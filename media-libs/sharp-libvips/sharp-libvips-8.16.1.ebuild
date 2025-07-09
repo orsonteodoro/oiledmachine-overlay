@@ -448,9 +448,9 @@ zerovec-derive-0.10.3
 zune-core-0.4.12
 zune-jpeg-0.4.14
 "
-# Rust requirements relaxed.  Use almost the same Rust version as librsvg-2.60.0's Cargo.toml.
-RUST_MAX_VER="1.78.0" # Inclusive
-RUST_MIN_VER="1.77.2" # llvm-17.0
+# Rust requirements relaxed.  Use the one that supports --check-cfg.
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.80.1" # llvm-18.1
 RUST_PV="${RUST_MAX_VER}"
 
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
@@ -695,72 +695,6 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 	popd 2>&1 >/dev/null || die
 }
 
-src_configure() {
-	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
-	if [[ -n "${ERUST_SLOT_OVERRIDE}" ]] ; then
-		RUST_SLOT="${ERUST_SLOT_OVERRIDE}"
-	elif ver_test "${RUST_MIN_VER}" -le "${rust_pv}" && ver_test "${rust_pv}" -le "${RUST_MAX_VER}" ; then
-		:
-	else
-eerror "Use \`eselect rust\` to switch to Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
-		die
-	fi
-	if ! has_version "dev-util/sccache" ; then
-einfo "Didn't detect sccache.  Removing sccache environment variables."
-		unset RUSTC_WRAPPER
-		unset SCCACHE_DIR
-		unset SCCACHE_MAX_FRAME_LENGTH
-	fi
-
-	export CC="${CHOST}-gcc"
-	export CXX="${CHOST}-g++"
-	export CPP="${CC} -E"
-	export AS="as"
-	export AR="ar"
-	export NM="nm"
-	export STRIP="strip"
-	export RANDLIB="randlib"
-	export READELF="readelf"
-	unset LD
-	check-compiler-switch_end
-
-einfo "RUST_SLOT:  ${RUST_SLOT}"
-	local rust_type=""
-	if [[ -n "${ERUST_TYPE_OVERRIDE}" ]] ; then
-		rust_type="${ERUST_TYPE_OVERRIDE}"
-	elif has_version "dev-lang/rust-bin:${RUST_SLOT}" ; then
-		rust_type="binary"
-	elif has_version "dev-lang/rust:${RUST_SLOT}" ; then
-		rust_type="source"
-	else
-		die "You must select a Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
-	fi
-
-	local rust_path=$(get_rust_path "${EPREFIX}" "${RUST_SLOT}" "${rust_type}")
-	export PATH="${rust_path}/bin:${PATH}"
-einfo "PATH:  ${PATH}"
-
-	strip-unsupported-flags
-	replace-flags '-O*' '-O2'
-
-	if use cpu_flags_x86_sse4 ; then
-		export USE_SSE4="1"
-	fi
-
-	if use vanilla ; then
-		export VANILLA=1
-		strip-flags
-	else
-		export VANILLA=0
-		cflags-hardened_append
-		rustflags-hardened_append
-	fi
-	if check-compiler-switch_is_flavor_slot_changed ; then
-ewarn "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
-}
-
 get_platform() {
 	if [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] ; then
 		echo "linux-x64"
@@ -839,12 +773,81 @@ setup_arch() {
 
 }
 
-src_compile() {
+src_configure() {
+	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
+	if [[ -n "${ERUST_SLOT_OVERRIDE}" ]] ; then
+		RUST_SLOT="${ERUST_SLOT_OVERRIDE}"
+	elif ver_test "${RUST_MIN_VER}" -le "${rust_pv}" && ver_test "${rust_pv}" -le "${RUST_MAX_VER}" ; then
+		:
+	else
+eerror "Use \`eselect rust\` to switch to Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
+		die
+	fi
+	if ! has_version "dev-util/sccache" ; then
+einfo "Didn't detect sccache.  Removing sccache environment variables."
+		unset RUSTC_WRAPPER
+		unset SCCACHE_DIR
+		unset SCCACHE_MAX_FRAME_LENGTH
+	fi
+
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
+	export AS="as"
+	export AR="ar"
+	export NM="nm"
+	export STRIP="strip"
+	export RANDLIB="randlib"
+	export READELF="readelf"
+	unset LD
+	check-compiler-switch_end
+
+einfo "RUST_SLOT:  ${RUST_SLOT}"
+	local rust_type=""
+	if [[ -n "${ERUST_TYPE_OVERRIDE}" ]] ; then
+		rust_type="${ERUST_TYPE_OVERRIDE}"
+	elif has_version "dev-lang/rust-bin:${RUST_SLOT}" ; then
+		rust_type="binary"
+	elif has_version "dev-lang/rust:${RUST_SLOT}" ; then
+		rust_type="source"
+	else
+		die "You must select a Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
+	fi
+
+	local rust_path=$(get_rust_path "${EPREFIX}" "${RUST_SLOT}" "${rust_type}")
+	export PATH="${rust_path}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
+
+	strip-unsupported-flags
+	replace-flags '-O*' '-O2'
+
+	if use cpu_flags_x86_sse4 ; then
+		export USE_SSE4="1"
+	fi
+
+	if use vanilla ; then
+		export VANILLA=1
+		strip-flags
+	else
+		export VANILLA=0
+		cflags-hardened_append
+		rustflags-hardened_append
+	fi
+	if check-compiler-switch_is_flavor_slot_changed ; then
+ewarn "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	unset MESON_CROSS_FILE
 	export PLATFORM=$(get_platform)
+	export PKG_CONFIG_LIBDIR=""
+	export PKG_CONFIG_PATH=""
 #	export SHARP_LIBVIPS_PREFIX="${WORKDIR}/build/deps"
 #	export PKG_CONFIG_PATH="${SHARP_LIBVIPS_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 	setup_arch
+}
+
+src_compile() {
 	bash "${S}/build/lin.sh" || die
 }
 

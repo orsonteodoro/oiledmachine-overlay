@@ -1,10 +1,26 @@
---- librsvg-2.60.0/meson.build.orig	2025-07-08 13:31:21.112730988 -0700
-+++ librsvg-2.60.0/meson.build	2025-07-08 14:18:22.829470077 -0700
-@@ -467,6 +467,7 @@ endif
- cargo_wrapper_args = [
-   '--cargo', cargo.full_path(),
-   '--manifest-path', cargo_toml,
-+  '--offline',
-   '--project-build-root', meson.project_build_root(),
-   '--prefix', get_option('prefix'),
-   '--libdir', get_option('libdir'),
+--- a/meson/cargo_wrapper.py.orig	2025-07-08 16:46:57.553778482 -0700
++++ b/meson/cargo_wrapper.py	2025-07-08 16:47:49.157256341 -0700
+@@ -143,12 +143,12 @@ if args.toolchain_version is not None:
+         cargo_cmd.extend(["+%s-%s" % (args.toolchain_version, args.target)])
+ 
+ if args.command == "cbuild":
+-    cargo_cmd.extend(["cbuild", "--locked"])
++    cargo_cmd.extend(["cbuild", "--offline"])
+     library_type = "staticlib" if args.extension in ("a", "lib") else "cdylib"
+     cargo_cmd.extend(cargo_prefixes)
+     cargo_cmd.extend(["--library-type", library_type])
+ elif args.command == "test":
+-    cargo_cmd.extend(["test", "--locked", "--no-fail-fast", "--color=always"])
++    cargo_cmd.extend(["test", "--offline", "--no-fail-fast", "--color=always"])
+     if 'librsvg' in args.packages:
+         # These are required for librsvg itself
+         # If doing an unqualified cargo build, they'll be called up
+@@ -156,7 +156,7 @@ elif args.command == "test":
+         # https://github.com/rust-lang/cargo/issues/2911
+         features.extend(["capi", "test-utils"])
+ else:
+-    cargo_cmd.extend(["build", "--locked"])
++    cargo_cmd.extend(["build", "--offline"])
+     if args.bin:
+         cargo_cmd.extend(["--bin", args.bin])
+ 
