@@ -16,7 +16,6 @@ EAPI=8
 
 # TODO package (rdepend):
 # commoncode
-# container-inspector
 # extractcode
 # extractcode_7z
 # extractcode-libarchive
