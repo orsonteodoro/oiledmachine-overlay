@@ -47,7 +47,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-50[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-scm-6[${PYTHON_USEDEP},toml]
+	>=dev-python/setuptools-scm-6[${PYTHON_USEDEP},toml(+)]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-5.0.2[${PYTHON_USEDEP}]

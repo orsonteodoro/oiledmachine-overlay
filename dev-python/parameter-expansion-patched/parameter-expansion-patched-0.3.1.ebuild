@@ -44,7 +44,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-scm-3.4[${PYTHON_USEDEP},toml]
+	>=dev-python/setuptools-scm-3.4[${PYTHON_USEDEP},toml(+)]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
