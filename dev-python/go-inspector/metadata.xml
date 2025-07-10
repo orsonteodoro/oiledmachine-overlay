@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/nexB/go-inspector/issues</bugs-to>
+    <changelog>https://github.com/nexB/go-inspector/blob/main/CHANGELOG.rst</changelog>
+    <remote-id type="github">nexB/go-inspector</remote-id>
+    <remote-id type="pypi">go-inspector</remote-id>
+  </upstream>
+</pkgmetadata>

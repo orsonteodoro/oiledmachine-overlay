@@ -23,7 +23,6 @@ EAPI=8
 # typecode-libmagic
 
 # TODO package (rdepend, USE=linux_kernel)
-# go-inspector
 # rust-inspector
 
 # TODO package (dev)
