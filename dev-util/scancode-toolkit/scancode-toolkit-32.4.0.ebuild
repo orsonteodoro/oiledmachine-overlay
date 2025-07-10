@@ -24,7 +24,6 @@ EAPI=8
 
 # TODO package (rdepend, USE=linux_kernel)
 # packagedcode-msitools
-# regipy
 # go-inspector
 # rust-inspector
 
