@@ -228,7 +228,7 @@ node-sharp_append_libs() {
 				codec_pkgs+=" libpng"
 				;;
 			svg)
-				codec_pkgs+=" librsvg-2.0 libxml"
+				codec_pkgs+=" librsvg-2.0 libxml-2.0"
 				;;
 			tiff)
 				codec_pkgs+=" libtiff-4"
