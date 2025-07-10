@@ -17,7 +17,6 @@ EAPI=8
 # TODO package (rdepend):
 # commoncode
 # container-inspector
-# debian-inspector
 # dparse2
 # extractcode
 # extractcode_7z
