@@ -22,6 +22,7 @@ fi
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
 YARN_AUDIT_FIX=0
+NODE_SHARP_USE="png svg"
 NODE_GYP_PV="9.3.0"
 NODE_VERSION="20"
 PATENT_STATUS=(
