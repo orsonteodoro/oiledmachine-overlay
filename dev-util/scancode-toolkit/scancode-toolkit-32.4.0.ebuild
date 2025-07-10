@@ -16,7 +16,6 @@ EAPI=8
 
 # TODO package (rdepend):
 # extractcode
-# extractcode_7z
 
 # TODO package (dev)
 # aboutcode-toolkit
