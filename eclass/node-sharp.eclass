@@ -228,7 +228,7 @@ node-sharp_append_libs() {
 				codec_pkgs+=" libpng"
 				;;
 			svg)
-				codec_pkgs+=" librsvg-2.0 libxml-2.0"
+				codec_pkgs+=" librsvg-2.0"
 				;;
 			tiff)
 				codec_pkgs+=" libtiff-4"
@@ -259,7 +259,7 @@ node-sharp_append_libs() {
 	# Generate cflags and libs recursively using pkg-config
 	if [[ -n "${codec_pkgs}" ]] ; then
 		codec_cflags="${codec_cflags} "$(pkg-config --cflags ${codec_pkgs} 2>/dev/null) || die "Failed to get cflags via pkg-config for ${codec_pkgs}"
-		codec_libs="${codec_libs} "$(pkg-config --libs ${codec_pkgs} 2>/dev/null) || die "Failed to get libs via pkg-config for ${codec_pkgs}"
+		codec_libs="${codec_libs} "$(pkg-config --libs --static  ${codec_pkgs} 2>/dev/null) || die "Failed to get libs via pkg-config for ${codec_pkgs}"
 	fi
 	einfo "codec_libs:  ${codec_libs}"
 	einfo "codec_cflags:  ${codec_cflags}"
