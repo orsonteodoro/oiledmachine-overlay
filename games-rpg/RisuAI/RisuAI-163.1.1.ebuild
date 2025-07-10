@@ -640,6 +640,7 @@ zvariant-5.5.3
 zvariant_derive-5.5.3
 zvariant_utils-3.2.0
 "
+NODE_SHARP_USE="exif jpeg lcms png svg"
 NODE_VERSION=20
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -689,13 +690,10 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-ollama +system-vips tray wayland X
+ollama tray wayland X
 ebuild_revision_7
 "
 REQUIRED_USE="
-	!cpu_flags_x86_sse4_2? (
-		system-vips
-	)
 	|| (
 		X
 		wayland
@@ -755,9 +753,6 @@ RDEPEND+="
 	${TAURI_RDEPEND}
 	ollama? (
 		app-misc/ollama
-	)
-	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,jpeg,png,svg]
 	)
 "
 DEPEND+="

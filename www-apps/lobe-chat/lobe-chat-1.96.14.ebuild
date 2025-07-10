@@ -45,6 +45,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
+NODE_SHARP_USE="exif lcms webp"
 NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
@@ -116,13 +117,10 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-file-management +indexdb +openrc postgres systemd +system-vips
+file-management +indexdb +openrc postgres systemd
 ebuild_revision_22
 "
 REQUIRED_USE="
-	!cpu_flags_x86_sse4_2? (
-		system-vips
-	)
 	file-management? (
 		postgres
 	)
@@ -152,9 +150,6 @@ RDEPEND+="
 	)
 	postgres? (
 		>=dev-db/postgresql-16.4
-	)
-	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,webp]
 	)
 "
 DEPEND+="

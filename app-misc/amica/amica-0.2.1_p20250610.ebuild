@@ -444,6 +444,7 @@ zerovec-derive-0.11.1
 "
 EGIT_COMMIT="75c19b915b839e22d1a47db584b1f91b4d69074e" # Jun 10, 2025
 NODE_ENV="development"
+NODE_SHARP_USE="exif jpeg"
 NODE_VERSION=18 # Upstream uses 18 and 20
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -623,13 +624,10 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-coqui debug ollama +system-vips tray voice-recognition wayland whisper-cpp X
+coqui debug ollama tray voice-recognition wayland whisper-cpp X
 ebuild_revision_8
 "
 REQUIRED_USE="
-	!cpu_flags_x86_sse4_2? (
-		system-vips
-	)
 	voice-recognition
 	whisper-cpp? (
 		voice-recognition
@@ -698,9 +696,6 @@ RDEPEND+="
 	)
 	ollama? (
 		app-misc/ollama
-	)
-	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[cxx,exif,jpeg]
 	)
 	whisper-cpp? (
 		app-accessibility/whisper-cpp

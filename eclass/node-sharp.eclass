@@ -191,9 +191,9 @@ node-sharp_pkg_setup() {
 
 # @FUNCTION: node-sharp_append_libs
 # @DESCRIPTION:
-# Appends required libs.  Allows for custom or minified builds by setting NODE_SHARP_EXT.
+# Appends required libs.  Allows for custom or minified builds by setting NODE_SHARP_USE.
 node-sharp_append_libs() {
-	einfo "Configuring sharp-libvips with NODE_SHARP_EXT=${NODE_SHARP_EXT}"
+	einfo "Configuring sharp-libvips with NODE_SHARP_USE=${NODE_SHARP_USE}"
 
 	# Core dependencies for sharp-libvips
 	local vips_deps="vips vips-cpp"
@@ -202,9 +202,9 @@ node-sharp_append_libs() {
 	local codec_pkgs=""
 
 	# Parse NODE_SHARP_EXT
-	local ext_list="${NODE_SHARP_EXT:-dzi exif gif heif jpg png svg tiff webp}"  # Defaults if unset
-	for ext in ${ext_list}; do
-		case "${ext}" in
+	local use_list="${NODE_SHARP_USE:-dzi exif gif heif jpg lcms png svg tiff webp}"  # Defaults if unset
+	for u in ${use_list}; do
+		case "${u}" in
 			dzi)
 				codec_pkgs+=" libarchive"
 				;;
@@ -219,6 +219,9 @@ node-sharp_append_libs() {
 				;;
 			jpg|jpeg)
 				codec_pkgs+=" libjpeg"
+				;;
+			lcms)
+				codec_pkgs+=" lcms2"
 				;;
 			png)
 				codec_pkgs+=" libpng"
