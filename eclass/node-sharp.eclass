@@ -198,7 +198,8 @@ node-sharp_append_libs() {
 	# Core dependencies for sharp-libvips
 	local vips_deps="vips vips-cpp"
 	local codec_cflags=""
-	local codec_libs="-lvips -lvips-cpp -lstdc++"  # Minimal set
+	local libdir=$(get_libdir)
+	local codec_libs="-L/usr/lib/sharp-vips/${libdir} -lvips -lvips-cpp -lstdc++"  # Minimal set
 	local codec_pkgs=""
 
 	# Parse NODE_SHARP_EXT
@@ -227,7 +228,7 @@ node-sharp_append_libs() {
 				codec_pkgs+=" libpng"
 				;;
 			svg)
-				codec_pkgs+=" librsvg-2.0"
+				codec_pkgs+=" librsvg-2.0 libxml"
 				;;
 			tiff)
 				codec_pkgs+=" libtiff-4"
@@ -269,7 +270,7 @@ node-sharp_append_libs() {
 cat << EOF > "${pkgconfig_dir}/vips.pc" || die "Failed to create custom vips.pc"
 prefix=/usr
 exec_prefix=\${prefix}
-libdir=\${prefix}/$(get_libdir)
+libdir=\${prefix}/${libdir}
 includedir=\${prefix}/include
 
 Name: vips
