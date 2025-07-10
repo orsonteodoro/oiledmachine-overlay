@@ -22,9 +22,6 @@ EAPI=8
 # typecode
 # typecode-libmagic
 
-# TODO package (rdepend, USE=linux_kernel)
-# rust-inspector
-
 # TODO package (dev)
 # aboutcode-toolkit
 # vendorize
