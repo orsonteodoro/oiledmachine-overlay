@@ -23,7 +23,6 @@ EAPI=8
 # extractcode_7z
 # extractcode-libarchive
 # plugincode
-# pygmars
 # typecode
 # typecode-libmagic
 
