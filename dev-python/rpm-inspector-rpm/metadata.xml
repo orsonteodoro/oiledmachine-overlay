@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/nexB/scancode-plugins/issues</bugs-to>
+    <changelog></changelog>
+    <remote-id type="github">nexB/scancode-plugins</remote-id>
+    <remote-id type="pypi">rpm-inspector-rpm</remote-id>
+  </upstream>
+</pkgmetadata>
