@@ -20,7 +20,6 @@ EAPI=8
 # extractcode
 # extractcode_7z
 # extractcode-libarchive
-# plugincode
 # typecode
 # typecode-libmagic
 
