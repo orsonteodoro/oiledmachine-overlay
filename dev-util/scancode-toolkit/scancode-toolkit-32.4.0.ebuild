@@ -15,7 +15,6 @@ EAPI=8
 # 5. Frees developer time to do other things.
 
 # TODO package (rdepend):
-# commoncode
 # extractcode
 # extractcode_7z
 # extractcode-libarchive
