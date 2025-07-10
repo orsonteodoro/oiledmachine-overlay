@@ -19,7 +19,6 @@ EAPI=8
 # extractcode
 # extractcode_7z
 # extractcode-libarchive
-# typecode
 
 # TODO package (dev)
 # aboutcode-toolkit
