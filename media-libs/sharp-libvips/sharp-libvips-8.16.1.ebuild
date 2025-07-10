@@ -502,7 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
-ebuild_revision_7
+ebuild_revision_8
 "
 LICENSE="
 	Apache-2.0
@@ -982,10 +982,10 @@ src_install() {
 	if [[ -d "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private" ]] ; then
 		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
 	fi
-	if [ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]; then
+	if [[ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]] ; then
 		sed -i "s|${WORKDIR}/build/deps|/usr/lib/sharp-vips|" "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
-		sed -i '/Libs:/ s|$| -laom -lheif -lvips -lglib-2.0 -lgobject-2.0 -lgio-2.0 -lz -ljpeg -lpng -ltiff -lwebp -larchive -llcms2 -lfontconfig -lpangocairo-1.0 -lpangoft2-1.0 -lrsvg-2 -lxml2|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips.pc" || die "Failed to add static libs to vips.pc"
-		sed -i '/Libs:/ s|$| -laom -lsharpyuv|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/libheif.pc" || die "Failed to add static libs to libheif.pc"
+		#sed -i '/Libs:/ s|$| -laom -lheif -lvips -lglib-2.0 -lgobject-2.0 -lgio-2.0 -lz -ljpeg -lpng -ltiff -lwebp -larchive -llcms2 -lfontconfig -lpangocairo-1.0 -lpangoft2-1.0 -lrsvg-2 -lxml2|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips.pc" || die "Failed to add static libs to vips.pc"
+		#sed -i '/Libs:/ s|$| -laom -lsharpyuv|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/libheif.pc" || die "Failed to add static libs to libheif.pc"
 	fi
 
 	# Install include
