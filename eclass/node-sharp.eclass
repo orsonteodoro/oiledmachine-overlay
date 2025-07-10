@@ -154,22 +154,7 @@ unset -f _node_sharp_set_globals
 #
 # See also:  https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
 #
-TRASH="
-		system-vips? (
-			>=media-libs/vips-${VIPS_PV}[avif,cgif,dzi,exif,fits,fontconfig,gif,hdr,imagemagick,imagequant,lcms,nifti,jpeg,jpeg2k,jpegxl,openslide,pango,pdf,png,poppler,svg,tiff,webp,zlib]
-			media-libs/freetype[harfbuzz,png]
-		)
-"
 if [[ -n "${SHARP_PV}" ]] ; then
-	IUSE+=" +system-vips"
-	if ver_test "${SHARP_PV}" -ge "0.30" ; then
-		IUSE+=" cpu_flags_x86_sse4_2"
-		REQUIRED_USE+="
-			!cpu_flags_x86_sse4_2? (
-				system-vips
-			)
-		"
-	fi
 	NODE_SHARP_CDEPEND+="
 		${NODE_SHARP_NODEJS_CDEPEND}
 		>=media-libs/sharp-libvips-8.16.1
@@ -201,13 +186,106 @@ node-sharp_pkg_setup() {
 # Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
 	unset SHARP_IGNORE_GLOBAL_LIBVIPS
 	unset SHARP_FORCE_GLOBAL_LIBVIPS
-	if use system-vips ; then
-einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
-	else
-einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
+	export SHARP_FORCE_GLOBAL_LIBVIPS="true" # true (system-vips), false (prebuilt)
+}
+
+# @FUNCTION: node-sharp_append_libs
+# @DESCRIPTION:
+# Appends required libs.  Allows for custom or minified builds by setting NODE_SHARP_EXT.
+node-sharp_append_libs() {
+	einfo "Configuring sharp-libvips with NODE_SHARP_EXT=${NODE_SHARP_EXT}"
+
+	# Core dependencies for sharp-libvips
+	local vips_deps="vips vips-cpp"
+	local codec_cflags=""
+	local codec_libs="-lvips -lvips-cpp -lstdc++"  # Minimal set
+	local codec_pkgs=""
+
+	# Parse NODE_SHARP_EXT
+	local ext_list="${NODE_SHARP_EXT:-dzi exif gif heif jpg png svg tiff webp}"  # Defaults if unset
+	for ext in ${ext_list}; do
+		case "${ext}" in
+			dzi)
+				codec_pkgs+=" libarchive"
+				;;
+			exif)
+				codec_pkgs+=" libexif"
+				;;
+			gif)
+				codec_pkgs+=" cgif"
+				;;
+			heif)
+				codec_pkgs+=" libheif"
+				;;
+			jpg|jpeg)
+				codec_pkgs+=" libjpeg"
+				;;
+			png)
+				codec_pkgs+=" libpng"
+				;;
+			svg)
+				codec_pkgs+=" librsvg-2.0"
+				;;
+			tiff)
+				codec_pkgs+=" libtiff-4"
+				;;
+			webp)
+				codec_pkgs+=" libwebp"
+				;;
+			*)
+				ewarn "Unsupported codec: ${ext}. Skipping."
+				;;
+		esac
+	done
+
+	# Verify sharp-libvips version
+	local vips_version=$(pkg-config --modversion vips 2>/dev/null || echo "0")
+	if [[ -z "${vips_version}" || "$(ver_cut 1-2 "${vips_version}")" < "8.16" ]]; then
+		die "sharp-libvips 8.16 or newer is required"
 	fi
+
+	# Check required dependencies
+	local dep
+	for dep in ${vips_deps} ${codec_pkgs} ; do
+		if ! pkg-config --modversion "${dep}" >/dev/null 2>&1; then
+			die "Missing dependency: ${dep}"
+		fi
+	done
+
+	# Generate cflags and libs recursively using pkg-config
+	if [[ -n "${codec_pkgs}" ]] ; then
+		codec_cflags="${codec_cflags} "$(pkg-config --cflags ${codec_pkgs} 2>/dev/null) || die "Failed to get cflags via pkg-config for ${codec_pkgs}"
+		codec_libs="${codec_libs} "$(pkg-config --libs ${codec_pkgs} 2>/dev/null) || die "Failed to get libs via pkg-config for ${codec_pkgs}"
+	fi
+	einfo "codec_libs:  ${codec_libs}"
+	einfo "codec_cflags:  ${codec_cflags}"
+
+	# Create a custom vips.pc with minimal dependencies
+	local pkgconfig_dir="${S}/sharp-pkgconfig"
+	mkdir -p "${pkgconfig_dir}" || die "Failed to create temporary pkgconfig directory"
+cat << EOF > "${pkgconfig_dir}/vips.pc" || die "Failed to create custom vips.pc"
+prefix=/usr
+exec_prefix=\${prefix}
+libdir=\${prefix}/$(get_libdir)
+includedir=\${prefix}/include
+
+Name: vips
+Description: Minimal vips configuration for sharp
+Version: ${vips_version}
+Requires:
+Libs: -L\${libdir} ${codec_libs}
+Cflags: -I\${includedir} -I\${includedir}/vips
+EOF
+	einfo "Created custom vips.pc with libs: ${codec_libs}"
+	# Set PKG_CONFIG_PATH to use custom vips.pc
+	export PKG_CONFIG_PATH="${pkgconfig_dir}:${PKG_CONFIG_PATH}"
+
+	export CFLAGS="${CFLAGS} ${codec_cflags}"
+	export CXXFLAGS="${CXXFLAGS} ${codec_cflags}"
+	export LDFLAGS="${LDFLAGS} ${codec_libs}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 # @FUNCTION: node-sharp_npm_rebuild_sharp
@@ -219,12 +297,11 @@ node-sharp_npm_rebuild_sharp() {
 		enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
 
-	if use system-vips ; then
-		edo rm -vrf "node_modules/@img/sharp"*
-		edo rm -vrf "${HOME}/.cache/node-gyp"
-		edo rm -vrf "node_modules/sharp"
-		export npm_config_build_from_source="true"
-	fi
+	einfo "Cleaning prebuilt for system-vips"
+	edo rm -vrf "node_modules/@img/sharp"*
+	edo rm -vrf "${HOME}/.cache/node-gyp"
+	edo rm -vrf "node_modules/sharp"
+	export npm_config_build_from_source="true"
 
 	enpm add "sharp@${SHARP_PV}" \
 		${NPM_INSTALL_ARGS[@]} \
@@ -243,53 +320,49 @@ node-sharp_npm_rebuild_sharp() {
 		eapply "${SHARP_NODE_PATCH_FIX_PATH}"
 	fi
 
-	if use system-vips ; then
-		local libdir=$(get_libdir)
-		export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-		export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	local libdir=$(get_libdir)
+	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	node-sharp_append_libs
 
-		append-flags $(pkg-config --cflags "glib-2.0")
-		edo rm -vrf "node_modules/sharp/build"
-		edo rm -vrf "node_modules/@img/sharp"*
-		pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
-			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-			if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-				if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-					edo node "../install/check" --debug
-				else
-					edo node "../install/check"
-				fi
-			elif ver_test "${sharp_pv}" -lt "0.33" ; then
+	edo rm -vrf "node_modules/sharp/build"
+	edo rm -vrf "node_modules/@img/sharp"*
+	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node "../install/check" --debug
+			else
+				edo node "../install/check"
+			fi
+		elif ver_test "${sharp_pv}" -lt "0.33" ; then
 	# The --build-from-source is not deterministic.
 	# The sharp install in package.json does short circuit and bypasses native build.
-				edo node "install/can-compile"
-				if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-					edo node-gyp configure --debug
-					edo node-gyp build --debug --verbose
-				else
-					edo node-gyp rebuild
-				fi
-				edo node "../install/dll-copy"
+			edo node "install/can-compile"
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node-gyp configure --debug
+				edo node-gyp build --debug --verbose
+			else
+				edo node-gyp rebuild
 			fi
-		popd >/dev/null 2>&1 || die
-	fi
+			edo node "../install/dll-copy"
+		fi
+	popd >/dev/null 2>&1 || die
 
 	unset npm_config_build_from_source
 
-	if use system-vips ; then
-		grep -q \
-			-e "SOLINK_MODULE.*sharp-.*.node" \
-			"${T}/build.log" \
-			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
-		grep -q \
-			-e "compilation terminated" \
-			"${T}/build.log" \
-			&& die "Detected error"
-		grep -q \
-			-e "build error" \
-			"${T}/build.log" \
-			&& die "Detected error"
-	fi
+	grep -q \
+		-e "SOLINK_MODULE.*sharp-.*.node" \
+		"${T}/build.log" \
+		|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	grep -q \
+		-e "compilation terminated" \
+		"${T}/build.log" \
+		&& die "Detected error"
+	grep -q \
+		-e "build error" \
+		"${T}/build.log" \
+		&& die "Detected error"
 }
 
 # @FUNCTION: node-sharp_npm_lockfile_add_sharp
@@ -324,78 +397,71 @@ einfo "Adding debug flags for sharp"
 		append-flags -ggdb3 -O0 -UNDEBUG -DG_ENABLE_DEBUG -DDEBUG
 	fi
 
-	if use system-vips ; then
-		local libdir=$(get_libdir)
-		export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-		export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	local libdir=$(get_libdir)
+	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	node-sharp_append_libs
 
-		append-flags $(pkg-config --cflags "glib-2.0")
-		edo rm -vrf "node_modules/@img/sharp"*
-		edo rm -vrf "${HOME}/.cache/node-gyp"
-		edo rm -vrf "node_modules/sharp"
-		export npm_config_build_from_source="true"
+	edo rm -vrf "node_modules/@img/sharp"*
+	edo rm -vrf "${HOME}/.cache/node-gyp"
+	edo rm -vrf "node_modules/sharp"
+	export npm_config_build_from_source="true"
 
-		eyarn add "sharp@${SHARP_PV}" \
-			-E \
-			${YARN_INSTALL_ARGS[@]} \
-			${SHARP_INSTALL_ARGS[@]}
+	eyarn add "sharp@${SHARP_PV}" \
+		-E \
+		${YARN_INSTALL_ARGS[@]} \
+		${SHARP_INSTALL_ARGS[@]}
 
-		if [[ -n "${SHARP_NODE_DEBUG_PATCH_PATH}" ]] ; then
-			eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
-		else
-			ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
-		fi
+	if [[ -n "${SHARP_NODE_DEBUG_PATCH_PATH}" ]] ; then
+		eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
+	else
+		ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
+	fi
 
-		if [[ -n "${SHARP_NODE_PATCH_FIX_PATH}" ]] ; then
-			eapply "${SHARP_NODE_PATCH_FIX_PATH}"
-		fi
+	if [[ -n "${SHARP_NODE_PATCH_FIX_PATH}" ]] ; then
+		eapply "${SHARP_NODE_PATCH_FIX_PATH}"
+	fi
 
-		edo rm -vrf "node_modules/sharp/build"
-		edo rm -vrf "node_modules/@img/sharp"*
-		pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
-			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-			if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-				if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-					edo node "../install/check" --debug
-				else
-					edo node "../install/check"
-				fi
-			elif ver_test "${sharp_pv}" -lt "0.33" ; then
+	edo rm -vrf "node_modules/sharp/build"
+	edo rm -vrf "node_modules/@img/sharp"*
+	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node "../install/check" --debug
+			else
+				edo node "../install/check"
+			fi
+		elif ver_test "${sharp_pv}" -lt "0.33" ; then
 	# The --build-from-source is not deterministic.
 	# The sharp install in package.json does short circuit and bypasses native build.
-				edo node "install/can-compile"
-				if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-					edo node-gyp configure --debug
-					edo node-gyp build --debug --verbose
-				else
-					edo node-gyp rebuild
-				fi
-				edo node "../install/dll-copy"
+			edo node "install/can-compile"
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node-gyp configure --debug
+				edo node-gyp build --debug --verbose
+			else
+				edo node-gyp rebuild
 			fi
-		popd >/dev/null 2>&1 || die
+			edo node "../install/dll-copy"
+		fi
+	popd >/dev/null 2>&1 || die
 
-		grep -q \
-			-e "SOLINK_MODULE.*sharp-.*.node" \
-			"${T}/build.log" \
-			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
-		grep -q \
-			-e "compilation terminated" \
-			"${T}/build.log" \
-			&& die "Detected error"
-		grep -q \
-			-e "build error" \
-			"${T}/build.log" \
-			&& die "Detected error"
+	grep -q \
+		-e "SOLINK_MODULE.*sharp-.*.node" \
+		"${T}/build.log" \
+		|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	grep -q \
+		-e "compilation terminated" \
+		"${T}/build.log" \
+		&& die "Detected error"
+	grep -q \
+		-e "build error" \
+		"${T}/build.log" \
+		&& die "Detected error"
 
-		unset npm_config_build_from_source
+	unset npm_config_build_from_source
 # TODO:  verify rebuilt.  For an example, see node-sharp_npm_rebuild_sharp.
 ewarn "QA:  You must manually verify sharp@${SHARP_PV} rebuild correctness"
-	else
-		unset npm_config_build_from_source
-		eyarn add "sharp@${SHARP_PV}" \
-			${YARN_INSTALL_ARGS[@]} \
-			${SHARP_INSTALL_ARGS[@]}
-	fi
 }
 
 # @FUNCTION: node-sharp_yarn_lockfile_add_sharp
