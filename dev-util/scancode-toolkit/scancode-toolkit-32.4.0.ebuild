@@ -14,9 +14,6 @@ EAPI=8
 # 4. Can detect missed licenses in source code
 # 5. Frees developer time to do other things.
 
-# TODO package (rdepend):
-# extractcode
-
 # TODO package (dev)
 # aboutcode-toolkit
 # vendorize
