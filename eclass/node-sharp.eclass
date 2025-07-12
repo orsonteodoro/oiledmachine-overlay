@@ -195,101 +195,119 @@ node-sharp_pkg_setup() {
 node-sharp_append_libs() {
 	einfo "Configuring sharp-libvips with NODE_SHARP_USE=${NODE_SHARP_USE}"
 
-	# Core dependencies for sharp-libvips
-	local vips_deps="vips vips-cpp"
-	local codec_cflags=""
-	local libdir=$(get_libdir)
-	local codec_libs="-L/usr/lib/sharp-vips/${libdir} -lvips -lvips-cpp -lstdc++"  # Minimal set
-	local codec_pkgs=""
+	filter-flags -Wl,--as-needed
 
-	# Parse NODE_SHARP_EXT
-	local use_list="${NODE_SHARP_USE:-dzi exif gif heif jpg lcms png svg tiff webp}"  # Defaults if unset
-	for u in ${use_list}; do
-		case "${u}" in
-			dzi)
-				codec_pkgs+=" libarchive"
-				;;
-			exif)
-				codec_pkgs+=" libexif"
-				;;
-			gif)
-				codec_pkgs+=" cgif"
-				;;
-			heif)
-				codec_pkgs+=" libheif"
-				;;
-			jpg|jpeg)
-				codec_pkgs+=" libjpeg"
-				;;
-			lcms)
-				codec_pkgs+=" lcms2"
-				;;
-			png)
-				codec_pkgs+=" libpng"
-				;;
-			svg)
-				codec_pkgs+=" librsvg-2.0"
-				;;
-			tiff)
-				codec_pkgs+=" libtiff-4"
-				;;
-			webp)
-				codec_pkgs+=" libwebp"
-				;;
-			*)
-				ewarn "Unsupported codec: ${ext}. Skipping."
-				;;
-		esac
-	done
+	# Base path for sharp-libvips static libraries and headers
+	local libdir=$(get_libdir)
+	local sharp_vips_base_path="/usr/lib/sharp-vips"
+	local sharp_vips_lib_path="${sharp_vips_base_path}/${libdir}"
+	local sharp_vips_include_path="${sharp_vips_base_path}/include"
+
+	export NODE_SHARP_INCLUDE_DIR="${sharp_vips_include_path}"
+	export NODE_SHARP_LIB_PATH="${sharp_vips_lib_path}"
+	export NODE_SHARP_PKG_CONFIG_DIR="${sharp_vips_lib_path}/pkgconfig"
+
+	# Verify sharp-libvips installation
+	if [[ ! -d "${sharp_vips_lib_path}" || ! -d "${sharp_vips_include_path}" ]] ; then
+		die "sharp-libvips not found at ${sharp_vips_base_path}"
+	fi
 
 	# Verify sharp-libvips version
 	local vips_version=$(pkg-config --modversion vips 2>/dev/null || echo "0")
-	if [[ -z "${vips_version}" || "$(ver_cut 1-2 "${vips_version}")" < "8.16" ]]; then
+	if [[ -z "${vips_version}" ]] || ver_test $(ver_cut 1-2 "${vips_version}") -lt "8.16" ; then
 		die "sharp-libvips 8.16 or newer is required"
 	fi
 
 	# Check required dependencies
 	local dep
-	for dep in ${vips_deps} ${codec_pkgs} ; do
-		if ! pkg-config --modversion "${dep}" >/dev/null 2>&1; then
+	for dep in ${vips_pkgs} ${deps_pkgs} ; do
+		if ! pkg-config --modversion "${dep}" >/dev/null 2>&1 ; then
 			die "Missing dependency: ${dep}"
 		fi
 	done
 
 	# Generate cflags and libs recursively using pkg-config
-	if [[ -n "${codec_pkgs}" ]] ; then
-		codec_cflags="${codec_cflags} "$(pkg-config --cflags ${codec_pkgs} 2>/dev/null) || die "Failed to get cflags via pkg-config for ${codec_pkgs}"
-		codec_libs="${codec_libs} "$(pkg-config --libs --static  ${codec_pkgs} 2>/dev/null) || die "Failed to get libs via pkg-config for ${codec_pkgs}"
+	if [[ -n "${deps_pkgs}" ]] ; then
+		deps_cflags="${deps_cflags} "$(pkg-config --cflags --static ${deps_pkgs} 2>/dev/null) || die "Failed to get cflags via pkg-config for ${deps_pkgs}"
+		deps_libs="${deps_libs} "$(pkg-config --libs --static ${deps_pkgs} 2>/dev/null) || die "Failed to get libs via pkg-config for ${deps_pkgs}"
 	fi
-	einfo "codec_libs:  ${codec_libs}"
-	einfo "codec_cflags:  ${codec_cflags}"
+	einfo "deps_libs:  ${deps_libs}"
+	einfo "deps_cflags:  ${deps_cflags}"
 
-	# Create a custom vips.pc with minimal dependencies
-	local pkgconfig_dir="${S}/sharp-pkgconfig"
-	mkdir -p "${pkgconfig_dir}" || die "Failed to create temporary pkgconfig directory"
-cat << EOF > "${pkgconfig_dir}/vips.pc" || die "Failed to create custom vips.pc"
-prefix=/usr
-exec_prefix=\${prefix}
-libdir=\${prefix}/${libdir}
-includedir=\${prefix}/include
+	# Verify static libvips-cpp.a and libxml2.a exist
+	if [[ ! -f "${sharp_vips_lib_path}/libvips-cpp.a" ]] ; then
+		die "libvips-cpp.a not found in ${sharp_vips_lib_path}"
+	fi
 
-Name: vips
-Description: Minimal vips configuration for sharp
-Version: ${vips_version}
-Requires:
-Libs: -L\${libdir} ${codec_libs}
-Cflags: -I\${includedir} -I\${includedir}/vips
-EOF
-	einfo "Created custom vips.pc with libs: ${codec_libs}"
 	# Set PKG_CONFIG_PATH to use custom vips.pc
-	export PKG_CONFIG_PATH="${pkgconfig_dir}:${PKG_CONFIG_PATH}"
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
+einfo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"
 
-	export CFLAGS="${CFLAGS} ${codec_cflags}"
-	export CXXFLAGS="${CXXFLAGS} ${codec_cflags}"
-	export LDFLAGS="${LDFLAGS} ${codec_libs}"
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "LIBS:  ${LIBS}"
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
+	unset LIBS
+}
+
+# @FUNCTION:  node-sharp_verify_loader_symbols
+# @DESCRIPTION:
+# Check loader symbols
+node-sharp_verify_built_symbols() {
+	if [[ -d "${S}/node_modules/sharp" ]]; then
+		einfo "Rebuilding sharp@0.34.2 from source"
+		pushd "${S}/node_modules/sharp" || die "Failed to enter sharp directory"
+			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node")
+			if [[ -f "${node_path}" ]]; then
+				einfo "Checking for undefined symbols in sharp-linux-x64.node"
+				if nm -D "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
+					die "Undefined symbol xmlCtxtUseOptions still present in sharp-linux-x64.node"
+				fi
+				# Verify static libxml2 via nm
+				einfo "Verifying libxml2 static linking"
+				if nm "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
+					die "libxml2 not statically linked in sharp-linux-x64.node"
+				fi
+
+				# Verify format loader symbols
+				einfo "Verifying format loader symbols"
+				local use_list="${NODE_SHARP_USE:-dzi exif gif heif jpg lcms png svg tiff webp}"  # Defaults if unset
+				for u in ${use_list} ; do
+				case "${u}" in
+					heif)
+						einfo "Checking vips_heifload for heif"
+						nm "${node_path}" | grep -q "vips_heifload" || die "Missing vips_heifload symbol for heif"
+						;;
+					jpg|jpeg)
+						einfo "Checking vips_jpegload for jpeg"
+						nm "${node_path}" | grep -q "vips_jpegload" || die "Missing vips_jpegload symbol for jpeg"
+						;;
+					png)
+						einfo "Checking vips_pngload for png"
+						nm "${node_path}" | grep -q "vips_pngload" || die "Missing vips_pngload symbol for png"
+						;;
+					svg)
+						einfo "Checking vips_svgload for svg"
+						nm "${node_path}" | grep -q "vips_svgload" || die "Missing vips_svgload symbol for svg"
+						;;
+					tiff)
+						einfo "Checking vips_tiffload for tiff"
+						nm "${node_path}" | grep -q "vips_tiffload" || die "Missing vips_tiffload symbol for tiff"
+						;;
+					webp)
+						einfo "Checking vips_webpload for webp"
+						nm "${node_path}" | grep -q "vips_webpload" || die "Missing vips_webpload symbol for webp"
+						;;
+					esac
+				done
+			else
+				die "sharp-linux-x64.node not found after rebuild"
+			fi
+		popd
+	else
+		die "sharp module not found in ${S}/node_modules/sharp. Ensure it is installed."
+	fi
 }
 
 # @FUNCTION: node-sharp_npm_rebuild_sharp
@@ -314,19 +332,18 @@ node-sharp_npm_rebuild_sharp() {
 		--foreground-scripts \
 		--verbose
 
-	if [[ -n "${SHARP_NODE_DEBUG_PATCH_PATH}" ]] ; then
-		eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
+	if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
+		local patch_path
+		for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
+			eapply "${patch_path}"
+		done
 	else
-		ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
-	fi
-
-	if [[ -n "${SHARP_NODE_PATCH_FIX_PATH}" ]] ; then
-		eapply "${SHARP_NODE_PATCH_FIX_PATH}"
+		ewarn "QA:  Missing NODE_SHARP_PATCHES"
 	fi
 
 	local libdir=$(get_libdir)
-	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig"
+	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}"
 	node-sharp_append_libs
 
 	edo rm -vrf "node_modules/sharp/build"
@@ -353,12 +370,17 @@ node-sharp_npm_rebuild_sharp() {
 		fi
 	popd >/dev/null 2>&1 || die
 
+	node-sharp_verify_built_symbols
+
 	unset npm_config_build_from_source
 
-	grep -q \
-		-e "SOLINK_MODULE.*sharp-.*.node" \
-		"${T}/build.log" \
-		|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
+		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	else
+		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	fi
 	grep -q \
 		-e "compilation terminated" \
 		"${T}/build.log" \
@@ -401,11 +423,6 @@ einfo "Adding debug flags for sharp"
 		append-flags -ggdb3 -O0 -UNDEBUG -DG_ENABLE_DEBUG -DDEBUG
 	fi
 
-	local libdir=$(get_libdir)
-	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
-	node-sharp_append_libs
-
 	edo rm -vrf "node_modules/@img/sharp"*
 	edo rm -vrf "${HOME}/.cache/node-gyp"
 	edo rm -vrf "node_modules/sharp"
@@ -416,15 +433,19 @@ einfo "Adding debug flags for sharp"
 		${YARN_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]}
 
-	if [[ -n "${SHARP_NODE_DEBUG_PATCH_PATH}" ]] ; then
-		eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
+	if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
+		local patch_path
+		for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
+			eapply "${patch_path}"
+		done
 	else
-		ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
+		ewarn "QA:  Missing NODE_SHARP_PATCHES"
 	fi
 
-	if [[ -n "${SHARP_NODE_PATCH_FIX_PATH}" ]] ; then
-		eapply "${SHARP_NODE_PATCH_FIX_PATH}"
-	fi
+	local libdir=$(get_libdir)
+	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig"
+	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}"
+	node-sharp_append_libs
 
 	edo rm -vrf "node_modules/sharp/build"
 	edo rm -vrf "node_modules/@img/sharp"*
@@ -450,10 +471,15 @@ einfo "Adding debug flags for sharp"
 		fi
 	popd >/dev/null 2>&1 || die
 
-	grep -q \
-		-e "SOLINK_MODULE.*sharp-.*.node" \
-		"${T}/build.log" \
-		|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	node-sharp_verify_built_symbols
+
+	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
+		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	else
+		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	fi
 	grep -q \
 		-e "compilation terminated" \
 		"${T}/build.log" \
