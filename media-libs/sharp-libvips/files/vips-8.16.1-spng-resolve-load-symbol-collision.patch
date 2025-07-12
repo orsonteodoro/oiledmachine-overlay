@@ -1,6 +1,6 @@
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1/libvips/foreign/foreign.c
---- vips-8.16.1.orig/libvips/foreign/foreign.c	2025-07-11 23:31:30.874346604 -0700
-+++ vips-8.16.1/libvips/foreign/foreign.c	2025-07-11 23:31:53.563556109 -0700
+--- vips-8.16.1.orig/libvips/foreign/foreign.c	2025-07-12 08:18:32.091286250 -0700
++++ vips-8.16.1/libvips/foreign/foreign.c	2025-07-12 08:20:59.190679231 -0700
 @@ -2960,6 +2960,9 @@ vips_foreign_operation_init(void)
  	extern GType vips_foreign_save_png_buffer_get_type(void);
  	extern GType vips_foreign_save_png_target_get_type(void);
@@ -11,7 +11,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
  	extern GType vips_foreign_save_spng_file_get_type(void);
  	extern GType vips_foreign_save_spng_buffer_get_type(void);
  	extern GType vips_foreign_save_spng_target_get_type(void);
-@@ -3186,9 +3189,9 @@ vips_foreign_operation_init(void)
+@@ -3186,12 +3189,15 @@ vips_foreign_operation_init(void)
  #endif /*HAVE_PNG*/
  
  #ifdef HAVE_SPNG
@@ -24,9 +24,15 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
  	vips_foreign_save_spng_file_get_type();
  	vips_foreign_save_spng_buffer_get_type();
  	vips_foreign_save_spng_target_get_type();
++	g_type_ensure(vips_foreign_save_spng_file_get_type());
++	g_type_ensure(vips_foreign_save_spng_buffer_get_type());
++	g_type_ensure(vips_foreign_save_spng_target_get_type());
+ #endif /*HAVE_SPNG*/
+ 
+ #ifdef HAVE_MATIO
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.1/libvips/foreign/spngload.c
---- vips-8.16.1.orig/libvips/foreign/spngload.c	2025-07-11 23:31:30.946345514 -0700
-+++ vips-8.16.1/libvips/foreign/spngload.c	2025-07-11 23:33:21.511086779 -0700
+--- vips-8.16.1.orig/libvips/foreign/spngload.c	2025-07-12 08:18:32.153441238 -0700
++++ vips-8.16.1/libvips/foreign/spngload.c	2025-07-12 08:18:52.332870544 -0700
 @@ -1,4 +1,5 @@
 -/* load PNG with libspng
 +/* spngload.c
@@ -1194,7 +1200,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
  
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c.bak vips-8.16.1/libvips/foreign/spngload.c.bak
 --- vips-8.16.1.orig/libvips/foreign/spngload.c.bak	1969-12-31 16:00:00.000000000 -0800
-+++ vips-8.16.1/libvips/foreign/spngload.c.bak	2025-07-11 23:31:53.564861256 -0700
++++ vips-8.16.1/libvips/foreign/spngload.c.bak	2025-07-12 08:18:52.333601812 -0700
 @@ -0,0 +1,923 @@
 +/* load PNG with libspng
 + *
@@ -2120,8 +2126,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c.bak vips-8
 +
 +#endif /*HAVE_SPNG*/
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.1/libvips/foreign/spngsave.c
---- vips-8.16.1.orig/libvips/foreign/spngsave.c	2025-07-11 23:31:30.982198595 -0700
-+++ vips-8.16.1/libvips/foreign/spngsave.c	2025-07-11 23:33:51.030572028 -0700
+--- vips-8.16.1.orig/libvips/foreign/spngsave.c	2025-07-12 08:18:32.188615298 -0700
++++ vips-8.16.1/libvips/foreign/spngsave.c	2025-07-12 08:18:52.334278507 -0700
 @@ -1,4 +1,5 @@
 -/* save to spng
 +/* spngsave.c
@@ -2138,7 +2144,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
   */
  
  /*
-@@ -43,824 +46,237 @@
+@@ -43,824 +46,243 @@
  
   */
  
@@ -2155,19 +2161,18 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -#include <stdio.h>
 -#include <stdlib.h>
 -#include <string.h>
--
--#include <vips/vips.h>
+ 
+ #include <vips/vips.h>
 -#include <vips/internal.h>
 -
 -#include "pforeign.h"
 -#include "quantise.h"
++#include <vips/foreign.h>
  
  #ifdef HAVE_SPNG
  
-+/* spngsave.c */
  #include <spng.h>
-+#include <vips/vips.h>
-+#include <vips/foreign.h>
++#include "spngsave.h"
  
  typedef struct _VipsForeignSaveSpng {
 -	VipsForeignSave parent_object;
@@ -2201,7 +2206,6 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 +    int compression;
 +    VipsTarget *target;
 +    char *filename;
-+    VipsRegion *region;
  } VipsForeignSaveSpng;
  
  typedef VipsForeignSaveClass VipsForeignSaveSpngClass;
@@ -2277,17 +2281,20 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -
 -	return NULL;
 -}
--
--static int
--vips_foreign_save_spng_profile(VipsForeignSaveSpng *spng, VipsImage *in)
--{
--	VipsForeignSave *save = (VipsForeignSave *) spng;
 +typedef struct _VipsForeignSaveSpngFile {
 +    VipsForeignSaveSpng parent_object;
 +} VipsForeignSaveSpngFile;
  
--	struct spng_iccp iccp;
+-static int
+-vips_foreign_save_spng_profile(VipsForeignSaveSpng *spng, VipsImage *in)
+-{
+-	VipsForeignSave *save = (VipsForeignSave *) spng;
 +typedef VipsForeignSaveSpngClass VipsForeignSaveSpngFileClass;
+ 
+-	struct spng_iccp iccp;
++typedef struct _VipsForeignSaveSpngBuffer {
++    VipsForeignSaveSpng parent_object;
++} VipsForeignSaveSpngBuffer;
  
 -	/* A profile supplied as an argument overrides an embedded
 -	 * profile.
@@ -2332,19 +2339,17 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		g_strlcpy(iccp.profile_name, "icc", sizeof(iccp.profile_name));
 -		iccp.profile_len = length;
 -		iccp.profile = (void *) data;
-+typedef struct _VipsForeignSaveSpngBuffer {
-+    VipsForeignSaveSpng parent_object;
-+} VipsForeignSaveSpngBuffer;
++typedef VipsForeignSaveSpngClass VipsForeignSaveSpngBufferClass;
  
 -		spng_set_iccp(spng->ctx, &iccp);
 -	}
-+typedef VipsForeignSaveSpngClass VipsForeignSaveSpngBufferClass;
- 
--	return 0;
--}
 +typedef struct _VipsForeignSaveSpngTarget {
 +    VipsForeignSaveSpng parent_object;
 +} VipsForeignSaveSpngTarget;
+ 
+-	return 0;
+-}
++typedef VipsForeignSaveSpngClass VipsForeignSaveSpngTargetClass;
  
 -static int
 -vips_foreign_save_spng_metadata(VipsForeignSaveSpng *spng, VipsImage *in)
@@ -2403,14 +2408,15 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -#endif /*DEBUG*/
 -	spng_set_text(spng->ctx, text_chunk_array, n_text);
 -	VIPS_FREE(text_chunk_array);
-+typedef VipsForeignSaveSpngClass VipsForeignSaveSpngTargetClass;
++/* Define base class first to ensure VIPS_TYPE_FOREIGN_SAVE_SPNG is available */
++G_DEFINE_TYPE(VipsForeignSaveSpng, vips_foreign_save_spng, VIPS_TYPE_FOREIGN_SAVE);
  
 -	return 0;
 -}
++/* Define subclasses after base class */
 +G_DEFINE_TYPE(VipsForeignSaveSpngFile, vips_foreign_save_spng_file, VIPS_TYPE_FOREIGN_SAVE_SPNG);
 +G_DEFINE_TYPE(VipsForeignSaveSpngBuffer, vips_foreign_save_spng_buffer, VIPS_TYPE_FOREIGN_SAVE_SPNG);
 +G_DEFINE_TYPE(VipsForeignSaveSpngTarget, vips_foreign_save_spng_target, VIPS_TYPE_FOREIGN_SAVE_SPNG);
-+G_DEFINE_TYPE(VipsForeignSaveSpng, vips_foreign_save_spng, VIPS_TYPE_FOREIGN_SAVE);
  
 -/* Pack a line of 1/2/4 bit index values.
 - */
@@ -2712,7 +2718,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	if (vips_target_end(spng->target))
 -		return -1;
 +    VIPS_UNREF(spng->target);
-+    VIPS_UNREF(spng->region);
++    VIPS_FREE(spng->filename);
  
 -	return 0;
 +    G_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->dispose(gobject);
@@ -2846,32 +2852,35 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 +    }
 +
 +    /* Handle different output types */
-+    if (VIPS_IS_FOREIGN_SAVE_SPNG_FILE(object)) {
-+        VipsForeignSaveSpngFile *file = (VipsForeignSaveSpngFile *) object;
-+        FILE *fp = fopen(file->parent_object.filename, "wb");
++    if (G_TYPE_CHECK_INSTANCE_TYPE(object, VIPS_TYPE_FOREIGN_SAVE_SPNG_FILE)) {
++        if (!spng->filename) {
++            free(png_buf);
++            spng_ctx_free(ctx);
++            vips_error("spngsave", "filename not set");
++            return -1;
++        }
++        FILE *fp = fopen(spng->filename, "wb");
 +        if (!fp) {
 +            free(png_buf);
 +            spng_ctx_free(ctx);
-+            vips_error("spngsave", "failed to open file %s", file->parent_object.filename);
++            vips_error("spngsave", "failed to open file %s", spng->filename);
 +            return -1;
 +        }
 +        if (fwrite(png_buf, 1, png_size, fp) != png_size) {
 +            fclose(fp);
 +            free(png_buf);
 +            spng_ctx_free(ctx);
-+            vips_error("spngsave", "failed to write to file %s", file->parent_object.filename);
++            vips_error("spngsave", "failed to write to file %s", spng->filename);
 +            return -1;
 +        }
 +        fclose(fp);
 +    }
-+    else if (VIPS_IS_FOREIGN_SAVE_SPNG_BUFFER(object)) {
-+        VipsForeignSaveSpngBuffer *buffer = (VipsForeignSaveSpngBuffer *) object;
++    else if (G_TYPE_CHECK_INSTANCE_TYPE(object, VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER)) {
 +        VipsBlob *blob = vips_blob_new(NULL, png_buf, png_size);
 +        g_object_set(object, "buffer", blob, NULL);
 +        vips_area_unref(VIPS_AREA(blob));
 +    }
-+    else if (VIPS_IS_FOREIGN_SAVE_SPNG_TARGET(object)) {
-+        VipsForeignSaveSpngTarget *target = (VipsForeignSaveSpngTarget *) object;
++    else if (G_TYPE_CHECK_INSTANCE_TYPE(object, VIPS_TYPE_FOREIGN_SAVE_SPNG_TARGET)) {
 +        if (!spng->target)
 +            spng->target = vips_target_new_to_memory();
 +        if (vips_target_write(spng->target, png_buf, png_size)) {
@@ -2983,7 +2992,9 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		G_STRUCT_OFFSET(VipsForeignSaveSpng, colours),
 -		2, 256, 256);
 -}
--
++    GObjectClass *gobject_class = G_OBJECT_CLASS(class);
++    VipsObjectClass *object_class = VIPS_OBJECT_CLASS(class);
+ 
 -static void
 -vips_foreign_save_spng_init(VipsForeignSaveSpng *spng)
 -{
@@ -3018,9 +3029,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_target_parent_class)
 -			->build(object))
 -		return -1;
-+    GObjectClass *gobject_class = G_OBJECT_CLASS(class);
-+    VipsObjectClass *object_class = VIPS_OBJECT_CLASS(class);
- 
+-
 -	return 0;
 +    gobject_class->dispose = vips_foreign_save_spng_dispose;
 +    object_class->nickname = "spngsave";
@@ -3144,7 +3153,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
  }
  
  static void
-@@ -868,63 +284,13 @@ vips_foreign_save_spng_file_init(VipsFor
+@@ -868,63 +290,13 @@ vips_foreign_save_spng_file_init(VipsFor
  {
  }
  
@@ -3210,3 +3219,25 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
  {
  }
  
+diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.h vips-8.16.1/libvips/foreign/spngsave.h
+--- vips-8.16.1.orig/libvips/foreign/spngsave.h	1969-12-31 16:00:00.000000000 -0800
++++ vips-8.16.1/libvips/foreign/spngsave.h	2025-07-12 08:18:52.334723912 -0700
+@@ -0,0 +1,18 @@
++/* spngsave.h */
++#ifndef VIPS_SPNGSAVE_H
++#define VIPS_SPNGSAVE_H
++
++#include <vips/vips.h>
++#include <vips/foreign.h>
++
++#define VIPS_TYPE_FOREIGN_SAVE_SPNG (vips_foreign_save_spng_get_type())
++#define VIPS_TYPE_FOREIGN_SAVE_SPNG_FILE (vips_foreign_save_spng_file_get_type())
++#define VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER (vips_foreign_save_spng_buffer_get_type())
++#define VIPS_TYPE_FOREIGN_SAVE_SPNG_TARGET (vips_foreign_save_spng_target_get_type())
++
++VIPS_API GType vips_foreign_save_spng_get_type(void);
++VIPS_API GType vips_foreign_save_spng_file_get_type(void);
++VIPS_API GType vips_foreign_save_spng_buffer_get_type(void);
++VIPS_API GType vips_foreign_save_spng_target_get_type(void);
++
++#endif /* VIPS_SPNGSAVE_H */
