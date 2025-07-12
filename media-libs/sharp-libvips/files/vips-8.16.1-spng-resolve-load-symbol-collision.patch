@@ -1,6 +1,6 @@
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1/libvips/foreign/foreign.c
---- vips-8.16.1.orig/libvips/foreign/foreign.c	2025-07-12 08:18:32.091286250 -0700
-+++ vips-8.16.1/libvips/foreign/foreign.c	2025-07-12 08:20:59.190679231 -0700
+--- vips-8.16.1.orig/libvips/foreign/foreign.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/foreign.c	2025-07-12 08:50:27.480540313 -0700
 @@ -2960,6 +2960,9 @@ vips_foreign_operation_init(void)
  	extern GType vips_foreign_save_png_buffer_get_type(void);
  	extern GType vips_foreign_save_png_target_get_type(void);
@@ -31,8 +31,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
  
  #ifdef HAVE_MATIO
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.1/libvips/foreign/spngload.c
---- vips-8.16.1.orig/libvips/foreign/spngload.c	2025-07-12 08:18:32.153441238 -0700
-+++ vips-8.16.1/libvips/foreign/spngload.c	2025-07-12 08:18:52.332870544 -0700
+--- vips-8.16.1.orig/libvips/foreign/spngload.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/spngload.c	2025-07-12 08:52:19.226173651 -0700
 @@ -1,4 +1,5 @@
 -/* load PNG with libspng
 +/* spngload.c
@@ -49,7 +49,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
   */
  
  /*
-@@ -37,886 +40,395 @@
+@@ -37,886 +40,397 @@
  
   */
  
@@ -852,6 +852,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
 +    foreign_class->get_flags = vips_foreign_load_spng_get_flags;
 +    foreign_class->header = vips_foreign_load_spng_header;
 +    foreign_class->load = vips_foreign_load_spng_load;
++    foreign_class->is_a_source = vips_foreign_load_spng_get_flags_source; // Add this line
  }
  
  static void
@@ -964,6 +965,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
 +    object_class->build = vips_foreign_load_spng_file_build;
 +
 +    foreign_class->is_a = vips_foreign_load_spng_file_is_a;
++    foreign_class->suffs = vips__png_suffs; // Add suffix list
 +
 +    VIPS_ARG_STRING(class, "filename", 1,
 +        "Filename", "Filename to load from",
@@ -1200,7 +1202,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
  
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c.bak vips-8.16.1/libvips/foreign/spngload.c.bak
 --- vips-8.16.1.orig/libvips/foreign/spngload.c.bak	1969-12-31 16:00:00.000000000 -0800
-+++ vips-8.16.1/libvips/foreign/spngload.c.bak	2025-07-12 08:18:52.333601812 -0700
++++ vips-8.16.1/libvips/foreign/spngload.c.bak	2025-07-12 08:50:27.522334646 -0700
 @@ -0,0 +1,923 @@
 +/* load PNG with libspng
 + *
@@ -2126,8 +2128,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c.bak vips-8
 +
 +#endif /*HAVE_SPNG*/
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.1/libvips/foreign/spngsave.c
---- vips-8.16.1.orig/libvips/foreign/spngsave.c	2025-07-12 08:18:32.188615298 -0700
-+++ vips-8.16.1/libvips/foreign/spngsave.c	2025-07-12 08:18:52.334278507 -0700
+--- vips-8.16.1.orig/libvips/foreign/spngsave.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/spngsave.c	2025-07-12 08:50:27.564539040 -0700
 @@ -1,4 +1,5 @@
 -/* save to spng
 +/* spngsave.c
@@ -3221,7 +3223,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
  
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.h vips-8.16.1/libvips/foreign/spngsave.h
 --- vips-8.16.1.orig/libvips/foreign/spngsave.h	1969-12-31 16:00:00.000000000 -0800
-+++ vips-8.16.1/libvips/foreign/spngsave.h	2025-07-12 08:18:52.334723912 -0700
++++ vips-8.16.1/libvips/foreign/spngsave.h	2025-07-12 08:50:27.567087283 -0700
 @@ -0,0 +1,18 @@
 +/* spngsave.h */
 +#ifndef VIPS_SPNGSAVE_H
