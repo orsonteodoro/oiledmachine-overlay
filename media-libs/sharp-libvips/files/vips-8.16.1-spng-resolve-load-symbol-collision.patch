@@ -49,7 +49,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
   */
  
  /*
-@@ -37,886 +40,424 @@
+@@ -37,886 +40,420 @@
  
   */
  
@@ -100,10 +100,6 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
 -} VipsForeignLoadPng;
 -
 -typedef VipsForeignLoadClass VipsForeignLoadPngClass;
-+// Define vips__png_suffs locally if not available in pforeign.h
-+#ifndef vips__png_suffs
-+static const char *vips__png_suffs[] = { ".png", NULL };
-+#endif
  
 -G_DEFINE_ABSTRACT_TYPE(VipsForeignLoadPng, vips_foreign_load_png,
 -	VIPS_TYPE_FOREIGN_LOAD);
