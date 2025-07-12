@@ -696,7 +696,7 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 		eapply "${FILESDIR}/librsvg-2.60.0-offline.patch"
 	popd 2>&1 >/dev/null || die
 	pushd "${WORKDIR}/vips-${VERSION_VIPS}" 2>&1 >/dev/null || die
-		eapply "A${FILESDIR}/vips-8.16.1-spng-resolve-load-symbol-collision.patch"
+		eapply "${FILESDIR}/vips-8.16.1-spng-resolve-load-symbol-collision.patch"
 		eapply "${FILESDIR}/vips-8.16.1-quantise-c-cast-pointers.patch"
 	popd 2>&1 >/dev/null || die
 }
