@@ -502,7 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
-ebuild_revision_10
+ebuild_revision_11
 "
 LICENSE="
 	Apache-2.0
