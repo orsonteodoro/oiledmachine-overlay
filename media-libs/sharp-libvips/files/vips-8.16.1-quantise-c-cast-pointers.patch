@@ -1,0 +1,11 @@
+--- a/libvips/foreign/quantise.c.orig	2025-03-09 04:13:50.000000000 -0700
++++ b/libvips/foreign/quantise.c	2025-07-11 22:45:43.713442425 -0700
+@@ -77,7 +77,7 @@ VipsQuantiseImage *
+ vips__quantise_image_create_rgba(const VipsQuantiseAttr *attr,
+ 	const void *bitmap, int width, int height, double gamma)
+ {
+-	return liq_image_create_rgba(attr, bitmap, width, height, gamma);
++	return liq_image_create_rgba((liq_attr *)attr, (void *)bitmap, width, height, gamma);
+ }
+ 
+ VipsQuantiseError

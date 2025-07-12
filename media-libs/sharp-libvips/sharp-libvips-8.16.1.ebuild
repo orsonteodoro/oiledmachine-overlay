@@ -502,7 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
-ebuild_revision_8
+ebuild_revision_9
 "
 LICENSE="
 	Apache-2.0
@@ -695,6 +695,10 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 	pushd "${WORKDIR}/librsvg-${VERSION_RSVG}" 2>&1 >/dev/null || die
 		eapply "${FILESDIR}/librsvg-2.60.0-offline.patch"
 	popd 2>&1 >/dev/null || die
+	pushd "${WORKDIR}/vips-${VERSION_VIPS}" 2>&1 >/dev/null || die
+		eapply "${FILESDIR}/vips-8.16.1-spng-resolve-load-symbol-collision.patch"
+		eapply "${FILESDIR}/vips-8.16.1-quantise-c-cast-pointers.patch"
+	popd 2>&1 >/dev/null || die
 }
 
 get_platform() {
@@ -861,6 +865,7 @@ setup_arch() {
 }
 
 src_configure() {
+	filter-flags -Wl,--as-needed
 	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
 	if [[ -n "${ERUST_SLOT_OVERRIDE}" ]] ; then
 		RUST_SLOT="${ERUST_SLOT_OVERRIDE}"
@@ -917,8 +922,8 @@ einfo "PATH:  ${PATH}"
 		strip-flags
 	else
 		export VANILLA=0
-		cflags-hardened_append
-		rustflags-hardened_append
+#		cflags-hardened_append
+#		rustflags-hardened_append
 	fi
 	if check-compiler-switch_is_flavor_slot_changed ; then
 ewarn "Detected compiler switch.  Disabling LTO."
@@ -962,7 +967,7 @@ src_install() {
 		die "No libraries found in ${WORKDIR}/build/deps/${libdir} or ${libdir}-original"
 	fi
 
-	# Install binaries
+	# Install binaries for debugging
 	insinto "/usr/lib/sharp-vips/bin"
 	if [[ -d "${WORKDIR}/build/deps/bin" ]] ; then
 		doins -r "${WORKDIR}/build/deps/bin/"*
@@ -982,10 +987,35 @@ src_install() {
 	if [[ -d "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private" ]] ; then
 		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
 	fi
+
+	# Manually generate to dedupe and to control linking order
 	if [[ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]] ; then
-		sed -i "s|${WORKDIR}/build/deps|/usr/lib/sharp-vips|" "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
-		#sed -i '/Libs:/ s|$| -laom -lheif -lvips -lglib-2.0 -lgobject-2.0 -lgio-2.0 -lz -ljpeg -lpng -ltiff -lwebp -larchive -llcms2 -lfontconfig -lpangocairo-1.0 -lpangoft2-1.0 -lrsvg-2 -lxml2|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips.pc" || die "Failed to add static libs to vips.pc"
-		#sed -i '/Libs:/ s|$| -laom -lsharpyuv|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/libheif.pc" || die "Failed to add static libs to libheif.pc"
+cat <<EOF > "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips.pc" || die
+prefix=/usr/lib/sharp-vips
+exec_prefix=\${prefix}
+libdir=\${prefix}/${libdir}
+includedir=\${prefix}/include
+
+Name: vips
+Description: VIPS image processing library
+Version: 8.15.3
+Libs: -L\${libdir} -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+Cflags: -I\${includedir} -I\${includedir}/glib-2.0 -I\${libdir}/glib-2.0/include -DSPNG_STATIC -DPNG16_STATIC
+EOF
+
+cat <<EOF > "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips-cpp.pc" || die
+prefix=/usr/lib/sharp-vips
+exec_prefix=\${prefix}
+libdir=\${prefix}/${libdir}
+includedir=\${prefix}/include
+
+Name: vips-cpp
+Description: VIPS C++ binding
+Version: 8.15.3
+Requires: vips
+Libs: -L\${libdir} -lvips-cpp
+Cflags: -I\${includedir}
+EOF
 	fi
 
 	# Install include
@@ -1013,4 +1043,29 @@ src_install() {
 	# Install tarball for debugging
 	insinto "/usr/lib/sharp-vips"
 	doins "${WORKDIR}/packaging/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz"
+
+	local L=(
+		"cjpeg"
+		"djpeg"
+		"gdbus-codegen"
+		"glib-compile-resources"
+		"glib-genmarshal"
+		"glib-gettextize"
+		"glib-mkenums"
+		"gobject-query"
+		"gtester"
+		"gtester-report"
+		"jpegtran"
+		"rdjpgcom"
+		"vips"
+		"vipsedit"
+		"vipsheader"
+		"vipsprofile"
+		"vipsthumbnail"
+		"wrjpgcom"
+	)
+	local x
+	for x in ${L[@]} ; do
+		fperms 0755 "/usr/lib/sharp-vips/bin/${x}"
+	done
 }

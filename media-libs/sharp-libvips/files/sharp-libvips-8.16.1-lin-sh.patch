@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-09 14:06:33.049390678 -0700
-+++ b/build/lin.sh	2025-07-09 14:51:32.038378734 -0700
+--- a/build/lin.sh.orig	2025-07-11 19:51:47.834973480 -0700
++++ b/build/lin.sh	2025-07-11 20:00:04.034760339 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -577,7 +577,7 @@
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -422,28 +548,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -422,28 +548,42 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -607,6 +607,16 @@
 -$CURL https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz | tar xJC ${DEPS}/vips --strip-components=1
 -cd ${DEPS}/vips
 +echo "DEBUG:  Building vips ${VERSION_VIPS}"
++echo "DEBUG:  Checking pkg-config for libpng and spng"
++if ! pkg-config --exists libpng ; then
++    echo "WARNING: libpng not found, pngload will be unavailable"
++fi
++if ! pkg-config --exists spng ; then
++    echo "ERROR: libspng not found, spngload and spngsave will be unavailable"
++    exit 1
++fi
++pkg-config --modversion libpng spng
++echo "DEBUG:  libspng pkg-config libs: $(pkg-config --libs spng)"
 +#mkdir ${DEPS}/vips
 +#$CURL https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz | tar xJC ${DEPS}/vips --strip-components=1
 +cd "${WORKDIR}/vips-${VERSION_VIPS}"
@@ -621,31 +631,42 @@
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -451,7 +581,7 @@ if [ "$LINUX" = true ]; then
+@@ -451,72 +591,100 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
 -  EXCLUDE_LIBS=$(find ${TARGET}/lib -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
-+  EXCLUDE_LIBS=$(find "${TARGET}/${LIBDIR}" -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
++  EXCLUDE_LIBS=$(find "${TARGET}/${LIBDIR}" -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' ! -name 'libspng.a' -printf "-Wl,--exclude-libs=%f ")
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +589,77 @@ if [ "$LINUX" = true ]; then
+   printf "{local:g_param_spec_types;};" > vips.map
  fi
++
++echo "DEBUG: Checking libspng library"
++ls -l "${TARGET}/${LIBDIR}/libspng.a" || { echo "libspng.a not found"; exit 1; }
++
++echo "DEBUG: Checking spng symbols in libspng.a"
++nm -g "${TARGET}/${LIBDIR}/libspng.a" | grep spng_encoded_image_size || echo "WARNING: spng_encoded_image_size not found in libspng.a"
++
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
- sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
+-sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 -CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" meson setup _build --default-library=shared --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++# oteodoro:  enable building tools
++#sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 +export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
 +# oteodoro:  change to static
-+CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC" \
++CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC" \
++LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR} -lspng" \
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
    ${WITHOUT_HIGHWAY:+-Dhighway=disabled} -Dorc=disabled -Dmagick=disabled -Dmatio=disabled -Dnifti=disabled -Dopenexr=disabled \
    -Dopenjpeg=disabled -Dopenslide=disabled -Dpdfium=disabled -Dpoppler=disabled -Dquantizr=disabled \
    -Dppm=false -Danalyze=false -Dradiance=false \
 -  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script=$DEPS/vips/vips.map $EXCLUDE_LIBS"}
-+  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' $EXCLUDE_LIBS"}
- meson install -C _build --tag runtime,devel
- 
+-meson install -C _build --tag runtime,devel
+-
 -# Cleanup
 -rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
 -
@@ -661,6 +682,13 @@
 -
 -  cp -L $base $dest_dir/$base
 -  chmod 644 $dest_dir/$base
++  -Dpng=enabled -Dspng=enabled -Dzlib=enabled \
++  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' -L${TARGET}/${LIBDIR} -lspng $EXCLUDE_LIBS"}
++meson compile -C _build || die "Meson compile failed"
++meson install -C _build --tag runtime,devel || die "Meson install failed"
++ls -l "${TARGET}/bin/vips" || die "vips binary not installed"
++${TARGET}/bin/vips -l | grep spng || echo "No spng loaders/savers found"
++
 +die() {
 +  local message="${1}"
 +  echo "DEBUG:  ${message}"
@@ -746,7 +774,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +694,25 @@ printf "{\n\
+@@ -551,17 +719,25 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
