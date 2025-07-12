@@ -38,7 +38,7 @@
 -  spawnSync(`node-gyp rebuild --directory=src ${isEmscripten() ? '--nodedir=emscripten' : ''}`, {
 +const spawnRebuild = (options = {}) => {
 +  const debugFlag = options.debug ? '--debug' : '';
-+  spawnSync(`node-gyp rebuild --directory=src ${isEmscripten() ? '--nodedir=emscripten' : ''} ${debugFlag}`, {
++  spawnSync(`node-gyp rebuild --verbose --directory=src ${isEmscripten() ? '--nodedir=emscripten' : ''} ${debugFlag}`, {
      ...spawnSyncOptions,
      stdio: 'inherit'
    }).status;

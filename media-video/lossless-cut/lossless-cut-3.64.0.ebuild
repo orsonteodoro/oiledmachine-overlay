@@ -22,6 +22,11 @@ fi
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
 YARN_AUDIT_FIX=0
+NODE_SHARP_PATCHES=(
+	"${FILESDIR}/sharp-0.34.2-debug.patch"
+	"${FILESDIR}/sharp-0.34.2-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.2-static-libs.patch"
+)
 NODE_SHARP_USE="png svg"
 NODE_GYP_PV="9.3.0"
 NODE_VERSION="20"
@@ -117,7 +122,6 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=media-libs/vips-${VIPS_PV}[cxx,png,svg]
 	sys-apps/yarn:${YARN_SLOT}
 	virtual/pkgconfig
 "
@@ -236,8 +240,6 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
 		fi
 		eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
-		export SHARP_NODE_DEBUG_PATCH_PATH="${FILESDIR}/sharp-0.34.2-debug.patch"
-		export SHARP_NODE_PATCH_FIX_PATH="${FILESDIR}/sharp-0.34.2-format-fixes.patch"
 
 		SHARP_INSTALL_ARGS=( "-D" )
 		node-sharp_yarn_rebuild_sharp
@@ -252,6 +254,48 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
+
+
+cat <<EOF > "${S}/script/icon-gen.mjs" || die
+// script/icon-gen.mjs
+import sharp from 'sharp';
+
+console.log('Entering sharp.init()');
+if (sharp.init('sharp')) {
+  console.error('vips_init failed');
+  process.exit(1);
+}
+console.log('vips_init succeeded');
+
+console.log('Entering sharp.format()');
+const formats = ['jpeg', 'png', 'webp', 'tiff', 'jp2k', 'magick', 'openslide', 'dz', 'ppm', 'fits', 'gif', 'svg', 'heif', 'pdf', 'vips', 'rad'];
+for (const format of formats) {
+  console.log(`Processing format: ${format}`);
+  try {
+    const oc = sharp.vips_foreign_find_load(format);
+    console.log(`  oc for ${format}load=${oc}`);
+    if (!oc) {
+      console.log(`  Invalid or null oc for format: ${format}`);
+      continue;
+    }
+    const fc = sharp.vips_object_new_from_name(oc);
+    console.log(`  fc for ${format}load=${fc}`);
+    if (!fc) {
+      console.log(`  Invalid or null fc for format: ${format}`);
+      continue;
+    }
+    const suffs = fc.suffs;
+    console.log(`  fc->suffs=${suffs ? suffs.join(',') : 'NULL'}`);
+    if (!suffs || suffs.length === 0) {
+      console.log(`  No valid fc->suffs for format: ${format}, vips_error: ${sharp.vips_error_buffer()}`);
+    }
+  } catch (e) {
+    console.error(`  Error processing format ${format}: ${e.message}`);
+  }
+}
+console.log('Exiting sharp.format()');
+EOF
+
 }
 
 src_compile() {
