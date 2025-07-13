@@ -1,4 +1,4 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,7 +17,7 @@ inherit cflags-hardened gnome.org meson-multilib vala xdg
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 
 DESCRIPTION="HTTP client/server library for GNOME"
-HOMEPAGE="https://wiki.gnome.org/Projects/libsoup"
+HOMEPAGE="https://libsoup.gnome.org"
 LICENSE="LGPL-2.1+"
 SLOT="2.4"
 IUSE="
