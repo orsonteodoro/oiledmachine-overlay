@@ -74,6 +74,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	local args=(
 		$(use_enable cpu_flags_arm_neon neon)
 		$(use_enable cpu_flags_x86_sse2 sse2)
