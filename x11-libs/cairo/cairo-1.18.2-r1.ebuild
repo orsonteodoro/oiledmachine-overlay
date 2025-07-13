@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# F40
+# F40 - Python 3.12
 
 #
 # Re-emerge twice for pgo/testing
@@ -20,6 +20,7 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD OOBR OOBW UAF"
+PYTHON_COMPAT=( "python3_"{11..12} )
 TRAIN_NO_X_DEPENDS=1
 TRAIN_USE_X=0
 UOPTS_SUPPORT_EBOLT=0
@@ -28,7 +29,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
 inherit meson
-inherit check-compiler-switch cflags-hardened flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
+inherit check-compiler-switch cflags-hardened flag-o-matic multilib-minimal python-any-r1 toolchain-funcs uopts virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
@@ -56,7 +57,7 @@ LICENSE="
 #"
 SLOT="0"
 IUSE="
-X aqua debug gles2-only gles3 +glib gtk-doc opengl spectre test
+X aqua debug gles2-only gles3 +glib gtk-doc lzo opengl spectre test
 ebuild_revision_11
 "
 REQUIRED_USE="
@@ -79,6 +80,9 @@ RDEPEND="
 	)
 	glib? (
 		>=dev-libs/glib-2.80.3:2[${MULTILIB_USEDEP}]
+	)
+	lzo? (
+		>=dev-libs/lzo-2.06-r1:2[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.8.10[${MULTILIB_USEDEP}]
@@ -110,6 +114,7 @@ PDEPEND="
 	)
 "
 BDEPEND="
+	${PYTHON_DEPS}
 	>=dev-build/meson-1.4.1
 	virtual/pkgconfig
 "
@@ -195,6 +200,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature aqua quartz)
 		$(meson_feature debug symbol-lookup)
 		$(meson_feature glib)
+		$(meson_feature lzo)
 		$(meson_feature test tests)
 		$(meson_feature X tee)
 		$(meson_feature X xcb)
