@@ -1,0 +1,50 @@
+--- node-v22.17.0.orig/common.gypi	2025-07-13 14:39:25.633480365 -0700
++++ node-v22.17.0/common.gypi	2025-07-13 14:41:10.473605840 -0700
+@@ -180,8 +180,12 @@
+       'Release': {
+         'variables': {
+           'v8_enable_handle_zapping': 0,
+-          'pgo_generate': ' -fprofile-generate ',
+-          'pgo_use': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_gcc': ' -fprofile-generate ',
++          'pgo_use_gcc': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_clang': ' -fprofile-generate=<(pgo_profile_dir) -mllvm -vp-counters-per-site=3 ',
++          'pgo_generate_clang_ldflags': ' -fprofile-generate=<(pgo_profile_dir) ',
++          'pgo_use_clang': ' -fprofile-use=<(pgo_profile_profdata) -mllvm -vp-counters-per-site=3 ',
++          'pgo_use_clang_ldflags': ' -fprofile-use=<(pgo_profile_profdata) ',
+           'conditions': [
+             ['node_shared != "true"', {
+               'MSVC_runtimeType': 0    # MultiThreaded (/MT)
+@@ -256,7 +260,31 @@
+             # frames otherwise, even with --call-graph dwarf.
+             'cflags': [ '-fno-omit-frame-pointer' ],
+           }],
+-          ['OS=="linux" or OS=="openharmony"', {
++          ['OS=="linux" and llvm_version=="0.0"', {
++            'conditions': [
++              ['enable_pgo_generate=="true"', {
++                'cflags': ['<(pgo_generate_gcc)'],
++               'ldflags': ['<(pgo_generate_gcc)'],
++              },],
++              ['enable_pgo_use=="true"', {
++                'cflags': ['<(pgo_use_gcc)'],
++                'ldflags': ['<(pgo_use_gcc)'],
++              },],
++            ],
++          },],
++          ['OS=="linux" and llvm_version!="0.0"', {
++             'conditions': [
++               ['enable_pgo_generate=="true"', {
++                'cflags': ['<(pgo_generate_clang)'],
++                'ldflags': ['<(pgo_generate_clang_ldflags)'],
++               },],
++               ['enable_pgo_use=="true"', {
++                'cflags': ['<(pgo_use_clang)'],
++                'ldflags': ['<(pgo_use_clang_ldflags)'],
++               },],
++             ],
++          },],
++          [OS=="openharmony"', {
+             'conditions': [
+               ['enable_pgo_generate=="true"', {
+                 'cflags': ['<(pgo_generate)'],

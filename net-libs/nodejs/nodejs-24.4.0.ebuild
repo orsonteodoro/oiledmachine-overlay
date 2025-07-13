@@ -13,9 +13,9 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Jun 7, 2025
+# Last deps commit date:  Jul 8, 2025
 
-ACORN_PV="8.14.1"
+ACORN_PV="8.15.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
@@ -74,9 +74,9 @@ TRAINER_TYPES=(
 COREPACK_PV="0.33.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.65.0"
+NGHTTP2_PV="1.66.0"
 NGHTTP3_PV="1.6.0"
-NPM_PV="11.3.0" # See https://github.com/nodejs/node/blob/v24.2.0/deps/npm/package.json
+NPM_PV="11.4.2" # See https://github.com/nodejs/node/blob/v24.4.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -168,7 +168,7 @@ RDEPEND+="
 	>=dev-libs/libuv-1.51.0:=
 	>=net-dns/c-ares-1.34.5
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.3
+	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
 		>=dev-libs/icu-77.1:=

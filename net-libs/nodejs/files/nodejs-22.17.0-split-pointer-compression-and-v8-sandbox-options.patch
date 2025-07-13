@@ -1,0 +1,34 @@
+--- node-v22.17.0.orig/configure.py	2025-06-24 13:18:20.000000000 -0700
++++ node-v22.17.0/configure.py	2025-07-13 14:44:47.062488099 -0700
+@@ -640,6 +640,12 @@ parser.add_argument('--experimental-enab
+     default=None,
+     help='[Experimental] Enable V8 pointer compression (limits max heap to 4GB and breaks ABI compatibility)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--disable-shared-readonly-heap',
+     action='store_true',
+     dest='disable_shared_ro_heap',
+@@ -1716,13 +1722,17 @@ def configure_v8(o, configs):
+   o['variables']['v8_use_siphash'] = 0 if options.without_siphash else 1
+   o['variables']['v8_enable_maglev'] = 1 if options.v8_enable_maglev else 0
+   o['variables']['v8_enable_pointer_compression'] = 1 if options.enable_pointer_compression else 0
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   # Using the sandbox requires always allocating array buffer backing stores in the sandbox.
+   # We currently have many backing stores tied to pointers from C++ land that are not
+   # even necessarily dynamic (e.g. in static storage) for fast communication between JS and C++.
+   # Until we manage to get rid of all those, v8_enable_sandbox cannot be used.
+   # Note that enabling pointer compression without enabling sandbox is unsupported by V8,
+   # so this can be broken at any time.
+-  o['variables']['v8_enable_sandbox'] = 0
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   o['variables']['v8_enable_pointer_compression_shared_cage'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_external_code_space'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0

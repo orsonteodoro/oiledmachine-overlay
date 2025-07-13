@@ -1,0 +1,59 @@
+--- node-v22.17.0.orig/common.gypi	2025-06-24 13:18:20.000000000 -0700
++++ node-v22.17.0/common.gypi	2025-07-13 14:37:07.341031883 -0700
+@@ -188,11 +188,21 @@
+             }, {
+               'MSVC_runtimeType': 2   # MultiThreadedDLL (/MD)
+             }],
+-            ['clang==1', {
+-              'lto': ' -flto ', # Clang
+-            }, {
++            ['clang==0', {
+               'lto': ' -flto=4 -fuse-linker-plugin -ffat-lto-objects ', # GCC
+             }],
++            ['clang==1 and with_goldlto=="true"', {
++              'lto': ' -flto', # Clang Gold LTO
++            }],
++            ['clang==1 and with_moldlto=="true"', {
++              'lto': ' -flto', # Mold LTO
++            }],
++            ['clang==1 and with_thinlto=="true"', {
++              'lto': ' -flto=thin', # Clang ThinLTO
++            }],
++            ['clang==1 and with_goldlto=="false" and with_thinlto=="false" and with_mold=="false"', {
++              'lto': ' -flto', # Clang with system default
++            }],
+           ],
+         },
+         'cflags': [ '-O3' ],
+@@ -204,7 +214,22 @@
+               'LLVM_LTO': 'YES',
+             },
+           }],
+-          ['OS=="linux" or OS=="openharmony"', {
++          ['OS=="linux" and with_moldlto=="true"', {
++            'ldflags': [
++              '-fuse-ld=mold',
++            ],
++          }],
++          ['OS=="linux" and with_thinlto=="true"', {
++            'ldflags': [
++              '-fuse-ld=lld',
++            ],
++          }],
++          ['OS=="linux" and (with_goldlto=="true" or node_section_ordering_info!="")', {
++            'ldflags': [
++              '-fuse-ld=gold',
++            ],
++          }],
++          ['OS=="openharmony"', {
+             'conditions': [
+               ['node_section_ordering_info!=""', {
+                 'cflags': [
+@@ -212,7 +237,6 @@
+                   '-ffunction-sections',
+                 ],
+                 'ldflags': [
+-                  '-fuse-ld=gold',
+                   '-Wl,--section-ordering-file=<(node_section_ordering_info)',
+                 ],
+               }],
