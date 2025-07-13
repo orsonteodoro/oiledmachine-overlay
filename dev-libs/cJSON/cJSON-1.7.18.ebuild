@@ -1,7 +1,7 @@
 # Copyright 2021-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO UAF"
@@ -18,13 +18,18 @@ DESCRIPTION="Ultralightweight JSON parser in ANSI C"
 HOMEPAGE="https://github.com/DaveGamble/cJSON"
 LICENSE="MIT"
 RESTRICT="
-	!test? ( test )
+	!test? (
+		test
+	)
 "
 SLOT="0"
 IUSE="
 test
 ebuild_revision_14
 "
+PATCHES=(
+	"${FILESDIR}"/${PV}-cmake4.patch
+)
 
 src_prepare() {
 	cmake_src_prepare
