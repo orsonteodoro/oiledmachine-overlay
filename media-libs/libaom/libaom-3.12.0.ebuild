@@ -503,6 +503,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_NEON_DOTPROD=OFF
 	# Bug #917278 \
 		-DENABLE_NEON_I8MM=OFF
+		# ENABLE_RVV for riscv
 		-DENABLE_SSE=$(usex cpu_flags_x86_sse ON OFF)
 		-DENABLE_SSE2=$(usex cpu_flags_x86_sse2 ON OFF)
 		-DENABLE_SSE3=$(usex cpu_flags_x86_sse3 ON OFF)
