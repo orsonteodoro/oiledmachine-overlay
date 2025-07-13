@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 # To find test archive version, see
 # https://github.com/nlohmann/json/blob/develop/cmake/download_test_data.cmake
 TEST_VERSION="3.1.0"
@@ -57,7 +58,7 @@ src_configure() {
 src_compile() {
 	cmake-multilib_src_compile
 
-	if use doc; then
+	if use doc ; then
 		emake -C doc
 		HTML_DOCS=( doc/html/. )
 	fi
