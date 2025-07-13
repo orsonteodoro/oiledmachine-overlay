@@ -29,7 +29,7 @@ S_ORIG="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
-		https://deps.gentoo.zip/media-libs/${PN}-${LIBVPX_TESTDATA_VER}-testdata.tar.xz
+		https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
 	)
 "
 
@@ -38,7 +38,7 @@ SRC_URI="
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD libvpx-PATENTS"
-SLOT="0/9"
+SLOT="0/11"
 PPC_IUSE="
 	cpu_flags_ppc_vsx3
 "
