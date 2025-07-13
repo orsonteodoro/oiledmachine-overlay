@@ -11,6 +11,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS OOBA"
 
+QT6_HAS_STATIC_LIBS=1
 inherit cflags-hardened flag-o-matic qt6-build toolchain-funcs
 
 DESCRIPTION="Cross-platform application development framework"
@@ -34,10 +35,7 @@ declare -A QT6_IUSE=(
 
 	[optfeature]="nls" #810802
 )
-IUSE="
-${QT6_IUSE[*]}
-ebuild_revision_9
-"
+IUSE="${QT6_IUSE[*]}"
 REQUIRED_USE="
 	?? ( journald syslog )
 	$(
@@ -128,8 +126,40 @@ COMMON_DEPEND="
 		sqlite? ( dev-db/sqlite:3 )
 	)
 "
+# wrt blockers: users do not always depclean regularly and outdated
+# dev-qt packages sometime cause runtime issues (update this when new
+# Qt libraries/plugins are added, and keep old for 2y+ if removed)
 RDEPEND="
 	${COMMON_DEPEND}
+	!<dev-qt/qt3d-${PV}:6
+	!<dev-qt/qt5compat-${PV}:6
+	!<dev-qt/qtcharts-${PV}:6
+	!<dev-qt/qtconnectivity-${PV}:6
+	!<dev-qt/qtdeclarative-${PV}:6
+	!<dev-qt/qthttpserver-${PV}:6
+	!<dev-qt/qtimageformats-${PV}:6
+	!<dev-qt/qtlanguageserver-${PV}:6
+	!<dev-qt/qtlocation-${PV}:6
+	!<dev-qt/qtmultimedia-${PV}:6
+	!<dev-qt/qtnetworkauth-${PV}:6
+	!<dev-qt/qtpositioning-${PV}:6
+	!<dev-qt/qtquick3d-${PV}:6
+	!<dev-qt/qtquicktimeline-${PV}:6
+	!<dev-qt/qtremoteobjects-${PV}:6
+	!<dev-qt/qtscxml-${PV}:6
+	!<dev-qt/qtsensors-${PV}:6
+	!<dev-qt/qtserialbus-${PV}:6
+	!<dev-qt/qtserialport-${PV}:6
+	!<dev-qt/qtshadertools-${PV}:6
+	!<dev-qt/qtspeech-${PV}:6
+	!<dev-qt/qtsvg-${PV}:6
+	!<dev-qt/qttools-${PV}:6
+	!<dev-qt/qtvirtualkeyboard-${PV}:6
+	!<dev-qt/qtwayland-${PV}:6
+	!<dev-qt/qtwebchannel-${PV}:6
+	!<dev-qt/qtwebengine-${PV}:6
+	!<dev-qt/qtwebsockets-${PV}:6
+	!<dev-qt/qtwebview-${PV}:6
 	syslog? ( virtual/logger )
 "
 DEPEND="
@@ -156,10 +186,10 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-6.5.2-no-symlink-check.patch
 	"${FILESDIR}"/${PN}-6.6.1-forkfd-childstack-size.patch
 	"${FILESDIR}"/${PN}-6.6.3-gcc14-avx512fp16.patch
-	"${FILESDIR}"/${PN}-6.8.0-qcontiguouscache.patch
 	"${FILESDIR}"/${PN}-6.8.2-cross.patch
-	"${FILESDIR}"/${P}-QTBUG-133500.patch
-	"${FILESDIR}"/${P}-QTBUG-133808.patch
+	"${FILESDIR}"/${PN}-6.9.0-no-direct-extern-access.patch
+	"${FILESDIR}"/${PN}-6.9.1-QTBUG-137755.patch
+	"${FILESDIR}"/${PN}-6.9.1-CVE-2025-5992.patch
 )
 
 src_prepare() {
@@ -206,6 +236,7 @@ src_configure() {
 
 		-DQT_UNITY_BUILD=ON # ~30% faster build, affects other dev-qt/* too
 
+		-DQT_FEATURE_force_system_libs=ON
 		-DQT_FEATURE_relocatable=OFF #927691
 		$(qt_feature ssl openssl)
 		$(qt_feature ssl openssl_linked)
@@ -377,7 +408,7 @@ src_install() {
 
 	if use test; then
 		local delete_bins=( # need a better way to handle this
-			clientserver copier crashingServer desktopsettingsaware_helper
+			apphelper clientserver copier crashingServer desktopsettingsaware_helper
 			echo fileWriterProcess modal_helper nospace 'one space'
 			paster qcommandlineparser_test_helper qfileopeneventexternal
 			socketprocess syslocaleapp tst_qhashseed_helper 'two space s'
