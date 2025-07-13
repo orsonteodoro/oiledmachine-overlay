@@ -47,8 +47,8 @@
 +else
 +	# For security-criticial builds.
 +	# Removed -Os and -O3 for security-critical and to maintain _FORTIFY_SOURCE integrity assumptions.
-+	export FLAGS+=" -fPIC"
-+	export FLAGS_OPTIMIZED=""
++	export FLAGS+=" -O0 -fPIC"
++	export FLAGS_OPTIMIZED="-O0"
 +
 +	# Control portability
 +	if [[ "${USE_SSE4}" == "1" ]] ; then
@@ -656,8 +656,8 @@
 +#sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 +export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
 +# oteodoro:  change to static
-+CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC" \
-+CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC" \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC -ggdb3" \
++CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC -ggdb3" \
 +LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR} -lspng" \
 +meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
