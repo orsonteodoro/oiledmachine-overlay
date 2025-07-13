@@ -1,4 +1,0 @@
-AUTOBUMP=1
-CATEGORY="dev-libs"
-PN="libfmt"
-BUMP_POLICY="new-patch-versions-per-minor-major"
