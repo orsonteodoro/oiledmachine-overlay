@@ -7,15 +7,18 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO"
-LIBFLAC_SONAME="10"
-LIBFLACXX_SONAME="12"
+LIBFLAC_SONAME="11"
+LIBFLACXX_SONAME="14"
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
-SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
+SRC_URI="
+	https://github.com/xiph/flac/releases/download/${PV}/${P}.tar.xz
+	https://downloads.xiph.org/releases/${PN}/${P}.tar.xz
+"
 
 DESCRIPTION="free lossless audio encoder and decoder"
 HOMEPAGE="https://xiph.org/flac/"
@@ -50,7 +53,6 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=app-arch/xz-utils-5.2.5
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gettext-0.21
 	virtual/pkgconfig
@@ -58,6 +60,7 @@ BDEPEND+="
 		>=dev-lang/nasm-2.15.05
 	)
 "
+DOCS=( "AUTHORS" {"CHANGELOG","README"}".md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.3-fPIC.patch"
 )
@@ -147,7 +150,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
+	# bash for https://github.com/xiph/flac/pull/803
+	# should be fixed in >1.5.0
+	CONFIG_SHELL="${BROOT}/bin/bash" \
+	ECONF_SOURCE="${S}" \
+	econf "${myeconfargs[@]}"
 }
 
 src_configure() {
