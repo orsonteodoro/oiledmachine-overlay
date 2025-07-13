@@ -2,8 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# ASan does not work with f16c and introspection
+CFLAGS_HARDENED_ASSEMBLERS="inline"
+CFLAGS_HARDENED_CI_SANITIZERS="asan"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="17" # F39
+CFLAGS_HARDENED_LANGS="asm c-lang"
+CFLAGS_HARDENED_SANITIZERS_DISABLE=1 # Disabled because introspection needs review.  It will break apps with GTK Python bindings.
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
+
 PYTHON_COMPAT=( python3_{11..14} )
-inherit gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
+inherit cflags-hardened gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
 
 DESCRIPTION="GTK is a multi-platform toolkit for creating graphical user interfaces"
 HOMEPAGE="https://www.gtk.org/ https://gitlab.gnome.org/GNOME/gtk/"
@@ -147,6 +157,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		# GDK backends
 		$(meson_use X x11-backend)
