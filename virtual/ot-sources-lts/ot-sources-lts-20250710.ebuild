@@ -19,16 +19,16 @@ RDEPEND="
 		~sys-kernel/ot-sources-5.10.239
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.186
+		~sys-kernel/ot-sources-5.15.187
 	)
 	6_1? (
-		~sys-kernel/ot-sources-6.1.143
+		~sys-kernel/ot-sources-6.1.144
 	)
 	6_6? (
-		~sys-kernel/ot-sources-6.6.96
+		~sys-kernel/ot-sources-6.6.97
 	)
 	6_12? (
-		~sys-kernel/ot-sources-6.12.36
+		~sys-kernel/ot-sources-6.12.37
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
