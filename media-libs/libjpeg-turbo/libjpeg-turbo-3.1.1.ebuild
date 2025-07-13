@@ -53,7 +53,7 @@ LICENSE="
 "
 SLOT="0/0.2"
 IUSE="
-+asm cpu_flags_arm_neon java
++asm cpu_flags_arm_neon debug java
 libjpeg_turbo_trainers_70_pct_quality_baseline
 libjpeg_turbo_trainers_75_pct_quality_baseline
 libjpeg_turbo_trainers_80_pct_quality_baseline
@@ -353,7 +353,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
+	if use debug ; then
+		replace-flags '-O*' '-O0'
+	else
+		cflags-hardened_append
+	fi
 
 	if use pgo && tc-is-clang ; then
 		append-flags $(test-flags -Wno-backend-plugin)
