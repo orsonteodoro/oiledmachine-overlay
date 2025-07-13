@@ -214,7 +214,7 @@
    if [ "$VERSION_LATEST_REQUIRED" == "false" ]; then
      echo "Skipping latest version check for $1"
      return
-@@ -190,229 +283,347 @@ if [ "$DARWIN" = true ]; then
+@@ -190,229 +283,348 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -525,10 +525,11 @@
 +    -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=${CMAKE_CONFIGURATION_1} \
      -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DHWY_ENABLE_CONTRIB=0 -DHWY_ENABLE_EXAMPLES=0 -DHWY_ENABLE_TESTS=0
 -  make install/strip
-+if [[ "${DEBUG}" == "1" ]] ; then
-+  make install ${MAKE_LINK_JOBS}
-+else
-+  make install/strip ${MAKE_LINK_JOBS}
++  if [[ "${DEBUG}" == "1" ]] ; then
++    make install ${MAKE_LINK_JOBS}
++  else
++    make install/strip ${MAKE_LINK_JOBS}
++  fi
  fi
  
  build_freetype() {
