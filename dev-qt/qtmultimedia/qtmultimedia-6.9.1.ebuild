@@ -7,18 +7,18 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
+QT6_HAS_STATIC_LIBS=1
 inherit cflags-hardened flag-o-matic qt6-build
 
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="amd64 arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv x86"
+	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
 fi
 
 IUSE="
 	+X alsa +dbus eglfs +ffmpeg gstreamer opengl pipewire pulseaudio
 	qml v4l vaapi vulkan wayland
-	ebuild_revision_8
 "
 # tst_qmediaplayerbackend hard requires qml, review in case becomes optional
 REQUIRED_USE="
