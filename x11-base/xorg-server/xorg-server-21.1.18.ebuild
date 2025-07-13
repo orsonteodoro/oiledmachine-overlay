@@ -7,16 +7,15 @@ CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANG="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IU OOBA OOBR OOBW PE UAF"
-XORG_EAUTORECONF="no"
 
-inherit cflags-hardened flag-o-matic xorg-3 meson
+inherit cflags-hardened flag-o-matic xorg-meson
 
 EGIT_REPO_URI="https://gitlab.freedesktop.org/xorg/xserver.git"
 
 DESCRIPTION="X.Org X servers"
 SLOT="0/${PV}"
 if [[ ${PV} != 9999* ]]; then
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 fi
 
 IUSE_SERVERS="xephyr xnest xorg xvfb"
@@ -121,7 +120,7 @@ src_configure() {
 	# localstatedir is used for the log location; we need to override the default
 	#	from ebuild.sh
 	# sysconfdir is used for the xorg.conf location; same applies
-	local emesonargs=(
+	local XORG_CONFIGURE_OPTIONS=(
 		--localstatedir "${EPREFIX}/var"
 		--sysconfdir "${EPREFIX}/etc/X11"
 		-Dbuildtype=$(usex debug debug plain)
@@ -154,26 +153,26 @@ src_configure() {
 
 	if [[ ${PV} == 9999 ]] ; then
 		# Gone in 21.1.x, but not in master.
-		emesonargs+=( -Dxwayland=false )
+		XORG_CONFIGURE_OPTIONS+=( -Dxwayland=false )
 	fi
 
 	if use systemd || use elogind; then
-		emesonargs+=(
+		XORG_CONFIGURE_OPTIONS+=(
 			-Dsystemd_logind=true
 			$(meson_use suid suid_wrapper)
 		)
 	else
-		emesonargs+=(
+		XORG_CONFIGURE_OPTIONS+=(
 			-Dsystemd_logind=false
 			-Dsuid_wrapper=false
 		)
 	fi
 
-	meson_src_configure
+	xorg-meson_src_configure
 }
 
 src_install() {
-	meson_src_install
+	xorg-meson_src_install
 
 	# The meson build system does not support install-setuid
 	if ! use systemd && ! use elogind; then
