@@ -8,24 +8,21 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-PYTHON_COMPAT=( "python3_"{10..13} )
 
+PYTHON_COMPAT=( python3_{11..13} )
+QT6_HAS_STATIC_LIBS=1
 # behaves very badly when qtdeclarative is not already installed, also
 # other more minor issues (installs junk, sandbox/offscreen issues)
 QT6_RESTRICT_TESTS=1
-
 inherit cflags-hardened python-any-r1 qt6-build
 
 DESCRIPTION="Qt Declarative (Quick 2)"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="amd64 arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv x86"
+	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
 fi
 
-IUSE="
-accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
-ebuild_revision_10
-"
+IUSE="accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
@@ -40,6 +37,11 @@ BDEPEND="
 	${PYTHON_DEPS}
 	~dev-qt/qtshadertools-${PV}:6
 "
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-6.9.1-QTBUG-135158.patch
+	"${FILESDIR}"/${PN}-6.9.1-qmlcachegen-crash.patch
+)
 
 src_configure() {
 	cflags-hardened_append
