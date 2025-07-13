@@ -32,7 +32,7 @@ einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
 _blender_set_globals
 unset -f _blender_set_globals
 
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBA OOBR SO"
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
