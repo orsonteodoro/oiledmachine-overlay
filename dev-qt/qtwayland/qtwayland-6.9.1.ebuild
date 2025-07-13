@@ -12,24 +12,19 @@ inherit cflags-hardened qt6-build
 
 DESCRIPTION="Wayland platform plugin for Qt"
 
-if [[ "${QT6_BUILD_TYPE}" == "release" ]]; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
+if [[ ${QT6_BUILD_TYPE} == release ]]; then
+	KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
 fi
 
-IUSE="
-accessibility compositor gnome qml vulkan
-ebuild_revision_8
-"
+IUSE="accessibility compositor gnome qml vulkan"
 
 RDEPEND="
 	dev-libs/wayland
+	~dev-qt/qtbase-${PV}:6[accessibility=,gui,opengl,vulkan=,wayland]
 	media-libs/libglvnd
 	x11-libs/libxkbcommon
-	~dev-qt/qtbase-${PV}:6[accessibility=,gui,opengl,vulkan=,wayland]
 	compositor? (
-		qml? (
-			~dev-qt/qtdeclarative-${PV}:6
-		)
+		qml? ( ~dev-qt/qtdeclarative-${PV}:6 )
 	)
 	gnome? (
 		~dev-qt/qtbase-${PV}:6[dbus]
@@ -38,13 +33,9 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	vulkan? (
-		dev-util/vulkan-headers
-	)
+	vulkan? ( dev-util/vulkan-headers )
 "
-BDEPEND="
-	dev-util/wayland-scanner
-"
+BDEPEND="dev-util/wayland-scanner"
 
 CMAKE_SKIP_TESTS=(
 	# segfaults for not-looked-into reasons, but not considered
@@ -61,12 +52,8 @@ CMAKE_SKIP_TESTS=(
 	tst_scaling
 )
 
-PATCHES=(
-	"${FILESDIR}/${P}-reset-mframe.patch"
-)
-
 src_configure() {
-	cflags-hardnened_append
+	cflags-hardened_append
 	local mycmakeargs=(
 		$(cmake_use_find_package compositor Qt6Quick)
 		$(cmake_use_find_package qml Qt6Quick)
