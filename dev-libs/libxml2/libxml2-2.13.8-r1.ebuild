@@ -10,8 +10,11 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF DOS FS HO IO MC NPD OOBA OOBR OOBW SO UAF"
-PYTHON_COMPAT=( "python3_"{10..13} )
+
+PYTHON_COMPAT=( python3_{11..14} )
 PYTHON_REQ_USE="xml(+)"
+inherit autotools cflags-hardened check-compiler-switch python-r1 multilib-minimal
+
 XSTS_HOME="http://www.w3.org/XML/2004/xml-schema-test-suite"
 XSTS_NAME_1="xmlschema2002-01-16"
 XSTS_NAME_2="xmlschema2004-01-14"
@@ -19,19 +22,16 @@ XSTS_TARBALL_1="xsts-2002-01-16.tar.gz"
 XSTS_TARBALL_2="xsts-2004-01-14.tar.gz"
 XMLCONF_TARBALL="xmlts20130923.tar.gz"
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic python-r1 multilib-minimal
-
+DESCRIPTION="XML C parser and toolkit"
+HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 if [[ ${PV} == 9999 ]] ; then
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
 	inherit git-r3
 else
 	inherit gnome.org
-	KEYWORDS="
-~alpha amd64 ~arm ~arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
-x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
-	"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 fi
-S="${WORKDIR}/${PN}-${PV%_rc*}"
+
 SRC_URI+="
 	test? (
 		${XSTS_HOME}/${XSTS_NAME_1}/${XSTS_TARBALL_1}
@@ -39,59 +39,36 @@ SRC_URI+="
 		https://www.w3.org/XML/Test/${XMLCONF_TARBALL}
 	)
 "
+S="${WORKDIR}/${PN}-${PV%_rc*}"
 
-DESCRIPTION="XML C parser and toolkit"
-HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 LICENSE="MIT"
 SLOT="2"
-IUSE="
-examples icu lzma +python readline static-libs test
-ebuild_revision_17
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
-REQUIRED_USE="
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
-"
+IUSE="examples icu lzma +python readline static-libs test"
+RESTRICT="!test? ( test )"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
 	virtual/libiconv
 	>=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
-	icu? (
-		>=dev-libs/icu-51.2-r1:=[${MULTILIB_USEDEP}]
-	)
-	lzma? (
-		>=app-arch/xz-utils-5.0.5-r1:=[${MULTILIB_USEDEP}]
-	)
-	python? (
-		${PYTHON_DEPS}
-	)
-	readline? (
-		sys-libs/readline:=
-	)
+	icu? ( >=dev-libs/icu-51.2-r1:=[${MULTILIB_USEDEP}] )
+	lzma? ( >=app-arch/xz-utils-5.0.5-r1:=[${MULTILIB_USEDEP}] )
+	python? ( ${PYTHON_DEPS} )
+	readline? ( sys-libs/readline:= )
 "
-DEPEND="
-	${RDEPEND}
-"
-BDEPEND="
-	virtual/pkgconfig
-"
+DEPEND="${RDEPEND}"
+BDEPEND="virtual/pkgconfig"
 
-if [[ "${PV}" == "9999" ]] ; then
+if [[ ${PV} == 9999 ]] ; then
 	BDEPEND+=" dev-build/gtk-doc-am"
 fi
 
 MULTILIB_CHOST_TOOLS=(
-	"/usr/bin/xml2-config"
+	/usr/bin/xml2-config
 )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-2.12.9-icu-pkgconfig.patch"
+	"${FILESDIR}"/${PN}-2.12.9-icu-pkgconfig.patch
+	"${FILESDIR}"/${PN}-2.13.8-CVE-2025-6021.patch
 )
 
 pkg_setup() {
@@ -100,29 +77,28 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ "${PV}" == "9999" ]] ; then
+	if [[ ${PV} == 9999 ]] ; then
 		git-r3_src_unpack
 	else
-		local tarname="${P/_rc/-rc}.tar.xz"
+		local tarname=${P/_rc/-rc}.tar.xz
 
-	# ${A} isn't used to avoid unpacking of test tarballs into ${WORKDIR},
-	# as they are needed as tarballs in ${S}/xstc instead and not unpacked
-		unpack "${tarname}"
+		# ${A} isn't used to avoid unpacking of test tarballs into ${WORKDIR},
+		# as they are needed as tarballs in ${S}/xstc instead and not unpacked
+		unpack ${tarname}
 
-		if [[ -n "${PATCHSET_VERSION}" ]] ; then
-			unpack "${PN}-${PATCHSET_VERSION}.tar.xz"
+		if [[ -n ${PATCHSET_VERSION} ]] ; then
+			unpack ${PN}-${PATCHSET_VERSION}.tar.xz
 		fi
 	fi
 
 	cd "${S}" || die
 
 	if use test ; then
-		cp \
-			"${DISTDIR}/${XSTS_TARBALL_1}" \
+		cp "${DISTDIR}/${XSTS_TARBALL_1}" \
 			"${DISTDIR}/${XSTS_TARBALL_2}" \
-			"${S}/xstc/" \
+			"${S}"/xstc/ \
 			|| die "Failed to install test tarballs"
-		unpack "${XMLCONF_TARBALL}"
+		unpack ${XMLCONF_TARBALL}
 	fi
 }
 
@@ -145,14 +121,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	libxml2_configure() {
-		ECONF_SOURCE="${S}" \
-		econf \
-			$(multilib_native_use_with readline) \
-			$(multilib_native_use_with readline history) \
-			$(use_enable static-libs static) \
+		ECONF_SOURCE="${S}" econf \
 			$(use_with icu) \
 			$(use_with lzma) \
+			$(use_enable static-libs static) \
+			$(multilib_native_use_with readline) \
+			$(multilib_native_use_with readline history) \
 			--with-legacy \
 			"$@"
 	}
@@ -193,9 +169,8 @@ multilib_src_test() {
 multilib_src_install() {
 	emake DESTDIR="${D}" install
 
-	multilib_is_native_abi \
-		&& use python \
-		&& python_foreach_impl run_in_build_dir libxml2_py_emake DESTDIR="${D}" install
+	multilib_is_native_abi && use python &&
+		python_foreach_impl run_in_build_dir libxml2_py_emake DESTDIR="${D}" install
 
 	# Hack until automake release is made for the optimise fix
 	# https://git.savannah.gnu.org/cgit/automake.git/commit/?id=bde43d0481ff540418271ac37012a574a4fcf097
@@ -204,11 +179,14 @@ multilib_src_install() {
 
 multilib_src_install_all() {
 	einstalldocs
+
 	if ! use examples ; then
-		rm -rf "${ED}/usr/share/doc/${PF}/examples" || die
-		rm -rf "${ED}/usr/share/doc/${PF}/python/examples" || die
+		rm -rf "${ED}"/usr/share/doc/${PF}/examples || die
+		rm -rf "${ED}"/usr/share/doc/${PF}/python/examples || die
 	fi
-	rm -rf "${ED}/usr/share/doc/${PN}-python-${PVR}" || die
+
+	rm -rf "${ED}"/usr/share/doc/${PN}-python-${PVR} || die
+
 	find "${ED}" -name '*.la' -delete || die
 }
 
@@ -218,15 +196,15 @@ pkg_postinst() {
 	if [[ -n "${ROOT}" ]]; then
 		elog "Skipping XML catalog creation for stage building (bug #208887)."
 	else
-	# Need an XML catalog, so no-one writes to a non-existent one
+		# Need an XML catalog, so no-one writes to a non-existent one
 		CATALOG="${EROOT}/etc/xml/catalog"
 
-	# We don't want to clobber an existing catalog though, only ensure that
-	# one is there
-	# <obz@gentoo.org>
+		# We don't want to clobber an existing catalog though,
+		# only ensure that one is there
+		# <obz@gentoo.org>
 		if [[ ! -e "${CATALOG}" ]]; then
 			[[ -d "${EROOT}/etc/xml" ]] || mkdir -p "${EROOT}/etc/xml"
-			"${EPREFIX}/usr/bin/xmlcatalog" --create > "${CATALOG}"
+			"${EPREFIX}"/usr/bin/xmlcatalog --create > "${CATALOG}"
 			einfo "Created XML catalog in ${CATALOG}"
 		fi
 	fi

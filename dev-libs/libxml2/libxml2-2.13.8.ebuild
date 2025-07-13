@@ -146,6 +146,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	libxml2_configure() {
 		ECONF_SOURCE="${S}" \
 		econf \
