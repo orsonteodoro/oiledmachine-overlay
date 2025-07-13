@@ -9,15 +9,15 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
-PYTHON_COMPAT=( "python3_"{10..13} )
-PYTHON_REQ_USE="xml(+)"
 
+PYTHON_COMPAT=( python3_{11..13} )
+PYTHON_REQ_USE="xml(+)"
 inherit cflags-hardened check-reqs flag-o-matic multiprocessing optfeature
 inherit prefix python-any-r1 qt6-build toolchain-funcs
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
-	https://dev.gentoo.org/~ionen/distfiles/${PN}-6.8-patchset-7.tar.xz
+	https://dev.gentoo.org/~ionen/distfiles/${PN}-6.9-patchset-6.tar.xz
 "
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
@@ -26,16 +26,15 @@ fi
 
 IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
-	+jumbo-build kerberos opengl pdfium pulseaudio qml screencast
+	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_11
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
+	test? ( widgets )
 "
 
-# dlopen: krb5, libva, pciutils, udev
-# gcc: for -latomic
+# dlopen: krb5, libva, pciutils
 RDEPEND="
 	app-arch/snappy:=
 	dev-libs/expat
@@ -60,9 +59,8 @@ RDEPEND="
 	media-libs/tiff:=
 	sys-apps/dbus
 	sys-apps/pciutils
-	sys-devel/gcc:*
 	sys-libs/zlib:=[minizip]
-	virtual/libudev
+	virtual/libudev:=
 	x11-libs/libX11
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
@@ -78,6 +76,7 @@ RDEPEND="
 	designer? ( ~dev-qt/qttools-${PV}:6[designer] )
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6 )
 	kerberos? ( virtual/krb5 )
+	opengl? ( media-libs/libglvnd[X] )
 	pulseaudio? ( media-libs/libpulse[glib] )
 	screencast? (
 		dev-libs/glib:2
@@ -88,16 +87,17 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	|| (
+		sys-devel/gcc:*
+		llvm-runtimes/libatomic-stub
+	)
 	media-libs/libglvnd
 	x11-base/xorg-proto
 	x11-libs/libXcursor
 	x11-libs/libXi
 	x11-libs/libxshmfence
-	opengl? ( media-libs/libglvnd[X] )
+	elibc_musl? ( sys-libs/queue-standalone )
 	screencast? ( media-libs/libepoxy[egl(+)] )
-	test? (
-		widgets? ( app-text/poppler[cxx(+)] )
-	)
 	vaapi? (
 		vulkan? ( dev-util/vulkan-headers )
 	)
@@ -105,7 +105,7 @@ DEPEND="
 BDEPEND="
 	$(python_gen_any_dep 'dev-python/html5lib[${PYTHON_USEDEP}]')
 	dev-util/gperf
-	net-libs/nodejs[ssl]
+	net-libs/nodejs[icu,ssl]
 	sys-devel/bison
 	sys-devel/flex
 "
@@ -116,9 +116,8 @@ PATCHES=( "${WORKDIR}"/patches/${PN} )
 
 PATCHES+=(
 	# add extras as needed here, may merge in set if carries across versions
-	"${FILESDIR}"/${PN}-6.8.1-aarch64-xnnpack.patch
-	"${FILESDIR}"/${PN}-6.8.2-cstdint.patch
-	"${FILESDIR}"/${PN}-6.8.2-glibc2.41.patch
+	"${FILESDIR}"/${PN}-6.8.3-gperf3.2.patch
+	"${FILESDIR}"/${PN}-6.9.1-CVE-2025-5419.patch
 )
 
 python_check_deps() {
@@ -137,8 +136,8 @@ qtwebengine_check-reqs() {
 		ewarn "If run into issues, please try disabling before reporting a bug."
 	fi
 
-	local CHECKREQS_DISK_BUILD=9G
-	local CHECKREQS_DISK_USR=360M
+	local CHECKREQS_DISK_BUILD=10G
+	local CHECKREQS_DISK_USR=400M
 
 	if ! has distcc ${FEATURES}; then #830661
 		# assume ~2GB per job or 1.5GB if clang, possible with less
@@ -178,13 +177,17 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		$(qt_feature pdfium qtpdf_build)
-		$(qt_feature qml qtpdf_quick_build)
-		$(qt_feature webdriver webenginedriver)
-		$(qt_feature widgets qtpdf_widgets_build)
+		$(use pdfium && qt_feature qml qtpdf_quick_build)
+		$(use pdfium && qt_feature widgets qtpdf_widgets_build)
 		$(usev pdfium -DQT_FEATURE_pdf_v8=ON)
 
+		# TODO?: since 6.9.0, dependency checks have been adjusted to make it
+		# easier for webengine to be optional which could be useful if *only*
+		# need QtPdf (rare at the moment), would require all revdeps to depend
+		# on qtwebengine[webengine(+)]
 		-DQT_FEATURE_qtwebengine_build=ON
 		$(qt_feature qml qtwebengine_quick_build)
+		$(qt_feature webdriver webenginedriver)
 		$(qt_feature widgets qtwebengine_widgets_build)
 
 		$(cmake_use_find_package designer Qt6Designer)
@@ -224,10 +227,11 @@ src_configure() {
 		-DQT_FEATURE_webengine_system_libvpx=OFF
 
 		# not necessary to pass these (default), but in case detection fails
+		# given qtbase's force_system_libs does not affect these right now
 		$(printf -- '-DQT_FEATURE_webengine_system_%s=ON ' \
 			freetype gbm glib harfbuzz lcms2 libevent libjpeg \
-			libopenjpeg2 libpci libpng libtiff libwebp libxml \
-			minizip opus poppler snappy zlib)
+			libopenjpeg2 libpci libpng libtiff libudev libwebp \
+			libxml minizip opus snappy zlib)
 
 		# TODO: fixup gn cross, or package dev-qt/qtwebengine-gn with =ON
 		# (see also BUILD_ONLY_GN option added in 6.8+ for the latter)
@@ -242,13 +246,10 @@ src_configure() {
 		symbol_level=0
 	)
 
-	if ! use custom-cflags; then
+	if use !custom-cflags; then
 		# qtwebengine can be rather fragile with *FLAGS
 		filter-lto
 		strip-flags
-
-		# temporary workaround for bug #947356, should be fixed in Qt 6.9.x
-		append-cppflags -U_GLIBCXX_ASSERTIONS
 
 		if is-flagq '-g?(gdb)?([2-9])'; then #914475
 			replace-flags '-g?(gdb)?([2-9])' -g1
@@ -261,6 +262,10 @@ src_configure() {
 		# report if above -march works again so can cleanup.
 		use arm64 && tc-is-gcc && filter-flags '-march=*' '-mcpu=*'
 	fi
+
+	# chromium passes this by default, but qtwebengine does not and it may
+	# "possibly" get enabled by some paths and cause issues (bug #953111)
+	append-ldflags -Wl,-z,noexecstack
 
 	if is-flagq "-fstack-protector" ; then
 		CFLAGS_HARDENED_SSP_LEVEL="1"
@@ -281,7 +286,8 @@ src_configure() {
 }
 
 src_compile() {
-	# tentatively work around a possible (rare) race condition (bug #921680)
+	# tentatively work around a possible (rare) race condition (bug #921680),
+	# has good chances to be obsolete but keep for now as a safety
 	cmake_build WebEngineCore_sync_all_public_headers
 
 	cmake_src_compile
