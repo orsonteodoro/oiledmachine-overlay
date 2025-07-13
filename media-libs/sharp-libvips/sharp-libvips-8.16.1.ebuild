@@ -1113,7 +1113,7 @@ EOF
 			fi
 			if is_debug_whitelisted "${x}" ; then
 				objcopy --only-keep-debug "${ED}/usr/lib/sharp-vips/bin/${x}" "${T}/${x}.debug" || die
-				exeinto "/usr/lib/debug/usr/bin"
+				exeinto "/usr/lib/debug/usr/lib/sharp-vips/bin/${x}"
 				doexe "${T}/${x}.debug"
 			fi
 			strip --strip-unneeded "${ED}/usr/lib/sharp-vips/bin/${x}" || die
