@@ -963,6 +963,20 @@ src_compile() {
 	bash "${S}/build/lin.sh" || die
 }
 
+is_debug_whitelisted() {
+	local WHITELIST=(
+		"vips"
+	)
+	local name="${1}"
+	local x
+	for x in ${WHITELIST[@]} ; do
+		if [[ "${name}" == "${x}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 src_install() {
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
 		export STRIP="/bin/true"
@@ -1092,10 +1106,16 @@ EOF
 
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
 		for x in ${L[@]} ; do
-			objcopy --add-gnu-debuglink="${ED}/usr/lib/sharp-vips/bin/${x}.debug" "${ED}/usr/lib/sharp-vips/bin/${x}"
-			objcopy --only-keep-debug "${ED}/usr/lib/sharp-vips/bin/${x}" "${T}/${x}.debug" || die
-			exeinto "/usr/lib/debug/usr/bin"
-			doexe "${T}/${x}.debug"
+			if file "${ED}/usr/lib/sharp-vips/bin/${x}" | grep -q "ELF.*executable.*with debug_info" ; then
+				:
+			else
+				continue
+			fi
+			if is_debug_whitelisted "${x}" ; then
+				objcopy --only-keep-debug "${ED}/usr/lib/sharp-vips/bin/${x}" "${T}/${x}.debug" || die
+				exeinto "/usr/lib/debug/usr/bin"
+				doexe "${T}/${x}.debug"
+			fi
 			strip --strip-unneeded "${ED}/usr/lib/sharp-vips/bin/${x}" || die
 		done
 	fi
