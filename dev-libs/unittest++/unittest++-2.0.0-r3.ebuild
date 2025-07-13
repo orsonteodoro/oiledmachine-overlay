@@ -1,12 +1,12 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PN="unittest-cpp"
 MY_P="${MY_PN}-${PV}"
 
-inherit cmake-multilib
+inherit cmake-multilib dot-a
 
 SRC_URI="
 https://github.com/unittest-cpp/unittest-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -27,6 +27,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-fix-tests-with-clang.patch"
 	"${FILESDIR}/${PN}-2.0.0-cmake-fix-pkgconfig-dir-path-on-FreeBSD.patch"
 	"${FILESDIR}/${PN}-2.0.0-Add-support-for-LIB_SUFFIX.patch"
+	"${FILESDIR}/${PN}-2.0.0-cmake4.patch"
 )
 
 src_prepare() {
@@ -38,6 +39,7 @@ src_prepare() {
 }
 
 src_configure() {
+	lto-guarantee-fat
 	local mycmakeargs=(
 	# Don't build with -Werror: https://bugs.gentoo.org/747583
 		-DUTPP_AMPLIFY_WARNINGS=OFF
@@ -51,6 +53,11 @@ src_test() {
 		"${BUILD_DIR}/TestUnitTest++" || die "Tests failed"
 	}
 	multilib_foreach_abi test_abi
+}
+
+src_install() {
+	cmake_src_install
+	strip-lto-bytecode
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.0.0-r2 (20230623)
