@@ -89,6 +89,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	local myeconfargs=(
 		$(multilib_native_enable tools)
 		$(use_enable test tests)
