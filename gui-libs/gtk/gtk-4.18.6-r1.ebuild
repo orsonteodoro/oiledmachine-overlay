@@ -2,43 +2,29 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-
-# ASan does not work with f16c and introspection
-CFLAGS_HARDENED_ASSEMBLERS="inline"
-CFLAGS_HARDENED_CI_SANITIZERS="asan"
-CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # F20
-CFLAGS_HARDENED_LANGS="asm c-lang"
-CFLAGS_HARDENED_SANITIZERS_DISABLE=1 # Disabled because introspection needs review.  It will break apps with GTK Python bindings.
-CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
-PYTHON_COMPAT=( "python3_"{10..13} )
-
-inherit cflags-hardened gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
+PYTHON_COMPAT=( python3_{11..14} )
+inherit gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
 
 DESCRIPTION="GTK is a multi-platform toolkit for creating graphical user interfaces"
 HOMEPAGE="https://www.gtk.org/ https://gitlab.gnome.org/GNOME/gtk/"
 
 LICENSE="LGPL-2+"
 SLOT="4"
-IUSE="
-aqua broadway cloudproviders colord cups examples gstreamer +introspection
-sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_10
-"
 REQUIRED_USE="
 	|| ( aqua wayland X )
+	gtk-doc? ( introspection )
 	test? ( introspection )
 "
-
-KEYWORDS="~alpha amd64 arm arm64 ~loong ppc ppc64 ~riscv sparc x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
+IUSE="aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c"
 
 # TODO: Optional gst build dep on >=gst-plugins-base-1.23.1, so depend on it once we can
 COMMON_DEPEND="
 	>=dev-libs/glib-2.76.0:2
-	>=x11-libs/cairo-1.18.0[aqua?,glib,svg(+),X?]
-	>=x11-libs/pango-1.52.0[introspection?]
+	>=x11-libs/cairo-1.18.2[aqua?,glib,svg(+),X?]
+	>=x11-libs/pango-1.56.0[introspection?]
 	>=dev-libs/fribidi-1.0.6
-	>=media-libs/harfbuzz-2.6.0:=
+	>=media-libs/harfbuzz-8.4.0:=
 	>=x11-libs/gdk-pixbuf-2.30:2[introspection?]
 	media-libs/libpng:=
 	media-libs/tiff:=
@@ -63,8 +49,8 @@ COMMON_DEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.76:= )
 	vulkan? ( >=media-libs/vulkan-loader-1.3:=[wayland?,X?] )
 	wayland? (
-		>=dev-libs/wayland-1.21.0
-		>=dev-libs/wayland-protocols-1.36
+		>=dev-libs/wayland-1.23.0
+		>=dev-libs/wayland-protocols-1.41
 		media-libs/mesa[wayland]
 		>=x11-libs/libxkbcommon-0.2
 	)
@@ -106,11 +92,12 @@ BDEPEND="
 		')
 	)
 	dev-python/docutils
-	dev-libs/glib
+	>=dev-libs/glib-2.80
 	>=dev-util/gdbus-codegen-2.48
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.7
 	virtual/pkgconfig
+	gtk-doc? ( dev-util/gi-docgen )
 	vulkan? ( media-libs/shaderc )
 	wayland? (
 		dev-util/wayland-scanner
@@ -127,7 +114,7 @@ PATCHES=(
 	# with USE="-wayland -X" to trick gtk into claiming that it wasn't built with
 	# such support.
 	# https://bugs.gentoo.org/624960
-	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_.patch
+	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_ge_4.18.5.patch
 )
 
 python_check_deps() {
@@ -160,13 +147,13 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	local emesonargs=(
 		# GDK backends
 		$(meson_use X x11-backend)
 		$(meson_use wayland wayland-backend)
 		$(meson_use broadway broadway-backend)
 		-Dwin32-backend=false
+		-Dandroid-backend=false
 		$(meson_use aqua macos-backend)
 
 		# Media backends
@@ -190,7 +177,7 @@ src_configure() {
 		$(meson_feature introspection)
 
 		# Documentation
-		-Ddocumentation=false # we ship pregenerated API docs from tarball
+		$(meson_use gtk-doc documentation)
 		-Dscreenshots=false
 		-Dman-pages=true
 
@@ -207,6 +194,8 @@ src_configure() {
 src_test() {
 	"${BROOT}${GLIB_COMPILE_SCHEMAS}" --allow-any-name "${S}/gtk" || die
 
+	addwrite /dev/dri
+
 	# Note that skipping gsk-compare entirely means we do run *far*
 	# fewer tests, but a reliable testsuite for us is more important
 	# than absolute-maximum coverage if we can't trust the results and
@@ -221,7 +210,8 @@ src_test() {
 			--no-suite=headless \
 			--no-suite=gsk-compare \
 			--no-suite=gsk-compare-broadway \
-			--no-suite=needs-udmabuf
+			--no-suite=needs-udmabuf \
+			--no-suite=pango
 	fi
 
 	if use wayland; then
@@ -251,11 +241,10 @@ src_test() {
 src_install() {
 	meson_src_install
 
-	# TODO: Seems that HTML docs are no longer in the tarball after
-	# upstream switched to CI-generated releases? bug #947514
-	#insinto /usr/share/gtk-doc/html
-	# This will install API docs specific to X11 and wayland regardless of USE flags, but this is intentional
-	#doins -r "${S}"/docs/reference/{gtk/gtk4,gsk/gsk4,gdk/gdk4{,-wayland,-x11}}
+	if use gtk-doc; then
+		mkdir -p "${ED}"/usr/share/gtk-doc/html/ || die
+		mv "${ED}"/usr/share/doc/{gtk4,gsk4,gdk4{,-wayland,-x11}} "${ED}"/usr/share/gtk-doc/html/ || die
+	fi
 }
 
 pkg_preinst() {
