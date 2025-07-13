@@ -6,7 +6,8 @@ EAPI=8
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-PYTHON_COMPAT=( "python3_"{10..13} )
+
+PYTHON_COMPAT=( python3_{11..14} )
 
 inherit cflags-hardened flag-o-matic meson-multilib python-any-r1 xdg-utils
 
@@ -18,69 +19,34 @@ if [[ ${PV} == 9999 ]] ; then
 	inherit git-r3
 else
 	SRC_URI="https://github.com/harfbuzz/harfbuzz/releases/download/${PV}/${P}.tar.xz"
-	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
-~x64-solaris
-	"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 fi
 
-LICENSE="
-	icu
-	ISC
-	Old-MIT
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
+LICENSE="Old-MIT ISC icu"
 # 0.9.18 introduced the harfbuzz-icu split; bug #472416
 # 3.0.0 dropped some unstable APIs; bug #813705
 # 6.0.0 changed libharfbuzz-subset.so ABI
 SLOT="0/6.0.0"
-IUSE="
-+cairo debug doc experimental +glib +graphite icu +introspection test +truetype
-ebuild_revision_14
-"
-REQUIRED_USE="
-	introspection? (
-		glib
-	)
-"
+
+IUSE="+cairo debug doc experimental +glib +graphite icu +introspection test +truetype"
+RESTRICT="!test? ( test )"
+REQUIRED_USE="introspection? ( glib )"
+
 RDEPEND="
-	cairo? (
-		x11-libs/cairo:=[${MULTILIB_USEDEP}]
-	)
-	glib? (
-		>=dev-libs/glib-2.38:2[${MULTILIB_USEDEP}]
-	)
-	graphite? (
-		>=media-gfx/graphite2-1.2.1:=[${MULTILIB_USEDEP}]
-	)
-	icu? (
-		>=dev-libs/icu-51.2-r1:=[${MULTILIB_USEDEP}]
-	)
-	introspection? (
-		>=dev-libs/gobject-introspection-1.34:=
-	)
-	truetype? (
-		>=media-libs/freetype-2.5.0.1:2=[${MULTILIB_USEDEP}]
-	)
+	cairo? ( x11-libs/cairo:=[${MULTILIB_USEDEP}] )
+	glib? ( >=dev-libs/glib-2.38:2[${MULTILIB_USEDEP}] )
+	graphite? ( >=media-gfx/graphite2-1.2.1:=[${MULTILIB_USEDEP}] )
+	icu? ( >=dev-libs/icu-51.2-r1:=[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-1.34:= )
+	truetype? ( >=media-libs/freetype-2.5.0.1:2=[${MULTILIB_USEDEP}] )
 "
-DEPEND="
-	${RDEPEND}
-"
+DEPEND="${RDEPEND}"
 BDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/help2man
 	virtual/pkgconfig
-	doc? (
-		dev-util/gtk-doc
-	)
-	introspection? (
-		dev-util/glib-utils
-	)
+	doc? ( dev-util/gtk-doc )
+	introspection? ( dev-util/glib-utils )
 "
 
 src_prepare() {
@@ -100,6 +66,11 @@ multilib_src_configure() {
 	cflags-hardened_append
 	# harfbuzz-gobject only used for introspection, bug #535852
 	local emesonargs=(
+		-Dcoretext=disabled
+		-Dchafa=disabled
+		-Dfontations=disabled
+		-Dwasm=disabled
+
 		$(meson_feature cairo)
 		$(meson_feature glib)
 		$(meson_feature graphite graphite2)
@@ -107,16 +78,15 @@ multilib_src_configure() {
 		$(meson_feature introspection gobject)
 		$(meson_feature test tests)
 		$(meson_feature truetype freetype)
+
 		$(meson_native_use_feature doc docs)
 		$(meson_native_use_feature introspection)
-		# Breaks building tests.. \
+		# Breaks building tests..
 		#$(meson_native_use_feature utilities)
+
 		$(meson_use experimental experimental_api)
-		-Dchafa=disabled
-		-Dcoretext=disabled
-		-Dfontations=disabled
-		-Dwasm=disabled
 	)
+
 	meson_src_configure
 }
 
