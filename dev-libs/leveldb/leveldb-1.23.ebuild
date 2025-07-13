@@ -3,24 +3,25 @@
 
 EAPI=8
 
+# See .travis.yml for details
+SNAPPY_PV="0.3.7"
+# Skipped sqlite and kyotocabinet
+
 inherit check-compiler-switch cmake flag-o-matic multilib-minimal toolchain-funcs
 
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="https://github.com/google/leveldb/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
 
 DESCRIPTION="A fast key-value storage library"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm64"
-SLOT="0/$(ver_cut 1 ${PV})"
 IUSE+=" +snappy +tcmalloc static-libs test"
 RESTRICT="
 	!test? (
 		test
 	)
 "
-# See .travis.yml for details
-SNAPPY_PV="0.3.7"
-# Skipped sqlite and kyotocabinet
+SLOT="0/$(ver_cut 1 ${PV})"
 CDEPEND="
 	>=sys-devel/gcc-8.4.0
 "
@@ -62,7 +63,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed -e '/fno-rtti/d' -i CMakeLists.txt || die
+	sed -e '/fno-rtti/d' -i "CMakeLists.txt" || die
 	cmake_src_prepare
 }
 
@@ -82,15 +83,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 			cd "${CMAKE_USE_DIR}" || die
 			mycmakeargs=(
 				-DHAVE_CRC32C=ON
-				-DLEVELDB_BUILD_BENCHMARKS=OFF
 				-DHAVE_SNAPPY=$(usex snappy)
 				-DHAVE_TCMALLOC=$(usex tcmalloc)
+				-DLEVELDB_BUILD_BENCHMARKS=OFF
 				-DLEVELDB_BUILD_TESTS=$(usex test)
 			)
 			if [[ "${lib_type}" == "static" ]] ; then
-				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
+				mycmakeargs+=(
+					-DBUILD_SHARED_LIBS=OFF
+				)
 			else
-				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
+				mycmakeargs+=(
+					-DBUILD_SHARED_LIBS=ON
+				)
 			fi
 			cmake_src_configure
 		done
@@ -140,8 +145,8 @@ src_install() {
 
 multilib_src_install_all() {
 	cd "${S}" || die
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
