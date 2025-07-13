@@ -454,7 +454,7 @@ RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.80.1" # llvm-18.1
 RUST_PV="${RUST_MAX_VER}"
 
-inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
+inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic multiprocessing python-single-r1 meson rust
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -501,6 +501,7 @@ DESCRIPTION="libvips static build for sharp, matching sharp-libvips"
 HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
+debug
 -vanilla
 ebuild_revision_15
 "
@@ -936,6 +937,23 @@ ewarn "Detected compiler switch.  Disabling LTO."
 	export PKG_CONFIG_LIBDIR=""
 	export PKG_CONFIG_PATH=""
 	export VERSION_VIPS="${VERSION_VIPS}"
+	if use debug ; then
+		export DEBUG=1
+
+	# Prevent linker memory spike
+		export MAKEFLAGS="-j1"
+		export MAKEOPTS="-j1"
+		export MAKE_LINK_JOBS="-j1"
+		export MESON_LINK_JOBS="-j1"
+	else
+		export MAKEFLAGS="-j$(makeopts_jobs)"
+		export MAKEOPTS="-j$(makeopts_jobs)"
+		export MAKE_LINK_JOBS="-j$(makeopts_jobs)"
+		export MESON_LINK_JOBS="-j$(makeopts_jobs)"
+	fi
+einfo "MAKEOPTS:  ${MAKEOPTS}"
+einfo "MAKE_LINK_JOBS:  ${MAKE_LINK_JOBS}"
+einfo "MESON_LINK_JOBS:  ${MESON_LINK_JOBS}"
 	setup_arch
 }
 
@@ -946,6 +964,9 @@ src_compile() {
 }
 
 src_install() {
+	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
+		export STRIP="/bin/true"
+	fi
 	local libdir=$(get_libdir)
 	insinto "/usr/lib/sharp-vips/${libdir}"
 	# Install shared and static libraries
@@ -1068,4 +1089,14 @@ EOF
 	for x in ${L[@]} ; do
 		fperms 0755 "/usr/lib/sharp-vips/bin/${x}"
 	done
+
+	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
+		for x in ${L[@]} ; do
+			objcopy --add-gnu-debuglink="${ED}/usr/lib/sharp-vips/bin/${x}.debug" "${ED}/usr/lib/sharp-vips/bin/${x}"
+			objcopy --only-keep-debug "${ED}/usr/lib/sharp-vips/bin/${x}" "${T}/${x}.debug" || die
+			exeinto "/usr/lib/debug/usr/bin"
+			doexe "${T}/${x}.debug"
+			strip --strip-unneeded "${ED}/usr/lib/sharp-vips/bin/${x}" || die
+		done
+	fi
 }
