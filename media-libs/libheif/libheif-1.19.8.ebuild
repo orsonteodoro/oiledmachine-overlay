@@ -9,7 +9,7 @@ PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
-inherit cflags-hardened cmake xdg multilib-minimal
+inherit cflags-hardened cmake gnome2-utils multilib-minimal xdg
 
 if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
@@ -21,7 +21,10 @@ fi
 
 DESCRIPTION="A HEIF and AVIF file format decoder and encoder"
 HOMEPAGE="https://github.com/strukturag/libheif"
-LICENSE="GPL-3"
+LICENSE="
+	GPL-3
+	MIT
+"
 RESTRICT="
 	!test? (
 		test
@@ -44,8 +47,8 @@ FFMPEG_HW_ACCEL_DECODE_H265_USE=(
 IUSE="
 ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
--avc avif +aom -dav1d -ffmpeg +gdk-pixbuf go jpeg -jpeg2k -kvazaar -heic -htj2k
--libde265 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
+-avc avif +aom -dav1d doc +examples -ffmpeg +gdk-pixbuf jpeg -jpeg2k -kvazaar -heic -htj2k
+-libde265 -openh264 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
 ebuild_revision_15
 "
 PATENT_STATUS_REQUIRED_USE="
@@ -102,9 +105,6 @@ REQUIRED_USE="
 			vvenc
 		)
 	)
-	test? (
-		go
-	)
 "
 RDEPEND="
 	media-libs/libpng:0[${MULTILIB_USEDEP}]
@@ -124,15 +124,14 @@ RDEPEND="
 	gdk-pixbuf? (
 		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
 	)
-	go? (
-		dev-lang/go:=
+	openh264? (
+		media-libs/openh264:=[${MULTILIB_USEDEP}]
 	)
 	htj2k? (
 		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
 		media-libs/openjph:=[${MULTILIB_USEDEP}]
 	)
 	jpeg? (
-		media-libs/libjpeg-turbo:0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
@@ -170,9 +169,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	test? (
-		<dev-cpp/catch-3
-		dev-lang/go
+	doc? (
+		app-text/doxygen
 	)
 "
 
@@ -180,34 +178,15 @@ MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libheif/heif_version.h"
 )
 
-src_prepare() {
-	if use test ; then
-		# bug 865351
-		rm "tests/catch.hpp" || die
-		ln -s \
-			"${ESYSROOT}/usr/include/catch2/catch.hpp" \
-			"tests/catch.hpp" \
-			|| die
-	fi
-
-	sed \
-		-i \
-		-e '/Werror/d' \
-		"CMakeLists.txt" \
-		|| die # bug 936466
-
-	cmake_src_prepare
-
-	multilib_copy_sources
-}
-
 multilib_src_configure() {
 	cflags-hardened_append
-	export GO111MODULE=auto
 	local mycmakeargs=(
+		$(cmake_use_find_package doc Doxygen)
+		-DBUILD_TESTING=$(usex test)
 		-DENABLE_PLUGIN_LOADING="true"
 		-DWITH_AOM_DECODER=$(usex aom)
 		-DWITH_AOM_ENCODER=$(usex aom)
+		-DWITH_EXAMPLES=$(usex examples)
 		-DWITH_FFMPEG_DECODER=$(usex ffmpeg)
 		-DWITH_GDK_PIXBUF=$(usex gdk-pixbuf)
 		-DWITH_JPEG_DECODER=$(usex jpeg)
@@ -215,6 +194,8 @@ multilib_src_configure() {
 		-DWITH_LIBDE265=$(usex libde265)
 		-DWITH_LIBSHARPYUV=$(usex libsharpyuv)
 		-DWITH_KVAZAAR=$(usex kvazaar)
+		-DWITH_OpenH264_DECODER=$(usex openh264)
+		-DWITH_OpenH264_ENCODER=$(usex openh264)
 		-DWITH_RAV1E=$(multilib_native_usex rav1e)
 		-DWITH_SvtEnc=$(usex svt-av1)
 		-DWITH_UVG266_ENCODER=$(usex uvg266)
@@ -239,19 +220,12 @@ multilib_src_configure() {
 	cmake_src_configure
 }
 
-multilib_src_compile() {
-	default
-	cmake_src_compile
+pkg_postinst() {
+	xdg_pkg_postinst
+	use gdk-pixbuf && multilib_foreach_abi gnome2_gdk_pixbuf_update
 }
 
-multilib_src_test() {
-	default
-}
-
-multilib_src_install() {
-	cmake_src_install
-}
-
-multilib_src_install_all() {
-	einstalldocs
+pkg_postrm() {
+	xdg_pkg_postrm
+	use gdk-pixbuf && multilib_foreach_abi gnome2_gdk_pixbuf_update
 }
