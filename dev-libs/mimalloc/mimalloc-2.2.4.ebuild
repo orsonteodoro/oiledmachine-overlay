@@ -18,8 +18,8 @@ HOMEPAGE="https://github.com/microsoft/mimalloc"
 LICENSE="MIT"
 SLOT="0/2"
 IUSE="
-debug test valgrind
-ebuild_revision_12
+-debug -guarded test -valgrind
+ebuild_revision_13
 "
 RESTRICT="
 	!test? (
@@ -39,6 +39,7 @@ src_configure() {
 		-DMI_BUILD_OBJECT=OFF
 		-DMI_BUILD_STATIC=OFF
 		-DMI_DEBUG_FULL=$(usex debug)
+		-DMI_GUARDED=$(usex guarded)
 		-DMI_INSTALL_TOPLEVEL=ON
 		-DMI_LIBC_MUSL=$(usex elibc_musl)
 		# Don't inject -march=XXX \

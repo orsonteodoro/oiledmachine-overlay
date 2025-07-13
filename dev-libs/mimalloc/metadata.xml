@@ -12,7 +12,7 @@
     <name>Sam James</name>
   </maintainer>
   <use>
-    <flag name="hardened">Enable exploit mitigations</flag>
+    <flag name="guarded">Enable guarded mode</flag>
   </use>
   <upstream>
     <remote-id type="github">microsoft/mimalloc</remote-id>
