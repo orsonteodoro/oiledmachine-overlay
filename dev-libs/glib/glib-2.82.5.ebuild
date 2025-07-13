@@ -309,6 +309,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	# TODO: figure a way to pass appropriate values for all cross properties
 	# that glib uses (search for get_cross_property)
 	#if tc-is-cross-compiler ; then
