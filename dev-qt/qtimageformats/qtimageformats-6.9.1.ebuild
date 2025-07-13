@@ -15,10 +15,8 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc64 ~riscv x86"
 fi
 
-IUSE="
-mng
-ebuild_revision_8
-"
+IUSE="mng"
+
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[gui]
 	media-libs/libwebp:=
@@ -40,8 +38,6 @@ src_configure() {
 		$(qt_feature mng)
 		-DQT_FEATURE_tiff=ON
 		-DQT_FEATURE_webp=ON
-		-DQT_FEATURE_system_tiff=ON
-		-DQT_FEATURE_system_webp=ON
 	)
 
 	qt6-build_src_configure
