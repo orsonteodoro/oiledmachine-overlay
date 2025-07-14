@@ -419,9 +419,6 @@ QA_WX_LOAD="
 		usr/lib/libGLX_mesa.so.0.0.0
 	)
 "
-PATCHES=(
-	"${FILESDIR}/${PN}_egl_fix_sw_fallback_rejection.patch"
-)
 
 llvm_check_deps() {
 	if use opencl ; then
