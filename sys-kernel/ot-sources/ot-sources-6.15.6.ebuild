@@ -21,13 +21,14 @@ inherit ot-kernel-v6.15
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.14.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.15.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, no KFENCE, no KCFI, yes -D_FORTIFY_SOURCE
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, KFENCE off, KCFI off, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.6 (20250714) with modified builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
 
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
