@@ -13208,6 +13208,12 @@ ot-kernel_set_security_critical() {
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
 		; then
+			if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
+				:
+			else
+eerror "Enable USE=cfi and OT_KERNEL_USE=cfi to enable Clang CFI support."
+				die
+			fi
 			ot-kernel_set_kconfig_cfi 1					# Uses llvm_slot
 			ot-kernel_set_kconfig_kernel_cmdline "cfi.fault=panic"
 			enabled=1
@@ -13233,6 +13239,12 @@ ot-kernel_set_security_critical() {
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
 		; then
+			if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ; then
+				:
+			else
+eerror "Enable USE=kcfi and OT_KERNEL_USE=kcfi to enable KCFI support."
+				die
+			fi
 			ot-kernel_set_kconfig_kcfi 1					# Uses llvm_slot
 			ot-kernel_set_kconfig_kernel_cmdline "kcfi.fault=panic"
 			enabled=1
@@ -13251,6 +13263,12 @@ ot-kernel_set_security_critical() {
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
 		; then
+			if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack ; then
+				:
+			else
+eerror "Enable USE=shadowcallstack and OT_KERNEL_USE=shadowcallstack to enable ShadowCallStack support."
+				die
+			fi
 			ot-kernel_set_kconfig_scs 1					# Uses llvm_slot
 			ot-kernel_set_kconfig_kernel_cmdline "scs.fault=panic"
 			enabled=1
