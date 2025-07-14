@@ -224,6 +224,13 @@ einfo "disclosure. This one is a <universally recognized bug name (e.g. use"
 einfo "after free)>.  Also give me a CVSS 3.1 estimate and severity as a"
 einfo "column.  The package in question is <package-name>."
 einfo
+einfo "Tip:  Ask the AI/LLM this question to fill in the blanks for"
+einfo "percentages:"
+einfo
+einfo "What are the chances or the proportion of a <vulnerability name> to"
+einfo "become a denial of service, data tampering, information disclosure,"
+einfo "code execution, privilege escalation, or zero click attack?"
+einfo
 	fi
 }
 fi
