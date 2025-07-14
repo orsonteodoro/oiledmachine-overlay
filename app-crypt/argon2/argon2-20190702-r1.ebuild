@@ -3,6 +3,8 @@
 
 EAPI=7
 
+MY_P="phc-winner-${P}"
+
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
 
@@ -12,7 +14,7 @@ inherit cflags-hardened check-compiler-switch flag-o-matic toolchain-funcs
 KEYWORDS="
 ~amd64 ~amd64-linux ~x64-macos
 "
-S="${WORKDIR}/phc-winner-${P}"
+S="${WORKDIR}/${MY_P}"
 SRC_URI="
 https://github.com/P-H-C/phc-winner-argon2/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -41,7 +43,7 @@ pkg_setup() {
 
 src_prepare() {
 	default
-	if ! use static-libs; then
+	if ! use static-libs ; then
 		sed -i \
 			-e '/LIBRARIES =/s/\$(LIB_ST)//' \
 			"Makefile" \
@@ -57,7 +59,7 @@ src_prepare() {
 	tc-export CC
 
 	OPTTEST=1
-	if use amd64 || use x86; then
+	if use amd64 || use x86 ; then
 		$(tc-getCPP) ${CFLAGS} ${CPPFLAGS} -P - <<-EOF &>/dev/null && OPTTEST=0
 			#if defined(__SSE2__)
 			true
@@ -77,7 +79,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
-	econf
+	default
 }
 
 src_compile() {
