@@ -3220,49 +3220,49 @@ ewarn "QA:  Update sanitizer patch for kernel ${KV_MAJOR_MINOR}."
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
-	if has clear ${IUSE_EFFECTIVE} ; then
+	if has clear ${IUSE_EFFECTIVE} && use clear ; then
 		if ot-kernel_use clear ; then
 			apply_clear_linux_patches
 		fi
 	fi
 
-	if has rt ${IUSE_EFFECTIVE} ; then
+	if has rt ${IUSE_EFFECTIVE} && use rt ; then
 		if ot-kernel_use rt ; then
 			apply_rt
 		fi
 	fi
 
-	if has uksm ${IUSE_EFFECTIVE} ; then
+	if has uksm ${IUSE_EFFECTIVE} && use uksm ; then
 		if ot-kernel_use uksm ; then
 			apply_uksm
 		fi
 	fi
 
-	if has multigen_lru ${IUSE_EFFECTIVE} ; then
+	if has multigen_lru ${IUSE_EFFECTIVE} && use multigen_lru ; then
 		if ot-kernel_use multigen_lru ; then
 			apply_multigen_lru
 		fi
 	fi
 
-	if has zen-multigen_lru ${IUSE_EFFECTIVE} ; then
+	if has zen-multigen_lru ${IUSE_EFFECTIVE} && use zen-multigen_lru ; then
 		if ot-kernel_use zen-multigen_lru ; then
 			apply_zen_multigen_lru
 		fi
 	fi
 
-	if has bmq ${IUSE_EFFECTIVE} ; then
+	if has bmq ${IUSE_EFFECTIVE} && use bmq ; then
 		if ot-kernel_use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			apply_bmq
 		fi
 	fi
 
-	if has pds ${IUSE_EFFECTIVE} ; then
+	if has pds ${IUSE_EFFECTIVE} && use pds ; then
 		if ot-kernel_use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			apply_pds
 		fi
 	fi
 
-	if has prjc ${IUSE_EFFECTIVE} ; then
+	if has prjc ${IUSE_EFFECTIVE} && use prjc ; then
 		if \
 		ot-kernel_use prjc \
 		&& \
@@ -3275,7 +3275,7 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has muqss ${IUSE_EFFECTIVE} ; then
+	if has muqss ${IUSE_EFFECTIVE} && use muqss ; then
 		if \
 			ot-kernel_use muqss \
 				&& \
@@ -3289,19 +3289,19 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has zen-muqss ${IUSE_EFFECTIVE} ; then
+	if has zen-muqss ${IUSE_EFFECTIVE} && use zen-muqss ; then
 		if ot-kernel_use zen-muqss && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
 			apply_zen_muqss
 		fi
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} ; then
+	if has tresor ${IUSE_EFFECTIVE} && use tresor ; then
 		if ot-kernel_use tresor ; then
 			apply_tresor
 		fi
 	fi
 
-	if has genpatches ${IUSE_EFFECTIVE} ; then
+	if has genpatches ${IUSE_EFFECTIVE} && use genpatches ; then
 		if ot-kernel_use genpatches ; then
 			apply_genpatches
 		fi
@@ -3311,53 +3311,53 @@ apply_all_patchsets() {
 		apply_o3
 	fi
 
-	if has zen-sauce ${IUSE_EFFECTIVE} ; then
+	if has zen-sauce ${IUSE_EFFECTIVE} && use zen-sauce ; then
 		if ot-kernel_use zen-sauce ; then
 			apply_zen_sauce
 		fi
 	fi
 
-	if has bbrv2 ${IUSE_EFFECTIVE} ; then
+	if has bbrv2 ${IUSE_EFFECTIVE} && use bbrv2 ; then
 		if ot-kernel_use bbrv2 ; then
 			apply_bbrv2
 		fi
 	fi
 
-	if has bbrv3 ${IUSE_EFFECTIVE} ; then
+	if has bbrv3 ${IUSE_EFFECTIVE} && use bbrv3 ; then
 		if ot-kernel_use bbrv3 ; then
 			apply_bbrv3
 		fi
 	fi
 
-	if has clang ${USE} ; then
+	if has clang ${USE} && use clang ; then
 		if ot-kernel_use clang && ot-kernel_use pgo ; then
 			apply_clang_pgo
 		fi
 	fi
 
-	if has cfi ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use cfi && [[ "${arch}" == "x86_64" ]] ; then
+	if has cfi ${IUSE_EFFECTIVE} && use cfi ; then
+		if [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi
 		fi
 	fi
 
-	if has kcfi ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
+	if has kcfi ${IUSE_EFFECTIVE} && use kcfi ; then
+		if [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
 			apply_kcfi
 		fi
 	fi
 
 	if \
-		   ( has c2tcp ${IUSE_EFFECTIVE}  && ot-kernel_use c2tcp ) \
-		|| ( has deepcc ${IUSE_EFFECTIVE} && ot-kernel_use deepcc ) \
-		|| ( has orca ${IUSE_EFFECTIVE}   && ot-kernel_use orca ) \
+		   ( has c2tcp ${IUSE_EFFECTIVE}  && use c2tcp && ot-kernel_use c2tcp ) \
+		|| ( has deepcc ${IUSE_EFFECTIVE} && use deepcc && ot-kernel_use deepcc ) \
+		|| ( has orca ${IUSE_EFFECTIVE}   && use orca && ot-kernel_use orca ) \
 	; then
 		if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
 			apply_c2tcp_v2
 		fi
 	fi
 
-	if has nest ${IUSE_EFFECTIVE} ; then
+	if has nest ${IUSE_EFFECTIVE} && use nest ; then
 		if ot-kernel_use nest && [[ "${cpu_sched}" == "nest" ]] ; then
 			apply_nest
 		fi
@@ -5308,7 +5308,7 @@ einfo "Disabling CFI support in the in the .config."
 # Sets the kernel config for Kernel Control Flow Integrity (KCFI)
 ot-kernel_set_kconfig_kcfi() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ; then
+	if (( ${enable} == 1 )) && has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) ; then
 eerror
 eerror "CFI requires LLVM >= 15 on arm64"
@@ -5540,10 +5540,10 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 ot-kernel_set_kconfig_compiler_toolchain() {
 	if \
 		( \
-		   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
-		|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
-		|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
-		|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang) \
+		   ( has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] ) \
+		|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ) \
+		|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
+		|| ( has clang ${IUSE_EFFECTIVE} && use clang && && ot-kernel_use clang) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -13208,19 +13208,10 @@ ot-kernel_set_security_critical() {
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
 		; then
-			if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
+			if has cfi ${IUSE_EFFECTIVE} && use cfi ; then
 				:
 			else
-#
-# TODO review simplification of tunables.
-#
-# USE is for verification of compiler and compiler-rt-sanitizers
-# OT_KERNEL_USE is for per kernel profile
-# OT_KERNEL_SECURITY_CRITICAL_TYPES is for sanitizer selection consistency.
-#
-# The OT_KERNEL_USE="cfi kcfi shadowcallstack" can or should be be removed.
-#
-eerror "Enable USE=cfi and OT_KERNEL_USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
+eerror "Enable USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
 				die
 			fi
 			ot-kernel_set_kconfig_cfi 1					# Uses llvm_slot
@@ -13248,10 +13239,10 @@ eerror "Enable USE=cfi and OT_KERNEL_USE=cfi to enable Clang CFI support or remo
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
 		; then
-			if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ; then
+			if has kcfi ${IUSE_EFFECTIVE} && use kcfi ; then
 				:
 			else
-eerror "Enable USE=kcfi and OT_KERNEL_USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
+eerror "Enable USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
 				die
 			fi
 			ot-kernel_set_kconfig_kcfi 1					# Uses llvm_slot
@@ -13272,10 +13263,10 @@ eerror "Enable USE=kcfi and OT_KERNEL_USE=kcfi to enable KCFI support or remove 
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
 		; then
-			if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack ; then
+			if has shadowcallstack ${IUSE_EFFECTIVE} && use shadowcallstack ; then
 				:
 			else
-eerror "Enable USE=shadowcallstack and OT_KERNEL_USE=shadowcallstack to enable ShadowCallStack support or remove scs from OT_KERNEL_SECURITY_CRITICAL_TYPES."
+eerror "Enable USE=shadowcallstack to enable ShadowCallStack support or remove scs from OT_KERNEL_SECURITY_CRITICAL_TYPES."
 				die
 			fi
 			ot-kernel_set_kconfig_scs 1					# Uses llvm_slot
@@ -13890,10 +13881,10 @@ einfo "Setting up the build toolchain"
 #			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 	if \
 		( \
-			   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
-			|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
-			|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
-			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang ) \
+			   ( has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] ) \
+			|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ) \
+			|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
+			|| ( has clang ${IUSE_EFFECTIVE} && use clang && ot-kernel_use clang ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \

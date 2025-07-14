@@ -1258,10 +1258,10 @@ ot-kernel_get_llvm_min_slot() {
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
-	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
+	if has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "arm64" ]] ; then
 		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
-	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
+	if has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
 		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
 
