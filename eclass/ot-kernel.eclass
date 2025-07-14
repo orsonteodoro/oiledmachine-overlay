@@ -3216,6 +3216,30 @@ ewarn "QA:  Update sanitizer patch for kernel ${KV_MAJOR_MINOR}."
 	fi
 }
 
+# @FUNCTION: _has_security_critical_type
+# @DESCRIPTION:
+# Checks if OT_KERNEL_SECURITY_CRITICAL_TYPES contains type
+_has_security_critical_type() {
+	local type="${1}"
+	local types
+	if has kcfi ${IUSE_EFFECTIVE} ; then
+		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan kcfi"}
+	elif has cfi ${IUSE_EFFECTIVE} ; then
+		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan cfi"}
+	else
+		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan"}
+	fi
+	local x
+	for x in ${types} ; do
+		if [[ "${x}" == "${type}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+
+
 # @FUNCTION: apply_all_patchsets
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
@@ -3336,13 +3360,13 @@ apply_all_patchsets() {
 	fi
 
 	if has cfi ${IUSE_EFFECTIVE} && use cfi ; then
-		if [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] && [[ "${arch}" == "x86_64" ]] ; then
+		if _has_security_critical_type "cfi" && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi
 		fi
 	fi
 
 	if has kcfi ${IUSE_EFFECTIVE} && use kcfi ; then
-		if [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
+		if _has_security_critical_type "kcfi" && [[ "${arch}" == "x86_64" ]] ; then
 			apply_kcfi
 		fi
 	fi
@@ -5308,7 +5332,7 @@ einfo "Disabling CFI support in the in the .config."
 # Sets the kernel config for Kernel Control Flow Integrity (KCFI)
 ot-kernel_set_kconfig_kcfi() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ; then
+	if (( ${enable} == 1 )) && has kcfi ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) ; then
 eerror
 eerror "CFI requires LLVM >= 15 on arm64"
@@ -5540,8 +5564,8 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 ot-kernel_set_kconfig_compiler_toolchain() {
 	if \
 		( \
-		   ( has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] ) \
-		|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ) \
+		   ( has cfi ${IUSE_EFFECTIVE} && use cfi && _has_security_critical_type "cfi" ) \
+		|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ) \
 		|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
 		|| ( has clang ${IUSE_EFFECTIVE} && use clang && ot-kernel_use clang) \
 		) \
@@ -13049,7 +13073,14 @@ ot-kernel_set_security_critical() {
 	# TODO: patch kernel for custom panic for <sanitizer>.fault=panic for KCSAN, UBSAN, KMSAN, KFENCE.
 
 	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
-	local types=${OT_KERNEL_SECURITY_CRITICAL_TYPES-"kasan ubsan cfi kcfi"}
+	local types
+	if has kcfi ${IUSE_EFFECTIVE} ; then
+		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan kcfi"}
+	elif has cfi ${IUSE_EFFECTIVE} ; then
+		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan cfi"}
+	else
+		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan"}
+	fi
 	local kfence_sample_interval=${KFENCE_SAMPLE_INTERVAL-10}
 	local kasan_sample_interval=${KASAN_SAMPLE_INTERVAL-1}
 	if \
@@ -13189,18 +13220,8 @@ ot-kernel_set_security_critical() {
 			ot-kernel_unset_configopt "CONFIG_KCSAN"
 		fi
 
-		has_cfi_in_types() {
-			local x
-			for x in ${types} ; do
-				if [[ "${x}" == "cfi" ]] ; then
-					return 0
-				fi
-			done
-			return 1
-		}
-
 		if \
-			has_cfi_in_types \
+			_has_security_critical_type "cfi" \
 					&&
 			[[ \
 				"${arch}" == "x86_64" \
@@ -13881,8 +13902,8 @@ einfo "Setting up the build toolchain"
 #			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 	if \
 		( \
-			   ( has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] ) \
-			|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ) \
+			   ( has cfi ${IUSE_EFFECTIVE} && use cfi && _has_security_critical_type "cfi" ) \
+			|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ) \
 			|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
 			|| ( has clang ${IUSE_EFFECTIVE} && use clang && ot-kernel_use clang ) \
 		) \
