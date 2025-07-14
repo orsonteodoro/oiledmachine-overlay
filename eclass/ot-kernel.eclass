@@ -13211,7 +13211,16 @@ ot-kernel_set_security_critical() {
 			if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
 				:
 			else
-eerror "Enable USE=cfi and OT_KERNEL_USE=cfi to enable Clang CFI support."
+#
+# TODO review simplification of tunables.
+#
+# USE is for verification of compiler and compiler-rt-sanitizers
+# OT_KERNEL_USE is for per kernel profile
+# OT_KERNEL_SECURITY_CRITICAL_TYPES is for sanitizer selection consistency.
+#
+# The OT_KERNEL_USE="cfi kcfi shadowcallstack" can or should be be removed.
+#
+eerror "Enable USE=cfi and OT_KERNEL_USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
 				die
 			fi
 			ot-kernel_set_kconfig_cfi 1					# Uses llvm_slot
@@ -13242,7 +13251,7 @@ eerror "Enable USE=cfi and OT_KERNEL_USE=cfi to enable Clang CFI support."
 			if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ; then
 				:
 			else
-eerror "Enable USE=kcfi and OT_KERNEL_USE=kcfi to enable KCFI support."
+eerror "Enable USE=kcfi and OT_KERNEL_USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
 				die
 			fi
 			ot-kernel_set_kconfig_kcfi 1					# Uses llvm_slot
@@ -13266,7 +13275,7 @@ eerror "Enable USE=kcfi and OT_KERNEL_USE=kcfi to enable KCFI support."
 			if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack ; then
 				:
 			else
-eerror "Enable USE=shadowcallstack and OT_KERNEL_USE=shadowcallstack to enable ShadowCallStack support."
+eerror "Enable USE=shadowcallstack and OT_KERNEL_USE=shadowcallstack to enable ShadowCallStack support or remove scs from OT_KERNEL_SECURITY_CRITICAL_TYPES."
 				die
 			fi
 			ot-kernel_set_kconfig_scs 1					# Uses llvm_slot
