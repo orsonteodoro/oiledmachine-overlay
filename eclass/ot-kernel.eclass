@@ -5543,7 +5543,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		   ( has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (^|" ")"cfi"(" "|$) ]] ) \
 		|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] ) \
 		|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
-		|| ( has clang ${IUSE_EFFECTIVE} && use clang && && ot-kernel_use clang) \
+		|| ( has clang ${IUSE_EFFECTIVE} && use clang && ot-kernel_use clang) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
