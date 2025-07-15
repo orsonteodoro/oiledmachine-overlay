@@ -209,7 +209,8 @@ zune-inflate-0.2.54
 "
 CURL_PV="7.68.0"
 GENERATE_LOCKFILE=0
-MITIGATION_URI="https://github.com/Cisco-Talos/clamav/releases/tag/clamav-1.4.3"
+MITIGATION_DATE="Jun 18, 2025"
+MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
 VULNERABILITIES_FIXED=(
 	"CVE-2025-20260;ZC, CE, DoS, DT, ID;Critical"
 	"CVE-2025-20234;ZC, DoS;Medium"
@@ -435,6 +436,11 @@ eerror "This is required for SSP (Stack Smashing Protection)."
 eerror
 		die
 	fi
+
+        if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
+        fi
 	vf_show
 }
 
