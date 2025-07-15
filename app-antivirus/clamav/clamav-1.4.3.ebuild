@@ -212,8 +212,8 @@ GENERATE_LOCKFILE=0
 MITIGATION_DATE="Jun 18, 2025"
 MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-20260;ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-20234;ZC, DoS;Medium"
+	"CVE-2025-20260;BO, ZC, CE, DoS, DT, ID;Critical"
+	"CVE-2025-20234;UAF, ZC, DoS;Medium"
 )
 PYTEST_PV="7.2.0"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
