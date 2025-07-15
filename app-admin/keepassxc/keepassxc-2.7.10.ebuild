@@ -5,13 +5,6 @@ EAPI=8
 
 # TODO:
 # fix testsshagent test
-# fix testurltools regression with isIpAddress() function:
-#PASS   : TestUrlTools::testTopLevelDomain()
-#FAIL!  : TestUrlTools::testIsIpAddress() '!urlTools()->isIpAddress(host3)' returned FALSE. ()
-#   Loc: [/var/tmp/portage/app-admin/keepassxc-2.7.10/work/keepassxc-2.7.10/tests/TestUrlTools.cpp(91)]
-#PASS   : TestUrlTools::testIsUrlIdentical()
-#PASS   : TestUrlTools::testIsUrlValid()
-
 
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
@@ -75,7 +68,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	^^ (
@@ -367,13 +360,19 @@ einfo "TEMP_DIR:  ${TEMP_DIR}"
 	# To exclude a test:  ctest -E "<test name>"
 	# To exclude multiple tests:  ctest -j 1 --test-load 4 -E "testkdbx3|testkdbx4"
 	# To test one test:  ctest -R <test name>
-	local extra_args=(
-		-E "testsshagent"
-	)
-	ENABLE_SLOW_TESTS=0
-	if [[ "${ENABLE_SLOW_TESTS}" != "1" ]] ; then
+	DISABLE_SSH_AGENT_TEST=1
+	DISABLE_SLOW_TESTS=1
+	local excluded_tests
+	if [[ "${DISABLE_SSH_AGENT_TEST}" == "1" ]] ; then
+		excluded_tests="|testsshagent"
+	fi
+	if [[ "${DISABLE_SLOW_TESTS}" == "1" ]] ; then
+		excluded_tests+="|testkdbx3|testkdbx4|testkeys"
+	fi
+	local extra_args=()
+	if [[ -n "${excluded_tests}" ]] ; then
 		extra_args+=(
-			-E "testkdbx3|testkdbx4|testkeys"
+			-E "${excluded_tests:1}"
 		)
 	fi
 	if use X ; then
