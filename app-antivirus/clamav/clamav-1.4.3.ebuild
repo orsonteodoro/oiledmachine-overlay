@@ -209,13 +209,18 @@ zune-inflate-0.2.54
 "
 CURL_PV="7.68.0"
 GENERATE_LOCKFILE=0
+MITIGATION_URI="https://github.com/Cisco-Talos/clamav/releases/tag/clamav-1.4.3"
+VULNERABILITIES_FIXED=(
+	"CVE-2025-20260;ZC, CE, DoS, DT, ID;Critical"
+	"CVE-2025-20234;ZC, DoS;Medium"
+)
 PYTEST_PV="7.2.0"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
 RUSTFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
 inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm
-inherit python-any-r1 rustflags-hardened sandbox-changes systemd tmpfiles toolchain-funcs
+inherit python-any-r1 rustflags-hardened sandbox-changes systemd tmpfiles toolchain-funcs vf
 
 if ! [[ "${PV}" =~ "_rc" ]] ; then
 	KEYWORDS="~amd64 ~arm64 ~arm64-macos"
@@ -430,6 +435,7 @@ eerror "This is required for SSP (Stack Smashing Protection)."
 eerror
 		die
 	fi
+	vf_show
 }
 
 PATCHES=(
