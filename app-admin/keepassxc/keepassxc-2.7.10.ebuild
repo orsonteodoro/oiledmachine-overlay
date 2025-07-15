@@ -65,7 +65,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	^^ (
@@ -292,7 +292,7 @@ eerror "Use \`eselect locale\` to change locale to en_US.utf8"
 	filter-lto
 	replace-flags '-O*' '-O2'
 	export MAKEOPTS="-j1"
-#	cflags-hardened_append
+	cflags-hardened_append
 
 	local -a mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or
