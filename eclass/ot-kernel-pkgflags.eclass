@@ -69,9 +69,9 @@ eerror "Cause:  ${2}"
 		if [[ -n "${evaluation}" ]] ; then
 eerror "Security evaluation:  ${3}"
 			local severity=""
-			[[ "${evaluation}" == "DoS" ]] && severity="medium"
-			[[ "${evaluation}" == "ID" ]] && severity="medium"
-			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && severity="high"
+			[[ "${evaluation}" == "DoS" ]] && severity="Medium"
+			[[ "${evaluation}" == "ID" ]] && severity="Medium"
+			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && severity="High"
 eerror "Estimated CVSS 3.1 severity:  ${severity}"
 		fi
 eerror
@@ -96,9 +96,9 @@ ewarn "Cause:  ${2}"
 		if [[ -n "${evaluation}" ]] ; then
 ewarn "Security evaluation:  ${3}"
 			local severity=""
-			[[ "${evaluation}" == "DoS" ]] && severity="medium"
-			[[ "${evaluation}" == "ID" ]] && severity="medium"
-			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && severity="high"
+			[[ "${evaluation}" == "DoS" ]] && severity="Medium"
+			[[ "${evaluation}" == "ID" ]] && severity="Medium"
+			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && severity="High"
 ewarn "Estimated CVSS 3.1 severity:  ${severity}"
 		fi
 ewarn
