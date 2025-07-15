@@ -1,0 +1,165 @@
+--- a/src/gui/entry/EntryAttributesModel.cpp.orig	2025-07-14 18:28:35.290497508 -0700
++++ b/src/gui/entry/EntryAttributesModel.cpp	2025-07-14 18:23:49.414871518 -0700
+@@ -24,7 +24,7 @@ EntryAttributesModel::EntryAttributesMod
+     , m_entryAttributes(nullptr)
+     , m_nextRenameDataChange(false)
+ {
+-    m_collator.setNumericMode(true);
++    m_collator.setNumericMode(false); // Avoid POSIX collation warning
+ }
+ 
+ void EntryAttributesModel::setEntryAttributes(EntryAttributes* entryAttributes)
+@@ -36,9 +36,8 @@ void EntryAttributesModel::setEntryAttri
+     }
+ 
+     m_entryAttributes = entryAttributes;
+-
++    m_attributes.clear(); // Clear attributes to start fresh
+     if (m_entryAttributes) {
+-        updateAttributes();
+         connect(m_entryAttributes, SIGNAL(customKeyModified(QString)), SLOT(attributeChange(QString)));
+         connect(m_entryAttributes, SIGNAL(aboutToBeAdded(QString)), SLOT(attributeAboutToAdd(QString)));
+         connect(m_entryAttributes, SIGNAL(added(QString)), SLOT(attributeAdd()));
+@@ -91,7 +90,9 @@ QVariant EntryAttributesModel::data(cons
+         return QVariant();
+     }
+ 
+-    return m_attributes.at(index.row());
++    QString key = m_attributes[index.row()];
++    qDebug() << "data: row" << index.row() << "key" << key << "m_attributes" << m_attributes;
++    return key;
+ }
+ 
+ bool EntryAttributesModel::setData(const QModelIndex& index, const QVariant& value, int role)
+@@ -142,96 +143,84 @@ QString EntryAttributesModel::keyByIndex
+ 
+ void EntryAttributesModel::attributeChange(const QString& key)
+ {
++    qDebug() << "attributeChange:" << key;
++    if (!EntryAttributes::isDefaultAttribute(key) && !m_attributes.contains(key)) {
++        int row = m_attributes.size();
++        beginInsertRows(QModelIndex(), row, row);
++        m_attributes.append(key);
++        endInsertRows();
++    }
+     int row = m_attributes.indexOf(key);
+-    Q_ASSERT(row != -1);
+-    emit dataChanged(index(row, 0), index(row, columnCount() - 1));
++    if (row != -1) {
++        emit dataChanged(index(row, 0), index(row, 0));
++    }
+ }
+ 
+ void EntryAttributesModel::attributeAboutToAdd(const QString& key)
+ {
+-    QList<QString> rows = m_attributes;
+-    rows.append(key);
+-    std::sort(rows.begin(), rows.end(), m_collator);
+-    int row = rows.indexOf(key);
+-    beginInsertRows(QModelIndex(), row, row);
++    qDebug() << "attributeAboutToAdd:" << key;
++    if (!EntryAttributes::isDefaultAttribute(key)) {
++        int row = m_attributes.size();
++        beginInsertRows(QModelIndex(), row, row);
++        m_attributes.append(key);
++    }
+ }
+ 
+ void EntryAttributesModel::attributeAdd()
+ {
+-    updateAttributes();
++    qDebug() << "attributeAdd";
+     endInsertRows();
+ }
+ 
+ void EntryAttributesModel::attributeAboutToRemove(const QString& key)
+ {
++    qDebug() << "attributeAboutToRemove:" << key;
+     int row = m_attributes.indexOf(key);
+-    beginRemoveRows(QModelIndex(), row, row);
++    if (row != -1) {
++        beginRemoveRows(QModelIndex(), row, row);
++    }
+ }
+ 
+ void EntryAttributesModel::attributeRemove()
+ {
+-    updateAttributes();
++    qDebug() << "attributeRemove";
++    if (!m_attributes.isEmpty()) {
++        int row = m_attributes.indexOf(m_attributes.first());
++        m_attributes.removeAt(row);
++    }
+     endRemoveRows();
+ }
+ 
+ void EntryAttributesModel::attributeAboutToRename(const QString& oldKey, const QString& newKey)
+ {
++    qDebug() << "attributeAboutToRename: oldKey" << oldKey << "newKey" << newKey;
+     int oldRow = m_attributes.indexOf(oldKey);
+-
+-    QList<QString> rows = m_attributes;
+-    rows.removeOne(oldKey);
+-    rows.append(newKey);
+-    std::sort(rows.begin(), rows.end(), m_collator);
+-    int newRow = rows.indexOf(newKey);
+-    if (newRow > oldRow) {
+-        newRow++;
+-    }
+-
+-    if (oldRow != newRow) {
+-        bool result = beginMoveRows(QModelIndex(), oldRow, oldRow, QModelIndex(), newRow);
+-        Q_UNUSED(result);
+-        Q_ASSERT(result);
+-    } else {
+-        m_nextRenameDataChange = true;
++    if (oldRow != -1) {
++        m_attributes[oldRow] = newKey;
++        emit dataChanged(index(oldRow, 0), index(oldRow, 0));
+     }
+ }
+ 
+ void EntryAttributesModel::attributeRename(const QString& oldKey, const QString& newKey)
+ {
+     Q_UNUSED(oldKey);
+-
+-    updateAttributes();
+-
+-    if (!m_nextRenameDataChange) {
+-        endMoveRows();
+-    } else {
+-        m_nextRenameDataChange = false;
+-
+-        QModelIndex keyIndex = index(m_attributes.indexOf(newKey), 0);
+-        emit dataChanged(keyIndex, keyIndex);
+-    }
++    Q_UNUSED(newKey);
+ }
+ 
+ void EntryAttributesModel::aboutToReset()
+ {
++    qDebug() << "aboutToReset";
+     beginResetModel();
+ }
+ 
+ void EntryAttributesModel::reset()
+ {
+-    updateAttributes();
++    qDebug() << "reset";
++    m_attributes.clear();
+     endResetModel();
+ }
+ 
+ void EntryAttributesModel::updateAttributes()
+ {
+-    m_attributes.clear();
+-
+-    const QList<QString> attributesKeyList = m_entryAttributes->keys();
+-    for (const QString& key : attributesKeyList) {
+-        if (!EntryAttributes::isDefaultAttribute(key)) {
+-            m_attributes.append(key);
+-        }
+-    }
+-    std::sort(m_attributes.begin(), m_attributes.end(), m_collator);
++// No-op: attributes are managed via signals
+ }

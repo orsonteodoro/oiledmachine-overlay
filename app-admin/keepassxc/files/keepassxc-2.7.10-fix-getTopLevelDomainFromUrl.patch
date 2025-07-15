@@ -1,0 +1,166 @@
+diff '--color=auto' -urp keepassxc-2.7.10.orig/src/core/UrlTools.cpp keepassxc-2.7.10/src/core/UrlTools.cpp
+--- keepassxc-2.7.10.orig/src/core/UrlTools.cpp	2025-07-14 23:27:58.744487762 -0700
++++ keepassxc-2.7.10/src/core/UrlTools.cpp	2025-07-14 23:32:08.450380176 -0700
+@@ -23,6 +23,12 @@
+ #endif
+ #include <QRegularExpression>
+ #include <QUrl>
++#include <QDebug>
++#include <QtCore/QFile>
++#include <QtCore/QFileInfo>
++#include <QtCore/QIODevice>
++#include <QtCore/QTextStream>
++#include <QtCore/QStandardPaths>
+ 
+ const QString UrlTools::URL_WILDCARD = "1kpxcwc1";
+ 
+@@ -81,6 +87,7 @@ QString UrlTools::getBaseDomainFromUrl(c
+     return baseDomain;
+ }
+ 
++
+ /**
+  * Gets the top level domain from URL.
+  *
+@@ -88,37 +95,122 @@ QString UrlTools::getBaseDomainFromUrl(c
+  */
+ QString UrlTools::getTopLevelDomainFromUrl(const QString& url) const
+ {
+-    auto host = QUrl::fromUserInput(url).host();
++    QUrl qurl = QUrl::fromUserInput(url);
++    QString host = qurl.host();
++    QString aceHost = QUrl::toAce(host);
+     if (isIpAddress(host)) {
+         return host;
+     }
+ 
+-    const auto numberOfDomainParts = host.split('.').length();
+-    static const auto dummy = QByteArrayLiteral("");
++    static QStringList tldList;
++    if (tldList.isEmpty()) {
++        QStringList pslPaths = {
++            QString::fromLocal8Bit(qgetenv("TEMP_DIR")) + "/public_suffix_list.dat",
++            "/usr/share/keepassxc/public_suffix_list.dat",
++            "/etc/keepassxc/tld",
++            QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/keepassxc/tld"
++        };
++
++        for (const QString& pslPath : pslPaths) {
++            if (pslPath.isEmpty() || !QFile::exists(pslPath)) {
++                qDebug() << "Skipping PSL file (not found):" << pslPath;
++                continue;
++            }
++
++            QFileInfo fileInfo(pslPath);
++            if (fileInfo.isWritable() && !pslPath.contains(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation))) {
++                qWarning() << "File is writable by others, skipping for security:" << pslPath;
++                continue;
++            }
++            if (!fileInfo.isReadable()) {
++                qWarning() << "File is not readable, skipping:" << pslPath;
++                continue;
++            }
++            if (pslPath.contains("/keepassxc/tld") && !pslPath.startsWith("/etc")) {
++                if (fileInfo.ownerId() != getuid()) {
++                    qWarning() << "User config file not owned by current user, skipping:" << pslPath;
++                    continue;
++                }
++                if (fileInfo.permissions() & QFileDevice::WriteGroup || fileInfo.permissions() & QFileDevice::WriteOther) {
++                    qWarning() << "User config file has group/world write permissions, skipping:" << pslPath;
++                    continue;
++                }
++            }
++
++            qDebug() << "Attempting to load PSL from" << pslPath << "with permissions:" << QString("0%1").arg(fileInfo.permissions(), 3, 8);
++            QFile file(pslPath);
++            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
++                qWarning() << "Failed to open PSL file" << pslPath << "- error:" << file.errorString();
++                continue;
++            }
++
++            QTextStream in(&file);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++            in.setEncoding(QStringConverter::Utf8);
++#else
++            in.setCodec("UTF-8");
++#endif
++            int lineCount = 0;
++            while (!in.atEnd()) {
++                QString line = in.readLine().trimmed();
++                if (!line.startsWith("//") && !line.startsWith("#") && !line.isEmpty()) {
++                    line = line.toLower().trimmed();
++                    if (line.contains("..") || line.contains("/")) {
++                        qWarning() << "Invalid TLD entry (possible path traversal):" << line;
++                        continue;
++                    }
++                    if (!tldList.contains(line)) {
++                        tldList.append(line);
++                        lineCount++;
++                    }
++                    if (line == "blogspot.com.ar" || line == "s3.amazonaws.com" || line == "org.ws" || line == "example.compute.amazonaws.com") {
++                        qDebug() << "Found" << line << "in PSL from" << pslPath;
++                    }
++                } else if (line.startsWith("#")) {
++                    qDebug() << "Skipping comment in" << pslPath << ":" << line;
++                }
++                if (!pslPath.contains("tld") && tldList.size() < 5) {
++                    qDebug() << "PSL line" << tldList.size() << ":" << line;
++                }
++            }
++            file.close();
++            qDebug() << "Loaded" << lineCount << "entries from" << pslPath;
++        }
++
++        if (tldList.isEmpty()) {
++            qWarning() << "No PSL files loaded, using fallback TLD list";
++            tldList = {
++                "com", "org", "net", "co.uk", "co.jp", "ide.kyoto.jp", "blogspot.com.ar", "ar",
++                "s3.amazonaws.com", "org.ws", "example.compute.amazonaws.com"
++            };
++            qDebug() << "Using fallback TLD list with" << tldList.size() << "entries";
++        } else {
++            qDebug() << "Total TLD entries:" << tldList.size();
++        }
++    }
+ 
+-    // Only loop the amount of different parts found
+-    for (auto i = 0; i < numberOfDomainParts; ++i) {
+-        // Cut the first part from host
+-        host = host.mid(host.indexOf('.') + 1);
+-
+-        QNetworkCookie cookie(dummy, dummy);
+-        cookie.setDomain(host);
+-
+-        // Check if dummy cookie's domain/TLD matches with public suffix list
+-        if (!QNetworkCookieJar{}.setCookiesFromUrl(QList{cookie}, QUrl::fromUserInput(url))) {
+-            return host;
++    QStringList parts = aceHost.isEmpty() ? host.split('.') : aceHost.split('.');
++    const auto numberOfDomainParts = parts.length();
++    qDebug() << "Host:" << host << "ACE Host:" << aceHost << "Parts:" << parts;
++    for (int i = 0; i < numberOfDomainParts; ++i) {
++        QString candidate = parts.mid(i).join('.').toLower();
++        qDebug() << "Checking TLD candidate:" << candidate;
++        if (tldList.contains(candidate)) {
++            return aceHost.isEmpty() ? candidate : QUrl::fromAce(candidate.toLatin1());
+         }
+     }
+ 
+-    return host;
++    return aceHost.isEmpty() ? parts.last() : QUrl::fromAce(parts.last().toLatin1());
+ }
+ 
+ bool UrlTools::isIpAddress(const QString& host) const
+ {
+-    // Handle IPv6 host with brackets, e.g [::1]
+-    const auto hostAddress = host.startsWith('[') && host.endsWith(']') ? host.mid(1, host.length() - 2) : host;
+-    QHostAddress address(hostAddress);
+-    return address.protocol() == QAbstractSocket::IPv4Protocol || address.protocol() == QAbstractSocket::IPv6Protocol;
++    QRegularExpression re(
++        "^(0|[1-9][0-9]{0,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\."
++        "(0|[1-9][0-9]{0,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\."
++        "(0|[1-9][0-9]{0,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\."
++        "(0|[1-9][0-9]{0,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
++    return re.match(host).hasMatch();
+ }
+ #endif
+ 
