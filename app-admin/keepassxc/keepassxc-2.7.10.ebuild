@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# TODO:
-# fix testsshagent test
-
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
@@ -174,6 +171,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.7.10-fix-testentrymodel-test.patch"
 	"${FILESDIR}/${PN}-2.7.10-fix-testpasskeys.patch"
 	"${FILESDIR}/${PN}-2.7.10-fix-getTopLevelDomainFromUrl.patch"
+	"${FILESDIR}/${PN}-2.7.10-testsshagent-workaround.patch"
 )
 
 verify_qt_consistency() {
@@ -277,6 +275,7 @@ src_prepare() {
 	echo "example.compute.amazonaws.com" >> "${T}/public_suffix_list.dat" || die "Failed to append example.compute.amazonaws.com"
 
 	cmake_src_prepare
+	chmod +x "tests/run_testsshagent.sh" || die
 }
 
 src_configure() {
@@ -293,7 +292,7 @@ eerror "Use \`eselect locale\` to change locale to en_US.utf8"
 	filter-lto
 	replace-flags '-O*' '-O2'
 	export MAKEOPTS="-j1"
-	cflags-hardened_append
+#	cflags-hardened_append
 
 	local -a mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or
@@ -360,8 +359,17 @@ einfo "TEMP_DIR:  ${TEMP_DIR}"
 	# To exclude a test:  ctest -E "<test name>"
 	# To exclude multiple tests:  ctest -j 1 --test-load 4 -E "testkdbx3|testkdbx4"
 	# To test one test:  ctest -R <test name>
-	DISABLE_SSH_AGENT_TEST=1
 	DISABLE_SLOW_TESTS=1
+
+	if has_version "net-misc/openssh" ; then
+		DISABLE_SSH_AGENT_TEST=0
+	else
+		DISABLE_SSH_AGENT_TEST=1
+	fi
+	if [[ -z "${SSH_AUTH_SOCK}" ]] ; then
+		DISABLE_SSH_AGENT_TEST=1
+	fi
+
 	local excluded_tests
 	if [[ "${DISABLE_SSH_AGENT_TEST}" == "1" ]] ; then
 		excluded_tests="|testsshagent"
@@ -376,12 +384,13 @@ einfo "TEMP_DIR:  ${TEMP_DIR}"
 		)
 	fi
 	if use X ; then
+einfo "Running tests under X"
 		virtx ctest -j 1 --test-load 4 ${extra_args[@]}
 	fi
 	if use wayland ; then
+einfo "Running tests under Wayland"
 		virtwl ctest -j 1 --test-load 4 ${extra_args[@]}
 	fi
-
 }
 
 src_install() {
@@ -421,14 +430,6 @@ einfo
 
 # Test results for USE="X* autotype* browser* keeshare* network* qt5compat qt6 test* yubikey* -doc (-qt5) -wayland*"
 # Note the TestKeePass1Reader::testCP1252Password() was disabled since cp-1252 is not supported on pure qt6 build on linux.
-
-
-# FIXME:
-
-#FAIL!  : TestPasskeys::testCreatingAttestationObjectWithEC() Compared values are not the same
-#   Actual   (result)                                                                                                                                                                                                                                                                                                          : "\xA3""cfmtdnonegattStmt\xA0hauthDataX\xA4t\xA6\xEA\x92\x13\xC9\x9C/t\xB2$\x92\xB3 \xCF@&*\x94\xC1\xA9P\xA0""9\x7F)%\x0B`\x84\x1E\xF0""E\x00\x00\x00\x00\xFD\xB1""A\xB2]\x84""D>\x8A""5F\x98\xC2\x05\xA5\x02\x00 \xCA\xBC\xC5'\x99pr\x94\xF0`\xC3\x9D])"...
-#   Expected (QString("\xA3" "cfmtdnonegattStmt\xA0hauthDataX\xA4t\xA6\xEA\x92\x13\xC9\x9C/t\xB2$\x92\xB3 \xCF@&*\x94\xC1\xA9P\xA0" "9\x7F)%\x0B`\x84\x1E\xF0" "E\x00\x00\x00\x01\x01\x02\x03\x04\x05\x06\x07\b\x01\x02\x03\x04\x05\x06\x07\b\x00 \x8B\xB0\xCA" "6\x17\xD6\xDE\x01\x11|\xEA\x94\r\xA0R\xC0\x80_\xF3r\xFBr\xB5\x02\x03:" "\xBAr\x0Fi\x81\xFE\xA5\x01\x02\x03& \x01!X " "e\xE2\xF2\x1F:cq\xD3G\xEA\xE0\xF7\x1F\xCF\xFA\\\xABO\xF6\x86\x88\x80\t\xAE\x81\x8BT\xB2\x9B\x15\x85~" "\"X \\\x8E\x1E@\xDB\x97T-\xF8\x9B\xB0\xAD" "5\xDC\x12^\xC3\x95\x05\xC6\xDF^\x03\xCB\xB4Q\x91\xFF|\xDB\x94\xB7")): "\uFFFDcfmtdnonegattStmt\uFFFDhauthDataX\uFFFDt\uFFFD\uFFFD\uFFFD\u0013\u025C/t\uFFFD$\uFFFD\uFFFD \uFFFD@&*\uFFFD\uFFFD\uFFFDP\uFFFD9\u007F)%\u000B`\uFFFD\u001E\uFFFDE"
-#   Loc: [/var/tmp/portage/app-admin/keepassxc-2.7.9/work/keepassxc-2.7.9/tests/TestPasskeys.cpp(285)]
 
 __TEST_RESULTS="
 Test project /var/tmp/portage/app-admin/keepassxc-2.7.10/work/keepassxc-2.7.10_build

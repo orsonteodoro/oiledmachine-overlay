@@ -1,0 +1,26 @@
+The tests works but problems with the testing framework causes stall.
+diff '--color=auto' -urpN keepassxc-2.7.10.orig/tests/CMakeLists.txt keepassxc-2.7.10/tests/CMakeLists.txt
+--- keepassxc-2.7.10.orig/tests/CMakeLists.txt	2025-07-15 09:30:10.197361114 -0700
++++ keepassxc-2.7.10/tests/CMakeLists.txt	2025-07-15 09:31:48.293976813 -0700
+@@ -168,8 +168,10 @@ if(WITH_XC_SSHAGENT)
+     add_unit_test(NAME testopensshkey SOURCES TestOpenSSHKey.cpp
+             LIBS sshagent ${TEST_LIBRARIES})
+     if(NOT WIN32)
+-        add_unit_test(NAME testsshagent SOURCES TestSSHAgent.cpp
+-                LIBS ${TEST_LIBRARIES})
++        add_unit_test(NAME testsshagent SOURCES TestSSHAgent.cpp
++                LIBS ${TEST_LIBRARIES})
++        add_test(NAME TestSshAgent COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/run_testsshagent.sh)
++        set_tests_properties(TestSshAgent PROPERTIES TIMEOUT 15)
+     endif()
+ endif()
+ 
+diff '--color=auto' -urpN keepassxc-2.7.10.orig/tests/run_testsshagent.sh keepassxc-2.7.10/tests/run_testsshagent.sh
+--- keepassxc-2.7.10.orig/tests/run_testsshagent.sh	1969-12-31 16:00:00.000000000 -0800
++++ keepassxc-2.7.10/tests/run_testsshagent.sh	2025-07-15 09:32:23.781437631 -0700
+@@ -0,0 +1,5 @@
++#!/bin/bash
++./testsshagent > testsshagent_output.log 2>&1
++exit_status=$?
++echo "TestSSHAgent exit status: $exit_status"
++exit $exit_status

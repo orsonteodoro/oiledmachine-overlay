@@ -53,20 +53,20 @@ diff '--color=auto' -urp keepassxc-2.7.10.orig/src/core/UrlTools.cpp keepassxc-2
 +
 +            QFileInfo fileInfo(pslPath);
 +            if (fileInfo.isWritable() && !pslPath.contains(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation))) {
-+                qWarning() << "File is writable by others, skipping for security:" << pslPath;
++                qDebug() << "File is writable by others, skipping for security:" << pslPath;
 +                continue;
 +            }
 +            if (!fileInfo.isReadable()) {
-+                qWarning() << "File is not readable, skipping:" << pslPath;
++                qDebug() << "File is not readable, skipping:" << pslPath;
 +                continue;
 +            }
 +            if (pslPath.contains("/keepassxc/tld") && !pslPath.startsWith("/etc")) {
 +                if (fileInfo.ownerId() != getuid()) {
-+                    qWarning() << "User config file not owned by current user, skipping:" << pslPath;
++                    qDebug() << "User config file not owned by current user, skipping:" << pslPath;
 +                    continue;
 +                }
 +                if (fileInfo.permissions() & QFileDevice::WriteGroup || fileInfo.permissions() & QFileDevice::WriteOther) {
-+                    qWarning() << "User config file has group/world write permissions, skipping:" << pslPath;
++                    qDebug() << "User config file has group/world write permissions, skipping:" << pslPath;
 +                    continue;
 +                }
 +            }
@@ -74,7 +74,7 @@ diff '--color=auto' -urp keepassxc-2.7.10.orig/src/core/UrlTools.cpp keepassxc-2
 +            qDebug() << "Attempting to load PSL from" << pslPath << "with permissions:" << QString("0%1").arg(fileInfo.permissions(), 3, 8);
 +            QFile file(pslPath);
 +            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-+                qWarning() << "Failed to open PSL file" << pslPath << "- error:" << file.errorString();
++                qDebug() << "Failed to open PSL file" << pslPath << "- error:" << file.errorString();
 +                continue;
 +            }
 +
@@ -90,7 +90,7 @@ diff '--color=auto' -urp keepassxc-2.7.10.orig/src/core/UrlTools.cpp keepassxc-2
 +                if (!line.startsWith("//") && !line.startsWith("#") && !line.isEmpty()) {
 +                    line = line.toLower().trimmed();
 +                    if (line.contains("..") || line.contains("/")) {
-+                        qWarning() << "Invalid TLD entry (possible path traversal):" << line;
++                        qDebug() << "Invalid TLD entry (possible path traversal):" << line;
 +                        continue;
 +                    }
 +                    if (!tldList.contains(line)) {
@@ -123,7 +123,7 @@ diff '--color=auto' -urp keepassxc-2.7.10.orig/src/core/UrlTools.cpp keepassxc-2
 -        if (!QNetworkCookieJar{}.setCookiesFromUrl(QList{cookie}, QUrl::fromUserInput(url))) {
 -            return host;
 +        if (tldList.isEmpty()) {
-+            qWarning() << "No PSL files loaded, using fallback TLD list";
++            qDebug() << "No PSL files loaded, using fallback TLD list";
 +            tldList = {
 +                "com", "org", "net", "co.uk", "co.jp", "ide.kyoto.jp", "blogspot.com.ar", "ar",
 +                "s3.amazonaws.com", "org.ws", "example.compute.amazonaws.com"
