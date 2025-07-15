@@ -359,7 +359,7 @@ einfo "TEMP_DIR:  ${TEMP_DIR}"
 	# To exclude a test:  ctest -E "<test name>"
 	# To exclude multiple tests:  ctest -j 1 --test-load 4 -E "testkdbx3|testkdbx4"
 	# To test one test:  ctest -R <test name>
-	DISABLE_SLOW_TESTS=1
+	DISABLE_SLOW_TESTS=0
 
 	if has_version "net-misc/openssh" ; then
 		DISABLE_SSH_AGENT_TEST=0
