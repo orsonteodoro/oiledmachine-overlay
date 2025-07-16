@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
-PSL_COMMIT="c38a2f8e8862ad65d91af25dee90002c61329953"
+PSL_COMMIT="c38a2f8e8862ad65d91af25dee90002c61329953" # Jul 9, 2025
 QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
@@ -44,7 +44,9 @@ https://github.com/keepassxreboot/${PN}/releases/download/${PV}/${P}-src.tar.xz
 	fi
 fi
 SRC_URI+="
-https://raw.githubusercontent.com/publicsuffix/list/c38a2f8e8862ad65d91af25dee90002c61329953/public_suffix_list.dat -> public_suffix_list-${PSL_COMMIT:0:7}.dat
+	network? (
+https://raw.githubusercontent.com/publicsuffix/list/${PSL_COMMIT}/public_suffix_list.dat -> public_suffix_list-${PSL_COMMIT:0:7}.dat
+	)
 "
 
 DESCRIPTION="KeePassXC - KeePass Cross-platform Community Edition"
@@ -56,7 +58,11 @@ LICENSE="
 	LGPL-2.1
 	GPL-2
 	GPL-3
+	network? (
+		MPL-2.0
+	)
 "
+# MPL-2.0 - PSL
 RESTRICT="
 	!test? (
 		test
@@ -260,7 +266,9 @@ ewarn "You must switch your gcc to 13 to avoid build time error(s)."
 
 src_unpack() {
 	unpack ${A}
-	cat "${DISTDIR}/public_suffix_list-${PSL_COMMIT:0:7}.dat" > "${T}/public_suffix_list.dat" || die
+	if use network ; then
+		cat "${DISTDIR}/public_suffix_list-${PSL_COMMIT:0:7}.dat" > "${T}/public_suffix_list.dat" || die
+	fi
 }
 
 src_prepare() {
@@ -268,11 +276,13 @@ src_prepare() {
 		printf '%s' "${PV}" > ".version" || die
 	fi
 
-	# For testing
-	echo "blogspot.com.ar" >> "${T}/public_suffix_list.dat" || die "Failed to append blogspot.com.ar"
-	echo "s3.amazonaws.com" >> "${T}/public_suffix_list.dat" || die "Failed to append s3.amazonaws.com"
-	echo "org.ws" >> "${T}/public_suffix_list.dat" || die "Failed to append org.ws"
-	echo "example.compute.amazonaws.com" >> "${T}/public_suffix_list.dat" || die "Failed to append example.compute.amazonaws.com"
+	if use network ; then
+		# For testing
+		echo "blogspot.com.ar" >> "${T}/public_suffix_list.dat" || die "Failed to append blogspot.com.ar"
+		echo "s3.amazonaws.com" >> "${T}/public_suffix_list.dat" || die "Failed to append s3.amazonaws.com"
+		echo "org.ws" >> "${T}/public_suffix_list.dat" || die "Failed to append org.ws"
+		echo "example.compute.amazonaws.com" >> "${T}/public_suffix_list.dat" || die "Failed to append example.compute.amazonaws.com"
+	fi
 
 	cmake_src_prepare
 	chmod +x "tests/run_testsshagent.sh" || die
