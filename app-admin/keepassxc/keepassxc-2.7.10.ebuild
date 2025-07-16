@@ -31,7 +31,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	#KEYWORDS="~amd64" # Test failure for 1 test
-	if [[ "${PV}" == *_beta* ]] ; then
+	if [[ "${PV}" == *"_beta"* ]] ; then
 		S="${WORKDIR}/${P/_/-}"
 		SRC_URI="
 https://github.com/keepassxreboot/${PN}/archive/${PV/_/-}.tar.gz
@@ -272,7 +272,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	if [[ "${PV}" != *_beta* ]] && [[ "${PV}" != *9999 ]] && [[ ! -f .version ]] ; then
+	if [[ "${PV}" != *"_beta"* ]] && [[ "${PV}" != *"9999" ]] && [[ ! -f ".version" ]] ; then
 		printf '%s' "${PV}" > ".version" || die
 	fi
 
@@ -331,7 +331,7 @@ eerror "Use \`eselect locale\` to change locale to en_US.utf8"
 			-DCMAKE_CXX_COMPILER="clazy"
 		)
 	fi
-	if [[ "${PV}" == *_beta* ]] ; then
+	if [[ "${PV}" == *"_beta"* ]] ; then
 		mycmakeargs+=(
 			-DOVERRIDE_VERSION="${PV/_/-}"
 		)
