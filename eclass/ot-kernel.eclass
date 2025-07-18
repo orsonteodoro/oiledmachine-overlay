@@ -16561,6 +16561,15 @@ ewarn "CVE-2024-31157 - ID                      # Microcode update for Intel® C
 ewarn "CVE-2024-28047 - ID                      # Microcode update for Intel® CPUs available"
 ewarn "CVE-2024-39355 - DoS                     # Microcode update for Intel® CPUs available"
 ewarn "CVE-2024-37020 - DoS                     # Microcode update for Intel® CPUs available"
+ewarn
+# 20250211
+ewarn "CVE-2024-0179 - CE, DoS, DT, ID          # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21925 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
+# 20250305
+ewarn "CVE-2024-36347 - DoS, DT, ID             # BIOS firmware update for AMD CPUs available"
+ewarn
+ewarn "Recent CPU vulnerabilities for Q2 2025:"
+ewarn
 # 20250512
 ewarn "CVE-2024-28956 - ID                      # Microcode update for Intel® CPUs available"
 ewarn "CVE-2025-20103 - DoS                     # Microcode update for Intel® CPUs available"
@@ -16570,12 +16579,14 @@ ewarn "CVE-2025-20623 - ID                      # Microcode update for Intel® C
 ewarn "CVE-2024-45332 - ID                      # Microcode update for Intel® CPUs available"
 ewarn "CVE-2025-24495 - ID                      # Microcode update for Intel® CPUs available"
 ewarn "CVE-2025-20012 - ID                      # Microcode update for Intel® CPUs available"
-
-# 20250211
-ewarn "CVE-2024-0179 - CE, DoS, DT, ID          # BIOS firmware update for AMD CPUs available"
-ewarn "CVE-2024-21925 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
-# 20250305
-ewarn "CVE-2024-36347 - DoS, DT, ID             # BIOS firmware update for AMD CPUs available"
+ewarn
+ewarn "Recent CPU vulnerabilities for Q3 2025:"
+ewarn
+# 20250708
+ewarn "CVE-2024-36350 - ID			# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36357 - ID			# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36348 - [Non-sensitive] ID	# No fix planned"
+ewarn "CVE-2024-36349 - [Non-sensitive] ID	# No fix planned"
 }
 
 # @FUNCTION: ot-kernel_postinst_experimental_kernel
