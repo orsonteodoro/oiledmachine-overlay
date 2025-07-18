@@ -472,14 +472,18 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Jul 07, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1752156535 # From `date +%s -d "2025-07-10 16:08:55 +0200"` from changelog for latest tag
+MITIGATION_DATE="Jul 17, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1752770645 # From `date +%s -d "2025-07-17 18:44:05 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+	# 20250718
+	"CVE-2025-38349;;"
 
-	# 20250710
+	# 20250715
+	"CVE-2023-53001;;Rejected"
+
 	"CVE-2025-38346;UAF;"
 	"CVE-2025-38348;BO;"
 	"CVE-2025-38347;;"
