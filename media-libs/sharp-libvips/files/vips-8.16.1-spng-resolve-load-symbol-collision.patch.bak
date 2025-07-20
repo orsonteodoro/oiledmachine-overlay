@@ -1,6 +1,6 @@
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1/libvips/foreign/foreign.c
---- vips-8.16.1.orig/libvips/foreign/foreign.c	2025-07-19 23:25:42.001371090 -0700
-+++ vips-8.16.1/libvips/foreign/foreign.c	2025-07-19 23:25:56.482082481 -0700
+--- vips-8.16.1.orig/libvips/foreign/foreign.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/foreign.c	2025-07-19 19:20:25.414242020 -0700
 @@ -26,6 +26,8 @@
   * 	- drop incompatible ICC profiles before save
   * 24/7/21
@@ -132,22 +132,34 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
  
  	return G_OBJECT_CLASS_NAME(load_class);
  }
-@@ -1783,60 +1802,117 @@ vips__foreign_update_metadata(VipsImage
+@@ -1783,58 +1802,73 @@ vips__foreign_update_metadata(VipsImage
  static int
  vips_foreign_save_build(VipsObject *object)
  {
 -	VipsForeignSave *save = VIPS_FOREIGN_SAVE(object);
--
--	/* The deprecated "strip" field sets "keep" to none.
--	 */
++    VipsForeignSave *save = VIPS_FOREIGN_SAVE(object);
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Starting build for object=%p, in=%p", object, save->in);
++
++    if (!save || !VIPS_IS_FOREIGN_SAVE(save)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Invalid VipsForeignSave object: %p", save);
++        vips_error("foreign_save", "Invalid VipsForeignSave object");
++        return -1;
++    }
+ 
+ 	/* The deprecated "strip" field sets "keep" to none.
+ 	 */
 -	if (vips_object_argument_isset(object, "strip") &&
 -		!vips_object_argument_isset(object, "keep"))
 -		save->keep = save->strip
 -			? VIPS_FOREIGN_KEEP_NONE
 -			: VIPS_FOREIGN_KEEP_ALL;
--
--	/* Keep ICC profile by default when a user profile has been set.
--	 */
++    if (vips_object_argument_isset(object, "strip") &&
++        !vips_object_argument_isset(object, "keep"))
++        save->keep = save->strip ? VIPS_FOREIGN_KEEP_NONE : VIPS_FOREIGN_KEEP_ALL;
+ 
+ 	/* Keep ICC profile by default when a user profile has been set.
+ 	 */
 -	if ((save->keep & VIPS_FOREIGN_KEEP_ICC) == 0 &&
 -		vips_object_argument_isset(object, "profile"))
 -		save->keep |= VIPS_FOREIGN_KEEP_ICC;
@@ -161,9 +173,27 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
 -				class->saveable, class->format_table, class->coding,
 -				save->background))
 -			return -1;
--
--		/* Updating metadata, need to copy the image.
--		 */
++    if ((save->keep & VIPS_FOREIGN_KEEP_ICC) == 0 &&
++        vips_object_argument_isset(object, "profile"))
++        save->keep |= VIPS_FOREIGN_KEEP_ICC;
++
++    if (save->in) {
++        VipsForeignSaveClass *class = VIPS_FOREIGN_SAVE_GET_CLASS(save);
++        VipsImage *ready;
++        VipsImage *x;
++
++        g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Converting image, saveable=%d, in=%p (Xsize=%d, Ysize=%d, Bands=%d, BandFmt=%d, Coding=%d)",
++              class->saveable, save->in, save->in->Xsize, save->in->Ysize, save->in->Bands, save->in->BandFmt, save->in->Coding);
++        if (vips__foreign_convert_saveable(save->in, &ready,
++                class->saveable, class->format_table, class->coding,
++                save->background)) {
++            g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: vips__foreign_convert_saveable failed: %s", vips_error_buffer());
++            vips_error("foreign_save", "Failed to convert image: %s", vips_error_buffer());
++            return -1;
++        }
+ 
+ 		/* Updating metadata, need to copy the image.
+ 		 */
 -		if (vips_copy(ready, &x, NULL)) {
 -			VIPS_UNREF(ready);
 -			return -1;
@@ -179,91 +209,9 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
 -		if (save->page_height)
 -			vips_image_set_int(ready, VIPS_META_PAGE_HEIGHT,
 -				save->page_height);
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Starting build for object=%p, type=%s",
-+          object, object ? g_type_name(G_OBJECT_TYPE(object)) : "NULL");
- 
--		VIPS_UNREF(save->ready);
--		save->ready = ready;
--	}
--
--	if (VIPS_OBJECT_CLASS(vips_foreign_save_parent_class)->build(object))
--		return -1;
--
--	return 0;
-+    if (!object || !VIPS_IS_OBJECT(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Invalid object: %p", object);
-+        vips_error("foreign_save", "Invalid object");
-+        return -1;
-+    }
-+
-+    VipsForeignSave *save = VIPS_FOREIGN_SAVE(object);
-+    if (!save || !VIPS_IS_FOREIGN_SAVE(save)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Invalid VipsForeignSave object: %p, type=%s",
-+              save, save ? g_type_name(G_OBJECT_TYPE(save)) : "NULL");
-+        vips_error("foreign_save", "Invalid VipsForeignSave object");
-+        return -1;
-+    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Object valid, save=%p, in=%p (type=%s, ref_count=%d)",
-+          save, save->in, save->in ? G_OBJECT_TYPE_NAME(save->in) : "NULL",
-+          save->in ? G_OBJECT(save->in)->ref_count : 0);
-+
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Input image not set: in=%p", save->in);
-+        vips_error("foreign_save", "Input image not set");
-+        return -1;
-+    }
-+
-+    g_object_ref(save->in);
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Before parent build, in=%p (type=%s, ref_count=%d)",
-+          save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
-+
-+    if (vips_object_argument_isset(object, "strip") &&
-+        !vips_object_argument_isset(object, "keep"))
-+        save->keep = save->strip ? VIPS_FOREIGN_KEEP_NONE : VIPS_FOREIGN_KEEP_ALL;
-+
-+    if ((save->keep & VIPS_FOREIGN_KEEP_ICC) == 0 &&
-+        vips_object_argument_isset(object, "profile"))
-+        save->keep |= VIPS_FOREIGN_KEEP_ICC;
-+
-+    if (VIPS_OBJECT_CLASS(vips_foreign_save_parent_class)->build(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Parent build failed: %s", vips_error_buffer());
-+        vips_error("foreign_save", "Parent build failed: %s", vips_error_buffer());
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: After parent build, in=%p (type=%s, ref_count=%d)",
-+          save->in, save->in ? G_OBJECT_TYPE_NAME(save->in) : "NULL",
-+          save->in ? G_OBJECT(save->in)->ref_count : 0);
-+
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Input image not set after parent build: in=%p", save->in);
-+        vips_error("foreign_save", "Input image not set");
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    if (save->in) {
-+        VipsForeignSaveClass *class = VIPS_FOREIGN_SAVE_GET_CLASS(save);
-+        VipsImage *ready;
-+        VipsImage *x;
-+
-+        g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Converting image, saveable=%d, in=%p", class->saveable, save->in);
-+        if (vips__foreign_convert_saveable(save->in, &ready,
-+                class->saveable, class->format_table, class->coding,
-+                save->background)) {
-+            g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: vips__foreign_convert_saveable failed: %s", vips_error_buffer());
-+            vips_error("foreign_save", "Failed to convert image: %s", vips_error_buffer());
-+            g_object_unref(save->in);
-+            return -1;
-+        }
-+
 +        if (vips_copy(ready, &x, NULL)) {
 +            g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: vips_copy failed: %s", vips_error_buffer());
 +            VIPS_UNREF(ready);
-+            g_object_unref(save->in);
 +            return -1;
 +        }
 +        VIPS_UNREF(ready);
@@ -272,7 +220,6 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
 +        if (vips__foreign_update_metadata(ready, save->keep)) {
 +            g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: vips__foreign_update_metadata failed: %s", vips_error_buffer());
 +            VIPS_UNREF(ready);
-+            g_object_unref(save->in);
 +            return -1;
 +        }
 +
@@ -283,25 +230,25 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
 +        save->ready = ready;
 +    }
 +
-+
 +    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: Calling parent build, in=%p, ready=%p", save->in, save->ready);
 +    if (VIPS_OBJECT_CLASS(vips_foreign_save_parent_class)->build(object)) {
 +        g_log("vips", G_LOG_LEVEL_ERROR, "foreign_save: Parent build failed: %s", vips_error_buffer());
-+        vips_error("foreign_save", "Parent build failed: %s", vips_error_buffer());
-+        g_object_unref(save->in);
 +        return -1;
 +    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "foreign_save: After parent build, in=%p, ready=%p", save->in, save->ready);
-+    g_object_unref(save->in);
+ 
+-		VIPS_UNREF(save->ready);
+-		save->ready = ready;
+-	}
+-
+-	if (VIPS_OBJECT_CLASS(vips_foreign_save_parent_class)->build(object))
+-		return -1;
+-
+-	return 0;
 +    return 0;
  }
  
-+
  #define UC VIPS_FORMAT_UCHAR
- #define C VIPS_FORMAT_CHAR
- #define US VIPS_FORMAT_USHORT
-@@ -2960,9 +3036,12 @@ vips_foreign_operation_init(void)
+@@ -2960,9 +2994,12 @@ vips_foreign_operation_init(void)
  	extern GType vips_foreign_save_png_buffer_get_type(void);
  	extern GType vips_foreign_save_png_target_get_type(void);
  
@@ -316,7 +263,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
  
  	extern GType vips_foreign_load_csv_file_get_type(void);
  	extern GType vips_foreign_load_csv_source_get_type(void);
-@@ -3186,12 +3265,10 @@ vips_foreign_operation_init(void)
+@@ -3186,12 +3223,10 @@ vips_foreign_operation_init(void)
  #endif /*HAVE_PNG*/
  
  #ifdef HAVE_SPNG
@@ -334,8 +281,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/foreign.c vips-8.16.1
  
  #ifdef HAVE_MATIO
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/meson.build vips-8.16.1/libvips/foreign/meson.build
---- vips-8.16.1.orig/libvips/foreign/meson.build	2025-07-19 23:25:42.001972999 -0700
-+++ vips-8.16.1/libvips/foreign/meson.build	2025-07-19 23:25:56.484793734 -0700
+--- vips-8.16.1.orig/libvips/foreign/meson.build	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/meson.build	2025-07-19 19:16:37.346854665 -0700
 @@ -44,8 +44,6 @@ foreign_sources = files(
      'radsave.c',
      'rawload.c',
@@ -365,8 +312,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/meson.build vips-8.16
      'dbh.h',
      'jpeg.h',
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.1/libvips/foreign/spngload.c
---- vips-8.16.1.orig/libvips/foreign/spngload.c	2025-07-19 23:25:42.002659778 -0700
-+++ vips-8.16.1/libvips/foreign/spngload.c	2025-07-19 23:25:56.485484293 -0700
+--- vips-8.16.1.orig/libvips/foreign/spngload.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/spngload.c	2025-07-19 19:16:37.347537005 -0700
 @@ -8,6 +8,37 @@
   *	-  add "unlimited" flag to png load
   * 3/2/23 MathemanFlo
@@ -2083,7 +2030,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.c vips-8.16.
  #endif /*HAVE_SPNG*/
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.h vips-8.16.1/libvips/foreign/spngload.h
 --- vips-8.16.1.orig/libvips/foreign/spngload.h	1969-12-31 16:00:00.000000000 -0800
-+++ vips-8.16.1/libvips/foreign/spngload.h	2025-07-19 23:25:56.485742319 -0700
++++ vips-8.16.1/libvips/foreign/spngload.h	2025-07-19 19:16:37.347814118 -0700
 @@ -0,0 +1,33 @@
 +#ifndef VIPS_SPNGLOAD_H
 +#define VIPS_SPNGLOAD_H
@@ -2119,8 +2066,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngload.h vips-8.16.
 +
 +#endif /*VIPS_SPNGLOAD_H*/
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.1/libvips/foreign/spngsave.c
---- vips-8.16.1.orig/libvips/foreign/spngsave.c	2025-07-19 23:25:42.004079129 -0700
-+++ vips-8.16.1/libvips/foreign/spngsave.c	2025-07-19 23:33:50.118724046 -0700
+--- vips-8.16.1.orig/libvips/foreign/spngsave.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/spngsave.c	2025-07-19 19:21:50.837071489 -0700
 @@ -14,6 +14,21 @@
   * 	- default filter to none
   * 17/11/22
@@ -2143,7 +2090,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
   */
  
  /*
-@@ -51,881 +66,710 @@
+@@ -51,881 +66,788 @@
  #ifdef HAVE_CONFIG_H
  #include <config.h>
  #endif /*HAVE_CONFIG_H*/
@@ -2196,22 +2143,14 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	/* Deprecated.
 -	 */
 -	int colours;
- 
+-
 -} VipsForeignSaveSpng;
-+/* Property IDs */
-+enum {
-+    PROP_FILENAME = 1,
-+    PROP_IN,
-+    PROP_BUFFER,
-+    PROP_LAST
-+};
- 
+-
 -typedef VipsForeignSaveClass VipsForeignSaveSpngClass;
- 
+-
 -G_DEFINE_ABSTRACT_TYPE(VipsForeignSaveSpng, vips_foreign_save_spng,
 -	VIPS_TYPE_FOREIGN_SAVE);
-+G_DEFINE_TYPE(VipsForeignSaveSpng, vips_foreign_save_spng, VIPS_TYPE_FOREIGN_SAVE);
- 
+-
 -static void
 -vips_foreign_save_spng_dispose(GObject *gobject)
 -{
@@ -2222,6 +2161,59 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	VIPS_UNREF(spng->target);
 -	VIPS_UNREF(spng->memory);
 -	VIPS_FREEF(spng_ctx_free, spng->ctx);
+-
+-	for (p = spng->text_chunks; p; p = p->next) {
+-		struct spng_text *text = (struct spng_text *) p->data;
+ 
+-		VIPS_FREE(text->text);
+-		VIPS_FREE(text);
+-	}
+-	VIPS_FREEF(g_slist_free, spng->text_chunks);
+-
+-	VIPS_FREE(spng->line);
+-
+-	G_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->dispose(gobject);
+-}
+-
+-static int
+-vips_foreign_save_spng_text(VipsForeignSaveSpng *spng,
+-	const char *keyword, const char *value)
+-{
+-	struct spng_text *text = VIPS_NEW(NULL, struct spng_text);
+-
+-	g_strlcpy(text->keyword, keyword, sizeof(text->keyword));
+-	/* FIXME ... is this right?
+-	 */
+-	text->type = SPNG_TEXT;
+-	text->length = strlen(value);
+-	text->text = g_strdup(value);
+-
+-	spng->text_chunks = g_slist_prepend(spng->text_chunks, text);
+-
+-	return 0;
+-}
++/* Property IDs */
++enum {
++    PROP_FILENAME = 1,
++    PROP_IN,
++    PROP_BUFFER,
++    PROP_LAST
++};
+ 
+-static void *
+-vips_foreign_save_spng_comment(VipsImage *image,
+-	const char *field, GValue *value, void *user_data)
+-{
+-	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) user_data;
+ 
+-	if (vips_isprefix("png-comment-", field)) {
+-		const char *value;
+-		int i;
+-		char key[256];
++G_DEFINE_TYPE(VipsForeignSaveSpng, vips_foreign_save_spng, VIPS_TYPE_FOREIGN_SAVE);
+ 
+-		if (vips_image_get_string(image, field, &value))
+-			return image;
 +/* Buffer-based saving */
 +typedef struct _VipsForeignSaveSpngBuffer {
 +    VipsForeignSave parent_object;
@@ -2230,104 +2222,34 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 +    size_t *len;
 +} VipsForeignSaveSpngBuffer;
  
--	for (p = spng->text_chunks; p; p = p->next) {
--		struct spng_text *text = (struct spng_text *) p->data;
-+typedef struct _VipsForeignSaveSpngBufferClass {
-+    VipsForeignSaveClass parent_class;
-+} VipsForeignSaveSpngBufferClass;
- 
--		VIPS_FREE(text->text);
--		VIPS_FREE(text);
--	}
--	VIPS_FREEF(g_slist_free, spng->text_chunks);
-+G_DEFINE_TYPE(VipsForeignSaveSpngBuffer, vips_foreign_save_spng_buffer, VIPS_TYPE_FOREIGN_SAVE);
- 
--	VIPS_FREE(spng->line);
-+static gboolean spngsave_buffer_class_initialized = FALSE;
- 
--	G_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->dispose(gobject);
--}
- 
--static int
--vips_foreign_save_spng_text(VipsForeignSaveSpng *spng,
--	const char *keyword, const char *value)
-+static void
-+vips_foreign_save_spng_dispose(GObject *gobject)
- {
--	struct spng_text *text = VIPS_NEW(NULL, struct spng_text);
-+    VipsForeignSaveSpng *save = VIPS_FOREIGN_SAVE_SPNG(gobject);
- 
--	g_strlcpy(text->keyword, keyword, sizeof(text->keyword));
--	/* FIXME ... is this right?
--	 */
--	text->type = SPNG_TEXT;
--	text->length = strlen(value);
--	text->text = g_strdup(value);
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Disposing VipsForeignSaveSpng %p", save);
- 
--	spng->text_chunks = g_slist_prepend(spng->text_chunks, text);
-+    if (save->in) {
-+        g_object_unref(save->in);
-+        save->in = NULL;
-+    }
-+    if (save->ready) {
-+        g_object_unref(save->ready);
-+        save->ready = NULL;
-+    }
-+    if (save->filename) {
-+        g_free(save->filename);
-+        save->filename = NULL;
-+    }
- 
--	return 0;
-+    G_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->dispose(gobject);
- }
- 
--static void *
--vips_foreign_save_spng_comment(VipsImage *image,
--	const char *field, GValue *value, void *user_data)
-+static void
-+vips_foreign_save_spng_buffer_dispose(GObject *gobject)
- {
--	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) user_data;
--
--	if (vips_isprefix("png-comment-", field)) {
--		const char *value;
--		int i;
--		char key[256];
--
--		if (vips_image_get_string(image, field, &value))
--			return image;
-+    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) gobject;
- 
 -		if (strlen(field) > 256 ||
 -			sscanf(field, "png-comment-%d-%80s", &i, key) != 2) {
 -			vips_error("vips2png",
 -				"%s", _("bad png comment key"));
 -			return image;
 -		}
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Disposing VipsForeignSaveSpngBuffer, in=%p (ref_count=%d)",
-+          save->in, save->in ? G_OBJECT(save->in)->ref_count : 0);
++typedef struct _VipsForeignSaveSpngBufferClass {
++    VipsForeignSaveClass parent_class;
++} VipsForeignSaveSpngBufferClass;
  
 -		vips_foreign_save_spng_text(spng, key, value);
 -	}
-+    VIPS_UNREF(save->in);
++G_DEFINE_TYPE(VipsForeignSaveSpngBuffer, vips_foreign_save_spng_buffer, VIPS_TYPE_FOREIGN_SAVE);
  
 -	return NULL;
-+    G_OBJECT_CLASS(vips_foreign_save_spng_buffer_parent_class)->dispose(gobject);
- }
+-}
++static gboolean spngsave_class_initialized = FALSE;
++static gboolean spngsave_buffer_class_initialized = FALSE;
  
 -static int
 -vips_foreign_save_spng_profile(VipsForeignSaveSpng *spng, VipsImage *in)
 +static void
-+vips_foreign_save_spng_set_property(GObject *gobject, guint property_id,
-+                                    const GValue *value, GParamSpec *pspec)
++vips_foreign_save_spng_dispose(GObject *gobject)
  {
 -	VipsForeignSave *save = (VipsForeignSave *) spng;
 -
 -	struct spng_iccp iccp;
-+    VipsForeignSaveSpng *save = VIPS_FOREIGN_SAVE_SPNG(gobject);
- 
+-
 -	/* A profile supplied as an argument overrides an embedded
 -	 * profile.
 -	 */
@@ -2371,40 +2293,17 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		g_strlcpy(iccp.profile_name, "icc", sizeof(iccp.profile_name));
 -		iccp.profile_len = length;
 -		iccp.profile = (void *) data;
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: set_property called with property_id=%u, name=%s",
-+          property_id, g_param_spec_get_name(pspec));
++    VipsForeignSaveSpng *save = (VipsForeignSaveSpng *) gobject;
  
 -		spng_set_iccp(spng->ctx, &iccp);
 -	}
--
--	return 0;
-+    switch (property_id) {
-+    case 1: // in
-+        if (save->in) {
-+            g_object_unref(save->in);
-+        }
-+        save->in = VIPS_IMAGE(g_value_dup_object(value));
-+        g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting in property: %p", save->in);
-+        break;
-+    case 2: // filename
-+        g_free(save->filename);
-+        save->filename = g_value_dup_string(value);
-+        g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting filename property: %s", save->filename);
-+        break;
-+    case 3: // buffer
-+        save->buf = (void **)g_value_get_pointer(value);
-+        g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting buffer property: %p", save->buf);
-+        break;
-+    case 4: // length
-+        save->len = (gsize *)g_value_get_pointer(value);
-+        g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting length property: %p", save->len);
-+        break;
-+    default:
-+        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
-+        break;
-+    }
- }
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Disposing VipsForeignSaveSpng, filename=%s, in=%p (ref_count=%d)",
++          save->filename ? save->filename : "(null)",
++          save->in, save->in ? G_OBJECT(save->in)->ref_count : 0);
  
+-	return 0;
+-}
+-
 -static int
 -vips_foreign_save_spng_metadata(VipsForeignSaveSpng *spng, VipsImage *in)
 -{
@@ -2462,24 +2361,28 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -#endif /*DEBUG*/
 -	spng_set_text(spng->ctx, text_chunk_array, n_text);
 -	VIPS_FREE(text_chunk_array);
--
++    VIPS_UNREF(save->in);
++    VIPS_FREE(save->filename);
+ 
 -	return 0;
--}
++    G_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->dispose(gobject);
+ }
  
 -/* Pack a line of 1/2/4 bit index values.
 - */
  static void
 -vips_foreign_save_spng_pack(VipsForeignSaveSpng *spng,
 -	VipsPel *q, VipsPel *p, size_t n)
-+vips_foreign_save_spng_buffer_set_property(GObject *gobject, guint property_id,
-+    const GValue *value, GParamSpec *pspec)
++vips_foreign_save_spng_buffer_dispose(GObject *gobject)
  {
 -	int pixel_mask = 8 / spng->bitdepth - 1;
 -	int shift = spng->palette ? 0 : 8 - spng->bitdepth;
--
++    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) gobject;
+ 
 -	VipsPel bits;
 -	size_t x;
-+    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) gobject;
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Disposing VipsForeignSaveSpngBuffer, in=%p (ref_count=%d)",
++          save->in, save->in ? G_OBJECT(save->in)->ref_count : 0);
  
 -	bits = 0;
 -	for (x = 0; x < n; x++) {
@@ -2497,47 +2400,11 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		 * left-align and flush.
 -		 */
 -		int collected_bits = (x & pixel_mask) << (spng->bitdepth - 1);
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: set_property called for buffer with property_id=%u, name=%s",
-+          property_id, pspec ? g_param_spec_get_name(pspec) : "(null)");
++    VIPS_UNREF(save->in);
  
 -		*q++ = bits << (8 - collected_bits);
 -	}
-+    if (!pspec) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: NULL pspec for property_id=%u", property_id);
-+        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
-+        return;
-+    }
-+
-+    switch (property_id) {
-+    case PROP_IN:
-+        {
-+            GObject *obj = g_value_get_object(value);
-+            g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting in property for buffer");
-+            VIPS_UNREF(save->in);
-+            if (obj && VIPS_IS_IMAGE(obj)) {
-+                save->in = VIPS_IMAGE(g_object_ref(obj));
-+                g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Input image set to %p (type=%s, ref_count=%d)",
-+                      save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
-+            } else {
-+                save->in = NULL;
-+                g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: Input value is %s",
-+                      obj ? "not a VipsImage" : "NULL");
-+            }
-+        }
-+        break;
-+    case PROP_BUFFER:
-+        {
-+            g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting buffer property");
-+            save->buf = g_value_get_pointer(value);
-+            save->len = g_value_get_pointer(value);
-+        }
-+        break;
-+    default:
-+        g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: Unknown property: %s, ID=%u",
-+              g_param_spec_get_name(pspec), property_id);
-+        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
-+        break;
-+    }
++    G_OBJECT_CLASS(vips_foreign_save_spng_buffer_parent_class)->dispose(gobject);
  }
  
 -static int
@@ -2556,15 +2423,15 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -vips_foreign_save_spng_write_block(VipsRegion *region, VipsRect *area,
 -	void *user)
 +static void
-+vips_foreign_save_spng_get_property(GObject *gobject, guint property_id,
-+                                    GValue *value, GParamSpec *pspec)
++vips_foreign_save_spng_set_property(GObject *gobject, guint property_id,
++    const GValue *value, GParamSpec *pspec)
  {
 -	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) user;
 -	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS(spng);
 -
 -	int y;
 -	int error;
-+    VipsForeignSaveSpng *save = VIPS_FOREIGN_SAVE_SPNG(gobject);
++    VipsForeignSaveSpng *save = (VipsForeignSaveSpng *) gobject;
  
 -	/* The area to write is always a set of complete scanlines.
 -	 */
@@ -2597,24 +2464,44 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		vips_error(class->nickname, "%s", spng_strerror(error));
 -		return -1;
 -	}
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: get_property called with property_id=%u, name=%s",
-+          property_id, g_param_spec_get_name(pspec));
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: set_property called with property_id=%u, name=%s",
++          property_id, pspec ? g_param_spec_get_name(pspec) : "(null)");
  
 -	return 0;
++    if (!pspec) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: NULL pspec for property_id=%u", property_id);
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        return;
++    }
++
 +    switch (property_id) {
-+    case 1: // in
-+        g_value_set_object(value, save->in);
++    case PROP_FILENAME:
++        {
++            const char *filename = g_value_get_string(value);
++            g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting filename property: %s", filename ? filename : "(null)");
++            VIPS_FREE(save->filename);
++            save->filename = g_strdup(filename);
++        }
 +        break;
-+    case 2: // filename
-+        g_value_set_string(value, save->filename);
-+        break;
-+    case 3: // buffer
-+        g_value_set_pointer(value, save->buf);
-+        break;
-+    case 4: // length
-+        g_value_set_pointer(value, save->len);
++    case PROP_IN:
++        {
++            GObject *obj = g_value_get_object(value);
++            g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting in property");
++            VIPS_UNREF(save->in);
++            if (obj && VIPS_IS_IMAGE(obj)) {
++                save->in = VIPS_IMAGE(g_object_ref(obj));
++                g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Input image set to %p (type=%s, ref_count=%d)",
++                      save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
++            } else {
++                save->in = NULL;
++                g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: Input value is %s",
++                      obj ? "not a VipsImage" : "NULL");
++            }
++        }
 +        break;
 +    default:
++        g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: Unknown property: %s, ID=%u",
++              g_param_spec_get_name(pspec), property_id);
 +        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
 +        break;
 +    }
@@ -2622,10 +2509,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
  
 -static int
 -vips_foreign_save_spng_write(VipsForeignSaveSpng *spng, VipsImage *in)
-+static void
-+vips_foreign_save_spng_buffer_get_property(GObject *gobject, guint property_id,
-+    GValue *value, GParamSpec *pspec)
- {
+-{
 -	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS(spng);
 -
 -	int error;
@@ -2827,41 +2711,27 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -				vips_foreign_save_spng_write_block, spng))
 -			return -1;
 -	}
-+    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) gobject;
- 
+-
 -	if (vips_target_end(spng->target))
 -		return -1;
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: get_property called for buffer with property_id=%u, name=%s",
-+          property_id, pspec ? g_param_spec_get_name(pspec) : "(null)");
- 
+-
 -	return 0;
-+    if (!pspec) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: NULL pspec for property_id=%u", property_id);
-+        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
-+        return;
-+    }
-+
-+    switch (property_id) {
-+    case PROP_IN:
-+        g_value_set_object(value, save->in);
-+        break;
-+    case PROP_BUFFER:
-+        g_value_set_pointer(value, save->buf);
-+        break;
-+    default:
-+        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
-+        break;
-+    }
- }
- 
- static int
- vips_foreign_save_spng_build(VipsObject *object)
+-}
+-
+-static int
+-vips_foreign_save_spng_build(VipsObject *object)
++static void
++vips_foreign_save_spng_buffer_set_property(GObject *gobject, guint property_id,
++    const GValue *value, GParamSpec *pspec)
  {
 -	VipsForeignSave *save = (VipsForeignSave *) object;
 -	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) object;
--
++    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) gobject;
+ 
 -	VipsImage *in;
--
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: set_property called for buffer with property_id=%u, name=%s",
++          property_id, pspec ? g_param_spec_get_name(pspec) : "(null)");
+ 
 -	if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->build(object))
 -		return -1;
 -
@@ -2916,123 +2786,42 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	g_object_unref(in);
 -
 -	return 0;
-+    VipsForeignSaveSpng *save = VIPS_FOREIGN_SAVE_SPNG(object);
-+    VipsObjectClass *object_class = VIPS_OBJECT_GET_CLASS(object);
-+    spng_ctx *ctx = NULL;
-+    FILE *file = NULL;
-+    int err;
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Building VipsForeignSaveSpng for filename=%s, in=%p",
-+          save->filename ? save->filename : "(null)", save->in);
-+
-+    if (!save || !VIPS_IS_FOREIGN_SAVE_SPNG(save)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsForeignSaveSpng object: %p, type=%s",
-+              save, save ? g_type_name(G_OBJECT_TYPE(save)) : "NULL");
-+        vips_error(object_class->nickname, "Invalid VipsForeignSaveSpng object");
-+        return -1;
++    if (!pspec) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: NULL pspec for property_id=%u", property_id);
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        return;
 +    }
 +
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid input image: in=%p", save->in);
-+        vips_error(object_class->nickname, "Input image not set or invalid");
-+        return -1;
++    switch (property_id) {
++    case PROP_IN:
++        {
++            GObject *obj = g_value_get_object(value);
++            g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting in property for buffer");
++            VIPS_UNREF(save->in);
++            if (obj && VIPS_IS_IMAGE(obj)) {
++                save->in = VIPS_IMAGE(g_object_ref(obj));
++                g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Input image set to %p (type=%s, ref_count=%d)",
++                      save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
++            } else {
++                save->in = NULL;
++                g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: Input value is %s",
++                      obj ? "not a VipsImage" : "NULL");
++            }
++        }
++        break;
++    case PROP_BUFFER:
++        {
++            g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting buffer property");
++            save->buf = g_value_get_pointer(value);
++            save->len = g_value_get_pointer(value);
++        }
++        break;
++    default:
++        g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: Unknown property: %s, ID=%u",
++              g_param_spec_get_name(pspec), property_id);
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        break;
 +    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Before parent build, in=%p (type=%s, ref_count=%d, Xsize=%d, Ysize=%d, Bands=%d, BandFmt=%d, Coding=%d)",
-+          save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count,
-+          save->in->Xsize, save->in->Ysize, save->in->Bands, save->in->BandFmt, save->in->Coding);
-+
-+    g_object_ref(save->in);
-+
-+    if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->build(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Parent build failed: %s", vips_error_buffer());
-+        vips_error(object_class->nickname, "Parent build failed: %s", vips_error_buffer());
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: After parent build, in=%p (type=%s, ref_count=%d)",
-+          save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
-+
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Input image not set after parent build: in=%p", save->in);
-+        vips_error(object_class->nickname, "Input image not set");
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    file = fopen(save->filename, "wb");
-+    if (!file) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to open file %s: %s",
-+              save->filename, strerror(errno));
-+        vips_error(object_class->nickname, "Failed to open file: %s", save->filename);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    ctx = spng_ctx_new(SPNG_CTX_ENCODER);
-+    if (!ctx) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create spng_ctx");
-+        vips_error(object_class->nickname, "Failed to create spng context");
-+        fclose(file);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    err = spng_set_option(ctx, SPNG_ENCODE_TO_BUFFER, 1);
-+    if (err) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to set SPNG_ENCODE_TO_BUFFER: %d", err);
-+        vips_error(object_class->nickname, "Failed to set spng option");
-+        spng_ctx_free(ctx);
-+        fclose(file);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    struct spng_ihdr ihdr = {0};
-+    ihdr.width = save->in->Xsize;
-+    ihdr.height = save->in->Ysize;
-+    ihdr.bit_depth = 8;
-+    ihdr.color_type = SPNG_COLOR_TYPE_TRUECOLOR;
-+    spng_set_ihdr(ctx, &ihdr);
-+
-+    err = spng_encode_image(ctx, save->in->data, save->in->Xsize * save->in->Ysize * save->in->Bands,
-+                            SPNG_FMT_PNG, SPNG_ENCODE_FINALIZE);
-+    if (err) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to encode image: %d", err);
-+        vips_error(object_class->nickname, "Failed to encode image");
-+        spng_ctx_free(ctx);
-+        fclose(file);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    size_t out_size;
-+    void *out_buffer = spng_get_png_buffer(ctx, &out_size, &err);
-+    if (!out_buffer || err) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to get PNG buffer: %d", err);
-+        vips_error(object_class->nickname, "Failed to get PNG buffer");
-+        spng_ctx_free(ctx);
-+        fclose(file);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    if (fwrite(out_buffer, 1, out_size, file) != out_size) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to write PNG buffer to file");
-+        vips_error(object_class->nickname, "Failed to write PNG buffer");
-+        free(out_buffer);
-+        spng_ctx_free(ctx);
-+        fclose(file);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    free(out_buffer);
-+    spng_ctx_free(ctx);
-+    fclose(file);
-+    g_object_unref(save->in);
-+    return 0;
  }
  
 -#define UC VIPS_FORMAT_UCHAR
@@ -3046,9 +2835,11 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	/* Promotion: */ UC, UC, US, US, US, US, US, US, US, US
 -};
 -
--static void
+ static void
 -vips_foreign_save_spng_class_init(VipsForeignSaveSpngClass *class)
--{
++vips_foreign_save_spng_get_property(GObject *gobject, guint property_id,
++    GValue *value, GParamSpec *pspec)
+ {
 -	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
 -	VipsObjectClass *object_class = (VipsObjectClass *) class;
 -	VipsForeignClass *foreign_class = (VipsForeignClass *) class;
@@ -3131,7 +2922,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		G_STRUCT_OFFSET(VipsForeignSaveSpng, colours),
 -		2, 256, 256);
 -}
--
++    VipsForeignSaveSpng *save = (VipsForeignSaveSpng *) gobject;
+ 
 -static void
 -vips_foreign_save_spng_init(VipsForeignSaveSpng *spng)
 -{
@@ -3149,14 +2941,15 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -} VipsForeignSaveSpngTarget;
 -
 -typedef VipsForeignSaveSpngClass VipsForeignSaveSpngTargetClass;
--
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: get_property called with property_id=%u, name=%s",
++          property_id, pspec ? g_param_spec_get_name(pspec) : "(null)");
+ 
 -G_DEFINE_TYPE(VipsForeignSaveSpngTarget, vips_foreign_save_spng_target,
 -	vips_foreign_save_spng_get_type());
 -
- static int
+-static int
 -vips_foreign_save_spng_target_build(VipsObject *object)
-+vips_foreign_save_spng_buffer_build(VipsObject *object)
- {
+-{
 -	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) object;
 -	VipsForeignSaveSpngTarget *target =
 -		(VipsForeignSaveSpngTarget *) object;
@@ -3169,124 +2962,38 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		return -1;
 -
 -	return 0;
-+    VipsForeignSaveSpng *save = VIPS_FOREIGN_SAVE_SPNG(object);
-+    VipsObjectClass *object_class = VIPS_OBJECT_GET_CLASS(object);
-+    spng_ctx *ctx = NULL;
-+    int err;
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Building VipsForeignSaveSpng for buffer output, in=%p",
-+          save->in);
-+
-+    if (!save || !VIPS_IS_FOREIGN_SAVE_SPNG(save)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsForeignSaveSpng object: %p, type=%s",
-+              save, save ? g_type_name(G_OBJECT_TYPE(save)) : "NULL");
-+        vips_error(object_class->nickname, "Invalid VipsForeignSaveSpng object");
-+        return -1;
++    if (!pspec) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: NULL pspec for property_id=%u", property_id);
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        return;
 +    }
 +
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid input image: in=%p", save->in);
-+        vips_error(object_class->nickname, "Input image not set or invalid");
-+        return -1;
++    switch (property_id) {
++    case PROP_FILENAME:
++        g_value_set_string(value, save->filename);
++        break;
++    case PROP_IN:
++        g_value_set_object(value, save->in);
++        break;
++    default:
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        break;
 +    }
-+
-+    if (!save->buf || !save->len) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Buffer or length pointer not set: buf=%p, len=%p",
-+              save->buf, save->len);
-+        vips_error(object_class->nickname, "Buffer or length pointer not set");
-+        return -1;
-+    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Before parent build, in=%p (type=%s, ref_count=%d, Xsize=%d, Ysize=%d, Bands=%d, BandFmt=%d, Coding=%d)",
-+          save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count,
-+          save->in->Xsize, save->in->Ysize, save->in->Bands, save->in->BandFmt, save->in->Coding);
-+
-+    g_object_ref(save->in);
-+
-+    if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->build(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Parent build failed: %s", vips_error_buffer());
-+        vips_error(object_class->nickname, "Parent build failed: %s", vips_error_buffer());
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: After parent build, in=%p (type=%s, ref_count=%d)",
-+          save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
-+
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Input image not set after parent build: in=%p", save->in);
-+        vips_error(object_class->nickname, "Input image not set");
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    ctx = spng_ctx_new(SPNG_CTX_ENCODER);
-+    if (!ctx) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create spng_ctx");
-+        vips_error(object_class->nickname, "Failed to create spng context");
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    err = spng_set_option(ctx, SPNG_ENCODE_TO_BUFFER, 1);
-+    if (err) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to set SPNG_ENCODE_TO_BUFFER: %d", err);
-+        vips_error(object_class->nickname, "Failed to set spng option");
-+        spng_ctx_free(ctx);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    struct spng_ihdr ihdr = {0};
-+    ihdr.width = save->in->Xsize;
-+    ihdr.height = save->in->Ysize;
-+    ihdr.bit_depth = 8;
-+    ihdr.color_type = SPNG_COLOR_TYPE_TRUECOLOR;
-+    spng_set_ihdr(ctx, &ihdr);
-+
-+    err = spng_encode_image(ctx, save->in->data, save->in->Xsize * save->in->Ysize * save->in->Bands,
-+                            SPNG_FMT_PNG, SPNG_ENCODE_FINALIZE);
-+    if (err) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to encode image: %d", err);
-+        vips_error(object_class->nickname, "Failed to encode image");
-+        spng_ctx_free(ctx);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    size_t out_size;
-+    void *out_buffer = spng_get_png_buffer(ctx, &out_size, &err);
-+    if (!out_buffer || err) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to get PNG buffer: %d", err);
-+        vips_error(object_class->nickname, "Failed to get PNG buffer");
-+        spng_ctx_free(ctx);
-+        g_object_unref(save->in);
-+        return -1;
-+    }
-+
-+    *save->buf = out_buffer;
-+    *save->len = out_size;
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Buffer encoded, buf=%p, len=%zu", *save->buf, *save->len);
-+
-+    spng_ctx_free(ctx);
-+    g_object_unref(save->in);
-+    return 0;
  }
  
  static void
 -vips_foreign_save_spng_target_class_init(VipsForeignSaveSpngTargetClass *class)
-+vips_foreign_save_spng_class_init(VipsForeignSaveSpngClass *class)
++vips_foreign_save_spng_buffer_get_property(GObject *gobject, guint property_id,
++    GValue *value, GParamSpec *pspec)
  {
 -	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
 -	VipsObjectClass *object_class = (VipsObjectClass *) class;
-+    GObjectClass *gobject_class = G_OBJECT_CLASS(class);
-+    VipsObjectClass *object_class = VIPS_OBJECT_CLASS(class);
++    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) gobject;
  
 -	gobject_class->set_property = vips_object_set_property;
 -	gobject_class->get_property = vips_object_get_property;
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Initializing VipsForeignSaveSpngClass, class=%p, type=%lu, type_name=%s",
-+          class, (gulong)VIPS_TYPE_FOREIGN_SAVE_SPNG, g_type_name(VIPS_TYPE_FOREIGN_SAVE_SPNG));
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: get_property called for buffer with property_id=%u, name=%s",
++          property_id, pspec ? g_param_spec_get_name(pspec) : "(null)");
  
 -	object_class->nickname = "pngsave_target";
 -	object_class->description = _("save image to target as PNG");
@@ -3298,28 +3005,192 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		VIPS_ARGUMENT_REQUIRED_INPUT,
 -		G_STRUCT_OFFSET(VipsForeignSaveSpngTarget, target),
 -		VIPS_TYPE_TARGET);
-+    gobject_class->dispose = vips_foreign_save_spng_dispose;
-+    gobject_class->set_property = vips_foreign_save_spng_set_property;
-+    gobject_class->get_property = vips_foreign_save_spng_get_property;
-+    object_class->nickname = "spngsave";
-+    object_class->description = "save image to PNG file with libspng";
-+    object_class->build = vips_foreign_save_spng_build;
++    if (!pspec) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: NULL pspec for property_id=%u", property_id);
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        return;
++    }
 +
-+    VIPS_ARG_IMAGE(class, "in", 1, "Input", "Image to save",
-+                   VIPS_ARGUMENT_REQUIRED_INPUT, G_STRUCT_OFFSET(VipsForeignSaveSpng, in));
-+    VIPS_ARG_STRING(class, "filename", 2, "Filename", "Filename to save to",
-+                    VIPS_ARGUMENT_OPTIONAL_INPUT, G_STRUCT_OFFSET(VipsForeignSaveSpng, filename), NULL);
-+    VIPS_ARG_POINTER(class, "buffer", 3, "Buffer", "Buffer to save to",
-+                     VIPS_ARGUMENT_OPTIONAL_OUTPUT, G_STRUCT_OFFSET(VipsForeignSaveSpng, buf));
-+    VIPS_ARG_POINTER(class, "length", 4, "Length", "Length of buffer",
-+                     VIPS_ARGUMENT_OPTIONAL_OUTPUT, G_STRUCT_OFFSET(VipsForeignSaveSpng, len));
++    switch (property_id) {
++    case PROP_IN:
++        g_value_set_object(value, save->in);
++        break;
++    case PROP_BUFFER:
++        g_value_set_pointer(value, save->buf);
++        break;
++    default:
++        G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
++        break;
++    }
  }
  
- static void
+-static void
 -vips_foreign_save_spng_target_init(VipsForeignSaveSpngTarget *target)
--{
--}
--
++static int
++vips_foreign_save_spng_build(VipsObject *object)
+ {
++    VipsForeignSaveSpng *save = (VipsForeignSaveSpng *) object;
++    VipsObjectClass *object_class = VIPS_OBJECT_GET_CLASS(object);
++    spng_ctx *ctx = NULL;
++    FILE *file = NULL;
++    int err;
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Building VipsForeignSaveSpng for filename=%s, in=%p",
++          save->filename ? save->filename : "(null)", save->in);
++
++    if (!save || !VIPS_IS_FOREIGN_SAVE(save)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsForeignSaveSpng object: %p", save);
++        vips_error(object_class->nickname, "Invalid VipsForeignSaveSpng object");
++        return -1;
++    }
++
++    if (!save->in || !VIPS_IS_IMAGE(save->in) || save->in->Xsize <= 0 || save->in->Ysize <= 0) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid input image: in=%p, Xsize=%d, Ysize=%d",
++              save->in, save->in ? save->in->Xsize : -1, save->in ? save->in->Ysize : -1);
++        vips_error(object_class->nickname, "Input image not set or invalid");
++        return -1;
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Before parent build, in=%p (type=%s, ref_count=%d, Xsize=%d, Ysize=%d, Bands=%d, BandFmt=%d, Coding=%d)",
++          save->in, save->in ? G_OBJECT_TYPE_NAME(save->in) : "NULL",
++          save->in ? G_OBJECT(save->in)->ref_count : 0,
++          save->in ? save->in->Xsize : -1, save->in ? save->in->Ysize : -1,
++          save->in ? save->in->Bands : -1, save->in ? save->in->BandFmt : -1,
++          save->in ? save->in->Coding : -1);
++
++    if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_parent_class)->build(object)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Parent build failed, in=%p, error=%s",
++              save->in, vips_error_buffer());
++        vips_error(object_class->nickname, "Parent build failed: %s", vips_error_buffer());
++        return -1;
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: After parent build, in=%p", save->in);
++
++    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Input image not set after parent build");
++        vips_error(object_class->nickname, "Input image not set");
++        return -1;
++    }
++
++    /* Validate and convert image format */
++    VipsImage *converted = NULL;
++    if (save->in->BandFmt != VIPS_FORMAT_UCHAR || (save->in->Bands != 3 && save->in->Bands != 4)) {
++        g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Converting image to sRGB, 8-bit, Bands=%d", save->in->Bands);
++        if (vips_colourspace(save->in, &converted, VIPS_INTERPRETATION_sRGB, NULL)) {
++            g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Colourspace conversion failed: %s", vips_error_buffer());
++            vips_error(object_class->nickname, "Colourspace conversion failed");
++            return -1;
++        }
++        if (vips_cast(converted, &save->in, VIPS_FORMAT_UCHAR, NULL)) {
++            g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Cast to UCHAR failed: %s", vips_error_buffer());
++            vips_error(object_class->nickname, "Cast to UCHAR failed");
++            VIPS_UNREF(converted);
++            return -1;
++        }
++        VIPS_UNREF(converted);
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Image format validated: BandFmt=%d, Bands=%d, Coding=%d, Type=%d",
++          save->in->BandFmt, save->in->Bands, save->in->Coding, save->in->Type);
++
++    /* Rest of the function remains unchanged */
++    file = fopen(save->filename, "wb");
++    if (!file) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to open file %s: %s",
++              save->filename, strerror(errno));
++        vips_error(object_class->nickname, "Failed to open file: %s", save->filename);
++        return -1;
++    }
++
++    ctx = spng_ctx_new(SPNG_CTX_ENCODER);
++    if (!ctx) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create spng_ctx");
++        vips_error(object_class->nickname, "Failed to create spng context");
++        fclose(file);
++        return -1;
++    }
++
++    err = spng_set_option(ctx, SPNG_ENCODE_TO_BUFFER, 1);
++    if (err != SPNG_OK) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to set encode to buffer: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "%s", spng_strerror(err));
++        spng_ctx_free(ctx);
++        fclose(file);
++        return -1;
++    }
++
++    struct spng_ihdr ihdr = {0};
++    ihdr.width = save->in->Xsize;
++    ihdr.height = save->in->Ysize;
++    ihdr.bit_depth = 8;
++    ihdr.color_type = save->in->Bands == 4 ? SPNG_COLOR_TYPE_TRUECOLOR_ALPHA : SPNG_COLOR_TYPE_TRUECOLOR;
++
++    err = spng_set_ihdr(ctx, &ihdr);
++    if (err != SPNG_OK) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to set IHDR: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "%s", spng_strerror(err));
++        spng_ctx_free(ctx);
++        fclose(file);
++        return -1;
++    }
++
++    size_t buffer_size = save->in->Xsize * save->in->Ysize * save->in->Bands;
++    unsigned char *buffer = g_malloc(buffer_size);
++    if (!buffer) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to allocate buffer");
++        vips_error(object_class->nickname, "Failed to allocate buffer");
++        spng_ctx_free(ctx);
++        fclose(file);
++        return -1;
++    }
++
++    for (int y = 0; y < save->in->Ysize; y++) {
++        guchar *row = VIPS_IMAGE_ADDR(save->in, 0, y);
++        memcpy(buffer + y * save->in->Xsize * save->in->Bands,
++               row, save->in->Xsize * save->in->Bands);
++    }
++
++    err = spng_encode_image(ctx, buffer, buffer_size,
++                            save->in->Bands == 4 ? SPNG_FMT_PNG : SPNG_FMT_PNG, SPNG_ENCODE_FINALIZE);
++    if (err != SPNG_OK) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to encode image: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "Failed to encode image: %s", spng_strerror(err));
++        g_free(buffer);
++        spng_ctx_free(ctx);
++        fclose(file);
++        return -1;
++    }
++
++    size_t out_size;
++    void *out_buffer = spng_get_png_buffer(ctx, &out_size, &err);
++    if (err != SPNG_OK || !out_buffer) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to get PNG buffer: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "Failed to get PNG buffer: %s", spng_strerror(err));
++        g_free(buffer);
++        spng_ctx_free(ctx);
++        fclose(file);
++        return -1;
++    }
++
++    if (fwrite(out_buffer, 1, out_size, file) != out_size) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to write PNG buffer to file");
++        vips_error(object_class->nickname, "Failed to write PNG buffer to file");
++        g_free(out_buffer);
++        g_free(buffer);
++        spng_ctx_free(ctx);
++        fclose(file);
++        return -1;
++    }
++
++    g_free(out_buffer);
++    g_free(buffer);
++    spng_ctx_free(ctx);
++    fclose(file);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Successfully saved PNG to %s", save->filename);
++    return 0;
+ }
+ 
 -typedef struct _VipsForeignSaveSpngFile {
 -	VipsForeignSaveSpng parent_object;
 -
@@ -3331,16 +3202,267 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -G_DEFINE_TYPE(VipsForeignSaveSpngFile, vips_foreign_save_spng_file,
 -	vips_foreign_save_spng_get_type());
 -
--static int
+ static int
 -vips_foreign_save_spng_file_build(VipsObject *object)
-+vips_foreign_save_spng_buffer_class_init(VipsForeignSaveSpngBufferClass *class)
++vips_foreign_save_spng_buffer_build(VipsObject *object)
  {
 -	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) object;
 -	VipsForeignSaveSpngFile *file = (VipsForeignSaveSpngFile *) object;
+-
+-	if (!(spng->target = vips_target_new_to_file(file->filename)))
+-		return -1;
+-
+-	if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_file_parent_class)
+-			->build(object))
+-		return -1;
+-
+-	return 0;
++    VipsForeignSaveSpngBuffer *save = (VipsForeignSaveSpngBuffer *) object; // Use correct struct
++    VipsObjectClass *object_class = VIPS_OBJECT_GET_CLASS(object);
++    spng_ctx *ctx = NULL;
++    int err;
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Building VipsForeignSaveSpngBuffer, in=%p",
++          save->in);
++
++    if (!save || !VIPS_IS_FOREIGN_SAVE(save)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsForeignSaveSpngBuffer object: %p", save);
++        vips_error(object_class->nickname, "Invalid VipsForeignSaveSpngBuffer object");
++        return -1;
++    }
++
++    if (!save->in || !VIPS_IS_IMAGE(save->in) || save->in->Xsize <= 0 || save->in->Ysize <= 0) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid input image: in=%p, Xsize=%d, Ysize=%d",
++              save->in, save->in ? save->in->Xsize : -1, save->in ? save->in->Ysize : -1);
++        vips_error(object_class->nickname, "Input image not set or invalid");
++        return -1;
++    }
++
++    if (!save->buf || !save->len) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Buffer or length pointer not set");
++        vips_error(object_class->nickname, "Buffer or length pointer not set");
++        return -1;
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Before parent build, in=%p (type=%s, ref_count=%d, Xsize=%d, Ysize=%d, Bands=%d, BandFmt=%d, Coding=%d)",
++          save->in, save->in ? G_OBJECT_TYPE_NAME(save->in) : "NULL",
++          save->in ? G_OBJECT(save->in)->ref_count : 0,
++          save->in ? save->in->Xsize : -1, save->in ? save->in->Ysize : -1,
++          save->in ? save->in->Bands : -1, save->in ? save->in->BandFmt : -1,
++          save->in ? save->in->Coding : -1);
++
++    if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_buffer_parent_class)->build(object)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Parent build failed, in=%p, error=%s",
++              save->in, vips_error_buffer());
++        vips_error(object_class->nickname, "Parent build failed: %s", vips_error_buffer());
++        return -1;
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: After parent build, in=%p", save->in);
++
++    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Input image not set after parent build");
++        vips_error(object_class->nickname, "Input image not set");
++        return -1;
++    }
++
++    /* Validate and convert image format */
++    VipsImage *converted = NULL;
++    if (save->in->BandFmt != VIPS_FORMAT_UCHAR || (save->in->Bands != 3 && save->in->Bands != 4)) {
++        g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Converting image to sRGB, 8-bit, Bands=%d", save->in->Bands);
++        if (vips_colourspace(save->in, &converted, VIPS_INTERPRETATION_sRGB, NULL)) {
++            g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Colourspace conversion failed: %s", vips_error_buffer());
++            vips_error(object_class->nickname, "Colourspace conversion failed");
++            return -1;
++        }
++        if (vips_cast(converted, &save->in, VIPS_FORMAT_UCHAR, NULL)) {
++            g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Cast to UCHAR failed: %s", vips_error_buffer());
++            vips_error(object_class->nickname, "Cast to UCHAR failed");
++            VIPS_UNREF(converted);
++            return -1;
++        }
++        VIPS_UNREF(converted);
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Image format validated: BandFmt=%d, Bands=%d, Coding=%d, Type=%d",
++          save->in->BandFmt, save->in->Bands, save->in->Coding, save->in->Type);
++
++    ctx = spng_ctx_new(SPNG_CTX_ENCODER);
++    if (!ctx) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create spng_ctx");
++        vips_error(object_class->nickname, "Failed to create spng context");
++        return -1;
++    }
++
++    err = spng_set_option(ctx, SPNG_ENCODE_TO_BUFFER, 1);
++    if (err != SPNG_OK) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to set encode to buffer: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "%s", spng_strerror(err));
++        spng_ctx_free(ctx);
++        return -1;
++    }
++
++    struct spng_ihdr ihdr = {0};
++    ihdr.width = save->in->Xsize;
++    ihdr.height = save->in->Ysize;
++    ihdr.bit_depth = 8;
++    ihdr.color_type = save->in->Bands == 4 ? SPNG_COLOR_TYPE_TRUECOLOR_ALPHA : SPNG_COLOR_TYPE_TRUECOLOR;
++
++    err = spng_set_ihdr(ctx, &ihdr);
++    if (err != SPNG_OK) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to set IHDR: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "%s", spng_strerror(err));
++        spng_ctx_free(ctx);
++        return -1;
++    }
++
++    size_t buffer_size = save->in->Xsize * save->in->Ysize * save->in->Bands;
++    unsigned char *buffer = g_malloc(buffer_size);
++    if (!buffer) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to allocate buffer");
++        vips_error(object_class->nickname, "Failed to allocate buffer");
++        spng_ctx_free(ctx);
++        return -1;
++    }
++
++    for (int y = 0; y < save->in->Ysize; y++) {
++        guchar *row = VIPS_IMAGE_ADDR(save->in, 0, y);
++        memcpy(buffer + y * save->in->Xsize * save->in->Bands,
++               row, save->in->Xsize * save->in->Bands);
++    }
++
++    err = spng_encode_image(ctx, buffer, buffer_size,
++                            save->in->Bands == 4 ? SPNG_FMT_PNG : SPNG_FMT_PNG, SPNG_ENCODE_FINALIZE);
++    if (err != SPNG_OK) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to encode image: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "Failed to encode image: %s", spng_strerror(err));
++        g_free(buffer);
++        spng_ctx_free(ctx);
++        return -1;
++    }
++
++    size_t out_size;
++    void *out_buffer = spng_get_png_buffer(ctx, &out_size, &err);
++    if (err != SPNG_OK || !out_buffer) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to get PNG buffer: %s", spng_strerror(err));
++        vips_error(object_class->nickname, "Failed to get PNG buffer: %s", spng_strerror(err));
++        g_free(buffer);
++        spng_ctx_free(ctx);
++        return -1;
++    }
++
++    *save->buf = out_buffer; // Correct struct
++    *save->len = out_size;   // Correct struct
++
++    g_free(buffer);
++    spng_ctx_free(ctx);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Successfully saved PNG to buffer, size=%zu", out_size);
++    return 0;
+ }
+ 
+ static void
+-vips_foreign_save_spng_file_class_init(VipsForeignSaveSpngFileClass *class)
++vips_foreign_save_spng_class_init(VipsForeignSaveSpngClass *class)
+ {
+-	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
+-	VipsObjectClass *object_class = (VipsObjectClass *) class;
++    GObjectClass *gobject_class = G_OBJECT_CLASS(class);
++    VipsObjectClass *object_class = VIPS_OBJECT_CLASS(class);
++    VipsForeignSaveClass *foreign_class = VIPS_FOREIGN_SAVE_CLASS(class);
++
++    if (spngsave_class_initialized) {
++        g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: VipsForeignSaveSpngClass already initialized");
++        return;
++    }
++
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Initializing VipsForeignSaveSpngClass, class=%p, type=%lu, type_name=%s",
++          class, (gulong)G_OBJECT_CLASS_TYPE(class), g_type_name(G_OBJECT_CLASS_TYPE(class)));
++
++    if (!g_type_is_a(G_OBJECT_CLASS_TYPE(class), VIPS_TYPE_FOREIGN_SAVE)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: VipsForeignSaveSpngClass is not a subclass of VIPS_TYPE_FOREIGN_SAVE");
++        vips_error("spngsave", "Class type invalid");
++        return;
++    }
++
++    gobject_class->dispose = vips_foreign_save_spng_dispose;
++    gobject_class->set_property = vips_foreign_save_spng_set_property;
++    gobject_class->get_property = vips_foreign_save_spng_get_property;
++
++    object_class->nickname = "spngsave";
++    object_class->description = "save PNG with libspng";
++    object_class->build = vips_foreign_save_spng_build;
++
++    foreign_class->saveable = VIPS_SAVEABLE_RGBA;
++    static VipsBandFormat format_table[] = {
++        VIPS_FORMAT_UCHAR,
++        VIPS_FORMAT_NOTSET,
++        VIPS_FORMAT_NOTSET,
++        VIPS_FORMAT_NOTSET,
++        VIPS_FORMAT_NOTSET,
++        VIPS_FORMAT_NOTSET,
++        VIPS_FORMAT_NOTSET,
++        VIPS_FORMAT_NOTSET
++    };
++    foreign_class->format_table = format_table;
++
++    g_object_class_install_property(gobject_class, PROP_FILENAME,
++        g_param_spec_string("filename", "Output filename", "Filename to save to",
++            NULL, G_PARAM_READWRITE | VIPS_ARGUMENT_REQUIRED | VIPS_ARGUMENT_CONSTRUCT));
++    g_object_class_install_property(gobject_class, PROP_IN,
++        g_param_spec_object("in", "Input image", "Image to save",
++            VIPS_TYPE_IMAGE, G_PARAM_READWRITE | VIPS_ARGUMENT_REQUIRED | VIPS_ARGUMENT_CONSTRUCT));
+ 
+-	gobject_class->set_property = vips_object_set_property;
+-	gobject_class->get_property = vips_object_get_property;
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Filename property registered with ID=%u", PROP_FILENAME);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Input property registered with ID=%u", PROP_IN);
+ 
+-	object_class->nickname = "pngsave";
+-	object_class->description = _("save image to file as PNG");
+-	object_class->build = vips_foreign_save_spng_file_build;
+-
+-	VIPS_ARG_STRING(class, "filename", 1,
+-		_("Filename"),
+-		_("Filename to save to"),
+-		VIPS_ARGUMENT_REQUIRED_INPUT,
+-		G_STRUCT_OFFSET(VipsForeignSaveSpngFile, filename),
+-		NULL);
++    spngsave_class_initialized = TRUE;
+ }
+ 
+ static void
+-vips_foreign_save_spng_file_init(VipsForeignSaveSpngFile *file)
+-{
+-}
+-
+-typedef struct _VipsForeignSaveSpngBuffer {
+-	VipsForeignSaveSpng parent_object;
+-
+-	VipsArea *buf;
+-} VipsForeignSaveSpngBuffer;
+-
+-typedef VipsForeignSaveSpngClass VipsForeignSaveSpngBufferClass;
+-
+-G_DEFINE_TYPE(VipsForeignSaveSpngBuffer, vips_foreign_save_spng_buffer,
+-	vips_foreign_save_spng_get_type());
+-
+-static int
+-vips_foreign_save_spng_buffer_build(VipsObject *object)
++vips_foreign_save_spng_buffer_class_init(VipsForeignSaveSpngBufferClass *class)
+ {
+-	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) object;
+-	VipsForeignSaveSpngBuffer *buffer =
+-		(VipsForeignSaveSpngBuffer *) object;
+-
+-	VipsBlob *blob;
+-
+-	if (!(spng->target = vips_target_new_to_memory()))
+-		return -1;
 +    GObjectClass *gobject_class = G_OBJECT_CLASS(class);
 +    VipsObjectClass *object_class = VIPS_OBJECT_CLASS(class);
  
--	if (!(spng->target = vips_target_new_to_file(file->filename)))
+-	if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_buffer_parent_class)
+-			->build(object))
 -		return -1;
 +    if (spngsave_buffer_class_initialized) {
 +        g_log("vips", G_LOG_LEVEL_WARNING, "spngsave: VipsForeignSaveSpngBufferClass already initialized");
@@ -3371,9 +3493,9 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 +        g_param_spec_pointer("buffer", "Output buffer", "Buffer to save to",
 +            G_PARAM_READWRITE | VIPS_ARGUMENT_REQUIRED | VIPS_ARGUMENT_CONSTRUCT));
  
--	if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_file_parent_class)
--			->build(object))
--		return -1;
+-	g_object_get(spng->target, "blob", &blob, NULL);
+-	g_object_set(buffer, "buffer", blob, NULL);
+-	vips_area_unref(VIPS_AREA(blob));
 +    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Input property registered with ID=%u", PROP_IN);
 +    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Buffer property registered with ID=%u", PROP_BUFFER);
  
@@ -3382,7 +3504,7 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
  }
  
  static void
--vips_foreign_save_spng_file_class_init(VipsForeignSaveSpngFileClass *class)
+-vips_foreign_save_spng_buffer_class_init(VipsForeignSaveSpngBufferClass *class)
 +vips_foreign_save_spng_init(VipsForeignSaveSpng *save)
  {
 -	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
@@ -3391,119 +3513,6 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -	gobject_class->set_property = vips_object_set_property;
 -	gobject_class->get_property = vips_object_get_property;
 -
--	object_class->nickname = "pngsave";
--	object_class->description = _("save image to file as PNG");
--	object_class->build = vips_foreign_save_spng_file_build;
--
--	VIPS_ARG_STRING(class, "filename", 1,
--		_("Filename"),
--		_("Filename to save to"),
--		VIPS_ARGUMENT_REQUIRED_INPUT,
--		G_STRUCT_OFFSET(VipsForeignSaveSpngFile, filename),
--		NULL);
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Initializing VipsForeignSaveSpng");
-+    save->in = NULL;
-+    save->ready = NULL;
-+    save->filename = NULL;
-+    save->buf = NULL;
-+    save->len = NULL;
- }
- 
- static void
--vips_foreign_save_spng_file_init(VipsForeignSaveSpngFile *file)
-+vips_foreign_save_spng_buffer_init(VipsForeignSaveSpngBuffer *save)
- {
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Initializing VipsForeignSaveSpngBuffer");
-+    save->in = NULL;
-+    save->buf = NULL;
-+    save->len = NULL;
-+}
-+
-+static VipsObject *
-+vips_spngsave_create_object(void)
-+{
-+    GObject *gobject;
-+    VipsObject *object;
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Creating VipsForeignSaveSpng object, VIPS_TYPE_FOREIGN_SAVE_SPNG=%lu",
-+          (gulong)VIPS_TYPE_FOREIGN_SAVE_SPNG);
-+
-+    g_type_ensure(VIPS_TYPE_FOREIGN_SAVE_SPNG);
-+    gobject = g_object_new(VIPS_TYPE_FOREIGN_SAVE_SPNG, NULL);
-+    if (!gobject || !G_IS_OBJECT(gobject)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create GObject: %p", gobject);
-+        vips_error("spngsave", "Failed to create GObject");
-+        if (gobject) g_object_unref(gobject);
-+        return NULL;
-+    }
-+
-+    object = VIPS_OBJECT(gobject);
-+    if (!object || !VIPS_IS_OBJECT(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsObject: %p", object);
-+        vips_error("spngsave", "Invalid VipsObject");
-+        g_object_unref(gobject);
-+        return NULL;
-+    }
-+
-+    if (!g_type_check_instance_is_a((GTypeInstance *)object, VIPS_TYPE_FOREIGN_SAVE_SPNG)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Object is not VipsForeignSaveSpng, type=%lu, type_name=%s",
-+              (gulong)G_OBJECT_TYPE(object), g_type_name(G_OBJECT_TYPE(object)));
-+        vips_error("spngsave", "Object is not VipsForeignSaveSpng");
-+        g_object_unref(gobject);
-+        return NULL;
-+    }
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Created VipsForeignSaveSpng object at %p (type=%lu, type_name=%s, is_spng=%d, ref_count=%d)",
-+          object, (gulong)G_OBJECT_TYPE(object), g_type_name(G_OBJECT_TYPE(object)),
-+          g_type_check_instance_is_a((GTypeInstance *)object, VIPS_TYPE_FOREIGN_SAVE_SPNG),
-+          G_OBJECT(object)->ref_count);
-+
-+    return object;
- }
- 
--typedef struct _VipsForeignSaveSpngBuffer {
--	VipsForeignSaveSpng parent_object;
--
--	VipsArea *buf;
--} VipsForeignSaveSpngBuffer;
--
--typedef VipsForeignSaveSpngClass VipsForeignSaveSpngBufferClass;
--
--G_DEFINE_TYPE(VipsForeignSaveSpngBuffer, vips_foreign_save_spng_buffer,
--	vips_foreign_save_spng_get_type());
--
--static int
--vips_foreign_save_spng_buffer_build(VipsObject *object)
--{
--	VipsForeignSaveSpng *spng = (VipsForeignSaveSpng *) object;
--	VipsForeignSaveSpngBuffer *buffer =
--		(VipsForeignSaveSpngBuffer *) object;
--
--	VipsBlob *blob;
--
--	if (!(spng->target = vips_target_new_to_memory()))
--		return -1;
--
--	if (VIPS_OBJECT_CLASS(vips_foreign_save_spng_buffer_parent_class)
--			->build(object))
--		return -1;
--
--	g_object_get(spng->target, "blob", &blob, NULL);
--	g_object_set(buffer, "buffer", blob, NULL);
--	vips_area_unref(VIPS_AREA(blob));
--
--	return 0;
--}
- 
--static void
--vips_foreign_save_spng_buffer_class_init(VipsForeignSaveSpngBufferClass *class)
--{
--	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
--	VipsObjectClass *object_class = (VipsObjectClass *) class;
- 
--	gobject_class->set_property = vips_object_set_property;
--	gobject_class->get_property = vips_object_get_property;
- 
 -	object_class->nickname = "pngsave_buffer";
 -	object_class->description = _("save image to buffer as PNG");
 -	object_class->build = vips_foreign_save_spng_buffer_build;
@@ -3514,20 +3523,29 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 -		VIPS_ARGUMENT_REQUIRED_OUTPUT,
 -		G_STRUCT_OFFSET(VipsForeignSaveSpngBuffer, buf),
 -		VIPS_TYPE_BLOB);
--}
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Initializing VipsForeignSaveSpng");
++    save->filename = NULL;
++    save->in = NULL;
+ }
  
--static void
+ static void
 -vips_foreign_save_spng_buffer_init(VipsForeignSaveSpngBuffer *buffer)
--{
++vips_foreign_save_spng_buffer_init(VipsForeignSaveSpngBuffer *save)
+ {
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Initializing VipsForeignSaveSpngBuffer");
++    save->in = NULL;
++    save->buf = NULL;
++    save->len = NULL;
++}
++
 +VIPS_API
 +int
 +vips_spngsave(VipsImage *in, const char *filename, ...)
 +{
-+    VipsObject *object;
-+    VipsForeignSaveSpng *save;
++    VipsForeignSave *save;
 +    int result;
 +
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Starting vips_spngsave for %s, in=%p", filename ? filename : "(null)", in);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Starting vips_spngsave for %s, in=%p", filename, in);
 +
 +    if (!in || !VIPS_IS_IMAGE(in)) {
 +        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid or NULL input image: %p", in);
@@ -3541,112 +3559,127 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.c vips-8.16.
 +        return -1;
 +    }
 +
-+    g_type_ensure(VIPS_TYPE_FOREIGN_SAVE_SPNG);
-+    object = vips_spngsave_create_object();
-+    if (!object) {
++    /* Ensure type is registered */
++    if (!g_type_name(VIPS_TYPE_FOREIGN_SAVE_SPNG)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: VIPS_TYPE_FOREIGN_SAVE_SPNG not registered");
++        vips_error("spngsave", "VIPS_TYPE_FOREIGN_SAVE_SPNG not registered");
 +        return -1;
 +    }
 +
-+    save = VIPS_FOREIGN_SAVE_SPNG(object);
-+    if (!save || !VIPS_IS_FOREIGN_SAVE_SPNG(save)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsForeignSaveSpng: %p", save);
-+        vips_error("spngsave", "Invalid VipsForeignSaveSpng");
-+        g_object_unref(object);
++    save = VIPS_FOREIGN_SAVE(g_object_new(VIPS_TYPE_FOREIGN_SAVE_SPNG,
++                                         "in", in,
++                                         "filename", filename,
++                                         NULL));
++    if (!save || !G_IS_OBJECT(save)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create VipsForeignSaveSpng object, save=%p", save);
++        vips_error("spngsave", "Failed to create VipsForeignSaveSpng object");
 +        return -1;
 +    }
 +
-+    g_object_ref(object);
-+    g_object_set(object, "in", in, "filename", filename, NULL);
++    GType save_type = G_OBJECT_TYPE(save);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Created VipsForeignSaveSpng object at %p (type=%lu, type_name=%s, is_spng=%d, save->in=%p)",
++          save, (gulong)save_type, save_type ? g_type_name(save_type) : "invalid",
++          g_type_check_instance_is_a((GTypeInstance *)save, VIPS_TYPE_FOREIGN_SAVE_SPNG),
++          ((VipsForeignSaveSpng *)save)->in);
 +
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: save->in is invalid after setting: %p", save->in);
-+        vips_error("spngsave", "Invalid input image after setting");
-+        g_object_unref(object);
++    if (!save_type || !g_type_check_instance_is_a((GTypeInstance *)save, VIPS_TYPE_FOREIGN_SAVE_SPNG)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Object is not VipsForeignSaveSpng, type=%lu, type_name=%s",
++              (gulong)save_type, save_type ? g_type_name(save_type) : "invalid");
++        vips_error("spngsave", "Object is not VipsForeignSaveSpng");
++        VIPS_UNREF(save);
 +        return -1;
 +    }
 +
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Input image set to %p (type=%s, ref_count=%d, Xsize=%d, Ysize=%d)",
-+          save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count,
-+          save->in->Xsize, save->in->Ysize);
++    if (!((VipsForeignSaveSpng *)save)->in || !VIPS_IS_IMAGE(((VipsForeignSaveSpng *)save)->in)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: save->in is invalid after creation: %p", ((VipsForeignSaveSpng *)save)->in);
++        vips_error("spngsave", "Invalid input image after object creation");
++        VIPS_UNREF(save);
++        return -1;
++    }
 +
-+    result = vips_object_build(object);
++    result = vips_object_build(VIPS_OBJECT(save));
 +    if (result) {
 +        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to build VipsForeignSaveSpng: %s", vips_error_buffer());
-+        g_object_unref(object);
++        VIPS_UNREF(save);
 +        return -1;
 +    }
 +
 +    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: VipsForeignSaveSpng built successfully");
-+    g_object_unref(object);
++    VIPS_UNREF(save);
 +    return 0;
 +}
 +
 +VIPS_API
 +int
-+vips_spngsave_buffer(VipsImage *in, void **buf, gsize *len, ...)
++vips_spngsave_buffer(VipsImage *in, void **buf, size_t *len, ...)
 +{
-+    VipsObject *object;
-+    VipsForeignSaveSpng *save;
++    VipsForeignSave *save;
 +    int result;
 +
 +    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Starting vips_spngsave_buffer, in=%p", in);
 +
 +    if (!in || !VIPS_IS_IMAGE(in)) {
 +        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid or NULL input image: %p", in);
-+        vips_error("spngsave", "Invalid or NULL input image");
++        vips_error("spngsave_buffer", "Invalid or NULL input image");
 +        return -1;
 +    }
 +
 +    if (!buf || !len) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Buffer or length pointer is NULL: buf=%p, len=%p", buf, len);
-+        vips_error("spngsave", "Buffer or length pointer is NULL");
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Buffer or length pointer not set");
++        vips_error("spngsave_buffer", "Buffer or length pointer not set");
 +        return -1;
 +    }
 +
-+    g_type_ensure(VIPS_TYPE_FOREIGN_SAVE_SPNG);
-+    object = vips_spngsave_create_object();
-+    if (!object) {
++    /* Ensure type is registered */
++    if (!g_type_name(VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER not registered");
++        vips_error("spngsave_buffer", "VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER not registered");
 +        return -1;
 +    }
 +
-+    save = VIPS_FOREIGN_SAVE_SPNG(object);
-+    if (!save || !VIPS_IS_FOREIGN_SAVE_SPNG(save)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Invalid VipsForeignSaveSpng: %p", save);
-+        vips_error("spngsave", "Invalid VipsForeignSaveSpng");
-+        g_object_unref(object);
++    save = VIPS_FOREIGN_SAVE(g_object_new(VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER,
++                                         "in", in,
++                                         "buffer", buf,
++                                         NULL));
++    if (!save) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to create VipsForeignSaveSpngBuffer object, save=NULL");
++        vips_error("spngsave_buffer", "Failed to create VipsForeignSaveSpngBuffer object");
 +        return -1;
 +    }
 +
-+    g_object_ref(object);
-+    g_object_set(object, "in", in, "buffer", buf, "length", len, NULL);
++    GType save_type = G_OBJECT_TYPE(save);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Created VipsForeignSaveSpngBuffer object at %p (type=%lu, type_name=%s, is_spng_buffer=%d)",
++          save, (gulong)save_type, save_type ? g_type_name(save_type) : "invalid",
++          g_type_check_instance_is_a((GTypeInstance *)save, VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER));
 +
-+    if (!save->in || !VIPS_IS_IMAGE(save->in)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: save->in is invalid after setting: %p", save->in);
-+        vips_error("spngsave", "Invalid input image after setting");
-+        g_object_unref(object);
++    if (!save_type || !g_type_check_instance_is_a((GTypeInstance *)save, VIPS_TYPE_FOREIGN_SAVE_SPNG_BUFFER)) {
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Object is not VipsForeignSaveSpngBuffer, type=%lu, type_name=%s",
++              (gulong)save_type, save_type ? g_type_name(save_type) : "invalid");
++        vips_error("spngsave_buffer", "Object is not VipsForeignSaveSpngBuffer");
++        VIPS_UNREF(save);
 +        return -1;
 +    }
 +
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Setting buffer output, buf=%p, len=%p, in=%p (type=%s, ref_count=%d)",
-+          save->buf, save->len, save->in, G_OBJECT_TYPE_NAME(save->in), G_OBJECT(save->in)->ref_count);
++    ((VipsForeignSaveSpngBuffer *)save)->buf = buf;
++    ((VipsForeignSaveSpngBuffer *)save)->len = len;
 +
-+    result = vips_object_build(object);
++    result = vips_object_build(VIPS_OBJECT(save));
 +    if (result) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to build VipsForeignSaveSpng for buffer: %s", vips_error_buffer());
-+        g_object_unref(object);
++        g_log("vips", G_LOG_LEVEL_ERROR, "spngsave: Failed to build VipsForeignSaveSpngBuffer: %s", vips_error_buffer());
++        VIPS_UNREF(save);
 +        return -1;
 +    }
 +
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: Buffer save completed, buf=%p, len=%zu", *buf, *len);
-+    g_object_unref(object);
++    g_log("vips", G_LOG_LEVEL_DEBUG, "spngsave: VipsForeignSaveSpngBuffer built successfully, buffer_size=%zu", *len);
++    VIPS_UNREF(save);
 +    return 0;
  }
  
  #endif /*HAVE_SPNG*/
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.h vips-8.16.1/libvips/foreign/spngsave.h
 --- vips-8.16.1.orig/libvips/foreign/spngsave.h	1969-12-31 16:00:00.000000000 -0800
-+++ vips-8.16.1/libvips/foreign/spngsave.h	2025-07-19 23:25:56.486500649 -0700
-@@ -0,0 +1,45 @@
++++ vips-8.16.1/libvips/foreign/spngsave.h	2025-07-19 19:21:49.077115608 -0700
+@@ -0,0 +1,42 @@
 +#ifndef VIPS_SPNGSAVE_H
 +#define VIPS_SPNGSAVE_H
 +
@@ -3674,9 +3707,6 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.h vips-8.16.
 +    VipsForeignSave parent_object;
 +    char *filename;
 +    VipsImage *in;
-+    VipsImage *ready;
-+    void **buf; // Pointer to store the output buffer
-+    gsize *len; // Pointer to store the buffer length
 +} VipsForeignSaveSpng;
 +
 +typedef struct _VipsForeignSaveSpngClass {
@@ -3693,8 +3723,8 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/spngsave.h vips-8.16.
 +
 +#endif /*VIPS_SPNGSAVE_H*/
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/include/vips/vips.h vips-8.16.1/libvips/include/vips/vips.h
---- vips-8.16.1.orig/libvips/include/vips/vips.h	2025-07-19 23:25:42.004674924 -0700
-+++ vips-8.16.1/libvips/include/vips/vips.h	2025-07-19 23:25:56.486660044 -0700
+--- vips-8.16.1.orig/libvips/include/vips/vips.h	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/include/vips/vips.h	2025-07-19 19:16:37.348814348 -0700
 @@ -194,6 +194,10 @@ const char *vips_guess_prefix(const char
  VIPS_API
  const char *vips_guess_libdir(const char *argv0, const char *env_name);
@@ -3706,106 +3736,9 @@ diff '--color=auto' -urpN vips-8.16.1.orig/libvips/include/vips/vips.h vips-8.16
  #ifdef __cplusplus
  }
  #endif /*__cplusplus*/
-diff '--color=auto' -urpN vips-8.16.1.orig/libvips/iofuncs/object.c vips-8.16.1/libvips/iofuncs/object.c
---- vips-8.16.1.orig/libvips/iofuncs/object.c	2025-07-19 23:25:42.005085435 -0700
-+++ vips-8.16.1/libvips/iofuncs/object.c	2025-07-19 23:25:56.487015010 -0700
-@@ -354,41 +354,64 @@ vips_object_check_required(VipsObject *o
- int
- vips_object_build(VipsObject *object)
- {
--	VipsObjectClass *object_class = VIPS_OBJECT_GET_CLASS(object);
-+    VipsObjectClass *object_class;
- 
--	/* Input and output args must both be set.
--	 */
--	VipsArgumentFlags iomask =
--		VIPS_ARGUMENT_INPUT | VIPS_ARGUMENT_OUTPUT;
--
--	int result;
-+    /* Input and output args must both be set. */
-+    VipsArgumentFlags iomask = VIPS_ARGUMENT_INPUT | VIPS_ARGUMENT_OUTPUT;
-+    int result;
-+
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "vips_object_build: Starting for object=%p, type=%s",
-+          object, object ? g_type_name(G_OBJECT_TYPE(object)) : "NULL");
-+
-+    if (!object || !VIPS_IS_OBJECT(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "vips_object_build: Invalid object: %p", object);
-+        vips_error("vips_object_build", "Invalid object");
-+        return -1;
-+    }
-+
-+    object_class = VIPS_OBJECT_GET_CLASS(object);
-+    if (!object_class) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "vips_object_build: Failed to get object class for %p", object);
-+        vips_error("vips_object_build", "Failed to get object class");
-+        return -1;
-+    }
- 
- #ifdef DEBUG
--	printf("vips_object_build: ");
--	vips_object_print_name(object);
--	printf("\n");
-+    printf("vips_object_build: ");
-+    vips_object_print_name(object);
-+    printf("\n");
- #endif /*DEBUG*/
- 
--	if (object_class->build(object))
--		return -1;
--
--	/* Check all required arguments have been supplied, don't stop on 1st
--	 * error.
--	 */
--	result = 0;
--	(void) vips_argument_map(object,
--		vips_object_check_required, &result, &iomask);
--
--	/* ... more checks go here.
--	 */
--	object->constructed = TRUE;
--
--	/* Only postbuild on success.
--	 */
--	if (!result)
--		result = vips_object_postbuild(object);
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "vips_object_build: Calling class build for %p, build=%p", object, object_class->build);
-+    if (object_class->build && object_class->build(object)) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "vips_object_build: Class build failed for %p: %s", object, vips_error_buffer());
-+        return -1;
-+    }
-+
-+    /* Check all required arguments have been supplied, don't stop on 1st error. */
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "vips_object_build: Checking required arguments for %p", object);
-+    result = 0;
-+    (void) vips_argument_map(object, vips_object_check_required, &result, &iomask);
-+    if (result) {
-+        g_log("vips", G_LOG_LEVEL_ERROR, "vips_object_build: Required argument check failed for %p: %s", object, vips_error_buffer());
-+        return -1;
-+    }
-+
-+    /* ... more checks go here. */
-+    object->constructed = TRUE;
-+
-+    /* Only postbuild on success. */
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "vips_object_build: Calling postbuild for %p", object);
-+    if (!result) {
-+        result = vips_object_postbuild(object);
-+        if (result) {
-+            g_log("vips", G_LOG_LEVEL_ERROR, "vips_object_build: Postbuild failed for %p: %s", object, vips_error_buffer());
-+            return -1;
-+        }
-+    }
- 
--	return result;
-+    g_log("vips", G_LOG_LEVEL_DEBUG, "vips_object_build: Completed for object=%p", object);
-+    return result;
- }
- 
- /**
 diff '--color=auto' -urpN vips-8.16.1.orig/libvips/iofuncs/operation.c vips-8.16.1/libvips/iofuncs/operation.c
---- vips-8.16.1.orig/libvips/iofuncs/operation.c	2025-07-19 23:25:42.005528795 -0700
-+++ vips-8.16.1/libvips/iofuncs/operation.c	2025-07-19 23:25:56.488983296 -0700
+--- vips-8.16.1.orig/libvips/iofuncs/operation.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/iofuncs/operation.c	2025-07-19 19:16:37.349080946 -0700
 @@ -989,7 +989,7 @@ vips_call_required_optional(VipsOperatio
  	return result;
  }

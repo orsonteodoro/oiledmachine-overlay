@@ -4,6 +4,28 @@
 
 EAPI=8
 
+
+# Dependency graph:
+# librsvg:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lrsvg-2 -lgio-2.0 -lgobject-2.0 -lffi -lcairo -ldl -lfontconfig -lpng16 -lz -lharfbuzz -lm -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -latomic -lm -pthread
+# libexif:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lexif
+# libpng: -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lpng16
+# libspng:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lspng -lm -lz
+# libjpeg:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -ljpeg
+# libheif:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lheif
+# libarchive:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -larchive
+# cgif:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lcgif
+# lcms2:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -llcms2 -lm -pthread
+# libwebp:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lwebp
+# libwebpmux:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lwebpmux
+# libwebpdemux:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lwebpdemux
+# hwy:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lhwy
+# imagequant:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -limagequant -lm
+# aom:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -laom
+# sharpyuv -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lsharpyuv
+# libtiff:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -ltiff
+# vips-cpp:  -L/usr/lib/sharp-vips/lib64 -lvips-cpp -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+# vips:  -L/usr/lib/sharp-vips/lib64 -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+
 # A:3.15, AL:2, D11, U22
 
 # Why this ebuild exists:
@@ -612,6 +634,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+ewarn "This ebuild is under development."
 	check-compiler-switch_start
 	rust_pkg_setup
 	python-single-r1_pkg_setup
@@ -866,6 +889,19 @@ setup_arch() {
 }
 
 src_configure() {
+	# Debug flags handled by build scripts and to avoid runtime issue.
+	filter-flags \
+		'-g' \
+		'-ggdb*'
+	replace-flags '-O*' '-O2'
+
+	if use debug ; then
+		replace-flags '-O*' '-O0'
+		if ! is-flagq '-O0' ; then
+			append-flags '-O0'
+		fi
+	fi
+
 	filter-flags -Wl,--as-needed
 	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
 	if [[ -n "${ERUST_SLOT_OVERRIDE}" ]] ; then
@@ -912,7 +948,6 @@ einfo "RUST_SLOT:  ${RUST_SLOT}"
 einfo "PATH:  ${PATH}"
 
 	strip-unsupported-flags
-	replace-flags '-O*' '-O2'
 
 	if use cpu_flags_x86_sse4 ; then
 		export USE_SSE4="1"
@@ -955,6 +990,102 @@ einfo "MAKEOPTS:  ${MAKEOPTS}"
 einfo "MAKE_LINK_JOBS:  ${MAKE_LINK_JOBS}"
 einfo "MESON_LINK_JOBS:  ${MESON_LINK_JOBS}"
 	setup_arch
+
+	export USE_AOM=${USE_AOM:-0}
+	export USE_ARCHIVE=${USE_ARCHIVE:-0}
+	export USE_CAIRO=${USE_CAIRO:-0}
+	export USE_CGIF=${USE_CGIF:-0}
+	export USE_EXIF=${USE_EXIF:-0}
+	export USE_EXPAT=1
+	export USE_FFI=${USE_FFI:-0}
+	export USE_FONTCONFIG=${USE_FONTCONFIG:-0}
+	export USE_FREETYPE=${USE_FREETYPE:-0}
+	export USE_FRIBIDI=${USE_FRIBIDI:-0}
+	export USE_GLIB=1
+	export USE_HARFBUZZ=${USE_HARFBUZZ:-0}
+	export USE_HEIF=${USE_HEIF:-0}
+	export USE_HWY=${USE_HWY:-0}
+	export USE_IMAGEQUANT=${USE_IMAGEQUANT:-0}
+	export USE_LCMS2=${USE_LCMS2:-0}
+	export USE_MOZJPEG=${USE_MOZJPEG:-0}
+	export USE_PANGO=${USE_PANGO:-0}
+	export USE_PIXMAN=${USE_PIXMAN:-0}
+	export USE_PNG16=${USE_PNG16:-0}
+	export USE_RSVG=${USE_RSVG:-0}
+	export USE_SPNG=${USE_SPNG:-1}
+	export USE_TIFF=${USE_TIFF:-0}
+	export USE_WEBP=${USE_WEBP:-0}
+	export USE_XML2=${USE_XML2:-0}
+	export USE_ZLIB_NG=${USE_ZLIB_NG:-0}
+
+	if use elibc_musl ; then
+		export USE_PROXY_LIBINTL=1
+	else
+		export USE_PROXY_LIBINTL=0
+	fi
+
+	if [[ "${USE_RSVG}" == "1" ]] ; then
+		export USE_CAIRO=1
+		export USE_GLIB=1
+		export USE_FFI=1
+		export USE_FONTCONFIG=1
+		export USE_FREETYPE=1
+		export USE_HARFBUZZ=1
+		export USE_PANGO=1
+		export USE_PIXMAN=1
+		export USE_PNG16=1
+		export USE_XML2=1
+		export USE_ZLIB_NG=1
+	fi
+
+	if [[ "${USE_PANGO}" == "1" ]] ; then
+		export USE_CAIRO=1
+		export USE_FRIBIDI=1
+		export USE_FONTCONFIG=1
+		export USE_FREETYPE=1
+		export USE_GLIB=1
+		export USE_HARFBUZZ=1
+	fi
+
+	if [[ "${USE_CAIRO}" == "1" ]] ; then
+		export USE_GLIB=1
+		export USE_PIXMAN=1
+		export USE_PNG16=1
+		export USE_FONTCONFIG=1
+		export USE_FREETYPE=1
+	fi
+
+	if [[ "${USE_GLIB}" == "1" ]] ; then
+		export USE_FFI=1
+		export USE_ZLIB_NG=1
+	fi
+
+	if [[ "${USE_FONTCONFIG}" == "1" ]] ; then
+		export USE_EXPAT=1
+	fi
+
+	if [[ "${USE_FREETYPE}" == "1" ]] ; then
+		export USE_HARFBUZZ=1
+		export USE_PNG16=1
+		export USE_ZLIB_NG=1
+	fi
+
+	if [[ "${USE_HEIF}" == "1" ]] ; then
+		export USE_AOM=1
+		export USE_WEBP=1
+	fi
+
+	if [[ "${USE_PNG16}" == "1" ]] ; then
+		USE_ZLIB_NG=1
+	fi
+
+	if [[ "${USE_SPNG}" == "1" ]] ; then
+		USE_ZLIB_NG=1
+	fi
+
+	if [[ "${USE_TIFF}" == "1" ]] ; then
+		USE_ZLIB_NG=1
+	fi
 }
 
 src_compile() {
@@ -1023,6 +1154,183 @@ src_install() {
 		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
 	fi
 
+
+#Libs: -L\${libdir} -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+	# DO NOT SORT CONDITIONALS
+	local vips_cflags=()
+	local vips_libs=(
+		"-lvips"
+	)
+
+	# DO NOT SORT CONDITIONALS
+	if [[ "${USE_TIFF}" == "1" ]] ; then
+		vips_libs+=(
+			"-ltiff"
+		)
+	fi
+	if [[ "${USE_ARCHIVE}" == "1" ]] ; then
+		vips_libs+=(
+			"-larchive"
+		)
+	fi
+	if [[ "${USE_SPNG}" == "1" ]] ; then
+		vips_libs+=(
+			"-lspng"
+		)
+		vips_cflags+=(
+			"-DSPNG_STATIC"
+		)
+	fi
+	if [[ "${USE_ZLIB_NG}" == "1" ]] ; then
+		vips_libs+=(
+			"-lz"
+		)
+	fi
+	if [[ "${USE_MOZJPEG}" == "1" ]] ; then
+		vips_libs+=(
+			"-ljpeg"
+		)
+	fi
+	if [[ "${USE_WEBP}" == "1" ]] ; then
+		vips_libs+=(
+			"-lwebp"
+			"-lwebpmux"
+			"-lwebpdemux"
+		)
+	fi
+	if [[ "${USE_HEIF}" == "1" ]] ; then
+		vips_libs+=(
+			"-lheif"
+		)
+	fi
+	if [[ "${USE_IMAGEQUANT}" == "1" ]] ; then
+		vips_libs+=(
+			"-limagequant"
+		)
+	fi
+	if [[ "${USE_CGIF}" == "1" ]] ; then
+		vips_libs+=(
+			"-lcgif"
+		)
+	fi
+	if [[ "${USE_EXIF}" == "1" ]] ; then
+		vips_libs+=(
+			"-lexif"
+		)
+	fi
+	if [[ "${USE_RSVG}" == "1" ]] ; then
+		vips_libs+=(
+			"-lrsvg-2"
+		)
+	fi
+	if [[ "${USE_CAIRO}" == "1" ]] ; then
+		vips_libs+=(
+			"-lcairo-gobject"
+		)
+	fi
+	if [[ "${USE_XML2}" == "1" ]] ; then
+		vips_libs+=(
+			"-lxml2"
+		)
+	fi
+	if [[ "${USE_PANGO}" == "1" ]] ; then
+		vips_libs+=(
+			"-lpangocairo-1.0"
+			"-lpangoft2-1.0"
+			"-lpango-1.0"
+		)
+	fi
+	if [[ "${USE_GLIB}" == "1" ]] ; then
+		vips_libs+=(
+			"-lgio-2.0"
+			"-lgobject-2.0"
+		)
+	fi
+	if [[ "${USE_CAIRO}" == "1" ]] ; then
+		vips_libs+=(
+			"-lcairo"
+		)
+	fi
+	if [[ "${USE_PNG16}" == "1" ]] ; then
+		vips_libs+=(
+			"-lpng16"
+		)
+		vips_cflags+=(
+			"-DPNG16_STATIC"
+		)
+	fi
+	if [[ "${USE_FONTCONFIG}" == "1" ]] ; then
+		vips_libs+=(
+			"-lfontconfig"
+		)
+	fi
+	if [[ "${USE_EXPAT}" == "1" ]] ; then
+		vips_libs+=(
+			"-lexpat"
+		)
+	fi
+	if [[ "${USE_HARFBUZZ}" == "1" ]] ; then
+		vips_libs+=(
+			"-lharfbuzz"
+		)
+	fi
+	if [[ "${USE_FREETYPE}" == "1" ]] ; then
+		vips_libs+=(
+			"-lfreetype"
+		)
+	fi
+	if [[ "${USE_PIXMAN}" == "1" ]] ; then
+		vips_libs+=(
+			"-lpixman-1"
+		)
+	fi
+	if [[ "${USE_GLIB}" == "1" ]] ; then
+		vips_libs+=(
+			"-lgmodule-2.0"
+			"-lglib-2.0"
+		)
+	fi
+	if [[ "${USE_LCMS2}" == "1" ]] ; then
+		vips_libs+=(
+			"-llcms2"
+		)
+	fi
+	if [[ "${USE_HWY}" == "1" ]] ; then
+		vips_libs+=(
+			"-lhwy"
+		)
+	fi
+	if [[ "${USE_AOM}" == "1" ]] ; then
+		vips_libs+=(
+			"-laom"
+		)
+	fi
+	if [[ "${USE_WEBP}" == "1" ]] ; then
+		vips_libs+=(
+			"-lsharpyuv"
+		)
+	fi
+	vips_libs+=(
+		"-lm"
+	)
+	if [[ "${USE_FFI}" == "1" ]] ; then
+		vips_libs+=(
+			"-lffi"
+		)
+	fi
+	if [[ "${USE_FRIBIDI}" == "1" ]] ; then
+		vips_libs+=(
+			"-lfribidi"
+		)
+	fi
+	vips_libs+=(
+		"-ldl"
+		"-lmd"
+		"-latomic"
+		"-lstdc++"
+		"-pthread"
+	)
+
 	# Manually generate to dedupe and to control linking order
 	if [[ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]] ; then
 cat <<EOF > "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips.pc" || die
@@ -1034,8 +1342,8 @@ includedir=\${prefix}/include
 Name: vips
 Description: VIPS image processing library
 Version: 8.15.3
-Libs: -L\${libdir} -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
-Cflags: -I\${includedir} -I\${includedir}/glib-2.0 -I\${libdir}/glib-2.0/include -DSPNG_STATIC -DPNG16_STATIC
+Libs: -L\${libdir} ${vips_libs[@]}
+Cflags: -I\${includedir} -I\${includedir}/glib-2.0 -I\${libdir}/glib-2.0/include ${vips_cflags[@]}
 EOF
 
 cat <<EOF > "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips-cpp.pc" || die
@@ -1101,11 +1409,13 @@ EOF
 	)
 	local x
 	for x in ${L[@]} ; do
+		[[ -e "${ED}/usr/lib/sharp-vips/bin/${x}" ]] || continue
 		fperms 0755 "/usr/lib/sharp-vips/bin/${x}"
 	done
 
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
 		for x in ${L[@]} ; do
+			[[ -e "${ED}/usr/lib/sharp-vips/bin/${x}" ]] || continue
 			if file "${ED}/usr/lib/sharp-vips/bin/${x}" | grep -q "ELF.*executable.*with debug_info" ; then
 				:
 			else
