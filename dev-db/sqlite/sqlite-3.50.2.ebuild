@@ -93,8 +93,6 @@ fi
 
 PATCHES=(
 	"${FILESDIR}/${PN}-3.47.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
-	# https://sqlite.org/forum/forumpost/f93323a743
-	"${FILESDIR}/${PN}-3.49.0-icu-tests.patch"
 )
 
 erun() {
@@ -492,7 +490,7 @@ _src_compile() {
         export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	cd "${BUILD_DIR}" || die
 	emake \
-		HAVE_TCL="$(usev tcl 1)" \
+		HAVE_TCL="$(usex tcl 1 0)" \
 		TCLLIBDIR="${EPREFIX}/usr/$(get_libdir)/${P}"
 
 	if use tools && multilib_is_native_abi ; then
