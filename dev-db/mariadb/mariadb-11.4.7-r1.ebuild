@@ -23,7 +23,7 @@ KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 S="${WORKDIR}/mysql"
 SRC_URI="
 	mirror://mariadb/${P}/source/${P}.tar.gz
-	https://dev.gentoo.org/~arkamar/distfiles/${P}-patches-01.tar.xz
+	https://dev.gentoo.org/~arkamar/distfiles/${PN}-11.4.7-patches-01.tar.xz
 "
 
 DESCRIPTION="An enhanced, drop-in replacement for MySQL"
@@ -68,16 +68,12 @@ REQUIRED_USE="
 # Be warned, *DEPEND are version-dependant
 # These are used for both runtime and compile time.
 #
-# libfmt-10 contains a bug which was fixed in libfmt-11, see
-# https://jira.mariadb.org/browse/MDEV-32815, bug 946074
-# libfmt-11.1 works with FMT_STATIC_THOUSANDS_SEPARATOR
-# differently, bug 946924
-#
 COMMON_DEPEND="
 	>=dev-libs/libpcre2-10.34:=
 	>=sys-apps/texinfo-4.7-r1
 	>=sys-libs/zlib-1.2.3:0=
 	dev-libs/libfmt:=
+	dev-libs/lzo:2
 	sys-libs/ncurses:0=
 	virtual/libcrypt:=
 	!bindist? (
@@ -108,6 +104,7 @@ COMMON_DEPEND="
 			app-arch/snappy:=
 			dev-libs/boost:=
 			dev-libs/libxml2:2=
+			dev-libs/thrift:=
 		)
 		cracklib? (
 			sys-libs/cracklib:0=
@@ -159,13 +156,15 @@ COMMON_DEPEND="
 	yassl? (
 		net-libs/gnutls:0=
 	)
-	|| (
-		<dev-libs/libfmt-10
-		=dev-libs/libfmt-11.0*
-	)
 "
 BDEPEND="
 	app-alternatives/yacc
+	test? (
+		acct-group/mysql
+		acct-user/mysql
+		dev-perl/Net-SSLeay
+		virtual/perl-Getopt-Long
+	)
 "
 DEPEND="
 	${COMMON_DEPEND}
@@ -174,9 +173,6 @@ DEPEND="
 			jdbc? (
 				>=virtual/jdk-1.8
 			)
-		)
-		test? (
-			acct-group/mysql acct-user/mysql
 		)
 	)
 	static? (
@@ -323,6 +319,7 @@ src_prepare() {
 	eapply "${WORKDIR}/mariadb-patches"
 	eapply "${FILESDIR}/${PN}-10.6.11-gssapi.patch"
 	eapply "${FILESDIR}/${PN}-10.6.12-gcc-13.patch"
+	eapply "${FILESDIR}/${PN}-11.4.7-gcc-16.patch"
 
 	eapply_user
 
@@ -420,6 +417,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
+	use elibc_musl && append-flags -D_LARGEFILE64_SOURCE
+
 	# It fails on alpha without this
 	use alpha && append-ldflags "-Wl,--no-relax"
 
@@ -433,16 +432,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
-	CMAKE_BUILD_TYPE="RelWithDebInfo"
-
 	# debug hack wrt #497532
 	local mycmakeargs=(
 		-DAUTH_GSSAPI_PLUGIN_TYPE=$(usex kerberos DYNAMIC OFF)
 		-DCLIENT_PLUGIN_AUTH_GSSAPI_CLIENT=OFF
+		-DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=OFF
 		-DCLIENT_PLUGIN_CLIENT_ED25519=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_DIALOG=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC
-		-DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=OFF
+		-DCLIENT_PLUGIN_ZSTD=OFF
 		-DCMAKE_C_FLAGS_RELWITHDEBINFO="$(usex debug '' '-DNDEBUG')"
 		-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(usex debug '' '-DNDEBUG')"
 		-DCONC_WITH_EXTERNAL_ZLIB=YES
@@ -479,6 +477,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DWITH_EXTERNAL_ZLIB=YES
 		-DWITH_LIBEDIT=0
 		-DWITH_LIBFMT="system"
+		-DWITH_THRIFT=system # for columnstore
 		-DWITH_UNIT_TESTS=$(usex test ON OFF)
 		-DWITH_UNITTEST=OFF
 		-DWITH_ZLIB=system
@@ -930,9 +929,9 @@ pkg_postinst() {
 einfo
 elog "This install includes the PAM authentication plugin."
 elog "To activate and configure the PAM plugin, please read:"
-elog "https://mariadb.com/kb/en/mariadb/pam-authentication-plugin/"
+elog "https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-with-pluggable-authentication-modules-pam/authentication-plugin-pam"
 einfo
-			chown mysql:mysql "${EROOT}/usr/$(get_libdir)/mariadb/plugin/auth_pam_tool_dir" || die
+			chown "mysql:mysql" "${EROOT}/usr/$(get_libdir)/mariadb/plugin/auth_pam_tool_dir" || die
 		fi
 
 		if [[ -z "${REPLACING_VERSIONS}" ]] ; then
@@ -959,19 +958,6 @@ elog "The first time the cluster is activated, you should add"
 elog "--wsrep-new-cluster to the options in /etc/conf.d/mysql for one node."
 elog "This option should then be removed for subsequent starts."
 einfo
-			if [[ -n "${REPLACING_VERSIONS}" ]] ; then
-				local rver
-				for rver in ${REPLACING_VERSIONS} ; do
-					if ver_test "${rver}" -lt "10.4.0" ; then
-ewarn
-ewarn "Upgrading galera from a previous version requires admin restart of the"
-ewarn "entire cluster.  For more information, please refer to"
-ewarn
-ewarn "  https://mariadb.com/kb/en/library/changes-improvements-in-mariadb-104/#galera-4"
-ewarn
-					fi
-				done
-			fi
 		fi
 	fi
 
@@ -1469,6 +1455,8 @@ einfo "Starting mysqld to finalize initialization: ${cmd[@]}"
 	cmd=(
 		"${mysql_binary}"
 		"--no-defaults"
+		# Skip SSL for client connections, see bug #951865
+		--skip-ssl
 		"--socket='${socket}'"
 		"-hlocalhost"
 		"-e \"${sql}\""
