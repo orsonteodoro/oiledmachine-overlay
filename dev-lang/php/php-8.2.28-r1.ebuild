@@ -390,6 +390,7 @@ COMMON_DEPEND="
 	)
 	xml? (
 		>=dev-libs/libxml2-2.9.0
+		dev-libs/libxml2:=
 	)
 	xpm? (
 		x11-libs/libXpm
