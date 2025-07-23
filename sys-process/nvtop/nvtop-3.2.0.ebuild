@@ -210,9 +210,9 @@ src_configure() {
 		-DINTEL_SUPPORT=$(usex video_cards_intel)
 		-DMSM_SUPPORT=$(usex video_cards_freedreno)
 		-DNVIDIA_SUPPORT=$(usex video_cards_nvidia)
+		-DTPU_SUPPORT=$(usex tpu)
 		-DUSE_LIBUDEV_OVER_LIBSYSTEMD=$(usex udev)
 		-DV3D_SUPPORT=$(usex video_cards_v3d)
-		-DTPU_SUPPORT=$(usex tpu)
 	)
 	cmake_src_configure
 }
