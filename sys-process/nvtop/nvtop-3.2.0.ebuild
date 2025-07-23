@@ -3,16 +3,18 @@
 
 EAPI=8
 
-# *DEPENDS based on U 20
+# *DEPENDS based on U 18.04
 
 LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
 LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
 LINUX_KERNEL_MSM_FDINFO_KV="6.0"
+LINUX_KERNEL_V3D_FDINFO_KV="6.8"
 VIDEO_CARDS=(
 	amdgpu
 	freedreno
 	intel
 	nvidia
+	v3d
 )
 
 inherit cmake linux-info xdg
@@ -22,7 +24,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		fallback-commit
 	"
 	EGIT_REPO_URI="https://github.com/Syllo/${PN}.git"
-	FALLBACK_COMMIT="0316ce19581c3d8543cf6aa312d1569c56ca754f" # Feb 26, 2024
+	FALLBACK_COMMIT="73291884d926445e499d6b9b71cb7a9bdbc7c393" # Mar 29, 2025
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~x86"
@@ -37,9 +39,9 @@ HOMEPAGE="https://github.com/Syllo/nvtop"
 LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
-	${VIDEO_CARDS[@]/#/video_cards_}
-	custom-kernel systemd udev unicode
-	r1
+${VIDEO_CARDS[@]/#/video_cards_}
+custom-kernel systemd udev unicode tpu
+ebuild_revision_1
 "
 REQUIRED_USE="
 	video_cards_amdgpu? (
@@ -75,7 +77,7 @@ gen_kernel_repend() {
 	"
 }
 RDEPEND="
-	>=sys-libs/ncurses-0.7.14:0=
+	>=sys-libs/ncurses-6.1:0=
 	udev? (
 		!systemd? (
 			!sys-fs/eudev
@@ -83,7 +85,10 @@ RDEPEND="
 		)
 	)
 	systemd? (
-		>=sys-apps/systemd-245.4
+		>=sys-apps/systemd-237
+	)
+	tpu? (
+		net-libs/grpc
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
@@ -97,7 +102,7 @@ RDEPEND="
 				)
 			)
 		)
-		>=x11-libs/libdrm-2.4.101[video_cards_amdgpu]
+		>=x11-libs/libdrm-2.4.99[video_cards_amdgpu]
 	)
 	video_cards_freedreno?  (
 		!custom-kernel? (
@@ -105,7 +110,7 @@ RDEPEND="
 				$(gen_kernel_repend ${LINUX_KERNEL_MSM_FDINFO_KV})
 			)
 		)
-		>=x11-libs/libdrm-2.4.101[video_cards_freedreno]
+		>=x11-libs/libdrm-2.4.99[video_cards_freedreno]
 	)
 	video_cards_intel?  (
 		!custom-kernel? (
@@ -117,13 +122,20 @@ RDEPEND="
 	video_cards_nvidia? (
 		x11-drivers/nvidia-drivers
 	)
+	video_cards_v3d?  (
+		!custom-kernel? (
+			|| (
+				$(gen_kernel_repend ${LINUX_KERNEL_V3D_FDINFO_KV})
+			)
+		)
+	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.16.3
-	>=sys-devel/gcc-9.3.0
+	>=dev-build/cmake-3.18
+	>=sys-devel/gcc-7.4.0
 	virtual/pkgconfig
 "
 
@@ -199,6 +211,8 @@ src_configure() {
 		-DMSM_SUPPORT=$(usex video_cards_freedreno)
 		-DNVIDIA_SUPPORT=$(usex video_cards_nvidia)
 		-DUSE_LIBUDEV_OVER_LIBSYSTEMD=$(usex udev)
+		-DV3D_SUPPORT=$(usex video_cards_v3d)
+		-DTPU_SUPPORT=$(usex tpu)
 	)
 	cmake_src_configure
 }

@@ -37,9 +37,9 @@ HOMEPAGE="https://github.com/Syllo/nvtop"
 LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
-	${VIDEO_CARDS[@]/#/video_cards_}
-	custom-kernel systemd udev unicode
-	r1
+${VIDEO_CARDS[@]/#/video_cards_}
+custom-kernel systemd udev unicode
+ebuild_revision_1
 "
 REQUIRED_USE="
 	video_cards_amdgpu? (
