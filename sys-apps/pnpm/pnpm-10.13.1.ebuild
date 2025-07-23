@@ -17,7 +17,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.12.4/pnpm-lock.yaml#L1
+SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.13.1/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+=" ebuild_revision_2"
 CDEPEND+="
