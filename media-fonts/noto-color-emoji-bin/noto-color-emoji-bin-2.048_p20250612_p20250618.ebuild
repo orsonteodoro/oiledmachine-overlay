@@ -43,7 +43,7 @@ DEPEND="
         ${RDEPEND}
 	dev-python/fonttools
 "
-EGIT_COMMIT="22e564626297b4df0a40570ad81d6c05cc7c38bd"
+EGIT_COMMIT="b3e3051a088047d19fd4d49b1c3ac42fb8c3aaf8"
 GH_URI="https://github.com/googlefonts/noto-emoji/raw/${EGIT_COMMIT}/fonts/"
 SRC_URI="
 	${GH_URI}/LICENSE -> ${P}.LICENSE
