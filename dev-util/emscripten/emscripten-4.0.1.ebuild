@@ -24,7 +24,6 @@ TEST_PATH="${WORKDIR}/test/"
 # https://github.com/emscripten-core/emsdk/blob/4.0.1/emsdk#L11
 # https://github.com/emscripten-core/emsdk/blob/4.0.1/scripts/update_python.py#L34
 # https://github.com/emscripten-core/emscripten/blob/4.0.1/requirements-dev.txt
-# flake8 (3.7.8) - <= 3.7
 # flake8 (5.0.4) - <= 3.10
 # flake8 (7.1.1) - <= 3.12
 # websockify (0.10.0) - <= 3.9
