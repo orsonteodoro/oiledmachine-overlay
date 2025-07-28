@@ -17,7 +17,7 @@ LLVM_COMPAT=( "20" )
 LLVM_SLOT="20"
 LLVM_MAX_SLOT="${LLVM_SLOT}"
 NODEJS_SLOT="16"
-PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.9
+PYTHON_COMPAT=( "python3_"{8..12} ) # emsdk lists 3.9
 TEST_PATH="${WORKDIR}/test/"
 # See also
 # https://github.com/emscripten-core/emsdk/blob/3.1.74/.circleci/config.yml#L24
@@ -26,6 +26,7 @@ TEST_PATH="${WORKDIR}/test/"
 # https://github.com/emscripten-core/emscripten/blob/3.1.74/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
 # flake8 (5.0.4) - <= 3.10
+# flake8 (7.1.1) - <= 3.12
 # websockify (0.10.0) - <= 3.9
 
 inherit check-compiler-switch flag-o-matic java-pkg-opt-2 python-single-r1 toolchain-funcs
