@@ -1,0 +1,36 @@
+diff '--color=auto' -urp emscripten-4.0.11.orig/tools/gen_struct_info.py emscripten-4.0.11/tools/gen_struct_info.py
+--- emscripten-4.0.11.orig/tools/gen_struct_info.py	2025-07-11 08:27:28.000000000 -0700
++++ emscripten-4.0.11/tools/gen_struct_info.py	2025-07-28 01:43:04.411786766 -0700
+@@ -92,6 +92,8 @@ CXXFLAGS = [
+     '-I' + utils.path_from_root('system/lib/libcxxabi/src'),
+     '-D__EMSCRIPTEN_EXCEPTIONS__',
+     '-I' + utils.path_from_root('system/lib/wasmfs/'),
++    '-I' + utils.path_from_root('system/lib/libcxx/include/'),
++    '-I' + utils.path_from_root('system/lib/libcxxabi/include/'),
+     '-std=c++17',
+ ]
+ 
+Only in emscripten-4.0.11/tools: gen_struct_info.py.orig
+diff '--color=auto' -urp emscripten-4.0.11.orig/tools/system_libs.py emscripten-4.0.11/tools/system_libs.py
+--- emscripten-4.0.11.orig/tools/system_libs.py	2025-07-11 08:27:28.000000000 -0700
++++ emscripten-4.0.11/tools/system_libs.py	2025-07-28 01:44:00.130094633 -0700
+@@ -1609,7 +1609,7 @@ class libcxxabi(ExceptionLibrary, MTLibr
+       '-DLIBCXXABI_NON_DEMANGLING_TERMINATE',
+       '-std=c++23',
+     ]
+-  includes = ['system/lib/libcxx/src']
++  includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src']
+ 
+   def __init__(self, **kwargs):
+     super().__init__(**kwargs)
+@@ -1688,7 +1688,7 @@ class libcxx(ExceptionLibrary, MTLibrary
+     '-DLIBC_NAMESPACE=__llvm_libc',
+   ]
+ 
+-  includes = ['system/lib/libcxx/src', 'system/lib/llvm-libc']
++  includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src', 'system/lib/llvm-libc']
+ 
+   src_dir = 'system/lib/libcxx/src'
+   src_glob = '**/*.cpp'
+Only in emscripten-4.0.11/tools: system_libs.py.orig
+Only in emscripten-4.0.11/tools: system_libs.py.rej

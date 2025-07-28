@@ -224,7 +224,7 @@ BDEPEND+="
 _PATCHES=(
 #	"${DISTDIR}/emscripten-commit-72dd53c.patch"
 	"${FILESDIR}/${PN}-4.0.11-set-wrappers-path.patch"
-	"${FILESDIR}/${PN}-3.1.51-includes.patch"
+	"${FILESDIR}/${PN}-4.0.11-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
 
@@ -320,7 +320,7 @@ src_prepare() {
 }
 
 src_configure() {
-	:
+	which ${CC} || die "Missing ${CC}"
 }
 
 src_compile() {

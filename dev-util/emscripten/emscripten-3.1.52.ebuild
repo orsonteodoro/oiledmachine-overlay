@@ -319,7 +319,7 @@ src_prepare() {
 }
 
 src_configure() {
-	:
+	which ${CC} || die "Missing ${CC}"
 }
 
 src_compile() {
