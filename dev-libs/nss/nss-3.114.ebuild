@@ -13,7 +13,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
-NSPR_VER="4.35"
+NSPR_VER="4.37"
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 DESCRIPTION="Mozilla's Network Security Services library that implements PKI support"
