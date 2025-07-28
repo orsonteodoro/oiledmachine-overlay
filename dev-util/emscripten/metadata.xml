@@ -21,16 +21,19 @@
 
     The project is rolling release.  No LTS versions.
 
-    LLVM 19 (dev) - 3.1.64 (Upstream supports live)
-    LLVM 18 (dev) - 3.1.52 (EOL)
-    LLVM 17 (dev) - 3.1.44 (EOL)
-    LLVM 16 (dev) - 3.1.30 (EOL)
-    LLVM 15 (stable) - 3.1.17 (EOL)
-    LLVM 14 (stable) - 3.1.3 (EOL)
-    LLVM 14 (stable) - 3.0.3 (EOL)
-    LLVM 14 (stable) - 2.0.26 (EOL)
-    LLVM 14 (stable) - 1.40.1 (EOL)
-    LLVM 14 (stable) - 1.39.20 (EOL)
+    LLVM 21 (dev) - 4.0.11
+    LLVM 20 (stable) - 4.0.1
+    LLVM 20 (stable) - 3.1.74
+    LLVM 19 (stable) - 3.1.64
+    LLVM 18 (stable) - 3.1.52
+    LLVM 17 (stable) - 3.1.44
+    LLVM 16 (stable) - 3.1.30
+    LLVM 15 (stable) - 3.1.17
+    LLVM 14 (stable) - 3.1.3
+    LLVM 14 (stable) - 3.0.3
+    LLVM 14 (stable) - 2.0.26
+    LLVM 14 (stable) - 1.40.1
+    LLVM 14 (stable) - 1.39.20
 
     These ebuilds only version by tags and release notes for a particular point
     release may be found in the next version bump.
@@ -80,25 +83,43 @@
   </use>
   <slots>
     <slot name="14-1.39">
-      Target LLVM 14 and Emscripten 1.39.x (EOL)
+      Target LLVM 14 and Emscripten 1.39.x
     </slot>
     <slot name="14-1.40">
-      Target LLVM 14 and Emscripten 1.40.x (EOL)
+      Target LLVM 14 and Emscripten 1.40.x
     </slot>
     <slot name="14-2.0">
-      Target LLVM 14 and Emscripten 2.0.x (EOL)
+      Target LLVM 14 and Emscripten 2.0.x
     </slot>
     <slot name="14-3.0">
-      Target LLVM 14 and Emscripten 3.0.x (EOL)
+      Target LLVM 14 and Emscripten 3.0.x
     </slot>
     <slot name="14-3.1">
-      Target LLVM 14 and Emscripten 3.1.x (EOL)
+      Target LLVM 14 and Emscripten 3.1.x
     </slot>
     <slot name="15-3.1">
-      Target LLVM 15 and Emscripten 3.1.x (EOL)
+      Target LLVM 15 and Emscripten 3.1.x
     </slot>
     <slot name="16-3.1">
-      Target LLVM 16 and Emscripten 3.1.x (Upstream supported)
+      Target LLVM 16 and Emscripten 3.1.x
+    </slot>
+    <slot name="17-3.1">
+      Target LLVM 17 and Emscripten 3.1.x
+    </slot>
+    <slot name="18-3.1">
+      Target LLVM 18 and Emscripten 3.1.x
+    </slot>
+    <slot name="19-3.1">
+      Target LLVM 19 and Emscripten 3.1.x
+    </slot>
+    <slot name="20-3.1">
+      Target LLVM 20 and Emscripten 3.1.x
+    </slot>
+    <slot name="20-4.0">
+      Target LLVM 20 and Emscripten 4.0.x
+    </slot>
+    <slot name="21-4.0">
+      Target LLVM 21 and Emscripten 4.0.x
     </slot>
   </slots>
 </pkgmetadata>
