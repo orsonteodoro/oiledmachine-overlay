@@ -13,6 +13,7 @@ DEST_FILENAME="${P}.tar.gz"
 EMSCRIPTEN_CONFIG_VER="2.0.26"
 INSTALL_PATH="/usr/share/"
 JAVA_SLOT="11"
+LLVM_COMPAT=( "19" )
 LLVM_SLOT="19"
 LLVM_MAX_SLOT="${LLVM_SLOT}"
 NODEJS_SLOT="16"
@@ -27,7 +28,7 @@ TEST_PATH="${WORKDIR}/test/"
 # flake8 (5.0.4) - <= 3.10
 # websockify (0.10.0) - <= 3.9
 
-inherit check-compiler-switch flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
+inherit check-compiler-switch flag-o-matic java-pkg-opt-2 python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos" # See tests/clang_native.py for supported arches
 SRC_URI="
@@ -137,12 +138,16 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
 ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	closure_compiler_java? (
 		closure-compiler
 		java
@@ -217,7 +222,7 @@ BDEPEND+="
 
 _PATCHES=(
 #	"${DISTDIR}/emscripten-commit-72dd53c.patch"
-	"${FILESDIR}/${PN}-3.1.51-set-wrappers-path.patch"
+	"${FILESDIR}/${PN}-3.1.64-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.51-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
@@ -236,7 +241,15 @@ eerror
 	fi
 	use java && java-pkg_ensure-vm-version-eq "${JAVA_SLOT}"
 	python-single-r1_pkg_setup
-	llvm_pkg_setup
+
+einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH=${PATH} (after)"
+
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	export CPP="${CC} -E"

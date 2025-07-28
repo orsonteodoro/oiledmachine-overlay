@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# U23
+# U20, U24
 
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{8..11} )

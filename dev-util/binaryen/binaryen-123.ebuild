@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U22, U24
+
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{8..11} )
 SLOT_MAJOR="${PV%%.*}"
@@ -29,8 +31,8 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" doc"
 CDEPEND+="
 	|| (
-		>=sys-devel/gcc-11
-		>=llvm-core/clang-11
+		>=sys-devel/gcc-7
+		>=llvm-core/clang-5
 	)
 "
 RDEPEND+="
@@ -59,12 +61,12 @@ einfo
 	test-flags-CXX "-std=c++17" >/dev/null 2>&1 \
 		|| die "Switch to a c++17 compatible compiler."
 	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt "11" ; then
-			die "${PN} requires GCC >=11 for c++17 support"
+		if ver_test $(gcc-major-version) -lt "7" ; then
+			die "${PN} requires GCC >=7 for c++17 support"
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt "11" ; then
-			die "${PN} requires Clang >=11 for c++17 support"
+		if ver_test $(clang-version) -lt "5" ; then
+			die "${PN} requires Clang >=5 for c++17 support"
 		fi
 	else
 		die "Compiler is not supported"

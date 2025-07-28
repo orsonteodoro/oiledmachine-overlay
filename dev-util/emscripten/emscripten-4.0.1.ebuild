@@ -4,33 +4,34 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.52/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/4.0.1/tools/config_template.py
 
 # TC = toolchain
-BINARYEN_SLOT="115" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+BINARYEN_SLOT="121" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 CLOSURE_COMPILER_SLOT="0"
 DEST_FILENAME="${P}.tar.gz"
 EMSCRIPTEN_CONFIG_VER="2.0.26"
 INSTALL_PATH="/usr/share/"
 JAVA_SLOT="11"
-LLVM_COMPAT=( "18" )
-LLVM_SLOT="18"
+LLVM_COMPAT=( "20" )
+LLVM_SLOT="20"
 LLVM_MAX_SLOT="${LLVM_SLOT}"
 NODEJS_SLOT="16"
-PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.9
+PYTHON_COMPAT=( "python3_"{8..12} ) # emsdk lists 3.9
 TEST_PATH="${WORKDIR}/test/"
 # See also
-# https://github.com/emscripten-core/emsdk/blob/3.1.52/.circleci/config.yml#L24
-# https://github.com/emscripten-core/emsdk/blob/3.1.52/emsdk#L11
-# https://github.com/emscripten-core/emsdk/blob/3.1.52/scripts/update_python.py#L34
-# https://github.com/emscripten-core/emscripten/blob/3.1.52/requirements-dev.txt
+# https://github.com/emscripten-core/emsdk/blob/4.0.1/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emsdk/blob/4.0.1/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/4.0.1/scripts/update_python.py#L34
+# https://github.com/emscripten-core/emscripten/blob/4.0.1/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
 # flake8 (5.0.4) - <= 3.10
+# flake8 (7.1.1) - <= 3.12
 # websockify (0.10.0) - <= 3.9
 
 inherit check-compiler-switch flag-o-matic java-pkg-opt-2 python-single-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos" # See tests/clang_native.py for supported arches
+#KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos" # See tests/clang_native.py for supported arches ; needs testing or patch update
 SRC_URI="
 	https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${DEST_FILENAME}
 	https://github.com/emscripten-core/emscripten/pull/20930/commits/72dd53cb20f421d7036680319b0e66489378df8e.patch -> emscripten-commit-72dd53c.patch
@@ -169,13 +170,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.52/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.52/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.52/package.json
-# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/packages/google-closure-compiler/package.json
-# For the required Java, See https://github.com/google/closure-compiler/blob/v20230802/.github/workflows/ci.yaml#L43
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.52/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.52/tools/shared.py#L43
+# See also https://github.com/emscripten-core/emscripten/blob/4.0.1/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/4.0.1/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/4.0.1/package.json
+# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/packages/google-closure-compiler/package.json
+# For the required Java, See https://github.com/google/closure-compiler/blob/v20240317/.github/workflows/ci.yaml#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/4.0.1/tools/shared.py#L62
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/4.0.1/tools/shared.py#L43
 RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
@@ -189,7 +190,7 @@ RDEPEND+="
 		)
 	)
 	dev-util/binaryen:${BINARYEN_SLOT}
-	>=net-libs/nodejs-16.20
+	>=net-libs/nodejs-18
 	(
 		>=llvm-core/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 		>=llvm-core/lld-${LLVM_SLOT}:${LLVM_SLOT}
@@ -222,7 +223,7 @@ BDEPEND+="
 
 _PATCHES=(
 #	"${DISTDIR}/emscripten-commit-72dd53c.patch"
-	"${FILESDIR}/${PN}-3.1.52-set-wrappers-path.patch"
+	"${FILESDIR}/${PN}-4.0.1-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.51-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
@@ -266,7 +267,7 @@ einfo "CXX:\t${CXX}"
 
 # The activated_cfg goes in emscripten.config from the json file.
 # The activated_env goes in 99emscripten from the json file.
-# https://github.com/emscripten-core/emsdk/blob/3.1.52/emsdk_manifest.json
+# https://github.com/emscripten-core/emsdk/blob/4.0.1/emsdk_manifest.json
 # For examples of environmental variables and paths used in this package, see
 # https://github.com/emscripten-core/emsdk/issues/167#issuecomment-414935332
 prepare_file() {
