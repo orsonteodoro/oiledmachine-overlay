@@ -181,7 +181,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
-		>=dev-util/closure-compiler-npm-20230802.0.0:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
+		>=dev-util/closure-compiler-npm-20240317.0.0:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		closure_compiler_java? (
 			virtual/jre:${JAVA_SLOT}
 		)
