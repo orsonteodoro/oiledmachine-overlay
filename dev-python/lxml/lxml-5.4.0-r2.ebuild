@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..14} "pypy3_11" )
+PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit distutils-r1 optfeature toolchain-funcs
 
@@ -46,8 +46,8 @@ RESTRICT="
 
 # Note: lib{xml2,xslt} are used as C libraries, not Python modules.
 DEPEND="
-	>=dev-libs/libxml2-2.10.3:=
-	>=dev-libs/libxslt-1.1.38
+	>=dev-libs/libxml2-2.13.8:=
+	>=dev-libs/libxslt-1.1.43
 "
 RDEPEND="
 	${DEPEND}
@@ -56,7 +56,6 @@ BDEPEND="
 	virtual/pkgconfig
 	|| (
 		>=dev-python/cython-3.0.10:3.0[${PYTHON_USEDEP}]
-		>=dev-python/cython-3.1:3.1[${PYTHON_USEDEP}]
 	)
 	doc? (
 		$(python_gen_any_dep '

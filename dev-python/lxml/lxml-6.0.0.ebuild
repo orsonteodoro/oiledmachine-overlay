@@ -6,13 +6,14 @@ EAPI=8
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..13} "pypy3" "pypy3_11" )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit distutils-r1 optfeature toolchain-funcs
 
 KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~x64-solaris
 "
 S="${WORKDIR}/lxml-${P}"
 SRC_URI="
@@ -45,15 +46,17 @@ RESTRICT="
 
 # Note: lib{xml2,xslt} are used as C libraries, not Python modules.
 DEPEND="
-	>=dev-libs/libxml2-2.10.3:=
-	>=dev-libs/libxslt-1.1.38
+	>=dev-libs/libxml2-2.12.9:=
+	>=dev-libs/libxslt-1.1.42
 "
 RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-python/cython-3.0.10:3.0[${PYTHON_USEDEP}]
 	virtual/pkgconfig
+	|| (
+		>=dev-python/cython-3.1.2:3.1[${PYTHON_USEDEP}]
+	)
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/docutils[${PYTHON_USEDEP}]
@@ -68,7 +71,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.0-pypy.patch"
+	"${FILESDIR}/${PN}-6.0.0-pypy.patch"
 )
 
 python_check_deps() {
@@ -84,10 +87,12 @@ check_cython() {
 		| cut -f 3 -d " " \
 		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g" -e "s|rc|_rc|g")
 	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.0"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
+	local expected_cython_slot="3.1"
+	if \
+		! ver_test "${actual_cython_slot}" -eq "${expected_cython_slot}" \
+	; then
 eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue"
+eerror "Do \`eselect cython set 3.1\` to continue"
 eerror
 eerror "Actual cython slot:  ${actual_cython_slot}"
 eerror "Expected cython slot:  ${expected_cython_slot}"
@@ -117,7 +122,8 @@ python_compile() {
 }
 
 python_compile_all() {
-	use doc && emake html
+	# disable automagic dep on coverage
+	use doc && emake CYTHON_WITH_COVERAGE= html
 }
 
 python_test() {
