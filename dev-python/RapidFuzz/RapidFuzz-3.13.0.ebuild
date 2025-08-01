@@ -41,7 +41,6 @@ BDEPEND+="
 	)
 	cpp? (
 		>=dev-python/cython-3.0.12:3.0[${PYTHON_USEDEP}]
-		>=dev-python/rapidfuzz_capi-3.3.2[${PYTHON_USEDEP}]
 		>=dev-python/scikit-build-0.17.0[${PYTHON_USEDEP}]
 		>=dev-build/cmake-3.22.5
 		>=dev-build/ninja-1.10.2.3
