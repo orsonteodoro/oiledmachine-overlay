@@ -720,7 +720,6 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 		eapply "${FILESDIR}/librsvg-2.60.0-offline.patch"
 	popd 2>&1 >/dev/null || die
 	pushd "${WORKDIR}/vips-${VERSION_VIPS}" 2>&1 >/dev/null || die
-		eapply "${FILESDIR}/vips-8.16.1-spng-resolve-load-symbol-collision.patch"
 		eapply "${FILESDIR}/vips-8.16.1-quantise-c-cast-pointers.patch"
 	popd 2>&1 >/dev/null || die
 }
@@ -991,32 +990,32 @@ einfo "MAKE_LINK_JOBS:  ${MAKE_LINK_JOBS}"
 einfo "MESON_LINK_JOBS:  ${MESON_LINK_JOBS}"
 	setup_arch
 
-	export USE_AOM=${USE_AOM:-0}
-	export USE_ARCHIVE=${USE_ARCHIVE:-0}
-	export USE_CAIRO=${USE_CAIRO:-0}
-	export USE_CGIF=${USE_CGIF:-0}
-	export USE_EXIF=${USE_EXIF:-0}
+	export USE_AOM=${USE_AOM:-1}
+	export USE_ARCHIVE=${USE_ARCHIVE:-1}
+	export USE_CAIRO=${USE_CAIRO:-1}
+	export USE_CGIF=${USE_CGIF:-1}
+	export USE_EXIF=${USE_EXIF:-1}
 	export USE_EXPAT=1
-	export USE_FFI=${USE_FFI:-0}
-	export USE_FONTCONFIG=${USE_FONTCONFIG:-0}
-	export USE_FREETYPE=${USE_FREETYPE:-0}
-	export USE_FRIBIDI=${USE_FRIBIDI:-0}
+	export USE_FFI=${USE_FFI:-1}
+	export USE_FONTCONFIG=${USE_FONTCONFIG:-1}
+	export USE_FREETYPE=${USE_FREETYPE:-1}
+	export USE_FRIBIDI=${USE_FRIBIDI:-1}
 	export USE_GLIB=1
-	export USE_HARFBUZZ=${USE_HARFBUZZ:-0}
-	export USE_HEIF=${USE_HEIF:-0}
-	export USE_HWY=${USE_HWY:-0}
-	export USE_IMAGEQUANT=${USE_IMAGEQUANT:-0}
-	export USE_LCMS2=${USE_LCMS2:-0}
-	export USE_MOZJPEG=${USE_MOZJPEG:-0}
-	export USE_PANGO=${USE_PANGO:-0}
-	export USE_PIXMAN=${USE_PIXMAN:-0}
-	export USE_PNG16=${USE_PNG16:-0}
-	export USE_RSVG=${USE_RSVG:-0}
-	export USE_SPNG=${USE_SPNG:-1}
-	export USE_TIFF=${USE_TIFF:-0}
-	export USE_WEBP=${USE_WEBP:-0}
-	export USE_XML2=${USE_XML2:-0}
-	export USE_ZLIB_NG=${USE_ZLIB_NG:-0}
+	export USE_HARFBUZZ=${USE_HARFBUZZ:-1}
+	export USE_HEIF=${USE_HEIF:-1}
+	export USE_HWY=${USE_HWY:-1}
+	export USE_IMAGEQUANT=${USE_IMAGEQUANT:-1}
+	export USE_LCMS2=${USE_LCMS2:-1}
+	export USE_MOZJPEG=${USE_MOZJPEG:-1}
+	export USE_PANGO=${USE_PANGO:-1}
+	export USE_PIXMAN=${USE_PIXMAN:-1}
+	export USE_PNG16=${USE_PNG16:-1}
+	export USE_RSVG=${USE_RSVG:-1}
+	export USE_SPNG=${USE_SPNG:-0}
+	export USE_TIFF=${USE_TIFF:-1}
+	export USE_WEBP=${USE_WEBP:-1}
+	export USE_XML2=${USE_XML2:-1}
+	export USE_ZLIB_NG=${USE_ZLIB_NG:-1}
 
 	if use elibc_musl ; then
 		export USE_PROXY_LIBINTL=1

@@ -395,10 +395,11 @@
  
  # Dependency version numbers
  VERSION_ZLIB_NG=2.2.4
-@@ -129,10 +414,39 @@ VERSION_AOM=3.12.0
+@@ -129,10 +414,40 @@ VERSION_AOM=3.12.0
  VERSION_HEIF=1.19.7
  VERSION_CGIF=0.5.0
  
++echo "VERSION_LIBVIPS: ${VERSION_VIPS}"
 +echo "VERSION_ZLIB_NG: ${VERSION_ZLIB_NG}"
 +echo "VERSION_FFI: ${VERSION_FFI}"
 +echo "VERSION_GLIB: ${VERSION_GLIB}"
@@ -1051,9 +1052,9 @@
 +#sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 +export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
 +# oteodoro:  change to static
-+CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC ${VIPS_CFLAGS}" \
-+CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED} -DSPNG_STATIC -DPNG16_STATIC ${VIPS_CXXFLAGS}" \
-+LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR} -lspng" \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} ${VIPS_CFLAGS}" \
++CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED} ${VIPS_CXXFLAGS}" \
++LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR}" \
 +meson setup _build --default-library=static --buildtype=${MESON_CONFIGURATION} ${MESON_STRIP} --prefix="${TARGET}" ${MESON} \
    -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
    ${WITHOUT_HIGHWAY:+-Dhighway=disabled} -Dorc=disabled -Dmagick=disabled -Dmatio=disabled -Dnifti=disabled -Dopenexr=disabled \
