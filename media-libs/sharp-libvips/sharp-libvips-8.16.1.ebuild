@@ -525,7 +525,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_16
+ebuild_revision_17
 "
 LICENSE="
 	Apache-2.0
