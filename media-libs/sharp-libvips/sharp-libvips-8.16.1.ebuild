@@ -482,7 +482,7 @@ KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
-https://github.com/lovell/sharp-libvips/archive/refs/tags/v8.16.1.tar.gz -> ${P}.tar.gz
+https://github.com/lovell/sharp-libvips/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/frida/proxy-libintl/archive/${VERSION_PROXY_LIBINTL}.tar.gz -> proxy-libintl-${VERSION_PROXY_LIBINTL}.tar.gz
 https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz -> zlib-ng-${VERSION_ZLIB_NG}.tar.gz
 https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz
@@ -525,7 +525,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_15
+ebuild_revision_16
 "
 LICENSE="
 	Apache-2.0
