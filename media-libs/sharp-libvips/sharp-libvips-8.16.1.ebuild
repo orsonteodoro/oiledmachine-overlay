@@ -525,7 +525,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_17
+ebuild_revision_18
 "
 LICENSE="
 	Apache-2.0
@@ -1340,7 +1340,7 @@ includedir=\${prefix}/include
 
 Name: vips
 Description: VIPS image processing library
-Version: 8.15.3
+Version: ${PV}
 Libs: -L\${libdir} ${vips_libs[@]}
 Cflags: -I\${includedir} -I\${includedir}/glib-2.0 -I\${libdir}/glib-2.0/include ${vips_cflags[@]}
 EOF
@@ -1353,7 +1353,7 @@ includedir=\${prefix}/include
 
 Name: vips-cpp
 Description: VIPS C++ binding
-Version: 8.15.3
+Version: ${PV}
 Requires: vips
 Libs: -L\${libdir} -lvips-cpp
 Cflags: -I\${includedir}
