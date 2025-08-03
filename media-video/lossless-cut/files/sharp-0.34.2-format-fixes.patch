@@ -13,14 +13,27 @@
  } catch (err) {
    // Bail early if bindings aren't available
    const help = ['', 'Something went wrong installing the "sharp" module', '', err.message, '', 'Possible solutions:'];
---- a/node_modules/sharp/lib/utility.js.orig	2025-07-07 12:59:13.468178664 -0700
-+++ b/node_modules/sharp/lib/utility.js	2025-07-07 13:13:57.755657335 -0700
-@@ -24,7 +24,9 @@ const format = sharp.format();
- format.heif.output.alias = ['avif', 'heic'];
- format.jpeg.output.alias = ['jpe', 'jpg'];
- format.tiff.output.alias = ['tif'];
+--- a/node_modules/sharp/lib/utility.js.orig	2025-08-02 17:19:12.857298413 -0700
++++ b/node_modules/sharp/lib/utility.js	2025-08-02 18:04:21.933769375 -0700
+@@ -21,10 +21,19 @@ const libvipsVersion = sharp.libvipsVers
+  * @returns {Object}
+  */
+ const format = sharp.format();
+-format.heif.output.alias = ['avif', 'heic'];
+-format.jpeg.output.alias = ['jpe', 'jpg'];
+-format.tiff.output.alias = ['tif'];
 -format.jp2k.output.alias = ['j2c', 'j2k', 'jp2', 'jpx'];
-+if (format.jp2k) {
++// Add aliases only for formats with valid output support
++if (format.heif && format.heif.output && format.heif.output.file) {
++  format.heif.output.alias = ['avif', 'heic'];
++}
++if (format.jpeg && format.jpeg.output && format.jpeg.output.file) {
++  format.jpeg.output.alias = ['jpe', 'jpg'];
++}
++if (format.tiff && format.tiff.output && format.tiff.output.file) {
++  format.tiff.output.alias = ['tif'];
++}
++if (format.jp2k && format.jp2k.output && format.jp2k.output.file) {
 +  format.jp2k.output.alias = ['j2c', 'j2k', 'jp2', 'jpx'];
 +}
  
@@ -70,123 +83,30 @@
    // Create an InputDescriptor instance from a Napi::Object describing an input image
    InputDescriptor* CreateInputDescriptor(Napi::Object input);
  
---- a/node_modules/sharp/src/utilities.cc.orig	2025-07-07 16:00:39.704631046 -0700
-+++ b/node_modules/sharp/src/utilities.cc	2025-07-07 16:06:20.141018693 -0700
-@@ -116,50 +116,85 @@ Napi::Value libvipsVersion(const Napi::C
- */
- Napi::Value format(const Napi::CallbackInfo& info) {
-   Napi::Env env = info.Env();
-+  sharp::Log(env, "debug", "Entering sharp.format()");
-   Napi::Object format = Napi::Object::New(env);
-   for (std::string const f : {
--    "jpeg", "png", "webp", "tiff", "magick", "openslide", "dz",
--    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "jp2k", "jxl", "rad"
-+    "jpeg", "png", "webp", "tiff", "jp2k", "magick", "openslide", "dz",
-+    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "rad"
+--- a/node_modules/sharp/src/utilities.cc.orig	2025-08-02 17:19:12.713300771 -0700
++++ b/node_modules/sharp/src/utilities.cc	2025-08-02 17:53:36.200747086 -0700
+@@ -123,6 +123,15 @@ Napi::Value format(const Napi::CallbackI
    }) {
-+    std::string msg = "Processing format: " + f;
-+    sharp::Log(env, "debug", msg);
      // Input
      const VipsObjectClass *oc = vips_class_find("VipsOperation", (f + "load").c_str());
--    Napi::Boolean hasInputFile = Napi::Boolean::New(env, oc);
-+    msg = "  oc for " + f + "load=" + std::to_string((uintptr_t)oc);
-+    sharp::Log(env, "debug", msg);
-+    Napi::Boolean hasInputFile = Napi::Boolean::New(env, oc != nullptr);
-+    if (!oc || (uintptr_t)oc < 0x1000) {
-+      msg = "  Invalid or null oc for format: " + f;
-+      sharp::Log(env, "warn", msg);
++    if (!oc) {
++      // Skip unsupported formats
++      Napi::Object container = Napi::Object::New(env);
++      container.Set("id", f);
++      container.Set("input", Napi::Object::New(env));
++      container.Set("output", Napi::Object::New(env));
++      format.Set(f, container);
 +      continue;
 +    }
+     Napi::Boolean hasInputFile = Napi::Boolean::New(env, oc);
      Napi::Boolean hasInputBuffer =
--      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "load_buffer").c_str()));
-+      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "load_buffer").c_str()) != 0);
-+    Napi::Boolean hasOutputFile =
-+      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save").c_str()) != 0);
-+    Napi::Boolean hasOutputBuffer =
-+      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save_buffer").c_str()) != 0);
-     Napi::Object input = Napi::Object::New(env);
-     input.Set("file", hasInputFile);
-     input.Set("buffer", hasInputBuffer);
+       Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "load_buffer").c_str()));
+@@ -132,7 +141,7 @@ Napi::Value format(const Napi::CallbackI
      input.Set("stream", hasInputBuffer);
--    if (hasInputFile) {
--      const VipsForeignClass *fc = VIPS_FOREIGN_CLASS(oc);
+     if (hasInputFile) {
+       const VipsForeignClass *fc = VIPS_FOREIGN_CLASS(oc);
 -      if (fc->suffs) {
--        Napi::Array fileSuffix = Napi::Array::New(env);
--        const char **suffix = fc->suffs;
--        for (int i = 0; *suffix; i++, suffix++) {
--          fileSuffix.Set(i, Napi::String::New(env, *suffix));
--        }
--        input.Set("fileSuffix", fileSuffix);
--      }
--    }
--    // Output
--    Napi::Boolean hasOutputFile =
--      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save").c_str()));
--    Napi::Boolean hasOutputBuffer =
--      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save_buffer").c_str()));
-     Napi::Object output = Napi::Object::New(env);
-     output.Set("file", hasOutputFile);
-     output.Set("buffer", hasOutputBuffer);
-     output.Set("stream", hasOutputBuffer);
--    // Other attributes
-     Napi::Object container = Napi::Object::New(env);
--    container.Set("id", f);
-     container.Set("input", input);
-     container.Set("output", output);
--    // Add to set of formats
-     format.Set(f, container);
-+
-+    if (hasInputFile.Value()) {
-+      const VipsForeignClass *fc = VIPS_FOREIGN_CLASS(oc);
-+      msg = "  fc for " + f + "load=" + std::to_string((uintptr_t)fc);
-+      sharp::Log(env, "debug", msg);
-+      if (!fc || (uintptr_t)fc < 0x1000) {
-+        msg = "  Invalid or null fc for format: " + f;
-+        sharp::Log(env, "warn", msg);
-+        continue;
-+      }
-+      msg = "  fc->suffs=" + std::to_string((uintptr_t)fc->suffs);
-+      sharp::Log(env, "debug", msg);
-+      if (!fc->suffs || (uintptr_t)fc->suffs < 0x1000 || (uintptr_t)fc->suffs > 0xf0000000) {
-+        msg = "  No valid fc->suffs for format: " + f + ", vips_error: " + std::string(vips_error_buffer());
-+        sharp::Log(env, "warn", msg);
-+        vips_error_clear();
-+        continue;
-+      }
-+      Napi::Array fileSuffix = Napi::Array::New(env);
-+      const char **suffix = fc->suffs;
-+      if (!suffix || !suffix[0] || (uintptr_t)suffix[0] < 0x1000 || (uintptr_t)suffix[0] > 0xf0000000) {
-+        msg = "  No valid fc->suffs[0] for format: " + f;
-+        sharp::Log(env, "warn", msg);
-+        vips_error_clear();
-+        continue;
-+      }
-+      for (int i = 0; suffix[i] && i < 100; i++) {
-+        if (!suffix[i] || (uintptr_t)suffix[i] < 0x1000 || (uintptr_t)suffix[i] > 0xf0000000) {
-+          msg = "    Invalid suffix[" + std::to_string(i) + "] for format: " + f;
-+          sharp::Log(env, "warn", msg);
-+          break;
-+        }
-+        msg = "    suffix[" + std::to_string(i) + "]=" + std::string(suffix[i]);
-+        sharp::Log(env, "debug", msg);
-+        fileSuffix.Set(i, Napi::String::New(env, suffix[i]));
-+      }
-+      if (!fileSuffix.IsEmpty()) {
-+        input.Set("fileSuffix", fileSuffix);
-+      }
-+    }
-   }
- 
--  // Raw, uncompressed data
-+  // Handle raw format
-   Napi::Boolean supported = Napi::Boolean::New(env, true);
-   Napi::Boolean unsupported = Napi::Boolean::New(env, false);
-   Napi::Object rawInput = Napi::Object::New(env);
-@@ -176,6 +211,7 @@ Napi::Value format(const Napi::CallbackI
-   raw.Set("output", rawOutput);
-   format.Set("raw", raw);
- 
-+  sharp::Log(env, "debug", "Exiting sharp.format()");
-   return format;
- }
- 
++      if (fc && fc->suffs && fc->suffs[0]) {
+         Napi::Array fileSuffix = Napi::Array::New(env);
+         const char **suffix = fc->suffs;
+         for (int i = 0; *suffix; i++, suffix++) {

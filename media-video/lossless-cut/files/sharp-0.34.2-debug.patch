@@ -61,17 +61,6 @@
    `@img/sharp-${runtimePlatform}/sharp.node`,
    '@img/sharp-wasm32/sharp.node'
  ];
---- a/node_modules/sharp/src/build/Makefile.orig	2025-07-04 15:18:13.136657420 -0700
-+++ b/node_modules/sharp/src/build/Makefile	2025-07-04 15:29:30.178562008 -0700
-@@ -21,7 +21,7 @@ else
- endif
- 
- # Specify BUILDTYPE=Release on the command line for a release build.
--BUILDTYPE ?= Release
-+BUILDTYPE ?= Debug
- 
- # Directory all our build output goes into.
- # Note that this must be two directories beneath src/ for unit tests to pass,
 --- a/node_modules/sharp/src/binding.gyp.orig	2025-07-04 19:07:46.255907677 -0700
 +++ b/node_modules/sharp/src/binding.gyp	2025-07-04 19:12:36.508614258 -0700
 @@ -20,9 +20,9 @@
