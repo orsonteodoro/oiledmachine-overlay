@@ -1,0 +1,14 @@
+diff '--color=auto' -urpN vips-8.16.1.orig/libvips/foreign/pngload.c vips-8.16.1/libvips/foreign/pngload.c
+--- vips-8.16.1.orig/libvips/foreign/pngload.c	2025-03-09 04:13:50.000000000 -0700
++++ vips-8.16.1/libvips/foreign/pngload.c	2025-08-02 22:18:04.281206619 -0700
+@@ -160,6 +160,10 @@ vips_foreign_load_png_class_init(VipsFor
+ 	 */
+ 	foreign_class->priority = 200;
+ 
++	static const char *png_suffs[] = { ".png", NULL };
++	foreign_class->suffs = png_suffs;
++	g_message("vips_foreign_load_png_class_init: set suffs=%p", foreign_class->suffs);
++
+ 	load_class->get_flags_filename =
+ 		vips_foreign_load_png_get_flags_filename;
+ 	load_class->get_flags = vips_foreign_load_png_get_flags;
