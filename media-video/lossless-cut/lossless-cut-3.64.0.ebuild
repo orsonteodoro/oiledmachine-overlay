@@ -91,7 +91,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
