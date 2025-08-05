@@ -26,10 +26,11 @@ NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.2-debug.patch"
 	"${FILESDIR}/sharp-0.34.2-format-fixes.patch"
 	"${FILESDIR}/sharp-0.34.2-static-libs.patch"
+	"${FILESDIR}/icon-gen-3.0.1-png-return.patch"
 )
 NODE_SHARP_USE="png svg"
 NODE_GYP_PV="9.3.0"
-NODE_VERSION="20"
+NODE_VERSION="20" # originally 20
 PATENT_STATUS=(
 	patent_status_nonfree
 )
@@ -236,13 +237,74 @@ src_unpack() {
 einfo "NODE_ENV:  ${NODE_ENV}"
 
 	if [[ "${ICON_TYPE}" == "png" ]] ; then
+	        # Clear yarn and npm caches first
+	        yarn cache clean || die "Failed to clear yarn cache"
+	        npm cache clean --force || die "Failed to clear npm cache"
+
 		if ver_test ${SHARP_PV%.*} -le "0.32" ; then
 			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
 		fi
-		eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+		eyarn add "sharp@${SHARP_PV}" -D
+		eyarn add "@types/icon-gen" -D
+
+		jq ".dependencies.sharp = \"^${SHARP_PV}\"" \
+			"node_modules/icon-gen/package.json" \
+				> \
+			"temp.json" \
+				&& \
+			mv "temp.json" "node_modules/icon-gen/package.json" \
+			|| die "Failed to update icon-gen package.json"
+
+		eyarn add "icon-gen@3.0.1" -D --no-optional # Must go before node-sharp_yarn_rebuild_sharp
+
+		# Remove nested sharp and prebuilt sharp
+		rm -rf "node_modules/icon-gen/node_modules/sharp" || die "Failed to remove nested sharp"
+		rm -rf "node_modules/@img" || die "Failed to remove @img/sharp-linux-x64"
 
 		SHARP_INSTALL_ARGS=( "-D" )
-		node-sharp_yarn_rebuild_sharp
+
+		# Remove nested sharp to avoid conflicts
+		rm -rf "node_modules/icon-gen/node_modules/sharp" || true
+
+		local configuration="Debug"
+		local nconfiguration="Release"
+		if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
+			configuration="Release"
+			nconfiguration="Debug"
+		fi
+		local sharp_platform=$(node-sharp_get_platform)
+
+	        # Rebuild sharp
+	        einfo "Rebuilding sharp in ${S}"
+	        pushd "${S}" || die
+	            node-sharp_yarn_rebuild_sharp
+	            local configuration="Debug"
+	            local sharp_arch=$(get_sharp_arch)
+	            # Copy sharp binary to expected location
+	            mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+	            cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+	               "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+	               || die "Failed to copy sharp-${sharp_platform}.node"
+	            ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+	        popd
+
+	        # Copy sharp binary to icon-gen if needed
+	        if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
+	            einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
+	            mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" || die "Failed to create icon-gen sharp build directory"
+	            cp "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+	               "node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+	               || die "Failed to copy sharp-${sharp_platform}.node to icon-gen"
+	            ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "Copied sharp-${sharp_platform}.node not found"
+	        fi
+
+		ewarn "Removing nested sharp or @img/sharp-linux-x64"
+		rm -rfv "node_modules/@img"
+		rm -rfv "node_modules/@types/icon-gen/node_modules/sharp"
+		rm -rfv "node_modules/icon-gen/node_modules/sharp"
+		rm -rfv "node_modules/sharp/node_modules/@img"
+
+		node-sharp_verify_dedupe
 	fi
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
@@ -255,50 +317,16 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
 
-
-cat <<EOF > "${S}/script/icon-gen.mjs" || die
-// script/icon-gen.mjs
-import sharp from 'sharp';
-
-console.log('Entering sharp.init()');
-if (sharp.init('sharp')) {
-  console.error('vips_init failed');
-  process.exit(1);
-}
-console.log('vips_init succeeded');
-
-console.log('Entering sharp.format()');
-const formats = ['jpeg', 'png', 'webp', 'tiff', 'jp2k', 'magick', 'openslide', 'dz', 'ppm', 'fits', 'gif', 'svg', 'heif', 'pdf', 'vips', 'rad'];
-for (const format of formats) {
-  console.log(`Processing format: ${format}`);
-  try {
-    const oc = sharp.vips_foreign_find_load(format);
-    console.log(`  oc for ${format}load=${oc}`);
-    if (!oc) {
-      console.log(`  Invalid or null oc for format: ${format}`);
-      continue;
-    }
-    const fc = sharp.vips_object_new_from_name(oc);
-    console.log(`  fc for ${format}load=${fc}`);
-    if (!fc) {
-      console.log(`  Invalid or null fc for format: ${format}`);
-      continue;
-    }
-    const suffs = fc.suffs;
-    console.log(`  fc->suffs=${suffs ? suffs.join(',') : 'NULL'}`);
-    if (!suffs || suffs.length === 0) {
-      console.log(`  No valid fc->suffs for format: ${format}, vips_error: ${sharp.vips_error_buffer()}`);
-    }
-  } catch (e) {
-    console.error(`  Error processing format ${format}: ${e.message}`);
-  }
-}
-console.log('Exiting sharp.format()');
-EOF
+	cat \
+		"${FILESDIR}/icon-gen.mjs" \
+		> \
+		"${S}/script/icon-gen.mjs" \
+		|| die
 
 }
 
 src_compile() {
+einfo "Running src_compile"
 	yarn_hydrate
 	yarn --version || die
 	electron-app_cp_electron

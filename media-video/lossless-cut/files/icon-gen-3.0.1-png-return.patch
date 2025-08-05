@@ -1,0 +1,244 @@
+--- a/node_modules/sharp/src/metadata.cc.orig	2025-08-04 17:34:47.062425349 -0700
++++ b/node_modules/sharp/src/metadata.cc	2025-08-04 17:36:26.434009253 -0700
+@@ -4,6 +4,7 @@
+ #include <numeric>
+ #include <vector>
+ #include <cmath>
++#include <iostream>
+ 
+ #include <napi.h>
+ #include <vips/vips8>
+@@ -300,18 +301,44 @@ Napi::Value metadata(const Napi::Callbac
+   // V8 objects are converted to non-V8 types held in the baton struct
+   MetadataBaton *baton = new MetadataBaton;
+   Napi::Object options = info[size_t(0)].As<Napi::Object>();
++  std::cerr << "metadata: options keys=";
++  Napi::Array propNames = options.GetPropertyNames();
++  for (uint32_t i = 0; i < propNames.Length(); i++) {
++    std::cerr << propNames.Get(i).ToString().Utf8Value() << ",";
++  }
++  std::cerr << std::endl;
+ 
+   // Input
+-  baton->input = sharp::CreateInputDescriptor(options.Get("input").As<Napi::Object>());
++  std::cerr << "metadata: calling CreateInputDescriptor" << std::endl;
++  try {
++    baton->input = sharp::CreateInputDescriptor(options.Get("input").As<Napi::Object>());
++    std::cerr << "metadata: input created, buffer size="
++              << (baton->input->buffer ? baton->input->bufferLength : 0) << std::endl;
++  } catch (std::exception const &err) {
++    std::cerr << "metadata: CreateInputDescriptor error: " << err.what() << std::endl;
++    delete baton;
++    Napi::Error::New(info.Env(), err.what()).ThrowAsJavaScriptException();
++    return info.Env().Undefined();
++  }
+ 
+   // Function to notify of libvips warnings
+   Napi::Function debuglog = options.Get("debuglog").As<Napi::Function>();
+ 
+   // Join queue for worker thread
+   Napi::Function callback = info[size_t(1)].As<Napi::Function>();
++  std::cerr << "metadata: creating MetadataWorker" << std::endl;
+   MetadataWorker *worker = new MetadataWorker(callback, baton, debuglog);
+   worker->Receiver().Set("options", options);
+-  worker->Queue();
++  std::cerr << "metadata: queuing worker" << std::endl;
++  try {
++    worker->Queue();
++    std::cerr << "metadata: worker queued, counterQueue=" << sharp::counterQueue << std::endl;
++  } catch (std::exception const &err) {
++    std::cerr << "metadata: worker queue error: " << err.what() << std::endl;
++    delete baton;
++    Napi::Error::New(info.Env(), err.what()).ThrowAsJavaScriptException();
++    return info.Env().Undefined();
++  }
+ 
+   // Increment queued task counter
+   sharp::counterQueue++;
+--- a/node_modules/icon-gen/node_modules/sharp/lib/output.js.orig	2025-08-04 15:50:11.203118835 -0700
++++ b/node_modules/icon-gen/node_modules/sharp/lib/output.js	2025-08-04 15:55:12.027093379 -0700
+@@ -26,6 +26,8 @@ const errJp2Save = new Error('JP2 output
+ 
+ const bitdepthFromColourCount = (colours) => 1 << 31 - Math.clz32(Math.ceil(Math.log2(colours)));
+ 
++const originalPipeline = sharp.pipeline;
++
+ /**
+  * Write output image data to a file.
+  *
+@@ -73,7 +75,13 @@ function toFile (fileOut, callback) {
+     }
+   } else {
+     this.options.fileOut = fileOut;
+-    return this._pipeline(callback);
++    if (callback) {
++      return this._pipeline(callback);
++    }
++    console.log('toFile: fileOut=', fileOut, 'options=', this.options);
++    return originalPipeline.call(this, this.options).catch(err => {
++      console.error('toFile error:', err); throw err;
++    });
+   }
+   return this;
+ }
+@@ -1104,7 +1112,10 @@ function _read () {
+   /* istanbul ignore else */
+   if (!this.options.streamOut) {
+     this.options.streamOut = true;
+-    this._pipeline();
++    console.log('_read: options=', this.options);
++    return originalPipeline.call(this, this.options).catch(err => {
++      console.error('_read error:', err); throw err;
++    });
+   }
+ }
+ 
+@@ -1120,11 +1131,11 @@ function _pipeline (callback) {
+       // output=file/buffer, input=stream
+       this.on('finish', () => {
+         this._flattenBufferIn();
+-        sharp.pipeline(this.options, callback);
++        originalPipeline.call(this, this.options, callback);
+       });
+     } else {
+       // output=file/buffer, input=file/buffer
+-      sharp.pipeline(this.options, callback);
++      originalPipeline.call(this, this.options, callback);
+     }
+     return this;
+   } else if (this.options.streamOut) {
+@@ -1133,7 +1144,7 @@ function _pipeline (callback) {
+       // output=stream, input=stream
+       this.once('finish', () => {
+         this._flattenBufferIn();
+-        sharp.pipeline(this.options, (err, data, info) => {
++        originalPipeline.call(this, this.options, (err, data, info) => {
+           if (err) {
+             this.emit('error', err);
+           } else {
+@@ -1149,7 +1160,7 @@ function _pipeline (callback) {
+       }
+     } else {
+       // output=stream, input=file/buffer
+-      sharp.pipeline(this.options, (err, data, info) => {
++      originalPipeline.call(this, this.options, (err, data, info) => {
+         if (err) {
+           this.emit('error', err);
+         } else {
+@@ -1168,10 +1179,10 @@ function _pipeline (callback) {
+       return new Promise((resolve, reject) => {
+         this.once('finish', () => {
+           this._flattenBufferIn();
+-          sharp.pipeline(this.options, (err, data, info) => {
++          originalPipeline.call(this, this.options, (err, data, info) => {
+             if (err) {
+               reject(err);
+             } else {
+               if (this.options.resolveWithObject) {
+                 resolve({ data, info });
+               } else {
+@@ -1184,15 +1196,12 @@ function _pipeline (callback) {
+     } else {
+       // output=promise, input=file/buffer
+       return new Promise((resolve, reject) => {
+-        sharp.pipeline(this.options, (err, data, info) => {
++        originalPipeline.call(this, this.options, (err, data, info) => {
+           if (err) {
+             reject(err);
+           } else {
+-            if (this.options.resolveWithObject) {
+-              resolve({ data: data, info: info });
+-            } else {
+-              resolve(data);
+-            }
++            console.log('Pipeline resolved:', this.options.resolveWithObject ? 'object' : 'data');
++            resolve(this.options.resolveWithObject ? { data, info } : data);
+           }
+         });
+       });
+--- a/node_modules/icon-gen/dist/lib/png.js.orig	2025-08-04 14:01:57.206659703 -0700
++++ b/node_modules/icon-gen/dist/lib/png.js	2025-08-04 14:07:15.790735886 -0700
+@@ -34,15 +34,33 @@ exports.filterImagesBySizes = filterImag
+  * @return Image generation task.
+  */
+ const generate = async (svg, size, dir, logger) => {
++    if (typeof svg === 'string') {
++        svg = fs_1.default.readFileSync(svg);
++    }
++    console.log('SVG input type:', typeof svg, 'length:', svg.length, 'first 100 bytes:', svg.slice(0, 100).toString());
++    if (!Buffer.isBuffer(svg)) {
++        throw new Error(`Invalid SVG input: expected Buffer, got ${typeof svg}`);
++    }
++    // Validate SVG with sharp
++    try {
++        await sharp_1.default(svg, { failOn: 'none' }).metadata();
++        console.log('SVG metadata validated successfully');
++    } catch (err) {
++        throw new Error(`Invalid SVG input: ${err.message}`);
++    }
+     const dest = path_1.default.join(dir, size + '.png');
+     logger.log('  Create: ' + dest);
+-    await (0, sharp_1.default)(svg)
++    try {
++        await sharp_1.default(svg, { failOn: 'none', animated: false })
+         .png({ compressionLevel: 9 })
+         .resize(size, size, {
+-        fit: 'contain',
+-        background: { r: 0, g: 0, b: 0, alpha: 0 }
+-    })
++          fit: 'contain',
++          background: { r: 0, g: 0, b: 0, alpha: 0 }
++        })
+         .toFile(dest);
++    } catch (err) {
++        throw new Error(`Failed to create PNG at ${dest}: ${err.message}`);
++    }
+     return { size: size, filePath: dest };
+ };
+ /**
+--- a/node_modules/icon-gen/dist/lib/index.js.orig	2025-08-04 10:07:31.616269086 -0700
++++ b/node_modules/icon-gen/dist/lib/index.js	2025-08-04 10:10:01.003094099 -0700
+@@ -172,8 +172,7 @@ const generateIconFromSVG = async (src,
+         throw new Error('Failed to create the working directory.');
+     }
+     try {
+-        const images = await (0, png_1.default)(svgFilePath, workDir, getRequiredPNGImageSizes(options), logger);
+-        const results = await generate(images, destDirPath, options, logger);
++        const results = await (0, png_1.default)(svgFilePath, destDirPath, getRequiredPNGImageSizes(options), logger);
+         del_1.default.sync([workDir], { force: true });
+         return results;
+     }
+--- a/node_modules/sharp/src/pipeline.cc.orig	2025-08-04 16:25:26.479387893 -0700
++++ b/node_modules/sharp/src/pipeline.cc	2025-08-04 16:25:25.007536947 -0700
+@@ -4,6 +4,7 @@
+ #include <algorithm>
+ #include <cmath>
+ #include <filesystem>
++#include <iostream>
+ #include <map>
+ #include <memory>
+ #include <numeric>
+@@ -1820,5 +1821,12 @@ Napi::Value pipeline(const Napi::Callbac
+   Napi::Number queueLength = Napi::Number::New(info.Env(), static_cast<int>(++sharp::counterQueue));
+   queueListener.Call(info.This(), { queueLength });
+ 
++  try {
++      queueListener.Call(info.This(), { queueLength });
++  } catch (std::exception& e) {
++    std::cerr << "queueListener error: " << e.what() << std::endl;
++    throw;
++  }
+-  return info.Env().Undefined();
++  std::cerr << "pipeline: booleanResult=" << baton->booleanResult << ", formatOut=" << baton->formatOut << std::endl;
++  return info.Env().Undefined();
+ }
+--- a/node_modules/sharp/src/pipeline.h.orig	2025-08-03 21:30:23.994446918 -0700
++++ b/node_modules/sharp/src/pipeline.h	2025-08-03 21:43:36.911631482 -0700
+@@ -69,6 +69,7 @@ struct PipelineBaton {
+   bool hasAttentionCenter;
+   int attentionX;
+   int attentionY;
++  bool booleanResult;
+   bool premultiplied;
+   bool tileCentre;
+   bool fastShrinkOnLoad;

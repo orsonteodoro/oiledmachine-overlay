@@ -246,13 +246,35 @@ einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 }
 
 
-# @FUNCTION:  node-sharp_get_arch
+# @FUNCTION:  node-sharp_get_platform
 # @DESCRIPTION:
 # Gets the arch
-node-sharp_get_arch() {
-	if [[ "${ARCH}" == "amd64" ]] ; then
-		echo "x64"
+node-sharp_get_platform() {
+	if use kernel_linux ; then
+		if  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "armv6" ]] ; then
+			echo "linux-armv6"
+		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "aarch64" ]] ; then
+			echo "linux-arm64v8"
+		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "powerpc64le" ]] ; then
+			echo "linux-ppc64le"
+		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "riscv64" ]] ; then
+			echo "linux-riscv64"
+		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "s390x" ]] ; then
+			echo "linux-s390x"
+		elif  [[ "${ELIBC}" == "glibc" && "${ARCH}" =~ "x86_64" ]] ; then
+			echo "linux-x64"
+
+		elif  [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "x86_64" ]] ; then
+			echo "linuxmusl-x64"
+		elif  [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "aarch64" ]] ; then
+			echo "linuxmusl-arm64v8"
+
+		else
+eerror "Unsupported ARCH=${ARCH} ELIBC=${ELIBC}"
+			die
+		fi
 	else
+eerror "The current Project Prefix is currently not supported."
 		die
 	fi
 }
@@ -262,19 +284,19 @@ node-sharp_get_arch() {
 # Check loader symbols
 node-sharp_verify_built_symbols() {
 	if [[ -d "${S}/node_modules/sharp" ]]; then
-		local sharp_arch=$(node-sharp_get_arch)
+		local sharp_platform=$(node-sharp_get_platform)
 		einfo "Rebuilding sharp from source"
 		pushd "${S}/node_modules/sharp" || die "Failed to enter sharp directory"
-			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node")
+			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/sharp-${sharp_platform}.node")
 			if [[ -f "${node_path}" ]]; then
-				einfo "Checking for undefined symbols in sharp-linux-${sharp_arch}.node"
+				einfo "Checking for undefined symbols in sharp-${sharp_platform}.node"
 				if nm -D "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
-					die "Undefined symbol xmlCtxtUseOptions still present in sharp-linux-${sharp_arch}.node"
+					die "Undefined symbol xmlCtxtUseOptions still present in sharp-${sharp_platform}.node"
 				fi
 				# Verify static libxml2 via nm
 				einfo "Verifying libxml2 static linking"
 				if nm "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
-					die "libxml2 not statically linked in sharp-linux-${sharp_arch}.node"
+					die "libxml2 not statically linked in sharp-${sharp_platform}.node"
 				fi
 
 				# Verify format loader symbols
@@ -313,7 +335,7 @@ node-sharp_verify_built_symbols() {
 					esac
 				done
 			else
-				die "sharp-linux-${sharp_arch}.node not found after rebuild"
+				die "sharp-${sharp_platform}.node not found after rebuild"
 			fi
 		popd
 	else
@@ -536,6 +558,27 @@ node-sharp_yarn_lockfile_add_sharp() {
 		eyarn add "node-gyp" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
 	eyarn add "sharp@${SHARP_PV}" ${YARN_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+}
+
+# @FUNCTION: node-sharp_verify_dedupe
+# @DESCRIPTION:
+# Check if the node-sharp package is completely deduped.
+node-sharp_verify_dedupe() {
+# If sharp is not dedupe, the patches not be applied correctly
+	local sharp_platform=$(node-sharp_get_platform)
+	local NODE_SHARP_PROJECT_ROOT=${PROJECT_ROOT:-"${S}"}
+	local L=(
+		$(find "${NODE_SHARP_PROJECT_ROOT}" -name "sharp-${sharp_platform}.node")
+	)
+	local n_hashes=$(sha1sum "${L[@]}" \
+		| cut -f 1 -d " " \
+		| sort \
+		| uniq \
+		| wc -l)
+	if (( ${n_hashes} > 1 )) ; then
+		eerror "sharp is not deduped"
+		die
+	fi
 }
 
 fi
