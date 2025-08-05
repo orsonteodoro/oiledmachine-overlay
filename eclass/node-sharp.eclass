@@ -447,8 +447,8 @@ node-sharp_yarn_rebuild_sharp() {
 
     einfo "PKG_CONFIG_PATH in yarn_rebuild: ${PKG_CONFIG_PATH}"
     einfo "LD_LIBRARY_PATH in yarn_rebuild: ${LD_LIBRARY_PATH}"
-    pkg-config --modversion vips-cpp || die "Failed to find vips-cpp.pc"
-    pkg-config --libs --static vips-cpp || die "Failed to find vips-cpp.pc libs"
+    einfo "vips-cpp version:  "$(pkg-config --modversion vips-cpp || die "Failed to find vips-cpp.pc")
+    einfo "vips-cpp libs:  "$(pkg-config --static --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
     if [[ ! -f "${sharp_vips_lib}/libvips-cpp.a" ]]; then
         die "libvips-cpp.a not found in ${sharp_vips_lib}"
     fi

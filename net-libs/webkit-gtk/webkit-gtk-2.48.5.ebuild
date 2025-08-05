@@ -114,18 +114,22 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="May 15, 2025"
-MITIGATION_LAST_UPDATE=1748524080 # From `date +%s -d "2025-05-29 6:08 AM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0003.html"
+MITIGATION_DATE="Aug 1, 2025"
+MITIGATION_LAST_UPDATE=1754036940 # From `date +%s -d "2025-08-01 1:29 AM PDT"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0005.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2023-42970;CE, DoS, DT, ID;High"
-	"CVE-2025-24223;MC, DoS, DT, ID;High"
-	"CVE-2025-31204;MC, DoS, DT, ID;High"
-	"CVE-2023-42875;CE, DT, ID;High"
-	"CVE-2025-31205;ID;Medium"
-	"CVE-2025-31206;TC, DoS;Medium"
-	"CVE-2025-31215;DoS;Medium"
-	"CVE-2025-31257;DoS;Medium"
+	"CVE-2025-24189;MC, DoS, DT, ID;High"
+	"CVE-2025-31273;MC, DoS, DT, ID;High"
+	"CVE-2025-31278;MC, DoS, DT, ID;High"
+	"CVE-2025-43211;MC, DoS, DT, ID;High"
+	"CVE-2025-6558;SE, DoS, DT, ID;High"
+	"CVE-2025-43227;ZC, ID; High"
+	"CVE-2025-43265;OOBR, ID;Medium"
+	"CVE-2025-43228;ID;Medium"
+	"CVE-2025-43240;ID;Medium"
+	"CVE-2025-43212;DoS;Medium"
+	"CVE-2025-43216;DoS;Medium"
+
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
