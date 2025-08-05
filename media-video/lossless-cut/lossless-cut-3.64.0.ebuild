@@ -13,7 +13,7 @@ MY_PN="${PN/-/}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
+	ELECTRON_APP_ELECTRON_PV="37.2.5" # Cr 138.0.7204.168, node 22.17.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -76,6 +76,7 @@ LICENSE="
 	CC0-1.0
 	GPL-2
 "
+# Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
 		electron-37.1.0-chromium.html
