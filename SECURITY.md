@@ -183,6 +183,32 @@ be offended.
 The report may be done via issue request but only if it contains no sensitive
 information, no personal attacks, and nothing that violates the website rules.
 
+## AI based fixes
+
+This overlay accepts AI based security fixes.  If the compiler or a runtime
+error is reported or encountered that is a common memory corruption, it could
+be fixed.  AI qualifications.
+
+* The AI must be recognize open source licenses.
+* The AI must be able to submit contributions under approved open source licenses.
+* The AI must be able to understand CVEs.
+* The AI must have a HumanEval score of at or above 70% (Grade C).
+* The AI must be able to fix ASan, UBSan type of errors.
+* AI are known to solve the following vulnerabilities.  Patch fixes are accepted
+  for the following:
+  - Stack based Buffer Overflows (Runtime error, high to critical severity)
+  - Dangling Pointer (-Wdangling-pointer=)
+  - Double Free (Runtime error, high to critical severity)
+  - Null Pointer Dereference (-Wnull-dereference; DoS)
+  - Out of Bounds Access/Read/Write (-Warray-bounds; DoS; high to critical severity)
+  - Race Conditions (Runtime error)
+  - String format vulnerabilities (-Wformat-security)
+  - Uninitalized variables (-Wmaybe-uninitialized; ID)
+  - Use After Free (-Wuse-after-free; DoS, DT, ID; high to critical severity)
+
+* You can submit a pull request.
+* The submission must be a patch file or an ebuild version bump.
+
 ## Personal identifiable information
 
 The scope of personal identifiable information includes e-mail, names, etc.
