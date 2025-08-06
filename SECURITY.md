@@ -195,6 +195,7 @@ AI qualifications:
 * The AI must be able to submit contributions under approved open source licenses.
 * The AI must be able to understand CVEs.
 * The AI must be able to fix ASan, UBSan type of errors.
+
 * AI are known to fix the following vulnerabilities.  Patch fixes are accepted
   for the following:
   - Dangling Pointer (-Wdangling-pointer=; DoS, PE, DoS, DT, ID; medium-high severity)
@@ -207,6 +208,13 @@ AI qualifications:
   - String format vulnerabilities (-Wformat-security; CE, PE, DoS, DT, ID; high-critical serverity)
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, ID; medium-high severity)
   - Use After Free (-Wuse-after-free; CE, PE, DoS, DT, ID; high-critical severity)
+
+* AI are known to fix the following non-compiler vulnerabilities.
+  - LD_PRELOAD hijack vulnerability
+  - Path traversal vulnerability
+
+* AI may be able fix the following non-compiler vulnerabilities but require extra work and time.
+  - Insecure password storage
 
 Contributing AI fixes:
 
