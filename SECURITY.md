@@ -194,7 +194,6 @@ AI qualifications:
 * The AI must be able to recognize open source licenses.
 * The AI must be able to submit contributions under approved open source licenses.
 * The AI must be able to understand CVEs.
-* The AI must have a HumanEval score of at or above 70% (Grade C).
 * The AI must be able to fix ASan, UBSan type of errors.
 * AI are known to solve the following vulnerabilities.  Patch fixes are accepted
   for the following:
