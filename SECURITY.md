@@ -223,14 +223,14 @@ AI qualifications:
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, **ID**; medium-high severity)
   - Use After Free (-Wuse-after-free or -fsanitize=address as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
-* AI are observed to fix alone or help fix with human assistance the following:
+* AI are observed to fix alone or help fix with human assistance/feedback the following:
   - Deadlocks (Runtime observation; ZC, **DoS**; low-medium severity)
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
   - LD_PRELOAD hijack vulnerability (It still requires human criticism; By code audit or experimentation; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By code audit; ZC, PE, **ID**, DT; medium-high severity)
 
 * AI has not yet been observed but may be able to fix alone or help fix with
-  human assistance the following:
+  human assistance/feedback the following:
   - Insecure password storage (By code audit or inspecting password store; PE, **ID**, DT; medium-high severity)
   - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; ZC, **CE**, PE, DoS, DT, ID, medium-high severity)
   - Race Condition (Runtime error; ZC, CE, **PE**, DoS, DT, ID; medium-high severity)
