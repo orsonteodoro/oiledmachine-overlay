@@ -197,8 +197,8 @@ AI qualifications:
 * The AI must be able to fix ASan, UBSan type of errors.
 * The AI must have code generation capabilities.
 
-* AI are known to fix the following vulnerabilities.  Patch fixes are accepted
-  for the following:
+* AI have been observed to fix the following vulnerabilities.  Patch fixes are
+  accepted for the following:
   - Dangling Pointer (-Wdangling-pointer=; DoS, PE, DoS, DT, ID; medium-high severity)
   - Double Free (-fsanitize=address, runtime error; CE, PE, DoS, DT, ID; high-critical severity)
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; DoS; low-medium severity)
@@ -214,7 +214,8 @@ AI qualifications:
   - LD_PRELOAD hijack vulnerability (It still requires human criticism.)
   - Path traversal vulnerability
 
-* AI may be able fix the following non-compiler vulnerabilities but require extra work and time:
+* AI may be able fix the following non-compiler vulnerabilities but require
+  extra work and time:
   - Insecure password storage
 
 Contributing AI fixes:
