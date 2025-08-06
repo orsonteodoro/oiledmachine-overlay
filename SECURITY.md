@@ -115,6 +115,12 @@ first when the objective is to reduce the EPSS set to less than 10% score.
 Scores closest to 1 indicate that the vulnerability may be actively or likely
 exploited.
 
+In short for this overlay,
+
+* EPSS score of '[0.1, 1]' - must be triaged
+* EPSS score of '[0.01, 0.1)' - optionally or conveniently triaged
+* EPSS score of '[0, 0.01)' - ignored
+
 ## Patching/triage priorities (ranked high top)
 
 0. Ebuilds that block (security) updates
