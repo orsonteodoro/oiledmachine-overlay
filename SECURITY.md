@@ -210,12 +210,13 @@ AI qualifications:
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, **ID**; medium-high severity)
   - Use After Free (-Wuse-after-free; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
-* AI are known to fix or help fix the following non-compiler vulnerabilities:
+* AI are known to fix or help fix the following non-detectable compiler static
+  analysis vulnerabilities:
   - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By inspection; ZC, PE, **ID**, DT; medium-high severity)
 
-* AI may be able fix the following non-compiler vulnerabilities but require
-  extra work and time:
+* AI may be able fix the following non-detectable compiler static analysis
+  vulnerabilities but require extra work and time to implement:
   - Insecure password storage (By inspection; PE, **ID**, DT; medium-high severity)
 
 Contributing AI fixes:
