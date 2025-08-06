@@ -216,7 +216,6 @@ AI qualifications:
   following:
   - Dangling Pointer (-Wdangling-pointer=; **CE**, PE, DoS, DT, ID; medium-high severity)
   - Double Free (-fsanitize=address as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
-  - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
   - Null Pointer Dereference (-Wnull-dereference; ZC, **DoS**; low-medium severity)
   - Out of Bounds Access/Read/Write (-Warray-bounds; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
   - Stack Overflow (-Wstringop-overflow, -fstack-protect or -fstack-protector-strong as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
@@ -226,6 +225,7 @@ AI qualifications:
 
 * AI are observed to fix alone or help fix with human assistance the following:
   - Deadlocks (Runtime observation; ZC, **DoS**; low-medium severity)
+  - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
   - LD_PRELOAD hijack vulnerability (It still requires human criticism; By code audit or experimentation; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By code audit; ZC, PE, **ID**, DT; medium-high severity)
 
