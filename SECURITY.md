@@ -105,14 +105,15 @@ problems resolved quickly.
 
 This overlay uses an EPSS score of 0.1 (10%) or above as the threshold for
 remediation or triage which the package will be seriously evaluated for security
-fixes or being dropped.  The overlay aims for less than 1% remediation which
-typically the vulnerability is difficult to fix or may have high complexity to
-exploit.  Vulnerabilities less than 1% may be ignored for long periods of time
-and considered low risk of being exploited.  Only Rust, Node, Electron based
-packages with scanned lock files will be evaluated for EPSS score.  The highest
-EPSS scores get triaged first when the objective is to reduce the EPSS set to
-less than 10% score.  Scores closest to 1 indicate that the vulnerability may be
-actively or likely exploited.
+fixes or being dropped.  The overlay tries to aim or converge towards a EPSS
+score less than 0.01 (1%) for remediation which typically the vulnerabilities
+are difficult to fix or may have high complexity to exploit.  Vulnerabilities
+less than 1% may be ignored for long periods of time and considered low risk of
+being exploited.  Only Rust, Node, Electron based packages with scanned lock
+files will be evaluated for EPSS score.  The highest EPSS scores get triaged
+first when the objective is to reduce the EPSS set to less than 10% score.
+Scores closest to 1 indicate that the vulnerability may be actively or likely
+exploited.
 
 ## Patching/triage priorities (ranked high top)
 
