@@ -117,9 +117,9 @@ exploited.
 
 In short for this overlay,
 
-* EPSS score of '[0.1, 1]' - must be triaged
-* EPSS score of '[0.01, 0.1)' - optionally or conveniently triaged
-* EPSS score of '[0, 0.01)' - ignored
+* EPSS score of [0.1, 1] - must be triaged
+* EPSS score of [0.01, 0.1) - optionally or conveniently triaged
+* EPSS score of [0, 0.01) - ignored
 
 ## Patching/triage priorities (ranked high top)
 
