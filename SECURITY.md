@@ -218,7 +218,7 @@ AI qualifications:
 * AI has not yet been observed but may be able to fix alone or help fix with
   human assistance the following:
   - Insecure password storage (By inspection; PE, **ID**, DT; medium-high severity)
-  - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; **ZC**, PE, DoS, DT, ID, medium-high severity)
+  - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; ZC, **CE**, PE, DoS, DT, ID, medium-high severity)
 
 Sometimes the AI will automatically detect and fix it on its own.  Other times,
 the AI has to be reminded or criticised that there is a vulnerability.
