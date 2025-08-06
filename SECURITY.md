@@ -195,6 +195,7 @@ AI qualifications:
 * The AI must be able to submit contributions under approved open source licenses.
 * The AI must be able to understand CVEs.
 * The AI must be able to fix ASan, UBSan type of errors.
+* The AI must have code generation capabilities.
 
 * AI are known to fix the following vulnerabilities.  Patch fixes are accepted
   for the following:
