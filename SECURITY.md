@@ -198,7 +198,7 @@ AI qualifications:
 * The AI must have code generation capabilities.
 
 * AI have been observed to fix the following memory corruption or undefined
-  behavior class of vulnerabilities.  Patch fixes are accepted for the
+  behavior classes of vulnerabilities.  Patch fixes are accepted for the
   following:
   - Dangling Pointer (-Wdangling-pointer=; **CE**, PE, DoS, DT, ID; medium-high severity)
   - Double Free (-fsanitize=address as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
