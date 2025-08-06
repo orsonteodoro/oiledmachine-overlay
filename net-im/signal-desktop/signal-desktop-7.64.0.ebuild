@@ -205,7 +205,7 @@ ewarn "QA:  Manually remove electron@23.3.13 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @types/keyv@3.1.4 from ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "CQA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/pnpm-lock.yaml"
@@ -240,8 +240,9 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${
 ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/rest@18.12.0 references to @octokit/rest@20.1.2"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest 9.2.2"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations (@esbuild/<arch>@0.24.0) from ${S}/pnpm-lock.yaml"
@@ -362,6 +363,8 @@ ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${
 
 			sed -i -e "s|http-proxy-middleware: 2.0.7|http-proxy-middleware: 2.0.9|g" "pnpm-lock.yaml" || die									# CVE-2025-32997; DT; Medium
 																								# CVE-2025-32996; DoS; Medium
+
+			sed -i -e "s|form-data: 4.0.1|form-data: 4.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 		}
 		patch_edits_pnpm
 
@@ -403,6 +406,7 @@ ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${
 			"esbuild@0.25.0"
 			"got@11.8.5"
 			"tar-fs@2.1.3"
+			"form-data@4.0.4"
 		)
 		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		deps=(
