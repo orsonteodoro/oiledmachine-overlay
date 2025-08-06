@@ -219,7 +219,7 @@ AI qualifications:
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
   - Null Pointer Dereference (-Wnull-dereference; ZC, **DoS**; low-medium severity)
   - Out of Bounds Access/Read/Write (-Warray-bounds; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
-  - Race Condition (Runtime error; ZC, CE, **PE**, DoS, DT, ID; medium-high severity)
+  - Deadlocks (Runtime observation, ZC, **DoS**; low-medium severity)
   - Stack Overflow (-Wstringop-overflow, -fstack-protect or -fstack-protector-strong as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
   - String format vulnerabilities (-Wformat-security; **CE**, PE, DoS, DT, ID; high-critical serverity)
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, **ID**; medium-high severity)
@@ -233,6 +233,7 @@ AI qualifications:
   human assistance the following:
   - Insecure password storage (By code audit or inspecting password store; PE, **ID**, DT; medium-high severity)
   - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; ZC, **CE**, PE, DoS, DT, ID, medium-high severity)
+  - Race Condition (Runtime error; ZC, CE, **PE**, DoS, DT, ID; medium-high severity)
 
 Sometimes the AI will automatically detect and fix it on its own.  Other times,
 the AI has to be reminded or criticised that there is a vulnerability.
