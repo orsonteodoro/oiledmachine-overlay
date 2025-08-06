@@ -225,12 +225,12 @@ AI qualifications:
   - Use After Free (-Wuse-after-free or -fsanitize=address as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
 * AI are observed to fix alone or help fix with human assistance the following:
-  - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; **CE**, PE, DT, ID; high-critical severity)
-  - Path traversal vulnerability (By inspection; ZC, PE, **ID**, DT; medium-high severity)
+  - LD_PRELOAD hijack vulnerability (It still requires human criticism; By code audit or experimentation; **CE**, PE, DT, ID; high-critical severity)
+  - Path traversal vulnerability (By code audit; ZC, PE, **ID**, DT; medium-high severity)
 
 * AI has not yet been observed but may be able to fix alone or help fix with
   human assistance the following:
-  - Insecure password storage (By inspection; PE, **ID**, DT; medium-high severity)
+  - Insecure password storage (By code audit or inspecting password store; PE, **ID**, DT; medium-high severity)
   - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; ZC, **CE**, PE, DoS, DT, ID, medium-high severity)
 
 Sometimes the AI will automatically detect and fix it on its own.  Other times,
