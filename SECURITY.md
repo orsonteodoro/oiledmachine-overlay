@@ -186,8 +186,8 @@ information, no personal attacks, and nothing that violates the website rules.
 ## AI based fixes
 
 This overlay accepts AI based security fixes.  If the compiler or a runtime
-error is reported or encountered that is a common memory corruption, it could
-be fixed.
+error is reported or encountered that is a common memory corruption or undefined
+behavior, it could be fixed.
 
 AI qualifications:
 
