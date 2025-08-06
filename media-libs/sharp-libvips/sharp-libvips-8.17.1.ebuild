@@ -4,6 +4,7 @@
 
 EAPI=8
 
+SHARP_VIPS_PV="1.2.1"
 
 # Dependency graph:
 # librsvg:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lrsvg-2 -lgio-2.0 -lgobject-2.0 -lffi -lcairo -ldl -lfontconfig -lpng16 -lz -lharfbuzz -lm -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -latomic -lm -pthread
@@ -97,33 +98,34 @@ PYTHON_COMPAT=( "python3_12" )
 
 # Dependency versions
 
+VERSION_SHARP_LIBVIPS=${SHARP_VIPS_PV}
 VERSION_VIPS=${PV}
 VERSION_ZLIB_NG=2.2.4
-VERSION_FFI=3.4.7
-VERSION_GLIB=2.84.1
-VERSION_XML2=2.14.1
+VERSION_FFI=3.5.1
+VERSION_GLIB=2.85.1
+VERSION_XML2=2.14.5
 VERSION_EXIF=0.6.25
 VERSION_LCMS2=2.17
 VERSION_MOZJPEG=4.1.5
-VERSION_PNG16=1.6.47
+VERSION_PNG=1.6.50
 VERSION_SPNG=0.7.4
 VERSION_IMAGEQUANT=2.4.1
-VERSION_WEBP=1.5.0
+VERSION_WEBP=1.6.0
 VERSION_TIFF=4.7.0
 VERSION_HWY=1.2.0
 VERSION_PROXY_LIBINTL=0.4
 VERSION_FREETYPE=2.13.3
 VERSION_EXPAT=2.7.1
-VERSION_ARCHIVE=3.7.9
-VERSION_FONTCONFIG=2.16.1
-VERSION_HARFBUZZ=11.0.0
-VERSION_PIXMAN=0.44.2
+VERSION_ARCHIVE=3.8.1
+VERSION_FONTCONFIG=2.17.1
+VERSION_HARFBUZZ=11.3.2
+VERSION_PIXMAN=0.46.4
 VERSION_CAIRO=1.18.4
 VERSION_FRIBIDI=1.0.16
-VERSION_PANGO=1.56.3
+VERSION_PANGO=1.56.4
 VERSION_RSVG=2.60.0
-VERSION_AOM=3.12.0
-VERSION_HEIF=1.19.7
+VERSION_AOM=3.12.1
+VERSION_HEIF=1.20.1
 VERSION_CGIF=0.5.0
 
 declare -A GIT_CRATES=()
@@ -479,10 +481,10 @@ RUST_PV="${RUST_MAX_VER}"
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic multiprocessing python-single-r1 meson rust
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${SHARP_VIPS_PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
-https://github.com/lovell/sharp-libvips/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
+https://github.com/lovell/sharp-libvips/archive/refs/tags/v${SHARP_VIPS_PV}.tar.gz -> ${PN}-${SHARP_VIPS_PV}.tar.gz
 https://github.com/frida/proxy-libintl/archive/${VERSION_PROXY_LIBINTL}.tar.gz -> proxy-libintl-${VERSION_PROXY_LIBINTL}.tar.gz
 https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz -> zlib-ng-${VERSION_ZLIB_NG}.tar.gz
 https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz
@@ -493,7 +495,7 @@ https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS2}/lcms2-$
 https://storage.googleapis.com/aom-releases/libaom-${VERSION_AOM}.tar.gz
 https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz
 https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz -> mozjpeg-${VERSION_MOZJPEG}.tar.gz
-https://downloads.sourceforge.net/project/libpng/libpng16/${VERSION_PNG16}/libpng-${VERSION_PNG16}.tar.xz
+https://downloads.sourceforge.net/project/libpng/libpng16/${VERSION_PNG}/libpng-${VERSION_PNG}.tar.xz
 https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz -> libspng-${VERSION_SPNG}.tar.gz
 https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz -> libimagequant-${VERSION_IMAGEQUANT}.tar.gz
 https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz
@@ -512,11 +514,11 @@ https://download.gnome.org/sources/librsvg/${VERSION_RSVG%.*}/librsvg-${VERSION_
 https://github.com/dloebl/cgif/archive/v${VERSION_CGIF}.tar.gz -> cgif-${VERSION_CGIF}.tar.gz
 https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz
 
-https://gist.github.com/kleisauke/284d685efa00908da99ea6afbaaf39ae/raw/936a6b8013d07d358c6944cc5b5f0e27db707ace/glib-without-gregex.patch -> ${P}-glib-without-gregex.patch
-https://gitlab.gnome.org/GNOME/libxml2/-/commit/88732cae7d6031b2fa216faa3dd542681b385117.patch -> ${P}-88732cae7d6031b2fa216faa3dd542681b385117.patch
+https://gist.github.com/kleisauke/284d685efa00908da99ea6afbaaf39ae/raw/12773e117bd557b83ba2a7410698db41813c3fda/glib-without-gregex.patch -> ${P}-glib-without-gregex.patch
+https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1106.patch -> ${P}-librsvg-1106.patch
 https://gist.githubusercontent.com/lovell/313a6901e9db1bf285f2a1f1180499e4/raw/3988223c7dfa4d22745d9392034b0117abef1446/libvips-cpp-soversion.patch -> ${P}-libvips-cpp-soversion.patch
 https://github.com/libvips/build-win64-mxe/raw/v${VERSION_VIPS}/build/patches/vips-8-heifsave-disable-hbr-support.patch -> ${P}-vips-8-heifsave-disable-hbr-support.patch
-https://raw.githubusercontent.com/lovell/sharp-libvips/refs/tags/v${PV}/THIRD-PARTY-NOTICES.md -> ${P}-THIRD-PARTY-NOTICES.md
+https://raw.githubusercontent.com/lovell/sharp-libvips/refs/tags/v${SHARP_VIPS_PV}/THIRD-PARTY-NOTICES.md -> ${P}-THIRD-PARTY-NOTICES.md
 "
 
 DESCRIPTION="libvips static build for sharp, matching sharp-libvips"
@@ -630,7 +632,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/sharp-libvips-8.16.1-lin-sh.patch"
+	"${FILESDIR}/sharp-libvips-8.17.1-posix-sh.patch"
 )
 
 pkg_setup() {
@@ -972,6 +974,7 @@ ewarn "Detected compiler switch.  Disabling LTO."
 	export PKG_CONFIG_LIBDIR=""
 	export PKG_CONFIG_PATH=""
 	export VERSION_VIPS="${VERSION_VIPS}"
+	export VERSION_SHARP_LIBVIPS="${SHARP_VIPS_PV}"
 	if use debug ; then
 		export DEBUG=1
 
@@ -1091,7 +1094,7 @@ einfo "MESON_LINK_JOBS:  ${MESON_LINK_JOBS}"
 src_compile() {
 	mkdir -p "${WORKDIR}/build" || die
 	mkdir -p "${WORKDIR}/packaging" || die
-	bash "${S}/build/lin.sh" || die
+	bash "${S}/build/posix.sh" || die
 }
 
 is_debug_whitelisted() {

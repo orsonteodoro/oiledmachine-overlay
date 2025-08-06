@@ -261,7 +261,7 @@ node-sharp_get_platform() {
 			echo "linux-riscv64"
 		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "s390x" ]] ; then
 			echo "linux-s390x"
-		elif  [[ "${ELIBC}" == "glibc" && "${ARCH}" =~ "x86_64" ]] ; then
+		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "x86_64" ]] ; then
 			echo "linux-x64"
 
 		elif  [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "x86_64" ]] ; then
