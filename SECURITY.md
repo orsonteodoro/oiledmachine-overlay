@@ -209,8 +209,8 @@ AI qualifications:
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, ID; medium-high severity)
   - Use After Free (-Wuse-after-free; CE, PE, DoS, DT, ID; high-critical severity)
 
-* AI are known to fix the following non-compiler vulnerabilities:
-  - LD_PRELOAD hijack vulnerability
+* AI are known to fix or help fix the following non-compiler vulnerabilities:
+  - LD_PRELOAD hijack vulnerability (It still requires human criticism.)
   - Path traversal vulnerability
 
 * AI may be able fix the following non-compiler vulnerabilities but require extra work and time:
