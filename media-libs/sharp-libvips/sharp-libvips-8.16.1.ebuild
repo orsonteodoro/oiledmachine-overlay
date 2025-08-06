@@ -525,7 +525,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_19
+ebuild_revision_20
 "
 LICENSE="
 	Apache-2.0
@@ -958,8 +958,8 @@ einfo "PATH:  ${PATH}"
 		strip-flags
 	else
 		export VANILLA=0
-#		cflags-hardened_append
-#		rustflags-hardened_append
+		cflags-hardened_append
+		rustflags-hardened_append
 	fi
 	if check-compiler-switch_is_flavor_slot_changed ; then
 ewarn "Detected compiler switch.  Disabling LTO."
