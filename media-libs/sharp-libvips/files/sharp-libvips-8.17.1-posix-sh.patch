@@ -18,7 +18,7 @@
 +echo "VERSION_GLIB: ${VERSION_GLIB}"
 +echo "VERSION_XML2: ${VERSION_XML2}"
 +echo "VERSION_EXIF: ${VERSION_EXIF}"
-+echo "VERSION_LCMS2: ${VERSION_LCMS2}"
++echo "VERSION_LCMS: ${VERSION_LCMS}"
 +echo "VERSION_MOZJPEG: ${VERSION_MOZJPEG}"
 +echo "VERSION_PNG: ${VERSION_PNG}"
 +echo "VERSION_SPNG: ${VERSION_SPNG}"
@@ -577,10 +577,10 @@
 -cd ${DEPS}/lcms
 -CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +if [[ "${USE_LCMS2}" == "1" ]] ; then
-+echo "DEBUG:  Building lcms ${VERSION_LCMS2}"
++echo "DEBUG:  Building lcms ${VERSION_LCMS}"
 +#mkdir ${DEPS}/lcms
 +#$CURL https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS}/lcms2-${VERSION_LCMS}.tar.gz | tar xzC ${DEPS}/lcms --strip-components=1
-+cd "${WORKDIR}/lcms2-${VERSION_LCMS2}"
++cd "${WORKDIR}/lcms2-${VERSION_LCMS}"
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dtests=disabled 
 +meson compile -C _build ${MESON_LINK_JOBS}

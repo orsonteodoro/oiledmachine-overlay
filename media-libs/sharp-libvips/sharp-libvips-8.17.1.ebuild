@@ -105,7 +105,7 @@ VERSION_FFI=3.5.1
 VERSION_GLIB=2.85.1
 VERSION_XML2=2.14.5
 VERSION_EXIF=0.6.25
-VERSION_LCMS2=2.17
+VERSION_LCMS=2.17
 VERSION_MOZJPEG=4.1.5
 VERSION_PNG=1.6.50
 VERSION_SPNG=0.7.4
@@ -491,7 +491,7 @@ https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERS
 https://download.gnome.org/sources/glib/${VERSION_GLIB%.*}/glib-${VERSION_GLIB}.tar.xz
 https://download.gnome.org/sources/libxml2/${VERSION_XML2%.*}/libxml2-${VERSION_XML2}.tar.xz
 https://github.com/libexif/libexif/releases/download/v${VERSION_EXIF}/libexif-${VERSION_EXIF}.tar.xz
-https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS2}/lcms2-${VERSION_LCMS2}.tar.gz
+https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS}/lcms2-${VERSION_LCMS}.tar.gz
 https://storage.googleapis.com/aom-releases/libaom-${VERSION_AOM}.tar.gz
 https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz
 https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz -> mozjpeg-${VERSION_MOZJPEG}.tar.gz
