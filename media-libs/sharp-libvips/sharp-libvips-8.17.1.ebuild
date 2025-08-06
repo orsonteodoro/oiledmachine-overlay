@@ -1388,7 +1388,7 @@ EOF
 
 	# Install tarball for debugging
 	insinto "/usr/lib/sharp-vips"
-	doins "${WORKDIR}/packaging/sharp-libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz"
+	doins "${WORKDIR}/packaging/sharp-libvips-${PLATFORM}.tar.gz"
 
 	local L=(
 		"cjpeg"
