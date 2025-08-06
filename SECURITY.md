@@ -210,11 +210,13 @@ AI qualifications:
 
 Contributing AI fixes:
 
-* Locate the code.  Show the code or function to the AI and present the compiler warning or runtime error.
+* Locate the code.  Show the code or function to the AI and present the compiler
+  warning or runtime error.
 * You can submit a pull request.
 * The submission must be a patch file or an ebuild version bump.  For version
-  bumps, the fixed commit must be in that tagged release.  Simply bumping
-  the version without a fix won't help.
+  bumps, the fixed commit must be in that tagged release.  Simply bumping the
+  version without a fix or still having the affected code that wasn't removed
+  won't help.
 
 ## Personal identifiable information
 
