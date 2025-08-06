@@ -211,7 +211,7 @@ AI qualifications:
   - Use After Free (-Wuse-after-free; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
 * AI are known to fix or help fix the following non-compiler vulnerabilities:
-  - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; high-critical severity)
+  - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By inspection; ZC, PE, **ID**, DT; medium-high severity)
 
 * AI may be able fix the following non-compiler vulnerabilities but require
