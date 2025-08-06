@@ -200,12 +200,12 @@ AI qualifications:
   - Dangling Pointer (-Wdangling-pointer=; DoS, PE, DoS, DT, ID; medium-high severity)
   - Double Free (-fsanitize=address, runtime error; CE, PE, DoS, DT, ID; high-critical severity)
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; DoS; low-medium severity)
-  - Null Pointer Dereference (-Wnull-dereference; DoS, low-medium severity)
+  - Null Pointer Dereference (-Wnull-dereference; DoS; low-medium severity)
   - Out of Bounds Access/Read/Write (-Warray-bounds; CE, PE, DoS, DT, ID; high-critical severity)
   - Race Condition (Runtime error; CE, PE, DoS, DT, ID; medium-high severity)
-  - Stack Overflow (-Wstringop-overflow or runtime error; CE, PE, DoS, DT, ID, high-critical severity)
+  - Stack Overflow (-Wstringop-overflow or runtime error; CE, PE, DoS, DT, ID; high-critical severity)
   - String format vulnerabilities (-Wformat-security; CE, PE, DoS, DT, ID; high-critical serverity)
-  - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, ID, medium-high severity)
+  - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, ID; medium-high severity)
   - Use After Free (-Wuse-after-free; CE, PE, DoS, DT, ID; high-critical severity)
 
 Contributing AI fixes:
