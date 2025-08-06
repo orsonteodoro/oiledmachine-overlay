@@ -199,24 +199,24 @@ AI qualifications:
 
 * AI have been observed to fix the following vulnerabilities.  Patch fixes are
   accepted for the following:
-  - Dangling Pointer (-Wdangling-pointer=; DoS, PE, DoS, DT, ID; medium-high severity)
-  - Double Free (-fsanitize=address, runtime error; CE, PE, DoS, DT, ID; high-critical severity)
-  - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; DoS; low-medium severity)
-  - Null Pointer Dereference (-Wnull-dereference; DoS; low-medium severity)
-  - Out of Bounds Access/Read/Write (-Warray-bounds; CE, PE, DoS, DT, ID; high-critical severity)
-  - Race Condition (Runtime error; CE, PE, DoS, DT, ID; medium-high severity)
-  - Stack Overflow (-Wstringop-overflow, -fstack-protect, or -fstack-protector-strong runtime error; CE, PE, DoS, DT, ID; high-critical severity)
-  - String format vulnerabilities (-Wformat-security; CE, PE, DoS, DT, ID; high-critical serverity)
-  - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, ID; medium-high severity)
-  - Use After Free (-Wuse-after-free; CE, PE, DoS, DT, ID; high-critical severity)
+  - Dangling Pointer (-Wdangling-pointer=; **CE**, PE, DoS, DT, ID; medium-high severity)
+  - Double Free (-fsanitize=address, runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
+  - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
+  - Null Pointer Dereference (-Wnull-dereference; ZC, **DoS**; low-medium severity)
+  - Out of Bounds Access/Read/Write (-Warray-bounds; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
+  - Race Condition (Runtime error; ZC, CE, **PE**, DoS, DT, ID; medium-high severity)
+  - Stack Overflow (-Wstringop-overflow, -fstack-protect, or -fstack-protector-strong runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
+  - String format vulnerabilities (-Wformat-security; **CE**, PE, DoS, DT, ID; high-critical serverity)
+  - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, **ID**; medium-high severity)
+  - Use After Free (-Wuse-after-free; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
 * AI are known to fix or help fix the following non-compiler vulnerabilities:
-  - LD_PRELOAD hijack vulnerability (It still requires human criticism.)
-  - Path traversal vulnerability
+  - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; high-critical severity)
+  - Path traversal vulnerability (By inspection; ZC, PE, **ID**, DT; medium-high severity)
 
 * AI may be able fix the following non-compiler vulnerabilities but require
   extra work and time:
-  - Insecure password storage
+  - Insecure password storage (By inspection; PE, **ID**, DT; medium-high severity)
 
 Contributing AI fixes:
 
