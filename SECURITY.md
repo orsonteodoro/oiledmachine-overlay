@@ -105,7 +105,7 @@ problems resolved quickly.
 
 This overlay uses an EPSS score of 0.1 (10%) or above as the threshold for
 remediation or triage which the package will be seriously evaluated for security
-fixes or being dropped.  The overlay tries to aim or converge towards a EPSS
+fixes or being dropped.  The overlay tries to aim or converge towards an EPSS
 score less than 0.01 (1%) for remediation which typically the vulnerabilities
 are difficult to fix or may have high complexity to exploit.  Vulnerabilities
 less than 1% may be ignored for long periods of time and considered low risk of
