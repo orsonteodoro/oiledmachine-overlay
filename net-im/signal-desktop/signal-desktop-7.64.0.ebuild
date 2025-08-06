@@ -31,7 +31,7 @@ ELECTRON_BUILDER_PV="26.0.14"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="37.2.0" # Cr 138.0.7204.97, node 22.17.0
+	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="36.3.2" # Cr 136.0.7103.115, node 22.15.1

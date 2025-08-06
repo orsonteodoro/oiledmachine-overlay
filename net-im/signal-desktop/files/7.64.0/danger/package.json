@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "@octokit/plugin-paginate-rest": "11.4.4-cjs.2",
+    "@octokit/request": "8.4.1",
+    "@octokit/request-error": "2.1.0",
+    "@octokit/rest": "20.1.2",
+    "cross-spawn": "7.0.5",
+    "danger": "13.0.4",
+    "endanger": "7.0.4",
+    "micromatch": "4.0.8",
+    "typescript": "5.6.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "core-js"
+    ]
+  }
+}
