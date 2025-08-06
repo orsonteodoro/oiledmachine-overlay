@@ -198,7 +198,7 @@ AI qualifications:
 * The AI must be able to fix ASan, UBSan type of errors.
 * AI are known to solve the following vulnerabilities.  Patch fixes are accepted
   for the following:
-  - Stack based Buffer Overflows (Runtime error, high to critical severity)
+  - Stack based Buffer Overflows (-Wstringop-overflow or runtime error, high to critical severity)
   - Dangling Pointer (-Wdangling-pointer=)
   - Double Free (Runtime error, high to critical severity)
   - Null Pointer Dereference (-Wnull-dereference; DoS)
