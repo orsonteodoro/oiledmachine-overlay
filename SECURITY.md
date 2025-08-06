@@ -187,7 +187,9 @@ information, no personal attacks, and nothing that violates the website rules.
 
 This overlay accepts AI based security fixes.  If the compiler or a runtime
 error is reported or encountered that is a common memory corruption, it could
-be fixed.  AI qualifications.
+be fixed.
+
+AI qualifications:
 
 * The AI must be recognize open source licenses.
 * The AI must be able to submit contributions under approved open source licenses.
@@ -206,6 +208,9 @@ be fixed.  AI qualifications.
   - Uninitalized variables (-Wmaybe-uninitialized; ID)
   - Use After Free (-Wuse-after-free; DoS, DT, ID; high to critical severity)
 
+Contributing AI fixes:
+
+* Locate the code.  Show the code or function to the AI and present the compiler warning or runtime error.
 * You can submit a pull request.
 * The submission must be a patch file or an ebuild version bump.
 
