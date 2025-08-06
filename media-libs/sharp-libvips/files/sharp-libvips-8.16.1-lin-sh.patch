@@ -1080,7 +1080,7 @@
 +meson compile -C _build ${MESON_LINK_JOBS} || die "Meson compile failed"
 +meson install -C _build --tag runtime,devel || die "Meson install failed"
 +ls -l "${TARGET}/bin/vips" || die "vips binary not installed"
-+${TARGET}/bin/vips -l | grep spng || echo "No spng loaders/savers found"
++"${TARGET}/bin/vips" -l | grep spng || echo "No spng loaders/savers found"
 +
 +die() {
 +  local message="${1}"

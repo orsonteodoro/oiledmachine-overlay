@@ -101,19 +101,19 @@
 +if [[ "${VANILLA}" == "1" ]] ; then
 +	# For performance-criticial builds.
 +	# Default optimisation level is for binary size (-Os)
-+	# Overriden to performance (${FLAGS_OPTIMIZED}) for select dependencies that benefit
++	# Overriden to performance (-O3) for select dependencies that benefit
 +	# O3 will reduce _FORTIFY_SOURCE integrity.
 +	if [[ "${DEBUG}" == "1" ]] ; then
 +		export FLAGS+=" -Os -fPIC"
-+		export FLAGS_OPTIMIZED="${FLAGS_OPTIMIZED}"
++		export FLAGS_OPTIMIZED="-O3"
 +	else
 +		export FLAGS+=" -Os -fPIC"
-+		export FLAGS_OPTIMIZED="${FLAGS_OPTIMIZED}"
++		export FLAGS_OPTIMIZED="-O3"
 +	fi
 +	export LIBSPNG_SSE4_FLAG="-DSPNG_SSE=4"
 +else
 +	# For security-criticial builds.
-+	# Removed -Os and ${FLAGS_OPTIMIZED} for security-critical and to maintain _FORTIFY_SOURCE integrity assumptions.
++	# Removed -Os and -O3 for security-critical and to maintain _FORTIFY_SOURCE integrity assumptions.
 +	if [[ "${DEBUG}" == "1" ]] ; then
 +		export FLAGS+=" -fPIC"
 +		export FLAGS_OPTIMIZED=""
@@ -903,8 +903,8 @@
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
 -sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
 -sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
-+sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
-+sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
 +fi
  
 +if [[ "${USE_FREETYPE}" == "1" ]] ; then
