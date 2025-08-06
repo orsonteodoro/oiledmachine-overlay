@@ -197,8 +197,9 @@ AI qualifications:
 * The AI must be able to fix ASan, UBSan type of errors.
 * The AI must have code generation capabilities.
 
-* AI have been observed to fix the following vulnerabilities.  Patch fixes are
-  accepted for the following:
+* AI have been observed to fix the following memory corruption or undefined
+  behavior class of vulnerabilities.  Patch fixes are accepted for the
+  following:
   - Dangling Pointer (-Wdangling-pointer=; **CE**, PE, DoS, DT, ID; medium-high severity)
   - Double Free (-fsanitize=address, runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
@@ -210,12 +211,12 @@ AI qualifications:
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, **ID**; medium-high severity)
   - Use After Free (-Wuse-after-free; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
-* AI are known to fix or help fix the following non-detectable compiler static
+* AI are known to fix or help fix the following non-detectable by compiler static
   analysis vulnerabilities:
   - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By inspection; ZC, PE, **ID**, DT; medium-high severity)
 
-* AI may be able fix the following non-detectable compiler static analysis
+* AI may be able fix the following non-detectable by compiler static analysis
   vulnerabilities but require extra work and time to implement:
   - Insecure password storage (By inspection; PE, **ID**, DT; medium-high severity)
 
