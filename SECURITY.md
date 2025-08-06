@@ -201,24 +201,27 @@ AI qualifications:
   behavior class of vulnerabilities.  Patch fixes are accepted for the
   following:
   - Dangling Pointer (-Wdangling-pointer=; **CE**, PE, DoS, DT, ID; medium-high severity)
-  - Double Free (-fsanitize=address, runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
+  - Double Free (-fsanitize=address as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
   - Null Pointer Dereference (-Wnull-dereference; ZC, **DoS**; low-medium severity)
   - Out of Bounds Access/Read/Write (-Warray-bounds; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
   - Race Condition (Runtime error; ZC, CE, **PE**, DoS, DT, ID; medium-high severity)
-  - Stack Overflow (-Wstringop-overflow, -fstack-protect, or -fstack-protector-strong runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
+  - Stack Overflow (-Wstringop-overflow, -fstack-protect or -fstack-protector-strong as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
   - String format vulnerabilities (-Wformat-security; **CE**, PE, DoS, DT, ID; high-critical serverity)
   - Uninitalized memory/variables (-Wuninitialized, -Wmaybe-uninitialized; CE, PE, DT, **ID**; medium-high severity)
-  - Use After Free (-Wuse-after-free; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
+  - Use After Free (-Wuse-after-free or -fsanitize=address as a runtime error; ZC, **CE**, PE, DoS, DT, ID; high-critical severity)
 
-* AI are known to fix or help fix the following non-detectable by compiler static
-  analysis vulnerabilities:
+* AI are observed to fix alone or help fix with human assistance the following:
   - LD_PRELOAD hijack vulnerability (It still requires human criticism; By inspection; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By inspection; ZC, PE, **ID**, DT; medium-high severity)
 
-* AI may be able fix the following non-detectable by compiler static analysis
-  vulnerabilities but require extra work and time to implement:
+* AI has not yet been observed but may be able to fix alone or help fix with
+  human assistance the following:
   - Insecure password storage (By inspection; PE, **ID**, DT; medium-high severity)
+  - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; **ZC**, PE, DoS, DT, ID, medium-high severity)
+
+Sometimes the AI will automatically detect and fix it on its own.  Other times,
+the AI has to be reminded or criticised that there is a vulnerability.
 
 Contributing AI fixes:
 
