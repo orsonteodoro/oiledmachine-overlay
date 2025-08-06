@@ -17,7 +17,7 @@ ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
+	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="29.0.1" # Cr 122.0.6261.57, node 20.9.0
