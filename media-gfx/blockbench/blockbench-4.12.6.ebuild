@@ -249,6 +249,7 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230807 with electron 37.2.6)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.5 (20230629 with electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.3 (20250311 with electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.2 (20250211 with electron 34.1.1)
