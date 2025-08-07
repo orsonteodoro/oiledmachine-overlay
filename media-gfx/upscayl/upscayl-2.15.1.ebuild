@@ -14,7 +14,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # See https://releases.electronjs.org/releases.json for version details.
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
+	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -119,7 +119,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_12
+	ebuild_revision_13
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -175,12 +175,17 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"14.2.30\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
 																# CVE-2025-48068; VS(ID), SS(ID); Low
 																# CVE-2025-30218; VS(ID)
+
+		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die			# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die				# CVE-2025-54798; DT; Low
 	}
 	patch_lockfile
 	local pkgs
 	pkgs=(
 		"undici@6.21.2"
 		"next@14.2.30"
+		"form-data@4.0.4"
+		"tmp@0.2.4"
 	)
 	enpm install -D ${pkgs[@]}
 
