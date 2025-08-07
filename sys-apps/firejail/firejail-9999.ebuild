@@ -4141,6 +4141,16 @@ ewarn
 ewarn "The /usr/local/firejail-bin has been removed.  You should remove"
 ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
 ewarn
+
+# We do not enable suid by default because it can cause privilege escalation.
+# suid is necessary for it to work properly on X.
+	if use X && has_version "x11-base/xorg-server" && ! has_version "x11-base/xorg-server[suid]" ; then
+ewarn "${PN} may require x11-base/xorg-server[suid] for it to work properly in X environments."
+	fi
+
+	if use X && ! use suid ; then
+ewarn "${PN} may require ${CATEGORY}/${PN}[suid] for it to work properly in X environments."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
