@@ -114,7 +114,7 @@ coverage in the model.  Vulnerabilities less than 1% may be ignored for long
 periods of time and considered low risk of being exploited.  Only Rust, Node,
 Electron based packages with scanned lock files will be evaluated for EPSS
 score.  The highest EPSS scores get triaged first when the objective is to
-reduce the EPSS set to less than 10% score.  Scores closest to 1 indicate that
+reduce the EPSS set to less than 5% score.  Scores closest to 1 indicate that
 the vulnerability may be actively or likely exploited.
 
 In short for this overlay,
