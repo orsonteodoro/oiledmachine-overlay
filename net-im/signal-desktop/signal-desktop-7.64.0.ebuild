@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_36
+ebuild_revision_37
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -205,7 +205,7 @@ ewarn "QA:  Manually remove electron@23.3.13 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @types/keyv@3.1.4 from ${S}/pnpm-lock.yaml"
 
-ewarn "CQA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/pnpm-lock.yaml"
@@ -249,6 +249,8 @@ ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations (@esbuild/<a
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove on-headers@1.0.2 from ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
