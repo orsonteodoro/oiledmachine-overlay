@@ -61,7 +61,7 @@ SLOT="0"
 # Deps based on their CI
 IUSE+="
 	firejail
-	ebuild_revision_14
+	ebuild_revision_15
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
@@ -98,18 +98,25 @@ src_unpack() {
 
 einfo "Applying mitigation"
 		patch_edits() {
-			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" \
-				"package-lock.json" \
-				|| die
-			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" \
-				"package-lock.json" \
-				|| die
+			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
 		}
 		patch_edits
 
 	# DT = Data Tampering
-		enpm install "got@^11.8.5" -P ${NPM_INSTALL_ARGS[@]}					# DT		# CVE-2022-33987
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D ${NPM_INSTALL_ARGS[@]}
+		local L
+		L=(
+			"got@^11.8.5"
+		)
+		enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}					# DT		# CVE-2022-33987
+
+		L=(
+			"electron@${ELECTRON_APP_ELECTRON_PV}"
+			"tmp@0.2.4"
+		)
+		enpm install ${L[@]} -D ${NPM_INSTALL_ARGS[@]}
 
 		patch_edits
 
