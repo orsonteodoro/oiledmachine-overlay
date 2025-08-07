@@ -20,7 +20,7 @@ EAPI=8
 
 AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
 MY_PN="WindowPet"
-NODE_VERSION="23" # Based on CI logs
+NODE_VERSION="23" # CI uses 23 based on CI logs
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="a0a310756ab3d770ed554c9801d3bea5940eb31e" # Obtained from GIT_CRATES
@@ -844,7 +844,7 @@ npm_unpack_post() {
 		fi
 	popd >/dev/null 2>&1 || die
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
-		cp -a \
+		cp -va \
 			"${FILESDIR}/${PV}/Cargo.lock" \
 			"${FILESDIR}/${PV}/Cargo.toml" \
 			"${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
@@ -868,11 +868,23 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
 		}
 
 		patch_lockfile
-		enpm install "@babel/runtime@7.26.10" -P		# CVE-2025-27789; DoS
-		enpm install "esbuild@^0.25.0" -D			# GHSA-67mh-4wv8-2f99; ID		# --prefer-offline is broken
+		local L
+		L=(
+			"@babel/runtime@7.26.10"			# CVE-2025-27789; DoS
+			"form-data@4.0.4"				# CVE-2025-7783; DT, ID
+		)
+		enpm install ${L[@]} -P
+
+
+		L=(
+			"esbuild@^0.25.0"				# GHSA-67mh-4wv8-2f99; ID
+		)
+		enpm install ${L[@]} -D
 		patch_lockfile
 	fi
 }
