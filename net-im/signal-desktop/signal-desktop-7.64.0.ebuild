@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_33
+ebuild_revision_36
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -310,6 +310,8 @@ ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
+
+				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die												# CVE-2025-54798; DT; Low
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -365,6 +367,11 @@ ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${
 																								# CVE-2025-32996; DoS; Medium
 
 			sed -i -e "s|form-data: 4.0.1|form-data: 4.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+
+			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
+			sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
+
+			sed -i -e "s|on-headers: 1.0.2|on-headers: 1.1.0|g" "pnpm-lock.yaml" || die												# CVE-2025-7339; DT, ID; Low
 		}
 		patch_edits_pnpm
 
@@ -374,6 +381,7 @@ ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
 				"brace-expansion@2.0.2"
+				"tmp@0.2.4"
 			)
 			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 			deps=(
@@ -421,6 +429,8 @@ ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${
 			"patch-package@8.0.0"
 			"webpack-dev-server@5.2.1"
 			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
+			"tmp@0.2.4"
+			"on-headers@1.1.0"
 		)
 		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
