@@ -6,15 +6,15 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/138.0.7204.49/DEPS#L533
-GN_COMMIT="ebc8f16ca7b0d36a3e532ee90896f9eb48e5423b"
-GN_PV="0.2237" # See get_gn_ver.sh
-# https://github.com/chromium/chromium/blob/138.0.7204.49/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/139.0.7258.66/DEPS#L533
+GN_COMMIT="97b68a0bb62b7528bc3491c7949d6804223c2b82"
+GN_PV="0.2255" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/139.0.7258.66/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="fd3fecfc"
 LLVM_N_COMMITS="11777"
 LLVM_OFFICIAL_SLOT="21" # Cr official slot
 LLVM_SUB_REV="1"
-# https://github.com/chromium/chromium/blob/138.0.7204.49/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/139.0.7258.66/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="4a0969e06dbeaaa43914d2d00b2e843d49aa3886"
 RUST_SUB_REV="1"
