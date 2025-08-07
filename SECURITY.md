@@ -121,8 +121,9 @@ In short for this overlay,
 
 * An EPSS score of [0.05, 1] must be triaged.
 * An EPSS score of [0.01, 0.05) may be optionally or conveniently triaged, but
-  provided as a carrot on a stick motivator to achieve 80%-90% the hypothetical
-  in the wild or the coverage of observed vulnerabilities in the model.
+  provided as a carrot on a stick motivator to achieve 80%-90% of the
+  hypothetical in the wild or of the coverage of observed vulnerabilities in the
+  model.
 * An EPSS score of [0, 0.01) is ignored.
 
 (Previously, it was 10% which was suggested by an AI.  10% is a nice number
