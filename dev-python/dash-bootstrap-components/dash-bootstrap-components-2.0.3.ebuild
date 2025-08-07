@@ -4,12 +4,10 @@
 
 EAPI=8
 
-# We don't bump to avoid pulling numpy 2.x
-
 NPM_TARBALL="${P}.tar.gz"
-NODE_VERSION=16 # Upstream uses node 16
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
+NODE_VERSION=22 # Upstream uses node 22
+DISTUTILS_USE_PEP517="hatchling"
+PYTHON_COMPAT=( "python3_"{10..13} ) # Lists up to 3.13
 
 inherit distutils-r1 npm
 
@@ -31,30 +29,25 @@ RESTRICT="mirror test" # Did not test
 SLOT="0"
 IUSE="dev pandas ebuild_revision_3"
 RDEPEND+="
-	>=sci-visualization/dash-2.0.0[${PYTHON_USEDEP},dev(+)]
+	>=sci-visualization/dash-3.0.4[${PYTHON_USEDEP},dev(+)]
 	pandas? (
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
+		>=dev-python/numpy-2.0.2[${PYTHON_USEDEP}]
+		>=dev-python/pandas-2.2.3[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	dev-python/invoke[${PYTHON_USEDEP}]
-	dev-python/semver[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
 	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
 	dev? (
+		>=dev-python/pytest-8.3.4[${PYTHON_USEDEP}]
+		>=dev-python/semver-3.0.2[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.8.5
 		>=sci-visualization/dash-2.0.0[${PYTHON_USEDEP},dev(+)]
-		dev-python/build[${PYTHON_USEDEP}]
-		dev-python/termcolor[${PYTHON_USEDEP}]
-
-		>=dev-python/pytest-6.0[${PYTHON_USEDEP}]
-		dev-python/black[${PYTHON_USEDEP}]
 	)
 "
+DOCS=( "README.md" )
 
 #distutils_enable_tests "pytest"
 
@@ -113,4 +106,7 @@ src_compile() {
 
 src_install() {
 	distutils-r1_src_install
+	insinto "licenses"
+	doins "LICENSE"
+	doins "NOTICE.txt"
 }
