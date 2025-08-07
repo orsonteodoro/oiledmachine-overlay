@@ -111,11 +111,12 @@ coverage.  The overlay tries to aim or converge towards an EPSS score less than
 0.01 (1%) for remediation which typically the vulnerabilities are difficult to
 fix or may have high complexity to exploit which translates to Grade B (80%)
 coverage in the model.  Vulnerabilities less than 1% may be ignored for long
-periods of time and considered low risk of being exploited.  Only Rust, Node,
+periods of time and considered low risk of being exploited.  Rust, Node,
 Electron based packages with scanned lock files will be evaluated for EPSS
-score.  The highest EPSS scores get triaged first when the objective is to
-reduce the EPSS set to less than 5% score.  Scores closest to 1 indicate that
-the vulnerability may be actively or likely exploited.
+score first.  As a fallback, CVEs will be EPSS randomly evaluated.  The highest
+EPSS scores get triaged first when the objective is to reduce the EPSS set to
+less than 5% score.  Scores closest to 1 indicate that the vulnerability may be
+actively or likely exploited.
 
 In short for this overlay,
 
