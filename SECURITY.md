@@ -249,7 +249,7 @@ AI qualifications:
 
 * AI has not yet been observed but may be able to fix alone or help fix with
   human assistance/feedback the following:
-  - Insecure password storage (By code audit or inspecting password store; PE, **ID**, DT; medium-high severity)
+  - Insecure password storage (By code audit or inspecting the password store; PE, **ID**, DT; medium-high severity)
   - Integer Overflow (-Wstrict-overflow or runtime detection with -fsanitize=undefined; ZC, **CE**, PE, DoS, DT, ID, medium-high severity)
   - Race Condition (Runtime error; ZC, CE, **PE**, DoS, DT, ID; medium-high severity)
 
