@@ -244,6 +244,8 @@ AI qualifications:
   - Infinite loops/recursion (-Winfinite-recursion, -Wanalyzer-infinite-loop, -Wanalyzer-infinite-recursion, runtime error; ZC, **DoS**; low-medium severity)
   - LD_PRELOAD hijack vulnerability (It still requires human criticism; By code audit or experimentation; **CE**, PE, DT, ID; high-critical severity)
   - Path traversal vulnerability (By code audit; ZC, PE, **ID**, DT; medium-high severity)
+  - Major version updates
+  - Code migration from insecure library to secure library 
 
 * AI has not yet been observed but may be able to fix alone or help fix with
   human assistance/feedback the following:
