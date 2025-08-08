@@ -7,6 +7,7 @@ EAPI="8"
 # 115.22.0 -> 115.23.0
 # 115.23.0 -> 115.24.0
 # 115.24.0 -> 115.25.0
+# 115.25.0 ->
 
 # For polkit
 
@@ -38,9 +39,9 @@ MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 MY_MAJOR=$(ver_cut 1)
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Apr 29, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1745866140 # From `date +%s -d "2025-04-28 11:49"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-30/"
+MITIGATION_DATE="Jul 22, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1753110300 # From `date +%s -d "2025-07-21 08:05"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-57/"
 MOZ_ESR="yes"
 
 MOZ_PV=${PV}

@@ -16,6 +16,7 @@ EAPI="8"
 # 128.9.0 -> 128.10.0
 # 128.10.0 -> 128.11.0
 # 128.11.0 -> 128.12.0
+# 128.12.0 -> 128.13.0
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
@@ -32,9 +33,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Apr 29, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1745866500 # From `date +%s -d "2025-04-28 11:55"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-29/"
+MITIGATION_DATE="Jul 22, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1753110240 # From `date +%s -d "2025-07-21 08:04"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-58/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
