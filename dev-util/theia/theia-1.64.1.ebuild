@@ -486,7 +486,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_30
+git ollama ebuild_revision_31
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -640,6 +640,12 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"1.1.12\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"multer\": \"^2.0.1\"|\"multer\": \"2.0.2\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"tmp\": \"~0.2.1\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"^0.2.1\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
 	}
 	patch_lockfile
 
@@ -678,6 +684,11 @@ einfo "Fixing vulnerabilities"
 	enpm add "form-data@4.0.4" -P -w "dev-packages/cli"												# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 	enpm add "form-data@4.0.4" -P -w "dev-packages/application-package"										# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 	enpm add "form-data@4.0.4" -D															# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+
+	enpm add "multer@2.0.2" -P -w "packages/filesystem"												# CVE-2025-7338; DoS; High
+
+	enpm add "tmp@0.2.4" -D																# CVE-2025-54798; DT; Low
+	enpm add "tmp@0.2.4" -P -w "dev-packages/cli"													# CVE-2025-54798; DT; Low
 
 	patch_lockfile
 }
