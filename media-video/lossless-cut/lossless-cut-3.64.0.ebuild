@@ -13,7 +13,7 @@ MY_PN="${PN/-/}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.2.5" # Cr 138.0.7204.168, node 22.17.1
+	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -24,8 +24,8 @@ NPM_AUDIT_FIX=0 # Breaks build
 YARN_AUDIT_FIX=0
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.2-debug.patch"
-	"${FILESDIR}/sharp-0.34.2-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.2-static-libs.patch"
+	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 	"${FILESDIR}/icon-gen-3.0.1-png-return.patch"
 )
 NODE_SHARP_USE="png svg"
@@ -37,14 +37,14 @@ PATENT_STATUS=(
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
-export NODE_SHARP_DEBUG=1
+#export NODE_SHARP_DEBUG=1
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
-SHARP_PV="0.34.2" # patched 0.34.7 works, non-patched 0.30.7 works; 0.31.0 introduced format() regression
+SHARP_PV="0.34.3" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
 VIPS_PV="8.16.1"
 
 inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
@@ -91,7 +91,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_13
+ebuild_revision_15
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -184,6 +184,9 @@ ewarn "QA:  Change prismjs ~x.xx to ^1.30.0 in lockfile"							# CVE-2024-53382;
 		# Breaks during runtime
 #		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"6\"|g" "package.json" || die
 #		eyarn add "@octokit/core@6"									# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
+
+		sed -i -e "s|tmp: \"npm:^0.2.0\"|tmp: \"npm:0.2.4\"|g" "yarn.lock" || die			# CVE-2025-54798; DT
+		eyarn add "tmp@0.2.4" -D
 
 		if [[ "${ICON_TYPE}" == "png" ]] ; then
 			eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
@@ -279,8 +282,6 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	        einfo "Rebuilding sharp in ${S}"
 	        pushd "${S}" || die
 	            node-sharp_yarn_rebuild_sharp
-	            local configuration="Debug"
-	            local sharp_arch=$(get_sharp_arch)
 	            # Copy sharp binary to expected location
 	            mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
 	            cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \

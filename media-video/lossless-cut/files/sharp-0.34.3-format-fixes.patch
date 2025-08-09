@@ -70,9 +70,9 @@
    // Create an InputDescriptor instance from a Napi::Object describing an input image
    InputDescriptor* CreateInputDescriptor(Napi::Object input);
  
---- a/node_modules/sharp/src/utilities.cc.orig	2025-08-03 01:12:50.325079800 -0700
-+++ b/node_modules/sharp/src/utilities.cc	2025-08-03 01:14:33.228871075 -0700
-@@ -115,69 +115,76 @@ Napi::Value libvipsVersion(const Napi::C
+--- a/node_modules/sharp/src/utilities.cc.orig	2025-08-08 20:11:17.704957413 -0700
++++ b/node_modules/sharp/src/utilities.cc	2025-08-08 20:15:49.571920542 -0700
+@@ -115,68 +115,71 @@ Napi::Value libvipsVersion(const Napi::C
    Get available input/output file/buffer/stream formats
  */
  Napi::Value format(const Napi::CallbackInfo& info) {
@@ -80,7 +80,7 @@
 -  Napi::Object format = Napi::Object::New(env);
 -  for (std::string const f : {
 -    "jpeg", "png", "webp", "tiff", "magick", "openslide", "dz",
--    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "jp2k", "jxl", "rad"
+-    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "jp2k", "jxl", "rad", "dcraw"
 -  }) {
 -    // Input
 -    const VipsObjectClass *oc = vips_class_find("VipsOperation", (f + "load").c_str());
@@ -119,6 +119,25 @@
 -    // Add to set of formats
 -    format.Set(f, container);
 -  }
+-
+-  // Raw, uncompressed data
+-  Napi::Boolean supported = Napi::Boolean::New(env, true);
+-  Napi::Boolean unsupported = Napi::Boolean::New(env, false);
+-  Napi::Object rawInput = Napi::Object::New(env);
+-  rawInput.Set("file", unsupported);
+-  rawInput.Set("buffer", supported);
+-  rawInput.Set("stream", supported);
+-  Napi::Object rawOutput = Napi::Object::New(env);
+-  rawOutput.Set("file", unsupported);
+-  rawOutput.Set("buffer", supported);
+-  rawOutput.Set("stream", supported);
+-  Napi::Object raw = Napi::Object::New(env);
+-  raw.Set("id", "raw");
+-  raw.Set("input", rawInput);
+-  raw.Set("output", rawOutput);
+-  format.Set("raw", raw);
+-
+-  return format;
 +   Napi::Env env = info.Env();
 +  g_message("Entering sharp.format()");
 +   Napi::Object format = Napi::Object::New(env);
@@ -184,29 +203,6 @@
 +   }
 +  g_message("Exiting sharp.format()");
 +   return format;
-+}
-+
-+
- 
--  // Raw, uncompressed data
--  Napi::Boolean supported = Napi::Boolean::New(env, true);
--  Napi::Boolean unsupported = Napi::Boolean::New(env, false);
--  Napi::Object rawInput = Napi::Object::New(env);
--  rawInput.Set("file", unsupported);
--  rawInput.Set("buffer", supported);
--  rawInput.Set("stream", supported);
--  Napi::Object rawOutput = Napi::Object::New(env);
--  rawOutput.Set("file", unsupported);
--  rawOutput.Set("buffer", supported);
--  rawOutput.Set("stream", supported);
--  Napi::Object raw = Napi::Object::New(env);
--  raw.Set("id", "raw");
--  raw.Set("input", rawInput);
--  raw.Set("output", rawOutput);
--  format.Set("raw", raw);
- 
--  return format;
--}
+ }
  
  /*
-   (Un)block libvips operations at runtime.
