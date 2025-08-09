@@ -428,8 +428,6 @@ node-sharp_npm_rebuild_sharp() {
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_pnpm_rebuild_sharp() {
-# The rebuild step is broken.
-ewarn "Sharp does not work with pnpm.  Use npm or yarn instead."
     if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
         epnpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
         epnpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
@@ -525,7 +523,6 @@ node-sharp_npm_lockfile_add_sharp() {
 # @DESCRIPTION:
 # Add sharp to pnpm lockfile
 node-sharp_pnpm_lockfile_add_sharp() {
-ewarn "Sharp does not work with pnpm.  Use npm or yarn instead."
 	if [[ -n "${NODE_ADDON_API_PV}" ]] ; then
 		epnpm install "node-addon-api@${NODE_ADDON_API_PV}" ${PNPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
 	else
