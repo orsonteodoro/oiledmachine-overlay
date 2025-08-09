@@ -127,7 +127,7 @@ einfo "IS = Insufficient Sanitiation of Input"
 einfo "IV = Insufficient Validation of Input or Data"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "KEV" ]] ; then
-einfo "Known Exploited Vulnerabilities (considered actively exploited in the wild)"
+einfo "KEV = Known Exploited Vulnerabilities (actively exploited in the wild)"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "MC" ]] ; then
 einfo "MC = Memory Corruption"
