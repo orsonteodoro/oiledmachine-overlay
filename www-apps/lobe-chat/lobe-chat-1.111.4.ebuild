@@ -438,13 +438,40 @@ pnpm_dedupe_post() {
 			sed -i -e "s|snowflake-sdk: 2.0.2|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
+			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
+
 			sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "packages/file-loaders/package.json" || die
+
+			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.7.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.7.2 references to @apidevtools/json-schema-ref-parser@11.7.2 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.7.2 references to @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
+ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
+ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
+ewarn "QA:  Manually remove @babel/runtime@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/core@4.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/auth-token@3.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/graphql@5.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request@6.2.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request-error@3.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.0 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@octokit/auth-token': 3.0.4 to '@octokit/auth-token': 4.0.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@octokit/graphql': 5.0.6 to '@octokit/graphql': 7.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@octokit/request': 6.2.8 to '@octokit/request': 8.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@octokit/request-error': 3.0.3 to '@octokit/request-error': 5.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/rest@19.0.13(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -470,6 +497,9 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 		pkgs=(
 			"snowflake-sdk@2.0.4"								# CVE-2025-24791; DT, ID; Medium
 													# CVE-2025-46328; DoS, DT, ID; High
+			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
+
+			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
 		)
 		epnpm add -D ${pkgs[@]}
 
