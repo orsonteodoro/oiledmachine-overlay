@@ -522,9 +522,15 @@ src_prepare() {
 }
 
 src_configure() {
+	npm_hydrate
+	pnpm_hydrate
+
+	setup_build_env
+
 	# Checks to see if toolchain is working or meets requirements
 	edo npm --version
 	edo pnpm --version
+	edo tsc --version
 }
 
 attach_segfault_handler() {
@@ -550,8 +556,6 @@ ewarn "Removing ${S}/.next"
 	pnpm_hydrate
 
 	setup_build_env
-
-	tsc --version || die
 
 	# Force rebuild to prevent illegal instruction
 	#edo npm rebuild "sharp"
