@@ -8,8 +8,6 @@ EAPI=8
 # 1.74.0 -> 1.96.13
 # 1.96.13 -> 1.96.14
 
-# This ebuild uses npm to unbreak sharp.
-
 # Ebuild using React 19
 
 #
@@ -50,21 +48,11 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.3.3"
-NPM_AUDIT_FIX_ARGS=(
-	"--legacy-peer-deps"
-	"--prefer-offline"
-)
-NPM_DEDUPE_ARGS=(
-	"--legacy-peer-deps"
-)
-NPM_INSTALL_ARGS=(
-	"--legacy-peer-deps"
-	"--prefer-offline"
-)
-NPM_UNINSTALL_ARGS=(
-	"--legacy-peer-deps"
-	"--prefer-offline"
+NEXTJS_PV="15.4.6"
+NODE_SHARP_PATCHES=(
+	"${FILESDIR}/sharp-0.34.2-debug.patch"
+	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 )
 PNPM_AUDIT_FIX=0
 RUST_MAX_VER="1.81.0" # Inclusive
@@ -73,10 +61,10 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from commit from committer-date:2024-10-07 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
-SHARP_PV="0.30.7" # 0.33.5 segfaults during build time and runtime
-VIPS_PV="8.15.3"
+SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
+VIPS_PV="8.17.1" # vips 8.15.3 correspons to sharp 0.30.7
 
-# Use npm for npm_updater_update_locks.sh
+# Use pnpm for pnpm_updater_update_locks.sh
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -347,18 +335,18 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	fi
 }
 
-npm_unpack_post() {
+pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
-	local npm_pv=$(npm --version)
+	local pnpm_pv=$(pnpm --version)
 	sed -i \
-		-e "s|npm@11.1.0|npm@${npm_pv}|g" \
+		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
 		"package.json" \
 		|| die
 
 	setup_cn_mirror_env
 
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
 			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
@@ -373,7 +361,7 @@ npm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-1.96.14-use-e965-xlsx.patch"
 
-#	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
+#	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
 #		mkdir -p "${S}/patches" || die
 #		cat "${FILESDIR}/types__mdx-2.0.13.patch" > "${S}/patches/@types__mdx@2.0.13.patch" || die
@@ -388,25 +376,25 @@ npm_unpack_post() {
 #		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
 #	fi
 
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
 			"@next/bundle-analyzer@^${NEXTJS_PV}"
 		)
-		enpm add ${pkgs[@]} -D --legacy-peer-deps
+		epnpm add -D ${pkgs[@]}
 		pkgs=(
 			"next@${NEXTJS_PV}"								# CVE-2025-29927; ZC, DoS, DT, ID; Critical
 #			"react@19.0.0"
 #			"react-dom@19.0.0"
 			"svix@1.45.1"
 		)
-		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-#		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
+		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+#		epnpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
-npm_unpack_install_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+pnpm_install_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		:
 	else
 		if use postgres ; then
@@ -415,34 +403,29 @@ npm_unpack_install_post() {
 				"pg@8.13.1"
 				"drizzle-orm@0.38.2"
 			)
-			enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+			epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 		fi
 	fi
 }
 
-npm_update_lock_install_post() {
-	:
-}
-
-npm_update_lock_audit_post() {
+pnpm_audit_post() {
 	local pkgs
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		npm_patch_lockfile() {
-			sed -i -e "s|\"vitest\": \"^1.0.0\"|\"vitest\": \"1.6.1\"|g" "package-lock.json" || die
-			sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
-			sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package-lock.json" || die
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		pnpm_patch_lockfile() {
+			sed -i -e "s|\"vitest\": ^3.2.4|\"vitest\": 3.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"vitest\": \"^3.2.4\"|\"vitest\": \"3.2.4\"|g" "package.json" || die
 		}
-		npm_patch_lockfile
+		pnpm_patch_lockfile
 		pkgs=(
-			"vitest@1.6.1"
+			"vitest@3.2.4"
 		)
-		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
-		npm_patch_lockfile
+		epnpm add -D ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+		pnpm_patch_lockfile
 	fi
 }
 
-npm_dedupe_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+pnpm_dedupe_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
@@ -454,24 +437,11 @@ npm_dedupe_post() {
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.2|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
-		}
-
-		npm_patch_lockfile() {
-			sed -i -e "s|\"@apidevtools/json-schema-ref-parser\": \"11.1.0\"|\"@apidevtools/json-schema-ref-parser\": \"11.2.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"~0.18.20\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.19.7\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"0.21.4\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"~0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \">=0.12 <1\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"snowflake-sdk\": \"^1.12.0\"|\"snowflake-sdk\": \"2.0.4\"|g" "package-lock.json" || die
-			sed -i -e "s|\"snowflake-sdk\": \"^2.0.2\"|\"snowflake-sdk\": \"^2.0.4\"|g" "package-lock.json" || die
-			sed -i -e "s|\"snowflake-sdk\": \"^2.0.3\"|\"snowflake-sdk\": \"^2.0.4\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "packages/file-loaders/package.json" || die
 		}
-		npm_patch_lockfile
+
+		pnpm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -481,13 +451,13 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 		# ID = Information Disclosure
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
-		enpm remove "xlsx"
+		epnpm remove "xlsx"
 
 		local pkgs
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 		)
-		enpm add ${pkgs[@]} --legacy-peer-deps
+		epnpm add ${pkgs[@]}
 
 		pkgs=(
 			"esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
@@ -495,19 +465,19 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
 		)
-		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
 			"snowflake-sdk@2.0.4"								# CVE-2025-24791; DT, ID; Medium
 													# CVE-2025-46328; DoS, DT, ID; High
 		)
-		enpm add ${pkgs[@]} -D --legacy-peer-deps
+		epnpm add -D ${pkgs[@]}
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
-		enpm add "@types/sharp" -D ${NPM_INSTALL_ARGS[@]}
-		node-sharp_npm_lockfile_add_sharp
-		npm_patch_lockfile
+		epnpm add -D "@types/sharp" ${NPM_INSTALL_ARGS[@]}
+		node-sharp_pnpm_lockfile_add_sharp
+		pnpm_patch_lockfile
 	fi
 }
 
@@ -519,11 +489,31 @@ src_unpack() {
 	else
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
-		npm_src_unpack
+		pnpm_src_unpack
 		rm -rf "${S}/node_modules/sharp/src/build"
 ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to sharp@0.30.7"
-		node-sharp_npm_rebuild_sharp
-#		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
+
+		local configuration="Debug"
+		local nconfiguration="Release"
+		if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
+			configuration="Release"
+			nconfiguration="Debug"
+		fi
+		local sharp_platform=$(node-sharp_get_platform)
+
+	        einfo "Rebuilding sharp in ${S}"
+	        pushd "${S}" || die
+			node-sharp_pnpm_rebuild_sharp
+			# Copy sharp binary to expected location
+			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+			cp \
+				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node"
+			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+		popd "${S}"
+
+#		epnpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 

@@ -1,0 +1,208 @@
+--- a/node_modules/icon-gen/node_modules/sharp/lib/sharp.js.orig	2025-08-02 18:51:37.521066828 -0700
++++ b/node_modules/icon-gen/node_modules/sharp/lib/sharp.js	2025-08-02 19:11:00.102274795 -0700
+@@ -1,10 +1,11 @@
+ 'use strict';
+ 
+ const platformAndArch = require('./platform')();
++const buildType = (process.env.NODE_ENV === 'debug' || process.env.NODE_ENV === 'Debug' || process.env.NODE_ENV === 'DEBUG' || process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'Development' || process.env.NODE_ENV === 'DEVELOPMENT') ? 'Debug' : 'Release';
+ 
+ /* istanbul ignore next */
+ try {
+-  module.exports = require(`../build/Release/sharp-${platformAndArch}.node`);
++  module.exports = require(`../build/${buildType}/sharp-${platformAndArch}.node`);
+ } catch (err) {
+   // Bail early if bindings aren't available
+   const help = ['', 'Something went wrong installing the "sharp" module', '', err.message, '', 'Possible solutions:'];
+--- a/node_modules/sharp/lib/utility.js.orig	2025-08-02 22:06:30.060839319 -0700
++++ b/node_modules/sharp/lib/utility.js	2025-08-02 22:07:19.469578612 -0700
+@@ -24,7 +24,9 @@ const format = sharp.format();
+ format.heif.output.alias = ['avif', 'heic'];
+ format.jpeg.output.alias = ['jpe', 'jpg'];
+ format.tiff.output.alias = ['tif'];
+-format.jp2k.output.alias = ['j2c', 'j2k', 'jp2', 'jpx'];
++if (format.jp2k && format.jp2k.output && format.jp2k.output.file) {
++  format.jp2k.output.alias = ['j2c', 'j2k', 'jp2', 'jpx'];
++}
+ 
+ /**
+  * An Object containing the available interpolators and their proper values
+--- a/node_modules/sharp/src/sharp.cc.orig	2025-08-02 19:03:28.546257262 -0700
++++ b/node_modules/sharp/src/sharp.cc	2025-08-02 19:11:00.102745422 -0700
+@@ -11,11 +11,21 @@
+ #include "pipeline.h"
+ #include "utilities.h"
+ #include "stats.h"
++#include "utilities.h"
++#include "common.h"
+ 
+ Napi::Object init(Napi::Env env, Napi::Object exports) {
++  sharp::Log(env, "debug", "Entering sharp.init()");
+   static std::once_flag sharp_vips_init_once;
+-  std::call_once(sharp_vips_init_once, []() {
+-    vips_init("sharp");
++  std::call_once(sharp_vips_init_once, [&env]() {
++    sharp::Log(env, "debug", "Calling vips_init(\"sharp\")");
++    if (vips_init("sharp")) {
++      std::string error = "vips_init failed: " + std::string(vips_error_buffer());
++      sharp::Log(env, "error", error);
++      Napi::Error::New(env, error).ThrowAsJavaScriptException();
++    } else {
++      sharp::Log(env, "debug", "vips_init succeeded");
++    }
+   });
+ 
+   g_log_set_handler("VIPS", static_cast<GLogLevelFlags>(G_LOG_LEVEL_WARNING),
+--- a/node_modules/sharp/src/common.h.orig	2025-08-02 19:03:28.606256349 -0700
++++ b/node_modules/sharp/src/common.h	2025-08-02 19:11:00.102901433 -0700
+@@ -140,6 +140,15 @@ namespace sharp {
+       vips_enum_from_nick(nullptr, type, AttrAsStr(obj, attr).data()));
+   }
+ 
++  // Helper function for logging
++  inline void Log(Napi::Env env, const std::string& level, const std::string& message) {
++    if (sharp::HasAttr(env.Global(), "console")) {
++      Napi::Object console = env.Global().Get("console").As<Napi::Object>();
++      Napi::Function log = console.Get(level).As<Napi::Function>();
++      log.Call(console, { Napi::String::New(env, message) });
++    }
++  }
++
+   // Create an InputDescriptor instance from a Napi::Object describing an input image
+   InputDescriptor* CreateInputDescriptor(Napi::Object input);
+ 
+--- a/node_modules/sharp/src/utilities.cc.orig	2025-08-08 20:11:17.704957413 -0700
++++ b/node_modules/sharp/src/utilities.cc	2025-08-08 20:15:49.571920542 -0700
+@@ -115,68 +115,71 @@ Napi::Value libvipsVersion(const Napi::C
+   Get available input/output file/buffer/stream formats
+ */
+ Napi::Value format(const Napi::CallbackInfo& info) {
+-  Napi::Env env = info.Env();
+-  Napi::Object format = Napi::Object::New(env);
+-  for (std::string const f : {
+-    "jpeg", "png", "webp", "tiff", "magick", "openslide", "dz",
+-    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "jp2k", "jxl", "rad", "dcraw"
+-  }) {
+-    // Input
+-    const VipsObjectClass *oc = vips_class_find("VipsOperation", (f + "load").c_str());
+-    Napi::Boolean hasInputFile = Napi::Boolean::New(env, oc);
+-    Napi::Boolean hasInputBuffer =
+-      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "load_buffer").c_str()));
+-    Napi::Object input = Napi::Object::New(env);
+-    input.Set("file", hasInputFile);
+-    input.Set("buffer", hasInputBuffer);
+-    input.Set("stream", hasInputBuffer);
+-    if (hasInputFile) {
+-      const VipsForeignClass *fc = VIPS_FOREIGN_CLASS(oc);
+-      if (fc->suffs) {
+-        Napi::Array fileSuffix = Napi::Array::New(env);
+-        const char **suffix = fc->suffs;
+-        for (int i = 0; *suffix; i++, suffix++) {
+-          fileSuffix.Set(i, Napi::String::New(env, *suffix));
+-        }
+-        input.Set("fileSuffix", fileSuffix);
+-      }
+-    }
+-    // Output
+-    Napi::Boolean hasOutputFile =
+-      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save").c_str()));
+-    Napi::Boolean hasOutputBuffer =
+-      Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save_buffer").c_str()));
+-    Napi::Object output = Napi::Object::New(env);
+-    output.Set("file", hasOutputFile);
+-    output.Set("buffer", hasOutputBuffer);
+-    output.Set("stream", hasOutputBuffer);
+-    // Other attributes
+-    Napi::Object container = Napi::Object::New(env);
+-    container.Set("id", f);
+-    container.Set("input", input);
+-    container.Set("output", output);
+-    // Add to set of formats
+-    format.Set(f, container);
+-  }
+-
+-  // Raw, uncompressed data
+-  Napi::Boolean supported = Napi::Boolean::New(env, true);
+-  Napi::Boolean unsupported = Napi::Boolean::New(env, false);
+-  Napi::Object rawInput = Napi::Object::New(env);
+-  rawInput.Set("file", unsupported);
+-  rawInput.Set("buffer", supported);
+-  rawInput.Set("stream", supported);
+-  Napi::Object rawOutput = Napi::Object::New(env);
+-  rawOutput.Set("file", unsupported);
+-  rawOutput.Set("buffer", supported);
+-  rawOutput.Set("stream", supported);
+-  Napi::Object raw = Napi::Object::New(env);
+-  raw.Set("id", "raw");
+-  raw.Set("input", rawInput);
+-  raw.Set("output", rawOutput);
+-  format.Set("raw", raw);
+-
+-  return format;
++   Napi::Env env = info.Env();
++  g_message("Entering sharp.format()");
++   Napi::Object format = Napi::Object::New(env);
++   for (std::string const f : {
++     "jpeg", "png", "webp", "tiff", "gif", "heif", "vips"
++   }) {
++    g_message("Processing format: %s", f.c_str());
++     const VipsObjectClass *oc = vips_class_find("VipsOperation", (f + "load").c_str());
++     if (!oc || (uintptr_t)oc < 0x1000) {
++      g_message("Skipping unsupported format: %s", f.c_str());
++       Napi::Object container = Napi::Object::New(env);
++       container.Set("id", f);
++       container.Set("input", Napi::Object::New(env));
++       container.Set("output", Napi::Object::New(env));
++       format.Set(f, container);
++       continue;
++     }
++     Napi::Boolean hasInputFile = Napi::Boolean::New(env, true);
++     Napi::Boolean hasInputBuffer = Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "load_buffer").c_str()) != 0);
++     Napi::Object input = Napi::Object::New(env);
++     input.Set("file", hasInputFile);
++     input.Set("buffer", hasInputBuffer);
++     input.Set("stream", hasInputBuffer);
++     if (hasInputFile.Value()) {
++       const VipsForeignClass *fc = VIPS_FOREIGN_CLASS(oc);
++       Napi::Array fileSuffix = Napi::Array::New(env);
++       if (fc && fc->suffs && fc->suffs[0]) {
++         const char **suffix = fc->suffs;
++         for (int i = 0; suffix[i]; i++) {
++          g_message("suffix[%d]=%s for format: %s", i, suffix[i], f.c_str());
++           fileSuffix.Set(static_cast<uint32_t>(i), Napi::String::New(env, suffix[i]));
++         }
++       } else {
++        g_message("No valid suffixes for format: %s", f.c_str());
++         if (f == "jpeg") {
++          fileSuffix.Set(static_cast<uint32_t>(0), Napi::String::New(env, ".jpg"));
++          fileSuffix.Set(static_cast<uint32_t>(1), Napi::String::New(env, ".jpeg"));
++         } else if (f == "png") {
++          fileSuffix.Set(static_cast<uint32_t>(0), Napi::String::New(env, ".png"));
++         } else if (f == "webp") {
++          fileSuffix.Set(static_cast<uint32_t>(0), Napi::String::New(env, ".webp"));
++         } else if (f == "tiff") {
++          fileSuffix.Set(static_cast<uint32_t>(0), Napi::String::New(env, ".tiff"));
++          fileSuffix.Set(static_cast<uint32_t>(1), Napi::String::New(env, ".tif"));
++         } else if (f == "heif") {
++          fileSuffix.Set(static_cast<uint32_t>(0), Napi::String::New(env, ".heif"));
++          fileSuffix.Set(static_cast<uint32_t>(1), Napi::String::New(env, ".heic"));
++         }
++       }
++       if (!fileSuffix.IsEmpty()) {
++         input.Set("fileSuffix", fileSuffix);
++       }
++     }
++     Napi::Object output = Napi::Object::New(env);
++     output.Set("file", Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save").c_str()) != 0));
++     output.Set("buffer", Napi::Boolean::New(env, vips_type_find("VipsOperation", (f + "save_buffer").c_str()) != 0));
++     output.Set("stream", output.Get("buffer"));
++     Napi::Object container = Napi::Object::New(env);
++     container.Set("id", f);
++     container.Set("input", input);
++     container.Set("output", output);
++     format.Set(f, container);
++   }
++  g_message("Exiting sharp.format()");
++   return format;
+ }
+ 
+ /*

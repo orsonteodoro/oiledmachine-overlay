@@ -1,0 +1,215 @@
+--- a/node_modules/sharp/install/check.js.orig	2025-07-04 18:32:57.127396387 -0700
++++ b/node_modules/sharp/install/check.js	2025-07-04 18:40:43.201383158 -0700
+@@ -5,8 +5,9 @@
+ 
+ try {
+   const { useGlobalLibvips, globalLibvipsVersion, log, spawnRebuild } = require('../lib/libvips');
++  const options = { debug: process.argv.includes('--debug') };
+ 
+-  const buildFromSource = (msg) => {
++  const buildFromSource = (msg, options = {}) => {
+     log(msg);
+     log('Attempting to build from source via node-gyp');
+     try {
+@@ -24,14 +25,14 @@ try {
+       return;
+     }
+     log('See https://sharp.pixelplumbing.com/install#building-from-source');
+-    const status = spawnRebuild();
++    const status = spawnRebuild(options);
+     if (status !== 0) {
+       process.exit(status);
+     }
+   };
+ 
+   if (useGlobalLibvips(log)) {
+-    buildFromSource(`Detected globally-installed libvips v${globalLibvipsVersion()}`);
++    buildFromSource(`Detected globally-installed libvips v${globalLibvipsVersion()}`, options);
+   } else if (process.env.npm_config_build_from_source) {
+     buildFromSource('Detected --build-from-source flag');
+   }
+--- a/node_modules/sharp/lib/libvips.js.orig	2025-07-04 17:39:54.191564213 -0700
++++ b/node_modules/sharp/lib/libvips.js	2025-07-04 17:52:25.420131795 -0700
+@@ -122,11 +122,13 @@ const yarnLocator = () => {
+ };
+ 
+ /* istanbul ignore next */
+-const spawnRebuild = () =>
+-  spawnSync(`node-gyp rebuild --directory=src ${isEmscripten() ? '--nodedir=emscripten' : ''}`, {
++const spawnRebuild = (options = {}) => {
++  const debugFlag = options.debug ? '--debug' : '';
++  spawnSync(`node-gyp rebuild --verbose --directory=src ${isEmscripten() ? '--nodedir=emscripten' : ''} ${debugFlag}`, {
+     ...spawnSyncOptions,
+     stdio: 'inherit'
+   }).status;
++}
+ 
+ const globalLibvipsVersion = () => {
+   if (process.platform !== 'win32') {
+--- a/node_modules/sharp/lib/sharp.js.orig	2025-07-04 15:34:56.147377173 -0700
++++ b/node_modules/sharp/lib/sharp.js	2025-07-04 15:50:02.384586552 -0700
+@@ -10,9 +10,10 @@ const { familySync, versionSync } = requ
+ const { runtimePlatformArch, isUnsupportedNodeRuntime, prebuiltPlatforms, minimumLibvipsVersion } = require('./libvips');
+ const runtimePlatform = runtimePlatformArch();
+ 
++const buildType = (process.env.NODE_ENV === 'debug' || process.env.NODE_ENV === 'Debug' || process.env.NODE_ENV === 'DEBUG' || process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'Development' || process.env.NODE_ENV === 'DEVELOPMENT') ? 'Debug' : 'Release';
+ const paths = [
+-  `../src/build/Release/sharp-${runtimePlatform}.node`,
+-  '../src/build/Release/sharp-wasm32.node',
++  `../src/build/${buildType}/sharp-${runtimePlatform}.node`,
++  '../src/build/${buildType}/sharp-wasm32.node',
+   `@img/sharp-${runtimePlatform}/sharp.node`,
+   '@img/sharp-wasm32/sharp.node'
+ ];
+--- a/node_modules/sharp/src/binding.gyp.orig	2025-07-04 19:07:46.255907677 -0700
++++ b/node_modules/sharp/src/binding.gyp	2025-07-04 19:12:36.508614258 -0700
+@@ -20,9 +20,9 @@
+         'defines': [
+           '_VIPS_PUBLIC=__declspec(dllexport)',
+           '_ALLOW_KEYWORD_MACROS',
+-          'G_DISABLE_ASSERT',
+-          'G_DISABLE_CAST_CHECKS',
+-          'G_DISABLE_CHECKS'
++#          'G_DISABLE_ASSERT',
++#          'G_DISABLE_CAST_CHECKS',
++#          'G_DISABLE_CHECKS'
+         ],
+         'sources': [
+           '<(sharp_libvips_cplusplus_dir)/VConnection.cpp',
+@@ -45,6 +45,61 @@
+           ],
+         },
+         'configurations': {
++          'Debug': {
++              'cflags_cc': [
++                '-std=c++17',
++                '-fexceptions',
++                '-Wall',
++                '-g',
++                '-O0',
++                '-UNDEBUG',
++                '-DG_ENABLE_DEBUG',
++                '-DDEBUG'
++              ],
++              'xcode_settings': {
++                'CLANG_CXX_LANGUAGE_STANDARD': 'c++17',
++                'MACOSX_DEPLOYMENT_TARGET': '10.15',
++                'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
++                'GCC_ENABLE_CPP_RTTI': 'YES',
++                'OTHER_CPLUSPLUSFLAGS': [
++                  '-fexceptions',
++                  '-Wall',
++                  '-g',
++                  '-O0',
++                  '-UNDEBUG',
++                  '-DG_ENABLE_DEBUG',
++                  '-DDEBUG'
++                ]
++              },
++              'conditions': [
++                ['OS == "win"', {
++                  'msvs_settings': {
++                    'VCCLCompilerTool': {
++                      "AdditionalOptions": [
++                        "/std:c++17",
++                        "/Od",
++                        "/Zi",
++                        "/UNDEBUG",
++                        "/DG_ENABLE_DEBUG",
++                        "/DDEBUG"
++                      ],
++                      'ExceptionHandling': 1,
++                      'Optimization': 0,
++                      'DebugInformationFormat': 3
++                    },
++                    'VCLinkerTool': {
++                     'GenerateDebugInformation': 'true',
++                      'LinkIncremental': 1
++                    }
++                  }
++                }],
++                ['target_arch == "arm"', {
++                  'cflags_cc': [
++                  '-Wno-psabi'
++                ]
++              }]
++            ]
++          },
+           'Release': {
+             'msvs_settings': {
+               'VCCLCompilerTool': {
+@@ -83,9 +138,9 @@
+   }, {
+     'target_name': 'sharp-<(platform_and_arch)',
+     'defines': [
+-      'G_DISABLE_ASSERT',
+-      'G_DISABLE_CAST_CHECKS',
+-      'G_DISABLE_CHECKS',
++#      'G_DISABLE_ASSERT',
++#      'G_DISABLE_CAST_CHECKS',
++#      'G_DISABLE_CHECKS',
+       'NAPI_VERSION=9',
+       'NODE_ADDON_API_DISABLE_DEPRECATED',
+       'NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS'
+@@ -235,6 +290,61 @@
+       ]
+     },
+     'configurations': {
++      'Debug': {
++          'cflags_cc': [
++            '-std=c++17',
++            '-fexceptions',
++            '-Wall',
++            '-g',
++            '-O0',
++            '-UNDEBUG',
++            '-DG_ENABLE_DEBUG',
++            '-DDEBUG'
++          ],
++          'xcode_settings': {
++            'CLANG_CXX_LANGUAGE_STANDARD': 'c++17',
++            'MACOSX_DEPLOYMENT_TARGET': '10.15',
++            'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
++            'GCC_ENABLE_CPP_RTTI': 'YES',
++            'OTHER_CPLUSPLUSFLAGS': [
++              '-fexceptions',
++              '-Wall',
++              '-g',
++              '-O0',
++              '-UNDEBUG',
++              '-DG_ENABLE_DEBUG',
++              '-DDEBUG'
++            ]
++          },
++          'conditions': [
++            ['OS == "win"', {
++              'msvs_settings': {
++                'VCCLCompilerTool': {
++                  "AdditionalOptions": [
++                    "/std:c++17",
++                    "/Od",
++                    "/Zi",
++                    "/UNDEBUG",
++                    "/DG_ENABLE_DEBUG",
++                    "/DDEBUG"
++                  ],
++                  'ExceptionHandling': 1,
++                  'Optimization': 0,
++                  'DebugInformationFormat': 3
++                },
++                'VCLinkerTool': {
++                  'GenerateDebugInformation': 'true',
++                  'LinkIncremental': 1
++                }
++              }
++            }],
++            ['target_arch == "arm"', {
++              'cflags_cc': [
++              '-Wno-psabi'
++            ]
++          }]
++        ]
++      },
+       'Release': {
+         'conditions': [
+           ['target_arch == "arm"', {

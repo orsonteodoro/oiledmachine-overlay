@@ -424,6 +424,86 @@ node-sharp_npm_rebuild_sharp() {
         && die "Detected build error"
 }
 
+# @FUNCTION: node-sharp_pnpm_rebuild_sharp
+# @DESCRIPTION:
+# Rebuild sharp with npm
+node-sharp_pnpm_rebuild_sharp() {
+# The rebuild step is broken.
+ewarn "Sharp does not work with pnpm.  Use npm or yarn instead."
+    if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
+        epnpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
+        epnpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
+    fi
+
+    einfo "Cleaning prebuilt for system-vips"
+    edo rm -vrf "node_modules/@img/sharp"*
+    edo rm -vrf "${HOME}/.cache/node-gyp"
+    edo rm -vrf "node_modules/sharp"
+    export npm_config_build_from_source="true"
+
+    local libdir=$(get_libdir)
+    export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+    export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+    einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
+
+    epnpm add "sharp@${SHARP_PV}" \
+        ${PNPM_INSTALL_ARGS[@]} \
+        ${SHARP_INSTALL_ARGS[@]}
+
+    if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
+        local patch_path
+        for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
+            eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
+        done
+    else
+        ewarn "QA:  Missing NODE_SHARP_PATCHES"
+    fi
+
+    node-sharp_append_libs
+
+    edo rm -vrf "node_modules/sharp/build"
+    edo rm -vrf "node_modules/@img/sharp"*
+    pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+        local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+        if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+                edo node "../install/check" --debug || die "Failed to run install/check --debug"
+            else
+                edo node "../install/check" || die "Failed to run install/check"
+            fi
+        elif ver_test "${sharp_pv}" -lt "0.33" ; then
+            edo node "install/can-compile" || die "Failed to run install/can-compile"
+            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+                edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
+                edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+            else
+                edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+            fi
+            edo node "../install/dll-copy" || die "Failed to run dll-copy"
+        fi
+    popd >/dev/null 2>&1 || die
+
+    node-sharp_verify_built_symbols
+
+    unset npm_config_build_from_source
+
+    if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
+        ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
+            || die "Did not build sharp@${SHARP_PV} with node-gyp"
+    else
+        ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
+            || die "Did not build sharp@${SHARP_PV} with node-gyp"
+    fi
+    grep -q \
+        -e "compilation terminated" \
+        "${T}/build.log" \
+        && die "Detected compilation error"
+    grep -q \
+        -e "build error" \
+        "${T}/build.log" \
+        && die "Detected build error"
+}
+
 # @FUNCTION: node-sharp_npm_lockfile_add_sharp
 # @DESCRIPTION:
 # Add sharp to npm lockfile
@@ -441,6 +521,23 @@ node-sharp_npm_lockfile_add_sharp() {
 	enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 
+# @FUNCTION: node-sharp_pnpm_lockfile_add_sharp
+# @DESCRIPTION:
+# Add sharp to pnpm lockfile
+node-sharp_pnpm_lockfile_add_sharp() {
+ewarn "Sharp does not work with pnpm.  Use npm or yarn instead."
+	if [[ -n "${NODE_ADDON_API_PV}" ]] ; then
+		epnpm install "node-addon-api@${NODE_ADDON_API_PV}" ${PNPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
+	else
+		epnpm install "node-addon-api" ${PNPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
+	fi
+	if [[ -n "${NODE_GYP_PV}" ]] ; then
+		epnpm install "node-gyp@${NODE_GYP_PV}" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
+	else
+		epnpm install "node-gyp" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
+	fi
+	epnpm add "sharp@${SHARP_PV}" ${PNPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+}
 
 # @FUNCTION: node-sharp_yarn_rebuild_sharp
 # @DESCRIPTION:
