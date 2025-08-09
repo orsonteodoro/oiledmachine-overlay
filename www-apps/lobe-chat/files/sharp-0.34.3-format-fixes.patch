@@ -1,18 +1,3 @@
---- a/node_modules/icon-gen/node_modules/sharp/lib/sharp.js.orig	2025-08-02 18:51:37.521066828 -0700
-+++ b/node_modules/icon-gen/node_modules/sharp/lib/sharp.js	2025-08-02 19:11:00.102274795 -0700
-@@ -1,10 +1,11 @@
- 'use strict';
- 
- const platformAndArch = require('./platform')();
-+const buildType = (process.env.NODE_ENV === 'debug' || process.env.NODE_ENV === 'Debug' || process.env.NODE_ENV === 'DEBUG' || process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'Development' || process.env.NODE_ENV === 'DEVELOPMENT') ? 'Debug' : 'Release';
- 
- /* istanbul ignore next */
- try {
--  module.exports = require(`../build/Release/sharp-${platformAndArch}.node`);
-+  module.exports = require(`../build/${buildType}/sharp-${platformAndArch}.node`);
- } catch (err) {
-   // Bail early if bindings aren't available
-   const help = ['', 'Something went wrong installing the "sharp" module', '', err.message, '', 'Possible solutions:'];
 --- a/node_modules/sharp/lib/utility.js.orig	2025-08-02 22:06:30.060839319 -0700
 +++ b/node_modules/sharp/lib/utility.js	2025-08-02 22:07:19.469578612 -0700
 @@ -24,7 +24,9 @@ const format = sharp.format();
