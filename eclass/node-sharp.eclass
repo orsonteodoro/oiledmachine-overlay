@@ -286,7 +286,7 @@ node-sharp_verify_built_symbols() {
 	if [[ -d "${S}/node_modules/sharp" ]]; then
 		local sharp_platform=$(node-sharp_get_platform)
 		einfo "Rebuilding sharp from source"
-		pushd "${S}/node_modules/sharp" || die "Failed to enter sharp directory"
+		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die "Failed to enter sharp directory"
 			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/sharp-${sharp_platform}.node")
 			if [[ -f "${node_path}" ]]; then
 				einfo "Checking for undefined symbols in sharp-${sharp_platform}.node"
@@ -337,7 +337,7 @@ node-sharp_verify_built_symbols() {
 			else
 				die "sharp-${sharp_platform}.node not found after rebuild"
 			fi
-		popd
+		popd >/dev/null 2>&1 || die
 	else
 		die "sharp module not found in ${S}/node_modules/sharp. Ensure it is installed."
 	fi
@@ -583,7 +583,7 @@ node-sharp_yarn_rebuild_sharp() {
             local patch_path
             for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
                 pushd "${S}" >/dev/null 2>&1 || die "Failed to enter ${S}"
-                eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
+                    eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
                 popd >/dev/null 2>&1
             done
             export NODE_SHARP_PATCHES_APPLIED=1
