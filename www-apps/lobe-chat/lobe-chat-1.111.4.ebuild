@@ -810,3 +810,5 @@ pkg_postrm() {
 # Stability:  passed
 # Client side database mode:  passed
 # Server side database mode:  untested
+
+# For Sharp testing, the "Common Settings" > Theme section will show pictures if sharp is built correctly.
