@@ -51,15 +51,37 @@
  
              let prompt;
              // TODO load prompt if it exists
---- a/src/features/lipSync/lipSync.ts.orig	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/features/lipSync/lipSync.ts	2025-08-10 10:37:34.321388850 -0700
-@@ -11,7 +11,8 @@ export class LipSync {
+--- a/src/features/lipSync/lipSync.ts.orig	2025-08-10 10:48:11.905368127 -0700
++++ b/src/features/lipSync/lipSync.ts	2025-08-10 10:51:49.742468255 -0700
+@@ -11,15 +11,28 @@ export class LipSync {
      this.audio = audio;
  
      this.analyser = audio.createAnalyser();
 -    this.timeDomainData = new Float32Array(TIME_DOMAIN_DATA_LENGTH);
-+    const arrayBuffer = new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4); // 4 bytes per float
++    this.analyser.fftSize = TIME_DOMAIN_DATA_LENGTH; // Ensure fftSize matches
++    // Explicitly create Float32Array with ArrayBuffer
++    const arrayBuffer: ArrayBuffer = new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4); // 4 bytes per float
 +    this.timeDomainData = new Float32Array(arrayBuffer);
    }
  
    public update(): LipSyncAnalyzeResult {
+-    this.analyser.getFloatTimeDomainData(this.timeDomainData);
++    // Ensure compatibility by creating a new Float32Array if needed
++    const compatibleData: Float32Array = new Float32Array(
++      this.timeDomainData.buffer instanceof ArrayBuffer
++        ? this.timeDomainData.buffer
++        : new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4)
++    );
++    if (!(this.timeDomainData.buffer instanceof ArrayBuffer)) {
++      compatibleData.set(this.timeDomainData); // Copy data if necessary
++    }
++
++    this.analyser.getFloatTimeDomainData(compatibleData);
+ 
+     let volume = 0.0;
+     for (let i = 0; i < TIME_DOMAIN_DATA_LENGTH; i++) {
+-      volume = Math.max(volume, Math.abs(this.timeDomainData[i]));
++      volume = Math.max(volume, Math.abs(compatibleData[i]));
+     }
+ 
+     // cook
