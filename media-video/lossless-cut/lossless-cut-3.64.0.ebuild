@@ -91,7 +91,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -410,6 +410,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250214 with electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250312 with electron 34.3.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250630 with electron 37.1.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250809 with electron 37.2.6)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
