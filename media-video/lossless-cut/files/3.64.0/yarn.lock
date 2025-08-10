@@ -3300,16 +3300,16 @@ __metadata:
   linkType: hard
 
 "browserslist@npm:^4.24.0, browserslist@npm:^4.25.1":
-  version: 4.25.1
-  resolution: "browserslist@npm:4.25.1"
+  version: 4.25.2
+  resolution: "browserslist@npm:4.25.2"
   dependencies:
-    caniuse-lite: "npm:^1.0.30001726"
-    electron-to-chromium: "npm:^1.5.173"
+    caniuse-lite: "npm:^1.0.30001733"
+    electron-to-chromium: "npm:^1.5.199"
     node-releases: "npm:^2.0.19"
     update-browserslist-db: "npm:^1.1.3"
   bin:
     browserslist: cli.js
-  checksum: 10/bfb5511b425886279bbe2ea44d10e340c8aea85866c9d45083c13491d049b6362e254018c0afbf56d41ceeb64f994957ea8ae98dbba74ef1e54ef901c8732987
+  checksum: 10/5a42c8728feffec8ace9fdf3dea52115e0329e0c423e2aec26f3e31e7bc0dea8e6267681a165d7e46cd867065e0fb3f042ef749f872c1ef912b62cacb7b84854
   languageName: node
   linkType: hard
 
@@ -3538,7 +3538,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001726":
+"caniuse-lite@npm:^1.0.30001733":
   version: 1.0.30001733
   resolution: "caniuse-lite@npm:1.0.30001733"
   checksum: 10/c269ecbf4cbdf4f8308334f6809ddca9ad3db8e0ea91c9851f5bdde291b15dac39c3e76bc5ecc3f069ac805f2a93805e19d5ccf10c22c0d57a11beff370433ae
@@ -4652,7 +4652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.5.173":
+"electron-to-chromium@npm:^1.5.199":
   version: 1.5.199
   resolution: "electron-to-chromium@npm:1.5.199"
   checksum: 10/96967ead8348d26bdf30f31235d97ee39b57d9794b62969d4191b616f29e6bcad1df1f5e29d127c730cb7739a2aca9ee84a918ba54a8bf4fce06f390b558f795
@@ -6782,7 +6782,7 @@ __metadata:
     del: "npm:^6.0.0"
     mkdirp: "npm:^1.0.4"
     pngjs: "npm:^6.0.0"
-    sharp: "npm:^0.30.4"
+    sharp: "npm:^0.34.3"
     uuid: "npm:^8.3.2"
   bin:
     icon-gen: dist/bin/index.js
@@ -10495,23 +10495,6 @@ __metadata:
     "@img/sharp-win32-x64":
       optional: true
   checksum: 10/b8ca871c99b48601c47f5dfabf32e38e60071a93e359b3c765d398f708a7cf3735d1bd804b72a957246a3b215fd281a17f887d9c36ebfa690c90fa5fe142d2cd
-  languageName: node
-  linkType: hard
-
-"sharp@npm:^0.30.4":
-  version: 0.30.7
-  resolution: "sharp@npm:0.30.7"
-  dependencies:
-    color: "npm:^4.2.3"
-    detect-libc: "npm:^2.0.1"
-    node-addon-api: "npm:^5.0.0"
-    node-gyp: "npm:latest"
-    prebuild-install: "npm:^7.1.1"
-    semver: "npm:^7.3.7"
-    simple-get: "npm:^4.0.1"
-    tar-fs: "npm:^2.1.1"
-    tunnel-agent: "npm:^0.6.0"
-  checksum: 10/57142557ac0f7164b71ec8f4adf19efe09d70678e796a5761c0d0f2ff1b2278c060a115ea5d0d4206ec714408be351a7c30ea996fa3617158a40888775f36959
   languageName: node
   linkType: hard
 

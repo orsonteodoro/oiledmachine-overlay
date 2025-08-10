@@ -157,8 +157,10 @@ yarn_update_lock_yarn_import_post() {
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 # Doesn't break build
 #ewarn "QA:  Manually modify lockfile to remove typescript@5.7.x and move associated version ranges from typescript 5.7.x to typescript@5.5.4"
-#ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in lockfile and drop @types/node 22"
-ewarn "QA:  Change prismjs ~x.xx to ^1.30.0 in lockfile"							# CVE-2024-53382; DT, ID; Medium
+#ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in yarn.lock and drop @types/node 22"
+ewarn "QA:  Manually modify prismjs ~x.xx to ^1.30.0 in yarn.lock"							# CVE-2024-53382; DT, ID; Medium
+ewarn "QA:  Manually modify remove sharp@^0.30.4 in yarn.lock"
+ewarn "QA:  Manually modify sharp: \"npm:^0.30.4\" to sharp: \"npm:^0.34.3\" in yarn.lock"
 
 		eyarn add "typescript@5.5.4" -D
 		#eyarn add "@types/node@20.14.14" -D
@@ -237,7 +239,11 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 
-	export NODE_ENV="development"
+	if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+		export NODE_ENV="development"
+	else
+		export NODE_ENV="Release"
+	fi
 einfo "NODE_ENV:  ${NODE_ENV}"
 
 	if [[ "${ICON_TYPE}" == "png" ]] ; then
