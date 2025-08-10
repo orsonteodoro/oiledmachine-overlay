@@ -632,7 +632,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	voice-recognition
@@ -916,6 +916,7 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-convert-ArrayBuffer.patch"
 }
 
 src_configure() {
