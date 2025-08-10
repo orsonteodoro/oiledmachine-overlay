@@ -924,6 +924,8 @@ ewarn "Ebuild dev QA:  Manually \`cargo add \"hyper-tls@^0.6\"\` for the cargo l
 			|| die "Failed to copy sharp-${sharp_platform}.node"
 		ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
 
+		rm -rf "${S}/node_modules/@capacitor/assets/node_modules/sharp"
+
 		node-sharp_verify_dedupe
         popd >/dev/null 2>&1 || die
 
