@@ -9,7 +9,7 @@ MY_PV="${PV/_beta/-beta.}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
+	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -141,20 +141,30 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 
 		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
 		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+
+		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die						# CVE-2025-54798; DT
 	}
 	patch_lockfile
 
-	enpm install "@langchain/community@0.3.3" -P ${NPM_INSTALL_ARGS[@]}
-	enpm install "vite@5.4.12" -D ${NPM_INSTALL_ARGS[@]}
-	enpm install "ws@8.17.1" -P ${NPM_INSTALL_ARGS[@]}
+	local L
+	L=(
+		"@langchain/community@0.3.3"
+		"ws@8.17.1"
 
-	# Fix breakage
-	enpm install "react-icons@5.2.1" -P ${NPM_INSTALL_ARGS[@]}
+		# Fix breakage
+		"react-icons@5.2.1"
 
-	# Still broken.  Still works with error:
-	# UnhandledPromiseRejectionWarning: Error: Cannot find package '/opt/llocal/resources/app.asar/node_modules/execa/index.js' imported from /opt/llocal/resources/app.asar/node_modules/shell-env/index.js
-#	enpm install "shell-env@4.0.1" -P ${NPM_INSTALL_ARGS[@]}
-#	enpm install "execa@5.1.1" -P ${NPM_INSTALL_ARGS[@]} # for shell-env
+		"form-data@4.0.4"
+	)
+	enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}
+
+	L=(
+		"vite@5.4.12"
+		"tmp@0.2.4"
+	)
+	enpm install ${L[@]} -D ${NPM_INSTALL_ARGS[@]}
 
 	patch_lockfile
 }

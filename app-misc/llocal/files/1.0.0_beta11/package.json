@@ -31,7 +31,7 @@
     "build:linux:release": "electron-vite build && electron-builder --linux --publish always"
   },
   "dependencies": {
-    "@babel/runtime": "^7.27.6",
+    "@babel/runtime": "^7.28.2",
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "@guyplusplus/turndown-plugin-gfm": "^1.0.7",
@@ -42,7 +42,7 @@
     "@swc/core": "^1.5.7",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/turndown": "^5.0.5",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "cheerio": "^1.0.0-rc.12",
     "cheminfo-types": "^1.7.3",
     "class-variance-authority": "^0.7.0",
@@ -50,6 +50,7 @@
     "d3-dsv": "^2.0.0",
     "duck-duck-scrape": "^2.2.5",
     "faiss-node": "^0.5.1",
+    "form-data": "^4.0.4",
     "google-sr": "^5.0.0",
     "i18next": "^25.0.1",
     "i18next-fs-backend": "^2.6.0",
@@ -96,11 +97,11 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
-    "electron": "^37.1.0",
+    "electron": "^37.2.6",
     "electron-builder": "^24.9.1",
     "electron-updater": "^6.1.7",
     "electron-vite": "^2.0.0",
-    "esbuild": "^0.25.5",
+    "esbuild": "^0.25.8",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "postcss": "^8.4.38",
@@ -109,6 +110,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.4.3",
+    "tmp": "^0.2.4",
     "typescript": "^5.3.3",
     "vite": "^5.4.12"
   }
