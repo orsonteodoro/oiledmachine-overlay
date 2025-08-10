@@ -553,6 +553,8 @@ ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to 
 				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
 				|| die "Failed to copy sharp-${sharp_platform}.node"
 			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+
+			node-sharp_verify_dedupe
 		popd >/dev/null 2>&1 || die
 
 #		epnpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
