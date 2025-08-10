@@ -19,19 +19,19 @@ aes-0.8.4
 aho-corasick-1.1.3
 alloc-no-stdlib-2.0.4
 alloc-stdlib-0.2.2
-android-tzdata-0.1.1
 android_system_properties-0.1.5
+android-tzdata-0.1.1
 anyhow-1.0.98
 arbitrary-1.4.1
 ashpd-0.11.0
 async-broadcast-0.7.2
-async-channel-2.3.1
+async-channel-2.5.0
 async-executor-1.13.2
-async-io-2.4.1
-async-lock-3.4.0
-async-process-2.3.1
+async-io-2.5.0
+async-lock-3.4.1
+async-process-2.4.0
 async-recursion-1.1.1
-async-signal-0.2.11
+async-signal-0.2.12
 async-task-4.7.1
 async-trait-0.1.88
 atk-0.18.2
@@ -42,42 +42,42 @@ backtrace-0.3.75
 base64-0.21.7
 base64-0.22.1
 base64ct-1.8.0
-bit-set-0.5.3
-bit-vec-0.6.3
 bitflags-1.3.2
 bitflags-2.9.1
-block-buffer-0.10.4
+bit-set-0.5.3
+bit-vec-0.6.3
 block2-0.5.1
 block2-0.6.1
-blocking-1.6.1
+block-buffer-0.10.4
+blocking-1.6.2
 brotli-8.0.1
 brotli-decompressor-5.0.0
 bstr-1.12.0
 bumpalo-3.19.0
-bytemuck-1.23.1
+bytemuck-1.23.2
 byteorder-1.5.0
 bytes-1.10.1
 bzip2-0.4.4
 bzip2-sys-0.1.13+1.0.8
 cairo-rs-0.18.5
 cairo-sys-rs-0.18.2
-camino-1.1.10
-cargo-platform-0.1.9
+camino-1.1.11
 cargo_metadata-0.19.2
-cargo_toml-0.22.1
-cc-1.2.27
+cargo-platform-0.1.9
+cargo_toml-0.22.3
+cc-1.2.32
 cesu8-1.1.0
 cfb-0.7.3
+cfg_aliases-0.2.1
 cfg-expr-0.15.8
 cfg-if-1.0.1
-cfg_aliases-0.2.1
 chrono-0.4.41
 cipher-0.4.4
 combine-4.6.7
 concurrent-queue-2.5.0
+constant_time_eq-0.1.5
 const-random-0.1.18
 const-random-macro-0.1.16
-constant_time_eq-0.1.5
 convert_case-0.4.0
 cookie-0.18.1
 cookie_store-0.21.1
@@ -87,7 +87,7 @@ core-foundation-sys-0.8.7
 core-graphics-0.24.0
 core-graphics-types-0.2.0
 cpufeatures-0.2.17
-crc32fast-1.4.2
+crc32fast-1.5.0
 crossbeam-channel-0.5.15
 crossbeam-utils-0.8.21
 crunchy-0.2.4
@@ -106,20 +106,21 @@ digest-0.10.7
 dirs-6.0.0
 dirs-sys-0.5.0
 dispatch-0.2.0
-dispatch2-0.2.0
 dispatch2-0.3.0
 displaydoc-0.2.5
+dlib-0.5.2
 dlopen2-0.7.0
 dlopen2_derive-0.4.1
 dlv-list-0.5.2
 document-features-0.2.11
+downcast-rs-1.2.1
 dpi-0.1.2
 dtoa-1.0.10
 dtoa-short-0.3.5
 dunce-1.0.5
-dyn-clone-1.0.19
-embed-resource-3.0.4
+dyn-clone-1.0.20
 embed_plist-1.2.2
+embed-resource-3.0.5
 encoding_rs-0.8.35
 endi-1.1.0
 enumflags2-0.7.12
@@ -127,7 +128,7 @@ enumflags2_derive-0.7.12
 equivalent-1.0.2
 erased-serde-0.4.6
 errno-0.3.13
-event-listener-5.4.0
+event-listener-5.4.1
 event-listener-strategy-0.5.4
 eventsource-client-0.12.2
 fancy-regex-0.11.0
@@ -149,7 +150,7 @@ futures-channel-0.3.31
 futures-core-0.3.31
 futures-executor-0.3.31
 futures-io-0.3.31
-futures-lite-2.6.0
+futures-lite-2.6.1
 futures-macro-0.3.31
 futures-sink-0.3.31
 futures-task-0.3.31
@@ -176,13 +177,13 @@ glib-sys-0.18.1
 glob-0.3.2
 gobject-sys-0.18.0
 gtk-0.18.2
-gtk-sys-0.18.2
 gtk3-macros-0.18.2
-h2-0.3.26
-h2-0.4.11
+gtk-sys-0.18.2
+h2-0.3.27
+h2-0.4.12
 hashbrown-0.12.3
 hashbrown-0.14.5
-hashbrown-0.15.4
+hashbrown-0.15.5
 heck-0.4.1
 heck-0.5.0
 hermit-abi-0.5.2
@@ -191,12 +192,12 @@ hmac-0.12.1
 html5ever-0.29.1
 http-0.2.12
 http-1.3.1
+httparse-1.10.1
 http-body-0.4.6
 http-body-1.0.1
 http-body-util-0.1.3
-http-range-0.1.5
-httparse-1.10.1
 httpdate-1.0.3
+http-range-0.1.5
 hyper-0.14.32
 hyper-1.6.0
 hyper-rustls-0.24.2
@@ -204,7 +205,7 @@ hyper-rustls-0.27.7
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
 hyper-tls-0.6.0
-hyper-util-0.1.14
+hyper-util-0.1.16
 iana-time-zone-0.1.63
 iana-time-zone-haiku-0.1.2
 ico-0.4.0
@@ -222,6 +223,7 @@ indexmap-1.9.3
 indexmap-2.10.0
 infer-0.19.0
 inout-0.1.4
+io-uring-0.7.9
 ipnet-2.11.0
 iri-string-0.7.8
 is-docker-0.2.0
@@ -232,9 +234,9 @@ javascriptcore-rs-sys-1.1.1
 jni-0.21.1
 jni-sys-0.3.0
 jobserver-0.1.33
-js-sys-0.3.77
 json-patch-3.0.1
 jsonptr-0.6.3
+js-sys-0.3.77
 keyboard-types-0.7.0
 kuchikiki-0.8.8-speedreader
 lazy_static-1.5.0
@@ -242,24 +244,25 @@ libappindicator-0.9.0
 libappindicator-sys-0.9.0
 libc-0.2.174
 libloading-0.7.4
-libredox-0.1.4
+libloading-0.8.8
+libredox-0.1.9
 linux-raw-sys-0.9.4
 litemap-0.8.0
-litrs-0.4.1
+litrs-0.4.2
 lock_api-0.4.13
 log-0.4.27
 lru-slab-0.1.2
 mac-0.1.1
 markup5ever-0.14.1
-match_token-0.1.0
 matches-0.1.10
+match_token-0.1.0
 memchr-2.7.5
 memoffset-0.9.1
 mime-0.3.17
 minisign-verify-0.2.4
 miniz_oxide-0.8.9
 mio-1.0.4
-muda-0.17.0
+muda-0.17.1
 native-tls-0.2.14
 ndk-0.9.0
 ndk-context-0.1.1
@@ -268,10 +271,9 @@ new_debug_unreachable-1.0.6
 nix-0.30.1
 nodrop-0.1.14
 num-conv-0.1.0
-num-traits-0.2.19
 num_enum-0.7.4
 num_enum_derive-0.7.4
-objc-sys-0.3.5
+num-traits-0.2.19
 objc2-0.5.2
 objc2-0.6.1
 objc2-app-kit-0.3.1
@@ -291,6 +293,7 @@ objc2-quartz-core-0.2.2
 objc2-quartz-core-0.3.1
 objc2-ui-kit-0.3.1
 objc2-web-kit-0.3.1
+objc-sys-0.3.5
 object-0.36.7
 once_cell-1.21.3
 open-5.3.2
@@ -301,9 +304,9 @@ openssl-sys-0.9.109
 option-ext-0.2.0
 ordered-multimap-0.7.3
 ordered-stream-0.2.0
+osakit-0.3.1
 os_info-3.12.0
 os_pipe-1.2.2
-osakit-0.3.1
 pango-0.18.3
 pango-sys-0.18.0
 parking-2.2.1
@@ -332,31 +335,31 @@ pin-project-lite-0.2.16
 pin-utils-0.1.0
 piper-0.2.4
 pkg-config-0.3.32
-plist-1.7.2
+plist-1.7.4
 png-0.17.16
-polling-3.8.0
+polling-3.10.0
 potential_utf-0.1.2
 powerfmt-0.2.0
 ppv-lite86-0.2.21
 precomputed-hash-0.1.1
+proc-macro2-1.0.95
 proc-macro-crate-1.3.1
 proc-macro-crate-2.0.0
 proc-macro-crate-3.3.0
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
 proc-macro-hack-0.5.20+deprecated
-proc-macro2-1.0.95
 psl-types-2.0.11
 publicsuffix-2.3.0
 quick-xml-0.37.5
+quick-xml-0.38.1
 quinn-0.11.8
 quinn-proto-0.11.12
 quinn-udp-0.5.13
 quote-1.0.40
-r-efi-5.3.0
 rand-0.7.3
 rand-0.8.5
-rand-0.9.1
+rand-0.9.2
 rand_chacha-0.2.2
 rand_chacha-0.3.1
 rand_chacha-0.9.0
@@ -366,38 +369,40 @@ rand_core-0.9.3
 rand_hc-0.2.0
 rand_pcg-0.2.1
 raw-window-handle-0.6.2
-redox_syscall-0.5.13
-redox_users-0.5.0
+redox_syscall-0.5.17
+redox_users-0.5.2
 ref-cast-1.0.24
 ref-cast-impl-1.0.24
+r-efi-5.3.0
 regex-1.11.1
 regex-automata-0.4.9
 regex-syntax-0.8.5
 reqwest-0.11.27
-reqwest-0.12.21
-rfd-0.15.3
+reqwest-0.12.22
+rfd-0.15.4
 ring-0.17.14
-rust-ini-0.21.1
-rustc-demangle-0.1.25
+rustc-demangle-0.1.26
 rustc-hash-1.1.0
 rustc-hash-2.1.1
 rustc_version-0.4.1
-rustix-1.0.7
+rust-ini-0.21.2
+rustix-1.0.8
 rustls-0.21.12
-rustls-0.23.28
+rustls-0.23.31
 rustls-native-certs-0.6.3
 rustls-pemfile-1.0.4
 rustls-pki-types-1.12.0
 rustls-webpki-0.101.7
-rustls-webpki-0.103.3
-rustversion-1.0.21
+rustls-webpki-0.103.4
+rustversion-1.0.22
 ryu-1.0.20
 same-file-1.0.6
 schannel-0.1.27
 schemars-0.8.22
 schemars-0.9.0
-schemars-1.0.3
+schemars-1.0.4
 schemars_derive-0.8.22
+scoped-tls-1.0.1
 scopeguard-1.2.0
 sct-0.7.1
 security-framework-2.11.1
@@ -405,12 +410,13 @@ security-framework-sys-2.14.0
 selectors-0.24.0
 semver-1.0.26
 serde-1.0.219
-serde-untagged-0.1.7
 serde_derive-1.0.219
 serde_derive_internals-0.29.1
-serde_json-1.0.140
+serde_json-1.0.142
 serde_repr-0.1.20
 serde_spanned-0.6.9
+serde_spanned-1.0.0
+serde-untagged-0.1.7
 serde_urlencoded-0.7.1
 serde_with-3.14.0
 serde_with_macros-3.14.0
@@ -419,17 +425,18 @@ serialize-to-javascript-impl-0.1.1
 servo_arc-0.2.0
 sha1-0.10.6
 sha2-0.10.9
-shared_child-1.1.0
+shared_child-1.1.1
 shlex-1.3.0
-sigchld-0.2.3
+sigchld-0.2.4
 signal-hook-0.3.18
-signal-hook-registry-1.4.5
+signal-hook-registry-1.4.6
 simd-adler32-0.3.7
 siphasher-0.3.11
 siphasher-1.0.1
-slab-0.4.10
+slab-0.4.11
 smallvec-1.15.1
 socket2-0.5.10
+socket2-0.6.0
 softbuffer-0.4.6
 soup3-0.5.0
 soup3-sys-0.5.0
@@ -455,24 +462,24 @@ tao-0.34.0
 tao-macros-0.1.3
 tar-0.4.44
 target-lexicon-0.12.16
-tauri-2.6.2
-tauri-build-2.3.0
-tauri-codegen-2.3.0
-tauri-macros-2.3.1
-tauri-plugin-2.3.0
-tauri-plugin-deep-link-2.4.0
-tauri-plugin-dialog-2.3.0
-tauri-plugin-fs-2.4.0
-tauri-plugin-http-2.5.0
+tauri-2.7.0
+tauri-build-2.3.1
+tauri-codegen-2.3.1
+tauri-macros-2.3.2
+tauri-plugin-2.3.1
+tauri-plugin-deep-link-2.4.1
+tauri-plugin-dialog-2.3.2
+tauri-plugin-fs-2.4.1
+tauri-plugin-http-2.5.1
 tauri-plugin-os-2.3.0
 tauri-plugin-process-2.3.0
 tauri-plugin-shell-2.3.0
-tauri-plugin-single-instance-2.3.0
+tauri-plugin-single-instance-2.3.2
 tauri-plugin-updater-2.9.0
-tauri-runtime-2.7.0
-tauri-runtime-wry-2.7.1
-tauri-utils-2.5.0
-tauri-winres-0.3.1
+tauri-runtime-2.7.1
+tauri-runtime-wry-2.7.2
+tauri-utils-2.6.0
+tauri-winres-0.3.3
 tempfile-3.20.0
 tendril-0.4.3
 thiserror-1.0.69
@@ -487,19 +494,23 @@ tiny-keccak-2.0.2
 tinystr-0.8.1
 tinyvec-1.9.0
 tinyvec_macros-0.1.1
-tokio-1.45.1
-tokio-io-timeout-1.2.0
+tokio-1.47.1
+tokio-io-timeout-1.2.1
 tokio-macros-2.5.0
 tokio-native-tls-0.3.1
 tokio-rustls-0.24.1
 tokio-rustls-0.26.2
-tokio-util-0.7.15
+tokio-util-0.7.16
 toml-0.8.23
+toml-0.9.5
 toml_datetime-0.6.11
+toml_datetime-0.7.0
 toml_edit-0.19.15
 toml_edit-0.20.7
 toml_edit-0.22.27
+toml_parser-1.0.2
 toml_write-0.1.2
+toml_writer-1.0.2
 tower-0.5.2
 tower-http-0.6.6
 tower-layer-0.3.3
@@ -507,8 +518,7 @@ tower-service-0.3.3
 tracing-0.1.41
 tracing-attributes-0.1.30
 tracing-core-0.1.34
-tray-icon-0.21.0
-trim-in-place-0.1.7
+tray-icon-0.21.1
 try-lock-0.2.5
 typeid-1.0.3
 typenum-1.18.0
@@ -516,10 +526,10 @@ uds_windows-1.1.0
 unic-char-property-0.9.0
 unic-char-range-0.9.0
 unic-common-0.9.0
-unic-ucd-ident-0.9.0
-unic-ucd-version-0.9.0
 unicode-ident-1.0.18
 unicode-segmentation-1.12.0
+unic-ucd-ident-0.9.0
+unic-ucd-version-0.9.0
 untrusted-0.9.0
 url-2.5.4
 urlpattern-0.3.0
@@ -527,8 +537,8 @@ utf-8-0.7.6
 utf8_iter-1.0.4
 uuid-1.17.0
 vcpkg-0.2.15
-version-compare-0.2.0
 version_check-0.9.5
+version-compare-0.2.0
 vswhom-0.1.0
 vswhom-sys-0.1.3
 walkdir-2.5.0
@@ -543,11 +553,16 @@ wasm-bindgen-macro-0.2.100
 wasm-bindgen-macro-support-0.2.100
 wasm-bindgen-shared-0.2.100
 wasm-streams-0.4.2
-web-sys-0.3.77
-web-time-1.1.0
+wayland-backend-0.3.11
+wayland-client-0.31.11
+wayland-protocols-0.32.9
+wayland-scanner-0.31.7
+wayland-sys-0.31.7
 webkit2gtk-2.0.1
 webkit2gtk-sys-2.0.1
-webpki-roots-1.0.1
+webpki-roots-1.0.2
+web-sys-0.3.77
+web-time-1.1.0
 webview2-com-0.38.0
 webview2-com-macros-0.8.0
 webview2-com-sys-0.38.0
@@ -555,11 +570,28 @@ winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.9
 winapi-x86_64-pc-windows-gnu-0.4.0
-window-vibrancy-0.6.0
 windows-0.61.3
+windows_aarch64_gnullvm-0.42.2
+windows_aarch64_gnullvm-0.48.5
+windows_aarch64_gnullvm-0.52.6
+windows_aarch64_gnullvm-0.53.0
+windows_aarch64_msvc-0.42.2
+windows_aarch64_msvc-0.48.5
+windows_aarch64_msvc-0.52.6
+windows_aarch64_msvc-0.53.0
 windows-collections-0.2.0
 windows-core-0.61.2
 windows-future-0.2.1
+windows_i686_gnu-0.42.2
+windows_i686_gnu-0.48.5
+windows_i686_gnu-0.52.6
+windows_i686_gnu-0.53.0
+windows_i686_gnullvm-0.52.6
+windows_i686_gnullvm-0.53.0
+windows_i686_msvc-0.42.2
+windows_i686_msvc-0.48.5
+windows_i686_msvc-0.52.6
+windows_i686_msvc-0.53.0
 windows-implement-0.60.0
 windows-interface-0.59.1
 windows-link-0.1.3
@@ -575,27 +607,9 @@ windows-sys-0.60.2
 windows-targets-0.42.2
 windows-targets-0.48.5
 windows-targets-0.52.6
-windows-targets-0.53.2
+windows-targets-0.53.3
 windows-threading-0.1.0
 windows-version-0.1.4
-windows_aarch64_gnullvm-0.42.2
-windows_aarch64_gnullvm-0.48.5
-windows_aarch64_gnullvm-0.52.6
-windows_aarch64_gnullvm-0.53.0
-windows_aarch64_msvc-0.42.2
-windows_aarch64_msvc-0.48.5
-windows_aarch64_msvc-0.52.6
-windows_aarch64_msvc-0.53.0
-windows_i686_gnu-0.42.2
-windows_i686_gnu-0.48.5
-windows_i686_gnu-0.52.6
-windows_i686_gnu-0.53.0
-windows_i686_gnullvm-0.52.6
-windows_i686_gnullvm-0.53.0
-windows_i686_msvc-0.42.2
-windows_i686_msvc-0.48.5
-windows_i686_msvc-0.52.6
-windows_i686_msvc-0.53.0
 windows_x86_64_gnu-0.42.2
 windows_x86_64_gnu-0.48.5
 windows_x86_64_gnu-0.52.6
@@ -608,8 +622,9 @@ windows_x86_64_msvc-0.42.2
 windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.53.0
+window-vibrancy-0.6.0
 winnow-0.5.40
-winnow-0.7.11
+winnow-0.7.12
 winreg-0.50.0
 winreg-0.55.0
 wit-bindgen-rt-0.39.0
@@ -620,8 +635,8 @@ x11-dl-2.21.0
 xattr-1.5.1
 yoke-0.8.0
 yoke-derive-0.8.0
-zbus-5.7.1
-zbus_macros-5.7.1
+zbus-5.9.0
+zbus_macros-5.9.0
 zbus_names-4.2.0
 zerocopy-0.8.26
 zerocopy-derive-0.8.26
@@ -629,19 +644,24 @@ zerofrom-0.1.6
 zerofrom-derive-0.1.6
 zeroize-1.8.1
 zerotrie-0.2.2
-zerovec-0.11.2
+zerovec-0.11.4
 zerovec-derive-0.11.1
 zip-0.6.6
-zip-4.2.0
+zip-4.3.0
 zstd-0.11.2+zstd.1.5.2
 zstd-safe-5.0.2+zstd.1.5.2
 zstd-sys-2.0.15+zstd.1.5.7
-zvariant-5.5.3
-zvariant_derive-5.5.3
+zvariant-5.6.0
+zvariant_derive-5.6.0
 zvariant_utils-3.2.0
 "
+NODE_SHARP_PATCHES=(
+	"${FILESDIR}/sharp-0.34.2-debug.patch"
+	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
+)
 NODE_SHARP_USE="exif jpeg lcms png svg"
-NODE_VERSION=20
+NODE_VERSION=22
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -652,10 +672,10 @@ NPM_SLOT="3"
 RUST_MAX_VER="1.85.1" # Inclusive
 RUST_MIN_VER="1.85.0" # llvm-19.1, required for:  feature `edition2024` is required
 RUST_PV="${RUST_MIN_VER}"
-SHARP_PV="0.33.5"
+SHARP_PV="0.34.3"
 TARBALL="${P}.tar.gz"
 NPM_TARBALL="${TARBALL}"
-VIPS_PV="8.15.3"
+VIPS_PV="8.17.1"
 VITE_PV="5.4.9"
 WEBKIT_GTK_STABLE=(
 	"2.48"
@@ -693,6 +713,7 @@ ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
 ebuild_revision_7
 "
+RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
 	|| (
 		X
@@ -879,11 +900,32 @@ eerror
 
 	# For manual lockfile creation
 ewarn "Ebuild dev QA:  Manually \`cargo add \"hyper-tls@^0.6\"\` for the cargo lockfile."
-#	unpack ${A}
-#	die
+	#unpack ${A}
+	#die
 
 	npm_src_unpack
-	node-sharp_npm_rebuild_sharp
+
+	local configuration="Debug"
+	local nconfiguration="Release"
+	if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
+		configuration="Release"
+		nconfiguration="Debug"
+	fi
+	local sharp_platform=$(node-sharp_get_platform)
+
+        pushd "${S}" >/dev/null 2>&1 || die
+		node-sharp_npm_rebuild_sharp
+
+		# Copy sharp binary to expected location
+		mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+		cp \
+			"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+			"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+			|| die "Failed to copy sharp-${sharp_platform}.node"
+		ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+
+		node-sharp_verify_dedupe
+        popd >/dev/null 2>&1 || die
 
 einfo "Unpacking cargo packages"
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
