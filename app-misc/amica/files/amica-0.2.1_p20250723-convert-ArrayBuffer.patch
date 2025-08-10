@@ -51,3 +51,15 @@
  
              let prompt;
              // TODO load prompt if it exists
+--- a/src/features/lipSync/lipSync.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/lipSync/lipSync.ts	2025-08-10 10:37:34.321388850 -0700
+@@ -11,7 +11,8 @@ export class LipSync {
+     this.audio = audio;
+ 
+     this.analyser = audio.createAnalyser();
+-    this.timeDomainData = new Float32Array(TIME_DOMAIN_DATA_LENGTH);
++    const arrayBuffer = new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4); // 4 bytes per float
++    this.timeDomainData = new Float32Array(arrayBuffer);
+   }
+ 
+   public update(): LipSyncAnalyzeResult {
