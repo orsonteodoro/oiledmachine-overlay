@@ -586,7 +586,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	voice-recognition
@@ -839,7 +839,26 @@ einfo "Unpacking cargo packages"
 		S="${S_PROJECT}/src-tauri" \
 		_production_unpack
 		enpm install "node-gyp@11.1.0" -D ${NPM_INSTALL_ARGS[@]}
-		node-sharp_npm_rebuild_sharp
+
+		local configuration="Debug"
+		local nconfiguration="Release"
+		if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
+			configuration="Release"
+			nconfiguration="Debug"
+		fi
+		local sharp_platform=$(node-sharp_get_platform)
+
+		pushd "${S}" >/dev/null 2>&1 || die
+			node-sharp_npm_rebuild_sharp
+
+			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+			cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node"
+				ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+	        popd >/dev/null 2>&1 || die
+
+		node-sharp_verify_dedupe
 	fi
 }
 
