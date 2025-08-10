@@ -1,5 +1,5 @@
---- a/src/components/messageInput.tsx.orig	2025-08-10 09:24:15.822959032 -0700
-+++ b/src/components/messageInput.tsx	2025-08-10 09:25:52.779102392 -0700
+--- a/src/components/messageInput.tsx.orig	2025-08-10 10:13:57.474745277 -0700
++++ b/src/components/messageInput.tsx	2025-08-10 10:15:44.974276221 -0700
 @@ -63,7 +63,9 @@ export default function MessageInput({
              // both are 16000
              const audioCtx = new AudioContext();
@@ -11,7 +11,7 @@
              transcriber.start(buffer);
              break;
            }
-@@ -73,7 +73,17 @@ export default function MessageInput({
+@@ -71,7 +73,18 @@ export default function MessageInput({
              console.debug('whisper_openai attempt');
              const wav = new WaveFile();
              wav.fromScratch(1, 16000, '32f', audio);
@@ -26,6 +26,27 @@
 +            if (!(wavBuffer.buffer instanceof ArrayBuffer)) {
 +              wavArrayBuffer.set(wavBuffer); // Copy data if necessary
 +            }
++
++            const file = new File([wavArrayBuffer], "input.wav", { type: "audio/wav" });
+ 
+             let prompt;
+             // TODO load prompt if it exists
+@@ -92,7 +105,18 @@ export default function MessageInput({
+             const wav = new WaveFile();
+             wav.fromScratch(1, 16000, '32f', audio);
+             wav.toBitDepth('16');
+-            const file = new File([wav.toBuffer()], "input.wav", { type: "audio/wav" });
++
++            // Convert Uint8Array<ArrayBufferLike> to Uint8Array<ArrayBuffer>
++            const wavBuffer = wav.toBuffer();
++            const arrayBuffer = wavBuffer.buffer instanceof ArrayBuffer
++              ? wavBuffer.buffer
++              : new ArrayBuffer(wavBuffer.buffer.byteLength);
++            const wavArrayBuffer = new Uint8Array(arrayBuffer);
++            if (!(wavBuffer.buffer instanceof ArrayBuffer)) {
++              wavArrayBuffer.set(wavBuffer); // Copy data if necessary
++            }
++
 +            const file = new File([wavArrayBuffer], "input.wav", { type: "audio/wav" });
  
              let prompt;
