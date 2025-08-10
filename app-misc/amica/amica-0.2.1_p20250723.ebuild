@@ -632,7 +632,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	voice-recognition
