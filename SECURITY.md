@@ -103,29 +103,29 @@ problems resolved quickly.
 
 ### EPSS remediation threshold
 
-This overlay uses an EPSS score of 0.05 (5%) or above as the threshold for
+This overlay uses an EPSS score of 5% or above as the threshold for
 remediation or triage which the package will be seriously evaluated for security
 fixes or being dropped.  5% because it is over 2/3 coverage of observed
 vulnerabilities (aka exploited in the wild) in the model or about Grade C (70%)
 coverage.  The overlay tries to aim or converge towards an EPSS score less than
-0.01 (1%) for remediation which typically the vulnerabilities are difficult to
+1% for remediation which typically the vulnerabilities are difficult to
 fix or may have high complexity to exploit which translates to Grade B (80%)
 coverage in the model.  Vulnerabilities less than 1% may be ignored for long
 periods of time and considered low risk of being exploited.  Rust, Node,
 Electron based packages with scanned lock files will be evaluated for EPSS
 score first.  As a fallback, CVEs will be EPSS randomly evaluated.  The highest
 EPSS scores get triaged first when the objective is to reduce the EPSS set to
-less than 5% score.  Scores closest to 1 indicate that the vulnerability may be
-actively or likely exploited.
+less than 5% score.  Scores closest to 100% indicate that the vulnerability may
+be actively or likely exploited in the next 30 days.
 
 In short for this overlay,
 
-* An EPSS score of [0.05, 1] must be triaged.
-* An EPSS score of [0.01, 0.05) may be optionally or conveniently triaged, but
+* EPSS scores of [5%, 100%] must be triaged.
+* EPSS scores of [1%, 5%) may be optionally or conveniently triaged, but
   provided as a carrot on a stick motivator to achieve 80%-90% of the
   hypothetical in the wild or of the coverage of observed vulnerabilities in the
   model.
-* An EPSS score of [0, 0.01) is ignored.
+* EPSS scores of [0%, 1%) are ignored.
 
 (Previously, it was 10% which was suggested by an AI.  10% is a nice number
 because it is easy to remember.  After research, the threshold is changed
