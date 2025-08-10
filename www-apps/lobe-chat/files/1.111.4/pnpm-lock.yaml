@@ -990,10 +990,6 @@ packages:
     resolution: {integrity: sha512-z5LMy0MWu0+w2hflUgj4RlJr1R+0BxKXL7ldXTO8FasU8fu599STghO+QKwId2dAD0d464aHtU+ChWuRHw4FNw==}
     hasBin: true
 
-  '@apidevtools/json-schema-ref-parser@11.1.0':
-    resolution: {integrity: sha512-g/VW9ZQEFJAOwAyUb8JFf7MLiLy2uEB4rU270rGzDwICxnxMlPy0O11KVePSgS36K1NI29gSlK84n5INGhd4Ag==}
-    engines: {node: '>= 16'}
-
   '@apidevtools/json-schema-ref-parser@11.2.0':
     resolution: {integrity: sha512-hvP76NqZbVnqv1EvhE8MFB4Pb0p9PxOZBC39hMH1sM3M4g488xMCuYG+Em0A55KAO0wcL8TPbEoT94/8LrzA0Q==}
     engines: {node: '>= 16'}
@@ -14596,14 +14592,6 @@ snapshots:
       - encoding
 
   '@anthropic-ai/sdk@0.57.0': {}
-
-  '@apidevtools/json-schema-ref-parser@11.1.0':
-    dependencies:
-      '@jsdevtools/ono': 7.1.3
-      '@types/json-schema': 7.0.15
-      '@types/lodash.clonedeep': 4.5.9
-      js-yaml: 4.1.0
-      lodash.clonedeep: 4.5.0
 
   '@apidevtools/json-schema-ref-parser@11.2.0':
     dependencies:
@@ -28358,7 +28346,7 @@ snapshots:
 
   remark-lint-frontmatter-schema@3.15.4:
     dependencies:
-      '@apidevtools/json-schema-ref-parser': 11.1.0
+      '@apidevtools/json-schema-ref-parser': 11.2.0
       ajv: 8.12.0
       ajv-formats: 2.1.1(ajv@8.12.0)
       find-up: 6.3.0

@@ -448,9 +448,7 @@ pnpm_dedupe_post() {
 		pnpm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.2.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.7.2 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.2.0 references to @apidevtools/json-schema-ref-parser@11.7.2 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
