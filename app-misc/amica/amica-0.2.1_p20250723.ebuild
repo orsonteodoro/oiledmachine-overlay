@@ -400,6 +400,11 @@ xattr-1.1.3
 "
 EGIT_COMMIT="ca2415c77d20ec41dd4fcf917dbb0e97961ddf08" # Jul 23, 2025
 NODE_ENV="development"
+NODE_SHARP_PATCHES=(
+	"${FILESDIR}/sharp-0.34.2-debug.patch"
+	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
+)
 NODE_SHARP_USE="exif jpeg"
 NODE_VERSION=18 # Upstream uses 18 and 20
 NPM_AUDIT_FIX_ARGS=(
@@ -581,7 +586,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	voice-recognition

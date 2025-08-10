@@ -1,0 +1,137 @@
+--- a/node_modules/sharp/src/binding.gyp.orig	2025-08-08 20:57:22.839123869 -0700
++++ b/node_modules/sharp/src/binding.gyp	2025-08-08 21:00:32.571436367 -0700
+@@ -9,7 +9,8 @@
+     'sharp_libvips_yarn_locator': '<!(node -p "require(\'../lib/libvips\').yarnLocator()")',
+     'sharp_libvips_include_dir': '<!(node -p "require(\'../lib/libvips\').buildSharpLibvipsIncludeDir()")',
+     'sharp_libvips_cplusplus_dir': '<!(node -p "require(\'../lib/libvips\').buildSharpLibvipsCPlusPlusDir()")',
+-    'sharp_libvips_lib_dir': '<!(node -p "require(\'../lib/libvips\').buildSharpLibvipsLibDir()")'
++    'sharp_libvips_lib_dir': '<!(node -p "require(\'../lib/libvips\').buildSharpLibvipsLibDir()")',
++    'sharp_libvips_pkgconfig_dir': '<!(node -p "require(\'../lib/libvips\').buildSharpLibvipsPkgconfigDir()")'
+   },
+   'targets': [{
+     'target_name': 'libvips-cpp-<(vips_version)',
+@@ -175,8 +176,17 @@
+     'conditions': [
+       ['use_global_libvips == "true"', {
+         # Use pkg-config for include and lib
+-        'include_dirs': ['<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --cflags-only-I vips-cpp vips glib-2.0 | sed s\/-I//g)'],
+-        'libraries': ['<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --libs vips-cpp)'],
++        'include_dirs': ['<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --cflags-only-I vips-cpp | sed s\/-I//g)'],
++        'cflags': [
++          '<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --static --cflags vips-cpp)',
++        ],
++        'ldflags': [
++          '-L<(sharp_libvips_lib_dir)',
++          '-Wl,--push-state,--whole-archive',
++          '<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --static --libs-only-l vips-cpp)',
++          '-Wl,--pop-state',
++          '-lstdc++fs',
++        ],
+         'defines': [
+           'SHARP_USE_GLOBAL_LIBVIPS'
+         ],
+@@ -184,17 +194,13 @@
+           ['OS == "linux"', {
+             'defines': [
+               # Inspect libvips-cpp.so to determine which C++11 ABI version was used and set _GLIBCXX_USE_CXX11_ABI accordingly. This is quite horrible.
+-              '_GLIBCXX_USE_CXX11_ABI=<!(if readelf -Ws "$(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --variable libdir vips-cpp)/libvips-cpp.so" | c++filt | grep -qF __cxx11;then echo "1";else echo "0";fi)'
++              '_GLIBCXX_USE_CXX11_ABI=1'
+             ]
+           }]
+         ]
+       }, {
+         # Use pre-built libvips stored locally within node_modules
+-        'include_dirs': [
+-          '<(sharp_libvips_include_dir)',
+-          '<(sharp_libvips_include_dir)/glib-2.0',
+-          '<(sharp_libvips_lib_dir)/glib-2.0/include'
+-        ],
++        'include_dirs': ['<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --cflags-only-I vips-cpp | sed s\/-I//g)'],
+         'library_dirs': [
+           '<(sharp_libvips_lib_dir)'
+         ],
+@@ -230,6 +236,9 @@
+             }
+           }],
+           ['OS == "linux"', {
++            'cflags': [
++              '<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --static --cflags vips-cpp)',
++            ],
+             'defines': [
+               '_GLIBCXX_USE_CXX11_ABI=1'
+             ],
+@@ -237,20 +246,12 @@
+               '<!(node -p "require(\'detect-libc\').isNonGlibcLinuxSync() ? \'\' : \'-flto=auto\'")'
+             ],
+             'link_settings': {
+-              'libraries': [
+-                '-l:libvips-cpp.so.<(vips_version)'
+-              ],
+               'ldflags': [
++                '-L<(sharp_libvips_lib_dir)',
++                '-Wl,--push-state,--whole-archive',
++                '<!@(PKG_CONFIG_PATH="<(pkg_config_path)" pkg-config --static --libs-only-l vips-cpp)',
++                '-Wl,--pop-state',
+                 '-lstdc++fs',
+-                '-Wl,-s',
+-                '-Wl,--disable-new-dtags',
+-                '-Wl,-z,nodelete',
+-                '-Wl,-Bsymbolic-functions',
+-                '-Wl,-rpath=\'$$ORIGIN/../../sharp-libvips-<(platform_and_arch)/lib\'',
+-                '-Wl,-rpath=\'$$ORIGIN/../../../sharp-libvips-<(platform_and_arch)/<(sharp_libvips_version)/lib\'',
+-                '-Wl,-rpath=\'$$ORIGIN/../../node_modules/@img/sharp-libvips-<(platform_and_arch)/lib\'',
+-                '-Wl,-rpath=\'$$ORIGIN/../../../node_modules/@img/sharp-libvips-<(platform_and_arch)/lib\'',
+-                '-Wl,-rpath,\'$$ORIGIN/../../../../../@img-sharp-libvips-<(platform_and_arch)-npm-<(sharp_libvips_version)-<(sharp_libvips_yarn_locator)/node_modules/@img/sharp-libvips-<(platform_and_arch)/lib\''
+               ]
+             }
+           }],
+--- a/node_modules/sharp/lib/libvips.js.orig	2025-07-10 21:46:48.006739281 -0700
++++ b/node_modules/sharp/lib/libvips.js	2025-07-10 21:47:36.661153485 -0700
+@@ -53,17 +53,13 @@ const buildPlatformArch = () => {
+ };
+ 
+ const buildSharpLibvipsIncludeDir = () => {
+-  try {
+-    return require(`@img/sharp-libvips-dev-${buildPlatformArch()}/include`);
+-  } catch {
+-    try {
+-      return require('@img/sharp-libvips-dev/include');
+-    } catch {}
+-  }
+-  /* istanbul ignore next */
+-  return '';
++  return process.env.NODE_SHARP_INCLUDE_DIR;
+ };
+ 
++const buildSharpLibvipsPkgconfigDir = () => {
++  return process.env.NODE_SHARP_PKG_CONFIG_DIR;
++}
++
+ const buildSharpLibvipsCPlusPlusDir = () => {
+   try {
+     return require('@img/sharp-libvips-dev/cplusplus');
+@@ -73,15 +69,7 @@ const buildSharpLibvipsCPlusPlusDir = ()
+ };
+ 
+ const buildSharpLibvipsLibDir = () => {
+-  try {
+-    return require(`@img/sharp-libvips-dev-${buildPlatformArch()}/lib`);
+-  } catch {
+-    try {
+-      return require(`@img/sharp-libvips-${buildPlatformArch()}/lib`);
+-    } catch {}
+-  }
+-  /* istanbul ignore next */
+-  return '';
++  return process.env.NODE_SHARP_LIB_PATH;
+ };
+ 
+ const isUnsupportedNodeRuntime = () => {
+@@ -196,6 +184,7 @@ module.exports = {
+   buildSharpLibvipsIncludeDir,
+   buildSharpLibvipsCPlusPlusDir,
+   buildSharpLibvipsLibDir,
++  buildSharpLibvipsPkgconfigDir,
+   isUnsupportedNodeRuntime,
+   runtimePlatformArch,
+   log,
