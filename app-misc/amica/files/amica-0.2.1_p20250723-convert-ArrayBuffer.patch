@@ -51,9 +51,9 @@
  
              let prompt;
              // TODO load prompt if it exists
---- a/src/features/lipSync/lipSync.ts.orig	2025-08-10 11:11:02.959534839 -0700
-+++ b/src/features/lipSync/lipSync.ts	2025-08-10 11:13:02.507575438 -0700
-@@ -11,15 +11,31 @@ export class LipSync {
+--- a/src/features/lipSync/lipSync.ts.orig	2025-08-10 11:24:02.917350041 -0700
++++ b/src/features/lipSync/lipSync.ts	2025-08-10 11:25:16.017244074 -0700
+@@ -11,15 +11,37 @@ export class LipSync {
      this.audio = audio;
  
      this.analyser = audio.createAnalyser();
@@ -66,20 +66,26 @@
  
    public update(): LipSyncAnalyzeResult {
 -    this.analyser.getFloatTimeDomainData(this.timeDomainData);
++    // Debugging: Log buffer types
++    console.log('timeDomainData.buffer is ArrayBuffer:', this.timeDomainData.buffer instanceof ArrayBuffer);
++    console.log('timeDomainData.buffer is SharedArrayBuffer:', this.timeDomainData.buffer instanceof SharedArrayBuffer);
++
 +    // Create compatibleData with explicit ArrayBuffer
 +    const arrayBuffer: ArrayBuffer = new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4);
-+    const compatibleData: Float32Array = new Float32Array(arrayBuffer);
-+
-+    // Copy data from timeDomainData to compatibleData
++    const compatibleData = new Float32Array(arrayBuffer);
 +    compatibleData.set(this.timeDomainData);
++
++    // Debugging: Log compatibleData buffer type
++    console.log('compatibleData.buffer is ArrayBuffer:', compatibleData.buffer instanceof ArrayBuffer);
++    console.log('compatibleData.buffer is SharedArrayBuffer:', compatibleData.buffer instanceof SharedArrayBuffer);
 +
 +    // Runtime check for safety
 +    if (!(compatibleData.buffer instanceof ArrayBuffer)) {
 +      throw new Error("compatibleData.buffer is not an ArrayBuffer");
 +    }
 +
-+    // Use compatibleData with explicit type assertion if needed
-+    this.analyser.getFloatTimeDomainData(compatibleData as Float32Array);
++    // Pass compatibleData to getFloatTimeDomainData
++    this.analyser.getFloatTimeDomainData(compatibleData);
  
      let volume = 0.0;
      for (let i = 0; i < TIME_DOMAIN_DATA_LENGTH; i++) {
@@ -88,3 +94,115 @@
      }
  
      // cook
+--- a/src/features/moshi/hooks/useAudioPlayback.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/moshi/hooks/useAudioPlayback.ts	2025-08-10 11:45:31.039583057 -0700
+@@ -11,7 +11,23 @@ export const useAudioPlayback = (audioCo
+     ) => {
+         const sampleRate = audioContext.sampleRate;
+         const newBuffer = audioContext.createBuffer(1, newAudioData.length, sampleRate);
+-        newBuffer.copyToChannel(newAudioData, 0);
++
++        // Convert newAudioData to Float32Array<ArrayBuffer>
++        const arrayBuffer: ArrayBuffer = newAudioData.buffer instanceof ArrayBuffer
++          ? newAudioData.buffer
++          : new ArrayBuffer(newAudioData.length * 4); // 4 bytes per float
++        const compatibleAudioData = new Float32Array(arrayBuffer);
++        if (!(newAudioData.buffer instanceof ArrayBuffer)) {
++          compatibleAudioData.set(newAudioData); // Copy data if necessary
++        }
++
++        // Debugging: Log buffer types
++        console.log('newAudioData.buffer is ArrayBuffer:', newAudioData.buffer instanceof ArrayBuffer);
++        console.log('newAudioData.buffer is SharedArrayBuffer:', newAudioData.buffer instanceof SharedArrayBuffer);
++        console.log('compatibleAudioData.buffer is ArrayBuffer:', compatibleAudioData.buffer instanceof ArrayBuffer);
++        console.log('compatibleAudioData.buffer is SharedArrayBuffer:', compatibleAudioData.buffer instanceof SharedArrayBuffer);
++
++        newBuffer.copyToChannel(compatibleAudioData, 0);
+ 
+         const sourceNode = viewer.model?._lipSync?.audio.createBufferSource();
+         sourceNode.buffer = newBuffer;
+--- a/src/features/speecht5/speecht5.ts.orig	2025-08-10 12:16:04.720142632 -0700
++++ b/src/features/speecht5/speecht5.ts	2025-08-10 12:18:39.411851758 -0700
+@@ -67,11 +67,26 @@ export async function speecht5(
+     }
+   });
+ 
+-
+   let wav = new WaveFile();
+   wav.fromScratch(1, 16000, '32f', (<any>window).chatvrm_worker_speecht5_audiocache);
+   const wavBuffer = wav.toBuffer();
+-  const wavBlob = new Blob([wavBuffer], { type: 'audio/wav' });
++
++  // Convert Uint8Array<ArrayBufferLike> to Uint8Array<ArrayBuffer>
++  const wavArrayBuffer: ArrayBuffer = wavBuffer.buffer instanceof ArrayBuffer
++    ? wavBuffer.buffer
++    : new ArrayBuffer(wavBuffer.buffer.byteLength);
++  const compatibleWavBuffer = new Uint8Array(wavArrayBuffer);
++  if (!(wavBuffer.buffer instanceof ArrayBuffer)) {
++    compatibleWavBuffer.set(wavBuffer); // Copy data if necessary
++  }
++
++  // Debugging: Log buffer types
++  console.log('wavBuffer.buffer is ArrayBuffer:', wavBuffer.buffer instanceof ArrayBuffer);
++  console.log('wavBuffer.buffer is SharedArrayBuffer:', wavBuffer.buffer instanceof SharedArrayBuffer);
++  console.log('compatibleWavBuffer.buffer is ArrayBuffer:', compatibleWavBuffer.buffer instanceof ArrayBuffer);
++  console.log('compatibleWavBuffer.buffer is SharedArrayBuffer:', compatibleWavBuffer.buffer instanceof SharedArrayBuffer);
++
++  const wavBlob = new Blob([compatibleWavBuffer], { type: 'audio/wav' });
+   const arrayBuffer = await wavBlob.arrayBuffer();
+ 
+   return { audio: arrayBuffer };
+--- a/src/pages/api/mediaHandler.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/src/pages/api/mediaHandler.ts	2025-08-10 12:35:08.583287175 -0700
+@@ -79,7 +79,23 @@ async function handleRequest(
+         if (payload) {
+           const filePath = payload.filepath;
+           const fileBuffer = fs.readFileSync(filePath);
+-          const audioFile = new File([fileBuffer], "input.wav", { type: "audio/wav" });
++
++          // Convert Buffer<ArrayBufferLike> to Uint8Array<ArrayBuffer>
++          const arrayBuffer: ArrayBuffer = fileBuffer.buffer instanceof ArrayBuffer
++            ? fileBuffer.buffer
++            : new ArrayBuffer(fileBuffer.buffer.byteLength);
++          const compatibleFileBuffer = new Uint8Array(arrayBuffer);
++          if (!(fileBuffer.buffer instanceof ArrayBuffer)) {
++            compatibleFileBuffer.set(fileBuffer); // Copy data if necessary
++          }
++
++          // Debugging: Log buffer types
++          console.log('fileBuffer.buffer is ArrayBuffer:', fileBuffer.buffer instanceof ArrayBuffer);
++          console.log('fileBuffer.buffer is SharedArrayBuffer:', fileBuffer.buffer instanceof SharedArrayBuffer);
++          console.log('compatibleFileBuffer.buffer is ArrayBuffer:', compatibleFileBuffer.buffer instanceof ArrayBuffer);
++          console.log('compatibleFileBuffer.buffer is SharedArrayBuffer:', compatibleFileBuffer.buffer instanceof SharedArrayBuffer);
++
++          const audioFile = new File([compatibleFileBuffer], "input.wav", { type: "audio/wav" });
+           response = await transcribeVoice(audioFile);
+           outputType = "Text";
+         } else {
+--- a/src/utils/blobFix.ts.orig	2025-08-10 12:41:42.807158492 -0700
++++ b/src/utils/blobFix.ts	2025-08-10 12:48:15.065253832 -0700
+@@ -509,8 +509,22 @@ class WebmFile extends WebmContainer {
+   }
+ 
+   toBlob(type = "video/webm") {
+-    const t:Uint8Array = new Uint8Array(this.source!.buffer);
+-    return new Blob([t], { type });
++    // Convert this.source!.buffer to ArrayBuffer
++    const arrayBuffer: ArrayBuffer = this.source!.buffer instanceof ArrayBuffer
++      ? this.source!.buffer
++      : new ArrayBuffer(this.source!.buffer.byteLength);
++    const compatibleData = new Uint8Array(arrayBuffer);
++    if (!(this.source!.buffer instanceof ArrayBuffer)) {
++      compatibleData.set(new Uint8Array(this.source!.buffer)); // Copy data if necessary
++    }
++
++    // Debugging: Log buffer types
++    console.log('this.source!.buffer is ArrayBuffer:', this.source!.buffer instanceof ArrayBuffer);
++    console.log('this.source!.buffer is SharedArrayBuffer:', this.source!.buffer instanceof SharedArrayBuffer);
++    console.log('compatibleData.buffer is ArrayBuffer:', compatibleData.buffer instanceof ArrayBuffer);
++    console.log('compatibleData.buffer is SharedArrayBuffer:', compatibleData.buffer instanceof SharedArrayBuffer);
++
++    return new Blob([compatibleData], { type });
+   }
+ }
+ 
