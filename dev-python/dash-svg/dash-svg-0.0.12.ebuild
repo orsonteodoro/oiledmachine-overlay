@@ -102,8 +102,11 @@ npm_update_lock_audit_post() {
 
 		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"3.1.3\"|" "package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"2.0.8\"|g" "package-lock.json" || die
-		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"koa\": \"^2.16.1\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
@@ -147,6 +150,9 @@ npm_update_lock_audit_post() {
 		"http-proxy-middleware@2.0.8"		# CVE-2025-32996			# DoS
 		"koa@2.16.1"				# CVE-2025-32379			# DoS, DT, ID
 		"undici@6.21.2"				# CVE-2025-47279			# DoS
+
+		"tmp@0.2.4"				# CVE-2025-54798			# DT
+		"koa@^2.16.2"				# CVE-2025-8129				# DT
 	)
 	enpm install "${pkgs[@]}" -D --prefer-offline
 
