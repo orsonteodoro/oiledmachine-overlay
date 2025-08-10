@@ -184,7 +184,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE+="
 	|| (
@@ -228,6 +228,7 @@ einfo "Applying mitigation"
 		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^5.4.19\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.0.33\"|g" "package-lock.json" || die
 	}
 	patch_edits
 
@@ -243,6 +244,7 @@ einfo "Applying mitigation"
 		"playwright@${PLAYWRIGHT_PV}"
 		"@playwright/test@${PLAYWRIGHT_PV}"
 
+		"tmp@0.2.4"						# DT		# CVE-2025-54798
 	)
 	enpm install -P --prefer-offline "${pkgs[@]}"
 
