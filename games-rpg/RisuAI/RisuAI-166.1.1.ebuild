@@ -1022,6 +1022,32 @@ src_compile() {
 	npm_hydrate
 	enpm --version
 
+#
+# <--- Last few GCs --->
+#
+# [605:0x556141339000]   178657 ms: Mark-Compact (reduce) 2025.1 (2074.1) -> 2025.0 (2078.1) MB, pooled: 0 MB, 1003.94 / 0.00 ms  (+ 434.0 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 1488 ms) (average mu = 0.20[605:0x556141339000]   181680 ms: Mark-Compact 2032.0 (2082.1) -> 2031.6 (2096.1) MB, pooled: 0 MB, 2647.09 / 0.00 ms  (average mu = 0.154, current mu = 0.124) allocation failure; GC in old space requested
+#
+#
+# <--- JS stacktrace --->
+#
+# FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+# ----- Native stack trace -----
+#
+#  1: 0x55613a125a83 node::DumpNativeBacktrace(_IO_FILE*) [/usr/bin/node22]
+#  2: 0x55613a2114cb node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/usr/bin/node22]
+#  3: 0x55613a5226d8 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
+#  4: 0x55613a522969 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
+#  5: 0x55613a896393  [/usr/bin/node22]
+#  6: 0x55613a8abd3c v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/usr/bin/node22]
+#  7: 0x55613a87e2b2 v8::internal::HeapAllocator::AllocateRawWithLightRetrySlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/usr/bin/node22]
+#  8: 0x55613a87e6ff v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/usr/bin/node22]
+#  9: 0x55613a85be99 v8::internal::Factory::NewFillerObject(int, v8::internal::AllocationAlignment, v8::internal::AllocationType, v8::internal::AllocationOrigin) [/usr/bin/node22]
+# 10: 0x55613ae52da6 v8::internal::Runtime_AllocateInOldGeneration(int, unsigned long*, v8::internal::Isolate*) [/usr/bin/node22]
+# 11: 0x5560db4ac576
+#
+	export NODE_OPTIONS=" --max-old-space-size=8192"
+einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
+
 #	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	enpm run build
 	local chost=$(get_rustc_target)
