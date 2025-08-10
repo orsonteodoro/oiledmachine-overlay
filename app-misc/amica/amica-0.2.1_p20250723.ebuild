@@ -632,7 +632,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_20
+ebuild_revision_22
 "
 REQUIRED_USE="
 	voice-recognition
@@ -859,6 +859,9 @@ ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 			"eslint"
 			"node-gyp@11.1.0"
 			"form-data@4.0.4"									# CVE-2025-7783					# VS(DT, ID), SS(DT, ID)
+
+			# Fix runtime
+			"typescript@5.6.3"
 		)
 		enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 		patch_lockfile
@@ -916,7 +919,6 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
-	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-convert-ArrayBuffer.patch"
 }
 
 src_configure() {
