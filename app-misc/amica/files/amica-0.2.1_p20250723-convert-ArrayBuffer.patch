@@ -51,9 +51,9 @@
  
              let prompt;
              // TODO load prompt if it exists
---- a/src/features/lipSync/lipSync.ts.orig	2025-08-10 10:48:11.905368127 -0700
-+++ b/src/features/lipSync/lipSync.ts	2025-08-10 10:51:49.742468255 -0700
-@@ -11,15 +11,28 @@ export class LipSync {
+--- a/src/features/lipSync/lipSync.ts.orig	2025-08-10 11:11:02.959534839 -0700
++++ b/src/features/lipSync/lipSync.ts	2025-08-10 11:13:02.507575438 -0700
+@@ -11,15 +11,31 @@ export class LipSync {
      this.audio = audio;
  
      this.analyser = audio.createAnalyser();
@@ -66,17 +66,20 @@
  
    public update(): LipSyncAnalyzeResult {
 -    this.analyser.getFloatTimeDomainData(this.timeDomainData);
-+    // Ensure compatibility by creating a new Float32Array if needed
-+    const compatibleData: Float32Array = new Float32Array(
-+      this.timeDomainData.buffer instanceof ArrayBuffer
-+        ? this.timeDomainData.buffer
-+        : new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4)
-+    );
-+    if (!(this.timeDomainData.buffer instanceof ArrayBuffer)) {
-+      compatibleData.set(this.timeDomainData); // Copy data if necessary
++    // Create compatibleData with explicit ArrayBuffer
++    const arrayBuffer: ArrayBuffer = new ArrayBuffer(TIME_DOMAIN_DATA_LENGTH * 4);
++    const compatibleData: Float32Array = new Float32Array(arrayBuffer);
++
++    // Copy data from timeDomainData to compatibleData
++    compatibleData.set(this.timeDomainData);
++
++    // Runtime check for safety
++    if (!(compatibleData.buffer instanceof ArrayBuffer)) {
++      throw new Error("compatibleData.buffer is not an ArrayBuffer");
 +    }
 +
-+    this.analyser.getFloatTimeDomainData(compatibleData);
++    // Use compatibleData with explicit type assertion if needed
++    this.analyser.getFloatTimeDomainData(compatibleData as Float32Array);
  
      let volume = 0.0;
      for (let i = 0; i < TIME_DOMAIN_DATA_LENGTH; i++) {
