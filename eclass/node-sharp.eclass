@@ -251,22 +251,22 @@ einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 # Gets the arch
 node-sharp_get_platform() {
 	if use kernel_linux ; then
-		if  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "armv6" ]] ; then
+		if [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "armv6" ]] ; then
 			echo "linux-armv6"
-		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "aarch64" ]] ; then
+		elif [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "aarch64" ]] ; then
 			echo "linux-arm64v8"
-		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "powerpc64le" ]] ; then
+		elif [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "powerpc64le" ]] ; then
 			echo "linux-ppc64le"
-		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "riscv64" ]] ; then
+		elif [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "riscv64" ]] ; then
 			echo "linux-riscv64"
-		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "s390x" ]] ; then
+		elif [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "s390x" ]] ; then
 			echo "linux-s390x"
-		elif  [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "x86_64" ]] ; then
+		elif [[ "${ELIBC}" == "glibc" && "${CHOST}" =~ "x86_64" ]] ; then
 			echo "linux-x64"
 
-		elif  [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "x86_64" ]] ; then
+		elif [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "x86_64" ]] ; then
 			echo "linuxmusl-x64"
-		elif  [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "aarch64" ]] ; then
+		elif [[ "${ELIBC}" == "musl" && "${CHOST}" =~ "aarch64" ]] ; then
 			echo "linuxmusl-arm64v8"
 
 		else
@@ -347,159 +347,159 @@ node-sharp_verify_built_symbols() {
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_npm_rebuild_sharp() {
-    if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
-        enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
-        enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
-    fi
+	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
+		enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+	fi
 
-    einfo "Cleaning prebuilt for system-vips"
-    edo rm -vrf "node_modules/@img/sharp"*
-    edo rm -vrf "${HOME}/.cache/node-gyp"
-    edo rm -vrf "node_modules/sharp"
-    export npm_config_build_from_source="true"
+	einfo "Cleaning prebuilt for system-vips"
+	edo rm -vrf "node_modules/@img/sharp"*
+	edo rm -vrf "${HOME}/.cache/node-gyp"
+	edo rm -vrf "node_modules/sharp"
+	export npm_config_build_from_source="true"
 
-    local libdir=$(get_libdir)
-    export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-    export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
-    einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
+	local libdir=$(get_libdir)
+	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
-    enpm add "sharp@${SHARP_PV}" \
-        ${NPM_INSTALL_ARGS[@]} \
-        ${SHARP_INSTALL_ARGS[@]} \
-        --ignore-scripts=false \
-        --foreground-scripts \
-        --verbose
+	enpm add "sharp@${SHARP_PV}" \
+		${NPM_INSTALL_ARGS[@]} \
+		${SHARP_INSTALL_ARGS[@]} \
+		--ignore-scripts=false \
+		--foreground-scripts \
+		--verbose
 
-    if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
-        local patch_path
-        for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
-            eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
-        done
-    else
-        ewarn "QA:  Missing NODE_SHARP_PATCHES"
-    fi
+	if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
+		local patch_path
+		for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
+			eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
+		done
+	else
+		ewarn "QA:  Missing NODE_SHARP_PATCHES"
+	fi
 
-    node-sharp_append_libs
+	node-sharp_append_libs
 
-    edo rm -vrf "node_modules/sharp/build"
-    edo rm -vrf "node_modules/@img/sharp"*
-    pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
-        local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-        if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-                edo node "../install/check" --debug || die "Failed to run install/check --debug"
-            else
-                edo node "../install/check" || die "Failed to run install/check"
-            fi
-        elif ver_test "${sharp_pv}" -lt "0.33" ; then
-            edo node "install/can-compile" || die "Failed to run install/can-compile"
-            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-                edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
-                edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
-            else
-                edo node-gyp rebuild || die "Failed to rebuild node-gyp"
-            fi
-            edo node "../install/dll-copy" || die "Failed to run dll-copy"
-        fi
-    popd >/dev/null 2>&1 || die
+	edo rm -vrf "node_modules/sharp/build"
+	edo rm -vrf "node_modules/@img/sharp"*
+	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node "../install/check" --debug || die "Failed to run install/check --debug"
+			else
+				edo node "../install/check" || die "Failed to run install/check"
+			fi
+		elif ver_test "${sharp_pv}" -lt "0.33" ; then
+			edo node "install/can-compile" || die "Failed to run install/can-compile"
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
+				edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+			else
+				edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+			fi
+			edo node "../install/dll-copy" || die "Failed to run dll-copy"
+		fi
+	popd >/dev/null 2>&1 || die
 
-    node-sharp_verify_built_symbols
+	node-sharp_verify_built_symbols
 
-    unset npm_config_build_from_source
+	unset npm_config_build_from_source
 
-    if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
-        ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
-            || die "Did not build sharp@${SHARP_PV} with node-gyp"
-    else
-        ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
-            || die "Did not build sharp@${SHARP_PV} with node-gyp"
-    fi
-    grep -q \
-        -e "compilation terminated" \
-        "${T}/build.log" \
-        && die "Detected compilation error"
-    grep -q \
-        -e "build error" \
-        "${T}/build.log" \
-        && die "Detected build error"
+	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
+		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	else
+		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	fi
+	grep -q \
+		-e "compilation terminated" \
+		"${T}/build.log" \
+		&& die "Detected compilation error"
+	grep -q \
+		-e "build error" \
+		"${T}/build.log" \
+		&& die "Detected build error"
 }
 
 # @FUNCTION: node-sharp_pnpm_rebuild_sharp
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_pnpm_rebuild_sharp() {
-    if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
-        epnpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
-        epnpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
-    fi
+	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
+		epnpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
+		epnpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
+	fi
 
-    einfo "Cleaning prebuilt for system-vips"
-    edo rm -vrf "node_modules/@img/sharp"*
-    edo rm -vrf "${HOME}/.cache/node-gyp"
-    edo rm -vrf "node_modules/sharp"
-    export npm_config_build_from_source="true"
+	einfo "Cleaning prebuilt for system-vips"
+	edo rm -vrf "node_modules/@img/sharp"*
+	edo rm -vrf "${HOME}/.cache/node-gyp"
+	edo rm -vrf "node_modules/sharp"
+	export npm_config_build_from_source="true"
 
-    local libdir=$(get_libdir)
-    export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-    export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
-    einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
+	local libdir=$(get_libdir)
+	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
-    epnpm add "sharp@${SHARP_PV}" \
-        ${PNPM_INSTALL_ARGS[@]} \
-        ${SHARP_INSTALL_ARGS[@]}
+	epnpm add "sharp@${SHARP_PV}" \
+		${PNPM_INSTALL_ARGS[@]} \
+		${SHARP_INSTALL_ARGS[@]}
 
-    if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
-        local patch_path
-        for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
-            eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
-        done
-    else
-        ewarn "QA:  Missing NODE_SHARP_PATCHES"
-    fi
+	if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
+		local patch_path
+		for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
+			eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
+		done
+	else
+		ewarn "QA:  Missing NODE_SHARP_PATCHES"
+	fi
 
-    node-sharp_append_libs
+	node-sharp_append_libs
 
-    edo rm -vrf "node_modules/sharp/build"
-    edo rm -vrf "node_modules/@img/sharp"*
-    pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
-        local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-        if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-                edo node "../install/check" --debug || die "Failed to run install/check --debug"
-            else
-                edo node "../install/check" || die "Failed to run install/check"
-            fi
-        elif ver_test "${sharp_pv}" -lt "0.33" ; then
-            edo node "install/can-compile" || die "Failed to run install/can-compile"
-            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-                edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
-                edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
-            else
-                edo node-gyp rebuild || die "Failed to rebuild node-gyp"
-            fi
-            edo node "../install/dll-copy" || die "Failed to run dll-copy"
-        fi
-    popd >/dev/null 2>&1 || die
+	edo rm -vrf "node_modules/sharp/build"
+	edo rm -vrf "node_modules/@img/sharp"*
+	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node "../install/check" --debug || die "Failed to run install/check --debug"
+			else
+				edo node "../install/check" || die "Failed to run install/check"
+			fi
+		elif ver_test "${sharp_pv}" -lt "0.33" ; then
+			edo node "install/can-compile" || die "Failed to run install/can-compile"
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
+				edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+			else
+				edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+			fi
+			edo node "../install/dll-copy" || die "Failed to run dll-copy"
+		fi
+	popd >/dev/null 2>&1 || die
 
-    node-sharp_verify_built_symbols
+	node-sharp_verify_built_symbols
 
-    unset npm_config_build_from_source
+	unset npm_config_build_from_source
 
-    if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
-        ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
-            || die "Did not build sharp@${SHARP_PV} with node-gyp"
-    else
-        ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
-            || die "Did not build sharp@${SHARP_PV} with node-gyp"
-    fi
-    grep -q \
-        -e "compilation terminated" \
-        "${T}/build.log" \
-        && die "Detected compilation error"
-    grep -q \
-        -e "build error" \
-        "${T}/build.log" \
-        && die "Detected build error"
+	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
+		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	else
+		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+	fi
+	grep -q \
+		-e "compilation terminated" \
+		"${T}/build.log" \
+		&& die "Detected compilation error"
+	grep -q \
+		-e "build error" \
+		"${T}/build.log" \
+		&& die "Detected build error"
 }
 
 # @FUNCTION: node-sharp_npm_lockfile_add_sharp
@@ -540,101 +540,101 @@ node-sharp_pnpm_lockfile_add_sharp() {
 # @DESCRIPTION:
 # Rebuild sharp with yarn
 node-sharp_yarn_rebuild_sharp() {
-    if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
-        eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
-        eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
-    fi
+	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
+		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+	fi
 
-    einfo "Cleaning prebuilt for system-vips"
-    edo rm -vrf "node_modules/@img/sharp"* || die "Failed to clean @img/sharp"
-    edo rm -vrf "${HOME}/.cache/node-gyp" || die "Failed to clean node-gyp cache"
-    edo rm -vrf "node_modules/sharp" || die "Failed to clean node_modules/sharp"
-    export npm_config_build_from_source="true"
+	einfo "Cleaning prebuilt for system-vips"
+	edo rm -vrf "node_modules/@img/sharp"* || die "Failed to clean @img/sharp"
+	edo rm -vrf "${HOME}/.cache/node-gyp" || die "Failed to clean node-gyp cache"
+	edo rm -vrf "node_modules/sharp" || die "Failed to clean node_modules/sharp"
+	export npm_config_build_from_source="true"
 
-    local libdir=$(get_libdir)
-    local sharp_vips_pkgconfig="/usr/lib/sharp-vips/${libdir}/pkgconfig"
-    local sharp_vips_lib="/usr/lib/sharp-vips/${libdir}"
-    if [[ ":${PKG_CONFIG_PATH}:" != *":${sharp_vips_pkgconfig}:"* ]]; then
-        export PKG_CONFIG_PATH="${sharp_vips_pkgconfig}:${PKG_CONFIG_PATH}"
-    fi
-    if [[ ":${LD_LIBRARY_PATH}:" != *":${sharp_vips_lib}:"* ]]; then
-        export LD_LIBRARY_PATH="${sharp_vips_lib}:${LD_LIBRARY_PATH}"
-    fi
+	local libdir=$(get_libdir)
+	local sharp_vips_pkgconfig="/usr/lib/sharp-vips/${libdir}/pkgconfig"
+	local sharp_vips_lib="/usr/lib/sharp-vips/${libdir}"
+	if [[ ":${PKG_CONFIG_PATH}:" != *":${sharp_vips_pkgconfig}:"* ]]; then
+		export PKG_CONFIG_PATH="${sharp_vips_pkgconfig}:${PKG_CONFIG_PATH}"
+	fi
+	if [[ ":${LD_LIBRARY_PATH}:" != *":${sharp_vips_lib}:"* ]]; then
+		export LD_LIBRARY_PATH="${sharp_vips_lib}:${LD_LIBRARY_PATH}"
+	fi
 
-    einfo "PKG_CONFIG_PATH in yarn_rebuild: ${PKG_CONFIG_PATH}"
-    einfo "LD_LIBRARY_PATH in yarn_rebuild: ${LD_LIBRARY_PATH}"
-    einfo "vips-cpp version:  "$(pkg-config --modversion vips-cpp || die "Failed to find vips-cpp.pc")
-    einfo "vips-cpp libs:  "$(pkg-config --static --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
-    if [[ ! -f "${sharp_vips_lib}/libvips-cpp.a" ]]; then
-        die "libvips-cpp.a not found in ${sharp_vips_lib}"
-    fi
-    einfo "Found libvips-cpp.a in ${sharp_vips_lib}"
+	einfo "PKG_CONFIG_PATH in yarn_rebuild: ${PKG_CONFIG_PATH}"
+	einfo "LD_LIBRARY_PATH in yarn_rebuild: ${LD_LIBRARY_PATH}"
+	einfo "vips-cpp version:  "$(pkg-config --modversion vips-cpp || die "Failed to find vips-cpp.pc")
+	einfo "vips-cpp libs:  "$(pkg-config --static --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
+	if [[ ! -f "${sharp_vips_lib}/libvips-cpp.a" ]]; then
+		die "libvips-cpp.a not found in ${sharp_vips_lib}"
+	fi
+	einfo "Found libvips-cpp.a in ${sharp_vips_lib}"
 
-    einfo "Running yarn add sharp@${SHARP_PV} --verbose"
-    eyarn add "sharp@${SHARP_PV}" -E \
+	einfo "Running yarn add sharp@${SHARP_PV} --verbose"
+	eyarn add "sharp@${SHARP_PV}" -E \
 		${YARN_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]}
 
-    # Skip patching if already done in src_prepare
-    if [[ -n "${NODE_SHARP_PATCHES_APPLIED}" ]]; then
-        einfo "Skipping patch application in node-sharp_yarn_rebuild_sharp as already applied in src_prepare"
-    else
-        if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
-            local patch_path
-            for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
-                pushd "${S}" >/dev/null 2>&1 || die "Failed to enter ${S}"
-                    eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
-                popd >/dev/null 2>&1
-            done
-            export NODE_SHARP_PATCHES_APPLIED=1
-        else
-            ewarn "QA:  Missing NODE_SHARP_PATCHES"
-        fi
-    fi
+	# Skip patching if already done in src_prepare
+	if [[ -n "${NODE_SHARP_PATCHES_APPLIED}" ]]; then
+		einfo "Skipping patch application in node-sharp_yarn_rebuild_sharp as already applied in src_prepare"
+	else
+		if (( ${#NODE_SHARP_PATCHES[@]} > 0 )) ; then
+			local patch_path
+			for patch_path in ${NODE_SHARP_PATCHES[@]} ; do
+				pushd "${S}" >/dev/null 2>&1 || die "Failed to enter ${S}"
+					eapply "${patch_path}" || die "Failed to apply patch ${patch_path}"
+				popd >/dev/null 2>&1
+			done
+			export NODE_SHARP_PATCHES_APPLIED=1
+		else
+			ewarn "QA:  Missing NODE_SHARP_PATCHES"
+		fi
+	fi
 
-    node-sharp_append_libs
+	node-sharp_append_libs
 
-    edo rm -vrf "node_modules/sharp/build" || die "Failed to clean sharp build directory"
-    edo rm -vrf "node_modules/@img/sharp"* || die "Failed to clean @img/sharp"
-    pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
-        local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-        if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-                edo node "../install/check" --debug || die "Failed to run install/check --debug"
-            else
-                edo node "../install/check" || die "Failed to run install/check"
-            fi
-        elif ver_test "${sharp_pv}" -lt "0.33" ; then
-            edo node "install/can-compile" || die "Failed to run install/can-compile"
-            if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-                edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
-                edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
-            else
-                edo node-gyp rebuild || die "Failed to rebuild node-gyp"
-            fi
-            edo node "../install/dll-copy" || die "Failed to run dll-copy"
-        fi
-    popd >/dev/null 2>&1 || die
+	edo rm -vrf "node_modules/sharp/build" || die "Failed to clean sharp build directory"
+	edo rm -vrf "node_modules/@img/sharp"* || die "Failed to clean @img/sharp"
+	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node "../install/check" --debug || die "Failed to run install/check --debug"
+			else
+				edo node "../install/check" || die "Failed to run install/check"
+			fi
+		elif ver_test "${sharp_pv}" -lt "0.33" ; then
+			edo node "install/can-compile" || die "Failed to run install/can-compile"
+			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
+				edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+			else
+				edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+			fi
+			edo node "../install/dll-copy" || die "Failed to run dll-copy"
+		fi
+	popd >/dev/null 2>&1 || die
 
-    node-sharp_verify_built_symbols
+	node-sharp_verify_built_symbols
 
-    unset npm_config_build_from_source
+	unset npm_config_build_from_source
 
-    if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
-        ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
-            || die "Did not build sharp@${SHARP_PV} with yarn"
-    else
-        ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
-            || die "Did not build sharp@${SHARP_PV} with yarn"
-    fi
-    grep -q \
-        -e "compilation terminated" \
-        "${T}/build.log" \
-        && die "Detected compilation error"
-    grep -q \
-        -e "build error" \
-        "${T}/build.log" \
-        && die "Detected build error"
+	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
+		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with yarn"
+	else
+		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
+			|| die "Did not build sharp@${SHARP_PV} with yarn"
+	fi
+	grep -q \
+		-e "compilation terminated" \
+		"${T}/build.log" \
+		&& die "Detected compilation error"
+	grep -q \
+		-e "build error" \
+		"${T}/build.log" \
+		&& die "Detected build error"
 }
 
 # @FUNCTION: node-sharp_yarn_lockfile_add_sharp
