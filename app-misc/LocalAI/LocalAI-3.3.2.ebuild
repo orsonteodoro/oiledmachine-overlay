@@ -74,29 +74,39 @@ CPU_FLAGS_X86=(
 #
 GEN_EBUILD=0
 GRPC_PROTOBUF_PAIRS=(
-	"1.65:5.26"
+# GRPC versions:
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/.github/workflows/generate_grpc_cache.yaml#L88
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/cpp/grpc/Makefile#L5
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/Dockerfile.golang#L113
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/python/coqui/requirements.txt
+	#grpc:protobuf
+	"1.71:5.29" # For python backends (coqui, kokoro, transformers)
+	#"1.65:5.26"
+	#"1.59:4.24"
+	#"1.54:3.21"
+	#"1.53:3.21"
+	#"1.52:3.21"
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOTS=(
-	"${HIP_5_5_VERSION}"
+	"${HIP_6_1_VERSION}"
 )
 
-BARK_CPP_PV="1.0.0"
+BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/bark-cpp/Makefile#L15
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
-ENCODEC_CPP_COMMIT="05513e7f03d8d349734a2b7a47b2e9921f0adeb0" # For bark.cpp
-ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper
-GGML_COMMIT_1="aa00e1676417d8007dbaa47d2ee1a6e06c60d546" # For bark.cpp/encodec.cpp
-GGML_COMMIT_2="dddef738b2d5a95323188ed019877d4e20568b7e" # For stable-diffusion.cpp
-ONNXRUNTIME_PV="1.20.0"
-GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0"
-KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306" # For llama.cpp
-LLAMA_CPP_COMMIT="d6d2c2ab8c8865784ba9fef37f2b2de3f2134d33"
-PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper
-PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper
-STABLE_DIFFUSION_CPP_COMMIT="53e3b17eb3d0b5760ced06a1f98320b68b34aaae"
-WHISPER_CPP_COMMIT="6266a9f9e56a5b925e9892acf650f3eb1245814d"
+ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
+ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
+GGML_COMMIT_2="7dee1d6a1e7611f238d09be96738388da97c88ed" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/5900ef6605c6fbf7934239f795c13c97bc993853
+ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/silero-vad/Makefile#L5
+GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/piper/Makefile#L4
+LLAMA_CPP_COMMIT="d31192b4ee1441bbbecd3cbf9e02633368bdc4f5" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/cpp/llama-cpp/Makefile#L2
+PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+STABLE_DIFFUSION_CPP_COMMIT="5900ef6605c6fbf7934239f795c13c97bc993853" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/stablediffusion-ggml/Makefile#L22
+WHISPER_CPP_COMMIT="0becabc8d68d9ffa6ddfba5240e38cd7a2642046" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/whisper/Makefile#L9
 
 inherit cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
 inherit python-single-r1 toolchain-funcs xdg
@@ -105,7 +115,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/mudler/LocalAI.git"
-	FALLBACK_COMMIT="e495b89f18412c77a0d05422cab03d39511d67cd" # Apr 19, 2025
+	FALLBACK_COMMIT="d6274eaf4ab0bf10fb130ec5e762c73ae6ea3feb" # Aug 4, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -132,10 +142,8 @@ https://github.com/mudler/go-piper/archive/${GO_PIPER_COMMIT}.tar.gz
 	-> go-piper-${GO_PIPER_COMMIT:0:7}.tar.gz
 https://github.com/mudler/LocalAI/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/nomic-ai/kompute/archive/${KOMPUTE_COMMIT}.tar.gz
-	-> kompute-${KOMPUTE_COMMIT:0:7}.tar.gz
-https://github.com/PABannier/bark.cpp/archive/refs/tags/v${BARK_CPP_PV}.tar.gz
-	-> bark-cpp-${BARK_CPP_PV}.tar.gz
+https://github.com/PABannier/bark.cpp/archive/${BARK_CPP_COMMIT}.tar.gz
+	-> bark-cpp-${BARK_CPP_COMMIT:0:7}.tar.gz
 https://github.com/PABannier/encodec.cpp/archive/${ENCODEC_CPP_COMMIT}.tar.gz
 	-> encodec-cpp-${ENCODEC_CPP_COMMIT:0:7}.tar.gz
 https://github.com/rhasspy/piper/archive/${PIPER_COMMIT}.tar.gz
@@ -144,8 +152,8 @@ https://github.com/rhasspy/espeak-ng/archive/${ESPEAK_NG_COMMIT}.tar.gz
 	-> rhasspy-espeak-ng-${ESPEAK_NG_COMMIT:0:7}.tar.gz
 https://github.com/rhasspy/piper-phonemize/archive/${PIPER_PHONEMIZE_COMMIT}.tar.gz
 	-> piper-phonemize-${PIPER_PHONEMIZE_COMMIT:0:7}.tar.gz
-https://github.com/richiejp/stable-diffusion.cpp/archive/${STABLE_DIFFUSION_CPP_COMMIT}.tar.gz
-	-> richiejp-stable-diffusion-cpp-${STABLE_DIFFUSION_CPP_COMMIT:0:7}.tar.gz
+https://github.com/leejet/stable-diffusion.cpp/archive/${STABLE_DIFFUSION_CPP_COMMIT}.tar.gz
+	-> leejet-stable-diffusion-cpp-${STABLE_DIFFUSION_CPP_COMMIT:0:7}.tar.gz
 	amd64? (
 https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_PV}/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz
 	)
@@ -315,6 +323,12 @@ gen_rocm_rdepend() {
 		"
 	done
 }
+# CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L20
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/.github/workflows/image_build.yml#L20
+# ROCm versions:
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/python/kokoro/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/python/vllm/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v3.3.2/.github/workflows/image.yml#L42
 RDEPEND+="
 	(
 		>=media-video/ffmpeg-6.1.1
@@ -373,8 +387,18 @@ DISABLED_DEPEND="
 	)
 "
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
+# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L118
+# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L154
 BDEPEND+="
 	${PYTHON_DEPS}
+	(
+		>=dev-go/protobuf-go-1.34.2
+		dev-go/protobuf-go:=
+	)
+	(
+		>=dev-go/protoc-gen-go-grpc-1.65.0
+		dev-go/protoc-gen-go-grpc:=
+	)
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
 	app-arch/upx
@@ -464,7 +488,6 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/whisper.cpp-${WHISPER_CPP_COMMIT}" "${S}/sources/whisper.cpp"
 
 	dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/backend/cpp/llama/llama.cpp"
-	dep_prepare_mv "${WORKDIR}/kompute-${KOMPUTE_COMMIT}" "${S}/backend/cpp/llama/llama.cpp/ggml/src/ggml-kompute/kompute"
 
 	#local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	mkdir -p "${S}/sources/onnxruntime" || die
