@@ -193,7 +193,7 @@ themanofrod-travel-agent tinydolphin tinyllama tulu3 vicuna wizard-math
 wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm wizardlm-uncensored
 wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
-LLVM_COMPAT=( 17 )
+LLVM_COMPAT=( 18 )
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
 #
