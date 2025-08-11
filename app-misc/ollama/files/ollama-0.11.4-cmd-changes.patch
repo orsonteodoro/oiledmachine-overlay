@@ -1,5 +1,5 @@
 --- ollama-0.11.4.orig/cmd/cmd.go	2025-08-07 14:23:55.000000000 -0700
-+++ ollama-0.11.4/cmd/cmd.go	2025-08-10 20:14:58.187458145 -0700
++++ ollama-0.11.4/cmd/cmd.go	2025-08-11 01:17:47.086387610 -0700
 @@ -15,8 +15,10 @@ import (
  	"net"
  	"net/http"
@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,2350 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,2391 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -196,6 +196,20 @@
 +	"codeup:13b-llama2-chat": "7.4GB",
 +	"codeup:13b-llama2-chat-q8_0": "14GB",
 +	"codeup:13b-llama2-chat-fp16": "26GB",
++	"cogito:3b": "2.2GB",
++	"cogito:8b": "4.9GB",
++	"cogito:14b": "9.0GB",
++	"cogito:32b": "20GB",
++	"cogito:70b": "43GB",
++	"cogito:3b-v1-preview-llama-q8_0": "3.8GB",
++	"cogito:3b-v1-preview-llama-fp16": "7.2GB",
++	"cogito:8b-v1-preview-llama-q8_0": "8.5GB",
++	"cogito:14b-v1-preview-qwen-q8_0": "16GB",
++	"cogito:14b-v1-preview-qwen-fp16": "30GB",
++	"cogito:32b-v1-preview-qwen-q8_0": "35GB",
++	"cogito:32b-v1-preview-qwen-fp16": "66GB",
++	"cogito:70b-v1-preview-llama-q8_0": "75GB",
++	"cogito:70b-v1-preview-llama-fp16": "141GB",
 +	"command-a:111b": "67GB",
 +	"command-a:111b-03-2025-fp16": "222GB",
 +	"command-a:111b-03-2025-q8_0": "118GB",
@@ -1466,6 +1480,20 @@
 +	"smollm:1.7b-instruct-v0.2-q5_K_M": "1.2GB",
 +	"smollm:1.7b-instruct-v0.2-q6_K": "1.4GB",
 +	"smollm:1.7b-instruct-v0.2-q8_K": "1.8GB",
++	"smollm2:135m": "271MB",
++	"smollm2:360m": "726MB",
++	"smollm2:1.7b": "1.8GB",
++	"smollm2:135m-instruct-q4_0": "92MB",
++	"smollm2:135m-instruct-q5_K_M": "112MB",
++	"smollm2:135m-instruct-q8_0": "145MB",
++	"smollm2:135m-instruct-fp16": "271MB",
++	"smollm2:360m-instruct-q4_0": "229MB",
++	"smollm2:360m-instruct-q4_1": "249MB",
++	"smollm2:360m-instruct-q8_0": "386MB",
++	"smollm2:360m-instruct-fp16": "726MB",
++	"smollm2:1.7b-instruct-q4_0": "991MB",
++	"smollm2:1.7b-instruct-q8_0": "1.8GB",
++	"smollm2:1.7b-instruct-fp16": "3.4GB",
 +	"snowflake-arctic-embed:22m": "46MB",
 +	"snowflake-arctic-embed:33m": "67MB",
 +	"snowflake-arctic-embed:110m": "219MB",
@@ -1908,6 +1936,7 @@
 +	"codeqwen": 1,
 +	"codestral": 1,
 +	"codeup": 1,
++	"cogito": 1,
 +	"command-a": 1,
 +	"command-r": 1,
 +	"command-r-plus": 1,
@@ -2055,6 +2084,7 @@
 +	"shieldgemma": 1,
 +	"smallthinker": 1,
 +	"smollm": 1,
++	"smollm2": 1,
 +	"snowflake-arctic-embed": 1,
 +	"snowflake-arctic-embed2": 1,
 +	"solar": 1,
@@ -2148,6 +2178,7 @@
 +	"codeqwen": "coding code-generation fixing-bugs",
 +	"codestral": "coding code-generation solving-basic-programming-problems fim fill-in-the-middle unit-test-generator python",
 +	"codeup": "coding code-generation",
++	"cogito": "multilingual general-knowledge math-word-problems",
 +	"command-a": "conversational chatbot rag tool-use coding multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"command-r": "rag tool-use english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
@@ -2219,6 +2250,15 @@
 +	"llama3.2": "multilingual chat instruction-following summaries english german french italian portuguese hindi spanish thai",
 +	"llama3.2-vision": "multilingual chat instruction-following summaries vision ocr optical-character-recognition english english-only-vision german french italian portuguese hindi spanish thai",
 +	"llama3.3": "general-knowledge instruction-following code-generation math-word-problems college-level-math calculus statistics tool-use multilingual english german french italian portuguese hindi spanish thai multilingual-commercial multilingual-research",
++	"llama4": "multimodal multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:maverick": "multimodal image-reasoning image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:17b-maverick-128e-instruct-q4_K_M": "multimodal image-reasoning image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:17b-maverick-128e-instruct-q8_0": "multimodal image-reasoning image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:17b-maverick-128e-instruct-fp16": "multimodal image-reasoning image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:scout": "multimodal image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:17b-scout-128e-instruct-q4_K_M": "multimodal image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:17b-scout-128e-instruct-q8_0": "multimodal image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
++	"llama4:17b-scout-128e-instruct-fp16": "multimodal image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
@@ -2317,6 +2357,7 @@
 +	"shieldgemma": "content-moderator",
 +	"smallthinker": "edge-devices",
 +	"smollm": "common-sense qa low-memory-footprint parent",
++	"smollm2": "common-sense qa physical-common-sense low-memory-footprint",
 +	"mannix/smaug-qwen2-72b": "fine-tuned-qwen2 optimized-qwen2 china-alignment china-bias multilingual german french spanish portuguese italian dutch russian czech polish arabic persian hebrew turkish japanese korean vietnamese thai indonesian malay lao burmese cebuano khmer tagalog hindi bengali urdu coding code-generation math-word-problems coding solving-basic-programming-problems math-word-problems stem science technology engineering mathematics",
 +	"snowflake-arctic-embed": "embeddings",
 +	"snowflake-arctic-embed2": "embeddings multilingual",
@@ -2362,7 +2403,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -308,6 +2654,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -308,6 +2695,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2388,7 +2429,7 @@
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -651,10 +3016,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -651,10 +3057,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2402,7 +2443,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -683,13 +3050,315 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -683,13 +3091,317 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2473,6 +2514,7 @@
 +		"codeqwen": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"codestral": "MNPL-0.1",
 +		"codeup": "CreativeML Open RAIL++-M License",
++		"cogito": "Apache-2.0, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"command-a": "CC-BY-NC-4.0",
 +		"command-r": "CC-BY-NC-4.0",
 +		"command-r-plus": "CC-BY-NC-4.0",
@@ -2637,6 +2679,7 @@
 +		"shieldgemma": "Gemma Terms of Use 20240401",
 +		"smallthinker": "Qwen RESEARCH LICENSE AGREEMENT",
 +		"smollm": "Apache-2.0",
++		"smollm2": "Apache-2.0",
 +		"snowflake-arctic-embed": "Apache-2.0",
 +		"snowflake-arctic-embed2": "Apache-2.0",
 +		"solar": "Apache-2.0",
@@ -2719,7 +2762,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -975,6 +3644,142 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -975,6 +3687,142 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -2862,7 +2905,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -1491,7 +4296,9 @@ func NewCLI() *cobra.Command {
+@@ -1491,7 +4339,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2872,7 +2915,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1588,6 +4395,30 @@ func NewCLI() *cobra.Command {
+@@ -1588,6 +4438,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -2903,7 +2946,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1604,6 +4435,9 @@ func NewCLI() *cobra.Command {
+@@ -1604,6 +4478,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2913,7 +2956,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1644,6 +4478,9 @@ func NewCLI() *cobra.Command {
+@@ -1644,6 +4521,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,

@@ -12,16 +12,12 @@ EAPI=8
 # phi4-reasoning
 # devstral
 # magistral
-# cogito
 # qwen3-coder
 # granite3.2
 # exaone-deep
 # mistral-small3.2
 # starling-ml
 # phi4-mini-reasoning
-# llama4
-# smollm2
-# snowflake-artic-embed
 #
 #
 #
@@ -159,7 +155,7 @@ benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
 bge-m3 canadiangamer-neena canadiangamer-priya captainkyd-whiterabbitneo7b
 chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga codegeex4
-codegemma codellama codeqwen codestral codeup command-a command-r command-r-plus
+codegemma codellama codeqwen codestral codeup cogito command-a command-r command-r-plus
 command-r7b command-r7b-arabic dbrx deepcoder deepscaler deepseek-coder
 deepseek-coder-v2 deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3
 disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
@@ -186,7 +182,7 @@ qwen2-math qwen2.5 qwen2.5-coder qwen3 qwq r1-1776 reader-lm reefer-her2
 reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b sailor2 samantha-mistral
 sammcj-smaug-mixtral-v0.1 savethedoctor-whiterabbitneo13bq8_0 shieldgemma
-smallthinker smollm snowflake-arctic-embed snowflake-arctic-embed2 solar
+smallthinker smollm smollm2 snowflake-arctic-embed snowflake-arctic-embed2 solar
 solar-pro sparksammy-samantha sparksammy-samantha-3.1
 sparksammy-samantha-eggplant sparksammy-samantha-v3-uncensored
 sparksammy-tinysam-goog sparksammy-tinysam-msft sqlcoder stable-beluga
@@ -1950,6 +1946,11 @@ LLM_LICENSES="
 	ollama_llms_codeup? (
 		CreativeML-Open-RAIL++-M-License-20230726
 	)
+	ollama_llms_cogito? (
+		Apache-2.0
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_command-a? (
 		CC-BY-NC-4.0
 	)
@@ -2462,6 +2463,9 @@ LLM_LICENSES="
 		Qwen-RESEARCH-LICENSE-AGREEMENT
 	)
 	ollama_llms_smollm? (
+		Apache-2.0
+	)
+	ollama_llms_smollm2? (
 		Apache-2.0
 	)
 	ollama_llms_snowflake-arctic-embed? (
