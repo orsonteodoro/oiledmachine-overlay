@@ -1,0 +1,26 @@
+diff '--color=auto' -urp ollama-0.11.4.orig/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.11.4/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.11.4.orig/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-08-07 14:23:55.000000000 -0700
++++ ollama-0.11.4/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-08-10 20:29:42.127444290 -0700
+@@ -284,18 +284,13 @@ endfunction()
+ 
+ ggml_add_backend(CPU)
+ 
++set(GGML_CPU_ALL_VARIANTS @GGML_CPU_ALL_VARIANTS@)
+ if (GGML_CPU_ALL_VARIANTS)
+     if (NOT GGML_BACKEND_DL)
+         message(FATAL_ERROR "GGML_CPU_ALL_VARIANTS requires GGML_BACKEND_DL")
+     endif()
+     add_custom_target(ggml-cpu)
+-    ggml_add_cpu_backend_variant(x64)
+-    ggml_add_cpu_backend_variant(sse42        SSE42)
+-    ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
+-    ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
+-    ggml_add_cpu_backend_variant(skylakex     SSE42 AVX F16C AVX2 BMI2 FMA AVX512)
+-    ggml_add_cpu_backend_variant(icelake      SSE42 AVX F16C AVX2 BMI2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
+-    ggml_add_cpu_backend_variant(alderlake    SSE42 AVX F16C AVX2 BMI2 FMA AVX_VNNI)
++    ggml_add_cpu_backend_variant(custom         @CPU_FEATURES@)
+ elseif (GGML_CPU)
+     ggml_add_cpu_backend_variant_impl("")
+ endif()
+Only in ollama-0.11.4/ml/backend/ggml/ggml/src: CMakeLists.txt.orig
+Only in ollama-0.11.4/ml/backend/ggml/ggml/src: CMakeLists.txt.rej

@@ -4,11 +4,32 @@
 
 EAPI=8
 
+# TODO list:
+# qwen2.5vl
+# gemma3n
+# phi4-reasoning
+# devstral
+# magistral
+# cogito
+# qwen3-coder
+# granite3.2
+# exaone-deep
+# mistral-small3.2
+# starling-ml
+# phi4-mini-reasoning
+# llama4
+# smollm2
+# snowflake-artic-embed
+#
+#
+#
+
 # 0.5.4 -> 0.5.7
 # 0.5.7 -> 0.5.11
 # 0.5.11 -> 0.5.12
 # 0.5.12 -> 0.5.13
 # 0.5.13 -> 0.6.5
+# 0.6.5 -> 0.11.4
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -142,13 +163,13 @@ deepseek-coder-v2 deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3
 disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
 dolphin3 dolphincoder duckdb-nsql ehartford-theprofessor eramax-aura_v3
 everythinglm falcon falcon2 falcon3 firefunction-v2 gemma gemma2 gemma3 glm4
-exaone3.5 fixt-home-3b-v3 fixt-home-3b-v2 goliath granite-code granite-embedding
+exaone3.5 fixt-home-3b-v3 fixt-home-3b-v2 goliath gpt-oss granite-code granite-embedding
 granite3-dense granite3.1-dense granite3-guardian granite3-moe granite3.1-moe
 granite3.2-vision granite3.3 hemanth-chessplayer hermes3 hookingai-monah-8b
 internlm2 jimscard-adult-film-screenwriter-nsfw jimscard-whiterabbit-neo
 joefamous-grok-1 leeplenty-lumimaid-v0.2 llama-guard3 llama-pro llama2
 llama2-chinese llama2-uncensored llama3 llama3-chatqa llama3-gradient
-llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llama3.3 llava
+llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llama3.3 llama4 llava
 llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
 mannix-llamax3-8b-alpaca mannix-smaug-qwen2-72b mannix-replete-coder-llama3-8b
 marco-o1 mathstral meditron medllama2 megadolphin minicpm-v mistral
@@ -159,7 +180,7 @@ notus notux nous-hermes nous-hermes2 nous-hermes2-mixtral nqduc-gemsura
 nqduc-mixsura nqduc-mixsura-sft nuextract olmo2 open-orca-platypus2 openchat
 opencoder openhermes openthinker orca-mini orca2 paraphrase-multilingual
 partai-dorna-llama3 phi phi3 phi3.5 phi4 phi4-mini phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder qwq r1-1776 reader-lm reefer-her2
+qwen2-math qwen2.5 qwen2.5-coder qwen3 qwq r1-1776 reader-lm reefer-her2
 reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b sailor2 samantha-mistral
 sammcj-smaug-mixtral-v0.1 savethedoctor-whiterabbitneo13bq8_0 shieldgemma
@@ -212,7 +233,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ollama/ollama.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	FALLBACK_COMMIT="5f8051180e3b9aeafc153f6b5056e7358a939c88" # Nov 29, 2024
+	FALLBACK_COMMIT="f2e9c9aff5f59b21a5d9a9668408732b3de01e20" # Aug 10, 2025
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
@@ -241,8 +262,24 @@ else
 		"github.com/pmezard/go-difflib v1.0.0/go.mod"
 		"github.com/stretchr/testify v1.1.4"
 		"github.com/stretchr/testify v1.1.4/go.mod"
+		"golang.org/x/mod v0.17.0"
+		"golang.org/x/mod v0.17.0/go.mod"
+		"golang.org/x/sync v0.12.0"
+		"golang.org/x/sync v0.12.0/go.mod"
+		"golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d"
+		"golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d/go.mod"
+		"golang.org/x/crypto v0.36.0"
+		"golang.org/x/crypto v0.36.0/go.mod"
+		"golang.org/x/sys v0.31.0"
+		"golang.org/x/sys v0.31.0/go.mod"
+		"golang.org/x/term v0.30.0"
+		"golang.org/x/term v0.30.0/go.mod"
+		"golang.org/x/text v0.23.0"
+		"golang.org/x/text v0.23.0/go.mod"
 		"rsc.io/pdf v0.1.1"
 		"rsc.io/pdf v0.1.1/go.mod"
+		"golang.org/x/sys v0.31.0"
+		"golang.org/x/sys v0.31.0/go.mod"
 		"github.com/google/go-cmp v0.6.0"
 		"github.com/google/go-cmp v0.6.0/go.mod"
 		"github.com/yuin/goldmark v1.4.13"
@@ -257,20 +294,6 @@ else
 		"golang.org/x/sys v0.30.0/go.mod"
 		"golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457"
 		"golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457/go.mod"
-		"golang.org/x/mod v0.17.0"
-		"golang.org/x/mod v0.17.0/go.mod"
-		"golang.org/x/sync v0.11.0"
-		"golang.org/x/sync v0.11.0/go.mod"
-		"golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d"
-		"golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d/go.mod"
-		"golang.org/x/net v0.21.0"
-		"golang.org/x/net v0.21.0/go.mod"
-		"golang.org/x/sys v0.30.0"
-		"golang.org/x/sys v0.30.0/go.mod"
-		"golang.org/x/term v0.29.0"
-		"golang.org/x/term v0.29.0/go.mod"
-		"golang.org/x/text v0.22.0"
-		"golang.org/x/text v0.22.0/go.mod"
 		"github.com/google/go-cmp v0.6.0"
 		"github.com/google/go-cmp v0.6.0/go.mod"
 		"golang.org/x/mod v0.23.0"
@@ -279,18 +302,16 @@ else
 		"golang.org/x/sync v0.11.0/go.mod"
 		"golang.org/x/tools v0.30.0"
 		"golang.org/x/tools v0.30.0/go.mod"
-		"golang.org/x/sys v0.30.0"
-		"golang.org/x/sys v0.30.0/go.mod"
+		"golang.org/x/net v0.21.0"
+		"golang.org/x/net v0.21.0/go.mod"
+		"golang.org/x/sys v0.31.0"
+		"golang.org/x/sys v0.31.0/go.mod"
+		"golang.org/x/term v0.30.0"
+		"golang.org/x/term v0.30.0/go.mod"
+		"golang.org/x/text v0.23.0"
+		"golang.org/x/text v0.23.0/go.mod"
 		"golang.org/x/text v0.20.0"
 		"golang.org/x/text v0.20.0/go.mod"
-		"golang.org/x/crypto v0.33.0"
-		"golang.org/x/crypto v0.33.0/go.mod"
-		"golang.org/x/sys v0.30.0"
-		"golang.org/x/sys v0.30.0/go.mod"
-		"golang.org/x/term v0.29.0"
-		"golang.org/x/term v0.29.0/go.mod"
-		"golang.org/x/text v0.22.0"
-		"golang.org/x/text v0.22.0/go.mod"
 		"git.sr.ht/~sbinet/cmpimg v0.1.0"
 		"git.sr.ht/~sbinet/gg v0.5.0"
 		"git.sr.ht/~sbinet/gg v0.5.0/go.mod"
@@ -1480,8 +1501,8 @@ else
 		"github.com/google/go-cmp v0.5.0/go.mod"
 		"github.com/google/go-cmp v0.5.5/go.mod"
 		"github.com/google/go-cmp v0.5.6/go.mod"
-		"github.com/google/go-cmp v0.6.0"
-		"github.com/google/go-cmp v0.6.0/go.mod"
+		"github.com/google/go-cmp v0.7.0"
+		"github.com/google/go-cmp v0.7.0/go.mod"
 		"github.com/google/gofuzz v1.0.0/go.mod"
 		"github.com/google/uuid v1.1.2/go.mod"
 		"github.com/google/uuid v1.6.0"
@@ -1582,8 +1603,8 @@ else
 		"golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod"
 		"golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod"
 		"golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod"
-		"golang.org/x/crypto v0.33.0"
-		"golang.org/x/crypto v0.33.0/go.mod"
+		"golang.org/x/crypto v0.36.0"
+		"golang.org/x/crypto v0.36.0/go.mod"
 		"golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod"
 		"golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod"
 		"golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod"
@@ -1625,8 +1646,8 @@ else
 		"golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod"
 		"golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod"
 		"golang.org/x/net v0.0.0-20210614182718-04defd469f4e/go.mod"
-		"golang.org/x/net v0.35.0"
-		"golang.org/x/net v0.35.0/go.mod"
+		"golang.org/x/net v0.38.0"
+		"golang.org/x/net v0.38.0/go.mod"
 		"golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod"
 		"golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod"
 		"golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod"
@@ -1636,8 +1657,8 @@ else
 		"golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod"
 		"golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod"
 		"golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod"
-		"golang.org/x/sync v0.11.0"
-		"golang.org/x/sync v0.11.0/go.mod"
+		"golang.org/x/sync v0.12.0"
+		"golang.org/x/sync v0.12.0/go.mod"
 		"golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod"
 		"golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod"
 		"golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod"
@@ -1653,17 +1674,17 @@ else
 		"golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod"
 		"golang.org/x/sys v0.5.0/go.mod"
 		"golang.org/x/sys v0.6.0/go.mod"
-		"golang.org/x/sys v0.30.0"
-		"golang.org/x/sys v0.30.0/go.mod"
+		"golang.org/x/sys v0.31.0"
+		"golang.org/x/sys v0.31.0/go.mod"
 		"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
-		"golang.org/x/term v0.29.0"
-		"golang.org/x/term v0.29.0/go.mod"
+		"golang.org/x/term v0.30.0"
+		"golang.org/x/term v0.30.0/go.mod"
 		"golang.org/x/text v0.3.0/go.mod"
 		"golang.org/x/text v0.3.3/go.mod"
 		"golang.org/x/text v0.3.5/go.mod"
 		"golang.org/x/text v0.3.6/go.mod"
-		"golang.org/x/text v0.22.0"
-		"golang.org/x/text v0.22.0/go.mod"
+		"golang.org/x/text v0.23.0"
+		"golang.org/x/text v0.23.0/go.mod"
 		"golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod"
 		"golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod"
 		"golang.org/x/tools v0.0.0-20190114222345-bf090417da8b/go.mod"
@@ -1737,6 +1758,10 @@ else
 		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
 		"rsc.io/pdf v0.1.1/go.mod"
+
+
+
+
 	)
 	go-module_set_globals
 
@@ -2056,6 +2081,9 @@ LLM_LICENSES="
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
+	ollama_llms_gpt-oss? (
+		Apache-2.0
+	)
 	ollama_llms_granite-code? (
 		Apache-2.0
 	)
@@ -2159,6 +2187,10 @@ LLM_LICENSES="
 	ollama_llms_llama3.3? (
 		llama3_3-LICENSE
 		llama3_3-USE_POLICY.md
+	)
+	ollama_llms_llama4? (
+		llama4-LICENSE
+		llama4-USE_POLICY.md
 	)
 	ollama_llms_llava? (
 		Apache-2.0
@@ -2359,6 +2391,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_qwen2.5-coder? (
+		Apache-2.0
+	)
+	ollama_llms_qwen3? (
 		Apache-2.0
 	)
 	ollama_llms_qwq? (
@@ -2603,6 +2638,7 @@ LICENSE="
 # GO-PATENTS - go-mod/golang.org/x/arch/PATENTS
 # W3C Test Suite License, W3C 3-clause BSD License - go-mod/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
 
+RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 
 IUSE+="
@@ -2963,9 +2999,8 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-0.6.5-cmd-changes.patch"
-	"${FILESDIR}/${PN}-0.5.13-custom-cpu-features.patch"
-	"${FILESDIR}/${PN}-0.5.11-sse42.patch"
+	"${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.11.4-custom-cpu-features.patch"
 )
 
 pkg_pretend() {

@@ -1,30 +1,34 @@
-diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
---- ollama-0.3.13.orig/cmd/cmd.go	2024-10-10 11:21:51.000000000 -0700
-+++ ollama-0.3.13/cmd/cmd.go	2024-10-22 16:57:34.745153648 -0700
-@@ -17,11 +17,13 @@ import (
+--- ollama-0.11.4.orig/cmd/cmd.go	2025-08-07 14:23:55.000000000 -0700
++++ ollama-0.11.4/cmd/cmd.go	2025-08-10 20:14:58.187458145 -0700
+@@ -15,8 +15,10 @@ import (
  	"net"
  	"net/http"
  	"os"
 +	"os/exec" // oteodoro:  added line
  	"os/signal"
  	"path/filepath"
- 	"regexp"
++	"regexp" // oteodoro:  added line
  	"runtime"
  	"slices"
-+	"sort" // oteodoro:  added line
- 	"strconv"
- 	"strings"
- 	"sync/atomic"
-@@ -47,6 +49,2007 @@ import (
- 	"github.com/ollama/ollama/version"
- )
+ 	"sort"
+@@ -86,6 +88,2350 @@ func getModelfileName(cmd *cobra.Command
+ 	return absName, nil
+ }
  
 +var sizeTable = map[string]string{
 +	// Quality control notes:
 +	// q6*, q5* for round downs for 16MB, 32MB, 64MB, 128MB, 256MB, 512MB, 1GB, 2GB, 4GB, 8GB, 16GB, 32GB, 64GB, 128GB, 256GB, 512GB boundary
 +	// fp16, q8_0 for max AGI
 +	// q4_0 is balanced but preference for speed over AGI (default)
-+	// For security based LLMs >= q5
++	// For security based LLMs where quality is important >= q5
++
++	// Generally the following are listed
++	// 1. The general facade flavors.
++	// 2. The uncompressed full version (f16).
++	// 3. The compressed full version (q8_0).
++	// 4. The memory aligned versions (from round downs above) that are >= q4 and above and below the memory boundaries.
++	// 5. Interesting tagged variations if fingerprint is different.
++
 +	"adens/quran-guide": "2.0GB",
 +	"akx/viking-7b": "4.6GB",
 +	"agcobra/liberated-qwen1.5-72b": "44GB",
@@ -56,6 +60,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"all-minilm:33m-l12-v2-fp16": "67MB",
 +	"Artalius/lixi": "2.0GB",
 +	"artifish/mlewd-v2.4": "7.9GB",
++	"athene-v2": "72GB",
 +	"aya:8b": "4.8GB",
 +	"aya:35b": "20GB",
 +	"aya:8b-23": "4.8GB",
@@ -64,6 +69,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"aya:8b-23-q8_0": "8.5GB",
 +	"aya:35b-23-q6_K": "29GB",
 +	"aya:35b-23-q8_0": "37GB",
++	"aya-expanse:8b": "5.1GB",
++	"aya-expanse:32b": "20GB",
++	"aya-expanse:8b-fp16": "16GB",
++	"aya-expanse:32b-fp16": "65GB",
++	"aya-expanse:8b-q6_K": "6.6GB",
++	"aya-expanse:8b-q8_0": "8.5GB",
++	"aya-expanse:32b-q6_K": "27GB",
++	"aya-expanse:32b-q8_0": "34GB",
 +	"bakllava:7b": "4.7GB",
 +	"bakllava:7b-v1-q6_K": "6.6GB",
 +	"bakllava:7b-v1-q8_0": "8.3GB",
@@ -183,6 +196,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"codeup:13b-llama2-chat": "7.4GB",
 +	"codeup:13b-llama2-chat-q8_0": "14GB",
 +	"codeup:13b-llama2-chat-fp16": "26GB",
++	"command-a:111b": "67GB",
++	"command-a:111b-03-2025-fp16": "222GB",
++	"command-a:111b-03-2025-q8_0": "118GB",
 +	"command-r:35b": "19GB",
 +	"command-r:35b-08-2024-q6_K": "27GB",
 +	"command-r:35b-v0.1-q6_K": "29GB",
@@ -194,10 +210,26 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"command-r-plus:104b": "59GB",
 +	"command-r-plus:104b-08-2024-q8_0": "110GB",
 +	"command-r-plus:104b-08-2024-fp16": "208GB",
++	"command-r7b:7b": "5.1GB",
++	"command-r7b:7b-12-2024-fp16": "16GB",
++	"command-r7b:7b-12-2024-q8_0": "8.5GB",
++	"command-r7b-arabic:7b": "5.1GB",
++	"command-r7b-arabic:7b-02-2025-fp16": "16GB",
++	"command-r7b-arabic:7b-02-2025-q8_0": "8.5GB",
 +	"dbrx:132b": "74GB",
 +	"dbrx:instruct": "74GB",
 +	"dbrx:132b-instruct-q8_0": "140GB",
 +	"dbrx:132b-instruct-fp16": "263GB",
++	"deepcoder:1.5b": "1.1GB",
++	"deepcoder:14b": "9.0GB",
++	"deepcoder:1.5b-preview-fp16": "3.6GB",
++	"deepcoder:1.5b-preview-q8_0": "1.9GB",
++	"deepcoder:14b-preview-fp16": "30GB",
++	"deepcoder:14b-preview-q8_0": "16GB",
++	"deepscaler:1.5b": "3.6GB",
++	"deepscaler:1.5b-preview-fp16b": "3.5GB",
++	"deepscaler:1.5b-preview-q4_K_Mb": "1.1GB",
++	"deepscaler:1.5b-preview-q8_0b": "1.9GB",
 +	"deepseek-coder-v2:16b": "8.9GB",
 +	"deepseek-coder-v2:236b": "133GB",
 +	"deepseek-coder-v2:lite": "8.9GB",
@@ -227,6 +259,27 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"deepseek-llm:7b-chat-fp16": "14GB",
 +	"deepseek-llm:67b-base-fp16": "135GB",
 +	"deepseek-llm:67b-chat-fp16": "135GB",
++	"deepseek-r1:1.5b": "1.1GB",
++	"deepseek-r1:7b": "4.7GB",
++	"deepseek-r1:8b": "4.9GB",
++	"deepseek-r1:14b": "9.0GB",
++	"deepseek-r1:32b": "20GB",
++	"deepseek-r1:70b": "43GB",
++	"deepseek-r1:671b": "404GB",
++	"deepseek-r1:1.5b-qwen-distill-fp16": "3.6GB",
++	"deepseek-r1:1.5b-qwen-distill-q8_0": "1.9GB",
++	"deepseek-r1:14b-qwen-distill-fp16": "30GB",
++	"deepseek-r1:14b-qwen-distill-q8_0": "16GB",
++	"deepseek-r1:32b-qwen-distill-fp16": "66GB",
++	"deepseek-r1:32b-qwen-distill-q8_0": "35GB",
++	"deepseek-r1:671b-fp16": "1.3TB",
++	"deepseek-r1:671b-q8_0": "713GB",
++	"deepseek-r1:70b-llama-distill-fp16": "141GB",
++	"deepseek-r1:70b-llama-distill-q8_0": "75GB",
++	"deepseek-r1:7b-qwen-distill-fp16": "15GB",
++	"deepseek-r1:7b-qwen-distill-q8_0": "8.1GB",
++	"deepseek-r1:8b-llama-distill-fp16": "16GB",
++	"deepseek-r1:8b-llama-distill-q8_0": "8.5GB",
 +	"deepseek-v2:16b": "8.9GB",
 +	"deepseek-v2:236b": "133GB",
 +	"deepseek-v2:lite": "8.9GB",
@@ -238,6 +291,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"deepseek-v2:236b-chat-fp16": "472GB",
 +	"deepseek-v2.5:236b": "133GB",
 +	"deepseek-v2.5:236b-q8_0": "251GB",
++	"deepseek-v3:671b": "404GB",
++	"deepseek-v3:671b-fp16": "1.3TB",
++	"deepseek-v3:671b-q8_0": "713GB",
 +	"disinfozone/telos": "5.1GB",
 +	"dolphin-llama3:8b": "4.7GB",
 +	"dolphin-llama3:70b": "40GB",
@@ -309,6 +365,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"dolphin-phi:2.7b-v2.6": "1.6GB",
 +	"dolphin-phi:2.7b-v2.6-q5_0": "1.9GB",
 +	"dolphin-phi:2.7b-v2.6-q8_0": "3.0GB",
++	"dolphin3:8b": "4.9GB",
++	"dolphin3:8b-llama3.1-fp16": "16GB",
++	"dolphin3:8b-llama3.1-q8_0": "8.5GB",
 +	"dolphincoder:7b": "4.1GB",
 +	"dolphincoder:15b": "9.1GB",
 +	"dolphincoder:7b-starcoder2": "4.2GB",
@@ -324,6 +383,15 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"duckdb-nsql:7b-fp16": "13GB",
 +	"ehartford/theprofessor:155b-q4_K_M": "93GB",
 +	"eramax/aura_v3:Q5": "5.1GB",
++	"exaone3.5:2.4b": "1.6GB",
++	"exaone3.5:7.8b": "4.8GB",
++	"exaone3.5:32b": "19GB",
++	"exaone3.5:2.4b-instruct-q8_0": "2.8GB",
++	"exaone3.5:2.4b-instruct-fp16": "5.3GB",
++	"exaone3.5:7.8b-instruct-q8_0": "8.3GB",
++	"exaone3.5:7.8b-instruct-fp16": "16GB",
++	"exaone3.5:32b-instruct-q8_0": "8.3GB",
++	"exaone3.5:32b-instruct-fp16": "64GB",
 +	"everythinglm:13b": "7.4GB",
 +	"everythinglm:13b-16k": "7.4GB",
 +	"everythinglm:13b-16k-q8_0": "14GB",
@@ -358,6 +426,18 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"falcon2:11b-q5_1": "8.4GB",
 +	"falcon2:11b-q8_0": "12GB",
 +	"falcon2:11b-fp16": "22GB",
++	"falcon3:1b": "1.8GB",
++	"falcon3:3b": "2.0GB",
++	"falcon3:7b": "4.6GB",
++	"falcon3:10b": "6.3GB",
++	"falcon3:1b-instruct-q8_0": "1.8GB",
++	"falcon3:1b-instruct-fp16": "3.3GB",
++	"falcon3:3b-instruct-q8_0": "3.4GB",
++	"falcon3:3b-instruct-fp16": "6.5GB",
++	"falcon3:7b-instruct-q8_0": "7.9GB",
++	"falcon3:7b-instruct-fp16": "15GB",
++	"falcon3:10b-instruct-q8_0": "11GB",
++	"falcon3:10b-instruct-fp16": "21GB",
 +	"firefunction-v2:70b": "40GB",
 +	"firefunction-v2:70b-q6_K": "58GB",
 +	"firefunction-v2:70b-q8_0": "75GB",
@@ -407,6 +487,18 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"gemma2:9b-text-fp16": "18GB",
 +	"gemma2:27b-instruct-fp16": "54GB",
 +	"gemma2:27b-text-fp16": "54GB",
++	"gemma3:1b": "815MB",
++	"gemma3:4b": "3.3GB",
++	"gemma3:12b": "8.1GB",
++	"gemma3:27b": "17GB",
++	"gemma3:12b-it-fp16": "24GB",
++	"gemma3:12b-it-q8_0": "13GB",
++	"gemma3:1b-it-fp16": "2.0GB",
++	"gemma3:1b-it-q8_0": "1.1GB",
++	"gemma3:27b-it-fp_16": "55GB",
++	"gemma3:27b-it-q8_0": "30GB",
++	"gemma3:4b-it-fp16": "8.6GB",
++	"gemma3:4b-it-q8_0": "5.0GB",
 +	"glm4:9b": "5.5GB",
 +	"glm4:9b-chat-q5_1": "7.1GB",
 +	"glm4:9b-text-q5_1": "7.1GB",
@@ -419,6 +511,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"goliath:120b-q4_0": "66GB",
 +	"goliath:120b-q8_0": "125GB",
 +	"goliath:120b-fp16": "236GB",
++	"gpt-oss:20b": "14GB",
++	"gpt-oss:120b": "64GB",
 +	"granite-code:3b": "2.0GB",
 +	"granite-code:8b": "4.6GB",
 +	"granite-code:20b": "12GB",
@@ -453,6 +547,11 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"granite-code:8b-instruct-fp16": "16GB",
 +	"granite-code:20b-base-fp16": "40GB",
 +	"granite-code:20b-instruct-8k-fp16": "40GB",
++	"granite-embedding:30m": "63MB",
++	"granite-embedding:278m": "563MB",
++	"granite-embedding:30m-en": "63MB",
++	"granite-embedding:30m-en-fp16": "63MB",
++	"granite-embedding:278m-fp16": "563MB",
 +	"granite3-dense:2b": "1.6GB",
 +	"granite3-dense:8b": "4.9GB",
 +	"granite3-dense:2b-instruct-q5_1": "2.0GB",
@@ -461,12 +560,41 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"granite3-dense:8b-instruct-q8_0": "8.7GB",
 +	"granite3-dense:2b-instruct-fp16": "5.3GB",
 +	"granite3-dense:8b-instruct-fp16": "16GB",
++	"granite3.1-dense:2b": "1.6GB",
++	"granite3.1-dense:8b": "5.0GB",
++	"granite3.1-dense:2b-instruct-fp16": "5.1GB",
++	"granite3.1-dense:2b-instruct-q5_K_S": "1.8GB",
++	"granite3.1-dense:2b-instruct-q6_K": "2.1GB",
++	"granite3.1-dense:2b-instruct-q8_0": "2.7GB",
++	"granite3.1-dense:8b-instruct-q6_K": "6.7GB",
++	"granite3.1-dense:8b-instruct-q8_0": "8.7GB",
++	"granite3.1-dense:8b-instruct-fp16": "16GB",
++	"granite3-guardian:2b": "2.7GB",
++	"granite3-guardian:8b": "5.8GB",
++	"granite3-guardian:2b-q8_0": "2.7GB",
++	"granite3-guardian:2b-fp16": "5.1GB",
++	"granite3-guardian:8b-q6_K": "6.7GB",
++	"granite3-guardian:8b-q8_0": "8.7GB",
++	"granite3-guardian:8b-fp16": "16GB",
 +	"granite3-moe:1b": "822MB",
 +	"granite3-moe:3b": "2.1GB",
 +	"granite3-moe:1b-instruct-q8_0": "1.4GB",
 +	"granite3-moe:3b-instruct-q8_0": "3.6GB",
 +	"granite3-moe:1b-instruct-fp16": "2.7GB",
 +	"granite3-moe:3b-instruct-fp16": "6.8GB",
++	"granite3.1-moe:1b": "1.4GB",
++	"granite3.1-moe:3b": "2.0GB",
++	"granite3.1-moe:1b-instruct-q5_K_S": "941MB",
++	"granite3.1-moe:1b-instruct-q6_K": "1.1GB",
++	"granite3.1-moe:1b-instruct-q8_0": "1.4GB",
++	"granite3.1-moe:1b-instruct-fp16": "2.7GB",
++	"granite3.1-moe:3b-instruct-q8_0": "3.5GB",
++	"granite3.1-moe:3b-instruct-fp16": "6.6GB",
++	"granite3.2-vision:2b": "2.4GB",
++	"granite3.2-vision:2b-fp16": "6.0GB",
++	"granite3.2-vision:2b-q8_0": "3.6GB",
++	"granite3.3:2b": "1.5GB",
++	"granite3.3:8b": "4.9GB",
 +	"hemanth/chessplayer": "3.8GB",
 +	"hermes3:8b": "4.7GB",
 +	"hermes3:70b": "40GB",
@@ -625,6 +753,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3.1:70b-text-fp16": "141GB",
 +	"llama3.1:405b-instruct-fp16": "812GB",
 +	"llama3.1:405b-text-fp16": "812GB",
++	"llama3.2-vision:11b":  "7.9GB",
++	"llama3.2-vision:90b":  "55GB",
++	"llama3.2-vision:11b-instruct-q8_0":  "12GB",
++	"llama3.2-vision:11b-instruct-fp16":  "21GB",
++	"llama3.2-vision:90b-instruct-q8_0":  "95GB",
++	"llama3.2-vision:90b-instruct-fp16":  "177GB",
 +	"llama3.2:3b": "2.0GB",
 +	"llama3.2:1b": "1.3GB",
 +	"llama3.2:1b-instruct-q5_1": "953MB",
@@ -639,6 +773,20 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3.2:1b-text-fp16": "2.5GB",
 +	"llama3.2:3b-instruct-fp16": "6.4GB",
 +	"llama3.2:3b-text-fp16": "6.4GB",
++	"llama3.3:70b": "43GB",
++	"llama3.3:70b-instruct-fp16": "141GB",
++	"llama3.3:70b-instruct-q8_0": "75GB",
++	"llama3.3:70b-instruct-q6_K": "58GB",
++	"llama4:maverick": "245GB",
++	"llama4:scout": "67GB",
++	"llama4:16x17b": "67GB",
++	"llama4:128x17b": "245GB",
++	"llama4:17b-maverick-128e-instruct-q4_K_M": "245GB",
++	"llama4:17b-maverick-128e-instruct-q8_0": "428GB",
++	"llama4:17b-maverick-128e-instruct-fp16": "803GB",
++	"llama4:17b-scout-128e-instruct-q4_K_M": "67GB",
++	"llama4:17b-scout-128e-instruct-q8_0": "117GB",
++	"llama4:17b-scout-128e-instruct-fp16": "217GB",
 +	"llama-guard3:1b": "1.6GB",
 +	"llama-guard3:8b": "4.9GB",
 +	"llama-guard3:1b-q4_1": "996MB",
@@ -698,6 +846,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mannix/smaug-qwen2-72b:q5_1": "55GB",
 +	"mannix/smaug-qwen2-72b:q6_K": "64GB",
 +	"mannix/smaug-qwen2-72b:q8_0": "77GB",
++	"marco-o1:7b": "4.7GB",
++	"marco-o1:7b-fp16": "15GB",
++	"marco-o1:7b-q8_0": "8.1GB",
 +	"mathstral:7b": "4.1GB",
 +	"mathstral:7b-v0.1-q8_0": "7.7GB",
 +	"mathstral:7b-v0.1-fp16": "14GB",
@@ -742,16 +893,22 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mistral:7b-instruct-v0.3-fp16": "14GB",
 +	"mistral:7b-text-fp16": "14GB",
 +	"mistral:7b-text-v0.2-fp16": "14GB",
-+	"mistral-large:123b": "69GB",
++	"mistral-large:123b": "73GB",
 +	"mistral-large:123b-instruct-2407-q6_K": "101GB",
 +	"mistral-large:123b-instruct-2407-q8_0": "130GB",
 +	"mistral-large:123b-instruct-2407-fp16": "245GB",
++	"mistral-large:123b-instruct-2411-q6_K": "101GB",
++	"mistral-large:123b-instruct-2411-q8_0": "130GB",
++	"mistral-large:123b-instruct-2411-fp16": "245GB",
 +	"mistral-nemo:12b": "7.1GB",
 +	"mistral-nemo:12b-instruct-2407-q8_0": "13GB",
 +	"mistral-nemo:12b-instruct-2407-fp16": "25GB",
 +	"mistral-openorca:7b": "4.1GB",
 +	"mistral-openorca:7b-q8_0": "7.7GB",
 +	"mistral-openorca:7b-fp16": "14GB",
++	"mistral-small3.1:24b": "15GB",
++	"mistral-small3.1:24b-instruct-2503-fp16": "48GB",
++	"mistral-small3.1:24b-instruct-2503-q8_0": "26GB",
 +	"mistral-small:22b": "13GB",
 +	"mistral-small:22b-instruct-2409-q5_0": "15GB",
 +	"mistral-small:22b-instruct-2409-q5_K_S": "15GB",
@@ -879,6 +1036,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"nuextract:3.8b": "2.2GB",
 +	"nuextract:3.8-q8_0": "3.1GB",
 +	"nuextract:3.8-fp16": "7.6GB",
++	"olmo2:7b": "4.5GB",
++	"olmo2:13b": "8.4GB",
++	"olmo2:7b-1124-instruct-fp16": "27GB",
++	"olmo2:7b-1124-instruct-q8_0": "15GB",
++	"olmo2:13b-1124-instruct-fp16": "15GB",
++	"olmo2:13b-1124-instruct-q8_0": "7.8GB",
 +	"open-orca-platypus2:13b": "7.4GB",
 +	"open-orca-platypus2:13b-q8_0": "14GB",
 +	"open-orca-platypus2:13b-fp16": "26GB",
@@ -892,6 +1055,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"openchat:7b-v3.5-fp16": "14GB",
 +	"openchat:7b-v3.5-0106-fp16": "14GB",
 +	"openchat:7b-v3.5-1210-fp16": "14GB",
++	"opencoder:1.5b": "1.4GB",
++	"opencoder:8b": "4.7GB",
++	"opencoder:1.5b-instruct-q8_0": "2.0GB",
++	"opencoder:1.5b-instruct-fp16": "3.8GB",
++	"opencoder:8b-instruct-q8_0": "8.3GB",
++	"opencoder:8b-instruct-fp16": "16GB",
 +	"openhermes:v2.5": "4.1GB",
 +	"openhermes:v2": "4.1GB",
 +	"openhermes:7b-v2": "4.1GB",
@@ -900,6 +1069,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"openhermes:7b-mistral-v2.5-q8_0": "7.7GB",
 +	"openhermes:7b-mistral-v2-fp16": "14GB",
 +	"openhermes:7b-mistral-v2.5-fp16": "14GB",
++	"openthinker:7b": "4.7GB",
++	"openthinker:32b": "20GB",
++	"openthinker:32b-fp16": "66GB",
++	"openthinker:32b-q8_0": "35GB",
++	"openthinker:7b-fp16": "15GB",
++	"openthinker:7b-q8_0": "8.1GB",
 +	"orca-mini:3b": "2.0GB",
 +	"orca-mini:7b": "3.8GB",
 +	"orca-mini:13b": "7.4GB",
@@ -963,6 +1138,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"phi3.5:3.8b": "2.2GB",
 +	"phi3.5:3.8b-mini-instruct-q8_0": "4.1GB",
 +	"phi3.5:3.8b-mini-instruct-fp16": "7.6GB",
++	"phi4:14b": "9.1GB",
++	"phi4:14b-fp16": "29GB",
++	"phi4:14b-q8_0": "16GB",
++	"phi4-mini:3.8b": "2.5GB",
++	"phi4-mini:3.8b-fp16": "7.7GB",
++	"phi4-mini:3.8b-q8_0": "4.1GB",
 +	"phind-codellama:34b": "19GB",
 +	"phind-codellama:34b-python": "19GB",
 +	"phind-codellama:34b-v2": "19GB",
@@ -1118,6 +1299,47 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen2.5-coder:1.5b-instruct-fp16": "3.1GB",
 +	"qwen2.5-coder:7b-base-fp16": "15GB",
 +	"qwen2.5-coder:7b-instruct-fp16": "15GB",
++	"qwen3:0.6b": "523MB",
++	"qwen3:1.7b": "1.4GB",
++	"qwen3:4b": "2.5GB",
++	"qwen3:8b": "5.2GB",
++	"qwen3:14b": "9.3GB",
++	"qwen3:30b": "19GB",
++	"qwen3:32b": "20GB",
++	"qwen3:235b": "142GB",
++	"qwen3:0.6b-q8_0": "832GB",
++	"qwen3:0.6b-fp16": "1.5GB",
++	"qwen3:1.7b-q8_0": "2.2GB",
++	"qwen3:1.7b-fp16": "4.1GB",
++	"qwen3:4b-instruct": "2.5GB",
++	"qwen3:4b-instruct-2507-q8_0": "4.3GB",
++	"qwen3:4b-instruct-2507-fp16": "8.1GB",
++	"qwen3:4b-q8_0": "4.4GB",
++	"qwen3:4b-fp16": "8.1GB",
++	"qwen3:8b-q8_0": "8.9GB",
++	"qwen3:8b-fp16": "16GB",
++	"qwen3:14b-q8_0": "16GB",
++	"qwen3:14b-fp16": "30GB",
++	"qwen3:30b-a3b-instruct-2507-q4_K_M": "19GB",
++	"qwen3:30b-a3b-instruct-2507-q8_0": "32GB",
++	"qwen3:30b-a3b-instruct-2507-fp16": "61GB",
++	"qwen3:30b-a3b-q8_0": "33GB",
++	"qwen3:30b-a3b-fp16": "61GB",
++	"qwen3:32b-q8_0": "35GB",
++	"qwen3:32b-fp16": "66GB",
++	"qwen3:235b-a22b-instruct-2507-q4_K_M": "142GB",
++	"qwen3:235b-a22b-instruct-2507-q8_0": "250GB",
++	"qwen3:235b-a22b-q8_0": "250GB",
++	"qwen3:235b-a22b-fp16": "470GB",
++	"qwq:32b": "20GB",
++	"qwq:32b-preview-fp16": "66GB",
++	"qwq:32b-preview-q8_0": "35GB",
++	"r1-1776:70b": "43GB",
++	"r1-1776:70b-distill-llama-fp16": "141GB",
++	"r1-1776:70b-distill-llama-q8_0": "75GB",
++	"r1-1776:671b": "404GB",
++	"r1-1776:671b-fp16": "1.3TB",
++	"r1-1776:671b-q8_0": "713GB",
 +	"reader-lm:0.5b": "352MB",
 +	"reader-lm:1.5b": "935MB",
 +	"reader-lm:0.5b-q5_1": "419MB",
@@ -1145,6 +1367,15 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"rouge/replete-coder-qwen2-1.5b:latest": "6.2GB",
 +	"rouge/replete-coder-qwen2-1.5b:Q8": "1.9GB",
 +	"rouge/replete-coder-qwen2-1.5b:f16": "3.1GB",
++	"sailor2:1b": "1.1GB",
++	"sailor2:8b": "5.2GB",
++	"sailor2:20b": "12GB",
++	"sailor2:1b-chat-fp16": "2.0GB",
++	"sailor2:1b-chat-q8_0": "1.1GB",
++	"sailor2:8b-chat-fp16": "17GB",
++	"sailor2:8b-chat-q8_0": "9.1GB",
++	"sailor2:20b-chat-fp16": "38GB",
++	"sailor2:20b-chat-q8_0": "20GB",
 +	"samantha-mistral:7b": "4.1GB",
 +	"samantha-mistral:7b-text": "4.1GB",
 +	"samantha-mistral:7b-v1.2-text": "4.1GB",
@@ -1163,6 +1394,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"shieldgemma:2b-fp16": "5.2GB",
 +	"shieldgemma:9b-fp16": "18GB",
 +	"shieldgemma:27b-fp16": "54GB",
++	"smallthinker:3b": "3.6GB",
++	"smallthinker:3b-preview-fp16": "6.8GB",
++	"smallthinker:3b-preview-q8_0": "3.6GB",
 +	"smollm:135m": "92MB",
 +	"smollm:360m": "229MB",
 +	"smollm:1.7b": "991MB",
@@ -1247,6 +1481,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"snowflake-arctic-embed:110m-m-fp16": "219MB",
 +	"snowflake-arctic-embed:137m-m-long-fp16": "274MB",
 +	"snowflake-arctic-embed:335m-l-fp16": "669MB",
++	"snowflake-arctic-embed2:568m": "1.2GB",
++	"snowflake-arctic-embed2:568m-l-fp16": "1.2GB",
 +	"solar:10.7b": "6.1GB",
 +	"solar:10.7b-instruct-v1-q5_0": "7.4GB",
 +	"solar:10.7b-text-v1-q5_0": "7.4GB",
@@ -1407,6 +1643,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"tinyllama:1.1b-chat-v1-q5_K_M": "783MB",
 +	"tinyllama:1.1b-chat-v1-q6_K": "904MB",
 +	"tinyllama:1.1b-chat-v1-q8_0": "1.2GB",
++	"tulu3:8b": "4.9GB",
++	"tulu3:70b": "43GB",
++	"tulu3:70b-q8_0": "75GB",
++	"tulu3:70b-fp16": "141GB",
++	"tulu3:8b-q8_0": "8.5GB",
++	"tulu3:8b-fp16": "16GB",
 +	"vicuna:7b": "3.8GB",
 +	"vicuna:13b": "7.4GB",
 +	"vicuna:33b": "18GB",
@@ -1641,7 +1883,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"all-minilm": 1,
 +	"Artalius/lixi": 1,
 +	"artifish/mlewd-v2.4": 1,
++	"athene-v2": 1,
 +	"aya": 1,
++	"aya-expanse": 1,
 +	"bakllava": 1,
 +	"bespoke-minicheck": 1,
 +	"bge-large": 1,
@@ -1664,33 +1908,50 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"codeqwen": 1,
 +	"codestral": 1,
 +	"codeup": 1,
++	"command-a": 1,
 +	"command-r": 1,
 +	"command-r-plus": 1,
++	"command-r7b": 1,
++	"command-r7b-arabic": 1,
 +	"dbrx": 1,
 +	"disinfozone/telos": 1,
++	"deepcoder": 1,
++	"deepscaler": 1,
 +	"deepseek-coder": 1,
 +	"deepseek-coder-v2": 1,
 +	"deepseek-llm": 1,
++	"deepseek-r1": 1,
 +	"deepseek-v2": 1,
 +	"deepseek-v2.5": 1,
++	"deepseek-v3": 1,
 +	"dolphin-llama3": 1,
 +	"dolphin-mistral": 1,
 +	"dolphin-mixtral": 1,
 +	"dolphin-phi": 1,
++	"dolphin3": 1,
 +	"dolphincoder": 1,
 +	"duckdb-nsql": 1,
 +	"ehartford/theprofessor": 1,
 +	"eramax/aura_v3": 1,
++	"exaone3.5": 1,
 +	"everythinglm": 1,
 +	"falcon": 1,
 +	"falcon2": 1,
++	"falcon3": 1,
 +	"firefunction-v2": 1,
 +	"fixt/home-3b-v3": 1,
 +	"fixt/home-3b-v2": 1,
 +	"goliath": 1,
++	"gpt-oss": 1,
 +	"granite-code": 1,
++	"granite-embedding": 1,
 +	"granite3-dense": 1,
++	"granite3.1-dense": 1,
++	"granite3-guardian": 1,
 +	"granite3-moe": 1,
++	"granite3.1-moe": 1,
++	"granite3.2-vision": 1,
++	"granite3.3": 1,
 +	"hemanth/chessplayer": 1,
 +	"hermes3": 1,
 +	"hookingai/monah-8b": 1,
@@ -1710,17 +1971,22 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3-groq-tool-use": 1,
 +	"llama3.1": 1,
 +	"llama3.2": 1,
++	"llama3.2-vision": 1,
++	"llama3.3": 1,
++	"llama4": 1,
 +	"llava": 1,
 +	"llava-llama3": 1,
 +	"llava-phi3": 1,
 +	"gemma": 1,
 +	"gemma2": 1,
++	"gemma3": 1,
 +	"glm4": 1,
 +	"magicoder": 1,
 +	"mannix/llamax3-8b-alpaca": 1,
 +	"mannix/replete-adapted-llama3-8b": 1,
 +	"mannix/replete-coder-llama3-8b": 1,
 +	"mannix/smaug-qwen2-72b": 1,
++	"marco-o1": 1,
 +	"mathstral": 1,
 +	"meditron": 1,
 +	"medllama2": 1,
@@ -1730,6 +1996,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mistral-large": 1,
 +	"mistral-nemo": 1,
 +	"mistral-openorca": 1,
++	"mistral-small3.1": 1,
 +	"mistral-small": 1,
 +	"mistrallite": 1,
 +	"mixtral": 1,
@@ -1750,9 +2017,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"nous-hermes2": 1,
 +	"nous-hermes2-mixtral": 1,
 +	"nuextract": 1,
++	"olmo2": 1,
 +	"open-orca-platypus2": 1,
 +	"openchat": 1,
++	"opencoder": 1,
 +	"openhermes": 1,
++	"openthinker": 1,
 +	"orca-mini": 1,
 +	"orca2": 1,
 +	"paraphrase-multilingual": 1,
@@ -1760,12 +2030,17 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"phi": 1,
 +	"phi3": 1,
 +	"phi3.5": 1,
++	"phi4": 1,
++	"phi4-mini": 1,
 +	"phind-codellama": 1,
 +	"qwen": 1,
 +	"qwen2": 1,
 +	"qwen2-math": 1,
 +	"qwen2.5": 1,
 +	"qwen2.5-coder": 1,
++	"qwen3": 1,
++	"qwq": 1,
++	"r1-1776": 1,
 +	"reader-lm": 1,
 +	"reefer/her2": 1,
 +	"reefer/minimonica": 1,
@@ -1773,12 +2048,15 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"reflection": 1,
 +	"rfc/whiterabbitneo": 1,
 +	"rouge/replete-coder-qwen2-1.5b": 1,
++	"sailor2": 1,
 +	"samantha-mistral": 1,
 +	"sammcj/smaug-mixtral-v0.1": 1,
 +	"savethedoctor/whiterabbitneo13bq8_0": 1,
 +	"shieldgemma": 1,
++	"smallthinker": 1,
 +	"smollm": 1,
 +	"snowflake-arctic-embed": 1,
++	"snowflake-arctic-embed2": 1,
 +	"solar": 1,
 +	"solar-pro": 1,
 +	"sparksammy/samantha": 1,
@@ -1798,6 +2076,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"themanofrod/travel-agent": 1,
 +	"tinydolphin": 1,
 +	"tinyllama": 1,
++	"tulu3": 1,
 +	"vicuna": 1,
 +	"wizard-math": 1,
 +	"wizard-vicuna": 1,
@@ -1818,6 +2097,13 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +var tagsList = map[string]string{
 +	// Quality control:
 +	// It is preferred to drop languages or capabilities if they are below 70% score
++	// If without : variant, it assumes :latest.  The latest should again follow 70% score.
++	//
++	// Example:
++	// llama3.1 is the same as llama:3.1:3b and can list instruction-following because it is at or above 70% score.
++	// llama3.1:1b should not list instruction-following because it is 59.5% score.
++	//
++	// 70% is chosen because it a Grade C from grade school which is a passing grade.
 +	"adens/quran-guide": "quran muslim islam allah",
 +	"agcobra/liberated-qwen1.5-72b": "uncensored safety-off multilingual general-knowledge math-word-problems arabic french vietnamese korean japanese spanish indonesian portuguese russian",
 +	"akx/viking-7b": "multilingual finnish english swedish danish norwegian icelandic coding code-generator",
@@ -1837,7 +2123,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"all-minilm": "embedding",
 +	"Artalius/lixi": "writer developer companion code-optimization fun-facts idea-generator wordsmith cloud-developer coding coding-assistant computer-science anime manga erotica nsfw japanese-alignment japanese-pop-culture uncensored gamer gamer-girl ai-girlfriend girlfriend funny",
 +	"artifish/mlewd-v2.4": "nsfw adult-content",
++	"athene-v2": "chat coding code-completion math-word-problems log-extraction general-knowledge",
 +	"aya": "multilingual arabic chinese czech dutch english french german greek hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
++	"aya-expanse": "text-generator tool-use qa multilingual arabic chinese-simplified chinese-traditional czech dutch english french german greek hebrew hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
 +	"bakllava": "image-deconstruction image-describe image-to-text image-summary ocr optical-character-recognition",
 +	"benevolentjoker/bethanygpt": "nsfw adult-content multiple-personalities",
 +	"benevolentjoker/belial": "devil fiction dark-personality",
@@ -1860,34 +2148,53 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"codeqwen": "coding code-generation fixing-bugs",
 +	"codestral": "coding code-generation solving-basic-programming-problems fim fill-in-the-middle unit-test-generator python",
 +	"codeup": "coding code-generation",
++	"command-a": "conversational chatbot rag tool-use coding multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"command-r": "rag tool-use english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
++	"command-r7b": "tool-use ai-applications for-gpus for-edge-devices reasoning qa coding rag  multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
++	"command-r7b-arabic": "rag middle-east northern-africa arabic instruction-following high-level-reasoning chain-of-thought multi-step-reasoning",
 +	"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
++	"deepcoder": "code-reasoning finetuned-deepseek-r1-distilled-qwen code-generation coding",
++	"deepscaler": "math-word-problems calculus statistics fine-tuned-deepseek-r1-distilled-qwen",
 +	"deepseek-coder": "coding english chinese code-completion fim fill-in-the-middle python",
 +	"deepseek-coder-v2": "coding code-completion code-insertion code-generator",
 +	"deepseek-llm": "bilingual common-sense basic-reasoning trivia chinese english general-knowledge china-alignment china-bias",
++	"deepseek-r1": "math-word-problems graduate-level-stem general-knowledge calculus statistics china-alignment china-bias china-censorship",
 +	"deepseek-v2": "bilinugual chinese english common-sense reasoning general-knowledge trivia math-word-problems china-alignment china-bias",
 +	"deepseek-v2:236b": "bilinugual chinese english common-sense reasoning general-knowledge trivia math-word-problems china-alignment china-bias",
 +	"deepseek-v2.5": "chat coding code-generator python common-sense reasoning instruction-following general-knowledge trivia math-word-problems chinese china-alignment china-bias",
++	"deepseek-v3": "general-knowledge trivia common-sense reasoning instruction-following coding code-generation python math-word-problems college-level-math graduate-level-stem stem calculus statistics chinese multilingual china-alignment china-bias",
 +	"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
 +	"dolphin-llama3": "uncensored coding function-calling chat fine-tunable-alignment",
 +	"dolphin-mistral": "uncensored coding function-calling chat fine-tunable-alignment",
 +	"dolphin-mixtral": "uncensored coding chat function-calling fine-tunable-alignment game-design humor prank-suggestions confessions",
 +	"dolphin-phi": "uncensored coding fine-tunable-alignment",
++	"dolphin3": "general-purpose coding math function-calling assistant",
 +	"dolphincoder": "uncensored coding coding-assistant",
 +	"duckdb-nsql": "coding sql",
 +	"ehartford/theprofessor": "brainstorming research reasoning science medical math computer-science physics cosmology professor theoretical-explanations",
 +	"eramax/aura_v3": "nsfw erotica roleplay",
++	"exaone3.5": "coding code-generation general-knowledge math-word-problems common-sense multilingual english korean",
 +	"everythinglm": "uncensored detailed-replies story-telling",
 +	"falcon": "llm-research",
 +	"falcon2": "llm-research",
++	"falcon3": "science math coding",
 +	"firefunction-v2": "chat instruction-following function-calling parsing",
 +	"fixt/home-3b-v3": "home-assistant smart-home function-calling multilingual english german spanish french",
 +	"fixt/home-3b-v2": "home-assistant smart-home function-calling",
 +	"goliath": "detailed-response roleplay detailed-roleplay",
++	"gpt-oss": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge graduate-level-reasoning",
 +	"granite-code": "coding code-generation fixing-bugs documentation assistant fine-tunable",
++	"granite-embedding": "embeddings english",
++	"granite-embedding:30m": "embeddings english",
++	"granite-embedding:278m": "embeddings multilingual",
 +	"granite3-dense": "summaries text-classification text-extraction qa rag code-related function-calling tool-use code-generation translation bug-fixing multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
-+	"granite3-moe": "low-latency summaries text-classification text-extraction qa rag code-related function-calling multilanguage english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
++	"granite3.1-dense": "tool-use rag summaries text-classification text-extraction qa code-related function-calling multilingual long-context english german spanish french japanese portuguese arabic czech italian korean dutch simplified-chinese",
++	"granite3-guardian": "security jailbreak-detection content-moderation guardrails nsfw-detection rag",
++	"granite3-moe": "low-latency summaries text-classification text-extraction qa rag code-related function-calling multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
++	"granite3.1-moe": "low-latency long-context summaries text-classification text-extraction qa rag code-related function-calling multilingual english german spanish french japanese portuguese arabic czech italian korean dutch simplified-chinese",
++	"granite3.2-vision": "content-extraction vision-language-model documents tables charts plots diagrams document-understanding ocr optical-character-recognition document-qa",
++	"granite3.3": "reasoning instruction-following fill-in-the-middle coding summaries text-classification text-extraction qa rag long-context document-qa business business-apps multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
 +	"hemanth/chessplayer": "chess chess-player white-player ai-moves-first",
 +	"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
 +	"hookingai/monah-8b": "online-dating hook-up llm-trainer nsfw adult-content uncensored",
@@ -1909,18 +2216,28 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3-gradient": "assistant",
 +	"llama3-groq-tool-use": "function-calling tool-use",
 +	"llama3.1": "multilingual chat translation summaries coding coding-assistant general-knowledge",
-+	"llama3.2": "multilingual chat instruction-following summaries",
-+	"llava": "ocr optical-character-recognition image-to-text chat chatbot",
++	"llama3.2": "multilingual chat instruction-following summaries english german french italian portuguese hindi spanish thai",
++	"llama3.2-vision": "multilingual chat instruction-following summaries vision ocr optical-character-recognition english english-only-vision german french italian portuguese hindi spanish thai",
++	"llama3.3": "general-knowledge instruction-following code-generation math-word-problems college-level-math calculus statistics tool-use multilingual english german french italian portuguese hindi spanish thai multilingual-commercial multilingual-research",
++	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
 +	"gemma": "text-generation qa summaries common-sense programming-tutor answering-questions",
 +	"gemma2": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning",
++	"gemma3": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa easy-reasoning physical-common-sense",
++	"gemma3:4b": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa document-qa easy-reasoning physical-common-sense yes-no-questions",
++	"gemma3:12b": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa document-qa easy-reasoning math-word-problems trivia physical-common-sense yes-no-questions",
++	"gemma3:27b": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa document-qa easy-reasoning challenging-reasoning math-word-problems triva physical-common-sense yes-no-questions multilingual-math chart-reasoning",
 +	"glm4": "math-word-problems coding multilingual",
-+	"glm4:-chat": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-q5_1": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-q6_K": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-q8_0": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-fp16": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"magicoder": "coding code-generation open-source-coding",
 +	"mannix/llamax3-8b-alpaca": "multilingual intruction-following akrikaans amharic arabic armenian assamese asturian azerbaijani belarusian bengali bosnian bulgarian burmese catalan cebuano chinese simplified-chinese traditional-chinese croatian czech danish dutch english estonian filipino finnish french fulah galician ganda georgian german greek gujarati hausa hebrew hindi hungarian icelandic igbo indonesian irish italian japanese javanese kabuverdianu kamba kannada kazakh khmer korean kyrgyz lao latvian lingala lithuanian luo luxembourgish macedonian malay malayalam maltese maori marathi mongolian nepali northern sotho norwegian nyanja occitan oriya oromo pashto persian polish portuguese punjabi romanian russian serbian shona sindhi slovak slovenian somali sorani kurdish spanish swahili swedish tajik tamil telugu thai turkish ukrainian umbundu urdu uzbek vietnamese welsh wolof xhosa yoruba zulu",
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
 +	"mannix/replete-coder-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention",
++	"marco-o1": "open-ended-resolution open-ended-problem-solving chain-of-thought math-word-problems salesperson stem-standard-answers math physics coding",
 +	"mathstral": "math-word-problems",
 +	"meditron": "medical diseases health-information medical-exam qa",
 +	"medllama2": "medical qa",
@@ -1930,7 +2247,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mistral-large": "multilingual french german spanish italian dutch portuguese russian japanese chinese coding code-generation solving-basic-programming-problems math-word-problems function-calling json",
 +	"mistral-nemo": "multilingual english french german spanish italian portuguese chinese korean arabic hindi common-sense trivia function-calling",
 +	"mistral-openorca": "common-sense",
-+	"mistral-small": "translation summaries",
++	"mistral-small3.1": "translation summaries vision long-context multilingual english french german spanish italian chinese japanese korean portuguese dutch polish function-calling",
++	"mistral-small": "translation summaries multilingual english french german spanish italian chinese japanese korean portuguese dutch polish function-calling",
 +	"mistrallite": "answering-long-questions qa common-sense",
 +	"mixtral": "multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable",
 +	"moondream": "picture-to-text qa image-deconstruction whats-that identify-in-picture",
@@ -1950,9 +2268,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"nqduc/mixsura": "vietnamese vietnam-alignment vietnam-bias english text-generator qa summary classification translation coding code-generator reasoning",
 +	"nqduc/mixsura-sft": "vietnamese vietnam-alignment vietnam-bias english text-generator qa summary classification translation coding code-generator reasoning",
 +	"nuextract": "structured-data-generation",
++	"olmo2": "common-sense reasoning trivia fully-open-model",
 +	"open-orca-platypus2": "chat coding code-generation text-generation common-sense",
 +	"openchat": "math-word-problems",
++	"opencoder": "coding code-generation multilingual chinese english",
 +	"openhermes": "chat cooking-recipes coding-by-example college-level-response",
++	"openthinker": "math-word-problems calculus statistics fully-open-sourced deepseek-r1-distilled",
++	"openthinker:32b": "math-word-problems calculus statistics fully-open-sourced deepseek-r1-distilled",
++	"openthinker:7b": "math-word-problems calculus statistics fully-open-sourced deepseek-r1-distilled",
 +	"orca-mini": "general-purpose writing-letters",
 +	"orca2": "assistant summaries abstract-reasoning",
 +	"paraphrase-multilingual": "embedding clustering semantic-search",
@@ -1960,6 +2283,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"phi": "chat street-directions coding code-generator code-competion text-completion qa answering-questions",
 +	"phi3": "common-sense trivia english math logic math-word-problems solving-basic-programming-problems",
 +	"phi3.5": "coding math logic teacher fact-check chat multilingual arabic chinese czech danish dutch english finnish french german hebrew hungarian italian japanese korean norwegian polish portuguese russian spanish swedish thai turkish ukrainian",
++	"phi4": "general-knowledge reasoning logic",
++	"phi4-mini": "abstract-reasoning qa math-word-problems physical-common-sense tool-use",
 +	"phind-codellama": "coding code-generation",
 +	"phind-codellama:34b-python": "coding code-generation python",
 +	"qwen": "china-alignment china-bias multilingual chat chinese english coding solving-basic-programming-problems",
@@ -1968,6 +2293,13 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen2.5": "china-alignment china-bias multilingual chat roleplay coding parsing json math instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5:72b": "china-alignment china-bias multilingual chat roleplay general-knowledge math-word-problems college-level-math calculus statistics coding code-generation python parsing json instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs",
++	"qwen3": "china-alignment china-bias multilingual",
++	"qwen3:235b-a22b-instruct-2507-q4_K_M": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
++	"qwen3:235b-a22b-instruct-2507-q8_0": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
++	"qwen3:235b-a22b-q8_0": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
++	"qwen3:235b-a22b-fp16": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
++	"qwq": "math-word-problems reasoning graduate-level-reasoning graduate-level-stem graduate-level-science biology physics chemistry college-level-math calculus statistics",
++	"r1-1776": "deepseek-r1-with-additional-post-training american-bias american-alignment uncensored general-knowledge math-word-problems calculus statistics reasoning",
 +	"reader-lm": "html-to-markdown",
 +	"reefer/her2": "erotica assistant adult-content ai-girlfriend girlfriend chat",
 +	"reefer/minimonica": "erotica assistant adult-content ai-girlfriend girlfriend chat",
@@ -1975,13 +2307,19 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"reflection": "reasoning",
 +	"rfc/whiterabbitneo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"rouge/replete-coder-qwen2-1.5b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention mobile",
++	"sailor2": "southeast-asia south-east-asia sea s-e-a multilingual english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
++	"sailor2:8b": "southeast-asia south-east-asia sea s-e-a multilingual production-ready english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
++	"sailor2:20b": "southeast-asia south-east-asia sea s-e-a multilingual production-ready english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
++	"sailor2:1b": "southeast-asia south-east-asia sea s-e-a multilingual research english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
 +	"samantha-mistral": "philosopher psychologist dating-coach",
 +	"sammcj/smaug-mixtral-v0.1": "fine-tuned-mixtral optimized-mixtral multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable abstract-reasoning",
 +	"savethedoctor/whiterabbitneo13bq8_0": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"shieldgemma": "content-moderator",
++	"smallthinker": "edge-devices",
 +	"smollm": "common-sense qa low-memory-footprint parent",
 +	"mannix/smaug-qwen2-72b": "fine-tuned-qwen2 optimized-qwen2 china-alignment china-bias multilingual german french spanish portuguese italian dutch russian czech polish arabic persian hebrew turkish japanese korean vietnamese thai indonesian malay lao burmese cebuano khmer tagalog hindi bengali urdu coding code-generation math-word-problems coding solving-basic-programming-problems math-word-problems stem science technology engineering mathematics",
 +	"snowflake-arctic-embed": "embeddings",
++	"snowflake-arctic-embed2": "embeddings multilingual",
 +	"solar": "chat rag fine-tuneable",
 +	"solar-pro": "common-sense math-word-problems fine-tuneable",
 +	"sparksammy/samantha": "gay femboy nerdy boyfriend ai-boyfriend nerd assistant blogging coding resume",
@@ -1998,9 +2336,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"starcoder": "coding code-generation",
 +	"starcoder2": "coding code-generation",
 +	"starling-lm": "chat chatbot roleplay writing humanities stem science technology engineering math reasoning structured-data-generation",
++	"tulu3": "instruction-following math-word-problems code-generation coding",
 +	"themanofrod/travel-agent": "camping travel travel-guide outdoors",
 +	"tinydolphin": "low-memory-footprint text-generation letter-writing poems",
-+	"tinyllama": "game-dialog-generator low-memory-footprint",
++	"tinyllama": "game-dialog-generator low-memory-footprint low-carbon-footprint",
 +	"vicuna": "american-alignment american-bias chat assistant llm-research",
 +	"wizard-math": "math logic",
 +	"wizard-vicuna": "american-alignment american-bias",
@@ -2021,9 +2360,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +}
 +
  func CreateHandler(cmd *cobra.Command, args []string) error {
- 	filename, _ := cmd.Flags().GetString("file")
- 	filename, err := filepath.Abs(filename)
-@@ -382,6 +2384,25 @@ func StopHandler(cmd *cobra.Command, arg
+ 	p := progress.NewProgress(os.Stderr)
+ 	defer p.Stop()
+@@ -308,6 +2654,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2049,20 +2388,21 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -711,9 +2732,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -651,10 +3016,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
 +	tags, errTags := cmd.Flags().GetBool("tags")
  	template, errTemplate := cmd.Flags().GetBool("template")
+ 	verbose, errVerbose := cmd.Flags().GetBool("verbose")
 +	website, errWebsite := cmd.Flags().GetBool("website")
  
--	for _, boolErr := range []error{errLicense, errModelfile, errParams, errSystem, errTemplate} {
-+	for _, boolErr := range []error{errLicense, errModelfile, errParams, errSystem, errTags, errTemplate, errWebsite} {
+-	for _, boolErr := range []error{errLicense, errModelfile, errParams, errSystem, errTemplate, errVerbose} {
++	for _, boolErr := range []error{errLicense, errModelfile, errParams, errSystem, errTags, errTemplate, errVerbose, errWebsite} {
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -742,13 +2765,269 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -683,13 +3050,315 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2108,7 +2448,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"all-minilm": "Apache-2.0",
 +		"Artalius/lixi": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
 +		"artifish/mlewd-v2.4": "CC-BY-NC-4.0",
++		"athene-v2": "Nexusflow.ai License Terms for Personal Use",
 +		"aya": "CC-BY-NC-4.0, Cohere For AI Acceptable Use Policy",
++		"aya-expanse": "CC-BY-NC-4.0, Cohere For AI Acceptable Use Policy",
 +		"bakllava": "Apache-2.0",
 +		"bespoke-minicheck": "CC-BY-NC-4.0",
 +		"bge-large": "MIT",
@@ -2131,36 +2473,60 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"codeqwen": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"codestral": "MNPL-0.1",
 +		"codeup": "CreativeML Open RAIL++-M License",
++		"command-a": "CC-BY-NC-4.0",
 +		"command-r": "CC-BY-NC-4.0",
 +		"command-r-plus": "CC-BY-NC-4.0",
++		"command-r7b": "CC-BY-NC-4.0",
++		"command-r7b-arabic": "CC-BY-NC-4.0",
 +		"dbrx": "Databricks Open Model License, Databricks Open Model Acceptable Use Policy",
++		"deepcoder": "MIT",
++		"deepscaler": "MIT",
 +		"deepseek-coder": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-coder-v2": "MIT DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-llm": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"deepseek-r1": "MIT Apache-2.0",
++		"deepseek-r1:1.5b": "MIT Apache-2.0",
++		"deepseek-r1:7b": "MIT Apache-2.0",
++		"deepseek-r1:14b": "MIT Apache-2.0",
++		"deepseek-r1:32b": "MIT Apache-2.0",
++		"deepseek-r1:8b": "MIT LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
++		"deepseek-r1:70b": "MIT LLAMA 3.3 COMMUNITY LICENSE AGREEMENT, Llama 3.3 Acceptable Use Policy",
 +		"deepseek-v2": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-v2.5": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"deepseek-v3": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"disinfozone/telos": "",
 +		"dolphin-llama3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"dolphin-mistral": "Apache-2.0",
 +		"dolphin-mixtral": "Apache-2.0",
 +		"dolphin-phi": "MICROSOFT RESEARCH LICENSE TERMS",
++		"dolphin3": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"dolphincoder": "BigCode Open RAIL-M v1 License Agreement",
 +		"duckdb-nsql": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"ehartford/theprofessor": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"eramax/aura_v3": "Apache-2.0",
++		"exaone3.5": "EXAONE AI Model License Agreement 1.1 - NC",
 +		"everythinglm": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"falcon": "Apache-2.0",
-+		"falcon2": "Falcon 2 11B TII License 1.0",
++		"falcon2": "Falcon 2 11B TII License 1.0 May 2024, Falcon 2 11B TII License Version 1.0 May 2024 ACCEPTABLE USE POLICY",
++		"falcon3": "Falcon 3 TII Falcon License December 2024, TII Falcon 3 License December 2024 ACCEPTABLE USE POLICY",
 +		"firefunction-v2": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"fixt/home-3b-v3": "STABILITY AI NON-COMMERCIAL RESEARCH COMMUNITY LICENSE AGREEMENT",
 +		"fixt/home-3b-v2": "CC-BY-NC-4.0",
 +		"gemma": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"gemma2": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
++		"gemma3": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"glm4": "The glm-4-9b License",
 +		"goliath": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"gpt-oss": "Apache-2.0",
 +		"granite-code": "Apache-2.0",
++		"granite-embedding": "Apache-2.0",
 +		"granite3-dense": "Apache-2.0",
++		"granite3.1-dense": "Apache-2.0",
++		"granite3-guardian": "Apache-2.0",
 +		"granite3-moe": "Apache-2.0",
++		"granite3.1-moe": "Apache-2.0",
++		"granite3.2-vision": "Apache-2.0",
++		"granite3.3": "Apache-2.0",
 +		"hemanth/chessplayer": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"hermes3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"hookingai/monah-8b": "Apache-2.0",
@@ -2180,6 +2546,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"llama3-groq-tool-use": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"llama3.1": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"llama3.2": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
++		"llama3.3": "LLAMA 3.3 COMMUNITY LICENSE AGREEMENT, Llama 3.3 Acceptable Use Policy",
++		"llama3.2-vision": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
++		"llama4": "LLAMA 4 COMMUNITY LICENSE AGREEMENT, Llama 4 Acceptable Use Policy",
 +		"llava": "Apache-2.0",
 +		"llava-llama3": "",
 +		"llava-phi3": "",
@@ -2188,6 +2557,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"mannix/smaug-qwen2-72b": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"mannix/replete-adapted-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"mannix/replete-coder-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
++		"marco-o1": "Apache-2.0",
 +		"mathstral": "Apache-2.0",
 +		"meditron": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"medllama2": "MIT",
@@ -2197,7 +2567,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"mistral-large": "MRL-0.1",
 +		"mistral-nemo": "Apache-2.0",
 +		"mistral-openorca": "Apache-2.0",
++		"mistral-small3.1": "Apache-2.0",
 +		"mistral-small": "Apache-2.0 MRL-0.1", // 2409 instruct is MRL, 2501 instruct is Apache-2.0
++		"mistral-small:22b": "MRL-0.1",
++		"mistral-small:24b": "Apache-2.0",
 +		"mistrallite": "Apache-2.0",
 +		"mixtral": "Apache-2.0",
 +		"moondream": "Apache-2.0",
@@ -2217,9 +2590,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"nous-hermes2": "Apache-2.0",
 +		"nous-hermes2-mixtral": "Apache-2.0",
 +		"nuextract": "MIT", // Ollama site says Apache-2.0.  HuggingFace site says MIT.
++		"olmo2": "Apache-2.0",
 +		"open-orca-platypus2": "CC-BY-NC-4.0",
 +		"openchat": "Apache-2.0",
++		"opencoder": "OpenCoder-20240716",
 +		"openhermes": "Apache-2.0",
++		"openthinker": "Apache-2.0",
 +		"orca-mini": "CC-BY-NC-SA-4.0",
 +		"orca2": "MICROSOFT RESEARCH LICENSE TERMS",
 +		"paraphrase-multilingual": "Apache-2.0",
@@ -2227,6 +2603,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"phi": "MIT",
 +		"phi3": "MIT",
 +		"phi3.5": "MIT",
++		"phi4": "MIT",
++		"phi4-mini": "MIT",
 +		"phind-codellama": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"qwen:0.5b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
 +		"qwen:1.8b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
@@ -2241,6 +2619,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"qwen2-math": "Apache-2.0",
 +		"qwen2.5": "Apache-2.0",
 +		"qwen2.5-coder": "Apache-2.0",
++		"qwen3": "Apache-2.0",
++		"qwq": "Apache-2.0",
++		"r1-1776": "MIT Apache-2.0",
++		"r1-1776:70b": "MIT LLAMA 3.3 COMMUNITY LICENSE AGREEMENT, Llama 3.3 Acceptable Use Policy",
 +		"reader-lm": "CC-BY-NC-4.0",
 +		"reefer/her2": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy,",
 +		"reefer/minimonica": "",
@@ -2248,12 +2630,15 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"reflection": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"rfc/whiterabbitneo": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"rouge/replete-coder-qwen2-1.5b": "Apache-2.0",
++		"sailor2": "Apache-2.0",
 +		"samantha-mistral": "Apache-2.0",
 +		"sammcj/smaug-mixtral-v0.1": "Apache-2.0",
 +		"savethedoctor/whiterabbitneo13bq8_0": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"shieldgemma": "Gemma Terms of Use 20240401",
++		"smallthinker": "Qwen RESEARCH LICENSE AGREEMENT",
 +		"smollm": "Apache-2.0",
 +		"snowflake-arctic-embed": "Apache-2.0",
++		"snowflake-arctic-embed2": "Apache-2.0",
 +		"solar": "Apache-2.0",
 +		"solar:instruct": "CC-BY-NC-4.0",
 +		"solar-pro": "MIT",
@@ -2274,6 +2659,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"themanofrod/travel-agent": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"tinydolphin": "Apache-2.0",
 +		"tinyllama": "Apache-2.0",
++		"tulu3": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"vicuna": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"wizard-math": "MICROSOFT RESEARCH LICENSE TERMS",
 +		"wizard-vicuna": "",
@@ -2332,9 +2718,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		}
  	}
  
- 	req := api.ShowRequest{Name: args[0]}
-@@ -927,6 +3206,138 @@ func PullHandler(cmd *cobra.Command, arg
- 	return nil
+ 	req := api.ShowRequest{Name: args[0], Verbose: verbose}
+@@ -975,6 +3644,142 @@ func PullHandler(cmd *cobra.Command, arg
+ 	return client.Pull(cmd.Context(), &request, fn)
  }
  
 +//oteodoro:  added function
@@ -2380,17 +2766,19 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	if s != nil {
 +		_requestedSize, err := strconv.ParseFloat(s[0], 64)
 +		if err != nil {
-+			return errors.New("You need to add the memory size in GB or MB for the preferred size.  Examples:  4GB, 500MB")
++			return errors.New("You need to add the memory size in TB, GB, or MB for the preferred size.  Examples:  1TB, 4GB, 500MB")
 +		}
 +		if strings.Contains(requestedSizeRaw, "GB") {
 +			requestedSize = int(_requestedSize * 1000)
 +		} else if strings.Contains(requestedSizeRaw, "MB") {
 +			requestedSize = int(_requestedSize)
++		} else if strings.Contains(requestedSizeRaw, "TB") {
++			requestedSize = int(_requestedSize * 1000 * 1000)
 +		} else {
-+			return errors.New("You need to add GB or MB to your number.  Examples:  4GB, 500MB")
++			return errors.New("You need to add TB, GB, or MB to your number.  Examples:  1TB, 4GB, 500MB")
 +		}
 +	} else {
-+		return errors.New("You need to add a number as an arg.  Examples:  4GB, 500MB")
++		return errors.New("You need to add a number as an arg.  Examples:  1TB, 4GB, 500MB")
 +	}
 +
 +	var results []*FindModelSizeResult
@@ -2412,6 +2800,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +			value = int(_value * 1000)
 +		} else if strings.Contains(valueRaw, "MB") {
 +			value = int(_value)
++		} else if strings.Contains(valueRaw, "TB") {
++			value = int(_value * 1000 * 1000)
 +		}
 +		if value <= requestedSize {
 +			result := &FindModelSizeResult{key, value, valueRaw}
@@ -2472,18 +2862,19 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1332,6 +3743,8 @@ func NewCLI() *cobra.Command {
+@@ -1491,7 +4296,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
 +	showCmd.Flags().Bool("tags", false, "Show tags, capabilities, or personality of a model")
+ 	showCmd.Flags().BoolP("verbose", "v", false, "Show detailed model information")
 +	showCmd.Flags().Bool("website", false, "Show website entry of a model")
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1414,6 +3827,30 @@ func NewCLI() *cobra.Command {
- 		RunE:    DeleteHandler,
- 	}
+@@ -1588,6 +4395,30 @@ func NewCLI() *cobra.Command {
+ 		_ = runner.Execute(args[1:])
+ 	})
  
 +	availCmd := &cobra.Command{
 +		Use:     "avail",
@@ -2512,7 +2903,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1430,6 +3867,9 @@ func NewCLI() *cobra.Command {
+@@ -1604,6 +4435,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2522,10 +2913,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1469,6 +3909,9 @@ func NewCLI() *cobra.Command {
- 		psCmd,
+@@ -1644,6 +4478,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
+ 		runnerCmd,
 +		availCmd,
 +		findSizeCmd,
 +		findKeywordsCmd,
