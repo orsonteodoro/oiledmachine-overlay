@@ -197,7 +197,7 @@ wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
 LLVM_COMPAT=( 18 ) # U24.04 uses clang 18 by default.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
+CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data"
 #
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
@@ -2653,7 +2653,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_79
+ebuild_revision_80
 "
 gen_rocm_required_use() {
 	local s
