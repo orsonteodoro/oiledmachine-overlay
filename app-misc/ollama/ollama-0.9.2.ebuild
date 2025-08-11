@@ -6,22 +6,6 @@ EAPI=8
 
 # U20
 
-# TODO list:
-# qwen2.5vl
-# gemma3n
-# phi4-reasoning
-# devstral
-# magistral
-# qwen3-coder
-# granite3.2
-# exaone-deep
-# mistral-small3.2
-# starling-ml
-# phi4-mini-reasoning
-#
-#
-#
-
 # 0.5.4 -> 0.5.7
 # 0.5.7 -> 0.5.11
 # 0.5.11 -> 0.5.12
@@ -158,27 +142,27 @@ chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga codegeex4
 codegemma codellama codeqwen codestral codeup cogito command-a command-r command-r-plus
 command-r7b command-r7b-arabic dbrx deepcoder deepscaler deepseek-coder
 deepseek-coder-v2 deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3
-disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
+devstral disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
 dolphin3 dolphincoder duckdb-nsql ehartford-theprofessor eramax-aura_v3
-everythinglm falcon falcon2 falcon3 firefunction-v2 gemma gemma2 gemma3 glm4
-exaone3.5 fixt-home-3b-v3 fixt-home-3b-v2 goliath gpt-oss granite-code granite-embedding
+everythinglm falcon falcon2 falcon3 firefunction-v2 gemma gemma2 gemma3 gemma3n glm4
+exaone3.5 exaone-deep fixt-home-3b-v3 fixt-home-3b-v2 goliath gpt-oss granite-code granite-embedding
 granite3-dense granite3.1-dense granite3-guardian granite3-moe granite3.1-moe
-granite3.2-vision granite3.3 hemanth-chessplayer hermes3 hookingai-monah-8b
+granite3.2 granite3.2-vision granite3.3 hemanth-chessplayer hermes3 hookingai-monah-8b
 internlm2 jimscard-adult-film-screenwriter-nsfw jimscard-whiterabbit-neo
 joefamous-grok-1 leeplenty-lumimaid-v0.2 llama-guard3 llama-pro llama2
 llama2-chinese llama2-uncensored llama3 llama3-chatqa llama3-gradient
 llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llama3.3 llama4 llava
-llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
+llava-llama3 llava-phi3 magicoder magistral mannix-replete-adapted-llama3-8b
 mannix-llamax3-8b-alpaca mannix-smaug-qwen2-72b mannix-replete-coder-llama3-8b
 marco-o1 mathstral meditron medllama2 megadolphin minicpm-v mistral
-mistral-large mistral-nemo mistral-openorca mistral-small mistral-small3.1
+mistral-large mistral-nemo mistral-openorca mistral-small mistral-small3.1 mistral-small3.2
 mistrallite mixtral monotykamary-whiterabbitneo-v1.5a moondream
 mxbai-embed-large nemotron nemotron-mini neural-chat nexusraven nomic-embed-text
 notus notux nous-hermes nous-hermes2 nous-hermes2-mixtral nqduc-gemsura
 nqduc-mixsura nqduc-mixsura-sft nuextract olmo2 open-orca-platypus2 openchat
 opencoder openhermes openthinker orca-mini orca2 paraphrase-multilingual
-partai-dorna-llama3 phi phi3 phi3.5 phi4 phi4-mini phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder qwen3 qwq r1-1776 reader-lm reefer-her2
+partai-dorna-llama3 phi phi3 phi3.5 phi4 phi4-mini phi4-mini-reasoning phi4-reasoning phind-codellama qwen qwen2
+qwen2-math qwen2.5 qwen2.5-coder qwen2.5vl qwen3 qwen3-coder qwq r1-1776 reader-lm reefer-her2
 reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b sailor2 samantha-mistral
 sammcj-smaug-mixtral-v0.1 savethedoctor-whiterabbitneo13bq8_0 shieldgemma
@@ -2007,6 +1991,9 @@ LLM_LICENSES="
 		Apache-2.0
 		MIT
 	)
+	ollama_llms_devstral? (
+		Apache-2.0
+	)
 	ollama_llms_disinfozone-telos? (
 		all-rights-reserved
 	)
@@ -2044,6 +2031,9 @@ LLM_LICENSES="
 	ollama_llms_exaone3.5? (
 		EXAONE-AI-Model-License-Agreement-1.1-NC
 	)
+	ollama_llms_exaone-deep? (
+		EXAONE-AI-Model-License-Agreement-1.1-NC
+	)
 	ollama_llms_everythinglm? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -2078,6 +2068,10 @@ LLM_LICENSES="
 		Gemma-Terms-of-Use-20240221
 		Gemma-Prohibited-Use-Policy-20240221
 	)
+	ollama_llms_gemma3n? (
+		Gemma-Terms-of-Use-20250324
+		Gemma-Prohibited-Use-Policy-20240221
+	)
 	ollama_llms_glm4? (
 		glm-4-9b-LICENSE
 	)
@@ -2107,6 +2101,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_granite3.1-moe? (
+		Apache-2.0
+	)
+	ollama_llms_granite3.2? (
 		Apache-2.0
 	)
 	ollama_llms_granite3.2-vision? (
@@ -2215,6 +2212,9 @@ LLM_LICENSES="
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
+	ollama_llms_magistral? (
+		Apache-2.0
+	)
 	ollama_llms_mannix-llamax3-8b-alpaca? (
 		MIT
 	)
@@ -2266,6 +2266,9 @@ LLM_LICENSES="
 		MRL-0.1.md
 	)
 	ollama_llms_mistral-small3.1? (
+		Apache-2.0
+	)
+	ollama_llms_mistral-small3.2? (
 		Apache-2.0
 	)
 	ollama_llms_mistrallite? (
@@ -2376,6 +2379,12 @@ LLM_LICENSES="
 	ollama_llms_phi4-mini? (
 		MIT
 	)
+	ollama_llms_phi4-mini-reasoning? (
+		MIT
+	)
+	ollama_llms_phi4-reasoning? (
+		MIT
+	)
 	ollama_llms_phind-codellama? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -2397,7 +2406,13 @@ LLM_LICENSES="
 	ollama_llms_qwen2.5-coder? (
 		Apache-2.0
 	)
+	ollama_llms_qwen2.5vl? (
+		Apache-2.0
+	)
 	ollama_llms_qwen3? (
+		Apache-2.0
+	)
+	ollama_llms_qwen3-coder? (
 		Apache-2.0
 	)
 	ollama_llms_qwq? (

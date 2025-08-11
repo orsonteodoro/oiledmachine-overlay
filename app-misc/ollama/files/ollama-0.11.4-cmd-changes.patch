@@ -1,5 +1,5 @@
 --- ollama-0.11.4.orig/cmd/cmd.go	2025-08-07 14:23:55.000000000 -0700
-+++ ollama-0.11.4/cmd/cmd.go	2025-08-11 01:17:47.086387610 -0700
++++ ollama-0.11.4/cmd/cmd.go	2025-08-11 10:53:29.102833770 -0700
 @@ -15,8 +15,10 @@ import (
  	"net"
  	"net/http"
@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,2391 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,2476 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -26,8 +26,10 @@
 +	// 1. The general facade flavors.
 +	// 2. The uncompressed full version (f16).
 +	// 3. The compressed full version (q8_0).
-+	// 4. The memory aligned versions (from round downs above) that are >= q4 and above and below the memory boundaries.
-+	// 5. Interesting tagged variations if fingerprint is different.
++	// 4. The memory aligned versions (from round downs above) that are >= q4 and below the memory boundaries.
++	// 5. Interesting tagged variations if the fingerprint is different.
++	// 6. The optimized balanced version (explicitly marked q4 or q4_K_M or the unmarked compression suffix implying sometimes q4 or q4_K_M)
++	//    If unmarked suffix is provided, then the corresponding explicit marked with same fingerprint may be optionally be listed.
 +
 +	"adens/quran-guide": "2.0GB",
 +	"akx/viking-7b": "4.6GB",
@@ -308,6 +310,9 @@
 +	"deepseek-v3:671b": "404GB",
 +	"deepseek-v3:671b-fp16": "1.3TB",
 +	"deepseek-v3:671b-q8_0": "713GB",
++	"devstral:24b": "14GB",
++	"devstral:24b-small-2505-q8_0": "25GB",
++	"devstral:24b-small-2505-fp16": "47GB",
 +	"disinfozone/telos": "5.1GB",
 +	"dolphin-llama3:8b": "4.7GB",
 +	"dolphin-llama3:70b": "40GB",
@@ -406,6 +411,15 @@
 +	"exaone3.5:7.8b-instruct-fp16": "16GB",
 +	"exaone3.5:32b-instruct-q8_0": "8.3GB",
 +	"exaone3.5:32b-instruct-fp16": "64GB",
++	"exaone-deep:2.4b": "1.6GB",
++	"exaone-deep:7.8b": "4.8GB",
++	"exaone-deep:32b": "19GB",
++	"exaone-deep:2.4b-q8_0": "2.8GB",
++	"exaone-deep:7.8b-q8_0": "8.3GB",
++	"exaone-deep:32b-q8_0": "34GB",
++	"exaone-deep:2.4b-fp16": "5.3GB",
++	"exaone-deep:7.8b-fp16": "16GB",
++	"exaone-deep:32b-fp16": "64GB",
 +	"everythinglm:13b": "7.4GB",
 +	"everythinglm:13b-16k": "7.4GB",
 +	"everythinglm:13b-16k-q8_0": "14GB",
@@ -513,6 +527,12 @@
 +	"gemma3:27b-it-q8_0": "30GB",
 +	"gemma3:4b-it-fp16": "8.6GB",
 +	"gemma3:4b-it-q8_0": "5.0GB",
++	"gemma3n:e2b": "5.6GB",
++	"gemma3n:e4b": "7.5GB",
++	"gemma3n:e2b-it-q8_0": "6.6GB",
++	"gemma3n:e2b-it-fp16": "8.9GB",
++	"gemma3n:e4b-it-q8_0": "9.5GB",
++	"gemma3n:e4b-it-fp16": "14GB",
 +	"glm4:9b": "5.5GB",
 +	"glm4:9b-chat-q5_1": "7.1GB",
 +	"glm4:9b-text-q5_1": "7.1GB",
@@ -604,6 +624,12 @@
 +	"granite3.1-moe:1b-instruct-fp16": "2.7GB",
 +	"granite3.1-moe:3b-instruct-q8_0": "3.5GB",
 +	"granite3.1-moe:3b-instruct-fp16": "6.6GB",
++	"granite3.2:2b": "1.5GB",
++	"granite3.2:8b": "4.9GB",
++	"granite3.2:2b-instruct-q8_0": "2.7GB",
++	"granite3.2:2b-instruct-fp16": "5.1GB",
++	"granite3.2:8b-instruct-q8_0": "8.7GB",
++	"granite3.2:8b-instruct-fp16": "16GB",
 +	"granite3.2-vision:2b": "2.4GB",
 +	"granite3.2-vision:2b-fp16": "6.0GB",
 +	"granite3.2-vision:2b-q8_0": "3.6GB",
@@ -839,6 +865,9 @@
 +	"magicoder:7b": "3.8GB",
 +	"magicoder:7b-s-cl-q8_0": "7.2GB",
 +	"magicoder:7b-s-cl-fp16": "13GB",
++	"magistral:24b": "14GB",
++	"magistral:24b-small-2506-q8_0": "25GB",
++	"magistral:24b-small-2506-fp16": "47GB",
 +	"mannix/llamax3-8b-alpaca:q4_0": "4.7GB",
 +	"mannix/llamax3-8b-alpaca:q6_K": "6.6GB",
 +	"mannix/llamax3-8b-alpaca:q8_0": "8.5GB",
@@ -929,6 +958,9 @@
 +	"mistral-small:22b-instruct-2409-q5_K_M": "16GB",
 +	"mistral-small:22b-instruct-2409-q8_0": "24GB",
 +	"mistral-small:22b-instruct-2409-fp16": "44GB",
++	"mistral-small3.2:24b": "15GB",
++	"mistral-small3.2:24b-instruct-2506-q8_0": "26GB",
++	"mistral-small3.2:24b-instruct-2506-fp16": "48GB",
 +	"mistrallite:7b": "4.1GB",
 +	"mistrallite:7b-v0.1-q8_0": "7.7GB",
 +	"mistrallite:7b-v0.1-fp16": "14GB",
@@ -1158,6 +1190,15 @@
 +	"phi4-mini:3.8b": "2.5GB",
 +	"phi4-mini:3.8b-fp16": "7.7GB",
 +	"phi4-mini:3.8b-q8_0": "4.1GB",
++	"phi4-mini-reasoning:3.8b": "3.2GB",
++	"phi4-mini-reasoning:3.8b-q8_0": "4.6GB",
++	"phi4-mini-reasoning:3.8b-fp16": "7.7GB",
++	"phi4-reasoning:plus": "11GB",
++	"phi4-reasoning:14b": "11GB",
++	"phi4-reasoning:14b-plus-q8_0": "17GB",
++	"phi4-reasoning:14b-plus-fp16": "29GB",
++	"phi4-reasoning:14b-q8_0": "17GB",
++	"phi4-reasoning:14b-fp16": "29GB",
 +	"phind-codellama:34b": "19GB",
 +	"phind-codellama:34b-python": "19GB",
 +	"phind-codellama:34b-v2": "19GB",
@@ -1313,6 +1354,18 @@
 +	"qwen2.5-coder:1.5b-instruct-fp16": "3.1GB",
 +	"qwen2.5-coder:7b-base-fp16": "15GB",
 +	"qwen2.5-coder:7b-instruct-fp16": "15GB",
++	"qwen2.5vl:3b": "3.2GB",
++	"qwen2.5vl:7b": "6.0GB",
++	"qwen2.5vl:32b": "21GB",
++	"qwen2.5vl:72b": "49GB",
++	"qwen2.5vl:3b-q8_0": "4.6GB",
++	"qwen2.5vl:3b-fp16": "7.5GB",
++	"qwen2.5vl:7b-q8_0": "9.4GB",
++	"qwen2.5vl:7b-fp16": "17GB",
++	"qwen2.5vl:32b-q8_0": "36GB",
++	"qwen2.5vl:32b-fp16": "67GB",
++	"qwen2.5vl:72b-q8_0": "79GB",
++	"qwen2.5vl:72b-fp16": "147GB",
 +	"qwen3:0.6b": "523MB",
 +	"qwen3:1.7b": "1.4GB",
 +	"qwen3:4b": "2.5GB",
@@ -1345,6 +1398,10 @@
 +	"qwen3:235b-a22b-instruct-2507-q8_0": "250GB",
 +	"qwen3:235b-a22b-q8_0": "250GB",
 +	"qwen3:235b-a22b-fp16": "470GB",
++	"qwen3-coder:30b": "19GB",
++	"qwen3-coder:30b-a3b-q8_0": "32GB",
++	"qwen3-coder:30b-a3b-fp16": "61GB",
++	"qwen3-coder:480b-a35b-fp16": "960GB",
 +	"qwq:32b": "20GB",
 +	"qwq:32b-preview-fp16": "66GB",
 +	"qwq:32b-preview-q8_0": "35GB",
@@ -1953,6 +2010,7 @@
 +	"deepseek-v2": 1,
 +	"deepseek-v2.5": 1,
 +	"deepseek-v3": 1,
++	"devstral": 1,
 +	"dolphin-llama3": 1,
 +	"dolphin-mistral": 1,
 +	"dolphin-mixtral": 1,
@@ -1963,6 +2021,7 @@
 +	"ehartford/theprofessor": 1,
 +	"eramax/aura_v3": 1,
 +	"exaone3.5": 1,
++	"exaone-deep": 1,
 +	"everythinglm": 1,
 +	"falcon": 1,
 +	"falcon2": 1,
@@ -1980,6 +2039,7 @@
 +	"granite3-moe": 1,
 +	"granite3.1-moe": 1,
 +	"granite3.2-vision": 1,
++	"granite3.2": 1,
 +	"granite3.3": 1,
 +	"hemanth/chessplayer": 1,
 +	"hermes3": 1,
@@ -2009,8 +2069,10 @@
 +	"gemma": 1,
 +	"gemma2": 1,
 +	"gemma3": 1,
++	"gemma3n": 1,
 +	"glm4": 1,
 +	"magicoder": 1,
++	"magistral": 1,
 +	"mannix/llamax3-8b-alpaca": 1,
 +	"mannix/replete-adapted-llama3-8b": 1,
 +	"mannix/replete-coder-llama3-8b": 1,
@@ -2026,7 +2088,8 @@
 +	"mistral-nemo": 1,
 +	"mistral-openorca": 1,
 +	"mistral-small3.1": 1,
-+	"mistral-small": 1,
++	"mistral-small3.2": 1,
++	"mistral-small": 1, // Sort this way to prevent eager match
 +	"mistrallite": 1,
 +	"mixtral": 1,
 +	"moondream": 1,
@@ -2060,14 +2123,18 @@
 +	"phi3": 1,
 +	"phi3.5": 1,
 +	"phi4": 1,
++	"phi4-mini-reasoning": 1,
 +	"phi4-mini": 1,
++	"phi4-reasoning": 1,
 +	"phind-codellama": 1,
 +	"qwen": 1,
 +	"qwen2": 1,
 +	"qwen2-math": 1,
 +	"qwen2.5": 1,
 +	"qwen2.5-coder": 1,
++	"qwen2.5vl": 1,
 +	"qwen3": 1,
++	"qwen3-coder": 1,
 +	"qwq": 1,
 +	"r1-1776": 1,
 +	"reader-lm": 1,
@@ -2178,7 +2245,11 @@
 +	"codeqwen": "coding code-generation fixing-bugs",
 +	"codestral": "coding code-generation solving-basic-programming-problems fim fill-in-the-middle unit-test-generator python",
 +	"codeup": "coding code-generation",
-+	"cogito": "multilingual general-knowledge math-word-problems",
++	"cogito:3b": "multilingual abstract-reasoning common-sense",
++	"cogito:8b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling",
++	"cogito:14b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling multilingual multilingual-math multilingual-general-knowledge",
++	"cogito:32b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling multilingual multilingual-math multilingual-general-knowledge",
++	"cogito:70b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling multilingual multilingual-math multilingual-general-knowledge",
 +	"command-a": "conversational chatbot rag tool-use coding multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"command-r": "rag tool-use english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
@@ -2196,6 +2267,7 @@
 +	"deepseek-v2.5": "chat coding code-generator python common-sense reasoning instruction-following general-knowledge trivia math-word-problems chinese china-alignment china-bias",
 +	"deepseek-v3": "general-knowledge trivia common-sense reasoning instruction-following coding code-generation python math-word-problems college-level-math graduate-level-stem stem calculus statistics chinese multilingual china-alignment china-bias",
 +	"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
++	"devstral": "coding-agent open-model",
 +	"dolphin-llama3": "uncensored coding function-calling chat fine-tunable-alignment",
 +	"dolphin-mistral": "uncensored coding function-calling chat fine-tunable-alignment",
 +	"dolphin-mixtral": "uncensored coding chat function-calling fine-tunable-alignment game-design humor prank-suggestions confessions",
@@ -2205,7 +2277,8 @@
 +	"duckdb-nsql": "coding sql",
 +	"ehartford/theprofessor": "brainstorming research reasoning science medical math computer-science physics cosmology professor theoretical-explanations",
 +	"eramax/aura_v3": "nsfw erotica roleplay",
-+	"exaone3.5": "coding code-generation general-knowledge math-word-problems common-sense multilingual english korean",
++	"exaone3.5": "coding code-generation python general-knowledge math-word-problems common-sense abstract-reasoning multilingual english korean",
++	"exaone-deep": "math high-school-math",
 +	"everythinglm": "uncensored detailed-replies story-telling",
 +	"falcon": "llm-research",
 +	"falcon2": "llm-research",
@@ -2219,13 +2292,17 @@
 +	"granite-embedding": "embeddings english",
 +	"granite-embedding:30m": "embeddings english",
 +	"granite-embedding:278m": "embeddings multilingual",
-+	"granite3-dense": "summaries text-classification text-extraction qa rag code-related function-calling tool-use code-generation translation bug-fixing multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
-+	"granite3.1-dense": "tool-use rag summaries text-classification text-extraction qa code-related function-calling multilingual long-context english german spanish french japanese portuguese arabic czech italian korean dutch simplified-chinese",
++	"granite3-dense": "summaries text-classification text-extraction qa rag code-related python function-calling tool-use code-generation translation bug-fixing multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
++	"granite3.1-dense": "tool-use rag summaries text-classification text-extraction qa code-related python function-calling multilingual long-context english german spanish french japanese portuguese arabic czech italian korean dutch simplified-chinese",
 +	"granite3-guardian": "security jailbreak-detection content-moderation guardrails nsfw-detection rag",
-+	"granite3-moe": "low-latency summaries text-classification text-extraction qa rag code-related function-calling multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
-+	"granite3.1-moe": "low-latency long-context summaries text-classification text-extraction qa rag code-related function-calling multilingual english german spanish french japanese portuguese arabic czech italian korean dutch simplified-chinese",
++	"granite3-moe": "low-latency summaries text-classification text-extraction qa rag code-related python function-calling multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
++	"granite3.1-moe": "low-latency long-context summaries text-classification text-extraction qa rag code-related python function-calling multilingual english german spanish french japanese portuguese arabic czech italian korean dutch simplified-chinese",
 +	"granite3.2-vision": "content-extraction vision-language-model documents tables charts plots diagrams document-understanding ocr optical-character-recognition document-qa",
-+	"granite3.3": "reasoning instruction-following fill-in-the-middle coding summaries text-classification text-extraction qa rag long-context document-qa business business-apps multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
++	"granite3.2": "business business-apps thinking summaries text-classification text-extraction long-context qa rag function-calling code-related python multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
++	"granite3.2:8b": "business business-apps thinking summaries text-classification text-extraction long-context qa rag function-calling instruction-following code-related python multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
++	"granite3.2:8b-instruct-q8_0": "business business-apps thinking summaries text-classification text-extraction long-context qa rag function-calling instruction-following code-related python multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
++	"granite3.3": "reasoning fill-in-the-middle coding summaries text-classification text-extraction qa rag long-context document-qa business business-apps multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
++	"granite3.3:8b": "reasoning instruction-following fill-in-the-middle coding summaries text-classification text-extraction qa rag long-context document-qa business business-apps multilingual english german spanish french japanese portuguese arabic czech italian korean dutch chinese",
 +	"hemanth/chessplayer": "chess chess-player white-player ai-moves-first",
 +	"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
 +	"hookingai/monah-8b": "online-dating hook-up llm-trainer nsfw adult-content uncensored",
@@ -2268,12 +2345,14 @@
 +	"gemma3:4b": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa document-qa easy-reasoning physical-common-sense yes-no-questions",
 +	"gemma3:12b": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa document-qa easy-reasoning math-word-problems trivia physical-common-sense yes-no-questions",
 +	"gemma3:27b": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa document-qa easy-reasoning challenging-reasoning math-word-problems triva physical-common-sense yes-no-questions multilingual-math chart-reasoning",
++	"gemma3n": "mobile-first-model for-laptop for-tablet for-phones guardrails child-safe content-safe representational-safe common-sense physical-common-sense basic-abstract-reasoning text-generation chat chatbot customer-service assistant summaries image-extraction image-summaries audio-extraction speech-to-text audio-translation research language-teacher language-tutor nlp-research natual-language-processing-research",
 +	"glm4": "math-word-problems coding multilingual",
 +	"glm4:9b-chat-q5_1": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"glm4:9b-chat-q6_K": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"glm4:9b-chat-q8_0": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"glm4:9b-chat-fp16": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"magicoder": "coding code-generation open-source-coding",
++	"magistral": "open-source-version small-version high-school-math multilingual english french german greek hindi indonesian italian japanese korean malay nepali polish portuguese romanian russian serbian spanish swedish turkish ukrainian vietnamese arabic bengali chinese farsi",
 +	"mannix/llamax3-8b-alpaca": "multilingual intruction-following akrikaans amharic arabic armenian assamese asturian azerbaijani belarusian bengali bosnian bulgarian burmese catalan cebuano chinese simplified-chinese traditional-chinese croatian czech danish dutch english estonian filipino finnish french fulah galician ganda georgian german greek gujarati hausa hebrew hindi hungarian icelandic igbo indonesian irish italian japanese javanese kabuverdianu kamba kannada kazakh khmer korean kyrgyz lao latvian lingala lithuanian luo luxembourgish macedonian malay malayalam maltese maori marathi mongolian nepali northern sotho norwegian nyanja occitan oriya oromo pashto persian polish portuguese punjabi romanian russian serbian shona sindhi slovak slovenian somali sorani kurdish spanish swahili swedish tajik tamil telugu thai turkish ukrainian umbundu urdu uzbek vietnamese welsh wolof xhosa yoruba zulu",
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
 +	"mannix/replete-coder-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention",
@@ -2287,7 +2366,8 @@
 +	"mistral-large": "multilingual french german spanish italian dutch portuguese russian japanese chinese coding code-generation solving-basic-programming-problems math-word-problems function-calling json",
 +	"mistral-nemo": "multilingual english french german spanish italian portuguese chinese korean arabic hindi common-sense trivia function-calling",
 +	"mistral-openorca": "common-sense",
-+	"mistral-small3.1": "translation summaries vision long-context multilingual english french german spanish italian chinese japanese korean portuguese dutch polish function-calling",
++	"mistral-small3.1": "translation summaries vision long-context multilingual english french german spanish italian chinese japanese korean portuguese dutch polish instruction-following function-calling general-knowledge python qa-charts qa-diagrams qa-doc-images",
++	"mistral-small3.2": "translation summaries vision long-context multilingual english french german spanish italian chinese japanese korean portuguese dutch polish instruction-following function-calling general-knowledge python qa-charts qa-diagrams qa-doc-images",
 +	"mistral-small": "translation summaries multilingual english french german spanish italian chinese japanese korean portuguese dutch polish function-calling",
 +	"mistrallite": "answering-long-questions qa common-sense",
 +	"mixtral": "multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable",
@@ -2324,7 +2404,9 @@
 +	"phi3": "common-sense trivia english math logic math-word-problems solving-basic-programming-problems",
 +	"phi3.5": "coding math logic teacher fact-check chat multilingual arabic chinese czech danish dutch english finnish french german hebrew hungarian italian japanese korean norwegian polish portuguese russian spanish swedish thai turkish ukrainian",
 +	"phi4": "general-knowledge reasoning logic",
-+	"phi4-mini": "abstract-reasoning qa math-word-problems physical-common-sense tool-use",
++	"phi4-mini": "abstract-reasoning qa math-word-problems physical-common-sense tool-use college-math",
++	"phi4-mini-reasoning": "college-math instruction-following python general-reasoning",
++	"phi4-reasoning": "high-school-math instruction-following python general-reasoning",
 +	"phind-codellama": "coding code-generation",
 +	"phind-codellama:34b-python": "coding code-generation python",
 +	"qwen": "china-alignment china-bias multilingual chat chinese english coding solving-basic-programming-problems",
@@ -2333,11 +2415,14 @@
 +	"qwen2.5": "china-alignment china-bias multilingual chat roleplay coding parsing json math instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5:72b": "china-alignment china-bias multilingual chat roleplay general-knowledge math-word-problems college-level-math calculus statistics coding code-generation python parsing json instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs",
++	"qwen2.5vl": "china-alignment china-bias image-recognition visual-recognition realistic-recognition artificial-recognition qa-charts qa-diagrams qa-doc-images qa-images visual-object-detection visual-object-labeling landmark-detection chinese-ocr chinese-optical-character-recognition",
 +	"qwen3": "china-alignment china-bias multilingual",
 +	"qwen3:235b-a22b-instruct-2507-q4_K_M": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
 +	"qwen3:235b-a22b-instruct-2507-q8_0": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
 +	"qwen3:235b-a22b-q8_0": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
 +	"qwen3:235b-a22b-fp16": "china-alignment china-bias graduate-level-reasoning multilingual high-school-math tool-use",
++	"qwen3-coder": "basic-coding simulation-coding game-programming gui-testing coding-agent",
++	"qwen3-coder:480b-a35b-fp16": "basic-coding simulation-coding game-programming gui-testing coding-agent agentic-tool",
 +	"qwq": "math-word-problems reasoning graduate-level-reasoning graduate-level-stem graduate-level-science biology physics chemistry college-level-math calculus statistics",
 +	"r1-1776": "deepseek-r1-with-additional-post-training american-bias american-alignment uncensored general-knowledge math-word-problems calculus statistics reasoning",
 +	"reader-lm": "html-to-markdown",
@@ -2403,7 +2488,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -308,6 +2695,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -308,6 +2780,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2429,7 +2514,7 @@
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -651,10 +3057,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -651,10 +3142,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2443,7 +2528,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -683,13 +3091,317 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -683,13 +3176,327 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2536,6 +2621,7 @@
 +		"deepseek-v2": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-v2.5": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-v3": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"devstral": "Apache-2.0",
 +		"disinfozone/telos": "",
 +		"dolphin-llama3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"dolphin-mistral": "Apache-2.0",
@@ -2547,6 +2633,7 @@
 +		"ehartford/theprofessor": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"eramax/aura_v3": "Apache-2.0",
 +		"exaone3.5": "EXAONE AI Model License Agreement 1.1 - NC",
++		"exaone-deep": "EXAONE AI Model License Agreement 1.1 - NC",
 +		"everythinglm": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"falcon": "Apache-2.0",
 +		"falcon2": "Falcon 2 11B TII License 1.0 May 2024, Falcon 2 11B TII License Version 1.0 May 2024 ACCEPTABLE USE POLICY",
@@ -2557,6 +2644,7 @@
 +		"gemma": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"gemma2": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"gemma3": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
++		"gemma3n": "Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
 +		"glm4": "The glm-4-9b License",
 +		"goliath": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"gpt-oss": "Apache-2.0",
@@ -2568,6 +2656,7 @@
 +		"granite3-moe": "Apache-2.0",
 +		"granite3.1-moe": "Apache-2.0",
 +		"granite3.2-vision": "Apache-2.0",
++		"granite3.2": "Apache-2.0",
 +		"granite3.3": "Apache-2.0",
 +		"hemanth/chessplayer": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"hermes3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
@@ -2595,6 +2684,7 @@
 +		"llava-llama3": "",
 +		"llava-phi3": "",
 +		"magicoder": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"magistral": "Apache-2.0",
 +		"mannix/llamax3-8b-alpaca": "MIT",
 +		"mannix/smaug-qwen2-72b": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"mannix/replete-adapted-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
@@ -2610,6 +2700,7 @@
 +		"mistral-nemo": "Apache-2.0",
 +		"mistral-openorca": "Apache-2.0",
 +		"mistral-small3.1": "Apache-2.0",
++		"mistral-small3.2": "Apache-2.0",
 +		"mistral-small": "Apache-2.0 MRL-0.1", // 2409 instruct is MRL, 2501 instruct is Apache-2.0
 +		"mistral-small:22b": "MRL-0.1",
 +		"mistral-small:24b": "Apache-2.0",
@@ -2647,6 +2738,8 @@
 +		"phi3.5": "MIT",
 +		"phi4": "MIT",
 +		"phi4-mini": "MIT",
++		"phi4-mini-reasoning": "MIT",
++		"phi4-reasoning": "MIT",
 +		"phind-codellama": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"qwen:0.5b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
 +		"qwen:1.8b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
@@ -2661,12 +2754,14 @@
 +		"qwen2-math": "Apache-2.0",
 +		"qwen2.5": "Apache-2.0",
 +		"qwen2.5-coder": "Apache-2.0",
++		"qwen2.5vl": "Apache-2.0",
 +		"qwen3": "Apache-2.0",
++		"qwen3-coder": "Apache-2.0",
 +		"qwq": "Apache-2.0",
 +		"r1-1776": "MIT Apache-2.0",
 +		"r1-1776:70b": "MIT LLAMA 3.3 COMMUNITY LICENSE AGREEMENT, Llama 3.3 Acceptable Use Policy",
 +		"reader-lm": "CC-BY-NC-4.0",
-+		"reefer/her2": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy,",
++		"reefer/her2": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"reefer/minimonica": "",
 +		"reefer/monica": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"reflection": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
@@ -2762,7 +2857,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -975,6 +3687,142 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -975,6 +3782,142 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -2905,7 +3000,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -1491,7 +4339,9 @@ func NewCLI() *cobra.Command {
+@@ -1491,7 +4434,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2915,7 +3010,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1588,6 +4438,30 @@ func NewCLI() *cobra.Command {
+@@ -1588,6 +4533,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -2946,7 +3041,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1604,6 +4478,9 @@ func NewCLI() *cobra.Command {
+@@ -1604,6 +4573,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2956,7 +3051,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1644,6 +4521,9 @@ func NewCLI() *cobra.Command {
+@@ -1644,6 +4616,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
