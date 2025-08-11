@@ -13,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ollama/ollama-python.git"
-	FALLBACK_COMMIT="1066246ab5d9860e4732632b5ac802e32ba533e7" # Dec 7, 2024
+	FALLBACK_COMMIT="53ff3cd025c1ae5e06cd81d47b79ae6b3b905027" # Aug 7, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -40,16 +40,15 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-lang/python-3.8
-	>=dev-python/anyio-4.5.2[${PYTHON_USEDEP}]
+	>=dev-python/anyio-4.8.0[${PYTHON_USEDEP}]
 	>=dev-python/certifi-2025.1.31[${PYTHON_USEDEP}]
-	>=dev-python/exceptiongroup-1.2.2[${PYTHON_USEDEP}]
 	>=dev-python/h11-0.14.0[${PYTHON_USEDEP}]
-	>=dev-python/httpcore-1.0.8[${PYTHON_USEDEP}]
+	>=dev-python/httpcore-1.0.7[${PYTHON_USEDEP}]
 	>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
 	>=dev-python/idna-3.10[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-2.10.6[${PYTHON_USEDEP}]
 	>=dev-python/sniffio-1.3.1[${PYTHON_USEDEP}]
-	>=dev-python/typing-extensions-4.13.2[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
