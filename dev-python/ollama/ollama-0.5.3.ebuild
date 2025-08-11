@@ -56,7 +56,7 @@ DEPEND+="
 BDEPEND+="
 	dev? (
 		>=dev-python/pytest-8.3.4[${PYTHON_USEDEP}]
-		>=dev-python/pytest-asyncio-0.24.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-anyio-0.24.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-httpserver-1.1.0[${PYTHON_USEDEP}]
 		>=dev-util/ruff-0.9.1
