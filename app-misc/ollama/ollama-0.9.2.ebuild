@@ -4497,4 +4497,5 @@ ewarn "The chroot and sandbox mitigation edits has not been implemented for syst
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.5.12, 20250127) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.6.5, 20250422) cpu test with smollm:135m, deepseek-r1:1.5b
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.9.2, 20250810) cpu test with smollm:135m
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.11.4, 20250810) cpu test with smollm:135m
 # cpu test: passed
