@@ -138,14 +138,14 @@
  
  void EntryAttributesModel::aboutToReset()
  {
-+    qDebug() << "aboutToReset";
++    //qDebug() << "aboutToReset";
      beginResetModel();
  }
  
  void EntryAttributesModel::reset()
  {
 -    updateAttributes();
-+    qDebug() << "reset";
++    //qDebug() << "reset";
 +    m_attributes.clear();
      endResetModel();
  }
