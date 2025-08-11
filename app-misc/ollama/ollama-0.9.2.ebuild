@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U20
+
 # TODO list:
 # qwen2.5vl
 # gemma3n
@@ -193,7 +195,7 @@ themanofrod-travel-agent tinydolphin tinyllama tulu3 vicuna wizard-math
 wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm wizardlm-uncensored
 wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
-LLVM_COMPAT=( 18 )
+LLVM_COMPAT=( 18 ) # U20 uses clang 10 by default but has clang 18 available.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
 #
