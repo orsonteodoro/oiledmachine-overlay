@@ -285,6 +285,9 @@ npm_update_lock_install_post() {
 		sed -i -e "s|\"vite\": \"^5.4.14\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die
 		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die
 		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die
+
+		sed -i -e "s|\"form-data\": \"~4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"~0.2.3\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
 	}
 	patch_lockfile
 
@@ -294,6 +297,8 @@ npm_update_lock_install_post() {
 		"cookie@0.7.0"							# CVE-2024-47764; VS(DT); Medium
 		"esbuild@0.25.0"						# GHSA-67mh-4wv8-2f99; ID; Moderate
 		"vite@5.4.19"							# CVE-2025-46565; VS(ID); Low
+		"form-data@4.0.4"						# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+		"tmp@0.2.4"							# CVE-2025-54798; DT; Low
 	)
 	enpm install -D --prefer-offline "${pkgs[@]}"
 
