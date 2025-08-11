@@ -13643,6 +13643,7 @@ einfo "Using assisted config mode"
 einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
 einfo "Auto updating the .config"
+ewarn "If \"Assumed value of MB_LEN_MAX wrong\" message is encountered, use \`eselect gcc\` to select GCC 12 or older."
 einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
 	fi
