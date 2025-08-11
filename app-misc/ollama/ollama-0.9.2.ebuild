@@ -3049,20 +3049,16 @@ pkg_setup() {
 ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
 	local llvm_base_path
 	if use rocm ; then
-		if use rocm_6_1 ; then
-			export ROCM_SLOT="6.1"
-			export LLVM_SLOT=17
-			export ROCM_VERSION="${HIP_6_1_VERSION}"
-		elif use rocm_6_0 ; then
-			export ROCM_SLOT="6.0"
-			export LLVM_SLOT=17
-			export ROCM_VERSION="${HIP_6_0_VERSION}"
+		if use rocm_6_3 ; then
+			export ROCM_SLOT="6.3"
+			export LLVM_SLOT=18
+			export ROCM_VERSION="${HIP_6_3_VERSION}"
 		fi
 		rocm_pkg_setup
 	else
 		local llvm_slot
-		if use llvm_slot_17 ; then
-			llvm_slot=17
+		if use llvm_slot_18 ; then
+			llvm_slot=18
 		fi
 		llvm_base_path="/usr/lib/llvm/${llvm_slot}"
 einfo "PATH (before):  ${PATH}"
