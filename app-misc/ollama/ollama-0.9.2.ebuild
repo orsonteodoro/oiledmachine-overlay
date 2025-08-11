@@ -29,7 +29,7 @@ EAPI=8
 # 0.5.11 -> 0.5.12
 # 0.5.12 -> 0.5.13
 # 0.5.13 -> 0.6.5
-# 0.6.5 -> 0.11.4
+# 0.6.5 -> 0.9.2
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -1501,8 +1501,8 @@ else
 		"github.com/google/go-cmp v0.5.0/go.mod"
 		"github.com/google/go-cmp v0.5.5/go.mod"
 		"github.com/google/go-cmp v0.5.6/go.mod"
-		"github.com/google/go-cmp v0.7.0"
-		"github.com/google/go-cmp v0.7.0/go.mod"
+		"github.com/google/go-cmp v0.6.0"
+		"github.com/google/go-cmp v0.6.0/go.mod"
 		"github.com/google/gofuzz v1.0.0/go.mod"
 		"github.com/google/uuid v1.1.2/go.mod"
 		"github.com/google/uuid v1.6.0"
@@ -1758,6 +1758,7 @@ else
 		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
 		"rsc.io/pdf v0.1.1/go.mod"
+
 
 
 
@@ -2791,6 +2792,13 @@ RDEPEND="
 IDEPEND="
 	${RDEPEND}
 "
+# The CUDA 11 requirement is relaxed.  Upstream tests with 11.3, 12.4.
+CUDA_11_8_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		=sys-devel/gcc-11*[cxx]
+	)
+"
 CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
@@ -2915,56 +2923,67 @@ BDEPEND="
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
