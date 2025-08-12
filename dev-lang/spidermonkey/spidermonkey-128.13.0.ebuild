@@ -105,7 +105,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -443,6 +443,13 @@ src_prepare() {
 #	popd >/dev/null 2>&1 || die
 
 	default
+
+	# Maintain -D_FORTIFY_SOURCE integrity
+	sed -i -e "s|-O3|-O2|g" \
+		"media/libopus/moz.build" \
+		"js/src/old-configure.in" \
+		"js/src/old-configure" \
+		|| die
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
