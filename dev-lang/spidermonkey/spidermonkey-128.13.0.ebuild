@@ -105,7 +105,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -445,15 +445,21 @@ src_prepare() {
 	default
 
 	# Maintain -D_FORTIFY_SOURCE integrity
-	sed -i -e "s|-O3|-O2|g" \
-		"config/moz.build" \
-		"gfx/skia/moz.build" \
-		"js/src/old-configure.in" \
-		"js/src/old-configure" \
-		"media/libopus/moz.build" \
-		"old-configure.in" \
-		"old-configure" \
-		|| die
+	local L=(
+		"config/moz.build"
+		"gfx/skia/moz.build"
+		"js/src/old-configure.in"
+		"js/src/old-configure"
+		"media/libopus/moz.build"
+		"old-configure.in"
+		"old-configure"
+	)
+	local path
+	for path in ${L[@]} ; do
+einfo "Editing ${path} -O3 -> -O2"
+		sed -i -e "s|-O3|-O2|g" "${S}/${path}" || die
+		grep -e "-O3" "${S}/${path}" && die "Patch failed"
+	done
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
