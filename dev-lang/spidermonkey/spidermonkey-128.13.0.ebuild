@@ -105,7 +105,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_21
+ebuild_revision_23
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -448,8 +448,6 @@ src_prepare() {
 	local L=(
 		"config/moz.build"
 		"gfx/skia/moz.build"
-		"js/src/old-configure.in"
-		"js/src/old-configure"
 		"media/libopus/moz.build"
 		"old-configure.in"
 		"old-configure"
