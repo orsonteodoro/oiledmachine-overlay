@@ -105,7 +105,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -456,7 +456,10 @@ src_prepare() {
 	)
 	local path
 	for path in ${L[@]} ; do
-		[[ -e "${S}/${path}" ]] || die
+		if ! [[ -e "${S}/${path}" ]] ; then
+ewarn "Missing ${S}/${path}"
+			continue
+		fi
 einfo "Editing ${path} -O3 -> -O2"
 		sed -i -e "s|-O3|-O2|g" "${S}/${path}" || die
 		grep -e "-O3" "${S}/${path}" && die "Patch failed"
