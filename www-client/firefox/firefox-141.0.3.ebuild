@@ -1451,6 +1451,28 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
+	# Maintain -D_FORTIFY_SOURCE integrity
+	local L=(
+		"build/moz.configure/flags.configure"
+		"build/moz.configure/toolchain.configure"
+		"config/moz.build"
+		"gfx/skia/moz.build"
+		"js/moz.configure"
+		"js/src/ctypes/libffi/configure"
+		"media/libopus/moz.build"
+		"media/libvpx/libvpx/build/make/configure.sh"
+	)
+	local path
+	for path in ${L[@]} ; do
+		if ! [[ -e "${S}/${path}" ]] ; then
+ewarn "Missing ${S}/${path}"
+			continue
+		fi
+einfo "Editing ${path} -O3 -> -O2"
+		sed -i -e "s|-O3|-O2|g" "${S}/${path}" || die
+		grep -e "-O3" "${S}/${path}" && die "Patch failed"
+	done
+
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
 
