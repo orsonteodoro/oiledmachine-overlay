@@ -68,6 +68,7 @@ src_prepare() {
 }
 
 src_configure() {
+ewarn "You may need to switch to GCC 13 via \`eselect gcc\`"
 	# It is forced so we can use OpenMP without adding more flags.
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
