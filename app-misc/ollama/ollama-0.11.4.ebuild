@@ -3002,7 +3002,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
-	"A${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.11.4-custom-cpu-features.patch"
 )
 
