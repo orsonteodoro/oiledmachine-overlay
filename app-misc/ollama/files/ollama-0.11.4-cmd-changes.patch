@@ -2952,7 +2952,7 @@
 +		fmt.Println()
 +		fmt.Printf("About compressed floats (aka f16) or ints (aka q2, q3, q4, q5, q6, q8) compression....\n")
 +		fmt.Printf("f16 is the uncompressed full version and should only be used on f16 native hardware.\n")
-+		fmt.Printf("q8 is compressed the full version.\n")
++		fmt.Printf("q8 is the compressed the full version.\n")
 +		fmt.Printf("q4 is the optimized balanced version and default.  If without a q suffix, it is assumed q4_0 or q4_K_M with preference for speed over accuracy.\n")
 +		fmt.Printf("q4 or above should be for logical or complex tasks.\n")
 +		fmt.Printf("q5 or above should be used for cybersecurity coding or when accuracy is required.\n")
