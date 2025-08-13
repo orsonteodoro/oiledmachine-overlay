@@ -2857,7 +2857,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -975,6 +3782,142 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -975,6 +3782,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -2950,9 +2950,13 @@
 +	printModelSizeResults(results)
 +	if len(results) != 0 {
 +		fmt.Println()
-+		fmt.Printf("About compressed floats (aka f16), or int4 (aka q4) compression....\n")
-+		fmt.Printf("f16 support should only be used on f16 native hardware.\n")
-+		fmt.Printf("Ollama uses q4 quantization by default if without q suffix, but may reduce AGI.\n")
++		fmt.Printf("About compressed floats (aka f16) or ints (aka q2, q3, q4, q5, q6, q8) compression....\n")
++		fmt.Printf("f16 is the uncompressed full version and should only be used on f16 native hardware.\n")
++		fmt.Printf("q8 is compressed the full version.\n")
++		fmt.Printf("q4 is the optimized balanced version and default.  If without a q suffix, it is assumed q4_0 or q4_K_M with preference for speed over accuracy.\n")
++		fmt.Printf("q4 or above should be for logical or complex tasks.\n")
++		fmt.Printf("q5 or above should be used for cybersecurity coding or when accuracy is required.\n")
++		fmt.Printf("q2 or q3 is resilient only when doing simple tasks, casual social contexts or chat, or basic answers.\n")
 +	}
 +	return nil
 +}
