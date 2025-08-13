@@ -1,5 +1,5 @@
 --- ollama-0.11.4.orig/cmd/cmd.go	2025-08-07 14:23:55.000000000 -0700
-+++ ollama-0.11.4/cmd/cmd.go	2025-08-13 02:15:22.686532720 -0700
++++ ollama-0.11.4/cmd/cmd.go	2025-08-13 02:38:30.409968329 -0700
 @@ -15,8 +15,10 @@ import (
  	"net"
  	"net/http"
@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,3078 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3072 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -159,40 +159,38 @@
 +	"codellama:70b-instruct": "39GB",
 +	"codellama:70b-python": "39GB",
 +	"codellama:7b-code-q6_K": "5.5GB",
++	"codellama:7b-code-q8_0": "7.2GB",
++	"codellama:7b-code-fp16": "13GB",
 +	"codellama:7b-instruct-q6_K": "5.5GB",
++	"codellama:7b-instruct-q8_0": "7.2GB",
++	"codellama:7b-instruct-fp16": "13GB",
 +	"codellama:7b-python-q6_K": "5.5GB",
++	"codellama:7b-python-q8_0": "7.2GB",
++	"codellama:7b-python-fp16": "13GB",
 +	"codellama:13b-code-q6_K": "11GB",
++	"codellama:13b-code-q8_0": "14GB",
++	"codellama:13b-code-fp16": "26GB",
 +	"codellama:13b-instruct-q6_K": "11GB",
++	"codellama:13b-instruct-q8_0": "14GB",
++	"codellama:13b-instruct-fp16": "26GB",
 +	"codellama:13b-python-q6_K": "11GB",
++	"codellama:13b-python-q8_0": "14GB",
++	"codellama:13b-python-fp16": "26GB",
 +	"codellama:34b-code-q6_K": "28GB",
 +	"codellama:34b-instruct-q6_K": "28GB",
-+	"codellama:34b-python-q6_K": "28GB",
-+	"codellama:70b-code-q6_K": "57GB",
-+	"codellama:70b-instruct-q6_K": "57GB",
-+	"codellama:70b-python-q6_K": "57GB",
-+	"codellama:7b-code-q8_0": "7.2GB",
-+	"codellama:7b-instruct-q8_0": "7.2GB",
-+	"codellama:7b-python-q8_0": "7.2GB",
-+	"codellama:13b-code-q8_0": "14GB",
-+	"codellama:13b-instruct-q8_0": "14GB",
-+	"codellama:13b-python-q8_0": "14GB",
-+	"codellama:34b-instruct-q6_K": "28GB",
-+	"codellama:34b-python-q6_K": "28GB",
 +	"codellama:34b-instruct-q8_0": "36GB",
-+	"codellama:34b-python-q8_0": "36GB",
-+	"codellama:70b-code-q8_0": "73GB",
-+	"codellama:70b-instruct-q8_0": "73GB",
-+	"codellama:70b-python-q8_0": "73GB",
-+	"codellama:7b-code-fp16": "13GB",
-+	"codellama:7b-instruct-fp16": "13GB",
-+	"codellama:7b-python-fp16": "13GB",
-+	"codellama:13b-code-fp16": "26GB",
-+	"codellama:13b-instruct-fp16": "26GB",
-+	"codellama:13b-python-fp16": "26GB",
 +	"codellama:34b-instruct-fp16": "67GB",
++	"codellama:34b-python-q6_K": "28GB",
++	"codellama:34b-python-q8_0": "36GB",
 +	"codellama:34b-python-fp16": "67GB",
++	"codellama:70b-code-q6_K": "57GB",
++	"codellama:70b-code-q8_0": "73GB",
 +	"codellama:70b-code-fp16": "138GB",
++	"codellama:70b-instruct-q6_K": "57GB",
++	"codellama:70b-instruct-q8_0": "73GB",
 +	"codellama:70b-instruct-fp16": "138GB",
++	"codellama:70b-python-q6_K": "57GB",
++	"codellama:70b-python-q8_0": "73GB",
 +	"codellama:70b-python-fp16": "138GB",
 +	"codeqwen:7b": "4.2GB",
 +	"codeqwen:chat": "4.2GB",
@@ -440,7 +438,6 @@
 +	"dolphin-mixtral:8x7b-v2.7-fp16": "93GB",
 +	"dolphin-mixtral:8x22b-v2.9-q6_K": "116GB",
 +	"dolphin-mixtral:8x22b-v2.9-q8_0": "149GB",
-+	"dolphin-mixtral:8x22b-v2.9-q6_K": "116GB",
 +	"dolphin-mixtral:8x22b-v2.9-fp16": "281GB",
 +	"dolphin-phi:2.7b": "1.6GB",
 +	"dolphin-phi:2.7b-v2.6": "1.6GB",
@@ -2214,9 +2211,6 @@
 +	"starcoder2:15b-instruct-v0.1-q6_K": "13GB",
 +	"starcoder2:15b-instruct-v0.1-q8_K": "17GB",
 +	"starcoder2:15b-instruct-v0.1-fp16": "32GB",
-+	"starcoder2:15b-instruct-v0.1-q6_K": "13GB",
-+	"starcoder2:15b-instruct-v0.1-q8_0": "17GB",
-+	"starcoder2:15b-instruct-v0.1-fp16": "32GB",
 +	"starling-lm:7b": "4.1GB",
 +	"starling-lm:alpha": "4.1GB",
 +	"starling-lm:beta": "4.1GB",
@@ -3090,7 +3084,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -308,6 +3382,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -308,6 +3376,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3116,7 +3110,7 @@
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -651,10 +3744,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -651,10 +3738,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3130,7 +3124,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -683,13 +3778,327 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -683,13 +3772,327 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3459,7 +3453,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -975,6 +4384,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -975,6 +4378,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -3606,7 +3600,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -1491,7 +5040,9 @@ func NewCLI() *cobra.Command {
+@@ -1491,7 +5034,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -3616,7 +3610,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1588,6 +5139,30 @@ func NewCLI() *cobra.Command {
+@@ -1588,6 +5133,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -3647,7 +3641,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1604,6 +5179,9 @@ func NewCLI() *cobra.Command {
+@@ -1604,6 +5173,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -3657,7 +3651,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1644,6 +5222,9 @@ func NewCLI() *cobra.Command {
+@@ -1644,6 +5216,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
