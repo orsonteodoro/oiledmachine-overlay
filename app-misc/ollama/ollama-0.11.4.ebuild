@@ -3002,7 +3002,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
+	"A${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.11.4-custom-cpu-features.patch"
 )
 
@@ -4480,6 +4480,16 @@ einfo "Tip:  If the cold start time is more than 20 seconds, use a smaller model
 einfo
 	if use systemd ; then
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
+	fi
+
+	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
+	if (( ${context_length} < 8192 )) ; then
+ewarn
+ewarn "Current OLLAMA_CONTEXT_LENGTH:  ${context_length}"
+ewarn
+ewarn "Open WebUI requires OLLAMA_CONTEXT_LENGTH >= 8192 for RAG support."
+ewarn "Change it in /etc/conf.d/ollama.conf."
+ewarn
 	fi
 
 	# TODO:  Add more orphaned packages or move into overlay's README.md

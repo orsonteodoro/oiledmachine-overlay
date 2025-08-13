@@ -4501,6 +4501,16 @@ einfo
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
 	fi
 
+	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
+	if (( ${context_length} < 8192 )) ; then
+ewarn
+ewarn "Current OLLAMA_CONTEXT_LENGTH:  ${context_length}"
+ewarn
+ewarn "Open WebUI requires OLLAMA_CONTEXT_LENGTH >= 8192 for RAG support."
+ewarn "Change it in /etc/conf.d/ollama.conf."
+ewarn
+	fi
+
 	# TODO:  Add more orphaned packages or move into overlay's README.md
 	optfeature_header "Install optional packages:"
 	optfeature "Electron GUI frontend" "app-misc/llocal"

@@ -20,6 +20,10 @@
 
   Ebuild build time environment variables
 
+  OLLAMA_CONTEXT_LENGTH - Set the default context length.  For Open WebUI,
+  you need at least 8192 for RAG support.
+  Ebuild default: 2048
+
   OLLAMA_KV_CACHE_TYPE - The default quantization used for the VRAM.
   This value can be used to decrease memory use by half or more if q8_0 or
   q4_0 is used.  This value may be changed via /etc/conf.d/ollama.conf
@@ -50,6 +54,7 @@
 
   Contents of /etc/portage/env/ollama.conf
 
+  OLLAMA_CONTEXT_LENGTH=8192
   OLLAMA_MAX_RETRIES=7
   OLLAMA_NUM_DOWNLOAD_PARTS=2
   OLLAMA_MIN_DOWNLOAD_PART_SIZE=1
