@@ -1,5 +1,5 @@
 --- ollama-0.11.4.orig/cmd/cmd.go	2025-08-07 14:23:55.000000000 -0700
-+++ ollama-0.11.4/cmd/cmd.go	2025-08-12 23:59:43.397468241 -0700
++++ ollama-0.11.4/cmd/cmd.go	2025-08-13 02:15:22.686532720 -0700
 @@ -15,8 +15,10 @@ import (
  	"net"
  	"net/http"
@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,2970 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3078 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -885,11 +885,19 @@
 +	"llama3-chatqa:70b": "40GB",
 +	"llama3-chatqa:8b-v1.5": "4.7GB",
 +	"llama3-chatqa:70b-v1.5": "40GB",
++	"llama3-chatqa:8b-v1.5-q2_K": "3.2GB",
++	"llama3-chatqa:8b-v1.5-q3_K_S": "3.7GB",
++	"llama3-chatqa:8b-v1.5-q3_K_M": "4.0GB",
++	"llama3-chatqa:8b-v1.5-q3_K_L": "4.3GB",
 +	"llama3-chatqa:8b-v1.5-q6_K": "6.6GB",
-+	"llama3-chatqa:70b-v1.5-q6_K": "58GB",
 +	"llama3-chatqa:8b-v1.5-q8_0": "8.5GB",
-+	"llama3-chatqa:70b-v1.5-q8_0": "75GB",
 +	"llama3-chatqa:8b-v1.5-fp16": "16GB",
++	"llama3-chatqa:70b-v1.5-q2_K": "26GB",
++	"llama3-chatqa:70b-v1.5-q3_K_S": "31GB",
++	"llama3-chatqa:70b-v1.5-q3_K_M": "34GB",
++	"llama3-chatqa:70b-v1.5-q3_K_L": "37GB",
++	"llama3-chatqa:70b-v1.5-q6_K": "58GB",
++	"llama3-chatqa:70b-v1.5-q8_0": "75GB",
 +	"llama3-chatqa:70b-v1.5-fp16": "141GB",
 +	"llama3-gradient:1024k": "4.7GB",
 +	"llama3-gradient:8b": "4.7GB",
@@ -1219,6 +1227,7 @@
 +	"mistral-small3.2:24b-instruct-2506-q8_0": "26GB",
 +	"mistral-small3.2:24b-instruct-2506-fp16": "48GB",
 +	"mistrallite:7b": "4.1GB",
++	"mistrallite:7b-v0.1-q6_K": "5.9GB",
 +	"mistrallite:7b-v0.1-q8_0": "7.7GB",
 +	"mistrallite:7b-v0.1-fp16": "14GB",
 +	"mixtral:8x7b": "26GB",
@@ -1299,10 +1308,20 @@
 +	"nomic-embed-text:137m-v1.5-fp16": "274MB",
 +	"notus:7b": "4.1GB",
 +	"notus:7b-v1": "4.1GB",
++	"notus:7b-v1-q2_K": "3.1GB",
++	"notus:7b-v1-q3_K_S": "3.2GB",
++	"notus:7b-v1-q3_K_M": "3.5GB",
++	"notus:7b-v1-q3_K_L": "3.8GB",
++	"notus:7b-v1-q6_K": "5.9GB",
 +	"notus:7b-v1-q8_0": "7.7GB",
 +	"notus:7b-v1-fp16": "14GB",
 +	"notux:8x7b": "26GB",
 +	"notux:8x7b-v1": "26GB",
++	"notux:8x7b-v1-q2_K": "16GB",
++	"notux:8x7b-v1-q3_K_S": "20GB",
++	"notux:8x7b-v1-q3_K_M": "20GB",
++	"notux:8x7b-v1-q3_K_L": "20GB",
++	"notux:8x7b-v1-q6_K": "38GB",
 +	"notux:8x7b-v1-q8_0": "50GB",
 +	"notux:8x7b-v1-fp16": "93GB",
 +	"nous-hermes:7b": "3.8GB",
@@ -1374,10 +1393,25 @@
 +	"openchat:7b-v3.5": "4.1GB",
 +	"openchat:7b-v3.5-0106": "4.1GB",
 +	"openchat:7b-v3.5-1210": "4.1GB",
++	"openchat:7b-v3.5-q2_K": "3.1GB",
++	"openchat:7b-v3.5-q3_K_S": "3.2GB",
++	"openchat:7b-v3.5-q3_K_M": "3.5GB",
++	"openchat:7b-v3.5-q3_K_L": "3.8GB",
++	"openchat:7b-v3.5-q6_K": "5.9GB",
 +	"openchat:7b-v3.5-q8_0": "7.7GB",
++	"openchat:7b-v3.5-fp16": "14GB",
++	"openchat:7b-v3.5-0106-q2_K": "3.1GB",
++	"openchat:7b-v3.5-1210-q2_K": "3.1GB",
++	"openchat:7b-v3.5-0106-q3_K_S": "3.2GB",
++	"openchat:7b-v3.5-1210-q3_K_S": "3.2GB",
++	"openchat:7b-v3.5-0106-q3_K_M": "3.5GB",
++	"openchat:7b-v3.5-1210-q3_K_M": "3.5GB",
++	"openchat:7b-v3.5-0106-q3_K_L": "3.8GB",
++	"openchat:7b-v3.5-1210-q3_K_L": "3.8GB",
++	"openchat:7b-v3.5-0106-q6_K": "5.9GB",
++	"openchat:7b-v3.5-1210-q6_K": "5.9GB",
 +	"openchat:7b-v3.5-0106-q8_0": "7.7GB",
 +	"openchat:7b-v3.5-1210-q8_0": "7.7GB",
-+	"openchat:7b-v3.5-fp16": "14GB",
 +	"openchat:7b-v3.5-0106-fp16": "14GB",
 +	"openchat:7b-v3.5-1210-fp16": "14GB",
 +	"opencoder:1.5b": "1.4GB",
@@ -1390,9 +1424,11 @@
 +	"openhermes:v2": "4.1GB",
 +	"openhermes:7b-v2": "4.1GB",
 +	"openhermes:7b-v2.5": "4.1GB",
++	"openhermes:7b-mistral-v2-q6_K": "5.9GB",
 +	"openhermes:7b-mistral-v2-q8_0": "7.7GB",
-+	"openhermes:7b-mistral-v2.5-q8_0": "7.7GB",
 +	"openhermes:7b-mistral-v2-fp16": "14GB",
++	"openhermes:7b-mistral-v2.5-q6_K": "5.9GB",
++	"openhermes:7b-mistral-v2.5-q8_0": "7.7GB",
 +	"openhermes:7b-mistral-v2.5-fp16": "14GB",
 +	"openthinker:7b": "4.7GB",
 +	"openthinker:32b": "20GB",
@@ -1466,9 +1502,11 @@
 +	"orca-mini:70b-v3-fp16": "138GB",
 +	"orca2:7b": "3.8GB",
 +	"orca2:13b": "7.4GB",
++	"orca2:7b-q6_K": "5.5GB",
 +	"orca2:7b-q8_0": "7.2GB",
-+	"orca2:13b-q8_0": "14GB",
 +	"orca2:7b-fp16": "13GB",
++	"orca2:13b-q6_K": "11GB",
++	"orca2:13b-q8_0": "14GB",
 +	"orca2:13b-fp16": "26GB",
 +	"paraphrase-multilingual:278m": "563MB",
 +	"paraphrase-multilingual:278m-mpnet-base-v2-fp16": "563MB",
@@ -2033,16 +2071,31 @@
 +	"snowflake-arctic-embed2:568m": "1.2GB",
 +	"snowflake-arctic-embed2:568m-l-fp16": "1.2GB",
 +	"solar:10.7b": "6.1GB",
++	"solar:10.7b-instruct-v1-q2_K": "4.5GB",
++	"solar:10.7b-instruct-v1-q3_K_S": "4.7GB",
++	"solar:10.7b-instruct-v1-q3_K_M": "5.2GB",
++	"solar:10.7b-instruct-v1-q3_K_L": "5.7GB",
 +	"solar:10.7b-instruct-v1-q5_0": "7.4GB",
-+	"solar:10.7b-text-v1-q5_0": "7.4GB",
++	"solar:10.7b-instruct-v1-q6_K": "8.8GB",
 +	"solar:10.7b-instruct-v1-q8_0": "11GB",
-+	"solar:10.7b-text-v1-q8_0": "11GB",
 +	"solar:10.7b-instruct-v1-fp16": "21GB",
++	"solar:10.7b-text-v1-q2_K": "4.5GB",
++	"solar:10.7b-text-v1-q3_K_S": "4.7GB",
++	"solar:10.7b-text-v1-q3_K_M": "5.2GB",
++	"solar:10.7b-text-v1-q3_K_L": "5.7GB",
++	"solar:10.7b-text-v1-q5_0": "7.4GB",
++	"solar:10.7b-text-v1-q6_K": "8.8GB",
++	"solar:10.7b-text-v1-q8_0": "11GB",
 +	"solar:10.7b-text-v1-fp16": "21GB",
 +	"solar-pro:22b": "13GB",
 +	"solar-pro:preview": "13GB",
++	"solar-pro:22b-preview-instruct-q2_K": "8.2GB",
++	"solar-pro:22b-preview-instruct-q3_K_S": "9.6GB",
++	"solar-pro:22b-preview-instruct-q3_K_M": "11GB",
++	"solar-pro:22b-preview-instruct-q3_K_L": "12GB",
 +	"solar-pro:22b-preview-instruct-q5_K_S": "15GB",
 +	"solar-pro:22b-preview-instruct-q5_K_M": "16GB",
++	"solar-pro:22b-preview-instruct-q6_K": "18GB",
 +	"solar-pro:22b-preview-instruct-q8_0": "24GB",
 +	"solar-pro:22b-preview-instruct-fp16": "44GB",
 +	"sparksammy/samantha": "3.8GB",
@@ -2169,9 +2222,19 @@
 +	"starling-lm:beta": "4.1GB",
 +	"starling-lm:7b-alpha": "4.1GB",
 +	"starling-lm:7b-beta": "4.1GB",
++	"starling-lm:7b-alpha-q2_K": "2.7GB",
++	"starling-lm:7b-alpha-q3_K_S": "3.2GB",
++	"starling-lm:7b-alpha-q3_K_M": "3.5GB",
++	"starling-lm:7b-alpha-q3_K_L": "3.8GB",
++	"starling-lm:7b-alpha-q6_K": "5.9GB",
 +	"starling-lm:7b-alpha-q8_0": "7.7GB",
-+	"starling-lm:7b-beta-q8_0": "7.7GB",
 +	"starling-lm:7b-alpha-fp16": "14GB",
++	"starling-lm:7b-beta-q2_K": "2.7GB",
++	"starling-lm:7b-beta-q3_K_S": "3.2GB",
++	"starling-lm:7b-beta-q3_K_M": "3.5GB",
++	"starling-lm:7b-beta-q3_K_L": "3.8GB",
++	"starling-lm:7b-beta-q6_K": "5.9GB",
++	"starling-lm:7b-beta-q8_0": "7.7GB",
 +	"starling-lm:7b-beta-fp16": "14GB",
 +	"themanofrod/travel-agent": "1.7GB",
 +	"tinydolphin:1.1b": "637MB",
@@ -2234,26 +2297,47 @@
 +	"vicuna:7b-16k": "3.8GB",
 +	"vicuna:13b-16k": "7.4GB",
 +	"vicuna:33b-16k": "18GB",
++	"vicuna:7b-q2_K": "2.8GB",
++	"vicuna:7b-q3_K_S": "2.9GB",
++	"vicuna:7b-q3_K_M": "3.3GB",
++	"vicuna:7b-q3_K_L": "3.6GB",
 +	"vicuna:7b-q6_K": "5.5GB",
-+	"vicuna:13b-q6_K": "11GB",
-+	"vicuna:33b-q6_K": "27GB",
-+	"vicuna:7b-v1.5-q6_K": "5.5GB",
-+	"vicuna:7b-v1.5-16k-q6_K": "5.5GB",
-+	"vicuna:13b-16k-q6_K": "11GB",
-+	"vicuna:13b-v1.5-16k-q6_K": "11GB",
 +	"vicuna:7b-q8_0": "7.2GB",
-+	"vicuna:13b-q8_0": "14GB",
-+	"vicuna:33b-q8_0": "35GB",
-+	"vicuna:7b-v1.5-q8_0": "7.2GB",
-+	"vicuna:7b-v1.5-16k-q8_0": "7.2GB",
-+	"vicuna:13b-16k-q8_0": "14GB",
-+	"vicuna:13b-v1.5-16k-q8_0": "14GB",
 +	"vicuna:7b-fp16": "13GB",
++	"vicuna:13b-q2_K": "5.4GB",
++	"vicuna:13b-q3_K_S": "5.7GB",
++	"vicuna:13b-q3_K_M": "6.3GB",
++	"vicuna:13b-q3_K_L": "6.9GB",
++	"vicuna:13b-q6_K": "11GB",
++	"vicuna:13b-q8_0": "14GB",
 +	"vicuna:13b-fp16": "26GB",
++	"vicuna:33b-q2_K": "14GB",
++	"vicuna:33b-q3_K_S": "14GB",
++	"vicuna:33b-q3_K_M": "16GB",
++	"vicuna:33b-q3_K_L": "17GB",
++	"vicuna:33b-q6_K": "27GB",
++	"vicuna:33b-q8_0": "35GB",
 +	"vicuna:33b-fp16": "65GB",
++	"vicuna:7b-v1.5-q2_K": "2.8GB",
++	"vicuna:7b-v1.5-q3_K_S": "2.9GB",
++	"vicuna:7b-v1.5-q3_K_M": "3.3GB",
++	"vicuna:7b-v1.5-q3_K_L": "3.6GB",
++	"vicuna:7b-v1.5-q6_K": "5.5GB",
++	"vicuna:7b-v1.5-q8_0": "7.2GB",
 +	"vicuna:7b-v1.5-fp16": "13GB",
++	"vicuna:7b_v1.5-16k-q2_K": "2.8GB",
++	"vicuna:7b_v1.5-16k-q3_K_S": "2.9GB",
++	"vicuna:7b_v1.5-16k-q3_K_M": "3.3GB",
++	"vicuna:7b_v1.5-16k-q3_K_L": "3.6GB",
++	"vicuna:7b-v1.5-16k-q6_K": "5.5GB",
++	"vicuna:7b-v1.5-16k-q8_0": "7.2GB",
 +	"vicuna:7b-v1.5-16k-fp16": "13GB",
-+	"vicuna:13b-16k-fp16": "26GB",
++	"vicuna:13b-v1.5-16k-q2_K": "5.4GB",
++	"vicuna:13b-v1.5-16k-q3_K_S": "5.7GB",
++	"vicuna:13b-v1.5-16k-q3_K_M": "6.3GB",
++	"vicuna:13b-v1.5-16k-q3_K_L": "6.9GB",
++	"vicuna:13b-v1.5-16k-q6_K": "11GB",
++	"vicuna:13b-v1.5-16k-q8_0": "14GB",
 +	"vicuna:13b-v1.5-16k-fp16": "26GB",
 +	"wizard-math:7b": "4.1GB",
 +	"wizard-math:13b": "7.4GB",
@@ -2276,9 +2360,11 @@
 +	"wizard-vicuna-uncensored:7b": "3.8GB",
 +	"wizard-vicuna-uncensored:13b": "7.4GB",
 +	"wizard-vicuna-uncensored:30b": "18GB",
++	"wizard-vicuna-uncensored:7b-q6_K": "5.5GB",
++	"wizard-vicuna-uncensored:13b-q6_K": "11GB",
++	"wizard-vicuna-uncensored:30b-q6_K": "27GB",
 +	"wizard-vicuna-uncensored:7b-q8_0": "7.2GB",
 +	"wizard-vicuna-uncensored:13b-q8_0": "14GB",
-+	"wizard-vicuna-uncensored:30b-q6_K": "27GB",
 +	"wizard-vicuna-uncensored:30b-q8_0": "35GB",
 +	"wizard-vicuna-uncensored:7b-fp16": "13GB",
 +	"wizard-vicuna-uncensored:13b-fp16": "26GB",
@@ -2303,6 +2389,7 @@
 +	"wizardcoder:34b-python-fp16": "67GB",
 +	"wizardlm-uncensored:13b": "7.4GB",
 +	"wizardlm-uncensored:13b-llama2": "7.4GB",
++	"wizardlm-uncensored:13b-llama2-q6_K": "11GB",
 +	"wizardlm-uncensored:13b-llama2-q8_0": "14GB",
 +	"wizardlm-uncensored:13b-llama2-fp16": "26GB",
 +	"wizardlm:7b-q4_0": "3.8GB",
@@ -2323,6 +2410,7 @@
 +	"wizardlm:13b-llama2-fp16": "26GB",
 +	"wizardlm2:7b": "4.1GB",
 +	"wizardlm2:8x22b": "80GB",
++	"wizardlm2:7b-q6_K": "5.9GB",
 +	"wizardlm2:7b-q8_0": "7.7GB",
 +	"wizardlm2:7b-fp16": "14GB",
 +	"wizardlm2:8x22b-q8_0": "149GB",
@@ -2334,20 +2422,40 @@
 +	"xwinlm:13b-v0.1": "7.4GB",
 +	"xwinlm:13b-v0.2": "7.4GB",
 +	"xwinlm:70b-v0.1": "39GB",
++	"xwinlm:7b-v0.1-q2_K": "2.8GB",
++	"xwinlm:7b-v0.2-q2_K": "2.8GB",
++	"xwinlm:7b-v0.1-q3_K_S": "2.9GB",
++	"xwinlm:7b-v0.2-q3_K_S": "2.9GB",
++	"xwinlm:7b-v0.1-q3_K_M": "3.3GB",
++	"xwinlm:7b-v0.2-q3_K_M": "3.3GB",
++	"xwinlm:7b-v0.1-q3_K_L": "3.6GB",
++	"xwinlm:7b-v0.2-q3_K_L": "3.6GB",
 +	"xwinlm:7b-v0.1-q6_K": "5.5GB",
 +	"xwinlm:7b-v0.2-q6_K": "5.5GB",
-+	"xwinlm:13b-v0.1-q6_K": "11GB",
-+	"xwinlm:13b-v0.2-q6_K": "11GB",
-+	"xwinlm:70b-v0.1-q6_K": "57GB",
 +	"xwinlm:7b-v0.1-q8_0": "7.2GB",
 +	"xwinlm:7b-v0.2-q8_0": "7.2GB",
-+	"xwinlm:13b-v0.1-q8_0": "14GB",
-+	"xwinlm:13b-v0.2-q8_0": "14GB",
-+	"xwinlm:70b-v0.1-q8_0": "73GB",
 +	"xwinlm:7b-v0.1-fp16": "13GB",
 +	"xwinlm:7b-v0.2-fp16": "13GB",
++	"xwinlm:13b-v0.1-q2_K": "5.4GB",
++	"xwinlm:13b-v0.2-q2_K": "5.4GB",
++	"xwinlm:13b-v0.1-q3_K_S": "5.7GB",
++	"xwinlm:13b-v0.2-q3_K_S": "5.7GB",
++	"xwinlm:13b-v0.1-q3_K_M": "6.3GB",
++	"xwinlm:13b-v0.2-q3_K_M": "6.3GB",
++	"xwinlm:13b-v0.1-q3_K_L": "6.9GB",
++	"xwinlm:13b-v0.2-q3_K_L": "6.9GB",
++	"xwinlm:13b-v0.1-q6_K": "11GB",
++	"xwinlm:13b-v0.2-q6_K": "11GB",
++	"xwinlm:13b-v0.1-q8_0": "14GB",
++	"xwinlm:13b-v0.2-q8_0": "14GB",
 +	"xwinlm:13b-v0.1-fp16": "26GB",
 +	"xwinlm:13b-v0.2-fp16": "26GB",
++	"xwinlm:70b-v0.1-q2_K": "29GB",
++	"xwinlm:70b-v0.1-q3_K_S": "30GB",
++	"xwinlm:70b-v0.1-q3_K_M": "33GB",
++	"xwinlm:70b-v0.1-q3_K_L": "36GB",
++	"xwinlm:70b-v0.1-q6_K": "57GB",
++	"xwinlm:70b-v0.1-q8_0": "73GB",
 +	"xwinlm:70b-v0.1-fp16": "138GB",
 +	"yarn-llama2:7b": "3.8GB",
 +	"yarn-llama2:13b": "7.4GB",
@@ -2982,7 +3090,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -308,6 +3274,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -308,6 +3382,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3008,7 +3116,7 @@
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -651,10 +3636,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -651,10 +3744,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3022,7 +3130,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -683,13 +3670,327 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -683,13 +3778,327 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3351,7 +3459,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -975,6 +4276,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -975,6 +4384,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -3449,7 +3557,7 @@
 +		fmt.Printf("q8 is the compressed full version.\n")
 +		fmt.Printf("q6 or above should be used for secure coding, finance, legal, medical or when accuracy is required.\n")
 +		fmt.Printf("q4 is the optimized balanced version and default.  If without a q suffix, it is assumed q4_0 or q4_K_M with preference for speed over accuracy.\n")
-+		fmt.Printf("q4 or above should be for logical, complex tasks, or detailed answers.\n")
++		fmt.Printf("q4 or above should be for logical, complex tasks, detailed answers, or translations.\n")
 +		fmt.Printf("q2 or q3 is resilient only when doing simple tasks, casual social contexts or chat, or basic answers.\n")
 +	}
 +	return nil
@@ -3498,7 +3606,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -1491,7 +4932,9 @@ func NewCLI() *cobra.Command {
+@@ -1491,7 +5040,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -3508,7 +3616,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1588,6 +5031,30 @@ func NewCLI() *cobra.Command {
+@@ -1588,6 +5139,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -3539,7 +3647,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1604,6 +5071,9 @@ func NewCLI() *cobra.Command {
+@@ -1604,6 +5179,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -3549,7 +3657,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1644,6 +5114,9 @@ func NewCLI() *cobra.Command {
+@@ -1644,6 +5222,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
