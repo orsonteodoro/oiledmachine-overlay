@@ -1520,7 +1520,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev test"
+IUSE+="
+dev test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	dev? (
 		test
