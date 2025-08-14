@@ -1577,13 +1577,12 @@ ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
-+suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
+test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
 ebuild_revision_39
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
 	!test
-	suid
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -1635,7 +1634,7 @@ RDEPEND+="
 		>=sys-libs/libselinux-8.1.0
 	)
 	X? (
-		x11-base/xorg-server[xvfb?]
+		x11-base/xorg-server[-suid,xvfb?]
 	)
 	xpra? (
 		x11-wm/xpra[X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
@@ -3027,6 +3026,7 @@ _src_configure() {
 	fi
 
 	local myconf=(
+		--enable-suid # Hard requirement
 		$(use_enable apparmor)
 		$(use_enable chroot)
 		$(use_enable dbusproxy)
@@ -3036,7 +3036,6 @@ _src_configure() {
 		$(use_enable network)
 		$(use_enable private-home)
 		$(use_enable selinux)
-		$(use_enable suid)
 		$(use_enable userns)
 		$(use_enable X x11)
 		${test_opts[@]}
@@ -4142,15 +4141,7 @@ ewarn "The /usr/local/firejail-bin has been removed.  You should remove"
 ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
 ewarn
 
-# We do not enable suid by default because it can cause privilege escalation.
-# suid is necessary for it to work properly on X.
-	if use X && has_version "x11-base/xorg-server" && ! has_version "x11-base/xorg-server[suid]" ; then
-ewarn "${PN} may require x11-base/xorg-server[suid] for it to work properly in X environments."
-	fi
-
-	if use X && ! use suid ; then
-ewarn "${PN} may require ${CATEGORY}/${PN}[suid] for it to work properly in X environments."
-	fi
+ewarn "SUID is required for ${PN} to work, so using it has risk of privilege escalation."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
