@@ -257,21 +257,68 @@ ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
 # If no arguments are provided, it uses the CRATES variable.
 # The value is set as CARGO_CRATE_URIS.
 _cargo_set_crate_uris() {
-	local -r regex='^([a-zA-Z0-9_\-]+)-([0-9]+\.[0-9]+\.[0-9]+.*)$'
+	local -r name_regex='^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'
+	local -r version_regex='^[0-9]+\.[0-9]+.*$'
 	local crates=${1}
 	local crate
 
 	CARGO_CRATE_URIS=
 	for crate in ${crates}; do
-		local name version url
+		local name version url tmp
+		# Trim leading/trailing whitespace
+		tmp=${crate//[[:space:]]/}
+		#einfo "Parsing crate: ${tmp}"
+		# Count hyphens without external commands
+		hyphen_count=0
+		for ((i=0; i<${#tmp}; i++)); do
+			[[ ${tmp:$i:1} == "-" ]] && ((hyphen_count++))
+		done
+		#einfo "  Hyphen count: ${hyphen_count}"
 		if [[ ${crate} == *@* ]]; then
 			name=${crate%@*}
 			version=${crate##*@}
-		else
-			[[ ${crate} =~ ${regex} ]] ||
+			#einfo "  @-based: name=${name}, version=${version}"
+			[[ -n ${name} && -n ${version} && ${name} =~ ${name_regex} && ${version} =~ ${version_regex} ]] ||
 				die "Could not parse name and version from crate: ${crate}"
-			name="${BASH_REMATCH[1]}"
-			version="${BASH_REMATCH[2]}"
+		else
+			# Case 1: Versions with build metadata (+)
+			if [[ ${tmp} =~ '+' && ${tmp} =~ ^(.*)-([0-9]+\.[0-9]+(\.[0-9]+)?\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)$ ]]; then
+				name="${BASH_REMATCH[1]}"
+				version="${BASH_REMATCH[2]}"
+				#einfo "  C1 Regex split (build metadata): name=${name}, version=${version}"
+				#einfo "  Validating name: ${name} =~ ${name_regex}"
+				#einfo "  Validating version: ${version} =~ ${version_regex}"
+				[[ -n ${name} && -n ${version} && ${name} =~ ${name_regex} && ${version} =~ ${version_regex} ]] ||
+					die "Could not parse name and version from crate: ${tmp}"
+			# Case 2: Simple version (major.minor.patch, 1 hyphen)
+			elif [[ ${hyphen_count} -eq 1 && ${tmp} =~ ^(.*)-([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+				name="${BASH_REMATCH[1]}"
+				version="${BASH_REMATCH[2]}"
+				#einfo "  C2 Regex split (simple version): name=${name}, version=${version}"
+				# Skip validation for simple version
+				#einfo "  Skipping validation for simple version"
+			# Case 3: Pre-release version (multiple hyphens)
+			elif [[ ${hyphen_count} -gt 1 && ${tmp} =~ ([0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z.-]+)$ ]]; then
+				version="${BASH_REMATCH[1]}"
+				len=$((${#tmp} - ${#version} - 1))
+				name="${tmp:0:len}"
+				#einfo "  C3 Regex split (pre-release): name=${name}, version=${version}"
+				#einfo "  Skipping validation for pre-release version"
+
+			# Case 4: Fallback for other cases
+			else
+				name=${tmp%-*}
+				version=${tmp##*-}
+				#einfo "  C4 Fallback split: name=${name}, version=${version}"
+				#einfo "  Validating name: ${name} =~ ${name_regex}"
+				#einfo "  Validating version: ${version} =~ ${version_regex}"
+				[[ -n ${name} && -n ${version} && ${name} =~ ${name_regex} && ${version} =~ ${version_regex} ]] ||
+					die "Could not parse name and version from crate: ${tmp}"
+			fi
+			#einfo "  Validating name: ${name} =~ ${name_regex}"
+			#einfo "  Validating version: ${version} =~ ${version_regex}"
+			[[ -n ${name} && -n ${version} && ${name} =~ ${name_regex} && ${version} =~ ${version_regex} ]] ||
+				die "Could not parse name and version from crate: ${tmp}"
 		fi
 		url="https://crates.io/api/v1/crates/${name}/${version}/download -> ${name}-${version}.crate"
 		CARGO_CRATE_URIS+="${url} "
