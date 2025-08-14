@@ -641,6 +641,7 @@ _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
 
 declare -A _SCOPE=(
+	["sway"]="ban" # Breaks startup
 	["X"]="ban"
 	["Xephyr"]="ban" # Breaks --x11=xephyr
 	["xpra"]="ban" # Causes Authorization required, but no authorization protocol specified
@@ -1578,7 +1579,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild_revision_39
+ebuild_revision_41
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -3784,9 +3785,21 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 		oom_arg="--oom=${OOM[${profile_name}]}"
 	fi
 
-	local all_args=(
+	local all_args_x=(
 		${apparmor_arg}
 		${x11_arg}
+		${allocator_args}
+		${wh_arg}
+		${seccomp_arg}
+		${landlock_arg}
+		${profile_arg}
+		${pulse_arg}
+		${oom_arg}
+		${args}
+	)
+
+	local all_args_wayland=(
+		${apparmor_arg}
 		${allocator_args}
 		${wh_arg}
 		${seccomp_arg}
@@ -3803,9 +3816,11 @@ cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${all_args[@]} "${exe_path}" "\$@"
+	echo "Detected X"
+	exec firejail ${all_args_x[@]} "${exe_path}" "\$@"
 else
-	exec firejail ${all_args[@]} "${exe_path}" "\$@"
+	echo "Detected wayland or tty"
+	exec firejail ${all_args_wayland[@]} "${exe_path}" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/${folder}/${wrapper_name}"
@@ -4079,10 +4094,10 @@ SANDBOX_WRITE="/run/firejail"
 EOF
 	insinto "/etc/sandbox.d"
 	doins "${T}/99firejail"
-	if use suid ; then
+
+	# Required:
 einfo "Setting suid bit for /usr/bin/firejail"
-#		fperms u+s "/usr/bin/firejail"
-	fi
+	fperms u+s "/usr/bin/firejail"
 }
 
 pkg_postinst() {
@@ -4157,3 +4172,8 @@ ewarn "SUID is required for ${PN} to work, so using it has risk of privilege esc
 # wrapper xephyr xpra -apparmor -contrib -dbusproxy -file-transfer -globalcfg
 # -hardened_malloc -mimalloc -network -scudo -selfrando (-selinux) -test
 # -test-profiles -test-x11 -vanilla -xvfb"
+
+# 1a576d1 tested (20250814):
+# mousepad with xephyr:  passed
+# mousepad with xpra:  failed
+# mousepad with wayland:  passed
