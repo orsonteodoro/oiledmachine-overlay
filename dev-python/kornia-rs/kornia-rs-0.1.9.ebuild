@@ -815,8 +815,8 @@ ordered-float-4.6.0
 ordered-float-5.0.0
 ordered-float-5.0.0
 ordered-stream-0.2.0
-ort-2.0.0-rc.10
-ort-sys-2.0.0-rc.10
+ort-2.0.0-rc.9
+ort-sys-2.0.0-rc.9
 overload-0.1.1
 overload-0.1.1
 owned_ttf_parser-0.25.1
@@ -1110,7 +1110,6 @@ slab-0.4.11
 slotmap-1.0.7
 smallvec-1.15.1
 smallvec-1.15.1
-smallvec-2.0.0-alpha.10
 smithay-client-toolkit-0.19.2
 smithay-clipboard-0.7.2
 smol_str-0.2.2
@@ -1522,7 +1521,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	dev? (
