@@ -11,7 +11,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 inherit check-compiler-switch cmake flag-o-matic xdg
 
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/coolercontrol-${PV}/coolercontrol"
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
