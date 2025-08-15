@@ -606,7 +606,7 @@ echo "Dropped packets per second:  ${d0} (t=1), ${d1} (t=2), ${d2} (t=3), ${d3} 
 			|| ${d4} == 1 \
 		)) ; then
 echo
-echo "Detected 1 dropped packet per second which concerning and indicative of possible thoughput issues."
+echo "Detected 1 dropped packet per second which is concerning and indicative of possible thoughput issues."
 echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
 		elif (( \
