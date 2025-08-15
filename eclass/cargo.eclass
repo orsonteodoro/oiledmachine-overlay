@@ -150,6 +150,7 @@ ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
 # Example of a simple definition with no path to Cargo.toml:
 # @CODE
 # declare -A GIT_CRATES=(
+#	[<crate_name>]="<project_uri>;<commit-id>;<project-name>-<commit-id>"
 # 	[home]="https://github.com/rbtcollins/home;a243ee2fbee6022c57d56f5aa79aefe194eabe53"
 # )
 # @CODE
@@ -157,6 +158,7 @@ ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
 # Example with paths defined:
 # @CODE
 # declare -A GIT_CRATES=(
+#	[<crate_name>]="<project_uri>;<commit-id>;<project-name>-<commit-id>/<crate-subdir>"
 # 	[rustpython-common]="https://github.com/RustPython/RustPython;4f38cb68e4a97aeea9eb19673803a0bd5f655383;RustPython-%commit%/common"
 # 	[rustpython-parser]="https://github.com/RustPython/RustPython;4f38cb68e4a97aeea9eb19673803a0bd5f655383;RustPython-%commit%/compiler/parser"
 # )
@@ -165,6 +167,7 @@ ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
 # Example with host defined:
 # @CODE
 # declare -A GIT_CRATES=(
+#	[<crate_name>]="<project_uri>;<commit-id>;<project-name>-<commit-id>/<crate-subdir>;<host>"
 #	[clapper]="https://gitlab.gnome.org/JanGernert/clapper-rs;530b6fd53a60563d8038f7a1d9d735d6dc496adb;clapper-rs-%commit%/libclapper-rs;gitlab"
 # )
 # @CODE
