@@ -5,6 +5,7 @@ EAPI=8
 
 # U24
 
+GCC_SLOT="15"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 LLVM_COMPAT=( 20 )
 
@@ -48,13 +49,14 @@ HYPRPM_RDEPEND="
 	app-alternatives/ninja
 	virtual/pkgconfig
 "
+# Relaxed re2 version requirement.  Originally slot 11
 RDEPEND="
 	${HYPRPM_RDEPEND}
 	>=dev-cpp/tomlplusplus-3.4.0
 	>=dev-libs/hyprlang-0.3.2
 	>=dev-libs/hyprgraphics-0.1.3:=
 	>=dev-libs/libinput-1.28.1:=
-	>=dev-libs/re2-11:=
+	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.22.90
 	>=gui-libs/aquamarine-0.9.0:=
@@ -137,15 +139,22 @@ einfo "PATH:  ${PATH} (after)"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 		export CPP="${CC} -E"
 	else
-		CC=$(tc-getCC)
-		CXX=$(tc-getCXX)
+		CC="${CHOST}-gcc-${GCC_SLOT}"
+		CXX="${CHOST}-g++-${GCC_SLOT}"
 		CPP="${CC} -E"
-		if ver_test $(gcc-major-version) -ne "15" ; then
-eerror "Switch to GCC 15"
+		if ver_test $(gcc-major-version) -ne "${GCC_SLOT}" ; then
+eerror "Switch to GCC ${GCC_SLOT}"
 			die
 		fi
 	fi
 	strip-unsupported-flags
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -170,7 +179,7 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local emesonargs=(
-		$(meson_feature legacy-renderer legacy_renderer)
+		#$(meson_feature legacy-renderer legacy_renderer)
 		$(meson_feature systemd)
 		$(meson_feature X xwayland)
 	)
