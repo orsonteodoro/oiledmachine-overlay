@@ -19,9 +19,9 @@ NPM_INSTALL_ARGS=(
 # ./convert-cargo-lock.sh 2.2.2 2.2.2
 
 declare -A GIT_CRATES=(
-[nvml-wrapper]="https://github.com/codifryed/nvml-wrapper;572095f631da93be8d243c73820e581676969897;plugins-workspace-%commit%/nvml-wrapper" # 0.10.0
-[nvml-wrapper-sys]="https://github.com/codifryed/nvml-wrapper;572095f631da93be8d243c73820e581676969897;plugins-workspace-%commit%/nvml-wrapper-sys" # 0.8.0
-[tower_governor]="https://github.com/codifryed/tower-governor;fd799d86418e58179468953c80ad7094a81a9e37;" # 0.4.3
+[nvml-wrapper]="https://github.com/codifryed/nvml-wrapper;572095f631da93be8d243c73820e581676969897;nvml-wrapper-%commit%/nvml-wrapper" # 0.10.0
+[nvml-wrapper-sys]="https://github.com/codifryed/nvml-wrapper;572095f631da93be8d243c73820e581676969897;nvml-wrapper-%commit%/nvml-wrapper-sys" # 0.8.0
+[tower_governor]="https://github.com/codifryed/tower-governor;fd799d86418e58179468953c80ad7094a81a9e37;tower-governor-%commit%" # 0.4.3
 )
 
 CRATES="

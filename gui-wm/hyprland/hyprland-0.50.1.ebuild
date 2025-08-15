@@ -3,8 +3,10 @@
 
 EAPI=8
 
+# U24
+
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
-LLVM_COMPAT=( 19 )
+LLVM_COMPAT=( 20 )
 
 inherit cflags-hardened check-compiler-switch meson toolchain-funcs
 
@@ -15,7 +17,7 @@ if [[ "${PV}" == *"9999" ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
 else
-	KEYWORDS="amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-source"
 	SRC_URI="
 https://github.com/hyprwm/${PN^}/releases/download/v${PV}/source-v${PV}.tar.gz
@@ -41,47 +43,48 @@ REQUIRED_USE="
 # so that it can clone, compile and install plugins.
 HYPRPM_RDEPEND="
 	>=dev-build/cmake-3.30
+	>=dev-build/meson-1.8.2
+	>=dev-vcs/git-2.50.1
 	app-alternatives/ninja
-	dev-build/meson
-	dev-vcs/git
 	virtual/pkgconfig
 "
 RDEPEND="
 	${HYPRPM_RDEPEND}
+	>=dev-cpp/tomlplusplus-3.4.0
+	>=dev-libs/hyprlang-0.3.2
+	>=dev-libs/hyprgraphics-0.1.3:=
+	>=dev-libs/libinput-1.28.1:=
+	>=dev-libs/re2-11:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.22.90
-	>=gui-libs/aquamarine-0.4.2
-	>=gui-libs/hyprcursor-0.1.9
-	dev-cpp/tomlplusplus
+	>=gui-libs/aquamarine-0.9.0:=
+	>=gui-libs/hyprcursor-0.1.7
+	>=gui-libs/hyprutils-0.8.1:=
+	>=media-libs/libglvnd-1.7.0
+	>=media-libs/mesa-25.1.6
+	>=x11-libs/cairo-1.18.4
+	>=x11-libs/libdrm-2.4.125
+	>=x11-libs/libXcursor-1.2.3
+	>=x11-libs/libxkbcommon-1.10.0
+	>=x11-libs/pango-1.56.4
+	>=x11-libs/pixman-0.46.2
 	dev-libs/glib:2
-	dev-libs/hyprlang
-	dev-libs/libinput:=
-	dev-libs/hyprgraphics:=
-	dev-libs/re2:=
-	gui-libs/hyprutils:=
-	media-libs/libglvnd
-	media-libs/mesa
 	sys-apps/util-linux
-	x11-libs/cairo
-	x11-libs/libdrm
-	x11-libs/libxkbcommon
-	x11-libs/pango
-	x11-libs/pixman
-	x11-libs/libXcursor
 	qtutils? (
 		gui-libs/hyprland-qtutils
 	)
 	X? (
-		x11-libs/libxcb:0=
-		x11-base/xwayland
-		x11-libs/xcb-util-errors
-		x11-libs/xcb-util-wm
+		>=x11-libs/libxcb-1.17.0:0=
+		>=x11-libs/xcb-util-errors-1.0.1
+		>=x11-libs/xcb-util-wm-0.4.2
+		>=x11-base/xwayland-24.1.8
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/hyprland-protocols-0.4
-	>=dev-libs/wayland-protocols-1.36
+	>=dev-cpp/glaze-5.5.4
+	>=dev-libs/hyprland-protocols-0.6.4
+	>=dev-libs/wayland-protocols-1.43
 "
 gen_clang_slot() {
 	for x in ${LLVM_COMPAT[@]} ; do
@@ -93,19 +96,19 @@ gen_clang_slot() {
 	done
 }
 BDEPEND="
+	>=app-misc/jq-1.8.1
 	>=dev-util/hyprwayland-scanner-0.3.10
-	app-misc/jq
-	dev-build/cmake
+	>=dev-build/cmake-4.0.3
 	virtual/pkgconfig
 	!clang? (
-		>=sys-devel/gcc-15:15
+		>=sys-devel/gcc-15.1.1:15
 	)
 	clang? (
 		(
 			$(gen_clang_slot)
 			llvm-core/clang:=
 		)
-		>=sys-devel/gcc-15:15
+		>=sys-devel/gcc-15.1.1:15
 	)
 "
 
