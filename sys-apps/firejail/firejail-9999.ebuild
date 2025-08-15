@@ -1579,7 +1579,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild_revision_41
+ebuild_revision_42
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -4175,5 +4175,5 @@ ewarn "SUID is required for ${PN} to work, so using it has risk of privilege esc
 
 # 1a576d1 tested (20250814):
 # mousepad with xephyr:  passed
-# mousepad with xpra:  failed
+# mousepad with xpra:  passed
 # mousepad with wayland:  passed
