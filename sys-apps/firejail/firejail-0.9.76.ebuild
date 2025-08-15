@@ -4197,3 +4197,20 @@ ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege 
 # mousepad with xephyr:  passed
 # mousepad with xpra:  passed
 # mousepad with wayland:  passed
+# xpra 6.2.5:  passed
+# xpra 6.3.2:  passed
+# xpra USE flags used for testing:
+# USE="X avif client cython firejail gtk3 jpeg rencodeplus server vsock webp
+# -aac -aes -alsa -amf -aom -appindicator -audio -avahi -brotli -cityhash
+# -clipboard -cpu-percent -csc_cython -csc_libyuv -cuda -cuda_rebuild -cups
+# -cups-forwarding -cythonize-more -dbus (-debug) -doc -drm -evdi -flac
+# -gnome-shell -gssapi -html5-client -html5_brotli -html5_gzip -http -ibus -jack
+# -kerberos -keyboard-layout -keycloak -lame -ldap -ldap3 -lz4 -lzo -matroska
+# -mdns -mp3 -mysql -netdev -notifications -nvdec -nvenc -nvfbc -nvjpeg -ogg
+# -opengl -openh264 -openrc -opus -osmesa -oss -otp -pam -pinentry -png -proc
+# -proxy -pulseaudio -pyglet -pyinotify -qrencode -qt6 -quic -remote-encoder
+# -rencode -rfb -sd_listen (-selinux) -socks -sound-forwarding -speex -spng -sql
+# -sqlite -ssh -sshpass -ssl -systemd -tcp-wrappers -test -tiff -tk -u2f -uinput
+# -v4l2 -vaapi -vorbis -vpx -wavpack -wayland -webcam -webcam-forwarding
+# -websockets -x264 -xdg -xinput -yaml -zeroconf -zlib"
+# PYTHON_SINGLE_TARGET="python3_11 -python3_12"
