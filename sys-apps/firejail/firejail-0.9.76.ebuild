@@ -4185,6 +4185,8 @@ ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege 
 # OILEDMACHINE-OVERLAY-META-DETAILED-NOTES:  The test USE flag was found useful in correcting profile errors and why it kept around; however, it is garbage quality.
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (1a576d1 with xpra 5.0.11 and 6.2.1, 20250118)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (897f12d, 20250118)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (1a576d1, 20250814)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (0.9.76, 20250814)
 
 # Tested for both 1a576d1, 897f12d
 # For sys-apps/firejail
@@ -4193,12 +4195,13 @@ ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege 
 # -hardened_malloc -mimalloc -network -scudo -selfrando (-selinux) -test
 # -test-profiles -test-x11 -vanilla -xvfb"
 
-# Both 1a576d1 and 0.9.76 tested (20250814):
+# 1a576d1 tests and config (on 20250814):
 # mousepad with xephyr:  passed
 # mousepad with xpra:  passed
 # mousepad with wayland:  passed
 # xpra 6.2.5:  passed
 # xpra 6.3.2:  passed
+#
 # xpra USE flags used for testing:
 # USE="X avif client cython firejail gtk3 jpeg rencodeplus server vsock webp
 # -aac -aes -alsa -amf -aom -appindicator -audio -avahi -brotli -cityhash
@@ -4214,3 +4217,10 @@ ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege 
 # -v4l2 -vaapi -vorbis -vpx -wavpack -wayland -webcam -webcam-forwarding
 # -websockets -x264 -xdg -xinput -yaml -zeroconf -zlib"
 # PYTHON_SINGLE_TARGET="python3_11 -python3_12"
+#
+# firejail USE flags used for testing:
+# USE="X auto chroot clang landlock private-home userns wrapper xephyr xpra
+# -apparmor -contrib -dbusproxy -file-transfer -globalcfg -hardened_malloc
+# -mimalloc -network -scudo -selfrando (-selinux) -test -test-profiles -test-x11
+# -vanilla -xvfb"
+#
