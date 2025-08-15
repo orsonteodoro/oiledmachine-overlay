@@ -1,8 +1,5 @@
 To test:
 
-Make sure the xpra proxy server(s) are up and that you have the DISPLAY for
-that was assiged to the xpra proxy server and spawned Xvfb at a future time.
-
 Run a program on the Xvfb:
 xpra start --start=xfce4-terminal :14500 # replacing 14500 with the value of DISPLAY
 

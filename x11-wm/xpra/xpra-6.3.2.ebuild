@@ -17,7 +17,7 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PATENT_STATUS_IUSE=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{11,12} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.3/.github/workflows/build.yml#L15
 
@@ -84,7 +84,7 @@ sd_listen selinux +server +socks sound-forwarding spng sql sqlite +ssh sshpass
 +ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
 wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml
 zeroconf zlib
-ebuild_revision_15
+ebuild_revision_16
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -340,7 +340,7 @@ PILLOW_DEPEND="
 "
 
 PYOPENGL_VER=(
-	"3.1.7"
+	"3.1.9"
 )
 
 gen_opengl_rdepend() {
@@ -883,6 +883,10 @@ src_prepare() {
 				|| die
 		fi
 	fi
+
+	if ! use amf ; then
+		eapply "${FILESDIR}/${PN}-6.3.2-disable-amf.patch"
+	fi
 }
 
 python_prepare_all() {
@@ -940,9 +944,10 @@ eerror
 		|| die
 
 	DISTUTILS_ARGS=(
+		$(use_with amf)
+		$(use_with amf amf_encoder)
 		$(use_with audio)
 		$(use_with audio gstreamer_audio)
-		$(use_with amf)
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
@@ -992,7 +997,6 @@ eerror
 		$(use_with vpx)
 		$(use_with vsock)
 		$(use_with v4l2)
-		$(use_with wayland)
 		$(use_with webcam)
 		$(use_with webp)
 		$(use_with X argb)
@@ -1058,13 +1062,14 @@ eerror
 
 python_install_all() {
 	distutils-r1_python_install_all
+	mv "${ED}/usr/etc" "${ED}/etc" || die
 	if use doc ; then
 		mv \
 			"${ED}/usr/share/doc/xpra" \
 			"${ED}/usr/share/doc/${PN}-${PVR}" \
 			|| die
 	fi
-	if use openrc ; then
+	if use openrc && use server && [[ -e "${ED}/etc/init.d/xpra" ]] ; then
 		fperms 0750 "/etc/init.d/xpra"
 	fi
 	if use X && has_version "x11-base/xorg-drivers[video_cards_dummy]" && [[ -e "${ED}/etc/xpra/xorg.conf" ]] ; then
@@ -1075,20 +1080,11 @@ python_install_all() {
 			|| die
 	fi
 	if ! use openrc ; then
-		if [[ -e "${ED}/etc/init.d/${PN}" ]] ; then
-			rm "${ED}/etc/init.d/${PN}" \
-				|| die
-		fi
+		rm -f "${ED}/etc/init.d/${PN}"
 	fi
 	if ! use systemd ; then
-		if [[ -e "${ED}/lib/systemd/system/xpra.service" ]] ; then
-			rm "${ED}/lib/systemd/system/xpra.service" \
-				|| die
-		fi
-		if [[ -e "${ED}/lib/systemd/system/xpra-nosocketactivation.service" ]] ; then
-			rm "${ED}/lib/systemd/system/xpra-nosocketactivation.service" \
-				|| die
-		fi
+		rm -f "${ED}/lib/systemd/system/xpra.service"
+		rm -f "${ED}/lib/systemd/system/xpra-nosocketactivation.service"
 	fi
 	python_fix_shebang "${ED}"
 }
@@ -1160,6 +1156,8 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (6.2.1, 20250118)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (6.2.5, 20250814)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (6.3.2, 20250814)
 # USE="X avif client cython firejail gtk3 rencodeplus server webp -aac -aes
 # -alsa -amf -aom -appindicator -audio -avahi -brotli -cityhash -clipboard
 # -cpu-percent -csc_cython -csc_libyuv -cuda -cuda_rebuild -cups
