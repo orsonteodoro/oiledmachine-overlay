@@ -1,0 +1,330 @@
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/CMakeLists.txt glaze-5.5.5/tests/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/CMakeLists.txt	2025-08-14 23:21:30.202407812 -0700
+@@ -1,17 +1,9 @@
+ include(FetchContent)
+ 
+-FetchContent_Declare(
+-  ut
+-  GIT_REPOSITORY https://github.com/openalgz/ut
+-  GIT_TAG v1.0.0
+-  GIT_SHALLOW TRUE
+-)
++find_package(ut2-glaze REQUIRED)
+ 
+ message(STATUS "Fetching dependencies...")
+ set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL TRUE)
+-set(CMAKE_SKIP_INSTALL_RULES ON CACHE BOOL "" FORCE)
+-FetchContent_MakeAvailable(ut)
+-set(CMAKE_SKIP_INSTALL_RULES OFF CACHE BOOL "" FORCE)
+ set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL FALSE)
+ message(STATUS "...finished fetching dependencies.")
+ 
+@@ -20,7 +12,7 @@ add_code_coverage_all_targets()
+ 
+ add_library(glz_test_common INTERFACE)
+ target_compile_features(glz_test_common INTERFACE cxx_std_23)
+-target_link_libraries(glz_test_common INTERFACE ut::ut glaze::glaze)
++target_link_libraries(glz_test_common INTERFACE ut2-glaze::ut2-glaze glaze::glaze)
+ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+     target_compile_options(glz_test_common INTERFACE -fno-exceptions -fno-rtti)
+     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+@@ -46,7 +38,7 @@ endif()
+ 
+ add_library(glz_test_exceptions INTERFACE)
+ target_compile_features(glz_test_exceptions INTERFACE cxx_std_23)
+-target_link_libraries(glz_test_exceptions INTERFACE ut::ut glaze::glaze)
++target_link_libraries(glz_test_exceptions INTERFACE ut2-glaze::ut2-glaze glaze::glaze)
+ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+     target_compile_options(glz_test_exceptions INTERFACE)
+     target_compile_options(glz_test_exceptions INTERFACE -Wall -Wextra -pedantic)
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/CMakeLists.txt.orig glaze-5.5.5/tests/CMakeLists.txt.orig
+--- glaze-5.5.5.orig/tests/CMakeLists.txt.orig	1969-12-31 16:00:00.000000000 -0800
++++ glaze-5.5.5/tests/CMakeLists.txt.orig	2025-08-04 12:11:22.000000000 -0700
+@@ -0,0 +1,129 @@
++include(FetchContent)
++
++FetchContent_Declare(
++  ut
++  GIT_REPOSITORY https://github.com/openalgz/ut
++  GIT_TAG v1.0.0
++  GIT_SHALLOW TRUE
++)
++
++message(STATUS "Fetching dependencies...")
++set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL TRUE)
++set(CMAKE_SKIP_INSTALL_RULES ON CACHE BOOL "" FORCE)
++FetchContent_MakeAvailable(ut)
++set(CMAKE_SKIP_INSTALL_RULES OFF CACHE BOOL "" FORCE)
++set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL FALSE)
++message(STATUS "...finished fetching dependencies.")
++
++include(../cmake/code-coverage.cmake)
++add_code_coverage_all_targets()
++
++add_library(glz_test_common INTERFACE)
++target_compile_features(glz_test_common INTERFACE cxx_std_23)
++target_link_libraries(glz_test_common INTERFACE ut::ut glaze::glaze)
++if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
++    target_compile_options(glz_test_common INTERFACE -fno-exceptions -fno-rtti)
++    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
++        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13)
++            target_compile_options(glz_test_common INTERFACE -Wall -Wextra -pedantic)
++        else()
++            target_compile_options(glz_test_common INTERFACE -Wall -Wextra -pedantic $<$<CONFIG:Debug>:-Werror>)
++        endif()
++    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
++        target_compile_options(glz_test_common INTERFACE -Wall -Wextra -pedantic $<$<CONFIG:Debug>:-Werror>)
++    else()
++        target_compile_options(glz_test_common INTERFACE -Wall -Wextra -pedantic)
++    endif()
++
++    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
++      target_compile_options(glz_test_common INTERFACE -ftime-trace -fsanitize=address -fsanitize-address-use-after-scope -fsanitize=undefined)
++      target_link_options(glz_test_common INTERFACE -ftime-trace -fsanitize=address -fsanitize-address-use-after-scope -fsanitize=undefined)
++    endif()
++elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
++    target_compile_options(glz_test_common INTERFACE /GR- /bigobj) #/fsanitize=address
++    target_compile_options(glz_test_common INTERFACE /W4 /wd4459 /wd4805)
++endif()
++
++add_library(glz_test_exceptions INTERFACE)
++target_compile_features(glz_test_exceptions INTERFACE cxx_std_23)
++target_link_libraries(glz_test_exceptions INTERFACE ut::ut glaze::glaze)
++if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
++    target_compile_options(glz_test_exceptions INTERFACE)
++    target_compile_options(glz_test_exceptions INTERFACE -Wall -Wextra -pedantic)
++elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
++    target_compile_options(glz_test_exceptions INTERFACE /GR- /bigobj) #/fsanitize=address
++    target_compile_options(glz_test_exceptions INTERFACE /W4 /wd4459 /wd4805)
++endif()
++
++add_subdirectory(api_test)
++add_subdirectory(beve_test)
++add_subdirectory(cli_menu_test)
++add_subdirectory(compare_test)
++add_subdirectory(csv_test)
++add_subdirectory(eigen_test)
++add_subdirectory(example_json)
++add_subdirectory(exceptions_test)
++add_subdirectory(inplace_vector)
++add_subdirectory(int_parsing)
++add_subdirectory(jmespath)
++add_subdirectory(jsonrpc_test)
++add_subdirectory(lib_test)
++add_subdirectory(mock_json_test)
++add_subdirectory(reflection)
++add_subdirectory(roundtrip)
++add_subdirectory(stencil)
++add_subdirectory(threading_test)
++add_subdirectory(toml_test)
++add_subdirectory(utility_formats)
++
++# JSON Tests
++add_subdirectory(json_conformance)
++add_subdirectory(json_performance)
++add_subdirectory(json_reflection_test)
++add_subdirectory(json_test)
++
++add_subdirectory(networking_tests)
++
++if(glaze_EETF_FORMAT)
++    add_subdirectory(eetf_test)
++endif(glaze_EETF_FORMAT)
++
++# We don't run find_package_test or glaze-install_test with MSVC/Windows, because the Github action runner often chokes
++# Don't run find_package on Clang, because Linux runs with Clang try to use GCC standard library and have errors before Clang 18
++if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
++    add_test(
++    NAME glaze-install_test
++    COMMAND
++    "${CMAKE_COMMAND}"
++    --install "${PROJECT_BINARY_DIR}"
++    --prefix "${CMAKE_CURRENT_BINARY_DIR}/install"
++    --config $<CONFIG>
++    --verbose
++    )
++
++    add_test(
++    NAME find_package_test
++    COMMAND
++    "${CMAKE_CTEST_COMMAND}"
++    --verbose
++    --output-on-failure
++    --build-noclean
++    --build-project "${PROJECT_NAME}" # helps msvc when --build-target
++    --build-generator "${CMAKE_GENERATOR}"
++    --build-config $<CONFIG>
++    --build-and-test
++    "${CMAKE_CURRENT_SOURCE_DIR}/find_package"
++    "${CMAKE_CURRENT_BINARY_DIR}/find_package"
++    --build-options
++    "-Dglaze_ROOT:PATH=${CMAKE_CURRENT_BINARY_DIR}/install"
++    "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
++    "-DBUILD_TESTING=ON"
++    "$<$<BOOL:${glaze_EETF_FORMAT}>:-Dglaze_EETF_FORMAT=ON>"
++    "$<$<BOOL:${glaze_EETF_FORMAT}>:-DEXTERNAL_MODULE_PATH=${PROJECT_SOURCE_DIR}/cmake>"
++    --test-command "${CMAKE_CTEST_COMMAND}" --verbose --output-on-failure # inner ctest command
++    )
++
++    set_tests_properties(glaze-install_test PROPERTIES FIXTURES_SETUP glaze-install-fixture)
++    set_tests_properties(find_package_test PROPERTIES FIXTURES_REQUIRED glaze-install-fixture)
++endif()
++
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/CMakeLists.txt.rej glaze-5.5.5/tests/CMakeLists.txt.rej
+--- glaze-5.5.5.orig/tests/CMakeLists.txt.rej	1969-12-31 16:00:00.000000000 -0800
++++ glaze-5.5.5/tests/CMakeLists.txt.rej	2025-08-14 23:11:31.445281365 -0700
+@@ -0,0 +1,21 @@
++--- tests/CMakeLists.txt
+++++ tests/CMakeLists.txt
++@@ -1,17 +1,9 @@
++ include(FetchContent)
++ 
++-FetchContent_Declare(
++-  ut
++-  GIT_REPOSITORY https://github.com/openalgz/ut
++-  GIT_TAG v0.0.5
++-  GIT_SHALLOW TRUE
++-)
+++find_package(ut2-glaze REQUIRED)
++ 
++ message(STATUS "Fetching dependencies...")
++ set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL TRUE)
++-set(CMAKE_SKIP_INSTALL_RULES ON CACHE BOOL "" FORCE)
++-FetchContent_MakeAvailable(ut)
++-set(CMAKE_SKIP_INSTALL_RULES OFF CACHE BOOL "" FORCE)
++ set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL FALSE)
++ message(STATUS "...finished fetching dependencies.")
++ 
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/networking_tests/asio_repe/CMakeLists.txt glaze-5.5.5/tests/networking_tests/asio_repe/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/networking_tests/asio_repe/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/networking_tests/asio_repe/CMakeLists.txt	2025-08-14 23:21:35.146350990 -0700
+@@ -1,14 +1,9 @@
+ project(asio_repe)
+ 
+-FetchContent_Declare(
+-    asio
+-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+-    GIT_TAG asio-1-32-0
+-    GIT_SHALLOW TRUE
+-)
+-FetchContent_MakeAvailable(asio)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(asio GLOBAL IMPORTED_TARGET REQUIRED asio)
+ 
+ add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp)
+ 
+ target_include_directories(${PROJECT_NAME} PRIVATE include ${asio_SOURCE_DIR}/asio/include)
+-target_link_libraries(${PROJECT_NAME} PRIVATE glz_test_exceptions)
+\ No newline at end of file
++target_link_libraries(${PROJECT_NAME} PRIVATE glz_test_exceptions)
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/networking_tests/CMakeLists.txt glaze-5.5.5/tests/networking_tests/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/networking_tests/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/networking_tests/CMakeLists.txt	2025-08-14 23:21:31.466393285 -0700
+@@ -1,10 +1,5 @@
+-FetchContent_Declare(
+-    asio
+-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+-    GIT_TAG asio-1-32-0
+-    GIT_SHALLOW TRUE
+-)
+-FetchContent_MakeAvailable(asio)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(asio GLOBAL IMPORTED_TARGET REQUIRED asio)
+ 
+ # HTTP Examples
+ add_subdirectory(http_examples)
+@@ -18,4 +13,4 @@ add_subdirectory(https_test)
+ add_subdirectory(openapi_test)
+ add_subdirectory(repe_test)
+ add_subdirectory(rest_test)
+-add_subdirectory(websocket_test)
+\ No newline at end of file
++add_subdirectory(websocket_test)
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/networking_tests/https_test/CMakeLists.txt glaze-5.5.5/tests/networking_tests/https_test/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/networking_tests/https_test/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/networking_tests/https_test/CMakeLists.txt	2025-08-14 23:21:37.898319361 -0700
+@@ -5,13 +5,8 @@ project(https_test)
+ # Only build if OpenSSL is available
+ find_package(OpenSSL REQUIRED)
+ 
+-FetchContent_Declare(
+-    asio
+-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+-    GIT_TAG asio-1-32-0
+-    GIT_SHALLOW TRUE
+-)
+-FetchContent_MakeAvailable(asio)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(asio GLOBAL IMPORTED_TARGET REQUIRED asio)
+ 
+ # Test if we can actually compile with OpenSSL headers
+ include(CheckCXXSourceCompiles)
+@@ -44,4 +39,4 @@ if(OPENSSL_HEADERS_AVAILABLE)
+     message(STATUS " Certificates will be generated automatically at runtime")
+ else()
+     message(FATAL_ERROR "❌ OpenSSL headers missing - install libssl-dev/openssl-devel")
+-endif()
+\ No newline at end of file
++endif()
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/networking_tests/openapi_test/CMakeLists.txt glaze-5.5.5/tests/networking_tests/openapi_test/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/networking_tests/openapi_test/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/networking_tests/openapi_test/CMakeLists.txt	2025-08-14 23:21:33.098374527 -0700
+@@ -1,12 +1,7 @@
+ project(openapi_test)
+ 
+-FetchContent_Declare(
+-    asio
+-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+-    GIT_TAG asio-1-32-0
+-    GIT_SHALLOW TRUE
+-)
+-FetchContent_MakeAvailable(asio)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(asio GLOBAL IMPORTED_TARGET REQUIRED asio)
+ 
+ add_executable(openapi_test openapi_test.cpp)
+ target_include_directories(openapi_test PRIVATE include ${asio_SOURCE_DIR}/asio/include)
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/networking_tests/repe_test/CMakeLists.txt glaze-5.5.5/tests/networking_tests/repe_test/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/networking_tests/repe_test/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/networking_tests/repe_test/CMakeLists.txt	2025-08-14 23:21:34.218361655 -0700
+@@ -1,12 +1,7 @@
+ project(repe_test)
+ 
+-FetchContent_Declare(
+-    asio
+-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+-    GIT_TAG asio-1-32-0
+-    GIT_SHALLOW TRUE
+-)
+-FetchContent_MakeAvailable(asio)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(asio GLOBAL IMPORTED_TARGET REQUIRED asio)
+ 
+ add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp)
+ 
+diff '--color=auto' -urpN glaze-5.5.5.orig/tests/networking_tests/rest_test/CMakeLists.txt glaze-5.5.5/tests/networking_tests/rest_test/CMakeLists.txt
+--- glaze-5.5.5.orig/tests/networking_tests/rest_test/CMakeLists.txt	2025-08-04 12:11:22.000000000 -0700
++++ glaze-5.5.5/tests/networking_tests/rest_test/CMakeLists.txt	2025-08-14 23:21:36.538334991 -0700
+@@ -1,12 +1,7 @@
+ project(rest_test)
+ 
+-FetchContent_Declare(
+-    asio
+-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+-    GIT_TAG asio-1-32-0
+-    GIT_SHALLOW TRUE
+-)
+-FetchContent_MakeAvailable(asio)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(asio GLOBAL IMPORTED_TARGET REQUIRED asio)
+ 
+ add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp)
+ 
+@@ -18,4 +13,4 @@ add_executable(rest_registry_test rest_r
+ target_include_directories(rest_registry_test PRIVATE include ${asio_SOURCE_DIR}/asio/include)
+ target_link_libraries(rest_registry_test PRIVATE glz_test_exceptions)
+ 
+-add_subdirectory(rest_server)
+\ No newline at end of file
++add_subdirectory(rest_server)
