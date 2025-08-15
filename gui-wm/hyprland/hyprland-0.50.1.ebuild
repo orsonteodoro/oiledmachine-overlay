@@ -185,3 +185,8 @@ src_configure() {
 	)
 	meson_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  0.51.1 PASSED (20250815)
+
+# Tested use flags:
+# USE="-X -clang -legacy-renderer -qtutils -systemd"
