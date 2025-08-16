@@ -30,6 +30,7 @@ inherit ot-kernel-v6.16
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, KFENCE off, KCFI off, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.6 (20250714) with modified builder profile with -O2 and -march=native, KFENCE on, KCFI off, UBSAN on, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.6 (20250715) with modified builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.16.1 (20250816) with modified builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on
 
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
