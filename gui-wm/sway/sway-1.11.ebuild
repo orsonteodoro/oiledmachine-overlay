@@ -68,7 +68,7 @@ if [[ "${PV}" == "9999" ]]; then
 	DEPEND+="~gui-libs/wlroots-9999:=[X=]"
 else
 	DEPEND+="
-		gui-libs/wlroots:0.18[X=]
+		gui-libs/wlroots:0.19[X=]
 	"
 fi
 RDEPEND="
@@ -77,7 +77,7 @@ RDEPEND="
 "
 BDEPEND="
 	>=dev-libs/wayland-protocols-1.24
-	>=dev-build/meson-0.60.0
+	>=dev-build/meson-1.3
 	virtual/pkgconfig
 "
 if [[ "${PV}" == "9999" ]]; then
