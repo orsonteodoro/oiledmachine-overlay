@@ -1,0 +1,189 @@
+--- a/kernel/cfi.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/cfi.c	2025-05-10 00:06:48.698252022 -0700
+@@ -7,9 +7,23 @@
+ 
+ #include <linux/cfi.h>
+ 
++static int kcfi_fault_mode __read_mostly = 0;
++
++static int __init kcfi_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kcfi_fault_mode = 1;
++	return 1;
++}
++__setup("kcfi.fault=", kcfi_fault_param);
++
+ enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
+ 				      unsigned long *target, u32 type)
+ {
++	if (kcfi_fault_mode == 1) {
++		panic("KCFI: control flow violation, panicking as requested");
++	}
++
+ 	if (target)
+ 		pr_err("CFI failure at %pS (target: %pS; expected type: 0x%08x)\n",
+ 		       (void *)addr, (void *)*target, type);
+--- a/kernel/kcsan/core.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/kcsan/core.c	2025-05-10 00:14:14.818539986 -0700
+@@ -26,6 +26,16 @@
+ #include "kcsan.h"
+ #include "permissive.h"
+ 
++static int kcsan_fault_mode __read_mostly = 0;
++
++static int __init kcsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kcsan_fault_mode = 1;
++	return 1;
++}
++__setup("kcsan.fault=", kcsan_fault_param);
++
+ static bool kcsan_early_enable = IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE);
+ unsigned int kcsan_udelay_task = CONFIG_KCSAN_UDELAY_TASK;
+ unsigned int kcsan_udelay_interrupt = CONFIG_KCSAN_UDELAY_INTERRUPT;
+--- a/kernel/kcsan/report.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/kcsan/report.c	2025-05-10 00:22:28.859195990 -0700
+@@ -419,6 +419,10 @@ static void print_report(enum kcsan_valu
+ 	if (rate_limit_report(this_frame, other_frame))
+ 		return;
+ 
++	if (kcsan_fault_mode == 1) {
++		panic("KCSAN: data race detected, panicking as requested");
++	}
++
+ 	/* Print report header. */
+ 	pr_err("==================================================================\n");
+ 	if (other_info) {
+--- a/kernel/scs.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/scs.c	2025-05-10 00:07:13.528565893 -0700
+@@ -12,6 +12,16 @@
+ #include <linux/vmalloc.h>
+ #include <linux/vmstat.h>
+ 
++static int scs_fault_mode __read_mostly = 0;
++
++static int __init scs_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		scs_fault_mode = 1;
++	return 1;
++}
++__setup("scs.fault=", scs_fault_param);
++
+ #ifdef CONFIG_DYNAMIC_SCS
+ DEFINE_STATIC_KEY_FALSE(dynamic_scs_enabled);
+ #endif
+@@ -161,6 +171,10 @@ void scs_release(struct task_struct *tsk
+ 	if (!scs_is_enabled() || !s)
+ 		return;
+ 
++	if (scs_fault_mode == 1) {
++		panic("SCS: shadow call stack violation, panicking as requested");
++	}
++
+ 	WARN(task_scs_end_corrupted(tsk),
+ 	     "corrupted shadow stack detected when freeing task\n");
+ 	scs_check_usage(tsk);
+--- a/lib/ubsan.c.orig	2025-07-27 14:26:38.000000000 -0700
++++ b/lib/ubsan.c	2025-08-16 05:45:28.496349522 -0700
+@@ -19,6 +19,16 @@
+ 
+ #include "ubsan.h"
+ 
++static int ubsan_fault_mode __read_mostly = 0;
++
++static int __init ubsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		ubsan_fault_mode = 1;
++	return 1;
++}
++__setup("ubsan.fault=", ubsan_fault_param);
++
+ #if defined(CONFIG_UBSAN_TRAP) || defined(CONFIG_UBSAN_KVM_EL2)
+ /*
+  * Only include matches for UBSAN checks that are actually compiled in.
+@@ -220,6 +230,10 @@ static void ubsan_prologue(struct source
+ {
+ 	current->in_ubsan++;
+ 
++	if (ubsan_fault_mode == 1) {
++		panic("UBSAN: undefined behavior detected, panicking as requested");
++	}
++
+ 	pr_warn(CUT_HERE);
+ 
+ 	pr_err("UBSAN: %s in %s:%d:%d\n", reason, loc->file_name,
+--- a/mm/kmsan/report.c.orig	2025-07-27 14:26:38.000000000 -0700
++++ b/mm/kmsan/report.c	2025-08-16 05:46:03.939912655 -0700
+@@ -16,6 +16,16 @@
+ 
+ #include "kmsan.h"
+ 
++static int kmsan_fault_mode __read_mostly = 0;
++
++static int __init kmsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kmsan_fault_mode = 1;
++	return 1;
++}
++__setup("kmsan.fault=", kmsan_fault_param);
++
+ static DEFINE_RAW_SPINLOCK(kmsan_report_lock);
+ #define DESCR_SIZE 128
+ /* Protected by kmsan_report_lock */
+@@ -164,6 +174,10 @@ void kmsan_report(depot_stack_handle_t o
+ 	if (!origin)
+ 		return;
+ 
++	if (kmsan_fault_mode == 1) {
++		panic("KMSAN: uninitialized memory usage, panicking as requested");
++	}
++
+ 	kmsan_enter_runtime();
+ 	ua_flags = user_access_save();
+ 	raw_spin_lock(&kmsan_report_lock);
+--- a/mm/kfence/core.c.orig	2025-05-10 00:28:08.646220755 -0700
++++ b/mm/kfence/core.c	2025-05-10 00:30:33.620180509 -0700
+@@ -36,6 +36,16 @@
+ 
+ #include "kfence.h"
+ 
++int kfence_fault_mode __read_mostly = 0;
++
++static int __init kfence_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kfence_fault_mode = 1;
++	return 1;
++}
++__setup("kfence.fault=", kfence_fault_param);
++
+ /* Disables KFENCE on the first warning assuming an irrecoverable error. */
+ #define KFENCE_WARN_ON(cond)                                                   \
+ 	({                                                                     \
+--- a/mm/kfence/report.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/mm/kfence/report.c	2025-05-10 00:29:51.796806566 -0700
+@@ -220,6 +220,10 @@ void kfence_report_error(unsigned long a
+ 	 */
+ 	lockdep_off();
+ 
++	if (kfence_fault_mode == 1) {
++		panic("KFENCE: memory access violation, panicking as requested");
++	}
++
+ 	pr_err("==================================================================\n");
+ 	/* Print report header. */
+ 	switch (type) {
+--- a/mm/kfence/kfence.h.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/mm/kfence/kfence.h	2025-05-14 22:49:41.343195915 -0700
+@@ -143,4 +143,6 @@ void kfence_report_error(unsigned long a
+ 
+ void kfence_print_object(struct seq_file *seq, const struct kfence_metadata *meta);
+ 
++extern int kfence_fault_mode;
++
+ #endif /* MM_KFENCE_KFENCE_H */

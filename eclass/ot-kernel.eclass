@@ -3375,7 +3375,9 @@ einfo "Applying the Nest scheduler patch"
 # @DESCRIPTION:
 # Add patch to avoid panic_on_warn for sanitizers
 ot-kernel_apply_kcmdline_for_sanitizers() {
-	if ver_test "${KV_MAJOR_MINOR}" -gt "6.6" ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.16.1.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -gt "6.6" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.14.6.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.6.90.patch"
