@@ -181,7 +181,7 @@ einfo "SE = Social Engineering Attack"
 einfo "TC = Type Confusion"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ToCToU" ]] ; then
-einfo "ToCToU = Time of Check Time of Use Race Condition"
+einfo "ToCToU = Time of Check Time of Use"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "TSE" ]] ; then
 einfo "TSE = Transient Speculative Execution"
