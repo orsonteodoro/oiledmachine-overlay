@@ -16715,11 +16715,17 @@ ewarn
 ewarn
 ewarn "Vulnerability classes:"
 ewarn
-ewarn "CE - Code Execution"
+ewarn "CE - Arbitrary Code Execution"
 ewarn "DoS - Denial of Service"
 ewarn "DT - Data Tampering"
 ewarn "ID - Information Disclosure"
+ewarn "IO - Integer Overflow"
+ewarn "NPD - Null Pointer Dereference"
 ewarn "PE - Privilege Escalation"
+ewarn "OOBA - Out of Bounds Access"
+ewarn "OOBR - Out of Bounds Read"
+ewarn "OOBW - Out of Bounds Write"
+ewarn "UM - Uninitalized Memory"
 ewarn
 ewarn "Recent CPU vulnerabilities for Q1 2025:"
 ewarn
@@ -16781,7 +16787,6 @@ ewarn "CVE-2024-21965 - DT                      # BIOS firmware update for AMD C
 ewarn "CVE-2024-36331 - DT                      # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2024-21977 - DT                      # BIOS firmware update for AMD CPUs available"
 # Client
-ewarn ""
 ewarn "CVE-2024-36326 - DT, ID                  # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2021-26383 - OOBA, DoS, DT           # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2024-21947 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
