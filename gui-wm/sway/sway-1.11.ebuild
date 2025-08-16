@@ -125,13 +125,12 @@ src_install() {
 pkg_postinst() {
 	fcaps_pkg_postinst
 	optfeature_header "There are several packages that may be useful with sway:"
-	optfeature "wallpaper utility" gui-apps/swaybg
-	optfeature "idle management utility" gui-apps/swayidle
-	optfeature "simple screen locker" gui-apps/swaylock
-	optfeature "lightweight notification daemon" gui-apps/mako
+	optfeature "a wallpaper utility" "gui-apps/swaybg"
+	optfeature "a idle management utility" "gui-apps/swayidle"
+	optfeature "a simple screen locker" "gui-apps/swaylock"
+	optfeature "a lightweight notification daemon" "gui-apps/mako"
 einfo
 einfo "For a list of additional addons and tools usable with sway please"
-einfo
 einfo "visit the official wiki at:"
 einfo
 einfo "https://github.com/swaywm/sway/wiki/Useful-add-ons-for-sway"
