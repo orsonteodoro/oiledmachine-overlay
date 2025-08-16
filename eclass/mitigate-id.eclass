@@ -3483,7 +3483,7 @@ if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
 	_mitigate_id_auto() {
-		gen_intel_microcode_ge 20250512
+		gen_intel_microcode_ge 20250812
 	}
 fi
 

@@ -166,7 +166,7 @@ GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapsh
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
-INTEL_MICROCODE_PV="20250512"
+INTEL_MICROCODE_PV="20250812"
 # IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION (aka profraw version).
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
@@ -472,12 +472,25 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Aug 1, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1754038289 # From `date +%s -d "2025-08-01 09:51:29 +0100"` from changelog for latest tag
+MITIGATION_DATE="Aug 15, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1755268777 # From `date +%s -d "2025-08-15 16:39:37 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+	# 20250812
+	"CVE-2025-38500;UAF;"
+
+	# 20250811
+	"CVE-2025-38499;;"
+	"CVE-2025-38213;;Rejected"
+	"CVE-2022-50031;UAF;Rejected"
+	"CVE-2024-57884;DoS;"
+
+	# 20250809
+	"CVE-2024-58238;;"
+	"CVE-2025-38498;;"
+
 	# 20250730
 	"CVE-2025-38498;;"
 
@@ -16747,6 +16760,63 @@ ewarn "CVE-2024-36350 - ID			# BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2024-36357 - ID			# BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2024-36348 - [Non-sensitive] ID	# No fix planned"
 ewarn "CVE-2024-36349 - [Non-sensitive] ID	# No fix planned"
+# 20250812
+ewarn "CVE-2025-20109 - PE, DoS, DT, ID		# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-22840 - PE, DoS, DT, ID		# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-22839 - PE, DoS, DT, ID		# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-22889 - PE, DT, ID		# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-20053 - PE, DT, ID		# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-24305 - PE, DT, ID		# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-21090 - DoS			# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-26403 - OOBW, PE, DT, ID	# Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-32086 - PE, DT, ID		# Microcode update for Intel® CPUs available"
+# 20250812
+# Server
+ewarn "CVE-2023-31351 - DT			# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-0032  - DT, ID			# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36354 - CE, DoS, DT, ID		# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21965 - DT			# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36331 - DT			# BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21977 - DT			# BIOS firmware update for AMD CPUs available"
+# Client
+ewarn ""
+ewarn "CVE-2024-36326 - DT, ID                  # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-26383 - DoS, DT                 # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21947 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-31325 - DT, ID                  # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-0032  - DT, ID                  # No fix listed in advisory"
+ewarn "CVE-2024-36354 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-20572 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-46757 - ID                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21970 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-26377 - DoS                     # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21977 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-46750 - DT, ID                  # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-31326 - ID                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-31330 - ID                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-20540 - DT                      # BIOS firmware update for AMD CPUs available"
+# Embedded
+ewarn "CVE-2024-36342 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36352 - DoS, DT                 # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-26383 - DoS, DT                 # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21947 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36354 - DoS, DT, ID             # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-0032  - DoS, DT                 # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-0009  - NPD, DoS                # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-31351 - DoS                     # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21965 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-20572 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-46757 - DoS, ID                 # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21970 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-26377 - DoS                     # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-0011  - ID                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-21977 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2024-36331 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-46750 - DT, ID                  # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-31326 - ID                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2023-20540 - DT                      # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2021-26410 -                         # BIOS firmware update for AMD CPUs available"
+
 }
 
 # @FUNCTION: ot-kernel_postinst_experimental_kernel

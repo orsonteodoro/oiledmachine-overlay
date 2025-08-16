@@ -945,7 +945,7 @@ _mitigate_dt_auto() {
 		gen_linux_firmware_ge 20240811
 	fi
 	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-		gen_intel_microcode_ge 20250211
+		gen_intel_microcode_ge 20250812
 	fi
 }
 
