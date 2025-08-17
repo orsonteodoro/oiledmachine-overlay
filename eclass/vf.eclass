@@ -207,6 +207,9 @@ einfo "UV = Uninitialized Value"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
 einfo "UAF = Use After Free"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAR" ]] ; then
+einfo "UAR = Use After Return"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "XSS" ]] ; then
 einfo "XSS = Cross Site Scripting Attack"
 		fi
