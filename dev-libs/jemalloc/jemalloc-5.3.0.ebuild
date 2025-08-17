@@ -120,7 +120,7 @@ _src_configure() {
 	strip-unsupported-flags
 
 	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
-		if tc-is-clang && [[ "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" =~ "llvm" ]] ; then
+		if tc-is-clang && [[ "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" =~ "clang" ]] ; then
 einfo "Adding -static-libsan for Clang $(clang-major-version)"
 			export LIBS+=" -static-libsan"
 		fi
