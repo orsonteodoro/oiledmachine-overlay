@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# D11 D12 D13 DUnstable U14.04 U16.04 U18.04 U20.04 U22.04 U24.04 U24.10
+
 inherit autotools check-compiler-switch desktop flag-o-matic toolchain-funcs xdg
 
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
@@ -20,8 +22,8 @@ RESTRICT="mirror"
 SLOT="0"
 GAMBAS_MODULES=(
 bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 htmlview httpd
-imlib2 jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf
-pixbuf poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
+imlib2 jit mime mixer mongodb mysql ncurses network odbc openal opengl openssl pcre pdf
+pixbuf poppler postgresql qt5 qt6 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 )
 LIBSDL_PV="1.2.8"
 LIBSDL2_PV="2.0.2"
@@ -95,6 +97,7 @@ REQUIRED_USE+="
 		!gsl
 		!gtk3
 		!imlib2
+		!mongodb
 		!ncurses
 		!poppler
 	)
@@ -174,6 +177,7 @@ DEPEND+="
 	gtk3? (
 		>=gnome-base/librsvg-2.14.3
 		>=x11-libs/gtk+-3.4:3[wayland?,X?]
+		>=dev-libs/fribidi-0.19.6
 		x11-libs/libICE
 		x11-libs/libSM
 		webview? (
@@ -207,6 +211,9 @@ DEPEND+="
 			>=media-libs/sdl2-mixer-2
 		)
 	)
+	mongodb? (
+		dev-libs/mongo-c-driver
+	)
 	mysql? (
 		virtual/mysql
 	)
@@ -223,9 +230,6 @@ DEPEND+="
 	opengl? (
 		media-libs/glew
 		media-libs/mesa
-		gtk3? (
-			x11-libs/gtkglext
-		)
 	)
 	openssl? (
 		>=dev-libs/openssl-1
@@ -268,6 +272,16 @@ DEPEND+="
 			>=dev-qt/qtx11extras-${QT_MIN_PV}:5
 			dev-qt/qtx11extras:=
 			x11-libs/libX11
+		)
+	)
+	qt6? (
+		dev-qt/qtbase:6[gui,opengl?,wayland?,widgets,X?]
+		dev-qt/qtbase:=
+		dev-qt/qtsvg:6
+		dev-qt/qtsvg:=
+		webview? (
+			>=dev-qt/qtwebengine-6:6[widgets]
+			dev-qt/qtwebengine:=
 		)
 	)
 	sdl? (
@@ -344,6 +358,7 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=(
 	[ncurses]="ncurses"
 	[network]="net"
 	[mixer]="sdlsound"
+	[mongodb]="mongodb"
 	[mysql]="mysql"
 	[odbc]="odbc"
 	[openal]="openal"
@@ -355,10 +370,12 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=(
 	[poppler]="poppler"
 	[postgresql]="postgresql"
 	[qt5]="qt5"
+	[qt6]="qt6"
 	[sdl]="sdl"
 	[sdl2]="sdl2"
 	[sqlite]="sqlite3"
 	[v4l]="v4l"
+	[wayland]="wayland"
 	[X]="X"
 	[xslt]="xslt"
 	[xml]="libxml"
@@ -550,6 +567,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
 		$(use_enable mime) \
+		$(use_enable mongodb) \
 		$(use_enable mysql) \
 		$(use_enable network net) \
 		$(use_enable odbc) \
@@ -711,10 +729,24 @@ src_install() {
 
 	# Quality control sections:
 	if use remove_deprecated ; then
+		find_remove_module "gb.db"
+		find_remove_module "gb.db.form"
+		find_remove_module "gb.db.mysql"
+		find_remove_module "gb.db.odbc"
+		find_remove_module "gb.db.postgresql"
+		find_remove_module "gb.db.sqlite2"
+		find_remove_module "gb.db.sqlite3"
+		find_remove_module "gb.db2"
+		find_remove_module "gb.desktop.gnome.keyring"
+		find_remove_module "gb.eval.highlight"
+		find_remove_module "gb.image.io"
 		find_remove_module "gb.libxml"
-		find_remove_module "gb.option.component"
+		find_remove_module "gb.option"
 		find_remove_module "gb.pdf"
 		find_remove_module "gb.report"
+		find_remove_module "gb.sdl"
+		find_remove_module "gb.sdl.sound"
+		find_remove_module "gb.v4l"
 		find_remove_module "gb.web.form"
 	fi
 
