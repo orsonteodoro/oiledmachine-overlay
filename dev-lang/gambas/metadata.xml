@@ -140,9 +140,6 @@
     <flag name="remove_not_finished">
       Deletes poor quality components if marked not finished
     </flag>
-    <flag name="remove_stable_not_finished">
-      Deletes components if marked stable and not finished
-    </flag>
     <flag name="remove_unstable">
       Deletes components if marked unstable
     </flag>

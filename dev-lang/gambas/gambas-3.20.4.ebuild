@@ -42,13 +42,12 @@ GAMBAS_MODULES_DEFAULTS=(
 	${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf}
 	${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2}
 )
-# The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
 # The USE flags below have no config options but are removed manually.
 IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
 debug doc +glsl +glu +ide +jit +glsl +sge remove_deprecated +remove_not_finished
-remove_stable_not_finished +remove_unstable smtp +webview
++remove_unstable smtp +webview
 ebuild_revision_5
 "
 REQUIRED_USE+="
@@ -100,10 +99,6 @@ REQUIRED_USE+="
 		!mongodb
 		!ncurses
 		!poppler
-	)
-	remove_stable_not_finished? (
-		!sdl2
-		!xml
 	)
 	remove_unstable? (
 		!jit
@@ -748,26 +743,6 @@ src_install() {
 		find_remove_module "gb.sdl.sound"
 		find_remove_module "gb.v4l"
 		find_remove_module "gb.web.form"
-	fi
-
-	if use remove_stable_not_finished ; then
-		if ! use ide ; then
-			find_remove_module "gb.desktop"
-			find_remove_module "gb.form.htmlview"
-			find_remove_module "gb.form.terminal"
-			find_remove_module "gb.util"
-			find_remove_module "gb.util.web"
-
-	# Causes runtime failure
-			find_remove_module "gb.test"
-		fi
-		find_remove_module "gb.desktop.x11"
-		find_remove_module "gb.map"
-		find_remove_module "gb.memcached"
-		find_remove_module "gb.poppler"
-		find_remove_module "gb.test.component"
-		find_remove_module "gb.web.feed"
-		find_remove_module "gb.web.gui"
 	fi
 
 	if use remove_unstable ; then
