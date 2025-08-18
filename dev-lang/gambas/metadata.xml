@@ -90,6 +90,9 @@
       Adds support to play multiple sound files at the same time used for
       typically games
     </flag>
+    <flag name="mongodb">
+      Adds support for MongoDB
+    </flag>
     <flag name="mysql">
       Adds support for MySQL
     </flag>
