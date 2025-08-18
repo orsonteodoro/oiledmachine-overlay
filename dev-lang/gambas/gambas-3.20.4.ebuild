@@ -132,7 +132,7 @@ REQUIRED_USE+="
 	)
 "
 # For depends see also:
-# https://gitlab.com/gambas/gambas/-/blob/3.16.3/.gitlab-ci.yml
+# https://gitlab.com/gambas/gambas/-/blob/3.20.4/.gitlab-ci.yml
 DEPEND+="
 	dev-libs/libffi
 	sys-devel/gcc
@@ -383,32 +383,63 @@ check_cxx() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
-einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
-einfo
-	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
-		|| die "Switch to a c++17 compatible compiler."
-	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt 11 ; then
-			die "${PN} requires GCC >=11 for c++17 support"
+	if use jit ; then
+		test-flags-CXX "-std=gnu++0x" 2>/dev/null 1>/dev/null \
+			|| die "Switch to a gnu++0x compatible compiler."
+		if tc-is-gcc ; then
+			if ver_test $(gcc-major-version) -lt 4.5 ; then
+				die "${PN} requires GCC >=4.5 for gnu++0x support"
+			fi
+		elif tc-is-clang ; then
+			if ver_test $(clang-version) -lt 3.0 ; then
+				die "${PN} requires Clang >=3.0 for gnu++0x support"
+			fi
+		else
+			die "Compiler is not supported for =${CATEGORY}/${P}"
 		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt 11 ; then
-			die "${PN} requires Clang >=11 for c++17 support"
+	fi
+	if use htmlview || ( use qt5 && use opengl ) || ( use qt5 && use wayland ) || ( use qt5 && use webview ) || ( use qt5 use X ) ; then
+		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
+			|| die "Switch to a c++11 compatible compiler for qt5 or htmlview USE flags."
+		if tc-is-gcc ; then
+			if ver_test $(gcc-fullversion) -lt "4.8" ; then
+				die "${PN} requires GCC >=4.8 for c++11 support"
+			fi
+		elif tc-is-clang ; then
+			if ver_test $(clang-fullversion) -lt "3.3" ; then
+				die "${PN} requires Clang >=3.3 for c++11 support"
+			fi
+		else
+			die "Compiler is not supported for =${CATEGORY}/${P}"
 		fi
-	else
-		die "Compiler is not supported for =${CATEGORY}/${P}"
+	fi
+	if use pdf || use poppler ; then
+		test-flags-CXX "-std=c++20" 2>/dev/null 1>/dev/null \
+			|| die "Switch to a c++20 compatible compiler for pdf or poppler USE flags."
+		if tc-is-gcc ; then
+			if ver_test $(gcc-major-version) -lt "8" ; then
+				die "${PN} requires GCC >=8 for c++20 support"
+			fi
+		elif tc-is-clang ; then
+			if ver_test $(clang-version) -lt "10" ; then
+				die "${PN} requires Clang >=10 for c++20 support"
+			fi
+		else
+			die "Compiler is not supported for =${CATEGORY}/${P}"
+		fi
 	fi
 }
 
 check_qt() {
-	einfo "Checking Qt versions"
+einfo "Checking Qt versions"
 	local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
 		| head -n 1 \
 		| cut -f 8 -d " ")
 	if ver_test ${QT_VERSION} -lt ${QT_MIN_PV} ; then
-		die "You need >=${QT_MIN_PV} for the Qt system libraries."
+eerror "You need >=${QT_MIN_PV} for the Qt system libraries."
+		die
 	fi
 
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -777,7 +808,7 @@ einfo "To change them see \`epkginfo -x gambas\` or metadata.xml"
 }
 
 pkg_postinst() {
-	einfo "Upstream code quality report:"
+einfo "Upstream code quality report:"
 	echo -e "${CODE_QUALITY_REPORT}"
 	xdg_pkg_postinst
 
