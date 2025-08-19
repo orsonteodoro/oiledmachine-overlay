@@ -10190,6 +10190,15 @@ ot-kernel-pkgflags_thermald() { # DONE
 		ot-kernel_y_configopt "CONFIG_INT340X_THERMAL"
 		ot-kernel_y_configopt "CONFIG_ACPI_THERMAL_REL"
 		ot-kernel_y_configopt "CONFIG_INT3406_THERMAL"
+
+		ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_BANG_BANG"
+		ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE"
+		ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR"
+		ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE"
+		ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE"
+
+		ot-kernel_y_configopt "CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE"
+		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_USER_SPACE"
 	fi
 }
 
@@ -12500,10 +12509,8 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["vm-guest-gaming"]="input"
         ["gpu-gaming-laptop"]="input"
         ["green-pc"]="power"
-        ["greenest-pc"]="power"
         ["hpc"]="throughput-headless"
         ["hpc-green"]="power"
-        ["hpc-greenest"]="power"
         ["hpc-throughput"]="throughput"
         ["jukebox"]="audio"
         ["laptop"]="power"
@@ -12765,7 +12772,6 @@ _ot-kernel_y_thp() {
 		|| "${work_profile}" == "datacenter-backend" \
 		|| "${work_profile}" == "hpc" \
 		|| "${work_profile}" == "hpc-green" \
-		|| "${work_profile}" == "hpc-greenest" \
 		|| "${work_profile}" == "hpc-realtime" \
 		|| "${work_profile}" == "hpc-thoughput" \
 		|| "${work_profile}" == "live-video-reporter" \

@@ -4497,6 +4497,11 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
 	unset OT_KERNEL_PKGFLAGS_REJECT
 	unset OT_KERNEL_PKU
+	unset OT_KERNEL_POWER_LEVEL_AUDIO
+	unset OT_KERNEL_POWER_LEVEL_CPU
+	unset OT_KERNEL_POWER_LEVEL_IO
+	unset OT_KERNEL_POWER_LEVEL_PCI
+	unset OT_KERNEL_POWER_LEVEL_USB
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION			# global var
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR	# global var
 	unset OT_KERNEL_PRIVATE_KEY
@@ -4505,9 +4510,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_PRUNE_EXTRA_ARCHES
 	unset OT_KERNEL_PUBLIC_KEY
 	unset OT_KERNEL_REISUB
-	unset OT_KERNEL_SATA_LPM_MAX
-	unset OT_KERNEL_SATA_LPM_MID
-	unset OT_KERNEL_SATA_LPM_MIN
+	unset OT_KERNEL_SATA_LPM
 	unset OT_KERNEL_SECURITY_CRITICAL
 	unset OT_KERNEL_SECURITY_CRITICAL_TYPES
 	unset OT_KERNEL_SGX
@@ -4521,6 +4524,8 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SWAP
 	unset OT_KERNEL_SWAP_COMPRESSION
 	unset OT_KERNEL_TARGET_TRIPLE
+	unset OT_KERNEL_THERMAL_GOVERNORS
+	unset OT_KERNEL_USB_AUTOSUSPEND
 	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 
 	unset OT_KERNEL_HAVE_CRYPTO_DEV_AES
@@ -4875,7 +4880,6 @@ eerror
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp"}
 	elif [[ \
 		   "${work_profile}" == "hpc-green" \
-		|| "${work_profile}" == "hpc-greenest" \
 	]] ; then
 	# Optimize for power savings.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
@@ -4992,7 +4996,6 @@ eerror
 		|| "${work_profile}" == "cryptocurrency-miner-dedicated" \
 		|| "${work_profile}" == "cryptocurrency-miner-workstation" \
 		|| "${work_profile}" == "green-pc" \
-		|| "${work_profile}" == "greenest-pc" \
 		|| "${work_profile}" == "gpu-gaming-laptop" \
 		|| "${work_profile}" == "laptop" \
 		|| "${work_profile}" == "solar-desktop" \
@@ -10125,17 +10128,6 @@ einfo "Changed .config to use UKSM"
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_usb_autosuspend
-# @DESCRIPTION:
-# Sets the kernel config for USB autosuspend
-ot-kernel_set_kconfig_usb_autosuspend() {
-	[[ -z "${OT_KERNEL_USB_AUTOSUSPEND}" ]] && return
-	if (( "${OT_KERNEL_USB_AUTOSUSPEND:-2}" > -1 )) ; then
-		ot-kernel_y_configopt "CONFIG_PM"
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${OT_KERNEL_USB_AUTOSUSPEND}"
-	fi
-}
-
 # @FUNCTION: ot-kernel_set_kconfig_usb_flash_disk
 # @DESCRIPTION:
 # Sets kernel config the USB flash disks
@@ -11119,10 +11111,265 @@ ot-kernel_set_rt_rcu() {
 	ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 }
 
+# @FUNCTION: ot-kernel_unset_thermal_govenor_defaults
+# @DESCRIPTION:
+# Disables all thermal govenors as default
+ot-kernel_unset_thermal_govenor_defaults() {
+	ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_BANG_BANG"
+	ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE"
+	ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR"
+	ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE"
+	ot-kernel_n_configopt "CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE"
+}
+
+# @FUNCTION: ot-kernel_canonicalize_power_level
+# @DESCRIPTION:
+# Change the common name power level to standard levels
+#
+# Heat level perspective
+# 2 = Very tolerant (always on)
+# 1 = Weak tolerant (on demand)
+# 0 = Weakest tolerant (power save)
+#
+# Power savings perspective
+# 2 = Max power savings
+# 1 = Some power savings
+# 0 = No power savings
+#
+# Power blend perspective
+# 2 = Summer blend
+# 1 = Spring/fall blend
+# 0 = Winter blend
+#
+# Battery perspective
+# 2 = <= 10% battery
+# 1 = > 10 battery
+# 0 = Charging AC power
+#
+# Mobile perspective
+# 1 = Battery
+# 0 = Charging
+#
+ot-kernel_canonicalize_power_level() {
+	local symbol="${1}"
+	if [[ "${symbol}" =~ ("0"|"ac"|"always-on"|"charging"|"performance"|"green"|"winter-blend") ]] ; then
+		echo "0"
+	elif [[ "${symbol}" =~ ("1"|"battery"|"balance"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
+		echo "1"
+	elif [[ "${symbol}" =~ ("2"|"red"|"low-battery"|"stable"|"summer-blend") ]] ; then
+		echo "2"
+	else
+eerror "QA:  symbol=${symbol} is not supported for power level."
+		die
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_power_level
+# @DESCRIPTION:
+# Adjust the power level of the devices
+ot-kernel_set_power_level() {
+	local power_source="${1}"
+	local form_factor="${2}" # mobile or stationary
+
+	local power_level_audio
+	local power_level_cpu
+	local power_level_io
+	local power_level_pci
+	local power_level_sata
+	local power_level_usb
+
+	# Allow fine-grain control to limit power for low heat tolerant devices such as CPU, GPU, Wi-Fi
+	if [[ "${power_source}" == "green" ]] ; then
+		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-2})
+		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-2})
+		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-2}) # i2c sensors, hd-audio
+		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-2})
+		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
+		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-2})
+	elif [[ "${power_source}" =~ ("battery"|"scalable") ]] ; then
+		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
+		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
+		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-1}) # i2c sensors, hd-audio
+		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-1})
+		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-1})
+		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-1})
+	elif [[ "${power_source}" == "ac" ]] ; then
+		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-0})
+		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
+		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-0}) # i2c sensors, hd-audio
+		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-0})
+		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-0})
+		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-0})
+	fi
+
+	if (( ${power_level_audio} == 2 )) ; then
+		if grep -q -E -e "^CONFIG_SND_DRIVERS=y" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_SND_AC97_POWER_SAVE"
+		fi
+	else
+		if grep -q -E -e "^CONFIG_SND_DRIVERS=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_SND_AC97_POWER_SAVE"
+			local ac97_autosuspend_seconds=${OT_KERNEL_AC97_AUTOSUSPEND:-10} # 0 is off (upstream default), 10 is suggested upstream
+			ot-kernel_set_configopt "CONFIG_SND_AC97_POWER_SAVE_DEFAULT" "${ac97_autosuspend_seconds}"
+		fi
+	fi
+
+	if (( ${power_level_io} == 2 )) ; then
+		ot-kernel_n_configopt "CONFIG_PM"
+	else
+		ot-kernel_y_configopt "CONFIG_PM"
+	fi
+
+	if (( ${power_level_pci} == 2 )) ; then
+		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			ot-kernel_n_configopt "CONFIG_PCIE_THERMAL"
+		fi
+	elif (( ${power_level_pci} == 1 )) ; then
+		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
+			fi
+			ot-kernel_y_configopt "CONFIG_THERMAL"
+			ot-kernel_y_configopt "CONFIG_PCIE_THERMAL"
+		fi
+	else
+		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			fi
+			ot-kernel_y_configopt "CONFIG_THERMAL"
+			ot-kernel_y_configopt "CONFIG_PCIE_THERMAL"
+		fi
+	fi
+
+	if (( ${power_level_cpu} == 2 )) ; then
+		ot-kernel_unset_all_cpu_freq_default_gov
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		ot-kernel_n_configopt "CONFIG_NO_HZ"
+		ot-kernel_n_configopt "CONFIG_CPU_THERMAL"
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			:
+		fi
+	elif (( ${power_level_cpu} == 1 )) ; then
+		ot-kernel_unset_all_cpu_freq_default_gov
+		if [[ "${form_factor}" == "mobile" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+		else
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+		fi
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		ot-kernel_y_configopt "CONFIG_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_THERMAL"
+		ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			:
+		fi
+	else
+		ot-kernel_unset_all_cpu_freq_default_gov
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_THERMAL"
+		ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			:
+		fi
+	fi
+
+	ot-kernel_unset_thermal_govenor_defaults
+
+	local thermal_governors=${OT_KERNEL_THERMAL_GOVERNORS:-step_wise}
+	if [[ "${thermal_governors}" =~ ^"bang_bang" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_DEFAULT_GOV_BANG_BANG"
+	elif [[ "${thermal_governors}" =~ ^"fair_share" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE"
+	elif [[ "${thermal_governors}" =~ ^"step_wise" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE"
+	elif [[ "${thermal_governors}" =~ ^"power_allocator" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR"
+	elif [[ "${thermal_governors}" =~ ^"user_space" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE"
+	fi
+
+	ot-kernel_unset_configopt "CONFIG_THERMAL_GOV_STEP_WISE"
+	ot-kernel_unset_configopt "CONFIG_THERMAL_GOV_FAIR_SHARE"
+	ot-kernel_unset_configopt "CONFIG_THERMAL_GOV_USER_SPACE"
+	ot-kernel_unset_configopt "CONFIG_THERMAL_GOV_POWER_ALLOCATOR"
+	ot-kernel_unset_configopt "CONFIG_THERMAL_GOV_BANG_BANG"
+
+	if [[ "${thermal_governors}" =~ "bang_bang" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_BANG_BANG"
+	fi
+	if [[ "${thermal_governors}" =~ "fair_share" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_FAIR_SHARE"
+	fi
+	if [[ "${thermal_governors}" =~ "power_allocator" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_POWER_ALLOCATOR"
+	fi
+	if [[ "${thermal_governors}" =~ "step_wise" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_STEP_WISE"
+	fi
+	if [[ "${thermal_governors}" =~ "user_space" ]] ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_USER_SPACE"
+	fi
+
+	if (( ${power_level_usb} == 2 )) ; then
+		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
+	else
+		local usb_autosuspend_seconds=${OT_KERNEL_USB_AUTOSUSPEND:-2}
+		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
+	fi
+
+	local hd_audio_autosuspend_seconds=${CONFIG_SND_HDA_POWER_SAVE_DEFAULT:-0} # always on
+	ot-kernel_set_configopt "${CONFIG_SND_HDA_POWER_SAVE_DEFAULT}" "${hd_audio_autosuspend_seconds}"
+
+	if (( ${power_level_sata} == 2 )) ; then
+		# Always on
+		if \
+			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "1"
+		fi
+	else
+		# On demand
+		if \
+			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "2"
+		fi
+		# The docs say 4 can cause disk corruption.
+	fi
+	if [[ -n "${OT_KERNEL_SATA_LPM}" ]] ; then
+		ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${OT_KERNEL_SATA_LPM}"
+		if (( ${OT_KERNEL_SATA_LPM} == 4 )) ; then
+ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.  Use a security safer option to avoid Data Tampering (DT) vulnerability."
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
 ot-kernel_set_kconfig_work_profile() {
+	local power_source="ac"
+	local form_factor="stationary"
 	FALLBACK_PREEMPT=""
 	FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=0
 einfo "Using the ${work_profile} work profile"
@@ -11216,7 +11463,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either website
 ewarn "OT_KERNEL_WORK_PROFILE=\"green-hpc\" has been renamed to hpc-green."
 		die
 	elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"greenest-hpc\" has been renamed to hpc-greenest."
+ewarn "OT_KERNEL_WORK_PROFILE=\"greenest-hpc\" has been renamed to hpc-green."
 		die
 	elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"realtime-hpc\" has been renamed to hpc-realtime."
@@ -11229,6 +11476,12 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"desktop-guest-vm\" has been renamed to vm-guest-
 		die
 	elif [[ "${work_profile}" == "gaming-guest-vm" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"desktop-guest-vm\" has been renamed to vm-guest-gaming."
+		die
+	elif [[ "${work_profile}" == "greenest-pc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"greenest-pc\" has been renamed to green-pc."
+		die
+	elif [[ "${work_profile}" == "hpc-greenest" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"hpc-greenest\" has been renamed to hpc-green."
 		die
 	fi
 
@@ -11251,11 +11504,8 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+		power_source="battery"
+		form_factor="mobile"
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
@@ -11264,13 +11514,11 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
 		   "${work_profile}" == "laptop" \
 		|| "${work_profile}" == "green-pc" \
-		|| "${work_profile}" == "greenest-pc" \
 		|| "${work_profile}" == "solar-desktop" \
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
@@ -11278,33 +11526,18 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		if [[ "${work_profile}" == "touchscreen-laptop" ]] ; then
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		else
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+		power_source="battery"
+		if [[ "${work_profile}" =~ ("laptop") ]] ; then
+			form_factor="mobile"
 		fi
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+
+		if [[ "${work_profile}" =~ ("green-pc"|"solar-desktop") ]] ; then
+			power_source="green"
+		else
+			power_source="scalable"
+		fi
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		fi
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			if [[ \
-				   "${work_profile}" == "solar-desktop" \
-				|| "${work_profile}" == "greenest-pc" \
-			]] ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
-			else
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-			fi
-		fi
-		if grep -q -E -e "^CONFIG_SND_AC97_CODEC=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_SND_AC97_POWER_SAVE"
 		fi
 		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
@@ -11317,7 +11550,6 @@ ewarn "The dss work profile is experimental and in development."
 		if [[ "${work_profile}" == "laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
-		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 		if [[ "${work_profile}" == "laptop" ]] ; then
@@ -11330,33 +11562,28 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
+		if [[ "${work_profile}" == "solar-gaming" ]] ; then
+			form_factor="stationary"
+		else
+			form_factor="mobile"
+		fi
 		if [[ \
 			   "${work_profile}" == "gpu-gaming-laptop" \
 			|| "${work_profile}" == "solar-gaming" \
 		]] ; then
 	# 3D allowed, intense worse case
+			power_source="battery"
 			ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		else
 	# 2D mostly, less intense
 	# Avoid leg burn on long use
+			power_source="green"
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
 		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
@@ -11368,7 +11595,6 @@ ewarn "The dss work profile is experimental and in development."
 		if [[ "${work_profile}" == "gpu-gaming-laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
-		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
@@ -11380,14 +11606,8 @@ ewarn "The dss work profile is experimental and in development."
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		power_source="scalable"
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
@@ -11410,20 +11630,10 @@ ewarn "The dss work profile is experimental and in development."
 		fi
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		if [[ "${work_profile}" == "game-server" ]] ; then
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			power_source="scalable"
 		else
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		fi
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			power_source="ac"
 		fi
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 	# The presentation could just be slides with few clicks or a gaming demo
@@ -11474,14 +11684,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
+		power_source="scalable"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ \
@@ -11506,13 +11709,7 @@ ewarn "The dss work profile is experimental and in development."
 		fi
 		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
+		power_source="ac"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
 			ot-kernel_iosched_builder_throughput
@@ -11524,14 +11721,7 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "renderfarm-workstation" \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
+		power_source="scalable"
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
 			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
@@ -11598,13 +11788,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-		fi
+		power_source="scalable"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ \
 			   "${work_profile}" == "file-server" \
@@ -11638,14 +11822,8 @@ ewarn "The dss work profile is experimental and in development."
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		power_source="ac"
 		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
 		if [[ \
 			   "${work_profile}" == "radio-broadcaster" \
 			|| "${work_profile}" == "voip" \
@@ -11709,22 +11887,8 @@ ewarn "The dss work profile is experimental and in development."
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-		fi
+		power_source="scalable"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
-		if [[ \
-			   "${work_profile}" == "mainstream-desktop" \
-			|| "${work_profile}" == "pi-web-browser" \
-		]] ; then
-			ot-kernel_y_configopt "CONFIG_PM"
-		else
-			ot-kernel_unset_configopt "CONFIG_PM"
-		fi
 		ot-kernel_iosched_streaming
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
@@ -11732,19 +11896,11 @@ ewarn "The dss work profile is experimental and in development."
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+		power_source="scalable"
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
@@ -11752,58 +11908,24 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+		power_source="scalable"
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
-		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
 		   "${work_profile}" == "hpc" \
 		|| "${work_profile}" == "hpc-green" \
-		|| "${work_profile}" == "hpc-greenest" \
 		|| "${work_profile}" == "hpc-realtime" \
 		|| "${work_profile}" == "hpc-throughput" \
 	]] ; then
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-
 		if [[ "${work_profile}" == "hpc-green" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			power_source="scalable"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-			fi
-			ot-kernel_y_configopt "CONFIG_PM"
-			ot-kernel_set_rcu_powersave
-			ot-kernel_iosched_lowest_power
-			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
-		elif [[ "${work_profile}" == "hpc-greenest" ]] ; then
-			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
-			ot-kernel_set_kconfig_no_hz_full
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
-			fi
-			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
@@ -11814,27 +11936,19 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			power_source="ac"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-			fi
 			ot-kernel_iosched_max_throughput
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "hpc-realtime" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
-			ot-kernel_unset_all_cpu_freq_default_gov
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			power_source="ac"
 			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
-			fi
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 			fi
 			ot-kernel_iosched_max_throughput
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
@@ -11846,13 +11960,7 @@ ewarn "The dss work profile is experimental and in development."
 		# Example: BOINC
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
+		power_source="ac"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -11874,10 +11982,7 @@ ewarn "The dss work profile is experimental and in development."
 		elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		power_source="ac"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 		_OT_KERNEL_FORCE_STABILITY=1
@@ -11885,48 +11990,14 @@ ewarn "The dss work profile is experimental and in development."
 
 	export OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"0"}
 
-	local sata_lpm_max="${OT_KERNEL_SATA_LPM_MAX:-1}"
-	local sata_lpm_mid="${OT_KERNEL_SATA_LPM_MID:-0}"
-	local sata_lpm_min="${OT_KERNEL_SATA_LPM_MIN:-0}"
-
 	if [[ \
 		-z "${work_profile}" \
 		|| "${work_profile}" == "custom" \
 		|| "${work_profile}" == "manual" \
 	]] ; then
 		:
-	elif \
-		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y" "${path_config}" \
-		; then
-		if \
-			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" ; then
-			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm_max}"
-		fi
-	elif \
-		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y" "${path_config}" \
-		|| grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y" "${path_config}" \
-		|| grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y" "${path_config}" \
-		; then
-		if \
-			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
-		; then
-			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm_mid}"
-		fi
-	elif \
-		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y" "${path_config}" \
-		; then
-		if \
-			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" ; then
-			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm_min}"
-		fi
 	else
-		ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "0" # firmware default
+		ot-kernel_set_power_level "${power_source}"
 	fi
 }
 
@@ -13804,7 +13875,6 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
-	ot-kernel_set_kconfig_usb_autosuspend
 	ot-kernel_set_kconfig_usb_flash_disk
 
 	ot-kernel_set_kconfig_usb_mass_storage
