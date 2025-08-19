@@ -11359,7 +11359,7 @@ ot-kernel_set_power_level() {
 	if [[ -n "${OT_KERNEL_SATA_LPM}" ]] ; then
 		ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${OT_KERNEL_SATA_LPM}"
 		if (( ${OT_KERNEL_SATA_LPM} == 4 )) ; then
-ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.  Use a security safer option to avoid Data Tampering (DT) vulnerability."
+ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 		fi
 	fi
 }
