@@ -11356,7 +11356,47 @@ ot-kernel_set_power_level() {
 		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_FAIR_SHARE"
 	fi
 	if [[ "${thermal_governors}" =~ "power_allocator" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		local DVFS=(
+			"DEVFREQ_THERMAL"
+			"DRM_LIMA"
+			"DRM_PANFROST"
+			"DRM_PANTHOR"
+			"EXYNOS5422_DMC"
+			"SCSI_UFSHCD"
+			"TEGRA20_EMC"
+		)
+		local found_dvfs=0
+		local x
+		for x in ${DVFS[@]} ; do
+			if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
+				found_dvfs=1
+				break
+			fi
+		done
+		if (( ${found_dvfs} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
+		fi
+
+		local CPU_FREQ=(
+			"ARCH_SA1100"
+			"CPU_FREQ_GOV_SCHEDUTIL"
+			"CPU_FREQ_THERMAL"
+			"PPC_POWERNV"
+			"SCHED_MC_PRIO"
+			"SCSI_LPFC"
+			"XEN_ACPI_PROCESSOR"
+		)
+		local found_cpu_freq=0
+		for x in ${CPU_FREQ[@]} ; do
+			if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
+				found_cpu_freq=1
+				break
+			fi
+		done
+		if (( ${found_cpu_freq} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		fi
+
 		ot-kernel_y_configopt "CONFIG_ENERGY_MODEL"
 		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_POWER_ALLOCATOR"
 	fi
