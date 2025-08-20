@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{10,11} ) # It can support 3.12 but limited by Nuitka.
 # D12 - Python 3.11
 # U22 - Python 3.10
 
-inherit python-r1 xdg
+inherit desktop python-r1 xdg
 
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
