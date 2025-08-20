@@ -11164,6 +11164,61 @@ eerror "QA:  symbol=${symbol} is not supported for power level."
 	fi
 }
 
+# @FUNCTION: ot-kernel_has_dvfs
+# @DESCRIPTION:
+# Check if dvfs used.
+ot-kernel_has_dvfs() {
+	local DVFS=(
+		"DEVFREQ_THERMAL"
+		"DRM_LIMA"
+		"DRM_PANFROST"
+		"DRM_PANTHOR"
+		"EXYNOS5422_DMC"
+		"SCSI_UFSHCD"
+		"TEGRA20_EMC"
+	)
+	local found_dvfs=0
+	local x
+	for x in ${DVFS[@]} ; do
+		if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
+			found_dvfs=1
+			break
+		fi
+	done
+	if (( ${found_dvfs} == 1 )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: ot-kernel_has_cpu_freq
+# @DESCRIPTION:
+# Check if cpu_freq used.
+ot-kernel_has_cpu_freq() {
+	local CPU_FREQ=(
+		"ARCH_SA1100"
+		"CPU_FREQ_GOV_SCHEDUTIL"
+		"CPU_FREQ_THERMAL"
+		"PPC_POWERNV"
+		"SCHED_MC_PRIO"
+		"SCSI_LPFC"
+		"XEN_ACPI_PROCESSOR"
+	)
+	local found_cpu_freq=0
+	for x in ${CPU_FREQ[@]} ; do
+		if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
+			found_cpu_freq=1
+			break
+		fi
+	done
+	if (( ${found_cpu_freq} == 1 )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_power_level
 # @DESCRIPTION:
 # Adjust the power level of the devices
@@ -11262,52 +11317,93 @@ ot-kernel_set_power_level() {
 		fi
 	fi
 
-	if (( ${power_level_cpu} == 2 )) ; then
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_n_configopt "CONFIG_NO_HZ"
-		ot-kernel_n_configopt "CONFIG_CPU_THERMAL"
-		ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
-
-		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-			:
-		fi
-	elif (( ${power_level_cpu} == 1 )) ; then
-		ot-kernel_unset_all_cpu_freq_default_gov
-		if [[ "${form_factor}" == "mobile" ]] ; then
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-			ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
-		else
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+	if ot-kernel_has_cpu_freq ; then
+		if (( ${power_level_cpu} == 2 )) ; then
+			ot-kernel_unset_all_cpu_freq_default_gov
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_n_configopt "CONFIG_NO_HZ"
+			ot-kernel_n_configopt "CONFIG_CPU_THERMAL"
 			ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				:
+			fi
+		elif (( ${power_level_cpu} == 1 )) ; then
+			ot-kernel_unset_all_cpu_freq_default_gov
+			if [[ "${form_factor}" == "mobile" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+				ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+			else
+				ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+				ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+			fi
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_NO_HZ"
+			ot-kernel_y_configopt "CONFIG_THERMAL"
+			ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				:
+			fi
+		else
+			ot-kernel_unset_all_cpu_freq_default_gov
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_NO_HZ"
+			ot-kernel_y_configopt "CONFIG_THERMAL"
+			ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
+			ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				:
+			fi
 		fi
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_NO_HZ"
-		ot-kernel_y_configopt "CONFIG_THERMAL"
-		ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
-		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-			:
+	fi
+
+	# For SoC MCs, GPUs
+	if ot-kernel_has_dvfs ; then
+		if (( ${power_level_cpu} == 2 )) ; then
+			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
+			ot-kernel_y_configopt "CONFIG_PM_OPP"
+			ot-kernel_y_configopt "CONFIG_DEVFREQ_GOV_PERFORMANCE"
+		elif (( ${power_level_cpu} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
+			ot-kernel_y_configopt "CONFIG_PM_OPP"
+			ot-kernel_y_configopt "CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_DEVFREQ_GOV_USERSPACE"
+			ot-kernel_y_configopt "CONFIG_DEVFREQ_THERMAL"
+		else
+			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
+			ot-kernel_y_configopt "CONFIG_PM_OPP"
+			ot-kernel_y_configopt "CONFIG_DEVFREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_DEVFREQ_THERMAL"
 		fi
-	else
-		ot-kernel_unset_all_cpu_freq_default_gov
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_NO_HZ"
-		ot-kernel_y_configopt "CONFIG_THERMAL"
-		ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
-		ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
-		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-			:
+		local DVFS_EVENTS=(
+			"ARM_EXYNOS_BUS_DEVFREQ"
+			"ARM_RK3399_DMC_DEVFREQ"
+			"DEVFREQ_EVENT_EXYNOS_NOCP"
+			"DEVFREQ_EVENT_EXYNOS_PPMU"
+			"DEVFREQ_EVENT_ROCKCHIP_DFI"
+			"EXYNOS5422_DMC"
+		)
+		local found_dvfs_events=0
+		local x
+		for x in ${DVFS_EVENTS[@]} ; do
+			if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
+				found_dvfs_events=1
+				break
+			fi
+		done
+		if (( ${found_dvfs_events} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ_EVENT"
 		fi
 	fi
 
@@ -11356,45 +11452,11 @@ ot-kernel_set_power_level() {
 		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_FAIR_SHARE"
 	fi
 	if [[ "${thermal_governors}" =~ "power_allocator" ]] ; then
-		local DVFS=(
-			"DEVFREQ_THERMAL"
-			"DRM_LIMA"
-			"DRM_PANFROST"
-			"DRM_PANTHOR"
-			"EXYNOS5422_DMC"
-			"SCSI_UFSHCD"
-			"TEGRA20_EMC"
-		)
-		local found_dvfs=0
-		local x
-		for x in ${DVFS[@]} ; do
-			if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
-				found_dvfs=1
-				break
-			fi
-		done
-		if (( ${found_dvfs} == 1 )) ; then
-			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
-		fi
-
-		local CPU_FREQ=(
-			"ARCH_SA1100"
-			"CPU_FREQ_GOV_SCHEDUTIL"
-			"CPU_FREQ_THERMAL"
-			"PPC_POWERNV"
-			"SCHED_MC_PRIO"
-			"SCSI_LPFC"
-			"XEN_ACPI_PROCESSOR"
-		)
-		local found_cpu_freq=0
-		for x in ${CPU_FREQ[@]} ; do
-			if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
-				found_cpu_freq=1
-				break
-			fi
-		done
-		if (( ${found_cpu_freq} == 1 )) ; then
+		if ot-kernel_has_cpu_freq ; then
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		fi
+		if ot-kernel_has_dvfs ; then
+			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
 		fi
 
 		ot-kernel_y_configopt "CONFIG_ENERGY_MODEL"
