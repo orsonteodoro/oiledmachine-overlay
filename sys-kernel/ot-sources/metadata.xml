@@ -3003,8 +3003,8 @@ TBM=0
     winter-blend = winter blend, alias for 2
 
     Battery perspective
-    low-battery = <= 10% battery, alias for 0
-    battery = > 10 battery, alias for 1
+    low-battery = 10% or less battery left, alias for 0
+    battery = More than 10% battery left, alias for 1
     ac = Charging AC power, alias for 2
 
     Mobile perspective
