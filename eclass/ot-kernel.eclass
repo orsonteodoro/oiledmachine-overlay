@@ -11596,14 +11596,13 @@ ewarn "The dss work profile is experimental and in development."
 			|| "${work_profile}" == "solar-gaming" \
 		]] ; then
 	# 3D allowed, intense worse case
-			power_source="battery"
 			ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		else
 	# 2D mostly, less intense
 	# Avoid leg burn on long use
-			power_source="green"
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 		fi
+		power_source="battery"
 		timer_handling="tickless"
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
