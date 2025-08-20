@@ -2982,7 +2982,7 @@ TBM=0
 
     OT_KERNEL_POWER_LEVEL_AUDIO - Set the power level for the audio system
     OT_KERNEL_POWER_LEVEL_BT_USB - Set the power level for Bluetooth USB devices
-    OT_KERNEL_POWER_LEVEL_CPU - Set the power level for the CPU
+    OT_KERNEL_POWER_LEVEL_CPU - Set the power level for CPUs, or SoC MCs and/or mobile GPUs
     OT_KERNEL_POWER_LEVEL_PCI - Set the power level for PCI
     OT_KERNEL_POWER_LEVEL_SATA - Set the power level for SATA
     OT_KERNEL_POWER_LEVEL_USB - Set the power level for USB
