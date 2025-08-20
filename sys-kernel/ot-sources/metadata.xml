@@ -2986,14 +2986,15 @@ TBM=0
     OT_KERNEL_POWER_LEVEL_WIFI - Set the power level for 802.11 devices
 
     Some of these settings may have a dramatic effect while others neglible effect.
-    These are used for fine grain control over power consumption.
+    These are used for fine grain control over power consumption which can
+    translate to overheating management or availability security management.
 
     Valid settings depending on perspective:
 
-    Heat level default perspective
-    2 = very tolerant (always on)
-    1 = weak tolerant (on demand)
-    0 = weakest tolerant (power save)
+    Heat level perspective, the default assumption
+    2 = high tolerance (which is equivalent to always-on)
+    1 = mid tolerance (which is equivalent to on-demand)
+    0 = weak tolerance (which is equivalent to the lowest power consumption)
 
     Power savings perspective
     green = max power savings
