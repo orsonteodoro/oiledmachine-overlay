@@ -24,6 +24,8 @@ EAPI=8
 # modified with subdir_mount, crypt_root_plain, llvm, pgo changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
+# Updated from changes from genkernel-4.3.17-r2.ebuild
+
 MY_PV=$(ver_cut 1-3 "${PV}")
 MY_P="${PN}-${MY_PV}"
 
@@ -60,7 +62,7 @@ VERSION_COREUTILS="9.4"
 VERSION_CRYPTSETUP="2.6.1"
 VERSION_DMRAID="1.0.0.rc16-3"
 VERSION_DROPBEAR="2022.83"
-VERSION_EUDEV="3.2.10"
+VERSION_EUDEV="3.2.14"
 VERSION_EXPAT="2.5.0"
 VERSION_E2FSPROGS="1.47.0"
 VERSION_FUSE="2.9.9"
@@ -69,18 +71,17 @@ VERSION_GPG="1.4.23"
 VERSION_HWIDS="20210613"
 # open-iscsi-2.1.9 static build not working yet
 VERSION_ISCSI="2.1.8"
-# json-c-0.17 needs gkbuild ported to meson
-VERSION_JSON_C="0.17"
+VERSION_JSON_C="0.18"
 VERSION_KMOD="31"
 VERSION_LIBAIO="0.3.113"
 VERSION_LIBGCRYPT="1.10.3"
-VERSION_LIBGPGERROR="1.47"
-VERSION_LIBXCRYPT="4.4.36"
+VERSION_LIBGPGERROR="1.51"
+VERSION_LIBXCRYPT="4.4.38"
 VERSION_LVM="2.03.22"
 VERSION_LZO="2.10"
 VERSION_MDADM="4.2"
 VERSION_POPT="1.19"
-VERSION_STRACE="6.7"
+VERSION_STRACE="6.15"
 VERSION_THIN_PROVISIONING_TOOLS="0.9.0"
 # unionfs-fuse-3.4 needs fuse:3
 VERSION_UNIONFS_FUSE="2.0"
@@ -107,7 +108,7 @@ COMMON_URI="
 	https://www.kernel.org/pub/linux/utils/cryptsetup/v$(ver_cut 1-2 ${VERSION_CRYPTSETUP})/cryptsetup-${VERSION_CRYPTSETUP}.tar.xz
 	https://people.redhat.com/~heinzm/sw/dmraid/src/dmraid-${VERSION_DMRAID}.tar.bz2
 	https://matt.ucc.asn.au/dropbear/releases/dropbear-${VERSION_DROPBEAR}.tar.bz2
-	https://dev.gentoo.org/~blueness/eudev/eudev-${VERSION_EUDEV}.tar.gz
+	https://github.com/eudev-project/eudev/releases/download/v${VERSION_EUDEV}/eudev-${VERSION_EUDEV}.tar.gz
 	https://github.com/libexpat/libexpat/releases/download/R_${VERSION_EXPAT//\./_}/expat-${VERSION_EXPAT}.tar.xz
 	https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${VERSION_E2FSPROGS}/e2fsprogs-${VERSION_E2FSPROGS}.tar.xz
 	https://github.com/libfuse/libfuse/releases/download/fuse-${VERSION_FUSE}/fuse-${VERSION_FUSE}.tar.gz
@@ -158,7 +159,7 @@ LICENSE="
 "
 RESTRICT=""
 SLOT="0/stable"
-IUSE+=" ibm +firmware"
+IUSE+=" ibm +firmware systemd"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
@@ -319,6 +320,7 @@ RDEPEND+="
 	app-portage/elt-patches
 	app-portage/portage-utils
 	app-text/asciidoc
+	dev-build/cmake
 	dev-util/gperf
 	sys-apps/sandbox
 	dev-build/autoconf
@@ -421,6 +423,7 @@ RDEPEND+="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/genkernel-4.3.16-globbing-workaround.patch"
 )
 
 pkg_setup() {
@@ -506,6 +509,14 @@ src_install() {
 		insinto "/usr/share/genkernel/distfiles"
 		doins ${A/${MY_P}.tar.xz/}
 	popd &>/dev/null || die
+
+	# Workaround for bug 944499, for now this patch will live in FILESDIR and is
+	# conditionally installed but we could add it to genkernel.git and conditionally
+	# remove it here instead.
+	if ! use systemd; then
+		insinto "/usr/share/genkernel/patches/lvm/${VERSION_LVM}/"
+		doins "${FILESDIR}/lvm2-2.03.20-dm_lvm_rules_no_systemd_v2.patch"
+	fi
 }
 
 pkg_postinst() {
@@ -519,7 +530,7 @@ pkg_postinst() {
 
 	local replacing_version
 	for replacing_version in ${REPLACING_VERSIONS} ; do
-		if ver_test "${replacing_version}" -lt "4" ; then
+		if ver_test "${replacing_version}" -lt 4 ; then
 			# This is an upgrade which requires user review
 
 ewarn
