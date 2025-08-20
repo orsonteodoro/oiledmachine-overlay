@@ -11173,6 +11173,7 @@ ot-kernel_set_power_level() {
 	local timer_handling="${3}" # periodic, tickless, tickless-full
 
 	local power_level_audio
+	local power_level_bt_usb
 	local power_level_cpu
 	local power_level_io
 	local power_level_pci
@@ -11180,9 +11181,11 @@ ot-kernel_set_power_level() {
 	local power_level_usb
 	local power_level_wifi
 
+
 	# Allow fine-grain control to limit power for low heat tolerant devices such as CPU, GPU, Wi-Fi
 	if [[ "${power_source}" == "green" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-2})
+		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-2})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-2})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-2}) # i2c sensors, hd-audio
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-2})
@@ -11191,6 +11194,7 @@ ot-kernel_set_power_level() {
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-2})
 	elif [[ "${power_source}" =~ ("battery"|"scalable") ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
+		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-1}) # i2c sensors, hd-audio
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-1})
@@ -11199,6 +11203,7 @@ ot-kernel_set_power_level() {
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-1})
 	elif [[ "${power_source}" == "ac" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-0})
+		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-0}) # i2c sensors, hd-audio
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-0})
@@ -11395,6 +11400,16 @@ ot-kernel_set_power_level() {
 	else
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
+	fi
+
+	if (( ${power_level_bt_usb} == 2 )) ; then
+		if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "BT_HCIBTUSB_AUTOSUSPEND"
+		fi
+	else
+		if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "BT_HCIBTUSB_AUTOSUSPEND"
 		fi
 	fi
 
