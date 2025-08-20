@@ -4420,6 +4420,8 @@ ot-kernel_clear_env() {
 	# The OT_KERNEL_ prefix is to avoid naming collisions.
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
+	unset OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
+	unset OT_KERNEL_AUTOSUSPEND_SECONDS_USB
 	unset OT_KERNEL_BOOT_ARGS
 	unset OT_KERNEL_BOOT_ARGS_LOCKDOWN
 	unset OT_KERNEL_BOOT_DECOMPRESSOR
@@ -4437,7 +4439,6 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE
-	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
 	unset OT_KERNEL_DMA_ATTACK_MITIGATIONS
 	unset OT_KERNEL_DMESG
 	unset OT_KERNEL_EARLY_KMS
@@ -4525,7 +4526,6 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SWAP_COMPRESSION
 	unset OT_KERNEL_TARGET_TRIPLE
 	unset OT_KERNEL_THERMAL_GOVERNORS
-	unset OT_KERNEL_USB_AUTOSUSPEND
 	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 
 	unset OT_KERNEL_HAVE_CRYPTO_DEV_AES
@@ -11207,11 +11207,18 @@ ot-kernel_set_power_level() {
 		if grep -q -E -e "^CONFIG_SND_DRIVERS=y" "${path_config}" ; then
 			ot-kernel_n_configopt "CONFIG_SND_AC97_POWER_SAVE"
 		fi
+		if grep -q -E -e "^CONFIG_SND_HDA=y" "${path_config}" && grep -q -E -e "^CONFIG_PM=y" "${path_config}" ; then
+			ot-kernel_set_configopt "CONFIG_SND_HDA_POWER_SAVE_DEFAULT" "0"
+		fi
 	else
+		local audio_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO:-10} # 0 is off (upstream default), 10 is suggested upstream
 		if grep -q -E -e "^CONFIG_SND_DRIVERS=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_SND_AC97_POWER_SAVE"
-			local ac97_autosuspend_seconds=${OT_KERNEL_AC97_AUTOSUSPEND:-10} # 0 is off (upstream default), 10 is suggested upstream
-			ot-kernel_set_configopt "CONFIG_SND_AC97_POWER_SAVE_DEFAULT" "${ac97_autosuspend_seconds}"
+			ot-kernel_set_configopt "CONFIG_SND_AC97_POWER_SAVE_DEFAULT" "${audio_autosuspend_seconds}"
+
+		fi
+		if grep -q -E -e "^CONFIG_SND_HDA=y" "${path_config}" && grep -q -E -e "^CONFIG_PM=y" "${path_config}" ; then
+			ot-kernel_set_configopt "CONFIG_SND_HDA_POWER_SAVE_DEFAULT" "${audio_autosuspend_seconds}"
 		fi
 	fi
 
@@ -11348,12 +11355,9 @@ ot-kernel_set_power_level() {
 	if (( ${power_level_usb} == 2 )) ; then
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 	else
-		local usb_autosuspend_seconds=${OT_KERNEL_USB_AUTOSUSPEND:-2}
+		local usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
 	fi
-
-	local hd_audio_autosuspend_seconds=${CONFIG_SND_HDA_POWER_SAVE_DEFAULT:-0} # always on
-	ot-kernel_set_configopt "${CONFIG_SND_HDA_POWER_SAVE_DEFAULT}" "${hd_audio_autosuspend_seconds}"
 
 	if (( ${power_level_sata} == 2 )) ; then
 		# Always on

@@ -991,20 +991,41 @@ TBM=0
 
 
 
-    OT_KERNEL_AC97_AUTOSUSPEND - Set the number of seconds to delay into
-    power save mode.
+    OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO - Set the number of seconds to delay into
+    power save mode.  It is suggested that 10 is a good value.  Upstream defaults it
+    to 0 meaning always on.
 
     See also
 
-      OT_KERNEL_AC97_AUTOSUSPEND
+      OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
+      OT_KERNEL_AUTOSUSPEND_SECONDS_USB
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_CPU
       OT_KERNEL_POWER_LEVEL_PCI
       OT_KERNEL_POWER_LEVEL_SATA
       OT_KERNEL_POWER_LEVEL_USB
       OT_KERNEL_THERMAL_GOVERNORS
-      OT_KERNEL_USB_AUTOSUSPEND
 
+
+
+    OT_KERNEL_AUTOSUSPEND_SECONDS_USB - The number of seconds to wait before USB power
+    suspend state is activated.
+
+    Acceptable values:
+
+      -1 = disable
+      1, 2 ... = delay in seconds to autosuspend USB, 2 is default
+
+    See also
+
+      OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
+      OT_KERNEL_POWER_LEVEL_AUDIO
+      OT_KERNEL_POWER_LEVEL_CPU
+      OT_KERNEL_POWER_LEVEL_PCI
+      OT_KERNEL_POWER_LEVEL_SATA
+      OT_KERNEL_POWER_LEVEL_USB
+      OT_KERNEL_THERMAL_GOVERNORS
+    
 
 
     OT_KERNEL_ADD_KEY_TO_MOK - Auto adds the provided key to MOK if not found.
@@ -2997,10 +3018,10 @@ TBM=0
 
     See also
 
-      OT_KERNEL_AC97_AUTOSUSPEND
+      OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
+      OT_KERNEL_AUTOSUSPEND_SECONDS_USB
       OT_KERNEL_SATA_LPM
       OT_KERNEL_THERMAL_GOVERNORS
-      OT_KERNEL_USB_AUTOSUSPEND
 
 
 
@@ -3195,14 +3216,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
     See also
 
-      OT_KERNEL_AC97_AUTOSUSPEND
+      OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
+      OT_KERNEL_AUTOSUSPEND_SECONDS_USB
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_CPU
       OT_KERNEL_POWER_LEVEL_PCI
       OT_KERNEL_POWER_LEVEL_SATA
       OT_KERNEL_POWER_LEVEL_USB
       OT_KERNEL_THERMAL_GOVERNORS
-      OT_KERNEL_USB_AUTOSUSPEND
 
 
 
@@ -4019,8 +4040,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     See also
 
-      OT_KERNEL_AC97_AUTOSUSPEND
-      OT_KERNEL_USB_AUTOSUSPEND
+      OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
+      OT_KERNEL_AUTOSUSPEND_SECONDS_USB
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_CPU
       OT_KERNEL_POWER_LEVEL_PCI
@@ -4029,26 +4050,6 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_THERMAL_GOVERNORS
       
 
-
-
-    OT_KERNEL_USB_AUTOSUSPEND - The number of seconds to wait before USB power
-    suspend state is activated.
-
-    Acceptable values:
-
-      -1 = disable
-      1, 2 ... = delay in seconds to autosuspend USB, 2 is default
-
-    See also
-
-      OT_KERNEL_AC97_AUTOSUSPEND
-      OT_KERNEL_POWER_LEVEL_AUDIO
-      OT_KERNEL_POWER_LEVEL_CPU
-      OT_KERNEL_POWER_LEVEL_PCI
-      OT_KERNEL_POWER_LEVEL_SATA
-      OT_KERNEL_POWER_LEVEL_USB
-      OT_KERNEL_THERMAL_GOVERNORS
-    
 
 
     OT_KERNEL_USE - Per build env USE flags.  If not set, it will use the same
