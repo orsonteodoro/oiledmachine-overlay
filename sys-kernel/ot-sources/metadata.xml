@@ -4012,6 +4012,23 @@ unset OT_KERNEL_PRIVATE_KEY
       power_allocator - power controlled governor
       user_space - have thermald control power
 
+    Examples
+
+     OT_KERNEL_THERMAL_GOVERNORS="step_wise" # Equivalent to upstream default
+     OT_KERNEL_THERMAL_GOVERNORS="step_wise bang_bang user_space" # step_wise is the default thermal governor
+
+    See also
+
+      OT_KERNEL_AC97_AUTOSUSPEND
+      OT_KERNEL_USB_AUTOSUSPEND
+      OT_KERNEL_POWER_LEVEL_AUDIO
+      OT_KERNEL_POWER_LEVEL_CPU
+      OT_KERNEL_POWER_LEVEL_PCI
+      OT_KERNEL_POWER_LEVEL_SATA
+      OT_KERNEL_POWER_LEVEL_USB
+      OT_KERNEL_THERMAL_GOVERNORS
+      
+
 
 
     OT_KERNEL_USB_AUTOSUSPEND - The number of seconds to wait before USB power
