@@ -2990,7 +2990,7 @@ TBM=0
 
     Some of these settings may have a dramatic effect while others neglible effect.
     These are used for fine grain control over power consumption which can
-    translate to overheating management or availability/correctness.
+    translate to overheating management or operational availability/correctness.
 
     Valid settings depending on perspective:
 
