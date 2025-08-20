@@ -9576,6 +9576,7 @@ ot-kernel-pkgflags_sc_controller() { # DONE
 # Applies kernel config flags for the scaphandre package
 ot-kernel-pkgflags_scaphandre() { # DONE
 	if ot-kernel_has_version_pkgflags "app-metrics/scaphandre" ; then
+		ot-kernel_y_configopt "CONFIG_POWERCAP"
 		ot-kernel_y_configopt "CONFIG_INTEL_RAPL"
 	fi
 }

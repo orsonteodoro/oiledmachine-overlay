@@ -11220,6 +11220,37 @@ ot-kernel_has_cpu_freq() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_has_open_firmware_thermal_support
+# @DESCRIPTION:
+# Check if enabled by user
+ot-kernel_has_open_firmware_thermal_support() {
+	local OF_THERMAL=(
+		"AB8500_BM"
+		"ARCH_EXYNOS"
+		"BCM2711_THERMAL"
+		"BCM2835_THERMAL"
+		"EXYNOS_THERMAL"
+		"MTK_THERMAL"
+		"QORIQ_THERMAL"
+		"REGULATOR_MAX8973"
+		"THERMAL_OF"
+		"UNIPHIER_THERMAL"
+	)
+	local found_thermal_of=0
+	local x
+	for x in ${OF_THERMAL[@]} ; do
+		if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
+			found_thermal_of=1
+			break
+		fi
+	done
+	if (( ${found_thermal_of} == 1 )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_power_level
 # @DESCRIPTION:
 # Adjust the power level of the devices
@@ -11227,6 +11258,7 @@ ot-kernel_set_power_level() {
 	local power_source="${1}"
 	local form_factor="${2}" # mobile or stationary
 	local timer_handling="${3}" # periodic, tickless, tickless-full
+	local interactive_critical="${4}"
 
 	local power_level_audio
 	local power_level_bt_usb
@@ -11341,6 +11373,27 @@ ot-kernel_set_power_level() {
 		fi
 	fi
 
+	# CONFIG_CPU_FREQ vs CONFIG_CPU_FREQ_THERMAL
+	# CONFIG_CPU_FREQ - for system load or user preferences
+	# CONFIG_CPU_FREQ_THERMAL - for overheating
+
+	# CONFIG_CPU_IDLE_THERMAL vs CONFIG_ACPI_PROCESSOR_IDLE
+	# CONFIG_ACPI_PROCESSOR_IDLE - mwait/halt/hlt during idle period
+	# CONFIG_CPU_IDLE_THERMAL - mwait/halt/hlt during active period
+
+	# CONFIG_ACPI is not not mutually exclusive with CONFIG_CPU_THERMAL
+	# CONFIG_CPU_FREQ_THERMAL and CONFIG_CPU_IDLE_THERMAL has precedence over ACPI frequency/idle control
+	if ot-kernel_has_acpi_support || ot-kernel_has_open_firmware_thermal_support ; then
+		ot-kernel_y_configopt "CONFIG_THERMAL"
+		ot-kernel_y_configopt "CONFIG_OF"
+		ot-kernel_y_configopt "CONFIG_THERMAL_OF"
+		ot-kernel_y_configopt "CONFIG_CPU_THERMAL" # CPU frequency change
+		if (( ${interactive_critical} == 0 )) ; then
+			ot-kernel_y_configopt "CONFIG_IDLE_INJECT"
+			ot-kernel_y_configopt "CONFIG_CPU_IDLE_THERMAL"
+		fi
+	fi
+
 	if ot-kernel_has_cpu_freq ; then
 		if (( ${power_level_cpu} == 2 )) ; then
 			ot-kernel_unset_all_cpu_freq_default_gov
@@ -11348,7 +11401,6 @@ ot-kernel_set_power_level() {
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 			ot-kernel_n_configopt "CONFIG_NO_HZ"
-			ot-kernel_n_configopt "CONFIG_CPU_THERMAL"
 			ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -11370,8 +11422,6 @@ ot-kernel_set_power_level() {
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 			ot-kernel_y_configopt "CONFIG_NO_HZ"
-			ot-kernel_y_configopt "CONFIG_THERMAL"
-			ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				:
 			fi
@@ -11383,8 +11433,6 @@ ot-kernel_set_power_level() {
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 			ot-kernel_y_configopt "CONFIG_NO_HZ"
-			ot-kernel_y_configopt "CONFIG_THERMAL"
-			ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
 			ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				:
@@ -11556,6 +11604,7 @@ ot-kernel_set_kconfig_work_profile() {
 	local power_source="ac"
 	local form_factor="stationary"
 	local timer_handling="periodic"
+	local interactive_critical=0
 	FALLBACK_PREEMPT=""
 	FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=0
 einfo "Using the ${work_profile} work profile"
@@ -11760,6 +11809,7 @@ ewarn "The dss work profile is experimental and in development."
 		fi
 		power_source="battery"
 		timer_handling="tickless"
+		interactive_critical=1
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
@@ -11783,6 +11833,7 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		power_source="scalable"
 		timer_handling="tickless"
+		interactive_critical=1
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
@@ -11793,7 +11844,11 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
-		timer_handling="tickless-full"
+		if [[ "${work_profile}" == "vm-guest-gaming" ]] ; then
+			interactive_critical=1
+		else
+			timer_handling="tickless-full"
+		fi
 	elif [[ \
 		   "${work_profile}" == "game-server" \
 		|| "${work_profile}" == "gaming-tournament" \
@@ -11809,6 +11864,7 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			power_source="ac"
 		fi
+		interactive_critical=1
 	# The presentation could just be slides with few clicks or a gaming demo
 	# with a lot of clicks.
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -11844,6 +11900,7 @@ ewarn "The dss work profile is experimental and in development."
 				FALLBACK_PREEMPT="CONFIG_PREEMPT"
 				FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=1
 			fi
+			interactive_critical=1
 		elif [[ "${work_profile}" == "gamedev" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
@@ -12148,7 +12205,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		:
 	else
-		ot-kernel_set_power_level "${power_source}" "${form_factor}" "${timer_handling}"
+		ot-kernel_set_power_level "${power_source}" "${form_factor}" "${timer_handling}" "${interactive_critical}"
 	fi
 }
 
