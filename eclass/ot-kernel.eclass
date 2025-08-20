@@ -11724,7 +11724,6 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
 		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
-		power_source="ac"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
 			ot-kernel_iosched_builder_throughput
@@ -11835,7 +11834,6 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz
-		power_source="ac"
 		ot-kernel_unset_all_cpu_freq_default_gov
 		if [[ \
 			   "${work_profile}" == "radio-broadcaster" \
@@ -11948,15 +11946,12 @@ ewarn "The dss work profile is experimental and in development."
 		]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
-			power_source="ac"
-			timer_handling="periodic"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_iosched_max_throughput
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "hpc-realtime" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_rt_rcu
-			power_source="ac"
 			timer_handling="tickless-full"
 			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
@@ -11972,8 +11967,6 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		# Example: BOINC
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
-		power_source="ac"
-		timer_handling="periodic"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -11994,7 +11987,6 @@ ewarn "The dss work profile is experimental and in development."
 		elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
-		power_source="ac"
 		timer_handling="tickless-full"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
