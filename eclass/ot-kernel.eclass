@@ -11368,7 +11368,7 @@ ot-kernel_set_power_level() {
 		fi
 	fi
 
-	# For SoC MCs, GPUs
+	# For SoC MCs, mobile GPUs
 	if ot-kernel_has_dvfs ; then
 		if (( ${power_level_cpu} == 2 )) ; then
 			ot-kernel_y_configopt "CONFIG_PM_DEVFREQ"
