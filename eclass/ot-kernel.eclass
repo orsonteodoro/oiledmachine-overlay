@@ -11295,9 +11295,17 @@ ot-kernel_set_power_level() {
 	if [[ "${timer_handling}" == "periodic" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 	elif [[ "${timer_handling}" == "tickless" ]] ; then
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 	elif [[ "${timer_handling}" == "tickless-full" ]] ; then
-		ot-kernel_set_kconfig_no_hz_full
+		if \
+			   grep -q -E -e "^CONFIG_SMP=y" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAVE_CONTEXT_TRACKING_USER=y" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y" "${path_config}" \
+		; then
+			ot-kernel_set_kconfig_no_hz_full
+		else
+			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		fi
 	fi
 
 	ot-kernel_unset_thermal_govenor_defaults
