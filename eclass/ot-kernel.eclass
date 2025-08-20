@@ -11260,6 +11260,7 @@ ot-kernel_set_power_level() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_n_configopt "CONFIG_NO_HZ"
 		ot-kernel_n_configopt "CONFIG_CPU_THERMAL"
+		ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			:
@@ -11268,8 +11269,10 @@ ot-kernel_set_power_level() {
 		ot-kernel_unset_all_cpu_freq_default_gov
 		if [[ "${form_factor}" == "mobile" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 		else
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
@@ -11293,6 +11296,7 @@ ot-kernel_set_power_level() {
 		ot-kernel_y_configopt "CONFIG_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_THERMAL"
 		ot-kernel_y_configopt "CONFIG_CPU_THERMAL"
+		ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			:
 		fi
