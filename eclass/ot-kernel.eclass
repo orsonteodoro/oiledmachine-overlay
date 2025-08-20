@@ -11170,6 +11170,7 @@ eerror "QA:  symbol=${symbol} is not supported for power level."
 ot-kernel_set_power_level() {
 	local power_source="${1}"
 	local form_factor="${2}" # mobile or stationary
+	local timer_handling="${3}" # periodic, tickless, tickless-full
 
 	local power_level_audio
 	local power_level_cpu
@@ -11252,6 +11253,7 @@ ot-kernel_set_power_level() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_n_configopt "CONFIG_NO_HZ"
 		ot-kernel_n_configopt "CONFIG_CPU_THERMAL"
+
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			:
 		fi
@@ -11287,6 +11289,15 @@ ot-kernel_set_power_level() {
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			:
 		fi
+	fi
+
+	# Outputs jitter and power which is why you cannot just simply classify in the above block
+	if [[ "${timer_handling}" == "periodic" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+	elif [[ "${timer_handling}" == "tickless" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
+	elif [[ "${timer_handling}" == "tickless-full" ]] ; then
+		ot-kernel_set_kconfig_no_hz_full
 	fi
 
 	ot-kernel_unset_thermal_govenor_defaults
@@ -11370,6 +11381,7 @@ ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.
 ot-kernel_set_kconfig_work_profile() {
 	local power_source="ac"
 	local form_factor="stationary"
+	local timer_handling="periodic"
 	FALLBACK_PREEMPT=""
 	FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=0
 einfo "Using the ${work_profile} work profile"
@@ -11502,10 +11514,10 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		power_source="battery"
 		form_factor="mobile"
+		timer_handling="tickless"
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
@@ -11523,10 +11535,10 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For power savings
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		power_source="battery"
+		timer_handling="tickless"
 		if [[ "${work_profile}" =~ ("laptop") ]] ; then
 			form_factor="mobile"
 		fi
@@ -11574,14 +11586,13 @@ ewarn "The dss work profile is experimental and in development."
 	# 3D allowed, intense worse case
 			power_source="battery"
 			ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		else
 	# 2D mostly, less intense
 	# Avoid leg burn on long use
 			power_source="green"
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
-			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 		fi
+		timer_handling="tickless"
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
@@ -11595,7 +11606,6 @@ ewarn "The dss work profile is experimental and in development."
 		if [[ "${work_profile}" == "gpu-gaming-laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -11605,11 +11615,10 @@ ewarn "The dss work profile is experimental and in development."
 	# 2D mostly, less intense
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 		power_source="scalable"
+		timer_handling="tickless"
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -11619,6 +11628,7 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
+		timer_handling="tickless-full"
 	elif [[ \
 		   "${work_profile}" == "game-server" \
 		|| "${work_profile}" == "gaming-tournament" \
@@ -11629,7 +11639,6 @@ ewarn "The dss work profile is experimental and in development."
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
 		fi
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		if [[ "${work_profile}" == "game-server" ]] ; then
 			power_source="scalable"
 		else
@@ -11639,7 +11648,6 @@ ewarn "The dss work profile is experimental and in development."
 	# The presentation could just be slides with few clicks or a gaming demo
 	# with a lot of clicks.
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 		if [[ "${work_profile}" == "pro-gaming" ]] ; then
@@ -11659,7 +11667,6 @@ ewarn "The dss work profile is experimental and in development."
 			|| "${work_profile}" == "musical-live-performance" \
 		]] ; then
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
-			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
 			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
@@ -11674,18 +11681,15 @@ ewarn "The dss work profile is experimental and in development."
 				FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=1
 			fi
 		elif [[ "${work_profile}" == "gamedev" ]] ; then
-			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "workstation" ]] ; then
-			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_set_kconfig_set_video_timer_hz # For video production
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
 		power_source="scalable"
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ \
 			   "${work_profile}" == "digital-audio-workstation" \
@@ -11708,7 +11712,6 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
 		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		power_source="ac"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
@@ -11720,7 +11723,6 @@ ewarn "The dss work profile is experimental and in development."
 		   "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" \
 	]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		power_source="scalable"
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
 			ot-kernel_set_kconfig_set_default_timer_hz
@@ -11787,8 +11789,8 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		power_source="scalable"
+		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ \
 			   "${work_profile}" == "file-server" \
@@ -11821,7 +11823,6 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		power_source="ac"
 		ot-kernel_unset_all_cpu_freq_default_gov
 		if [[ \
@@ -11886,8 +11887,8 @@ ewarn "The dss work profile is experimental and in development."
 	# Allow to open more browser tabs
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		power_source="scalable"
+		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_iosched_streaming
 	elif [[ \
@@ -11895,8 +11896,8 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		power_source="scalable"
+		timer_handling="tickless"
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
@@ -11907,8 +11908,8 @@ ewarn "The dss work profile is experimental and in development."
 		"${work_profile}" == "cryptocurrency-miner-workstation" \
 	]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		power_source="scalable"
+		timer_handling="tickless"
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
@@ -11923,8 +11924,8 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		if [[ "${work_profile}" == "hpc-green" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
-			ot-kernel_set_kconfig_no_hz_full
 			power_source="scalable"
+			timer_handling="tickless"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
@@ -11935,16 +11936,16 @@ ewarn "The dss work profile is experimental and in development."
 		]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
-			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			power_source="ac"
+			timer_handling="periodic"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_iosched_max_throughput
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "hpc-realtime" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
-			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			power_source="ac"
+			timer_handling="tickless-full"
 			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
@@ -11959,8 +11960,8 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		# Example: BOINC
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		power_source="ac"
+		timer_handling="periodic"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -11974,7 +11975,6 @@ ewarn "The dss work profile is experimental and in development."
 		fi
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_highest_timer_hz
-		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
 		# ML/DL case for self-driving car/drone
 		if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
@@ -11983,6 +11983,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
 		power_source="ac"
+		timer_handling="tickless-full"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 		_OT_KERNEL_FORCE_STABILITY=1
@@ -11997,7 +11998,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		:
 	else
-		ot-kernel_set_power_level "${power_source}"
+		ot-kernel_set_power_level "${power_source}" "${form_factor}" "${timer_handling}"
 	fi
 }
 
