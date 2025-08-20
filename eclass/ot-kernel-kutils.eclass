@@ -257,5 +257,40 @@ eerror
 	fi
 }
 
+# @FUNCTION: ot-kernel_has_acpi_support
+# @DESCRIPTION:
+# Checks for ACPI support
+ot-kernel_has_acpi_support() {
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		if grep -q -E -e "^CONFIG_X86_32=y" ; then
+			return 1
+		else
+			return 0
+		fi
+	elif [[ "${arch}" == "arm64" ]] ; then
+		if grep -q -E -e "^CONFIG_EFI=y" "${path_config}" ; then
+			return 0
+		fi
+	elif [[ "${arch}" == "loongarch" ]] ; then
+		return 0
+	elif [[ "${arch}" == "riscv" ]] ; then
+		if grep -q -E -e "^CONFIG_EFI=y" "${path_config}" && grep -q -E -e "^CONFIG_64BIT=y" "${path_config}" ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel_has_apm_support
+# @DESCRIPTION:
+# Checks for APM support
+ot-kernel_has_apm_support() {
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_X86_32=y" "${path_config}" && grep -q -E -e "^CONFIG_PM_SLEEP=y" "${path_config}" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 OT_KERNEL_KUTILS_ECLASS="1"
 fi

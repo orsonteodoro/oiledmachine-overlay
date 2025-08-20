@@ -5673,7 +5673,7 @@ einfo "Using lazy as the default IOMMU domain type for mitigation against DMA at
 
 		# Don't use lscpu/cpuinfo autodetect if using distcc or
 		# Cross-compile but use the config itself to guestimate.
-		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] && ot-kernel_has_acpi_support ; then
 			local found=0
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 einfo "Adding IOMMU support (VT-d)"
@@ -11206,6 +11206,7 @@ ot-kernel_has_cpu_freq() {
 		"XEN_ACPI_PROCESSOR"
 	)
 	local found_cpu_freq=0
+	local x
 	for x in ${CPU_FREQ[@]} ; do
 		if grep -q -E -e "^CONFIG_${x}=y" "${path_config}" ; then
 			found_cpu_freq=1
@@ -11271,6 +11272,29 @@ ot-kernel_set_power_level() {
 		: #ot-kernel_n_configopt "CONFIG_PM" # Some drivers need this
 	else
 		ot-kernel_y_configopt "CONFIG_PM"
+	fi
+
+	if ot-kernel_has_acpi_support ; then
+		ot-kernel_y_configopt "CONFIG_ACPI"
+		ot-kernel_y_configopt "CONFIG_ACPI_PROCESSOR_IDLE"
+		ot-kernel_y_configopt "CONFIG_CPU_IDLE"
+	elif ot-kernel_has_apm_support ; then
+		ot-kernel_y_configopt "CONFIG_APM"
+		if [[ "${APM_BOOT:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_APM_DO_ENABLE"
+		else
+			ot-kernel_n_configopt "CONFIG_APM_DO_ENABLE"
+		fi
+		if [[ "${APM_CPU_IDLE:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_APM_CPU_IDLE"
+		else
+			ot-kernel_n_configopt "CONFIG_APM_CPU_IDLE"
+		fi
+		if [[ "${APM_SCREEN_BLANKING:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_APM_DISPLAY_BLANK"
+		else
+			ot-kernel_n_configopt "CONFIG_APM_DISPLAY_BLANK"
+		fi
 	fi
 
 	if (( ${power_level_audio} == 2 )) ; then
@@ -11695,7 +11719,7 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			power_source="scalable"
 		fi
-		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
+		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
 			ot-kernel_y_configopt "CONFIG_ACPI_BUTTON"
@@ -11737,7 +11761,7 @@ ewarn "The dss work profile is experimental and in development."
 		power_source="battery"
 		timer_handling="tickless"
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
-		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
+		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
 			ot-kernel_y_configopt "CONFIG_ACPI_BUTTON"

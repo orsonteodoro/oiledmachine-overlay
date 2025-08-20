@@ -4274,6 +4274,9 @@ unset OT_KERNEL_PRIVATE_KEY
     multiple reference, or is likely independent; it is likely an implied
     disabled.
 
+    ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
+    Valid values:  0 (default), 1
+
     AMDGPU_DEEP_COLOR - Add support for more than 8 Bits Per Pixel for utilities
     querying capabilities.  For HDMI connections, it may be beneficial to set to
     1.  0 is the upstream default.
@@ -4329,7 +4332,16 @@ unset OT_KERNEL_PRIVATE_KEY
       clear [delete from kernel command line; same as -1 if amdgpu present]
       unset [same as clear]
 
-    ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
+    APM_BOOT - Automatically enable APM power management on kernel boot, but may freeze if enabled.
+    (for 32-bit x86 only)
+    Valid values:  0 (default), 1
+
+    APM_CPU_IDLE - Enable APM CPU idle, but may freeze if enabled.
+    (for 32-bit x86 only)
+    Valid values:  0 (default), 1
+
+    APM_SCREEN_BLANKING - Enable APM screen blanking, but may freeze if enabled.
+    (for 32-bit x86 only)
     Valid values:  0 (default), 1
 
     CAMERAS - Add camera support.  Multiple drivers are space separated.

@@ -1646,7 +1646,9 @@ ot-kernel-pkgflags_cdrom() { #
 		ot-kernel_y_configopt "CONFIG_UDF_FS"
 	fi
 
-	ot-kernel_y_configopt "CONFIG_ACPI"
+	if ot-kernel_has_acpi_support ; then
+		ot-kernel_y_configopt "CONFIG_ACPI"
+	fi
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_ACPI"
 	ot-kernel_y_configopt "CONFIG_SATA_HOST"
@@ -2019,7 +2021,9 @@ ot-kernel-pkgflags_collectd() { # DONE
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
-		ot-kernel_has_version "${pkg}[collectd_plugins_battery]" && ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_has_version "${pkg}[collectd_plugins_battery]" && ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+		fi
 		ot-kernel_has_version "${pkg}[collectd_plugins_cgroups]" && ot-kernel_y_configopt "CONFIG_CGROUPS"
 		if ot-kernel_has_version "${pkg}[collectd_plugins_cpufreq]" ; then
 			ot-kernel_y_configopt "CONFIG_SYSFS"
@@ -2031,7 +2035,9 @@ ot-kernel-pkgflags_collectd() { # DONE
 		ot-kernel_has_version "${pkg}[collectd_plugins_nfs]" && ot-kernel_y_configopt "CONFIG_NFS_COMMON"
 		ot-kernel_has_version "${pkg}[collectd_plugins_serial]" && ot-kernel_y_configopt "CONFIG_SERIAL_CORE"
 		ot-kernel_has_version "${pkg}[collectd_plugins_swap]" && ot-kernel_y_configopt "CONFIG_SWAP"
-		ot-kernel_has_version "${pkg}[collectd_plugins_thermal]" && ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_has_version "${pkg}[collectd_plugins_thermal]" && ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
+		fi
 		ot-kernel_has_version "${pkg}[collectd_plugins_turbostat]" && ot-kernel_y_configopt "CONFIG_X86_MSR"
 		ot-kernel_has_version "${pkg}[collectd_plugins_vmem]" && ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
 		ot-kernel_has_version "${pkg}[collectd_plugins_vserver]" && ot-kernel_y_configopt "CONFIG_VSERVER"
@@ -2130,7 +2136,9 @@ ot-kernel-pkgflags_corefreq() { # DONE
 		ot-kernel_y_configopt "CONFIG_DMI"
 		ot-kernel_y_configopt "CONFIG_HAVE_NMI"
 		#ot-kernel_y_configopt "CONFIG_XEN" # See ot-kernel-pkgflags_xen
-		ot-kernel_y_configopt "CONFIG_AMD_NB"
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AMD_NB"
+		fi
 		ot-kernel_y_configopt "CONFIG_HAVE_PERF_EVENTS"
 
 	# See OT_KERNEL_CPU_SCHED
@@ -2141,8 +2149,10 @@ ot-kernel-pkgflags_corefreq() { # DONE
 		#ot-kernel_y_configopt "CONFIG_SCHED_BORE"
 		#ot-kernel_y_configopt "CONFIG_SCHED_CACHY"
 
-		ot-kernel_y_configopt "CONFIG_ACPI"
-		ot-kernel_y_configopt "CONFIG_ACPI_CPPC_LIB"
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_y_configopt "CONFIG_ACPI"
+			ot-kernel_y_configopt "CONFIG_ACPI_CPPC_LIB"
+		fi
 	fi
 }
 
@@ -4155,7 +4165,9 @@ ewarn "https://doc.dpdk.org/guides/linux_gsg/sys_reqs.html#running-dpdk-applicat
 ewarn
 
 		# Optional group
-		ot-kernel_y_configopt "CONFIG_ACPI"
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_y_configopt "CONFIG_ACPI"
+		fi
 		ot-kernel_y_configopt "CONFIG_HPET"
 		ot-kernel_y_configopt "CONFIG_HPET_MMAP"
 	fi
@@ -6431,21 +6443,21 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 		if [[ "${LM_SENSORS_MODULES:-0}" == "1" ]] ; then
 einfo "Adding referenced modules for the lm-sensors package."
 			# Slice sections of the file and extract options
-			local sidx1=$(grep -n "PC SMBus host controller drivers" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
-			local eidx1=$(grep -n "if ACPI" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
-			local sidx2=$(grep -n "Other I2C/SMBus bus drivers" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
-			local eidx2=$(wc -l drivers/i2c/busses/Kconfig | cut -f 1 -d " ")
+			local sidx1=$(grep -n "PC SMBus host controller drivers" "drivers/i2c/busses/Kconfig" | cut -f 1 -d ":")
+			local eidx1=$(grep -n "if ACPI" "drivers/i2c/busses/Kconfig" | cut -f 1 -d ":")
+			local sidx2=$(grep -n "Other I2C/SMBus bus drivers" "drivers/i2c/busses/Kconfig" | cut -f 1 -d ":")
+			local eidx2=$(wc -l "drivers/i2c/busses/Kconfig" | cut -f 1 -d " ")
 			# Module options for sensors, i2c, smbus
 			local OPTS=(
-				$(sed -n ${sidx1},${eidx1}p drivers/i2c/busses/Kconfig \
+				$(sed -n ${sidx1},${eidx1}p "drivers/i2c/busses/Kconfig" \
 					| grep "config " \
 					| cut -f 2 -d " " \
 					| sed -e "s|^|CONFIG_|g")
-				$(sed -n ${sidx2},${eidx2}p drivers/i2c/busses/Kconfig \
+				$(sed -n ${sidx2},${eidx2}p "drivers/i2c/busses/Kconfig" \
 					| grep "config " \
 					| cut -f 2 -d " " \
 					| sed -e "s|^|CONFIG_|g")
-				$(grep -e "config SENSORS" drivers/hwmon/Kconfig \
+				$(grep -e "config SENSORS" "drivers/hwmon/Kconfig" \
 					| cut -f 2 -d " " \
 					| sed -e "s|^|CONFIG_|g")
 			)
@@ -6455,10 +6467,10 @@ einfo "Adding referenced modules for the lm-sensors package."
 			done
 
 			local NOT_TRISTATE=(
-				CONFIG_SENSORS_W83795_FANCTRL
-				CONFIG_SENSORS_BT1_PVT_ALARMS
-				CONFIG_SENSORS_LTQ_CPUTEMP
-				CONFIG_SENSORS_S3C_RAW
+				"CONFIG_SENSORS_W83795_FANCTRL"
+				"CONFIG_SENSORS_BT1_PVT_ALARMS"
+				"CONFIG_SENSORS_LTQ_CPUTEMP"
+				"CONFIG_SENSORS_S3C_RAW"
 			)
 
 			local o
@@ -6468,7 +6480,7 @@ einfo "Adding referenced modules for the lm-sensors package."
 		fi
 
 
-		local O=$(grep -E -e "config SENSORS_.*" $(find drivers/hwmon -name "Kconfig*") \
+		local O=$(grep -E -e "config SENSORS_.*" $(find "drivers/hwmon" -name "Kconfig*") \
 			| cut -f 2 -d ":" \
 			| sed -e "s|config ||g" \
 			| sed -e "s|^|CONFIG_|g")
@@ -8945,9 +8957,12 @@ ot-kernel-pkgflags_r8168() { # DONE
 ot-kernel-pkgflags_rasdaemon() { # DONE
 	local pkg="app-admin/rasdaemon"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		ban_disable_debug "${pkg}" "CONFIG_ACPI_EXTLOG, CONFIG_DEBUG_FS"
-		ot-kernel_y_configopt "CONFIG_ACPI_EXTLOG"
+		if ot-kernel_has_acpi_support ; then
+			ban_disable_debug "${pkg}" "CONFIG_ACPI_EXTLOG"
+			ot-kernel_y_configopt "CONFIG_ACPI_EXTLOG"
+		fi
 		needs_debugfs
+		ban_disable_debug "${pkg}" "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
 }
@@ -11139,7 +11154,9 @@ ot-kernel-pkgflags_xen() { # DONE
 			ot-kernel_y_configopt "CONFIG_FB"
 			ot-kernel_y_configopt "CONFIG_XEN_FBDEV_FRONTEND"
 
-			ot-kernel_y_configopt "CONFIG_ACPI"
+			if ot-kernel_has_acpi_support ; then
+				ot-kernel_y_configopt "CONFIG_ACPI"
+			fi
 
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_BRIDGE"
