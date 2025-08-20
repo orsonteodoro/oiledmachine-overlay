@@ -11581,11 +11581,11 @@ ot-kernel_set_power_level() {
 
 	if (( ${power_level_bt_usb} == 2 )) ; then
 		if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
-			ot-kernel_n_configopt "BT_HCIBTUSB_AUTOSUSPEND"
+			ot-kernel_n_configopt "CONFIG_BT_HCIBTUSB_AUTOSUSPEND"
 		fi
 	else
 		if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "BT_HCIBTUSB_AUTOSUSPEND"
+			ot-kernel_y_configopt "CONFIG_BT_HCIBTUSB_AUTOSUSPEND"
 		fi
 	fi
 
