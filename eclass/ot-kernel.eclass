@@ -11152,11 +11152,11 @@ ot-kernel_unset_thermal_govenor_defaults() {
 #
 ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
-	if [[ "${symbol}" =~ ("0"|"ac"|"always-on"|"charging"|"performance"|"green"|"winter-blend") ]] ; then
+	if [[ "${symbol}" =~ ("0"|"green"|"low-battery"|"lowest-power"|"stable"|"summer-blend") ]] ; then
 		echo "0"
 	elif [[ "${symbol}" =~ ("1"|"battery"|"balance"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
 		echo "1"
-	elif [[ "${symbol}" =~ ("2"|"red"|"low-battery"|"stable"|"summer-blend") ]] ; then
+	elif [[ "${symbol}" =~ ("2"|"ac"|"always-on"|"charging"|"red"|"performance"|"winter-blend") ]] ; then
 		echo "2"
 	else
 eerror "QA:  symbol=${symbol} is not supported for power level."
