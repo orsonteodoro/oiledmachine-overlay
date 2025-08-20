@@ -11178,6 +11178,7 @@ ot-kernel_set_power_level() {
 	local power_level_pci
 	local power_level_sata
 	local power_level_usb
+	local power_level_wifi
 
 	# Allow fine-grain control to limit power for low heat tolerant devices such as CPU, GPU, Wi-Fi
 	if [[ "${power_source}" == "green" ]] ; then
@@ -11187,6 +11188,7 @@ ot-kernel_set_power_level() {
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-2})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-2})
+		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-2})
 	elif [[ "${power_source}" =~ ("battery"|"scalable") ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
@@ -11194,6 +11196,7 @@ ot-kernel_set_power_level() {
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-1})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-1})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-1})
+		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-1})
 	elif [[ "${power_source}" == "ac" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-0})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
@@ -11201,6 +11204,7 @@ ot-kernel_set_power_level() {
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-0})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-0})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-0})
+		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-0})
 	fi
 
 	if (( ${power_level_audio} == 2 )) ; then
@@ -11383,6 +11387,17 @@ ot-kernel_set_power_level() {
 		fi
 		# The docs say 4 can cause disk corruption.
 	fi
+
+	if (( ${power_level_wifi} == 2 )) ; then
+		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
+	else
+		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
+	fi
+
 	if [[ -n "${OT_KERNEL_SATA_LPM}" ]] ; then
 		ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${OT_KERNEL_SATA_LPM}"
 		if (( ${OT_KERNEL_SATA_LPM} == 4 )) ; then
@@ -11534,9 +11549,6 @@ ewarn "The dss work profile is experimental and in development."
 		power_source="battery"
 		form_factor="mobile"
 		timer_handling="tickless"
-		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		fi
 		if [[ "${work_profile}" == "smartphone-voice" ]] ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		else
@@ -11563,9 +11575,6 @@ ewarn "The dss work profile is experimental and in development."
 			power_source="green"
 		else
 			power_source="scalable"
-		fi
-		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
 		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
@@ -11609,7 +11618,6 @@ ewarn "The dss work profile is experimental and in development."
 		power_source="battery"
 		timer_handling="tickless"
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
-		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
@@ -11632,7 +11640,6 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		power_source="scalable"
 		timer_handling="tickless"
-		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
@@ -11659,7 +11666,6 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			power_source="ac"
 		fi
-		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 	# The presentation could just be slides with few clicks or a gaming demo
 	# with a lot of clicks.
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -11911,9 +11917,6 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		power_source="scalable"
 		timer_handling="tickless"
-		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
@@ -11923,9 +11926,6 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		power_source="scalable"
 		timer_handling="tickless"
-		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power

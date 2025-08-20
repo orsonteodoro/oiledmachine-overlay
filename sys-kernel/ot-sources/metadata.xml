@@ -1004,6 +1004,7 @@ TBM=0
       OT_KERNEL_POWER_LEVEL_PCI
       OT_KERNEL_POWER_LEVEL_SATA
       OT_KERNEL_POWER_LEVEL_USB
+      OT_KERNEL_POWER_LEVEL_WIFI
       OT_KERNEL_THERMAL_GOVERNORS
 
 
@@ -1024,6 +1025,7 @@ TBM=0
       OT_KERNEL_POWER_LEVEL_PCI
       OT_KERNEL_POWER_LEVEL_SATA
       OT_KERNEL_POWER_LEVEL_USB
+      OT_KERNEL_POWER_LEVEL_WIFI
       OT_KERNEL_THERMAL_GOVERNORS
     
 
@@ -2980,6 +2982,7 @@ TBM=0
     OT_KERNEL_POWER_LEVEL_PCI - Set the power level for PCI
     OT_KERNEL_POWER_LEVEL_SATA - Set the power level for SATA
     OT_KERNEL_POWER_LEVEL_USB - Set the power level for USB
+    OT_KERNEL_POWER_LEVEL_WIFI - Set the power level for 802.11 devices
 
     Some of these settings may have a dramatic effect while others neglible effect.
     These are used for fine grain control over power consumption.
@@ -3223,6 +3226,7 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_POWER_LEVEL_PCI
       OT_KERNEL_POWER_LEVEL_SATA
       OT_KERNEL_POWER_LEVEL_USB
+      OT_KERNEL_POWER_LEVEL_WIFI
       OT_KERNEL_THERMAL_GOVERNORS
 
 
@@ -4047,6 +4051,7 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_POWER_LEVEL_PCI
       OT_KERNEL_POWER_LEVEL_SATA
       OT_KERNEL_POWER_LEVEL_USB
+      OT_KERNEL_POWER_LEVEL_WIFI
       OT_KERNEL_THERMAL_GOVERNORS
       
 
