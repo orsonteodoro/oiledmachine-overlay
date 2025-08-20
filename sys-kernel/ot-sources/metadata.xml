@@ -992,8 +992,9 @@ TBM=0
 
 
     OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO - Set the number of seconds to delay into
-    power save mode.  It is suggested that 10 is a good value.  Upstream defaults it
-    to 0 meaning always on.
+    power save mode.  It is suggested that 10 is a good value and the ebuild default
+    for on-demand or green power saving scenarios.  Upstream defaults it to 0
+    meaning always on.
 
     See also
 
