@@ -10572,7 +10572,7 @@ ot-kernel_set_kconfig_work_profile_init() {
 		ot-kernel_unset_configopt "CONFIG_SND_AC97_POWER_SAVE"
 	fi
 	ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
-	ot-kernel_unset_configopt "CONFIG_PM"
+	#ot-kernel_unset_configopt "CONFIG_PM" # Some drivers need this
 	ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 }
 
@@ -11212,6 +11212,12 @@ ot-kernel_set_power_level() {
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-0})
 	fi
 
+	if (( ${power_level_io} == 2 )) ; then
+		: #ot-kernel_n_configopt "CONFIG_PM" # Some drivers need this
+	else
+		ot-kernel_y_configopt "CONFIG_PM"
+	fi
+
 	if (( ${power_level_audio} == 2 )) ; then
 		if grep -q -E -e "^CONFIG_SND_DRIVERS=y" "${path_config}" ; then
 			ot-kernel_n_configopt "CONFIG_SND_AC97_POWER_SAVE"
@@ -11229,12 +11235,6 @@ ot-kernel_set_power_level() {
 		if grep -q -E -e "^CONFIG_SND_HDA=y" "${path_config}" && grep -q -E -e "^CONFIG_PM=y" "${path_config}" ; then
 			ot-kernel_set_configopt "CONFIG_SND_HDA_POWER_SAVE_DEFAULT" "${audio_autosuspend_seconds}"
 		fi
-	fi
-
-	if (( ${power_level_io} == 2 )) ; then
-		ot-kernel_n_configopt "CONFIG_PM"
-	else
-		ot-kernel_y_configopt "CONFIG_PM"
 	fi
 
 	if (( ${power_level_pci} == 2 )) ; then
@@ -11356,6 +11356,8 @@ ot-kernel_set_power_level() {
 		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_FAIR_SHARE"
 	fi
 	if [[ "${thermal_governors}" =~ "power_allocator" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_ENERGY_MODEL"
 		ot-kernel_y_configopt "CONFIG_THERMAL_GOV_POWER_ALLOCATOR"
 	fi
 	if [[ "${thermal_governors}" =~ "step_wise" ]] ; then
