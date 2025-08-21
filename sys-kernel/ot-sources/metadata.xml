@@ -143,65 +143,53 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
 
-    6.12 (Stable)					A
+    6.12 (LTS)						A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    Clear Linux patchset		N
 		    genpatches				A
 		    kernel_compiler_patch		A
 		    Nest				D
-		    Project C				A
+		    Project C				E
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
+		    zen-sauce				N
 
-    6.13 (Stable)					A
-		    -rt	(RT_PREEMPT)			D
-		    Clang PGO				D
-		    Clear Linux patchset		A
-		    genpatches				A
-		    kernel_compiler_patch		D
-		    Nest				D
-		    Project C				A
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
-
-    6.14 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				D
-		    Clear Linux patchset		A (point releases only, not live)
-		    genpatches				A
-		    kernel_compiler_patch		D
-		    Nest				D
-		    Project C				A
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
-
-    6.15 (Mainline / Live / Master)			A
+    6.15 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    Clear Linux patchset		D (point releases only, not live)
-		    genpatches				D
+		    genpatches				A
 		    kernel_compiler_patch		D
 		    Nest				D
-		    Project C				D
+		    Project C				A
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				D
+		    zen-sauce				A
+
+    6.16 (Stable)					A
+		    -rt	(RT_PREEMPT)			A
+		    Clang PGO				D
+		    Clear Linux patchset		D (point releases only, not live)
+		    genpatches				A
+		    kernel_compiler_patch		D
+		    Nest				D
+		    Project C				A
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				A
+
+    6.17 (Live)						A
+    Ebuild support for live is temporarily down but may change in the future.
 
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
@@ -2003,7 +1991,7 @@ TBM=0
     Acceptable values:
 
       1 - yes, a rotational hard drive is present
-      0 - no HHD exists
+      0 - no HDD exists
       auto - autodetect via sysfs (default)
       unset - auto
 
