@@ -11136,7 +11136,7 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # 1 = Some power savings
 # 0 = No power savings
 #
-# Power blend perspective
+# Energy blend perspective
 # 2 = Summer blend
 # 1 = Spring/fall blend
 # 0 = Winter blend
