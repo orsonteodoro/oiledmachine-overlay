@@ -3083,9 +3083,8 @@ TBM=0
       long-life = Alias for 0
 
       LED perspective
-      2 = off (to reduce jitter or command latency)
-      1 = illuminate
-      0 = off
+      blink = illuminate
+      no-blink = off to to reduce jitter or command latency or energy use
 
     See also
 

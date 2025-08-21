@@ -11157,11 +11157,16 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # 1 = avg-life
 # 0 = long-life
 #
+# LED perspective
+# 2 = no-blink to reduce jitter or command latency
+# 1 = blink
+# 0 = no-blink
+#
 ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
-	if [[ "${symbol}" =~ ("0"|"green"|"long-life"|"low-battery"|"lowest-power"|"stable"|"summer-blend") ]] ; then
+	if [[ "${symbol}" =~ ("0"|"green"|"long-life"|"low-battery"|"lowest-power"|"no-blink"|"stable"|"summer-blend") ]] ; then
 		echo "0"
-	elif [[ "${symbol}" =~ ("1"|"avg-life"|"battery"|"balance"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
+	elif [[ "${symbol}" =~ ("1"|"avg-life"|"battery"|"balance"|"blink"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
 		echo "1"
 	elif [[ "${symbol}" =~ ("2"|"ac"|"always-on"|"charging"|"red"|"performance"|"short-life"|"winter-blend") ]] ; then
 		echo "2"
