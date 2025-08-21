@@ -11158,9 +11158,9 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # 0 = long-life
 #
 # LED perspective
-# 2 = no-blink to reduce jitter or command latency
+# 2 = no-blink or off to reduce jitter or command latency
 # 1 = blink
-# 0 = no-blink
+# 0 = no-blink or off
 #
 ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
