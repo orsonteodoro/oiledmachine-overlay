@@ -11640,6 +11640,7 @@ einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "rcutree.enable_rcu_lazy=[01]"
 
 		ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU"
+		ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "rcu_nocbs=all"
 	else
 		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
@@ -11667,11 +11668,15 @@ einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most
 			ot-kernel_y_configopt "CONFIG_RCU_LAZY"
 			ot-kernel_set_kconfig_kernel_cmdline "rcutree.enable_rcu_lazy=1"
 
-			if [[ "${OT_KERNEL_CPU_TAGS}" =~ "heterogeneous-power-cores" ]] ; then
+			if [[ "${OT_KERNEL_HETEROGENEOUS_POWER_CORES}" == "1" ]] ; then
 	# Power efficient core offloading
 				ot-kernel_y_configopt "CONFIG_RCU_NOCB_CPU"
 				ot-kernel_y_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
 				ot-kernel_y_configopt "CONFIG_TREE_RCU"
+			else
+				ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU"
+				ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "rcu_nocbs=all"
 			fi
 		fi
 	fi
