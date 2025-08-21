@@ -11604,13 +11604,9 @@ ewarn "The OT_KERNEL_SATA_LPM set to >= 4 may cause disk corruption with some di
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "2"
 		else
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "3" # 3 is the upstream default
-ewarn
-ewarn "CONFIG_SATA_MOBILE_LPM_POLICY issues:"
-ewarn
 ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) may cause freezes that result in data loss.  Consider using performance (2) instead."
 ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) enables device power management which may lower HDD lifespan.  Consider using on-demand (1) instead."
 einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most users, this is not an issue."
-ewarn
 		fi
 	fi
 
