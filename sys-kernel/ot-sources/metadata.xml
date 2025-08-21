@@ -2458,7 +2458,7 @@ TBM=0
 
 
     OT_KERNEL_LED_EVENTS - A space delimited of types of events to allow LED
-    illumination.  (WIP)
+    illumination.
 
     Valid values:
 
