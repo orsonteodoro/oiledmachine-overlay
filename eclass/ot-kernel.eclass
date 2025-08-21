@@ -11639,9 +11639,24 @@ einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most
 		ot-kernel_n_configopt "CONFIG_RCU_LAZY"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "rcutree.enable_rcu_lazy=[01]"
 
-		ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU"
-		ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "rcu_nocbs=all"
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+			|| "${work_profile}" == "pi-deep-learning" \
+			|| "${work_profile}" == "pi-music-production" \
+			|| "${work_profile}" == "radio-broadcaster" \
+			|| "${work_profile}" == "hpc-realtime" \
+			|| "${work_profile}" == "ros" \
+			|| "${work_profile}" == "voip" \
+		]] ; then
+	# Reduce jitter for both hard-realtime or soft-realtime
+	# RCU_NOCB_CPU is already enabled for work profiles.
+			:
+		else
+			ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU"
+			ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "rcu_nocbs=all"
+		fi
 	else
 		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
 	# Put the CPU to sleep if possible.
@@ -11660,8 +11675,11 @@ einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most
 			|| "${work_profile}" == "ros" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
-	# Realtime
+	# Hard-realtime or soft-realtime
 			ot-kernel_n_configopt "CONFIG_RCU_LAZY"
+
+	# Reduce jitter for both hard-realtime or soft-realtime
+	# RCU_NOCB_CPU is already enabled for work profiles.
 		else
 	# Power efficient idle
 			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
