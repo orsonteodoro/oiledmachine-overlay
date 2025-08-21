@@ -11575,7 +11575,7 @@ eerror "1 - Max performance"
 eerror "2 - Medium power savings"
 eerror "3 - Medium power savings with HDD/SSD power management enabled"
 eerror "4 - High power savings with HDD/SSD power management enabled"
-eerror "5 - Highest power savings with HDD/SDD power management enabled"
+eerror "5 - Highest power savings with HDD/SSD power management enabled"
 eerror
 eerror "Using >= 4 for OT_KERNEL_SATA_LPM may cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 eerror
