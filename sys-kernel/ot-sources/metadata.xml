@@ -2999,42 +2999,47 @@ TBM=0
     These are used for fine grain control over power consumption which can
     translate to overheating management or operational availability/correctness.
 
-    Valid settings depending on perspective:
+    Valid settings depending on the perspectives:
 
-    Heat level perspective, the default assumption
-    2 = high tolerance (which is equivalent to always-on)
-    1 = mid tolerance (which is equivalent to on-demand)
-    0 = weak tolerance (which is equivalent to the lowest power consumption)
+      Heat level perspective, the default assumption
+      2 = high tolerance (which is equivalent to always-on)
+      1 = mid tolerance (which is equivalent to on-demand)
+      0 = weak tolerance (which is equivalent to the lowest power consumption)
 
-    Power savings perspective
-    red = no power savings
-    yellow = some power savings
-    green = max power savings
+      Power savings perspective
+      red = no power savings
+      yellow = some power savings
+      green = max power savings
 
-    Power blend perspective from non air conditioned room
-    winter-blend = winter blend, alias for 2
-    spring-blend = spring/fall blend, alias for 1
-    summer-blend = summer blend, alias for 0
-    fall-blend = spring/fall blend, alias for 1
+      Power blend perspective from non air conditioned room
+      winter-blend = winter blend, alias for 2
+      spring-blend = spring/fall blend, alias for 1
+      summer-blend = summer blend, alias for 0
+      fall-blend = spring/fall blend, alias for 1
 
-    Battery perspective
-    ac = Charging AC power, alias for 2
-    battery = More than 10% battery left, alias for 1
-    low-battery = 10% or less battery left, alias for 0
+      Battery perspective
+      ac = Charging AC power, alias for 2
+      battery = More than 10% battery left, alias for 1
+      low-battery = 10% or less battery left, alias for 0
 
-    Alternatively, you may use the following power management aliases
-    always-on = Alias for 2
-    on-demand = Alias for 1
-    lowest-power = Alias for 0
+      Alternatively, you may use the following power management aliases
+      always-on = Alias for 2
+      on-demand = Alias for 1
+      lowest-power = Alias for 0
 
-    Mobile perspective
-    charging = Charging, alias for 2
-    battery = Battery, alias for 1
+      Mobile perspective
+      charging = Charging, alias for 2
+      battery = Battery, alias for 1
 
-    Performance perspective which bandwidth may be reduced
-    performance = Alias for 2
-    balance = Alias for 1
-    stable = Alias for 0
+      Performance perspective which bandwidth may be reduced
+      performance = Alias for 2
+      balance = Alias for 1
+      stable = Alias for 0
+
+      Lifespan perspective
+      short-life = Alias for 2
+      avg-life = Alias for 1
+      long-life = Alias for 0
 
     See also
 

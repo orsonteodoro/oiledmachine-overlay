@@ -11150,13 +11150,18 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # 1 = Battery
 # 0 = Charging
 #
+# Lifespan perspective
+# 2 = short-life
+# 1 = avg-life
+# 0 = long-life
+#
 ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
-	if [[ "${symbol}" =~ ("0"|"green"|"low-battery"|"lowest-power"|"stable"|"summer-blend") ]] ; then
+	if [[ "${symbol}" =~ ("0"|"green"|"long-life"|"low-battery"|"lowest-power"|"stable"|"summer-blend") ]] ; then
 		echo "0"
-	elif [[ "${symbol}" =~ ("1"|"battery"|"balance"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
+	elif [[ "${symbol}" =~ ("1"|"avg-life"|"battery"|"balance"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
 		echo "1"
-	elif [[ "${symbol}" =~ ("2"|"ac"|"always-on"|"charging"|"red"|"performance"|"winter-blend") ]] ; then
+	elif [[ "${symbol}" =~ ("2"|"ac"|"always-on"|"charging"|"red"|"performance"|"short-life"|"winter-blend") ]] ; then
 		echo "2"
 	else
 eerror "QA:  symbol=${symbol} is not supported for power level."
@@ -11268,7 +11273,6 @@ ot-kernel_set_power_level() {
 	local power_level_sata
 	local power_level_usb
 	local power_level_wifi
-
 
 	# Allow fine-grain control to limit power for low heat tolerant devices such as CPU, GPU, Wi-Fi
 	if [[ "${power_source}" == "green" ]] ; then
@@ -11596,8 +11600,11 @@ ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.
 		fi
 	fi
 
-	if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
-		ot-kernel_y_configopt "CONFIG_USB_XHCI_SIDEBAND"
+	# It may put the CPU to sleep but then there is a latency cost.
+	if (( ${power_level_cpu} < 2 )) ; then
+		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_USB_XHCI_SIDEBAND"
+		fi
 	fi
 }
 
