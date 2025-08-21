@@ -2465,12 +2465,12 @@ TBM=0
       backlight - Allow LED illumination for backlight devices when unblanked
       camera - Allow to illuminate the main bright flash and the small light indicators
       cpu - Allow the corresponding LED to illuminate with the corresponding active CPU or corresponding Core
+      default-on - Allow LEDs to illuminate immediately when turned on
       disk - Allow LED illumination on ATA disk activity
       events - Allow LED illumination of events based single blink event or blink at a slower constant rate for rapid multiple events
       heartbeat - Allow the LED simulate a heartbeat based on CPU load activity for headless
       input - Allow the LED backlight to turn on indicator or keyboard of mobile
       netdev - Allow LEDs to illuminate on network activity
-      on - Allow LEDs to illuminate immediately when turned on
       panic - Allow LEDs to blink when a kernel panic is detected
       pattern - Allow artsy LED patterns support
       systemwide-activity - Allow the LED to illuminate based on overall system load
