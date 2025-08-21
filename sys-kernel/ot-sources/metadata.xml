@@ -3002,20 +3002,20 @@ TBM=0
     Valid settings depending on the perspectives:
 
       Heat level perspective, the default assumption
-      2 = high tolerance (which is equivalent to always-on)
-      1 = mid tolerance (which is equivalent to on-demand)
-      0 = weak tolerance (which is equivalent to the lowest power consumption)
+      2 = High tolerance (which is equivalent to always-on)
+      1 = Mid tolerance (which is equivalent to on-demand)
+      0 = Weak tolerance (which is equivalent to the lowest power consumption)
 
       Power savings perspective
-      red = no power savings
-      yellow = some power savings
-      green = max power savings
+      red = No power savings
+      yellow = Some power savings
+      green = Max power savings
 
-      Power blend perspective from non air conditioned room
-      winter-blend = winter blend, alias for 2
-      spring-blend = spring/fall blend, alias for 1
-      summer-blend = summer blend, alias for 0
-      fall-blend = spring/fall blend, alias for 1
+      Energy blend perspective from non air conditioned room
+      winter-blend = Alias for 2
+      spring-blend = Alias for 1
+      summer-blend = Alias for 0
+      fall-blend = Alias for 1
 
       Battery perspective
       ac = Charging AC power, alias for 2
