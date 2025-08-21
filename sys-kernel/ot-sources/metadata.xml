@@ -3242,6 +3242,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Using >= 3 may cause freezes that may result in data loss.
     Using >= 4 may cause disk corruption with certain disks.
+    Using device power management for HDD may reduce the lifespan.
 
     See also
 
