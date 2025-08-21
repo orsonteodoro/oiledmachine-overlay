@@ -4438,6 +4438,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_CONFIG_MODE
 	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
+        unset OT_KERNEL_CPU_TAGS
 	unset OT_KERNEL_DISABLE
 	unset OT_KERNEL_DMA_ATTACK_MITIGATIONS
 	unset OT_KERNEL_DMESG
@@ -11631,14 +11632,47 @@ einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most
 	fi
 
 	if (( ${power_level_cpu} == 2 )) ; then
-		# Avoid latency cost
+	# Avoid latency cost
 		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
 			ot-kernel_n_configopt "CONFIG_USB_XHCI_SIDEBAND"
 		fi
+		ot-kernel_n_configopt "CONFIG_RCU_LAZY"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "rcutree.enable_rcu_lazy=[01]"
+
+		ot-kernel_n_configopt "CONFIG_RCU_NOCB_CPU"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "rcu_nocbs=all"
 	else
-		# Put the CPU to sleep if possible.
 		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
+	# Put the CPU to sleep if possible.
 			ot-kernel_y_configopt "CONFIG_USB_XHCI_SIDEBAND"
+		fi
+
+		if (( ${interactive_critical} == 1 )) ; then
+			ot-kernel_n_configopt "CONFIG_RCU_LAZY"
+		elif [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+			|| "${work_profile}" == "pi-deep-learning" \
+			|| "${work_profile}" == "pi-music-production" \
+			|| "${work_profile}" == "radio-broadcaster" \
+			|| "${work_profile}" == "hpc-realtime" \
+			|| "${work_profile}" == "ros" \
+			|| "${work_profile}" == "voip" \
+		]] ; then
+	# Realtime
+			ot-kernel_n_configopt "CONFIG_RCU_LAZY"
+		else
+	# Power efficient idle
+			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
+			ot-kernel_y_configopt "CONFIG_RCU_LAZY"
+			ot-kernel_set_kconfig_kernel_cmdline "rcutree.enable_rcu_lazy=1"
+
+			if [[ "${OT_KERNEL_CPU_TAGS}" =~ "heterogeneous-power-cores" ]] ; then
+	# Power efficient core offloading
+				ot-kernel_y_configopt "CONFIG_RCU_NOCB_CPU"
+				ot-kernel_y_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
+				ot-kernel_y_configopt "CONFIG_TREE_RCU"
+			fi
 		fi
 	fi
 }
