@@ -11578,22 +11578,24 @@ eerror "3 - Medium power savings with HDD/SSD power management enabled [upstream
 eerror "4 - High power savings with HDD/SSD power management enabled"
 eerror "5 - Highest power savings with HDD/SSD power management enabled"
 eerror
-eerror "The OT_KERNEL_SATA_LPM >= 3 may cause freezes that result in data loss."
-eerror "The OT_KERNEL_SATA_LPM >= 4 may cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
+eerror "OT_KERNEL_SATA_LPM >= 3 may cause freezes that result in data loss."
+eerror "OT_KERNEL_SATA_LPM >= 4 may cause disk corruption with some disks."
+eerror "Use a secure safer option [0-2] to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 eerror "Using HDD power management may lower lifespan."
 eerror
 				die
 				;;
 		esac
 		if (( ${sata_lpm} >= 3 )) ; then
-ewarn "The OT_KERNEL_SATA_LPM set to >= 3 may cause freezes that result in data loss."
-ewarn "The OT_KERNEL_SATA_LPM set to >= 3 enables HDD/SSD power management which may lower HDD lifespan."
+ewarn "OT_KERNEL_SATA_LPM >= 3 may cause freezes that result in data loss."
+ewarn "OT_KERNEL_SATA_LPM >= 3 enables HDD/SSD power management which may lower HDD lifespan."
 			if (( ${sata_lpm} == 3 )) ; then
-einfo "The OT_KERNEL_SATA_LPM=3 uses the kernel default value.  For most users, this is not an issue."
+einfo "OT_KERNEL_SATA_LPM=3 uses the kernel default value.  For most users, this is not an issue."
 			fi
 		fi
 		if (( ${sata_lpm} >= 4 )) ; then
-ewarn "The OT_KERNEL_SATA_LPM set to >= 4 may cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
+ewarn "OT_KERNEL_SATA_LPM >= 4 may cause disk corruption with some disks."
+ewarn "Use a secure safer option [0-2] to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 		fi
 		if (( ${allow_mobile_lpm_policy_changes} == 1 )) ; then
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm}"
@@ -11607,9 +11609,10 @@ ewarn "The OT_KERNEL_SATA_LPM set to >= 4 may cause disk corruption with some di
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "2"
 		else
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "3" # 3 is the upstream default
-ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) may cause freezes that result in data loss."
-ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) enables HDD/SSD power management which may lower HDD lifespan."
-einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most users, this is not an issue."
+ewarn "OT_KERNEL_POWER_LEVEL_SATA is set to the lowest-power (0) which may cause freezes that result in data loss."
+ewarn "OT_KERNEL_POWER_LEVEL_SATA is set to the lowest-power (0) enables HDD/SSD power management which may lower HDD lifespan."
+ewarn "Use a secure safer option [0-2] to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
+einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most users, this is not an issue."
 		fi
 	fi
 
