@@ -11630,8 +11630,13 @@ einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most
 		fi
 	fi
 
-	# It may put the CPU to sleep but then there is a latency cost.
-	if (( ${power_level_cpu} < 2 )) ; then
+	if (( ${power_level_cpu} == 2 )) ; then
+		# Avoid latency cost
+		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_USB_XHCI_SIDEBAND"
+		fi
+	else
+		# Put the CPU to sleep if possible.
 		if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_USB_XHCI_SIDEBAND"
 		fi
