@@ -161,7 +161,7 @@
     6.15 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
-		    Clear Linux patchset		D (point releases only, not live)
+		    Clear Linux patchset		N
 		    genpatches				A
 		    kernel_compiler_patch		D
 		    Nest				D
@@ -176,7 +176,7 @@
     6.16 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
-		    Clear Linux patchset		D (point releases only, not live)
+		    Clear Linux patchset		N
 		    genpatches				A
 		    kernel_compiler_patch		D
 		    Nest				D
