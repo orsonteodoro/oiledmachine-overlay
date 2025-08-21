@@ -3233,14 +3233,15 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      0 - firmware default
-      1 - maximum performance
-      2 - medium performance
-      3 - medium performance with initiated power management by device
-      4 - minimal power use
+      0 - Use firmware defaults
+      1 - Maximum performance
+      2 - Medium power savings
+      3 - Medium power savings with device power management enabled [Upstream kernel default]
+      4 - High power savings with device power management enabled
+      5 - Highest power savings with device power management enabled
 
     Using 3-4 may cause data loss that manifest as freezes.
-    Using 4 may cause disk corruption with certain disks.
+    Using >= 4 may cause disk corruption with certain disks.
 
     See also
 

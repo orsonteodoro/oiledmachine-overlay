@@ -11552,25 +11552,66 @@ ot-kernel_set_power_level() {
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
 	fi
 
-	if (( ${power_level_sata} == 2 )) ; then
-		# Always on
-		if \
-			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
-		; then
-			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "1"
+	local allow_mobile_lpm_policy_changes=0
+	if \
+		   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
+		&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
+		&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
+	; then
+		allow_mobile_lpm_policy_changes=1
+	fi
+
+	local sata_lpm="${OT_KERNEL_SATA_LPM}"
+	if [[ -n "${sata_lpm}" ]] ; then
+		case "${sata_lpm}" in
+			[0-5])
+				;;
+			*)
+eerror
+eerror "OT_KERNEL_SATA_LPM is invalid.  Acceptable values"
+eerror
+eerror "0 - Use firmware settings"
+eerror "1 - Max performance"
+eerror "2 - Medium power savings"
+eerror "3 - Medium power savings with device power management enabled"
+eerror "4 - High power savings with device power management enabled"
+eerror "5 - Highest power savings with device power management enabled"
+eerror
+eerror "Using >= 4 for OT_KERNEL_SATA_LPM may cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
+eerror
+				die
+				;;
+		esac
+		if (( ${sata_lpm} >= 3 )) ; then
+ewarn "The OT_KERNEL_SATA_LPM set to >= 3 may cause freezes.  Consider using performance (2) instead."
+ewarn "The OT_KERNEL_SATA_LPM set to >= 3 enables device power management which may lower HDD lifespan.  Consider using performance (2) instead."
+			if (( ${sata_lpm} == 3 )) ; then
+einfo "The OT_KERNEL_SATA_LPM=3 uses the kernel default value.  For most users, this is not an issue."
+			fi
+		fi
+		if (( ${sata_lpm} >= 4 )) ; then
+ewarn "The OT_KERNEL_SATA_LPM set to >= 4 may cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
+		fi
+		if (( ${allow_mobile_lpm_policy_changes} == 1 )) ; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm}"
 		fi
 	else
-		# On demand
-		if \
-			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
-			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
-		; then
+		if (( ${allow_mobile_lpm_policy_changes} == 0 )) ; then
+			:
+		elif (( ${power_level_sata} == 2 )) ; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "1"
+		elif (( ${power_level_sata} == 1 )) ; then
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "2"
+		else
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "3" # 3 is the upstream default
+ewarn
+ewarn "CONFIG_SATA_MOBILE_LPM_POLICY issues:"
+ewarn
+ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) may cause freezes.  Consider using performance (2) instead."
+ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) enables device power management which may lower HDD lifespan.  Consider using on-demand (1) instead."
+einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most users, this is not an issue."
+ewarn
 		fi
-		# The docs say 4 can cause disk corruption.
 	fi
 
 	if (( ${power_level_wifi} == 2 )) ; then
@@ -11590,13 +11631,6 @@ ot-kernel_set_power_level() {
 	else
 		if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_BT_HCIBTUSB_AUTOSUSPEND"
-		fi
-	fi
-
-	if [[ -n "${OT_KERNEL_SATA_LPM}" ]] ; then
-		ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${OT_KERNEL_SATA_LPM}"
-		if (( ${OT_KERNEL_SATA_LPM} == 4 )) ; then
-ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 		fi
 	fi
 
