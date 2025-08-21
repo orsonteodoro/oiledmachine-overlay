@@ -4502,6 +4502,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_POWER_LEVEL_AUDIO
 	unset OT_KERNEL_POWER_LEVEL_CPU
 	unset OT_KERNEL_POWER_LEVEL_IO
+	unset OT_KERNEL_POWER_LEVEL_LED
 	unset OT_KERNEL_POWER_LEVEL_PCI
 	unset OT_KERNEL_POWER_LEVEL_USB
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION			# global var
@@ -11270,6 +11271,7 @@ ot-kernel_set_power_level() {
 	local power_level_bt_usb
 	local power_level_cpu
 	local power_level_io
+	local power_level_led
 	local power_level_pci
 	local power_level_sata
 	local power_level_usb
@@ -11281,6 +11283,7 @@ ot-kernel_set_power_level() {
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-2})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-2})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-2}) # i2c sensors, hd-audio
+		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-2})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-2})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-2})
@@ -11290,6 +11293,7 @@ ot-kernel_set_power_level() {
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-1}) # i2c sensors, hd-audio
+		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-1})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-1})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-1})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-1})
@@ -11299,6 +11303,7 @@ ot-kernel_set_power_level() {
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-0}) # i2c sensors, hd-audio
+		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-0})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-0})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-0})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-0})
@@ -11702,6 +11707,155 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "rcu_nocbs=all"
 			fi
 		fi
+	fi
+
+	if (( ${power_level_led} == 1 )) && [[ "${timer_handling}" != "tickless-full" ]] ; then # Prevent realtime jitter
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "backlight" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_BACKLIGHT"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "camera" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_CAMERA"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "cpu" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_CPU"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "disk" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_DISK"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "events" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_ONESHOT"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "heartbeat" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_HEARTBEAT"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "input" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_INPUT_EVENTS"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "netdev" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_NETDEV"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "default-on" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_DEFAULT_ON"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "panic" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_PANIC"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "pattern" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_PATTERN"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "timer" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_TIMER"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "systemwide-activity" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_ACTIVITY"
+		fi
+		if [[ "${OT_KERNEL_LED_EVENTS}" =~ "tty" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_TTY"
+		fi
+
+		if [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CHASSIS_LCD_LED"
+		fi
+		if \
+			   grep -q -E -e "^CONFIG_BT=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_NET=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+			ot-kernel_y_configopt "CONFIG_BT_LEDS"
+		fi
+		if \
+			   grep -q -E -e "^CONFIG_INET=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_NET=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_NETFILTER=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_NETFILTER_XTABLES=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_NETFILTER_ADVANCED=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LED"
+		fi
+		if \
+			   grep -q -E -e "^CONFIG_NET=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_MAC80211=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_WIRELESS=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+			ot-kernel_y_configopt "CONFIG_MAC80211_LEDS"
+		fi
+		if \
+			   grep -q -E -e "^CONFIG_USB=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_USB_SUPPORT=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_USB_LEDS_TRIGGER_USBPORT" # option
+			ot-kernel_y_configopt "CONFIG_USB_LED_TRIG" # option
+		fi
+		if \
+			   grep -q -E -e "^CONFIG_NETDEVICES=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_PHYLIB=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+			ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+			ot-kernel_y_configopt "CONFIG_LED_TRIGGER_PHY"
+		fi
+
+	else
+	# The LEDs are turned off on performance to reduce latency.
+		ot-kernel_n_configopt "CONFIG_BT_LEDS"
+		ot-kernel_n_configopt "CONFIG_CHASSIS_LCD_LED"
+		ot-kernel_n_configopt "CONFIG_LED_TRIGGER_PHY"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_ACTIVITY"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_BACKLIGHT"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_CAMERA"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_CPU"
+		ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_DEFAULT_ON"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_DISK"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_HEARTBEAT"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_INPUT_EVENTS"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_NETDEV"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_ONESHOT"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_PANIC"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_PATTERN"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_TIMER"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_TTY"
+		ot-kernel_n_configopt "CONFIG_MAC80211_LEDS"
+		ot-kernel_n_configopt "CONFIG_NETFILTER_XT_TARGET_LED"
+		ot-kernel_n_configopt "CONFIG_NET_DSA_MV88E6XXX_LEDS"
+		ot-kernel_n_configopt "CONFIG_NET_DSA_QCA8K_LEDS_SUPPORT"
+		ot-kernel_n_configopt "CONFIG_USB_LED_TRIG"
+		ot-kernel_n_configopt "CONFIG_USB_LEDS_TRIGGER_USBPORT"
 	fi
 }
 
