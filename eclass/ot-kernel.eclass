@@ -11573,9 +11573,9 @@ eerror
 eerror "0 - Use firmware settings"
 eerror "1 - Max performance"
 eerror "2 - Medium power savings"
-eerror "3 - Medium power savings with device power management enabled"
-eerror "4 - High power savings with device power management enabled"
-eerror "5 - Highest power savings with device power management enabled"
+eerror "3 - Medium power savings with HDD/SSD power management enabled"
+eerror "4 - High power savings with HDD/SSD power management enabled"
+eerror "5 - Highest power savings with HDD/SDD power management enabled"
 eerror
 eerror "Using >= 4 for OT_KERNEL_SATA_LPM may cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 eerror
@@ -11584,7 +11584,7 @@ eerror
 		esac
 		if (( ${sata_lpm} >= 3 )) ; then
 ewarn "The OT_KERNEL_SATA_LPM set to >= 3 may cause freezes that result in data loss.  Consider using performance (2) instead."
-ewarn "The OT_KERNEL_SATA_LPM set to >= 3 enables device power management which may lower HDD lifespan.  Consider using performance (2) instead."
+ewarn "The OT_KERNEL_SATA_LPM set to >= 3 enables HDD/SSD power management which may lower HDD lifespan.  Consider using performance (2) instead."
 			if (( ${sata_lpm} == 3 )) ; then
 einfo "The OT_KERNEL_SATA_LPM=3 uses the kernel default value.  For most users, this is not an issue."
 			fi
@@ -11605,7 +11605,7 @@ ewarn "The OT_KERNEL_SATA_LPM set to >= 4 may cause disk corruption with some di
 		else
 			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "3" # 3 is the upstream default
 ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) may cause freezes that result in data loss.  Consider using performance (2) instead."
-ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) enables device power management which may lower HDD lifespan.  Consider using on-demand (1) instead."
+ewarn "The OT_KERNEL_POWER_LEVEL_SATA set to lowest-power (0) enables HDD/SSD power management which may lower HDD lifespan.  Consider using on-demand (1) instead."
 einfo "The OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most users, this is not an issue."
 		fi
 	fi

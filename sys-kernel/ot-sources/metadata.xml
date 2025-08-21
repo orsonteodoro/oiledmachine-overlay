@@ -3236,13 +3236,13 @@ unset OT_KERNEL_PRIVATE_KEY
       0 - Use firmware defaults
       1 - Maximum performance
       2 - Medium power savings
-      3 - Medium power savings with device power management enabled [Upstream kernel default]
-      4 - High power savings with device power management enabled
-      5 - Highest power savings with device power management enabled
+      3 - Medium power savings with HDD/SSD power management enabled [Upstream kernel default]
+      4 - High power savings with HDD/SSD power management enabled
+      5 - Highest power savings with HDD/SDD power management enabled
 
     Using >= 3 may cause freezes that may result in data loss.
     Using >= 4 may cause disk corruption with certain disks.
-    Using device power management for HDD may reduce the lifespan.
+    Using HDD power management may reduce the lifespan.
 
     See also
 
