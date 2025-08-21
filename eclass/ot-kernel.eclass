@@ -11595,6 +11595,10 @@ ot-kernel_set_power_level() {
 ewarn "Using 4 for OT_KERNEL_SATA_LPM can cause disk corruption with some disks.  Use a secure safer option to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 		fi
 	fi
+
+	if grep -q -E -e "^CONFIG_USB_XHCI_HCD=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_USB_XHCI_SIDEBAND"
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
