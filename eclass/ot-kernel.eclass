@@ -10926,7 +10926,7 @@ ot-kernel_set_power_level() {
 	local power_level_cpu
 	local power_level_display # Sleep state (always-on, suspend, sleep/off)
 	local power_level_display_backlight # Mobile or laptop backlight while active phase
-	local power_level_io
+	local power_level_io # i2c sensors, hd-audio
 	local power_level_led
 	local power_level_pci
 	local power_level_sata
@@ -10934,13 +10934,13 @@ ot-kernel_set_power_level() {
 	local power_level_wifi
 
 	# Allow fine-grain control to limit power for low heat tolerant devices such as CPU, GPU, Wi-Fi
-	if [[ "${power_source}" == "green" ]] ; then
+	if [[ "${power_source}" == "ac" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-2})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-2})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-2})
 		power_level_display=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY:-2})
 		power_level_display_backlight=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY_BACKLIGHT:-2})
-		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-2}) # i2c sensors, hd-audio
+		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-2})
 		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-2})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-2})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
@@ -10952,19 +10952,19 @@ ot-kernel_set_power_level() {
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
 		power_level_display=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY:-1})
 		power_level_display_backlight=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY_BACKLIGHT:-1})
-		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-1}) # i2c sensors, hd-audio
+		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-1})
 		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-1})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-1})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-1})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-1})
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-1})
-	elif [[ "${power_source}" == "ac" ]] ; then
+	elif [[ "${power_source}" == "green" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-0})
-		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
+		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-0})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
 		power_level_display=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY:-0})
 		power_level_display_backlight=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY_BACKLIGHT:-0})
-		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-0}) # i2c sensors, hd-audio
+		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-0})
 		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-0})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-0})
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-0})
