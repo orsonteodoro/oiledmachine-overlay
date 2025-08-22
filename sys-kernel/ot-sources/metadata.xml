@@ -3093,8 +3093,8 @@ TBM=0
       no-blink = Off to to reduce jitter or command latency or energy use
 
       Backlight perspective
-      2 = Backlight full
-      1 = Backlight adjustable assuming with battery
+      2 = Backlight full or manually adjusted directly on display panel
+      1 = Backlight adjustable assuming with battery with special/programmable key functions
       0 = Backlight adjustable assuming with low battery, but the user space batter event handler should set to lowest or disable it
 
     See also

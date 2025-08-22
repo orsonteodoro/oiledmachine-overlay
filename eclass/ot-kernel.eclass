@@ -11168,8 +11168,8 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # 0 = No-blink or off
 #
 # Backlight perspective
-# 2 = Backlight full
-# 1 = Backlight adjustable assuming with battery
+# 2 = Backlight full or manually adjusted directly on display panel
+# 1 = Backlight adjustable assuming with battery with special/programmable key functions
 # 0 = Backlight adjustable assuming with low battery, but the user space batter event handler should set to lowest or disable it
 #
 ot-kernel_canonicalize_power_level() {
