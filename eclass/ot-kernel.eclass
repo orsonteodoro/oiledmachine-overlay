@@ -10916,7 +10916,7 @@ ot-kernel_has_open_firmware_thermal_support() {
 # @DESCRIPTION:
 # Adjust the power level of the devices
 ot-kernel_set_power_level() {
-	local power_source="${1}"
+	local power_profile="${1}"
 	local form_factor="${2}" # mobile or stationary
 	local timer_handling="${3}" # periodic, tickless, tickless-full
 	local interactive_critical="${4}"
@@ -10934,7 +10934,7 @@ ot-kernel_set_power_level() {
 	local power_level_wifi
 
 	# Allow fine-grain control to limit power for low heat tolerant devices such as CPU, GPU, Wi-Fi
-	if [[ "${power_source}" == "ac" ]] ; then
+	if [[ "${power_profile}" == "ac" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-2})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-2})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-2})
@@ -10946,7 +10946,7 @@ ot-kernel_set_power_level() {
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-2})
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-2})
-	elif [[ "${power_source}" =~ ("battery"|"conserve"|"scalable") ]] ; then
+	elif [[ "${power_profile}" =~ ("battery"|"conserve"|"scalable") ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
@@ -10958,7 +10958,7 @@ ot-kernel_set_power_level() {
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-1})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-1})
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-1})
-	elif [[ "${power_source}" == "green" ]] ; then
+	elif [[ "${power_profile}" == "green" ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-0})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-0})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
@@ -11084,16 +11084,18 @@ ot-kernel_set_power_level() {
 			if grep -q -E -e "^CONFIG_X86_INTEL_PSTATE=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			else
-				if [[ "${form_factor}" == "scalable" ]] ; then
+				if [[ "${power_profile}" == "scalable" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+				elif [[ "${power_profile}" == "conserve" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 				elif [[ "${form_factor}" == "mobile" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 				else
-					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 				fi
 			fi
 
-			if [[ "${form_factor}" == "scalable" ]] ; then
+			if [[ "${power_profile}" == "scalable" ]] ; then
 				ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
 			else
 				ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
@@ -11650,7 +11652,7 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
 ot-kernel_set_kconfig_work_profile() {
-	local power_source="ac"
+	local power_profile="ac"
 	local form_factor="stationary"
 	local timer_handling="periodic"
 	local interactive_critical=0
@@ -11787,7 +11789,7 @@ ewarn "The dss work profile is experimental and in development."
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
-		power_source="battery"
+		power_profile="on-demand"
 		form_factor="mobile"
 		timer_handling="tickless"
 		if [[ "${work_profile}" == "smartphone-voice" ]] ; then
@@ -11806,17 +11808,18 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
-		power_source="battery"
+		if [[ "${work_profile}" =~ ("green-pc"|"solar-desktop") ]] ; then
+			power_profile="green"
+		elif [[ "${work_profile}" =~ ("touchscreen-laptop") ]] ; then
+			power_profile="on-demand"
+		else
+			power_profile="conserve"
+		fi
 		timer_handling="tickless"
 		if [[ "${work_profile}" =~ ("laptop") ]] ; then
 			form_factor="mobile"
 		fi
 
-		if [[ "${work_profile}" =~ ("green-pc"|"solar-desktop") ]] ; then
-			power_source="green"
-		else
-			power_source="conserve"
-		fi
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
@@ -11856,12 +11859,10 @@ ewarn "The dss work profile is experimental and in development."
 	# Avoid leg burn on long use
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 		fi
-		if [[ "${work_profile}" =~ "laptop" ]] ; then
-			power_source="battery"
-		elif [[ "${work_profile}" =~ "pi" ]] ; then
-			power_source="ac"
-		elif [[ "${work_profile}" =~ "solar" ]] ; then
-			power_source="scalable"
+		if [[ "${work_profile}" =~ "pi" ]] ; then
+			power_profile="ac"
+		else
+			power_profile="scalable"
 		fi
 		timer_handling="tickless"
 		interactive_critical=1
@@ -11886,7 +11887,7 @@ ewarn "The dss work profile is experimental and in development."
 	# 2D mostly, less intense
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		power_source="scalable"
+		power_profile="scalable"
 		timer_handling="tickless"
 		interactive_critical=1
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -11915,9 +11916,7 @@ ewarn "The dss work profile is experimental and in development."
 		fi
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		if [[ "${work_profile}" == "game-server" ]] ; then
-			power_source="scalable"
-		else
-			power_source="ac"
+			power_profile="scalable"
 		fi
 		interactive_critical=1
 	# The presentation could just be slides with few clicks or a gaming demo
@@ -11965,7 +11964,14 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
-		power_source="scalable"
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+		]] ; then
+			power_profile="ac"
+		else
+			power_profile="scalable"
+		fi
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ \
 			   "${work_profile}" == "digital-audio-workstation" \
@@ -11999,11 +12005,11 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "renderfarm-workstation" \
 	]] ; then
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
-			power_source="scalable"
+			power_profile="scalable"
 			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		else
-			power_source="conserve"
+			power_profile="conserve"
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
@@ -12065,7 +12071,7 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		power_source="conserve"
+		power_profile="conserve"
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ \
@@ -12163,9 +12169,9 @@ ewarn "The dss work profile is experimental and in development."
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
 		if [[ "${work_profile}" == "mainstream-desktop" ]] ; then
-			power_source="scalable"
+			power_profile="scalable"
 		else
-			power_source="conserve"
+			power_profile="conserve"
 		fi
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -12175,7 +12181,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
-		power_source="conserve"
+		power_profile="conserve"
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ot-kernel_set_rcu_powersave
@@ -12184,7 +12190,7 @@ ewarn "The dss work profile is experimental and in development."
 		"${work_profile}" == "cryptocurrency-miner-workstation" \
 	]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
-		power_source="scalable"
+		power_profile="scalable"
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_set_rcu_powersave
@@ -12197,7 +12203,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		if [[ "${work_profile}" == "hpc-green" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
-			power_source="green"
+			power_profile="green"
 			timer_handling="tickless"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_set_rcu_powersave
@@ -12207,18 +12213,16 @@ ewarn "The dss work profile is experimental and in development."
 			   "${work_profile}" == "hpc" \
 			|| "${work_profile}" == "hpc-throughput" \
 		]] ; then
-			if [[ "${work_profile}" == "hpc" ]] ; then
-				power_source="scalable"
-			fi
+			power_profile="scalable"
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_iosched_max_throughput
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "hpc-realtime" ]] ; then
+			timer_handling="tickless-full"
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_rt_rcu
-			timer_handling="tickless-full"
 			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
@@ -12232,7 +12236,7 @@ ewarn "The dss work profile is experimental and in development."
 		"${work_profile}" == "distributed-computing-client" \
 	]] ; then
 		# Example: BOINC
-		power_source="conserve"
+		power_profile="conserve"
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
@@ -12269,7 +12273,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		:
 	else
-		ot-kernel_set_power_level "${power_source}" "${form_factor}" "${timer_handling}" "${interactive_critical}"
+		ot-kernel_set_power_level "${power_profile}" "${form_factor}" "${timer_handling}" "${interactive_critical}"
 	fi
 }
 
