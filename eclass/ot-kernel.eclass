@@ -10946,7 +10946,7 @@ ot-kernel_set_power_level() {
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-2})
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-2})
-	elif [[ "${power_source}" =~ ("battery"|"scalable") ]] ; then
+	elif [[ "${power_source}" =~ ("battery"|"conserve"|"scalable") ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
@@ -11080,13 +11080,25 @@ ot-kernel_set_power_level() {
 			fi
 		elif (( ${power_level_cpu} == 1 )) ; then
 			ot-kernel_unset_all_cpu_freq_default_gov
-			if [[ "${form_factor}" == "mobile" ]] ; then
-				ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-				ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
-			else
+
+			if grep -q -E -e "^CONFIG_X86_INTEL_PSTATE=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-				ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+			else
+				if [[ "${form_factor}" == "scalable" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+				elif [[ "${form_factor}" == "mobile" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+				else
+					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+				fi
 			fi
+
+			if [[ "${form_factor}" == "scalable" ]] ; then
+				ot-kernel_n_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+			else
+				ot-kernel_y_configopt "CONFIG_WQ_POWER_EFFICIENT_DEFAULT"
+			fi
+
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
@@ -11100,7 +11112,7 @@ ot-kernel_set_power_level() {
 		else
 			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
@@ -11803,7 +11815,7 @@ ewarn "The dss work profile is experimental and in development."
 		if [[ "${work_profile}" =~ ("green-pc"|"solar-desktop") ]] ; then
 			power_source="green"
 		else
-			power_source="scalable"
+			power_source="conserve"
 		fi
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
@@ -11844,7 +11856,13 @@ ewarn "The dss work profile is experimental and in development."
 	# Avoid leg burn on long use
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 		fi
-		power_source="battery"
+		if [[ "${work_profile}" =~ "laptop" ]] ; then
+			power_source="battery"
+		elif [[ "${work_profile}" =~ "pi" ]] ; then
+			power_source="ac"
+		elif [[ "${work_profile}" =~ "solar" ]] ; then
+			power_source="scalable"
+		fi
 		timer_handling="tickless"
 		interactive_critical=1
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
@@ -11980,11 +11998,12 @@ ewarn "The dss work profile is experimental and in development."
 		   "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" \
 	]] ; then
-		power_source="scalable"
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
+			power_source="scalable"
 			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		else
+			power_source="conserve"
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
@@ -12046,7 +12065,7 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		power_source="scalable"
+		power_source="conserve"
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ \
@@ -12143,7 +12162,11 @@ ewarn "The dss work profile is experimental and in development."
 	# Allow to open more browser tabs
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
-		power_source="scalable"
+		if [[ "${work_profile}" == "mainstream-desktop" ]] ; then
+			power_source="scalable"
+		else
+			power_source="conserve"
+		fi
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_iosched_streaming
@@ -12152,7 +12175,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
-		power_source="scalable"
+		power_source="conserve"
 		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ot-kernel_set_rcu_powersave
@@ -12174,7 +12197,7 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		if [[ "${work_profile}" == "hpc-green" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
-			power_source="scalable"
+			power_source="green"
 			timer_handling="tickless"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_set_rcu_powersave
@@ -12184,6 +12207,9 @@ ewarn "The dss work profile is experimental and in development."
 			   "${work_profile}" == "hpc" \
 			|| "${work_profile}" == "hpc-throughput" \
 		]] ; then
+			if [[ "${work_profile}" == "hpc" ]] ; then
+				power_source="scalable"
+			fi
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
@@ -12206,6 +12232,7 @@ ewarn "The dss work profile is experimental and in development."
 		"${work_profile}" == "distributed-computing-client" \
 	]] ; then
 		# Example: BOINC
+		power_source="conserve"
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
