@@ -11170,7 +11170,7 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # Backlight perspective
 # 2 = Backlight full or manually adjusted directly on display panel
 # 1 = Backlight adjustable assuming with battery with special/programmable key functions
-# 0 = Backlight adjustable assuming with low battery, but the user space batter event handler should set to lowest or disable it
+# 0 = Backlight adjustable assuming with low battery, but the userspace battery event handler should set backlight levels to lowest or disabled
 #
 ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
