@@ -3052,7 +3052,7 @@ TBM=0
     smartphones Wi-Fi switch, backlights, programmable function keys, or LEDs
     need to be manually added to the kernel config by using
     OT_KERNEL_MENUCONFIG_UI=menuconfig or with the OT_KERNEL_KCONFIG array
-    (e.g. [CONFIG_ASUS_LAPTOP]=y).
+    (e.g. OT_KERNEL_KCONFIG[CONFIG_ASUS_LAPTOP]=y).
 
     Valid settings depending on the perspectives:
 
