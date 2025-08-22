@@ -10815,7 +10815,7 @@ ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
 	if [[ "${symbol}" =~ ("0"|"green"|"long-life"|"low-battery"|"lowest-power"|"no-blink"|"stable"|"summer-blend") ]] ; then
 		echo "0"
-	elif [[ "${symbol}" =~ ("1"|"avg-life"|"battery"|"balance"|"blink"|"fall-blend"|"on-demand"|"spring-blend"|"yellow") ]] ; then
+	elif [[ "${symbol}" =~ ("1"|"avg-life"|"battery"|"balance"|"blink"|"fall-blend"|"on-demand"|"short-boosts"|"spring-blend"|"yellow") ]] ; then
 		echo "1"
 	elif [[ "${symbol}" =~ ("2"|"ac"|"always-on"|"charging"|"red"|"performance"|"short-life"|"winter-blend") ]] ; then
 		echo "2"
@@ -10946,7 +10946,7 @@ ot-kernel_set_power_level() {
 		power_level_sata=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_SATA:-2})
 		power_level_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_USB:-2})
 		power_level_wifi=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_WIFI:-2})
-	elif [[ "${power_profile}" =~ ("battery"|"conserve"|"scalable") ]] ; then
+	elif [[ "${power_profile}" =~ ("short-boosts"|"conserve"|"scalable") ]] ; then
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
@@ -11088,7 +11088,7 @@ ot-kernel_set_power_level() {
 					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 				elif [[ "${power_profile}" == "conserve" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
-				elif [[ "${form_factor}" == "mobile" ]] ; then
+				elif [[ "${power_profile}" == "short-boosts" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 				else
 					ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -11786,7 +11786,7 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "smartphone-voice" \
 		|| "${work_profile}" == "tablet" \
 	]] ; then
-		power_profile="on-demand"
+		power_profile="short-boosts"
 		form_factor="mobile"
 		timer_handling="tickless"
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
@@ -11808,7 +11808,7 @@ ewarn "The dss work profile is experimental and in development."
 		if [[ "${work_profile}" =~ ("green-pc"|"solar-desktop") ]] ; then
 			power_profile="green"
 		elif [[ "${work_profile}" =~ ("touchscreen-laptop") ]] ; then
-			power_profile="on-demand"
+			power_profile="short-boosts"
 		else
 			power_profile="conserve"
 		fi
