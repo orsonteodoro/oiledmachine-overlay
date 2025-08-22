@@ -11163,9 +11163,14 @@ ot-kernel_unset_thermal_govenor_defaults() {
 # 0 = long-life
 #
 # LED perspective
-# 2 = no-blink or off to reduce jitter or command latency
-# 1 = blink
-# 0 = no-blink or off
+# 2 = No-blink or off to reduce jitter or command latency
+# 1 = Blink or illuminate
+# 0 = No-blink or off
+#
+# Backlight perspective
+# 2 = Backlight full
+# 1 = Backlight adjustable assuming with battery
+# 0 = Backlight adjustable assuming with low battery, but the user space batter event handler should set to lowest or disable it
 #
 ot-kernel_canonicalize_power_level() {
 	local symbol="${1}"
