@@ -11275,6 +11275,8 @@ ot-kernel_set_power_level() {
 	local power_level_audio
 	local power_level_bt_usb
 	local power_level_cpu
+	local power_level_display # Sleep state (always-on, suspend, sleep/off)
+	local power_level_display_backlight # Mobile or laptop backlight while active phase
 	local power_level_io
 	local power_level_led
 	local power_level_pci
@@ -11287,6 +11289,8 @@ ot-kernel_set_power_level() {
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-2})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-2})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-2})
+		power_level_display=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY:-2})
+		power_level_display_backlight=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY_BACKLIGHT:-2})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-2}) # i2c sensors, hd-audio
 		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-2})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-2})
@@ -11297,6 +11301,8 @@ ot-kernel_set_power_level() {
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-1})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-1})
+		power_level_display=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY:-1})
+		power_level_display_backlight=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY_BACKLIGHT:-1})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-1}) # i2c sensors, hd-audio
 		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-1})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-1})
@@ -11307,6 +11313,8 @@ ot-kernel_set_power_level() {
 		power_level_audio=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_AUDIO:-0})
 		power_level_bt_usb=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_BT_USB:-1})
 		power_level_cpu=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_CPU:-0})
+		power_level_display=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY:-0})
+		power_level_display_backlight=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_DISPLAY_BACKLIGHT:-0})
 		power_level_io=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_IO:-0}) # i2c sensors, hd-audio
 		power_level_led=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_LED:-0})
 		power_level_pci=$(ot-kernel_canonicalize_power_level ${OT_KERNEL_POWER_LEVEL_PCI:-0})
@@ -11845,7 +11853,7 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_BACKLIGHT"
 		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_CAMERA"
 		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_CPU"
-		ot-kernel_y_configopt "CONFIG_LEDS_TRIGGER_DEFAULT_ON"
+		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_DEFAULT_ON"
 		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_DISK"
 		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_HEARTBEAT"
 		ot-kernel_n_configopt "CONFIG_LEDS_TRIGGER_INPUT_EVENTS"
@@ -11861,6 +11869,105 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 		ot-kernel_n_configopt "CONFIG_NET_DSA_QCA8K_LEDS_SUPPORT"
 		ot-kernel_n_configopt "CONFIG_USB_LED_TRIG"
 		ot-kernel_n_configopt "CONFIG_USB_LEDS_TRIGGER_USBPORT"
+	fi
+
+	if (( ${power_level_display} == 2 )) ; then
+	# Always on
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_n_configopt "CONFIG_ACPI_VIDEO"
+		fi
+	elif (( ${power_level_display} == 2 )) ; then
+	# Light suspend
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
+		fi
+	elif (( ${power_level_display} == 1 )) ; then
+	# Deep suspend
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
+		fi
+	fi
+
+	if (( ${power_level_display_backlight} == 2 )) ; then
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_n_configopt "CONFIG_ACPI_VIDEO"
+		fi
+		if grep -q -E -e "^CONFIG_DRM_NOUVEAU=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_DRM_NOUVEAU_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_ATY=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_FB_ATY_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_ATY128=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_FB_ATY128_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_NVIDIA=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_FB_NVIDIA_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_RADEON=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_FB_RADEON_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_RIVA=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_FB_RIVA_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_HID_PICOLCD=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_HID_PICOLCD_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_X86_PLATFORM_DEVICES=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_NVIDIA_WMI_EC_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_X86_PLATFORM_DRIVERS_DELL=(y|m)" "${path_config}" ; then
+			ot-kernel_n_configopt "CONFIG_DELL_UART_BACKLIGHT"
+		fi
+	else
+		if ot-kernel_has_acpi_support ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
+		fi
+		if grep -q -E -e "^CONFIG_DRM_NOUVEAU=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_ATY=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_FB_ATY_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_ATY128=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_FB_ATY128_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_NVIDIA=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_FB_NVIDIA_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_RADEON=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_FB_RADEON_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_FB_RIVA=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_FB_RIVA_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_HID_PICOLCD=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_HID_PICOLCD_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_X86_PLATFORM_DEVICES=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_NVIDIA_WMI_EC_BACKLIGHT"
+		fi
+		if grep -q -E -e "^CONFIG_X86_PLATFORM_DRIVERS_DELL=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_DELL_UART_BACKLIGHT"
+		fi
+		if \
+			   grep -q -E -e "^CONFIG_ADB_PMU=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_PPC_PMAC=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_FB=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+			ot-kernel_y_configopt "CONFIG_PMAC_BACKLIGHT"
+		fi
 	fi
 }
 
