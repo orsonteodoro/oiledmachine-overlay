@@ -3046,6 +3046,14 @@ TBM=0
     otherwise, it will disable to reduce execution latency or disable to reduce
     power consumption.
 
+    The OT_KERNEL_POWER_LEVEL_* control the general or broad kernel config
+    options.  For specific/multifunctional options or devices, you need to
+    manually select them.  Some platform drivers used to control laptop or
+    smartphones Wi-Fi switch, backlights, programmable function keys, or LEDs
+    need to be manually added to the kernel config by using
+    OT_KERNEL_MENUCONFIG_UI=menuconfig or with the OT_KERNEL_KCONFIG array
+    (e.g. [CONFIG_ASUS_LAPTOP]=y).
+
     Valid settings depending on the perspectives:
 
       Heat level perspective, the default assumption
