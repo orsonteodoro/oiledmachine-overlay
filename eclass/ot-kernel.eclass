@@ -11926,43 +11926,35 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 		fi
 	else
 		if ot-kernel_has_acpi_support ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
+			ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 		fi
 		if grep -q -E -e "^CONFIG_DRM_NOUVEAU=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_FB_ATY=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_FB_ATY_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_FB_ATY128=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_FB_ATY128_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_FB_NVIDIA=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_FB_NVIDIA_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_FB_RADEON=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_FB_RADEON_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_FB_RIVA=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_FB_RIVA_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_HID_PICOLCD=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_HID_PICOLCD_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_X86_PLATFORM_DEVICES=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_ACPI_WMI"
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_NVIDIA_WMI_EC_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_X86_PLATFORM_DRIVERS_DELL=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_DELL_UART_BACKLIGHT"
 		fi
 		if \
@@ -11970,7 +11962,6 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 			&& grep -q -E -e "^CONFIG_PPC_PMAC=(y|m)" "${path_config}" \
 			&& grep -q -E -e "^CONFIG_FB=(y|m)" "${path_config}" \
 		; then
-			ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 			ot-kernel_y_configopt "CONFIG_PMAC_BACKLIGHT"
 		fi
 	fi
