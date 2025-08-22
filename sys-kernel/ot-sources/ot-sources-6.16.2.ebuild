@@ -13,15 +13,15 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 
 CLEAR_LINUX_PATCHES_VER="6.15.7-1591"
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="10" # can be live only when 9999
-PATCH_PROJC_VER="6.15-r2"
-PATCH_RT_VER="6.15-rt2"
+GENPATCHES_VER="3" # can be live only when 9999
+PATCH_PROJC_VER="6.16-r0"
+PATCH_RT_VER="6.16-rt3"
 
-inherit ot-kernel-v6.15
+inherit ot-kernel-v6.16
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.15.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.16.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
@@ -30,6 +30,7 @@ inherit ot-kernel-v6.15
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, KFENCE off, KCFI off, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.6 (20250714) with modified builder profile with -O2 and -march=native, KFENCE on, KCFI off, UBSAN on, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.6 (20250715) with modified builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.16.1 (20250816) with modified builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on
 
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A

@@ -13,9 +13,9 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 
 CLEAR_LINUX_PATCHES_VER="6.12.11-1537"
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="46" # can be live only when 9999
+GENPATCHES_VER="48" # can be live only when 9999
 PATCH_PROJC_VER="6.12-r1"
-PATCH_RT_VER="6.12.39-rt11"
+PATCH_RT_VER="6.12.43-rt12"
 
 inherit ot-kernel-v6.12
 
