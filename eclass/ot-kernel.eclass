@@ -11786,12 +11786,12 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "smartphone-voice" \
 		|| "${work_profile}" == "tablet" \
 	]] ; then
-		_OT_KERNEL_FORCE_SWAP_OFF="1"
-		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		power_profile="on-demand"
 		form_factor="mobile"
 		timer_handling="tickless"
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
+		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
+		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		if [[ "${work_profile}" == "smartphone-voice" ]] ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		else
@@ -11805,9 +11805,6 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "solar-desktop" \
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
-		ot-kernel_set_kconfig_set_video_timer_hz # For power savings
-		ot-kernel_y_configopt "CONFIG_SUSPEND"
-		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		if [[ "${work_profile}" =~ ("green-pc"|"solar-desktop") ]] ; then
 			power_profile="green"
 		elif [[ "${work_profile}" =~ ("touchscreen-laptop") ]] ; then
@@ -11815,11 +11812,13 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			power_profile="conserve"
 		fi
-		timer_handling="tickless"
 		if [[ "${work_profile}" =~ ("laptop") ]] ; then
 			form_factor="mobile"
 		fi
-
+		timer_handling="tickless"
+		ot-kernel_set_kconfig_set_video_timer_hz # For power savings
+		ot-kernel_y_configopt "CONFIG_SUSPEND"
+		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
@@ -11843,11 +11842,17 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
+		if [[ "${work_profile}" =~ "pi" ]] ; then
+			power_profile="ac"
+		else
+			power_profile="scalable"
+		fi
 		if [[ "${work_profile}" == "solar-gaming" ]] ; then
 			form_factor="stationary"
 		else
 			form_factor="mobile"
 		fi
+		timer_handling="tickless"
 		if [[ \
 			   "${work_profile}" == "gpu-gaming-laptop" \
 			|| "${work_profile}" == "solar-gaming" \
@@ -11859,12 +11864,6 @@ ewarn "The dss work profile is experimental and in development."
 	# Avoid leg burn on long use
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 		fi
-		if [[ "${work_profile}" =~ "pi" ]] ; then
-			power_profile="ac"
-		else
-			power_profile="scalable"
-		fi
-		timer_handling="tickless"
 		interactive_critical=1
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		if ot-kernel_has_acpi_support ; then
@@ -11885,10 +11884,10 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 	# Assumes on desktop
 	# 2D mostly, less intense
-		_OT_KERNEL_FORCE_SWAP_OFF="1"
-		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		power_profile="scalable"
 		timer_handling="tickless"
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
+		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		interactive_critical=1
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
@@ -11911,13 +11910,13 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "presentation" \
 	]] ; then
+		if [[ "${work_profile}" == "game-server" ]] ; then
+			power_profile="scalable"
+		fi
 		if [[ "${work_profile}" != "game-server" ]] ; then
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
 		fi
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		if [[ "${work_profile}" == "game-server" ]] ; then
-			power_profile="scalable"
-		fi
 		interactive_critical=1
 	# The presentation could just be slides with few clicks or a gaming demo
 	# with a lot of clicks.
@@ -11936,6 +11935,20 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "musical-live-performance" \
 		|| "${work_profile}" == "workstation" \
 	]] ; then
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+		]] ; then
+			power_profile="ac"
+		elif [[ "${work_profile}" == "gamedev" ]] ; then
+	# Assumed at home
+			power_profile="ac"
+			timer_handling="periodic"
+		elif [[ "${work_profile}" == "workstation" ]] ; then
+	# Assumed not at home
+			power_profile="scalable"
+			timer_handling="tickless"
+		fi
 		if [[ \
 			   "${work_profile}" == "digital-audio-workstation" \
 			|| "${work_profile}" == "musical-live-performance" \
@@ -11963,14 +11976,6 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_kconfig_set_video_timer_hz # For video production
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
-		fi
-		if [[ \
-			   "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "musical-live-performance" \
-		]] ; then
-			power_profile="ac"
-		else
-			power_profile="scalable"
 		fi
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ \
@@ -12006,10 +12011,12 @@ ewarn "The dss work profile is experimental and in development."
 	]] ; then
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
 			power_profile="scalable"
+			timer_handling="tickless"
 			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		else
 			power_profile="conserve"
+			timer_handling="tickless"
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
@@ -12030,6 +12037,8 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "website-interactive" \
 		|| "${work_profile}" == "website-small" \
 	]] ; then
+		power_profile="conserve"
+		timer_handling="tickless"
 		if [[ \
 			   "${work_profile}" == "database-server" \
 			|| "${work_profile}" == "datacenter-backend" \
@@ -12071,8 +12080,6 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		power_profile="conserve"
-		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ \
 			   "${work_profile}" == "file-server" \
@@ -12134,6 +12141,12 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "pi-web-browser" \
 		|| "${work_profile}" == "sdr" \
 	]] ; then
+		if [[ "${work_profile}" == "mainstream-desktop" ]] ; then
+			power_profile="scalable"
+		else
+			power_profile="conserve"
+		fi
+		timer_handling="tickless"
 	# sdr = radio
 		if [[ \
 			   "${work_profile}" == "dvr" \
@@ -12168,30 +12181,24 @@ ewarn "The dss work profile is experimental and in development."
 	# Allow to open more browser tabs
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
-		if [[ "${work_profile}" == "mainstream-desktop" ]] ; then
-			power_profile="scalable"
-		else
-			power_profile="conserve"
-		fi
-		timer_handling="tickless"
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_iosched_streaming
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
 	]] ; then
-		_OT_KERNEL_FORCE_SWAP_OFF="1"
-		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		power_profile="conserve"
 		timer_handling="tickless"
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
+		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-workstation" \
 	]] ; then
-		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		power_profile="scalable"
 		timer_handling="tickless"
+		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
@@ -12202,9 +12209,9 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "hpc-throughput" \
 	]] ; then
 		if [[ "${work_profile}" == "hpc-green" ]] ; then
-			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			power_profile="green"
 			timer_handling="tickless"
+			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
@@ -12246,6 +12253,7 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "ros" \
 	]] ; then
 	# ros ~ robotics
+		timer_handling="tickless-full"
 		if [[ "${work_profile}" == "ros" ]] ; then
 			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
 		fi
@@ -12258,7 +12266,6 @@ ewarn "The dss work profile is experimental and in development."
 		elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
-		timer_handling="tickless-full"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 		_OT_KERNEL_FORCE_STABILITY=1
