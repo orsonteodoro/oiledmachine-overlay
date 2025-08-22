@@ -11933,20 +11933,42 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 		if grep -q -E -e "^CONFIG_DRM_NOUVEAU=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU_BACKLIGHT"
 		fi
+		if grep -q -E -e "^CONFIG_FB_3DFX=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FB_3DFX_I2C"
+		fi
 		if grep -q -E -e "^CONFIG_FB_ATY=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_FB_ATY_BACKLIGHT"
 		fi
 		if grep -q -E -e "^CONFIG_FB_ATY128=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_FB_ATY128_BACKLIGHT"
 		fi
+		if grep -q -E -e "^CONFIG_FB_CYBER2000=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FB_CYBER2000_DDC"
+		fi
+		if grep -q -E -e "^CONFIG_FB_I810=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FB_I810_GTF"
+			ot-kernel_y_configopt "CONFIG_FB_I810_I2C"
+		fi
+		if grep -q -E -e "^CONFIG_FB_MATROX=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FB_MATROX_I2C"
+		fi
 		if grep -q -E -e "^CONFIG_FB_NVIDIA=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_FB_NVIDIA_BACKLIGHT"
+			ot-kernel_y_configopt "CONFIG_FB_NVIDIA_I2C"
 		fi
 		if grep -q -E -e "^CONFIG_FB_RADEON=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_FB_RADEON_BACKLIGHT"
+			ot-kernel_y_configopt "CONFIG_FB_RADEON_I2C"
 		fi
 		if grep -q -E -e "^CONFIG_FB_RIVA=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_FB_RIVA_BACKLIGHT"
+			ot-kernel_y_configopt "CONFIG_FB_RIVA_I2C"
+		fi
+		if grep -q -E -e "^CONFIG_FB_S3=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FB_S3_DDC"
+		fi
+		if grep -q -E -e "^CONFIG_FB_SAVAGE=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FB_SAVAGE_I2C"
 		fi
 		if grep -q -E -e "^CONFIG_HID_PICOLCD=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_HID_PICOLCD_BACKLIGHT"
@@ -11956,6 +11978,7 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 		fi
 		if grep -q -E -e "^CONFIG_X86_PLATFORM_DRIVERS_DELL=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_DELL_UART_BACKLIGHT"
+			ot-kernel_y_configopt "CONFIG_SERIAL_DEV_BUS"
 		fi
 		if \
 			   grep -q -E -e "^CONFIG_ADB_PMU=(y|m)" "${path_config}" \
