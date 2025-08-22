@@ -11886,12 +11886,12 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_n_configopt "CONFIG_ACPI_VIDEO"
 		fi
-	elif (( ${power_level_display} == 2 )) ; then
+	elif (( ${power_level_display} == 1 )) ; then
 	# Light suspend
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
 		fi
-	elif (( ${power_level_display} == 1 )) ; then
+	elif (( ${power_level_display} == 0 )) ; then
 	# Deep suspend
 		if ot-kernel_has_acpi_support ; then
 			ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
