@@ -824,7 +824,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_AMD_NB"
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_VIA_CPUTEMP" # 2005/2008
 
 	# Temp sensor
@@ -1131,14 +1132,26 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_NET"
 
+	# CPU temp sensors
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
+	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER" # 2011-2015
+
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_PSU" # 2013
+	ot-kernel_y_configopt "CONFIG_SENSORS_NCT6683" # 2013
+	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
 
 	# For ethernet for wired Internet
 	ot-kernel_y_configopt "CONFIG_ETHERNET"
@@ -1282,17 +1295,22 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
-	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER"
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
+	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER" # 2011-2015
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_PSU" # 2013
+	ot-kernel_y_configopt "CONFIG_SENSORS_NCT6683" # 2013
+	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
 
 	# CPU cooler sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1441,6 +1459,11 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	# CPU temp sensors
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
+	
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
