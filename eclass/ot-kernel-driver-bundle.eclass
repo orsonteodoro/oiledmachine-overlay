@@ -123,6 +123,19 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
 
+	# For optical mouse (USB 1.1)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
+	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
+	ot-kernel_y_configopt "CONFIG_TTY"
+
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
@@ -263,6 +276,17 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	# For optical mouse (USB 1.1)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
@@ -417,6 +441,17 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
 
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	# For optical mouse (USB 1.1)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 
@@ -537,6 +572,17 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	# For optical mouse (USB 1.1)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -699,6 +745,13 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+	# For optical mouse (USB 1.1, 2.0)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -873,6 +926,13 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
 
+	# For optical mouse (USB 2.0)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
 	# For backlight, Fn keys
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
@@ -966,10 +1026,11 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
 
 	# Use power efficient algorithm
+	ot-kernel_y_configopt "CONFIG_DEFAULT_BBR"
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_INET"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
-	ot-kernel_y_configopt "CONFIG_DEFAULT_BBR"
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR"
 
 	# For webcam
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -1045,6 +1106,13 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
+
+	# For optical mouse (USB 2.0)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1210,6 +1278,13 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
+
+	# For optical mouse (USB 2.0)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1392,6 +1467,13 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
+
+	# For optical mouse (USB 2.0)
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
