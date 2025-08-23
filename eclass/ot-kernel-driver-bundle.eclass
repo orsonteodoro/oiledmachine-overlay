@@ -825,6 +825,24 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
 
+	# For ethernet for wired Internet
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+	ot-kernel_y_configopt "CONFIG_IGB" # 2008
+	ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+
+	# For Wi-FI, we need an environment variable or use flag because of the firmware issue
+	# iwlwifi
+	# b43
+	# brcmfmac
+	# ath9k
+	# ath10k
+
 	# For gameport to USB adapter (2005)
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
@@ -958,7 +976,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
 
-	# For 3D modeling haptics
+	# For 3D modeling with a haptic stylus
 	# USB 2.0, USB 3.0, Ethernet, Parallel Port (EPP)
 	# OH Linux (2009)
 	# G MT (2003), G MT X (2008)
@@ -975,6 +993,17 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 	ot-kernel_y_configopt "CONFIG_PCI"
+
+	# For ethernet for the haptic stylus or wired Internet
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+	ot-kernel_y_configopt "CONFIG_IGB" # 2008
+	ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
 	# For drawing on pen display
 	ot-kernel_y_configopt "CONFIG_HID"
