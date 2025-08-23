@@ -123,6 +123,10 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
 
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
 	# For optical mouse (USB 1.1)
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
