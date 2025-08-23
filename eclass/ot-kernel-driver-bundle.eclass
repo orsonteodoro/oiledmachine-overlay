@@ -354,9 +354,13 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
 	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
 
-	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
+	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer, scanner
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+
+	# For scanner
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
