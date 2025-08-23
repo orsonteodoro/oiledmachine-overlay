@@ -1146,12 +1146,15 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_PSU" # 2013
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT6683" # 2013
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
+	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
+	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
 
 	# For ethernet for wired Internet
 	ot-kernel_y_configopt "CONFIG_ETHERNET"
@@ -1305,15 +1308,13 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_PSU" # 2013
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT6683" # 2013
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
-
-	# CPU cooler sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
 
@@ -1463,7 +1464,6 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
-	
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
