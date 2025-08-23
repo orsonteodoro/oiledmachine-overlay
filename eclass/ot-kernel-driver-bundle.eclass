@@ -836,9 +836,10 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
 # @DESCRIPTION:
 # A 2010s x86 video game artist driver bundle
+# FIXME:  It should be a laptop, but this is the desktop version.
 ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-video-game-artist" ]] || return
-ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
