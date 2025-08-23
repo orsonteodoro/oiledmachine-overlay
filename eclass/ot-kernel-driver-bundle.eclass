@@ -125,7 +125,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
 
 	# For optical mouse (USB 1.1)
 	ot-kernel_y_configopt "CONFIG_INPUT"
@@ -277,7 +277,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
 
 	# For optical mouse (USB 1.1)
 	ot-kernel_y_configopt "CONFIG_INPUT"
@@ -441,7 +441,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
 
 	# For optical mouse (USB 1.1)
 	ot-kernel_y_configopt "CONFIG_INPUT"
@@ -573,7 +573,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
 
 	# For optical mouse (USB 1.1)
 	ot-kernel_y_configopt "CONFIG_INPUT"
