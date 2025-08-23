@@ -33,6 +33,7 @@ ot-kernel-driver-bundle_add_drivers() {
 	ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_vpceb25fx_drivers
 	ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
 	ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
 	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
 einfo "Adding a custom driver bundle"
@@ -84,7 +85,12 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
 
-	ot-kernel_y_configopt "CONFIG_PARPORT" # 1981 (pc version), for printer
+	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+
+	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
@@ -113,6 +119,18 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA)
+	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
+	ot-kernel_y_configopt "CONFIG_PATA_ALI" # 1997
+	ot-kernel_y_configopt "CONFIG_PATA_HPT366" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
+	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_AGP"
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
@@ -150,7 +168,19 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
 
-	ot-kernel_y_configopt "CONFIG_PARPORT" # 1981 (pc version), for printer
+	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+
+	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
@@ -180,16 +210,29 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 
+	# For HDD
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA)
+	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
+	ot-kernel_y_configopt "CONFIG_PATA_ALI" # 1997
+	ot-kernel_y_configopt "CONFIG_PATA_HPT366" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
+	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
+	ot-kernel_y_configopt "CONFIG_PCI"
+
 	ot-kernel_y_configopt "CONFIG_AGP"
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
 
 	ot-kernel_y_configopt "CONFIG_FB"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
 	ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
 	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -215,7 +258,18 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_SND_KORG1212" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 
-	ot-kernel_y_configopt "CONFIG_PARPORT" # 1981 (pc version), for printer
+	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+
+	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
@@ -244,6 +298,22 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	# For HDD
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA), 2003-2006 (SATA)
+	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
+	ot-kernel_y_configopt "CONFIG_PATA_HPT366" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_HPT37X" # 2001
+	ot-kernel_y_configopt "CONFIG_PATA_HPT3X2N" # 2003
+	ot-kernel_y_configopt "CONFIG_PATA_HPT3X3" # ?
+	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
+	ot-kernel_y_configopt "CONFIG_SATA_NV" # 2004
+	ot-kernel_y_configopt "CONFIG_SATA_VIA" # 2003
+	ot-kernel_y_configopt "CONFIG_SATA_VITESSE" # 2002
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -277,9 +347,9 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_VT"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -316,6 +386,27 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+
+	# CPU sensors
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_SENSORS_K8TEMP" # 2003
+
+	# Temp sensors
+	ot-kernel_y_configopt "CONFIG_DMI"
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASB100" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_VIA686A" # 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT1211" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+
+	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -339,6 +430,18 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
 	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	# For HDD
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA), 2003-2006 (SATA)
+	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
+	ot-kernel_y_configopt "CONFIG_PATA_ATIIXP" # 2007
+	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
+	ot-kernel_y_configopt "CONFIG_SATA_NV" # 2004
+	ot-kernel_y_configopt "CONFIG_SATA_VIA" # 2003
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -379,9 +482,9 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_VT"
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_VT"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -427,6 +530,35 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
+
+	# CPU temp sensors
+	ot-kernel_y_configopt "CONFIG_AMD_NB"
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_VIA_CPUTEMP" # 2005/2008
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU3" # 2005
+	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 2007
+
+	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+
+	# For gameport to USB adapter (2005)
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -454,6 +586,9 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2_ALPS"
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_ALPS"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -483,7 +618,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
-	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 2009
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 2003-2006 (SATA)
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
@@ -572,6 +707,17 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+
+	# CPU temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
+
+	# For gameport to USB adapter (2005)
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -626,9 +772,9 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_VT"
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_VT"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -669,6 +815,179 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_NET"
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
+
+	# For gameport to USB adapter (2005)
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
+# @DESCRIPTION:
+# A 2010s x86 video game artist driver bundle
+ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-video-game-artist" ]] || return
+ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	# Assumes USB keyboard
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
+
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
+
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	# Modern for higher resolutions
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_VT"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+
+	# For speakers
+	ot-kernel_y_configopt "CONFIG_BT"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BREDR"
+	ot-kernel_y_configopt "CONFIG_BT_HIDP"
+	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_NET"
+
+	# For gameport to USB adapter (2005)
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	# CPU temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
+	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER"
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_PSU" # 2013
+
+	# CPU cooler sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
+	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
+
+	# For 3D modeling haptics
+	# USB 2.0, USB 3.0, Ethernet, Parallel Port (EPP)
+	# OH Linux (2009)
+	# G MT (2003), G MT X (2008)
+	# PP 1.5 (2001)
+	ot-kernel_y_configopt "CONFIG_ETHERNET" # 1983
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PARPORT"
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+	ot-kernel_y_configopt "CONFIG_PCI"
+
+	# For drawing on pen display
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_WACOM" # 1998/2001
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+
+	# For closed source drivers
+	ot-kernel_y_configopt "CONFIG_MODULES"
+	ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+	_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -723,9 +1042,9 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_VT"
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_VT"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -762,6 +1081,30 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_NET"
+
+	# For gameport to USB adapter (2005)
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_EC"
+
+	# CPU cooler sensors
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_ROG_RYUJIN" # 2021
+	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN3" # 2020
+
+	# Fan or lighting control
+	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
+
 }
 
 fi

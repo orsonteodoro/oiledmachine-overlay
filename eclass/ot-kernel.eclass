@@ -14064,6 +14064,16 @@ einfo "Disabled security critical settings"
 	fi
 }
 
+# @FUNCTION: ot-kernel_fix_external_modules
+# @DESCRIPTION:
+# Remove symbol trimming for closed source drivers
+ot-kernel_fix_external_modules() {
+	if [[ "${_FORCE_OT_KERNEL_EXTERNAL_MODULES}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_unset_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -14170,6 +14180,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
 
+	local _FORCE_OT_KERNEL_EXTERNAL_MODULES=0
 	ot-kernel-driver-bundle_add_drivers
 	ot-kernel_set_mobo_audio
 	ot-kernel_set_webcam
@@ -14232,6 +14243,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_check_kernel_signing_prereqs
 	ot-kernel_set_kconfig_module_signing
 	ot-kernel_set_message
+	ot-kernel_fix_external_modules
 
 	ot-kernel_set_rust
 	ot-kernel_set_kconfig_cpu_scheduler_post
