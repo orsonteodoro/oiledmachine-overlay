@@ -1720,11 +1720,15 @@ TBM=0
     ot-kernel-driver-bundle_add_custom_bundle_drivers in your env profile which
     will add your personal set of drivers.
 
+    For older bundles, it is recommended to copy the bundle and disable the
+    drivers that you don't need in the hook function.
+
     Acceptable values:
 
       early-1990s-pc-gamer
       late-1990s-pc-gamer
       late-1990s-music-production
+      1990s-artist
       early-2000s-pc-gamer
       late-2000s-pc-gamer
       vpceb25fx

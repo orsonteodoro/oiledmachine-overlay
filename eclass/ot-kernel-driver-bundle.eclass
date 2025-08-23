@@ -28,6 +28,7 @@ inherit toolchain-funcs
 ot-kernel-driver-bundle_add_drivers() {
 	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_1990s_artist_drivers
 	ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
 	ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -49,8 +50,14 @@ ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
 ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
+	ot-kernel_y_configopt "CONFIG_SERIO"
+	ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # 1981, For trackball mouse
+	ot-kernel_y_configopt "CONFIG_TTY"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -68,6 +75,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -82,8 +90,17 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
 	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 
+	ot-kernel_y_configopt "CONFIG_EISA" # 1988
+
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_ADLIB" # 1987
+	ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
+	ot-kernel_y_configopt "CONFIG_SND_CS4231" #
+	ot-kernel_y_configopt "CONFIG_SND_ISA" # 1981
+	ot-kernel_y_configopt "CONFIG_SND_SB8" # 1989
+	ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
+	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
@@ -91,6 +108,10 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
@@ -102,6 +123,13 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
+	ot-kernel_y_configopt "CONFIG_SERIO"
+	ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # 1981, For trackball mouse
+	ot-kernel_y_configopt "CONFIG_TTY"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -119,6 +147,14 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	# For CD-ROM
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	ot-kernel_y_configopt "CONFIG_SCSI"
 
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
@@ -150,23 +186,42 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
 	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 
+	ot-kernel_y_configopt "CONFIG_EISA" # 1988
+
+	ot-kernel_y_configopt "CONFIG_PNP"
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_ISA"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
+	ot-kernel_y_configopt "CONFIG_SND_AZT2316" # 1995
+	ot-kernel_y_configopt "CONFIG_SND_AZT2320" # 1997/1998
 	ot-kernel_y_configopt "CONFIG_SND_AZT3328" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_CS4231" #
+	ot-kernel_y_configopt "CONFIG_SND_CS4236" # 1996
 	ot-kernel_y_configopt "CONFIG_SND_CS46XX" # 1998
 	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 	ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_GUSEXTREME" # 1996
 	ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	ot-kernel_y_configopt "CONFIG_SND_MAESTRO3" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_OPL3SA2" # 1995
+	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	ot-kernel_y_configopt "CONFIG_SND_SONICVIBES" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_TRIDENT" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+
+	# To play MIDI music
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
+	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
@@ -181,6 +236,144 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_A3D" # 1997
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_STINGER" # 1998
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_1990s_artist_drivers
+# @DESCRIPTION:
+# A late 1990s x86 artist driver bundle, for CAD and graphic arts
+ot-kernel-driver-bundle_add_1990s_artist_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-artist" ]] || return
+ewarn "The 1990s-artist driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
+	ot-kernel_y_configopt "CONFIG_SERIO"
+	ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # 1981, For trackball mouse
+	ot-kernel_y_configopt "CONFIG_TTY"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	# For CD-ROM
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA)
+	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
+	ot-kernel_y_configopt "CONFIG_PATA_ALI" # 1997
+	ot-kernel_y_configopt "CONFIG_PATA_HPT366" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
+	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
+	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
+	ot-kernel_y_configopt "CONFIG_PCI"
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
+	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
+	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_EISA" # 1988
+
+	ot-kernel_y_configopt "CONFIG_PNP"
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_ISA"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
+	ot-kernel_y_configopt "CONFIG_SND_AZT2316" # 1995
+	ot-kernel_y_configopt "CONFIG_SND_AZT2320" # 1997/1998
+	ot-kernel_y_configopt "CONFIG_SND_AZT3328" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_CS4231" #
+	ot-kernel_y_configopt "CONFIG_SND_CS4236" # 1996
+	ot-kernel_y_configopt "CONFIG_SND_CS46XX" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_GUSEXTREME" # 1996
+	ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
+	ot-kernel_y_configopt "CONFIG_SND_MAESTRO3" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_OPL3SA2" # 1995
+	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
+	ot-kernel_y_configopt "CONFIG_SND_SONICVIBES" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_TRIDENT" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
+	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+
+	# To play MIDI music
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
+	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
+
+	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+
+	# Temp sensor
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+
+	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_MAGELLAN" # 1993
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
@@ -205,10 +398,18 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
 
-	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+
+	# For CD-ROM, CD-RW (1997)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	ot-kernel_y_configopt "CONFIG_SCSI"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -247,16 +448,35 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
 	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 
+	ot-kernel_y_configopt "CONFIG_EISA" # 1988
+
+	ot-kernel_y_configopt "CONFIG_PNP"
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_ISA"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
+	ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_INTERWAVE" # 1995
+	ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 	ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
 	ot-kernel_y_configopt "CONFIG_SND_KORG1212" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_MSND_CLASSIC" # 1991
+	ot-kernel_y_configopt "CONFIG_SND_MSND_PINNACLE" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
+	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
+	ot-kernel_y_configopt "CONFIG_SND_SSCAPE" # 1994
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
+	ot-kernel_y_configopt "CONFIG_SND_MPU401" # 1984
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
@@ -294,10 +514,18 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
 
-	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+
+	# For CD-ROM, CD-RW (1997)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	ot-kernel_y_configopt "CONFIG_SCSI"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -359,8 +587,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
 	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 
-	ot-kernel_y_configopt "CONFIG_SOUND"
-	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -407,6 +634,18 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -430,6 +669,14 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
 	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	# For CD-ROM, CD-RW (1997)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	ot-kernel_y_configopt "CONFIG_SCSI"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -552,13 +799,19 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 
-
 	# For gameport to USB adapter (2005)
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -718,6 +971,13 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -849,6 +1109,14 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
