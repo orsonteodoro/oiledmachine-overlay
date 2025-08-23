@@ -166,12 +166,21 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+	ot-kernel_y_configopt "CONFIG_FB"
+	ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
+	ot-kernel_y_configopt "CONFIG_FB_ATY128" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
+	ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
+	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -229,7 +238,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 
@@ -297,12 +306,23 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_DRM_MGAG200" # 1998
+	ot-kernel_y_configopt "CONFIG_FB"
+	ot-kernel_y_configopt "CONFIG_FB_MATROX" # 1999-2001
+	ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_PM3" # 1999
+	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
+	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -364,7 +384,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 
@@ -426,17 +446,20 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
-
 	ot-kernel_y_configopt "CONFIG_FB"
+	ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
+	ot-kernel_y_configopt "CONFIG_FB_ATY128" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
 	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
 	ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
 	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
+	ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# Older framebuffer driver
@@ -488,7 +511,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 
@@ -545,7 +568,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SATA_NV" # 2004
 	ot-kernel_y_configopt "CONFIG_SATA_VIA" # 2003
 	ot-kernel_y_configopt "CONFIG_SATA_VITESSE" # 2002
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -568,10 +591,13 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+	ot-kernel_y_configopt "CONFIG_FB"
+	ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -620,7 +646,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 
 	# CPU sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_K8TEMP" # 2003
 
@@ -628,7 +654,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_DMI"
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASB100" # 2002
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
@@ -692,7 +718,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_SATA_NV" # 2004
 	ot-kernel_y_configopt "CONFIG_SATA_VIA" # 2003
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -711,7 +737,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
@@ -785,14 +811,14 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_AMD_NB"
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007
 	ot-kernel_y_configopt "CONFIG_SENSORS_VIA_CPUTEMP" # 2005/2008
 
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU3" # 2005
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
@@ -877,19 +903,19 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
 	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 2003-2006 (SATA)
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
 
 	# For graphics
 	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_DRM_I915"
 
 	# For Wi-Fi
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_WLAN"
 	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_CFG80211"
 	ot-kernel_y_configopt "CONFIG_IWLWIFI"
 
@@ -932,7 +958,7 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_MMC"
 	ot-kernel_y_configopt "CONFIG_MMC_SDHCI"
 	ot-kernel_y_configopt "CONFIG_MMC_SDHCI_PCI" # 2006
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# MemoryStick does not work, checked several years ago
 	ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -1014,7 +1040,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 
 	ot-kernel_y_configopt "CONFIG_DRM"
@@ -1097,7 +1123,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
 	# For Wi-FI, we need an environment variable or use flag because of the firmware issue
@@ -1154,7 +1180,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 
 	ot-kernel_y_configopt "CONFIG_DRM"
@@ -1229,7 +1255,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 
 	# CPU temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
 	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER"
 
@@ -1264,7 +1290,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PARPORT"
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# For ethernet for the haptic stylus or wired Internet
 	ot-kernel_y_configopt "CONFIG_ETHERNET"
@@ -1274,7 +1300,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
 	# For drawing on pen display
@@ -1327,7 +1353,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
 
-	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 
 	ot-kernel_y_configopt "CONFIG_DRM"
