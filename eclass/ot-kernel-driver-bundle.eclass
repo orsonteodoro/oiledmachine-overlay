@@ -239,6 +239,8 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -384,6 +386,8 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -517,6 +521,8 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -664,6 +670,9 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_VIA686A" # 2000
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT1211" # 2002
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -821,13 +830,19 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	# Temp sensor
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU3" # 2005
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627EHF" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83792D" # 2005
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83793" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -943,6 +958,12 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_IPV6"
 
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
+
 	# Use power efficient algorithm
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_INET"
@@ -976,6 +997,7 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_ACPI_BUTTON"
 	ot-kernel_y_configopt "CONFIG_ACPI_FAN"
 	ot-kernel_y_configopt "CONFIG_ACPI_PROCESSOR"
+	ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
 	ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
 	ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
@@ -1431,11 +1453,11 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_ROG_RYUJIN" # 2021
+	ot-kernel_y_configopt "CONFIG_SENSORS_GIGABYTE_WATERFORCE" # 2021
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN3" # 2020
 
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
-
 }
 
 fi
