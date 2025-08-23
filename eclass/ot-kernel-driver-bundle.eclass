@@ -55,8 +55,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIO"
-	ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # 1981, For trackball mouse
+	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
 	ot-kernel_y_configopt "CONFIG_TTY"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
@@ -127,8 +126,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIO"
-	ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # 1981, For trackball mouse
+	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
 	ot-kernel_y_configopt "CONFIG_TTY"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
@@ -267,8 +265,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIO"
-	ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # 1981, For trackball mouse
+	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
 	ot-kernel_y_configopt "CONFIG_TTY"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
@@ -398,6 +395,12 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_MAGELLAN" # 1993
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
+
+	# Graphics tablet for drawing
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+	ot-kernel_y_configopt "CONFIG_TABLET_SERIAL_WACOM4"
+	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
