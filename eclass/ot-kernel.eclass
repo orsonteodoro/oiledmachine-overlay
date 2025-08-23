@@ -1080,7 +1080,7 @@ ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
 inherit check-reqs dhms flag-o-matic multiprocessing python-single-r1 ot-kernel-kutils ot-kernel-pkgflags
-inherit sandbox-changes security-scan toolchain-funcs vf
+inherit ot-kernel-driver-bundle sandbox-changes security-scan toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
@@ -4081,6 +4081,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_DISABLE
 	unset OT_KERNEL_DMA_ATTACK_MITIGATIONS
 	unset OT_KERNEL_DMESG
+	unset OT_KERNEL_DRIVER_BUNDLE
 	unset OT_KERNEL_EARLY_KMS
 	unset OT_KERNEL_EFI_PARTITION
 	unset OT_KERNEL_EP800
@@ -14169,6 +14170,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
 
+	ot-kernel-driver-bundle_add_drivers
 	ot-kernel_set_mobo_audio
 	ot-kernel_set_webcam
 	ot-kernel_set_mobile_camera

@@ -1715,6 +1715,47 @@ TBM=0
 
 
 
+    OT_KERNEL_DRIVER_BUNDLE - Enables a set of preselected driver bundles for
+    quick installs.  You can define a custom hook function
+    ot-kernel-driver-bundle_add_custom_bundle_drivers in your env profile which
+    will add your personal set of drivers.
+
+    Acceptable values:
+
+      early-1990s-pc-gamer
+      late-1990s-pc-gamer
+      late-1990s-music-production
+      early-2000s-pc-gamer
+      late-2000s-pc-gamer
+      vpceb25fx
+      2010s-pc-gamer
+      2020s-pc-gamer
+
+    Examples
+
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer"
+
+      # See also eclass/ot-kernel-driver-bundle.eclass for examples
+      # Use ot-kernel_y_configopt to add drivers
+      # Use ot-kernel_n_configopt to remove drivers
+      ot-kernel-driver-bundle_add_custom_bundle_drivers() {
+          einfo "Adding gaming drivers"
+          # PS/2 keyboard
+          ot-kernel_y_configopt "CONFIG_INPUT"
+          ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+          ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)           
+
+          # Mouse
+          ot-kernel_y_configopt "CONFIG_INPUT"
+          ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+          ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL"
+          ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+          #...
+      }
+
+
+
     OT_KERNEL_EARLY_KMS - enable early KMS for graphics improvement.
     This setting fixes early kms problem with OT_KERNEL_BOOT_SUBSYSTEMS="m".
     For out-of-tree Direct Rendering Manager DKMS graphics drivers, this should

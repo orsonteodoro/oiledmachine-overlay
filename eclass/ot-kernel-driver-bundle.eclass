@@ -1,0 +1,767 @@
+# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# @ECLASS: ot-kernel-driver-bundle.eclass
+# @MAINTAINER:
+# Orson Teodoro <orsonteodoro@hotmail.com>
+# @AUTHOR:
+# Orson Teodoro <orsonteodoro@hotmail.com>
+# @SUPPORTED_EAPIS: 7 8
+# @BLURB: Eclass for bundled driver installation
+# @DESCRIPTION:
+# The ot-kernel-bundles eclass contains per decade or per platform
+# computer configurations.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+if [[ -z "${OT_KERNEL_DRIVER_BUNDLE_ECLASS}" ]] ; then
+
+inherit toolchain-funcs
+
+# @FUNCTION: ot-kernel-driver-bundle_add_drivers
+# @DESCRIPTION:
+# Main routine for installing drivers in bundles
+ot-kernel-driver-bundle_add_drivers() {
+	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
+	ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_vpceb25fx_drivers
+	ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
+	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
+einfo "Adding a custom driver bundle"
+		ot-kernel-driver-bundle_add_custom_bundle_drivers
+	fi
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
+# @DESCRIPTION:
+# An early 1990s x86 gamer driver bundle
+ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] || return
+ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+
+	ot-kernel_y_configopt "CONFIG_PARPORT" # 1981 (pc version), for printer
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
+# @DESCRIPTION:
+# A late 1990s x86 gamer driver bundle
+ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-pc-gamer" ]] || return
+ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
+	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
+	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_AZT3328" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_CS46XX" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_MAESTRO3" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_SONICVIBES" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_TRIDENT" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
+	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+
+	ot-kernel_y_configopt "CONFIG_PARPORT" # 1981 (pc version), for printer
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
+# @DESCRIPTION:
+# A late 1990s x86 music production driver bundle
+ot-kernel-driver-bundle_add_late_1990s_music_production_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-music-production" ]] || return
+ewarn "The late-1990s-music-production driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
+	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
+	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+
+	ot-kernel_y_configopt "CONFIG_FB"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
+	ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
+	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_KORG1212" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
+
+	ot-kernel_y_configopt "CONFIG_PARPORT" # 1981 (pc version), for printer
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
+# @DESCRIPTION:
+# An early 2000s x86 music production driver bundle
+ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-pc-gamer" ]] || return
+ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
+	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
+	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	# Modern for higher resolutions
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_CS4281" # 2001
+	ot-kernel_y_configopt "CONFIG_SND_ALI5451" # 2001
+	ot-kernel_y_configopt "CONFIG_SND_ATIIXP" # 2003
+	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
+	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
+# @DESCRIPTION:
+# A late 2000s x86 pc gamer driver bundle
+ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-pc-gamer" ]] || return
+ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
+	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
+	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
+
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	# Modern for higher resolutions
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
+	ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_CA0106" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_CTXFI" # 2005
+	ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
+	ot-kernel_y_configopt "CONFIG_SND_EMU10K1X" # 2003
+	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
+	ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
+	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
+# @DESCRIPTION:
+# Driver bundle for vpceb25fx (2010)
+ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
+ewarn "The vpceb25fx driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	# For backlight, Fn keys
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
+	ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_RFKILL"
+	ot-kernel_y_configopt "CONFIG_SONY_LAPTOP" # Adding a platform driver example
+	ot-kernel_y_configopt "CONFIG_X86_PLATFORM_DEVICES"
+
+	# For touchpad
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2_ALPS"
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	# No USB 3.0
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+
+	# For DVD
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR"
+
+	# For HDD
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 2009
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+
+	# For graphics
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_DRM_I915"
+
+	# For Wi-Fi
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI"
+
+	local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+	local filename=$(basename $(ls "/lib/firmware/iwlwifi-6000-"*".ucode"))
+	firmware="${firmware} ${filename}" # Insert firmware
+einfo "Auto inserting ${filename} firmware"
+	firmware=$(echo "${firmware}" \
+		| sed -r \
+			-e "s|[ ]+| |g" \
+			-e "s|^[ ]+||g" \
+			-e 's|[ ]+$||g') # Trim mid/left/right spaces
+	ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
+	local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+
+	# For physical Wi-Fi switch
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_RFKILL"
+
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_IPV6"
+
+	# Use power efficient algorithm
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+	ot-kernel_y_configopt "CONFIG_DEFAULT_BBR"
+
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+
+	# Only SD reader supported
+	ot-kernel_y_configopt "CONFIG_MMC"
+	ot-kernel_y_configopt "CONFIG_MMC_SDHCI"
+	ot-kernel_y_configopt "CONFIG_MMC_SDHCI_PCI" # 2006
+	ot-kernel_y_configopt "CONFIG_PCI"
+
+	# MemoryStick does not work, checked several years ago
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_MEMSTICK"
+	ot-kernel_y_configopt "CONFIG_MSPRO_BLOCK"
+	ot-kernel_y_configopt "CONFIG_MS_BLOCK"
+
+	# For battery management
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ACPI_AC"
+	ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+	ot-kernel_y_configopt "CONFIG_ACPI_BUTTON"
+	ot-kernel_y_configopt "CONFIG_ACPI_FAN"
+	ot-kernel_y_configopt "CONFIG_ACPI_PROCESSOR"
+	ot-kernel_y_configopt "CONFIG_ACPI_VIDEO"
+	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_THERMAL"
+
+	# For sound, HDMI (TV output)
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
+# @DESCRIPTION:
+# A 2010s x86 pc gamer driver bundle
+ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-pc-gamer" ]] || return
+ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	# Assumes USB keyboard
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
+
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
+
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	# Modern for higher resolutions
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+
+	# For speakers
+	ot-kernel_y_configopt "CONFIG_BT"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BREDR"
+	ot-kernel_y_configopt "CONFIG_BT_HIDP"
+	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_NET"
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
+# @DESCRIPTION:
+# A 2020s x86 pc gamer driver bundle
+ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-pc-gamer" ]] || return
+ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	# Assumes USB keyboard
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+
+	ot-kernel_y_configopt "CONFIG_AGP"
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
+
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+
+	# Older framebuffer driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	# Modern for higher resolutions
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_TTY"
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+
+	# For speakers
+	ot-kernel_y_configopt "CONFIG_BT"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BREDR"
+	ot-kernel_y_configopt "CONFIG_BT_HIDP"
+	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_NET"
+}
+
+fi
