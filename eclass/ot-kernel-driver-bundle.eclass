@@ -141,12 +141,6 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_TTY"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
-	ot-kernel_y_configopt "CONFIG_TTY"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
