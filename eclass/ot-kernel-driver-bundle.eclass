@@ -2015,7 +2015,7 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 	fi
 
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8192cu" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8192"|"wifi:rtl8192cu") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
@@ -2025,21 +2025,10 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8192du" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8192"|"wifi:rtl8192du") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
-		ot-kernel_y_configopt "CONFIG_RTL8192DU" # 2013
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_WLAN"
-		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
-	fi
-
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8192" ]] ; then
-		ot-kernel_y_configopt "CONFIG_MAC80211"
-		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
-		ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
 		ot-kernel_y_configopt "CONFIG_RTL8192DU" # 2013
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_WLAN"
@@ -2055,8 +2044,6 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN"
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
-
-
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8723"|"wifi:rtl8723du") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
@@ -2080,7 +2067,7 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8821"|"wifi:rtl8821cu") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8811"|"wifi:rtl8821"|"wifi:rtl8821cu") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_RTW88"
