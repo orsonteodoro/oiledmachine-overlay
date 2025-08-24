@@ -1796,23 +1796,34 @@ TBM=0
 
       Gamer devices by vendor
 
+      controller:act-labs
+      controller:avb
+      controller:boeder
       controller:ch
+      controller:creative-labs
       controller:dragonrise
       controller:gembird
       controller:generic-brand
+      controller:genius
       controller:google
       controller:gravis
       controller:greenasia
+      controller:guillemot
+      controller:iforce
+      controller:interact
       controller:logitech
       controller:madcatz
+      controller:mayflash
       controller:microsoft
       controller:nintendo
       controller:phoenixrc
+      controller:retrode
       controller:saitek
       controller:sony
       controller:steam
       controller:steelseries
       controller:thrustmaster
+      controller:trust
       controller:thq
       controller:united-game-artists
 
