@@ -37,8 +37,12 @@ ot-kernel-driver-bundle_add_drivers() {
 	ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
 	ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
 	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
+eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot-kernel-driver-bundle_add_custom_driver_bundle"
+		die
+	fi
+	if declare -f ot-kernel-driver-bundle_add_custom_driver_bundle ; then
 einfo "Adding a custom driver bundle"
-		ot-kernel-driver-bundle_add_custom_bundle_drivers
+		ot-kernel-driver-bundle_add_custom_driver_bundle
 	fi
 }
 
