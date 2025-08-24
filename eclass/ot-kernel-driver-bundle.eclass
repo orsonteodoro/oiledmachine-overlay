@@ -732,6 +732,21 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+
+	# HID based gaming controllers
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+	ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019
+	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+	ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
+	ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
+	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# Gaming compatibility adapters
+	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -912,6 +927,31 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+
+	# HID based gaming controllers
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
+	ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
+	ot-kernel_y_configopt "CONFIG_HID_ICADE" # 2011
+	ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+	ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes
+	ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+	ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_LOGIG940_FF" # 2009
+	ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
+	ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
+	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
+	ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# Gaming compatibility adapters
+	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
+
+	# Game immersion
+	ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -1112,6 +1152,18 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 
+	# Gaming mice
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
+
+	# Gaming mouse/keyboard
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011-2017
+
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 
@@ -1264,6 +1316,53 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+
+	# HID based gaming controllers
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_GEMBIRD" # 2016
+	ot-kernel_y_configopt "CONFIG_HID_GOOGLE_STADIA_FF" # 2019
+	ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
+	ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+	ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
+	ot-kernel_y_configopt "CONFIG_HID_NINTENDO" # 2017, 2018
+	ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes
+	ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
+	ot-kernel_y_configopt "CONFIG_HID_STEAM" # 2015
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+	ot-kernel_y_configopt "CONFIG_HID_UDRAW_PS3" # 2011
+	ot-kernel_y_configopt "CONFIG_HID_VRC2" # 2015
+	ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
+	ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# HID based keyboards
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
+	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_RAZER" # 2010, keyboard fixes
+	ot-kernel_y_configopt "CONFIG_HID_REDRAGON" # 2015, keyboard fix
+	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
+	ot-kernel_y_configopt "CONFIG_HID_TOPRE" # 2018, N-key rollover support
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
+
+	# Gaming headset (mic/earphones)
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+
+	# Gaming adapters
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_MAYFLASH" # 2014, 2015
+	ot-kernel_y_configopt "CONFIG_HID_RETRODE" # 2012
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
@@ -1283,6 +1382,18 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# Gaming mice
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
+
+	# Gaming mouse/keyboard
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011-2017
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1453,6 +1564,20 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MODULES"
 	ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
 	_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
+
+	# HID based keyboards
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
+	ot-kernel_y_configopt "CONFIG_HID_RAZER" # 2010, keyboard fixes
+	ot-kernel_y_configopt "CONFIG_HID_REDRAGON" # 2015, keyboard fix
+	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
+	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_TOPRE" # 2018, N-key rollover support
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1472,6 +1597,11 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# Gaming mice
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1564,13 +1694,6 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_NET"
 
-	# For gameport to USB adapter (2005)
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
@@ -1591,6 +1714,36 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
+
+	# For gameport to USB adapter (2005)
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_PXRC" # 2023
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+	ot-kernel_y_configopt "CONFIG_HID_WINWING" # 2023-2024
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# Keyboard fixes
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
+	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
+	ot-kernel_y_configopt "CONFIG_HID_SIGMAMICRO" # 2022
+	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
+
+	# Gaming compatibility adapters
+	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
 }
 
 fi
