@@ -42,6 +42,8 @@ einfo "Adding a custom driver bundle"
 	fi
 }
 
+
+
 # @FUNCTION: ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 # @DESCRIPTION:
 # An early 1990s x86 gamer driver bundle
@@ -747,6 +749,22 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 
 	# Gaming compatibility adapters
 	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RTL8180" # 2002
+	ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
+	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -938,6 +956,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+	ot-kernel_y_configopt "CONFIG_HID_WIIMOTE" # 2006, 2012
 	ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
 	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
 	ot-kernel_y_configopt "CONFIG_LOGIG940_FF" # 2009
@@ -952,6 +971,31 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 
 	# Game immersion
 	ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+	ot-kernel_y_configopt "CONFIG_B43" # 2008
+	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
+	ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
+	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+	ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RT2X00"
+	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -1029,25 +1073,12 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_DRM_I915"
 
 	# For Wi-Fi
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_WLAN"
 	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI"
-
-	local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-	local filename=$(basename $(ls "/lib/firmware/iwlwifi-6000-"*".ucode"))
-	firmware="${firmware} ${filename}" # Insert firmware
-einfo "Auto inserting ${filename} firmware"
-	firmware=$(echo "${firmware}" \
-		| sed -r \
-			-e "s|[ ]+| |g" \
-			-e "s|^[ ]+||g" \
-			-e 's|[ ]+$||g') # Trim mid/left/right spaces
-	ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-	local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 
 	# For physical Wi-Fi switch
 	ot-kernel_y_configopt "CONFIG_NET"
@@ -1133,6 +1164,29 @@ einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
+	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+	ot-kernel_y_configopt "CONFIG_RTW88"
+	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -1295,13 +1349,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
-	# For Wi-FI, we need an environment variable or use flag because of the firmware issue
-	# iwlwifi
-	# b43
-	# brcmfmac
-	# ath9k
-	# ath10k
-
 	# For gameport to USB adapter (2005)
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
@@ -1332,6 +1379,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
 	ot-kernel_y_configopt "CONFIG_HID_UDRAW_PS3" # 2011
 	ot-kernel_y_configopt "CONFIG_HID_VRC2" # 2015
+	ot-kernel_y_configopt "CONFIG_HID_WIIMOTE" # 2006, 2012
 	ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
 	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
 	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
@@ -1363,6 +1411,46 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_RETRODE" # 2012
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_AR5523" # 2018
+	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+	ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
+	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
+	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
+	ot-kernel_y_configopt "CONFIG_B43" # 2008
+	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
+	ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
+	ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
+	ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
+	ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RT2X00"
+	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
+	ot-kernel_y_configopt "CONFIG_RT2800USB" # 2009
+	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+	ot-kernel_y_configopt "CONFIG_RTW88"
+	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
@@ -1578,6 +1666,45 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_AR5523" # 2018
+	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+	ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
+	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
+	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
+	ot-kernel_y_configopt "CONFIG_B43" # 2008
+	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
+	ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
+	ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
+	ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
+	ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RT2X00"
+	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
+	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+	ot-kernel_y_configopt "CONFIG_RTW88"
+	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1744,6 +1871,46 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	# Gaming compatibility adapters
 	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_AR5523" # 2018
+	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
+	ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
+	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
+	ot-kernel_y_configopt "CONFIG_ATH11K" # 2020
+	ot-kernel_y_configopt "CONFIG_ATH12K" # 2025
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
+	ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
+	ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
+	ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
+	ot-kernel_y_configopt "CONFIG_MT7921U" # 2023
+	ot-kernel_y_configopt "CONFIG_MT7925U" # 2024
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RT2X00"
+	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
+	ot-kernel_y_configopt "CONFIG_RT2800USB" # 2009
+	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+	ot-kernel_y_configopt "CONFIG_RTW88"
+	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+	ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
 }
 
 fi
