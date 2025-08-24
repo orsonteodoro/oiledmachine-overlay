@@ -2947,7 +2947,6 @@ ewarn "Use LLD or mold for ROP mitigation"
 	[[ -n "${cflags}" ]] && append-flags ${cflags}
 	[[ -n "${ldflags}" ]] && append-flags ${ldflags}
 
-
 	cflags-hardened_append
 	cflags="${cflags} ${CFLAGS_HARDENED_CFLAGS}"
 	ldflags="${ldflags} ${CFLAGS_HARDENED_LDFLAGS}"
