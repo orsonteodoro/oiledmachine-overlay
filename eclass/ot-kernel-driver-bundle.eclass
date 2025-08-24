@@ -750,21 +750,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	# Gaming compatibility adapters
 	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
 
-	# Wi-Fi
-	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
-	ot-kernel_y_configopt "CONFIG_MAC80211"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_RTL8180" # 2002
-	ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
-	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_WLAN"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -972,30 +958,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	# Game immersion
 	ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
 
-	# Wi-Fi
-	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
-	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
-	ot-kernel_y_configopt "CONFIG_B43" # 2008
-	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
-	ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
-	ot-kernel_y_configopt "CONFIG_MAC80211"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
-	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
-	ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_RT2X00"
-	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
-	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_WLAN"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -1164,29 +1127,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
-
-	# Wi-Fi
-	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
-	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
-	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
-	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
-	ot-kernel_y_configopt "CONFIG_MAC80211"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
-	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
-	ot-kernel_y_configopt "CONFIG_RTW88"
-	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
-	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
-	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
-	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_WLAN"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -1412,45 +1352,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 
-	# Wi-Fi
-	ot-kernel_y_configopt "CONFIG_AR5523" # 2018
-	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
-	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
-	ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
-	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
-	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
-	ot-kernel_y_configopt "CONFIG_B43" # 2008
-	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
-	ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
-	ot-kernel_y_configopt "CONFIG_MAC80211"
-	ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
-	ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
-	ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
-	ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_RT2X00"
-	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
-	ot-kernel_y_configopt "CONFIG_RT2800USB" # 2009
-	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
-	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
-	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
-	ot-kernel_y_configopt "CONFIG_RTW88"
-	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
-	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
-	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
-	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
-	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_WLAN"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
@@ -1667,44 +1569,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
-	# Wi-Fi
-	ot-kernel_y_configopt "CONFIG_AR5523" # 2018
-	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
-	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
-	ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
-	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
-	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
-	ot-kernel_y_configopt "CONFIG_B43" # 2008
-	ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
-	ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
-	ot-kernel_y_configopt "CONFIG_MAC80211"
-	ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
-	ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
-	ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
-	ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_RT2X00"
-	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
-	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
-	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
-	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
-	ot-kernel_y_configopt "CONFIG_RTW88"
-	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
-	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
-	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
-	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
-	ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_WLAN"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1872,45 +1737,454 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	# Gaming compatibility adapters
 	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
 
-	# Wi-Fi
-	ot-kernel_y_configopt "CONFIG_AR5523" # 2018
-	ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
-	ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
-	ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
-	ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
-	ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
-	ot-kernel_y_configopt "CONFIG_ATH11K" # 2020
-	ot-kernel_y_configopt "CONFIG_ATH12K" # 2025
-	ot-kernel_y_configopt "CONFIG_CFG80211"
-	ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
-	ot-kernel_y_configopt "CONFIG_MAC80211"
-	ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
-	ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
-	ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
-	ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
-	ot-kernel_y_configopt "CONFIG_MT7921U" # 2023
-	ot-kernel_y_configopt "CONFIG_MT7925U" # 2024
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_RT2X00"
-	ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
-	ot-kernel_y_configopt "CONFIG_RT2800USB" # 2009
-	ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
-	ot-kernel_y_configopt "CONFIG_RTL_CARDS"
-	ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
-	ot-kernel_y_configopt "CONFIG_RTW88"
-	ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
-	ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
-	ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
-	ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
-	ot-kernel_y_configopt "CONFIG_RTW89" # 2021
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_WLAN"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers() {
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_vendor
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_vendor() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:atheros" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_AR5523" # 2018
+		ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+		ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+		ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
+		ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
+		ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
+		ot-kernel_y_configopt "CONFIG_ATH11K" # 2020
+		ot-kernel_y_configopt "CONFIG_ATH12K" # 2025
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:broadcom"|"wifi:bcm") ]] ; then
+		ot-kernel_y_configopt "CONFIG_B43" # 2008
+		ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
+		ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:intel" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CFG80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mediatek" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
+		ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
+		ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
+		ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
+		ot-kernel_y_configopt "CONFIG_MT7921U" # 2023
+		ot-kernel_y_configopt "CONFIG_MT7925U" # 2024
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ralink" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RT2X00"
+		ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
+		ot-kernel_y_configopt "CONFIG_RT2800USB" # 2009
+		ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:realtek" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTL8180" # 2002, PCI
+		ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
+		ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+		ot-kernel_y_configopt "CONFIG_RTL8192DU" # 2013
+		ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+		ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+		ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8851BE" # 2023
+		ot-kernel_y_configopt "CONFIG_RTW89_8852AE" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8852BE" # 2022
+		ot-kernel_y_configopt "CONFIG_RTW89_8852BTE" # 2022
+		ot-kernel_y_configopt "CONFIG_RTW89_8852CE" # 2024
+		ot-kernel_y_configopt "CONFIG_RTW89_8922AE" # 2024
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+}
+
+
+
+ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ar5523" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_AR5523" # 2018
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ath5k" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_ATH5K" # 2002-2005
+		ot-kernel_y_configopt "CONFIG_ATH5K_PCI"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ath6kl" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_ATH6KL" # 2011
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ath9k" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_ATH9K" # 2008
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ath10k" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_ATH10K" # 2012
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ath11k" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_ATH11K" # 2020
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ath12k" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_ATH12K" # 2025
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_ATH"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:b43" ]] ; then
+		ot-kernel_y_configopt "CONFIG_B43" # 2008
+		ot-kernel_y_configopt "CONFIG_B43LEGACY" # 2002, 2008
+		ot-kernel_y_configopt "CONFIG_BCMA_POSSIBLE"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_SSB_POSSIBLE"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
+	fi
+
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:iwlwifi" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CFG80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_IWLWIFI" # 2001, 2002, 2003, 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2019
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_INTEL"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mt7601u" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT7601U" # 2012
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mt76x0u" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT76x0U" # 2013
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mt76x2u" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT76x2U" # 2013
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mt7663u" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT7663U" # 2019
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mt7921u" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT7921U" # 2023
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:mt7925u" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_MT7925U" # 2024
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_MEDIATEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rt2500usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RT2X00"
+		ot-kernel_y_configopt "CONFIG_RT2500USB" # 2005-2008
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rt2800usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RT2X00"
+		ot-kernel_y_configopt "CONFIG_RT2800USB" # 2009
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	fi
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rt73usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RT2X00"
+		ot-kernel_y_configopt "CONFIG_RT73USB" # 2007
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_RALINK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8180" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+		ot-kernel_y_configopt "CONFIG_RTL8180" # 2002, PCI
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8187" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+		ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8192cu" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+		ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8192du" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+		ot-kernel_y_configopt "CONFIG_RTL8192DU" # 2013
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtl8192" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTL_CARDS"
+		ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
+		ot-kernel_y_configopt "CONFIG_RTL8192DU" # 2013
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtw87"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8723"|"wifi:rtl8723du") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtw88"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+		ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+		ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8821"|"wifi:rtl8821cu") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8822"|"wifi:rtl8822bu") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8822"|"wifi:rtl8822cu") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8851"|"wifi:rtw8851be") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8851BE" # 2023
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8852"|"wifi:rtw8852ae") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8852AE" # 2021
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8852"|"wifi:rtw8852be") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8852BE" # 2022
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8852"|"wifi:rtw8852bte") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8852BTE" # 2022
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8852"|"wifi:rtw8852ce") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8852CE" # 2024
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8922"|"wifi:rtw8922ae") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8922AE" # 2024
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtw89"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8851BE" # 2023
+		ot-kernel_y_configopt "CONFIG_RTW89_8852AE" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW89_8852BE" # 2022
+		ot-kernel_y_configopt "CONFIG_RTW89_8852BTE" # 2022
+		ot-kernel_y_configopt "CONFIG_RTW89_8852CE" # 2024
+		ot-kernel_y_configopt "CONFIG_RTW89_8922AE" # 2024
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
 }
 
 fi

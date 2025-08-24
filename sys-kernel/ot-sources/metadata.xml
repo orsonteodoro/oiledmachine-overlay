@@ -1736,9 +1736,67 @@ TBM=0
       2010s-video-game-artist
       2020s-pc-gamer
 
+      For Wi-Fi, you can quick add one of the following Wi-Fi vendors for the
+      preselected driver bundles if you don't know the model:
+
+      wifi:atheros
+      wifi:broadcom
+      wifi:intel
+      wifi:mediatek
+      wifi:ralink
+      wifi:realtek
+
+      For Wi-Fi, you can quick add one of the following desktop models for
+      the preselected driver bundles to save space and build time:
+
+      wifi:ar5523
+      wifi:ath5k
+      wifi:ath6kl
+      wifi:ath9k
+      wifi:ath10k
+      wifi:ath11k
+      wifi:ath12k
+      wifi:b43
+      wifi:iwlwifi
+      wifi:mt7601u
+      wifi:mt76x0u
+      wifi:mt76x2u
+      wifi:mt7663u
+      wifi:mt7921u
+      wifi:mt7925u
+      wifi:rt2500usb
+      wifi:rt73usb
+      wifi:rtl8180
+      wifi:rtl8187
+      wifi:rtl8192cu
+      wifi:rtl8192du
+      wifi:rtl8192
+      wifi:rtw87
+      wifi:rtl8723
+      wifi:rtl8723du
+      wifi:rtw88
+      wifi:rtl8821
+      wifi:rtl8821cu
+      wifi:rtl8822
+      wifi:rtl8822bu
+      wifi:rtl8822
+      wifi:rtl8822cu
+      wifi:rtw8851
+      wifi:rtw8851be
+      wifi:rtw8852
+      wifi:rtw8852ae
+      wifi:rtw8852
+      wifi:rtw8852be
+      wifi:rtw8852bte
+      wifi:rtw8852ce
+      wifi:rtw8922
+      wifi:rtw8922ae
+      wifi:rtw89
+
     Examples
 
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:ath5k"
 
       # See also eclass/ot-kernel-driver-bundle.eclass for examples
       # Use ot-kernel_y_configopt to add drivers
