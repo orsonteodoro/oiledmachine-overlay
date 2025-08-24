@@ -1759,28 +1759,29 @@ TBM=0
       wifi:b43
       wifi:iwlwifi
       wifi:mt7601u
+      wifi:mt7663u
       wifi:mt76x0u
       wifi:mt76x2u
-      wifi:mt7663u
       wifi:mt7921u
       wifi:mt7925u
       wifi:rt2500usb
       wifi:rt73usb
       wifi:rtl8180
       wifi:rtl8187
+      wifi:rtl8192
       wifi:rtl8192cu
       wifi:rtl8192du
-      wifi:rtl8192
-      wifi:rtw87
       wifi:rtl8723
       wifi:rtl8723du
-      wifi:rtw88
       wifi:rtl8821
       wifi:rtl8821cu
       wifi:rtl8822
       wifi:rtl8822bu
       wifi:rtl8822
       wifi:rtl8822cu
+      wifi:rtw87
+      wifi:rtw88
+      wifi:rtw8811
       wifi:rtw8851
       wifi:rtw8851be
       wifi:rtw8852
@@ -1789,9 +1790,9 @@ TBM=0
       wifi:rtw8852be
       wifi:rtw8852bte
       wifi:rtw8852ce
+      wifi:rtw89
       wifi:rtw8922
       wifi:rtw8922ae
-      wifi:rtw89
 
     Examples
 
