@@ -1624,6 +1624,7 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class
 	fi
 	if [[ "${tags}" =~ "hid" ]] ; then
+		# USB or Bluetooth
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class
 	fi
