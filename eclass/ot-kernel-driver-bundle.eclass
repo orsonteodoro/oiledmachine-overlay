@@ -46,8 +46,6 @@ einfo "Adding a custom driver bundle"
 	fi
 }
 
-
-
 # @FUNCTION: ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 # @DESCRIPTION:
 # An early 1990s x86 gamer driver bundle
@@ -259,16 +257,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
-	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_A3D" # 1997
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_STINGER" # 1998
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_1990s_artist_drivers
@@ -724,37 +713,8 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
 
-	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
-
-	# HID based gaming controllers
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
-	ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019
-	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
-	ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
-	ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
-	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	# Gaming compatibility adapters
-	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -919,50 +879,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
-	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	# For gameport to USB adapter (2005)
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
-
-	# HID based gaming controllers
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
-	ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
-	ot-kernel_y_configopt "CONFIG_HID_ICADE" # 2011
-	ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
-	ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes
-	ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
-	ot-kernel_y_configopt "CONFIG_HID_WIIMOTE" # 2006, 2012
-	ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
-	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
-	ot-kernel_y_configopt "CONFIG_LOGIG940_FF" # 2009
-	ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
-	ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
-	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
-	ot-kernel_y_configopt "CONFIG_NEW_LEDS"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	# Gaming compatibility adapters
-	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
-
-	# Game immersion
-	ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -1293,43 +1211,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
-	# For gameport to USB adapter (2005)
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
-
-	# HID based gaming controllers
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_GEMBIRD" # 2016
-	ot-kernel_y_configopt "CONFIG_HID_GOOGLE_STADIA_FF" # 2019
-	ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
-	ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
-	ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
-	ot-kernel_y_configopt "CONFIG_HID_NINTENDO" # 2017, 2018
-	ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes
-	ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
-	ot-kernel_y_configopt "CONFIG_HID_STEAM" # 2015
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
-	ot-kernel_y_configopt "CONFIG_HID_UDRAW_PS3" # 2011
-	ot-kernel_y_configopt "CONFIG_HID_VRC2" # 2015
-	ot-kernel_y_configopt "CONFIG_HID_WIIMOTE" # 2006, 2012
-	ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
-	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
-	ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
-	ot-kernel_y_configopt "CONFIG_NEW_LEDS"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
 	# HID based keyboards
 	ot-kernel_y_configopt "CONFIG_HID"
 	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
@@ -1357,6 +1238,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB_HID"
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
@@ -1711,22 +1593,6 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
-	# For gameport to USB adapter (2005)
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_PXRC" # 2023
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
-	ot-kernel_y_configopt "CONFIG_HID_WINWING" # 2023-2024
-	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
-	ot-kernel_y_configopt "CONFIG_NEW_LEDS"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
 	# Keyboard fixes
 	ot-kernel_y_configopt "CONFIG_HID"
 	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
@@ -1738,10 +1604,301 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
-	# Gaming compatibility adapters
-	ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid"
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
+	local tags="${1}"
+	if [[ "${tags}" =~ "serial" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SERIO" # 1984 (9-pin DE-9), 1981 (25-pin PC version)
+		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_vendor
+		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_class
+	fi
+	if [[ "${tags}" =~ "gameport" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981, 15 pin
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor
+		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class
+	fi
+	if [[ "${tags}" =~ "hid" ]] ; then
+		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor
+		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class
+	fi
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_vendor() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gravis" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_STINGER" # 1998, 9-pin
+		ot-kernel_y_configopt "CONFIG_SERIO"
+	fi
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_class() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_STINGER" # 1998, 9-pin
+	fi
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:saitek" || "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:ch"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:madcatz" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_A3D" # 1997
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:microsoft" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:thrustmaster" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
+	fi
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:joystick" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:flight-stick"|"controller:joystick") ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_A3D" # 1997, trackball and joystick
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:two-handed-joystick" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:fps" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:throttle" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
+	fi
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:dragonrise" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gembird" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_GEMBIRD" # 2016
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:google" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_GOOGLE_STADIA_FF" # 2019
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:greenasia" ]] ; then
+		ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:logitech" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_LOGIG940_FF" # 2009
+		ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
+		ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
+		ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:microsoft" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:nintendo" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_NINTENDO" # 2017, 2018
+		ot-kernel_y_configopt "CONFIG_HID_WIIMOTE" # 2006, 2012
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:phoenixrc" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_PXRC" # 2023
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:saitek" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes mouse/gamepad
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:steam" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_STEAM" # 2015
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:sony" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:steelseries" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:thrustmaster" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:thq" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_UDRAW_PS3" # 2011
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:united-game-artists" ]] ; then
+		# Game immersion
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:generic-brand" ]] ; then
+		# No vendor name
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
+		ot-kernel_y_configopt "CONFIG_HID_VRC2" # 2015
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+}
+
+ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:joystick" ]] ; then
+		# Explicitly labeled joystick
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:drawing-tablet" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_UDRAW_PS3" # 2011
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
+		ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
+		ot-kernel_y_configopt "CONFIG_HID_GEMBIRD" # 2016
+		ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
+		ot-kernel_y_configopt "CONFIG_HID_GOOGLE_STADIA_FF" # 2019
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
+		ot-kernel_y_configopt "CONFIG_HID_NINTENDO" # 2017, 2018
+		ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes mouse/gamepad
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_STEAM" # 2015
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
+		ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
+		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:toy-remote-control" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_PXRC" # 2023
+		ot-kernel_y_configopt "CONFIG_HID_VRC2" # 2015
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:steering-wheel"|"controller:racing-wheel") ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019, racing-wheel/headset
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
+		ot-kernel_y_configopt "CONFIG_LOGIWHEELS_FF" # 2000-2015
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:flight-stick" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_MICROSOFT" # 2000, 2004, 2006, 2011, 2016, 2019, 2020, fixes for mouse/joystick/gamepads
+		ot-kernel_y_configopt "CONFIG_HID_THRUSTMASTER" # 2002, 2007, 2011, 2015, 2022
+		ot-kernel_y_configopt "CONFIG_LOGITECH_FF" # 2001-2006
+		ot-kernel_y_configopt "CONFIG_LOGIG940_FF" # 2009
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:flight-throttle" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_WINWING" # 2023-2024
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_LOGIG940_FF" # 2009
+		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:motion-controller" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_WIIMOTE" # 2006, 2012
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:adapter"|"controller:dongle") ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SMARTJOYPLUS" # 2003, 2008, 2009, 2020
+		ot-kernel_y_configopt "CONFIG_HID_SONY" # 2005, 2006, 2009, 2011, 2013, 2015, 2016
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:vibrator" ]] ; then
+		# Game immersion
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
+	fi
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers() {
@@ -1833,8 +1990,6 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_vendor() {
 	fi
 }
 
-
-
 ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:ar5523" ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
@@ -1903,8 +2058,6 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN"
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_BROADCOM"
 	fi
-
-
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:iwlwifi" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CFG80211"

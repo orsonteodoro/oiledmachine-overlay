@@ -1794,10 +1794,51 @@ TBM=0
       wifi:rtw8922
       wifi:rtw8922ae
 
+      Gamer devices by vendor
+
+      controller:ch
+      controller:dragonrise
+      controller:gembird
+      controller:generic-brand
+      controller:google
+      controller:gravis
+      controller:greenasia
+      controller:ion
+      controller:logitech
+      controller:madcatz
+      controller:microsoft
+      controller:nintendo
+      controller:phoenixrc
+      controller:saitek
+      controller:sony
+      controller:steam
+      controller:steelseries
+      controller:thrustmaster
+      controller:thq
+      controller:united-game-artists
+
+      Gamer devices by general type
+       
+      controller:adapter
+      controller:dongle
+      controller:drawing-tablet
+      controller:gamepad
+      controller:flight-stick
+      controller:flight-throttle
+      controller:fps
+      controller:joystick
+      controller:motion-controller
+      controller:racing-wheel
+      controller:steering-wheel
+      controller:throttle
+      controller:toy-remote-control
+      controller:two-handed-joystick
+      controller:vibrator
+
     Examples
 
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros"
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:ath5k"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:ath5k controller:gamepad"
 
       #
       # See also eclass/ot-kernel-driver-bundle.eclass for examples
