@@ -1872,6 +1872,14 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_TRANCEVIBRATOR" # 2001
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:winwing" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_WINWING" # 2023-2024
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:generic-brand" ]] ; then
 		# No vendor name
 		ot-kernel_y_configopt "CONFIG_HID"
