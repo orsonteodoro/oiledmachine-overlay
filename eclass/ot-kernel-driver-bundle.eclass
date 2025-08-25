@@ -22,9 +22,6 @@ if [[ -z "${OT_KERNEL_DRIVER_BUNDLE_ECLASS}" ]] ; then
 
 inherit toolchain-funcs
 
-# xpad needs usb or bluetooth
-# 
-
 # @FUNCTION: ot-kernel-driver-bundle_add_drivers
 # @DESCRIPTION:
 # Main routine for installing drivers in bundles
@@ -757,7 +754,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
-	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -930,7 +927,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
-	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -1102,7 +1099,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
-	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -1292,7 +1289,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
-	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
@@ -1673,7 +1670,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
-	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
@@ -1854,26 +1851,6 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:8bitdo" ]] ; then
-		# USB dongle with X-input mode
-		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
-		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
-		ot-kernel_y_configopt "CONFIG_USB_HID"
-		ot-kernel_y_configopt "CONFIG_USB_HID_BPF_EVENTS"
-
-		# Bluetooth with X-input mode
-		ot-kernel_y_configopt "CONFIG_BT"
-		ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
-		ot-kernel_y_configopt "CONFIG_BT_BNEP"
-		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
-		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
-
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-		if (( ${disable_xpad} == 0 )) ; then
-			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
-		fi
-	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:dragonrise" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
@@ -2181,6 +2158,7 @@ ot-kernel-driver-bundle_add_xpad() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
 	fi
 	if [[ "${tags}" =~ "bt" ]] ; then
+	# USB 2.0 (2000) if using dongle to connect to other Bluetooth.
 	# Does not use xpad driver
 		ot-kernel_y_configopt "CONFIG_BT"
 		ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
