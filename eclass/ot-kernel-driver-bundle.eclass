@@ -26,6 +26,18 @@ inherit toolchain-funcs
 # @DESCRIPTION:
 # Main routine for installing drivers in bundles
 ot-kernel-driver-bundle_add_drivers() {
+	local disable_xpad=0
+	if \
+		   has_version "games-util/xone" \
+		|| has_version "games-util/xpadneo" \
+		|| has_version "games-util/xboxdrv" \
+	; then
+ewarn "Disabling xpad driver"
+		disable_xpad=1
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
+	fi
+
 	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_1990s_artist_drivers
@@ -1772,8 +1784,10 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
-		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
-		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+		if (( ${disable_xpad} == 0 )) ; then
+			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:thrustmaster" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -1798,8 +1812,10 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_INTERACT" # 1997, 1999, 2000
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_SIDEWINDER" # 1995-2003
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
-		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
-		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+		if (( ${disable_xpad} == 0 )) ; then
+			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
+			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+		fi
 
 	fi
 
@@ -1851,7 +1867,9 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
 
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+		if (( ${disable_xpad} == 0 )) ; then
+			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:dragonrise" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HID"
@@ -1984,7 +2002,9 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
 
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+		if (( ${disable_xpad} == 0 )) ; then
+			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:joystick" ]] ; then
 		# Explicitly labeled joystick

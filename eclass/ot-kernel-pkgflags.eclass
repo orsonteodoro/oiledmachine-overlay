@@ -845,6 +845,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_x86info
 	ot-kernel-pkgflags_xfce4_battery_plugin
 	ot-kernel-pkgflags_xmms2
+	ot-kernel-pkgflags_xone
 	ot-kernel-pkgflags_xorg_server
 	ot-kernel-pkgflags_xoscope
 	ot-kernel-pkgflags_xpadneo
@@ -11100,6 +11101,7 @@ ot-kernel-pkgflags_xboxdrv() { # DONE
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
 	fi
 }
 
@@ -11582,6 +11584,16 @@ ot-kernel-pkgflags_xmms2() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_xone
+# @DESCRIPTION:
+# Applies kernel config flags for the xorg-server package
+ot-kernel-pkgflags_xone() { # DONE
+	if ot-kernel_has_version_pkgflags "games-util/xone" ; then
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_xorg_server
 # @DESCRIPTION:
 # Applies kernel config flags for the xorg-server package
@@ -11606,6 +11618,8 @@ ot-kernel-pkgflags_xoscope() { # DONE
 ot-kernel-pkgflags_xpadneo() { # DONE
 	if ot-kernel_has_version_pkgflags "games-util/xpadneo" ; then
 		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
 	fi
 }
 
