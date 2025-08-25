@@ -1887,6 +1887,7 @@ TBM=0
       controller:flight-throttle
       controller:fps
       controller:joystick
+      controller:microphone
       controller:motion-controller
       controller:racing-wheel
       controller:steering-wheel

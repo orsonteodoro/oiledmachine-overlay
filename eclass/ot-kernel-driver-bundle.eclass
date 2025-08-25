@@ -2159,6 +2159,13 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_vendor() {
 	]] ; then
 		ot-kernel-driver-bundle_add_xpad
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:sony" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_USB"
+	fi
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_class() {
@@ -2189,6 +2196,13 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_class() {
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_IFORCE" # 1998, 1999, 2001, 2004, steering wheel, flying joystick
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_IFORCE_USB"
+		ot-kernel_y_configopt "CONFIG_USB"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:microphone" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_USB"
 	fi
 }
