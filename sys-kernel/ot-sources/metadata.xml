@@ -1832,6 +1832,7 @@ TBM=0
       controller:iforce
       controller:intec
       controller:interact
+      controller:ion-audio
       controller:joytech
       controller:lenovo
       controller:logic3
@@ -1855,7 +1856,8 @@ TBM=0
       controller:retrode
       controller:saitek
       controller:scuf-gaming
-      controller:snakebite
+      controller:shanwan
+      controller:snakebyte
       controller:sony
       controller:steam
       controller:steelseries
@@ -1878,7 +1880,9 @@ TBM=0
       controller:dongle
       controller:dance-pad
       controller:drawing-tablet
+      controller:drum
       controller:gamepad
+      controller:guitar
       controller:flight-stick
       controller:flight-throttle
       controller:fps
