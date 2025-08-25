@@ -755,6 +755,8 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
 
+	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
@@ -927,6 +929,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
+
+	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
@@ -1271,17 +1275,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
-	# HID based keyboards
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
-	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_RAZER" # 2010, keyboard fixes
-	ot-kernel_y_configopt "CONFIG_HID_REDRAGON" # 2015, keyboard fix
-	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
-	ot-kernel_y_configopt "CONFIG_HID_TOPRE" # 2018, N-key rollover support
-	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
@@ -1501,17 +1495,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
 	_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
 
-	# HID based keyboards
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
-	ot-kernel_y_configopt "CONFIG_HID_RAZER" # 2010, keyboard fixes
-	ot-kernel_y_configopt "CONFIG_HID_REDRAGON" # 2015, keyboard fix
-	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
-	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_TOPRE" # 2018, N-key rollover support
-	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
@@ -1660,19 +1644,29 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
-	# Keyboard fixes
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
-	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
-	ot-kernel_y_configopt "CONFIG_HID_SIGMAMICRO" # 2022
-	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+}
+
+ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes() {
+	# HID (USB/Bluetooth) based keyboards
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
+	ot-kernel_y_configopt "CONFIG_HID_COUGAR" # 2014, keyboard fixes
+	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
+	ot-kernel_y_configopt "CONFIG_HID_RAZER" # 2010, keyboard fixes
+	ot-kernel_y_configopt "CONFIG_HID_REDRAGON" # 2015, keyboard fix
+	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
+	ot-kernel_y_configopt "CONFIG_HID_SEMITEK" # 2018, 2019, 2020, 2021
+	ot-kernel_y_configopt "CONFIG_HID_SIGMAMICRO" # 2022
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_HID_TOPRE" # 2018, N-key rollover support
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
