@@ -11098,9 +11098,12 @@ ot-kernel-pkgflags_wpa_supplicant() { # DONE
 # Applies kernel config flags for the xboxdrv package
 ot-kernel-pkgflags_xboxdrv() { # DONE
 	if ot-kernel_has_version_pkgflags "games-util/xboxdrv" ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_y_configopt "CONFIG_UHID"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
 	fi
