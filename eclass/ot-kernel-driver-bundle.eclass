@@ -1775,6 +1775,24 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:8bitdo" ]] ; then
+		# USB dongle with X-input mode
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_USB_HID_BPF_EVENTS"
+
+		# Bluetooth with X-input mode
+		ot-kernel_y_configopt "CONFIG_BT"
+		ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+		ot-kernel_y_configopt "CONFIG_BT_BNEP"
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:dragonrise" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
@@ -1890,6 +1908,24 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:arcade" ]] ; then
+		# USB dongle with X-input mode
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_USB_HID_BPF_EVENTS"
+
+		# Bluetooth with X-input mode
+		ot-kernel_y_configopt "CONFIG_BT"
+		ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+		ot-kernel_y_configopt "CONFIG_BT_BNEP"
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:joystick" ]] ; then
 		# Explicitly labeled joystick
 		ot-kernel_y_configopt "CONFIG_INPUT"
