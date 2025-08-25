@@ -11617,6 +11617,7 @@ ot-kernel-pkgflags_xoscope() { # DONE
 # Applies kernel config flags for the xpadneo package
 ot-kernel-pkgflags_xpadneo() { # DONE
 	if ot-kernel_has_version_pkgflags "games-util/xpadneo" ; then
+		ot-kernel_y_configopt "CONFIG_UHID"
 		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"

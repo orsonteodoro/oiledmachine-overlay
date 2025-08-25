@@ -22,6 +22,9 @@ if [[ -z "${OT_KERNEL_DRIVER_BUNDLE_ECLASS}" ]] ; then
 
 inherit toolchain-funcs
 
+# xpad needs usb or bluetooth
+# 
+
 # @FUNCTION: ot-kernel-driver-bundle_add_drivers
 # @DESCRIPTION:
 # Main routine for installing drivers in bundles
@@ -1774,7 +1777,7 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_WARRIOR" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:madcatz" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:mad-catz" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_A3D" # 1997
@@ -1986,26 +1989,6 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:arcade" ]] ; then
-		# USB dongle with X-input mode
-		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
-		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
-		ot-kernel_y_configopt "CONFIG_USB_HID"
-		ot-kernel_y_configopt "CONFIG_USB_HID_BPF_EVENTS"
-
-		# Bluetooth with X-input mode
-		ot-kernel_y_configopt "CONFIG_BT"
-		ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
-		ot-kernel_y_configopt "CONFIG_BT_BNEP"
-		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
-		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
-
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-		if (( ${disable_xpad} == 0 )) ; then
-			ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
-		fi
-	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:joystick" ]] ; then
 		# Explicitly labeled joystick
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -2105,9 +2088,74 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_IFORCE_USB"
 		ot-kernel_y_configopt "CONFIG_USB"
 	fi
+	if [[ \
+		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"controller:8bitdo"\
+"|controller:acer"\
+"|controller:amazon"\
+"|controller:asus"\
+"|controller:andamiro"\
+"|controller:bda"\
+"|controller:bigben"\
+"|controller:bigben-interactive"\
+"|controller:black-shark"\
+"|controller:chic"\
+"|controller:elecom"\
+"|controller:fanatec"\
+"|controller:gamepad-digital"\
+"|controller:gamesir"\
+"|controller:gamestop"\
+"|controller:generic-brand"\
+"|controller:gpd"\
+"|controller:hama"\
+"|controller:hyperkin"\
+"|controller:hyperx"\
+"|controller:hori"\
+"|controller:intec"\
+"|controller:interact"\
+"|controller:joytech"\
+"|controller:lenovo"\
+"|controller:logic3"\
+"|controller:logitech"\
+"|controller:mad-catz"\
+"|controller:machenike"\
+"|controller:msi"\
+"|controller:micro-star-international"\
+"|controller:nacon"\
+"|controller:performance-designed-products"\
+"|controller:pdp"\
+"|controller:pelican"\
+"|controller:powera"\
+"|controller:razer"\
+"|controller:radica-games"\
+"|controller:redoctane"\
+"|controller:saitek"\
+"|controller:scuf-gaming"\
+"|controller:snakebite"\
+"|controller:steelseries"\
+"|controller:tecno"\
+"|controller:thrustmaster"\
+"|controller:turtle-beach"\
+"|controller:wooting"\
+"|controller:xiaomi"\
+"|controller:zeroplus"\
+"|controller:zotac"\
+) \
+	]] ; then
+		ot-kernel-driver-bundle_add_xpad
+	fi
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_class() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:dance-pad" ]] ; then
+		ot-kernel-driver-bundle_add_xpad
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:arcade" ]] ; then
+		ot-kernel-driver-bundle_add_xpad
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
+		ot-kernel-driver-bundle_add_xpad
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:steering-wheel"|"controller:racing-wheel") ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
@@ -2121,6 +2169,27 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_class() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_IFORCE" # 1998, 1999, 2001, 2004, steering wheel, flying joystick
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_IFORCE_USB"
 		ot-kernel_y_configopt "CONFIG_USB"
+	fi
+}
+
+ot-kernel-driver-bundle_add_xpad() {
+	if [[ "${tags}" =~ "usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_ARCH_HAB"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD"
+	fi
+	if [[ "${tags}" =~ "bt" ]] ; then
+	# Does not use xpad driver
+		ot-kernel_y_configopt "CONFIG_BT"
+		ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+		ot-kernel_y_configopt "CONFIG_BT_HIDP"
+		ot-kernel_y_configopt "CONFIG_BT_HCIBTUSB"
+		ot-kernel_y_configopt "CONFIG_BT_HCIUART"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_UHID"
 	fi
 }
 

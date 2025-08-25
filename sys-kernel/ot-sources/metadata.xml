@@ -1798,36 +1798,78 @@ TBM=0
 
       controller:8bitdo
       controller:act-labs
+      controller:acer
+      controller:amazon
+      controller:andamiro
+      controller:asus
       controller:avb
+      controller:bda
+      controller:bigben
+      controller:bigben-interactive
+      controller:black-shark
       controller:boeder
       controller:ch
+      controller:chic
       controller:creative-labs
       controller:dragonrise
+      controller:elecom
+      controller:fanatec
+      controller:gamepad-digital
+      controller:gamesir
+      controller:gamestop
       controller:gembird
       controller:generic-brand
       controller:genius
       controller:google
+      controller:gpd
       controller:gravis
       controller:greenasia
       controller:guillemot
+      controller:hama
+      controller:hori
+      controller:hyperkin
+      controller:hyperx
       controller:iforce
+      controller:intec
       controller:interact
+      controller:joytech
+      controller:lenovo
+      controller:logic3
       controller:logitech
-      controller:madcatz
+      controller:mad-catz
       controller:mayflash
+      controller:machenike
+      controller:micro-star-international
       controller:microsoft
+      controller:msi
+      controller:nacon
       controller:nintendo
+      controller:pdp
+      controller:pelican
+      controller:performance-designed-products
       controller:phoenixrc
+      controller:powera
+      controller:radica-games
+      controller:razer
+      controller:redoctane
       controller:retrode
       controller:saitek
+      controller:scuf-gaming
+      controller:snakebite
       controller:sony
       controller:steam
       controller:steelseries
+      controller:tecno
+      controller:thq
       controller:thrustmaster
       controller:trust
-      controller:thq
+      controller:turtle-beach
       controller:united-game-artists
       controller:winwing
+      controller:wooting
+      controller:xiaomi
+      controller:zeroplus
+      controller:zotac
 
       Gamer devices by general type
 
