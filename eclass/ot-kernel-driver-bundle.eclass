@@ -1702,6 +1702,7 @@ ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes() {
 	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
 	ot-kernel_y_configopt "CONFIG_HID_COUGAR" # 2014, keyboard fixes
 	ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
+	ot-kernel_y_configopt "CONFIG_HID_LOGITECH" # 2005
 	ot-kernel_y_configopt "CONFIG_HID_RAZER" # 2010, keyboard fixes
 	ot-kernel_y_configopt "CONFIG_HID_REDRAGON" # 2015, keyboard fix
 	ot-kernel_y_configopt "CONFIG_HID_ROCCAT" # 2019-2023, mouse/keyboard
