@@ -1078,6 +1078,15 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
 
+	# For possibly watchdog to restart on freeze
+	ot-kernel_y_configopt "CONFIG_LPC_ICH"
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_ITCO_WDT"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
+
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb"
 }
 
