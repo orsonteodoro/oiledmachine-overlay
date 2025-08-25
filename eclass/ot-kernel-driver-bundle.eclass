@@ -752,7 +752,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	# CPU sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -911,7 +911,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -971,6 +971,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
@@ -1085,7 +1086,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	# Only SD reader supported
 	ot-kernel_y_configopt "CONFIG_MMC"
@@ -1259,7 +1260,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	# For speakers
 	ot-kernel_y_configopt "CONFIG_BT"
@@ -1316,13 +1317,10 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
+	# For gamer mouse
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
-
-	# Gaming headset (mic/earphones)
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
@@ -1440,7 +1438,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	# For speakers
 	ot-kernel_y_configopt "CONFIG_BT"
@@ -1536,7 +1534,9 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
+	# For gamer mouse
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
@@ -1642,7 +1642,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	# For speakers
 	ot-kernel_y_configopt "CONFIG_BT"
@@ -1685,11 +1685,28 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
+	# For gamer mouse
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+}
+
+# Mic and earphones
+ot-kernel-driver-bundle_add_usb_gamer_headsets() {
+	# For feature completness
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019, racing-wheel, console headset
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
+
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_USB"
+	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_USB"
 }
 
 ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes() {
@@ -2041,7 +2058,7 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:steering-wheel"|"controller:racing-wheel") ]] ; then
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
-		ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019, racing-wheel/headset
+		ot-kernel_y_configopt "CONFIG_HID_STEELSERIES" # 2001, 2019, racing-wheel, console headset
 		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
 		ot-kernel_y_configopt "CONFIG_LOGIRUMBLEPAD2_FF" # 2004-2006
