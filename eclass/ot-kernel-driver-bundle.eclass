@@ -257,6 +257,13 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
+
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
@@ -406,6 +413,13 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
+
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 
@@ -551,6 +565,13 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -712,6 +733,13 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
+
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb"
@@ -879,6 +907,13 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
+
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb"
 }
@@ -1020,14 +1055,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_THERMAL"
 
-	# For sound, HDMI (TV output)
-	ot-kernel_y_configopt "CONFIG_SOUND"
-	ot-kernel_y_configopt "CONFIG_SND"
-	ot-kernel_y_configopt "CONFIG_SND_PCI"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
-
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
@@ -1036,19 +1063,22 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
 
-	# For gameport to USB adapter (2005)
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
 
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD" # 2001
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_XPAD_FF" # 2005
+	# For sound, HDMI (TV output)
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -1199,6 +1229,13 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
+
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	# For ethernet for wired Internet
 	ot-kernel_y_configopt "CONFIG_ETHERNET"
@@ -1391,6 +1428,13 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
 
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
+
 	# For 3D modeling with a haptic stylus
 	# USB 2.0, USB 3.0, Ethernet, Parallel Port (EPP)
 	# OH Linux (2009)
@@ -1574,6 +1618,13 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_EC"
+
+	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_PCI"
 
 	# CPU cooler sensors
 	ot-kernel_y_configopt "CONFIG_HID"
