@@ -7649,6 +7649,7 @@ dev-libs/libgpiod
 dev-util/lttng-modules
 dev-util/sysdig-kmod
 games-util/hid-nintendo
+games-util/xone
 games-util/xpadneo
 media-libs/svgalib
 media-sound/netcat-cpi
@@ -11617,7 +11618,11 @@ ot-kernel-pkgflags_xoscope() { # DONE
 # Applies kernel config flags for the xpadneo package
 ot-kernel-pkgflags_xpadneo() { # DONE
 	if ot-kernel_has_version_pkgflags "games-util/xpadneo" ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_UHID"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
