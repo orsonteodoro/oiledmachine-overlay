@@ -783,6 +783,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
@@ -972,6 +973,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
@@ -1311,10 +1313,8 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
-	# For gamer mouse
-	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
@@ -1521,10 +1521,8 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
-	# For gamer mouse
-	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
@@ -1672,10 +1670,8 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
-	# For gamer mouse
-	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
@@ -1694,6 +1690,18 @@ ot-kernel-driver-bundle_add_usb_gamer_headsets() {
 	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_USB"
+}
+
+ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes() {
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
+	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
+	ot-kernel_y_configopt "CONFIG_HID_KYE" # 2013
+	ot-kernel_y_configopt "CONFIG_HID_LOGITECH" # 2005
+	ot-kernel_y_configopt "CONFIG_HID_LOGITECH_HIDPP" # 2014, 2016, 2017, 2019, 2020, 2024, for feature completeness
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_HID"
 }
 
 ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes() {
