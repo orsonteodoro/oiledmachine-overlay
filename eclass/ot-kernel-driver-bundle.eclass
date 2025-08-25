@@ -783,6 +783,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_usb_gamer_headsets
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
