@@ -1876,6 +1876,7 @@ TBM=0
       controller:adapter
       controller:arcade
       controller:dongle
+      controller:dance-pad
       controller:drawing-tablet
       controller:gamepad
       controller:flight-stick
