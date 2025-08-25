@@ -333,6 +333,20 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
 
+	# For Zip Drive (internal)
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+
+	# For Zip Drive (external)
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC"
+	ot-kernel_y_configopt "CONFIG_PARPORT"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_SCSI_PPA"
+	ot-kernel_y_configopt "CONFIG_SCSI_IMM"
+
+	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
 	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
@@ -497,6 +511,19 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
+
+	# For Zip Drive (internal)
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+
+	# For Zip Drive (external)
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC"
+	ot-kernel_y_configopt "CONFIG_PARPORT"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_SCSI_PPA"
+	ot-kernel_y_configopt "CONFIG_SCSI_IMM"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -797,6 +824,19 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
+
+	# For Zip Drive (internal)
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+
+	# For Zip Drive (external)
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC"
+	ot-kernel_y_configopt "CONFIG_PARPORT"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_SCSI_PPA"
+	ot-kernel_y_configopt "CONFIG_SCSI_IMM"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
