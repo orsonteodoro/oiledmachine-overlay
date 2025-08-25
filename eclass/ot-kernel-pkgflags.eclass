@@ -11587,9 +11587,12 @@ ot-kernel-pkgflags_xmms2() { # DONE
 
 # @FUNCTION: ot-kernel-pkgflags_xone
 # @DESCRIPTION:
-# Applies kernel config flags for the xorg-server package
+# Applies kernel config flags for the xone package
 ot-kernel-pkgflags_xone() { # DONE
 	if ot-kernel_has_version_pkgflags "games-util/xone" ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_UHID"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
 	fi
