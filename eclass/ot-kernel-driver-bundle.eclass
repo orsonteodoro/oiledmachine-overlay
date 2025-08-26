@@ -1617,11 +1617,6 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 	if [[ \
 		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "graphics:radeon"($|" ")\
-|"graphics:wonder"\
-|"graphics:mach"\
-|"graphics:3d-rage"\
-|"graphics:rage-pro"\
-|"graphics:rage-128"\
 |"graphics:r100"\
 |"graphics:r200"\
 |"graphics:r300"\
@@ -1725,8 +1720,12 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 
 	# When both kernel command line options are enabled, the framebuffer is
 	# using accelerated KMS.
-		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		fi
 
 	# Disable all graphical framebuffer drivers for TTY
 		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
@@ -1739,6 +1738,20 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
 		ot-kernel_unset_configopt "CONFIG_VGA_CONSOLE" # This will conflict
 ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvidia-drivers package."
+
+	# Provide framebuffer console on boot
+		if [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
+			ot-kernel_unset_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		else
+			ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		fi
+
+	# Allow only text based TTY driver for host as the fallback to fix broken driver versions
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE" # Graphics support >  Console display driver support > Framebuffer Console support
+		ot-kernel_y_configopt "CONFIG_TTY" # Character devices > Enable TTY
+		ot-kernel_y_configopt "CONFIG_VT"
 	fi
 }
 
@@ -1752,13 +1765,13 @@ ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
 		disable_efi=1
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:atyfb"|"graphics:mach64") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:atyfb"|"graphics:mach64"|"graphics:mach"($|" ")|"graphics:rage-pro") ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_ATY"
 		disable_efi=1
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:aty128fb"|"graphics:rage128") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:aty128fb"|"graphics:rage128"|"graphics:rage-128") ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_ATY128" # 1998
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
@@ -1814,7 +1827,7 @@ ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
 		disable_efi=1
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:vesafb"|"graphics:vesa") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:vesafb"|"graphics:vesa"|"graphics:wonder"|"graphics:3d-rage") ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_VESA" # 1994
 		disable_efi=1

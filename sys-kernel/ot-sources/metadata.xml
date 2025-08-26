@@ -1755,11 +1755,6 @@ TBM=0
       graphics:g550
 
       graphics:radeon
-      graphics:wonder
-      graphics:mach
-      graphics:3d-rage
-      graphics:rage-pro
-      graphics:rage-128
       graphics:r100
       graphics:r200
       graphics:r300
@@ -1804,10 +1799,25 @@ TBM=0
       graphics:g43
       graphics:g45
       graphics:hd-graphics
+
       graphics:xe
+
       graphics:matroxfb
+
+      graphics:atyfb
+
+      graphics:mach64
+      graphics:mach
+
       graphics:atyfb
       graphics:mach64
+      graphics:mach      
+      graphics:rage-pro
+
+      graphics:aty128fb
+      graphics:rage128
+      graphics:rage-128
+
 
       graphics:nvidiafb
 
@@ -1835,6 +1845,8 @@ TBM=0
 
       graphics:vesafb
       graphics:vesa
+      graphics:wonder
+      graphics:3d-rage
 
       graphics:simplefb
       graphics:simpledrm
@@ -4596,6 +4608,12 @@ unset OT_KERNEL_PRIVATE_KEY
       workstation
       vm-guest-desktop
       vm-guest-gaming
+      vm-guest-headless
+      vm-host-desktop
+      vm-host-desktop-gpu-passthrough
+      vm-host-gaming
+      vm-host-gaming-gpu-passthrough
+      vm-host-headless
 
     Notes:
 
@@ -5214,6 +5232,20 @@ unset OT_KERNEL_PRIVATE_KEY
 
     VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.
     Valid values:  0, 1 (default).
+
+    VM_HOST_PCIE_ACS_OVERRRIDE - Apply virtual machine host workaround to
+    fix GPU passthrough issues.  This fix can lower security or increase
+    instability.
+
+    Motherboard it applies to:
+    AMD B550 or B-series chipsets
+    Older AMD X-series chipsets (X370, X470)
+    Older Intel® X-series chipsets
+    Older Intel® Z-series chipsets (Z170)
+    IOMMU grouped PCIe slots
+
+    Valid values:  0 (default), 1
+    
 
     VSYSCALL_MODE - Select vsyscall mode.
     Valid values:  full, emulate (default).

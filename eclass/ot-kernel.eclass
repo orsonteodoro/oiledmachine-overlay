@@ -11731,16 +11731,35 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
+		   "${work_profile}" == "vm-host-desktop" \
+		|| "${work_profile}" == "vm-host-desktop-gpu-passthrough" \
+		|| "${work_profile}" == "vm-host-gaming" \
+		|| "${work_profile}" == "vm-host-gaming-gpu-passthrough" \
+		|| "${work_profile}" == "vm-host-headless" \
+	]] ; then
+		if [[ "${work_profile}" == "vm-host-headless" ]] ; then
+			ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+			timer_handling="tickless-full"
+		else
+			ot-kernel_set_kconfig_set_highest_timer_hz
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
+			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
+			timer_handling="tickless"
+		fi
+	elif [[ \
 		   "${work_profile}" == "vm-guest-desktop" \
 		|| "${work_profile}" == "vm-guest-gaming" \
+		|| "${work_profile}" == "vm-guest-headless" \
 	]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
-		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
-		if [[ "${work_profile}" == "vm-guest-gaming" ]] ; then
-			interactive_critical=1
-		else
+		if [[ "${work_profile}" == "vm-guest-headless" ]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			timer_handling="tickless-full"
+		else
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
+			timer_handling="tickless"
 		fi
 	elif [[ \
 		   "${work_profile}" == "game-server" \
@@ -13911,6 +13930,78 @@ ot-kernel_fix_external_modules() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_vm_host_gpu_passthrough
+# @DESCRIPTION:
+ot-kernel_set_kconfig_vm_host_gpu_passthrough() {
+	# For GPU passthrough, the host DRM and framebuffer drivers are removed, and
+	# the guest virtual machine can use the amdgpu or nvidia-drm (closed source) driver.
+	if [[ \
+		   "${work_profile}" == "vm-host-gaming-gpu-passthrough" \
+		|| "${work_profile}" == "vm-host-desktop-gpu-passthrough" \
+	]] ; then
+	# GPU passthrough needs IOMMU which was released circa 2013 in consumer grade GPUs
+
+	# Disable all DRM and graphical framebuffer for GPU passthrough
+		ot-kernel_unset_configopt "CONFIG_DRM_AMDGPU" # Yes for GPU passthrough
+		ot-kernel_unset_configopt "CONFIG_DRM_I915" # Intel HD Graphics (>= Haswell Gen7.5) - Yes for GPU passthrough
+		ot-kernel_unset_configopt "CONFIG_DRM_MGAG200"
+		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
+		ot-kernel_unset_configopt "CONFIG_DRM_RADEON" # Yes >= GCN 2 for GPU passthrough
+		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
+		ot-kernel_unset_configopt "CONFIG_DRM_XE"
+		ot-kernel_unset_configopt "CONFIG_FB_ATY"
+		ot-kernel_unset_configopt "CONFIG_FB_ATY128"
+		ot-kernel_unset_configopt "CONFIG_FB_EFI"
+		ot-kernel_unset_configopt "CONFIG_FB_I740"
+		ot-kernel_unset_configopt "CONFIG_FB_MATROX"
+		ot-kernel_unset_configopt "CONFIG_FB_NVIDIA" # Yes for Maxwell >= Sep 2014 for GPU passthrough
+		ot-kernel_unset_configopt "CONFIG_FB_RADEON"
+		ot-kernel_unset_configopt "CONFIG_FB_RIVA"
+		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
+		ot-kernel_unset_configopt "CONFIG_FB_UVESA"
+		ot-kernel_unset_configopt "CONFIG_FB_VESA"
+		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
+
+	# Removed to prevent nvidia-drm being used
+	# It cannot be used in both host hypervisor and guest virtual machine.
+	# The options are only allowed in non-vm setups.
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+
+	# Needs to be disabled on both guest virtual machine and host hypervisor.
+		ot-kernel_unset_configopt "CONFIG_DRM_FBDEV_EMULATION"
+
+	# Removed to prevent fallback to legacy driver
+		ot-kernel_unset_configopt "CONFIG_VGA_CONSOLE"
+
+	# Allow only text based TTY driver for host
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE" # Graphics support >  Console display driver support > Framebuffer Console support
+		ot-kernel_y_configopt "CONFIG_TTY" # Character devices > Enable TTY
+		ot-kernel_y_configopt "CONFIG_VT"
+
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_INTEL_IOMMU"
+			ot-kernel_set_kconfig_kernel_cmdline "intel_iommu=on"
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_AMD_IOMMU"
+			ot-kernel_set_kconfig_kernel_cmdline "amd_iommu=on"
+		fi
+		ot-kernel_set_kconfig_kernel_cmdline "iommu=pt"
+		if [[ "${VM_HOST_PCIE_ACS_OVERRRIDE}" == "1" ]] ; then
+	# Fix GPU passthrough for problematic chipsets
+			ot-kernel_set_kconfig_kernel_cmdline "pcie_acs_override=downstream,multifunction"
+		fi
+
+		if has_version "app-emulation/qemu" || has_version "app-emulation/xen" ; then
+			ot-kernel_y_configopt "CONFIG_VFIO_PCI"
+		fi
+ewarn "KMS and framebuffers will be disabled for GPU passthrough on host.  Assuming X drivers used instead."
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -14019,6 +14110,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	local _FORCE_OT_KERNEL_EXTERNAL_MODULES=0
 	ot-kernel-driver-bundle_add_drivers
+	ot-kernel_set_kconfig_vm_host_gpu_passthrough
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	local _OT_KERNEL_DEV_MEM=0

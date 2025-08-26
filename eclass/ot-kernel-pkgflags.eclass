@@ -7333,7 +7333,7 @@ ot-kernel-pkgflags_nv() { # DONE
 
 	# These two selects DRM_KMS_HELPER indirectly. \
 		ot-kernel_y_configopt "CONFIG_DRM"
-		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		_ot-kernel_set_drm_fbdev_emulation
 
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -7427,8 +7427,12 @@ ot-kernel-pkgflags_nv() { # DONE
 
 	# When both kernel command line options are enabled, the framebuffer is
 	# using accelerated KMS.
-		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		fi
 
 	# Disable all graphical framebuffer drivers for TTY
 		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
@@ -10651,7 +10655,7 @@ ot-kernel-pkgflags_vbox() { # DONE
 			ot-kernel_y_configopt "CONFIG_VIRTIO_MENU"
 			ot-kernel_y_configopt "CONFIG_VIRTIO_PCI"
 			ot-kernel_y_configopt "CONFIG_DRM"
-			ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+			_ot-kernel_set_drm_fbdev_emulation
 			ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 			ot-kernel_y_configopt "CONFIG_FB"
 			ot-kernel_y_configopt "CONFIG_DRM_VMWGFX"
@@ -11305,7 +11309,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_MEMORY_HOTREMOVE"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_DEVICE_PRIVATE"
-		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		_ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
 		ot-kernel_y_configopt "CONFIG_AGP"
@@ -11465,7 +11469,7 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_I915_FBDEV"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.3" ; then
-			ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+			_ot-kernel_set_drm_fbdev_emulation
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.6" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
@@ -11533,7 +11537,7 @@ ot-kernel-pkgflags_xf86_video_nouveau() { # DONE
 	if ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-nouveau" ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		_ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU"
 	fi
 }
@@ -14161,6 +14165,17 @@ _ot-kernel_set_ia32_support() {
 	        ot-kernel_unset_configopt "CONFIG_IA32_EMULATION"
 	else
 	        ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_set_drm_fbdev_emulation
+# @DESCRIPTION:
+# Proper "Enable legacy fbdev support for your modesetting driver" setup
+_ot-kernel_set_drm_fbdev_emulation() {
+	if [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
+		ot-kernel_unset_configopt "CONFIG_DRM_FBDEV_EMULATION"
+	else
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
 	fi
 }
 
