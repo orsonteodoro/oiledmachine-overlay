@@ -1719,7 +1719,7 @@ TBM=0
     quick installs.  You can define a custom hook function
     ot-kernel-driver-bundle_add_custom_driver_bundle in your env profile which
     will add your personal set of drivers.  Currently ARCH=x86 and ARCH=amd64
-    is only supported for prelected bundles.
+    are only supported for prelected bundles.
 
     Acceptable values:
 
@@ -1902,7 +1902,7 @@ TBM=0
       wifi:rtw8922
       wifi:rtw8922ae
 
-      Gamer devices by vendor
+      Gamer devices by vendor name
 
       controller:8bitdo
       controller:act-labs
