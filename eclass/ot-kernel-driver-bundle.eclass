@@ -1555,7 +1555,7 @@ ot-kernel-driver-bundle_add_graphics() {
 		ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
 	fi
 
-	if [[ "${tag}" =~ "pci" ]] ; then
+	if [[ "${tag}" =~ "pci"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	fi
 
