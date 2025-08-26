@@ -1697,7 +1697,7 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 	fi
 
 	# If efifb and simpledrm are built, simpledrm is used.
-	# If simpledrm and simplebf are built, simpledrm is used.
+	# If simpledrm and simplefb are built, simpledrm is used.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:efifb" ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_EFI"
