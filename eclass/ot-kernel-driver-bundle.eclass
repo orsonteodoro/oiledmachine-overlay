@@ -96,13 +96,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "isa"
 
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -193,13 +187,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -330,13 +318,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -480,13 +462,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -629,18 +605,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
-	ot-kernel_y_configopt "CONFIG_VT"
-
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -773,18 +738,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 
-	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
-	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_VT"
-
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -936,6 +890,8 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_DRM"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_DRM_I915"
+
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	# For Wi-Fi
 	ot-kernel_y_configopt "CONFIG_CFG80211"
@@ -1089,18 +1045,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
-	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_VT"
-
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1239,18 +1184,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
-	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_VT"
-
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1435,18 +1369,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	# Modern for higher resolutions
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
-	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_VT"
-
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_TTY"
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-	ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-	ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1512,6 +1435,32 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
+ot-kernel-driver-bundle_add_console() {
+	local tag="${1}"
+
+	if [[ "${tag}" =~ "tty-graphics" ]] ; then
+	# Modern for higher resolutions or with background
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_VT"
+	fi
+
+	if [[ "${tag}" =~ "tty-text" ]] ; then
+	# Just black background
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_TTY"
+		ot-kernel_y_configopt "CONFIG_VT"
+		ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
+		ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+	fi
+
+	# Currently the kernels/ebuild support use case where it is for gaming use.
+	# It is possible to have the machine repurposed as a server.
+}
+
 ot-kernel-driver-bundle_add_storage() {
 	local tag="${1}"
 
@@ -1575,12 +1524,6 @@ ot-kernel-driver-bundle_add_graphics() {
 
 	ot-kernel-driver-bundle_add_graphics_drm_by_driver_name
 	ot-kernel-driver-bundle_add_graphics_fb_by_driver_name
-
-	# Graphical console
-	ot-kernel_y_configopt "CONFIG_FB_CORE"
-	ot-kernel_y_configopt "CONFIG_FB"
-	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-	ot-kernel_y_configopt "CONFIG_VT"
 }
 
 # KMS
