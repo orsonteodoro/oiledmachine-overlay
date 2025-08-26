@@ -1460,7 +1460,7 @@ ot-kernel-driver-bundle_add_console() {
 	# Currently the kernels/ebuild support use case where it is for gaming use.
 	# It is possible to have the machine repurposed as a server.
 
-	if [[ "${tag}" =~ "serial" ]] ; then
+	if [[ "${tag}" =~ ($|" ")"serial" ]] ; then
 	# For headless servers
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SERIAL_8250"
