@@ -1459,6 +1459,23 @@ ot-kernel-driver-bundle_add_console() {
 
 	# Currently the kernels/ebuild support use case where it is for gaming use.
 	# It is possible to have the machine repurposed as a server.
+
+	if [[ "${tag}" =~ "serial" ]] ; then
+	# For headless servers
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250"
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_TTY"
+	fi
+	if [[ "${tag}" =~ "usb-serial" ]] ; then
+	# For headless servers
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_TTY"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SERIAL"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_SERIAL_CONSOLE"
+	fi
 }
 
 ot-kernel-driver-bundle_add_storage() {
