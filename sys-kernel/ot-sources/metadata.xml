@@ -5177,15 +5177,6 @@ unset OT_KERNEL_PRIVATE_KEY
     128 - acceptable on x86 or x86_64 arches
     unset - uses 256 key size on x86_64 or 128 key size on x86
 
-    TTY_DRIVER - Add a video driver as a TTY driver fallback for binary GPU drivers
-    Valid values:
-      efi - newer systems
-      simple - greater portability but conflicts with some binary GPU drivers
-      vesa - older systems
-      headless - no tty
-      none - no tty
-    (Valid only in binary driver contexts.)
-
     USB_FLASH_EXT2 - Add support for ext2 USB flash disks (aka USB thumb drive)
     Valid values:  0 (default), 1.
 

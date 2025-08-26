@@ -7312,43 +7312,6 @@ ot-kernel-pkgflags_nut() { # DONE
 	fi
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_tty_fallback
-# @DESCRIPTION:
-# Adds a video driver for TTY as the fallback to binary GPU drivers.
-_ot-kernel-pkgflags_tty_fallback() {
-	if [[ "${TTY_DRIVER}" == "efi" ]] ; then
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_EFI"
-		ot-kernel_set_configopt "CONFIG_FB_EFI" "y"
-		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
-	elif [[ "${TTY_DRIVER}" == "simple" ]] \
-		&& ver_test "${MY_PV}" -lt "5.8.13" ; then
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_set_configopt "CONFIG_FB_SIMPLE" "m"
-		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
-	elif [[ "${TTY_DRIVER}" == "vesa" \
-		&& "${arch}" =~ ("x86") ]] ; then
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_set_configopt "CONFIG_FB_VESA" "y"
-		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
-	elif [[ "${TTY_DRIVER}" =~ ("headless"|"none") ]] ; then
-		ot-kernel_unset_configopt "CONFIG_FB_EFI"
-		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
-		ot-kernel_unset_configopt "CONFIG_FB_VESA"
-	else
-eerror
-eerror "You must choose one of the following:"
-eerror
-eerror "  TTY_DRIVER=efi"
-eerror "  TTY_DRIVER=simple    ${message}"
-eerror "  TTY_DRIVER=vesa"
-eerror "  TTY_DRIVER=headless"
-eerror "  TTY_DRIVER=none"
-eerror
-		die
-	fi
-}
-
 # @FUNCTION: ot-kernel-pkgflags_nv
 # @DESCRIPTION:
 # Applies kernel config flags for the nv driver
@@ -7452,8 +7415,29 @@ ot-kernel-pkgflags_nv() { # DONE
 			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
 		fi
 
-		local message="# Broken with the ${pkg} package for >= 5.18.13"
-		_ot-kernel-pkgflags_tty_fallback
+	# Add graphical framebuffer support
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_VT"
+
+	# TTY framebuffer can only use efifb or the two settings below which
+	# enables the closed KMS driver (nvidia-drm).
+
+	# When both kernel command line options are enabled, the framebuffer is
+	# accelerated and KMS.
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+
+	# Disable all tty fb drivers
+		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
+		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
+		ot-kernel_unset_configopt "CONFIG_FB_EFI" # This is unaccelerated
+		ot-kernel_unset_configopt "CONFIG_FB_NVIDIA"
+		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
+		ot-kernel_unset_configopt "CONFIG_FB_UVESA"
+		ot-kernel_unset_configopt "CONFIG_FB_VESA"
+		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
 	fi
 }
 

@@ -4330,7 +4330,6 @@ ot-kernel_clear_env() {
 	unset TBM
 	unset TRESOR_MAX_KEY_SIZE
 	unset TRESOR_TARGET_OVERRIDE
-	unset TTY_DRIVER
 	unset QEMU_GUEST_LINUX
 	unset QEMU_HOST
 	unset QEMU_KVMGT
