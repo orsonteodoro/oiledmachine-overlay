@@ -4994,12 +4994,6 @@ unset OT_KERNEL_PRIVATE_KEY
     Examples:
       MICROCODE_BLACKLIST="-s !0x000406f1"
 
-    MOBO_AUDIO - Add support for motherboard audio, gamer grade PCI audio, or laptop audio.
-    Valid values:  1 (default), 0
-
-    MOBO_AUDIO_LEGACY - Add support for legacy motherboard audio or gamer grade PCI audio.
-    Valid values:  1, 0 (default)
-
     OPENRGB_RESOLVE_ACPI_SMBUS_CONFLICT - Add additional kernel command line
     args to fix ACPI and SMBUS conficts.
     Valid values:  0 (default), 1.

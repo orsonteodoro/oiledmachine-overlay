@@ -4295,8 +4295,6 @@ ot-kernel_clear_env() {
 	unset MDADM_RAID
 	unset MICROCODE_SIGNATURES
 	unset MICROCODE_BLACKLIST
-	unset MOBO_AUDIO
-	unset MOBO_AUDIO_LEGACY
 	unset NEST_SPINNING
 	unset NFS_CLIENT
 	unset NFS_SERVER
@@ -5006,42 +5004,6 @@ eerror "The value clear for OT_KERNEL_NET_QOS_SCHEDULERS has been changed to dis
 		picked_alg="${picked_alg,,}"
 einfo "Using ${picked_alg} as the default network QoS"
 		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg^^}"
-	fi
-}
-
-# @FUNCTION: ot-kernel_set_mobo_audio
-# @DESCRIPTION:
-# Common motherboard audio, pci cards for budget gamer, or laptop audio.
-ot-kernel_set_mobo_audio() {
-	# 2005 - present (2023)
-	if [[ "${MOBO_AUDIO:-1}" == "1" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_PCI"
-		ot-kernel_y_configopt "CONFIG_SND_PCI"
-		ot-kernel_set_configopt "CONFIG_SND_HDA_INTEL" "m"
-		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_CA0110" "m" # 2008
-		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_CA0132" "m" # 2011
-		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_REALTEK" "m" # 2004
-		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" "m" # 2005
-		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_VIA" "m" # 2006-2009
-		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
-		ot-kernel_set_configopt "CONFIG_SND_VIRTUOSO" "m" # 2008
-	fi
-	# 1997 - 2004
-	if [[ "${MOBO_AUDIO_LEGACY:-0}" == "1" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_SND_PCI"
-		ot-kernel_set_configopt "CONFIG_SND_ATIIXP" "m" # 2003-2004
-		ot-kernel_set_configopt "CONFIG_SND_AU8810" "m" # 1999
-		ot-kernel_set_configopt "CONFIG_SND_AU8820" "m" # 1997
-		ot-kernel_set_configopt "CONFIG_SND_AU8830" "m" # 1998
-		ot-kernel_set_configopt "CONFIG_SND_CTXFI" "m" # 2005
-		ot-kernel_set_configopt "CONFIG_SND_EMU10K1" "m" # 1998
-		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0" "m" # 1999
-		ot-kernel_set_configopt "CONFIG_SND_CA0106" "m" # 2004
-		ot-kernel_set_configopt "CONFIG_SND_VIA82XX" "m" # 2002
 	fi
 }
 
@@ -14057,7 +14019,6 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	local _FORCE_OT_KERNEL_EXTERNAL_MODULES=0
 	ot-kernel-driver-bundle_add_drivers
-	ot-kernel_set_mobo_audio
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	local _OT_KERNEL_DEV_MEM=0
