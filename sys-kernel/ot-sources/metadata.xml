@@ -2004,6 +2004,10 @@ TBM=0
       controller:two-handed-joystick
       controller:vibrator
 
+      Storage devices by general type
+
+      storage:zip-drive
+
     Examples
 
       OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad graphics:efifb graphics:amdgpu"

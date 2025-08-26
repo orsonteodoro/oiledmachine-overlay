@@ -118,6 +118,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
@@ -239,6 +240,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	# Temp sensor
@@ -311,18 +313,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
 
-	# For Zip Drive (internal)
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
-
-	# For Zip Drive (external)
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC"
-	ot-kernel_y_configopt "CONFIG_PARPORT"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_SCSI_PPA"
-	ot-kernel_y_configopt "CONFIG_SCSI_IMM"
+	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -386,6 +377,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer, scanner
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	# For scanner
@@ -471,18 +463,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
 
-	# For Zip Drive (internal)
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
-
-	# For Zip Drive (external)
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC"
-	ot-kernel_y_configopt "CONFIG_PARPORT"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_SCSI_PPA"
-	ot-kernel_y_configopt "CONFIG_SCSI_IMM"
+	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -539,6 +520,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	# Temp sensor
@@ -605,6 +587,8 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
+
+	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -757,19 +741,6 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
 	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
-
-	# For Zip Drive (internal)
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
-
-	# For Zip Drive (external)
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC"
-	ot-kernel_y_configopt "CONFIG_PARPORT"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_SCSI_PPA"
-	ot-kernel_y_configopt "CONFIG_SCSI_IMM"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -1366,6 +1337,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_PARPORT"
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
@@ -1538,6 +1510,43 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+}
+
+ot-kernel-driver-bundle_add_storage() {
+	local tag="${1}"
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tag}" =~ "ide" ]] ; then
+	# 1995
+		ot-kernel_y_configopt "CONFIG_ATA"
+		ot-kernel_y_configopt "CONFIG_ATA_SFF"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
+		ot-kernel_y_configopt "CONFIG_SCSI"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tag}" =~ "scsi" ]] ; then
+	# 1995
+		ot-kernel_y_configopt "CONFIG_SCSI"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
+		# TODO add controller
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tag}" =~ "parport" ]] ; then
+	# 1995
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_PARPORT"
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC"
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
+		ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_SCSI"
+		ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
+		ot-kernel_y_configopt "CONFIG_SCSI_PPA"
+		ot-kernel_y_configopt "CONFIG_SCSI_IMM"
+	fi
 }
 
 # Do this to speed up build times
