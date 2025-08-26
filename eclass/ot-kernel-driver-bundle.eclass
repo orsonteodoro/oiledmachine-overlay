@@ -1496,7 +1496,8 @@ ot-kernel-driver-bundle_add_console() {
 	fi
 
 	if grep -q -E -e "CONFIG_TTY=y" "${path_config}" ; then
-	# This can be turned off you don't use emulators or access legacy systems.
+	#
+	# This option can be turned off you don't use emulators or access legacy systems.
 	#
 	# Use cases for LCD legacy displays, emulators, or serial connections that only support
 	# the following code pages:
@@ -1521,8 +1522,8 @@ ot-kernel-driver-bundle_add_console() {
 			ot-kernel_unset_configopt "CONFIG_VT_HW_CONSOLE_BINDING"
 		fi
 
-	# For graphical terminals or ssh
-		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS" # Not used for serial headless
+	# For graphical terminals or SSH servers
+		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 	fi
 }
 
