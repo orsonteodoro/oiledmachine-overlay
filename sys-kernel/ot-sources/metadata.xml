@@ -4771,35 +4771,6 @@ unset OT_KERNEL_PRIVATE_KEY
     (for 32-bit x86 only)
     Valid values:  0 (default), 1
 
-    CAMERAS - Add camera support.  Multiple drivers are space separated.
-    Valid values:
-      all - support all USB or I2C based cameras.
-      ep800 - support the EP800 USB sensor.
-      gl860 - support the GL860 USB sensor.
-      gspca - support all USB based gspca webcams.
-      i2c - support all i2c cameras used in smartphone or mobile devices.
-      m5602 - support the m5602 USB sensor.
-      name - a specific driver listed in one of the following lists:
-        https://docs.kernel.org/admin-guide/media/gspca-cardlist.html
-        https://github.com/torvalds/linux/blob/master/drivers/media/i2c/Kconfig
-        https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/gl860/Kconfig
-        https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/m5602/Kconfig
-        https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/stv06xx/Kconfig
-        https://github.com/torvalds/linux/blob/master/drivers/media/usb/pwc/Kconfig
-      none (default) - do not support webcams.  Same as unset.
-      pwc - support pwc USB cameras.  See the above link.
-      stv06xx - support STV06xx USB camera.
-      uvc - support UVC based cameras (recommended)
-      
-    Examples:
-      CAMERAS="all"
-      CAMERAS="uvc"
-      CAMERAS="ov519 zc3xx m5602"
-      CAMERAS="imx355"
-
-    CAMERAS_SNAPSHOT_BUTTON - Add support for the take snapshot button.
-    Valid values:  0, 1 (default if uvc is added)
-
     CDROM - Support for CDROM, CD-R, CD-RW
     Valid values:  0, 1 (default)
     See also:  DVD

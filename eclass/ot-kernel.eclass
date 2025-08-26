@@ -4263,8 +4263,6 @@ ot-kernel_clear_env() {
 	unset AMDGPU_OVERDRIVE
 	unset AMDGPU_VM_FRAGMENT_SIZE
 	unset ALSA_PC_SPEAKER
-	unset CAMERAS
-	unset CAMERAS_SNAPSHOT_BUTTON
 	unset CRYPTSETUP_CIPHERS
 	unset CRYPTSETUP_INTEGRITIES
 	unset CRYPTSETUP_HASHES
@@ -5044,128 +5042,6 @@ ot-kernel_set_mobo_audio() {
 		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0" "m" # 1999
 		ot-kernel_set_configopt "CONFIG_SND_CA0106" "m" # 2004
 		ot-kernel_set_configopt "CONFIG_SND_VIA82XX" "m" # 2002
-	fi
-}
-
-# @FUNCTION: ot-kernel_set_webcam
-# @DESCRIPTION:
-# Enable webcam drivers.
-ot-kernel_set_webcam() {
-	cd "${BUILD_DIR}" || die
-	local wants_gspca=0
-	local wants_usb_webcam=0
-	local wants_uvc_webcam=0
-	local cameras="${CAMERAS,,}"
-	if [[ "${cameras}" == "gspca" || "${cameras}" == "all" ]] ; then
-		wants_gspca=1
-		local ALL_GSPCA=(
-			$(grep -r -e "config USB_GSPCA" $(find drivers/media/usb -name "Kconfig*") \
-				| cut -f 2 -d ":" \
-				| cut -f 2 -d " " \
-				| cut -f 3 -d "_" \
-				| sort \
-				| sed -e "/^$/d")
-			"USB_GL860"
-			"USB_M5602"
-			"USB_STV06XX"
-		)
-		local m # gspca module
-		for m in ${ALL_GSPCA[@]} ; do
-			ot-kernel_set_configopt "CONFIG_${m}" "m"
-			wants_usb_webcam=1
-			wants_gspca=1
-		done
-	fi
-
-	# Add requested GSPCA drivers
-	if [[ -n "${cameras}" ]] ; then
-		local ALL_GSPCA=(
-			$(grep -r -e "config USB_GSPCA" $(find drivers/media/usb -name "Kconfig*") \
-				| cut -f 2 -d ":" \
-				| cut -f 2 -d " " \
-				| cut -f 3 -d "_" \
-				| sort \
-				| sed -e "/^$/d")
-			"USB_GL860"
-			"USB_M5602"
-			"USB_STV06XX"
-		)
-		local x
-		for x in ${cameras^^} ; do
-			local m
-			for m in ${ALL_GSPCA[@]} ; do
-				if [[ "${x}" =~ "${m}" ]] ; then
-					ot-kernel_set_configopt "CONFIG_${m}" "m"
-					wants_usb_webcam=1
-					wants_gspca=1
-				fi
-			done
-		done
-	fi
-
-	if [[ "${cameras}" =~ ("all"|"pwc") ]] ; then
-		ot-kernel_set_configopt "CONFIG_USB_PWC" "m"
-		wants_usb_webcam=1
-	fi
-
-	if [[ "${cameras}" =~ ("all"|"uvc") ]] ; then
-		ot-kernel_set_configopt "CONFIG_USB_VIDEO_CLASS" "m"
-		wants_usb_webcam=1
-		if [[ "${CAMERAS_SNAPSHOT_BUTTON:-1}" == "1" ]] ; then
-			# Take snapshot button
-			ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
-			ot-kernel_y_configopt "CONFIG_INPUT"
-			ot-kernel_y_configopt "CONFIG_CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
-		fi
-	fi
-
-	if (( ${wants_usb_webcam} == 1 )) ; then
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	fi
-
-	if (( ${wants_gspca} == 1 )) ; then
-		ot-kernel_set_configopt "CONFIG_USB_GSPCA" "m"
-	fi
-
-	# For testing build time breakage
-	ot-kernel_set_kconfig_ep800
-}
-
-# @FUNCTION: ot-kernel_set_mobile_camera
-# @DESCRIPTION:
-# Enable camera drivers for smartphone or mobile devices
-ot-kernel_set_mobile_camera() {
-	cd "${BUILD_DIR}" || die
-	local cameras="${CAMERAS,,}"
-	local wants_i2c_camera=0
-	if [[ "${cameras}" == "i2c" || "${cameras}" == "all" ]] ; then
-		local ALL_I2C_CAMERAS=(
-			$(grep -r -e "^config VIDEO_" $(find drivers/media/i2c -name "Kconfig*") \
-				| cut -f 2- -d ":" \
-				| cut -f 2 -d " " \
-				| sort)
-		)
-		local x
-		for x in ${cameras^^} ; do
-			local m
-			for m in ${ALL_I2C_CAMERAS[@]} ; do
-				if [[ "${x}" =~ "${m}" ]] ; then
-					ot-kernel_set_configopt "CONFIG_${m}" "m"
-					wants_i2c_camera=1
-				fi
-			done
-		done
-	fi
-	if (( ${wants_i2c_camera} == 1 )) ; then
-		ot-kernel_y_configopt "CONFIG_VIDEO_CAMERA_SENSOR"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_I2C"
 	fi
 }
 
@@ -14182,8 +14058,6 @@ einfo "Forcing the default hardening level for maximum uptime"
 	local _FORCE_OT_KERNEL_EXTERNAL_MODULES=0
 	ot-kernel-driver-bundle_add_drivers
 	ot-kernel_set_mobo_audio
-	ot-kernel_set_webcam
-	ot-kernel_set_mobile_camera
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	local _OT_KERNEL_DEV_MEM=0
