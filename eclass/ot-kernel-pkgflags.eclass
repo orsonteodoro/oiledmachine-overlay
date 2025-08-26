@@ -7421,11 +7421,12 @@ ot-kernel-pkgflags_nv() { # DONE
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 		ot-kernel_y_configopt "CONFIG_VT"
 
-	# TTY framebuffer can only use efifb or the two settings below which
-	# enables the closed KMS driver (nvidia-drm).
+	# The nvidia-drivers can only use the TTY framebuffer with either efifb
+	# or nvidia-drm (the proprietary KMS driver) with the two settings
+	# below.
 
 	# When both kernel command line options are enabled, the framebuffer is
-	# accelerated and KMS.
+	# using accelerated KMS.
 		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
 		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
 
@@ -7438,6 +7439,8 @@ ot-kernel-pkgflags_nv() { # DONE
 		ot-kernel_unset_configopt "CONFIG_FB_UVESA"
 		ot-kernel_unset_configopt "CONFIG_FB_VESA"
 		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
+		ot-kernel_unset_configopt "CONFIG_VGA_CONSOLE" # This will conflict
+ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvidia-drivers package."
 	fi
 }
 

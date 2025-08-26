@@ -94,11 +94,6 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE" # Text only
-
 	ot-kernel-driver-bundle_add_graphics "isa"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -196,12 +191,6 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -349,11 +338,6 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
-
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -515,11 +499,6 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
-
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -665,11 +644,6 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
-
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
@@ -827,11 +801,6 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
-
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
@@ -1149,11 +1118,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
-
 	# Modern for higher resolutions
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
@@ -1303,11 +1267,6 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
-
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Modern for higher resolutions
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
@@ -1504,11 +1463,6 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	# Older framebuffer driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
-
 	# Modern for higher resolutions
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
 	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
@@ -1612,11 +1566,6 @@ ot-kernel-driver-bundle_add_graphics() {
 
 	ot-kernel-driver-bundle_add_graphics_drm_by_driver_name
 	ot-kernel-driver-bundle_add_graphics_fb_by_driver_name
-
-	# Older text only driver
-	ot-kernel_y_configopt "CONFIG_VT"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
 
 	# Graphical console
 	ot-kernel_y_configopt "CONFIG_FB_CORE"
@@ -1739,6 +1688,48 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 		ot-kernel_y_configopt "CONFIG_DRM_XE"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:simpledrm" ]] ; then
+	# An alternative framebuffer driver to replace fbdev
+	# Needs either UEFI GOP or VESA
+		ot-kernel_y_configopt "CONFIG_DRM_SIMPLEDRM"
+	fi
+
+	# If efifb and simpledrm are built, simpledrm is used.
+	# If simpledrm and simplebf are built, simpledrm is used.
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:efifb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_y_configopt "CONFIG_FB_EFI"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:nvidia-drm"|"graphics:nvidia-drivers") ]] ; then
+	# Only the graphical framebuffer will be repeated for completeness and consistency.
+	# For the full config see ot-kernel-pkgflags.
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
+
+	# The nvidia-drivers can only use the TTY framebuffer with either efifb
+	# or nvidia-drm (the proprietary KMS driver) with the two settings
+	# below.
+
+	# When both kernel command line options are enabled, the framebuffer is
+	# using accelerated KMS.
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+
+	# Disable all tty fb drivers
+		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
+		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
+		ot-kernel_unset_configopt "CONFIG_FB_EFI" # This is unaccelerated
+		ot-kernel_unset_configopt "CONFIG_FB_NVIDIA"
+		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
+		ot-kernel_unset_configopt "CONFIG_FB_UVESA"
+		ot-kernel_unset_configopt "CONFIG_FB_VESA"
+		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
+		ot-kernel_unset_configopt "CONFIG_VGA_CONSOLE" # This will conflict
+ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvidia-drivers package."
 	fi
 }
 

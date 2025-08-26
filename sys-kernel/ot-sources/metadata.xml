@@ -1739,7 +1739,8 @@ TBM=0
       graphics are provided for the driver bundles.  This selection
       process is used to debloat the production build and speed up the
       build process.  The following driver names, generations, or models
-      can be choosen.  The vga fall backs are already provided.
+      can be choosen.  The first item in the group is the driver name.
+      The remaining rows in the group are aliases.
 
       graphics:mgag200
       graphics:millennium
@@ -1771,6 +1772,7 @@ TBM=0
       graphics:northern-islands
       graphics:southern-islands
       graphics:sea-islands
+
       graphics:amdgpu
       graphics:volcanic-islands
       graphics:artic-islands
@@ -1835,6 +1837,12 @@ TBM=0
       graphics:vesa
 
       graphics:simplefb
+      graphics:simpledrm
+
+      graphics:efifb
+
+      graphics:nvidia-drm
+      graphics:nvidia-drivers
 
       For Wi-Fi, you can quick add one of the following Wi-Fi vendors for the
       preselected driver bundles if you don't know the model:
@@ -1998,8 +2006,8 @@ TBM=0
 
     Examples
 
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad"
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:ath5k controller:gamepad"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad graphics:efifb graphics:amdgpu"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:ath5k controller:gamepad graphics:efifb graphics:amdgpu"
 
       #
       # See also eclass/ot-kernel-driver-bundle.eclass for examples
