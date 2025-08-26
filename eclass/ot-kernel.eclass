@@ -14000,6 +14000,9 @@ ot-kernel_set_kconfig_vm_host_gpu_passthrough() {
 		fi
 ewarn "KMS and framebuffers will be disabled for GPU passthrough on host.  Assuming X drivers used instead."
 	fi
+	if [[ "${work_profile}" =~ "vm-guest" ]] ; then
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "iommu=pt"
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_configure_assisted
