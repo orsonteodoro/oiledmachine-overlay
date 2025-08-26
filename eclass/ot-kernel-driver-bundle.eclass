@@ -97,7 +97,9 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE" # Text only
+
+	ot-kernel-driver-bundle_add_graphics "isa"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_TTY"
@@ -195,19 +197,6 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
-	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
-	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
-	ot-kernel_y_configopt "CONFIG_FB"
-	ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
-	ot-kernel_y_configopt "CONFIG_FB_ATY128" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
-	ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
-	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -359,21 +348,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
-	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
-	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_DRM_MGAG200" # 1998
-	ot-kernel_y_configopt "CONFIG_FB"
-	ot-kernel_y_configopt "CONFIG_FB_MATROX" # 1999-2001
-	ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_PM3" # 1999
-	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
-	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel-driver-bundle_add_graphics "agp pci"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -538,19 +513,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
-	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
-	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
-	ot-kernel_y_configopt "CONFIG_FB"
-	ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
-	ot-kernel_y_configopt "CONFIG_FB_ATY128" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
-	ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
-	ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
-	ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel-driver-bundle_add_graphics "agp pci"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -701,13 +664,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
-	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
-	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
-	ot-kernel_y_configopt "CONFIG_FB"
-	ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel-driver-bundle_add_graphics "agp pci"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -869,21 +826,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
-	ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
-	ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
-
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
-
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
-
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+	ot-kernel-driver-bundle_add_graphics "agp pcie"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -1204,21 +1147,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
-
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
-
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
-
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+	ot-kernel-driver-bundle_add_graphics "pcie"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -1373,21 +1302,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
 
-	ot-kernel_y_configopt "CONFIG_AGP" # 1997
-	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
-
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
-
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
-
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+	ot-kernel-driver-bundle_add_graphics "pcie"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -1587,13 +1502,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_MMU"
-	ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
-
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+	ot-kernel-driver-bundle_add_graphics "pcie"
 
 	# Older framebuffer driver
 	ot-kernel_y_configopt "CONFIG_VT"
@@ -1675,6 +1584,252 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+}
+
+# Do this to speed up build times
+ot-kernel-driver-bundle_add_graphics() {
+	local tag="${1}"
+
+	if [[ "${tag}" =~ "isa" ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB_VGA16" # 1987
+		ot-kernel_unset_configopt "CONFIG_FB_EFI" # unaccelerated, efifb is to see early boot for UEFI (2006)
+	fi
+	if [[ "${tag}" =~ "agp" ]] ; then
+		ot-kernel_y_configopt "CONFIG_AGP" # 1997
+		ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
+		ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
+		ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
+	fi
+
+	if [[ "${tag}" =~ "pci" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+	if [[ "${tag}" =~ "pcie" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+	fi
+
+	ot-kernel-driver-bundle_add_graphics_drm_by_driver_name
+	ot-kernel-driver-bundle_add_graphics_fb_by_driver_name
+
+	# Older text only driver
+	ot-kernel_y_configopt "CONFIG_VT"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+	# Graphical console
+	ot-kernel_y_configopt "CONFIG_FB_CORE"
+	ot-kernel_y_configopt "CONFIG_FB"
+	ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+	ot-kernel_y_configopt "CONFIG_VT"
+}
+
+# KMS
+# If efifb [non-accelerated] and amdgpu [accelerated] are both built, efifb runs
+# first then amdgpu replaces it during runtime.
+ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:mgag200"\
+|"graphics:millennium"($|" ")\
+|"graphics:millennium-ii"\
+|"graphics:mystique"($|" ")\
+|"graphics:mystique-g220"\
+|"graphics:productiva-g100"\
+|"graphics:millennium-g200"\
+|"graphics:marvel-g200"\
+|"graphics:g400"($|" ")\
+|"graphics:g450"($|" ")\
+|"graphics:g550"($|" ")\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_MGAG200" # 1998
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:nouveau" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+	if [[ \
+		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:radeon"($|" ")\
+|"graphics:wonder"\
+|"graphics:mach"\
+|"graphics:3d-rage"\
+|"graphics:rage-pro"\
+|"graphics:rage-128"\
+|"graphics:r100"\
+|"graphics:r200"\
+|"graphics:r300"\
+|"graphics:r400"\
+|"graphics:r500"\
+|"graphics:r600"\
+|"graphics:rv670"\
+|"graphics:r700"\
+|"graphics:evergreen"\
+|"graphics:northern-islands"\
+|"graphics:southern-islands"\
+|"graphics:sea-islands"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+	if [[ \
+		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:amdgpu"\
+|"graphics:volcanic-islands"\
+|"graphics:artic-islands"\
+|"graphics:polaris"\
+|"graphics:vega"\
+|"graphics:navi-1x"\
+|"graphics:navi-2x"\
+|"graphics:navi-3x"\
+|"graphics:navi-4x"\
+|"graphics:gcn3"\
+|"graphics:gcn4"\
+|"graphics:gcn5"\
+|"graphics:rdna"($|" ")\
+|"graphics:rdna2"\
+|"graphics:rdna3"\
+|"graphics:rdna4"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:i915"\
+|"graphics:830m"\
+|"graphics:845g"\
+|"graphics:852gm"\
+|"graphics:855gm"\
+|"graphics:865g"\
+|"graphics:915g"\
+|"graphics:945g"\
+|"graphics:965g"\
+|"graphics:g35"($|" ")\
+|"graphics:g41"($|" ")\
+|"graphics:g43"($|" ")\
+|"graphics:g45"($|" ")\
+|"graphics:hd-graphics"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_I915"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:xe") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_XE"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+}
+
+# efi [non-accelerated] > nvidiafb [accelerated] or radeonfb [accelerated]
+ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
+	local disable_efi=0
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:matroxfb") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_MATROX" # 1999-2001
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:atyfb"|"graphics:mach64") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_ATY"
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:aty128fb"|"graphics:rage128") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_ATY128" # 1998
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:nvidiafb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_NVIDIA" # 1998
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:pm3fb"|"graphics:permedia3") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_PM3" # 1999
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:rivafb"|"graphics:riva"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_RIVA" # 1997
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:s3fb"|"graphics:trio"|"graphics:virge") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_S3" # 1995/1996
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:savagefb"|"graphics:savage"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_SAVAGE" # 1998
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:sstfb"|"graphics:voodoo1") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_VOODOO1" # 1996-1998
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:tdfxfb"|"graphics:banshee"|"graphics:voodoo3"|"graphics:voodoo4"|"graphics:voodoo5") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_3DFX" # 1998-2000
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		disable_efi=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:vesafb"|"graphics:vesa") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_VESA" # 1994
+		disable_efi=1
+	fi
+
+	# If simplefb [unaccelerated] and efifb [unaccelerated] are both built, simplefb wins to load.
+	# If simplefb [unaccelerated] and vesafb [unaccelerated] are both built, simplefb wins to load.
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:simplefb") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB_SIMPLE" # For early boot only to later use nvidia closed source driver
+		disable_efi=1
+	fi
+
+	if (( ${disable_efi} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_FB_EFI" # unaccelerated, efifb is to see early boot
+	fi
 }
 
 # Mic and earphones
@@ -2117,57 +2272,57 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_vendor() {
 	if [[ \
 		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "controller:8bitdo"\
-"|controller:acer"\
-"|controller:amazon"\
-"|controller:asus"\
-"|controller:andamiro"\
-"|controller:bda"\
-"|controller:bigben"\
-"|controller:bigben-interactive"\
-"|controller:black-shark"\
-"|controller:chic"\
-"|controller:elecom"\
-"|controller:fanatec"\
-"|controller:gamepad-digital"\
-"|controller:gamesir"\
-"|controller:gamestop"\
-"|controller:generic-brand"\
-"|controller:gpd"\
-"|controller:hama"\
-"|controller:hyperkin"\
-"|controller:hyperx"\
-"|controller:hori"\
-"|controller:intec"\
-"|controller:interact"\
-"|controller:ion-audio"\
-"|controller:joytech"\
-"|controller:lenovo"\
-"|controller:logic3"\
-"|controller:logitech"\
-"|controller:mad-catz"\
-"|controller:machenike"\
-"|controller:msi"\
-"|controller:micro-star-international"\
-"|controller:nacon"\
-"|controller:performance-designed-products"\
-"|controller:pdp"\
-"|controller:pelican"\
-"|controller:powera"\
-"|controller:razer"\
-"|controller:radica-games"\
-"|controller:redoctane"\
-"|controller:saitek"\
-"|controller:scuf-gaming"\
-"|controller:snakebyte"\
-"|controller:shanwan"\
-"|controller:steelseries"\
-"|controller:tecno"\
-"|controller:thrustmaster"\
-"|controller:turtle-beach"\
-"|controller:wooting"\
-"|controller:xiaomi"\
-"|controller:zeroplus"\
-"|controller:zotac"\
+|"controller:acer"\
+|"controller:amazon"\
+|"controller:asus"\
+|"controller:andamiro"\
+|"controller:bda"\
+|"controller:bigben"\
+|"controller:bigben-interactive"\
+|"controller:black-shark"\
+|"controller:chic"\
+|"controller:elecom"\
+|"controller:fanatec"\
+|"controller:gamepad-digital"\
+|"controller:gamesir"\
+|"controller:gamestop"\
+|"controller:generic-brand"\
+|"controller:gpd"\
+|"controller:hama"\
+|"controller:hyperkin"\
+|"controller:hyperx"\
+|"controller:hori"\
+|"controller:intec"\
+|"controller:interact"\
+|"controller:ion-audio"\
+|"controller:joytech"\
+|"controller:lenovo"\
+|"controller:logic3"\
+|"controller:logitech"\
+|"controller:mad-catz"\
+|"controller:machenike"\
+|"controller:msi"\
+|"controller:micro-star-international"\
+|"controller:nacon"\
+|"controller:performance-designed-products"\
+|"controller:pdp"\
+|"controller:pelican"\
+|"controller:powera"\
+|"controller:razer"\
+|"controller:radica-games"\
+|"controller:redoctane"\
+|"controller:saitek"\
+|"controller:scuf-gaming"\
+|"controller:snakebyte"\
+|"controller:shanwan"\
+|"controller:steelseries"\
+|"controller:tecno"\
+|"controller:thrustmaster"\
+|"controller:turtle-beach"\
+|"controller:wooting"\
+|"controller:xiaomi"\
+|"controller:zeroplus"\
+|"controller:zotac"\
 ) \
 	]] ; then
 		ot-kernel-driver-bundle_add_xpad
