@@ -96,7 +96,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "isa"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -187,7 +187,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -318,7 +318,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -462,7 +462,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -605,7 +605,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
@@ -738,7 +738,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
@@ -891,7 +891,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_DRM_I915"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	# For Wi-Fi
 	ot-kernel_y_configopt "CONFIG_CFG80211"
@@ -1045,7 +1045,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1184,7 +1184,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1369,7 +1369,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_graphics "pcie"
 
-	ot-kernel-driver-bundle_add_console "tty-text tty-graphics"
+	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1438,23 +1438,41 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_console() {
 	local tag="${1}"
 
-	if [[ "${tag}" =~ "tty-graphics" ]] ; then
-	# Modern for higher resolutions or with background
+	if [[ "${tag}" =~ ("hga-tty"|"hercules-tty"|"mono-tty") ]] ; then
+	# Hercules/HGA (1982), monocrome
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_FB_HGA"
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
+
+		# Not all TTY features enabled for RAM limitations
 	fi
 
-	if [[ "${tag}" =~ "tty-text" ]] ; then
-	# Just black background
+	if [[ "${tag}" =~ ("cga-tty"|"ega-tty"|(^|" ")"vga-tty") ]] ; then
+	# CGA (1981)
+	# EGA (1984)
+	# VGA (1987)
+	# Hardware vga required
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
+		ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+
+		# Not all TTY features enabled for RAM limitations
+	fi
+
+	if [[ "${tag}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
+	# Modern tty with resolutions and background
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_TTY"
+		ot-kernel_y_configopt "CONFIG_VT"
 		ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
-		ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default, unicode support
-		ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
-		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 	fi
 
 	# Currently the kernels/ebuild support use case where it is for gaming use.
@@ -1475,6 +1493,36 @@ ot-kernel-driver-bundle_add_console() {
 		ot-kernel_y_configopt "CONFIG_USB_SERIAL"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_SERIAL_CONSOLE"
+	fi
+
+	if grep -q -E -e "CONFIG_TTY=y" "${path_config}" ; then
+	# This can be turned off you don't use emulators or access legacy systems.
+	#
+	# Use cases for LCD legacy displays, emulators, or serial connections that only support
+	# the following code pages:
+	#
+	# Central European / Slavic (II) - 852 (1991)
+	# Cyrillic - 866 (1986), 855 (1988), 866 (1986)
+	# Greek - 737 (1996), 851 (1986)
+	# Portugese - 860 (1986)
+	# Nordic - 865 (1986)
+	# Turkish - 857 (1989)
+	# Japanese - 932 (1988)
+	# The original IBM PC charset - 437 (1981)
+	# Multilinual (Latin I) - 850 (1987)
+	# Non UTF-8 encodings
+	#
+		ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default
+
+		if [[ "${tag}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
+	# For switching graphics drivers without reboot
+			ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
+		else
+			ot-kernel_unset_configopt "CONFIG_VT_HW_CONSOLE_BINDING"
+		fi
+
+	# For graphical terminals or ssh
+		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS" # Not used for serial headless
 	fi
 }
 
