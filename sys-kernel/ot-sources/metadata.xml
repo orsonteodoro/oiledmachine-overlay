@@ -2011,7 +2011,7 @@ TBM=0
     Examples
 
       OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad graphics:efifb graphics:amdgpu"
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:ath5k controller:gamepad graphics:efifb graphics:amdgpu"
+      OT_KERNEL_DRIVER_BUNDLE="2020s-pc-gamer wifi:ath5k wifi:rtw8811 graphics:nvidia-drivers"
 
       #
       # See also eclass/ot-kernel-driver-bundle.eclass for examples
