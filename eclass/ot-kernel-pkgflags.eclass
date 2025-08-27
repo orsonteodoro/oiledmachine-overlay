@@ -2335,22 +2335,6 @@ ot-kernel-pkgflags_crda() { # DONE
 	if ot-kernel_has_version_pkgflags "net-wireless/crda" ; then
 		ot-kernel_has_version "net-wireless/wireless-regdb" || die "Install the wireless-regdb package first"
 		ot-kernel_y_configopt "CONFIG_CFG80211_CRDA_SUPPORT"
-
-einfo "Auto adding wireless-regdb firmware."
-		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-		firmware=$(echo "${firmware}" \
-			| tr " " "\n" \
-			| sed -r -e 's|regulatory.db(.p7s)?$||g' \
-			| tr "\n" " ") # dedupe
-		firmware="${firmware} regulatory.db regulatory.db.p7s" # Dump firmware relpaths
-		firmware=$(echo "${firmware}" \
-			| sed -r \
-				-e "s|[ ]+| |g" \
-				-e "s|^[ ]+||g" \
-				-e 's|[ ]+$||g') # Trim mid/left/right spaces
-		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_WIRELESS"
