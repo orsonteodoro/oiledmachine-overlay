@@ -95,7 +95,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 
-	ot-kernel-driver-bundle_add_graphics "isa"
+	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
 
 	ot-kernel-driver-bundle_add_console "tty"
 
@@ -1799,7 +1799,7 @@ ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
 	fi
 
 	if (( ${disable_efi} == 1 )) ; then
-		ot-kernel_y_configopt "CONFIG_FB_EFI" # unaccelerated, efifb is to see early boot
+		ot-kernel_unset_configopt "CONFIG_FB_EFI" # unaccelerated, efifb is to see early boot
 	fi
 }
 
