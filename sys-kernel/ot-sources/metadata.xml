@@ -1721,7 +1721,7 @@ TBM=0
     will add your personal set of drivers.  Currently ARCH=x86 and ARCH=amd64
     are only supported for prelected bundles.
 
-    Acceptable values:
+    Acceptable values (tentative):
 
       early-1990s-pc-gamer
       late-1990s-pc-gamer
@@ -1731,6 +1731,7 @@ TBM=0
       late-2000s-pc-gamer
       vpceb25fx
       2010s-pc-gamer
+      2010s-cgi-artist
       2010s-video-game-artist
       2020s-pc-gamer
 
@@ -2023,6 +2024,22 @@ TBM=0
       Storage devices by general type
 
       storage:zip-drive
+
+      Graphics tablets, smartpens, 3d haptic devices
+
+      graphics-tablet:acecad
+      graphics-tablet:aiptek
+      graphics-tablet:genius
+      graphics-tablet:hawang
+      graphics-tablet:kb-gear
+      graphics-tablet:wacom
+      haptic-devices:touch
+      haptic-devices:touch-x
+      haptic-devices:phantom-premium
+      smartpen:genie
+      smartpen:iris
+      smartpen:newyes
+      smartpen:pegasus
 
     Examples
 

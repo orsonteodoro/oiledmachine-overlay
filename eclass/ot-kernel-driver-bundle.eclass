@@ -392,11 +392,8 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
 
-	# Graphics tablet for drawing
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
-	ot-kernel_y_configopt "CONFIG_TABLET_SERIAL_WACOM4"
-	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
+	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
@@ -988,7 +985,10 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+	ot-kernel-driver-bundle_add_graphics_tablet "usb"
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -1007,11 +1007,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	# Gaming mice
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1134,7 +1129,12 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 # A 2010s x86 video game artist driver bundle
 # FIXME:  It should be a laptop, but this is the desktop version.
 ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-video-game-artist" ]] || return
+	# TODO:  rename
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("2010s-cgi-artist"|"2010s-video-game-artist") ]] ; then
+		:
+	else
+		return
+	fi
 ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
@@ -1146,11 +1146,6 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	# Gaming mice
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1256,49 +1251,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
 
-	# For 3D modeling with a haptic stylus
-	# USB 2.0, USB 3.0, Ethernet, Parallel Port (EPP)
-	# OH Linux (2009)
-	# G MT (2003), G MT X (2008)
-	# PP 1.5 (2001)
-	ot-kernel_y_configopt "CONFIG_ETHERNET" # 1983
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_GENERIC"
-	ot-kernel_y_configopt "CONFIG_INET"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PARPORT"
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
-	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	# For ethernet for the haptic stylus or wired Internet
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
-	ot-kernel_y_configopt "CONFIG_IGB" # 2008
-	ot-kernel_y_configopt "CONFIG_R8169" # 2003
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
-
-	# For drawing on pen display
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_WACOM" # 1998/2001
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
-
-	# For closed source drivers
-	ot-kernel_y_configopt "CONFIG_MODULES"
-	ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
-	_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
+	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
@@ -1324,11 +1277,6 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_USB"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	# Gaming mice
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -1872,6 +1820,7 @@ ot-kernel-driver-bundle_add_usb_gamer_headsets() {
 ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes() {
 	ot-kernel_y_configopt "CONFIG_HID"
 	ot-kernel_y_configopt "CONFIG_HID_CORSAIR" # 2011, 2013, 2016, 2017, fixes keyboard/mouse
+	ot-kernel_y_configopt "CONFIG_HID_GLORIOUS" # 2019-2020
 	ot-kernel_y_configopt "CONFIG_HID_HOLTEK" # 2012, 2016, 2017, 2018, 2019, 2021, 2022, for mouse/keyboard/game controller
 	ot-kernel_y_configopt "CONFIG_HID_KYE" # 2013
 	ot-kernel_y_configopt "CONFIG_HID_LOGITECH" # 2005
@@ -1897,6 +1846,182 @@ ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes() {
 	ot-kernel_y_configopt "CONFIG_HID_TOPRE" # 2018, N-key rollover support
 	ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
+}
+
+ot-kernel-driver-bundle_add_haptic_devices_by_usb() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-devices:touch-x"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("haptic-devices:touch"($|" ")|"haptic-devices:touch-x"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HIDRAW"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+
+		# For closed source drivers
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+		_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
+	fi
+}
+
+ot-kernel-driver-bundle_add_haptic_devices_by_ethernet() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("haptic-devices:touch"($|" ")|"haptic-devices:touch-x"($|" ")) ]] ; then
+	# OpenHaptics support on Linux (2009)
+	# Touch (2003), Touch X (2008)
+	# USB 2.0, USB 3.0, Ethernet
+	# For ethernet for the haptic stylus or wired Internet
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+		ot-kernel_y_configopt "CONFIG_IGB" # 2008
+		ot-kernel_y_configopt "CONFIG_R8169" # 2003
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+
+		# For closed source drivers
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+		_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
+	fi
+}
+
+ot-kernel-driver-bundle_add_haptic_devices_by_parport() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-devices:phantom-premium" ]] ; then
+	# For 3D modeling with a haptic stylus
+	# Parallel Port (EPP)
+	# Phantom Premium 1.5 (2001)
+		ot-kernel_y_configopt "CONFIG_ETHERNET" # 1983
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PARPORT"
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
+		ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+
+		# For closed source drivers
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_n_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+		_FORCE_OT_KERNEL_EXTERNAL_MODULES=1
+	fi
+}
+
+ot-kernel-driver-bundle_add_haptic_devices() {
+	local tag="${1}"
+	if [[ "${tag}" =~ "parport" ]] ; then
+		ot-kernel-driver-bundle_add_haptic_devices_by_parport
+	fi
+	if [[ "${tag}" =~ "ethernet" ]] ; then
+		ot-kernel-driver-bundle_add_haptic_devices_by_ethernet
+	fi
+	if [[ "${tag}" =~ "usb" ]] ; then
+		ot-kernel-driver-bundle_add_haptic_devices_by_usb
+	fi
+}
+
+ot-kernel-driver-bundle_add_graphics_tablet_by_serial() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics-tablet:wacom" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+		ot-kernel_y_configopt "CONFIG_TABLET_SERIAL_WACOM4"
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987
+	fi
+}
+
+ot-kernel-driver-bundle_add_graphics_tablet_by_usb() {
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics-tablet:aiptek"|"graphics-tablet:genius") ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+		ot-kernel_y_configopt "CONFIG_TABLET_USB_AIPTEK" # 2003, 2006
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics-tablet:kb-gear" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+		ot-kernel_y_configopt "CONFIG_TABLET_USB_KBTAB" # 1999
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics-tablet:acecad" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+		ot-kernel_y_configopt "CONFIG_TABLET_USB_ACECAD" # 2001
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics-tablet:hawang" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+		ot-kernel_y_configopt "CONFIG_TABLET_USB_HANWANG" # 2009
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics-tablet:wacom" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_WACOM" # 1998/2001
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("smartpen:genie"|"smartpen:iris"|"smartpen:newyes"|"smartpen:pegasus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_TABLET_USB_PEGASUS"
+	fi
+}
+
+ot-kernel-driver-bundle_add_graphics_tablet() {
+	local tag="${1}"
+	if [[ "${tag}" =~ "serial" ]] ; then
+		ot-kernel-driver-bundle_add_graphics_tablet_by_serial
+	fi
+	if [[ "${tag}" =~ "usb" ]] ; then
+		ot-kernel-driver-bundle_add_graphics_tablet_by_usb
+	fi
+}
+
+ot-kernel-driver-bundle_add_home_theater_remote() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "remote:apple" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_APPLEIR"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "remote:ati" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_ATI_REMOTE2"
+		ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "remote:keyspan" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_KEYSPAN_REMOTE" # 2001
+		ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "remote:philips" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_ATI_REMOTE2"
+		ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "remote:zydacron" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_ZYDACRON"
+	fi
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
