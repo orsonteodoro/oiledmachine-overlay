@@ -116,12 +116,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
-	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
@@ -244,7 +239,9 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_ALI1535" # 1999
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
@@ -382,7 +379,9 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_ALI1535" # 1999
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
@@ -516,7 +515,9 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_ALI1535" # 1999
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
@@ -668,7 +669,9 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_ALI1563" # 2002
+	ot-kernel_y_configopt "CONFIG_I2C_ALI1535" # 1999
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_NFORCE2" # 2002, 2003, 2004
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_SIS630" # 2000, 2003
@@ -821,7 +824,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -985,7 +988,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	# For sound, HDMI (TV output)
@@ -1122,7 +1125,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1235,13 +1238,6 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_NET"
 
-	# For gameport to USB adapter (2005)
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
 	# CPU temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
@@ -1270,7 +1266,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1385,7 +1381,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	# CPU cooler sensors
@@ -2063,7 +2059,6 @@ ot-kernel-driver-bundle_add_home_theater_remote() {
 		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_HID_ZYDACRON"
 	fi
-	
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
