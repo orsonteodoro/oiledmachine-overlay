@@ -1124,11 +1124,17 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER" # 2011-2015
 
-	# Temp sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
+	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
+	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
@@ -1139,15 +1145,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
-
-	# For temperature, RAM timing info
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
-	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
-	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
-	ot-kernel_y_configopt "CONFIG_PCI"
 
 	# For ethernet for wired Internet
 	ot-kernel_y_configopt "CONFIG_ETHERNET"
@@ -1265,11 +1262,17 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER" # 2011-2015
 
-	# Temp sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
+	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
+	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
@@ -1280,15 +1283,6 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
-
-	# For temperature, RAM timing info
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
-	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
-	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
-	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 
@@ -1390,18 +1384,16 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
 
-	# Temp sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_ACPI"
-	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_EC"
-
 	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_EC"
 
 	# CPU cooler sensors
 	ot-kernel_y_configopt "CONFIG_HID"
