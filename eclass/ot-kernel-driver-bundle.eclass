@@ -245,6 +245,10 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
@@ -378,8 +382,12 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
@@ -508,8 +516,12 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
@@ -656,8 +668,13 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_NFORCE2" # 2002, 2003, 2004
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_SIS630" # 2000, 2003
+	ot-kernel_y_configopt "CONFIG_I2C_SIS96X" # 2001, 2002
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
@@ -805,6 +822,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
@@ -1104,6 +1123,8 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	# For ethernet for wired Internet
@@ -1250,6 +1271,8 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_i801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
@@ -1382,6 +1405,13 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+
+	# For AI support
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
+	ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI_MSI"
 }
 
 ot-kernel-driver-bundle_add_console() {
@@ -1593,6 +1623,11 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 		ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+
+	# Add temp sensor
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_NVIDIA_GPU" # 2018
+		ot-kernel_y_configopt "CONFIG_PCI"
 	fi
 
 	if [[ \
@@ -1710,6 +1745,11 @@ ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvid
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE" # Graphics support >  Console display driver support > Framebuffer Console support
 		ot-kernel_y_configopt "CONFIG_TTY" # Character devices > Enable TTY
 		ot-kernel_y_configopt "CONFIG_VT"
+
+	# Add temp sensor
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_NVIDIA_GPU" # 2018
+		ot-kernel_y_configopt "CONFIG_PCI"
 	fi
 }
 
@@ -2023,6 +2063,7 @@ ot-kernel-driver-bundle_add_home_theater_remote() {
 		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_HID_ZYDACRON"
 	fi
+	
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {

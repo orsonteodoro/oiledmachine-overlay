@@ -6440,62 +6440,6 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 		if grep -q -E -e "^CONFIG_(PCI|ISA)=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPORT"
 		fi
-
-		if [[ "${LM_SENSORS_MODULES:-0}" == "1" ]] ; then
-einfo "Adding referenced modules for the lm-sensors package."
-			# Slice sections of the file and extract options
-			local sidx1=$(grep -n "PC SMBus host controller drivers" "drivers/i2c/busses/Kconfig" | cut -f 1 -d ":")
-			local eidx1=$(grep -n "if ACPI" "drivers/i2c/busses/Kconfig" | cut -f 1 -d ":")
-			local sidx2=$(grep -n "Other I2C/SMBus bus drivers" "drivers/i2c/busses/Kconfig" | cut -f 1 -d ":")
-			local eidx2=$(wc -l "drivers/i2c/busses/Kconfig" | cut -f 1 -d " ")
-			# Module options for sensors, i2c, smbus
-			local OPTS=(
-				$(sed -n ${sidx1},${eidx1}p "drivers/i2c/busses/Kconfig" \
-					| grep "config " \
-					| cut -f 2 -d " " \
-					| sed -e "s|^|CONFIG_|g")
-				$(sed -n ${sidx2},${eidx2}p "drivers/i2c/busses/Kconfig" \
-					| grep "config " \
-					| cut -f 2 -d " " \
-					| sed -e "s|^|CONFIG_|g")
-				$(grep -e "config SENSORS" "drivers/hwmon/Kconfig" \
-					| cut -f 2 -d " " \
-					| sed -e "s|^|CONFIG_|g")
-			)
-			local o
-			for o in ${OPTS[@]} ; do
-				ot-kernel_set_configopt "${o}" "m"
-			done
-
-			local NOT_TRISTATE=(
-				"CONFIG_SENSORS_W83795_FANCTRL"
-				"CONFIG_SENSORS_BT1_PVT_ALARMS"
-				"CONFIG_SENSORS_LTQ_CPUTEMP"
-				"CONFIG_SENSORS_S3C_RAW"
-			)
-
-			local o
-			for o in ${NOT_TRISTATE[@]} ; do
-				ot-kernel_y_configopt "${o}"
-			done
-		fi
-
-
-		local O=$(grep -E -e "config SENSORS_.*" $(find "drivers/hwmon" -name "Kconfig*") \
-			| cut -f 2 -d ":" \
-			| sed -e "s|config ||g" \
-			| sed -e "s|^|CONFIG_|g")
-		local found=0
-		local o
-		for o in ${O[@]} ; do
-			if grep -q -e "^${o}=" "${path_config}" ; then
-				found=1
-				break
-			fi
-		done
-		if (( ${found} == 0 )) ; then
-ewarn "You may need to have at least one CONFIG_SENSOR_... for lm-sensors."
-		fi
 	fi
 }
 
