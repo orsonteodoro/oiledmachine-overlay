@@ -2090,7 +2090,7 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_class() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:ch"($|" ") || "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:saitek" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:ch"($|" ")|"controller:saitek"|"controller:thrustmaster") ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
