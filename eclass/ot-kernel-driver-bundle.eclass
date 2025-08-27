@@ -1996,8 +1996,10 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_INTERACT" # 1997, 1999, 2000
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:logitech" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_WARRIOR" # 1997
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:mad-catz" ]] ; then
@@ -2029,9 +2031,11 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_ANALOG" # 1992, 2000, 2016
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_COBRA" # 1997
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_GF2K" #
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_GUILLEMOT" #
@@ -2045,9 +2049,25 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:flight-stick"|"controller:joystick") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:steering-wheel"|"controller:racing-wheel") ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:6dof") ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:flight-stick"|"controller:joystick") ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_A3D" # 1997, trackball and joystick
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_GF2K" #
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_GUILLEMOT" #
@@ -2062,8 +2082,10 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:fps" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_TMDC" # 1997, 1998, 2005
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:throttle" ]] ; then
@@ -2077,6 +2099,23 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:acrux" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_ACRUX"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:betop" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_BETOP_FF"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:bigben" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_BIGBEN_FF" # 2021
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:dragonrise" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
@@ -2182,6 +2221,16 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
 		ot-kernel_y_configopt "CONFIG_USB_HID"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:xfx" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_ZEROPLUS" # 2000
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:zeroplus" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_ZEROPLUS" # 2000
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:generic-brand" ]] ; then
 		# No vendor name
 		ot-kernel_y_configopt "CONFIG_HID"
@@ -2205,6 +2254,9 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
 		ot-kernel_y_configopt "CONFIG_GREENASIA_FF" # 2009/2013
 		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_ACRUX"
+		ot-kernel_y_configopt "CONFIG_HID_BETOP_FF" # 2021
+		ot-kernel_y_configopt "CONFIG_HID_BIGBEN_FF" # 2021
 		ot-kernel_y_configopt "CONFIG_HID_DRAGONRISE" # 2009, 2023
 		ot-kernel_y_configopt "CONFIG_HID_GEMBIRD" # 2016
 		ot-kernel_y_configopt "CONFIG_HID_GREENASIA"
@@ -2215,6 +2267,7 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class() {
 		ot-kernel_y_configopt "CONFIG_HID_SAITEK" # 2009, 2010, fixes mouse/gamepad
 		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_HID_STEAM" # 2015
+		ot-kernel_y_configopt "CONFIG_HID_ZEROPLUS" # 2000
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
@@ -2343,7 +2396,6 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_vendor() {
 |"controller:turtle-beach"\
 |"controller:wooting"\
 |"controller:xiaomi"\
-|"controller:zeroplus"\
 |"controller:zotac"\
 ) \
 	]] ; then
@@ -2355,6 +2407,12 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_USB"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:logitech" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ADI"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
 	fi
 }
 
@@ -2370,6 +2428,10 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_usb_by_class() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:gamepad" ]] ; then
 		ot-kernel-driver-bundle_add_xpad
+		ot-kernel_y_configopt "CONFIG_ADI"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "controller:guitar" ]] ; then
 		ot-kernel-driver-bundle_add_xpad

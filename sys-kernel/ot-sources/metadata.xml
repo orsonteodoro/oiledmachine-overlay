@@ -1919,11 +1919,13 @@ TBM=0
       controller:8bitdo
       controller:act-labs
       controller:acer
+      controller:acrux
       controller:amazon
       controller:andamiro
       controller:asus
       controller:avb
       controller:bda
+      controller:betop
       controller:bigben
       controller:bigben-interactive
       controller:black-shark
@@ -1989,12 +1991,14 @@ TBM=0
       controller:united-game-artists
       controller:winwing
       controller:wooting
+      controller:xfx
       controller:xiaomi
       controller:zeroplus
       controller:zotac
 
       Gamer devices by general type
 
+      controller:6dof
       controller:adapter
       controller:arcade
       controller:dongle
