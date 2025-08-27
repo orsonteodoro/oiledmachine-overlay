@@ -63,6 +63,7 @@ einfo "Adding a custom driver bundle"
 # @FUNCTION: ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 # @DESCRIPTION:
 # An early 1990s x86 gamer driver bundle
+# At least Pentium is supported for this ebuild
 ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] || return
 ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
