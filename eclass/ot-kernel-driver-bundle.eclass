@@ -227,15 +227,8 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
-	# Temp sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-
 	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
@@ -247,6 +240,15 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
@@ -368,15 +370,8 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SCSI"
 	ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
 
-	# Temp sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-
 	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
@@ -387,6 +382,17 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+
 	ot-kernel_y_configopt "CONFIG_PCI"
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
@@ -504,15 +510,8 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
 	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
-	# Temp sensor
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-
 	# For temperature, RAM timing info
+	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
@@ -524,6 +523,15 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
@@ -651,22 +659,9 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_SENSORS_K8TEMP" # 2003
 
-	# Temp sensors
+	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_DMI"
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
-	ot-kernel_y_configopt "CONFIG_SENSORS_ASB100" # 2002
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_VIA686A" # 2000
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT1211" # 2002
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
-
-	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_ALI1563" # 2002
@@ -679,6 +674,27 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ASB100" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM63" # 2002, 2008
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM75" # 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM85" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM90" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM92" # 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM93" # 2003
+	ot-kernel_y_configopt "CONFIG_SENSORS_PC87427" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_VIA686A" # 2000
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT1211" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
@@ -803,24 +819,9 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_VIA_CPUTEMP" # 2005/2008
 
-	# Temp sensor
+	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
-	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU3" # 2005
-	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83627EHF" # 2007
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83792D" # 2005
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83793" # 2006
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
-
-	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_I2C"
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
@@ -828,6 +829,24 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU3" # 2005
+	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM63" # 2002, 2008
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM90" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM73" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM87" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM95234" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM95241" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_LM95245" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83627EHF" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83792D" # 2005
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83793" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
