@@ -4993,9 +4993,6 @@ unset OT_KERNEL_PRIVATE_KEY
     Recommendations:  security-critical: 10,  balanced: 100,  performance-critical: 1000
     So changes are based on magnitude of order.
 
-    LM_SENSORS_MODULES - Add modules for lm-sensors.
-    Valid values:  0 (default), 1.
-
     MDADM_RAID - Add support for software RAID.
     Valid values:  0, 1 (default).
 
