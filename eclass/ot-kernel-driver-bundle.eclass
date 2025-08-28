@@ -74,12 +74,12 @@ einfo "Adding a custom driver bundle"
 ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] || return
 ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
 	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_keyboard "ps2"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial"
-	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
@@ -103,13 +103,13 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-pc-gamer" ]] || return
 ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
-	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
 
@@ -193,13 +193,13 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_1990s_artist_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-artist" ]] || return
 ewarn "The 1990s-artist driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
-	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
 	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
@@ -301,13 +301,13 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_1990s_music_production_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-music-production" ]] || return
 ewarn "The late-1990s-music-production driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd-ram"
 	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
@@ -394,13 +394,13 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-pc-gamer" ]] || return
 ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
@@ -518,13 +518,13 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-pc-gamer" ]] || return
 ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+rw dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
@@ -776,6 +776,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-pc-gamer" ]] || return
 ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -876,6 +877,7 @@ ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers() {
 		return
 	fi
 ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -967,6 +969,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-pc-gamer" ]] || return
 ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
