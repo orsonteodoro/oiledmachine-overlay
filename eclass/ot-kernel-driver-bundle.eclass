@@ -50,13 +50,13 @@ ewarn "Disabling xpad driver"
 
 	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
-	ot-kernel-driver-bundle_add_1990s_artist_drivers
-	ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
+	ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
+	ot-kernel-driver-bundle_add_late_1990s_musician_drivers
 	ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_vpceb25fx_drivers
 	ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
-	ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
+	ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
 	ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
 	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
 eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot-kernel-driver-bundle_add_custom_driver_bundle"
@@ -188,12 +188,12 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_1990s_artist_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
 # @DESCRIPTION:
 # A late 1990s x86 artist driver bundle, for CAD and graphic arts
-ot-kernel-driver-bundle_add_1990s_artist_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-artist" ]] || return
-ewarn "The 1990s-artist driver bundle has not been recently tested."
+ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("1990s-cgi-artist"|"1990s-drafter") ]] || return
+ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
@@ -296,10 +296,10 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_music_production_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_musician_drivers
 # @DESCRIPTION:
 # A late 1990s x86 music production driver bundle
-ot-kernel-driver-bundle_add_late_1990s_music_production_drivers() {
+ot-kernel-driver-bundle_add_late_1990s_musician_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-musician" ]] || return
 ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
@@ -866,18 +866,14 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
 # @DESCRIPTION:
 # A 2010s x86 video game artist driver bundle
 # FIXME:  It should be a laptop, but this is the desktop version.
-ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers() {
+ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers() {
 	# TODO:  rename
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("2010s-cgi-artist"|"2010s-video-game-artist") ]] ; then
-		:
-	else
-		return
-	fi
-ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("2010s-cgi-artist"|"2010s-video-game-artist") ]] || return
+ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
