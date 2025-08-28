@@ -1166,8 +1166,8 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
-	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER" # 2011-2015
 
 	# For temperature, RAM timing info
@@ -1190,6 +1190,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2103" # 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2009, 2011
+	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999-2019
 	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_F71882FG" # 2009
@@ -1346,6 +1347,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2103" # 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2009, 2011
+	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999-2019
 	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_F71882FG" # 2009
