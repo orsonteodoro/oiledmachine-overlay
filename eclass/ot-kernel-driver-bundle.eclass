@@ -1142,6 +1142,7 @@ ot-kernel-driver-bundle_add_pc_speaker() {
 	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
 	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+	ot-kernel_unset_configopt "CONFIG_SND_PCSP"
 }
 
 ot-kernel-driver-bundle_add_bluetooth() {
