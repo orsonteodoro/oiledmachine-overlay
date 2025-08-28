@@ -202,7 +202,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
-	ot-kernel-driver-bundle_add_storage "ide parport scsi"
+	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -310,7 +310,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd-ram"
-	ot-kernel-driver-bundle_add_storage "ide parport scsi"
+	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -403,9 +403,10 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
-	ot-kernel-driver-bundle_add_storage "ide parport scsi"
+	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -526,6 +527,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+rw dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -781,16 +783,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
-
-	# For NVMe SSD
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_NVME" # 2011
-
-	# For SATA HDD/SSD
-	ot-kernel_y_configopt "CONFIG_ATA"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -893,16 +886,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
-
-	# For NVMe SSD
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_NVME" # 2011
-
-	# For SATA HDD/SSD
-	ot-kernel_y_configopt "CONFIG_ATA"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -993,16 +977,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
-
-	# For NVMe SSD
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_NVME" # 2011
-
-	# For SATA HDD/SSD
-	ot-kernel_y_configopt "CONFIG_ATA"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1055,6 +1030,25 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
+	fi
+}
+
+ot-kernel-driver-bundle_add_data_storage_interfaces() {
+	local tags="${1}"
+	if [[ "${tags}" =~ "nvme" ]] ; then
+	# 2011
+	# For NVMe SSD
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_NVME" # 2011
+	fi
+
+	if [[ "${tags}" =~ "sata" ]] ; then
+	# 2004
+	# For SATA HDD/SSD
+		ot-kernel_y_configopt "CONFIG_ATA"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_SATA_AHCI"
 	fi
 }
 
@@ -1372,7 +1366,7 @@ ot-kernel-driver-bundle_add_console() {
 	fi
 }
 
-ot-kernel-driver-bundle_add_storage() {
+ot-kernel-driver-bundle_add_external_storage() {
 	local tags="${1}"
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tags}" =~ "ide" ]] ; then
