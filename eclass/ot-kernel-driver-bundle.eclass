@@ -300,8 +300,8 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 # @DESCRIPTION:
 # A late 1990s x86 music production driver bundle
 ot-kernel-driver-bundle_add_late_1990s_music_production_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-music-production" ]] || return
-ewarn "The late-1990s-music-production driver bundle has not been recently tested."
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-musician" ]] || return
+ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
