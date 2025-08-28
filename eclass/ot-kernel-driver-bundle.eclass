@@ -402,7 +402,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -524,7 +524,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+rw dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For HDD
@@ -641,6 +641,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	# No USB 3.0
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 
 	# For backlight, Fn keys
 	ot-kernel_y_configopt "CONFIG_ACPI"
@@ -901,7 +902,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
-	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1002,7 +1003,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
-	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1086,6 +1087,7 @@ ot-kernel-driver-bundle_add_optical_drive() {
 	# CD-RW (1997)
 	# DVD-ROM (1996)
 	# DVD-R (1997)
+	# DVD+R (2002)
 	# DVD-RW (1999)
 	# DVD-RAM (1998)
 	# DVD+RW (2001)
