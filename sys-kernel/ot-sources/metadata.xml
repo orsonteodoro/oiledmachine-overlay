@@ -1822,8 +1822,7 @@ TBM=0
       graphics:nvidiafb
 
       graphics:pm3fb
-
-      graphics:permedia3
+      graphics:permedia-3
 
       graphics:rivafb
       graphics:riva

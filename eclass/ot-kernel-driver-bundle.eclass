@@ -1648,7 +1648,7 @@ ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
 		disable_efi=1
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:pm3fb"|"graphics:permedia3") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:pm3fb"|"graphics:permedia-3") ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_PM3" # 1999
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
