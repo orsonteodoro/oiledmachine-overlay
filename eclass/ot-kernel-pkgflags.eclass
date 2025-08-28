@@ -1241,26 +1241,7 @@ _ot-kernel-pkgflags_has_beep_udev_rules() {
 # Applies kernel config flags for the beep package
 ot-kernel-pkgflags_beep() { # DONE
 	if ot-kernel_has_version_pkgflags "app-misc/beep" ; then
-		STD_PC_SPEAKER="${STD_PC_SPEAKER:-1}"
-		ALSA_PC_SPEAKER="${ALSA_PC_SPEAKER:-0}"
-		if [[ "${STD_PC_SPEAKER}" == "1" ]] ; then
-			ot-kernel_y_configopt "CONFIG_INPUT"
-			ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-			# pcspkr.ko mentioned in package docs
-			ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-			ot-kernel_unset_configopt "CONFIG_SND_PCSP"
-		elif [[ "${ALSA_PC_SPEAKER}" == "1" ]] ; then
-			# Second to avoid sound card problems
-			ot-kernel_y_configopt "CONFIG_SOUND"
-			ot-kernel_unset_configopt "CONFIG_UML"
-			ot-kernel_y_configopt "CONFIG_SND"
-			ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
-			ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM"
-			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-			ot-kernel_y_configopt "CONFIG_INPUT"
-			ot-kernel_y_configopt "CONFIG_SND_PCSP"
-		fi
-
+	# Discussed in beep's manpage
 		if \
 			   ot-kernel_has_version "virtual/libudev" \
 			&& _ot-kernel-pkgflags_has_beep_udev_rules \

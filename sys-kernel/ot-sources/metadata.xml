@@ -4739,9 +4739,6 @@ unset OT_KERNEL_PRIVATE_KEY
     multiple reference, or is likely independent; it is likely an implied
     disabled.
 
-    ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
-    Valid values:  0 (default), 1
-
     AMDGPU_DEEP_COLOR - Add support for more than 8 Bits Per Pixel for utilities
     querying capabilities.  For HDMI connections, it may be beneficial to set to
     1.  0 is the upstream default.
@@ -5051,10 +5048,6 @@ unset OT_KERNEL_PRIVATE_KEY
     Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af.
     It requires AMD CPU family 17h (2017) or 19h (2021).
     Before you use SEV, please test OT_KERNEL_SME first because SME can break boot.
-
-    STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
-    driver.
-    Valid values:  0, 1 (default).
 
     TPM - Force added support for TPM (Trusted Platform Module).
     Valid values:  0 (default), 1.
