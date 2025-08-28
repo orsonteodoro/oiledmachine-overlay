@@ -20,7 +20,7 @@ esac
 
 if [[ -z "${OT_KERNEL_DRIVER_BUNDLE_ECLASS}" ]] ; then
 
-inherit toolchain-funcs
+inherit toolchain-funcs ot-kernel-kutils
 
 # TODO:  Review xpad for wooting keyboards changes
 
@@ -74,39 +74,13 @@ einfo "Adding a custom driver bundle"
 ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] || return
 ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
-	ot-kernel_y_configopt "CONFIG_TTY"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
 	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
-
 	ot-kernel-driver-bundle_add_console "tty"
-
-	ot-kernel_y_configopt "CONFIG_EISA" # 1988
+	ot-kernel-driver-bundle_add_mouse "ps2 serial"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_floppy_drive
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -118,11 +92,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 
-	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
-	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
-
+	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
@@ -132,51 +102,15 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-pc-gamer" ]] || return
 ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	# For optical mouse (USB 1.1)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
-	ot-kernel_y_configopt "CONFIG_TTY"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
-
-	# For CD-ROM
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
-	ot-kernel_y_configopt "CONFIG_JOLIET"
-	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
+	ot-kernel-driver-bundle_add_graphics "agp pci"
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_floppy_drive
+	ot-kernel-driver-bundle_add_cdrom_drive
 
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
@@ -189,10 +123,6 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	ot-kernel-driver-bundle_add_console "tty"
-
-	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
 	ot-kernel_y_configopt "CONFIG_PNP"
 	ot-kernel_y_configopt "CONFIG_SOUND"
@@ -228,11 +158,6 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
 	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
-
-	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
-	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -262,6 +187,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
+	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
@@ -271,52 +197,15 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_1990s_artist_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-artist" ]] || return
 ewarn "The 1990s-artist driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	# For optical mouse (USB 1.1)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-	ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
-	ot-kernel_y_configopt "CONFIG_TTY"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
-
-	# For CD-ROM
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
-	ot-kernel_y_configopt "CONFIG_JOLIET"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
+	ot-kernel-driver-bundle_add_graphics "agp pci"
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_floppy_drive
+	ot-kernel-driver-bundle_add_cdrom_drive
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
@@ -331,12 +220,6 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	ot-kernel-driver-bundle_add_graphics "agp pci"
-
-	ot-kernel-driver-bundle_add_console "tty"
-
-	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
 	ot-kernel_y_configopt "CONFIG_PNP"
 	ot-kernel_y_configopt "CONFIG_SOUND"
@@ -372,11 +255,6 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
 	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
-
-	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer, scanner
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
-	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	# For scanner
 	ot-kernel_y_configopt "CONFIG_SCSI"
@@ -410,8 +288,6 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
-	ot-kernel_y_configopt "CONFIG_PCI"
-
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 
@@ -423,6 +299,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
 
+	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 }
@@ -433,46 +310,15 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_1990s_music_production_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-music-production" ]] || return
 ewarn "The late-1990s-music-production driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	# For optical mouse (USB 1.1)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-
-	# For CD-ROM, CD-RW (1997)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
-	ot-kernel_y_configopt "CONFIG_JOLIET"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
+	ot-kernel-driver-bundle_add_graphics "agp pci"
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_mouse "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_floppy_drive
+	ot-kernel-driver-bundle_add_cdrom_drive
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
@@ -487,12 +333,6 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
 	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	ot-kernel-driver-bundle_add_graphics "agp pci"
-
-	ot-kernel-driver-bundle_add_console "tty"
-
-	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
 	ot-kernel_y_configopt "CONFIG_PNP"
 	ot-kernel_y_configopt "CONFIG_SOUND"
@@ -521,11 +361,6 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
 	ot-kernel_y_configopt "CONFIG_SND_MPU401" # 1984
-
-	ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
-	ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
-	ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
 
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -557,6 +392,8 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	ot-kernel-driver-bundle_add_printer "parport"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
@@ -565,47 +402,18 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-pc-gamer" ]] || return
 ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	# For optical mouse (USB 1.1)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-
-	# For CD-ROM, CD-RW (1997)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
-	ot-kernel_y_configopt "CONFIG_JOLIET"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
+	ot-kernel-driver-bundle_add_graphics "agp pci"
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_mouse "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_floppy_drive
+	ot-kernel-driver-bundle_add_cdrom_drive
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -623,19 +431,6 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SATA_VITESSE" # 2002
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
-
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
@@ -643,12 +438,6 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
-
-	ot-kernel-driver-bundle_add_graphics "agp pci"
-
-	ot-kernel-driver-bundle_add_console "tty"
-
-	ot-kernel_y_configopt "CONFIG_EISA" # 1988
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -662,18 +451,6 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	# CPU sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -731,10 +508,11 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
 
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
@@ -745,36 +523,15 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-pc-gamer" ]] || return
 ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
-	ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
-
-	# For optical mouse (USB 1.1, 2.0)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
-
-	# For CD-ROM, CD-RW (1997)
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
-	ot-kernel_y_configopt "CONFIG_JOLIET"
-	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
+	ot-kernel-driver-bundle_add_graphics "agp pcie"
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_mouse "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_cdrom_drive
+	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -787,39 +544,6 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SATA_NV" # 2004
 	ot-kernel_y_configopt "CONFIG_SATA_VIA" # 2003
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
-
-	ot-kernel-driver-bundle_add_graphics "agp pcie"
-
-	ot-kernel-driver-bundle_add_console "tty"
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -901,10 +625,11 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
@@ -915,16 +640,12 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
 ewarn "The vpceb25fx driver bundle has not been recently tested."
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
-
-	# For optical mouse (USB 2.0)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_keyboard
+	ot-kernel-driver-bundle_add_mouse "usb"
+	# No USB 3.0
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For backlight, Fn keys
 	ot-kernel_y_configopt "CONFIG_ACPI"
@@ -945,24 +666,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_HID_ALPS"
 
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-
-	# No USB 3.0
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
-
 	# For DVD
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_SCSI"
@@ -982,8 +685,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_DRM"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_DRM_I915"
-
-	ot-kernel-driver-bundle_add_console "tty"
 
 	# For Wi-Fi
 	ot-kernel_y_configopt "CONFIG_CFG80211"
@@ -1014,14 +715,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR"
 
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
-
 	# Only SD reader supported
 	ot-kernel_y_configopt "CONFIG_MMC"
 	ot-kernel_y_configopt "CONFIG_MMC_SDHCI"
@@ -1047,10 +740,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_BACKLIGHT_CLASS_DEVICE"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_THERMAL"
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
 
 	# CPU temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1080,6 +769,8 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
+	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
@@ -1092,19 +783,15 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-pc-gamer" ]] || return
 ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
+	ot-kernel-driver-bundle_add_graphics "pcie"
+	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
-
-	# For optical mouse (USB 2.0)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_mouse "usb"
+	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1116,27 +803,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
 
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
-
-	ot-kernel-driver-bundle_add_graphics "pcie"
-
-	ot-kernel-driver-bundle_add_console "tty"
-
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
@@ -1144,30 +810,6 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
-
-	# For speakers
-	ot-kernel_y_configopt "CONFIG_BT"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
-	ot-kernel_y_configopt "CONFIG_BT_BREDR"
-	ot-kernel_y_configopt "CONFIG_BT_HIDP"
-	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_NET"
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1229,10 +871,12 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
@@ -1249,19 +893,15 @@ ot-kernel-driver-bundle_add_2010s_video_game_artist_drivers() {
 		return
 	fi
 ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_expansion_slots "pcie"
+	ot-kernel-driver-bundle_add_graphics "pcie"
+	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
-
-	# For optical mouse (USB 2.0)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_mouse "usb"
+	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1273,27 +913,6 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
 
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
-
-	ot-kernel-driver-bundle_add_graphics "pcie"
-
-	ot-kernel-driver-bundle_add_console "tty"
-
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
@@ -1301,30 +920,6 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
-
-	# For speakers
-	ot-kernel_y_configopt "CONFIG_BT"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
-	ot-kernel_y_configopt "CONFIG_BT_BREDR"
-	ot-kernel_y_configopt "CONFIG_BT_HIDP"
-	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_NET"
 
 	# CPU temp sensor
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1380,12 +975,13 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
 
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
-
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
 
@@ -1395,20 +991,15 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-pc-gamer" ]] || return
 ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
-
+	ot-kernel-driver-bundle_add_expansion_slots "pcie"
+	ot-kernel-driver-bundle_add_graphics "pcie"
+	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
-
-	# For optical mouse (USB 2.0)
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_mouse "usb"
+	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1420,33 +1011,8 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
 
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
-
-	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-
 	ot-kernel_y_configopt "CONFIG_AGP" # 1997
 	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
-
-	ot-kernel-driver-bundle_add_graphics "pcie"
-
-	ot-kernel-driver-bundle_add_console "tty"
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1455,26 +1021,6 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
-
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
-
-	# For speakers
-	ot-kernel_y_configopt "CONFIG_BT"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
-	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
-	ot-kernel_y_configopt "CONFIG_BT_BREDR"
-	ot-kernel_y_configopt "CONFIG_BT_HIDP"
-	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_NET"
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1502,25 +1048,209 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
+	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_bluetooth
+	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 
-	# For AI support
-	ot-kernel_y_configopt "CONFIG_DRM"
-	ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
-	ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_PCI_MSI"
+	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		# For AI support
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
+		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCI_MSI"
+	fi
+}
+
+ot-kernel-driver-bundle_add_cdrom_drive() {
+	# For CD-ROM, CD-RW (1997)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+}
+
+ot-kernel-driver-bundle_add_usb_storage_support() {
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE" # 2000
+}
+
+ot-kernel-driver-bundle_add_floppy_drive() {
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+}
+
+ot-kernel-driver-bundle_add_printer() {
+	local tags="${1}"
+	if [[ "${tags}" =~ "parport" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
+		ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+	fi
+	if [[ "${tags}" =~ "usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+	fi
+}
+
+ot-kernel-driver-bundle_add_uvc_webcam() {
+	# For webcam
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+}
+
+ot-kernel-driver-bundle_add_pc_speaker() {
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+	ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM" # 1981
+	ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+}
+
+ot-kernel-driver-bundle_add_bluetooth() {
+	# For speakers
+	ot-kernel_y_configopt "CONFIG_BT"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_MC_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BNEP_PROTO_FILTER"
+	ot-kernel_y_configopt "CONFIG_BT_BREDR"
+	ot-kernel_y_configopt "CONFIG_BT_HIDP"
+	ot-kernel_y_configopt "CONFIG_BT_RFCOMM"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_NET"
+}
+
+ot-kernel-driver-bundle_add_mouse() {
+	local tags="${1}"
+	if [[ "${tags}" =~ "ps2" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+		ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
+	fi
+	if [[ "${tags}" =~ "serial" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+		ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
+		ot-kernel_y_configopt "CONFIG_TTY"
+	fi
+	if [[ "${tags}" =~ "usb" ]] ; then
+		# For optical mouse (USB 1.1)
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+}
+
+ot-kernel-driver-bundle_add_keyboard() {
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+}
+
+ot-kernel-driver-bundle_add_expansion_slots() {
+	local tags="${1}"
+	if [[ "${tags}" =~ (^|" ")"isa"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_ISA_BUS" # 8-bit (1981)
+		ot-kernel_y_configopt "CONFIG_ISA_DMA_API" # 16-bit with DMA (1984), for consumers
+	fi
+	if [[ "${tags}" =~ (^|" ")"eisa"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_EISA" # 32-bit 1988, for server
+	fi
+	if [[ "${tags}" =~ "pci"($|" ") ]] ; then
+	# PCI 1.1 () - IOV
+	# PCI 2.2 (1998) - Message Signal Interrupts
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
+	if [[ "${tags}" =~ "pcie"($|" ") ]] ; then
+	# PCIe 1.0 (2003)
+	# PCIe 1.1 (2005) - AER
+	# PCIe 2.0 (2007) - IOV, ASPM
+	# PCIe 3.0 (2010) - PASID, PTM (PCI Express Precision Time Measurement)
+	# PCIe 4.0 (2017) - DPC
+	# PCIe 5.0 (2019)
+	# PCIe 6.0 (2022)
+	# PCIe 7.0 (2025)
+	# P2PDMA - Not universal
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
+	fi
+	if [[ "${tags}" =~ "pcie-aer" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIEAER"
+	fi
+	if [[ "${tags}" =~ "pcie-aspm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIEASPM"
+	fi
+	if [[ "${tags}" =~ "pcie-ptm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIE_PTM" # Requires PCIe card with support
+	fi
+	if [[ "${tags}" =~ "pcie-iov" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI_IOV"
+	fi
+	if [[ "${tags}" =~ "pci-pri" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI_PRI" # For ARM
+	fi
+	if [[ "${tags}" =~ "pcie-pasid" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI_PASID"
+	fi
+	if [[ "${tags}" =~ "agp"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_y_configopt "CONFIG_AGP" # 1997
+	fi
+	if [[ "${tags}" =~ "vlb"($|" ") ]] ; then
+ewarn "VLB is not supported"
+	fi
+}
+
+ot-kernel-driver-bundle_add_usb() {
+	local tags="${1}"
+	if [[ "${tags}" =~ "usb-1.1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	fi
+	if [[ "${tags}" =~ "usb-2.0" ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+	fi
+	if [[ "${tags}" =~ "usb-3.0" ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+	fi
 }
 
 ot-kernel-driver-bundle_add_console() {
-	local tag="${1}"
+	local tags="${1}"
 
-	if [[ "${tag}" =~ ("hga-tty"|"hercules-tty"|"mono-tty") ]] ; then
+	if [[ "${tags}" =~ ("hga-tty"|"hercules-tty"|"mono-tty") ]] ; then
 	# Hercules/HGA (1982), monocrome
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FB"
@@ -1533,7 +1263,7 @@ ot-kernel-driver-bundle_add_console() {
 		# Not all TTY features enabled for RAM limitations
 	fi
 
-	if [[ "${tag}" =~ ("cga-tty"|"ega-tty"|(^|" ")"vga-tty") ]] ; then
+	if [[ "${tags}" =~ ("cga-tty"|"ega-tty"|(^|" ")"vga-tty") ]] ; then
 	# CGA (1981)
 	# EGA (1984)
 	# VGA (1987)
@@ -1546,7 +1276,7 @@ ot-kernel-driver-bundle_add_console() {
 		# Not all TTY features enabled for RAM limitations
 	fi
 
-	if [[ "${tag}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
+	if [[ "${tags}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
 	# Modern tty with resolutions and background
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FB"
@@ -1560,14 +1290,14 @@ ot-kernel-driver-bundle_add_console() {
 	# Currently the kernels/ebuild support use case where it is for gaming use.
 	# It is possible to have the machine repurposed as a server.
 
-	if [[ "${tag}" =~ ($|" ")"serial" ]] ; then
+	if [[ "${tags}" =~ ($|" ")"serial" ]] ; then
 	# For headless servers
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SERIAL_8250"
 		ot-kernel_y_configopt "CONFIG_SERIAL_8250_CONSOLE"
 		ot-kernel_y_configopt "CONFIG_TTY"
 	fi
-	if [[ "${tag}" =~ "usb-serial" ]] ; then
+	if [[ "${tags}" =~ "usb-serial" ]] ; then
 	# For headless servers
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_TTY"
@@ -1597,7 +1327,7 @@ ot-kernel-driver-bundle_add_console() {
 	#
 		ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS" # optional, upstream default
 
-		if [[ "${tag}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
+		if [[ "${tags}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
 	# For switching graphics drivers without reboot
 			ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING" # optional, upstream default
 		else
@@ -1610,9 +1340,9 @@ ot-kernel-driver-bundle_add_console() {
 }
 
 ot-kernel-driver-bundle_add_storage() {
-	local tag="${1}"
+	local tags="${1}"
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tag}" =~ "ide" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tags}" =~ "ide" ]] ; then
 	# 1995
 		ot-kernel_y_configopt "CONFIG_ATA"
 		ot-kernel_y_configopt "CONFIG_ATA_SFF"
@@ -1622,7 +1352,7 @@ ot-kernel-driver-bundle_add_storage() {
 		ot-kernel_y_configopt "CONFIG_SCSI"
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tag}" =~ "scsi" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tags}" =~ "scsi" ]] ; then
 	# 1995
 		ot-kernel_y_configopt "CONFIG_SCSI"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
@@ -1631,7 +1361,7 @@ ot-kernel-driver-bundle_add_storage() {
 		# TODO add controller
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tag}" =~ "parport" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tags}" =~ "parport" ]] ; then
 	# 1995
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_PARPORT"
@@ -1648,24 +1378,24 @@ ot-kernel-driver-bundle_add_storage() {
 
 # Do this to speed up build times
 ot-kernel-driver-bundle_add_graphics() {
-	local tag="${1}"
+	local tags="${1}"
 
-	if [[ "${tag}" =~ "isa" ]] ; then
+	if [[ "${tags}" =~ "isa" ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB_VGA16" # 1987
 		ot-kernel_unset_configopt "CONFIG_FB_EFI" # unaccelerated, efifb is to see early boot for UEFI (2006)
 	fi
-	if [[ "${tag}" =~ "agp" ]] ; then
+	if [[ "${tags}" =~ "agp" ]] ; then
 		ot-kernel_y_configopt "CONFIG_AGP" # 1997
 		ot-kernel_y_configopt "CONFIG_AGP_AMD64" # 2002, 2003
 		ot-kernel_y_configopt "CONFIG_AGP_INTEL" # 1997-2004
 		ot-kernel_y_configopt "CONFIG_AGP_VIA" # 1998
 	fi
 
-	if [[ "${tag}" =~ "pci"($|" ") ]] ; then
+	if [[ "${tags}" =~ "pci"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	fi
 
-	if [[ "${tag}" =~ "pcie" ]] ; then
+	if [[ "${tags}" =~ "pcie" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
 		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS" # 2003
 	fi
@@ -2067,14 +1797,14 @@ ot-kernel-driver-bundle_add_haptic_devices_by_parport() {
 }
 
 ot-kernel-driver-bundle_add_haptic_devices() {
-	local tag="${1}"
-	if [[ "${tag}" =~ "parport" ]] ; then
+	local tags="${1}"
+	if [[ "${tags}" =~ "parport" ]] ; then
 		ot-kernel-driver-bundle_add_haptic_devices_by_parport
 	fi
-	if [[ "${tag}" =~ "ethernet" ]] ; then
+	if [[ "${tags}" =~ "ethernet" ]] ; then
 		ot-kernel-driver-bundle_add_haptic_devices_by_ethernet
 	fi
-	if [[ "${tag}" =~ "usb" ]] ; then
+	if [[ "${tags}" =~ "usb" ]] ; then
 		ot-kernel-driver-bundle_add_haptic_devices_by_usb
 	fi
 }
@@ -2130,11 +1860,11 @@ ot-kernel-driver-bundle_add_graphics_tablet_by_usb() {
 }
 
 ot-kernel-driver-bundle_add_graphics_tablet() {
-	local tag="${1}"
-	if [[ "${tag}" =~ "serial" ]] ; then
+	local tags="${1}"
+	if [[ "${tags}" =~ "serial" ]] ; then
 		ot-kernel-driver-bundle_add_graphics_tablet_by_serial
 	fi
-	if [[ "${tag}" =~ "usb" ]] ; then
+	if [[ "${tags}" =~ "usb" ]] ; then
 		ot-kernel-driver-bundle_add_graphics_tablet_by_usb
 	fi
 }
