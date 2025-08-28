@@ -240,12 +240,17 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7414" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7418" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M1" # 1998, 2002, 2005, 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
@@ -383,12 +388,17 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7414" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7418" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M1" # 1998, 2002, 2005, 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
@@ -523,12 +533,17 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7414" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7418" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M1" # 1998, 2002, 2005, 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
@@ -675,7 +690,14 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7470" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7411" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1031" # 2000
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASB100" # 2002
+	ot-kernel_y_configopt "CONFIG_SENSORS_DME1737" # 2004, 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_F75375S" # 2002, 2005, 2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM63" # 2002, 2008
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
@@ -689,6 +711,9 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM93" # 2003
 	ot-kernel_y_configopt "CONFIG_SENSORS_PC87427" # 2002
 	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M1" # 1998, 2002, 2005, 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M192" # 2001, 2005, 2006, 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47B397" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_VIA686A" # 2000
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT1211" # 2002
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
@@ -826,13 +851,28 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
+	ot-kernel_y_configopt "CONFIG_I2C_NFORCE2" # 2002, 2003, 2004
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU3" # 2005
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1026" # <=2008
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1177" # 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7470" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7410" # 2009, 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7462" # 2008
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7475" # 2007, 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_DME1737" # 2004, 2006
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC1403" # 2005
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC6W201" # 2005
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71882FG" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_F75375S" # 2002, 2005, 2014
 	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM63" # 2002, 2008
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM90" # 2004
@@ -841,6 +881,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM95234" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM95241" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_LM95245" # 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M192" # 2001, 2005, 2006, 2007
+	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47B397" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627EHF" # 2007
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83792D" # 2005
@@ -1135,6 +1177,18 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1029" # 2012
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7410" # 2009, 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7475" # 2007, 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2103" # 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2011
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_F75375S" # 2002, 2005, 2014
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71882FG" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_LTC2991" # 2015
+	ot-kernel_y_configopt "CONFIG_SENSORS_LTC4282" # 2015
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
@@ -1273,6 +1327,18 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1029" # 2012
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7410" # 2009, 2017
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7475" # 2007, 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2103" # 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2011
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
+	ot-kernel_y_configopt "CONFIG_SENSORS_F75375S" # 2002, 2005, 2014
+	ot-kernel_y_configopt "CONFIG_SENSORS_F71882FG" # 2009
+	ot-kernel_y_configopt "CONFIG_SENSORS_LTC2991" # 2015
+	ot-kernel_y_configopt "CONFIG_SENSORS_LTC4282" # 2015
 	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
