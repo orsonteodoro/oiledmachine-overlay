@@ -502,12 +502,12 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
 
-	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
 
@@ -621,12 +621,12 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
-	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
 
@@ -661,12 +661,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID"
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_HID_ALPS"
-
-	# For DVD
-	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -767,11 +761,11 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
 	ot-kernel-driver-bundle_add_uvc_webcam
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -870,13 +864,13 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
+	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_uvc_webcam
 	ot-kernel-driver-bundle_add_bluetooth
-	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
-	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 }
 
@@ -977,14 +971,14 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
 
-	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
-	ot-kernel-driver-bundle_add_bluetooth
-	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
+	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1053,13 +1047,13 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
-	ot-kernel-driver-bundle_add_uvc_webcam
-	ot-kernel-driver-bundle_add_bluetooth
-	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 
 	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
