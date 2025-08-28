@@ -110,7 +110,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_cdrom_drive
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
 
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
@@ -205,7 +205,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_cdrom_drive
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
@@ -318,7 +318,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_cdrom_drive
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd-ram"
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 
 	# For HDD
@@ -410,7 +410,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_cdrom_drive
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_storage "ide parport scsi"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -530,7 +530,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
 	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_cdrom_drive
+	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
 
 	# For HDD
@@ -902,6 +902,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1000,6 +1001,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
 
 	# For NVMe SSD
 	ot-kernel_y_configopt "CONFIG_PCI"
@@ -1067,14 +1069,43 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	fi
 }
 
-ot-kernel-driver-bundle_add_cdrom_drive() {
-	# For CD-ROM, CD-RW (1997)
+ot-kernel-driver-bundle_add_cdrw_support() {
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_CDROM_PKTCDVD"
+}
+
+ot-kernel-driver-bundle_add_optical_drive() {
+	local tags="${1}"
+	# CD-ROM (1985, PC version)
+	# CD-R (1995)
+	# CD-RW (1997)
+	# DVD-ROM (1996)
+	# DVD-R (1997)
+	# DVD-RW (1999)
+	# DVD-RAM (1998)
+	# DVD+RW (2001)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
 	ot-kernel_y_configopt "CONFIG_BLOCK"
-	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
-	ot-kernel_y_configopt "CONFIG_JOLIET"
 	ot-kernel_y_configopt "CONFIG_SCSI"
+	if [[ "${tags}" =~ "cd" ]] ; then
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_ISO9660_FS" # 1998, 4 GiB limit
+		ot-kernel_y_configopt "CONFIG_JOLIET" # 1995, 8 GiB limit total, 4 GiB files
+	fi
+	if [[ "${tags}" =~ "dvd" ]] ; then
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_ISO9660_FS" # 1998, 4 GiB limit
+		ot-kernel_y_configopt "CONFIG_JOLIET" # 1995, 8 GiB limit total, 4 GiB files
+		ot-kernel_y_configopt "CONFIG_UDF_FS" # 1995, 16 EiB limit
+	fi
+
+	if [[ "${tags}" =~ ("cd-rw"($|" ")|"dvd-rw"($|" ")|"dvd+rw"($|" ")|"dvd-ram"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_BLK_DEV"
+		ot-kernel_y_configopt "CONFIG_SCSI"
+		ot-kernel_y_configopt "CONFIG_CDROM_PKTCDVD"
+	fi
 }
 
 ot-kernel-driver-bundle_add_usb_storage_support() {
