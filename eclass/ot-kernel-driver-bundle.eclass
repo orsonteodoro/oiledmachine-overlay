@@ -27,8 +27,9 @@ inherit toolchain-funcs ot-kernel-kutils
 #
 # Rollover rules:
 #
-# For mobo components, they can rollover forward (e.g. 1999 parts in 90s profiles can be placed into into 2000 profiles)
+# For mobo components, they can rollover a year forward (e.g. 1999 can roll over to 2000s profile; early decade [2004] can roll over to late decade [2005]) but not backward.
 # For accessories or cards, they can rollover backwards or forward decades if compatible.
+# If an older edition card or older accessory has been observed during that time period, it can be placed in that time period.
 #
 
 # @FUNCTION: ot-kernel-driver-bundle_add_drivers
