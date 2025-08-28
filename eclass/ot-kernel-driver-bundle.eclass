@@ -91,6 +91,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SB8" # 1989
 	ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
@@ -152,12 +153,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
-
-	# To play MIDI music
-	ot-kernel_y_configopt "CONFIG_SOUND"
-	ot-kernel_y_configopt "CONFIG_SND"
-	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
-	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# For temperature, RAM timing info
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -249,12 +245,7 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
-
-	# To play MIDI music
-	ot-kernel_y_configopt "CONFIG_SOUND"
-	ot-kernel_y_configopt "CONFIG_SND"
-	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
-	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# For scanner
 	ot-kernel_y_configopt "CONFIG_SCSI"
@@ -356,6 +347,7 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel_y_configopt "CONFIG_SND_SSCAPE" # 1994
 	ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -451,6 +443,8 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 	ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# CPU sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -569,6 +563,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
+
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_AMD_NB"
@@ -759,6 +755,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# For possibly watchdog to restart on freeze
 	ot-kernel_y_configopt "CONFIG_LPC_ICH"
@@ -810,6 +807,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -921,8 +919,9 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+	ot-kernel-driver-bundle_add_midi_playback_support
 
-	# CPU temp sensor
+	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
@@ -1023,6 +1022,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1069,10 +1069,12 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	fi
 }
 
-ot-kernel-driver-bundle_add_cdrw_support() {
-	ot-kernel_y_configopt "CONFIG_BLK_DEV"
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_CDROM_PKTCDVD"
+ot-kernel-driver-bundle_add_midi_playback_support() {
+	# To play MIDI music
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
+	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
 }
 
 ot-kernel-driver-bundle_add_optical_drive() {
