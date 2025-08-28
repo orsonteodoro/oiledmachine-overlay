@@ -77,8 +77,8 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
 	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
 	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_keyboard "ps2"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 
@@ -107,8 +107,8 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
@@ -197,8 +197,8 @@ ewarn "The 1990s-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
@@ -305,8 +305,8 @@ ewarn "The late-1990s-music-production driver bundle has not been recently teste
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd-ram"
@@ -398,8 +398,8 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
@@ -521,8 +521,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -637,7 +637,6 @@ ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
 ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_keyboard
 	ot-kernel-driver-bundle_add_mouse "usb"
 	# No USB 3.0
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
@@ -787,6 +786,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 
@@ -898,6 +898,7 @@ ewarn "The 2010s-video-game-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
@@ -998,6 +999,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 	# Assumes USB keyboard
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd-rw dvd+rw dvd-ram"
@@ -1199,9 +1201,19 @@ ot-kernel-driver-bundle_add_mouse() {
 }
 
 ot-kernel-driver-bundle_add_keyboard() {
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+	local tags="${1}"
+	if [[ "${tags}" =~ "ps2" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+		ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
+	fi
+	if [[ "${tags}" =~ "usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
