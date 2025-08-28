@@ -24,6 +24,13 @@ inherit toolchain-funcs
 
 # TODO:  Review xpad for wooting keyboards changes
 
+#
+# Rollover rules:
+#
+# For mobo components, they can rollover forward (e.g. 1999 parts in 90s profiles can be placed into into 2000 profiles)
+# For accessories or cards, they can rollover backwards or forward decades if compatible.
+#
+
 # @FUNCTION: ot-kernel-driver-bundle_add_drivers
 # @DESCRIPTION:
 # Main routine for installing drivers in bundles
