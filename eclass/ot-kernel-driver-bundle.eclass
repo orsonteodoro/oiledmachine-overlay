@@ -690,7 +690,10 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_SENSORS_ABITUGURU" # 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7414" # 1999
+	ot-kernel_y_configopt "CONFIG_SENSORS_AD7418" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
+	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
 	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7470" # 2004
 	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7411" # 2002
 	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1031" # 2000
