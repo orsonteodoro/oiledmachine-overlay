@@ -508,7 +508,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
@@ -628,7 +628,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 }
@@ -763,7 +763,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
@@ -860,7 +860,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
@@ -954,7 +954,7 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
@@ -1018,7 +1018,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_uvc_webcam
+	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
@@ -1124,14 +1124,1070 @@ ot-kernel-driver-bundle_add_printer() {
 	fi
 }
 
-ot-kernel-driver-bundle_add_uvc_webcam() {
-	# For webcam
-	ot-kernel_y_configopt "CONFIG_USB"
-	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
+	# See https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/media/gspca-cardlist.rst
+	local is_gspca=0
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_BENQ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:conexant"|"webcam:creative") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_CONEX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:cpia1"|"webcam:stmicroelectronics") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_CPIA1"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dtcs033") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_DTCS033"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:etoms") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ETOMS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:finepix"|"webcam:fujifilm") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_FINEPIX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:jeilinj") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_JEILINJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:jl2005bcd") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_JL2005BCD"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:microsoft") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_KINECT" # 2010
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:konica"|"webcam:intel") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_KONICA"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:mars") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_MARS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:mr97310a") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_MR97310A"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:divio"|"webcam:logitech") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_NW80X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:d-link"|"webcam:microsoft"|"webcam:omnivision"|"webcam:sony") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:omnivision"|"webcam:sony") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:omnivision") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534_9"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:d-link"|"webcam:hp"($|" ")|"webcam:hewlett-packard"|"webcam:labtec"|"webcam:pixart"|"webcam:philips") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:labtec"|"webcam:pixart"|"webcam:philips") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7302"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pixart"|"webcam:philips") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7311"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:aox"|"webcam:endpoints"|"webcam:kensington"|"webcam:philips") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SE401"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sonix") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SN9C2028"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:microsoft"|"webcam:sonix") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SN9C20X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sonix") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXB"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:microsoft"|"webcam:philips"|"webcam:sonix") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA1528"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq"|"webcam:creative"|"webcam:d-link"|"webcam:intel"|"webcam:kodak"|"webcam:logitech"|"webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:3com"|"webcam:arowana"|"webcam:intel"|"webcam:kodak"|"webcam:smile-international"|"webcam:sunplus"|"webcam:viewqwest") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA501"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:intel"|"webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA505"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA506"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:intel"|"webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA508"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:labtec"|"webcam:logitech"|"webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA561"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sq-technologies") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ905"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:lego"|"webcam:sq-technologies") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ905C"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:sq-technologies") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ930X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:syntek") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STK014"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:syntek") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STK1135"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:stmicroelectronics") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STV0680"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq"|"webcam:creative"|"webcam:fujifilm"|"webcam:jvc"|"webcam:logitech"|"webcam:philips"|"webcam:polaroid"|"webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:t613") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_T613"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:topro") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TOPRO"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:touptek") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TOUPTEK"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:labtec"|"webcam:logitech") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TV8532"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:hp"($|" ")|"webcam:hewlett-packard"|"webcam:logitech"|"webcam:samsung"|"webcam:vimicro"|"webcam:z-star") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:3com"|"webcam:vicam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VICAM"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:xirlink_cit") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_XIRLINK_CIT"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:creative"|"webcam:hp"($|" ")|"webcam:hewlett-packard"|"webcam:labtec"|"webcam:logitech"|"webcam:philips"|"webcam:vimicro"|"webcam:z-star") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:gl860") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GL860"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ali"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_M5602"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:lego"|"webcam:logitech"|"webcam:stmicroelectronics") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_STV06XX"
+		is_gspca=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:philips"\
+|"webcam:ashkey"
+|"webcam:creative"\
+|"webcam:logitech"\
+|"webcam:samsung"\
+|"webcam:sotec"\
+|"webcam:visionite"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_PWC" # 2000, 2001, 2002, 2003, 2006
+	fi
+
+	if (( ${is_gspca} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:acer"\
+|"webcam:actions-microelectronics"\
+|"webcam:alcor-micro"\
+|"webcam:apple"\
+|"webcam:arkmicro"\
+|"webcam:asus"\
+|"webcam:aveo-technology"\
+|"webcam:bodelin"\
+|"webcam:chicony"\
+|"webcam:cisco"\
+|"webcam:dell"\
+|"webcam:ecamm"\
+|"webcam:foxlink"\
+|"webcam:jmicron"\
+|"webcam:generic-brand"
+|"webcam:genesys-logic"\
+|"webcam:genius"\
+|"webcam:guillemot"\
+|"webcam:generalplus-technology"\
+|"webcam:geo-semiconductor"\
+|"webcam:hp"($|" ")\
+|"webcam:hewlett-packard"\
+|"webcam:imc-networks"\
+|"webcam:insta360"\
+|"webcam:fujitsu"\
+|"webcam:jaotech"\
+|"webcam:kurokesu"
+|"webcam:lenovo"\
+|"webcam:logilink"\
+|"webcam:logitech"\
+|"webcam:microsoft"\
+|"webcam:medion"\
+|"webcam:msi"\
+|"webcam:nanotech"\
+|"webcam:nxp"($|" ")\
+|"webcam:nxp-semiconductors"\
+|"webcam:omnivision"\
+|"webcam:oculus"($|" ")\
+|"webcam:oculus-vr"\
+|"webcam:ophir-optronics"\
+|"webcam:packard-bell"\
+|"webcam:quanta"\
+|"webcam:quanta-computer"\
+|"webcam:samsung"\
+|"webcam:shenzen"\
+|"webcam:sigma-micro"\
+|"webcam:syntek"\
+|"webcam:tasco"\
+|"webcam:thermoteknix"\
+|"webcam:the-imaging-source"\
+|"webcam:quanta"\
+|"webcam:vimicro"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+	fi
+}
+
+# Currently the 90s and 2000s major brands are triaged first in this list before
+# the UVC era, then the ones with multiple architectures under one driver
+ot-kernel-driver-bundle_add_webcam_by_model_name() {
+	# See https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/media/gspca-cardlist.rst
+	local is_gspca=0
+
+	# 3Com
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:homeconnect-lite") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA501"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:homeconnect-usb-camera"|"webcam:homeconnect-webcam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VICAM"
+		is_gspca=1
+	fi
+
+	# ALi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:video-camera-controller") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_M5602"
+		is_gspca=1
+	fi
+
+	# BenQ
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dc-1300"|"webcam:dc-1500"|"webcam:dc-3410") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dc-1016") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dc-e300") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_BENQ"
+		is_gspca=1
+	fi
+
+	# Creative
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:notebook-cx11646") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_CONEX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:live-cam-video-im-vf0350"\
+|"webcam:live-vista-im"\
+|"webcam:live-vista-vf0330"\
+|"webcam:live-vista-vf0350"\
+|"webcam:live-vista-vf0400"\
+|"webcam:live-vista-vf0420"\
+|"webcam:live-vista-vf0470"\
+|"webcam:video-blaster-webcam-go-plus"\
+|"webcam:webcam"($|" ")\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-vista-plus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:qmax") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TOPRO"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pc-cam-300") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-nx-ultra") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA505"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-vista-pd1100") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA508"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-vista-pd1100"|"webcam:webcam-vista-vf0010") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA561"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:go-mini") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STV0680"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:joy-it"|"webcam:live-ultra"|"webcam:live-ultra-for-notebooks"|"webcam:live-motion") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ930X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pc-cam-350"|"webcam:pc-cam-600"|"webcam:pc-cam-750") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:live-cam-notebook-ultra-vc0130") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:live"($|" ")\
+|"webcam:live-cam-notebook-pro-vf0250"\
+|"webcam:live-cam-video-im"\
+|"webcam:nx"($|" ")\
+|"webcam:nx-pro"($|" ")\
+|"webcam:nx-pro2"($|" ")\
+|"webcam:instant-p0620"\
+|"webcam:instant-p0620d"\
+|"webcam:webcam-live"($|" ")\
+|"webcam:webcam-mobile-pd1090"\
+|"webcam:webcam-notebook-pd1171"\
+|"webcam:webcam-nx-pro"\
+|"webcam:webcam-vista-pro"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+
+	# D-Link
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dsb-c310-webcam"|"webcam:usb-digital-video-cam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dsb-c120") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dsc-350") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+
+	# HP
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:2.0-megapixel"|"webcam:2.0-megapixel-rz406aa") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:premium-starter-cam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+
+	# Fujifilm
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:mv-1") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:finepix"\
+|"webcam:finepix-4800"\
+|"webcam:finepix-a202"\
+|"webcam:finepix-a203"\
+|"webcam:finepix-a204"\
+|"webcam:finepix-a205"\
+|"webcam:finepix-a210"\
+|"webcam:finepix-a303"\
+|"webcam:finepix-a310"\
+|"webcam:finepix-f401"\
+|"webcam:finepix-f402"\
+|"webcam:finepix-f410"\
+|"webcam:finepix-f420"\
+|"webcam:finepix-f601"\
+|"webcam:finepix-f700"\
+|"webcam:finepix-m603"\
+|"webcam:finepix-s300"\
+|"webcam:finepix-s304"\
+|"webcam:finepix-s500"\
+|"webcam:finepix-s602"\
+|"webcam:finepix-s700"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_FINEPIX"
+		is_gspca=1
+	fi
+
+	# Kensington
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:67014"|"webcam:67015"|"webcam:67016"|"webcam:67017") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SE401"
+		is_gspca=1
+	fi
+
+	# Labtec
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-1200") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:2200"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7302"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-elch2"|"webcam:webcam-plus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA561"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TV8532"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:webcam-notebook"|"webcam:webcam-pro") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+
+	# Logitech
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:quickcam-pro-dark-focus-ring") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_NW80X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:quickcam-traveler"|"webcam:clicksmart-310"|"webcam:clicksmart-510") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:qc-chat-elch2"\
+|"webcam:qc-elch2"\
+|"webcam:qc-express-etch2"\
+|"webcam:qc-for-notebook"\
+|"webcam:quickcam-express-plus"\
+	) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA561"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:clicksmart-420"|"webcam:clicksmart-820") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:quickcam-express") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TV8532"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:orbicam"|"webcam:quickcam-for-dell-notebooks") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:notebook-deluxe"\
+|"webcam:qc-im"\
+|"webcam:qc-chat"\
+|"webcam:qcam-stx"\
+|"webcam:qcim"\
+|"webcam:qccommunicate-stx"\
+|"webcam:quickcam-e2500"\
+|"webcam:quickcam-cool"\
+|"webcam:quickcam-express"\
+|"webcam:quickcam-for-notebooks"\
+|"webcam:quickcam-image"\
+|"webcam:quickcam-im/connect"\
+|"webcam:quickcam-messenger"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:quickcamcommunicate"|"webcam:quickcamexpress"|"webcam:quickcammessenger"|"webcam:quickcammessenger-new"|"webcam:quickcam-web") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_STV06XX"
+		is_gspca=1
+	fi
+
+	# Intel
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pocket-pc-camera") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:create-and-share") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA501"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pc-camera-pro") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA505"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:easy-pc-camera") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA508"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:yc76") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_KONICA"
+		is_gspca=1
+	fi
+
+	# JVC
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:gc-a50") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+
+	# Kodak
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dvc-325") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA501"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ez200") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+
+	# LEGO
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:bionicle") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ905C"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:legocam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_STV06XX"
+		is_gspca=1
+	fi
+
+	# Microsoft
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:kinect") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_KINECT" # 2010
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:vx1000"|"webcam:vx3000") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:xbox-cam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:lifecam-vx6000") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SN9C20X"
+		is_gspca=1
+	fi
+
+	# OmniVision
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov511"|"webcam:ov518"|"webcam:ov519"|"webcam:ovfx2"|"webcam:supercam"|"webcam:w9967cf"|"webcam:w9968cf") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:veho-filmscanner") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534_9"
+		is_gspca=1
+	fi
+
+	# Philips
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spc-600-nc"|"webcam:spc-700-nc"|"webcam:spc-710-nc") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pcvc665k") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SE401"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dmvc1300k") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spc-200-nc"|"webcam:spc-300-nc"|"webcam:spc-210-nc"|"webcam:spc-315-nc") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spc-220-nc") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spc-230-nc") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7302"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spc-500-nc"|"webcam:spc-610-nc") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7311"
+		is_gspca=1
+	fi
+
+	# Polaroid
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ion-80"|"webcam:pdc2030"|"webcam:pdc3070") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+
+	# Samsung
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:q1-ultra-premium") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+
+	# Sony
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:eyetoy") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:playstation-eye") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534"
+		is_gspca=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:zc3xx"|"webcam:vc3xx"|"webcam:zc0301"|"webcam:zc0302"|"webcam:zc0303") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:commmunicate-stx"|"webcam:lifecam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+	fi
+
+	if (( ${is_gspca} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+|"webcam:292a-ipc-ar0330"\
+|"webcam:2k-fhd-camera"\
+|"webcam:808-camera"\
+|"webcam:alienware-x51"\
+|"webcam:au3820"\
+|"webcam:built-in-isight"($|" ")\
+|"webcam:built-in-isight-via-ibridge"\
+|"webcam:c1-pro"\
+|"webcam:cnf7129"\
+|"webcam:display-capture-uvc05"\
+|"webcam:easynote-mx52"\
+|"webcam:eee-100he"\
+|"webcam:eface-2025"\
+|"webcam:f9sg"\
+|"webcam:facetime-hd-camera"\
+|"webcam:fsc-webcam-v30s"\
+|"webcam:gc6500"\
+|"webcam:hd-pro-webcam-c920"\
+|"webcam:hd-pro-webcam-c922"\
+|"webcam:hd-user-facing"\
+|"webcam:hercules-classic-silver"\
+|"webcam:hp-spartan"\
+|"webcam:hp-webcam"($|" ")\
+|"webcam:hp-webcam-hd-2300"\
+|"webcam:lifecam-nx-6000"\
+|"webcam:lifecam-nx-3000"\
+|"webcam:lifecam-vx-7000"\
+|"webcam:link"($|" ")\
+|"webcam:ir-video"\
+|"webcam:manta-mm-353-plako"\
+|"webcam:medion-akoya"\
+|"webcam:minoru3d"\
+|"webcam:miricle-307k"\
+|"webcam:mt6227"\
+|"webcam:notebook"($|" ")\
+|"webcam:ov7670"\
+|"webcam:pc-usb-webcam"\
+|"webcam:pico-image"\
+|"webcam:positional-tracker-dk2"\
+|"webcam:proscope-hr"\
+|"webcam:q310"\
+|"webcam:quickcam"($|" ")\
+|"webcam:quickcam-fusion"\
+|"webcam:quickcam-orbit-mp"\
+|"webcam:quickcam-pro-5000"\
+|"webcam:quickcam-pro-for-notebook"($|" ")\
+|"webcam:rally-bar"($|" ")\
+|"webcam:rally-bar-huddle"\
+|"webcam:rally-bar-mini"\
+|"webcam:realsense-d4m"\
+|"webcam:realsense-depth-camera-d405"\
+|"webcam:realsense-depth-camera-d410"\
+|"webcam:realsense-depth-camera-d415"\
+|"webcam:realsense-depth-camera-d430"\
+|"webcam:realsense-depth-camera-d435"\
+|"webcam:realsense-depth-camera-d435i"\
+|"webcam:realsense-depth-camera-d455"\
+|"webcam:realsense-depth-module-d421"\
+|"webcam:rift-sensor"\
+|"webcam:smart-terminal"\
+|"webcam:sp2008wfp"\
+|"webcam:spcam-620u"\
+|"webcam:starcam-370i"\
+|"webcam:studio-hybrid-140g"\
+|"webcam:thinkpad-sl400"\
+|"webcam:thinkpad-sl500"\
+|"webcam:thinkpad-sl400"\
+|"webcam:thinkpad-sl500"\
+|"webcam:u3s"\
+|"webcam:usb-2.0-camera"\
+|"webcam:usb-2.0-pc-camera"\
+|"webcam:usb2.0-xga-webcam"\
+|"webcam:usb-ccd-cameras"\
+|"webcam:usb-microscope"\
+|"webcam:usb-web-camera"\
+|"webcam:vega"\
+|"webcam:vt-camera-ii"\
+|"webcam:venus"\
+|"webcam:webcam($|" ")"\
+|"webcam:webcam-c910"\
+|"webcam:webcam-b910"\
+|"webcam:wireless-webcam"($|" ")\
+|"webcam:xps-m1530"\
+|"webcam:xps-m1330"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+	fi
+
+
+}
+
+ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name() {
+	local is_gspca=0
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_BENQ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:conex") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_CONEX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:cpia1") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_CPIA1"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dtcs033") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_DTCS033"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:etoms") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ETOMS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:finepix") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_FINEPIX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:jeilinj") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_JEILINJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:jl2005bcd") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_JL2005BCD"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:kinect") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_KINECT" # 2010
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:konica") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_KONICA"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:mars") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_MARS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:mr97310a") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_MR97310A"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:nw80x") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_NW80X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov519") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov534") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov534_9") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534_9"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pac207") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pac7302") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7302"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pac7311") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7311"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:se401") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SE401"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sn9c2028") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SN9C2028"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sn9c20x") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SN9C20X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sonixb") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXB"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sonixj") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca1528") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA1528"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca500") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca501") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA501"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca505") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA505"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca506") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA506"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca508") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA508"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:spca561") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA561"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sq905") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ905"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sq905c") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ905C"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sq930x") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SQ930X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:stk014") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STK014"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:stk1135") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STK1135"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:stv0680") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STV0680"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:sunplus") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:t613") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_T613"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:topro") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TOPRO"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:touptek") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TOUPTEK"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:tv8532") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_TV8532"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:vc032x") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:vicam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VICAM"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:xirlink_cit") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_XIRLINK_CIT"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:zc3xx") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:gl860") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GL860"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:m5602") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_M5602"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:svt06xx") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_STV06XX"
+		is_gspca=1
+	fi
+
+	if (( ${is_gspca} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
+	fi
+}
+
+ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"webcam:pwc"\
+|"webcam:pca645"\
+|"webcam:pca646"\
+|"webcam:pcvc675"\
+|"webcam:pcvc680"\
+|"webcam:pcvc690"\
+|"webcam:pcvc720"\
+|"webcam:pcvc730"\
+|"webcam:pcvc740"\
+|"webcam:pcvc750"\
+|"webcam:spc900nc"\
+|"webcam:philips-pca645"\
+|"webcam:philips-pca646"\
+|"webcam:philips-pcvc675"\
+|"webcam:philips-pcvc680"\
+|"webcam:philips-pcvc690"\
+|"webcam:philips-pcvc720"\
+|"webcam:philips-pcvc730"\
+|"webcam:philips-pcvc740"\
+|"webcam:philips-pcvc750"\
+|"webcam:philips-spc900nc"\
+|"webcam:ashkey-vc010"
+|"webcam:quickcam-pro-3000"\
+|"webcam:quickcam-pro-4000"\
+|"webcam:logitech-zoom"\
+|"webcam:logitech-notebook-pro"\
+|"webcam:logitech-quickcam-orbit"\
+|"webcam:logitech-quickcam-sphere"\
+|"webcam:creative-webcam-5"\
+|"webcam:creative-webcam-pro-ex"\
+|"webcam:sotec-afina-eye"\
+|"webcam:visionite-vcs-uc300"\
+|"webcam:visionite-vcs-um100"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_PWC" # 2000, 2001, 2002, 2003, 2006
+	fi
+}
+
+ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:uvc"|"webcam:logitech-commmunicate-stx") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+	fi
+}
+
+ot-kernel-driver-bundle_add_webcam() {
+	ot-kernel-driver-bundle_add_webcam_by_vendor_name
+	ot-kernel-driver-bundle_add_webcam_by_model_name
+	ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name
+	ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name
+	ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name
 }
 
 ot-kernel-driver-bundle_add_pc_speaker() {
