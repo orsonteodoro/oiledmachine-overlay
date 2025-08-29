@@ -2358,6 +2358,9 @@ ot-kernel-driver-bundle_add_webcam() {
 	ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name
 	ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name
 	ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name
+	if grep -q -E -e "^CONFIG_USB_GSPCA_" "${path_config}" ; then
+ewarn "You are likely using a 30 FPS camera, considered obsolete by today's video streaming standards.  Use a camera produced >= 2012 with 60 FPS capability instead."
+	fi
 }
 
 ot-kernel-driver-bundle_add_pc_speaker() {
