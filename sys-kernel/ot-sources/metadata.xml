@@ -2040,10 +2040,19 @@ TBM=0
       smartpen:newyes
       smartpen:pegasus
 
+      Webcams
+
+      webcam:<vendor-name>
+      webcam:<driver-name>
+      webcam:<product-name>
+      webcam:uvc
+
+      See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1131
+
     Examples
 
-      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad graphics:efifb graphics:amdgpu"
-      OT_KERNEL_DRIVER_BUNDLE="2020s-pc-gamer wifi:ath5k wifi:rtw8811 graphics:nvidia-drivers"
+      OT_KERNEL_DRIVER_BUNDLE="2010s-pc-gamer wifi:atheros controller:gamepad graphics:efifb graphics:amdgpu webcam:uvc"
+      OT_KERNEL_DRIVER_BUNDLE="2020s-pc-gamer wifi:ath5k wifi:rtw8811 graphics:nvidia-drivers webcam:uvc"
 
       #
       # See also eclass/ot-kernel-driver-bundle.eclass for examples
