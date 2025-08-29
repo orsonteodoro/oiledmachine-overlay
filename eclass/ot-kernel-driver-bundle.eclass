@@ -1330,10 +1330,11 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
-"webcam:philips"\
-|"webcam:ashkey"
+"webcam:ame"\
+|"webcam:askey"\
 |"webcam:creative"\
 |"webcam:logitech"\
+|"webcam:philips"\
 |"webcam:samsung"\
 |"webcam:sotec"\
 |"webcam:visionite"\
@@ -1413,6 +1414,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
 	fi
 }
 
@@ -1975,6 +1977,7 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
 	fi
 
 	if (( ${is_gspca} == 1 )) ; then
@@ -2081,9 +2084,8 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
 	fi
-
-
 }
 
 ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name() {
@@ -2301,8 +2303,18 @@ ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name() {
 }
 
 ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pwc") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_PWC" # 2000, 2001, 2002, 2003, 2006
+	fi
+}
+
+ot-kernel-driver-bundle_add_pwc_webcam_by_model_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
-"webcam:pwc"\
+"webcam:afina-eye"\
+|"webcam:cu-001"\
+|"webcam:mpc-c10"\
+|"webcam:mpc-c30"\
+|"webcam:notebook-pro"\
 |"webcam:pca645"\
 |"webcam:pca646"\
 |"webcam:pcvc675"\
@@ -2312,29 +2324,17 @@ ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name() {
 |"webcam:pcvc730"\
 |"webcam:pcvc740"\
 |"webcam:pcvc750"\
-|"webcam:spc900nc"\
-|"webcam:philips-pca645"\
-|"webcam:philips-pca646"\
-|"webcam:philips-pcvc675"\
-|"webcam:philips-pcvc680"\
-|"webcam:philips-pcvc690"\
-|"webcam:philips-pcvc720"\
-|"webcam:philips-pcvc730"\
-|"webcam:philips-pcvc740"\
-|"webcam:philips-pcvc750"\
-|"webcam:philips-spc900nc"\
-|"webcam:ashkey-vc010"
 |"webcam:quickcam-pro-3000"\
 |"webcam:quickcam-pro-4000"\
-|"webcam:logitech-zoom"\
-|"webcam:logitech-notebook-pro"\
-|"webcam:logitech-quickcam-orbit"\
-|"webcam:logitech-quickcam-sphere"\
-|"webcam:creative-webcam-5"\
-|"webcam:creative-webcam-pro-ex"\
-|"webcam:sotec-afina-eye"\
-|"webcam:visionite-vcs-uc300"\
-|"webcam:visionite-vcs-um100"\
+|"webcam:quickcam-orbit"\
+|"webcam:quickcam-sphere"\
+|"webcam:spc900nc"\
+|"webcam:vc010"
+|"webcam:vcs-uc300"\
+|"webcam:vcs-um100"\
+|"webcam:webcam-5"\
+|"webcam:webcam-pro-ex"\
+|"webcam:zoom"($|" ")\
 ) \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_PWC" # 2000, 2001, 2002, 2003, 2006
@@ -2349,6 +2349,30 @@ ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS" # Already has mic support
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
+	fi
+}
+
+ot-kernel-driver-bundle_add_s2255_webcam() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:s2255drv"|"webcam:2255-usb-device"|"webcam:sensoray") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_USB_S2255"
+	fi
+}
+
+ot-kernel-driver-bundle_add_usbtv007_webcam() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:usbtv007") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_USBTV"
 	fi
 }
 
@@ -2357,7 +2381,10 @@ ot-kernel-driver-bundle_add_webcam() {
 	ot-kernel-driver-bundle_add_webcam_by_model_name
 	ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name
 	ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name
+	ot-kernel-driver-bundle_add_pwc_webcam_by_model_name
 	ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name
+	ot-kernel-driver-bundle_add_s2255_webcam
+	ot-kernel-driver-bundle_add_usbtv007_webcam
 	if grep -q -E -e "^CONFIG_USB_GSPCA_" "${path_config}" ; then
 ewarn "You are likely using a 30 FPS camera, considered obsolete by today's video streaming standards."
 ewarn "For gaming or sports, use a camera produced >= 2016 with 720p @ 60 FPS capability instead."
