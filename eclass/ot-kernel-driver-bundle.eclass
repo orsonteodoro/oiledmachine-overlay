@@ -1666,7 +1666,7 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:quickcamcommunicate"|"webcam:quickcamexpress"|"webcam:quickcammessenger"|"webcam:quickcammessenger-new"|"webcam:quickcam-web") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:quickcam-communicate"|"webcam:quickcam-express"|"webcam:quickcam-messenger"|"webcam:quickcam-messenger"|"webcam:quickcam-web") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_STV06XX"
 		is_gspca=1
 	fi
@@ -1742,8 +1742,12 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:veho-filmscanner") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov534"|"webcam:veho-filmscanner") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534_9"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov534"|"webcam:ov722x") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534"
 		is_gspca=1
 	fi
 
