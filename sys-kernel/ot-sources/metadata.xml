@@ -2047,7 +2047,10 @@ TBM=0
       webcam:<product-name>
       webcam:uvc
 
-      See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1131
+      For a list of webcam drivers, see
+
+      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1131
+      https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/media/gspca-cardlist.rst 
 
     Examples
 
