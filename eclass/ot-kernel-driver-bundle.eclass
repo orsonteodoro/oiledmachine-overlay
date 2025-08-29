@@ -1832,6 +1832,7 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 |"webcam:built-in-isight-via-ibridge"\
 |"webcam:c1-pro"\
 |"webcam:cnf7129"\
+|"webcam:commmunicate-stx"\
 |"webcam:display-capture-uvc05"\
 |"webcam:easynote-mx52"\
 |"webcam:eee-100he"\
@@ -2172,7 +2173,7 @@ ot-kernel-driver-bundle_add_pwc_webcam_by_driver_name() {
 }
 
 ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:uvc"|"webcam:logitech-commmunicate-stx") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:uvc") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
