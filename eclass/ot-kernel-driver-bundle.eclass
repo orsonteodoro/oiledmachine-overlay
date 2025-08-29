@@ -1370,29 +1370,29 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 |"webcam:jmicron"\
 |"webcam:generic-brand"
 |"webcam:genesys-logic"\
-|"webcam:genius"\
-|"webcam:guillemot"\
 |"webcam:generalplus-technology"\
+|"webcam:genius"\
 |"webcam:geo-semiconductor"\
+|"webcam:guillemot"\
+|"webcam:fujitsu"\
 |"webcam:hp"($|" ")\
 |"webcam:hewlett-packard"\
 |"webcam:imc-networks"\
 |"webcam:insta360"\
-|"webcam:fujitsu"\
 |"webcam:jaotech"\
 |"webcam:kurokesu"
 |"webcam:lenovo"\
 |"webcam:logilink"\
 |"webcam:logitech"\
-|"webcam:microsoft"\
 |"webcam:medion"\
+|"webcam:microsoft"\
 |"webcam:msi"\
 |"webcam:nanotech"\
 |"webcam:nxp"($|" ")\
 |"webcam:nxp-semiconductors"\
-|"webcam:omnivision"\
 |"webcam:oculus"($|" ")\
 |"webcam:oculus-vr"\
+|"webcam:omnivision"\
 |"webcam:ophir-optronics"\
 |"webcam:packard-bell"\
 |"webcam:quanta"\
@@ -1402,9 +1402,8 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 |"webcam:sigma-micro"\
 |"webcam:syntek"\
 |"webcam:tasco"\
-|"webcam:thermoteknix"\
 |"webcam:the-imaging-source"\
-|"webcam:quanta"\
+|"webcam:thermoteknix"\
 |"webcam:vimicro"\
 ) \
 	]] ; then
