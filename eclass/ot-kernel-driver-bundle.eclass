@@ -2072,6 +2072,10 @@ ot-kernel-driver-bundle_add_gspca_webcam_by_driver_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_DTCS033"
 		is_gspca=1
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ep800") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_EP800"
+		is_gspca=1
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:etoms") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ETOMS"
 		is_gspca=1
