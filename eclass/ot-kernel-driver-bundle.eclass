@@ -1144,6 +1144,10 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_DTCS033"
 		is_gspca=1
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:endpoints") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_EP800"
+		is_gspca=1
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:etoms") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ETOMS"
 		is_gspca=1
@@ -1557,6 +1561,12 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dsc-350") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
+		is_gspca=1
+	fi
+
+	# Endpoints
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ep800"|"webcam:se401"|"webcam:se402") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_EP800"
 		is_gspca=1
 	fi
 
