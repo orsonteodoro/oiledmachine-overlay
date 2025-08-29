@@ -1188,11 +1188,11 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:omnivision"|"webcam:sony") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:hercules"|"webcam:guillemot"|"webcam:omnivision"|"webcam:sony") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534"
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:omnivision") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:hercules"|"webcam:guillemot"|"webcam:omnivision") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534_9"
 		is_gspca=1
 	fi
@@ -1200,7 +1200,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC207"
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:genius"|"webcam:labtec"|"webcam:pixart"|"webcam:philips"|"webcam:trust") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:genius"|"webcam:hercules"|"webcam:guillemot"|"webcam:labtec"|"webcam:pixart"|"webcam:philips"|"webcam:trust") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7302"
 		is_gspca=1
 	fi
@@ -1224,7 +1224,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXB"
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:genius"|"webcam:microsoft"|"webcam:philips"|"webcam:sonix") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:genius"|"webcam:hercules"|"webcam:guillemot"|"webcam:microsoft"|"webcam:philips"|"webcam:sonix") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXJ"
 		is_gspca=1
 	fi
@@ -1232,7 +1232,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA1528"
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq"|"webcam:creative"|"webcam:d-link"|"webcam:intel"|"webcam:kodak"|"webcam:logitech"|"webcam:mustek"|"webcam:sunplus") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:agfa"|"webcam:benq"|"webcam:creative"|"webcam:d-link"|"webcam:intel"|"webcam:kodak"|"webcam:logitech"|"webcam:mustek"|"webcam:sunplus") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
 		is_gspca=1
 	fi
@@ -1280,7 +1280,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_STV0680"
 		is_gspca=1
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq"|"webcam:creative"|"webcam:fujifilm"|"webcam:genius"|"webcam:jvc"|"webcam:logitech"|"webcam:mustek"|"webcam:philips"|"webcam:polaroid"|"webcam:sunplus"|"webcam:trust") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:benq"|"webcam:creative"|"webcam:fujifilm"|"webcam:genius"|"webcam:jvc"|"webcam:logitech"|"webcam:medion"|"webcam:mustek"|"webcam:philips"|"webcam:polaroid"|"webcam:sunplus"|"webcam:trust") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
 		is_gspca=1
 	fi
@@ -1355,6 +1355,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 "webcam:acer"\
 |"webcam:actions-microelectronics"\
 |"webcam:alcor-micro"\
+|"webcam:alienware"\
 |"webcam:apple"\
 |"webcam:arkmicro"\
 |"webcam:asus"\
@@ -1417,6 +1418,7 @@ ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
 
 # Currently the 90s and 2000s major brands are triaged first in this list before
 # the UVC era, then the ones with multiple architectures under one driver
+# Only the model name, not the vendor name or not brand should be keyworded.
 ot-kernel-driver-bundle_add_webcam_by_model_name() {
 	# See https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/media/gspca-cardlist.rst
 	local is_gspca=0
@@ -1434,6 +1436,12 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 	# A4Tech
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:pk-130mg") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_VC032X"
+		is_gspca=1
+	fi
+
+	# Agfa
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:cl20"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SPCA500"
 		is_gspca=1
 	fi
 
@@ -1605,6 +1613,24 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:videocam-v2"|"webcam:videocam-v3"|"webcam:videocam-web-v2") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_ZC3XX"
+		is_gspca=1
+	fi
+
+	# Hercules (Guillemot)
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:classic-silver"|"webcam:deluxe-optical-glass") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SONIXJ"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:blog-webcam") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:classic-link"|"webcam:link"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_PAC7302"
+		is_gspca=1
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:dualpix-hd-weblog") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV534_9"
 		is_gspca=1
 	fi
 
@@ -1831,6 +1857,12 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 		is_gspca=1
 	fi
 
+	# Medion
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:md-41437") ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_SUNPLUS"
+		is_gspca=1
+	fi
+
 	# OmniVision
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("webcam:ov511"|"webcam:ov518"|"webcam:ov519"|"webcam:ovfx2"|"webcam:supercam"|"webcam:w9967cf"|"webcam:w9968cf") ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA_OV519" # 1998, 2000, 2002
@@ -1954,11 +1986,11 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
 	fi
 
+# Only the model name, not the vendor name or not brand should be keyworded.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 |"webcam:292a-ipc-ar0330"\
 |"webcam:2k-fhd-camera"\
 |"webcam:808-camera"\
-|"webcam:alienware-x51"\
 |"webcam:au3820"\
 |"webcam:built-in-isight"($|" ")\
 |"webcam:built-in-isight-via-ibridge"\
@@ -1976,7 +2008,7 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 |"webcam:hd-pro-webcam-c920"\
 |"webcam:hd-pro-webcam-c922"\
 |"webcam:hd-user-facing"\
-|"webcam:hercules-classic-silver"\
+|"webcam:classic-silver"\
 |"webcam:hp-spartan"\
 |"webcam:hp-webcam"($|" ")\
 |"webcam:hp-webcam-hd-2300"\
@@ -2038,6 +2070,7 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 |"webcam:webcam-c910"\
 |"webcam:webcam-b910"\
 |"webcam:wireless-webcam"($|" ")\
+|"webcam:x51"\
 |"webcam:xps-m1530"\
 |"webcam:xps-m1330"\
 ) \
