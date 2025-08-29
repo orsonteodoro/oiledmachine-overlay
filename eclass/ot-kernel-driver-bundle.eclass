@@ -1990,7 +1990,7 @@ ot-kernel-driver-bundle_add_webcam_by_model_name() {
 
 # Only the model name, not the vendor name or not brand should be keyworded.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
-|"webcam:292a-ipc-ar0330"\
+"webcam:292a-ipc-ar0330"\
 |"webcam:2k-fhd-camera"\
 |"webcam:808-camera"\
 |"webcam:au3820"\
