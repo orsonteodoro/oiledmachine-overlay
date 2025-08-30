@@ -4295,61 +4295,56 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-950"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # digital demodulator
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC2028" # Tuner and analog demodulator
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_I2C_MUX"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_VIDEOBUF2_VMALLOC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX25840"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2" # Analog capture
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Video decoder
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-950q") ]] ; then
-		ot-kernel_y_configopt "CONFIG_DVB_AU8522_V4L"
+		ot-kernel_y_configopt "CONFIG_DVB_AU8522_DTV" # ATSC and ClearQAM digital demodulators
+		ot-kernel_y_configopt "CONFIG_DVB_AU8522_V4L" # Analog demodulator
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_AU6522"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000" # Tuner
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
-		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828" # USB bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_V4L2" # Analog video capture
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-955q" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # Digital demodulator
+		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # ATSC and QAM digital demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
+		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-#		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
-#		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157" # Analog and digital tuner
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
@@ -4360,15 +4355,11 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
-		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2_SUBDEV_API"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1950" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4701,6 +4692,8 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	fi
 
 	if grep -q -E -e "^CONFIG_RC_CORE=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 		ot-kernel_y_configopt "CONFIG_IR_MCE_KBD_DECODER"
 		ot-kernel_y_configopt "CONFIG_IR_NEC_DECODER"
 		ot-kernel_y_configopt "CONFIG_IR_RC5_DECODER"
