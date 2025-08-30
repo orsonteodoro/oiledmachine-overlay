@@ -2049,8 +2049,16 @@ TBM=0
 
       For a list of webcam drivers, see
 
-      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1131
+      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1136
       https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/media/gspca-cardlist.rst 
+
+      TV tuners
+
+      tv-tuner:<product-name>
+
+      For a list of TV tuner drivers, see
+
+      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L4212
 
     Examples
 
