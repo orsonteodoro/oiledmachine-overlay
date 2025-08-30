@@ -4515,9 +4515,92 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_USB"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv-wonder-hd-600-usb") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # Digital demodulator for ASTC (8-VSB) and 64/256-QAM
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC2028" # Tuner for NTSC, PAL, SECAM, ASTC, DVB-C, DVB-T, DMB-T, ISDB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog decoder
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder") ]] ; then
+	# AMD/ATI
+	# No analog sound support because driver missing
+	# Digital sound decode done by sound card DAC
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_NXT200X" # ATSC (8-VSB) / QAM / VSB demodulator
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SIMPLE" # TUV1236D tuner for ASTC (8-VSB) and 64/256-QAM; TUA6034 tuner for DVB-T, DVB-C, ISDB-T, ASTC, PAL, NTSC, DOCSIS
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887" # Analog IF (radio Intermediate Frequency) demodulator for PAL, SECAM, NTSC
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder-value-edition") ]] ; then
+	# AMD/ATI
+	# TU1236 uses the same driver as TUV1236D
+	# Removes AK5355, TDA9887
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_NXT200X" # ATSC (8-VSB) / QAM / VSB demodulator
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SIMPLE" # TUV1236D tuner for ASTC (8-VSB) and 64/256-QAM; TUA6034 tuner for DVB-T, DVB-C, ISDB-T, ASTC, PAL, NTSC, DOCSIS
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:my-cinema-p7131-hybrid") ]] ; then
+	# ASUS
+	# FM radio support is incomplete
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # DVB-T demodulator and tuner
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog tuner
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1600" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Digital demodulator
@@ -4599,6 +4682,26 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB" # Possibly used for analog side
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5500") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_SI2165" # DVB-T, DVB-C demodulator
+		ot-kernel_y_configopt "CONFIG_DVB_TDA10071" # DVB-S2 demodulator
+		# CX24118A - Missing tuner for DVB-S, DVB-S2
+		# CX24501 - No driver
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM radio
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuners for analog TV (PAL/SECAM), DVB-C, DVB-T, FM radio
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # A/V decoder and analog IF demodulator
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5525") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4688,11 +4791,15 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	#
 	# Workarounds or resolutions for above issues:
 	#
-	# 1. Explicitly list all supported standards and chips to the AI
-	# 2. Verify selected drivers with IC or chip list on wiki
-	# 3. Put a note or warning that the use case is not supported
-	# 4. Verify 1-to-1 coverage between driver set and components
-	# 5. Verify that it lists a bridge, tuner(s), demodulator(s)
+	# 1. Explicitly list all supported standards and chips to the AI.
+	# 2. Verify selected drivers with IC or chip list on wiki.
+	# 3. Put a note or warning that the use case is not supported.
+	# 4. Verify 1-to-1 coverage between driver set and components.
+	# 5. Verify that it lists a bridge, tuner(s), demodulator(s).
+	#    The order to see a viewable analog image is Tuner > Demodulator > Decoder > Output.
+	#    The order to see a viewable digital image is Tuner > Demodulator > Demultiplexer > Decoder > Output.
+	#    The order to listen to analog FM radio is Tuner > Demodulator > Decoder > Output.
+	#    The order to listen to digital FM radio is Tuner > Demodulator > Output.
 	#
 
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
