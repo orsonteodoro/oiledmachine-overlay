@@ -4785,7 +4785,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# 2. Hard to find kernel config directions
 	# 3. AI hallucinations when reconstructing the proper config
 	# 4. AI incomplete driver sets
-	# 5. Deleted drivers for components of TV tuner
+	# 5. Deleted or merged drivers for components of TV tuner
 	#
 
 	#
