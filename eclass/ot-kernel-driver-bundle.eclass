@@ -4689,7 +4689,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# Workarounds or resolutions for above issues:
 	#
 	# 1. Explicitly list all supported standards and chips to the AI
-	# 2. Verify selected drivers with list on wiki
+	# 2. Verify selected drivers with IC or chip list on wiki
 	# 3. Put a note or warning that the use case is not supported
 	# 4. Verify 1-to-1 coverage between driver set and components
 	# 5. Verify that it lists a bridge, tuner(s), demodulator(s)
