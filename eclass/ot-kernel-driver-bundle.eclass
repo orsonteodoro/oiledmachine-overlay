@@ -186,6 +186,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
+	ot-kernel-driver-bundle_add_tv_tuner "pci"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
@@ -294,6 +295,7 @@ ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
+	ot-kernel-driver-bundle_add_tv_tuner "pci"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_musician_drivers
@@ -387,6 +389,7 @@ ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 
 	ot-kernel-driver-bundle_add_printer "parport"
+	ot-kernel-driver-bundle_add_tv_tuner "pci"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
@@ -511,6 +514,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
+	ot-kernel-driver-bundle_add_tv_tuner "pci usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -631,6 +635,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
+	ot-kernel-driver-bundle_add_tv_tuner "pci pcie usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -769,6 +774,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+	ot-kernel-driver-bundle_add_tv_tuner "usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -864,6 +870,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
@@ -958,6 +965,7 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1022,6 +1030,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-2.0"
 
 	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 		# For AI support
@@ -2384,6 +2393,9 @@ ot-kernel-driver-bundle_add_webcam() {
 	ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name
 	ot-kernel-driver-bundle_add_s2255_webcam
 	ot-kernel-driver-bundle_add_usbtv007_webcam
+	if grep -q -E -e "^CONFIG_MEDIA_SUPPORT=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
+	fi
 	if grep -q -E -e "^CONFIG_USB_GSPCA_" "${path_config}" ; then
 ewarn "You are likely using a 30 FPS camera, considered obsolete by today's video streaming standards."
 ewarn "For gaming or sports, use a camera produced >= 2016 with 720p @ 60 FPS capability instead."
@@ -3766,6 +3778,7 @@ ot-kernel-driver-bundle_add_xpad() {
 }
 
 ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers() {
+	ot-kernel_y_configopt "CONFIG_FW_LOADER"
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_vendor
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model
 }
@@ -4192,6 +4205,268 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_WLAN"
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:mxl111sf" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DVBSKY"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_MXL111SF"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_IR_TOY"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_LIRC"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_RC_DEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TVEEPROM"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:au0828" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_AU8522_V4L"
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_AU6522"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_V4L2"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:em28xx" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2_SUBDEV_API"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:cx231xx" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2_SUBDEV_API"
+	fi
+}
+ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-aero-m" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DVBSKY"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_MXL111SF"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_IR_TOY"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_LIRC"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_RC_DEVICES"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TVEEPROM"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-950"($|" ")|"tv-tuner:wintv-hvr-950q") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_AU8522_V4L"
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_AU6522"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_V4L2"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-955q" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2_SUBDEV_API"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1950" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner_pci_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:cx18" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX18"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX18_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1600" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX18"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX18_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner_pcie_by_driver_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:cx23885" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner() {
+	# Only digital supported
+	local tags="${1}"
+
+	ot-kernel_y_configopt "CONFIG_FW_LOADER"
+	if [[ "${tags}" =~ "usb-2.0"($|" ") ]] ; then
+		ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_driver_name
+		ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name
+	fi
+	if [[ "${tags}" =~ "pci"($|" ") ]] ; then
+		ot-kernel-driver-bundle_add_tv_tuner_pci_by_driver_name
+		ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name
+	fi
+	if [[ "${tags}" =~ "pcie"($|" ") ]] ; then
+		ot-kernel-driver-bundle_add_tv_tuner_pcie_by_driver_name
+		ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name
+	fi
+	if grep -q -E -e "^CONFIG_MEDIA_SUPPORT=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
 	fi
 }
 
