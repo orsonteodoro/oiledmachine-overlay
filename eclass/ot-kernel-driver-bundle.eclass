@@ -4521,8 +4521,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv-dvb-s2-stick-461e support."
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_A8293"
-		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103"
-		#ot-kernel_y_configopt "CONFIG_DVB_M88TS2022" # For tuner
+		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103" # Demodulator for DVB-S/S2
+		#ot-kernel_y_configopt "CONFIG_DVB_M88TS2022" # Tuner for DVB-S2, ABS-S
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4886,8 +4886,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5525") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_MT312" # DVB-S2 tuner
-		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # DVB-T2/C and DVB-S2 demodulator
+		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # DVB-T2/C and DVB-S2 demodulator for digital cable or terrestrial antenna
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -4895,6 +4894,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_M88RS6000T" # Receiver and demodulator chip for DVB-S/S2/S2X, ISDB-S for satellite
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157" # Analog tuner for NTSC, PAL, SECAM; Digital tuner for ATSC, QAM, DVB-T2/T/C2/C, DTMB, ISDB-T/C
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
