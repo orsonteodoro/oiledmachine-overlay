@@ -4848,7 +4848,6 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		# TDA827X Tuner -> IF -> TDA1004X Demodulator
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA827X" # Tuner for DVB-T if paired with TDA10046A
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_PCI"
