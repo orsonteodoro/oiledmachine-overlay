@@ -5162,6 +5162,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	#    The order to see a viewable digital image is Tuner > Demodulator > Demultiplexer > Decoder > Output.
 	#    The order to listen to analog FM radio is Tuner > Demodulator > Decoder > Output.
 	#    The order to listen to digital FM radio is Tuner > Demodulator > Output.
+	#    The firmware tells which region the card is allowed to operate even though the hardware has capabilities to operate outside the region.
 	#
 	# 6. Analog support will be disabled if not listed in table.
 	#
