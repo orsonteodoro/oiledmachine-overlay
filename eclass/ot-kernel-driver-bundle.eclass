@@ -5033,6 +5033,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # A/V decoder and analog IF demodulator
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	# The CPU does digital video decoding.
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5525") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
