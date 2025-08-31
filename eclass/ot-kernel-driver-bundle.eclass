@@ -5120,6 +5120,8 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	#    You need at least the bridge, tuner, and the demodulator drivers
 	#    for older models without a hardware decoder.
 	#
+	#    Some devices require fewer drivers if components are integrated.
+	#
 	#    It may be possible to bypass the decoder chip and do CPU based
 	#    decoding if the driver was not implemented for the hardware
 	#    decoder.
