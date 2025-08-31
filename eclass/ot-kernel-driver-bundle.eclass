@@ -5114,7 +5114,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# QAM - Digital Cable US & UK
 	# DVB - Europe, Africa, Asia, Oceana
 	#  -T - Terrestrial antenna; Australia, India, Ireland, England
-	#  -T2 - Second version of -T; Malaysia, Iran, Turkey, Ukraine, Middle East, Italy, Netherlands, Spain, Ireland, England, North Korea
+	#  -T2 - Second version of -T; Malaysia, Indonesia, Iran, Turkey, Ukraine, Middle East, Italy, Netherlands, Spain, Ireland, England, North Korea
 	#  -S - Satellite
 	#  -S2 - Second version of -S; Turkey; Netherlands
 	#  -C - Cable; Netherlands
