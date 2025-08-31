@@ -5138,7 +5138,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# 3. AI hallucinations when reconstructing the proper config
 	# 4. AI incomplete driver sets
 	# 5. Deleted or merged drivers for components of TV tuner
-	# 6. The AI says the component supports the region but the wiki disagrees.
+	# 6. The AI says the component supports the standards but the wiki disagrees about the resultant standard.
 	#
 
 	#
