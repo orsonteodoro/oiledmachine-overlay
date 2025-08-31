@@ -5188,9 +5188,12 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# But can the CPU keep up?
 	#
 	# There are several opinions on the question.
-	# One LLMs says no only CPU can be used for decoding.  It is possible that the LLM and the same company who happens to create codecs is biased.
+	# One LLM says no only CPU can be used for digital video decoding.  It is possible that the LLM and the same company who happens to create video codecs is biased.
 	# Another LLM says yes you can do video decoding with VAAPI implying GPU accelerated decoding.
+	#
 	# I personally think it is possible that you can use GPU acceleration and the LLM is possibly biased.
+	# The other issue to be aware of is the patent tax or fee.  The reason why some companies may
+	# not want to pay for the chip is because of royalties for the newer codecs.
 	#
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-1.0" ]] ; then
 ewarn "You may need a >= 2008 CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
