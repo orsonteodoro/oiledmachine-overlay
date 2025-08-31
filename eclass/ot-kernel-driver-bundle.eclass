@@ -4939,6 +4939,66 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB" # Possibly used for analog side
 	fi
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c1f1") ]] ; then
+# Unsupported because missing CX24228-21Z demodulator driver
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL/SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for PAL, NTSC, SECAM, DVB, ASTC, ISDB, DTMB
+		ot-kernel_y_configopt "CONFIG_DVB_CX24110" # Analog IF demodulator with CX24228-21Z for ATSC, QAM.
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
+	fi
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c2f2") ]] ; then
+# Unsupported because missing CX24228-21Z demodulator driver
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL/SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
+	fi
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c3f2") ]] ; then
+# Unsupported because missing CX24228-21Z demodulator driver
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL/SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c4f2") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL/SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge and analog encoder for MPEG-1/2
+		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # DTV receiver and demodulator for DVB-T, DVB-H, T-DMB, ISDB-T, MediaFLO, CMMB
+	# This one uses digital video decoding on the CPU.
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5500") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2165" # DVB-T, DVB-C demodulator
@@ -5056,10 +5116,21 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# 3. Put a note or warning that the use case is not supported.
 	# 4. Verify 1-to-1 coverage between driver set and components.
 	# 5. Verify that it lists a bridge, tuner(s), demodulator(s).
+	#
+	#    You need at least the bridge and the demodulator drivers for older
+	#    models without a hardware decoder.
+	#
+	#    It may be possible to bypass the decoder chip and do CPU based
+	#    decoding if the driver was not implemented for the hardware
+	#    decoder.
+	#
+	#    For newer models with a SoC, you need at least one driver.
+	#
 	#    The order to see a viewable analog image is Tuner > Demodulator > Decoder > Output.
 	#    The order to see a viewable digital image is Tuner > Demodulator > Demultiplexer > Decoder > Output.
 	#    The order to listen to analog FM radio is Tuner > Demodulator > Decoder > Output.
 	#    The order to listen to digital FM radio is Tuner > Demodulator > Output.
+	#
 	# 6. Analog support will be disabled if not listed in table.
 	#
 
