@@ -5115,16 +5115,14 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# 2. Verify selected drivers with IC or chip list on wiki.
 	# 3. Put a note or warning that the use case is not supported.
 	# 4. Verify 1-to-1 coverage between driver set and components.
-	# 5. Verify that it lists a bridge, tuner(s), demodulator(s).
+	# 5. Verify that it lists a bridge, tuner(s), demodulator(s), decoder(s).
 	#
-	#    You need at least the bridge and the demodulator drivers for older
-	#    models without a hardware decoder.
+	#    You need at least the bridge, tuner, and the demodulator drivers
+	#    for older models without a hardware decoder.
 	#
 	#    It may be possible to bypass the decoder chip and do CPU based
 	#    decoding if the driver was not implemented for the hardware
 	#    decoder.
-	#
-	#    For newer models with a SoC, you need at least one driver.
 	#
 	#    The order to see a viewable analog image is Tuner > Demodulator > Decoder > Output.
 	#    The order to see a viewable digital image is Tuner > Demodulator > Demultiplexer > Decoder > Output.
