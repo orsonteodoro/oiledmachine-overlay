@@ -4900,10 +4900,12 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		# Missing CX24227 driver which may be used in different revision
-		# The CX24227 is supposed to do digital decoding.
-		# Digital decoding is handled by the CPU with userspace decoding.
-		# It requires udev to make /dev/dvb/adapter0/dvr0 device node.
+	# Missing CX24227 driver which may be used in different revision
+	# The CX24227 is supposed to do digital video decoding.
+	# Digital video decoding is handled by the CPU with userspace decoding.
+	# It requires udev to make /dev/dvb/adapter0/dvr0 device node.
+	# The dvr0 device node contains raw MPEG-2 TS but needs a video player
+	# with DVB support.
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator for PAL, NTSC, SECAM
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Analog tuner for NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2131" # Digital tuner for ATSC, QAM
