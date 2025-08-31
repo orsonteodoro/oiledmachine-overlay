@@ -4340,6 +4340,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # ATSC and QAM digital demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4360,6 +4361,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4385,6 +4387,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # ATSC (8-VSB) and QAM demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4399,6 +4402,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # ATSC, NTSC, ClearQAM tuner
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4423,6 +4427,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4441,6 +4446,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
@@ -4452,6 +4458,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
@@ -4469,6 +4476,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB_RTL28XXU"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4482,6 +4490,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_COMMON_OPTIONS"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4532,6 +4541,7 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # Digital demodulator for ASTC (8-VSB) and 64/256-QAM
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4554,6 +4564,7 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # Analog tuner for NTSC, PAL, SECAM, CVBS, SIF; Digital tuner for ASTC, DVB-C, DVB-T, DMB-T, ISDB-T, 64-QAM
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4577,6 +4588,7 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # ATSC (8-VSB), ClearQAM
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4591,6 +4603,50 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:xbox-one-digital-tv-tuner") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_MN88472" # Demodulator for DVB-T, DVB-T2, DVB-C, ISDB-T, DTMB
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18250" # A tuner that lets the demodulator determine the supported standards
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-td-stick") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T, DVB-H, T-DMB, ISDB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2266" # Tuners for DVB-T, DVB-H
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nanostick-t2-290e") ]] ; then
+	# Only digital TV supported
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CXD2820R" # Demodulator for DVB-T/T2/C
+		ot-kernel_y_configopt "CONFIG_DVB_TDA18271C2DD" # Digital tuner for DVB-T/T2, DVB-C/C2, ATSC, ISDB-T; Analog tuner for NTSC, PAL, SECAM
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB device controller
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+		ot-kernel_y_configopt "CONFIG_USB"
 	fi
 }
 
@@ -4644,6 +4700,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # DVB-T demodulator and tuner
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
@@ -4663,6 +4720,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Digital demodulator
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
@@ -4702,6 +4760,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-stereo" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
@@ -4820,11 +4879,11 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# Only digital supported
 	local tags="${1}"
 
-	# ATSC - North America, Carribean, East Asia
+	# ATSC - North America, Carribean, South Korea
 	# QAM - Digital Cable US & UK
 	# DVB - Europe, Africa, Asia, Oceana
 	#  -T - Terrestrial antenna; Australia, India, Ireland, England
-	#  -T2 - Second version of -T; Malaysia, Iran, Turkey, Ukraine, Middle East, Italy, Netherlands, Spain, Ireland, England
+	#  -T2 - Second version of -T; Malaysia, Iran, Turkey, Ukraine, Middle East, Italy, Netherlands, Spain, Ireland, England, North Korea
 	#  -S - Satellite
 	#  -S2 - Second version of -S; Turkey; Netherlands
 	#  -C - Cable; Netherlands
