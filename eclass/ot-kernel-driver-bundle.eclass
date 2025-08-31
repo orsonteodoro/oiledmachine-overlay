@@ -4528,7 +4528,7 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv-wonder-hd-600-usb") ]] ; then
-	# AMD/ATI
+	# ATI
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # Digital demodulator for ASTC (8-VSB) and 64/256-QAM
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -4596,7 +4596,7 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 
 ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder") ]] ; then
-	# AMD/ATI
+	# ATI
 	# No analog sound support because driver missing
 	# Digital sound decode done by sound card DAC
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4618,7 +4618,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder-value-edition") ]] ; then
-	# AMD/ATI
+	# ATI
 	# TU1236 uses the same driver as TUV1236D
 	# Removes AK5355, TDA9887
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
