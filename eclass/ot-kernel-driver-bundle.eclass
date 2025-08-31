@@ -5184,20 +5184,28 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 
 	# It's like software modems but with TV tuners
 	if [[ -n "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" ]] ; then
-	# But can it keep up?
+	#
+	# But can the CPU keep up?
+	#
+	# There are several opinions on the question.
+	# One LLMs says no only CPU can be used for decoding.  It is possible that the LLM and the same company who happens to create codecs is biased.
+	# Another LLM says yes you can do video decoding with VAAPI implying GPU accelerated decoding.
+	# I personally think it is possible that you can use GPU acceleration and the LLM is possibly biased.
+	#
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-1.0" ]] ; then
-ewarn "You need a >= 2008 CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+ewarn "You may need a >= 2008 CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-3.0" ]] ; then
-ewarn "You need a >= 2016 CPU for software based HVEC decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+ewarn "You may need a >= 2016 CPU for software based HVEC decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ClearQAM" ]] ; then
-ewarn "You need a >= 2007 multicore CPU for software based H.264 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
-ewarn "You need a >= 2006 multicore CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+ewarn "You may need a >= 2007 multicore CPU for software based H.264 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+ewarn "You may need a >= 2006 multicore CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "DVB" ]] ; then
-ewarn "You need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
 		fi
+einfo "Consider using VAAPI to accelerate video decoding for TV tuner if hardware support available."
 	fi
 }
 
