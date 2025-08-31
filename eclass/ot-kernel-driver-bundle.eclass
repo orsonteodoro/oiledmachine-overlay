@@ -4823,10 +4823,14 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# ATSC - North America, Carribean, East Asia
 	# QAM - Digital Cable US & UK
 	# DVB - Europe, Africa, Asia, Oceana
-	#  -T - Terrestrial antenna
+	#  -T - Terrestrial antenna; Australia, India, Ireland, England
+	#  -T2 - Second version of -T; Malaysia, Iran, Turkey, Ukraine, Middle East, Italy, Netherlands, Spain, Ireland, England
 	#  -S - Satellite
-	#  -C - Cable
-	# ISDB - Japan, South America, Southeast Asia, Africa
+	#  -S2 - Second version of -S; Turkey; Netherlands
+	#  -C - Cable; Netherlands
+	# ISDB - Japan, South America, Southeast Asia, Africa, Philippines
+	# DTMB - China, Cuba, Comoros, Cambodia, Laos, Pakistan
+
 	# NTSC - US, Canada, Japan, South America
 	# PAL - Europe, Australia, Asia, Africa
 	#  -M - Brazil
