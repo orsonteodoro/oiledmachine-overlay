@@ -4986,6 +4986,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c4f2") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # DTV receiver and demodulator for DVB-T, DVB-H, T-DMB, ISDB-T, MediaFLO, CMMB
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL/SECAM
@@ -4996,8 +4997,22 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge and analog encoder for MPEG-1/2
-		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # DTV receiver and demodulator for DVB-T, DVB-H, T-DMB, ISDB-T, MediaFLO, CMMB
 	# This one uses digital video decoding on the CPU.
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2255") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # Digital video demodulator and decoder for ASTC, ClearQAM (QAM-B)
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL/SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157" # Tuner for NTSC, PAL, SECAM, ASTC, DVB-T/T2, DVB-C/C2, DTMB, ISDB-T/C, QAM
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge and analog encoder for MPEG-1/2; analog video decoder for NTSC, PAL, SECAM.
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5500") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
