@@ -5208,7 +5208,7 @@ ewarn "You may need a >= 2006 multicore CPU for software based MPEG-2 decoding f
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "DVB" ]] ; then
 ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
 		fi
-einfo "Alternatively, consider using VAAPI to accelerate video decoding for the TV tuner if hardware support available."
+einfo "Alternatively, consider using VAAPI to accelerate video decoding for the TV tuner if hardware accelerated codec support is available on the GPU/CPU."
 	fi
 }
 
