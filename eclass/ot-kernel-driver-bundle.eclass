@@ -4916,6 +4916,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and analog decoder for PAL, NTSC, SECAM
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 ClearQAM"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4997,7 +4998,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge and analog encoder for MPEG-1/2
-	# This one uses digital video decoding on the CPU.
+		export _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2255") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5033,7 +5034,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # A/V decoder and analog IF demodulator
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-	# The CPU does digital video decoding.
+		export _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5525") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5070,8 +5071,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # For sound support
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd-dvt-t-t2-c") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd-dvb-t-t2-c") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # Demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5087,6 +5089,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and host adapter
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB"
 	fi
 }
 
@@ -5095,6 +5098,9 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	local tags="${1}"
 
 	# ATSC - North America, Carribean, South Korea
+	#  - 1.0 - 1995
+	#  - 3.0 - 2017
+	# 8-VSB - 1996
 	# QAM - Digital Cable US & UK
 	# DVB - Europe, Africa, Asia, Oceana
 	#  -T - Terrestrial antenna; Australia, India, Ireland, England
@@ -5150,6 +5156,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# 6. Analog support will be disabled if not listed in table.
 	#
 
+	unset _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUPPORT_FILTER"
 	if [[ "${tags}" =~ "usb-2.0"($|" ") ]] ; then
@@ -5173,6 +5180,24 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 		ot-kernel_y_configopt "CONFIG_IR_RC5_DECODER"
 		ot-kernel_y_configopt "CONFIG_LIRC"
 		ot-kernel_y_configopt "CONFIG_RC_DECODERS"
+	fi
+
+	# It's like software modems but with TV tuners
+	if [[ -n "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" ]] ; then
+	# But can it keep up?
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-1.0" ]] ; then
+ewarn "You need a >= 2008 CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-3.0" ]] ; then
+ewarn "You need a >= 2016 CPU for software based HVEC decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ClearQAM" ]] ; then
+ewarn "You need a >= 2007 multicore CPU for software based H.264 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+ewarn "You need a >= 2006 multicore CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "DVB" ]] ; then
+ewarn "You need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
+		fi
 	fi
 }
 
