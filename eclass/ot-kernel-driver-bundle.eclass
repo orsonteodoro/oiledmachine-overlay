@@ -5199,7 +5199,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 ewarn "You may need a >= 2008 CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-3.0" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based HVEC decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ClearQAM" ]] ; then
 ewarn "You may need a >= 2007 multicore CPU for software based H.264 decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
