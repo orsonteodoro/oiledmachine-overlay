@@ -5182,7 +5182,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 		ot-kernel_y_configopt "CONFIG_RC_DECODERS"
 	fi
 
-	# It's like software modems but with TV tuners
+	# It's like software modems but with TV tuners.
 	if [[ -n "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" ]] ; then
 	#
 	# But can the CPU keep up?
@@ -5208,7 +5208,7 @@ ewarn "You may need a >= 2006 multicore CPU for software based MPEG-2 decoding f
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "DVB" ]] ; then
 ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated chip."
 		fi
-einfo "Consider using VAAPI to accelerate video decoding for TV tuner if hardware support available."
+einfo "Alternatively, consider using VAAPI to accelerate video decoding for TV tuner if hardware support available."
 	fi
 }
 
