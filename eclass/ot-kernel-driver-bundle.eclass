@@ -4840,6 +4840,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-dvb-t-super-007") ]] ; then
+	# AVerMedia
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator and decoder for DVB-T, DVB-H
 		ot-kernel_y_configopt "CONFIG_INPUT"
