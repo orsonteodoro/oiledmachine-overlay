@@ -4225,6 +4225,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_RC_DEVICES"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 ATSC-M ATSC-H DVB-T USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 DVB-T"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-65301") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4249,6 +4251,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-72301") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_AU8522_DTV" # Digital demodulator
@@ -4270,6 +4274,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_V4L2"
 		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-01200") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4292,6 +4298,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-950"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4313,6 +4321,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2" # Analog capture
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Video decoder
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-950q") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_AU8522_DTV" # ATSC and ClearQAM digital demodulators
@@ -4334,6 +4344,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_AU0828_V4L2" # Analog video capture
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 ClearQAM NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 ClearQAM NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-955q" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4356,6 +4368,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 ClearQAM NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 ClearQAM"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1950" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4379,6 +4393,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2"
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_SYSFS"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 ClearQAM NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 ClearQAM"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-801ese" ]] ; then
 	# Missing analog support in driver
@@ -4395,6 +4411,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 QAM USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 QAM"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-800e" ]] ; then
 	# QAM is not supported
@@ -4419,6 +4437,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog video decoder for NTSC, PAL, SECAM
 		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2_SUBDEV_API"
+		_OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-801e" ]] ; then
 	# Missing analog support in driver
@@ -4437,14 +4457,17 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX25840" # Analog video/audio decoder for NTSC, PAL, PAL60, SECAM
+		_OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 QAM USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ATSC-1.0 QAM"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-72e" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_DIB3000MC"
 		ot-kernel_y_configopt "CONFIG_DVB_DIB7000M"
-		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_TUNER_DIB0070" # Tuner
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4452,11 +4475,15 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-T"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-nano-stick-73e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-73e" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_TUNER_DIB0070" # Tuner
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -4466,8 +4493,29 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-T"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-microstick-pc-and-mac-77e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-nano-stick-73e-se-solo" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_TUNER_DIB0070" # The assumed tuner, but it is not defined in the component list
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_SMS_USB_DRV"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-T"
+	fi
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-microstick-pc-and-mac-77e" ]] ; then
+	# Missing component list for verification.  It could be a AI hallucination generated list.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_RTL2832_SDR"
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
@@ -4484,22 +4532,26 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-nanostix-t2-290e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-nanostick-t2-290e" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P"
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
+		ot-kernel_y_configopt "CONFIG_DVB_CXD2820R" # Decoding and demodulation for DVB-T/T2, DVB-C
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_COMMON_OPTIONS"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_IT913X"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TUA9001"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner to IF to send to demodulator for PAL, NTSC, SECAM, DVB-T, ATSC, DVB-C
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T2 DVB-C USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-T2 DVB-C"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-460e" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4516,6 +4568,8 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-S DVB-S2"
 	fi
 	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-461e" ]] ; then
 ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv-dvb-s2-stick-461e support."
@@ -4535,6 +4589,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-S DVB-S2"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv-wonder-hd-600-usb") ]] ; then
 	# ATI
@@ -4557,6 +4613,7 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog decoder
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 NTSC USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:eyetv-hybrid-us") ]] ; then
 	# Elgato
@@ -4581,6 +4638,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog video decoder for NTSC, PAL, PAL60
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ASTC-1.0 NTSC"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:indtube") ]] ; then
 	# EVGA
@@ -4603,6 +4662,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+		_OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="H.262"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:xbox-one-digital-tv-tuner") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4617,6 +4678,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 DVB-C USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="H.265" # It can do hardware accelerated decode for DVB-T, DVB-T2, DVB-C but may offloads to CPU for H.265 codec.
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-td-stick") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4629,6 +4692,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2266" # Tuners for DVB-T, DVB-H
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-T DVB-T2"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nanostick-t2-290e") ]] ; then
 	# Only digital TV supported
@@ -4648,6 +4713,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-C DVB-T2"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-solohd") ]] ; then
 	# Only digital TV supported
@@ -4671,6 +4738,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T DVB-T2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-C DVB-T DVB-T2"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-dualhd") ]] ; then
 	# Only digital TV supported
@@ -4691,6 +4760,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T DVB-T2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-C DVB-T DVB-T2"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-triplestick-t2-292e" ]] ; then
 	# Only digital TV supported
@@ -4711,6 +4782,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T DVB-T2 USB-2.0"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-C DVB-T DVB-T2"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-digi-volar-x-a815") ]] ; then
 	# AVerMedia
@@ -4725,6 +4798,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MXL5005S" # Tuner for DVB-T
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="DVB-T"
+		_OT_KERNEL_TV_TUNER_TAGS="DVB-T"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertvhd-volar-a868r") ]] ; then
 	# AVerMedia
@@ -4738,6 +4813,8 @@ ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
+		_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER="ASTC-1.0"
+		_OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0"
 	fi
 }
 
@@ -5130,6 +5207,8 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# The ebuild only supports fully supported models.
 	# Partially supported models will be considered if it has basic digital TV or AM/FM radio support.
 
+	# The NTSC/PAL/SECAM should also be listed for with old VCRs for home videos.
+
 	#
 	# Issues for generating TV tuner driver sets
 	#
@@ -5168,7 +5247,9 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# 6. Analog support will be disabled if not listed in table.
 	#
 
-	unset _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER
+	# Video decode chip may likely mean both the hardware acceleration of signal decoding of ATSC, DVB and the video codec decoding of H.262, H.264, H.265.
+	unset _OT_KERNEL_TV_TUNER_SOFTWARE_DECODER # It should list which TV standards will be soft-decoded.
+	unset _OT_KERNEL_TV_TUNER_TAGS # It should contain the firmware allowed operation for the model so that code reviewers or device owners know the official capabilities of the device.
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUPPORT_FILTER"
 	if [[ "${tags}" =~ "usb-2.0"($|" ") ]] ; then
@@ -5207,18 +5288,43 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# The other issue to be aware of is the patent tax or fee.  The reason why some companies may
 	# not want to pay for the chip is because of royalties for the newer codecs.
 	#
+
+	# Just the signal decode is the issue for analog.
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ ("NTSC") ]] ; then
+ewarn "You may need a >= 2000 CPU for software based NTSC decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for NTSC."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ ("PAL") ]] ; then
+ewarn "You may need a >= 2000 CPU for software based PAL decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for PAL."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ ("SECAM") ]] ; then
+ewarn "You may need a >= 2000 CPU for software based SECAM decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for SECAM."
+		fi
+
+	# Some TV tuner cards offload both the signal decoding and video codec decoding on the CPU.
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-1.0" ]] ; then
-ewarn "You may need a >= 2008 CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
+ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ATSC 1.0 signal decode and H.262 codec decode."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-3.0" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ATSC 3.0 signal decode and H.265 codec decode."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ClearQAM" ]] ; then
-ewarn "You may need a >= 2007 multicore CPU for software based H.264 decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
-ewarn "You may need a >= 2006 multicore CPU for software based MPEG-2 decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
+ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ClearQAM signal decode and H.264 codec decode."
+ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ClearQAM signal decode and H.262 codec decode."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "QAM"($|" ") ]] ; then
+ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the QAM signal decode and H.264 codec decode."
+ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the QAM signal decode and H.262 codec decode."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "DVB" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware video decode acceleration."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the DVB signal decode and H.265 decode."
+		fi
+
+	# Some TV tuner cards offload the video codec to the CPU but hardware accelerate the signal decoding.
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "H.265" ]] ; then
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for H.265 decode."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "H.262" ]] ; then
+ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for H.262 decode."
 		fi
 einfo "Alternatively, consider using VAAPI to accelerate video decoding for the TV tuner if hardware accelerated codec support is available on the GPU/CPU."
 	fi
