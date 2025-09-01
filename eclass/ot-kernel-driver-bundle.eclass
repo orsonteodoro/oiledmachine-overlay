@@ -4364,10 +4364,12 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC USB-2.0"
 	fi
-	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1900" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1900" ]] ; then
 	# Model 73219, rev D1F5
 	# Based on logs
-	# Missing demodulator model
+	# The logs are missing the demodulator model.
+	# The driver set assumes that the CONFIG_VIDEO_PVRUSB2_DVB will add all the DVB-T demodulator
+	# drivers and autodetect the DVB-T demodulator.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
