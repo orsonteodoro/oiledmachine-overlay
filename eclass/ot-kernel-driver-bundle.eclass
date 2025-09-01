@@ -5289,44 +5289,44 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	# not want to pay for the chip is because of royalties for the newer codecs.
 	#
 
-	# Just the signal decode is the issue for analog.
+	# Analog signal decode is offloaded on the CPU for some TV cards.
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ ("NTSC") ]] ; then
-ewarn "You may need a >= 2000 CPU for software based NTSC decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for NTSC."
+ewarn "You may need a >= 2000 CPU for software based NTSC decoding for sustained 30 FPS.  Your TV card lacks hardware accelerated decode for NTSC."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ ("PAL") ]] ; then
-ewarn "You may need a >= 2000 CPU for software based PAL decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for PAL."
+ewarn "You may need a >= 2000 CPU for software based PAL decoding for sustained 30 FPS.  Your TV card lacks hardware accelerated decode for PAL."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ ("SECAM") ]] ; then
-ewarn "You may need a >= 2000 CPU for software based SECAM decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for SECAM."
+ewarn "You may need a >= 2000 CPU for software based SECAM decoding for sustained 30 FPS.  Your TV card lacks hardware accelerated decode for SECAM."
 		fi
 
 	# Some TV tuner cards offload both the signal decoding and video codec decoding on the CPU.
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-1.0" ]] ; then
-ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ATSC 1.0 signal decode and H.262 codec decode."
+ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both the ATSC 1.0 and H.262."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ATSC-3.0" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ATSC 3.0 signal decode and H.265 codec decode."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both the ATSC 3.0 and H.265."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "ClearQAM" ]] ; then
-ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ClearQAM signal decode and H.264 codec decode."
-ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the ClearQAM signal decode and H.262 codec decode."
+ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both ClearQAM and H.264."
+ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both ClearQAM and H.262."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "QAM"($|" ") ]] ; then
-ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the QAM signal decode and H.264 codec decode."
-ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the QAM signal decode and H.262 codec decode."
+ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both QAM and H.264."
+ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both QAM and H.262."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "DVB" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for both the DVB signal decode and H.265 decode."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both DVB and H.265."
 		fi
 
 	# Some TV tuner cards offload the video codec to the CPU but hardware accelerate the signal decoding.
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "H.265" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for H.265 decode."
+ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for H.265."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "H.262" ]] ; then
-ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware acceleration for H.262 decode."
+ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for H.262."
 		fi
-einfo "Alternatively, consider using VAAPI to accelerate video decoding for the TV tuner if hardware accelerated codec support is available on the GPU/CPU."
+einfo "Alternatively, consider using VAAPI to accelerate video decoding on the CPU or GPU for the TV tuner."
 	fi
 }
 
