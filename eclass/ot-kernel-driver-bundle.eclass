@@ -4370,28 +4370,33 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	# The logs are missing the demodulator model.
 	# The driver set assumes that the CONFIG_VIDEO_PVRUSB2_DVB will add all the DVB-T demodulator
 	# drivers and autodetect the DVB-T demodulator.
+	# The FM tuner chip is unknown.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
 		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T/T2, ISDB-T, DTMB
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, ATSC, ISDB-T
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator for NTSC, PAL, SECAM
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X" # Hypothesized from American version; MPEG encoder, analog IF demodulator for FM radio
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX25840" # A/V decoder with cx25843-24 for NTSC, PAL, SECAM, BTSC, EIA-J, AT, NICAM, FM/AM
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2" # USB bridge
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_SYSFS"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL USB-2.0"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL NO-FM USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1950" ]] ; then
+	# The FM tuner chip is unknown.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
@@ -4401,21 +4406,21 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_IT913X" # Possibly used digital tuner
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Possibly used tuner
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Possibly used analog/digital tuner
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_IT913X" # Possibly used digital tuner DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Possibly used tuner for DVB-C
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Possibly used analog/digital tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, ISDB-T
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X" # MPEG encoder
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X" # MPEG encoder, analog IF demodulator for FM radio
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX25840" # Video decoder
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2"
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_SYSFS"
-		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC FM USB-2.0"
+		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC NO-FM USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-801ese" ]] ; then
 	# Missing analog support in driver
@@ -4887,7 +4892,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL FM PCI"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL NO-FM PCI"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1600" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4937,7 +4942,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge and A/V decoder with CX23882
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
-	# Missing component models for FM radio
+	# Missing FM radio models for tuner and demodulator for FM radio support
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-T NO-PAL NO-SECAM NO-FM PCI"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-4000" ]] ; then
@@ -4956,7 +4961,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887" # Demodulator for FM, analog TV
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SIMPLE" # FMD1216ME MK3 tuner for DVB-T, PAL, SECAM, FM radio; TUA6034 tuner for DVB-T, DVB-C, ISDB-T, ATSC, PAL, NTSC, DOCSIS
-	# Missing driver for TDA7040 because FM decoding is offloaded to the CPU
+	# Missing driver for TDA7040 FM decoder so it is offloaded to the CPU
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_WM8775" # ADC
 		ot-kernel_y_configopt "CONFIG_PCI"
@@ -5039,7 +5044,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800-full-height") ]] ; then
+	# Medford
+	# The LLM is flip-floping and self-contradicting for the the FM tuner chip.  The FM tuner model is unknown.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Digital demodulator for ATSC, ClearQAM, VSB
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5052,7 +5059,33 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2131" # Digital tuner for ATSC, QAM, NTSC
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Analog tuner PAL, NTSC, SECAM;  Digital tuner for DVB-T, ATSC 1.0 (8-VSB)
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Analog tuner PAL, NTSC, SECAM;  Digital tuner for DVB-T, ATSC 1.0 (8-VSB), QAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator with TDA8295
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X" # MPEG encoder for analog TV
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB" # Possibly used for analog side
+		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC NO-FM PCIe"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800-low-profile") ]] ; then
+	# Brentwood
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Digital demodulator for ATSC, ClearQAM, VSB
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2131" # Digital tuner for ATSC, QAM, NTSC
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA827X" # Analog tuner for NTSC, PAL, SECAM, FM radio with TDA8275A
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator with TDA8295
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
