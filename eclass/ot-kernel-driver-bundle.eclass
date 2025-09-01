@@ -4218,14 +4218,26 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_RC_DEVICES"
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ATSC-M/H DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-duet-hd-stick-52009" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T for 7000PC
+		ot-kernel_y_configopt "CONFIG_DVB_TUNER_DIB0070" # Tuner for DVB-T/T2, DVB-H, DVB-SH, T-DMB, ISDB-T, CMMB, DAB/DAB+, ATSC-M/H
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-65301") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5024,6 +5036,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
@@ -5046,6 +5060,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887" # Analog tuner
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Possibly used
@@ -5061,7 +5077,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX18" # Handle video and audio streams
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX18_ALSA" # Audio support
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC PCI"
+		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC NO-FM PCI"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-3000" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5076,6 +5092,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SIMPLE" # FMD1216ME tuner for DVB-T, PAL, SECAM, FM radio
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
@@ -5086,7 +5103,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
-	# Missing FM radio models for tuner and demodulator for FM radio support
+	# Missing FM radio model for demodulator for FM radio support
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-T NO-PAL NO-SECAM NO-FM PCI"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-4000" ]] ; then
@@ -5174,6 +5191,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator for PAL, NTSC, SECAM
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, QAM
@@ -5182,7 +5201,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and analog decoder for PAL, NTSC, SECAM
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL PCIe"
+	# Missing FM radio tuner and demodulator model ids.
+	# It is possible that some revisions did or did not have FM radio support.
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL NO-FM PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1250") ]] ; then
 	# Only digital TV supported
@@ -5221,6 +5242,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-T/T2, ISDB-T, DTMB.  From dmesg log in wiki.
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator for NTSC, PAL, SECAM, FM radio.  For Philips 18271_8295 from dmesg log in wiki.
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
@@ -5231,7 +5254,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X" # MPEG encoder for analog TV
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL NO-SECAM PCIe"
+	# Missing FM radio tuner and demodulator model ids.
+	# It is possible that some revisions did or did not have FM radio support.
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL NO-SECAM NO-FM PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800-full-height") ]] ; then
 	# Medford
@@ -5295,6 +5320,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for PAL, NTSC, SECAM, DVB-T, ATSC, ISDB-T, DMB-T/H
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
@@ -5304,7 +5331,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL PCIe"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # A/V decoder for NTSC, PAL, SECAM
+	# Missing FM radio model ids for tuner and demodulator
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL NO-FM PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2205"|"tv-tuner:wintv-hvr-2215") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
