@@ -5319,7 +5319,7 @@ ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) de
 ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for both DVB and H.265."
 		fi
 
-	# Some TV tuner cards offload the video codec to the CPU but hardware accelerate the signal decoding.
+	# Some TV tuner cards offload the video codec decoding to the CPU but hardware accelerate the signal decoding.
 		if [[ "${_OT_KERNEL_TV_TUNER_SOFTWARE_DECODER}" =~ "H.265" ]] ; then
 ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.  Your TV card lacks a hardware accelerated decode for H.265."
 		fi
