@@ -5180,6 +5180,22 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# 4. CX23416 passes to CX2388x to sends PCM to software
 	# 5. Software performs stereo decoding.
 	#
+	# Alternatively,
+	#
+	# 1. FM radio waves > tuner
+	# 2. tuner > demodulator
+	# 3. demodulator > ADC
+	# 4. ADC > PCM
+	# 5. PCM > PCI
+	# 6. PCI > OS
+	# 7. OS > App
+	# 8. App > library
+	# 9. library > DSP
+	# 10. DSP > library
+	# 11. library > APP
+	# 12. App > OS
+	# 13. OS > speaker
+	#
 	# Stereo decoding happens in CX2388x in step 2 or it is offloaded to the CPU in step 5.
 	# Stereo decoding means that the mono audio signal is converted to stereo.
 	# The component interaction map can determine if the driver set is complete.
