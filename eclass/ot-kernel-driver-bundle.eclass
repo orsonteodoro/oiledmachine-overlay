@@ -5300,6 +5300,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:voodootv-100-pci") ]] ; then
+	# 3DFX
 		ot-kernel_y_configopt "CONFIG_EEPROM_AT24" # For reading the 24c01a
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL
