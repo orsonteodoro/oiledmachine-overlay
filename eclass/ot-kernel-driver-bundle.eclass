@@ -5200,7 +5200,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# 12. app > OS
 	# 13. OS > speaker
 	#
-	# The CONFIG_VIDEO_IVTV is not necessary.  The two LLMs disagree if the symbol it is needed for FM radio support for wintv-hvr-1300.
+	# The CONFIG_VIDEO_IVTV is not necessary.  Two LLMs disagree if the symbol is needed for FM radio support for wintv-hvr-1300.
 	#
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL FM PCI"
 	fi
