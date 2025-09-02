@@ -4688,26 +4688,6 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
 	fi
-	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-461e" ]] ; then
-ewarn "The M88TS2022 tuner driver for DVB-S/S2 is dropped in later kernel version for tv-tuner:pctv-dvb-s2-stick-461e support."
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
-		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103" # Demodulator for DVB-S/S2
-		ot-kernel_y_configopt "CONFIG_DVB_M88TS2022" # Tuner for DVB-S2, ABS-S
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_I2C_MUX"
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18212"
-		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
-	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv-wonder-hd-600-usb") ]] ; then
 	# ATI
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
