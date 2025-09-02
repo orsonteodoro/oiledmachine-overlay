@@ -5605,6 +5605,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5500") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # For LNB voltage regulator
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2165" # DVB-T, DVB-C demodulator
 		ot-kernel_y_configopt "CONFIG_DVB_TDA10071" # DVB-S2 demodulator
@@ -5731,6 +5732,9 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	#
 	#    You need at least the bridge, tuner, and the demodulator drivers
 	#    for older models without a hardware decoder.
+	#
+	#    For DVB-S/S2 cards, they need to verify that LNB voltage regulator
+	#    driver is installed.
 	#
 	#    Some devices require fewer drivers if components are integrated.
 	#
