@@ -5275,7 +5275,6 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_DVB_DIB3000MC" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # PCI-to-USB bridge
-		ot-kernel_y_configopt "CONFIG_DVB_USB_DIBUSB_MC" # For USB devices on PCI card
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
