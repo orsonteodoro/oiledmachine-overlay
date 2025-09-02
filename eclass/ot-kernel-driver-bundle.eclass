@@ -4674,17 +4674,18 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T2 DVB-C USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-460e" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_STV090x"
-		ot-kernel_y_configopt "CONFIG_DVB_TDA10071"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA10071" # Demodulator and tuner for DVB-S/S2
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18212"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB bridge
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
@@ -4693,7 +4694,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-461e" ]] ; then
 ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv-dvb-s2-stick-461e support."
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_A8293"
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103" # Demodulator for DVB-S/S2
 		#ot-kernel_y_configopt "CONFIG_DVB_M88TS2022" # Tuner for DVB-S2, ABS-S
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5213,7 +5214,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_CX22702" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_DVB_CX24116" # Demodulator for DVB-S/S2, driver for CX24118A
-		ot-kernel_y_configopt "CONFIG_DVB_ISL6421" # LNB voltage controller
+		ot-kernel_y_configopt "CONFIG_DVB_ISL6421" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -5733,7 +5734,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	#    You need at least the bridge, tuner, and the demodulator drivers
 	#    for older models without a hardware decoder.
 	#
-	#    For DVB-S/S2 cards, they need to verify that LNB voltage regulator
+	#    For DVB-S/S2 cards, they need to verify that the LNB controller
 	#    driver is installed.
 	#
 	#    Some devices require fewer drivers if components are integrated.
