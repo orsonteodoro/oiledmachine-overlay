@@ -48,6 +48,10 @@ ewarn "Disabling xpad driver"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
 	fi
 
+	# Disabled to reduce build times.
+	# Used by TV tuner cards with a lot of revisions.
+	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
+
 	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
@@ -2394,9 +2398,6 @@ ot-kernel-driver-bundle_add_webcam() {
 	ot-kernel-driver-bundle_add_uvc_webcam_by_driver_name
 	ot-kernel-driver-bundle_add_s2255_webcam
 	ot-kernel-driver-bundle_add_usbtv007_webcam
-	if grep -q -E -e "^CONFIG_MEDIA_SUPPORT=(y|m)" "${path_config}" ; then
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
-	fi
 	if grep -q -E -e "^CONFIG_USB_GSPCA_" "${path_config}" ; then
 ewarn "You are likely using a 30 FPS camera, considered obsolete by today's video streaming standards."
 ewarn "For gaming or sports, use a camera produced >= 2016 with 720p @ 60 FPS capability instead."
@@ -4480,6 +4481,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT" # Force bloated autodetection
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, ATSC, ISDB-T
@@ -4636,7 +4638,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
 	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-microstick-pc-and-mac-77e" ]] ; then
-	# Missing component list for verification.  It could be a AI hallucination generated list.
+	# Missing component list for verification.  It could be a AI hallucinated generated list.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_RTL2832_SDR"
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
@@ -4692,7 +4694,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
 	fi
 	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-461e" ]] ; then
-ewarn "The M88TS2022 driver is dropped in later kernel version for tv-tuner:pctv-dvb-s2-stick-461e support."
+ewarn "The M88TS2022 tuner driver for DVB-S/S2 is dropped in later kernel version for tv-tuner:pctv-dvb-s2-stick-461e support."
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103" # Demodulator for DVB-S/S2
@@ -5141,6 +5143,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT" # Force bloated autodetection
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
@@ -5178,10 +5181,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# 2. FMD1216ME passes signal to CX2388x for ADC (audio to digital conversion) processing.
 	# 3. CX2388x passes to CX23416 for PCM audio conversion.
 	# 4. CX23416 passes to CX2388x to sends PCM to software.
-	# 5. Software performs stereo decoding.
+	# 5. Software performs stereo decoding, where the mono signal is converted to stereo.
 	#
 	# Stereo decoding happens in CX2388x in step 2 or it is offloaded to the CPU in step 5.
-	# Stereo decoding means that the mono audio signal is converted to stereo.
 	# The component interaction map can determine if the driver set is complete.
 	#
 	# Alternatively,
@@ -5199,6 +5201,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# 11. library > app
 	# 12. app > OS
 	# 13. OS > speaker
+	#
+	# Different systems will combine or offload to reduce cost and to miniaturize.
 	#
 	# The CONFIG_VIDEO_IVTV is not necessary.  Two LLMs disagree if the symbol is needed for FM radio support for wintv-hvr-1300.
 	#
@@ -5814,9 +5818,6 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	fi
 	if [[ "${tags}" =~ "pcie"($|" ") ]] ; then
 		ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name
-	fi
-	if grep -q -E -e "^CONFIG_MEDIA_SUPPORT=(y|m)" "${path_config}" ; then
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
 	fi
 
 	if grep -q -E -e "^CONFIG_RC_CORE=(y|m)" "${path_config}" ; then
