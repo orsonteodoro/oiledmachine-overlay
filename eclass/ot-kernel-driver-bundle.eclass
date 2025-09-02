@@ -5196,8 +5196,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# 8. App > library
 	# 9. library > mono-to-stereo DSP
 	# 10. mono-to-stereo DSP > library
-	# 11. library > APP
-	# 12. App > OS
+	# 11. library > app
+	# 12. app > OS
 	# 13. OS > speaker
 	#
 	# The CONFIG_VIDEO_IVTV is not necessary.  The two LLMs disagree if the symbol it is needed for FM radio support for wintv-hvr-1300.
