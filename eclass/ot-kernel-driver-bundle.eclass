@@ -5175,9 +5175,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# The hypothetical high level analysis for FM radio support
 	#
 	# 1. FMD1216ME does FM frequency tuning and partial demodulation of FM radio.
-	# 2. FMD1216ME passes signal to CX2388x for ADC processing.
+	# 2. FMD1216ME passes signal to CX2388x for ADC (audio to digital conversion) processing.
 	# 3. CX2388x passes to CX23416 for PCM audio conversion.
-	# 4. CX23416 passes to CX2388x to sends PCM to software
+	# 4. CX23416 passes to CX2388x to sends PCM to software.
 	# 5. Software performs stereo decoding.
 	#
 	# Stereo decoding happens in CX2388x in step 2 or it is offloaded to the CPU in step 5.
