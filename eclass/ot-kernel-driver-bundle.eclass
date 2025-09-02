@@ -5190,8 +5190,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	# 6. PCI > OS
 	# 7. OS > App
 	# 8. App > library
-	# 9. library > DSP
-	# 10. DSP > library
+	# 9. library > mono-to-stereo DSP
+	# 10. mono-to-stereo DSP > library
 	# 11. library > APP
 	# 12. App > OS
 	# 13. OS > speaker
