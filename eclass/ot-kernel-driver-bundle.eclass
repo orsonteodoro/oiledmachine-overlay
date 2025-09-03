@@ -5332,10 +5332,11 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-t" ]] ; then
-# Unfinished
-		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CORE" # Tuner for DVB-T tuner with Grundig
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-t-pci-p1" ]] ; then
+	# Frontend possibility 1
+		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CORE" # Tuner for DVB-T with 29504-401.04
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_L64781" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
@@ -5347,9 +5348,12 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7146" # PCI bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-pci-90002"|"tv-tuner:wintv-nova-t-pci-90003") ]] ; then
-# Unfinished
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-t-pci-p2" ]] ; then
+	# Frontend possibility 2
+		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CI" # Tuner for DVB-T  with tdm1316l
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
@@ -5358,13 +5362,11 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_DVB_CX22702" # Demodulator
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge and A/V decoder
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7146" # PCI bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
+	# tv-tuner:wintv-nova-t-pci-90002 is not supported because driver is missing for DTT7592 tuner.
+	# tv-tuner:wintv-nova-t-pci-90003 is not supported because driver is missing for DTT75105 tuner.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-500") ]] ; then
 	# USB drivers required because of USB 2.0 hub on-board
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5384,6 +5386,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
 	# tv-tuner:wintv-hvr-1600mce is not supported since TMFNM05_12E was removed
+	# tv-tuner:pctv-dvb-s2-stick-461e is not supported because driver is missing for hypothesized M88TS2022 tuner or DVB-S/S2 tuner.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-card-800i" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Demodulator for ATSC, QAM
