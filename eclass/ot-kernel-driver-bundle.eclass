@@ -5932,6 +5932,13 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 		ot-kernel_y_configopt "CONFIG_RC_DECODERS"
 	fi
 
+	if grep -q -E -e "^CONFIG_SND_AW2=y" "${path_config}" && grep -q -E -e "^CONFIG_VIDEO_SAA7146=(y|m)" "${path_config}"  ; then
+		_OT_KERNEL_FORCE_SND_AW2_AS_MODULE=1
+	fi
+	if grep -q -E -e "^CONFIG_SND_AW2=y" "${path_config}" && grep -q -E -e "^CONFIG_VIDEO_SAA7146_VV=(y|m)" "${path_config}" ; then
+		_OT_KERNEL_FORCE_SND_AW2_AS_MODULE=1
+	fi
+
 	# It's like software modems but with TV tuners.
 	if [[ -n "${_OT_KERNEL_TV_TUNER_TAGS}" ]] ; then
 	#

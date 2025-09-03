@@ -13921,7 +13921,7 @@ einfo "Disabled security critical settings"
 # @DESCRIPTION:
 # Remove symbol trimming for closed source drivers
 ot-kernel_fix_external_modules() {
-	if [[ "${_FORCE_OT_KERNEL_EXTERNAL_MODULES}" == "1" ]] ; then
+	if [[ "${_OT_KERNEL_FORCE_EXTERNAL_MODULES}" == "1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_unset_configopt "CONFIG_TRIM_UNUSED_KSYMS"
 	fi
@@ -13999,6 +13999,20 @@ ewarn "KMS and framebuffers will be disabled for GPU passthrough on host.  Assum
 	fi
 	if [[ "${work_profile}" =~ "vm-guest" ]] ; then
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "iommu=pt"
+	fi
+}
+
+# @FUNCTION: ot-kernel_fix_saa7146_conflict
+# @DESCRIPTION:
+# Avoid conflict between saa7146 and snd-aw2 drivers.
+ot-kernel_fix_saa7146_conflict() {
+	if [[ "${_OT_KERNEL_FORCE_SND_AW2_AS_MODULE}" == "1" ]] ; then
+ewarn "Changing to CONFIG_SND_AW2=m.  You are responsible for blacklisting snd-aw2 kernel module to avoid conflicting saa7146 to make the TV tuner operational."
+		ot-kernel_set_configopt "CONFIG_SND_AW2" "m"
+	fi
+	if [[ "${_OT_KERNEL_FORCE_SND_AW2_AS_MODULE}" == "1" ]] ; then
+ewarn "Changing to CONFIG_SND_AW2=m.  You are responsible for blacklisting snd-aw2 kernel module to avoid conflicting saa7146_vv to make the TV tuner operational."
+		ot-kernel_set_configopt "CONFIG_SND_AW2" "m"
 	fi
 }
 
@@ -14108,7 +14122,8 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
 
-	local _FORCE_OT_KERNEL_EXTERNAL_MODULES=0
+	local _OT_KERNEL_FORCE_SND_AW2_AS_MODULE=0
+	local _OT_KERNEL_FORCE_EXTERNAL_MODULES=0
 	ot-kernel-driver-bundle_add_drivers
 	ot-kernel_set_kconfig_vm_host_gpu_passthrough
 
@@ -14170,6 +14185,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_module_signing
 	ot-kernel_set_message
 	ot-kernel_fix_external_modules
+	ot-kernel_fix_saa7146_conflict
 
 	ot-kernel_set_rust
 	ot-kernel_set_kconfig_cpu_scheduler_post
