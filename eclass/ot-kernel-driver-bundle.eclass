@@ -4211,7 +4211,39 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-s-usb-p1" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-usb"($|" ")|"tv-tuner:wintv-nova-t-usb-p1"($|" ")) ]] ; then
+	# Frontend possibility 1
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_TTUSB_BUDGET" # Tuner for DVB-T with td1316.  It is the whole device driver that includes the USB bridge.
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-1.1"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-usb"($|" ")|"tv-tuner:wintv-nova-t-usb-p2"($|" ")) ]] ; then
+	# Frontend possibility 2
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX22700" # Demodulator for DVB-T, QAM, 8-VSB
+		ot-kernel_y_configopt "CONFIG_DVB_TTUSB_BUDGET" # Tuner for DVB-T with TDMB7.  It is the whole device driver that includes the USB bridge.
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-1.1"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s-usb"($|" ")|"tv-tuner:wintv-nova-s-usb-p1") ]] ; then
 	# Frontend possibility 1
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
@@ -4225,9 +4257,9 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-1.1"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-s-usb-p2" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s-usb"|"tv-tuner:wintv-nova-s-usb-p2") ]] ; then
 	# Frontend possibility 2
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
@@ -4241,7 +4273,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-1.1"
 	fi
 }
 
@@ -4809,6 +4841,33 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 DVB-C USB-2.0"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-stick") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T, DVB-H, T-DMB, ISDB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2266" # Tuners for DVB-T, DVB-H
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-usb2") ]] ; then
+		ot-kernel_y_configopt "CONFIG_CYPRESS_FIRMWARE" # For USB bridge with FX2
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB3000MC" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_PLL" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_NOVA_T_USB2" # USB bridge with FX2
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-td-stick") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T, DVB-H, T-DMB, ISDB-T
@@ -5302,25 +5361,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 DVB-T PAL SECAM FM PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nexus-s"($|" ")|"tv-tuner:wintv-nexus-s-rev-2.x"($|" ")) ]] ; then
-	# Dummy proof combining both
-		ot-kernel_y_configopt "CONFIG_DVB_AV7110" # DVB-S tuner with either BSRU6, BSRV2, or BSBE1; MPEG-2 decoder
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_STV0299" # Demodulator for DVB-S, DSSTM
-		ot-kernel_y_configopt "CONFIG_DVB_VES1X93" # Demodulator for DVB-S
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_PCI"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_STAGING"
-		ot-kernel_y_configopt "CONFIG_STAGING_MEDIA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7146" # USB bridge
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S PCI"
-	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nexus-s-rev-2.1-p1"|"tv-tuner:wintv-nexus-s-rev-2.2"|"tv-tuner:wintv-nexus-s-rev-2.3") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nexus-s"($|" ")|"tv-tuner:wintv-nexus-s-rev-2.x"($|" ")|"tv-tuner:wintv-nexus-s-rev-2.1-p1"|"tv-tuner:wintv-nexus-s-rev-2.2"|"tv-tuner:wintv-nexus-s-rev-2.3") ]] ; then
 	# Frontend possibility 1
 		ot-kernel_y_configopt "CONFIG_DVB_AV7110" # DVB-S tuner with either BSRU6, BSRV2, or BSBE1; MPEG-2 decoder
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5337,7 +5378,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7146" # USB bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nexus-s-rev-2.1-p2") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nexus-s"($|" ")|"tv-tuner:wintv-nexus-s-rev-2.x"($|" ")|"tv-tuner:wintv-nexus-s-rev-2.1-p2") ]] ; then
 	# Frontend possibility 2
 		ot-kernel_y_configopt "CONFIG_DVB_AV7110" # DVB-S tuner with either BSRU6, BSRV2, or BSBE1; MPEG-2 decoder
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5539,6 +5580,27 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_TEA6420" # Audio switch for input and output
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVAUDIO" # Audio decoder with TDA9850
 		export _OT_KERNEL_TV_TUNER_TAGS="NTSC PAL FM PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:lr6650"|"tv-tuner:winfast-dtv1000-t") ]] ; then
+	# LiveView
+	# Leadtek
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX22702" # Demodulator
+		ot-kernel_y_configopt "CONFIG_DVB_PLL" # Tuner with DTT7579
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge and A/V decoder with CX23882
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
 }
 
@@ -5818,6 +5880,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5525") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller for DVB-S/S2 support
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # DVB-T2/C and DVB-S2 demodulator for digital cable or terrestrial antenna
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5854,7 +5917,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # A/V decoder and analog IF demodulator
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # A/V decoder and analog IF demodulator, ADC, PCM
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C NO-DVB-S NO-DVB-S2 DVB-T NO-PAL NO-SECAM NO-FM PCIe"
 	fi
