@@ -6061,7 +6061,6 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 
 	# The ATSC and DVB TV tuner devices get triaged first.
 	# The ebuild only supports TV cards with at least one working standard with either ATSC, DVB-C/T/T2/S/S2, ISDB-T, or FM radio.
-	# Partially supported models will be considered if it has basic digital TV or AM/FM radio support.
 
 	# The NTSC/PAL/SECAM should also be listed for with old VCRs for home videos.
 
