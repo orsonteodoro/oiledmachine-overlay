@@ -4965,7 +4965,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T DVB-T2 USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-digi-volar-x-a815") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-digi-volar-x"($|" ")|"tv-tuner:avertv-digi-volar-x-a815") ]] ; then
 	# AVerMedia
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_AF9015" # Demodulator and decoding for DVB-T
@@ -4979,7 +4979,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertvhd-volar-a868r") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertvhd-volar"($|" ")|"tv-tuner:avertvhd-volar-a868r") ]] ; then
 	# AVerMedia
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # Demodulator/decoder for ATSC (8-VSB), QAM
@@ -5524,7 +5524,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 QAM NTSC PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-dvb-t-super-007-m135d") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-dvb-t-super-007"($|" ")|"tv-tuner:avertv-dvb-t-super-007-m135d") ]] ; then
 	# AVerMedia
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator and decoder for DVB-T, DVB-H
@@ -5720,7 +5720,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 	# It is possible that some revisions did or did not have FM radio support.
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL NO-SECAM NO-FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (("tv-tuner:wintv-hvr-1800"($|" ")|"tv-tuner:wintv-hvr-1800-full-height")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800"($|" ")|"tv-tuner:wintv-hvr-1800-full-height") ]] ; then
 	# Medford
 	# The LLM is flip-floping and self-contradicting for the the FM tuner chip.  The FM tuner model is unknown.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
