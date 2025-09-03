@@ -6013,6 +6013,27 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 DVB-C PCIe"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:atv-pex85-isdb"|"tv-tuner:x8502"($|" ")|"tv-tuner:x8507-pci-express-hybrid-card"|"tv-tuner:xtreme-pcie-vi8057") ]] ; then
+	# Advantek Networks
+	# Geniatech
+	# Leadership
+	# MyGica
+	# Visus
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_MB86A20S" # Demodulator for ISDB-T, FM radio tuner
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000" # Tuner for ISDB-T, audio processing
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="ISDB-T NO-FM PCIe"
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner() {
