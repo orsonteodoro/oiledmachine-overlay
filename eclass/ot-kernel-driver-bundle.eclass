@@ -4859,7 +4859,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_DIB3000MC" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
-		ot-kernel_y_configopt "CONFIG_DVB_PLL" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_PLL" # PLL for DVB-T with ENV57H
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_NOVA_T_USB2" # USB bridge with FX2
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -5585,10 +5585,11 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 	# LiveView
 	# Leadtek
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_CX22702" # Demodulator
-		ot-kernel_y_configopt "CONFIG_DVB_PLL" # Tuner with DTT7579
+		ot-kernel_y_configopt "CONFIG_DVB_CX22702" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_PLL" # Tuner with DTT 7579
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC/PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
