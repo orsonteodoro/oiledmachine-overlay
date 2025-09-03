@@ -5130,7 +5130,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder"($|" ")|"tv-tuner:hdtv-wonder-regular-edition") ]] ; then
 	# ATI
 	# No analog sound support because driver missing
 	# Digital sound decode done by sound card DAC
@@ -5154,7 +5154,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 QAM NTSC PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder-value-edition") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder"($|" ")|"tv-tuner:hdtv-wonder-value-edition") ]] ; then
 	# ATI
 	# TU1236 uses the same driver as TUV1236D
 	# Removes AK5355, TDA9887
