@@ -190,7 +190,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
-	ot-kernel-driver-bundle_add_tv_tuner "pci"
+	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
@@ -518,7 +518,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pci usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pci usb-1.1 usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
@@ -639,7 +639,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pci pcie usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pci pcie usb-1.1 usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -778,7 +778,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -874,7 +874,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
@@ -969,7 +969,7 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1034,7 +1034,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0"
 
 	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 		# For AI support
@@ -4210,6 +4210,41 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 	fi
 }
 
+ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-s-usb-p1" ]] ; then
+	# Frontend possibility 1
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_STV0299" # Demodulator for DVB-S, DSSTM
+		ot-kernel_y_configopt "CONFIG_DVB_TTUSB_BUDGET" # Tuner for DVB-S with BSRU6.  It is the whole device driver that includes the USB bridge.
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-s-usb-p2" ]] ; then
+	# Frontend possibility 2
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA8083" # Demodulator for DVB-S
+		ot-kernel_y_configopt "CONFIG_DVB_TTUSB_BUDGET" # Tuner for DVB-S with 29504-451.  It is the whole device driver that includes the USB bridge.
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
+	fi
+}
+
 ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-aero-m" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4786,6 +4821,24 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s-usb2") ]] && ver_test "${KV_MAJOR_MINOR}" -le "6.0" ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX24123" # Demodulator and tuner for DVB-S with CX24123; tuner and LNB controller for DVB-S with CX24109
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TM6000" # USB bridge and video decoder.  Only available kernel version <= 6.0.
+		ot-kernel_y_configopt "CONFIG_VIDEO_TM6000_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TM6000_DVB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nanostick-t2-290e") ]] ; then
 	# Only digital TV supported
@@ -5385,6 +5438,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
+	# tv-tuner:wintv-nova-td-500 is not supported in the ebuild since the model of the parts are not clearly defined or ambiguous.  You can still manually add it and some users reported success.
 	# tv-tuner:wintv-hvr-1600mce is not supported since TMFNM05_12E was removed
 	# tv-tuner:pctv-dvb-s2-stick-461e is not supported because driver is missing for hypothesized M88TS2022 tuner or DVB-S/S2 tuner.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-card-800i" ]] ; then
@@ -5915,6 +5969,9 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	unset _OT_KERNEL_TV_TUNER_TAGS # It should contain the firmware allowed operation for the model so that code reviewers or device owners know the official capabilities of the device.
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUPPORT_FILTER"
+	if [[ "${tags}" =~ "usb-1.1"($|" ") ]] ; then
+		ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name
+	fi
 	if [[ "${tags}" =~ "usb-2.0"($|" ") ]] ; then
 		ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name
 	fi
