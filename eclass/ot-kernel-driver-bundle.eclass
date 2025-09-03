@@ -4327,7 +4327,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-65301") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850"($|" ")|"tv-tuner:wintv-hvr-850-65301") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # Demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -4351,7 +4351,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # A/V decoder for analog video input
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-72301") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850"($|" ")|"tv-tuner:wintv-hvr-850-72301") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_AU8522_DTV" # Digital demodulator
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -4372,7 +4372,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850-01200") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-850"($|" ")|"tv-tuner:wintv-hvr-850-01200") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT3305" # ATSC demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -4394,7 +4394,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-900-65008"($|" ")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-900"($|" ")|"tv-tuner:wintv-hvr-900-65008"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_ZL10353" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
@@ -4608,7 +4608,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_PVRUSB2_SYSFS"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC NO-FM USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-801ese" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-hd-stick"($|" ")|"tv-tuner:pctv-hd-stick-801ese") ]] ; then
 	# Missing analog support in driver
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # ATSC (8-VSB) and QAM demodulator
@@ -4625,7 +4625,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 QAM NO-NTSC USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-800e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-hd-pro-stick"($|" ")|"tv-tuner:pctv-hd-pro-stick-800e") ]] ; then
 	# QAM is not supported
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT330X" # ATSC, NTSC, ClearQAM tuner
@@ -4649,7 +4649,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2_SUBDEV_API"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-stick-801e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-hd-pro-stick"($|" ")|"tv-tuner:pctv-hd-pro-stick-801e") ]] ; then
 	# Missing analog support in driver
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # Demodulator for ATSC, ClearQAM
@@ -4685,24 +4685,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-73e" ]] ; then
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T
-		ot-kernel_y_configopt "CONFIG_DVB_TUNER_DIB0070" # Tuner
-		ot-kernel_y_configopt "CONFIG_DVB_USB"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SMS_USB_DRV"
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
-	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-nano-stick-73e-se-solo" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nano-stick"($|" ")|"tv-tuner:pctv-73e"($|" ")|"tv-tuner:pctv-nano-stick-73e-se-solo") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_DVB_TUNER_DIB0070" # The assumed tuner, but it is not defined in the component list
@@ -4719,7 +4702,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-microstick-pc-and-mac-77e" ]] ; then
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-microstick-pc-and-mac"($|" ")|"tv-tuner:pctv-microstick-pc-and-mac-77e") ]] ; then
 	# Missing component list for verification.  It could be a AI hallucinated generated list.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_RTL2832_SDR"
@@ -4737,7 +4720,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-nanostick-t2-290e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nanostick-t2"($|" ")|"tv-tuner:pctv-nanostick-t2-290e") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_CXD2820R" # Decoding and demodulation for DVB-T/T2, DVB-C
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -4748,15 +4731,16 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner to IF to send to demodulator for PAL, NTSC, SECAM, DVB-T, ATSC, DVB-C
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB bridge
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T2 DVB-C USB-2.0"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T2 USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-dvb-s2-stick-460e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-dvb-s2-stick"|"tv-tuner:pctv-dvb-s2-stick-460e") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_TDA10071" # Demodulator and tuner for DVB-S/S2
@@ -4918,26 +4902,6 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TM6000_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nanostick-t2-290e") ]] ; then
-	# Only digital TV supported
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_CXD2820R" # Demodulator for DVB-T/T2/C
-		ot-kernel_y_configopt "CONFIG_DVB_TDA18271C2DD" # Digital tuner for DVB-T/T2, DVB-C/C2, ATSC, ISDB-T; Analog tuner for NTSC, PAL, SECAM
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB device controller
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T2 USB-2.0"
-	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-solohd") ]] ; then
 	# Only digital TV supported
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4981,7 +4945,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T DVB-T2 USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-triplestick-t2-292e" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-triplestick-t2"($|" ")|"tv-tuner:pctv-triplestick-t2-292e") ]] ; then
 	# Only digital TV supported
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # Digital demodulator for DVB-C/T/T2
@@ -5483,7 +5447,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-t-pci-p1" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-pci"($|" ")|"tv-tuner:wintv-nova-t-pci-p1") ]] ; then
 	# Frontend possibility 1
 		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CORE" # Tuner for DVB-T with 29504-401.04
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5499,7 +5463,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7146" # PCI bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-nova-t-pci-p2" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-pci"($|" ")|"tv-tuner:wintv-nova-t-pci-p2") ]] ; then
 	# Frontend possibility 2
 		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_BUDGET_CI" # Tuner for DVB-T  with tdm1316l
@@ -5539,7 +5503,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 	# tv-tuner:wintv-nova-td-500 is not supported in the ebuild since the model of the parts are not clearly defined or ambiguous.  You can still manually add it and some users reported success.
 	# tv-tuner:wintv-hvr-1600mce is not supported since TMFNM05_12E was removed
 	# tv-tuner:pctv-dvb-s2-stick-461e is not supported because driver is missing for hypothesized M88TS2022 tuner or DVB-S/S2 tuner.
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:pctv-hd-card-800i" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-hd-card"($|" ")|"tv-tuner:pctv-hd-card-800i") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Demodulator for ATSC, QAM
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5600,7 +5564,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
 		export _OT_KERNEL_TV_TUNER_TAGS="PAL SECAM FM PCI"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-radio-44914-rev-c121") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-radio"($|" ")|"tv-tuner:wintv-radio-44914-rev-c121") ]] ; then
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
@@ -5756,7 +5720,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 	# It is possible that some revisions did or did not have FM radio support.
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL NO-SECAM NO-FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800-full-height") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (("tv-tuner:wintv-hvr-1800"($|" ")|"tv-tuner:wintv-hvr-1800-full-height")) ]] ; then
 	# Medford
 	# The LLM is flip-floping and self-contradicting for the the FM tuner chip.  The FM tuner model is unknown.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5783,7 +5747,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB" # Possibly used for analog side
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC NO-FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800-low-profile") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1800"($|" ")|"tv-tuner:wintv-hvr-1800-low-profile") ]] ; then
 	# Brentwood
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Digital demodulator for ATSC, ClearQAM, VSB
@@ -5849,7 +5813,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T DVB-T2 NO-PAL PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c1f1") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c1f1") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -5868,7 +5832,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge, driver for CX24228-21Z demodulator
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c2f2") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c2f2") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -5885,7 +5849,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge, driver for CX24228-21Z demodulator
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c3f2") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c3f2") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -5902,7 +5866,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge, driver for CX24228-21Z demodulator
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250-rev-c4f2") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c4f2") ]] ; then
 	# Does not support DVB
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1411" # DTV receiver and demodulator for DVB-T, DVB-H, T-DMB, ISDB-T, MediaFLO, CMMB
@@ -5979,7 +5943,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C NO-DVB-S NO-DVB-S2 DVB-T NO-PAL NO-SECAM NO-FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd-atsc-clearqam") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-atsc-clearqam") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # ATSC and ClearQAM demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5996,7 +5960,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd-dvb-t-t2-c") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-dvb-t-t2-c") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # Demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
