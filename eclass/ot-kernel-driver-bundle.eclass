@@ -299,7 +299,7 @@ ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
-	ot-kernel-driver-bundle_add_tv_tuner "pci"
+	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_musician_drivers
@@ -393,7 +393,7 @@ ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 
 	ot-kernel-driver-bundle_add_printer "parport"
-	ot-kernel-driver-bundle_add_tv_tuner "pci"
+	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
