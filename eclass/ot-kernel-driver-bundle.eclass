@@ -6130,7 +6130,7 @@ ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for
 einfo "Alternatively, consider using VAAPI to accelerate video decoding on the CPU or GPU for the TV tuner."
 einfo "TV tuner tags:  ${_OT_KERNEL_TV_TUNER_TAGS}"
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "NO-" ]] ; then
-einfo "NO- means that support is broken."
+einfo "NO- means that support is broken because either missing/broken driver or missing chip model information."
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "?-" ]] ; then
 einfo "?- means that support is unverified or is based on low confidence/veracity or hypothesized chip model information."
