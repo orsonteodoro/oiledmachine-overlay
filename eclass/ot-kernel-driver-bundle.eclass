@@ -4211,6 +4211,25 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
+	# The tv-tuner:dec1100-t is not supported because missing device reference in driver.
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dec2000-t"|"tv-tuner:dec2540-t") ]] ; then
+	# Hauppauge
+	# TechnoTrend
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_TTUSB_DEC" # Tuner for DVB-T.  It is the whole device driver that includes the USB bridge.
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T USB-1.1"
+	fi
+	# The tv-tuner:dec3000-s is not supported until the DVB-S demodulator model is known.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-usb"($|" ")|"tv-tuner:wintv-nova-t-usb-p1"($|" ")) ]] ; then
 	# Frontend possibility 1
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -6029,7 +6048,6 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	#
 
 	# Video decode chip may likely mean both the hardware acceleration of signal decoding of ATSC, DVB and the video codec decoding of H.262, H.264, H.265.
-	# If a prefix is prefixed with NO-, it means that support is broken for that feature.
 	unset _OT_KERNEL_TV_TUNER_TAGS # It should contain the firmware allowed operation for the model so that code reviewers or device owners know the official capabilities of the device.
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUPPORT_FILTER"
@@ -6111,6 +6129,12 @@ ewarn "You may need a >= 2008 CPU for software based H.262 (MPEG-2) decoding for
 		fi
 einfo "Alternatively, consider using VAAPI to accelerate video decoding on the CPU or GPU for the TV tuner."
 einfo "TV tuner tags:  ${_OT_KERNEL_TV_TUNER_TAGS}"
+		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "NO-" ]] ; then
+einfo "NO- means that support is broken."
+		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "?-" ]] ; then
+einfo "?- means that support is unverified or is based on low confidence/veracity or hypothesized chip model information."
+		fi
 	fi
 }
 
