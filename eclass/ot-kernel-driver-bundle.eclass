@@ -4518,6 +4518,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	# 3. The card was placed in the wrong box.
 	# 4. The driver has the wrong model name.
 	# 5. The card was possibly rebranded from 935c to 935 hd.
+	# 6. The card's <vendor-id>:<product-id> has multiple product names and was mislabled by the driver.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-935-hd"($|" ")) ]] ; then
 	# Based on logs
 	# See the linuxtv wiki "making it work" section about the inconsistency/workaround/quirk.
