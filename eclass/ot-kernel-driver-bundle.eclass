@@ -4988,6 +4988,48 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TM6000_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-2.0"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s2"($|" ")|"tv-tuner:wintv-nova-s2-satellite-tv-receiver") ]] ; then
+	# Supported upstream but with workaround
+	# There are more patches for the Nova S2.
+	# Users noted that the branded "wintv-nova-s2" device is identified as PCTV 461.
+	#
+	# For fixes, see
+	# Workaround - https://github.com/b-rad-NDi/media_tree/issues/12
+	# Patch to fix both misidentification and similaneous TV cards - https://github.com/b-rad-NDi/Ubuntu-media-tree-kernel-builder/issues/162
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller selected by EM28XX_DVB
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT" # Force bloated autodetection for tuner, demodulators, and LNB controller.
+		# Typically the LNB controller is manually added.
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB device controller
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+
+	# There is a design choice where you can build all drivers as external modules or as built-in.
+	# It is assumed as built-in for security reasons, but users can choose to build as modules.
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "em28xx.card=[0-9]+"
+
+		if [[ "${OT_KERNEL_NOVA_S2_PATCH_FIX_APPLIED}" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "em28xx.card=92" # The workaround
+	# People have multiple TV cards so they can do picture-in-picture in their live streams.
+ewarn "A user patch for tv-tuner:wintv-nova-s2 may be needed for multiple tuners cards to be used at the same time with the same em2xx driver."
+ewarn "See https://github.com/b-rad-NDi/Ubuntu-media-tree-kernel-builder/issues/162"
+ewarn "After applying the patch use OT_KERNEL_NOVA_S2_PATCH_FIX_APPLIED=1"
+		fi
+
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-solohd") ]] ; then
 	# Only digital TV supported
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5264,6 +5306,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
 	fi
+# Missing max s2, nova hd.  See https://github.com/b-rad-NDi/media_tree/commit/9cd4bcfb1683fbf7ca603b0f1909f086c0057d1d
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
