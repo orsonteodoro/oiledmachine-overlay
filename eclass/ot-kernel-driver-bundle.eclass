@@ -4416,9 +4416,10 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog decoder
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-900-65018"($|" ")) ]] ; then
-	# Not supported because we are missing the driver for the DRX3975D demodulator for DVB-T
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-900"($|" ")|"tv-tuner:wintv-hvr-900-65018"($|" ")) ]] && ver_test "${KV_MAJOR_MINOR}" -le "2.6" ; then
+	# Not supported because the kernel is old
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DRX397XD" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
