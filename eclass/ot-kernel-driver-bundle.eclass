@@ -5127,6 +5127,32 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ISDB-T USB-2.0"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-ministick"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SMS_USB_DRV" # USB bridge, tuner and demodulator for DVB-T.
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-ministick-2"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_AF9033" # USB bridge, demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_IT913X" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T USB-2.0"
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
@@ -6000,6 +6026,51 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 	fi
 }
 
+ot-kernel-driver-bundle_add_tv_tuner_cardbus_by_product_name() {
+	# CardBus (1995) with PCI
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:avertv-hybrid+fm-cardbus"($|" ")|"tv-tuner:avertv-hybrid+fm-cardbus-e506r") ]] ; then
+	# AVerMedia
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_MT352" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC2028" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-FM CardBus"
+	fi
+}
+
+ot-kernel-driver-bundle_add_tv_tuner_expresscard_by_product_name() {
+	# ExpressCard (2003) with PCIe, USB 2.0, USB 3.0
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-1500"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Demodulator for ASTC, ClearQAM
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC2028" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, DMB-T, ISDB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC ExpressCard"
+	fi
+}
+
 ot-kernel-driver-bundle_add_tv_tuner() {
 	# Only digital supported
 	local tags="${1}"
@@ -6084,6 +6155,12 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	fi
 	if [[ "${tags}" =~ "pcie"($|" ") ]] ; then
 		ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name
+	fi
+	if [[ "${tags}" =~ "cardbus"($|" ") ]] ; then
+		ot-kernel-driver-bundle_add_tv_tuner_cardbus_by_product_name
+	fi
+	if [[ "${tags}" =~ "expresscard"($|" ") ]] ; then
+		ot-kernel-driver-bundle_add_tv_tuner_expresscard_by_product_name
 	fi
 
 	if grep -q -E -e "^CONFIG_RC_CORE=(y|m)" "${path_config}" ; then
