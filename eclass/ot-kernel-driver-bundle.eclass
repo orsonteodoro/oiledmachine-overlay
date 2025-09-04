@@ -6505,7 +6505,8 @@ ewarn "For satellite based TV tuners, only one LNB controller should be used to"
 ewarn "avoid conflicts."
 ewarn
 ewarn "This means to disconnect the TV tuner(s) or living room satellite receiver,"
-ewarn "or adding a new device to manage the LNB conflict."
+ewarn "or adding a new device to manage the LNB conflict, configure the software"
+ewarn "to turn off LNB power for the TV tuner card."
 ewarn
 ewarn "Consequences could include pixelization, freezing, loss of signal, or"
 ewarn "equipment damage."
