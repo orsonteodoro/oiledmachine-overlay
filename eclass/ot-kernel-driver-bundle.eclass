@@ -6499,6 +6499,21 @@ einfo "NO- means that support is broken because either missing/broken driver or 
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "?-" ]] ; then
 einfo "?- means that support is unverified or is based on low confidence/veracity or hypothesized chip model information."
 		fi
+		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ ("DVB-S"|"ISDB-S"|"QAM") ]] ; then
+ewarn
+ewarn "For satellite based TV tuners, only one LNB controller should be used to"
+ewarn "avoid conflicts."
+ewarn
+ewarn "This means to disconnect the TV tuner(s) or living room satellite receiver,"
+ewarn "or adding a new device to manage the LNB conflict."
+ewarn
+ewarn "Consequences could include pixelization, freezing, loss of signal, or"
+ewarn "equipment damage."
+ewarn
+ewarn "For help ask the AI or the satellite company or both to resolve LNB"
+ewarn "conflicts or issues."
+ewarn
+		fi
 	fi
 }
 
