@@ -6121,6 +6121,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder, FM radio decoder
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	# It is possible to use a ISDB-T tuner with an ISDB-Tb demodulator to extract ISDB-Tb digital radio.
+	# The ISDB-Tb digital radio signal can be used for radio TV channels or for ISDB-Tb car radio receiver.
 	#
 	# The driver didn't mainline FM radio changes to CX23885 driver yet.
 	# The FM radio patch is available, we can possibly add it.
