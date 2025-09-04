@@ -4460,6 +4460,50 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T PAL USB-2.0"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-930c-hd"($|" ")|"tv-tuner:wintv-hvr-930c-hd-p1") ]] ; then
+	# Frontend possibility 1
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_SI2165" # Demodulator for DVB-C, DVB-H, DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, DVB-T/T2, DVB-C/C2, ATSC, ISDB-T, DTMB, J.83B
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T NO-PAL USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-930c-hd"($|" ")|"tv-tuner:wintv-hvr-930c-hd-p2") ]] ; then
+	# Frontend possibility 2
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_SI2165" # Demodulator for DVB-C, DVB-H, DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SI2157" # Tuner for ATSC, QAM, DTMB, DVB-T/T2, DVB-C/C2, ISDB-T/C, NTSC, PAL, SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T NO-PAL USB-2.0"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-935-hd"($|" ")) ]] ; then
 	# Based on logs
 	# The PAL demodulation chip is unknown.
