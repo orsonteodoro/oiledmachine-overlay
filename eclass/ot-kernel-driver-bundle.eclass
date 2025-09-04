@@ -4211,13 +4211,16 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
-	# The tv-tuner:dec1100-t is not supported because missing device reference in driver.
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dec2000-t"|"tv-tuner:dec2540-t") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dec2000-t"|"tv-tuner:dec2540-t"|"tv-tuner:dec3000-s") ]] ; then
 	# Hauppauge
 	# TechnoTrend
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
 		ot-kernel_y_configopt "CONFIG_DVB_TTUSB_DEC" # Tuner for DVB-T.  It is the whole device driver that includes the USB bridge.
+	# The ttusbdecfe.c is the demodulator driver.  The AI said that it does have hints or infer that it is also a tuner driver.
+	# The ttusb_dec.c is the USB bridge driver.
+	# The frontend is the portion containg the tuner and the demodulator according to linuxtv.  This is why you see fe in the name.
+	# It is hypothesized that the firmware has the LNB controller driver for DVB-S.  Typically, the LNB support is a driver in the kernel.
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -4227,7 +4230,11 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB"
-		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T USB-1.1"
+		if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dec3000-s") ]] ; then
+			export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-S USB-1.1"
+		else
+			export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T USB-1.1"
+		fi
 	fi
 	# The tv-tuner:dec3000-s is not supported until the DVB-S demodulator model is known.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-usb"($|" ")|"tv-tuner:wintv-nova-t-usb-p1"($|" ")) ]] ; then
