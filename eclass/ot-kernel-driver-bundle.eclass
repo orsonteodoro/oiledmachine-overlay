@@ -4504,8 +4504,24 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T NO-PAL USB-2.0"
 	fi
+# Missing:
+# hvr-935c with the the actual 935c card.  The auto probe below (tv-tuner:wintv-hvr-935-hd) may be different from the hvr-935c hardware set.
+# hvr-975
+# hvr-1255
+# hvr-1265
+# nova-s2
+	#
+	# You can't really trust what is put out there.
+	# There are some hypothetical possibilities:
+	# 1. The wiki contributor or editor placed the dmesg log in the wrong wiki page.
+	# 2. The manufactuer did not update the firmware model product name in the firmware but the hardware and chips itself are correct.
+	# 3. The card was placed in the wrong box.
+	# 4. The driver has the wrong model name.
+	# 5. The card was possibly rebranded from 935c to 935 hd.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-935-hd"($|" ")) ]] ; then
 	# Based on logs
+	# See the linuxtv wiki "making it work" section about the inconsistency/workaround/quirk.
+	# The quirk is that the The WinTV-HVR-935 HD card uses driver or firmware that identifies as WinTV-HVR-935C.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # Demodulator for DVB-C, DVB-T/T2/T2-Lite
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
@@ -4831,7 +4847,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog video decoder for NTSC, PAL, PAL60
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:indtube") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:indtube"|"tv-tuner:in-d-tube") ]] ; then
 	# EVGA
 	# TODO:  consider adding patch, see wiki
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4869,7 +4885,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 DVB-C USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-stick") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-t-stick"|"tv-tuner:wintv-nova-t-stick-70001"|"tv-tuner:wintv-nova-t-stick-70009"|"tv-tuner:wintv-nova-t"($|" ")|"tv-tuner:wintv-nova-t-lite"|"tv-tuner:wintv-nova-t-se") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator for DVB-T, DVB-H, T-DMB, ISDB-T
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
@@ -5181,6 +5197,27 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-dvb-s2-stick-461e"($|" ")|"tv-tuner:pctv-dvb-s2-stick"($|" ")) ]] && ver_test "${KV_MAJOR_MINOR}" -le "4.0" ; then
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103" # Demodulator for DVB-S/S2
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_M88TS2022" # Tuner for DVB-S/S2
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB interface
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0 PCI"
 	fi
 }
 
@@ -5574,7 +5611,6 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
 	# tv-tuner:wintv-hvr-1600mce is not supported since TMFNM05_12E was removed
-	# tv-tuner:pctv-dvb-s2-stick-461e is not supported because driver is missing for hypothesized M88TS2022 tuner or DVB-S/S2 tuner.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-hd-card"($|" ")|"tv-tuner:pctv-hd-card-800i") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Demodulator for ATSC, QAM
