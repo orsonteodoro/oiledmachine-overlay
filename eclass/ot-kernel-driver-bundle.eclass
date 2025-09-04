@@ -5134,7 +5134,11 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SMS_USB_DRV" # USB bridge, tuner and demodulator for DVB-T.
+		ot-kernel_y_configopt "CONFIG_SMS_USB_DRV" # Hypothesized USB bridge.  Tuner and demodulator for DVB-T.
+	# Typically a TV tuner will have 2-3 parts.
+	# Two LLMs suggest that it is a tuner and demodulator and then eagerly say that it is not a USB bridge.
+	# I ask the question to one of them does the source code hint that it could be a USB bridge and could you tell by grepping it?
+	# One LLM suggested that it fulfils the role as a USB bridge.
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_USB"
