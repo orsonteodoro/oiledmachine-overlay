@@ -639,7 +639,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pci pcie usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pci pcie usb-1.1 usb-2.0 usb-3.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
@@ -778,7 +778,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0 usb-3.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -874,7 +874,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
@@ -969,7 +969,7 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
@@ -1034,7 +1034,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 
 	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 		# For AI support
@@ -5309,6 +5309,29 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 # Missing max s2, nova hd.  See https://github.com/b-rad-NDi/media_tree/commit/9cd4bcfb1683fbf7ca603b0f1909f086c0057d1d
 }
 
+ot-kernel-driver-bundle_add_tv_tuner_usb_3_0_by_product_name() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-usb"($|" ")|"tv-tuner:wintv-quadhd-usb-astc"($|" ")) ]] ; then
+	# It will be identified as "quadHD-A"
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_MXL692" # Tuning and demodulator for ASTC
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB interface with em28174
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 USB-2.0"
+	fi
+}
+
 ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:hdtv-wonder"($|" ")|"tv-tuner:hdtv-wonder-regular-edition") ]] ; then
 	# ATI
@@ -6189,7 +6212,7 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C NO-DVB-S NO-DVB-S2 DVB-T NO-PAL NO-SECAM NO-FM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-atsc-clearqam") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-pci"($|" ")|"tv-tuner:wintv-quadhd-atsc-clearqam"|"tv-tuner:wintv-quadhd-pci-astc-clearqam"($|" ")|"tv-tuner:wintv-quadhd-astc-clearqam"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # ATSC and ClearQAM demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -6206,7 +6229,7 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM PCIe"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-dvb-t-t2-c") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-quadhd"($|" ")|"tv-tuner:wintv-quadhd-pci"($|" ")|"tv-tuner:wintv-quadhd-dvb-t-t2-c"|"tv-tuner:wintv-quadhd-pci-dvb-t-t2-c"|"tv-tuner:wintv-quadhd-dvb-t-t2-c") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # Demodulator
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -6370,21 +6393,31 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUPPORT_FILTER"
 	if [[ "${tags}" =~ "usb-1.1"($|" ") ]] ; then
+	# USB 1.1 (1998)
 		ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name
 	fi
 	if [[ "${tags}" =~ "usb-2.0"($|" ") ]] ; then
+	# USB 2.0 (2000)
 		ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name
 	fi
+	if [[ "${tags}" =~ "usb-3.0"($|" ") ]] ; then
+	# USB 3.0 (2008)
+		ot-kernel-driver-bundle_add_tv_tuner_usb_3_0_by_product_name
+	fi
 	if [[ "${tags}" =~ "pci"($|" ") ]] ; then
+	# PCI (1992)
 		ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name
 	fi
 	if [[ "${tags}" =~ "pcie"($|" ") ]] ; then
+	# PCIe (2003)
 		ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name
 	fi
 	if [[ "${tags}" =~ "cardbus"($|" ") ]] ; then
+	# CardBus (1995)
 		ot-kernel-driver-bundle_add_tv_tuner_cardbus_by_product_name
 	fi
 	if [[ "${tags}" =~ "expresscard"($|" ") ]] ; then
+	# ExpressCard (2003)
 		ot-kernel-driver-bundle_add_tv_tuner_expresscard_by_product_name
 	fi
 
