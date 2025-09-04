@@ -4989,7 +4989,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s2"($|" ")|"tv-tuner:wintv-nova-s2-satellite-tv-receiver") ]] ; then
 	# Supported upstream but with workaround
 	# There are more patches for the Nova S2.
-	# Users noted that the branded "wintv-nova-s2" device is identified as PCTV 461.
+	# Users noted that the branded "wintv-nova-s2" device is identified as PCTV 461 or misidentified as PCTV DVB-S2 Stick (461e v2).
 	#
 	# For fixes, see
 	# Workaround - https://github.com/b-rad-NDi/media_tree/issues/12
