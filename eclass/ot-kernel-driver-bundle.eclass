@@ -4530,8 +4530,6 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T NO-PAL USB-2.0"
 	fi
-# Missing:
-# nova-s2
 	#
 	# You can't really trust what is put out there.
 	# There are some hypothetical possibilities:
@@ -5020,12 +5018,14 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	# It is assumed as built-in for security reasons, but users can choose to build as modules.
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "em28xx.card=[0-9]+"
 
-		if [[ "${OT_KERNEL_NOVA_S2_PATCH_FIX_APPLIED}" ]] ; then
+		if [[ "${OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED}" == "1" ]] ; then
+			:
+		else
 			ot-kernel_set_kconfig_kernel_cmdline "em28xx.card=92" # The workaround
 	# People have multiple TV cards so they can do picture-in-picture in their live streams.
 ewarn "A user patch for tv-tuner:wintv-nova-s2 may be needed for multiple tuners cards to be used at the same time with the same em2xx driver."
 ewarn "See https://github.com/b-rad-NDi/Ubuntu-media-tree-kernel-builder/issues/162"
-ewarn "After applying the patch use OT_KERNEL_NOVA_S2_PATCH_FIX_APPLIED=1"
+ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1"
 		fi
 
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
