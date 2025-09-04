@@ -4702,24 +4702,6 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-microstick-pc-and-mac"($|" ")|"tv-tuner:pctv-microstick-pc-and-mac-77e") ]] ; then
-	# Missing component list for verification.  It could be a AI hallucinated generated list.
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_RTL2832_SDR"
-		ot-kernel_y_configopt "CONFIG_DVB_USB"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
-		ot-kernel_y_configopt "CONFIG_DVB_USB_RTL28XXU"
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_I2C_MUX"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_USB"
-	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-nanostick-t2"($|" ")|"tv-tuner:pctv-nanostick-t2-290e") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_CXD2820R" # Decoding and demodulation for DVB-T/T2, DVB-C
@@ -5127,7 +5109,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="ISDB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-ministick"($|" ")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-ministick"($|" ")|"tv-tuner:pctv-microstick-pc-and-mac"($|" ")|"tv-tuner:pctv-microstick-pc-and-mac-77e") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -5137,7 +5119,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SMS_USB_DRV" # Hypothesized USB bridge.  Tuner and demodulator for DVB-T.
 	# Typically a TV tuner will have 2-3 parts.
 	# Two LLMs suggest that it is a tuner and demodulator and then eagerly say that it is not a USB bridge.
-	# I ask the question to one of them does the source code hint that it could be a USB bridge and could you tell by grepping it?
+	# I ask the question to one of them does the source code hint [infer] that it could be a USB bridge and could you tell by grepping it?
 	# One LLM suggested that it fulfils the role as a USB bridge.
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_SOUND"
