@@ -4994,7 +4994,6 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	# For fixes, see
 	# Workaround - https://github.com/b-rad-NDi/media_tree/issues/12
 	# Patch to fix both misidentification and similaneous TV cards - https://github.com/b-rad-NDi/Ubuntu-media-tree-kernel-builder/issues/162
-		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller selected by EM28XX_DVB
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_I2C"
