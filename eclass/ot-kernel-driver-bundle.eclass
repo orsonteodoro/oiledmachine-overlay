@@ -4506,7 +4506,6 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-935-hd"($|" ")) ]] ; then
 	# Based on logs
-	# The PAL demodulation chip is unknown.
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_SI2168" # Demodulator for DVB-C, DVB-T/T2/T2-Lite
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
@@ -4520,12 +4519,12 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX" # USB bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX" # USB bridge, analog IF demodulator for NTSC, PAL, SECAM, FM radio
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX231XX_RC"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX25840" # A/V decoder for NTSC, PAL, SECAM
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T ?-DVB-T2 NO-PAL USB-2.0"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T ?-DVB-T2 PAL USB-2.0"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-950"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -5556,7 +5555,24 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
-	# tv-tuner:wintv-nova-td-500 is not supported in the ebuild since the model of the parts are not clearly defined or ambiguous.  You can still manually add it and some users reported success.
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-td-500"($|" ")|"tv-tuner:wintv-nova-td-500-dual-tuner"|"tv-tuner:wintv-nova-td-500-84xxx") ]] ; then
+	# Based on logs
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P" # Demodulator and tuner for DVB-T, DTMB
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700" # USB bridge
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Tuner for DVB-C, DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
 	# tv-tuner:wintv-hvr-1600mce is not supported since TMFNM05_12E was removed
 	# tv-tuner:pctv-dvb-s2-stick-461e is not supported because driver is missing for hypothesized M88TS2022 tuner or DVB-S/S2 tuner.
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-hd-card"($|" ")|"tv-tuner:pctv-hd-card-800i") ]] ; then
@@ -5945,6 +5961,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_LGDT3306A" # Digital video demodulator and decoder for ATSC, ClearQAM (QAM-B)
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -5956,6 +5973,22 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge and analog encoder for MPEG-1/2; analog video decoder for NTSC, PAL, SECAM.
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC PCIe"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-4400") ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_SI2165" # DVB-T/T2, DVB-C demodulator
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder, Analog IF demodulator
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 NO-DVB-T NO-PAL PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-5525") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller for DVB-S/S2 support
@@ -6040,19 +6073,23 @@ ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
 	# MyGica
 	# Visus
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_MB86A20S" # Demodulator for ISDB-T, FM radio tuner
+		ot-kernel_y_configopt "CONFIG_DVB_MB86A20S" # Demodulator for ISDB-T, FM radio tuner, digital radio (ISDB-Tb)
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000" # Tuner for ISDB-T, audio processing
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_XC5000" # Tuner for ISDB-T, audio processing, FM radio demodulator
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX23885" # PCIe bridge and A/V decoder, FM radio decoder
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		export _OT_KERNEL_TV_TUNER_TAGS="ISDB-T NO-FM PCIe"
+	# It is possible to use a ISDB-T tuner with an ISDB-Tb demodulator to extract ISDB-Tb digital radio.
+	#
+	# The driver didn't mainline FM radio changes to CX23885 driver yet.
+	# The FM radio patch is available, we can possibly add it.
+		export _OT_KERNEL_TV_TUNER_TAGS="ISDB-T ?-ISDB-Tb NO-FM PCIe"
 	fi
 }
 
