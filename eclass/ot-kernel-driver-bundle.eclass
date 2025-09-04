@@ -5312,7 +5312,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge with CX23880/881/882
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge with CX2388X
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
@@ -5357,7 +5357,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge and A/V decoder.
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge and A/V decoder with CX2388X.
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD" # MPEG-2 encoder with CX23416
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
@@ -5398,7 +5398,8 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-1600" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Digital demodulator
+		# The S5H1409 driver is used for the CX24227.  See commit 89885558ada9e076b48f4b6887e252e13e7eaf74
+		ot-kernel_y_configopt "CONFIG_DVB_S5H1409" # Demodulator for ATSC, QAM
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
@@ -5407,11 +5408,9 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SDR_SUPPORT" # FM
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887" # Analog tuner
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Possibly used
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MXL5005S" # Digital tuner
-ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tuner:wintv-hvr-1600, the digital TV (ASTC-1.0, ClearQAM) may not work."
-		#ot-kernel_y_configopt "CONFIG_VIDEO_CX24227" # Demodulator for ATSC, QAM, DVB.  The driver was removed from the kernel.
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887" # Analog demodulator for NTSC, PAL, SECAM, AM/FM radio
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Possibly used tuner for DVB-C, QAM, NTSC, PAL, SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MXL5005S" # Digital tuner for ASTC, DVB-T, ClearQAM, PAL, NTSC, SECAM
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCI_QUIRKS"
@@ -5420,7 +5419,7 @@ ewarn "The CX24227 driver is missing in the kernel.  For some revisions of tv-tu
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX18" # Handle video and audio streams
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX18_ALSA" # Audio support
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		export _OT_KERNEL_TV_TUNER_TAGS="NO-ATSC-1.0 NO-ClearQAM NTSC NO-FM PCI"
+		export _OT_KERNEL_TV_TUNER_TAGS="NO-ATSC-1.0 ClearQAM NTSC NO-FM PCI" # ClearQAM support is model dependent.
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "tv-tuner:wintv-hvr-3000" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
