@@ -874,6 +874,9 @@
       Enables support for the vulkan API for GPU offload and decoding of
       H.264, HEVC, AV1 and video processing filters.
     </flag>
+    <flag name="whisper">
+      Enable automatic speech recognition and transcription filter.
+    </flag>
     <flag name="x265">
       Enables HEVC encoding with <pkg>media-libs/x265</pkg>.
     </flag>
