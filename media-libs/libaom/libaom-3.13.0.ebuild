@@ -62,13 +62,22 @@ RESTRICT="
 	test
 	strip
 "
-SLOT="0/3"
+SLOT="0/3" # current - age
 ARM_IUSE="
 	cpu_flags_arm_crc32
+	cpu_flags_arm_dotprod
+	cpu_flags_arm_i8mm
 	cpu_flags_arm_neon
 "
 PPC_IUSE="
 	cpu_flags_ppc_vsx
+"
+RISCV_IUSE="
+	cpu_flags_riscv_rvv
+"
+MIPS_IUSE="
+	cpu_flags_mips_dspr2
+	cpu_flags_mips_msa
 "
 X86_IUSE="
 	cpu_flags_x86_mmx
@@ -80,6 +89,11 @@ X86_IUSE="
 	cpu_flags_x86_sse4_2
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512cd
+	cpu_flags_x86_avx512dq
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vl
 "
 PGO_TRAINERS="
 	libaom_trainers_2_pass_constrained_quality
@@ -94,15 +108,78 @@ ${ARM_IUSE}
 ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
-+asm big-endian chromium debug doc +examples lossless pgo static-libs test
++asm big-endian chromium debug doc +examples highway lossless pgo static-libs test
 ebuild_revision_31
 "
 REQUIRED_USE="
+	arm64? (
+		cpu_flags_arm_neon
+	)
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_mmx
 	)
-	cpu_flags_x86_ssse3? (
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_sse3? (
 		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_1
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_arm_dotprod? (
+		cpu_flags_arm_neon
+	)
+	cpu_flags_arm_i8mm? (
+		cpu_flags_arm_neon
 	)
 	pgo? (
 		|| (
@@ -128,8 +205,13 @@ REQUIRED_USE="
 		pgo
 	)
 "
+DEPEND+="
+	highway? (
+		dev-cpp/highway
+	)
+"
 BDEPEND+="
-	>=dev-build/cmake-3.7
+	>=dev-build/cmake-3.16
 	abi_x86_32? (
 		dev-lang/yasm
 	)
@@ -478,8 +560,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# For fixing segfault with PGO+BOLT
 	append-flags \
 		$(test-flags \
-			-fno-gcse \
-			-fno-cse-follow-jumps \
+			"-fno-gcse" \
+			"-fno-cse-follow-jumps" \
 		)
 
 	local mycmakeargs=(
@@ -492,26 +574,27 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_TESTS=$(usex test)
 		-DENABLE_TOOLS=ON
 		-DENABLE_WERROR=OFF
-		# ENABLE_DSPR2 / ENABLE_MSA for mips
+
+	# CPU optimizations
+		-DCONFIG_HIGHWAY=$(usex highway)
 		-DENABLE_ARM_CRC32=$(usex cpu_flags_arm_crc32 ON OFF)
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
+		-DENABLE_AVX512=$(usex cpu_flags_x86_avx512f)
+		-DENABLE_DSPR2=$(usex cpu_flags_mips_dspr2)
 		-DENABLE_MMX=$(usex cpu_flags_x86_mmx ON OFF)
-	# Neon support is assumed to be always enabled on arm64 \
-		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON $(usex arm64 ON OFF))
-	# Bug #917277 \
-		-DENABLE_NEON_DOTPROD=OFF
-	# Bug #917278 \
-		-DENABLE_NEON_I8MM=OFF
-		# ENABLE_RVV for riscv
+		-DENABLE_MSA=$(usex cpu_flags_mips_msa)
+		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON OFF)
+		-DENABLE_NEON_DOTPROD=$(usex cpu_flags_arm_dotprod)
+		-DENABLE_NEON_I8MM=$(usex cpu_flags_arm_i8mm)
+		-DENABLE_RVV=$(usex cpu_flags_riscv_rvv)
 		-DENABLE_SSE=$(usex cpu_flags_x86_sse ON OFF)
 		-DENABLE_SSE2=$(usex cpu_flags_x86_sse2 ON OFF)
 		-DENABLE_SSE3=$(usex cpu_flags_x86_sse3 ON OFF)
 		-DENABLE_SSE4_1=$(usex cpu_flags_x86_sse4_1 ON OFF)
 		-DENABLE_SSE4_2=$(usex cpu_flags_x86_sse4_2 ON OFF)
 		-DENABLE_SSSE3=$(usex cpu_flags_x86_ssse3 ON OFF)
-	# Bug #920474 \
-		-DENABLE_SVE=OFF
+		-DENABLE_SVE=$(usex cpu_flags_arm_sve ON OFF)
 		-DENABLE_VSX=$(usex cpu_flags_ppc_vsx ON OFF)
 	)
 
@@ -572,30 +655,52 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	# Bug when building for various ABIs.
 	if ! use asm ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="generic"
+		)
 	elif [[ "${ABI}" == "x86" ]] ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=x86 )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="x86"
+		)
 	elif [[ "${ABI}" == "amd64" ]] ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=x86_64 )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="x86_64"
+		)
 	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib" ]] ; then
 		# o32
-		mycmakeargs+=( -DAOM_TARGET_CPU=mips32 )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="mips32"
+		)
 	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib32" ]] ; then
 		# n32
-		mycmakeargs+=( -DAOM_TARGET_CPU=mips64 )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="mips64"
+		)
 	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib64" ]] ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=mips64 )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="mips64"
+		)
 	elif [[ "${ABI}" == "arm" ]] ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=arm )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="arm"
+		)
 	elif [[ "${ABI}" == "arm64" ]] ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=arm64 )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="arm64"
+		)
 	elif [[ "${ABI}" == "ppc" ]] ; then
-		mycmakeargs+=( -DAOM_TARGET_CPU=ppc )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="ppc"
+		)
 	elif [[ "${ABI}" == "ppc64" ]] ; then
 		ewarn "No reference to ppc64 in source"
-		mycmakeargs+=( -DAOM_TARGET_CPU=ppc )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="ppc"
+		)
 	else
-		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="generic"
+		)
 	fi
 
 	# LIBAOM_TEST_PROCS is added by our tests-parallel.patch
