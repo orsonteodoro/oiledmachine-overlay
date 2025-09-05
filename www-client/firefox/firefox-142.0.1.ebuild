@@ -5,7 +5,7 @@
 EAPI=8
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
-# See /var/tmp/portage/www-client/firefox-141.0.3/work/firefox-141.0.3/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-142.0.1/work/firefox-142.0.1/taskcluster/kinds/bootstrap/kind.yml
 
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
@@ -229,7 +229,7 @@ NASM_PV="2.14.02"
 NODE_VERSION=18
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="9999" # Inclusive
+RUST_MAX_VER="1.89.0" # Inclusive.  Corresponds to llvm 20
 RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
@@ -355,6 +355,7 @@ REQUIRED_USE="
 		X
 	)
 	rust-simd? (
+		!llvm_slot_20
 		!llvm_slot_19
 	)
 	vaapi? (

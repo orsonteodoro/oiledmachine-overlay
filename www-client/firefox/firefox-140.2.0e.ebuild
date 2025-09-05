@@ -5,7 +5,7 @@
 EAPI=8
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
-# See /var/tmp/portage/www-client/firefox-128.14.0e/work/firefox-128.14.0/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/taskcluster/kinds/bootstrap/kind.yml
 
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
@@ -41,29 +41,29 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/128.13.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/moz.configure
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/modules/freetype2/include/freetype/freetype.h L5223
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/taskcluster/kinds/toolchain/nasm.yml
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/140.2.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/moz.configure
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0/taskcluster
+# /var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0/taskcluster
 #   Keyword search:  gtk
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -82,7 +82,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="128.13.0"
+PV="140.2.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -99,7 +99,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-128.13.0e/work/firefox-128.13.0"
+SRC="/var/tmp/portage/www-client/firefox-140.2.0e/work/firefox-140.2.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -166,25 +166,29 @@ FFMPEG_COMPAT=(
 	"51.53.53" # 0.10
 	"50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-12.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-01.tar.xz"
+FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FINGERPRINT="\
-dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
-2a1798763b46e4002e33d80cd416fb285494e88a8fd8413a97019c7772373a32\
+dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
+f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
 " # SHA512
-LLVM_COMPAT=( 18 17 ) # Limited based on rust
+LLVM_COMPAT=( 20 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Aug 19, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1755545760 # From `date +%s -d "2025-08-18 12:36"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-66/"
+MITIGATION_LAST_UPDATE=1755546540 # From `date +%s -d "2025-08-18 12:49"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-67/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
 	"CVE-2025-9179;MC, ZC, DoS, DT, ID;Critical"
 	"CVE-2025-9180;DoS, DT, ID;High"
 	"CVE-2025-9181;UM, ID;Medium"
+	"CVE-2025-9182;ZC, DoS;High"
+	"CVE-2025-9183;SA, DT;Medium"
+	"CVE-2025-9184;MC, CE, ZC, DoS, DT, ID;High"
 	"CVE-2025-9185;MC, CE, ZC, DoS, DT, ID;High"
 )
 MOZ_ESR="yes"
@@ -229,12 +233,11 @@ NASM_PV="2.14.02"
 NODE_VERSION=18
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.81.0" # Inclusive.  Corresponds to llvm 18
-RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
+RUST_MAX_VER="1.89.0" # Inclusive.  Corresponds to llvm 20
+RUST_MIN_VER="1.82.0" # Corresponds to llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
-WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="manual"
 # Information about the bundled wasi toolchain from
@@ -242,12 +245,12 @@ VIRTUALX_REQUIRED="manual"
 WASI_SDK_VER="25.0"
 WASI_SDK_LLVM_VER="19"
 
-inherit autotools cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
 inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
 inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
 
-KEYWORDS="amd64 arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
 S_BAK="${WORKDIR}/${PN}-${PV/e}"
 if [[ "${PV}" =~ *"_rc"* ]] ; then
@@ -263,6 +266,9 @@ PATCH_URIS=(
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
+	loong? (
+		https://dev.gentoo.org/~xen0n/distfiles/www-client/${MOZ_PN}/${FIREFOX_LOONG_PATCHSET}
+	)
 	wasm-sandbox? (
 		amd64? (
 			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz
@@ -275,7 +281,11 @@ SRC_URI="
 
 DESCRIPTION="Firefox Web Browser"
 # llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
-RESTRICT="mirror"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 LICENSE="
 	Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html
 "
@@ -308,7 +318,8 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +jit libcanberra libnotify libproxy libsecret mold +pgo
 +pulseaudio rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
-system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
+system-pipewire
+system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
 ebuild_revision_17
 "
@@ -353,8 +364,8 @@ REQUIRED_USE="
 		X
 	)
 	rust-simd? (
-		!llvm_slot_18
-		llvm_slot_17
+		!llvm_slot_20
+		!llvm_slot_19
 	)
 	vaapi? (
 		wayland
@@ -470,24 +481,26 @@ PATENT_CDEPENDS="
 	)
 "
 RUST_CDEPEND="
-	llvm_slot_18? (
+	llvm_slot_20? (
 		|| (
-			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.80*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.79*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.78*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.80*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.79*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.78*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.87*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.87*[${MULTILIB_USEDEP}]
 		)
 	)
-	llvm_slot_17? (
+	llvm_slot_19? (
 		|| (
-			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.76*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.76*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.84*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.83*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.82*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -500,7 +513,7 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.101[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.112[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35.0[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
@@ -514,6 +527,7 @@ CDEPEND="
 	virtual/freedesktop-icon-theme
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
+	x11-libs/libdrm[${MULTILIB_USEDEP}]
 	dbus? (
 		>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 	)
@@ -549,7 +563,7 @@ CDEPEND="
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-73.1[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-76.1[${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-jpeg? (
@@ -564,8 +578,12 @@ CDEPEND="
 		>=media-libs/libvpx-1.14.0:0[${MULTILIB_USEDEP},postproc]
 		media-libs/libvpx:=
 	)
+	system-pipewire? (
+		>=media-video/pipewire-1.4.7-r2[${MULTILIB_USEDEP}]
+		media-video/pipewire:=
+	)
 	system-png? (
-		>=media-libs/libpng-1.6.43:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.45:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
 		>=media-libs/libwebp-1.4.0:0[${MULTILIB_USEDEP}]
@@ -715,7 +733,7 @@ BDEPEND+="
 	${RUST_CDEPEND}
 	=net-libs/nodejs-${NODE_VERSION%%.*}*
 	>=dev-lang/perl-5.006
-	>=dev-util/cbindgen-0.26.0
+	>=dev-util/cbindgen-0.27.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	app-alternatives/awk
 	app-arch/unzip
@@ -1032,19 +1050,11 @@ eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
 
 pkg_pretend() {
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
-		if use pgo ; then
-			if ! has usersandbox $FEATURES ; then
-	# Generally speaking, PGO doesn't require usersandbox dropped.
-eerror "You must enable usersandbox as X server can not run as root!"
-				die
-			fi
-		fi
-
 	# Ensure we have enough disk space to compile
 		if use pgo || is-flagq '-flto*' || use debug ; then
-			CHECKREQS_DISK_BUILD="13500M"
+			CHECKREQS_DISK_BUILD="14300M"
 		else
-			CHECKREQS_DISK_BUILD="6600M"
+			CHECKREQS_DISK_BUILD="7400M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -1178,9 +1188,9 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 
 	# Ensure we have enough disk space to compile
 		if use pgo || is-flagq '-flto*' || use debug ; then
-			CHECKREQS_DISK_BUILD="13500M"
+			CHECKREQS_DISK_BUILD="14300M"
 		else
-			CHECKREQS_DISK_BUILD="6400M"
+			CHECKREQS_DISK_BUILD="7400M"
 		fi
 
 		check-reqs_pkg_setup
@@ -1457,7 +1467,7 @@ src_prepare() {
 ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	fi
 
-	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-128.3.0e-disallow-store-data-races.patch"
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.2.0e-disallow-store-data-races.patch"
 
 	# Flicker prevention with -Ofast
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-gfx-layers.patch"
@@ -1478,19 +1488,13 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# Prevent video seek bug
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-128.3.0e-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
-	# Workaround for bgo#917599
-	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
-		eapply "${WORKDIR}/firefox-patches/"*"-bmo-1862601-system-icu-74.patch"
-	fi
-
-	rm -v "${WORKDIR}/firefox-patches/"*"-bmo-1862601-system-icu-74.patch" || die
-
 	# Workaround for bgo#915651 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
 	fi
 
 	eapply "${WORKDIR}/firefox-patches"
+	use loong && eapply "${WORKDIR}/firefox-loong-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1563,18 +1567,11 @@ eerror
 			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
-	# Make LTO respect MAKEOPTS
-	# Make ICU respect MAKEOPTS
-	# Respect MAKEOPTS all around (maybe some find+sed is better)
 	sed -i \
 		-e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}/build/moz.configure/lto-pgo.configure" \
-		"${S}/intl/icu_sources_data.py" \
-		"${S}/python/mozbuild/mozbuild/base.py" \
-		"${S}/third_party/libwebrtc/build/toolchain/get_cpu_count.py" \
-		"${S}/third_party/libwebrtc/build/toolchain/get_concurrent_links.py" \
+		"${S}/third_party/chromium/build/toolchain/get_cpu_count.py" \
 		"${S}/third_party/python/gyp/pylib/gyp/input.py" \
-		"${S}/python/mozbuild/mozbuild/code_analysis/mach_commands.py" \
 		|| die "Failed sedding multiprocessing.cpu_count"
 
 	# The toolchain prefix section was moved to the function below.
@@ -1956,21 +1953,18 @@ einfo
 		--disable-crashreporter \
 		--disable-disk-remnant-avoidance \
 		--disable-geckodriver \
-		--disable-gpsd \
 		--disable-install-strip \
 		--disable-legacy-profile-creation \
 		--disable-parental-controls \
 		--disable-strip \
-		--disable-tests \
 		--disable-updater \
-		--disable-valgrind \
 		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
+		--enable-packed-relative-relocs \
 		--enable-release \
 		--enable-system-ffi \
-		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CDEFAULT}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
@@ -1979,13 +1973,14 @@ einfo
 		--without-ccache \
 		--with-intl-api \
 		--with-system-ffi \
+		--with-system-gbm \
+		--with-system-libdrm \
 		--with-system-nspr \
 		--with-system-nss \
+		--with-system-pixman \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
-		--with-unsigned-addon-scopes="app,system" \
-		--x-includes="${ESYSROOT}/usr/include" \
-		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
+		--with-unsigned-addon-scopes=app,system
 
 	# mozconfig_add_options_ac \
 	#	'' \
@@ -2009,7 +2004,8 @@ einfo
 eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 			die
 		fi
-		if use amd64 || use arm64 || use ppc64 || use riscv ; then
+		# Whitelist to allow unkeyworded arches to build with "--disable-rust-simd" by default.
+		if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
 			mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
 		else
 			mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
@@ -2096,6 +2092,7 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
+	mozconfig_use_with system-pipewire
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
@@ -2252,6 +2249,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if use pgo ; then
 		mozconfig_add_options_ac '+pgo' MOZ_PGO=1
 
+		# Avoid compressing just-built instrumented Firefox with
+		# high levels of compression. Just use tar as a container
+		# to save >=10 minutes.
+		export MOZ_PKG_FORMAT="tar"
+
 		if tc-is-clang ; then
 			# Used in build/pgo/profileserver.py
 			export LLVM_PROFDATA="llvm-profdata"
@@ -2395,6 +2397,8 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 		mozconfig_add_options_mk '-telemetry setting' "MOZ_TELEMETRY_REPORTING=0"
 	fi
 
+	mozconfig_use_enable test tests
+
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1
 
@@ -2483,6 +2487,29 @@ _src_compile() {
 	fi
 
 	${virtx_cmd} ./mach build --verbose || die
+}
+
+src_test() {
+	# https://firefox-source-docs.mozilla.org/testing/automated-testing/index.html
+	local -a failures=()
+
+	# Some tests respect this
+	local -x MOZ_HEADLESS=1
+
+	# Check testing/mach_commands.py
+	einfo "Testing with cppunittest ..."
+	./mach cppunittest
+	local ret=$?
+	if [[ ${ret} -ne 0 ]]; then
+		eerror "Test suite cppunittest failed with error code ${ret}"
+		failures+=( cppunittest )
+	fi
+
+	if [[ ${#failures} -eq 0 ]]; then
+		einfo "Test suites succeeded"
+	else
+		die "Test suites failed: ${failures[@]}"
+	fi
 }
 
 src_compile() {
@@ -2684,12 +2711,8 @@ EOF
 	# Add telemetry config prefs, just in case something happens in future
 	# and telemetry build options stop working.
 	if ! use telemetry ; then
-		cat >>"${GENTOO_PREFS}" <<-EOF \
+		cat "${FILESDIR}/gentoo-telemetry-prefs.js" >>"${GENTOO_PREFS}" \
 			|| die "failed to set telemetry prefs"
-		sticky_pref("toolkit.telemetry.dap_enabled", false);
-		pref("toolkit.telemetry.dap_helper", "");
-		pref("toolkit.telemetry.dap_leader", "");
-		EOF
 	fi
 
 	# Install language packs
@@ -2707,7 +2730,8 @@ EOF
 
 	# Prefer the upstream svg file they use when packaging flatpak so it's always up-to-date.
 	insinto "/usr/share/icons/hicolor/symbolic/apps"
-	newins "${S}/taskcluster/docker/firefox-flatpak/firefox-symbolic.svg" "firefox-symbolic.svg"
+	newins "${S}/browser/installer/linux/app/flatpak/files/share/icons/hicolor/symbolic/apps/org.mozilla.firefox-symbolic.svg" "firefox-symbolic.svg"
+	dosym -r "/usr/share/icons/hicolor/symbolic/apps/firefox-symbolic.svg" "/usr/share/icons/hicolor/symbolic/apps/org.mozilla.firefox-symbolic.svg"
 
 	local icon
 	local size
