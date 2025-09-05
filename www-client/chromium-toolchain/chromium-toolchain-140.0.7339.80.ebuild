@@ -6,20 +6,20 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/139.0.7258.66/DEPS#L533
-GN_COMMIT="97b68a0bb62b7528bc3491c7949d6804223c2b82"
-GN_PV="0.2255" # See get_gn_ver.sh
-# https://github.com/chromium/chromium/blob/139.0.7258.66/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="fd3fecfc"
-LLVM_N_COMMITS="11777"
+# https://github.com/chromium/chromium/blob/140.0.7339.80/DEPS#L533
+GN_COMMIT="3a4f5cea73eca32e9586e8145f97b04cbd4a1aee"
+GN_PV="0.2265" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/140.0.7339.80/tools/clang/scripts/update.py#L38 \
+LLVM_COMMIT="bd809ffb" # without the g prefix
+LLVM_N_COMMITS="16348"
 LLVM_OFFICIAL_SLOT="21" # Cr official slot
-LLVM_SUB_REV="1"
-# https://github.com/chromium/chromium/blob/139.0.7258.66/tools/rust/update_rust.py#L37 \
+LLVM_SUB_REV="15"
+# https://github.com/chromium/chromium/blob/140.0.7339.80/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="4a0969e06dbeaaa43914d2d00b2e843d49aa3886"
-RUST_SUB_REV="1"
-RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.86.0" # Corresponds to llvm-20.1, see https://github.com/rust-lang/rust/blob/4a0969e06dbeaaa43914d2d00b2e843d49aa3886/RELEASES.md
+RUST_COMMIT="22be76b7e259f27bf3e55eb931f354cd8b69d55f"
+RUST_SUB_REV="3"
+RUST_MAX_VER="1.88.0" # Inclusive
+RUST_MIN_VER="1.88.0" # Corresponds to llvm-20.1, see https://github.com/rust-lang/rust/blob/22be76b7e259f27bf3e55eb931f354cd8b69d55f/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
@@ -32,7 +32,7 @@ SRC_URI="
 	amd64? (
 https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
 	-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
-https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
+https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%-*}.tar.xz
 	-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
 	)
 https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
