@@ -346,6 +346,29 @@ BDEPEND="
 "
 DOCS=( "AUTHORS" "README.md" "README_sycl.md" )
 
+pkg_setup() {
+	local llvm_base_path
+	if use rocm ; then
+		if use rocm_6_2 ; then
+			export ROCM_SLOT="6.2"
+			export LLVM_SLOT=18
+			export ROCM_VERSION="${HIP_6_2_VERSION}"
+		fi
+		rocm_pkg_setup
+	fi
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
+			export CC="${CHOST}-gcc-11"
+			export CXX="${CHOST}-gxx-11"
+			export CPP="${CXX} -E"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
+			export CC="${CHOST}-gcc-13"
+			export CXX="${CHOST}-gxx-13"
+			export CPP="${CXX} -E"
+		fi
+	fi
+}
+
 src_configure() {
 	# Note: CUDA and HIP are currently untested. Build failures may occur.
 	# Turning off examples causes errors during configure
