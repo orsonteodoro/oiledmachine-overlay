@@ -167,8 +167,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-33a5c589e3915dd15765bf5662a5745d8e937d02d31aba01fedb2e254827dedf\
-90bc4feb981382d1f6ec6e6ea0bba4a5ff709e9d38656993b2cbc083f03e2724\
+68aefe6548277b28cc1c9d3137a42efac54623a1420192bf9ada58dc054f376a\
+b94a0e89d1ddf1763bf2172bf49a4818fa1752e95d3491d56b4c898fa200ac86\
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	LLVM_COMPAT=( 22 21 ) # Can use [CURRENT_LLVM_MAJOR_VERSION+1 or CURRENT_LLVM_MAJOR_VERSION] inclusive
@@ -1977,7 +1977,7 @@ ewarn
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=4743
+	local tc_count_expected=4900
 	local tc_count_actual=$(cat "/usr/share/chromium/toolchain/file-count")
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
@@ -1989,7 +1989,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=536909
+	local sources_count_expected=538509
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
