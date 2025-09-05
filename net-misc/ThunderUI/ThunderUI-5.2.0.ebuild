@@ -65,6 +65,10 @@ npm_update_lock_install_post() {
 			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"sha.js\": \"^2.4.0\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
+			sed -i -e "s|\"sha.js\": \"^2.4.8\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
+			sed -i -e "s|\"sha.js\": \"^2.4.11\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
 		}
 		patch_lockfile
 
@@ -75,8 +79,10 @@ npm_update_lock_install_post() {
 
 			"pbkdf2@3.1.3"				# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
 								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID)
+
+			"sha.js@2.4.12"				# CVE-2025-9288; ZC, VS(DoS, DT), SS(DT, ID)
 		)
-		enpm add "${pkgs[@]}" -D --prefer-offline
+		enpm add "${pkgs[@]}" -D #--prefer-offline
 		patch_lockfile
 	fi
 }
