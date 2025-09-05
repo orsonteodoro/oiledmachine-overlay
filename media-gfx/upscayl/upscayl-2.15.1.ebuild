@@ -14,7 +14,6 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # See https://releases.electronjs.org/releases.json for version details.
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	#ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
 	ELECTRON_APP_ELECTRON_PV="38.0.0" # Cr 140.0.7339.41, node 22.18.0
 else
 	# Upstream preference
@@ -276,3 +275,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250312, electron 34.3.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250630, electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250806, electron 37.2.6)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250905, electron 38.0.0)
