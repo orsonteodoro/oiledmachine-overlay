@@ -1126,7 +1126,7 @@ RDEPEND+="
 		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
 	)
 	whisper? (
-		>=app-accessibility/whisper-cpp-1.7.5[ffmpeg]
+		>=app-accessibility/whisper-cpp-1.7.5
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
