@@ -32,7 +32,7 @@
       Build and install example applications
     </flag>
     <flag name="sycl">
-      Add GPU support through SYCL
+      Add hardware acceleration support through SYCL
     </flag>
     <flag name="vulkan">
       Allow to accelerate workloads for older GPUs and later that

@@ -101,7 +101,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
-+cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
++cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -sycl -vulkan
 video_cards_intel
 ebuild_revision_1
 "
@@ -333,6 +333,14 @@ RDEPEND="
 		>=media-libs/libsdl2-2.0.20
 		media-libs/libsdl2:=
 	)
+	sycl? (
+		sys-devel/DPC++
+		video_cards_intel? (
+			dev-libs/intel-compute-runtime[l0]
+			sci-libs/oneMKL
+			sys-devel/DPC++[video_cards_intel]
+		)
+	)
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3.204.1
 	)
@@ -368,10 +376,15 @@ pkg_setup() {
 			export CPP="${CXX} -E"
 		fi
 	fi
-	if use video_cards_intel && use openvino ; then
+	if use openvino ; then
 		CONFIG_CHECK="~DRM_ACCEL_IVPU ~DRM ~DRM_ACCEL ~PCI ~PCI_MSI"
 		WARNING_DRM_ACCEL_IVPU="Missing NPU support with CONFIG_DRM_ACCEL_IVPU"
 		linux-info_pkg_setup
+	fi
+	if use sycl ; then
+		export CC="${ESYSROOT}/usr/lib/llvm/intel/bin/clang"
+		export CXX="${ESYSROOT}/usr/lib/llvm/intel/bin/clang++"
+		export CPP="${CC} -E"
 	fi
 }
 
@@ -394,7 +407,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DGGML_CPU=$(usex cpu)
 		-DGGML_CUBLAS=$(usex cuda)
 		-DGGML_HIPBLAS=$(usex rocm)
-		-DGGML_SYCL=OFF
+		-DGGML_SYCL=$(usex sycl)
 		-DGGML_VULKAN=$(usex vulkan)
 		-DWHISPER_FFMPEG=$(usex ffmpeg)
 		-DWHISPER_SDL2=$(usex sdl2)
