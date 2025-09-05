@@ -344,6 +344,7 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.5
 "
+DOCS=( "AUTHORS" "README.md" "README_sycl.md" )
 
 src_configure() {
 	# Note: CUDA and HIP are currently untested. Build failures may occur.
