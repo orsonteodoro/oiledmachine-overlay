@@ -31,9 +31,6 @@
     <flag name="sdl2">
       Build and install example applications
     </flag>
-    <flag name="sycl">
-      Add hardware acceleration support through SYCL
-    </flag>
     <flag name="vulkan">
       Allow to accelerate workloads for older GPUs and later that
       support Vulkan 1.2 or later.
