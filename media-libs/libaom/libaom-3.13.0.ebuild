@@ -68,6 +68,7 @@ ARM_IUSE="
 	cpu_flags_arm_dotprod
 	cpu_flags_arm_i8mm
 	cpu_flags_arm_neon
+	cpu_flags_arm_sve
 "
 PPC_IUSE="
 	cpu_flags_ppc_vsx
@@ -105,8 +106,10 @@ PGO_TRAINERS="
 "
 IUSE="
 ${ARM_IUSE}
+${MIPS_IUSE}
 ${PPC_IUSE}
 ${PGO_TRAINERS}
+${RISCV_IUSE}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples highway lossless pgo static-libs test
 ebuild_revision_32
@@ -207,7 +210,21 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	highway? (
-		dev-cpp/highway[cpu_flags_x86_sse2?,cpu_flags_x86_ssse3?,cpu_flags_x86_sse4_1?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512bw?,cpu_flags_x86_avx512cd?,cpu_flags_x86_avx512dq?,cpu_flags_x86_avx512f?,cpu_flags_x86_avx512vl?]
+		dev-cpp/highway[\
+cpu_flags_arm_sve?,\
+cpu_flags_riscv_rvv?,\
+cpu_flags_x86_sse2?,\
+cpu_flags_x86_ssse3?,\
+cpu_flags_x86_sse4_1?,\
+cpu_flags_x86_sse4_2?,\
+cpu_flags_x86_avx?,\
+cpu_flags_x86_avx2?,\
+cpu_flags_x86_avx512bw?,\
+cpu_flags_x86_avx512cd?,\
+cpu_flags_x86_avx512dq?,\
+cpu_flags_x86_avx512f?,\
+cpu_flags_x86_avx512vl?\
+]
 	)
 "
 DEPEND+="
