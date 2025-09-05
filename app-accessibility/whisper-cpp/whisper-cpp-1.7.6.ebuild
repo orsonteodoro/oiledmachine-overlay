@@ -34,8 +34,8 @@ CUDA_TARGETS_COMPAT=(
 	"sm_89"
 )
 CPU_FLAGS_LOONG=(
-	"cpu_flags_loong_lsx"
 	"cpu_flags_loong_lasx"
+	"cpu_flags_loong_lsx"
 )
 CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
@@ -47,26 +47,25 @@ CPU_FLAGS_S390=(
 	"cpu_flags_s390_vxe"
 )
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_sse4_2"
-	"cpu_flags_x86_bmi2"
-	"cpu_flags_x86_f16c"
-	"cpu_flags_x86_fma"
+	"cpu_flags_x86_amx"
+	"cpu_flags_x86_amx_bf16"
+	"cpu_flags_x86_amx_int8"
+	"cpu_flags_x86_amx_tile"
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_avx512cd"
 	"cpu_flags_x86_avx512dq"
 	"cpu_flags_x86_avx512f"
-	"cpu_flags_x86_avx512vl"
-	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_avx512vbmi"
+	"cpu_flags_x86_avx512vl"
 	"cpu_flags_x86_avx512vnni"
 	"cpu_flags_x86_avxvnni"
 	"cpu_flags_x86_avxvnniint8"
-	"cpu_flags_x86_amx"
-	"cpu_flags_x86_amx_tile"
-	"cpu_flags_x86_amx_int8"
-	"cpu_flags_x86_amx_bf16"
+	"cpu_flags_x86_bmi2"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_fma"
+	"cpu_flags_x86_sse4_2"
 )
 ROCM_SLOTS=(
 	# 5.5 minimum
