@@ -15,7 +15,7 @@ PYTHON_COMPAT=( python3_{11..14} )
 PYTHON_REQ_USE="xml(+)"
 inherit autotools cflags-hardened check-compiler-switch python-r1 multilib-minimal
 
-XSTS_HOME="http://www.w3.org/XML/2004/xml-schema-test-suite"
+XSTS_HOME="https://www.w3.org/XML/2004/xml-schema-test-suite"
 XSTS_NAME_1="xmlschema2002-01-16"
 XSTS_NAME_2="xmlschema2004-01-14"
 XSTS_TARBALL_1="xsts-2002-01-16.tar.gz"
@@ -29,7 +29,7 @@ if [[ ${PV} == 9999 ]] ; then
 	inherit git-r3
 else
 	inherit gnome.org
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 fi
 
 SRC_URI+="
@@ -68,7 +68,11 @@ MULTILIB_CHOST_TOOLS=(
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.12.9-icu-pkgconfig.patch
+	"${FILESDIR}"/${PN}-2.13.8-CVE-2025-49794-CVE-2025-49796.patch
+	"${FILESDIR}"/${PN}-2.13.8-CVE-2025-49795.patch
 	"${FILESDIR}"/${PN}-2.13.8-CVE-2025-6021.patch
+	"${FILESDIR}"/${PN}-2.13.8-CVE-2025-6170.patch
+
 )
 
 pkg_setup() {
