@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>zl29ah@gmail.com</email>
+    <name>Sergey Alirzaev</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">ggml-org/whisper.cpp</remote-id>
+  </upstream>
+  <use>
+    <flag name="cpu">
+      Add CPU support
+    </flag>
+    <flag name="cuda">
+      Add NVIDIA GPU support
+    </flag>
+    <flag name="cuda-fp16">
+      Use 16-bit floating point for some operations as an optimization.
+    </flag>
+    <flag name="ffmpeg">
+      Add support for additional audio formats
+    </flag>
+    <flag name="openvino">
+      Add support for inference on CPUs, Intel® NPUs, Intel® GPUs.
+    </flag>
+    <flag name="rocm">
+      Add AMD GPU support
+    </flag>
+    <flag name="sdl2">
+      Build and install example applications
+    </flag>
+    <flag name="sycl">
+      Add GPU support through SYCL
+    </flag>
+    <flag name="vulkan">
+      Allow to accelerate workloads for older GPUs and later that
+      support Vulkan 1.2 or later.
+    </flag>
+  </use>
+</pkgmetadata>
