@@ -166,6 +166,7 @@ BDEPEND+="
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron from lockfile."
 		fix_lockfile() {
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		}
