@@ -92,7 +92,7 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~alpha ~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~alpha amd64 arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 ~amd64-linux ~x86-linux ~x64-solaris
 	"
 	SRC_URI="
@@ -318,7 +318,7 @@ BDEPEND="
 	app-alternatives/lex
 	virtual/pkgconfig
 	opencl? (
-		>=dev-util/bindgen-0.58.0
+		>=dev-util/bindgen-0.71.0
 		llvm_slot_15? (
 			|| (
 				=dev-lang/rust-1.69*
