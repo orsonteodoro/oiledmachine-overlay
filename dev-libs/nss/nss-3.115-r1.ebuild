@@ -51,6 +51,7 @@ PATCHES=(
 	"${FILESDIR}"/nss-3.103-gentoo-fixes-add-pkgconfig-files.patch
 	"${FILESDIR}"/nss-3.21-gentoo-fixup-warnings.patch
 	"${FILESDIR}"/nss-3.87-use-clang-as-bgo892686.patch
+	"${FILESDIR}"/nss-3.115-bmo-1983399-align-sftkdb_known_attributes_size-type.patch
 )
 
 src_prepare() {
@@ -102,31 +103,6 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
-
-	local libs=()
-	if tc-is-gcc ; then
-		local s=$(gcc-major-version)
-		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
-			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "asan") )
-			fi
-			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal") )
-			fi
-		fi
-	else
-		local s=$(clang-major-version)
-		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
-			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "asan") )
-			fi
-			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal") )
-			fi
-		fi
-	fi
-#	append-ldflags ${libs[@]}
-
 	# Ensure we stay multilib aware
 	sed -i -e "/@libdir@/ s:lib64:$(get_libdir):" config/Makefile || die
 }
