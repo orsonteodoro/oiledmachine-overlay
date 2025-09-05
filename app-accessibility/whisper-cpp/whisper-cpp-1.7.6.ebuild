@@ -406,11 +406,9 @@ src_configure() {
 		mycmakeargs+=(
 			-DGGML_NATIVE=ON
 		)
-	fi
-
-	if is-flagq "-march=native" ; then
+	else
 		mycmakeargs+=(
-			-DGGML_NATIVE=ON
+			-DGGML_NATIVE=OFF
 		)
 	fi
 	filter-flags "-march=*"
