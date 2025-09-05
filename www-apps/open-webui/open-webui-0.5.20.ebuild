@@ -52,7 +52,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	|| (
@@ -288,6 +288,11 @@ npm_update_lock_install_post() {
 
 		sed -i -e "s|\"form-data\": \"~4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tmp\": \"~0.2.3\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"jspdf\": \"^3.0.0\"|\"jspdf\": \"3.0.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"devalue\": \"^5.1.0\"|\"devalue\": \"5.3.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite-plugin-static-copy\": \"^2.2.0\"|\"vite-plugin-static-copy\": \"2.3.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"mermaid\": \"^10.9.3\"|\"mermaid\": \"10.9.4\"|g" "package-lock.json" || die
 	}
 	patch_lockfile
 
@@ -299,13 +304,19 @@ npm_update_lock_install_post() {
 		"vite@5.4.19"							# CVE-2025-46565; VS(ID); Low
 		"form-data@4.0.4"						# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 		"tmp@0.2.4"							# CVE-2025-54798; DT; Low
+		"devalue@5.3.2"							# CVE-2025-57820; SS(DoS, DT, ID); High
 	)
-	enpm install -D --prefer-offline "${pkgs[@]}"
+#	enpm install -D --prefer-offline "${pkgs[@]}"
+	enpm install -D "${pkgs[@]}"
 
 	pkgs=(
 		"dompurify@3.2.4"
+		"jspdf@3.0.2"							# CVE-2025-57810; ZC, VS(DoS); High
+		"vite-plugin-static-copy@2.3.2"					# CVE-2025-57753; VS(ID); Moderate
+		"mermaid@10.9.4"						# CVE-2025-54881; SS(DT, ID); Moderate
 	)
-	enpm install -P --prefer-offline "${pkgs[@]}"
+#	enpm install -P --prefer-offline "${pkgs[@]}"
+	enpm install -P "${pkgs[@]}"
 
 	patch_lockfile
 }
