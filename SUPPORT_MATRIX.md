@@ -147,7 +147,7 @@ exist in build files.
 | Qt 6.x                            | Fully supported                       |                                                          |
 | ROCm 6.2                          | Available                             | F41 (6.2.1) (3), U24 (>= 6.2.0) (1)                      |
 | ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1) (3)                      |
-| SYCL                              | Available                             |                                                          |
+| SYCL                              | Not supported                         |                                                          |
 | systemd                           | Partially supported                   |                                                          |
 | TensorFlow >= 2.14 (CPU)          | Fully supported                       |                                                          |
 | TensorFlow 2.14 (CUDA 11.8)       | Available                             |                                                          |
