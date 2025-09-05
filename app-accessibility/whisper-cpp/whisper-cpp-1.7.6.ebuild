@@ -363,17 +363,18 @@ src_configure() {
 		-DWHISPER_SDL2=$(usex sdl2)
 
 	# CPU/GPU Optimizations
-		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile)
-		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8)
 		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16)
+		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8)
+		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile)
 		-DGGML_AVX=$(usex cpu_flags_x86_avx)
 		-DGGML_AVX_VNNI=$(usex cpu_flags_x86_avxvnni)
 		-DGGML_AVX2=$(usex cpu_flags_x86_avx2)
 		-DGGML_AVX512=$(usex cpu_flags_x86_avx512f)
+		-DGGML_AVX512_BF16=$(usex cpu_flags_x86_avx512bf16)
 		-DGGML_AVX512_VBMI=$(usex cpu_flags_x86_avx512vbmi)
 		-DGGML_AVX512_VNNI=$(usex cpu_flags_x86_avx512vnni)
-		-DGGML_AVX512_BF16=$(usex cpu_flags_x86_avx512bf16)
 		-DGGML_BMI2=$(usex cpu_flags_x86_bmi2)
+		-DGGML_CUDA_F16=$(usex cuda-f16)
 		-DGGML_F16C=$(usex cpu_flags_x86_f16c)
 		-DGGML_FMA=$(usex cpu_flags_x86_fma)
 		-DGGML_LASX=$(usex cpu_flags_loong_lasx)
@@ -384,7 +385,6 @@ src_configure() {
 		-DGGML_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DGGML_VXE=$(use cpu_flags_s390_vxe)
 		-DGGML_XTHEADVECTOR=$(usex cpu_flags_riscv_xthreadvector)
-		-DGGML_CUDA_F16=$(usex cuda-f16)
 	)
 	if use mkl ; then
 		mycmakeargs+=(
