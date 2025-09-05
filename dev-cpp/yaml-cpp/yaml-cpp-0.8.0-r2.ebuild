@@ -27,8 +27,14 @@ PATCHES=(
 	"${FILESDIR}/yaml-cpp-0.8.0-gtest.patch"
 	"${FILESDIR}/yaml-cpp-0.8.0-gcc13.patch"
 	"${FILESDIR}/yaml-cpp-0.8.0-include-cstdint.patch"
-	"${FILESDIR}/yaml-cpp-0.8.0-cmake.patch"
+	"${FILESDIR}/yaml-cpp-0.8.0-cmake2.patch"
 )
+
+src_prepare() {
+	rm -r test/gtest-1.11.0 || die
+
+	cmake_src_prepare
+}
 
 src_configure() {
 	local mycmakeargs=(
