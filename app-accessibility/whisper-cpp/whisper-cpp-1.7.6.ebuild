@@ -9,9 +9,9 @@ EAPI=8
 # CUDA:  https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/.github/workflows/build.yml#L772
 #        https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/ggml/src/ggml-cuda/CMakeLists.txt#L8
 
-inherit cmake rocm
+inherit cmake flag-o-matic rocm
 
-MY_PN="whisper.cpp"
+MY_PN="${PN/-/.}"
 MY_P="${MY_PN}-${PV}"
 
 # See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/system-requirements.rst
@@ -407,11 +407,23 @@ src_configure() {
 		)
 	fi
 
-	if [[ ${ARCH} =~ ("amd64") ]] ; then
+	if is-flagq "-march=native" ; then
 		mycmakeargs+=(
 			-DGGML_NATIVE=ON
 		)
 	fi
+	filter-flags "-march=*"
+
+	if is-flagq "-flto*" ; then
+		mycmakeargs+=(
+			-DGGML_LTO=ON
+		)
+	else
+		mycmakeargs+=(
+			-DGGML_LTO=OFF
+		)
+	fi
+	filter-lto
 
 	cmake_src_configure
 }
