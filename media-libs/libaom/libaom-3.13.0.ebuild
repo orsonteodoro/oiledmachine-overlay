@@ -109,7 +109,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples highway lossless pgo static-libs test
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	arm64? (
@@ -205,10 +205,13 @@ REQUIRED_USE="
 		pgo
 	)
 "
-DEPEND+="
+RDEPEND+="
 	highway? (
-		dev-cpp/highway
+		dev-cpp/highway[cpu_flags_x86_sse2?,cpu_flags_x86_ssse3?,cpu_flags_x86_sse4_1?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512bw?,cpu_flags_x86_avx512cd?,cpu_flags_x86_avx512dq?,cpu_flags_x86_avx512f?,cpu_flags_x86_avx512vl?]
 	)
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-build/cmake-3.16
