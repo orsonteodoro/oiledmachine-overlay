@@ -103,6 +103,7 @@ ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
+video_cards_intel
 ebuild_revision_1
 "
 gen_rocm_required_use() {
@@ -367,6 +368,11 @@ pkg_setup() {
 			export CXX="${CHOST}-g++-13"
 			export CPP="${CXX} -E"
 		fi
+	fi
+	if use video_cards_intel && use openvino ; then
+		CONFIG_CHECK="~DRM_ACCEL_IVPU ~DRM ~DRM_ACCEL ~PCI ~PCI_MSI"
+		WARNING_DRM_ACCEL_IVPU="Missing NPU support with CONFIG_DRM_ACCEL_IVPU"
+		linux-info_pkg_setup
 	fi
 }
 
