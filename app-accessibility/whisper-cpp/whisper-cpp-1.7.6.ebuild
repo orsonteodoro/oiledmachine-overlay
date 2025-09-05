@@ -9,7 +9,7 @@ EAPI=8
 # CUDA:  https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/.github/workflows/build.yml#L772
 #        https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/ggml/src/ggml-cuda/CMakeLists.txt#L8
 
-inherit cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 MY_PN="${PN/-/.}"
 MY_P="${MY_PN}-${PV}"
@@ -347,7 +347,7 @@ BDEPEND="
 DOCS=( "AUTHORS" "README.md" "README_sycl.md" )
 
 pkg_setup() {
-	local llvm_base_path
+	check-compiler-switch_start
 	if use rocm ; then
 		if use rocm_6_2 ; then
 			export ROCM_SLOT="6.2"
@@ -370,6 +370,14 @@ pkg_setup() {
 }
 
 src_configure() {
+	strip-unsupported-flags
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# Note: CUDA and HIP are currently untested. Build failures may occur.
 	# Turning off examples causes errors during configure
 	# -DWHISPER_BUILD_TESTS=$(usex test)
