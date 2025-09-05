@@ -168,6 +168,9 @@ einfo "PP = Prototype Pollution"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
 einfo "RC = Race Condition"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SA" ]] ; then
+einfo "SA = Spoofing Attack Vulnerability"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SO" ]] ; then
 einfo "SO = Stack Based Buffer Overflow"
 		fi

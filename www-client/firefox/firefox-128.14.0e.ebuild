@@ -177,20 +177,15 @@ dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 LLVM_COMPAT=( 18 17 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Jul 22, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1753110240 # From `date +%s -d "2025-07-21 08:04"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-58/"
+MITIGATION_DATE="Aug 19, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1755545760 # From `date +%s -d "2025-08-18 12:36"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-66/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-8027;ID;Medium"
-	"CVE-2025-8028;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8029;DT, ID;High;"
-	"CVE-2025-8030;DT, ID;High"
-	"CVE-2025-8031;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8032;DT, ID;High"
-	"CVE-2025-8033;ID;Medium"
-	"CVE-2025-8034;MC, CE, DoS, DT, ID;High"
-	"CVE-2025-8035;MC, CE, DoS, DT, ID;High"
+	"CVE-2025-9179;MC, ZC, DoS, DT, ID;Critical"
+	"CVE-2025-9180;DoS, DT, ID;High"
+	"CVE-2025-9181;UM, ID;Medium"
+	"CVE-2025-9185;MC, CE, ZC, DoS, DT, ID;High"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(

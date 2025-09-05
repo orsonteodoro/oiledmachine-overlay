@@ -169,36 +169,23 @@ GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FINGERPRINT="\
-4c95f2ac1ac7d0ee165ac8854e6d2c749556668e4727cd424631d7ad0f278f00\
-c574d93d923da42ba8bba368bf45dffe5815e71f72cd5663e96dfb1b5a536835\
+ad62a4a6d4f03ae141499e405e2427003015d890c6c37ecc129488af4ff7137d\
+4ea73ca1f7f2f0729a9423783369412a71eb0b84b7e14c310b124f1d1db33133\
 " # SHA512
 LLVM_COMPAT=( 20 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Jul 22, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1754576880 # From `date +%s -d "2025-08-07 07:28"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-56/"
+MITIGATION_DATE="Aug 19, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1756299120 # From `date +%s -d "2025-08-27 05:52"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-64/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-8027;ID;Medium"
-	"CVE-2025-8028;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8041;"
-	"CVE-2025-8042;;"
-	"CVE-2025-8029;DT, ID;High;"
-	"CVE-2025-8036;DT, ID;High"
-	"CVE-2025-8037;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8030;DT, ID;High"
-	"CVE-2025-8043;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8031;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8032;DT, ID;High"
-	"CVE-2025-8038;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8039;DT, ID;High"
-	"CVE-2025-8033;ID;Medium"
-	"CVE-2025-8364;;"
-	"CVE-2025-8044;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-8034;MC, CE, DoS, DT, ID;High"
-	"CVE-2025-8040;MC, CE, DoS, DT, ID;High"
-	"CVE-2025-8035;MC, CE, DoS, DT, ID;High"
+	"CVE-2025-9179;MC, ZC, DoS, DT, ID;Critical"
+	"CVE-2025-9181;UM, ID;Medium"
+	"CVE-2025-9182;ZC, DoS;High"
+	"CVE-2025-9183;SA, DT;Medium"
+	"CVE-2025-9184;MC, CE, ZC, DoS, DT, ID;High"
+	"CVE-2025-9185;MC, CE, ZC, DoS, DT, ID;High"
 )
 MOZ_ESR=
 MOZ_LANGS=(
