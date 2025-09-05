@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
-inherit cflags-hardened gnome2-utils meson xdg-utils
+inherit cflags-hardened flag-o-matic gnome2-utils meson xdg-utils
 
 KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
 SRC_URI="https://archive.xfce.org/src/apps/${PN}/${PV%.*}/${P}.tar.xz"
@@ -19,12 +19,12 @@ HOMEPAGE="
 LICENSE="GPL-2+"
 SLOT="0"
 IUSE="
-policykit spell +shortcuts
+policykit spell +shortcuts X
 ebuild_revision_11
 "
 DEPEND="
 	>=dev-libs/glib-2.56.2
-	>=x11-libs/gtk+-3.22.0:3
+	>=x11-libs/gtk+-3.22.0:3[X?]
 	>=x11-libs/gtksourceview-4.0.0:4
 	policykit? (
 		>=sys-auth/polkit-0.102
@@ -46,6 +46,10 @@ BDEPEND="
 
 src_configure() {
 	cflags-hardened_append
+
+	# defang automagic dependencies
+	use X || append-flags -DGENTOO_GTK_HIDE_X11
+
 	local emesonargs=(
 		-Dgtksourceview4=enabled
 		$(meson_feature policykit polkit)
