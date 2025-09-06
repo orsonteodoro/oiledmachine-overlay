@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_38
+ebuild_revision_39
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -251,6 +251,8 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove on-headers@1.0.2 from ${S}/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
