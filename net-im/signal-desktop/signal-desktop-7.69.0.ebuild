@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_37
+ebuild_revision_38
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -227,7 +227,7 @@ ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.ya
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
 
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/pnpm-lock.yaml"
