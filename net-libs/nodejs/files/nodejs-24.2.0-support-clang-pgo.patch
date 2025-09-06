@@ -44,7 +44,7 @@
 +              },],
 +            ],
 +          },],
-+          [OS=="openharmony"', {
++          ['OS=="openharmony"', {
              'conditions': [
                ['enable_pgo_generate=="true"', {
                  'cflags': ['<(pgo_generate)'],
