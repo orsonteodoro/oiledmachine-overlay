@@ -119,7 +119,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_14
+	ebuild_revision_16
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -171,10 +171,14 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
 																# CVE-2025-47279; DoS; Low
 
-		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"14.2.30\"|g" "package-lock.json" || die				# CVE-2025-29927; DT, ID; Critical
-		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"14.2.30\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
+		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"14.2.32\"|g" "package-lock.json" || die				# CVE-2025-29927; DT, ID; Critical
+		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"14.2.32\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
 																# CVE-2025-48068; VS(ID), SS(ID); Low
 																# CVE-2025-30218; VS(ID)
+
+		sed -i -e "s|\"next\": \"^14.2.30\"|\"next\": \"14.2.32\"|g" "package-lock.json" || die				# CVE-2025-57752; ID; Medium
+																# CVE-2025-57822; DT, ID; Medium
+																# CVE-2025-55173; DT, Medium
 
 		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die			# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die				# CVE-2025-54798; DT; Low
@@ -183,7 +187,7 @@ npm_update_lock_audit_post() {
 	local pkgs
 	pkgs=(
 		"undici@6.21.2"
-		"next@14.2.30"
+		"next@14.2.32"
 		"form-data@4.0.4"
 		"tmp@0.2.4"
 	)
