@@ -4,11 +4,11 @@
 EAPI=8
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.46.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.69.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v7.47.0/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v7.69.0/CONTRIBUTING.md#known-issues
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -31,10 +31,10 @@ ELECTRON_BUILDER_PV="26.0.14"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
+	ELECTRON_APP_ELECTRON_PV="38.0.0" # Cr 140.0.7339.41, node 22.18.0
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="36.3.2" # Cr 136.0.7103.115, node 22.15.1
+	ELECTRON_APP_ELECTRON_PV="37.3.1" # Cr 138.0.7204.235, node 22.18.0
 fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT=3
@@ -83,11 +83,11 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-37.1.0-chromium.html
+		electron-38.0.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-36.3.2-chromium.html
+		electron-37.3.1-chromium.html
 	"
 fi
 SLOT="0"
