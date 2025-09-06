@@ -48,3 +48,32 @@
              'conditions': [
                ['enable_pgo_generate=="true"', {
                  'cflags': ['<(pgo_generate)'],
+--- a/configure.py.orig	2025-06-14 22:47:35.053084684 -0700
++++ b/configure.py	2025-06-14 22:48:33.659411055 -0700
+@@ -1562,14 +1562,22 @@ def configure_node(o):
+     raise Exception(
+       'The pgo option is supported only on linux.')
+ 
++  o['variables']['pgo_profile_dir'] = ""
++  o['variables']['pgo_profile_profdata'] = ""
+   if flavor == 'linux':
+     if options.enable_pgo_generate or options.enable_pgo_use:
+-      version_checked = (5, 4, 1)
+-      if not gcc_version_ge(version_checked):
+-        version_checked_str = ".".join(map(str, version_checked))
++      gcc_version_checked = (5, 4, 1)
++      clang_version_checked = (3, 9, 1)
++      if not gcc_version_ge(gcc_version_checked) and not clang_version_ge(clang_version_checked):
++        gcc_version_checked_str = ".".join(map(str, gcc_version_checked))
++        clang_version_checked_str = ".".join(map(str, clang_version_checked))
+         raise Exception(
+           'The options --enable-pgo-generate and --enable-pgo-use '
+-          f'are supported for gcc and gxx {version_checked_str} or newer only.')
++          f'are supported for gcc and gxx {gcc_version_checked_str} or newer only'
++          f'or for clang and clang++ {clang_version_checked_str} or newer only.')
++      if clang_version_ge(clang_version_checked):
++        o['variables']['pgo_profile_dir'] = os.environ.get('PGO_PROFILE_DIR')
++        o['variables']['pgo_profile_profdata'] = os.environ.get('PGO_PROFILE_PROFDATA')
+ 
+     if options.enable_pgo_generate and options.enable_pgo_use:
+       raise Exception(
