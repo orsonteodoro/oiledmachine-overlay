@@ -4873,6 +4873,30 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog decoder
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 NTSC USB-2.0"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:eyetv-hybrid"($|" ")|"tv-tuner:eyetv-hybrid-2008"|"tv-tuner:eyetv-hybrid-eu-2008") ]] ; then
+	# Elgato
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DRXK" # Demodulator for DVB-C DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for DVB-C, DVB-T, ISDB-T ATSC, NTSC, PAL, SECAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX" # USB bridge, analog audio
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_V4L2"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog video decoder for NTSC, PAL, PAL60
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T PAL USB-2.0"
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:eyetv-hybrid-us") ]] ; then
 	# Elgato
 	# QAM is not supported
