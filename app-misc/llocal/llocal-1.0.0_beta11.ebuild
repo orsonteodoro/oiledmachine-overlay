@@ -19,11 +19,11 @@ NODE_VERSION=20
 #NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
-#	"--prefer-offline"
+	"--prefer-offline"
 )
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
-#	"--prefer-offline"
+	"--prefer-offline"
 )
 NPM_LOCKFILE_SOURCE="ebuild"
 NPM_EXE_LIST="
