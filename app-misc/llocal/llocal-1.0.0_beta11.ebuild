@@ -9,7 +9,8 @@ MY_PV="${PV/_beta/-beta.}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
+#	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
+	ELECTRON_APP_ELECTRON_PV="38.0.0" # Cr 140.0.7339.41, node 22.18.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -18,11 +19,11 @@ NODE_VERSION=20
 #NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
-	"--prefer-offline"
+#	"--prefer-offline"
 )
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
-	"--prefer-offline"
+#	"--prefer-offline"
 )
 NPM_LOCKFILE_SOURCE="ebuild"
 NPM_EXE_LIST="
@@ -64,7 +65,7 @@ LICENSE="
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-37.1.0-chromium.html
+		electron-38.0.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -72,7 +73,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_7"
+IUSE+=" ebuild_revision_8"
 RDEPEND="
 	app-misc/ollama
 "
@@ -145,6 +146,9 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 
 		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die						# CVE-2025-54798; DT
+
+		sed -i -e "s|\"mermaid\": \"^11.4.1\"|\"mermaid\": \"^11.10.0\"|g" "package-lock.json" || die					# CVE-2025-54881; SS(DT, ID); Medium
+																		# CVE-2025-54880; SS(DT, ID); Medium
 	}
 	patch_lockfile
 
@@ -157,6 +161,7 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 		"react-icons@5.2.1"
 
 		"form-data@4.0.4"
+		"mermaid@11.10.0"
 	)
 	enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}
 
