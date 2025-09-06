@@ -5337,6 +5337,93 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-mini-ii"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_M920X" # USB bridge, tuner and demodulator drivers
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-mini-ii-v3.0"($|" ")|"tv-tuner:k-vox"($|" ")|"tv-tuner:digivox-mini-ii-v3.0-p2") ]] ; then
+	# MSI
+	# Device profile 1
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_AF9015" # USB bridge and demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2060" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-mini-ii-v3.0"($|" ")|"tv-tuner:digivox-mini-deluxe"($|" ")|"tv-tuner:digivox-mini-ii-v3.0-p1"|"usb-dvbt-hd"|"hu394") ]] ; then
+	# DIKOM
+	# MaxMedia
+	# MSI
+	# Device profile 2
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_RTL2832" # Demodulator for DVB-T, ISDB-T, DAB, DAB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB_RTL28XXU" # USB bridge
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_FC0012" # Tuner
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-mini-iii"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_AF9015" # USB bridge, demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:md95700"($|" ")|"tv-tuner:md95700-mdusbtv-hybrid") ]] ; then
+	# Medion
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX22702" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_CXUSB" # For transfering firmware to device.  It also likely includes the USB bridge driver which interacts with an unlisted IC/chip.
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SIMPLE" # FMD1216ME MK3 tuner for DVB-T, PAL, SECAM, FM radio.  Partial demodulator for FM radio.
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_ATI_REMOTE"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX25840" # A/V decoder and demodulator for PAL, SECAM; ADC; linear PCM output (For FM radio)
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL FM ?-Capture USB-2.0"
+	fi
 # Missing max s2, nova hd.  See https://github.com/b-rad-NDi/media_tree/commit/9cd4bcfb1683fbf7ca603b0f1909f086c0057d1d
 }
 
