@@ -2415,12 +2415,19 @@ einfo "Added ${x} from ${module} sanitizer"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
 	fi
 
-	local s
+	local disable_vtv=1
 	if tc-is-gcc ; then
-		s=$(gcc-major-version)
-		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
-ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebuild gcc ${s} with vtv USE flag enabled."
-		fi
+		local s
+		for s in $(seq 15 20) ; do
+			if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
+# The vtv will always pick the highest slot for vtv in the qt packages even when selecting older gcc or changing LD_LIBRARY_PATH or using -L/usr/lib/gcc/${CHOST}/14 or less..
+ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv).  Rebuild the system without vtv in <= sys-devel/gcc-14"
+ewarn "Then, remove >=sys-devel/gcc-15 from the system."
+ewarn "Then rebuild C++ packages with vtv."
+				disable_vtv=1
+				break
+			fi
+		done
 	fi
 
 	if \
@@ -2445,10 +2452,13 @@ ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV
 			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"security-critical"|"web-browsers") ]] \
 		; then
 	# ZC, CE, PE
-			filter-flags "-f*vtable-verify=*"
-			append-cxxflags "-fvtable-verify=std"
-			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
-ewarn "vtable-verify (vtv) is broken for GCC 15.  Use GCC <15 instead."
+			if (( ${disable_vtv} == 0 )) ; then
+				filter-flags "-f*vtable-verify=*"
+				append-cxxflags "-fvtable-verify=std"
+				CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
+			else
+ewarn "Skipping vtable verify until >=sys-devel/gcc-15 is removed from the system."
+			fi
 		fi
 	fi
 
