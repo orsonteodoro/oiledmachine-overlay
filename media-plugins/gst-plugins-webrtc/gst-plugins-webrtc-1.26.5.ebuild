@@ -18,7 +18,7 @@ ebuild_revision_13
 "
 RDEPEND="
 	~media-plugins/gst-plugins-sctp-${PV}:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/webrtc-audio-processing-1.0:0[${MULTILIB_USEDEP}]
+	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
 	>=net-libs/libnice-0.1.20[${MULTILIB_USEDEP}]
 "
 DEPEND="

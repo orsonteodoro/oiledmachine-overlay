@@ -16,7 +16,7 @@ IUSE="
 ebuild_revision_13
 "
 RDEPEND="
-	>=media-libs/webrtc-audio-processing-1.0[${MULTILIB_USEDEP}]
+	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
 "
 DEPEND="
