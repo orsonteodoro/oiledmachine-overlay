@@ -76,6 +76,14 @@ DEPEND="
 
 multilib_src_configure() {
 	cflags-hardened_append
+
+	if qmake6 --version 2>&1 | grep "Unable to verify vtable pointer" ; then
+		local gcc_slot=$(qmake6 --version 2>&1 | grep "vtv" | grep -o -E "/[0-9]+/" | sed -e "s|/||g" | head -n 1)
+eerror "Rebuild dev-qt/qtbase and all the Qt6 packages with the same GCC slot to update vtable-verify mitigations."
+eerror "GCC 15 has a bugged vtv.  Use GCC < 15 instead for vtv mitigation for code integrity protection."
+		die
+	fi
+
 	local emesonargs=(
 		-Dqt-egl=$(usex egl "enabled" "disabled")
 		-Dqt-wayland=$(usex wayland "enabled" "disabled")
