@@ -2448,6 +2448,7 @@ ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
+ewarn "vtable-verify (vtv) is broken for GCC 15.  Use GCC <15 instead."
 		fi
 	fi
 
