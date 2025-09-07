@@ -5528,7 +5528,7 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_SIMPLE" # FMD1216ME MK3 tuner for DVB-T, PAL, SECAM, FM radio
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, QAM
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, QAM.  Partial demodulator for FM radio.
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
