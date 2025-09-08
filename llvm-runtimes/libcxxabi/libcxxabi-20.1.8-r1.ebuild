@@ -27,7 +27,7 @@ unset -f _llvm_set_globals
 GCC_SLOT=14
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
@@ -46,7 +46,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
-hardened +static-libs test
+clang hardened +static-libs test
 ebuild_revision_14
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
@@ -62,6 +62,12 @@ BDEPEND+="
 		${PYTHON_DEPS}
 	)
 	>=sys-devel/gcc-${GCC_SLOT}
+	clang? (
+		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}
+	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
@@ -138,6 +144,12 @@ is_hardened_gcc() {
 		return 0
 	fi
 	return 1
+}
+
+test_compiler() {
+	target_is_not_host && return
+	$(tc-getCXX) ${CXXFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
+		<<<'int main() { return 0; }' &>/dev/null
 }
 
 src_configure() {
@@ -282,6 +294,12 @@ _usex_lto() {
 }
 
 _configure_abi() {
+	# Workaround for bgo #961153.
+	# TODO: Fix the multilib.eclass, so it sets CTARGET properly.
+	if ! is_crosspkg ; then
+		export CTARGET="${CHOST}"
+	fi
+
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
@@ -292,10 +310,27 @@ eerror
 eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
 eerror
 		fi
-		export CC="${CHOST}-clang-${SLOT_MAJOR}"
-		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+
+		llvm_prepend_path -b "${LLVM_MAJOR}"
+		local -x CC="${CTARGET}-clang-${LLVM_MAJOR}"
+		local -x CXX="${CTARGET}-clang++-${LLVM_MAJOR}"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+
+		# The full clang configuration might not be ready yet. Use the partial
+		# configuration of components that libunwind depends on.
+		local flags=(
+			--config="${ESYSROOT}"/etc/clang/"${LLVM_MAJOR}"/gentoo-{rtlib,unwindlib,linker}.cfg
+		)
+		local -x CFLAGS="${CFLAGS} ${flags[@]}"
+		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
+		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
+	fi
+
+	local nostdlib_flags=( -nostdlib++ )
+	if ! test_compiler && test_compiler "${nostdlib_flags[@]}"; then
+		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
+		ewarn "${CXX} seems to lack stdlib, trying with ${nostdlib_flags[*]}"
 	fi
 
 einfo
@@ -343,7 +378,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DCMAKE_CXX_COMPILER_TARGET="${CTARGET}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_ENABLE_RUNTIMES="libcxxabi;libcxx"
 		-DLLVM_INCLUDE_TESTS=OFF
@@ -426,6 +463,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DLIBCXXABI_ENABLE_STATIC=OFF
 			-DLIBCXX_ENABLE_SHARED=ON
 			-DLIBCXX_ENABLE_STATIC=OFF
+		)
+	fi
+
+	if is_crosspkg ; then
+		mycmakeargs+=(
+			# Without this, the compiler will compile a test program
+			# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+			# Install inside the cross sysroot.
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
 		)
 	fi
 

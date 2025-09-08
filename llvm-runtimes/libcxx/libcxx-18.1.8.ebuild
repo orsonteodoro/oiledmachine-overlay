@@ -473,7 +473,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use test; then
 		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
-		[[ -n ${clang_path} ]] || die "Unable to find ${CHOST}-clang for tests"
+		[[ -n "${clang_path}" ]] || die "Unable to find ${CHOST}-clang for tests"
 
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
@@ -491,7 +491,7 @@ src_compile() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
-			if [[ ${CHOST} != *-darwin* ]] ; then
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				gen_shared_ldscript
 				use static-libs && gen_static_ldscript
 			fi
@@ -530,30 +530,30 @@ END_LDSCRIPT
 
 gen_static_ldscript() {
 	# Move it first.
-	mv lib/libc++{,_static}.a || die
+	mv "lib/libc++"{"","_static"}".a" || die
 	# Generate libc++.a ldscript for inclusion of its dependencies so that
 	# clang++ -stdlib=libc++ -static works out of the box.
 	local deps=(
-		libc++_static.a
-		$(usex libcxxabi libc++abi.a libsupc++.a)
+		"libc++_static.a"
+		$(usex libcxxabi "libc++abi.a" "libsupc++.a")
 	)
 	# On Linux/glibc it does not link without libpthread or libdl. It is
 	# fine on FreeBSD.
-	use elibc_glibc && deps+=( libpthread.a libdl.a )
+	use elibc_glibc && deps+=( "libpthread.a" "libdl.a" )
 
-	gen_ldscript "${deps[*]}" > lib/libc++.a || die
+	gen_ldscript "${deps[*]}" > "lib/libc++.a" || die
 }
 
 gen_shared_ldscript() {
 	# Move it first.
-	mv lib/libc++{,_shared}.so || die
+	mv "lib/libc++"{"","_shared"}".so" || die
 	local deps=(
-		libc++_shared.so
+		"libc++_shared.so"
 		# libsupc++ doesn't have a shared version
-		$(usex libcxxabi libc++abi.so libsupc++.a)
+		$(usex libcxxabi "libc++abi.so" "libsupc++.a")
 	)
 
-	gen_ldscript "${deps[*]}" > lib/libc++.so || die
+	gen_ldscript "${deps[*]}" > "lib/libc++.so" || die
 }
 
 src_install() {
@@ -565,9 +565,9 @@ src_install() {
 			cmake_src_install
 			# since we've replaced libc++.{a,so} with ldscripts, now we have to
 			# install the extra symlinks
-			if [[ ${CHOST} != *-darwin* ]] ; then
-				dolib.so lib/libc++_shared.so
-				use static-libs && dolib.a lib/libc++_static.a
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				dolib.so "lib/libc++_shared.so"
+				use static-libs && dolib.a "lib/libc++_static.a"
 			fi
 		done
 		multilib_check_headers

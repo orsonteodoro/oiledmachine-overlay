@@ -29,8 +29,7 @@ unset -f _llvm_set_globals
 inherit check-compiler-switch cmake flag-o-matic llvm.org llvm-utils python-single-r1 toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos
-~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="The LLVM linker (link editor)"
@@ -131,7 +130,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"libunwind/include/mach-o"
 )
-LLVM_USE_TARGETS="llvm"
+LLVM_USE_TARGETS="llvm+eq"
 llvm.org_set_globals
 
 gen_rdepend() {
@@ -248,6 +247,7 @@ _src_configure() {
 		-DLLVM_INCLUDE_TESTS=$(usex test)
 		-DLLVM_ENABLE_ZLIB=FORCE_ON
 		-DLLVM_ENABLE_ZSTD=$(usex zstd FORCE_ON OFF)
+		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON

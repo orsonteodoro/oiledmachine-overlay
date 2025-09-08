@@ -30,7 +30,7 @@ inherit check-compiler-switch cmake dhms llvm.org multilib-minimal pax-utils pyt
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
 ~arm64-macos ~ppc-macos ~x64-macos
 "
 
@@ -586,13 +586,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 _src_configure() {
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
-
-	if use ppc && tc-is-gcc && [[ $(gcc-major-version) -lt "14" ]]; then
-		# Workaround for bug #880677
-		append-flags $(test-flags-CXX -fno-ipa-sra)
-		append-flags $(test-flags-CXX -fno-ipa-modref)
-		append-flags $(test-flags-CXX -fno-ipa-icf)
-	fi
 
 	# ODR violations (bug #917536, bug #926529). Just do it for GCC for now
 	# to avoid people grumbling. GCC is, anecdotally, more likely to miscompile

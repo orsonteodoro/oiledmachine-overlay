@@ -25,7 +25,7 @@ unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
@@ -64,6 +64,8 @@ BDEPEND="
 	)
 	clang? (
 		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
 	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
@@ -98,8 +100,18 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 }
 
+test_compiler() {
+	target_is_not_host && return
+	local compiler=${1}
+	shift
+	${compiler} ${CFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
+		<<<'int main() { return 0; }' &>/dev/null
+}
+
 multilib_src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
+	if use clang ; then
+		llvm_prepend_path -b "${LLVM_MAJOR}"
+	fi
 	local libdir=$(get_libdir)
 
 	# https://github.com/llvm/llvm-project/issues/56825
@@ -107,10 +119,43 @@ multilib_src_configure() {
 	filter-lto
 
 	if use clang ; then
-		export CC="${CHOST}-clang"
-		export CXX="${CHOST}-clang++"
+		local -x CC="${CTARGET}-clang-${LLVM_MAJOR}"
+		local -x CXX="${CTARGET}-clang++-${LLVM_MAJOR}"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+
+		# The full clang configuration might not be ready yet. Use the partial
+		# configuration files that are guaranteed to exist even during initial
+		# installations and upgrades.
+		local flags=(
+			--config="${ESYSROOT}"/etc/clang/"${LLVM_MAJOR}"/gentoo-{rtlib,linker}.cfg
+		)
+		local -x CFLAGS="${CFLAGS} ${flags[@]}"
+		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
+		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
+	fi
+
+	# Check whether C compiler runtime is available.
+	if ! test_compiler "$(tc-getCC)"; then
+		local nolib_flags=( -nodefaultlibs -lc )
+		if test_compiler "$(tc-getCC)" "${nolib_flags[@]}"; then
+			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
+			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+		elif test_compiler "$(tc-getCC)" "${nolib_flags[@]}" -nostartfiles; then
+			# Avoiding -nostartfiles earlier on for bug #862540,
+			# and set available entry symbol for bug #862798.
+			nolib_flags+=( -nostartfiles -e main )
+			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
+			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+		fi
+	fi
+	# Check whether C++ standard library is available,
+	local nostdlib_flags=( -nostdlib++ )
+	if ! test_compiler "$(tc-getCXX)" &&
+		test_compiler "$(tc-getCXX)" "${nostdlib_flags[@]}"
+	then
+		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
+		ewarn "${CXX} seems to lack runtime, trying with ${nostdlib_flags[*]}"
 	fi
 
 	check-compiler-switch_end
@@ -140,7 +185,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 	use debug || append-cppflags -DNDEBUG
 
 	local mycmakeargs=(
-		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DCMAKE_C_COMPILER_TARGET="${CTARGET}"
+		-DCMAKE_CXX_COMPILER_TARGET="${CTARGET}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_ENABLE_RUNTIMES="libunwind"
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
@@ -157,6 +205,16 @@ einfo "Detected compiler switch.  Disabling LTO."
 		# avoid dependency on libgcc_s if compiler-rt is used
 		-DLIBUNWIND_USE_COMPILER_RT=${use_compiler_rt}
 	)
+	if is_crosspkg; then
+		mycmakeargs+=(
+			# Without this, the compiler will compile a test program
+			# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+			# Install inside the cross sysroot.
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
+		)
+	fi
 	if use test; then
 		mycmakeargs+=(
 			-DLLVM_ENABLE_RUNTIMES="libunwind;libcxxabi;libcxx"

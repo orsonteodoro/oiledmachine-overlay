@@ -36,7 +36,7 @@ LLVM_COMPONENTS=(
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
@@ -64,7 +64,7 @@ RESTRICT="
 SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
-hardened +libcxxabi +static-libs test +threads
+clang hardened +libcxxabi +static-libs test +threads
 ebuild_revision_17
 "
 RDEPEND="
@@ -82,6 +82,12 @@ DEPEND="
 BDEPEND+="
 	>=sys-devel/gcc-${GCC_SLOT}
 	dev-util/patchutils
+	clang? (
+		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}
+	)
 	test? (
 		$(python_gen_any_dep '
 			dev-python/lit[${PYTHON_USEDEP}]
@@ -245,7 +251,8 @@ pkg_setup() {
 }
 
 src_configure() {
-	llvm_prepend_path "${PV%%.*}"
+	local install_prefix="${EPREFIX}"
+	is_crosspkg && install_prefix+="/usr/${CTARGET}"
 
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
@@ -259,7 +266,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local cxxabi cxxabi_incs
 	if use libcxxabi; then
 		cxxabi=system-libcxxabi
-		cxxabi_incs="${EPREFIX}/usr/include/c++/v1"
+		cxxabi_incs="${install_prefix}/usr/include/c++/v1"
 	else
 		local gcc_inc="${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-fullversion)/include/g++-v$(gcc-major-version)"
 		cxxabi=libsupc++
@@ -312,6 +319,12 @@ is_cfi_supported() {
 }
 
 _configure_abi() {
+	# Workaround for bgo #961153.
+	# TODO: Fix the multilib.eclass, so it sets CTARGET properly.
+	if ! is_crosspkg ; then
+		export CTARGET="${CHOST}"
+	fi
+
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
@@ -322,10 +335,21 @@ eerror
 eerror "You must emerge clang:${PV%%.*} to build with clang."
 eerror
 		fi
-		export CC="${CHOST}-clang-${PV%%.*}"
-		export CXX="${CHOST}-clang++-${PV%%.*}"
+
+		llvm_prepend_path -b "${LLVM_MAJOR}"
+		local -x CC="${CTARGET}-clang-${LLVM_MAJOR}"
+		local -x CXX="${CTARGET}-clang++-${LLVM_MAJOR}"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+
+		# The full clang configuration might not be ready yet. Use the partial
+		# configuration of components that libunwind depends on.
+		local flags=(
+			--config="${ESYSROOT}"/etc/clang/"${LLVM_MAJOR}"/gentoo-{rtlib,unwindlib,linker}.cfg
+		)
+		local -x CFLAGS="${CFLAGS} ${flags[@]}"
+		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
+		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
 	fi
 
 einfo
@@ -371,18 +395,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local use_compiler_rt=OFF
 	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
 
-	# bootstrap: cmake is unhappy if compiler can't link to stdlib
-	local nolib_flags=( -nodefaultlibs -lc )
-	if ! test_compiler; then
-		if test_compiler "${nolib_flags[@]}"; then
-			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
-			ewarn "${CXX} seems to lack runtime, trying with ${nolib_flags[*]}"
-		fi
+	local nostdlib_flags=( -nostdlib++ )
+	if ! test_compiler && test_compiler "${nostdlib_flags[@]}"; then
+		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
+		ewarn "${CXX} seems to lack stdlib, trying with ${nostdlib_flags[*]}"
 	fi
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DCMAKE_CXX_COMPILER_TARGET="${CTARGET}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 		-DLIBCXX_CXX_ABI=${cxxabi}
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
@@ -394,6 +417,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_INSTALL_MODULES=ON
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
+
+		# this is broken with standalone builds, and also meaningless
+		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
+
 		-DLLVM_ENABLE_RUNTIMES=libcxx
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
@@ -459,9 +486,21 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+	if is_crosspkg ; then
+		# Needed to target built libc headers
+		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
+		mycmakeargs+=(
+			# Without this, the compiler will compile a test program
+			# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+			# Install inside the cross sysroot.
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
+		)
+	fi
 	if use test; then
 		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
-		[[ -n ${clang_path} ]] || die "Unable to find ${CHOST}-clang for tests"
+		[[ -n "${clang_path}" ]] || die "Unable to find ${CHOST}-clang for tests"
 
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
@@ -479,7 +518,7 @@ src_compile() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
-			if [[ ${CHOST} != *-darwin* ]] ; then
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				gen_shared_ldscript
 				use static-libs && gen_static_ldscript
 			fi
@@ -523,30 +562,30 @@ END_LDSCRIPT
 
 gen_static_ldscript() {
 	# Move it first.
-	mv lib/libc++{,_static}.a || die
+	mv "lib/libc++"{"","_static"}".a" || die
 	# Generate libc++.a ldscript for inclusion of its dependencies so that
 	# clang++ -stdlib=libc++ -static works out of the box.
 	local deps=(
-		libc++_static.a
-		$(usex libcxxabi libc++abi.a libsupc++.a)
+		"libc++_static.a"
+		$(usex libcxxabi "libc++abi.a" "libsupc++.a")
 	)
 	# On Linux/glibc it does not link without libpthread or libdl. It is
 	# fine on FreeBSD.
-	use elibc_glibc && deps+=( libpthread.a libdl.a )
+	use elibc_glibc && deps+=( "libpthread.a" "libdl.a" )
 
-	gen_ldscript "${deps[*]}" > lib/libc++.a || die
+	gen_ldscript "${deps[*]}" > "lib/libc++.a" || die
 }
 
 gen_shared_ldscript() {
 	# Move it first.
-	mv lib/libc++{,_shared}.so || die
+	mv "lib/libc++"{"","_shared"}".so" || die
 	local deps=(
-		libc++_shared.so
+		"libc++_shared.so"
 		# libsupc++ doesn't have a shared version
-		$(usex libcxxabi libc++abi.so libsupc++.a)
+		$(usex libcxxabi "libc++abi.so" "libsupc++.a")
 	)
 
-	gen_ldscript "${deps[*]}" > lib/libc++.so || die
+	gen_ldscript "${deps[*]}" > "lib/libc++.so" || die
 }
 
 src_install() {
@@ -558,9 +597,10 @@ src_install() {
 			cmake_src_install
 			# since we've replaced libc++.{a,so} with ldscripts, now we have to
 			# install the extra symlinks
-			if [[ ${CHOST} != *-darwin* ]] ; then
-				dolib.so lib/libc++_shared.so
-				use static-libs && dolib.a lib/libc++_static.a
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				is_crosspkg && into "/usr/${CTARGET}"
+				dolib.so "lib/libc++_shared.so"
+				use static-libs && dolib.a "lib/libc++_static.a"
 			fi
 		done
 		multilib_check_headers

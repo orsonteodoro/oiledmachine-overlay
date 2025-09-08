@@ -48,7 +48,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 	fi
 else
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 	"
 fi
 

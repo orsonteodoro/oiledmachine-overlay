@@ -68,6 +68,7 @@ BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
 		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:${LLVM_MAJOR}
 	)
 	test? (
 		$(python_gen_any_dep "
@@ -128,7 +129,9 @@ test_compiler() {
 }
 
 src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
+	if use clang || use test ; then
+		llvm_prepend_path -b "${LLVM_MAJOR}"
+	fi
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
@@ -140,12 +143,21 @@ src_configure() {
 		# Only do this conditionally to allow overriding with
 		# e.g. CC=clang-13 in case of breakage
 		if ! tc-is-clang ; then
-			local -x CC="${CHOST}-clang"
-			local -x CXX="${CHOST}-clang++"
+			local -x CC="${CHOST}-clang-${LLVM_MAJOR}"
+			local -x CXX="${CHOST}-clang++-${LLVM_MAJOR}"
 			local -x CPP="${CC} -E"
 		fi
 
 		strip-unsupported-flags
+
+		# The full clang configuration might not be ready yet. Given that compiler-rt
+		# require runtime, use only the linker configuration.
+		local flags=(
+			--config="${ESYSROOT}/etc/clang/${LLVM_MAJOR}/gentoo-linker.cfg"
+		)
+		local -x CFLAGS="${CFLAGS} ${flags[@]}"
+		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
+		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
 	fi
 
 	check-compiler-switch_end
@@ -175,6 +187,7 @@ ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 
 	local mycmakeargs=(
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
 
 		-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=$(usex !atomic-builtins)
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)

@@ -17,7 +17,7 @@ fi
 inherit llvm-ebuilds
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
 ~arm64-macos ~x64-macos
 "
 
@@ -164,7 +164,7 @@ LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
 	"llvm/utils"
 )
-LLVM_USE_TARGETS="llvm"
+LLVM_USE_TARGETS="llvm+eq"
 llvm.org_set_globals
 [[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
 BDEPEND+="
