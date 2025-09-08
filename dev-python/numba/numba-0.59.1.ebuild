@@ -83,7 +83,7 @@ gen_clang_bdepend() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
-				llvm-core/clang-runtime:${s}[openmp]
+				llvm-runtimes/clang-runtime:${s}[openmp]
 				>=llvm-runtimes/openmp-${s}
 			)
 		"
