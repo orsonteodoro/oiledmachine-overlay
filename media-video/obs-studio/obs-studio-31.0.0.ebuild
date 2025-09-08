@@ -1063,7 +1063,7 @@ einfo
 	)
 
 	local clang_slot=$(clang-major-version)
-	if tc-is-clang && has_version "=llvm-core/clang-runtime-${clang_slot}*[libcxx]" ; then
+	if tc-is-clang && has_version "=llvm-runtimes/clang-runtime-${clang_slot}*[libcxx]" ; then
 		mycmakeargs+=(
 			-DUSE_LIBCXX=ON
 		)
