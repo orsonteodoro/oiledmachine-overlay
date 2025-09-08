@@ -2415,14 +2415,15 @@ einfo "Added ${x} from ${module} sanitizer"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
 	fi
 
-	local disable_vtv=1
+	local disable_vtv=0
 	if tc-is-gcc ; then
 		local s
 		for s in $(seq 15 20) ; do
 			if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
-# The vtv will always pick the highest slot for vtv in the qt packages even when selecting older gcc or changing LD_LIBRARY_PATH or using -L/usr/lib/gcc/${CHOST}/14 or less..
+# The vtv always picks the highest slot for the qt packages even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or using -L/usr/lib/gcc/${CHOST}/14 or less.
 ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv).  Rebuild the system without vtv."
 ewarn "Then, remove >=sys-devel/gcc-15 from the system."
+ewarn "Add >=sys-devel/gcc-15 to /etc/portage/package.mask/gcc."
 ewarn "Then rebuild C++ packages selectively with vtv using <=sys-devel/gcc-14 compiler."
 				disable_vtv=1
 				break
