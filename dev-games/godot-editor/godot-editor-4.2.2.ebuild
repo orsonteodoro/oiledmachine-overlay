@@ -259,7 +259,7 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=llvm-core/clang-runtime-${s}[compiler-rt,sanitize]
+				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
 				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
