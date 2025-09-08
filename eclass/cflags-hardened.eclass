@@ -2418,13 +2418,32 @@ einfo "Added ${x} from ${module} sanitizer"
 	local disable_vtv=0
 	if tc-is-gcc ; then
 		local s
-		for s in $(seq 15 20) ; do
+		for s in $(seq 15 25) ; do
 			if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
 # The vtv always picks the highest slot for the qt packages even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or using -L/usr/lib/gcc/${CHOST}/14 or less.
-ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv).  Rebuild the system without vtv and without using >=sys-devel/gcc-15.  You must link to older gcc version to safely remove >=gcc-15 and friends (libvtv, libstdc++, lib*san, etc)."
-ewarn "Then, remove >=sys-devel/gcc-15 from the system."
-ewarn "Add >=sys-devel/gcc-15 to /etc/portage/package.mask/gcc."
-ewarn "Then rebuild C++ packages selectively with vtv using <=sys-devel/gcc-14 compiler."
+ewarn
+ewarn "TENTATIVE notice for resolution for unbroken vtv support."
+ewarn
+ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv) used in C++ programs to improve execution integrity."
+ewarn
+ewarn "The following oiledmachine-overlay ebuilds have to be re-emerged to switch to the unbroken vtv implementation:"
+ewarn
+ewarn "app-antivirus/clamav::oiledmachine-overlay"
+ewarn "dev-qt/qtwebengine::oiledmachine-overlay"
+ewarn "dev-qt/qtwayland::oiledmachine-overlay"
+ewarn "dev-qt/qtdeclarative::oiledmachine-overlay"
+ewarn "dev-qt/qtbase::oiledmachine-overlay"
+ewarn
+ewarn "If you did system-wide vtv, the entire system should be re-emerged twice.  Once to remove vtv.  Second time to re-apply unbroken vtv."
+ewarn
+ewarn "1. Rebuild the system without vtv and without using >=sys-devel/gcc-15.  You must link to older gcc version to safely remove >=gcc-15 and friends (libvtv, libstdc++, lib*san, etc)."
+ewarn "2. Then, remove >=sys-devel/gcc-15 from the system."
+ewarn "3. Add >=sys-devel/gcc-15 to /etc/portage/package.mask/gcc."
+ewarn "4. Then rebuild C++ packages selectively with vtv using <=sys-devel/gcc-14 compiler."
+ewarn
+ewarn "GCC 14 is likely not to have a broken vtv implementation but not verified yet."
+ewarn "This message may be updated to point to the unbroken slot implementation of vtv."
+ewarn
 				disable_vtv=1
 				break
 			fi
