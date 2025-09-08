@@ -2452,12 +2452,12 @@ ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV
 			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"security-critical"|"web-browsers") ]] \
 		; then
 	# ZC, CE, PE
+			filter-flags "-f*vtable-verify=*"
 			if (( ${disable_vtv} == 0 )) ; then
-				filter-flags "-f*vtable-verify=*"
 				append-cxxflags "-fvtable-verify=std"
 				CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
 			else
-ewarn "Skipping vtable verify until >=sys-devel/gcc-15 is removed from the system."
+ewarn "Skipping applying -fvtable-verify until >=sys-devel/gcc-15 is removed from the system."
 			fi
 		fi
 	fi
