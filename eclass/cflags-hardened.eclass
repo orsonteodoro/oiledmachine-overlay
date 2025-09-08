@@ -2425,7 +2425,7 @@ einfo "Added ${x} from ${module} sanitizer"
 ewarn
 ewarn "TENTATIVE notice for resolution for unbroken vtv support."
 ewarn
-ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv) used in C++ programs to improve execution integrity."
+ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv) used in C++ programs to protect some execution integrity."
 ewarn
 ewarn "The following oiledmachine-overlay ebuilds have to be re-emerged to switch to the unbroken vtv implementation:"
 ewarn
