@@ -29,7 +29,7 @@ The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
-| LIBC                 | Arch     | Level of support            | Distro correspondence                          |
+| LIBC                 | Arch     | Level of support            | Distro or CI image correspondence              |
 | ---                  | ----     | ---                         | ---                                            |
 | glibc                | 64-bit   | Generally supported         | D12 (2.36), U24 (2.39)                         |
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), U24 (2.39)                         |
@@ -54,7 +54,7 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Compiler                        | Level of support                      | Distro correspondence              |
+| Compiler                        | Level of support                      | Distro or CI image correspondence  |
 | ---                             | ---                                   | ---                                |
 | Clang 14                        | Not supported                         | D12 (14.0)                         |
 | Clang 18                        | Fully supported                       | U24 (18.0)                         |
@@ -66,13 +66,14 @@ exist in build files.
 | Cython 3.1.0                    | Fully supported                       |                                    |
 | GCC 12                          | Fully supported                       | D12 (12.2)                         |
 | GCC 13                          | Partially Supported                   | U24 (13.2)                         |
-| GCC 14                          | Partially Supported                   | F41 (14.2.1)                       |
-| GCC 15                          | Not Supported                         | F42 (15.1.1), F40 (14.0), A(15.2)  |
+| GCC 14                          | Partially Supported                   | F41 (14.2.1), F40 (14.0)           |
+| GCC 15                          | Not Supported                         | F42 (15.1.1), A(15.2)              |
 | GCC 16			  | Not Supported                         |                                    |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                       |
 | Rust 1.74.0                     | Partially supported                   |                                    |
 | Rust 1.75.0                     | Available                             | U24 (1.75.0)                       |
 | Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)         |
+| Rust 1.89.0                     | Available                             | A (1.89.0)                         |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                    |
 
 * GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
@@ -89,11 +90,11 @@ exist in build files.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
 * Due to the lack of GPU access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for increased chances of reproducibility.
 
-| Python               | Level of support                      | Distro correspondence                      |
+| Python               | Level of support                      | Distro or CI image correspondence          |
 | ---                  | ---                                   | ---                                        |
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                         |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                         |
-| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                         |
+| 3.12                 | Partially supported                   | U24 (EOL Apr 2029), A(Rolling)             |
 | 3.13                 | Available                             | F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | 3.13t                | Not supported                         |                                            |
 | 3.14 and later       | Not supported                         |                                            |
@@ -105,7 +106,7 @@ exist in build files.
   Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
   bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
-| Platform                          | Level of support                      | Distro correspondence                                    |
+| Platform                          | Level of support                      | Distro or CI image correspondence                        |
 | ---                               | ---                                   | ---                                                      |
 | CUDA 11.8                         | Available                             | D12 (11.8)                                               |
 | CUDA 12.8                         | Planned                               | U24 (12.0)                                               |
@@ -116,7 +117,7 @@ exist in build files.
 | gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), F41 (1.48.4), F42 (1.48.4), U24 (1.51.1)   |
 | gRPC 1.55 - 1.62                  | Available                             |                                                          |
 | gRPC >= 1.63                      | Available                             |                                                          |
-| GTK 2 (4)                         | Not Supported                         |
+| GTK 2 (4)                         | Not Supported                         |                                                          |
 | GTK 3                             | Fully supported                       |                                                          |
 | GTK 4                             | Fully supported                       |                                                          |
 | OpenGL <= 4.6                     | Fully supported                       |                                                          |
