@@ -1671,7 +1671,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | gui-libs/libdecor | A client-side decorations library for Wayland clients |
 | llvm-core/clang | C language family frontend for LLVM |
 | llvm-core/clang-common | Common files shared between multiple slots of clang |
-| llvm-core/clang-runtime | A meta-ebuild for the Clang runtime libraries |
 | llvm-core/clang-toolchain-symlinks | Symlinks to use Clang on a GCC-free system |
 | llvm-core/lld | The LLVM linker (link editor) |
 | llvm-core/lld-toolchain-symlinks | Symlinks to use LLD on a binutils-free system |
@@ -1681,6 +1680,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | llvm-core/llvmgold | LLVMgold plugin symlink for autoloading |
 | llvm-core/mlir | Multi Level Intermediate Representation for LLVM |
 | llvm-core/pstl | Parallel STL is an implementation of the C++ standard library algorithms with support for execution policies |
+| llvm-runtimes/clang-runtime | A meta-ebuild for the Clang runtime libraries |
 | llvm-runtimes/compiler-rt | Compiler runtime library for clang (built-in part) |
 | llvm-runtimes/compiler-rt-sanitizers | Compiler runtime libraries for clang (sanitizers & xray) |
 | llvm-runtimes/libcxx | New implementation of the C++ standard library, targeting C++11 |

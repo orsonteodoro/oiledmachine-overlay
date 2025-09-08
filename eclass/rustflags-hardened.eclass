@@ -463,7 +463,7 @@ eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-core/lld"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+eerror "emerge -1vuDN llvm-runtimes/clang-runtime:${LLVM_SLOT}[sanitize]"
 }
 
 # @FUNCTION: _rustflags-hardened_proximate_opt_level
@@ -1609,7 +1609,7 @@ eerror "emerge -1vuDN sys-devel/gcc:${GCC_SLOT}[sanitize]"
 eerror "Missing ${module} sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+eerror "emerge -1vuDN llvm-runtimes/clang-runtime:${LLVM_SLOT}[sanitize]"
 				die
 			fi
 			local skip=0

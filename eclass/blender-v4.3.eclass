@@ -586,7 +586,7 @@ gen_asan_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=llvm-core/clang-runtime-${s}[compiler-rt,sanitize]
+				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
 				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[asan]
 				llvm-core/clang:${s}
 			)
