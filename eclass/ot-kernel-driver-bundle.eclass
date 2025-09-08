@@ -5679,8 +5679,8 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 	# Leadtek
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_RTL2832" # Demodulator for DVB-T, ISDB-T, DAB, DAB-T
-		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_RTL28XXU" # USB bridge
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_MUX"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -6501,10 +6501,112 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NTSC PAL SECAM FM PCI"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-starburst"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA10071" # DVB-S/S2 demodulator
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge, A/V decoder and analog IF demodulator, ADC, PCM
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S2 PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dvb-s-digistar"($|" ")|"digiwave-103g"($|" ")|"spc1000"($|" ")) ]] ; then
+	# Geniatech
+	# HomeVision
+	# X3M
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX24123" # Demodulator and tuner for DVB-S with CX24123; tuner and LNB controller for DVB-S with CX24109
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88" # PCI bridge, A/V decoder and analog IF demodulator, ADC, PCM
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_BLACKBIRD"
+		ot-kernel_y_configopt "CONFIG_VIDEO_CX88_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-300i"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_MT352" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT20XX" # Tuner for NTSC, PAL, DVB-C, DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA9887" # Analog demodulator
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # USB bridge, A/V decoder
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB" # Possibly used for analog side
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:winfast-dtv2000ds"($|" ")|"tv-tuner:winfast-dtv2000-ds"($|" ")) ]] ; then
+	# Leadtek
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_AF9015" # Demodulator for DVB-T; ADC; USB bridge
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA18271" # Tuner for NTSC, PAL, SECAM, ATSC, DVB-C, DVB-T, QAM
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:winfast-dtv2000ds-plus"($|" ")|"tv-tuner:winfast-dtv2000-ds-plus"($|" ")) ]] ; then
+	# Leadtek
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_RTL2832" # Demodulator for DVB-T, ISDB-T, DAB, DAB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB_RTL28XXU" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_RADIO_SUPPORT" # DAB+
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT" # Force bloated autodetection of tuner
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_FC0013" # Tuner for DvB-T, DAB, DAB+
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T ?-DAB+ PCI"
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-starburst2") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-starburst2"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_I2C"
