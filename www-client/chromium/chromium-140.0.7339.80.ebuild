@@ -1072,7 +1072,7 @@ gen_depend_llvm() {
 			)
 			=llvm-runtimes/compiler-rt-${s}*
 			llvm-runtimes/compiler-rt:=
-			=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 			llvm-core/lld:${s}
 			llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
@@ -3530,7 +3530,7 @@ einfo "PATH=${PATH} (after)"
 					|| \
 				has_version "=llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 					|| \
-				has_version "=llvm-core/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				has_version "=llvm-runtimes/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 			; then
 eerror
 eerror "The fallback-commit USE flag is required."
@@ -3540,7 +3540,7 @@ eerror "       =llvm-core/clang-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-core/lld-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
-eerror "       =llvm-core/clang-runtime-${LLVM_SLOT}.0.0.9999"
+eerror "       =llvm-runtimes/clang-runtime-${LLVM_SLOT}.0.0.9999"
 eerror
 				die
 			fi
