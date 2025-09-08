@@ -149,7 +149,7 @@ BDEPEND="
 "
 PDEPEND+="
 	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
-	~llvm-core/clang-runtime-${PV}
+	~llvm-runtimes/clang-runtime-${PV}
 "
 RESTRICT="
 	!test? (
