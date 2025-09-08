@@ -59,7 +59,7 @@ exist in build files.
 | Clang 14                        | Not supported                         | D12 (14.0)                         |
 | Clang 18                        | Fully supported                       | U24 (18.0)                         |
 | Clang 19                        | Supported                             | F41 (19.1.7)                       |
-| Clang 20                        | Available                             | F42 (20.1.3)                       |
+| Clang 20                        | Available                             | F42 (20.1.3), A(20)                |
 | Clang 21                        | Not supported                         |                                    |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32)                      |
 | Cython 3.0.12                   | Fully Supported                       | U24 (3.0.8)                        |
@@ -67,7 +67,8 @@ exist in build files.
 | GCC 12                          | Fully supported                       | D12 (12.2)                         |
 | GCC 13                          | Partially Supported                   | U24 (13.2)                         |
 | GCC 14                          | Partially Supported                   | F41 (14.2.1)                       |
-| GCC 15                          | Not Supported                         | F42 (15.1.1)                       |
+| GCC 15                          | Not Supported                         | F42 (15.1.1), F40 (14.0), A(15.2)  |
+| GCC 16			  | Not Supported                         |                                    |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                       |
 | Rust 1.74.0                     | Partially supported                   |                                    |
 | Rust 1.75.0                     | Available                             | U24 (1.75.0)                       |
@@ -77,6 +78,9 @@ exist in build files.
 * GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
 * GCC 12 is recommended for CUDA 11.8 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM).
 * GCC 13 is recommended for CUDA 12.8 when using Blender, Ollama (LLM).  This is to align closely with U24.
+* GCC 15 is not supported in this overlay because of -fvtable-verify, prebuilt GPU libraries limits on
+  maximium supported GCC version, and the decrease in feature completeness such has reduced hardening or
+  reduced features like in shareware.
 * The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
 * What it means for CUDA users is that if you want your AI girlfriend (LLM) to have hardware accelerated speech recognition stick to GCC 12 and CUDA 11.8.
 * GCC is preferred but Clang 18 is recommended as fallback.
