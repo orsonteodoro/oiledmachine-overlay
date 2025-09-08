@@ -326,13 +326,13 @@ gen_llvm_test_bdepend()
 		echo "
 			llvm_slot_${s}? (
 				!fuzz-testing? (
-					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
+					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 				)
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				fuzz-testing? (
-					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 					=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
 					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
 				)
@@ -605,7 +605,7 @@ src_configure_abi() {
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version  "llvm-core/clang:${s}" \
-			&& has_version "=llvm-core/clang-runtime-${s}*" \
+			&& has_version "=llvm-runtimes/clang-runtime-${s}*" \
 			&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*" \
 				; then
 einfo
@@ -623,7 +623,7 @@ eerror
 eerror "Fix the clang toolchain.  It requires:"
 eerror
 eerror "  llvm-core/clang:\${SLOT}"
-eerror "  =llvm-core/clang-runtime-\${SLOT}*"
+eerror "  =llvm-runtimes/clang-runtime-\${SLOT}*"
 eerror "  =llvm-runtimes/compiler-rt-sanitizers-*\${SLOT}"
 eerror
 eerror "where \${SLOT} = 14."
