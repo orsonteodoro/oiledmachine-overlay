@@ -7450,7 +7450,7 @@ ewarn "MP2 audio - expired"
 ewarn "MPEG-H - active"
 		fi
 
-einfo "Alternatively, consider using AMF, CUVID, NVDEC, QSV, VAAPI, or Vulkan to accelerate video decoding on the CPU or GPU for the TV tuner."
+einfo "Alternatively, consider using AMF, CUVID, NVDEC, QSV, VAAPI, VDPAU, or Vulkan to accelerate video decoding on the CPU or GPU for the TV tuner."
 
 einfo "TV tuner tags:  ${_OT_KERNEL_TV_TUNER_TAGS}"
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "NO-" ]] ; then
