@@ -197,7 +197,7 @@ BDEPEND+="
 PDEPEND+="
 	sys-apps/npm:3
 	acorn? (
-		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
+		>=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})
 	)
 "
 PATCHES=(
