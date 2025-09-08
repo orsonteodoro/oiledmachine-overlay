@@ -76,7 +76,7 @@ RDEPEND+="
 	!tbb? (
 		|| (
 			sys-devel/gcc[openmp]
-			llvm-core/clang-runtime[openmp]
+			llvm-runtimes/clang-runtime[openmp]
 		)
 	)
 	tbb? (
