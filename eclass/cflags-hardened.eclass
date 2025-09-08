@@ -2421,7 +2421,7 @@ einfo "Added ${x} from ${module} sanitizer"
 		for s in $(seq 15 20) ; do
 			if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
 # The vtv always picks the highest slot for the qt packages even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or using -L/usr/lib/gcc/${CHOST}/14 or less.
-ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv).  Rebuild the system without vtv."
+ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv).  Rebuild the system without vtv and without using >=sys-devel/gcc-15.  You must link to older gcc version to safely remove >=gcc-15 and friends (libvtv, libstdc++, lib*san, etc)."
 ewarn "Then, remove >=sys-devel/gcc-15 from the system."
 ewarn "Add >=sys-devel/gcc-15 to /etc/portage/package.mask/gcc."
 ewarn "Then rebuild C++ packages selectively with vtv using <=sys-devel/gcc-14 compiler."
