@@ -2420,6 +2420,7 @@ einfo "Added ${x} from ${module} sanitizer"
 		local s
 		for s in $(seq 15 25) ; do
 			if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
+# It is broken for GCC 15.2.0, 15.2.1_p20250906.
 # The vtv always picks the highest slot for the qt packages even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or using -L/usr/lib/gcc/${CHOST}/14 or less.
 ewarn
 ewarn "TENTATIVE notice for resolution for unbroken vtv support."
