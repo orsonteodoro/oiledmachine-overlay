@@ -302,7 +302,7 @@ gen_cfi_arm64_rdepends() {
 	for s in ${LLVM_CFI_ARM64_SLOTS[@]} ; do
 		echo "
 			(
-				=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
+				=llvm-runtimes/clang-runtime-${s}*[compiler-rt,sanitize]
 				=llvm-runtimes/compiler-rt-${s}*
 				=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 				llvm-core/clang:${s}
@@ -317,7 +317,7 @@ gen_cfi_x86_rdepends() {
 	for s in ${LLVM_CFI_X86_SLOTS[@]} ; do
 		echo "
 			(
-				=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
+				=llvm-runtimes/clang-runtime-${s}*[compiler-rt,sanitize]
 				=llvm-runtimes/compiler-rt-${s}*
 				=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 				llvm-core/clang:${s}
