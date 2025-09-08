@@ -5762,8 +5762,12 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-dual-dvb-t-diversity-stick"($|" ")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-dual-dvb-t-diversity-stick"($|" ")|"tv-tuner:pctv-dual-dvb-t-diversity-stick-2001e"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB3000MC"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000M"
+		ot-kernel_y_configopt "CONFIG_DVB_DIB7000P"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_DIB0700"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -5772,6 +5776,12 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "dvb_usb_dib0700.force_lna_activation=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "dvb_usb.disable_rc_polling=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "usbcore.autosuspend=(-1|0|1)"
+		ot-kernel_set_kconfig_kernel_cmdline "dvb_usb_dib0700.force_lna_activation=1"
+		ot-kernel_set_kconfig_kernel_cmdline "dvb_usb.disable_rc_polling=1"
+		ot-kernel_set_kconfig_kernel_cmdline "usbcore.autosuspend=-1"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
 # Missing max s2, nova hd.  See https://github.com/b-rad-NDi/media_tree/commit/9cd4bcfb1683fbf7ca603b0f1909f086c0057d1d
