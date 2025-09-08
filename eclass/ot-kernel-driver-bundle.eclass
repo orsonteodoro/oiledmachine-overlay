@@ -7306,7 +7306,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 		local codec_aac=0 # Active patents
 		local codec_ac3=0 # Expired patents
 		local codec_ac4=0 # Active patents
-		local codec_eac3=0 # Expired patents
+		local codec_eac3=0 # Active patents
 		local codec_h262=0 # Expired patents
 		local codec_h264=0 # Active patents
 		local codec_h264_optional="" # Active patents
@@ -7315,6 +7315,7 @@ ot-kernel-driver-bundle_add_tv_tuner() {
 		local codec_he_aacv2=0 # Active patents
 		local codec_mp2=0 # Expired patents
 		local codec_mpeg_h=0 # Active patents
+		local codec_vvc_optional=0 # Active patents
 
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ ("NTSC") ]] ; then
 ewarn "You may need a >= 2000 CPU for software based NTSC decoding for sustained 30 FPS."
@@ -7338,6 +7339,7 @@ ewarn "You may need a >= 2000 CPU for software based SECAM decoding for sustaine
 			codec_eac3=1
 			codec_h265=1
 			codec_mpeg_h=1
+			codec_vvc_optional=" (optional)"
 		fi
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ ("QAM"($|" ")|"ClearQAM") ]] ; then
 			codec_ac3=1
@@ -7408,14 +7410,19 @@ ewarn "You may need a >= 2000 CPU for software based SECAM decoding for sustaine
 	# Some TV tuner cards offload the video codec decoding to the CPU but hardware accelerate the signal decoding.
 
 		if (( ${codec_h262} == 1 )) ; then
-ewarn "You may need a >= 2006 multicore CPU for software based H.262 (MPEG-2) decoding for sustained 30 FPS."
+ewarn "You may need a 2006 or later multicore CPU for CPU based H.262 (MPEG-2) decoding for sustained 30 FPS."
 		fi
 		if (( ${codec_h264} == 1 )) || [[ -n "${codec_h264_optional}" ]] ; then
-ewarn "You may need a >= 2007 multicore CPU for software based H.264 (AVC) decoding for sustained 30 FPS.${codec_h264_optional}"
+ewarn "You may need a 2007 or later multicore CPU for CPU based H.264 (AVC) decoding for sustained 30 FPS.${codec_h264_optional}"
 		fi
 		if (( ${codec_h265} == 1 )) || [[ -n "${codec_h265_optional}" ]] ; then
-ewarn "You may need a >= 2016 CPU for software based H.265 (HVEC) decoding for sustained 30 FPS.${codec_h265_optional}"
+ewarn "You may need a 2016 or later CPU for CPU based H.265 (HVEC) decoding for sustained 30 FPS.${codec_h265_optional}"
 		fi
+		if (( ${codec_vvc} == 1 )) || [[ -n "${codec_vvc_optional}" ]] ; then
+ewarn "You may need a 2021 or later CPU for CPU based VVC decoding for sustained 30 FPS.${codec_vvc_optional}"
+		fi
+
+einfo "Alternatively, consider using the GPU accelerated decoding with AMF, CUVID, NVDEC, QSV, VAAPI, VDPAU, or Vulkan to for the TV tuner."
 
 einfo "Be aware that some TV cards may offload patented codecs to GPU or CPU."
 einfo "The patent status for codecs used in digital TV standards:"
@@ -7434,10 +7441,10 @@ ewarn "E-AC-3 - active"
 		if (( ${codec_h262} == 1 )) ; then
 ewarn "H.262 - expired"
 		fi
-		if (( ${codec_h264} == 1 )) ; then
+		if (( ${codec_h264} == 1 )) || [[ -n "${codec_h264_optional}" ]] ; then
 ewarn "H.264 - active"
 		fi
-		if (( ${codec_h265} == 1 )) ; then
+		if (( ${codec_h265} == 1 )) || [[ -n "${codec_h265_optional}" ]] ; then
 ewarn "H.265 - active"
 		fi
 		if (( ${codec_he_aacv2} == 1 )) ; then
@@ -7449,8 +7456,9 @@ ewarn "MP2 audio - expired"
 		if (( ${codec_mpeg_h} == 1 )) ; then
 ewarn "MPEG-H - active"
 		fi
-
-einfo "Alternatively, consider using AMF, CUVID, NVDEC, QSV, VAAPI, VDPAU, or Vulkan to accelerate video decoding on the CPU or GPU for the TV tuner."
+		if (( ${codec_vvc} == 1 )) || [[ -n "${codec_vvc_optional}" ]] ; then
+ewarn "VVC - active"
+		fi
 
 einfo "TV tuner tags:  ${_OT_KERNEL_TV_TUNER_TAGS}"
 		if [[ "${_OT_KERNEL_TV_TUNER_TAGS}" =~ "NO-" ]] ; then
