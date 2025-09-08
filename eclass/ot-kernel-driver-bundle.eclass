@@ -7429,7 +7429,7 @@ ewarn "AC-3 - expired"
 ewarn "AC-4 - active"
 		fi
 		if (( ${codec_eac3} == 1 )) ; then
-ewarn "E-AC-3 - expired"
+ewarn "E-AC-3 - active"
 		fi
 		if (( ${codec_h262} == 1 )) ; then
 ewarn "H.262 - expired"
