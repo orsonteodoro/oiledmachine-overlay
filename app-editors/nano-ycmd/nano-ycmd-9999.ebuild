@@ -125,7 +125,7 @@ gen_scudo_rdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang-runtime:${s}[sanitize]
+				llvm-runtimes/clang-runtime:${s}[sanitize]
 				llvm-core/llvm:${s}
 				llvm-runtimes/compiler-rt-sanitizers:${s}[scudo]
 			)
