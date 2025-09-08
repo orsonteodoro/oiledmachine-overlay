@@ -4304,8 +4304,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S USB-1.1"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:artec-t1-usb-tv-box"($|" ")) ]] ; then
-	# MSI
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:artec-t1-usb-tv-box"($|" ")|"tv-tuner:artec-t1-usb-tvbox"($|" ")|"tv-tuner:usb1.1-dvb-t-reference-design-mod3000"|"tv-tuner:usb1.1-dvb-t-reference-design") ]] ; then
 	# Artec T1 USB1.1 TVBOX with AN2135 -> Thomson Cable [tuner, driver default]
 	# DiBcom USB1.1 DVB-T reference design (MOD3000) -> Panasonic ENV77H11D5 [tuner]
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -4313,6 +4312,21 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_1_1_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIBUSB_MB" # USB bridge, tuner for DVB-T
 		ot-kernel_y_configopt "CONFIG_DVB_USB_DIBUSB_MB_FAULTY" # From log
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-1.1"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:artec-t1-usb-tv-box"($|" ")) ]] ; then
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
@@ -5446,7 +5460,23 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_VIDEO_EM28XX_RC"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-S DVB-S2 USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-mini-ii"($|" ")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-duo"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_USB_AF9015" # Demodulator for DVB-T; ADC; USB bridge
+		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:digivox-mini-ii"($|" ")|"tv-tuner:digi-vox-mini-ii"($|" ")) ]] ; then
 	# MSI
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_M920X" # USB bridge, tuner and demodulator drivers
@@ -5675,8 +5705,30 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-C DVB-T NO-PAL NO-SECAM NO-NTSC NO-FM USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:mega-sky-55801"($|" ")|"tv-tuner:mega-sky-580"($|" ")) ]] ; then
+	# In this eclass,
+	# (1) any changes to the USB bridge but retain the same product name/id is considered a new device profile.
+	# (2) any changes to the demodulator but retain the same bridge model and product name/id is considered a new fontend profile.
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:mega-sky-580"($|" ")|"tv-tuner:mega-sky-580-p1") ]] ; then
 	# MSI
+	# Device profile 1
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_MT352" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_DVB_USB_M920X" # USB bridge
+		ot-kernel_y_configopt "CONFIG_DVB_USB"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_QT1010" # Tuner for DVB-T
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:mega-sky-55801"($|" ")|"tv-tuner:mega-sky-580"($|" ")|"tv-tuner:mega-sky-580-p2") ]] ; then
+	# MSI
+	# Device profile 2
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_USB_GL861" # USB bridge
 		ot-kernel_y_configopt "CONFIG_DVB_USB_V2"
@@ -7233,6 +7285,60 @@ ot-kernel-driver-bundle_add_tv_tuner_cardbus_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-FM CardBus"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-nb"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_PLL"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA6752HS"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=94"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=67"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL CardBus"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Demodulator for NTSC, PAL, SECAM
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=135"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL CardBus"
 	fi
 }
 
