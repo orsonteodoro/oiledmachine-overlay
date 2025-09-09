@@ -334,7 +334,9 @@ _configure_cpu_flags_ppc() {
 	fi
 	if ! use cpu_flags_ppc_crypto ; then
 		append-flags -mno-crypto
-		cpp_flags+=" -DHWY_DISABLE_PPC8_CRYPTO=1"
+		cpp_flags+=(
+			"-DHWY_DISABLE_PPC8_CRYPTO=1"
+		)
 	fi
 }
 
@@ -418,12 +420,16 @@ _configure_cpu_flags_x86() {
 		disabled_cpu_flags+=(
 			"HWY_AVX3_ZEN4"
 		)
-		cpp_flags+=" -DHWY_AVX3_DISABLE_AVX512BF16=1"
+		cpp_flags+=(
+			"-DHWY_AVX3_DISABLE_AVX512BF16=1"
+		)
 	fi
 
 	use cpu_flags_x86_f16c || append-flags -mno-f16c
 	if ! use cpu_flags_x86_f16c ; then
-		cpp_flags+=" -DHWY_DISABLE_F16C=1"
+		cpp_flags+=(
+			"-DHWY_DISABLE_F16C=1"
+		)
 	fi
 
 	use cpu_flags_x86_bmi || append-flags -mno-bmi
@@ -433,7 +439,9 @@ _configure_cpu_flags_x86() {
 #		:
 #	else
 	# Breaks if flag is added
-#		cpp_flags+=" -DHWY_DISABLE_BMI2_FMA=1"
+#		cpp_flags+=(
+#			"-DHWY_DISABLE_BMI2_FMA=1"
+#		)
 #	fi
 
 	use cpu_flags_x86_aes || append-flags -mno-aes
@@ -441,7 +449,9 @@ _configure_cpu_flags_x86() {
 	if use cpu_flags_x86_pclmul && use cpu_flags_x86_aes ; then
 		:
 	else
-		cpp_flags+=" -DHWY_DISABLE_PCLMUL_AES=1"
+		cpp_flags+=(
+			"-DHWY_DISABLE_PCLMUL_AES=1"
+		)
 	fi
 }
 
@@ -453,7 +463,7 @@ eerror "Detected compiler switch.  Removing LTO."
 		filter-lto
 	fi
 
-	local cpp_flags=""
+	local cpp_flags=()
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 		-DHWY_CMAKE_ARM7=$(usex cpu_flags_arm_neon)
@@ -488,11 +498,16 @@ eerror "Detected compiler switch.  Removing LTO."
 		)
 	fi
 	mycmakeargs+=(
-		-DCMAKE_CXX_FLAGS="${cpp_flags}"
-		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
+		-DCMAKE_CXX_FLAGS="${CXXFLAGS} ${cpp_flags[*]}"
 	)
 
 	use test && mycmakeargs+=( "-DHWY_SYSTEM_GTEST=ON" )
+
+	append-cppflags ${cpp_flags[@]}
+
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
 
 	cmake_src_configure
 }
