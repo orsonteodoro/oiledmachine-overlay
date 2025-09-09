@@ -6047,6 +6047,21 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		export _OT_KERNEL_TV_TUNER_TAGS="ASTC-1.0 ClearQAM NTSC USB-2.0"
 	fi
 	# Missing 18272/M driver for tv-tuner:ub445-u2-atsc-hybrid-tv-stick
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:ub445-u-atsc-hybrid-tv-stick"($|" ")) ]] ; then
+	# KWorld
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_MUX"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_usb_3_0_by_product_name() {
@@ -6141,7 +6156,7 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCI bridge and A/V decoder
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge and A/V decoder
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
@@ -7160,6 +7175,56 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NTSC ?-FM PCI"
 	fi
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dvb-t-210"($|" ")|"tv-tuner:dvb-t-210-p1") ]] ; then
+	# KWorld
+	# Profile 1
+# Unfinished
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=65"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=54"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
+	if false && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:dvb-t-210"($|" ")|"tv-tuner:dvb-t-210-p2") ]] ; then
+	# KWorld
+	# Profile 2
+# Unfinished
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=81"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=54"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
@@ -7341,7 +7406,7 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_MT2131" # Digital tuner for ATSC, QAM, NTSC
 		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA827X" # Analog tuner for NTSC, PAL, SECAM, FM radio with TDA8275A
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator with TDA8295
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Analog IF demodulator with TDA8275A
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_SND"
@@ -7399,6 +7464,7 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c1f1") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX24110" # Analog IF demodulator with CX24228-21Z for ATSC, QAM.
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_CONTROLLER"
@@ -7413,11 +7479,12 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge, driver for CX24228-21Z demodulator
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC FM PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c2f2") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX24110" # Analog IF demodulator with CX24228-21Z for ATSC, QAM.
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
@@ -7430,11 +7497,12 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge, driver for CX24228-21Z demodulator
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC FM PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c3f2") ]] ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_CX24110" # Analog IF demodulator with CX24228-21Z for ATSC, QAM.
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # NTSC
@@ -7447,7 +7515,7 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_RC_CORE"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge, driver for CX24228-21Z demodulator
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7164" # PCIe bridge
 		export _OT_KERNEL_TV_TUNER_TAGS="ATSC-1.0 ClearQAM NO-NTSC FM PCIe"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-2250"($|" ")|"tv-tuner:wintv-hvr-2250-rev-c4f2") ]] ; then
@@ -7655,6 +7723,86 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_VIDEO_CX2341X" # Analog video to MPEG2 video encoder
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T ?-NTSC ?-PAL ?-SECAM ?-FM PCIe EXPERIMENTAL"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d"($|" ")|"tv-tuner:flydvb-t-hybrid") ]] ; then
+	# MSI
+	# LifeView
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_PLL"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=94"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=61"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=135"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1-alt"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA827X" # with 8275AC1
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Demodulator for NTSC, PAL, SECAM; with 8275AC1
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=109"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
 }
 
