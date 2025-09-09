@@ -120,7 +120,6 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-respect-fontconfig.patch"
-	"${FILESDIR}/${P}-cups.patch"
 )
 
 TEST_READY="1"
