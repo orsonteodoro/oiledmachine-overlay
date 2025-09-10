@@ -7225,6 +7225,87 @@ ot-kernel-driver-bundle_add_tv_tuner_pci_by_product_name() {
 		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=54"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d"($|" ")|"tv-tuner:flydvb-t-hybrid") ]] ; then
+	# MSI
+	# LifeView
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_PLL"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=94"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=61"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Demodulator for NTSC, PAL, SECAM
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=135" # The LinuxTVWiki suggested card=94 but claimed it caused tuning problems.
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL PCI"
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1-alt"($|" ")) ]] ; then
+	# MSI
+		ot-kernel_y_configopt "CONFIG_DVB_CORE"
+		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
+		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA827X" # with 8275AC1
+		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Demodulator for NTSC, PAL, SECAM; with 8275AC1
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_RC_CORE"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
+		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
+		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
+		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=109"
+		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
+	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_pcie_by_product_name() {
@@ -7724,86 +7805,6 @@ ewarn "tv-tuner:wintv-hvr-1255 may require user patch for tuner.  See https://gi
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T ?-NTSC ?-PAL ?-SECAM ?-FM PCIe EXPERIMENTAL"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d"($|" ")|"tv-tuner:flydvb-t-hybrid") ]] ; then
-	# MSI
-	# LifeView
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_PLL"
-		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_PCI"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
-		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=94"
-		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=61"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
-	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1"($|" ")) ]] ; then
-	# MSI
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_PCI"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
-		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=135"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
-	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1-alt"($|" ")) ]] ; then
-	# MSI
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA827X" # with 8275AC1
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Demodulator for NTSC, PAL, SECAM; with 8275AC1
-		ot-kernel_y_configopt "CONFIG_PCI"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
-		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=109"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PCI"
-	fi
 }
 
 ot-kernel-driver-bundle_add_tv_tuner_cardbus_by_product_name() {
@@ -7856,32 +7857,6 @@ ot-kernel-driver-bundle_add_tv_tuner_cardbus_by_product_name() {
 		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=94"
 		ot-kernel_set_kconfig_kernel_cmdline "saa7134.tuner=67"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T NO-PAL CardBus"
-	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:tv@nywhere-a/d-v1.1"($|" ")) ]] ; then
-	# MSI
-		ot-kernel_y_configopt "CONFIG_DVB_CORE"
-		ot-kernel_y_configopt "CONFIG_DVB_TDA1004X" # Demodulator for DVB-T with TDA10046H
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_ANALOG_TV_SUPPORT" # PAL
-		ot-kernel_y_configopt "CONFIG_MEDIA_DIGITAL_TV_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_PCI_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_TUNER_TDA8290" # Demodulator for NTSC, PAL, SECAM
-		ot-kernel_y_configopt "CONFIG_PCI"
-		ot-kernel_y_configopt "CONFIG_RC_CORE"
-		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134" # PCI bridge
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_ALSA"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_DVB"
-		ot-kernel_y_configopt "CONFIG_VIDEO_SAA7134_RC"
-		ot-kernel_y_configopt "CONFIG_VIDEO_TUNER"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.card=[0-9]+"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "saa7134.tuner=[0-9]+"
-		ot-kernel_set_kconfig_kernel_cmdline "saa7134.card=135"
-		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T PAL CardBus"
 	fi
 }
 
