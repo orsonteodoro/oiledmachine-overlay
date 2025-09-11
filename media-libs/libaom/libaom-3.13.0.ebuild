@@ -588,7 +588,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	# https://bugs.chromium.org/p/aomedia/issues/detail?id=3487 shows that \
 	# big endian detection doesn't work. \
-		-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
+
 	# It needs libjxl which is currently unpackaged. \
 		-DCONFIG_TUNE_BUTTERAUGLI=0
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
@@ -687,49 +687,89 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if ! use asm ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="generic"
+			-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
 		)
 	elif [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="x86"
+			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "amd64" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="x86_64"
+			-DCONFIG_BIG_ENDIAN=0
 		)
-	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib" ]] ; then
-		# o32
+	elif [[ "${ABI}" == "o32" ]] ; then
 		mycmakeargs+=(
-			-DAOM_TARGET_CPU="mips32"
+			-DAOM_TARGET_CPU="mips"
+			-DAOM_EXTRA_C_FLAGS="-mabi=o32"
 		)
-	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib32" ]] ; then
-		# n32
+		if [[ "${CHOST}" =~ ^"mips64-" ]] ; then
+			mycmakeargs+=(
+				-DCONFIG_BIG_ENDIAN=0
+			)
+		elif [[ "${CHOST}" =~ ^"mips64el-" ]] ; then
+			mycmakeargs+=(
+				-DCONFIG_BIG_ENDIAN=1
+			)
+		fi
+	elif [[ "${ABI}" == "n32" ]] ; then
 		mycmakeargs+=(
-			-DAOM_TARGET_CPU="mips64"
+			-DAOM_TARGET_CPU="mips"
+			-DAOM_EXTRA_C_FLAGS="-mabi=n32"
 		)
-	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib64" ]] ; then
+		if [[ "${CHOST}" =~ ^"mips-" ]] ; then
+			mycmakeargs+=(
+				-DCONFIG_BIG_ENDIAN=0
+			)
+		elif [[ "${CHOST}" =~ ^"mipsel-" ]] ; then
+			mycmakeargs+=(
+				-DCONFIG_BIG_ENDIAN=1
+			)
+		fi
+	elif [[ "${ABI}" == "n64" ]] ; then
 		mycmakeargs+=(
-			-DAOM_TARGET_CPU="mips64"
+			-DAOM_TARGET_CPU="mips"
+			-DAOM_EXTRA_C_FLAGS="-mabi=n64"
 		)
-	elif [[ "${ABI}" == "arm" ]] ; then
+		if [[ "${CHOST}" =~ ^"mips64-" ]] ; then
+			mycmakeargs+=(
+				-DCONFIG_BIG_ENDIAN=0
+			)
+		elif [[ "${CHOST}" =~ ^"mips64el-" ]] ; then
+			mycmakeargs+=(
+				-DCONFIG_BIG_ENDIAN=1
+			)
+		fi
+	elif [[ "${ABI}" == "arm" && "${CHOST}" =~ ^"arm" ]] ; then
 		mycmakeargs+=(
-			-DAOM_TARGET_CPU="arm"
+			-DAOM_TARGET_CPU="${CHOST%%-*}"
+			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "arm64" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="arm64"
+			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "ppc" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="ppc"
+			-DCONFIG_BIG_ENDIAN=1
 		)
-	elif [[ "${ABI}" == "ppc64" ]] ; then
-		ewarn "No reference to ppc64 in source"
+	elif [[ "${ABI}" == "ppc64" && "${CHOST}" =~ "powerpc64le-" ]] ; then
 		mycmakeargs+=(
-			-DAOM_TARGET_CPU="ppc"
+			-DAOM_TARGET_CPU="ppc64le"
+			-DCONFIG_BIG_ENDIAN=0
+		)
+	elif [[ "${ABI}" == "ppc64" && "${CHOST}" =~ "powerpc-" ]] ; then
+		mycmakeargs+=(
+			-DAOM_TARGET_CPU="ppc64"
+			-DCONFIG_BIG_ENDIAN=1
 		)
 	else
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="generic"
+			-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
 		)
 	fi
 
