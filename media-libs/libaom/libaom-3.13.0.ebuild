@@ -56,7 +56,8 @@ fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
-LICENSE="Alliance-for-Open-Media-Patent-License-1.0 BSD-2"
+LICENSE="Alliance-for-Open-Media-Patent-License-1.0 BSD-2 Clear-BSD"
+# Clear-BSD for CONFIG_SVT_AV1 or svt-av1 project
 # Don't strip CFI \
 RESTRICT="
 	test
