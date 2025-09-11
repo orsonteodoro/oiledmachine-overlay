@@ -109,7 +109,7 @@ ${PGO_TRAINERS}
 ${RISCV_IUSE}
 ${X86_IUSE}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	arm64? (
@@ -710,16 +710,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="mips"
 			-DAOM_EXTRA_C_FLAGS="-mabi=o32"
+			-DAOM_EXTRA_CXX_FLAGS="-mabi=o32"
 		)
 	elif [[ "${ABI}" == "n32" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="mips"
 			-DAOM_EXTRA_C_FLAGS="-mabi=n32"
+			-DAOM_EXTRA_CXX_FLAGS="-mabi=n32"
 		)
 	elif [[ "${ABI}" == "n64" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="mips"
 			-DAOM_EXTRA_C_FLAGS="-mabi=n64"
+			-DAOM_EXTRA_CXX_FLAGS="-mabi=n64"
 		)
 	elif [[ "${ABI}" == "arm" && "${CHOST}" =~ ^"arm" ]] ; then
 		mycmakeargs+=(
