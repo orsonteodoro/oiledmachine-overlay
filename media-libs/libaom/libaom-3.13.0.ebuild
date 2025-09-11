@@ -111,7 +111,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${RISCV_IUSE}
 ${X86_IUSE}
-+asm big-endian chromium debug doc +examples highway lossless pgo static-libs test
++asm -big-endian chromium debug doc +examples -highway lossless pgo static-libs test
 ebuild_revision_32
 "
 REQUIRED_USE="
@@ -263,6 +263,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.4.0-posix-c-source-ftello.patch"
 	"${FILESDIR}/${PN}-3.7.0-allow-fortify-source.patch"
 	"${FILESDIR}/${PN}-3.8.1-tests-parallel.patch"
+	"${FILESDIR}/${PN}-3.13.0-highway-linker-language-cxx.patch"
 )
 
 # The PATENTS file is required to be distributed with this package bug #682214.
@@ -585,6 +586,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 
 	local mycmakeargs=(
+	# Use only 1 or 0 for CONFIG_ prefixed options.
+	# See also build/cmake/aom_config_defaults.cmake for options.
+
 	# https://bugs.chromium.org/p/aomedia/issues/detail?id=3487 shows that \
 	# big endian detection doesn't work. \
 		-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
@@ -596,7 +600,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_WERROR=OFF
 
 	# CPU optimizations
-		-DCONFIG_HIGHWAY=$(usex highway)
+		-DCONFIG_HIGHWAY=$(usex highway 1 0)
+		-DCONFIG_SVT_AV1=$(usex cpu_flags_x86_avx2 1 0) # SVT-AV1 AVX2 convolution support
 		-DENABLE_ARM_CRC32=$(usex cpu_flags_arm_crc32 ON OFF)
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
