@@ -109,7 +109,7 @@ ${PGO_TRAINERS}
 ${RISCV_IUSE}
 ${X86_IUSE}
 +asm -big-endian chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	arm64? (
@@ -706,11 +706,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 		if [[ "${CHOST}" =~ ^"mips64-" ]] ; then
 			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=0
+				-DCONFIG_BIG_ENDIAN=1
 			)
 		elif [[ "${CHOST}" =~ ^"mips64el-" ]] ; then
 			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=1
+				-DCONFIG_BIG_ENDIAN=0
 			)
 		fi
 	elif [[ "${ABI}" == "n32" ]] ; then
@@ -720,11 +720,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 		if [[ "${CHOST}" =~ ^"mips-" ]] ; then
 			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=0
+				-DCONFIG_BIG_ENDIAN=1
 			)
 		elif [[ "${CHOST}" =~ ^"mipsel-" ]] ; then
 			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=1
+				-DCONFIG_BIG_ENDIAN=0
 			)
 		fi
 	elif [[ "${ABI}" == "n64" ]] ; then
@@ -734,11 +734,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 		if [[ "${CHOST}" =~ ^"mips64-" ]] ; then
 			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=0
+				-DCONFIG_BIG_ENDIAN=1
 			)
 		elif [[ "${CHOST}" =~ ^"mips64el-" ]] ; then
 			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=1
+				-DCONFIG_BIG_ENDIAN=0
 			)
 		fi
 	elif [[ "${ABI}" == "arm" && "${CHOST}" =~ ^"arm" ]] ; then
