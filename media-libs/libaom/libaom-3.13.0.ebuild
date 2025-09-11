@@ -234,7 +234,7 @@ BDEPEND+="
 		dev-lang/yasm
 	)
 	abi_x86_64? (
-		dev-lang/yasm
+		dev-lang/nasm
 	)
 	abi_x86_x32? (
 		dev-lang/yasm
@@ -381,9 +381,7 @@ ewarn
 	uopts_setup
 
 	if ! use asm ; then
-ewarn
 ewarn "USE=-asm may result in unsmooth decoding."
-ewarn
 	fi
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
@@ -637,9 +635,16 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DENABLE_NASM=ON
 		)
 	else
-		mycmakeargs+=(
-			-DENABLE_NASM=OFF
-		)
+		if [[ "${ABI}" =~ "amd64" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_NASM=ON
+			)
+		else
+	# Use yasm or gas
+			mycmakeargs+=(
+				-DENABLE_NASM=OFF
+			)
+		fi
 	fi
 
 	if [[ "${lib_type}" == "static" ]] ; then
