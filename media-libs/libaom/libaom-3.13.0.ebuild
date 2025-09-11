@@ -646,6 +646,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 				-DENABLE_NASM=OFF
 			)
 		fi
+		if [[ "${ABI}" =~ "x86" || "${ABI}" =~ "x32" ]] ; then
+			export YASM_PATH="/usr/bin/yasm"
+		else
+			unset YASM_PATH
+		fi
 	fi
 
 	if [[ "${lib_type}" == "static" ]] ; then
