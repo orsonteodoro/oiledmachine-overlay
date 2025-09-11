@@ -8,7 +8,7 @@ BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch" # FIXME
 GENPATCHES_VER="255"
 PRJC_LTS="-lts"
 PATCH_PROJC_VER="5.10-lts-r3"
-PATCH_RT_VER="5.10.241-rt135"
+PATCH_RT_VER="5.10.242-rt136"
 
 inherit ot-kernel-v5.10
 
