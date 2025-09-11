@@ -108,7 +108,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${RISCV_IUSE}
 ${X86_IUSE}
-+asm -big-endian chromium debug doc +examples -highway lossless pgo static-libs test
++asm chromium debug doc +examples -highway lossless pgo static-libs test
 ebuild_revision_33
 "
 REQUIRED_USE="
@@ -684,92 +684,66 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	# Bug when building for various ABIs.
+	local endianess=$(tc-endian)
+	if [[ "${endianess}" == "big" ]] ; then
+		mycmakeargs+=(
+			-DCONFIG_BIG_ENDIAN=1
+		)
+	else
+		mycmakeargs+=(
+			-DCONFIG_BIG_ENDIAN=0
+		)
+	fi
 	if ! use asm ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="generic"
-			-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
 		)
 	elif [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="x86"
-			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "amd64" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="x86_64"
-			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "o32" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="mips"
 			-DAOM_EXTRA_C_FLAGS="-mabi=o32"
 		)
-		if [[ "${CHOST}" =~ ^"mips64-" ]] ; then
-			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=1
-			)
-		elif [[ "${CHOST}" =~ ^"mips64el-" ]] ; then
-			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=0
-			)
-		fi
 	elif [[ "${ABI}" == "n32" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="mips"
 			-DAOM_EXTRA_C_FLAGS="-mabi=n32"
 		)
-		if [[ "${CHOST}" =~ ^"mips-" ]] ; then
-			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=1
-			)
-		elif [[ "${CHOST}" =~ ^"mipsel-" ]] ; then
-			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=0
-			)
-		fi
 	elif [[ "${ABI}" == "n64" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="mips"
 			-DAOM_EXTRA_C_FLAGS="-mabi=n64"
 		)
-		if [[ "${CHOST}" =~ ^"mips64-" ]] ; then
-			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=1
-			)
-		elif [[ "${CHOST}" =~ ^"mips64el-" ]] ; then
-			mycmakeargs+=(
-				-DCONFIG_BIG_ENDIAN=0
-			)
-		fi
 	elif [[ "${ABI}" == "arm" && "${CHOST}" =~ ^"arm" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="${CHOST%%-*}"
-			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "arm64" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="arm64"
-			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "ppc" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="ppc"
-			-DCONFIG_BIG_ENDIAN=1
 		)
 	elif [[ "${ABI}" == "ppc64" && "${CHOST}" =~ "powerpc64le-" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="ppc64le"
-			-DCONFIG_BIG_ENDIAN=0
 		)
 	elif [[ "${ABI}" == "ppc64" && "${CHOST}" =~ "powerpc-" ]] ; then
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="ppc64"
-			-DCONFIG_BIG_ENDIAN=1
 		)
 	else
 		mycmakeargs+=(
 			-DAOM_TARGET_CPU="generic"
-			-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
 		)
 	fi
 
