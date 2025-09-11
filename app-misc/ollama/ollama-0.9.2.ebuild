@@ -4496,6 +4496,7 @@ einfo "         1 TB RAM     256 B or less parameters"
 einfo
 einfo "Tip:  If the words per minute is slower than 130, use a smaller model.  Using a slow model may affect text-to-speech."
 einfo "Tip:  If the cold start time is more than 20 seconds, use a smaller model."
+einfo "Tip:  To mitigate long load times, use SSD for <=O(10) GB models or NVMe RAID for >=O(100) GB or >=(1) TB models."
 einfo
 	if use systemd ; then
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
