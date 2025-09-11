@@ -222,6 +222,7 @@ cpu_flags_x86_avx512dq?,\
 cpu_flags_x86_avx512f?,\
 cpu_flags_x86_avx512vl?\
 ]
+		dev-cpp/highway:=
 	)
 "
 DEPEND+="
