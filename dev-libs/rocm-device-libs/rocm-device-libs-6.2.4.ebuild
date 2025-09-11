@@ -103,6 +103,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-6.2.4.patch"
 )
 
 pkg_setup() {
