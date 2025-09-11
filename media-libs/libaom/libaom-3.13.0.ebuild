@@ -70,16 +70,13 @@ ARM_IUSE="
 	cpu_flags_arm_i8mm
 	cpu_flags_arm_neon
 	cpu_flags_arm_sve
+	cpu_flags_arm_sve2
 "
 PPC_IUSE="
 	cpu_flags_ppc_vsx
 "
 RISCV_IUSE="
 	cpu_flags_riscv_rvv
-"
-MIPS_IUSE="
-	cpu_flags_mips_dspr2
-	cpu_flags_mips_msa
 "
 X86_IUSE="
 	cpu_flags_x86_mmx
@@ -107,7 +104,6 @@ PGO_TRAINERS="
 "
 IUSE="
 ${ARM_IUSE}
-${MIPS_IUSE}
 ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${RISCV_IUSE}
@@ -233,6 +229,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.16
+	sys-devel/binutils
 	abi_x86_32? (
 		dev-lang/yasm
 	)
@@ -607,9 +604,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 		-DENABLE_AVX512=$(usex cpu_flags_x86_avx512f)
-		-DENABLE_DSPR2=$(usex cpu_flags_mips_dspr2)
 		-DENABLE_MMX=$(usex cpu_flags_x86_mmx ON OFF)
-		-DENABLE_MSA=$(usex cpu_flags_mips_msa)
 		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON OFF)
 		-DENABLE_NEON_DOTPROD=$(usex cpu_flags_arm_dotprod)
 		-DENABLE_NEON_I8MM=$(usex cpu_flags_arm_i8mm)
@@ -621,6 +616,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_SSE4_2=$(usex cpu_flags_x86_sse4_2 ON OFF)
 		-DENABLE_SSSE3=$(usex cpu_flags_x86_ssse3 ON OFF)
 		-DENABLE_SVE=$(usex cpu_flags_arm_sve ON OFF)
+		-DENABLE_SVE2=$(usex cpu_flags_arm_sve2 ON OFF)
 		-DENABLE_VSX=$(usex cpu_flags_ppc_vsx ON OFF)
 	)
 
@@ -641,7 +637,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DENABLE_NASM=ON
 		)
 	else
-		mycmakeargs+=( -DENABLE_NASM=OFF )
+		mycmakeargs+=(
+			-DENABLE_NASM=OFF
+		)
 	fi
 
 	if [[ "${lib_type}" == "static" ]] ; then
