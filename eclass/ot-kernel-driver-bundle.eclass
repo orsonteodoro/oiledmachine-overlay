@@ -50,6 +50,9 @@ ewarn "Disabling xpad driver"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
 	fi
 
+	# /dev nodes
+	ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+
 	# Disabled to reduce build times.
 	# Used by TV tuner cards with a lot of revisions.
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
@@ -63,6 +66,7 @@ ewarn "Disabling xpad driver"
 	ot-kernel-driver-bundle_add_vpceb25fx_drivers
 	ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
+	ot-kernel-driver-bundle_add_15_da0086nr_drivers
 	ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
 	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
 eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot-kernel-driver-bundle_add_custom_driver_bundle"
@@ -81,6 +85,7 @@ einfo "Adding a custom driver bundle"
 ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] || return
 ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
 	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
@@ -110,6 +115,7 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-pc-gamer" ]] || return
 ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
@@ -201,6 +207,7 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("1990s-cgi-artist"|"1990s-drafter") ]] || return
 ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
@@ -310,6 +317,7 @@ ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_1990s_musician_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-musician" ]] || return
 ewarn "The late-1990s-musician driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
@@ -404,6 +412,7 @@ ewarn "The late-1990s-musician driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-pc-gamer" ]] || return
 ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
@@ -529,6 +538,7 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-pc-gamer" ]] || return
 ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
@@ -568,7 +578,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA"
@@ -650,6 +660,7 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
 ewarn "The vpceb25fx driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	# No USB 3.0
@@ -760,7 +771,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # Audio only
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
@@ -780,7 +791,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
@@ -789,6 +800,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-pc-gamer" ]] || return
 ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
@@ -801,7 +813,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -887,6 +899,7 @@ ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers() {
 	# TODO:  rename
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("2010s-cgi-artist"|"2010s-video-game-artist") ]] || return
 ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
@@ -902,7 +915,7 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -974,12 +987,240 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 }
 
+# @FUNCTION: ot-kernel-driver-bundle_add_15_da0086nr_drivers
+# @DESCRIPTION:
+# Driver bundle for 15-da0086nr (2019)
+ot-kernel-driver-bundle_add_15_da0086nr_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "15-da0086nr" ]] || return
+ewarn "The 15-da0086nr driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
+	ot-kernel-driver-bundle_add_console "tty"
+	ot-kernel-driver-bundle_add_mouse "usb"
+	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel_y_configopt "CONFIG_USB_XHCI_PLATFORM"
+	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
+
+	# Keyboard
+	#ot-kernel_y_configopt "CONFIG_ACPI_PROCFS_POWER" # Debug
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD"
+	ot-kernel_y_configopt "CONFIG_SERIO"
+	ot-kernel_y_configopt "CONFIG_SERIO_I8042"
+
+	# Multimedia keys
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_HP_WMI"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_X86_PLATFORM_DEVICES"
+	ot-kernel_y_configopt "CONFIG_X86_PLATFORM_DRIVERS_HP"
+
+	# Touchpad
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2_SYNAPTICS"
+
+	# Touchscreen on LED screen
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_TOUCHSCREEN"
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_GENERIC"
+	ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+
+	# PCIe
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCIE_ASPM"
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+
+	# Graphics
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_DRM_I915"
+	ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
+	ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
+	ot-kernel_y_configopt "CONFIG_FIRMWARE_EDID"
+	ot-kernel_y_configopt "CONFIG_PCI"
+
+	# HDMI
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_DRM_DISPLAY_HDMI_HELPER"
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # Audio, audio only
+
+	# SATA
+	ot-kernel_y_configopt "CONFIG_AHCI_PLATFORM" # SATA
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_GENERIC"
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX"
+	ot-kernel_y_configopt "CONFIG_LIBATA"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+	ot-kernel_y_configopt "CONFIG_SCSI_SATA"
+	ot-kernel_y_configopt "CONFIG_SCSI_MOD"
+
+	# RAID
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_INTEL_ISH_AHCI"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+
+	# Sensors
+	ot-kernel_y_configopt "CONFIG_ACPI_PROCESSOR"
+	ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
+	ot-kernel_y_configopt "CONFIG_HID_SENSOR_HUB"
+	ot-kernel_y_configopt "CONFIG_I2C"
+	ot-kernel_y_configopt "CONFIG_I2C_CORE"
+	ot-kernel_y_configopt "CONFIG_I2C_HID"
+	ot-kernel_y_configopt "CONFIG_I2C_I801"
+	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
+	ot-kernel_y_configopt "CONFIG_INTEL_ISH_FIRMWARE"
+	ot-kernel_y_configopt "CONFIG_INTEL_ISH_HID"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP"
+	ot-kernel_y_configopt "CONFIG_THERMAL_INTEL"
+
+	# Fan
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+	ot-kernel_y_configopt "CONFIG_HP_WMI_SENSORS"
+	ot-kernel_y_configopt "CONFIG_HWMON"
+	ot-kernel_y_configopt "CONFIG_THERMAL"
+
+	# Audio
+	ot-kernel_y_configopt "CONFIG_COMMON_CLK"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HDA"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # Audio only
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
+	ot-kernel_y_configopt "CONFIG_SND_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_SOC"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_INTEL_AVS"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_INTEL_MACH"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_INTEL_SKL"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_HDA_AUDIO_CODEC"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_PCI"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_SKL"
+	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_TOPLEVEL"
+
+	# Bluetooth
+	ot-kernel_y_configopt "CONFIG_BT"
+	ot-kernel_y_configopt "CONFIG_BT_CORE"
+	ot-kernel_y_configopt "CONFIG_BT_HCIBTUSB"
+	ot-kernel_y_configopt "CONFIG_BT_HCIUART"
+	ot-kernel_y_configopt "CONFIG_BT_HCIUART_3WIRE"
+	ot-kernel_y_configopt "CONFIG_BT_HCIUART_H4"
+	ot-kernel_y_configopt "CONFIG_BT_HCIUART_RTL"
+	ot-kernel_y_configopt "CONFIG_BT_HCIUART_SERDEV"
+	ot-kernel_y_configopt "CONFIG_GPIOLIB"
+	ot-kernel_y_configopt "CONFIG_NET"
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_R8169"
+
+	# WiFi
+	ot-kernel_y_configopt "CONFIG_FW_LOADER"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_RTW88"
+	ot-kernel_y_configopt "CONFIG_RTW88_CORE"
+	ot-kernel_y_configopt "CONFIG_RTW88_8723DE"
+	ot-kernel_y_configopt "CONFIG_WLAN"
+	ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+
+	# Webcam
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
+	ot-kernel_y_configopt "CONFIG_V4L2_MEM2MEM_DRIVERS" # Webcam
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+
+	# Card reader
+	ot-kernel_y_configopt "CONFIG_MMC"
+	ot-kernel_y_configopt "CONFIG_MMC_BLOCK"
+	ot-kernel_y_configopt "CONFIG_MMC_REALTEK_PCI"
+	ot-kernel_y_configopt "CONFIG_MMC_SDHCI"
+	ot-kernel_y_configopt "CONFIG_MMC_SDHCI_ACPI"
+	ot-kernel_y_configopt "CONFIG_MMC_SDHCI_PCI"
+
+	# CPU
+	ot-kernel_y_configopt "CONFIG_X86"
+	ot-kernel_y_configopt "CONFIG_MICROCODE_INTEL"
+
+	# Power management
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+	ot-kernel_y_configopt "CONFIG_INT340X_THERMAL"
+	ot-kernel_y_configopt "CONFIG_INTEL_LPSS_PCI"
+	ot-kernel_y_configopt "CONFIG_INTEL_PMC_CORE"
+	ot-kernel_y_configopt "CONFIG_INTEL_PCH_THERMAL"
+	ot-kernel_y_configopt "CONFIG_INTEL_PMT_TELEMETRY"
+	ot-kernel_y_configopt "CONFIG_INTEL_PSTATE"
+	ot-kernel_y_configopt "CONFIG_INTEL_RAPL"
+	ot-kernel_y_configopt "CONFIG_INTEL_UNCORE_FREQ_CONTROL"
+	ot-kernel_unset_configopt "CONFIG_INTEL_VSEC"
+	ot-kernel_y_configopt "CONFIG_MFD_INTEL_LPSS_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+	ot-kernel_y_configopt "CONFIG_PM"
+	ot-kernel_y_configopt "CONFIG_POWERCAP"
+	ot-kernel_y_configopt "CONFIG_PCIE_PME"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI_PLATFORM"
+	ot-kernel_y_configopt "CONFIG_THERMAL"
+	ot-kernel_y_configopt "CONFIG_THERMAL_INTEL_CPU"
+	ot-kernel_y_configopt "CONFIG_X86_PLATFORM_DEVICES"
+
+	# Support legacy devices
+	ot-kernel_y_configopt "CONFIG_INTEL_LPC"
+
+	# Security and stability, remote troubleshooting
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_INTEL_MEI"
+	ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+
+	# Security
+	ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_PROCESSOR_SELECT"
+	ot-kernel_y_configopt "CONFIG_X86_SGX"
+	ot-kernel_y_configopt "CONFIG_X86_X2APIC"
+
+	# Virtualization
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_DRM"
+	ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
+	ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+	ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI_MSI"
+
+	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
+	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_webcam
+	ot-kernel-driver-bundle_add_usb_gamer_headsets
+	ot-kernel-driver-bundle_add_graphics_tablet "usb"
+	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
+	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
+}
+
 # @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
 # @DESCRIPTION:
 # A 2020s x86 pc gamer driver bundle
 ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-pc-gamer" ]] || return
 ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
+	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
@@ -995,7 +1236,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -1046,6 +1287,11 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
 	fi
+}
+
+ot-kernel-driver-bundle_add_rtc_cmos() {
+	ot-kernel_y_configopt "CONFIG_RTC_CLASS"
+	ot-kernel_y_configopt "CONFIG_RTC_DRV_CMOS"
 }
 
 ot-kernel-driver-bundle_add_data_storage_interfaces() {
@@ -2532,20 +2778,24 @@ ewarn "VLB is not supported"
 
 ot-kernel-driver-bundle_add_usb() {
 	local tags="${1}"
-	if [[ "${tags}" =~ "usb-1.1" ]] ; then
-		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	if [[ "${tags}" =~ "usb-3.0" ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
 	fi
 	if [[ "${tags}" =~ "usb-2.0" ]] ; then
-		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
 	fi
-	if [[ "${tags}" =~ "usb-3.0" ]] ; then
-		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	if [[ "${tags}" =~ "usb-1.1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_USB_UHCI_HCD" # 1996 (controller), 1998 (standard)
+		elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
+		fi
 	fi
 }
 
