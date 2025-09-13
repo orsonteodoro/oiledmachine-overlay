@@ -6,10 +6,10 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/devices/aerox3_gen2.py r
 +
 +
 +profile = {
-+    "name": "SteelSeries Aerox 3 Gen 2",
++    "name": "SteelSeries Rival 3 Gen 2",
 +    "models": [
 +        {
-+            "name": "SteelSeries Aerox 3 Gen 2",
++            "name": "SteelSeries Rival 3 Gen 2",
 +            "vendor_id": 0x1038,
 +            "product_id": 0x1870,
 +            "endpoint": 3,

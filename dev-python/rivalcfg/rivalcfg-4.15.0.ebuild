@@ -36,7 +36,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev ebuild_revision_2"
+IUSE+=" dev ebuild_revision_3"
 RDEPEND+="
 	>=dev-python/hidapi-0.14.0[${PYTHON_USEDEP}]
 "
