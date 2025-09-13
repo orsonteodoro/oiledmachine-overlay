@@ -36,7 +36,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev ebuild_revision_3"
+IUSE+=" dev ebuild_revision_4"
 RDEPEND+="
 	>=dev-python/hidapi-0.14.0[${PYTHON_USEDEP}]
 "
@@ -56,7 +56,7 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.rst" "README.rst" )
 PATCHES=(
-	"${FILESDIR}/${PN}-4.15.0-add-rival3-gen2-support.patch"
+	"A${FILESDIR}/${PN}-4.15.0-add-rival3-gen2-support.patch"
 )
 
 src_unpack() {
