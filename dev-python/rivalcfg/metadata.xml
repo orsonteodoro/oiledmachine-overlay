@@ -9,6 +9,7 @@
   <upstream>
     <bugs-to>https://github.com/flozz/rivalcfg/issues</bugs-to>
     <changelog>https://github.com/flozz/rivalcfg/blob/main/CHANGELOG.rst</changelog>
+    <doc lang="en">https://flozz.github.io/rivalcfg/index.html</doc>
     <remote-id type="github">flozz/rivalcfg</remote-id>
     <remote-id type="pypi">rivalcfg</remote-id>
   </upstream>
