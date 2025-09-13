@@ -69,7 +69,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/devices/aerox3_gen2.py r
 +            "description": "Set the color of the bottom LED",
 +            "cli": ["--bottom-color", "--z3"],
 +            "report_type": usbhid.HID_REPORT_TYPE_OUTPUT,
-+            "command": [0x21, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
++            "command": [0x21, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
 +            "value_type": "rgbcolor",
 +            "default": "blue",
 +        },
