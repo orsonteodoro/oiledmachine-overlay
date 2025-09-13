@@ -56,7 +56,7 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.rst" "README.rst" )
 PATCHES=(
-	"A${FILESDIR}/${PN}-4.15.0-add-rival3-gen2-support.patch"
+	"${FILESDIR}/${PN}-4.15.0-add-rival3-gen2-support.patch"
 )
 
 src_unpack() {
