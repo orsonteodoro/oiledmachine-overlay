@@ -34,6 +34,7 @@ EAPI=8
 # 138.0.7204.49 -> 138.0.7204.100
 # 138.0.7204.100 -> 139.0.7258.66
 # 139.0.7258.66 -> 140.0.7339.80
+# 140.0.7339.80 -> 140.0.7339.127
 
 # For depends see:
 # https://github.com/chromium/chromium/tree/140.0.7339.80/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501, D11
@@ -122,8 +123,8 @@ te th tr uk ur vi zh-CN zh-TW
 "
 CHROMIUM_TOOLCHAIN=1
 
-CROMITE_COMMIT="6d6ce62db92b0a6b415c55e9b8fd861da13bfd6e" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="139.0.7258.158"
+CROMITE_COMMIT="63888d58b55fab6873bea02b17bd3c533dfad697" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="140.0.7339.128"
 
 # About PGO version compatibility
 #
@@ -213,7 +214,7 @@ PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="139.0.7258.154-1"
+UNGOOGLED_CHROMIUM_PV="140.0.7339.132-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/140.0.7339.80/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -1989,7 +1990,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=538509
+	local sources_count_expected=538513
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2355,7 +2356,7 @@ einfo "Applying the distro patchset ..."
 	# Unreleased fontconfig changed magic numbers and google have rolled to this version
 	if has_version "<=media-libs/fontconfig-2.17.1" ; then
 		PATCHES+=(
-			"${FILESDIR}/chromium-140-work-with-old-fontconfig.patch"
+			"${FILESDIR}/chromium-140-work-with-old-fontconfig-again.patch"
 		)
 	fi
 
