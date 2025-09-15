@@ -286,8 +286,8 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multicpi_range.
 +                unique_pairs.append(pair)
 +                seen.add(pair_tuple)
 +        final_pairs = unique_pairs
-+        if len(final_pairs) == 1:
-+            print("Single pair detected, keeping CPI_count=1")
++        #if len(final_pairs) == 1:
++            #print("Single pair detected, keeping CPI_count=1")
 +
 +    # Define max_presets early
 +    max_presets = 4 if sensitivity_mode == "xy" else setting_info["max_preset_count"]
@@ -300,7 +300,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multicpi_range.
 +        print(f"Warning: Using {len(final_pairs)} presets, expected up to {max_presets}: {final_pairs}")
 +
 +    # Debug: Print parsed presets
-+    print(f"Parsed CPI presets: {final_pairs}")
++    #print(f"Parsed CPI presets: {final_pairs}")
 +
 +    # Selected preset
 +    if selected_preset is None:
@@ -340,7 +340,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multicpi_range.
 +    # Pre-reset for -sxy to clear firmware state
 +    if sensitivity_mode == "xy":
 +        reset_packet = [0x34, 0x1, 0x0, 0x8, 0x8]  # Reset to 400x400
-+        print(f"Sending pre-reset packet: {list(map(hex, reset_packet))}")
++        #print(f"Sending pre-reset packet: {list(map(hex, reset_packet))}")
 +        # Note: This requires mouse.py to send the packet
 +
 +    # Process CPI values and construct packet
@@ -356,7 +356,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multicpi_range.
 +            x_bytes = uint_to_little_endian_bytearray(x_value, cpi_length)
 +            y_bytes = uint_to_little_endian_bytearray(y_value, cpi_length)
 +            output_values = merge_bytes(x_bytes, y_bytes)
-+            print(f"Mapped CPI {cpi_x}x{cpi_y} to X={x_value} (0x{x_value:02X}), Y={y_value} (0x{y_value:02X})")
++            #print(f"Mapped CPI {cpi_x}x{cpi_y} to X={x_value} (0x{x_value:02X}), Y={y_value} (0x{y_value:02X})")
 +            packet = merge_bytes(0x34, cpi_count, selected_preset, output_values)
 +        else:
 +            # Multi-pair: 7-byte packet for 2 presets, 11-byte for 4 presets
@@ -368,7 +368,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multicpi_range.
 +                x_bytes = uint_to_little_endian_bytearray(x_value, cpi_length)
 +                y_bytes = uint_to_little_endian_bytearray(y_value, cpi_length)
 +                output_values = merge_bytes(output_values, x_bytes, y_bytes)
-+                print(f"Mapped CPI {cpi_x}x{cpi_y} to X={x_value} (0x{x_value:02X}), Y={y_value} (0x{y_value:02X})")
++                #print(f"Mapped CPI {cpi_x}x{cpi_y} to X={x_value} (0x{x_value:02X}), Y={y_value} (0x{y_value:02X})")
 +            packet = merge_bytes(0x34, cpi_count, selected_preset, output_values)
 +    else:
 +        for cpi_x, cpi_y in final_pairs:
@@ -377,10 +377,10 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multicpi_range.
 +            value = mappings[cpi_x]
 +            value_bytes = uint_to_little_endian_bytearray(value, cpi_length)
 +            output_values = merge_bytes(output_values, value_bytes)
-+            print(f"Mapped CPI {cpi_x}x{cpi_y} to {value} (0x{value:02X})")
++            #print(f"Mapped CPI {cpi_x}x{cpi_y} to {value} (0x{value:02X})")
 +        packet = merge_bytes(cpi_count, selected_preset, output_values)
 +
-+    print(f"Generated packet: {list(map(hex, packet))}")
++    #print(f"Generated packet: {list(map(hex, packet))}")
 +    return packet
 +
 +def cli_multirange_validator(max_preset_count, sensitivity_mode="single"):
@@ -427,7 +427,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/handlers/multidpi_range.
  
 -    return merge_bytes(dpi_count, selected_preset, output_values)
 +    packet = merge_bytes(dpi_count, selected_preset, output_values)
-+    print(f"Generated packet: {list(map(hex, packet))}")
++    #print(f"Generated packet: {list(map(hex, packet))}")
 +
 +    return packet
  
@@ -443,7 +443,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/mouse.py rivalcfg-4.15.0
 +    def _send_firmware_query(self):
 +        """Send 0x90 firmware query packet."""
 +        if "firmware_version" not in self.mouse_profile:
-+            print("No firmware_version in profile, skipping query")
++            #print("No firmware_version in profile, skipping query")
 +            return
 +        self._hid_write(
 +            report_type=self.mouse_profile["firmware_version"]["report_type"],
@@ -456,9 +456,9 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/mouse.py rivalcfg-4.15.0
 +        )
 +        if response:
 +            version_str = ''.join(chr(b) for b in response[1:16] if 32 <= b <= 126)
-+            print(f"Firmware query response: {version_str}")
-+        else:
-+            print("No firmware response received")
++            #print(f"Firmware query response: {version_str}")
++        #else:
++            #print("No firmware response received")
 +        time.sleep(0.1)
 +
 +    def _send_reset_packet(self, reset_packet=None):
@@ -471,7 +471,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/mouse.py rivalcfg-4.15.0
 +                data=reset_packet,
 +                packet_length=64,
 +            )
-+            print(f"Sent reset packet: {list(map(hex, reset_packet))}")
++            #print(f"Sent reset packet: {list(map(hex, reset_packet))}")
 +            time.sleep(0.1)
 +
 +    def _send_initialization_sequence(self, reset_packet=None):
@@ -483,7 +483,7 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/mouse.py rivalcfg-4.15.0
 +                data=self.mouse_profile["settings"]["button_mapping"]["command"],
 +                packet_length=64,
 +            )
-+            print("Sent button_mapping packet: [0x31, 0x00]")
++            #print("Sent button_mapping packet: [0x31, 0x00]")
 +            time.sleep(0.1)
 +        if reset_packet:
 +            self._send_reset_packet(reset_packet)
@@ -561,27 +561,27 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/mouse.py rivalcfg-4.15.0
 +            normal_dpi = cpi_values[len(cpi_values) // 2] if cpi_values else 800
 +            cpi_mappings = {200: 0x04, 400: 0x08, 800: 0x14, 1600: 0x24, 2400: 0x37, 3200: 0x4C}
 +            normal_dpi_value = cpi_mappings.get(normal_dpi, 0x14)
-+            print(f"Using normal DPI for pre-reset: {normal_dpi} (0x{normal_dpi_value:02x})")
++            #print(f"Using normal DPI for pre-reset: {normal_dpi} (0x{normal_dpi_value:02x})")
 +
 +        if any(key in self.mouse_profile["settings"] for key in ["sensitivity", "sensitivity1", "sensitivity2"]):
 +            pre_reset_packet = [0x34, 0x4, 0x0, normal_dpi_value, normal_dpi_value, normal_dpi_value, normal_dpi_value, normal_dpi_value, normal_dpi_value, normal_dpi_value, normal_dpi_value]
-+            print(f"Sending four-pair pre-reset packet for -r: {list(map(hex, pre_reset_packet))}")
++            #print(f"Sending four-pair pre-reset packet for -r: {list(map(hex, pre_reset_packet))}")
 +            self._hid_write(data=pre_reset_packet)
 +            time.sleep(0.1)
 +
 +            clear_packet = [0x34, 0x0, 0x0]
-+            print(f"Sending clear packet for -r: {list(map(hex, clear_packet))}")
++            #print(f"Sending clear packet for -r: {list(map(hex, clear_packet))}")
 +            self._hid_write(data=clear_packet)
 +            time.sleep(0.1)
 +
 +            pre_reset_single = [0x34, 0x1, 0x0, normal_dpi_value, normal_dpi_value]
-+            print(f"Sending fallback pre-reset packet: {list(map(hex, pre_reset_single))}")
++            #print(f"Sending fallback pre-reset packet: {list(map(hex, pre_reset_single))}")
 +            self._hid_write(data=pre_reset_single)
 +            time.sleep(0.1)
 +
 +        for key in ["sensitivity", "sensitivity1", "sensitivity2"]:
 +            if key in self.mouse_profile["settings"] and "default" in self.mouse_profile["settings"][key]:
-+                print(f"Resetting {key} to default: {self.mouse_profile['settings'][key]['default']}")
++                #print(f"Resetting {key} to default: {self.mouse_profile['settings'][key]['default']}")
 +                getattr(self, f"set_{key}")(self.mouse_profile["settings"][key]["default"])
 +                time.sleep(0.1)
 +
@@ -595,17 +595,17 @@ diff '--color=auto' -urpN rivalcfg-4.15.0.orig/rivalcfg/mouse.py rivalcfg-4.15.0
              ):
 -                method(setting_info["default"])
 +                if "default" in setting_info:
-+                    print(f"Resetting {name} to default: {setting_info['default']}")
++                    #print(f"Resetting {name} to default: {setting_info['default']}")
 +                    method(setting_info["default"])
-+                else:
-+                    print(f"Skipping reset for {name}: no default value defined")
++                #else:
++                    #print(f"Skipping reset for {name}: no default value defined")
              else:
                  method()
 +            time.sleep(0.1)
 +
 +        for key in ["sensitivity", "sensitivity1", "sensitivity2"]:
 +            if key in self.mouse_profile["settings"] and "default" in self.mouse_profile["settings"][key]:
-+                print(f"Retrying {key} reset to: {self.mouse_profile['settings'][key]['default']}")
++                #print(f"Retrying {key} reset to: {self.mouse_profile['settings'][key]['default']}")
 +                getattr(self, f"set_{key}")(self.mouse_profile['settings'][key]["default"])
 +                time.sleep(0.1)
 +
