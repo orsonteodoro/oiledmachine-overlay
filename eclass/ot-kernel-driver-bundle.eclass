@@ -111,7 +111,9 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# Ethernet
-	ot-kernel_unset_configopt "CONFIG_64BIT"
+	# Most computers were 32-bit, even though 64-bit was released
+	# 64-bit is needs to be disabled in order to access the ISA option.
+	#ot-kernel_unset_configopt "CONFIG_64BIT"
 	ot-kernel_y_configopt "CONFIG_ISA"
 	ot-kernel_y_configopt "CONFIG_EISA"
 	ot-kernel_y_configopt "CONFIG_EL3" # 1992
