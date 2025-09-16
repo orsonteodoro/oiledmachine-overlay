@@ -1892,12 +1892,16 @@ TBM=0
       wifi:rtl8192cu
       wifi:rtl8192du
       wifi:rtl8723
+      wifi:rtl8723de
       wifi:rtl8723du
       wifi:rtl8821
+      wifi:rtl8821ce
       wifi:rtl8821cu
       wifi:rtl8822
+      wifi:rtl8822be
       wifi:rtl8822bu
       wifi:rtl8822
+      wifi:rtl8822ce
       wifi:rtl8822cu
       wifi:rtw87
       wifi:rtw88

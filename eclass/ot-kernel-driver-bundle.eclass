@@ -4104,9 +4104,13 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_vendor() {
 		ot-kernel_y_configopt "CONFIG_RTL8187" # 2004
 		ot-kernel_y_configopt "CONFIG_RTL8192CU" # 2013
 		ot-kernel_y_configopt "CONFIG_RTL8192DU" # 2013
+		ot-kernel_y_configopt "CONFIG_RTW88_8821CE" # 2017
 		ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+		ot-kernel_y_configopt "CONFIG_RTW88_8822BE" # 2017
 		ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+		ot-kernel_y_configopt "CONFIG_RTW88_8822CE" # 2022
 		ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DE" # 2018
 		ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
 		ot-kernel_y_configopt "CONFIG_RTW89" # 2021
 		ot-kernel_y_configopt "CONFIG_RTW89_8851BE" # 2023
@@ -4324,12 +4328,24 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "wifi:rtw87"($|" ") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw87") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DE" # 2018
 		ot-kernel_y_configopt "CONFIG_RTW88_8723DU" # 2018
+		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8723"|"wifi:rtl8723de") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DE" # 2018
+		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_WLAN"
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
@@ -4348,10 +4364,24 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_MAC80211"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8821CE" # 2017
 		ot-kernel_y_configopt "CONFIG_RTW88_8821CU" # 2017
+		ot-kernel_y_configopt "CONFIG_RTW88_8822BE" # 2016
 		ot-kernel_y_configopt "CONFIG_RTW88_8822BU" # 2016
+		ot-kernel_y_configopt "CONFIG_RTW88_8822CE" # 2022
 		ot-kernel_y_configopt "CONFIG_RTW88_8822CU" # 2021
+		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtw8811"|"wifi:rtl8821"|"wifi:rtl8821ce") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8821CE" # 2017
+		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_WLAN"
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
@@ -4366,6 +4396,16 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
 
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8822"|"wifi:rtl8822be") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8822BE" # 2016
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8822"|"wifi:rtl8822bu") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
@@ -4376,6 +4416,17 @@ ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers_by_model() {
 		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
 	fi
 
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8822"|"wifi:rtl8822ce") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_RTW88"
+		ot-kernel_y_configopt "CONFIG_RTW88_8822CE" # 2022
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_WLAN"
+		ot-kernel_y_configopt "CONFIG_WLAN_VENDOR_REALTEK"
+	fi
+
+		ot-kernel_y_configopt "CONFIG_RTW88_8723DE" # 2018
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("wifi:rtl8822"|"wifi:rtl8822cu") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MAC80211"
