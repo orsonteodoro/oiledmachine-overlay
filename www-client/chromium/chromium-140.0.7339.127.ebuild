@@ -185,14 +185,11 @@ LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
 MITIGATION_DATE="Sep 2, 2025" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1756493400 # From `date +%s -d "2025-08-29 11:50 AM PDT"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2025/08/stable-channel-update-for-desktop.html"
+MITIGATION_LAST_UPDATE=1757373660 # From `date +%s -d "2025-09-08 4:21 PM PDT"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/09/stable-channel-update-for-desktop_9.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-9864;UAF, MC, DoS, DT, ID;High"
-	"CVE-2025-9865;DoS, DT;Medium"
-	"CVE-2025-9866;DoS, DT, ID;High"
-	"CVE-2025-9867;DoS, DT;Medium"
-	"442611697;;"
+	"CVE-2025-10200;MC, DoS, DT, ID;High"
+	"CVE-2025-10201;DoS, DT, ID;High"
 )
 NABIS=0 # Global variable
 NODE_VERSION=22
