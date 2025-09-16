@@ -1888,13 +1888,41 @@ TBM=0
       wifi:rt73usb
       wifi:rtl8180
       wifi:rtl8187
+      wifi:rtl8188
+      wifi:rtl8188cu
+      wifi:rtl8188de
+      wifi:rtl8188fu
+      wifi:rtl8188ru
+      wifi:rtl8188eu
+      wifi:rtl8188gu
+      wifi:rtl8191
+      wifi:rtl8191cu
+      wifi:rtl8191se
+      wifi:rtl8192
+      wifi:rtl8192cu
+      wifi:rtl8192de
+      wifi:rtl8192eu
+      wifi:rtl8192fu
+      wifi:rtl8192se
+      wifi:rtl8188
+      wifi:rtl8188ce
+      wifi:rtl8188cu
+      wifi:rtl8188ee
       wifi:rtl8192
       wifi:rtl8192cu
       wifi:rtl8192du
+      wifi:rtl8192ee
+      wifi:rtl8710
+      wifi:rtl8710bu
       wifi:rtl8723
-      wifi:rtl8723de
-      wifi:rtl8723du
+      wifi:rtl8723ae
+      wifi:rtl8723au
+      wifi:rtl8723be
+      wifi:rtl8723bu
+      wifi:rtl8812
+      wifi:rtl8812ae
       wifi:rtl8821
+      wifi:rtl8821ae
       wifi:rtl8821ce
       wifi:rtl8821cu
       wifi:rtl8822
@@ -1903,7 +1931,10 @@ TBM=0
       wifi:rtl8822
       wifi:rtl8822ce
       wifi:rtl8822cu
+      wifi:rtl8xxxu
       wifi:rtw87
+      wifi:rtw8723de
+      wifi:rtw8723du
       wifi:rtw88
       wifi:rtw8811
       wifi:rtw8851
