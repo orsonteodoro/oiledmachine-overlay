@@ -8850,6 +8850,7 @@ ot-kernel-driver-bundle_add_watchdog() {
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
 	elif [[ "${tags}" =~ "late-2000" ]] ; then
+		ot-kernel_y_configopt "CONFIG_F71808E_WDT" # Late 2000s, 2010
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_IT8712F_WDT" # 2000, specifically this model
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -8860,6 +8861,7 @@ ot-kernel-driver-bundle_add_watchdog() {
 			ot-kernel_y_configopt "CONFIG_NV_TCO" # 2006
 		fi
 	elif [[ "${tags}" =~ "2010" ]] ; then
+		ot-kernel_y_configopt "CONFIG_F71808E_WDT" # Late 2000s, 2010
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
