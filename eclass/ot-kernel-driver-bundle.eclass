@@ -53,6 +53,11 @@ ewarn "Disabling xpad driver"
 	# /dev nodes
 	ot-kernel_y_configopt "CONFIG_DEVTMPFS"
 
+	# Internet
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_IPV6"
+	ot-kernel_y_configopt "CONFIG_NET"
+
 	# Disabled to reduce build times.
 	# Used by TV tuner cards with a lot of revisions.
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
@@ -104,6 +109,14 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
+
+	# Ethernet
+	ot-kernel_unset_configopt "CONFIG_64BIT"
+	ot-kernel_y_configopt "CONFIG_ISA"
+	ot-kernel_y_configopt "CONFIG_EISA"
+	ot-kernel_y_configopt "CONFIG_EL3" # 1992
+	ot-kernel_y_configopt "CONFIG_NE2000" # 1988
+	ot-kernel_y_configopt "CONFIG_WD80x3" # 1987
 
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
@@ -195,6 +208,26 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
+	ot-kernel_y_configopt "CONFIG_E100" # 1997
+	ot-kernel_y_configopt "CONFIG_EISA"
+	ot-kernel_y_configopt "CONFIG_EL3" # 1992
+	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
+	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
 
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
@@ -305,6 +338,26 @@ ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
 
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
+	ot-kernel_y_configopt "CONFIG_E100" # 1997
+	ot-kernel_y_configopt "CONFIG_EISA"
+	ot-kernel_y_configopt "CONFIG_EL3" # 1992
+	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
+	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
+
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
@@ -401,6 +454,27 @@ ewarn "The late-1990s-musician driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
+	ot-kernel_y_configopt "CONFIG_E100" # 1997
+	ot-kernel_y_configopt "CONFIG_EISA"
+	ot-kernel_y_configopt "CONFIG_EL3" # 1992
+	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
+	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
+	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
 
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
@@ -521,6 +595,24 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_8139CP" # 2003
+	ot-kernel_y_configopt "CONFIG_8139TOO" # 2000
+	ot-kernel_y_configopt "CONFIG_E100" # 1997
+	ot-kernel_y_configopt "CONFIG_E1000" # 2000
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
+	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
@@ -644,6 +736,32 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_8139TOO" # 1999
+	ot-kernel_y_configopt "CONFIG_BNX2" # 2008
+	ot-kernel_y_configopt "CONFIG_E1000" # 2000
+	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_IGB" # 2008
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+	ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	ot-kernel_y_configopt "CONFIG_SKGE" # 1999
+	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
+	ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
+	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
+
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
@@ -713,10 +831,8 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_RFKILL"
 
-	ot-kernel_y_configopt "CONFIG_INET"
+	# Ethernet
 	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_IPV6"
-
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_ETHERNET"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
@@ -869,16 +985,24 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 
-	# For ethernet for wired Internet
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_ALX" # 2011
+	ot-kernel_y_configopt "CONFIG_E1000" # 2000
 	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
 	ot-kernel_y_configopt "CONFIG_IGB" # 2008
-	ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_ATHEROS"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
 	ot-kernel_y_configopt "CONFIG_PCI" # 1992
 	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+	ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
+	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
@@ -975,6 +1099,25 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_ALX" # 2011
+	ot-kernel_y_configopt "CONFIG_E1000" # 2000
+	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_IGB" # 2008
+	ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_ATHEROS"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+	ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
+	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
@@ -1123,6 +1266,11 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_NET"
 
 	# Ethernet
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_R8169"
 
 	# WiFi
@@ -1155,6 +1303,13 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	# CPU
 	ot-kernel_y_configopt "CONFIG_X86"
 	ot-kernel_y_configopt "CONFIG_MICROCODE_INTEL"
+
+	# Use power efficient algorithm
+	ot-kernel_y_configopt "CONFIG_DEFAULT_BBR"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR"
 
 	# Power management
 	ot-kernel_y_configopt "CONFIG_ACPI"
@@ -1268,6 +1423,24 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_AQTION"
+	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_I40E" # 2020
+	ot-kernel_y_configopt "CONFIG_ICE" # 2020
+	ot-kernel_y_configopt "CONFIG_IGB" # 2007
+	ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AQUANTIA"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_PCI_MSI"
+	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+	ot-kernel_y_configopt "CONFIG_R8169" # 2003
 
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
@@ -3306,14 +3479,8 @@ ot-kernel-driver-bundle_add_haptic_devices_by_ethernet() {
 	# USB 2.0, USB 3.0, Ethernet
 	# For ethernet for the haptic stylus or wired Internet
 		ot-kernel_y_configopt "CONFIG_ETHERNET"
-		ot-kernel_y_configopt "CONFIG_E1000E" # 2005
-		ot-kernel_y_configopt "CONFIG_IGB" # 2008
-		ot-kernel_y_configopt "CONFIG_R8169" # 2003
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
-		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
 
 		# For closed source drivers
 		ot-kernel_y_configopt "CONFIG_MODULES"
