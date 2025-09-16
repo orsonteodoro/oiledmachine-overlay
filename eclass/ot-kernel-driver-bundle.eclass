@@ -132,7 +132,7 @@ ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
 ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 1990
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -245,7 +245,7 @@ ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers() {
 ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 1990
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -376,7 +376,7 @@ ot-kernel-driver-bundle_add_late_1990s_musician_drivers() {
 ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 1990
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -493,7 +493,7 @@ ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
 ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2000
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -638,7 +638,7 @@ ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
 ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2000
 	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -786,7 +786,7 @@ ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
 ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2010
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	# No USB 3.0
@@ -942,7 +942,7 @@ ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
 ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2010
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -1050,7 +1050,7 @@ ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers() {
 ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2010
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -1163,7 +1163,7 @@ ot-kernel-driver-bundle_add_15_da0086nr_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "15-da0086nr" ]] || return
 ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2010
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
@@ -1425,7 +1425,7 @@ ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
 ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog
+	ot-kernel-driver-bundle_add_watchdog 2020
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -8844,17 +8844,43 @@ has_mei_packages() {
 # damage.  If the sensor is damaged, misconfigured, not calibrated, or not
 # detected, then use the hardware watchdog as a fallback.
 ot-kernel-driver-bundle_add_watchdog() {
-	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-		ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
-	elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2010
-	fi
+	local decade="${1}"
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
-	ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
+	if (( ${decade} == 1990 )) ; then
+		ot-kernel_y_configopt "CONFIG_ALIM1535_WDT" # 1998
+		ot-kernel_y_configopt "CONFIG_ALIM7101_WDT" # 1998
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
+		fi
+	elif (( ${decade} == 2000 )) ; then
+		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
+		ot-kernel_y_configopt "CONFIG_IT8712F_WDT" # 2000
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2009
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
+			ot-kernel_y_configopt "CONFIG_NV_TCO" # 2006
+		fi
+	elif (( ${decade} == 2010 )) ; then
+		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
+		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2009
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
+		fi
+	elif (( ${decade} == 2020 )) ; then
+		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
+		fi
+	fi
 }
 
 fi
