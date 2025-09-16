@@ -132,6 +132,7 @@ ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
 ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -244,6 +245,7 @@ ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers() {
 ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -374,6 +376,7 @@ ot-kernel-driver-bundle_add_late_1990s_musician_drivers() {
 ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -490,6 +493,7 @@ ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
 ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -634,6 +638,7 @@ ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
 ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -781,6 +786,7 @@ ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
 ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	# No USB 3.0
@@ -918,11 +924,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	else
 		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_WDT"
 	fi
-	ot-kernel_y_configopt "CONFIG_ITCO_WDT"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_WATCHDOG"
-	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
-	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
@@ -941,6 +942,7 @@ ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
 ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -1048,6 +1050,7 @@ ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers() {
 ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -1160,6 +1163,7 @@ ot-kernel-driver-bundle_add_15_da0086nr_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "15-da0086nr" ]] || return
 ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
@@ -1403,9 +1407,6 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_WDT"
 
 	fi
-	ot-kernel_y_configopt "CONFIG_ITCO_WDT"
-	ot-kernel_y_configopt "CONFIG_WATCHDOG"
-	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
@@ -1424,6 +1425,7 @@ ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
 ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
+	ot-kernel-driver-bundle_add_watchdog
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -8835,6 +8837,22 @@ has_mei_packages() {
 		return 0
 	fi
 	return 1
+}
+
+# Enable robost fallback for overheating to prevent damage in an infinite loop.
+# If the CPU glitches or malfunctions when overheating, then reboot to mitigate damage.
+ot-kernel-driver-bundle_add_watchdog() {
+	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
+	elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ACPI"
+		ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2010
+		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
+	fi
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 }
 
 fi
