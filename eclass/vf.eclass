@@ -72,7 +72,7 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	# The complex cases that are undecided, or that fit more than one
 	# vulnerability class, or unable to be classified should deserve
 	# a conditional, but trivial vulnerabilities should only use one
-	# or more DoS, DT, ID.
+	# or more DoS, DT, ID impact vectors.
 	#
 einfo
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO" ]] ; then
