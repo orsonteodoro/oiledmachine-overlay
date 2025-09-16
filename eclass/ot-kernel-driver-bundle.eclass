@@ -62,6 +62,8 @@ ewarn "Disabling xpad driver"
 	# Used by TV tuner cards with a lot of revisions.
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
 
+	# The memory and processing speed in earlier decades was very limited.
+	# This is why the decades were split.
 	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
 	ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
