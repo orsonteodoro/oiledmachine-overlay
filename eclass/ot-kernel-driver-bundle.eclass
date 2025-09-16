@@ -8847,14 +8847,14 @@ ot-kernel-driver-bundle_add_watchdog() {
 	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 	elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
-		ot-kernel_y_configopt "CONFIG_ACPI"
 		ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2010
-		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
 	fi
+	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
+	ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
 }
 
 fi
