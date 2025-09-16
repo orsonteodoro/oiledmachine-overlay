@@ -885,7 +885,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
 	ot-kernel_y_configopt "CONFIG_PCI"
 
-	# For sound, HDMI (TV output)
+	# Sound support
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
@@ -894,9 +894,30 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
 
-	# For possibly watchdog to restart on freeze
+	# Availability-critical and remote troubleshooting
+	# Two views, MEI is good for IT remote troubleshooting on laptops and workstations typically enterprise.
+	# MEI is a big security risk.
+	# Enablement is based on software installed.
+	# MEI vulnerability impact vectors:  CE, DoS, DT, ID, PE
+	# MEI is independent of OS, so it cannot be easily disabled just by
+	# disabling kernel support.
+	ot-kernel_y_configopt "CONFIG_PCI"
+	if has_mei_packages ; then
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+	else
+		ot-kernel_unset_configopt "CONFIG_INTEL_MEI"
+		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_ME"
+	fi
+
+	# Watchdog (optional)
 	ot-kernel_y_configopt "CONFIG_LPC_ICH"
-	ot-kernel_y_configopt "CONFIG_I2C"
+	if has_mei_packages ; then
+	# Can report but not necessarily restart.
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_WDT"
+	else
+		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_WDT"
+	fi
 	ot-kernel_y_configopt "CONFIG_ITCO_WDT"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG"
@@ -1191,7 +1212,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_FIRMWARE_EDID"
 	ot-kernel_y_configopt "CONFIG_PCI"
 
-	# HDMI
+	# HDMI sound for TV output
 	ot-kernel_y_configopt "CONFIG_DRM"
 	ot-kernel_y_configopt "CONFIG_DRM_DISPLAY_HDMI_HELPER"
 	ot-kernel_y_configopt "CONFIG_SOUND"
@@ -1339,11 +1360,6 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	# Support legacy devices
 	ot-kernel_y_configopt "CONFIG_INTEL_LPC"
 
-	# Security and stability, remote troubleshooting
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_INTEL_MEI"
-	ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
-
 	# Security
 	ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
 	ot-kernel_y_configopt "CONFIG_CRYPTO"
@@ -1361,6 +1377,35 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_PCI_MSI"
+
+	# Availability-critical and remote troubleshooting
+	# Two views, MEI is good for IT remote troubleshooting on laptops and workstations typically enterprise.
+	# MEI is a big security risk and it is not easy to disable.
+	# Enablement is based on software installed.
+	# MEI vulnerability impact vectors:  CE, DoS, DT, ID, PE
+	# MEI is independent of OS, so it cannot be easily disabled just by
+	# disabling kernel support.
+	ot-kernel_y_configopt "CONFIG_PCI"
+	if has_mei_packages ; then
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+	else
+		ot-kernel_unset_configopt "CONFIG_INTEL_MEI"
+		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_ME"
+	fi
+
+	# Watchdog (optional)
+	ot-kernel_y_configopt "CONFIG_PCI"
+	if has_mei_packages ; then
+	# Can report but not necessarily restart.
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_WDT"
+	else
+		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_WDT"
+
+	fi
+	ot-kernel_y_configopt "CONFIG_ITCO_WDT"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG"
+	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
 
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
@@ -8769,6 +8814,27 @@ ewarn "conflicts or issues."
 ewarn
 		fi
 	fi
+}
+
+has_mei_packages() {
+	# Missing:  MeshCommander
+	if has_version "app-admin/coreboot-utils" ; then
+	# Status checker.  Needs ssh to obtain MEI status.
+		return 0
+	fi
+	if has_version "app-admin/mei-amt-check" ; then
+	# ME removal, can brick device
+		return 0
+	fi
+	if has_version "dev-libs/metee" ; then
+	# Status checker
+		return 0
+	fi
+	if has_version "sys-apps/me_cleaner" ; then
+	# Status checker, library only
+		return 0
+	fi
+	return 1
 }
 
 fi
