@@ -8853,6 +8853,8 @@ ot-kernel-driver-bundle_add_watchdog() {
 	if (( ${decade} == 1990 )) ; then
 		ot-kernel_y_configopt "CONFIG_ALIM1535_WDT" # 1998
 		ot-kernel_y_configopt "CONFIG_ALIM7101_WDT" # 1998
+		ot-kernel_y_configopt "CONFIG_W83877F_WDT" # 1996
+		ot-kernel_y_configopt "CONFIG_W83977F_WDT" # 1997
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
