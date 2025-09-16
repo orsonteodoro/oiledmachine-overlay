@@ -222,12 +222,13 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
 	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
 	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
@@ -352,12 +353,13 @@ ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
 	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
 	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
@@ -470,13 +472,13 @@ ewarn "The late-1990s-musician driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
 	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
 	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
 	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
-	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
 	ot-kernel_y_configopt "CONFIG_NETDEVICES"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
