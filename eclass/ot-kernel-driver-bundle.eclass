@@ -904,22 +904,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
 
-	# Availability-critical and remote troubleshooting
-	# Two views, MEI is good for IT remote troubleshooting on laptops and workstations typically enterprise.
-	# MEI is a big security risk.
-	# Enablement is based on software installed.
-	# MEI vulnerability impact vectors:  CE, DoS, DT, ID, PE
-	# MEI is independent of OS, so it cannot be easily disabled just by
-	# disabling kernel support.
-	ot-kernel_y_configopt "CONFIG_PCI"
-	if has_mei_packages ; then
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
-	else
-		ot-kernel_unset_configopt "CONFIG_INTEL_MEI"
-		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_ME"
-	fi
-
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
@@ -1376,22 +1360,6 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_PCI_MSI"
-
-	# Availability-critical and remote troubleshooting
-	# Two views, MEI is good for IT remote troubleshooting on laptops and workstations typically enterprise.
-	# MEI is a big security risk and it is not easy to disable.
-	# Enablement is based on software installed.
-	# MEI vulnerability impact vectors:  CE, DoS, DT, ID, PE
-	# MEI is independent of OS, so it cannot be easily disabled just by
-	# disabling kernel support.
-	ot-kernel_y_configopt "CONFIG_PCI"
-	if has_mei_packages ; then
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
-	else
-		ot-kernel_unset_configopt "CONFIG_INTEL_MEI"
-		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_ME"
-	fi
 
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
@@ -3161,6 +3129,8 @@ ot-kernel-driver-bundle_add_graphics() {
 
 	ot-kernel-driver-bundle_add_graphics_drm_by_driver_name
 	ot-kernel-driver-bundle_add_graphics_fb_by_driver_name
+
+	ot-kernel-driver-bundle_add_hdcp_support
 }
 
 # KMS
@@ -3207,19 +3177,52 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 |"graphics:r700"\
 |"graphics:evergreen"\
 |"graphics:northern-islands"\
-|"graphics:southern-islands"\
-|"graphics:sea-islands"\
+|"graphics:southern-islands"($|" ")\
+|"graphics:sea-islands"($|" ")\
+|"graphics:gcn1"($|" ")\
+|"graphics:gcn2"($|" ")\
 ) \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_RADEON" # 2000
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+	fi
 
-	# Add temp sensor
-		ot-kernel_y_configopt "CONFIG_I2C"
-		ot-kernel_y_configopt "CONFIG_I2C_NVIDIA_GPU" # 2018
-		ot-kernel_y_configopt "CONFIG_PCI"
+	if [[ \
+		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:amdgpu"\
+|"graphics:southern-islands-experimental"\
+|"graphics:gcn1-experimental"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_SI"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "radeon.si_support=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.si_support=[01]"
+		ot-kernel_set_kconfig_kernel_cmdline "radeon.si_support=0"
+		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.si_support=1"
+	fi
+
+	if [[ \
+		"${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:amdgpu"\
+|"graphics:sea-islands-experimental"\
+|"graphics:gcn2-experimental"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU" # 2015 (GCN3)
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "radeon.cik_support=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.cik_support=[01]"
+		ot-kernel_set_kconfig_kernel_cmdline "radeon.cik_support=0"
+		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.cik_support=1"
 	fi
 
 	if [[ \
@@ -8886,6 +8889,62 @@ ot-kernel-driver-bundle_add_watchdog() {
 		fi
 	else
 		ot-kernel_unset_configopt "CONFIG_INTEL_MEI_WDT"
+	fi
+}
+
+ot-kernel-driver-bundle_add_hdcp_support() {
+	# Availability-critical, remote troubleshooting, DRM
+	# MEI is used for IT remote troubleshooting on laptops and workstations typically enterprise.
+	# MEI is a big security risk with vulnerability impact vectors of CE, DoS, DT, ID, PE.
+	# MEI is independent of OS, so it cannot be easily disabled just by disabling kernel support.
+	if grep -q -E -e "^CONFIG_DRM_I915=y" "${path_config}" || grep -q -E -e "^CONFIG_DRM_XE=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_HDCP" # Allow useless 4K support.  Only 720p or 1080p allowed on Linux.
+		ot-kernel_y_configopt "CONFIG_PCI"
+	# We would like to completely disable the HDCP DRM, but we don't disable
+	# because other features depend on it:
+	# - Anti-Theft feature (for disabling or tracking)
+	# - Blue-ray protection
+	# - Power management
+	# - Remote management
+	# - TPM, PTT, disk encryption, key storage
+	fi
+
+	if grep -q -E -e "^CONFIG_DRM_AMDGPU=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_DRM_AMD_DC"
+		if grep -q -E -e "^CONFIG_DRM_AMDGPU_SI=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_SI"
+		fi
+ewarn "For HDCP support on AMDGPU:  \`xrandr --output <OUTPUT_NAME> --set \"Content Protection\" \"Enabled\"\` replacing <OUTPUT_NAME> with either DP-1 or HDMI-1."
+	# We would like to completely disable HDCP DRM, but we don't disable
+	# because other features depend on these features:
+	# - Color management
+	# - DisplayPort support
+	# - FreeSync or tear-free support
+	# - HDMI support
+	# - HDR
+	# - Multi-monitor
+	# - Power management
+	# - Wide color gamut
+	fi
+
+	if ! grep -q -E -e "^CONFIG_DRM_AMDGPU=y" "${path_config}" && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:gcn1"($|" ")|"graphics:southern-islands"($|" ")) ]] ; then
+ewarn "You are using the radeon driver which doesn't support HDCP."
+ewarn "Consider switching to the amdgpu driver for HDCP support."
+ewarn "For HDCP, use graphics:gcn1-experimental or graphics:southern-islands-experimental instead."
+	fi
+
+	if ! grep -q -E -e "^CONFIG_DRM_AMDGPU=y" "${path_config}" && [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:gcn2"($|" ")|"graphics:sea-islands"($|" ")) ]] ; then
+ewarn "You are using the radeon driver which doesn't support HDCP."
+ewarn "Consider switching to the amdgpu driver for HDCP support."
+ewarn "For HDCP, use graphics:gcn2-experimental or graphics:sea-islands-experimental instead."
+	fi
+
+	if grep -q -E -e "^CONFIG_DRM_NOUVEAU=y" "${path_config}" ; then
+ewarn "You are using the nouveau driver which doesn't support HDCP."
+ewarn "Consider switching to the closed source driver for HDCP support."
+ewarn "For HDCP, use graphics:nvidia-drm or graphics:nvidia-drivers instead."
 	fi
 }
 

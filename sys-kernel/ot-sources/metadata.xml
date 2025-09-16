@@ -1768,8 +1768,12 @@ TBM=0
       graphics:northern-islands
       graphics:southern-islands
       graphics:sea-islands
+      graphics:gcn1
+      graphics:gcn2
 
       graphics:amdgpu
+      graphics:southern-islands-experimental
+      graphics:sea-islands-experimental
       graphics:volcanic-islands
       graphics:artic-islands
       graphics:polaris
@@ -1778,6 +1782,8 @@ TBM=0
       graphics:navi-2x
       graphics:navi-3x
       graphics:navi-4x
+      graphics:gcn1-experimental
+      graphics:gcn2-experimental
       graphics:gcn3
       graphics:gcn4
       graphics:gcn5
