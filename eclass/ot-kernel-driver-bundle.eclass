@@ -8840,7 +8840,9 @@ has_mei_packages() {
 }
 
 # Enable robost fallback for overheating to prevent damage in an infinite loop.
-# If the CPU glitches or malfunctions when overheating, then reboot to mitigate damage.
+# If the CPU glitches or malfunctions when overheating, then reboot to mitigate
+# damage.  If the sensor is damaged, misconfigured, not calibrated, or not
+# detected, then use the hardware watchdog as a fallback.
 ot-kernel-driver-bundle_add_watchdog() {
 	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
