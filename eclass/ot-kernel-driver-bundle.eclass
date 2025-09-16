@@ -8844,7 +8844,7 @@ has_mei_packages() {
 # damage.  If the sensor is damaged, misconfigured, not calibrated, or not
 # detected, then use the hardware watchdog as a fallback.
 ot-kernel-driver-bundle_add_watchdog() {
-	local decade="${1}"
+	local decade=${1}
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_PCI"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG"
