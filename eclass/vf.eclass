@@ -94,8 +94,9 @@ einfo "DoS = Denial of Service"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DF" ]] ; then
 einfo "DF = Double Free"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DP" ]] ; then
-einfo "DP = Dangling Pointer"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DR" ]] ; then
+# DT
+einfo "DR = Data Race"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
@@ -166,6 +167,7 @@ einfo "PI = Prompt Injection"
 einfo "PP = Prototype Pollution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
+# DoS, DT, ID, PE
 einfo "RC = Race Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SA" ]] ; then
