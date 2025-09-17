@@ -1916,6 +1916,9 @@ TBM=0
       For sound, it is also possible to choose based on the model or the driver.
       See the eclass for details.
 
+      Sound card module names:  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L9119
+      Sound card product names:  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L9325
+
       For Wi-Fi, you can quick add one of the following Wi-Fi vendors for the
       preselected driver bundles if you don't know the model:
 
@@ -2144,7 +2147,7 @@ TBM=0
 
       For a list of webcam drivers, see
 
-      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1136
+      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L1419
       https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/media/gspca-cardlist.rst 
 
       TV tuners
@@ -2153,7 +2156,7 @@ TBM=0
 
       For a list of TV tuner drivers, see
 
-      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L4212
+      https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L4677
 
     Examples
 
