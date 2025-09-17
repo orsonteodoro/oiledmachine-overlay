@@ -929,6 +929,7 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
 
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1039,7 +1040,7 @@ ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
-	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
 
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1343,15 +1344,6 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	# Support legacy devices
 	ot-kernel_y_configopt "CONFIG_INTEL_LPC"
 
-	# Security
-	ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
-	ot-kernel_y_configopt "CONFIG_CRYPTO"
-	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_PROCESSOR_SELECT"
-	ot-kernel_y_configopt "CONFIG_X86_SGX"
-	ot-kernel_y_configopt "CONFIG_X86_X2APIC"
-
 	# Virtualization
 	ot-kernel_y_configopt "CONFIG_ACPI"
 	ot-kernel_y_configopt "CONFIG_DRM"
@@ -1388,7 +1380,7 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
-	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
+	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
 
 	ot-kernel_y_configopt "CONFIG_SND"
@@ -1507,6 +1499,7 @@ ot-kernel-driver-bundle_add_optical_drive() {
 	# DVD-RW (1999)
 	# DVD-RAM (1998)
 	# DVD+RW (2001)
+	# Blu-ray (2006)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV"
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR" # 1987 (SCSI CD-ROM)
 	ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -1527,6 +1520,24 @@ ot-kernel-driver-bundle_add_optical_drive() {
 		ot-kernel_y_configopt "CONFIG_BLK_DEV"
 		ot-kernel_y_configopt "CONFIG_SCSI"
 		ot-kernel_y_configopt "CONFIG_CDROM_PKTCDVD"
+	fi
+
+	if [[ "${tags}" =~ "4k-blu-ray" ]] && [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+	# Blu-ray 4K support (2016)
+		ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_PROCESSOR_SELECT"
+		ot-kernel_y_configopt "CONFIG_X86_SGX"
+		ot-kernel_y_configopt "CONFIG_X86_X2APIC"
+# CE, DoS, DT, ID, PE
+ewarn "If you do not update the BIOS, please disable SGX after 4K Blu-ray use."
+ewarn "SGX is known to have vulnerabilities."
+	else
+	# The AI said that kernel disablement is not the best way to neutralize the vulnerabilities.
+	# The best way it to disable it -- it claims is through the BIOS.
+		ot-kernel_unset_configopt "CONFIG_X86_SGX"
 	fi
 }
 
@@ -8893,13 +8904,13 @@ ot-kernel-driver-bundle_add_watchdog() {
 }
 
 ot-kernel-driver-bundle_add_hdcp_support() {
-	# Availability-critical, remote troubleshooting, DRM
+	local tags="${1}"
 	# MEI is used for IT remote troubleshooting on laptops and workstations typically enterprise.
 	# MEI is a big security risk with vulnerability impact vectors of CE, DoS, DT, ID, PE.
 	# MEI is independent of OS, so it cannot be easily disabled just by disabling kernel support.
 	if grep -q -E -e "^CONFIG_DRM_I915=y" "${path_config}" || grep -q -E -e "^CONFIG_DRM_XE=y" "${path_config}" ; then
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI" # Basic support
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME" # Advanced features
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_HDCP" # Allow HDCP 2.2 service compatibility that typically disallow 4K on Linux.
 		ot-kernel_y_configopt "CONFIG_PCI"
 	# We would like to completely disable the HDCP DRM, but we don't disable
@@ -8907,7 +8918,7 @@ ot-kernel-driver-bundle_add_hdcp_support() {
 	# - Anti-Theft feature (for disabling or tracking)
 	# - Blue-ray protection
 	# - Power management
-	# - Remote management
+	# - Remote management and repair
 	# - TPM, PTT, disk encryption, key storage
 	fi
 
