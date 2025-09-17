@@ -9054,6 +9054,15 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:idt"|"sound:integrated-device-technology"|"sound:sigmatel") ]] ; then
+		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+			ot-kernel_y_configopt "CONFIG_SND_HDA"
+			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
+			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+			ot-kernel_y_configopt "CONFIG_SND_PCI"
+		fi
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:intel" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 		if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
@@ -9409,7 +9418,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:azt3328" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AZT3328" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:cirrus-logic-hda-codec" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:cirrus-logic-hda-codec"|"sound:cs4206"|"sound:cs4203"|"sound:cs4208"|"sound:cs4210"|"sound:cs4213") ]] ; then
 		if [[ "${tags}" =~ ("2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
@@ -9458,7 +9467,45 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:sound-blaster-live-dell-oem" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1X" # 2003
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:conexant-hd-audio" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:conexant-hd-audio"|\
+"sound:cx8070"|\
+"sound:cx8200"|\
+"sound:cx11970"|\
+"sound:cx20549"|\
+"sound:cx20551"|\
+"sound:cx20561"|\
+"sound:cx20582"|\
+"sound:cx20583"|\
+"sound:cx20584"|\
+"sound:cx20585"|\
+"sound:cx20588"|\
+"sound:cx20590"|\
+"sound:cx20631"|\
+"sound:cx20632"|\
+"sound:cx20641"|\
+"sound:cx20642"|\
+"sound:cx20651"|\
+"sound:cx20652"|\
+"sound:cx20664"|\
+"sound:cx20665"|\
+"sound:cx21722:"|\
+"sound:cx20722"|\
+"sound:cx21724"|\
+"sound:cx20724"|\
+"sound:cx20751"|\
+"sound:cx20752"|\
+"sound:cx20751"|\
+"sound:cx20752"|\
+"sound:cx20753"|\
+"sound:cx20754"|\
+"sound:cx20755"|\
+"sound:cx20756"|\
+"sound:cx20757"|\
+"sound:cx20952"|\
+"sound:sn6140"|\
+"sound:sn6180"\
+) ]] ; then
 		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
@@ -9472,7 +9519,109 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:fuji"|"sound:pinnacle") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_MSND_PINNACLE" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:idt"|"sound:integrated-device-technology"|"sound:sigmatel") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:92hd206x"|\
+"sound:92hd206d"|\
+"sound:92hd75b3x5"|\
+"sound:92hd83c1x5"|\
+"sound:92hd83c1c5"|\
+"sound:92hd81b1x5"|\
+"sound:92hd81b1c5"|\
+"sound:92hd87b1"|\
+"sound:92hd87b3"|\
+"sound:92hd87b2"|\
+"sound:92hd87b4"|\
+"sound:92hd88b3"|\
+"sound:92hd88b1"|\
+"sound:92hd88b2"|\
+"sound:92hd88b4"|\
+"sound:92hd75b2x5"|\
+"sound:92hd73d1x5"|\
+"sound:92hd73c1x5"|\
+"sound:92hd73e1x5"|\
+"sound:92hd95"|\
+"sound:92hd66b1x5"|\
+"sound:92hd66b2x5"|\
+"sound:92hd66b3x5"|\
+"sound:92hd66c1x5"|\
+"sound:92hd66c2x5"|\
+"sound:92hd66c3x5"|\
+"sound:92hd66b1x3"|\
+"sound:92hd66b2x3"|\
+"sound:92hd66b3x3"|\
+"sound:92hd66c1x3"|\
+"sound:92hd66c2x3"|\
+"sound:92hd66c3"|\
+"sound:92hd66c365"|\
+"sound:92hd71b8x"|\
+"sound:92hd71b8x"|\
+"sound:92hd71b7x"|\
+"sound:92hd71b7x"|\
+"sound:92hd71b6x"|\
+"sound:92hd71b6x"|\
+"sound:92hd71b5x"|\
+"sound:92hd71b5x"|\
+"sound:92hd89c3"|\
+"sound:92hd89c2"|\
+"sound:92hd89c1"|\
+"sound:92hd89b3"|\
+"sound:92hd89b2"|\
+"sound:92hd89b1"|\
+"sound:92hd89e3"|\
+"sound:92hd89e2"|\
+"sound:92hd89e1"|\
+"sound:92hd89d3"|\
+"sound:92hd89d2"|\
+"sound:92hd89d1"|\
+"sound:92hd89f3"|\
+"sound:92hd89f2"|\
+"sound:92hd89f1"|\
+"sound:92hd93bxx"|\
+"sound:92hd91bxx"|\
+"sound:92hd98bxx"|\
+"sound:92hd99bxx"|\
+"sound:92hd90bxx"|\
+"sound:cxd9872rd"|\
+"sound:cxd9872rk"|\
+"sound:cxd9872akd"|\
+"sound:stac9200"|\
+"sound:stac9220"|\
+"sound:stac9221"|\
+"sound:stac9220"|\
+"sound:stac9220d"|\
+"sound:stac9223d"|\
+"sound:stac9221"|\
+"sound:stac9221d"|\
+"sound:stac9227"|\
+"sound:stac92hd700"|\
+"sound:stac9228"|\
+"sound:stac9229"|\
+"sound:stac9274"|\
+"sound:stac9274d"|\
+"sound:stac9273x"|\
+"sound:stac9273d"|\
+"sound:stac9272x"|\
+"sound:stac9272d"|\
+"sound:stac9271x"|\
+"sound:stac9271d"|\
+"sound:stac9274x5nh"|\
+"sound:stac9274d5nh"|\
+"sound:stac9202"|\
+"sound:stac9202d"|\
+"sound:stac9250"|\
+"sound:stac9250d"|\
+"sound:stac9251"|\
+"sound:stac9250d"|\
+"sound:stac9872ak"|\
+"sound:stac9205"|\
+"sound:stac9205d"|\
+"sound:stac9204"|\
+"sound:stac9204d"|\
+"sound:stac9255"|\
+"sound:stac9255d"|\
+"sound:stac9254"|\
+"sound:stac9254d"\
+) ]] ; then
 		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005

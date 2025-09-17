@@ -1894,6 +1894,8 @@ TBM=0
       sound:aztech
       sound:cirrus-logic
       sound:creative
+      sound:idt
+      sound:integrated-device-technology
       sound:dell
       sound:dynasonic
       sound:ensoniq
@@ -1908,6 +1910,7 @@ TBM=0
       sound:realtek
       sound:s3
       sound:sis
+      sound:sigmatel
       sound:trident
       sound:turtle-beach
       sound:via
