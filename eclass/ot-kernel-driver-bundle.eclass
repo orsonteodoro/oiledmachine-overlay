@@ -8900,7 +8900,7 @@ ot-kernel-driver-bundle_add_hdcp_support() {
 	if grep -q -E -e "^CONFIG_DRM_I915=y" "${path_config}" || grep -q -E -e "^CONFIG_DRM_XE=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI"
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
-		ot-kernel_y_configopt "CONFIG_INTEL_MEI_HDCP" # Allow useless 4K support.  Only 720p or 1080p allowed on Linux.
+		ot-kernel_y_configopt "CONFIG_INTEL_MEI_HDCP" # Allow useless 4K support.  Services only allow 720p or 1080p for Linux.
 		ot-kernel_y_configopt "CONFIG_PCI"
 	# We would like to completely disable the HDCP DRM, but we don't disable
 	# because other features below depend on the above symbols:
