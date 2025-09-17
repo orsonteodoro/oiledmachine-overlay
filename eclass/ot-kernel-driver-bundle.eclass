@@ -8903,7 +8903,7 @@ ot-kernel-driver-bundle_add_hdcp_support() {
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_HDCP" # Allow useless 4K support.  Only 720p or 1080p allowed on Linux.
 		ot-kernel_y_configopt "CONFIG_PCI"
 	# We would like to completely disable the HDCP DRM, but we don't disable
-	# because other features depend on it:
+	# because other features depend on the above symbols:
 	# - Anti-Theft feature (for disabling or tracking)
 	# - Blue-ray protection
 	# - Power management
@@ -8918,7 +8918,7 @@ ot-kernel-driver-bundle_add_hdcp_support() {
 		fi
 ewarn "For HDCP support on AMDGPU:  \`xrandr --output <OUTPUT_NAME> --set \"Content Protection\" \"Enabled\"\` replacing <OUTPUT_NAME> with either DP-1 or HDMI-1."
 	# We would like to completely disable HDCP DRM, but we don't disable
-	# because other features depend on these features:
+	# because other features depend on the above symbols:
 	# - Color management
 	# - DisplayPort support
 	# - FreeSync or tear-free support
