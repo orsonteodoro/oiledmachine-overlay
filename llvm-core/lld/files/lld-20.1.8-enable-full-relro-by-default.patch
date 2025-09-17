@@ -1,0 +1,30 @@
+# oteodoro changes:
+# Patch status:  testing
+# Changed from Partial RELRO to Full RELRO
+# For use in the hardened profile
+
+License header of ELF/Driver.cpp:
+
+//===- Driver.cpp ---------------------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+--- lld/ELF/Driver.cpp.orig	2025-07-08 16:06:32.000000000 -0700
++++ lld/ELF/Driver.cpp	2025-09-17 15:49:45.505098330 -0700
+@@ -1517,10 +1517,10 @@ static void readConfigs(Ctx &ctx, opt::I
+   ctx.arg.zNodefaultlib = hasZOption(args, "nodefaultlib");
+   ctx.arg.zNodelete = hasZOption(args, "nodelete");
+   ctx.arg.zNodlopen = hasZOption(args, "nodlopen");
+-  ctx.arg.zNow = getZFlag(args, "now", "lazy", false);
++  ctx.arg.zNow = getZFlag(args, "now", "lazy", true);          // Changed by oteodoro to enable Full RELRO by default
+   ctx.arg.zOrigin = hasZOption(args, "origin");
+   ctx.arg.zPacPlt = hasZOption(args, "pac-plt");
+-  ctx.arg.zRelro = getZFlag(args, "relro", "norelro", true);
++  ctx.arg.zRelro = getZFlag(args, "relro", "norelro", false);  // Changed by oteodoro to enable Full RELRO by default
+   ctx.arg.zRetpolineplt = hasZOption(args, "retpolineplt");
+   ctx.arg.zRodynamic = hasZOption(args, "rodynamic");
+   ctx.arg.zSeparate = getZSeparate(args);

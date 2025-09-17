@@ -187,18 +187,18 @@ eapply_hardened() {
 ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
 	local hardened_flags=""
 	if use default-full-relro ; then
-		eapply "${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
+		eapply "${FILESDIR}/lld-20.1.8-enable-full-relro-by-default.patch"
 		hardened_flags="Full RELRO"
 	fi
 	if use default-no-relro ; then
-		eapply "${FILESDIR}/clang-12.0.1-disable-relro-by-default.patch"
+		eapply "${FILESDIR}/lld-20.1.8-disable-relro-by-default.patch"
 		hardened_flags="NO RELRO"
 	fi
 	if use default-partial-relro ; then
 		hardened_flags="Partial RELRO"
 	fi
 	if use hardened || use hardened-compat ; then
-		eapply "${FILESDIR}/clang-12.0.1-version-info.patch"
+		eapply "${FILESDIR}/lld-20.1.8-version-info.patch"
 		sed -i -e "s|__HARDENED_FLAGS__|${hardened_flags}|g" \
 			"ELF/Driver.cpp" || die
 	fi
