@@ -9383,10 +9383,11 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:sound-blaster-audigy-rx"|\
 "sound:sound-blaster-live"|\
 "sound:sound-blaster-live-5.1"|\
+"sound:sound-blaster-live-5.1-dell-oem"|
 "sound:sound-blaster-live-value"|\
-"sound:sound-blaster-pci-512"\
+"sound:sound-blaster-pci-512"|\
 ) ]] ; then
-	# For the Dell OEM version use sound:sound-blaster-live-dell-oem instead.
+	# See also the sound:sound-blaster-live-dell-oem
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:8x0") ]] ; then
@@ -9530,7 +9531,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:sound-blaster-live-dell-oem" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:sound-blaster-live-dell-oem"|"sound:dell-sound-blaster-live") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1X" # 2003
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
