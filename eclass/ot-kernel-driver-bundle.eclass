@@ -8905,9 +8905,9 @@ ot-kernel-driver-bundle_add_watchdog() {
 
 ot-kernel-driver-bundle_add_hdcp_support() {
 	local tags="${1}"
-	# MEI is used for IT remote troubleshooting on laptops and workstations typically enterprise.
+	# MEI is used for enterprise IT remote troubleshooting on laptops and workstations.
 	# MEI is a big security risk with vulnerability impact vectors of CE, DoS, DT, ID, PE.
-	# MEI is independent of OS, so it cannot be easily disabled just by disabling kernel support.
+	# ME has an independent OS and doesn't depend on the user's operating system, so it cannot be easily disabled just by disabling kernel support.
 	if grep -q -E -e "^CONFIG_DRM_I915=y" "${path_config}" || grep -q -E -e "^CONFIG_DRM_XE=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI" # Basic support
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME" # Advanced features
