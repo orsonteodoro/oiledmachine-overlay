@@ -209,8 +209,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20.18.0-lto-update.patch"
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-23.5.0-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-20.18.1-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-20.19.5-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-20.19.5-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {

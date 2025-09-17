@@ -1,0 +1,28 @@
+diff '--color=auto' -urpN node-v20.19.5.orig/configure.py node-v20.19.5/configure.py
+--- node-v20.19.5.orig/configure.py	2025-09-16 18:30:07.829912503 -0700
++++ node-v20.19.5/configure.py	2025-09-16 18:31:10.733597888 -0700
+@@ -586,6 +586,12 @@ parser.add_argument('--experimental-enab
+     default=None,
+     help='[Experimental] Enable V8 pointer compression (limits max heap to 4GB and breaks ABI compatibility)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--disable-shared-readonly-heap',
+     action='store_true',
+     dest='disable_shared_ro_heap',
+@@ -1657,7 +1663,10 @@ def configure_v8(o):
+   # Until we manage to get rid of all those, v8_enable_sandbox cannot be used.
+   # Note that enabling pointer compression without enabling sandbox is unsupported by V8,
+   # so this can be broken at any time.
+-  o['variables']['v8_enable_sandbox'] = 0
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   o['variables']['v8_enable_pointer_compression_shared_cage'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_external_code_space'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
