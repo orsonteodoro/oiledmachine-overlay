@@ -8913,6 +8913,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
@@ -8964,6 +8965,12 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:asus" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
+		if [[ "${tags}" =~ ("2010") ]] ; then
+			ot-kernel_y_configopt "CONFIG_SND_HDA"
+			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
+			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:ati" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ATIIXP" # 2003
@@ -8983,6 +8990,14 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CS8409" # 2016
+			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+		fi
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:cmedia" ]] ; then
+		if [[ "${tags}" =~ ("2010") ]] ; then
+			ot-kernel_y_configopt "CONFIG_SND_HDA"
+			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		fi
@@ -9224,6 +9239,14 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-cmedia" ]] ; then
+		if [[ "${tags}" =~ ("2010") ]] ; then
+			ot-kernel_y_configopt "CONFIG_SND_HDA"
+			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
+			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+		fi
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-conexant" ]] ; then
 		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
@@ -9369,7 +9392,12 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:8x0") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:7018"|"sound:4d-wave"|"sound:4d-wave-dx"|"sound:4d-wave-nx") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:7018"|\
+"sound:4d-wave"|\
+"sound:4d-wave-dx"|\
+"sound:4d-wave-nx"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_TRIDENT" # 1997
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:1212io") ]] ; then
@@ -9396,10 +9424,18 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:audiopci"|"sound:audiopci-1370") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:audiopci"|"sound:audiopci-1371"|"sound:audiopci-1373") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:audiopci"|\
+"sound:audiopci-1371"|\
+"sound:audiopci-1373"\
+	) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:azalia"|"sound:hda"|"sound:high-definition-audio") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:azalia"|\
+"sound:hda"|\
+"sound:high-definition-audio"\
+	) ]] ; then
 		if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9418,7 +9454,14 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:azt3328" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AZT3328" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:cirrus-logic-hda-codec"|"sound:cs4206"|"sound:cs4203"|"sound:cs4208"|"sound:cs4210"|"sound:cs4213") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:cirrus-logic-hda-codec"|\
+"sound:cs4203"|\
+"sound:cs4206"|\
+"sound:cs4208"|\
+"sound:cs4210"|\
+"sound:cs4213"\
+) ]] ; then
 		if [[ "${tags}" =~ ("2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
@@ -9429,16 +9472,39 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:cs4231" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_CS4231" #
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:cs4232"|"sound:cs4236"|"sound:cs4236+") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:cs4232"|\
+"sound:cs4236"|\
+"sound:cs4236+"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_CS4236" # 1996
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:cs4281"|"sound:sound-fusion") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:cs4281"|\
+"sound:sound-fusion"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_CS4281" # 2001
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:cs46xx"|"sound:sound-fusion"|"sound:cs4280"|"sound:cs461x"|"sound:cs462x"|"sound:cs463x") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:sound-fusion"|\
+"sound:cs4280"|\
+"sound:cs46xx"|\
+"sound:cs461x"|\
+"sound:cs462x"|\
+"sound:cs463x"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_CS46XX" # 1998
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:cirrus-logic-hda-bridge"|"sound:cs8409") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:cirrus-logic-hda-bridge"|\
+"sound:cs8409"|\
+"sound:cs4206"|\
+"sound:cs4207"|\
+"sound:cs4208"|\
+"sound:cs4210"|\
+"sound:cs4213"|\
+"sound:cs42l42"\
+) ]] ; then
 		if [[ "${tags}" =~ ("2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CS8409" # 2016
@@ -9446,7 +9512,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		fi
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:ca0110-ibg" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:ca0110-ibg"|"sound:sb0880"|"sound:sb0880-x-fi") ]] ; then
 		if [[ "${tags}" =~ ("late-2000") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2005
@@ -9513,6 +9579,19 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		fi
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:cm9825"|\
+"sound:cmedia-hd-audio"\
+"sound:cmi8888"|\
+"sound:cmi9880"|\
+) ]] ; then
+		if [[ "${tags}" =~ ("2010") ]] ; then
+			ot-kernel_y_configopt "CONFIG_SND_HDA"
+			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
+			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
+			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
+		fi
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:fm-card" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ADLIB" # 1987
 	fi
@@ -9520,8 +9599,29 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND_MSND_PINNACLE" # 1997
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
-"sound:92hd206x"|\
 "sound:92hd206d"|\
+"sound:92hd206x"|\
+"sound:92hd66b1x3"|\
+"sound:92hd66b1x5"|\
+"sound:92hd66b2x3"|\
+"sound:92hd66b2x5"|\
+"sound:92hd66b3x3"|\
+"sound:92hd66b3x5"|\
+"sound:92hd66c1x3"|\
+"sound:92hd66c1x5"|\
+"sound:92hd66c2x3"|\
+"sound:92hd66c2x5"|\
+"sound:92hd66c3"|\
+"sound:92hd66c365"|\
+"sound:92hd66c3x5"|\
+"sound:92hd71b5x"|\
+"sound:92hd71b6x"|\
+"sound:92hd71b7x"|\
+"sound:92hd71b8x"|\
+"sound:92hd73d1x5"|\
+"sound:92hd73c1x5"|\
+"sound:92hd73e1x5"|\
+"sound:92hd75b2x5"|\
 "sound:92hd75b3x5"|\
 "sound:92hd83c1x5"|\
 "sound:92hd83c1c5"|\
@@ -9535,92 +9635,64 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:92hd88b1"|\
 "sound:92hd88b2"|\
 "sound:92hd88b4"|\
-"sound:92hd75b2x5"|\
-"sound:92hd73d1x5"|\
-"sound:92hd73c1x5"|\
-"sound:92hd73e1x5"|\
 "sound:92hd95"|\
-"sound:92hd66b1x5"|\
-"sound:92hd66b2x5"|\
-"sound:92hd66b3x5"|\
-"sound:92hd66c1x5"|\
-"sound:92hd66c2x5"|\
-"sound:92hd66c3x5"|\
-"sound:92hd66b1x3"|\
-"sound:92hd66b2x3"|\
-"sound:92hd66b3x3"|\
-"sound:92hd66c1x3"|\
-"sound:92hd66c2x3"|\
-"sound:92hd66c3"|\
-"sound:92hd66c365"|\
-"sound:92hd71b8x"|\
-"sound:92hd71b8x"|\
-"sound:92hd71b7x"|\
-"sound:92hd71b7x"|\
-"sound:92hd71b6x"|\
-"sound:92hd71b6x"|\
-"sound:92hd71b5x"|\
-"sound:92hd71b5x"|\
-"sound:92hd89c3"|\
-"sound:92hd89c2"|\
-"sound:92hd89c1"|\
-"sound:92hd89b3"|\
-"sound:92hd89b2"|\
 "sound:92hd89b1"|\
-"sound:92hd89e3"|\
-"sound:92hd89e2"|\
-"sound:92hd89e1"|\
-"sound:92hd89d3"|\
-"sound:92hd89d2"|\
+"sound:92hd89b2"|\
+"sound:92hd89b3"|\
+"sound:92hd89c1"|\
+"sound:92hd89c2"|\
+"sound:92hd89c3"|\
 "sound:92hd89d1"|\
+"sound:92hd89d2"|\
+"sound:92hd89d3"|\
+"sound:92hd89e1"|\
+"sound:92hd89e2"|\
+"sound:92hd89e3"|\
 "sound:92hd89f3"|\
 "sound:92hd89f2"|\
 "sound:92hd89f1"|\
-"sound:92hd93bxx"|\
+"sound:92hd90bxx"|\
 "sound:92hd91bxx"|\
+"sound:92hd93bxx"|\
 "sound:92hd98bxx"|\
 "sound:92hd99bxx"|\
-"sound:92hd90bxx"|\
 "sound:cxd9872rd"|\
 "sound:cxd9872rk"|\
 "sound:cxd9872akd"|\
 "sound:stac9200"|\
-"sound:stac9220"|\
-"sound:stac9221"|\
-"sound:stac9220"|\
-"sound:stac9220d"|\
-"sound:stac9223d"|\
-"sound:stac9221"|\
-"sound:stac9221d"|\
-"sound:stac9227"|\
-"sound:stac92hd700"|\
-"sound:stac9228"|\
-"sound:stac9229"|\
-"sound:stac9274"|\
-"sound:stac9274d"|\
-"sound:stac9273x"|\
-"sound:stac9273d"|\
-"sound:stac9272x"|\
-"sound:stac9272d"|\
-"sound:stac9271x"|\
-"sound:stac9271d"|\
-"sound:stac9274x5nh"|\
-"sound:stac9274d5nh"|\
 "sound:stac9202"|\
 "sound:stac9202d"|\
+"sound:stac9204"|\
+"sound:stac9204d"|\
+"sound:stac9205"|\
+"sound:stac9205d"|\
+"sound:stac9220"|\
+"sound:stac9220d"|\
+"sound:stac9221"|\
+"sound:stac9221d"|\
+"sound:stac9223d"|\
+"sound:stac9227"|\
+"sound:stac9228"|\
+"sound:stac9229"|\
 "sound:stac9250"|\
 "sound:stac9250d"|\
 "sound:stac9251"|\
-"sound:stac9250d"|\
-"sound:stac9872ak"|\
-"sound:stac9205"|\
-"sound:stac9205d"|\
-"sound:stac9204"|\
-"sound:stac9204d"|\
-"sound:stac9255"|\
-"sound:stac9255d"|\
 "sound:stac9254"|\
 "sound:stac9254d"\
+"sound:stac9255"|\
+"sound:stac9255d"|\
+"sound:stac9271d"|\
+"sound:stac9271x"|\
+"sound:stac9272d"|\
+"sound:stac9272x"|\
+"sound:stac9273d"|\
+"sound:stac9273x"|\
+"sound:stac9274"|\
+"sound:stac9274d"|\
+"sound:stac9274d5nh"|\
+"sound:stac9274x5nh"|\
+"sound:stac92hd700"|\
+"sound:stac9872ak"|\
 ) ]] ; then
 		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
@@ -9630,10 +9702,22 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:interwave-stb"|"sound:med3210"|"sound:pca761aw"|"sound:ultrasound-plug-and-play") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:interwave-stb"|\
+"sound:med3210"|\
+"sound:pca761aw"|\
+"sound:ultrasound-plug-and-play"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:ixp"|"sound:ixp-150"|"sound:ixp-200"|"sound:ixp-250"|"sound:ixp-300"|"sound:ixp-400") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:ixp"|\
+"sound:ixp-150"|\
+"sound:ixp-200"|\
+"sound:ixp-250"|\
+"sound:ixp-300"|\
+"sound:ixp-400"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ATIIXP" # 2003
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:lenovo" ]] ; then
@@ -9647,10 +9731,18 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:m5451" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ALI5451" # 2001
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:maui"|"sound:tropez"|"sound:tropez+"|"sound:wavefront") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:maui"|\
+"sound:tropez"|\
+"sound:tropez+"|\
+"sound:wavefront") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:multisound-classic"|"sound:monterey"|"sound:tahiti") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:multisound-classic"|\
+"sound:monterey"|\
+"sound:tahiti"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_MSND_CLASSIC" # 1991
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:realtek-hd-audio") ]] ; then
@@ -9663,13 +9755,27 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:sonicvibes" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_SONICVIBES" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:sound-blaster-1.0"|"sound:sound-blaster-2.0"|"sound:sound-blaster-pro") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:sound-blaster-1.0"|\
+"sound:sound-blaster-2.0"|\
+"sound:sound-blaster-pro"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_SB8" # 1989
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:sound-blaster-16"|"sound:sound-blaster-16-pnp") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:sound-blaster-16"|\
+"sound:sound-blaster-16-pnp"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:sound-blaster-awe"|"sound:sound-blaster-awe-pnp"|"sound:sound-blaster-awe-32"|"sound:sound-blaster-awe-64"|"sound:sound-blaster-awe-32-pnp"|"sound:sound-blaster-awe-64-pnp") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:sound-blaster-awe"|\
+"sound:sound-blaster-awe-pnp"|\
+"sound:sound-blaster-awe-32"|\
+"sound:sound-blaster-awe-64"|\
+"sound:sound-blaster-awe-32-pnp"|\
+"sound:sound-blaster-awe-64-pnp"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:sound-blaster-x-fi" ]] ; then
@@ -9687,13 +9793,42 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:ultrasound-max" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:via82xx"|"sound:via8233"|"sound:via8235") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:via82xx"|\
+"sound:via8233"|\
+"sound:via8235"\
+	) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:virtuoso"|"sound:virtuoso-66"|"sound:virtuoso-100"|"sound:virtuoso-200") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:virtuoso"|\
+"sound:virtuoso-66"|\
+"sound:virtuoso-100"|\
+"sound:virtuoso-200"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:vt1708"|"sound:via-hd-audio") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:via-hd-audio"|\
+"sound:vt1702"|\
+"sound:vt1705"|\
+"sound:vt1705cf"|\
+"sound:vt1708sce"|\
+"sound:vt1708"|\
+"sound:vt1708b"|\
+"sound:vt1708s"|\
+"sound:vt1709"|\
+"sound:vt1708s"|\
+"sound:vt1716s"|\
+"sound:vt1718s"|\
+"sound:vt1802"|\
+"sound:vt1808"|\
+"sound:vt1812"|\
+"sound:vt1818s"|\
+"sound:vt1828s"|\
+"sound:vt2002p"|\
+"sound:vt2020"\
+) ]] ; then
 		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
@@ -9704,7 +9839,14 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:opl3"|"sound:opl3-sa2"|"sound:opl3-sa3") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_OPL3SA2" # 1995
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:ymf724"|"sound:ymf724f"|"sound:ymf740"|"sound:ymf740c"|"sound:ymf744"|"sound:ymf754") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:ymf724"|\
+"sound:ymf724f"|\
+"sound:ymf740"|\
+"sound:ymf740c"|\
+"sound:ymf744"|\
+"sound:ymf754"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	fi
 
