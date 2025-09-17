@@ -8825,7 +8825,7 @@ ot-kernel-driver-bundle_add_sound() {
 	fi
 
 	ot-kernel-driver-bundle_add_sound_by_decade
-	ot-kernel-driver-bundle_add_sound_by_model
+	ot-kernel-driver-bundle_add_sound_by_vendor_name
 	ot-kernel-driver-bundle_add_sound_by_module_name
 	ot-kernel-driver-bundle_add_sound_by_product_name
 }
@@ -8939,7 +8939,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 	ot-kernel-driver-bundle_add_midi_playback_support
 }
 
-ot-kernel-driver-bundle_add_sound_by_model() {
+ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:adlib" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ADLIB" # 1987
 	fi
