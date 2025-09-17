@@ -1533,7 +1533,7 @@ ot-kernel-driver-bundle_add_optical_drive() {
 		ot-kernel_y_configopt "CONFIG_X86_X2APIC"
 # CE, DoS, DT, ID, PE
 ewarn "If you do not update the BIOS, please disable SGX after 4K Blu-ray use."
-ewarn "SGX is known to have vulnerabilities."
+ewarn "SGX is known to have vulnerabilities and may be exploited over network."
 	else
 	# The AI said that kernel disablement is not the best way to neutralize the vulnerabilities.
 	# The best way it to disable it -- it claims is through the BIOS.
