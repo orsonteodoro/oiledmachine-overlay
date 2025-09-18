@@ -3526,7 +3526,7 @@ ewarn "=x11-drivers/nvidia-drivers-390*:  3.10.x - 5.19.x"
 ewarn
 ewarn "To make this message disappear, either"
 ewarn
-ewarn "1. Set the proper sm_xx value or codename"
+ewarn "1. Set the proper graphics:sm_xx or graphics:codename value"
 ewarn "2. Switch to graphics:nouveau"
 ewarn
 		fi
