@@ -1793,10 +1793,60 @@ TBM=0
       graphics:gcn3
       graphics:gcn4
       graphics:gcn5
+      graphics:cdna1
+      graphics:cdna2
+      graphics:cdna3
       graphics:rdna
       graphics:rdna2
       graphics:rdna3
       graphics:rdna4
+      graphics:gfx600
+      graphics:gfx601
+      graphics:gfx602
+      graphics:gfx700
+      graphics:gfx701
+      graphics:gfx702
+      graphics:gfx703
+      graphics:gfx704
+      graphics:gfx705
+      graphics:gfx801
+      graphics:gfx802
+      graphics:gfx803
+      graphics:gfx805
+      graphics:gfx810
+      graphics:gfx900
+      graphics:gfx902
+      graphics:gfx904
+      graphics:gfx906
+      graphics:gfx908
+      graphics:gfx909
+      graphics:gfx90a
+      graphics:gfx90c
+      graphics:gfx942
+      graphics:gfx950
+      graphics:gfx1010
+      graphics:gfx1011
+      graphics:gfx1012
+      graphics:gfx1013
+      graphics:gfx1030
+      graphics:gfx1031
+      graphics:gfx1032
+      graphics:gfx1033
+      graphics:gfx1034
+      graphics:gfx1035
+      graphics:gfx1036
+      graphics:gfx1100
+      graphics:gfx1101
+      graphics:gfx1102
+      graphics:gfx1103
+      graphics:gfx1150
+      graphics:gfx1151
+      graphics:gfx1152
+      graphics:gfx1153
+      graphics:gfx1200
+      graphics:gfx1201
+      graphics:gfx1250
+      graphics:gfx1251
 
       graphics:i915
       graphics:830m
@@ -1865,8 +1915,50 @@ TBM=0
 
       graphics:efifb
 
+      For graphics:nvidia-drivers, it is recommended to use the
+      graphics:<sm_xxx> or graphics:<codename> instead to verify correctness
+      between the driver version, the kernel version, and the microarchitecture.
+
       graphics:nvidia-drm
       graphics:nvidia-drivers
+      graphics:tesla
+      graphics:fermi
+      graphics:kepler
+      graphics:maxwell
+      graphics:pascal
+      graphics:volta
+      graphics:turing
+      graphics:ampere
+      graphics:ada-lovelace
+      graphics:hopper
+      graphics:blackwell
+      graphics:sm_20
+      graphics:sm_21
+      graphics:sm_30
+      graphics:sm_32
+      graphics:sm_35
+      graphics:sm_37
+      graphics:sm_50
+      graphics:sm_52
+      graphics:sm_53
+      graphics:sm_60
+      graphics:sm_61
+      graphics:sm_62
+      graphics:sm_70
+      graphics:sm_72
+      graphics:sm_75
+      graphics:sm_80
+      graphics:sm_86
+      graphics:sm_87
+      graphics:sm_89
+      graphics:sm_90
+      graphics:sm_90a
+      graphics:sm_100
+      graphics:sm_100a
+      graphics:sm_101
+      graphics:sm_101a
+      graphics:sm_120
+      graphics:sm_120a
 
       For sound, you can quickly choose based on the decade.  The trade off
       is more build time and wasted space.

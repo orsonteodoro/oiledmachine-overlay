@@ -3306,7 +3306,7 @@ ewarn "=x11-drivers/nvidia-drivers-390*:  3.10.x - 5.19.x"
 ewarn
 ewarn "To make this message disappear, either"
 ewarn
-ewarn "1. Set the proper graphics:sm_xx or graphics:codename value"
+ewarn "1. Set the proper graphics:<sm_xxx> or graphics:<codename> value"
 ewarn "2. Switch to graphics:nouveau"
 ewarn "3. Hard mask the incompatible versions and emerge the proper x11-drivers/nvidia-drivers driver major version immediately after this kernel is installed"
 ewarn
