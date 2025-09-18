@@ -3532,6 +3532,7 @@ ewarn "To make this message disappear, either"
 ewarn
 ewarn "1. Set the proper graphics:sm_xx or graphics:codename value"
 ewarn "2. Switch to graphics:nouveau"
+ewarn "3. Emerge the proper x11-drivers/nvidia-drivers major driver version and hard mask the incompatible versions"
 ewarn
 		fi
 	fi
