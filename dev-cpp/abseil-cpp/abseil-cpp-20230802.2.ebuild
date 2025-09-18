@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake-multilib flag-o-matic python-any-r1
+inherit cflags-hardened cmake-multilib flag-o-matic python-any-r1
 
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
@@ -26,7 +26,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV%%.*}"
 IUSE+="
 +cxx17 test -test-helpers
-ebuild_revision_12
+ebuild_revision_13
 "
 BDEPEND+="
 	${PYTHON_DEPS}
