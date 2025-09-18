@@ -103,6 +103,7 @@ GLIB_VERSIONS=(
 	"2.82.5"
 )
 GOBJECT_INTROSPECTION_VERSIONS=(
+	"1.84"
 	"1.82"
 )
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
