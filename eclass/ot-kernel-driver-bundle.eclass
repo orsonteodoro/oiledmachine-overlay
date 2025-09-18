@@ -3324,7 +3324,7 @@ ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
 		disable_efi=1
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:atyfb"|"graphics:mach64"|"graphics:mach"($|" ")|"graphics:rage-pro") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:3d-rage"|"graphics:atyfb"|"graphics:mach64"|"graphics:mach"($|" ")|"graphics:rage-pro") ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_ATY"
 		disable_efi=1
@@ -3386,7 +3386,7 @@ ot-kernel-driver-bundle_add_graphics_fb_by_driver_name() {
 		disable_efi=1
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:vesafb"|"graphics:vesa"|"graphics:wonder"|"graphics:3d-rage") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:vesafb"|"graphics:vesa"|"graphics:wonder") ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_VESA" # 1994
 		disable_efi=1

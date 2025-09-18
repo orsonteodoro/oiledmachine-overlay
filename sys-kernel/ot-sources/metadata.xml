@@ -1873,6 +1873,7 @@ TBM=0
       graphics:mach
 
       graphics:atyfb
+      graphics:3d-rage
       graphics:mach64
       graphics:mach      
       graphics:rage-pro
@@ -1908,7 +1909,6 @@ TBM=0
       graphics:vesafb
       graphics:vesa
       graphics:wonder
-      graphics:3d-rage
 
       graphics:simplefb
       graphics:simpledrm
