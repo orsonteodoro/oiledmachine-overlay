@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 GST_PLUGINS_BUILD_DIR="webrtc webrtcdsp"
-GST_PLUGINS_ENABLED="webrtc webrtcdsp"
+GST_PLUGINS_ENABLED="dtls sctp srtp webrtc webrtcdsp"
 
 inherit cflags-hardened gstreamer-meson
 
@@ -17,7 +17,9 @@ IUSE="
 ebuild_revision_13
 "
 RDEPEND="
+	~media-plugins/gst-plugins-dtls-${PV}:1.0[${MULTILIB_USEDEP}]
 	~media-plugins/gst-plugins-sctp-${PV}:1.0[${MULTILIB_USEDEP}]
+	~media-plugins/gst-plugins-srtp-${PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
 	>=net-libs/libnice-0.1.20[${MULTILIB_USEDEP}]
 "
