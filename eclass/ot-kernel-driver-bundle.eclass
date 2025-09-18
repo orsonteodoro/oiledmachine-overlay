@@ -3510,6 +3510,7 @@ ot-kernel-driver-bundle_add_home_theater_remote() {
 	fi
 }
 
+# It goes after ot-kernel-driver-bundle_add_sound.
 ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
 	local tags="${1}"
 	if [[ "${tags}" =~ "hid" ]] ; then
@@ -3520,6 +3521,12 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
 	if [[ "${tags}" =~ "gameport" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981, 15 pin
+		if grep -q -E -e "^CONFIG_SND_EMU10K1=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_GAMEPORT_EMU10K1" # 1998
+		fi
+		if grep -q -E -e "^CONFIG_SND_FM801=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_GAMEPORT_FM801" # 1998
+		fi
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class
@@ -8816,7 +8823,7 @@ ot-kernel-driver-bundle_add_sound() {
 	if [[ "${tags}" =~ "isa"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ISA" # 1981
 	fi
-	if [[ "${tags}" =~ "pci"($|" ") ]] ; then
+	if [[ "${tags}" =~ "pci" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 	fi
 
@@ -8828,6 +8835,28 @@ ot-kernel-driver-bundle_add_sound() {
 	ot-kernel-driver-bundle_add_sound_by_vendor_name
 	ot-kernel-driver-bundle_add_sound_by_module_name
 	ot-kernel-driver-bundle_add_sound_by_product_name
+
+	if \
+		   grep -q -E -e "^CONFIG_SND_HDA_CODEC_REALTEK=(m|y)" "${path_config}" \
+	; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+	fi
+
+	if \
+		   grep -q -E -e "^CONFIG_SND_EMU10K1=(m|y)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_SND_ALI5451=(m|y)" "${path_config}" \
+	; then
+		ot-kernel_y_configopt "CONFIG_ZONE_DMA"
+	fi
+
+	if \
+		   grep -q -E -e "^CONFIG_SND_AZT2320=(m|y)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_SND_AZT3328=(m|y)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_SND_INTERWAVE_STB=(m|y)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_SND_INTERWAVE=(m|y)" "${path_config}" \
+	; then
+		ot-kernel_y_configopt "CONFIG_PNP" # 1995
+	fi
 }
 
 ot-kernel-driver-bundle_add_sound_by_decade() {
@@ -8840,7 +8869,6 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	fi
 	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990" ]] ; then
-		ot-kernel_y_configopt "CONFIG_PNP"
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
@@ -8853,6 +8881,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_ENS1370" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
+		ot-kernel_y_configopt "CONFIG_SND_FM801" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_GUSEXTREME" # 1996
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
@@ -8863,10 +8892,8 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_TRIDENT" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
-		ot-kernel_y_configopt "CONFIG_ZONE_DMA"
 	fi
 	if [[ "${tags}" =~ "late-1990-production-grade" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990" ]] ; then
-		ot-kernel_y_configopt "CONFIG_PNP"
 		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE" # 1995
@@ -8896,9 +8923,9 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
+		ot-kernel_y_configopt "CONFIG_SND_FM801" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
-		ot-kernel_y_configopt "CONFIG_ZONE_DMA"
 	fi
 	if [[ "${tags}" =~ "late-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
@@ -8909,7 +8936,6 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1X" # 2003
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
-		ot-kernel_y_configopt "CONFIG_ZONE_DMA"
 
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
@@ -9413,7 +9439,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:allegro"|"sound:maestro3") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:allegro"|"sound:canyon3d-2"|"sound:maestro3") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_MAESTRO3" # 1999
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:au8820"|"sound:vortex"($|" ")) ]] ; then
