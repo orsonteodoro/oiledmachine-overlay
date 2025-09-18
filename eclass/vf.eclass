@@ -75,10 +75,15 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	# or more DoS, DT, ID impact vectors.
 	#
 einfo
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("AB"($|" ")|"ABO") ]] ; then
+# Adjacent integrity compromised
+einfo "AB = Adjacent Buffer Overrun"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "AW" ]] ; then
 einfo "AW = Arbitrary Write"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("BO"|"OOSS") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO" ]] ; then
+# Stack size insufficient
 einfo "BO = Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("ACE"|"CE") ]] ; then
@@ -104,7 +109,7 @@ einfo "DR = Data Race"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("EM"|"EMA") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("EM"($|" ")|"EMA") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
 		fi
@@ -115,6 +120,7 @@ einfo "HO = Heap Based Buffer Overflow"
 einfo "ID = Information Disclosure"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("IF"|"IR") ]] ; then
+# Improper Free
 # Improper Release
 einfo "IF = Improper Free"
 		fi
