@@ -75,11 +75,11 @@ eerror "The late-1990s-pc-gamer profile has been removed.  Use the late-1990s-de
 		die
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-musician" ]] ; then
-eerror "The late-1990s-musician profile has been removed.  Use the late-1990s-desktop-pc profile instead."
+eerror "The late-1990s-musician profile has been removed.  Use the late-1990s-desktop-pc with sound:1990s-musician profiles instead."
 		die
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-cgi-artist" ]] ; then
-eerror "The 1990s-cgi-artist profile has been removed.  Use the early-1990s-desktop-pc or late-1990s-desktop-pc profile instead."
+eerror "The 1990s-cgi-artist profile has been removed.  Use the early-1990s-desktop-pc or late-1990s-desktop-pc with 3d-mouse:6dof profiles instead."
 		die
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-drafter" ]] ; then
@@ -9049,7 +9049,7 @@ ot-kernel-driver-bundle_add_sound() {
 }
 
 ot-kernel-driver-bundle_add_sound_by_decade() {
-	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990"($|" ") ]] ; then
+	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ADLIB" # 1987
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
 		ot-kernel_y_configopt "CONFIG_SND_CS4231" #
@@ -9057,7 +9057,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	fi
-	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990"($|" ") ]] ; then
+	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
@@ -9082,7 +9082,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	fi
-	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990-musician"($|" ") ]] ; then
+	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s-musician"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_MSND_CLASSIC" # 1991
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
@@ -9090,7 +9090,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_SSCAPE" # 1994
 		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
 	fi
-	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990-musician"($|" ") ]] ; then
+	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s-musician"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE" # 1995
@@ -9109,7 +9109,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
 	fi
-	if [[ "${tags}" =~ "early-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000" ]] ; then
+	if [[ "${tags}" =~ "early-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
@@ -9124,7 +9124,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	fi
-	if [[ "${tags}" =~ "late-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000" ]] ; then
+	if [[ "${tags}" =~ "late-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_CA0106" # 2004
@@ -9144,7 +9144,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	fi
-	if [[ "${tags}" =~ "2010" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2010" ]] ; then
+	if [[ "${tags}" =~ "2010" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2010s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
@@ -9154,7 +9154,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	fi
-	if [[ "${tags}" =~ "2020" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2020" ]] ; then
+	if [[ "${tags}" =~ "2020" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2020s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
