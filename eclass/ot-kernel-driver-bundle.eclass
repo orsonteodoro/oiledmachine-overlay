@@ -3289,6 +3289,247 @@ ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvid
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_NVIDIA_GPU" # 2018
 		ot-kernel_y_configopt "CONFIG_PCI"
+
+	# Available drivers on the distro:
+		local consistency_failed=0
+		if has_version "=x11-drivers/nvidia-drivers-575*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.13" ; then
+			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"maxwell"|\
+"pascal"|\
+"volta"|\
+"turing"|\
+"ampere"|\
+"ada-lovelace"|\
+"hopper"|\
+"blackwell"|\
+"sm_50"|\
+"sm_52"|\
+"sm_53"|\
+"sm_60"|\
+"sm_61"|\
+"sm_62"|\
+"sm_70"|\
+"sm_72"|\
+"sm_75"|\
+"sm_80"|\
+"sm_86"|\
+"sm_87"|\
+"sm_89"|\
+"sm_90"|\
+"sm_90a"|\
+"sm_100"|\
+"sm_100a"|\
+"sm_101"|\
+"sm_101a"|\
+"sm_120"|\
+"sm_120a") \
+			]] ; then
+einfo "CUDA microarchitecture check:  PASSED"
+			else
+ewarn "CUDA microarchitecture check:  FAILED"
+				consistency_failed=1
+			fi
+		elif has_version "=x11-drivers/nvidia-drivers-570*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.13" ; then
+			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"maxwell"|\
+"pascal"|\
+"volta"|\
+"turing"|\
+"ampere"|\
+"ada-lovelace"|\
+"hopper"|\
+"blackwell"|\
+"sm_50"|\
+"sm_52"|\
+"sm_53"|\
+"sm_60"|\
+"sm_61"|\
+"sm_62"|\
+"sm_70"|\
+"sm_72"|\
+"sm_75"|\
+"sm_80"|\
+"sm_86"|\
+"sm_87"|\
+"sm_89"|\
+"sm_90"|\
+"sm_90a"|\
+"sm_100"|\
+"sm_100a"|\
+"sm_101"|\
+"sm_101a"|\
+"sm_120"|\
+"sm_120a") \
+			]] ; then
+einfo "CUDA microarchitecture check:  PASSED"
+			else
+ewarn "CUDA microarchitecture check:  FAILED"
+				consistency_failed=1
+			fi
+		elif has_version "=x11-drivers/nvidia-drivers-535*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.8" ; then
+			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"maxwell"|\
+"pascal"|\
+"volta"|\
+"turing"|\
+"ampere"|\
+"ada-lovelace"|\
+"sm_50"|\
+"sm_52"|\
+"sm_53"|\
+"sm_60"|\
+"sm_61"|\
+"sm_62"|\
+"sm_70"|\
+"sm_72"|\
+"sm_75"|\
+"sm_80"|\
+"sm_86"|\
+"sm_87"|\
+"sm_89")\
+			]] ; then
+einfo "CUDA microarchitecture check:  PASSED"
+			else
+ewarn "CUDA microarchitecture check:  FAILED"
+				consistency_failed=1
+			fi
+		elif has_version "=x11-drivers/nvidia-drivers-470*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.8" ; then
+			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"kepler"|\
+"maxwell"|\
+"pascal"|\
+"volta"|\
+"turing"|\
+"ampere"|\
+"sm_30"|\
+"sm_32"|\
+"sm_35"|\
+"sm_37"|\
+"sm_50"|\
+"sm_52"|\
+"sm_53"|\
+"sm_60"|\
+"sm_61"|\
+"sm_62"|\
+"sm_70"|\
+"sm_72"|\
+"sm_75"|\
+"sm_80"|\
+"sm_86"|\
+"sm_87")\
+			]] ; then
+einfo "CUDA microarchitecture check:  PASSED"
+			else
+ewarn "CUDA microarchitecture check:  FAILED"
+				consistency_failed=1
+			fi
+		elif has_version "=x11-drivers/nvidia-drivers-390*" && ver_test "${KV_MAJOR_MINOR}" -ge "3.10" && ver_test "${KV_MAJOR_MINOR}" -le "5.19" ; then
+			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"fermi"|\
+"kepler"|\
+"maxwell"|\
+"pascal"|\
+"sm_20"|\
+"sm_21"|\
+"sm_30"|\
+"sm_32"|\
+"sm_35"|\
+"sm_37"|\
+"sm_50"|\
+"sm_52"|\
+"sm_53"|\
+"sm_60"|\
+"sm_61"|\
+"sm_62") \
+			]] ; then
+einfo "CUDA microarchitecture check:  PASSED"
+			else
+ewarn "CUDA microarchitecture check:  FAILED"
+				consistency_failed=1
+			fi
+		else
+			consistency_failed=1
+		fi
+
+		if (( ${consistency_failed} == 1 )) ; then
+			local pv_actual="NOT FOUND"
+			if has_version "x11-drivers/nvidia-drivers" ; then
+				pv_actual=$(best_version "x11-drivers/nvidia-drivers" | sed -e "s|x11-drivers/nvidia-drivers-||g")
+			fi
+
+			local sm_arch="UNKNOWN"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "fermi" ]] && sm_arch="fermi"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "kepler" ]] && sm_arch="kepler"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "maxwell" ]] && sm_arch="maxwell"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "pascal" ]] && sm_arch="pascal"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "volta" ]] && sm_arch="volta"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "turing" ]] && sm_arch="turing"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "ampere" ]] && sm_arch="ampere"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "ada-lovelace" ]] && sm_arch="ada-lovelace"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "hopper" ]] && sm_arch="hopper"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "blackwell" ]] && sm_arch="blackwell"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_20" ]] && sm_arch="sm_20"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_21" ]] && sm_arch="sm_21"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_30" ]] && sm_arch="sm_30"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_32" ]] && sm_arch="sm_32"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_35" ]] && sm_arch="sm_35"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_37" ]] && sm_arch="sm_37"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_50" ]] && sm_arch="sm_50"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_52" ]] && sm_arch="sm_52"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_53" ]] && sm_arch="sm_53"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_60" ]] && sm_arch="sm_60"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_61" ]] && sm_arch="sm_61"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_62" ]] && sm_arch="sm_62"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_70" ]] && sm_arch="sm_70"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_72" ]] && sm_arch="sm_72"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_75" ]] && sm_arch="sm_75"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_80" ]] && sm_arch="sm_80"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_86" ]] && sm_arch="sm_86"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_87" ]] && sm_arch="sm_87"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_89" ]] && sm_arch="sm_89"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_90"($|" ") ]] && sm_arch="sm_90"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_90a" ]] && sm_arch="sm_90a"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_100"($|" ") ]] && sm_arch="sm_100"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_100a" ]] && sm_arch="sm_100a"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_101"($|" ") ]] && sm_arch="sm_101"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_101a" ]] && sm_arch="sm_101a"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_120"($|" ") ]] && sm_arch="sm_120"
+			[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sm_120a" ]] && sm_arch="sm_120a"
+
+ewarn
+ewarn "Driver consistency checks failed"
+ewarn
+ewarn "You need to downgrade or upgrade the kernel version or"
+ewarn "x11-drivers/nvidia-drivers driver version to correspond to the matching"
+ewarn "GPU microarchitecture."
+ewarn
+ewarn "x11-drivers/nvidia-drivers actual version:  ${pv_actual}"
+ewarn "x11-drivers/nvidia-drivers expected version:  390.x, 470.x, 535.x, 570.x, 575.x"
+ewarn "GPU microarchitecture (actual):  ${sm_arch}"
+ewarn "Kernel version:  ${PV}"
+ewarn
+ewarn "Expected microarchitecture to driver version correspondance:"
+ewarn
+ewarn "=x11-drivers/nvidia-drivers-575*:  maxwell, pascal, volta, turing, ampere, ada-lovelace, hopper, blackwell, sm_50, sm_52, sm_53, sm_60, sm_61, sm_62, sm_70, sm_72, sm_75, sm_80, sm_86, sm_87, sm_89, sm_90, sm_90a, sm_100, sm_100a, sm_101, sm_101a, sm_120, sm_120a"
+ewarn "=x11-drivers/nvidia-drivers-570*:  maxwell, pascal, volta, turing, ampere, ada-lovelace, hopper, blackwell, sm_50, sm_52, sm_53, sm_60, sm_61, sm_62, sm_70, sm_72, sm_75, sm_80, sm_86, sm_87, sm_89, sm_90, sm_90a, sm_100, sm_100a, sm_101, sm_101a, sm_120, sm_120a"
+ewarn "=x11-drivers/nvidia-drivers-535*:  maxwell, pascal, volta, turing, ampere, ada-lovelace, sm_50, sm_52, sm_53, sm_60, sm_61, sm_62, sm_70, sm_72, sm_75, sm_80, sm_86, sm_87, sm_89"
+ewarn "=x11-drivers/nvidia-drivers-470*:  kepler, maxwell, pascal, volta, turing, ampere, sm_30, sm_32, sm_35, sm_37, sm_50, sm_52, sm_53, sm_60, sm_61, sm_62, sm_70, sm_72, sm_75, sm_80, sm_86, sm_87"
+ewarn "=x11-drivers/nvidia-drivers-390*:  fermi, kepler, maxwell, pascal, sm_20, sm_21, sm_30, sm_32, sm_35, sm_37, sm_50, sm_52, sm_53, sm_60, sm_61, sm_62"
+ewarn
+ewarn "Expected kernel versions to driver version correspondance:"
+ewarn
+ewarn "=x11-drivers/nvidia-drivers-575*:  4.15.x - 6.13.x"
+ewarn "=x11-drivers/nvidia-drivers-570*:  4.15.x - 6.13.x"
+ewarn "=x11-drivers/nvidia-drivers-535*:  4.15.x - 6.8.x"
+ewarn "=x11-drivers/nvidia-drivers-470*:  4.15.x - 6.8.x"
+ewarn "=x11-drivers/nvidia-drivers-390*:  3.10.x - 5.19.x"
+ewarn
+ewarn "To make this message disappear, either"
+ewarn
+ewarn "1. Set the proper sm_xx value or codename"
+ewarn "2. Switch to graphics:nouveau"
+ewarn
+		fi
 	fi
 }
 
