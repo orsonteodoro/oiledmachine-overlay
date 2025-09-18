@@ -2214,7 +2214,21 @@ TBM=0
 
       storage:zip-drive
 
-      Graphics tablets, smartpens, 3d haptic devices
+      Drafter and CGI artist 3D mice
+
+      input:3d-mouse
+      input:6dof
+      input:magellan
+      input:spaceball-2003
+      input:spaceball-3003
+      input:spaceball-4000
+      input:spaceball-4004-flx
+      input:spaceball-4000-usb
+      input:spaceball-5000
+      input:spaceorb-avenger
+      input:spacenavigator
+
+      Graphics tablets, smartpens, 3D haptic devices
 
       graphics-tablet:acecad
       graphics-tablet:aiptek

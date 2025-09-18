@@ -176,6 +176,7 @@ ewarn "The early-1990s driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_WD80x3" # 1987
 
 	ot-kernel-driver-bundle_add_printer "parport"
+	ot-kernel-driver-bundle_add_6dof "serial"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
@@ -262,6 +263,7 @@ ewarn "The late-1990s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "parport"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
+	ot-kernel-driver-bundle_add_6dof "serial usb-1.1"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
 }
@@ -393,6 +395,7 @@ ewarn "The early-2000s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
+	ot-kernel-driver-bundle_add_6dof "serial usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
@@ -518,6 +521,7 @@ ewarn "The late-2000s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
+	ot-kernel-driver-bundle_add_6dof "serial usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
@@ -650,6 +654,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
+	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0"
 }
@@ -748,6 +753,7 @@ ewarn "The 2010s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
+	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
@@ -976,6 +982,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_haptic_devices "usb"
+	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
@@ -1054,6 +1061,7 @@ ewarn "The 2020s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
+	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
@@ -2487,7 +2495,9 @@ ot-kernel-driver-bundle_add_mouse() {
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 		ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
-		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for mouse, modems, TTY console
+		ot-kernel_y_configopt "CONFIG_SERIO" # Abstraction layer
+		ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # Interface to the abstraction layer for RS-242 input devices
 		ot-kernel_y_configopt "CONFIG_TTY"
 	fi
 	if [[ "${tags}" =~ "usb" ]] ; then
@@ -2501,6 +2511,60 @@ ot-kernel-driver-bundle_add_mouse() {
 
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+}
+
+# 6dof (aka 3D mouse) support for drafters and graphic CGI artists.
+ot-kernel-driver-bundle_add_6dof() {
+	local tags="${1}"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
+	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:magellan") ]] ; then
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_MAGELLAN" # 1993, serial
+	fi
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceball-2003"|"input:spaceball-3003"|"input:spaceball-4000"|"input:spaceball-4004-flx") ]] ; then
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
+	fi
+	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceball-4000-usb") ]] ; then
+	# Assumes with an adapter
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SERIAL"
+		ot-kernel_y_configopt "CONFIG_USB_SERIAL_GENERIC"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_TTY"
+
+	# Common USB-to-serial chipsets found in adapters
+		if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") ]] ; then
+			ot-kernel_y_configopt "CONFIG_USB_SERIAL_CH341" # 2013, usb-1.1, usb-2.0
+			ot-kernel_y_configopt "CONFIG_USB_SERIAL_FTDI_SIO" # 2007, usb-1.1, usb-2.0
+			ot-kernel_y_configopt "CONFIG_USB_SERIAL_PL2303" # 2002, usb-1.1, usb-2.0
+		fi
+		if [[ "${tags}" =~ ("usb-2.0") ]] ; then
+			ot-kernel_y_configopt "CONFIG_USB_SERIAL_CP210X" # 2004, usb-2.0
+		fi
+	fi
+	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceball-5000") ]] ; then
+	# It can work in usb-3.0 but run at slower speeds.
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
+	fi
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceorb-360"|"input:spaceorb-avenger") ]] ; then
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
+	fi
+	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spacenavigator") ]] ; then
+	# SpaceNavigator (2006)
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_PID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_NEW_LEDS"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+	fi
 }
 
 ot-kernel-driver-bundle_add_keyboard() {
@@ -3789,6 +3853,7 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class() {
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_ADI" # 1997, 1998, 1999, 2000
+		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("controller:flight-stick"|"controller:joystick") ]] ; then
@@ -9999,6 +10064,5 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 	fi
 }
-
 
 fi
