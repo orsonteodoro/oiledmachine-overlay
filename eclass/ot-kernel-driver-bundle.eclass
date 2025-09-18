@@ -3050,6 +3050,9 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 "graphics:amdgpu"\
 |"graphics:southern-islands-experimental"\
 |"graphics:gcn1-experimental"\
+|"graphics:gfx600"\
+|"graphics:gfx601"\
+|"graphics:gfx602"\
 ) \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -3068,6 +3071,12 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 "graphics:amdgpu"\
 |"graphics:sea-islands-experimental"\
 |"graphics:gcn2-experimental"\
+|"graphics:gfx700"\
+|"graphics:gfx701"\
+|"graphics:gfx702"\
+|"graphics:gfx703"\
+|"graphics:gfx704"\
+|"graphics:gfx705"\
 ) \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -3099,6 +3108,44 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 |"graphics:rdna2"\
 |"graphics:rdna3"\
 |"graphics:rdna4"\
+|"graphics:gfx801"\
+|"graphics:gfx802"\
+|"graphics:gfx803"\
+|"graphics:gfx805"\
+|"graphics:gfx810"\
+|"graphics:gfx900"\
+|"graphics:gfx902"\
+|"graphics:gfx904"\
+|"graphics:gfx906"\
+|"graphics:gfx908"\
+|"graphics:gfx909"\
+|"graphics:gfx90a"\
+|"graphics:gfx90c"\
+|"graphics:gfx942"\
+|"graphics:gfx950"\
+|"graphics:gfx1010"\
+|"graphics:gfx1011"\
+|"graphics:gfx1012"\
+|"graphics:gfx1013"\
+|"graphics:gfx1030"\
+|"graphics:gfx1031"\
+|"graphics:gfx1032"\
+|"graphics:gfx1033"\
+|"graphics:gfx1034"\
+|"graphics:gfx1035"\
+|"graphics:gfx1036"\
+|"graphics:gfx1100"\
+|"graphics:gfx1101"\
+|"graphics:gfx1102"\
+|"graphics:gfx1103"\
+|"graphics:gfx1150"\
+|"graphics:gfx1151"\
+|"graphics:gfx1152"\
+|"graphics:gfx1153"\
+|"graphics:gfx1200"\
+|"graphics:gfx1201"\
+|"graphics:gfx1250"\
+|"graphics:gfx1251"\
 ) \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -3152,7 +3199,48 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 		ot-kernel_y_configopt "CONFIG_FB_EFI"
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("graphics:nvidia-drm"|"graphics:nvidia-drivers") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"graphics:nvidia-drm"\
+|"graphics:nvidia-drivers"\
+|"graphics:tesla"\
+|"graphics:fermi"\
+|"graphics:kepler"\
+|"graphics:maxwell"\
+|"graphics:pascal"\
+|"graphics:volta"\
+|"graphics:turing"\
+|"graphics:ampere"\
+|"graphics:ada-lovelace"\
+|"graphics:hopper"\
+|"graphics:blackwell"\
+|"graphics:sm_20"\
+|"graphics:sm_21"\
+|"graphics:sm_30"\
+|"graphics:sm_32"\
+|"graphics:sm_35"\
+|"graphics:sm_37"\
+|"graphics:sm_50"\
+|"graphics:sm_52"\
+|"graphics:sm_53"\
+|"graphics:sm_60"\
+|"graphics:sm_61"\
+|"graphics:sm_62"\
+|"graphics:sm_70"\
+|"graphics:sm_72"\
+|"graphics:sm_75"\
+|"graphics:sm_80"\
+|"graphics:sm_86"\
+|"graphics:sm_87"\
+|"graphics:sm_89"\
+|"graphics:sm_90"\
+|"graphics:sm_90a"\
+|"graphics:sm_100"\
+|"graphics:sm_100a"\
+|"graphics:sm_101"\
+|"graphics:sm_101a"\
+|"graphics:sm_120"\
+|"graphics:sm_120a"\
+) ]] ; then
 	# Only the graphical framebuffer will be repeated for completeness and consistency.
 	# For the full config see ot-kernel-pkgflags.
 		ot-kernel_y_configopt "CONFIG_DRM"
