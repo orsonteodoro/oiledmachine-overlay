@@ -78,7 +78,7 @@ einfo
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "AW" ]] ; then
 einfo "AW = Arbitrary Write"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("BO"|"OOSS") ]] ; then
 einfo "BO = Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("ACE"|"CE") ]] ; then
