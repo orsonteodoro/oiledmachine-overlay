@@ -76,13 +76,13 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	#
 einfo
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("AB"($|" ")|"ABO") ]] ; then
-# Adjacent integrity compromised
+# Adjacent buffer integrity compromised
 einfo "AB = Adjacent Buffer Overrun"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "AW" ]] ; then
 einfo "AW = Arbitrary Write"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO"($|" ") ]] ; then
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
 		fi
