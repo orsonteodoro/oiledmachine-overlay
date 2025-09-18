@@ -1882,7 +1882,6 @@ TBM=0
       graphics:rage128
       graphics:rage-128
 
-
       graphics:nvidiafb
 
       graphics:pm3fb
@@ -1900,6 +1899,7 @@ TBM=0
 
       graphics:sstfb
       graphics:voodoo1
+
       graphics:tdfxfb
       graphics:banshee
       graphics:voodoo3
