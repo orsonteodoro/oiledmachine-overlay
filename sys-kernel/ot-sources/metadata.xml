@@ -1768,12 +1768,14 @@ TBM=0
       graphics:r400
       graphics:r500
       graphics:r600
-      graphics:rv670
       graphics:r700
       graphics:evergreen
       graphics:northern-islands
       graphics:southern-islands
       graphics:sea-islands
+      graphics:terascale1
+      graphics:terascale2
+      graphics:terascale3
       graphics:gcn1
       graphics:gcn2
 

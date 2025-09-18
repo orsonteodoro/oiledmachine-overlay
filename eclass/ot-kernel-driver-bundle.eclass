@@ -34,33 +34,11 @@ inherit toolchain-funcs ot-kernel-kutils
 # If an older edition card or older accessory has been observed during that time period, it can be placed in that time period.
 #
 
-# @FUNCTION: ot-kernel-driver-bundle_add_drivers
-# @DESCRIPTION:
-# Main routine for installing drivers in bundles
-ot-kernel-driver-bundle_add_drivers() {
-	local disable_xpad=0
-	if \
-		   has_version "games-util/xone" \
-		|| has_version "games-util/xpadneo" \
-		|| has_version "games-util/xboxdrv" \
-	; then
-ewarn "Disabling xpad driver"
-		disable_xpad=1
-		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
-		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
+ot-kernel-driver-bundle_check_name_changes() {
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:rv670"($|" ") ]] ; then
+eerror "The graphics:rv670 profile has been removed.  Use graphics:terascale1 or graphics:r600."
+		die
 	fi
-
-	# /dev nodes
-	ot-kernel_y_configopt "CONFIG_DEVTMPFS"
-
-	# Internet
-	ot-kernel_y_configopt "CONFIG_INET"
-	ot-kernel_y_configopt "CONFIG_IPV6"
-	ot-kernel_y_configopt "CONFIG_NET"
-
-	# Disabled to reduce build times.
-	# Used by TV tuner cards with a lot of revisions.
-	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-devices:"($|" ") ]] ; then
 eerror "The haptic-devices prefix has been renamed to haptic-device."
@@ -132,6 +110,41 @@ eerror "The 2010s-video-game-artist profile has been renamed.  Use the 2010s-des
 eerror "The 2020s-pc-gamer profile has been renamed.  Use the 2020s-desktop-pc profile instead."
 		die
 	fi
+	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
+eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot-kernel-driver-bundle_add_custom_driver_bundle"
+		die
+	fi
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_drivers
+# @DESCRIPTION:
+# Main routine for installing drivers in bundles
+ot-kernel-driver-bundle_add_drivers() {
+	local disable_xpad=0
+	if \
+		   has_version "games-util/xone" \
+		|| has_version "games-util/xpadneo" \
+		|| has_version "games-util/xboxdrv" \
+	; then
+ewarn "Disabling xpad driver"
+		disable_xpad=1
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD_FF"
+	fi
+
+	# /dev nodes
+	ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+
+	# Internet
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_IPV6"
+	ot-kernel_y_configopt "CONFIG_NET"
+
+	# Disabled to reduce build times.
+	# Used by TV tuner cards with a lot of revisions.
+	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
+
+	ot-kernel-driver-bundle_check_name_changes
 
 	# The memory and processing speed in earlier decades was very limited.
 	# This is why the decades were split.
@@ -143,10 +156,6 @@ eerror "The 2020s-pc-gamer profile has been renamed.  Use the 2020s-desktop-pc p
 	ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers
 	ot-kernel-driver-bundle_add_15_da0086nr_drivers
 	ot-kernel-driver-bundle_add_2020s_desktop_pc_drivers
-	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
-eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot-kernel-driver-bundle_add_custom_driver_bundle"
-		die
-	fi
 	if declare -f ot-kernel-driver-bundle_add_custom_driver_bundle ; then
 einfo "Adding a custom driver bundle"
 		ot-kernel-driver-bundle_add_custom_driver_bundle
@@ -2867,12 +2876,14 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 |"graphics:r400"\
 |"graphics:r500"\
 |"graphics:r600"\
-|"graphics:rv670"\
 |"graphics:r700"\
 |"graphics:evergreen"\
 |"graphics:northern-islands"\
 |"graphics:southern-islands"($|" ")\
 |"graphics:sea-islands"($|" ")\
+|"graphics:terascale1"($|" ")\
+|"graphics:terascale2"($|" ")\
+|"graphics:terascale3"($|" ")\
 |"graphics:gcn1"($|" ")\
 |"graphics:gcn2"($|" ")\
 ) \
