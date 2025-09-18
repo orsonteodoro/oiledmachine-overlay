@@ -62,6 +62,11 @@ ewarn "Disabling xpad driver"
 	# Used by TV tuner cards with a lot of revisions.
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
 
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-devices:"($|" ") ]] ; then
+eerror "The haptic-devices prefix has been renamed to haptic-device."
+		die
+	fi
+
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1900"($|" ") ]] ; then
 eerror "The sound:1900 profile has been renamed to sound:1990s."
 		die
@@ -3515,14 +3520,14 @@ ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes() {
 }
 
 ot-kernel-driver-bundle_add_haptic_devices_by_usb() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-devices:touch-x"($|" ") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-device:touch-x"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HID_GENERIC"
 		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("haptic-devices:touch"($|" ")|"haptic-devices:touch-x"($|" ")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("haptic-device:touch"($|" ")|"haptic-device:touch-x"($|" ")) ]] ; then
 		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -3540,7 +3545,7 @@ ot-kernel-driver-bundle_add_haptic_devices_by_usb() {
 }
 
 ot-kernel-driver-bundle_add_haptic_devices_by_ethernet() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("haptic-devices:touch"($|" ")|"haptic-devices:touch-x"($|" ")) ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("haptic-device:touch"($|" ")|"haptic-device:touch-x"($|" ")) ]] ; then
 	# OpenHaptics support on Linux (2009)
 	# Touch (2003), Touch X (2008)
 	# USB 2.0, USB 3.0, Ethernet
@@ -3557,7 +3562,7 @@ ot-kernel-driver-bundle_add_haptic_devices_by_ethernet() {
 }
 
 ot-kernel-driver-bundle_add_haptic_devices_by_parport() {
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-devices:phantom-premium" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-device:phantom-premium" ]] ; then
 	# For 3D modeling with a haptic stylus
 	# Parallel Port (EPP)
 	# Phantom Premium 1.5 (2001)

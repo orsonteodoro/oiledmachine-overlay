@@ -2232,9 +2232,9 @@ TBM=0
       graphics-tablet:hawang
       graphics-tablet:kb-gear
       graphics-tablet:wacom
-      haptic-devices:touch
-      haptic-devices:touch-x
-      haptic-devices:phantom-premium
+      haptic-device:touch
+      haptic-device:touch-x
+      haptic-device:phantom-premium
       smartpen:genie
       smartpen:iris
       smartpen:newyes
