@@ -3104,7 +3104,11 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 |"graphics:gcn3"\
 |"graphics:gcn4"\
 |"graphics:gcn5"\
+|"graphics:cdna1"\
+|"graphics:cdna2"\
+|"graphics:cdna3"\
 |"graphics:rdna"($|" ")\
+|"graphics:rdna1"\
 |"graphics:rdna2"\
 |"graphics:rdna3"\
 |"graphics:rdna4"\
