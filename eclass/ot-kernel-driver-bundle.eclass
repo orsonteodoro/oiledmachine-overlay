@@ -62,19 +62,82 @@ ewarn "Disabling xpad driver"
 	# Used by TV tuner cards with a lot of revisions.
 	ot-kernel_unset_configopt "CONFIG_MEDIA_SUBDRV_AUTOSELECT"
 
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1900"($|" ") ]] ; then
+eerror "The sound:1900 profile has been renamed to sound:1990s."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990"($|" ") ]] ; then
+eerror "The sound:1990 profile has been renamed to sound:1990s."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000"($|" ") ]] ; then
+eerror "The sound:2000 profile has been renamed to sound:2000s."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2010"($|" ") ]] ; then
+eerror "The sound:2010 profile has been renamed to sound:2010s."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2020"($|" ") ]] ; then
+eerror "The sound:2020 profile has been renamed to sound:2020s."
+		die
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] ; then
+eerror "The early-1990s-pc-gamer profile has been removed.  Use the early-1990s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-pc-gamer" ]] ; then
+eerror "The late-1990s-pc-gamer profile has been removed.  Use the late-1990s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-musician" ]] ; then
+eerror "The late-1990s-musician profile has been removed.  Use the late-1990s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-cgi-artist" ]] ; then
+eerror "The 1990s-cgi-artist profile has been removed.  Use the early-1990s-desktop-pc or late-1990s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "1990s-drafter" ]] ; then
+eerror "The 1990s-drafter profile has been removed.  Use the early-1990s-desktop-pc or late-1990s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-pc-gamer" ]] ; then
+eerror "The early-2000s-pc-gamer profile has been renamed.  Use the early-2000s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-pc-gamer" ]] ; then
+eerror "The late-2000s-pc-gamer profile has been renamed.  Use the late-2000s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-pc-gamer" ]] ; then
+eerror "The 2010s-pc-gamer profile has been renamed.  Use the 2010s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-cgi-artist" ]] ; then
+eerror "The 2010s-cgi-artist profile has been renamed.  Use the 2010s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-video-game-artist" ]] ; then
+eerror "The 2010s-video-game-artist profile has been renamed.  Use the 2010s-desktop-pc profile instead."
+		die
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-pc-gamer" ]] ; then
+eerror "The 2020s-pc-gamer profile has been renamed.  Use the 2020s-desktop-pc profile instead."
+		die
+	fi
+
 	# The memory and processing speed in earlier decades was very limited.
 	# This is why the decades were split.
-	ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
-	ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
-	ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
-	ot-kernel-driver-bundle_add_late_1990s_musician_drivers
-	ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
-	ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_early_1990s_desktop_pc_drivers
+	ot-kernel-driver-bundle_add_late_1990s_desktop_pc_drivers
+	ot-kernel-driver-bundle_add_early_2000s_desktop_pc_drivers
+	ot-kernel-driver-bundle_add_late_2000s_desktop_pc_drivers
 	ot-kernel-driver-bundle_add_vpceb25fx_drivers
-	ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
-	ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
+	ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers
 	ot-kernel-driver-bundle_add_15_da0086nr_drivers
-	ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
+	ot-kernel-driver-bundle_add_2020s_desktop_pc_drivers
 	if declare -f ot-kernel-driver-bundle_add_custom_bundle_drivers ; then
 eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot-kernel-driver-bundle_add_custom_driver_bundle"
 		die
@@ -85,13 +148,13 @@ einfo "Adding a custom driver bundle"
 	fi
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_early_1990s_desktop_pc_drivers
 # @DESCRIPTION:
 # An early 1990s x86 gamer driver bundle
 # At least Pentium is available for this ebuild
-ot-kernel-driver-bundle_add_early_1990s_pc_gamer_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-pc-gamer" ]] || return
-ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
+ot-kernel-driver-bundle_add_early_1990s_desktop_pc_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-desktop-pc" ]] || return
+ewarn "The early-1990s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
@@ -116,12 +179,12 @@ ewarn "The early-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_desktop_pc_drivers
 # @DESCRIPTION:
 # A late 1990s x86 gamer driver bundle
-ot-kernel-driver-bundle_add_late_1990s_pc_gamer_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-pc-gamer" ]] || return
-ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
+ot-kernel-driver-bundle_add_late_1990s_desktop_pc_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-desktop-pc" ]] || return
+ewarn "The late-1990s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "late-1990"
@@ -197,213 +260,18 @@ ewarn "The late-1990s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
 
 	ot-kernel-driver-bundle_add_printer "parport"
+	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers
-# @DESCRIPTION:
-# A late 1990s x86 artist driver bundle, for CAD and graphic arts
-ot-kernel-driver-bundle_add_1990s_cgi_artist_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("1990s-cgi-artist"|"1990s-drafter") ]] || return
-ewarn "The 1990s-cgi-artist driver bundle has not been recently tested."
-	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "late-1990"
-	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
-	ot-kernel-driver-bundle_add_graphics "agp pci"
-	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_usb "usb-1.1"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
-	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
-	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
-	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
-	ot-kernel-driver-bundle_add_sound "late-1990 isa pci"
-
-	# For HDD
-	ot-kernel_y_configopt "CONFIG_ATA"
-	ot-kernel_y_configopt "CONFIG_ATA_SFF"
-	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
-	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA)
-	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
-	ot-kernel_y_configopt "CONFIG_PATA_ALI" # 1997
-	ot-kernel_y_configopt "CONFIG_PATA_HPT366" # 1999
-	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
-	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
-	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	# For scanner
-	ot-kernel_y_configopt "CONFIG_SCSI"
-	ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
-
-	# For temperature, RAM timing info
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
-	ot-kernel_y_configopt "CONFIG_I2C_ALI1535" # 1999
-	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
-	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
-	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
-	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_SENSORS_AD7414" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_AD7418" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999-2019
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
-	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M1" # 1998, 2002, 2005, 2006
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-
-	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_MAGELLAN" # 1993
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
-	ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
-
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
-	ot-kernel_y_configopt "CONFIG_E100" # 1997
-	ot-kernel_y_configopt "CONFIG_EISA"
-	ot-kernel_y_configopt "CONFIG_EL3" # 1992
-	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
-	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
-	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
-	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
-
-	ot-kernel-driver-bundle_add_printer "parport"
-	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
-	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
-	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
-}
-
-# @FUNCTION: ot-kernel-driver-bundle_add_late_1990s_musician_drivers
-# @DESCRIPTION:
-# A late 1990s x86 music production driver bundle
-ot-kernel-driver-bundle_add_late_1990s_musician_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-musician" ]] || return
-ewarn "The late-1990s-musician driver bundle has not been recently tested."
-	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "late-1990"
-	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
-	ot-kernel-driver-bundle_add_graphics "agp pci"
-	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_usb "usb-1.1"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
-	ot-kernel-driver-bundle_add_mouse "ps2 usb"
-	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw dvd-ram"
-	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
-	ot-kernel-driver-bundle_add_sound "late-1990-production-grade isa pci"
-
-	# For HDD
-	ot-kernel_y_configopt "CONFIG_ATA"
-	ot-kernel_y_configopt "CONFIG_ATA_SFF"
-	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
-	ot-kernel_y_configopt "CONFIG_ATA_PIIX" # 1995-2007 (PATA)
-	ot-kernel_y_configopt "CONFIG_PATA_AMD" # 1999-2004
-	ot-kernel_y_configopt "CONFIG_PATA_ALI" # 1997
-	ot-kernel_y_configopt "CONFIG_PATA_HPT366" # 1999
-	ot-kernel_y_configopt "CONFIG_PATA_OLDPIIX" # 1995
-	ot-kernel_y_configopt "CONFIG_PATA_SIS" # 1999
-	ot-kernel_y_configopt "CONFIG_PATA_VIA" # 1995
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-
-	ot-kernel_y_configopt "CONFIG_SND"
-	ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
-	ot-kernel_y_configopt "CONFIG_SND_MPU401" # 1984
-	ot-kernel_y_configopt "CONFIG_SOUND"
-
-	# For temperature, RAM timing info
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_ALI15X3" # 1997
-	ot-kernel_y_configopt "CONFIG_I2C_ALI1535" # 1999
-	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
-	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
-	ot-kernel_y_configopt "CONFIG_I2C_SIS5595" # 1997
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_VIA" # 1997
-	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SENSORS_AD7414" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_AD7418" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1025" # 1999, 2004
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999-2019
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM77" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM78" # 1999, 2000
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM80" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_LM83" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_PC87360" # 1998, 1999, 2000/2001
-	ot-kernel_y_configopt "CONFIG_SENSORS_SMSC47M1" # 1998, 2002, 2005, 2006
-	ot-kernel_y_configopt "CONFIG_SENSORS_VT8231" # 1999
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
-	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
-
-	ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981
-	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
-
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
-	ot-kernel_y_configopt "CONFIG_E100" # 1997
-	ot-kernel_y_configopt "CONFIG_EISA"
-	ot-kernel_y_configopt "CONFIG_EL3" # 1992
-	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
-	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
-	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
-	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
-
-	ot-kernel-driver-bundle_add_printer "parport"
-	ot-kernel-driver-bundle_add_tv_tuner "pci" # For the USB 1.1, it still require a year 2000 CPU for consistent 30 FPS.
-}
-
-# @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_early_2000s_desktop_pc_drivers
 # @DESCRIPTION:
 # An early 2000s x86 music production driver bundle
-ot-kernel-driver-bundle_add_early_2000s_pc_gamer_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-pc-gamer" ]] || return
-ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
+ot-kernel-driver-bundle_add_early_2000s_desktop_pc_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-desktop-pc" ]] || return
+ewarn "The early-2000s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "early-2000"
@@ -523,18 +391,20 @@ ewarn "The early-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 	ot-kernel-driver-bundle_add_tv_tuner "pci usb-1.1 usb-2.0"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_late_2000s_desktop_pc_drivers
 # @DESCRIPTION:
-# A late 2000s x86 pc gamer driver bundle
-ot-kernel-driver-bundle_add_late_2000s_pc_gamer_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-pc-gamer" ]] || return
-ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
+# A late 2000s x86 desktop PC driver bundle
+ot-kernel-driver-bundle_add_late_2000s_desktop_pc_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-desktop-pc" ]] || return
+ewarn "The late-2000s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "late-2000"
@@ -646,6 +516,8 @@ ewarn "The late-2000s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
@@ -782,12 +654,12 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_tv_tuner "usb-1.1 usb-2.0"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers
 # @DESCRIPTION:
-# A 2010s x86 pc gamer driver bundle
-ot-kernel-driver-bundle_add_2010s_pc_gamer_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-pc-gamer" ]] || return
-ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
+# A 2010s x86 desktop PC driver bundle
+ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-desktop-pc" ]] || return
+ewarn "The 2010s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "2010"
@@ -874,118 +746,12 @@ ewarn "The 2010s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
-	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
-}
-
-# @FUNCTION: ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers
-# @DESCRIPTION:
-# A 2010s x86 video game artist driver bundle
-# FIXME:  It should be a laptop, but this is the desktop version.
-ot-kernel-driver-bundle_add_2010s_cgi_artist_drivers() {
-	# TODO:  rename
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("2010s-cgi-artist"|"2010s-video-game-artist") ]] || return
-ewarn "The 2010s-cgi-artist driver bundle has not been recently tested."
-	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "2010"
-	ot-kernel-driver-bundle_add_expansion_slots "pcie"
-	ot-kernel-driver-bundle_add_graphics "pcie"
-	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
-	ot-kernel-driver-bundle_add_mouse "usb"
-	ot-kernel-driver-bundle_add_usb_storage_support
-	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
-	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
-	ot-kernel-driver-bundle_add_sound "2010 pcie"
-
-	# CPU temp sensors
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
-	ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP" # 2006
-	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP" # 2007-2014
-	ot-kernel_y_configopt "CONFIG_SENSORS_FAM15H_POWER" # 2011-2015
-
-	# For temperature, RAM timing info
-	ot-kernel_y_configopt "CONFIG_ACPI"
-	ot-kernel_y_configopt "CONFIG_ACPI_WMI"
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_I2C"
-	ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-	ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
-	ot-kernel_y_configopt "CONFIG_I2C_I801" # 1999, 2000, 2002, 2003, 2004, 2009, 2012, 2026
-	ot-kernel_y_configopt "CONFIG_I2C_PIIX4" # 1997, 1999, 2000, 2001, 2002, 2004, 2005, 2006, 2010
-	ot-kernel_y_configopt "CONFIG_I2C_VIAPRO" # 1998, 1999, 2000, 2002, 2004, 2006, 2008, 2009, 2010
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SENSORS_ACPI_POWER" # 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADM1029" # 2012
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADM9240" # 1999, 2010
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7410" # 2009, 2017
-	ot-kernel_y_configopt "CONFIG_SENSORS_ADT7475" # 2007, 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_ASUS_WMI" # 2017
-	ot-kernel_y_configopt "CONFIG_SENSORS_ATK0110" # 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2103" # 2010
-	ot-kernel_y_configopt "CONFIG_SENSORS_EMC2305" # 2009, 2011
-	ot-kernel_y_configopt "CONFIG_SENSORS_I5500" # 2008-2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_IT87" # 1999-2019
-	ot-kernel_y_configopt "CONFIG_SENSORS_F71805F" # 2004, 2006, 2010
-	ot-kernel_y_configopt "CONFIG_SENSORS_F71882FG" # 2009
-	ot-kernel_y_configopt "CONFIG_SENSORS_F75375S" # 2002, 2005, 2014
-	ot-kernel_y_configopt "CONFIG_SENSORS_LTC2991" # 2015
-	ot-kernel_y_configopt "CONFIG_SENSORS_LTC4282" # 2015
-	ot-kernel_y_configopt "CONFIG_SENSORS_NCT6683" # 2013
-	ot-kernel_y_configopt "CONFIG_SENSORS_NCT7802" # 2012
-
-	# Temp, fan control
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_CPRO" # 2017
-
-	# PSU sensor
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_SENSORS_CORSAIR_PSU" # 2013
-
-	# Water cooler sensors
-	ot-kernel_y_configopt "CONFIG_HWMON"
-	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
-	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
-	ot-kernel_y_configopt "CONFIG_USB_HID" # Dependency of CONFIG_SENSORS_NZXT_KRAKEN2
-
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_ALX" # 2011
-	ot-kernel_y_configopt "CONFIG_E1000" # 2000
-	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_IGB" # 2008
-	ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_ATHEROS"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
-	ot-kernel_y_configopt "CONFIG_R8169" # 2003
-	ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
-	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
-
-	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
-	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
-	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
-	ot-kernel-driver-bundle_add_webcam
-	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
-	ot-kernel-driver-bundle_add_bluetooth
-	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 }
 
@@ -1208,19 +974,20 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
+	ot-kernel-driver-bundle_add_haptic_devices "usb"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
-	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 }
 
-# @FUNCTION: ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers
+# @FUNCTION: ot-kernel-driver-bundle_add_2020s_desktop_pc_drivers
 # @DESCRIPTION:
-# A 2020s x86 pc gamer driver bundle
-ot-kernel-driver-bundle_add_2020s_pc_gamer_drivers() {
-	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-pc-gamer" ]] || return
-ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
+# A 2020s x86 desktop PC driver bundle
+ot-kernel-driver-bundle_add_2020s_desktop_pc_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-desktop-pc" ]] || return
+ewarn "The 2020s driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "2020"
@@ -1285,6 +1052,8 @@ ewarn "The 2020s-pc-gamer driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
 	ot-kernel-driver-bundle_add_printer "usb"
+	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
+	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_bluetooth
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
@@ -9201,7 +8970,7 @@ ot-kernel-driver-bundle_add_sound() {
 }
 
 ot-kernel-driver-bundle_add_sound_by_decade() {
-	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1900" ]] ; then
+	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ADLIB" # 1987
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
 		ot-kernel_y_configopt "CONFIG_SND_CS4231" #
@@ -9209,7 +8978,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	fi
-	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990" ]] ; then
+	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
@@ -9234,7 +9003,15 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	fi
-	if [[ "${tags}" =~ "late-1990-production-grade" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990" ]] ; then
+	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990-musician"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
+		ot-kernel_y_configopt "CONFIG_SND_MSND_CLASSIC" # 1991
+		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
+		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
+		ot-kernel_y_configopt "CONFIG_SND_SSCAPE" # 1994
+		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
+	fi
+	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990-musician"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE" # 1995
