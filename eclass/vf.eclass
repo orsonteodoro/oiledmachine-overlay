@@ -75,6 +75,9 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	# or more DoS, DT, ID impact vectors.
 	#
 einfo
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "AW" ]] ; then
+einfo "AW = Arbitrary Write"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO" ]] ; then
 einfo "BO = Buffer Overflow"
 		fi
@@ -214,6 +217,9 @@ einfo "UAF = Use After Free"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAR" ]] ; then
 einfo "UAR = Use After Return"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "WWWC" ]] ; then
+einfo "WWWC = Write What Where Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "XSS" ]] ; then
 einfo "XSS = Cross Site Scripting Attack"
