@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit profile-mem python-single-r1
+inherit python-single-r1
 
 SRC_URI="
 https://github.com/jarun/ddgr/archive/v${PV}.tar.gz
