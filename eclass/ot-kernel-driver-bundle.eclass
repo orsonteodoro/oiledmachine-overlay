@@ -2520,14 +2520,14 @@ ot-kernel-driver-bundle_add_6dof() {
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYSTICK"
 	ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 	ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
-	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:magellan") ]] ; then
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("3d-mouse:6dof"|"3d-mouse:magellan") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for trackball mouse
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_MAGELLAN" # 1993, serial
 	fi
-	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceball-2003"|"input:spaceball-3003"|"input:spaceball-4000"|"input:spaceball-4004-flx") ]] ; then
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("3d-mouse:6dof"|"3d-mouse:spaceball-2003"|"3d-mouse:spaceball-3003"|"3d-mouse:spaceball-4000"|"3d-mouse:spaceball-4004-flx") ]] ; then
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 	fi
-	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceball-4000-usb") ]] ; then
+	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("3d-mouse:6dof"|"3d-mouse:spaceball-4000-usb") ]] ; then
 	# Assumes with an adapter
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 		ot-kernel_y_configopt "CONFIG_USB"
@@ -2546,14 +2546,14 @@ ot-kernel-driver-bundle_add_6dof() {
 			ot-kernel_y_configopt "CONFIG_USB_SERIAL_CP210X" # 2004, usb-2.0
 		fi
 	fi
-	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceball-5000") ]] ; then
+	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("3d-mouse:6dof"|"3d-mouse:spaceball-5000") ]] ; then
 	# It can work in usb-3.0 but run at slower speeds.
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEBALL" # 1991, 1995, 1999
 	fi
-	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spaceorb-360"|"input:spaceorb-avenger") ]] ; then
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("3d-mouse:6dof"|"3d-mouse:spaceorb-360"|"3d-mouse:spaceorb-avenger") ]] ; then
 		ot-kernel_y_configopt "CONFIG_JOYSTICK_SPACEORB" # 1996
 	fi
-	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("input:3d-mouse"|"input:6dof"|"input:spacenavigator") ]] ; then
+	if [[ "${tags}" =~ ("usb-1.1"|"usb-2.0") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("3d-mouse:6dof"|"3d-mouse:spacenavigator") ]] ; then
 	# SpaceNavigator (2006)
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
