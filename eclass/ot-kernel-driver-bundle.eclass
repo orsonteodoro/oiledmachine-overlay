@@ -684,7 +684,7 @@ ewarn "The 2010s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt-3"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -1016,7 +1016,7 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt-3 thunderbolt-4"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -2660,7 +2660,7 @@ ot-kernel-driver-bundle_add_external_ports() {
 		ot-kernel_y_configopt "CONFIG_FIREWIRE"
 		ot-kernel_y_configopt "CONFIG_FIREWIRE_OHCI"
 	fi
-	if [[ "${tags}" =~ "thunderbolt" ]] ; then
+	if [[ "${tags}" =~ ("thunderbolt-3"|"thunderbolt-4") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB4"
 	fi
