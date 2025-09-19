@@ -102,6 +102,9 @@ einfo "DoS = Denial of Service"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DF"($|" "|";"|",") ]] ; then
 einfo "DF = Double Free"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DL"($|" "|";"|",") ]] ; then
+einfo "DL = Deadlock"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DR"($|" "|";"|",") ]] ; then
 # DT
 einfo "DR = Data Race"
@@ -141,6 +144,9 @@ einfo "KEV = Known Exploited Vulnerabilities (actively exploited in the wild)"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
 einfo "MC = Memory Corruption"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ML"($|" "|";"|",") ]] ; then
+einfo "ML = Memory Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("MT"|"US")($|" "|";"|",") ]] ; then
 # Unterminated String
