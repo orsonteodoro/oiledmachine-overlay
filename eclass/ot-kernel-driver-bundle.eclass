@@ -168,7 +168,7 @@ einfo "Adding a custom driver bundle"
 # At least Pentium is available for this ebuild
 ot-kernel-driver-bundle_add_early_1990s_desktop_pc_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-1990s-desktop-pc" ]] || return
-ewarn "The early-1990s driver bundle has not been recently tested."
+ewarn "The early-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
@@ -199,7 +199,7 @@ ewarn "The early-1990s driver bundle has not been recently tested."
 # A late 1990s x86 gamer driver bundle
 ot-kernel-driver-bundle_add_late_1990s_desktop_pc_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-1990s-desktop-pc" ]] || return
-ewarn "The late-1990s driver bundle has not been recently tested."
+ewarn "The late-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "late-1990"
@@ -287,7 +287,7 @@ ewarn "The late-1990s driver bundle has not been recently tested."
 # An early 2000s x86 music production driver bundle
 ot-kernel-driver-bundle_add_early_2000s_desktop_pc_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "early-2000s-desktop-pc" ]] || return
-ewarn "The early-2000s driver bundle has not been recently tested."
+ewarn "The early-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "early-2000"
@@ -421,7 +421,7 @@ ewarn "The early-2000s driver bundle has not been recently tested."
 # A late 2000s x86 desktop PC driver bundle
 ot-kernel-driver-bundle_add_late_2000s_desktop_pc_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "late-2000s-desktop-pc" ]] || return
-ewarn "The late-2000s driver bundle has not been recently tested."
+ewarn "The late-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "late-2000"
@@ -678,7 +678,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 # A 2010s x86 desktop PC driver bundle
 ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2010s-desktop-pc" ]] || return
-ewarn "The 2010s driver bundle has not been recently tested."
+ewarn "The 2010s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "2010"
@@ -1008,7 +1008,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 # A 2020s x86 desktop PC driver bundle
 ot-kernel-driver-bundle_add_2020s_desktop_pc_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "2020s-desktop-pc" ]] || return
-ewarn "The 2020s driver bundle has not been recently tested."
+ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "2020"
