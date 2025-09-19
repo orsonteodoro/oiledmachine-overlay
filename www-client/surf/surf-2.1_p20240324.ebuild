@@ -675,6 +675,7 @@ pkg_config() {
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-TEST:  passed (webkit-gtk 2.42.2:4/37, 20231202)
+# OILEDMACHINE-OVERLAY-TEST:  passed (webkit-gtk 2.48.6:4/37, 20250919)
 # USE="gtk3 smoothscrolling -curl -doc -geolocation -gtk4 -mod_adblock
 # -mod_adblock_easylist -mod_adblock_spam404 -mod_autoopen -mod_link_hints
 # -mod_searchengines -mod_simple_bookmarking_redux -mpv -plumb -pointer-lock

@@ -3056,6 +3056,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.46.3, 20241116):
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.48.1, 20250422) for slot 4.1/0:
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.48.6, 20250919) for slot 4/37:
 #
 #   CFLAGS=-Oshit build config:
 #
