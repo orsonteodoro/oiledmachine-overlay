@@ -206,7 +206,7 @@ ewarn "The late-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 firewire"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
 	ot-kernel-driver-bundle_add_floppy_drive
@@ -294,13 +294,12 @@ ewarn "The early-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_usb "usb-1.1"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 firewire"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
 	ot-kernel-driver-bundle_add_sound "early-2000 isa pci pcie"
@@ -428,7 +427,7 @@ ewarn "The late-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "ps2 usb"
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+rw dvd-rw dvd+rw dvd-ram"
@@ -553,7 +552,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	# No USB 3.0
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 
@@ -685,7 +684,7 @@ ewarn "The 2010s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -785,7 +784,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_watchdog "2010 mei"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel_y_configopt "CONFIG_USB_XHCI_PLATFORM"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
@@ -1017,7 +1016,7 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel_y_configopt "CONFIG_INPUT"
 	ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
-	ot-kernel-driver-bundle_add_usb "usb-1.1 usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt"
 	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
@@ -2654,17 +2653,16 @@ ewarn "VLB is not supported"
 	fi
 }
 
-ot-kernel-driver-bundle_add_usb() {
+ot-kernel-driver-bundle_add_external_ports() {
 	local tags="${1}"
-	if [[ "${tags}" =~ "usb-3.0" ]] ; then
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	if [[ "${tags}" =~ "firewire" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_FIREWIRE"
+		ot-kernel_y_configopt "CONFIG_FIREWIRE_OHCI"
 	fi
-	if [[ "${tags}" =~ "usb-2.0" ]] ; then
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+	if [[ "${tags}" =~ "thunderbolt" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_USB4"
 	fi
 	if [[ "${tags}" =~ "usb-1.1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB"
@@ -2674,6 +2672,17 @@ ot-kernel-driver-bundle_add_usb() {
 		elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
 		fi
+	fi
+	if [[ "${tags}" =~ "usb-2.0" ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD" # 2000
+	fi
+	if [[ "${tags}" =~ "usb-3.0" ]] ; then
+	# Can use Type-A or Type-C connector
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
 	fi
 }
 
