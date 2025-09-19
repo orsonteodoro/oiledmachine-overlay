@@ -34,8 +34,6 @@
 #	https://github.com/Soheil-ab/c2tcp
 # CFI:
 #	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
-# Clear Linux patches:
-#       https://github.com/clearlinux-pkgs/linux
 # DeepCC:
 #	https://github.com/Soheil-ab/DeepCC.v1.0
 # genpatches:
@@ -148,8 +146,6 @@ BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 CFI_BASE_URI="https://github.com/torvalds/linux/commit/"
 CK_BASE_URI="https://github.com/torvalds/linux/commit/"
 CLANG_PGO_FN="clang-pgo-v9.patch"
-CLEAR_LINUX_PATCHES_FN="clear-linux-patches-${CLEAR_LINUX_PATCHES_VER}.tar.gz"
-CLEAR_LINUX_PATCHES_URI="https://github.com/clearlinux-pkgs/linux/archive/refs/tags/${CLEAR_LINUX_PATCHES_VER}.tar.gz -> ${CLEAR_LINUX_PATCHES_FN}"
 
 if [[ -n "${C2TCP_VER}" ]] ; then
 	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
@@ -478,6 +474,165 @@ MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+	# 2025-09-19
+	"CVE-2025-39846;NPD, DoS;"
+	"CVE-2025-39845;;"
+	"CVE-2025-39844;;"
+	"CVE-2025-39843;;"
+	"CVE-2025-39842;;"
+	"CVE-2025-39841;;"
+	"CVE-2025-39840;OOBR;"
+	"CVE-2025-39866;UAF;"
+	"CVE-2025-39865;NPD, DoS;"
+	"CVE-2025-39864;UAF;"
+	"CVE-2025-39863;UAF;"
+	"CVE-2025-39862;;"
+	"CVE-2025-39861;UAF;"
+	"CVE-2025-39860;UAF;"
+	"CVE-2025-39859;UAF;"
+	"CVE-2025-39858;;"
+	"CVE-2025-39857;NPD, DoS;"
+	"CVE-2025-39839;;"
+	"CVE-2025-39856;NPD, DoS;"
+	"CVE-2025-39855;DoS;"
+	"CVE-2025-39854;DoS;"
+	"CVE-2025-39853;;"
+	"CVE-2025-39852;DoS;"
+	"CVE-2025-39851;;"
+	"CVE-2025-39850;;"
+	"CVE-2025-39849;;"
+	"CVE-2025-39848;;"
+	"CVE-2025-39847;DoS;"
+	"CVE-2025-39837;;"
+	"CVE-2025-39838;NPD, DoS;"
+	"CVE-2022-50377;;"
+
+	# 2025-09-18
+	"CVE-2022-50414;;"
+	"CVE-2023-53422;DoS;"
+	"CVE-2023-53421;;"
+	"CVE-2023-53420;OOB, DoS;"
+	"CVE-2023-53419;;"
+	"CVE-2022-50419;;"
+	"CVE-2022-50418;DoS;"
+	"CVE-2023-53447;;"
+	"CVE-2023-53446;UAF;"
+	"CVE-2023-53445;;"
+	"CVE-2023-53444;;"
+	"CVE-2023-53443;DoS;"
+	"CVE-2022-50417;;"
+	"CVE-2023-53442;;"
+	"CVE-2023-53441;DoS;"
+	"CVE-2023-53440;;"
+	"CVE-2023-53439;;"
+	"CVE-2023-53438;;"
+	"CVE-2023-53437;;"
+	"CVE-2023-53436;DoS;"
+	"CVE-2023-53435;DoS;"
+	"CVE-2023-53434;;"
+	"CVE-2023-53433;;"
+	"CVE-2022-50416;DoS;"
+	"CVE-2023-53432;UAF;"
+	"CVE-2023-53431;;"
+	"CVE-2023-53430;DoS;"
+	"CVE-2023-53429;;"
+	"CVE-2023-53428;;"
+	"CVE-2023-53427;UAF;"
+	"CVE-2023-53426;UAF;"
+	"CVE-2023-53425;NPD, DoS;"
+	"CVE-2023-53424;DoS;"
+	"CVE-2023-53423;DoS;"
+	"CVE-2022-50415;NPD, DoS;"
+	"CVE-2022-50410;BO;"
+	"CVE-2022-50409;;"
+	"CVE-2022-50408;UAF;"
+	"CVE-2022-50407;;"
+	"CVE-2022-50406;MC;"
+	"CVE-2022-50405;;"
+	"CVE-2022-50404;;"
+	"CVE-2022-50403;UB;"
+	"CVE-2022-50413;UAF;"
+	"CVE-2022-50412;;"
+	"CVE-2022-50411;;"
+	"CVE-2022-50401;;"
+	"CVE-2022-50402;;"
+	"CVE-2023-53410;DoS;"
+	"CVE-2023-53409;DoS;"
+	"CVE-2023-53408;DoS;"
+	"CVE-2023-53407;DoS;"
+	"CVE-2023-53406;DoS;"
+	"CVE-2023-53405;DoS;"
+	"CVE-2023-53404;DoS;"
+	"CVE-2023-53403;DoS;"
+	"CVE-2023-53418;DoS;"
+	"CVE-2023-53417;DoS;"
+	"CVE-2023-53416;DoS;"
+	"CVE-2023-53415;DoS;"
+	"CVE-2023-53414;DoS;"
+	"CVE-2023-53413;DoS;"
+	"CVE-2023-53412;DoS;"
+	"CVE-2023-53411;DoS;"
+	"CVE-2022-50400;;"
+	"CVE-2023-53402;DoS;"
+	"CVE-2023-53375;;"
+	"CVE-2023-53384;NPD, DoS;"
+	"CVE-2023-53383;;"
+	"CVE-2023-53382;;"
+	"CVE-2023-53381;DoS;"
+	"CVE-2023-53380;NPD, DoS;"
+	"CVE-2023-53379;DoS;"
+	"CVE-2023-53378;;"
+	"CVE-2023-53401;NPD, DoS;"
+	"CVE-2023-53400;;"
+	"CVE-2023-53399;NPD, DoS;"
+	"CVE-2023-53398;UAF;"
+	"CVE-2023-53397;;"
+	"CVE-2023-53396;DoS;"
+	"CVE-2023-53395;;"
+	"CVE-2023-53377;UAF;"
+	"CVE-2023-53394;DoS;"
+	"CVE-2023-53393;;"
+	"CVE-2023-53392;DoS;"
+	"CVE-2023-53391;;"
+	"CVE-2023-53390;DoS;"
+	"CVE-2023-53389;;"
+	"CVE-2023-53388;;"
+	"CVE-2023-53387;;"
+	"CVE-2023-53386;UAF;"
+	"CVE-2023-53385;;"
+	"CVE-2023-53376;;"
+	"CVE-2022-50384;UAF;"
+	"CVE-2022-50383;;"
+	"CVE-2022-50382;;"
+	"CVE-2022-50381;DoS;"
+	"CVE-2022-50380;NPD, DoS;"
+	"CVE-2022-50379;RC;"
+	"CVE-2023-53374;;"
+	"CVE-2022-50378;UAF;"
+	"CVE-2023-53373;;"
+	"CVE-2023-53372;OF;"
+	"CVE-2023-53371;DoS;"
+	"CVE-2023-53370;DoS;"
+	"CVE-2023-53369;;"
+	"CVE-2022-50399;IO;"
+	"CVE-2022-50398;;"
+	"CVE-2022-50397;;"
+	"CVE-2022-50396;DoS;"
+	"CVE-2022-50395;DoS;"
+	"CVE-2022-50377;;"
+	"CVE-2022-50394;OOB;"
+	"CVE-2022-50393;;"
+	"CVE-2022-50392;DoS;"
+	"CVE-2022-50391;DoS;"
+	"CVE-2022-50390;UB;"
+	"CVE-2022-50389;DoS;"
+	"CVE-2022-50388;DoS;"
+	"CVE-2022-50387;DoS;"
+	"CVE-2022-50386;;"
+	"CVE-2022-50385;;"
+	"CVE-2022-50375;;"
+	"CVE-2022-50376;DoS;"
+
 	# 2025-09-17
 	"CVE-2023-53354;;"
 	"CVE-2023-53363;UAF;"
@@ -2991,104 +3146,6 @@ einfo "Done unpacking."
 	fi
 }
 
-# @FUNCTION: apply_clear_linux_patches
-# @DESCRIPTION:
-# Applies Clear Linux patches
-apply_clear_linux_patches() {
-einfo "Applying Clear Linux patches"
-	if ver_test "${PV}" -eq "${CLEAR_LINUX_PATCHES_VER%-*}" ; then
-		mkdir -p "${T}/clear-linux-patches"
-		pushd "${T}/clear-linux-patches" >/dev/null 2>&1 || die
-			unpack "${CLEAR_LINUX_PATCHES_FN}"
-		popd >/dev/null 2>&1 || die
-		local P=(
-			$(grep -E -e "^Patch[0-9]+:" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
-				| cut -f 2 -d ":" \
-				| sed -E -e "s|^[ ]+||g")
-		)
-		local p
-		local blacklisted="${OT_KERNEL_CLEAR_LINUX_PATCHSET_BLACKLIST}"
-		if ! [[ "${cpu_sched}" =~ "cfs" ]] ; then
-			blacklisted+=" 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch"
-		fi
-		local upstream_blacklisted=$(grep -E -e "#%?patch[0-9]+" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
-			| cut -f 1 -d " " \
-			| sed -r -e "s|#%?patch||g")
-		for p in ${P[@]} ; do
-			local is_blacklisted=0
-			local bl
-			for bl in ${upstream_blacklisted} ; do
-				local fn=$(grep -E -e "^Patch${bl}" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
-					| cut -f 2 -d " ")
-				if [[ "${p}" == "${fn}" ]] ; then
-					is_blacklisted=1
-					break
-				fi
-			done
-
-			for bl in ${blacklisted} ; do
-				if [[ "${p}" == "${bl}" ]] ; then
-					is_blacklisted=1
-					break
-				fi
-			done
-			if ! [[ "${cpu_sched}" =~ "cfs" ]] ; then
-				if grep -q -F -e "kernel/sched" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" ; then
-ewarn "Skipping ${p} which makes reference to kernel/sched implying CFS.  ${cpu_sched} != cfs"
-					is_blacklisted=1
-				fi
-			fi
-			if (( ${is_blacklisted} == 1 )) ; then
-ewarn "${p} is blacklisted.  Skipping..."
-				continue
-			fi
-			_fpatch "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}"
-		done
-
-		# Apply extra patches after official
-		local P=(
-			"${OT_KERNEL_CLEAR_LINUX_PATCHSET_EXTRA}"
-		)
-		for p in ${P[@]} ; do
-			local subject=$(grep -e "^Subject:" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" \
-				| head -n 1 \
-				| sed -e "s|^Subject: ||")
-			local bl=""
-			for bl in ${blacklisted} ; do
-				if [[ "${p}" == "${bl}" ]] ; then
-ewarn "Skipping clear linux patchset ${p} -- ${subject}"
-					continue
-				fi
-			done
-			_fpatch "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" "-- ${subject}"
-		done
-
-		if [[ "${CFLAGS}" =~ "-march=westmere" ]] ; then
-einfo "Keeping -march=westmere from Clear Linux patch."
-		else
-ewarn "Removing -march=westmere from Clear Linux patch.  Set CFLAGS with -march=westmere to keep it."
-			sed -i -e "s|-march=westmere||g" "arch/x86/Makefile" || die
-		fi
-
-		if [[ "${CFLAGS}" =~ "-O3" ]] ; then
-einfo "Keeping -O3 from Clear Linux patch."
-			_OT_KERNEL_O3_PROVIDER["${KV_MAJOR_MINOR}-${extraversion}"]="clear"
-		else
-ewarn "Removing -O3 from Clear Linux patch.  Set CFLAGS with -O3 to keep it."
-			sed -i -e "s|-O3||g" "arch/x86/Makefile" || die
-		fi
-	else
-ewarn
-ewarn "The Clear Linux patches version mismatch.  Skipping."
-ewarn
-ewarn "Actual version:  ${PV}"
-ewarn "Expected version:  ${CLEAR_LINUX_PATCHES_VER%-*}"
-ewarn
-ewarn "The patchset estimated bump is 2-7 days after the point release."
-ewarn
-	fi
-}
-
 # @FUNCTION: apply_nest
 # @DESCRIPTION:
 # Apply the Nest scheduler.
@@ -3152,12 +3209,6 @@ _has_security_critical_type() {
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
-	if has clear ${IUSE_EFFECTIVE} && use clear ; then
-		if ot-kernel_use clear ; then
-			apply_clear_linux_patches
-		fi
-	fi
-
 	if has rt ${IUSE_EFFECTIVE} && use rt ; then
 		if ot-kernel_use rt ; then
 			apply_rt

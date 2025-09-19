@@ -328,7 +328,7 @@ ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
 ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 bbrv3 build c2tcp +cet +cfs -clang clear -deepcc -debug doc -dwarf4
+bbrv2 bbrv3 build c2tcp +cet +cfs -clang -deepcc -debug doc -dwarf4
 -dwarf5 dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto
 nest orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor
 tresor_prompt tresor_sysfs zen-sauce
@@ -410,7 +410,6 @@ LICENSE+="
 "
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" clear? ( GPL-2 )"
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
@@ -1003,7 +1002,6 @@ elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${BBRV2_SRC_URIS}
 		${BBRV3_SRC_URIS}
 		${C2TCP_URIS}
-		${CLEAR_LINUX_PATCHES_URI}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -1033,9 +1031,6 @@ else
 		)
 		c2tcp? (
 			${C2TCP_URIS}
-		)
-		clear? (
-			${CLEAR_LINUX_PATCHES_URI}
 		)
 		deepcc? (
 			${C2TCP_URIS}
@@ -1432,20 +1427,9 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-369ef2b-fix-for-6.6.0-git-6bc986a.patch"
 	elif [[ "${path}" =~ "zen-sauce-6.6.0-1554998.patch" ]] ; then
-		if ot-kernel_use clear ; then
-			# Duplicate of 0133-novector.patch
-			:
-		else
-			_dpatch "${PATCH_OPTS}" "${path}"
-		fi
+		_dpatch "${PATCH_OPTS}" "${path}"
 	elif [[ "${path}" =~ "zen-sauce-6.6.0-a1b7aab.patch" ]] ; then
-		if ot-kernel_use clear ; then
-			# Duplicate of 0162-extra-optmization-flags.patch
-			:
-		else
-			_dpatch "${PATCH_OPTS}" "${path}"
-		fi
-
+		_dpatch "${PATCH_OPTS}" "${path}"
 	elif [[ "${path}" =~ "Nest_v6.6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-6.6-fix-for-6.6.7.patch"

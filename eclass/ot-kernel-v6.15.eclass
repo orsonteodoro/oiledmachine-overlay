@@ -338,7 +338,6 @@ fi
 if [[ "${PV}" =~ "9999" ]] ; then
 	:
 else
-#clear
 IUSE+="
 "
 fi
@@ -1018,7 +1017,6 @@ elif [[ "${PV}" =~ "9999" ]] ; then
 		)
 	"
 elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
-#		${CLEAR_LINUX_PATCHES_URI}
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
 		${BBRV3_SRC_URIS}
@@ -1038,9 +1036,6 @@ elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${TRESOR_SYSFS_SRC_URI}
 		${ZEN_SAUCE_URIS}
 	"
-#		clear? (
-#			${CLEAR_LINUX_PATCHES_URI}
-#		)
 else
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
