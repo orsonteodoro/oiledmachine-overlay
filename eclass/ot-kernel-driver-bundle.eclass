@@ -323,7 +323,7 @@ ewarn "The early-2000s driver bundle has not been recently tested."
 
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
@@ -659,7 +659,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # Audio only
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
 
@@ -887,7 +887,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HDA"
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # Audio only
-	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 	ot-kernel_y_configopt "CONFIG_SND_PCI"
 	ot-kernel_y_configopt "CONFIG_SND_SOC"
@@ -9110,7 +9110,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
 	fi
 	if [[ "${tags}" =~ "early-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 
@@ -9138,7 +9138,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
-		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9151,6 +9151,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	fi
@@ -9158,6 +9159,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	fi
 	ot-kernel-driver-bundle_add_midi_playback_support
@@ -9325,7 +9327,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:realtek" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA"
-		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
@@ -9488,7 +9490,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-realtek" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA"
-		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
@@ -9969,9 +9971,86 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 ) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_MSND_CLASSIC" # 1991
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:realtek-hd-audio") ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:realtek-hd-audio"|\
+"alc215"|\
+"alc221"|\
+"alc222"|\
+"alc225"|\
+"alc236"|\
+"alc231"|\
+"alc233"|\
+"alc234"|\
+"alc236"|\
+"alc245"|\
+"alc255"|\
+"alc256"|\
+"alc257"|\
+"alc260"|\
+"alc262"|\
+"alc267"|\
+"alc268"|\
+"alc269"|\
+"alc270"|\
+"alc272"|\
+"alc274"|\
+"alc275"|\
+"alc276"|\
+"alc280"|\
+"alc282"|\
+"alc283"|\
+"alc284"|\
+"alc285"|\
+"alc286"|\
+"alc287"|\
+"alc288"|\
+"alc289"|\
+"alc290"|\
+"alc292"|\
+"alc293"|\
+"alc294"|\
+"alc295"|\
+"alc298"|\
+"alc299"|\
+"alc300"|\
+"alc623"|\
+"alc660"|\
+"alc660-vd"|\
+"alc662"|\
+"alc662"|\
+"alc663"|\
+"alc665"|\
+"alc667"|\
+"alc668"|\
+"alc670"|\
+"alc671"|\
+"alc680"|\
+"alc700"|\
+"alc701"|\
+"alc703"|\
+"alc711"|\
+"alc861"|\
+"alc861-vd"|\
+"alc880"|\
+"alc882"|\
+"alc883"|\
+"alc885"|\
+"alc887"|\
+"alc888"|\
+"alc889"|\
+"alc889a"|\
+"alc891"|\
+"alc892"|\
+"alc897"|\
+"alc898"|\
+"alc1150"|\
+"alc1200"|\
+"alc1220"|\
+"alcs1200a"|\
+"hw8326"\
+) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA"
-		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
