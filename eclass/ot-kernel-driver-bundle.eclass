@@ -9072,7 +9072,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_ENS1371" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_FM801" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_GUSEXTREME" # 1996
-		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 		ot-kernel_y_configopt "CONFIG_SND_MAESTRO3" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_OPL3SA2" # 1995
@@ -9121,7 +9121,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_FM801" # 1998
-		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	fi
 	if [[ "${tags}" =~ "late-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
@@ -9131,6 +9131,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_CTXFI" # 2005
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1X" # 2003
+		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
 
@@ -9205,6 +9206,9 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_AZT2316" # 1995
 		ot-kernel_y_configopt "CONFIG_SND_AZT2320" # 1997/1998
 		ot-kernel_y_configopt "CONFIG_SND_AZT3328" # 1997
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:c-media" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:cirrus-logic" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_CS4231" #
@@ -9303,8 +9307,10 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
 	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:ali"|"sound:amd"|"sound:intel"|"sound:nvidia"|"sound:sis") ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
+	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:intel" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
 		if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9522,8 +9528,8 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:interwave-stb" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:indel8x0" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:intel8x0" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:interwave-stb" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
@@ -9615,8 +9621,40 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	# See also the sound:sound-blaster-live-dell-oem
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:8x0") ]] ; then
-		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:440mx"|\
+"sound:6300esb"|\
+"sound:8x0"|\
+"sound:82801aa"|\
+"sound:82801aa-ich"|\
+"sound:82901ab"|\
+"sound:82901ab-ich0"|\
+"sound:82801ba"|\
+"sound:82801ba-ich2"|\
+"sound:82801ca"|\
+"sound:82801ca-ich3"|\
+"sound:82801db"|\
+"sound:82801db-ich4"|\
+"sound:amd768"|\
+"sound:amd8111"|\
+"sound:ck8"|\
+"sound:ck8s"|\
+"sound:ck804"|\
+"sound:ich5"|\
+"sound:ich6"|\
+"sound:ich7"|\
+"sound:esb2"|\
+"sound:m5455"|\
+"sound:mcp1"|\
+"sound:mcp2"|\
+"sound:mcp3"|\
+"sound:mcp04"|\
+"sound:nforce"|\
+"sound:nforce2"|\
+"sound:nforce3"|\
+"sound:si7012"\
+) ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "sound:7018"|\
@@ -9781,9 +9819,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:cx20652"|\
 "sound:cx20664"|\
 "sound:cx20665"|\
-"sound:cx21722:"|\
 "sound:cx20722"|\
-"sound:cx21724"|\
 "sound:cx20724"|\
 "sound:cx20751"|\
 "sound:cx20752"|\
@@ -9795,6 +9831,8 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:cx20756"|\
 "sound:cx20757"|\
 "sound:cx20952"|\
+"sound:cx21722"|\
+"sound:cx21724"|\
 "sound:sn6140"|\
 "sound:sn6180"\
 ) ]] ; then
@@ -10104,10 +10142,26 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:oxygen-hd-audio"|\
 "sound:virtuoso"|\
 "sound:virtuoso-66"|\
 "sound:virtuoso-100"|\
-"sound:virtuoso-200"\
+"sound:virtuoso-200"|\
+"sound:xonar-d1"|\
+"sound:xonar-d2"|\
+"sound:xonar-d2x"|\
+"sound:xonar-ds"|\
+"sound:xonar-dsx"|\
+"sound:xonar-dx"|\
+"sound:xonar-hdav1.3"|\
+"sound:xonar-hdav1.3+h6"|\
+"sound:xonar-hdav1.3-slim"|\
+"sound:xonar-st"|\
+"sound:xonar-st+h6"|\
+"sound:xonar-stx"|\
+"sound:xonar-stx-ii"|\
+"sound:xonar-stx-ii+h6"|\
+"sound:xonar-xense"|\
 ) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
 	fi

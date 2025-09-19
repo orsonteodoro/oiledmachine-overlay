@@ -1986,6 +1986,7 @@ TBM=0
       sound:ati
       sound:aztech
       sound:cirrus-logic
+      sound:c-media
       sound:creative
       sound:idt
       sound:integrated-device-technology
