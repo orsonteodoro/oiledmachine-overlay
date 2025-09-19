@@ -1733,14 +1733,16 @@ TBM=0
 
     Acceptable values (tentative):
 
-      early-1990s-desktop-pc
-      late-1990s-desktop-pc
-      early-2000s-desktop-pc
-      late-2000s-desktop-pc
-      2010s-desktop-pc
-      2020s-desktop-pc
-      vpceb25fx
-      15-da0086nr
+      Base profiles available:
+
+      base:early-1990s-desktop-pc
+      base:late-1990s-desktop-pc
+      base:early-2000s-desktop-pc
+      base:late-2000s-desktop-pc
+      base:2010s-desktop-pc
+      base:2020s-desktop-pc
+      base:vpceb25fx
+      base:15-da0086nr
  
       For graphics chips, currently non-oem gaming grade and office grade
       graphics are provided for the driver bundles.  This selection
@@ -2264,8 +2266,8 @@ TBM=0
 
     Examples
 
-      OT_KERNEL_DRIVER_BUNDLE="2010s-desktop-pc sound:2010s wifi:atheros controller:gamepad graphics:efifb graphics:polaris webcam:uvc"
-      OT_KERNEL_DRIVER_BUNDLE="2020s-desktop-pc sound:2020s wifi:ath5k wifi:rtw8811 graphics:ampere webcam:uvc"
+      OT_KERNEL_DRIVER_BUNDLE="base:2010s-desktop-pc sound:2010s wifi:atheros controller:gamepad graphics:efifb graphics:polaris webcam:uvc"
+      OT_KERNEL_DRIVER_BUNDLE="base:2020s-desktop-pc sound:2020s wifi:ath5k wifi:rtw8811 graphics:ampere webcam:uvc"
 
       #
       # See also eclass/ot-kernel-driver-bundle.eclass for examples
