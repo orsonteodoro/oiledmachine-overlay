@@ -30,6 +30,7 @@ inherit ot-kernel-v6.12
 
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.7.0.9999 (6.7.0-rc7 commit: 98b1cc82c4affc16f5598d4fa14b1858671b2263) (20231121) with builder profile
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.12.48 (20250919) with builder profile, _FORTIFY_SOURCE on, kcfi on, ubsan on, kfence on.
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
