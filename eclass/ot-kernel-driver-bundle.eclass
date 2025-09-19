@@ -2704,7 +2704,7 @@ ot-kernel-driver-bundle_add_console() {
 	# CGA (1981)
 	# EGA (1984)
 	# VGA (1987)
-	# Hardware vga required
+	# VGA hardware required
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
