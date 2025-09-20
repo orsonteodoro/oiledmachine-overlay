@@ -76,8 +76,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables the advanced GUI.
     </flag>
     <flag name="asan">
-      Enables ASAN for reporting but not necessarily preventing memory use
-      problems or possible vulnerabilities.
+      Enables ASan for memory corruption detection that may lead to
+      code execution, privilege escalation, denial of service, data tampering,
+      information disclosure.
+
       Adds 1.5 - 4.0 worst case performance penalty.
       It is not recommened for use in production.
     </flag>
@@ -184,8 +186,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       for 3D.
     </flag>
     <flag name="hwasan">
-      Enables HWASAN for reporting but not necessarily preventing memory use
-      problems or possible vulnerabilities.
+      Enables HASan for memory corruption detection that may lead to
+      code execution, privilege escalation, denial of service, data tampering,
+      information disclosure.
+
       Adds 1.15 - 1.50 worst case performance penalty.
       It is ready for use in production.
     </flag>
@@ -234,7 +238,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       linker when using LTO.
     </flag>
     <flag name="lsan">
-      Enables LSAN for reporting but not necessarily preventing memory leaks.
+      Enables LSan for memory leaks detection that may lead to Denial of Service
+      (DoS).
+
       Adds 1.05 - 1.50 worst case performance penalty.
       It is not recommened for use in production.
     </flag>
@@ -275,8 +281,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables MP3 support.
     </flag>
     <flag name="msan">
-      Enables MSAN for reporting but not necessarily fixing uninitialized
-      variables.
+      Enables MSAN for detecting uninitalized memory that may lead to
+      information disclosure.
+
       Adds 3.00 - 11.00 worst case performance penalty.
       It is not recommened for use in production.
     </flag>
@@ -354,7 +361,12 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables DXT compression.
     </flag>
     <flag name="sanitize-in-production">
-      Makes sanitizer violations fatal in production to stop exploits.
+      Makes sanitizer violations fatal in production to stop exploits that
+      may lead to code execution, privilege escalation, denial of service,
+      data tampering, information disclosure.
+
+      Typically it is combined with ASan inspired sanitizer (ASan, HWASan,
+      GWP-ASan) and UBSan.
     </flag>
     <flag name="speech">
       Enables text-to-speech.
@@ -483,14 +495,17 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables mobile touchscreen events support.
     </flag>
     <flag name="tsan">
-      Enables TSAN to catch but not necessarily prevent data races that
-      potentially can lead to a crash or memory corruption.
+      Enables TSan to detect data races that can lead to data tampering.
+
       Adds 4.00 - 16.00 worst case performance penalty.
       It is not recommened for use in production.
     </flag>
     <flag name="ubsan">
-      Enables UBSAN to catch but not necessarily prevent overflows or null
-      pointer or misaligned access that could lead to a crash.
+      Enables UBSan for undefined behavior detection for integer overflows,
+      NULL pointer dereference, out of bounds violations that may lead to
+      code execution, privilege escalation, denial of service, data
+      tampering, information disclosure.
+
       Adds 1.10 - 2 worst case performance penalty.
       It is not recommened for use in production.
     </flag>
