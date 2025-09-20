@@ -183,7 +183,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_8
+	ebuild_revision_9
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -296,6 +296,10 @@ REQUIRED_USE+="
 	)
 	vscode? (
 		csharp-external-editor
+	)
+	?? (
+		asan
+		hwasan
 	)
 "
 
@@ -769,6 +773,18 @@ src_configure() {
 			mkdir -p "${WORKDIR}/mono" || die
 			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
 			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+		fi
+	fi
+	if use sanitize-in-production ; then
+# You can use UBSan and tc-malloc or scudo with GWP-ASan.
+		if use asan || use hwasan ; then
+			:
+		else
+ewarn "You are missing a address sanitizer for USE=sanitize-in-production."
+ewarn "You are responsible for adding a LD_PRELOAD wrapper to a sample based address sanitizer (e.g. tc-malloc, scudo)."
+		fi
+		if ! use ubsan ; then
+ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 		fi
 	fi
 }
