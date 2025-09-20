@@ -231,9 +231,6 @@ REQUIRED_USE+="
 	lld? (
 		clang
 	)
-	lsan? (
-		asan
-	)
 	mp1? (
 		mp3
 	)
