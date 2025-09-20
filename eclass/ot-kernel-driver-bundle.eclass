@@ -1604,6 +1604,8 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_HID_GENERIC"
 	ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
 	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+	ot-kernel_set_configopt "CONFIG_INPUT_MOUSEDEV_SCREEN_X" "1366"
+	ot-kernel_set_configopt "CONFIG_INPUT_MOUSEDEV_SCREEN_Y" "768"
 
 	# PCIe
 	ot-kernel_y_configopt "CONFIG_PCI"
