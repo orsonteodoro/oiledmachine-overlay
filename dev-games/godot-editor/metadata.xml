@@ -76,10 +76,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables the advanced GUI.
     </flag>
     <flag name="asan">
-      Enables ASan for unaccelerated memory corruption, heap overflow, stack
-      overflow, out-of-bounds, double free detection, use after free, use after
-      return that may lead to code execution, privilege escalation, denial of
-      service, data tampering, information disclosure.
+      Enables ASan for unaccelerated detection of memory corruption, heap
+      overflow, stack overflow, out-of-bounds, double free detection, use after
+      free, use after return that may lead to code execution, privilege
+      escalation, denial of service, data tampering, information disclosure.
 
       Adds 1.5x - 4.0x worst case performance penalty.
       It is not recommened for use in production.
@@ -194,10 +194,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       for 3D.
     </flag>
     <flag name="hwasan">
-      Enables HASan for hardware accelerated memory corruption, heap overflow,
-      stack overflow, out-of-bounds, double free detection, use after free, use
-      after return that may lead to code execution, privilege escalation, denial
-      of service, data tampering, information disclosure.
+      Enables HASan for hardware accelerated detection of memory corruption,
+      heap overflow, stack overflow, out-of-bounds, double free detection, use
+      after free, use after return that may lead to code execution, privilege
+      escalation, denial of service, data tampering, information disclosure.
 
       Adds 1.15x - 1.50x worst case performance penalty.
       It is ready for use in production.
