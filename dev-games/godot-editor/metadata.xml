@@ -63,6 +63,18 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="3d">
       Enables 3D support.
     </flag>
+    <flag name="2d-physics">
+      Enables 2D physics support.
+    </flag>
+    <flag name="3d-physics">
+      Enables 3D physics support.
+    </flag>
+    <flag name="2d-navigation">
+      Enables 2D AI pathfinding support.
+    </flag>
+    <flag name="3d-navigation">
+      Enables 3D AI pathfinding support.
+    </flag>
     <flag name="advanced-gui">
       Enables the advanced GUI.
     </flag>
@@ -72,6 +84,15 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="astc">
       Enables CPU based ASTC texture compression/decompression.
+    </flag>
+    <flag name="bc">
+      Enables BC texture decompression.
+    </flag>
+    <flag name="basis-universal">
+      Enables support for portable 3D texture compression.
+    </flag>
+    <flag name="betsy">
+      Allows to offload texture compression to GPU for BC1, BC3, ETC1, ETC2, EAC.
     </flag>
     <flag name="brotli">
       Allows to use WOFF2 fonts compressed with brotli.
@@ -124,6 +145,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables support for OpenEXR texture images used in association with 3D
       animation.
     </flag>
+    <flag name="fbx">
+      Enables support for FBX interchange format for scenes and assets
+      to and from other programs.
+    </flag>
     <flag name="csharp-external-editor">
       Selects a compatible C# editor
     </flag>
@@ -166,6 +191,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables support for inverse kinematics used for hinges and bone animation
       in 3D games.
     </flag>
+    <flag name="interactive-music">
+      Enable the interactive music system using music clips and transition
+      rules.
+    </flag>
     <flag name="jit">
       Enables JIT support for PCRE2.  JIT may need to be disabled on platforms
       such as consoles if expression compilation fails.  If disabled, it falls
@@ -177,6 +206,11 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="jpeg">
       Enables JPEG support.
+    </flag>
+    <flag name="jolt-physics">
+      Enables multicore performance based 3D rigid body physics and collsion
+      detection based on the experimental Jolt Physics engine.  If disabled, it
+      will use the Godot Physics engine.
     </flag>
     <flag name="ktx">
       Enables KTX texture container support.
@@ -247,6 +281,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="musepack">
       Enables support for Musepack audio files.
     </flag>
+    <flag name="noise">
+      Enables support for noise to generate random textures, maps, terrain,
+      shaders, etc.
+    </flag>
     <flag name="ogg">
       Enables support for the Ogg container format.
     </flag>
@@ -300,8 +338,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="raycast">
       Build the module for occlusion culling with 3 levels of quality.
     </flag>
-    <flag name="recast">
-      Enable mesh generation for 3D games.
+    <flag name="navigation">
+      Enable AI pathfinding for NPCs or AI bots.
     </flag>
     <flag name="s3tc">
       Enables DXT compression.
@@ -317,9 +355,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enable SVG vector image format support.
     </flag>
     <flag name="system-brotli">
-      Uses the system's external library instead of the internal version.
-    </flag>
-    <flag name="system-bullet">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-clipper2">
@@ -338,6 +373,15 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-glslang">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-graphite">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-harfbuzz">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-libjpeg-turbo">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-libmpcdec">
@@ -385,13 +429,16 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="system-pcre2">
       Uses the system's external library instead of the internal version.
     </flag>
-    <flag name="system-recast">
+    <flag name="system-recastnavigation">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-rvo2">
       Uses the system's external library instead of the internal version.
     </flag>
-    <flag name="system-squish">
+    <flag name="system-sdl">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-wslay">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-xatlas">
@@ -438,9 +485,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables decomposition of 3D polygons into simple more accurate
       approximation for collison detection at the model's limbs instead of more
       spheroid or retangular shapes.
-    </flag>
-    <flag name="visual-script">
-      Enables the visual scripting and editor.
     </flag>
     <flag name="webm">
       Enables support for the WebM format for audio and video.

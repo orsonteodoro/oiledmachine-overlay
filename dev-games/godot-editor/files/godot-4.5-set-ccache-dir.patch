@@ -1,0 +1,10 @@
+--- a/SConstruct.orig	2025-09-14 18:30:02.000000000 -0700
++++ b/SConstruct	2025-09-20 00:49:32.384357326 -0700
+@@ -117,6 +117,7 @@ env.PrependENVPath("PATH", os.getenv("PA
+ env.PrependENVPath("PKG_CONFIG_PATH", os.getenv("PKG_CONFIG_PATH"))
+ if "TERM" in os.environ:  # Used for colored output.
+     env["ENV"]["TERM"] = os.environ["TERM"]
++env.PrependENVPath("CCACHE_DIR", os.getenv("CCACHE_DIR"))
+ 
+ env.disabled_modules = set()
+ env.module_version_string = ""

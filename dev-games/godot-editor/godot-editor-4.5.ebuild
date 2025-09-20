@@ -2,10 +2,12 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=7
+
+# U22
+
 # See profiles/desc/godot* for more related files.
 # Keep profiles/make.defaults up to date.
-
-EAPI=7
 
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
@@ -15,7 +17,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO SO"
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
-inherit godot-4.2
+inherit godot-4.5
 inherit cflags-hardened desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils virtualx
 
 SRC_URI="
@@ -83,45 +85,45 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +csg +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer
-+mobile-vr +msdfgen +openxr +raycast +recast +vhacd +xatlas
++3d +csg +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer +mobile-vr
++msdfgen +openxr +raycast +vhacd +xatlas
 "
 IUSE_AUDIO="
-+alsa +pulseaudio +speech
++alsa +interactive-music +pulseaudio +speech
 "
 IUSE_BUILD="
 ${SANITIZERS[@]}
 clang debug jit layers lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +ktx +minizip -mp1 -mp2 +mp3
-+ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
++astc +bc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +ktx +minizip -mp1 -mp2
++mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
-+advanced-gui +dbus
++advanced-gui +dbus -editor-splash +wayland +X
 "
 IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+freetype +graphite +opengl +opensimplex +pcre2 +text-server-adv
--text-server-fb +volk +vulkan
++2d-navigation +3d-navigation +2d-physics +3d-physics +basis-universal +betsy
++freetype +graphite +navigation +noise +opengl +opensimplex +pcre2 +sdl
++text-server-adv -text-server-fb +volk +vulkan
 "
 IUSE_NET="
 ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +text-server-adv
 -text-server-fb +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
-csharp-external-editor -gdscript gdscript_lsp -mono monodevelop +visual-script
-vscode
+csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
 system-brotli system-clipper2 system-embree system-enet system-freetype
-system-glslang system-icu system-libogg system-libpng system-libtheora
-system-libvorbis system-libwebp system-libwebsockets
-system-mbedtls system-miniupnpc system-msdfgen -system-mono system-openxr
-system-pcre2 system-recast system-squish system-wslay system-xatlas
-system-zlib system-zstd
+system-glslang system-graphite system-harfbuzz system-icu system-libjpeg-turbo
+system-libogg system-libpng system-libtheora system-sdl system-libvorbis
+system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
+system-msdfgen -system-mono system-openxr system-pcre2 system-recastnavigation
+system-wslay system-xatlas system-zlib system-zstd
 "
 IUSE+="
 	${IUSE_3D}
@@ -151,6 +153,12 @@ REQUIRED_USE+="
 	^^ (
 		text-server-adv
 		text-server-fb
+	)
+	2d-navigation? (
+		navigation
+	)
+	3d-navigation? (
+		navigation
 	)
 	clang? (
 		^^ (
@@ -189,6 +197,12 @@ REQUIRED_USE+="
 	msdfgen? (
 		freetype
 	)
+	navigation? (
+		|| (
+			2d-navigation
+			3d-navigation
+		)
+	)
 	optimize-size? (
 		!optimize-speed
 	)
@@ -214,8 +228,7 @@ REQUIRED_USE+="
 		!system-mono
 		!system-msdfgen
 		!system-pcre2
-		!system-recast
-		!system-squish
+		!system-recastnavigation
 		!system-xatlas
 		!system-zlib
 		!system-zstd
@@ -408,8 +421,17 @@ DEPEND+="
 	system-glslang? (
 		>=dev-util/glslang-${GLSLANG_PV}
 	)
+	system-graphite? (
+		>=media-gfx/graphite2-${GRAPHITE2_PV}
+	)
+	system-harfbuzz? (
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}
+	)
 	system-icu? (
 		>=dev-libs/icu-${ICU_PV}
+	)
+	system-libjpeg-turbo? (
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}
 	)
 	system-libogg? (
 		>=media-libs/libogg-${LIBOGG_PV}
@@ -441,11 +463,11 @@ DEPEND+="
 	system-pcre2? (
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
 	)
-	system-recast? (
+	system-recastnavigation? (
 		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
 	)
-	system-squish? (
-		>=media-libs/libsquish-${LIBSQUISH_PV}
+	system-sdl? (
+		>=media-libs/libsdl3-${LIBSDL3_PV}
 	)
 	system-wslay? (
 		>=net-libs/wslay-${WSLAY_PV}
@@ -487,8 +509,10 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
+	$(python_gen_any_dep '
+		dev-build/scons[${PYTHON_USEDEP}]
+	')
 	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
-	dev-build/scons
 	lld? (
 		llvm-core/lld
 	)
@@ -502,7 +526,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
+	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
 )
 
 check_speech_dispatcher() {
@@ -890,24 +914,28 @@ src_compile() {
 	)
 	local options_x11=(
 		platform="x11"
+		alsa=$(usex alsa)
 		dbus=$(usex dbus)
 		pulseaudio=$(usex pulseaudio)
+		no_editor_splash=$(usex !editor-splash)
 		opengl3=$(usex opengl)
+		speechd=$(usex speech)
+		sdl=$(usex sdl)
 		touch=$(usex touch)
 		udev=$(usex gamepad)
-		use_alsa=$(usex alsa)
 		use_asan=$(usex asan)
 		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_lsan=$(usex lsan)
 		use_msan=$(usex msan)
-		use_speechd=$(usex speech)
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
 		use_volk=$(usex volk)
 		vulkan=$(usex vulkan)
+		wayland=$(usex wayland)
+		x11=$(usex X)
 	)
 	local options_modules_shared=(
 		builtin_brotli=$(usex !system-brotli)
@@ -917,7 +945,9 @@ src_compile() {
 		builtin_enet=$(usex !system-enet)
 		builtin_freetype=$(usex !system-freetype)
 		builtin_glslang=$(usex glslang)
+		builtin_graphite=$(usex !system-graphite)
 		builtin_icu4c=$(usex !system-icu)
+		builtin_libjpeg_turbo=$(usex !system-libjpeg-turbo)
 		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
@@ -928,9 +958,10 @@ src_compile() {
 		builtin_msdfgen=$(usex !system-msdfgen)
 		builtin_pcre2=$(usex !system-pcre2)
 		builtin_openxr=$(usex !system-openxr)
-		builtin_recast=$(usex !system-recast)
+		builtin_recastnavigation=$(usex !system-recastnavigation)
+		builtin_rvo2_2d=True
 		builtin_rvo2_3d=True
-		builtin_squish=$(usex !system-squish)
+		builtin_sdl=$(usex !system-sdl)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
 		builtin_zlib=$(usex !system-zlib)
@@ -941,13 +972,16 @@ src_compile() {
 "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
+		builtin_brotli=True
 		builtin_certs=True
 		builtin_clipper2=True
-		builtin_brotli=True
 		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
 		builtin_glslang=True
+		builtin_graphite=True
+		builtin_icu4c=True
+		builtin_libjpeg_turbo=True
 		builtin_libogg=True
 		builtin_libpng=True
 		builtin_libtheora=True
@@ -958,9 +992,8 @@ src_compile() {
 		builtin_msdfgen=True
 		builtin_pcre2=True
 		builtin_openxr=True
-		builtin_recast=True
+		builtin_recastnavigation=True
 		builtin_rvo2=True
-		builtin_squish=True
 		builtin_wslay=True
 		builtin_xatlas=True
 		builtin_zlib=True
@@ -976,6 +1009,10 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		disable_physics_2d=$(usex !2d-physics)
+		disable_physics_3d=$(usex !3d-physics)
+		disable_navigation_2d=$(usex !2d-pathfinding)
+		disable_navigation_3d=$(usex !3d-pathfinding)
 		brotli=$(usex brotli)
 		builtin_pcre2_with_jit=$(usex jit)
 		disable_3d=$(usex !3d)
@@ -985,13 +1022,17 @@ src_compile() {
 		minizip=$(usex minizip)
 		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
+		module_basis_universal_enabled=$(usex basis-universal)
+		module_bcdec_enabled=$(usex bc)
+		module_betsy_enabled=$(usex betsy)
 		module_bmp_enabled=$(usex bmp)
 		module_camera_enabled=$(usex camera)
 		module_csg_enabled=$(usex csg)
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
-		module_etcpak_enabled=$(usex etc)
 		module_enet_enabled=$(usex enet)
+		module_etcpak_enabled=$(usex etc)
+		module_fbx_enabled=$(usex fbx)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False
 		module_gdscript_enabled=$(usex gdscript)
@@ -999,6 +1040,7 @@ src_compile() {
 		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
 		module_hdr_enabled=$(usex hdr)
+		module_interactive_music_enabled=$(usex interactive-music)
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
 		module_ktx_enabled=$(usex ktx)
@@ -1009,29 +1051,29 @@ src_compile() {
 		module_mobile_vr_enabled=$(usex mobile-vr)
 		module_msdfgen_enabled=$(usex msdfgen)
 		module_multiplayer_enabled=$(usex multiplayer)
-		module_navigation_enabled=$(usex recast)
+		module_navigation_enabled=$(usex navigation)
+		module_noise_enabled=$(usex noise)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
+		module_openxr_enabled=$(usex openxr)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
-		module_squish_enabled=$(usex s3tc)
 		module_stb_vorbis_enabled=$(usex vorbis)
 		module_svg_enabled=$(usex svg)
 		module_text_server_adv_enabled=$(usex text-server-adv)
 		module_text_server_fb_enabled=$(usex text-server-fb)
+		module_tga_enabled=$(usex tga)
 		module_theora_enabled=$(usex theora)
 		module_tinyexr_enabled=$(usex exr)
-		module_tga_enabled=$(usex tga)
 		module_upnp_enabled=$(usex upnp)
-		module_visual_script_enabled=$(usex visual-script)
 		module_vhacd_enabled=$(usex vhacd)
 		module_vorbis_enabled=$(usex vorbis)
-		module_websocket_enabled=$(usex websocket)
 		module_webp_enabled=$(usex webp)
 		module_webrtc_enabled=$(usex webrtc)
+		module_websocket_enabled=$(usex websocket)
 		module_webxr_enabled=False
-		module_xatlas_enabled=$(usex xatlas)
+		module_xatlas_unwrap_enabled=$(usex xatlas)
 		module_zip_enabled=$(usex minizip)
 	)
 
