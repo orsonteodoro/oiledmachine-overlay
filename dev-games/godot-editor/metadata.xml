@@ -76,9 +76,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables the advanced GUI.
     </flag>
     <flag name="asan">
-      Enables ASan for unaccelerated detection of memory corruption, heap
-      overflow, stack overflow, out-of-bounds, double free detection, use after
-      free, use after return that may lead to code execution, privilege
+      Enables ASan for unaccelerated detection of memory corruption, pointer
+      corruption, heap overflow, stack overflow, out-of-bounds, double free, use
+      after free, use after return that may lead to code execution, privilege
       escalation, denial of service, data tampering, information disclosure.
 
       Adds 1.5x - 4.0x worst case performance penalty.
@@ -195,9 +195,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="hwasan">
       Enables HASan for hardware assisted detection of memory corruption,
-      heap overflow, stack overflow, out-of-bounds, double free detection, use
-      after free, use after return that may lead to code execution, privilege
-      escalation, denial of service, data tampering, information disclosure.
+      pointer corruption, heap overflow, stack overflow, out-of-bounds, double
+      free, use after free, use after return that may lead to code execution,
+      privilege escalation, denial of service, data tampering, information
+      disclosure.
 
       The sanitizer is probabilistic based meaning that there is a chance to
       miss a check.
