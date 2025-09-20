@@ -545,7 +545,7 @@ einfo "Mono version:  ${MONO_PV}"
 einfo
 
 einfo
-einfo "Export template minimum version requirements:"
+einfo "Export template platform minimum version required:"
 einfo
 einfo "Android:  ${ANDROID_MIN_VER} or later"
 einfo "MacOS:  ${MACOS_MIN_VER} or later"
