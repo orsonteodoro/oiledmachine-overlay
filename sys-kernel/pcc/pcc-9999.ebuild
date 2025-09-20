@@ -269,7 +269,7 @@ einfo "PATH (after):  ${PATH}"
 	MODULES_MAKEARGS=(
 		V=1
 		ARCH=$(tc-arch-kernel)
-		CC=${CC}
+		CC="${CC}"
 		CPP="${CC} -E"
 		KDIR="/lib/modules/${KV_FULL}/build"
 		NIH_KDIR="${KERNEL_DIR}"
