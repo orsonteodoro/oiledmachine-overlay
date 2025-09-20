@@ -445,7 +445,7 @@ _OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS=(
 	"CONFIG_INTEL_RAPL"
 	"CONFIG_INTEL_UNCORE_FREQ_CONTROL"
 	"CONFIG_INTEL_VSEC"
-	"CONFIG_IOMMU_SUPPORT"
+	#"CONFIG_IOMMU_SUPPORT"
 	"CONFIG_IPV6"
 	"CONFIG_IR_MCE_KBD_DECODER"
 	"CONFIG_IR_MCEUSB"
@@ -1006,9 +1006,9 @@ ot-kernel-driver-bundle_clear_driver_set() {
 # @DESCRIPTION:
 # Main routine for installing drivers in bundles
 ot-kernel-driver-bundle_add_drivers() {
-	if [[ -n "${OT_KERNEL_DRIVER_BUNDLE}" ]] ; then
-		ot-kernel-driver-bundle_clear_driver_set
-	fi
+	#if [[ -n "${OT_KERNEL_DRIVER_BUNDLE}" ]] ; then
+	#	ot-kernel-driver-bundle_clear_driver_set
+	#fi
 
 	local disable_xpad=0
 	if \
