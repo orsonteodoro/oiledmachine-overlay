@@ -1697,7 +1697,7 @@ TBM=0
 
     Sometimes there is a risk in damaging the device to obtain more precise
     details about the device.  The more general options are provided to reduce
-    damage at the cost of more build time.
+    damage at the cost of more build time or provided as a convenience.
 
     You can define a custom hook function
     ot-kernel-driver-bundle_add_custom_driver_bundle in your env profile which
