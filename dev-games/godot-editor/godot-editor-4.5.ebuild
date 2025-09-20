@@ -91,7 +91,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/4.0.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -183,7 +183,7 @@ IUSE+="
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
-# See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
+# See https://github.com/godotengine/godot/tree/4.5-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
 	3d
