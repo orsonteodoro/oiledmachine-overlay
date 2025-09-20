@@ -26,7 +26,7 @@ GLIBC_PV="2.35" # Based on CI image
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
 LINUX_MIN_VER="D12, U22, F36" # Based on CI image and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
-WINDOWS_MIN_VER="10" # Based on D3D12 version
+WINDOWS_MIN_VER="10" # Based on D3D12 major version
 
 # Emscripten core info is at:
 # https://github.com/emscripten-core/emsdk/blob/4.0.11/emscripten-releases-tags.txt
