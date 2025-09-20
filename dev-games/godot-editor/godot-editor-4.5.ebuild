@@ -183,7 +183,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_11
+	ebuild_revision_12
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -987,10 +987,7 @@ src_compile() {
 		alsa=$(usex alsa)
 		dbus=$(usex dbus)
 		pulseaudio=$(usex pulseaudio)
-		no_editor_splash=$(usex !editor-splash)
-		opengl3=$(usex opengl)
 		speechd=$(usex speech)
-		sdl=$(usex sdl)
 		touch=$(usex touch)
 		udev=$(usex gamepad)
 		use_asan=$(usex asan)
@@ -1004,8 +1001,6 @@ src_compile() {
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
-		use_volk=$(usex volk)
-		vulkan=$(usex vulkan)
 		wayland=$(usex wayland)
 		x11=$(usex X)
 	)
@@ -1092,7 +1087,9 @@ src_compile() {
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
+		no_editor_splash=$(usex !editor-splash)
 		precision=$(usex fp64 "double" "single")
+		opengl3=$(usex opengl)
 		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
 		module_basis_universal_enabled=$(usex basis-universal)
@@ -1148,6 +1145,9 @@ src_compile() {
 		module_webxr_enabled=False
 		module_xatlas_unwrap_enabled=$(usex xatlas)
 		module_zip_enabled=$(usex minizip)
+		sdl=$(usex sdl)
+		use_volk=$(usex volk)
+		vulkan=$(usex vulkan)
 	)
 
 	src_compile_linux
