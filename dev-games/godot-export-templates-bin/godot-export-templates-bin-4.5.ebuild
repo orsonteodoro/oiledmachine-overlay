@@ -6,13 +6,13 @@ EAPI=8
 
 STATUS="stable"
 
-ANDROID_MIN_API="24"
-ANDROID_SDK_VER="35"
-DOTNET_SDK_PV="8.0.19"
+ANDROID_MIN_API="24" # From tarball, see src_configure
+ANDROID_SDK_VER="35" # From tarball, see src_configure
+DOTNET_SDK_PV="8.0.19" # From CI logs
 EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
-GCC_PV="13.2.0"
-JDK_PV="17.0.16"
-NDK_PV="28.1"
+GCC_PV="13.2.0" # From CI logs
+JDK_PV="17.0.16" # From CI logs
+NDK_PV="28.1" # From CI logs
 
 # System minimum requirements for export templates not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
