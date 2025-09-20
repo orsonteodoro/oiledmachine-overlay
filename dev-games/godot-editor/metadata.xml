@@ -330,8 +330,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables string regular expression support.
     </flag>
     <flag name="portable">
-      Configures build to maximize distribution.  Disables system dependencies.
-      Implies static build.
+      Configures build to maximize distribution on game distribution platforms
+      or container distribution platforms.  It disables use of system
+      dependencies.  It implies static build.
     </flag>
     <flag name="pulseaudio">
       Enables PulseAudio support.

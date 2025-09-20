@@ -183,7 +183,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_9
+	ebuild_revision_10
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -254,12 +254,19 @@ REQUIRED_USE+="
 	)
 	portable? (
 		!asan
+		!hwasan
+		!lsan
+		!msan
+		!system-brotli
 		!system-clipper2
 		!system-embree
 		!system-enet
 		!system-freetype
 		!system-glslang
+		!system-graphite
+		!system-harfbuzz
 		!system-icu
+		!system-libjpeg-turbo
 		!system-libogg
 		!system-libpng
 		!system-libtheora
@@ -272,10 +279,13 @@ REQUIRED_USE+="
 		!system-msdfgen
 		!system-pcre2
 		!system-recastnavigation
+		!system-sdl
 		!system-xatlas
 		!system-zlib
 		!system-zstd
+		!sanitize-in-production
 		!tsan
+		!ubsan
 		vulkan? (
 			volk
 		)
