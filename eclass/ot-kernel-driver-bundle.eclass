@@ -35,6 +35,10 @@ inherit toolchain-funcs ot-kernel-kutils
 #
 
 ot-kernel-driver-bundle_check_name_changes() {
+	if ! [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:" ]] ; then
+ewarn "The port:ethernet, port:parallel-port, port:ps/2, port:serial, port:thunderbolt-3, port:thunderbolt-4 are now optional and not default on."
+	fi
+
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:rv670"($|" ") ]] ; then
 eerror "The graphics:rv670 profile has been removed.  Use graphics:terascale1 or graphics:r600."
 		die
@@ -173,23 +177,13 @@ ewarn "The early-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
 	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
+	ot-kernel-driver-bundle_add_ports "serial parallel-port"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_keyboard "ps2"
-	ot-kernel-driver-bundle_add_mouse "ps2 serial"
+	ot-kernel-driver-bundle_add_keyboard "ps/2"
+	ot-kernel-driver-bundle_add_mouse "ps/2 serial"
 	ot-kernel-driver-bundle_add_floppy_drive
-	ot-kernel-driver-bundle_add_sound "early-1990 isa"
-
-	# Ethernet
-	# Most computers were 32-bit, even though 64-bit was released.
-	# The 64-bit config option needs to be disabled in order to access the ISA option to enable ISA drivers.
-	#ot-kernel_unset_configopt "CONFIG_64BIT"
-	ot-kernel_y_configopt "CONFIG_ISA"
-	ot-kernel_y_configopt "CONFIG_EISA"
-	ot-kernel_y_configopt "CONFIG_EL3" # 1992
-	ot-kernel_y_configopt "CONFIG_NE2000" # 1988
-	ot-kernel_y_configopt "CONFIG_WD80x3" # 1987
-
-	ot-kernel-driver-bundle_add_printer "parport"
+	ot-kernel-driver-bundle_add_sound "early-1990s isa"
+	ot-kernel-driver-bundle_add_ethernet "early-1990s"
 	ot-kernel-driver-bundle_add_6dof "serial"
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport"
 }
@@ -202,16 +196,16 @@ ot-kernel-driver-bundle_add_late_1990s_desktop_pc_drivers() {
 ewarn "The late-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "late-1990"
+	ot-kernel-driver-bundle_add_watchdog "late-1990s"
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
+	ot-kernel-driver-bundle_add_ports "serial parallel-port usb-1.1 firewire"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 firewire"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
-	ot-kernel-driver-bundle_add_mouse "ps2 serial usb"
+	ot-kernel-driver-bundle_add_keyboard "ps/2 usb"
+	ot-kernel-driver-bundle_add_mouse "ps/2 serial usb"
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd-rw"
-	ot-kernel-driver-bundle_add_sound "late-1990 isa pci"
+	ot-kernel-driver-bundle_add_sound "late-1990s isa pci"
 
 	ot-kernel_y_configopt "CONFIG_ATA"
 	ot-kernel_y_configopt "CONFIG_ATA_SFF"
@@ -253,28 +247,7 @@ ewarn "The late-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83627HF" # 1998
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83781D" # 1997-2007
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
-	ot-kernel_y_configopt "CONFIG_E100" # 1997
-	ot-kernel_y_configopt "CONFIG_EISA"
-	ot-kernel_y_configopt "CONFIG_EL3" # 1992
-	ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
-	ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
-	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
-	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
-
-	ot-kernel-driver-bundle_add_printer "parport"
+	ot-kernel-driver-bundle_add_ethernet "late-1990s"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_6dof "serial usb-1.1"
@@ -290,19 +263,19 @@ ot-kernel-driver-bundle_add_early_2000s_desktop_pc_drivers() {
 ewarn "The early-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "early-2000"
+	ot-kernel-driver-bundle_add_watchdog "early-2000s"
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
+	ot-kernel-driver-bundle_add_ports "serial parallel-port usb-1.1 usb-2.0 firewire"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 firewire"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
-	ot-kernel-driver-bundle_add_mouse "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard "ps/2 usb"
+	ot-kernel-driver-bundle_add_mouse "ps/2 usb"
 	ot-kernel-driver-bundle_add_floppy_drive
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
-	ot-kernel-driver-bundle_add_external_storage "ide parport scsi"
+	ot-kernel-driver-bundle_add_external_storage "ide parallel-port scsi"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
-	ot-kernel-driver-bundle_add_sound "early-2000 isa pci pcie"
+	ot-kernel-driver-bundle_add_sound "early-2000s isa pci pcie"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -384,28 +357,10 @@ ewarn "The early-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83791D" # 2001
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L785TS" # 2002
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_8139CP" # 2003
-	ot-kernel_y_configopt "CONFIG_8139TOO" # 2000
-	ot-kernel_y_configopt "CONFIG_E100" # 1997
-	ot-kernel_y_configopt "CONFIG_E1000" # 2000
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
-	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
-	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
-
+	ot-kernel-driver-bundle_add_ethernet "early-2000s"
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_6dof "serial usb-1.1 usb-2.0"
@@ -423,17 +378,17 @@ ot-kernel-driver-bundle_add_late_2000s_desktop_pc_drivers() {
 ewarn "The late-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "late-2000"
+	ot-kernel-driver-bundle_add_watchdog "late-2000s"
 	ot-kernel-driver-bundle_add_expansion_slots "agp pci pcie"
 	ot-kernel-driver-bundle_add_graphics "agp pcie"
+	ot-kernel-driver-bundle_add_ports "serial parallel-port usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
-	ot-kernel-driver-bundle_add_mouse "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard "ps/2 usb"
+	ot-kernel-driver-bundle_add_mouse "ps/2 usb"
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+rw dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
-	ot-kernel-driver-bundle_add_sound "late-2000 pci"
+	ot-kernel-driver-bundle_add_sound "late-2000s pci"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -502,36 +457,10 @@ ewarn "The late-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83795" # 2006
 	ot-kernel_y_configopt "CONFIG_SENSORS_W83L786NG" # 2006
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_8139TOO" # 1999
-	ot-kernel_y_configopt "CONFIG_BNX2" # 2008
-	ot-kernel_y_configopt "CONFIG_E1000" # 2000
-	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_IGB" # 2008
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
-	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
-	ot-kernel_y_configopt "CONFIG_R8169" # 2003
-	ot-kernel_y_configopt "CONFIG_SKGE" # 1999
-	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
-	ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
-	ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
-	ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
-
+	ot-kernel-driver-bundle_add_ethernet "late-2000s"
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "serial usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet"
 	ot-kernel-driver-bundle_add_6dof "serial usb-1.1 usb-2.0 usb-3.0"
@@ -548,11 +477,11 @@ ot-kernel-driver-bundle_add_vpceb25fx_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "vpceb25fx" ]] || return
 ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_watchdog "2010 mei"
+	ot-kernel-driver-bundle_add_watchdog "2010s mei"
+	ot-kernel-driver-bundle_add_ports "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	# No USB 3.0
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
 
@@ -601,13 +530,15 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_RFKILL"
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:ethernet" ]] ; then
+		# Ethernet
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
+	fi
 
 	# Use power efficient algorithm
 	ot-kernel_y_configopt "CONFIG_DEFAULT_BBR"
@@ -664,7 +595,6 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0"
@@ -680,17 +610,17 @@ ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers() {
 ewarn "The 2010s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "2010"
+	ot-kernel-driver-bundle_add_watchdog "2010s"
 	ot-kernel-driver-bundle_add_expansion_slots "pci pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
+	ot-kernel-driver-bundle_add_ports "serial usb-1.1 usb-2.0 usb-3.0 thunderbolt-3"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt-3"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard "ps/2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
-	ot-kernel-driver-bundle_add_sound "2010 pcie"
+	ot-kernel-driver-bundle_add_sound "2010s pcie"
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -741,29 +671,10 @@ ewarn "The 2010s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SENSORS_AQUACOMPUTER_D5NEXT" # 2018
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_KRAKEN2" # 2016
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_ALX" # 2011
-	ot-kernel_y_configopt "CONFIG_E1000" # 2000
-	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_IGB" # 2008
-	ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_ATHEROS"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI" # 1992
-	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
-	ot-kernel_y_configopt "CONFIG_R8169" # 2003
-	ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
-	ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
-
+	ot-kernel-driver-bundle_add_ethernet "2010s"
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0 usb-3.0"
@@ -781,10 +692,10 @@ ot-kernel-driver-bundle_add_15_da0086nr_drivers() {
 	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "15-da0086nr" ]] || return
 ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
-	ot-kernel-driver-bundle_add_watchdog "2010 mei"
+	ot-kernel-driver-bundle_add_watchdog "2010s mei"
+	ot-kernel-driver-bundle_add_ports "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_mouse "usb"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0"
 	ot-kernel_y_configopt "CONFIG_USB_XHCI_PLATFORM"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram"
@@ -910,13 +821,15 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_GPIOLIB"
 	ot-kernel_y_configopt "CONFIG_NET"
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_R8169"
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:ethernet" ]] ; then
+		# Ethernet
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_R8169"
+	fi
 
 	# WiFi
 	ot-kernel_y_configopt "CONFIG_FW_LOADER"
@@ -992,7 +905,6 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_PCI_MSI"
 
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_haptic_devices "usb"
 	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0 usb-3.0"
@@ -1010,17 +922,17 @@ ot-kernel-driver-bundle_add_2020s_desktop_pc_drivers() {
 ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
-	ot-kernel-driver-bundle_add_watchdog "2020"
+	ot-kernel-driver-bundle_add_watchdog "2020s"
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
+	ot-kernel-driver-bundle_add_ports "serial usb-1.1 usb-2.0 usb-3.0 thunderbolt-3 thunderbolt-4"
 	ot-kernel-driver-bundle_add_console "tty"
-	ot-kernel-driver-bundle_add_external_ports "usb-1.1 usb-2.0 usb-3.0 thunderbolt-3 thunderbolt-4"
-	ot-kernel-driver-bundle_add_keyboard "ps2 usb"
+	ot-kernel-driver-bundle_add_keyboard "ps/2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
-	ot-kernel-driver-bundle_add_sound "2020 pcie"
+	ot-kernel-driver-bundle_add_sound "2020s pcie"
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1048,28 +960,10 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	# Fan or lighting control
 	ot-kernel_y_configopt "CONFIG_SENSORS_NZXT_SMART2" # 2020
 
-	# Ethernet
-	ot-kernel_y_configopt "CONFIG_AQTION"
-	ot-kernel_y_configopt "CONFIG_E1000E" # 2005
-	ot-kernel_y_configopt "CONFIG_ETHERNET"
-	ot-kernel_y_configopt "CONFIG_I40E" # 2020
-	ot-kernel_y_configopt "CONFIG_ICE" # 2020
-	ot-kernel_y_configopt "CONFIG_IGB" # 2007
-	ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
-	ot-kernel_y_configopt "CONFIG_NETDEVICES"
-	ot-kernel_y_configopt "CONFIG_NET"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_AQUANTIA"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
-	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
-	ot-kernel_y_configopt "CONFIG_PCI"
-	ot-kernel_y_configopt "CONFIG_PCI_MSI"
-	ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
-	ot-kernel_y_configopt "CONFIG_R8169" # 2003
-
+	ot-kernel-driver-bundle_add_ethernet "2020s"
 	ot-kernel-driver-bundle_add_x86_desktop_wifi_drivers
 	ot-kernel-driver-bundle_add_hid_gaming_keyboard_fixes
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
-	ot-kernel-driver-bundle_add_printer "usb"
 	ot-kernel-driver-bundle_add_graphics_tablet "usb serial"
 	ot-kernel-driver-bundle_add_haptic_devices "ethernet usb"
 	ot-kernel-driver-bundle_add_6dof "usb-1.1 usb-2.0 usb-3.0"
@@ -1187,21 +1081,6 @@ ot-kernel-driver-bundle_add_floppy_drive() {
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_FD" # 5.25" floppy (1976), 3.5" floppy (1976)
 	ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 	ot-kernel_y_configopt "CONFIG_BLOCK"
-}
-
-ot-kernel-driver-bundle_add_printer() {
-	local tags="${1}"
-	if [[ "${tags}" =~ "parport" ]] ; then
-		ot-kernel_y_configopt "CONFIG_PARPORT" # For printer
-		ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
-		ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
-		ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
-	fi
-	if [[ "${tags}" =~ "usb" ]] ; then
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-	fi
 }
 
 ot-kernel-driver-bundle_add_webcam_by_vendor_name() {
@@ -2497,12 +2376,12 @@ ot-kernel-driver-bundle_add_bluetooth() {
 
 ot-kernel-driver-bundle_add_mouse() {
 	local tags="${1}"
-	if [[ "${tags}" =~ "ps2" ]] ; then
+	if [[ "${tags}" =~ "ps/2" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:ps/2" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 		ot-kernel_y_configopt "CONFIG_MOUSE_PS2" # 1987
 	fi
-	if [[ "${tags}" =~ "serial" ]] ; then
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:serial" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_MOUSE"
 		ot-kernel_y_configopt "CONFIG_MOUSE_SERIAL" # 1985
@@ -2580,7 +2459,7 @@ ot-kernel-driver-bundle_add_6dof() {
 
 ot-kernel-driver-bundle_add_keyboard() {
 	local tags="${1}"
-	if [[ "${tags}" =~ "ps2" ]] ; then
+	if [[ "${tags}" =~ "ps/2" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:ps/2" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_INPUT_KEYBOARD"
 		ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD" # 1984 (AT), 1987 (PS/2 Keyboard)
@@ -2651,14 +2530,28 @@ ewarn "VLB is not supported"
 	fi
 }
 
-ot-kernel-driver-bundle_add_external_ports() {
+ot-kernel-driver-bundle_add_ports() {
 	local tags="${1}"
-	if [[ "${tags}" =~ "firewire" ]] ; then
+
+	if [[ "${tags}" =~ "firewire" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:firewire") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_FIREWIRE"
 		ot-kernel_y_configopt "CONFIG_FIREWIRE_OHCI"
 	fi
-	if [[ "${tags}" =~ ("thunderbolt-3"|"thunderbolt-4") ]] ; then
+	if [[ "${tags}" =~ "parallel-port" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:parallel-port") ]] ; then
+		ot-kernel_y_configopt "CONFIG_PARPORT" # For printer, scanner, or external drive
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC" # 1981
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC_FIFO"
+		ot-kernel_y_configopt "CONFIG_PARPORT_1284" # 1991
+	fi
+	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:serial"|"port:com") ]] ; then
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for mouse, modems, TTY console
+		ot-kernel_y_configopt "CONFIG_SERIO" # Abstraction layer
+		ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # Interface to the abstraction layer for RS-242 input devices
+		ot-kernel_y_configopt "CONFIG_TTY"
+	fi
+	if [[ "${tags}" =~ ("thunderbolt-3"|"thunderbolt-4") && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:thunderbolt-3"|"port:thunderbolt-4") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_USB4"
 	fi
@@ -2681,6 +2574,9 @@ ot-kernel-driver-bundle_add_external_ports() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD" # 2008
+	fi
+	if [[ "${tags}" =~ "usb" ]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
 	fi
 }
 
@@ -2798,7 +2694,7 @@ ot-kernel-driver-bundle_add_external_storage() {
 		# TODO add controller
 	fi
 
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tags}" =~ "parport" ]] ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "storage:zip-drive" && "${tags}" =~ "parallel-port" ]] ; then
 	# 1995
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_PARPORT"
@@ -3579,7 +3475,7 @@ ot-kernel-driver-bundle_add_haptic_devices_by_ethernet() {
 	fi
 }
 
-ot-kernel-driver-bundle_add_haptic_devices_by_parport() {
+ot-kernel-driver-bundle_add_haptic_devices_by_parallel_port() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "haptic-device:phantom-premium" ]] ; then
 	# For 3D modeling with a haptic stylus
 	# Parallel Port (EPP)
@@ -3607,8 +3503,8 @@ ot-kernel-driver-bundle_add_haptic_devices_by_parport() {
 
 ot-kernel-driver-bundle_add_haptic_devices() {
 	local tags="${1}"
-	if [[ "${tags}" =~ "parport" ]] ; then
-		ot-kernel-driver-bundle_add_haptic_devices_by_parport
+	if [[ "${tags}" =~ "parallel-port" ]] ; then
+		ot-kernel-driver-bundle_add_haptic_devices_by_parallel_port
 	fi
 	if [[ "${tags}" =~ "ethernet" ]] ; then
 		ot-kernel-driver-bundle_add_haptic_devices_by_ethernet
@@ -8897,7 +8793,7 @@ ot-kernel-driver-bundle_add_watchdog() {
 	ot-kernel_y_configopt "CONFIG_WATCHDOG"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_CORE"
 	ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
-	if [[ "${tags}" =~ "late-1990" ]] ; then
+	if [[ "${tags}" =~ "late-1990s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ALIM1535_WDT" # 1998
 		ot-kernel_y_configopt "CONFIG_ALIM7101_WDT" # 1998
 		ot-kernel_y_configopt "CONFIG_W83877F_WDT" # 1996
@@ -8905,13 +8801,13 @@ ot-kernel-driver-bundle_add_watchdog() {
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
-	elif [[ "${tags}" =~ "early-2000" ]] ; then
+	elif [[ "${tags}" =~ "early-2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_IT8712F_WDT" # 2000
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
-	elif [[ "${tags}" =~ "late-2000" ]] ; then
+	elif [[ "${tags}" =~ "late-2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_F71808E_WDT" # Late 2000s, 2010
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_IT8712F_WDT" # 2000, specifically this model
@@ -8922,7 +8818,7 @@ ot-kernel-driver-bundle_add_watchdog() {
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 			ot-kernel_y_configopt "CONFIG_NV_TCO" # 2006
 		fi
-	elif [[ "${tags}" =~ "2010" ]] ; then
+	elif [[ "${tags}" =~ "2010s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_F71808E_WDT" # Late 2000s, 2010
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
@@ -8932,7 +8828,7 @@ ot-kernel-driver-bundle_add_watchdog() {
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
-	elif [[ "${tags}" =~ "2020" ]] ; then
+	elif [[ "${tags}" =~ "2020s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
@@ -9023,7 +8919,7 @@ ot-kernel-driver-bundle_add_sound() {
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 	fi
 
-	if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
+	if [[ "${tags}" =~ ("early-2000s"|"late-2000s"|"2010s"|"2020s") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA"
 	fi
 
@@ -9056,7 +8952,7 @@ ot-kernel-driver-bundle_add_sound() {
 }
 
 ot-kernel-driver-bundle_add_sound_by_decade() {
-	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s"($|" ") ]] ; then
+	if [[ "${tags}" =~ "early-1990s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_ADLIB" # 1987
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
 		ot-kernel_y_configopt "CONFIG_SND_CS4231" #
@@ -9064,7 +8960,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	fi
-	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s"($|" ") ]] ; then
+	if [[ "${tags}" =~ "late-1990s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_AZT1605" # 1994/1995
@@ -9089,7 +8985,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 	fi
-	if [[ "${tags}" =~ "early-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s-musician"($|" ") ]] ; then
+	if [[ "${tags}" =~ "early-1990s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s-musician"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_MSND_CLASSIC" # 1991
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
@@ -9097,7 +8993,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_SSCAPE" # 1994
 		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
 	fi
-	if [[ "${tags}" =~ "late-1990" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s-musician"($|" ") ]] ; then
+	if [[ "${tags}" =~ "late-1990s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:1990s-musician"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_GUSCLASSIC" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE" # 1995
@@ -9116,7 +9012,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_YMFPCI" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_WAVEFRONT" # 1993
 	fi
-	if [[ "${tags}" =~ "early-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
+	if [[ "${tags}" =~ "early-2000s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
@@ -9131,7 +9027,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
 	fi
-	if [[ "${tags}" =~ "late-2000" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
+	if [[ "${tags}" =~ "late-2000s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_AU8820" # 1997
 		ot-kernel_y_configopt "CONFIG_SND_AU8830" # 1998
 		ot-kernel_y_configopt "CONFIG_SND_CA0106" # 2004
@@ -9152,7 +9048,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 		ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 	fi
-	if [[ "${tags}" =~ "2010" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2010s" ]] ; then
+	if [[ "${tags}" =~ "2010s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2010s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
@@ -9163,7 +9059,7 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	fi
-	if [[ "${tags}" =~ "2020" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2020s" ]] ; then
+	if [[ "${tags}" =~ "2020s" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:2020s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2006-2010
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
@@ -9188,7 +9084,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:analog-devices" ]] ; then
-		if [[ "${tags}" =~ ("late-2009"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9198,7 +9094,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:asus" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_VIRTUOSO" # 2008
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9222,7 +9118,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_CS4236" # 1996
 		ot-kernel_y_configopt "CONFIG_SND_CS4281" # 2001
 		ot-kernel_y_configopt "CONFIG_SND_CS46XX" # 1998
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CS8409" # 2016
@@ -9231,7 +9127,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:cmedia" ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9244,14 +9140,14 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1" # 1998
-		if [[ "${tags}" =~ ("late-2000") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
 		fi
-		if [[ "${tags}" =~ ("2010"|"2020") ]] ; then
+		if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9264,14 +9160,14 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:dell" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_EMU10K1X" # 2003
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 			ot-kernel_y_configopt "CONFIG_SND_HDA_RECONFIG"
 		fi
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CS8409" # 2016
@@ -9297,7 +9193,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hp" ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9306,7 +9202,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:idt"|"sound:integrated-device-technology"|"sound:sigmatel") ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9318,7 +9214,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_INTEL8X0" # 1999, 2000, 2001, 2002, 2004, 2005, 2008
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:intel" ]] ; then
-		if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
+		if [[ "${tags}" =~ ("early-2000s"|"late-2000s"|"2010s"|"2020s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
@@ -9331,7 +9227,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 		ot-kernel_y_configopt "CONFIG_SND_INTERWAVE_STB" # 1995
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:lenovo" ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9361,7 +9257,7 @@ ot-kernel-driver-bundle_add_sound_by_vendor_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:via" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_VIA82XX" # 1999
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9443,7 +9339,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		ot-kernel_y_configopt "CONFIG_SND_GUSMAX" # 1997
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-analog" ]] ; then
-		if [[ "${tags}" =~ ("late-2009"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9452,7 +9348,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-cirrus" ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9460,7 +9356,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-ca0110" ]] ; then
-		if [[ "${tags}" =~ ("late-2000") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9469,7 +9365,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-ca0132" ]] ; then
-		if [[ "${tags}" =~ ("2010"|"2020") ]] ; then
+		if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9478,7 +9374,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-cmedia" ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9486,7 +9382,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-conexant" ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9494,7 +9390,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-cs8409" ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CS8409" # 2016
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9509,7 +9405,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-sigmatel" ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9518,7 +9414,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-codec-via" ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9526,7 +9422,7 @@ ot-kernel-driver-bundle_add_sound_by_module_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:hda-intel" ]] ; then
-		if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
+		if [[ "${tags}" =~ ("early-2000s"|"late-2000s"|"2010s"|"2020s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
@@ -9675,7 +9571,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND_KORG1212" # 1997
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:ad1986a" ]] ; then
-		if [[ "${tags}" =~ ("late-2009"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_ANALOG" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9707,7 +9603,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:hda"|\
 "sound:high-definition-audio"\
 	) ]] ; then
-		if [[ "${tags}" =~ ("early-2000"|"late-2000"|"2010"|"2020") ]] ; then
+		if [[ "${tags}" =~ ("early-2000s"|"late-2000s"|"2010s"|"2020s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 			ot-kernel_y_configopt "CONFIG_SND_PCI"
@@ -9733,7 +9629,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:cs4210"|\
 "sound:cs4213"\
 ) ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CIRRUS" # 2013
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9776,7 +9672,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:cs4213"|\
 "sound:cs42l42"\
 ) ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CS8409" # 2016
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9784,7 +9680,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("sound:ca0110-ibg"|"sound:sb0880"|"sound:sb0880-x-fi") ]] ; then
-		if [[ "${tags}" =~ ("late-2000") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0110" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9793,7 +9689,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		fi
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:ca0132" ]] ; then
-		if [[ "${tags}" =~ ("2010"|"2020") ]] ; then
+		if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CA0132" # 2011
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9843,7 +9739,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:sn6140"|\
 "sound:sn6180"\
 ) ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9856,7 +9752,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:cmi8888"|\
 "sound:cmi9880"|\
 ) ]] ; then
-		if [[ "${tags}" =~ ("2010") ]] ; then
+		if [[ "${tags}" =~ ("2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CMEDIA" # 2008
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9965,7 +9861,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:stac92hd700"|\
 "sound:stac9872ak"|\
 ) ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" # 2005
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -9992,7 +9888,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND_ATIIXP" # 2003
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "sound:lenovo" ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_CONEXANT" # 2007
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -10193,7 +10089,7 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 "sound:vt2002p"|\
 "sound:vt2020"\
 ) ]] ; then
-		if [[ "${tags}" =~ ("late-2000"|"2010") ]] ; then
+		if [[ "${tags}" =~ ("late-2000s"|"2010s") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SND_HDA"
 			ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_VIA" # 2006, 2009, 2011
 			ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
@@ -10218,5 +10114,123 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI" # 2004, audio only
 	fi
 }
+
+ot-kernel-driver-bundle_add_ethernet() {
+	local tags="${1}"
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:ethernet" ]] || return
+	if [[ "${tags}" =~ "early-1990s" ]] ; then
+	# Most computers were 32-bit, even though 64-bit was released.
+	# The 64-bit config option needs to be disabled in order to access the ISA option to enable ISA drivers.
+		#ot-kernel_unset_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_ISA"
+		ot-kernel_y_configopt "CONFIG_EISA"
+		ot-kernel_y_configopt "CONFIG_EL3" # 1992
+		ot-kernel_y_configopt "CONFIG_NE2000" # 1988
+		ot-kernel_y_configopt "CONFIG_WD80x3" # 1987
+	fi
+	if [[ "${tags}" =~ "late-1990s" ]] ; then
+		ot-kernel_y_configopt "CONFIG_8139TOO" # 1997
+		ot-kernel_y_configopt "CONFIG_E100" # 1997
+		ot-kernel_y_configopt "CONFIG_EISA"
+		ot-kernel_y_configopt "CONFIG_EL3" # 1992
+		ot-kernel_y_configopt "CONFIG_EPIC100" # 1996
+		ot-kernel_y_configopt "CONFIG_NE2K_PCI" # 1998
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_TULIP" # 1994
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_DEC"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+		ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+		ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
+	fi
+	if [[ "${tags}" =~ "early-2000s" ]] ; then
+		ot-kernel_y_configopt "CONFIG_8139CP" # 2003
+		ot-kernel_y_configopt "CONFIG_8139TOO" # 2000
+		ot-kernel_y_configopt "CONFIG_E100" # 1997
+		ot-kernel_y_configopt "CONFIG_E1000" # 2000
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
+		ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+		ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
+	fi
+	if [[ "${tags}" =~ "late-2000s" ]] ; then
+		ot-kernel_y_configopt "CONFIG_8139TOO" # 1999
+		ot-kernel_y_configopt "CONFIG_BNX2" # 2008
+		ot-kernel_y_configopt "CONFIG_E1000" # 2000
+		ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_IGB" # 2008
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_3COM"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_AMD"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_VIA"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCNET32" # 1996
+		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+		ot-kernel_y_configopt "CONFIG_R8169" # 2003
+		ot-kernel_y_configopt "CONFIG_SKGE" # 1999
+		ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
+		ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
+		ot-kernel_y_configopt "CONFIG_VIA_RHINE" # 1995
+		ot-kernel_y_configopt "CONFIG_VORTEX" # 1995
+	fi
+	if [[ "${tags}" =~ "2010s" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ALX" # 2011
+		ot-kernel_y_configopt "CONFIG_E1000" # 2000
+		ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_IGB" # 2008
+		ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_ATHEROS"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_BROADCOM"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_MARVELL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_PCI" # 1992
+		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+		ot-kernel_y_configopt "CONFIG_R8169" # 2003
+		ot-kernel_y_configopt "CONFIG_TIGON3" # 2001
+		ot-kernel_y_configopt "CONFIG_SKY2" # 2004 (architecture), 2007 (specific model)
+	fi
+	if [[ "${tags}" =~ "2020s" ]] ; then
+		ot-kernel_y_configopt "CONFIG_AQTION"
+		ot-kernel_y_configopt "CONFIG_E1000E" # 2005
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_I40E" # 2020
+		ot-kernel_y_configopt "CONFIG_ICE" # 2020
+		ot-kernel_y_configopt "CONFIG_IGB" # 2007
+		ot-kernel_y_configopt "CONFIG_IXGBE" # 2003
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_AQUANTIA"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_INTEL"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCI_MSI"
+		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK_OPTIONAL"
+		ot-kernel_y_configopt "CONFIG_R8169" # 2003
+	fi
+}
+
 
 fi
