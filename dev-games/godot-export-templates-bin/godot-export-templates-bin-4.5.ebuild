@@ -8,10 +8,10 @@ STATUS="stable"
 
 ANDROID_MIN_API="24"
 ANDROID_SDK_VER="35"
+DOTNET_SDK_PV="8.0.19"
 EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
 GCC_PV="13.2.0"
 JDK_PV="17.0.16"
-MONO_PV="8.0.19"
 NDK_PV="28.1"
 
 # System minimum requirements for export templates not based on documentation but on CI logs.
@@ -231,13 +231,9 @@ BDEPEND="app-arch/unzip"
 
 pkg_setup() {
 	if use custom ; then
-einfo
 einfo "USE=custom (installing individually per microarch)"
-einfo
 	else
-ewarn
 ewarn "USE=-custom (installing in bulk)"
-ewarn
 	fi
 }
 
@@ -530,6 +526,7 @@ pkg_postinst() {
 einfo
 einfo "SDK minimum requirements:"
 einfo
+einfo ".NET SDK version:  ${DOTNET_SDK_PV}"
 einfo "Android API minimum:  ${ANDROID_MIN_API}"
 einfo "Android NDK version:  ${NDK_PV}"
 einfo "Android SDK version:  ${ANDROID_SDK_VER}"
@@ -537,7 +534,6 @@ einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
 einfo "GNU C Library version:  ${GLIBC_PV}"
 einfo "GCC version:  ${GCC_PV}"
 einfo "JDK version:  ${JDK_PV}"
-einfo "Mono version:  ${MONO_PV}"
 einfo
 
 einfo

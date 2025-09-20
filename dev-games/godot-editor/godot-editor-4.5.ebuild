@@ -361,21 +361,7 @@ CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
 	mono? (
-		system-mono? (
-			=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
-			>=dev-lang/mono-${MONO_PV_MIN}
-		)
-		!system-mono? (
-			|| (
-				amd64? (
-					=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
-				)
-				x86? (
-					=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
-				)
-			)
-		)
-		dev-dotnet/dotnet-sdk-bin:6.0
+		=dev-dotnet/dotnet-sdk-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}
 	)
 "
 CDEPEND_CLANG="
@@ -750,12 +736,13 @@ ewarn "LANG=POSIX not supported"
 
 	if use mono ; then
 einfo "USE=mono is under contruction"
-		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
-			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
+		local dotnet_sdk_pv_major="${DOTNET_SDK_SLOT%%.*}"
+		if ls "/opt/dotnet-sdk-bin-${dotnet_sdk_pv_major}"*"/dotnet" 2>/dev/null 1>/dev/null ; then
+			local p=$(ls "/opt/dotnet-sdk-bin-${dotnet_sdk_pv_major}"*"/dotnet" | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
 		else
 eerror
-eerror "Could not find dotnet.  Emerge dev-dotnet/dotnet-sdk-bin"
+eerror "Could not find dotnet.  Emerge >=dev-dotnet/dotnet-sdk-bin-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}"
 eerror
 			die
 		fi
