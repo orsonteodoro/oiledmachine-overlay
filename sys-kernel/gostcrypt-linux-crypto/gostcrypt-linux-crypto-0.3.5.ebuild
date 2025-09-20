@@ -24,7 +24,7 @@ RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 custom-kernel doc
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 "
@@ -212,6 +212,8 @@ einfo "PATH (after):  ${PATH}"
 	MODULES_MAKEARGS=(
 		V=1
 		ARCH=$(tc-arch-kernel)
+		CC="${CC}"
+		CPP="${CC} -E"
 		KDIR="/lib/modules/${KV_FULL}/build"
 		NIH_KDIR="${KERNEL_DIR}"
 		NIH_KSRC="${KERNEL_DIR}"
