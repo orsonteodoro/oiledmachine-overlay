@@ -32,21 +32,14 @@ WINDOWS_MIN_VER="10" # Based on D3D12 version
 # https://github.com/emscripten-core/emsdk/blob/4.0.11/emscripten-releases-tags.txt
 # https://github.com/emscripten-core/emscripten/blob/4.0.11/ChangeLog.md
 
-if [[ "${AUPDATE}" == "1" ]] ; then
-	SRC_URI="
+SRC_URI="
+	mono? (
 		https://github.com/godotengine/godot/releases/download/${PV}-${STATUS}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz
+	)
+	standard? (
 		https://github.com/godotengine/godot/releases/download/${PV}-${STATUS}/Godot_v${PV}-${STATUS}_export_templates.tpz
-	"
-else
-	SRC_URI="
-		mono? (
-			https://github.com/godotengine/godot/releases/download/${PV}-${STATUS}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz
-		)
-		standard? (
-			https://github.com/godotengine/godot/releases/download/${PV}-${STATUS}/Godot_v${PV}-${STATUS}_export_templates.tpz
-		)
-	"
-fi
+	)
+"
 
 DESCRIPTION="Godot export templates"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
