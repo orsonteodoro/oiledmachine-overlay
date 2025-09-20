@@ -540,6 +540,7 @@ einfo "Android API minimum:  ${ANDROID_MIN_API}"
 einfo "Android SDK version:  ${ANDROID_SDK_VER}"
 einfo "Android NDK version:  ${NDK_PV}"
 einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
+einfo "GNU C Library version:  ${GLIBC_MIN_PV}"
 einfo "JDK version:  ${JDK_PV}"
 einfo "Mono version:  ${MONO_PV}"
 einfo
