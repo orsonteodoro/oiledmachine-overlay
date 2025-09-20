@@ -151,7 +151,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="fp64">
       Support scientific, engineering, large world, large distance simulation
-      use cases to prevent jitter, clumping, jumping, drifting.
+      use cases to prevent unwanted clumping, drifting, jitter, jumping.
     </flag>
     <flag name="fbx">
       Enables support for FBX interchange format for scenes and assets
