@@ -55,7 +55,7 @@ ${TINYEXR_VULNERABILITY_HISTORY}
 ${ZLIB_VULNERABILITY_HISTORY}
 ${ZSTD_VULNERABILITY_HISTORY}
 CE IO SO
-" # There are probably more which doesn't account for the third-party folder.
+"
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
