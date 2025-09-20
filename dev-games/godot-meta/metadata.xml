@@ -6,55 +6,6 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!--
-
-    For overview of Godot see either the website or dev-games/godot-editor.
-
-
-    This is a meta package for installing Godot on this distro.
-    Previous ebuild iterations built Godot as a monolithic ebuild.  These
-    ebuilds now are split in order to increase code clarity and improve
-    the tractable completion of each cross-compile port.
-    
-
-    Cross-compile or split ebuild design notes:
-
-      * Packages with godot-cross-* need to be emerged in prefix (crossdev) context.
-      * Packages with godot-export-templates-* need to be emerge in native context.
-      * See also metadata.xml in each package for details.
-
-
-    Ebuild development priorities with top highest (subject to change):
-
-      * Re-add support for Mono (for Linux) in ebuild in a cleaner way [trivial]
-      * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (64-bit) [trivial]
-      * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (32-bit) [trivial]
-      * Completion of export-template ebuilds for javascript [trivial]
-      * Completion of prefix (crossdev) / export-template ebuilds for Android [least difficult]
-      * Re-add support for GDNative (C++ bindings) in ebuild in a cleaner way [trivial]
-      * Re-add support for Custom modules in ebuild in a cleaner way [trivial]
-      * Re-add support for Mono (Cross) in ebuild in a tractable and most complete way [most difficult]
-      * Completion of *most* prefix (crossdev) / export-template ebuilds for iOS (help needed) [most difficult]
-      * Completion of *most* prefix (crossdev) / export-template ebuilds for macOS (help needed) [most difficult]
-      * Completion of godot-ios-plugins (community help is needed) [least difficult]
-
-    Some cannot be completed without community help.  Some require that
-    specific hardware.
-
-    Ebuild completion status (for build from source code):
-
-      Android:  Incomplete / Work In Progress (help needed)
-      Dedicated server:  Complete
-      Demos:  Complete
-      Editor:  Complete
-      Headless server:  Complete
-      iOS:  Incomplete / Work In Progress [community help is needed]
-      JavasSript:  Incomplete / Work In Progress [community help is optional]
-      macOS:  Incomplete / Work In Progress [community help is needed]
-      MinGW-w64 (32-bit):  Incomplete / Work In Progress [community help is optional]
-      MinGW-w64 (64-bit):  Incomplete / Work In Progress [community help is optional]
-
-  -->
   <upstream>
     <bugs-to>https://github.com/godotengine/godot/issues</bugs-to>
     <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
@@ -79,50 +30,15 @@
     <remote-id type="github">godotengine/godot</remote-id>
   </upstream>
   <use>
-    <flag name="android">
-      Builds the export template for Android not prebuilt
-    </flag>
-    <flag name="dedicated-server">
-      Builds a dedicated gaming Linux server
-    </flag>
     <flag name="demos">
       Installs demos
     </flag>
-    <flag name="headless-server">
-      Builds a headless Linux server for editing and testing
-    </flag>
-    <flag name="ios">
-      Builds the export template for iOS built from source
-    </flag>
-    <flag name="ios-plugins">
-      Builds iOS plugins
-    </flag>
-    <flag name="javascript">
-      Builds the export template for WASM HTML5
-    </flag>
-    <flag name="linux32">
-      Builds the export template for 32-bit Linux
-    </flag>
-    <flag name="linux64">
-      Builds the export template for 64-bit Linux
-    </flag>
-    <flag name="macos">
-      Builds the export template for macOS
-    </flag>
-    <flag name="mingw32">
-      Builds the export template for MinGW-w64 (32-bit) for Wine32
-    </flag>
-    <flag name="mingw32">
-      Builds the export template for MinGW-w64 (64-bit) for Wine64
-    </flag>
-    <flag name="prebuilt-export-templates">
-      Installs the prebuilt export templates for all supported platforms.
+    <flag name="export-templates">
+      Installs export templates for all supported platforms to port your project
+      to those platforms with minimal effort.
     </flag>
   </use>
   <slots>
-    <slot name="2">
-      For backwards compatibility with version 2 projects.
-    </slot>
     <slot name="3">
       For compatibility with version 3 projects only.
     </slot>
