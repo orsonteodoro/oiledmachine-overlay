@@ -36,7 +36,7 @@ inherit toolchain-funcs ot-kernel-kutils
 
 ot-kernel-driver-bundle_check_name_changes() {
 	if ! [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:" ]] ; then
-ewarn "The port:ethernet, port:parallel-port, port:ps/2, port:serial, port:thunderbolt-3, port:thunderbolt-4 are now optional and not default on."
+ewarn "The port:ethernet, port:parallel-port, port:ps/2, port:serial, port:thunderbolt-3, port:thunderbolt-4 are now optional."
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:rv670"($|" ") ]] ; then
