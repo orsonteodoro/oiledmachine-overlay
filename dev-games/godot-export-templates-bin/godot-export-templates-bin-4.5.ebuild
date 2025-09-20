@@ -14,9 +14,9 @@ GCC_PV="13.2.0" # From CI logs
 JDK_PV="17.0.16" # From CI logs
 NDK_PV="28.1" # From CI logs
 
-# System minimum requirements for export templates not based on documentation but on CI logs.
+# The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
-# The export templates allow to run the game on the target platforms.
+# The export templates allow to run the project on the prebuilt target platforms.
 ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
 # Chrome min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1904
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
