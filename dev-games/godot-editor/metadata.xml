@@ -521,9 +521,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="ubsan">
       Enables UBSan for undefined behavior detection for integer overflows,
-      NULL pointer dereference, pointer overflow violations that may lead to
-      code execution, privilege escalation, denial of service, data
-      tampering, information disclosure.
+      NULL pointer dereference, pointer overflow, shift overflow violations
+      that may lead to code execution, privilege escalation, denial of
+      service, data tampering, information disclosure.
 
       Adds 1.10x - 2.00x worst case performance penalty.
       It is not recommended for use in production.
