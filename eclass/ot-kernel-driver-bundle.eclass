@@ -3478,8 +3478,8 @@ ot-kernel-driver-bundle_add_ports() {
 ot-kernel-driver-bundle_add_console() {
 	local tags="${1}"
 
-	if [[ "${tags}" =~ ("hga-tty"|"hercules-tty"|"mono-tty") ]] ; then
-	# Hercules/HGA (1982), monocrome
+	if [[ "${tags}" =~ ("hga-tty"|"hercules-tty"|"monochrome-tty") ]] ; then
+	# Hercules/HGA (1982), monochrome
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_CORE"
@@ -3504,7 +3504,7 @@ ot-kernel-driver-bundle_add_console() {
 		# Not all TTY features enabled for RAM limitations
 	fi
 
-	if [[ "${tags}" =~ ("tty"($|" ")|"svga-tta") ]] ; then
+	if [[ "${tags}" =~ ((^|" ")"tty"($|" ")|"svga-tty") ]] ; then
 	# Modern tty with resolutions and background
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FB"
