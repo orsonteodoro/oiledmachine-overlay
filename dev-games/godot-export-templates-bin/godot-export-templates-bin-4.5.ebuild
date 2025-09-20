@@ -8,17 +8,28 @@ STATUS="stable"
 
 ANDROID_MIN_API="24"
 ANDROID_SDK_VER="35"
-GLIBC_PV="2.3.4" # Minimum required so >=U22, >=D12, >=sys-libs/glibc-2.3.4 if writing system requirements
-IOS_MIN="10.0"
-MONO_PV="6.12.0.182"
-EMSCRIPTEN_PV="1.39.9" # emsdk_pv == emscripten-core_pv
+EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
+JDK_PV="17.0.16"
+MONO_PV="8.0.19"
+NDK_PV="28.1"
 
-# To get the internal dependency versions of the EMSCRIPTEN_PV build:
-# https://storage.googleapis.com/webassembly/emscripten-releases-builds/linux/122396dfad60e1b2a83ccefa74a1425a2e05b5cb/wasm-binaries.tbz2
-# 122396d ; found in https://github.com/emscripten-core/emsdk/blob/1.39.9/emscripten-releases-tags.txt
+# System minimum requirements for export templates not based on documentation but on CI logs.
+# It is assumed that the documentation is not up to date because the LTS versions page is lagging.
+# The export templates allow to run the game on the target platforms.
+ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
+# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1904
+# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
+# Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
+BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 14"
+GLIBC_MIN_PV="2.3.4"
+IOS_MIN_VER="12.0"
+LINUX_MIN_VER="U22" # Based on CI image
+MACOS_MIN_VER="15.5"
+WINDOWS_MIN_VER="10" # Based on D3D12 version
 
 # Emscripten core info is at:
-# https://github.com/emscripten-core/emscripten/blob/1.39.9/ChangeLog.md
+# https://github.com/emscripten-core/emsdk/blob/4.0.11/emscripten-releases-tags.txt
+# https://github.com/emscripten-core/emscripten/blob/4.0.11/ChangeLog.md
 
 if [[ "${AUPDATE}" == "1" ]] ; then
 	SRC_URI="
@@ -58,7 +69,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/3.4.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -94,7 +105,11 @@ MONO_LICENSE="
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
 # OSL-1.1 -- external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs (nunitlite.dll)
-LICENSE+=" mono? ( ${MONO_LICENSE} )"
+LICENSE+="
+	mono? (
+		${MONO_LICENSE}
+	)
+"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
@@ -482,7 +497,7 @@ fi
 	einfo "mono_pv=${mono_pv}"
 
 	if (( ${needs_update} == 1 )) ; then
-		:; #die
+		: #die
 	fi
 
 	rm -rf "${T}/sandbox" || die
@@ -516,27 +531,32 @@ src_install() {
 pkg_postinst() {
 	# Information provided for developers so others know or ebuilds know if
 	# they meet requirements or security advisories:
-	einfo
 	einfo "Developer details:"
-	einfo
 
-	use android && einfo "Android min API:  ${ANDROID_MIN_API}"
-	use android || einfo "Android min API:  N/A"
+einfo
+einfo "SDK minimum requirements:"
+einfo
+einfo "Android API minimum:  ${ANDROID_MIN_API}"
+einfo "Android SDK version:  ${ANDROID_SDK_VER}"
+einfo "Android NDK version:  ${NDK_PV}"
+einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
+einfo "JDK version:  ${JDK_PV}"
+einfo "Mono version:  ${MONO_PV}"
+einfo
 
-	use android && einfo "Android SDK ver:  ${ANDROID_SDK_VER}"
-	use android || einfo "Android SDK ver:  N/A"
+einfo
+einfo "Export template minimum version requirements:"
+einfo
+einfo "Android:  ${ANDROID_MIN_VER} or later"
+einfo "MacOS:  ${MACOS_MIN_VER} or later"
+einfo "iOS:  ${IOS_MIN_VER} or later"
+einfo "Linux:  ${LINUX_MIN_VER} or later"
+einfo "Windows:  ${WINDOWS_MIN_VER} or later"
+einfo "Web:  ${BROWSERS_MIN_VER} or later"
+einfo
 
-	use ios && einfo "iOS min:  ${IOS_MIN}"
-	use ios || einfo "iOS min:  N/A"
 
-	use mono && einfo "Mono version:  ${MONO_PV}"
-	use mono || einfo "Mono version:  N/A"
-
-	[[ "${USE}" =~ "javascript" ]] && einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
-	[[ "${USE}" =~ "javascript" ]] || einfo "Emscripten version:  N/A"
-
-	einfo "CPU microarchitectures:  See metadata.xml"
-	einfo
+einfo "CPU microarchitectures:  See metadata.xml"
 	if use custom ; then
 		if use mono ; then
 einfo
