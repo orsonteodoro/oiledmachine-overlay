@@ -20,7 +20,7 @@ ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
 # Chrome min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1904
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
-BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 14"
+BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
 GLIBC_MIN_PV="2.3.4"
 IOS_MIN_VER="12.0"
 LINUX_MIN_VER="U22" # Based on CI image
