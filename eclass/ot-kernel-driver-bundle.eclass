@@ -129,6 +129,7 @@ _OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS=(
 # production eclass scripts done earlier.  The coverage of enablement of some
 # symbols in this eclass are not complete for desktop bundles but complete for
 # laptop bundles.
+# Generator:  for x in $(grep -o -E -e "CONFIG_[A-Za-z0-9_]+" ot-kernel-driver-bundle.eclass); do echo -e "\t\"${x}\"" ; done | sort | uniq
 	#"CONFIG_64BIT"
 	"CONFIG_8139CP"
 	"CONFIG_8139TOO"
