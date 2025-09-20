@@ -100,7 +100,8 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-KEYWORDS="~amd64 ~riscv ~x86"
+# See https://github.com/godotengine/godot/blob/4.5-stable/platform/linuxbsd/detect.py#L76
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
 
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
