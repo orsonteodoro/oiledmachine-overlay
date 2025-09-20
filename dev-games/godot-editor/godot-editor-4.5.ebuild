@@ -15,7 +15,8 @@ MY_P="${MY_PN}-${PV}"
 ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
 ASTCENC_VULNERABILITY_HISTORY="BO"
 BROTLI_VULNERABILITY_HISTORY="BO IU"
-# It can collect GPS coords or the game engine can be used for app purposes not just games.
+# It can collect GPS coords for geolocation based games or gamified app or the
+# game engine can be used for app purposes not just games.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 ENET_VULNERABILITY_HISTORY="DOS"
