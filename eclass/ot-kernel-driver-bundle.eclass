@@ -126,8 +126,9 @@ eerror "ot-kernel-driver-bundle_add_custom_bundle_drivers has been renamed to ot
 # Currently, we just unset the symbols that get changed in this eclass while preserving the other settings from pkgflags and hardening.
 _OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS=(
 # Some rows are disabled because we do not want to undo the work of the
-# production eclass scripts.  The coverage of enablement of some symbols in this eclass is
-# not complete for desktop bundles but complete for laptop bundles.
+# production eclass scripts done earlier.  The coverage of enablement of some
+# symbols in this eclass are not complete for desktop bundles but complete for
+# laptop bundles.
 	#"CONFIG_64BIT"
 	"CONFIG_8139CP"
 	"CONFIG_8139TOO"
