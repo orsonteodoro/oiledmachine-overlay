@@ -10904,17 +10904,24 @@ ot-kernel-driver-bundle_add_sound_by_product_name() {
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "sound:sound-blaster-16"|\
-"sound:sound-blaster-16-pnp"\
+"sound:sound-blaster-16-pnp"|\
+"sound:sound-blaster-16-value-pnp"|\
+"sound:sound-blaster-vibra16c"|\
+"sound:sound-blaster-vibra16cl"|\
+"sound:sound-blaster-vibra16s"|\
+"sound:sound-blaster-vibra16x"\
 ) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_SB16" # 1992
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"sound:sound-blaster-16-pnp-awe"|\
 "sound:sound-blaster-awe"|\
-"sound:sound-blaster-awe-pnp"|\
 "sound:sound-blaster-awe-32"|\
-"sound:sound-blaster-awe-64"|\
 "sound:sound-blaster-awe-32-pnp"|\
-"sound:sound-blaster-awe-64-pnp"\
+"sound:sound-blaster-awe-64"|\
+"sound:sound-blaster-awe-64-pnp"|\
+"sound:sound-blaster-awe-64-pnp-gold"|\
+"sound:sound-blaster-awe-pnp"\
 ) ]] ; then
 		ot-kernel_y_configopt "CONFIG_SND_SBAWE" # 1994
 	fi
