@@ -1230,6 +1230,13 @@ einfo
 einfo "  https://docs.godotengine.org/en/$(ver_cut 1-2 ${PV})/tutorials/scripting/c_sharp/c_sharp_basics.html#configuring-an-external-editor"
 einfo
 	fi
+	if use asan || use hwasan || use lsan || use msan || use tsan ; then
+ewarn
+ewarn "You need to rebuild this package if the sanitizer package is updated or"
+ewarn "removed to prevent a denial of service since the build scripts do not"
+ewarn "statically link the sanitizer libraries."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
