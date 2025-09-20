@@ -40,7 +40,7 @@ RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 allegro custom-kernel doc +vivace
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
@@ -235,6 +235,7 @@ _src_compile_one() {
 		| cut -f 1 -d " " \
 		| cut -f 2 -d "=" \
 		| sed -e "s/[\"|']//g")
+einfo "CC:  ${CC}"
 
 einfo "PATH (before):  ${PATH}"
 	if tc-is-gcc ; then
@@ -259,7 +260,7 @@ einfo "PATH (before):  ${PATH}"
 einfo "PATH (after):  ${PATH}"
 	strip-unsupported-flags
 	einfo "CC: ${CC}"
-	gcc --version || die
+	${CC} --version || die
 
 	local modargs=(
 		NIH_SOURCE="${KERNEL_DIR}"
@@ -268,6 +269,8 @@ einfo "PATH (after):  ${PATH}"
 	MODULES_MAKEARGS=(
 		V=1
 		ARCH=$(tc-arch-kernel)
+		CC=${CC}
+		CPP="${CC} -E"
 		KDIR="/lib/modules/${KV_FULL}/build"
 		NIH_KDIR="${KERNEL_DIR}"
 		NIH_KSRC="${KERNEL_DIR}"
