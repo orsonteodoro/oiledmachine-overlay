@@ -135,6 +135,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="debug">
       Enables debugging support.  Disabling builds as release.
     </flag>
+    <flag name="editor-splash">
+      Enable/disable the editor splash intro.
+    </flag>
     <flag name="enet">
       Enables multiplayer networking support.
     </flag>
