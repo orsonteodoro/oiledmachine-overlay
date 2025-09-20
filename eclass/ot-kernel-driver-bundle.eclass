@@ -983,7 +983,7 @@ _OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS=(
 	"CONFIG_WLAN_VENDOR_MEDIATEK"
 	"CONFIG_WLAN_VENDOR_RALINK"
 	"CONFIG_WLAN_VENDOR_REALTEK"
-	"CONFIG_X86"
+	#"CONFIG_X86"
 	#"CONFIG_X86_32"
 	"CONFIG_X86_PLATFORM_DEVICES"
 	"CONFIG_X86_PLATFORM_DRIVERS_HP"
@@ -1006,6 +1006,8 @@ ot-kernel-driver-bundle_clear_driver_set() {
 # @DESCRIPTION:
 # Main routine for installing drivers in bundles
 ot-kernel-driver-bundle_add_drivers() {
+
+	# This is disabled until the ot-kernel-driver-bundle_clear_driver_set is reviewed entirely for safety.
 	#if [[ -n "${OT_KERNEL_DRIVER_BUNDLE}" ]] ; then
 	#	ot-kernel-driver-bundle_clear_driver_set
 	#fi
