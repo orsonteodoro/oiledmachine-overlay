@@ -378,6 +378,11 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Typically it is combined with ASan inspired sanitizer (ASan, HWASan,
       GWP-ASan) and UBSan.  TC-Malloc and Scudo have GWP-ASan, a production
       ready and sample based address sanitizer, but need to be LD_PRELOADed.
+
+      The GWP-ASan has a performance penalty that is acceptable for
+      production use but with tradeoffs of not checking every allocation,
+      delayed use after free detection, and not performing stack error
+      detection.
     </flag>
     <flag name="speech">
       Enables text-to-speech.
