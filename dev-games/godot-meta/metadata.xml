@@ -32,7 +32,9 @@
     </flag>
     <flag name="export-templates">
       Installs export templates for all supported platforms to port your project
-      to those platforms with minimal effort.
+      to those platforms with minimal effort.  It requires the project to be
+      coded in GDScript.  The project's GDScripts, art and sound assets get
+      combined with the export template and the porting process is done.
     </flag>
   </use>
   <slots>
