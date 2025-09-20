@@ -39,10 +39,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <bugs-to>https://github.com/godotengine/godot/issues</bugs-to>
     <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/3.5/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/4.0/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/4.1/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/4.2/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.5/</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
     <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
     <doc lang="fi">https://docs.godotengine.org/fi/latest/</doc>
@@ -81,6 +78,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="asan">
       Enables ASAN for reporting but not necessarily preventing memory use
       problems or possible vulnerabilities.
+      Adds 1.5 - 4.0 worst case performance penalty.
+      It is not recommened for use in production.
     </flag>
     <flag name="astc">
       Enables CPU based ASTC texture compression/decompression.
@@ -184,6 +183,12 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables support for gridmaps for 3D level making similar to tile maps but
       for 3D.
     </flag>
+    <flag name="hwasan">
+      Enables HWASAN for reporting but not necessarily preventing memory use
+      problems or possible vulnerabilities.
+      Adds 1.15 - 1.50 worst case performance penalty.
+      It is ready for use in production.
+    </flag>
     <flag name="hdr">
       Enables support for HDR images.
     </flag>
@@ -230,6 +235,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="lsan">
       Enables LSAN for reporting but not necessarily preventing memory leaks.
+      Adds 1.05 - 1.50 worst case performance penalty.
+      It is not recommened for use in production.
     </flag>
     <flag name="lto">
       Enables link time optimization with ThinLTO that enables faster
@@ -270,6 +277,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="msan">
       Enables MSAN for reporting but not necessarily fixing uninitialized
       variables.
+      Adds 3.00 - 11.00 worst case performance penalty.
+      It is not recommened for use in production.
     </flag>
     <flag name="msdfgen">
       Enables use of the msdfgen library to better sharpen text when the camera
@@ -343,6 +352,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="s3tc">
       Enables DXT compression.
+    </flag>
+    <flag name="sanitize-in-production">
+      Makes sanitizer violations fatal in production to stop exploits.
     </flag>
     <flag name="speech">
       Enables text-to-speech.
@@ -473,18 +485,20 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="tsan">
       Enables TSAN to catch but not necessarily prevent data races that
       potentially can lead to a crash or memory corruption.
+      Adds 4.00 - 16.00 worst case performance penalty.
+      It is not recommened for use in production.
     </flag>
     <flag name="ubsan">
       Enables UBSAN to catch but not necessarily prevent overflows or null
       pointer or misaligned access that could lead to a crash.
+      Adds 1.10 - 2 worst case performance penalty.
+      It is not recommened for use in production.
     </flag>
     <flag name="upnp">
       Enables universal plug and play for devices.
     </flag>
     <flag name="vhacd">
-      Enables decomposition of 3D polygons into simple more accurate
-      approximation for collison detection at the model's limbs instead of more
-      spheroid or retangular shapes.
+      Enables optimized and accurate 3D collision shapes.
     </flag>
     <flag name="webm">
       Enables support for the WebM format for audio and video.

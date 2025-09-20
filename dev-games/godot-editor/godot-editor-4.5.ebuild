@@ -123,6 +123,7 @@ gen_required_use_template()
 
 SANITIZERS=(
 	asan
+	hwasan
 	lsan
 	msan
 	tsan
@@ -137,7 +138,7 @@ IUSE_AUDIO="
 +alsa +interactive-music +pulseaudio +speech
 "
 IUSE_BUILD="
-${SANITIZERS[@]}
+${SANITIZERS[@]} sanitize-in-production
 clang debug jit layers lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -572,6 +573,7 @@ BDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
+	"${FILESDIR}/godot-4.5-sanitizers.patch"
 )
 
 check_speech_dispatcher() {
@@ -969,11 +971,13 @@ src_compile() {
 		touch=$(usex touch)
 		udev=$(usex gamepad)
 		use_asan=$(usex asan)
+		use_hwasan=$(usex hwasan)
 		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_lsan=$(usex lsan)
 		use_msan=$(usex msan)
+		use_sanitize_in_production=$(usex sanitize-in-production)
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
