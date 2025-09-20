@@ -6,8 +6,9 @@ EAPI=8
 
 STATUS="stable"
 
-ANDROID_MIN_API="21"
-ANDROID_SDK_VER="33"
+ANDROID_MIN_API="24"
+ANDROID_SDK_VER="35"
+GLIBC_PV="2.3.4" # Minimum required so >=U22, >=D12, >=sys-libs/glibc-2.3.4 if writing system requirements
 IOS_MIN="10.0"
 MONO_PV="6.12.0.182"
 EMSCRIPTEN_PV="1.39.9" # emsdk_pv == emscripten-core_pv

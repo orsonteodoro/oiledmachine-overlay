@@ -63,7 +63,7 @@ FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
 inherit godot-4.5
-inherit cflags-hardened desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils virtualx
+inherit cflags-hardened desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -390,7 +390,7 @@ CDEPEND_CLANG="
 "
 CDEPEND_GCC="
 	!clang? (
-		sys-devel/gcc
+		>=sys-devel/gcc-${GCC_PV}
 	)
 "
 DEPEND+="
@@ -568,7 +568,7 @@ BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '
-		dev-build/scons[${PYTHON_USEDEP}]
+		>=dev-build/scons-4.9.0[${PYTHON_USEDEP}]
 	')
 	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
 	lld? (
@@ -770,6 +770,21 @@ eerror
 src_configure() {
 	default
 	cflags-hardened_append
+	if tc-is-gcc ; then
+		local gcc_pv=$(gcc-full-version)
+		if ver_test "${gcc_pv}" -lt "${GCC_PV}" ; then
+eerror "Switch to >=sys-devel/gcc-${GCC_PV}"
+			die
+		fi
+	fi
+	if tc-is-clang ; then
+		local clang_pv=$(clang-full-version)
+		local clang_pv_min=${LLVM_COMPAT[-1]}
+		if ver_test "${clang_pv}" -lt "${clang_pv_min}" ; then
+eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
+			die
+		fi
+	fi
 	if use portable ; then
 		strip-flags
 		filter-flags -march=*
