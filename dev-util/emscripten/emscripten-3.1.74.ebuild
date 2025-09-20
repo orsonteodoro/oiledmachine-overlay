@@ -26,6 +26,10 @@ TEST_PATH="${WORKDIR}/test/"
 # https://github.com/emscripten-core/emscripten/blob/3.1.74/requirements-dev.txt
 # flake8 (5.0.4) - <= 3.10
 # websockify (0.10.0) - <= 3.9
+BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 14.1"
+# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/3.1.74/src/settings.js#L1904
+# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/3.1.74/src/settings.js#L1878
+# Safari min version:  https://github.com/emscripten-core/emscripten/blob/3.1.74/src/settings.js#L1893
 
 inherit check-compiler-switch flag-o-matic java-pkg-opt-2 python-single-r1 toolchain-funcs
 
@@ -425,6 +429,7 @@ ewarn "You must manually setup the JAVA_HOME, and PATH when using"
 ewarn "closure-compiler for Java."
 ewarn
 	fi
+einfo "Minimum browser version required:  ${BROWSERS_MIN_VER}"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (3.1.51)
