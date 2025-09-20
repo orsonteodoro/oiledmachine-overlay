@@ -2241,7 +2241,7 @@ TBM=0
 
       Ports
 
-      The listed ports can be enabled by adding it to the drive bundle.  They
+      The listed ports can be enabled by adding it to the driver bundle.  They
       are optional in this ebuild package but not forced default on.  They
       are currently default off since they are not mainstream user options
       today or are too enthusiast.
