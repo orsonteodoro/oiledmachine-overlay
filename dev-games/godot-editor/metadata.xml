@@ -82,7 +82,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       escalation, denial of service, data tampering, information disclosure.
 
       Adds 1.5x - 4.0x worst case performance penalty.
-      It is not recommened for use in production.
+      It is not recommended for use in production.
     </flag>
     <flag name="astc">
       Enables CPU based ASTC texture compression/decompression.
@@ -251,7 +251,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       (DoS).
 
       Adds 1.05x - 1.50x worst case performance penalty.
-      It is not recommened for use in production.
+      It is not recommended for use in production.
     </flag>
     <flag name="lto">
       Enables link time optimization with ThinLTO that enables faster
@@ -294,7 +294,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       information disclosure.
 
       Adds 3.00x - 11.00x worst case performance penalty.
-      It is not recommened for use in production.
+      It is not recommended for use in production.
     </flag>
     <flag name="msdfgen">
       Enables use of the msdfgen library to better sharpen text when the camera
@@ -514,7 +514,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables TSan to detect data races that can lead to data tampering.
 
       Adds 4.00x - 16.00x worst case performance penalty.
-      It is not recommened for use in production.
+      It is not recommended for use in production.
     </flag>
     <flag name="ubsan">
       Enables UBSan for undefined behavior detection for integer overflows,
@@ -523,7 +523,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       tampering, information disclosure.
 
       Adds 1.10x - 2.00x worst case performance penalty.
-      It is not recommened for use in production.
+      It is not recommended for use in production.
     </flag>
     <flag name="upnp">
       Enables universal plug and play for devices.
