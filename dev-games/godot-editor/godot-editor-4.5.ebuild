@@ -139,7 +139,7 @@ IUSE_AUDIO="
 "
 IUSE_BUILD="
 ${SANITIZERS[@]} sanitize-in-production
-clang debug jit layers lld lto +neon +optimize-speed optimize-size portable
+clang debug -fp64 jit layers lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
 +astc +bc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +ktx +minizip -mp1 -mp2
@@ -1081,17 +1081,18 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		brotli=$(usex brotli)
+		builtin_pcre2_with_jit=$(usex jit)
+		disable_3d=$(usex !3d)
 		disable_physics_2d=$(usex !2d-physics)
 		disable_physics_3d=$(usex !3d-physics)
 		disable_navigation_2d=$(usex !2d-pathfinding)
 		disable_navigation_3d=$(usex !3d-pathfinding)
-		brotli=$(usex brotli)
-		builtin_pcre2_with_jit=$(usex jit)
-		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
+		precision=$(usex fp64)
 		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
 		module_basis_universal_enabled=$(usex basis-universal)
