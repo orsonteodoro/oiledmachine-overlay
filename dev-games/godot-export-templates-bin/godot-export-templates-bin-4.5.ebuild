@@ -9,6 +9,7 @@ STATUS="stable"
 ANDROID_MIN_API="24"
 ANDROID_SDK_VER="35"
 EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
+GCC_PV="13.2.0"
 JDK_PV="17.0.16"
 MONO_PV="8.0.19"
 NDK_PV="28.1"
@@ -21,10 +22,10 @@ ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
 BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
-GLIBC_MIN_PV="2.3.4"
-IOS_MIN_VER="12.0"
-LINUX_MIN_VER="U22" # Based on CI image
-MACOS_MIN_VER="15.5"
+GLIBC_PV="2.35" # Based on CI image
+IOS_MIN_VER="12.0" # From -miphoneos-version-min=
+LINUX_MIN_VER="U22, D12, F36" # Based on CI image and GLIBC_PV
+MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
 WINDOWS_MIN_VER="10" # Based on D3D12 version
 
 # Emscripten core info is at:
@@ -540,7 +541,8 @@ einfo "Android API minimum:  ${ANDROID_MIN_API}"
 einfo "Android NDK version:  ${NDK_PV}"
 einfo "Android SDK version:  ${ANDROID_SDK_VER}"
 einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
-einfo "GNU C Library version:  ${GLIBC_MIN_PV}"
+einfo "GNU C Library version:  ${GLIBC_PV}"
+einfo "GCC version:  ${GCC_PV}"
 einfo "JDK version:  ${JDK_PV}"
 einfo "Mono version:  ${MONO_PV}"
 einfo
