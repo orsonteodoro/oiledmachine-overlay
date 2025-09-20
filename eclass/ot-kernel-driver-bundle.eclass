@@ -36,7 +36,7 @@ inherit toolchain-funcs ot-kernel-kutils
 
 ot-kernel-driver-bundle_check_name_changes() {
 	if ! [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:" ]] ; then
-ewarn "The port:ethernet, port:parallel-port, port:ps/2, port:serial, port:thunderbolt-3, port:thunderbolt-4 are now optional."
+ewarn "The port:ethernet, port:gameport, port:midi, port:parallel-port, port:ps/2, port:serial, port:thunderbolt-3, port:thunderbolt-4 are now optional."
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "graphics:rv670"($|" ") ]] ; then
@@ -1070,7 +1070,7 @@ ewarn "The late-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "late-1990s"
-	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci-to-isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_ports "serial parallel-port usb-1.1 firewire"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -1137,7 +1137,7 @@ ewarn "The early-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_watchdog "early-2000s"
-	ot-kernel-driver-bundle_add_expansion_slots "isa pci agp"
+	ot-kernel-driver-bundle_add_expansion_slots "isa pci-to-isa pci agp"
 	ot-kernel-driver-bundle_add_graphics "agp pci"
 	ot-kernel-driver-bundle_add_ports "serial parallel-port usb-1.1 usb-2.0 firewire"
 	ot-kernel-driver-bundle_add_console "tty"
@@ -1683,6 +1683,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_PCI"
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_SKL"
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_TOPLEVEL"
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	# Bluetooth
 	ot-kernel_y_configopt "CONFIG_BT"
@@ -3354,8 +3355,14 @@ ot-kernel-driver-bundle_add_keyboard() {
 ot-kernel-driver-bundle_add_expansion_slots() {
 	local tags="${1}"
 	if [[ "${tags}" =~ (^|" ")"isa"($|" ") ]] ; then
-		ot-kernel_y_configopt "CONFIG_ISA_BUS" # 8-bit (1981)
+		if ! grep -q -E -e "CONFIG_64BIT=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_ISA" # 8-bit (1981-1998), native ISA without PCI-to-ISA bridge
+			ot-kernel_y_configopt "CONFIG_X86_32"
+		fi
 		ot-kernel_y_configopt "CONFIG_ISA_DMA_API" # 16-bit with DMA (1984), for consumers
+	fi
+	if [[ "${tags}" =~ (^|" ")"pci-to-isa"($|" ") ]] ; then
+		ot-kernel_y_configopt "CONFIG_ISA_BUS" # 1999, PCI-to-ISA bridge
 	fi
 	if [[ "${tags}" =~ (^|" ")"eisa"($|" ") ]] ; then
 		ot-kernel_y_configopt "CONFIG_EISA" # 32-bit 1988, for server
@@ -3422,7 +3429,7 @@ ot-kernel-driver-bundle_add_ports() {
 	if [[ "${tags}" =~ "serial" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:serial"|"port:com") ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_SERIAL_8250" # 1978/1987, for mouse, modems, TTY console
-		ot-kernel_y_configopt "CONFIG_SERIO" # Abstraction layer
+		ot-kernel_y_configopt "CONFIG_SERIO" # 1984 (9-pin DE-9), 1981 (25-pin PC version), abstraction layer
 		ot-kernel_y_configopt "CONFIG_SERIO_SERPORT" # Interface to the abstraction layer for RS-242 input devices
 		ot-kernel_y_configopt "CONFIG_TTY"
 	fi
@@ -4486,21 +4493,13 @@ ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers() {
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_vendor
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_hid_by_class
 	fi
-	if [[ "${tags}" =~ "gameport" ]] ; then
+	if [[ "${tags}" =~ "gameport" && "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:gameport" ]] ; then
 		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981, 15 pin
-		if grep -q -E -e "^CONFIG_SND_EMU10K1=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_GAMEPORT_EMU10K1" # 1998
-		fi
-		if grep -q -E -e "^CONFIG_SND_FM801=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_GAMEPORT_FM801" # 1998
-		fi
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_vendor
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_gameport_by_class
 	fi
 	if [[ "${tags}" =~ "serial" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SERIO" # 1984 (9-pin DE-9), 1981 (25-pin PC version)
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_vendor
 		ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_serial_by_class
 	fi
@@ -9802,6 +9801,7 @@ ot-kernel-driver-bundle_add_sound() {
 	ot-kernel-driver-bundle_add_sound_by_vendor_name
 	ot-kernel-driver-bundle_add_sound_by_module_name
 	ot-kernel-driver-bundle_add_sound_by_product_name
+	ot-kernel-driver-bundle_add_midi_playback_support
 
 	if \
 		   grep -q -E -e "^CONFIG_SND_HDA_CODEC_REALTEK=(m|y)" "${path_config}" \
@@ -9824,6 +9824,15 @@ ot-kernel-driver-bundle_add_sound() {
 	; then
 		ot-kernel_y_configopt "CONFIG_PNP" # 1995
 	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:midi" ]] ; then
+		ot-kernel-driver-bundle_add_midi_usb_support
+		ot-kernel-driver-bundle_add_5_pin_midi_support
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:gameport"|"port:midi") ]] ; then
+		ot-kernel-driver-bundle_add_gameport_to_5_pin_midi_support
+	fi
+	ot-kernel-driver-bundle_add_musician_support
 }
 
 ot-kernel-driver-bundle_add_sound_by_decade() {
@@ -9941,7 +9950,6 @@ ot-kernel-driver-bundle_add_sound_by_decade() {
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL" # 2004
 	fi
-	ot-kernel-driver-bundle_add_midi_playback_support
 }
 
 ot-kernel-driver-bundle_add_sound_by_vendor_name() {
@@ -11107,5 +11115,49 @@ ot-kernel-driver-bundle_add_ethernet() {
 	fi
 }
 
+ot-kernel-driver-bundle_add_midi_usb_support() {
+	# For MIDI over USB, 5-pin MIDI interface cable
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_USB"
+	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO" # 2002
+	ot-kernel_y_configopt "CONFIG_USB"
+}
+
+ot-kernel-driver-bundle_add_5_pin_midi_support() {
+	# For 5-pin MIDI to 5-pin MIDI support
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+}
+
+ot-kernel-driver-bundle_add_gameport_to_5_pin_midi_support() {
+	# The gameport can be used with a Y cable with 2 MIDI connectors.
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:gameport"|"port:midi") ]] ; then
+		ot-kernel_y_configopt "CONFIG_GAMEPORT" # 1981, 15 pin
+		if grep -q -E -e "^CONFIG_SND_EMU10K1=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_GAMEPORT_EMU10K1" # 1998
+		fi
+		if grep -q -E -e "^CONFIG_SND_FM801=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_GAMEPORT_FM801" # 1998
+		fi
+		if grep -q -E -e "^CONFIG_ISA=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_GAMEPORT_NS558"
+		fi
+	fi
+}
+
+ot-kernel-driver-bundle_add_musician_support() {
+	ot-kernel_y_configopt "CONFIG_SOUND"
+	ot-kernel_y_configopt "CONFIG_SND"
+	ot-kernel_y_configopt "CONFIG_SND_HRTIMER"
+	ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
+	ot-kernel_y_configopt "CONFIG_SND_RAWMIDI" # MIDI 1.0, indirectly added by choosing sound card driver
+	# Sequencer is used for software that needs to route between
+	# applications/devices or wavetable support on older sound cards.
+	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
+	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO" # 2002
+	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO_MIDI_V2" # 2020
+	ot-kernel_y_configopt "CONFIG_SND_UMP_LEGACY_RAWMIDI" # MIDI 2.0 support for RawMidi
+}
 
 fi

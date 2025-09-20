@@ -2247,6 +2247,8 @@ TBM=0
 
       port:com
       port:ethernet
+      port:gameport
+      port:midi
       port:parallel-port
       port:ps/2
       port:serial
