@@ -183,7 +183,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_10
+	ebuild_revision_11
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -1092,7 +1092,7 @@ src_compile() {
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
-		precision=$(usex fp64)
+		precision=$(usex fp64 "double" "single")
 		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
 		module_basis_universal_enabled=$(usex basis-universal)
