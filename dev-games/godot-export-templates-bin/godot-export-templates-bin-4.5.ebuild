@@ -14,6 +14,7 @@ EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
 GCC_PV="13.2.0" # From CI logs
 JDK_PV="17.0.16" # From CI logs
 NDK_PV="28.1" # From CI logs
+CLANG_PV="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)"
 
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
@@ -387,6 +388,7 @@ einfo "Android API minimum:  ${ANDROID_MIN_API}"
 einfo "Android NDK version:  ${NDK_PV}"
 einfo "Android SDK version:  ${ANDROID_SDK_VER}"
 einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
+einfo "Clang version used with Emscripten:  ${CLANG_PV}"
 einfo "GNU C Library version:  ${GLIBC_PV}"
 einfo "GCC version:  ${GCC_PV}"
 einfo "JDK version:  ${JDK_PV}"
