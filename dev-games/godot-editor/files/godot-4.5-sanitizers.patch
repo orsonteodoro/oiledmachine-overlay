@@ -17,7 +17,7 @@
          env.Append(LINKFLAGS=["-ftest-coverage", "-fprofile-arcs"])
  
 -    if env["use_ubsan"] or env["use_asan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
-+    if env["use_ubsan"] or env["use_asan"] or env["use_hwsan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
++    if env["use_ubsan"] or env["use_asan"] or env["use_hwasan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
          env.extra_suffix += ".san"
          env.Append(CCFLAGS=["-DSANITIZERS_ENABLED"])
  
