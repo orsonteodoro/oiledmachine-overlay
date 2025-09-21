@@ -86,14 +86,18 @@ HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="
 	(
-		icu
-		ISC
-		Old-MIT
-	)
-	(
+		Apache-2.0
+		Bison-exception-2.2
 		custom
+		GPL-3
 		BSD
 		BSD-2
+		MIT
+	)
+	(
+		BSD
+		BSD-2
+		custom
 		GPL-2+-with-autoconf-exception
 		GPL-3+-with-autoconf-exception
 		NAIST-IPADIC
@@ -101,13 +105,9 @@ LICENSE="
 		Unicode-3.0
 	)
 	(
-		custom
-		Apache-2.0
-		Bison-exception-2.2
-		GPL-3
-		BSD
-		BSD-2
-		MIT
+		icu
+		ISC
+		Old-MIT
 	)
 	all-rights-reserved
 	Apache-2.0
