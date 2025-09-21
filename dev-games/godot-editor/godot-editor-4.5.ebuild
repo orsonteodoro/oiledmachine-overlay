@@ -531,6 +531,9 @@ DEPEND+="
 			media-libs/vulkan-loader[layers?,X]
 		)
 	)
+	wayland? (
+		>=gui-libs/libdecor-0.1.0
+	)
 "
 RDEPEND+="
 	${DEPEND}
@@ -563,6 +566,9 @@ BDEPEND+="
 	mono? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
+	)
+	wayland? (
+		>=dev-util/wayland-scanner-1.20.0
 	)
 	|| (
 		${CDEPEND_CLANG}
@@ -989,6 +995,7 @@ src_compile() {
 		platform="x11"
 		alsa=$(usex alsa)
 		dbus=$(usex dbus)
+		libdecor=$(usex wayland)
 		pulseaudio=$(usex pulseaudio)
 		speechd=$(usex speech)
 		touch=$(usex touch)
