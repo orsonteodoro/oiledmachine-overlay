@@ -798,6 +798,7 @@ src_configure() {
 		gcc_current_profile_slot="${gcc_current_profile_slot##*-}"
 	# Check glslang's libstdcxx symbols when linking using USE=vulkan
 einfo "Current GCC slot:  ${gcc_current_profile_slot}"
+		check_pkg_glibcxx "dev-util/spirv-tools" "/usr/$(get_libdir)/libSPIRV-Tools-opt.so" "${gcc_current_profile_slot}" # Dependency of glslang
 		check_pkg_glibcxx "dev-util/glslang" "/usr/$(get_libdir)/libglslang.so" "${gcc_current_profile_slot}"
 	fi
 
