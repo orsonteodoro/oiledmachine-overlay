@@ -15,8 +15,8 @@
 # Check version symbol library compatibility with glibcxx
 #
 # Examples:
-# local gcc_current_profile=$(gcc-config -c)
-# local gcc_current_profile_slot=${gcc_current_profile##*-}
+# # gcc-config -l reports the currently selected libstdcxx but setting CC= cannot do it properly.
+# local gcc_current_profile_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
 # check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${gcc_current_profile_slot}"
 #
 # check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "12"

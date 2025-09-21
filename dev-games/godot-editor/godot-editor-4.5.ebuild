@@ -73,7 +73,7 @@ CPU_FLAGS_X86=(
 )
 
 inherit godot-4.5
-inherit cflags-hardened desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
+inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -202,9 +202,12 @@ IUSE+="
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/4.5-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
-# brotli opengl
+# brotli - for woff2 font decompression, unbreaking log
+# opengl - for fixing black screen
 REQUIRED_USE+="
+	brotli
 	freetype
+	opengl
 	pcre2
 	svg
 	^^ (
@@ -783,6 +786,21 @@ eerror
 src_configure() {
 	default
 	cflags-hardened_append
+
+	if has_version "dev-util/glslang" ; then
+		local glslang_libstdcxx_pv=$(strings "/usr/$(get_libdir)/libglslang.so" \
+			| grep GLIBCXX \
+			| sort -V \
+			| tail -n 1 \
+			| cut -f 2 -d "_")
+	# gcc-config -l reports the currently selected libstdcxx but setting CC= cannot do it properly.
+		local gcc_current_profile_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
+		gcc_current_profile_slot="${gcc_current_profile_slot##*-}"
+	# Check glslang's libstdcxx symbols when linking using USE=vulkan
+einfo "Current GCC slot:  ${gcc_current_profile_slot}"
+		check_pkg_glibcxx "dev-util/glslang" "/usr/$(get_libdir)/libglslang.so" "${gcc_current_profile_slot}"
+	fi
+
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
 		if ver_test "${gcc_pv}" -lt "${GCC_PV}" ; then
