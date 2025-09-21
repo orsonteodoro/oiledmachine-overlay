@@ -405,6 +405,7 @@ einfo
 
 
 einfo "CPU microarchitectures:  See metadata.xml"
+ewarn "The x86-64 export templates require SSE 4.2 or Haswell or newer to prevent an illegal instruction error."
 	if use custom ; then
 		if use mono ; then
 einfo
