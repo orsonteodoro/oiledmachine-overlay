@@ -126,7 +126,7 @@ check_pkg_glibcxx() {
 	)
 	local glibcxx_ver=$(strings "${library_path}" \
 		| grep "^GLIBCXX" \
-		| sort \
+		| sort -V \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 	if true ; then
