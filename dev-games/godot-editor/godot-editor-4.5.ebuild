@@ -196,7 +196,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_12
+	ebuild_revision_13
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -1108,6 +1108,12 @@ src_compile() {
 	options_modules+=(
 		brotli=$(usex brotli)
 		builtin_pcre2_with_jit=$(usex jit)
+		cpu_flags_x86_sse4_2=$(usex cpu_flags_x86_sse4_2)
+		cpu_flags_x86_sse4_1=$(usex cpu_flags_x86_sse4_1)
+		cpu_flags_x86_ssse3=$(usex cpu_flags_x86_ssse3)
+		cpu_flags_x86_sse2=$(usex cpu_flags_x86_sse2)
+		cpu_flags_x86_sse=$(usex cpu_flags_x86_sse)
+		cpu_flags_x86_popcnt=$(usex cpu_flags_x86_popcnt)
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
