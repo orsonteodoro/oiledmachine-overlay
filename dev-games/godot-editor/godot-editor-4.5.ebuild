@@ -764,15 +764,15 @@ src_configure() {
 	default
 	cflags-hardened_append
 	if tc-is-gcc ; then
-		local gcc_pv=$(gcc-full-version)
+		local gcc_pv=$(gcc-fullversion)
 		if ver_test "${gcc_pv}" -lt "${GCC_PV}" ; then
 eerror "Switch to >=sys-devel/gcc-${GCC_PV}"
 			die
 		fi
 	fi
 	if tc-is-clang ; then
-		local clang_pv=$(clang-full-version)
-		local clang_pv_min=${LLVM_COMPAT[-1]}
+		local clang_pv=$(clang-fullversion)
+		local clang_pv_min="${LLVM_COMPAT[-1]}"
 		if ver_test "${clang_pv}" -lt "${clang_pv_min}" ; then
 eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
 			die
