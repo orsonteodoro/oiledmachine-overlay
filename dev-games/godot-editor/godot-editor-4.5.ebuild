@@ -85,16 +85,42 @@ DESCRIPTION="Godot editor"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="
+	(
+		icu
+		ISC
+		Old-MIT
+	)
+	(
+		custom
+		BSD
+		BSD-2
+		GPL-2+-with-autoconf-exception
+		GPL-3+-with-autoconf-exception
+		NAIST-IPADIC
+		MIT
+		Unicode-3.0
+	)
+	(
+		custom
+		Apache-2.0
+		Bison-exception-2.2
+		GPL-3
+		BSD
+		BSD-2
+		MIT
+	)
 	all-rights-reserved
 	Apache-2.0
 	BitstreamVera
 	Boost-1.0
 	BSD
 	BSD-2
+	CC0-1.0
 	CC-BY-3.0
 	CC-BY-4.0
 	FTL
 	ISC
+	IJG
 	LGPL-2.1
 	MIT
 	MPL-2.0
@@ -102,7 +128,29 @@ LICENSE="
 	openssl
 	Unlicense
 	ZLIB
+	|| (
+		Apache-2.0
+		MIT
+	)
+	|| (
+		public-domain
+		Unlicense
+	)
+	|| (
+		public-domain
+		MIT
+		Unlicense
+	)
 "
+
+# thirdparty/icu4c - custom, BSD, BSD-2, GPL-2+-with-autoconf-exception, GPL-3+-with-autoconf-exception, NAIST-IPADIC, MIT, Unicode-3.0
+#   See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/icu4c/LICENSE
+# thirdparty/glslang - custom, BSD, BSD-2, MIT, Apache-2.0, GPL-3 with Bison-exception-2.2, custom, MIT
+#   See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/glslang/LICENSE.txt
+# thirdparty/spirv-cross || ( Apache-2.0 MIT )
+# thirdparty/misc/r128 - || ( public-domain Unlicense )
+# thirdparty/misc/smolv || ( public-domain MIT Unlicense )
+# thirdparty/misc/stb_rect_pack.h || ( public-domain MIT Unlicense )
 
 # See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
