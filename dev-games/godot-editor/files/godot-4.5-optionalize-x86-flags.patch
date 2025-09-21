@@ -1,0 +1,73 @@
+--- godot-4.5-stable.orig/SConstruct	2025-09-20 22:36:31.736483356 -0700
++++ godot-4.5-stable/SConstruct	2025-09-20 22:49:54.119865163 -0700
+@@ -316,6 +316,14 @@ opts.Add("rcflags", "Custom flags for Wi
+ opts.Add("c_compiler_launcher", "C compiler launcher (e.g. `ccache`)")
+ opts.Add("cpp_compiler_launcher", "C++ compiler launcher (e.g. `ccache`)")
+ 
++opts.Add("cpu_flags_x86_popcnt", "Add popcnt support", True)
++opts.Add("cpu_flags_x86_sse", "Add sse support", True)
++opts.Add("cpu_flags_x86_sse2", "Add sse2 support", True)
++opts.Add("cpu_flags_x86_sse3", "Add sse3 support", True)
++opts.Add("cpu_flags_x86_ssse3", "Add ssse3 support", True)
++opts.Add("cpu_flags_x86_sse4_1", "Add sse4.1 support", True)
++opts.Add("cpu_flags_x86_sse4_2", "Add sse4.2 support", True)
++
+ # Update the environment to have all above options defined
+ # in following code (especially platform and custom_modules).
+ opts.Update(env)
+@@ -741,19 +749,25 @@ if env["arch"] == "x86_64":
+     # AVX and AVX2 aren't enabled because they aren't available on more recent low-end Intel CPUs.
+     if env.msvc and not methods.using_clang(env):
+         # https://stackoverflow.com/questions/64053597/how-do-i-enable-sse4-1-and-sse3-but-not-avx-in-msvc/69328426
+-        env.Append(CCFLAGS=["/d2archSSE42"])
++        if env["cpu_flags_x86_sse4_2"]:
++            env.Append(CCFLAGS=["/d2archSSE42"])
+     else:
+-        # `-msse2` is implied when compiling for x86_64.
+-        env.Append(CCFLAGS=["-msse4.2", "-mpopcnt"])
++        if env["cpu_flags_x86_sse4_2"]:
++            # `-msse2` is implied when compiling for x86_64.
++            env.Append(CCFLAGS=["-msse4.2"])
++        if env["cpu_flags_x86_popcnt"]:
++            env.Append(CCFLAGS=["-mpopcnt"])
+ elif env["arch"] == "x86_32":
+     # Be more conservative with instruction sets on 32-bit x86 to improve compatibility.
+     # SSE and SSE2 are present on all CPUs that support 64-bit, even if running a 32-bit OS.
+     if env.msvc and not methods.using_clang(env):
+-        env.Append(CCFLAGS=["/arch:SSE2"])
++        if env["cpu_flags_x86_sse2"]:
++            env.Append(CCFLAGS=["/arch:SSE2"])
+     else:
+         # Use `-mfpmath=sse` to use SSE for floating-point math, which is more stable than x87.
+         # `-mstackrealign` is needed for it to work.
+-        env.Append(CCFLAGS=["-msse2", "-mfpmath=sse", "-mstackrealign"])
++        if env["cpu_flags_x86_sse2"]:
++            env.Append(CCFLAGS=["-msse2", "-mfpmath=sse", "-mstackrealign"])
+ 
+ # Explicitly specify colored output.
+ if methods.using_gcc(env):
+--- godot-4.5-stable.orig/modules/raycast/SCsub	2025-09-14 18:30:02.000000000 -0700
++++ godot-4.5-stable/modules/raycast/SCsub	2025-09-20 22:43:41.609725162 -0700
+@@ -86,10 +86,20 @@ if env["builtin_embree"]:
+     # according to compiler instruction set flags.
+     if env["arch"] != "x86_64" or env.msvc:
+         # Embree needs those; it will automatically use SSE2NEON in ARM.
+-        env_thirdparty.Append(CPPDEFINES=["__SSE__", "__SSE2__"])
++        if env["cpu_flags_x86_sse2"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE2__"])
++        if env["cpu_flags_x86_sse"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE__"])
+ 
+     if env["arch"] == "x86_64" and env.msvc:
+-        env_thirdparty.Append(CPPDEFINES=["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"])
++        if env["cpu_flags_x86_sse4_2"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE4_2__"])
++        if env["cpu_flags_x86_sse4_1"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE4_1__"])
++        if env["cpu_flags_x86_ssse3"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSSE3__"])
++        if env["cpu_flags_x86_sse3"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE3__"])
+ 
+     if env["platform"] == "web":
+         env_thirdparty.Append(CXXFLAGS=["-msimd128"])

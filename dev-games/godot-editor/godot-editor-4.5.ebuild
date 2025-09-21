@@ -62,6 +62,16 @@ CE IO SO
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_sse4_2"
+	"cpu_flags_x86_sse4_1"
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_sse3"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse"
+	"cpu_flags_x86_popcnt"
+)
+
 inherit godot-4.5
 inherit cflags-hardened desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
@@ -139,8 +149,10 @@ IUSE_AUDIO="
 +alsa +interactive-music +pulseaudio +speech
 "
 IUSE_BUILD="
-${SANITIZERS[@]} sanitize-in-production
+${CPU_FLAGS_X86[@]}
+${SANITIZERS[@]}
 clang debug -fp64 jit layers lld lto +optimize-speed optimize-size portable
+sanitize-in-production
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
 +astc +bc +bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +ktx +minizip -mp1
@@ -203,6 +215,27 @@ REQUIRED_USE+="
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
+	)
+	cpu_flags_x86_popcnt? (
+		cpu_flags_x86_sse4_2
+		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse4_1
+		cpu_flags_x86_popcnt
+	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_sse4_2
+		cpu_flags_x86_popcnt
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse3? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
 	)
 	csharp-external-editor? (
 		mono
@@ -564,6 +597,7 @@ BDEPEND+="
 PATCHES=(
 	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
 	"${FILESDIR}/godot-4.5-sanitizers.patch"
+	"${FILESDIR}/godot-4.5-optionalize-x86-flags.patch"
 )
 
 check_speech_dispatcher() {
