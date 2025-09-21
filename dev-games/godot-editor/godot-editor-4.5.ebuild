@@ -140,7 +140,7 @@ IUSE_AUDIO="
 "
 IUSE_BUILD="
 ${SANITIZERS[@]} sanitize-in-production
-clang debug -fp64 jit layers lld lto +neon +optimize-speed optimize-size portable
+clang debug -fp64 jit layers lld lto +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
 +astc +bc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +ktx +minizip -mp1 -mp2
