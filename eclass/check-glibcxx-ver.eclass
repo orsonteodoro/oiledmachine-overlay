@@ -14,6 +14,17 @@
 # @DESCRIPTION:
 # Check version symbol library compatibility with glibcxx
 #
+# The issue is that if a lib dependency is built with a newer GCC but the app is
+# built with a older GCC, the linking will not work in the app.  This is because
+# all C++ lib ebuilds should be built with gcc_slot_xx with gcc-config -l
+# verification similar to llvm_slot_xxx.  The distro devs wants to offload the
+# resolution to the user, but it should not be that way.  The ebuild devs and
+# the distro don't want to confront the issue.  The ebuilds need to have the
+# gcc_slot_xx for reproducible/deterministic builds.  The gcc_slot_xx with
+# gcc-config -l verificaiton is the most reliable way to fix this coverage issue.
+# This eclass may miss the coverage, so the check to check_pkg_glibcxx set could
+# be incomplete for some ebuilds.
+#
 # Examples:
 # # gcc-config -l reports the currently selected libstdcxx but setting CC= cannot do it properly.
 # local gcc_current_profile_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
