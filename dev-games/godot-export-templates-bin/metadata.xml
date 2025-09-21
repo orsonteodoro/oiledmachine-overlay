@@ -6,95 +6,108 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!--
-
-    These are bundled export templates.
-
-    If you don't unpack them, allow the Godot editor to unpack them.
-
-    All prebuilt export templates come with debug and release configurations.
-
-    Export template platforms for standard (from zip file list inspection):
-
-      Android (armv7, arm64v8, x86, x86-64)
-      iOS (arm64, arm64-x86_64-simulator [Universal 2 binary])
-      Linux (x86, 32-bit)
-      Linux (x86-64, 64-bit)
-      JavaScript (WASM, GDnative, threads)
-      macOS (x86-64, 64-bit)
-      Universal Windows Platform (UWP, arm, 32-bit)
-      Universal Windows Platform (UWP, 64-bit)
-      Windows (x86, 32-bit)
-      Windows (x86-64, 64-bit)
-
-    Export template platforms for Mono (from zip file list inspection):
-
-      Mono template libraries support BCL, .NET (2.0, 4.0, 4.5)
-
-      Android (armv7, arm64v8, x86, x86-64, MonoDroid)
-      iOS (arm64, arm64-x86_64-simulator [Universal 2 binary], MonoTouch)
-      JavaScript (WASM)
-      Linux (x86, 32-bit)
-      Linux (x86-64 64-bit)
-      macOS (x86-64, 64-bit)
-      Windows (x86, 32-bit)
-      Windows (x86-64, 64-bit)
-
-  -->
   <use>
-    <flag name="android">
-      Install Android export templates
+    <flag name="android-debug">
+      Install export templates for this build
     </flag>
-    <flag name="debug">
-      Install debug export templates
+    <flag name="android-source">
+      Install export templates for this build
     </flag>
     <flag name="ios">
-      Install ios export templates
+      Install export templates for this build
     </flag>
-    <flag name="linux_x86">
-      Install Linux x86 export templates
+    <flag name="linux-debug-arm32">
+      Install export templates for this build
     </flag>
-    <flag name="linux_x86_64">
-      Install Linux x86-64 export templates
+    <flag name="linux-debug-arm64">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-debug-x86-32">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-debug-x86-64">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-release-arm32">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-release-arm64">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-release-x86-32">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-release-x86-64">
+      Install export templates for this build
     </flag>
     <flag name="macos">
-      Install macOS export templates
+      Install export templates for this build
+    </flag>
+    <flag name="visionos">
+      Install export templates for this build
+    </flag>
+    <flag name="web-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="web-dlink-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="web-dlink-nothreads-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="web-dlink-nothreads-release">
+      Install export templates for this build
+    </flag>
+    <flag name="web-nothreads-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="web-nothreads-release">
+      Install export templates for this build
+    </flag>
+    <flag name="web-release">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-debug-arm64-console">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-debug-arm64">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-debug-x86-32-console">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-debug-x86-32">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-debug-x86-64-console">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-debug-x86-64">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-release-arm64-console">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-release-arm64">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-release-x86-32-console">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-release-x86-32">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-release-x86-64-console">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-release-x86-64">
+      Install export templates for this build
     </flag>
     <flag name="mono">
-      Installs the Mono/C# export templates with data files
-    </flag>
-    <flag name="release">
-      Install release export templates
-    </flag>
-    <flag name="javascript">
-      Install the JavaScript (WASM) export template
-    </flag>
-    <flag name="javascript_gdnative">
-      Install the JavaScript (WASM) export template with GDNative
-    </flag>
-    <flag name="javascript_threads">
-      Install the JavaScript (WASM) export template with threads
-    </flag>
-    <flag name="custom">
-      Unpacks files for selective install
-    </flag>
-    <flag name="uwp_arm">
-      Install Universal Windows Platform export templates for arm
-    </flag>
-    <flag name="uwp_x86">
-      Install Universal Windows Platform export templates for x86
-    </flag>
-    <flag name="uwp_x86_64">
-      Install Universal Windows Platform export templates for x86_64
+      Installs the Mono/C# export templates
     </flag>
     <flag name="standard">
-      Installs the standard export templates without Mono
-    </flag>
-    <flag name="windows_x86">
-      Install Windows x86 export templates
-    </flag>
-    <flag name="windows_x86_64">
-      Install Windows x86_64 export templates
+      Install the GDScript export templates
     </flag>
   </use>  
 </pkgmetadata>

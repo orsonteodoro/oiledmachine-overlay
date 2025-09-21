@@ -6,6 +6,7 @@ EAPI=8
 
 STATUS="stable"
 
+MAINTENANCE_MODE=0
 ANDROID_MIN_API="24" # From tarball, see src_configure
 ANDROID_SDK_VER="35" # From tarball, see src_configure
 DOTNET_SDK_PV="8.0.19" # From CI logs
@@ -108,120 +109,60 @@ LICENSE+="
 
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 HOMEPAGE="https://godotengine.org"
-PLATFORMS="
-	android
-	ios
-	javascript
-	javascript_gdnative
-	javascript_threads
-	linux_x86
-	linux_x86_64
-	macos
-	uwp_arm
-	uwp_x86
-	uwp_x86_64
-	windows_x86
-	windows_x86_64
+FILENAMES="
+android_debug.apk
+android_source.zip
+ios.zip
+linux_debug.arm32
+linux_debug.arm64
+linux_debug.x86_32
+linux_debug.x86_64
+linux_release.arm32
+linux_release.arm64
+linux_release.x86_32
+linux_release.x86_64
+macos.zip
+visionos.zip
+web_debug.zip
+web_dlink_debug.zip
+web_dlink_nothreads_debug.zip
+web_dlink_nothreads_release.zip
+web_dlink_release.zip
+web_nothreads_debug.zip
+web_nothreads_release.zip
+web_release.zip
+windows_debug_arm64_console.exe
+windows_debug_arm64.exe
+windows_debug_x86_32_console.exe
+windows_debug_x86_32.exe
+windows_debug_x86_64_console.exe
+windows_debug_x86_64.exe
+windows_release_arm64_console.exe
+windows_release_arm64.exe
+windows_release_x86_32_console.exe
+windows_release_x86_32.exe
+windows_release_x86_64_console.exe
+windows_release_x86_64.exe
 "
-IUSE+=" ${PLATFORMS} custom debug mono release standard"
+get_build_ids() {
+	local x
+	for x in ${FILENAMES[@]} ; do
+		local t="${x}"
+		t="${t%.apk}"
+		t="${t%.exe}"
+		t="${t%.zip}"
+		t="${t//./-}"
+		t="${t//_/-}"
+		echo " ${t}"
+	done
+}
+BUILD_IDS=$(get_build_ids)
+IUSE+="
+${BUILD_IDS} custom mono standard
+"
 REQUIRED_USE="
-	!ios
-	android? (
-		|| (
-			standard
-			mono
-		)
-	)
-	ios? (
-		|| (
-			standard
-			mono
-		)
-	)
-	javascript? (
-		|| (
-			standard
-			mono
-		)
-	)
-	javascript_gdnative? (
-		|| (
-			standard
-		)
-	)
-	javascript_threads? (
-		|| (
-			standard
-		)
-	)
-	linux_x86? (
-		|| (
-			standard
-			mono
-		)
-	)
-	linux_x86_64? (
-		|| (
-			standard
-			mono
-		)
-	)
-	macos? (
-		|| (
-			standard
-			mono
-		)
-	)
-	uwp_arm? (
-		|| (
-			standard
-		)
-	)
-	uwp_x86? (
-		|| (
-			standard
-		)
-	)
-	uwp_x86_64? (
-		|| (
-			standard
-		)
-	)
-	windows_x86? (
-		|| (
-			standard
-			mono
-		)
-	)
-	windows_x86_64? (
-		|| (
-			standard
-			mono
-		)
-	)
-	custom? (
-		|| (
-			debug
-			release
-		)
-	)
 	|| (
-		mono
-		standard
-	)
-	|| (
-		android
-		ios
-		javascript
-		javascript_gdnative
-		javascript_threads
-		linux_x86
-		linux_x86_64
-		uwp_arm
-		uwp_x86
-		uwp_x86_64
-		windows_x86
-		windows_x86_64
+		${BUILD_IDS}
 	)
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"
@@ -237,6 +178,100 @@ ewarn "USE=-custom (installing in bulk)"
 	fi
 }
 
+get_build_id() {
+	local filename="${1}"
+	local t="${1}"
+	t="${t%.apk}"
+	t="${t%.exe}"
+	t="${t%.zip}"
+	t="${t//./-}"
+	t="${t//_/-}"
+	echo "${t}"
+}
+
+unpack_build_id() {
+	local filename="${1}"
+	local platform_id=$(get_build_id "${1}")
+	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
+		local keep=0
+		if use "${type}" && use "${platform_id}" ; then
+			keep=1
+		fi
+		if (( ${keep} == 0 )) ; then
+			einfo "Removing ${filename}"
+			rm "${filename}" || die
+		else
+			einfo "Keeping ${filename}"
+		fi
+	popd >/dev/null 2>&1 || die
+}
+
+src_unpack_standard() {
+	local type="standard"
+	unpack_build_id "android_debug.apk"
+	unpack_build_id "android_source.zip"
+	unpack_build_id "ios.zip"
+	unpack_build_id "linux_debug.arm32"
+	unpack_build_id "linux_debug.arm64"
+	unpack_build_id "linux_debug.x86_32"
+	unpack_build_id "linux_debug.x86_64"
+	unpack_build_id "linux_release.arm32"
+	unpack_build_id "linux_release.arm64"
+	unpack_build_id "linux_release.x86_32"
+	unpack_build_id "linux_release.x86_64"
+	unpack_build_id "macos.zip"
+	unpack_build_id "visionos.zip"
+	unpack_build_id "web_debug.zip"
+	unpack_build_id "web_dlink_debug.zip"
+	unpack_build_id "web_dlink_nothreads_debug.zip"
+	unpack_build_id "web_dlink_nothreads_release.zip"
+	unpack_build_id "web_dlink_release.zip"
+	unpack_build_id "web_nothreads_debug.zip"
+	unpack_build_id "web_nothreads_release.zip"
+	unpack_build_id "web_release.zip"
+	unpack_build_id "windows_debug_arm64_console.exe"
+	unpack_build_id "windows_debug_arm64.exe"
+	unpack_build_id "windows_debug_x86_32_console.exe"
+	unpack_build_id "windows_debug_x86_32.exe"
+	unpack_build_id "windows_debug_x86_64_console.exe"
+	unpack_build_id "windows_debug_x86_64.exe"
+	unpack_build_id "windows_release_arm64_console.exe"
+	unpack_build_id "windows_release_arm64.exe"
+	unpack_build_id "windows_release_x86_32_console.exe"
+	unpack_build_id "windows_release_x86_32.exe"
+	unpack_build_id "windows_release_x86_64_console.exe"
+	unpack_build_id "windows_release_x86_64.exe"
+}
+
+src_unpack_mono() {
+	local type="mono"
+	unpack_build_id "android_debug.apk"
+	unpack_build_id "android_source.zip"
+	unpack_build_id "ios.zip"
+	unpack_build_id "linux_debug.arm32"
+	unpack_build_id "linux_debug.arm64"
+	unpack_build_id "linux_debug.x86_32"
+	unpack_build_id "linux_debug.x86_64"
+	unpack_build_id "linux_release.arm32"
+	unpack_build_id "linux_release.arm64"
+	unpack_build_id "linux_release.x86_32"
+	unpack_build_id "linux_release.x86_64"
+	unpack_build_id "macos.zip"
+	unpack_build_id "visionos.zip"
+	unpack_build_id "windows_debug_arm64_console.exe"
+	unpack_build_id "windows_debug_arm64.exe"
+	unpack_build_id "windows_debug_x86_32_console.exe"
+	unpack_build_id "windows_debug_x86_32.exe"
+	unpack_build_id "windows_debug_x86_64_console.exe"
+	unpack_build_id "windows_debug_x86_64.exe"
+	unpack_build_id "windows_release_arm64_console.exe"
+	unpack_build_id "windows_release_arm64.exe"
+	unpack_build_id "windows_release_x86_32_console.exe"
+	unpack_build_id "windows_release_x86_32.exe"
+	unpack_build_id "windows_release_x86_64_console.exe"
+	unpack_build_id "windows_release_x86_64.exe"
+}
+
 src_unpack() {
 	mkdir -p "${S}" || die
 	if use custom ; then
@@ -245,150 +280,17 @@ src_unpack() {
 		if use mono ; then
 			einfo "USE=mono is under contruction"
 			unzip -x "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
+			src_unpack_mono
 		fi
 		if use standard ; then
 			unzip -x "${DISTDIR}/Godot_v${PV}-${STATUS}_export_templates.tpz" -d "${WORKDIR}/standard" || die
+			src_unpack_standard
 		fi
-		for type in mono standard ; do
-			! use mono && [[ "${type}" == "mono" ]] && continue
-			! use standard && [[ "${type}" == "standard" ]] && continue
-			for configuration in debug release ; do
-				if use "${configuration}" ; then
-					if ! use android ; then
-						rm -rf "${WORKDIR}/${type}/templates/android"*"${configuration}"* || die
-					fi
-					if ! use javascript ; then
-						rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${configuration}"* || die
-					fi
-					if ! use linux_x86 ; then
-						rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${configuration}"* || die
-					fi
-					if ! use linux_x86_64 ; then
-						rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${configuration}"* || die
-					fi
-					if ! use windows_x86 ; then
-						rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${configuration}"* || die
-					fi
-					if ! use windows_x86_64 ; then
-						rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${configuration}"* || die
-					fi
-					if [[ "${type}" == "mono" ]] ; then
-						local configuration2
-						configuration2="${configuration}"
-						# ambiguous between release and release_debug
-						[[ "${configuration}" == "debug" ]] && configuration2="release_debug"
-						if ! use linux_x86 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${configuration2}") || die
-						fi
-						if ! use linux_x86_64 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${configuration2}") || die
-						fi
-						if ! use windows_x86 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${configuration2}") || die
-						fi
-						if ! use windows_x86_64 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${configuration2}") || die
-						fi
-					fi
-					if [[ "${type}" == "standard" ]] ; then
-						if ! use javascript ; then
-							rm -rf "${WORKDIR}/${type}/templates/webassembly_${configuration}"* || die
-						fi
-						if ! use javascript_gdnative ; then
-							rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${configuration}"* || die
-						fi
-						if ! use javascript_threads ; then
-							rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${configuration}"* || die
-						fi
-						if ! use uwp_arm ; then
-							rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${configuration}"* || die
-						fi
-						if ! use uwp_x86 ; then
-							rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${configuration}"* || die
-						fi
-						if ! use uwp_x86_64 ; then
-							rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${configuration}"* || die
-						fi
-					fi
-				else
-					rm -rf "${WORKDIR}/${type}/templates/android"*"${configuration}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${configuration}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${configuration}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${configuration}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${configuration}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${configuration}"* || die
-					if [[ "${type}" == "mono" ]] ; then
-						local configuration2
-						configuration2="${configuration}"
-						# ambiguous between release and release_debug
-						[[ "${configuration}" == "debug" ]] && configuration2="release_debug"
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${configuration2}") || die
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${configuration2}") || die
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${configuration2}") || die
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${configuration2}") || die
-					fi
-					if [[ "${type}" == "standard" ]] ; then
-						rm -rf "${WORKDIR}/${type}/templates/webassembly_${configuration}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${configuration}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${configuration}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${configuration}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${configuration}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${configuration}"* || die
-					fi
-				fi
-			done
-			if ! use android ; then
-				rm -rf "${WORKDIR}/${type}/templates/android"*"source"* || die
-			fi
-			if ! use ios ; then
-				rm -rf "${WORKDIR}/${type}/templates/iphone"* || die
-			fi
-			if ! use macos ; then
-				rm -rf "${WORKDIR}/${type}/templates/osx"* || die
-			fi
-			if [[ "${type}" == "mono" ]] ; then
-				if ! use android ; then
-					rm -rf "${WORKDIR}/${type}/templates/bcl/monodroid"* || die
-					rm -rf "${WORKDIR}/${type}/templates/bcl/godot_android_ext"* || die
-				fi
-				if ! use ios ; then
-					rm -rf "${WORKDIR}/${type}/templates/bcl/monotouch"* || die
-					rm -rf "${WORKDIR}/${type}/templates/iphone-mono-libs"* || die
-				fi
-				if ! use javascript ; then
-					rm -rf "${WORKDIR}/${type}/templates/bcl/wasm"* || die
-				fi
-				if [[ ! ( "${USE}" =~ "linux" ) ]] && ! use macos ; then
-					rm -rf "${WORKDIR}/${type}/templates/bcl/net_4_x" || die
-				fi
-				if [[ ! ( "${USE}" =~ "windows" ) ]] ; then
-					rm -rf "${WORKDIR}/${type}/templates/bcl/net_4_x_win" || die
-				fi
-			fi
-		done
 	fi
 }
 
-src_configure() {
+get_android_sdk_info() {
 	local needs_update=0
-	# Verify metadata:
-	if use mono ; then
-		local mono_pv=$(unzip -p \
-			$(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz") \
-			"templates/data.mono.x11.64.release_debug/Mono/lib/libmono-native.so" \
-			| strings \
-			| grep -o -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" \
-			| head -n 1)
-		if [[ "${mono_pv}" != "${MONO_PV}" ]] ; then
-eerror
-eerror "Expected Mono:  ${MONO_PV}"
-eerror "Actual Mono:  ${mono_pv}"
-eerror
-eerror "Bump the MONO_PV in the ebuild."
-eerror
-			needs_update=1
-		fi
-	fi
 
 	local src_tarball
 	if use standard ; then
@@ -435,66 +337,20 @@ eerror
 		needs_update=1
 	fi
 
-	if use ios ; then
-		unzip -x \
-			$(realpath "${DISTDIR}/${src_tarball}") \
-			"templates/iphone.zip" \
-			-d "${T}/sandbox" || die
-		local ios_min=$(unzip -p \
-			"${T}/sandbox/templates/iphone.zip" \
-			"godot_ios.xcodeproj/project.pbxproj" \
-			| grep -e "IPHONEOS_DEPLOYMENT_TARGET" \
-			| head -n 1 \
-			| grep -o -E "[0-9\.]+")
-		if [[ "${ios_min}" != "${IOS_MIN}" ]] ; then
-eerror
-eerror "Expected iOS Min API:  ${IOS_MIN}"
-eerror "Actual iOS Min API:  ${ios_min}"
-eerror
-eerror "Bump the IOS_MIN in the ebuild."
-eerror
-			needs_update=1
-		fi
-	fi
+	einfo "Android API minimum:  ${android_min_api}"
+	einfo "Android SDK version:  ${android_sdk_pv}"
+}
 
-if false ; then
-	if use standard ; then
-		unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
-			"templates/webassembly_threads_debug.zip" \
-			-d "${T}/sandbox" || die
-		emscripten_pv=$(unzip -p \
-			"${T}/sandbox/templates/webassembly_threads_debug.zip" \
-			"godot.wasm" \
-			| strings \
-			| grep -e "emsdk_" \
-			| grep -o -E -e "[0-9]+\.[0-9]+\.[0-9]+")
+src_configure() {
+	if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
+		use android-debug || die "Enable USE=android-debug"
+		use android-source || die "Enable USE=android-source"
+		get_android_sdk_info
 	fi
-	if use standard && [[ "${emscripten_pv}" != "${EMSCRIPTEN_PV}" ]] ; then
-eerror
-eerror "Expected Emscripten version:  ${EMSCRIPTEN_PV}"
-eerror "Actual Emscripten version:  ${emscripten_pv}"
-eerror
-eerror "Bump the EMSCRIPTEN_PV in the ebuild."
-eerror
-		needs_update=1
-	fi
-fi
-
-	einfo "android_min_api=${android_min_api}"
-	einfo "android_sdk_pv=${android_sdk_pv}"
-	einfo "emscripten_pv=${emscripten_pv}"
-	einfo "ios_min=${ios_min}"
-	einfo "mono_pv=${mono_pv}"
-
-	if (( ${needs_update} == 1 )) ; then
-		: #die
-	fi
-
-	rm -rf "${T}/sandbox" || die
 }
 
 src_install() {
-	use debug && export STRIP="true"
+	export STRIP="true"
 	insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates"
 	if ! use custom ; then
 		use mono && doins $(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz")
