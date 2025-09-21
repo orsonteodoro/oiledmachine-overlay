@@ -132,7 +132,7 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +csg +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer +mobile-vr
++csg +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer +mobile-vr
 +msdfgen +openxr +raycast +vhacd +xatlas
 "
 IUSE_AUDIO="
@@ -147,13 +147,13 @@ IUSE_CONTAINERS_CODECS_FORMATS="
 -mp2 +mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
-+advanced-gui +dbus -editor-splash +wayland +X
++dbus -editor-splash +wayland +X
 "
 IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+2d-navigation +3d-navigation +2d-physics +3d-physics +basis-universal +betsy
++basis-universal +betsy
 +freetype +graphite +navigation +noise +opengl +opensimplex +pcre2 +sdl
 +text-server-adv -text-server-fb +volk +vulkan
 "
@@ -191,8 +191,6 @@ IUSE+="
 # See https://github.com/godotengine/godot/tree/4.5-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
-	3d
-	advanced-gui
 	brotli
 	freetype
 	opengl
@@ -200,12 +198,6 @@ REQUIRED_USE+="
 	^^ (
 		text-server-adv
 		text-server-fb
-	)
-	2d-navigation? (
-		navigation
-	)
-	3d-navigation? (
-		navigation
 	)
 	clang? (
 		^^ (
@@ -240,12 +232,6 @@ REQUIRED_USE+="
 	)
 	msdfgen? (
 		freetype
-	)
-	navigation? (
-		|| (
-			2d-navigation
-			3d-navigation
-		)
 	)
 	optimize-size? (
 		!optimize-speed
@@ -1088,12 +1074,6 @@ src_compile() {
 	options_modules+=(
 		brotli=$(usex brotli)
 		builtin_pcre2_with_jit=$(usex jit)
-		disable_3d=$(usex !3d)
-		disable_physics_2d=$(usex !2d-physics)
-		disable_physics_3d=$(usex !3d-physics)
-		disable_navigation_2d=$(usex !2d-navigation)
-		disable_navigation_3d=$(usex !3d-navigation)
-		disable_advanced_gui=$(usex !advanced-gui)
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)

@@ -57,24 +57,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <remote-id type="github">godotengine/godot</remote-id>
   </upstream>
   <use>
-    <flag name="3d">
-      Enables 3D support.
-    </flag>
-    <flag name="2d-physics">
-      Enables 2D physics support.
-    </flag>
-    <flag name="3d-physics">
-      Enables 3D physics support.
-    </flag>
-    <flag name="2d-navigation">
-      Enables 2D AI pathfinding support.
-    </flag>
-    <flag name="3d-navigation">
-      Enables 3D AI pathfinding support.
-    </flag>
-    <flag name="advanced-gui">
-      Enables the advanced GUI.
-    </flag>
     <flag name="asan">
       Enables ASan for unaccelerated detection of memory corruption, pointer
       corruption, heap overflow, stack overflow, out-of-bounds, double free, use
