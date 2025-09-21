@@ -143,8 +143,8 @@ ${SANITIZERS[@]} sanitize-in-production
 clang debug -fp64 jit layers lld lto +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+astc +bc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +ktx +minizip -mp1 -mp2
-+mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
++astc +bc +bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +ktx +minizip -mp1
+-mp2 +mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
 +advanced-gui +dbus -editor-splash +wayland +X
@@ -1091,8 +1091,8 @@ src_compile() {
 		disable_3d=$(usex !3d)
 		disable_physics_2d=$(usex !2d-physics)
 		disable_physics_3d=$(usex !3d-physics)
-		disable_navigation_2d=$(usex !2d-pathfinding)
-		disable_navigation_3d=$(usex !3d-pathfinding)
+		disable_navigation_2d=$(usex !2d-navigation)
+		disable_navigation_3d=$(usex !3d-navigation)
 		disable_advanced_gui=$(usex !advanced-gui)
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
