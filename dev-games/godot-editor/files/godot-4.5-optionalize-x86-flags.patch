@@ -4,13 +4,13 @@
  opts.Add("c_compiler_launcher", "C compiler launcher (e.g. `ccache`)")
  opts.Add("cpp_compiler_launcher", "C++ compiler launcher (e.g. `ccache`)")
  
-+opts.Add("cpu_flags_x86_popcnt", "Add popcnt support", True)
-+opts.Add("cpu_flags_x86_sse", "Add sse support", True)
-+opts.Add("cpu_flags_x86_sse2", "Add sse2 support", True)
-+opts.Add("cpu_flags_x86_sse3", "Add sse3 support", True)
-+opts.Add("cpu_flags_x86_ssse3", "Add ssse3 support", True)
-+opts.Add("cpu_flags_x86_sse4_1", "Add sse4.1 support", True)
-+opts.Add("cpu_flags_x86_sse4_2", "Add sse4.2 support", True)
++opts.Add(BoolVariable("cpu_flags_x86_popcnt", "Add popcnt support", True))
++opts.Add(BoolVariable("cpu_flags_x86_sse", "Add sse support", True))
++opts.Add(BoolVariable("cpu_flags_x86_sse2", "Add sse2 support", True))
++opts.Add(BoolVariable("cpu_flags_x86_sse3", "Add sse3 support", True))
++opts.Add(BoolVariable("cpu_flags_x86_ssse3", "Add ssse3 support", True))
++opts.Add(BoolVariable("cpu_flags_x86_sse4_1", "Add sse4.1 support", True))
++opts.Add(BoolVariable("cpu_flags_x86_sse4_2", "Add sse4.2 support", True))
 +
  # Update the environment to have all above options defined
  # in following code (especially platform and custom_modules).
