@@ -190,10 +190,10 @@ IUSE+="
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/4.5-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
+# brotli opengl
 REQUIRED_USE+="
-	brotli
 	freetype
-	opengl
+	pcre2
 	svg
 	^^ (
 		text-server-adv
