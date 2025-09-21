@@ -393,10 +393,10 @@ einfo "JDK version:  ${JDK_PV}"
 einfo
 
 einfo
-einfo "Export template platform minimum version required:"
+einfo "Platform minimum versions required for export templates:"
 einfo
 einfo "Android:  ${ANDROID_MIN_VER} or later"
-einfo "MacOS:  ${MACOS_MIN_VER} or later"
+einfo "macOS:  ${MACOS_MIN_VER} or later"
 einfo "iOS:  ${IOS_MIN_VER} or later"
 einfo "Linux:  ${LINUX_MIN_VER} or later"
 einfo "Web:  ${BROWSERS_MIN_VER} or later"
