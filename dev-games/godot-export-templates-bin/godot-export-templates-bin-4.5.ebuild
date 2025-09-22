@@ -11,8 +11,8 @@ ANDROID_SDK_VER="35" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs
 DOTNET_SDK_PV="8.0.19" # From CI logs
 EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
-MINGW_PV="14.2.1" # From binary inspection
 JDK_PV="17.0.16" # From CI logs
+MINGW_PV="14.2.1" # From binary inspection
 NDK_PV="28.1" # From CI logs
 
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
