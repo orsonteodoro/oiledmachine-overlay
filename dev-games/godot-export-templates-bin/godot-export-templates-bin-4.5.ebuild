@@ -455,8 +455,8 @@ einfo ".NET SDK version:  ${DOTNET_SDK_PV}"
 einfo "Android API minimum:  ${ANDROID_MIN_API}"
 einfo "Android NDK version:  ${NDK_PV}"
 einfo "Android SDK version:  ${ANDROID_SDK_VER}"
-einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
 einfo "Clang version used with Emscripten:  ${CLANG_PV_EMSCRIPTEN}"
+einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
 einfo "JDK version used for Android export template:  ${JDK_PV}"
 einfo
 
