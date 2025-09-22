@@ -2,6 +2,8 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# U22
+
 # Versioning stored here to dedupe requirements in both godot-editor and export template ebuilds.
 
 STATUS="stable"
@@ -29,7 +31,7 @@ MINIUPNPC_PV="2.2.7"
 OPUS_PV="1.1.5"
 OPUSFILE_PV="0.8"
 PKGCONF_PV="1.3.7"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_13" )
 RECASTNAVIGATION_PV="1.6.0"
 WSLAY_PV="1.1.1"
 ZLIB_PV="1.3.1"
