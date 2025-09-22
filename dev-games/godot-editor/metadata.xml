@@ -20,8 +20,8 @@
 
     It has a built in 3D level editor, IDE object manager.
 
-    Prebuilt export templates allow for porting to mix reality, mobile, desktop,
-    web with minimal effort for use on game distribution or container
+    Prebuilt export templates allow for porting to mixed reality, mobile,
+    desktop, web with minimal effort for use on game distribution or container
     distribution platforms.  However, some prebuilt export templates for x86_64
     Linux require SSE 4.2 or newer.  The workaround is to port the game as a
     32-bit x86 or to fork this ebuild with changes to produce a custom export
