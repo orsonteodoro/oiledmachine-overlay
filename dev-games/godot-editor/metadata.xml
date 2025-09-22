@@ -20,11 +20,17 @@
 
     It has a built in 3D level editor, IDE object manager.
 
-    Prebuilt export templates allow for porting to mobile, web, desktop PCs.
-    However, some prebuilt export templates for x86_64 Linux require SSE 4.2 or
-    newer.  The workaround is to port the game as a 32-bit x86 or to fork
-    this ebuild with changes to produce a custom export template without
-    SSE 4.2.
+    Prebuilt export templates allow for porting to mix reality, mobile, desktop,
+    web with minimal effort for use on game distribution or container
+    distribution platforms.  However, some prebuilt export templates for x86_64
+    Linux require SSE 4.2 or newer.  The workaround is to port the game as a
+    32-bit x86 or to fork this ebuild with changes to produce a custom export
+    template without SSE 4.2.  The standard export templates export code into
+    intermediate bytecode.  The Mono export templates export code into
+    intermediate language.  The standard export templates are interpreted and
+    more portable, but the Mono export templates are JITed and ran in near
+    native speed but less portable.  Porting to console is possible but
+    non-free through third-parties.
   </longdescription>
   <!--  
 
