@@ -8,17 +8,23 @@
   </maintainer>
   <longdescription>
     Godot is a IDE for building video games capable of making 3D and 2D games
-    in a day.  It can produce games for desktop, mobile, VR
-    (virtual reality), AR (augmented reality), web browser games, multiplayer
-    games for many game genres.
+    in a day.  It can produce games for desktop, mobile, VR (virtual reality),
+    AR (augmented reality), web browser games, multiplayer games.
 
     It also has available game AI algorithms, physics engines, level
     generators.
 
-    It also supports C/C++, C# 12 (.NET 8.0), visual programming similar to UDK,
-    GDScript similar to Python.
+    For the primary scripting languages it uses GDScript and C# 12 (.NET 8.0).
+    GDScript's syntax is similar to Python.  It supports C/C++ scripting via
+    GDNative.
 
     It has a built in 3D level editor, IDE object manager.
+
+    Prebuilt export templates allow for porting to mobile, web, desktop PCs.
+    However, some prebuilt export templates for x86_64 Linux require SSE 4.2 or
+    newer.  The workaround is to port the game as a 32-bit x86 or to fork
+    this ebuild with changes to produce a custom export template without
+    SSE 4.2.
   </longdescription>
   <!--  
 
