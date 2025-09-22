@@ -159,8 +159,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Natively supported for export templates on Android, macOS, Web.
     </flag>
     <flag name="exr">
-      Enables support for OpenEXR texture images used in association with 3D
-      animation.
+      Enables support for OpenEXR texture images used in 3D models.
     </flag>
     <flag name="fbx">
       Enables support for FBX interchange format for scenes and assets
@@ -191,12 +190,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="gltf">
       Enables support for the glTF interchange format to import or export 3D
-      models or scenes between Godot and 3D editor programs to make changes to
-      them on either editor side or Godot side.  Overview details can be found
-      in the documentation and at
-
-        https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
-
+      models or scenes between Godot and 3D editor programs.
     </flag>
     <flag name="graphite">
       Enables support for SIL Graphite smart fonts.
