@@ -110,7 +110,7 @@
       Installs the Mono/C# export templates
     </flag>
     <flag name="standard">
-      Install the GDScript export templates
+      Install the GDScript/GDNative export templates
     </flag>
   </use>  
 </pkgmetadata>

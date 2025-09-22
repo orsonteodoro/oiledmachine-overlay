@@ -16,8 +16,8 @@
     generators.
 
     For the primary scripting languages it uses GDScript and C# 12 (.NET 8.0).
-    GDScript's syntax is similar to Python.  It supports C/C++ scripting via
-    GDNative.
+    GDScript's syntax is similar to Python.  It supports unmanaged C/C++
+    scripting via GDNative.
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
@@ -31,8 +31,9 @@
     intermediate bytecode.  The Mono export templates export code into
     intermediate language.  The standard export templates are interpreted and
     more portable, but the Mono export templates are JITed and ran in near
-    native speed but less portable.  Porting to console is possible but
-    non-free through third-parties.
+    native speed but less portable.  For GDNative scripted projects, use the
+    standard export templates.  Porting to console is possible but non-free
+    through third-parties
   </longdescription>
   <!--  
 
