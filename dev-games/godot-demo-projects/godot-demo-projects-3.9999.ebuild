@@ -7,14 +7,14 @@ EAPI=8
 STATUS="stable"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="4.2"
+	EGIT_BRANCH="master"
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
 	inherit git-r3
 	S="${WORKDIR}/${P}"
 else
 	# The latest release
-	EGIT_COMMIT_DEMOS_STABLE="31d1c0c1122717b3ad74aeb94255bc38def52747"
+	EGIT_COMMIT_DEMOS_STABLE=""
 	FN_DEST="${PN}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz"
 	KEYWORDS="~amd64 ~riscv ~x86"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
@@ -31,7 +31,7 @@ https://github.com/godotengine/godot-demo-projects
 "
 LICENSE="MIT"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
+SLOT="${SLOT_MAJ}/3.x"
 RDEPEND="
 	!dev-games/godot
 "
@@ -51,11 +51,16 @@ src_unpack() {
 	fi
 }
 
-src_configure() { :; }
-src_compile() { :; }
+src_configure() {
+	:
+}
+
+src_compile() {
+	:
+}
 
 src_install() {
-	insinto /usr/share/godot${SLOT_MAJ}/godot-demo-projects
+	insinto "/usr/share/godot${SLOT_MAJ}/godot-demo-projects"
 	doins -r "${S}"/*
 }
 

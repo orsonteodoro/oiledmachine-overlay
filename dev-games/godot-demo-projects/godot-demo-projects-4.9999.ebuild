@@ -31,7 +31,7 @@ https://github.com/godotengine/godot-demo-projects
 "
 LICENSE="MIT"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
+SLOT="${SLOT_MAJ}/4.x"
 RDEPEND="
 	!dev-games/godot
 "
@@ -51,11 +51,16 @@ src_unpack() {
 	fi
 }
 
-src_configure() { :; }
-src_compile() { :; }
+src_configure() {
+	:
+}
+
+src_compile() {
+	:
+}
 
 src_install() {
-	insinto /usr/share/godot${SLOT_MAJ}/godot-demo-projects
+	insinto "/usr/share/godot${SLOT_MAJ}/godot-demo-projects"
 	doins -r "${S}"/*
 }
 
