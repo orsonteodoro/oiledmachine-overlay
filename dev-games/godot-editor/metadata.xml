@@ -15,8 +15,9 @@
     It also has available game AI algorithms, physics engines, level
     generators.
 
-    It also supports C/C++, C# 7.0, visual programming similar to UDK,
+    It also supports C/C++, C# 12 (.NET 8.0), visual programming similar to UDK,
     GDScript similar to Python.
+
     It has a built in 3D level editor, IDE object manager.
   </longdescription>
   <!--  
