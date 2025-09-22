@@ -106,6 +106,9 @@
     <flag name="windows-release-x86-64">
       Install export templates for this build
     </flag>
+    <flag name="custom">
+      Choose what export templates to install, otherwise, install all of them.
+    </flag>
     <flag name="mono">
       Installs the Mono/C# export templates
     </flag>
