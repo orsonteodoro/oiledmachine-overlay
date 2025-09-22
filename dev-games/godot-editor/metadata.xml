@@ -19,7 +19,8 @@
     GDScript's syntax is similar to Python.  It supports C/C++ scripting via
     GDNative.
 
-    It has a built in 3D level editor, IDE object manager.
+    It has a built in drag-and-drop 3D level editor, IDE object manager,
+    script editor.
 
     Prebuilt export templates allow for porting to mixed reality, mobile,
     desktop, web with minimal effort for use on game distribution or container
