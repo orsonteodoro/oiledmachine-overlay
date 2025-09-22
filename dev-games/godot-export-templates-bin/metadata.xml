@@ -10,6 +10,9 @@
     <flag name="android-debug">
       Install export templates for this build
     </flag>
+    <flag name="android-release">
+      Install export templates for this build
+    </flag>
     <flag name="android-source">
       Install export templates for this build
     </flag>

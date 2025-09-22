@@ -6,15 +6,14 @@ EAPI=8
 
 STATUS="stable"
 
-MAINTENANCE_MODE=0
 ANDROID_MIN_API="24" # From tarball, see src_configure
 ANDROID_SDK_VER="35" # From tarball, see src_configure
+CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs
 DOTNET_SDK_PV="8.0.19" # From CI logs
 EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
-GCC_PV="13.2.0" # From CI logs
+MINGW_PV="14.2.1" # From binary inspection
 JDK_PV="17.0.16" # From CI logs
 NDK_PV="28.1" # From CI logs
-CLANG_PV="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)"
 
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
@@ -24,7 +23,6 @@ ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
 BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
-GLIBC_PV="2.35" # Based on CI image
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
 LINUX_MIN_VER="D12, U22, F36" # Based on CI image and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
@@ -112,6 +110,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 HOMEPAGE="https://godotengine.org"
 FILENAMES="
 android_debug.apk
+android_release.apk
 android_source.zip
 ios.zip
 linux_debug.arm32
@@ -169,13 +168,15 @@ REQUIRED_USE="
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 RESTRICT="binchecks"
-BDEPEND="app-arch/unzip"
+BDEPEND="
+	app-arch/unzip
+"
 
 pkg_setup() {
 	if use custom ; then
 einfo "USE=custom (installing individually per microarch)"
 	else
-ewarn "USE=-custom (installing in bulk)"
+ewarn "USE=-custom (installing whole tarball(s))"
 	fi
 }
 
@@ -190,7 +191,7 @@ get_build_id() {
 	echo "${t}"
 }
 
-unpack_build_id() {
+filter_build_id() {
 	local filename="${1}"
 	local platform_id=$(get_build_id "${1}")
 	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
@@ -207,70 +208,70 @@ unpack_build_id() {
 	popd >/dev/null 2>&1 || die
 }
 
-src_unpack_standard() {
+filter_standard() {
 	local type="standard"
-	unpack_build_id "android_debug.apk"
-	unpack_build_id "android_source.zip"
-	unpack_build_id "ios.zip"
-	unpack_build_id "linux_debug.arm32"
-	unpack_build_id "linux_debug.arm64"
-	unpack_build_id "linux_debug.x86_32"
-	unpack_build_id "linux_debug.x86_64"
-	unpack_build_id "linux_release.arm32"
-	unpack_build_id "linux_release.arm64"
-	unpack_build_id "linux_release.x86_32"
-	unpack_build_id "linux_release.x86_64"
-	unpack_build_id "macos.zip"
-	unpack_build_id "visionos.zip"
-	unpack_build_id "web_debug.zip"
-	unpack_build_id "web_dlink_debug.zip"
-	unpack_build_id "web_dlink_nothreads_debug.zip"
-	unpack_build_id "web_dlink_nothreads_release.zip"
-	unpack_build_id "web_dlink_release.zip"
-	unpack_build_id "web_nothreads_debug.zip"
-	unpack_build_id "web_nothreads_release.zip"
-	unpack_build_id "web_release.zip"
-	unpack_build_id "windows_debug_arm64_console.exe"
-	unpack_build_id "windows_debug_arm64.exe"
-	unpack_build_id "windows_debug_x86_32_console.exe"
-	unpack_build_id "windows_debug_x86_32.exe"
-	unpack_build_id "windows_debug_x86_64_console.exe"
-	unpack_build_id "windows_debug_x86_64.exe"
-	unpack_build_id "windows_release_arm64_console.exe"
-	unpack_build_id "windows_release_arm64.exe"
-	unpack_build_id "windows_release_x86_32_console.exe"
-	unpack_build_id "windows_release_x86_32.exe"
-	unpack_build_id "windows_release_x86_64_console.exe"
-	unpack_build_id "windows_release_x86_64.exe"
+	filter_build_id "android_debug.apk"
+	filter_build_id "android_source.zip"
+	filter_build_id "ios.zip"
+	filter_build_id "linux_debug.arm32"
+	filter_build_id "linux_debug.arm64"
+	filter_build_id "linux_debug.x86_32"
+	filter_build_id "linux_debug.x86_64"
+	filter_build_id "linux_release.arm32"
+	filter_build_id "linux_release.arm64"
+	filter_build_id "linux_release.x86_32"
+	filter_build_id "linux_release.x86_64"
+	filter_build_id "macos.zip"
+	filter_build_id "visionos.zip"
+	filter_build_id "web_debug.zip"
+	filter_build_id "web_dlink_debug.zip"
+	filter_build_id "web_dlink_nothreads_debug.zip"
+	filter_build_id "web_dlink_nothreads_release.zip"
+	filter_build_id "web_dlink_release.zip"
+	filter_build_id "web_nothreads_debug.zip"
+	filter_build_id "web_nothreads_release.zip"
+	filter_build_id "web_release.zip"
+	filter_build_id "windows_debug_arm64_console.exe"
+	filter_build_id "windows_debug_arm64.exe"
+	filter_build_id "windows_debug_x86_32_console.exe"
+	filter_build_id "windows_debug_x86_32.exe"
+	filter_build_id "windows_debug_x86_64_console.exe"
+	filter_build_id "windows_debug_x86_64.exe"
+	filter_build_id "windows_release_arm64_console.exe"
+	filter_build_id "windows_release_arm64.exe"
+	filter_build_id "windows_release_x86_32_console.exe"
+	filter_build_id "windows_release_x86_32.exe"
+	filter_build_id "windows_release_x86_64_console.exe"
+	filter_build_id "windows_release_x86_64.exe"
 }
 
-src_unpack_mono() {
+filter_mono() {
 	local type="mono"
-	unpack_build_id "android_debug.apk"
-	unpack_build_id "android_source.zip"
-	unpack_build_id "ios.zip"
-	unpack_build_id "linux_debug.arm32"
-	unpack_build_id "linux_debug.arm64"
-	unpack_build_id "linux_debug.x86_32"
-	unpack_build_id "linux_debug.x86_64"
-	unpack_build_id "linux_release.arm32"
-	unpack_build_id "linux_release.arm64"
-	unpack_build_id "linux_release.x86_32"
-	unpack_build_id "linux_release.x86_64"
-	unpack_build_id "macos.zip"
-	unpack_build_id "visionos.zip"
-	unpack_build_id "windows_debug_arm64_console.exe"
-	unpack_build_id "windows_debug_arm64.exe"
-	unpack_build_id "windows_debug_x86_32_console.exe"
-	unpack_build_id "windows_debug_x86_32.exe"
-	unpack_build_id "windows_debug_x86_64_console.exe"
-	unpack_build_id "windows_debug_x86_64.exe"
-	unpack_build_id "windows_release_arm64_console.exe"
-	unpack_build_id "windows_release_arm64.exe"
-	unpack_build_id "windows_release_x86_32_console.exe"
-	unpack_build_id "windows_release_x86_32.exe"
-	unpack_build_id "windows_release_x86_64_console.exe"
-	unpack_build_id "windows_release_x86_64.exe"
+	filter_build_id "android_debug.apk"
+	filter_build_id "android_source.zip"
+	filter_build_id "ios.zip"
+	filter_build_id "linux_debug.arm32"
+	filter_build_id "linux_debug.arm64"
+	filter_build_id "linux_debug.x86_32"
+	filter_build_id "linux_debug.x86_64"
+	filter_build_id "linux_release.arm32"
+	filter_build_id "linux_release.arm64"
+	filter_build_id "linux_release.x86_32"
+	filter_build_id "linux_release.x86_64"
+	filter_build_id "macos.zip"
+	filter_build_id "visionos.zip"
+	filter_build_id "windows_debug_arm64_console.exe"
+	filter_build_id "windows_debug_arm64.exe"
+	filter_build_id "windows_debug_x86_32_console.exe"
+	filter_build_id "windows_debug_x86_32.exe"
+	filter_build_id "windows_debug_x86_64_console.exe"
+	filter_build_id "windows_debug_x86_64.exe"
+	filter_build_id "windows_release_arm64_console.exe"
+	filter_build_id "windows_release_arm64.exe"
+	filter_build_id "windows_release_x86_32_console.exe"
+	filter_build_id "windows_release_x86_32.exe"
+	filter_build_id "windows_release_x86_64_console.exe"
+	filter_build_id "windows_release_x86_64.exe"
 }
 
 src_unpack() {
@@ -279,74 +280,141 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/mono" || die
 		mkdir -p "${WORKDIR}/standard" || die
 		if use mono ; then
-			einfo "USE=mono is under contruction"
 			unzip -x "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
-			src_unpack_mono
 		fi
 		if use standard ; then
 			unzip -x "${DISTDIR}/Godot_v${PV}-${STATUS}_export_templates.tpz" -d "${WORKDIR}/standard" || die
-			src_unpack_standard
 		fi
 	fi
 }
 
 get_android_sdk_info() {
-	local needs_update=0
+	local type="${1}"
+	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
+		local L=(
+			"debug"
+			"release"
+		)
+		local x
+		for x in ${L[@]} ; do
+			local f="android_${x}.apk"
+			if [[ -e "${f}" ]] ; then
+				mkdir -p "sandbox" || die
+				cp -a "${f}" "sandbox" || die
+				pushd "sandbox" >/dev/null 2>&1 || die
+					unzip -qq -x "${f}" || die
+					local android_min_api=$(cat "classes.dex" \
+						| strings \
+						| grep -o -E "min-api\":[0-9]+" \
+						| cut -f 2 -d ":")
+				popd >/dev/null 2>&1 || die
+				rm -rf "sandbox"
+echo
+einfo "Inspecting android_${x}.apk"
+einfo "Android API minimum:  ${android_min_api}"
+			fi
+		done
 
-	local src_tarball
-	if use standard ; then
-		src_tarball="Godot_v${PV}-${STATUS}_export_templates.tpz"
-	else
-		src_tarball="Godot_v${PV}-${STATUS}_mono_export_templates.tpz"
-	fi
+		if [[ -e "${DISTDIR}/${src_tarball}" ]] ; then
+			local f="android_source.zip"
+			if [[ -e "${f}" ]] ; then
+				mkdir -p "sandbox" || die
+				cp -a "${f}" "sandbox" || die
+				pushd "sandbox" >/dev/null 2>&1 || die
+					unzip -qq -x "${f}" || die
+					local android_sdk_pv=$(cat "config.gradle" \
+						| grep -e "compileSdk" \
+						| grep -o -E -e "[0-9]+")
+				popd >/dev/null 2>&1 || die
+				rm -rf "sandbox"
+echo
+einfo "Inspecting ${f} (${type}):"
+einfo "Android SDK version:  ${android_sdk_pv}"
+			fi
+		fi
+	popd >/dev/null 2>&1 || die
+}
 
-	mkdir -p "${T}/sandbox" || die
-	unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
-		"templates/android_debug.apk" \
-		-d "${T}/sandbox" || die
-	local android_min_api=$(unzip -p \
-		"${T}/sandbox/templates/android_debug.apk" \
-		"classes.dex" \
-		| strings \
-		| grep -o -E "min-api\":[0-9]+" \
-		| cut -f 2 -d ":")
-	if [[ "${android_min_api}" != "${ANDROID_MIN_API}" ]] ; then
-eerror
-eerror "Expected Android Min API:  ${ANDROID_MIN_API}"
-eerror "Actual Android Min API:  ${android_min_api}"
-eerror
-eerror "Bump the ANDROID_MIN_API in the ebuild."
-eerror
-		needs_update=1
-	fi
+get_glibc_info() {
+	local type="${1}"
+	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
+		local x
+		for x in $(find . -executable -type f); do
+echo
+einfo "Inspecting ${x}:"
+			strings "${x}" | grep -E -e "GLIBC_[0-9.]+" | sort -V | tail -n 1
+		done
+	popd >/dev/null 2>&1 || die
+}
 
-	unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
-		"templates/android_source.zip" \
-		-d "${T}/sandbox" || die
-	local android_sdk_pv=$(unzip -p \
-		"${T}/sandbox/templates/android_source.zip" \
-		"config.gradle" \
-		| grep -e "compileSdk" \
-		| grep -o -E -e "[0-9]+")
-	if [[ "${android_sdk_pv}" != "${ANDROID_SDK_VER}" ]] ; then
-eerror
-eerror "Expected Android SDK ver:  ${ANDROID_SDK_VER}"
-eerror "Actual Android SDK ver:  ${android_sdk_pv}"
-eerror
-eerror "Bump the ANDROID_SDK_VER in the ebuild."
-eerror
-		needs_update=1
-	fi
+get_compiler_info() {
+	local type="${1}"
+	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
+		local x
+		for x in $(find . -executable -type f); do
+echo
+einfo "Inspecting ${x} (${type}):"
+			strings "${x}" | grep -i -E -e "(gcc|clang).*[0-9]+\.[0-9]+\.[0-9]+" | sort -V | uniq
+		done
+	popd >/dev/null 2>&1 || die
+}
 
-	einfo "Android API minimum:  ${android_min_api}"
-	einfo "Android SDK version:  ${android_sdk_pv}"
+get_compiler_info_osxcross() {
+	local type="${1}"
+	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
+		local L=(
+			"ios.zip"
+			"macos.zip"
+			"visionos.zip"
+		)
+		local f
+		for f in ${L[@]} ; do
+			mkdir -p "sandbox" || die
+			cp -a "${f}" "sandbox" || die
+			pushd "sandbox" >/dev/null 2>&1 || die
+				unzip -qq -x "${f}" || die
+				local x
+				for x in $(find . -executable -type f -o -name "*.a"); do
+echo
+einfo "Inspecting ${x} (${f}, ${type}):"
+					strings "${x}" | grep -i -E -e "(gcc|clang).*[0-9]+\.[0-9]+\.[0-9]+" | sort -V | uniq
+				done
+			popd >/dev/null 2>&1 || die
+			rm -rf "sandbox"
+		done || die
+	popd >/dev/null 2>&1 || die
 }
 
 src_configure() {
-	if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
-		use android-debug || die "Enable USE=android-debug"
-		use android-source || die "Enable USE=android-source"
-		get_android_sdk_info
+	use custom || return
+einfo "Build info for developers:"
+# Disclosed to prevent possible linking issues from versioned symbols
+	if use standard ; then
+		get_android_sdk_info "standard"
+		get_glibc_info "standard"
+		get_compiler_info "standard"
+		get_compiler_info_osxcross "standard"
+	fi
+	if use mono ; then
+		get_android_sdk_info "mono"
+		get_glibc_info "mono"
+		get_compiler_info "mono"
+		get_compiler_info_osxcross "mono"
+	fi
+}
+
+src_compile() {
+	if use custom ; then
+		if use mono ; then
+			if [[ "${MAINTENANCE_MODE}" != "1" ]] ; then
+				filter_mono
+			fi
+		fi
+		if use standard ; then
+			if [[ "${MAINTENANCE_MODE}" != "1" ]] ; then
+				filter_standard
+			fi
+		fi
 	fi
 }
 
@@ -381,17 +449,15 @@ pkg_postinst() {
 	einfo "Developer details:"
 
 einfo
-einfo "SDK minimum requirements:"
+einfo "Additional SDK minimum requirements:"
 einfo
 einfo ".NET SDK version:  ${DOTNET_SDK_PV}"
 einfo "Android API minimum:  ${ANDROID_MIN_API}"
 einfo "Android NDK version:  ${NDK_PV}"
 einfo "Android SDK version:  ${ANDROID_SDK_VER}"
 einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
-einfo "Clang version used with Emscripten:  ${CLANG_PV}"
-einfo "GNU C Library version:  ${GLIBC_PV}"
-einfo "GCC version:  ${GCC_PV}"
-einfo "JDK version:  ${JDK_PV}"
+einfo "Clang version used with Emscripten:  ${CLANG_PV_EMSCRIPTEN}"
+einfo "JDK version used for Android export template:  ${JDK_PV}"
 einfo
 
 einfo
