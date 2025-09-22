@@ -44,5 +44,11 @@
     <slot name="3">
       For compatibility with version 3 projects only.
     </slot>
+    <slot name="4">
+      For compatibility with version 4 projects only.
+    </slot>
+    <subslots>
+      Reflect supported tags
+    </subslots>
   </slots>
 </pkgmetadata>

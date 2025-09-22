@@ -17,7 +17,7 @@ RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
 	demos? (
-		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})
+		dev-games/godot-demo-projects:${PV%%.*}
 	)
 	export-templates? (
 		dev-games/godot-export-templates-bin:${SLOT}
