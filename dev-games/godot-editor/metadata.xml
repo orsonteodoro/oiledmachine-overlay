@@ -9,8 +9,8 @@
   <longdescription>
     Godot is a IDE for building video games capable of making 3D and 2D games
     in a day.  It can produce apps/games for desktop, mobile, VR (virtual
-    reality), AR (augmented reality), web browser games, multiplayer games,
-    simulations for websites.
+    reality), AR (augmented reality), MR (mixed reality), web browser games,
+    multiplayer games, simulations for websites.
 
     It also has available game AI algorithms, physics engines, level
     generators.
