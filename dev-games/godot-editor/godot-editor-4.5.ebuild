@@ -262,6 +262,12 @@ REQUIRED_USE+="
 		text-server-adv
 		text-server-fb
 	)
+	betsy? (
+		|| (
+			vulkan
+			opengl
+		)
+	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -831,9 +837,47 @@ eerror
 	use speech && check_speech_dispatcher
 }
 
+# In 2025, almost all free models use textures.
+# In earlier decades, a significant number of free models didn't have textures.
+warn_missing_texture_format() {
+	#if use blend ; then
+		use dds || ewarn ".blend models may require USE=dds"
+		use exr || ewarn ".blend models may require USE=exr"
+		use jpeg || ewarn ".blend models may require USE=jpeg"
+		use png || ewarn ".blend models may require USE=png"
+		use tga || ewarn ".blend models may require USE=tga"
+	#fi
+	#if use collada ; then
+		use jpeg || ewarn ".dae models may require USE=jpeg"
+		use png || ewarn ".dae models may require USE=png"
+	#fi
+	if use gltf ; then
+		use jpeg || ewarn ".gltf models may require USE=jpeg"
+		use png || ewarn ".gltf models may require USE=png"
+		use ktx || ewarn ".gltf models may require USE=ktx"
+		use webp || ewarn ".gltf models may require USE=webp"
+	fi
+	if use fbx ; then
+		use jpeg || ewarn ".fbx models may require USE=jpeg"
+		use png || ewarn ".fbx models may require USE=png"
+		use tga || ewarn ".fbx models may require USE=tga"
+	fi
+	if use obj ; then
+		use jpeg || ewarn ".obj models may require USE=jpeg"
+		use png || ewarn ".obj models may require USE=png"
+	fi
+	#if use escn ; then
+	# From Blender's Godot-Blender-Exporter add-on
+		use jpeg || ewarn ".escn models may require USE=jpeg"
+		use png || ewarn ".escn models may require USE=png"
+		use tga || ewarn ".escn models may require USE=tga"
+	#fi
+}
+
 src_configure() {
 	default
 	cflags-hardened_append
+	warn_missing_texture_format
 
 	if has_version "dev-util/glslang" ; then
 		local glslang_libstdcxx_pv=$(strings "/usr/$(get_libdir)/libglslang.so" \

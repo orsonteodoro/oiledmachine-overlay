@@ -68,15 +68,25 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="astc">
       Enables CPU based ASTC texture compression/decompression.
+
+      Natively supported for export templates on Android, iOS, macOS, Web.
     </flag>
     <flag name="bc">
       Enables BC texture decompression.
+
+      Natively supported for export templates on Linux, macOS, Windows, Web.
     </flag>
     <flag name="basis-universal">
       Enables support for portable 3D texture compression.
     </flag>
     <flag name="betsy">
       Allows to offload texture compression to GPU for BC1, BC3, ETC1, ETC2, EAC.
+
+      GPUs support:
+
+      AMD GPUs - GCN 1.0 (2012) or newer
+      Intel® IGPs/dGPUs - Ivy Bridge (2012) or newer
+      NVIDIA GPUs - Fermi (2010) or newer
     </flag>
     <flag name="brotli">
       Allows to use WOFF2 fonts compressed with brotli.
@@ -103,6 +113,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="cvtt">
       Enables use for BPTC texture compression / decompression.
+
+      BPTC is natively supported on export templates for Linux, macOS, Windows.
     </flag>
     <flag name="dbus">
       Enables support for prevention of the screensaver while gaming and
@@ -112,8 +124,11 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables the denoiser module to improve lightmap generation quality.
     </flag>
     <flag name="dds">
-      Enables support for DDS (DirectDraw Surface) format and loading BCn
-      compressed (DXT1, DXT2, DXT3, DXT4, DXT5) textures.
+      Enables support for importing DDS (DirectDraw Surface) format and loading
+      BCn compressed (DXT1, DXT2, DXT3, DXT4, DXT5) textures.
+
+      BCn is natively supported on export templates for Android, Linux, macOS,
+      Windows, Web.
     </flag>
     <flag name="debug">
       Enables debugging support.  Disabling builds as release.
@@ -127,6 +142,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="etc">
       Enables support for Ericsson Texture Compression (ETC1/ETC2) and loading
       textures from the PKM file format.
+
+      Natively supported for export templates on Android, macOS, Web.
     </flag>
     <flag name="exr">
       Enables support for OpenEXR texture images used in association with 3D
@@ -217,7 +234,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       will use the Godot Physics engine.
     </flag>
     <flag name="ktx">
-      Enables KTX texture container support.
+      Enables KTX texture container support as an importable image format.
     </flag>
     <flag name="layers">
       Enables Vulkan Validation Layers for debugging Vulkan support.
@@ -334,6 +351,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="pvrtc">
       Enables PowerVR texture compression.
+
+      Natively supported for export templates on iOS, macOS.
     </flag>
     <flag name="python_targets_python3_8">
       For generating docs and translations.
@@ -355,6 +374,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="s3tc">
       Enables DXT compression.
+
+      Natively supported on desktop PCs.
     </flag>
     <flag name="sanitize-in-production">
       Makes sanitizer violations fatal in production to stop exploits that
