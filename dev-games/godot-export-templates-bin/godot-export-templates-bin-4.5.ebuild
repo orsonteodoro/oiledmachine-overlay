@@ -406,14 +406,10 @@ einfo "Build info for developers:"
 src_compile() {
 	if use custom ; then
 		if use mono ; then
-			if [[ "${MAINTENANCE_MODE}" != "1" ]] ; then
-				filter_mono
-			fi
+			filter_mono
 		fi
 		if use standard ; then
-			if [[ "${MAINTENANCE_MODE}" != "1" ]] ; then
-				filter_standard
-			fi
+			filter_standard
 		fi
 	fi
 }
