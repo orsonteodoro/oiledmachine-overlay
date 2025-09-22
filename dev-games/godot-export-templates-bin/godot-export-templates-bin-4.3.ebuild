@@ -6,32 +6,31 @@ EAPI=8
 
 STATUS="stable"
 
-ANDROID_MIN_API="24" # From tarball, see src_configure
-ANDROID_SDK_VER="35" # From tarball, see src_configure
-CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs
+ANDROID_MIN_API="21" # From tarball, see src_configure
+ANDROID_SDK_VER="34" # From tarball, see src_configure
+CLANG_PV_EMSCRIPTEN="??" # From CI logs
 DOTNET_SDK_PV="8.0.19" # From CI logs
-EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
-EMSCRIPTEN_NODE_PV="22.16.0"
-JDK_PV="17.0.16" # From CI logs
-MINGW_PV="14.2.1" # From binary inspection
-NDK_PV="28.1" # From CI logs
+EMSCRIPTEN_PV="3.1.39" # Based on doc
+EMSCRIPTEN_NODE_PV="10.19" # Based on emscripten
+JDK_PV="17" # From docs
+MINGW_PV="14.1.1" # From binary inspection
+NDK_PV="23.2" # From docs
 
-# The system minimum requirements for the export templates are not based on documentation but on CI logs.
-# It is assumed that the documentation is not up to date because the LTS versions page is lagging.
+# It assumes that the docs are 100% correct, since the logs are deleted.
 # The export templates allow to run the project on the prebuilt target platforms.
-ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
-# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1904
-# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
-# Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
-BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
+ANDROID_MIN_VER="6.0" # Based on docs
+# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1904
+# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1878
+# Safari min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1893
+BROWSERS_MIN_VER="Chrome 75, Firefox 68, Safari 14.1"
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
 LINUX_MIN_VER="D12, U22, F36" # Based on CI image and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
-WINDOWS_MIN_VER="10" # Based on /DWINVER= /D_WIN32_WINNT=
+WINDOWS_MIN_VER="10" # Based on docs
 
 # Emscripten core info is at:
-# https://github.com/emscripten-core/emsdk/blob/4.0.11/emscripten-releases-tags.txt
-# https://github.com/emscripten-core/emscripten/blob/4.0.11/ChangeLog.md
+# https://github.com/emscripten-core/emsdk/blob/3.1.39/emscripten-releases-tags.txt
+# https://github.com/emscripten-core/emscripten/blob/3.1.39/ChangeLog.md
 
 SRC_URI="
 	mono? (
@@ -123,7 +122,6 @@ linux_release.arm64
 linux_release.x86_32
 linux_release.x86_64
 macos.zip
-visionos.zip
 web_debug.zip
 web_dlink_debug.zip
 web_dlink_nothreads_debug.zip
@@ -212,6 +210,7 @@ filter_build_id() {
 filter_standard() {
 	local type="standard"
 	filter_build_id "android_debug.apk"
+	filter_build_id "android_release.apk"
 	filter_build_id "android_source.zip"
 	filter_build_id "ios.zip"
 	filter_build_id "linux_debug.arm32"
@@ -223,7 +222,7 @@ filter_standard() {
 	filter_build_id "linux_release.x86_32"
 	filter_build_id "linux_release.x86_64"
 	filter_build_id "macos.zip"
-	filter_build_id "visionos.zip"
+	filter_build_id "version.txt"
 	filter_build_id "web_debug.zip"
 	filter_build_id "web_dlink_debug.zip"
 	filter_build_id "web_dlink_nothreads_debug.zip"
@@ -249,6 +248,7 @@ filter_standard() {
 filter_mono() {
 	local type="mono"
 	filter_build_id "android_debug.apk"
+	filter_build_id "android_release.apk"
 	filter_build_id "android_source.zip"
 	filter_build_id "ios.zip"
 	filter_build_id "linux_debug.arm32"
@@ -260,7 +260,7 @@ filter_mono() {
 	filter_build_id "linux_release.x86_32"
 	filter_build_id "linux_release.x86_64"
 	filter_build_id "macos.zip"
-	filter_build_id "visionos.zip"
+	filter_build_id "version.txt"
 	filter_build_id "windows_debug_arm64_console.exe"
 	filter_build_id "windows_debug_arm64.exe"
 	filter_build_id "windows_debug_x86_32_console.exe"
@@ -366,7 +366,6 @@ get_compiler_info_osxcross() {
 		local L=(
 			"ios.zip"
 			"macos.zip"
-			"visionos.zip"
 		)
 		local f
 		for f in ${L[@]} ; do

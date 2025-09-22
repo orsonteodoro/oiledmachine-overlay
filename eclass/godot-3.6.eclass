@@ -2,6 +2,8 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# Versioning stored here to dedupe requirements in both godot-editor and export template ebuilds.
+
 STATUS="stable"
 
 BROTLI_PV="1.1.0"

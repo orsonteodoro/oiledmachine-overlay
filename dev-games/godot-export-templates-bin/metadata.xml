@@ -106,6 +106,98 @@
     <flag name="windows-release-x86-64">
       Install export templates for this build
     </flag>
+
+    <flag name="bcl">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-windows-32-release">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-windows-32-release-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-windows-64-release">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-windows-64-release-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-x11-32-release">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-x11-32-release-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-x11-64-release">
+      Install export templates for this build
+    </flag>
+    <flag name="data-mono-x11-64-release-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="iphone-mono-libs">
+      Install export templates for this build
+    </flag>
+    <flag name="iphone">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-32-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-32-release">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-64-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-64-release">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-arm32-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-arm32-release">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-arm64-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="linux-x11-arm64-release">
+      Install export templates for this build
+    </flag>
+    <flag name="osx">
+      Install export templates for this build
+    </flag>
+    <flag name="webassembly-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="webassembly-gdnative-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="webassembly-gdnative-release">
+      Install export templates for this build
+    </flag>
+    <flag name="webassembly-release">
+      Install export templates for this build
+    </flag>
+    <flag name="webassembly-threads-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="webassembly-threads-release">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-32-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-32-release">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-64-debug">
+      Install export templates for this build
+    </flag>
+    <flag name="windows-64-release">
+      Install export templates for this build
+    </flag>
+
     <flag name="custom">
       Choose what export templates to install, otherwise, install all of them.
     </flag>

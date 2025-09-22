@@ -4,6 +4,8 @@
 
 # U22
 
+# Versioning stored here to dedupe requirements in both godot-editor and export template ebuilds.
+
 STATUS="stable"
 
 BROTLI_PV="1.1.9"
