@@ -74,7 +74,6 @@ LICENSE="
 # Listed because of mono_static=yes
 # mono_static=yes (applied to iOS, WASM builds) # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
 MONO_LICENSE="
-	MIT
 	Apache-2.0
 	BoringSSL-ECC
 	BoringSSL-PSK
@@ -83,6 +82,7 @@ MONO_LICENSE="
 	IDPL
 	ISC
 	LGPL-2.1
+	MIT
 	Mono-patents
 	MPL-1.1
 	openssl
