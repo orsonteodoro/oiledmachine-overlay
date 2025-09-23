@@ -55,7 +55,48 @@ HOMEPAGE="
 	https://dotnet.microsoft.com/
 	https://github.com/dotnet/dotnet/
 "
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	Apache-2.0
+	Boost-1.0
+	BSD
+	BSD-2
+	BSD-4
+	CC-BY-3.0
+	CC-BY-SA-3.0
+	CC0-1.0
+	custom
+	DOTNET-libraries-and-runtime-components-patents
+	GPL-2-with-linking-exception
+	HPND
+	LGPL-2.1+
+	MIT
+	Ms-PL
+	public-domain
+	Unicode-DFS-2016
+	UoI-NCSA
+	W3C-Software-and-Document-Notice-and-License
+	ZLIB
+"
+# See https://github.com/dotnet/dotnet/blob/v8.0.120/THIRD-PARTY-NOTICES.txt
+# The distro's Apache-2.0 license template doesn't contain the all rights reserved clause.
+# The distro's MIT license template doesn't contain the all rights reserved clause.
+# Apache-2.0 Boost-1.0 BSD-2 HPND MIT public-domain UoI-NCSA ZLIB - src/diagnostics/THIRD-PARTY-NOTICES.TXT
+# Apache-2.0 BSD custom CC-BY-3.0 MIT Ms-PL - src/source-build-externals/src/application-insights/WEB/ThirdPartyNotices.txt
+# CC-BY-SA-3.0 - src/runtime/src/tests/sizeondisk/sodbench/THIRD-PARTY-NOTICES.TXT
+# custom - Search "The limited permissions granted above"
+# custom - Search "To anyone who acknowledges that this file is"
+# custom - See src/roslyn/src/Setup/Roslyn.VsixLicense/EULA.rtf
+# custom - See src/roslyn-analyzers/assets/EULA.txt
+# ( all-rights-reserved Apache-2.0 ) src/msbuild/THIRDPARTYNOTICES.txt
+# GPL-2-with-linking-exception LGPL-2.1+ MIT ZLIB - src/sourcelink/src/SourceLink.Git.IntegrationTests/THIRD-PARTY-NOTICES.txt
 SLOT="${SDK_SLOT}/${RUNTIME_SLOT}"
 
 # STRIP="llvm-strip" corrupts some executables when using the patchelf hack.
