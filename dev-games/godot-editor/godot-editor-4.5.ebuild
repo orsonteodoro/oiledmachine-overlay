@@ -1176,8 +1176,7 @@ src_compile() {
 		builtin_zstd=$(usex !system-zstd)
 		pulseaudio=$(usex pulseaudio)
 		use_static_cpp=$(usex portable)
-		$(usex portable "" \
-"system_certs_path=/etc/ssl/certs/ca-certificates.crt")
+		$(usex portable "" "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
 		builtin_brotli=True

@@ -354,6 +354,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="musepack">
       Enables support for Musepack audio files.
     </flag>
+    <flag name="navigation">
+      Enable AI pathfinding for NPCs or AI bots.
+    </flag>
     <flag name="noise">
       Enables support for noise to generate random textures, maps, terrain,
       shaders, etc.
@@ -379,6 +382,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="optimize-speed">
       Optimizes the built program(s) for speed.
+    </flag>
+    <flag name="opus">
+      Enable for Opus audio codec support for general use.
     </flag>
     <flag name="pbm">Enables support for PBM image format used in open
       platforms.
@@ -411,11 +417,12 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="python_targets_python3_11">
       For generating docs and translations.
     </flag>
+    <flag name="squish">
+      Enable 2D sprite squish and strech effect based on a [square root]
+      function.
+    </flag>
     <flag name="raycast">
       Build the module for occlusion culling with 3 levels of quality.
-    </flag>
-    <flag name="navigation">
-      Enable AI pathfinding for NPCs or AI bots.
     </flag>
     <flag name="s3tc">
       Enables DXT compression.
@@ -584,7 +591,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables optimized and accurate 3D collision shapes.
     </flag>
     <flag name="webm">
-      Enables support for the WebM format for audio and video.
+      Enables support for playing VP8 and VP9 videos without an alpha channel.
     </flag>
     <flag name="webm-simd">
       Builds internal libvpx as SIMD optimized for WebM.

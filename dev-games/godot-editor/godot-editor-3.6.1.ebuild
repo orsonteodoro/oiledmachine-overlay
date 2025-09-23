@@ -15,7 +15,6 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
-ASTCENC_VULNERABILITY_HISTORY="BO"
 BROTLI_VULNERABILITY_HISTORY="BO IU"
 # It can collect GPS coords for geolocation based games or gamified app or the
 # game engine can be used for app purposes not just games.
@@ -36,7 +35,6 @@ ZLIB_VULNERABILITY_HISTORY="BO CE DF"
 ZSTD_VULNERABILITY_HISTORY="BO"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="
 ${ANGLE_VULNERABILITY_HISTORY}
-${ASTCENC_VULNERABILITY_HISTORY}
 ${BROTLI_VULNERABILITY_HISTORY}
 ${ENET_VULNERABILITY_HISTORY}
 ${FREETYPE_VULNERABILITY_HISTORY}
@@ -163,21 +161,21 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+csg +gltf +gridmap +lightmapper_rd +meshoptimizer +mobile-vr
++bullet +csg +gltf +gridmap +lightmapper_cpu +lightmapper_rd +mobile-vr
 +raycast +vhacd +xatlas
 "
 IUSE_AUDIO="
-+alsa +interactive-music +pulseaudio +speech
++alsa +pulseaudio +speech
 "
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug -fp64 jit layers lld lto +optimize-speed optimize-size portable
-sanitize-in-production
+clang debug jit layers lld lto +optimize-speed optimize-size portable
+sanitize-in-production +visual-script
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+astc +bc +bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +ktx +minizip -mp1
--mp2 +mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
++bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +minizip -mp1
+-mp2 +mp3 +ogg +opus +pvrtc +s3tc +svg +tga +theora +vorbis +webm +webp
 "
 IUSE_GUI="
 +dbus -editor-splash +wayland +X
@@ -186,23 +184,23 @@ IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+basis-universal +betsy
-+freetype +navigation +noise +opengl +opensimplex +pcre2
-+text-server-adv -text-server-fb +volk +vulkan
++denoise
++freetype +navigation +opengl +opensimplex +pcre2 +squish
++volk +vulkan
 "
 IUSE_NET="
-ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +text-server-adv
--text-server-fb +upnp +webrtc +websocket
+ca-certs-relax +enet +jsonrpc +mbedtls +text-server-adv
++upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
 csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
-system-brotli system-embree system-enet system-freetype
+system-brotli system-bullet system-embree system-enet system-freetype
 system-libogg system-libpng system-libtheora system-libvorbis
 system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
--system-mono system-pcre2 system-recastnavigation
-system-wslay system-xatlas system-zlib system-zstd
+-system-mono system-opus system-pcre2 system-recastnavigation
+system-squish system-libvpx system-wslay system-xatlas system-zlib system-zstd
 "
 IUSE+="
 	${IUSE_3D}
@@ -216,7 +214,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_14
+	ebuild_revision_15
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -230,16 +228,6 @@ REQUIRED_USE+="
 	opengl
 	pcre2
 	svg
-	^^ (
-		text-server-adv
-		text-server-fb
-	)
-	betsy? (
-		|| (
-			vulkan
-			opengl
-		)
-	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -286,6 +274,7 @@ REQUIRED_USE+="
 		!lsan
 		!msan
 		!system-brotli
+		!system-bullet
 		!system-embree
 		!system-enet
 		!system-freetype
@@ -298,8 +287,10 @@ REQUIRED_USE+="
 		!system-mbedtls
 		!system-miniupnpc
 		!system-mono
+		!system-opus
 		!system-pcre2
 		!system-recastnavigation
+		!system-squish
 		!system-xatlas
 		!system-zlib
 		!system-zstd
@@ -469,6 +460,9 @@ DEPEND+="
 	system-brotli? (
 		>=app-arch/brotli-${BROTLI_PV}
 	)
+	system-bullet? (
+		>=sci-physics/bullet-${BULLET_PV}
+	)
 	system-enet? (
 		>=net-libs/enet-${ENET_PV}
 	)
@@ -490,6 +484,9 @@ DEPEND+="
 	system-libvorbis? (
 		>=media-libs/libvorbis-${LIBVORBIS_PV}
 	)
+	system-libvpx? (
+		>=media-libs/libvpx-${LIBVPX_PV}
+	)
 	system-libwebp? (
 		>=media-libs/libwebp-${LIBWEBP_PV}
 	)
@@ -499,11 +496,17 @@ DEPEND+="
 	system-miniupnpc? (
 		>=net-libs/miniupnpc-${MINIUPNPC_PV}
 	)
+	system-opus? (
+		>=media-libs/opus-${OPUS_PV}
+	)
 	system-pcre2? (
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
 	)
 	system-recastnavigation? (
 		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
+	)
+	system-squish? (
+		>=dev-libs/squish-${SQUISH_PV}
 	)
 	system-wslay? (
 		>=net-libs/wslay-${WSLAY_PV}
@@ -703,9 +706,6 @@ ewarn "Do not emerge this directly use dev-games/godot-meta instead."
 	if use gdscript ; then
 ewarn "The gdscript USE flag is untested."
 	fi
-	if use text-server-fb ; then
-ewarn "text-server-fb is slow.  Consider text-server-adv instead."
-	fi
 
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
@@ -770,7 +770,6 @@ warn_missing_texture_format() {
 	if use gltf ; then
 		use jpeg || ewarn ".gltf models may require USE=jpeg"
 		use png || ewarn ".gltf models may require USE=png"
-		use ktx || ewarn ".gltf models may require USE=ktx"
 		use webp || ewarn ".gltf models may require USE=webp"
 	fi
 	if use fbx ; then
@@ -1048,6 +1047,7 @@ src_compile() {
 	)
 	local options_modules_shared=(
 		builtin_brotli=$(usex !system-brotli)
+		builtin_bullet=$(usex !system-bullet)
 		builtin_certs=$(usex portable)
 		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
@@ -1056,24 +1056,27 @@ src_compile() {
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
 		builtin_libvorbis=$(usex !system-libvorbis)
+		builtin_libvpx=$(usex !system-libvpx)
 		builtin_libwebp=$(usex !system-libwebp)
 		builtin_mbedtls=$(usex !system-mbedtls)
 		builtin_miniupnpc=$(usex !system-miniupnpc)
+		builtin_opus=$(usex !system-opus)
 		builtin_pcre2=$(usex !system-pcre2)
-		builtin_recastnavigation=$(usex !system-recastnavigation)
+		builtin_recast=$(usex !system-recastnavigation)
 		builtin_rvo2_2d=True
 		builtin_rvo2_3d=True
+		builtin_squish=True # $(usex !system-squish) # Missing?
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
 		builtin_zlib=$(usex !system-zlib)
 		builtin_zstd=$(usex !system-zstd)
 		pulseaudio=$(usex pulseaudio)
 		use_static_cpp=$(usex portable)
-		$(usex portable "" \
-"system_certs_path=/etc/ssl/certs/ca-certificates.crt")
+		$(usex portable "" "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
 		builtin_brotli=True
+		builtin_bullet=True
 		builtin_certs=True
 		builtin_embree=True
 		builtin_enet=True
@@ -1083,12 +1086,15 @@ src_compile() {
 		builtin_libpng=True
 		builtin_libtheora=True
 		builtin_libvorbis=True
+		builtin_libvpx=True
 		builtin_libwebp=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
+		builtin_opus=True
 		builtin_pcre2=True
-		builtin_recastnavigation=True
+		builtin_recast=True
 		builtin_rvo2=True
+		builtin_squish=True
 		builtin_wslay=True
 		builtin_xatlas=True
 		builtin_zlib=True
@@ -1111,19 +1117,16 @@ src_compile() {
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
 		no_editor_splash=$(usex !editor-splash)
-		precision=$(usex fp64 "double" "single")
 		opengl3=$(usex opengl)
-		module_astcenc_enabled=$(usex astc)
-		module_basis_universal_enabled=$(usex basis-universal)
-		module_bcdec_enabled=$(usex bc)
-		module_betsy_enabled=$(usex betsy)
+		module_bullet_enabled=$(usex bullet)
 		module_bmp_enabled=$(usex bmp)
 		module_camera_enabled=$(usex camera)
 		module_csg_enabled=$(usex csg)
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
+		module_denoise_enabled=$(usex denoise)
 		module_enet_enabled=$(usex enet)
-		module_etcpak_enabled=$(usex etc)
+		module_etc_enabled=$(usex etc)
 		module_fbx_enabled=$(usex fbx)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False
@@ -1131,39 +1134,36 @@ src_compile() {
 		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
 		module_hdr_enabled=$(usex hdr)
-		module_interactive_music_enabled=$(usex interactive-music)
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
-		module_ktx_enabled=$(usex ktx)
+		module_lightmapper_cpu_enabled=$(usex lightmapper_cpu)
 		module_lightmapper_rd_enabled=$(usex lightmapper_rd)
 		module_mbedtls_enabled=$(usex mbedtls)
-		module_meshoptimizer_enabled=$(usex meshoptimizer)
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
-		module_multiplayer_enabled=$(usex multiplayer)
 		module_navigation_enabled=$(usex navigation)
-		module_noise_enabled=$(usex noise)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
+		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
+		module_squish_enabled=$(usex squish)
 		module_stb_vorbis_enabled=$(usex vorbis)
 		module_svg_enabled=$(usex svg)
-		module_text_server_adv_enabled=$(usex text-server-adv)
-		module_text_server_fb_enabled=$(usex text-server-fb)
 		module_tga_enabled=$(usex tga)
 		module_theora_enabled=$(usex theora)
 		module_tinyexr_enabled=$(usex exr)
 		module_upnp_enabled=$(usex upnp)
 		module_vhacd_enabled=$(usex vhacd)
+		module_visual_script_enabled=$(usex visual-script)
 		module_vorbis_enabled=$(usex vorbis)
+		module_webm_enabled=$(usex webm)
 		module_webp_enabled=$(usex webp)
 		module_webrtc_enabled=$(usex webrtc)
 		module_websocket_enabled=$(usex websocket)
 		module_webxr_enabled=False
 		module_xatlas_unwrap_enabled=$(usex xatlas)
-		module_zip_enabled=$(usex minizip)
 		use_volk=$(usex volk)
 		vulkan=$(usex vulkan)
 	)
