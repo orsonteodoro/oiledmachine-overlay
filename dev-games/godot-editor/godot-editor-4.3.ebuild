@@ -782,16 +782,8 @@ ewarn "LANG=POSIX not supported"
 
 	if use mono ; then
 einfo "USE=mono is under contruction"
-		local dotnet_sdk_pv_major="${DOTNET_SDK_SLOT%%.*}"
-		if ls "/opt/dotnet-sdk-bin-${dotnet_sdk_pv_major}"*"/dotnet" 2>/dev/null 1>/dev/null ; then
-			local p=$(ls "/opt/dotnet-sdk-bin-${dotnet_sdk_pv_major}"*"/dotnet" | head -n 1)
-			export PATH="$(dirname ${p}):${PATH}"
-		else
-eerror
-eerror "Could not find dotnet.  Emerge >=dev-dotnet/dotnet-sdk-bin-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}"
-eerror
-			die
-		fi
+		local p=$(ls "/opt/dotnet-sdk-bin-${DOTNET_SDK_SLOT}/dotnet" | head -n 1)
+		export PATH="$(dirname ${p}):${PATH}"
 		export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 		sandbox-changes_no_network_sandbox "To download micropackages"
