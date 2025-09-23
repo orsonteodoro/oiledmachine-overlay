@@ -46,7 +46,9 @@ QA_FLAGS_IGNORED="
 
 KEYWORDS="amd64"
 S="${WORKDIR}/${PN}-${RUNTIME_SLOT}"
-SRC_URI=""
+EGIT_COMMIT="dotnet-sdk-${PV}"
+EGIT_MIN_CLONE_TYPE="shallow"
+EGIT_REPO_URI="https://github.com/dotnet/dotnet.git"
 
 inherit check-reqs flag-o-matic llvm-r1 multiprocessing python-any-r1 sandbox-changes
 
@@ -144,6 +146,7 @@ BDEPEND="
 	')
 	>=dev-build/cmake-3.22.1
 	>=dev-vcs/git-2.34.1
+	app-crypt/rhash
 	sys-devel/gcc:${GCC_SLOT}
 "
 IDEPEND="
@@ -183,6 +186,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+einfo "Build:  Long Term Support (LTS)"
 	sandbox-changes_no_network_sandbox "To download tarball with submodules"
 	check-reqs_pkg_setup
 	llvm-r1_pkg_setup
@@ -191,20 +195,14 @@ pkg_setup() {
 	check_requirements_locale
 }
 
-build_tarball() {
-	# Typically, a GH tarball doesn't package submodules.  A clone will download the submodules.
-	git clone --depth 1 -b "v${RUNTIME_SLOT}" "https://github.com/dotnet/dotnet" "dotnet-sdk-${RUNTIME_SLOT}" || die
-	cd "dotnet-sdk-${RUNTIME_SLOT}" || die
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+
+	cd "${S}" || die
 	git rev-parse HEAD || die
 	"./prep.sh" || die
-	rm -fr .git
-	cd .. || die
-	tar -acf "dotnet-sdk-${PV}-prepared-gentoo-amd64.tar.xz" "dotnet-sdk-${RUNTIME_SLOT}" || die
-}
-
-src_unpack() {
-	build_tarball
-	unpack "dotnet-sdk-${PV}-prepared-gentoo-amd64.tar.xz"
+	rm -f -r ".git"
 }
 
 src_prepare() {
