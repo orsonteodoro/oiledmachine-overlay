@@ -54,7 +54,7 @@
     Name          | Use cases, cui bono? [11]                                                                                          |
     --------------|--------------------------------------------------------------------------------------------------------------------|
     GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs),                                                                |
-    C#            | 3D games/apps, interactive presentations, training simulations                                                     |
+    C#            | 2D/3D games/apps, interactive presentations, training simulations                                                  |
     GDNative      | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
     GDExtension   | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
     Orchestrator  | Educational, prototyping, 2.5D/3D environment/NPC scripting                                                        |
