@@ -187,7 +187,7 @@ pkg_pretend() {
 
 pkg_setup() {
 einfo "Build:  Long Term Support (LTS)"
-	sandbox-changes_no_network_sandbox "To download tarball with submodules"
+	sandbox-changes_no_network_sandbox "To download project and submodules"
 	check-reqs_pkg_setup
 	llvm-r1_pkg_setup
 	python-any-r1_pkg_setup
