@@ -15,7 +15,6 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
-BROTLI_VULNERABILITY_HISTORY="BO IU"
 # It can collect GPS coords for geolocation based games or gamified app or the
 # game engine can be used for app purposes not just games.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
@@ -35,7 +34,6 @@ ZLIB_VULNERABILITY_HISTORY="BO CE DF"
 ZSTD_VULNERABILITY_HISTORY="BO"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="
 ${ANGLE_VULNERABILITY_HISTORY}
-${BROTLI_VULNERABILITY_HISTORY}
 ${ENET_VULNERABILITY_HISTORY}
 ${FREETYPE_VULNERABILITY_HISTORY}
 ${LIBJPEG_TURBO_VULNERABILITY_HISTORY}
@@ -174,7 +172,7 @@ clang debug jit lld lto +optimize-speed optimize-size portable
 sanitize-in-production +visual-script
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +minizip -mp1
++bmp +cvtt +dds +etc +exr +fbx +hdr +jpeg +minizip -mp1
 -mp2 +mp3 +ogg +opus +pvrtc +s3tc +svg +tga +theora +vorbis +webm +webp
 "
 IUSE_GUI="
@@ -195,7 +193,7 @@ IUSE_SCRIPTING="
 csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
-system-brotli system-bullet system-embree system-enet system-freetype
+system-bullet system-embree system-enet system-freetype
 system-libogg system-libpng system-libtheora system-libvorbis
 system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
 -system-mono system-opus system-pcre2 system-recastnavigation
@@ -219,10 +217,8 @@ IUSE+="
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/4.5-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
-# brotli - for woff2 font decompression, unbreaking log
 # opengl - for fixing black screen
 REQUIRED_USE+="
-	brotli
 	freetype
 	opengl
 	pcre2
@@ -266,7 +262,6 @@ REQUIRED_USE+="
 		!hwasan
 		!lsan
 		!msan
-		!system-brotli
 		!system-bullet
 		!system-embree
 		!system-enet
@@ -446,9 +441,6 @@ DEPEND+="
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[flite,pulseaudio]
 			)
 		)
-	)
-	system-brotli? (
-		>=app-arch/brotli-${BROTLI_PV}
 	)
 	system-bullet? (
 		>=sci-physics/bullet-${BULLET_PV}
@@ -1030,7 +1022,6 @@ src_compile() {
 		x11=$(usex X)
 	)
 	local options_modules_shared=(
-		builtin_brotli=$(usex !system-brotli)
 		builtin_bullet=$(usex !system-bullet)
 		builtin_certs=$(usex portable)
 		builtin_embree=$(usex !system-embree)
@@ -1059,7 +1050,6 @@ src_compile() {
 		$(usex portable "" "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
-		builtin_brotli=True
 		builtin_bullet=True
 		builtin_certs=True
 		builtin_embree=True
@@ -1098,7 +1088,6 @@ src_compile() {
 	fi
 
 	options_modules+=(
-		brotli=$(usex brotli)
 		builtin_pcre2_with_jit=$(usex jit)
 		cpu_flags_x86_sse2=$(usex cpu_flags_x86_sse2)
 		cpu_flags_x86_sse=$(usex cpu_flags_x86_sse)
