@@ -1,0 +1,26 @@
+--- a/SConstruct.orig	2025-09-22 18:01:08.150651145 -0700
++++ b/SConstruct	2025-09-22 18:03:37.272394495 -0700
+@@ -306,6 +306,9 @@ opts.Add("asflags", "Custom flags for th
+ opts.Add("arflags", "Custom flags for the archive tool")
+ opts.Add("rcflags", "Custom flags for Windows resource compiler")
+ 
++opts.Add(BoolVariable("cpu_flags_x86_sse", "Add sse support", True))
++opts.Add(BoolVariable("cpu_flags_x86_sse2", "Add sse2 support", True))
++
+ # Update the environment to have all above options defined
+ # in following code (especially platform and custom_modules).
+ opts.Update(env)
+--- a/modules/raycast/SCsub.orig	2024-08-14 16:00:16.000000000 -0700
++++ b/modules/raycast/SCsub	2025-09-22 18:03:26.680554894 -0700
+@@ -88,7 +88,10 @@ if env["builtin_embree"]:
+ 
+     if env["arch"] != "x86_64" or env.msvc:
+         # Embree needs those, it will automatically use SSE2NEON in ARM
+-        env_thirdparty.Append(CPPDEFINES=["__SSE2__", "__SSE__"])
++        if env["cpu_flags_x86_sse2"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE2__"])
++        if env["cpu_flags_x86_sse"]:
++            env_thirdparty.Append(CPPDEFINES=["__SSE__"])
+ 
+     if env["platform"] == "web":
+         env_thirdparty.Append(CXXFLAGS=["-msimd128"])

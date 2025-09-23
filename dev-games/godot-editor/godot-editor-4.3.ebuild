@@ -38,7 +38,6 @@ PCRE2_VULNERABILITY_HISTORY="DOS"
 TINYEXR_VULNERABILITY_HISTORY="DOS HO IO"
 ZLIB_VULNERABILITY_HISTORY="BO CE DF"
 ZSTD_VULNERABILITY_HISTORY="BO"
-SDL_VULNERABILITY_HISTORY="DF HO"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="
 ${ANGLE_VULNERABILITY_HISTORY}
 ${ASTCENC_VULNERABILITY_HISTORY}
@@ -55,7 +54,6 @@ ${LIBTHEORA_VULNERABILITY_HISTORY}
 ${LIBVORBIS_VULNERABILITY_HISTORY}
 ${MINIUPNPC_VULNERABILITY_HISTORY}
 ${PCRE2_VULNERABILITY_HISTORY}
-${SDL_VULNERABILITY_HISTORY}
 ${TINYEXR_VULNERABILITY_HISTORY}
 ${ZLIB_VULNERABILITY_HISTORY}
 ${ZSTD_VULNERABILITY_HISTORY}
@@ -65,13 +63,8 @@ FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_sse4_2"
-	"cpu_flags_x86_sse4_1"
-	"cpu_flags_x86_ssse3"
-	"cpu_flags_x86_sse3"
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse"
-	"cpu_flags_x86_popcnt"
 )
 
 inherit godot-4.3
@@ -216,7 +209,7 @@ camera -gamepad +touch
 "
 IUSE_LIBS="
 +basis-universal +betsy
-+freetype +graphite +navigation +noise +opengl +opensimplex +pcre2 +sdl
++freetype +graphite +navigation +noise +opengl +opensimplex +pcre2
 +text-server-adv -text-server-fb +volk +vulkan
 "
 IUSE_NET="
@@ -228,8 +221,8 @@ csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
 system-brotli system-clipper2 system-embree system-enet system-freetype
-system-glslang system-graphite system-harfbuzz system-icu system-libjpeg-turbo
-system-libogg system-libpng system-libtheora system-sdl system-libvorbis
+system-glslang system-graphite system-harfbuzz system-icu
+system-libogg system-libpng system-libtheora system-libvorbis
 system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
 system-msdfgen -system-mono system-openxr system-pcre2 system-recastnavigation
 system-wslay system-xatlas system-zlib system-zstd
@@ -274,24 +267,6 @@ REQUIRED_USE+="
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
-	)
-	cpu_flags_x86_popcnt? (
-		cpu_flags_x86_sse4_2
-		cpu_flags_x86_sse4_1
-	)
-	cpu_flags_x86_sse4_2? (
-		cpu_flags_x86_sse4_1
-		cpu_flags_x86_popcnt
-	)
-	cpu_flags_x86_sse4_1? (
-		cpu_flags_x86_sse4_2
-		cpu_flags_x86_popcnt
-	)
-	cpu_flags_x86_ssse3? (
-		cpu_flags_x86_sse3
-	)
-	cpu_flags_x86_sse3? (
-		cpu_flags_x86_sse2
 	)
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_sse
@@ -345,7 +320,6 @@ REQUIRED_USE+="
 		!system-graphite
 		!system-harfbuzz
 		!system-icu
-		!system-libjpeg-turbo
 		!system-libogg
 		!system-libpng
 		!system-libtheora
@@ -358,7 +332,6 @@ REQUIRED_USE+="
 		!system-msdfgen
 		!system-pcre2
 		!system-recastnavigation
-		!system-sdl
 		!system-xatlas
 		!system-zlib
 		!system-zstd
@@ -552,9 +525,6 @@ DEPEND+="
 	system-icu? (
 		>=dev-libs/icu-${ICU_PV}
 	)
-	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}
-	)
 	system-libogg? (
 		>=media-libs/libogg-${LIBOGG_PV}
 	)
@@ -587,9 +557,6 @@ DEPEND+="
 	)
 	system-recastnavigation? (
 		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
-	)
-	system-sdl? (
-		>=media-libs/libsdl3-${LIBSDL3_PV}
 	)
 	system-wslay? (
 		>=net-libs/wslay-${WSLAY_PV}
@@ -656,7 +623,7 @@ BDEPEND+="
 PATCHES=(
 	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
 	"${FILESDIR}/godot-4.5-sanitizers.patch"
-	"${FILESDIR}/godot-4.5-optionalize-x86-flags.patch"
+	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
 )
 
 check_speech_dispatcher() {
@@ -1157,7 +1124,6 @@ src_compile() {
 		builtin_glslang=$(usex glslang)
 		builtin_graphite=$(usex !system-graphite)
 		builtin_icu4c=$(usex !system-icu)
-		builtin_libjpeg_turbo=$(usex !system-libjpeg-turbo)
 		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
@@ -1171,7 +1137,6 @@ src_compile() {
 		builtin_recastnavigation=$(usex !system-recastnavigation)
 		builtin_rvo2_2d=True
 		builtin_rvo2_3d=True
-		builtin_sdl=$(usex !system-sdl)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
 		builtin_zlib=$(usex !system-zlib)
@@ -1221,12 +1186,8 @@ src_compile() {
 	options_modules+=(
 		brotli=$(usex brotli)
 		builtin_pcre2_with_jit=$(usex jit)
-		cpu_flags_x86_sse4_2=$(usex cpu_flags_x86_sse4_2)
-		cpu_flags_x86_sse4_1=$(usex cpu_flags_x86_sse4_1)
-		cpu_flags_x86_ssse3=$(usex cpu_flags_x86_ssse3)
 		cpu_flags_x86_sse2=$(usex cpu_flags_x86_sse2)
 		cpu_flags_x86_sse=$(usex cpu_flags_x86_sse)
-		cpu_flags_x86_popcnt=$(usex cpu_flags_x86_popcnt)
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
@@ -1288,7 +1249,6 @@ src_compile() {
 		module_webxr_enabled=False
 		module_xatlas_unwrap_enabled=$(usex xatlas)
 		module_zip_enabled=$(usex minizip)
-		sdl=$(usex sdl)
 		use_volk=$(usex volk)
 		vulkan=$(usex vulkan)
 	)

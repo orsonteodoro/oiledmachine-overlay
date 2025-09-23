@@ -1,0 +1,45 @@
+diff '--color=auto' -urp godot-3.6.1-stable.orig/platform/x11/detect.py godot-3.6.1-stable/platform/x11/detect.py
+--- godot-3.6.1-stable.orig/platform/x11/detect.py	2025-06-24 10:10:49.000000000 -0700
++++ godot-3.6.1-stable/platform/x11/detect.py	2025-09-22 18:35:21.291027334 -0700
+@@ -69,9 +69,11 @@ def get_opts():
+         BoolVariable("use_static_cpp", "Link libgcc and libstdc++ statically for better portability", True),
+         BoolVariable("use_ubsan", "Use LLVM/GCC compiler undefined behavior sanitizer (UBSAN)", False),
+         BoolVariable("use_asan", "Use LLVM/GCC compiler address sanitizer (ASAN))", False),
++        BoolVariable("use_hwasan", "Use LLVM/GCC compiler address sanitizer (HWASAN)", False),
+         BoolVariable("use_lsan", "Use LLVM/GCC compiler leak sanitizer (LSAN))", False),
+         BoolVariable("use_tsan", "Use LLVM/GCC compiler thread sanitizer (TSAN))", False),
+         BoolVariable("use_msan", "Use LLVM/GCC compiler memory sanitizer (MSAN))", False),
++        BoolVariable("use_sanitize_in_production", "Use LLVM compiler sanitizers in production forcing violations as fatal", False),
+         BoolVariable("pulseaudio", "Detect and use PulseAudio", True),
+         BoolVariable("speechd", "Detect and use Speech Dispatcher for Text-to-Speech support", True),
+         BoolVariable("udev", "Use udev for gamepad connection callbacks", True),
+@@ -180,7 +182,7 @@ def configure(env):
+             env.Append(LINKFLAGS=["-fuse-ld=%s" % env["linker"]])
+ 
+     # Sanitizers
+-    if env["use_ubsan"] or env["use_asan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
++    if env["use_ubsan"] or env["use_asan"] or env["use_hwasan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
+         env.extra_suffix += "s"
+ 
+         if env["use_ubsan"]:
+@@ -204,6 +206,10 @@ def configure(env):
+             env.Append(CCFLAGS=["-fsanitize=address,pointer-subtract,pointer-compare"])
+             env.Append(LINKFLAGS=["-fsanitize=address"])
+ 
++        if env["use_hwasan"]:
++            env.Append(CCFLAGS=["-fsanitize=hwaddress"])
++            env.Append(LINKFLAGS=["-fsanitize=hwaddress"])
++
+         if env["use_lsan"]:
+             env.Append(CCFLAGS=["-fsanitize=leak"])
+             env.Append(LINKFLAGS=["-fsanitize=leak"])
+@@ -216,6 +222,9 @@ def configure(env):
+             env.Append(CCFLAGS=["-fsanitize=memory"])
+             env.Append(LINKFLAGS=["-fsanitize=memory"])
+ 
++        if env["use_sanitize_in_production"]:
++            env.Append(CCFLAGS=["-fno-sanitize-recover"])
++
+     # LTO
+ 
+     if env["lto"] == "auto":  # Full LTO for production.

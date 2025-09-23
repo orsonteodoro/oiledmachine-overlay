@@ -23,10 +23,6 @@ CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 ENET_VULNERABILITY_HISTORY="DOS"
 FREETYPE_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
-GLSLANG_VULNERABILITY_HISTORY="NPD"
-GRAPHITE_VULNERABILITY_HISTORY="HO UM"
-HARFBUZZ_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-ICU4C_VULNERABILITY_HISTORY="CE DF DOS HO IO MC OOBR OOBW SO UAF UM"
 LIBPNG_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD MC OOBR SO UAF UM"
 LIBJPEG_TURBO_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBR SO UM"
 LIBTHEORA_VULNERABILITY_HISTORY="IO"
@@ -38,24 +34,18 @@ PCRE2_VULNERABILITY_HISTORY="DOS"
 TINYEXR_VULNERABILITY_HISTORY="DOS HO IO"
 ZLIB_VULNERABILITY_HISTORY="BO CE DF"
 ZSTD_VULNERABILITY_HISTORY="BO"
-SDL_VULNERABILITY_HISTORY="DF HO"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="
 ${ANGLE_VULNERABILITY_HISTORY}
 ${ASTCENC_VULNERABILITY_HISTORY}
 ${BROTLI_VULNERABILITY_HISTORY}
 ${ENET_VULNERABILITY_HISTORY}
 ${FREETYPE_VULNERABILITY_HISTORY}
-${GLSLANG_VULNERABILITY_HISTORY}
-${GRAPHITE_VULNERABILITY_HISTORY}
-${HARFBUZZ_VULNERABILITY_HISTORY}
-${ICU4C_VULNERABILITY_HISTORY}
 ${LIBJPEG_TURBO_VULNERABILITY_HISTORY}
 ${LIBPNG_VULNERABILITY_HISTORY}
 ${LIBTHEORA_VULNERABILITY_HISTORY}
 ${LIBVORBIS_VULNERABILITY_HISTORY}
 ${MINIUPNPC_VULNERABILITY_HISTORY}
 ${PCRE2_VULNERABILITY_HISTORY}
-${SDL_VULNERABILITY_HISTORY}
 ${TINYEXR_VULNERABILITY_HISTORY}
 ${ZLIB_VULNERABILITY_HISTORY}
 ${ZSTD_VULNERABILITY_HISTORY}
@@ -65,13 +55,8 @@ FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_sse4_2"
-	"cpu_flags_x86_sse4_1"
-	"cpu_flags_x86_ssse3"
-	"cpu_flags_x86_sse3"
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse"
-	"cpu_flags_x86_popcnt"
 )
 
 inherit godot-3.6
@@ -95,16 +80,6 @@ LICENSE="
 		BSD
 		BSD-2
 		MIT
-	)
-	(
-		BSD
-		BSD-2
-		custom
-		GPL-2+-with-autoconf-exception
-		GPL-3+-with-autoconf-exception
-		NAIST-IPADIC
-		MIT
-		Unicode-3.0
 	)
 	(
 		icu
@@ -145,10 +120,6 @@ LICENSE="
 	)
 "
 
-# thirdparty/icu4c - custom, BSD, BSD-2, GPL-2+-with-autoconf-exception, GPL-3+-with-autoconf-exception, NAIST-IPADIC, MIT, Unicode-3.0
-#   See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/icu4c/LICENSE
-# thirdparty/glslang - custom, BSD, BSD-2, MIT, Apache-2.0, GPL-3 with Bison-exception-2.2, custom, MIT
-#   See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/glslang/LICENSE.txt
 # thirdparty/spirv-cross || ( Apache-2.0 MIT )
 # thirdparty/misc/r128 - || ( public-domain Unlicense )
 # thirdparty/misc/smolv || ( public-domain MIT Unlicense )
@@ -192,8 +163,8 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+csg +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer +mobile-vr
-+msdfgen +openxr +raycast +vhacd +xatlas
++csg +gltf +gridmap +lightmapper_rd +meshoptimizer +mobile-vr
++raycast +vhacd +xatlas
 "
 IUSE_AUDIO="
 +alsa +interactive-music +pulseaudio +speech
@@ -216,7 +187,7 @@ camera -gamepad +touch
 "
 IUSE_LIBS="
 +basis-universal +betsy
-+freetype +graphite +navigation +noise +opengl +opensimplex +pcre2 +sdl
++freetype +navigation +noise +opengl +opensimplex +pcre2
 +text-server-adv -text-server-fb +volk +vulkan
 "
 IUSE_NET="
@@ -227,11 +198,10 @@ IUSE_SCRIPTING="
 csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
-system-brotli system-clipper2 system-embree system-enet system-freetype
-system-glslang system-graphite system-harfbuzz system-icu system-libjpeg-turbo
-system-libogg system-libpng system-libtheora system-sdl system-libvorbis
+system-brotli system-embree system-enet system-freetype
+system-libogg system-libpng system-libtheora system-libvorbis
 system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
-system-msdfgen -system-mono system-openxr system-pcre2 system-recastnavigation
+-system-mono system-pcre2 system-recastnavigation
 system-wslay system-xatlas system-zlib system-zstd
 "
 IUSE+="
@@ -275,24 +245,6 @@ REQUIRED_USE+="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
-	cpu_flags_x86_popcnt? (
-		cpu_flags_x86_sse4_2
-		cpu_flags_x86_sse4_1
-	)
-	cpu_flags_x86_sse4_2? (
-		cpu_flags_x86_sse4_1
-		cpu_flags_x86_popcnt
-	)
-	cpu_flags_x86_sse4_1? (
-		cpu_flags_x86_sse4_2
-		cpu_flags_x86_popcnt
-	)
-	cpu_flags_x86_ssse3? (
-		cpu_flags_x86_sse3
-	)
-	cpu_flags_x86_sse3? (
-		cpu_flags_x86_sse2
-	)
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_sse
 	)
@@ -322,9 +274,6 @@ REQUIRED_USE+="
 	mp2? (
 		mp3
 	)
-	msdfgen? (
-		freetype
-	)
 	optimize-size? (
 		!optimize-speed
 	)
@@ -337,15 +286,9 @@ REQUIRED_USE+="
 		!lsan
 		!msan
 		!system-brotli
-		!system-clipper2
 		!system-embree
 		!system-enet
 		!system-freetype
-		!system-glslang
-		!system-graphite
-		!system-harfbuzz
-		!system-icu
-		!system-libjpeg-turbo
 		!system-libogg
 		!system-libpng
 		!system-libtheora
@@ -355,10 +298,8 @@ REQUIRED_USE+="
 		!system-mbedtls
 		!system-miniupnpc
 		!system-mono
-		!system-msdfgen
 		!system-pcre2
 		!system-recastnavigation
-		!system-sdl
 		!system-xatlas
 		!system-zlib
 		!system-zstd
@@ -528,9 +469,6 @@ DEPEND+="
 	system-brotli? (
 		>=app-arch/brotli-${BROTLI_PV}
 	)
-	system-clipper2? (
-		>=games-engines/clipper2-${CLIPPER2_PV}
-	)
 	system-enet? (
 		>=net-libs/enet-${ENET_PV}
 	)
@@ -539,21 +477,6 @@ DEPEND+="
 	)
 	system-freetype? (
 		>=media-libs/freetype-${FREETYPE_PV}
-	)
-	system-glslang? (
-		>=dev-util/glslang-${GLSLANG_PV}
-	)
-	system-graphite? (
-		>=media-gfx/graphite2-${GRAPHITE2_PV}
-	)
-	system-harfbuzz? (
-		>=media-libs/harfbuzz-${HARFBUZZ_PV}
-	)
-	system-icu? (
-		>=dev-libs/icu-${ICU_PV}
-	)
-	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}
 	)
 	system-libogg? (
 		>=media-libs/libogg-${LIBOGG_PV}
@@ -576,20 +499,11 @@ DEPEND+="
 	system-miniupnpc? (
 		>=net-libs/miniupnpc-${MINIUPNPC_PV}
 	)
-	system-msdfgen? (
-		>=media-libs/msdfgen-${MSDFGEN_PV}
-	)
-	system-openxr? (
-		>=media-libs/openxr-${OPENXR_PV}
-	)
 	system-pcre2? (
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
 	)
 	system-recastnavigation? (
 		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
-	)
-	system-sdl? (
-		>=media-libs/libsdl3-${LIBSDL3_PV}
 	)
 	system-wslay? (
 		>=net-libs/wslay-${WSLAY_PV}
@@ -654,9 +568,9 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
-	"${FILESDIR}/godot-4.5-sanitizers.patch"
-	"${FILESDIR}/godot-4.5-optionalize-x86-flags.patch"
+	"${FILESDIR}/godot-3.6-set-ccache-dir.patch"
+	"${FILESDIR}/godot-3.6-sanitizers.patch"
+	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
 )
 
 check_speech_dispatcher() {
@@ -880,21 +794,6 @@ src_configure() {
 	default
 	cflags-hardened_append
 	warn_missing_texture_format
-
-	if has_version "dev-util/glslang" ; then
-		local glslang_libstdcxx_pv=$(strings "/usr/$(get_libdir)/libglslang.so" \
-			| grep GLIBCXX \
-			| sort -V \
-			| tail -n 1 \
-			| cut -f 2 -d "_")
-	# gcc-config -l reports the currently selected libstdcxx but setting CC= cannot do it properly.
-		local gcc_current_profile_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
-		gcc_current_profile_slot="${gcc_current_profile_slot##*-}"
-	# Check glslang's libstdcxx symbols when linking using USE=vulkan
-einfo "Current GCC slot:  ${gcc_current_profile_slot}"
-		check_pkg_glibcxx "dev-util/spirv-tools" "/usr/$(get_libdir)/libSPIRV-Tools-opt.so" "${gcc_current_profile_slot}" # Dependency of glslang
-		check_pkg_glibcxx "dev-util/glslang" "/usr/$(get_libdir)/libglslang.so" "${gcc_current_profile_slot}"
-	fi
 
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
@@ -1150,14 +1049,9 @@ src_compile() {
 	local options_modules_shared=(
 		builtin_brotli=$(usex !system-brotli)
 		builtin_certs=$(usex portable)
-		builtin_clipper2=$(usex !system-clipper2)
 		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
 		builtin_freetype=$(usex !system-freetype)
-		builtin_glslang=$(usex glslang)
-		builtin_graphite=$(usex !system-graphite)
-		builtin_icu4c=$(usex !system-icu)
-		builtin_libjpeg_turbo=$(usex !system-libjpeg-turbo)
 		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
@@ -1165,13 +1059,10 @@ src_compile() {
 		builtin_libwebp=$(usex !system-libwebp)
 		builtin_mbedtls=$(usex !system-mbedtls)
 		builtin_miniupnpc=$(usex !system-miniupnpc)
-		builtin_msdfgen=$(usex !system-msdfgen)
 		builtin_pcre2=$(usex !system-pcre2)
-		builtin_openxr=$(usex !system-openxr)
 		builtin_recastnavigation=$(usex !system-recastnavigation)
 		builtin_rvo2_2d=True
 		builtin_rvo2_3d=True
-		builtin_sdl=$(usex !system-sdl)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
 		builtin_zlib=$(usex !system-zlib)
@@ -1184,13 +1075,9 @@ src_compile() {
 	local options_modules_static=(
 		builtin_brotli=True
 		builtin_certs=True
-		builtin_clipper2=True
 		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
-		builtin_glslang=True
-		builtin_graphite=True
-		builtin_icu4c=True
 		builtin_libjpeg_turbo=True
 		builtin_libogg=True
 		builtin_libpng=True
@@ -1199,9 +1086,7 @@ src_compile() {
 		builtin_libwebp=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
-		builtin_msdfgen=True
 		builtin_pcre2=True
-		builtin_openxr=True
 		builtin_recastnavigation=True
 		builtin_rvo2=True
 		builtin_wslay=True
@@ -1221,19 +1106,13 @@ src_compile() {
 	options_modules+=(
 		brotli=$(usex brotli)
 		builtin_pcre2_with_jit=$(usex jit)
-		cpu_flags_x86_sse4_2=$(usex cpu_flags_x86_sse4_2)
-		cpu_flags_x86_sse4_1=$(usex cpu_flags_x86_sse4_1)
-		cpu_flags_x86_ssse3=$(usex cpu_flags_x86_ssse3)
 		cpu_flags_x86_sse2=$(usex cpu_flags_x86_sse2)
 		cpu_flags_x86_sse=$(usex cpu_flags_x86_sse)
-		cpu_flags_x86_popcnt=$(usex cpu_flags_x86_popcnt)
-		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
 		no_editor_splash=$(usex !editor-splash)
 		precision=$(usex fp64 "double" "single")
 		opengl3=$(usex opengl)
-		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
 		module_basis_universal_enabled=$(usex basis-universal)
 		module_bcdec_enabled=$(usex bc)
@@ -1249,7 +1128,6 @@ src_compile() {
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False
 		module_gdscript_enabled=$(usex gdscript)
-		module_glslang_enabled=$(usex glslang)
 		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
 		module_hdr_enabled=$(usex hdr)
@@ -1262,13 +1140,11 @@ src_compile() {
 		module_meshoptimizer_enabled=$(usex meshoptimizer)
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
-		module_msdfgen_enabled=$(usex msdfgen)
 		module_multiplayer_enabled=$(usex multiplayer)
 		module_navigation_enabled=$(usex navigation)
 		module_noise_enabled=$(usex noise)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
-		module_openxr_enabled=$(usex openxr)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
@@ -1288,7 +1164,6 @@ src_compile() {
 		module_webxr_enabled=False
 		module_xatlas_unwrap_enabled=$(usex xatlas)
 		module_zip_enabled=$(usex minizip)
-		sdl=$(usex sdl)
 		use_volk=$(usex volk)
 		vulkan=$(usex vulkan)
 	)
