@@ -844,32 +844,26 @@ warn_missing_texture_format() {
 		use dds || ewarn ".blend models may require USE=dds"
 		use exr || ewarn ".blend models may require USE=exr"
 		use jpeg || ewarn ".blend models may require USE=jpeg"
-		use png || ewarn ".blend models may require USE=png"
 		use tga || ewarn ".blend models may require USE=tga"
 	#fi
 	#if use collada ; then
 		use jpeg || ewarn ".dae models may require USE=jpeg"
-		use png || ewarn ".dae models may require USE=png"
 	#fi
 	if use gltf ; then
 		use jpeg || ewarn ".gltf models may require USE=jpeg"
-		use png || ewarn ".gltf models may require USE=png"
 		use ktx || ewarn ".gltf models may require USE=ktx"
 		use webp || ewarn ".gltf models may require USE=webp"
 	fi
 	if use fbx ; then
 		use jpeg || ewarn ".fbx models may require USE=jpeg"
-		use png || ewarn ".fbx models may require USE=png"
 		use tga || ewarn ".fbx models may require USE=tga"
 	fi
 	if use obj ; then
 		use jpeg || ewarn ".obj models may require USE=jpeg"
-		use png || ewarn ".obj models may require USE=png"
 	fi
 	#if use escn ; then
 	# From Blender's Godot-Blender-Exporter add-on
 		use jpeg || ewarn ".escn models may require USE=jpeg"
-		use png || ewarn ".escn models may require USE=png"
 		use tga || ewarn ".escn models may require USE=tga"
 	#fi
 }
