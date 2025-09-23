@@ -170,7 +170,7 @@ IUSE_AUDIO="
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug jit layers lld lto +optimize-speed optimize-size portable
+clang debug jit lld lto +optimize-speed optimize-size portable
 sanitize-in-production +visual-script
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -186,7 +186,6 @@ camera -gamepad +touch
 IUSE_LIBS="
 +denoise
 +freetype +navigation +opengl +opensimplex +pcre2 +squish
-+volk +vulkan
 "
 IUSE_NET="
 ca-certs-relax +enet +jsonrpc +mbedtls +text-server-adv
@@ -247,12 +246,6 @@ REQUIRED_USE+="
 		jsonrpc
 		websocket
 	)
-	layers? (
-		|| (
-			volk
-			vulkan
-		)
-	)
 	lld? (
 		clang
 	)
@@ -297,9 +290,6 @@ REQUIRED_USE+="
 		!sanitize-in-production
 		!tsan
 		!ubsan
-		vulkan? (
-			volk
-		)
 	)
 	riscv? (
 		mono? (
@@ -519,12 +509,6 @@ DEPEND+="
 	)
 	system-zstd? (
 		>=app-arch/zstd-${ZSTD_PV}
-	)
-	vulkan? (
-		media-libs/vulkan-drivers
-		!volk? (
-			media-libs/vulkan-loader[layers?,X]
-		)
 	)
 	wayland? (
 		>=gui-libs/libdecor-0.1.0
@@ -1164,8 +1148,6 @@ src_compile() {
 		module_websocket_enabled=$(usex websocket)
 		module_webxr_enabled=False
 		module_xatlas_unwrap_enabled=$(usex xatlas)
-		use_volk=$(usex volk)
-		vulkan=$(usex vulkan)
 	)
 
 	src_compile_linux
