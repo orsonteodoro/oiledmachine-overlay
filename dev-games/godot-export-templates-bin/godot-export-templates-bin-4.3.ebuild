@@ -73,35 +73,40 @@ LICENSE="
 
 # Listed because of mono_static=yes
 # mono_static=yes (applied to iOS, WASM builds) # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
-MONO_LICENSE="
+DOTNET_LICENSE="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0
-	BoringSSL-ECC
-	BoringSSL-PSK
+	Boost-1.0
 	BSD
+	BSD-2
+	BSD-4
+	CC-BY-3.0
+	CC-BY-SA-3.0
+	CC0-1.0
+	custom
 	DOTNET-libraries-and-runtime-components-patents
-	IDPL
-	ISC
-	LGPL-2.1
+	GPL-2-with-linking-exception
+	HPND
+	LGPL-2.1+
 	MIT
-	Mono-patents
-	MPL-1.1
-	openssl
-	OSL-1.1
+	Ms-PL
+	public-domain
+	Unicode-DFS-2016
+	UoI-NCSA
+	W3C-Software-and-Document-Notice-and-License
+	ZLIB
 "
-# ! = not
-# MIT IDPL -- BCL
-# !Apache-1.1 -- ikvm-disabled
-# Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
-# BSD - mono/metadata/w32file-unix-glob.c, mono/metadata/w32file-unix-glob.h (libmonosgen.a)
-# BSD openssl ISC -- btls enabled for mono-desktop (osx, windows, linux)
-# !BSD !openssl !ISC -- btls disabled for ios, wasm
-# IDPL MPL-1.1 -- RabbitMQ.Client
-# LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
-# openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
-# OSL-1.1 -- external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs (nunitlite.dll)
+# See dotnet-sdk ebuild
 LICENSE+="
 	mono? (
-		${MONO_LICENSE}
+		${DOTNET_LICENSE}
 	)
 "
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
