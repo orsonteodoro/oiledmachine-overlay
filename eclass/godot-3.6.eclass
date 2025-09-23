@@ -10,7 +10,7 @@ STATUS="stable"
 
 BULLET_PV="3.25"
 CA_CERTIFICATES_PV="20250408"
-DOTNET_SDK_PV="9.0.200"
+DOTNET_SDK_PV="9.0" # Relaxed, originally 9.0.200
 DOTNET_SDK_SLOT="9.0"
 ENET_PV="1.3.17" # Upstream uses live
 EMBREE_PV="3.13.5"
