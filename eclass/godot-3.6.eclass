@@ -36,6 +36,7 @@ PYTHON_COMPAT=( "python3_13" )
 RECASTNAVIGATION_PV="1.6.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1" # From past experience.  speech-dispatcher team noted a bug. # skip
 SPEECH_DISPATCHER_PV_MIN="0.8.8" # skip
+SQUISH_PV="1.15"
 WSLAY_PV="1.1.1"
 ZLIB_PV="1.3.1"
 ZSTD_PV="1.5.5"
