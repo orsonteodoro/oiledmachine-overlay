@@ -813,9 +813,9 @@ warn_missing_texture_format() {
 		use jpeg || ewarn ".fbx models may require USE=jpeg"
 		use tga || ewarn ".fbx models may require USE=tga"
 	fi
-	if use obj ; then
+	#if use obj ; then
 		use jpeg || ewarn ".obj models may require USE=jpeg"
-	fi
+	#fi
 	#if use escn ; then
 	# From Blender's Godot-Blender-Exporter add-on
 		use jpeg || ewarn ".escn models may require USE=jpeg"
