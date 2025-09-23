@@ -406,7 +406,7 @@ CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
 	mono? (
-		>=dev-dotnet/dotnet-sdk-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}[llvm_slot_17?,llvm_slot_18?]
+		>=dev-dotnet/dotnet-sdk-bin-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}
 	)
 "
 CDEPEND_CLANG="
