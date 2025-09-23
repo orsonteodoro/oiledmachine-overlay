@@ -1212,9 +1212,13 @@ src_compile() {
 	)
 
 	if use optimize-size ; then
-		myoptions+=( optimize=size )
+		myoptions+=(
+			optimize=size
+		)
 	else
-		myoptions+=( optimize=speed )
+		myoptions+=(
+			optimize=speed
+		)
 	fi
 
 	options_modules+=(
