@@ -6,7 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
     Godot is a IDE for building video games capable of making 3D and 2D games
     in a day.  It can produce apps/games for desktop, mobile, VR (virtual
     reality), AR (augmented reality), MR (mixed reality), web browser games,
@@ -71,9 +71,6 @@
     native speed but less portable.  For GDNative scripted projects, use the
     standard export templates.  Porting to console is possible but non-free
     through third-parties
-
-  </longdescription>
-  <!--  
 
     Cross-compile notes:
 
