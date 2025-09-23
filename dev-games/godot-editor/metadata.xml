@@ -57,8 +57,8 @@
     C#            | 2D/3D games/apps, interactive presentations, training simulations                                                  |
     GDNative      | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
     GDExtension   | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
-    Orchestrator  | Educational, prototyping, 2.5D/3D environment/NPC scripting                                                        |
-    VisualScript  | Educational, prototyping, 2.5D/3D environment/NPC scripting                                                        |
+    Orchestrator  | Prototyping, 2.5D/3D environment/NPC scripting                                                                     |
+    VisualScript  | Education, prototyping, 2.5D/3D environment/NPC scripting                                                          |
 
     [1] Node based visual languages should be easy if experienced with Kismet or
         Blueprint but can difficult if a person is not accustomed or not vibing
