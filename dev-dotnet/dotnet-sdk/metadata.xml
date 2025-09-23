@@ -17,6 +17,7 @@
   <upstream>
     <bugs-to>https://github.com/dotnet/sdk/issues/</bugs-to>
     <doc>https://learn.microsoft.com/en-us/dotnet/</doc>
+    <remote-id type="cpe">cpe:/a:microsoft:.net</remote-id>
     <remote-id type="github">dotnet/installer</remote-id>
     <remote-id type="github">dotnet/sdk</remote-id>
   </upstream>
