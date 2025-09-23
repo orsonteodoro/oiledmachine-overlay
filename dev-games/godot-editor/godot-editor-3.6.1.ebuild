@@ -161,7 +161,7 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+bullet +csg +gltf +gridmap +lightmapper_cpu +lightmapper_rd +mobile-vr
++bullet +csg +gltf +gridmap +lightmapper_cpu +mobile-vr
 +raycast +vhacd +xatlas
 "
 IUSE_AUDIO="
@@ -1121,7 +1121,6 @@ src_compile() {
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
 		module_lightmapper_cpu_enabled=$(usex lightmapper_cpu)
-		module_lightmapper_rd_enabled=$(usex lightmapper_rd)
 		module_mbedtls_enabled=$(usex mbedtls)
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
