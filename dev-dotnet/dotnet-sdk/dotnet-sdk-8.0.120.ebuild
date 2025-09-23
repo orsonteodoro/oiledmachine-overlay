@@ -79,9 +79,11 @@ RDEPEND="
 	>=app-arch/brotli-1.0.9
 	>=app-crypt/mit-krb5-1.19.2:0/0
 	>=dev-libs/icu-70.1
-	>=dev-libs/openssl-3.0.2:=
+	>=dev-libs/openssl-3.0.2
+	dev-libs/openssl:=
 	>=dev-libs/rapidjson-1.1.0
-	>=dev-util/lttng-ust-2.13.1:=
+	>=dev-util/lttng-ust-2.13.1
+	dev-util/lttng-ust:=
 	>=sys-libs/libunwind-1.3.2
 	>=sys-libs/zlib-1.2.11:0/1
 "
