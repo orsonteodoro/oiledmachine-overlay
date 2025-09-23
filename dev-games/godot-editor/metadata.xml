@@ -20,7 +20,7 @@
 
     4.5:  GDScript, C# 12 (.NET 8.0), GDExtension
     4.3:  GDScript, C# 12 (.NET 8.0), GDExtension, Orchestrator
-    3.6:  GDScript, C# 13 (.NET 9.0), GDNative, VisualScript
+    3.6:  GDScript, C# 13 (.NET 9.0), GDNative [10], VisualScript
 
     For the primary scripting languages it uses GDScript and C#.
     GDScript's syntax is similar to Python.  It supports unmanaged C/C++
@@ -31,7 +31,7 @@
     Name          | Runtime speed   | Security         | Learning curve | Portability
     --------------|-----------------|------------------|----------------|------------
     GDScript      | Slow            | Moderate to Low  | Easy [4]       | A
-    C#            | Fast            | Good             | Easy           | C or F [5]
+    C# [11]       | Fast            | Good             | Easy           | C or F [5]
     GDNative      | Faster          | Baddest [7]      | Hardest        | B [6]
     GDExtension   | Fastest         | Bad [7]          | Hard           | B+ [6]
     Orchestrator  | Slower          | Depends on Godot | 50/50 [1]      | Low [3]
@@ -60,6 +60,11 @@
         compiler reports.
     [8] It varies based on the project size, team size, experience, quality standards
     [9] AI is less likely to help you or you lose AI code generation benefit
+    [10] Currently not supported in the ebuild due to complex build process.
+         You should try the prebuilt instead.
+    [11] It may not be supported currently since the distro's dotnot-sdk:8.0 has
+         build time failure.
+
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
