@@ -3,6 +3,7 @@
 
 <pkgmetadata>
   <maintainer type="project">
+    <!-- Ebuild originator -->
     <email>dotnet@gentoo.org</email>
     <name>Gentoo Dotnet Project</name>
   </maintainer>

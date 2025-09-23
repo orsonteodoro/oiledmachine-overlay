@@ -13,6 +13,7 @@ EAPI=8
 CHECKREQS_DISK_BUILD="20G"
 CHECKREQS_DISK_USR="1200M"
 COMMIT="999243871ad8799c178193bb2d384dfbcfd94ce6"
+GCC_SLOT="11" # Same as U22 default
 SDK_SLOT="$(ver_cut 1-2)"
 RUNTIME_SLOT="${SDK_SLOT}.9"
 LLVM_COMPAT=( 18 ) # U22 defauls to  14
@@ -84,14 +85,18 @@ PDEPEND="
 	${NUGETS_DEPEND}
 "
 RDEPEND="
+	(
+		dev-libs/openssl:=
+		>=dev-libs/rapidjson-1.1.0
+	)
+	(
+		>=dev-util/lttng-ust-2.13.1
+		dev-util/lttng-ust:=
+	)
 	>=app-arch/brotli-1.0.9
 	>=app-crypt/mit-krb5-1.19.2:0/0
 	>=dev-libs/icu-70.1
 	>=dev-libs/openssl-3.0.2:0/3
-	dev-libs/openssl:=
-	>=dev-libs/rapidjson-1.1.0
-	>=dev-util/lttng-ust-2.13.1
-	dev-util/lttng-ust:=
 	>=sys-libs/libunwind-1.3.2
 	>=sys-libs/zlib-1.2.11:0/1
 "
@@ -100,13 +105,14 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-build/cmake-3.22.1
-	>=dev-vcs/git-2.34.1
 	$(llvm_gen_dep '
 		llvm-core/clang:${LLVM_SLOT}
 		llvm-core/lld:${LLVM_SLOT}
 		llvm-core/llvm:${LLVM_SLOT}
 	')
+	>=dev-build/cmake-3.22.1
+	>=dev-vcs/git-2.34.1
+	sys-devel/gcc:${GCC_SLOT}
 "
 IDEPEND="
 	app-eselect/eselect-dotnet
@@ -175,6 +181,21 @@ src_unpack() {
 
 src_prepare() {
 	default
+
+	# We need to ensure that we avoid this error:
+	# error: "Assumed value of MB_LEN_MAX wrong"
+	# To fix this, we usually use an earlier GCC slot.
+	local gcc_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
+	gcc_slot=${row##*-}
+	if (( ${gcc_slot} != ${GCC_SLOT} )) ; then
+eerror
+eerror "Switch to GCC ${GCC_SLOT}.  Do the following"
+eerror
+eerror "eselect gcc set ${CHOST}-${GCC_SLOT}"
+eerror "source /etc/profile"
+eerror
+		die
+	fi
 
 	strip-flags
 	# Not implemented by Clang, bug 946334 \
