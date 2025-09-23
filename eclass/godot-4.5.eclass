@@ -29,7 +29,7 @@ LIBSDL3_PV="3.2.14"
 LIBTHEORA_PV="1.2.0_pre9999"
 LIBVORBIS_PV="1.3.7"
 LIBWEBP_PV="1.5.0"
-LLVM_COMPAT=( 18 15 14 ) # U22 only supports 11-15, but the oiledmachine-overlay only supports >= 18, corresponding to U24
+LLVM_COMPAT=( 18 17 ) # Limited by dotnet-sdk ebuild.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MBEDTLS_PV="3.6.4"
 MINIUPNPC_PV="2.3.3"
