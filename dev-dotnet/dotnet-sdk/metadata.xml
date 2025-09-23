@@ -11,7 +11,7 @@
   oiledmachine-overlay notes:
 
   This fork exists because all the distro ebuilds are broken.
-  They may disappear on this overlay when issues are fixed on the distro overlay.
+  This ebuild may disappear on this overlay when issues are fixed on the distro overlay.
 
   -->
   <upstream>
