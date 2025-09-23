@@ -114,6 +114,7 @@ einfo "Copying third party licenses and copyright notices${message_extension}"
 			-o -iname "*author*" \
 			-o -iname "*CONTRIBUTORS*" \
 			-o -iname "*credits*" \
+			-o -iname "*EULA*" \
 			-o -iname "*maintainers*") \
 		$(grep -i -G -l \
 			-e "copyright" \
