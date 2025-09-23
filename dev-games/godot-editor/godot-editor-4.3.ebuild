@@ -6,6 +6,8 @@ EAPI=7
 
 # U22
 
+# Ebuild for Orchestrator visual programming language support
+
 # See profiles/desc/godot* for more related files.
 # Keep profiles/make.defaults up to date.
 
@@ -72,7 +74,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_popcnt"
 )
 
-inherit godot-4.5
+inherit godot-4.3
 inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
@@ -1362,6 +1364,7 @@ ewarn "removed to prevent a denial of service since the build scripts do not"
 ewarn "statically link the sanitizer libraries."
 ewarn
 	fi
+einfo "This release is for the Orchestrator plugin compatibility."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

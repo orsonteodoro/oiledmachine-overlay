@@ -6,6 +6,8 @@ EAPI=7
 
 # U22
 
+# Ebuild for VisualScript visual programming language support
+
 # See profiles/desc/godot* for more related files.
 # Keep profiles/make.defaults up to date.
 
@@ -72,7 +74,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_popcnt"
 )
 
-inherit godot-4.5
+inherit godot-3.6
 inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
@@ -633,7 +635,7 @@ BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '
-		>=dev-build/scons-4.9.0[${PYTHON_USEDEP}]
+		>=dev-build/scons-4.7.0[${PYTHON_USEDEP}]
 	')
 	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
 	lld? (
@@ -1362,6 +1364,7 @@ ewarn "removed to prevent a denial of service since the build scripts do not"
 ewarn "statically link the sanitizer libraries."
 ewarn
 	fi
+ewarn "VisualScript support has been dropped in the 4.x series.  Please convert your code to GDScript or C#."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

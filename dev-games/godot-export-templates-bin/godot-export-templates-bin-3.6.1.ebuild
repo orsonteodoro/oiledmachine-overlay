@@ -6,10 +6,10 @@ EAPI=8
 
 STATUS="stable"
 
-ANDROID_MIN_API="24" # From tarball, see src_configure
-ANDROID_SDK_VER="35" # From tarball, see src_configure
+ANDROID_MIN_API="19" # From tarball, see src_configure
+ANDROID_SDK_VER="34" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="17.0.0 (c672c3fe05adbb590abc99da39143b55ad510538)" # From CI logs
-DOTNET_SDK_PV="8.0.19" # From CI logs
+DOTNET_SDK_PV="9.0.200" # From CI logs
 EMSCRIPTEN_PV="3.1.39" # Based on CI logs for this release.  U24
 EMSCRIPTEN_NODE_PV="22.16.0"
 JDK_PV="17.0.16" # From CI logs
@@ -19,7 +19,7 @@ NDK_PV="23.2" # From CI logs
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
 # The export templates allow to run the project on the prebuilt target platforms.
-ANDROID_MIN_VER="5.0" # The documentation says 6.0 but the AI says 7.0.
+ANDROID_MIN_VER="4.4"
 # Chrome min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1904
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1878
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1893
@@ -355,7 +355,7 @@ get_compiler_info_osxcross() {
 	local type="${1}"
 	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
 		local L=(
-			"ios.zip"
+			"iphone.zip"
 			"osx.zip"
 		)
 		local f
