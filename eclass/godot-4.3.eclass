@@ -26,7 +26,7 @@ LIBSQUISH_PV="1.15"
 LIBTHEORA_PV="1.2.0_pre9999"
 LIBVORBIS_PV="1.3.7"
 LIBWEBP_PV="1.4.0"
-LLVM_COMPAT=( {15..13} ) # See https://github.com/godotengine/godot/blob/4.3-stable/misc/hooks/pre-commit-clang-format#L79
+LLVM_COMPAT=( 18 15 14 ) # U22 only supports 11-15, but the oiledmachine-overlay only supports >= 18, corresponding to U24
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MBEDTLS_PV="3.6.0"
 MINIUPNPC_PV="2.2.7"
