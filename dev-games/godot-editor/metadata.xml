@@ -42,14 +42,23 @@
     Orchestrator  | No              | day(s) to month(s) [9]                   |
     VisualScript  | No              | day(s) to month(s) [9]                   |
 
-    Name          | Language similarity                                        |
-    --------------|------------------------------------------------------------|
-    GDScript      | Python, Lua                                                |
-    C#            | Java                                                       |
-    GDNative      | C++ (unmanaged)                                            |
-    GDExtension   | C++ (unmanaged)                                            |
-    Orchestrator  | Kismet, Blueprint, VisualScript                            |
-    VisualScript  | Kismet, Blueprint, Orchestrator                            |
+    Name          | Language similarity             |
+    --------------|---------------------------------|
+    GDScript      | Python, Lua                     |
+    C#            | Java                            |
+    GDNative      | C++ (unmanaged)                 |
+    GDExtension   | C++ (unmanaged), Rust           |
+    Orchestrator  | Kismet, Blueprint, VisualScript |
+    VisualScript  | Kismet, Blueprint, Orchestrator |
+
+    Name          | Use cases, cui bono? [11]                                                                                          |
+    --------------|--------------------------------------------------------------------------------------------------------------------|
+    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs),                                                                |
+    C#            | 3D games/apps, interactive presentations, training simulations                                                     |
+    GDNative      | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
+    GDExtension   | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
+    Orchestrator  | Educational, prototyping, 2.5D/3D environment/NPC scripting                                                        |
+    VisualScript  | Educational, prototyping, 2.5D/3D environment/NPC scripting                                                        |
 
     [1] Node based visual languages should be easy if experienced with Kismet or
         Blueprint but can difficult if a person is not accustomed or not vibing
@@ -67,6 +76,10 @@
     [9] AI is less likely to help you or you lose AI code generation benefit
     [10] Currently not supported in the ebuild due to complex build process.
          You should try the prebuilt instead.
+    [11] You can use multiple languages in the game.  Typically GDScript and C#, or
+         GDScript and GDExtension are combined.
+    [12] A memory bounded problem.  C++ offers the lowest memory overhead of the listed languages.
+    [13] Via OpenMP
 
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
