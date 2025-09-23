@@ -24,14 +24,14 @@
 
     Language features:
 
-    Name          | Runtime speed   | Security         | Learning curve | Portability
-    --------------|-----------------|------------------|----------------|------------
-    GDScript      | Slow            | Moderate to Low  | Easy [4]       | Best
-    C#            | Fast            | Good             | Easy           | Okay to poor [5]
-    GDNative      | Faster          | Baddest [7]      | Hardest        | Good [6]
-    GDExtension   | Fastest         | Bad [7]          | Hard           | Better [6]
-    Orchestrator  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [3]
-    VisualScript  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [2]
+    Name          | Runtime speed   | Security         | Learning curve | Portability             |
+    --------------|-----------------|------------------|----------------|-------------------------|
+    GDScript      | Slow            | Moderate to Low  | Easy [4]       | Best                    |
+    C#            | Fast            | Good             | Easy           | Okay to poor [5]        |
+    GDNative      | Faster          | Baddest [7]      | Hardest        | Good [6]                |
+    GDExtension   | Fastest         | Bad [7]          | Hard           | Better [6]              |
+    Orchestrator  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [3] |
+    VisualScript  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [2] |
 
     Name          | Recommended     | Project development time (estimated) [8] |
     --------------|-----------------|------------------------------------------|
