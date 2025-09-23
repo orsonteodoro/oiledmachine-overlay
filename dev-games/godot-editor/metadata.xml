@@ -608,6 +608,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="websocket">
       Enables support for the WebSocket protocol.
     </flag>
+    <flag name="visual-script">
+      Add support for the VisualScript visual programming language.
+    </flag>
     <flag name="vorbis">
       Enables support for the Vorbis audio codec.
     </flag>
