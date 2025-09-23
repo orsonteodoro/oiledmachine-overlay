@@ -43,11 +43,11 @@
     C#            | Yes             | day(s) to week(s)                        |
     GDNative      | No              | week(s) to month(s)                      |
     GDExtension   | No              | week(s) to month(s)                      |
-    Orchestrator  | No              | day(s) to month(s)                       |
-    VisualScript  | No              | day(s) to month(s)                       |
+    Orchestrator  | No              | day(s) to month(s) [9]                   |
+    VisualScript  | No              | day(s) to month(s) [9]                   |
 
     [1] Node based visual languages should be easy if experienced with UDK but
-        can difficult if person is not accustomed or not vibing with the style.
+        can difficult if a person is not accustomed or not vibing with the style.
     [2] Removed in 4.x
     [3] Slow development cycle
     [4] Easy with the help of AI
@@ -59,6 +59,7 @@
         There are more vulnerabilities that the AI can catch than what a
         compiler reports.
     [8] It varies based on the project size, team size, experience, quality standards
+    [9] AI is less likely to help you or you lose AI code generation benefit
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
