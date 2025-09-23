@@ -198,8 +198,8 @@ clang debug -fp64 jit layers lld lto +optimize-speed optimize-size portable
 sanitize-in-production
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+astc +bc +bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +ktx +minizip -mp1
--mp2 +mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
++astc +bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +ktx +minizip -mp1
+-mp2 +mp3 +ogg +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
 +dbus -editor-splash +wayland +X
@@ -208,9 +208,9 @@ IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+basis-universal +betsy
-+freetype +graphite +navigation +noise +opengl +opensimplex +pcre2
-+text-server-adv -text-server-fb +volk +vulkan
++basis-universal
++freetype +graphite +navigation +noise +opengl +pcre2
++squish +text-server-adv -text-server-fb +volk +vulkan
 "
 IUSE_NET="
 ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +text-server-adv
@@ -256,12 +256,6 @@ REQUIRED_USE+="
 	^^ (
 		text-server-adv
 		text-server-fb
-	)
-	betsy? (
-		|| (
-			vulkan
-			opengl
-		)
 	)
 	clang? (
 		^^ (
@@ -907,7 +901,7 @@ ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 
 _compile() {
 	# Define lto here because scons does not evaluate lto= as steady-state.
-	scons ${options_x11[@]} \
+	scons ${options_linuxbsd[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		bits=default \
@@ -1091,8 +1085,8 @@ src_compile() {
 		lto=$(usex lto "thin" "none")
 		platform="linuxbsd"
 	)
-	local options_x11=(
-		platform="x11"
+	local options_linuxbsd=(
+		platform="linuxbsd"
 		alsa=$(usex alsa)
 		dbus=$(usex dbus)
 		libdecor=$(usex wayland)
@@ -1123,6 +1117,7 @@ src_compile() {
 		builtin_freetype=$(usex !system-freetype)
 		builtin_glslang=$(usex glslang)
 		builtin_graphite=$(usex !system-graphite)
+		builtin_harfbuzz=$(usex !system-harfbuzz)
 		builtin_icu4c=$(usex !system-icu)
 		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
@@ -1137,6 +1132,7 @@ src_compile() {
 		builtin_recastnavigation=$(usex !system-recastnavigation)
 		builtin_rvo2_2d=True
 		builtin_rvo2_3d=True
+		builtin_squish=True # $(usex !system-squish) # Missing lib?
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
 		builtin_zlib=$(usex !system-zlib)
@@ -1154,8 +1150,9 @@ src_compile() {
 		builtin_freetype=True
 		builtin_glslang=True
 		builtin_graphite=True
+		builtin_harfbuzz=True
 		builtin_icu4c=True
-		builtin_libjpeg_turbo=True
+#		builtin_libjpeg_turbo=True
 		builtin_libogg=True
 		builtin_libpng=True
 		builtin_libtheora=True
@@ -1196,8 +1193,6 @@ src_compile() {
 		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
 		module_basis_universal_enabled=$(usex basis-universal)
-		module_bcdec_enabled=$(usex bc)
-		module_betsy_enabled=$(usex betsy)
 		module_bmp_enabled=$(usex bmp)
 		module_camera_enabled=$(usex camera)
 		module_csg_enabled=$(usex csg)
@@ -1207,7 +1202,6 @@ src_compile() {
 		module_etcpak_enabled=$(usex etc)
 		module_fbx_enabled=$(usex fbx)
 		module_freetype_enabled=$(usex freetype)
-		module_gdnative_enabled=False
 		module_gdscript_enabled=$(usex gdscript)
 		module_glslang_enabled=$(usex glslang)
 		module_gltf_enabled=$(usex gltf)
@@ -1227,12 +1221,10 @@ src_compile() {
 		module_navigation_enabled=$(usex navigation)
 		module_noise_enabled=$(usex noise)
 		module_ogg_enabled=$(usex ogg)
-		module_opensimplex_enabled=$(usex opensimplex)
 		module_openxr_enabled=$(usex openxr)
-		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
-		module_stb_vorbis_enabled=$(usex vorbis)
+		module_squish_enabled=$(usex squish)
 		module_svg_enabled=$(usex svg)
 		module_text_server_adv_enabled=$(usex text-server-adv)
 		module_text_server_fb_enabled=$(usex text-server-fb)

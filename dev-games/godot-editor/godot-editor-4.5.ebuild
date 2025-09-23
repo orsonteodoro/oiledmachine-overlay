@@ -204,7 +204,7 @@ sanitize-in-production
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
 +astc +bc +bmp +brotli +cvtt +dds +etc +exr +fbx +hdr +jpeg +ktx +minizip -mp1
--mp2 +mp3 +ogg +pvrtc +s3tc +svg +tga +theora +vorbis +webp
+-mp2 +mp3 +ogg +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
 +dbus -editor-splash +wayland +X
@@ -214,7 +214,7 @@ camera -gamepad +touch
 "
 IUSE_LIBS="
 +basis-universal +betsy
-+freetype +graphite +navigation +noise +opengl +opensimplex +pcre2 +sdl
++freetype +graphite +navigation +noise +opengl +pcre2 +sdl
 +text-server-adv -text-server-fb +volk +vulkan
 "
 IUSE_NET="
@@ -938,7 +938,7 @@ ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 
 _compile() {
 	# Define lto here because scons does not evaluate lto= as steady-state.
-	scons ${options_x11[@]} \
+	scons ${options_linuxbsd[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		bits=default \
@@ -1122,8 +1122,8 @@ src_compile() {
 		lto=$(usex lto "thin" "none")
 		platform="linuxbsd"
 	)
-	local options_x11=(
-		platform="x11"
+	local options_linuxbsd=(
+		platform="linuxbsd"
 		alsa=$(usex alsa)
 		dbus=$(usex dbus)
 		libdecor=$(usex wayland)
@@ -1154,6 +1154,7 @@ src_compile() {
 		builtin_freetype=$(usex !system-freetype)
 		builtin_glslang=$(usex glslang)
 		builtin_graphite=$(usex !system-graphite)
+		builtin_harfbuzz=$(usex !system-harfbuzz)
 		builtin_icu4c=$(usex !system-icu)
 		builtin_libjpeg_turbo=$(usex !system-libjpeg-turbo)
 		builtin_libogg=$(usex !system-libogg)
@@ -1187,6 +1188,7 @@ src_compile() {
 		builtin_freetype=True
 		builtin_glslang=True
 		builtin_graphite=True
+		builtin_harfbuzz=True
 		builtin_icu4c=True
 		builtin_libjpeg_turbo=True
 		builtin_libogg=True
@@ -1244,7 +1246,6 @@ src_compile() {
 		module_etcpak_enabled=$(usex etc)
 		module_fbx_enabled=$(usex fbx)
 		module_freetype_enabled=$(usex freetype)
-		module_gdnative_enabled=False
 		module_gdscript_enabled=$(usex gdscript)
 		module_glslang_enabled=$(usex glslang)
 		module_gltf_enabled=$(usex gltf)
@@ -1264,12 +1265,9 @@ src_compile() {
 		module_navigation_enabled=$(usex navigation)
 		module_noise_enabled=$(usex noise)
 		module_ogg_enabled=$(usex ogg)
-		module_opensimplex_enabled=$(usex opensimplex)
 		module_openxr_enabled=$(usex openxr)
-		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
-		module_stb_vorbis_enabled=$(usex vorbis)
 		module_svg_enabled=$(usex svg)
 		module_text_server_adv_enabled=$(usex text-server-adv)
 		module_text_server_fb_enabled=$(usex text-server-fb)
