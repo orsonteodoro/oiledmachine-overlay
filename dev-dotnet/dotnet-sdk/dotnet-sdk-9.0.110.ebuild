@@ -155,7 +155,6 @@ BDEPEND="
 	')
 	>=dev-build/cmake-3.22.1
 	>=dev-vcs/git-2.34.1
-	app-crypt/rhash
 	sys-devel/gcc:${GCC_SLOT}
 "
 IDEPEND="
