@@ -19,7 +19,7 @@
 
     4.5:  GDScript, C# 12 (.NET 8.0), GDNative
     4.3:  GDScript, C# 12 (.NET 8.0), GDNative, Orchestrator
-    3.6:  GDScript, C# 12 (.NET 8.0), GDNative, VisualScript
+    3.6:  GDScript, C# 13 (.NET 9.0), GDNative, VisualScript
 
     For the primary scripting languages it uses GDScript and C#.
     GDScript's syntax is similar to Python.  It supports unmanaged C/C++
