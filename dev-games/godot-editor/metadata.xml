@@ -21,7 +21,6 @@
     4.5:  GDScript, C# 12 (.NET 8.0)
     4.3:  GDScript, C# 12 (.NET 8.0), GDExtension, Orchestrator
     3.6:  GDScript, C# 13 (.NET 9.0), VisualScript
-    3.5:  GDScript, C# 13 (.NET 9.0), GDNative [10], VisualScript
 
     Language features:
 
@@ -29,7 +28,6 @@
     --------------|-----------------|------------------|----------------|-------------------------|
     GDScript      | Slow            | Moderate to Low  | Easy [4]       | Best                    |
     C#            | Fast            | Good             | Medium [14]    | Okay to poor [5]        |
-    GDNative      | Faster          | Baddest [7]      | Hardest        | Good [6]                |
     GDExtension   | Fastest         | Bad [7]          | Hard           | Better [6]              |
     Orchestrator  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [3] |
     VisualScript  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [2] |
@@ -38,7 +36,6 @@
     --------------|-----------------|------------------------------------------|
     GDScript      | Yes             | day(s) to week(s)                        |
     C#            | Yes             | day(s) to week(s)                        |
-    GDNative      | No              | week(s) to month(s)                      |
     GDExtension   | No              | week(s) to month(s)                      |
     Orchestrator  | No              | day(s) to month(s) [9]                   |
     VisualScript  | No              | day(s) to month(s) [9]                   |
@@ -47,7 +44,6 @@
     --------------|---------------------------------|
     GDScript      | Python, Lua                     |
     C#            | Java                            |
-    GDNative      | C++ (unmanaged)                 |
     GDExtension   | C++ (unmanaged), Rust           |
     Orchestrator  | Kismet, Blueprint, VisualScript |
     VisualScript  | Kismet, Blueprint, Orchestrator |
@@ -56,7 +52,6 @@
     --------------|--------------------------------------------------------------------------------------------------------------------|
     GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure, LLM games         |
     C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, training simulations, UIs                     |
-    GDNative      | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
     GDExtension   | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
     Orchestrator  | Prototyping, 2.5D/3D environment/NPC scripting, machinima                                                          |
     VisualScript  | Education, prototyping, 2.5D/3D environment/NPC scripting, machinima                                               |
@@ -76,8 +71,6 @@
     [8] It varies based on the project size, team size, experience, quality
         standards
     [9] AI is less likely to help you or you lose AI code generation benefit
-    [10] Currently not supported in the ebuild due to complex build process.
-         You should try the prebuilt instead.
     [11] You can use multiple languages in the game.  Typically GDScript and C#,
          or GDScript and GDExtension are combined.
     [12] A memory bounded problem.  C++ offers the lowest memory overhead of the
@@ -670,9 +663,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     More fine-grained slotting primarily for language support.
     Stable versions only to minimize project upgrade issues.
     -->
-    <slot name="3.5">
-      For compatibility with 3.5.x projects, C# 13, GDNative support, VisualScript.
-    </slot>
     <slot name="3.6">
       For compatibility with 3.6.x projects, C# 13, VisualScript.
     </slot>
