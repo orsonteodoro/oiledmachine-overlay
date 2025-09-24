@@ -56,7 +56,7 @@ CPU_FLAGS_X86=(
 )
 
 inherit godot-3.6
-inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
+inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic edo llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -168,7 +168,7 @@ IUSE_AUDIO="
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug jit lld lto +optimize-speed optimize-size portable
+clang debug jit lld lto mold +optimize-speed optimize-size portable
 sanitize-in-production +visual-script
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -250,6 +250,9 @@ REQUIRED_USE+="
 	)
 	mp2? (
 		mp3
+	)
+	mono? (
+		system-mono
 	)
 	optimize-size? (
 		!optimize-speed
@@ -356,6 +359,10 @@ CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
 	mono? (
+		(
+			>=dev-lang/mono-6.12.0
+			dev-lang/mono:=
+		)
 		>=dev-dotnet/dotnet-sdk-bin-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}
 	)
 "
@@ -524,6 +531,16 @@ RDEPEND+="
 		)
 	)
 "
+gen_bdepend_lld() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				llvm-core/lld:${s}
+			)
+		"
+	done
+}
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
@@ -532,9 +549,13 @@ BDEPEND+="
 	')
 	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
 	lld? (
-		llvm-core/lld
+		$(gen_bdepend_lld)
+	)
+	mold? (
+		sys-devel/mold
 	)
 	mono? (
+		app-portage/gentoolkit
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
@@ -753,7 +774,7 @@ warn_missing_texture_format() {
 
 src_configure() {
 	default
-	cflags-hardened_append
+	#cflags-hardened_append
 	warn_missing_texture_format
 
 	if tc-is-gcc ; then
@@ -824,15 +845,15 @@ einfo "Adding \`addwrite ${x}\` sandbox rule"
 
 einfo "Mono support:  Generating glue sources"
 	# Generates modules/mono/glue/mono_glue.gen.cpp
-	local f=$(basename bin/godot*x11*)
+	local f=$(basename "bin/godot"*"x11"*)
 	virtx \
 	bin/${f} \
 		--audio-driver Dummy \
 		--generate-mono-glue \
-		modules/mono/glue
+		"modules/mono/glue"
 }
 
-_assemble_datafiles() {
+_assemble_datafiles_for_export_templates() {
 einfo "Mono support:  Assembling data files"
 	if [[ ! -e "bin/GodotSharp" ]] ; then
 eerror
@@ -845,8 +866,19 @@ eerror
 	local src
 	local dest
 	src="${S}/bin/GodotSharp/Mono/lib/mono/${FRAMEWORK}"
-	dest="${WORKDIR}/templates/bcl/net_4_x"
-einfo "Mono support:  Collecting BCL"
+	PLATFORM="Linux"
+	if [[ "${PLATFORM}" == "Android" ]] ; then
+		dest="${WORKDIR}/templates/bcl/monodroid"
+	elif [[ "${PLATFORM}" == "iOS" ]] ; then
+		dest="${WORKDIR}/templates/bcl/monotouch"
+	elif [[ "${PLATFORM}" =~ ("Linux"|"macOS") ]] ; then
+		dest="${WORKDIR}/templates/bcl/net_4_x"
+	elif [[ "${PLATFORM}" == "WebAssembly" ]] ; then
+		dest="${WORKDIR}/templates/bcl/wasm"
+	elif [[ "${PLATFORM}" == "Windows" ]] ; then
+		dest="${WORKDIR}/templates/bcl/net_4_x_win"
+	fi
+einfo "Mono support:  Collecting BCL for ${PLATFORM}"
 	mkdir -p "${dest}"
 	cp -aT "${src}" "${dest}" || die
 
@@ -911,19 +943,32 @@ get_configuration3() {
 	fi
 }
 
+get_configuration4() {
+	if use debug ; then
+		echo "debug"
+	else
+		echo "release_debug"
+	fi
+}
+
 add_portable_mono_prefix() {
 	if ! use system-mono ; then
 		if use amd64 ; then
 			options_extra+=(
 				copy_mono_root=yes
-				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)"
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)" # Portable Mono base path
 			)
 		elif use x86 ; then
 			options_extra+=(
 				copy_mono_root=yes
-				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86-$(get_configuration3)"
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86-$(get_configuration3)" # Portable Mono base path
 			)
 		fi
+# Not supported due to a lack of time.
+ewarn "You are linking to portable mono.  USE=-system-mono is not supported for this ebuild."
+ewarn "Rebuild the system-mono as portable instead and set USE=system-mono"
+		[[ -e "${mono_prefix}/include" ]] || die "Missing ${mono_prefix}/include"
+		[[ -e "${mono_prefix}/lib" ]] || die "Missing ${mono_prefix}/lib"
 	fi
 }
 
@@ -939,7 +984,7 @@ einfo "Mono support:  Building the Mono glue generator"
 	add_portable_mono_prefix
 	_compile
 	_gen_mono_glue
-	_assemble_datafiles
+	#_assemble_datafiles_for_export_templates
 einfo "Mono support:  Building final binary"
 	# CI adds mono_static=yes
 	options_extra=(
@@ -965,13 +1010,23 @@ einfo "Creating export template"
 }
 
 src_compile_linux() {
-	local target="editor"
+	local target=$(get_configuration4)
 	local configuration="debug"
 einfo "Building Linux editor"
 	if use mono ; then
 		src_compile_linux_yes_mono
 	else
 		src_compile_linux_no_mono
+	fi
+}
+
+get_linker() {
+	if use lld ; then
+		echo "lld"
+	elif use mold ; then
+		echo "mold"
+	else
+		echo "bfd"
 	fi
 }
 
@@ -989,19 +1044,18 @@ src_compile() {
 		alsa=$(usex alsa)
 		dbus=$(usex dbus)
 		libdecor=$(usex wayland)
+		linker=$(get_linker)
+		lto=$(usex lto)
 		pulseaudio=$(usex pulseaudio)
 		speechd=$(usex speech)
 		touch=$(usex touch)
 		udev=$(usex gamepad)
 		use_asan=$(usex asan)
 		use_hwasan=$(usex hwasan)
-		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
-		use_lto=$(usex lto)
 		use_lsan=$(usex lsan)
 		use_msan=$(usex msan)
 		use_sanitize_in_production=$(usex sanitize-in-production)
-		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
 		wayland=$(usex wayland)
@@ -1135,7 +1189,7 @@ _install_linux_editor() {
 	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJ}"
 	exeinto "${d_base}/bin"
 	local f
-	f=$(basename bin/godot*editor*)
+	f=$(basename "bin/godot"*"x11"*)
 	doexe "bin/${f}"
 	dosym \
 		"${d_base}/bin/${f}" \
@@ -1177,10 +1231,50 @@ _install_mono_glue() {
 	doins -r "modules/mono/glue/GodotSharp/GodotSharpEditor/Generated"
 }
 
+_install_editor_data_files() {
+	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJ}"
+	insinto "${d_base}/bin"
+	exeinto "${d_base}/bin"
+	doins -r "bin/GodotSharp"
+	doexe "bin/libmonosgen-2.0.so"
+#	bin/GodotSharp
+#	bin/godot.x11.opt.tools.64.mono
+#	bin/libmonosgen-2.0.so
+	if use system-mono ; then
+		dodir "/usr/$(get_libdir)/godot/3/GodotSharp/Mono"
+		IFS=$'\n'
+		local L=(
+			$(equery f mono)
+		)
+		local src_path
+		for src_path in "${L[@]}" ; do
+			if [[ "${src_path}" =~ ^"/usr/lib/" ]] ; then
+				:
+			elif [[ "${src_path}" =~ ^"/usr/lib64/" ]] ; then
+				:
+			elif [[ "${src_path}" =~ ^"/usr/include/" ]] ; then
+				:
+			elif [[ "${src_path}" =~ ^"/usr/bin/" ]] ; then
+				:
+			else
+				continue
+			fi
+			local new_prefix="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/GodotSharp/Mono"
+			local new_path=$(echo "${src_path}" | sed -e "s|^/usr|${new_prefix}|")
+			local d=$(dirname "${new_path}")
+			dodir "${d}"
+			cp -a "${src_path}" "${ED}/${new_path}" || die
+		done
+		IFS=$' \t\n'
+# /usr/lib64/godot/3/bin/GodotSharp/Mono/lib64/libmono-native.so
+	fi
+}
+
 src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
 	_install_linux_editor
-	_install_template_datafiles
+	_install_editor_data_files
+	#_install_template_datafiles
 	use mono && _install_mono_glue
 }
 
@@ -1207,3 +1301,5 @@ ewarn "VisualScript support has been dropped in the 4.x series.  Please convert 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  mono, csharp, split-packages, multiplatform, portable-games, multislot
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250922)
 # Hello World test:  passed
+# GDScript:  untested
+# C# Hello world test:  passed
