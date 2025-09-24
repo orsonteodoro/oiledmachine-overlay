@@ -11,7 +11,6 @@ ANDROID_SDK_VER="34" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="19" # From https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/shared.py#L62
 DOTNET_SDK_PV="8.0" # From docs
 EMSCRIPTEN_PV="3.1.64" # Based on https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/web_builds.yml#L10 U22
-EMSCRIPTEN_CLANG_PV="21"
 EMSCRIPTEN_NODE_PV="10.19" # Based on emscripten
 JDK_PV="17" # From https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/android_builds.yml#L50
 MINGW_PV="14.1.1" # From binary inspection
