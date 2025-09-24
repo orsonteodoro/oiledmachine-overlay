@@ -213,9 +213,6 @@
     More fine-grained slotting primarily for language support.
     Stable versions only to minimize project upgrade issues.
     -->
-    <slot name="3.5">
-      For compatibility with 3.5.x projects, C# 13, GDNative support, VisualScript.
-    </slot>
     <slot name="3.6">
       For compatibility with 3.6.x projects, C# 13, VisualScript.
     </slot>
@@ -223,7 +220,7 @@
       For compatibility with 4.3.x projects, C# 12, GDExtensions support, Orchestrator support.
     </slot>
     <slot name="4.5">
-      For compatibility with 4.5.x projects, C# 12.
+      For compatibility with 4.5.x projects, C# 12, GDExtensions support.
     </slot>
   </slots>
 </pkgmetadata>
