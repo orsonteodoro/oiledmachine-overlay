@@ -74,7 +74,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_popcnt"
 )
 
-inherit godot-4.5
+inherit godot-4.4
 inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic edo llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
@@ -215,7 +215,7 @@ camera -gamepad +touch
 "
 IUSE_LIBS="
 +basis-universal +betsy
-+freetype +graphite jolt +navigation +noise +opengl +pcre2 +sdl
++freetype +graphite +jolt +navigation +noise +opengl +pcre2 +sdl
 +text-server-adv -text-server-fb +volk +vulkan
 "
 IUSE_NET="
@@ -227,8 +227,8 @@ csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
 system-brotli system-clipper2 system-embree system-enet system-freetype
-system-glslang system-graphite system-harfbuzz system-icu system-libjpeg-turbo
-system-libogg system-libpng system-libtheora system-sdl system-libvorbis
+system-glslang system-graphite system-harfbuzz system-icu
+system-libogg system-libpng system-libtheora system-libvorbis
 system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
 system-msdfgen system-openxr system-pcre2 system-recastnavigation
 system-wslay system-xatlas system-zlib system-zstd
@@ -344,7 +344,6 @@ REQUIRED_USE+="
 		!system-graphite
 		!system-harfbuzz
 		!system-icu
-		!system-libjpeg-turbo
 		!system-libogg
 		!system-libpng
 		!system-libtheora
@@ -356,7 +355,6 @@ REQUIRED_USE+="
 		!system-msdfgen
 		!system-pcre2
 		!system-recastnavigation
-		!system-sdl
 		!system-xatlas
 		!system-zlib
 		!system-zstd
@@ -545,9 +543,6 @@ DEPEND+="
 	system-icu? (
 		>=dev-libs/icu-${ICU_PV}
 	)
-	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}
-	)
 	system-libogg? (
 		>=media-libs/libogg-${LIBOGG_PV}
 	)
@@ -580,9 +575,6 @@ DEPEND+="
 	)
 	system-recastnavigation? (
 		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
-	)
-	system-sdl? (
-		>=media-libs/libsdl3-${LIBSDL3_PV}
 	)
 	system-wslay? (
 		>=net-libs/wslay-${WSLAY_PV}
@@ -663,7 +655,7 @@ BDEPEND+="
 PATCHES=(
 	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
 	"${FILESDIR}/godot-4.5-sanitizers.patch"
-	"${FILESDIR}/godot-4.5-optionalize-x86-flags.patch"
+	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
 )
 
 check_speech_dispatcher() {
@@ -1165,7 +1157,6 @@ src_compile() {
 		builtin_graphite=$(usex !system-graphite)
 		builtin_harfbuzz=$(usex !system-harfbuzz)
 		builtin_icu4c=$(usex !system-icu)
-		builtin_libjpeg_turbo=$(usex !system-libjpeg-turbo)
 		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
@@ -1179,7 +1170,6 @@ src_compile() {
 		builtin_recastnavigation=$(usex !system-recastnavigation)
 		builtin_rvo2_2d=True
 		builtin_rvo2_3d=True
-		builtin_sdl=$(usex !system-sdl)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
 		builtin_zlib=$(usex !system-zlib)
