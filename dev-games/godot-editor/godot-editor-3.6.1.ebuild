@@ -733,7 +733,6 @@ ewarn "LANG=POSIX not supported"
 	fi
 
 	if use mono ; then
-einfo "USE=mono is under contruction"
 		local p=$(ls "/opt/dotnet-sdk-bin-${DOTNET_SDK_SLOT}/dotnet" | head -n 1)
 		export PATH="$(dirname ${p}):${PATH}"
 		export DOTNET_CLI_TELEMETRY_OPTOUT=1
