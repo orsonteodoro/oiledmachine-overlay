@@ -10,27 +10,28 @@ ANDROID_MIN_API="21" # From tarball, see src_configure
 ANDROID_SDK_VER="34" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="19" # From https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/shared.py#L62
 DOTNET_SDK_PV="8.0" # From docs
-EMSCRIPTEN_PV="3.1.64" # Based on https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/web_builds.yml#L10 U22
-EMSCRIPTEN_NODE_PV="10.19" # Based on emscripten
-JDK_PV="17" # From https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/android_builds.yml#L50
-MINGW_PV="14.1.1" # From binary inspection
-NDK_PV="23.2" # From https://github.com/godotengine/godot/blob/4.3-stable/platform/android/detect.py#L61
+EMSCRIPTEN_PV="3.1.64" # Based on CI logs for this release https://github.com/godotengine/godot/blob/4.4.1-stable/.github/workflows/web_builds.yml#L12 U24
+EMSCRIPTEN_NODE_PV="22.16.0"
+JDK_PV="17" # From https://github.com/godotengine/godot/blob/4.4.1-stable/.github/workflows/android_builds.yml#L49
+MINGW_PV="14.2.1" # From binary inspection
+NDK_PV="23.2" # From https://github.com/godotengine/godot/blob/4.4.1-stable/platform/android/detect.py#L71
 
-# It assumes that the docs are 100% correct, since the logs are deleted.
+# The system minimum requirements for the export templates are not based on documentation but on CI logs.
+# It is assumed that the documentation is not up to date because the LTS versions page is lagging.
 # The export templates allow to run the project on the prebuilt target platforms.
-ANDROID_MIN_VER="6.0" # Based on docs
-# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1904
-# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1878
-# Safari min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1893
-BROWSERS_MIN_VER="Chrome 75, Firefox 68, Safari 14.1"
+ANDROID_MIN_VER="14.0"
+# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/3.1.64/src/settings.js#L1904
+# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/3.1.64/src/settings.js#L1878
+# Safari min version:  https://github.com/emscripten-core/emscripten/blob/3.1.64/src/settings.js#L1893
+BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 14.1"
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
-LINUX_MIN_VER="D11, U20, F32" # Based on https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/linux_builds.yml#L20 and GLIBC_PV
+LINUX_MIN_VER="D12, U22, F37" # Based on https://github.com/godotengine/godot/blob/4.4.1-stable/.github/workflows/linux_builds.yml#L22 and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
-WINDOWS_MIN_VER="10" # Based on docs
+WINDOWS_MIN_VER="10" # Based on /DWINVER= /D_WIN32_WINNT=
 
 # Emscripten core info is at:
-# https://github.com/emscripten-core/emsdk/blob/3.1.39/emscripten-releases-tags.txt
-# https://github.com/emscripten-core/emscripten/blob/3.1.39/ChangeLog.md
+# https://github.com/emscripten-core/emsdk/blob/3.1.64/emscripten-releases-tags.txt
+# https://github.com/emscripten-core/emscripten/blob/3.1.64/ChangeLog.md
 
 SRC_URI="
 	mono? (
@@ -63,7 +64,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/4.4.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -370,6 +371,7 @@ get_compiler_info_osxcross() {
 		local L=(
 			"ios.zip"
 			"macos.zip"
+			"visionos.zip"
 		)
 		local f
 		for f in ${L[@]} ; do
