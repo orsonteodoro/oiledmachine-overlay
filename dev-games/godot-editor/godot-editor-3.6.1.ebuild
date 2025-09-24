@@ -211,7 +211,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_15
+	ebuild_revision_16
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -774,7 +774,7 @@ warn_missing_texture_format() {
 
 src_configure() {
 	default
-	#cflags-hardened_append
+	cflags-hardened_append
 	warn_missing_texture_format
 
 	if tc-is-gcc ; then
