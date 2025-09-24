@@ -18,9 +18,10 @@
 
     Scripting language compatibility:
 
-    4.5:  GDScript, C# 12 (.NET 8.0), GDExtension
+    4.5:  GDScript, C# 12 (.NET 8.0)
     4.3:  GDScript, C# 12 (.NET 8.0), GDExtension, Orchestrator
-    3.6:  GDScript, C# 13 (.NET 9.0), GDNative [10], VisualScript
+    3.6:  GDScript, C# 13 (.NET 9.0), VisualScript
+    3.5:  GDScript, C# 13 (.NET 9.0), GDNative [10], VisualScript
 
     Language features:
 
