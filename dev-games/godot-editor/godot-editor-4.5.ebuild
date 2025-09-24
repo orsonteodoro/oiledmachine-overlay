@@ -969,6 +969,17 @@ einfo "Mono support:  Generating glue sources"
 		--headless \
 		--generate-mono-glue \
 		"modules/mono/glue"
+	local d
+	d="modules/mono/glue/GodotSharp/GodotSharp/Generated"
+	if [[ ! -e "${d}" ]] ; then
+eerror "Failed to generate mono glue.  Missing ${d}"
+		die
+	fi
+	d="modules/mono/glue/GodotSharp/GodotSharpEditor/Generated"
+	if [[ ! -e "${d}" ]] ; then
+eerror "Failed to generate mono glue.  Missing ${d}"
+		die
+	fi
 }
 
 _assemble_datafiles_for_export_templates() {
@@ -1082,7 +1093,7 @@ ewarn "Rebuild the system-mono as portable instead and set USE=system-mono"
 	fi
 }
 
-_gen_mono_glue() {
+_gen_managed_libraries() {
 einfo "Mono support:  Building managed libraries"
 	./modules/mono/build_scripts/build_assemblies.py \
 		--godot-output-dir="./bin" \
@@ -1403,8 +1414,8 @@ _install_editor_data_files() {
 			local new_prefix="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/GodotSharp/Mono"
 			local new_path=$(echo "${src_path}" | sed -e "s|^/usr|${new_prefix}|")
 			local d=$(dirname "${new_path}")
-			dodir "${d}"
-			cp -a "${src_path}" "${ED}/${new_path}" || die
+#			dodir "${d}"
+#			cp -a "${src_path}" "${ED}/${new_path}" || die
 		done
 		IFS=$' \t\n'
 	fi
