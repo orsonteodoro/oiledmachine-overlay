@@ -8,10 +8,10 @@ EAPI=8
 
 DESCRIPTION="Godot metapackage"
 KEYWORDS="~amd64 ~riscv ~x86"
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
+SLOT="$(ver_cut 1-2 ${PV})"
 IUSE="
 +demos -export-templates
+ebuild_revision_1
 "
 RDEPEND="
 	!dev-games/godot
