@@ -238,8 +238,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       to and from other programs.
     </flag>
     <flag name="fp64">
-      Support scientific, engineering, large world, large distance simulation
-      use cases to prevent unwanted clumping, drifting, jitter, jumping.
+      Support geolocation or geocaching games used in mobile, AR, VR, ML;
+      large world, large distance, scientific, engineering, large distance
+      simulations use cases to prevent unwanted clumping, drifting, jitter,
+      jumping.
     </flag>
     <flag name="csharp-external-editor">
       Selects a compatible C# editor
