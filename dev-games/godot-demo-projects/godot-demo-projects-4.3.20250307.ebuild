@@ -18,7 +18,7 @@ else
 	# The latest release
 	FALLBACK_COMMIT="5557b10cfa514101fb168c8ff2239594d7d34cff" # Mar 07, 2025
 	FN_DEST="${PN}-${FALLBACK_COMMIT:0:7}.tar.gz"
-	KEYWORDS="~amd64 ~riscv ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
 	S="${WORKDIR}/${PN}-${FALLBACK_COMMIT}"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		SRC_URI="
@@ -42,7 +42,7 @@ LICENSE="MIT"
 SLOT_MAJ=$(ver_cut "1-2" "${PV}")
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	!dev-games/godot
