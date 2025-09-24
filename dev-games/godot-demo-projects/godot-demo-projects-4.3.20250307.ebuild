@@ -6,24 +6,31 @@ EAPI=8
 
 STATUS="stable"
 
-if [[ "${PV}" =~ "9999" ]] ; then
+if [[ "${PV}" =~ "99999999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
-	FALLBACK_COMMIT="84eabb3cf78dfea1e4b5e0d449c02d952c755aa8"
+	FALLBACK_COMMIT="5557b10cfa514101fb168c8ff2239594d7d34cff" # Mar 07, 2025
 	inherit git-r3
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 else
 	# The latest release
-	EGIT_COMMIT_DEMOS_STABLE=""
-	FN_DEST="${PN}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz"
+	FALLBACK_COMMIT="5557b10cfa514101fb168c8ff2239594d7d34cff" # Mar 07, 2025
+	FN_DEST="${PN}-${FALLBACK_COMMIT:0:7}.tar.gz"
 	KEYWORDS="~amd64 ~riscv ~x86"
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
-	SRC_URI="
-https://github.com/godotengine/${PN}/archive/refs/tags/$(ver_cut 1-2 ${PV})-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz
-		-> ${FN_DEST}
-	"
+	S="${WORKDIR}/${PN}-${FALLBACK_COMMIT}"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		SRC_URI="
+https://github.com/godotengine/${PN}/archive/${FALLBACK_COMMIT}.tar.gz
+			-> ${FN_DEST}
+		"
+	else
+		SRC_URI="
+https://github.com/godotengine/${PN}/archive/refs/tags/$(ver_cut 1-2 ${PV})-${FALLBACK_COMMIT:0:7}.tar.gz
+			-> ${FN_DEST}
+		"
+	fi
 fi
 
 DESCRIPTION="Demonstration and Template Projects"
@@ -35,7 +42,7 @@ LICENSE="MIT"
 SLOT_MAJ=$(ver_cut "1-2" "${PV}")
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	!dev-games/godot
@@ -46,7 +53,7 @@ ewarn "Do not emerge this directly use dev-games/godot-meta instead."
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${PV}" =~ "99999999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
