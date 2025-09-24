@@ -54,11 +54,11 @@
     Name          | Use cases, cui bono? [11]                                                                                          |
     --------------|--------------------------------------------------------------------------------------------------------------------|
     GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs)                                                                 |
-    C#            | 2D/3D games/apps, interactive presentations, training simulations, UIs                                             |
-    GDNative      | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
-    GDExtension   | Chess[12], racing, using machine learning models, GPU offloading engineering simulations[13], custom libs/physics  |
-    Orchestrator  | Prototyping, 2.5D/3D environment/NPC scripting                                                                     |
-    VisualScript  | Education, prototyping, 2.5D/3D environment/NPC scripting                                                          |
+    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, training simulations, UIs                     |
+    GDNative      | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
+    GDExtension   | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
+    Orchestrator  | Prototyping, 2.5D/3D environment/NPC scripting, machinima                                                          |
+    VisualScript  | Education, prototyping, 2.5D/3D environment/NPC scripting, machinima                                               |
 
     [1] Node based visual languages should be easy if experienced with Kismet or
         Blueprint but can difficult if a person is not accustomed or not vibing
@@ -86,7 +86,6 @@
          missing or not operational for C#, so API class reference documents
          are essential for productivity.
 
-
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
 
@@ -108,7 +107,6 @@
       * Packages with godot-cross-* need to be emerged in crossdev context.
       * Packages with godot-template-* need to be emerge in native context.
       * See also metadata.xml in each package for details.
-
 
     See dev-games/godot-meta for cross-compile package status.
 
