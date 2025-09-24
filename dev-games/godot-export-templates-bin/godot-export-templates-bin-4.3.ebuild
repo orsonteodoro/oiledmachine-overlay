@@ -10,11 +10,11 @@ ANDROID_MIN_API="21" # From tarball, see src_configure
 ANDROID_SDK_VER="34" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="??" # From CI logs
 DOTNET_SDK_PV="8.0" # From docs
-EMSCRIPTEN_PV="3.1.39" # Based on doc
+EMSCRIPTEN_PV="3.1.64" # Based on https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/web_builds.yml#L10 U22
 EMSCRIPTEN_NODE_PV="10.19" # Based on emscripten
-JDK_PV="17" # From docs
+JDK_PV="17" # From https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/android_builds.yml#L50
 MINGW_PV="14.1.1" # From binary inspection
-NDK_PV="23.2" # From docs
+NDK_PV="23.2" # From https://github.com/godotengine/godot/blob/4.3-stable/platform/android/detect.py#L61
 
 # It assumes that the docs are 100% correct, since the logs are deleted.
 # The export templates allow to run the project on the prebuilt target platforms.
@@ -24,7 +24,7 @@ ANDROID_MIN_VER="6.0" # Based on docs
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/3.1.39/src/settings.js#L1893
 BROWSERS_MIN_VER="Chrome 75, Firefox 68, Safari 14.1"
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
-LINUX_MIN_VER="D12, U22, F36" # Based on CI image and GLIBC_PV
+LINUX_MIN_VER="D11, U20, F32" # Based on https://github.com/godotengine/godot/blob/4.3-stable/.github/workflows/linux_builds.yml#L20 and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
 WINDOWS_MIN_VER="10" # Based on docs
 

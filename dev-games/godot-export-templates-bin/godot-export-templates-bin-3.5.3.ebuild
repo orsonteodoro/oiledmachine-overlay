@@ -7,14 +7,14 @@ EAPI=8
 STATUS="stable"
 
 ANDROID_MIN_API="19" # From tarball, see src_configure
-ANDROID_SDK_VER="34" # From tarball, see src_configure
+ANDROID_SDK_VER="33" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="17.0.0 (c672c3fe05adbb590abc99da39143b55ad510538)" # From CI logs
 DOTNET_SDK_PV="9.0.200" # From CI logs
-EMSCRIPTEN_PV="3.1.39" # Based on https://github.com/godotengine/godot/blob/3.6.1-stable/.github/workflows/javascript_builds.yml#L10 U24
+EMSCRIPTEN_PV="3.1.14" # Based on https://github.com/godotengine/godot/blob/3.5.3-stable/.github/workflows/javascript_builds.yml#L10 U20
 EMSCRIPTEN_NODE_PV="22.16.0"
-JDK_PV="17" # From https://github.com/godotengine/godot/blob/3.6.1-stable/.github/workflows/android_builds.yml#L27
-MINGW_PV="13.2.1" # From binary inspection
-NDK_PV="23.2" # From https://github.com/godotengine/godot/blob/3.6.1-stable/platform/android/detect.py#L46
+JDK_PV="11" # From https://github.com/godotengine/godot/blob/3.5.3-stable/.github/workflows/android_builds.yml#L34
+MINGW_PV="11.2.1" # From binary inspection
+NDK_PV="23.2" # From https://github.com/godotengine/godot/blob/3.5.3-stable/platform/android/detect.py#L45
 
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
@@ -24,9 +24,9 @@ ANDROID_MIN_VER="4.4"
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/1.39.9/src/settings.js#L1878
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/1.39.9/src/settings.js#L1893
 BROWSERS_MIN_VER="Chrome 75, Firefox 65, Safari 12"
-IOS_MIN_VER="12.0" # From -miphoneos-version-min=
-LINUX_MIN_VER="D11, U22, F37" # Based on https://github.com/godotengine/godot/blob/3.6.1-stable/.github/workflows/linux_builds.yml#L18 and GLIBC_PV
-MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
+IOS_MIN_VER="10.0" # From -miphoneos-version-min=
+LINUX_MIN_VER="D11, U20, F32" # Based on https://github.com/godotengine/godot/blob/3.5.3-stable/.github/workflows/linux_builds.yml#L17 and GLIBC_PV
+MACOS_MIN_VER="10.12" # From -mmacosx-version-min=
 WINDOWS_MIN_VER="7" # Based on /DWINVER= /D_WIN32_WINNT=
 
 # Emscripten core info is at:
@@ -174,11 +174,13 @@ linux_x11_32_debug
 linux_x11_32_release
 linux_x11_64_debug
 linux_x11_64_release
-linux_x11_arm32_debug
-linux_x11_arm32_release
-linux_x11_arm64_debug
-linux_x11_arm64_release
 osx.zip
+uwp_arm_debug.zip
+uwp_arm_release.zip
+uwp_x64_debug.zip
+uwp_x64_release.zip
+uwp_x86_debug.zip
+uwp_x86_release.zip
 webassembly_debug.zip
 webassembly_gdnative_debug.zip
 webassembly_gdnative_release.zip
@@ -265,12 +267,13 @@ filter_standard() {
 	filter_build_id "linux_x11_32_release"
 	filter_build_id "linux_x11_64_debug"
 	filter_build_id "linux_x11_64_release"
-	filter_build_id "linux_x11_arm32_debug"
-	filter_build_id "linux_x11_arm32_release"
-	filter_build_id "linux_x11_arm64_debug"
-	filter_build_id "linux_x11_arm64_release"
 	filter_build_id "osx.zip"
-	filter_build_id "version.txt"
+	filter_build_id "uwp_arm_debug.zip"
+	filter_build_id "uwp_arm_release.zip"
+	filter_build_id "uwp_x64_debug.zip"
+	filter_build_id "uwp_x64_release.zip"
+	filter_build_id "uwp_x86_debug.zip"
+	filter_build_id "uwp_x86_release.zip"
 	filter_build_id "webassembly_debug.zip"
 	filter_build_id "webassembly_gdnative_debug.zip"
 	filter_build_id "webassembly_gdnative_release.zip"
@@ -304,7 +307,6 @@ filter_mono() {
 	filter_build_id "linux_x11_64_debug"
 	filter_build_id "linux_x11_64_release"
 	filter_build_id "osx.zip"
-	filter_build_id "version.txt"
 	filter_build_id "webassembly_debug.zip"
 	filter_build_id "webassembly_release.zip"
 	filter_build_id "windows_32_debug.exe"

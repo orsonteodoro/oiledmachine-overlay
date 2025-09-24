@@ -10,11 +10,11 @@ ANDROID_MIN_API="24" # From tarball, see src_configure
 ANDROID_SDK_VER="35" # From tarball, see src_configure
 CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs
 DOTNET_SDK_PV="8.0.100" # From CI logs
-EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release.  U24
+EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/web_builds.yml#L12 U24
 EMSCRIPTEN_NODE_PV="22.16.0"
-JDK_PV="17.0.16" # From CI logs
+JDK_PV="17.0.16" # From CI logs, see https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/android_builds.yml#L49
 MINGW_PV="14.2.1" # From binary inspection
-NDK_PV="28.1" # From CI logs
+NDK_PV="28.1" # From CI logs, https://github.com/godotengine/godot/blob/4.5-stable/platform/android/detect.py#L71
 
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
@@ -25,7 +25,7 @@ ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
 BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
-LINUX_MIN_VER="D12, U22, F36" # Based on CI image and GLIBC_PV
+LINUX_MIN_VER="D12, U22, F37" # Based on https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/linux_builds.yml#L22 and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
 WINDOWS_MIN_VER="10" # Based on /DWINVER= /D_WIN32_WINNT=
 
