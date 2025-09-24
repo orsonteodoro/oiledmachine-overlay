@@ -8,16 +8,17 @@ EAPI=8
 
 DESCRIPTION="Godot metapackage"
 KEYWORDS="~amd64 ~riscv ~x86"
-SLOT="$(ver_cut 1-2 ${PV})"
+SLOT_MAJ=$(ver_cut "1-2" "${PV}")
+SLOT="${SLOT_MAJ}"
 IUSE="
 +demos -export-templates
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
 	demos? (
-		dev-games/godot-demo-projects:${PV%%.*}
+		dev-games/godot-demo-projects:${SLOT}
 	)
 	export-templates? (
 		dev-games/godot-export-templates-bin:${SLOT}
