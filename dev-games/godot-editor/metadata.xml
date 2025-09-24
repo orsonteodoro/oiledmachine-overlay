@@ -121,6 +121,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.3</doc>
+    <doc lang="en">https://docs.godotengine.org/en/3.6</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
     <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
     <doc lang="fi">https://docs.godotengine.org/fi/latest/</doc>
