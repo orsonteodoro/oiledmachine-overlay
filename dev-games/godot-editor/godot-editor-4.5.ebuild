@@ -12,6 +12,8 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
+BUILD_EXPORT_TEMPLATES=0
+
 ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
 ASTCENC_VULNERABILITY_HISTORY="BO"
 BROTLI_VULNERABILITY_HISTORY="BO IU"
@@ -229,7 +231,7 @@ system-brotli system-clipper2 system-embree system-enet system-freetype
 system-glslang system-graphite system-harfbuzz system-icu system-libjpeg-turbo
 system-libogg system-libpng system-libtheora system-sdl system-libvorbis
 system-libwebp system-libwebsockets system-mbedtls system-miniupnpc
-system-msdfgen -system-mono system-openxr system-pcre2 system-recastnavigation
+system-msdfgen system-openxr system-pcre2 system-recastnavigation
 system-wslay system-xatlas system-zlib system-zstd
 "
 IUSE+="
@@ -352,7 +354,6 @@ REQUIRED_USE+="
 		!system-libwebsockets
 		!system-mbedtls
 		!system-miniupnpc
-		!system-mono
 		!system-msdfgen
 		!system-pcre2
 		!system-recastnavigation
@@ -365,11 +366,6 @@ REQUIRED_USE+="
 		!ubsan
 		vulkan? (
 			volk
-		)
-	)
-	riscv? (
-		mono? (
-			system-mono
 		)
 	)
 	speech? (
@@ -913,15 +909,6 @@ eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
 		strip-flags
 		filter-flags -march=*
 	fi
-	if use mono ; then
-		# mono_static=yes bug
-		if use system-mono ; then
-			# The code assumes unilib system not multilib.
-			mkdir -p "${WORKDIR}/mono" || die
-			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
-			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
-		fi
-	fi
 	if use sanitize-in-production ; then
 # You can use UBSan and tc-malloc or scudo with GWP-ASan.
 		if use asan || use hwasan ; then
@@ -1072,27 +1059,6 @@ get_configuration3() {
 	fi
 }
 
-add_portable_mono_prefix() {
-	if ! use system-mono ; then
-		if use amd64 ; then
-			options_extra+=(
-				copy_mono_root=yes
-				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)" # Portable Mono base path
-			)
-		elif use x86 ; then
-			options_extra+=(
-				copy_mono_root=yes
-				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86-$(get_configuration3)" # Portable Mono base path
-			)
-		fi
-# Not supported due to a lack of time.
-ewarn "You are linking to portable mono.  USE=-system-mono is not supported for this ebuild."
-ewarn "Rebuild the system-mono as portable instead and set USE=system-mono"
-		[[ -e "${mono_prefix}/include" ]] || die "Missing ${mono_prefix}/include"
-		[[ -e "${mono_prefix}/lib" ]] || die "Missing ${mono_prefix}/lib"
-	fi
-}
-
 _gen_managed_libraries() {
 einfo "Mono support:  Building managed libraries"
 	./modules/mono/build_scripts/build_assemblies.py \
@@ -1109,11 +1075,12 @@ einfo "Mono support:  Building the Mono glue generator"
 		module_mono_enabled=yes
 		mono_glue=no
 	)
-	add_portable_mono_prefix
 	_compile
 	_gen_mono_glue
 	_gen_managed_libraries
-	#_assemble_datafiles_for_export_templates
+	if [[ "${BUILD_EXPORT_TEMPLATES}" == "1" ]] ; then
+		_assemble_datafiles_for_export_templates
+	fi
 einfo "Mono support:  Building final binary"
 	# CI adds mono_static=yes
 	options_extra=(
@@ -1124,7 +1091,6 @@ einfo "Mono support:  Building final binary"
 #		mono_static=yes
 #		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
 	)
-	add_portable_mono_prefix
 	_compile
 }
 
@@ -1376,10 +1342,10 @@ _install_template_datafiles() {
 	fi
 }
 
-_install_mono_glue() {
+_install_mono_glue_for_export_templates() {
 	local prefix="/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue"
-	insinto "${prefix}/modules/mono/glue"
-	doins "modules/mono/glue/mono_glue.gen.cpp"
+	#insinto "${prefix}/modules/mono/glue"
+	#doins "modules/mono/glue/mono_glue.gen.cpp"
 	insinto "${prefix}/modules/mono/glue/GodotSharp/GodotSharp"
 	doins -r "modules/mono/glue/GodotSharp/GodotSharp/Generated"
 	insinto "${prefix}/modules/mono/glue/GodotSharp/GodotSharpEditor"
@@ -1391,42 +1357,16 @@ _install_editor_data_files() {
 	insinto "${d_base}/bin"
 	exeinto "${d_base}/bin"
 	doins -r "bin/GodotSharp"
-	doexe "bin/libmonosgen-2.0.so"
-	if use system-mono ; then
-		dodir "/usr/$(get_libdir)/godot/3/GodotSharp/Mono"
-		IFS=$'\n'
-		local L=(
-			$(equery f mono)
-		)
-		local src_path
-		for src_path in "${L[@]}" ; do
-			if [[ "${src_path}" =~ ^"/usr/lib/" ]] ; then
-				:
-			elif [[ "${src_path}" =~ ^"/usr/lib64/" ]] ; then
-				:
-			elif [[ "${src_path}" =~ ^"/usr/include/" ]] ; then
-				:
-			elif [[ "${src_path}" =~ ^"/usr/bin/" ]] ; then
-				:
-			else
-				continue
-			fi
-			local new_prefix="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/GodotSharp/Mono"
-			local new_path=$(echo "${src_path}" | sed -e "s|^/usr|${new_prefix}|")
-			local d=$(dirname "${new_path}")
-#			dodir "${d}"
-#			cp -a "${src_path}" "${ED}/${new_path}" || die
-		done
-		IFS=$' \t\n'
-	fi
 }
 
 src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
 	_install_linux_editor
 	use mono && _install_editor_data_files
-	#_install_template_datafiles
-	use mono && _install_mono_glue
+	if [[ "${BUILD_EXPORT_TEMPLATES}" == "1" ]] ; then
+		_install_template_datafiles
+		use mono && _install_mono_glue_for_export_templates
+	fi
 }
 
 pkg_postinst() {
@@ -1449,6 +1389,10 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  mono, csharp, split-packages, multiplatform, portable-games, multislot
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250923)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250922)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (4.3, 20250923)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.6, 20250923)
-# Hello World test:  passed
+# Label3D Hello World test:  passed
+# GDScript scripting test:  passed
+# C# Hello world test:  passed

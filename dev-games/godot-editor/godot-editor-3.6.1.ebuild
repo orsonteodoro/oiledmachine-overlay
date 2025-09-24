@@ -14,6 +14,8 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
+BUILD_EXPORT_TEMPLATES=0
+
 ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
 # It can collect GPS coords for geolocation based games or gamified app or the
 # game engine can be used for app purposes not just games.
@@ -984,7 +986,9 @@ einfo "Mono support:  Building the Mono glue generator"
 	add_portable_mono_prefix
 	_compile
 	_gen_mono_glue
-	#_assemble_datafiles_for_export_templates
+	if [[ "${BUILD_EXPORT_TEMPLATES}" == "1" ]] ; then
+		_assemble_datafiles_for_export_templates
+	fi
 einfo "Mono support:  Building final binary"
 	# CI adds mono_static=yes
 	options_extra=(
@@ -1221,7 +1225,7 @@ _install_template_datafiles() {
 	fi
 }
 
-_install_mono_glue() {
+_install_mono_glue_for_export_templates() {
 	local prefix="/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue"
 	insinto "${prefix}/modules/mono/glue"
 	doins "modules/mono/glue/mono_glue.gen.cpp"
@@ -1270,8 +1274,10 @@ src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
 	_install_linux_editor
 	use mono && _install_editor_data_files
-	#_install_template_datafiles
-	use mono && _install_mono_glue
+	if [[ "${BUILD_EXPORT_TEMPLATES}" == "1" ]] ; then
+		_install_template_datafiles
+		use mono && _install_mono_glue_for_export_templates
+	fi
 }
 
 pkg_postinst() {
@@ -1295,8 +1301,10 @@ ewarn "VisualScript support has been dropped in the 4.x series.  Please convert 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  mono, csharp, split-packages, multiplatform, portable-games, multislot
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250923)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250922)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (4.3, 20250923)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.6, 20250923)
-# Hello World test:  passed
-# GDScript:  passed
+# Label3D Hello World test:  passed
+# GDScript Hello world test:  passed
 # C# Hello world test:  passed

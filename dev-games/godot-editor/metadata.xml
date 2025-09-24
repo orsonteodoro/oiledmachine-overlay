@@ -27,7 +27,7 @@
     Name          | Runtime speed   | Security         | Learning curve | Portability             |
     --------------|-----------------|------------------|----------------|-------------------------|
     GDScript      | Slow            | Moderate to Low  | Easy [4]       | Best                    |
-    C#            | Fast            | Good             | Easy           | Okay to poor [5]        |
+    C#            | Fast            | Good             | Easy [14]      | Okay to poor [5]        |
     GDNative      | Faster          | Baddest [7]      | Hardest        | Good [6]                |
     GDExtension   | Fastest         | Bad [7]          | Hard           | Better [6]              |
     Orchestrator  | Slower          | Depends on Godot | 50/50 [1][9]   | Forward port issues [3] |
@@ -72,14 +72,18 @@
         vulnerable code.  It is recommended to use a local LLM to code review it.
         There are more vulnerabilities that the AI can catch than what a
         compiler reports.
-    [8] It varies based on the project size, team size, experience, quality standards
+    [8] It varies based on the project size, team size, experience, quality
+        standards
     [9] AI is less likely to help you or you lose AI code generation benefit
     [10] Currently not supported in the ebuild due to complex build process.
          You should try the prebuilt instead.
-    [11] You can use multiple languages in the game.  Typically GDScript and C#, or
-         GDScript and GDExtension are combined.
-    [12] A memory bounded problem.  C++ offers the lowest memory overhead of the listed languages.
+    [11] You can use multiple languages in the game.  Typically GDScript and C#,
+         or GDScript and GDExtension are combined.
+    [12] A memory bounded problem.  C++ offers the lowest memory overhead of the
+         listed languages.
     [13] Via OpenMP
+    [14] Some AI can help with code generation.  It requires an external editor
+         for IntelliSense.
 
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
