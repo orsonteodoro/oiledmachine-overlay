@@ -204,15 +204,16 @@ get_build_ids() {
 }
 BUILD_IDS=$(get_build_ids)
 IUSE+="
-${BUILD_IDS} custom mono standard
+${BUILD_IDS}
+custom mono standard
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
 		${BUILD_IDS}
 	)
 "
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
+SLOT="$(ver_cut 1-2 ${PV})"
 RESTRICT="binchecks"
 BDEPEND="
 	app-arch/unzip
@@ -453,17 +454,17 @@ src_compile() {
 
 src_install() {
 	export STRIP="true"
-	insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates"
+	insinto "/usr/share/godot/${SLOT}/prebuilt-export-templates"
 	if ! use custom ; then
 		use mono && doins $(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz")
 		use standard && doins $(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_export_templates.tpz")
 	else
 		if use mono ; then
-			insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono"
+			insinto "/usr/share/godot/${SLOT}/prebuilt-export-templates/mono"
 			doins -r "${WORKDIR}/mono/"*
 		fi
 		if use standard ; then
-			insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/standard"
+			insinto "/usr/share/godot/${SLOT}/prebuilt-export-templates/standard"
 			doins -r "${WORKDIR}/standard/"*
 		fi
 		local p
@@ -513,7 +514,7 @@ einfo
 einfo "The following still must be done for export templates (Mono/C#):"
 einfo
 einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
-einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono/templates ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
+einfo "  cp -aT /usr/share/godot/${SLOT}/prebuilt-export-templates/mono/templates ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
 einfo
 		fi
 		if use standard ; then
@@ -521,7 +522,7 @@ einfo
 einfo "The following still must be done for export templates (standard):"
 einfo
 einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
-einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/standard/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  cp -aT /usr/share/godot/${SLOT}/prebuilt-export-templates/standard/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
 einfo
 		fi
 	fi
