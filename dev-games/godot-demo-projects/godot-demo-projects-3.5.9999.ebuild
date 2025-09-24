@@ -32,7 +32,7 @@ http://godotengine.org
 https://github.com/godotengine/godot-demo-projects
 "
 LICENSE="MIT"
-SLOT_MAJ=$(ver_cut 1-2 ${PV})
+SLOT_MAJ=$(ver_cut "1-2" "${PV}")
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+="
 ebuild_revision_1
