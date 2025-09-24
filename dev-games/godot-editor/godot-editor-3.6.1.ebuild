@@ -1237,9 +1237,6 @@ _install_editor_data_files() {
 	exeinto "${d_base}/bin"
 	doins -r "bin/GodotSharp"
 	doexe "bin/libmonosgen-2.0.so"
-#	bin/GodotSharp
-#	bin/godot.x11.opt.tools.64.mono
-#	bin/libmonosgen-2.0.so
 	if use system-mono ; then
 		dodir "/usr/$(get_libdir)/godot/3/GodotSharp/Mono"
 		IFS=$'\n'
@@ -1266,14 +1263,13 @@ _install_editor_data_files() {
 			cp -a "${src_path}" "${ED}/${new_path}" || die
 		done
 		IFS=$' \t\n'
-# /usr/lib64/godot/3/bin/GodotSharp/Mono/lib64/libmono-native.so
 	fi
 }
 
 src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
 	_install_linux_editor
-	_install_editor_data_files
+	use mono && _install_editor_data_files
 	#_install_template_datafiles
 	use mono && _install_mono_glue
 }

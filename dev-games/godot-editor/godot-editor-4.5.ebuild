@@ -1381,15 +1381,39 @@ _install_editor_data_files() {
 	exeinto "${d_base}/bin"
 	doins -r "bin/GodotSharp"
 	doexe "bin/libmonosgen-2.0.so"
-#	bin/GodotSharp
-#	bin/godot.x11.opt.tools.64.mono
-#	bin/libmonosgen-2.0.so
+	if use system-mono ; then
+		dodir "/usr/$(get_libdir)/godot/3/GodotSharp/Mono"
+		IFS=$'\n'
+		local L=(
+			$(equery f mono)
+		)
+		local src_path
+		for src_path in "${L[@]}" ; do
+			if [[ "${src_path}" =~ ^"/usr/lib/" ]] ; then
+				:
+			elif [[ "${src_path}" =~ ^"/usr/lib64/" ]] ; then
+				:
+			elif [[ "${src_path}" =~ ^"/usr/include/" ]] ; then
+				:
+			elif [[ "${src_path}" =~ ^"/usr/bin/" ]] ; then
+				:
+			else
+				continue
+			fi
+			local new_prefix="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/GodotSharp/Mono"
+			local new_path=$(echo "${src_path}" | sed -e "s|^/usr|${new_prefix}|")
+			local d=$(dirname "${new_path}")
+			dodir "${d}"
+			cp -a "${src_path}" "${ED}/${new_path}" || die
+		done
+		IFS=$' \t\n'
+	fi
 }
 
 src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
 	_install_linux_editor
-	_install_editor_data_files
+	use mono && _install_editor_data_files
 	#_install_template_datafiles
 	use mono && _install_mono_glue
 }
