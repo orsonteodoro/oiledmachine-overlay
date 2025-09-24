@@ -10,7 +10,9 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
+	FALLBACK_COMMIT="84eabb3cf78dfea1e4b5e0d449c02d952c755aa8"
 	inherit git-r3
+	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 else
 	# The latest release
@@ -30,20 +32,22 @@ http://godotengine.org
 https://github.com/godotengine/godot-demo-projects
 "
 LICENSE="MIT"
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/3.x"
+SLOT_MAJ=$(ver_cut 1-2 ${PV})
+SLOT="${SLOT_MAJ}/${PV}"
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND="
 	!dev-games/godot
 "
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
 }
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -60,8 +64,8 @@ src_compile() {
 }
 
 src_install() {
-	insinto "/usr/share/godot${SLOT_MAJ}/godot-demo-projects"
-	doins -r "${S}"/*
+	insinto "/usr/share/godot/${SLOT_MAJ}/godot-demo-projects"
+	doins -r "${S}/"*
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
