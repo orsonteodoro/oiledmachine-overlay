@@ -105,9 +105,50 @@ DOTNET_LICENSE="
 	ZLIB
 "
 # See dotnet-sdk ebuild
+MONO_LICENSE="
+	(
+		MIT
+		UoI-NCSA
+	)
+	Apache-1.1
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	APSL-2
+	BoringSSL-ECC
+	BoringSSL-PSK
+	BSD
+	BSD-2
+	BSD-4
+	CC-BY-2.5
+	CC-BY-4.0
+	DOTNET-libraries-and-runtime-components-patents
+	gcc-runtime-library-exception-3.1
+	GPL-2+
+	GPL-2-with-linking-exception
+	GPL-2+-with-libtool-exception
+	GPL-3+
+	GPL-3+-with-autoconf-exception
+	GPL-3+-with-libtool-exception
+	IDPL
+	Info-ZIP
+	ISC
+	LGPL-2.1
+	LGPL-2.1-with-linking-exception
+	MIT
+	Mono-gc_allocator.h
+	Mono-patents
+	MPL-1.1
+	Ms-PL
+	openssl
+	OSL-3.0
+	SunPro
+	ZLIB
+"
+# See mono ebuild
 LICENSE+="
 	mono? (
 		${DOTNET_LICENSE}
+		${MONO_LICENSE}
 	)
 "
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
