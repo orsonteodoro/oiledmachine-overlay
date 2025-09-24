@@ -53,7 +53,7 @@
 
     Name          | Use cases, cui bono? [11]                                                                                          |
     --------------|--------------------------------------------------------------------------------------------------------------------|
-    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs)                                                                 |
+    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure, LLM games         |
     C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, training simulations, UIs                     |
     GDNative      | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
     GDExtension   | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
