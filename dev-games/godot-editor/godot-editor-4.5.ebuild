@@ -1439,4 +1439,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  mono, csharp, split-packages, multiplatform, portable-games, multislot
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250922)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.6, 20250923)
 # Hello World test:  passed

@@ -1296,6 +1296,7 @@ ewarn "VisualScript support has been dropped in the 4.x series.  Please convert 
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  mono, csharp, split-packages, multiplatform, portable-games, multislot
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (4.5, 20250922)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.6, 20250923)
 # Hello World test:  passed
-# GDScript:  untested
+# GDScript:  passed
 # C# Hello world test:  passed
