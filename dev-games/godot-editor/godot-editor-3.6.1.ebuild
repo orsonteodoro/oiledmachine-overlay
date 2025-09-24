@@ -212,7 +212,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_17
+	ebuild_revision_18
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -1190,7 +1190,7 @@ _install_linux_editor() {
 einfo "Setting up Linux editor environment"
 	make_desktop_entry \
 		"/usr/bin/godot${SLOT}" \
-		"Godot${SLOT}" \
+		"Godot ${SLOT}" \
 		"/usr/share/pixmaps/godot${SLOT}.png" \
 		"Development;IDE"
 	newicon "icon.png" "godot${SLOT}.png"
