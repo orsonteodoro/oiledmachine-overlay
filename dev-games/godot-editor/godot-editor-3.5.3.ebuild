@@ -4,7 +4,7 @@
 
 EAPI=7
 
-# U22
+# U20
 
 # Ebuild for VisualScript visual programming language support
 
@@ -57,7 +57,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
 
-inherit godot-3.6
+inherit godot-3.5
 inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic edo llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
@@ -564,7 +564,7 @@ BDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/godot-3.6-set-ccache-dir.patch"
-	"${FILESDIR}/godot-3.6-sanitizers.patch"
+	"${FILESDIR}/godot-3.5.3-sanitizers.patch"
 	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
 )
 

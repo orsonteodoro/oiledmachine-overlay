@@ -1,0 +1,47 @@
+diff '--color=auto' -urp godot-3.5.3-stable.orig/platform/x11/detect.py godot-3.5.3-stable/platform/x11/detect.py
+--- godot-3.5.3-stable.orig/platform/x11/detect.py	2023-09-24 13:26:39.000000000 -0700
++++ godot-3.5.3-stable/platform/x11/detect.py	2025-09-24 11:33:03.470599161 -0700
+@@ -71,9 +71,11 @@ def get_opts():
+         BoolVariable("use_static_cpp", "Link libgcc and libstdc++ statically for better portability", True),
+         BoolVariable("use_ubsan", "Use LLVM/GCC compiler undefined behavior sanitizer (UBSAN)", False),
+         BoolVariable("use_asan", "Use LLVM/GCC compiler address sanitizer (ASAN))", False),
++        BoolVariable("use_hwasan", "Use LLVM/GCC compiler address sanitizer (HWASAN)", False),
+         BoolVariable("use_lsan", "Use LLVM/GCC compiler leak sanitizer (LSAN))", False),
+         BoolVariable("use_tsan", "Use LLVM/GCC compiler thread sanitizer (TSAN))", False),
+         BoolVariable("use_msan", "Use LLVM/GCC compiler memory sanitizer (MSAN))", False),
++        BoolVariable("use_sanitize_in_production", "Use LLVM compiler sanitizers in production forcing violations as fatal", False),
+         BoolVariable("pulseaudio", "Detect and use PulseAudio", True),
+         BoolVariable("udev", "Use udev for gamepad connection callbacks", True),
+         BoolVariable("debug_symbols", "Add debugging symbols to release/release_debug builds", True),
+@@ -179,7 +181,7 @@ def configure(env):
+         else:
+             env["use_lto"] = True  # ThinLTO implies LTO
+ 
+-    if env["use_ubsan"] or env["use_asan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
++    if env["use_ubsan"] or env["use_asan"] or env["use_hwasan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
+         env.extra_suffix += "s"
+ 
+         if env["use_ubsan"]:
+@@ -203,6 +205,10 @@ def configure(env):
+             env.Append(CCFLAGS=["-fsanitize=address,pointer-subtract,pointer-compare"])
+             env.Append(LINKFLAGS=["-fsanitize=address"])
+ 
++        if env["use_hwasan"]:
++            env.Append(CCFLAGS=["-fsanitize=hwaddress"])
++            env.Append(LINKFLAGS=["-fsanitize=hwaddress"])
++
+         if env["use_lsan"]:
+             env.Append(CCFLAGS=["-fsanitize=leak"])
+             env.Append(LINKFLAGS=["-fsanitize=leak"])
+@@ -215,6 +221,9 @@ def configure(env):
+             env.Append(CCFLAGS=["-fsanitize=memory"])
+             env.Append(LINKFLAGS=["-fsanitize=memory"])
+ 
++        if env["use_sanitize_in_production"]:
++            env.Append(CCFLAGS=["-fno-sanitize-recover"])
++
+     if env["use_lto"]:
+         if env["use_thinlto"]:
+             env.Append(CCFLAGS=["-flto=thin"])
+Only in godot-3.5.3-stable/platform/x11: detect.py.orig
+Only in godot-3.5.3-stable/platform/x11: detect.py.rej
