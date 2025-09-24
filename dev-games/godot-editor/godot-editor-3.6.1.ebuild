@@ -134,8 +134,7 @@ LICENSE="
 # See https://github.com/godotengine/godot/blob/4.5-stable/platform/linuxbsd/detect.py#L76
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
 
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
+SLOT="$(ver_cut 1-2 ${PV})"
 
 gen_required_use_template()
 {
@@ -213,7 +212,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_16
+	ebuild_revision_17
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -957,12 +956,12 @@ add_portable_mono_prefix() {
 		if use amd64 ; then
 			options_extra+=(
 				copy_mono_root=yes
-				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)" # Portable Mono base path
+				mono_prefix="/usr/lib/godot/${SLOT}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)" # Portable Mono base path
 			)
 		elif use x86 ; then
 			options_extra+=(
 				copy_mono_root=yes
-				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86-$(get_configuration3)" # Portable Mono base path
+				mono_prefix="/usr/lib/godot/${SLOT}/mono-runtime/desktop-linux-x86-$(get_configuration3)" # Portable Mono base path
 			)
 		fi
 # Not supported due to a lack of time.
@@ -996,7 +995,7 @@ einfo "Mono support:  Building final binary"
 
 # Will re-enable once the godot-mono-runtime* is complete
 #		mono_static=yes
-#		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
+#		mono_prefix="/usr/lib/godot/${SLOT}/mono-runtime/linux-x86_64"
 	)
 	add_portable_mono_prefix
 	_compile
@@ -1189,34 +1188,34 @@ src_compile() {
 }
 
 _install_linux_editor() {
-	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJ}"
+	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT}"
 	exeinto "${d_base}/bin"
 	local f
 	f=$(basename "bin/godot"*"x11"*)
 	doexe "bin/${f}"
 	dosym \
 		"${d_base}/bin/${f}" \
-		"/usr/bin/godot${SLOT_MAJ}"
+		"/usr/bin/godot${SLOT}"
 einfo "Setting up Linux editor environment"
 	make_desktop_entry \
-		"/usr/bin/godot${SLOT_MAJ}" \
-		"Godot${SLOT_MAJ}" \
-		"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
+		"/usr/bin/godot${SLOT}" \
+		"Godot${SLOT}" \
+		"/usr/share/pixmaps/godot${SLOT}.png" \
 		"Development;IDE"
-	newicon "icon.png" "godot${SLOT_MAJ}.png"
+	newicon "icon.png" "godot${SLOT}.png"
 }
 
 _install_template_datafiles() {
 	local prefix
 	if use mono ; then
-		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
+		prefix="/usr/share/godot/${SLOT}/export-templates/mono"
 		insinto "${prefix}"
 		doins -r "${WORKDIR}/templates"
 		echo "${PV}.${STATUS}.mono" > "${T}/version.txt" || die
 		insinto "${prefix}/templates"
 		doins "${T}/version.txt"
 	else
-		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
+		prefix="/usr/share/godot/${SLOT}/export-templates/standard"
 		insinto "${prefix}"
 		echo "${PV}.${STATUS}" > "${T}/version.txt" || die
 		insinto "${prefix}/templates"
@@ -1225,7 +1224,7 @@ _install_template_datafiles() {
 }
 
 _install_mono_glue_for_export_templates() {
-	local prefix="/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue"
+	local prefix="/usr/share/${MY_PN}/${SLOT}/mono-glue"
 	insinto "${prefix}/modules/mono/glue"
 	doins "modules/mono/glue/mono_glue.gen.cpp"
 	insinto "${prefix}/modules/mono/glue/GodotSharp/GodotSharp"
@@ -1235,7 +1234,7 @@ _install_mono_glue_for_export_templates() {
 }
 
 _install_editor_data_files() {
-	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJ}"
+	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT}"
 	insinto "${d_base}/bin"
 	exeinto "${d_base}/bin"
 	doins -r "bin/GodotSharp"
@@ -1259,7 +1258,7 @@ _install_editor_data_files() {
 			else
 				continue
 			fi
-			local new_prefix="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/GodotSharp/Mono"
+			local new_prefix="/usr/$(get_libdir)/godot/${SLOT}/bin/GodotSharp/Mono"
 			local new_path=$(echo "${src_path}" | sed -e "s|^/usr|${new_prefix}|")
 			local d=$(dirname "${new_path}")
 			dodir "${d}"
