@@ -8,7 +8,7 @@ STATUS="stable"
 
 ANDROID_MIN_API="24" # From tarball, see src_configure
 ANDROID_SDK_VER="35" # From tarball, see src_configure
-CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs
+CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs, see https://github.com/emscripten-core/emscripten/blob/4.0.11/tools/shared.py#L62
 DOTNET_SDK_PV="8.0.100" # From CI logs
 EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/web_builds.yml#L12 U24
 EMSCRIPTEN_NODE_PV="22.16.0"
