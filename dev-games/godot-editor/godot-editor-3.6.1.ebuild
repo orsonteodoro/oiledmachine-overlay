@@ -19,6 +19,7 @@ BUILD_EXPORT_TEMPLATES=0
 ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
 # It can collect GPS coords for geolocation based games or gamified app or the
 # game engine can be used for app purposes not just games.
+# Contains open_encrypted_with_pass() API that accepts password or users may login with password.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 ENET_VULNERABILITY_HISTORY="DOS"
