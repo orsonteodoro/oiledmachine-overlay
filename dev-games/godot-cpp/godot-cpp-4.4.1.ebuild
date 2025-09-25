@@ -141,7 +141,7 @@ eerror
 	local x
 	for x in ${ALL_ARCHES[@]} ; do
 		if [[ "${MULTILIB_ABIS}" =~ (^|" ")"${x}"($|" ") ]] ; then
-einfo "Building bindings for amd64"
+einfo "Building bindings for ${x}"
 			local libdir="${LIBMAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
@@ -234,7 +234,8 @@ install_linux() {
 	)
 	local x
 	for x in ${ALL_ARCHES[@]} ; do
-		if [[ "${MULTILIB_ABIS}" =~ "${x}" ]] ; then
+		if [[ "${MULTILIB_ABIS}" =~ (^|" ")"${x}"($|" ") ]] ; then
+einfo "Installing bindings for ${x}"
 			local libdir="${LIBMAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
