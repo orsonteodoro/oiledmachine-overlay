@@ -246,7 +246,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_22
+	ebuild_revision_24
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder

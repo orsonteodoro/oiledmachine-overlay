@@ -213,7 +213,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_22
+	ebuild_revision_24
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -819,7 +819,7 @@ _compile() {
 		target="${target}" \
 		${options_extra[@]} \
 		lto=$(usex lto "thin" "none") \
-		optimize="custom" \
+		optimize="speed" \
 		"CFLAGS=${CFLAGS}" \
 		"CXXFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" \
@@ -941,6 +941,7 @@ get_configuration4() {
 	if use debug ; then
 		echo "debug"
 	else
+	# Restrict to -O2 with release_debug to prevent compromised _FORTIFY_SOURCE
 		echo "release_debug"
 	fi
 }
