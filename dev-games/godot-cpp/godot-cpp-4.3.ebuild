@@ -64,7 +64,10 @@ generate_extension_api_json() {
 	for x in $(seq 0 18) ; do
 		addpredict "/dev/input/event${x}"
 	done
-	/usr/bin/godot${SLOT} --headless --dump-extension-api || die
+	/usr/bin/godot${SLOT} \
+		--headless \
+		--dump-extension-api \
+		|| die
 }
 
 build_android() {
@@ -73,7 +76,10 @@ build_android() {
 ewarn "USE=android is untested"
 		strip-flags
 		filter-lto
-		scons platform=android custom_api_file="${path}" || die
+		scons \
+			platform=android \
+			custom_api_file="${path}" \
+			|| die
 	fi
 }
 
@@ -154,6 +160,9 @@ einfo "Building bindings for ${x}"
 			local libdir="${LIB_MAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
+einfo "abi:  ${abi}"
+einfo "bitness:  ${bitness}"
+einfo "libdir:  ${libdir}"
 			scons \
 				arch="${abi}" \
 				bits=${bitness} \
@@ -161,6 +170,7 @@ einfo "Building bindings for ${x}"
 				platform="linux" \
 				precision="${precision}" \
 				target="${configuration}" \
+				verbose=yes \
 				|| die
 		fi
 	done
@@ -176,7 +186,10 @@ build_web() {
 	filter-lto
 	if use web ; then
 ewarn "USE=web is untested"
-		scons platform=web custom_api_file="${path}" || die
+		scons \
+			platform=web \
+			custom_api_file="${path}" \
+			|| die
 	fi
 }
 
