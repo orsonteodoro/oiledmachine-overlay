@@ -44,7 +44,7 @@
     --------------|---------------------------------|
     GDScript      | Python, Lua                     |
     C#            | Java                            |
-    GDExtension   | C++ (unmanaged), Rust           |
+    GDExtension   | C++ (unmanaged) [15], Rust      |
     Orchestrator  | Kismet, Blueprint, VisualScript |
     VisualScript  | Kismet, Blueprint, Orchestrator |
 
@@ -79,6 +79,7 @@
     [14] Some AI can help with code generation.  Predictive code completion is
          missing or not operational for C#, so API class reference documents
          are essential for productivity.
+    [15] Bindings available from the dev-games/godot-cpp package
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
