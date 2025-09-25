@@ -26,7 +26,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
-IUSE+=" android debug web"
+IUSE+="
+android debug web
+ebuild_revision_1
+"
 RDEPEND+="
 	~dev-games/godot-editor-${PV}
 	web? (
@@ -149,7 +152,7 @@ includedir=\${prefix}/include
 Name: godot-cpp
 Description: C++ bindings for Godot Engine GDExtension API
 Version: ${PV}
-Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86
+Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86_64
 Cflags: -I\${includedir}
 Requires:
 EOF
@@ -159,7 +162,7 @@ EOF
 	fi
 	if [[ "${MULTILIB_ABIS}" =~ (^|" ")"x86"($|" ") ]] ; then
 		insinto "/usr/lib/godot-cpp/${PV}/linux-32/lib"
-		doins "bin/libgodot-cpp.linux.${configuration}.x86.a"
+		doins "bin/libgodot-cpp.linux.${configuration}.x86_32.a"
 		insinto "/usr/lib/godot-cpp/${PV}/linux-32"
 		doins -r "include"
 		if [[ "${MULTILIB_ABIS}" =~ "x86" ]] ; then
@@ -172,7 +175,7 @@ includedir=\${prefix}/include
 Name: godot-cpp
 Description: C++ bindings for Godot Engine GDExtension API
 Version: ${PV}
-Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86
+Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86_32
 Cflags: -I\${includedir}
 Requires:
 EOF
