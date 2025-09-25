@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_8
+ebuild_revision_9
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -145,7 +145,7 @@ eerror
 	for x in ${ALL_ARCHES[@]} ; do
 		if [[ "${MULTILIB_ABIS}" =~ (^|" ")"${x}"($|" ") ]] ; then
 einfo "Building bindings for ${x}"
-			local libdir="${LIBMAP[${x}]}"
+			local libdir="${LIB_MAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
 			scons \
@@ -239,7 +239,7 @@ install_linux() {
 	for x in ${ALL_ARCHES[@]} ; do
 		if [[ "${MULTILIB_ABIS}" =~ (^|" ")"${x}"($|" ") ]] ; then
 einfo "Installing bindings for ${x}"
-			local libdir="${LIBMAP[${x}]}"
+			local libdir="${LIB_MAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}/${libdir}"
