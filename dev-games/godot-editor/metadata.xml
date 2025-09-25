@@ -406,12 +406,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="openxr">
       Enables the OpenXR driver for VR/AR devices.
     </flag>
-    <flag name="optimize-size">
-      Optimizes the built program(s) for reduced size.
-    </flag>
-    <flag name="optimize-speed">
-      Optimizes the built program(s) for speed.
-    </flag>
     <flag name="opus">
       Enable for Opus audio codec support for general use.
     </flag>

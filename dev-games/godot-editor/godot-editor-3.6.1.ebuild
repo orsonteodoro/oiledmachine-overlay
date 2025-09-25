@@ -169,7 +169,7 @@ IUSE_AUDIO="
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug jit lld lto mold +optimize-speed optimize-size portable
+clang debug jit lld lto mold portable
 sanitize-in-production +visual-script
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -254,12 +254,6 @@ REQUIRED_USE+="
 	)
 	mono? (
 		system-mono
-	)
-	optimize-size? (
-		!optimize-speed
-	)
-	optimize-speed? (
-		!optimize-size
 	)
 	portable? (
 		!asan
@@ -820,10 +814,11 @@ _compile() {
 		${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
-		bits=default \
-		target=${target} \
+		bits="default" \
+		target="${target}" \
 		${options_extra[@]} \
 		lto=$(usex lto "thin" "none") \
+		optimize="none" \
 		"CFLAGS=${CFLAGS}" \
 		"CXXFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" \
@@ -1113,16 +1108,6 @@ src_compile() {
 		pulseaudio=False
 		use_static_cpp=True
 	)
-
-	if use optimize-size ; then
-		myoptions+=(
-			optimize=size
-		)
-	else
-		myoptions+=(
-			optimize=speed
-		)
-	fi
 
 	options_modules+=(
 		builtin_pcre2_with_jit=$(usex jit)

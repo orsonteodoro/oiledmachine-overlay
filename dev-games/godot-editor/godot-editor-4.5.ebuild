@@ -200,7 +200,7 @@ IUSE_AUDIO="
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug -fp64 jit layers lld lto mold +optimize-speed optimize-size portable
+clang debug -fp64 jit layers lld lto mold portable
 sanitize-in-production
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -323,12 +323,6 @@ REQUIRED_USE+="
 	)
 	msdfgen? (
 		freetype
-	)
-	optimize-size? (
-		!optimize-speed
-	)
-	optimize-speed? (
-		!optimize-size
 	)
 	portable? (
 		!asan
@@ -928,10 +922,11 @@ _compile() {
 		${options_linuxbsd[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
-		bits=default \
-		target=${target} \
+		bits="default" \
+		target="${target}" \
 		${options_extra[@]} \
 		lto=$(usex lto "thin" "none") \
+		optimize="none" \
 		"cflags=${CFLAGS}" \
 		"cxxflags=${CXXFLAGS}" \
 		"cppdefines=${CPPFLAGS}" \
@@ -1224,16 +1219,6 @@ src_compile() {
 		pulseaudio=False
 		use_static_cpp=True
 	)
-
-	if use optimize-size ; then
-		myoptions+=(
-			optimize=size
-		)
-	else
-		myoptions+=(
-			optimize=speed
-		)
-	fi
 
 	options_modules+=(
 		brotli=$(usex brotli)
