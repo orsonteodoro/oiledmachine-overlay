@@ -1,0 +1,37 @@
+diff '--color=auto' -urp godot-4.3-stable.orig/SConstruct godot-4.3-stable/SConstruct
+--- godot-4.3-stable.orig/SConstruct	2024-08-14 16:00:16.000000000 -0700
++++ godot-4.3-stable/SConstruct	2025-09-25 13:03:00.696662983 -0700
+@@ -147,6 +147,7 @@ env.PrependENVPath("PATH", os.getenv("PA
+ env.PrependENVPath("PKG_CONFIG_PATH", os.getenv("PKG_CONFIG_PATH"))
+ if "TERM" in os.environ:  # Used for colored output.
+     env["ENV"]["TERM"] = os.environ["TERM"]
++env.PrependENVPath("CCACHE_DIR", os.getenv("CCACHE_DIR"))
+ 
+ env.disabled_modules = []
+ env.module_version_string = ""
+@@ -305,6 +306,9 @@ opts.Add("asflags", "Custom flags for th
+ opts.Add("arflags", "Custom flags for the archive tool")
+ opts.Add("rcflags", "Custom flags for Windows resource compiler")
+ 
++opts.Add("c_compiler_launcher", "C compiler launcher (e.g. `ccache`)")
++opts.Add("cpp_compiler_launcher", "C++ compiler launcher (e.g. `ccache`)")
++
+ # Update the environment to have all above options defined
+ # in following code (especially platform and custom_modules).
+ opts.Update(env)
+@@ -1037,6 +1041,13 @@ if env["ninja"]:
+ if env["threads"]:
+     env.Append(CPPDEFINES=["THREADS_ENABLED"])
+ 
++# Prepend compiler launchers
++if "c_compiler_launcher" in env:
++    env["CC"] = " ".join([env["c_compiler_launcher"], env["CC"]])
++
++if "cpp_compiler_launcher" in env:
++    env["CXX"] = " ".join([env["cpp_compiler_launcher"], env["CXX"]])
++
+ # Build subdirs, the build order is dependent on link order.
+ Export("env")
+ 
+Only in godot-4.3-stable: SConstruct.orig
+Only in godot-4.3-stable: SConstruct.rej

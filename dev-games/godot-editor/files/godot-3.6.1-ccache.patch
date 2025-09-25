@@ -1,0 +1,35 @@
+diff '--color=auto' -urp godot-3.6.1-stable.orig/SConstruct godot-3.6.1-stable/SConstruct
+--- godot-3.6.1-stable.orig/SConstruct	2025-06-24 10:10:49.000000000 -0700
++++ godot-3.6.1-stable/SConstruct	2025-09-25 12:57:33.769834712 -0700
+@@ -76,6 +76,7 @@ env_base.PrependENVPath("PATH", os.geten
+ env_base.PrependENVPath("PKG_CONFIG_PATH", os.getenv("PKG_CONFIG_PATH"))
+ if "TERM" in os.environ:  # Used for colored output.
+     env_base["ENV"]["TERM"] = os.environ["TERM"]
++env_base.PrependENVPath("CCACHE_DIR", os.getenv("CCACHE_DIR"))
+ 
+ env_base.disabled_modules = []
+ env_base.use_ptrcall = False
+@@ -202,6 +203,9 @@ opts.Add("CFLAGS", "Custom flags for the
+ opts.Add("CXXFLAGS", "Custom flags for the C++ compiler")
+ opts.Add("LINKFLAGS", "Custom flags for the linker")
+ 
++opts.Add("c_compiler_launcher", "C compiler launcher (e.g. `ccache`)")
++opts.Add("cpp_compiler_launcher", "C++ compiler launcher (e.g. `ccache`)")
++
+ # Update the environment to have all above options defined
+ # in following code (especially platform and custom_modules).
+ opts.Update(env_base)
+@@ -745,6 +749,13 @@ if selected_platform in platform_list:
+ 
++    # Prepend compiler launchers
++    if "c_compiler_launcher" in env:
++        env["CC"] = " ".join([env["c_compiler_launcher"], env["CC"]])
++
++    if "cpp_compiler_launcher" in env:
++        env["CXX"] = " ".join([env["cpp_compiler_launcher"], env["CXX"]])
++
+     Export("env")
+ 
+     # build subdirs, the build order is dependent on link order.
+ 
+     SConscript("core/SCsub")

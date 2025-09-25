@@ -558,7 +558,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/godot-3.6-set-ccache-dir.patch"
+	"${FILESDIR}/godot-3.6.1-ccache.patch"
 	"${FILESDIR}/godot-3.6-sanitizers.patch"
 	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
 )
@@ -811,6 +811,13 @@ ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 _compile() {
 	# Define lto here because scons does not evaluate lto= as steady-state.
 	# Do not sort.  Steady state build systems can sort config but not this one.
+	local extra_conf=()
+	if [[ -n "${CCACHE_DIR}" ]] ; then
+		extra_conf=(
+			c_compiler_launcher="ccache"
+			cpp_compiler_launcher="ccache"
+		)
+	fi
 	scons \
 		${options_x11[@]} \
 		${options_modules[@]} \
@@ -824,6 +831,7 @@ _compile() {
 		"CXXFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" \
 		verbose=yes \
+		${extra_conf[@]} \
 		|| die
 }
 
