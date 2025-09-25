@@ -251,13 +251,14 @@ EOF
 			doins "${T}/godot-cpp.pc"
 		fi
 	done
-# TODO web
 }
 
 src_install() {
 	docinto "licenses"
 	dodoc "LICENSE.md"
 	install_linux
+# TODO web
+# TODO android
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
