@@ -213,7 +213,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_24
+	ebuild_revision_25
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -763,7 +763,6 @@ warn_missing_texture_format() {
 
 src_configure() {
 	default
-	cflags-hardened_append
 	warn_missing_texture_format
 
 	if tc-is-gcc ; then
@@ -785,6 +784,7 @@ eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
 		strip-flags
 		filter-flags '-march=*'
 	fi
+	cflags-hardened_append
 	if use mono ; then
 		# mono_static=yes bug
 		if use system-mono ; then

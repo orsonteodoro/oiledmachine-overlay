@@ -246,7 +246,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_24
+	ebuild_revision_25
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -865,7 +865,6 @@ warn_missing_texture_format() {
 
 src_configure() {
 	default
-	cflags-hardened_append
 	warn_missing_texture_format
 
 	if has_version "dev-util/glslang" ; then
@@ -902,6 +901,7 @@ eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
 		strip-flags
 		filter-flags '-march=*'
 	fi
+	cflags-hardened_append
 	if use sanitize-in-production ; then
 # You can use UBSan and tc-malloc or scudo with GWP-ASan.
 		if use asan || use hwasan ; then
