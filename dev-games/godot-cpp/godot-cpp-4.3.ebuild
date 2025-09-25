@@ -28,7 +28,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug web
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	~dev-games/godot-editor-${PV}
@@ -138,7 +138,7 @@ install_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
 	# Assumes glibc for prebuilt templates
 	local configuration=$(usex debug "template_debug" "template_release")
-	if [[ "${MULTILIB_ABIS}" =~ "x86_64" ]] ; then
+	if [[ "${MULTILIB_ABIS}" =~ "amd64" ]] ; then
 		insinto "/usr/lib/godot-cpp/${SLOT}/linux-64/lib64"
 		doins "bin/libgodot-cpp.linux.${configuration}.x86_64.a"
 		insinto "/usr/lib/godot-cpp/${SLOT}/linux-64"
