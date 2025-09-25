@@ -245,7 +245,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_18
+	ebuild_revision_19
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -905,7 +905,7 @@ eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
 	fi
 	if use portable ; then
 		strip-flags
-		filter-flags -march=*
+		filter-flags '-march=*'
 	fi
 	if use sanitize-in-production ; then
 # You can use UBSan and tc-malloc or scudo with GWP-ASan.
@@ -932,9 +932,9 @@ _compile() {
 		target=${target} \
 		${options_extra[@]} \
 		lto=$(usex lto "thin" "none") \
-		"CFLAGS=${CFLAGS}" \
-		"CCFLAGS=${CXXFLAGS}" \
-		"LINKFLAGS=${LDFLAGS}" \
+		"cflags=${CFLAGS}" \
+		"cxxflags=${CXXFLAGS}" \
+		"linkflags=${LDFLAGS}" \
 		verbose=yes \
 		|| die
 }
