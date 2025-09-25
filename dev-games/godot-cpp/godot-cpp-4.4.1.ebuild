@@ -6,6 +6,11 @@ EAPI=8
 
 # U22
 
+# See godot-editor for additional hardening comments
+# Hardening is applied to protect password code paths.
+# There is an open_encrypted_with_pass() API that these bindings makes available.
+CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
+CFLAGS_HARDENED_VTABLE_VERIFY=1
 GCC_SLOT="11"
 LLVM_COMPAT=( "17" )
 STATUS="stable"
@@ -17,7 +22,7 @@ https://github.com/godotengine/godot-cpp/archive/refs/tags/godot-${PV}-${STATUS}
 	-> ${P}.tar.gz
 "
 
-inherit flag-o-matic
+inherit cflags-hardened flag-o-matic
 
 DESCRIPTION="C++ bindings for the Godot script API"
 HOMEPAGE="
@@ -30,7 +35,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_12
+ebuild_revision_13
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -53,6 +58,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/godot-cpp-4.5-env-changes.patch"
 )
 
 src_unpack() {
@@ -105,6 +111,7 @@ eerror
 	export CPP="${CC} -E"
 	strip-flags
 	filter-lto
+	cflags-hardened_append
 	local path="$(pwd)/extension_api.json"
 	local configuration=$(usex debug "template_debug" "template_release")
 	local precision=$(usex fp64 "double" "single")
@@ -150,6 +157,13 @@ einfo "Building bindings for ${x}"
 			local libdir="${LIB_MAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
+			local extra_conf=()
+			if [[ -n "${CCACHE_DIR}" ]] ; then
+				extra_conf=(
+					c_compiler_launcher="ccache"
+					cpp_compiler_launcher="ccache"
+				)
+			fi
 einfo "abi:  ${abi}"
 einfo "bitness:  ${bitness}"
 einfo "libdir:  ${libdir}"
@@ -159,9 +173,14 @@ einfo "libdir:  ${libdir}"
 				custom_api_file="${path}" \
 				platform="linux" \
 				precision="${precision}" \
-				optimize="${OPTIMIZE_LEVEL}" \
+				optimize="custom" \
 				target="${configuration}" \
+				cflags="${CFLAGS}" \
+				cxxflags="${CXXFLAGS}" \
+				cppdefines="${CPPFLAGS}" \
+				linkflags="${LDLAGS}" \
 				verbose=yes \
+				${extra_conf[@]} \
 				|| die
 		fi
 	done
@@ -195,25 +214,6 @@ get_olast() {
 src_configure() {
 	# Assumes glibc for prebuilt templates
 	use elibc_musl && die "musl is not currently supported.  Fork ebuild."
-	# We want to use optimize=custom but you cannot set the CFLAGS yet and the build system is too hermetic.
-	# It would require build scripts changes to apply custom {C,CXX,LD}FLAGS.
-	local olast=$(get_olast)
-	if [[ "${olast}" =~ ("-O3"|"-O4"|"-Ofast") ]] ; then
-		OPTIMIZE_LEVEL="speed"
-	elif [[ "${olast}" == "-O2" ]] ; then
-		OPTIMIZE_LEVEL="speed_trace"
-	elif [[ "${olast}" =~ ("-Os"|"-Oz") ]] ; then
-		OPTIMIZE_LEVEL="size"
-	elif [[ "${olast}" == "-Og" ]] ; then
-		OPTIMIZE_LEVEL="debug"
-	elif [[ "${olast}" == "-O1" ]] ; then
-	# There is no -O1 in build script so use -O2 for hardened compilers to prevent _FORTIFY_SOURCE issues.
-		OPTIMIZE_LEVEL="speed_trace"
-	else
-		OPTIMIZE_LEVEL="none"
-	fi
-	export OPTIMIZE_LEVEL
-	filter-flags '-O*'
 }
 
 src_compile() {
