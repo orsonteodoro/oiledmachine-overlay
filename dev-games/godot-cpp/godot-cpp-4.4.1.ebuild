@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_11
+ebuild_revision_12
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -198,7 +198,7 @@ src_configure() {
 	# We want to use optimize=custom but you cannot set the CFLAGS yet and the build system is too hermetic.
 	# It would require build scripts changes to apply custom {C,CXX,LD}FLAGS.
 	local olast=$(get_olast)
-	if [[ "${olast}" =~ ("-O3"|"-Ofast") ]] ; then
+	if [[ "${olast}" =~ ("-O3"|"-O4"|"-Ofast") ]] ; then
 		OPTIMIZE_LEVEL="speed"
 	elif [[ "${olast}" == "-O2" ]] ; then
 		OPTIMIZE_LEVEL="speed_trace"
@@ -206,6 +206,9 @@ src_configure() {
 		OPTIMIZE_LEVEL="size"
 	elif [[ "${olast}" == "-Og" ]] ; then
 		OPTIMIZE_LEVEL="debug"
+	elif [[ "${olast}" == "-O1" ]] ; then
+	# There is no -O1 in build script so use -O2 for hardened compilers to prevent _FORTIFY_SOURCE issues.
+		OPTIMIZE_LEVEL="speed_trace"
 	else
 		OPTIMIZE_LEVEL="none"
 	fi
