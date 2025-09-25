@@ -10,7 +10,7 @@ GCC_SLOT="9"
 LLVM_COMPAT=( "17" )
 STATUS="stable"
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-godot-${PV}-${STATUS}"
 SRC_URI="
 https://github.com/godotengine/godot-cpp/archive/refs/tags/godot-${PV}-${STATUS}.tar.gz
