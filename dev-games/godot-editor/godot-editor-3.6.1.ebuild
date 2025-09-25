@@ -815,7 +815,9 @@ ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 
 _compile() {
 	# Define lto here because scons does not evaluate lto= as steady-state.
-	scons ${options_x11[@]} \
+	# Do not sort.  Steady state build systems can sort config but not this one.
+	scons \
+		${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		bits=default \
@@ -824,7 +826,9 @@ _compile() {
 		lto=$(usex lto "thin" "none") \
 		"CFLAGS=${CFLAGS}" \
 		"CCFLAGS=${CXXFLAGS}" \
-		"LINKFLAGS=${LDFLAGS}" || die
+		"LINKFLAGS=${LDFLAGS}" \
+		verbose=yes \
+		|| die
 }
 
 _gen_mono_glue() {
