@@ -24,9 +24,9 @@ src_unpack() {
 }
 
 src_install() {
-	insinto /usr/share/eselect/modules
-	doins emscripten.eselect
-	insinto /usr/share/${PN}
+	insinto "/usr/share/eselect/modules"
+	doins "emscripten.eselect"
+	insinto "/usr/share/${PN}"
 	doins "${FILESDIR}/hello_world.cpp"
 }
 

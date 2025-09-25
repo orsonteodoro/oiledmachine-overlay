@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20240627-r2"
+VERSION="20250924"
 PN="emscripten"
 
 # version tests
@@ -108,7 +108,7 @@ find_targets() {
     for em_pv in ${EMSCRIPTEN_VERSIONS} ; do
         [[ ! -f "${EROOT}/usr/share/emscripten-${em_pv}/emcc" ]] && continue
         local use_path=$(realpath --canonicalize-missing \
-            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_pv}/USE)
+            "${EROOT}/var/db/pkg/dev-util/emscripten-${em_pv}/USE")
         [[ ! -f "${use_path}" ]] && continue
         for compiler in fastcomp llvm ; do
             if [[ "${compiler}" == "fastcomp" ]] ; then
@@ -117,11 +117,13 @@ find_targets() {
                 fi
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_slot in ${LLVM_VERSIONS} ; do
-                    if grep -q -F -e "llvm_targets_WebAssembly" \
-                           $(realpath "${EROOT}"/var/db/pkg/llvm-core/llvm-${llvm_slot}*/USE) \
+                    if \
+                       [[ -f "${EROOT}/var/db/pkg/llvm-core/llvm-${llvm_slot}"*"/USE" ]]
                        && grep -q -F -e "llvm_targets_WebAssembly" \
-                           $(realpath "${EROOT}"/var/db/pkg/llvm-core/clang-${llvm_slot}*/USE) ; then
-			llvm_pv=$(basename $(realpath "${EROOT}"/var/db/pkg/llvm-core/clang-${llvm_slot}*) \
+                           $(realpath "${EROOT}/var/db/pkg/llvm-core/llvm-${llvm_slot}"*"/USE") \
+                       && grep -q -F -e "llvm_targets_WebAssembly" \
+                           $(realpath "${EROOT}/var/db/pkg/llvm-core/clang-${llvm_slot}"*"/USE") ; then
+			llvm_pv=$(basename $(realpath "${EROOT}/var/db/pkg/llvm-core/clang-${llvm_slot}"*) \
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_pv}" | cut -f 1-2 -d '.')
@@ -201,7 +203,7 @@ set_config() {
     local metadata_path="/usr/share/emscripten-${em_pv}/eselect.metadata"
 
     local use_path=$(realpath --canonicalize-missing \
-        "${EROOT}"/var/db/pkg/dev-util/emscripten-${PV}/USE)
+        "${EROOT}/var/db/pkg/dev-util/emscripten-${PV}/USE")
     if [[ ! -f "${use_path}" ]] ; then
         echo "emscripten ${PV} is not installed."
         return 1
@@ -279,8 +281,7 @@ EOF
     for tool in em++ em-config emar emcc emcmake emconfigure emmake \
         emranlib emrun emscons ${additional_tools[@]} ; do
         if [[ ! -f "${EROOT}/usr/share/emscripten-${PV}/${tool}" ]] ; then
-            echo \
-"Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
+            echo "Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
             return 1
         fi
         ln -sf "${EROOT}/usr/share/emscripten-${PV}/${tool}" \
@@ -449,13 +450,13 @@ do_set() {
     [[ -z $1 ]] && die -q "You didn't tell me what to set the symlink to"
     [[ $# -gt 1 ]] && die -q "Too many parameters"
 
-    if [[ -L ${EROOT}/usr/include/node ]]; then
+    if [[ -L "${EROOT}/usr/include/node" ]]; then
         # existing symlink
         remove_symlink || die -q "Couldn't remove existing symlink"
         set_config "$1" || die -q "Couldn't set a new symlink"
-    elif [[ -e ${EROOT}/usr/include/node ]]; then
+    elif [[ -e "${EROOT}/usr/include/node" ]]; then
         # we have something strange
-        die -q "${EROOT}/usr/include/node exists but is not a symlink"
+        die "${EROOT}/usr/include/node exists but is not a symlink"
     else
         set_config "$1" || die -q "Couldn't set a new symlink"
     fi
