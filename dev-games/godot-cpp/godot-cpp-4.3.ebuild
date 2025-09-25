@@ -7,7 +7,7 @@ EAPI=8
 # U20
 
 GCC_SLOT="9"
-LLVM_COMPAT=( "18" )
+LLVM_COMPAT=( "17" )
 STATUS="stable"
 
 KEYWORDS="~amd64"
@@ -28,7 +28,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug web
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	~dev-games/godot-editor-${PV}
@@ -136,7 +136,7 @@ src_compile() {
 
 install_linux() {
 	# Assumes glibc for prebuilt templates
-	local configuration=$(usex debug "template_debug" "release")
+	local configuration=$(usex debug "template_debug" "template_release")
 	if [[ "${MULTILIB_ABIS}" =~ "x86_64" ]] ; then
 		insinto "/usr/lib/godot-cpp/${PV}/linux-64/lib64"
 		doins "bin/libgodot-cpp.linux.${configuration}.x86_64.a"
