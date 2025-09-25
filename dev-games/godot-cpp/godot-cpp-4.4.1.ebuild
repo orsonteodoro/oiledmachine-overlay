@@ -28,7 +28,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	~dev-games/godot-editor-${PV}[fp64=]
@@ -69,7 +69,9 @@ ewarn "USE=android is untested"
 }
 
 build_linux() {
-	local gcc_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
+	local gcc_slot=$(gcc-config -l \
+		| grep "*" \
+		| cut -f 3 -d " ")
 	gcc_slot="${gcc_slot##*-}"
 	if ver_test ${gcc_slot} -ne "${GCC_SLOT}" ; then
 # Avoid versioned symbols issues
@@ -90,28 +92,62 @@ eerror
 	local path="$(pwd)/extension_api.json"
 	local configuration=$(usex debug "template_debug" "template_release")
 	local precision=$(usex fp64 "double" "single")
-	if [[ "${MULTILIB_ABIS}" =~ "amd64" ]] ; then
+	declare -A ABI_MAP=(
+		["amd64"]="x86_64"
+		["x86"]="x86_32"
+		["arm"]="arm32"
+		["arm64"]="arm64"
+		["riscv"]="rv64"
+		["ppc"]="ppc32"
+		["ppc64"]="ppc64"
+#		["web"]="wasm32"
+	)
+	declare -A BITNESS_MAP=(
+		["amd64"]="64"
+		["x86"]="32"
+		["arm"]="32"
+		["arm64"]="64"
+		["riscv"]="64"
+		["ppc"]="32"
+		["ppc64"]="64"
+#		["web"]="32"
+	)
+	declare -A LIB_MAP=()
+	LIB_MAP["amd64"]=$(get_libdir2 "amd64")
+	LIB_MAP["x86"]=$(get_libdir2 "x86")
+	LIB_MAP["arm"]=$(get_libdir2 "arm")
+	LIB_MAP["arm64"]=$(get_libdir2 "arm64")
+	LIB_MAP["riscv"]=$(get_libdir2 "riscv")
+	LIB_MAP["ppc"]=$(get_libdir2 "ppc")
+	LIB_MAP["ppc64"]=$(get_libdir2 "ppc64")
+	LIB_MAP["web"]="lib"
+	local ALL_ARCHES=(
+		"amd64"
+		"x86"
+		"arm"
+		"arm64"
+		"riscv"
+		"ppc"
+		"ppc64"
+#		"web"
+	)
+	local x
+	for x in ${ALL_ARCHES[@]} ; do
+		if [[ "${MULTILIB_ABIS}" =~ (^|" ")"${x}"($|" ") ]] ; then
 einfo "Building bindings for amd64"
-		scons \
-			arch=x86_64 \
-			bits=64 \
-			custom_api_file="${path}" \
-			platform="linux" \
-			precision="${precision}" \
-			target="${configuration}" \
-			|| die
-	fi
-	if [[ "${MULTILIB_ABIS}" =~ (^|" ")"x86"($|" ") ]] ; then
-einfo "Building bindings for x86"
-		scons \
-			arch=x86_32 \
-			bits=32 \
-			custom_api_file="${path}" \
-			platform="linux" \
-			precision="${precision}" \
-			target="${configuration}" \
-			|| die
-	fi
+			local libdir="${LIBMAP[${x}]}"
+			local abi="${ABI_MAP[${x}]}"
+			local bitness="${BITNESS_MAP[${x}]}"
+			scons \
+				arch="${abi}" \
+				bits=${bitness} \
+				custom_api_file="${path}" \
+				platform="linux" \
+				precision="${precision}" \
+				target="${configuration}" \
+				|| die
+		fi
+	done
 }
 
 build_web() {
