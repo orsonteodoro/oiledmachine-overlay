@@ -164,6 +164,7 @@ ewarn "USE=web is untested"
 }
 
 src_configure() {
+	# Assumes glibc for prebuilt templates
 	use elibc_musl && die "musl is not currently supported.  Fork ebuild."
 }
 
@@ -182,7 +183,6 @@ get_libdir2() {
 
 install_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
-	# Assumes glibc for prebuilt templates
 	local configuration=$(usex debug "template_debug" "template_release")
 	local configuration2=$(usex debug "debug" "release")
 	declare -A ABI_MAP=(
