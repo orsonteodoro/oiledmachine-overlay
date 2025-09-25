@@ -27,8 +27,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android debug web
-ebuild_revision_4
+android debug fp64 web
+ebuild_revision_5
 "
 RDEPEND+="
 	~dev-games/godot-editor-${PV}
@@ -89,6 +89,7 @@ eerror
 	/usr/bin/godot${SLOT} --headless --dump-extension-api || die
 	local path="$(pwd)/extension_api.json"
 	local configuration=$(usex debug "template_debug" "template_release")
+	local precision=$(usex fp64 "double" "single")
 	if [[ "${MULTILIB_ABIS}" =~ "amd64" ]] ; then
 einfo "Building bindings for amd64"
 		scons \
@@ -96,6 +97,7 @@ einfo "Building bindings for amd64"
 			bits=64 \
 			custom_api_file="${path}" \
 			platform="linux" \
+			precision="${precision}" \
 			target="${configuration}" \
 			|| die
 	fi
@@ -106,6 +108,7 @@ einfo "Building bindings for x86"
 			bits=32 \
 			custom_api_file="${path}" \
 			platform="linux" \
+			precision="${precision}" \
 			target="${configuration}" \
 			|| die
 	fi
@@ -134,56 +137,84 @@ src_compile() {
 	build_web
 }
 
+get_libdir2() {
+	local abi="${1}"
+	local t="LIBDIR_${abi}"
+	echo "${!t}"
+}
+
 install_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
 	# Assumes glibc for prebuilt templates
 	local configuration=$(usex debug "template_debug" "template_release")
-	if [[ "${MULTILIB_ABIS}" =~ "amd64" ]] ; then
-		insinto "/usr/lib/godot-cpp/${SLOT}/linux-64/lib64"
-		doins "bin/libgodot-cpp.linux.${configuration}.x86_64.a"
-		insinto "/usr/lib/godot-cpp/${SLOT}/linux-64"
-		doins -r "include"
-		if [[ "${MULTILIB_ABIS}" =~ "amd64" ]] ; then
+	local configuration2=$(usex debug "debug" "release")
+	declare -A ABI_MAP=(
+		["amd64"]="x86_64"
+		["x86"]="x86_32"
+		["arm"]="arm32"
+		["arm64"]="arm64"
+		["riscv"]="rv64"
+		["ppc"]="ppc32"
+		["ppc64"]="ppc64"
+#		["web"]="wasm32"
+	)
+	declare -A BITNESS_MAP=(
+		["amd64"]="64"
+		["x86"]="32"
+		["arm"]="32"
+		["arm64"]="64"
+		["riscv"]="64"
+		["ppc"]="32"
+		["ppc64"]="64"
+#		["web"]="32"
+	)
+	declare -A LIB_MAP=()
+	LIB_MAP["amd64"]=$(get_libdir2 "amd64")
+	LIB_MAP["x86"]=$(get_libdir2 "x86")
+	LIB_MAP["arm"]=$(get_libdir2 "arm")
+	LIB_MAP["arm64"]=$(get_libdir2 "arm64")
+	LIB_MAP["riscv"]=$(get_libdir2 "riscv")
+	LIB_MAP["ppc"]=$(get_libdir2 "ppc")
+	LIB_MAP["ppc64"]=$(get_libdir2 "ppc64")
+	LIB_MAP["web"]="lib"
+	local ALL_ARCHES=(
+		"amd64"
+		"x86"
+		"arm"
+		"arm64"
+		"riscv"
+		"ppc"
+		"ppc64"
+#		"web"
+	)
+	local x
+	for x in ${ALL_ARCHES[@]} ; do
+		if [[ "${MULTILIB_ABIS}" =~ "${x}" ]] ; then
+			local libdir="${LIBMAP[${x}]}"
+			local abi="${ABI_MAP[${x}]}"
+			local bitness="${BITNESS_MAP[${x}]}"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}/${libdir}"
+			doins "bin/libgodot-cpp.linux.${configuration}.x86_64.a"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}"
+			doins -r "include"
 cat <<EOF > "${T}/godot-cpp.pc" || die
-prefix=/usr/lib/godot-cpp/${SLOT}/linux-64
+prefix=/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}
 exec_prefix=\${prefix}
-libdir=\${prefix}/lib64
+libdir=\${prefix}/${libdir}
 includedir=\${prefix}/include
 
 Name: godot-cpp
 Description: C++ bindings for Godot Engine GDExtension API
 Version: ${PV}
-Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86_64
+Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.${abi}
 Cflags: -I\${includedir}
 Requires:
 EOF
-			insinto "/usr/lib/godot-cpp/${SLOT}/linux-64/lib64/pkgconfig"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}/${libdir}/pkgconfig"
 			doins "${T}/godot-cpp.pc"
 		fi
-	fi
-	if [[ "${MULTILIB_ABIS}" =~ (^|" ")"x86"($|" ") ]] ; then
-		insinto "/usr/lib/godot-cpp/${SLOT}/linux-32/lib"
-		doins "bin/libgodot-cpp.linux.${configuration}.x86_32.a"
-		insinto "/usr/lib/godot-cpp/${SLOT}/linux-32"
-		doins -r "include"
-		if [[ "${MULTILIB_ABIS}" =~ "x86" ]] ; then
-cat <<EOF > "${T}/godot-cpp.pc" || die
-prefix=/usr/lib/godot-cpp/${SLOT}/linux-32
-exec_prefix=\${prefix}
-libdir=\${prefix}/lib
-includedir=\${prefix}/include
-
-Name: godot-cpp
-Description: C++ bindings for Godot Engine GDExtension API
-Version: ${PV}
-Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86_32
-Cflags: -I\${includedir}
-Requires:
-EOF
-			insinto "/usr/lib/godot-cpp/${SLOT}/linux-32/lib/pkgconfig"
-			doins "${T}/godot-cpp.pc"
-		fi
-	fi
+	done
+# TODO web
 }
 
 src_install() {
