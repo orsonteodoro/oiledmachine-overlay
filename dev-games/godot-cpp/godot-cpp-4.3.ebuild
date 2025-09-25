@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_10
+ebuild_revision_11
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -165,6 +165,7 @@ einfo "libdir:  ${libdir}"
 				custom_api_file="${path}" \
 				platform="linux" \
 				precision="${precision}" \
+				optimize="${OPTIMIZE_LEVEL}" \
 				target="${configuration}" \
 				verbose=yes \
 				|| die
@@ -189,9 +190,33 @@ ewarn "USE=web is untested"
 	fi
 }
 
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast|g)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	echo "${olast}"
+}
+
 src_configure() {
 	# Assumes glibc for prebuilt templates
 	use elibc_musl && die "musl is not currently supported.  Fork ebuild."
+	# We want to use optimize=custom but you cannot set the CFLAGS yet and the build system is too hermetic.
+	# It would require build scripts changes to apply custom {C,CXX,LD}FLAGS.
+	local olast=$(get_olast)
+	if [[ "${olast}" =~ ("-O3"|"-Ofast") ]] ; then
+		OPTIMIZE_LEVEL="speed"
+	elif [[ "${olast}" == "-O2" ]] ; then
+		OPTIMIZE_LEVEL="speed_trace"
+	elif [[ "${olast}" =~ ("-Os"|"-Oz") ]] ; then
+		OPTIMIZE_LEVEL="size"
+	elif [[ "${olast}" == "-Og" ]] ; then
+		OPTIMIZE_LEVEL="debug"
+	else
+		OPTIMIZE_LEVEL="none"
+	fi
+	export OPTIMIZE_LEVEL
+	filter-flags '-O*'
 }
 
 src_compile() {
