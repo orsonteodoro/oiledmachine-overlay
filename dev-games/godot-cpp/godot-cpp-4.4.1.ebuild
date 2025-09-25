@@ -34,8 +34,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android debug fp64 web
-ebuild_revision_14
+android -debug-engine +debug-extension fp64 web
+ebuild_revision_15
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -65,6 +65,19 @@ src_unpack() {
 	unpack ${A}
 }
 
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast|g)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	echo "${olast}"
+}
+
+src_configure() {
+	# Assumes glibc for prebuilt templates
+	use elibc_musl && die "musl is not currently supported.  Fork ebuild."
+}
+
 generate_extension_api_json() {
 	local x
 	for x in $(seq 0 18) ; do
@@ -89,7 +102,23 @@ ewarn "USE=android is untested"
 	fi
 }
 
-build_linux() {
+_build_target_linux() {
+	local target="${1}"
+	local dev_build
+	local debug_symbols
+	# For target=template_debug or target=editor:
+	# If dev_build=True, -O2 + debug engine off.
+	# If dev_build=False -O0 + debug engine on.
+	if [[ "${target}" == "template_release" ]] ; then
+		dev_build="False"
+		debug_symbols="False"
+	elif [[ "${target}" == "template_debug" ]] ; then
+		dev_build=$(usex debug-engine "True" "False")
+		debug_symbols="True"
+	else
+		dev_build=$(usex debug-engine "True" "False")
+		debug_symbols=$(usex debug-engine "True" "False")
+	fi
 	local gcc_slot=$(gcc-config -l \
 		| grep "*" \
 		| cut -f 3 -d " ")
@@ -113,7 +142,6 @@ eerror
 	filter-lto
 	cflags-hardened_append
 	local path="$(pwd)/extension_api.json"
-	local configuration=$(usex debug "template_debug" "template_release")
 	local precision=$(usex fp64 "double" "single")
 	declare -A ABI_MAP=(
 		["amd64"]="x86_64"
@@ -171,10 +199,12 @@ einfo "libdir:  ${libdir}"
 				arch="${abi}" \
 				bits=${bitness} \
 				custom_api_file="${path}" \
+				debug_symbols="${debug_symbols}" \
+				dev_build="${dev_build}" \
 				platform="linux" \
 				precision="${precision}" \
 				optimize="custom" \
-				target="${configuration}" \
+				target="${target}" \
 				cflags="${CFLAGS}" \
 				cxxflags="${CXXFLAGS}" \
 				cppdefines="${CPPFLAGS}" \
@@ -183,6 +213,21 @@ einfo "libdir:  ${libdir}"
 				${extra_conf[@]} \
 				|| die
 		fi
+	done
+}
+
+build_linux() {
+	local targets=(
+		"editor"
+		"template_debug"
+		"template_release"
+	)
+	local target
+	for target in ${targets[@]} ; do
+		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
+			continue
+		fi
+		_build_target_linux "${target}"
 	done
 }
 
@@ -203,19 +248,6 @@ ewarn "USE=web is untested"
 	fi
 }
 
-get_olast() {
-	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast|g)" \
-		| tr " " "\n" \
-		| tail -n 1)
-	echo "${olast}"
-}
-
-src_configure() {
-	# Assumes glibc for prebuilt templates
-	use elibc_musl && die "musl is not currently supported.  Fork ebuild."
-}
-
 src_compile() {
 	generate_extension_api_json
 	build_android
@@ -229,10 +261,17 @@ get_libdir2() {
 	echo "${!t}"
 }
 
-install_linux() {
+_install_target_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
-	local configuration=$(usex debug "template_debug" "template_release")
-	local configuration2=$(usex debug "debug" "release")
+	local target="${1}"
+	local configuration
+	if [[ "${target}" == "template_release" ]] ; then
+		configuration="release"
+	elif [[ "${target}" == "template_debug" ]] ; then
+		configuration="debug"
+	else
+		configuration=$(usex debug "debug" "release")
+	fi
 	declare -A ABI_MAP=(
 		["amd64"]="x86_64"
 		["x86"]="x86_32"
@@ -275,12 +314,12 @@ einfo "Installing bindings for ${x}"
 			local libdir="${LIB_MAP[${x}]}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
-			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}/${libdir}"
-			doins "bin/libgodot-cpp.linux.${configuration}.${abi}.a"
-			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}/${libdir}"
+			doins "bin/libgodot-cpp.linux.${target}.${abi}.a"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}"
 			doins -r "include"
 cat <<EOF > "${T}/godot-cpp.pc" || die
-prefix=/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}
+prefix=/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}
 exec_prefix=\${prefix}
 libdir=\${prefix}/${libdir}
 includedir=\${prefix}/include
@@ -288,13 +327,28 @@ includedir=\${prefix}/include
 Name: godot-cpp
 Description: C++ bindings for Godot Engine GDExtension API
 Version: ${PV}
-Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.${abi}
+Libs: -L\${libdir} -lgodot-cpp.linux.${target}.${abi}
 Cflags: -I\${includedir}
 Requires:
 EOF
-			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}/${libdir}/pkgconfig"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}/${libdir}/pkgconfig"
 			doins "${T}/godot-cpp.pc"
 		fi
+	done
+}
+
+install_linux() {
+	local targets=(
+		"editor"
+		"template_debug"
+		"template_release"
+	)
+	local target
+	for target in ${targets[@]} ; do
+		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
+			continue
+		fi
+		_install_target_linux "${target}"
 	done
 }
 
