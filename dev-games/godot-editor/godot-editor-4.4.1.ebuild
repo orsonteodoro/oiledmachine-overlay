@@ -245,7 +245,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_19
+	ebuild_revision_21
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -926,6 +926,7 @@ _compile() {
 		lto=$(usex lto "thin" "none") \
 		"cflags=${CFLAGS}" \
 		"cxxflags=${CXXFLAGS}" \
+		"cppdefines=${CPPFLAGS}" \
 		"linkflags=${LDFLAGS}" \
 		verbose=yes \
 		|| die
