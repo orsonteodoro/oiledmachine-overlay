@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_9
+ebuild_revision_10
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -116,7 +116,6 @@ eerror
 		["riscv"]="rv64"
 		["ppc"]="ppc32"
 		["ppc64"]="ppc64"
-#		["web"]="wasm32"
 	)
 	declare -A BITNESS_MAP=(
 		["amd64"]="64"
@@ -126,7 +125,6 @@ eerror
 		["riscv"]="64"
 		["ppc"]="32"
 		["ppc64"]="64"
-#		["web"]="32"
 	)
 	declare -A LIB_MAP=()
 	LIB_MAP["amd64"]=$(get_libdir2 "amd64")
@@ -136,7 +134,6 @@ eerror
 	LIB_MAP["riscv"]=$(get_libdir2 "riscv")
 	LIB_MAP["ppc"]=$(get_libdir2 "ppc")
 	LIB_MAP["ppc64"]=$(get_libdir2 "ppc64")
-	LIB_MAP["web"]="lib"
 	local ALL_ARCHES=(
 		"amd64"
 		"x86"
@@ -145,7 +142,6 @@ eerror
 		"riscv"
 		"ppc"
 		"ppc64"
-#		"web"
 	)
 	local x
 	for x in ${ALL_ARCHES[@]} ; do
@@ -217,7 +213,6 @@ install_linux() {
 		["riscv"]="rv64"
 		["ppc"]="ppc32"
 		["ppc64"]="ppc64"
-#		["web"]="wasm32"
 	)
 	declare -A BITNESS_MAP=(
 		["amd64"]="64"
@@ -227,7 +222,6 @@ install_linux() {
 		["riscv"]="64"
 		["ppc"]="32"
 		["ppc64"]="64"
-#		["web"]="32"
 	)
 	declare -A LIB_MAP=()
 	LIB_MAP["amd64"]=$(get_libdir2 "amd64")
@@ -237,7 +231,6 @@ install_linux() {
 	LIB_MAP["riscv"]=$(get_libdir2 "riscv")
 	LIB_MAP["ppc"]=$(get_libdir2 "ppc")
 	LIB_MAP["ppc64"]=$(get_libdir2 "ppc64")
-	LIB_MAP["web"]="lib"
 	local ALL_ARCHES=(
 		"amd64"
 		"x86"
@@ -246,7 +239,6 @@ install_linux() {
 		"riscv"
 		"ppc"
 		"ppc64"
-#		"web"
 	)
 	local x
 	for x in ${ALL_ARCHES[@]} ; do
@@ -256,7 +248,7 @@ einfo "Installing bindings for ${x}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}/${libdir}"
-			doins "bin/libgodot-cpp.linux.${configuration}.x86_64.a"
+			doins "bin/libgodot-cpp.linux.${configuration}.${abi}.a"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration2}-${abi}"
 			doins -r "include"
 cat <<EOF > "${T}/godot-cpp.pc" || die
