@@ -28,7 +28,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug web
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	~dev-games/godot-editor-${PV}
@@ -135,16 +135,17 @@ src_compile() {
 }
 
 install_linux() {
+	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
 	# Assumes glibc for prebuilt templates
 	local configuration=$(usex debug "template_debug" "template_release")
 	if [[ "${MULTILIB_ABIS}" =~ "x86_64" ]] ; then
-		insinto "/usr/lib/godot-cpp/${PV}/linux-64/lib64"
+		insinto "/usr/lib/godot-cpp/${SLOT}/linux-64/lib64"
 		doins "bin/libgodot-cpp.linux.${configuration}.x86_64.a"
-		insinto "/usr/lib/godot-cpp/${PV}/linux-64"
+		insinto "/usr/lib/godot-cpp/${SLOT}/linux-64"
 		doins -r "include"
 		if [[ "${MULTILIB_ABIS}" =~ "amd64" ]] ; then
 cat <<EOF > "${T}/godot-cpp.pc" || die
-prefix=/usr/lib/godot-cpp/${PV}/linux-64
+prefix=/usr/lib/godot-cpp/${SLOT}/linux-64
 exec_prefix=\${prefix}
 libdir=\${prefix}/lib64
 includedir=\${prefix}/include
@@ -156,18 +157,18 @@ Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86_64
 Cflags: -I\${includedir}
 Requires:
 EOF
-			insinto "/usr/lib/godot-cpp/${PV}/linux-64/lib64/pkgconfig"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-64/lib64/pkgconfig"
 			doins "${T}/godot-cpp.pc"
 		fi
 	fi
 	if [[ "${MULTILIB_ABIS}" =~ (^|" ")"x86"($|" ") ]] ; then
-		insinto "/usr/lib/godot-cpp/${PV}/linux-32/lib"
+		insinto "/usr/lib/godot-cpp/${SLOT}/linux-32/lib"
 		doins "bin/libgodot-cpp.linux.${configuration}.x86_32.a"
-		insinto "/usr/lib/godot-cpp/${PV}/linux-32"
+		insinto "/usr/lib/godot-cpp/${SLOT}/linux-32"
 		doins -r "include"
 		if [[ "${MULTILIB_ABIS}" =~ "x86" ]] ; then
 cat <<EOF > "${T}/godot-cpp.pc" || die
-prefix=/usr/lib/godot-cpp/${PV}/linux-32
+prefix=/usr/lib/godot-cpp/${SLOT}/linux-32
 exec_prefix=\${prefix}
 libdir=\${prefix}/lib
 includedir=\${prefix}/include
@@ -179,7 +180,7 @@ Libs: -L\${libdir} -lgodot-cpp.linux.${configuration}.x86_32
 Cflags: -I\${includedir}
 Requires:
 EOF
-			insinto "/usr/lib/godot-cpp/${PV}/linux-32/lib/pkgconfig"
+			insinto "/usr/lib/godot-cpp/${SLOT}/linux-32/lib/pkgconfig"
 			doins "${T}/godot-cpp.pc"
 		fi
 	fi
