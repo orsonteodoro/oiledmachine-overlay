@@ -35,7 +35,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_13
+ebuild_revision_14
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -178,7 +178,7 @@ einfo "libdir:  ${libdir}"
 				cflags="${CFLAGS}" \
 				cxxflags="${CXXFLAGS}" \
 				cppdefines="${CPPFLAGS}" \
-				linkflags="${LDLAGS}" \
+				linkflags="${LDFLAGS}" \
 				verbose=yes \
 				${extra_conf[@]} \
 				|| die
