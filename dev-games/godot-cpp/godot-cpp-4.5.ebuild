@@ -60,6 +60,10 @@ src_unpack() {
 }
 
 generate_extension_api_json() {
+	local x
+	for x in $(seq 0 18) ; do
+		addpredict "/dev/input/event${x}"
+	done
 	/usr/bin/godot${SLOT} --headless --dump-extension-api || die
 }
 
@@ -95,7 +99,6 @@ eerror
 	export CPP="${CC} -E"
 	strip-flags
 	filter-lto
-	/usr/bin/godot${SLOT} --headless --dump-extension-api || die
 	local path="$(pwd)/extension_api.json"
 	local configuration=$(usex debug "template_debug" "template_release")
 	local precision=$(usex fp64 "double" "single")
