@@ -28,10 +28,10 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
-	~dev-games/godot-editor-${PV}
+	~dev-games/godot-editor-${PV}[fp64=]
 	web? (
 		>=dev-util/emscripten-3.1.39:17-3.1
 	)

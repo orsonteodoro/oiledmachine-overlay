@@ -10,4 +10,9 @@
     <bugs-to>https://github.com/godotengine/godot-cpp/issues</bugs-to>
     <remote-id type="github">godotengine/godot-cpp</remote-id>
   </upstream>
+  <use>
+    <flag name="fp64">
+      Use 64-bit double float support.
+    </flag>
+  </use>
 </pkgmetadata>
