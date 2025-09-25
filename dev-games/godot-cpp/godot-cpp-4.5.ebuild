@@ -30,6 +30,7 @@ IUSE+="
 android debug fp64 web
 ebuild_revision_7
 "
+# Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
 	~dev-games/godot-editor-${PV}[fp64=]
 	web? (
