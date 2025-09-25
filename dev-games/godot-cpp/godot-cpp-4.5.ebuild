@@ -17,6 +17,8 @@ https://github.com/godotengine/godot-cpp/archive/refs/tags/godot-${PV}-${STATUS}
 	-> ${P}.tar.gz
 "
 
+inherit flag-o-matic
+
 DESCRIPTION="C++ bindings for the Godot script API"
 HOMEPAGE="
 	https://github.com/godotengine/godot-cpp
@@ -28,7 +30,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android debug fp64 web
-ebuild_revision_7
+ebuild_revision_8
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -65,6 +67,8 @@ build_android() {
 # TODO: Update CC, CXX, CPP
 	if use android ; then
 ewarn "USE=android is untested"
+		strip-flags
+		filter-lto
 		scons platform=android custom_api_file="${path}" || die
 	fi
 }
@@ -89,6 +93,8 @@ eerror
 	export CC="${CHOST}-gcc-${GCC_SLOT}"
 	export CXX="${CHOST}-g++-${GCC_SLOT}"
 	export CPP="${CC} -E"
+	strip-flags
+	filter-lto
 	/usr/bin/godot${SLOT} --headless --dump-extension-api || die
 	local path="$(pwd)/extension_api.json"
 	local configuration=$(usex debug "template_debug" "template_release")
@@ -157,6 +163,8 @@ build_web() {
 	export CXX="em++"
 	unset CPP
 	unset LD
+	strip-flags
+	filter-lto
 	if use web ; then
 ewarn "USE=web is untested"
 		scons platform=web custom_api_file="${path}" || die
