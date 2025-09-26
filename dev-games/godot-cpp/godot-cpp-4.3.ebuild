@@ -34,8 +34,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android +debug-extension -debug-game-engine +editor-plugin fp64 web
-ebuild_revision_17
+android +debug-extension -debug-game-engine -editor-plugin fp64 web
+ebuild_revision_18
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
