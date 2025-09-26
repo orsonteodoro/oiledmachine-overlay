@@ -34,7 +34,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android -debug-engine +debug-extension fp64 web
+android +debug-extension -debug-game-engine fp64 web
 ebuild_revision_16
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
@@ -113,11 +113,11 @@ _build_target_linux() {
 		dev_build="False"
 		debug_symbols="False"
 	elif [[ "${target}" == "template_debug" ]] ; then
-		dev_build=$(usex debug-engine "True" "False")
+		dev_build=$(usex debug-game-engine "True" "False")
 		debug_symbols="True"
 	else
-		dev_build=$(usex debug-engine "True" "False")
-		debug_symbols=$(usex debug-engine "True" "False")
+		dev_build=$(usex debug-game-engine "True" "False")
+		debug_symbols=$(usex debug-game-engine "True" "False")
 	fi
 	local gcc_slot=$(gcc-config -l \
 		| grep "*" \

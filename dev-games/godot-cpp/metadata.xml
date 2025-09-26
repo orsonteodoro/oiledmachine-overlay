@@ -11,11 +11,11 @@
     <remote-id type="github">godotengine/godot-cpp</remote-id>
   </upstream>
   <use>
-    <flag name="debug-engine">
-      Enable or disable the game engine debug build.
-    </flag>
     <flag name="debug-extension">
       Enable or disable the game developer debug build.
+    </flag>
+    <flag name="debug-game-engine">
+      Enable or disable the game engine debug build.
     </flag>
     <flag name="fp64">
       Use 64-bit double float support.
