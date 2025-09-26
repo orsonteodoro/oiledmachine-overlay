@@ -138,6 +138,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <doc lang="uk">https://docs.godotengine.org/uk/latest/</doc>
     <doc lang="zh_CN">https://docs.godotengine.org/zh_CN/latest/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/classes/index.html</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.4/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.3/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/3.6/classes/index.html</doc>
     <remote-id type="cpe">cpe:/a:godotengine:godot_engine</remote-id>
@@ -667,18 +668,20 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <!--
     More fine-grained slotting primarily for language support.
     Stable versions only to minimize project upgrade issues.
+
+    For a list of languages supported, see https://docs.godotengine.org/en/stable/tutorials/scripting/other_languages.html
     -->
     <slot name="3.6">
       For compatibility with 3.6.x projects, C# 13, C++, VisualScript.
     </slot>
     <slot name="4.3">
-      For compatibility with 4.3.x projects, C# 12, C++, Rust, Orchestrator.
+      For compatibility with 4.3.x projects, C# 12, C++, Nim, Odin, Orchestrator, Rust, Swift.
     </slot>
     <slot name="4.4">
-      For compatibility with 4.4.x projects, C# 12, C++, Rust.
+      For compatibility with 4.4.x projects, C# 12, C++, JavaScript, Nim, Odin, Rust, TypeScript.
     </slot>
     <slot name="4.5">
-      For compatibility with 4.5.x projects, C# 12, C++, Rust.
+      For compatibility with 4.5.x projects, C# 12, C++, Go, JavaScript, Rust, TypeScript.
     </slot>
   </slots>
 </pkgmetadata>
