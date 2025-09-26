@@ -19,7 +19,7 @@ GODOT_PN="godot"
 GODOT_PV="3.6.1"
 GODOT_P="${GODOT_PN}-${GODOT_PV}"
 EGIT_COMMIT="07153d40e0e5c25de1fd2d00da3a1669e7ea7e64"
-GODOT_HEADERS_COMMIT="1049927a596402cd2e8215cd6624868929f5f18d"
+#GODOT_HEADERS_COMMIT="1049927a596402cd2e8215cd6624868929f5f18d"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 SRC_URI="
@@ -52,15 +52,15 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android +debug-extension -debug-game-engine web
-ebuild_revision_16
+ebuild_revision_18
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
 	!debug-game-engine? (
-		~dev-games/godot-editor-${GODOT_PV}[-debug]
+		~dev-games/godot-editor-${GODOT_PV}[-debug,gdnative]
 	)
 	debug-game-engine? (
-		~dev-games/godot-editor-${GODOT_PV}[debug]
+		~dev-games/godot-editor-${GODOT_PV}[debug,gdnative]
 	)
 	web? (
 		>=dev-util/emscripten-3.1.38:17-3.1
@@ -123,6 +123,8 @@ generate_api_json() {
 		addpredict "/dev/input/event${x}"
 	done
 	virtx /usr/bin/godot${SLOT} \
+		-q \
+		--audio-driver 'Dummy' \
 		--gdnative-generate-json-api \
 		api.json \
 		|| die

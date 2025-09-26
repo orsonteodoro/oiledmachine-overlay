@@ -224,7 +224,7 @@ ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +text-server-adv
 -text-server-fb +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
-csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
+csharp-external-editor +gdscript gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
 system-brotli system-clipper2 system-embree system-enet system-freetype
@@ -246,7 +246,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_26
+	ebuild_revision_29
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder

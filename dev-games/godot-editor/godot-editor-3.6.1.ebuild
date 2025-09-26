@@ -192,7 +192,7 @@ ca-certs-relax +enet +jsonrpc +mbedtls +text-server-adv
 +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
-csharp-external-editor -gdscript gdscript_lsp -mono monodevelop vscode
+csharp-external-editor +gdscript +gdnative gdscript_lsp -mono monodevelop vscode
 "
 IUSE_SYSTEM="
 system-bullet system-embree system-enet system-freetype
@@ -213,7 +213,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_27
+	ebuild_revision_29
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -562,7 +562,6 @@ PATCHES=(
 	"${FILESDIR}/godot-3.6-sanitizers.patch"
 	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
 	"${FILESDIR}/godot-3.6.1-custom-optimize.patch"
-	"${FILESDIR}/godot-3.6.1-debug_methods_enabled-option.patch"
 )
 
 check_speech_dispatcher() {
@@ -830,7 +829,6 @@ _compile() {
 		${options_extra[@]} \
 		lto="${lto}" \
 		optimize="custom" \
-		debug_methods_enabled="yes" \
 		"CFLAGS=${CFLAGS}" \
 		"CXXFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" \
@@ -1144,7 +1142,7 @@ src_compile() {
 		module_etc_enabled=$(usex etc)
 		module_fbx_enabled=$(usex fbx)
 		module_freetype_enabled=$(usex freetype)
-		module_gdnative_enabled=False
+		module_gdnative_enabled=$(usex gdnative)
 		module_gdscript_enabled=$(usex gdscript)
 		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
