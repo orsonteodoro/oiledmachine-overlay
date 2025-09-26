@@ -35,7 +35,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android -debug-engine +debug-extension fp64 web
-ebuild_revision_15
+ebuild_revision_16
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
