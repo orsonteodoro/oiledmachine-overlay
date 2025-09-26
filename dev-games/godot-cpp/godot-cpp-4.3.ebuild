@@ -34,12 +34,12 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android +debug-extension -debug-game-engine fp64 web
+android -debug +debug-extension fp64 web
 ebuild_revision_16
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
-	~dev-games/godot-editor-${PV}[fp64=]
+	~dev-games/godot-editor-${PV}[debug=,fp64=]
 	web? (
 		>=dev-util/emscripten-3.1.38:17-3.1
 	)
@@ -113,11 +113,11 @@ _build_target_linux() {
 		dev_build="False"
 		debug_symbols="False"
 	elif [[ "${target}" == "template_debug" ]] ; then
-		dev_build=$(usex debug-game-engine "True" "False")
+		dev_build=$(usex debug "True" "False")
 		debug_symbols="True"
 	else
-		dev_build=$(usex debug-game-engine "True" "False")
-		debug_symbols=$(usex debug-game-engine "True" "False")
+		dev_build=$(usex debug "True" "False")
+		debug_symbols=$(usex debug "True" "False")
 	fi
 	local gcc_slot=$(gcc-config -l \
 		| grep "*" \
