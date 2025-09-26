@@ -51,7 +51,7 @@
     Lua           | No                       | In development             | day(s) to week(s)                            |
     TypeScript    | No                       | Hit or miss [20][21]       | day(s) to years(s)                           |
     Odin          | No                       | Work In Progress           | day(s) to weeks(s)                           |
-    Orchestrator  | No                       | Dev and stable branches    | day(s) to years(s) [9]                       |
+    Orchestrator  | No                       | Dev and stable releases    | day(s) to years(s) [9]                       |
     Rust          | No                       | Production                 | day(s) to years(s)                           |
     Swift         | No                       | Experimental               | day(s) to weeks(s)                           |
     VisualScript  | No                       | Production                 | day(s) to years(s) [9]                       |
