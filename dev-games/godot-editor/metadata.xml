@@ -18,9 +18,9 @@
 
     Scripting language compatibility:
 
-    4.5:  GDScript, C# 12 (.NET 8.0), GDExtension
-    4.3:  GDScript, C# 12 (.NET 8.0), GDExtension, Orchestrator
-    3.6:  GDScript, C# 13 (.NET 9.0), VisualScript
+    4.5:  GDScript, C# 12 (.NET 8.0), C++, Rust
+    4.3:  GDScript, C# 12 (.NET 8.0), C++, Rust, Orchestrator
+    3.6:  GDScript, C# 13 (.NET 9.0), C++, VisualScript
 
     Language features:
 
@@ -669,13 +669,16 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     Stable versions only to minimize project upgrade issues.
     -->
     <slot name="3.6">
-      For compatibility with 3.6.x projects, C# 13, VisualScript.
+      For compatibility with 3.6.x projects, C# 13, C++, VisualScript.
     </slot>
     <slot name="4.3">
-      For compatibility with 4.3.x projects, C# 12, GDExtensions support, Orchestrator support.
+      For compatibility with 4.3.x projects, C# 12, C++, Rust, Orchestrator.
+    </slot>
+    <slot name="4.4">
+      For compatibility with 4.5.x projects, C# 12, C++, Rust.
     </slot>
     <slot name="4.5">
-      For compatibility with 4.5.x projects, C# 12, GDExtensions support.
+      For compatibility with 4.5.x projects, C# 12, C++, Rust.
     </slot>
   </slots>
 </pkgmetadata>

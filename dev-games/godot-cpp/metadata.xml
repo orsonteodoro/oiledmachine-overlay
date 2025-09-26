@@ -17,8 +17,29 @@
     <flag name="debug-game-engine">
       Enable or disable the game engine debug build.
     </flag>
+    <flag name="editor-plugin">
+      Enable or disable the editor plugin build.
+    </flag>
     <flag name="fp64">
       Use 64-bit double float support.
     </flag>
   </use>
+  <slots>
+    <!--
+    More fine-grained slotting primarily for language support.
+    Stable versions only to minimize project upgrade issues.
+    -->
+    <slot name="3.6">
+      For compatibility with 3.6.x projects, GDNative based projects.
+    </slot>
+    <slot name="4.3">
+      For compatibility with 4.3.x projects, GDExtension based projects.
+    </slot>
+    <slot name="4.4">
+      For compatibility with 4.5.x projects, GDExtension based projects.
+    </slot>
+    <slot name="4.5">
+      For compatibility with 4.5.x projects, GDExtension based projects.
+    </slot>
+  </slots>
 </pkgmetadata>
