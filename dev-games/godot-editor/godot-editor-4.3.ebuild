@@ -196,7 +196,7 @@ IUSE_AUDIO="
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug -fp64 jit layers lld lto mold portable
+clang -debug -fp64 jit layers lld lto mold portable
 sanitize-in-production
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -241,7 +241,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_25
+	ebuild_revision_26
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -1196,6 +1196,8 @@ src_compile() {
 		builtin_pcre2_with_jit=$(usex jit)
 		cpu_flags_x86_sse2=$(usex cpu_flags_x86_sse2)
 		cpu_flags_x86_sse=$(usex cpu_flags_x86_sse)
+		debug_symbols=$(usex debug)
+		dev_build=$(usex debug)
 		graphite=$(usex graphite)
 		minimp3_extra_formats=$(usex mp2 True $(usex mp1 True False))
 		minizip=$(usex minizip)
