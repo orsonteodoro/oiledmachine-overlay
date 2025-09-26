@@ -24,41 +24,85 @@
 
     Language features:
 
-    Name          | Runtime speed   | Security                    | Learning curve      | Portability             |
-    --------------|-----------------|-----------------------------|---------------------|-------------------------|
-    GDScript      | Slow            | Moderate to bad             | Easy [4]            | Best                    |
-    C#            | Fast            | Good                        | Medium [14]         | Okay to poor [5]        |
-    C++           | Fastest         | Bad [7][17][18], unmanaged  | Hard                | Better [6]              |
-    Rust          | Fast            | Moderate to bad [16][18]    | Medium [1][18]      | Better [6]              |
-    Orchestrator  | Slower          | Depends on Godot            | Hit or miss [1][9]  | Forward port issues [3] |
-    VisualScript  | Slower          | Depends on Godot            | Hit or miss [1][9]  | Forward port issues [2] |
+    Name          | Performance score   | Security score              | Learning curve score  | Portability score       |
+    --------------|---------------------|-----------------------------|-----------------------|-------------------------|
+    C#            | 7                   | 7                           | 6 [14]                | 9 [5]                   |
+    C++           | 9                   | 3, unmanaged                | 2                     | 8 [6]                   |
+    D             | 8                   | 6                           | 5                     | 6                       |
+    GDScript      | 5                   | 5                           | 8 [4]                 | 10                      |
+    Go            | 7                   | 8                           | 8                     | 5                       |
+    JavaScript    | 4 [23]              | 5                           | 7                     | 7                       |
+    Lua           | 6                   | 6                           | 8                     | 6                       |
+    Odin          | 9                   | 3                           | 5                     | 6                       |
+    Orchestrator  | 4                   | ?, depends on Godot         | ? [1][9]              | ? [3]                   |
+    Rust          | 9                   | 10                          | 4 [1]                 | 7 [6]                   |
+    Swift         | 7                   | 8                           | 6                     | 6                       |
+    TypeScript    | 4 [23]              | 6                           | 6                     | 7                       |
+    VisualScript  | 4                   | 7, depends on Godot         | 9 [1][9]              | 10 [2]                  |
 
-    Name          | Recommended     | Project development time (estimated) [8] |
-    --------------|-----------------|------------------------------------------|
-    GDScript      | Yes             | day(s) to week(s)                        |
-    C#            | Yes             | day(s) to week(s)                        |
-    C++           | No              | week(s) to month(s)                      |
-    Rust          | No              | day(s) to week(s)                        |
-    Orchestrator  | No              | day(s) to month(s) [9]                   |
-    VisualScript  | No              | day(s) to month(s) [9]                   |
+    Name          | Officially supported     | Bindings code quality      | Project development time (estimated) [8][19] |
+    --------------|--------------------------|----------------------------|----------------------------------------------|
+    C#            | Yes                      | Production                 | day(s) to months(s)                          |
+    C++           | Yes                      | Production                 | week(s) to years(s)                          |
+    D             | No                       | In development             | week(s) to years(s)                          |
+    GDScript      | Yes                      | Production                 | day(s) to week(s)                            |
+    Go            | No                       | In development (untagged)  | day(s) to years(s)                           |
+    JavaScript    | No                       | Hit or miss [20][21][22]   | day(s) to week(s)                            |
+    Lua           | No                       | In development             | day(s) to week(s)                            |
+    TypeScript    | No                       | Hit or miss [20][21]       | day(s) to years(s)                           |
+    Odin          | No                       | Work In Progress           | day(s) to weeks(s)                           |
+    Orchestrator  | No                       | Dev and stable branches    | day(s) to years(s) [9]                       |
+    Rust          | No                       | Production                 | day(s) to years(s)                           |
+    Swift         | No                       | Experimental               | day(s) to weeks(s)                           |
+    VisualScript  | No                       | Production                 | day(s) to years(s) [9]                       |
 
     Name          | Language similarity                | Integration                                                  |
     --------------|------------------------------------|--------------------------------------------------------------|
-    GDScript      | Python, Lua                        | Built-in                                                     |
     C#            | Java                               | Built-in                                                     |
     C++           | C, Java                            | External plugin (godot-cpp)                                  |
-    Rust          | C++, C#                            | External extension library (gdext as the godot rust crate)   |
-    Orchestrator  | Kismet, Blueprint, VisualScript    | Third party plugin                                           |
+    D             | C#                                 | Exteranl plugin                                              |
+    GDScript      | Python                             | Built-in                                                     |
+    Go            | JavaScript                         | External plugin                                              |
+    JavaScript    | C, ActionScript                    | External plugin, @godot-js/godot-ts package                  |
+    Lua           | Ruby                               | External plugin                                              |
+    Odin          | Go                                 | External plugin                                              |
+    Orchestrator  | Kismet, Blueprint, VisualScript    | External plugin                                              |
+    Rust          | C++, C#                            | External plugin (gdext as the godot rust crate)              |
+    Swift         | TypeScript                         | External plugin                                              |
+    TypeScript    | JavaScript                         | External plugin, @godot-js/godot-ts package                  |
     VisualScript  | Kismet, Blueprint, Orchestrator    | Built-in                                                     |
 
-    Name          | Use cases, cui bono? [11]                                                                                          |
-    --------------|--------------------------------------------------------------------------------------------------------------------|
-    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure, LLM games         |
-    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, training simulations, UIs                     |
-    C++           | Chess[12], using machine learning models, GPU offloading engineering simulations[13], custom libs/physics          |
-    Rust          | 2D/3D games, using machine learning models                                                                         |
-    Orchestrator  | Prototyping, 2.5D/3D environment/NPC scripting, machinima                                                          |
-    VisualScript  | Education, prototyping, 2.5D/3D environment/NPC scripting, machinima                                               |
+    Name          | Compilation                         | Notes                                                        |
+    --------------|-------------------------------------|--------------------------------------------------------------|
+    C#            | IL bytecode (VM)                    |                                                              |
+    C++           | Compiled                            |                                                              |
+    D             | Compiled                            |                                                              |
+    GDScript      | Interpreted                         |                                                              |
+    Go            | Compiled                            |                                                              |
+    JavaScript    | Hybrid (Interpreted to JIT) (VM)    |                                                              |
+    Lua           | Bytecode-interpreted (VM)           |                                                              |
+    Odin          | Compiled                            |                                                              |
+    Orchestrator  | Interpreted                         |                                                              |
+    Rust          | Compiled                            |                                                              |
+    Swift         | Compiled                            |                                                              |
+    TypeScript    | Compiled (Transpiled) to JavaScript |                                                              |
+    VisualScript  | Interpreted                         |                                                              |
+
+    Name          | Use cases, cui bono? [11]                                                                                                              |
+    --------------|----------------------------------------------------------------------------------------------------------------------------------------|
+    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, interactive training simulations, UIs                             |
+    C++           | 2D/3D games/apps, chess[12], using machine learning models, engineering/science simulations, GPU offloading[13], custom libs/physics   |
+    D             | 3D games                                                                                                                               |
+    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure, LLM games                             |
+    Go            | Server-side MMO networking, AI/ML machine learning games/apps                                                                          |
+    JavaScript    | Simple 2D apps/games                                                                                                                   | 
+    Lua           | Player mods, mini games                                                                                                                |
+    Odin          | RTS games, particle effects, city simulations                                                                                          |
+    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training by example                                                      |
+    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations                                                       |
+    Swift         | Simple 2D apps/games, mobile games                                                                                                     |
+    TypeScript    | Simple 2D apps/games                                                                                                                   | 
+    VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima, training by example                                   |
 
     [1] Difficult if a person is not accustomed or not vibing with the style.
     [2] Removed in 4.x
@@ -66,10 +110,6 @@
     [4] Easy with the help of AI.  Predictive code completion is verified working.
     [5] Some platforms are noted as experimental or not supported.
     [6] Not portable if using SIMD or not using runtime detection
-    [7] Possibility of malicious third party libraries or chances of introducing
-        vulnerable code.  It is recommended to use a local LLM to code review it.
-        There are more vulnerabilities that the AI can catch than what a
-        compiler reports.
     [8] It varies based on the project size, team size, experience, quality
         standards
     [9] AI is less likely to help you or you lose AI code generation benefit
@@ -82,11 +122,16 @@
          missing or not operational for C#, so API class reference documents
          are essential for productivity.
     [15] Bindings available from the dev-games/godot-cpp package
-    [16] Hardening is feature incomplete or not in production (e.g. SSP) compared to C++.
-         SSP (stack overflow protection) is not on by default, but on Go it is on by default.
-    [17] No heap overflow mitigation by default
-    [18] Does not clear memory/variables which can lead to uninitalized memory
-         vulnerabilities which can lead to information disclosure.
+    [19] The estimated time typically is related to project scalability.
+         Popular languages in the industry reflect real world estimates.
+         Languages that are not in the year range are unlikely to be languages in triple AAA titles.
+         Year(s) indicates the average time it takes to build a AAA title, AI project.
+         Week(s) indicates medium size projects, team projects, or casual game developer pace.
+         Day(s) indicate simple games, and team programming contests.
+    [20] Not all arches are verified tested.
+    [21] Demos simple 2D games.
+    [22] Not feature complete.
+    [23] The demos look slow or skippy, less than 30 FPS
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
