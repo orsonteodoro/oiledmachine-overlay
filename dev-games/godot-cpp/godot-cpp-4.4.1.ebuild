@@ -34,12 +34,17 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android -debug +debug-extension fp64 web
+android +debug-extension -debug-game-engine fp64 web
 ebuild_revision_16
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
-	~dev-games/godot-editor-${PV}[debug=,fp64=]
+	!debug-game-engine? (
+		~dev-games/godot-editor-${PV}[-debug,fp64=]
+	)
+	debug-game-engine? (
+		~dev-games/godot-editor-${PV}[debug,fp64=]
+	)
 	web? (
 		>=dev-util/emscripten-3.1.39:17-3.1
 	)
