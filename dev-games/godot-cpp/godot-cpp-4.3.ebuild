@@ -142,7 +142,7 @@ eerror
 eerror "eselect gcc set ${CHOST}-${GCC_SLOT}"
 eerror "source /etc/profile"
 eerror
-#		die
+		die
 	fi
 	export CC="${CHOST}-gcc-${GCC_SLOT}"
 	export CXX="${CHOST}-g++-${GCC_SLOT}"

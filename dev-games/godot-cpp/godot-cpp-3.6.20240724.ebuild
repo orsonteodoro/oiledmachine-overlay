@@ -11,8 +11,7 @@ EAPI=8
 # There is an open_encrypted_with_pass() API that these bindings makes available.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-#GCC_SLOT="9"
-GCC_SLOT="11"
+GCC_SLOT="9"
 LLVM_COMPAT=( "17" )
 STATUS="stable"
 
@@ -177,7 +176,7 @@ eerror
 eerror "eselect gcc set ${CHOST}-${GCC_SLOT}"
 eerror "source /etc/profile"
 eerror
-#		die
+		die
 	fi
 	export CC="${CHOST}-gcc-${GCC_SLOT}"
 	export CXX="${CHOST}-g++-${GCC_SLOT}"
