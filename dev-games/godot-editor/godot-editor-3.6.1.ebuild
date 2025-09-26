@@ -213,7 +213,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_26
+	ebuild_revision_27
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -561,6 +561,8 @@ PATCHES=(
 	"${FILESDIR}/godot-3.6.1-ccache.patch"
 	"${FILESDIR}/godot-3.6-sanitizers.patch"
 	"${FILESDIR}/godot-4.3-optionalize-x86-flags.patch"
+	"${FILESDIR}/godot-3.6.1-custom-optimize.patch"
+	"${FILESDIR}/godot-3.6.1-debug_methods_enabled-option.patch"
 )
 
 check_speech_dispatcher() {
@@ -811,13 +813,14 @@ ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 _compile() {
 	# Define lto here because scons does not evaluate lto= as steady-state.
 	# Do not sort.  Steady state build systems can sort config but not this one.
-	local extra_conf=()
+	local ccache_conf=()
 	if [[ -n "${CCACHE_DIR}" ]] ; then
-		extra_conf=(
+		ccache_conf=(
 			c_compiler_launcher="ccache"
 			cpp_compiler_launcher="ccache"
 		)
 	fi
+	local lto=$(usex lto "thin" "none")
 	scons \
 		${options_x11[@]} \
 		${options_modules[@]} \
@@ -825,13 +828,14 @@ _compile() {
 		bits="default" \
 		target="${target}" \
 		${options_extra[@]} \
-		lto=$(usex lto "thin" "none") \
-		optimize="speed" \
+		lto="${lto}" \
+		optimize="custom" \
+		debug_methods_enabled="yes" \
 		"CFLAGS=${CFLAGS}" \
 		"CXXFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" \
-		verbose=yes \
-		${extra_conf[@]} \
+		verbose="yes" \
+		${ccache_conf[@]} \
 		|| die
 }
 
@@ -950,6 +954,7 @@ get_configuration4() {
 		echo "debug"
 	else
 	# Restrict to -O2 with release_debug to prevent compromised _FORTIFY_SOURCE
+	# release_debug is needed to enable --gdnative-generate-json-api call for godot-cpp bindings.
 		echo "release_debug"
 	fi
 }

@@ -919,13 +919,14 @@ ewarn "You are missing the UBSan sanitizer for USE=sanitize-in-production."
 _compile() {
 	# Define lto here because scons does not evaluate lto= as steady-state.
 	# Do not sort.  Steady state build systems can sort config but not this one.
-	local extra_conf=()
+	local ccache_conf=()
 	if [[ -n "${CCACHE_DIR}" ]] ; then
-		extra_conf=(
+		ccache_conf=(
 			c_compiler_launcher="ccache"
 			cpp_compiler_launcher="ccache"
 		)
 	fi
+	local lto=$(usex lto "thin" "none")
 	scons \
 		${options_linuxbsd[@]} \
 		${options_modules[@]} \
@@ -933,14 +934,14 @@ _compile() {
 		bits="default" \
 		target="${target}" \
 		${options_extra[@]} \
-		lto=$(usex lto "thin" "none") \
+		lto="${lto}" \
 		optimize="custom" \
 		"cflags=${CFLAGS}" \
 		"cxxflags=${CXXFLAGS}" \
 		"cppdefines=${CPPFLAGS}" \
 		"linkflags=${LDFLAGS}" \
 		verbose=yes \
-		${extra_conf[@]} \
+		${ccache_conf[@]} \
 		|| die
 }
 
