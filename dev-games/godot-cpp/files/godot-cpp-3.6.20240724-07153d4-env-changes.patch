@@ -1,0 +1,48 @@
+diff '--color=auto' -urp godot-cpp-07153d40e0e5c25de1fd2d00da3a1669e7ea7e64.orig/SConstruct godot-cpp-07153d40e0e5c25de1fd2d00da3a1669e7ea7e64/SConstruct
+--- godot-cpp-07153d40e0e5c25de1fd2d00da3a1669e7ea7e64.orig/SConstruct	2024-07-24 07:06:23.000000000 -0700
++++ godot-cpp-07153d40e0e5c25de1fd2d00da3a1669e7ea7e64/SConstruct	2025-09-25 21:36:39.235631682 -0700
+@@ -160,6 +160,12 @@ opts.Add(
+         True,
+     )
+ )
++opts.Add("CCFLAGS", "Custom flags for both the C and C++ compilers")
++opts.Add("CXXFLAGS", "Custom flags for the C++ compiler")
++opts.Add("CFLAGS", "Custom flags for the C compiler")
++opts.Add("LINKFLAGS", "Custom flags for the linker")
++opts.Add("c_compiler_launcher", "C compiler launcher (e.g. `ccache`)")
++opts.Add("cpp_compiler_launcher", "C++ compiler launcher (e.g. `ccache`)")
+ 
+ opts.Add(BoolVariable("build_library", "Build the godot-cpp library.", True))
+ 
+@@ -455,6 +461,31 @@ elif env["platform"] == "javascript":
+     elif env["target"] == "release":
+         env.Append(CCFLAGS=["-O3"])
+ 
++# Environment flags
++CCFLAGS = env.get("CCFLAGS", "")
++env["CCFLAGS"] = ""
++env.Append(CCFLAGS=str(CCFLAGS).split())
++
++CFLAGS = env.get("CFLAGS", "")
++env["CFLAGS"] = ""
++env.Append(CFLAGS=str(CFLAGS).split())
++
++CXXFLAGS = env.get("CXXFLAGS", "")
++env["CXXFLAGS"] = ""
++env.Append(CXXFLAGS=str(CXXFLAGS).split())
++
++LINKFLAGS = env.get("LINKFLAGS", "")
++env["LINKFLAGS"] = ""
++env.Append(LINKFLAGS=str(LINKFLAGS).split())
++
++if "c_compiler_launcher" in env:
++    env["CC"] = " ".join([env["c_compiler_launcher"], env["CC"]])
++
++if "cpp_compiler_launcher" in env:
++    env["CXX"] = " ".join([env["cpp_compiler_launcher"], env["CXX"]])
++
++env.PrependENVPath("CCACHE_DIR", os.getenv("CCACHE_DIR"))
++
+ # Cache
+ scons_cache_path = os.environ.get("SCONS_CACHE")
+ if scons_cache_path is not None:

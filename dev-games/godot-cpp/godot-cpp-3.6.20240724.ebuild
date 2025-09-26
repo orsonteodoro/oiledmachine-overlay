@@ -11,18 +11,36 @@ EAPI=8
 # There is an open_encrypted_with_pass() API that these bindings makes available.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-GCC_SLOT="9"
+#GCC_SLOT="9"
+GCC_SLOT="11"
 LLVM_COMPAT=( "17" )
 STATUS="stable"
 
+GODOT_PN="godot"
+GODOT_PV="3.6.1"
+GODOT_P="${GODOT_PN}-${GODOT_PV}"
+EGIT_COMMIT="07153d40e0e5c25de1fd2d00da3a1669e7ea7e64"
+GODOT_HEADERS_COMMIT="1049927a596402cd2e8215cd6624868929f5f18d"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
-S="${WORKDIR}/${PN}-godot-${PV}-${STATUS}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 SRC_URI="
-https://github.com/godotengine/godot-cpp/archive/refs/tags/godot-${PV}-${STATUS}.tar.gz
-	-> ${P}.tar.gz
+https://github.com/godotengine/godot-cpp/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${EGIT_COMMIT:0:7}.tar.gz
 "
+if [[ -n "${GODOT_HEADERS_COMMIT}" ]] ; then
+# Repo source as a submodule of godot-cpp
+	SRC_URI+="
+https://github.com/godotengine/godot-headers/archive/${GODOT_HEADERS_COMMIT}.tar.gz
+	-> godot-headers-${GODOT_HEADERS_COMMIT:0:7}.tar.gz
+	"
+else
+# The Godot latest for 3.6.1 in the 3.x series.
+	SRC_URI+="
+https://github.com/godotengine/${GODOT_PN}/archive/${GODOT_PV}-${STATUS}.tar.gz -> ${GODOT_P}.tar.gz
+	"
+fi
 
-inherit cflags-hardened flag-o-matic
+inherit cflags-hardened flag-o-matic virtualx
 
 DESCRIPTION="C++ bindings for the Godot script API"
 HOMEPAGE="
@@ -34,16 +52,16 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android +debug-extension -debug-game-engine fp64 web
+android +debug-extension -debug-game-engine web
 ebuild_revision_16
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
 	!debug-game-engine? (
-		~dev-games/godot-editor-${PV}[-debug,fp64=]
+		~dev-games/godot-editor-${GODOT_PV}[-debug]
 	)
 	debug-game-engine? (
-		~dev-games/godot-editor-${PV}[debug,fp64=]
+		~dev-games/godot-editor-${GODOT_PV}[debug]
 	)
 	web? (
 		>=dev-util/emscripten-3.1.38:17-3.1
@@ -63,11 +81,27 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/godot-cpp-4.5-env-changes.patch"
+	"${FILESDIR}/godot-cpp-3.6.20240724-07153d4-env-changes.patch"
 )
 
 src_unpack() {
 	unpack ${A}
+	rm -rf "${S}/godot-headers"
+	if [[ -n "${GODOT_HEADERS_COMMIT}" ]] ; then
+		mv \
+			"${WORKDIR}/godot-headers-${GODOT_HEADERS_COMMIT}" \
+			"${S}/godot-headers" \
+			|| die
+		if [[ ! -f "${S}/godot-headers/api.json" ]] ; then
+eerror "Missing ${S}/godot-headers/api.json"
+			die
+		fi
+	else
+		mv \
+			"${WORKDIR}/${GODOT_P}-${STATUS}/modules/gdnative" \
+			"${S}/godot-headers" \
+			|| die
+	fi
 }
 
 get_olast() {
@@ -83,16 +117,17 @@ src_configure() {
 	use elibc_musl && die "musl is not currently supported.  Fork ebuild."
 }
 
-generate_extension_api_json() {
+# Currently broken and hangs
+generate_api_json() {
 	local x
 	for x in $(seq 0 18) ; do
 		addpredict "/dev/input/event${x}"
 	done
-	/usr/bin/godot${SLOT} \
-		--headless \
-		--dump-extension-api \
+	virtx /usr/bin/godot${SLOT} \
+		--gdnative-generate-json-api \
+		api.json \
 		|| die
-einfo "Generate extension_api.json done"
+einfo "Generate api.json done"
 }
 
 build_android() {
@@ -112,21 +147,21 @@ _build_target_linux() {
 	local target="${1}"
 	local dev_build
 	local debug_symbols
-	if [[ "${target}" == "template_release" ]] ; then
+	if [[ "${target}" == "release" ]] ; then
 		dev_build="False"
 		debug_symbols="False"
-	elif [[ "${target}" == "template_debug" ]] ; then
-	# For target=template_debug:
+	elif [[ "${target}" == "debug" ]] ; then
+	# For target=debug:
 	# If dev_build=True, -O2 + debug engine off + additional debug paths and reporting.
 	# If dev_build=False -O0 + debug engine on + additional debug paths and reporting.
-		dev_build=$(usex debug "True" "False")
+		dev_build=$(usex debug-game-engine "True" "False")
 		debug_symbols="True"
 	else
 	# For target=editor:
 	# If dev_build=True, -O2 + debug engine off.
 	# If dev_build=False -O0 + debug engine on.
-		dev_build=$(usex debug "True" "False")
-		debug_symbols=$(usex debug "True" "False")
+		dev_build=$(usex debug-game-engine "True" "False")
+		debug_symbols=$(usex debug-game-engine "True" "False")
 	fi
 	local gcc_slot=$(gcc-config -l \
 		| grep "*" \
@@ -150,8 +185,7 @@ eerror
 	strip-flags
 	filter-lto
 	cflags-hardened_append
-	local path="$(pwd)/extension_api.json"
-	local precision=$(usex fp64 "double" "single")
+	local path="${S}/godot-headers/api.json"
 	declare -A ABI_MAP=(
 		["amd64"]="x86_64"
 		["x86"]="x86_32"
@@ -211,13 +245,12 @@ einfo "libdir:  ${libdir}"
 				debug_symbols="${debug_symbols}" \
 				dev_build="${dev_build}" \
 				platform="linux" \
-				precision="${precision}" \
 				optimize="custom" \
 				target="${target}" \
-				cflags="${CFLAGS}" \
-				cxxflags="${CXXFLAGS}" \
-				cppdefines="${CPPFLAGS}" \
-				linkflags="${LDFLAGS}" \
+				use_custom_api_file="yes" \
+				"CFLAGS=${CFLAGS}" \
+				"CXXFLAGS=${CXXFLAGS}" \
+				"LINKFLAGS=${LDFLAGS}" \
 				verbose=yes \
 				${extra_conf[@]} \
 				|| die
@@ -227,12 +260,12 @@ einfo "libdir:  ${libdir}"
 
 build_linux() {
 	local targets=(
-		"template_debug"
-		"template_release"
+		"debug"
+		"release"
 	)
 	local target
 	for target in ${targets[@]} ; do
-		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
+		if [[ "${target}" == "debug" ]] && ! use debug-extension ; then
 			continue
 		fi
 		_build_target_linux "${target}"
@@ -257,10 +290,12 @@ ewarn "USE=web is untested"
 }
 
 src_compile() {
-	generate_extension_api_json
-	build_android
+	if ! [[ -n "${GODOT_HEADERS_COMMIT}" ]] ; then
+		generate_api_json
+	fi
+#	build_android
 	build_linux
-	build_web
+#	build_web
 }
 
 get_libdir2() {
@@ -273,9 +308,9 @@ _install_target_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
 	local target="${1}"
 	local configuration
-	if [[ "${target}" == "template_release" ]] ; then
+	if [[ "${target}" == "release" ]] ; then
 		configuration="release"
-	elif [[ "${target}" == "template_debug" ]] ; then
+	elif [[ "${target}" == "debug" ]] ; then
 		configuration="debug"
 	else
 		configuration=$(usex debug-game-engine "debug" "release")
@@ -323,7 +358,7 @@ einfo "Installing bindings for ${x}"
 			local abi="${ABI_MAP[${x}]}"
 			local bitness="${BITNESS_MAP[${x}]}"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}/${libdir}"
-			doins "bin/libgodot-cpp.linux.${target}.${abi}.a"
+			doins "bin/libgodot-cpp.linux.${target}.${bitness}.a"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}"
 			doins -r "include"
 cat <<EOF > "${T}/godot-cpp.pc" || die
@@ -335,7 +370,7 @@ includedir=\${prefix}/include
 Name: godot-cpp
 Description: C++ bindings for Godot Engine GDExtension API
 Version: ${PV}
-Libs: -L\${libdir} -lgodot-cpp.linux.${target}.${abi}
+Libs: -L\${libdir} -lgodot-cpp.linux.${target}.${bitness}
 Cflags: -I\${includedir}
 Requires:
 EOF
@@ -347,12 +382,12 @@ EOF
 
 install_linux() {
 	local targets=(
-		"template_debug"
-		"template_release"
+		"debug"
+		"release"
 	)
 	local target
 	for target in ${targets[@]} ; do
-		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
+		if [[ "${target}" == "debug" ]] && ! use debug-extension ; then
 			continue
 		fi
 		_install_target_linux "${target}"

@@ -92,6 +92,7 @@ generate_extension_api_json() {
 		--headless \
 		--dump-extension-api \
 		|| die
+einfo "Generate extension_api.json done"
 }
 
 build_android() {
@@ -277,7 +278,7 @@ _install_target_linux() {
 	elif [[ "${target}" == "template_debug" ]] ; then
 		configuration="debug"
 	else
-		configuration=$(usex debug "debug" "release")
+		configuration=$(usex debug-game-engine "debug" "release")
 	fi
 	declare -A ABI_MAP=(
 		["amd64"]="x86_64"
