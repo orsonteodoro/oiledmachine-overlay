@@ -111,16 +111,19 @@ _build_target_linux() {
 	local target="${1}"
 	local dev_build
 	local debug_symbols
-	# For target=template_debug or target=editor:
-	# If dev_build=True, -O2 + debug engine off.
-	# If dev_build=False -O0 + debug engine on.
 	if [[ "${target}" == "template_release" ]] ; then
 		dev_build="False"
 		debug_symbols="False"
 	elif [[ "${target}" == "template_debug" ]] ; then
+	# For target=template_debug:
+	# If dev_build=True, -O2 + debug engine off + additional debug paths and reporting.
+	# If dev_build=False -O0 + debug engine on + additional debug paths and reporting.
 		dev_build=$(usex debug "True" "False")
 		debug_symbols="True"
 	else
+	# For target=editor:
+	# If dev_build=True, -O2 + debug engine off.
+	# If dev_build=False -O0 + debug engine on.
 		dev_build=$(usex debug "True" "False")
 		debug_symbols=$(usex debug "True" "False")
 	fi
@@ -223,7 +226,6 @@ einfo "libdir:  ${libdir}"
 
 build_linux() {
 	local targets=(
-		"editor"
 		"template_debug"
 		"template_release"
 	)
@@ -344,7 +346,6 @@ EOF
 
 install_linux() {
 	local targets=(
-		"editor"
 		"template_debug"
 		"template_release"
 	)
