@@ -675,7 +675,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       For compatibility with 4.3.x projects, C# 12, C++, Rust, Orchestrator.
     </slot>
     <slot name="4.4">
-      For compatibility with 4.5.x projects, C# 12, C++, Rust.
+      For compatibility with 4.4.x projects, C# 12, C++, Rust.
     </slot>
     <slot name="4.5">
       For compatibility with 4.5.x projects, C# 12, C++, Rust.

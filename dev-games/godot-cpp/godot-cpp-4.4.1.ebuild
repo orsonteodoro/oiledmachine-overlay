@@ -34,8 +34,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android +debug-extension -debug-game-engine fp64 web
-ebuild_revision_16
+android +debug-extension -debug-game-engine +editor-plugin fp64 web
+ebuild_revision_17
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -227,11 +227,15 @@ einfo "libdir:  ${libdir}"
 
 build_linux() {
 	local targets=(
+		"editor"
 		"template_debug"
 		"template_release"
 	)
 	local target
 	for target in ${targets[@]} ; do
+		if [[ "${target}" == "editor" ]] && ! use editor-plugin ; then
+			continue
+		fi
 		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
 			continue
 		fi
@@ -347,11 +351,15 @@ EOF
 
 install_linux() {
 	local targets=(
+		"editor"
 		"template_debug"
 		"template_release"
 	)
 	local target
 	for target in ${targets[@]} ; do
+		if [[ "${target}" == "editor" ]] && ! use editor-plugin ; then
+			continue
+		fi
 		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
 			continue
 		fi

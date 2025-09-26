@@ -12,13 +12,13 @@
   </upstream>
   <use>
     <flag name="debug-extension">
-      Enable or disable the game developer debug build.
+      Add support for game developer debug builds.
     </flag>
     <flag name="debug-game-engine">
-      Enable or disable the game engine debug build.
+      Add support for game engine debug builds.
     </flag>
     <flag name="editor-plugin">
-      Enable or disable the editor plugin build.
+      Add editor plugin support.
     </flag>
     <flag name="fp64">
       Use 64-bit double float support.
@@ -36,7 +36,7 @@
       For compatibility with 4.3.x projects, GDExtension based projects.
     </slot>
     <slot name="4.4">
-      For compatibility with 4.5.x projects, GDExtension based projects.
+      For compatibility with 4.4.x projects, GDExtension based projects.
     </slot>
     <slot name="4.5">
       For compatibility with 4.5.x projects, GDExtension based projects.
