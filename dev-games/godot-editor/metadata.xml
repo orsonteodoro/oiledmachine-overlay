@@ -63,13 +63,13 @@
     D             | C#                                 | Exteranl plugin                                              |
     GDScript      | Python                             | Built-in                                                     |
     Go            | JavaScript                         | External plugin                                              |
-    JavaScript    | C, ActionScript                    | External plugin, @godot-js/godot-ts package                  |
+    JavaScript    | C, ActionScript                    | External plugin (@godot-js/godot-ts package)                 |
     Lua           | Ruby                               | External plugin                                              |
     Odin          | Go                                 | External plugin                                              |
     Orchestrator  | Kismet, Blueprint, VisualScript    | External plugin                                              |
     Rust          | C++, C#                            | External plugin (gdext as the godot rust crate)              |
     Swift         | TypeScript                         | External plugin                                              |
-    TypeScript    | JavaScript                         | External plugin, @godot-js/godot-ts package                  |
+    TypeScript    | JavaScript                         | External plugin (@godot-js/godot-ts package)                 |
     VisualScript  | Kismet, Blueprint, Orchestrator    | Built-in                                                     |
 
     Name          | Compilation                         | Notes                                                        |
