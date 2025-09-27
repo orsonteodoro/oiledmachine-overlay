@@ -33,6 +33,7 @@
     Go            | 7                   | 8                           | 8                     | 5                       |
     JavaScript    | 4 [23]              | 5                           | 7                     | 7                       |
     Lua           | 6                   | 6                           | 8                     | 6                       |
+    Nim           | 9/4                 | 3/5                         | ?                     | 8/7                     |
     Odin          | 9                   | 3                           | 5                     | 6                       |
     Orchestrator  | 4                   | ?, depends on Godot         | ? [1][9]              | ? [3]                   |
     Rust          | 9                   | 10                          | 4 [1]                 | 7 [6]                   |
@@ -66,6 +67,7 @@
     Go            | C                                  | External plugin                                              |
     JavaScript    | C, ActionScript                    | External plugin (@godot-js/godot-ts package)                 |
     Lua           | Ruby                               | External plugin                                              |
+    Nim           | Python, TypeScript                 | External plugin                                              |
     Odin          | Go                                 | External plugin                                              |
     Orchestrator  | Kismet, Blueprint, VisualScript    | External plugin                                              |
     Rust          | C++, C#                            | External plugin (gdext as the godot rust crate)              |
@@ -73,22 +75,23 @@
     TypeScript    | JavaScript                         | External plugin (@godot-js/godot-ts package)                 |
     VisualScript  | Kismet, Blueprint, Orchestrator    | Built-in                                                     |
 
-    Name          | Compilation                         | Notes                                                        |
-    --------------|-------------------------------------|--------------------------------------------------------------|
-    C#            | IL bytecode, JIT (VM) [25]          |                                                              |
-    C++           | Compiled                            |                                                              |
-    D             | Compiled                            |                                                              |
-    GDScript      | Interpreted                         |                                                              |
-    GDShader      | Compiled                            |                                                              |
-    Go            | Compiled                            |                                                              |
-    JavaScript    | Hybrid (Interpreted, JIT) (VM) [25] |                                                              |
-    Lua           | Bytecode-interpreted, JIT (VM) [25] |                                                              |
-    Odin          | Compiled                            |                                                              |
-    Orchestrator  | Interpreted                         |                                                              |
-    Rust          | Compiled                            |                                                              |
-    Swift         | Compiled                            |                                                              |
-    TypeScript    | Compiled (Transpiled) to JavaScript |                                                              |
-    VisualScript  | Interpreted                         |                                                              |
+    Name          | Compilation                                                                                       |
+    --------------|---------------------------------------------------------------------------------------------------|
+    C#            | IL bytecode, JIT (VM) [25]                                                                        |
+    C++           | Compiled                                                                                          |
+    D             | Compiled                                                                                          |
+    GDScript      | Interpreted                                                                                       |
+    GDShader      | Compiled                                                                                          |
+    Go            | Compiled                                                                                          |
+    JavaScript    | Hybrid (Interpreted, JIT) (VM) [25]                                                               |
+    Lua           | Bytecode-interpreted, JIT (VM) [25]                                                               |
+    Nim           | Compiled (Transpiled) to C for desktop or JavaScript for Web                                      |
+    Odin          | Compiled                                                                                          |
+    Orchestrator  | Interpreted                                                                                       |
+    Rust          | Compiled                                                                                          |
+    Swift         | Compiled                                                                                          |
+    TypeScript    | Compiled (Transpiled) to JavaScript                                                               |
+    VisualScript  | Interpreted                                                                                       |
 
     Name          | Use cases, cui bono? [11]                                                                          |
     --------------|----------------------------------------------------------------------------------------------------|
@@ -105,6 +108,7 @@
     Go            | Server-side MMO networking, AI/ML machine learning games/apps                                      |
     JavaScript    | Simple 2D apps/games                                                                               | 
     Lua           | Player mods, mini games                                                                            |
+    Nim           | Performance-critical code, multiplayer mobile games                                                |
     Odin          | RTS games, particle systems, city simulations                                                      |
     Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training animation                   |
     Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations                   |
@@ -131,7 +135,6 @@
     [14] Some AI can help with code generation.  Predictive code completion is
          missing or not operational for C#, so API class reference documents
          are essential for productivity.
-    [15] Bindings available from the dev-games/godot-cpp package
     [19] The estimated time typically is related to project scalability.
          Popular languages in the industry reflect real world estimates.
          Languages that are not in the year range are unlikely to be languages in triple AAA titles.
