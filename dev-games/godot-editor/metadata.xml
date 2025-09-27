@@ -33,13 +33,13 @@
     Go            | 7                   | 8                           | 8                     | 5                       |
     JavaScript    | 4 [23]              | 5                           | 7                     | 7                       |
     Lua           | 6                   | 6                           | 8                     | 6                       |
-    Nim           | 9/4                 | 3/5                         | ?                     | 8/7                     |
+    Nim           | 9 [23]              | 7                           | 9                     | 9                       |
     Odin          | 9                   | 3                           | 5                     | 6                       |
-    Orchestrator  | 4                   | ?, depends on Godot         | ? [1][9]              | ? [3]                   |
+    Orchestrator  | 4                   | 7, inherits from Godot      | 9 [1][9]              | 9 [3]                   |
     Rust          | 9                   | 10                          | 4 [1]                 | 7 [6]                   |
     Swift         | 7                   | 8                           | 6                     | 6                       |
     TypeScript    | 4 [23]              | 6                           | 6                     | 7                       |
-    VisualScript  | 4                   | 7, depends on Godot         | 9 [1][9]              | 10 [2]                  |
+    VisualScript  | 4                   | 7, inherits from Godot      | 9 [1][9]              | 10 [2]                  |
 
     Name          | Officially supported     | Bindings code quality      | Estimated project development time [8][19]  |
     --------------|--------------------------|----------------------------|---------------------------------------------|
@@ -95,23 +95,23 @@
 
     Name          | Use cases, cui bono? [11]                                                                          |
     --------------|----------------------------------------------------------------------------------------------------|
-    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations,                               |
+    C#            | 2D/3D games/apps, 3D racing/flying games, mobile games, game mechanics, interactive presentations, |
                   | interactive training simulations, UIs, audio analysis for rhythm games or music visualizations     |
                   | Screensavers                                                                                       |
-    C++           | 2D/3D games/apps, chess[12], using machine learning models, engineering/science simulations,       |
-                  | GPU offloading[13], custom libs/physics                                                            |
+    C++           | 2D/3D games/apps, chess [12], game mechanics, using machine learning models,                       |
+                  | engineering/science simulations, GPU offloading [13], custom libs/physics,                         |
+                  | performance-critical code                                                                          |
     D             | 3D games                                                                                           |
-    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom)                   |
-                  | Fractal graphics                                                                                   |
+    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom), fractal graphics |
     GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure,   |
-                  | LLM games                                                                                          |
+                  | LLM apps/games                                                                                     |
     Go            | Server-side MMO networking, AI/ML machine learning games/apps                                      |
     JavaScript    | Simple 2D apps/games                                                                               | 
     Lua           | Player mods, mini games                                                                            |
-    Nim           | Performance-critical code, multiplayer mobile games                                                |
+    Nim           | Game mechanics, multiplayer mobile games                                                           |
     Odin          | RTS games, particle systems, city simulations                                                      |
     Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training animation                   |
-    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations                   |
+    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations, game mechanics   |
     Swift         | Simple 2D apps/games, mobile games                                                                 |
     TypeScript    | Simple 2D apps/games                                                                               | 
     VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima,                   |
@@ -138,7 +138,7 @@
     [19] The estimated time typically is related to project scalability.
          Popular languages in the industry reflect real world estimates.
          Languages that are not in the year range are unlikely to be languages in triple AAA titles.
-         Year(s) indicates the average time it takes to build a AAA title, AI project.
+         Year(s) indicates the average time it takes to build a AAA title, large open source project.
          Week(s) indicates medium size projects, team projects, or casual game developer pace.
          Day(s) indicate simple games, and team programming contests.
     [20] Not all arches are verified tested.
