@@ -18,9 +18,10 @@
 
     Scripting language compatibility:
 
-    4.5:  GDScript, C# 12 (.NET 8.0), C++, Rust
-    4.3:  GDScript, C# 12 (.NET 8.0), C++, Rust, Orchestrator
-    3.6:  GDScript, C# 13 (.NET 9.0), C++, VisualScript
+    4.5:  GDScript, C#, C++, Go, JavaScript, Rust, TypeScript
+    4.4:  GDScript, C#, C++, JavaScript, Nim, Odin, Rust, TypeScript
+    4.3:  GDScript, C#, C++, Nim, Odin, Orchestrator, Rust, Swift
+    3.6:  GDScript, C#, C++, VisualScript
 
     Language features:
 
@@ -118,6 +119,47 @@
     VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima,                   |
                   | training movies, intro/cutscene animation                                                          |
 
+    Name                   | Game developer dependency requirements for Godot 3.6.x                                    |
+    -----------------------|-------------------------------------------------------------------------------------------|
+    C# C# 13 (.NET 9.0)    | =dev-lang/mono-6* dev-dotnet/dotnet-sdk-bin:9.0                                           |
+    C++                    | sys-devel/gcc:9                                                                           |
+    JavaScript (Built-in)  | >=dev-util/emscripten-3.1.39:17-3.1 LLVM 17                                               |
+
+    Name                   | Game developer dependency requirements for Godot 4.3.x                                    |
+    -----------------------|-------------------------------------------------------------------------------------------|
+    C# 12 (.NET 8.0)       | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
+    C++                    | sys-devel/gcc:9                                                                           |
+    D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.3[-mono]       |
+    JavaScript (Built-in)  | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
+    Nim                    | >=dev-lang/nim-2.0.0 sys-devel/gcc:14 dev-util/emscripten                                 |
+    Odin                   | dev-lang/odin                                                                             |
+    Rust                   | >=dev-lang/rust-bin-1.80.0                                                                |
+    Swift                  | >=dev-lang/swift-6.0:6                                                                    |
+
+    Name                   | Game developer dependency requirements for Godot 4.4.x                                    |
+    -----------------------|-------------------------------------------------------------------------------------------|
+    C# 12 (.NET 8.0)       | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
+    C++                    | sys-devel/gcc:11                                                                          |
+    D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.4[-mono]       |
+    JavaScript (GodotJS)   | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
+    JavaScript (Built-in)  | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
+    Lua                    | >=dev-build/scons-4.9.1 sys-devel/gcc:11 LUA and LuaJIT source code submodules            |
+    Nim                    | >=dev-lang/nim-2.0.12 sys-devel/gcc:15, dev-util/emscripten                               |
+    Odin                   | dev-lang/odin                                                                             |
+    Rust                   | >=dev-lang/rust-bin-1.85.0                                                                |
+    TypeScript             | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
+
+    Name                   | Game developer dependency requirements for Godot 4.5.x                                    |
+    -----------------------|-------------------------------------------------------------------------------------------|
+    C# 12 (.NET 8.0)       | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
+    C++                    | sys-devel/gcc:11                                                                          |
+    D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.5[-mono]       |
+    Go                     | >=dev-lang/go-1.25.0 >=dev-lang/zig-0.15.1:0.15                                           |
+    JavaScript (GodotJS)   | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                  |
+    JavaScript (Built-in)  | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                  |
+    Nim                    | >=dev-lang/nim-2.0.12 sys-devel/gcc:15, dev-util/emscripten                               |
+    TypeScript             | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                  |
+
     [1] Difficult if a person is not accustomed or not vibing with the style.
     [2] Removed in 4.x
     [3] Slow development cycle or 2 minor versions behind
@@ -148,7 +190,7 @@
     [23] The demos look slow or skippy, less than 30 FPS
     [24] This is mostly a subjective syntactic comparison of bubble sort.  For
          some rows, the runtime performance similarity and memory safety
-         similarity of compariable languages are noted.
+         similarity of comparable languages are noted.
     [25] JIT optimized machine code either before execution or in the middle
          of execution.  Interpreted is similar to -O0,  JIT optimized is
          similar to full -O3 runtime performance.
@@ -167,7 +209,7 @@
     more portable, but the Mono export templates are JITed and ran in near
     native speed but less portable.  For GDNative scripted projects, use the
     standard export templates.  Porting to console is possible but non-free
-    through third-parties
+    through third-parties.
 
     Cross-compile notes:
 
@@ -737,16 +779,16 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     For a list of languages supported, see https://docs.godotengine.org/en/stable/tutorials/scripting/other_languages.html
     -->
     <slot name="3.6">
-      For compatibility with 3.6.x projects, C# 13, C++, VisualScript.
+      For compatibility with 3.6.x projects, C#, C++, VisualScript.
     </slot>
     <slot name="4.3">
-      For compatibility with 4.3.x projects, C# 12, C++, Nim, Odin, Orchestrator, Rust, Swift.
+      For compatibility with 4.3.x projects, C#, C++, Nim, Odin, Orchestrator, Rust, Swift.
     </slot>
     <slot name="4.4">
-      For compatibility with 4.4.x projects, C# 12, C++, JavaScript, Nim, Odin, Rust, TypeScript.
+      For compatibility with 4.4.x projects, C#, C++, JavaScript, Nim, Odin, Rust, TypeScript.
     </slot>
     <slot name="4.5">
-      For compatibility with 4.5.x projects, C# 12, C++, Go, JavaScript, Rust, TypeScript.
+      For compatibility with 4.5.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
     </slot>
   </slots>
 </pkgmetadata>
