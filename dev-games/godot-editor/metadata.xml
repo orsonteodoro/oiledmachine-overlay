@@ -116,7 +116,8 @@
                   | engineering/science simulations, GPU offloading [13], custom libs/physics,                          |
                   | performance-critical code                                                                           |
     D             | 3D games                                                                                            |
-    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom), fractal graphics  |
+    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom), fractal graphics, |
+                  | music player visualizations                                                                         |
     GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure,    |
                   | LLM apps/games                                                                                      |
     Go            | Server-side MMO networking, AI/ML machine learning games/apps                                       |
