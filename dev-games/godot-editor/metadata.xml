@@ -90,22 +90,28 @@
     TypeScript    | Compiled (Transpiled) to JavaScript |                                                              |
     VisualScript  | Interpreted                         |                                                              |
 
-    Name          | Use cases, cui bono? [11]                                                                                                              |
-    --------------|----------------------------------------------------------------------------------------------------------------------------------------|
-    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, interactive training simulations, UIs, audio analysis             |
-    C++           | 2D/3D games/apps, chess[12], using machine learning models, engineering/science simulations, GPU offloading[13], custom libs/physics   |
-    D             | 3D games                                                                                                                               |
-    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom)                                                       |
-    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure, LLM games                             |
-    Go            | Server-side MMO networking, AI/ML machine learning games/apps                                                                          |
-    JavaScript    | Simple 2D apps/games                                                                                                                   | 
-    Lua           | Player mods, mini games                                                                                                                |
-    Odin          | RTS games, particle systems, city simulations                                                                                          |
-    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training by example                                                      |
-    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations                                                       |
-    Swift         | Simple 2D apps/games, mobile games                                                                                                     |
-    TypeScript    | Simple 2D apps/games                                                                                                                   | 
-    VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima, training by example                                   |
+    Name          | Use cases, cui bono? [11]                                                                          |
+    --------------|----------------------------------------------------------------------------------------------------|
+    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations,                               |
+                  | interactive training simulations, UIs, audio analysis for rhythm games or music visualizations     |
+                  | Screensavers                                                                                       |
+    C++           | 2D/3D games/apps, chess[12], using machine learning models, engineering/science simulations,       |
+                  | GPU offloading[13], custom libs/physics                                                            |
+    D             | 3D games                                                                                           |
+    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom)                   |
+                  | Fractal graphics                                                                                   |
+    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure,   |
+                  | LLM games                                                                                          |
+    Go            | Server-side MMO networking, AI/ML machine learning games/apps                                      |
+    JavaScript    | Simple 2D apps/games                                                                               | 
+    Lua           | Player mods, mini games                                                                            |
+    Odin          | RTS games, particle systems, city simulations                                                      |
+    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training animation                   |
+    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations                   |
+    Swift         | Simple 2D apps/games, mobile games                                                                 |
+    TypeScript    | Simple 2D apps/games                                                                               | 
+    VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima,                   |
+                  | training animation                                                                                 |
 
     [1] Difficult if a person is not accustomed or not vibing with the style.
     [2] Removed in 4.x
