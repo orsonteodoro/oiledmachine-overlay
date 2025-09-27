@@ -96,8 +96,8 @@
     Name          | Use cases, cui bono? [11]                                                                          |
     --------------|----------------------------------------------------------------------------------------------------|
     C#            | 2D/3D games/apps, 3D racing/flying games, mobile games, game mechanics, interactive presentations, |
-                  | interactive training simulations, UIs, audio analysis for rhythm games or music visualizations     |
-                  | Screensavers                                                                                       |
+                  | interactive training simulations, UIs, audio analysis for rhythm games or music visualizations,    |
+                  | screensavers                                                                                       |
     C++           | 2D/3D games/apps, chess [12], game mechanics, using machine learning models,                       |
                   | engineering/science simulations, GPU offloading [13], custom libs/physics,                         |
                   | performance-critical code                                                                          |
@@ -110,12 +110,13 @@
     Lua           | Player mods, mini games                                                                            |
     Nim           | Game mechanics, multiplayer mobile games                                                           |
     Odin          | RTS games, particle systems, city simulations                                                      |
-    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training animation                   |
+    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training movies,                     |
+                  | intro/cutscene animation                                                                           |
     Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations, game mechanics   |
     Swift         | Simple 2D apps/games, mobile games                                                                 |
     TypeScript    | Simple 2D apps/games                                                                               | 
     VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima,                   |
-                  | training animation                                                                                 |
+                  | training movies, intro/cutscene animation                                                          |
 
     [1] Difficult if a person is not accustomed or not vibing with the style.
     [2] Removed in 4.x
