@@ -11,7 +11,7 @@
     <remote-id type="github">godotengine/godot-cpp</remote-id>
   </upstream>
   <use>
-    <flag name="debug-extension">
+    <flag name="debug-export-template-plugin">
       Add support for game developer debug builds.
     </flag>
     <flag name="debug-game-engine">

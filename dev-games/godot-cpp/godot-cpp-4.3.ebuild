@@ -34,8 +34,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android +debug-extension -debug-game-engine -editor-plugin fp64 web
-ebuild_revision_18
+android +debug-export-template-plugin -debug-game-engine -editor-plugin fp64 web
+ebuild_revision_19
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -236,7 +236,7 @@ build_linux() {
 		if [[ "${target}" == "editor" ]] && ! use editor-plugin ; then
 			continue
 		fi
-		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
+		if [[ "${target}" == "template_debug" ]] && ! use debug-export-template-plugin ; then
 			continue
 		fi
 		_build_target_linux "${target}"
@@ -276,12 +276,20 @@ get_libdir2() {
 _install_target_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
 	local target="${1}"
+	local target2
+	local target3
 	local configuration
 	if [[ "${target}" == "template_release" ]] ; then
+		target2="export template plugin"
+		target3="export-template-plugin"
 		configuration="release"
 	elif [[ "${target}" == "template_debug" ]] ; then
+		target2="export template plugin"
+		target3="export-template-plugin"
 		configuration="debug"
 	else
+		target2="editor plugin"
+		target3="editor-plugin"
 		configuration=$(usex debug-game-engine "debug" "release")
 	fi
 	declare -A ABI_MAP=(
@@ -330,14 +338,14 @@ einfo "Installing bindings for ${x}"
 			doins "bin/libgodot-cpp.linux.${target}.${abi}.a"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}"
 			doins -r "include"
-cat <<EOF > "${T}/godot-cpp.pc" || die
+cat <<EOF > "${T}/godot-cpp-${target3}.pc" || die
 prefix=/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}
 exec_prefix=\${prefix}
 libdir=\${prefix}/${libdir}
 includedir=\${prefix}/include
 
-Name: godot-cpp
-Description: C++ bindings for Godot Engine GDExtension API
+Name: godot-cpp-${target3}
+Description: C++ ${target2} bindings for Godot Engine GDExtension API
 Version: ${PV}
 Libs: -L\${libdir} -lgodot-cpp.linux.${target}.${abi}
 Cflags: -I\${includedir}
@@ -360,7 +368,7 @@ install_linux() {
 		if [[ "${target}" == "editor" ]] && ! use editor-plugin ; then
 			continue
 		fi
-		if [[ "${target}" == "template_debug" ]] && ! use debug-extension ; then
+		if [[ "${target}" == "template_debug" ]] && ! use debug-export-template-plugin ; then
 			continue
 		fi
 		_install_target_linux "${target}"

@@ -51,8 +51,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
-android +debug-extension -debug-game-engine web
-ebuild_revision_18
+android +debug-export-template-plugin -debug-game-engine web
+ebuild_revision_19
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
@@ -260,7 +260,7 @@ build_linux() {
 	)
 	local target
 	for target in ${targets[@]} ; do
-		if [[ "${target}" == "debug" ]] && ! use debug-extension ; then
+		if [[ "${target}" == "debug" ]] && ! use debug-export-template-plugin ; then
 			continue
 		fi
 		_build_target_linux "${target}"
@@ -302,6 +302,8 @@ get_libdir2() {
 _install_target_linux() {
 	# We don't install it to the /usr prefix because the headers may be different per Godot slot.
 	local target="${1}"
+	local target2="export template plugin"
+	local target3="export-template-plugin"
 	local configuration
 	if [[ "${target}" == "release" ]] ; then
 		configuration="release"
@@ -354,14 +356,14 @@ einfo "Installing bindings for ${x}"
 			doins "bin/libgodot-cpp.linux.${target}.${bitness}.a"
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}"
 			doins -r "include"
-cat <<EOF > "${T}/godot-cpp.pc" || die
+cat <<EOF > "${T}/godot-cpp-${target3}.pc" || die
 prefix=/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}
 exec_prefix=\${prefix}
 libdir=\${prefix}/${libdir}
 includedir=\${prefix}/include
 
-Name: godot-cpp
-Description: C++ bindings for Godot Engine GDExtension API
+Name: godot-cpp-${target3}
+Description: C++ ${target2} bindings for Godot Engine GDNative API
 Version: ${PV}
 Libs: -L\${libdir} -lgodot-cpp.linux.${target}.${bitness}
 Cflags: -I\${includedir}
@@ -380,7 +382,7 @@ install_linux() {
 	)
 	local target
 	for target in ${targets[@]} ; do
-		if [[ "${target}" == "debug" ]] && ! use debug-extension ; then
+		if [[ "${target}" == "debug" ]] && ! use debug-export-template-plugin ; then
 			continue
 		fi
 		_install_target_linux "${target}"
