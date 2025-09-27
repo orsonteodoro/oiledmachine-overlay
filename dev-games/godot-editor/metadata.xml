@@ -57,11 +57,12 @@
     JavaScript    | No                  | 5  [Development] [20][21][22]  | day(s) to week(s)                            |
     (GodotJS)     |                     |                                |                                              |
     Lua           | No                  | 7  [Development]               | day(s) to week(s)                            |
-    TypeScript    | No                  | 7  [Development] [20][21]      | day(s) to year(s)                            |
+    Nim           | No                  | 8  [Both]                      | day(s) to months(s)                          |
     Odin          | No                  | 6  [Development]               | day(s) to week(s)                            |
     Orchestrator  | No                  | 8  [Both]                      | day(s) to year(s) [9]                        |
     Rust          | No                  | 9  [Both]                      | day(s) to year(s)                            |
     Swift         | No                  | 6  [Development]               | day(s) to week(s)                            |
+    TypeScript    | No                  | 7  [Development] [20][21]      | day(s) to year(s)                            |
     VisualScript  | No                  | 8  [Production]                | day(s) to year(s) [9]                        |
 
     Name          | Language similarity [24]             | Integration                                                  |
