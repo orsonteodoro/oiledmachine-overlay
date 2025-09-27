@@ -72,7 +72,10 @@
     GDScript      | Python                               | Built-in                                                     |
     GDShader      | GLSL                                 | Built-in                                                     |
     Go            | C                                    | External plugin                                              |
+    JavaScript    | C, ActionScript                      | Built-in                                                     |
+    (Built-in)    |                                      |                                                              |
     JavaScript    | C, ActionScript                      | External plugin (@godot-js/godot-ts package)                 |
+    (GodotJS)     |                                      |                                                              |
     Lua           | Ruby                                 | External plugin                                              |
     Nim           | Python, TypeScript                   | External plugin                                              |
     Odin          | Go                                   | External plugin                                              |
