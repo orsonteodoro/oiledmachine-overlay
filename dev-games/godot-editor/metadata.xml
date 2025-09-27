@@ -60,7 +60,7 @@
     --------------|------------------------------------|--------------------------------------------------------------|
     C#            | Java                               | Built-in                                                     |
     C++           | C, Java                            | External plugin (godot-cpp)                                  |
-    D             | C#                                 | Exteranl plugin                                              |
+    D             | C#                                 | External plugin                                              |
     GDScript      | Python                             | Built-in                                                     |
     GDShader      | GLSL                               | Built-in                                                     |
     Go            | C                                  | External plugin                                              |
