@@ -61,6 +61,7 @@
     C#            | Java                               | Built-in                                                     |
     C++           | C, Java                            | External plugin (godot-cpp)                                  |
     D             | C#                                 | Exteranl plugin                                              |
+    GDShader      | GLSL                               | Built-in                                                     |
     GDScript      | Python                             | Built-in                                                     |
     Go            | JavaScript                         | External plugin                                              |
     JavaScript    | C, ActionScript                    | External plugin (@godot-js/godot-ts package)                 |
@@ -77,6 +78,7 @@
     C#            | IL bytecode (VM)                    |                                                              |
     C++           | Compiled                            |                                                              |
     D             | Compiled                            |                                                              |
+    GDShader      | Compiled                            |                                                              |
     GDScript      | Interpreted                         |                                                              |
     Go            | Compiled                            |                                                              |
     JavaScript    | Hybrid (Interpreted to JIT) (VM)    |                                                              |
@@ -90,9 +92,10 @@
 
     Name          | Use cases, cui bono? [11]                                                                                                              |
     --------------|----------------------------------------------------------------------------------------------------------------------------------------|
-    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, interactive training simulations, UIs                             |
+    C#            | 2D/3D games/apps, 3D racing/flying games, interactive presentations, interactive training simulations, UIs, audio analysis             |
     C++           | 2D/3D games/apps, chess[12], using machine learning models, engineering/science simulations, GPU offloading[13], custom libs/physics   |
     D             | 3D games                                                                                                                               |
+    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom)                                                       |
     GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure, LLM games                             |
     Go            | Server-side MMO networking, AI/ML machine learning games/apps                                                                          |
     JavaScript    | Simple 2D apps/games                                                                                                                   | 
@@ -114,7 +117,8 @@
         standards
     [9] AI is less likely to help you or you lose AI code generation benefit
     [11] You can use multiple languages in the game.  Typically GDScript and C#,
-         or GDScript and GDExtension are combined.
+         or GDScript and C++ are combined.  Use C# or C++ for performance-critical
+         code.  Use GDScript for productivity-critical code.
     [12] A memory bounded problem.  C++ offers the lowest memory overhead of the
          listed languages.
     [13] Via OpenMP
