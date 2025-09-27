@@ -61,8 +61,8 @@
     C#            | Java                               | Built-in                                                     |
     C++           | C, Java                            | External plugin (godot-cpp)                                  |
     D             | C#                                 | Exteranl plugin                                              |
-    GDShader      | GLSL                               | Built-in                                                     |
     GDScript      | Python                             | Built-in                                                     |
+    GDShader      | GLSL                               | Built-in                                                     |
     Go            | JavaScript                         | External plugin                                              |
     JavaScript    | C, ActionScript                    | External plugin (@godot-js/godot-ts package)                 |
     Lua           | Ruby                               | External plugin                                              |
@@ -78,8 +78,8 @@
     C#            | IL bytecode (VM)                    |                                                              |
     C++           | Compiled                            |                                                              |
     D             | Compiled                            |                                                              |
-    GDShader      | Compiled                            |                                                              |
     GDScript      | Interpreted                         |                                                              |
+    GDShader      | Compiled                            |                                                              |
     Go            | Compiled                            |                                                              |
     JavaScript    | Hybrid (Interpreted to JIT) (VM)    |                                                              |
     Lua           | Bytecode-interpreted (VM)           |                                                              |
