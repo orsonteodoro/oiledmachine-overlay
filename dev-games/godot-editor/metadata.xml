@@ -196,9 +196,9 @@
     [12] Chess AI is a memory bounded problem.  C++ offers the lowest memory
          overhead of the listed languages.  It is possible to link to
          State Of The Art (SOTA) open source chess AI libraries.  It is also
-         possible to use a non-performant lanugage to interface to the SOTA AI
-         libraries via pipes.  For human to human chess games, it is not
-         necessary to use C++.
+         possible to use a non-performant language to interface to the SOTA AI
+         libraries via pipes.  For human-to-human chess games, you may use
+         a non-performant programming language instead.
     [13] Via OpenMP
     [14] Some AI can help with code generation.  Predictive code completion is
          missing or not operational for C#, so API class reference documents
