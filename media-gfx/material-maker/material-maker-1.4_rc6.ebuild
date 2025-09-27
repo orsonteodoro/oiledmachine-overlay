@@ -6,6 +6,7 @@ EAPI=8
 
 # U 24
 
+MY_PN="Material Maker"
 MY_PV="${PV/_rc/rc}"
 
 GODOT_PV_DESKTOP="4.4.1"
@@ -14,7 +15,7 @@ PYTHON_COMPAT=( "python3_12" )
 RCEDIT_PV="1.1.1"
 STATUS="stable"
 
-inherit python-r1
+inherit python-r1 xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -25,6 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-${MY_PV}"
 	SRC_URI="
 https://github.com/RodZill4/material-maker/archive/refs/tags/${MY_PV}.tar.gz
 	-> ${P}.tar.gz
@@ -54,7 +56,6 @@ BDEPEND="
 "
 
 pkg_setup() {
-ewarn "This ebuild is still in development."
 	python_setup
 }
 
@@ -73,9 +74,11 @@ eerror "Bump needed for MY_PV"
 	else
 		unpack ${A}
 	fi
-	unzip -a "Godot_v${GODOT_PV_DESKTOP}-${STATUS}_export_templates.tpz" || die
-	mkdir -v -p "~/.local/share/godot/export_templates/${GODOT_PV_DESKTOP}.${STATUS}" || die
-	mv "./templates/"* "~/.local/share/godot/export_templates/${GODOT_PV_DESKTOP}.${STATUS}" || die
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	mkdir
+	unzip "${distdir}/Godot_v${GODOT_PV_DESKTOP}-${STATUS}_export_templates.tpz" "templates/linux_release.x86_64" || die
+	mkdir -v -p "${HOME}/.local/share/godot/export_templates/${GODOT_PV_DESKTOP}.${STATUS}" || die
+	mv "templates/linux_release.x86_64" "${HOME}/.local/share/godot/export_templates/${GODOT_PV_DESKTOP}.${STATUS}" || die
 }
 
 src_prepare() {
@@ -88,21 +91,28 @@ src_configure() {
 
 desktop_gen_tres() {
 	local slot="${GODOT_PV_DESKTOP%%.*}"
+	mkdir -p "${HOME}/.config/godot" || die
 	echo '[gd_resource type="EditorSettings" format=2]' >> "${HOME}/.config/godot/editor_settings-${slot}.tres"
 	echo '[resource]' >> "${HOME}/.config/godot/editor_settings-${slot}.tres"
 	echo 'export/windows/wine = "/usr/bin/wine"' >> "${HOME}/.config/godot/editor_settings-${slot}.tres"
-	echo 'export/windows/rcedit = "'"${$RCEDIT_PATH}"'/rcedit-'"${PV}"'-x64.exe"' >> "${HOME}/.config/godot/editor_settings-${slot}.tres"
+	echo 'export/windows/rcedit = "'"${RCEDIT_PATH}"'/rcedit-'"${PV}"'-x64.exe"' >> "${HOME}/.config/godot/editor_settings-${slot}.tres"
 	mkdir -v -p "build/${MY_PV}_${MY_PV}_linux" || die
 }
 
 desktop_build_winux() {
-	godot \
+	local x
+	for x in $(seq 0 18) ; do
+		addpredict "/dev/input/event${x}"
+	done
+	addpredict "/dev/input/mice"
+	addpredict "/dev/input/mouse0"
+	"${WORKDIR}/Godot_v${GODOT_PV_DESKTOP}-${STATUS}_linux.x86_64" \
 		--headless \
 		-v \
 		--export-release "${export_template}" \
 		"build/${MY_PV}_${MY_PV}_${os}/${MY_PV}.${suffix}" \
 		|| die
-	godot \
+	"${WORKDIR}/Godot_v${GODOT_PV_DESKTOP}-${STATUS}_linux.x86_64" \
 		--headless \
 		-v \
 		--export-release "${export_template}" \
@@ -135,25 +145,6 @@ desktop_copy_data_winux() {
 	done
 }
 
-desktop_copy_data_mac() {
-	local pairs=(
-		"addons/material_maker/nodes:build/mac/${MY_PV}.app/Contents/${os}"
-		"material_maker/environments:build/mac/${MY_PV}.app/Contents/${os}"
-		"material_maker/examples:build/mac/${MY_PV}.app/Contents/${os}"
-		"material_maker/library:build/mac/${MY_PV}.app/Contents/${os}"
-		"material_maker/meshes:build/mac/${MY_PV}.app/Contents/${os}"
-		"material_maker/misc/export:build/mac/${MY_PV}.app/Contents/${os}"
-		"doc:build/mac/${MY_PV}.app/Contents/${os}/doc"
-	)
-	local src
-	local dest
-	for pair in ${pairs[@]} ; do
-		local src="${pair%:*}"
-		local dest="${pair#*:}"
-		cp -vR "${src}" "${dest}"
-	done
-}
-
 desktop_pack_winux() {
 	cd build || die
 	if use amd64 && use kernel_linux ; then
@@ -168,29 +159,43 @@ eerror "ARCH=${ARCH} is not supported"
 }
 
 src_compile() {
-	if use desktop ; then
-		local arch
-		local os
-		local export_template
-		if use amd64 && use kernel_linux ; then
-			suffix="x86_64"
-			os="linux"
-			export_template="Linux/X11"
-		else
+	local arch
+	local os
+	local export_template
+	if use amd64 && use kernel_linux ; then
+		suffix="x86_64"
+		os="linux"
+		export_template="Linux/X11"
+	else
 eerror "OS/ARCH not supported"
-			die
-		fi
-		desktop_gen_tres
-		if use kernel_linux ; then
-			desktop_build_winux
-			desktop_build_doc
-			desktop_copy_data_winux
-			desktop_pack_winux
-		fi
+		die
+	fi
+	desktop_gen_tres
+	if use kernel_linux ; then
+		desktop_build_winux
+		desktop_build_doc
+		desktop_copy_data_winux
+		desktop_pack_winux
 	fi
 }
 
 src_install() {
 	default
-ewarn "TODO:  finish install"
+	pushd "${S}/build/${MY_PV}_${MY_PV}_linux" || die
+		insinto "/opt/${PN}"
+		doins -r *
+		fperms "+x" "/opt/${PN}/${MY_PV}.x86_64"
+	popd || die
+	newicon "icon.png" "${PN}.png"
+	make_desktop_entry \
+		"/opt/${PN}" \
+		"${MY_PN}" \
+		"${PN}.png" \
+		"Graphics;3DGraphics"
+	exeinto "/usr/bin"
+cat <<EOF > "${T}/${PN}"
+#!/bin/bash
+"/opt/${PN}/${MY_PV}.x86_64" "$@"
+EOF
+	doexe "${T}/${PN}"
 }
