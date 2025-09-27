@@ -44,18 +44,18 @@
     Name          | Officially supported     | Bindings code quality      | Project development time (estimated) [8][19] |
     --------------|--------------------------|----------------------------|----------------------------------------------|
     C#            | Yes                      | Production                 | day(s) to months(s)                          |
-    C++           | Yes                      | Production                 | week(s) to years(s)                          |
-    D             | No                       | In development             | week(s) to years(s)                          |
+    C++           | Yes                      | Production                 | week(s) to year(s)                           |
+    D             | No                       | In development             | week(s) to year(s)                           |
     GDScript      | Yes                      | Production                 | day(s) to week(s)                            |
-    Go            | No                       | In development (untagged)  | day(s) to years(s)                           |
+    Go            | No                       | In development (untagged)  | day(s) to year(s)                            |
     JavaScript    | No                       | Hit or miss [20][21][22]   | day(s) to week(s)                            |
     Lua           | No                       | In development             | day(s) to week(s)                            |
-    TypeScript    | No                       | Hit or miss [20][21]       | day(s) to years(s)                           |
+    TypeScript    | No                       | Hit or miss [20][21]       | day(s) to year(s)                            |
     Odin          | No                       | Work In Progress           | day(s) to weeks(s)                           |
-    Orchestrator  | No                       | Dev and stable releases    | day(s) to years(s) [9]                       |
-    Rust          | No                       | Production                 | day(s) to years(s)                           |
+    Orchestrator  | No                       | Dev and stable releases    | day(s) to year(s) [9]                        |
+    Rust          | No                       | Production                 | day(s) to year(s)                            |
     Swift         | No                       | Experimental               | day(s) to weeks(s)                           |
-    VisualScript  | No                       | Production                 | day(s) to years(s) [9]                       |
+    VisualScript  | No                       | Production                 | day(s) to year(s) [9]                        |
 
     Name          | Language similarity [24]           | Integration                                                  |
     --------------|------------------------------------|--------------------------------------------------------------|
