@@ -1208,20 +1208,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-dotnet/monogame-extended | MonoGame.Extended are classes and extensions to make MonoGame more awesome |
 | dev-dotnet/monogame | One framework for creating powerful cross-platform games. |
 | dev-dotnet/mono-msbuild-bin | MSBuild is the build platform for .NET and VS. |
-| dev-dotnet.old/assimp-net | AssimpNet is a C# language binding to the Assimp library |
-| dev-dotnet.old/atitextureconverter | A C# Wrapper for the TextureConverter native library to allow |
-| dev-dotnet.old/freeimagenet | FreeImage.NET is a wrapper for the FreeImage library for popular |
-| dev-dotnet.old/gnome-sharp | Bindings to the core Gnome APIs |
-| dev-dotnet.old/gwen-dotnet | GWEN.Net is a .Net port of GWEN, and is a lightweight GUI library aimed at games. |
-| dev-dotnet.old/libgdiplus | Library for using System.Drawing with Mono |
-| dev-dotnet.old/libgit2sharp | A C# PInvoke wrapper library for LibGit2 C library |
-| dev-dotnet.old/mono-addins | A generic framework for creating extensible applications |
-| dev-dotnet.old/ndesk-options | NDesk.Options |
-| dev-dotnet.old/nvorbis | NVorbis is a C# vorbis decoder |
-| dev-dotnet.old/opentk | OpenTK - A .NET interface to OpenCL/OpenAL/OpenGL |
-| dev-dotnet.old/pvrtexlibnet | Simple C# wrapper around PVRTexLib from Imagination Technologies |
-| dev-dotnet.old/sharpfont | Cross-platform FreeType bindings for .NET |
-| dev-dotnet.old/xwt | Cross platform GUI framework for desktop and mobile applications |
 | dev-dotnet/sdl2-cs | SDL2# - C# Wrapper for SDL2 |
 | dev-dotnet/sfmldotnet | SFML.Net is a C# language binding for SFML |
 | dev-dotnet/sharpnav | SharpNav is an advanced pathfinding library for C# |
