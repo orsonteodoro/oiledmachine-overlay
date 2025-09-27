@@ -15,7 +15,7 @@ PYTHON_COMPAT=( "python3_12" )
 RCEDIT_PV="1.1.1"
 STATUS="stable"
 
-inherit python-r1 xdg
+inherit desktop python-r1 xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -41,7 +41,10 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc"
+IUSE+="
+doc
+ebuild_revision_1
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
