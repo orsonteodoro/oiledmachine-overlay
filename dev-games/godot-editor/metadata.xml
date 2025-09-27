@@ -33,7 +33,7 @@
     Go            | 7                   | 8                           | 8                     | 5                       |
     JavaScript    | 4 [23]              | 5                           | 7                     | 7                       |
     Lua           | 6                   | 6                           | 8                     | 6                       |
-    Nim           | 9 [23]              | 7                           | 9                     | 9                       |
+    Nim           | 9 [23]              | 7                           | 8                     | 9                       |
     Odin          | 9                   | 3                           | 5                     | 6                       |
     Orchestrator  | 4                   | 7, inherits from Godot      | 9 [1][9]              | 9 [3]                   |
     Rust          | 9                   | 10                          | 4 [1]                 | 7 [6]                   |
