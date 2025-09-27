@@ -370,7 +370,7 @@ Cflags: -I\${includedir}
 Requires:
 EOF
 			insinto "/usr/lib/godot-cpp/${SLOT}/linux-${configuration}-${abi}/${libdir}/pkgconfig"
-			doins "${T}/godot-cpp.pc"
+			doins "${T}/godot-cpp-${target3}.pc"
 		fi
 	done
 }
