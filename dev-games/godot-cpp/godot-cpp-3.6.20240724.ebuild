@@ -157,12 +157,6 @@ _build_target_linux() {
 	# If dev_build=False -O0 + debug engine on + additional debug paths and reporting.
 		dev_build=$(usex debug-game-engine "True" "False")
 		debug_symbols="True"
-	else
-	# For target=editor:
-	# If dev_build=True, -O2 + debug engine off.
-	# If dev_build=False -O0 + debug engine on.
-		dev_build=$(usex debug-game-engine "True" "False")
-		debug_symbols=$(usex debug-game-engine "True" "False")
 	fi
 	local gcc_slot=$(gcc-config -l \
 		| grep "*" \
@@ -313,8 +307,6 @@ _install_target_linux() {
 		configuration="release"
 	elif [[ "${target}" == "debug" ]] ; then
 		configuration="debug"
-	else
-		configuration=$(usex debug-game-engine "debug" "release")
 	fi
 	declare -A ABI_MAP=(
 		["amd64"]="x86_64"
