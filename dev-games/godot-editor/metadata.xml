@@ -121,13 +121,13 @@
 
     Name                   | Game developer dependency requirements for Godot 3.6.x                                    |
     -----------------------|-------------------------------------------------------------------------------------------|
-    C# C# 13 (.NET 9.0)    | =dev-lang/mono-6* dev-dotnet/dotnet-sdk-bin:9.0                                           |
+    C# 13                  | >=dev-lang/mono-6.12.0 dev-dotnet/dotnet-sdk-bin:9.0                                      |
     C++                    | sys-devel/gcc:9                                                                           |
     JavaScript (Built-in)  | >=dev-util/emscripten-3.1.39:17-3.1 LLVM 17                                               |
 
     Name                   | Game developer dependency requirements for Godot 4.3.x                                    |
     -----------------------|-------------------------------------------------------------------------------------------|
-    C# 12 (.NET 8.0)       | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
+    C# 12                  | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
     C++                    | sys-devel/gcc:9                                                                           |
     D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.3[-mono]       |
     JavaScript (Built-in)  | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
@@ -138,7 +138,7 @@
 
     Name                   | Game developer dependency requirements for Godot 4.4.x                                    |
     -----------------------|-------------------------------------------------------------------------------------------|
-    C# 12 (.NET 8.0)       | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
+    C# 12                  | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
     C++                    | sys-devel/gcc:11                                                                          |
     D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.4[-mono]       |
     JavaScript (GodotJS)   | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
@@ -151,7 +151,7 @@
 
     Name                   | Game developer dependency requirements for Godot 4.5.x                                    |
     -----------------------|-------------------------------------------------------------------------------------------|
-    C# 12 (.NET 8.0)       | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
+    C# 12                  | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
     C++                    | sys-devel/gcc:11                                                                          |
     D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.5[-mono]       |
     Go                     | >=dev-lang/go-1.25.0 >=dev-lang/zig-0.15.1:0.15                                           |
