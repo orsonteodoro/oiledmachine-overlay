@@ -32,7 +32,10 @@
     D             | 8                   | 6                           | 5                     | 6                       |
     GDScript      | 5                   | 5                           | 8 [4]                 | 10                      |
     Go            | 7                   | 8                           | 8                     | 5                       |
-    JavaScript    | 4 [23]              | 5                           | 7                     | 7                       |
+    JavaScript    | 6 [23]              | 7                           | 8                     | 7                       |
+    (Built-in)    |                     |                             |                       |                         |
+    JavaScript    | 5                   | 6                           | 8                     | 6                       |
+    (GodotJS)     |                     |                             |                       |                         |
     Lua           | 6                   | 6                           | 8                     | 6                       |
     Nim           | 9 [23]              | 7                           | 8                     | 9                       |
     Odin          | 9                   | 3                           | 5                     | 6                       |
@@ -42,123 +45,138 @@
     TypeScript    | 4 [23]              | 6                           | 6                     | 7                       |
     VisualScript  | 4                   | 7, inherits from Godot      | 9 [1][9]              | 10 [2]                  |
 
-    Name          | Officially supported     | Bindings code quality      | Estimated project development time [8][19]  |
-    --------------|--------------------------|----------------------------|---------------------------------------------|
-    C#            | Yes                      | Production                 | day(s) to month(s)                          |
-    C++           | Yes                      | Production                 | week(s) to year(s)                          |
-    D             | No                       | In development             | week(s) to year(s)                          |
-    GDScript      | Yes                      | Production                 | day(s) to week(s)                           |
-    Go            | No                       | In development (untagged)  | day(s) to year(s)                           |
-    JavaScript    | No                       | Hit or miss [20][21][22]   | day(s) to week(s)                           |
-    Lua           | No                       | In development             | day(s) to week(s)                           |
-    TypeScript    | No                       | Hit or miss [20][21]       | day(s) to year(s)                           |
-    Odin          | No                       | Work In Progress           | day(s) to week(s)                           |
-    Orchestrator  | No                       | Dev and stable releases    | day(s) to year(s) [9]                       |
-    Rust          | No                       | Production                 | day(s) to year(s)                           |
-    Swift         | No                       | Experimental               | day(s) to week(s)                           |
-    VisualScript  | No                       | Production                 | day(s) to year(s) [9]                       |
+    Name          | Official support    | Feature complete score/quality | Estimated project development time [8][19]   |
+    --------------|---------------------|--------------------------------|----------------------------------------------|
+    C#            | Yes                 | 10 [Production]                | day(s) to month(s)                           |
+    C++           | Yes                 | 9  [Production]                | week(s) to year(s)                           |
+    D             | No                  | 6  [Development]               | week(s) to year(s)                           |
+    GDScript      | Yes                 | 10 [Production]                | day(s) to week(s)                            |
+    Go            | No                  | 6  [Development]               | day(s) to year(s)                            |
+    JavaScript    | No                  | 7  [Production]                | day(s) to week(s)                            |
+    (Built-in)    |                     |                                |                                              |
+    JavaScript    | No                  | 5  [Development] [20][21][22]  | day(s) to week(s)                            |
+    (GodotJS)     |                     |                                |                                              |
+    Lua           | No                  | 7  [Development]               | day(s) to week(s)                            |
+    TypeScript    | No                  | 7  [Development] [20][21]      | day(s) to year(s)                            |
+    Odin          | No                  | 6  [Development]               | day(s) to week(s)                            |
+    Orchestrator  | No                  | 8  [Both]                      | day(s) to year(s) [9]                        |
+    Rust          | No                  | 9  [Both]                      | day(s) to year(s)                            |
+    Swift         | No                  | 6  [Development]               | day(s) to week(s)                            |
+    VisualScript  | No                  | 8  [Production]                | day(s) to year(s) [9]                        |
 
-    Name          | Language similarity [24]           | Integration                                                  |
-    --------------|------------------------------------|--------------------------------------------------------------|
-    C#            | Java                               | Built-in                                                     |
-    C++           | C, Java                            | External plugin (godot-cpp)                                  |
-    D             | C#                                 | External plugin                                              |
-    GDScript      | Python                             | Built-in                                                     |
-    GDShader      | GLSL                               | Built-in                                                     |
-    Go            | C                                  | External plugin                                              |
-    JavaScript    | C, ActionScript                    | External plugin (@godot-js/godot-ts package)                 |
-    Lua           | Ruby                               | External plugin                                              |
-    Nim           | Python, TypeScript                 | External plugin                                              |
-    Odin          | Go                                 | External plugin                                              |
-    Orchestrator  | Kismet, Blueprint, VisualScript    | External plugin                                              |
-    Rust          | C++, C#                            | External plugin (gdext as the godot rust crate)              |
-    Swift         | TypeScript                         | External plugin                                              |
-    TypeScript    | JavaScript                         | External plugin (@godot-js/godot-ts package)                 |
-    VisualScript  | Kismet, Blueprint, Orchestrator    | Built-in                                                     |
+    Name          | Language similarity [24]             | Integration                                                  |
+    --------------|--------------------------------------|--------------------------------------------------------------|
+    C#            | Java                                 | Built-in                                                     |
+    C++           | C, Java                              | External plugin (godot-cpp)                                  |
+    D             | C#                                   | External plugin                                              |
+    GDScript      | Python                               | Built-in                                                     |
+    GDShader      | GLSL                                 | Built-in                                                     |
+    Go            | C                                    | External plugin                                              |
+    JavaScript    | C, ActionScript                      | External plugin (@godot-js/godot-ts package)                 |
+    Lua           | Ruby                                 | External plugin                                              |
+    Nim           | Python, TypeScript                   | External plugin                                              |
+    Odin          | Go                                   | External plugin                                              |
+    Orchestrator  | Kismet, Blueprint, VisualScript      | External plugin                                              |
+    Rust          | C++, C#                              | External plugin (gdext as the godot rust crate)              |
+    Swift         | TypeScript                           | External plugin                                              |
+    TypeScript    | JavaScript                           | External plugin (@godot-js/godot-ts package)                 |
+    VisualScript  | Kismet, Blueprint, Orchestrator      | Built-in                                                     |
 
-    Name          | Compilation                                                                                       |
-    --------------|---------------------------------------------------------------------------------------------------|
-    C#            | IL bytecode, JIT (VM) [25]                                                                        |
-    C++           | Compiled                                                                                          |
-    D             | Compiled                                                                                          |
-    GDScript      | Interpreted                                                                                       |
-    GDShader      | Compiled                                                                                          |
-    Go            | Compiled                                                                                          |
-    JavaScript    | Hybrid (Interpreted, JIT) (VM) [25]                                                               |
-    Lua           | Bytecode-interpreted, JIT (VM) [25]                                                               |
-    Nim           | Compiled (Transpiled) to C for desktop or JavaScript for Web                                      |
-    Odin          | Compiled                                                                                          |
-    Orchestrator  | Interpreted                                                                                       |
-    Rust          | Compiled                                                                                          |
-    Swift         | Compiled                                                                                          |
-    TypeScript    | Compiled (Transpiled) to JavaScript                                                               |
-    VisualScript  | Interpreted                                                                                       |
+    Name          | Compilation                                                                                         |
+    --------------|-----------------------------------------------------------------------------------------------------|
+    C#            | IL bytecode, JIT (VM) [25]                                                                          |
+    C++           | Compiled                                                                                            |
+    D             | Compiled                                                                                            |
+    GDScript      | Interpreted                                                                                         |
+    GDShader      | Compiled                                                                                            |
+    Go            | Compiled                                                                                            |
+    JavaScript    | Compiles to WebAssembly (WASM) and runs WASM & JS glue on JavaScript engine                         |
+    (Builtin)     | with WebAssembly support                                                                            |
+    JavaScript    | JavaScript code is passed to JavaScript engine, Hybrid (Interpreted, JIT) (VM) [25]                 |
+    (GodotJS)     |                                                                                                     |
+    Lua           | Bytecode-interpreted, JIT (VM) [25]                                                                 |
+    Nim           | Compiled (Transpiled) to C for desktop or JavaScript for Web                                        |
+    Odin          | Compiled                                                                                            |
+    Orchestrator  | Interpreted                                                                                         |
+    Rust          | Compiled                                                                                            |
+    Swift         | Compiled                                                                                            |
+    TypeScript    | Compiled (Transpiled) to JavaScript                                                                 |
+    VisualScript  | Interpreted                                                                                         |
 
-    Name          | Use cases, cui bono? [11]                                                                          |
-    --------------|----------------------------------------------------------------------------------------------------|
-    C#            | 2D/3D games/apps, 3D racing/flying games, mobile games, game mechanics, interactive presentations, |
-                  | interactive training simulations, UIs, audio analysis for rhythm games or music visualizations,    |
-                  | screensavers                                                                                       |
-    C++           | 2D/3D games/apps, chess [12], game mechanics, using machine learning models,                       |
-                  | engineering/science simulations, GPU offloading [13], custom libs/physics,                         |
-                  | performance-critical code                                                                          |
-    D             | 3D games                                                                                           |
-    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom), fractal graphics |
-    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure,   |
-                  | LLM apps/games                                                                                     |
-    Go            | Server-side MMO networking, AI/ML machine learning games/apps                                      |
-    JavaScript    | Simple 2D apps/games                                                                               | 
-    Lua           | Player mods, mini games                                                                            |
-    Nim           | Game mechanics, multiplayer mobile games                                                           |
-    Odin          | RTS games, particle systems, city simulations                                                      |
-    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training movies,                     |
-                  | intro/cutscene animation                                                                           |
-    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations, game mechanics   |
-    Swift         | Simple 2D apps/games, mobile games                                                                 |
-    TypeScript    | Simple 2D apps/games                                                                               | 
-    VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima,                   |
-                  | training movies, intro/cutscene animation                                                          |
+    Name          | Use cases, cui bono? [11]                                                                           |
+    --------------|-----------------------------------------------------------------------------------------------------|
+    C#            | 2D/3D games/apps, 3D racing/flying games, mobile games, game mechanics, interactive presentations,  |
+                  | interactive training simulations, UIs, audio analysis for rhythm games or music visualizations,     |
+                  | screensavers                                                                                        |
+    C++           | 2D/3D games/apps, chess [12], game mechanics, using machine learning models,                        |
+                  | engineering/science simulations, GPU offloading [13], custom libs/physics,                          |
+                  | performance-critical code                                                                           |
+    D             | 3D games                                                                                            |
+    GDShader      | Custom particle effect visuals and behavior, custom post processing (e.g. bloom), fractal graphics  |
+    GDScript      | Protyping, 2D/3D games/apps, User Interfaces (UIs), simple mobile games, text parsing adventure,    |
+                  | LLM apps/games                                                                                      |
+    Go            | Server-side MMO networking, AI/ML machine learning games/apps                                       |
+    JavaScript    | Modding, multiplayer chess, web browser games                                                       |
+    (Built-in)    |                                                                                                     |
+    JavaScript    | Simple 2D apps/games                                                                                | 
+    (GodotJS)     |                                                                                                     |
+    Lua           | Player mods, mini games                                                                             |
+    Nim           | Game mechanics, multiplayer mobile games                                                            |
+    Odin          | RTS games, particle systems, city simulations                                                       |
+    Orchestrator  | Prototyping, 2.5D/3D environment or NPC scripting, machinima, training movies,                      |
+                  | intro/cutscene animation                                                                            |
+    Rust          | 2D/3D games, using machine learning (ML) models, engineering/science simulations, game mechanics    |
+    Swift         | Simple 2D apps/games, mobile games                                                                  |
+    TypeScript    | Simple 2D apps/games                                                                                | 
+    VisualScript  | CompSci education, prototyping, 2.5D/3D environment or NPC scripting, machinima,                    |
+                  | training movies, intro/cutscene animation                                                           |
 
-    Name                   | Game developer dependency requirements for Godot 3.6.x                                    |
-    -----------------------|-------------------------------------------------------------------------------------------|
-    C# 13                  | >=dev-lang/mono-6.12.0 dev-dotnet/dotnet-sdk-bin:9.0                                      |
-    C++                    | sys-devel/gcc:9                                                                           |
-    JavaScript (Built-in)  | >=dev-util/emscripten-3.1.39:17-3.1 LLVM 17                                               |
+    Name          | Game developer dependency requirements for Godot 3.6.x                                              |
+    --------------|-----------------------------------------------------------------------------------------------------|
+    C# 13         | >=dev-lang/mono-6.12.0 dev-dotnet/dotnet-sdk-bin:9.0                                                |
+    C++           | sys-devel/gcc:9                                                                                     |
+    JavaScript    | >=dev-util/emscripten-3.1.39:17-3.1 LLVM 17                                                         |
+    (Built-in)    |                                                                                                     |
 
-    Name                   | Game developer dependency requirements for Godot 4.3.x                                    |
-    -----------------------|-------------------------------------------------------------------------------------------|
-    C# 12                  | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
-    C++                    | sys-devel/gcc:9                                                                           |
-    D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.3[-mono]       |
-    JavaScript (Built-in)  | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
-    Nim                    | >=dev-lang/nim-2.0.0 sys-devel/gcc:14 dev-util/emscripten                                 |
-    Odin                   | dev-lang/odin                                                                             |
-    Rust                   | >=dev-lang/rust-bin-1.80.0                                                                |
-    Swift                  | >=dev-lang/swift-6.0:6                                                                    |
+    Name          | Game developer dependency requirements for Godot 4.3.x                                              |
+    --------------|-----------------------------------------------------------------------------------------------------|
+    C# 12         | dev-dotnet/dotnet-sdk-bin:8.0                                                                       |
+    C++           | sys-devel/gcc:9                                                                                     |
+    D             | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.3[-mono]                 |
+    JavaScript    | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                            |
+    (Built-in)    |                                                                                                     |
+    Nim           | >=dev-lang/nim-2.0.0 sys-devel/gcc:14 dev-util/emscripten                                           |
+    Odin          | dev-lang/odin                                                                                       |
+    Rust          | >=dev-lang/rust-bin-1.80.0                                                                          |
+    Swift         | >=dev-lang/swift-6.0:6                                                                              |
 
-    Name                   | Game developer dependency requirements for Godot 4.4.x                                    |
-    -----------------------|-------------------------------------------------------------------------------------------|
-    C# 12                  | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
-    C++                    | sys-devel/gcc:11                                                                          |
-    D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.4[-mono]       |
-    JavaScript (GodotJS)   | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
-    JavaScript (Built-in)  | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
-    Lua                    | >=dev-build/scons-4.9.1 sys-devel/gcc:11 LUA and LuaJIT source code submodules            |
-    Nim                    | >=dev-lang/nim-2.0.12 sys-devel/gcc:15, dev-util/emscripten                               |
-    Odin                   | dev-lang/odin                                                                             |
-    Rust                   | >=dev-lang/rust-bin-1.85.0                                                                |
-    TypeScript             | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                  |
+    Name          | Game developer dependency requirements for Godot 4.4.x                                              |
+    --------------|-----------------------------------------------------------------------------------------------------|
+    C# 12         | dev-dotnet/dotnet-sdk-bin:8.0                                                                       |
+    C++           | sys-devel/gcc:11                                                                                    |
+    D             | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.4[-mono]                 |
+    JavaScript    | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                            |
+    (GodotJS)     |                                                                                                     |
+    JavaScript    | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                            |
+    (Built-in)    |                                                                                                     |
+    Lua           | >=dev-build/scons-4.9.1 sys-devel/gcc:11 LUA and LuaJIT source code submodules                      |
+    Nim           | >=dev-lang/nim-2.0.12 sys-devel/gcc:15, dev-util/emscripten                                         |
+    Odin          | dev-lang/odin                                                                                       |
+    Rust          | >=dev-lang/rust-bin-1.85.0                                                                          |
+    TypeScript    | >=dev-util/emscripten-3.1.64:19-3.1 llvm-core/llvm:19 llvm-core/clang:19                            |
 
-    Name                   | Game developer dependency requirements for Godot 4.5.x                                    |
-    -----------------------|-------------------------------------------------------------------------------------------|
-    C# 12                  | dev-dotnet/dotnet-sdk-bin:8.0                                                             |
-    C++                    | sys-devel/gcc:11                                                                          |
-    D                      | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.5[-mono]       |
-    Go                     | >=dev-lang/go-1.25.0 >=dev-lang/zig-0.15.1:0.15                                           |
-    JavaScript (GodotJS)   | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                  |
-    JavaScript (Built-in)  | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                  |
-    Nim                    | >=dev-lang/nim-2.0.12 sys-devel/gcc:15, dev-util/emscripten                               |
-    TypeScript             | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                  |
+    Name          | Game developer dependency requirements for Godot 4.5.x                                              |
+    --------------|-----------------------------------------------------------------------------------------------------|
+    C# 12         | dev-dotnet/dotnet-sdk-bin:8.0                                                                       |
+    C++           | sys-devel/gcc:11                                                                                    |
+    D             | || ( >=dev-lang/dmd-2.096 >=dev-lang/ldc-1.26.0 ) dev-games/godot-editor:4.5[-mono]                 |
+    Go            | >=dev-lang/go-1.25.0 >=dev-lang/zig-0.15.1:0.15                                                     |
+    JavaScript    | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                            |
+    (GodotJS)     |                                                                                                     |
+    JavaScript    | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                            |
+    (Built-in)    |                                                                                                     |
+    Nim           | >=dev-lang/nim-2.0.12 sys-devel/gcc:15, dev-util/emscripten                                         |
+    TypeScript    | >=dev-util/emscripten-4.0.11:21-4.0 llvm-core/llvm:21 llvm-core/clang:21                            |
 
     [1] Difficult if a person is not accustomed or not vibing with the style.
     [2] Removed in 4.x
