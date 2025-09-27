@@ -1467,7 +1467,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/invisible-watermark | A Python library for invisible image watermark (blind image watermark) |
 | dev-python/ivy | Convert machine learning code between frameworks |
 | dev-python/JaroWinkler | Python library for fast approximate string matching using Jaro and Jaro-Winkler similarity |
-| dev-python/javaproperties | |
+| dev-python/javaproperties | Read & write Java .properties files |
 | dev-python/jax | Differentiate, compile, and transform Numpy code |
 | dev-python/jaxlib | Support library for JAX |
 | dev-python/jaxtyping | Type annotations and runtime checking for shape and dtype of JAX/NumPy/PyTorch/etc. arrays. |

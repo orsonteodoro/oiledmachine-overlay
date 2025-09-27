@@ -26,7 +26,7 @@ https://github.com/jwodder/javaproperties/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION=""
+DESCRIPTION="Read & write Java .properties files"
 HOMEPAGE="
 	https://github.com/jwodder/javaproperties
 	https://pypi.org/project/javaproperties
