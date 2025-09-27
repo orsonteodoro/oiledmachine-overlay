@@ -78,7 +78,6 @@ eerror "Bump needed for MY_PV"
 		unpack ${A}
 	fi
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	mkdir
 	unzip "${distdir}/Godot_v${GODOT_PV_DESKTOP}-${STATUS}_export_templates.tpz" "templates/linux_release.x86_64" || die
 	mkdir -v -p "${HOME}/.local/share/godot/export_templates/${GODOT_PV_DESKTOP}.${STATUS}" || die
 	mv "templates/linux_release.x86_64" "${HOME}/.local/share/godot/export_templates/${GODOT_PV_DESKTOP}.${STATUS}" || die
