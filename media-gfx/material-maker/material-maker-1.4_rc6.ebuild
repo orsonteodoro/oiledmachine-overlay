@@ -41,6 +41,7 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc"
 REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 "
 BDEPEND="
 	>=dev-games/godot-editor-${GODOT_PV_DESKTOP}:${GODOT_SLOT_DESKTOP}
