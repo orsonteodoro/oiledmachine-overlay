@@ -56,14 +56,14 @@
     Swift         | No                       | Experimental               | day(s) to weeks(s)                           |
     VisualScript  | No                       | Production                 | day(s) to years(s) [9]                       |
 
-    Name          | Language similarity                | Integration                                                  |
+    Name          | Language similarity [24]           | Integration                                                  |
     --------------|------------------------------------|--------------------------------------------------------------|
     C#            | Java                               | Built-in                                                     |
     C++           | C, Java                            | External plugin (godot-cpp)                                  |
     D             | C#                                 | Exteranl plugin                                              |
     GDScript      | Python                             | Built-in                                                     |
     GDShader      | GLSL                               | Built-in                                                     |
-    Go            | JavaScript                         | External plugin                                              |
+    Go            | C                                  | External plugin                                              |
     JavaScript    | C, ActionScript                    | External plugin (@godot-js/godot-ts package)                 |
     Lua           | Ruby                               | External plugin                                              |
     Odin          | Go                                 | External plugin                                              |
@@ -136,6 +136,9 @@
     [21] Demos simple 2D games.
     [22] Not feature complete.
     [23] The demos look slow or skippy, less than 30 FPS
+    [24] This is mostly a subjective syntactic comparison of bubble sort.  For
+         some rows, the runtime performance similarity and memory safety
+         similarity of compariable languages are noted.
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
