@@ -90,8 +90,8 @@
     GDScript      | Interpreted                                                                                         |
     GDShader      | Compiled                                                                                            |
     Go            | Compiled                                                                                            |
-    JavaScript    | Compiles to WebAssembly (WASM) and runs WASM & JS glue on JavaScript engine                         |
-    (Builtin)     | with WebAssembly support                                                                            |
+    JavaScript    | Compiles to WebAssembly (WASM) and runs WASM & JS glue on JavaScript engine with WASM support       |
+    (Builtin)     |                                                                                                     |
     JavaScript    | JavaScript code is passed to JavaScript engine, Hybrid (Interpreted, JIT) (VM) [25]                 |
     (GodotJS)     |                                                                                                     |
     Lua           | Bytecode-interpreted, JIT (VM) [25]                                                                 |
