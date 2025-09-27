@@ -75,14 +75,14 @@
 
     Name          | Compilation                         | Notes                                                        |
     --------------|-------------------------------------|--------------------------------------------------------------|
-    C#            | IL bytecode (VM)                    |                                                              |
+    C#            | IL bytecode, JIT (VM) [25]          |                                                              |
     C++           | Compiled                            |                                                              |
     D             | Compiled                            |                                                              |
     GDScript      | Interpreted                         |                                                              |
     GDShader      | Compiled                            |                                                              |
     Go            | Compiled                            |                                                              |
-    JavaScript    | Hybrid (Interpreted to JIT) (VM)    |                                                              |
-    Lua           | Bytecode-interpreted (VM)           |                                                              |
+    JavaScript    | Hybrid (Interpreted, JIT) (VM) [25] |                                                              |
+    Lua           | Bytecode-interpreted, JIT (VM) [25] |                                                              |
     Odin          | Compiled                            |                                                              |
     Orchestrator  | Interpreted                         |                                                              |
     Rust          | Compiled                            |                                                              |
@@ -145,6 +145,9 @@
     [24] This is mostly a subjective syntactic comparison of bubble sort.  For
          some rows, the runtime performance similarity and memory safety
          similarity of compariable languages are noted.
+    [25] JIT optimized machine code either before execution or in the middle
+         of execution.  Interpreted is similar to -O0,  JIT optimized is
+         similar to full -O3 runtime performance.
 
     It has a built in drag-and-drop 3D level editor, IDE object manager,
     script editor.
