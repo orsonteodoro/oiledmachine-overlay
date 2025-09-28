@@ -62,7 +62,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_40
+ebuild_revision_41
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -671,6 +671,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_native_use_bool doxygen cpp-docs)
 		$(meson_use analyze)
 		$(meson_use cpu_flags_x86_avx avx)
+		$(meson_use cpu_flags_x86_avx10_2 avx10_2)
 		$(meson_use cpu_flags_x86_avx512bw avx512bw)
 		$(meson_use cpu_flags_x86_avx512fp16 bf16_spr)
 		$(meson_use cpu_flags_x86_avx512bf16 bf16_zen4)

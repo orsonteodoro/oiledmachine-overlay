@@ -34,7 +34,7 @@ diff '--color=auto' -urp libvips-8.17.2.orig/meson.build libvips-8.17.2/meson.bu
 +    if not get_option('bf16_spr')
 +        disabled_targets += ['HWY_AVX3_SPR']
 +    endif
-+    if not get_option('avx10.2')
++    if not get_option('avx10_2')
          disabled_targets += ['HWY_AVX10_2']
      endif
 -    # Optionally, build without AVX512 support (helps to reduce binary size at the cost of performance)
@@ -47,7 +47,7 @@ Only in libvips-8.17.2: meson.build.rej
 diff '--color=auto' -urp libvips-8.17.2.orig/meson_options.txt libvips-8.17.2/meson_options.txt
 --- libvips-8.17.2.orig/meson_options.txt	2025-09-13 05:30:02.000000000 -0700
 +++ libvips-8.17.2/meson_options.txt	2025-09-28 15:14:51.257913581 -0700
-@@ -262,3 +262,31 @@ option('fuzzing_engine',
+@@ -262,3 +262,36 @@ option('fuzzing_engine',
  option('fuzzer_ldflags',
      type: 'string',
      description: 'Extra LDFLAGS used during linking of fuzzing binaries')
@@ -63,6 +63,11 @@ diff '--color=auto' -urp libvips-8.17.2.orig/meson_options.txt libvips-8.17.2/me
 +  type: 'boolean',
 +  value: true,
 +  description: 'Build with AVX')
++
++option('avx10_2',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX10.2')
 +
 +option('avx512bw',
 +  type: 'boolean',
