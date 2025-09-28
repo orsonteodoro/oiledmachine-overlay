@@ -34,7 +34,8 @@ MY_PV="${PV}" # ver_test context
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 2.1.0
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		navi12_vcn
 # and linux-firmware firmware upload date
-KERNEL_RELEASE_DATE="20200824" # Based on navi12 vcn first presence
+KERNEL_RELEASE_DATE="20191124"
+FIRMWARE_RELEASE_DATE="20200824" # Based on navi12 vcn first presence
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -435,7 +436,7 @@ CDEPEND+="
 		app-arch/gzip
 	)
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${FIRMWARE_RELEASE_DATE}
 	)
 	lz4? (
 		app-arch/lz4

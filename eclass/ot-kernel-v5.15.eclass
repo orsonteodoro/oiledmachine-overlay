@@ -34,7 +34,8 @@ MY_PV="${PV}" # ver_test context
 # https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.1
 # https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		yellow_carp_vcn
 # and linux-firmware firmware upload date
-KERNEL_RELEASE_DATE="20210915" # Based on yellow_carp vcn first file presence
+KERNEL_RELEASE_DATE="20211031"
+FIRMWARE_RELEASE_DATE="20210915" # Based on yellow_carp vcn first file presence
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -707,7 +708,7 @@ CDEPEND+="
 		app-arch/gzip
 	)
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${FIRMWARE_RELEASE_DATE}
 	)
 	lto? (
 		|| (
