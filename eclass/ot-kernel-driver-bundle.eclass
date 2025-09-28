@@ -1064,7 +1064,7 @@ ewarn "The early-1990s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_rtc_cmos
 	ot-kernel-driver-bundle_add_pc_speaker
 	ot-kernel-driver-bundle_add_expansion_slots "isa pci"
-	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not suppored
+	ot-kernel-driver-bundle_add_graphics "isa pci" # vlb is not supported
 	ot-kernel-driver-bundle_add_ports "serial parallel-port"
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_keyboard "ps/2"

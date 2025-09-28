@@ -468,12 +468,44 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Sep 19, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1758292659 # From `date +%s -d "2025-09-19 16:37:39 +0200"` from changelog for latest tag
+MITIGATION_DATE="Sep 24, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1758791814 # From `date +%s -d "2025-09-25 11:16:54 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+	# 2025-09-24
+	"CVE-2025-39890;ML, DoS;"
+	"CVE-2024-58241;;"
+	"CVE-2025-39889;;"
+
+	# 2025-09-23
+	"CVE-2025-39885;;"
+	"CVE-2025-39888;;"
+	"CVE-2025-39887;NPD, DoS;"
+	"CVE-2025-39886;;"
+	"CVE-2025-39876;NPD, DoS;"
+	"CVE-2025-39875;NPD, DoS;"
+	"CVE-2025-39874;;"
+	"CVE-2025-39873;;"
+	"CVE-2025-39872;;"
+	"CVE-2025-39871;UAF;"
+	"CVE-2025-39870;DF;"
+	"CVE-2025-39869;;"
+	"CVE-2025-39884;DoS;"
+	"CVE-2025-39883;DoS;"
+	"CVE-2025-39882;UAF;"
+	"CVE-2025-39881;UAF;"
+	"CVE-2025-39880;;"
+	"CVE-2025-39879;NPD, DoS;"
+	"CVE-2025-39878;DoS;"
+	"CVE-2025-39877;UAF;"
+	"CVE-2025-39867;NPD, DoS;"
+	"CVE-2025-39868;DoS;" # Panic on warn
+
+	# 2025-09-22
+	"CVE-2022-50403;UB;Rejected"
+
 	# 2025-09-19
 	"CVE-2025-39846;NPD, DoS;"
 	"CVE-2025-39845;;"
