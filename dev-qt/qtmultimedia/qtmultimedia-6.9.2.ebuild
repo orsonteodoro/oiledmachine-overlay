@@ -30,7 +30,7 @@ REQUIRED_USE="
 
 # dlopen/dbus: pipewire
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[gui,network,opengl=,vulkan=,widgets]
+	~dev-qt/qtbase-${PV}:6[concurrent,gui,network,opengl=,vulkan=,widgets]
 	alsa? (
 		!pulseaudio? ( media-libs/alsa-lib )
 	)
@@ -94,6 +94,9 @@ CMAKE_SKIP_TESTS=(
 	# fails with offscreen rendering
 	tst_qvideoframecolormanagement
 	tst_qwindowcapturebackend
+	# >=ffmpeg-8 changed SWS_* defines to an enum and this confuses a test-only
+	# assert, should have no negative runtime effect so just skip for now
+	tst_qffmpegvideoencoderutils
 )
 
 PATCHES=(

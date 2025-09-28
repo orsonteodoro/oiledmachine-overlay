@@ -10,14 +10,13 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
 
-PYTHON_COMPAT=( python3_{11..13} )
-PYTHON_REQ_USE="xml(+)"
+PYTHON_COMPAT=( python3_{11..14} )
 inherit cflags-hardened check-reqs flag-o-matic multiprocessing optfeature
 inherit prefix python-any-r1 qt6-build toolchain-funcs
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
-	https://dev.gentoo.org/~ionen/distfiles/${PN}-6.9-patchset-6.tar.xz
+	https://dev.gentoo.org/~ionen/distfiles/${PN}-6.9-patchset-9.tar.xz
 "
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
@@ -116,8 +115,7 @@ PATCHES=( "${WORKDIR}"/patches/${PN} )
 
 PATCHES+=(
 	# add extras as needed here, may merge in set if carries across versions
-	"${FILESDIR}"/${PN}-6.8.3-gperf3.2.patch
-	"${FILESDIR}"/${PN}-6.9.1-CVE-2025-5419.patch
+	"${FILESDIR}"/${PN}-6.9.2-QTBUG-139424.patch
 )
 
 python_check_deps() {
@@ -286,11 +284,12 @@ src_configure() {
 }
 
 src_compile() {
-	# tentatively work around a possible (rare) race condition (bug #921680),
-	# has good chances to be obsolete but keep for now as a safety
-	cmake_build WebEngineCore_sync_all_public_headers
-
 	cmake_src_compile
+
+	# exact cause unknown, but >=qtwebengine-6.9.2 started to act as if
+	# QtWebEngineProcess is marked USER_FACING despite not set anywhere
+	# and this creates a user_facing_tool_links.txt with a broken symlink
+	:> "${BUILD_DIR}"/user_facing_tool_links.txt || die
 }
 
 src_test() {

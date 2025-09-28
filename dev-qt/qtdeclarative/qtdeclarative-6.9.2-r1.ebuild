@@ -9,7 +9,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 
-PYTHON_COMPAT=( python3_{11..13} )
+PYTHON_COMPAT=( python3_{11..14} )
 QT6_HAS_STATIC_LIBS=1
 # behaves very badly when qtdeclarative is not already installed, also
 # other more minor issues (installs junk, sandbox/offscreen issues)
@@ -39,8 +39,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-6.9.1-QTBUG-135158.patch
-	"${FILESDIR}"/${PN}-6.9.1-qmlcachegen-crash.patch
+	"${FILESDIR}"/${P}-QTBUG-139626.patch
 )
 
 src_configure() {
