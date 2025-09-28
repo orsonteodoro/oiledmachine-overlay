@@ -78,6 +78,9 @@
     <flag name="cpu_flags_x86_avx2">
       Optimize with Advanced Vector Extensions 2 (AVX2)
     </flag>
+    <flag name="cpu_flags_x86_avx10_2">
+      Optimize with Advanced Vector Extensions 10.2 (AVX10.2)
+    </flag>
     <flag name="cpu_flags_x86_avx512bf16">
       Optimize with AVX-512 Bfloat16 Floating-Point Instructions (AVX512BF16) for Zen 4 or later
     </flag>
