@@ -30,13 +30,15 @@ esac
 
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
-# Based on AMD GPU firmware names from
+# AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 2.1.0
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		navi12_vcn
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for navi12 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20191124"
-FIRMWARE_RELEASE_DATE="20200824" # Based on navi12 vcn first presence
+AMDGPU_FIRMWARE_RELEASE_DATE="20200824" # Based on navi12 vcn first presence
+ATH_FIRMWARE_RELEASE_DATE="20220530" # Based on presence of latest added board-2 (WCN3990) file in https://github.com/torvalds/linux/blob/v5.4/drivers/net/wireless/ath/ath10k/core.c
+RTW_FIRMWARE_RELEASE_DATE="20181008" # Based on latest added rtl8822c_fw and rtl8822b_fw bin drivers from https://github.com/torvalds/linux/tree/v5.10/drivers/net/wireless/realtek/rtw88
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -440,7 +442,10 @@ CDEPEND+="
 		app-arch/gzip
 	)
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-${FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
 	)
 	lz4? (
 		app-arch/lz4

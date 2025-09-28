@@ -35,13 +35,16 @@ esac
 
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
-# The date is based on AMD GPU firmware names in
+# AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.2.1
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 4.0.4
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/amdgpu/gfx_v11_0_3.c		the last gfx version for gc_11_0_4 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20250727"
-FIRMWARE_RELEASE_DATE="20230330" # Based on gc_11_0_4 file first presence
+AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
+AMDGPU_FIRMWARE_RELEASE_DATE="20230330" # Based on gc_11_0_4 file first presence
+ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.6/drivers/net/wireless/ath/ath12k/hw.c
+RTW_FIRMWARE_RELEASE_DATE="20230524" # Based on latest added rtw8851b_fw bin driver from https://github.com/torvalds/linux/blob/v6.6/drivers/net/wireless/realtek/rtw89/
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -877,7 +880,10 @@ CDEPEND+="
 	)
 
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-${FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
 	)
 	lto? (
 		|| (
