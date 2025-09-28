@@ -60,6 +60,9 @@ FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 first presen
 # product leak, last minute bugs, release scheduling), this firmware(s)
 # supporting the latest hardware or the microarchitectures listed in the driver
 # may be delayed.
+#
+# This also means that each vendor will have an early release or late release
+# of their devices' firmware.
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
