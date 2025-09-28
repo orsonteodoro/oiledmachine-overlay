@@ -8,7 +8,7 @@ EAPI=7
 
 AMDGPU_FIRMWARE_PV="6.8.5.60204"
 DC_VER="3.2.286" # From rock-dkms
-KERNEL_FIRMWARE_PV="99999999" # DCN 4.0.1 was not found.  Currently DCN is 3.5.1 on linux-firmware.git
+KERNEL_FIRMWARE_PV="20241206"
 # Expected firmware properites:
 # Git message:  6.2
 # Driver folder = 6.2.4

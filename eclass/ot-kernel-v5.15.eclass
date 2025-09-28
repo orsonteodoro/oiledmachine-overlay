@@ -30,7 +30,17 @@ esac
 
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
-KERNEL_RELEASE_DATE="20211031" # of first stable release
+# Based on AMD GPU firmware names from
+# https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.1
+# https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		yellow_carp_vcn
+# and linux-firmware firmware upload date
+KERNEL_RELEASE_DATE="20210915" # Based on yellow_carp vcn first file presence
+# Initially, the required firmware date was thought to be feature complete and in
+# sync with the kernel driver on the release date of the kernel.  It is not the
+# case.  Because of many reasons (code review sabateurs, job security, marketing
+# product leak, last minute bugs, release scheduling), this firmware(s)
+# supporting the latest hardware or the microarchitectures listed in the driver
+# may be delayed.
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
