@@ -38,8 +38,8 @@ MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20211031"
 AMD_SEV_FIRMWARE_RELEASE_DATE="20210912" # Based on amd_sev_fam19h_model0xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20211112" # Based on cyan_skillfish2 first file presence
-ATH_FIRMWARE_RELEASE_DATE="20220307" # Based on presence of latest added board-2 (WCN6855) file in https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/ath/ath11k/core.c
-RTW_FIRMWARE_RELEASE_DATE="20200518" # Based on latest added rtw8821c_fw bin driver from https://github.com/torvalds/linux/tree/v5.10/drivers/net/wireless/realtek/rtw88
+ATH_FIRMWARE_RELEASE_DATE="20220307" # Based on presence of latest added board (WCN6855) file in https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/ath/ath11k/core.c
+RTW_FIRMWARE_RELEASE_DATE="20200518" # Based on latest added rtw8821c_fw bin driver from https://github.com/torvalds/linux/tree/v5.15/drivers/net/wireless/realtek/rtw88
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing

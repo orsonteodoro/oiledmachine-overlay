@@ -37,8 +37,8 @@ MY_PV="${PV}" # ver_test context
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20191124"
 AMDGPU_FIRMWARE_RELEASE_DATE="20200824" # Based on navi12 vcn first presence
-ATH_FIRMWARE_RELEASE_DATE="20220530" # Based on presence of latest added board-2 (WCN3990) file in https://github.com/torvalds/linux/blob/v5.4/drivers/net/wireless/ath/ath10k/core.c
-RTW_FIRMWARE_RELEASE_DATE="20181008" # Based on latest added rtl8822c_fw and rtl8822b_fw bin drivers from https://github.com/torvalds/linux/tree/v5.10/drivers/net/wireless/realtek/rtw88
+ATH_FIRMWARE_RELEASE_DATE="20220530" # Based on presence of latest added board (WCN3990) file in https://github.com/torvalds/linux/blob/v5.4/drivers/net/wireless/ath/ath10k/core.c
+RTW_FIRMWARE_RELEASE_DATE="20181008" # Based on latest added rtl8822c_fw and rtl8822b_fw bin drivers from https://github.com/torvalds/linux/tree/v5.4/drivers/net/wireless/realtek/rtw88
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -901,6 +901,19 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "sys-fs/xfsprogs" "2.6.0" "CONFIG_XFS_FS"
 	_ot-kernel_check_versions "sys-process/procps" "3.2.0" ""
 	_ot-kernel_check_versions "virtual/udev" "081" ""
+
+	if grep -q -E -e "^CONFIG_IWLMVM=y" "${path_config}" ; then
+eerror
+eerror "The distro's sys-kernel/linux-firmware for the iwlwifi 22000 family of"
+eerror "devices created between 2016-2019 (CONFIG_IWLMVM) are not supported for"
+eerror "the ${KV_MAJOR_MINOR} kernel series."
+eerror
+eerror "Use kernel version >= 5.10 or disable the"
+eerror "\"Intel Wireless WiFi MVM Firmware support\" (CONFIG_IWLMVM) to"
+eerror "continue."
+eerror
+		die
+	fi
 }
 
 # @FUNCTION: ot-kernel_get_llvm_min_slot
