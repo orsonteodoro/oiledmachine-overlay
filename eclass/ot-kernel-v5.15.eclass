@@ -33,9 +33,10 @@ MY_PV="${PV}" # ver_test context
 # Based on AMD GPU firmware names from
 # https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.1
 # https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		yellow_carp_vcn
+# https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for cyan_skillfish2 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20211031"
-FIRMWARE_RELEASE_DATE="20210915" # Based on yellow_carp vcn first file presence
+FIRMWARE_RELEASE_DATE="20211112" # Based on cyan_skillfish2 first file presence
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing

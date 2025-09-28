@@ -33,9 +33,10 @@ MY_PV="${PV}" # ver_test context
 # Based on AMD GPU firmware names from
 # https://elixir.bootlin.com/linux/v5.10.244/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.0
 # https://elixir.bootlin.com/linux/v5.10.244/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		navy_flounder_vcn
+# https://elixir.bootlin.com/linux/v5.10.244/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for navy_flounder and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20201213"
-FIRMWARE_RELEASE_DATE="20201213" # Based on navy_flounder vcn first file presence
+FIRMWARE_RELEASE_DATE="20210322" # Based on navy_flounder vcn first file presence
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing

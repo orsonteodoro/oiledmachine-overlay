@@ -38,9 +38,10 @@ MY_PV="${PV}" # ver_test context
 # The date is based on AMD GPU firmware names in
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.2.1
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 4.0.4
+# https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/amdgpu/gfx_v11_0_3.c		the last gfx version for gc_11_0_4 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20250727"
-FIRMWARE_RELEASE_DATE="20230110" # Based on vcn 4.0.4 and dcn 3.2.1 files first presence
+FIRMWARE_RELEASE_DATE="20230330" # Based on gc_11_0_4 file first presence
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing

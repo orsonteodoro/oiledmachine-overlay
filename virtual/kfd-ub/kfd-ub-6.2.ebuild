@@ -8,7 +8,7 @@ EAPI=7
 
 AMDGPU_FIRMWARE_PV="6.8.5.60204"
 DC_VER="3.2.286" # From rock-dkms
-KERNEL_FIRMWARE_PV="20241206"
+KERNEL_FIRMWARE_PV="20241203"
 # Expected firmware properites:
 # Git message:  6.2
 # Driver folder = 6.2.4

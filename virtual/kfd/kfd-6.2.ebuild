@@ -8,7 +8,7 @@ EAPI=7
 
 AMDGPU_FIRMWARE_PV="6.8.5.60204"
 DC_VER="3.2.286" # From rock-dkms
-KERNEL_FIRMWARE_PV="20241206"
+KERNEL_FIRMWARE_PV="20241203"
 # Expected firmware properites:
 # Git message:  6.2
 # Driver folder = 6.2.4
@@ -32,6 +32,7 @@ KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; This row is from linux-kerne
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 # drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c for VCN version
+# drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c for GC version
 KERNEL_RANGE=(
 # Avoid pinning solely to EOL version.
 # See footnote 2 in metadata.xml.

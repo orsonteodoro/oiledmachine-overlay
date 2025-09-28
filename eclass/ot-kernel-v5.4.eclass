@@ -33,6 +33,7 @@ MY_PV="${PV}" # ver_test context
 # Based on AMD GPU firmware names from
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 2.1.0
 # https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		navi12_vcn
+# https://elixir.bootlin.com/linux/v5.4.299/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for navi12 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20191124"
 FIRMWARE_RELEASE_DATE="20200824" # Based on navi12 vcn first presence

@@ -30,6 +30,7 @@ KERNEL_PV="6.8" # DC_VER = 3.2.266 ; DCN = 3.5.1 ; This row is from linux-kernel
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 # drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c for VCN version
+# drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c for GC version
 KERNEL_RANGE=(
 # Avoid pinning solely to EOL version.
 # See footnote 2 in metadata.xml.

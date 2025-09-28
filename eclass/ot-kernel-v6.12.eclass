@@ -51,9 +51,10 @@ fi
 # Based on AMD GPU firmware names from
 # https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
 # https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.0
+# https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20241117"
-FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 first presence
+FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 and gc_12_0_1 first presence
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
