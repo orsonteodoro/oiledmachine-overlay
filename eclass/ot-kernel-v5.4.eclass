@@ -442,7 +442,6 @@ CDEPEND+="
 		app-arch/gzip
 	)
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
