@@ -43,7 +43,7 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
