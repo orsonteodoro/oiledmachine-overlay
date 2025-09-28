@@ -45,8 +45,7 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.13
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.14
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.16
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
@@ -88,8 +87,7 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.13/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.14/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.16/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -105,8 +103,7 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.13...zen-kernel:6.13/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.14...zen-kernel:6.14/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.16...zen-kernel:6.16/zen-sauce
 
 # CI
 # branch tip or live, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
