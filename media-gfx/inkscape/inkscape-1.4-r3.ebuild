@@ -88,7 +88,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	jpeg? ( media-libs/libjpeg-turbo:= )
 	readline? ( sys-libs/readline:= )
 	sourceview? ( x11-libs/gtksourceview:4 )
-	spell? ( app-text/gspell )
+	spell? ( app-text/gspell:= )
 	visio? (
 		app-text/libwpg:0.3
 		dev-libs/librevenge
@@ -117,10 +117,8 @@ DEPEND="${COMMON_DEPEND}
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.4-gcc15.patch
 	"${FILESDIR}"/${PN}-1.4-poppler-24.10-fix-backport.patch
-	"${FILESDIR}"/${P}-poppler-24.11.0.patch # bug 943499
-	"${FILESDIR}"/${P}-poppler-24.12.0.patch # bug 946597
-	"${FILESDIR}"/${P}-poppler-25.02.0.patch # bug 949531
-	"${FILESDIR}"/${P}-poppler-25.06.0.patch # bug 957137, pending for 1.4.3
+	"${FILESDIR}"/${P}-poppler-24.{11,12}.0.patch # bugs 943499, 946597
+	"${FILESDIR}"/${P}-poppler-25.{02,06,07,09}.0.patch # bugs 949531, 957137, 962278
 	"${FILESDIR}"/${P}-cmake4.patch
 )
 
@@ -143,6 +141,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm -r src/3rdparty/2geom/tests || die # bug 958419
 	cmake_src_prepare
 	sed -i "/install.*COPYING/d" CMakeScripts/ConfigCPack.cmake || die
 }
