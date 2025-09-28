@@ -197,7 +197,10 @@ src_install() {
 	exeinto "/usr/bin"
 cat <<EOF > "${T}/${PN}"
 #!/bin/bash
-"/opt/${PN}/${MY_PV}.x86_64" "$@"
+cd "/opt/${PN}"
+"./${MY_PV}.x86_64" "$@"
 EOF
 	doexe "${T}/${PN}"
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 1.4_rc6 (20250927)
