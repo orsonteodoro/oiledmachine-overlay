@@ -18,6 +18,7 @@ CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="NPD UAF"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx10_2"
 	"cpu_flags_x86_avx512bw"
 	"cpu_flags_x86_avx512fp16"
 	"cpu_flags_x86_avx512bf16"
@@ -176,6 +177,9 @@ RDEPEND+="
 	)
 	highway? (
 		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		cpu_flags_x86_avx10_2? (
+			>=dev-cpp/highway-1.3.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		)
 	)
 	imagemagick? (
 		!graphicsmagick? (
@@ -256,7 +260,7 @@ RDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-8.17.0-simd-options.patch"
+	"${FILESDIR}/${PN}-8.17.2-simd-options.patch"
 	"${FILESDIR}/${PN}-8.17.0-remove-release-changes.patch"
 	"${FILESDIR}/${PN}-8.17.0-magick-suffixes.patch"
 )
