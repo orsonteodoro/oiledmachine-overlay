@@ -13,21 +13,23 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
-NSPR_VER="4.35"
+NSPR_VER="4.36"
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 DESCRIPTION="Mozilla's Network Security Services library that implements PKI support"
 HOMEPAGE="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
 SRC_URI="https://archive.mozilla.org/pub/security/nss/releases/${RTM_NAME}/src/${P}.tar.gz
-	cacert? ( https://dev.gentoo.org/~juippis/mozilla/patchsets/nss-3.101-cacert-class1-class3.patch )"
+	cacert? ( https://dev.gentoo.org/~juippis/mozilla/patchsets/nss-3.104-cacert-class1-class3.patch )"
 
 LICENSE="|| ( MPL-2.0 GPL-2 LGPL-2.1 )"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~x64-solaris"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~x64-solaris"
 IUSE="cacert test test-full +utils cpu_flags_ppc_altivec cpu_flags_x86_avx2 cpu_flags_x86_sse3 cpu_flags_ppc_vsx"
-RESTRICT="!test? ( test )"
 
 REQUIRED_USE="test-full? ( test )"
+
+PROPERTIES="test_network"
+RESTRICT="test"
 
 # pkg-config called by nss-config -> virtual/pkgconfig in RDEPEND
 RDEPEND="
@@ -46,17 +48,16 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-3.53-gentoo-fixups.patch"
-	"${FILESDIR}/${PN}-3.21-gentoo-fixup-warnings.patch"
+	"${FILESDIR}"/nss-3.103-gentoo-fixes-add-pkgconfig-files.patch
+	"${FILESDIR}"/nss-3.21-gentoo-fixup-warnings.patch
 	"${FILESDIR}"/nss-3.87-use-clang-as-bgo892686.patch
-	"${FILESDIR}"/nss-3.101.3-update-expected-error-code-in-pkg12util-pbmac1-tests.patch
 )
 
 src_prepare() {
 	default
 
 	if use cacert ; then
-		eapply -p2 "${DISTDIR}"/nss-3.101-cacert-class1-class3.patch
+		eapply -p2 "${DISTDIR}"/nss-3.104-cacert-class1-class3.patch
 	fi
 
 	pushd coreconf >/dev/null || die
@@ -101,31 +102,6 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
-
-	local libs=()
-	if tc-is-gcc ; then
-		local s=$(gcc-major-version)
-		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
-			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "asan") )
-			fi
-			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal") )
-			fi
-		fi
-	else
-		local s=$(clang-major-version)
-		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
-			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "asan") )
-			fi
-			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-				libs+=( $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal") )
-			fi
-		fi
-	fi
-#	append-ldflags ${libs[@]}
-
 	# Ensure we stay multilib aware
 	sed -i -e "/@libdir@/ s:lib64:$(get_libdir):" config/Makefile || die
 }
@@ -256,7 +232,7 @@ multilib_src_compile() {
 	NSPR_LIB_DIR="${T}/fakedir" \
 	emake -C coreconf \
 		CC="$(tc-getBUILD_CC)" \
-			${buildbits-${mybits}}
+		${buildbits-${mybits}}
 	makeargs+=( NSINSTALL="${PWD}/$(find -type f -name nsinstall)" )
 
 	# Then build the target tools.
@@ -370,8 +346,8 @@ multilib_src_install() {
 	# bug 517266
 	sed -e 's#Libs:#Libs: -lfreebl#' \
 		-e 's#Cflags:#Cflags: -I${includedir}/private#' \
-		*/lib/pkgconfig/nss.pc >"${ED}"/usr/$(get_libdir)/pkgconfig/nss-softokn.pc ||
-			die "could not create nss-softokn.pc"
+		*/lib/pkgconfig/nss.pc >"${ED}"/usr/$(get_libdir)/pkgconfig/nss-softokn.pc \
+		|| die "could not create nss-softokn.pc"
 
 	# all the include files
 	insinto /usr/include/nss
