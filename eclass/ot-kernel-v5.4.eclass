@@ -903,9 +903,22 @@ ot-kernel_check_versions() {
 
 	if grep -q -E -e "^CONFIG_IWLMVM=y" "${path_config}" ; then
 eerror
-eerror "The distro's sys-kernel/linux-firmware for the iwlwifi 22000 family of"
-eerror "devices created between 2016-2019 (CONFIG_IWLMVM) are not supported for"
-eerror "the ${KV_MAJOR_MINOR} kernel series."
+eerror "The distro's newer sys-kernel/linux-firmware package for the iwlwifi"
+eerror "22000 family of devices created between 2016-2019 (CONFIG_IWLMVM) are"
+eerror "not supported for the ${KV_MAJOR_MINOR} kernel series."
+eerror
+eerror "Unsupported devices:"
+eerror
+eerror "Intel® Wi-Fi 6"
+eerror "Intel® Wi-Fi 6 AX101"
+eerror "Intel® Wi-Fi 6 AX200 160MHz"
+eerror "Intel® Wi-Fi 6 AX201 160MHz"
+eerror "Intel® Wi-Fi 6 AX211 160MHz"
+eerror "Intel® Wi-Fi 6 AX411 160MHz"
+eerror "Intel® Killer™ Wi-Fi 6 AX1650w 160MHz Wireless Network Adapter (200D2W)"
+eerror "Intel® Killer™ Wi-Fi 6 AX1650x 160MHz Wireless Network Adapter (200NGW)"
+eerror "Intel® Killer™ Wi-Fi 6 AX1650s 160MHz Wireless Network Adapter (201D2W)"
+eerror "Intel® Killer™ Wi-Fi 6 AX1650i 160MHz Wireless Network Adapter (201NGW)"
 eerror
 eerror "Use kernel version >= 5.10 or disable the"
 eerror "\"Intel Wireless WiFi MVM Firmware support\" (CONFIG_IWLMVM) to"
