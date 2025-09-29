@@ -54,6 +54,7 @@ fi
 # https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20241117"
+# The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 and gc_12_0_1 first presence
 ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/ath/ath12k/hw.c

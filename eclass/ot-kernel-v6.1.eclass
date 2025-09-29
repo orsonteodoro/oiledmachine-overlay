@@ -38,6 +38,7 @@ MY_PV="${PV}" # ver_test context
 # https://elixir.bootlin.com/linux/v6.1.154/source/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c		the last gfx version for gc_11_0_4 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20221211"
+# The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20210912" # Based on amd_sev_fam19h_model0xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20230330" # Based on gc_11_0_4 file first presence
 ATH_FIRMWARE_RELEASE_DATE="20220424" # Based on presence of latest added board-2 (WCN6750) file in https://github.com/torvalds/linux/blob/v6.1/drivers/net/wireless/ath/ath11k/core.c

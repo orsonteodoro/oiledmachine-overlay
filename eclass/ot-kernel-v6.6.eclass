@@ -41,30 +41,13 @@ MY_PV="${PV}" # ver_test context
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/amdgpu/gfx_v11_0_3.c		the last gfx version for gc_11_0_4 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20250727"
+# The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20230330" # Based on gc_11_0_4 file first presence
 ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.6/drivers/net/wireless/ath/ath12k/hw.c
 RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v6.6/drivers/net/wireless/realtek/rtl8xxxu/
 RTLWIFI_FIRMWARE_RELEASE_DATE="20191008" # Based on latest added rtl8812aefw_wowlan bin from https://github.com/torvalds/linux/blob/v6.6/drivers/net/wireless/realtek/rtlwifi/
 RTW_FIRMWARE_RELEASE_DATE="20230524" # Based on latest added rtw8851b_fw bin driver from https://github.com/torvalds/linux/blob/v6.6/drivers/net/wireless/realtek/rtw89/
-
-
-20241010 rtl8192du
-2013 rtl8192cu
-2012 rtl8192de
-
-2013 rtl8188ee
-rtl8192c
-2012 rtl8192ce
-2013 rtl8192cu
-2012 rtl8192de
-2014 rtl8192ee
-2012 rtl8192se
-2019 rtl8723ae
-2014 rtl8723be
-rtl8723com
-rtl8821ae
-
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing

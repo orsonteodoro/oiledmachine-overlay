@@ -36,6 +36,7 @@ MY_PV="${PV}" # ver_test context
 # https://elixir.bootlin.com/linux/v5.10.244/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for navy_flounder and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20201213"
+# The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20210912" # Based on amd_sev_fam19h_model0xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20210322" # Based on navy_flounder vcn first file presence
 ATH_FIRMWARE_RELEASE_DATE="20201023" # Based on presence of latest added board (QCA6390) file in https://github.com/torvalds/linux/blob/v5.10/drivers/net/wireless/ath/ath11k/core.c

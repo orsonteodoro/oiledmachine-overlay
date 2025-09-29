@@ -36,6 +36,7 @@ MY_PV="${PV}" # ver_test context
 # https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for cyan_skillfish2 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20211031"
+# The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20210912" # Based on amd_sev_fam19h_model0xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20211112" # Based on cyan_skillfish2 first file presence
 ATH_FIRMWARE_RELEASE_DATE="20220307" # Based on presence of latest added board (WCN6855) file in https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/ath/ath11k/core.c
