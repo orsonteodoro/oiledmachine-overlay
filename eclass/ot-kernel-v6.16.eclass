@@ -60,7 +60,9 @@ fi
 KERNEL_RELEASE_DATE="20250727"
 AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 and gc_12_0_1 first presence
+AMDXDNA_FIRMWARE_RELEASE_DATE="20241203" # Based on npu.sbin first presence
 ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.16/drivers/net/wireless/ath/ath12k/hw.c
+IVPU_FIRMWARE_RELEASE_DATE="20250307" # Based on presence of added vpu_37xx_v1 bin referenced in https://github.com/torvalds/linux/blob/v6.16/drivers/accel/ivpu/ivpu_fw.c
 RTW_FIRMWARE_RELEASE_DATE="20250421" # Based on latest added rtw8852c_fw-2 and rtw8922a_fw-3 bin drivers from https://github.com/torvalds/linux/blob/v6.16/drivers/net/wireless/realtek/rtw89
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
@@ -908,7 +910,9 @@ CDEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${AMDXDNA_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${IVPU_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
 	)
 	lto? (

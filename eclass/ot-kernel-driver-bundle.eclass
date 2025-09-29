@@ -1864,13 +1864,21 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "hid usb bt"
 	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 
-	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-		# For AI support
+	# For AI support
+	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
-		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU"
+		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU" # 2023
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
+	elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.14" ; then
+		ot-kernel_y_configopt "CONFIG_ACPI"
+		ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
+		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_AMDXDNA" # 2024
+		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_PCI"
 	fi
 }
 

@@ -1482,6 +1482,18 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "sys-fs/xfsprogs" "2.6.0" "CONFIG_XFS_FS"
 	_ot-kernel_check_versions "sys-process/procps" "3.2.0" ""
 	_ot-kernel_check_versions "virtual/udev" "081" ""
+
+	if grep -q -E -e "^CONFIG_DRM_ACCEL_IVPU=y" "${path_config}" ; then
+eerror
+eerror "The distro's sys-kernel/linux-firmware does not support older firmware"
+eerror "for the \"Intel® VPU for Meteor Lake and newer\" (CONFIG_DRM_ACCEL_IVPU)"
+eerror "driver.  It is not supported in this series."
+eerror
+eerror "Disable the CONFIG_DRM_ACCEL_IVPU option or use the >= 6.16 series"
+eerror "to continue."
+eerror
+		die
+	fi
 }
 
 # @FUNCTION: ot-kernel_check_usedeps
