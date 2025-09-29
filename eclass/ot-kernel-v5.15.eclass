@@ -39,6 +39,8 @@ KERNEL_RELEASE_DATE="20211031"
 AMD_SEV_FIRMWARE_RELEASE_DATE="20210912" # Based on amd_sev_fam19h_model0xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20211112" # Based on cyan_skillfish2 first file presence
 ATH_FIRMWARE_RELEASE_DATE="20220307" # Based on presence of latest added board (WCN6855) file in https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/ath/ath11k/core.c
+RTL8XXXU_FIRMWARE_RELEASE_DATE="20160203" # Based on latest added rtl8192eu_nic bin from https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/realtek/rtl8xxxu/
+RTLWIFI_FIRMWARE_RELEASE_DATE="20191008" # Based on latest added rtl8812aefw_wowlan bin from https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/realtek/rtlwifi/
 RTW_FIRMWARE_RELEASE_DATE="20200518" # Based on latest added rtw8821c_fw bin driver from https://github.com/torvalds/linux/tree/v5.15/drivers/net/wireless/realtek/rtw88
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
@@ -718,6 +720,8 @@ CDEPEND+="
 		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
 	)
 	lto? (

@@ -38,6 +38,8 @@ MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20191124"
 AMDGPU_FIRMWARE_RELEASE_DATE="20200824" # Based on navi12 vcn first presence
 ATH_FIRMWARE_RELEASE_DATE="20220530" # Based on presence of latest added board (WCN3990) file in https://github.com/torvalds/linux/blob/v5.4/drivers/net/wireless/ath/ath10k/core.c
+RTL8XXXU_FIRMWARE_RELEASE_DATE="20160203" # Based on latest added rtl8192eu_nic bin from https://github.com/torvalds/linux/blob/v5.4/drivers/net/wireless/realtek/rtl8xxxu/
+RTLWIFI_FIRMWARE_RELEASE_DATE="20191008" # Based on latest added rtl8812aefw_wowlan bin from https://github.com/torvalds/linux/blob/v5.4/drivers/net/wireless/realtek/rtlwifi/
 RTW_FIRMWARE_RELEASE_DATE="20181008" # Based on latest added rtl8822c_fw and rtl8822b_fw bin drivers from https://github.com/torvalds/linux/tree/v5.4/drivers/net/wireless/realtek/rtw88
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
@@ -444,6 +446,8 @@ CDEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
 	)
 	lz4? (
