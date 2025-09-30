@@ -5820,13 +5820,12 @@ einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set 
 
 	else
 		cores=${CPU_CORES:-1}
-		l3_cache_size=${CPU_L3_CACHE_SIZE}
+		l3_cache_size=${CPU_L3_CACHE_SIZE:-0}
 		numa_nodes=${CPU_NUMA_NODES:-1}
 		sockets=${CPU_SOCKETS:-1}
 		tpc=${CPU_TPC:-1}
 		lcpus=$(( ${cores} * ${sockets} * ${tpc} ))
 	fi
-
 
 	local cpu_system="${CPU_SYSTEM,,}"
 
@@ -9373,7 +9372,11 @@ einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set 
 		numa_nodes=${CPU_NUMA_NODES:-1}
 		tpc=${CPU_TPC:-1}
 		lcpus=$(( ${cores} * ${sockets} * ${tpc} ))
-		l3_cache_size=${CPU_L3_CACHE_SIZE}
+		l3_cache_size=${CPU_L3_CACHE_SIZE:-0}
+	fi
+
+	if (( ${l3_cache_size} == 0 && ${lcpus} != 1 )) ; then
+ewarn "Your CPU_L3_CACHE_SIZE is too small for contemporary multicore CPUs.  Use \`lscpu\` to find the proper value."
 	fi
 
 einfo "CPU cores:  ${cores}"

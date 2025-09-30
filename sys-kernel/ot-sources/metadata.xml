@@ -4994,23 +4994,29 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:  DVD
 
     CPU_CORES - The number of CPU cores per CPU socket.
+    Tip:  The proper value can be obtained using lscpu.
     Valid values:  1 to N, default is auto
 
     CPU_HETEROGENEOUS_POWER_CORES - Autodetect override for enabled or disabled
     heterogeneous power for big.LITTLE or P-/E-cores for power efficiency and
     temperature reduction.  This is the override value.
+    Tip:  The proper value can be obtained using lscpu and AI.
     Valid values:  0 (default, disable), 1 to enable
 
-    CPU_L3_CACHE_SIZE - The size of cache in KiB.
+    CPU_L3_CACHE_SIZE - The size of cache in KiB.  It is used to tune the MuQSS
+    scheduler.
+    Tip:  The proper value can be obtained using lscpu.
     Examples:
       CPU_L3_CACHE_SIZE=24576 # 24 MiB
       CPU_L3_CACHE_SIZE=3072 # 3 MiB
       CPU_L3_CACHE_SIZE=512 # 512 KiB
 
     CPU_NUMA_NODES - The number of NUMA nodes.
+    Tip:  The proper value can be obtained using lscpu.
     Valid values:  1 to N, default is auto
 
     CPU_MODEL - The model of the CPU based on compiler flags.
+    Tip:  The proper value can be obtained using lscpu.
 
     Examples:
 
@@ -5018,9 +5024,11 @@ unset OT_KERNEL_PRIVATE_KEY
       CPU_MODEL="-mtune=cortex-a75.cortex-a55"
 
     CPU_SOCKETS - The number of sockets in the system.
+    Tip:  The proper value can be obtained using lscpu.
     Valid values:  1 to N, default is auto
 
     CPU_SYSTEM - Optimize the CPU scheduler based on the description.
+    Tip:  The proper value can be obtained using lscpu and AI.
     Valid values:
       auto (default; based on builder machine)
       custom
@@ -5037,10 +5045,12 @@ unset OT_KERNEL_PRIVATE_KEY
       uniprocessor
 
     CPU_TPC - The number of threads per core.
+    Tip:  The proper value can be obtained using lscpu.
     Valid values:  1 to N, default is auto
 
     CPU_VENDOR - The vendor name of the CPU used for overriding autodetection.
     If not set, it will determine based on the compiler flags.
+    Tip:  The proper value can be obtained using lscpu.
 
     For acceptable canonical names, see ot-kernel-kutils.eclass.
 
