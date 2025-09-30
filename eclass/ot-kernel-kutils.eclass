@@ -543,6 +543,116 @@ ot-kernel_get_vendor_from_flags() {
 
 		["i686"]="generic"
 
+		["arm7tdmi"]="arm"
+		["arm7tdmi-s"]="arm"
+		["arm710t"]="arm"
+		["arm720t"]="arm"
+		["arm740t"]="arm"
+		["strongarm"]="dec/intel"
+		["strongarm110"]="dec/intel"
+		["strongarm1100"]="intel"
+		["strongarm1110"]="intel"
+		["arm8"]="arm"
+		["arm810"]="arm"
+		["arm9"]="arm"
+		["arm9e"]="arm"
+		["arm920"]="arm"
+		["arm920t"]="arm"
+		["arm922t"]="arm"
+		["arm946e-s"]="arm"
+		["arm966e-s"]="arm"
+		["arm968e-s"]="arm"
+		["arm926ej-s"]="arm"
+		["arm940t"]="arm"
+		["arm9tdmi"]="arm"
+		["arm10tdmi"]="arm"
+		["arm1020t"]="arm"
+		["arm1026ej-s"]="arm"
+		["arm10e"]="arm"
+		["arm1020e"]="arm"
+		["arm1022e"]="arm"
+		["arm1136j-s"]="arm"
+		["arm1136jf-s"]="arm"
+		["mpcore"]="arm"
+		["mpcorenovfp"]="arm"
+		["arm1156t2-s"]="arm"
+		["arm1156t2f-s"]="arm"
+		["arm1176jz-s"]="arm"
+		["arm1176jzf-s"]="arm"
+		["generic-armv7-a"]="arm"
+		["cortex-a5"]="arm"
+		["cortex-a7"]="arm"
+		["cortex-a8"]="arm"
+		["cortex-a9"]="arm"
+		["cortex-a12"]="arm"
+		["cortex-a15"]="arm"
+		["cortex-a17"]="arm"
+		["cortex-a32"]="arm"
+		["cortex-a35"]="arm"
+		["cortex-a53"]="arm"
+		["cortex-a55"]="arm"
+		["cortex-a57"]="arm"
+		["cortex-a72"]="arm"
+		["cortex-a73"]="arm"
+		["cortex-a75"]="arm"
+		["cortex-a76"]="arm"
+		["cortex-a76ae"]="arm"
+		["cortex-a77"]="arm"
+		["cortex-a78"]="arm"
+		["cortex-a78ae"]="arm"
+		["cortex-a78c"]="arm"
+		["cortex-a710"]="arm"
+		["ares"]="arm"
+		["cortex-r4"]="arm"
+		["cortex-r4f"]="arm"
+		["cortex-r5"]="arm"
+		["cortex-r7"]="arm"
+		["cortex-r8"]="arm"
+		["cortex-r52"]="arm"
+		["cortex-r52plus"]="arm"
+		["cortex-m0"]="arm"
+		["cortex-m0plus"]="arm"
+		["cortex-m1"]="arm"
+		["cortex-m3"]="arm"
+		["cortex-m4"]="arm"
+		["cortex-m7"]="arm"
+		["cortex-m23"]="arm"
+		["cortex-m33"]="arm"
+		["cortex-m35p"]="arm"
+		["cortex-m52"]="arm"
+		["cortex-m55"]="arm"
+		["cortex-m85"]="arm"
+		["cortex-x1"]="arm"
+		["cortex-x1c"]="arm"
+		["cortex-m1.small-multiply"]="arm"
+		["cortex-m0.small-multiply"]="arm"
+		["cortex-m0plus.small-multiply"]="arm"
+		["exynos-m1"]="samsung"
+		["marvell-pj4"]="marvell"
+		["neoverse-n1"]="arm"
+		["neoverse-n2"]="arm"
+		["neoverse-v1"]="arm"
+		["xscale"]="intel/marvell"
+		["iwmmxt"]="intel"
+		["iwmmxt2"]="marvell"
+		["ep9312"]="cirrus-logic"
+		["fa526"]="arm"
+		["fa626"]="arm"
+		["fa606te"]="arm"
+		["fa626te"]="arm"
+		["fmp626"]="fujitsu"
+		["fa726te"]="arm"
+		["star-mc1"]="arm-china"
+		["xgene1"]="appliedmicro"
+		["cortex-a15.cortex-a7"]="arm"
+		["cortex-a17.cortex-a7"]="arm"
+		["cortex-a57.cortex-a53"]="arm"
+		["cortex-a72.cortex-a53"]="arm"
+		["cortex-a72.cortex-a35"]="arm"
+		["cortex-a73.cortex-a53"]="arm"
+		["cortex-a75.cortex-a55"]="arm"
+		["cortex-a76.cortex-a55"]="arm"
+
 		["cortex-a35"]="arm"
 		["cortex-a53"]="arm"
 		["cortex-a55"]="arm"
@@ -580,7 +690,7 @@ ot-kernel_get_vendor_from_flags() {
 		["qdf24xx"]="qualcomm"
 		["saphira"]="ampere"
 		["phecda"]="marvell"
-		["xgene1"]="amcc"
+		["xgene1"]="appliedmicro"
 		["vulcan"]="cavium"
 		["octeontx"]="marvell"
 		["octeontx81"]="marvell"
@@ -656,13 +766,13 @@ ot-kernel_get_vendor_from_flags() {
 	# -mcpu=
 	declare -A MODEL_TO_VENDOR_NAME_MCPU=(
 		["401"]="ibm"
-		["403"]="ibm/amcc"
-		["405"]="ibm/amcc/xilinx/synopsys/hifn/culturecom"
-		["405fp"]="ibm/xilinx/amcc/hifn/culturecom/synopsys"
-		["440"]="ibm/amcc/xilinx"
-		["440fp"]="ibm/amcc/xilinx"
-		["464"]="ibm/amcc"
-		["464fp"]="ibm/amcc"
+		["403"]="ibm/appliedmicro"
+		["405"]="ibm/appliedmicro/xilinx/synopsys/hifn/culturecom"
+		["405fp"]="ibm/xilinx/appliedmicro/hifn/culturecom/synopsys"
+		["440"]="ibm/appliedmicro/xilinx"
+		["440fp"]="ibm/appliedmicro/xilinx"
+		["464"]="ibm/appliedmicro"
+		["464fp"]="ibm/appliedmicro"
 		["476"]="ibm/lsi"
 		["476fp"]="ibm/lsi"
 		["505"]="motorola"
@@ -695,7 +805,7 @@ ot-kernel_get_vendor_from_flags() {
 		["G3"]="apple/ibm/motorola"
 		["G4"]="apple/ibm/motorola"
 		["G5"]="apple/ibm/motorola"
-		["titan"]="amcc"
+		["titan"]="appliedmicro"
 		["power3"]="ibm"
 		["power4"]="ibm"
 		["power5"]="ibm"
@@ -960,9 +1070,17 @@ ot-kernel_has_multicore() {
 		fi
 	fi
 
-	# TODO finish
 	local model=$(ot-kernel_get_cpu_model)
-	# Pure multicore microarches are only listed.
+
+	case ${model} in
+		"bonnell" | \
+		"atom" | \
+		"cortex-a53")
+ewarn "${model} is both unicore and multicore.  CPU_CORES to force unicore for older models."
+	esac
+
+	# TODO finish
+	# For microarches with both unicore or multicore, it is assumed to be newer multicore models.
 	case ${model} in
 		"core2" | \
 		"nehalem" | \
@@ -997,6 +1115,8 @@ ot-kernel_has_multicore() {
 		"graniterapids" | \
 		"graniterapids-d" | \
 		"diamondrapids" | \
+		"bonnell" | \
+		"atom" | \
 		"silvermont" | \
 		"slm" | \
 		"goldmont" | \
@@ -1023,10 +1143,12 @@ ot-kernel_has_multicore() {
 		"lujiazui" | \
 		"yongfeng" | \
 		"shijidadao" | \
+		"a64fx" | \
 		"apple-m1" | \
 		"apple-m2" | \
 		"apple-m3" | \
 		"cobalt-100" | \
+		"cortex-a53" | \
 		"cortex-a57.cortex-a53" | \
 		"cortex-a72.cortex-a53" | \
 		"cortex-a73.cortex-a35" | \
