@@ -1183,8 +1183,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-cpp/pystring | C++ functions matching the interface and behavior of Python string methods |
 | dev-cpp/selfrando | Function order shuffling to defend against ROP and other types of code reuse |
 | dev-cpp/sqlitecpp | SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper |
-| dev-cpp/tbb | oneAPI Threading Building Blocks (oneTBB) |
-| dev-cpp/tbb | Threading Building Blocks (TBB) |
 | dev-cpp/yaml-cpp | YAML parser and emitter in C++ |
 | dev-db/mariadb | An enhanced, drop-in replacement for MySQL |
 | dev-db/mysql | A fast, multi-threaded, multi-user SQL database server |
@@ -1786,7 +1784,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/imagemagick | A collection of tools and libraries for many image formats |
 | media-gfx/inkscape | SVG based generic vector-drawing program |
 | media-gfx/material-maker | A procedural textures authoring and 3D model painting tool based on the Godot game engine |
-| media-gfx/nanovdb | A lightweight GPU friendly version of VDB initially targeting rendering applications. |
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
 | media-gfx/upscayl-custom-models | Extra custom models for Upscayl. |
 | media-gfx/upscayl | Upscayl is an AI based image upscaler |
@@ -2029,8 +2026,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-zxing | Barcode image scanner plugin using zxing-cpp for GStreamer |
 | media-plugins/imlib2_loaders | Additional image loaders for Imlib2 |
 | media-plugins/openvino-ai-plugins-gimp | GIMP AI plugins with OpenVINO Backend |
-| media-plugins/RadeonProRenderBlenderAddon | A Blender® rendering plug-in for accurate ray-tracing to produce images and animations of scenes and providing real-time interactive rendering and continuous adjustment of effects. |
-| media-plugins/RadeonProRenderMaterialLibrary | The Radeon™ ProRender for Blender® Material Library |
 | media-radio/codecserver | Modular audio codec server |
 | media-radio/csdr | A simple DSP library and command-line tool for Software Defined Radio. |
 | media-radio/digiham | Tools for decoding digital ham communication |
@@ -2192,8 +2187,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-power/cpupower-gui | This program is designed to allow you to change the frequency limits of your cpu and its governor similar to cpupower. |
 | sys-process/nvtop | GPU & Accelerator process monitoring |
 | sys-process/psdoom-ng | A First Person Shooter (FPS) process killer |
-| virtual/blender-lts | Virtual for Blender® LTS |
-| virtual/blender-stable | Virtual for Blender® stable |
 | virtual/kfd-lb | KFD (Kernel Fusion Driver) with version limited lower boundary |
 | virtual/kfd | The Kernel Fusion Driver (KFD) |
 | virtual/kfd-ub | KFD (Kernel Fusion Driver) with version limited upper boundary |
