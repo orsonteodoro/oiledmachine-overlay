@@ -77,7 +77,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
--alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
+-alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus +nanovdb -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
 ebuild_revision_6
@@ -331,6 +331,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
 					$(usex tbbmalloc "Tbbmalloc" "None")\
 				     )
+		-DOPENVDB_BUILD_NANOVDB=$(usex nanovdb)
+		-DNANOVDB_BUILD_TOOLS=OFF
 		-DOPENVDB_ABI_VERSION_NUMBER="${version}"
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON \
 						$(usex vdb_print ON \

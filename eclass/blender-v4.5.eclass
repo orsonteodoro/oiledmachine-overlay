@@ -964,14 +964,12 @@ RDEPEND+="
 	openvdb? (
 		abi12-compat? (
 			|| (
-				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,numpy]
-				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,numpy]
+				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
+				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
 			)
+			media-gfx/openvdb:=
 		)
 		>=dev-libs/c-blosc-1.21.1[zlib]
-		nanovdb? (
-			~media-gfx/nanovdb-32.4.2_p20221027:0=
-		)
 	)
 	openxr? (
 		>=media-libs/openxr-1.0.22
