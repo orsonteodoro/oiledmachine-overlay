@@ -192,7 +192,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	?? (
@@ -260,9 +260,14 @@ RDEPEND_PYTHON_BINDINGS="
 "
 # TODO:  src/bindings/python/requirements_test.txt
 RDEPEND+="
-	dev-cpp/tbb
-	dev-libs/protobuf:0/3.21
-	dev-libs/protobuf:=
+	(
+		>=dev-cpp/tbb-2021.10:0
+		dev-cpp/tbb:=
+	)
+	(
+		dev-libs/protobuf:0/3.21
+		dev-libs/protobuf:=
+	)
 	mlas? (
 		>=sci-libs/mlas-20240118
 	)
