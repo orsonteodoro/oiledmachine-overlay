@@ -129,17 +129,13 @@ CUDA_TARGETS_UNTESTED=(
 	sm_90
 )
 LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
-LLVM_COMPAT=( 15 )
+LLVM_COMPAT=( {18..15} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 # LLVM versions supported by Blender:
-# =media-gfx/blender-9999 (4.2.0 alpha) :: 17 16 15
-# =media-gfx/blender-3.6* :: 16 15 14 13 12 11
-# =media-gfx/blender-3.5* :: 13 12 11
-# =media-gfx/blender-3.4* :: 13 12 11
-# =media-gfx/blender-3.3* :: 13 12 11
+# =media-gfx/blender-4.5* :: Non GPU builds can use LLVM 17, 16, 15; HIP 6.3 for Windows needs LLVM 18; HIP 6.4 for Linux needs LLVM 19.
 
 BLENDER_SLOTS=(
-	blender-3_5 # python3_11 .. python3_10
+	blender-4_5 # python3_13 .. python3_11
 )
 CONFIGURATION="weekly"
 # Ceiling values based on python compatibility matching the particular Blender
@@ -151,14 +147,14 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 PLUGIN_NAME="rprblender"
 # It supports Python 3.7 to 3.10, but they are deprecated in this distro in
 # python-utils-r1.eclass.
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_"{11..13} )
 # Commits are based on left side.  The commit associated with the message
 # (right) differs with the commit associated with the folder (left) on the
 # GitHub website.
 HIPBIN_COMMIT="7c255d38122d3018c6e75c60307761ff2c185e9d"
 HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
 ROCM_SLOTS=(
-	rocm_5_3
+	rocm_6_3
 )
 RPIPSDK_COMMIT="31b926e462a097e54efd653f2ed8ba5a4fad2d8c"
 RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
@@ -257,6 +253,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
 denoiser +hip intel-ocl +matlib +opencl +rocr +vulkan
+ebuild_revision_1
 "
 gen_amdgpu_opencl_required_use() {
 	local g
@@ -290,14 +287,14 @@ gen_amdgpu_required_use() {
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	$(gen_amdgpu_required_use)
-	blender-3_5? (
+	blender-4_5? (
 		python_single_target_python3_11
 	)
 	opencl? (
 		$(gen_amdgpu_opencl_required_use)
 	)
-	rocm_5_3? (
-		llvm_slot_15
+	rocm_6_3? (
+		llvm_slot_18
 	)
 	rocr? (
 		video_cards_amdgpu
@@ -384,7 +381,7 @@ RDEPEND_NOT_LISTED="
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.9/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
 BLENDER_RDEPEND="
-	blender-3_5? (
+	blender-4_5? (
 		=media-gfx/blender-3.5*[${PYTHON_SINGLE_USEDEP}]
 	)
 "
@@ -412,8 +409,8 @@ RDEPEND+="
 					dev-libs/amdgpu-pro-opencl-legacy
 				)
 				rocr? (
-					rocm_5_3? (
-						dev-libs/rocm-opencl-runtime:5.3
+					rocm_6_3? (
+						dev-libs/rocm-opencl-runtime:6.3
 					)
 				)
 			)
