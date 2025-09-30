@@ -666,14 +666,14 @@ ot-kernel_get_vendor_from_flags() {
 		["476"]="ibm/lsi"
 		["476fp"]="ibm/lsi"
 		["505"]="motorola"
-		["601"]="ibm/motorola" # aim alliance
+		["601"]="ibm/motorola" # AIM alliance
 		["602"]="ibm/motorola"
 		["603"]="ibm/motorola/freescale/chip-supply/qed/atmel/honeywell"
 		["603e"]="ibm/motorola/freescale"
 		["604"]="apple/ibm/motorola"
 		["604e"]="apple/ibm/motorola"
 		["620"]="apple/ibm/motorola"
-		["630"]="ibm/motorola/freescale" # aim alliance
+		["630"]="ibm/motorola/freescale" # AIM alliance
 		["740"]="apple/ibm/motorola"
 		["7400"]="apple/ibm/motorola"
 		["7450"]="apple/ibm/motorola"
