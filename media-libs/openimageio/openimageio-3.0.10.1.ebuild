@@ -320,7 +320,7 @@ RDEPEND+="
 			media-gfx/openvdb:=
 		)
 		tbb? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}
 			dev-cpp/tbb:=
 		)
 	)
