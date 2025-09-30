@@ -4,7 +4,6 @@
 
 EAPI=8
 
-LEGACY_TBB_SLOT="2"
 TRAIN_TEST_DURATION=20
 TRAIN_USE_X=1
 PYTHON_COMPAT=( python3_{8..11} )
@@ -317,7 +316,6 @@ IUSE+="
 	-openvr
 	-python
 	+serialize
-	-tbb
 	test
 	-threads
 	ebuild_revision_4
@@ -371,9 +369,6 @@ REQUIRED_USE+="
 	serialize? (
 		extras
 	)
-	tbb? (
-		threads
-	)
 "
 CDEPEND="
 	python? (
@@ -391,10 +386,6 @@ DEPEND+="
 		media-libs/mesa[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 	)
-	tbb? (
-		!<dev-cpp/tbb-2021:0=
-		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-	)
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
@@ -406,7 +397,6 @@ BDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.85-soversion.patch"
-	"${FILESDIR}/${PN}-3.24-fix-tbb-linking.patch"
 )
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
@@ -471,38 +461,10 @@ einfo
 	# they are already installed in system folders.
 }
 
-fix_tbb_rpath() {
-	if use tbb ; then
-		local found=0
-		local f
-		for f in $(find "${ED}") ; do
-			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
-einfo
-einfo "Setting rpath for ${f} for TBB"
-einfo
-				local old_rpath=$(patchelf \
-					--print-rpath \
-					"${f}") || die
-				[[ -n "${old_rpath}" ]] && old_rpath=":${old_rpath}"
-				patchelf \
-					--set-rpath \
-					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}${old_rpath}" \
-					"${f}" || die
-			fi
-		done
-	fi
-}
-
 pkg_setup() {
 	check-compiler-switch_start
 	#use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
 	#use bolt && ewarn "The bolt USE flag may not generate a BOLT profile."
-einfo
-einfo "To hard unmask the USE=tbb add the following line to"
-einfo "/etc/portage/profile/package.use.mask:"
-einfo
-einfo "  sci-physics/bullet -tbb"
-einfo
 	uopts_setup
 	python-single-r1_pkg_setup
 }
@@ -560,24 +522,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DBUILD_UNIT_TESTS=$(usex test)
 		-DBULLET2_MULTITHREADING=$(usex threads)
 		-DBULLET2_USE_OPEN_MP_MULTITHREADING=$(usex openmp)
-		-DBULLET2_USE_TBB_MULTITHREADING=$(usex tbb)
+		-DBULLET2_USE_TBB_MULTITHREADING=OFF
 		-DINSTALL_EXTRA_LIBS=ON
 		-DINSTALL_LIBS=ON
 		-DUSE_DOUBLE_PRECISION=$(usex double-precision)
 		-DUSE_GRAPHICAL_BENCHMARK=$(usex graphical-benchmark)
 	)
-	if use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		mycmakeargs+=(
-			-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DBULLET2_TBB_LIB_DIR="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-		)
-	elif use tbb ; then
-eerror
-eerror "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} must be installed from the"
-eerror "oiledmachine-overlay."
-eerror
-		die
-	fi
 einfo
 einfo "PGO_PHASE=${PGO_PHASE}"
 #einfo "BOLT_PHASE=${BOLT_PHASE}"
@@ -691,7 +641,6 @@ echo "/usr/share/${PN}/demos" \
 	einstalldocs
 	LCNR_SOURCE="${WORKDIR}/${PN}$(ver_cut 1 ${PV})-${PV}"
 	lcnr_install_files
-	fix_tbb_rpath
 	sanitize_rpaths
 }
 
