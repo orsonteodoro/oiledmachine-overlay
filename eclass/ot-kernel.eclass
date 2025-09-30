@@ -5832,7 +5832,6 @@ einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set 
 
 	local multicore=0
 	local multicore_with_level3_cache=0
-	local lcpus=1
 	local smp=0
 	local smt=0
 
