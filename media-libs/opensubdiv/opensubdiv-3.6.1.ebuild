@@ -1,19 +1,20 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Some parts synced with opensubdiv-3.4.4-r2.
-
 EAPI=8
+
+# U22
+
+# Some parts synced with opensubdiv-3.4.4-r2.
 
 CMAKE_MAKEFILE_GENERATOR=emake
 CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_50
+	"sm_35"
+	"sm_50"
 )
-LEGACY_TBB_SLOT="2" # For TBB 2020
 MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} ) # U22 (3.10)
 
 inherit check-compiler-switch cmake cuda flag-o-matic python-any-r1 toolchain-funcs
 
@@ -81,14 +82,15 @@ RDEPEND="
 		media-libs/glew:=
 	)
 	glfw? (
-		>=media-libs/glfw-3.0.0:=
+		>=media-libs/glfw-3.3.3
+		media-libs/glfw:=
 	)
 	opencl? (
 		virtual/opencl
 	)
 	ptex? (
-		>=media-libs/ptex-2.0
-		>=sys-libs/zlib-1.2
+		>=media-libs/ptex-2.4.2
+		>=sys-libs/zlib-1.2.13
 	)
 	X? (
 		x11-libs/libX11
@@ -102,20 +104,18 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	tbb? (
-		|| (
-			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
-		)
+		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}
+		dev-cpp/tbb:=
 	)
 "
 BDEPEND="
-	>=dev-build/cmake-3.12
+	>=dev-build/cmake-3.14
 	doc? (
 		$(python_gen_any_dep '
-			>=dev-python/docutils-0.9[${PYTHON_USEDEP}]
+			>=dev-python/docutils-0.21.2[${PYTHON_USEDEP}]
+			>=dev-python/pygments-2.19[${PYTHON_USEDEP}]
 		')
-		>=app-text/doxygen-1.8.4
+		>=app-text/doxygen-1.14.0
 	)
 	cuda? (
 		=sys-devel/gcc-11*[cxx]
@@ -124,7 +124,6 @@ BDEPEND="
 PATCHES_=(
 	"${FILESDIR}/${PN}-3.6.0-use-gnuinstalldirs.patch"
 	"${FILESDIR}/${PN}-3.6.0-cudaflags.patch"
-	"${FILESDIR}/${PN}-3.6.0-tbb-slot-select.patch"
 )
 
 pkg_setup() {
@@ -206,17 +205,6 @@ einfo "CXX:\t\t${CXX}"
 		)
 	fi
 
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		mycmakeargs+=(
-			-DUSE_ONETBB=ON
-		)
-		append-cxxflags -DUSE_ONETBB
-	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		mycmakeargs+=(
-			-DUSE_ONETBB=OFF
-		)
-	fi
-
 	export LIBDIR=$(get_libdir)
 
 	# fails with building cuda kernels when using multiple jobs
@@ -245,20 +233,6 @@ src_test() {
 
 src_install() {
 	cmake_src_install
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:
-	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		for f in $(find "${ED}") ; do
-			test -L "${f}" && continue
-			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-				einfo "Old rpath for ${f}:"
-				patchelf --print-rpath "${f}" || die
-				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-					"${f}" || die
-			fi
-		done
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
