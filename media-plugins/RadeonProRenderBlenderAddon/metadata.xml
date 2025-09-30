@@ -30,14 +30,8 @@
     <doc lang="en">https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/about.html</doc>
   </upstream>
   <use>
-    <flag name="blender-3_3">
-      Build the plugin for Blender 3.3.x LTS (Long Term Support) series.
-    </flag>
-    <flag name="blender-3_4">
-      Build the plugin for Blender 3.4.x series.
-    </flag>
-    <flag name="blender-3_5">
-      Build the plugin for Blender 3.5.x series.
+    <flag name="blender-4_5">
+      Build the plugin for Blender 4.5.x series.
     </flag>
     <flag name="denoiser">
       Checks for dynamic libraries that may be required to use the denoiser.
@@ -55,7 +49,7 @@
       Checks for proper OpenCL support for GPUs.
     </flag>
     <flag name="rocr">
-      Enabling uses the ROCr OpenCL implementation.
+      Enabling uses the ROCr [ROCm OpenCL Runtime] OpenCL implementation.
       Disabling uses the legacy OpenCL implementation.
 
       The setting is ignored if the video_cards_amdgpu USE flag is disabled.
