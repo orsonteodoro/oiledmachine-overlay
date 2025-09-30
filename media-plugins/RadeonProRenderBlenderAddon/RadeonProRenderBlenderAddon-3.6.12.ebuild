@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# U18, U20
+# U20
 
 # Essentially if it is >= GCN 1.x it is supported.
 AMDGPU_TARGETS_COMPAT=(
@@ -139,31 +139,32 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 # =media-gfx/blender-3.3* :: 13 12 11
 
 BLENDER_SLOTS=(
-	blender-3_3 # python3_11 .. python3_10
-	blender-3_4 # python3_11 .. python3_10
+	blender-3_5 # python3_11 .. python3_10
 )
-CONFIGURATION="release"
+CONFIGURATION="weekly"
 # Ceiling values based on python compatibility matching the particular Blender
-# version.
-MAX_BLENDER_PV="3.5" # Exclusive
-MIN_BLENDER_PV="2.80"
+# version
+MAX_BLENDER_PV="3.6" # Exclusive
+MIN_BLENDER_PV="2.93"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 PLUGIN_NAME="rprblender"
 # It supports Python 3.7 to 3.10, but they are deprecated in this distro in
 # python-utils-r1.eclass.
 PYTHON_COMPAT=( "python3_11" )
-ROCM_SLOTS=(
-	rocm_5_3
-)
 # Commits are based on left side.  The commit associated with the message
 # (right) differs with the commit associated with the folder (left) on the
 # GitHub website.
-RPIPSDK_COMMIT="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
+HIPBIN_COMMIT="7c255d38122d3018c6e75c60307761ff2c185e9d"
+HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
+ROCM_SLOTS=(
+	rocm_5_3
+)
+RPIPSDK_COMMIT="31b926e462a097e54efd653f2ed8ba5a4fad2d8c"
 RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
-RPRSC_COMMIT="6608117fcddd783e81b2aedc2c1abdf0b449d465"
+RPRSC_COMMIT="8188f1a1f29c205f6935b495365144b908c1d66d"
 RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_COMMIT:0:7}.tar.gz"
-RPRSDK_COMMIT="c6424e29169743cd5a05c10593a2665dfedb185c"
+RPRSDK_COMMIT="b83fa6512355221ee83fb8801c3316252f1c717c"
 RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_COMMIT:0:7}.tar.gz"
 VIDEO_CARDS="
 	video_cards_amdgpu
@@ -180,6 +181,7 @@ KEYWORDS="~amd64"
 #	-> ${RPIPSDK_DF}
 
 S="${WORKDIR}/${P}"
+S_HIPBIN="${WORKDIR}/RadeonProRenderSDKKernels-${HIPBIN_COMMIT}"
 S_RPIPSDK="${WORKDIR}/${P}/RadeonProImageProcessingSDK"
 S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
 S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${RPRSC_COMMIT}"
@@ -190,6 +192,8 @@ https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDK/archive/${RPRSDK_
 	-> ${RPRSDK_DF}
 https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/archive/${RPRSC_COMMIT}.tar.gz
 	-> ${RPRSC_DF}
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDKKernels/archive/${HIPBIN_COMMIT}.tar.gz
+	-> ${HIPBIN_DF}
 "
 
 DESCRIPTION="A Blender® rendering plug-in for accurate ray-tracing to produce \
@@ -224,7 +228,7 @@ RPRSDK_LICENSE="
 	Khronos-IP-framework
 	MIT
 "
-# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.5.0/src/rprblender/EULA.html
+# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.6.9/src/rprblender/EULA.html
 RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
 	BSD
@@ -252,7 +256,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser intel-ocl +matlib +opencl +rocr +vulkan
+denoiser +hip intel-ocl +matlib +opencl +rocr +vulkan
 "
 gen_amdgpu_opencl_required_use() {
 	local g
@@ -286,10 +290,7 @@ gen_amdgpu_required_use() {
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	$(gen_amdgpu_required_use)
-	blender-3_3? (
-		python_single_target_python3_11
-	)
-	blender-3_4? (
+	blender-3_5? (
 		python_single_target_python3_11
 	)
 	opencl? (
@@ -318,6 +319,7 @@ REQUIRED_USE+="
 		${BLENDER_SLOTS[@]}
 	)
 	|| (
+		hip
 		opencl
 	)
 "
@@ -379,14 +381,11 @@ RDEPEND_NOT_LISTED="
 		)
 	)
 "
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.5.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.9/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
 BLENDER_RDEPEND="
-	blender-3_3? (
-		=media-gfx/blender-3.3*[${PYTHON_SINGLE_USEDEP}]
-	)
-	blender-3_4? (
-		=media-gfx/blender-3.4*[${PYTHON_SINGLE_USEDEP}]
+	blender-3_5? (
+		=media-gfx/blender-3.5*[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 
@@ -397,6 +396,9 @@ RDEPEND+="
 	>=media-libs/embree-2.12.0
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
+	hip? (
+		dev-util/hip:5.3
+	)
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
 	)
@@ -420,6 +422,9 @@ RDEPEND+="
 			)
 			video_cards_nvidia? (
 				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
+				hip? (
+					dev-util/hip[cuda]
+				)
 			)
 		)
 	)
@@ -434,7 +439,7 @@ RDEPEND+="
 	)
 "
 DEPEND_NOT_LISTED=""
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.5.0/README-LNX.md#build-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.9/README-LNX.md#build-requirements
 DEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
@@ -464,7 +469,7 @@ BDEPEND+="
 	dev-vcs/git
 "
 PATCHES=(
-	"${FILESDIR}/rpr-3.1.6-gentoo-skip-libs_cffi_backend.patch"
+	"${FILESDIR}/rpr-3.6.12-gentoo-skip-libs_cffi_backend.patch"
 	"${FILESDIR}/rpr-3.3-disable-download-wheel-boto3.patch"
 )
 
@@ -482,12 +487,12 @@ warn_untested_gpu() {
 	local gpu
 	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
 		if use "amdgpu_targets_${gpu}" ; then
-ewarn "${gpu} is not CI tested upstream."
+ewarn "${gpu} is not tested upstream."
 		fi
 	done
 	for gpu in ${CUDA_TARGETS_UNTESTED[@]} ; do
 		if use "cuda_targets_${gpu}" ; then
-ewarn "${gpu} is not CI tested upstream."
+ewarn "${gpu} is not tested upstream."
 		fi
 	done
 }
@@ -557,6 +562,7 @@ src_unpack() {
 		|| die
 #	ln -s "${S_RPIPSDK}" "RadeonProImageProcessingSDK" || die
 	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
+	ln -s "${S_HIPBIN}" "RadeonProRenderSDK/hipbin" || die
 	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
 	get_rpipsdk
 }
@@ -564,7 +570,7 @@ src_unpack() {
 fix_version() {
 	local line_num=$(grep -n -e "\"version\"" "src/rprblender/__init__.py" \
 		| cut -f 1 -d ":")
-	einfo "line_num:  ${line_num}"
+einfo "line_num:  ${line_num}"
 	sed -i -e "${line_num}d" "src/rprblender/__init__.py" || die
 	local ver_major=$(ver_cut 1 ${PV})
 	local ver_minor=$(ver_cut 2 ${PV})
@@ -573,10 +579,11 @@ fix_version() {
 }
 
 src_prepare() {
-	ewarn "This is the ${CONFIGURATION} build."
+ewarn "This is the ${CONFIGURATION} build."
+ewarn "This is a placeholder build.  It may work for Linux."
 	default
 	fix_version
-	eapply "${FILESDIR}/rpr-3.5.2-more-generic-call-python3.patch"
+	eapply "${FILESDIR}/rpr-3.6.12-more-generic-call-python3.patch"
 	git init || die
 	touch dummy || die
 	git config user.email "name@example.com" || die
@@ -590,7 +597,7 @@ src_configure() {
 	default
 	cd "${S}" || die
 
-	einfo "Disabled python 3.9 bindings"
+einfo "Disabled python 3.9 bindings"
 	sed -i -e "/python3.9 build.py/d" \
 		build.sh || die
 }
@@ -695,5 +702,25 @@ einfo
 einfo "To see the material browser, the renderer must be set to Radeon ProRender"
 einfo "It is located at the bottom of the materials property tab."
 einfo
+	if use hip ; then
+ewarn
+ewarn "For multislot HIP/ROCm, ensure the following symlink exist:"
+ewarn
+ewarn "  ln -s /opt/rocm-<ver> /opt/rocm"
+ewarn
+ewarn "For HIP-cuda, the following symlink may be required"
+ewarn
+ewarn "  ln -s /opt/cuda /usr/local/cuda"
+ewarn
+	fi
+	if use hip ; then
+ewarn
+ewarn "You must manually disable \"Use OpenCL\" in the Blender User Setting for HIP support."
+ewarn
+	fi
+	if use opencl ; then
+ewarn
+ewarn "You must manually enable \"Use OpenCL\" in the Blender User Setting."
+ewarn
+	fi
 }
-
