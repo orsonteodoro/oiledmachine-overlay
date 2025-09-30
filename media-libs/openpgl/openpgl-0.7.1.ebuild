@@ -3,24 +3,26 @@
 
 EAPI=8
 
+# U22
+
 ARM_CPU_FLAGS=(
-	neon:neon
-	neon2x:neon2x
+	"neon:neon"
+	"neon2x:neon2x"
 )
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_12" )
 X86_CPU_FLAGS=(
-	sse4_1:sse4_1
-	sse4_2:sse4_2
-	avx2:avx2
-	avx512f:avx512f
-	avx512dq:avx512dq
-	avx512pf:avx512pf
-	avx512vl:avx512vl
+	"sse4_1:sse4_1"
+	"sse4_2:sse4_2"
+	"avx2:avx2"
+	"avx512f:avx512f"
+	"avx512dq:avx512dq"
+	"avx512pf:avx512pf"
+	"avx512vl:avx512vl"
 
 )
 CPU_FLAGS=(
-	${X86_CPU_FLAGS[@]/#/+cpu_flags_x86_}
-	${ARM_CPU_FLAGS[@]/#/+cpu_flags_arm_}
+	"${ARM_CPU_FLAGS[@]/#/+cpu_flags_arm_}"
+	"${X86_CPU_FLAGS[@]/#/+cpu_flags_x86_}"
 )
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
@@ -75,28 +77,28 @@ REQUIRED_USE+="
 RDEPEND+="
 	!tbb? (
 		|| (
-			sys-devel/gcc[openmp]
-			llvm-runtimes/clang-runtime[openmp]
+			>=sys-devel/gcc-11[openmp]
+			>=llvm-runtimes/clang-runtime-14[openmp]
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2017
+		>=dev-cpp/tbb-2021.5.0
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.1
+	>=dev-build/cmake-3.22.1
 "
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 src_configure() {
 	# -Werror=strict-aliasing
 	# https://bugs.gentoo.org/926890
 	#
-	# Do not trust with LTO either.
-	append-flags -fno-strict-aliasing
+	# Upstream "solved" this by setting -fno-strict-aliasing themselves.
+	# Do not trust with LTO.
 	filter-lto
 
 	local has_sse4="OFF"
@@ -128,9 +130,9 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	dodoc \
-		third-party-programs.txt \
-		third-party-programs-Embree.txt \
-		third-party-programs-TBB.txt
+		"third-party-programs.txt" \
+		"third-party-programs-Embree.txt" \
+		"third-party-programs-TBB.txt"
 	einstalldocs
 }
 
