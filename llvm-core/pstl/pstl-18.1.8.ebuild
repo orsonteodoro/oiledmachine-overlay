@@ -50,15 +50,12 @@ RESTRICT="
 SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
--openmp -tbb test
-ebuild_revision_5
+-openmp test
+ebuild_revision_6
 "
 RDEPEND="
 	openmp? (
 		llvm-runtimes/openmp:${LLVM_MAJOR}
-	)
-	tbb? (
-		dev-cpp/tbb
 	)
 "
 DEPEND="
@@ -146,7 +143,7 @@ einfo "CXX:\t${CXX}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
-		-DPSTL_PARALLEL_BACKEND=$(usex tbb "tbb" $(usex openmp "omp" "serial"))
+		-DPSTL_PARALLEL_BACKEND=$(usex openmp "omp" "serial")
 	)
 
 	if use test; then
