@@ -4046,12 +4046,15 @@ ot-kernel_get_envs() {
 check_environment_variable_renames() {
 	if [[ -n "${OT_KERNEL_EP800}" ]] ; then
 eerror "OT_KERNEL_EP800 new name is now CAMERAS=\"ep800\".  Please rename to continue."
+		die
 	fi
 	if [[ -n "${WEBCAMS}" ]] ; then
 eerror "WEBCAMS new name is now CAMERAS.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${WEBCAMS_UVC_SNAPSHOT_BUTTON}" ]] ; then
 eerror "WEBCAMS_UVC_SNAPSHOT_BUTTON new name is now CAMERAS_SNAPSHOT_BUTTON.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${ZENSAUCE_BLACKLIST}" || -n "${ZENSAUCE_WHITELIST}" ]] ; then
 eerror
@@ -4065,92 +4068,136 @@ eerror
 
 	if [[ -n "${SYSTEMD_FEATURE_TRAFFIC_CONTROL}" ]] ; then
 eerror "SYSTEMD_FEATURE_TRAFFIC_CONTROL has removed."
+		die
 	fi
 
 	if [[ -n "${SYSTEMD_FEATURE_SIGNED_DM_VERITY}" ]] ; then
 eerror "SYSTEMD_FEATURE_SIGNED_DM_VERITY has been renamed to CRYPTSETUP_VERITY"
+		die
 	fi
 
 	if [[ -n "${SYSTEMD_FEATURE_NET}" ]] ; then
 eerror "SYSTEMD_FEATURE_NET has been renamed to SYSTEMD_FEATURE_BPF"
+		die
 	fi
 
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_HOME.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HOME_SERVER_FAIR.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FILE.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MOBILE.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN.  Please rename to continue"
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RESET}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RESET has been removed."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HOME_SERVER_THROUGHPUT.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW.  Please rename to continue."
+		die
 	fi
 
 	if [[ -n "${DSS_COMPAT}" ]] ; then
 eerror "DSS_COMPAT has been renamed to TLS.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${KTLS_COMPAT}" ]] ; then
 eerror "KTLS_COMPAT has been renamed to TLS.  Please rename to continue."
+		die
 	fi
 	if [[ -n "${KTLS_REGION}" ]] ; then
 eerror "KTLS_REGION has been renamed to TLS_REGION.  Please rename to continue."
+		die
 	fi
 
 	if [[ -n "${OT_KERNEL_SECURITY_CRITICAL_SCHEMES}" ]] ; then
 eerror "OT_KERNEL_SECURITY_CRITICAL_SCHEMES has been renamed to OT_KERNEL_SECURITY_CRITICAL_TYPES.  Please rename to continue."
+		die
 	fi
 
 	if [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "cfi-5.15" ]] ; then
 eerror "The cfi-5.15 option has been renamed to cfi in OT_KERNEL_SECURITY_CRITICAL_TYPES.  Please rename to continue."
+		die
 	fi
 
+	if [[ -n "${CPU_MFG}" ]] ; then
+eerror "CPU_MFG has been renamed to CPU_VENDOR.  Rename to continue"
+		die
+	fi
+	if [[ -n "${CPU_HETEROGENEOUS_POWER_CORES}" ]] ; then
+eerror "OT_KERNEL_HETEROGENEOUS_POWER_CORES has been renamed to CPU_HETEROGENEOUS_POWER_CORES.  Please rename to continue."
+		die
+	fi
+
+	if [[ -n "${OT_KERNEL_PROCESSOR_CLASS}" ]] ; then
+eerror "OT_KERNEL_PROCESSOR_CLASS has been renamed to CPU_SYSTEM.  Please set CPU_CORES, CPU_HETEROGENEOUS_POWER_CORES, CPU_L3_CACHE_SIZE, CPU_NUMA_NODES, CPU_SOCKETS, CPU_SYSTEM, CPU_TPC.  Rename to continue."
+		die
+	fi
+	if [[ -n "${OT_KERNEL_N_CPUS}" ]] ; then
+eerror "OT_KERNEL_N_CPUS has been removed.  Please set CPU_SOCKETS, CPU_TPC and delete OT_KERNEL_N_CPUS to continue."
+		die
+	fi
 
 ewarn
 ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
@@ -4372,6 +4419,15 @@ ot-kernel_clear_env() {
 	unset AMDGPU_EXP_HW_SUPPORT
 	unset AMDGPU_OVERDRIVE
 	unset AMDGPU_VM_FRAGMENT_SIZE
+	unset CPU_CORES
+	unset CPU_HETEROGENEOUS_POWER_CORES
+	unset CPU_L3_CACHE_SIZE
+	unset CPU_MODEL
+	unset CPU_NUMA_NODES
+	unset CPU_SOCKETS
+	unset CPU_SYSTEM
+	unset CPU_TPC
+	unset CPU_VENDOR
 	unset CRYPTSETUP_CIPHERS
 	unset CRYPTSETUP_INTEGRITIES
 	unset CRYPTSETUP_HASHES
@@ -5266,7 +5322,7 @@ einfo "Using lazy as the default IOMMU domain type for mitigation against DMA at
 		# Cross-compile but use the config itself to guestimate.
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] && ot-kernel_has_acpi_support ; then
 			local found=0
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 einfo "Adding IOMMU support (VT-d)"
 				ot-kernel_y_configopt "CONFIG_MMU"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
@@ -5277,7 +5333,7 @@ einfo "Adding IOMMU support (VT-d)"
 				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
 				found=1
 			fi
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 einfo "Adding IOMMU support (Vi)"
 				ot-kernel_y_configopt "CONFIG_MMU"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
@@ -5289,7 +5345,7 @@ einfo "Adding IOMMU support (Vi)"
 			fi
 			if (( ${found} == 0 )) ; then
 eerror
-eerror "Failed to set IOMMU for DMA mitigation.  Set the CPU_MFG environment"
+eerror "Failed to set IOMMU for DMA mitigation.  Set the CPU_VENDOR environment"
 eerror "variable."
 eerror
 eerror "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
@@ -5710,53 +5766,83 @@ einfo "Changed .config to use MuQSS"
 		ot-kernel_set_kconfig_kernel_cmdline "rqshare=smt"
 	}
 
-	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
+	local cores # Cores per socket
+	local l3_cache_size
+	local numa_nodes
+	local cpu_system="${CPU_SYSTEM,,}"
+	local sockets
+	local tpc # Threads per core
+	local lcpus # Logical CPUs
+
+	if [[ -z "${cpu_system}" ]] ; then
+		cpu_system="auto"
+	fi
+
+	if [[ \
+		   "${cpu_system}" == "auto" \
+	]] ; then
+einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set CPU_CORES, CPU_NUMA_NODES, CPU_SOCKETS, CPU_SYSTEM, CPU_TPC"
+		cores=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Core(s) per socket:" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		numa_nodes=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^NUMA node(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		sockets=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Socket(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		tpc=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Thread(s) per core:" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		local _lcpus=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^CPU(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+") # cores * sockets * tpc
+
+		lcpus=$(( ${cores} * ${sockets} * ${tpc} ))
+
+		if lscpu | grep -E "L3.*[0-9]+ MiB" ; then
+			l3_cache_size=$(( $(lscpu | sed -r -e "s|^[ ]+||g" | grep -E "^L3.*[0-9]+ (KiB|MiB)" | sed -E "s|[ ]+| |g" | cut -f 3 -d " ") * 1024 ))
+		elif lscpu | grep -E "L3.*[0-9]+ KiB" ; then
+			l3_cache_size=$(lscpu | sed -r -e "s|^[ ]+||g" | grep -E "^L3.*[0-9]+ (KiB|MiB)" | sed -E "s|[ ]+| |g" | cut -f 3 -d " ")
+		else
+			l3_cache_size=0
+		fi
+
+	else
+		cores=${CPU_CORES:-1}
+		l3_cache_size=${CPU_L3_CACHE_SIZE}
+		numa_nodes=${CPU_NUMA_NODES:-1}
+		sockets=${CPU_SOCKETS:-1}
+		tpc=${CPU_TPC:-1}
+		lcpus=$(( ${cores} * ${sockets} * ${tpc} ))
+	fi
+
+
+	local cpu_system="${CPU_SYSTEM,,}"
 
 	local multicore=0
 	local multicore_with_level3_cache=0
-	local ncpus=1
-	local nnuma=0
+	local lcpus=1
 	local smp=0
 	local smt=0
-	local tpc=1
 
-	if ! tc-is-cross-compiler ; then
-		ncpus=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep "^CPU(s)" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9]+")
-		(( ${ncpus} > 0 )) && smp=1
+	(( ${lcpus} > 1 )) && smp=1
+	(( ${tpc} > 1 )) && smt=1
+	(( ${cores} > 1 )) && multicore=1
+	(( ${cores} > 1 && ${l3_cache_size} > 0 )) && multicore_with_level3_cache=1
 
-		nnuma=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep "^NUMA node(s)" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9]+")
-		[[ -z "${nnuma}" ]] && nnuma=0
-
-		tpc=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep -e "^Thread(s) per core:.*" \
-			| head -n 1 \
-			| grep -E -o "[0-9]+")
-		(( ${tpc} > 1 )) && smt=1
-
-		local ncores=$(cat "/proc/cpuinfo" \
-			| grep "^cpu cores" \
-			| grep -E -o "[0-9]+" \
-			| head -n 1)
-		(( ${ncores} > 1 )) && multicore=1
-
-		if \
-			lscpu \
-				| sed -r -e "s|^[ ]+||g" \
-				| grep -q -E "^L3.*[0-9]+" \
-				&&
-			(( ${multicore} == 1 )) \
-		; then
-			multicore_with_level3_cache=1
-		fi
+	if (( ${l3_cache_size} > 0 )) && (( ${multicore} > 0 )) ; then
+		multicore_with_level3_cache=1
 	fi
 
 	if [[ \
@@ -5784,21 +5870,21 @@ einfo "Changed .config to use MuQSS"
 		if _ot-kernel_is_hardening_level_least_secure ; then
 			if \
 				[[ \
-					   "${smt}" == "1" \
-					|| "${processor_class}" == "multicore-smt" \
+					   "${cpu_system}" == "multicore-smt" \
+					|| "${smt}" == "1" \
 				]] \
 			; then
 				_set_muqss_smt
 			elif \
 				[[ \
-					   "${multicore}" == "1" \
-					|| "${processor_class}" =~ "multicore" \
+					   "${cpu_system}" =~ "multicore" \
+					|| "${multicore}" == "1" \
 				]] \
 			; then
 				_set_muqss_mc
 			elif \
 				[[ \
-					   "${processor_class}" =~ "smp" \
+					   "${cpu_system}" =~ "smp" \
 					|| "${smp}" == "1" \
 				]] \
 			; then
@@ -5815,14 +5901,14 @@ einfo "Changed .config to use MuQSS"
 			_set_muqss_mc_llc
 		elif \
 			[[ \
-				   "${multicore}" == "1" \
-				|| "${processor_class}" =~ "multicore" \
+				   "${cpu_system}" =~ "multicore" \
+				|| "${multicore}" == "1" \
 			]] \
 		; then
 			_set_muqss_mc
 		elif \
 			[[ \
-				   "${processor_class}" =~ "smp" \
+				   "${cpu_system}" =~ "smp" \
 				|| "${smp}" == "1" \
 			]] \
 		; then
@@ -5834,8 +5920,8 @@ einfo "Changed .config to use MuQSS"
 		if [[ "${cpu_sched}" == "muqss" || "${cpu_sched}" == "muqss-latency" ]] ; then
 			if \
 				[[ \
-					   "${nnuma}" -gt "1" \
-					|| "${processor_class}" =~ "numa" \
+					   "${cpu_system}" =~ "numa" \
+					|| "${numa_nodes}" -gt "1" \
 				]] \
 			; then
 				_set_muqss_numa
@@ -5846,7 +5932,7 @@ einfo "Changed .config to use MuQSS"
 					) \
 						&& \
 					( \
-						   "${processor_class}" == "multicore-smt" \
+						   "${cpu_system}" == "multicore-smt" \
 						|| "${smt}" == "1" \
 					) \
 				]] \
@@ -5860,14 +5946,14 @@ einfo "Changed .config to use MuQSS"
 				_set_muqss_mc_llc
 			elif \
 				[[ \
-					   "${multicore}" == "1" \
-					|| "${processor_class}" =~ "multicore" \
+					   "${cpu_system}" =~ "multicore" \
+					|| "${multicore}" == "1" \
 				]] \
 			; then
 				_set_muqss_mc
 			elif \
 				[[ \
-					   "${processor_class}" =~ "smp" \
+					   "${cpu_system}" =~ "smp" \
 					|| "${smp}" == "1" \
 				]] \
 			; then
@@ -6216,7 +6302,7 @@ ot-kernel_set_kconfig_exfat() {
 # Set or remove the l1tf mitigation.
 ot-kernel_set_kconfig_l1tf_mitigations() {
 	local mode="${1}" # 1=enable, 0=disable
-	[[ $(ot-kernel_get_cpu_mfg_id) != "intel" ]] && return
+	[[ $(ot-kernel_get_cpu_vendor) != "intel" ]] && return
 	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		local family
 		if tc-is-cross-compiler ; then
@@ -6501,7 +6587,7 @@ eerror
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
 			fi
 			if [[ "${arch}" == "arm64" ]] ; then
@@ -6536,7 +6622,7 @@ eerror
 				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
 					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=off"
 				fi
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
 					ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
@@ -6569,11 +6655,11 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
 					ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=off"
@@ -6588,7 +6674,7 @@ eerror
 			ot-kernel_set_kconfig_l1tf_mitigations "0"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 			if [[ "${arch}" == "powerpc" ]] ; then
@@ -6626,7 +6712,7 @@ eerror
 				ot-kernel_unset_configopt "nospectre_bhb"
 			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_SRSO"
 				fi
 			fi
@@ -6650,7 +6736,7 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -6663,12 +6749,12 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RETHUNK"
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_SRSO"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_UNRET_ENTRY"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_IBPB_ENTRY"
 				fi
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_GDS_FORCE"
@@ -6766,7 +6852,7 @@ eerror
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 	# GDS:  Rely on automagic
 				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
 			fi
@@ -6792,7 +6878,7 @@ eerror
 				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
 					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=auto"
 				fi
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
@@ -6837,11 +6923,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
@@ -6856,7 +6942,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 			ot-kernel_set_kconfig_l1tf_mitigations "0.5"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 			if [[ "${arch}" == "powerpc" ]] ; then
@@ -6887,13 +6973,13 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 				fi
 			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_SRSO"
 				fi
 			fi
@@ -6917,7 +7003,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -6929,12 +7015,12 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_UNRET_ENTRY"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_IBPB_ENTRY"
 				fi
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_GDS_FORCE"
@@ -7162,7 +7248,7 @@ ewarn
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
 			fi
 			if [[ "${arch}" == "arm64" ]] ; then
@@ -7190,7 +7276,7 @@ ewarn
 				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
 					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=auto"
 				fi
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_set_kconfig_kernel_cmdline "mds=full"
 					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=full,nosmt"
 					ot-kernel_set_kconfig_kernel_cmdline "tsx_async_abort=full,nosmt"
@@ -7231,11 +7317,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
@@ -7257,11 +7343,11 @@ eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
 				die
 			fi
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
-			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			elif [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
-			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
+			elif [[ $(ot-kernel_get_cpu_vendor) == "hygon" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 			fi
 		fi
@@ -7270,7 +7356,7 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			ot-kernel_set_kconfig_kernel_cmdline "l1d_flush=on"
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 			if [[ "${arch}" == "powerpc" ]] ; then
@@ -7301,13 +7387,13 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 				fi
 			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_SRSO"
 				fi
 			fi
@@ -7322,7 +7408,7 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 			if [[ "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 				fi
 			fi
@@ -7335,7 +7421,7 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -7347,12 +7433,12 @@ eerror
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_UNRET_ENTRY"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_IBPB_ENTRY"
 				fi
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_GDS_FORCE"
@@ -7518,9 +7604,9 @@ einfo "Setting .config with ${X86_MICROARCH_OVERRIDE} march setting"
 einfo "Setting .config with CONFIG_${X86_MICROARCH_OVERRIDE}=y"
 				kflag="CONFIG_${KCP_MICROARCH_OVERRIDE}"
 			elif grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
-				local mfg=$(ot-kernel_get_cpu_mfg_id)
-				mfg=${mfg^^}
-				kflag="CONFIG_MNATIVE_${mfg}"
+				local vendor=$(ot-kernel_get_cpu_vendor)
+				vendor=${vendor^^}
+				kflag="CONFIG_MNATIVE_${vendor}"
 			elif grep -q -F -e "MNATIVE" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 einfo "Setting .config with -march=native"
 				kflag="CONFIG_MNATIVE"
@@ -9228,113 +9314,144 @@ ot-kernel_set_kconfig_pgo() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_processor_class
+# @FUNCTION: ot-kernel_set_kconfig_cpu_system
 # @DESCRIPTION:
-# Sets the kernel config for the processor_class
-ot-kernel_set_kconfig_processor_class() {
-	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
-	if [[ -z "${processor_class}" ]] ; then
-		:
-	elif [[ \
-		   "${processor_class}" == "custom" \
-		|| "${processor_class}" == "manual" \
+# Sets the kernel config for the cpu_system
+ot-kernel_set_kconfig_cpu_system() {
+	local cores # Cores per socket
+	local sockets
+	local numa_nodes
+	local cpu_system="${CPU_SYSTEM,,}"
+	local tpc # Threads per core
+	local lcpus # Logical CPUs
+	local l3_cache_size
+
+	if [[ -z "${cpu_system}" ]] ; then
+		cpu_system="auto"
+	fi
+
+	if [[ \
+		   "${cpu_system}" == "auto" \
 	]] ; then
-		:
-	elif [[ \
-		   "${processor_class}" == "auto" \
-	]] ; then
-		local ncpus=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep "^CPU(s):" \
-			| head -n 1 \
-			| grep -o -E -e "[0-9]+") # ncores * nsockets * tpc
-		local ncores=$(lscpu \
+einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set CPU_CORES, CPU_NUMA_NODES, CPU_SOCKETS, CPU_SYSTEM, CPU_TPC"
+		cores=$(lscpu \
 			| sed -r -e "s|^[ ]+||g" \
 			| grep "^Core(s) per socket:" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+")
-		local nsockets=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep "^Socket(s):" \
-			| head -n 1 \
-			| grep -o -E -e "[0-9]+")
-		local tpc=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep "^Thread(s) per core:" \
-			| head -n 1 \
-			| grep -o -E -e "[0-9]+")
-		local n_numa_nodes=$(lscpu \
+		numa_nodes=$(lscpu \
 			| sed -r -e "s|^[ ]+||g" \
 			| grep "^NUMA node(s):" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+")
-		if (( ${ncpus} > 1 )) ; then
+		sockets=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Socket(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		tpc=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Thread(s) per core:" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		local _lcpus=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^CPU(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+") # cores * sockets * tpc
+		lcpus=$(( ${cores} * ${sockets} * ${tpc} ))
+
+		if lscpu | grep -E "L3.*[0-9]+ MiB" ; then
+			l3_cache_size=$(( $(lscpu | sed -r -e "s|^[ ]+||g" | grep -E "^L3.*[0-9]+ (KiB|MiB)" | sed -E "s|[ ]+| |g" | cut -f 3 -d " ") * 1024 ))
+		elif lscpu | grep -E "L3.*[0-9]+ KiB" ; then
+			l3_cache_size=$(lscpu | sed -r -e "s|^[ ]+||g" | grep -E "^L3.*[0-9]+ (KiB|MiB)" | sed -E "s|[ ]+| |g" | cut -f 3 -d " ")
+		else
+			l3_cache_size=0
+		fi
+	else
+		cores=${CPU_CORES:-1}
+		sockets=${CPU_SOCKETS:-1}
+		numa_nodes=${CPU_NUMA_NODES:-1}
+		tpc=${CPU_TPC:-1}
+		lcpus=$(( ${cores} * ${sockets} * ${tpc} ))
+		l3_cache_size=${CPU_L3_CACHE_SIZE}
+	fi
+
+einfo "CPU cores:  ${cores}"
+einfo "CPU sockets:  ${sockets}"
+einfo "CPU TPC:  ${tpc}"
+einfo "Logical CPUs:  ${lcpus}"
+einfo "NUMA nodes:  ${numa_nodes}"
+einfo "L3 cache size:  ${l3_cache_size}"
+
+	if [[ -z "${cpu_system}" ]] ; then
+		:
+	elif [[ \
+		   "${cpu_system}" == "custom" \
+		|| "${cpu_system}" == "manual" \
+	]] ; then
+		:
+	elif [[ \
+		   "${cpu_system}" == "auto" \
+	]] ; then
+		if (( ${lcpus} > 1 )) ; then
 			ot-kernel_y_configopt "CONFIG_SMP"
 		else
 			ot-kernel_unset_configopt "CONFIG_SMP"
 		fi
-		if (( ${ncores} > 1 )) ; then
+		if (( ${cores} > 1 )) ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		fi
-		if (( ${nsockets} > 1 )) ; then
+		if (( ${sockets} > 1 )) ; then
 			ot-kernel_y_configopt "CONFIG_NUMA"
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_X86_64_ACPI_NUMA"
 			fi
 			ot-kernel_set_configopt "CONFIG_NODES_SHIFT" \
-				$(${EPYTHON} -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
+				$(${EPYTHON} -c "import math; print(math.ceil(math.log(${sockets})/math.log(2)))")
 		fi
 	elif [[ \
-		   "${processor_class}" == "unicore" \
-		|| "${processor_class}" == "uniprocessor" \
+		   "${cpu_system}" == "unicore" \
+		|| "${cpu_system}" == "uniprocessor" \
 	]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_unset_configopt "CONFIG_SMP"
 	elif [[ \
-		   "${processor_class}" == "smp" \
-		|| "${processor_class}" == "smp-legacy" \
-		|| "${processor_class}" == "smp-unicore" \
+		   "${cpu_system}" == "smp" \
+		|| "${cpu_system}" == "smp-legacy" \
+		|| "${cpu_system}" == "smp-unicore" \
 	]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
 	elif [[ \
-		   "${processor_class}" == "multicore" \
-		|| "${processor_class}" == "multicore-smt" \
+		   "${cpu_system}" == "multicore" \
+		|| "${cpu_system}" == "multicore-smt" \
 	]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
 	elif [[ \
-		   "${processor_class}" == "numa-unicore" \
+		   "${cpu_system}" == "numa-unicore" \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
 	elif [[ \
-		   "${processor_class}" == "numa" \
-		|| "${processor_class}" == "numa-multicore" \
+		   "${cpu_system}" == "numa" \
+		|| "${cpu_system}" == "numa-multicore" \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
 	fi
-	[[ -z "${processor_class}" ]] && processor_class="not set (manual)"
-einfo "Processor class is ${processor_class}"
-	local ncpus="${OT_KERNEL_N_CPUS}"
-	if [[ "${ncpus}" == "auto" ]] ; then
-		ncpus=$(lscpu \
-			| sed -r -e "s|^[ ]+||g" \
-			| grep "^CPU(s):" \
-			| head -n 1 \
-			| grep -o -E -e "[0-9]+")
-		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
-	elif [[ -n "${ncpus}" ]] ; then
-		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
-	fi
-	ncpus=$(grep -r -e "CONFIG_NR_CPUS=" "${BUILD_DIR}/.config" | grep -o -E -e "[0-9]+")
-einfo "Processor count maximum:  ${ncpus}"
+	[[ -z "${cpu_system}" ]] && cpu_system="not set (manual)"
+einfo "CPU system is ${cpu_system}"
+	ot-kernel_set_configopt "CONFIG_NR_CPUS" "${lcpus}"
+	lcpus=$(grep -r -e "CONFIG_NR_CPUS=" "${BUILD_DIR}/.config" \
+		| grep -o -E -e "[0-9]+")
+einfo "Processor count maximum:  ${lcpus}"
 }
 
 # @FUNCTION: _ot-kernel_is_hardening_level_custom
@@ -9559,7 +9676,7 @@ einfo "Using ${x}"
 				ot-kernel_set_kconfig_slab_allocator "slub"
 			fi
 		elif grep -q -E -e "^CONFIG_NUMA=y" "${path_config}" \
-			|| [[ "${processor_class}" =~ "numa" ]] ; then
+			|| [[ "${cpu_system}" =~ "numa" ]] ; then
 			ot-kernel_set_kconfig_slab_allocator "slub"
 		else
 			ot-kernel_set_kconfig_slab_allocator "slub"
@@ -11317,7 +11434,7 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 			ot-kernel_y_configopt "CONFIG_RCU_LAZY"
 			ot-kernel_set_kconfig_kernel_cmdline "rcutree.enable_rcu_lazy=1"
 
-			if [[ "${OT_KERNEL_HETEROGENEOUS_POWER_CORES}" == "1" ]] ; then
+			if ot-kernel_has_heterogeneous_power_cores ; then
 	# Power efficient core offloading
 				ot-kernel_y_configopt "CONFIG_RCU_NOCB_CPU"
 				ot-kernel_y_configopt "CONFIG_RCU_NOCB_CPU_DEFAULT_ALL"
@@ -13195,10 +13312,10 @@ eerror
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
 			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-				# Already set in ot-kernel_set_kconfig_processor_class
+				# Already set in ot-kernel_set_kconfig_cpu_system
 				# ot-kernel_y_configopt "CONFIG_SMP"
 				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
 				else
 					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
@@ -13269,10 +13386,10 @@ eerror
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
 			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-				# Already set in ot-kernel_set_kconfig_processor_class
+				# Already set in ot-kernel_set_kconfig_cpu_system
 				# ot-kernel_y_configopt "CONFIG_SMP"
 				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
 				else
 					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
@@ -14088,11 +14205,11 @@ ot-kernel_set_kconfig_vm_host_gpu_passthrough() {
 		ot-kernel_y_configopt "CONFIG_TTY" # Character devices > Enable TTY
 		ot-kernel_y_configopt "CONFIG_VT"
 
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_INTEL_IOMMU"
 			ot-kernel_set_kconfig_kernel_cmdline "intel_iommu=on"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_AMD_IOMMU"
 			ot-kernel_set_kconfig_kernel_cmdline "amd_iommu=on"
 		fi
@@ -14140,17 +14257,20 @@ ewarn "Missing ${path_config} so generating a new default config."
 einfo "Changing config options for -${extraversion}"
 	[[ -e "${path_config}" ]] || die ".config is missing"
 
-	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		local mfg=$(ot-kernel_get_cpu_mfg_id)
-# It is wrong when CBUILD != CHOST/CTARGET.
+	local vendor=$(ot-kernel_get_cpu_vendor)
+	local cpu_model=$(ot-kernel_get_cpu_model_from_flags)
+# It could be wrong when CBUILD != CHOST/CTARGET.
 einfo
-einfo "The CPU vendor is set to ${mfg}.  If it is wrong, please manually change"
-einfo "it with the CPU_MFG envvar."
+einfo "CPU vendor:  ${vendor}"
+einfo "CPU model:  ${cpu_model}"
 einfo
-einfo "For more info, see metadata.xml"
-einfo "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)."
+einfo "If CPU vendor is wrong, please manually change CPU_VENDOR environment variable."
+einfo "If CPU model is wrong, please change -march=, -mtune=, -mcpu= values in CFLAGS or add them to the CPU_MODEL environment variable."
 einfo
-	fi
+einfo "These should be exact for proper autodetection."
+einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+einfo
+
 
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 
@@ -14180,7 +14300,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	ot-kernel_set_kconfig_init_systems
 	ot-kernel_set_kconfig_boot_args
-	ot-kernel_set_kconfig_processor_class
+	ot-kernel_set_kconfig_cpu_system
 	ot-kernel_set_kconfig_page_size
 	ot-kernel_set_kconfig_auto_set_slab_allocator
 	ot-kernel_set_kconfig_cpu_scheduler

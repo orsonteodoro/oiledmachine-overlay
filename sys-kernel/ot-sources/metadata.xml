@@ -971,9 +971,9 @@ TBM=0
       APM_BOOT
       APM_CPU_IDLE
       APM_SCREEN_BLANKING
+      CPU_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
       OT_KERNEL_AUTOSUSPEND_SECONDS_USB
-      OT_KERNEL_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_BT_USB
       OT_KERNEL_POWER_LEVEL_CPU
@@ -1002,8 +1002,8 @@ TBM=0
       APM_BOOT
       APM_CPU_IDLE
       APM_SCREEN_BLANKING
+      CPU_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
-      OT_KERNEL_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_BT_USB
       OT_KERNEL_POWER_LEVEL_CPU
@@ -2569,21 +2569,6 @@ TBM=0
       OT_KERNEL_SSD
 
 
-    OT_KERNEL_HETEROGENEOUS_POWER_CORES - Optimize big.LITTLE or P-/E-cores
-    (Alder Lake or newer) for power efficiency and temperature reduction.
-
-    Valid values:
-
-      1 - Enable
-      0 - Disable
-      unset - Disable
-
-    See also
-
-      OT_KERNEL_POWER_LEVEL_CPU
-
-
-
     OT_KERNEL_HWRAID - Set if SATA hardware raid is being used.  This may
     improve the throughput with the BFQ I/O scheduler.
 
@@ -3315,10 +3300,6 @@ TBM=0
 
 
 
-    OT_KERNEL_N_CPUS - Sets the max number of CPUs.
-
-
-
     OT_KERNEL_MENUCONFIG_COLORS - Sets the colors for menuconfig.
 
     Acceptable values:
@@ -3673,9 +3654,9 @@ TBM=0
       APM_BOOT
       APM_CPU_IDLE
       APM_SCREEN_BLANKING
+      CPU_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
       OT_KERNEL_AUTOSUSPEND_SECONDS_USB
-      OT_KERNEL_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_LED_EVENTS
       OT_KERNEL_SATA_LPM
       OT_KERNEL_THERMAL_GOVERNORS
@@ -3879,9 +3860,9 @@ unset OT_KERNEL_PRIVATE_KEY
       APM_BOOT
       APM_CPU_IDLE
       APM_SCREEN_BLANKING
+      CPU_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
       OT_KERNEL_AUTOSUSPEND_SECONDS_USB
-      OT_KERNEL_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_BT_USB
       OT_KERNEL_POWER_LEVEL_CPU
@@ -4712,9 +4693,9 @@ unset OT_KERNEL_PRIVATE_KEY
       APM_BOOT
       APM_CPU_IDLE
       APM_SCREEN_BLANKING
+      CPU_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_AUTOSUSPEND_SECONDS_AUDIO
       OT_KERNEL_AUTOSUSPEND_SECONDS_USB
-      OT_KERNEL_HETEROGENEOUS_POWER_CORES
       OT_KERNEL_POWER_LEVEL_AUDIO
       OT_KERNEL_POWER_LEVEL_BT_USB
       OT_KERNEL_POWER_LEVEL_CPU
@@ -5012,25 +4993,76 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0, 1 (default)
     See also:  DVD
 
-    CRYPTSETUP_CIPHERS - Space separated list block ciphers.
-    Valid values:  aes, anubis, camellia, cast6, kuznyechik, serpent, twofish.
+    CPU_CORES - The number of CPU cores per CPU socket.
+    Valid values:  1 to N, default is auto
 
-    If unset, it adds aes.
+    CPU_HETEROGENEOUS_POWER_CORES - Autodetect override for enabled or disabled
+    heterogeneous power for big.LITTLE or P-/E-cores for power efficiency and
+    temperature reduction.  This is the override value.
+    Valid values:  0 (default, disable), 1 to enable
 
-    CPU_MFG - The manufacturer of the CPU.  It is used to override the portable
-    autodetect solution especially if producing a prebuilt kernel package.  This
-    affects the following:
+    CPU_L3_CACHE_SIZE - The size of cache in KiB.
+    Examples:
+      CPU_L3_CACHE_SIZE=24576 # 24 MiB
+      CPU_L3_CACHE_SIZE=3072 # 3 MiB
+      CPU_L3_CACHE_SIZE=512 # 512 KiB
 
+    CPU_NUMA_NODES - The number of NUMA nodes.
+    Valid values:  1 to N, default is auto
+
+    CPU_MODEL - The model of the CPU based on compiler flags.
+
+    Examples:
+
+      CPU_MODEL="-march=i686"
+      CPU_MODEL="-mtune=cortex-a75.cortex-a55"
+
+    CPU_SOCKETS - The number of sockets in the system.
+    Valid values:  1 to N, default is auto
+
+    CPU_SYSTEM - Optimize the CPU scheduler based on the description.
+    Valid values:
+      auto (default; based on builder machine)
+      custom
+      smp
+      smp-legacy
+      smp-unicore
+      multicore
+      multicore-smt
+      numa
+      numa-unicore
+      numa-multicore
+      manual
+      unicore
+      uniprocessor
+
+    CPU_TPC - The number of threads per core.
+    Valid values:  1 to N, default is auto
+
+    CPU_VENDOR - The vendor name of the CPU used for overriding autodetection.
+    If not set, it will determine based on the compiler flags.
+
+    For acceptable canonical names, see ot-kernel-kutils.eclass.
+
+    It affects the following kernel configuration or eclass sections:
+
+      Driver bundle base templates
+      Pkgflags
       IOMMU
       kernel_compiler_patch native option
       KVM
       PMU events
       OpenRGB
+      Security/hardening
 
-    Examples:
+    Example:
 
-      CPU_MFG="amd"
-      CPU_MFG="intel"
+      CPU_VENDOR="amd"
+
+    CRYPTSETUP_CIPHERS - Space separated list block ciphers.
+    Valid values:  aes, anubis, camellia, cast6, kuznyechik, serpent, twofish.
+
+    If unset, it adds aes.
 
     CRYPTSETUP_INTEGRITIES - Space separated of AEAD ciphers used for
     additional encryption with data integrity.  Only for LUKS2.

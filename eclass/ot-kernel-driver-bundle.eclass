@@ -1865,13 +1865,13 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 
 	# For AI support
-	if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
+	if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU" # 2023
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
-	elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.14" ; then
+	elif [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.14" ; then
 		ot-kernel_y_configopt "CONFIG_ACPI"
 		ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -1948,7 +1948,7 @@ ot-kernel-driver-bundle_add_optical_drive() {
 		ot-kernel_y_configopt "CONFIG_CDROM_PKTCDVD"
 	fi
 
-	if [[ "${tags}" =~ "4k-blu-ray" ]] && [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+	if [[ "${tags}" =~ "4k-blu-ray" ]] && [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 	# Blu-ray 4K support (2016)
 		ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
@@ -3463,9 +3463,9 @@ ot-kernel-driver-bundle_add_ports() {
 	if [[ "${tags}" =~ "usb-1.1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_USB_UHCI_HCD" # 1996 (controller), 1998 (standard)
-		elif [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		elif [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD" # 1999
 		fi
 	fi
@@ -9695,23 +9695,23 @@ ot-kernel-driver-bundle_add_watchdog() {
 		ot-kernel_y_configopt "CONFIG_ALIM7101_WDT" # 1998
 		ot-kernel_y_configopt "CONFIG_W83877F_WDT" # 1996
 		ot-kernel_y_configopt "CONFIG_W83977F_WDT" # 1997
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
 	elif [[ "${tags}" =~ "early-2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_IT8712F_WDT" # 2000
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
 	elif [[ "${tags}" =~ "late-2000s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_F71808E_WDT" # Late 2000s, 2010
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_IT8712F_WDT" # 2000, specifically this model
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2009
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 			ot-kernel_y_configopt "CONFIG_NV_TCO" # 2006
 		fi
@@ -9719,15 +9719,15 @@ ot-kernel-driver-bundle_add_watchdog() {
 		ot-kernel_y_configopt "CONFIG_F71808E_WDT" # Late 2000s, 2010
 		ot-kernel_y_configopt "CONFIG_IT87_WDT" # 2003
 		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SP5100_TCO" # 2009
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
 	elif [[ "${tags}" =~ "2020s" ]] ; then
 		ot-kernel_y_configopt "CONFIG_WDAT_WDT" # 2014
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ITCO_WDT" # 1999-2000
 		fi
 	fi

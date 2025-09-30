@@ -2118,7 +2118,7 @@ ot-kernel-pkgflags_corefreq() { # DONE
 		ot-kernel_y_configopt "CONFIG_DMI"
 		ot-kernel_y_configopt "CONFIG_HAVE_NMI"
 		#ot-kernel_y_configopt "CONFIG_XEN" # See ot-kernel-pkgflags_xen
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AMD_NB"
 		fi
 		ot-kernel_y_configopt "CONFIG_HAVE_PERF_EVENTS"
@@ -7232,10 +7232,10 @@ ot-kernel-pkgflags_nv() { # DONE
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
 		ot-kernel_y_configopt "CONFIG_AGP"
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AGP_INTEL"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 		fi
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
@@ -7260,13 +7260,13 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 		if ot-kernel_has_version ">=${pkg}-515.86[kernel-open]" ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 				ot-kernel_y_configopt "CONFIG_PCI"
 				ot-kernel_y_configopt "CONFIG_ACPI"
 				ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
 				ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2"
 	# It enables the MMU_NOTIFIER indirectly.
-			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			elif [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_PCI"
 				ot-kernel_y_configopt "CONFIG_PCI_MSI"
 				ot-kernel_y_configopt "CONFIG_ACPI"
@@ -7792,12 +7792,12 @@ ot-kernel-pkgflags_openrgb() { # DONE
 	if ot-kernel_has_version_pkgflags "app-misc/openrgb" ; then
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PCI"
 			ot-kernel_y_configopt "CONFIG_I2C_I801"
 			ot-kernel_y_configopt "CONFIG_I2C_NCT6775"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PCI"
 			ot-kernel_y_configopt "CONFIG_I2C_PIIX4"
 		fi
@@ -8080,10 +8080,10 @@ ot-kernel-pkgflags_kvm_host_required() {
 	# Don't use lscpu/cpuinfo autodetect if using distcc or
 	# cross-compile but use the config itself to guestimate.
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_KVM_INTEL"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_KVM_AMD"
 		fi
 	fi
@@ -8452,13 +8452,13 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 	if [[ "${arch}" =~ ("x86") ]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		# Guess based on hints from kconfig
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
 			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_UNCORE" "m"
 			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL" "m"
 			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_CSTATE" "m"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
 			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL" "m"
 			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_AMD_POWER" "m"
@@ -11222,10 +11222,10 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
 		ot-kernel_y_configopt "CONFIG_AGP"
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AGP_INTEL"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -11328,10 +11328,10 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
 		ot-kernel_y_configopt "CONFIG_AGP"
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AGP_INTEL"
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -11545,13 +11545,13 @@ ot-kernel-pkgflags_xpmem() { # DONE
 	# It enables the MMU_NOTIFIER indirectly. \
 			: # See ot-kernel-pkgflags_roct
 		fi
-		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+		if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PCI"
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
 			ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2"
 	# It enables the MMU_NOTIFIER indirectly.
-		elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+		elif [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PCI"
 			ot-kernel_y_configopt "CONFIG_PCI_MSI"
 			ot-kernel_y_configopt "CONFIG_ACPI"
