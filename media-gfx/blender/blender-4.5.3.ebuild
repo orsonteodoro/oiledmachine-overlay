@@ -7,7 +7,7 @@ EAPI=8
 RELEASE_TYPE="release"
 VARIANT="stable"
 
-inherit blender-v4.3
+inherit blender-v4.5
 
 # For current version, see
 # https://download.blender.org/source/

@@ -29,11 +29,9 @@
 
     oiledmachine-overlay notes:
 
-    3.3.x         - LTS (Long Term Support) to Sept 2024 (EOL)
-    3.6.x         - LTS (Long Term Support) to Jun 2025
-    4.1.x         - Stable (EOL)
-    4.2.x         - LTS (Long Term Support) to Jul 2026
-    4.3.x         - Stable
+    Non LTS only supported for this overlay.
+
+    4.5.x         - Stable
 
     EOL (End of Life) versions are available on the overlay temporarily for
     third party plugins.  Use EOL versions at your own risk.

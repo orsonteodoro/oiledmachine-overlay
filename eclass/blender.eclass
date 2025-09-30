@@ -209,7 +209,6 @@ get_dest() {
 }
 
 blender_check_requirements() {
-	# tc-check-openmp does not print slot/version details.
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
@@ -219,10 +218,6 @@ einfo "CPP:\t\t${CPP}"
 	${CC} --version
 
 	# Use /usr/include/omp.h instead of /usr/lib/gcc/${CHOST}/12/include/omp.h
-
-	if use openmp ; then
-		tc-check-openmp
-	fi
 
 	if use doc; then
 		CHECKREQS_DISK_BUILD="4G" check-reqs_pkg_pretend
@@ -809,30 +804,6 @@ blender_configure_linker_flags() {
 		-DWITH_LINKER_LLD=OFF
 		-DWITH_LINKER_GOLD=OFF
 	)
-
-	if use usd && ldd "${ESYSROOT}/usr/$(get_libdir)/openusd/lib/libusd_ms.so" 2>/dev/null \
-		| grep -q -e "libtbb.so.${LEGACY_TBB_SLOT} " ; then
-einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for USD (libusd_ms.so)"
-		mycmakeargs+=(
-			-DTBB_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-		)
-	fi
-
-	if use usd && ldd "${ESYSROOT}/usr/$(get_libdir)/openusd/lib/libusd_usd_ms.so" 2>/dev/null \
-		| grep -q -e "libtbb.so.${LEGACY_TBB_SLOT} " ; then
-einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for USD (libusd_usd_ms.so)"
-		mycmakeargs+=(
-			-DTBB_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-		)
-	fi
-
-	if use openvdb && ldd "${ESYSROOT}/usr/$(get_libdir)/libopenvdb.so" 2>/dev/null \
-		| grep -q -e "libtbb.so.${LEGACY_TBB_SLOT} " ; then
-einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for OpenVDB (libopenvdb.so)"
-		mycmakeargs+=(
-			-DTBB_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-		)
-	fi
 }
 
 blender_configure_simd_cycles() {

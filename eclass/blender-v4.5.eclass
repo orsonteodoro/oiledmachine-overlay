@@ -2,12 +2,12 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v4.3.eclass
+# @ECLASS: blender-v4.5.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v4.3.eclass helps reduce code duplication across ebuilds
+# The blender-v4.5.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # FIXME:  alembic requires imath
@@ -19,25 +19,25 @@
 # the multiple LLVM bug.
 
 # For versioning see:
-# https://github.com/blender/blender/blob/v4.3.2/source/blender/blenkernel/BKE_blender_version.h
+# https://github.com/blender/blender/blob/v4.5.3/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # No need to look past those dates.
 
-# Last change was Nov 3, 2024 for:
-# https://github.com/blender/blender/blob/v4.3.2/build_files/build_environment/install_linux_packages.py
+# Last change was Jul 7, 2025 for:
+# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
 
-# Last change was Sep 24, 2024 for:
-# https://github.com/blender/blender/blob/v4.3.2/build_files/cmake/config/blender_release.cmake
+# Last change was Apr 8, 2025 for:
+# https://github.com/blender/blender/blob/v4.5.3/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Oct 18, 2024 for:
-# https://github.com/blender/blender/blob/v4.3.2/build_files/build_environment/cmake/versions.cmake
+# Last change was Jul 8, 2025 for:
+# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v4.3.2/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v4.5.3/intern/cycles/cmake/external_libs.cmake#L47
 
-# GPU lib versions:  https://github.com/blender/blender/blob/v4.3.2/build_files/config/pipeline_config.yaml
+# GPU lib versions:  https://github.com/blender/blender/blob/v4.5.3/build_files/config/pipeline_config.yaml
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -47,9 +47,10 @@
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 #
 # Mentioned in versions.cmake but missing in (R)DEPENDS freeglut,
-# glfw, clew, cuew, webp, xml2, tinyxml, yaml, flexbison,
+# glfw, clew, cuew, webp, xml2, tinyxml, yamlcpp, flexbison,
 # bzip2, libffi, lzma, openssl, sqlite, nasm, ispc for oidn,
-# faad (added in 0.6 ffmpeg but removed in 0.7+)
+# faad (added in 0.6 ffmpeg but removed in 0.7+), sse2neon, zstd
+# brotli
 #
 # The LLVM linked to Blender should match mesa's linked llvm version to avoid
 # multiple version problem if using system's mesa.
@@ -71,18 +72,21 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.3.2/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
 FFMPEG_IUSE+="
 	+jpeg2k libaom +mp3 +opus rav1e svt-av1 +theora +vorbis +vpx webm +webp x264 x265 +xvid
 "
 
-LLVM_COMPAT=( {18..15} )
+# ROCm 6.4: 19, ROCm 6.3: 18
+# Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
+# It uses LLVM 17 as default.
+LLVM_COMPAT=( {18..17} ) # TODO bump to 19 after ROCm 6.4 added
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 # Platform defaults based on CMakeList.txt
-OPENVDB_ABIS_MAJOR_VERS=11
+OPENVDB_ABIS_MAJOR_VERS=12
 OPENVDB_ABIS=(
 	${OPENVDB_ABIS_MAJOR_VERS/#/abi}
 )
@@ -95,14 +99,13 @@ PATENT_STATUS_IUSE=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.3.2/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
 
 BOOST_PV="1.82"
 CLANG_MIN="8.0"
 FREETYPE_PV="2.13.0"
 GCC_MIN="11.2"
-LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.2.2"
 ONETBB_SLOT="0"
@@ -116,13 +119,13 @@ OPENEXR_V3_PV=(
 	"3.2.2:3.1.9"
 	"3.2.1:3.1.9"
 )
-OSL_PV="1.13.7"
+OSL_PV="1.14.3.0"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
+VULKAN_PV="1.3.296"
 
 CUDA_TARGETS_COMPAT=(
 	compute_75
-	sm_30
 	sm_35
 	sm_37
 	sm_50
@@ -133,6 +136,11 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_86
 	sm_89
+
+	sm_80
+	sm_90
+	sm_100
+	sm_120
 )
 OPTIX_RAYTRACE_TARGETS=(
 	sm_75
@@ -141,7 +149,7 @@ OPTIX_RAYTRACE_TARGETS=(
 )
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/blender/blender/blob/v4.3.2/CMakeLists.txt#L699
+# https://github.com/blender/blender/blob/v4.5.3/CMakeLists.txt#L699
 	gfx900
 	gfx902
 	gfx90c
@@ -160,9 +168,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1103
 	gfx1150
 	gfx1151
+	gfx1152
+	gfx1200
+	gfx1201
 )
 HIPRT_RAYTRACE_TARGETS=(
-# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.3.7df94af/scripts/bitcodes/compile.py#L90
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.5.a21e075/scripts/bitcodes/compile.py#L90
 	gfx900
 	gfx902
 	gfx90c
@@ -178,9 +189,13 @@ HIPRT_RAYTRACE_TARGETS=(
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 ROCM_SLOTS=(
-	rocm_5_7
+	rocm_6_3
 )
 
 IUSE+="
@@ -191,13 +206,13 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
-+X +abi11-compat +alembic aot -asan +boost +bullet +collada +color-management
++X +abi12-compat +alembic aot -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
 +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
-+opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
-+openxr -optix +osl +pdf +potrace +pulseaudio release -rocm -sdl +sndfile sycl
-+tbb test +tiff +usd +uv-slim -valgrind +wayland
++opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
++openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
++sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
 ebuild_revision_13
 "
 # hip is default ON upstream.
@@ -294,7 +309,7 @@ LICENSE+="
 	)
 
 "
-# ( all-rights-reserved Apache-2.0 ) - blender-4.3.2/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 ) - blender-4.5.3/extern/mantaflow/LICENSE
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
@@ -315,28 +330,28 @@ LICENSE+="
 #   public-domain
 #   UoI-NCSA
 #   ZLIB
-#   - blender-4.3.2/release/license/THIRD-PARTY-LICENSES.txt
-# all-rights-reserved MIT - blender-4.3.2/extern/vulkan_memory_allocator/LICENSE.txt
-# Apache-2.0 - blender-4.3.2/intern/cycles/doc/license/Apache2-license.txt
-# Apache-2.0 - blender-4.3.2/extern/cuew/LICENSE
-# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.3.2/doc/license/SPDX-license-identifiers.txt
-# Apache-2.0 BSD MIT ZLIB - blender-4.3.2/intern/cycles/doc/license/SPDX-license-identifiers.txt
-# BL - blender-4.3.2/doc/license/BL-license.txt
-# Boost-1.0 - blender-4.3.2/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
-# BSD - blender-4.3.2/intern/cycles/doc/license/BSD-3-Clause-license.txt
-# BSD-2.0 - blender-4.3.2/extern/xxhash/LICENSE
-# BSD custom - blender-4.3.2/extern/quadriflow/LICENSE.txt
+#   - blender-4.5.3/release/license/THIRD-PARTY-LICENSES.txt
+# all-rights-reserved MIT - blender-4.5.3/extern/vulkan_memory_allocator/LICENSE.txt
+# Apache-2.0 - blender-4.5.3/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-4.5.3/extern/cuew/LICENSE
+# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.5.3/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD MIT ZLIB - blender-4.5.3/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# BL - blender-4.5.3/doc/license/BL-license.txt
+# Boost-1.0 - blender-4.5.3/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-4.5.3/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2.0 - blender-4.5.3/extern/xxhash/LICENSE
+# BSD custom - blender-4.5.3/extern/quadriflow/LICENSE.txt
 # CC-BY-4.0 - The splash screen chosen license is found in https://www.blender.org/download/demo-files/ )
-# CC0-1.0 - blender-4.3.2/release/datafiles/studiolights/world/license.txt
-# custom MIT - blender-4.3.2/extern/fmtlib/LICENSE.rst
-# GPL-2+ - blender-4.3.2/tools/check_source/check_licenses.py
-# GPL-2.0 - blender-4.3.2/release/license/GPL-license.txt
-# GPL-3.0 - blender-4.3.2/doc/license/GPL3-license.txt
-# LGPL-2.1 - ./blender-4.3.2/doc/license/LGPL2.1-license.txt
-# MIT - blender-4.3.2/intern/cycles/doc/license/MIT-license.txt
-# ZLIB - blender-4.3.2/intern/cycles/doc/license/Zlib-license.txt
-# ZLIB - blender-4.3.2/doc/license/Zlib-license.txt
-# || ( CC0-1.0 public-domain ) - blender-4.3.2/release/datafiles/studiolights/matcap/license.txt
+# CC0-1.0 - blender-4.5.3/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-4.5.3/extern/fmtlib/LICENSE.rst
+# GPL-2+ - blender-4.5.3/tools/check_source/check_licenses.py
+# GPL-2.0 - blender-4.5.3/release/license/GPL-license.txt
+# GPL-3.0 - blender-4.5.3/doc/license/GPL3-license.txt
+# LGPL-2.1 - ./blender-4.5.3/doc/license/LGPL2.1-license.txt
+# MIT - blender-4.5.3/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-4.5.3/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-4.5.3/doc/license/Zlib-license.txt
+# || ( CC0-1.0 public-domain ) - blender-4.5.3/release/datafiles/studiolights/matcap/license.txt
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
@@ -440,7 +455,7 @@ REQUIRED_USE+="
 			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
 		)
 		|| (
-			rocm_5_7
+			rocm_6_3
 		)
 	)
 	hydra? (
@@ -471,6 +486,9 @@ REQUIRED_USE+="
 	)
 	openimagedenoise? (
 		tbb
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	openvdb? (
 		openexr
@@ -493,6 +511,9 @@ REQUIRED_USE+="
 	osl? (
 		cycles
 		llvm
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	release? (
 		!debug
@@ -523,7 +544,6 @@ REQUIRED_USE+="
 		openal
 		openexr
 		openimageio
-		openmp
 		openimagedenoise
 		opensubdiv
 		openvdb
@@ -549,8 +569,8 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_5_7? (
-		llvm_slot_17
+	rocm_6_3? (
+		llvm_slot_18
 		rocm
 	)
 	theora? (
@@ -611,8 +631,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			>=media-libs/oidn-2.3.0[llvm_slot_${s},aot?,sycl?]
-			<media-libs/oidn-3[llvm_slot_${s},aot?,sycl?]
+			>=media-libs/oidn-2.3.3[llvm_slot_${s},aot?,sycl?]
+			<media-libs/oidn-3.0[llvm_slot_${s},aot?,sycl?]
 		)
 		"
 	done
@@ -623,10 +643,10 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				>=dev-cpp/robin-map-0.6.2
+				>=dev-cpp/robin-map-1.3.0
 				>=dev-libs/libfmt-9.1.0
-				>=media-libs/openimageio-2.5.11.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
-				<media-libs/openimageio-2.6[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-3.0.6.1[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				<media-libs/openimageio-3.1.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 			)
 		"
 	done
@@ -653,7 +673,7 @@ gen_osl_depends()
 		echo "
 			llvm_slot_${s}? (
 				>=media-libs/osl-${OSL_PV}:=[llvm_slot_${s},static-libs]
-				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
+				<media-libs/osl-2.0:=[llvm_slot_${s},static-libs]
 			)
 		"
 	done
@@ -664,7 +684,7 @@ gen_osl_depends()
 # build_files/build_environment/install_linux_packages.py : --disable-ffplay
 CODECS="
 	libaom? (
-		>=media-libs/libaom-3.3.0
+		>=media-libs/libaom-3.4.0
 	)
 	mp3? (
 		>=media-sound/lame-3.100[sndfile]
@@ -701,7 +721,10 @@ PATENT_STATUS_RDEPEND="
 			|| (
 				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
-				>=media-video/ffmpeg-6.1.1:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				>=media-video/ffmpeg-4.0:0[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				<media-video/ffmpeg-8:0[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 			)
 		)
 	)
@@ -710,40 +733,46 @@ PATENT_STATUS_RDEPEND="
 			|| (
 				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
-				>=media-video/ffmpeg-6.1.1:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				>=media-video/ffmpeg-4.0:0[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				<media-video/ffmpeg-8:0[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 			)
 		)
 	)
 "
 # The distro's llvm 14 for mesa is 22.05.
 # Missing OCLOC
+# Missing nanobind
 # For compute-runtime version correspondance to level zero, see https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
+# https://github.com/oneapi-src/unified-runtime/blob/da04d13807044aaf17615b66577fb0e832011ab1/cmake/FetchLevelZero.cmake#L104
 RDEPEND+="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
+			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
-		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
-		>=dev-python/charset-normalizer-2.0.6[${PYTHON_USEDEP}]
-		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
+		>=dev-python/certifi-2025.4.26[${PYTHON_USEDEP}]
+		>=dev-python/charset-normalizer-3.4.1[${PYTHON_USEDEP}]
+		>=dev-python/idna-3.10[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
-		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
-		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		>=dev-python/urllib3-2.4.0[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.23.0[${PYTHON_USEDEP}]
 	' 'python*')
 	${CODECS}
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.11.9
+	>=dev-lang/python-3.11.11
 	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}
-	>=media-libs/libpng-1.6.37:0=
-	>=media-libs/shaderc-2022.3
-	>=media-libs/vulkan-loader-1.3.270
+	>=media-libs/libpng-1.6.43:0=
+	>=media-libs/shaderc-2024.3
+	>=media-libs/vulkan-loader-${VULKAN_PV}
+	>=sci-mathematics/manifold-3.1.0
 	>=sys-libs/minizip-ng-3.0.7
-	>=sys-libs/zlib-1.2.13
+	>=sys-libs/zlib-1.3.1
 	dev-libs/lzo:2
 	media-libs/libglvnd
 	media-libs/libsamplerate
@@ -759,113 +788,84 @@ RDEPEND+="
 		)
 	)
 	collada? (
-		>=media-libs/opencollada-1.6.68:=
-		dev-libs/libpcre:=[static-libs]
+		>=media-libs/arasp-opencollada-20240718:=
 	)
 	color-management? (
-		>=dev-libs/expat-2.5.0
-		>=media-libs/opencolorio-2.3.2[cpu_flags_x86_sse2?,python]
+		>=dev-libs/expat-2.6.4
+		>=media-libs/opencolorio-2.4.1[cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
-		cuda_targets_sm_30? (
-			|| (
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
-			)
-		)
 		cuda_targets_sm_35? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_37? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_50? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
 		cuda_targets_compute_75? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*
 				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-10.2*
-				=dev-util/nvidia-cuda-toolkit-10.1*
 			)
 		)
-		=dev-util/nvidia-cuda-toolkit:=
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	cycles? (
 		cycles-path-guiding? (
 			(
-				>=media-libs/openpgl-0.6[tbb?]
-				<media-libs/openpgl-0.7[tbb?]
+				>=media-libs/openpgl-0.6.0[tbb?]
+				<media-libs/openpgl-0.7.0[tbb?]
 			)
 		)
 		osl? (
@@ -876,7 +876,7 @@ RDEPEND+="
 		sys-apps/dbus
 	)
 	embree? (
-		>=media-libs/embree-4.3.2:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
+		>=media-libs/embree-4.4.0:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 		<media-libs/embree-5
 	)
 	ffmpeg? (
@@ -889,11 +889,11 @@ RDEPEND+="
 		>=media-libs/flac-1.4.2
 	)
 	gmp? (
-		>=dev-libs/gmp-6.2.1[cxx]
+		>=dev-libs/gmp-6.3.0[cxx]
 	)
 	hiprt? (
-		rocm_5_7? (
-			=media-libs/hiprt-2.3*:5.7[rocm]
+		rocm_6_3? (
+			=media-libs/hiprt-2.5*:6.3[rocm]
 		)
 		media-libs/hiprt:=
 	)
@@ -909,76 +909,22 @@ RDEPEND+="
 	llvm? (
 		$(gen_llvm_depends)
 	)
-	llvm_slot_15? (
-		openmp? (
-			!rocm? (
-				llvm-runtimes/openmp:15
-			)
-		)
-		|| (
-			~media-libs/mesa-22.2.0[X?]
-			~media-libs/mesa-22.2.1[X?]
-			~media-libs/mesa-22.2.2[X?]
-			~media-libs/mesa-22.2.3[X?]
-			~media-libs/mesa-22.2.5[X?]
-			~media-libs/mesa-22.3.1[X?]
-			~media-libs/mesa-22.3.2[X?]
-			~media-libs/mesa-22.3.3[X?]
-			~media-libs/mesa-22.3.6[X?]
-			~media-libs/mesa-22.3.5[X?]
-			 ~media-libs/mesa-22.3.7[X?]
-			=media-libs/mesa-23.1.0[X?]
-			=media-libs/mesa-23.1.1[X?]
-			=media-libs/mesa-23.1.2[X?]
-			=media-libs/mesa-23.1.3[X?]
-			=media-libs/mesa-23.1.4[X?]
-			=media-libs/mesa-23.1.5[X?]
-			=media-libs/mesa-23.1.6[X?]
-			=media-libs/mesa-23.1.7[X?]
-			=media-libs/mesa-23.1.8[X?]
-			=media-libs/mesa-23.1.9[X?]
-			=media-libs/mesa-23.2.1[X?]
-			=media-libs/mesa-23.3.0[X?]
-			=media-libs/mesa-23.3.1[X?]
-			=media-libs/mesa-23.3.2[X?]
-			=media-libs/mesa-23.3.3[X?]
-			=media-libs/mesa-23.3.4[X?]
-			=media-libs/mesa-23.3.5[X?]
-			=media-libs/mesa-23.3*[X?]
-			=media-libs/mesa-24.0*[X?]
-			=media-libs/mesa-9999[X?]
-		)
-	)
-	llvm_slot_16? (
-		openmp? (
-			!rocm? (
-				llvm-runtimes/openmp:16
-			)
-		)
-		|| (
-			=media-libs/mesa-22.3*[X?]
-			=media-libs/mesa-23.0*[X?]
-			=media-libs/mesa-23.1*[X?]
-			=media-libs/mesa-23.2*[X?]
-			=media-libs/mesa-23.3*[X?]
-			=media-libs/mesa-24.0*[X?]
-			=media-libs/mesa-9999[X?]
-		)
-	)
 	llvm_slot_17? (
-		openmp? (
-			!rocm? (
-				llvm-runtimes/openmp:17
-			)
-		)
 		|| (
-			=media-libs/mesa-23.3*[X?]
-			=media-libs/mesa-24.0*[X?]
+			=media-libs/mesa-24.1*[X?]
+		)
+	)
+	llvm_slot_18? (
+		|| (
+			=media-libs/mesa-24.1*[X?]
+			=media-libs/mesa-25.0*[X?]
+			=media-libs/mesa-25.1*[X?]
+			=media-libs/mesa-25.2*[X?]
 			=media-libs/mesa-9999[X?]
 		)
 	)
 	materialx? (
-		>=media-libs/materialx-1.38.8[${PYTHON_SINGLE_USEDEP},python]
+		>=media-libs/materialx-1.39.10[${PYTHON_SINGLE_USEDEP},python]
 	)
 	ndof? (
 		>=dev-libs/libspnav-1.1
@@ -992,7 +938,7 @@ RDEPEND+="
 	)
 	openal? (
 		!pulseaudio? (
-			>=media-libs/openal-1.21.1[alsa]
+			>=media-libs/openal-1.23.1[alsa]
 		)
 		>=media-libs/openal-1.23.1[pulseaudio?]
 	)
@@ -1016,11 +962,10 @@ RDEPEND+="
 		>=media-libs/opensubdiv-3.6.0:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
-		abi11-compat? (
+		abi12-compat? (
 			|| (
-				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
-				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
-				=media-gfx/openvdb-11*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
+				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,numpy]
+				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,numpy]
 			)
 		)
 		>=dev-libs/c-blosc-1.21.1[zlib]
@@ -1029,7 +974,7 @@ RDEPEND+="
 		)
 	)
 	openxr? (
-		>=media-libs/openxr-1.0.17
+		>=media-libs/openxr-1.0.22
 	)
 	optix? (
 		>=dev-libs/optix-7
@@ -1048,13 +993,13 @@ RDEPEND+="
 	)
 	release? (
 		>=media-libs/freetype-${FREETYPE_PV}[brotli,bzip2,harfbuzz,png]
-		>=media-libs/harfbuzz-5.1.0[truetype]
+		>=media-libs/harfbuzz-10.0.1[truetype]
 	)
 	rocm? (
-		rocm_5_7? (
-			~dev-libs/rocm-opencl-runtime-${HIP_5_7_VERSION}:5.7
-			~dev-util/hip-${HIP_5_7_VERSION}:5.7[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_5_7_VERSION}:5.7
+		rocm_6_3? (
+			~dev-libs/rocm-opencl-runtime-${HIP_6_3_VERSION}:6.3
+			~dev-util/hip-${HIP_6_3_VERSION}:6.3[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_6_3_VERSION}:6.3
 		)
 		dev-util/hip:=
 	)
@@ -1072,40 +1017,36 @@ RDEPEND+="
 	)
 	sycl? (
 		(
-			>=dev-libs/level-zero-1.16.1
-			<dev-libs/level-zero-2
+			>=dev-libs/level-zero-1.19.2
+			<dev-libs/level-zero-2.0
 		)
 		|| (
 			(
-				>=sys-devel/DPC++-2024.03.14:0/7[aot?]
-				!<sys-devel/DPC++-2024.03.14
+				>=sys-devel/DPC++-2025.01.08:0/8[aot?]
+				!<sys-devel/DPC++-2025.01.08
 			)
 		)
 		aot? (
 			>=dev-libs/intel-compute-runtime-23.52.28202.45[l0]
-			>=dev-util/intel-graphics-compiler-1.0.17384.29
+			>=dev-util/intel-graphics-compiler-2.1.14
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
-		usd? (
-			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=[tbbmalloc(+)]
-		)
+		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[tbbmalloc]
 	)
 	tiff? (
-		>=media-libs/tiff-4.6.0:0[jpeg,zlib]
+		>=media-libs/tiff-4.7.0:0[jpeg,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-24.05[imaging,monolithic,opengl,openvdb,openimageio,python]
-		<media-libs/openusd-25[imaging,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-25.02[imaging,monolithic,opengl,openvdb,openimageio,python]
+		<media-libs/openusd-26.0[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-debug/valgrind
 	)
 	wayland? (
-		>=dev-libs/wayland-1.23.0
-		>=dev-libs/wayland-protocols-1.36
+		>=dev-libs/wayland-1.23.1
+		>=dev-libs/wayland-protocols-1.44
 		>=gui-libs/libdecor-0.2.2
 	)
 	webp? (
@@ -1129,18 +1070,17 @@ DEPEND+="
 	${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
 "
-# Missing SSE2NEON
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
-		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
-		>=dev-python/autopep8-1.6.0[${PYTHON_USEDEP}]
-		>=dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
+		>=dev-python/cython-3.0.11[${PYTHON_USEDEP}]
+		>=dev-python/autopep8-2.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pycodestyle-2.13.0[${PYTHON_USEDEP}]
 	' 'python*')
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-build/meson-0.63.0
-	>=dev-util/vulkan-headers-1.3.270
+	>=dev-util/vulkan-headers-${VULKAN_PV}
 	dev-util/patchelf
 	virtual/pkgconfig
 	asan? (
@@ -1175,12 +1115,12 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_5_7? (
-			~sys-devel/llvm-roc-${HIP_5_7_VERSION}:5.7
+		rocm_6_3? (
+			~sys-devel/llvm-roc-${HIP_6_3_VERSION}:6.3
 		)
 	)
 	test? (
-		>=dev-libs/weston-13.0.3
+		>=dev-libs/weston-14.0.2
 	)
 	|| (
 		>=sys-devel/gcc-${GCC_MIN}
@@ -1193,12 +1133,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.1.0-openusd-21.11-python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
-	"${FILESDIR}/${PN}-4.3.1-build-draco.patch"
 #	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
-	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
-	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
+	"${FILESDIR}/${PN}-4.5.3-hip-flags.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -1297,15 +1235,27 @@ ewarn "including all dependencies of this package."
 ewarn
 	fi
 
+	if use llvm_slot_18 ; then
+ewarn "Using LLVM 18"
+ewarn "LLVM 18 is only for ROCm 6.3 builds and is untested."
+	fi
+	if use llvm_slot_17 ; then
+einfo "Using LLVM 17"
+	fi
+
 	if use rocm ; then
-		if use rocm_5_7 ; then
-			export LLVM_SLOT=17
-			export ROCM_SLOT="5.7"
-			export ROCM_VERSION="${HIP_5_7_VERSION}"
+	# Upstream uses ROCm 6.4 for Linux, ROCm 6.3 for Windows
+		if use rocm_6_3 ; then
+			export LLVM_SLOT=18
+			export ROCM_SLOT="6.3"
+			export ROCM_VERSION="${HIP_6_3_VERSION}"
 		else
-# See https://github.com/blender/blender/blob/v4.3.2/build_files/config/pipeline_config.yaml
+# See https://github.com/blender/blender/blob/v4.5.3/build_files/config/pipeline_config.yaml
 eerror
-eerror "Only rocm_5_7 supported."
+eerror "Supported ROCm version(s):"
+eerror
+eerror "  6.3"
+eerror "  6.4"
 eerror
 			die
 		fi
@@ -1313,20 +1263,6 @@ eerror
 	#else
 		# See blender_pkg_setup for llvm_pkg_setup
 	fi
-}
-
-show_tbb_error() {
-eerror
-eerror "You can only choose one adventure:"
-eerror
-eerror "  (1) disable the usd USE flag"
-eerror "  (2) use the tbb:${LEGACY_TBB_SLOT} from the oiledmachine-overlay"
-eerror "  (3) use the <tbb-2021:0::gentoo and hardmask tbb >= 2021"
-eerror
-eerror "Any downgrade or upgrade may require a rebuild of those packages"
-eerror "depending on them."
-eerror
-	die
 }
 
 apply_hiprt_2_3_patchset() {
@@ -1363,41 +1299,11 @@ einfo "Applying hiprt_patchset"
 
 _src_prepare_patches() {
 	#apply_hiprt_2_3_patchset
-	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
-	eapply "${FILESDIR}/blender-4.3.1-parent-datafiles-dir-change.patch"
-	if \
-		( \
-			has_version "<dev-cpp/tbb-2021:0" \
-				|| \
-			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
-		) \
-		&& \
-		use usd ; then
-		:
-	elif \
-		! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
-		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
-		use usd ; then
-		show_tbb_error
-	fi
-	if \
-		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
-		has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
-		use usd ; then
-		eapply "${FILESDIR}/blender-3.5.1-tbb2-usd.patch"
-	elif use usd ;then
-ewarn
-ewarn "Untested tbb configuration.  It is assumed"
-ewarn ">=dev-cpp/tbb-2021:${ONETBB_SLOT} and"
-ewarn "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} are both installed."
-ewarn
-ewarn "Install both if build fails."
-ewarn
-	fi
+	eapply "${FILESDIR}/blender-4.5.3-parent-datafiles-dir-change.patch"
 	if use rocm ; then
 		local rocm_version=""
-		if use rocm_5_7 ; then
-			rocm_version="${HIP_5_7_VERSION}"
+		if use rocm_6_3 ; then
+			rocm_version="${HIP_6_3_VERSION}"
 		fi
 
 		sed \
@@ -1505,10 +1411,10 @@ eerror
 		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
-		-DWITH_OPENMP=$(usex openmp)
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
 		-DWITH_OPENVDB=$(usex openvdb)
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
+		-DWITH_PIPEWIRE=$(usex pipewire)
 		-DWITH_POTRACE=$(usex potrace)
 		-DWITH_PUGIXML=$(usex openimageio ON $(usex osl ON OFF))
 		-DWITH_PULSEAUDIO=$(usex pulseaudio)
@@ -1570,67 +1476,6 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		use "llvm_slot_${s}" && llvm_slot=${s}
 	done
 
-	if use openmp && tc-is-clang ; then
-		local llvm_slot
-		local s
-		for s in ${LLVM_COMPAT[@]} ; do
-			use "llvm_slot_${s}" && llvm_slot=${s}
-		done
-		if ! use rocm ; then
-			mycmakeargs+=(
-				-DOPENMP_CUSTOM=ON
-				-DOPENMP_FOUND=ON
-				-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-				-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-				-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-			)
-		else
-			mycmakeargs+=(
-				-DOPENMP_CUSTOM=ON
-				-DOPENMP_FOUND=ON
-				-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_LINKER_FLAGS="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
-			)
-		fi
-	fi
-
-	if use openmp && tc-is-gcc ; then
-		local gcc_slot="$(gcc-major-version)"
-		local gomp_abspath
-		if [[ "${ABI}" =~ ("amd64") && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
-			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
-		elif [[ "${ABI}" =~ ("x86") && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
-			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
-		elif [[ -e "${GOMP_LIB64_ABSPATH}" ]] ; then
-			gomp_abspath="${GOMP_LIB64_ABSPATH}"
-		elif [[ -e "${GOMP_LIB32_ABSPATH}" ]] ; then
-			gomp_abspath="${GOMP_LIB32_ABSPATH}"
-		elif [[ -e "${GOMP_LIB_ABSPATH}" ]] ; then
-			gomp_abspath="${GOMP_LIB_ABSPATH}"
-		else
-eerror
-eerror "${ABI} is unknown.  Please set one or more of the following per-package"
-eerror "environment variables:"
-eerror
-eerror "GOMP_LIB_ABSPATH"
-eerror "GOMP_LIB32_ABSPATH"
-eerror "GOMP_LIB64_ABSPATH"
-eerror
-eerror "to point to the absolute path to libgomp.so for GCC slot ${gcc_slot}"
-eerror "corresponding to that ABI."
-eerror
-			die
-		fi
-		mycmakeargs+=(
-			-DOPENMP_CUSTOM=ON
-			-DOPENMP_FOUND=ON
-			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
-			-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
-			-DOpenMP_LINKER_FLAGS="${gomp_abspath}"
-		)
-	fi
-
 	if use materialx ; then
 		mycmakeargs+=(
 			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/$(get_libdir)/materialx/lib/cmake/MaterialX"
@@ -1662,7 +1507,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v4.3.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/v4.5.3/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

@@ -1,0 +1,21 @@
+diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/kernel/CMakeLists.txt blender-4.5.3/intern/cycles/kernel/CMakeLists.txt
+--- blender-4.5.3.orig/intern/cycles/kernel/CMakeLists.txt	2025-09-02 22:37:32.000000000 -0700
++++ blender-4.5.3/intern/cycles/kernel/CMakeLists.txt	2025-09-30 09:33:50.550453037 -0700
+@@ -727,6 +727,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYC
+       ${hip_flags}
+       --offload-arch=${arch}
+       ${HIP_HIPCC_FLAGS}
++      -D __HIP__
+       --genco
+       ${CMAKE_CURRENT_SOURCE_DIR}${hip_kernel_src}
+       ${flags}
+@@ -817,6 +818,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYC
+     -D CCL_NAMESPACE_END=
+     -D HIPCC
+     -D __HIPRT__
++    -D __HIP__
+     -std=c++17
+     -mllvm
+     -amdgpu-early-inline-all=false
+Only in blender-4.5.3/intern/cycles/kernel: CMakeLists.txt.orig
+Only in blender-4.5.3/intern/cycles/kernel: CMakeLists.txt.rej
