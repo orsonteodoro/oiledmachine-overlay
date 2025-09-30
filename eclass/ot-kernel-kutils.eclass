@@ -289,7 +289,7 @@ ot-kernel_get_vendor_from_flags() {
 		["lakemont"]="intel"
 		["pentium-mmx"]="intel"
 		["pentiumpro"]="intel"
-		["i686"]="intel"
+		["i686"]="generic"
 		["pentium2"]="intel"
 		["pentium3"]="intel"
 		["pentium3m"]="intel"
