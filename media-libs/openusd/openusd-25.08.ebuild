@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U22
+
 # For dependencies, see
 # https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/VERSIONS.md
 # https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L2019
@@ -27,7 +29,7 @@ OPENEXR_V3_PV=(
 	"3.2.0:3.1.9"
 	"3.1.13:3.1.9"
 )
-PYTHON_COMPAT=( "python3_"{9..11} ) # Only 3.9 listed
+PYTHON_COMPAT=( "python3_"{9..13} )
 VULKAN_PV="1.3.296.0"
 
 inherit check-compiler-switch cmake python-single-r1 flag-o-matic
