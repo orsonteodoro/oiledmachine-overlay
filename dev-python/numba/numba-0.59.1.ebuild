@@ -42,7 +42,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 doc clang cuda openmp tbb
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	clang? (
@@ -71,7 +71,8 @@ RDEPEND+="
 		=dev-python/llvmlite-0.42*[${PYTHON_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.1
+		>=dev-cpp/tbb-2021.1:0
+		dev-cpp/tbb:=
 	)
 "
 DEPEND+="
