@@ -1,0 +1,14 @@
+diff '--color=auto' -urp openvdb-12.1.1.orig/openvdb_cmd/vdb_tool/CMakeLists.txt openvdb-12.1.1/openvdb_cmd/vdb_tool/CMakeLists.txt
+--- openvdb-12.1.1.orig/openvdb_cmd/vdb_tool/CMakeLists.txt	2025-09-28 22:49:13.000000000 -0700
++++ openvdb-12.1.1/openvdb_cmd/vdb_tool/CMakeLists.txt	2025-09-30 11:55:49.156405103 -0700
+@@ -110,7 +110,7 @@ endif()
+ if(OPENVDB_TOOL_USE_EXR)
+   target_compile_definitions(vdb_tool_common INTERFACE "VDB_TOOL_USE_EXR")
+   find_package(OpenEXR ${MINIMUM_OPENEXR_VERSION} REQUIRED)
+-  target_link_libraries(vdb_tool_common INTERFACE OpenEXR::IlmImf)
++  target_link_libraries(vdb_tool_common INTERFACE OpenEXR::OpenEXR)
+ endif()
+ 
+ if(OPENVDB_TOOL_USE_ABC)
+Only in openvdb-12.1.1/openvdb_cmd/vdb_tool: CMakeLists.txt.orig
+Only in openvdb-12.1.1/openvdb_cmd/vdb_tool: CMakeLists.txt.rej
