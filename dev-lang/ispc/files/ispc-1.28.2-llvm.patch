@@ -1,0 +1,49 @@
+diff '--color=auto' -urp ispc-1.28.2.orig/CMakeLists.txt ispc-1.28.2/CMakeLists.txt
+--- ispc-1.28.2.orig/CMakeLists.txt	2025-09-24 09:17:51.000000000 -0700
++++ ispc-1.28.2/CMakeLists.txt	2025-09-30 14:21:45.146150852 -0700
+@@ -408,7 +408,7 @@ if (${LLVM_VERSION_NUMBER} VERSION_LESS
+     message(FATAL_ERROR "ISPC requires LLVM 18.0.0 or later")
+ endif()
+ 
+-set(CLANG_LIBRARY_LIST clangFrontend clangBasic clangEdit clangLex clangSupport clangASTMatchers)
++set(CLANG_LIBRARY_LIST clang clang-cpp)
+ 
+ set(LLVM_COMPONENTS engine ipo bitreader bitwriter instrumentation linker option frontendopenmp passes)
+ if (ISPC_LIBRARY_JIT)
+@@ -810,21 +810,8 @@ if (NOT WIN32 AND NOT APPLE)
+ endif()
+ 
+ # Link against Clang libraries
+-foreach(clangLib ${CLANG_LIBRARY_LIST})
+-    # Preferred way to build ISPC is to link it with individual clang static
+-    # libraries. However, when they omitted it can be link with shared library
+-    # libclang-cpp.so. Second approach would be utilized in some controlled
+-    # environments, like in package managers for particular OSes (issue 2418).
+-    find_library(${clangLib}Path
+-                 NAMES
+-                    "${CMAKE_STATIC_LIBRARY_PREFIX}${clangLib}${CMAKE_STATIC_LIBRARY_SUFFIX}"
+-                    clang-cpp
+-                 HINTS ${LLVM_LIBRARY_DIRS})
+-    if (NOT ${${clangLib}Path} IN_LIST CLANG_LIBRARY_FULL_PATH_LIST)
+-        list(APPEND CLANG_LIBRARY_FULL_PATH_LIST ${${clangLib}Path})
+-    endif()
+-endforeach()
+-list(APPEND LINK_LIBRARIES ${CLANG_LIBRARY_FULL_PATH_LIST})
++find_package(Clang REQUIRED)
++target_link_libraries(${PROJECT_NAME} ${CLANG_LIBRARY_LIST})
+ 
+ # Link against LLVM libraries
+ list(APPEND LINK_LIBRARIES ${LLVM_LIBRARY_LIST} ${CMAKE_DL_LIBS})
+Only in ispc-1.28.2: CMakeLists.txt.orig
+Only in ispc-1.28.2: CMakeLists.txt.rej
+diff '--color=auto' -urp ispc-1.28.2.orig/src/llvmutil.cpp ispc-1.28.2/src/llvmutil.cpp
+--- ispc-1.28.2.orig/src/llvmutil.cpp	2025-09-24 09:17:51.000000000 -0700
++++ ispc-1.28.2/src/llvmutil.cpp	2025-09-30 14:20:33.231287509 -0700
+@@ -19,6 +19,7 @@
+ #include <llvm/IR/BasicBlock.h>
+ #include <llvm/IR/Instructions.h>
+ #include <llvm/IR/Module.h>
++#include <llvm/Support/raw_ostream.h>
+ 
+ #ifdef ISPC_XE_ENABLED
+ #include <llvm/GenXIntrinsics/GenXIntrinsics.h>

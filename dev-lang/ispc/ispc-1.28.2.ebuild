@@ -3,18 +3,20 @@
 
 EAPI=8
 
+# U18, U20, U22, F39
+
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_CI_SANITIZERS="asan"
-CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="15"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="16"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_COMPAT=( {18..13} ) # See https://github.com/ispc/ispc/blob/v1.21.1/src/ispc_version.h
+LLVM_COMPAT=( {19..18} ) # See https://github.com/ispc/ispc/blob/v1.28.2/src/ispc_version.h
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} )
 UOPTS_SUPPORT_EBOLT=0
@@ -27,11 +29,11 @@ inherit check-compiler-switch cflags-hardened cmake flag-o-matic python-any-r1 l
 if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
-	FALLBACK_COMMIT="a0e8e48169f35a129941475c7023920e968dbc31" # Oct 10, 2023
+	FALLBACK_COMMIT="5bf8fb90b34122b55813d3198fb45c42478d51ca" # Sep 24, 2025
 	IUSE+=" fallback-commit"
 else
-	BENCHMARK_COMMIT="e991355c02b93fe17713efe04cbc2e278e00fdbd"
-	GTEST_COMMIT="bf0701daa9f5b30e5882e2f8f9a5280bcba87e77"
+	BENCHMARK_COMMIT="a6ad7fbbdc2e14fab82bb8a6d27760d700198cbf"
+	GTEST_COMMIT="f8d7d77c06936315286eb55f8de22cd23c188571"
 	SRC_URI="
 		https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 		bolt? (
@@ -129,12 +131,8 @@ gen_omp_depends() {
 		"
 	done
 }
-
-# Some versions obtained from CI.
-# U 22.04
 RDEPEND="
 	$(gen_llvm_depends)
-	>=sys-libs/ncurses-6.3
 	>=sys-libs/zlib-1.2.11
 	openmp? (
 		|| (
@@ -162,8 +160,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.20.0-llvm.patch"
-	"${FILESDIR}/${PN}-1.18.1-curses-cmake.patch"
+	"${FILESDIR}/${PN}-1.28.2-llvm.patch"
 )
 
 pkg_setup() {
@@ -271,10 +268,26 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	local wants_llvm=0
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${s}" ; then
+			wants_llvm=1
+			break
+		fi
+	done
+	if use lto || (( ${wants_llvm} == 1 )) ; then
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+	fi
+	unset LD
+	strip-unsupported-flags
 	if ! has_version "llvm-core/llvm:${LLVM_SLOT}=[dump(+)]" ; then
 		append-cppflags -DNDEBUG
 	fi
-	unset LD
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 	uopts_src_configure
@@ -386,12 +399,12 @@ src_test() {
 }
 
 src_install() {
-	dobin "${BUILD_DIR}"/bin/ispc
+	dobin "${BUILD_DIR}/bin/ispc"
 	einstalldocs
 
 	if use examples; then
-		docompress -x /usr/share/doc/${PF}/examples
-		dodoc -r examples
+		docompress -x "/usr/share/doc/${PF}/examples"
+		dodoc -r "examples"
 	fi
 	uopts_src_install
 }
