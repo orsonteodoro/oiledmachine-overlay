@@ -66,7 +66,7 @@ LICENSE="BSD"
 KEYWORDS="~amd64"
 IUSE+="
 atlas doc examples -ilp64 mkl openblas tbb openmp test
-ebuild_revision_5
+ebuild_revision_6
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
@@ -309,6 +309,7 @@ RDEPEND+="
 	)
 	tbb? (
 		dev-cpp/tbb:0
+		dev-cpp/tbb:=
 	)
 "
 DEPEND="
