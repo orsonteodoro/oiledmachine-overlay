@@ -3,48 +3,52 @@
 
 EAPI=8
 
+# U22, U24
+
 # SSE4.1 hardware was released in 2008.
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
+	"gfx902"
+	"gfx909"
+	"gfx90c"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1033"
+	"gfx1034"
+	"gfx1035"
+	"gfx1036"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1103"
 )
-CMAKE_BUILD_TYPE=Release
-COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
+CMAKE_BUILD_TYPE="Release"
+COMPOSABLE_KERNEL_COMMIT="c79bf11148ac7abd7504f0e700b409b4c63a052c"
+CUTLASS_COMMIT="afa1772203677c5118fcd82537a9c8fefbcc7008"
 CUDA_TARGETS_COMPAT=(
-	sm_70
-	sm_75
-	sm_80
-	sm_90
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_90"
 )
-CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
 inherit hip-versions
 HIP_VERSIONS=(
-	"${HIP_5_5_VERSION}"
-	"${HIP_5_6_VERSION}"
+	"${HIP_6_3_VERSION}"
+	"${HIP_6_2_VERSION}"
 )
 ROCM_SLOTS=(
-	rocm_5_5
-	rocm_5_6
+	"rocm_6_3"
+	"rocm_6_2"
 )
-LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( {16..10} ) # Based on DPC++ (sycl-nightly)
+LLVM_COMPAT=( {18..14} ) # Based on U24, U22 defaults
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
-OIDN_WEIGHTS_COMMIT="4322c25e25a05584f65da1a4be5cef40a4b2e90b"
+OIDN_WEIGHTS_COMMIT="28883d1769d5930e13cf7f1676dd852bd81ed9e7"
 ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -56,7 +60,7 @@ if [[ ${PV} = *9999 ]]; then
 	EGIT_REPO_URI="${ORG_GH}/oidn.git"
 	EGIT_BRANCH="master"
 else
-	KEYWORDS="~amd64"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 ${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
 	-> ${P}.tar.gz
@@ -92,7 +96,6 @@ ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
 ebuild_revision_9
 "
-
 gen_required_use_cuda_targets() {
 	local x
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
@@ -122,7 +125,7 @@ REQUIRED_USE+="
 	)
 	^^ (
 		clang
-		cuda
+		gcc
 		rocm
 	)
 	aot? (
@@ -140,11 +143,11 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_5_5? (
-		llvm_slot_16
+	rocm_6_2? (
+		llvm_slot_18
 	)
-	rocm_5_6? (
-		llvm_slot_16
+	rocm_6_3? (
+		llvm_slot_18
 	)
 "
 gen_clang_depends() {
@@ -160,6 +163,7 @@ gen_clang_depends() {
 		"
 	done
 }
+
 gen_hip_depends() {
 	local hip_version
 	for hip_version in ${HIP_VERSIONS[@]} ; do
@@ -179,35 +183,29 @@ gen_hip_depends() {
 		"
 	done
 }
+
 # See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 RDEPEND+="
 	${PYTHON_DEPS}
+	(
+		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}
+		dev-cpp/tbb:=
+	)
 	virtual/libc
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-11.8:=
+		>=dev-util/nvidia-cuda-toolkit-12.8
+		>=x11-drivers/nvidia-drivers-525.60.13
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		rocm_5_5? (
-			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
-		)
-		rocm_5_6? (
-			~sys-devel/llvm-roc-${HIP_5_6_VERSION}:5.6
-		)
-		sys-devel/llvm-roc:=
 		$(gen_hip_depends)
-		dev-util/hip:=[rocm]
+		dev-util/hip[rocm]
+		dev-util/hip:=
 	)
 	sycl? (
-		>=sys-devel/DPC++-2022.12.15:0/6[aot?]
+		>=sys-devel/DPC++-2023.10.26:0/7[aot?]
 		dev-libs/level-zero
 		sys-devel/DPC++:=
-	)
-	|| (
-		(
-			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-		)
-		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
 	)
 "
 DEPEND+="
@@ -216,30 +214,41 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-lang/ispc-1.17.0
+	>=dev-lang/ispc-1.21.0
 	>=dev-build/cmake-3.15
 	clang? (
 		$(gen_clang_depends)
 	)
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-11.8
+		>=dev-build/cmake-3.18
+		>=dev-util/nvidia-cuda-toolkit-12.8
 		sys-devel/binutils[gold,plugins]
 	)
 	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_PV}
 	)
 	rocm? (
-		$(gen_hip_depends)
+		(
+			$(gen_hip_depends)
+			sys-devel/llvm-roc:=
+		)
 		>=dev-build/cmake-3.21
+		rocm_6_2? (
+			~sys-devel/llvm-roc-${HIP_6_2_VERSION}:6.2
+		)
+		rocm_6_3? (
+			~sys-devel/llvm-roc-${HIP_6_3_VERSION}:6.3
+		)
+	)
+	sycl? (
+		>=dev-build/cmake-3.25.2
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
-	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
-	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
 )
 HIP_PATCHES=(
-	"${FILESDIR}/${PN}-2.0.1-hip-buildfiles-changes.patch"
+	"${FILESDIR}/${PN}-2.2.1-hip-buildfiles-changes.patch"
 	"${FILESDIR}/${PN}-2.0.1-set-rocm-path.patch"
 )
 
@@ -261,14 +270,14 @@ pkg_setup() {
 		use cpu && check_cpu
 	fi
 
-	if use rocm_5_6 ; then
-		LLVM_SLOT=16
-		ROCM_SLOT="5.6"
-		ROCM_VERSION="${HIP_5_6_VERSION}"
-	elif use rocm_5_5 ; then
-		LLVM_SLOT=16
-		ROCM_SLOT="5.5"
-		ROCM_VERSION="${HIP_5_5_VERSION}"
+	if use rocm_6_3 ; then
+		LLVM_SLOT=18
+		ROCM_SLOT="6.3"
+		ROCM_VERSION="${HIP_6_3_VERSION}"
+	elif use rocm_6_2 ; then
+		LLVM_SLOT=18
+		ROCM_SLOT="6.2"
+		ROCM_VERSION="${HIP_6_2_VERSION}"
 	fi
 
 	if use rocm ; then
@@ -388,11 +397,6 @@ ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
 		export CXX="${CHOST}-g++-11"
 		export CPP="${CC} -E"
 		cuda_host_cc_check 11
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
-		export CPP="${CC} -E"
-		cuda_host_cc_check 11
 	elif use cuda ; then
 eerror
 eerror "If using"
@@ -493,25 +497,7 @@ einfo "CUDA_TARGETS:  ${targets}"
 		fi
 	fi
 
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
-			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)"
-			-DTBB_SOVER=$(echo $(basename $(realpath "${ESYSROOT}/usr/$(get_libdir)/libtbb.so")) | cut -f 3 -d ".")
-		)
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_SOVER="${LEGACY_TBB_SLOT}"
-		)
-	fi
-
 	cmake_src_configure
-}
-
-src_test() {
-	"${BUILD_DIR}/oidnTest" || die "There were test faliures!"
 }
 
 src_install() {
@@ -522,27 +508,17 @@ src_install() {
 	use doc && einstalldocs
 	docinto licenses
 	dodoc \
-		LICENSE.txt \
-		third-party-programs.txt \
-		third-party-programs-oneDNN.txt \
-		third-party-programs-oneTBB.txt
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:;
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		for f in $(find "${ED}") ; do
-			test -L "${f}" && continue
-			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-				einfo "Old rpath for ${f}:"
-				patchelf --print-rpath "${f}" || die
-				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-					"${f}" || die
-			fi
-		done
-	fi
+		"LICENSE.txt" \
+		"third-party-programs.txt" \
+		"third-party-programs-oneDNN.txt" \
+		"third-party-programs-oneTBB.txt"
 
 	# Generated when hip is enabled.
 	rm -rf "${ED}/var"
+}
+
+src_test() {
+	"${BUILD_DIR}/oidnTest" || die "There were test faliures!"
 }
 
 pkg_postinst() {
