@@ -142,7 +142,6 @@ RDEPEND+="
 	virtual/opengl
 	tbb? (
 		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}
-		=dev-cpp/tbb-2021*
 		dev-cpp/tbb:=
 	)
 "
