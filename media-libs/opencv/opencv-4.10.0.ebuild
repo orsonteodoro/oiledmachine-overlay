@@ -289,7 +289,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_32
+	ebuild_revision_33
 "
 # hal for acceleration
 IUSE+="
@@ -897,7 +897,7 @@ RDEPEND="
 		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.11.0[${MULTILIB_USEDEP}]
+		>=dev-cpp/tbb-2021.11.0:0[${MULTILIB_USEDEP}]
 		dev-cpp/tbb:=[${MULTILIB_USEDEP}]
 	)
 	tiff? (
@@ -1766,27 +1766,6 @@ multilib_src_install() {
 		fix_python_loader
 	else
 		cmake_src_install
-	fi
-
-	# Fix TBB linking
-	if use tbb ; then
-		local LIBPATHS=(
-			$(find "${ED}/usr/$(get_libdir)" -name "*.so*")
-		)
-		local path
-		for path in ${LIBPATHS[@]} ; do
-			[[ -L "${path}" ]] && continue
-			if ldd "${path}" | grep -F -q "libtbb.so.2" ; then
-				if [[ -e "/usr/$(get_libdir)/tbb/2/libtbb.so.2" ]] ; then
-	# TBB legacy (oiledmachine-overlay ebuild fork)
-einfo "Fixing rpath for ${path}"
-					patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${path}" || die
-				fi
-			elif ldd "${path}" | grep -F -q "libtbb.so.12" ; then
-	# oneTBB
-				:
-			fi
-		done
 	fi
 
 	if use ffmpeg ; then
