@@ -788,7 +788,7 @@ RDEPEND+="
 		)
 	)
 	collada? (
-		>=media-libs/arasp-opencollada-20240718:=
+		>=media-libs/aras-p-opencollada-20240718:=
 	)
 	color-management? (
 		>=dev-libs/expat-2.6.4
