@@ -4,24 +4,19 @@
 EAPI=8
 
 # For dependencies, see
-# https://github.com/PixarAnimationStudios/USD/blob/v23.11/VERSIONS.md
-# https://github.com/PixarAnimationStudios/USD/blob/v23.11/build_scripts/build_usd.py#L2019
-# TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/VERSIONS.md
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L2019
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L763
 
-BOOST_PV="1.76.0"
+BOOST_PV="1.80.0"
 CMAKE_BUILD_TYPE="Release"
-LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
-OPENEXR_V2_PV=(
-	# openexr:imath
-	"2.5.11:2.5.11"
-	"2.5.10:2.5.10"
-	"2.5.9:2.5.9"
-	"2.5.8:2.5.8"
-	"2.5.7:2.5.7"
-)
 OPENEXR_V3_PV=(
 	# openexr:imath
+	#"3.4.0:9999"
+	"3.3.5:3.1.12"
+	"3.3.4:3.1.12"
+	"3.3.3:3.1.12"
 	"3.3.2:3.1.12"
 	"3.3.1:3.1.12"
 	"3.3.0:3.1.11"
@@ -31,23 +26,16 @@ OPENEXR_V3_PV=(
 	"3.2.1:3.1.9"
 	"3.2.0:3.1.9"
 	"3.1.13:3.1.9"
-	"3.1.12:3.1.9"
-	"3.1.11:3.1.9"
-	"3.1.10:3.1.9"
-	"3.1.9:3.1.9"
-	"3.1.8:3.1.8"
-	"3.1.7:3.1.7"
-	"3.1.6:3.1.5"
-	"3.1.5:3.1.5"
 )
-PYTHON_COMPAT=( "python3_"{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} ) # Only 3.9 listed
+VULKAN_PV="1.3.296.0"
 
 inherit check-compiler-switch cmake python-single-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenUSD-${PV}"
 SRC_URI="
-https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
+https://github.com/PixarAnimationStudios/OpenUSD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
@@ -74,7 +62,7 @@ LICENSE="
 	MIT
 	OpenUSD-23.11
 "
-# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v23.11/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
@@ -83,7 +71,8 @@ IUSE+="
 -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
--vulkan r3
+-vulkan
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -136,25 +125,11 @@ gen_openexr_pairs() {
 			)
 		"
 	done
-	for row in ${OPENEXR_V2_PV[@]} ; do
-		local ilmbase_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}:=
-				~media-libs/ilmbase-${ilmbase_pv}:=
-			)
-		"
-	done
 }
 
-RDEPEND+="
+ARDEPEND+="
 	>=sys-libs/zlib-1.2.11
-	!experimental? (
-		!<dev-cpp/tbb-2021:0=
-		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-		>=dev-cpp/tbb-2020.3:${LEGACY_TBB_SLOT}=
-	)
+	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 	!python? (
 		>=dev-libs/boost-${BOOST_PV}:=
 	)
@@ -168,23 +143,22 @@ RDEPEND+="
 		>=media-libs/embree-3.2.2
 	)
 	experimental? (
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 	)
 	hdf5? (
 		>=sci-libs/hdf5-1.10[cxx,hl]
 	)
 	imaging? (
-		>=media-libs/opensubdiv-3.5.1
+		>=media-libs/opensubdiv-3.6.0
 		x11-libs/libX11
 	)
 	jemalloc? (
 		dev-libs/jemalloc-usd
 	)
 	materialx? (
-		>=media-libs/materialx-1.38.7
+		>=media-libs/materialx-1.39.3
 	)
 	opencolorio? (
-		>=media-libs/opencolorio-2.1.3
+		>=media-libs/opencolorio-2.2.1
 	)
 	openexr? (
 		|| (
@@ -196,16 +170,16 @@ RDEPEND+="
 	)
 	openimageio? (
 		>=media-libs/libpng-1.6.29
-		>=media-libs/openimageio-2.3.21.0:=
+		>=media-libs/openimageio-2.5.16.0:=
 		>=media-libs/tiff-4.0.7
 		virtual/jpeg
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.17
-		>=media-gfx/openvdb-9.1.0
+		>=media-gfx/openvdb-10.1.0
 	)
 	osl? (
-		>=media-libs/osl-1.10.9
+		>=media-libs/osl-1.13.11
 	)
 	ptex? (
 		>=media-libs/ptex-2.4.2
@@ -228,7 +202,7 @@ RDEPEND+="
 		')
 	)
         vulkan? (
-		>=dev-util/vulkan-headers-1.2.135.0
+		>=dev-util/vulkan-headers-${VULKAN_PV}
 	)
 "
 DEPEND+="
@@ -236,9 +210,9 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/jinja2-2[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-3.1.2[${PYTHON_USEDEP}]
 	')
-	>=dev-build/cmake-3.17.5
+	>=dev-build/cmake-3.26.5
 	>=sys-devel/bison-2.4.1
 	>=sys-devel/flex-2.5.39
 	dev-cpp/argparse
@@ -248,11 +222,8 @@ BDEPEND+="
 		>=app-text/doxygen-1.9.6[dot]
 	)
 	|| (
-		(
-			<sys-devel/gcc-11
-			>=sys-devel/gcc-9.3.1
-		)
-		<llvm-core/clang-12
+		>=sys-devel/gcc-11
+		>=llvm-core/clang-16
 	)
 "
 PATCHES=(
@@ -277,19 +248,6 @@ EOF
 }
 
 src_prepare() {
-	if use experimental ; then
-		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-ewarn "Using oneTBB.  Support is experimental, incomplete, and in-development."
-			eapply "${FILESDIR}/tbb.patch"
-			eapply "${FILESDIR}/atomic-tbb.patch"
-			eapply "${FILESDIR}/onetbb-compat.patch"
-		else
-einfo "Using legacy TBB"
-		fi
-	else
-einfo "Using legacy TBB"
-	fi
-
 	# Fix for #2351
 	sed -i 's|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 17|g' \
 		cmake/defaults/CXXDefaults.cmake || die
@@ -316,11 +274,6 @@ ewarn "Uninstall ${PN} to avoid build failure."
 ewarn
 		die
 	fi
-	if use experimental ; then
-		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
-		fi
-	fi
 
 	export USD_PATH="/usr/$(get_libdir)/${PN}"
 	if use draco; then
@@ -329,15 +282,8 @@ ewarn
 			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/USD/blob/v23.11/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/cmake/defaults/Options.cmake
 	local mycmakeargs+=(
-		$(usex experimental "
-			-DTBB_INCLUDE_DIR=${ESYSROOT}/usr/include
-			-DTBB_LIBRARY=${ESYSROOT}/usr/$(get_libdir)
-		" "
-			-DTBB_INCLUDE_DIR=${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}
-			-DTBB_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
-		")
 		$(usex jemalloc "-DPXR_MALLOC_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so" "")
 		$(usex usdview "-DPYSIDEUICBINARY:PATH=${S}/pyside2-uic" "")
 		-DBUILD_SHARED_LIBS=ON
@@ -446,21 +392,7 @@ EOF
 			"${ED}/usr/lib/${EPYTHON}" || die
 	fi
 	use doc && einstalldocs
-	dodoc LICENSE.txt NOTICE.txt
-	if ! use experimental ; then
-		if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-			for f in $(find "${ED}") ; do
-				test -L "${f}" && continue
-				if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-einfo "Old rpath for ${f}:"
-					patchelf --print-rpath "${f}" || die
-einfo "Setting rpath for ${f}"
-					patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-						"${f}" || die
-				fi
-			done
-		fi
-	fi
+	dodoc "LICENSE.txt" "NOTICE.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-jemalloc-usd, link-to-multislot-tbb
