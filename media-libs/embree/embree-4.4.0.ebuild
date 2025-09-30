@@ -4,22 +4,21 @@
 
 EAPI=8
 
-# U22.04
+# U22, U24
 # 15.0.1 -xCOMMON-AVX512
 
+# For requirements see
+# https://github.com/RenderKit/embree/blob/v4.4.0/scripts/cmake-presets/os.json
+
 ARM_CPU_FLAGS=(
-	neon:neon
-	neon2x:neon2x
+	"neon:neon"
+	"neon2x:neon2x"
 )
+CLANG_PV="14"
+GCC_PV="11"
 CMAKE_BUILD_TYPE="Release"
-CXXABI_V=11
 EGIT_COMMIT="4.3.2-blender"
 IMAGEMAGICK_PV="6.9.11.60"
-LEGACY_TBB_SLOT="2"
-MIN_CLANG_PV="3.3" # for c++11
-MIN_CLANG_PV_AVX512SKX="3.6" # for -march=skx
-MIN_GCC_PV="4.8.1" # for c++11
-MIN_GCC_PV_AVX512SKX="5.1.0" # for -mavx512vl
 ONETBB_SLOT="0"
 PANDOC_PV="2.9.2.1"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -48,7 +47,7 @@ CPU_FLAGS=(
 
 inherit check-compiler-switch cmake flag-o-matic linux-info python-r1 sandbox-changes toolchain-funcs uopts
 
-S="${WORKDIR}/embree-${PV}-blender"
+S="${WORKDIR}/embree-${PV}"
 SRC_URI="
 https://github.com/RenderKit/embree/archive/refs/tags/v${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
@@ -142,29 +141,23 @@ RDEPEND+="
 	dev-libs/level-zero
 	virtual/opengl
 	tbb? (
-		|| (
-			(
-				!<dev-cpp/tbb-2021:0=
-				<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-			)
-			>=dev-cpp/tbb-2021.2.0:${ONETBB_SLOT}=
-		)
+		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}
+		=dev-cpp/tbb-2021*
+		dev-cpp/tbb:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
+# For DPC++ version, see "oneAPI DPC++/C++ Compiler" row in README.md
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-build/cmake-3.19.0
+	>=dev-build/cmake-3.23.0
 	>=dev-python/sympy-1.9[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	clang? (
-		>=llvm-core/clang-${MIN_CLANG_PV}
-		cpu_flags_x86_avx512dq? (
-			>=llvm-core/clang-${MIN_CLANG_PV_AVX512SKX}
-		)
+		>=llvm-core/clang-${CLANG_PV}
 	)
 	doc? (
 		>=app-text/pandoc-${PANDOC_PV}
@@ -179,13 +172,10 @@ BDEPEND+="
 		>=media-gfx/xfig-3.2.8
 	)
 	gcc? (
-		>=sys-devel/gcc-${MIN_GCC_PV}
-		cpu_flags_x86_avx512dq? (
-			>=sys-devel/gcc-${MIN_GCC_PV_AVX512SKX}
-		)
+		>=sys-devel/gcc-${GCC_PV}
 	)
 	ispc? (
-		>=dev-lang/ispc-1.17.0
+		>=dev-lang/ispc-1.23.0
 	)
 	pgo? (
 		x11-base/xorg-server[xvfb]
@@ -200,19 +190,8 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
-	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
-	"${FILESDIR}/${PN}-4.3.2-findtbb-alt-lib-path.patch"
-	"${FILESDIR}/${PN}-4.1.0-tbb-alt-config.patch"
 	"${FILESDIR}/${PN}-4.1.0-customize-flags.patch"
 )
-
-chcxx() {
-eerror
-eerror "You need to switch your ${1} compiler to at least ${2} or higher for"
-eerror "${3} support."
-eerror
-	die
-}
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -242,12 +221,9 @@ pkg_setup() {
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 		local cc_pv=$(clang-fullversion)
-		if ver_test ${cc_pv} -lt ${MIN_CLANG_PV} ; then
-			chcxx "Clang" "${MIN_CLANG_PV}" "c++11"
-		fi
-		if ver_test ${cc_pv} -lt ${MIN_CLANG_PV_AVX512SKX} \
-			&& use cpu_flags_x86_avx512dq ; then
-			chcxx "Clang" "${MIN_CLANG_PV_AVX512SKX}" "AVX512-SKX"
+		if ver_test ${cc_pv} -lt ${CLANG_PV} ; then
+eerror "Switch to Clang >= ${CLANG_PV}"
+			die
 		fi
 	else
 		export CC="${CC_ALT:-${CHOST}-gcc}"
@@ -256,12 +232,9 @@ pkg_setup() {
 		strip-unsupported-flags
 		if tc-is-gcc ; then
 			local cc_pv=$(gcc-fullversion)
-			if ver_test ${cc_pv} -lt ${MIN_GCC_PV} ; then
-				chcxx "GCC" "${MIN_GCC_PV}" "c++11"
-			fi
-			if ver_test ${cc_pv} -lt ${MIN_GCC_PV_AVX512SKX} \
-				&& use cpu_flags_x86_avx512dq ; then
-				chcxx "GCC" "${MIN_GCC_PV_AVX512SKX}" "AVX512-SKX"
+			if ver_test ${cc_pv} -lt ${GCC_PV} ; then
+eerror "Switch to GCC >= ${GCC_PV}"
+				die
 			fi
 		else
 ewarn
@@ -286,10 +259,10 @@ ewarn
 
 src_prepare() {
 	cmake_src_prepare
-	# disable RPM package building
+	# Disable RPM package building
 	sed -i \
 		-e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 	uopts_src_prepare
 }
@@ -333,7 +306,7 @@ eerror
 	# and it fails to link properly.
 	# https://github.com/embree/embree/issues/115
 
-	filter-flags -march=*
+	filter-flags '-march=*'
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -417,7 +390,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		| grep -E -e "-O(0|1|2|3|4|Ofast)( |$)" \
 		| tail -n 1)
 	if use custom-optimization ; then
-		mycmakeargs+=( -DCUSTOM_OPTIMIZATION_LEVEL="${last_o}" )
+		mycmakeargs+=(
+			-DCUSTOM_OPTIMIZATION_LEVEL="${last_o}"
+		)
 	fi
 
 	if use pgo ; then
@@ -428,46 +403,49 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use tutorials; then
-		use ispc && \
-		mycmakeargs+=( -DEMBREE_ISPC_ADDRESSING:STRING="64" )
+		if use ispc ; then
+			mycmakeargs+=(
+				-DEMBREE_ISPC_ADDRESSING:STRING="64"
+			)
+		fi
 	fi
 
 	if use cpu_flags_arm_neon2x ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NEON2X" )
+		mycmakeargs+=(
+			-DEMBREE_MAX_ISA:STRING="NEON2X"
+		)
 	elif use cpu_flags_arm_neon ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NEON" )
+		mycmakeargs+=(
+			-DEMBREE_MAX_ISA:STRING="NEON"
+		)
 	elif use cpu_flags_x86_avx512f \
 		&& use cpu_flags_x86_avx512cd \
 		&& use cpu_flags_x86_avx512dq \
 		&& use cpu_flags_x86_avx512bw \
 		&& use cpu_flags_x86_avx512vl
 	then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512" )
-	elif use cpu_flags_x86_avx2 ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX2" )
-	elif use cpu_flags_x86_avx ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX" )
-	elif use cpu_flags_x86_sse4_2 ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="SSE4.2" )
-	elif use cpu_flags_x86_sse2 ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="SSE2" )
-	else
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NONE" )
-	fi
-
-	if ! use tbb ; then
-		:
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
-			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)"
-			-DTBB_SOVER=$(echo $(basename $(realpath "${ESYSROOT}/usr/$(get_libdir)/libtbb.so")) | cut -f 3 -d ".")
+			-DEMBREE_MAX_ISA:STRING="AVX512"
 		)
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	elif use cpu_flags_x86_avx2 ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_SOVER="${LEGACY_TBB_SLOT}"
+			-DEMBREE_MAX_ISA:STRING="AVX2"
+		)
+	elif use cpu_flags_x86_avx ; then
+		mycmakeargs+=(
+			-DEMBREE_MAX_ISA:STRING="AVX"
+		)
+	elif use cpu_flags_x86_sse4_2 ; then
+		mycmakeargs+=(
+			-DEMBREE_MAX_ISA:STRING="SSE4.2"
+		)
+	elif use cpu_flags_x86_sse2 ; then
+		mycmakeargs+=(
+			-DEMBREE_MAX_ISA:STRING="SSE2"
+		)
+	else
+		mycmakeargs+=(
+			-DEMBREE_MAX_ISA:STRING="NONE"
 		)
 	fi
 
@@ -522,9 +500,7 @@ _get_cbuild_isas() {
 			echo "avx512"
 		fi
 	else
-eerror
-eerror "Kernel of CPU not supported for GPU yet."
-eerror
+eerror "Only linux kernel is supported."
 		die
 	fi
 }
@@ -619,15 +595,15 @@ EOF
 	docinto docs
 	if use doc ; then
 		einstalldocs
-		doman man/man3/*
+		doman "man/man3/"*
 	fi
-	use doc-docfiles && dodoc -r doc/doc
-	use doc-images && dodoc -r doc/images
-	use doc-man && dodoc -r doc/man/man3
-	use doc-html && dodoc -r doc/www
+	use doc-docfiles && dodoc -r "doc/doc"
+	use doc-images && dodoc -r "doc/images"
+	use doc-man && dodoc -r "doc/man/man3"
+	use doc-html && dodoc -r "doc/www"
 	if use tutorials ; then
-		insinto /usr/share/${PN}/tutorials
-		doins -r tutorials/*
+		insinto "/usr/share/${PN}/tutorials"
+		doins -r "tutorials/"*
 	fi
 	docinto licenses
 	dodoc \
@@ -637,24 +613,6 @@ EOF
 		"third-party-programs-oneAPI-DPCPP.txt" \
 		"third-party-programs-TBB.txt" \
 		"third-party-programs.txt"
-	if ! use tbb ; then
-		:
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		for f in $(find "${ED}") ; do
-			test -L "${f}" && continue
-			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-				einfo "Old rpath for ${f}:"
-				patchelf --print-rpath "${f}" || die
-				einfo "Setting rpath for ${f}"
-				patchelf \
-					--set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-					"${f}" \
-					|| die
-			fi
-		done
-	fi
 	uopts_src_install
 }
 
