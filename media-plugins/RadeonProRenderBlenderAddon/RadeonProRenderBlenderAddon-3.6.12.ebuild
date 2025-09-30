@@ -128,7 +128,6 @@ CUDA_TARGETS_UNTESTED=(
 	sm_89
 	sm_90
 )
-LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
 LLVM_COMPAT=( {18..15} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 # LLVM versions supported by Blender:
@@ -253,7 +252,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
 denoiser +hip intel-ocl +matlib +opencl +rocr +vulkan
-ebuild_revision_1
+ebuild_revision_2
 "
 gen_amdgpu_opencl_required_use() {
 	local g
@@ -366,15 +365,9 @@ RDEPEND_NOT_LISTED="
 		|| (
 			$(gen_omp_depends)
 		)
-		|| (
-			(
-				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-				>=dev-cpp/tbb-2020.1:${LEGACY_TBB_SLOT}=
-			)
-			(
-				 <dev-cpp/tbb-2021:0=
-				>=dev-cpp/tbb-2020.1:0=
-			)
+		(
+			>=dev-cpp/tbb-2021:0
+			dev-cpp/tbb:=
 		)
 	)
 "
