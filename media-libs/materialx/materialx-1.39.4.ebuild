@@ -4,14 +4,15 @@
 
 EAPI=8
 
+# U22, U24
 # cxx17
 
-PYTHON_COMPAT=( "python3_"{10..11} ) # CI does not list 3.10 for this package.
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cmake python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="f679db7875a928fd0162cd38bdc7461b2aa81c0f"
+	FALLBACK_COMMIT="270b5cf2ae2be24a3b6ef4b0569f1c93038dda1d"
 	MY_PN="${PN}"
 	MY_P="${MY_PN}-${PV}"
 	IUSE+=" fallback-commit"
@@ -22,10 +23,10 @@ else
 	MY_P="${MY_PN}-${PV}"
 	EGIT_IMGUI_COMMIT="9aae45eb4a05a5a1f96be1ef37eb503a12ceb889"
 	EGIT_IMGUI_NODE_EDITOR_COMMIT="2f99b2d613a400f6579762bd7e7c343a0d844158"
-	EGIT_NANOGUI_COMMIT="f5020e2f3e5114d517642e67afbb21cb88cf04c0"
+	EGIT_NANOGUI_COMMIT="6452dd6944d2ba5c0c9bc0042a1894f703ce1ace"
 		EGIT_GLFW_COMMIT="e130e55a990998c78fd323f21076e798e0efe8a4"
-		EGIT_NANOBIND_COMMIT="07b4e1fc9e94eeaf5e9c2f4a63bdb275a25c82c6"
-			EGIT_ROBIN_MAP_COMMIT="a603419b9a0687c9148e02c8bd5e3db180bb9ac0"
+		EGIT_NANOBIND_COMMIT="e504eebbee419003f639cf9852a957c44e009633"
+			EGIT_ROBIN_MAP_COMMIT="4ec1bf19c6a96125ea22062f38c2cf5b958e448e"
 		EGIT_NANOVG_COMMIT="bf2320d1175122374a9b806d91e9e666c9336375"
 		EGIT_NANOVG_METAL_COMMIT="075b04f16c579728c693b46a2ce408f2325968cf"
 	S="${WORKDIR}/${MY_P}"
@@ -102,8 +103,8 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.16
 	|| (
-		>=sys-devel/gcc-8
-		>=llvm-core/clang-5
+		>=sys-devel/gcc-11
+		>=llvm-core/clang-14
 	)
 "
 PATCHES=(
