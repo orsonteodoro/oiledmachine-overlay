@@ -952,12 +952,17 @@ ot-kernel_has_heterogeneous_power_cores() {
 # @DESCRIPTION:
 # Reports if the arch has multicore support
 ot-kernel_has_multicore() {
-	if [[ -n "${CPU_MULTICORE}" ]] ; then
-		return "${CPU_MULTICORE}"
+	if [[ -n "${CPU_CORES}" ]] ; then
+		if (( ${CPU_CORES} > 1 )) ; then
+			return 0
+		else
+			return 1
+		fi
 	fi
 
 	# TODO finish
 	local model=$(ot-kernel_get_cpu_model)
+	# Pure multicore microarches are only listed.
 	case ${model} in
 		"core2" | \
 		"nehalem" | \
@@ -992,8 +997,6 @@ ot-kernel_has_multicore() {
 		"graniterapids" | \
 		"graniterapids-d" | \
 		"diamondrapids" | \
-		"bonnell" | \
-		"atom" | \
 		"silvermont" | \
 		"slm" | \
 		"goldmont" | \
@@ -1041,7 +1044,13 @@ ot-kernel_has_multicore() {
 		"octeontx2f95n" | \
 		"thunderx2t99" | \
 		"thunderx3t110" | \
-		"xgene1" )
+		"xgene1" | \
+		"leon5" | \
+		"niagara" | \
+		"niagara2" | \
+		"niagara3" | \
+		"niagara4" | \
+		"m8")
 			return 0
 			;;
 	esac
