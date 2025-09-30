@@ -1021,11 +1021,6 @@ ot-kernel_get_cpu_model() {
 	local model
 	# Set by environment variable
 
-	if [[ -n "${CPU_MODEL}" ]] ; then
-		echo "${CPU_MODEL}"
-		return
-	fi
-
 	# Auto detect based on user's compiler flags
 	local model=$(ot-kernel_get_cpu_model_from_flags)
 	echo "${model}"
@@ -1062,12 +1057,9 @@ ot-kernel_has_heterogeneous_power_cores() {
 # @DESCRIPTION:
 # Reports if the arch has multicore support
 ot-kernel_has_multicore() {
-	if [[ -n "${CPU_CORES}" ]] ; then
-		if (( ${CPU_CORES} > 1 )) ; then
-			return 0
-		else
-			return 1
-		fi
+	local cpu_cores=${CPU_CORES:-1}
+	if (( ${cpu_cores} > 1 )) ; then
+		return 0
 	fi
 
 	local model=$(ot-kernel_get_cpu_model)
@@ -1075,8 +1067,22 @@ ot-kernel_has_multicore() {
 	case ${model} in
 		"bonnell" | \
 		"atom" | \
-		"cortex-a53")
-ewarn "${model} is both unicore and multicore.  CPU_CORES to force unicore for older models."
+		"leon3" | \
+		"leon3v7" | \
+		"leon5" | \
+		"cortex-a35" | \
+		"cortex-a53" | \
+		"cortex-a55" | \
+		"cortex-a57" | \
+		"cortex-a72" | \
+		"cortex-a73" | \
+		"cortex-a75" | \
+		"cortex-a76" | \
+		"cortex-a77" | \
+		"cortex-x1" | \
+		"cortex-a510" | \
+		"cortex-x2" )
+ewarn "${model} was available for both unicore and multicore.  Use CPU_CORES=1 to force unicore for older models."
 	esac
 
 	# TODO finish
@@ -1148,7 +1154,18 @@ ewarn "${model} is both unicore and multicore.  CPU_CORES to force unicore for o
 		"apple-m2" | \
 		"apple-m3" | \
 		"cobalt-100" | \
+		"cortex-a35" | \
 		"cortex-a53" | \
+		"cortex-a55" | \
+		"cortex-a57" | \
+		"cortex-a72" | \
+		"cortex-a73" | \
+		"cortex-a75" | \
+		"cortex-a76" | \
+		"cortex-a77" | \
+		"cortex-x1" | \
+		"cortex-a510" | \
+		"cortex-x2" | \
 		"cortex-a57.cortex-a53" | \
 		"cortex-a72.cortex-a53" | \
 		"cortex-a73.cortex-a35" | \
@@ -1167,6 +1184,8 @@ ewarn "${model} is both unicore and multicore.  CPU_CORES to force unicore for o
 		"thunderx2t99" | \
 		"thunderx3t110" | \
 		"xgene1" | \
+		"leon3" | \
+		"leon3v7" | \
 		"leon5" | \
 		"niagara" | \
 		"niagara2" | \
