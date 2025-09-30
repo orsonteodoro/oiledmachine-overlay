@@ -289,7 +289,7 @@ ot-kernel_get_vendor_from_flags() {
 		["lakemont"]="intel"
 		["pentium-mmx"]="intel"
 		["pentiumpro"]="intel"
-		["i686"]="intel"
+		["i686"]="intel" # For Cyrix use -mtune=i686 instead
 		["pentium2"]="intel"
 		["pentium3"]="intel"
 		["pentium3m"]="intel"
@@ -540,6 +540,8 @@ ot-kernel_get_vendor_from_flags() {
 	# -mtune=
 	declare -A MODEL_TO_VENDOR_NAME_MTUNE=(
 		["generic"]="generic"
+
+		["i686"]="generic"
 
 		["cortex-a35"]="arm"
 		["cortex-a53"]="arm"
