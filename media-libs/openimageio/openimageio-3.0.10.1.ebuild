@@ -3,24 +3,24 @@
 
 EAPI=8
 
+# U22, U24
+
 # Requirements:
-# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.13.1/INSTALL.md
+# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
+# For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
-LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {18..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
-OPENEXR_V2_PV=(
-	# openexr:imath
-	"2.5.9:2.5.9"
-	"2.5.8:2.5.8"
-)
 OPENEXR_V3_PV=(
 	# openexr:imath
+	"3.3.5:3.1.12"
+	"3.3.4:3.1.12"
+	"3.3.3:3.1.12"
 	"3.3.2:3.1.12"
 	"3.3.1:3.1.12"
 	"3.3.0:3.1.11"
@@ -40,7 +40,7 @@ OPENEXR_V3_PV=(
 	"3.1.5:3.1.5"
 	"3.1.4:3.1.4"
 )
-OPENVDB_APIS=( {11..5} )
+OPENVDB_APIS=( {12..9} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 PYTHON_COMPAT=( "python3_"{11..12} )
@@ -114,7 +114,7 @@ ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
-gif gui heif icc jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw
+gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
 ebuild_revision_30
 "
@@ -190,18 +190,10 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
-				~dev-libs/imath-${imath_pv}:=
-			)
-		"
-	done
-	for row in ${OPENEXR_V2_PV[@]} ; do
-		local ilmbase_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}:=
-				~media-libs/ilmbase-${ilmbase_pv}:=
+				~media-libs/openexr-${openexr_pv}
+				media-libs/openexr:=
+				~dev-libs/imath-${imath_pv}
+				dev-libs/imath:=
 			)
 		"
 	done
@@ -209,15 +201,32 @@ gen_openexr_pairs() {
 
 # Depends Mar 16, 2024
 RDEPEND+="
+	(
+		>=dev-libs/boost-1.53
+		dev-libs/boost:=
+	)
+	(
+		>=dev-libs/libfmt-7.0.0
+		dev-libs/libfmt:=
+	)
+	(
+		>=dev-libs/pugixml-1.8
+		dev-libs/pugixml:=
+	)
+	(
+		>=media-libs/tiff-4.0:0
+		media-libs/tiff:=
+	)
+	(
+		>=sys-libs/zlib-1.2.7
+		sys-libs/zlib:=
+	)
 	>=dev-cpp/robin-map-0.6.2
-	>=dev-libs/boost-1.53:=
-	>=dev-libs/libfmt-9.0.0:=
-	>=dev-libs/pugixml-1.8:=
-	>=media-libs/tiff-3.9:0=
-	sys-libs/zlib:=
+	>=media-libs/libjpeg-turbo-2.1
 	virtual/jpeg:0
 	color-management? (
-		>=media-libs/opencolorio-1.1:=
+		>=media-libs/opencolorio-2.2
+		media-libs/opencolorio:=
 	)
 	dds? (
 		>=media-libs/libsquish-1.13
@@ -227,34 +236,50 @@ RDEPEND+="
 	)
 	ffmpeg? (
 		|| (
-			media-video/ffmpeg:0/55.57.57
 			media-video/ffmpeg:0/56.58.58
 			media-video/ffmpeg:0/57.59.59
 			media-video/ffmpeg:0/58.60.60
 			media-video/ffmpeg:0/59.61.61
+			media-video/ffmpeg:0/60.62.62
 		)
 		media-video/ffmpeg:=
 	)
 	field3d? (
-		>=media-libs/Field3D-1.7.3:=
+		>=media-libs/Field3D-1.7.3
+		media-libs/Field3D:=
 	)
 	fits? (
 		sci-libs/cfitsio:=
 	)
 	gif? (
-		>=media-libs/giflib-4.1:0=
+		>=media-libs/giflib-5.0:0
+		media-libs/giflib:=
 	)
 	heif? (
-		>=media-libs/libheif-1.3:=
+		(
+			>=media-libs/libheif-1.11
+			media-libs/libheif:=
+		)
 		avif? (
-			>=media-libs/libheif-1.7:=[aom?,rav1e?]
+			>=media-libs/libheif-1.11[aom?,rav1e?]
+			media-libs/libheif:=
 		)
 	)
+	j2c? (
+		>=media-libs/jph-0.21.2
+		media-libs/jph:=
+	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2:2=
+		>=media-libs/openjpeg-2.0:2
+		media-libs/openjpeg:=
+	)
+	jxl? (
+		>=media-libs/libjxl-0.10.1
+		media-libs/libjxl:=
 	)
 	opencv? (
-		>=media-libs/opencv-3:=
+		>=media-libs/opencv-4
+		media-libs/opencv:=
 	)
 	opengl? (
 		media-libs/glew:=
@@ -262,6 +287,14 @@ RDEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
+		abi12-compat? (
+			|| (
+				=media-gfx/openvdb-14*[abi12-compat]
+				=media-gfx/openvdb-13*[abi12-compat]
+				=media-gfx/openvdb-12*[abi12-compat]
+			)
+			media-gfx/openvdb:=
+		)
 		abi11-compat? (
 			|| (
 				=media-gfx/openvdb-13*[abi11-compat]
@@ -286,67 +319,30 @@ RDEPEND+="
 			)
 			media-gfx/openvdb:=
 		)
-		abi8-compat? (
-			|| (
-				=media-gfx/openvdb-10*[abi8-compat]
-				=media-gfx/openvdb-9*[abi8-compat]
-				=media-gfx/openvdb-8*[abi8-compat]
-			)
-			media-gfx/openvdb:=
-		)
-		abi7-compat? (
-			|| (
-				=media-gfx/openvdb-9*[abi7-compat]
-				=media-gfx/openvdb-8*[abi7-compat]
-				=media-gfx/openvdb-7*[abi7-compat]
-			)
-			media-gfx/openvdb:=
-		)
-		abi6-compat? (
-			|| (
-				=media-gfx/openvdb-8*[abi6-compat]
-				=media-gfx/openvdb-7*[abi6-compat]
-				=media-gfx/openvdb-6*[abi6-compat]
-			)
-			media-gfx/openvdb:=
-		)
-		abi5-compat? (
-			|| (
-				=media-gfx/openvdb-7*[abi5-compat]
-				=media-gfx/openvdb-6*[abi5-compat]
-				=media-gfx/openvdb-5*[abi5-compat]
-			)
-			media-gfx/openvdb:=
-		)
 		tbb? (
-			|| (
-				(
-					!<dev-cpp/tbb-2021:0=
-					<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-					>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
-				)
-				(
-					>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
-				)
-			)
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+			dev-cpp/tbb:=
 		)
 	)
 	png? (
-		media-libs/libpng:0=
+		>=media-libs/libpng-1.6.0:0
+		media-libs/libpng:=
 	)
 	ptex? (
 		>=media-libs/ptex-2.3.1:=
+		media-libs/ptex:=
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			dev-libs/boost:=[${PYTHON_USEDEP},python]
+			dev-libs/boost[${PYTHON_USEDEP},python]
+			dev-libs/boost:=
 		')
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
 		$(python_gen_cond_dep '
-			>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.7[${PYTHON_USEDEP}]
 		')
 	)
 	qt5? (
@@ -369,18 +365,24 @@ RDEPEND+="
 	)
 	raw? (
 		!cxx17? (
-			<media-libs/libraw-0.20:=
-			>=media-libs/libraw-0.18:=
+			(
+				>=media-libs/libraw-0.18
+				<media-libs/libraw-0.20
+			)
+			media-libs/libraw:=
 		)
 		cxx17? (
-			>=media-libs/libraw-0.20:=
+			>=media-libs/libraw-0.20
+			media-libs/libraw:=
 		)
 	)
 	truetype? (
-		>=media-libs/freetype-2.8:2=
+		>=media-libs/freetype-2.10.0:2
+		media-libs/freetype:=
 	)
 	webp? (
-		>=media-libs/libwebp-0.6.1:=
+		>=media-libs/libwebp-1.1
+		media-libs/libwebp:=
 	)
 	|| (
 		$(gen_openexr_pairs)
@@ -408,7 +410,7 @@ BDEPEND_ICC="
 	>=sys-devel/icc-13
 "
 BDEPEND+="
-	>=dev-build/cmake-3.15
+	>=dev-build/cmake-3.18.2
 	clang? (
 		${BDEPEND_CLANG}
 	)
@@ -435,8 +437,7 @@ BDEPEND+="
 DOCS=( "CHANGES.md" "CREDITS.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.5.8.0-fits.patch"
-	"${FILESDIR}/${PN}-2.5.8.0-fix-unit_simd.patch"
-	"${FILESDIR}/${PN}-2.5.8.0-fix-tests.patch"
+	"${FILESDIR}/${PN}-3.0.10.1-fix-tests.patch"
 )
 
 _oiio_use() {
@@ -497,20 +498,6 @@ src_prepare() {
 				"${WORKDIR}/j2kp4files_v1_5" \
 				|| die
 		fi
-	fi
-}
-
-get_tbb_slot() {
-	if ! use tbb ; then
-		echo "-1"
-	elif use openvdb && has_version "<media-gfx/openvdb-9" ; then
-		echo ${LEGACY_TBB_SLOT}
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		echo ${ONETBB_SLOT}
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		echo ${LEGACY_TBB_SLOT}
-	else
-		echo "-1"
 	fi
 }
 
@@ -704,22 +691,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	local use_tbb=$(get_tbb_slot)
-
-	if [[ "${use_tbb}" == "${ONETBB_SLOT}" ]] ; then
-		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
-			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)"
-		)
-		sed -i -e "s|tbb/tbb_stddef.h|oneapi/tbb/version.h|g" \
-			"src/cmake/modules/FindTBB.cmake" || die
-	elif [[ "${use_tbb}" == "${LEGACY_TBB_SLOT}" ]] ; then
-		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-		)
-	fi
-
 	cmake_src_configure
 }
 
@@ -757,20 +728,6 @@ src_test() {
 src_install() {
 	font_src_install
 	cmake_src_install
-
-	local use_tbb=$(get_tbb_slot)
-	if [[ "${use_tbb}" == "${LEGACY_TBB_SLOT}" ]] ; then
-		for f in $(find "${ED}") ; do
-			test -L "${f}" && continue
-			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-				einfo "Old rpath for ${f}:"
-				patchelf --print-rpath "${f}" || die
-				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "${EROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-					"${f}" || die
-			fi
-		done
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
