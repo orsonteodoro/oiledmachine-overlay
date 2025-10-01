@@ -289,7 +289,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_34
+	ebuild_revision_35
 "
 # hal for acceleration
 IUSE+="
@@ -458,11 +458,6 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512vl
 	)
-	cpu_flags_x86_avx512er? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512pf
-	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512cd
@@ -470,6 +465,17 @@ REQUIRED_USE="
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
+	)
+
+	cpu_flags_x86_avx512er? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512pf
+	)
+	cpu_flags_x86_avx512pf? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512er
 	)
 
 	cpu_flags_x86_avx512_vpopcntdq? (
