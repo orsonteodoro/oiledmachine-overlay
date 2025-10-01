@@ -64,36 +64,36 @@ RESTRICT="
 	strip
 "
 SLOT="0/3" # current - age
-ARM_IUSE="
-	cpu_flags_arm_crc32
-	cpu_flags_arm_dotprod
-	cpu_flags_arm_i8mm
-	cpu_flags_arm_neon
-	cpu_flags_arm_sve
-	cpu_flags_arm_sve2
-"
-PPC_IUSE="
-	cpu_flags_ppc_vsx
-"
-RISCV_IUSE="
-	cpu_flags_riscv_rvv
-"
-X86_IUSE="
-	cpu_flags_x86_mmx
-	cpu_flags_x86_sse
-	cpu_flags_x86_sse2
-	cpu_flags_x86_sse3
-	cpu_flags_x86_ssse3
-	cpu_flags_x86_sse4_1
-	cpu_flags_x86_sse4_2
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512cd
-	cpu_flags_x86_avx512dq
-	cpu_flags_x86_avx512f
-	cpu_flags_x86_avx512vl
-"
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_crc32"
+	"cpu_flags_arm_dotprod"
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_neon"
+	"cpu_flags_arm_sve"
+	"cpu_flags_arm_sve2"
+)
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_vsx"
+)
+CPU_FLAGS_RISCV=(
+	"cpu_flags_riscv_rvv"
+)
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_mmx"
+	"cpu_flags_x86_sse"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse3"
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_sse4_1"
+	"cpu_flags_x86_sse4_2"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512cd"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vl"
+)
 PGO_TRAINERS="
 	libaom_trainers_2_pass_constrained_quality
 	libaom_trainers_2_pass_constrained_quality_quick
@@ -103,19 +103,19 @@ PGO_TRAINERS="
 	libaom_trainers_lossless_quick
 "
 IUSE="
-${ARM_IUSE}
-${PPC_IUSE}
+${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_PPC[@]}
+${CPU_FLAGS_RISCV[@]}
+${CPU_FLAGS_X86[@]}
 ${PGO_TRAINERS}
-${RISCV_IUSE}
-${X86_IUSE}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE="
 	arm64? (
 		cpu_flags_arm_neon
 	)
-	cpu_flags_x86_sse2? (
+	cpu_flags_x86_sse? (
 		cpu_flags_x86_mmx
 	)
 	cpu_flags_x86_sse2? (
@@ -131,31 +131,27 @@ REQUIRED_USE="
 		cpu_flags_x86_ssse3
 	)
 	cpu_flags_x86_sse4_2? (
-		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse4_1
 	)
 	cpu_flags_x86_avx? (
-		cpu_flags_x86_sse4_1
 		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_avx512bw? (
-		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
-		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512f
@@ -169,7 +165,6 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
-		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq

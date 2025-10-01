@@ -146,17 +146,17 @@ REQUIRED_USE="
 		cpu_flags_x86_ssse3
 		cpu_flags_x86_sse4
 	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_sse4_2
+	)
 	cpu_flags_x86_sse4? (
 		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4
 	)
-	cpu_flags_x86_f16c? (
-		cpu_flags_x86_avx
-	)
 	cpu_flags_x86_avx2? (
-		cpu_flags_x86_f16c
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512cd

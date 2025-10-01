@@ -30,15 +30,15 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 X86_CPU_FLAGS=(
-	avx:avx
-	avx2:avx2
-	avx512f:avx512f
-	avx512vl:avx512vl
-	avx512bw:avx512bw
-	avx512dq:avx512dq
-	avx512cd:avx512cd
-	sse2:sse2
-	sse4_2:sse4_2
+	"avx:avx"
+	"avx2:avx2"
+	"avx512bw:avx512bw"
+	"avx512f:avx512f"
+	"avx512cd:avx512cd"
+	"avx512dq:avx512dq"
+	"avx512vl:avx512vl"
+	"sse2:sse2"
+	"sse4_2:sse4_2"
 )
 CPU_FLAGS=(
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
@@ -80,50 +80,49 @@ ebuild_revision_7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	^^ ( clang gcc )
+	^^ (
+		clang
+		gcc
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse2
+	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512vl
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512cd
-	)
-	cpu_flags_x86_avx512vl? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512cd
-	)
 	cpu_flags_x86_avx512bw? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512cd
-	)
-	cpu_flags_x86_avx512dq? (
-		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
 	)
 	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
 	)
-	cpu_flags_x86_sse4_2? (
-		cpu_flags_x86_sse2
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
 	)
 	pgo? (
 		tutorials

@@ -11,14 +11,20 @@ ARM_CPU_FLAGS=(
 )
 PYTHON_COMPAT=( "python3_12" )
 X86_CPU_FLAGS=(
-	"sse4_1:sse4_1"
-	"sse4_2:sse4_2"
 	"avx2:avx2"
 	"avx512f:avx512f"
+	"avx512bw:avx512bw"
+	"avx512cd:avx512cd"
 	"avx512dq:avx512dq"
-	"avx512pf:avx512pf"
 	"avx512vl:avx512vl"
-
+	"bmi:bmi"
+	"bmi2:bmi2"
+	"f16c:f16c"
+	"fma:fma"
+	"lzcnt:lzcnt"
+	"sse2:sse2"
+	"sse4_1:sse4_1"
+	"sse4_2:sse4_2"
 )
 CPU_FLAGS=(
 	"${ARM_CPU_FLAGS[@]/#/+cpu_flags_arm_}"
@@ -45,25 +51,60 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 debug doc tbb
+ebuild_revision_1
 "
 REQUIRED_USE+="
 	tbb
-	cpu_flags_x86_avx2? (
+	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_sse4_1
 	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx512vl? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
+	cpu_flags_x86_bmi? (
+		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx512pf? (
-		cpu_flags_x86_avx2
+	cpu_flags_x86_bmi2? (
+		cpu_flags_x86_bmi
+	)
+	cpu_flags_x86_fma? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_lzcnt? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 	)
 	|| (
@@ -101,14 +142,6 @@ src_configure() {
 	# Do not trust with LTO.
 	filter-lto
 
-	local has_sse4="OFF"
-
-	if use cpu_flags_x86_sse4_1 \
-		|| use cpu_flags_x86_sse4_2
-	then
-		has_sse4="ON"
-	fi
-
 	# This is currently needed on arm64 to get the NEON SIMD wrapper to compile the code successfully
 	use cpu_flags_arm_neon && append-flags -flax-vector-conversions
 
@@ -119,7 +152,7 @@ src_configure() {
 		-DOPENPGL_BUILD_STATIC=OFF
 		-DOPENPGL_ISA_NEON=$(usex cpu_flags_arm_neon)
 		-DOPENPGL_ISA_NEON2X=$(usex cpu_flags_arm_neon2x)
-		-DOPENPGL_ISA_SSE4="${has_sse4}"
+		-DOPENPGL_ISA_SSE4=$(usex cpu_flags_x86_sse4_2)
 		-DOPENPGL_ISA_AVX2=$(usex cpu_flags_x86_avx2)
 		-DOPENPGL_ISA_AVX512=$(usex cpu_flags_x86_avx512f)
 		-DOPENPGL_USE_OMP_THREADING=$(usex tbb "OFF" "ON")
