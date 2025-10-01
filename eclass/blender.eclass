@@ -78,10 +78,10 @@ X86_CPU_FLAGS=(
 	"lzcnt:lzcnt"
 	"sse4_1:sse4_1"
 	"sse4_2:sse4_2"
-	"avx:avx"
 	"f16c:f16c"
 	"fma:fma"
 	"bmi:bmi"
+	"avx:avx"
 	"avx2:avx2"
 	"avx512f:avx512f"
 	"avx512dq:avx512dq"
@@ -133,18 +133,17 @@ REQUIRED_USE+="
 		cpu_flags_x86_sse4_1
 	)
 	cpu_flags_x86_lzcnt? (
-		cpu_flags_x86_sse4_2
+		cpu_flags_x86_avx2
 		cpu_flags_x86_bmi
 	)
 	cpu_flags_x86_bmi? (
 		cpu_flags_x86_sse4_2
-		cpu_flags_x86_lzcnt
 	)
 	cpu_flags_x86_fma? (
-		cpu_flags_x86_sse4_2
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_f16c? (
-		cpu_flags_x86_sse4_2
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
