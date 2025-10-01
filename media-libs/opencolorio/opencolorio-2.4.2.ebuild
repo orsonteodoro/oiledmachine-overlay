@@ -24,9 +24,19 @@ CPU_FLAGS_ARM=(
 )
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512cd"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vl"
 	"cpu_flags_x86_f16c"
 	"cpu_flags_x86_sse"
 	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse3"
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_sse4"
+	"cpu_flags_x86_sse4_2"
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 OPENEXR_V3_PV=(
@@ -114,7 +124,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 doc opengl python static-libs test
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="
 	doc? (
@@ -126,11 +136,58 @@ REQUIRED_USE="
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_sse
 	)
-	cpu_flags_x86_avx? (
+	cpu_flags_x86_sse3? (
 		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse4
+	)
+	cpu_flags_x86_sse4? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4
 	)
 	cpu_flags_x86_f16c? (
 		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
 	)
 "
 # Depends update: Aug 31, 2023
@@ -251,15 +308,18 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DOCIO_INSTALL_EXT_PACKAGES=NONE
 		-DOCIO_PYTHON_VERSION="${EPYTHON/python/}"
 		-DOCIO_USE_AVX=$(usex cpu_flags_x86_avx)
+		-DOCIO_USE_AVX2=$(usex cpu_flags_x86_avx2)
+		-DOCIO_USE_AVX512=$(usex cpu_flags_x86_avx512f)
 		-DOCIO_USE_F16C$(usex cpu_flags_x86_f16c)
 		-DOCIO_USE_SSE=$(usex cpu_flags_x86_sse)
 		-DOCIO_USE_SSE2=$(usex cpu_flags_x86_sse2)
+		-DOCIO_USE_SSE3=$(usex cpu_flags_x86_sse3)
+		-DOCIO_USE_SSSE3=$(usex cpu_flags_x86_ssse3)
+		-DOCIO_USE_SSE4=$(usex cpu_flags_x86_sse4)
+		-DOCIO_USE_SSE42=$(usex cpu_flags_x86_sse4_2)
 	)
 	if \
-		   use cpu_flags_x86_avx \
-		|| use cpu_flags_x86_f16c \
-		|| use cpu_flags_x86_sse \
-		|| use cpu_flags_x86_sse2 \
+		   use cpu_flags_x86_sse \
 		|| use cpu_flags_arm_neon \
 	; then
 		mycmakeargs+=(
