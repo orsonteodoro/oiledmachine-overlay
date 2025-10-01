@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake-multilib sandbox-changes
+# U24
+
+inherit check-compiler-switch cmake-multilib sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="v1.x"
@@ -22,14 +24,16 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="test"
 DEPEND="
-	>=dev-libs/libfmt-8.0.0:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-9.1.0[${MULTILIB_USEDEP}]
+	dev-libs/libfmt:=
 "
 RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.11
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	sys-devel/gcc:11
+	>=dev-build/cmake-3.28.3
+	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-force_external_fmt.patch"
@@ -42,6 +46,7 @@ check_network_sandbox() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	use test && check_network_sandbox
 }
 
@@ -57,6 +62,17 @@ src_prepare() {
 }
 
 src_configure() {
+	# Reduce chance of build time failure
+	export CC="${CHOST}-gcc-11"
+	export CC="${CHOST}-g++"
+	strip-unsupported-flags
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DSPDLOG_BUILD_BENCH=no
 		-DSPDLOG_BUILD_EXAMPLE=no
