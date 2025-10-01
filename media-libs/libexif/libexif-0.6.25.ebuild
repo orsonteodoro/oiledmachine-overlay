@@ -3,7 +3,8 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+# It can process GPS coords
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO ID IO OOBR UAF UM"
 
 inherit autotools cflags-hardened multilib-minimal
@@ -15,7 +16,10 @@ SRC_URI="https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz"
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="doc nls"
+IUSE="
+doc nls
+ebuild_revision_1
+"
 
 RDEPEND="nls? ( virtual/libintl )"
 DEPEND="${RDEPEND}"
