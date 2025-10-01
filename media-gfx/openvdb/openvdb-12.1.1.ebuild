@@ -9,6 +9,10 @@
 
 EAPI=8
 
+CPU_FLAGS_X86=(
+	"avx"
+	"sse4_2"
+)
 LLVM_COMPAT=( {18..15} ) # Max limit for Blender
 LLVM_COMPAT_AX=( {18..15} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -51,7 +55,6 @@ VDB_UTILS=(
 	"vdb_render"
 	"vdb_view"
 )
-CPU_FLAGS_X86=( avx sse4_2 )
 
 inherit check-compiler-switch cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
@@ -80,7 +83,7 @@ ${OPENVDB_ABIS_[@]} +abi${PV%%.*}-compat
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus +nanovdb -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	^^ (
@@ -378,9 +381,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DOPENVDB_BUILD_VDB_AX=$(usex utils)
 		)
 	fi
-
-einfo "SITEDIR: "$(python_get_sitedir)
-	die
 
 	if use python; then
 		mycmakeargs+=(
