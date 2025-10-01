@@ -3,12 +3,14 @@
 
 EAPI=8
 
-# U 22.04
+# U22
+
+MY_PN="OpenXR-SDK-Source"
 
 CMAKE_BUILD_TYPE="Release"
 MESA_PV="22.0.1"
-MY_PN="OpenXR-SDK-Source"
 PYTHON_COMPAT=( "python3_"{8..13} )
+VULKAN_PV="1.3.204.1"
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
@@ -29,8 +31,8 @@ LICENSE="
 "
 # See also https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.18/.reuse/dep5
 HOMEPAGE="
-	https://khronos.org/openxr
 	https://github.com/KhronosGroup/OpenXR-SDK-Source
+	https://khronos.org/openxr
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -39,22 +41,28 @@ doc gles2 +system-jsoncpp wayland xcb +xlib
 "
 REQUIRED_USE+="
 	^^ (
+		wayland
 		xcb
 		xlib
-		wayland
 	)
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 	media-libs/mesa[egl(+),libglvnd(+)]
-	media-libs/vulkan-drivers
-	media-libs/vulkan-loader
+	>=media-libs/vulkan-drivers-${VULKAN_PV}
+	>=media-libs/vulkan-loader-${VULKAN_PV}
 	virtual/libc
 	gles2? (
-		media-libs/mesa[gles2(+),opengl]
+		>=media-libs/mesa-${MESA_PV}[gles2(+),opengl]
 	)
 	system-jsoncpp? (
-		dev-libs/jsoncpp
+		>=dev-libs/jsoncpp-1.9.5
+	)
+	wayland? (
+		>=dev-libs/wayland-1.20.0
+		>=dev-libs/wayland-protocols-1.25
+		>=dev-util/wayland-scanner-1.20.0
+		>=media-libs/mesa-${MESA_PV}[egl(+)]
 	)
 	xcb? (
 		>=x11-libs/libxcb-1.14
@@ -62,24 +70,19 @@ DEPEND+="
 		>=x11-libs/xcb-util-wm-0.4.1
 	)
 	xlib? (
-		x11-base/xorg-proto
 		>=x11-libs/libX11-1.7.5
-	)
-	wayland? (
-		>=dev-libs/wayland-1.20.0
-		>=dev-libs/wayland-protocols-1.25
-		dev-util/wayland-scanner
-		>=media-libs/mesa-${MESA_PV}[egl(+)]
+		x11-base/xorg-proto
 	)
 "
 RDEPEND+="
 	${DEPEND}
+	>=dev-util/vulkan-headers-${VULKAN_PV}
 "
 BDEPEND+="
+	${PYTHON_DEPS}
 	$(python_gen_any_dep '
 		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 	')
-	${PYTHON_DEPS}
 	>=dev-build/cmake-3.22.1
 	virtual/pkgconfig
 	|| (
@@ -111,7 +114,8 @@ src_configure() {
 			-DPRESENTATION_BACKEND=wayland
 		)
 	else
-		die "Must choose a PRESENTATION_BACKEND"
+eerror "You must choose either xlib, xcb, wayland USE flag"
+		die
 	fi
 	cmake_src_configure
 }
