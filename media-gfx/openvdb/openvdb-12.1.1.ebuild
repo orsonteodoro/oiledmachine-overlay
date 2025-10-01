@@ -378,6 +378,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use python; then
 		mycmakeargs+=(
+			-Dnanobind_DIR="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/nanobind/cmake"
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
 			-DPython_EXECUTABLE="${PYTHON}"
 			-DPython_INCLUDE_DIR="$(python_get_includedir)"
