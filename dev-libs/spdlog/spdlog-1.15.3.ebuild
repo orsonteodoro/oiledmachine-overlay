@@ -24,7 +24,7 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 DEPEND="
 	>=dev-libs/libfmt-9.1.0[${MULTILIB_USEDEP}]
@@ -67,7 +67,7 @@ src_prepare() {
 src_configure() {
 	# Reduce chance of build time failure
 	export CC="${CHOST}-gcc-11"
-	export CXX="${CHOST}-g++"
+	export CXX="${CHOST}-g++-11"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 	check-compiler-switch_end
