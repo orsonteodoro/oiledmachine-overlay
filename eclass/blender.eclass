@@ -147,6 +147,8 @@ REQUIRED_USE+="
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+		cpu_flags_x86_fma
 	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2

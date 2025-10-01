@@ -460,7 +460,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mimalloc -mkl +nccl +mpi +nnpack +numpy +onednn -openblas -opencl -opencv +openmp
 +rccl rocm roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
-ebuild_revision_29
+ebuild_revision_30
 "
 gen_cuda_required_use() {
 	local x
@@ -543,6 +543,8 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+		cpu_flags_x86_fma
 	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
