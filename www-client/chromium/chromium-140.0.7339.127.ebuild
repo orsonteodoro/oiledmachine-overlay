@@ -734,14 +734,15 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx
 	)
 
-	cpu_flags_x86_avx512bw? (
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
@@ -749,41 +750,35 @@ REQUIRED_USE+="
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
 	)
 
 	cpu_flags_x86_avx512vnni? (
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512bw
 		cpu_flags_x86_f16c
 	)
 
+	cpu_flags_x86_avx512bf16? (
+		cpu_flags_x86_avx512vnni
+	)
+
+	cpu_flags_x86_vpclmulqdq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_vaes
+	)
 	cpu_flags_x86_vaes? (
 		cpu_flags_x86_aes
 		cpu_flags_x86_vpclmulqdq
 	)
-	cpu_flags_x86_vpclmulqdq? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_gfni
-		cpu_flags_x86_vaes
-	)
 	cpu_flags_x86_avx512vbmi? (
-		cpu_flags_x86_vpclmulqdq
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512bw
 		cpu_flags_x86_f16c
+		cpu_flags_x86_vpclmulqdq
 	)
 
 	cpu_flags_x86_avx512vbmi2? (
@@ -809,9 +804,6 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512vpopcntdq
 	)
 
-	cpu_flags_x86_avx512bf16? (
-		cpu_flags_x86_avx512vnni
-	)
 
 	cpu_flags_x86_avx512fp16? (
 		cpu_flags_x86_avx512vbmi2
@@ -3754,10 +3746,15 @@ einfo "Using the system toolchain"
 		)
 	# Workaround for build failure with clang-18 and -march=native without
 	# avx512. Does not affect e.g. -march=skylake, only native (bug #931623).
-		use amd64 && is-flagq -march=native &&
-			[[ $(clang-major-version) -eq "18" ]] && [[ $(clang-minor-version) -lt "6" ]] &&
-			tc-cpp-is-true "!defined(__AVX512F__)" ${CXXFLAGS} &&
-			append-flags -mevex512
+		if \
+			   use amd64 \
+			&& is-flagq "-march=native" \
+			&& [[ $(clang-major-version) -eq "18" ]] \
+			&& [[ $(clang-minor-version) -lt "6" ]] \
+			&& ! use cpu_flags_x86_avx512f \
+		; then
+			append-flags $(test-flags-CXX "-mevex512")
+		fi
 	else
 		myconf_gn+=(
 			"is_clang=false"
