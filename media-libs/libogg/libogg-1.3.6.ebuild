@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
 inherit cflags-hardened multilib-minimal
 
@@ -14,7 +14,10 @@ SRC_URI="https://downloads.xiph.org/releases/ogg/${P}.tar.xz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="static-libs"
+IUSE="
+static-libs
+ebuild_revision_1
+"
 
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/ogg/config_types.h"
