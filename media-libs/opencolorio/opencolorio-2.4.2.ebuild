@@ -7,7 +7,6 @@ EAPI=8
 # expandvars
 # openfx
 # prettymethods - delete references?
-# sphinx-press-theme
 
 # minizip-ng 3.0.10 causes
 #error: user-defined literal in preprocessor expression
@@ -15,13 +14,26 @@ EAPI=8
 #      |     ^~~~~~~~~~~~~~~~
 
 # For requirements, see
-# https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.3.2/docs/quick_start/installation.rst#building-from-source
+# https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.4.2/docs/quick_start/installation.rst#building-from-source
+# https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_neon"
+)
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_sse"
+	"cpu_flags_x86_sse2"
+)
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 OPENEXR_V3_PV=(
 	# openexr:imath
+	"3.3.5:3.1.12"
+	"3.3.4:3.1.12"
+	"3.3.3:3.1.12"
 	"3.3.2:3.1.12"
 	"3.3.1:3.1.12"
 	"3.3.0:3.1.11"
@@ -52,8 +64,10 @@ gen_half_pairs_rdepend() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
-				~dev-libs/imath-${imath_pv}:=
+				~media-libs/openexr-${openexr_pv}
+				media-libs/openexr:=
+				~dev-libs/imath-${imath_pv}
+				dev-libs/imath:=
 			)
 		"
 	done
@@ -94,13 +108,27 @@ RESTRICT="
 	test
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test ebuild_revision_2"
+IUSE="
+${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_X86[@]}
+doc opengl python static-libs test
+ebuild_revision_2
+"
 REQUIRED_USE="
 	doc? (
 		python
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
 	)
 "
 # Depends update: Aug 31, 2023
@@ -113,7 +141,7 @@ RDEPEND="
 	dev-libs/tinyxml
 	dev-build/ninja
 	opengl? (
-		>=media-libs/openimageio-2.3.12.0-r3:=
+		>=media-libs/openimageio-2.2.14:=
 		>=media-libs/lcms-2.2:2
 		media-libs/freeglut
 		media-libs/glew:=
@@ -133,7 +161,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.13
+	>=dev-build/cmake-3.14
 	virtual/pkgconfig
 	doc? (
 		app-text/doxygen
@@ -143,6 +171,7 @@ BDEPEND="
 			dev-python/recommonmark[${PYTHON_USEDEP}]
 			dev-python/six[${PYTHON_USEDEP}]
 			dev-python/sphinx[${PYTHON_USEDEP}]
+			dev-python/sphinx-press-theme[${PYTHON_USEDEP}]
 			dev-python/sphinx-tabs[${PYTHON_USEDEP}]
 			dev-python/testresources[${PYTHON_USEDEP}]
 		')
@@ -175,18 +204,18 @@ src_prepare() {
 	cmake_src_prepare
 
 	sed -i -e "s|LIBRARY DESTINATION lib|LIBRARY DESTINATION $(get_libdir)|g" \
-		{,src/bindings/python/,src/OpenColorIO/,src/libutils/oglapphelpers/}CMakeLists.txt \
+		{"","src/bindings/python/","src/OpenColorIO/","src/libutils/oglapphelpers/"}"CMakeLists.txt" \
 		|| die
 	sed -i -e "s|ARCHIVE DESTINATION lib|ARCHIVE DESTINATION $(get_libdir)|g" \
-		{,src/bindings/python/,src/OpenColorIO/,src/libutils/oglapphelpers/}CMakeLists.txt \
+		{"","src/bindings/python/","src/OpenColorIO/","src/libutils/oglapphelpers/"}"CMakeLists.txt" \
 		|| die
 
 	# Avoid automagic test dependency on OSL, bug #833933
 	# Can cause problems during e.g. OpenEXR unsplitting migration
-	cmake_run_in tests cmake_comment_add_subdirectory osl
+	cmake_run_in "tests" "cmake_comment_add_subdirectory" "osl"
 
 	# No references or generator bug.
-	touch share/cmake/modules/FindZLIBNG.cmake || die
+	touch "share/cmake/modules/FindZLIBNG.cmake" || die
 }
 
 src_configure() {
@@ -219,8 +248,26 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DOCIO_BUILD_TESTS=$(usex test)
 		-DOCIO_INSTALL_EXT_PACKAGES=NONE
 		-DOCIO_PYTHON_VERSION="${EPYTHON/python/}"
-		-DOCIO_USE_SSE=$(usex cpu_flags_x86_sse2)
+		-DOCIO_USE_AVX=$(usex cpu_flags_x86_avx)
+		-DOCIO_USE_F16C$(usex cpu_flags_x86_f16c)
+		-DOCIO_USE_SSE=$(usex cpu_flags_x86_sse)
+		-DOCIO_USE_SSE2=$(usex cpu_flags_x86_sse2)
 	)
+	if \
+		   use cpu_flags_x86_avx \
+		|| use cpu_flags_x86_f16c \
+		|| use cpu_flags_x86_sse \
+		|| use cpu_flags_x86_sse2 \
+		|| use cpu_flags_arm_neon \
+	; then
+		mycmakeargs+=(
+			-DDOCIO_USE_SIMD=ON
+		)
+	else
+		mycmakeargs+=(
+			-DDOCIO_USE_SIMD=OFF
+		)
+	fi
 
 	# We need this to work around asserts that can trigger even in proper use cases.
 	# See https://github.com/AcademySoftwareFoundation/OpenColorIO/issues/1235
