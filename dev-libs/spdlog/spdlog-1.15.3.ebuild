@@ -22,7 +22,10 @@ DESCRIPTION="Very fast, header only, C++ logging library"
 HOMEPAGE="https://github.com/gabime/spdlog"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 DEPEND="
 	>=dev-libs/libfmt-9.1.0[${MULTILIB_USEDEP}]
 	dev-libs/libfmt:=
@@ -64,7 +67,8 @@ src_prepare() {
 src_configure() {
 	# Reduce chance of build time failure
 	export CC="${CHOST}-gcc-11"
-	export CC="${CHOST}-g++"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
