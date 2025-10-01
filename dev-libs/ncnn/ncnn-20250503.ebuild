@@ -262,8 +262,6 @@ REQUIRED_USE="
 
 	cpu_flags_x86_avx512vnni? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_fma
-		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_avx512bf16? (
 		cpu_flags_x86_avx512bw
@@ -274,13 +272,9 @@ REQUIRED_USE="
 
 	cpu_flags_x86_avxneconvert? (
 		cpu_flags_x86_avx2
-		cpu_flags_x86_fma
-		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_avxvnni? (
 		cpu_flags_x86_avx2
-		cpu_flags_x86_fma
-		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_avxvnniint8? (
 		cpu_flags_x86_avxvnni
