@@ -161,6 +161,7 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
+			>=dev-python/nanobind-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 			numpy? (
 				>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
