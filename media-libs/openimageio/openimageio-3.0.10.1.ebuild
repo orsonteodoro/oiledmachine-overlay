@@ -62,7 +62,7 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic font llvm python-single-r1 virtualx
+inherit cflags-hardened check-compiler-switch check-glibcxx-ver cmake flag-o-matic font llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
@@ -578,6 +578,13 @@ eerror
 		die
 	fi
 	strip-unsupported-flags
+
+	# Versioned symbols issues
+	local gcc_current_profile_slot=$(gcc-config -c)
+	gcc_current_profile_slot=${gcc_current_profile_slot%%*-}
+	check_pkg_glibcxx "media-gfx/openvdb" "/usr/$(get_libdir)/libjxl_threads.so" "${gcc_current_profile_slot}"
+	check_pkg_glibcxx "media-libs/openexr" "/usr/$(get_libdir)/libOpenEXR.so" "${gcc_current_profile_slot}"
+	check_pkg_glibcxx "media-libs/libjxl" "/usr/$(get_libdir)/libopenvdb.so" "${gcc_current_profile_slot}"
 
 	local cpufeature
 	local mysimd=()
