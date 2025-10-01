@@ -49,6 +49,7 @@ QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
 TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-05-01
 X86_CPU_FEATURES=(
+	aes:aes
 	avx:avx
 	avx2:avx2
 	avx512f:avx512f
@@ -154,6 +155,31 @@ REQUIRED_USE="
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
+	)
+	cpu_flags_x86_sse3? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
 	)
 	opengl? (
 		|| (
