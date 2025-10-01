@@ -70,23 +70,22 @@ else
 fi
 
 X86_CPU_FLAGS=(
-	mmx:mmx
-	sse:sse
-	sse2:sse2
-	sse3:sse3
-	ssse3:ssse3
-	lzcnt:lzcnt
-	sse4_1:sse4_1
-	sse4_2:sse4_2
-	avx:avx
-	f16c:f16c
-	fma:fma
-	bmi:bmi
-	avx2:avx2
-	avx512f:avx512f
-	avx512dq:avx512dq
-	avx512er:avx512er
-	avx512bf16:avx512bf16
+	"mmx:mmx"
+	"sse:sse"
+	"sse2:sse2"
+	"sse3:sse3"
+	"ssse3:ssse3"
+	"lzcnt:lzcnt"
+	"sse4_1:sse4_1"
+	"sse4_2:sse4_2"
+	"avx:avx"
+	"f16c:f16c"
+	"fma:fma"
+	"bmi:bmi"
+	"avx2:avx2"
+	"avx512f:avx512f"
+	"avx512dq:avx512dq"
+	"avx512bf16:avx512bf16"
 )
 CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
@@ -99,105 +98,67 @@ ${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}
 "
 # Assets categories are listed in https://www.blender.org/download/demo-files/
 
-# At the source code level, they mix the sse2 intrinsics functions up with the
-#   __KERNEL_SSE__.
-REQUIRED_USE_MINIMAL_CPU_FLAGS="
-	!cpu_flags_x86_mmx? (
-		!cpu_flags_x86_sse
-		!cpu_flags_x86_sse2
-	)
-	cpu_flags_x86_sse2? (
-		!cpu_flags_x86_sse? (
-			cpu_flags_x86_mmx
-		)
-	)
-"
-
 REQUIRED_USE_CYCLES="
 	cycles? (
-		!cpudetection? (
-			amd64? (
-				cpu_flags_x86_avx? (
-					cpu_flags_x86_sse4_1
-				)
-				cpu_flags_x86_avx2? (
-					cpu_flags_x86_avx
-					cpu_flags_x86_sse4_1
-					cpu_flags_x86_fma
-					cpu_flags_x86_lzcnt
-					cpu_flags_x86_bmi
-					cpu_flags_x86_f16c
-				)
-				cpu_flags_x86_sse4_1? (
-					cpu_flags_x86_sse3
-				)
-			)
-			cpu_flags_x86_sse3? (
-				cpu_flags_x86_sse2
-				cpu_flags_x86_ssse3
-			)
-			cpu_flags_x86_ssse3? (
-				cpu_flags_x86_sse3
-			)
-		)
 		openexr
 		openimageio
 		tiff
-		amd64? (
-			cpu_flags_x86_sse2
-		)
-		cpu_flags_x86_sse? (
-			cpu_flags_x86_sse2
-		)
-		cpu_flags_x86_sse2? (
-			cpu_flags_x86_sse
-		)
-		cpudetection? (
-			cpu_flags_x86_avx? (
-				cpu_flags_x86_sse
-			)
-			cpu_flags_x86_avx2? (
-				cpu_flags_x86_sse
-			)
-		)
 		osl? (
 			llvm
-		)
-		x86? (
-			cpu_flags_x86_sse2
 		)
 	)
 "
 
 # See https://gitlab.com/libeigen/eigen/-/blob/3.3.7/Eigen/Core
-REQUIRED_USE_EIGEN="
-	cpu_flags_x86_avx? (
+
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	${REQUIRED_USE_CYCLES}
+	cpu_flags_x86_sse? (
+		cpu_flags_x86_mmx
+	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_sse3? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_ssse3? (
 		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_1? (
 		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_lzcnt? (
+		cpu_flags_x86_sse4_2
+		cpu_flags_x86_bmi
+	)
+	cpu_flags_x86_bmi? (
+		cpu_flags_x86_sse4_2
+		cpu_flags_x86_lzcnt
+	)
+	cpu_flags_x86_fma? (
 		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx512er? (
-		cpu_flags_x86_avx512f
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512dq
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512f
 	)
 	cpu_flags_x86_avx512bf16? (
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512dq
 	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_fma
-		cpu_flags_x86_avx
-		cpu_flags_x86_avx2
-	)
-"
-
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-	${REQUIRED_USE_CYCLES}
-	${REQUIRED_USE_EIGEN}
-	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 "
 
 get_dest() {
@@ -331,7 +292,6 @@ blender_pkg_setup() {
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
-	check_cpu
 	check_optimal_compiler_for_cycles_x86
 
 	check-compiler-switch_end
@@ -431,170 +391,6 @@ ewarn
 					fi
 				fi
 			done
-		fi
-	fi
-}
-
-check_cpu() {
-	if use kernel_linux \
-		&& [[ ! -e "${BROOT}/proc/cpuinfo" ]] ; then
-ewarn
-ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
-ewarn
-		return
-	fi
-
-	# Sorted by chronological order to be able to disable remaining
-	# incompatible.
-	grep -q -i -E -e 'mmx( |$)' "${BROOT}/proc/cpuinfo" # 1997
-	local has_mmx="$?"
-	grep -q -i -E -e 'sse( |$)' "${BROOT}/proc/cpuinfo" # 1999
-	local has_sse="$?"
-	grep -q -i -E -e 'sse2( |$)' "${BROOT}/proc/cpuinfo" # 2000
-	local has_sse2="$?"
-	grep -q -i -E -e 'sse3( |$)' "${BROOT}/proc/cpuinfo" # 2004
-	local has_sse3="$?"
-	grep -q -i -E -e 'pni( |$)' "${BROOT}/proc/cpuinfo" # 2004, equivalent to sse3
-	local has_pni="$?"
-	grep -q -i -E -e 'ssse3( |$)' "${BROOT}/proc/cpuinfo" # 2006
-	local has_ssse3="$?"
-	grep -q -i -E -e 'abm( |$)' "${BROOT}/proc/cpuinfo" # 2007
-	local has_abm="$?"
-	grep -q -i -E -e 'sse4_1( |$)' "${BROOT}/proc/cpuinfo" # 2008
-	local has_sse4_1="$?"
-	grep -q -i -E -e 'sse4_2( |$)' "${BROOT}/proc/cpuinfo" # 2008
-	local has_sse4_2="$?"
-	grep -q -i -E -e 'avx( |$)' "${BROOT}/proc/cpuinfo" # 2011
-	local has_avx="$?"
-	grep -q -i -E -e 'f16c( |$)' "${BROOT}/proc/cpuinfo" # 2011
-	local has_f16c="$?"
-	grep -q -i -E -e 'fma( |$)' "${BROOT}/proc/cpuinfo" # 2012
-	local has_fma="$?"
-	grep -q -i -E -e 'bmi1( |$)' "${BROOT}/proc/cpuinfo" # 2013
-	local has_bmi1="$?"
-	grep -q -i -E -e 'avx2( |$)' "${BROOT}/proc/cpuinfo" # 2013
-	local has_avx2="$?"
-	grep -q -i -E -e 'avx512f( |$)' "${BROOT}/proc/cpuinfo" # 2016 / 2017
-	local has_avx512f="$?"
-	grep -q -i -E -e 'avx512er( |$)' "${BROOT}/proc/cpuinfo" # 2016
-	local has_avx512er="$?"
-	grep -q -i -E -e 'avx512dq( |$)' "${BROOT}/proc/cpuinfo" # 2017
-	local has_avx512dq="$?"
-	grep -q -i -E -e 'avx512bf16( |$)' "${BROOT}/proc/cpuinfo" # 2020
-	local has_avx512bf16="$?"
-
-	# We cancel building to prevent runtime errors with dependencies
-	# that may not do sufficient runtime checks for cpu types like eigen.
-
-	cpuflag_die() {
-		local flag="${1}"
-eerror
-eerror "${flag} may not be supported on your CPU and was enabled via the"
-eerror "cpu_flags_x86_${flag}"
-eerror
-		die
-	}
-
-	if use cpu_flags_x86_mmx ; then
-		if [[ "${has_mmx}" != "0" ]] ; then
-			cpuflag_die "mmx"
-		fi
-	fi
-
-	if use cpu_flags_x86_sse ; then
-		if [[ "${has_sse}" != "0" ]] ; then
-			cpuflag_die "sse"
-		fi
-	fi
-
-	if use cpu_flags_x86_sse2 ; then
-		if [[ "${has_sse2}" != "0" ]] ; then
-			cpuflag_die "sse2"
-		fi
-	fi
-
-	if use cpu_flags_x86_sse3 ; then
-		if [[ "${has_sse3}" != "0" && "${has_pni}" != "0" ]] ; then
-			cpuflag_die "sse3"
-		fi
-	fi
-
-	if use cpu_flags_x86_ssse3 ; then
-		if [[ "${has_ssse3}" != "0" ]] ; then
-			cpuflag_die "ssse3"
-		fi
-	fi
-
-	if use cpu_flags_x86_lzcnt ; then
-		if [[ "${has_bmi1}" != "0" && "${has_abm}" != "0" ]] ; then
-			cpuflag_die "lzcnt"
-		fi
-	fi
-
-	if use cpu_flags_x86_sse4_1 ; then
-		if [[ "${has_sse4_1}" != "0" ]] ; then
-			cpuflag_die "sse4_1"
-		fi
-	fi
-
-	if use cpu_flags_x86_sse4_2 ; then
-		if [[ "${has_sse4_2}" != "0" ]] ; then
-			cpuflag_die "sse4_2"
-		fi
-	fi
-
-	if use cpu_flags_x86_avx ; then
-		if [[ "${has_avx}" != "0" ]] ; then
-			cpuflag_die "avx"
-		fi
-	fi
-
-	if use cpu_flags_x86_f16c ; then
-		if [[ "${has_f16c}" != "0" ]] ; then
-			cpuflag_die "f16c"
-		fi
-	fi
-
-	if use cpu_flags_x86_fma ; then
-		if [[ "${has_fma}" != "0" ]] ; then
-			cpuflag_die "fma"
-		fi
-	fi
-
-	# For tzcnt
-	if use cpu_flags_x86_bmi ; then
-		if [[ "${has_bmi1}" != "0" ]] ; then
-			cpuflag_die "bmi"
-		fi
-	fi
-
-	if use cpu_flags_x86_avx2 ; then
-		if [[ "${has_avx2}" != "0" ]] ; then
-			cpuflag_die "avx2"
-		fi
-	fi
-
-	if use cpu_flags_x86_avx512f ; then
-		if [[ "${has_avx512f}" != "0" ]] ; then
-			cpuflag_die "avx512f"
-		fi
-	fi
-
-	if use cpu_flags_x86_avx512er ; then
-		if [[ "${has_avx512er}" != "0" ]] ; then
-			cpuflag_die "avx512er"
-		fi
-	fi
-
-	if use cpu_flags_x86_avx512dq ; then
-		if [[ "${has_avx512dq}" != "0" ]] ; then
-			cpuflag_die "avx512dq"
-		fi
-	fi
-
-	if use cpu_flags_x86_avx512bf16 ; then
-		if [[ "${has_avx512bf16}" != "0" ]] ; then
-			cpuflag_die "avx512bf16"
 		fi
 	fi
 }
@@ -730,70 +526,36 @@ einfo
 
 blender_configure_eigen() {
 	if use cpu_flags_x86_avx512f ; then
-		if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|\
-cooperlake|tigerlake|sapphirerapids|rocketlake) ]] \
-		|| [[ "${CXXFLAGS}" =~ "mavx512f"( |$) ]] ; then
-			# Already added
-			:
-		else
-			append-cxxflags -mavx512f
-		fi
+		append-cxxflags -mavx512f
 	else
 		append-cxxflags -mno-avx512f
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
-		if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake|\
-tigerlake|sapphirerapids|rocketlake) ]] \
-		|| [[ "${CXXFLAGS}" =~ "mavx512dq"( |$) ]] ; then
-			# Already added
-			:
-		else
-			append-cxxflags -mavx512dq
-		fi
+		append-cxxflags -mavx512dq
 	else
 		append-cxxflags -mno-avx512dq
-	fi
-
-	if use cpu_flags_x86_avx512er ; then
-		if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-knl|knm) ]] \
-		|| [[ "${CXXFLAGS}" =~ "mavx512er"( |$) ]] ; then
-			# Already added
-			:
-		else
-			append-cxxflags -mavx512er
-		fi
-	else
-		append-cxxflags -mno-avx512er
 	fi
 
 	if use cpu_flags_x86_avx512f ; then
 		append-cxxflags -DEIGEN_ENABLE_AVX512
 	fi
 
-	if ! use cpu_flags_x86_mmx \
-	&& ! use cpu_flags_x86_sse \
-	&& ! use cpu_flags_x86_sse2 \
-	&& ! use cpu_flags_x86_sse3 \
-	&& ! use cpu_flags_x86_ssse3 \
-	&& ! use cpu_flags_x86_sse4_1 \
-	&& ! use cpu_flags_x86_sse4_2 \
-	&& ! use cpu_flags_x86_avx \
-	&& ! use cpu_flags_x86_avx2 \
-	&& ! use cpu_flags_x86_avx512f \
-	&& ! use cpu_flags_x86_avx512dq \
-	&& ! use cpu_flags_x86_avx512er \
-	&& ! use cpu_flags_x86_fma \
-	&& ! use cpu_flags_x86_f16c ; then
+	if \
+		   ! use cpu_flags_x86_mmx \
+		&& ! use cpu_flags_x86_sse \
+		&& ! use cpu_flags_x86_sse2 \
+		&& ! use cpu_flags_x86_sse3 \
+		&& ! use cpu_flags_x86_ssse3 \
+		&& ! use cpu_flags_x86_sse4_1 \
+		&& ! use cpu_flags_x86_sse4_2 \
+		&& ! use cpu_flags_x86_avx \
+		&& ! use cpu_flags_x86_avx2 \
+		&& ! use cpu_flags_x86_avx512f \
+		&& ! use cpu_flags_x86_avx512dq \
+		&& ! use cpu_flags_x86_fma \
+		&& ! use cpu_flags_x86_f16c \
+	; then
 		append-cxxflags -DEIGEN_DONT_VECTORIZE
 	fi
 }
