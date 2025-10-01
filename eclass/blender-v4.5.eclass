@@ -1480,6 +1480,12 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		)
 	fi
 
+	if use collada ; then
+		mycmakeargs+=(
+			-DOpenCOLLADA_DIR:PATH="${ESYSROOT}/usr/lib/aras-p-opencollada"
+		)
+	fi
+
 	if use usd ; then
 		blender_configure_openusd
 	fi
