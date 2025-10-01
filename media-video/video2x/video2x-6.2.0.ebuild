@@ -24,132 +24,132 @@ SPDLOG_COMMIT="e593f6695c6065e6b345fe2862f04a519ed484e0" # Sep 23, 2024
 VIDEO2K_COMMIT="a6dfdc734328fda0f25b923e75f91fafc60d88ef" # Dec 11, 2024, 6.2.0
 
 BF16_ARCHES=(
-	armv8.4-a
-	armv8.5-a
-	armv8.6-a
-	armv8.7-a
-	armv8.8-a
-	armv8.9-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
+	"armv8.4-a"
+	"armv8.5-a"
+	"armv8.6-a"
+	"armv8.7-a"
+	"armv8.8-a"
+	"armv8.9-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
 )
 
 FP16_ARCHES=(
-	armv8.2-a
-	armv8.3-a
-	armv8.4-a
-	armv8.5-a
-	armv8.6-a
-	armv8.7-a
-	armv8.8-a
-	armv8.9-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
+	"armv8.2-a"
+	"armv8.3-a"
+	"armv8.4-a"
+	"armv8.5-a"
+	"armv8.6-a"
+	"armv8.7-a"
+	"armv8.8-a"
+	"armv8.9-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
 )
 
 FP16FML_ARCHES=(
-	armv8.2-a
-	armv8.3-a
-	armv8.4-a
-	armv8.5-a
-	armv8.6-a
-	armv8.7-a
-	armv8.8-a
-	armv8.9-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
+	"armv8.2-a"
+	"armv8.3-a"
+	"armv8.4-a"
+	"armv8.5-a"
+	"armv8.6-a"
+	"armv8.7-a"
+	"armv8.8-a"
+	"armv8.9-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
 )
 
 I8MM_ARCHES=(
-	armv8.4-a
-	armv8.5-a
-	armv8.6-a
-	armv8.7-a
-	armv8.8-a
-	armv8.9-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
+	"armv8.4-a"
+	"armv8.5-a"
+	"armv8.6-a"
+	"armv8.7-a"
+	"armv8.8-a"
+	"armv8.9-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
 )
 
 SVE_ARCHES=(
-	armv8.6-a
-	armv8.7-a
-	armv8.8-a
-	armv8.9-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
+	"armv8.6-a"
+	"armv8.7-a"
+	"armv8.8-a"
+	"armv8.9-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
 )
 
 CPU_FLAGS_ARM=(
-	cpu_flags_arm_bf16
-	cpu_flags_arm_dotprod
-	cpu_flags_arm_fp16
-	cpu_flags_arm_fp16fml
-	cpu_flags_arm_i8mm
-	cpu_flags_arm_sve
-	cpu_flags_arm_sve2
-	cpu_flags_arm_svebf16
-	cpu_flags_arm_svei8mm
-	cpu_flags_arm_svef32mm
-	cpu_flags_arm_vfpv4
+	"cpu_flags_arm_bf16"
+	"cpu_flags_arm_dotprod"
+	"cpu_flags_arm_fp16"
+	"cpu_flags_arm_fp16fml"
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_sve"
+	"cpu_flags_arm_sve2"
+	"cpu_flags_arm_svebf16"
+	"cpu_flags_arm_svei8mm"
+	"cpu_flags_arm_svef32mm"
+	"cpu_flags_arm_vfpv4"
 )
 
 CPU_FLAGS_LOONG=(
-	cpu_flags_loong_lasx
-	cpu_flags_loong_lsx
-	cpu_flags_loong_mmi
+	"cpu_flags_loong_lasx"
+	"cpu_flags_loong_lsx"
+	"cpu_flags_loong_mmi"
 )
 
 CPU_FLAGS_MIPS=(
-	cpu_flags_mips_msa
+	"cpu_flags_mips_msa"
 )
 
 CPU_FLAGS_PPC=(
-	cpu_flags_ppc_sse2
-	cpu_flags_ppc_sse41
+	"cpu_flags_ppc_sse2"
+	"cpu_flags_ppc_sse41"
 )
 
 CPU_FLAGS_RISCV=(
-	cpu_flags_riscv_rvv
-	cpu_flags_riscv_xtheadvector
-	cpu_flags_riscv_zfh
-	cpu_flags_riscv_zvfh
+	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_xtheadvector"
+	"cpu_flags_riscv_zfh"
+	"cpu_flags_riscv_zvfh"
 )
 
 CPU_FLAGS_X86=(
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avxneconvert
-	cpu_flags_x86_avxvnni
-	cpu_flags_x86_avxvnniint8
-	cpu_flags_x86_avxvnniint16
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512cd
-	cpu_flags_x86_avx512dq
-	cpu_flags_x86_avx512f
-	cpu_flags_x86_avx512bf16
-	cpu_flags_x86_avx512fp16
-	cpu_flags_x86_avx512vl
-	cpu_flags_x86_avx512vnni
-	cpu_flags_x86_f16c
-	cpu_flags_x86_fma
-	cpu_flags_x86_sse2
-	cpu_flags_x86_xop
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avxneconvert"
+	"cpu_flags_x86_avxvnni"
+	"cpu_flags_x86_avxvnniint8"
+	"cpu_flags_x86_avxvnniint16"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512cd"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512bf16"
+	"cpu_flags_x86_avx512fp16"
+	"cpu_flags_x86_avx512vl"
+	"cpu_flags_x86_avx512vnni"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_fma"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_xop"
 )
 
 PYTHON_COMPAT=( "python3_12" )
@@ -276,52 +276,47 @@ REQUIRED_USE="
 		cpu_flags_riscv_zfh
 	)
 	cpu_flags_x86_avx? (
-		cpu_flags_x86_fma
+		cpu_flags_x86_sse2
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
-		cpu_flags_x86_fma
-		cpu_flags_x86_f16c
 	)
-	cpu_flags_x86_avx512bw? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
+	cpu_flags_x86_fma? (
+		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_avx512dq? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
+	cpu_flags_x86_xop? (
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_sse2
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
 	)
 	cpu_flags_x86_avx512bf16? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512fp16? (
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512bf16
 	)
 	cpu_flags_x86_avx512vnni? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avxneconvert? (
 		cpu_flags_x86_avx2
@@ -341,15 +336,6 @@ REQUIRED_USE="
 		cpu_flags_x86_avx2
 		cpu_flags_x86_fma
 		cpu_flags_x86_f16c
-	)
-	cpu_flags_x86_f16c? (
-		cpu_flags_x86_avx
-	)
-	cpu_flags_x86_fma? (
-		cpu_flags_x86_f16c
-	)
-	cpu_flags_x86_xop? (
-		cpu_flags_x86_avx
 	)
 "
 RDEPEND+="
