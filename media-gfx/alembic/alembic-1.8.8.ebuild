@@ -16,6 +16,9 @@ OPENEXR_V2_PV=(
 )
 OPENEXR_V3_PV=(
 	# openexr:imath
+	"3.3.5:3.1.12"
+	"3.3.4:3.1.12"
+	"3.3.3:3.1.12"
 	"3.3.2:3.1.12"
 	"3.3.1:3.1.12"
 	"3.3.0:3.1.11"
@@ -76,7 +79,9 @@ gen_openexr_pairs() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}:=
+				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}:=
+				dev-libs/imath:=
 			)
 		"
 	done
@@ -86,7 +91,9 @@ gen_openexr_pairs() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}:=
+				media-libs/openexr:=
 				~media-libs/ilmbase-${ilmbase_pv}:=
+				media-libs/ilmbase:=
 			)
 		"
 	done
@@ -99,7 +106,9 @@ gen_openexr_py_pairs() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}:=
+				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}:=[${PYTHON_SINGLE_USEDEP},python]
+				dev-libs/imath:=
 			)
 		"
 	done
@@ -107,12 +116,15 @@ gen_openexr_py_pairs() {
 RDEPEND+="
 	${PYTHON_DEPS}
 	hdf5? (
-		>=sci-libs/hdf5-1.10.2:=[zlib(+)]
+		(
+			>=sci-libs/hdf5-1.8.9:=[zlib(+)]
+			sci-libs/hdf5:=
+		)
 		>=sys-libs/zlib-1.2.11-r1
 	)
 	python? (
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.53.0[${PYTHON_USEDEP},python]
+			>=dev-libs/boost-1.55.0[${PYTHON_USEDEP},python]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
 		|| (
@@ -135,7 +147,6 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.8.5-set-correct-libdir.patch"
 )
 DOCS=( "ACKNOWLEDGEMENTS.txt" "FEEDBACK.txt" "NEWS.txt" "README.txt" )
 
