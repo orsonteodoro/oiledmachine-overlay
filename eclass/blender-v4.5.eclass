@@ -924,7 +924,7 @@ RDEPEND+="
 		)
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.10[${PYTHON_SINGLE_USEDEP},python]
+		>=media-libs/materialx-1.39.2[${PYTHON_SINGLE_USEDEP},python]
 	)
 	ndof? (
 		>=dev-libs/libspnav-1.1
