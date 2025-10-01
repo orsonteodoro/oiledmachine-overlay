@@ -49,7 +49,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	media-libs/mesa[egl(+),libglvnd(+)]
-	>=media-libs/vulkan-drivers-${VULKAN_PV}
+	media-libs/vulkan-drivers
 	>=media-libs/vulkan-loader-${VULKAN_PV}
 	virtual/libc
 	gles2? (
