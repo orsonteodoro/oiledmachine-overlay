@@ -45,13 +45,13 @@ OPENVDB_ABIS=( {12..11} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 PYTHON_COMPAT=( "python3_"{8..11} )
-VDB_UTILS="
-	vdb_lod
-	vdb_print
-	vdb_render
-	vdb_view
-"
-X86_CPU_FLAGS=( avx sse4_2 )
+VDB_UTILS=(
+	"vdb_lod"
+	"vdb_print"
+	"vdb_render"
+	"vdb_view"
+)
+CPU_FLAGS_X86=( avx sse4_2 )
 
 inherit check-compiler-switch cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
@@ -74,13 +74,13 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
+${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
-${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+${OPENVDB_ABIS_[@]} +abi${PV%%.*}-compat
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus +nanovdb -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	^^ (
@@ -96,9 +96,12 @@ REQUIRED_USE+="
 			${LLVM_COMPAT_AX[@]/#/llvm_slot_}
 		)
 	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_2
+	)
 	jemalloc? (
 		|| (
-			${VDB_UTILS}
+			${VDB_UTILS[@]}
 			test
 		)
 	)
@@ -376,6 +379,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+einfo "SITEDIR: "$(python_get_sitedir)
+	die
+
 	if use python; then
 		mycmakeargs+=(
 			-Dnanobind_DIR="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/nanobind/cmake"
@@ -383,6 +389,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DPython_EXECUTABLE="${PYTHON}"
 			-DPython_INCLUDE_DIR="$(python_get_includedir)"
 			-DUSE_NUMPY=$(usex numpy)
+			-DVDB_PYTHON_INSTALL_DIRECTORY="$(python_get_sitedir)"
 		)
 	fi
 
