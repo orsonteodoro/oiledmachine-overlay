@@ -526,6 +526,9 @@ REQUIRED_USE="
 			)
 		)
 	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_sse2
+	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_1
 	)
@@ -541,6 +544,9 @@ REQUIRED_USE="
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+	)
 	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
@@ -548,26 +554,15 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512vl
-		cpu_flags_x86_avx2
-	)
-	cpu_flags_x86_avx512vbmi? (
-		cpu_flags_x86_avx512f
-		xnnpack
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
 	)
-	cpu_flags_x86_sse4_1? (
-		cpu_flags_x86_sse2
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx512bw
+		xnnpack
 	)
 	cuda? (
 		|| (
@@ -585,11 +580,27 @@ REQUIRED_USE="
 	)
 	fbgemm? (
 		|| (
-			cpu_flags_x86_avx2
-			cpu_flags_x86_avx512f
+			(
+				cpu_flags_x86_avx2
+				cpu_flags_x86_f16c
+				cpu_flags_x86_fma
+			)
+			(
+				cpu_flags_x86_avx512bw
+				cpu_flags_x86_fma
+			)
+		)
+		cuda? (
+			cpu_flags_x86_avx512bw
+			cpu_flags_x86_f16c
+			cpu_flags_x86_fma
+			openmp
 		)
 		rocm? (
 			cpu_flags_x86_avx2
+			cpu_flags_x86_f16c
+			cpu_flags_x86_fma
+			openmp
 		)
 	)
 	ffmpeg? (
@@ -625,7 +636,7 @@ REQUIRED_USE="
 		|| (
 			cpu_flags_x86_amx
 			cpu_flags_x86_avx2
-			cpu_flags_x86_avx512f
+			cpu_flags_x86_avx512bw
 			cpu_flags_x86_sse4_1
 		)
 	)
