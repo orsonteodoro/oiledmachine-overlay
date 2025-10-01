@@ -1030,7 +1030,7 @@ RDEPEND+="
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[tbbmalloc]
+		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[tbbmalloc(+)]
 	)
 	tiff? (
 		>=media-libs/tiff-4.7.0:0[jpeg,zlib]
