@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake edos2unix flag-o-matic
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+inherit cflags-hardened cmake edos2unix flag-o-matic
 
 EGIT_COMMIT="dfc341ab0b3b23ee307ab8660c0213e64da1eac6"
 S="${WORKDIR}/OpenCOLLADA-${EGIT_COMMIT}"
@@ -17,7 +19,10 @@ HOMEPAGE="https://github.com/aras-p/OpenCOLLADA"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
-IUSE="static-libs"
+IUSE="
+static-libs
+ebuild_revision_1
+"
 RDEPEND="
 	dev-libs/libpcre:=
 	dev-libs/libxml2:=
@@ -56,6 +61,7 @@ src_prepare() {
 src_configure() {
 	# Bug 619670
 	append-cxxflags -std=c++14
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/aras-p-opencollada"
