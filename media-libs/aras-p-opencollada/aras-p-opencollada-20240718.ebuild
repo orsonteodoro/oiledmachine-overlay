@@ -14,12 +14,10 @@ https://github.com/aras-p/OpenCOLLADA/archive/${EGIT_COMMIT}.tar.gz
 
 DESCRIPTION="OpenCOLLADA Cleanup Fork"
 HOMEPAGE="https://github.com/aras-p/OpenCOLLADA"
-
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 IUSE="static-libs"
-
 RDEPEND="
 	dev-libs/libpcre:=
 	dev-libs/libxml2:=
@@ -27,13 +25,12 @@ RDEPEND="
 	media-libs/lib3ds
 	sys-libs/zlib
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
-	app-admin/chrpath
 	virtual/pkgconfig
 "
-
-
 PATCHES=(
 	"${FILESDIR}/opencollada-1.6.68-fix-null-conversion.patch"
 	"${FILESDIR}/opencollada-1.6.68-cmake-fixes.patch"
@@ -50,13 +47,9 @@ src_prepare() {
 	cmake_src_prepare
 
 	# Remove bundled depends that have portage equivalents
-	#rm -rv "Externals/"{"expat","lib3ds"} || die
 	rm -rv "Externals/LibXML" || die
-	#rm -rv "Externals/"{"pcre","zlib","zziplib"} || die
 
 	# Remove unused build systems
-	#rm -v "Makefile" || die
-	#rm -v "scripts/"{"unixbuild.sh","vcproj2cmake.rb"} || die
 	find "${S}" -name "SConscript" -delete || die
 }
 
@@ -74,26 +67,6 @@ src_configure() {
 	cmake_src_configure
 }
 
-gen_env_file() {
-newenvd - 99opencollada <<- _EOF_
-LDPATH=/usr/$(get_libdir)/opencollada
-_EOF_
-}
-
 src_install() {
 	cmake_src_install
-
-	#gen_env_file
-
-	# Remove insecure DAEValidator RUNPATH and install DAEValidator library.
-	dolib.so "${BUILD_DIR}/lib/libDAEValidatorLibrary.so"
-	chrpath -d "${BUILD_DIR}/bin/DAEValidator" || die
-
-	dobin "${BUILD_DIR}/bin/DAEValidator"
-	dobin "${BUILD_DIR}/bin/OpenCOLLADAValidator"
-	# We need to be in same directory as above binaries
-	docinto "/usr/bin"
-	dodoc "${BUILD_DIR}/bin/COLLADAPhysX3Schema.xsd"
-	dodoc "${BUILD_DIR}/bin/collada_schema_1_4_1.xsd"
-	dodoc "${BUILD_DIR}/bin/collada_schema_1_5.xsd"
 }
