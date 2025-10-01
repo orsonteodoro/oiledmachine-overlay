@@ -510,6 +510,7 @@ cuda_host_cc_check() {
 eerror
 eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}."
 eerror "${reason}"
+eerror
 eerror "Do"
 eerror
 eerror "  eselect gcc set ${CHOST}-${required_gcc_slot}"
