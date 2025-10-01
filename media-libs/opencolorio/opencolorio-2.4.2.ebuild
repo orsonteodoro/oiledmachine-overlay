@@ -81,7 +81,9 @@ gen_imath_bdepend() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}:=
+				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}:=
+				dev-libs/imath:=
 			)
 		"
 	done
