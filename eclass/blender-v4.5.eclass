@@ -607,7 +607,8 @@ gen_asan_bdepend() {
 		echo "
 			llvm_slot_${s}? (
 				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[asan]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[asan]
+				llvm-runtimes/compiler-rt-sanitizers:=
 				llvm-core/clang:${s}
 			)
 		"
@@ -659,8 +660,10 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
-				~dev-libs/imath-${imath_pv}:=
+				~media-libs/openexr-${openexr_pv}
+				media-libs/openexr:=
+				~dev-libs/imath-${imath_pv}
+				dev-libs/imath:=
 			)
 		"
 	done
@@ -672,8 +675,9 @@ gen_osl_depends()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				>=media-libs/osl-${OSL_PV}:=[llvm_slot_${s},static-libs]
-				<media-libs/osl-2.0:=[llvm_slot_${s},static-libs]
+				>=media-libs/osl-${OSL_PV}[llvm_slot_${s},static-libs]
+				<media-libs/osl-2.0[llvm_slot_${s},static-libs]
+				media-libs/osl:=
 			)
 		"
 	done
@@ -782,13 +786,16 @@ RDEPEND+="
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
 	)
 	boost? (
-		>=dev-libs/boost-${BOOST_PV}:=[nls?,threads(+)]
+		>=dev-libs/boost-${BOOST_PV}[nls?,threads(+)]
+		dev-libs/boost:=
 		usd? (
-			>=dev-libs/boost-${BOOST_PV}:=[nls?,threads(+),python]
+			>=dev-libs/boost-${BOOST_PV}[nls?,threads(+),python]
+			dev-libs/boost:=
 		)
 	)
 	collada? (
-		>=media-libs/aras-p-opencollada-20240718:=
+		>=media-libs/aras-p-opencollada-20240718
+		media-libs/aras-p-opencollada:=
 	)
 	color-management? (
 		>=dev-libs/expat-2.6.4
@@ -876,8 +883,9 @@ RDEPEND+="
 		sys-apps/dbus
 	)
 	embree? (
-		>=media-libs/embree-4.4.0:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
+		>=media-libs/embree-4.4.0[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 		<media-libs/embree-5
+		media-libs/embree:=
 	)
 	ffmpeg? (
 		media-video/ffmpeg:=
@@ -901,7 +909,8 @@ RDEPEND+="
 		virtual/jack
 	)
 	jemalloc? (
-		>=dev-libs/jemalloc-5.2.1:=
+		>=dev-libs/jemalloc-5.2.1
+		dev-libs/jemalloc:=
 	)
 	jpeg2k? (
 		>=media-libs/openjpeg-2.5.0:2
@@ -959,7 +968,8 @@ RDEPEND+="
 		)
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.6.0:=[cuda=,opencl=,opengl(+),tbb?]
+		>=media-libs/opensubdiv-3.6.0[cuda=,opencl=,opengl(+),tbb?]
+		media-libs/opensubdiv:=
 	)
 	openvdb? (
 		abi12-compat? (
