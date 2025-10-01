@@ -82,7 +82,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -142,12 +142,10 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
-		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
-		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 	)
@@ -157,18 +155,18 @@ REQUIRED_USE="
 		cpu_flags_x86_vpclmulqdq
 	)
 	cpu_flags_x86_vpclmulqdq? (
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx2
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 	)
 	cpu_flags_x86_avx512vbmi? (
 		cpu_flags_x86_vpclmulqdq
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512bw
 		cpu_flags_x86_f16c
 	)
 
 	cpu_flags_x86_avx512vnni? (
-		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512bw
 		cpu_flags_x86_f16c
 	)
 
