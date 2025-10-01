@@ -5,6 +5,7 @@ EAPI=8
 
 # U24, VFX CY2024
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -133,6 +134,7 @@ PATCHES=(
 DOCS=( "ACKNOWLEDGEMENTS.txt" "FEEDBACK.txt" "NEWS.txt" "README.txt" )
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		$(usex python "-DPython3_EXECUTABLE=${PYTHON}" "")
 		-DALEMBIC_BUILD_LIBS=ON
