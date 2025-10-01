@@ -473,8 +473,6 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512pf
 	)
 	cpu_flags_x86_avx512pf? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512er
 	)
 
