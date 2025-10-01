@@ -3,17 +3,8 @@
 
 EAPI=8
 
-OPENEXR_V2_PV=(
-	# openexr:imath
-	"2.5.11:2.5.11"
-	"2.5.10:2.5.10"
-	"2.5.9:2.5.9"
-	"2.5.8:2.5.8"
-	"2.5.7:2.5.7"
-	"2.5.6:2.5.6"
-	"2.5.5:2.5.5"
-	"2.5.4:2.5.4"
-)
+# U24, VFX CY2024
+
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -40,7 +31,7 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake python-single-r1
+inherit cflags-hardened cmake python-single-r1
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -62,7 +53,10 @@ LICENSE="
 "
 # custom - search "TO THE FULLEST EXTENT PERMITTED UNDER APPLICABLE LAW"
 SLOT="0"
-IUSE="examples hdf5 python test"
+IUSE="
+examples hdf5 python test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -82,18 +76,6 @@ gen_openexr_pairs() {
 				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}:=
 				dev-libs/imath:=
-			)
-		"
-	done
-	for row in ${OPENEXR_V2_PV[@]} ; do
-		local ilmbase_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}:=
-				media-libs/openexr:=
-				~media-libs/ilmbase-${ilmbase_pv}:=
-				media-libs/ilmbase:=
 			)
 		"
 	done
@@ -120,7 +102,7 @@ RDEPEND+="
 			>=sci-libs/hdf5-1.8.9:=[zlib(+)]
 			sci-libs/hdf5:=
 		)
-		>=sys-libs/zlib-1.2.11-r1
+		>=sys-libs/zlib-1.3
 	)
 	python? (
 		$(python_gen_cond_dep '
