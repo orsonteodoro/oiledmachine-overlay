@@ -1,0 +1,397 @@
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/include/OSL/oslexec.h OpenShadingLanguage-1.14.7.0/src/include/OSL/oslexec.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/include/OSL/oslexec.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/include/OSL/oslexec.h	2025-09-30 18:18:28.985156605 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <memory>
+ 
+ #include <OSL/oslconfig.h>
+@@ -11,6 +17,10 @@
+ 
+ #include <OpenImageIO/refcnt.h>
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ 
+ OSL_NAMESPACE_BEGIN
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/include/OSL: oslexec.h.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/include/OSL/platform.h OpenShadingLanguage-1.14.7.0/src/include/OSL/platform.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/include/OSL/platform.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/include/OSL/platform.h	2025-09-30 18:18:54.836745279 -0700
+@@ -18,12 +18,21 @@
+ 
+ #pragma once
+ 
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <cstring>
+ #include <memory>
+ #include <cstdint>
+ 
+ #include <OSL/oslversion.h>
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ #if defined(__x86_64__) && !defined(__CUDA_ARCH__)
+ #   include <x86intrin.h>
+ #endif
+Only in OpenShadingLanguage-1.14.7.0/src/include/OSL: platform.h.orig
+Only in OpenShadingLanguage-1.14.7.0/src/include/OSL: platform.h.rej
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/include/osl_pvt.h OpenShadingLanguage-1.14.7.0/src/include/osl_pvt.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/include/osl_pvt.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/include/osl_pvt.h	2025-09-30 18:18:28.985156605 -0700
+@@ -4,10 +4,20 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <memory>
+ 
+ #include <OSL/oslconfig.h>
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ 
+ OSL_NAMESPACE_BEGIN
+ namespace pvt {
+Only in OpenShadingLanguage-1.14.7.0/src/include: osl_pvt.h.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/liboslcomp/symtab.h OpenShadingLanguage-1.14.7.0/src/liboslcomp/symtab.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/liboslcomp/symtab.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/liboslcomp/symtab.h	2025-09-30 18:18:28.985156605 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <memory>
+ #include <stack>
+ #include <unordered_map>
+@@ -14,6 +20,10 @@
+ 
+ #include "osl_pvt.h"
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ 
+ OSL_NAMESPACE_BEGIN
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/liboslcomp: symtab.h.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/llvm_util.cpp OpenShadingLanguage-1.14.7.0/src/liboslexec/llvm_util.cpp
+--- OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/llvm_util.cpp	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/liboslexec/llvm_util.cpp	2025-09-30 18:19:21.012328791 -0700
+@@ -3,6 +3,11 @@
+ // https://github.com/AcademySoftwareFoundation/OpenShadingLanguage
+ 
+ 
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <cinttypes>
+ #include <memory>
+ 
+@@ -135,6 +140,10 @@ OSL_GCC_PRAGMA(GCC diagnostic ignored "-
+ 
+ OSL_PRAGMA_WARNING_POP
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ OSL_NAMESPACE_BEGIN
+ 
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/liboslexec: llvm_util.cpp.orig
+Only in OpenShadingLanguage-1.14.7.0/src/liboslexec: llvm_util.cpp.rej
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/oslexec_pvt.h OpenShadingLanguage-1.14.7.0/src/liboslexec/oslexec_pvt.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/oslexec_pvt.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/liboslexec/oslexec_pvt.h	2025-09-30 18:18:28.989156542 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <list>
+ #include <map>
+ #include <memory>
+@@ -49,6 +55,10 @@
+ #include "constantpool.h"
+ #include "opcolor.h"
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ 
+ using namespace OSL;
+ using namespace OSL::pvt;
+Only in OpenShadingLanguage-1.14.7.0/src/liboslexec: oslexec_pvt.h.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/pointcloud.h OpenShadingLanguage-1.14.7.0/src/liboslexec/pointcloud.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/pointcloud.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/liboslexec/pointcloud.h	2025-09-30 18:19:41.891996564 -0700
+@@ -2,6 +2,12 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ // https://github.com/AcademySoftwareFoundation/OpenShadingLanguage
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #ifdef USE_PARTIO
+ #    include <Partio.h>
+ #    include <memory>
+@@ -10,6 +16,14 @@
+ 
+ #include <OSL/oslconfig.h>
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ OSL_NAMESPACE_BEGIN
+ namespace pvt {
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/liboslexec: pointcloud.h.orig
+Only in OpenShadingLanguage-1.14.7.0/src/liboslexec: pointcloud.h.rej
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/typespec.cpp OpenShadingLanguage-1.14.7.0/src/liboslexec/typespec.cpp
+--- OpenShadingLanguage-1.14.7.0.orig/src/liboslexec/typespec.cpp	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/liboslexec/typespec.cpp	2025-09-30 18:18:28.989156542 -0700
+@@ -2,6 +2,12 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ // https://github.com/AcademySoftwareFoundation/OpenShadingLanguage
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <cstdio>
+ #include <memory>
+ #include <string>
+@@ -12,6 +18,9 @@
+ 
+ #include "oslexec_pvt.h"
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
+ 
+ 
+ OSL_NAMESPACE_BEGIN
+Only in OpenShadingLanguage-1.14.7.0/src/liboslexec: typespec.cpp.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/liboslquery/py_osl.h OpenShadingLanguage-1.14.7.0/src/liboslquery/py_osl.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/liboslquery/py_osl.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/liboslquery/py_osl.h	2025-09-30 18:18:28.989156542 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ // Python.h uses the 'register' keyword, don't warn about it being
+ // deprecated in C++17.
+ #if (__cplusplus >= 201703L && defined(__GNUC__))
+@@ -33,8 +39,13 @@
+ #include <pybind11/operators.h>
+ #include <pybind11/pybind11.h>
+ #include <pybind11/stl.h>
+-namespace py = pybind11;
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
++
++namespace py = pybind11;
+ 
+ // Python3 is always unicode, so return a true str
+ #define PY_STR py::str
+Only in OpenShadingLanguage-1.14.7.0/src/liboslquery: py_osl.h.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/osltoy/osltoyrenderer.h OpenShadingLanguage-1.14.7.0/src/osltoy/osltoyrenderer.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/osltoy/osltoyrenderer.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/osltoy/osltoyrenderer.h	2025-09-30 18:20:01.299687755 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <map>
+ #include <memory>
+ #include <unordered_map>
+@@ -15,6 +21,10 @@
+ #include <OSL/oslexec.h>
+ #include <OSL/rendererservices.h>
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ OSL_NAMESPACE_BEGIN
+ 
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/osltoy: osltoyrenderer.h.orig
+Only in OpenShadingLanguage-1.14.7.0/src/osltoy: osltoyrenderer.h.rej
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/testrender/simpleraytracer.h OpenShadingLanguage-1.14.7.0/src/testrender/simpleraytracer.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/testrender/simpleraytracer.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/testrender/simpleraytracer.h	2025-09-30 18:18:28.989156542 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <map>
+ #include <memory>
+ #include <unordered_map>
+@@ -16,6 +22,10 @@
+ #include "raytracer.h"
+ #include "sampling.h"
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ 
+ OSL_NAMESPACE_BEGIN
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/testrender: simpleraytracer.h.orig
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/testshade/batched_simplerend.h OpenShadingLanguage-1.14.7.0/src/testshade/batched_simplerend.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/testshade/batched_simplerend.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/testshade/batched_simplerend.h	2025-09-30 18:20:19.331400836 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <memory>
+ #include <unordered_map>
+ #include <unordered_set>
+@@ -15,6 +21,10 @@
+ 
+ #include <OSL/batched_rendererservices.h>
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ OSL_NAMESPACE_BEGIN
+ 
+ class SimpleRenderer;
+Only in OpenShadingLanguage-1.14.7.0/src/testshade: batched_simplerend.h.orig
+Only in OpenShadingLanguage-1.14.7.0/src/testshade: batched_simplerend.h.rej
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/testshade/simplerend.h OpenShadingLanguage-1.14.7.0/src/testshade/simplerend.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/testshade/simplerend.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/testshade/simplerend.h	2025-09-30 18:20:37.891105513 -0700
+@@ -4,6 +4,12 @@
+ 
+ #pragma once
+ 
++
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <map>
+ #include <memory>
+ #include <unordered_map>
+@@ -20,6 +26,10 @@
+ 
+ #include "render_state.h"
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ OSL_NAMESPACE_BEGIN
+ 
+ 
+Only in OpenShadingLanguage-1.14.7.0/src/testshade: simplerend.h.orig
+Only in OpenShadingLanguage-1.14.7.0/src/testshade: simplerend.h.rej
+diff '--color=auto' -urp OpenShadingLanguage-1.14.7.0.orig/src/testshade/testshade.cpp OpenShadingLanguage-1.14.7.0/src/testshade/testshade.cpp
+--- OpenShadingLanguage-1.14.7.0.orig/src/testshade/testshade.cpp	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/testshade/testshade.cpp	2025-09-30 18:18:28.989156542 -0700
+@@ -3,6 +3,11 @@
+ // https://github.com/AcademySoftwareFoundation/OpenShadingLanguage
+ 
+ 
++#if defined(__CUDACC__)
++#  pragma push_macro("__noinline__")
++#  undef __noinline__
++#endif
++
+ #include <cmath>
+ #include <fstream>
+ #include <iostream>
+@@ -40,6 +45,10 @@
+ #include "render_state.h"
+ #include "simplerend.h"
+ 
++#if defined(__CUDACC__)
++#  pragma pop_macro("__noinline__")
++#endif
++
+ 
+ extern int testshade_llvm_compiled_rs_size;
+ extern unsigned char testshade_llvm_compiled_rs_block[];

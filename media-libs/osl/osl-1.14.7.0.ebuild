@@ -3,15 +3,17 @@
 
 EAPI=8
 
+# U24
+
 # For requirements, see
-# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/INSTALL.md
+# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.14.7.0/INSTALL.md
 # For optix requirements, see
-# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
+# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.14.7.0/src/cmake/externalpackages.cmake
 
 CUDA_TARGETS_COMPAT=(
 	sm_60
 )
-LLVM_COMPAT=( {15..13} ) # clang is 16 supported but not llvm 16
+LLVM_COMPAT=( {19..11} ) # clang is 16 supported but not llvm 16
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 OPENEXR_V2_PV=(
 	# openexr:imath
@@ -23,6 +25,9 @@ OPENEXR_V2_PV=(
 )
 OPENEXR_V3_PV=(
 	# openexr:imath
+	"3.3.5:3.1.12"
+	"3.3.4:3.1.12"
+	"3.3.3:3.1.12"
 	"3.3.2:3.1.12"
 	"3.3.1:3.1.12"
 	"3.3.0:3.1.11"
@@ -42,7 +47,7 @@ OPENEXR_V3_PV=(
 	"3.1.5:3.1.5"
 	"3.1.4:3.1.4"
 )
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists up to 3.10
+PYTHON_COMPAT=( "python3_"{10..13} )
 QT5_MIN="5.6"
 QT6_MIN="6"
 OIIO_PV="2.2"
@@ -131,7 +136,7 @@ REQUIRED_USE+="
 "
 PATCHES=(
 	"${FILESDIR}/osl-1.12.13.0-change-ci-test.bash.patch"
-	"${FILESDIR}/osl-1.13.8.0-cuda-noinline-fix.patch"
+	"${FILESDIR}/osl-1.14.7.0-cuda-noinline-fix.patch"
 )
 
 gen_llvm_depend()
@@ -186,8 +191,10 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
-				~dev-libs/imath-${imath_pv}:=
+				~media-libs/openexr-${openexr_pv}
+				media-libs/openexr:=
+				~dev-libs/imath-${imath_pv}
+				dev-libs/imath:=
 			)
 		"
 	done
@@ -197,7 +204,9 @@ gen_openexr_pairs() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}:=
-				~media-libs/ilmbase-${ilmbase_pv}:=[${MULTILIB_USEDEP}]
+				media-libs/openexr:=
+				~media-libs/ilmbase-${ilmbase_pv}[${MULTILIB_USEDEP}]
+				media-libs/ilmbase:=
 			)
 		"
 	done
@@ -209,23 +218,29 @@ gen_openexr_pairs() {
 
 RDEPEND+="
 	(
-		>=media-libs/openimageio-2.4.12.0:=[${PYTHON_SINGLE_USEDEP}]
-		<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]
+		>=media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP}]
+		media-libs/openimageio:=
+	)
+	(
+		>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
+		dev-libs/boost:=
+	)
+	(
+		sys-libs/zlib[${MULTILIB_USEDEP}]
+		sys-libs/zlib:=
 	)
 	$(gen_llvm_depend)
-	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-1.8[${MULTILIB_USEDEP}]
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-8:=
 	)
 	optix? (
 		(
 			>=media-libs/openimageio-${OIIO_PV}[${PYTHON_SINGLE_USEDEP}]
-			media-libs/openimageio:=[${PYTHON_SINGLE_USEDEP}]
+			media-libs/openimageio:=
 		)
-		>=dev-libs/optix-5.1
+		>=dev-libs/optix-7.0
 		|| (
 			$(gen_opx_llvm_rdepend)
 		)
@@ -236,7 +251,7 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.7[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
 	)
@@ -261,7 +276,7 @@ DEPEND+="
 "
 BDEPEND+="
 	$(gen_llvm_depend)
-	>=dev-build/cmake-3.12
+	>=dev-build/cmake-3.19
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/bison-2.7
 	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
@@ -270,7 +285,8 @@ BDEPEND+="
 			>=media-libs/openimageio-'${OIIO_PV}'[truetype]
 		')
 		cuda? (
-			>=dev-util/nvidia-cuda-toolkit-10:=
+			>=dev-util/nvidia-cuda-toolkit-9:=
+			dev-util/nvidia-cuda-toolkit:=
 		)
 	)
 	|| (
