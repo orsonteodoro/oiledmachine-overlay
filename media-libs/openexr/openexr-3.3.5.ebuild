@@ -8,7 +8,7 @@ MY_PN="OpenEXR"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
 CPU_FLAGS_X86=(
-	cpu_flags_x86_avx
+	"cpu_flags_x86_avx"
 )
 OPENEXR_IMAGES_PV="1.0"
 
@@ -47,8 +47,10 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=app-arch/libdeflate-1.21:=[zlib(+)]
+	>=app-arch/libdeflate-1.21[zlib(+)]
+	app-arch/libdeflate:=
 	~dev-libs/imath-3.1.12:=
+	dev-libs/imath:=
 "
 DEPEND="
 	${RDEPEND}
