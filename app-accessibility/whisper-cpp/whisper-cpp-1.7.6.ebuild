@@ -102,7 +102,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
-ebuild_revision_2
+ebuild_revision_3
 "
 gen_rocm_required_use() {
 	local s
@@ -152,20 +152,11 @@ REQUIRED_USE="
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx2? (
-		cpu_flags_x86_bmi2
-	)
-	cpu_flags_x86_avx2? (
-		cpu_flags_x86_avx
-		cpu_flags_x86_bmi2
-		cpu_flags_x86_fma
-		cpu_flags_x86_f16c
-	)
-	cpu_flags_x86_f16c? (
-		cpu_flags_x86_sse4_2
-	)
 	cpu_flags_x86_bmi2? (
 		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_fma? (
 		cpu_flags_x86_avx

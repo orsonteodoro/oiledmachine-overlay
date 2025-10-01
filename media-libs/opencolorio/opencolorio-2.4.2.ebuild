@@ -124,7 +124,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 doc opengl python static-libs test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	doc? (
@@ -147,7 +147,7 @@ REQUIRED_USE="
 		cpu_flags_x86_sse4
 	)
 	cpu_flags_x86_f16c? (
-		cpu_flags_x86_sse4_2
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_sse4? (
 		cpu_flags_x86_sse4_2
