@@ -128,35 +128,26 @@ REQUIRED_USE="
 		cpu_flags_x86_avx
 	)
 
-	cpu_flags_x86_avx512bw? (
-		cpu_flags_x86_avx512dq
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512f
 	)
 
