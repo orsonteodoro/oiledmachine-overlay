@@ -310,7 +310,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DOCIO_USE_AVX=$(usex cpu_flags_x86_avx)
 		-DOCIO_USE_AVX2=$(usex cpu_flags_x86_avx2)
 		-DOCIO_USE_AVX512=$(usex cpu_flags_x86_avx512f)
-		-DOCIO_USE_F16C$(usex cpu_flags_x86_f16c)
+		-DOCIO_USE_F16C=$(usex cpu_flags_x86_f16c)
 		-DOCIO_USE_SSE=$(usex cpu_flags_x86_sse)
 		-DOCIO_USE_SSE2=$(usex cpu_flags_x86_sse2)
 		-DOCIO_USE_SSE3=$(usex cpu_flags_x86_sse3)
