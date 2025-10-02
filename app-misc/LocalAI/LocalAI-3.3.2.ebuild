@@ -20,53 +20,53 @@ MY_PN2="local-ai"
 inherit hip-versions
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx900
-	gfx906
-	gfx908
-	gfx940
-	gfx941
-	gfx942
-	gfx90a
-	gfx1030
-	gfx1031
-	gfx1100
-	gfx1101
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx90a"
+	"gfx1030"
+	"gfx1031"
+	"gfx1100"
+	"gfx1101"
 )
 CPU_FLAGS_ARM=(
-	cpu_flags_arm_dotprod
-	cpu_flags_arm_i8mm
-	cpu_flags_arm_sme
+	"cpu_flags_arm_dotprod"
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_sme"
 )
 CPU_FLAGS_LOONG=(
-	cpu_flags_loong_lasx
-	cpu_flags_loong_lsx
+	"cpu_flags_loong_lasx"
+	"cpu_flags_loong_lsx"
 )
 CPU_FLAGS_RISCV=(
-	cpu_flags_riscv_rvv
-	cpu_flags_riscv_rv_zfh
+	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_rv_zfh"
 )
 CPU_FLAGS_S390=(
-	cpu_flags_s390_vxe
+	"cpu_flags_s390_vxe"
 )
 CPU_FLAGS_X86=(
-	cpu_flags_x86_amx_bf16
-	cpu_flags_x86_amx_int8
-	cpu_flags_x86_amx_tile
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512_vbmi
-	cpu_flags_x86_avx512_vnni
-	cpu_flags_x86_avx512_bf16
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512cd
-	cpu_flags_x86_avx512dq
-	cpu_flags_x86_avx512f
-	cpu_flags_x86_avx512vl
-	cpu_flags_x86_avx_vnni
-	cpu_flags_x86_bmi2
-	cpu_flags_x86_f16c
-	cpu_flags_x86_fma
-	cpu_flags_x86_sse4_2
+	"cpu_flags_x86_amx_bf16"
+	"cpu_flags_x86_amx_int8"
+	"cpu_flags_x86_amx_tile"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512_vbmi"
+	"cpu_flags_x86_avx512_vnni"
+	"cpu_flags_x86_avx512_bf16"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512cd"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vl"
+	"cpu_flags_x86_avx_vnni"
+	"cpu_flags_x86_bmi2"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_fma"
+	"cpu_flags_x86_sse4_2"
 )
 #
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
@@ -182,7 +182,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	!ci
@@ -203,9 +203,6 @@ REQUIRED_USE="
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx2? (
-		cpu_flags_x86_avx
-	)
 
 	cpu_flags_x86_bmi2? (
 		cpu_flags_x86_sse4_2
@@ -215,6 +212,11 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_fma? (
 		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+		cpu_flags_x86_fma
 	)
 	cpu_flags_x86_avx_vnni? (
 		cpu_flags_x86_avx2
@@ -244,19 +246,16 @@ REQUIRED_USE="
 
 	cpu_flags_x86_avx512_vnni? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512_vbmi? (
+		cpu_flags_x86_avx512bw
 	)
 	cpu_flags_x86_avx512_bf16? (
 		cpu_flags_x86_avx512_vnni
 	)
-	cpu_flags_x86_avx512_vbmi? (
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_f16c
-	)
 
 	cpu_flags_x86_amx_bf16? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_f16c
 		cpu_flags_x86_amx_int8
 		cpu_flags_x86_amx_tile
 	)

@@ -39,9 +39,9 @@ DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD libvpx-PATENTS"
 SLOT="0/11"
-PPC_IUSE="
-	cpu_flags_ppc_vsx3
-"
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_vsx3"
+)
 TRAINER_IUSE="
 	libvpx_trainers_2_pass_constrained_quality
 	libvpx_trainers_2_pass_constrained_quality_quick
@@ -51,7 +51,7 @@ TRAINER_IUSE="
 	libvpx_trainers_lossless_quick
 "
 IUSE="
-${PPC_IUSE}
+${CPU_FLAGS_PPC[@]}
 ${TRAINER_IUSE}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
 ebuild_revision_31

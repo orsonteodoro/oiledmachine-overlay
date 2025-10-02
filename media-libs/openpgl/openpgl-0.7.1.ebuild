@@ -51,7 +51,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 debug doc tbb
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	tbb
@@ -60,6 +60,8 @@ REQUIRED_USE+="
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_sse4_2
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_bmi? (
 		cpu_flags_x86_sse4_2

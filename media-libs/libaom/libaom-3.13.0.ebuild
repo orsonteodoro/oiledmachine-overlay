@@ -109,7 +109,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 ${PGO_TRAINERS}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_35
+ebuild_revision_36
 "
 REQUIRED_USE="
 	arm64? (
@@ -139,36 +139,25 @@ REQUIRED_USE="
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_avx512bw? (
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
 	)
 	cpu_flags_arm_dotprod? (
 		cpu_flags_arm_neon

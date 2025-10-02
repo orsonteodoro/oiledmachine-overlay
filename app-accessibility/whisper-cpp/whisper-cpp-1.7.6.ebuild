@@ -39,7 +39,7 @@ CPU_FLAGS_LOONG=(
 )
 CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
-	"cpu_flags_riscv_xthreadvector"
+	"cpu_flags_riscv_xtheadvector"
 	"cpu_flags_riscv_zfh"
 )
 CPU_FLAGS_S390=(
@@ -102,7 +102,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
-ebuild_revision_3
+ebuild_revision_4
 "
 gen_rocm_required_use() {
 	local s
@@ -163,68 +163,38 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+		cpu_flags_x86_fma
+	)
+
+	cpu_flags_x86_avxvnni? (
+		cpu_flags_x86_avx2
+	)
+
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512cd
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx512f
 	)
 
 	cpu_flags_x86_avx512bw? (
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-	)
-
-	cpu_flags_x86_amx_bf16? (
-		cpu_flags_x86_avxvnni
-		cpu_flags_x86_amx_int8
-		cpu_flags_x86_amx_tile
-		cpu_flags_x86_avx512vbmi
-		cpu_flags_x86_avx512vnni
-		cpu_flags_x86_avx512bf16
-	)
-	cpu_flags_x86_amx_int8? (
-		cpu_flags_x86_avxvnni
-		cpu_flags_x86_amx_bf16
-		cpu_flags_x86_amx_tile
-		cpu_flags_x86_avx512vbmi
-		cpu_flags_x86_avx512vnni
-		cpu_flags_x86_avx512bf16
-	)
-	cpu_flags_x86_amx_tile? (
-		cpu_flags_x86_avxvnni
-		cpu_flags_x86_amx_bf16
-		cpu_flags_x86_amx_int8
-		cpu_flags_x86_avx512vbmi
-		cpu_flags_x86_avx512vnni
-		cpu_flags_x86_avx512bf16
 	)
 
 	cpu_flags_x86_avx512vnni? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_f16c
+		cpu_flags_x86_avx512bw
 	)
 
 	cpu_flags_x86_avx512bf16? (
@@ -232,11 +202,32 @@ REQUIRED_USE="
 	)
 
 	cpu_flags_x86_avx512vbmi? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_f16c
+		cpu_flags_x86_avx512bw
 	)
 
-	cpu_flags_riscv_xthreadvector? (
+	cpu_flags_x86_amx_bf16? (
+		cpu_flags_x86_avxvnni
+		cpu_flags_x86_amx_int8
+		cpu_flags_x86_amx_tile
+		cpu_flags_x86_avx512vbmi
+		cpu_flags_x86_avx512bf16
+	)
+	cpu_flags_x86_amx_int8? (
+		cpu_flags_x86_avxvnni
+		cpu_flags_x86_amx_bf16
+		cpu_flags_x86_amx_tile
+		cpu_flags_x86_avx512vbmi
+		cpu_flags_x86_avx512bf16
+	)
+	cpu_flags_x86_amx_tile? (
+		cpu_flags_x86_avxvnni
+		cpu_flags_x86_amx_bf16
+		cpu_flags_x86_amx_int8
+		cpu_flags_x86_avx512vbmi
+		cpu_flags_x86_avx512bf16
+	)
+
+	cpu_flags_riscv_xtheadvector? (
 		cpu_flags_riscv_rvv
 	)
 	cpu_flags_riscv_zfh? (
@@ -388,7 +379,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_zfh)
 		-DGGML_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DGGML_VXE=$(use cpu_flags_s390_vxe)
-		-DGGML_XTHEADVECTOR=$(usex cpu_flags_riscv_xthreadvector)
+		-DGGML_XTHEADVECTOR=$(usex cpu_flags_riscv_xtheadvector)
 	)
 	if use mkl ; then
 		mycmakeargs+=(

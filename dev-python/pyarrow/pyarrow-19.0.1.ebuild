@@ -59,7 +59,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +parquet +snappy ssl
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -68,6 +68,9 @@ REQUIRED_USE="
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+	)
 	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
@@ -75,19 +78,11 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
 	)
 "
 RDEPEND="

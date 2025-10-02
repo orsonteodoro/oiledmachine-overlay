@@ -76,7 +76,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs sycl +tbb test tutorials
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -93,36 +93,25 @@ REQUIRED_USE+="
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_avx512bw? (
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512cd? (
-		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
-	)
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
 	)
 	pgo? (
 		tutorials
