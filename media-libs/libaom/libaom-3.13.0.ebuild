@@ -109,7 +109,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 ${PGO_TRAINERS}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_36
+ebuild_revision_37
 "
 REQUIRED_USE="
 	arm64? (
@@ -586,12 +586,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_ARM_CRC32=$(usex cpu_flags_arm_crc32 ON OFF)
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
-		-DENABLE_AVX512=$(usex cpu_flags_x86_avx512f)
+		-DENABLE_AVX512=$(usex cpu_flags_x86_avx512dq ON OFF)
 		-DENABLE_MMX=$(usex cpu_flags_x86_mmx ON OFF)
 		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON OFF)
-		-DENABLE_NEON_DOTPROD=$(usex cpu_flags_arm_dotprod)
-		-DENABLE_NEON_I8MM=$(usex cpu_flags_arm_i8mm)
-		-DENABLE_RVV=$(usex cpu_flags_riscv_rvv)
+		-DENABLE_NEON_DOTPROD=$(usex cpu_flags_arm_dotprod ON OFF)
+		-DENABLE_NEON_I8MM=$(usex cpu_flags_arm_i8mm ON OFF)
+		-DENABLE_RVV=$(usex cpu_flags_riscv_rvv ON OFF)
 		-DENABLE_SSE=$(usex cpu_flags_x86_sse ON OFF)
 		-DENABLE_SSE2=$(usex cpu_flags_x86_sse2 ON OFF)
 		-DENABLE_SSE3=$(usex cpu_flags_x86_sse3 ON OFF)
