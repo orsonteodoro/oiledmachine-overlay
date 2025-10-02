@@ -82,7 +82,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -119,10 +119,10 @@ REQUIRED_USE="
 		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_f16c? (
-		cpu_flags_x86_avx
+		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_fma? (
-		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
 	)
 
 	cpu_flags_x86_avx2? (

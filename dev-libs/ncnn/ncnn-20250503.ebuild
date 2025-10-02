@@ -189,7 +189,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 examples openmp python tools +vulkan
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -230,10 +230,9 @@ REQUIRED_USE="
 		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_f16c? (
-		cpu_flags_x86_avx
+		cpu_flags_x86_sse2
 	)
 	cpu_flags_x86_fma? (
-		cpu_flags_x86_avx
 		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_xop? (

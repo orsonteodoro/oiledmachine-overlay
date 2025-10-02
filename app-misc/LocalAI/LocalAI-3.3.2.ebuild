@@ -182,7 +182,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	!ci
@@ -208,10 +208,10 @@ REQUIRED_USE="
 		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_f16c? (
-		cpu_flags_x86_avx
+		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_fma? (
-		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx

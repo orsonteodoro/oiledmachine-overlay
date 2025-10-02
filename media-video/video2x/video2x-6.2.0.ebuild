@@ -241,7 +241,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_7
+ebuild_revision_8
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -284,11 +284,10 @@ REQUIRED_USE="
 		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_fma? (
-		cpu_flags_x86_avx
 		cpu_flags_x86_f16c
 	)
 	cpu_flags_x86_f16c? (
-		cpu_flags_x86_avx
+		cpu_flags_x86_sse2
 	)
 	cpu_flags_x86_xop? (
 		cpu_flags_x86_avx
