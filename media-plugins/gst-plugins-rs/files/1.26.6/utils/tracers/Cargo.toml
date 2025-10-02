@@ -1,26 +1,35 @@
 [package]
-name = "gst-plugin-elevenlabs"
+name = "gst-plugin-tracers"
 version.workspace = true
-authors = ["Mathieu Duponchelle <mathieu@centricular.com>"]
+authors = ["Guillaume Desmottes <guillaume.desmottes@onestream.live>"]
 repository.workspace = true
 license = "MPL-2.0"
-description = "GStreamer ElevenLabs plugin"
 edition.workspace = true
+description = "GStreamer Rust tracers plugin"
 rust-version.workspace = true
 
 [dependencies]
-futures = "0.3"
-gst = { workspace = true, features = ["v1_20"] }
-gst-base.workspace = true
-gst-audio = { workspace = true, features = ["v1_16"] }
-tokio = { version = "1", features = [ "full" ] }
+gst.workspace = true
+anyhow = "1"
+regex = "1"
+atomic_refcell = "0.1"
+pcap-file = "2"
+etherparse = "0.19.0"
+chrono = "0.4.35"
+walkdir = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio-stream = "0.1.11"
+async-tungstenite = { version = "0.31", features = ["tokio-runtime", "url"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-anyhow = "1"
-reqwest = { version = "0.12" }
+url = "2"
+futures = "0.3"
+
+[target.'cfg(unix)'.dependencies]
+signal-hook = "0.3"
 
 [lib]
-name = "gstelevenlabs"
+name = "gstrstracers"
 crate-type = ["cdylib", "rlib"]
 path = "src/lib.rs"
 
@@ -31,6 +40,8 @@ gst-plugin-version-helper.workspace = true
 static = []
 capi = []
 doc = ["gst/v1_18"]
+v1_22 = ["gst/v1_22"]
+v1_26 = ["gst/v1_26"]
 
 [package.metadata.capi]
 min_version = "0.9.21"
@@ -44,7 +55,7 @@ versioning = false
 import_library = false
 
 [package.metadata.capi.pkg_config]
-requires_private = "gstreamer-1.0, gstreamer-base-1.0, gstreamer-audio-1.0, gobject-2.0, glib-2.0, gmodule-2.0"
+requires_private = "gstreamer-1.0, gobject-2.0, glib-2.0, gmodule-2.0"
 
 [package.metadata.gstreamer]
 release_date = "2025-07-16"

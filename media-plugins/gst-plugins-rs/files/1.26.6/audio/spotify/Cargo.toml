@@ -1,32 +1,30 @@
 [package]
-name = "gst-plugin-reqwest"
+name = "gst-plugin-spotify"
 version.workspace = true
-authors = ["Sebastian Dröge <sebastian@centricular.com>"]
+authors = ["Guillaume Desmottes <guillaume@desmottes.be>"]
 repository.workspace = true
-license = "MIT OR Apache-2.0"
-description = "GStreamer reqwest HTTP Source Plugin"
+license = "MPL-2.0"
+description = "GStreamer Spotify Plugin"
 edition.workspace = true
-rust-version.workspace = true
+rust-version = "1.85"
 
 [dependencies]
-url = "2.1"
-reqwest = { version = "0.12", features = ["cookies", "gzip"] }
-futures = "0.3"
-headers = "0.4"
-mime = "0.3"
 gst.workspace = true
 gst-base.workspace = true
-tokio = { version = "1.0", default-features = false, features = ["time", "rt-multi-thread"] }
-
-[dev-dependencies]
-hyper = { version = "1.0", features = ["server"] }
-http-body-util = "0.1.1"
-bytes = "1.0"
-pin-project-lite = "0.2"
-gst.workspace = true
+librespot-core = { version = "0.7", default-features = false, features = [
+    "rustls-tls-native-roots",
+] }
+librespot-metadata = { version = "0.7", default-features = false }
+librespot-playback = { version = "0.7", default-features = false, features = [
+    'passthrough-decoder',
+] }
+tokio = { version = "1.0", features = ["rt-multi-thread"] }
+futures = "0.3"
+anyhow = "1.0"
+url = "2.3"
 
 [lib]
-name = "gstreqwest"
+name = "gstspotify"
 crate-type = ["cdylib", "rlib"]
 path = "src/lib.rs"
 
