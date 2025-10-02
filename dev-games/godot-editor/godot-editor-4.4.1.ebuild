@@ -246,7 +246,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_29
+	ebuild_revision_30
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -274,10 +274,6 @@ REQUIRED_USE+="
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
-	)
-	cpu_flags_x86_popcnt? (
-		cpu_flags_x86_sse4_2
-		cpu_flags_x86_sse4_1
 	)
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_sse4_1
