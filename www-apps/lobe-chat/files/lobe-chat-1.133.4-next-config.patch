@@ -1,0 +1,46 @@
+--- a/next.config.ts.orig	2025-10-01 14:06:07.000000000 -0700
++++ b/next.config.ts	2025-10-02 15:07:56.659067398 -0700
+@@ -20,12 +20,14 @@ const standaloneConfig: NextConfig = {
+ };
+ 
+ const nextConfig: NextConfig = {
++  // For more settings, see also https://github.com/vercel/next.js/blob/v15.3.3/packages/next/src/server/config-shared.ts#L306
+   ...(isStandaloneMode ? standaloneConfig : {}),
+   assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX,
+   compiler: {
+     emotion: true,
+   },
+   compress: isProd,
++  staticPageGenerationTimeout: 120,
+   eslint: {
+     ignoreDuringBuilds: true,
+   },
+@@ -45,7 +47,27 @@ const nextConfig: NextConfig = {
+     // refs: https://github.com/lobehub/lobe-chat/pull/7430
+     serverMinification: false,
+     webVitalsAttribution: ['CLS', 'LCP'],
+-    webpackMemoryOptimizations: true,
++    webpackMemoryOptimizations: false,
++//
++// # Setting workerThreads=false causes:
++//
++//     munmap_chunk(): invalid pointer
++//     # but shows progress bar
++//
++// # Setting workerThreads=true causes:
++//
++//     > Build error occurred
++//     Error [DataCloneError]: webpack (config, options) {
++//                     const webpack = options.webpack;
++//                     const { dev } = op...<omitted>... } could not be cloned.
++//         at new Promise (<anonymous>) {
++//       code: 25,
++//       [...]
++//       DATA_CLONE_ERR: 25
++//     # without progress bar
++//
++    workerThreads: false,
++    cpus: 1,
+   },
+   async headers() {
+     const securityHeaders = [

@@ -7,6 +7,8 @@ EAPI=8
 # Version bump history for configuration update reviews:
 # 1.74.0 -> 1.96.13
 # 1.96.13 -> 1.96.14
+# 1.96.14 -> 1.111.4
+# 1.111.4 -> 1.133.4
 
 # Ebuild using React 19
 
@@ -35,12 +37,12 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `NPM_UPDATER_VERSIONS="1.96.14" npm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.133.4"` pnpm_updater_update_locks.sh to update lockfile
 
 MY_PN="LobeChat"
 
 CPU_FLAGS_X86=(
-	cpu_flags_x86_sse4_2
+	"cpu_flags_x86_sse4_2"
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_SHARP_USE="exif lcms webp"
@@ -357,7 +359,7 @@ pnpm_unpack_post() {
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
-	eapply "${FILESDIR}/${PN}-1.96.13-next-config.patch"
+	eapply "${FILESDIR}/${PN}-1.133.4-next-config.patch" # FIXME
 	eapply "${FILESDIR}/${PN}-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-1.96.14-use-e965-xlsx.patch"
 
@@ -543,19 +545,21 @@ ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to 
 		fi
 		local sharp_platform=$(node-sharp_get_platform)
 
-	        einfo "Rebuilding sharp in ${S}"
-	        pushd "${S}" >/dev/null 2>&1 || die
-			node-sharp_pnpm_rebuild_sharp
-			# Copy sharp binary to expected location
-			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
-			cp \
-				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node"
-			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+		if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
+		        einfo "Rebuilding sharp in ${S}"
+		        pushd "${S}" >/dev/null 2>&1 || die
+				node-sharp_pnpm_rebuild_sharp
+				# Copy sharp binary to expected location
+				mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+				cp \
+					"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+					"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+					|| die "Failed to copy sharp-${sharp_platform}.node"
+				ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
 
-			node-sharp_verify_dedupe
-		popd >/dev/null 2>&1 || die
+				node-sharp_verify_dedupe
+			popd >/dev/null 2>&1 || die
+		fi
 
 #		epnpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
