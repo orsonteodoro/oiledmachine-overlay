@@ -38,93 +38,94 @@ EAPI=8
 # CUDA:  https://github.com/ollama/ollama/blob/v0.6.5/.github/workflows/release.yaml#L194
 # Hardware support:  https://github.com/ollama/ollama/blob/v0.6.5/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
-	gfx900
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_plus
-	gfx90a_xnack_minus
-	gfx940
-	gfx941
-	gfx942
-	gfx1010
-	gfx1012
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
+	"gfx900"
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx90a_xnack_plus"
+	"gfx90a_xnack_minus"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx1010"
+	"gfx1012"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
 )
 I8MM_ARCHES=(
-	armv8.2-a
-	armv8.3-a
-	armv8.4-a
-	armv8.5-a
-	armv8.6-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
-	armv8-r
+	"armv8.2-a"
+	"armv8.3-a"
+	"armv8.4-a"
+	"armv8.5-a"
+	"armv8.6-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
+	"armv8-r"
 )
 SVE_ARCHES=(
-	armv8.2-a
-	armv8.3-a
-	armv8.4-a
-	armv8.5-a
-	armv8.6-a
-	armv9-a
-	armv9.1-a
-	armv9.2-a
-	armv9.3-a
-	armv9.4-a
+	"armv8.2-a"
+	"armv8.3-a"
+	"armv8.4-a"
+	"armv8.5-a"
+	"armv8.6-a"
+	"armv9-a"
+	"armv9.1-a"
+	"armv9.2-a"
+	"armv9.3-a"
+	"armv9.4-a"
 )
 CPU_FLAGS_ARM=(
-	cpu_flags_arm_i8mm
-	cpu_flags_arm_sve
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_sve"
 )
 CPU_FLAGS_X86=(
-	cpu_flags_x86_f16c
-	cpu_flags_x86_fma
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512bf16
-	cpu_flags_x86_avx512dq
-	cpu_flags_x86_avx512f
-	cpu_flags_x86_avx512vbmi
-	cpu_flags_x86_avx512vl
-	cpu_flags_x86_avx512vnni
-	cpu_flags_x86_avxvnni
-	cpu_flags_x86_avxvnniint8
-	cpu_flags_x86_sse
-	cpu_flags_x86_sse2
-	cpu_flags_x86_sse3
-	cpu_flags_x86_ssse3
-	cpu_flags_x86_sse4_2
-	cpu_flags_x86_amx
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_fma"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bf16"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vbmi"
+	"cpu_flags_x86_avx512vl"
+	"cpu_flags_x86_avx512vnni"
+	"cpu_flags_x86_avxvnni"
+	"cpu_flags_x86_avxvnniint8"
+	"cpu_flags_x86_sse"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse3"
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_sse4_2"
+	"cpu_flags_x86_amx_tile"
+	"cpu_flags_x86_amx_int8"
 )
 CUDA_FATTN_TARGETS_COMPAT=(
-	sm_60
-	sm_61
-	sm_70
-	sm_75
-	sm_80
-	sm_86
-	sm_89
-	sm_90
-	sm_90a
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_89"
+	"sm_90"
+	"sm_90a"
 )
 CUDA_TARGETS_COMPAT=(
-	sm_50
-	sm_52
-	sm_60
-	sm_61
-	sm_70
-	sm_75
-	sm_80
-	sm_86
-	sm_89
-	sm_90
-	sm_90a
+	"sm_50"
+	"sm_52"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_89"
+	"sm_90"
+	"sm_90a"
 )
 LLMS=(
 adens-quran-guide agcobra-liberated-qwen1.5-72b akx-viking-7b alfred
@@ -2672,7 +2673,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_80
+ebuild_revision_82
 "
 gen_rocm_required_use() {
 	local s
@@ -2751,8 +2752,37 @@ REQUIRED_USE="
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_ssse3
 	)
+	cpu_flags_x86_avxvnni? (
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avxvnniint8? (
+		cpu_flags_x86_avxvnni
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512dq
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512vl
+	)
 	cpu_flags_x86_avx512vnni? (
 		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512bf16? (
+		cpu_flags_x86_avx512vnni
+	)
+	cpu_flags_x86_amx_tile? (
+		cpu_flags_x86_amx_int8
+		cpu_flags_x86_avx512bf16
+	)
+	cpu_flags_x86_amx_int8? (
+		cpu_flags_x86_amx_tile
 	)
 	cuda? (
 		|| (
@@ -3466,9 +3496,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 		CPU_FEATURES+=( "AVX512_VNNI" )
 	fi
 
-	if use cpu_flags_x86_amx ; then
+	if use cpu_flags_x86_amx_tile ; then
 		CPU_FEATURES+=(
 			"AMX_TILE"
+		)
+	fi
+	if use cpu_flags_x86_amx_int8 ; then
+		CPU_FEATURES+=(
 			"AMX_INT8"
 		)
 	fi
