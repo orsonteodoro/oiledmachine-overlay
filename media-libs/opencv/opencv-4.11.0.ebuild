@@ -183,11 +183,8 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_avx512er:AVX512_KNL_EXTRA"
 	"cpu_flags_x86_avx512f:AVX_512F"
 	"cpu_flags_x86_avx512ifma:AVX_512IFMA"
-	"cpu_flags_x86_avx512pf:AVX512_KNL_EXTRA"
 	"cpu_flags_x86_avx512vl:AVX_512VL"
 	"cpu_flags_x86_avx512_bitalg:AVX_512BITALG"
-	"cpu_flags_x86_avx512_4fmaps:AVX512_KNM_EXTRA"
-	"cpu_flags_x86_avx512_4vnniw:AVX512_KNM_EXTRA"
 	"cpu_flags_x86_avx512_vbmi:AVX_512VBMI"
 	"cpu_flags_x86_avx512_vbmi2:AVX_512VBMI2"
 	"cpu_flags_x86_avx512_vnni:AVX_512VNNI"
@@ -471,10 +468,7 @@ REQUIRED_USE="
 	cpu_flags_x86_avx512er? (
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512pf
-	)
-	cpu_flags_x86_avx512pf? (
-		cpu_flags_x86_avx512er
+		cpu_flags_x86_avx512_vpopcntdq
 	)
 
 	cpu_flags_x86_avx512_vpopcntdq? (
@@ -488,18 +482,6 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx512ifma? (
 		cpu_flags_x86_avx512_vbmi
-	)
-	cpu_flags_x86_avx512_4fmaps? (
-		cpu_flags_x86_avx512er
-
-		cpu_flags_x86_avx512_4vnniw
-		cpu_flags_x86_avx512_vpopcntdq
-	)
-	cpu_flags_x86_avx512_4vnniw? (
-		cpu_flags_x86_avx512er
-
-		cpu_flags_x86_avx512_4fmaps
-		cpu_flags_x86_avx512_vpopcntdq
 	)
 	cpu_flags_x86_avx512_vnni? (
 		cpu_flags_x86_avx512bw
