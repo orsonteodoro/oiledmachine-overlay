@@ -99,6 +99,9 @@ einfo "CSRF = Cross Site Request Forgery"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DoS"($|" "|";"|",") ]] ; then
 einfo "DoS = Denial of Service"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DbZ"($|" "|";"|",") ]] ; then
+einfo "DbZ = Divide by Zero"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DF"($|" "|";"|",") ]] ; then
 einfo "DF = Double Free"
 		fi
@@ -139,6 +142,9 @@ einfo "IP = Improper Permissions"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
 einfo "IO = Integer Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOOOB"($|" "|";"|",") ]] ; then
+einfo "IOOOB = Index Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
 einfo "IS = Insufficient Sanitiation of Input"
@@ -200,6 +206,9 @@ einfo "SA = Spoofing Attack Vulnerability"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SO"($|" "|";"|",") ]] ; then
 einfo "SO = Stack Based Buffer Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOOB"($|" "|";"|",") ]] ; then
+einfo "SOOB = Shift Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBX"($|" "|";"|",") ]] ; then
 einfo "SBX = Sandbox Escape"
