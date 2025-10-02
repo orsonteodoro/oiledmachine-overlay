@@ -14,7 +14,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # See https://releases.electronjs.org/releases.json for version details.
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="38.0.0" # Cr 140.0.7339.41, node 22.18.0
+	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -103,7 +103,7 @@ THIRD_PARTY_LICENSES="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	THIRD_PARTY_LICENSES+="
-		electron-38.0.0-chromium.html
+		electron-38.2.0-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
