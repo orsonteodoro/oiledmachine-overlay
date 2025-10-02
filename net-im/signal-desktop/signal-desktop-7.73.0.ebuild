@@ -83,11 +83,11 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-38.0.0-chromium.html
+		electron-38.2.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-37.3.1-chromium.html
+		electron-38.2.0-chromium.html
 	"
 fi
 SLOT="0"
