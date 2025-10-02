@@ -88,22 +88,9 @@
     <flag name="cpu_flags_arm_vfpv3">
       Support vfpv3 (arm32 only)
     </flag>
-    <flag name="cpu_flags_x86_fma3">
-      Support FMA3 (Fused Multiply Add instruction with 3 variables)
-
-      Supported CPUs:
-
-      - Intel® Haswell (2013) and newer
-      - AMD Piledriver (2012) and newer
-
-    </flag>
-    <flag name="cpu_flags_x86_fma4">
-      Support FMA4 (Fused Multiply Add instruction with 4 variables)
-
-      Supported CPUs:
-
-      - AMD Bulldozer (2011)
-
+    <flag name="cpu_flags_x86_fma">
+      Support FMA (Fused Multiply Add instruction with 3 variables)
+      Disable if using Bulldozer version 1 (bdver1).
     </flag>
     <flag name="cuda">
       Enable NVIDIA® CUDA® computations support (Experimental!)

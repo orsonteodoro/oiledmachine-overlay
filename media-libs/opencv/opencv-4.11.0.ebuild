@@ -193,7 +193,7 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_avx512_vnni:AVX_512VNNI"
 	"cpu_flags_x86_avx512_vpopcntdq:AVX_512VPOPCNTDQ"
 	"cpu_flags_x86_f16c:FP16"
-	"cpu_flags_x86_fma3:FMA3"
+	"cpu_flags_x86_fma:FMA3"
 	"cpu_flags_x86_popcnt:POPCNT"
 	"cpu_flags_x86_sse:SSE"					# Always available on 64-bit CPUs
 	"cpu_flags_x86_sse2:SSE2"				# Always available on 64-bit CPUs
@@ -428,7 +428,7 @@ REQUIRED_USE="
 	cpu_flags_x86_f16c? (
 		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_fma3? (
+	cpu_flags_x86_fma? (
 		cpu_flags_x86_avx2
 	)
 	cpu_flags_x86_sse4_1? (
