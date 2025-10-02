@@ -119,6 +119,9 @@ einfo "EMA = Evil Maid Attack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IbD"($|" "|";"|",") ]] ; then
+einfo "IbD = Insecure by Design"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
 einfo "ID = Information Disclosure"
 		fi
@@ -126,6 +129,10 @@ einfo "ID = Information Disclosure"
 # Improper Free
 # Improper Release
 einfo "IF = Improper Free"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
+# Coded Insecurely
+einfo "II = Implemented Insecurely"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
