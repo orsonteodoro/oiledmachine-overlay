@@ -6,18 +6,18 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/140.0.7339.80/DEPS#L533
-GN_COMMIT="3a4f5cea73eca32e9586e8145f97b04cbd4a1aee"
-GN_PV="0.2265" # See get_gn_ver.sh
-# https://github.com/chromium/chromium/blob/140.0.7339.80/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/141.0.7390.54/DEPS#L533
+GN_COMMIT="5d0a4153b0bcc86c5a23310d5b648a587be3c56d"
+GN_PV="0.2279" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/141.0.7390.54/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="bd809ffb" # without the g prefix
 LLVM_N_COMMITS="16348"
 LLVM_OFFICIAL_SLOT="21" # Cr official slot
-LLVM_SUB_REV="15"
-# https://github.com/chromium/chromium/blob/140.0.7339.80/tools/rust/update_rust.py#L37 \
+LLVM_SUB_REV="17"
+# https://github.com/chromium/chromium/blob/141.0.7390.54/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="22be76b7e259f27bf3e55eb931f354cd8b69d55f"
-RUST_SUB_REV="3"
+RUST_SUB_REV="4"
 RUST_MAX_VER="1.88.0" # Inclusive
 RUST_MIN_VER="1.88.0" # Corresponds to llvm-20.1, see https://github.com/rust-lang/rust/blob/22be76b7e259f27bf3e55eb931f354cd8b69d55f/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
