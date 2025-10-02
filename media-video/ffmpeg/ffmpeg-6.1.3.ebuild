@@ -289,6 +289,8 @@ X86_CPU_FEATURES_RAW=(
 	aes:aesni
 	avx:avx
 	avx2:avx2
+	avx512bw:avx512
+	avx512gfni:avx512icl
 	fma3:fma3
 	fma4:fma4
 	mmx:mmx
@@ -305,8 +307,44 @@ X86_CPU_FEATURES=(
 	${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_}
 )
 X86_CPU_REQUIRED_USE="
+	cpu_flags_x86_mmxext?  (
+		cpu_flags_x86_mmx
+	)
+	cpu_flags_x86_3dnow?  (
+		cpu_flags_x86_mmx
+	)
+	cpu_flags_x86_3dnowext?  (
+		cpu_flags_x86_3dnow
+	)
+	cpu_flags_x86_sse?  (
+		cpu_flags_x86_mmxext
+	)
+	cpu_flags_x86_sse2?  (
+		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_sse3?  (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_ssse3?  (
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_1?  (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_sse4_2?  (
+		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_avx?  (
+		cpu_flags_x86_sse4_2
+	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_xop?  (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_aes? (
+		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_fma4? (
 		cpu_flags_x86_avx
@@ -314,41 +352,11 @@ X86_CPU_REQUIRED_USE="
 	cpu_flags_x86_fma3? (
 		cpu_flags_x86_avx
 	)
-	cpu_flags_x86_xop?  (
-		cpu_flags_x86_avx
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx2
 	)
-	cpu_flags_x86_avx?  (
-		cpu_flags_x86_sse4_2
-	)
-	cpu_flags_x86_aes? (
-		cpu_flags_x86_sse4_2
-	)
-	cpu_flags_x86_sse4_2?  (
-		cpu_flags_x86_sse4_1
-	)
-	cpu_flags_x86_sse4_1?  (
-		cpu_flags_x86_ssse3
-	)
-	cpu_flags_x86_ssse3?  (
-		cpu_flags_x86_sse3
-	)
-	cpu_flags_x86_sse3?  (
-		cpu_flags_x86_sse2
-	)
-	cpu_flags_x86_sse2?  (
-		cpu_flags_x86_sse
-	)
-	cpu_flags_x86_sse?  (
-		cpu_flags_x86_mmxext
-	)
-	cpu_flags_x86_mmxext?  (
-		cpu_flags_x86_mmx
-	)
-	cpu_flags_x86_3dnowext?  (
-		cpu_flags_x86_3dnow
-	)
-	cpu_flags_x86_3dnow?  (
-		cpu_flags_x86_mmx
+	cpu_flags_x86_avx512gfni? (
+		cpu_flags_x86_avx512bw
 	)
 "
 
@@ -502,7 +510,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
 wayland
-ebuild_revision_47
+ebuild_revision_48
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
