@@ -7,10 +7,10 @@ EAPI=8
 AT_TYPES_NODE_PV="18.16.3"
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1187"
-	["chromium-headless-shell-linux-glibc-amd64"]="1187"
+# See https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1193"
+	["chromium-headless-shell-linux-glibc-amd64"]="1193"
 	["chromium-tip-of-tree-linux-glibc-amd64"]="1357"
 	["ffmpeg-linux-glibc-amd64"]="1011"
 	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1490"
@@ -30,7 +30,7 @@ MY_PN="${PN//-cli/}"
 NODE_ENV="development"
 NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
-PLAYWRIGHT_PV="1.55.0"
+PLAYWRIGHT_PV="1.55.1"
 
 inherit desktop edo npm playwright
 
@@ -284,10 +284,10 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.55.0/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.55.1/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/browsers.json
 
 	local L=()
 	local choice
@@ -299,7 +299,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.55.0/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.55.1/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
