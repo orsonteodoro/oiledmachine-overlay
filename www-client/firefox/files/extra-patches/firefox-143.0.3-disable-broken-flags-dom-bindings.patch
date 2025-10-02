@@ -1,0 +1,20 @@
+--- a/dom/bindings/moz.build.orig	2025-09-29 11:23:06.000000000 -0700
++++ b/dom/bindings/moz.build	2025-10-02 09:53:44.812396889 -0700
+@@ -217,3 +217,17 @@ if CONFIG["COMPILE_ENVIRONMENT"]:
+ # Old versions of GCC issue false-positive warnings about buffer overflow.
+ if CONFIG["CC_TYPE"] == "gcc" and 10 <= int(CONFIG["CC_VERSION"].split(".")[0]) < 12:
+     CXXFLAGS += ["-Wno-stringop-overflow"]
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    # Prevent tab crash
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent tab crash
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
