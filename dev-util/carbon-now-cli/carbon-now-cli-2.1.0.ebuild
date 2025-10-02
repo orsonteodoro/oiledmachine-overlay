@@ -134,7 +134,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium? (
 			BSD
-			chromium-139.0.7258.x
+			chromium-140.0.7339.x
 		)
 	"
 fi
@@ -142,7 +142,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium-tip-of-tree? (
 			BSD
-			chromium-140.0.7271.x
+			chromium-141.0.7342.x
 		)
 	"
 fi
@@ -150,7 +150,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; t
 	THIRD_PARTY_LICENSES+="
 		chromium-headless-shell? (
 			BSD
-			chromium-139.0.7258.x
+			chromium-140.0.7339.x
 		)
 	"
 fi
@@ -158,7 +158,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox? (
 			BSD
-			FF-140.0-THIRD-PARTY-LICENSES
+			FF-141.0-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -166,7 +166,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox-beta? (
 			BSD
-			FF-140.0b7-THIRD-PARTY-LICENSES
+			FF-142.0b4-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -184,7 +184,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE+="
 	|| (
