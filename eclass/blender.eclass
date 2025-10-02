@@ -132,10 +132,6 @@ REQUIRED_USE+="
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_sse4_1
 	)
-	cpu_flags_x86_lzcnt? (
-		cpu_flags_x86_avx2
-		cpu_flags_x86_bmi
-	)
 	cpu_flags_x86_bmi? (
 		cpu_flags_x86_sse4_2
 	)
