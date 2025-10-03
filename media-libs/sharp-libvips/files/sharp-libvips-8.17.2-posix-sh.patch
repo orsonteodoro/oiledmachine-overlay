@@ -1191,7 +1191,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 -$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
 +echo "DEBUG:  Adding THIRD-PARTY-NOTICES.md"
 +#$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
-+cat "${DISTDIR}/${PN}-8.17.1-THIRD-PARTY-NOTICES.md" > "THIRD-PARTY-NOTICES.md"
++cat "${DISTDIR}/${P}-THIRD-PARTY-NOTICES.md" > "THIRD-PARTY-NOTICES.md"
  
  # Create the tarball
 -ls -al lib
