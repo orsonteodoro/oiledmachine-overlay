@@ -810,7 +810,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +  make install ${MAKE_LINK_JOBS}
 +else
 +  make install/strip ${MAKE_LINK_JOBS}
-+if
++fi
  fi
  
  build_freetype() {
