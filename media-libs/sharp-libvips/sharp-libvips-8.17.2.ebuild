@@ -6,8 +6,6 @@ EAPI=8
 
 # Version based on libvips
 
-SHARP_VIPS_PV="1.2.1"
-
 # Dependency graph:
 # librsvg:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lrsvg-2 -lgio-2.0 -lgobject-2.0 -lffi -lcairo -ldl -lfontconfig -lpng16 -lz -lharfbuzz -lm -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -latomic -lm -pthread
 # libexif:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lexif
@@ -100,6 +98,7 @@ PYTHON_COMPAT=( "python3_12" )
 
 # Dependency versions
 
+SHARP_VIPS_PV="1.2.3" # BUMP IMPORTANT!
 VERSION_SHARP_LIBVIPS=${SHARP_VIPS_PV}
 VERSION_VIPS=${PV}
 VERSION_ZLIB_NG=2.2.5
@@ -562,7 +561,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_20
+ebuild_revision_21
 "
 LICENSE="
 	Apache-2.0
@@ -667,7 +666,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/sharp-libvips-8.17.1-posix-sh.patch"
+	"A${FILESDIR}/sharp-libvips-8.17.1-posix-sh.patch"
 )
 
 pkg_setup() {
