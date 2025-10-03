@@ -21914,7 +21914,7 @@ snapshots:
 
   '@umijs/babel-preset-umi@4.5.1':
     dependencies:
-      '@babel/runtime': 7.28.2
+      '@babel/runtime': 7.28.4
       '@bloomberg/record-tuple-polyfill': 0.0.4
       '@umijs/bundler-utils': 4.5.1
       '@umijs/utils': 4.5.1
