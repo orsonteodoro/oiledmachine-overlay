@@ -37,7 +37,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.133.4"` pnpm_updater_update_locks.sh to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.133.4" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
@@ -50,7 +50,7 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.4.6"
+NEXTJS_PV="15.4.7"
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.2-debug.patch"
 	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
