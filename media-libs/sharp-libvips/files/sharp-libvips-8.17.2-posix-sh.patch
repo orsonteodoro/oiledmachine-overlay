@@ -690,7 +690,6 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
    -Dstatic_zlib=true -Dbuild_examples=false
 +meson compile -C _build ${MESON_LINK_JOBS}
  meson install -C _build --tag devel
-+fi
 +
 +echo "DEBUG:  Checking pkg-config for png"
 +pkg-config --modversion spng
@@ -699,6 +698,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +    exit 1
 +fi
 +echo "DEBUG:  libspng pkg-config libs: $(pkg-config --libs spng)"
++fi
  
 -mkdir ${DEPS}/imagequant
 -$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
