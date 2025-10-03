@@ -658,7 +658,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building libpng16 ${VERSION_PNG}"
 +#mkdir ${DEPS}/png
 +#$CURL https://github.com/pnggroup/libpng/archive/v${VERSION_PNG}.tar.gz | tar xzC ${DEPS}/png --strip-components=1
- cd ${DEPS}/png
+-cd ${DEPS}/png
++cd "${WORKDIR}/libpng-${VERSION_PNG}"
 -./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-tools --without-binconfigs --disable-unversioned-libpng-config
@@ -682,7 +683,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building libspng ${VERSION_SPNG}"
 +#mkdir ${DEPS}/spng
 +#$CURL https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz | tar xzC ${DEPS}/spng --strip-components=1
- cd ${DEPS}/spng
+-cd ${DEPS}/spng
++cd "${WORKDIR}/libspng-${VERSION_SPNG}"
 -CFLAGS="${CFLAGS} -O3 -DSPNG_SSE=4" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} ${LIBSPNG_SSE4_FLAG}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dstatic_zlib=true -Dbuild_examples=false
@@ -711,7 +713,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building libimagequant ${VERSION_IMAGEQUANT}"
 +#mkdir ${DEPS}/imagequant
 +#$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
- cd ${DEPS}/imagequant
+-cd ${DEPS}/imagequant
++cd "${WORKDIR}/libimagequant-${VERSION_IMAGEQUANT}"
 -CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON}
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
 +meson compile -C _build ${MESON_LINK_JOBS}
@@ -724,7 +727,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building libwebp ${VERSION_WEBP}"
 +#mkdir ${DEPS}/webp
 +#$CURL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz | tar xzC ${DEPS}/webp --strip-components=1
- cd ${DEPS}/webp
+-cd ${DEPS}/webp
++cd "${WORKDIR}/libwebp-${VERSION_WEBP}"
 -./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --enable-libwebpmux --enable-libwebpdemux ${WITHOUT_NEON:+--disable-neon}
@@ -742,7 +746,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building tiff ${VERSION_TIFF}"
 +#mkdir ${DEPS}/tiff
 +#$CURL https://download.osgeo.org/libtiff/tiff-${VERSION_TIFF}.tar.gz | tar xzC ${DEPS}/tiff --strip-components=1
- cd ${DEPS}/tiff
+-cd ${DEPS}/tiff
++cd "${WORKDIR}/tiff-${VERSION_TIFF}"
  # Propagate -pthread into CFLAGS to ensure WebP support
 -CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
