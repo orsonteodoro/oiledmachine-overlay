@@ -1,6 +1,6 @@
-diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1.2.3/build/posix.sh
+diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1.2.3/build/posix.sh
 --- sharp-libvips-1.2.3.orig/build/posix.sh	2025-09-17 02:40:38.000000000 -0700
-+++ sharp-libvips-1.2.3/build/posix.sh	2025-10-02 20:53:52.701771065 -0700
++++ sharp-libvips-1.2.3/build/posix.sh	2025-10-02 21:16:41.411958288 -0700
 @@ -2,10 +2,41 @@
  set -e
  
@@ -437,7 +437,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
  
  # Download and build dependencies from source
  
-@@ -114,237 +430,429 @@ if [ "$DARWIN" = true ]; then
+@@ -114,237 +430,430 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -479,6 +479,13 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
 -cd ${DEPS}/zlib-ng
 -CFLAGS="${CFLAGS} -O3" cmake -G"Unix Makefiles" \
 -  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
+-  -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
+-make install/strip
+-
+-mkdir ${DEPS}/ffi
+-$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
+-cd ${DEPS}/ffi
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +if [[ "${USE_ZLIB_NG}" == "1" ]] ; then
 +echo "DEBUG:  Building zlib-ng ${VERSION_ZLIB_NG}"
 +#mkdir ${DEPS}/zlib-ng
@@ -486,19 +493,15 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
 +cd "${WORKDIR}/zlib-ng-${VERSION_ZLIB_NG}"
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
 +  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
-   -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
--make install/strip
++  -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE \
++  -DWITH_GTEST=FALSE
 +if [[ "${DEBUG}" == "1" ]] ; then
 +  make install ${MAKE_LINK_JOBS}
 +else
 +  make install/strip ${MAKE_LINK_JOBS}
 +fi
 +fi
- 
--mkdir ${DEPS}/ffi
--$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
--cd ${DEPS}/ffi
--./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++
 +if [[ "${USE_FFI}" == "1" ]] ; then
 +echo "DEBUG:  Building libffi ${VERSION_FFI}"
 +#mkdir ${DEPS}/ffi
@@ -990,7 +993,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -354,28 +862,37 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -354,28 +863,37 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -1039,7 +1042,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -383,72 +900,94 @@ if [ "$LINUX" = true ]; then
+@@ -383,72 +901,94 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -1176,7 +1179,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -481,17 +1020,25 @@ printf "{\n\
+@@ -481,17 +1021,25 @@ printf "{\n\
  }" >versions.json
  
  # Add third-party notices
@@ -1209,3 +1212,4 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/
 -chmod 644 ${PACKAGE}/sharp-libvips-${PLATFORM}.tar.*
 +chmod 644 "${PACKAGE}/sharp-libvips-${PLATFORM}.tar."*
 +echo "DEBUG:  DONE"
+Only in sharp-libvips-1.2.3: configure.log
