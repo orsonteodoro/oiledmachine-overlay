@@ -915,8 +915,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
 -sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
 -sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
-+sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
-+sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
 +fi
  
 +if [[ "${USE_FREETYPE}" == "1" ]] ; then
