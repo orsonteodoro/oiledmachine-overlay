@@ -1,0 +1,1211 @@
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1.2.3/build/posix.sh
+--- sharp-libvips-1.2.3.orig/build/posix.sh	2025-09-17 02:40:38.000000000 -0700
++++ sharp-libvips-1.2.3/build/posix.sh	2025-10-02 20:53:52.701771065 -0700
+@@ -2,10 +2,41 @@
+ set -e
+ 
+ # Dependency version numbers
+-if [ -f /packaging/versions.properties ]; then
+-  source /packaging/versions.properties
++echo "${WORKDIR}/sharp-libvips-${VERSION_SHARP_LIBVIPS}/packaging/versions.properties"
++if [ -f "${WORKDIR}/sharp-libvips-${VERSION_SHARP_LIBVIPS}/versions.properties" ]; then
++  echo "Initalizing versions"
++  source "${WORKDIR}/sharp-libvips-${VERSION_SHARP_LIBVIPS}/versions.properties"
+ fi
+ 
++echo "VERSION_LIBVIPS: ${VERSION_VIPS}"
++echo "VERSION_ZLIB_NG: ${VERSION_ZLIB_NG}"
++echo "VERSION_FFI: ${VERSION_FFI}"
++echo "VERSION_GLIB: ${VERSION_GLIB}"
++echo "VERSION_XML2: ${VERSION_XML2}"
++echo "VERSION_EXIF: ${VERSION_EXIF}"
++echo "VERSION_LCMS: ${VERSION_LCMS}"
++echo "VERSION_MOZJPEG: ${VERSION_MOZJPEG}"
++echo "VERSION_PNG: ${VERSION_PNG}"
++echo "VERSION_SPNG: ${VERSION_SPNG}"
++echo "VERSION_IMAGEQUANT: ${VERSION_IMAGEQUANT}"
++echo "VERSION_WEBP: ${VERSION_WEBP}"
++echo "VERSION_TIFF: ${VERSION_TIFF}"
++echo "VERSION_HWY: ${VERSION_HWY}"
++echo "VERSION_PROXY_LIBINTL: ${VERSION_PROXY_LIBINTL}"
++echo "VERSION_FREETYPE: ${VERSION_FREETYPE}"
++echo "VERSION_EXPAT: ${VERSION_EXPAT}"
++echo "VERSION_ARCHIVE: ${VERSION_ARCHIVE}"
++echo "VERSION_FONTCONFIG: ${VERSION_FONTCONFIG}"
++echo "VERSION_HARFBUZZ: ${VERSION_HARFBUZZ}"
++echo "VERSION_PIXMAN: ${VERSION_PIXMAN}"
++echo "VERSION_CAIRO: ${VERSION_CAIRO}"
++echo "VERSION_FRIBIDI: ${VERSION_FRIBIDI}"
++echo "VERSION_PANGO: ${VERSION_PANGO}"
++echo "VERSION_RSVG: ${VERSION_RSVG}"
++echo "VERSION_AOM: ${VERSION_AOM}"
++echo "VERSION_HEIF: ${VERSION_HEIF}"
++echo "VERSION_CGIF: ${VERSION_CGIF}"
++
+ # Remove patch version component
+ without_patch() {
+   echo "${1%.[[:digit:]]*}"
+@@ -19,28 +50,74 @@ without_prerelease() {
+ case ${PLATFORM} in
+   linux*)
+     LINUX=true
+-    DEPS=/deps
+-    TARGET=/target
+-    PACKAGE=/packaging
+-    ROOT=/root
++    DEPS="${WORKDIR}/deps"
++    TARGET="${WORKDIR}/build/deps"
++    PACKAGE="${WORKDIR}/packaging"
++    ROOT="${HOME}"
+     VIPS_CPP_DEP=libvips-cpp.so.$(without_prerelease $VERSION_VIPS)
+     ;;
+   darwin*)
+     DARWIN=true
+-    DEPS=$PWD/deps
+-    TARGET=$PWD/target
+-    PACKAGE=$PWD
+-    ROOT=$PWD/platforms/$PLATFORM
++    DEPS="$PWD/deps"
++    TARGET="$PWD/build/deps"
++    PACKAGE="$PWD"
++    ROOT="$PWD/platforms/$PLATFORM"
+     VIPS_CPP_DEP=libvips-cpp.$(without_prerelease $VERSION_VIPS).dylib
+     ;;
+ esac
+ 
+-mkdir ${DEPS}
+-mkdir ${TARGET}
++mkdir "${DEPS}"
++mkdir "${TARGET}"
++
++if [[ "${DEBUG}" == "1" ]] ; then
++	MESON_CONFIGURATION="debug"
++	CMAKE_CONFIGURATION_1="Debug"
++	CMAKE_CONFIGURATION_2="Debug"
++	MESON_STRIP=""
++	VIPS_CFLAGS="-O0 -g -ggdb3"
++	VIPS_CXXFLAGS="-O0 -g -ggdb3"
++else
++# See https://mesonbuild.com/Builtin-options.html#details-for-buildtype
++	MESON_CONFIGURATION="release"
++# See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
++	CMAKE_CONFIGURATION_1="Release"
++	CMAKE_CONFIGURATION_2="MinSizeRel"
++	MESON_STRIP="--strip"
++	VIPS_CFLAGS=""
++	VIPS_CXXFLAGS=""
++fi
+ 
+-# Default optimisation level is for binary size (-Os)
+-# Overriden to performance (-O3) for select dependencies that benefit
+-export FLAGS+=" -Os -fPIC"
++if [[ "${VANILLA}" == "1" ]] ; then
++	# For performance-criticial builds.
++	# Default optimisation level is for binary size (-Os)
++	# Overriden to performance (-O3) for select dependencies that benefit
++	# O3 will reduce _FORTIFY_SOURCE integrity.
++	if [[ "${DEBUG}" == "1" ]] ; then
++		export FLAGS+=" -Os -fPIC"
++		export FLAGS_OPTIMIZED="-O3"
++	else
++		export FLAGS+=" -Os -fPIC"
++		export FLAGS_OPTIMIZED="-O3"
++	fi
++	export LIBSPNG_SSE4_FLAG="-DSPNG_SSE=4"
++else
++	# For security-criticial builds.
++	# Removed -Os and -O3 for security-critical and to maintain _FORTIFY_SOURCE integrity assumptions.
++	if [[ "${DEBUG}" == "1" ]] ; then
++		export FLAGS+=" -fPIC"
++		export FLAGS_OPTIMIZED=""
++	else
++		export FLAGS+=" -fPIC"
++		export FLAGS_OPTIMIZED=""
++	fi
++
++	# Control portability
++	if [[ "${USE_SSE4}" == "1" ]] ; then
++		export LIBSPNG_SSE4_FLAG="-DSPNG_SSE=4"
++	else
++		export LIBSPNG_SSE4_FLAG=""
++	fi
++fi
+ 
+ # Force "new" C++11 ABI compliance
+ # Remove async exception unwind/backtrace tables
+@@ -50,20 +127,37 @@ if [ "$LINUX" = true ]; then
+ fi
+ 
+ # Common build paths and flags
+-export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig"
+-export PATH="${PATH}:${TARGET}/bin"
+-export LD_LIBRARY_PATH="${TARGET}/lib"
+-export CFLAGS="${FLAGS}"
+-export CXXFLAGS="${FLAGS}"
+-export OBJCFLAGS="${FLAGS}"
+-export OBJCXXFLAGS="${FLAGS}"
+-export CPPFLAGS="-I${TARGET}/include"
+-export LDFLAGS="-L${TARGET}/lib"
++if [[ "${VANILLA}" == "1" ]] ; then
++	export PKG_CONFIG_LIBDIR="${TARGET}/${LIBDIR}/pkgconfig"
++	export PATH="${PATH}:${TARGET}/bin"
++	export LD_LIBRARY_PATH="${TARGET}/${LIBDIR}"
++	export CFLAGS="${FLAGS}"
++	export CXXFLAGS="${FLAGS}"
++	export OBJCFLAGS="${FLAGS}"
++	export OBJCXXFLAGS="${FLAGS}"
++	export CPPFLAGS="-I${TARGET}/include"
++	export LDFLAGS="-L${TARGET}/${LIBDIR}"
++else
++	export PKG_CONFIG_LIBDIR="${TARGET}/${LIBDIR}/pkgconfig"
++	export PATH="${PATH}:${TARGET}/bin"
++	export LD_LIBRARY_PATH="${TARGET}/${LIBDIR}"
++	export CFLAGS="${CFLAGS} ${FLAGS}"
++	export CXXFLAGS="${CXXFLAGS} ${FLAGS}"
++	export OBJCFLAGS="${OBJCFLAGS} ${FLAGS}"
++	export OBJCXXFLAGS="${OBJCXXFLAGS} ${FLAGS}"
++	export CPPFLAGS="${CPPFLAGS} -I${TARGET}/include"
++	export LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR}"
++fi
+ 
+ # On Linux, we need to create a relocatable library
+ # Note: this is handled for macOS using the `install_name_tool` (see below)
+ if [ "$LINUX" = true ]; then
+   export LDFLAGS+=" -Wl,--gc-sections -Wl,-rpath=\$ORIGIN/"
++  export CARGO_HOME="${WORKDIR}/cargo_home"
++  export RUSTUP_HOME="${WORKDIR}/rustup_home"
++  mkdir -p "${CARGO_HOME}"
++  mkdir -p "${RUSTUP_HOME}"
++  export PATH="${CARGO_HOME}/bin:${PATH}"
+ fi
+ 
+ if [ "$DARWIN" = true ]; then
+@@ -72,17 +166,17 @@ if [ "$DARWIN" = true ]; then
+   # Local rust installation
+   export CARGO_HOME="${DEPS}/cargo"
+   export RUSTUP_HOME="${DEPS}/rustup"
+-  mkdir -p $CARGO_HOME
+-  mkdir -p $RUSTUP_HOME
++  mkdir -p "${CARGO_HOME}"
++  mkdir -p "${RUSTUP_HOME}"
+   export PATH="${CARGO_HOME}/bin:${PATH}"
+ fi
+ 
+ # Run as many parallel jobs as there are available CPU cores
+-if [ "$LINUX" = true ]; then
+-  export MAKEFLAGS="-j$(nproc)"
+-elif [ "$DARWIN" = true ]; then
+-  export MAKEFLAGS="-j$(sysctl -n hw.logicalcpu)"
+-fi
++#if [ "$LINUX" = true ]; then
++#  export MAKEFLAGS="-j$(nproc)"
++#elif [ "$DARWIN" = true ]; then
++#  export MAKEFLAGS="-j$(sysctl -n hw.logicalcpu)"
++#fi
+ 
+ # Expose target sysroot to CMake
+ export TARGET_SYSROOT="${TARGET}"
+@@ -102,8 +196,230 @@ export RUSTFLAGS+=" --remap-path-prefix=
+ # We don't want to use any native libraries, so unset PKG_CONFIG_PATH
+ unset PKG_CONFIG_PATH
+ 
++# Prevent libheif from referencing system-libs
++export PKG_CONFIG_PATH="${TARGET}/${LIBDIR}/pkgconfig"
++export LD_LIBRARY_PATH="${TARGET}/${LIBDIR}"
++
+ # Common options for curl
+-CURL="curl --silent --location --retry 3 --retry-max-time 30"
++#CURL="curl --silent --location --retry 3 --retry-max-time 30"
++CURL="/bin/true"
++
++VIPS_ARGS=()
++USE_AOM=${USE_AOM:-0}
++USE_ARCHIVE=${USE_ARCHIVE:-0}
++USE_CAIRO=${USE_CAIRO:-0}
++USE_CGIF=${USE_CGIF:-0}
++USE_EXIF=${USE_EXIF:-0}
++USE_EXPAT=1
++USE_FFI=${USE_FFI:-0}
++USE_FONTCONFIG=${USE_FONTCONFIG:-0}
++USE_FREETYPE=${USE_FREETYPE:-0}
++USE_FRIBIDI=${USE_FRIBIDI:-0}
++USE_GLIB=1
++USE_HARFBUZZ=${USE_HARFBUZZ:-0}
++USE_HEIF=${USE_HEIF:-0}
++USE_HWY=${USE_HWY:-0}
++USE_IMAGEQUANT=${USE_IMAGEQUANT:-0}
++USE_LCMS2=${USE_LCMS2:-0}
++USE_MOZJPEG=${USE_MOZJPEG:-0}
++USE_PANGO=${USE_PANGO:-0}
++USE_PIXMAN=${USE_PIXMAN:-0}
++USE_PNG16=${USE_PNG16:-0}
++USE_PROXY_LIBINTL=${USE_PROXY_LIBINTL:-0}
++USE_RSVG=${USE_RSVG:-0}
++USE_SPNG=${USE_SPNG:-0}
++USE_TIFF=${USE_TIFF:-0}
++USE_WEBP=${USE_WEBP:-0}
++USE_XML2=${USE_XML2:-0}
++USE_ZLIB_NG=${USE_ZLIB_NG:-0}
++
++if [[ "${USE_RSVG}" == "1" ]] ; then
++	USE_CAIRO=1
++	USE_GLIB=1
++	USE_FFI=1
++	USE_FONTCONFIG=1
++	USE_FREETYPE=1
++	USE_HARFBUZZ=1
++	USE_PANGO=1
++	USE_PIXMAN=1
++	USE_PNG16=1
++	USE_XML2=1
++	USE_ZLIB_NG=1
++fi
++
++if [[ "${USE_PANGO}" == "1" ]] ; then
++	USE_CAIRO=1
++	USE_FRIBIDI=1
++	USE_FONTCONFIG=1
++	USE_FREETYPE=1
++	USE_GLIB=1
++	USE_HARFBUZZ=1
++fi
++
++if [[ "${USE_CAIRO}" == "1" ]] ; then
++	USE_GLIB=1
++	USE_PIXMAN=1
++	USE_PNG16=1
++	USE_FONTCONFIG=1
++	USE_FREETYPE=1
++fi
++
++if [[ "${USE_GLIB}" == "1" ]] ; then
++	USE_FFI=1
++	USE_ZLIB_NG=1
++fi
++
++if [[ "${USE_FONTCONFIG}" == "1" ]] ; then
++	USE_EXPAT=1
++fi
++
++if [[ "${USE_FREETYPE}" == "1" ]] ; then
++	USE_HARFBUZZ=1
++	USE_PNG16=1
++	USE_ZLIB_NG=1
++fi
++
++if [[ "${USE_HEIF}" == "1" ]] ; then
++	USE_AOM=1
++	USE_WEBP=1
++fi
++
++if [[ "${USE_PNG16}" == "1" ]] ; then
++	USE_ZLIB_NG=1
++fi
++
++if [[ "${USE_SPNG}" == "1" ]] ; then
++	USE_ZLIB_NG=1
++fi
++
++if [[ "${USE_TIFF}" == "1" ]] ; then
++	USE_ZLIB_NG=1
++fi
++
++
++USE_ARCHIVE=${USE_ARCHIVE:-0}
++USE_AOM=${USE_AOM:-0}
++USE_CAIRO=${USE_CAIRO:-0}
++USE_CGIF=${USE_CGIF:-0}
++USE_EXIF=${USE_EXIF:-1}
++USE_EXPAT=1
++USE_FFI=${USE_FFI:-0}
++USE_FONTCONFIG=${USE_FONTCONFIG:-0}
++USE_FREETYPE=${USE_FREETYPE:-0}
++USE_FRIBIDI=${USE_FRIBIDI:-1}
++USE_GLIB=1
++USE_HARFBUZZ=${USE_HARFBUZZ:-1}
++USE_HEIF=${USE_HEIF:-1}
++USE_HWY=${USE_HWY:-0}
++USE_IMAGEQUANT=${USE_IMAGEQUANT:-0}
++USE_LCMS2=${USE_LCMS2:-1}
++USE_MOZJPEG=${USE_MOZJPEG:-1}
++USE_PANGO=${USE_PANGO:-1}
++USE_PIXMAN=${USE_PIXMAN:-0}
++USE_PNG16=${USE_PNG16:-0}
++USE_PROXY_LIBINTL=${USE_PROXY_LIBINTL:-1}
++USE_RSVG=${USE_RSVG:-0}
++USE_SPNG=${USE_SPNG:-0}
++USE_TIFF=${USE_TIFF:-0}
++USE_WEBP=${USE_WEBP:-1}
++USE_XML2=${USE_XML2:-1}
++USE_ZLIB_NG=${USE_ZLIB_NG:-0}
++
++if [[ "${USE_ARCHIVE}" == "1" ]] ; then
++	VIPS_ARGS+=( -Darchive=enabled )
++else
++	VIPS_ARGS+=( -Darchive=disabled )
++fi
++
++if [[ "${USE_CGIF}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dcgif=enabled )
++else
++	VIPS_ARGS+=( -Dcgif=disabled )
++fi
++
++if [[ "${USE_EXIF}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dexif=enabled )
++else
++	VIPS_ARGS+=( -Dexif=disabled )
++fi
++
++if [[ "${USE_FONTCONFIG}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dfontconfig=enabled )
++else
++	VIPS_ARGS+=( -Dfontconfig=disabled )
++fi
++
++if [[ "${USE_HEIF}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dheif=enabled )
++else
++	VIPS_ARGS+=( -Dheif=disabled )
++fi
++
++if [[ "${USE_HWY}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dhighway=enabled )
++else
++	VIPS_ARGS+=( -Dhighway=disabled )
++fi
++
++if [[ "${USE_IMAGEQUANT}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dimagequant=enabled )
++else
++	VIPS_ARGS+=( -Dimagequant=disabled )
++fi
++
++if [[ "${USE_LCMS2}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dlcms=enabled )
++else
++	VIPS_ARGS+=( -Dlcms=disabled )
++fi
++
++if [[ "${USE_MOZJPEG}" == "1" ]] ; then
++	VIPS_ARGS+=( -Djpeg=enabled )
++else
++	VIPS_ARGS+=( -Djpeg=disabled )
++fi
++
++if [[ "${USE_PANGO}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dpangocairo=enabled )
++else
++	VIPS_ARGS+=( -Dpangocairo=disabled )
++fi
++
++if [[ "${USE_PNG16}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dpng=enabled )
++else
++	VIPS_ARGS+=( -Dpng=disabled )
++fi
++
++if [[ "${USE_RSVG}" == "1" ]] ; then
++	VIPS_ARGS+=( -Drsvg=enabled )
++else
++	VIPS_ARGS+=( -Drsvg=disabled )
++fi
++
++if [[ "${USE_SPNG}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dspng=enabled )
++else
++	VIPS_ARGS+=( -Dspng=disabled )
++fi
++
++if [[ "${USE_TIFF}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dtiff=enabled )
++else
++	VIPS_ARGS+=( -Dtiff=disabled )
++fi
++
++if [[ "${USE_WEBP}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dwebp=enabled )
++else
++	VIPS_ARGS+=( -Dwebp=disabled )
++fi
++
++if [[ "${USE_ZLIB_NG}" == "1" ]] ; then
++	VIPS_ARGS+=( -Dzlib=enabled )
++else
++	VIPS_ARGS+=( -Dzlib=disabled )
++fi
+ 
+ # Download and build dependencies from source
+ 
+@@ -114,237 +430,429 @@ if [ "$DARWIN" = true ]; then
+   CFLAGS= cargo install cargo-c --locked
+ fi
+ 
++echo "PLATFORM:  ${PLATFORM}"
++echo "PKG_CONFIG_LIBDIR:  ${PKG_CONFIG_LIBDIR}"
++echo "PATH:  ${PATH}"
++echo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"
++echo "CFLAGS:  ${CFLAGS}"
++echo "CXXFLAGS:  ${CXXFLAGS}"
++echo "OBJCFLAGS:  ${OBJCFLAGS}"
++echo "OBJCXXFLAGS:  ${OBJCXXFLAGS}"
++echo "CPPFLAGS:  ${CPPFLAGS}"
++echo "LDFLAGS:  ${LDFLAGS}"
++echo "CARGO_HOME:  ${CARGO_HOME}"
++echo "RUSTUP_HOME:  ${RUSTUP_HOME}"
++echo "MAKEFLAGS:  ${MAKEFLAGS}"
++echo "RUSTFLAGS:  ${RUSTFLAGS}"
++
++if [[ "${USE_PROXY_LIBINTL}" == "1" ]] ; then
+ if [ "${PLATFORM%-*}" == "linuxmusl" ] || [ "$DARWIN" = true ]; then
++  echo "DEBUG:  Building proxy-libintl ${VERSION_PROXY_LIBINTL}"
+   # musl and macOS requires the standalone intl support library of gettext, since it's not provided by libc (like GNU).
+   # We use a stub version of gettext instead, since we don't need any of the i18n features.
+-  mkdir ${DEPS}/proxy-libintl
+-  $CURL https://github.com/frida/proxy-libintl/archive/${VERSION_PROXY_LIBINTL}.tar.gz | tar xzC ${DEPS}/proxy-libintl --strip-components=1
+-  cd ${DEPS}/proxy-libintl
+-  meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON}
++  #mkdir ${DEPS}/proxy-libintl
++  #$CURL https://github.com/frida/proxy-libintl/archive/${VERSION_PROXY_LIBINTL}.tar.gz | tar xzC ${DEPS}/proxy-libintl --strip-components=1
++  cd "${WORKDIR}/proxy-libintl-${VERSION_PROXY_LIBINTL}"
++  meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
++  meson compile -C _build ${MESON_LINK_JOBS}
+   meson install -C _build --tag devel
+ fi
++fi
+ 
+-mkdir ${DEPS}/zlib-ng
+-$CURL https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz | tar xzC ${DEPS}/zlib-ng --strip-components=1
+-cd ${DEPS}/zlib-ng
+-CFLAGS="${CFLAGS} -O3" cmake -G"Unix Makefiles" \
+-  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
++if [[ "${USE_ZLIB_NG}" == "1" ]] ; then
++echo "DEBUG:  Building zlib-ng ${VERSION_ZLIB_NG}"
++#mkdir ${DEPS}/zlib-ng
++#$CURL https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz | tar xzC ${DEPS}/zlib-ng --strip-components=1
++cd "${WORKDIR}/zlib-ng-${VERSION_ZLIB_NG}"
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
+   -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
+-make install/strip
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install/strip ${MAKE_LINK_JOBS}
++fi
++fi
+ 
+-mkdir ${DEPS}/ffi
+-$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
+-cd ${DEPS}/ffi
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++if [[ "${USE_FFI}" == "1" ]] ; then
++echo "DEBUG:  Building libffi ${VERSION_FFI}"
++#mkdir ${DEPS}/ffi
++#$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
++cd "${WORKDIR}/libffi-${VERSION_FFI}"
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
+   --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-structs --disable-docs
+-make install-strip
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install-strip ${MAKE_LINK_JOBS}
++fi
++fi
+ 
+-mkdir ${DEPS}/glib
+-$CURL https://download.gnome.org/sources/glib/$(without_patch $VERSION_GLIB)/glib-${VERSION_GLIB}.tar.xz | tar xJC ${DEPS}/glib --strip-components=1
+-cd ${DEPS}/glib
+-$CURL https://gist.github.com/kleisauke/284d685efa00908da99ea6afbaaf39ae/raw/bdad5489a61c217850631571caf57f5db6ea8b2c/glib-without-gregex.patch | patch -p1
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} --datadir=${TARGET}/share ${MESON} \
++if [[ "${USE_GLIB}" == "1" ]] ; then
++echo "DEBUG:  Building glib ${VERSION_GLIB}"
++#mkdir ${DEPS}/glib
++#$CURL https://download.gnome.org/sources/glib/$(without_patch $VERSION_GLIB)/glib-${VERSION_GLIB}.tar.xz | tar xJC ${DEPS}/glib --strip-components=1
++cd "${WORKDIR}/glib-${VERSION_GLIB}"
++#$CURL https://gist.github.com/kleisauke/284d685efa00908da99ea6afbaaf39ae/raw/bdad5489a61c217850631571caf57f5db6ea8b2c/glib-without-gregex.patch | patch -p1
++cat "${FILESDIR}/${P}-glib-without-gregex-v2.patch" | patch -p1
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" --datadir="${TARGET}/share" ${MESON} \
+   --force-fallback-for=gvdb -Dintrospection=disabled -Dnls=disabled -Dlibmount=disabled -Dsysprof=disabled -Dlibelf=disabled \
+   -Dtests=false -Dglib_assert=false -Dglib_checks=false -Dglib_debug=disabled ${DARWIN:+-Dbsymbolic_functions=false}
+ # bin-devel is needed for glib-mkenums
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag bin-devel,devel
++# Ensure glibconfig.h is installed
++echo "DEBUG:  Installing glibconfig.h"
++mkdir -p "${WORKDIR}/build/deps/lib64/glib-2.0/include"
++cp "${WORKDIR}/glib-${VERSION_GLIB}/_build/glib/glibconfig.h" "${WORKDIR}/build/deps/lib64/glib-2.0/include/" || die "Failed to install glibconfig.h"
++fi
+ 
+-mkdir ${DEPS}/xml2
+-$CURL https://download.gnome.org/sources/libxml2/$(without_patch $VERSION_XML2)/libxml2-${VERSION_XML2}.tar.xz | tar xJC ${DEPS}/xml2 --strip-components=1
+-cd ${DEPS}/xml2
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++if [[ "${USE_XML2}" == "1" ]] ; then
++echo "DEBUG:  Building libxml2 ${VERSION_XML2}"
++#mkdir ${DEPS}/xml2
++#$CURL https://download.gnome.org/sources/libxml2/$(without_patch $VERSION_XML2)/libxml2-${VERSION_XML2}.tar.xz | tar xJC ${DEPS}/xml2 --strip-components=1
++cd "${WORKDIR}/libxml2-${VERSION_XML2}"
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dminimum=true
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/exif
+-$CURL https://github.com/libexif/libexif/releases/download/v${VERSION_EXIF}/libexif-${VERSION_EXIF}.tar.xz | tar xJC ${DEPS}/exif --strip-components=1
+-cd ${DEPS}/exif
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++if [[ "${USE_EXIF}" == "1" ]] ; then
++echo "DEBUG:  Building libexif ${VERSION_EXIF}"
++#mkdir ${DEPS}/exif
++#$CURL https://github.com/libexif/libexif/releases/download/v${VERSION_EXIF}/libexif-${VERSION_EXIF}.tar.xz | tar xJC ${DEPS}/exif --strip-components=1
++cd "${WORKDIR}/libexif-${VERSION_EXIF}"
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
+   --disable-nls --disable-docs --without-libiconv-prefix --without-libintl-prefix \
+   CPPFLAGS="${CPPFLAGS} -DNO_VERBOSE_TAG_DATA"
+-make install-strip doc_DATA=
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS} doc_DATA=
++else
++  make install-strip ${MAKE_LINK_JOBS} doc_DATA=
++fi
++fi
+ 
+-mkdir ${DEPS}/lcms
+-$CURL https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS}/lcms2-${VERSION_LCMS}.tar.gz | tar xzC ${DEPS}/lcms --strip-components=1
+-cd ${DEPS}/lcms
+-CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++if [[ "${USE_LCMS2}" == "1" ]] ; then
++echo "DEBUG:  Building lcms ${VERSION_LCMS}"
++#mkdir ${DEPS}/lcms
++#$CURL https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS}/lcms2-${VERSION_LCMS}.tar.gz | tar xzC ${DEPS}/lcms --strip-components=1
++cd "${WORKDIR}/lcms2-${VERSION_LCMS}"
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dtests=disabled 
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/aom
+-$CURL https://storage.googleapis.com/aom-releases/libaom-${VERSION_AOM}.tar.gz | tar xzC ${DEPS}/aom --strip-components=1
+-cd ${DEPS}/aom
++if [[ "${USE_AOM}" == "1" ]] ; then
++echo "DEBUG:  Building libaom ${VERSION_AOM}"
++#mkdir ${DEPS}/aom
++#$CURL https://storage.googleapis.com/aom-releases/libaom-${VERSION_AOM}.tar.gz | tar xzC ${DEPS}/aom --strip-components=1
++cd "${WORKDIR}/libaom-${VERSION_AOM}"
+ # Downgrade minimum required CMake version to 3.13 - https://aomedia.googlesource.com/aom/+/597a35fbc9837e33366a1108631d9c72ee7a49e7
+ find . -name 'CMakeLists.txt' -o -name '*.cmake' | xargs sed -i'.bak' "/^cmake_minimum_required/s/3.16/3.13/"
+ mkdir aom_build
+ cd aom_build
+ AOM_AS_FLAGS="${FLAGS}" cmake -G"Unix Makefiles" \
+-  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=MinSizeRel \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=MinSizeRel \
+   -DBUILD_SHARED_LIBS=FALSE -DENABLE_DOCS=0 -DENABLE_TESTS=0 -DENABLE_TESTDATA=0 -DENABLE_TOOLS=0 -DENABLE_EXAMPLES=0 \
+   -DCONFIG_PIC=1 -DENABLE_NASM=1 ${WITHOUT_NEON:+-DENABLE_NEON=0} -DENABLE_RVV=0 \
+   -DCONFIG_AV1_HIGHBITDEPTH=0 -DCONFIG_WEBM_IO=0 \
+   ..
+-make install/strip
+-
+-mkdir ${DEPS}/heif
+-$CURL https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz | tar xzC ${DEPS}/heif --strip-components=1
+-cd ${DEPS}/heif
+-# Downgrade minimum required CMake version to 3.12 - https://github.com/strukturag/libheif/issues/975
+-sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
+-CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" cmake -G"Unix Makefiles" \
+-  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
+-  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0
+-make install/strip
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install/strip ${MAKE_LINK_JOBS}
++fi
++fi
+ 
+-mkdir ${DEPS}/jpeg
+-$CURL https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
++if [[ "${USE_MOZJPEG}" == "1" ]] ; then
++echo "DEBUG:  Building mozjpeg ${VERSION_MOZJPEG}"
++#mkdir ${DEPS}/jpeg
++#$CURL https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
+ cd ${DEPS}/jpeg
+ # [PATCH] BUILD: Silence CMake 3.28.x deprecation warning
+-$CURL https://github.com/mozilla/mozjpeg/commit/1644bdb7d2fac66cd0ce25adef7754e008b5bc1e.patch | patch -p1
++#$CURL https://github.com/mozilla/mozjpeg/commit/1644bdb7d2fac66cd0ce25adef7754e008b5bc1e.patch | patch -p1
++cat "${DISTDIR}/${P}-mozjpeg-1644bdb.patch" | patch -p1
+ cmake -G"Unix Makefiles" \
+-  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCMAKE_BUILD_TYPE=MinSizeRel \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCMAKE_BUILD_TYPE=MinSizeRel \
+   -DENABLE_STATIC=TRUE -DENABLE_SHARED=FALSE -DWITH_JPEG8=1 -DWITH_TURBOJPEG=FALSE -DPNG_SUPPORTED=FALSE
+-make install/strip
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install/strip ${MAKE_LINK_JOBS}
++fi
++fi
+ 
+-mkdir ${DEPS}/png
+-$CURL https://github.com/pnggroup/libpng/archive/v${VERSION_PNG}.tar.gz | tar xzC ${DEPS}/png --strip-components=1
++if [[ "${USE_PNG16}" == "1" ]] ; then
++echo "DEBUG:  Building libpng16 ${VERSION_PNG}"
++#mkdir ${DEPS}/png
++#$CURL https://github.com/pnggroup/libpng/archive/v${VERSION_PNG}.tar.gz | tar xzC ${DEPS}/png --strip-components=1
+ cd ${DEPS}/png
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
+   --disable-tools --without-binconfigs --disable-unversioned-libpng-config
+-make install-strip dist_man_MANS=
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS} dist_man_MANS=
++else
++  make install-strip ${MAKE_LINK_JOBS} dist_man_MANS=
++fi
++
++echo "DEBUG:  Checking pkg-config for libpng"
++pkg-config --modversion libpng
++if ! pkg-config --exists libpng ; then
++    echo "WARNING: libpng not found, pngload will be unavailable"
++fi
++fi
+ 
+-mkdir ${DEPS}/spng
+-$CURL https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz | tar xzC ${DEPS}/spng --strip-components=1
++if [[ "${USE_SPNG}" == "1" ]] ; then
++echo "DEBUG:  Building libspng ${VERSION_SPNG}"
++#mkdir ${DEPS}/spng
++#$CURL https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz | tar xzC ${DEPS}/spng --strip-components=1
+ cd ${DEPS}/spng
+-CFLAGS="${CFLAGS} -O3 -DSPNG_SSE=4" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} ${LIBSPNG_SSE4_FLAG}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dstatic_zlib=true -Dbuild_examples=false
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
++
++echo "DEBUG:  Checking pkg-config for png"
++pkg-config --modversion spng
++if ! pkg-config --exists spng ; then
++    echo "ERROR: libspng not found, spngload and spngsave will be unavailable"
++    exit 1
++fi
++echo "DEBUG:  libspng pkg-config libs: $(pkg-config --libs spng)"
+ 
+-mkdir ${DEPS}/imagequant
+-$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
++echo "DEBUG: Checking libspng library"
++ls -l "${TARGET}/${LIBDIR}/libspng.a" || { echo "libspng.a not found"; exit 1; }
++
++echo "DEBUG: Checking spng symbols in libspng.a"
++nm -g "${TARGET}/${LIBDIR}/libspng.a" | grep spng_encoded_image_size || echo "WARNING: spng_encoded_image_size not found in libspng.a"
++fi
++
++if [[ "${USE_IMAGEQUANT}" == "1" ]] ; then
++echo "DEBUG:  Building libimagequant ${VERSION_IMAGEQUANT}"
++#mkdir ${DEPS}/imagequant
++#$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
+ cd ${DEPS}/imagequant
+-CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON}
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/webp
+-$CURL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz | tar xzC ${DEPS}/webp --strip-components=1
++if [[ "${USE_WEBP}" == "1" ]] ; then
++echo "DEBUG:  Building libwebp ${VERSION_WEBP}"
++#mkdir ${DEPS}/webp
++#$CURL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz | tar xzC ${DEPS}/webp --strip-components=1
+ cd ${DEPS}/webp
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
+   --enable-libwebpmux --enable-libwebpdemux ${WITHOUT_NEON:+--disable-neon}
+-make install-strip bin_PROGRAMS= noinst_PROGRAMS= man_MANS=
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS} bin_PROGRAMS= noinst_PROGRAMS= man_MANS=
++else
++  make install-strip ${MAKE_LINK_JOBS} bin_PROGRAMS= noinst_PROGRAMS= man_MANS=
++fi
++fi
+ 
+-mkdir ${DEPS}/tiff
+-$CURL https://download.osgeo.org/libtiff/tiff-${VERSION_TIFF}.tar.gz | tar xzC ${DEPS}/tiff --strip-components=1
++if [[ "${USE_TIFF}" == "1" ]] ; then
++echo "DEBUG:  Building tiff ${VERSION_TIFF}"
++#mkdir ${DEPS}/tiff
++#$CURL https://download.osgeo.org/libtiff/tiff-${VERSION_TIFF}.tar.gz | tar xzC ${DEPS}/tiff --strip-components=1
+ cd ${DEPS}/tiff
+ # Propagate -pthread into CFLAGS to ensure WebP support
+-CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
+   --disable-tools --disable-tests --disable-contrib --disable-docs --disable-mdi --disable-pixarlog --disable-old-jpeg --disable-cxx --disable-lzma --disable-zstd --disable-libdeflate
+-make install-strip noinst_PROGRAMS= dist_doc_DATA=
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS} noinst_PROGRAMS= dist_doc_DATA=
++else
++  make install-strip ${MAKE_LINK_JOBS} noinst_PROGRAMS= dist_doc_DATA=
++fi
++fi
+ 
+-if [ -z "$WITHOUT_HIGHWAY" ]; then
+-  mkdir ${DEPS}/hwy
+-  $CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
+-  cd ${DEPS}/hwy
++# Place after tiff
++if [[ "${USE_HEIF}" == "1" ]] ; then
++# oteodoro:  Changed build order to prevent referencing system-libs (libjpeg, libpng, libtiff, zlib).
++echo "DEBUG:  Building libheif ${VERSION_HEIF}"
++#mkdir ${DEPS}/heif
++#$CURL https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz | tar xzC ${DEPS}/heif --strip-components=1
++cd "${WORKDIR}/libheif-${VERSION_HEIF}"
++# Downgrade minimum required CMake version to 3.12 - https://github.com/strukturag/libheif/issues/975
++sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
++# oteodoro:  Add -DZLIB_ROOT, -DTIFF_ROOT, -DJPEG_ROOT, -DPNG_ROOT to prevent referencing system copy.
++# oteodoro:  Add explicit aom settings
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
++  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0 \
++  -DWITH_AOM=ON \
++  -DWITH_AOM_DECODER=ON \
++  -DWITH_AOM_ENCODER=ON \
++  -DPNG_ROOT="${TARGET}" \
++  -DJPEG_ROOT="${TARGET}" \
++  -DTIFF_ROOT="${TARGET}" \
++  -DZLIB_ROOT="${TARGET}"
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install/strip ${MAKE_LINK_JOBS}
++fi
++fi
++
++if [[ "${USE_HWY}" == "1" ]] ; then
++  echo "DEBUG:  Building highway ${VERSION_HWY}"
++  #mkdir ${DEPS}/hwy
++  #$CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
++  cd "${WORKDIR}/highway-${VERSION_HWY}"
+   # [PATCH] workaround for inadvertent SVE codegen on GCC<14
+-  $CURL https://github.com/google/highway/commit/ad48f2bf298bac247288c8399a5c0e9a40ed8246.patch | patch -p1
+-  CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" cmake -G"Unix Makefiles" \
+-    -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
++  #$CURL https://github.com/google/highway/commit/ad48f2bf298bac247288c8399a5c0e9a40ed8246.patch | patch -p1
++  cat "${DISTDIR}/${P}-highway-ad48f2b.patch" | patch -p1
++  CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
++    -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
+     -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DHWY_ENABLE_CONTRIB=0 -DHWY_ENABLE_EXAMPLES=0 -DHWY_ENABLE_TESTS=0
+-  make install/strip
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install/strip ${MAKE_LINK_JOBS}
++if
+ fi
+ 
+ build_freetype() {
+-  rm -rf ${DEPS}/freetype
+-  mkdir ${DEPS}/freetype
+-  $CURL https://github.com/freetype/freetype/archive/VER-${VERSION_FREETYPE//./-}.tar.gz | tar xzC ${DEPS}/freetype --strip-components=1
+-  cd ${DEPS}/freetype
+-  meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++  echo "DEBUG:  Building freetype ${VERSION_FREETYPE}"
++  #rm -rf ${DEPS}/freetype
++  #mkdir ${DEPS}/freetype
++  #$CURL https://github.com/freetype/freetype/archive/VER-${VERSION_FREETYPE//./-}.tar.gz | tar xzC ${DEPS}/freetype --strip-components=1
++  cd "${WORKDIR}/freetype-VER-${VERSION_FREETYPE//./-}"
++  meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+     -Dzlib=enabled -Dpng=enabled -Dbrotli=disabled -Dbzip2=disabled "$@"
++  meson compile -C _build ${MESON_LINK_JOBS}
+   meson install -C _build --tag devel
+ }
++if [[ "${USE_FREETYPE}" == "1" ]] ; then
+ build_freetype -Dharfbuzz=disabled
++fi
+ 
+-mkdir ${DEPS}/expat
+-$CURL https://github.com/libexpat/libexpat/releases/download/R_${VERSION_EXPAT//./_}/expat-${VERSION_EXPAT}.tar.xz | tar xJC ${DEPS}/expat --strip-components=1
+-cd ${DEPS}/expat
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared \
++if [[ "${USE_EXPAT}" == "1" ]] ; then
++echo "DEBUG:  Building expat ${VERSION_EXPAT}"
++#mkdir ${DEPS}/expat
++#$CURL https://github.com/libexpat/libexpat/releases/download/R_${VERSION_EXPAT//./_}/expat-${VERSION_EXPAT}.tar.xz | tar xJC ${DEPS}/expat --strip-components=1
++cd "${WORKDIR}/expat-${VERSION_EXPAT}"
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared \
+   --disable-dependency-tracking --without-xmlwf --without-docbook --without-getrandom --without-sys-getrandom \
+   --without-libbsd --without-examples --without-tests
+-make install-strip dist_cmake_DATA= nodist_cmake_DATA=
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS} dist_cmake_DATA= nodist_cmake_DATA=
++else
++  make install-strip ${MAKE_LINK_JOBS} dist_cmake_DATA= nodist_cmake_DATA=
++fi
++fi
+ 
+-mkdir ${DEPS}/archive
+-$CURL https://github.com/libarchive/libarchive/releases/download/v${VERSION_ARCHIVE}/libarchive-${VERSION_ARCHIVE}.tar.xz | tar xJC ${DEPS}/archive --strip-components=1
+-cd ${DEPS}/archive
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++if [[ "${USE_ARCHIVE}" == "1" ]] ; then
++echo "DEBUG:  Building libarchive ${VERSION_ARCHIVE}"
++#mkdir ${DEPS}/archive
++#$CURL https://github.com/libarchive/libarchive/releases/download/v${VERSION_ARCHIVE}/libarchive-${VERSION_ARCHIVE}.tar.xz | tar xJC ${DEPS}/archive --strip-components=1
++cd "${WORKDIR}/libarchive-${VERSION_ARCHIVE}"
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
+   --disable-bsdtar --disable-bsdcat --disable-bsdcpio --disable-bsdunzip --disable-posix-regex-lib --disable-xattr --disable-acl \
+   --without-bz2lib --without-libb2 --without-iconv --without-lz4 --without-zstd --without-lzma \
+   --without-lzo2 --without-cng --without-openssl --without-xml2 --without-expat
+-make install-strip libarchive_man_MANS=
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS} libarchive_man_MANS=
++else
++  make install-strip ${MAKE_LINK_JOBS} libarchive_man_MANS=
++fi
++fi
+ 
+-mkdir ${DEPS}/fontconfig
+-$CURL https://gitlab.freedesktop.org/fontconfig/fontconfig/-/archive/${VERSION_FONTCONFIG}/fontconfig-${VERSION_FONTCONFIG}.tar.gz | tar xzC ${DEPS}/fontconfig --strip-components=1
+-cd ${DEPS}/fontconfig
++if [[ "${USE_FONTCONFIG}" == "1" ]] ; then
++echo "DEBUG:  Building fontconfig ${VERSION_FONTCONFIG}"
++#mkdir ${DEPS}/fontconfig
++#$CURL https://gitlab.freedesktop.org/fontconfig/fontconfig/-/archive/${VERSION_FONTCONFIG}/fontconfig-${VERSION_FONTCONFIG}.tar.gz | tar xzC ${DEPS}/fontconfig --strip-components=1
++cd "${WORKDIR}/fontconfig-${VERSION_FONTCONFIG}"
+ # Disable install of gettext files
+ sed -i'.bak' "/subdir('its')/d" meson.build
+ # Silence FcInit warnings
+ sed -i'.bak' "/using without calling FcInit/d" src/fcobjs.c
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dcache-build=disabled -Ddoc=disabled -Dnls=disabled -Dtests=disabled -Dtools=disabled
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/harfbuzz
+-$CURL https://github.com/harfbuzz/harfbuzz/archive/${VERSION_HARFBUZZ}.tar.gz | tar xzC ${DEPS}/harfbuzz --strip-components=1
+-cd ${DEPS}/harfbuzz
++if [[ "${USE_HARFBUZZ}" == "1" ]] ; then
++echo "DEBUG:  Building harfbuzz ${VERSION_HARFBUZZ}"
++#mkdir ${DEPS}/harfbuzz
++#$CURL https://github.com/harfbuzz/harfbuzz/archive/${VERSION_HARFBUZZ}.tar.gz | tar xzC ${DEPS}/harfbuzz --strip-components=1
++cd "${WORKDIR}/harfbuzz-${VERSION_HARFBUZZ}"
+ # Disable utils
+ sed -i'.bak' "/subdir('util')/d" meson.build
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dgobject=disabled -Dicu=disabled -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled ${DARWIN:+-Dcoretext=enabled}
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
+ 
+ # pkg-config provided by Amazon Linux 2 doesn't support circular `Requires` dependencies.
+ # https://bugs.freedesktop.org/show_bug.cgi?id=7331
+ # https://gitlab.freedesktop.org/pkg-config/pkg-config/-/commit/6d6dd43e75e2bc82cfe6544f8631b1bef6e1cf45
+ # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
+-sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
+-sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++fi
+ 
++if [[ "${USE_FREETYPE}" == "1" ]] ; then
+ build_freetype -Dharfbuzz=enabled
++fi
+ 
+-mkdir ${DEPS}/pixman
+-$CURL https://cairographics.org/releases/pixman-${VERSION_PIXMAN}.tar.gz | tar xzC ${DEPS}/pixman --strip-components=1
+-cd ${DEPS}/pixman
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++if [[ "${USE_PIXMAN}" == "1" ]] ; then
++echo "DEBUG:  Building pixman ${VERSION_PIXMAN}"
++#mkdir ${DEPS}/pixman
++#$CURL https://cairographics.org/releases/pixman-${VERSION_PIXMAN}.tar.gz | tar xzC ${DEPS}/pixman --strip-components=1
++cd "${WORKDIR}/pixman-${VERSION_PIXMAN}"
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dlibpng=disabled -Dgtk=disabled -Dopenmp=disabled -Dtests=disabled -Ddemos=disabled \
+   ${WITHOUT_NEON:+-Da64-neon=disabled}
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/cairo
+-$CURL https://cairographics.org/releases/cairo-${VERSION_CAIRO}.tar.xz | tar xJC ${DEPS}/cairo --strip-components=1
+-cd ${DEPS}/cairo
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++if [[ "${USE_CAIRO}" == "1" ]] ; then
++echo "DEBUG:  Building cairo ${VERSION_CAIRO}"
++#mkdir ${DEPS}/cairo
++#$CURL https://cairographics.org/releases/cairo-${VERSION_CAIRO}.tar.xz | tar xJC ${DEPS}/cairo --strip-components=1
++cd "${WORKDIR}/cairo-${VERSION_CAIRO}"
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   ${LINUX:+-Dquartz=disabled} ${DARWIN:+-Dquartz=enabled} -Dfreetype=enabled -Dfontconfig=enabled -Dtee=disabled -Dxcb=disabled -Dxlib=disabled -Dzlib=disabled \
+   -Dtests=disabled -Dspectre=disabled -Dsymbol-lookup=disabled
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/fribidi
+-$CURL https://github.com/fribidi/fribidi/releases/download/v${VERSION_FRIBIDI}/fribidi-${VERSION_FRIBIDI}.tar.xz | tar xJC ${DEPS}/fribidi --strip-components=1
+-cd ${DEPS}/fribidi
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++if [[ "${USE_FRIBIDI}" == "1" ]] ; then
++echo "DEBUG:  Building fribidi ${VERSION_FRIBIDI}"
++#mkdir ${DEPS}/fribidi
++#$CURL https://github.com/fribidi/fribidi/releases/download/v${VERSION_FRIBIDI}/fribidi-${VERSION_FRIBIDI}.tar.xz | tar xJC ${DEPS}/fribidi --strip-components=1
++cd "${WORKDIR}/fribidi-${VERSION_FRIBIDI}"
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Ddocs=false -Dbin=false -Dtests=false
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/pango
+-$CURL https://download.gnome.org/sources/pango/$(without_patch $VERSION_PANGO)/pango-${VERSION_PANGO}.tar.xz | tar xJC ${DEPS}/pango --strip-components=1
+-cd ${DEPS}/pango
++if [[ "${USE_PANGO}" == "1" ]] ; then
++echo "DEBUG:  Building pango ${VERSION_PANGO}"
++#mkdir ${DEPS}/pango
++#$CURL https://download.gnome.org/sources/pango/$(without_patch $VERSION_PANGO)/pango-${VERSION_PANGO}.tar.xz | tar xJC ${DEPS}/pango --strip-components=1
++cd "${WORKDIR}/pango-${VERSION_PANGO}"
+ # Disable utils and tools
+ sed -i'.bak' "/subdir('utils')/{N;d;}" meson.build
+-meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Ddocumentation=false -Dbuild-testsuite=false -Dbuild-examples=false -Dintrospection=disabled -Dfontconfig=enabled
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/rsvg
+-$CURL https://download.gnome.org/sources/librsvg/$(without_patch $VERSION_RSVG)/librsvg-${VERSION_RSVG}.tar.xz | tar xJC ${DEPS}/rsvg --strip-components=1
+-cd ${DEPS}/rsvg
++if [[ "${USE_RSVG}" == "1" ]] ; then
++echo "DEBUG:  Building librsvg ${VERSION_RSVG}"
++#mkdir ${DEPS}/rsvg
++#$CURL https://download.gnome.org/sources/librsvg/$(without_patch $VERSION_RSVG)/librsvg-${VERSION_RSVG}.tar.xz | tar xJC ${DEPS}/rsvg --strip-components=1
++cd "${WORKDIR}/librsvg-${VERSION_RSVG}"
+ # Disallow GIF and WebP embedded in SVG images
+ sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
+ # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
+@@ -354,28 +862,37 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+ # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
+ sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
+ # Regenerate the lockfile after making the above changes
+-cargo update --workspace
++#cargo update --workspace
+ # Remove the --static flag from the PKG_CONFIG env since Rust does not
+ # parse that correctly.
+-PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=plain --strip --prefix=${TARGET} ${MESON} \
++PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=plain --strip --prefix="${TARGET}" ${MESON} \
+   -Dintrospection=disabled -Dpixbuf{,-loader}=disabled -Ddocs=disabled -Dvala=disabled -Dtests=false \
+   ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/cgif
+-$CURL https://github.com/dloebl/cgif/archive/v${VERSION_CGIF}.tar.gz | tar xzC ${DEPS}/cgif --strip-components=1
+-cd ${DEPS}/cgif
+-CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++if [[ "${USE_CGIF}" == "1" ]] ; then
++echo "DEBUG:  Building cgif ${VERSION_CGIF}"
++#mkdir ${DEPS}/cgif
++#$CURL https://github.com/dloebl/cgif/archive/v${VERSION_CGIF}.tar.gz | tar xzC ${DEPS}/cgif --strip-components=1
++cd "${WORKDIR}/cgif-${VERSION_CGIF}"
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
+   -Dexamples=false -Dtests=false
++meson compile -C _build ${MESON_LINK_JOBS}
+ meson install -C _build --tag devel
++fi
+ 
+-mkdir ${DEPS}/vips
+-$CURL https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz | tar xJC ${DEPS}/vips --strip-components=1
+-cd ${DEPS}/vips
++echo "DEBUG:  Building vips ${VERSION_VIPS}"
++#mkdir ${DEPS}/vips
++#$CURL https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz | tar xJC ${DEPS}/vips --strip-components=1
++cd "${WORKDIR}/vips-${VERSION_VIPS}"
+ # Use version number in SONAME
+-$CURL https://gist.githubusercontent.com/lovell/313a6901e9db1bf285f2a1f1180499e4/raw/3988223c7dfa4d22745d9392034b0117abef1446/libvips-cpp-soversion.patch | patch -p1
++#$CURL https://gist.githubusercontent.com/lovell/313a6901e9db1bf285f2a1f1180499e4/raw/3988223c7dfa4d22745d9392034b0117abef1446/libvips-cpp-soversion.patch | patch -p1
++cat "${DISTDIR}/${P}-libvips-cpp-soversion.patch" | patch -p1
+ # Disable HBR support in heifsave
+-$CURL https://github.com/libvips/build-win64-mxe/raw/v${VERSION_VIPS}/build/patches/vips-8-heifsave-disable-hbr-support.patch | patch -p1
++#$CURL https://github.com/libvips/build-win64-mxe/raw/v${VERSION_VIPS}/build/patches/vips-8-heifsave-disable-hbr-support.patch | patch -p1
++cat "${DISTDIR}/${P}-vips-8-heifsave-disable-hbr-support.patch" | patch -p1
+ # Link libvips.so statically into libvips-cpp.so
+ sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
+ sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
+@@ -383,72 +900,94 @@ if [ "$LINUX" = true ]; then
+   # Ensure libvips-cpp.so is linked with -z nodelete
+   sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
+   # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
+-  EXCLUDE_LIBS=$(find ${TARGET}/lib -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
++  EXCLUDE_LIBS=$(find "${TARGET}/${LIBDIR}" -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' ! -name 'libspng.a' -printf "-Wl,--exclude-libs=%f ")
+   EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
+   # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
+   # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
+   printf "{local:g_param_spec_types;};" > vips.map
+ fi
++
+ # Disable building man pages, gettext po files, tools, and (fuzz-)tests
+-sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
+-CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" meson setup _build --default-library=shared --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++# oteodoro:  enable building tools
++#sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
++export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
++# oteodoro:  change to static
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} ${VIPS_CFLAGS}" \
++CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED} ${VIPS_CXXFLAGS}" \
++LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR}" \
++meson setup _build --default-library=static --buildtype=${MESON_CONFIGURATION} ${MESON_STRIP} --prefix="${TARGET}" ${MESON} \
+   -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
+   ${WITHOUT_HIGHWAY:+-Dhighway=disabled} -Dorc=disabled -Dmagick=disabled -Dmatio=disabled -Dnifti=disabled -Dopenexr=disabled \
+   -Dopenjpeg=disabled -Dopenslide=disabled -Dpdfium=disabled -Dpoppler=disabled -Dquantizr=disabled \
+   -Dppm=false -Danalyze=false -Dradiance=false \
+-  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script=$DEPS/vips/vips.map $EXCLUDE_LIBS"}
+-meson install -C _build --tag runtime,devel
+-
+-# Cleanup
+-rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
+-
+-mkdir ${TARGET}/lib-filtered
+-mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
+-
+-# Pack only the relevant libraries
+-# Note: we can't use ldd on Linux, since that can only be executed on the target machine
+-# Note 2: we modify all dylib dependencies to use relative paths on macOS
+-function copydeps {
+-  local base=$1
+-  local dest_dir=$2
+-
+-  cp -L $base $dest_dir/$base
+-  chmod 644 $dest_dir/$base
++  ${VIPS_ARGS[@]} \
++  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' -L${TARGET}/${LIBDIR} -lspng $EXCLUDE_LIBS"}
++meson compile -C _build ${MESON_LINK_JOBS} || die "Meson compile failed"
++meson install -C _build --tag runtime,devel || die "Meson install failed"
++ls -l "${TARGET}/bin/vips" || die "vips binary not installed"
++"${TARGET}/bin/vips" -l | grep spng || echo "No spng loaders/savers found"
++
++die() {
++  local message="${1}"
++  echo "DEBUG:  ${message}"
++  exit 1
++}
+ 
+-  if [ "$LINUX" = true ]; then
+-    local dependencies=$(readelf -d $base | grep NEEDED | awk '{ print $5 }' | tr -d '[]')
+-  elif [ "$DARWIN" = true ]; then
+-    local dependencies=$(otool -LX $base | awk '{print $1}' | grep $TARGET)
++# Create symlinks for shared libraries
++cd "${TARGET}/${LIBDIR}"
++if [ -f "libvips-cpp.so.${VERSION_VIPS}" ]; then
++  ln -sf libvips-cpp.so.${VERSION_VIPS} libvips-cpp.so || die "Failed to create libvips-cpp.so symlink"
++fi
++if [ -f "libvips.so.${VERSION_VIPS}" ]; then
++  ln -sf libvips.so.${VERSION_VIPS} libvips.so || die "Failed to create libvips.so symlink"
++fi
+ 
+-    install_name_tool -id @rpath/$base $dest_dir/$base
+-  fi
++# Skip shared library symlinks for static build
++cd "${TARGET}/${LIBDIR}"
++mkdir -p "${TARGET}/${LIBDIR}/pkgconfig"
++cp -f "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc" "${TARGET}/${LIBDIR}/pkgconfig/" || die "Failed to copy .pc files"
++mkdir -p "${TARGET}/${LIBDIR}-original"
++cp -r "${TARGET}/${LIBDIR}/"* "${TARGET}/${LIBDIR}-original/"
+ 
+-  for dep in $dependencies; do
+-    base_dep=$(basename $dep)
++# Cleanup
++#echo "DEBUG:  Performing clean-up"
++#rm -rf "${TARGET}/${LIBDIR}/"{"pkgconfig",".libs",*".la","cmake"}
+ 
+-    [ ! -f "$PWD/$base_dep" ] && echo "$base_dep does not exist in $PWD" && continue
+-    echo "$base depends on $base_dep"
++IFS=$'\n'
++for path in $(find "${TARGET}") ; do
++	if [[ -L "${path}" && ! -e "${path}" ]] ; then
++		rm -v "${path}"
++	fi
++done
++IFS=$' \n\r\t'
+ 
+-    if [ ! -f "$dest_dir/$base_dep" ]; then
+-      if [ "$DARWIN" = true ]; then
+-        install_name_tool -change $dep @rpath/$base_dep $dest_dir/$base
+-      fi
++#mkdir ${TARGET}/${LIBDIR}-filtered
++#mv "${TARGET}/${LIBDIR}/glib-2.0" "${TARGET}/${LIBDIR}-filtered"
+ 
+-      # Call this function (recursive) on each dependency of this library
+-      copydeps $base_dep $dest_dir
++function copydeps {
++  echo "DEBUG:  copydeps() called"
++  mkdir -p "${2}" || die "Failed to create destination directory ${2}"
++  # Copy static libraries
++  for lib in libvips.a libvips-cpp.a libheif.a libaom.a libglib-2.0.a libgobject-2.0.a libgio-2.0.a libz.a libjpeg.a libpng.a libtiff.a libwebp.a libarchive.a liblcms2.a libfontconfig.a libpangocairo.a libpangoft2.a librsvg-2.a libcairo.a libxml2.a libsharpyuv.a libhwy.a; do
++    if [ -f "${TARGET}/${LIBDIR}/${lib}" ]; then
++      cp "${TARGET}/${LIBDIR}/${lib}" "${2}/${lib}" || die "Failed to copy ${lib}"
++    elif [ -f "${TARGET}/${LIBDIR}-original/${lib}" ]; then
++      cp "${TARGET}/${LIBDIR}-original/${lib}" "${2}/${lib}" || die "Failed to copy ${lib}"
+     fi
+-  done;
++  done
+ }
+ 
+-cd ${TARGET}/lib
++cd "${TARGET}/${LIBDIR}"
+ if [ "$LINUX" = true ]; then
+   # Check that we really linked with -z nodelete
+-  readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
++  # oteodoro:  disabling since building vips static lib
++  : #readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
+ fi
+-copydeps ${VIPS_CPP_DEP} ${TARGET}/lib-filtered
++mkdir -p "${TARGET}/${LIBDIR}-filtered"
++copydeps "" "${TARGET}/${LIBDIR}-filtered"
+ 
+ # Create JSON file of version numbers
+-cd ${TARGET}
++cd "${TARGET}"
+ printf "{\n\
+   \"aom\": \"${VERSION_AOM}\",\n\
+   \"archive\": \"${VERSION_ARCHIVE}\",\n\
+@@ -481,17 +1020,25 @@ printf "{\n\
+ }" >versions.json
+ 
+ # Add third-party notices
+-$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
++echo "DEBUG:  Adding THIRD-PARTY-NOTICES.md"
++#$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
++cat "${DISTDIR}/${P}-THIRD-PARTY-NOTICES.md" > "THIRD-PARTY-NOTICES.md"
+ 
+ # Create the tarball
+-ls -al lib
+-rm -rf lib
+-mv lib-filtered lib
+-tar chzf ${PACKAGE}/sharp-libvips-${PLATFORM}.tar.gz \
++echo "DEBUG:  Creating tarball"
++ls -al ${LIBDIR}
++#rm -rf lib
++mv ${LIBDIR} ${LIBDIR}-filtered-tmp
++mv ${LIBDIR}-original ${LIBDIR}
++tar chzf "${PACKAGE}/sharp-libvips-${PLATFORM}.tar.gz" \
+   include \
+-  lib \
++  ${LIBDIR} \
++  bin \
+   *.json \
+   THIRD-PARTY-NOTICES.md
++mv ${LIBDIR} ${LIBDIR}-original
++mv ${LIBDIR}-filtered-tmp ${LIBDIR}
+ 
+ # Allow tarballs to be read outside container
+-chmod 644 ${PACKAGE}/sharp-libvips-${PLATFORM}.tar.*
++chmod 644 "${PACKAGE}/sharp-libvips-${PLATFORM}.tar."*
++echo "DEBUG:  DONE"

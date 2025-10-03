@@ -549,10 +549,11 @@ https://github.com/dloebl/cgif/archive/v${VERSION_CGIF}.tar.gz -> cgif-${VERSION
 https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz
 
 https://gist.github.com/kleisauke/284d685efa00908da99ea6afbaaf39ae/raw/12773e117bd557b83ba2a7410698db41813c3fda/glib-without-gregex.patch -> ${P}-glib-without-gregex.patch
-https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1106.patch -> ${P}-librsvg-1106.patch
 https://gist.githubusercontent.com/lovell/313a6901e9db1bf285f2a1f1180499e4/raw/3988223c7dfa4d22745d9392034b0117abef1446/libvips-cpp-soversion.patch -> ${P}-libvips-cpp-soversion.patch
 https://github.com/libvips/build-win64-mxe/raw/v${VERSION_VIPS}/build/patches/vips-8-heifsave-disable-hbr-support.patch -> ${P}-vips-8-heifsave-disable-hbr-support.patch
 https://raw.githubusercontent.com/lovell/sharp-libvips/refs/tags/v${SHARP_VIPS_PV}/THIRD-PARTY-NOTICES.md -> ${P}-THIRD-PARTY-NOTICES.md
+https://github.com/mozilla/mozjpeg/commit/1644bdb7d2fac66cd0ce25adef7754e008b5bc1e.patch -> ${P}-mozjpeg-1644bdb.patch
+https://github.com/google/highway/commit/ad48f2bf298bac247288c8399a5c0e9a40ed8246.patch -> ${P}-highway-ad48f2b.patch
 "
 
 DESCRIPTION="libvips static build for sharp, matching sharp-libvips"
@@ -561,7 +562,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_21
+ebuild_revision_23
 "
 LICENSE="
 	Apache-2.0
@@ -666,7 +667,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/sharp-libvips-8.17.1-posix-sh.patch"
+	"${FILESDIR}/sharp-libvips-8.17.2-posix-sh.patch"
 )
 
 pkg_setup() {
