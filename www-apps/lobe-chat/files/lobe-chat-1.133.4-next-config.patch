@@ -20,7 +20,7 @@
      serverMinification: false,
      webVitalsAttribution: ['CLS', 'LCP'],
 -    webpackMemoryOptimizations: true,
-+    webpackMemoryOptimizations: false,
++    webpackMemoryOptimizations: true,
 +//
 +// # Setting workerThreads=false causes:
 +//

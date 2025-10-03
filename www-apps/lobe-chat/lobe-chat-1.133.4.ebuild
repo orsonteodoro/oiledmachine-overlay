@@ -195,7 +195,8 @@ setup_build_env() {
 # 7: 0x565121ea9c0e  [/usr/bin/node22]
 # 8: 0x565121eabb8d  [/usr/bin/node22]
 # 9: 0x5651226cd425  [/usr/bin/node22]
-	export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096
+	#export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096, 8192 worked previously
+	export NODE_OPTIONS=" --max-old-space-size=6144" # Testing
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	# The build variables below can be set in /etc/portage/env/lobe-chat.conf
