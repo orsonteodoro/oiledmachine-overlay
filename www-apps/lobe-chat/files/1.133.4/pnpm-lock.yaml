@@ -14892,7 +14892,7 @@ snapshots:
     dependencies:
       '@octokit/plugin-retry': 3.0.9
       '@octokit/plugin-throttling': 3.7.0(@octokit/core@5.2.2)
-      '@octokit/rest': 19.0.13(encoding@0.1.13)
+      '@octokit/rest': 20.1.2
       '@semantic-release/error': 3.0.0
       aggregate-error: 3.1.0
       debug: 4.4.3(supports-color@10.2.2)
@@ -21910,7 +21910,7 @@ snapshots:
 
   '@umijs/babel-preset-umi@4.5.1':
     dependencies:
-      '@babel/runtime': 7.28.2
+      '@babel/runtime': 7.28.4
       '@bloomberg/record-tuple-polyfill': 0.0.4
       '@umijs/bundler-utils': 4.5.1
       '@umijs/utils': 4.5.1

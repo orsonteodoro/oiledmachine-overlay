@@ -64,7 +64,7 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
-VIPS_PV="8.17.1" # vips 8.15.3 correspons to sharp 0.30.7
+VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
 
 # Use pnpm for pnpm_updater_update_locks.sh
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
@@ -556,6 +556,9 @@ ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to 
 					"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
 					|| die "Failed to copy sharp-${sharp_platform}.node"
 				ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+
+		# Remove prebuilts
+				rm -rf "node_modules/.pnpm/@img+sharp-"*"@"* || true
 
 				node-sharp_verify_dedupe
 			popd >/dev/null 2>&1 || die
