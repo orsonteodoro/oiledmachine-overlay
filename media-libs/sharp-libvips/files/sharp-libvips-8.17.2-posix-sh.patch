@@ -634,7 +634,8 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building mozjpeg ${VERSION_MOZJPEG}"
 +#mkdir ${DEPS}/jpeg
 +#$CURL https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
- cd ${DEPS}/jpeg
+-cd ${DEPS}/jpeg
++cd "${WORKDIR}/mozjpeg-${VERSION_MOZJPEG}"
  # [PATCH] BUILD: Silence CMake 3.28.x deprecation warning
 -$CURL https://github.com/mozilla/mozjpeg/commit/1644bdb7d2fac66cd0ce25adef7754e008b5bc1e.patch | patch -p1
 +#$CURL https://github.com/mozilla/mozjpeg/commit/1644bdb7d2fac66cd0ce25adef7754e008b5bc1e.patch | patch -p1
