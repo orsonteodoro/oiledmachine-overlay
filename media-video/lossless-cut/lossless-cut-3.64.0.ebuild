@@ -14,7 +14,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 #	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
-	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.133, node 22.19.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -46,7 +46,7 @@ NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
 SHARP_PV="0.34.3" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
-VIPS_PV="8.16.1"
+VIPS_PV="8.17.2"
 
 inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
 
@@ -162,7 +162,7 @@ yarn_update_lock_yarn_import_post() {
 #ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in yarn.lock and drop @types/node 22"
 ewarn "QA:  Manually modify prismjs ~x.xx to ^1.30.0 in yarn.lock"							# CVE-2024-53382; DT, ID; Medium
 ewarn "QA:  Manually modify prismjs ~1.27.0 to ^1.30.0 in yarn.lock"							# CVE-2024-53382; DT, ID; Medium
-ewarn "QA:  Manually remove prisonjs <1.30.0 in yarn.lock"								# CVE-2024-53382; DT, ID; Medium
+ewarn "QA:  Manually remove prismjs <1.30.0 in yarn.lock"								# CVE-2024-53382; DT, ID; Medium
 ewarn "QA:  Manually remove sharp@^0.30.4 in yarn.lock"
 ewarn "QA:  Manually modify sharp: \"npm:^0.30.4\" to sharp: \"npm:^0.34.3\" in yarn.lock"
 
