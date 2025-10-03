@@ -13,7 +13,8 @@ MY_PN="${PN/-/}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
+#	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
+	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -78,8 +79,9 @@ LICENSE="
 "
 # Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+#		electron-37.1.0-chromium.html
 	LICENSE+="
-		electron-37.1.0-chromium.html
+		electron-38.2.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -91,7 +93,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
