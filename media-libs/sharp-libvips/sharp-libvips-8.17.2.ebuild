@@ -508,8 +508,8 @@ zune-core-0.4.12
 zune-jpeg-0.4.20
 "
 # Rust requirements relaxed.  Use the one that supports --check-cfg.
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.80.1" # llvm-18.1
+RUST_MAX_VER="1.85.1" # Inclusive
+RUST_MIN_VER="1.85.1" # llvm-18.1
 RUST_PV="${RUST_MAX_VER}"
 
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic multiprocessing python-single-r1 meson rust
