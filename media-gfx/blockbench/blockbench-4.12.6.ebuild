@@ -12,7 +12,7 @@ ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="38.0.0" # Cr 140.0.7339.41, node 22.18.0 works
+	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0 works
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="33.3.1" # Cr 130.0.6723.170, node 20.18.1
@@ -70,7 +70,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-38.0.0-chromium.html
+		electron-38.2.0-chromium.html
 	)
 	GPL-3+
 "
@@ -158,7 +158,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_5"
+IUSE+=" ebuild_revision_6"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_VERSION}[npm,webassembly(+)]
