@@ -1,6 +1,6 @@
 diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1.2.3/build/posix.sh
 --- sharp-libvips-1.2.3.orig/build/posix.sh	2025-09-17 02:40:38.000000000 -0700
-+++ sharp-libvips-1.2.3/build/posix.sh	2025-10-02 21:16:41.411958288 -0700
++++ sharp-libvips-1.2.3/build/posix.sh	2025-10-02 23:58:23.013894701 -0700
 @@ -2,10 +2,41 @@
  set -e
  
@@ -437,7 +437,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  
  # Download and build dependencies from source
  
-@@ -114,237 +430,430 @@ if [ "$DARWIN" = true ]; then
+@@ -114,237 +430,429 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -473,19 +473,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
    meson install -C _build --tag devel
  fi
 +fi
- 
--mkdir ${DEPS}/zlib-ng
--$CURL https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz | tar xzC ${DEPS}/zlib-ng --strip-components=1
--cd ${DEPS}/zlib-ng
--CFLAGS="${CFLAGS} -O3" cmake -G"Unix Makefiles" \
--  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
--  -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
--make install/strip
--
--mkdir ${DEPS}/ffi
--$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
--cd ${DEPS}/ffi
--./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
++
 +if [[ "${USE_ZLIB_NG}" == "1" ]] ; then
 +echo "DEBUG:  Building zlib-ng ${VERSION_ZLIB_NG}"
 +#mkdir ${DEPS}/zlib-ng
@@ -501,7 +489,19 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +  make install/strip ${MAKE_LINK_JOBS}
 +fi
 +fi
-+
+ 
+-mkdir ${DEPS}/zlib-ng
+-$CURL https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz | tar xzC ${DEPS}/zlib-ng --strip-components=1
+-cd ${DEPS}/zlib-ng
+-CFLAGS="${CFLAGS} -O3" cmake -G"Unix Makefiles" \
+-  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
+-  -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
+-make install/strip
+-
+-mkdir ${DEPS}/ffi
+-$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
+-cd ${DEPS}/ffi
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +if [[ "${USE_FFI}" == "1" ]] ; then
 +echo "DEBUG:  Building libffi ${VERSION_FFI}"
 +#mkdir ${DEPS}/ffi
@@ -611,7 +611,13 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
    -DCONFIG_AV1_HIGHBITDEPTH=0 -DCONFIG_WEBM_IO=0 \
    ..
 -make install/strip
--
++if [[ "${DEBUG}" == "1" ]] ; then
++  make install ${MAKE_LINK_JOBS}
++else
++  make install/strip ${MAKE_LINK_JOBS}
++fi
++fi
+ 
 -mkdir ${DEPS}/heif
 -$CURL https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz | tar xzC ${DEPS}/heif --strip-components=1
 -cd ${DEPS}/heif
@@ -621,20 +627,14 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 -  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
 -  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0
 -make install/strip
-+if [[ "${DEBUG}" == "1" ]] ; then
-+  make install ${MAKE_LINK_JOBS}
-+else
-+  make install/strip ${MAKE_LINK_JOBS}
-+fi
-+fi
- 
+-
 -mkdir ${DEPS}/jpeg
 -$CURL https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
+-cd ${DEPS}/jpeg
 +if [[ "${USE_MOZJPEG}" == "1" ]] ; then
 +echo "DEBUG:  Building mozjpeg ${VERSION_MOZJPEG}"
 +#mkdir ${DEPS}/jpeg
 +#$CURL https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
--cd ${DEPS}/jpeg
 +cd "${WORKDIR}/mozjpeg-${VERSION_MOZJPEG}"
  # [PATCH] BUILD: Silence CMake 3.28.x deprecation warning
 -$CURL https://github.com/mozilla/mozjpeg/commit/1644bdb7d2fac66cd0ce25adef7754e008b5bc1e.patch | patch -p1
@@ -654,13 +654,13 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  
 -mkdir ${DEPS}/png
 -$CURL https://github.com/pnggroup/libpng/archive/v${VERSION_PNG}.tar.gz | tar xzC ${DEPS}/png --strip-components=1
+-cd ${DEPS}/png
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +if [[ "${USE_PNG16}" == "1" ]] ; then
 +echo "DEBUG:  Building libpng16 ${VERSION_PNG}"
 +#mkdir ${DEPS}/png
 +#$CURL https://github.com/pnggroup/libpng/archive/v${VERSION_PNG}.tar.gz | tar xzC ${DEPS}/png --strip-components=1
--cd ${DEPS}/png
 +cd "${WORKDIR}/libpng-${VERSION_PNG}"
--./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-tools --without-binconfigs --disable-unversioned-libpng-config
 -make install-strip dist_man_MANS=
@@ -679,18 +679,22 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  
 -mkdir ${DEPS}/spng
 -$CURL https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz | tar xzC ${DEPS}/spng --strip-components=1
+-cd ${DEPS}/spng
+-CFLAGS="${CFLAGS} -O3 -DSPNG_SSE=4" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +if [[ "${USE_SPNG}" == "1" ]] ; then
 +echo "DEBUG:  Building libspng ${VERSION_SPNG}"
 +#mkdir ${DEPS}/spng
 +#$CURL https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz | tar xzC ${DEPS}/spng --strip-components=1
--cd ${DEPS}/spng
 +cd "${WORKDIR}/libspng-${VERSION_SPNG}"
--CFLAGS="${CFLAGS} -O3 -DSPNG_SSE=4" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} ${LIBSPNG_SSE4_FLAG}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dstatic_zlib=true -Dbuild_examples=false
 +meson compile -C _build ${MESON_LINK_JOBS}
  meson install -C _build --tag devel
-+
+ 
+-mkdir ${DEPS}/imagequant
+-$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
+-cd ${DEPS}/imagequant
+-CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON}
 +echo "DEBUG:  Checking pkg-config for png"
 +pkg-config --modversion spng
 +if ! pkg-config --exists spng ; then
@@ -698,10 +702,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +    exit 1
 +fi
 +echo "DEBUG:  libspng pkg-config libs: $(pkg-config --libs spng)"
-+fi
- 
--mkdir ${DEPS}/imagequant
--$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
++
 +echo "DEBUG: Checking libspng library"
 +ls -l "${TARGET}/${LIBDIR}/libspng.a" || { echo "libspng.a not found"; exit 1; }
 +
@@ -713,9 +714,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 +echo "DEBUG:  Building libimagequant ${VERSION_IMAGEQUANT}"
 +#mkdir ${DEPS}/imagequant
 +#$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
--cd ${DEPS}/imagequant
 +cd "${WORKDIR}/libimagequant-${VERSION_IMAGEQUANT}"
--CFLAGS="${CFLAGS} -O3" meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON}
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
 +meson compile -C _build ${MESON_LINK_JOBS}
  meson install -C _build --tag devel
@@ -723,13 +722,13 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  
 -mkdir ${DEPS}/webp
 -$CURL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz | tar xzC ${DEPS}/webp --strip-components=1
+-cd ${DEPS}/webp
+-./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +if [[ "${USE_WEBP}" == "1" ]] ; then
 +echo "DEBUG:  Building libwebp ${VERSION_WEBP}"
 +#mkdir ${DEPS}/webp
 +#$CURL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz | tar xzC ${DEPS}/webp --strip-components=1
--cd ${DEPS}/webp
 +cd "${WORKDIR}/libwebp-${VERSION_WEBP}"
--./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
 +./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --enable-libwebpmux --enable-libwebpdemux ${WITHOUT_NEON:+--disable-neon}
 -make install-strip bin_PROGRAMS= noinst_PROGRAMS= man_MANS=
@@ -742,11 +741,11 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  
 -mkdir ${DEPS}/tiff
 -$CURL https://download.osgeo.org/libtiff/tiff-${VERSION_TIFF}.tar.gz | tar xzC ${DEPS}/tiff --strip-components=1
+-cd ${DEPS}/tiff
 +if [[ "${USE_TIFF}" == "1" ]] ; then
 +echo "DEBUG:  Building tiff ${VERSION_TIFF}"
 +#mkdir ${DEPS}/tiff
 +#$CURL https://download.osgeo.org/libtiff/tiff-${VERSION_TIFF}.tar.gz | tar xzC ${DEPS}/tiff --strip-components=1
--cd ${DEPS}/tiff
 +cd "${WORKDIR}/tiff-${VERSION_TIFF}"
  # Propagate -pthread into CFLAGS to ensure WebP support
 -CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
@@ -999,7 +998,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -354,28 +863,37 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -354,28 +862,37 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -1048,7 +1047,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -383,72 +901,94 @@ if [ "$LINUX" = true ]; then
+@@ -383,72 +900,94 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -1185,7 +1184,7 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -481,17 +1021,25 @@ printf "{\n\
+@@ -481,17 +1020,25 @@ printf "{\n\
  }" >versions.json
  
  # Add third-party notices
@@ -1218,4 +1217,3 @@ diff '--color=auto' -urp sharp-libvips-1.2.3.orig/build/posix.sh sharp-libvips-1
 -chmod 644 ${PACKAGE}/sharp-libvips-${PLATFORM}.tar.*
 +chmod 644 "${PACKAGE}/sharp-libvips-${PLATFORM}.tar."*
 +echo "DEBUG:  DONE"
-Only in sharp-libvips-1.2.3: configure.log
