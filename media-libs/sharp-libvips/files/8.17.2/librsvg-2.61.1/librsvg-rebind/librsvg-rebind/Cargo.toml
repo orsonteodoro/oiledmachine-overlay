@@ -1,0 +1,39 @@
+[package]
+name = "librsvg-rebind"
+authors = ["Sophie Herold <sophie@hemio.de>"]
+readme = "README.md"
+homepage = "https://gitlab.gnome.org/GNOME/librsvg"
+description = "Rust bindings for librsvg"
+license = "MIT"
+repository = "https://gitlab.gnome.org/GNOME/librsvg"
+documentation = "https://gnome.pages.gitlab.gnome.org/librsvg/doc/librsvg_rebind/"
+categories = ["api-bindings"]
+version = "0.2.1"
+keywords = ["svg"]
+edition = "2021"
+
+exclude = ["Gir.toml"]
+
+[dependencies]
+libc.workspace = true
+bitflags.workspace = true
+cairo-rs.workspace = true
+glib.workspace = true
+gio.workspace = true
+
+[dev-dependencies]
+cairo-rs = { workspace = true, features = ['png'] }
+
+[dependencies.ffi]
+package = "librsvg-rebind-sys"
+version = "0.2.1"
+path = "./sys"
+
+[package.metadata.docs.rs]
+rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]
+all-features = true
+
+[features]
+v2_58 = ["ffi/v2_58"]
+v2_59 = ["v2_58", "ffi/v2_59"]
