@@ -416,6 +416,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250312 with electron 34.3.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250630 with electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250809 with electron 37.2.6)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20251003 with electron 38.2.1)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
