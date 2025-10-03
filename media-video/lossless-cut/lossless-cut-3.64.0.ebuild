@@ -273,7 +273,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 
 		# Remove nested sharp and prebuilt sharp
 		rm -rf "node_modules/icon-gen/node_modules/sharp" || die "Failed to remove nested sharp"
-		rm -rf "node_modules/@img" || die "Failed to remove @img/sharp-linux-x64"
+		rm -rf "node_modules/@img" || die "Failed to remove nested sharp"
 
 		SHARP_INSTALL_ARGS=( "-D" )
 
@@ -315,6 +315,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		rm -rfv "node_modules/@types/icon-gen/node_modules/sharp"
 		rm -rfv "node_modules/icon-gen/node_modules/sharp"
 		rm -rfv "node_modules/sharp/node_modules/@img"
+		rm -rfv "node_modules/icon-gen/node_modules/@img"
 
 		node-sharp_verify_dedupe
 	fi
