@@ -119,7 +119,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_16
+	ebuild_revision_17
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
