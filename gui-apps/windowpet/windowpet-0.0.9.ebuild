@@ -666,7 +666,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 tray wayland +X
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	|| (
@@ -879,6 +879,7 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^5.4.20\"|g" "package-lock.json" || die
 		}
 
 		patch_lockfile
@@ -892,6 +893,8 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 
 		L=(
 			"esbuild@^0.25.0"				# GHSA-67mh-4wv8-2f99; ID
+			"vite@5.4.20"					# CVE-2025-58751; ID
+									# CVE-2025-58752; ID
 		)
 		enpm install ${L[@]} -D
 		patch_lockfile
