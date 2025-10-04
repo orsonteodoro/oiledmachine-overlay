@@ -158,7 +158,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_6"
+IUSE+=" ebuild_revision_7"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_VERSION}[npm,webassembly(+)]
@@ -166,7 +166,7 @@ BDEPEND+="
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron from lockfile."
+einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron@33.4.11 from lockfile."
 		fix_lockfile() {
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		}
