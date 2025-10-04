@@ -31,7 +31,7 @@ ELECTRON_BUILDER_PV="26.0.14"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.133, node 22.19.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
@@ -259,10 +259,12 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 				sed -i -e "s|\"esbuild\": \"^0.18.10\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die									# GHSA-67mh-4wv8-2f99; ID; Moderate
 				sed -i -e "s|\"happy-dom\": \"8.9.0\"|\"happy-dom\": \"15.10.2\"|g" "package-lock.json" || die									# CVE-2024-51757; DoS, DT, ID; Critical
 				sed -i -e "s|\"rollup\": \"^3.27.1\"|\"rollup\": \"^3.29.5\"|g" "package-lock.json" || die									# CVE-2024-47068; DT, ID; Medium
-				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"4.5.14\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
+				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
+																								# CVE-2025-58751; VS(ID); Low
+																								# CVE-2025-58752; VS(ID); Low
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -304,16 +306,20 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 15.10.2|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
 				sed -i -e "s|rollup: 3.27.1|rollup: 3.29.5|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
 
-				sed -i -e "s|vite: 4.5.3|vite: 4.5.14|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: 4.5.3|vite: 5.4.20|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
+																								# CVE-2025-58751; VS(ID); Low
+																								# CVE-2025-58752; VS(ID); Low
 
 
-				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 4.5.14|g" "pnpm-lock.yaml" || die											# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 5.4.20|g" "pnpm-lock.yaml" || die											# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
+																								# CVE-2025-58751; VS(ID); Low
+																								# CVE-2025-58752; VS(ID); Low
 
 				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die												# CVE-2025-54798; DT; Low
 			popd >/dev/null 2>&1 || die
@@ -343,7 +349,8 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 																								#   @octokit/request
 																								#   @octokit/plugin-paginate-rest
 																								#   @octokit/request-error
-			sed -i -e "s|axios: 1.7.9|axios: 1.8.2|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
+			sed -i -e "s|axios: 1.7.9|axios: 1.12.0|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
+																								# CVE-2025-58754, ZC, DoS, High
 			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
 			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
 			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
@@ -362,7 +369,8 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 			sed -i -e "s|got: 11.8.2|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
 			sed -i -e "s|got: 6.7.1|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
-			sed -i -e "s|tar-fs: 2.1.2|tar-fs: 2.1.3|g" "pnpm-lock.yaml" || die													# CVE-2025-48387; ZC, DT; High
+			sed -i -e "s|tar-fs: 2.1.2|tar-fs: 2.1.4|g" "pnpm-lock.yaml" || die													# CVE-2025-48387; ZC, DT; High
+																								# CVE-2025-59343; ZC, VS(DT)
 
 			sed -i -e "s|webpack-dev-server: 5.1.0|webpack-dev-server: 5.2.1|g" "pnpm-lock.yaml" || die										# CVE-2025-30359; ID; Medium
 																								# CVE-2025-30360; ID; Medium
@@ -394,7 +402,7 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 				"esbuild@0.25.0"
 				"happy-dom@15.10.2"
 				"rollup@3.29.5"
-				"vite@4.5.14"
+				"vite@5.4.20"
 			)
 			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
@@ -417,7 +425,7 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 			"@babel/helpers@7.26.10"
 			"esbuild@0.25.0"
 			"got@11.8.5"
-			"tar-fs@2.1.3"
+			"tar-fs@2.1.4"
 			"form-data@4.0.4"
 		)
 		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
@@ -427,7 +435,7 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 			"@octokit/request@8.4.1"
 			"@octokit/request-error@5.1.1"
 			"@octokit/rest@20.1.2"
-			"axios@1.8.2"
+			"axios@1.12.0"
 			"brace-expansion@2.0.2"
 			"brace-expansion@1.1.12"
 			"patch-package@8.0.0"
