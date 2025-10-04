@@ -10,7 +10,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 #	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
-	ELECTRON_APP_ELECTRON_PV="38.0.0" # Cr 140.0.7339.41, node 22.18.0
+	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.41, node 22.18.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -65,7 +65,7 @@ LICENSE="
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-38.0.0-chromium.html
+		electron-38.2.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -149,6 +149,8 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 
 		sed -i -e "s|\"mermaid\": \"^11.4.1\"|\"mermaid\": \"^11.10.0\"|g" "package-lock.json" || die					# CVE-2025-54881; SS(DT, ID); Medium
 																		# CVE-2025-54880; SS(DT, ID); Medium
+		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"^2.1.4\"|g" "package-lock.json" || die					# CVE-2025-59343; VS(DT); High
+		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"^3.1.1\"|g" "package-lock.json" || die					# CVE-2025-59343, GHSA-vj76-c3g6-qr5v; VS(DT); High # Not mentioned in the GH scanner for llocal but in a different package
 	}
 	patch_lockfile
 
@@ -162,6 +164,9 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 
 		"form-data@4.0.4"
 		"mermaid@11.10.0"
+
+		"tar-fs@2.1.4"
+		"tar-fs@3.1.1"
 	)
 	enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}
 
@@ -179,7 +184,8 @@ npm_update_lock_audit_post() {
 ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.3.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"axios\": \"^1.6.8\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die						# CVE-2025-27152; ID; High
+			sed -i -e "s|\"axios\": \"^1.6.8\"|\"axios\": \"^1.12.0\"|g" "package-lock.json" || die						# CVE-2025-27152; ID; High
+																			# CVE-2025-58754; ZC, DoS; High
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
 			sed -i -e "s|\"esbuild\": \"^0.21.5\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
 			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json"						# GHSA-67mh-4wv8-2f99; ID; Medium
@@ -188,7 +194,7 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 		}
 		patch_lockfile
 		enpm install "@babel/runtime@^7.26.10" -P
-		enpm install "axios@^1.8.2" -P
+		enpm install "axios@^1.12.0" -P
 		enpm install "esbuild@^0.25.0" -D # --prefer-offline is bugged, must follow vite
 		enpm install "prismjs@^1.30.0" -P
 		patch_lockfile
