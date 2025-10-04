@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO fork @signalapp/libsignal-client for custom hardening
+
 # To update use:
 # PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.69.0" pnpm_updater_update_locks.sh
 
