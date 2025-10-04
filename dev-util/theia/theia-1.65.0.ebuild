@@ -708,6 +708,7 @@ einfo "Fixing vulnerabilities"
 
 einfo "QA:  Manually remove node_modules/patch-package/node_modules/tmp@0.0.33 from package-lock.json"
 einfo "QA:  Manually remove node_modules/jsondiffpatch@0.6.0 from package-lock.json"
+einfo "QA:  Manually remove node_modules/dockerode/node_modules/tar-fs@2.1.3 from package-lock.json"
 
 	patch_lockfile
 }
