@@ -184,8 +184,8 @@ MITIGATION_LAST_UPDATE=1758655020 # From `date +%s -d "2025-09-23 12:17"` from f
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-75/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-10527;SE, DoS, DT, ID;High"
-	"CVE-2025-10528;SE, ZC, DoS, DT, ID;High"
+	"CVE-2025-10527;SBE, DoS, DT, ID;High"
+	"CVE-2025-10528;SBE, ZC, DoS, DT, ID;High"
 	"CVE-2025-10529;ZC, DT, ID;Medium"
 	"CVE-2025-10532;ZC, DT, ID;Medium"
 	"CVE-2025-10533;IO, DoS, DT, ID;High"

@@ -180,7 +180,7 @@ MITIGATION_LAST_UPDATE=1759204980 # From `date +%s -d "2025-09-29 21:03"` from f
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-80/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-11152;SE, IO, ZC, DoS, DT, ID;High"
+	"CVE-2025-11152;SBE, IO, ZC, DoS, DT, ID;High"
 	"CVE-2025-11153;ZC, DT;High"
 )
 MOZ_ESR=

@@ -75,9 +75,13 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	# or more DoS, DT, ID impact vectors.
 	#
 einfo
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("AB"|"ABO")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ABO"($|" "|";"|",") ]] ; then
 # Adjacent buffer integrity compromised
-einfo "AB = Adjacent Buffer Overrun"
+# BO is taken so ABO is used
+einfo "ABO = Adjacent Buffer Overrun"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACE"($|" "|";"|",") ]] ; then
+einfo "ACE = Arbitrary Code Execution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
 einfo "AW = Arbitrary Write"
@@ -86,8 +90,8 @@ einfo "AW = Arbitrary Write"
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ACE"|"CE")($|" "|";"|",") ]] ; then
-# Arbitrary Code Execution
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CE"($|" "|";"|",") ]] ; then
+# Alias for ACE
 einfo "CE = Code Execution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CI"($|" "|";"|",") ]] ; then
@@ -128,9 +132,7 @@ einfo "IbD = Insecure by Design"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
 einfo "ID = Information Disclosure"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IF"|"IR")($|" "|";"|",") ]] ; then
-# Improper Free
-# Improper Release
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IF"($|" "|";"|",") ]] ; then
 einfo "IF = Improper Free"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
@@ -145,6 +147,9 @@ einfo "IO = Integer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOOOB"($|" "|";"|",") ]] ; then
 einfo "IOOOB = Index Out Of Bounds"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IR"($|" "|";"|",") ]] ; then
+einfo "IR = Improper Release"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
 einfo "IS = Insufficient Sanitiation of Input"
@@ -164,8 +169,7 @@ einfo "MC = Memory Corruption"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ML"($|" "|";"|",") ]] ; then
 einfo "ML = Memory Leak"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("MT"|"US")($|" "|";"|",") ]] ; then
-# Unterminated String
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MT"($|" "|";"|",") ]] ; then
 einfo "MT = Missing Terminator Character"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NPD"($|" "|";"|",") ]] ; then
@@ -189,7 +193,7 @@ einfo "OOR = Out Of Range Access"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE"|"EP"|"EoP")($|" "|";"|",") ]] ; then
 # Escalated Privileges
 # Escalation of Privileges
-einfo "PE = Privilege Escalation"
+einfo "PE/EP/EoP = Privilege Escalation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PI"($|" "|";"|",") ]] ; then
 einfo "PI = Prompt Injection"
@@ -204,17 +208,17 @@ einfo "RC = Race Condition"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
 einfo "SA = Spoofing Attack Vulnerability"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SE"($|" "|";"|",") ]] ; then
+einfo "SE = Sandbox Escape"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SO"($|" "|";"|",") ]] ; then
 einfo "SO = Stack Based Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOOB"($|" "|";"|",") ]] ; then
 einfo "SOOB = Shift Out Of Bounds"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBX"($|" "|";"|",") ]] ; then
-einfo "SBX = Sandbox Escape"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SE"($|" "|";"|",") ]] ; then
-einfo "SE = Social Engineering Attack"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SEA"($|" "|";"|",") ]] ; then
+einfo "SEA = Social Engineering Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TC"($|" "|";"|",") ]] ; then
 einfo "TC = Type Confusion"
@@ -240,6 +244,9 @@ einfo "UM = Uninitialized Memory"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UP"($|" "|";"|",") ]] ; then
 einfo "UP = Uninitialized Pointer"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"US"($|" "|";"|",") ]] ; then
+einfo "US = Unterminated String"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UV"($|" "|";"|",") ]] ; then
 einfo "UV = Uninitialized Value"
 		fi
@@ -260,7 +267,7 @@ einfo "XSRF = Cross Site Request Forgery"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZC"|"ZCA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:N/PR:N/UI:N
-einfo "ZC = Zero Click Attack"
+einfo "ZC/ZCA = Zero Click Attack"
 		fi
 einfo
 einfo "Tip:  Ask the AI/LLM this question to fill in the blanks for the table"
