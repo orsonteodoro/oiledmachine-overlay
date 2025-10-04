@@ -707,9 +707,11 @@ _install_webapp_v2() {
 
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
-	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
-	mv "${S}/scripts/migrateServerDB/docker.cjs" "${ED}${_PREFIX}" || die
-	mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
+	if use postgres ; then
+		mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
+		mv "${S}/scripts/migrateServerDB/docker.cjs" "${ED}${_PREFIX}" || die
+		mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
+	fi
 
 	# Sanitize permissions
 	chown -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
