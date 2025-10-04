@@ -629,9 +629,9 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"tar-fs\": \"^3.0.6\"|\"tar-fs\": \"3.0.9\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"~2.1.2\"|\"tar-fs\": \"2.1.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"3.0.9\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar-fs\": \"^3.0.6\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar-fs\": \"~2.1.2\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar\": \"6.1.11\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
@@ -649,6 +649,8 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"tmp\": \"~0.2.1\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tmp\": \"^0.2.1\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"jsondiffpatch\": \"0.6.0\"|\"jsondiffpatch\": \"0.7.2\"|g" "package-lock.json" || die
 	}
 	patch_lockfile
 
@@ -678,8 +680,10 @@ einfo "Fixing vulnerabilities"
 	enpm add "@babel/runtime@^7.26.10" -P -w "packages/core"											# CVE-2025-27789; DoS; Medium
 	enpm add "@babel/runtime@^7.26.10" -P														# CVE-2025-27789; DoS; Medium
 
-	enpm add "tar-fs@3.0.9" -D															# CVE-2025-48387; ZC, VS(DT); High
-	enpm add "tar-fs@2.1.3" -D															# CVE-2025-48387; ZC, VS(DT); High
+	enpm add "tar-fs@3.1.1" -D															# CVE-2025-48387; ZC, VS(DT); High
+																			# CVE-2025-59343; ZC, VS(DT); High
+	enpm add "tar-fs@2.1.4" -D															# CVE-2025-48387; ZC, VS(DT); High
+																			# CVE-2025-59343; ZC, VS(DT); High
 
 	enpm add "tar@6.2.1" -D																# CVE-2024-28863; DoS; Medium
 	enpm add "brace-expansion@1.1.12" -D														# CVE-2025-5889; DoS; Low
@@ -692,6 +696,11 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "tmp@0.2.4" -D																# CVE-2025-54798; DT; Low
 	enpm add "tmp@0.2.4" -P -w "dev-packages/cli"													# CVE-2025-54798; DT; Low
+
+	enpm add "jsondiffpatch@0.7.2" -P -w "examples/browser"												# CVE-2025-9910; VS(DT, ID); Moderate
+	enpm add "jsondiffpatch@0.7.2" -P -w "examples/electron"											# CVE-2025-9910; VS(DT, ID); Moderate
+
+einfo "QA:  Manually remove node_modules/patch-package/node_modules/tmp@0.0.33 from package-lock.json"
 
 	patch_lockfile
 }
