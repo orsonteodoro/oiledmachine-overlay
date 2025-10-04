@@ -195,8 +195,7 @@ setup_build_env() {
 # 7: 0x565121ea9c0e  [/usr/bin/node22]
 # 8: 0x565121eabb8d  [/usr/bin/node22]
 # 9: 0x5651226cd425  [/usr/bin/node22]
-	#export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096, 8192 worked previously
-	export NODE_OPTIONS=" --max-old-space-size=6144" # Testing
+	export NODE_OPTIONS=" --max-old-space-size=6144" # 6144 works but still triggers OOM killer, 8192 worked previously
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	# The build variables below can be set in /etc/portage/env/lobe-chat.conf
@@ -301,8 +300,9 @@ pkg_setup() {
 ewarn
 ewarn "${CATEGORY}/${PN} build warning."
 ewarn
-ewarn "The kernel or browser OOM manager may inadvertantly prevent access to"
-ewarn "browser tabs after high memory pressure during build time which may"
+ewarn "The browser OOM manager may inadvertantly prevent access to"
+ewarn "browser tabs or the kernel may OOM kill the web browser"
+ewarn "after high memory pressure during build time which may"
 ewarn "result in data loss."
 ewarn
 ewarn "Save work immediately."
