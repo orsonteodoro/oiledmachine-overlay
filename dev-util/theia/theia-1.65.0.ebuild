@@ -631,7 +631,9 @@ einfo "Fixing vulnerabilities"
 
 		sed -i -e "s|\"tar-fs\": \"^3.0.6\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar-fs\": \"~2.1.2\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar-fs\": \"^3.0.9\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar\": \"6.1.11\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
@@ -682,6 +684,10 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "tar-fs@3.1.1" -D															# CVE-2025-48387; ZC, VS(DT); High
 																			# CVE-2025-59343; ZC, VS(DT); High
+	enpm add "tar-fs@3.1.1" -P -w "examples/browser"
+	enpm add "tar-fs@3.1.1" -P -w "examples/electron"
+	enpm add "tar-fs@3.1.1" -P -w "examples/api-samples"
+	enpm add "tar-fs@3.1.1" -P -w "examples/browser-only"
 	enpm add "tar-fs@2.1.4" -D															# CVE-2025-48387; ZC, VS(DT); High
 																			# CVE-2025-59343; ZC, VS(DT); High
 
@@ -701,6 +707,7 @@ einfo "Fixing vulnerabilities"
 	enpm add "jsondiffpatch@0.7.2" -P -w "examples/electron"											# CVE-2025-9910; VS(DT, ID); Moderate
 
 einfo "QA:  Manually remove node_modules/patch-package/node_modules/tmp@0.0.33 from package-lock.json"
+einfo "QA:  Manually remove node_modules/jsondiffpatch@0.6.0 from package-lock.json"
 
 	patch_lockfile
 }
