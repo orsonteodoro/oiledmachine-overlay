@@ -73,7 +73,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_9"
+IUSE+=" ebuild_revision_10"
 RDEPEND="
 	app-misc/ollama
 "
@@ -132,14 +132,15 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 		# VS = Vulnerable System (Direct attack)
 		sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"0.3.3\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
 
-		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
-		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
-		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
-		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
-		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.20\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
+		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"5.4.20\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
 																		# CVE-2025-46565; VS(ID); Medium
 																		# CVE-2025-32395; VS(ID); Medium
 																		# CVE-2025-31486; ID; Medium
+																		# CVE-2025-58752;ID; Low
 
 		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
 		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die
@@ -172,7 +173,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 	enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}
 
 	L=(
-		"vite@5.4.12"
+		"vite@5.4.20"
 		"tmp@0.2.4"
 	)
 	enpm install ${L[@]} -D ${NPM_INSTALL_ARGS[@]}
