@@ -766,7 +766,7 @@ src_install() {
 	dodoc "LICENSE"
 
 	newicon \
-		"${S}/public/icons/icon-512x512.png" \
+		"${S}/.next/standalone/public/icons/icon-512x512.png" \
 		"${PN}.png"
 
 	# Include hidden files/dirs with *
