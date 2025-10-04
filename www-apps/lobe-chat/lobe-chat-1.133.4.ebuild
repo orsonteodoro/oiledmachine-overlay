@@ -482,6 +482,7 @@ ewarn
 #ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually change @babel/runtime@7.23.6 references to @babel/runtime@7.28.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @babel/runtime@7.28.2 references to @babel/runtime@7.28.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/rest@19.0.13(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove regenerator-runtime@0.14.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
