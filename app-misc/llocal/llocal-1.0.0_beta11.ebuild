@@ -123,7 +123,8 @@ npm_update_lock_install_post() {
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 	fi
 	patch_lockfile() {
-ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
+ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
+ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and arches in package-lock.json"
 		# DoS = Denial of Service
 		# DT = Data Tampering
 		# ID = Information Disclosure
