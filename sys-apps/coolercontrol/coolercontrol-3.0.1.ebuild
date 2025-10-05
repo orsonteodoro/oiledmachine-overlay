@@ -13,10 +13,10 @@ PYTHON_COMPAT=( "python3_"{10,11} ) # It can support 3.12 but limited by Nuitka.
 
 inherit desktop python-r1 xdg
 
+S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
-S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="Cooling device control for Linux"
 HOMEPAGE="
@@ -27,7 +27,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" qt6 html hwmon liqctld openrc systemd wayland X ebuild_revision_1"
+IUSE+=" qt6 html hwmon openrc systemd wayland X ebuild_revision_1"
 REQUIRED_USE="
 	qt6? (
 		|| (
@@ -42,9 +42,6 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	~sys-apps/coolercontrold-${PV}[hwmon?,openrc?,systemd?]
-	liqctld? (
-		~sys-apps/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP},openrc?,systemd?]
-	)
 	qt6? (
 		~sys-apps/coolercontrol-qt6-${PV}[wayland?,X?]
 	)

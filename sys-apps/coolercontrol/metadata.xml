@@ -24,9 +24,6 @@
     <flag name="hwmon">
       Add support for CPU and motherboard fan/temperature monitoring.
     </flag>
-    <flag name="liqctld">
-      Add liquidctl device support for AIOs, USB fan hubs, etc.
-    </flag>
     <flag name="qt6">
       Use the standalone desktop application (i.e. a limited web browser that
       opens the web app from the dameon).
