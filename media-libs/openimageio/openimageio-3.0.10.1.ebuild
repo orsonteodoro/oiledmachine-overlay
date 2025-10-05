@@ -9,6 +9,11 @@ EAPI=8
 # https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
 # For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 CXX_STD_MIN="14"
@@ -62,7 +67,7 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cflags-hardened check-compiler-switch check-glibcxx-ver cmake flag-o-matic font llvm python-single-r1 virtualx
+inherit cflags-hardened check-compiler-switch check-glibcxx-ver cmake flag-o-matic font libstdcxx-slot llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
@@ -217,9 +222,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -229,15 +234,15 @@ gen_openexr_pairs() {
 # Depends Mar 16, 2024
 RDEPEND+="
 	(
-		>=dev-libs/boost-1.53
+		>=dev-libs/boost-1.53[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
 	)
 	(
-		>=dev-libs/libfmt-7.0.0
+		>=dev-libs/libfmt-7.0.0[${LIBSTDCXX_USEDEP}]
 		dev-libs/libfmt:=
 	)
 	(
-		>=dev-libs/pugixml-1.8
+		>=dev-libs/pugixml-1.8[${LIBSTDCXX_USEDEP}]
 		dev-libs/pugixml:=
 	)
 	(
@@ -252,7 +257,7 @@ RDEPEND+="
 	>=media-libs/libjpeg-turbo-2.1
 	virtual/jpeg:0
 	color-management? (
-		>=media-libs/opencolorio-2.2
+		>=media-libs/opencolorio-2.2[${LIBSTDCXX_USEDEP}]
 		media-libs/opencolorio:=
 	)
 	dds? (
@@ -301,11 +306,11 @@ RDEPEND+="
 		media-libs/openjpeg:=
 	)
 	jxl? (
-		>=media-libs/libjxl-0.10.1
+		>=media-libs/libjxl-0.10.1[${LIBSTDCXX_USEDEP}]
 		media-libs/libjxl:=
 	)
 	opencv? (
-		>=media-libs/opencv-4
+		>=media-libs/opencv-4[${LIBSTDCXX_USEDEP}]
 		media-libs/opencv:=
 	)
 	opengl? (
@@ -316,38 +321,38 @@ RDEPEND+="
 	openvdb? (
 		abi12-compat? (
 			|| (
-				=media-gfx/openvdb-14*[abi12-compat]
-				=media-gfx/openvdb-13*[abi12-compat]
-				=media-gfx/openvdb-12*[abi12-compat]
+				=media-gfx/openvdb-14*[${LIBSTDCXX_USEDEP},abi12-compat]
+				=media-gfx/openvdb-13*[${LIBSTDCXX_USEDEP},abi12-compat]
+				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},abi12-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		abi11-compat? (
 			|| (
-				=media-gfx/openvdb-13*[abi11-compat]
-				=media-gfx/openvdb-12*[abi11-compat]
-				=media-gfx/openvdb-11*[abi11-compat]
+				=media-gfx/openvdb-13*[${LIBSTDCXX_USEDEP},abi11-compat]
+				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},abi11-compat]
+				=media-gfx/openvdb-11*[${LIBSTDCXX_USEDEP},abi11-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		abi10-compat? (
 			|| (
-				=media-gfx/openvdb-12*[abi10-compat]
-				=media-gfx/openvdb-11*[abi10-compat]
-				=media-gfx/openvdb-10*[abi10-compat]
+				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},abi10-compat]
+				=media-gfx/openvdb-11*[${LIBSTDCXX_USEDEP},abi10-compat]
+				=media-gfx/openvdb-10*[${LIBSTDCXX_USEDEP},abi10-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		abi9-compat? (
 			|| (
-				=media-gfx/openvdb-11*[abi9-compat]
-				=media-gfx/openvdb-10*[abi9-compat]
-				=media-gfx/openvdb-9*[abi9-compat]
+				=media-gfx/openvdb-11*[${LIBSTDCXX_USEDEP},abi9-compat]
+				=media-gfx/openvdb-10*[${LIBSTDCXX_USEDEP},abi9-compat]
+				=media-gfx/openvdb-9*[${LIBSTDCXX_USEDEP},abi9-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		tbb? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-cpp/tbb:=
 		)
 	)
@@ -356,7 +361,7 @@ RDEPEND+="
 		media-libs/libpng:=
 	)
 	ptex? (
-		>=media-libs/ptex-2.3.1:=
+		>=media-libs/ptex-2.3.1[${LIBSTDCXX_USEDEP}]
 		media-libs/ptex:=
 	)
 	python? (
@@ -392,16 +397,13 @@ RDEPEND+="
 	)
 	raw? (
 		!cxx17? (
-			(
-				>=media-libs/libraw-0.18
-				<media-libs/libraw-0.20
-			)
-			media-libs/libraw:=
+			>=media-libs/libraw-0.18[${LIBSTDCXX_USEDEP}]
+			<media-libs/libraw-0.20[${LIBSTDCXX_USEDEP}]
 		)
 		cxx17? (
-			>=media-libs/libraw-0.20
-			media-libs/libraw:=
+			>=media-libs/libraw-0.20[${LIBSTDCXX_USEDEP}]
 		)
+		media-libs/libraw:=
 	)
 	truetype? (
 		>=media-libs/freetype-2.10.0:2
@@ -500,6 +502,7 @@ pkg_setup() {
 		llvm_pkg_setup
 	fi
 	export CC CXX
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -579,15 +582,6 @@ eerror
 		die
 	fi
 	strip-unsupported-flags
-
-	# Versioned symbols issues
-	local gcc_current_profile_slot=$(gcc-config -c)
-	gcc_current_profile_slot=${gcc_current_profile_slot##*-}
-
-	check_pkg_glibcxx "media-libs/libjxl" "/usr/$(get_libdir)/libjxl_threads.so" "${gcc_current_profile_slot}"
-	check_pkg_glibcxx "media-libs/opencolorio" "/usr/$(get_libdir)/libOpenColorIO.so" "${gcc_current_profile_slot}"
-	check_pkg_glibcxx "media-libs/openexr" "/usr/$(get_libdir)/libOpenEXR.so" "${gcc_current_profile_slot}"
-	check_pkg_glibcxx "media-gfx/openvdb" "/usr/$(get_libdir)/libopenvdb.so" "${gcc_current_profile_slot}"
 
 	local cpufeature
 	local mysimd=()
