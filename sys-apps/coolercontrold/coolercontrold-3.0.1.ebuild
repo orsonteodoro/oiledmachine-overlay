@@ -795,7 +795,11 @@ ewarn
 	LCNR_SOURCE="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
+	local gui_port=${COOLERCONTROL_GUI_PORT:-11987}
+	local liqctld_port=${COOLERCONTROL_LIQCTLD_PORT:-11986}
 ewarn "The /etc/coolercontrol can be removed to reset the daemon settings."
+einfo "GUI port:  ${gui_port}"
+einfo "Liqctld port:  ${liqctld_port}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
