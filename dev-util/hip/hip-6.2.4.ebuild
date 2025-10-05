@@ -7,12 +7,17 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
+GCC_COMPAT=(
+	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake docs flag-o-matic prefix python-any-r1 rocm
+inherit check-compiler-switch cmake docs flag-o-matic libstdcxx-slot prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/clr-rocm-${PV}/hipamd"
@@ -189,6 +194,7 @@ ewarn
 
 	# Ignore QA FLAGS check for library compiled from assembly sources
 	QA_FLAGS_IGNORED="/opt/rocm-${PV}/$(rocm_get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
