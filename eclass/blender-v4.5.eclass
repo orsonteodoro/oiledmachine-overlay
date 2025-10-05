@@ -654,7 +654,8 @@ gen_oiio_depends() {
 		echo "
 			${s}? (
 				>=dev-cpp/robin-map-1.3.0
-				>=dev-libs/libfmt-9.1.0
+				>=dev-libs/libfmt-9.1.0[${LIBSTDCXX_USEDEP}]
+				dev-libs/libfmt:=
 				>=media-libs/openimageio-3.0.6.1[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				<media-libs/openimageio-3.1.0[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				media-libs/openimageio:=
@@ -810,7 +811,7 @@ RDEPEND+="
 	)
 	color-management? (
 		>=dev-libs/expat-2.6.4
-		>=media-libs/opencolorio-2.4.1[cpu_flags_x86_sse2?,python]
+		>=media-libs/opencolorio-2.4.1[${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		cuda_targets_sm_35? (
@@ -887,7 +888,8 @@ RDEPEND+="
 			)
 		)
 		osl? (
-			>=dev-libs/pugixml-${PUGIXML_PV}
+			>=dev-libs/pugixml-${PUGIXML_PV}[${LIBSTDCXX_USEDEP}]
+			dev-libs/pugixml:=
 		)
 	)
 	dbus? (
