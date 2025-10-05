@@ -579,6 +579,7 @@ REQUIRED_USE+="
 		)
 	)
 	rocm_6_3? (
+		gcc_slot_13_4
 		llvm_slot_18
 		rocm
 	)
@@ -1026,7 +1027,8 @@ RDEPEND+="
 	rocm? (
 		rocm_6_3? (
 			~dev-libs/rocm-opencl-runtime-${HIP_6_3_VERSION}:6.3
-			~dev-util/hip-${HIP_6_3_VERSION}:6.3[rocm]
+			~dev-util/hip-${HIP_6_3_VERSION}:6.3[${LIBSTDCXX_USEDEP},rocm]
+			dev-util/hip:=
 			~sys-libs/llvm-roc-libomp-${HIP_6_3_VERSION}:6.3
 		)
 		dev-util/hip:=
