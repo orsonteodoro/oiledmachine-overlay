@@ -71,6 +71,12 @@ CPU_FLAGS_3_3=(
 
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 12.2; <=CUDA-12.9, <=CUDA-12.8
+	"gcc_slot_13_4" # <=CUDA-12.6, <=CUDA-12.5, <=CUDA-12.4, <=CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, <=CUDA-11.8
+)
+
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
@@ -219,7 +225,7 @@ ${ROCM_SLOTS[@]}
 ebuild_revision_14
 "
 # hip is default ON upstream.
-inherit blender
+inherit blender libstdcxx-slot
 
 LICENSE+="
 	(
@@ -649,8 +655,9 @@ gen_oiio_depends() {
 			${s}? (
 				>=dev-cpp/robin-map-1.3.0
 				>=dev-libs/libfmt-9.1.0
-				>=media-libs/openimageio-3.0.6.1[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
-				<media-libs/openimageio-3.1.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-3.0.6.1[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				<media-libs/openimageio-3.1.0[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				media-libs/openimageio:=
 			)
 		"
 	done
@@ -663,9 +670,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -789,7 +796,7 @@ RDEPEND+="
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
 	)
 	boost? (
-		>=dev-libs/boost-${BOOST_PV}[nls?,threads(+)]
+		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP},nls?,threads(+)]
 		dev-libs/boost:=
 		usd? (
 			>=dev-libs/boost-${BOOST_PV}[nls?,threads(+),python]
@@ -1274,6 +1281,7 @@ eerror
 	#else
 		# See blender_pkg_setup for llvm_pkg_setup
 	fi
+	libstdcxx-slot_verify
 }
 
 apply_hiprt_2_3_patchset() {
