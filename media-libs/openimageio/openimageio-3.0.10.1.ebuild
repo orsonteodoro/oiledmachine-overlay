@@ -67,7 +67,7 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cflags-hardened check-compiler-switch check-glibcxx-ver cmake flag-o-matic font libstdcxx-slot llvm python-single-r1 virtualx
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic font libstdcxx-slot llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
