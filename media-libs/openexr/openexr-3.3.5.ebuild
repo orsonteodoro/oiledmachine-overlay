@@ -11,9 +11,9 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 )
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 12.2; <=CUDA-12.9, <=CUDA-12.8
-	"gcc_slot_13_4" # <=CUDA-12.6, <=CUDA-12.5, <=CUDA-12.4, <=CUDA-12.3
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, <=CUDA-11.8
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
 )
 OPENEXR_IMAGES_PV="1.0"
 
