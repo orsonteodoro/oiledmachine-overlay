@@ -4,10 +4,15 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
+GCC_COMPAT=(
+	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic prefix rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -113,6 +118,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
