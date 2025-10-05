@@ -774,11 +774,11 @@ ewarn
 ewarn "The OpenRC script is experimental for ${CATEGORY}/${PN}."
 ewarn "If it works, send an issue request to remove this message."
 ewarn
-		exeinto /etc/init.d
+		exeinto "/etc/init.d"
 		doexe "${FILESDIR}/coolercontrold"
 	fi
 	if use systemd ; then
-		insinto /lib/systemd/system
+		insinto "/lib/systemd/system"
 		doins "${WORKDIR}/coolercontrol-${PV}/packaging/systemd/coolercontrold.service"
 	fi
 	if ! use openrc && ! use systemd ; then
@@ -795,9 +795,11 @@ ewarn
 	LCNR_SOURCE="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
+ewarn "The /etc/coolercontrol can be removed to reset the daemon settings."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20231201)
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.1, 20250701)
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.2, 20250814)
+# OILEDMACHINE-OVERLAY-TEST:  passed (3.0.1, 20251004)

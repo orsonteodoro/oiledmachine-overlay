@@ -7,8 +7,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="gitlab">coolercontrol/coolercontrol</remote-id>
     <bugs-to>https://gitlab.com/coolercontrol/coolercontrol/-/issues</bugs-to>
+    <doc lang="en">https://docs.coolercontrol.org</doc>
+    <remote-id type="gitlab">coolercontrol/coolercontrol</remote-id>
   </upstream>
   <!--
 
