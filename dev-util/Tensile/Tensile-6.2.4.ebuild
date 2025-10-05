@@ -23,12 +23,17 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
+GCC_COMPAT=(
+	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-glibcxx-ver cmake distutils-r1 prefix rocm toolchain-funcs
+inherit cmake distutils-r1 libstdcxx-slot prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -77,7 +82,8 @@ RDEPEND="
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,numa,rocm?]
 	client? (
-		dev-libs/boost
+		dev-libs/boost[${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
 	cuda? (
@@ -181,8 +187,6 @@ ewarn
 	distutils-r1_src_configure
 
 	if use client; then
-		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_6_2_GLIBCXX}"
-
 		local mycmakeargs=(
 			-DCMAKE_SKIP_RPATH=ON
 			-DROCM_ROOT="${ROCM_PATH}"
