@@ -170,6 +170,7 @@ _libstdcxx_slot_set_globals() {
 	LIBSTDCXX_USEDEP=$(libstdcxx-slot_generate_usedep)
 	export IUSE
 	export REQUIRED_USE
+	export LIBSTDCXX_USEDEP
 }
 _libstdcxx_slot_set_globals
 unset -f _libstdcxx_slot_set_globals
