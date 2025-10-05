@@ -80,23 +80,28 @@ RDEPEND="
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,numa,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP},cuda?,numa,rocm?]
+	dev-util/hip:=
 	client? (
 		dev-libs/boost[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
-		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		dev-util/rocm-smi:=
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		dev-libs/rocm-comgr:=
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		dev-libs/rocr-runtime:=
 		opencl? (
 			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 		)
 		openmp? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+			sys-libs/llvm-roc-libomp:=
 		)
 	)
 
