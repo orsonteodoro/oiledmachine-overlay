@@ -19,6 +19,11 @@ EAPI=8
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 12.2; <=CUDA-12.9, <=CUDA-12.8
+	"gcc_slot_13_4" # <=CUDA-12.6, <=CUDA-12.5, <=CUDA-12.4, <=CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, <=CUDA-11.8
+)
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
@@ -65,7 +70,7 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit check-compiler-switch cmake flag-o-matic python-single-r1 virtualx
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 virtualx
 
 gen_half_pairs_rdepend() {
 	local row
@@ -74,9 +79,9 @@ gen_half_pairs_rdepend() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -90,9 +95,9 @@ gen_imath_bdepend() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}:=
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -120,7 +125,7 @@ RESTRICT="
 	test
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="
+IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 doc opengl python static-libs test
@@ -181,17 +186,22 @@ REQUIRED_USE="
 "
 # Depends update: Aug 31, 2023
 RDEPEND="
-	>=dev-cpp/yaml-cpp-0.7.0:=
-	>=dev-cpp/pystring-1.1.3
+	>=dev-cpp/yaml-cpp-0.7.0[${LIBSTDCXX_USEDEP}]
+	dev-cpp/yaml-cpp:=
+	>=dev-cpp/pystring-1.1.3[${LIBSTDCXX_USEDEP}]
+	dev-cpp/pystring:=
 	>=dev-libs/expat-2.4.1
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.2.13
-	dev-libs/tinyxml
+	dev-libs/tinyxml[${LIBSTDCXX_USEDEP}]
+	dev-libs/tinyxml:=
 	dev-build/ninja
 	opengl? (
-		>=media-libs/openimageio-2.2.14:=
+		>=media-libs/openimageio-2.2.14[${LIBSTDCXX_USEDEP}]
+		media-libs/openimageio:=
 		>=media-libs/lcms-2.2:2
 		media-libs/freeglut
+		media-libs/glew[${LIBSTDCXX_USEDEP}]
 		media-libs/glew:=
 		virtual/opengl
 	)
@@ -246,6 +256,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

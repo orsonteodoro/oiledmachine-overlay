@@ -1,0 +1,208 @@
+# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# @ECLASS: libstdcxx-slot.eclass
+# @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
+# @SUPPORTED_EAPIS: 7 8
+# @BLURB: Slotify C++ packages
+# @DESCRIPTION:
+# This eclass tries to solve the libstdc++ version symbols issue.
+# Only apply this eclass to C++ packages.
+
+if [[ -z ${_LIBSTDCXX_SLOT_ECLASS} ]] ; then
+_LIBSTDCXX_SLOT_ECLASS=1
+
+# See also https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/config/abi/pre/gnu.ver
+# GCC version to libstdc++ version mappings
+GCC_8_1="3.4.25"
+GCC_8_2="3.4.25"
+GCC_8_3="3.4.25"
+GCC_8_4="3.4.25"
+GCC_8_5="3.4.25"
+GCC_9_1="3.4.26"
+GCC_9_2="3.4.27"
+GCC_9_3="3.4.28"
+GCC_9_4="3.4.28"
+GCC_9_5="3.4.28"
+GCC_10_1="3.4.28"
+GCC_10_2="3.4.28"
+GCC_10_3="3.4.28"
+GCC_10_4="3.4.28"
+GCC_10_5="3.4.28"
+GCC_11_1="3.4.29"
+GCC_11_2="3.4.29"
+GCC_11_3="3.4.29"
+GCC_11_4="3.4.29"
+GCC_11_5="3.4.29"
+GCC_12_1="3.4.30"
+GCC_12_2="3.4.30"
+GCC_12_3="3.4.30"
+GCC_12_4="3.4.30"
+GCC_12_5="3.4.30"
+GCC_13_1="3.4.31"
+GCC_13_2="3.4.32"
+GCC_13_3="3.4.32"
+GCC_13_4="3.4.32"
+GCC_14_1="3.4.33"
+GCC_14_2="3.4.33"
+GCC_14_3="3.4.33"
+GCC_15_1="3.4.34"
+GCC_15_2="3.4.34"
+GCC_16_1="3.4.35"
+
+# @ECLASS_VARIABLE: _ALL_GCC_COMPAT
+# @DESCRIPTION:
+# All GCC point versions available by distro repo.
+# Live is not supported
+_ALL_GCC_COMPAT=(
+	"16_1"
+	"15_2"
+	"15_1"
+	"14_3"
+	"14_2"
+	"14_1"
+	"13_4"
+	"13_3"
+	"13_2"
+	"13_1"
+	"13_1"
+	"12_4"
+	"12_3"
+	"12_2"
+	"12_2"
+	"11_5"
+	"11_4"
+	"11_3"
+	"11_2"
+	"11_1"
+	"10_5"
+	"10_4"
+	"10_3"
+	"10_2"
+	"10_1"
+	"9_5"
+	"9_4"
+	"9_3"
+	"9_2"
+	"9_1"
+	"8_5"
+	"8_4"
+	"8_3"
+	"8_2"
+	"8_1"
+)
+
+# @FUNCTION: libstdcxx-slot_generate_iuse
+# @DESCRIPTION:
+# Generate IUSE string
+libstdcxx-slot_generate_iuse() {
+	if [[ -z "${GCC_COMPAT}" ]] ; then
+eerror "QA:  GCC_COMPAT must be defined"
+		die
+	fi
+	local t=""
+	local x
+	for x in ${_ALL_GCC_COMPAT[@]} ; do
+		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
+			t+=" gcc_slot_${x}"
+		fi
+	done
+	echo "${t}"
+}
+
+
+# @FUNCTION: libstdcxx-slot_generate_iuse
+# @DESCRIPTION:
+# Generate REQUIRED_USE string
+libstdcxx-slot_generate_required_use() {
+	if [[ -z "${GCC_COMPAT}" ]] ; then
+eerror "QA:  GCC_COMPAT must be defined"
+		die
+	fi
+	local t=()
+	local x
+	for x in ${_ALL_GCC_COMPAT[@]} ; do
+		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
+			t+=" gcc_slot_${x}"
+		fi
+	done
+	echo "
+		^^ (
+			${t[@]}
+		)
+	"
+}
+
+libstdcxx-slot_generate_usedep() {
+	if [[ -z "${GCC_COMPAT}" ]] ; then
+eerror "QA:  GCC_COMPAT must be defined"
+		die
+	fi
+	local t=()
+	local x
+	for x in ${_ALL_GCC_COMPAT[@]} ; do
+		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
+			t+=",gcc_slot_${x}(-)?"
+		fi
+	done
+	echo "${t:1}"
+}
+
+_libstdcxx_slot_set_globals() {
+	IUSE+=$(libstdcxx-slot_generate_iuse)
+	REQUIRED_USE+=$(libstdcxx-slot_generate_required_use)
+	LIBSTDCXX_USEDEP=$(libstdcxx-slot_generate_usedep)
+	export IUSE
+	export REQUIRED_USE
+}
+_libstdcxx_slot_set_globals
+unset -f _libstdcxx_slot_set_globals
+
+_switch_gcc_to_continue_message() {
+	local slot="${1}"
+eerror
+eerror "You must do the following to continue:"
+eerror
+eerror "eselect gcc ${CHOST}-${slot}"
+eerror "source /etc/profile"
+eerror
+}
+
+_GLIBCXX_VER_VERIFIED=0
+# @FUNCTION: libstdcxx-slot_verify
+# @DESCRIPTION:
+# Verify libstdc++ version before compiling
+libstdcxx-slot_verify() {
+	local gcc_slot=$(gcc-config -c | cut -f 5 -d "-")
+	local actual_gcc_version=$(${CHOST}-gcc-${gcc_slot} --version | head -n 1 | cut -f 5 -d " ")
+	local actual_gcc_ver2=$(ver_cut 1-2 "${actual_gcc_version}")
+	local k="GCC_${actual_gcc_ver2/./_}"
+	local actual_libstdcxx_ver="${!k}"
+	local x
+	for x in ${_ALL_GCC_COMPAT[@]} ; do
+		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
+			local k="GCC_${x/./_}"
+			local expected_libstdcxx_ver="${!k}"
+			if ver_test "${actual_libstdcxx_ver}" -ne "${expected_libstdcxx_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
+				_switch_gcc_to_continue_message ${x%_*}
+				die
+			fi
+		fi
+	done
+	export _GLIBCXX_VER_VERIFIED=1
+}
+
+# @FUNCTION: libstdcxx-slot_pkg_postinst
+# @DESCRIPTION:
+# Event handler for check libstdc++ slot verification
+libstdcxx-slot_pkg_postinst() {
+	if (( ${_GLIBCXX_VER_VERIFIED} != 1 )) ; then
+eerror "QA:  You must call libstdcxx-slot_verify in pkg_setup"
+		die
+	fi
+}
+
+EXPORT_FUNCTIONS pkg_postinst
+
+fi
