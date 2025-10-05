@@ -10,9 +10,14 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 )
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 12.2; <=CUDA-12.9, <=CUDA-12.8
+	"gcc_slot_13_4" # <=CUDA-12.6, <=CUDA-12.5, <=CUDA-12.4, <=CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, <=CUDA-11.8
+)
 OPENEXR_IMAGES_PV="1.0"
 
-inherit cflags-hardened cmake flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic libstdcxx-slot
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x86-linux"
 SRC_URI="
@@ -49,7 +54,7 @@ RESTRICT="
 RDEPEND="
 	>=app-arch/libdeflate-1.21[zlib(+)]
 	app-arch/libdeflate:=
-	~dev-libs/imath-3.1.12:=
+	~dev-libs/imath-3.1.12[${LIBSTDCXX_USEDEP}]
 	dev-libs/imath:=
 "
 DEPEND="
@@ -71,6 +76,11 @@ DOCS=(
 	"README.md"
 	"SECURITY.md"
 )
+
+pkg_setup() {
+	check-compiler-switch_start
+	libstdcxx-slot_verify
+}
 
 src_prepare() {
 	# Fix path for testsuite
@@ -123,6 +133,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local so_ver=$(grep -o -E "OPENEXR_LIB_SOVERSION [0-9]+" "CMakeLists.txt" | cut -f 2 -d " ")
 einfo "SOVER:  ${so_ver}"
 	if ! grep -q -e "OPENEXR_LIB_SOVERSION ${SLOT#*/}" "CMakeLists.txt" ; then
