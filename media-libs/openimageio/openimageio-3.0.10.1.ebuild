@@ -585,6 +585,7 @@ eerror
 	gcc_current_profile_slot=${gcc_current_profile_slot##*-}
 
 	check_pkg_glibcxx "media-libs/libjxl" "/usr/$(get_libdir)/libjxl_threads.so" "${gcc_current_profile_slot}"
+	check_pkg_glibcxx "media-libs/opencolorio" "/usr/$(get_libdir)/libOpenColorIO.so" "${gcc_current_profile_slot}"
 	check_pkg_glibcxx "media-libs/openexr" "/usr/$(get_libdir)/libOpenEXR.so" "${gcc_current_profile_slot}"
 	check_pkg_glibcxx "media-gfx/openvdb" "/usr/$(get_libdir)/libopenvdb.so" "${gcc_current_profile_slot}"
 
