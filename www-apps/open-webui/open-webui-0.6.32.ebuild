@@ -4,19 +4,40 @@
 
 EAPI=8
 
-# We don't eager bump because of torchvision requirements is not up to date.
+# TODO package
+# ddgs
+# google-genai
+# mcp
+# opentelemetry-exporter-otlp
+# opentelemetry-instrumentation-fastapi
+# opentelemetry-instrumentation-sqlalchemy
+# opentelemetry-instrumentation-redis
+# opentelemetry-instrumentation-requests
+# opentelemetry-instrumentation-logging
+# opentelemetry-instrumentation-httpx
+# oracledb
+# pinecone
+# pycrdt
+# starlette-compress
+# starsessions
+# tencentcloud-sdk-python
+
+# TODO review
+# httpx
 
 MY_PN="Open WebUI"
 
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_VERSION="22" # From https://github.com/open-webui/open-webui/blob/v0.5.20/Dockerfile#L24
+NODE_VERSION="22" # From https://github.com/open-webui/open-webui/blob/v0.6.32/Dockerfile#L24
 NPM_AUDIT_FIX_ARGS=(
 #	"--prefer-offline"
+	"--legacy-peer-deps"
 )
 NPM_INSTALL_ARGS=(
 #	"--prefer-offline"
+	"--legacy-peer-deps"
 )
 PYTHON_COMPAT=( "python3_"{11..12} )
 
@@ -31,7 +52,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64" # Dependencies are unpackaged, untested
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/open-webui/open-webui/archive/refs/tags/v${PV}.tar.gz
@@ -70,14 +91,8 @@ MOTO_RDEPEND="
 # For missing >=dev-python/passlib-1.7.4[bcrypt(+)] rdepends
 PASSLIB_RDEPEND="
 	$(python_gen_cond_dep '
+		>=dev-python/bcrypt-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/passlib-1.7.4[${PYTHON_USEDEP},bcrypt(+)]
-		dev-python/bcrypt[${PYTHON_USEDEP}]
-	')
-"
-# For missing dev-python/pyjwt[crypto] rdepends
-PYJWT_RDEPEND="
-	$(python_gen_cond_dep '
-		dev-python/cryptography[${PYTHON_USEDEP}]
 	')
 "
 # For missing dev-python/uvicorn[standard] rdepends
@@ -132,77 +147,101 @@ DOCKER_REPEND="
 RDEPEND+="
 	${DOCKER_REPEND}
 	${PASSLIB_RDEPEND}
-	${PYJWT_RDEPEND}
 	${MOTO_RDEPEND}
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		>=dev-python/aiohttp-3.11.11[${PYTHON_USEDEP}]
+		>=dev-python/aiohttp-3.12.15[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.14.0[${PYTHON_USEDEP}]
 		>=dev-python/apscheduler-3.10.4[${PYTHON_USEDEP}]
-		>=dev-python/argon2-cffi-23.1.0[${PYTHON_USEDEP}]
+		>=dev-python/argon2-cffi-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/asgiref-3.8.1[${PYTHON_USEDEP}]
-		>=dev-python/Authlib-1.4.1[${PYTHON_USEDEP}]
-		>=dev-python/azure-ai-documentintelligence-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/azure-identity-1.20.0[${PYTHON_USEDEP}]
+		>=dev-python/Authlib-1.6.3[${PYTHON_USEDEP}]
+		>=dev-python/av-14.0.1[${PYTHON_USEDEP}]
+		>=dev-python/azure-ai-documentintelligence-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/azure-identity-1.25.0[${PYTHON_USEDEP}]
 		>=dev-python/azure-storage-blob-12.24.1[${PYTHON_USEDEP}]
 		>=dev-python/bcrypt-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/black-25.1.0[${PYTHON_USEDEP}]
-		>=dev-python/boto3-1.35.53[${PYTHON_USEDEP}]
+		>=dev-python/boto3-1.40.5[${PYTHON_USEDEP}]
+		>=dev-python/ddgs-9.0.0[${PYTHON_USEDEP}]
 		>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
-		>=dev-python/duckduckgo-search-7.3.2[${PYTHON_USEDEP}]
-		>=dev-python/einops-0.8.0[${PYTHON_USEDEP}]
-		>=dev-python/elasticsearch-8.17.1[${PYTHON_USEDEP}]
-		>=dev-python/fake-useragent-1.5.1[${PYTHON_USEDEP}]
+		>=dev-python/einops-0.8.1[${PYTHON_USEDEP}]
+		>=dev-python/elasticsearch-9.1.0[${PYTHON_USEDEP}]
+		>=dev-python/fake-useragent-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/fastapi-0.115.7[${PYTHON_USEDEP}]
 		>=dev-python/firecrawl-py-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/fpdf2-2.8.2[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.2.3[${PYTHON_USEDEP}]
 		>=dev-python/gcp-storage-emulator-2024.08.03[${PYTHON_USEDEP}]
 		>=dev-python/google-cloud-storage-2.19.0[${PYTHON_USEDEP}]
-		>=dev-python/google-generativeai-0.7.2[${PYTHON_USEDEP}]
-		>=dev-python/googleapis-common-protos-1.63.2[${PYTHON_USEDEP}]
+		>=dev-python/google-genai-1.38.0[${PYTHON_USEDEP}]
+		>=dev-python/google-generativeai-0.8.5[${PYTHON_USEDEP}]
+		>=dev-python/googleapis-common-protos-1.70.0[${PYTHON_USEDEP}]
+		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},socks(+),http2(+),zstd(+),cli(+),brotli(+)]
+		>=dev-python/itsdangerous-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
-		>=dev-python/loguru-0.7.2[${PYTHON_USEDEP}]
-		>=dev-python/markdown-3.7[${PYTHON_USEDEP}]
+		>=dev-python/loguru-0.7.3[${PYTHON_USEDEP}]
+		>=dev-python/markdown-3.8.2[${PYTHON_USEDEP}]
+		>=dev-python/mcp-1.14.1[${PYTHON_USEDEP}]
 		>=dev-python/nltk-3.9.1[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-2.8.0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-api-1.36.0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-sdk-1.36.0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-exporter-otlp-1.36.0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-fastapi-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-redis-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-requests-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-logging-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-httpx-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/oracledb-3.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-2.2.3[${PYTHON_USEDEP}]
-		>=dev-python/peewee-3.17.9[${PYTHON_USEDEP}]
+		>=dev-python/pinecone-6.0.2[${PYTHON_USEDEP}]
+		>=dev-python/pycrdt-0.12.25[${PYTHON_USEDEP}]
+		>=dev-python/peewee-3.18.1[${PYTHON_USEDEP}]
 		>=dev-python/peewee-migrate-1.12.2[${PYTHON_USEDEP}]
-		>=dev-python/pgvector-0.3.5[${PYTHON_USEDEP}]
+		>=dev-python/pgvector-0.4.1[${PYTHON_USEDEP}]
 		>=dev-python/playwright-bin-1.49.1[${PYTHON_USEDEP}]
 		>=dev-python/psycopg-2.9.9:2[${PYTHON_USEDEP}]
-		>=dev-python/pydantic-2.10.6[${PYTHON_USEDEP}]
+		>=dev-python/pyarrow-20.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-2.11.7[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.10.1[${PYTHON_USEDEP},crypto(+)]
 		>=dev-python/pymdown-extensions-10.14.2[${PYTHON_USEDEP}]
 		>=dev-python/pymysql-1.1.1[${PYTHON_USEDEP}]
-		>=dev-python/pypandoc-1.13[${PYTHON_USEDEP}]
-		>=dev-python/pypdf-4.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
+		>=dev-python/pypandoc-1.15[${PYTHON_USEDEP}]
+		>=dev-python/pypdf-6.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.4.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-docker-3.1.1[${PYTHON_USEDEP}]
 		>=dev-python/python-jose-3.4.0[${PYTHON_USEDEP}]
-		>=dev-python/python-multipart-0.0.18[${PYTHON_USEDEP}]
-		>=dev-python/python-pptx-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/python-socketio-5.11.3[${PYTHON_USEDEP}]
+		>=dev-python/python-multipart-0.0.20[${PYTHON_USEDEP}]
+		>=dev-python/python-pptx-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/python-socketio-5.13.0[${PYTHON_USEDEP}]
 		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pyxlsb-1.0.10[${PYTHON_USEDEP}]
-		>=dev-python/qdrant-client-1.12.0[${PYTHON_USEDEP}]
+		>=dev-python/qdrant-client-1.14.3[${PYTHON_USEDEP}]
 		>=dev-python/rank-bm25-0.2.2[${PYTHON_USEDEP}]
 		>=dev-python/RestrictedPython-8.0[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.13.1[${PYTHON_USEDEP}]
-		>=dev-python/uvicorn-0.34.0[${PYTHON_USEDEP},standard(+)]
-		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		>=dev-python/starlette-compress-1.6.0[${PYTHON_USEDEP}]
+		>=dev-python/starsessions-2.2.1[${PYTHON_USEDEP},redis]
+		>=dev-python/tencentcloud-sdk-python-3.0.1336[${PYTHON_USEDEP}]
+		>=dev-python/uvicorn-0.35.0[${PYTHON_USEDEP},standard(+)]
+		>=dev-python/requests-2.32.5[${PYTHON_USEDEP}]
 		>=dev-python/sqlalchemy-2.0.38[${PYTHON_USEDEP}]
-		>=dev-python/validators-0.34.0[${PYTHON_USEDEP}]
+		>=dev-python/validators-0.35.0[${PYTHON_USEDEP}]
 		>=dev-python/xlrd-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/youtube-transcript-api-0.6.3[${PYTHON_USEDEP}]
+		>=dev-python/youtube-transcript-api-1.2.2[${PYTHON_USEDEP}]
+		>=virtual/pillow-11.3.0[${PYTHON_USEDEP}]
+		dev-python/accelerate[${PYTHON_USEDEP}]
 		dev-python/aiocache[${PYTHON_USEDEP}]
 		dev-python/aiofiles[${PYTHON_USEDEP}]
 		dev-python/anthropic[${PYTHON_USEDEP}]
 		dev-python/async-timeout[${PYTHON_USEDEP}]
-		dev-python/extract-msg[${PYTHON_USEDEP}]
+		dev-python/cryptography[${PYTHON_USEDEP}]
 		dev-python/google-api-python-client[${PYTHON_USEDEP}]
 		dev-python/google-auth-httplib2[${PYTHON_USEDEP}]
 		dev-python/google-auth-oauthlib[${PYTHON_USEDEP}]
@@ -214,15 +253,15 @@ RDEPEND+="
 		dev-python/tiktoken[${PYTHON_USEDEP}]
 		sci-ml/sentencepiece[${PYTHON_USEDEP}]
 	')
-	>=dev-python/chromadb-0.6.2[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/chromadb-1.0.20[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.1.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-0.3.19[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-community-0.3.18[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-0.3.27[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-community-0.3.29[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/langfuse-2.44.0[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/pymilvus-2.4.0[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/rapidocr-onnxruntime-1.3.24[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/sentence-transformers-3.3.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/pymilvus-2.5.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/rapidocr-onnxruntime-1.20.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/sentence-transformers-5.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/unstructured-0.16.17[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.11.0[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
