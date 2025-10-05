@@ -1109,19 +1109,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-antivirus/clamav | Clam Anti-Virus Scanner |
 | app-arch/brotli | Generic-purpose lossless compression algorithm |
 | app-arch/bzip2 | A high-quality data compressor used extensively by Gentoo Linux |
-| app-arch/go-appimage | Purely experimental playground for Go implementation of AppImage tools |
 | app-arch/libarchive | Multi-format archive and compression library |
 | app-arch/lz4 | Extremely Fast Compression algorithm |
 | app-arch/pigz | A parallel implementation of gzip |
-| app-arch/static-tools-appstreamcli | appstreamcli for static-tools |
-| app-arch/static-tools-bsdtar | bsdtar for static-tools |
-| app-arch/static-tools | Building static binaries of some tools using an Alpine chroot with musl |
-| app-arch/static-tools-desktop-file-utils | desktop-file-utils for static-tools |
-| app-arch/static-tools-patchelf | patchelf for static-tools |
-| app-arch/static-tools-runtime-fuse | runtime-fuse for static-tools |
-| app-arch/static-tools-squashfs-tools | squashfuse for static-tools |
-| app-arch/static-tools-squashfuse | squashfuse for static-tools |
-| app-arch/static-tools-zsyncmake | zsyncmake for static-tools |
 | app-arch/unzip | unzipper for pkzip-compressed files |
 | app-arch/xz-utils | Utils for managing LZMA compressed files |
 | app-arch/zip | Info ZIP (encryption support) |
@@ -1789,6 +1779,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/upscayl | Upscayl is an AI based image upscaler |
 | media-gfx/voltaml-fast-stable-diffusion | A beautiful and easy to use Stable Diffusion web user interface |
 | media-libs/alure | The OpenAL Utility Toolkit |
+| media-libs/aras-p-opencollada | OpenCOLLADA Cleanup Fork |
 | media-libs/assimp | Importer library to import assets from 3D files |
 | media-libs/cgif | A fast and lightweight GIF encoder |
 | media-libs/cimg | C++ template image processing toolkit |
@@ -1816,11 +1807,14 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/libheif | A HEIF and AVIF file format decoder and encoder |
 | media-libs/libjpeg-turbo | MMX, SSE, and SSE2 SIMD accelerated JPEG library |
 | media-libs/libmediainfo | MediaInfo libraries |
+| media-libs/libogg | The Ogg media file format library |
 | media-libs/libplacebo | Reusable library for GPU-accelerated image processing primitives |
 | media-libs/libpng | Portable Network Graphics library |
 | media-libs/libsdl2 | Simple Direct Media Layer |
 | media-libs/libsfml | Simple and Fast Multimedia Library (SFML) |
 | media-libs/libspng | libspng is a C library for reading and writing Portable Network Graphics (PNG) format files with a focus on security and ease of use. |
+| media-libs/libtheora | The Theora Video Compression Codec |
+| media-libs/libvorbis | The Ogg Vorbis sound file format library |
 | media-libs/libvpx | WebM VP8 and VP9 Codec SDK |
 | media-libs/libwebp | A lossy image compression format |
 | media-libs/libyuv | libyuv is an open source project that includes YUV scaling and conversion functionality. |
@@ -2147,7 +2141,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-apps/cellular-traces-y2018 | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/coolercontrol | Cooling device control for Linux |
 | sys-apps/coolercontrold | The CoolerControl system service that handles controlling hardware |
-| sys-apps/coolercontrol-liqctld | A daemon for interacting with liquidctl |
 | sys-apps/coolercontrol-qt6 | A standalone desktop app for CoolerControl based on Qt6 |
 | sys-apps/deepcc | DeepCC: A Deep Reinforcement Learning Plug-in to Boost the performance of your TCP scheme in Cellular Networks! |
 | sys-apps/evhz | Show mouse refresh rate under linux + evdev |
