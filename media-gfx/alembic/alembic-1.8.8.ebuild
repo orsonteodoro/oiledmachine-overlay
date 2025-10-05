@@ -5,6 +5,11 @@ EAPI=8
 
 # U24, VFX CY2024
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 12.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 OPENEXR_V3_PV=(
 	# openexr:imath
@@ -32,7 +37,7 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cflags-hardened cmake python-single-r1
+inherit cflags-hardened cmake libstdcxx-slot python-single-r1
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -73,9 +78,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}:=
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -88,9 +93,9 @@ gen_openexr_py_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}:=[${PYTHON_SINGLE_USEDEP},python]
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 				dev-libs/imath:=
 			)
 		"
@@ -110,6 +115,7 @@ RDEPEND+="
 			>=dev-libs/boost-1.55.0[${PYTHON_USEDEP},python]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
+		>=dev-libs/boost-1.55.0[${LIBSTDCXX_USEDEP}]
 		|| (
 			$(gen_openexr_py_pairs)
 		)
@@ -132,6 +138,11 @@ BDEPEND+="
 PATCHES=(
 )
 DOCS=( "ACKNOWLEDGEMENTS.txt" "FEEDBACK.txt" "NEWS.txt" "README.txt" )
+
+pkg_setup() {
+	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	cflags-hardened_append

@@ -9,6 +9,11 @@
 
 EAPI=8
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 12.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 CPU_FLAGS_X86=(
 	"avx"
 	"sse4_2"
@@ -56,7 +61,7 @@ VDB_UTILS=(
 	"vdb_view"
 )
 
-inherit check-compiler-switch cmake flag-o-matic llvm python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot llvm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -123,10 +128,12 @@ gen_openexr_pairs() {
 		echo "
 			(
 				openexr? (
-					~media-libs/openexr-${openexr_pv}:=
+					~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+					media-libs/openexr:=
 				)
 				imath-half? (
-					~dev-libs/imath-${imath_pv}:=
+					~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+					dev-libs/imath:=
 				)
 			)
 		"
@@ -147,10 +154,11 @@ gen_ax_depend() {
 }
 RDEPEND+="
 	(
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
-	>=dev-libs/boost-1.80:=
+	>=dev-libs/boost-1.80[${LIBSTDCXX_USEDEP}]
+	dev-libs/boost:=
 	>=sys-libs/zlib-1.2.7:=
 	ax? (
 		$(gen_ax_depend)
@@ -159,10 +167,12 @@ RDEPEND+="
 		>=dev-libs/c-blosc-1.17.0:=
 	)
 	jemalloc? (
+		dev-libs/jemalloc[${LIBSTDCXX_USEDEP}]
 		dev-libs/jemalloc:=
 	)
 	log4cplus? (
-		>=dev-libs/log4cplus-1.1.2:=
+		>=dev-libs/log4cplus-1.1.2[${LIBSTDCXX_USEDEP}]
+		dev-libs/log4cplus:=
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -177,7 +187,8 @@ RDEPEND+="
 	vdb_view? (
 		>=media-libs/glfw-3.1
 		>=media-libs/glfw-3.3
-		media-libs/glu
+		media-libs/glu[${LIBSTDCXX_USEDEP}]
+		media-libs/glu:=
 		media-libs/mesa[egl(+)]
 		virtual/opengl
 		x11-libs/libX11
@@ -270,6 +281,7 @@ pkg_setup() {
 			break
 		fi
 	done
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

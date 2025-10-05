@@ -72,9 +72,9 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 12.2; <=CUDA-12.9, <=CUDA-12.8
-	"gcc_slot_13_4" # <=CUDA-12.6, <=CUDA-12.5, <=CUDA-12.4, <=CUDA-12.3
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, <=CUDA-11.8
+	"gcc_slot_14_3" # CY2026 is GCC 12.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
 )
 
 # For max and min package versions see link below. \
@@ -793,7 +793,8 @@ RDEPEND+="
 	media-libs/vulkan-drivers
 	virtual/libintl
 	alembic? (
-		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
+		>=media-gfx/alembic-1.8.3[${LIBSTDCXX_USEDEP},boost(+),hdf(+)]
+		media-gfx/alembic:=
 	)
 	boost? (
 		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP},nls?,threads(+)]
@@ -984,8 +985,8 @@ RDEPEND+="
 	openvdb? (
 		abi12-compat? (
 			|| (
-				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
-				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
+				=media-gfx/openvdb-13*[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
+				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
 			)
 			media-gfx/openvdb:=
 		)
@@ -1050,7 +1051,8 @@ RDEPEND+="
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[tbbmalloc(+)]
+		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP},tbbmalloc(+)]
+		dev-cpp/tbb:=
 	)
 	tiff? (
 		>=media-libs/tiff-4.7.0:0[jpeg,zlib]
@@ -1077,7 +1079,10 @@ RDEPEND+="
 	)
 	|| (
 		virtual/glu
-		>=media-libs/glu-9.0.1
+		(
+			>=media-libs/glu-9.0.1[${LIBSTDCXX_USEDEP}]
+			media-libs/glu:=
+		)
 	)
 	|| (
 		virtual/jpeg:0=
@@ -1096,7 +1101,8 @@ BDEPEND+="
 		>=dev-python/pycodestyle-2.13.0[${PYTHON_USEDEP}]
 	' 'python*')
 	>=dev-build/cmake-3.10
-	>=dev-cpp/yaml-cpp-0.7.0
+	>=dev-cpp/yaml-cpp-0.7.0[${LIBSTDCXX_USEDEP}]
+	dev-cpp/yaml-cpp:=
 	>=dev-build/meson-0.63.0
 	>=dev-util/vulkan-headers-${VULKAN_PV}
 	dev-util/patchelf
