@@ -207,6 +207,7 @@ hyper-rustls-0.24.2
 hyper-rustls-0.27.7
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
+hyper-tls-0.6.0
 hyper-util-0.1.17
 iana-time-zone-0.1.64
 iana-time-zone-haiku-0.1.2
@@ -916,7 +917,7 @@ eerror
 	fi
 
 	# For manual lockfile creation
-ewarn "Ebuild dev QA:  Manually \`cargo add \"hyper-tls@^0.6\"\` for the cargo lockfile."
+ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	#unpack ${A}
 	#die
 
@@ -1119,4 +1120,5 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250318) with rust 1.81.0
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250630) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.1.0, 20250810) with rust 1.85.1
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with rust 1.85.1
 # ollama support - passed
