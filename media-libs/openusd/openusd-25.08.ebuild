@@ -12,6 +12,11 @@ EAPI=8
 
 BOOST_PV="1.80.0"
 CMAKE_BUILD_TYPE="Release"
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
 	# openexr:imath
@@ -32,7 +37,7 @@ OPENEXR_V3_PV=(
 PYTHON_COMPAT=( "python3_"{9..13} )
 VULKAN_PV="1.3.296.0"
 
-inherit check-compiler-switch cmake python-single-r1 flag-o-matic
+inherit check-compiler-switch cmake libstdcxx-slot python-single-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenUSD-${PV}"
@@ -122,21 +127,26 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=
-				~dev-libs/imath-${imath_pv}:=
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				media-libs/openexr:=
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				dev-libs/imath:=
 			)
 		"
 	done
 }
 
-ARDEPEND+="
+# TODO experimental
+RDEPEND+="
 	>=sys-libs/zlib-1.2.11
-	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+	>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
+	dev-cpp/tbb:=
 	!python? (
-		>=dev-libs/boost-${BOOST_PV}:=
+		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
 	)
 	alembic? (
-		>=media-gfx/alembic-1.8.5[hdf5?]
+		>=media-gfx/alembic-1.8.5[${LIBSTDCXX_USEDEP},hdf5?]
 	)
 	draco? (
 		>=media-libs/draco-1.4.3
@@ -144,23 +154,21 @@ ARDEPEND+="
 	embree? (
 		>=media-libs/embree-3.2.2
 	)
-	experimental? (
-	)
 	hdf5? (
 		>=sci-libs/hdf5-1.10[cxx,hl]
 	)
 	imaging? (
-		>=media-libs/opensubdiv-3.6.0
+		>=media-libs/opensubdiv-3.6.0[${LIBSTDCXX_USEDEP}]
 		x11-libs/libX11
 	)
 	jemalloc? (
-		dev-libs/jemalloc-usd
+		dev-libs/jemalloc-usd[${LIBSTDCXX_USEDEP}]
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.3
+		>=media-libs/materialx-1.39.3[${LIBSTDCXX_USEDEP}]
 	)
 	opencolorio? (
-		>=media-libs/opencolorio-2.2.1
+		>=media-libs/opencolorio-2.2.1[${LIBSTDCXX_USEDEP}]
 	)
 	openexr? (
 		|| (
@@ -172,24 +180,26 @@ ARDEPEND+="
 	)
 	openimageio? (
 		>=media-libs/libpng-1.6.29
-		>=media-libs/openimageio-2.5.16.0:=
+		>=media-libs/openimageio-2.5.16.0[${LIBSTDCXX_USEDEP}]
+		media-libs/openimageio:=
 		>=media-libs/tiff-4.0.7
 		virtual/jpeg
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.17
-		>=media-gfx/openvdb-10.1.0
+		>=media-gfx/openvdb-10.1.0[${LIBSTDCXX_USEDEP}]
 	)
 	osl? (
 		>=media-libs/osl-1.13.11
 	)
 	ptex? (
-		>=media-libs/ptex-2.4.2
+		>=media-libs/ptex-2.4.2[${LIBSTDCXX_USEDEP}]
+		media-libs/ptex:=
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-'"${BOOST_PV}"':=[python,${PYTHON_USEDEP}]
+			>=dev-libs/boost-'"${BOOST_PV}"'[${PYTHON_USEDEP},python]
 			usdview? (
 				(
 					>=dev-python/pyside2-5.15.2.1[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
@@ -202,6 +212,8 @@ ARDEPEND+="
 				)
 			)
 		')
+		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
 	)
         vulkan? (
 		>=dev-util/vulkan-headers-${VULKAN_PV}
@@ -240,6 +252,7 @@ DOCS=( "CHANGELOG.md" "README.md" )
 pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 gen_pyside2_uic_file() {
