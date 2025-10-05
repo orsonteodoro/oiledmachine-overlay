@@ -641,8 +641,9 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			>=media-libs/oidn-2.3.3[llvm_slot_${s},aot?,sycl?]
-			<media-libs/oidn-3.0[llvm_slot_${s},aot?,sycl?]
+			>=media-libs/oidn-2.3.3[${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
+			<media-libs/oidn-3.0[${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
+			media-libs/oidn:=
 		)
 		"
 	done
@@ -778,14 +779,17 @@ RDEPEND+="
 	${CODECS}
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
-	>=dev-cpp/pystring-1.1.3
+	>=dev-cpp/pystring-1.1.3[${LIBSTDCXX_USEDEP}]
+	dev-cpp/pystring[${LIBSTDCXX_USEDEP}]
 	>=dev-lang/python-3.11.11
 	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/libpng-1.6.43:0=
-	>=media-libs/shaderc-2024.3
+	>=media-libs/shaderc-2024.3[${LIBSTDCXX_USEDEP}]
+	media-libs/shaderc:=
 	>=media-libs/vulkan-loader-${VULKAN_PV}
-	>=sci-mathematics/manifold-3.1.0
+	>=sci-mathematics/manifold-3.1.0[${LIBSTDCXX_USEDEP}]
+	sci-mathematics/manifold:=
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.3.1
 	dev-libs/lzo:2
@@ -799,14 +803,13 @@ RDEPEND+="
 	)
 	boost? (
 		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP},nls?,threads(+)]
-		dev-libs/boost:=
 		usd? (
-			>=dev-libs/boost-${BOOST_PV}[nls?,threads(+),python]
-			dev-libs/boost:=
+			>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP},nls?,threads(+),python]
 		)
+		dev-libs/boost:=
 	)
 	collada? (
-		>=media-libs/aras-p-opencollada-20240718
+		>=media-libs/aras-p-opencollada-20240718[${LIBSTDCXX_USEDEP}]
 		media-libs/aras-p-opencollada:=
 	)
 	color-management? (
@@ -883,8 +886,9 @@ RDEPEND+="
 	cycles? (
 		cycles-path-guiding? (
 			(
-				>=media-libs/openpgl-0.6.0[tbb?]
-				<media-libs/openpgl-0.7.0[tbb?]
+				>=media-libs/openpgl-0.6.0[${LIBSTDCXX_USEDEP},tbb?]
+				<media-libs/openpgl-0.7.0[${LIBSTDCXX_USEDEP},tbb?]
+				media-libs/openpgl:=
 			)
 		)
 		osl? (
@@ -922,7 +926,7 @@ RDEPEND+="
 		virtual/jack
 	)
 	jemalloc? (
-		>=dev-libs/jemalloc-5.2.1
+		>=dev-libs/jemalloc-5.2.1[${LIBSTDCXX_USEDEP}]
 		dev-libs/jemalloc:=
 	)
 	jpeg2k? (
@@ -946,7 +950,8 @@ RDEPEND+="
 		)
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.2[${PYTHON_SINGLE_USEDEP},python]
+		>=media-libs/materialx-1.39.2[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
+		media-libs/materialx:=
 	)
 	ndof? (
 		>=dev-libs/libspnav-1.1
@@ -960,9 +965,10 @@ RDEPEND+="
 	)
 	openal? (
 		!pulseaudio? (
-			>=media-libs/openal-1.23.1[alsa]
+			>=media-libs/openal-1.23.1[${LIBSTDCXX_USEDEP},alsa]
 		)
-		>=media-libs/openal-1.23.1[pulseaudio?]
+		>=media-libs/openal-1.23.1[${LIBSTDCXX_USEDEP},pulseaudio?]
+		media-libs/openal:=
 	)
 	opencl? (
 		virtual/opencl
@@ -972,7 +978,8 @@ RDEPEND+="
 	)
 	openimageio? (
 		$(gen_oiio_depends)
-		>=dev-libs/pugixml-${PUGIXML_PV}
+		>=dev-libs/pugixml-${PUGIXML_PV}[${LIBSTDCXX_USEDEP}]
+		dev-libs/pugixml:=
 	)
 	openexr? (
 		!<media-libs/openexr-3
@@ -981,7 +988,7 @@ RDEPEND+="
 		)
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.6.0[cuda=,opencl=,opengl(+),tbb?]
+		>=media-libs/opensubdiv-3.6.0[${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
 		media-libs/opensubdiv:=
 	)
 	openvdb? (
@@ -1038,8 +1045,9 @@ RDEPEND+="
 	)
 	sycl? (
 		(
-			>=dev-libs/level-zero-1.19.2
-			<dev-libs/level-zero-2.0
+			>=dev-libs/level-zero-1.19.2[${LIBSTDCXX_USEDEP}]
+			<dev-libs/level-zero-2.0[${LIBSTDCXX_USEDEP}]
+			dev-libs/level-zero:=
 		)
 		|| (
 			(
