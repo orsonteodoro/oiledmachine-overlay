@@ -9,6 +9,10 @@
 # @DESCRIPTION:
 # Checks compiler for switch to prevent LTO or CFI build bugs.
 
+# Two conditions where LTO stripping needs to be applied which implies using this eclass:
+# 1. When it uses static libs or uses the static USE flag.
+# 2. When it produces static-libs or has a static-libs USE flag.
+
 if [[ -z "${_CHECK_COMPILER_SWITCH_ECLASS}" ]] ; then
 _CHECK_COMPILER_SWITCH_ECLASS=1
 
