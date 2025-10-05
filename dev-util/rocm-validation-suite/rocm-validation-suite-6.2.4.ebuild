@@ -3,12 +3,17 @@
 
 EAPI=8
 
+GCC_COMPAT=(
+	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=18
 MY_PN="ROCmValidationSuite"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-compiler-switch flag-o-matic check-glibcxx-ver cmake rocm
+inherit check-compiler-switch flag-o-matic cmake libstdcxx-slot rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -47,12 +52,16 @@ RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" doc test ebuild_revision_3"
 RDEPEND="
-	dev-cpp/yaml-cpp
+	dev-cpp/yaml-cpp[${LIBSTDCXX_USEDEP}]
+	dev-cpp/yaml-cpp:=
 	sys-apps/pciutils
-	~dev-util/hip-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+	dev-util/hip:=
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+	dev-libs/rocr-runtime:=
 	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
-	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+	dev-util/rocm-smi:=
 	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 "
 DEPEND="
@@ -72,6 +81,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -98,10 +108,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-
-# Prevent:
-# ld.bfd: /usr/lib/gcc/x86_64-pc-linux-gnu/12/../../../../lib64/libyaml-cpp.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-	check_pkg_glibcxx "dev-cpp/yaml-cpp" "/usr/$(get_libdir)/libyaml-cpp.so" "${HIP_6_2_GLIBCXX}"
 
 	local mycmakeargs=(
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
