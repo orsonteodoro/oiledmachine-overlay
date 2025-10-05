@@ -17,7 +17,7 @@ GCC_COMPAT=(
 )
 OPENEXR_IMAGES_PV="1.0"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic libstdcxx-slot
+inherit cflags-hardened cmake flag-o-matic libstdcxx-slot
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x86-linux"
 SRC_URI="
@@ -78,7 +78,6 @@ DOCS=(
 )
 
 pkg_setup() {
-	check-compiler-switch_start
 	libstdcxx-slot_verify
 }
 
@@ -133,13 +132,6 @@ src_prepare() {
 }
 
 src_configure() {
-	check-compiler-switch_end
-	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
-	# Prevent static-libs IR mismatch.
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
-
 	local so_ver=$(grep -o -E "OPENEXR_LIB_SOVERSION [0-9]+" "CMakeLists.txt" | cut -f 2 -d " ")
 einfo "SOVER:  ${so_ver}"
 	if ! grep -q -e "OPENEXR_LIB_SOVERSION ${SLOT#*/}" "CMakeLists.txt" ; then
