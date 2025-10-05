@@ -78,7 +78,7 @@ LICENSE="
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_42
+ebuild_revision_43
 "
 REQUIRED_USE="
 	hsa? (
@@ -131,6 +131,7 @@ RDEPEND="
 	)
 	lc? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		dev-libs/rocm-comgr:=
 	)
 	numa? (
 		sys-process/numactl
