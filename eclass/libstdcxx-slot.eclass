@@ -1,4 +1,4 @@
-# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -12,6 +12,21 @@
 
 if [[ -z ${_LIBSTDCXX_SLOT_ECLASS} ]] ; then
 _LIBSTDCXX_SLOT_ECLASS=1
+
+# @ECLASS_VARIABLE: LIBSTDCXX_USEDEP
+# @DESCRIPTION:
+# Add to C++ packages that have GLIBCXX symbol.
+# To find whether you should add LIBSTDCXX_USEDEP, do
+#
+#   grep "GLIBCXX" /usr/lib64/*OpenImage*
+#
+# Example:
+#
+# RDEPEND=(
+#	>=media-libs/openimageio-2.2.14[${LIBSTDCXX_USEDEP}]
+#	media-libs/openimageio:=
+# )
+#
 
 # See also https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/config/abi/pre/gnu.ver
 # GCC version to libstdc++ version mappings
