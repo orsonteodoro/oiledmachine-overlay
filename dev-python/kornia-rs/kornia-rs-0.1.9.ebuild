@@ -4,7 +4,7 @@
 
 EAPI=8
 
-#GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-1}
+GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
 #DISTUTILS_ARGS=(
 #	"kornia-py/Cargo.toml"
@@ -88,9 +88,9 @@ anstyle-parse-0.2.7
 anstyle-query-1.1.4
 anstyle-wincon-3.0.10
 anyhow-1.0.100
-anyhow-1.0.99
+anyhow-1.0.100
 approx-0.5.1
-arbitrary-1.4.1
+arbitrary-1.4.2
 arbitrary-1.4.2
 arboard-3.6.1
 arg_enum_proc_macro-0.3.4
@@ -150,7 +150,7 @@ autocfg-1.5.0
 av1-grain-0.2.4
 av1-grain-0.2.4
 av-data-0.4.4
-avif-serialize-0.8.5
+avif-serialize-0.8.6
 avif-serialize-0.8.6
 axum-0.7.9
 axum-core-0.4.5
@@ -165,11 +165,11 @@ bincode-1.3.3
 bincode-1.3.3
 bincode-2.0.1
 bincode_derive-2.0.1
-bit_field-0.10.2
+bit_field-0.10.3
 bit_field-0.10.3
 bitflags-1.3.2
 bitflags-1.3.2
-bitflags-2.9.1
+bitflags-2.9.4
 bitflags-2.9.4
 bit-set-0.8.0
 bitstream-io-2.6.0
@@ -187,9 +187,9 @@ built-0.7.7
 bumpalo-3.19.0
 bumpalo-3.19.0
 bytecount-0.6.9
-bytemuck-1.23.2
 bytemuck-1.24.0
-bytemuck_derive-1.10.1
+bytemuck-1.24.0
+bytemuck_derive-1.10.2
 bytemuck_derive-1.10.2
 byteorder-1.5.0
 byteorder-1.5.0
@@ -206,7 +206,7 @@ cargo_metadata-0.18.1
 cargo-platform-0.1.9
 cast-0.3.0
 castaway-0.2.4
-cc-1.2.32
+cc-1.2.40
 cc-1.2.40
 cesu8-1.1.0
 cfb-0.7.3
@@ -214,7 +214,7 @@ cfg_aliases-0.2.1
 cfg-expr-0.15.8
 cfg-expr-0.15.8
 cfg-expr-0.20.3
-cfg-if-1.0.1
+cfg-if-1.0.3
 cfg-if-1.0.3
 cgl-0.3.2
 chrono-0.4.42
@@ -222,7 +222,7 @@ chunked_transfer-1.5.0
 ciborium-0.2.2
 ciborium-io-0.2.2
 ciborium-ll-0.2.2
-circular-buffer-1.1.0
+circular-buffer-1.2.0
 circular-buffer-1.2.0
 clang-format-0.3.0
 clap-4.5.48
@@ -343,8 +343,9 @@ dunce-1.0.5
 dyn-clone-1.0.20
 dyn-stack-0.11.0
 dyn-stack-0.11.0
-dyn-stack-0.13.0
 dyn-stack-0.13.2
+dyn-stack-0.13.2
+dyn-stack-macros-0.1.0
 dyn-stack-macros-0.1.0
 ecolor-0.31.1
 econtext-0.2.0
@@ -403,10 +404,12 @@ faer-0.20.2
 faer-entity-0.20.1
 faer-entity-0.20.1
 fast_detector-0.1.0
-fast_image_resize-5.2.1
+fast_image_resize-5.1.0
 fast_image_resize-5.3.0
 fastrand-2.3.0
 fax-0.2.6
+fax-0.2.6
+fax_derive-0.2.0
 fax_derive-0.2.0
 fdeflate-0.3.7
 fdeflate-0.3.7
@@ -414,6 +417,7 @@ features-0.1.0
 ffmpeg-sidecar-2.2.0
 filetime-0.2.26
 filters-0.1.0
+find-msvc-tools-0.1.3
 find-msvc-tools-0.1.3
 fixed-1.29.0
 fixed-1.29.0
@@ -463,7 +467,7 @@ gemm-f64-0.18.2
 gemm-f64-0.18.2
 generativity-1.1.0
 generativity-1.1.0
-generator-0.8.5
+generator-0.8.7
 generator-0.8.7
 generic-array-0.14.7
 generic-array-0.14.7
@@ -509,7 +513,7 @@ half-2.6.0
 half-2.6.0
 hashbrown-0.12.3
 hashbrown-0.15.5
-hashbrown-0.15.5
+hashbrown-0.16.0
 hashbrown-0.16.0
 hdrhistogram-7.5.4
 heck-0.5.0
@@ -550,20 +554,20 @@ id-arena-2.2.1
 ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.1
-image-0.25.6
+image-0.25.8
 image-0.25.8
 imageproc-0.25.0
 imagesize-0.12.0
-image-webp-0.2.3
+image-webp-0.2.4
 image-webp-0.2.4
 imgproc-0.1.9
-imgref-1.11.0
+imgref-1.12.0
 imgref-1.12.0
 immutable-chunkmap-2.1.2
 indent-0.1.1
 indenter-0.3.4
 indexmap-1.9.3
-indexmap-2.10.0
+indexmap-2.11.4
 indexmap-2.11.4
 indicatif-0.17.11
 indoc-2.0.6
@@ -591,7 +595,7 @@ jiff-tzdb-0.1.4
 jiff-tzdb-platform-0.1.3
 jni-0.21.1
 jni-sys-0.3.0
-jobserver-0.1.33
+jobserver-0.1.34
 jobserver-0.1.34
 jpeg-decoder-0.3.2
 jpeg-decoder-0.3.2
@@ -632,7 +636,7 @@ kqueue-sys-1.0.4
 kurbo-0.9.5
 lazy_static-1.5.0
 lazy_static-1.5.0
-lebe-0.5.2
+lebe-0.5.3
 lebe-0.5.3
 lexical-core-1.0.6
 lexical-parse-float-1.0.6
@@ -640,7 +644,7 @@ lexical-parse-integer-1.0.6
 lexical-util-1.0.7
 lexical-write-float-1.0.6
 lexical-write-integer-1.0.6
-libc-0.2.175
+libc-0.2.176
 libc-0.2.176
 libfuzzer-sys-0.4.10
 libfuzzer-sys-0.4.10
@@ -657,7 +661,7 @@ litrs-0.4.2
 lmdb-rkv-0.14.0
 lmdb-rkv-sys-0.11.2
 lock_api-0.4.14
-log-0.4.27
+log-0.4.28
 log-0.4.28
 log-once-0.4.1
 loom-0.7.2
@@ -677,7 +681,7 @@ matrixmultiply-0.3.10
 matrixmultiply-0.3.10
 maybe-rayon-0.1.1
 maybe-rayon-0.1.1
-memchr-2.7.5
+memchr-2.7.6
 memchr-2.7.6
 memmap2-0.5.10
 memmap2-0.9.8
@@ -697,6 +701,7 @@ miniz_oxide-0.8.9
 miniz_oxide-0.8.9
 mio-0.8.11
 mio-1.0.4
+moxcms-0.7.5
 moxcms-0.7.5
 muldiv-1.0.1
 naga-24.0.0
@@ -743,7 +748,7 @@ notify-6.1.1
 npyz-0.8.4
 npyz-0.8.4
 ntapi-0.4.1
-nu-ansi-term-0.46.0
+nu-ansi-term-0.50.1
 nu-ansi-term-0.50.1
 num-0.4.3
 number_prefix-0.4.0
@@ -816,12 +821,11 @@ orbclient-0.3.48
 ordered-float-2.10.1
 ordered-float-3.9.2
 ordered-float-4.6.0
-ordered-float-5.0.0
+ordered-float-5.1.0
 ordered-float-5.1.0
 ordered-stream-0.2.0
-ort-2.0.0-rc.10
-ort-sys-2.0.0-rc.10
-overload-0.1.1
+ort-2.0.0-rc.9
+ort-sys-2.0.0-rc.9
 owned_ttf_parser-0.25.1
 page_size-0.6.0
 parking-2.2.1
@@ -835,13 +839,13 @@ peg-0.6.3
 peg-macros-0.6.3
 peg-runtime-0.6.3
 percent-encoding-2.3.2
-pest-2.8.1
 pest-2.8.3
-pest_derive-2.8.1
+pest-2.8.3
 pest_derive-2.8.3
-pest_generator-2.8.1
+pest_derive-2.8.3
 pest_generator-2.8.3
-pest_meta-2.8.1
+pest_generator-2.8.3
+pest_meta-2.8.3
 pest_meta-2.8.3
 petgraph-0.7.1
 phf-0.11.3
@@ -866,6 +870,7 @@ ply-rs-0.1.3
 png-0.17.16
 png-0.17.16
 png-0.18.0
+png-0.18.0
 polling-3.11.0
 poll-promise-0.3.0
 pollster-0.4.0
@@ -879,7 +884,7 @@ ppv-lite86-0.2.21
 ppv-lite86-0.2.21
 prettyplease-0.2.37
 proc-macro2-1.0.101
-proc-macro2-1.0.97
+proc-macro2-1.0.101
 proc-macro-crate-3.4.0
 profiling-1.0.17
 profiling-1.0.17
@@ -896,6 +901,7 @@ pulp-0.18.22
 pulp-0.18.22
 pulp-0.21.5
 pulp-0.21.5
+pxfm-0.1.24
 pxfm-0.1.24
 py_literal-0.4.0
 py_literal-0.4.0
@@ -915,7 +921,7 @@ quick-xml-0.38.3
 quinn-0.11.9
 quinn-proto-0.11.13
 quinn-udp-0.5.14
-quote-1.0.40
+quote-1.0.41
 quote-1.0.41
 rand-0.8.5
 rand-0.8.5
@@ -932,7 +938,7 @@ rav1e-0.7.1
 rav1e-0.7.1
 ravif-0.11.20
 ravif-0.11.20
-raw-cpuid-11.5.0
+raw-cpuid-11.6.0
 raw-cpuid-11.6.0
 rawpointer-0.2.1
 rawpointer-0.2.1
@@ -1071,11 +1077,12 @@ security-framework-sys-2.15.0
 semver-1.0.27
 seq-macro-0.3.6
 seq-macro-0.3.6
-serde-1.0.219
+serde-1.0.228
 serde-1.0.228
 serde_bytes-0.11.19
 serde_core-1.0.228
-serde_derive-1.0.219
+serde_core-1.0.228
+serde_derive-1.0.228
 serde_derive-1.0.228
 serde_derive_internals-0.29.1
 serde_json-1.0.145
@@ -1116,7 +1123,6 @@ slab-0.4.11
 slotmap-1.0.7
 smallvec-1.15.1
 smallvec-1.15.1
-smallvec-2.0.0-alpha.10
 smithay-client-toolkit-0.19.2
 smithay-clipboard-0.7.2
 smol_str-0.2.2
@@ -1124,7 +1130,7 @@ snap-1.1.1
 socket2-0.5.10
 socket2-0.6.0
 sorted-vec-0.8.10
-sorted-vec-0.8.7
+sorted-vec-0.8.10
 spin-0.10.0
 spin-0.9.8
 spirv-0.3.0+sdk-1.3.268.0
@@ -1141,7 +1147,7 @@ strum_macros-0.26.4
 sublime_fuzzy-0.7.0
 subtle-2.6.1
 svgtypes-0.13.0
-syn-2.0.105
+syn-2.0.106
 syn-2.0.106
 sync_wrapper-1.0.2
 synstructure-0.13.2
@@ -1157,21 +1163,22 @@ tap-1.0.1
 target-lexicon-0.12.16
 target-lexicon-0.12.16
 target-lexicon-0.13.2
-target-lexicon-0.13.2
+target-lexicon-0.13.3
 tempfile-3.23.0
 termcolor-1.4.1
 thiserror-1.0.69
 thiserror-1.0.69
-thiserror-2.0.14
+thiserror-2.0.17
 thiserror-2.0.17
 thiserror-impl-1.0.69
 thiserror-impl-1.0.69
-thiserror-impl-2.0.14
+thiserror-impl-2.0.17
 thiserror-impl-2.0.17
 thread_local-1.1.9
 thread_local-1.1.9
 threadpool-1.8.1
 thrift-0.17.0
+tiff-0.10.3
 tiff-0.10.3
 tiff-0.9.1
 tiff-0.9.1
@@ -1221,7 +1228,6 @@ tracing-core-0.1.34
 tracing-log-0.2.0
 tracing-log-0.2.0
 tracing-opentelemetry-0.24.0
-tracing-subscriber-0.3.19
 tracing-subscriber-0.3.20
 try-lock-0.2.5
 ttf-parser-0.25.1
@@ -1232,7 +1238,7 @@ turbojpeg-sys-1.1.1
 twox-hash-1.6.3
 twox-hash-2.1.2
 type-map-0.5.1
-typenum-1.18.0
+typenum-1.19.0
 typenum-1.19.0
 ucd-trie-0.1.7
 ucd-trie-0.1.7
@@ -1240,7 +1246,7 @@ uds_windows-1.1.0
 uhlc-0.5.2
 undistort-0.1.9
 unicase-2.8.1
-unicode-ident-1.0.18
+unicode-ident-1.0.19
 unicode-ident-1.0.19
 unicode-segmentation-1.12.0
 unicode-width-0.1.14
@@ -1278,20 +1284,21 @@ walkers-0.36.0
 want-0.3.1
 wasi-0.11.1+wasi-snapshot-preview1
 wasi-0.11.1+wasi-snapshot-preview1
-wasi-0.14.2+wasi-0.2.4
+wasi-0.14.7+wasi-0.2.4
 wasi-0.14.7+wasi-0.2.4
 wasip2-1.0.1+wasi-0.2.4
+wasip2-1.0.1+wasi-0.2.4
 wasm-bindgen-0.2.100
-wasm-bindgen-0.2.100
+wasm-bindgen-0.2.104
 wasm-bindgen-backend-0.2.100
-wasm-bindgen-backend-0.2.100
+wasm-bindgen-backend-0.2.104
 wasm-bindgen-futures-0.4.50
 wasm-bindgen-macro-0.2.100
-wasm-bindgen-macro-0.2.100
+wasm-bindgen-macro-0.2.104
 wasm-bindgen-macro-support-0.2.100
-wasm-bindgen-macro-support-0.2.100
+wasm-bindgen-macro-support-0.2.104
 wasm-bindgen-shared-0.2.100
-wasm-bindgen-shared-0.2.100
+wasm-bindgen-shared-0.2.104
 wasm-streams-0.4.2
 wayland-backend-0.3.11
 wayland-client-0.31.11
@@ -1317,12 +1324,9 @@ wgpu-types-24.0.0
 which-5.0.0
 wide-0.7.33
 winapi-0.3.9
-winapi-0.3.9
-winapi-i686-pc-windows-gnu-0.4.0
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.11
-winapi-util-0.1.9
-winapi-x86_64-pc-windows-gnu-0.4.0
+winapi-util-0.1.11
 winapi-x86_64-pc-windows-gnu-0.4.0
 windows-0.34.0
 windows-0.52.0
@@ -1371,14 +1375,15 @@ windows_i686_msvc-0.52.6
 windows_i686_msvc-0.53.0
 windows-implement-0.57.0
 windows-implement-0.58.0
-windows-implement-0.60.0
+windows-implement-0.60.1
 windows-implement-0.60.1
 windows-interface-0.57.0
 windows-interface-0.58.0
-windows-interface-0.59.1
+windows-interface-0.59.2
 windows-interface-0.59.2
 windows-link-0.1.3
 windows-link-0.1.3
+windows-link-0.2.0
 windows-link-0.2.0
 windows-numerics-0.2.0
 windows-numerics-0.2.0
@@ -1395,9 +1400,10 @@ windows-strings-0.5.0
 windows-sys-0.45.0
 windows-sys-0.48.0
 windows-sys-0.52.0
-windows-sys-0.59.0
+windows-sys-0.52.0
 windows-sys-0.59.0
 windows-sys-0.60.2
+windows-sys-0.61.1
 windows-sys-0.61.1
 windows-targets-0.42.2
 windows-targets-0.48.5
@@ -1425,11 +1431,11 @@ windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.53.0
 winit-0.30.12
-winnow-0.7.12
+winnow-0.7.13
 winnow-0.7.13
 win-sys-0.3.1
 wit-bindgen-0.46.0
-wit-bindgen-rt-0.39.0
+wit-bindgen-0.46.0
 writeable-0.6.1
 x11-dl-2.21.0
 x11rb-0.13.2
@@ -1456,10 +1462,10 @@ zbus_names-3.0.0
 zbus_names-4.2.0
 zbus_xml-4.0.0
 zerocopy-0.7.35
-zerocopy-0.8.26
+zerocopy-0.8.27
 zerocopy-0.8.27
 zerocopy-derive-0.7.35
-zerocopy-derive-0.8.26
+zerocopy-derive-0.8.27
 zerocopy-derive-0.8.27
 zerofrom-0.1.6
 zerofrom-derive-0.1.6
@@ -1471,7 +1477,7 @@ zune-core-0.4.12
 zune-core-0.4.12
 zune-inflate-0.2.54
 zune-inflate-0.2.54
-zune-jpeg-0.4.20
+zune-jpeg-0.4.21
 zune-jpeg-0.4.21
 zvariant-4.2.0
 zvariant-5.7.0
@@ -1589,6 +1595,7 @@ einfo "Generating lockfile"
 
 einfo "Fixing vulnerabilities"
 #	cargo install "glib@0.20.0"						# GHSA-wrw7-89jp-8q8g; ZC, DT; Moderate
+#	cargo install "tracing-subscriber@0.3.20"				# CVE-2025-58160; VS(DT); Low
 
 	die
 }
@@ -1623,6 +1630,10 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
+		# For manual lockfile generation
+	#unpack "${P}.tar.gz"
+	#die
+
 		if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 			_lockfile_gen_unpack
 		else
