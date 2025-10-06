@@ -76,7 +76,7 @@ CPU_FLAGS_X86=(
 )
 
 inherit godot-4.4
-inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic edo llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
+inherit cflags-hardened desktop flag-o-matic edo libstdcxx-slot llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -523,7 +523,8 @@ DEPEND+="
 		>=media-libs/freetype-${FREETYPE_PV}
 	)
 	system-glslang? (
-		>=dev-util/glslang-${GLSLANG_PV}
+		>=dev-util/glslang-${GLSLANG_PV}[${LIBSTDCXX_USEDEP}]
+		dev-util/glslang:=
 	)
 	system-graphite? (
 		>=media-gfx/graphite2-${GRAPHITE2_PV}
@@ -818,6 +819,7 @@ ewarn "LANG=POSIX not supported"
 	fi
 
 	use speech && check_speech_dispatcher
+	libstdcxx-slot_verify
 }
 
 # In 2025, almost all free models use textures.
@@ -854,21 +856,6 @@ warn_missing_texture_format() {
 src_configure() {
 	default
 	warn_missing_texture_format
-
-	if has_version "dev-util/glslang" ; then
-		local glslang_libstdcxx_pv=$(strings "/usr/$(get_libdir)/libglslang.so" \
-			| grep GLIBCXX \
-			| sort -V \
-			| tail -n 1 \
-			| cut -f 2 -d "_")
-	# gcc-config -l reports the currently selected libstdcxx but setting CC= cannot do it properly.
-		local gcc_current_profile_slot=$(gcc-config -l | grep "*" | cut -f 3 -d " ")
-		gcc_current_profile_slot="${gcc_current_profile_slot##*-}"
-	# Check glslang's libstdcxx symbols when linking using USE=vulkan
-einfo "Current GCC slot:  ${gcc_current_profile_slot}"
-		check_pkg_glibcxx "dev-util/spirv-tools" "/usr/$(get_libdir)/libSPIRV-Tools-opt.so" "${gcc_current_profile_slot}" # Dependency of glslang
-		check_pkg_glibcxx "dev-util/glslang" "/usr/$(get_libdir)/libglslang.so" "${gcc_current_profile_slot}"
-	fi
 
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)

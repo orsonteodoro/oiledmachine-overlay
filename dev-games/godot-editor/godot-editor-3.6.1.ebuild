@@ -59,7 +59,7 @@ CPU_FLAGS_X86=(
 )
 
 inherit godot-3.6
-inherit cflags-hardened check-glibcxx-ver desktop flag-o-matic edo llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
+inherit cflags-hardened desktop flag-o-matic edo libstdcxx-slot llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -730,6 +730,7 @@ ewarn "LANG=POSIX not supported"
 	fi
 
 	use speech && check_speech_dispatcher
+	libstdcxx-slot_verify
 }
 
 # In 2025, almost all free models use textures.

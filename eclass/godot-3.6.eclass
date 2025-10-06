@@ -18,6 +18,9 @@ EMSCRIPTEN_PV="3.1.39"
 EMSCRIPTEN_SLOT="17-3.1" # ${LLVM_SLOT}-$(ver_cut 1-2 ${EMSCRIPTEN_PV})
 FREETYPE_PV="2.12.1"
 GCC_PV="11.4.0"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Same default slot as U22, forced for compatibility with prebuilt export template
+)
 LIBOGG_PV="1.3.5"
 LIBPCRE2_PV="10.42"
 LIBPNG_PV="1.6.43"

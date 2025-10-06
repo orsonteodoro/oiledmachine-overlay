@@ -27,11 +27,16 @@ HOMEPAGE="https://www.khronos.org/opengles/sdk/tools/Reference-Compiler/ https:/
 LICENSE="BSD"
 SLOT="0/15.4"
 
-BDEPEND="${PYTHON_DEPS}
-	~dev-util/spirv-tools-${PV}[${MULTILIB_USEDEP}]
+BDEPEND="
+	${PYTHON_DEPS}
+	~dev-util/spirv-tools-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-util/spirv-tools:=
 "
 
-DEPEND="~dev-util/spirv-tools-${PV}[${MULTILIB_USEDEP}]"
+DEPEND="
+	~dev-util/spirv-tools-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-util/spirv-tools:=
+"
 RDEPEND="${DEPEND}"
 
 pkg_setup() {

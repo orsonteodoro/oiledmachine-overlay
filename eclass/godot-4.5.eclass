@@ -19,6 +19,9 @@ EMSCRIPTEN_PV="4.0.11"
 EMSCRIPTEN_SLOT="21-4.0" # ${LLVM_SLOT}-$(ver_cut 1-2 ${EMSCRIPTEN_PV})
 FREETYPE_PV="2.13.3"
 GCC_PV="11.4.0"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Same default slot as U22, forced for compatibility with prebuilt export template
+)
 GLSLANG_PV="1.3.283.0"
 GRAPHITE2_PV="1.3.14"
 HARFBUZZ_PV="11.3.2"
