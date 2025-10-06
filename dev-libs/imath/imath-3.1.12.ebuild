@@ -5,9 +5,14 @@ EAPI=8
 
 MY_PN="${PN^}"
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cmake python-single-r1
+inherit cmake libstdcxx-slot python-single-r1
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -71,6 +76,7 @@ PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_configure() {
