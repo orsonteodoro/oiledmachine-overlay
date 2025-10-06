@@ -252,6 +252,7 @@ PATCHES=(
 #	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
 #	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
+	"${FILESDIR}/openusd-25.08-replace-fix.patch"
 )
 DOCS=( "CHANGELOG.md" "README.md" )
 

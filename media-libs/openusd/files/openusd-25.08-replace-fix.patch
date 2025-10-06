@@ -1,0 +1,12 @@
+diff '--color=auto' -urp OpenUSD-25.08.orig/pxr/external/boost/python/CMakeLists.txt OpenUSD-25.08/pxr/external/boost/python/CMakeLists.txt
+--- OpenUSD-25.08.orig/pxr/external/boost/python/CMakeLists.txt	2025-07-31 09:26:03.000000000 -0700
++++ OpenUSD-25.08/pxr/external/boost/python/CMakeLists.txt	2025-10-06 13:58:48.813436703 -0700
+@@ -17,7 +17,7 @@ endif()
+ foreach(config RELEASE RELWITHDEBINFO MINSIZEREL)
+     string(REPLACE
+         ${ndebug_flag} ""
+-        CMAKE_CXX_FLAGS_${config} ${CMAKE_CXX_FLAGS_${config}}
++        CMAKE_CXX_FLAGS_${config} "${CMAKE_CXX_FLAGS_${config}}"
+     )
+ endforeach()
+ 
