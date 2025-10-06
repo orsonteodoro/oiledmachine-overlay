@@ -291,7 +291,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_37
+	ebuild_revision_38
 "
 # hal for acceleration
 IUSE+="
@@ -711,7 +711,7 @@ RDEPEND="
 	contribfreetype? (
 		(
 			>=media-libs/harfbuzz-2.6.4:0[${MULTILIB_USEDEP}]
-			media-libs/harfbuzz:=[${MULTILIB_USEDEP}]
+			media-libs/harfbuzz:=
 		)
 		>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 	)
@@ -720,7 +720,8 @@ RDEPEND="
 		dev-games/ogre:=
 	)
 	ffmpeg? (
-		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
+		media-video/ffmpeg[${MULTILIB_USEDEP}]
+		media-video/ffmpeg:=
 	)
 	gdal? (
 		>=sci-libs/gdal-3.0.4:0
@@ -728,15 +729,15 @@ RDEPEND="
 	)
 	gflags? (
 		>=dev-cpp/gflags-2.2.2:0[${MULTILIB_USEDEP}]
-		dev-cpp/gflags:=[${MULTILIB_USEDEP}]
+		dev-cpp/gflags:=
 	)
 	glog? (
 		>=dev-cpp/glog-0.4.0:0[${MULTILIB_USEDEP}]
-		dev-cpp/glog:=[${MULTILIB_USEDEP}]
+		dev-cpp/glog:=
 	)
 	gphoto2? (
 		>=media-libs/libgphoto2-2.5.24:0[${MULTILIB_USEDEP}]
-		media-libs/libgphoto2:=[${MULTILIB_USEDEP}]
+		media-libs/libgphoto2:=
 	)
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -752,7 +753,7 @@ RDEPEND="
 	ieee1394? (
 		(
 			>=media-libs/libdc1394-2.2.6:2[${MULTILIB_USEDEP}]
-			media-libs/libdc1394:=[${MULTILIB_USEDEP}]
+			media-libs/libdc1394:=
 		)
 		>=sys-libs/libraw1394-2.1.2:0[${MULTILIB_USEDEP}]
 	)
@@ -761,12 +762,12 @@ RDEPEND="
 	)
 	jpeg? (
 		>=media-libs/libjpeg-turbo-3.0.3:0[${MULTILIB_USEDEP}]
-		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
+		media-libs/libjpeg-turbo:=
 	)
 	jpeg2k? (
 		!jasper? (
 			>=media-libs/openjpeg-2.5.2:2[${MULTILIB_USEDEP}]
-			media-libs/openjpeg:=[${MULTILIB_USEDEP}]
+			media-libs/openjpeg:=
 		)
 		jasper? (
 			>=media-libs/jasper-1.900.1:0
@@ -807,13 +808,13 @@ RDEPEND="
 	)
 	png? (
 		>=media-libs/libpng-1.6.43:0[${MULTILIB_USEDEP}]
-		media-libs/libpng:=[${MULTILIB_USEDEP}]
+		media-libs/libpng:=
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-python/numpy-1.16.5:0[${PYTHON_USEDEP}]
-			dev-python/numpy:=[${PYTHON_USEDEP}]
+			dev-python/numpy:=
 		')
 		openvino? (
 			>=sci-ml/openvino-2024.0.0[${PYTHON_SINGLE_USEDEP}]
@@ -848,12 +849,12 @@ RDEPEND="
 		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.11.0:0[${MULTILIB_USEDEP}]
-		dev-cpp/tbb:=[${MULTILIB_USEDEP}]
+		>=dev-cpp/tbb-2021.11.0:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/tbb:=
 	)
 	tiff? (
 		>=media-libs/tiff-4.6.0:0[${MULTILIB_USEDEP}]
-		media-libs/tiff:=[${MULTILIB_USEDEP}]
+		media-libs/tiff:=
 	)
 	v4l? (
 		>=media-libs/libv4l-0.8.3:0[${MULTILIB_USEDEP}]
@@ -876,7 +877,7 @@ RDEPEND="
 	)
 	webp? (
 		>=media-libs/libwebp-1.4.0:0[${MULTILIB_USEDEP}]
-		media-libs/libwebp:=[${MULTILIB_USEDEP}]
+		media-libs/libwebp:=
 	)
 	xine? (
 		>=media-libs/xine-lib-1.2.9:1

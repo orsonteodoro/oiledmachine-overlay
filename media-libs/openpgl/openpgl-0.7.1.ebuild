@@ -56,7 +56,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 debug doc tbb
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	tbb
@@ -127,7 +127,7 @@ RDEPEND+="
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.5.0
+		>=dev-cpp/tbb-2021.5.0[${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 "
