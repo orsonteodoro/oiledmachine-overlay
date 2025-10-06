@@ -291,7 +291,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_38
+	ebuild_revision_39
 "
 # hal for acceleration
 IUSE+="
@@ -610,16 +610,20 @@ gen_openexr_rdepend() {
 	for ver in ${OPENEXR2_PV[@]} ; do
 		echo "
 			(
-				~dev-libs/imath-${ver}
-				~media-libs/openexr-${ver}
+				~dev-libs/imath-${ver}[${LIBSTDCXX_USEDEP}]
+				dev-libs/imath:=
+				~media-libs/openexr-${ver}[${LIBSTDCXX_USEDEP}]
+				media-libs/openexr:=
 			)
 		"
 	done
 	for ver in ${OPENEXR3_PV[@]} ; do
 		echo "
 			(
-				~dev-libs/imath-${ver}
-				~media-libs/openexr-${ver}
+				~dev-libs/imath-${ver}[${LIBSTDCXX_USEDEP}]
+				dev-libs/imath:=
+				~media-libs/openexr-${ver}[${LIBSTDCXX_USEDEP}]
+				media-libs/openexr:=
 			)
 		"
 	done
@@ -700,7 +704,7 @@ RDEPEND="
 	)
 	contribdnn? (
 		system-flatbuffers? (
-			=dev-libs/flatbuffers-23.5*:0
+			=dev-libs/flatbuffers-23.5*:0[${LIBSTDCXX_USEDEP}]
 			dev-libs/flatbuffers:=
 		)
 	)
@@ -728,11 +732,11 @@ RDEPEND="
 		sci-libs/gdal:=
 	)
 	gflags? (
-		>=dev-cpp/gflags-2.2.2:0[${MULTILIB_USEDEP}]
+		>=dev-cpp/gflags-2.2.2:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/gflags:=
 	)
 	glog? (
-		>=dev-cpp/glog-0.4.0:0[${MULTILIB_USEDEP}]
+		>=dev-cpp/glog-0.4.0:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/glog:=
 	)
 	gphoto2? (
@@ -748,7 +752,8 @@ RDEPEND="
 		>=x11-libs/gtk+-3.24.18:3[${MULTILIB_USEDEP}]
 	)
 	halide? (
-		dev-lang/halide[${MULTILIB_USEDEP}]
+		dev-lang/halide[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-lang/halide:=
 	)
 	ieee1394? (
 		(
