@@ -5,11 +5,16 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
-inherit cflags-hardened cmake-multilib gnome2-utils multilib-minimal xdg
+inherit cflags-hardened cmake-multilib gnome2-utils libstdcxx-slot multilib-minimal xdg
 
 if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
@@ -49,7 +54,7 @@ ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
 -avc avif +aom -dav1d doc +examples -ffmpeg +gdk-pixbuf jpeg -jpeg2k -kvazaar -heic -htj2k
 -libde265 -openh264 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
-ebuild_revision_16
+ebuild_revision_17
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -177,6 +182,10 @@ BDEPEND="
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libheif/heif_version.h"
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 multilib_src_configure() {
 	cflags-hardened_append
