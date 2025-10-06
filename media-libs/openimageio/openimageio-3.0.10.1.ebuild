@@ -54,16 +54,16 @@ QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
 TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-05-01
 X86_CPU_FEATURES=(
-	aes:aes
-	avx:avx
-	avx2:avx2
-	avx512f:avx512f
-	f16c:f16c
-	sse2:sse2
-	sse3:sse3
-	sse4_1:sse4.1
-	sse4_2:sse4.2
-	ssse3:ssse3
+	"aes:aes"
+	"avx:avx"
+	"avx2:avx2"
+	"avx512f:avx512f"
+	"f16c:f16c"
+	"sse2:sse2"
+	"sse3:sse3"
+	"sse4_1:sse4.1"
+	"sse4_2:sse4.2"
+	"ssse3:ssse3"
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
@@ -122,7 +122,7 @@ ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
 gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-ebuild_revision_31
+ebuild_revision_33
 "
 gen_abi_compat_required_use() {
 	local s
@@ -288,14 +288,11 @@ RDEPEND+="
 		media-libs/giflib:=
 	)
 	heif? (
-		(
-			>=media-libs/libheif-1.11
-			media-libs/libheif:=
-		)
+		>=media-libs/libheif-1.11[${LIBSTDCXX_USEDEP}]
 		avif? (
-			>=media-libs/libheif-1.11[aom?,rav1e?]
-			media-libs/libheif:=
+			>=media-libs/libheif-1.11[${LIBSTDCXX_USEDEP},aom?,rav1e?]
 		)
+		media-libs/libheif:=
 	)
 	j2c? (
 		>=media-libs/jph-0.21.2
