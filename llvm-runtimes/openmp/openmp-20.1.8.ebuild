@@ -32,12 +32,21 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h
+GCC_COMPAT=(
+	# Pruned non-GPU slots to simplify GPU offload support.
+        "gcc_slot_13_4" # CUDA-12.3 (FC), CUDA-12.4 (PS), CUDA-12.5 (PS), CUDA-12.6 (PS), ROCm-7.0 (U24), U24.04 (GCC default)
+        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-7.0 (U22)
+        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
+)
+# FC = Feature Complete
+# PS = Partial Support
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_12" )
 
 inherit llvm-ebuilds
 
-inherit flag-o-matic cmake-multilib linux-info llvm.org llvm-utils python-single-r1
+inherit flag-o-matic cmake-multilib libstdcxx-slot linux-info llvm.org llvm-utils python-single-r1
 inherit toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -69,9 +78,9 @@ RESTRICT="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_EBUILDS_LLVM20_REVISION}
 debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
 ebuild_revision_9
-${LLVM_EBUILDS_LLVM20_REVISION}
 "
 gen_cuda_required_use() {
 	local x
@@ -196,7 +205,8 @@ RDEPEND="
 	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
-		~llvm-core/llvm-${PV}[${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		llvm-core/llvm:=
 	)
 "
 # Tests:
@@ -211,7 +221,8 @@ BDEPEND="
 	llvm-core/lld:${PV%%.*}
 	offload? (
 		llvm_targets_NVPTX? (
-			llvm-core/clang
+			llvm-core/clang[${LIBSTDCXX_USEDEP}]
+			llvm-core/clang:=
 		)
 		virtual/pkgconfig
 	)
@@ -258,6 +269,7 @@ ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 	python-single-r1_pkg_setup
 	LLVM_MAX_SLOT="${LLVM_SLOT}"
 	llvm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
