@@ -24,6 +24,8 @@ HIP_6_0_VERSION="6.0.2"
 HIP_6_1_VERSION="6.1.2"
 HIP_6_2_VERSION="6.2.4"
 HIP_6_3_VERSION="6.3.3"
+HIP_6_4_VERSION="6.4.3"
+HIP_7_0_VERSION="6.4.3"
 
 HIP_3_5_LLVM_SLOT="11"
 HIP_3_7_LLVM_SLOT="11"
@@ -48,6 +50,8 @@ HIP_6_0_LLVM_SLOT="17"
 HIP_6_1_LLVM_SLOT="17"
 HIP_6_2_LLVM_SLOT="18"
 HIP_6_3_LLVM_SLOT="18"
+HIP_6_4_LLVM_SLOT="19"
+HIP_7_0_LLVM_SLOT="19"
 
 # AOCC in this context means rocm-llvm-alt
 AOCC_5_1_SLOT="13"
@@ -150,6 +154,8 @@ _hip_set_globals() {
 		HIP_6_1_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
 		HIP_6_2_GCC_SLOT="13" # GCC 9.1 U20, GCC 12.1 U22, GCC 13.2 U24
 		HIP_6_3_GCC_SLOT="13" # GCC 9.1 U20, GCC 12.1 U22, GCC 13.2 U24
+		HIP_6_4_GCC_SLOT="13" # GCC 12.1 U22, GCC 13.2 U24
+		HIP_7_0_GCC_SLOT="13" # GCC 12.1 U22, GCC 13.2 U24
 	else
 	# The GCC slots listed is based on the max GCC allowed in the dev-util/nvidia-cuda-toolkit ebuild.
 	# For HIP_PLATFORM == nvidia.
@@ -166,6 +172,8 @@ _hip_set_globals() {
 		HIP_6_1_GCC_SLOT="12" # CUDA 12.3
 		HIP_6_2_GCC_SLOT="13" # CUDA 12.5
 		HIP_6_3_GCC_SLOT="13" # CUDA 12.6
+		HIP_6_4_GCC_SLOT="13" # CUDA 12.6
+		HIP_7_0_GCC_SLOT="14" # CUDA 12.9
 	fi
 }
 
@@ -177,12 +185,15 @@ unset -f _hip_set_globals
 #
 # Key:
 # c       - consistent CUDA version with HIPIFY documentation with the same
-#           ROCM_SLOT.
+#           ROCM_SLOT.  This means that it has the same LLVM major version
+#           but not necessarily the same stable non-git versus the unstable
+#           git suffix.
 # s       - stable config
 # u       - not marked stable config (implied unstable or not CI tested)
 # match   - The versions are matching.  (e.g. The git version in HIPIFY
 #           documentation with the same ROCM_SLOT is the same as version in
-#           llvm-roc with the git suffix.)
+#           llvm-roc with the git suffix.)  The suffix for git or non-git
+#           are the same.
 # missing - The corresponding llvm-roc major version is not found in HIPIFY
 #           documentation for the same ROCM_SLOT.  Upstream may have forgotten
 #           to update the documentation, which is a common bad habit in
@@ -204,7 +215,9 @@ HIPIFY_5_7_CUDA_SLOT="12.2" # LLVM 17, [c,u,match]
 HIPIFY_6_0_CUDA_SLOT="12.2" # LLVM 17, [c,s]
 HIPIFY_6_1_CUDA_SLOT="12.3" # LLVM 17, [c,s]
 HIPIFY_6_2_CUDA_SLOT="12.5" # LLVM 19, [u]
-HIPIFY_6_3_CUDA_SLOT="12.6" # LLVM 19, [missing]
+HIPIFY_6_3_CUDA_SLOT="12.6" # LLVM 19, [s]
+HIPIFY_6_4_CUDA_SLOT="12.6" # LLVM 19, [c,u]
+HIPIFY_7_0_CUDA_SLOT="12.9" # LLVM 21, [u]
 
 HIPIFY_4_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.3.1.ebuild?id=38b155fa1bf907617067c98eb4ba3a5d0790eb1a"
 HIPIFY_4_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
@@ -223,3 +236,5 @@ HIPIFY_6_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvi
 HIPIFY_6_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.3.2.ebuild?id=c6a96e9169b96c35d91263b113b334655f752e60"
 HIPIFY_6_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.1.ebuild?id=d071cb72002d9422a4d1d94160012d222196173c"
 HIPIFY_6_3_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.6.1.ebuild?id=91e6a514e9d7c73279ab9bd40a796c9c389b931e"
+HIPIFY_6_4_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.6.3-r1.ebuild?id=62a338f7964ba52c5a84b7763c79e7b333cbd3bc"
+HIPIFY_7_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.9.0.ebuild?id=ee17add182cc067d308fc060e20ce2f631099d96"
