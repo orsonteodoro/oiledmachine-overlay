@@ -3,13 +3,20 @@
 
 EAPI=8
 
+# U 22.04
+
 # Breaks during linking dev-util/hyprwayland-scanner
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, U24 (default)
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
+)
 
-inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -32,7 +39,6 @@ doc static-libs test
 ebuild_revision_29
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# U 22.04
 DEPEND+="
 	virtual/libc
 "
@@ -51,6 +57,7 @@ DOCS=( "docs" "readme.txt" )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libstdcxx-slot_verify
 }
 
 src_configure() {
