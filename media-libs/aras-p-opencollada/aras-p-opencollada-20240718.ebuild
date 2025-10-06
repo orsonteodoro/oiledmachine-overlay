@@ -4,8 +4,13 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 
-inherit cflags-hardened cmake edos2unix flag-o-matic
+inherit cflags-hardened cmake edos2unix flag-o-matic libstdcxx-slot
 
 EGIT_COMMIT="dfc341ab0b3b23ee307ab8660c0213e64da1eac6"
 S="${WORKDIR}/OpenCOLLADA-${EGIT_COMMIT}"
@@ -45,6 +50,10 @@ PATCHES=(
 	"${FILESDIR}/opencollada-1.6.68-cmake4.patch"
 #	"${FILESDIR}/opencollada-1.6.68-unbundle-zlib.patch"
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_prepare() {
 	edos2unix "CMakeLists.txt"
