@@ -79,7 +79,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -147,6 +147,7 @@ RDEPEND+="
 	)
 	alembic? (
 		>=media-gfx/alembic-1.8.5[${LIBSTDCXX_USEDEP},hdf5?]
+		media-gfx/alembic:=
 	)
 	draco? (
 		>=media-libs/draco-1.4.3
@@ -159,16 +160,20 @@ RDEPEND+="
 	)
 	imaging? (
 		>=media-libs/opensubdiv-3.6.0[${LIBSTDCXX_USEDEP}]
+		media-libs/opensubdiv:=
 		x11-libs/libX11
 	)
 	jemalloc? (
 		dev-libs/jemalloc-usd[${LIBSTDCXX_USEDEP}]
+		dev-libs/jemalloc-usd:=
 	)
 	materialx? (
 		>=media-libs/materialx-1.39.3[${LIBSTDCXX_USEDEP}]
+		media-libs/materialx:=
 	)
 	opencolorio? (
 		>=media-libs/opencolorio-2.2.1[${LIBSTDCXX_USEDEP}]
+		media-libs/opencolorio:=
 	)
 	openexr? (
 		|| (
@@ -188,6 +193,7 @@ RDEPEND+="
 	openvdb? (
 		>=dev-libs/c-blosc-1.17
 		>=media-gfx/openvdb-10.1.0[${LIBSTDCXX_USEDEP}]
+		media-gfx/openvdb:=
 	)
 	osl? (
 		>=media-libs/osl-1.13.11
