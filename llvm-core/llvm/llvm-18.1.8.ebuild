@@ -4,6 +4,16 @@
 
 EAPI=8
 
+# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/clang/include/clang/Basic/Cuda.h
+GCC_COMPAT=(
+	# Pruned non-GPU slots to simplify GPU offload support.
+        "gcc_slot_13_4" # CUDA-12.3 (FC), ROCm-6.2 (U24), ROCm-6.3 (U24), U24.04 (GCC default, LLVM default)
+        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-6.3 (U22)
+        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
+	"gcc_slot_9_1" # ROCm-6.2 (U20), ROCm-6.3 (U20)
+)
+# FC = Feature Complete
+# PS = Partial Support
 PYTHON_COMPAT=( "python3_11" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -24,7 +34,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake dhms libstdcxx-slot llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
@@ -48,10 +58,10 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
+${LLVM_EBUILDS_LLVM18_REVISION}
 +binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi ncurses tcmalloc test xml z3 zstd
 ebuild_revision_10
-${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -249,6 +259,7 @@ ewarn
 einfo
 einfo "See llvm-core/clang/metadata.xml for details on PGO/BOLT optimization."
 einfo
+	libstdcxx-slot_verify
 }
 
 python_check_deps() {

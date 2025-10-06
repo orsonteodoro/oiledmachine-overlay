@@ -4,6 +4,16 @@
 
 EAPI=8
 
+# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/clang/include/clang/Basic/Cuda.h
+GCC_COMPAT=(
+	# Pruned non-GPU slots to simplify GPU offload support.
+        "gcc_slot_13_4" # CUDA-12.3 (FC), ROCm-6.2 (U24), ROCm-6.3 (U24), U24.04 (GCC default, LLVM default)
+        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-6.3 (U22)
+        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
+	"gcc_slot_9_1" # ROCm-6.2 (U20), ROCm-6.3 (U20)
+)
+# FC = Feature Complete
+# PS = Partial Support
 PYTHON_COMPAT=( "python3_11" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -24,7 +34,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
+inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~arm64-macos ~x64-macos"
@@ -40,12 +50,12 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
+${LLVM_EBUILDS_LLVM18_REVISION}
 cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
 ebuild_revision_11
-${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -125,7 +135,8 @@ RDEPEND+="
 	xml? (
 		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
 	)
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},debug=]
+	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
+	llvm-core/llvm:=
 "
 
 DEPEND="
@@ -141,7 +152,8 @@ BDEPEND="
 		')
 	)
 	test? (
-		~llvm-core/lld-${PV}
+		~llvm-core/lld-${PV}[${LIBSTDCXX_USEDEP}]
+		llvm-core/lld:=
 	)
 	xml? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -293,6 +305,7 @@ einfo
 einfo "See the metadata.xml for details about using the PGO/BOLT optimizer"
 einfo "script (optimize.sh)"
 einfo
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

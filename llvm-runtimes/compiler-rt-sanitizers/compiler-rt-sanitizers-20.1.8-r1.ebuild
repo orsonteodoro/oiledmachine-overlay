@@ -24,9 +24,18 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h
+GCC_COMPAT=(
+	# Pruned non-GPU slots to simplify GPU offload support.
+        "gcc_slot_13_4" # CUDA-12.3 (FC), CUDA-12.4 (PS), CUDA-12.5 (PS), CUDA-12.6 (PS), ROCm-7.0 (U24), U24.04 (GCC default)
+        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-7.0 (U22)
+        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
+)
+# FC = Feature Complete
+# PS = Partial Support
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch check-reqs cmake flag-o-matic libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
@@ -302,13 +311,15 @@ RDEPEND="
 	llvm-runtimes/compiler-rt-sanitizers-logging
 "
 DEPEND="
-	llvm-core/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:=
 	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
 		llvm-core/clang-linker-config:${LLVM_MAJOR}
 		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
 		llvm-runtimes/clang-stdlib-config:${LLVM_MAJOR}
@@ -323,7 +334,8 @@ BDEPEND="
 			>=dev-python/lit-15[\${PYTHON_USEDEP}]
 		")
 		=llvm-runtimes/compiler-rt-${LLVM_VERSION%%.*}*:=
-		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
 	)
 	!test? (
 		${PYTHON_DEPS}
@@ -388,6 +400,7 @@ pkg_setup() {
 	check_extra_config
 	check_space
 	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

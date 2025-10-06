@@ -6,6 +6,15 @@ EAPI=8
 
 # Last update:  2024-11-20
 
+# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h
+GCC_COMPAT=(
+	# Pruned non-GPU slots to simplify GPU offload support.
+        "gcc_slot_13_4" # CUDA-12.3 (FC), CUDA-12.4 (PS), CUDA-12.5 (PS), CUDA-12.6 (PS), ROCm-7.0 (U24), U24.04 (GCC default)
+        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-7.0 (U22)
+        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
+)
+# FC = Feature Complete
+# PS = Partial Support
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -26,7 +35,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake flag-o-matic llvm.org llvm-utils python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot llvm.org llvm-utils python-single-r1 toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
@@ -40,10 +49,10 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
+${LLVM_EBUILDS_LLVM20_REVISION}
 debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
 ebuild_revision_3
-${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE+="
 	^^ (
@@ -103,13 +112,15 @@ RDEPEND="
 	zstd? (
 		app-arch/zstd:=
 	)
-	~llvm-core/llvm-${PV}[debug=,zstd=]
+	~llvm-core/llvm-${PV}[${LIBSTDCXX_USEDEP},debug=,zstd=]
+	llvm-core/llvm:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}
+	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:=
 	test? (
 		>=dev-build/cmake-3.16
 		$(python_gen_cond_dep "
@@ -170,6 +181,7 @@ einfo
 einfo
 einfo "See llvm-core/clang/metadata.xml for details on PGO/BOLT optimization."
 einfo
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

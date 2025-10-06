@@ -6,6 +6,15 @@ EAPI=8
 
 # Last update:  2024-06-23
 
+# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-19.1.7/clang/include/clang/Basic/Cuda.h
+GCC_COMPAT=(
+	# Pruned non-GPU slots to simplify GPU offload support.
+        "gcc_slot_13_4" # CUDA-12.3 (FC), CUDA-12.4 (PS), CUDA-12.5 (PS), ROCm-6.4 (U24), U24.04 (GCC default)
+        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-6.4 (U22)
+        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
+)
+# FC = Feature Complete
+# PS = Partial Support
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -31,7 +40,7 @@ amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
 ~arm64-macos ~x64-macos
 "
 
-inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions llvm.org multilib
+inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm.org multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 DESCRIPTION="C language family frontend for LLVM"
@@ -45,12 +54,12 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
+${LLVM_EBUILDS_LLVM19_REVISION}
 cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
 ebuild_revision_11
-${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -130,7 +139,8 @@ RDEPEND+="
 	xml? (
 		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
 	)
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},debug=]
+	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
+	llvm-core/llvm:=
 "
 
 DEPEND="
@@ -140,7 +150,8 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16
 	test? (
-		~llvm-core/lld-${PV}
+		~llvm-core/lld-${PV}[${LIBSTDCXX_USEDEP}]
+		llvm-core/lld:=
 	)
 	xml? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -300,6 +311,7 @@ einfo
 einfo "See the metadata.xml for details about using the PGO/BOLT optimizer"
 einfo "script (optimize.sh)"
 einfo
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
