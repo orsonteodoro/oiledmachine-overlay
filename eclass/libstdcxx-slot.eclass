@@ -22,10 +22,16 @@ _LIBSTDCXX_SLOT_ECLASS=1
 #
 # Example:
 #
+# inherit libstdcxx-slot
+#
 # RDEPEND=(
 #	>=media-libs/openimageio-2.2.14[${LIBSTDCXX_USEDEP}]
 #	media-libs/openimageio:=
 # )
+#
+# pkg_setup() {
+#	libstdcxx-slot_verify
+# }
 #
 
 # See also https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/config/abi/pre/gnu.ver
