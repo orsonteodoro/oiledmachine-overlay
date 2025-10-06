@@ -99,7 +99,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_9
+ebuild_revision_10
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -178,11 +178,14 @@ gen_hip_depends() {
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				~dev-libs/rocm-comgr-${hip_version}:${s}
+				~dev-libs/rocm-comgr-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
+				dev-libs/rocm-comgr:=
 				~dev-libs/rocm-device-libs-${hip_version}${s}
-				~dev-libs/rocr-runtime-${hip_version}:${s}
+				~dev-libs/rocr-runtime-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
+				dev-libs/rocr-runtime:=
 				~dev-libs/roct-thunk-interface-${hip_version}${s}
-				~dev-util/hip-${hip_version}:${s}[rocm]
+				~dev-util/hip-${hip_version}:${s}[${LIBSTDCXX_USEDEP},rocm]
+				dev-util/hip:=
 				~dev-util/rocminfo-${hip_version}:${s}
 			)
 		"
@@ -193,29 +196,31 @@ gen_hip_depends() {
 RDEPEND+="
 	${PYTHON_DEPS}
 	(
-		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}
+		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 	virtual/libc
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-12.8
-		>=x11-drivers/nvidia-drivers-525.60.13
 		dev-util/nvidia-cuda-toolkit:=
+		>=x11-drivers/nvidia-drivers-525.60.13
 	)
 	rocm? (
 		$(gen_hip_depends)
-		dev-util/hip[rocm]
+		dev-util/hip[${LIBSTDCXX_USEDEP},rocm]
 		dev-util/hip:=
 	)
 	sycl? (
 		>=sys-devel/DPC++-2023.10.26:0/7[aot?]
-		dev-libs/level-zero
 		sys-devel/DPC++:=
+		dev-libs/level-zero[${LIBSTDCXX_USEDEP}]
+		dev-libs/level-zero:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	media-libs/openimageio[cuda?]
+	media-libs/openimageio[${LIBSTDCXX_USEDEP},cuda?]
+	media-libs/openimageio:=
 "
 BDEPEND+="
 	${PYTHON_DEPS}
