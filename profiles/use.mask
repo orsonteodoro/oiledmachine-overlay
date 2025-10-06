@@ -27,3 +27,6 @@ qt5
 # Old packages
 ycmd-43
 ycmd-44
+
+# EOL from upsteam
+gcc_slot_9_1
