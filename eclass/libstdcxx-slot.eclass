@@ -186,7 +186,7 @@ _switch_gcc_to_continue_message() {
 eerror
 eerror "You must do the following to continue:"
 eerror
-eerror "eselect gcc ${CHOST}-${slot}"
+eerror "eselect gcc set ${CHOST}-${slot}"
 eerror "source /etc/profile"
 eerror
 }
