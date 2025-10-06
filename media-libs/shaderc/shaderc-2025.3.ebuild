@@ -20,10 +20,13 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
-IUSE="doc"
+IUSE="
+doc
+ebuild_revision_1
+"
 
 RDEPEND="
-	>=dev-util/glslang-1.4.321.0:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-util/glslang-1.4.321.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-util/glslang:=
 	>=dev-util/spirv-tools-1.4.321.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-util/spirv-tools:=

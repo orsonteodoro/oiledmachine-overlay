@@ -7,9 +7,14 @@ EAPI=8
 # U22, U24
 # cxx17
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, ROCm-6.2, ROCm-6.3, ROCm-6.4, ROCm-7.0, U24 (default)
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
+)
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cmake python-single-r1
+inherit cmake libstdcxx-slot python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="270b5cf2ae2be24a3b6ef4b0569f1c93038dda1d"
@@ -80,7 +85,8 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	media-libs/openimageio
+	media-libs/openimageio[${LIBSTDCXX_USEDEP}]
+	media-libs/openimageio:=
 	virtual/opengl
 	kernel_linux? (
 		x11-libs/libX11
@@ -114,6 +120,7 @@ DOCS=( )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 verify_version() {
