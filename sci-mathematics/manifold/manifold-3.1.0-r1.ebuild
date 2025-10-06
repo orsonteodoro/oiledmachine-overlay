@@ -32,18 +32,25 @@ fi
 LICENSE="Apache-2.0"
 SLOT="0/1"
 
-IUSE="debug python +tbb test"
+IUSE="
+debug python +tbb test
+ebuild_revision_1
+"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	tbb? ( dev-cpp/tbb:= )
-	sci-mathematics/clipper2
+	sci-mathematics/clipper2[${LIBSTDCXX_USEDEP}]
+	sci-mathematics/clipper2:=
 	python? ( ${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
+	)
+	tbb? (
+		dev-cpp/tbb[${LIBSTDCXX_USEDEP}]
+		dev-cpp/tbb:=
 	)
 "
 DEPEND="
