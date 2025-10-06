@@ -89,6 +89,7 @@ HIP_6_2_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_3_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_3_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_4_GLIBCXX_MIN="3.4.30" # GCC 12.1.0
+HIP_7_0_GLIBCXX_MIN="3.4.30" # GCC 12.1.0
 
 # Upstream preference
 HIP_4_1_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
@@ -105,6 +106,7 @@ HIP_6_1_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_2_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 HIP_6_3_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 HIP_6_4_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
+HIP_7_0_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 
 # oiledmachine-overlay preference
 # The choice of GLIBCXX and GCC_SLOT maximum currently is based on rebuild mood.
@@ -126,6 +128,8 @@ HIP_6_0_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_1_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_2_GLIBCXX="3.4.32" # GCC 13.2.0
 HIP_6_3_GLIBCXX="3.4.32" # GCC 13.2.0
+HIP_6_4_GLIBCXX="3.4.32" # GCC 13.2.0
+HIP_7_0_GLIBCXX="3.4.32" # GCC 13.2.0
 
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"

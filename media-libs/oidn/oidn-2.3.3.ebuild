@@ -34,6 +34,11 @@ CUDA_TARGETS_COMPAT=(
 	"sm_80"
 	"sm_90"
 )
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, ROCm-6.2, ROCm-6.3, ROCm-6.4, U24 (default)
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
+)
 inherit hip-versions
 HIP_VERSIONS=(
 	"${HIP_6_3_VERSION}"
@@ -53,7 +58,7 @@ ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit check-compiler-switch cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic libstdcxx-slot llvm python-single-r1 rocm toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -293,6 +298,7 @@ pkg_setup() {
 	if use cuda ; then
 		cuda_add_sandbox
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

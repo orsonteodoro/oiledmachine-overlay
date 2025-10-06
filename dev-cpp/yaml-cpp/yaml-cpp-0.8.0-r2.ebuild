@@ -36,11 +36,14 @@ PATCHES=(
 	"${FILESDIR}/yaml-cpp-0.8.0-cmake2.patch"
 )
 
+pkg_setup() {
+	libstdcxx-slot_verify
+}
+
 src_prepare() {
 	rm -r test/gtest-1.11.0 || die
 
 	cmake_src_prepare
-	libstdcxx-slot_verify
 }
 
 src_configure() {
