@@ -9,6 +9,11 @@ ARM_CPU_FLAGS=(
 	"neon:neon"
 	"neon2x:neon2x"
 )
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, U24 (default)
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
+)
 PYTHON_COMPAT=( "python3_12" )
 X86_CPU_FLAGS=(
 	"avx2:avx2"
@@ -31,7 +36,7 @@ CPU_FLAGS=(
 	"${X86_CPU_FLAGS[@]/#/+cpu_flags_x86_}"
 )
 
-inherit cmake flag-o-matic python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic python-any-r1 toolchain-funcs libstdcxx-slot
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV/_/-}"
@@ -123,6 +128,7 @@ RDEPEND+="
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021.5.0
+		dev-cpp/tbb:=
 	)
 "
 DEPEND+="
@@ -132,6 +138,11 @@ BDEPEND+="
 	>=dev-build/cmake-3.22.1
 "
 DOCS=( "CHANGELOG.md" "README.md" )
+
+pkg_setup() {
+	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	# -Werror=strict-aliasing
