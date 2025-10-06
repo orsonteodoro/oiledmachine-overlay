@@ -3,11 +3,16 @@
 
 EAPI=8
 
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic python-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -63,6 +68,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
