@@ -35,8 +35,7 @@ CUDA_TARGETS_COMPAT=(
 # For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h
 GCC_COMPAT=(
 	# Pruned non-GPU slots to simplify GPU offload support.
-        "gcc_slot_13_4" # CUDA-12.3 (FC), CUDA-12.4 (PS), CUDA-12.5 (PS), CUDA-12.6 (PS), ROCm-7.0 (U24), U24.04 (GCC default)
-        "gcc_slot_12_5" # ROCm-6.2 (U22), ROCm-7.0 (U22)
+        "gcc_slot_13_4" # CUDA-12.3 (FC), CUDA-12.4 (PS), CUDA-12.5 (PS), CUDA-12.6 (PS), U24.04 (GCC default)
         "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
 )
 # FC = Feature Complete
