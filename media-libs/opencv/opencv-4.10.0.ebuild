@@ -200,9 +200,9 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_ssse3:SSSE3"
 )
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
-	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, U24 (default)
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
 )
 GSTREAMER_PV="1.16.2"
 KLEIDICV_PV="0.1.0"								# See https://github.com/opencv/opencv/blob/4.10.0/3rdparty/kleidicv/CMakeLists.txt
