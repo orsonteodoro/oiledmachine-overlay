@@ -9,7 +9,7 @@ GCC_COMPAT=(
 	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
 )
 
-inherit flag-o-matic libstdcxx-slot
+inherit flag-o-matic meson libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -47,7 +47,7 @@ BDEPEND+="
 		llvm-core/clang
 	)
 "
-DOCS=( "README" )
+DOCS=( "README.md" )
 
 pkg_setup() {
 	if use test ; then
@@ -97,43 +97,28 @@ src_unpack() {
 
 src_prepare() {
 	default
-	sed -i \
-		-e '/.\/test/d' "Makefile" \
-		|| die
 }
 
 src_configure() {
-	sed -i \
-		-e "s|/usr/lib|${ESYSROOT}/usr/$(get_libdir)|g" \
-		"Makefile" \
-		|| die
 	if use custom-cflags ; then
-		sed -i \
-			-e "s|-O3|${CXXFLAGS}|g" \
-			-e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" "Makefile" \
-			|| die
+		:
 	else
 		strip-flags
 		filter-flags -O*
 	fi
+	meson_src_configure
 }
 
 src_compile() {
-	emake LIBDIR="${S}" install
-	use test && emake LIBDIR="${S}" test
-	# Fix header location
-	mkdir "${S}/pystring" || die
-	mv "${S}/pystring.h" "${S}/pystring" || die
+	meson_src_compile
 }
 
 src_test() {
-	cd "${S}" || die
-	./test || die
+	meson_src_test
 }
 
 src_install() {
-	dolib.so "${S}/libpystring.so"{"",".0"{"",".0.0"}}
-	doheader -r "${S}/pystring"
+	meson_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
 	use doc && einstalldocs
