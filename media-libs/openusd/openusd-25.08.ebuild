@@ -11,6 +11,8 @@ EAPI=8
 # https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L763
 
 BOOST_PV="1.80.0"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO ID MC OOB OOBA UAF"
 CMAKE_BUILD_TYPE="Release"
 GCC_COMPAT=(
 	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
@@ -37,7 +39,7 @@ OPENEXR_V3_PV=(
 PYTHON_COMPAT=( "python3_"{9..13} )
 VULKAN_PV="1.3.296.0"
 
-inherit check-compiler-switch cmake libstdcxx-slot python-single-r1 flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake libstdcxx-slot python-single-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenUSD-${PV}"
@@ -79,7 +81,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -290,10 +292,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	cflags-hardened_append
+
 	if has_version "media-libs/openusd" ; then
-ewarn
 ewarn "Uninstall ${PN} to avoid build failure."
-ewarn
 		die
 	fi
 
