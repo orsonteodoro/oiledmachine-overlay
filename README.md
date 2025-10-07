@@ -234,12 +234,21 @@ systemwide upgrades and downgrades of the default libstdc++, the parallel
 package builds should be disabled.  After the system has been sanitized with
 the same libstdc++, you can re-enable parallel package builds.
 
-| USE flag       | LTS | libstdc++ compatibility                                                                                            | Default C++   |
-|----------------|-----|--------------------------------------------------------------------------------------------------------------------|---------------|
-| gcc_slot_11_5  | Yes | U22, CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9                                   | C++17         |
-| gcc_slot_12_5  | No  | D12, F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17         |
-| gcc_slot_13_4  | Yes | U24, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                     | C++17         |
-| gcc_slot_14_3  | No  | F41, CUDA 12.8, CUDA 12.9                                                                                          | C++17         |
+| USE flag       | LTS* | libstdc++ compatibility                                                                                                       | Default C++   |
+|----------------|------|-------------------------------------------------------------------------------------------------------------------------------|---------------|
+| gcc_slot_11_5  | Yes  | U22 (EOL 2027), CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9                                   | C++17         |
+| gcc_slot_12_5  | No   | D12 (EOL 2028), F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17         |
+| gcc_slot_13_4  | Yes  | U24 (EOL 2036), CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                     | C++17         |
+| gcc_slot_14_3  | No   | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                     | C++17         |
+
+EOL dates should be taken with a gain of salt because this distro only respects
+the latest release of the other distros.  The distro will delete or break
+support for a core component (e.g. Python) so full support for an older LTS
+version is unreliable.
+
+The LTS support is arbitrary chosen by this overlay.  Alternatively, you may use
+the EOL date as your preferred metric.  U22, D12, U24, D13 are considered LTS by
+AI.
 
 * CUDA 11.x - LTS (Long Term Support)
 * CUDA 12.x - Rolling release cycle
