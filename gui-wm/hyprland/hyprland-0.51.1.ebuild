@@ -6,7 +6,8 @@ EAPI=8
 # U24
 
 GCC_COMPAT=(
-	"gcc_slot_14_3" # Support -std=c++26, but reduce chances of breaking systemwide CUDA 12.x support
+	# For older GPU libs users, use hyprland 0.39.1 instead
+	"gcc_slot_14_3" # Support -std=c++26 without breaking systemwide CUDA 12.x support
 )
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 
