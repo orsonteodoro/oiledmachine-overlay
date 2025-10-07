@@ -227,6 +227,13 @@ be compatible with the latest distro versions (F42, U24, D13) and deletionist
 towards older releases.  Only slots supported by the GPUs will be made
 available for this USE prefix.
 
+It was discovered that manually setting the gcc through `eselect gcc` is the
+most reliable way to resolve GLIBCXX_ version symbols linking issue.  Using
+per-package environment changes to CC/CXX did not resolve the issue.  For
+systemwide upgrades and downgrades of the default libstdc++, the parallel
+package builds should be disabled.  After the system has been sanitized with
+the same libstdc++, you can re-enable parallel package builds.
+
 | USE flag       | LTS | libstdc++ compatibility                                                                                            | Default C++   |
 |----------------|-----|--------------------------------------------------------------------------------------------------------------------|---------------|
 | gcc_slot_11_5  | Yes | U22, CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9                                   | C++17         |
