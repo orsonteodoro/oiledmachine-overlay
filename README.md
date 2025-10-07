@@ -234,9 +234,13 @@ available for this USE prefix.
 | gcc_slot_13_4  | Yes | U24, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                          | C++17         |
 | gcc_slot_14_3  | No  | F41, CUDA 12.8, CUDA 12.9                                                                               | C++17         |
 
-CUDA 11.x - LTS
-CUDA 12.x - Rolling release cycle
-ROCm - Rolling release cycle
+* CUDA 11.x - LTS
+* CUDA 12.x - Rolling release cycle
+* ROCm - Rolling release cycle
+
+While the older GPU package versions may not be available on overlays, they
+may be used by containerized programs.  Older containerized programs may require
+older gcc_slot_* slot.
 
 If the libstdc++ version symbols doesn't change on minor version bump (e.g. from
 gcc_slot_13_4 to gcc_slot_13_5), then the flag will stay the same to avoid
