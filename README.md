@@ -253,13 +253,16 @@ completeness (aka full version) and public proclamation of LTS.  Alternatively,
 you may use the EOL date as your preferred metric.  U22, D12, U24, D13 are
 considered LTS by AI.
 
+Consider the following release cycles when choosing a mutually exclusive
+gcc_slot_*:
+
 * CUDA 11.x - LTS (Long Term Support)
 * CUDA 12.x - Rolling release cycle
 * ROCm - Rolling release cycle
 
 While the older GPU package versions may not be available on overlays, they
 may be used by containerized programs.  Older containerized programs may require
-older gcc_slot_* slot.
+an older gcc_slot_* slot.
 
 If the libstdc++ version symbols doesn't change on minor version bump (e.g. from
 gcc_slot_13_4 to gcc_slot_13_5), then the flag will stay the same to avoid
