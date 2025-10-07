@@ -64,7 +64,7 @@ RDEPEND="
 	>=dev-libs/wayland-1.20.0
 	>=gui-libs/hyprcursor-0.1.6[${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprcursor:=
-	gui-libs/wlroots-hyprland
+	>=gui-libs/wlroots-hyprland-0.80.0_p20240424
 	>=media-libs/libglvnd-1.4.0
 	>=media-libs/mesa-22.0.1
 	>=x11-libs/cairo-1.16.0
