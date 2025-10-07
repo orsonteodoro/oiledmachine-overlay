@@ -263,7 +263,8 @@ older gcc_slot_* slot.
 
 If the libstdc++ version symbols doesn't change on minor version bump (e.g. from
 gcc_slot_13_4 to gcc_slot_13_5), then the flag will stay the same to avoid
-unnecessary rebuilds.
+unnecessary rebuilds.  The compatibility is based on the mysterious GLIBCXX_
+version but presented using the familiarly discussed GCC version.
 
 To use it you may specify it either in your /etc/portage/make.conf or apply it per-package.
 
