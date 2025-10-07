@@ -223,9 +223,9 @@ that the distro may hard mask that GCC compiler then you will end up rebuilding
 all the affected GCC packages.  It is recommended to use a LTS slot that has
 the upper version limit bounded by the GPU package.  If no GPU, then it is 
 recommended to use the latest LTS USE flag (U24), since this distro tends to
-be compatible with the latest distro versions (F42, U24, D13) and deletionist
-towards older releases.  Only slots supported by the GPUs will be made
-available for this USE prefix.
+be compatible with the latest distro versions (F42, U24, D13) and
+accelerationist-deletionist towards older releases.  Only slots supported by
+the GPUs will be made available for this USE prefix.
 
 It was discovered that manually setting the gcc through `eselect gcc` is the
 most reliable way to resolve GLIBCXX_ version symbols linking issue.  Using
