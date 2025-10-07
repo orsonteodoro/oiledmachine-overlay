@@ -248,10 +248,10 @@ the latest release of the other distros.  The main distro repo will delete or
 break support for a core component (e.g. Python) so full support for an older
 LTS version is unreliable.
 
-(*) The LTS support is arbitrary chosen by this overlay.  It is based on feature
-completeness (aka full version) and public proclamation of LTS.  Alternatively,
-you may use the EOL date as your preferred metric.  U22, D12, U24, D13 are
-considered LTS by AI.
+(*) The LTS support for these USE flags are arbitrary chosen by this overlay.
+It is based on feature completeness (aka full version) and public proclamation
+of LTS.  Alternatively, you may use the EOL date as your preferred metric.  U22,
+D12, U24, D13 are considered LTS by AI.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
