@@ -14,8 +14,6 @@ GCC_COMPAT=(
         "gcc_slot_12_5" # CUDA-12.3, ROCm-7.0 (U22), D12 (GCC default)
         "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA 11.8, U22 (GCC default)
 )
-# FC = Feature Complete
-# PS = Partial Support
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then

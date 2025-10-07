@@ -31,6 +31,13 @@ CUDA_TARGETS_COMPAT=(
 	sm_87
 	sm_89
 	sm_90
+	sm_90a
+	sm_100
+	sm_100a
+	sm_101
+	sm_101a
+	sm_120
+	sm_120a
 )
 # For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h
 GCC_COMPAT=(
@@ -40,8 +47,6 @@ GCC_COMPAT=(
         "gcc_slot_12_5" # CUDA-12.3, ROCm-7.0 (U22), D12 (GCC default)
         "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA 11.8, U22 (GCC default)
 )
-# FC = Feature Complete
-# PS = Partial Support
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_12" )
 
