@@ -214,6 +214,34 @@ See [SECURITY.md](SECURITY.md)
 
 (Draft)
 
+#### gcc_slot_* changes
+
+The overlay introduces the gcc_slot_* USE flag prefix.  This USE flag set is
+designed to solve the GLIBCXX version symbols issues during the linking phase.
+It is safe to use the lowest gcc_slot_* prefixed listed, but there is a risk
+that the distro may hard mask that GCC compiler then you will end up rebuilding
+all the affected GCC packages.  It is recommended to use a LTS slot that has
+the upper version limit bounded by the GPU package.  If no GPU, then it is 
+recommended to use the latest LTS USE flag (U24), since this distro tends to
+be compatible with the latest distro versions (F42, U24, D13).  Only slots
+supported by the GPUs will be made available for this USE prefix.
+
+| USE flag       | LTS | libstdc++ compatibility                                                                                 | Default C++
+| gcc_slot_11_5  | Yes | U22, CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9                        | C++17
+| gcc_slot_12_5  | No  | D12, F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17
+| gcc_slot_13_4  | Yes | U24, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                          | C++17
+| gcc_slot_14_3  | No  | F41, CUDA 12.8, CUDA 12.9                                                                               | C++17
+
+CUDA 11.x - LTS
+CUDA 12.x - Rolling release cycle
+ROCm - Rolling release cycle
+
+If the libstdc++ version symbols doesn't change on minor version bump (e.g. from
+gcc_slot_13_4 to gcc_slot_13_5), then the flag will stay the same to avoid
+unnecessary rebuilds.
+
+#### Hardening changes
+
 This overlay will force hardening always on to mitigate against some zero click
 attacks.
 
@@ -383,7 +411,7 @@ packages.
 The requirement is based partly on the overlay's maintainer shift towards a
 more defensive posture on cybersecurity.
 
-#### -D_FORTIFY_SOURCE integrity re-evaluated
+##### -D_FORTIFY_SOURCE integrity re-evaluated
 
 -D_FORTIFY_SOURCE provides stack overflow and heap overflow protection for str*,
 and mem* functions for packages that use GLIBC.  If compromised or not applied
@@ -393,7 +421,7 @@ carefully, it may result in a critical severity vulnerability.
 cases and not comprehensive memory corruption mitigation.  It is the fallback
 when ASan cannot be applied.
 
-##### Extra flags added fix lost fortify source integrity
+###### Extra flags added fix lost fortify source integrity
 
 When -O1, -O2, -O3 is added, -D_FORTIFY_SOURCE's integrity may be compromised.
 
@@ -411,7 +439,7 @@ grained control compared to these sets.  The set is selected to counter the most
 prevalent compromises with the most effectiveness.  With the -O flags, it
 doesn't necessary follow that order.
 
-##### BOLT/PGO is here stay in cflags-hardened contexts
+###### BOLT/PGO is here stay in cflags-hardened contexts
 
 There was some thought to remove BOLT/PGO in packages marked with
 cflags-hardened to eliminate a source of -D_FORTIFY_SOURCE integrity loss.
@@ -431,7 +459,7 @@ There are two narratives in this Faustian bargain.
   The CVSS score maybe drops a quarter in this narrative but estimated to be
   high severity.
 
-##### CFI is optional on untested arches
+###### CFI is optional on untested arches
 
 While it may be ideal to auto opt-in into CFI, it is not so easy and straightforward
 based on past experience.  This is why it was decided to make it optional
@@ -549,7 +577,7 @@ take advantage of other environment variables that act like metadata or use hint
 to apply hardening.  The eclasses/ebuilds can be modified to add more hints to
 improve auto applying CFI flags or to minimize build time failures.
 
-#### Requirements
+##### Requirements
 
 ```
 sys-devel/gcc[sanitize,vtv]
@@ -601,9 +629,9 @@ manage it with CFLAGS_HARDENED_SANITIZERS_COMPAT and eclass assist.  The users
 must choose only one default compiler vendor via CC and CXX and discourage
 switching between vendors via per-package flags for LTO, CFI, ASan, UBSan, etc.
 
-#### Troubleshooting
+##### Troubleshooting
 
-##### Run failure #1 or broken decrypted login
+###### Run failure #1 or broken decrypted login
 
 A broken login may be encountered and cause a profile not to decrypt home as a
 result of broken simultaneously use of ASan and UBSan with curl.
@@ -620,7 +648,7 @@ Try emerging curl from this overlay with the fix or use the distro curl instead
 for the permanent fix.
 
 
-##### Run failure #2
+###### Run failure #2
 
 If missing ASan or UBSan symbols are encoutered in the build system toolchain,
 replace the broken shared library or executable using the distro tarball.
@@ -645,7 +673,7 @@ packages that may affect the @system set.  It is preferred to avoid
 ASan-ing/UBSan-ing the @system set to avoid an unfixable @system or the compiler
 toolchain, but it is not obvious sometimes if a package will affect @system.
 
-##### Breaking Qt based packages at configure time
+###### Breaking Qt based packages at configure time
 
 You can either make a copy of the ebuild to your local overlay and modify the
 ebuild to set abort_on_error=0 for ASan and halt_on_error=0 for UBSan in
@@ -664,7 +692,7 @@ per-package flags can be used to avoid incompatibility problems.  Add the flag
 to the package and then rebuild the problematic package or deep dependency
 causing the problem.
 
-##### Missing ASan symbols with Flatpak because of missing ASan symbols in curl
+###### Missing ASan symbols with Flatpak because of missing ASan symbols in curl
 
 You may get an error with sys-apps/flatpak interaction with broken linked curl.
 Delete /usr/bin/flatpak, re-emerge curl without ASan with per-package env containing
