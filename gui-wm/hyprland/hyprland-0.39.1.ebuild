@@ -3,10 +3,13 @@
 
 EAPI=8
 
-# U24
+# U22
 
 GCC_COMPAT=(
-	"gcc_slot_14_3" # Support -std=c++26, but reduce chances of breaking CUDA 12.x support
+	"gcc_slot_11_5" # Support -std=c++23
+	"gcc_slot_12_5" # Support -std=c++23
+	"gcc_slot_13_3" # Support -std=c++23
+	"gcc_slot_14_3" # Support -std=c++23
 )
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 
@@ -24,13 +27,15 @@ else
 	SRC_URI="
 https://github.com/hyprwm/${PN^}/releases/download/v${PV}/source-v${PV}.tar.gz
 	-> ${P}.gh.tar.gz
+https://github.com/hyprwm/Hyprland/commit/28c85619243e6320e75d7abcfe8244fa99d054dd.patch
+	-> hyprland-commit-28c8561.patch
 	"
 fi
 
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-legacy-renderer +qtutils systemd X
+legacy-renderer systemd X
 ebuild_revision_13
 "
 REQUIRED_USE="
@@ -38,69 +43,62 @@ REQUIRED_USE="
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
 HYPRPM_RDEPEND="
-	>=dev-build/cmake-3.30
-	>=dev-build/meson-1.8.2
-	>=dev-vcs/git-2.50.1
+	>=dev-build/cmake-3.22.1
+	>=dev-build/meson-0.61.2
+	>=dev-vcs/git-2.34.1
 	app-alternatives/ninja
 	virtual/pkgconfig
 "
-# Relaxed re2 version requirement.  Originally slot 11
+# glib missing in build files
+# pixman missing in build files
+# tomlplusplus missing in U22 repo
+# util-linux missing in build files
 RDEPEND="
 	${HYPRPM_RDEPEND}
 	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP}]
 	dev-cpp/tomlplusplus:=
 	>=dev-libs/hyprlang-0.3.2[${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
-	>=dev-libs/hyprgraphics-0.1.3[${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprgraphics:=
-	>=dev-libs/libinput-1.28.1:=
-	dev-libs/re2[${LIBSTDCXX_USEDEP}]
-	dev-libs/re2:=
+	>=dev-libs/libinput-1.20.0:=
 	>=dev-libs/udis86-1.7.2
-	>=dev-libs/wayland-1.22.90
-	>=gui-libs/aquamarine-0.9.0[${LIBSTDCXX_USEDEP}]
-	gui-libs/aquamarine:=
-	>=gui-libs/hyprcursor-0.1.7[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/wayland-1.20.0
+	>=gui-libs/hyprcursor-0.1.6[${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprcursor:=
-	>=gui-libs/hyprutils-0.8.1[${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
-	>=media-libs/libglvnd-1.7.0
-	>=media-libs/mesa-25.1.6
-	>=x11-libs/cairo-1.18.4
-	>=x11-libs/libdrm-2.4.125
-	>=x11-libs/libXcursor-1.2.3
-	>=x11-libs/libxkbcommon-1.10.0
-	>=x11-libs/pango-1.56.4
-	>=x11-libs/pixman-0.46.2
-	dev-libs/glib:2
-	sys-apps/util-linux
-	qtutils? (
-		gui-libs/hyprland-qtutils
-	)
+	gui-libs/wlroots-hyprland
+	>=media-libs/libglvnd-1.4.0
+	>=media-libs/mesa-22.0.1
+	>=x11-libs/cairo-1.16.0
+	>=x11-libs/libdrm-2.4.110
+	>=x11-libs/libxkbcommon-1.4.0
+	>=x11-libs/pango-1.50.6
+	>=x11-libs/pixman-0.40.0
+	>=dev-libs/glib-2.72.1:2
+	>=sys-apps/util-linux-2.37.2
+	>=sys-apps/pciutils-3.7.0
 	X? (
-		>=x11-libs/libxcb-1.17.0:0=
-		>=x11-libs/xcb-util-errors-1.0.1
-		>=x11-libs/xcb-util-wm-0.4.2
-		>=x11-base/xwayland-24.1.8
+		>=x11-libs/libxcb-1.14:0=
+		>=x11-libs/xcb-util-wm-0.4.1
+		>=x11-base/xwayland-22.1.1
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/glaze-5.5.4
-	>=dev-libs/hyprland-protocols-0.6.4
-	>=dev-libs/wayland-protocols-1.43
+	>=dev-libs/hyprland-protocols-0.3.0
+	>=dev-libs/wayland-protocols-1.25
 "
 BDEPEND="
-	>=app-misc/jq-1.8.1
-	>=dev-util/hyprwayland-scanner-0.3.10[${LIBSTDCXX_USEDEP}]
-	dev-util/hyprwayland-scanner:=
-	>=dev-build/cmake-4.0.3
+	>=app-misc/jq-1.6
+	>=dev-build/cmake-3.22.1
+	>=dev-util/wayland-scanner-1.20.0
 	virtual/pkgconfig
 	|| (
-		>=sys-devel/gcc-14
-		>=llvm-core/clang-17
+		>=sys-devel/gcc-11
+		>=llvm-core/clang-13
 	)
 "
+PATCHES=(
+	"${FILESDIR}/hyprland-commit-28c8561.patch"
+)
 
 pkg_setup() {
 	check-compiler-switch_start
