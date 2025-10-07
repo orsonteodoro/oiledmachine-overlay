@@ -240,6 +240,28 @@ If the libstdc++ version symbols doesn't change on minor version bump (e.g. from
 gcc_slot_13_4 to gcc_slot_13_5), then the flag will stay the same to avoid
 unnecessary rebuilds.
 
+To use it you may specify it either in your /etc/portage/make.conf or apply it per-package.
+
+Either:
+
+```
+# Sample contents of /etc/portage/make.conf:
+GCC_SLOT="11_5"
+```
+
+or
+
+```
+# Sample contents of /etc/portage/env/gcc_slot_11_5.conf:
+GCC_SLOT="11_5"
+```
+
+```
+# Sample contents of /etc/portage/package.env:
+media-gfx/blender gcc_slot_11_5.conf
+```
+
+
 #### Hardening changes
 
 This overlay will force hardening always on to mitigate against some zero click
