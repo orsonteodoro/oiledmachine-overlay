@@ -242,9 +242,9 @@ the same libstdc++, you can re-enable parallel package builds.
 | gcc_slot_14_3  | No   | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                     | C++17         |
 
 EOL dates should be taken with a gain of salt because this distro only respects
-the latest release of the other distros.  The distro will delete or break
-support for a core component (e.g. Python) so full support for an older LTS
-version is unreliable.
+the latest release of the other distros.  The main distro repo will delete or
+break support for a core component (e.g. Python) so full support for an older
+LTS version is unreliable.
 
 (*) The LTS support is arbitrary chosen by this overlay.  Alternatively, you may use
 the EOL date as your preferred metric.  U22, D12, U24, D13 are considered LTS by
