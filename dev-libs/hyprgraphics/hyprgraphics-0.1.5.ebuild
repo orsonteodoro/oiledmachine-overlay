@@ -1,0 +1,41 @@
+# Copyright 2023-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+GCC_COMPAT=(
+	"gcc_slot_14_3" # Minimal slot for -std=c++26
+)
+
+inherit cmake libstdcxx-slot
+
+DESCRIPTION="Hyprland graphics / resource utilities"
+HOMEPAGE="https://github.com/hyprwm/hyprgraphics"
+SRC_URI="https://github.com/hyprwm/${PN}/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+
+LICENSE="BSD"
+SLOT="0"
+KEYWORDS="~amd64"
+
+RDEPEND="
+	>=gui-libs/hyprutils-0.1.1[${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprutils[${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprutils:=
+	media-libs/libjpeg-turbo:=
+	media-libs/libjxl[${LIBSTDCXX_USEDEP}]
+	media-libs/libjxl:=
+	media-libs/libspng
+	media-libs/libwebp:=
+	sys-apps/file
+	x11-libs/cairo
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	virtual/pkgconfig
+"
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}

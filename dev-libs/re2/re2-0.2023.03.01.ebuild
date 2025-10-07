@@ -5,6 +5,13 @@ EAPI=8
 
 # Bump every month
 
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++14
+	"gcc_slot_12_5" # Support -std=c++14
+	"gcc_slot_13_3" # Support -std=c++14
+	"gcc_slot_14_3" # Support -std=c++14
+)
+
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
 
@@ -13,7 +20,7 @@ CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_LANGS="cxx"
 SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
-inherit cflags-hardened cmake-multilib toolchain-funcs
+inherit cflags-hardened cmake-multilib libstdcxx-slot toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/re2-${RE2_VER}"
@@ -32,7 +39,7 @@ ebuild_revision_13
 "
 RDEPEND="
 	icu? (
-		dev-libs/icu:0[${MULTILIB_USEDEP}]
+		dev-libs/icu:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 "
@@ -46,6 +53,10 @@ BDEPEND="
 "
 DOCS=( "AUTHORS" "CONTRIBUTORS" "README" "doc/syntax.txt" )
 HTML_DOCS=( "doc/syntax.html" )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	cflags-hardened_append

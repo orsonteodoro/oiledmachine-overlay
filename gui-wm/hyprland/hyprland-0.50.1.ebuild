@@ -5,11 +5,12 @@ EAPI=8
 
 # U24
 
-GCC_SLOT="15"
+GCC_COMPAT=(
+	"gcc_slot_14_3" # Support -std=c++26, but reduce chances of breaking CUDA 12.x support
+)
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
-LLVM_COMPAT=( 20 )
 
-inherit cflags-hardened check-compiler-switch meson toolchain-funcs
+inherit cflags-hardened check-compiler-switch libstdcxx-slot meson toolchain-funcs
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -29,16 +30,10 @@ fi
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-${LLVM_COMPAT[@]/#/llvm_slot_}
-clang legacy-renderer +qtutils systemd X
+legacy-renderer +qtutils systemd X
 ebuild_revision_13
 "
 REQUIRED_USE="
-	clang? (
-		^^ (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
-		)
-	)
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -52,16 +47,23 @@ HYPRPM_RDEPEND="
 # Relaxed re2 version requirement.  Originally slot 11
 RDEPEND="
 	${HYPRPM_RDEPEND}
-	>=dev-cpp/tomlplusplus-3.4.0
-	>=dev-libs/hyprlang-0.3.2
-	>=dev-libs/hyprgraphics-0.1.3:=
+	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP}]
+	dev-cpp/tomlplusplus:=
+	>=dev-libs/hyprlang-0.3.2[${LIBSTDCXX_USEDEP}]
+	dev-libs/hyprlang:=
+	>=dev-libs/hyprgraphics-0.1.3[${LIBSTDCXX_USEDEP}]
+	dev-libs/hyprgraphics:=
 	>=dev-libs/libinput-1.28.1:=
+	dev-libs/re2[${LIBSTDCXX_USEDEP}]
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.22.90
-	>=gui-libs/aquamarine-0.9.0:=
-	>=gui-libs/hyprcursor-0.1.7
-	>=gui-libs/hyprutils-0.8.1:=
+	>=gui-libs/aquamarine-0.9.0[${LIBSTDCXX_USEDEP}]
+	gui-libs/aquamarine:=
+	>=gui-libs/hyprcursor-0.1.7[${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprcursor:=
+	>=gui-libs/hyprutils-0.8.1[${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprutils:=
 	>=media-libs/libglvnd-1.7.0
 	>=media-libs/mesa-25.1.6
 	>=x11-libs/cairo-1.18.4
@@ -88,29 +90,15 @@ DEPEND="
 	>=dev-libs/hyprland-protocols-0.6.4
 	>=dev-libs/wayland-protocols-1.43
 "
-gen_clang_slot() {
-	for x in ${LLVM_COMPAT[@]} ; do
-		echo "
-			llvm_slot_${x}? (
-				llvm-core/clang:${x}
-			)
-		"
-	done
-}
 BDEPEND="
 	>=app-misc/jq-1.8.1
-	>=dev-util/hyprwayland-scanner-0.3.10
+	>=dev-util/hyprwayland-scanner-0.3.10[${LIBSTDCXX_USEDEP}]
+	dev-util/hyprwayland-scanner:=
 	>=dev-build/cmake-4.0.3
 	virtual/pkgconfig
-	!clang? (
-		>=sys-devel/gcc-15.1.1:15
-	)
-	clang? (
-		(
-			$(gen_clang_slot)
-			llvm-core/clang:=
-		)
-		>=sys-devel/gcc-15.1.1:15
+	|| (
+		>=sys-devel/gcc-14
+		>=llvm-core/clang-17
 	)
 "
 
@@ -118,35 +106,9 @@ pkg_setup() {
 	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
-	if use clang ; then
-		local x
-		for x in ${LLVM_COMPAT[@]} ; do
-			if use "llvm_slot_${x}" ; then
-				LLVM_SLOT="${x}"
-				break
-			fi
-		done
-		local path
-		path="/usr/lib/llvm/${LLVM_SLOT}/bin"
-einfo "PATH:  ${PATH} (before)"
-		PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -e "\|/usr/lib/llvm|d" \
-			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
-			| tr "\n" ":")
-einfo "PATH:  ${PATH} (after)"
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-		export CPP="${CC} -E"
-	else
-		CC="${CHOST}-gcc-${GCC_SLOT}"
-		CXX="${CHOST}-g++-${GCC_SLOT}"
-		CPP="${CC} -E"
-		if ver_test $(gcc-major-version) -ne "${GCC_SLOT}" ; then
-eerror "Switch to GCC ${GCC_SLOT}"
-			die
-		fi
-	fi
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
 
 einfo "CC:  ${CC}"
@@ -168,6 +130,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 eerror "Enable the clang USE flag"
 		die
 	fi
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

@@ -13,13 +13,19 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF DOS HO IO MC OOBR OOBW SO UAF UM"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_3" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/icu-config"
 )
 PYTHON_COMPAT=( "python3_"{10..13} )
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/icu.asc"
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om libstdcxx-slot llvm
 inherit multilib-minimal python-any-r1 toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "_rc" ]] ; then
@@ -97,6 +103,7 @@ get_lib_types() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

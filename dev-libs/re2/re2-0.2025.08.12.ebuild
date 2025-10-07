@@ -6,6 +6,13 @@ EAPI=8
 
 # Bump every month
 
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_3" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
+
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
 
@@ -19,7 +26,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 SONAME="11"				# https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
-inherit cflags-hardened cmake-multilib distutils-r1 toolchain-funcs
+inherit cflags-hardened cmake-multilib distutils-r1 libstdcxx-slot toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/re2-${RE2_VER}"
@@ -40,7 +47,7 @@ ebuild_revision_13
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20240116.2:0/20240116
 	icu? (
-		dev-libs/icu:0[${MULTILIB_USEDEP}]
+		dev-libs/icu:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	python? (
@@ -70,6 +77,7 @@ HTML_DOCS=( "doc/syntax.html" )
 
 pkg_setup() {
 	python_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
