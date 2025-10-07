@@ -236,7 +236,7 @@ the same libstdc++, you can re-enable parallel package builds.  Per-package
 changes to CC/CXX should be removed for ebuild packages that received
 libstdcxx-slot treatment.
 
-| USE flag       | LTS* | libstdc++ compatibility                                                                                                       | Default C++   |
+| USE flag       | LTS* | Indirect libstdc++ compatibility                                                                                              | Default C++   |
 |----------------|------|-------------------------------------------------------------------------------------------------------------------------------|---------------|
 | gcc_slot_11_5  | Yes  | U22 (EOL 2027), CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9                                   | C++17         |
 | gcc_slot_12_5  | No   | D12 (EOL 2028), F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17         |
