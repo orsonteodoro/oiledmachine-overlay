@@ -261,6 +261,12 @@ GCC_SLOT="11_5"
 media-gfx/blender gcc_slot_11_5.conf
 ```
 
+or
+
+```
+# Sample contents of /etc/portage/package.use/blender:
+media-gfx/blender gcc_slot_11_5
+```
 
 #### Hardening changes
 
