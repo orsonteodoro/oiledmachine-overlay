@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This is a modified wlroots ebuild for the hyprland fork.
+
+  -->
+  <use>
+    <flag name="drm">Enable Direct Rendering Management</flag>
+    <flag name="libinput">Enable support for input devices via <pkg>dev-libs/libinput</pkg></flag>
+    <flag name="session">Enable session support (is required for DRM and libinput)</flag>
+    <flag name="x11-backend">Enable support for handling input/output devices through <pkg>x11-libs/libxcb</pkg></flag>
+    <flag name="xcb-errors">Better error reporting when using xwayland</flag>
+    <flag name="X">Enable support for X11 applications (XWayland)</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">hyprwm/wlroots-hyprland</remote-id>
+   </upstream>
+</pkgmetadata>
