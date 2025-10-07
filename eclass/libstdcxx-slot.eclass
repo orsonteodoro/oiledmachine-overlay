@@ -22,6 +22,11 @@ _LIBSTDCXX_SLOT_ECLASS=1
 #
 # Example:
 #
+# GCC_COMPAT=(
+#	"gcc_slot_14_3" # CY2026 Draft is GCC 14.2
+#	"gcc_slot_11_5" # CY2025 is GCC 11.2.1
+# )
+#
 # inherit libstdcxx-slot
 #
 # RDEPEND=(
