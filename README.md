@@ -241,7 +241,7 @@ the same libstdc++, you can re-enable parallel package builds.
 | gcc_slot_13_4  | Yes | U24, CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                     | C++17         |
 | gcc_slot_14_3  | No  | F41, CUDA 12.8, CUDA 12.9                                                                                          | C++17         |
 
-* CUDA 11.x - LTS
+* CUDA 11.x - LTS (Long Term Support)
 * CUDA 12.x - Rolling release cycle
 * ROCm - Rolling release cycle
 
