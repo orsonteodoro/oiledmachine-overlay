@@ -246,7 +246,7 @@ the latest release of the other distros.  The distro will delete or break
 support for a core component (e.g. Python) so full support for an older LTS
 version is unreliable.
 
-The LTS support is arbitrary chosen by this overlay.  Alternatively, you may use
+* The LTS support is arbitrary chosen by this overlay.  Alternatively, you may use
 the EOL date as your preferred metric.  U22, D12, U24, D13 are considered LTS by
 AI.
 
