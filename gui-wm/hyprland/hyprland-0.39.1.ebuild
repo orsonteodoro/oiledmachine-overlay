@@ -29,8 +29,6 @@ else
 	SRC_URI="
 https://github.com/hyprwm/${PN^}/releases/download/v${PV}/source-v${PV}.tar.gz
 	-> ${P}.gh.tar.gz
-https://github.com/hyprwm/Hyprland/commit/28c85619243e6320e75d7abcfe8244fa99d054dd.patch
-	-> hyprland-commit-28c8561.patch
 	"
 fi
 
@@ -99,7 +97,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/hyprland-commit-28c8561.patch"
 )
 
 pkg_setup() {
