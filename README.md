@@ -233,8 +233,9 @@ per-package environment changes to CC/CXX did not resolve the issue.  For
 systemwide upgrades and downgrades of the default libstdc++, the parallel
 package builds should be disabled.  After the system has been sanitized with
 the same libstdc++, you can re-enable parallel package builds.  Per-package
-changes to CC/CXX should be removed for ebuild packages that received
-libstdcxx-slot treatment.
+changes to CC/CXX using gcc override should be removed for ebuild packages
+that received libstdcxx-slot treatment to avoid inconsistency.  Changes to
+CC/CXX using clang can still remain.
 
 | USE flag       | LTS* | Indirect libstdc++ compatibility                                                                                              | Default C++   |
 |----------------|------|-------------------------------------------------------------------------------------------------------------------------------|---------------|
