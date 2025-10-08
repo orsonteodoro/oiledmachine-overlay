@@ -19,10 +19,9 @@ EAPI=8
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
-	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"

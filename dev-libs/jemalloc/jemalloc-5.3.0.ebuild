@@ -14,10 +14,9 @@ EAPI=8
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
-	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, ROCm-6.2, ROCm-6.3, ROCm-6.4, ROCm-7.0, U24 (default)
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"

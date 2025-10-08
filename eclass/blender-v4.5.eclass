@@ -71,12 +71,11 @@ CPU_FLAGS_3_3=(
 
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
 	# Only the pipeline_config.yaml equivalent listed
 	# CI uses Rocky 8.10 (GCC 10-14, LLVM 17-19)
-	"gcc_slot_14_3" # CUDA-12.8, U24
-	"gcc_slot_13_4" # ROCm-6.3, ROCm-6.4, U24 (default)
-	"gcc_slot_11_5" # CY2025 is >= GCC 11.2.1, CUDA-11.8, U22 (default)
+	${LIBSTDCXX_COMPAT_GPU[@]}
 )
 
 # For max and min package versions see link below. \

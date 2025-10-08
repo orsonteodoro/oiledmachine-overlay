@@ -111,7 +111,22 @@ LIBSTDCXX_COMPAT_STDCXX11=(
         "gcc_slot_14_3" # Support -std=c++11
 )
 
-# GCC_COMPAT template for -std=c++17 projects, compiler default
+# GCC_COMPAT template for -std=c++14 projects
+#
+# Example:
+#
+# GCC_COMPAT=(
+#     ${LIBSTDCXX_COMPAT_STDCXX14[@]}
+# )
+#
+LIBSTDCXX_COMPAT_STDCXX14=(
+	"gcc_slot_11_5" # Support -std=c++14
+        "gcc_slot_12_5" # Support -std=c++14
+        "gcc_slot_13_4" # Support -std=c++14
+        "gcc_slot_14_3" # Support -std=c++14
+)
+
+# GCC_COMPAT template for -std=c++17 projects or the compiler default
 #
 # Example:
 #

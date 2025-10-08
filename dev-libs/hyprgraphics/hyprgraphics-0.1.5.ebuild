@@ -3,8 +3,10 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+
 GCC_COMPAT=(
-	"gcc_slot_14_3" # Minimal slot for -std=c++26
+	${LIBSTDCXX_COMPAT_STDCXX26[@]}
 )
 
 inherit cmake libstdcxx-slot

@@ -13,11 +13,9 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF DOS HO IO MC OOBR OOBW SO UAF UM"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++17
-	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_4" # Support -std=c++17
-	"gcc_slot_14_3" # Support -std=c++17
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/icu-config"

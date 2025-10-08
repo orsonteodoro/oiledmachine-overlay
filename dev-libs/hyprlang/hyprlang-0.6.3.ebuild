@@ -3,6 +3,8 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+
 GCC_COMPAT=(
 	"gcc_slot_14_3" # Support -std=c++23, required by #include <print>
 )

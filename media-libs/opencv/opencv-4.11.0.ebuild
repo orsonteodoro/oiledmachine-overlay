@@ -199,11 +199,9 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_sse4_2:SSE4_2"
 	"cpu_flags_x86_ssse3:SSSE3"
 )
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++11
-	"gcc_slot_12_5" # Support -std=c++11
-	"gcc_slot_13_4" # Support -std=c++11
-	"gcc_slot_14_3" # Support -std=c++11
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 GSTREAMER_PV="1.16.2"
 KLEIDICV_PV="0.1.0"								# See https://github.com/opencv/opencv/blob/4.10.0/3rdparty/kleidicv/CMakeLists.txt

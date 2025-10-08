@@ -6,11 +6,9 @@ EAPI=8
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++17
-	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_4" # Support -std=c++17
-	"gcc_slot_14_3" # Support -std=c++17
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit cflags-hardened libstdcxx-slot qt6-build

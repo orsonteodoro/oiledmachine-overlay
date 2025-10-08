@@ -5,11 +5,9 @@ EAPI=8
 
 LLVM_COMPAT=( {17..20} ) # see .cmake.conf for minimum
 LLVM_OPTIONAL=1
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++17
-	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_4" # Support -std=c++17
-	"gcc_slot_14_3" # Support -std=c++17
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 # behaves very badly when qttools is not already installed, also

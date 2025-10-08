@@ -8,11 +8,9 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++17
-	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_4" # Support -std=c++17
-	"gcc_slot_14_3" # Support -std=c++17
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 PYTHON_COMPAT=( python3_{11..14} )

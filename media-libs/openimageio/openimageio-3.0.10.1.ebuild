@@ -9,10 +9,9 @@ EAPI=8
 # https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
 # For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
-	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
