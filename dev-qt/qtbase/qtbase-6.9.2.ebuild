@@ -10,9 +10,15 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS OOBA"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 
 QT6_HAS_STATIC_LIBS=1
-inherit cflags-hardened flag-o-matic qt6-build toolchain-funcs
+inherit cflags-hardened flag-o-matic libstdcxx-slot qt6-build toolchain-funcs
 
 DESCRIPTION="Cross-platform application development framework"
 
@@ -68,10 +74,14 @@ COMMON_DEPEND="
 	zstd? ( app-arch/zstd:= )
 
 	app-crypt/libb2
+	dev-libs/double-conversion[${LIBSTDCXX_USEDEP}]
 	dev-libs/double-conversion:=
 	dev-libs/glib:2
 	dev-libs/libpcre2:=[pcre16,unicode(+)]
-	icu? ( dev-libs/icu:= )
+	icu? (
+		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu:=
+	)
 	journald? ( sys-apps/systemd )
 
 	dbus? ( sys-apps/dbus )
@@ -120,7 +130,10 @@ COMMON_DEPEND="
 		libproxy? ( net-libs/libproxy )
 	)
 	sql? (
-		mysql? ( dev-db/mysql-connector-c:= )
+		mysql? (
+			dev-db/mysql-connector-c[${LIBSTDCXX_USEDEP}]
+			dev-db/mysql-connector-c:=
+		)
 		oci8? ( dev-db/oracle-instantclient:=[sdk] )
 		odbc? ( dev-db/unixODBC )
 		postgres? ( dev-db/postgresql:* )
@@ -180,7 +193,10 @@ DEPEND="
 BDEPEND="zstd? ( app-arch/libarchive[zstd] )" #910392
 PDEPEND="
 	nls? ( ~dev-qt/qttranslations-${PV}:6 )
-	wayland? ( ~dev-qt/qtwayland-${PV}:6 )
+	wayland? (
+		~dev-qt/qtwayland-${PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtwayland:=
+	)
 "
 
 PATCHES=(
@@ -191,6 +207,10 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-6.8.2-cross.patch
 	"${FILESDIR}"/${PN}-6.9.0-no-direct-extern-access.patch
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_prepare() {
 	qt6-build_src_prepare

@@ -6,9 +6,15 @@ EAPI=8
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 
 QT6_HAS_STATIC_LIBS=1
-inherit cflags-hardened flag-o-matic qt6-build
+inherit cflags-hardened flag-o-matic libstdcxx-slot qt6-build
 
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
@@ -30,7 +36,8 @@ REQUIRED_USE="
 
 # dlopen/dbus: pipewire
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[concurrent,gui,network,opengl=,vulkan=,widgets]
+	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},concurrent,gui,network,opengl=,vulkan=,widgets]
+	dev-qt/qtbase:=
 	alsa? (
 		!pulseaudio? ( media-libs/alsa-lib )
 	)
@@ -60,8 +67,10 @@ RDEPEND="
 	)
 	pulseaudio? ( media-libs/libpulse )
 	qml? (
-		~dev-qt/qtdeclarative-${PV}:6
-		~dev-qt/qtquick3d-${PV}:6
+		~dev-qt/qtdeclarative-${PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtdeclarative:=
+		~dev-qt/qtquick3d-${PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtquick3d:=
 	)
 "
 DEPEND="
@@ -70,7 +79,10 @@ DEPEND="
 	v4l? ( sys-kernel/linux-headers )
 	vulkan? ( dev-util/vulkan-headers )
 "
-BDEPEND="~dev-qt/qtshadertools-${PV}:6"
+BDEPEND="
+	~dev-qt/qtshadertools-${PV}:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtshadertools:=
+"
 
 CMAKE_SKIP_TESTS=(
 	# unimportant and expects all backends to be available (bug #928420)
@@ -103,6 +115,10 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-6.7.3-eigen-ppc-no-vsx.patch
 	"${FILESDIR}"/${PN}-6.8.1-qversionnumber.patch
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	cflags-hardened_append

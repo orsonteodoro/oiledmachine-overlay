@@ -9,9 +9,15 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 
 PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened check-reqs flag-o-matic multiprocessing optfeature
+inherit cflags-hardened check-reqs flag-o-matic libstdcxx-slot multiprocessing optfeature
 inherit prefix python-any-r1 qt6-build toolchain-funcs
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
@@ -35,6 +41,7 @@ REQUIRED_USE="
 
 # dlopen: krb5, libva, pciutils
 RDEPEND="
+	app-arch/snappy[${LIBSTDCXX_USEDEP}]
 	app-arch/snappy:=
 	dev-libs/expat
 	dev-libs/libevent:=
@@ -42,8 +49,10 @@ RDEPEND="
 	dev-libs/libxslt
 	dev-libs/nspr
 	dev-libs/nss
-	~dev-qt/qtbase-${PV}:6[accessibility=,gui,opengl=,vulkan?,widgets?]
-	~dev-qt/qtdeclarative-${PV}:6[widgets?]
+	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,vulkan?,widgets?]
+	dev-qt/qtbase:=
+	~dev-qt/qtdeclarative-${PV}:6[${LIBSTDCXX_USEDEP},widgets?]
+	dev-qt/qtdeclarative:=
 	~dev-qt/qtwebchannel-${PV}:6[qml?]
 	media-libs/fontconfig
 	media-libs/freetype
@@ -72,7 +81,10 @@ RDEPEND="
 	x11-libs/libxkbcommon
 	x11-libs/libxkbfile
 	alsa? ( media-libs/alsa-lib )
-	designer? ( ~dev-qt/qttools-${PV}:6[designer] )
+	designer? (
+		~dev-qt/qttools-${PV}:6[${LIBSTDCXX_USEDEP},designer]
+		dev-qt/qttools:=
+	)
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6 )
 	kerberos? ( virtual/krb5 )
 	opengl? ( media-libs/libglvnd[X] )
@@ -81,7 +93,10 @@ RDEPEND="
 		dev-libs/glib:2
 		media-video/pipewire:=
 	)
-	system-icu? ( dev-libs/icu:= )
+	system-icu? (
+		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu:=
+	)
 	vaapi? ( media-libs/libva:=[X] )
 "
 DEPEND="

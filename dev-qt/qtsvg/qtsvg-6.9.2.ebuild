@@ -6,8 +6,14 @@ EAPI=8
 CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 
-inherit cflags-hardened qt6-build toolchain-funcs
+inherit cflags-hardened libstdcxx-slot qt6-build toolchain-funcs
 
 DESCRIPTION="SVG rendering library for the Qt6 framework"
 
@@ -16,10 +22,15 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[gui,widgets]
+	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},gui,widgets]
+	dev-qt/qtbase:=
 	sys-libs/zlib:=
 "
 DEPEND="${RDEPEND}"
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	cflags-hardened_append

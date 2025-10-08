@@ -8,13 +8,19 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 
 PYTHON_COMPAT=( python3_{11..14} )
 QT6_HAS_STATIC_LIBS=1
 # behaves very badly when qtdeclarative is not already installed, also
 # other more minor issues (installs junk, sandbox/offscreen issues)
 QT6_RESTRICT_TESTS=1
-inherit cflags-hardened python-any-r1 qt6-build
+inherit cflags-hardened libstdcxx-slot python-any-r1 qt6-build
 
 DESCRIPTION="Qt Declarative (Quick 2)"
 
@@ -25,9 +31,13 @@ fi
 IUSE="accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
+	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
+	dev-qt/qtbase:=
 	qmlls? ( ~dev-qt/qtlanguageserver-${PV}:6 )
-	svg? ( ~dev-qt/qtsvg-${PV}:6 )
+	svg? (
+		~dev-qt/qtsvg-${PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtsvg:=
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -35,12 +45,17 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	~dev-qt/qtshadertools-${PV}:6
+	~dev-qt/qtshadertools-${PV}:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtshadertools:=
 "
 
 PATCHES=(
 	"${FILESDIR}"/${P}-QTBUG-139626.patch
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	cflags-hardened_append
