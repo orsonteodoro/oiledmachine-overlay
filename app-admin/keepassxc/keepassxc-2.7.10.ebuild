@@ -6,12 +6,18 @@ EAPI=8
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 PSL_COMMIT="c38a2f8e8862ad65d91af25dee90002c61329953" # Jul 9, 2025
 QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
 
-inherit cflags-hardened cmake flag-o-matic toolchain-funcs virtualx xdg
+inherit cflags-hardened cmake flag-o-matic libstdcxx-slot toolchain-funcs virtualx xdg
 
 # Time to convert to Qt6
 # patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
@@ -91,7 +97,8 @@ REQUIRED_USE="
 "
 RDEPEND="
 	app-crypt/argon2:=
-	dev-libs/botan:3=
+	dev-libs/botan:3[${LIBSTDCXX_USEDEP}]
+	dev-libs/botan:=
 	media-gfx/qrencode:=
 	sys-kernel/mitigate-id
 	sys-libs/readline:0=
@@ -113,11 +120,15 @@ RDEPEND="
 		)
 	)
 	qt6? (
-		>=dev-qt/qt5compat-${QT6_PV}:6[gui]
-		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,X?]
-		>=dev-qt/qtsvg-${QT6_PV}:6
+		>=dev-qt/qt5compat-${QT6_PV}:6[${LIBSTDCXX_USEDEP},gui]
+		dev-qt/qt5compat:=
+		>=dev-qt/qtbase-${QT6_PV}:6[${LIBSTDCXX_USEDEP},concurrent,dbus,gui,network,wayland?,X?]
+		dev-qt/qtbase:=
+		>=dev-qt/qtsvg-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtsvg:=
 		wayland? (
-			>=dev-qt/qtwayland-${QT6_PV}:6
+			>=dev-qt/qtwayland-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+			dev-qt/qtwayland:=
 		)
 	)
 	X? (
@@ -151,7 +162,8 @@ BDEPEND="
 		>=dev-qt/linguist-tools-${QT5_PV}:5
 	)
 	qt6? (
-		>=dev-qt/qttools-${QT6_PV}:6[linguist]
+		>=dev-qt/qttools-${QT6_PV}:6[${LIBSTDCXX_USEDEP},linguist]
+		dev-qt/qttools:=
 		X? (
 			virtual/pkgconfig
 		)
@@ -262,6 +274,7 @@ pkg_setup() {
 	if ver_test $(gcc-major-version) -lt "13" ; then
 ewarn "You must switch your gcc to 13 to avoid build time error(s)."
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
