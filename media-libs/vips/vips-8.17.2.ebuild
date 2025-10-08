@@ -25,6 +25,10 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_ssse3"
 )
 GCC_PV="14"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
 LIBJPEG_TURBO_PV="2.1.2"
 LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -37,7 +41,7 @@ SO_R=1
 SO_A=19
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
-inherit cflags-hardened check-compiler-switch flag-o-matic llvm meson-multilib multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic libstdcxx-slot llvm meson-multilib multilib-minimal
 inherit python-r1 toolchain-funcs vala
 
 KEYWORDS="~amd64 ~arm64"
@@ -176,14 +180,16 @@ RDEPEND+="
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
 	highway? (
-		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		>=dev-cpp/highway-0.16.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		cpu_flags_x86_avx10_2? (
-			>=dev-cpp/highway-1.3.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+			>=dev-cpp/highway-1.3.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		)
+		dev-cpp/highway:=
 	)
 	imagemagick? (
 		!graphicsmagick? (
-			>=media-gfx/imagemagick-6.9.11.60[cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
+			>=media-gfx/imagemagick-6.9.11.60[${LIBSTDCXX_USEDEP},cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
+			media-gfx/imagemagick:=
 			avif? (
 				media-gfx/imagemagick[heif]
 			)
@@ -211,7 +217,8 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.11.0[${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.11.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/libjxl:=
 	)
 	lcms? (
 		>=media-libs/lcms-2.12[${MULTILIB_USEDEP}]
@@ -223,7 +230,8 @@ RDEPEND+="
 		media-libs/nifti_clib[${MULTILIB_USEDEP}]
 	)
 	openexr? (
-		>=media-libs/openexr-2.5.7[${MULTILIB_USEDEP}]
+		>=media-libs/openexr-2.5.7[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/openexr:=
 	)
 	openslide? (
 		>=media-libs/openslide-3.4.0[${MULTILIB_USEDEP}]
@@ -241,7 +249,8 @@ RDEPEND+="
 		>=x11-libs/pango-1.50.6[${MULTILIB_USEDEP}]
 	)
 	poppler? (
-		>=app-text/poppler-22.02.0[${MULTILIB_USEDEP},cairo,introspection]
+		>=app-text/poppler-22.02.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cairo,introspection]
+		app-text/poppler:=
 	)
 	svg? (
 		>=gnome-base/librsvg-2.52.5[${MULTILIB_USEDEP}]
@@ -276,9 +285,12 @@ gen_llvm_bdepend()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				llvm-core/lld:${s}
-				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/llvm:=
 				fuzz-testing? (
 					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
 				)
@@ -296,13 +308,18 @@ gen_llvm_test_bdepend()
 				!fuzz-testing? (
 					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 				)
-				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				llvm-core/lld:${s}
-				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/llvm:=
 				fuzz-testing? (
 					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
-					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},libfuzzer,asan,ubsan]
+					llvm-runtimes/compiler-rt-sanitizers:=
+					llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+					llvm-runtimes/openmp:=
 				)
 			)
 		"
@@ -418,6 +435,7 @@ eerror
 	if use test || tc-is-clang ; then
 		multilib_foreach_abi setup_abi
 	fi
+	libstdcxx-slot_verify
 }
 
 _remove_avx() {
