@@ -10,7 +10,7 @@ GCC_COMPAT=(
 	# It may be possible to build Clang 15 with GCC 11 then build hyprland with Clang 15.
 	"gcc_slot_11_5" # Support -std=c++23 without breaking systemwide CUDA 11.x, CUDA 12.x
 	"gcc_slot_12_5" # Support -std=c++23 without breaking systemwide CUDA >=12.3, ROCm >=6.2
-	"gcc_slot_13_3" # Support -std=c++23 without breaking systemwide CUDA >=12.4, ROCm >=6.4
+	"gcc_slot_13_4" # Support -std=c++23 without breaking systemwide CUDA >=12.4, ROCm >=6.4
 	"gcc_slot_14_3" # Support -std=c++23 without breaking systemwide CUDA >=12.8
 )
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
