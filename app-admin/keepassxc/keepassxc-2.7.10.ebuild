@@ -7,10 +7,10 @@ CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++17
-	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_4" # Support -std=c++17
-	"gcc_slot_14_3" # Support -std=c++17
+	"gcc_slot_11_5" # Support -std=c++20
+	"gcc_slot_12_5" # Support -std=c++20
+	"gcc_slot_13_4" # Support -std=c++20
+	"gcc_slot_14_3" # Support -std=c++20
 )
 PSL_COMMIT="c38a2f8e8862ad65d91af25dee90002c61329953" # Jul 9, 2025
 QT5_PV="5.2.0"
