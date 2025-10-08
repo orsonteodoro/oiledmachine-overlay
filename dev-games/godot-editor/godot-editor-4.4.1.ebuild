@@ -376,9 +376,12 @@ gen_cdepend_lto_llvm() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}
-				llvm-core/lld:${s}
-				llvm-core/llvm:${s}
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:=
 			)
 		"
 	done
@@ -391,9 +394,12 @@ gen_clang_sanitizer() {
 		echo "
 			llvm_slot_${s}? (
 				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[${san_type}]
-				llvm-core/clang:${s}
-				llvm-core/llvm:${s}
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},${san_type}]
+				llvm-runtimes/compiler-rt-sanitizers:=
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:=
 			)
 		"
 	done
@@ -427,7 +433,8 @@ CDEPEND+="
 CDEPEND_CLANG="
 	clang? (
 		!lto? (
-			llvm-core/clang
+			llvm-core/clang[${LIBSTDCXX_USEDEP}]
+			llvm-core/clang:=
 		)
 		lto? (
 			$(gen_cdepend_lto_llvm)
@@ -533,7 +540,8 @@ DEPEND+="
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}
 	)
 	system-icu? (
-		>=dev-libs/icu-${ICU_PV}
+		>=dev-libs/icu-${ICU_PV}[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu:=
 	)
 	system-libogg? (
 		>=media-libs/libogg-${LIBOGG_PV}
@@ -560,7 +568,8 @@ DEPEND+="
 		>=media-libs/msdfgen-${MSDFGEN_PV}
 	)
 	system-openxr? (
-		>=media-libs/openxr-${OPENXR_PV}
+		>=media-libs/openxr-${OPENXR_PV}[${LIBSTDCXX_USEDEP}]
+		media-libs/openxr:=
 	)
 	system-pcre2? (
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
