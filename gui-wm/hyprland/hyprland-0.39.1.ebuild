@@ -57,6 +57,12 @@ RDEPEND="
 	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP}]
 	dev-cpp/tomlplusplus:=
 	>=dev-libs/hyprlang-0.3.2[${LIBSTDCXX_USEDEP}]
+	gcc_slot_11_5? (
+		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
+	)
+	gcc_slot_12_5? (
+		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
+	)
 	dev-libs/hyprlang:=
 	>=dev-libs/libinput-1.20.0:=
 	>=dev-libs/udis86-1.7.2
@@ -74,12 +80,6 @@ RDEPEND="
 	>=dev-libs/glib-2.72.1:2
 	>=sys-apps/util-linux-2.37.2
 	>=sys-apps/pciutils-3.7.0
-	gcc_slot_11_5? (
-		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
-	)
-	gcc_slot_12_5? (
-		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
-	)
 	X? (
 		>=x11-libs/libxcb-1.14:0=
 		>=x11-libs/xcb-util-wm-0.4.1
