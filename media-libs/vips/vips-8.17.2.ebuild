@@ -129,18 +129,22 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			media-libs/libheif:=
 		)
 		heic? (
-			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			media-libs/libheif:=
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			media-libs/libheif:=
 		)
 		heic? (
-			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			media-libs/libheif:=
 		)
 	)
 "
