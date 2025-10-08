@@ -26,10 +26,16 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_1"
 	"cpu_flags_x86_sse4_2"
 )
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++11
+	"gcc_slot_12_5" # Support -std=c++11
+	"gcc_slot_13_4" # Support -std=c++11
+	"gcc_slot_14_3" # Support -std=c++11
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 
-inherit cflags-hardened check-compiler-switch edo flag-o-matic multiprocessing python-r1
+inherit cflags-hardened check-compiler-switch edo flag-o-matic libstdcxx-slot multiprocessing python-r1
 inherit toolchain-funcs verify-sig
 
 # We don't list 32-bit because of unpatched vulnerabilities in those arches.
@@ -70,6 +76,7 @@ REQUIRED_USE="
 # NOTE: Boost is needed at runtime too for the CLI tool.
 DEPEND="
 	boost? (
+		dev-libs/boost[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
 	)
 	bzip2? (
@@ -122,6 +129,7 @@ python_check_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python_setup
+	libstdcxx-slot_verify
 }
 
 src_configure() {

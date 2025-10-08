@@ -6,10 +6,16 @@ EAPI=8
 MY_P="Botan-${PV}"
 
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++20
+	"gcc_slot_12_5" # Support -std=c++20
+	"gcc_slot_13_4" # Support -std=c++20
+	"gcc_slot_14_3" # Support -std=c++20
+)
 PYTHON_COMPAT=( python3_{11..13} )
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/botan.asc
 
-inherit cflags-hardened check-compiler-switch edo dot-a flag-o-matic multiprocessing ninja-utils python-r1 toolchain-funcs verify-sig
+inherit cflags-hardened check-compiler-switch edo dot-a flag-o-matic libstdcxx-slot multiprocessing ninja-utils python-r1 toolchain-funcs verify-sig
 
 DESCRIPTION="C++ crypto library"
 HOMEPAGE="https://botan.randombit.net/"
@@ -33,7 +39,10 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 # NOTE: Boost is needed at runtime too for the CLI tool.
 DEPEND="
-	boost? ( dev-libs/boost:= )
+	boost? (
+		dev-libs/boost[${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
+	)
 	bzip2? ( >=app-arch/bzip2-1.0.5:= )
 	lzma? ( app-arch/xz-utils:= )
 	python? ( ${PYTHON_DEPS} )
@@ -66,6 +75,7 @@ python_check_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python_setup
+	libstdcxx-slot_verify
 }
 
 pkg_pretend() {
