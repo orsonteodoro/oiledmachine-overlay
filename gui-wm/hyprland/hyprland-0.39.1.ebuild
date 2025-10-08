@@ -9,10 +9,10 @@ inherit libstdcxx-compat
 
 GCC_COMPAT=(
 	# It requires std::unreachable() from either GCC >=13 or Clang >=15.
-	# It may be possible to build Clang 15 with GCC 11 then build hyprland with Clang 15.
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_0(-)" # Skip placeholder
 
 inherit cflags-hardened check-compiler-switch libstdcxx-slot meson toolchain-funcs
 
@@ -53,15 +53,9 @@ HYPRPM_RDEPEND="
 # util-linux missing in build files
 RDEPEND="
 	${HYPRPM_RDEPEND}
-	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
 	>=dev-libs/hyprlang-0.3.2[${LIBSTDCXX_USEDEP}]
-	gcc_slot_11_5? (
-		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
-	)
-	gcc_slot_12_5? (
-		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
-	)
 	dev-libs/hyprlang:=
 	>=dev-libs/libinput-1.20.0:=
 	>=dev-libs/udis86-1.7.2

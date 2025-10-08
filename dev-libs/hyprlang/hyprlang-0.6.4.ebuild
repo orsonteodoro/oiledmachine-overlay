@@ -6,7 +6,7 @@ EAPI=8
 inherit libstdcxx-compat
 
 GCC_COMPAT=(
-	"gcc_slot_14_3" # Support -std=c++23, required by #include <print>
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
 
 inherit cmake libstdcxx-slot toolchain-funcs

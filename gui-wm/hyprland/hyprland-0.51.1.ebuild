@@ -12,6 +12,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX26[@]}
 )
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_0(-)" # Skip placeholder
 
 inherit cflags-hardened check-compiler-switch libstdcxx-slot meson toolchain-funcs
 
@@ -51,11 +52,11 @@ HYPRPM_RDEPEND="
 # util-linux was not mentoned in build files
 RDEPEND="
 	${HYPRPM_RDEPEND}
-	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
 	>=dev-libs/hyprlang-0.6.3[${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
-	>=dev-libs/hyprgraphics-0.1.6[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprgraphics-0.1.6[gcc_slot_15_2]
 	dev-libs/hyprgraphics:=
 	>=dev-libs/libinput-1.29.1:=
 	dev-libs/re2[${LIBSTDCXX_USEDEP}]

@@ -149,8 +149,13 @@ eerror "QA:  GCC_COMPAT must be defined"
 
 	IUSE="${IUSE} ${iuse}"
 	REQUIRED_USE="${REQUIRED_USE} ${required_use}"
-	LIBSTDCXX_USEDEP="${usedep:1}"
-	readonly LIBSTDCXX_USEDEP
+
+	if [[ "${LIBSTDCXX_USEDEP_SKIP}" == "1" ]] ; then
+	# Skip resolution but mark packages as having C++ version symbols.
+		LIBSTDCXX_USEDEP="gcc_slot_0(-)"
+	else
+		LIBSTDCXX_USEDEP="${usedep:1}"
+	fi
 }
 _libstdcxx_slot_set_globals
 unset -f _libstdcxx_slot_set_globals
