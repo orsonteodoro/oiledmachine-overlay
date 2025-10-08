@@ -78,7 +78,8 @@ RDEPEND="
 	sys-apps/util-linux
 	>=sys-apps/pciutils-3.10.0
 	qtutils? (
-		gui-libs/hyprland-qtutils
+		gui-libs/hyprland-qtutils[${LIBSTDCXX_USEDEP}]
+		gui-libs/hyprland-qtutils:=
 	)
 	X? (
 		>=x11-libs/libxcb-1.17.0:0=
