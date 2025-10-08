@@ -10,6 +10,12 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan"
 CFLAGS_HARDENED_USE_CASES="jit"
 CMAKE_MAKEFILE_GENERATOR="emake"
 FLATBUFFERS_PV="23.5.26"
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++11
+	"gcc_slot_12_5" # Support -std=c++11
+	"gcc_slot_13_4" # Support -std=c++11
+	"gcc_slot_14_3" # Support -std=c++11
+)
 GTEST_COMMIT="703bd9caab50b139428cea1aaff9974ebee5742e"
 LLVM_COMPAT=( {20..17} )
 MUNIT_COMMIT="da8f73412998e4f1adf1100dc187533a51af77fd"
@@ -24,7 +30,7 @@ WASM_C_API_COMMIT="b6dd1fb658a282c64b029867845bc50ae59e1497"
 WABT_PV="1.0.36"
 WEBASSEMBLY_TESTSUITE_COMMIT="f3f048661dc1686d556a27d522df901cb747ab4a"
 
-inherit cmake-multilib dep-prepare llvm multilib-build python-single-r1 pypi
+inherit cmake-multilib dep-prepare libstdcxx-slot llvm multilib-build python-single-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -93,9 +99,12 @@ gen_llvm_rdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[llvm_targets_WebAssembly,llvm_targets_X86]
-				llvm-core/lld:${s}[llvm_targets_WebAssembly,llvm_targets_X86]
-				llvm-core/llvm:${s}[llvm_targets_WebAssembly,llvm_targets_X86]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},llvm_targets_WebAssembly,llvm_targets_X86]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP},llvm_targets_WebAssembly,llvm_targets_X86]
+				llvm-core/lld:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},llvm_targets_WebAssembly,llvm_targets_X86]
+				llvm-core/llvm:=
 				llvm-runtimes/compiler-rt:${s}
 				arm? (
 					llvm-core/clang:${s}[llvm_targets_ARM]
@@ -145,7 +154,8 @@ RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_HEADERS_PV}
 	media-libs/vulkan-drivers
 	serialization? (
-		>=dev-libs/flatbuffers-23.5.26
+		>=dev-libs/flatbuffers-23.5.26[${LIBSTDCXX_USEDEP}]
+		dev-libs/flatbuffers:=
 	)
 "
 DEPEND+="
@@ -173,6 +183,7 @@ einfo "PATH=${PATH} (before)"
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 einfo "PATH=${PATH} (after)"
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
