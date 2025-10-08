@@ -99,6 +99,8 @@ LIBSTDCXX_COMPAT_LTS=(
 
 # GCC_COMPAT template for -std=c++98 projects
 #
+# Status:  Production ready
+#
 # Example:
 #
 # GCC_COMPAT=(
@@ -113,6 +115,8 @@ LIBSTDCXX_COMPAT_STDCXX98=(
 )
 
 # GCC_COMPAT template for -std=c++03 projects
+#
+# Status:  Production ready
 #
 # Example:
 #
@@ -129,6 +133,8 @@ LIBSTDCXX_COMPAT_STDCXX03=(
 
 # GCC_COMPAT template for -std=c++11 projects
 #
+# Status:  Production ready
+#
 # Example:
 #
 # GCC_COMPAT=(
@@ -143,6 +149,8 @@ LIBSTDCXX_COMPAT_STDCXX11=(
 )
 
 # GCC_COMPAT template for -std=c++14 projects
+#
+# Status:  Production ready
 #
 # Example:
 #
@@ -159,6 +167,11 @@ LIBSTDCXX_COMPAT_STDCXX14=(
 
 # GCC_COMPAT template for -std=c++17 projects or the compiler default
 #
+# Status:  Production ready
+#
+#    Missing feature count for core support for least common denominator:  0
+# Missing feature count for library support for least common denominator: -1
+#
 # Example:
 #
 # GCC_COMPAT=(
@@ -173,6 +186,11 @@ LIBSTDCXX_COMPAT_STDCXX17=(
 )
 
 # GCC_COMPAT template for -std=c++20 projects
+#
+# Status:  Non-production
+#
+#    Missing feature count for core support for least common denominator:  0
+# Missing feature count for library support for least common denominator:  1
 #
 # Example:
 #
@@ -189,6 +207,11 @@ LIBSTDCXX_COMPAT_STDCXX20=(
 
 # GCC_COMPAT template for -std=c++23 projects
 #
+# Status:  Non-production
+#
+#    Missing feature count for core support for least common denominator:   2
+# Missing feature count for library support for least common denominator:  14
+#
 # Example:
 #
 # GCC_COMPAT=(
@@ -201,6 +224,11 @@ LIBSTDCXX_COMPAT_STDCXX23=(
 )
 
 # GCC_COMPAT template for -std=c++26 projects
+#
+# Status:  Non-production
+#
+#    Missing feature count for core support for least common denominator:  10
+# Missing feature count for library support for least common denominator:  54
 #
 # Example:
 #
