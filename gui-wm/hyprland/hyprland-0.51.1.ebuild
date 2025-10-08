@@ -137,10 +137,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	${CC} --version || die
 
-	if tc-is-clang && ! use clang ; then
-eerror "Enable the clang USE flag"
-		die
-	fi
 	libstdcxx-slot_verify
 }
 
