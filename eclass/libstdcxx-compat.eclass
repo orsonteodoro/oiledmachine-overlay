@@ -12,6 +12,37 @@
 if [[ -z ${_LIBSTDCXX_COMPAT_ECLASS} ]] ; then
 _LIBSTDCXX_COMPAT_ECLASS=1
 
+#
+# Ebuild developer draft/tentative plan for ebuilds.
+#
+# There are 3 identified cases for *DEPENDs:
+#
+# 1. LTS only packages
+# 2. Pure non-LTS
+# 3. Mixed LTS with non LTS
+#
+# LTS packages are defined as -std=c++17 or earlier.
+# Non-LTS packages are defined as -std=c++20 or later.
+#
+# Goals:
+#
+# 1. LTS packages are consistently built with the chosen GLIBCXX_ version.
+# 2. No versioned symbols errors.
+# 3. LTS packages are always unaffected by experimental C++ packages.
+# 4. Isolate rebellious/subversive/disposable bleeding edge C++ standard packages from conforming higher quality LTS packages.
+# 5. Fixing the build order.  LTS C++ standard packages get built first, experimental c++ standard packages afterwards.
+# 6. Verification that the LTS packages are not contaminated with experimental C++ settings.
+#    a.  If contaminated, then force version limit or disable feature.
+#
+# Proposed solution for USE flag *DEPENDs:
+#
+# 1.  LTS package case:  Use USEDEP without hesitation in *DEPENDs.
+# 2.  Pure non-LTS case:  Use USEDEP without hesitation in *DEPENDs.
+# 3.  Mixed LTS with non LTS:
+#     a.  If the current package is non-LTS:  LTS packages get USEDEP_LTS with placeholder, while non-LTS get USEDEP.
+#     b.  If the current package is LTS:  LTS packages get USEDEP with placeholder, while non-LTS get USEDEP_DEV with placeholder.
+#
+
 # GCC_COMPAT template for ROCm based apps/libs with latest security update
 #
 # Example:
@@ -41,6 +72,8 @@ LIBSTDCXX_COMPAT_CUDA=(
 )
 
 # GCC_COMPAT template for CUDA 11.x based apps/libs
+#
+# Status:  Used in production
 #
 # Example:
 #
@@ -84,6 +117,8 @@ LIBSTDCXX_COMPAT_GPU=(
 
 # GCC_COMPAT template for desktop based LTS distros
 #
+# Status:  Production ready
+#
 # Example:
 #
 # GCC_COMPAT=(
@@ -99,7 +134,7 @@ LIBSTDCXX_COMPAT_LTS=(
 
 # GCC_COMPAT template for -std=c++98 projects
 #
-# Status:  Production ready
+# Status:  Used in production
 #
 # Example:
 #
@@ -116,7 +151,7 @@ LIBSTDCXX_COMPAT_STDCXX98=(
 
 # GCC_COMPAT template for -std=c++03 projects
 #
-# Status:  Production ready
+# Status:  Used in production
 #
 # Example:
 #
@@ -133,7 +168,7 @@ LIBSTDCXX_COMPAT_STDCXX03=(
 
 # GCC_COMPAT template for -std=c++11 projects
 #
-# Status:  Production ready
+# Status:  Used in production
 #
 # Example:
 #
@@ -150,7 +185,7 @@ LIBSTDCXX_COMPAT_STDCXX11=(
 
 # GCC_COMPAT template for -std=c++14 projects
 #
-# Status:  Production ready
+# Status:  Used in production
 #
 # Example:
 #
@@ -167,10 +202,10 @@ LIBSTDCXX_COMPAT_STDCXX14=(
 
 # GCC_COMPAT template for -std=c++17 projects or the compiler default
 #
-# Status:  Production ready
+# Status:  Used in production
 #
 #    Missing feature count for core support for least common denominator:  0
-# Missing feature count for library support for least common denominator: -1
+# Missing feature count for library support for least common denominator:  1
 #
 # Example:
 #
@@ -185,9 +220,15 @@ LIBSTDCXX_COMPAT_STDCXX17=(
         "gcc_slot_14_3" # Support -std=c++17
 )
 
+#
+# Ebuild developer plan for ebuilds that mix LTS (<= -std=c++17) with non-LTS (> -std=c++17) C++ standards:
+#
+# The LTS packages get USEDEP_LTS but disjoint from non-LTS USEDEP.
+#
+
 # GCC_COMPAT template for -std=c++20 projects
 #
-# Status:  Non-production
+# Status:  Support is still in development
 #
 #    Missing feature count for core support for least common denominator:  0
 # Missing feature count for library support for least common denominator:  1
@@ -207,7 +248,7 @@ LIBSTDCXX_COMPAT_STDCXX20=(
 
 # GCC_COMPAT template for -std=c++23 projects
 #
-# Status:  Non-production
+# Status:  Support is still in development
 #
 #    Missing feature count for core support for least common denominator:   2
 # Missing feature count for library support for least common denominator:  14
@@ -225,7 +266,7 @@ LIBSTDCXX_COMPAT_STDCXX23=(
 
 # GCC_COMPAT template for -std=c++26 projects
 #
-# Status:  Non-production
+# Status:  Support is still in development
 #
 #    Missing feature count for core support for least common denominator:  10
 # Missing feature count for library support for least common denominator:  54
