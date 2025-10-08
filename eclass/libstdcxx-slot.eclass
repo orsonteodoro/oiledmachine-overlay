@@ -27,6 +27,10 @@ _LIBSTDCXX_SLOT_ECLASS=1
 #	"gcc_slot_11_5" # CY2025 is GCC 11.2.1
 # )
 #
+# # Sometimes the IUSE changes through the eclass does not work.  Force it in
+# # the ebuild to use the USE flag it in RDEPEND.
+#
+# IUSE+=" ${GCC_COMPAT[@]}"
 # inherit libstdcxx-slot
 #
 # RDEPEND=(
@@ -119,73 +123,41 @@ _ALL_GCC_COMPAT=(
 	"8_1"
 )
 
-# @FUNCTION: libstdcxx-slot_generate_iuse
+# @FUNCTION: _libstdcxx_slot_set_globals
 # @DESCRIPTION:
-# Generate IUSE string
-libstdcxx-slot_generate_iuse() {
+# Init globals
+_libstdcxx_slot_set_globals() {
 	if [[ -z "${GCC_COMPAT}" ]] ; then
 eerror "QA:  GCC_COMPAT must be defined"
 		die
 	fi
-	local t=""
+
+	local iuse=""
+	local usedep=""
 	local x
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
-			t+=" gcc_slot_${x}"
+			iuse="${iuse} gcc_slot_${x}"
+			usedep="${usedep},gcc_slot_${x}(-)?"
 		fi
 	done
-	echo "${t}"
-}
-
-
-# @FUNCTION: libstdcxx-slot_generate_iuse
-# @DESCRIPTION:
-# Generate REQUIRED_USE string
-libstdcxx-slot_generate_required_use() {
-	if [[ -z "${GCC_COMPAT}" ]] ; then
-eerror "QA:  GCC_COMPAT must be defined"
-		die
-	fi
-	local t=()
-	local x
-	for x in ${_ALL_GCC_COMPAT[@]} ; do
-		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
-			t+=" gcc_slot_${x}"
-		fi
-	done
-	echo "
+	required_use="
 		^^ (
-			${t[@]}
+			${iuse}
 		)
 	"
-}
 
-libstdcxx-slot_generate_usedep() {
-	if [[ -z "${GCC_COMPAT}" ]] ; then
-eerror "QA:  GCC_COMPAT must be defined"
-		die
-	fi
-	local t=()
-	local x
-	for x in ${_ALL_GCC_COMPAT[@]} ; do
-		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
-			t+=",gcc_slot_${x}(-)?"
-		fi
-	done
-	echo "${t:1}"
-}
-
-_libstdcxx_slot_set_globals() {
-	IUSE+=$(libstdcxx-slot_generate_iuse)
-	REQUIRED_USE+=$(libstdcxx-slot_generate_required_use)
-	LIBSTDCXX_USEDEP=$(libstdcxx-slot_generate_usedep)
-	export IUSE
-	export REQUIRED_USE
-	export LIBSTDCXX_USEDEP
+	IUSE="${IUSE} ${iuse}"
+	REQUIRED_USE="${REQUIRED_USE} ${required_use}"
+	LIBSTDCXX_USEDEP="${usedep:1}"
+	readonly LIBSTDCXX_USEDEP
 }
 _libstdcxx_slot_set_globals
 unset -f _libstdcxx_slot_set_globals
 
+# @FUNCTION: _switch_gcc_to_continue_message
+# @DESCRIPTION:
+# Request indirect libstdc++ changes message
 _switch_gcc_to_continue_message() {
 	local slot="${1}"
 eerror

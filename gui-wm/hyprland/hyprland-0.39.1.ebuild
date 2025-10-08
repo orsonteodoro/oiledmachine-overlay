@@ -35,10 +35,9 @@ fi
 LICENSE="BSD"
 SLOT="0"
 IUSE="
+${GCC_COMPAT[@]}
 legacy-renderer systemd X
 ebuild_revision_13
-"
-REQUIRED_USE="
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -75,6 +74,12 @@ RDEPEND="
 	>=dev-libs/glib-2.72.1:2
 	>=sys-apps/util-linux-2.37.2
 	>=sys-apps/pciutils-3.7.0
+	gcc_slot_11_5? (
+		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
+	)
+	gcc_slot_12_5? (
+		<dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
+	)
 	X? (
 		>=x11-libs/libxcb-1.14:0=
 		>=x11-libs/xcb-util-wm-0.4.1
