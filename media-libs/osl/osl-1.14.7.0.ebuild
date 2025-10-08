@@ -15,14 +15,6 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_COMPAT=( {19..11} ) # clang is 16 supported but not llvm 16
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-OPENEXR_V2_PV=(
-	# openexr:imath
-	"2.5.11:2.5.11"
-	"2.5.10:2.5.10"
-	"2.5.9:2.5.9"
-	"2.5.8:2.5.8"
-	"2.5.7:2.5.7"
-)
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -67,8 +59,12 @@ CPU_FEATURES=(
 	# It goes after X86_CPU_FEATURES.
 	${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 
-inherit check-compiler-switch cmake cuda flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic libstdcxx-slot llvm multilib-minimal python-single-r1 toolchain-funcs
 
 S="${WORKDIR}/OpenShadingLanguage-${PV}"
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -146,12 +142,16 @@ gen_llvm_depend()
 		echo "
 			llvm_slot_${s}? (
 				!cuda? (
-					llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-					llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+					llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+					llvm-core/clang:=
+					llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+					llvm-core/llvm:=
 				)
 				cuda? (
-					llvm-core/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
-					llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+					llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},llvm_targets_NVPTX]
+					llvm-core/clang:=
+					llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},llvm_targets_NVPTX]
+					llvm-core/llvm:=
 				)
 			)
 		"
@@ -163,9 +163,12 @@ gen_opx_llvm_rdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
-				llvm-core/lld:${s}
-				llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				llvm-core/llvm:=
 			)
 		"
 	done
@@ -176,9 +179,12 @@ gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				llvm-core/lld:${s}
-				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/llvm:=
 			)
 		"
 	done
@@ -191,22 +197,10 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}
+				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}
+				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
-			)
-		"
-	done
-	for row in ${OPENEXR_V2_PV[@]} ; do
-		local ilmbase_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}:=
-				media-libs/openexr:=
-				~media-libs/ilmbase-${ilmbase_pv}[${MULTILIB_USEDEP}]
-				media-libs/ilmbase:=
 			)
 		"
 	done
@@ -218,11 +212,11 @@ gen_openexr_pairs() {
 
 RDEPEND+="
 	(
-		>=media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP}]
+		>=media-libs/openimageio-2.5[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 		media-libs/openimageio:=
 	)
 	(
-		>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
+		>=dev-libs/boost-1.55[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/boost:=
 	)
 	(
@@ -230,14 +224,16 @@ RDEPEND+="
 		sys-libs/zlib:=
 	)
 	$(gen_llvm_depend)
-	>=dev-libs/pugixml-1.8[${MULTILIB_USEDEP}]
-	dev-libs/libfmt[${MULTILIB_USEDEP}]
+	>=dev-libs/pugixml-1.8[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/pugixml:=
+	dev-libs/libfmt[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/libfmt:=
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-8:=
 	)
 	optix? (
 		(
-			>=media-libs/openimageio-${OIIO_PV}[${PYTHON_SINGLE_USEDEP}]
+			>=media-libs/openimageio-${OIIO_PV}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 			media-libs/openimageio:=
 		)
 		>=dev-libs/optix-7.0
@@ -246,7 +242,8 @@ RDEPEND+="
 		)
 	)
 	partio? (
-		>=media-libs/partio-1.13.2
+		>=media-libs/partio-1.13.2[${LIBSTDCXX_USEDEP}]
+		media-libs/partio:=
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -261,10 +258,13 @@ RDEPEND+="
 		>=dev-qt/qtwidgets-${QT5_MIN}:5[X?]
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_MIN}:6[gui,wayland?,widgets,X?]
+		>=dev-qt/qtbase-${QT6_MIN}:6[${LIBSTDCXX_USEDEP},gui,wayland?,widgets,X?]
+		dev-qt/qtbase:=
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_MIN}:6[opengl]
-			>=dev-qt/qtwayland-${QT6_MIN}:6
+			>=dev-qt/qtdeclarative-${QT6_MIN}:6[${LIBSTDCXX_USEDEP},opengl]
+			dev-qt/qtdeclarative:=
+			>=dev-qt/qtwayland-${QT6_MIN}:6[${LIBSTDCXX_USEDEP}]
+			dev-qt/qtwayland:=
 		)
 	)
 	|| (
@@ -282,7 +282,8 @@ BDEPEND+="
 	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
 	test? (
 		$(python_gen_cond_dep '
-			>=media-libs/openimageio-'${OIIO_PV}'[truetype]
+			>=media-libs/openimageio-'${OIIO_PV}'['"${LIBSTDCXX_USEDEP},"'truetype]
+			media-libs/openimageio:=
 		')
 		cuda? (
 			>=dev-util/nvidia-cuda-toolkit-9:=
@@ -332,6 +333,7 @@ ewarn
 	python-single-r1_pkg_setup
 
 	llvm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
