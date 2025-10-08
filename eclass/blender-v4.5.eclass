@@ -1005,7 +1005,8 @@ RDEPEND+="
 		>=dev-libs/c-blosc-1.21.1[zlib]
 	)
 	openxr? (
-		>=media-libs/openxr-1.0.22
+		>=media-libs/openxr-1.0.22[${LIBSTDCXX_USEDEP}]
+		media-libs/openxr:=
 	)
 	optix? (
 		>=dev-libs/optix-7

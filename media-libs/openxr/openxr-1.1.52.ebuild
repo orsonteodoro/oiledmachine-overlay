@@ -8,11 +8,16 @@ EAPI=8
 MY_PN="OpenXR-SDK-Source"
 
 CMAKE_BUILD_TYPE="Release"
+GCC_COMPAT=(
+	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8
+	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3
+	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8
+)
 MESA_PV="22.0.1"
 PYTHON_COMPAT=( "python3_"{8..13} )
 VULKAN_PV="1.3.204.1"
 
-inherit cmake flag-o-matic python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
@@ -90,6 +95,11 @@ BDEPEND+="
 		>=sys-devel/gcc-11.2.0
 	)
 "
+
+pkg_setup() {
+	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	export CC=$(tc-getCC)
