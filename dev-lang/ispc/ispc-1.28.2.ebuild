@@ -160,7 +160,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.28.2-llvm.patch"
+	"${FILESDIR}/${PN}-1.28.2-llvm-v2.patch"
 )
 
 pkg_setup() {
