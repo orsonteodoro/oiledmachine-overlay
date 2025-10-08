@@ -144,7 +144,7 @@ LIBSTDCXX_COMPAT_ROCM=(
 #     ${LIBSTDCXX_COMPAT_CUDA[@]}
 # )
 #
-LIBSTDCXX_COMPAT_CUDA11=(
+LIBSTDCXX_COMPAT_CUDA=(
 	"gcc_slot_11_5" # Support CUDA 11.8
         "gcc_slot_12_5" # Support CUDA >= 12.3
         "gcc_slot_13_4" # Support CUDA >= 12.4
