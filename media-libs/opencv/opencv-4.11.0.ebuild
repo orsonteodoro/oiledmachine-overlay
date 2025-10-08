@@ -836,7 +836,8 @@ RDEPEND="
 	)
 	!qt5? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[gui,widgets,concurrent,opengl?]
+			>=dev-qt/qtbase-${QT6_PV}:6[${LIBSTDCXX_USEDEP},gui,widgets,concurrent,opengl?]
+			dev-qt/qtbase:=
 		)
 	)
 	quirc? (
