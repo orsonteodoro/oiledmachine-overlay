@@ -7,7 +7,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
 PYTHON_COMPAT=( "python3_"{11,12} )
 
