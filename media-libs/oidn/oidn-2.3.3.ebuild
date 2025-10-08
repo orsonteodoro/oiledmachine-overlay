@@ -335,9 +335,6 @@ src_prepare() {
 	if use rocm ; then
 		eapply ${HIP_PATCHES[@]}
 	fi
-	pushd "${S}/external/composable_kernel" || die
-		eapply "${FILESDIR}/composable_kernel-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
-	popd
 	if use cuda ; then
 		cuda_src_prepare
 		addpredict "/proc/self/task/"
