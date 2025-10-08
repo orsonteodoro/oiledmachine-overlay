@@ -3,10 +3,9 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
-	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, U24 (default)
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
 inherit cmake-multilib libstdcxx-slot

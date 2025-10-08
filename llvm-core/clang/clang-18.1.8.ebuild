@@ -4,13 +4,9 @@
 
 EAPI=8
 
-# For CUDA version see, https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/clang/include/clang/Basic/Cuda.h
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	# Pruned non-GPU slots to simplify GPU offload support.
-        "gcc_slot_13_4" # ROCm-6.2 (U24), ROCm-6.3 (U24), U24.04 (GCC default, LLVM default)
-        "gcc_slot_12_5" # CUDA-12.3, ROCm-6.2 (U22), ROCm-6.3 (U22), F37 (GCC default)
-        "gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (GCC default)
-	"gcc_slot_9_1" # ROCm-6.2 (U20), ROCm-6.3 (U20)
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 PYTHON_COMPAT=( "python3_11" )
 

@@ -111,6 +111,21 @@ LIBSTDCXX_COMPAT_STDCXX98=(
         "gcc_slot_14_3" # Support -std=c++98
 )
 
+# GCC_COMPAT template for -std=c++03 projects
+#
+# Example:
+#
+# GCC_COMPAT=(
+#     ${LIBSTDCXX_COMPAT_STDCXX03[@]}
+# )
+#
+LIBSTDCXX_COMPAT_STDCXX03=(
+	"gcc_slot_11_5" # Support -std=c++03
+        "gcc_slot_12_5" # Support -std=c++03
+        "gcc_slot_13_4" # Support -std=c++03
+        "gcc_slot_14_3" # Support -std=c++03
+)
+
 # GCC_COMPAT template for -std=c++11 projects
 #
 # Example:
