@@ -73,9 +73,7 @@ CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	# Only the pipeline_config.yaml equivalent listed
-	# CI uses Rocky 8.10 (GCC 10-14, LLVM 17-19)
-	${LIBSTDCXX_COMPAT_GPU[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 # For max and min package versions see link below. \
