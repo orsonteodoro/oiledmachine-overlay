@@ -124,6 +124,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 	${CC} --version || die
 
 	libstdcxx-slot_verify
+	local gcc_slot=$(gcc-config -c | cut -f 5 -d "-")
+	if (( ${gcc_slot} == 11 || ${gcc_slot} == 12 )) ; then
+ewarn "${PN} requires Clang >= 15.  You need to set CC=clang-15 and CXX=clang++-15 or higher"
+		tc-check-min_ver "clang" "15"
+	else
+		tc-check-min_ver "gcc" "13"
+	fi
 }
 
 src_prepare() {

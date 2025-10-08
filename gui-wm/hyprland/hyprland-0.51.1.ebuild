@@ -138,6 +138,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	${CC} --version || die
 
 	libstdcxx-slot_verify
+	if tc-is-gcc ; then
+		tc-check-min_ver "gcc" "14"
+	else
+		tc-check-min_ver "clang" "17"
+	fi
 }
 
 src_prepare() {
