@@ -16,7 +16,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF DOS HO IO MC OOBR OOBW SO UAF UM"
 GCC_COMPAT=(
 	"gcc_slot_11_5" # Support -std=c++17
 	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_3" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
 	"gcc_slot_14_3" # Support -std=c++17
 )
 MULTILIB_CHOST_TOOLS=(

@@ -8,7 +8,7 @@ EAPI=8
 GCC_COMPAT=(
 	"gcc_slot_11_5" # Support -std=c++14
 	"gcc_slot_12_5" # Support -std=c++14
-	"gcc_slot_13_3" # Support -std=c++14
+	"gcc_slot_13_4" # Support -std=c++14
 	"gcc_slot_14_3" # Support -std=c++14
 )
 
