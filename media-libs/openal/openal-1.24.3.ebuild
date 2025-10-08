@@ -3,15 +3,15 @@
 
 EAPI=8
 
-GCC_COMPAT=(
-	"gcc_slot_14_3" # CY2026 is GCC 14.2; CUDA-12.9, CUDA-12.8, U24
-	"gcc_slot_13_4" # CUDA-12.6, CUDA-12.5, CUDA-12.4, CUDA-12.3, ROCm-6.2, ROCm-6.3, ROCm-6.4, ROCm-7.0, U24 (default)
-	"gcc_slot_11_5" # CY2025 is GCC 11.2.1, CUDA-11.8, U22 (default), U24
-)
-
 # False positives because of REQUIRE vs BACKEND options() (conditionally set)
 # See bug #809314
 CMAKE_WARN_UNUSED_CLI=no
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
 inherit cmake-multilib libstdcxx-slot
 
 MY_P="${PN}-soft-${PV}"
@@ -30,6 +30,7 @@ IUSE="
 	alsa coreaudio debug jack oss pipewire portaudio pulseaudio sdl sndio gui
 	cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse4_1
 	cpu_flags_arm_neon
+	ebuild_revision_1
 "
 
 # PipeWire:
@@ -38,7 +39,10 @@ IUSE="
 # find it anyway, but no :=.
 RDEPEND="
 	alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
-	gui? ( >=dev-qt/qtbase-6.8:6[gui,widgets] )
+	gui? (
+		>=dev-qt/qtbase-6.8:6[${LIBSTDCXX_USEDEP},gui,widgets]
+		dev-qt/qtbase:=
+	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	pipewire? ( media-video/pipewire[${MULTILIB_USEDEP}] )
 	portaudio? ( media-libs/portaudio[${MULTILIB_USEDEP}] )
