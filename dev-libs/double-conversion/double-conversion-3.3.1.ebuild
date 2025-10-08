@@ -3,7 +3,14 @@
 
 EAPI=8
 
-inherit cmake-multilib flag-o-matic
+GCC_COMPAT=(
+	"gcc_slot_11_5" # Support -std=c++17
+	"gcc_slot_12_5" # Support -std=c++17
+	"gcc_slot_13_4" # Support -std=c++17
+	"gcc_slot_14_3" # Support -std=c++17
+)
+
+inherit cmake-multilib flag-o-matic libstdcxx-slot
 
 SRC_URI="https://github.com/google/double-conversion/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
@@ -13,6 +20,10 @@ LICENSE="BSD"
 SLOT="0/3"
 KEYWORDS="~amd64 ~arm64"
 IUSE="test"
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	# -O0 breaks on 32-bit on
