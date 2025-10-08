@@ -6,7 +6,7 @@ EAPI=8
 # U22
 
 GCC_COMPAT=(
-	# It requires std::unreachable() either GCC >=13 or Clang >=15.
+	# It requires std::unreachable() from either GCC >=13 or Clang >=15.
 	# It may be possible to build Clang 15 with GCC 11 then build hyprland with Clang 15.
 	"gcc_slot_11_5" # Support -std=c++23 without breaking systemwide CUDA 11.x, CUDA 12.x
 	"gcc_slot_12_5" # Support -std=c++23 without breaking systemwide CUDA >=12.3, ROCm >=6.2
