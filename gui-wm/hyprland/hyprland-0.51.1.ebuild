@@ -59,7 +59,7 @@ RDEPEND="
 	>=dev-libs/hyprgraphics-0.1.6[gcc_slot_15_2]
 	dev-libs/hyprgraphics:=
 	>=dev-libs/libinput-1.29.1:=
-	dev-libs/re2[${LIBSTDCXX_USEDEP}]
+	dev-libs/re2[${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.24.0
