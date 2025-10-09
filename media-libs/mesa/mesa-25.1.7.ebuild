@@ -80,7 +80,8 @@ VIDEO_CARDS=(
 
 # Bug
 inherit cargo
-inherit cflags-hardened check-compiler-switch flag-o-matic libstdcxx-slot llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit cflags-hardened check-compiler-switch flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit libstdcxx-slot
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -428,6 +429,8 @@ QA_WX_LOAD="
 		usr/lib/libGLX_mesa.so.0.0.0
 	)
 "
+PATCHES=(
+)
 
 llvm_check_deps() {
 	if use opencl ; then
