@@ -33,6 +33,7 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
+	dev-build/cmake
 	virtual/pkgconfig
 "
 
