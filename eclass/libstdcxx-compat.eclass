@@ -30,18 +30,26 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 # 2. No versioned symbols errors.
 # 3. Ensure proper GPU stack support.
 # 4. LTS packages are always unaffected by experimental C++ packages.
-# 5. Isolate narcissistic/subversive/disposable bleeding edge C++ standard packages from conforming/collaborative/responsive higher quality LTS packages.
-# 6. Fixing the build order.  LTS C++ standard packages get built first, experimental c++ standard packages afterwards.
-# 7. Verification that the LTS packages are not contaminated with experimental C++ settings.
+# 5. Isolate narcissistic/subversive/disposable bleeding edge C++ standard
+#    packages from conforming/collaborative/responsive higher quality LTS
+#    packages.
+# 6. Fixing the build order.  LTS C++ standard packages get built first,
+#    experimental c++ standard packages afterwards.
+# 7. Verification that the LTS packages are not contaminated with experimental
+#    C++ settings.
 #    a.  If contaminated, then force version limit or disable feature.
 #
 # Proposed solution for USEFLAG conflicts:
 #
-# 1.  LTS package case:  Use USEDEP without hesitation in *DEPENDs.
-# 2.  Pure non-LTS case:  Use USEDEP without hesitation in *DEPENDs.
+# 1.  LTS package case:  Use LIBSTDCXX_USEDEP without hesitation in *DEPENDs.
+# 2.  Pure non-LTS case:  Use LIBSTDCXX_USEDEP without hesitation in *DEPENDs.
 # 3.  Mixed LTS with non LTS:
-#     a.  If the current package is non-LTS, in the same package LTS packages get USEDEP_LTS="gcc_slot_skip(+)" placeholder while non-LTS get USEDEP.
-#     b.  If the current package is LTS, in the same package LTS packages get USEDEP while non-LTS get USEDEP_DEV="gcc_slot_skip(+)" placeholder.
+#     a.  If the current package is non-LTS, in the same package LTS packages
+#         get LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" placeholder while non-LTS
+#         get LIBSTDCXX_USEDEP.
+#     b.  If the current package is LTS, in the same package LTS packages get
+#         LIBSTDCXX_USEDEP while non-LTS get
+#         LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)" placeholder.
 #
 
 # GCC_COMPAT template for ROCm based apps/libs with latest security update
