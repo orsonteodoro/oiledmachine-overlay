@@ -30,7 +30,7 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 # 2. No versioned symbols errors.
 # 3. Ensure proper GPU stack support.
 # 4. LTS packages are always unaffected by experimental C++ packages.
-# 5. Isolate narcissistic/subversive/disposable bleeding edge C++ standard packages from conforming higher quality LTS packages.
+# 5. Isolate narcissistic/subversive/disposable bleeding edge C++ standard packages from conforming/collaborative/responsive higher quality LTS packages.
 # 6. Fixing the build order.  LTS C++ standard packages get built first, experimental c++ standard packages afterwards.
 # 7. Verification that the LTS packages are not contaminated with experimental C++ settings.
 #    a.  If contaminated, then force version limit or disable feature.
