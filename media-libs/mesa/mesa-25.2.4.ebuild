@@ -817,6 +817,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature unwind libunwind)
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
+		$(meson_use llvm amd-use-llvm)
 		$(meson_use opengl)
 		$(meson_use sysprof)
 		$(meson_use test build-tests)
