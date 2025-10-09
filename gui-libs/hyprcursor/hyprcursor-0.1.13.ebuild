@@ -7,6 +7,7 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit cmake libstdcxx-slot
 
@@ -29,7 +30,7 @@ SLOT="0"
 RESTRICT="test"
 
 RDEPEND="
-	dev-cpp/tomlplusplus[${LIBSTDCXX_USEDEP}]
+	dev-cpp/tomlplusplus[${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
 	>=dev-libs/hyprlang-0.4.2[${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
