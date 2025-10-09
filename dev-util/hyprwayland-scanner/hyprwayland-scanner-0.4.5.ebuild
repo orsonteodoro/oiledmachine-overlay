@@ -7,6 +7,7 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit cmake libstdcxx-slot toolchain-funcs
 
@@ -25,7 +26,7 @@ LICENSE="BSD"
 SLOT="0"
 
 RDEPEND="
-	>=dev-libs/pugixml-1.14[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/pugixml-1.14[${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/pugixml:=
 "
 DEPEND="
