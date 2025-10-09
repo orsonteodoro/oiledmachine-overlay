@@ -26,11 +26,9 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_1"
 	"cpu_flags_x86_sse4_2"
 )
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++11
-	"gcc_slot_12_5" # Support -std=c++11
-	"gcc_slot_13_4" # Support -std=c++11
-	"gcc_slot_14_3" # Support -std=c++11
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"

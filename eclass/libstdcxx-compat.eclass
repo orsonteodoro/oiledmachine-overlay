@@ -240,6 +240,7 @@ LIBSTDCXX_COMPAT_STDCXX17=(
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX20=(
+	#"gcc_slot_11_5" # Support -std=c++20 (Observed in downstream projects)
         "gcc_slot_13_4" # Support -std=c++20
         "gcc_slot_14_3" # Support -std=c++20
 	"gcc_slot_15_2" # Support -std=c++20

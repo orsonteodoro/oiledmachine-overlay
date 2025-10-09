@@ -3,11 +3,9 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_14_3" # D13 (LTS), F41 compatible, hyprland compatible
-	"gcc_slot_13_4" # U24 (LTS) compatible
-	"gcc_slot_12_4" # D12 (LTS) compatible
-	"gcc_slot_11_5" # U22 (LTS) compatible
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libstdcxx-slot meson

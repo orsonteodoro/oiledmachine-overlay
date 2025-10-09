@@ -4,11 +4,9 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++20
-	"gcc_slot_12_5" # Support -std=c++20
-	"gcc_slot_13_4" # Support -std=c++20
-	"gcc_slot_14_3" # Support -std=c++20
+	${LIBSTDCXX_COMPAT_STDCXX20[@]}
 )
 PYTHON_COMPAT=( python3_{11..13} )
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/botan.asc

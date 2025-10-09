@@ -10,11 +10,9 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan"
 CFLAGS_HARDENED_USE_CASES="jit"
 CMAKE_MAKEFILE_GENERATOR="emake"
 FLATBUFFERS_PV="23.5.26"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++11
-	"gcc_slot_12_5" # Support -std=c++11
-	"gcc_slot_13_4" # Support -std=c++11
-	"gcc_slot_14_3" # Support -std=c++11
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 GTEST_COMMIT="703bd9caab50b139428cea1aaff9974ebee5742e"
 LLVM_COMPAT=( {20..17} )

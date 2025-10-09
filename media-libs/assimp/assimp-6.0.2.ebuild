@@ -5,11 +5,9 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO NPD OOBR OOBW SO UAF"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support -std=c++17
-	"gcc_slot_12_5" # Support -std=c++17
-	"gcc_slot_13_4" # Support -std=c++17
-	"gcc_slot_14_3" # Support -std=c++17
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot
