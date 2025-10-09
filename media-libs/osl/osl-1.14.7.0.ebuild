@@ -336,6 +336,17 @@ ewarn
 	libstdcxx-slot_verify
 }
 
+gen_wrapper_bypass() {
+	# Bypass libc++ headers and use glibc headers directly
+	mkdir -p "${WORKDIR}/include/c++/v1"
+cat << EOF > "${WORKDIR}/include/c++/v1/wchar.h"
+#ifndef __CUSTOM_WCHAR_H
+#define __CUSTOM_WCHAR_H
+#include </usr/include/wchar.h>
+#endif
+EOF
+}
+
 src_prepare() {
 	if use optix; then
 		cuda_src_prepare
@@ -352,6 +363,8 @@ src_prepare() {
 			"CMakeLists.txt" || die
 	fi
 
+	gen_wrapper_bypass
+
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
 	# The patcher only patches relative to CMAKE_USE_DIR not $(pwd)
@@ -359,14 +372,6 @@ src_prepare() {
 }
 
 src_configure() {
-	mkdir -p "${WORKDIR}/include/c++/v1"
-cat << EOF > "${WORKDIR}/include/c++/v1/wchar.h"
-#ifndef __CUSTOM_WCHAR_H
-#define __CUSTOM_WCHAR_H
-#include </usr/include/wchar.h>
-#endif
-EOF
-
 	configure_abi() {
 		local llvm_slot
 		for llvm_slot in ${LLVM_COMPAT[@]} ; do
@@ -376,12 +381,18 @@ EOF
 			fi
 		done
 
+		if eselect profile show | grep "llvm" ; then
+			export CC="${CHOST}-clang-${llvm_slot}"
+			export CXX="${CHOST}-clang++-${llvm_slot}"
+		else
 	# Fix "Assumed value of MB_LEN_MAX wrong" when using Clang 18 with libstdcxx associated with GCC 13.
 	# GCC uses MB_LEN_MAX=16
 	# Clang uses MB_LEN_MAX=1
 	# GCC is correct if using libstdc++ as default.
-		export CC="${CHOST}-clang-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
-		export CXX="${CHOST}-clang++-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
+			export CC="${CHOST}-clang-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
+			export CXX="${CHOST}-clang++-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
+		fi
+
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 

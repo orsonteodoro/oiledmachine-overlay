@@ -22,10 +22,6 @@ CRATES="
 	unicode-ident@1.0.12
 "
 GCC_SLOT=12
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
-)
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 )
@@ -82,7 +78,6 @@ VIDEO_CARDS=(
 # Bug
 inherit cargo
 inherit cflags-hardened check-compiler-switch flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
-inherit libstdcxx-slot
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -578,12 +573,25 @@ src_unpack() {
 	popd >/dev/null 2>&1 || die
 }
 
+gen_wrapper_bypass() {
+	# Bypass libc++ headers and use glibc headers directly
+	mkdir -p "${WORKDIR}/include/c++/v1"
+cat << EOF > "${WORKDIR}/include/c++/v1/wchar.h"
+#ifndef __CUSTOM_WCHAR_H
+#define __CUSTOM_WCHAR_H
+#include </usr/include/wchar.h>
+#endif
+EOF
+}
+
 src_prepare() {
 	default
 	sed -i \
 		-e "/^PLATFORM_SYMBOLS/a '__gentoo_check_ldflags__'," \
 		bin/symbols-check.py \
 		|| die # bug #830728
+
+	gen_wrapper_bypass
 
 	prepare_abi() {
 		uopts_src_prepare
@@ -597,8 +605,19 @@ _src_configure_compiler() {
 		for llvm_slot in ${LLVM_COMPAT[@]} ; do
 			use "llvm_slot_${llvm_slot}" && break
 		done
-		export CC="${CHOST}-clang-${llvm_slot}"
-		export CXX="${CHOST}-clang++-${llvm_slot}"
+
+		if eselect profile show | grep "llvm" ; then
+			export CC="${CHOST}-clang-${llvm_slot}"
+			export CXX="${CHOST}-clang++-${llvm_slot}"
+		else
+	# Fix "Assumed value of MB_LEN_MAX wrong" when using Clang 18 with libstdcxx associated with GCC 13.
+	# GCC uses MB_LEN_MAX=16
+	# Clang uses MB_LEN_MAX=1
+	# GCC is correct if using libstdc++ as default.
+			export CC="${CHOST}-clang-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
+			export CXX="${CHOST}-clang++-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
+		fi
+
 		export CPP="${CC} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
