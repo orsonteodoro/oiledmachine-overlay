@@ -21,6 +21,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 RDEPEND="
+	gnome-base/librsvg
 	>=gui-libs/hyprutils-0.1.1[${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils[${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
