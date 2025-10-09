@@ -22,7 +22,7 @@ RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},gui=,icu=,network,xml]
 	dev-qt/qtbase:=
 	icu? (
-		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu[gcc_slot_11_5]
 		dev-libs/icu:=
 	)
 	!icu? ( virtual/libiconv )

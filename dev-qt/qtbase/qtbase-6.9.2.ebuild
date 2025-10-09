@@ -77,7 +77,7 @@ COMMON_DEPEND="
 	dev-libs/glib:2
 	dev-libs/libpcre2:=[pcre16,unicode(+)]
 	icu? (
-		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu[gcc_slot_11_5]
 		dev-libs/icu:=
 	)
 	journald? ( sys-apps/systemd )

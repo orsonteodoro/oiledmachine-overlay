@@ -540,7 +540,7 @@ DEPEND+="
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}
 	)
 	system-icu? (
-		>=dev-libs/icu-${ICU_PV}[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-${ICU_PV}[gcc_slot_11_5]
 		dev-libs/icu:=
 	)
 	system-libogg? (

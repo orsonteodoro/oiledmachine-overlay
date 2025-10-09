@@ -15,7 +15,8 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF DOS HO IO MC OOBR OOBW SO UAF UM"
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	#${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"gcc_slot_11_5" # webkit-gtk needs to be build with GCC 11.5.
 )
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/icu-config"

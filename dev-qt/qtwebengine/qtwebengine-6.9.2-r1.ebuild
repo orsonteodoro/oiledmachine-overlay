@@ -92,7 +92,7 @@ RDEPEND="
 		media-video/pipewire:=
 	)
 	system-icu? (
-		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu[gcc_slot_11_5]
 		dev-libs/icu:=
 	)
 	vaapi? ( media-libs/libva:=[X] )

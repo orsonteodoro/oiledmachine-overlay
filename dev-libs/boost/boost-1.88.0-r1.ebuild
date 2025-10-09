@@ -38,7 +38,10 @@ RESTRICT="!test? ( test )"
 
 RDEPEND="
 	bzip2? ( app-arch/bzip2:=[${MULTILIB_USEDEP}] )
-	icu? ( dev-libs/icu:=[${MULTILIB_USEDEP}] )
+	icu? (
+		dev-libs/icu[gcc_slot_11_5,${MULTILIB_USEDEP}]
+		dev-libs/icu:=
+	)
 	!icu? ( virtual/libiconv[${MULTILIB_USEDEP}] )
 	lzma? ( app-arch/xz-utils:=[${MULTILIB_USEDEP}] )
 	mpi? ( virtual/mpi[${MULTILIB_USEDEP},cxx,threads] )
