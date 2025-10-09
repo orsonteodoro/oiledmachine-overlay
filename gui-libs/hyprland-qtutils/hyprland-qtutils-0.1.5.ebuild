@@ -29,9 +29,14 @@ RDEPEND="
 	gui-libs/hyprutils:=
 	gui-libs/hyprland-qt-support
 	kde-frameworks/qqc2-desktop-style:6
+	sys-apps/pciutils
 "
 DEPEND="
 	${RDEPEND}
+"
+BDEPEND="
+	dev-build/cmake
+	virtual/pkgconfig
 "
 
 pkg_setup() {
