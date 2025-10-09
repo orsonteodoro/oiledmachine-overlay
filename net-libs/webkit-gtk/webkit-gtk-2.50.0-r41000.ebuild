@@ -752,11 +752,15 @@ gen_depend_llvm() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				llvm-core/clang:${s}
-				llvm-core/llvm:${s}
-				llvm-core/lld:${s}
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:=
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
 				openmp? (
-					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
+					llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+					llvm-runtimes/openmp:=
 				)
 			)
 		"
@@ -801,7 +805,8 @@ gen_gobject_introspection_rdepend() {
 RDEPEND+="
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
-	>=dev-libs/icu-70.1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/icu-70.1[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/icu:=
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
@@ -896,7 +901,8 @@ RDEPEND+="
 		)
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/libjxl:=
 	)
 	libbacktrace? (
 		sys-libs/libbacktrace[${MULTILIB_USEDEP}]
@@ -932,7 +938,8 @@ RDEPEND+="
 		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
 	)
 	thunder? (
-		net-libs/Thunder
+		net-libs/Thunder[${LIBSTDCXX_USEDEP}]
+		net-libs/Thunder:=
 	)
 	variation-fonts? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
@@ -949,10 +956,12 @@ RDEPEND+="
 		${OCDM_WV}
 	)
 	webxr? (
-		>=media-libs/openxr-1.0.20
+		>=media-libs/openxr-1.0.20[${LIBSTDCXX_USEDEP}]
+		media-libs/openxr:=
 	)
 	woff2? (
-		>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
+		>=media-libs/woff2-1.0.2[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/woff2:=
 	)
 	X? (
 		>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
@@ -995,12 +1004,6 @@ BDEPEND+="
 	)
 	mold? (
 		>=sys-devel/mold-2.0
-	)
-	thunder? (
-		net-libs/Thunder
-	)
-	openmp? (
-		llvm-runtimes/openmp:=
 	)
 	|| (
 		>=sys-devel/gcc-13.2.0:13
