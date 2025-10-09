@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U24
+
 inherit cmake
 
 S="${WORKDIR}/glaze-${PV}"
@@ -15,13 +17,16 @@ HOMEPAGE="https://github.com/stephenberry/glaze"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64"
-IUSE="examples fuzzing ssl test"
+IUSE="eetf examples fuzzing ssl test"
 RESTRICT="
 	!test? (
 		test
 	)
 "
 RDEPEND="
+	eetf? (
+		>=dev-lang/erlang-25.3.2
+	)
 	ssl? (
 		dev-libs/openssl:=
 	)
@@ -29,8 +34,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/eigen-3.4
-		dev-cpp/asio
+		>=dev-cpp/eigen-3.4.0
+		>=dev-cpp/asio-1.28.1
 		dev-cpp/ut2-glaze
 	)
 "
@@ -43,6 +48,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_SKIP_INSTALL_RULES=OFF
 		-Dglaze_DEVELOPER_MODE=ON
+		-Dglaze_EETF_FORMAT=$(usex eetf)
 		-Dglaze_ENABLE_FUZZING=$(usex fuzzing)
 		-Dglaze_BUILD_EXAMPLES=$(usex examples)
 		-Dglaze_ENABLE_SSL=$(usex ssl)

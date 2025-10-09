@@ -22,6 +22,7 @@
     <remote-id type="github">stephenberry/glaze</remote-id>
   </upstream>
   <use>
+    <flag name="eetf">Support reading EETF (Erlang External Term Format)</flag>
     <flag name="fuzzing">Build fuzzers (not install)</flag>
     <flag name="examples">Build examples (not install)</flag>
   </use>
