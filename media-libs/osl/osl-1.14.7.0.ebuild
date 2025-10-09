@@ -64,7 +64,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit check-compiler-switch cmake cuda flag-o-matic libstdcxx-slot llvm multilib-minimal python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic flag-o-matic-om libstdcxx-slot llvm multilib-minimal python-single-r1 toolchain-funcs
 
 S="${WORKDIR}/OpenShadingLanguage-${PV}"
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -97,7 +97,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_8
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	^^ (
@@ -336,17 +336,6 @@ ewarn
 	libstdcxx-slot_verify
 }
 
-gen_wrapper_bypass() {
-	# Bypass libc++ headers and use glibc headers directly
-	mkdir -p "${WORKDIR}/include/c++/v1"
-cat << EOF > "${WORKDIR}/include/c++/v1/wchar.h"
-#ifndef __CUSTOM_WCHAR_H
-#define __CUSTOM_WCHAR_H
-#include </usr/include/wchar.h>
-#endif
-EOF
-}
-
 src_prepare() {
 	if use optix; then
 		cuda_src_prepare
@@ -362,8 +351,6 @@ src_prepare() {
 		sed -i -e "s|osl_add_all_tests|#osl_add_all_tests|g" \
 			"CMakeLists.txt" || die
 	fi
-
-	gen_wrapper_bypass
 
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
@@ -381,18 +368,9 @@ src_configure() {
 			fi
 		done
 
-		if eselect profile show | grep "llvm" ; then
-			export CC="${CHOST}-clang-${llvm_slot}"
-			export CXX="${CHOST}-clang++-${llvm_slot}"
-		else
-	# Fix "Assumed value of MB_LEN_MAX wrong" when using Clang 18 with libstdcxx associated with GCC 13.
-	# GCC uses MB_LEN_MAX=16
-	# Clang uses MB_LEN_MAX=1
-	# GCC is correct if using libstdc++ as default.
-			export CC="${CHOST}-clang-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
-			export CXX="${CHOST}-clang++-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
-		fi
-
+		export CC="${CHOST}-clang-${llvm_slot}"
+		export CXX="${CHOST}-clang++-${llvm_slot}"
+		fix_mb_len_max
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 
@@ -506,18 +484,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 				-DUSE_QT="${has_qt}"
 				-DUSE_SIMD=$(IFS=","; echo "${mysimd[*]}")
 				-DVEC_REPORT="ON"
-				-DUSE_FAST_MATH="ON"
 			)
 
-#			if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
-#				mycmakeargs=(
-#					-DUSE_FAST_MATH="ON"
-#				)
-#			else
-#				mycmakeargs=(
-#					-DUSE_FAST_MATH="OFF"
-#				)
-#			fi
+			if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
+				mycmakeargs=(
+					-DUSE_FAST_MATH="ON"
+				)
+			else
+				mycmakeargs=(
+					-DUSE_FAST_MATH="OFF"
+				)
+			fi
 
 			if use cuda ; then
 				mycmakeargs+=(
