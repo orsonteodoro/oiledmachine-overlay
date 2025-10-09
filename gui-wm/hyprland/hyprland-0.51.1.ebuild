@@ -50,6 +50,7 @@ HYPRPM_RDEPEND="
 # Relaxed re2 version requirement.  Originally slot 11
 # glib was not mentioned in build files
 # util-linux was not mentoned in build files
+# glib version is relaxed
 RDEPEND="
 	${HYPRPM_RDEPEND}
 	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP_LTS}]
@@ -77,7 +78,7 @@ RDEPEND="
 	>=x11-libs/libxkbcommon-1.11.0
 	>=x11-libs/pango-1.57.0
 	>=x11-libs/pixman-0.46.4
-	>=dev-libs/glib-2.86.0:2
+	dev-libs/glib:2
 	sys-apps/util-linux
 	>=sys-apps/pciutils-3.10.0
 	qtutils? (
