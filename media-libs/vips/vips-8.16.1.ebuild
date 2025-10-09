@@ -357,7 +357,7 @@ gen_llvm_test_bdepend()
 				llvm-core/llvm:=
 				fuzz-testing? (
 					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},libfuzzer,asan,ubsan]
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*[gcc_slot_11_5,libfuzzer,asan,ubsan]
 					llvm-runtimes/compiler-rt-sanitizers:=
 					llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 					llvm-runtimes/openmp:=

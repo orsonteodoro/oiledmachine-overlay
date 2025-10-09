@@ -26,7 +26,7 @@ unset -f _llvm_set_globals
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
 )
 PYTHON_COMPAT=( "python3_12" )
 
@@ -447,7 +447,6 @@ src_configure() {
 		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
 		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
 	fi
-ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 
 	local flag want_sanitizer=OFF
 	for flag in "${SANITIZER_FLAGS[@]}"; do
