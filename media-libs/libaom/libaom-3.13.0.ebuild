@@ -11,6 +11,10 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO IO UAF"
 CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_MB_LEN_MAX_LIB_FIX[@]}
+)
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_SUPPORT_EBOLT=0
@@ -25,7 +29,7 @@ UOPTS_BOLT_INST_ARGS=(
 )
 
 inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
-inherit multiprocessing python-single-r1 toolchain-funcs uopts
+inherit libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -383,6 +387,7 @@ eerror "CC/CXX must must be >=llvm-core/clang-${CLANG_MIN_SLOT}"
 			die
 		fi
 	fi
+	libstdcxx-slot_verify
 }
 
 # The order does matter with PGO.
@@ -395,10 +400,6 @@ src_prepare() {
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
-
-#/usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong"
-## error "Assumed value of MB_LEN_MAX wrong"
-	ewarn "If \"Assumed value of MB_LEN_MAX wrong\" is encountered, switch to gcc."
 
 	if tc-is-clang \
 		&& has_version "llvm-core/lld" \

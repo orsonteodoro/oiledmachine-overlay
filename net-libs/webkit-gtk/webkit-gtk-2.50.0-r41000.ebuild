@@ -98,6 +98,10 @@ FFMPEG_COMPAT=(
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_MB_LEN_MAX_LIB_FIX[@]}
+)
 GLIB_VERSIONS=(
 	"2.84.3"
 	"2.82.5"
@@ -141,7 +145,7 @@ USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs cmake desktop dhms flag-o-matic
-inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
+inherit git-r3 gnome2 lcnr libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-single-r1 ruby-single toolchain-funcs vf
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
@@ -1123,37 +1127,22 @@ _set_clang() {
 	export GCC_FLAGS=""
 	strip-unsupported-flags
 	${CC} --version || die
-ewarn
-ewarn "If \"Assumed value of MB_LEN_MAX wrong\" error encountered, rebuild"
-ewarn "${CATEGORY}/${PN} and dev-libs/icu with GCC 12."
-ewarn
 }
 
 _set_gcc() {
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot="${gcc_current_profile##*-}"
 
-	if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
-ewarn "GCC ${gcc_current_profile_slot} is not supported upstream."
-ewarn "If problems encountered, build both dev-libs/icu and ${CATEGORY}/${PN} with either GCC 11, 12, 13."
+	if ver_test "${gcc_current_profile_slot}" -eq "11" ; then
 		export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
 		export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
-	elif has_version "sys-devel/gcc:13" ; then
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
-	elif has_version "sys-devel/gcc:12" ; then
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-g++-12"
-	elif has_version "sys-devel/gcc:11" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
 	else
 eerror
-eerror "GCC must be either 11, 12, 13"
+eerror "GCC must be 11"
 eerror
 eerror "Example:"
 eerror
-eerror "  eselect gcc set ${CHOST}-gcc-13"
+eerror "  eselect gcc set ${CHOST}-11"
 eerror "  source /etc/profile"
 eerror "  emerge -C dev-libs/icu"
 eerror "  emerge -1vuDN dev-libs/icu"
@@ -2055,6 +2044,7 @@ einfo
 	check_page_size
 	check_security_expire
 	check_ulimit
+	libstdcxx-slot_verify
 }
 
 _check_langs() {
