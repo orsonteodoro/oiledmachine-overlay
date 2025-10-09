@@ -34,7 +34,7 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 # 6. Verification that the LTS packages are not contaminated with experimental C++ settings.
 #    a.  If contaminated, then force version limit or disable feature.
 #
-# Proposed solution for USE flag *DEPENDs:
+# Proposed solution for USEFLAG conflicts:
 #
 # 1.  LTS package case:  Use USEDEP without hesitation in *DEPENDs.
 # 2.  Pure non-LTS case:  Use USEDEP without hesitation in *DEPENDs.
