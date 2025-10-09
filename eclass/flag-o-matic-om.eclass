@@ -105,4 +105,38 @@ strip-flag-value() {
 	export ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS
 }
 
+# @FUNCTION: fix_mb_len_max
+# @DESCRIPTION:
+# Fix build time issue when building with Clang and >= GCC 13 in a libstdcxx based system.
+fix_mb_len_max() {
+	local extra_args_cc=""
+	local extra_args_cxx=""
+	if [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] ; then
+		if eselect profile show | grep "llvm" ; then
+			:
+		else
+	# Fix "Assumed value of MB_LEN_MAX wrong" when using Clang 18 with libstdcxx associated with GCC 13.
+	# GCC uses MB_LEN_MAX=16
+	# Clang uses MB_LEN_MAX=1
+	# GCC is correct if using libstdc++ as default.
+			#extra_args_cc="${extra_args_cc} -I/usr/include -I${WORKDIR}/include/c++/v1"
+			#extra_args_cxx="${extra_args_cxx} -I/usr/include -I${WORKDIR}/include/c++/v1"
+			if use elibc_glibc ; then
+einfo "Applying MB_LEN_MAX fix"
+				extra_args_cc="${extra_args_cc} -DMB_LEN_MAX=16"
+				extra_args_cxx="${extra_args_cxx} -DMB_LEN_MAX=16"
+			fi
+			if use kernel_linux ; then
+einfo "Applying PATH_MAX, NAME_MAX fixes"
+				extra_args_cc="${extra_args_cc} -DPATH_MAX=4096 -DNAME_MAX=255"
+				extra_args_cxx="${extra_args_cxx} -DPATH_MAX=4096 -DNAME_MAX=255"
+			fi
+		fi
+		append-cflags ${extra_args_cc}
+		append-cxxflags ${extra_args_cxx}
+	fi
+	export _CFLAGS="${extra_args_cc}"
+	export _CXXFLAGS="${extra_args_cxx}"
+}
+
 fi
