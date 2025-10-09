@@ -6,12 +6,16 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
-GCC_SLOT=12
+GCC_SLOT=11
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
+)
 LLVM_COMPAT=( {17..15} )
 PYTHON_COMPAT=( "python3_"{10..11} )
 YARN_SLOT="1"
 
-inherit bazel check-compiler-switch flag-o-matic llvm-r1 distutils-r1 yarn
+inherit bazel check-compiler-switch flag-o-matic libstdcxx-slot llvm-r1 distutils-r1 yarn
 
 KEYWORDS="~amd64 ~arm64"
 bazel_external_uris="
@@ -259,25 +263,6 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	strip-unsupported-flags
 }
 
-check_libstdcxx() {
-	local slot="${1}"
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
-eerror
-eerror "You must switch to GCC ${slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	check-compiler-switch_start
 	yarn_pkg_setup
@@ -289,8 +274,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-# Avoid /usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong" \
-	check_libstdcxx ${GCC_SLOT}
 	python-single-r1_pkg_setup
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
