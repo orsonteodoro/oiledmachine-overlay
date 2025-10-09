@@ -30,7 +30,7 @@ _LIBSTDCXX_SLOT_ECLASS=1
 # 1. LTS packages are consistently built with the chosen GLIBCXX_ version.
 # 2. No versioned symbols errors.
 # 3. LTS packages are always unaffected by experimental C++ packages.
-# 4. Isolate rebellious/subversive/disposable bleeding edge C++ standard packages from conforming higher quality LTS packages.
+# 4. Isolate narcissistic/subversive/disposable bleeding edge C++ standard packages from conforming higher quality LTS packages.
 # 5. Fixing the build order.  LTS C++ standard packages get built first, experimental c++ standard packages afterwards.
 # 6. Verification that the LTS packages are not contaminated with experimental C++ settings.
 #    a.  If contaminated, then force version limit or disable feature.
