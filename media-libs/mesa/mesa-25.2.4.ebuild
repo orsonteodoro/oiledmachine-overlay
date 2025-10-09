@@ -24,7 +24,7 @@ CRATES="
 GCC_SLOT=12
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
+	${LIBSTDCXX_COMPAT_MB_LEN_MAX_LIB_FIX[@]}
 )
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
