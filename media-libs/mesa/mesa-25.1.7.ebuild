@@ -21,6 +21,10 @@ CRATES="
 	paste@1.0.14
 "
 GCC_SLOT=12
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
+)
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 )
@@ -76,7 +80,7 @@ VIDEO_CARDS=(
 
 # Bug
 inherit cargo
-inherit cflags-hardened check-compiler-switch flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit cflags-hardened check-compiler-switch flag-o-matic libstdcxx-slot llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -474,30 +478,6 @@ python_check_deps() {
 		|| return 1
 }
 
-check_libstdcxx() {
-# Prevent error:
-#../mesa-24.0.4/src/util/fossilize_db.c:360:20: error: use of undeclared identifier 'PATH_MAX'
-#   char list_entry[PATH_MAX];
-#                   ^
-#../mesa-24.0.4/src/util/fossilize_db.c:428:50: error: use of undeclared identifier 'NAME_MAX'
-#   char buf[10 * (sizeof(struct inotify_event) + NAME_MAX + 1)];
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${GCC_SLOT}" ; then
-eerror
-eerror "You must switch to GCC ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-#		die
-	fi
-}
-
 # From toolchain-funcs.eclass.
 # Fixes inherit bug
 # @FUNCTION: tc-is-lto
@@ -535,9 +515,7 @@ ewarn "Ignoring USE=opencl since USE does not contain llvm"
 }
 
 pkg_setup() {
-einfo "Switch to GCC 12 if build fails."
 	check-compiler-switch_start
-	check_libstdcxx
 	# Warning message for bug 459306
 	if use llvm && has_version "llvm-core/llvm[!debug=]" ; then
 ewarn
@@ -584,6 +562,7 @@ einfo "PATH=${PATH} (after)"
 	if use opencl || ( use vulkan && use video_cards_nvk ) ; then
 		rust_pkg_setup
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
