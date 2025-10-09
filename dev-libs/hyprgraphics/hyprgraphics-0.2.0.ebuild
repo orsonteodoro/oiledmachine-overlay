@@ -23,7 +23,6 @@ KEYWORDS="~amd64"
 RDEPEND="
 	gnome-base/librsvg
 	>=gui-libs/hyprutils-0.1.1[${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils[${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
 	x11-libs/pango
 	media-libs/libheif[${LIBSTDCXX_USEDEP_LTS}]
