@@ -39,8 +39,8 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 # 1.  LTS package case:  Use USEDEP without hesitation in *DEPENDs.
 # 2.  Pure non-LTS case:  Use USEDEP without hesitation in *DEPENDs.
 # 3.  Mixed LTS with non LTS:
-#     a.  If the current package is non-LTS:  LTS packages get USEDEP_LTS with placeholder, while non-LTS get USEDEP.
-#     b.  If the current package is LTS:  LTS packages get USEDEP, while non-LTS get USEDEP_DEV with placeholder.
+#     a.  If the current package is non-LTS:  LTS packages get USEDEP_LTS="gcc_slot_skip(+)" placeholder, while non-LTS get USEDEP.
+#     b.  If the current package is LTS:  LTS packages get USEDEP, while non-LTS get USEDEP_DEV="gcc_slot_skip(+)" placeholder.
 #
 
 # GCC_COMPAT template for ROCm based apps/libs with latest security update
