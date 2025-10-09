@@ -8,6 +8,7 @@ GCC_COMPAT=(
 	# Support -std=c++23, required for #include <print> support >= GCC 14
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit cmake libstdcxx-slot
 
@@ -19,15 +20,16 @@ HOMEPAGE="https://github.com/hyprwm/hyprland-qtutils"
 LICENSE="BSD"
 SLOT="0"
 RDEPEND="
-	dev-qt/qtbase:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtbase:6[${LIBSTDCXX_USEDEP_LTS}]
 	dev-qt/qtbase:=
-	dev-qt/qtdeclarative:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtdeclarative:6[${LIBSTDCXX_USEDEP_LTS}]
 	dev-qt/qtdeclarative:=
-	dev-qt/qtwayland:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtwayland:6[${LIBSTDCXX_USEDEP_LTS}]
 	dev-qt/qtwayland:=
 	gui-libs/hyprutils[${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
-	gui-libs/hyprland-qt-support
+	gui-libs/hyprland-qt-support[${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprland-qt-support:=
 	kde-frameworks/qqc2-desktop-style:6
 	sys-apps/pciutils
 "
