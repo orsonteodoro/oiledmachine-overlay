@@ -41,7 +41,7 @@ _LIBSTDCXX_SLOT_ECLASS=1
 # 2.  Pure non-LTS case:  Use USEDEP without hesitation in *DEPENDs.
 # 3.  Mixed LTS with non LTS:
 #     a.  If the current package is non-LTS:  LTS packages get USEDEP_LTS with placeholder, while non-LTS get USEDEP.
-#     b.  If the current package is LTS:  LTS packages get USEDEP with placeholder, while non-LTS get USEDEP_DEV with placeholder.
+#     b.  If the current package is LTS:  LTS packages get USEDEP, while non-LTS get USEDEP_DEV with placeholder.
 #
 
 # @ECLASS_VARIABLE: LIBSTDCXX_USEDEP
