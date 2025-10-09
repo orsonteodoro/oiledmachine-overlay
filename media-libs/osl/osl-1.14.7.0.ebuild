@@ -359,6 +359,14 @@ src_prepare() {
 }
 
 src_configure() {
+	mkdir -p "${WORKDIR}/include/c++/v1"
+cat << EOF > "${WORKDIR}/include/c++/v1/wchar.h"
+#ifndef __CUSTOM_WCHAR_H
+#define __CUSTOM_WCHAR_H
+#include </usr/include/wchar.h>
+#endif
+EOF
+
 	configure_abi() {
 		local llvm_slot
 		for llvm_slot in ${LLVM_COMPAT[@]} ; do
@@ -368,8 +376,12 @@ src_configure() {
 			fi
 		done
 
-		export CC="${CHOST}-clang-${llvm_slot}"
-		export CXX="${CHOST}-clang++-${llvm_slot}"
+	# Fix "Assumed value of MB_LEN_MAX wrong" when using Clang 18 with libstdcxx associated with GCC 13.
+	# GCC uses MB_LEN_MAX=16
+	# Clang uses MB_LEN_MAX=1
+	# GCC is correct if using libstdc++ as default.
+		export CC="${CHOST}-clang-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
+		export CXX="${CHOST}-clang++-${llvm_slot} -I/usr/include -I${WORKDIR}/include/c++/v1 -DMB_LEN_MAX=16"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 
@@ -483,17 +495,18 @@ einfo "Detected compiler switch.  Disabling LTO."
 				-DUSE_QT="${has_qt}"
 				-DUSE_SIMD=$(IFS=","; echo "${mysimd[*]}")
 				-DVEC_REPORT="ON"
+				-DUSE_FAST_MATH="ON"
 			)
 
-			if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
-				mycmakeargs=(
-					-DUSE_FAST_MATH="ON"
-				)
-			else
-				mycmakeargs=(
-					-DUSE_FAST_MATH="OFF"
-				)
-			fi
+#			if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
+#				mycmakeargs=(
+#					-DUSE_FAST_MATH="ON"
+#				)
+#			else
+#				mycmakeargs=(
+#					-DUSE_FAST_MATH="OFF"
+#				)
+#			fi
 
 			if use cuda ; then
 				mycmakeargs+=(
