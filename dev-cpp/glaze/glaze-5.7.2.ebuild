@@ -41,7 +41,7 @@ DEPEND="
 "
 PATCHES=(
 # Unbundle test dependencies otherwise they are fetched from github at build time
-	"${FILESDIR}/${PN}-5.5.5-unbundle-test-deps.patch"
+#	"${FILESDIR}/${PN}-5.5.5-unbundle-test-deps.patch"
 )
 
 src_configure() {
