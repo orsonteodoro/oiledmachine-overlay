@@ -8,6 +8,7 @@ GCC_COMPAT=(
 	# Support -std=c++23, required for #include <print> support >= GCC 14
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit cmake libstdcxx-slot
 
@@ -21,9 +22,9 @@ SLOT="0"
 KEYWORDS="amd64"
 
 RDEPEND="
-	dev-qt/qtbase:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtbase:6[${LIBSTDCXX_USEDEP_LTS}]
 	dev-qt/qtbase:=
-	dev-qt/qtdeclarative:6[${LIBSTDCXX_USEDEP}]
+	dev-qt/qtdeclarative:6[${LIBSTDCXX_USEDEP_LTS}]
 	dev-qt/qtdeclarative:=
 	>=dev-libs/hyprlang-0.6.0[${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
