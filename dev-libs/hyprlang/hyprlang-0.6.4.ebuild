@@ -37,8 +37,8 @@ BDEPEND="
 pkg_setup() {
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
+	libstdcxx-slot_verify
+
 	tc-check-min_ver gcc 14
 	tc-check-min_ver clang 17
-
-	libstdcxx-slot_verify
 }
