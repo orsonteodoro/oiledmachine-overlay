@@ -12,7 +12,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX26[@]}
 )
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
-LIBSTDCXX_USEDEP_LTS="gcc_slot_0(+)" # Skip placeholder
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" # Skip placeholder
 
 inherit cflags-hardened check-compiler-switch libstdcxx-slot meson toolchain-funcs
 
