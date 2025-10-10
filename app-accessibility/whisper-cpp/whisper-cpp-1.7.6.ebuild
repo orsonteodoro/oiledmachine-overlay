@@ -283,7 +283,7 @@ RDEPEND="
 		>=sci-libs/openblas-0.3.20
 	)
 	opencl? (
-		>=sci-libs/clblast-2.12
+		>=sci-libs/clblast-2.12[${LIBSTDCXX_USEDEP}]
 		sci-libs/clblast:=
 	)
 	openvino? (
