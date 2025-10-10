@@ -97,7 +97,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE+="
 	^^ (
@@ -133,6 +133,7 @@ REQUIRED_USE+="
 PATCHES=(
 	"${FILESDIR}/osl-1.12.13.0-change-ci-test.bash.patch"
 	"${FILESDIR}/osl-1.14.7.0-cuda-noinline-fix.patch"
+	"${FILESDIR}/osl-1.14.7.0-fast-math-off-dual-changes.patch"
 )
 
 gen_llvm_depend()
@@ -487,10 +488,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 			)
 
 			if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
+einfo "Fast-math optimizations on"
 				mycmakeargs=(
 					-DUSE_FAST_MATH="ON"
 				)
 			else
+einfo "Fast-math optimizations off"
 				mycmakeargs=(
 					-DUSE_FAST_MATH="OFF"
 				)

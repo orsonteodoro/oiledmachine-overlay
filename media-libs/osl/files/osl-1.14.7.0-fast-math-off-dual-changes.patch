@@ -1,0 +1,47 @@
+diff '--color=auto' -urpN OpenShadingLanguage-1.14.7.0.orig/src/include/OSL/dual.h OpenShadingLanguage-1.14.7.0/src/include/OSL/dual.h
+--- OpenShadingLanguage-1.14.7.0.orig/src/include/OSL/dual.h	2025-08-02 14:08:57.000000000 -0700
++++ OpenShadingLanguage-1.14.7.0/src/include/OSL/dual.h	2025-10-09 21:20:30.180400651 -0700
+@@ -950,6 +950,10 @@ OSL_HOSTDEVICE OSL_FORCEINLINE Dual<T,P>
+     return dualfunc (a, tanha, sech2a);
+ }
+ 
++OSL_HOSTDEVICE OSL_FORCEINLINE float safe_acos(float x) {
++    return std::acos(std::clamp(x, -1.0f, 1.0f));
++}
++
+ // f(x) = acos(x), f'(x) = -1/(sqrt(1 - x^2))
+ template<class T, int P>
+ OSL_HOSTDEVICE OSL_FORCEINLINE Dual<T,P> safe_acos (const Dual<T,P> &a)
+@@ -971,6 +975,10 @@ OSL_HOSTDEVICE OSL_FORCEINLINE Dual<T,P>
+     return dualfunc (a, f, df);
+ }
+ 
++OSL_HOSTDEVICE OSL_FORCEINLINE float safe_asin(float x) {
++    return std::asin(std::clamp(x, -1.0f, 1.0f));
++}
++
+ // f(x) = asin(x), f'(x) = 1/(sqrt(1 - x^2))
+ template<class T, int P>
+ OSL_HOSTDEVICE OSL_FORCEINLINE Dual<T,P> safe_asin (const Dual<T,P> &a)
+@@ -1079,6 +1087,10 @@ OSL_HOSTDEVICE OSL_FORCEINLINE Dual<T,P>
+     return dualfunc (u, v, powuv, v.val()*powuvm1, logu*powuv);
+ }
+ 
++OSL_HOSTDEVICE OSL_FORCEINLINE float safe_log2(float x) {
++    return std::log2(std::max(x, 0.0f));
++}
++
+ // f(x) = log2(x), f'(x) = 1/(x*log2)
+ // (log base 2)
+ template<class T, int P>
+@@ -1098,6 +1110,10 @@ OSL_HOSTDEVICE OSL_FORCEINLINE Dual<T,P>
+     return dualfunc (a, f, df);
+ }
+ 
++OSL_HOSTDEVICE OSL_FORCEINLINE float safe_log10(float x) {
++    return std::log10(std::max(x, 0.0f));
++}
++
+ // f(x) = log10(x), f'(x) = 1/(x*log10)
+ // (log base 10)
+ template<class T, int P>
