@@ -2868,7 +2868,6 @@ gen_rocm_bdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		local s1="${s/./_}"
-		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
 				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
@@ -2882,7 +2881,6 @@ gen_rocm_rdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		local s1="${s/./_}"
-		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
 				~dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
@@ -2935,10 +2933,9 @@ gen_rocm_bdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		local s1="${s/./_}"
-		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
-				=sys-devel/gcc-${!gcc_slot}*
+				sys-devel/gcc
 			)
 		"
 	done
@@ -3312,12 +3309,9 @@ src_configure() {
 			"CMakePresets.json" \
 			|| die
 	elif use rocm ; then
-		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-		local gcc_slot="${!_gcc_slot}"
 einfo "ROCM_SLOT: ${ROCM_SLOT}"
-einfo "gcc_slot: ${gcc_slot}"
-		export CC="${CHOST}-gcc-${gcc_slot}"
-		export CXX="${CHOST}-g++-${gcc_slot}"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 		sed -i \
