@@ -123,7 +123,7 @@ BDEPEND="
 		>=app-text/doxygen-1.14.0
 	)
 	cuda? (
-		=sys-devel/gcc-11*[cxx]
+		sys-devel/gcc[cxx]
 	)
 "
 PATCHES_=(
@@ -149,9 +149,9 @@ src_configure() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	if use cuda ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-gcc-11"
-		export CPP="${CXX} -E"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 
