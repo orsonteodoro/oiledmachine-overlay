@@ -232,8 +232,8 @@ src_configure() {
 			pushd "mixbench-${x2}" >/dev/null 2>&1 || die
 				local mycmakeargs=()
 				if [[ "${x2}" == "cuda" ]] ; then
-					export CC="${CHOST}-gcc-${s}"
-					export CXX="${CHOST}-gcc-${s}"
+					export CC="${CHOST}-gcc"
+					export CXX="${CHOST}-g++"
 					export CPP="${CC} -E"
 					strip-unsupported-flags
 					addpredict "/proc/self/task/"
