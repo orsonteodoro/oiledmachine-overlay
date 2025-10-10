@@ -1,0 +1,11 @@
+--- a/build_files/cmake/platform/platform_unix.cmake.orig	2025-10-10 10:38:39.054992545 -0700
++++ b/build_files/cmake/platform/platform_unix.cmake	2025-10-10 10:50:55.335389075 -0700
+@@ -171,7 +171,7 @@ function(check_freetype_for_brotli)
+     unset(HAVE_BROTLI CACHE)
+     include(CheckSymbolExists)
+     set(CMAKE_REQUIRED_INCLUDES ${FREETYPE_INCLUDE_DIRS})
+-    check_symbol_exists(FT_CONFIG_OPTION_USE_BROTLI "freetype/config/ftconfig.h" HAVE_BROTLI)
++    check_symbol_exists(FT_CONFIG_OPTION_USE_BROTLI "freetype/config/ftoption.h" HAVE_BROTLI)
+     unset(CMAKE_REQUIRED_INCLUDES)
+     if(NOT HAVE_BROTLI)
+       unset(HAVE_BROTLI CACHE)
