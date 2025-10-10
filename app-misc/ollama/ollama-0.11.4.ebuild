@@ -127,6 +127,10 @@ CUDA_TARGETS_COMPAT=(
 	"sm_90"
 	"sm_90a"
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 LLMS=(
 adens-quran-guide agcobra-liberated-qwen1.5-72b akx-viking-7b alfred
 ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
@@ -207,7 +211,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit cflags-hardened check-compiler-switch cmake dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
+inherit cflags-hardened check-compiler-switch cmake dep-prepare edo flag-o-matic go-module lcnr libstdcxx-slot multiprocessing optfeature rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -3057,25 +3061,6 @@ einfo "Generating tag start for ${path}"
 einfo "Generating tag done"
 }
 
-check_libstdcxx() {
-	local slot="${1}"
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
-eerror
-eerror "You must switch to GCC ${slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	check-compiler-switch_start
 ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
@@ -3101,6 +3086,7 @@ einfo "PATH (before):  ${PATH}"
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_base_path}/bin|g")
 einfo "PATH (after):  ${PATH}"
 	fi
+	libstdcxx-slot_verify
 }
 
 gen_unpack() {
@@ -3315,7 +3301,6 @@ src_configure() {
 			-e "s|60;61;62;70;72;75;80;86;87;89;90;90a|${CMAKE_CUDA_ARCHITECTURES}|g" \
 			"CMakePresets.json" \
 			|| die
-		check_libstdcxx "13"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
@@ -3326,7 +3311,6 @@ src_configure() {
 			-e "s|50;52;53;60;61;62;70;72;75;80;86|${CMAKE_CUDA_ARCHITECTURES}|g" \
 			"CMakePresets.json" \
 			|| die
-		check_libstdcxx "11"
 	elif use rocm ; then
 		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		local gcc_slot="${!_gcc_slot}"
@@ -3340,7 +3324,6 @@ einfo "gcc_slot: ${gcc_slot}"
 			-e "s|gfx900;gfx940;gfx941;gfx942;gfx1010;gfx1012;gfx1030;gfx1100;gfx1101;gfx1102;gfx906:xnack-;gfx908:xnack-;gfx90a:xnack+;gfx90a:xnack-|${AMDGPU_TARGETS}|g" \
 			"CMakePresets.json" \
 			|| die
-		check_libstdcxx "${gcc_slot}"
 		local libs=(
 			"amd_comgr:dev-libs/rocm-comgr"
 			"amdhip64:dev-util/hip"
