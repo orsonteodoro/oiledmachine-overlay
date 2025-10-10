@@ -268,8 +268,8 @@ Python 3.10 by the distro's python-utils-r1 eclass and the distro community
 removal of markings for Python 3.10 support in PYTHON_COMPAT.  Only full access
 Python will be made available on this overlay.  The older Python is necessary
 for QA testing for both the Clang compiler and downstream projects but denied by
-the distro.  The distro's manifest ban is bad because it goes against the spirit
-of the GPL with the right to hack.
+the distro.  The distro's manifest update ban for older Python 3.10 ebuilds is
+bad because it goes against the spirit of the GPL with the right to hack.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
