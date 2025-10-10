@@ -35,7 +35,10 @@ DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
-IUSE="boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss png qt5 qt6 test tiff +utils"
+IUSE="
+boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss png qt5 qt6 test tiff +utils
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
@@ -140,8 +143,8 @@ einfo "PATH=${PATH} (before)"
 einfo "PATH=${PATH} (after)"
 	fi
 	if ! which ${CC} 2>&1 >/dev/null ; then
-		export CC="gcc"
-		export CXX="g++"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
 	fi
 	if tc-is-clang ; then

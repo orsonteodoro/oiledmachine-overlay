@@ -1162,15 +1162,10 @@ pkg_setup() {
 		llvm_pkg_setup
 
 		if ! use clang ; then
-			if has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
-				export CC="${CHOST}-gcc-13"
-				export CXX="${CHOST}-g++-13"
-			elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" ; then
-				export CC="${CHOST}-gcc-12"
-				export CXX="${CHOST}-g++-12"
-			elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-				export CC="${CHOST}-gcc-11"
-				export CXX="${CHOST}-g++-11"
+			if has_version "dev-util/nvidia-cuda-toolkit" ; then
+				export CC="${CHOST}-gcc"
+				export CXX="${CHOST}-g++"
+				export CPP="${CC} -E"
 			else
 				local min_slot
 
@@ -1190,19 +1185,14 @@ pkg_setup() {
 					min_slot=${GCC_SLOTS[-1]}
 				fi
 
-				local gcc_slots=( $(seq ${GCC_SLOTS[0]} -1 ${min_slot}) )
-				local s
-				for s in ${gcc_slots[@]} ; do
-					if use openmp && has_version "=sys-devel/gcc-${s}*[openmp]" ; then
-						export CC="${CHOST}-gcc-${s}"
-						export CXX="${CHOST}-g++-${s}"
-						break
-					elif has_version "=sys-devel/gcc-${s}*" ; then
-						export CC="${CHOST}-gcc-${s}"
-						export CXX="${CHOST}-g++-${s}"
-						break
-					fi
-				done
+				export CC="${CHOST}-gcc"
+				export CXX="${CHOST}-g++"
+				export CPP="${CC} -E"
+				local v=$(gcc-major-version)
+				if ver_test "${v}" -lt "${min_slot}" ; then
+eerror "Switch to GCC >= ${min_slot}"
+					die
+				fi
 			fi
 		fi
 		export CPP="${CC} -E"

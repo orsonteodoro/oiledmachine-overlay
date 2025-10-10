@@ -260,8 +260,8 @@ src_configure() {
 						-DOpenCL_INCLUDE_DIR="${ESYSROOT}/usr/include"
 					)
 				elif [[ "${x2}" == "openmp" ]] ; then
-					export CC="gcc"
-					export CXX="g++"
+					export CC="${CHOST}-gcc"
+					export CXX="${CHOST}-g++"
 					export CPP="${CC} -E"
 					strip-unsupported-flags
 				elif [[ "${x2}" == "sycl" ]] ; then
