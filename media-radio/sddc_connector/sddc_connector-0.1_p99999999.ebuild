@@ -4,9 +4,12 @@
 
 EAPI=8
 
-GCC_SLOT="11"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
 
-inherit check-compiler-switch cmake
+inherit check-compiler-switch cmake libstdcxx-slot
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -61,13 +64,14 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-0.19
-	sys-devel/gcc:${GCC_SLOT}
+	sys-devel/gcc
 	virtual/pkgconfig
 "
 DOCS=( LICENSE )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -91,34 +95,6 @@ src_configure() {
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
-	fi
-
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${GCC_SLOT}" -ne "${gcc_current_profile_slot}" ; then
-#
-# Fixes:
-#
-#    132 | #error -- unsupported GNU version! gcc versions later than 11 are not
-# supported! The nvcc flag '-allow-unsupported-compiler' can be used to override
-# this version check; however, using an unsupported host compiler may cause
-# compilation failure or incorrect run time execution. Use at your own risk.
-#        |  ^~~~~
-#
-eerror
-eerror "You must switch to == GCC ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-eerror "When you are done, immediately switch back to the systemwide"
-eerror "default slot for gcc."
-eerror
-		die
 	fi
 
 	cmake_src_configure
