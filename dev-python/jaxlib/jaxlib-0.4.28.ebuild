@@ -70,14 +70,19 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
-GCC_COMPAT=( {11..9} ) # Based on U22, U20
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+GCC_COMPAT2=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
 LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
-inherit bazel cflags-hardened check-compiler-switch cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
-inherit llvm rocm sandbox-changes toolchain-funcs
+inherit bazel cflags-hardened check-compiler-switch cuda distutils-r1 dhms
+inherit flag-o-matic git-r3 hip-versions java-pkg-opt-2 libstdcxx-slot llvm
+inherit rocm sandbox-changes toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
@@ -573,57 +578,10 @@ einfo "PATH:\t${PATH}"
 
 use_gcc() {
 	_remove_llvm_from_path
-	local found=0
-	local s
-	for s in ${GCC_COMPAT[@]} ; do
-		symlink_ver=$(gcc_symlink_ver ${s})
-		export CC="${CHOST}-gcc-${symlink_ver}"
-		export CXX="${CHOST}-g++-${symlink_ver}"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		if ${CC} --version 2>/dev/null 1>/dev/null ; then
-einfo "Switched to gcc:${s}"
-			found=1
-			break
-		fi
-	done
-	local found2=0
-	local s_valid
-	for s_valid in ${GCC_COMPAT[@]} ; do
-		if (( ${s} == ${s_valid} )) ; then
-			found2=1
-			break
-		fi
-	done
-	if (( ${found} != 1 )) ; then
-		local slots_desc=$(echo "${GCC_COMPAT[@]}" \
-			| tr " " "\n" \
-			| tac \
-			| tr "\n" " " \
-			| sed -e "s| |, |g" -e "s|, $||g")
-eerror
-eerror "Use only gcc slots ${slots_desc}"
-eerror
-		die
-	fi
-	if (( ${found2} == 1 )) ; then
-		:
-	else
-ewarn
-ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
-ewarn
-einfo
-einfo "  Build time success on 2.11.0:"
-einfo
-einfo "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
-einfo "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
-einfo
-	fi
 
 	# Required for CUDA builds
 	if use cuda ; then
-		has_version "sys-devel/gcc:11" || die "Reinstall gcc:11"
-		local s=11 # Slot
+		local s=$(gcc-major-version) # Slot
 		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
 	fi
 
@@ -763,6 +721,7 @@ eerror
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
 	# sandbox-changes_no_network_sandbox "To download micropackages"
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
