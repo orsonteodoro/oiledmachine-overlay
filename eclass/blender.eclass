@@ -529,9 +529,20 @@ blender_configure_eigen() {
 
 blender_configure_linker_flags() {
 	# Respect the user linker choice.
+	local mold_enable="OFF"
+	local ldd_enable="OFF"
+	local gold_enable="OFF"
+	if is-flagq "-fuse-ld=gold" ; then
+		gold_enable="ON"
+	elif is-flagq "-fuse-ld=lld" ; then
+		gold_enable="ON"
+	elif is-flagq "-fuse-ld=mold" ; then
+		mold_enable="ON"
+	fi
 	mycmakeargs+=(
-		-DWITH_LINKER_LLD=OFF
-		-DWITH_LINKER_GOLD=OFF
+		-DWITH_LINKER_LLD=${ldd_enable}
+		-DWITH_LINKER_GOLD=${gold_enable}
+		-DWITH_LINKER_MOLD=${mold_enable}
 	)
 }
 
