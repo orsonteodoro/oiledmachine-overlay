@@ -37,7 +37,7 @@ ebuild_revision_13
 "
 RDEPEND="
 	icu? (
-		dev-libs/icu:0[${MULTILIB_USEDEP},gcc_slot_11_5]
+		dev-libs/icu:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 "

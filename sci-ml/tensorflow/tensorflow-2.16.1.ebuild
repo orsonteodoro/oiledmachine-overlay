@@ -58,9 +58,13 @@ CUDA_TARGETS_COMPAT=(
 	compute_80 # Unsupported
 	compute_90 # Supported
 )
-GCC_COMPAT=( {12..9} )
-GCC_MAX_SLOT="${GCC_COMPAT[0]}"
-GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+GCC_COMPAT2=( {12..9} )
+GCC_MAX_SLOT="${GCC_COMPAT2[0]}"
+GCC_MIN_SLOT="${GCC_COMPAT2[-1]}"
 GCC_SLOT_WITH_CUDA=12
 GRPC_PROTOBUF_PAIRS=(
 	"1.62:4.25"
@@ -142,7 +146,8 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel cflags-hardened check-compiler-switch check-reqs cuda distutils-r1 dhms flag-o-matic lcnr llvm multibuild
+inherit bazel cflags-hardened check-compiler-switch check-reqs cuda distutils-r1
+inherit dhms flag-o-matic flag-o-matic-om lcnr libstdcxx-slot llvm multibuild
 inherit prefix rocm toolchain-funcs
 
 # For deps versioning, see
@@ -872,7 +877,7 @@ gen_llvm_bdepend() {
 gen_gcc_bdepend() {
 	local s
 	echo "|| ("
-	for s in ${GCC_COMPAT[@]} ; do
+	for s in ${GCC_COMPAT2[@]} ; do
 		echo "
 			=sys-devel/gcc-${s}*:${s}
 		"
@@ -1030,9 +1035,9 @@ einfo "PATH:\t${PATH}"
 use_gcc() {
 	_remove_llvm_from_path
 	local found=0
-	use cuda && GCC_COMPAT=( ${GCC_SLOT_WITH_CUDA} )
+	use cuda && GCC_COMPAT2=( ${GCC_SLOT_WITH_CUDA} )
 	local s
-	for s in ${GCC_COMPAT[@]} ; do
+	for s in ${GCC_COMPAT2[@]} ; do
 		local symlink_ver=$(gcc_symlink_ver ${s})
 		export CC="${CHOST}-gcc-${symlink_ver}"
 		export CXX="${CHOST}-g++-${symlink_ver}"
@@ -1047,7 +1052,7 @@ einfo "Switched to gcc:${s}"
 	done
 	local found2=0
 	local s_valid
-	for s_valid in ${GCC_COMPAT[@]} ; do
+	for s_valid in ${GCC_COMPAT2[@]} ; do
 		if (( ${s} == ${s_valid} )) ; then
 			found2=1
 			break
@@ -1055,7 +1060,7 @@ einfo "Switched to gcc:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only gcc slots ${GCC_COMPAT[@]}"
+eerror "Use only gcc slots ${GCC_COMPAT2[@]}"
 eerror
 		die
 	fi
@@ -1176,25 +1181,6 @@ eerror
 	fi
 }
 
-check_libstdcxx() {
-	local slot="${1}"
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
-eerror
-eerror "You must switch to GCC ${slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -1249,9 +1235,6 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_SLOT="5.0"
 			ROCM_VERSION="${HIP_5_0_VERSION}"
 		fi
-		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-		local gcc_slot="${!_gcc_slot}"
-		check_libstdcxx ${gcc_slot}
 	elif tc-is-clang || use clang ; then
 		use_gcc
 		use_clang
@@ -1323,6 +1306,7 @@ eerror
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 ewarn "ccache support for this package is in TESTING.  Disable ccache if problematic."
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
