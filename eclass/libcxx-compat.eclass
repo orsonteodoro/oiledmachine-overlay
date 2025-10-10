@@ -18,7 +18,8 @@ _LIBCXX_COMPAT_ECLASS=1
 # Only add "Observed in downstream projects" if observed from remote CI logs.
 #
 # If a USE flag slot is marked "Observed in downstream projects", the lower
-# bounds for that slot may be changed to allow it.
+# bounds for that slot may be changed to allow it but only if widely observed
+# across many projects.
 #
 
 # Fewer slots are shown because of LTS issues with Python.
