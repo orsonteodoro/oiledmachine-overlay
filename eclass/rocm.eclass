@@ -1530,8 +1530,26 @@ rocm_get_libomp_path() {
 # @DESCRIPTION:
 # Sets compiler defaults to gcc to avoid versioned C++ linking errors.
 rocm_set_default_gcc() {
-	local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-	gcc_slot="${!_gcc_slot}"
+	local gcc_slots=(
+		"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+		"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+		"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	)
+	local _gcc_slot=""
+
+	local x
+	for x in ${gcc_slots[@]} ; do
+		if has_version "dev-util/hip:${ROCM_SLOT}[${x}]" ; then
+			_gcc_slot="${x}"
+			break
+		fi
+	done
+	if [[ -z "${_gcc_slot}" ]] ; then
+eerror "You must enable the gcc_slot for the dev-util/hip package first."
+		die
+	fi
+	_gcc_slot=$(echo "${_gcc_slot}" | cut -f 3- -d "_" | cut -f 1 -d "_")
+
 	export CC="${CHOST}-gcc-${gcc_slot}"
 	export CXX="${CHOST}-g++-${gcc_slot}"
 	export CPP="${CC} -E"
