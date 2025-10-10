@@ -1074,44 +1074,6 @@ get_gcc_ver_from_cxxabi() {
 	echo "${gcc_ver}"
 }
 
-check_icu_build() {
-	local icu_cxxabi_ver=$(strings "${ESYSROOT}/usr/$(get_libdir)/libicui18n.so" \
-		| grep "CXXABI_1" \
-		| sort -V \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-
-	local gcc_pv=$(gcc-fullversion)
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	local gcc_slot=$(gcc-major-version)
-	local gcc_cxxabi_ver=$(strings "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libstdc++.so" \
-		| grep "CXXABI_1" \
-		| sort -V \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-
-	local icu_gcc_ver=$(get_gcc_ver_from_cxxabi "${icu_cxxabi_ver}")
-
-	if ver_test "${icu_cxxabi_ver}" -gt "${gcc_cxxabi_ver}" ; then
-# The CXXABI is less accurate than GLIBCXX
-eerror
-eerror "Detected missing symbol.  Please use the same GCC for both ICU and ${PN}."
-eerror "Only GCC 11, 12, 13 supported."
-eerror
-eerror "Example solution:"
-eerror
-eerror "  eselect gcc set ${CHOST}-gcc-13"
-eerror "  source /etc/profile"
-eerror "  emerge -C dev-libs/icu"
-eerror "  emerge -1vuDN dev-libs/icu"
-eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
-eerror
-		die
-	fi
-}
-
 _set_clang() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -1196,7 +1158,6 @@ einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
 		fi
 	fi
 	_set_cxx
-	#check_icu_build
 
 	if ! use opengl && ! use gles2; then
 ewarn
@@ -1978,7 +1939,6 @@ einfo "Latest security advisory:  ${MITIGATION_URI}"
 	fi
 	vf_show
 	_set_cxx
-	#check_icu_build
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
