@@ -17,60 +17,6 @@ _LIBCXX_COMPAT_ECLASS=1
 # the python-utils-r1 eclass.  Only releases associated with full access Python
 # will be shown.
 
-# GCC_COMPAT template for ROCm based apps/libs with latest security update
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBCXX_COMPAT_ROCM[@]}
-# )
-#
-LIBCXX_COMPAT_ROCM=(
-	"llvm_slot_20" # Support ROCm 6.4, 7.0
-        "llvm_slot_21" # Support ROCm 6.4, 7.0
-)
-
-# GCC_COMPAT template for CUDA based apps/libs
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBCXX_COMPAT_CUDA[@]}
-# )
-#
-LIBCXX_COMPAT_CUDA=(
-	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-	"llvm_slot_19" # Support CUDA 12.8, 12.9
-)
-
-# GCC_COMPAT template for CUDA 12.x based apps/libs
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBCXX_COMPAT_CUDA12[@]}
-# )
-#
-LIBCXX_COMPAT_CUDA12=(
-	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-	"llvm_slot_19" # Support CUDA 12.8, 12.9
-)
-
-# GCC_COMPAT template for GPU based apps/libs
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBCXX_COMPAT_GPU[@]}
-# )
-#
-LIBCXX_COMPAT_GPU=(
-	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-	"llvm_slot_19" # Support CUDA 12.8, 12.9
-	"llvm_slot_20" # Support ROCm 6.4, 7.0
-        "llvm_slot_21" # Support ROCm 6.4, 7.0
-)
-
 # GCC_COMPAT template for desktop based LTS distros
 #
 # Status:  Production ready
