@@ -237,22 +237,39 @@ changes to CC/CXX using gcc override should be removed for ebuild packages
 that received libstdcxx-slot treatment to avoid inconsistency.  Changes to
 CC/CXX using clang can still remain.
 
-| USE flag       | LTS* | Indirect libstdc++ compatibility                                                                                              | Default C++   |
-|----------------|------|-------------------------------------------------------------------------------------------------------------------------------|---------------|
-| gcc_slot_11_5  | Yes  | U22 (EOL 2027), CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9                                   | C++17         |
-| gcc_slot_12_5  | No   | D12 (EOL 2028), F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17         |
-| gcc_slot_13_4  | Yes  | U24 (EOL 2036), CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                     | C++17         |
-| gcc_slot_14_3  | No   | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                     | C++17         |
+| USE flag       | LTS [1] | Indirect libstdc++ compatibility                                                                                              | Default C++     |
+|----------------|---------|-------------------------------------------------------------------------------------------------------------------------------|-----------------|
+| gcc_slot_11_5  | Yes     | U22 (EOL 2027), CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9                                   | C++17           |
+| gcc_slot_12_5  | No      | D12 (EOL 2028), F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17           |
+| gcc_slot_13_4  | Yes     | U24 (EOL 2036), CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                     | C++17           |
+| gcc_slot_14_3  | No      | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                     | C++17           |
+
+| USE flag [3]   | LTS [1] | Indirect libc++ compatibility                                                                                                 | Default C++ [2] |
+|----------------|---------|-------------------------------------------------------------------------------------------------------------------------------|-----------------|
+| llvm_slot_18   | Yes     | U24                                                                                                                           | C++17           |
+| llvm_slot_19   | No      | D13                                                                                                                           | C++17           |
 
 EOL dates should be taken with a gain of salt because this distro only respects
 the latest release of the other distros.  The main distro repo will delete or
 break support for a core component (e.g. Python) so full support for an older
 LTS version is unreliable.
 
-(*) The LTS support for these USE flags are arbitrary chosen by this overlay.
+[1] The LTS support for these USE flags are arbitrary chosen by this overlay.
 It is based on feature completeness (aka full version) and public proclamation
 of LTS.  Alternatively, you may use the EOL date as your preferred metric.  U22,
 D12, U24, D13 are considered LTS by AI.
+
+[2] The libc++ requires to be built with -std=c++23, but can link
+userland to -std=c++17.  The -std=c++17 is determined by either the userland
+program or the default setting in the Clang program itself.
+
+[3] There are fewer slots supported because of the manifest update ban of
+Python 3.10 by the distro's python-utils-r1 eclass and the distro community
+removal of markings for Python 3.10 support in PYTHON_COMPAT.  Only full access
+Python will be made available on this overlay.  The older Python is necessary
+for QA testing for both the Clang compiler and downstream projects but denied by
+the distro.  The distro's manifest ban is bad because it goes against the spirit
+of the GPL with the right to hack.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
