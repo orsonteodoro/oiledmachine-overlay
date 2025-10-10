@@ -247,7 +247,7 @@ CC/CXX using clang can still remain.
 | USE flag [3]   | LTS [1] | Indirect libc++ compatibility                                                                                                 | Default C++ [2] |
 |----------------|---------|-------------------------------------------------------------------------------------------------------------------------------|-----------------|
 | llvm_slot_18   | Yes     | U24                                                                                                                           | C++17           |
-| llvm_slot_19   | No      | D13                                                                                                                           | C++17           |
+| llvm_slot_19   | Yes     | D13                                                                                                                           | C++17           |
 
 EOL dates should be taken with a gain of salt because this distro only respects
 the latest release of the other distros.  The main distro repo will delete or
