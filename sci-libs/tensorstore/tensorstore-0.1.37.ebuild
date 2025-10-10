@@ -176,64 +176,8 @@ eerror
 	fi
 }
 
-# Modified tc_use_major_version_only() from toolchain.eclass
-gcc_symlink_ver() {
-	local slot="${1}"
-	local ncomponents=3
-
-	local pv=$(best_version "sys-devel/gcc:${slot}" \
-		| sed -e "s|sys-devel/gcc-||g")
-	if [[ -z "${pv}" ]] ; then
-		return
-	fi
-
-	if ver_test ${pv} -lt 10 ; then
-		ncomponents=3
-	elif [[ ${slot} -eq 10 ]] && ver_test "${pv}" -ge "10.4.1_p20220929" ; then
-		ncomponents=1
-	elif [[ ${slot} -eq 11 ]] && ver_test "${pv}" -ge "11.3.1_p20220930" ; then
-		ncomponents=1
-	elif [[ ${slot} -eq 12 ]] && ver_test "${pv}" -ge "12.2.1_p20221001" ; then
-		ncomponents=1
-	elif [[ ${slot} -eq 13 ]] && ver_test "${pv}" -ge "13.0.0_pre20221002" ; then
-		ncomponents=1
-	elif [[ ${slot} -gt 13 ]] ; then
-		ncomponents=1
-	fi
-
-	if [[ ${ncomponents} -eq 1 ]] ; then
-		ver_cut 1 ${pv}
-		return
-	fi
-
-	ver_cut 1-3 ${pv}
-}
-
 use_gcc() {
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -e "\|/usr/lib/llvm|d" \
-		| tr "\n" ":")
-einfo "PATH:\t${PATH}"
-	local found=0
-	local s
-	for s in ${GCC_COMPAT[@]} ; do
-		symlink_ver=$(gcc_symlink_ver ${s})
-		export CC="${CHOST}-gcc-${symlink_ver}"
-		export CXX="${CHOST}-g++-${symlink_ver}"
-		export CPP="${CC} -E"
-		if ${CC} --version >/dev/null 2>&1 ; then
-einfo "Switched to gcc:${s}"
-			found=1
-			break
-		fi
-	done
-	if (( ${found} != 1 )) ; then
-eerror
-eerror "Use only gcc slots ${GCC_COMPAT[@]}"
-eerror
-		die
-	fi
+	export CC=$(tc-getCC)
 	${CC} --version || die
 	strip-unsupported-flags
 }
