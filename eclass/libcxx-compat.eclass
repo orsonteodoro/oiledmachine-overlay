@@ -5,9 +5,9 @@
 # @ECLASS: libcxx-compat.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: CLANG_COMPAT templates
+# @BLURB: LLVM_COMPAT templates
 # @DESCRIPTION:
-# Common macro expanded like array values for CLANG_COMPAT.
+# Common macro expanded like array values for LLVM_COMPAT.
 
 if [[ -z ${_LIBCXX_COMPAT_ECLASS} ]] ; then
 _LIBCXX_COMPAT_ECLASS=1
@@ -31,14 +31,14 @@ _LIBCXX_COMPAT_ECLASS=1
 # CLANG_COMPAT contains "llvm_slot_" prefix.
 # LLVM_COMPAT contains just the slot number.
 
-# CLANG_COMPAT template for desktop based LTS distros
+# LLVM_COMPAT template for desktop based LTS distros
 #
 # Status:  Production ready
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_LTS[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_LTS[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_LTS=(
@@ -46,14 +46,14 @@ LIBCXX_COMPAT_LTS=(
         "llvm_slot_19" # Support D13
 )
 
-# CLANG_COMPAT template for -std=c++98 projects
+# LLVM_COMPAT template for -std=c++98 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX98[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX98[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX98=(
@@ -61,14 +61,14 @@ LIBCXX_COMPAT_STDCXX98=(
 	"llvm_slot_19" # Support -std=c++98
 )
 
-# CLANG_COMPAT template for -std=c++03 projects
+# LLVM_COMPAT template for -std=c++03 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX03[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX03[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX03=(
@@ -76,14 +76,14 @@ LIBCXX_COMPAT_STDCXX03=(
 	"llvm_slot_19" # Support -std=c++03
 )
 
-# CLANG_COMPAT template for -std=c++11 projects
+# LLVM_COMPAT template for -std=c++11 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX11[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX11=(
@@ -91,14 +91,14 @@ LIBCXX_COMPAT_STDCXX11=(
 	"llvm_slot_19" # Support -std=c++11
 )
 
-# CLANG_COMPAT template for -std=c++14 projects
+# LLVM_COMPAT template for -std=c++14 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX14[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX14=(
@@ -106,7 +106,7 @@ LIBCXX_COMPAT_STDCXX14=(
 	"llvm_slot_19" # Support -std=c++14
 )
 
-# CLANG_COMPAT template for -std=c++17 projects or the compiler default
+# LLVM_COMPAT template for -std=c++17 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -115,8 +115,8 @@ LIBCXX_COMPAT_STDCXX14=(
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX17[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX17=(
@@ -124,7 +124,7 @@ LIBCXX_COMPAT_STDCXX17=(
 	"llvm_slot_21" # Support -std=c++17
 )
 
-# CLANG_COMPAT template for -std=c++20 projects or the compiler default
+# LLVM_COMPAT template for -std=c++20 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -133,8 +133,8 @@ LIBCXX_COMPAT_STDCXX17=(
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX20[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX20=(
@@ -142,7 +142,7 @@ LIBCXX_COMPAT_STDCXX20=(
 	"llvm_slot_21" # Support -std=c++20
 )
 
-# CLANG_COMPAT template for -std=c++23 projects or the compiler default
+# LLVM_COMPAT template for -std=c++23 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -151,15 +151,15 @@ LIBCXX_COMPAT_STDCXX20=(
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX23[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX23=(
 	"llvm_slot_21" # Support -std=c++23
 )
 
-# CLANG_COMPAT template for -std=c++26 projects or the compiler default
+# LLVM_COMPAT template for -std=c++26 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -168,8 +168,8 @@ LIBCXX_COMPAT_STDCXX23=(
 #
 # Example:
 #
-# CLANG_COMPAT=(
-#     ${LIBCXX_COMPAT_STDCXX26[@]}
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_STDCXX26=(
