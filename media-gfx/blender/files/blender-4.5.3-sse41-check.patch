@@ -1,0 +1,11 @@
+--- source/blender/blenlib/BLI_bit_span_to_index_ranges.hh.orig	2025-07-10 02:43:07.000000000 -0700
++++ source/blender/blenlib/BLI_bit_span_to_index_ranges.hh	2025-10-10 12:51:32.241338438 -0700
+@@ -106,7 +106,7 @@ inline void bits_to_index_ranges(const B
+     int64_t int_i = 0;
+ 
+ /* Checking for chunks of 0 bits can be speedup using intrinsics quite significantly. */
+-#if BLI_HAVE_SSE2
++#if BLI_HAVE_SSE2 && defined(__SSE4_1__)
+     for (; int_i + 1 < ints_to_check; int_i += 2) {
+       /* Loads the next 128 bit. */
+       const __m128i group = _mm_loadu_si128(reinterpret_cast<const __m128i *>(start + int_i));
