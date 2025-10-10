@@ -35,7 +35,8 @@ unset -f _blender_set_globals
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBA OOBR SO"
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 
-inherit cflags-hardened check-compiler-switch cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
+inherit cflags-hardened check-compiler-switch cuda check-reqs cmake dhms
+inherit flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"

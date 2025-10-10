@@ -1306,6 +1306,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	append-flags -funsigned-char
 	append-lfs-flags
 	cflags-hardened_append
+	fix_mb_len_max
 
 	local s="${OPENVDB_ABIS_MAJOR_VERS}"
 	if use "abi${s}-compat" ; then
