@@ -56,7 +56,6 @@ GCC_COMPAT=(
 GCC_COMPAT2=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT2[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT2[-1]}"
-GCC_SLOT_WITH_CUDA=12
 GRPC_PROTOBUF_PAIRS=(
 	"1.62:4.25"
 	"1.61:4.25"
@@ -529,7 +528,6 @@ CUDA_CDEPEND="
 			>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
 			<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 )):=[profiler]
 		)
-		sys-devel/gcc:${GCC_SLOT_WITH_CUDA}
 	)
 "
 
@@ -872,7 +870,6 @@ BDEPEND="
 	)
 	cuda? (
 		${CUDA_CDEPEND}
-		sys-devel/gcc:${GCC_SLOT_WITH_CUDA}
 	)
 	python? (
 		!big-endian? (
@@ -1574,6 +1571,7 @@ ewarn
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0 # $(usex cuda 1 0)
 		if use cuda ; then
+			export GCC_SLOT_WITH_CUDA=$(gcc-major-version)
 			export TF_NEED_CLANG=0
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
