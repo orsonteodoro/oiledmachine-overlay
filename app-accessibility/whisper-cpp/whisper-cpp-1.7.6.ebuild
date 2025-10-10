@@ -102,7 +102,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
-ebuild_revision_5
+ebuild_revision_6
 "
 gen_rocm_required_use() {
 	local s
@@ -316,15 +316,9 @@ pkg_setup() {
 		rocm_pkg_setup
 	fi
 	if use cuda ; then
-		if has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-			export CC="${CHOST}-gcc-11"
-			export CXX="${CHOST}-g++-11"
-			export CPP="${CXX} -E"
-		elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
-			export CC="${CHOST}-gcc-13"
-			export CXX="${CHOST}-g++-13"
-			export CPP="${CXX} -E"
-		fi
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		export CPP="${CXX} -E"
 	fi
 	if use openvino ; then
 		CONFIG_CHECK="~DRM_ACCEL_IVPU ~DRM ~DRM_ACCEL ~PCI ~PCI_MSI"
