@@ -193,85 +193,60 @@ check_embree() {
 		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
 		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
-ewarn
 ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
-ewarn
 		else
 			if has_version 'media-libs/embree[-filter_function]' || \
 			   has_version 'media-libs/embree[-filter-function]' || \
 			   has_version 'media-libs/embree[-filterfunction]' ; then
-ewarn
 ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
-ewarn
 			fi
 		fi
 
 		# The default for EMBREE_BACKFACE_CULLING is OFF in embree.
 		if grep -q -F -e "EMBREE_BACKFACE_CULLING=ON" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
-ewarn
 ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
-ewarn
 		else
 			if has_version 'media-libs/embree[backface_culling]' || \
 			   has_version 'media-libs/embree[backface-culling]' || \
 			   has_version 'media-libs/embree[backfaceculling]' ; then
-ewarn
 ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
-ewarn
 			fi
 		fi
 
 		# The default for EMBREE_RAY_MASK is OFF in embree.
 		if grep -q -F -e "EMBREE_RAY_MASK=OFF" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
-ewarn
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
-ewarn
 		else
 			if   has_version 'media-libs/embree[-ray_mask]' || \
 			     has_version 'media-libs/embree[-ray-mask]' || \
 			     has_version 'media-libs/embree[-raymask]' ; then
-ewarn
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
-ewarn
 			elif has_version 'media-libs/embree[ray_mask]' || \
 			     has_version 'media-libs/embree[ray-mask]' || \
 			     has_version 'media-libs/embree[raymask]' ; then
 				:
 			elif has_version 'media-libs/embree' ; then
-ewarn
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
-ewarn
 			fi
 		fi
 	fi
 }
 
 check_compiler() {
-	if ! test-flags-CXX "-std=c++${CXXABI_VER}" 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "Switch to a c++${CXXABI_VER} compatible compiler."
-eerror
-	fi
 	if tc-is-gcc ; then
 		if ver_test $(gcc-fullversion) -lt "${GCC_MIN}" ; then
-eerror
 eerror "${PN} requires GCC >= ${GCC_MIN}"
-eerror
 			die
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt "${CLANG_MIN}" ; then
-eerror
 eerror "${PN} requires Clang >= ${CLANG_MIN}"
-eerror
 			die
 		fi
 	else
-eerror
 eerror "Compiler is not supported"
-eerror
 		die
 	fi
 }
@@ -422,10 +397,8 @@ check_optimal_compiler_for_cycles_x86() {
 		fi
 	fi
 	strip-unsupported-flags
-einfo
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
-einfo
 }
 
 IUSE+="
@@ -445,9 +418,7 @@ _get_impls() {
 print_release_description() {
 	local lts_versions=$(echo "${LTS_VERSIONS[@]/%/,}" | sed -e "s|,$||g")
 	if [[ "${RELEASE_TYPE}" == "lts" ]] ; then
-einfo
 einfo "This version is a Long Term Support (LTS) version till ${EOL_DATE}."
-einfo
 	elif [[ "${RELEASE_TYPE}" == "release" ]] ; then
 einfo
 einfo "This version is a point release for this series."
@@ -492,9 +463,7 @@ blender_src_prepare() {
 	local file
 	while IFS="" read -d $'\0' -r file ; do
 		if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
-einfo
 einfo "Removing -DGLEW_STATIC from ${file}"
-einfo
 			sed -i \
 				-e '/-DGLEW_STATIC/d' "${file}" \
 				|| die
@@ -840,36 +809,26 @@ _src_compile_docs() {
 		addpredict "/dev/dri"
 		addpredict "/dev/nvidiactl"
 
-einfo
 einfo "Generating Blender C/C++ API docs ..."
-einfo
 		cd "${CMAKE_USE_DIR}"/doc/doxygen || die
 		doxygen -u Doxyfile || die
 		if ! doxygen ; then
-eerror
-eerror "doxygen failed to build API docs."
-eerror
+eerror "Doxygen failed to build API docs."
 			die
 		fi
 
 		cd "${CMAKE_USE_DIR}" || die
-einfo
 einfo "Generating (BPY) Blender Python API docs ..."
-einfo
 		if ! "${BUILD_DIR}/bin/blender" \
 			--background \
 			--python "doc/python_api/sphinx_doc_gen.py" \
 			-noaudio ; then
-eerror
-eerror "sphinx failed."
-eerror
+eerror "Sphinx failed to build docs."
 		fi
 
 		cd "${CMAKE_USE_DIR}/doc/python_api" || die
 		if ! sphinx-build sphinx-in BPY_API ; then
-eerror
-eerror "sphinx failed."
-eerror
+eerror "Sphinx failed to build docs."
 			die
 		fi
 	fi
@@ -881,16 +840,12 @@ _install() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die
-einfo
 einfo "Installing sandboxed copy"
-einfo
 	_src_install
 }
 
 _clean() {
-einfo
 einfo "Wiping sandboxed install"
-einfo
 	cd "${S}" || die
 	rm -rf "${D}" || die
 }
@@ -914,9 +869,7 @@ _src_test() {
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die
 	if use test; then
-einfo
 einfo "Running Blender Unit Tests for ${impl} ..."
-einfo
 		cd "${BUILD_DIR}/bin/tests" || die
 		local f
 		for f in *_test; do
@@ -1070,9 +1023,7 @@ fecho1 "# with blenderplayer with licenses or built without such dependencies."
 fecho1 "# The dependency of those direct shared dependencies may also be required."
 fecho1
 		if [[ ! -e "${T}/build-build_portable.log" ]] ; then
-eerror
 eerror "Missing build log."
-eerror
 			die
 		fi
 

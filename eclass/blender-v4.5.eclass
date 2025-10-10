@@ -69,8 +69,6 @@ CPU_FLAGS_3_3=(
 	${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}
 )
 
-CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -782,7 +780,7 @@ RDEPEND+="
 	dev-cpp/pystring[${LIBSTDCXX_USEDEP}]
 	>=dev-lang/python-3.11.11
 	>=dev-libs/fribidi-1.0.12
-	>=media-libs/freetype-${FREETYPE_PV}
+	>=media-libs/freetype-${FREETYPE_PV}[brotli]
 	>=media-libs/libpng-1.6.43:0=
 	>=media-libs/shaderc-2024.3[${LIBSTDCXX_USEDEP}]
 	media-libs/shaderc:=
@@ -1298,9 +1296,7 @@ _src_configure() {
 	fi
 
 	if has_version "dev-libs/wayland" && ! use wayland ; then
-eerror
 eerror "You must enable the wayland USE flag or uninstall wayland."
-eerror
 		die
 	fi
 
