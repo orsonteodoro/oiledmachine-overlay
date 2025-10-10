@@ -9,7 +9,12 @@ EAPI=8
 # CUDA:  https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/.github/workflows/build.yml#L772
 #        https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/ggml/src/ggml-cuda/CMakeLists.txt#L8
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 MY_PN="${PN/-/.}"
 MY_P="${MY_PN}-${PV}"
@@ -102,7 +107,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
-ebuild_revision_6
+ebuild_revision_7
 "
 gen_rocm_required_use() {
 	local s
@@ -325,6 +330,7 @@ pkg_setup() {
 		WARNING_DRM_ACCEL_IVPU="Missing NPU support with CONFIG_DRM_ACCEL_IVPU"
 		linux-info_pkg_setup
 	fi
+	libstdcxx-slot_verify
 }
 
 src_configure() {
