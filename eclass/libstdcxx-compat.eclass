@@ -13,6 +13,15 @@ if [[ -z ${_LIBSTDCXX_COMPAT_ECLASS} ]] ; then
 _LIBSTDCXX_COMPAT_ECLASS=1
 
 #
+# QA standards:
+#
+# Only add "Observed in downstream projects" if observed from remote CI logs.
+#
+# If a USE flag slot is marked "Observed in downstream projects", the lower
+# bounds for that slot may be changed to allow it.
+#
+
+#
 # Ebuild developer draft/tentative plan for ebuilds.
 #
 # There are 3 identified cases for *DEPENDs:

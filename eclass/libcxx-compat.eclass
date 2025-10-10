@@ -12,6 +12,15 @@
 if [[ -z ${_LIBCXX_COMPAT_ECLASS} ]] ; then
 _LIBCXX_COMPAT_ECLASS=1
 
+#
+# QA standards:
+#
+# Only add "Observed in downstream projects" if observed from remote CI logs.
+#
+# If a USE flag slot is marked "Observed in downstream projects", the lower
+# bounds for that slot may be changed to allow it.
+#
+
 # Fewer slots are shown because of LTS issues with Python.
 # The distro overlay is denying manifest updates to Python 3.10.x and older in
 # the python-utils-r1 eclass.  Only releases associated with full access Python
