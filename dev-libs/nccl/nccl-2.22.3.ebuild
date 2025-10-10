@@ -18,11 +18,15 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 	compute_90
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
 NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=2024-06-19
 S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit autotools check-compiler-switch flag-o-matic linux-info python-any-r1
+inherit autotools check-compiler-switch flag-o-matic libstdcxx-slot linux-info python-any-r1
 
 S="${WORKDIR}/${P}-1"
 KEYWORDS="~amd64"
@@ -310,21 +314,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	check_kernel_setup
 	python-any-r1_pkg_setup
-}
-
-libstdcxx_check() {
-	local required_gcc_slot="${1}"
-        local gcc_current_profile=$(gcc-config -c)
-        local gcc_current_profile_slot=${gcc_current_profile##*-}
-        if ver_test "${gcc_current_profile_slot}" -ne "${required_gcc_slot}" ; then
-eerror
-eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${required_gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-                die
-        fi
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -336,35 +326,10 @@ src_prepare() {
 }
 
 src_configure() {
-	if has_version "=dev-util/nvidia-cuda-toolkit-12.5*" ; then
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 13
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.4*" ; then
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 13
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.3*" ; then
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-g++-12"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 12
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 11
-	else
-# Avoid version symbols problems.
-eerror "Unsupported cuda version."
-		die
-	fi
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
