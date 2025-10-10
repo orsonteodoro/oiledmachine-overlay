@@ -90,30 +90,9 @@ python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
-check_libstdcxx() {
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -lt "${GCC_SLOT}" ; then
-# Fixes:
-# warning "Libc++ only supports GCC 13 and later"
-eerror
-eerror "You must switch to >= GCC ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
-	check_libstdcxx
 }
 
 get_lib_types() {

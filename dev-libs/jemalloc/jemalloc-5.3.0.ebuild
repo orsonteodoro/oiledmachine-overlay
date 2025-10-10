@@ -115,8 +115,8 @@ src_configure() { :; }
 
 _src_configure_compiler() {
 	# clang breaks tests
-	export CC="gcc"
-	export CXX="g++"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 }
