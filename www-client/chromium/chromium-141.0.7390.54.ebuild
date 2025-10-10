@@ -163,7 +163,6 @@ FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec
 FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
-GCC_SLOT="" # Global variable
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
@@ -3539,31 +3538,22 @@ eerror
 		append-cppflags -DFORCE_CLANG_STDATOMIC_H
 	else
 einfo "Switching to GCC"
-		unset GCC_SLOT
-		local s
-		for s in ${GCC_COMPAT[@]} ; do
-			if has_version "sys-devel/gcc:${s}" ; then
-				GCC_SLOT="${s}"
-				break
-			fi
-		done
-
 		if tc-is-cross-compiler ; then
-			export CC="${CBUILD}-gcc-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CBUILD}-g++-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC="${CBUILD}-gcc-${GCC_SLOT}"
-			export BUILD_CXX="${CBUILD}-g++-${GCC_SLOT}"
+			export CC="${CBUILD}-gcc $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CBUILD}-g++ $(get_abi_CFLAGS ${ABI})"
+			export BUILD_CC="${CBUILD}-gcc"
+			export BUILD_CXX="${CBUILD}-g++"
 			export BUILD_AR="ar"
 			export BUILD_NM="nm"
 		else
-			export CC="${CHOST}-gcc-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CHOST}-g++-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CC="${CHOST}-gcc $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CHOST}-g++ $(get_abi_CFLAGS ${ABI})"
 		fi
 
 		if tc-is-cross-compiler ; then
-			CPP="${CBUILD}-gcc-${LLVM_SLOT} -E"
+			CPP="${CBUILD}-gcc -E"
 		else
-			CPP="${CHOST}-gcc-${LLVM_SLOT} -E"
+			CPP="${CHOST}-gcc -E"
 		fi
 
 		export AR="ar"
