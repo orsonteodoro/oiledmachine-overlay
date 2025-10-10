@@ -29,6 +29,7 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LIBJPEG_TURBO_PV="2.1.2"
 LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -258,7 +259,7 @@ RDEPEND+="
 		>=x11-libs/pango-1.50.6[${MULTILIB_USEDEP}]
 	)
 	poppler? (
-		>=app-text/poppler-22.02.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cairo,introspection]
+		>=app-text/poppler-22.02.0[${LIBSTDCXX_USEDEP_DEV},${MULTILIB_USEDEP},cairo,introspection]
 		app-text/poppler:=
 	)
 	svg? (
