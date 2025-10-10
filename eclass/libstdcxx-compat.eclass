@@ -15,7 +15,8 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 #
 # QA standards:
 #
-# Only add "Observed in downstream projects" if observed from remote CI logs.
+# Only add "Observed in downstream projects" if observed from remote CI logs
+# and the slot is feature incomplete.
 #
 # If a USE flag slot is marked "Observed in downstream projects", the lower
 # bounds for that slot may be changed to allow it but only if widely observed
