@@ -5,6 +5,11 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
+GCC_COMPAT=(
+	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=18
 LLVM_TARGETS=(
 	AMDGPU
@@ -16,7 +21,7 @@ SANITIZER_FLAGS=(
 	cfi
 )
 
-inherit check-compiler-switch cmake dhms flag-o-matic rocm toolchain-funcs
+inherit check-compiler-switch cmake dhms flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -117,6 +122,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	dhms_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
