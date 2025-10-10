@@ -17,13 +17,16 @@ _LIBCXX_COMPAT_ECLASS=1
 # the python-utils-r1 eclass.  Only releases associated with full access Python
 # will be shown.
 
-# GCC_COMPAT template for desktop based LTS distros
+# CLANG_COMPAT contains "llvm_slot_" prefix.
+# LLVM_COMPAT contains just the slot number.
+
+# CLANG_COMPAT template for desktop based LTS distros
 #
 # Status:  Production ready
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_LTS[@]}
 # )
 #
@@ -32,13 +35,13 @@ LIBCXX_COMPAT_LTS=(
         "llvm_slot_19" # Support D13
 )
 
-# GCC_COMPAT template for -std=c++98 projects
+# CLANG_COMPAT template for -std=c++98 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX98[@]}
 # )
 #
@@ -47,13 +50,13 @@ LIBCXX_COMPAT_STDCXX98=(
 	"llvm_slot_19" # Support -std=c++98
 )
 
-# GCC_COMPAT template for -std=c++03 projects
+# CLANG_COMPAT template for -std=c++03 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX03[@]}
 # )
 #
@@ -62,13 +65,13 @@ LIBCXX_COMPAT_STDCXX03=(
 	"llvm_slot_19" # Support -std=c++03
 )
 
-# GCC_COMPAT template for -std=c++11 projects
+# CLANG_COMPAT template for -std=c++11 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX11[@]}
 # )
 #
@@ -77,13 +80,13 @@ LIBCXX_COMPAT_STDCXX11=(
 	"llvm_slot_19" # Support -std=c++11
 )
 
-# GCC_COMPAT template for -std=c++14 projects
+# CLANG_COMPAT template for -std=c++14 projects
 #
 # Status:  Used in production
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX14[@]}
 # )
 #
@@ -92,7 +95,7 @@ LIBCXX_COMPAT_STDCXX14=(
 	"llvm_slot_19" # Support -std=c++14
 )
 
-# GCC_COMPAT template for -std=c++17 projects or the compiler default
+# CLANG_COMPAT template for -std=c++17 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -101,7 +104,7 @@ LIBCXX_COMPAT_STDCXX14=(
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX17[@]}
 # )
 #
@@ -110,7 +113,7 @@ LIBCXX_COMPAT_STDCXX17=(
 	"llvm_slot_21" # Support -std=c++17
 )
 
-# GCC_COMPAT template for -std=c++20 projects or the compiler default
+# CLANG_COMPAT template for -std=c++20 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -119,7 +122,7 @@ LIBCXX_COMPAT_STDCXX17=(
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX20[@]}
 # )
 #
@@ -128,7 +131,7 @@ LIBCXX_COMPAT_STDCXX20=(
 	"llvm_slot_21" # Support -std=c++20
 )
 
-# GCC_COMPAT template for -std=c++23 projects or the compiler default
+# CLANG_COMPAT template for -std=c++23 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -137,7 +140,7 @@ LIBCXX_COMPAT_STDCXX20=(
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX23[@]}
 # )
 #
@@ -145,7 +148,7 @@ LIBCXX_COMPAT_STDCXX23=(
 	"llvm_slot_21" # Support -std=c++23
 )
 
-# GCC_COMPAT template for -std=c++26 projects or the compiler default
+# CLANG_COMPAT template for -std=c++26 projects or the compiler default
 #
 # Status:  Support is still in development
 #
@@ -154,7 +157,7 @@ LIBCXX_COMPAT_STDCXX23=(
 #
 # Example:
 #
-# GCC_COMPAT=(
+# CLANG_COMPAT=(
 #     ${LIBCXX_COMPAT_STDCXX26[@]}
 # )
 #
