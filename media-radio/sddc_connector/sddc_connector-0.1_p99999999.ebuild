@@ -37,7 +37,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -88,8 +88,8 @@ src_unpack() {
 }
 
 src_configure() {
-	export CC="${CHOST}-gcc-11"
-	export CXX="${CHOST}-g++-11"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 
 	check-compiler-switch_end
