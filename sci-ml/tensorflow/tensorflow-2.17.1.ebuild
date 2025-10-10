@@ -1034,50 +1034,11 @@ einfo "PATH:\t${PATH}"
 
 use_gcc() {
 	_remove_llvm_from_path
-	local found=0
-	use cuda && GCC_COMPAT2=( ${GCC_SLOT_WITH_CUDA} )
-	local s
-	for s in ${GCC_COMPAT2[@]} ; do
-		local symlink_ver=$(gcc_symlink_ver ${s})
-		export CC="${CHOST}-gcc-${symlink_ver}"
-		export CXX="${CHOST}-g++-${symlink_ver}"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		if ${CC} --version 2>/dev/null 1>/dev/null ; then
-			check_libstdcxx ${s}
-einfo "Switched to gcc:${s}"
-			found=1
-			break
-		fi
-	done
-	local found2=0
-	local s_valid
-	for s_valid in ${GCC_COMPAT2[@]} ; do
-		if (( ${s} == ${s_valid} )) ; then
-			found2=1
-			break
-		fi
-	done
-	if (( ${found} != 1 )) ; then
-eerror
-eerror "Use only gcc slots ${GCC_COMPAT2[@]}"
-eerror
-		die
-	fi
-	if (( ${found2} == 1 )) ; then
-		:;
-	else
-ewarn
-ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
-ewarn
-ewarn "  Build time success on 2.11.0:"
-ewarn
-ewarn "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
-ewarn "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
-ewarn
-	fi
-	${CC} --version || die
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
+	${CC} --version || die
 }
 
 use_clang() {
@@ -1146,7 +1107,7 @@ eerror
 		die
 	fi
 	if (( ${found2} == 1 )) ; then
-		:;
+		:
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
@@ -1246,12 +1207,6 @@ einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
 einfo "completely installed."
 einfo
 		die
-	fi
-
-	if tc-is-clang ; then
-		if use cuda ; then
-			check_libstdcxx 11
-		fi
 	fi
 
 	if use rocm ; then
