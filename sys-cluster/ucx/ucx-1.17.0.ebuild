@@ -16,6 +16,10 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 )
 CLANG_COMPAT=( {18..15} )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
 inherit hip-versions
 RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
@@ -46,7 +50,7 @@ ROCM_IUSE=(
 )
 UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
-inherit autotools check-compiler-switch dep-prepare flag-o-matic rocm linux-info toolchain-funcs
+inherit autotools check-compiler-switch dep-prepare flag-o-matic libstdcxx-slot rocm linux-info toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -465,25 +469,6 @@ einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 	fi
 }
 
-check_libstdcxx() {
-	local slot="${1}"
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
-eerror
-eerror "You must switch to GCC ${slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
@@ -573,6 +558,7 @@ pkg_setup() {
 		WARNING_MLX5_CORE="CONFIG_MLX5_CORE=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_INFINIBAND="CONFIG_MLX5_INFINIBAND=y is required for ConnectX-4 or later support."
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -738,18 +724,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		myconf+=(
 			--without-ze
 		)
-	fi
-
-	if [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-		check_libstdcxx 12
-	elif [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.3*" ; then
-		check_libstdcxx 12
-	elif [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
-		check_libstdcxx 13
-	elif [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.5*" ; then
-		check_libstdcxx 13
-	elif [[ "${USE_ROCM}" == "1" ]] && use rocm ; then
-		check_libstdcxx 12
 	fi
 
 	NVCC_APPEND_FLAGS=""
