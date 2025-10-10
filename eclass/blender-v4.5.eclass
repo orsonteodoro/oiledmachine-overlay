@@ -1174,81 +1174,9 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.3-hip-flags.patch"
 )
 
-check_multiple_llvm_versions_in_native_libs() {
-	# Checks to avoid loading multiple versions of LLVM.
-
-	local llvm_slot
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		use "llvm_slot_${s}" && llvm_slot=${s}
-	done
-
-	if ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
-		local llvm_ret
-		ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
-			| grep -q -e "LLVM-${llvm_slot}"
-		llvm_ret="$?"
-		if [[ "${llvm_ret}" != "0" ]] ; then
-ewarn
-ewarn "Detected linking inconsistency:"
-ewarn
-ewarn "Requested LLVM blender USE flag:  llvm-${llvm_slot}"
-ewarn "Files inspected:  ${ESYSROOT}/usr/$(get_libdir)/dri/"*".so"
-ewarn "Actual LLVM linking:"
-ewarn
-		ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
-			| grep -e "LLVM-"
-ewarn
-ewarn "These should be the same to avoid a possible multiple LLVMs loaded bug."
-ewarn
-ewarn
-
-ewarn
-ewarn "Prebuilt binary video card drivers users:"
-ewarn
-ewarn "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
-ewarn "media-libs/mesa ebuilds for compatibility details."
-ewarn
-			if use osl ; then
-eerror
-eerror "You must pick one of the following:"
-eerror
-eerror "(1) Use media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay"
-eerror "instead if it exists."
-eerror "(2) Disable the osl USE flag."
-eerror
-				die
-			fi
-		fi
-	fi
-
-	if use osl && [[ -e "${ESYSROOT}/usr/$(get_libdir)/liboslexec.so" ]] ; then
-		osl_llvm=
-		if ldd "${ESYSROOT}/usr/$(get_libdir)/liboslexec.so" \
-			| grep -q -F "libLLVMAnalysis.so.9" ; then
-			# split llvm
-			osl_llvm=9
-		else
-			# monolithic llvm
-			osl_llvm=$(ldd "${ESYSROOT}/usr/$(get_libdir)/liboslexec.so" \
-				| grep -F -i -e "LLVM" | head -n 1 \
-				| grep -o -E -e "libLLVM-[0-9]+.so" \
-				| head -n 1 | grep -o -E -e "[0-9]+")
-		fi
-		if [[ -n "${osl_llvm}" ]] \
-			&& ver_test "${osl_llvm}" -ne "${llvm_slot}" ; then
-eerror
-eerror "media-libs/osl must be linked to LLVM ${llvm_slot}"
-eerror
-			die
-		fi
-	fi
-}
-
 _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
-	check_multiple_llvm_versions_in_native_libs
 	print_release_description
 
 	local found=0
