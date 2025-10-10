@@ -5,6 +5,8 @@ EAPI=8
 
 # PV _pabbcc corresponds to rocm a.bb.cc
 
+MY_PV=$(ver_cut 1-3)
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
 	gfx701
@@ -44,11 +46,14 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_90
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
 FORTRAN_STANDARD="77 90"
-MY_PV=$(ver_cut 1-3)
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit check-compiler-switch cmake flag-o-matic fortran-2 python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic fortran-2 libstdcxx-slot python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	inherit rocm
 else
@@ -358,6 +363,7 @@ icl-magma-v2_7_pkg_setup() {
 	if use mkl ; then
 		source "/opt/intel/oneapi/mkl/latest/env/vars.sh"
 	fi
+	libstdcxx-slot_verify
 }
 
 gen_pc_file() {
@@ -471,21 +477,6 @@ einfo "Removing LLVM references"
 	IFS=$' \t\n'
 }
 
-libstdcxx_check() {
-	local required_gcc_slot="${1}"
-        local gcc_current_profile=$(gcc-config -c)
-        local gcc_current_profile_slot=${gcc_current_profile##*-}
-        if ver_test "${gcc_current_profile_slot}" -ne "${required_gcc_slot}" ; then
-eerror
-eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${required_gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-                die
-        fi
-}
-
 generate_precisions() {
 	local inc_file
 	if has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl && use ilp64 ; then
@@ -540,43 +531,13 @@ eerror
 		export gpu="$(get_cuda_flags)"
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.5*" && has_version "=sys-devel/gcc-13*" ; then
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
+	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-		libstdcxx_check 13
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=sys-devel/gcc-13*" ; then
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 13
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/gcc-12*" ; then
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-g++-12"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 12
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-		libstdcxx_check 11
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda ; then
-eerror
-eerror "If using"
-eerror
-eerror "CUDA 12.5 - install and switch via eselect gcc to either gcc 13"
-eerror "CUDA 12.4 - install and switch via eselect gcc to either gcc 13"
-eerror "CUDA 12.3 - install and switch via eselect gcc to either gcc 12"
-eerror "CUDA 11.8 - install and switch via eselect gcc to either gcc 11"
-eerror
-		die
 	elif has rocm ${IUSE_EFFECTIVE} && use rocm ; then
 		export gpu="$(get_amdgpu_flags)"
-		libstdcxx_check 12
 	fi
 	sed -i \
 		-e "s|@GPU_TARGET_OVERRIDE@|GPU_TARGET = ${gpu}|g" \
