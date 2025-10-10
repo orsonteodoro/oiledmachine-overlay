@@ -727,12 +727,12 @@ find_remove_module() {
 }
 
 gen_env() {
-cat <<-EOF > "${T}"/50${PN}-jit
+cat <<-EOF > "${T}/50${PN}-jit"
 # Details can be found at http://gambaswiki.org/wiki/doc/jit
-GB_NO_JIT=${EGAMBAS_GB_NO_JIT:=0}
-GB_JIT_DEBUG=${EGAMBAS_GB_JIT_DEBUG:=0}
-GB_JIT_CC="${EGAMBAS_GB_JIT_CC:=gcc}"
-GB_JIT_CFLAGS="${EGAMBAS_GB_JIT_CFLAGS:=-O3}"
+GB_NO_JIT=${EGAMBAS_GB_NO_JIT:-0}
+GB_JIT_DEBUG=${EGAMBAS_GB_JIT_DEBUG:-0}
+GB_JIT_CC="${EGAMBAS_GB_JIT_CC:-gcc}"
+GB_JIT_CFLAGS="${EGAMBAS_GB_JIT_CFLAGS:--O3}"
 EOF
 }
 
