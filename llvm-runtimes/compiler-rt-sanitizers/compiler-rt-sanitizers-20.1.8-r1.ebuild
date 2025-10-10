@@ -26,11 +26,11 @@ unset -f _llvm_set_globals
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch check-reqs cmake flag-o-matic libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
@@ -52,7 +52,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_14
+ebuild_revision_15
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -436,6 +436,7 @@ src_configure() {
 		local -x CXX="${CHOST}-clang++-${LLVM_MAJOR}"
 		local -x CPP="${CC} -E"
 		strip-unsupported-flags
+		fix_mb_len_max
 
 		# The full clang configuration might not be ready yet. Use the partial
 		# configuration files that are guaranteed to exist even during initial

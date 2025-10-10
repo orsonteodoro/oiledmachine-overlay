@@ -100,7 +100,7 @@ FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 GLIB_VERSIONS=(
 	"2.84.3"
@@ -144,8 +144,9 @@ SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
-inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs cmake desktop dhms flag-o-matic
-inherit git-r3 gnome2 lcnr libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker
+inherit check-reqs cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
+inherit lcnr libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-single-r1 ruby-single toolchain-funcs vf
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
@@ -2886,6 +2887,8 @@ eerror
 	else
 		export WK_USE_CCACHE=OFF
 	fi
+
+	fix_mb_len_max
 
 	cmake_src_configure
 }

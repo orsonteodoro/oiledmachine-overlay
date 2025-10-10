@@ -292,19 +292,4 @@ LIBSTDCXX_COMPAT_STDCXX26=(
 	"gcc_slot_16_1" # Support -std=c++26
 )
 
-# A fix for the following
-#
-#   error "Assumed value of MB_LEN_MAX wrong"
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
-# )
-#
-LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX=(
-	"gcc_slot_11_5"
-	#"gcc_slot_12_5" # Also fixes it but disabled to avoid ABI incompatibility
-)
-
 fi

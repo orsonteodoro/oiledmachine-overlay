@@ -7,15 +7,11 @@ EAPI=8
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 GCC_SLOT=11
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
-)
 LLVM_COMPAT=( {17..15} )
 PYTHON_COMPAT=( "python3_"{10..11} )
 YARN_SLOT="1"
 
-inherit bazel check-compiler-switch flag-o-matic libstdcxx-slot llvm-r1 distutils-r1 yarn
+inherit bazel check-compiler-switch flag-o-matic flag-o-matic-om llvm-r1 distutils-r1 yarn
 
 KEYWORDS="~amd64 ~arm64"
 bazel_external_uris="
@@ -241,7 +237,7 @@ eerror
 		die
 	fi
 	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 )) ; then
-		:;
+		:
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
@@ -249,6 +245,7 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	llvm-r1_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
+	fix_mb_len_max
 }
 
 pkg_setup() {

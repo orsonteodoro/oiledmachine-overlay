@@ -13,7 +13,7 @@ GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_MB_LEN_MAX_FIX[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -113,7 +113,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 ${PGO_TRAINERS}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE="
 	arm64? (

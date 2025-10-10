@@ -35,7 +35,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WANT_AUTOMAKE="none"
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic llvm multilib postgres systemd uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib postgres systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -736,24 +736,6 @@ src_prepare() {
 
 src_configure() { :; }
 
-check_libstdcxx() {
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${GCC_SLOT}" ; then
-eerror
-eerror "You must switch to >= ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 _src_configure_compiler() {
 	if use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
@@ -790,7 +772,6 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	check_libstdcxx
 	if use cgi ; then
 		if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
 			UOPTS_IMPLS="_${sapi}"
@@ -814,6 +795,8 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 
 	# https://bugs.gentoo.org/866683, https://bugs.gentoo.org/913527
 	filter-lto
+
+	fix_mb_len_max
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
