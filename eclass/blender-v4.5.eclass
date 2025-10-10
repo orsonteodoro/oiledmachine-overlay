@@ -578,7 +578,6 @@ REQUIRED_USE+="
 		)
 	)
 	rocm_6_3? (
-		gcc_slot_13_4
 		llvm_slot_18
 		rocm
 	)
