@@ -24,7 +24,10 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-GCC_SLOT=14
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+)
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
 	"runtimes"
@@ -35,7 +38,7 @@ LLVM_COMPONENTS=(
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos
@@ -79,8 +82,8 @@ DEPEND="
 	llvm-core/llvm:${PV%%.*}
 "
 BDEPEND+="
-	>=sys-devel/gcc-${GCC_SLOT}
 	dev-util/patchutils
+	sys-devel/gcc
 	test? (
 		$(python_gen_any_dep '
 			dev-python/lit[${PYTHON_USEDEP}]
@@ -98,26 +101,6 @@ llvm.org_set_globals
 python_check_deps() {
 	use test || return 0
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
-}
-
-check_libstdcxx() {
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -lt "${GCC_SLOT}" ; then
-# Fixes:
-# warning "Libc++ only supports GCC 14 and later"
-eerror
-eerror "You must switch to >= GCC ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
 }
 
 test_compiler() {
@@ -240,7 +223,7 @@ pkg_setup() {
 		eerror "and try again."
 		die
 	fi
-	check_libstdcxx
+	libstdcxx-slot_verify
 }
 
 src_configure() {
