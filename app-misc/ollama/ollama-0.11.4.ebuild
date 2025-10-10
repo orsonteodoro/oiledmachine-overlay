@@ -2677,7 +2677,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_82
+ebuild_revision_83
 "
 gen_rocm_required_use() {
 	local s
@@ -3287,27 +3287,25 @@ get_cuda_flags() {
 
 _NVCC_FLAGS=""
 src_configure() {
-	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.8*" ; then
-	# It is possible to use GCC 14, but U24 uses GCC 13
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
+	if use cuda ; then
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
-		export CUDA_SLOT=12
-		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
-		sed -i \
-			-e "s|60;61;62;70;72;75;80;86;87;89;90;90a|${CMAKE_CUDA_ARCHITECTURES}|g" \
-			"CMakePresets.json" \
-			|| die
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
-		export CPP="${CC} -E"
-		export CUDA_SLOT=11
-		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
-		sed -i \
-			-e "s|50;52;53;60;61;62;70;72;75;80;86|${CMAKE_CUDA_ARCHITECTURES}|g" \
-			"CMakePresets.json" \
-			|| die
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			export CUDA_SLOT=12
+			export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
+			sed -i \
+				-e "s|60;61;62;70;72;75;80;86;87;89;90;90a|${CMAKE_CUDA_ARCHITECTURES}|g" \
+				"CMakePresets.json" \
+				|| die
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			export CUDA_SLOT=11
+			export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
+			sed -i \
+				-e "s|50;52;53;60;61;62;70;72;75;80;86|${CMAKE_CUDA_ARCHITECTURES}|g" \
+				"CMakePresets.json" \
+				|| die
+		fi
 	elif use rocm ; then
 einfo "ROCM_SLOT: ${ROCM_SLOT}"
 		export CC="${CHOST}-gcc"
