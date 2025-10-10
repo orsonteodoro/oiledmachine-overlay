@@ -544,6 +544,7 @@ blender_configure_linker_flags() {
 		-DWITH_LINKER_GOLD=${gold_enable}
 		-DWITH_LINKER_MOLD=${mold_enable}
 	)
+	filter-flags '-fuse-ld=*'
 }
 
 blender_configure_simd_cycles() {
