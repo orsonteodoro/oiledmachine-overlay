@@ -3,6 +3,11 @@
 
 EAPI=8
 
+GCC_COMPAT=(
+	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 IMPLS=(
 	"cuda"
 	"opencl"
@@ -22,7 +27,7 @@ ROCM_SLOTS=(
 	rocm_6_1
 )
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="440a133a6423840ce613d1eaab43cd586effd389" # Feb 23, 2024
@@ -170,6 +175,7 @@ einfo "ROCM_SLOT:  ${ROCM_SLOT}"
 einfo "ROCM_VERSION:  ${ROCM_VERSION}"
 		rocm_pkg_setup
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -213,27 +219,6 @@ src_prepare() {
 	fi
 }
 
-_check_libstdcxx() {
-	local gcc_slot="${1}"
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-
-	if ver_test "${gcc_current_profile_slot}" -ne "${gcc_slot}" ; then
-eerror
-eerror "Current slot:  ${gcc_current_profile_slot}"
-eerror
-eerror "You must switch to GCC ${gcc_slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 src_configure() {
 	local x
 	for x in ${IMPLS[@]} ; do
@@ -247,13 +232,6 @@ src_configure() {
 			pushd "mixbench-${x2}" >/dev/null 2>&1 || die
 				local mycmakeargs=()
 				if [[ "${x2}" == "cuda" ]] ; then
-					local s="11"
-					if has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-						s="11"
-					elif has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-						s="12"
-					fi
-					_check_libstdcxx "${s}"
 					export CC="${CHOST}-gcc-${s}"
 					export CXX="${CHOST}-gcc-${s}"
 					export CPP="${CC} -E"
