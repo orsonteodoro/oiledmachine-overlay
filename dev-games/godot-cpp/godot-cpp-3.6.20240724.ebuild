@@ -11,7 +11,10 @@ EAPI=8
 # There is an open_encrypted_with_pass() API that these bindings makes available.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-GCC_SLOT="9"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+)
 LLVM_COMPAT=( "17" )
 STATUS="stable"
 
@@ -39,7 +42,7 @@ https://github.com/godotengine/${GODOT_PN}/archive/${GODOT_PV}-${STATUS}.tar.gz 
 	"
 fi
 
-inherit cflags-hardened flag-o-matic virtualx
+inherit cflags-hardened flag-o-matic libstdcxx-slot virtualx
 
 DESCRIPTION="C++ bindings for the Godot script API"
 HOMEPAGE="
@@ -71,7 +74,6 @@ DEPEND+="
 "
 # Force GCC for portable builds.  Using the GCC default for U20.
 BDEPEND+="
-	sys-devel/gcc:${GCC_SLOT}
 	web? (
 		>=dev-build/cmake-3.16.3
 	)
@@ -82,6 +84,10 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/godot-cpp-3.6.20240724-07153d4-env-changes.patch"
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	unpack ${A}
@@ -158,24 +164,8 @@ _build_target_linux() {
 		dev_build=$(usex debug-game-engine "True" "False")
 		debug_symbols="True"
 	fi
-	local gcc_slot=$(gcc-config -l \
-		| grep "*" \
-		| cut -f 3 -d " ")
-	gcc_slot="${gcc_slot##*-}"
-	if ver_test ${gcc_slot} -ne "${GCC_SLOT}" ; then
-# Avoid versioned symbols issues
-eerror
-eerror "GCC ${GCC_SLOT} required for portability."
-eerror
-eerror "You must do:"
-eerror
-eerror "eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "source /etc/profile"
-eerror
-		die
-	fi
-	export CC="${CHOST}-gcc-${GCC_SLOT}"
-	export CXX="${CHOST}-g++-${GCC_SLOT}"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-flags
 	filter-lto

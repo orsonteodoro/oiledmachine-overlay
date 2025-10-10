@@ -213,8 +213,8 @@ LIBSTDCXX_COMPAT_STDCXX14=(
 #
 # Status:  Used in production
 #
-#    Missing feature count for core support for least common denominator:  0
-# Missing feature count for library support for least common denominator:  1
+#    Missing feature count for core support for lowest common denominator:  0
+# Missing feature count for library support for lowest common denominator:  1
 #
 # Example:
 #
@@ -239,8 +239,8 @@ LIBSTDCXX_COMPAT_STDCXX17=(
 #
 # Status:  Support is still in development
 #
-#    Missing feature count for core support for least common denominator:  0
-# Missing feature count for library support for least common denominator:  1
+#    Missing feature count for core support for lowest common denominator:  0
+# Missing feature count for library support for lowest common denominator:  1
 #
 # Example:
 #
@@ -260,8 +260,8 @@ LIBSTDCXX_COMPAT_STDCXX20=(
 #
 # Status:  Support is still in development
 #
-#    Missing feature count for core support for least common denominator:   2
-# Missing feature count for library support for least common denominator:  14
+#    Missing feature count for core support for lowest common denominator:   2
+# Missing feature count for library support for lowest common denominator:  14
 #
 # Example:
 #
@@ -278,8 +278,8 @@ LIBSTDCXX_COMPAT_STDCXX23=(
 #
 # Status:  Support is still in development
 #
-#    Missing feature count for core support for least common denominator:  10
-# Missing feature count for library support for least common denominator:  54
+#    Missing feature count for core support for lowest common denominator:  10
+# Missing feature count for library support for lowest common denominator:  54
 #
 # Example:
 #

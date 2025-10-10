@@ -7,8 +7,13 @@ CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBR SO UAF UM"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic toolchain-funcs xdg-utils
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic libstdcxx-slot toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
 	inherit git-r3
@@ -54,20 +59,29 @@ COMMON_DEPEND="
 		>=dev-qt/qtgui-5.15.2:5
 		>=dev-qt/qtxml-5.15.2:5
 	)
-	qt6? ( dev-qt/qtbase:6[gui,xml] )
+	qt6? (
+		dev-qt/qtbase:6[${LIBSTDCXX_USEDEP_LTS},gui,xml]
+		dev-qt/qtbase:=
+	)
 	tiff? ( media-libs/tiff:= )
 "
 RDEPEND="${COMMON_DEPEND}
 	cjk? ( app-text/poppler-data )
 "
 DEPEND="${COMMON_DEPEND}
-	boost? ( >=dev-libs/boost-1.74 )
+	boost? (
+		>=dev-libs/boost-1.74[${LIBSTDCXX_USEDEP_LTS}]
+		dev-libs/boost:=
+	)
 	test? (
 		qt5? (
 			>=dev-qt/qttest-5.15.2:5
 			>=dev-qt/qtwidgets-5.15.2:5
 		)
-		qt6? ( dev-qt/qtbase:6[widgets] )
+		qt6? (
+			dev-qt/qtbase:6[${LIBSTDCXX_USEDEP_LTS},widgets]
+			dev-qt/qtbase:=
+		)
 	)
 "
 BDEPEND="
@@ -89,6 +103,7 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -136,10 +151,10 @@ einfo "PATH=${PATH} (after)"
 		export CPP="${CC} -E"
 einfo "Using Clang ${LLVM_SLOT}"
 	else
-		local gcc_slot=$(gcc-major-version)
-		export CC="${CHOST}-gcc-${gcc_slot}"
-		export CXX="${CHOST}-g++-${gcc_slot}"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
+		local gcc_slot=$(gcc-major-version)
 einfo "Using GCC ${gcc_slot}"
 	fi
 	strip-unsupported-flags
