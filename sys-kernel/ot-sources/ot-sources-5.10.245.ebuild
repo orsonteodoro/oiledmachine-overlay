@@ -6,9 +6,9 @@ EAPI=8
 EBUILD_REV=""
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch" # FIXME
 GENPATCHES_VER="258"
-PRJC_LTS="-lts"
-PATCH_PROJC_VER="5.10-lts-r3"
-PATCH_RT_VER="5.10.244-rt138"
+#PRJC_LTS="-lts"
+PATCH_PROJC_VER="5.10-r4"
+PATCH_RT_VER="5.10.245-rt139"
 
 inherit ot-kernel-v5.10
 

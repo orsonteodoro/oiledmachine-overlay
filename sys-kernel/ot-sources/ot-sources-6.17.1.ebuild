@@ -8,20 +8,19 @@ LINUX_SOURCES_FALLBACK_COMMIT="7586ac7c340c3672f116052c1d150f134810965b" # 2025-
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.15
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.17
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.15.7-1591"
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="13" # can be live only when 9999
-PATCH_PROJC_VER="6.16-r0"
-PATCH_RT_VER="6.16-rt3"
+GENPATCHES_VER="3" # can be live only when 9999
+PATCH_PROJC_VER="6.17-r1"
+PATCH_RT_VER="6.17.1-rt5"
 
-inherit ot-kernel-v6.16
+inherit ot-kernel-v6.17
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.16.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.17.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
