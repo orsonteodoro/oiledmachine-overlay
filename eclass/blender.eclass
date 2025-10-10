@@ -535,7 +535,7 @@ blender_configure_linker_flags() {
 	if is-flagq "-fuse-ld=gold" ; then
 		gold_enable="ON"
 	elif is-flagq "-fuse-ld=lld" ; then
-		gold_enable="ON"
+		lld_enable="ON"
 	elif is-flagq "-fuse-ld=mold" ; then
 		mold_enable="ON"
 	fi
