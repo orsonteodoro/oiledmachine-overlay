@@ -328,7 +328,7 @@ gen_clang_sanitizer() {
 		echo "
 			llvm_slot_${s}? (
 				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*[gcc_slot_11_5,${san_type}]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},${san_type}]
 				llvm-runtimes/compiler-rt-sanitizers:=
 				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
 				llvm-core/clang:=
