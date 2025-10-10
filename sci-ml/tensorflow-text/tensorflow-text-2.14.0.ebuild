@@ -20,7 +20,11 @@ DOUBLE_CONVERSION_PV="3.2.0"						# https://github.com/tensorflow/tensorflow/blo
 EIGEN_COMMIT="0b51f763cbbd0ed08168f88972724329f0375498"			# https://github.com/tensorflow/tensorflow/blob/v2.14.0/third_party/eigen3/workspace.bzl#L10
 FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"		# https://github.com/tensorflow/tensorflow/blob/v2.14.0/third_party/farmhash/workspace.bzl#L10
 FLATBUFFERS_PV="23.5.26"						# https://github.com/tensorflow/tensorflow/blob/v2.14.0/third_party/flatbuffers/workspace.bzl#L10
-GCC_COMPAT=( {12..9} )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+GCC_COMPAT2=( {12..9} )
 GIFLIB_PV="5.2.1"							# https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/workspace2.bzl#L339
 GOOGLEAPIS_COMMIT="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/workspace2.bzl#L310
 GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"			# https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/workspace2.bzl#L541
@@ -60,7 +64,7 @@ TENSORFLOW_RUNTIME_COMMIT="769f5cc9b8732933140b09e8808d13614182b496"	# https://g
 UPB_COMMIT="9effcbcb27f0a665f9f345030188c0b291e32482"			# https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/workspace2.bzl#L912
 ZLIB_PV="1.2.13"							# https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/workspace2.bzl#L587
 
-inherit bazel check-compiler-switch distutils-r1 flag-o-matic
+inherit bazel check-compiler-switch distutils-r1 flag-o-matic libstdcxx-slot
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/text-${PV}"
@@ -171,7 +175,7 @@ DEPEND+="
 "
 gen_gcc_bdepend() {
 	local s
-	for s in ${GCC_COMPAT[@]} ; do
+	for s in ${GCC_COMPAT2[@]} ; do
 		echo "
 			sys-devel/gcc:${s}
 		"
@@ -193,23 +197,12 @@ pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	# Building with clang is broken.
-	local s
-	local GCC_SLOT="-1"
-	for s in ${GCC_COMPAT[@]} ; do
-		if has_version "sys-devel/gcc:${s}" ; then
-			GCC_SLOT=${s}
-			export CC="${CHOST}-gcc-${GCC_SLOT}"
-			export CXX="${CHOST}-g++-${GCC_SLOT}"
-			export CPP="${CC} -E"
-			strip-unsupported-flags
-			break
-		fi
-	done
-	if (( ${GCC_SLOT} == -1 )) ; then
-eerror "You need slot 9-12 for sys-devel/gcc."
-		die
-	fi
-	export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${GCC_SLOT}"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
+	GCC_SLOT=$(gcc-major-version)
+	strip-unsupported-flags
+	export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${GCC_SLOT}/${CHOST}-gcc-${GCC_SLOT}"
 	export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
 	export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
 
@@ -218,6 +211,7 @@ eerror "You need slot 9-12 for sys-devel/gcc."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
