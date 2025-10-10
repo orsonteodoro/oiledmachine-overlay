@@ -65,8 +65,8 @@ src_prepare() {
 
 src_configure() {
 	# Build time breakage when building with clang
-	export CC="gcc"
-	export CXX="g++"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 

@@ -10,7 +10,6 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="17"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBA OOBR OOBW PE SO TC UAF UM"
-GCC_SLOT=12
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 PHP_MV="$(ver_cut 1)"
@@ -436,7 +435,6 @@ gen_clang_bdepend() {
 			(
 				=llvm-runtimes/compiler-rt-sanitizers-${s}*[profile]
 				llvm-core/clang:${s}
-				sys-devel/gcc:${GCC_SLOT}
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[bolt?]
 			)
@@ -452,9 +450,6 @@ BDEPEND="
 	)
 	pgo? (
 		|| (
-			!clang? (
-				sys-devel/gcc:${GCC_SLOT}
-			)
 			clang? (
 				$(gen_clang_bdepend)
 			)
@@ -768,9 +763,9 @@ _src_configure_compiler() {
 		fi
 	fi
 	if ! use clang ; then
-		# Breaks with gcc-13 (libstdcxx)
-		export CC="${CHOST}-gcc-${GCC_SLOT}"
-		export CXX="${CHOST}-gcc-${GCC_SLOT}"
+	# Breaks with gcc-13 (libstdcxx)
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-gcc"
 		export CPP="${CC} -E"
 		export AR="ar"
 		export NM="nm"

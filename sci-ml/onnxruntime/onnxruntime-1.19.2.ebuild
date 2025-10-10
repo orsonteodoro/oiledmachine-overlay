@@ -91,6 +91,10 @@ EMSDK_COMMIT="d52c46520124845b1e0e0525f2759299d840143f"
 FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
 FP16_COMMIT="0a92994d729ff76a58f692d3028ca1b64b145d91" # From cmake/deps.txt
 FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 GOOGLETEST_PV="1.15.0" # From cmake/deps.txt
 GOOGLETEST_COMMIT_1="ff233bdd4cac0a0bf6e5cd45bda3406814cb2796" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
@@ -140,7 +144,7 @@ TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
 XNNPACK_COMMIT="0da379fc4808f9601faef392352018c741c0f297" # From cmake/deps.txt
 
-inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic libstdcxx-slot llvm-r1 rocm toolchain-funcs
 
 DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
 HOMEPAGE="
@@ -716,6 +720,7 @@ pkg_setup() {
 	fi
 
 	use rocm && rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

@@ -162,6 +162,10 @@ FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
 FLATBUFFERS_COMMIT="fb9afbafc7dfe226b9db54d4923bfb8839635274" # dawn/angle dep
 FP16_COMMIT="0a92994d729ff76a58f692d3028ca1b64b145d91" # From cmake/deps.txt
 FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 GIT_HOOKS_COMMIT="6d91964d33adee28dda9c7faf9ffd6f4672c381c" # swiftshader dep
 GLFW_COMMIT="b35641f4a3c62aa86a0b3c983d163bc0fe36026d" # dawn (DAWN_COMMIT_1) dep
 GLMARK2_COMMIT="ca8de51fedb70bace5351c6b002eb952c747e889" # dawn/angle dep
@@ -314,7 +318,7 @@ XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
 ZLIB_COMMIT_1="209717dd69cd62f24cbacc4758261ae2dd78cfac" # dawn (DAWN_COMMIT_1) dep
 ZLIB_COMMIT_2="d3aea2341cdeaf7e717bc257a59aa7a9407d318a" # dawn/angle dep
 
-inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare distutils-r1 flag-o-matic libstdcxx-slot llvm-r1 rocm toolchain-funcs
 
 # Vendored packages need to be added or reviewed for compleness.
 # The reason for delay is submodule hell (the analog of dll hell or dependency hell).
@@ -1229,6 +1233,7 @@ pkg_setup() {
 	fi
 
 	use rocm && rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 _unpack() {
@@ -1901,8 +1906,8 @@ src_configure() {
 	PYTHON_INCLUDE_DIR="$(python_get_includedir)"
 	PYTHON_LIBRARY="$(python_get_library_path)"
 
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC}"
 
 	strip-unsupported-flags

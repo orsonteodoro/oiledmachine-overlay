@@ -5,7 +5,12 @@ EAPI=8
 
 # U24
 
-inherit check-compiler-switch cmake-multilib sandbox-changes
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+
+inherit check-compiler-switch cmake-multilib libstdcxx-slot sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="v1.x"
@@ -27,7 +32,7 @@ test
 ebuild_revision_2
 "
 DEPEND="
-	>=dev-libs/libfmt-9.1.0[${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-9.1.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/libfmt:=
 "
 RDEPEND="
@@ -51,6 +56,7 @@ check_network_sandbox() {
 pkg_setup() {
 	check-compiler-switch_start
 	use test && check_network_sandbox
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -66,8 +72,8 @@ src_prepare() {
 
 src_configure() {
 	# Reduce chance of build time failure
-	export CC="${CHOST}-gcc-11"
-	export CXX="${CHOST}-g++-11"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 	check-compiler-switch_end
