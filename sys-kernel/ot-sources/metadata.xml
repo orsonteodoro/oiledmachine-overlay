@@ -170,6 +170,20 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
+    6.17 (Stable)					A
+		    -rt	(RT_PREEMPT)			A
+		    Clang PGO				D
+		    genpatches				A
+		    kernel_compiler_patch		D
+		    Nest				D
+		    Project C				A
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				A
+
     6.17 (Live)						A
     Ebuild support for live is temporarily down but may change in the future.
 
@@ -5595,6 +5609,10 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.16, see:
 
       https://github.com/torvalds/linux/compare/v6.16...zen-kernel:6.16/zen-sauce
+
+    For 6.17, see:
+
+      https://github.com/torvalds/linux/compare/v6.17...zen-kernel:6.17/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
