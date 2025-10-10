@@ -240,12 +240,6 @@ LIBSTDCXX_COMPAT_STDCXX17=(
         "gcc_slot_14_3" # Support -std=c++17
 )
 
-#
-# Ebuild developer plan for ebuilds that mix LTS (<= -std=c++17) with non-LTS (> -std=c++17) C++ standards:
-#
-# The LTS packages get USEDEP_LTS but disjoint from non-LTS USEDEP.
-#
-
 # GCC_COMPAT template for -std=c++20 projects
 #
 # Status:  Support is still in development
