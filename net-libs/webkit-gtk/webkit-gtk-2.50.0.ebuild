@@ -1096,26 +1096,8 @@ _set_clang() {
 }
 
 _set_gcc() {
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot="${gcc_current_profile##*-}"
-
-	if ver_test "${gcc_current_profile_slot}" -eq "11" ; then
-		export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
-		export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
-	else
-eerror
-eerror "GCC must be 11"
-eerror
-eerror "Example:"
-eerror
-eerror "  eselect gcc set ${CHOST}-11"
-eerror "  source /etc/profile"
-eerror "  emerge -C dev-libs/icu"
-eerror "  emerge -1vuDN dev-libs/icu"
-eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
-eerror
-		die
-	fi
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	export AR="ar"
 	export NM="nm"
