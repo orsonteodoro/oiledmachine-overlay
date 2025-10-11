@@ -1067,8 +1067,8 @@ RDEPEND+="
 		>=media-libs/tiff-4.7.0:0[jpeg,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-25.02[imaging,monolithic,opengl,openvdb,openimageio,python]
-		<media-libs/openusd-26.0[imaging,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-25.02[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		<media-libs/openusd-26.0[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-debug/valgrind
@@ -1171,7 +1171,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-4.5.3-hip-flags.patch"
 	"${FILESDIR}/${PN}-4.5.3-fix-brotli-check.patch"
-	"${FILESDIR}/${PN}-4.5.3-sse41-check.patch"
+	"${FILESDIR}/${PN}-4.5.3-simd-checks.patch"
 	"${FILESDIR}/${PN}-4.5.3-optionalize-simd.patch"
 )
 

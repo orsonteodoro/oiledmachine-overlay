@@ -80,7 +80,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -330,7 +330,7 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 		-DPXR_BUILD_USDVIEW=$(usex usdview ON OFF)
 		-DPXR_ENABLE_GL_SUPPORT=$(usex opengl ON OFF)
 		-DPXR_ENABLE_HDF5_SUPPORT=$(usex hdf5 ON OFF)
-		-DPXR_ENABLE_MATERIALX_SUPPORT=$(usex materialx)
+		-DPXR_ENABLE_MATERIALX_SUPPORT=$(usex materialx ON OFF)
 		-DPXR_ENABLE_OPENVDB_SUPPORT=$(usex openvdb ON OFF)
 		-DPXR_ENABLE_OSL_SUPPORT=$(usex osl ON OFF)
 		-DPXR_ENABLE_PTEX_SUPPORT=$(usex ptex ON OFF)
