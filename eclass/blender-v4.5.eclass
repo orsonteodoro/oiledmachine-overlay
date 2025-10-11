@@ -1171,6 +1171,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-4.5.3-hip-flags.patch"
 	"${FILESDIR}/${PN}-4.5.3-fix-brotli-check.patch"
+	"${FILESDIR}/${PN}-4.5.3-sse41-check.patch"
 )
 
 _blender_pkg_setup() {
