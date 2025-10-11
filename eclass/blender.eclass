@@ -528,6 +528,12 @@ blender_configure_eigen_arm() {
 			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
 			replace-flags "${oi}" "${of}+sve"
 		fi
+
+		if is-flagq "-mcpu=*" ; then
+			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
+			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
+			replace-flags "${oi}" "${of}+sve"
+		fi
 	else
 		if \
 			   is-flagq "-march=armv8-a*" \
@@ -542,6 +548,12 @@ blender_configure_eigen_arm() {
 		; then
 			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
 			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
+			replace-flags "${oi}" "${of}-sve"
+		fi
+
+		if is-flagq "-mcpu=*" ; then
+			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
+			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
 			replace-flags "${oi}" "${of}-sve"
 		fi
 	fi
