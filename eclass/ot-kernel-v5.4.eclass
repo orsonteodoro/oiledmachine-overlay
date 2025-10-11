@@ -110,19 +110,25 @@ EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 GCC_PV="4.6"
-GCC_COMPAT=( {13..4} )
-GCC_MAX_SLOT=${GCC_COMPAT[0]}
-GCC_MIN_SLOT=${GCC_COMPAT[-1]}
-GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
-GCC_SLOT_KCP="${GCC_COMPAT[0]}" # With kernel-compiler-patch
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+GCC_MAX_SLOT="14"
+GCC_MIN_SLOT="11"
+GCC_SLOT_NOT_KCP=( ${GCC_COMPAT2[@]} ) # Without kernel-compiler-patch
+GCC_SLOT_KCP="${GCC_COMPAT2[0]}" # With kernel-compiler-patch
 GCC_MIN_KCP_GENPATCHES_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=9
 KMOD_PV="13"
-LLVM_COMPAT=( {18..10} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
-LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+LLVM_MAX_SLOT="19"
+LLVM_MIN_SLOT="18"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
 LLVM_MIN_KCP_GENPATCHES_AMD64=12
@@ -253,6 +259,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.4/Documentation/process/changes.rst
 IUSE+="
 ${ARM_FLAGS[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
 bmq build c2tcp +cfs -clang deepcc -debug doc -dwarf4 -expoline -gdb +genpatches
@@ -261,6 +268,11 @@ tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
 
 REQUIRED_USE+="
+	clang? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	dwarf4? (
 		debug
 		gdb
@@ -281,7 +293,7 @@ REQUIRED_USE+="
 	)
 "
 
-inherit ot-kernel
+inherit ot-kernel libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
@@ -316,12 +328,12 @@ _seq() {
 }
 
 gen_clang_llvm_pair() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			llvm-core/clang:${s}
 			llvm-core/llvm:${s}
 		)
@@ -340,9 +352,7 @@ KCP_RDEPEND="
 			>=sys-devel/gcc-11.1
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 	arm64? (
@@ -350,9 +360,7 @@ KCP_RDEPEND="
 			>=sys-devel/gcc-5.1.0
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 "
@@ -423,9 +431,7 @@ CDEPEND+="
 			>=sys-devel/gcc-4.5
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 		>=dev-debug/gdb-7.0
 	)
@@ -482,9 +488,7 @@ CDEPEND+="
 			>=sys-devel/gcc-7.3.0
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 	xz? (
@@ -621,6 +625,8 @@ ewarn
 ewarn "genpatches is EOL (End of Life) for the ${KV_MAJOR_MINOR} series."
 ewarn
 	fi
+	# For Qt5
+	libstdcxx-slot_verify
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
@@ -984,13 +990,7 @@ eerror
 	fi
 
 	# Descending sort
-	if grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
-		_llvm_min_slot=15
-	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
-	else
-		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
-	fi
+	_llvm_min_slot=${LLVM_MIN_SLOT} # 18
 	echo "${_llvm_min_slot}"
 }
 
@@ -1019,20 +1019,8 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif grep -q -E -e "^CONFIG_KASAN_SW_TAGS=y" "${path_config}" ; then
 		_gcc_min_slot=11
-	elif [[ "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=${GCC_MIN_KCP_ZEN_SAUCE_AMD64} # 9
-	elif grep -q -E -e "^CONFIG_KASAN_GENERIC=y" "${path_config}" ; then
-		_gcc_min_slot=8
-	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
-		_gcc_min_slot=8
-	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=7
-	elif (( ${wants_kcp_rpi} == 1 )) ; then
-		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
-	elif has cpu_flags_x86_avx512vl ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_avx512vl ; then
-		_gcc_min_slot=5
 	else
-		_gcc_min_slot=${GCC_MIN_SLOT} # 4
+		_gcc_min_slot=${GCC_MIN_SLOT} # 11
 	fi
 	echo "${_gcc_min_slot}"
 }
@@ -1044,7 +1032,7 @@ ot-kernel_get_llvm_max_slot() {
 	local _llvm_max_slot
 
 	# Ascending sort
-	_llvm_max_slot=${LLVM_MAX_SLOT} # 18
+	_llvm_max_slot=${LLVM_MAX_SLOT} # 19
 	echo "${_llvm_max_slot}"
 }
 
@@ -1071,6 +1059,6 @@ ot-kernel_get_gcc_max_slot() {
 	# sys-cluster/xpmem
 
 	# Ascending sort
-	_gcc_max_slot=${GCC_MAX_SLOT} # 13
+	_gcc_max_slot=${GCC_MAX_SLOT} # 14
 	echo "${_gcc_max_slot}"
 }

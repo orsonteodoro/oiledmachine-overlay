@@ -1090,7 +1090,7 @@ SLOT=${SLOT:-${PV}}
 IUSE+="
 ${EBUILD_REV}
 ${TRAINERS[@]/#/ot_kernel_trainers_}
-big-endian bzip2 cpu_flags_arm_thumb gost graphicsmagick gtk gzip imagemagick
+big-endian bzip2 cpu_flags_arm_thumb cuda gost graphicsmagick gtk gzip imagemagick
 intel-microcode linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs
 xz zstd
 "
@@ -14272,37 +14272,31 @@ eerror
 # @DESCRIPTION:
 # Gets a Clang compiler that meets requirements for both cpu_flags and kernel config options.
 get_llvm_slot() {
-	if ! declare -f ot-kernel_get_llvm_min_slot >/dev/null ; then
-eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
-		die
-	fi
-
-	local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
-	local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
-
-	local llvm_slot
-	for llvm_slot in $(seq ${_llvm_max_slot} -1 ${_llvm_min_slot}) ; do
-		ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" && is_clang_ready && break
+	local llvm_slot=""
+	local x
+	for x in ${LLVM_COMPAT[@]} ; do
+		if ot-kernel_use "llvm_slot_${x}" ; then
+			llvm_slot="${x/llvm_slot_}"
+			break
+		fi
 	done
+
 	echo "${llvm_slot}"
 }
 
-# @FUNCTION: get_llvm_slot
+# @FUNCTION: get_gcc_slot
 # @DESCRIPTION:
 # Gets a GCC compiler that meets requirements for both cpu_flags and kernel config options.
 get_gcc_slot() {
-	if ! declare -f ot-kernel_get_gcc_min_slot >/dev/null ; then
-eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
-		die
-	fi
-
-	local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
-	local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
-
-	local gcc_slot
-	for gcc_slot in $(seq ${_gcc_max_slot} -1 ${_gcc_min_slot}) ; do
-		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
+	local gcc_slot=""
+	local x
+	for x in ${GCC_COMPAT[@]/gcc_slot_} ; do
+		if ot-kernel_use "gcc_slot_${x}" ; then
+			gcc_slot="${x/gcc_slot_}"
+			break
+		fi
 	done
+
 	echo "${gcc_slot}"
 }
 
@@ -14415,14 +14409,36 @@ einfo "PATH=${PATH} (after)"
 
 einfo "Requested CC:  ${original_cc}"
 einfo "Adjusted CC:  ${CC}"
-ewarn "The requested CC and the adjusted CC must be the same or a inconsistency may exist."
-ewarn "This eclass will only allow one LLVM compiler slot for PATH."
-einfo "The adjusted CC implies the minimum required compiler and version for both cpu_flags and selected kernel config options."
-einfo "Requested CC is the chosen compiler before emerge."
-einfo "Adjusted CC is based on available compilers, cpu_flag USE flags, kernel config options."
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
+
+	# Verify requirements
+	if ot-kernel_use clang ; then
+		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
+		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
+		local s=$(clang-major-version)
+		if ver_test "${s}" < ${_llvm_min_slot} ; then
+eerror "You must switch Clang to >= ${_llvm_min_slot}"
+			die
+		fi
+		if ver_test "${s}" > ${_llvm_max_slot} ; then
+eerror "You must switch Clang to <= ${_llvm_max_slot}"
+			die
+		fi
+	else
+		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
+		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
+		local s=$(gcc-major-version)
+		if ver_test "${s}" < ${_gcc_min_slot} ; then
+eerror "You must switch GCC to >= ${_gcc_min_slot}"
+			die
+		fi
+		if ver_test "${s}" > ${_llvm_min_slot} ; then
+eerror "You must switch GCC to <= ${_llvm_max_slot}"
+			die
+		fi
+	fi
 
 #
 # Fix for the following below when building with Clang 18 with libstdc++:

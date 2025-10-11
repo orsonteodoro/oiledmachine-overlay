@@ -139,18 +139,24 @@ EXCLUDE_SCS=(
 )
 EXTRAVERSION="-ot"
 GCC_PV="5.1"
-GCC_COMPAT=( {13..5} )
-GCC_MAX_SLOT=${GCC_COMPAT[0]}
-GCC_MIN_SLOT=${GCC_COMPAT[-1]}
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+GCC_MAX_SLOT="14"
+GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64=13
 GCC_MIN_KCP_GRAYSKY2_AMD64=13
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=13
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
-LLVM_COMPAT=( {18..11} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
-LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+LLVM_MAX_SLOT="19"
+LLVM_MIN_SLOT="18"
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
 LLVM_MIN_KCP_GENPATCHES_AMD64=15
@@ -295,6 +301,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
 ${ARM_FLAGS[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
 bbrv2 build c2tcp +cet +cfs -clang deepcc -debug doc -dwarf4 -dwarf5 -dwarf-auto
@@ -304,6 +311,11 @@ zen-sauce
 "
 
 REQUIRED_USE+="
+	clang? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	dwarf4? (
 		debug
 		gdb
@@ -352,7 +364,7 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 	"
 fi
 
-inherit ot-kernel
+inherit ot-kernel libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
@@ -391,12 +403,12 @@ _seq() {
 }
 
 gen_kcfi_rdepend() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			llvm-core/clang:${s}
 			llvm-core/llvm:${s}
 		)
@@ -405,12 +417,12 @@ gen_kcfi_rdepend() {
 }
 
 gen_shadowcallstack_rdepend() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*[compiler-rt,sanitize]
 			=llvm-runtimes/compiler-rt-${s}*:=
 			=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
@@ -423,12 +435,12 @@ gen_shadowcallstack_rdepend() {
 }
 
 gen_lto_rdepend() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*
 			llvm-core/clang:${s}
 			llvm-core/lld:${s}
@@ -439,12 +451,12 @@ gen_lto_rdepend() {
 }
 
 gen_clang_pgo_rdepend() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*
 			llvm-core/clang:${s}
 			llvm-core/llvm:${s}
@@ -454,12 +466,12 @@ gen_clang_pgo_rdepend() {
 }
 
 gen_clang_llvm_pair() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			llvm-core/clang:${s}
 			llvm-core/llvm:${s}
 		)
@@ -468,12 +480,12 @@ gen_clang_llvm_pair() {
 }
 
 gen_clang_lld() {
-	local min=${1}
-	local max=${2}
+	local min=${LLVM_MIN_SLOT}
+	local max=${LLVM_MAX_SLOT}
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
-		(
+		llvm_slot_${s}? (
 			llvm-core/clang:${s}
 			llvm-core/lld:${s}
 			llvm-core/llvm:${s}
@@ -493,9 +505,7 @@ KCP_RDEPEND="
 			>=sys-devel/gcc-13.9
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 	arm64? (
@@ -503,9 +513,7 @@ KCP_RDEPEND="
 			>=sys-devel/gcc-5.1.0
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 "
@@ -515,7 +523,7 @@ gen_rust_cdepend() {
 	for s in ${RUST_SLOTS[@]} ; do
 		local llvm_slot=${RUST_PV_TO_LLVM_SLOT[${s}]}
 		echo "
-			(
+			llvm_slot_${llvm_slot}?	(
 				llvm-core/clang:${llvm_slot}
 				llvm-core/llvm:${llvm_slot}
 				|| (
@@ -557,7 +565,7 @@ CDEPEND+="
 				sys-devel/binutils
 			)
 			clang? (
-				$(gen_clang_lld 15 ${LLVM_MAX_SLOT})
+				$(gen_clang_lld)
 			)
 		)
 	)
@@ -570,9 +578,7 @@ CDEPEND+="
 			>=sys-devel/gcc-9
 		)
 		clang? (
-			|| (
-				$(gen_clang_lld 14 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_lld)
 		)
 	)
 	cpu_flags_arm_bti? (
@@ -581,7 +587,7 @@ CDEPEND+="
 				>=sys-devel/gcc-10.1
 			)
 			clang? (
-				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+				$(gen_clang_llvm_pair)
 			)
 		)
 	)
@@ -594,9 +600,7 @@ CDEPEND+="
 			>=sys-devel/gcc-10.1
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair 9 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 	cpu_flags_arm_pac? (
@@ -606,9 +610,7 @@ CDEPEND+="
 				>=sys-devel/gcc-9.1
 			)
 			clang? (
-				|| (
-					$(gen_clang_llvm_pair 14 ${LLVM_MAX_SLOT})
-				)
+				$(gen_clang_llvm_pair)
 			)
 		)
 	)
@@ -669,9 +671,7 @@ CDEPEND+="
 				>=sys-devel/gcc-5
 			)
 			clang? (
-				|| (
-					$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
-				)
+				$(gen_clang_llvm_pair)
 			)
 			>=sys-devel/binutils-2.26
 		)
@@ -682,9 +682,7 @@ CDEPEND+="
 			>=sys-devel/gcc-4.5
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 		>=dev-debug/gdb-7.0
 	)
@@ -697,9 +695,7 @@ CDEPEND+="
 			)
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 		>=dev-debug/gdb-8.0
 	)
@@ -753,9 +749,7 @@ CDEPEND+="
 			>=sys-devel/gcc-7.3.0
 		)
 		clang? (
-			|| (
-				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_llvm_pair)
 		)
 	)
 	rust? (
@@ -788,20 +782,14 @@ CDEPEND+="
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
 	)
 	lto? (
-		|| (
-			$(gen_lto_rdepend ${LLVM_MIN_LTO} ${LLVM_MAX_SLOT})
-		)
+		$(gen_lto_rdepend)
 	)
 	kcfi? (
 		arm64? (
-			|| (
-				$(gen_kcfi_rdepend ${LLVM_MIN_KCFI_ARM64} ${LLVM_MAX_SLOT})
-			)
+			$(gen_kcfi_rdepend)
 		)
 		amd64? (
-			|| (
-				$(gen_kcfi_rdepend ${LLVM_MIN_KCFI_AMD64} ${LLVM_MAX_SLOT})
-			)
+			$(gen_kcfi_rdepend)
 		)
 	)
 	pgo? (
@@ -810,13 +798,9 @@ CDEPEND+="
 			sys-libs/libunwind[static-libs]
 		)
 		clang? (
-			|| (
-				$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO} ${LLVM_MAX_SLOT})
-			)
+			$(gen_clang_pgo_rdepend)
 			s390? (
-				|| (
-					$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO_S390} ${LLVM_MAX_SLOT})
-				)
+				$(gen_clang_pgo_rdepend)
 			)
 		)
 	)
@@ -826,9 +810,7 @@ CDEPEND+="
 				>=sys-devel/gcc-12.1
 			)
 			clang? (
-				|| (
-					$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
-				)
+				$(gen_shadowcallstack_rdepend)
 			)
 		)
 	)
@@ -964,6 +946,8 @@ ewarn "ctr(tresor)."
 ewarn
 		fi
 	fi
+	# For Qt6, Qt5
+	libstdcxx-slot_verify
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
@@ -1361,59 +1345,7 @@ ot-kernel_get_llvm_min_slot() {
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
 	# Descending sort
-	if grep -q -E -e "^CONFIG_CC_HAS_RANDSTRUCT=y" "${path_config}" ; then
-		_llvm_min_slot=16
-	elif grep -q -E -e "^CONFIG_CFI_CLANG=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
-	elif grep -q -E -e "^CONFIG_CFI_CLANG=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
-	elif grep -q -E -e "^CONFIG_RUST=y" "${path_config}" ; then
-		_llvm_min_slot=16
-	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
-	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
-		_llvm_min_slot=15
-	elif grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_llvm_min_slot=15
-	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
-		_llvm_min_slot=15
-	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
-		_llvm_min_slot=15
-	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
-		_llvm_min_slot=15
-	elif ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_PGO_S390} # 15
-	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=14
-	elif grep -q -E -e "^CONFIG_HAVE_KMSAN_COMPILER=y" "${path_config}" ; then
-		_llvm_min_slot=14
-	elif grep -q -E -e "^CONFIG_KCSAN_WEAK_MEMORY=y" "${path_config}" ; then
-		_llvm_min_slot=14
-	elif grep -q -E -e "^CONFIG_SLS=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=15
-	elif grep -q -E -e "^CONFIG_RANDOMIZE_KSTACK_OFFSET=y" "${path_config}" ; then
-		_llvm_min_slot=14
-	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=14
-	elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac && [[ "${auth}" == "arm64" ]] ; then
-		_llvm_min_slot=14
-	elif ot-kernel_use clang && ot-kernel_use pgo ; then
-		_llvm_min_slot=${LLVM_MIN_PGO} # 13
-	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_llvm_min_slot=12
-	elif grep -q -E -e "^CONFIG_COMPAT=y" "${path_config}" && [[ "${arch}" == "powerpc" ]] ; then
-		_llvm_min_slot=12
-	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED=y" "${path_config}" ; then
-		_llvm_min_slot=12
-	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
-		_llvm_min_slot=12
-	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
-		_llvm_min_slot=${LLVM_MIN_LTO} # 12
-	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
-	else
-		_llvm_min_slot=${LLVM_MIN_SLOT} # 11
-	fi
+	_llvm_min_slot=${LLVM_MIN_SLOT} # 18
 	echo "${_llvm_min_slot}"
 }
 
@@ -1443,34 +1375,8 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_SLS=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=11
-	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_gcc_min_slot=10
-	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
-		_gcc_min_slot=10
-	elif grep -q -E -e "^CONFIG_ARM64_MTE=y" "${path_config}" ; then
-		_gcc_min_slot=10
-	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=9
-	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=9
-	elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac && [[ "${auth}" == "arm64" ]] ; then
-		_gcc_min_slot=9
-	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
-		_gcc_min_slot=9
-	elif grep -q -E -e "^CONFIG_KASAN_GENERIC=y" "${path_config}" ; then
-		_gcc_min_slot=8
-	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
-		_gcc_min_slot=8
-	elif ot-kernel_use cpu_flags_x86_vpclmulqdq ; then
-		_gcc_min_slot=8
-	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=7
-	elif grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
-		_gcc_min_slot=6
-	elif has cpu_flags_x86_gfni ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_gfni ; then
-		_gcc_min_slot=6
 	else
-		_gcc_min_slot=${GCC_MIN_SLOT} # 5
+		_gcc_min_slot=${GCC_MIN_SLOT} # 11
 	fi
 	echo "${_gcc_min_slot}"
 }
@@ -1483,9 +1389,10 @@ ot-kernel_get_llvm_max_slot() {
 
 	# Ascending sort
 	if grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
+eerror "CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y is unsupported"
 		_llvm_max_slot=16
 	else
-		_llvm_max_slot=${LLVM_MAX_SLOT} # 18
+		_llvm_max_slot=${LLVM_MAX_SLOT} # 19
 	fi
 	echo "${_llvm_max_slot}"
 }
@@ -1514,11 +1421,13 @@ ot-kernel_get_gcc_max_slot() {
 
 	# Ascending sort
 	if grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
+eerror "CONFIG_ARCH_RPC=y is unsupported"
 		_gcc_max_slot=8
 	elif grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
+eerror "CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y is unsupported"
 		_gcc_max_slot=10
 	else
-		_gcc_max_slot=${GCC_MAX_SLOT} # 13
+		_gcc_max_slot=${GCC_MAX_SLOT} # 14
 	fi
 	echo "${_gcc_max_slot}"
 }
