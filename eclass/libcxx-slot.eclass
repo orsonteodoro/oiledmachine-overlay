@@ -10,12 +10,6 @@
 # This eclass tries to help keep LLVM slots updated not neglected.
 # Only apply this eclass to C++ packages.
 
-# Status:  Unfinshed eclass.
-
-# Design issue.  The distro's llvm_slot_ is oversimplified.
-# It may need an LIBCXX_COMPAT to bump RDEPEND and/or a virtual ebuild to avoid
-# missing symbols in binary packages.
-
 if [[ -z ${_LIBCXX_SLOT_ECLASS} ]] ; then
 _LIBCXX_SLOT_ECLASS=1
 
