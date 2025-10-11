@@ -524,8 +524,8 @@ blender_configure_eigen_arm() {
 			|| is-flagq "-march=armv8.8-a*" \
 			|| is-flagq "-march=armv8.9-a*" \
 		; then
-			local oi=$(echo "${CHOST}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
-			local of=$(echo "${CHOST}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
+			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
+			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
 			replace-flags "${oi}" "${of}+sve"
 		fi
 	else
@@ -540,8 +540,8 @@ blender_configure_eigen_arm() {
 			|| is-flagq "-march=armv8.8-a*" \
 			|| is-flagq "-march=armv8.9-a*" \
 		; then
-			local oi=$(echo "${CHOST}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
-			local of=$(echo "${CHOST}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
+			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
+			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
 			replace-flags "${oi}" "${of}-sve"
 		fi
 	fi
