@@ -104,7 +104,7 @@ trainer-ext-reflection
 trainer-ext-spl
 trainer-ext-standard
 trainer-zend
-ebuild_revision_17
+ebuild_revision_18
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
@@ -752,7 +752,7 @@ _src_configure_compiler() {
 	if ! use clang ; then
 	# Breaks with gcc-13 (libstdcxx)
 		export CC="${CHOST}-gcc"
-		export CXX="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
 		export AR="ar"
 		export NM="nm"
