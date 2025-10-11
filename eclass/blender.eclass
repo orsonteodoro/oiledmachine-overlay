@@ -509,6 +509,7 @@ einfo "Removing -DGLEW_STATIC from ${file}"
 }
 
 blender_configure_eigen_arm() {
+	[[ "${ARCH}" =~ "arm64" ]] || return
 	# Only arm64 supported
 	# sve only optional in application processor
 	if use cpu_flags_arm_sve ; then
@@ -545,6 +546,7 @@ blender_configure_eigen_arm() {
 }
 
 blender_configure_eigen_mips() {
+	[[ "${ARCH}" =~ "mips" ]] || return
 	if use cpu_flags_mips_msa ; then
 		append-cxxflags -mmsa
 	else
@@ -553,6 +555,7 @@ blender_configure_eigen_mips() {
 }
 
 blender_configure_eigen_ppc() {
+	[[ "${ARCH}" =~ "ppc64" ]] || return
 	if use cpu_flags_ppc_vsx ; then
 		append-cxxflags -mvsx
 	else
@@ -561,6 +564,7 @@ blender_configure_eigen_ppc() {
 }
 
 blender_configure_eigen_s390() {
+	[[ "${ARCH}" =~ "s390" ]] || return
 	if use cpu_flags_s390_zvector ; then
 		append-cxxflags -mzvector
 	else
@@ -569,6 +573,7 @@ blender_configure_eigen_s390() {
 }
 
 blender_configure_eigen_x86() {
+	[[ "${ARCH}" =~ "amd64" ]] || return
 	if use cpu_flags_x86_sse2 ; then
 		append-cxxflags -msse2
 	else
