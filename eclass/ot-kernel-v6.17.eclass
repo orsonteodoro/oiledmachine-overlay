@@ -422,6 +422,11 @@ REQUIRED_USE+="
 	genpatches_1510? (
 		genpatches
 	)
+	pgo? (
+		|| (
+			llvm_slot_18
+		)
+	)
 	tresor_prompt? (
 		tresor
 	)

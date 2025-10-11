@@ -353,6 +353,11 @@ REQUIRED_USE+="
 	multigen_lru? (
 		!zen-multigen_lru
 	)
+	pgo? (
+		|| (
+			llvm_slot_18
+		)
+	)
 	shadowcallstack? (
 		cfi
 		clang

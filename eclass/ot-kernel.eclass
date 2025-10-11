@@ -363,53 +363,6 @@ PRJC_URI_BASE=\
 PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
 PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
 
-PGO_LLVM_SUPPORTED_VERSIONS=(
-# Bump also IPD_RAW_VER_MAX when profraw version bumped
-# Search for INSTR_PROF_RAW_VERSION in either
-# /usr/lib/llvm/${LLVM_SLOT}/include/llvm/ProfileData/InstrProfData.inc
-# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc ; change from main to tagged version
-#	"19.0.0.9999" # profraw v9
-	"18.1.8"
-	"18.1.7"
-	"18.1.6"
-	"18.1.5"
-	"18.1.4"
-	"18.1.3"
-	"18.1.2"
-	"18.1.0" # profraw v9
-	"17.0.6" # profraw v8
-	"17.0.5"
-	"17.0.4"
-	"17.0.3"
-	"17.0.2"
-	"17.0.1"
-	"17.0.0"
-	"16.0.6" # profraw v8
-	"16.0.5"
-	"16.0.4"
-	"16.0.3"
-	"16.0.2"
-	"16.0.1"
-	"16.0.0"
-	"15.0.7" # profraw v8
-	"15.0.6"
-	"15.0.5"
-	"15.0.4"
-	"15.0.3"
-	"15.0.2"
-	"15.0.1"
-	"15.0.0"
-	"14.0.6" # profraw v8
-	"14.0.5"
-	"14.0.4"
-	"14.0.3"
-	"14.0.2"
-	"14.0.1"
-	"14.0.0"
-	"13.0.1" # profraw v7
-	"13.0.0"
-)
-
 # Constant enums
 # For Profile Guided Optimization (PGO) or Profile Directed Optimization (PDO)
 PGO_PHASE_UNK="UNK" # Unset
@@ -1624,61 +1577,24 @@ einfo "Verifying profraw version compatibility"
 
 # This data structure must be kept in sync.
 # https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/kernel/pgo/fs.c?h=for-next/clang/pgo#n63
-# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc                     # Search for INSTR_PROF_RAW_VERSION
-
-	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
-	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
-	local pv
-	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
-		( ! ot-kernel_has_version "~llvm-core/llvm-${pv}" ) && continue
-einfo "pv=${pv}"
-		local instr_prof_raw_ver=$(cat \
-"${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
-			| grep "INSTR_PROF_RAW_VERSION" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9]+")
-einfo "instr_prof_raw_ver=${instr_prof_raw_ver}"
-		if (( ${instr_prof_raw_ver} == ${IPD_RAW_VER} )) ; then
-			found_upstream_version=1
-		fi
-		if (( ${instr_prof_raw_ver} >= ${IPD_RAW_VER_MIN} && ${instr_prof_raw_ver} <= ${IPD_RAW_VER_MAX} )) ; then
-			found_patched_version=1
+# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc				# Search for INSTR_PROF_RAW_VERSION
+# /usr/lib/llvm/${LLVM_SLOT}/include/llvm/ProfileData/InstrProfData.inc							# Search for INSTR_PROF_RAW_VERSION
+	local PGO_SLOTS=( {18..13} )
+	local found=0
+	local x
+	for x in ${PGO_SLOTS[@]} ; do
+		if ot-kernel_use "llvm_slot_${x}" ; then
+			local pv=$(best_version "=llvm-core/llvm-${x}*" | sed -e "s|llvm-core/llvm-||g")
+			found=1
+			break
 		fi
 	done
-	if (( ${found_upstream_version} != 1 )) ; then
-eerror
-eerror "No installed LLVM versions are with compatible."
-eerror "INSTR_PROF_RAW_VERSION == ${IPD_RAW_VER} is required"
-eerror
-	fi
-	if (( ${found_patched_version} != 1 )) ; then
-eerror
-eerror "INSTR_PROF_RAW_VERSION >= ${IPD_RAW_VER_MIN} and"
-eerror "INSTR_PROF_RAW_VERSION <= ${IPD_RAW_VER_MAX} is required"
-eerror
-eerror "No installed LLVM versions are compatible.  Please send an issue"
-eerror "request with your LLVM version.  If you are using a live LLVM version,"
-eerror "send the EGIT_VERSION found in"
-eerror "\${ESYSROOT}/var/db/pkg/llvm-core/llvm-\${pv}*/environment.bz2"
-eerror
-eerror "You may also use one of the supported LLVM versions for PGO support below:"
-eerror "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
-eerror
+	if (( ${found} == 0 )) ; then
+eerror "The Clang PGO patch requires either LLVM 13 to 18."
+eerror "Profraw v7 to v9 only supported."
+eerror "Switch to llvm_slot_18."
 		die
 	fi
-}
-
-# @FUNCTION: display_required_clang
-# @DESCRIPTION:
-# Show a user message of the clang versions supported for the profraw raw version.
-display_required_clang() {
-einfo
-einfo "For Clang PGO support, if you use a live ebuild, only the latest commit"
-einfo "for one of these live versions (with the 9999 version) is supported."
-einfo "You may also use one of the Clang versions listed for Clang PGO:"
-einfo
-einfo "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
-einfo
 }
 
 # @FUNCTION: ot-kernel_use
@@ -1777,8 +1693,7 @@ ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 
 	if has clang ${IUSE_EFFECTIVE} ; then
 		if use clang ; then
-			display_required_clang
-			#verify_profraw_compatibility
+			verify_profraw_compatibility
 		fi
 	fi
 
