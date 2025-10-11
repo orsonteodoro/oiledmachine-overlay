@@ -1172,6 +1172,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.3-hip-flags.patch"
 	"${FILESDIR}/${PN}-4.5.3-fix-brotli-check.patch"
 	"${FILESDIR}/${PN}-4.5.3-sse41-check.patch"
+	"${FILESDIR}/${PN}-4.5.3-optionalize-simd.patch"
 )
 
 _blender_pkg_setup() {
@@ -1387,6 +1388,20 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 		-DWITH_USD=$(usex usd)
 		-DWITH_TBB=$(usex tbb)
 		-DWITH_XR_OPENXR=$(usex openxr)
+
+		-DWITH_SSE=$(usex cpu_flags_x86_sse)
+		-DWITH_SSE2=$(usex cpu_flags_x86_sse2)
+		-DWITH_SSE3=$(usex cpu_flags_x86_sse3)
+		-DWITH_SSSE3=$(usex cpu_flags_x86_ssse3)
+		-DWITH_LZCNT=$(usex cpu_flags_x86_lzcnt)
+		-DWITH_BMI=$(usex cpu_flags_x86_bmi)
+		-DWITH_BMI2=$(usex cpu_flags_x86_bmi2)
+		-DWITH_FMA=$(usex cpu_flags_x86_fma)
+		-DWITH_F16C=$(usex cpu_flags_x86_f16c)
+		-DWITH_SSE41=$(usex cpu_flags_x86_sse4_1)
+		-DWITH_SSE42=$(usex cpu_flags_x86_sse4_2)
+		-DWITH_AVX=$(usex cpu_flags_x86_avx)
+		-DWITH_AVX2=$(usex cpu_flags_x86_avx2)
 	)
 
 	blender_configure_linker_flags
