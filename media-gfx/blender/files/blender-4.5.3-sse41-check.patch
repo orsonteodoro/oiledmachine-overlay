@@ -9,3 +9,24 @@
      for (; int_i + 1 < ints_to_check; int_i += 2) {
        /* Loads the next 128 bit. */
        const __m128i group = _mm_loadu_si128(reinterpret_cast<const __m128i *>(start + int_i));
+--- a/intern/cycles/kernel/device/cpu/kernel.cpp.orig	2025-07-10 02:43:06.000000000 -0700
++++ b/intern/cycles/kernel/device/cpu/kernel.cpp	2025-10-11 11:02:21.482226967 -0700
+@@ -8,11 +8,13 @@
+  * one with SSE4.2 intrinsics.
+  */
+ #if defined(__x86_64__) || defined(_M_X64)
+-#  define __KERNEL_SSE__
+-#  define __KERNEL_SSE2__
+-#  define __KERNEL_SSE3__
+-#  define __KERNEL_SSSE3__
+-#  define __KERNEL_SSE42__
++#  if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE4_2__)
++#    define __KERNEL_SSE__
++#    define __KERNEL_SSE2__
++#    define __KERNEL_SSE3__
++#    define __KERNEL_SSSE3__
++#    define __KERNEL_SSE42__
++#  endif
+ #endif
+ 
+ /* When building kernel for native machine detect kernel features from the flags
