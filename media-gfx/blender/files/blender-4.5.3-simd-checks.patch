@@ -23,7 +23,7 @@ diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/kernel/device/cpu/kern
 diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/util/optimization.h blender-4.5.3/intern/cycles/util/optimization.h
 --- blender-4.5.3.orig/intern/cycles/util/optimization.h	2025-07-10 02:43:06.000000000 -0700
 +++ blender-4.5.3/intern/cycles/util/optimization.h	2025-10-11 11:24:35.793057014 -0700
-@@ -18,12 +18,15 @@
+@@ -18,12 +18,14 @@
  
  #  elif defined(__x86_64__) || defined(_M_X64)
  
@@ -40,7 +40,6 @@ diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/util/optimization.h bl
 +#        define WITH_CYCLES_OPTIMIZED_KERNEL_AVX2
 +#      endif
 +#    endif
-+#endif
  
  /* Arm Neon
   *
