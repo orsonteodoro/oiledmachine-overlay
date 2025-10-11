@@ -422,8 +422,8 @@ src_configure() {
 
 _src_configure_compiler() {
 	# Forced gcc to avoid potential jemalloc build issues
-	export CC="gcc"
-	export CXX="g++"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 }
