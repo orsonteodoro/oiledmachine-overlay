@@ -1592,7 +1592,7 @@ einfo "Verifying profraw version compatibility"
 	if (( ${found} == 0 )) ; then
 eerror "The Clang PGO patch requires either LLVM 13 to 18."
 eerror "Profraw v7 to v9 only supported."
-eerror "Switch to llvm_slot_18."
+eerror "Switch to llvm_slot_18 in both the USE flag and OT_KERNEL_USE."
 		die
 	fi
 }
@@ -1601,6 +1601,7 @@ eerror "Switch to llvm_slot_18."
 # @DESCRIPTION:
 # Analog of use keyword but in the context of per build env
 ot-kernel_use() {
+	local u
 	for u in ${OT_KERNEL_USE} ; do
 		[[ "${u}" =~ ^"-" ]] && continue
 		[[ "${u}" =~ ^"+" ]] && u="${u:1}"
