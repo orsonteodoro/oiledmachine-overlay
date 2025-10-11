@@ -871,9 +871,12 @@ CDEPEND+="
 		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		>=dev-qt/qtcore-${QT6_PV}:6
-		>=dev-qt/qtgui-${QT6_PV}:6
-		>=dev-qt/qtwidgets-${QT6_PV}:6
+		>=dev-qt/qtcore-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtcore:=
+		>=dev-qt/qtgui-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtgui:=
+		>=dev-qt/qtwidgets-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		dev-qt/qtwidgets:=
 	)
 	retpoline? (
 		!clang? (
