@@ -122,12 +122,12 @@ fix_mb_len_max() {
 			#extra_args_cc="${extra_args_cc} -I/usr/include -I${WORKDIR}/include/c++/v1"
 			#extra_args_cxx="${extra_args_cxx} -I/usr/include -I${WORKDIR}/include/c++/v1"
 			if use elibc_glibc ; then
-einfo "Applying MB_LEN_MAX fix"
+einfo "Applying MB_LEN_MAX fix for Clang with glibc"
 				extra_args_cc="${extra_args_cc} -DMB_LEN_MAX=16"
 				extra_args_cxx="${extra_args_cxx} -DMB_LEN_MAX=16"
 			fi
 			if use kernel_linux ; then
-einfo "Applying PATH_MAX, NAME_MAX fixes"
+einfo "Applying PATH_MAX, NAME_MAX fixes for Clang with Linux kernel"
 				extra_args_cc="${extra_args_cc} -DPATH_MAX=4096 -DNAME_MAX=255"
 				extra_args_cxx="${extra_args_cxx} -DPATH_MAX=4096 -DNAME_MAX=255"
 			fi
