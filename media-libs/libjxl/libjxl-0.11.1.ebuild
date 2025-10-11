@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DBZ DOS OOBA OOBR OOBW SO"
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit cflags-hardened cmake-multilib gnome2-utils libstdcxx-slot
