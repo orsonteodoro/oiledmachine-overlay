@@ -1323,7 +1323,6 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	unset CMAKE_LIBRARY_PATH
 	unset CMAKE_PREFIX_PATH
 
-	blender_configure_simd_cycles
 	blender_configure_eigen
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated

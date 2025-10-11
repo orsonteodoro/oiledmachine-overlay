@@ -70,6 +70,18 @@ else
 	SRC_URI="https://download.blender.org/source/${P}.tar.gz"
 fi
 
+ARM_CPU_FLAGS=(
+	"sve:sve"
+)
+MIPS_CPU_FLAGS=(
+	"msa:msa"
+)
+PPC_CPU_FLAGS=(
+	"vsx:vsx"
+)
+S390_CPU_FLAGS=(
+	"zvector:zvector"
+)
 X86_CPU_FLAGS=(
 	"mmx:mmx"
 	"sse:sse"
@@ -90,6 +102,10 @@ X86_CPU_FLAGS=(
 	"avx512bf16:avx512bf16"
 )
 CPU_FLAGS=(
+	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
+	${MIPS_CPU_FLAGS[@]/#/cpu_flags_mips_}
+	${PPC_CPU_FLAGS[@]/#/cpu_flags_ppc_}
+	${S390_CPU_FLAGS[@]/#/cpu_flags_s390_}
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
 IUSE+="
@@ -492,11 +508,141 @@ einfo "Removing -DGLEW_STATIC from ${file}"
 	fi
 }
 
-blender_configure_eigen() {
+blender_configure_eigen_arm() {
+	# Only arm64 supported
+	# sve only optional in application processor
+	if use cpu_flags_arm_sve ; then
+		if \
+			   is-flagq "-march=armv8-a*" \
+			|| is-flagq "-march=armv8.2-a*" \
+			|| is-flagq "-march=armv8.3-a*" \
+			|| is-flagq "-march=armv8.4-a*" \
+			|| is-flagq "-march=armv8.5-a*" \
+			|| is-flagq "-march=armv8.6-a*" \
+			|| is-flagq "-march=armv8.7-a*" \
+			|| is-flagq "-march=armv8.8-a*" \
+			|| is-flagq "-march=armv8.9-a*" \
+		; then
+			local o=$(echo "${CHOST}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
+			replace-flags "${o}" "${o}+sve"
+		fi
+	else
+		if \
+			   is-flagq "-march=armv8-a*" \
+			|| is-flagq "-march=armv8.2-a*" \
+			|| is-flagq "-march=armv8.3-a*" \
+			|| is-flagq "-march=armv8.4-a*" \
+			|| is-flagq "-march=armv8.5-a*" \
+			|| is-flagq "-march=armv8.6-a*" \
+			|| is-flagq "-march=armv8.7-a*" \
+			|| is-flagq "-march=armv8.8-a*" \
+			|| is-flagq "-march=armv8.9-a*" \
+		; then
+			local o=$(echo "${CHOST}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
+			replace-flags "${o}" "${o}-sve"
+		fi
+	fi
+}
+
+blender_configure_eigen_mips() {
+	if use cpu_flags_mips_msa ; then
+		append-cxxflags -mmsa
+	else
+		append-cxxflags -mno-msa
+	fi
+}
+
+blender_configure_eigen_ppc() {
+	if use cpu_flags_ppc_vsx ; then
+		append-cxxflags -mvsx
+	else
+		append-cxxflags -mno-vsx
+	fi
+}
+
+blender_configure_eigen_s390() {
+	if use cpu_flags_s390_zvector ; then
+		append-cxxflags -mzvector
+	else
+		append-cxxflags -mno-zvector
+	fi
+}
+
+blender_configure_eigen_x86() {
+	if use cpu_flags_x86_sse2 ; then
+		append-cxxflags -msse2
+	else
+		append-cxxflags -mno-sse2
+	fi
+	if use cpu_flags_x86_sse3 ; then
+		append-cxxflags -msse3
+	else
+		append-cxxflags -mno-sse3
+	fi
+	if use cpu_flags_x86_ssse3 ; then
+		append-cxxflags -mssse3
+	else
+		append-cxxflags -mno-ssse3
+	fi
+	if use cpu_flags_x86_sse4_1 ; then
+		append-cxxflags -msse4.1
+	else
+		append-cxxflags -mno-sse4.1
+	fi
+	if use cpu_flags_x86_sse4_2 ; then
+		append-cxxflags -msse4.2
+	else
+		append-cxxflags -mno-sse4.2
+	fi
+	if use cpu_flags_x86_avx ; then
+		append-cxxflags -mavx
+	else
+		append-cxxflags -mno-avx
+	fi
+	if use cpu_flags_x86_avx2 ; then
+		append-cxxflags -mavx2
+	else
+		append-cxxflags -mno-avx2
+	fi
+	if use cpu_flags_x86_fma ; then
+		append-cxxflags -mfma
+	else
+		append-cxxflags -mno-fma
+	fi
+	if use cpu_flags_x86_f16c ; then
+		append-cxxflags -mf16c
+	else
+		append-cxxflags -mno-f16c
+	fi
+
 	if use cpu_flags_x86_avx512f ; then
 		append-cxxflags -mavx512f
 	else
 		append-cxxflags -mno-avx512f
+	fi
+
+
+	if use cpu_flags_x86_avx512f ; then
+		append-cxxflags -DEIGEN_ENABLE_AVX512
+	fi
+
+	if \
+		   use cpu_flags_x86_sse2 \
+		|| use cpu_flags_x86_sse3 \
+		|| use cpu_flags_x86_ssse3 \
+		|| use cpu_flags_x86_sse4_1 \
+		|| use cpu_flags_x86_sse4_2 \
+		|| use cpu_flags_x86_avx \
+		|| use cpu_flags_x86_avx2 \
+		|| use cpu_flags_x86_avx512f \
+		|| use cpu_flags_x86_avx512dq \
+		|| use cpu_flags_x86_avx512bf16 \
+		|| use cpu_flags_x86_fma \
+		|| use cpu_flags_x86_f16c \
+	; then
+		:
+	else
+		append-cxxflags -DEIGEN_DONT_VECTORIZE
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
@@ -505,27 +651,19 @@ blender_configure_eigen() {
 		append-cxxflags -mno-avx512dq
 	fi
 
-	if use cpu_flags_x86_avx512f ; then
-		append-cxxflags -DEIGEN_ENABLE_AVX512
+	if use cpu_flags_x86_avx512bf16 ; then
+		append-cxxflags -mavx512bf16
+	else
+		append-cxxflags -mno-avx512bf16
 	fi
+}
 
-	if \
-		   ! use cpu_flags_x86_mmx \
-		&& ! use cpu_flags_x86_sse \
-		&& ! use cpu_flags_x86_sse2 \
-		&& ! use cpu_flags_x86_sse3 \
-		&& ! use cpu_flags_x86_ssse3 \
-		&& ! use cpu_flags_x86_sse4_1 \
-		&& ! use cpu_flags_x86_sse4_2 \
-		&& ! use cpu_flags_x86_avx \
-		&& ! use cpu_flags_x86_avx2 \
-		&& ! use cpu_flags_x86_avx512f \
-		&& ! use cpu_flags_x86_avx512dq \
-		&& ! use cpu_flags_x86_fma \
-		&& ! use cpu_flags_x86_f16c \
-	; then
-		append-cxxflags -DEIGEN_DONT_VECTORIZE
-	fi
+blender_configure_eigen() {
+	blender_configure_eigen_arm
+	blender_configure_eigen_mips
+	blender_configure_eigen_ppc
+	blender_configure_eigen_s390
+	blender_configure_eigen_x86
 }
 
 blender_configure_linker_flags() {
@@ -546,111 +684,6 @@ blender_configure_linker_flags() {
 		-DWITH_LINKER_MOLD=${mold_enable}
 	)
 	filter-flags '-fuse-ld=*'
-}
-
-blender_configure_simd_cycles() {
-	# The avx2 config in CMakeLists.txt already sets this.
-	if tc-is-gcc || tc-is-clang ; then
-		if ! use cpudetection && use cycles && ! use cpu_flags_x86_avx2 ; then
-			if use cpu_flags_x86_bmi ; then
-				# bmi1 only, tzcnt
-				if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
-rocketlake|\
-\
-bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
-				|| [[ "${CXXFLAGS}" =~ "mbmi"( |$) ]] ; then
-					# Already added
-					:
-				else
-					append-cxxflags -mbmi
-				fi
-			else
-				append-cxxflags -mno-bmi
-			fi
-			if use cpu_flags_x86_lzcnt ; then
-				# intel puts lzcnt in bmi1
-				# amd puts lzcnt in abm
-				if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
-rocketlake|\
-\
-amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
-				|| [[ "${CXXFLAGS}" =~ "mlzcnt" ]] ; then
-					# Already added
-					:
-				else
-					append-cxxflags -mlzcnt
-				fi
-			else
-				append-cxxflags -mno-lzcnt
-			fi
-		fi
-
-		if use cpu_flags_x86_f16c ; then
-			if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-ivybridge|haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|\
-icelake-client|icelake-server|cascadelake|copperlake|tigerlake|sapphirerapids|\
-alderlake|rocketlake|\
-\
-bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
-			|| [[ "${CXXFLAGS}" =~ "mf16c" ]] ; then
-				# Already added
-				:
-			else
-				append-cxxflags -mf16c
-			fi
-		else
-			append-cxxflags -mno-f16c
-		fi
-
-		if use cpu_flags_x86_fma ; then
-			# for eigen and cycles
-			if [[ "${CXXFLAGS}" =~ "march="(\
-native|\
-\
-haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
-rocketlake|\
-\
-bdver2|bdver3|bdver4|znver1|znver2) ]] \
-			|| [[ "${CXXFLAGS}" =~ "mfma" ]] ; then
-				# Already added
-				:
-			else
-				append-cxxflags -mfma
-			fi
-		else
-			append-cxxflags -mno-fma
-		fi
-
-		if use cycles && use cpudetection ; then
-			# It is automatically added by -march=native
-			filter-flags \
-				'-m*3dnow' \
-				'-m*abm' \
-				'-m*avx*' \
-				'-m*bmi' \
-				'-m*f16c' \
-				'-m*fma' \
-				'-m*lzcnt' \
-				'-m*mmx' \
-				'-m*popcnt' \
-				'-m*sse*' \
-				'-m*ssse3'
-			filter-flags \
-				'-march=*'
-		fi
-
-	fi
 }
 
 blender_configure_openusd() {
