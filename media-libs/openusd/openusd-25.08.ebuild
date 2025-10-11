@@ -294,7 +294,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cflags-hardened_append
 
 	if has_version "media-libs/openusd" ; then
-ewarn "Uninstall ${PN} to avoid build failure."
+ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 		die
 	fi
 
