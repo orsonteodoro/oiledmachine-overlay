@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -34,6 +34,6 @@ RDEPEND="
 		>=llvm-runtimes/libcxx-21.1.3
 	)
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
