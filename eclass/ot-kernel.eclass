@@ -1695,38 +1695,6 @@ ot-kernel_use() {
 	return 1
 }
 
-# @FUNCTION: verify_gcc_header_compat_with_clang
-# @DESCRIPTION:
-# Check and avoid header incompatibility
-verify_gcc_header_compat_with_clang() {
-# TODO:  re-evaluate keep/delete status.
-# The issue is about libstdcxx header compatibility of MB_LEN_MAX and the clang/llvm build discussed below.
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	local GCC_SLOT_PGO_MAX="12"
-	if ver_test "${GCC_SLOT_PGO_MAX}" -ne "${gcc_current_profile_slot}" ; then
-ewarn
-ewarn "Detected possible header incompability between GCC and Clang."
-ewarn
-ewarn "Actual GCC slot:  ${gcc_current_profile_slot}"
-ewarn "Expected GCC slot:  ${GCC_SLOT_PGO_MAX}"
-ewarn
-	fi
-ewarn
-ewarn "The \"Assumed value of MB_LEN_MAX wrong\" error appears, you must switch"
-ewarn "switch to == GCC ${GCC_SLOT_PGO_MAX}.  Do"
-ewarn
-ewarn "  eselect gcc list"
-ewarn "  eselect gcc set <CHOST>-${GCC_SLOT_PGO_MAX}"
-ewarn "  source /etc/profile"
-ewarn
-ewarn "or whatever gcc version works."
-ewarn
-ewarn "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-ewarn "to the default immediately after this package has been merged."
-ewarn
-}
-
 # @FUNCTION: ot-kernel_pkg_setup
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
@@ -1811,7 +1779,6 @@ ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 		if use clang ; then
 			display_required_clang
 			#verify_profraw_compatibility
-			verify_gcc_header_compat_with_clang
 		fi
 	fi
 
@@ -6141,7 +6108,7 @@ eerror
 eerror "Actual GCC version:  ${gcc_version}"
 eerror "Actual Clang version:  ${clang_version}"
 eerror
-eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
+eerror "Tip:  Add/remove clang in both OT_KERNEL_USE and in USE."
 eerror
 			die
 		fi
@@ -13946,7 +13913,6 @@ einfo "Using assisted config mode"
 einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
 einfo "Auto updating the .config"
-ewarn "If \"Assumed value of MB_LEN_MAX wrong\" message is encountered, use \`eselect gcc\` to select GCC 12 or older."
 einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
 	fi
@@ -14304,7 +14270,7 @@ eerror
 
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
-# Gets the clang compiler that the user want to use.
+# Gets a Clang compiler that meets requirements for both cpu_flags and kernel config options.
 get_llvm_slot() {
 	if ! declare -f ot-kernel_get_llvm_min_slot >/dev/null ; then
 eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
@@ -14323,7 +14289,7 @@ eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
 
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
-# Gets the gcc compiler that the user want to use.
+# Gets a GCC compiler that meets requirements for both cpu_flags and kernel config options.
 get_gcc_slot() {
 	if ! declare -f ot-kernel_get_gcc_min_slot >/dev/null ; then
 eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
@@ -14354,6 +14320,8 @@ einfo "Setting up the build toolchain"
 		"INSTALL_MOD_PATH=${ED}"
 		"INSTALL_PATH=${ED}${kernel_dir}"
 	)
+
+	local original_cc="${CC}"
 
 	# Automagic sources
 	# It could produce a negative consequence if missing important conditional min/max.
@@ -14445,8 +14413,58 @@ einfo "PATH=${PATH} (after)"
 		LD="ld.bfd"
 	fi
 
+einfo "Requested CC:  ${original_cc}"
+einfo "Adjusted CC:  ${CC}"
+ewarn "The requested CC and the adjusted CC must be the same or a inconsistency may exist."
+ewarn "This eclass will only allow one LLVM compiler slot for PATH."
+einfo "The adjusted CC implies the minimum required compiler and version for both cpu_flags and selected kernel config options."
+einfo "Requested CC is the chosen compiler before emerge."
+einfo "Adjusted CC is based on available compilers, cpu_flag USE flags, kernel config options."
+
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
+
+#
+# Fix for the following below when building with Clang 18 with libstdc++:
+#
+# In file included from scripts/kconfig/conf.c:9:
+# In file included from /usr/include/stdlib.h:1159:
+# /usr/include/bits/stdlib.h:98:3: error: "Assumed value of MB_LEN_MAX wrong"
+#    98 | # error "Assumed value of MB_LEN_MAX wrong"
+#       |   ^
+# scripts/kconfig/conf.c:47:18: error: use of undeclared identifier 'PATH_MAX'
+#    47 | static char line[PATH_MAX];
+#       |                  ^
+# 2 errors generated.
+#
+# MB_LEN_MAX is 16 with glibc.
+# MB_LEN_MAX is 1 with clang.
+#
+	local extra_args=()
+	if eselect profile show | grep llvm ; then
+		:
+	else
+		if use elibc_glibc ; then
+			extra_args+=(
+				"-DMB_LEN_MAX=16"	# From /usr/include/bits/stdlib.h from glibc
+			)
+		fi
+		if use kernel_linux ; then
+			extra_args+=(
+				"-DPATH_MAX=4096"	# From /usr/include/linux/limits.h from linux-headers
+				"-DNAME_MAX=255"	# From /usr/include/linux/limits.h from linux-headers
+			)
+		fi
+		if (( ${#extra_args[@]} > 0 )) ; then
+			args+=(
+				#"KBUILD_CFLAGS=${extra_args[*]}"
+				#"V=1"
+			)
+			export CFLAGS="${CFLAGS} ${extra_args[*]}"
+			export CXXFLAGS="${CXXFLAGS} ${extra_args[*]}"
+		fi
+	fi
+
 einfo "PATH=${PATH}"
 einfo "CC:  ${CC}"
 ${CC} --version || die
@@ -14460,26 +14478,26 @@ einfo "CXXFLAGS=${CXXFLAGS}"
 einfo "LDFLAGS=${LDFLAGS}"
 einfo
 
-	if [[ -z "${HOSTCFLAGS}" ]] ; then
-		HOSTCFLAGS="${CFLAGS}"
-		HOSTLDFLAGS="${LDFLAGS}"
+	if [[ -z "${KBUILD_USERHOSTCFLAGS}" ]] ; then
+		KBUILD_USERHOSTCFLAGS="${CFLAGS}"
+		KBUILD_USERHOSTLDFLAGS="${LDFLAGS}"
 	fi
 
 einfo
 einfo "Host programs CFLAGS:"
 einfo
-einfo "HOSTCFLAGS=${HOSTCFLAGS}"
-einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
+einfo "KBUILD_USERHOSTCFLAGS=${KBUILD_USERHOSTCFLAGS}"
+einfo "KBUILD_USERHOSTLDFLAGS=${KBUILD_USERHOSTLDFLAGS}"
 einfo
 	if tc-is-cross-compiler ; then
 		args+=(
-			"'HOSTCFLAGS=-O1 -pipe'"
-			"'HOSTLDFLAGS=-O1 -pipe'"
+			"KBUILD_USERHOSTCFLAGS=-O1 -pipe"
+			"KBUILD_USERHOSTLDFLAGS=-O1 -pipe"
 		)
 	else
 		args+=(
-			"'HOSTCFLAGS=${HOSTCFLAGS}'"
-			"'HOSTLDFLAGS=${HOSTLDFLAGS}'"
+			"KBUILD_USERHOSTCFLAGS=${KBUILD_USERHOSTCFLAGS}"
+			"KBUILD_USERHOSTLDFLAGS=${KBUILD_USERHOSTLDFLAGS}"
 		)
 	fi
 
