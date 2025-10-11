@@ -122,11 +122,24 @@ fix_mb_len_max() {
 			#extra_args_cc="${extra_args_cc} -I/usr/include -I${WORKDIR}/include/c++/v1"
 			#extra_args_cxx="${extra_args_cxx} -I/usr/include -I${WORKDIR}/include/c++/v1"
 			if use elibc_glibc ; then
+	# From /usr/include/limits.h in sys-devel/glibc
 einfo "Applying MB_LEN_MAX fix for Clang with glibc"
 				extra_args_cc="${extra_args_cc} -DMB_LEN_MAX=16"
 				extra_args_cxx="${extra_args_cxx} -DMB_LEN_MAX=16"
+einfo "Applying SSIZE_MAX fix for Clang with glibc"
+	# From /usr/include/bits/posix1_lim.h in /usr/include/bits/posix1_lim.h
+				if [[ "${ABI}" =~ ("64"|"alpha"|"s390x") ]] ; then
+	# 0x7FFFFFFFFFFFFFFF
+					extra_args_cc="${extra_args_cc} -DSSIZE_MAX=9223372036854775807"
+					extra_args_cxx="${extra_args_cxx} -DSSIZE_MAX=9223372036854775807"
+				else
+	# 0x7FFFFFFF
+					extra_args_cc="${extra_args_cc} -DSSIZE_MAX=2147483647"
+					extra_args_cxx="${extra_args_cxx} -DSSIZE_MAX=2147483647"
+				fi
 			fi
 			if use kernel_linux ; then
+	# From /usr/include/linux/limits.h in sys-kernel/linux-headers
 einfo "Applying PATH_MAX, NAME_MAX fixes for Clang with Linux kernel"
 				extra_args_cc="${extra_args_cc} -DPATH_MAX=4096 -DNAME_MAX=255"
 				extra_args_cxx="${extra_args_cxx} -DPATH_MAX=4096 -DNAME_MAX=255"
