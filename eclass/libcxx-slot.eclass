@@ -71,6 +71,7 @@ _LIBCXX_SLOT_ECLASS=1
 #	"llvm_slot_18" # U24
 #	"llvm_slot_19" # D13
 # )
+# CXX_STANDARD="17" # It can be 98, 03, 11, 14, 17, 20, 23, 26
 #
 # # Sometimes the IUSE changes through the eclass does not work.  Force it in
 # # the ebuild to use the USE flag it in RDEPEND.
@@ -255,8 +256,54 @@ eerror "QA:  LLVM_COMPAT must be defined"
 		)
 	"
 
+	if [[ -z "${CXX_STANDARD}" ]] ; then
+eerror "QA:  CXX_STANDARD is undefined."
+eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
+		die
+	fi
+
+	local rdepend
+	if [[ "${CXX_STANDARD}" == "98" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx98]
+		"
+	elif [[ "${CXX_STANDARD}" == "03" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx03]
+		"
+	elif [[ "${CXX_STANDARD}" == "11" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx11]
+		"
+	elif [[ "${CXX_STANDARD}" == "14" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx14]
+		"
+	elif [[ "${CXX_STANDARD}" == "17" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx17]
+		"
+	elif [[ "${CXX_STANDARD}" == "20" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx20]
+		"
+	elif [[ "${CXX_STANDARD}" == "23" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx23]
+		"
+	elif [[ "${CXX_STANDARD}" == "26" ]] ; then
+		rdepend="
+			virtual/libcxx[cxx23]
+		"
+	else
+eerror "QA:  CXX_STANDARD is invalid."
+eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
+		die
+	fi
+
 	IUSE="${IUSE} ${iuse}"
 	REQUIRED_USE="${REQUIRED_USE} ${required_use}"
+	RDEPEND="${RDEPEND} ${rdepend}"
 
 	if [[ "${LIBCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
