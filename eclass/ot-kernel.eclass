@@ -422,11 +422,22 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Oct 10, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1759742406 # From `date +%s -d "2025-10-06 11:20:06 +0200"` from changelog for latest tag
+MITIGATION_LAST_UPDATE=1760266918 # From `date +%s -d "2025-10-12 13:01:58 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+
+# There are more unannounced advisories but they are slow released.
+# You can do a keyword scan of the changelog for potential vulnerabilities.
+# If the ebuild maintainer(s) gathered from them from the changelog, then vulnerability coverage may be incomplete.
+
+	# 2025-10-10
+	"CVE-2022-50502;NPD;Rejected"
+	"CVE-2022-50338;UAF;Rejected"
+	"CVE-2022-50487;BO;Rejected"
+	"CVE-2022-50455;NPD, DoS;Rejected"
+
 	# 2025-10-09
 	"CVE-2025-39963;;"
 	"CVE-2025-39962;;"
@@ -1569,6 +1580,7 @@ ewarn
 }
 
 verify_profraw_compatibility() {
+	[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] || return
 einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
 	# If wrong version, expect something like this:
@@ -1735,6 +1747,7 @@ eerror
 # Copies the profraw for Clang PGO.
 # It has to be done outside of the sandbox.
 dump_profraw() {
+	[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] || return
 	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PGO"|"PG0") ]] ; then
 		return
 	fi
@@ -1769,7 +1782,7 @@ einfo "stale or to force a PGO profile update."
 einfo
 		fi
 	fi
-	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
+	chown -R "portage:portage" "${OT_KERNEL_PGO_DATA_DIR}"
 }
 
 # @FUNCTION: dump_gcda
@@ -1821,7 +1834,7 @@ einfo "stale or to force a PGO profile update."
 einfo
 		fi
 	fi
-	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
+	chown -R "portage:portage" "${OT_KERNEL_PGO_DATA_DIR}"
 }
 
 # @FUNCTION: get_current_tag_for_k_major_minor_branch
@@ -2200,7 +2213,19 @@ _filter_genpatches() {
 		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	fi
 
-	if ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) && ! [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] ; then
+	if \
+		[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] \
+			&& \
+		! [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] \
+			&& \
+		( \
+			has clang ${IUSE_EFFECTIVE} \
+				&& \
+			ot-kernel_use clang \
+				&& \
+			ot-kernel_use pgo \
+		) \
+	; then
 ewarn
 ewarn "Clang PGO is not compatible with Genpatches 1500 and cause boot failure."
 ewarn "Disable clang pgo in OT_KERNEL_USE or add 1500 to GENPATCHES_BLACKLIST"
@@ -2504,6 +2529,7 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 # @DESCRIPTION:
 # Apply the PGO patch for use with clang
 apply_clang_pgo() {
+	[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] || return
 einfo "Applying the Clang PGO patch"
 	_fpatch "${FILESDIR}/${CLANG_PGO_FN}"
 }
@@ -2929,8 +2955,8 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has clang ${USE} && use clang ; then
-		if ot-kernel_use clang && ot-kernel_use pgo ; then
+	if has clang ${USE} && use clang && ot-kernel_use clang ; then
+		if use pgo && ot-kernel_use pgo ; then
 			apply_clang_pgo
 		fi
 	fi
@@ -8600,6 +8626,7 @@ einfo "debugfs disabled success"
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 _ot-kernel_set_kconfig_pgo_clang() {
+	[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] || return
 	local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/compiler_fingerprint"
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
@@ -14753,7 +14780,16 @@ ot-kernel_build_kernel() {
 		local llvm_slot=$(get_llvm_slot)
 		local pgo_phase # pgophase file
 		local makefile_pgo_phase
-		if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+		if \
+			[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] \
+				&& \
+			has clang ${IUSE_EFFECTIVE} \
+				&& \
+			ot-kernel_use clang \
+				&& \
+			ot-kernel_use pgo \
+		; then
+	# Clang PGO section
 			local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/compiler_fingerprint"
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 			local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
@@ -14820,14 +14856,15 @@ einfo "Resuming as PGI since no profile generated"
 		elif \
 			( \
 				( has clang ${IUSE_EFFECTIVE} && ! ot-kernel_use clang ) \
-				|| \
+					|| \
 				( ! has clang ${IUSE_EFFECTIVE} ) \
 			) \
-			&& \
+				&& \
 			( \
 				   ot-kernel_use pgo \
 			) \
 		; then
+	# GCC PGO section
 			local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/compiler_fingerprint"
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc"
@@ -14908,7 +14945,11 @@ eerror "Only native GCC PGO builds are supported."
 eerror
 					die
 				fi
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} > 0 )) ; then
+			elif \
+				[[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] \
+					&& \
+				(( ${n_gcda} > 0 )) \
+			; then
 				pgo_phase="PGO"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
@@ -14922,7 +14963,11 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+			elif \
+				[[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") ]] \
+					&& \
+				[[ -e "${profdata_dpath}" ]] \
+			; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
@@ -14940,7 +14985,11 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} == 0 )) ; then
+			elif \
+				[[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] \
+					&& \
+				(( ${n_gcda} == 0 )) \
+			; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
@@ -16069,10 +16118,12 @@ ot_kernel_serialize_pgo_state() {
 	[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
 	[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 	[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
-	local pgo_phase_statefile
-	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && use pgo ; then
-		pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
-	elif use pgo ; then
+	local pgo_phase_statefile=""
+	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && use pgo && ot-kernel_use pgo ; then
+		if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
+			pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
+		fi
+	elif use pgo && ot-kernel_use pgo ; then
 		pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 	fi
 	if [[ -n "${pgo_phase_statefile}" ]] ; then

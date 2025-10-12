@@ -348,11 +348,6 @@ REQUIRED_USE+="
 	genpatches_1510? (
 		genpatches
 	)
-	pgo? (
-		|| (
-			llvm_slot_18
-		)
-	)
 	tresor_prompt? (
 		tresor
 	)
@@ -360,6 +355,15 @@ REQUIRED_USE+="
 		tresor
 	)
 "
+if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
+	REQUIRED_USE+="
+		pgo? (
+			|| (
+				llvm_slot_18
+			)
+		)
+	"
+fi
 
 gen_scs_exclusion() {
 	local a

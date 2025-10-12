@@ -358,11 +358,6 @@ REQUIRED_USE+="
 	multigen_lru? (
 		!zen-multigen_lru
 	)
-	pgo? (
-		|| (
-			llvm_slot_18
-		)
-	)
 	shadowcallstack? (
 		cfi
 		clang
@@ -377,6 +372,15 @@ REQUIRED_USE+="
 		!multigen_lru
 	)
 "
+if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
+	REQUIRED_USE+="
+		pgo? (
+			|| (
+				llvm_slot_18
+			)
+		)
+	"
+fi
 
 gen_scs_exclusion() {
 	local a

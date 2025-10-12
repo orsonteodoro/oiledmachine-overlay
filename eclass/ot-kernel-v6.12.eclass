@@ -168,7 +168,7 @@ C2TCP_KV="4.13.1"
 C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
 C2TCP_VER="2.2"
 # For CFI users, KCFI merged in 6.1
-CLANG_PGO_SUPPORTED=1
+CLANG_PGO_SUPPORTED=0 # Needs updated patch for LLVM 20
 # See
 # https://github.com/torvalds/linux/blob/v6.12/tools/build/feature/Makefile#L331
 # https://github.com/torvalds/linux/blob/v6.12/tools/perf/Makefile.config#L276
@@ -428,11 +428,6 @@ REQUIRED_USE+="
 	genpatches_1510? (
 		genpatches
 	)
-	pgo? (
-		|| (
-			llvm_slot_18
-		)
-	)
 	tresor_prompt? (
 		tresor
 	)
@@ -440,6 +435,15 @@ REQUIRED_USE+="
 		tresor
 	)
 "
+if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
+	REQUIRED_USE+="
+		pgo? (
+			|| (
+				llvm_slot_18
+			)
+		)
+	"
+fi
 
 gen_scs_exclusion() {
 	local a

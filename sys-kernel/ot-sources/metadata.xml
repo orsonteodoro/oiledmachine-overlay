@@ -130,7 +130,7 @@
 
     6.6 (LTS)						A
 		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				E
+		    Clang PGO				D
 		    genpatches				A
 		    kernel_compiler_patch		X
 		    Nest				R
