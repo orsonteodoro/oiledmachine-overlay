@@ -204,6 +204,7 @@ GCC_MIN_KCP_ZEN_SAUCE_AMD64=14
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
 # llvm slot originally 16, testing 18
+LIBCXX_SLOT_DEFAULT_RDEPEND=0
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
