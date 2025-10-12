@@ -605,6 +605,11 @@ ewarn
 		return
 	fi
 
+	local stack_mitigations=1
+	if [[ "${ARCH}" =~ "hppa" ]] ; then
+		stack_mitigations=0
+	fi
+
 	local bti="${BTI[${march}]}"
 	local mte="${MTE[${march}]}"
 	local pac="${PAC[${march}]}"
@@ -952,6 +957,8 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		if \
 			[[ "${RUSTFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] \
 				&& \
+			(( ${stack_mitigations} == 1 )) \
+				&& \
 			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 		; then
 	# ZC, CE, EP
@@ -959,12 +966,16 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		elif \
 			[[ "${RUSTFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] \
 				&& \
+			(( ${stack_mitigations} == 1 )) \
+				&& \
 			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
 		; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -Z stack-protector=basic"
 		elif \
 			[[ "${RUSTFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] \
+				&& \
+			(( ${stack_mitigations} == 1 )) \
 				&& \
 			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 		; then
@@ -1132,6 +1143,8 @@ einfo "rustc host:  ${host}"
 		if \
 			_rustflags-hardened_has_target_feature "stack-probe" \
 				&& \
+			(( ${stack_mitigations} == 1 )) \
+				&& \
 			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
 		; then
 	# Mitigation for stack clash, stack overflow
@@ -1142,7 +1155,11 @@ einfo "rustc host:  ${host}"
 		fi
 
 	# ZC, CE, EP, DoS, DT
-		if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" ; then
+		if \
+			(( ${stack_mitigations} == 1 )) \
+				&& \
+			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		; then
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 				| sed -r -e "s#-C[ ]*link-arg=[-+]fstack-clash-protection##g")
 			RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"

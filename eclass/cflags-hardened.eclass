@@ -1239,6 +1239,11 @@ ewarn
 	fi
 einfo "Protect spectrum:  ${protect_spectrum}"
 
+	local stack_mitigations=1
+	if [[ "${ARCH}" =~ "hppa" ]] ; then
+		stack_mitigations=0
+	fi
+
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
@@ -1281,9 +1286,11 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		ver_test "${gcc_pv}" -ge "14.2" \
 			&& \
 		[[ "${CFLAGS_HARDENED_FHARDENED:-1}" == "1" ]] \
-			&&
+			&& \
 		[[ "${CFLAGS_HARDENED_FHARDENED_USER:-0}" == "1" ]] \
-			&&
+			&& \
+		(( ${stack_mitigations} == 1 )) \
+			&& \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 	; then
 einfo "Appending -fhardened"
@@ -1342,8 +1349,10 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 |"untrusted-data"\
 |"web-browser")\
 			]] \
-					&&
+					&& \
 			test-flags-CC "-fstack-clash-protection" \
+					&& \
+			(( ${stack_mitigations} == 1 )) \
 					&& \
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 		; then
@@ -1358,6 +1367,8 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 				&& \
 			! tc-enables-ssp \
 				&& \
+			(( ${stack_mitigations} == 1 )) \
+				&& \
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 		; then
 	# ZC, CE, EP
@@ -1371,6 +1382,8 @@ einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
 				&& \
 			! tc-enables-ssp-strong \
 				&& \
+			(( ${stack_mitigations} == 1 )) \
+				&& \
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 		; then
 	# ZC, CE, EP
@@ -1383,6 +1396,8 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			[[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] \
 				&& \
 			! tc-enables-ssp-all \
+				&& \
+			(( ${stack_mitigations} == 1 )) \
 				&& \
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 		; then
