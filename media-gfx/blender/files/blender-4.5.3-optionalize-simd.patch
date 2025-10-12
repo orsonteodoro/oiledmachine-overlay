@@ -1,3 +1,4 @@
+Build files changes
 diff '--color=auto' -urp blender-4.5.3.orig/build_files/cmake/Modules/FindEmbree.cmake blender-4.5.3/build_files/cmake/Modules/FindEmbree.cmake
 --- blender-4.5.3.orig/build_files/cmake/Modules/FindEmbree.cmake	2025-07-10 02:43:06.000000000 -0700
 +++ blender-4.5.3/build_files/cmake/Modules/FindEmbree.cmake	2025-10-11 09:38:54.969390934 -0700
@@ -134,3 +135,35 @@ diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/CMakeLists.txt blender
  
    if(CXX_HAS_SSE42)
      set(CYCLES_SSE42_FLAGS "-xsse4.2")
+diff '--color=auto' -urpN blender-4.5.3.orig/CMakeLists.txt blender-4.5.3/CMakeLists.txt
+--- blender-4.5.3.orig/CMakeLists.txt	2025-07-10 02:43:42.000000000 -0700
++++ blender-4.5.3/CMakeLists.txt	2025-10-11 20:50:17.957274934 -0700
+@@ -5,6 +5,8 @@
+ # -----------------------------------------------------------------------------
+ # Early Initialization
+ 
++option(WITH_SSE42 "Allow SSE4.2" ON)
++
+ # NOTE: We don't allow in-source builds. This causes no end of troubles because
+ # all out-of-source builds will use the CMakeCache.txt file there and even
+ # build the libs and objects in it.
+@@ -1554,13 +1556,18 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Release
+ endif()
+ 
+ # Test SIMD support, before platform includes to determine if sse2neon is needed.
++# See also build_files/cmake/macros.cmake
+ if(WITH_CPU_SIMD)
+   set(COMPILER_SSE42_FLAG)
+ 
+   # Test Neon first since macOS Arm can compile and run x86-64 SSE binaries.
+   test_neon_support()
+   if(NOT SUPPORT_NEON_BUILD)
+-    test_sse_support(COMPILER_SSE42_FLAG)
++    if(WITH_SSE42)
++      test_sse_support(COMPILER_SSE42_FLAG)
++    else()
++      set(SUPPORT_SSE42_BUILD FALSE)
++    endif()
+   endif()
+ endif()
+ 
