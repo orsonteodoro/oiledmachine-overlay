@@ -52,6 +52,14 @@ _LIBCXX_SLOT_ECLASS=1
 #         LIBCXX_USEDEP_DEV="llvm_slot_skip(+)" placeholder.
 #
 
+# @ECLASS_VARIABLE: LIBCXX_SLOT_CONFIG
+# @DESCRIPTION:
+# Controls the defaults for IUSE and RDEPEND.
+# Valid values: core, core+lib, lib
+# core - Only show the interface relevant to compiler.
+# core+lib - Show the interface relevant to compiler and the libc++ library (C++ runtime library).
+# lib - Show only the relevant interface for the libc++ library (C++ runtime library).
+
 # @ECLASS_VARIABLE: LIBCXX_USEDEP
 # @DESCRIPTION:
 # Add to C++ packages that have libc++ ldd linkage.
@@ -311,7 +319,7 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		die
 	fi
 
-	if [[ "${LIBCXX_SLOT_DEFAULT_IUSE:-1}" == "1" ]] ; then
+	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
 		IUSE="
 			${IUSE}
 			libcxx
@@ -322,7 +330,7 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		${REQUIRED_USE}
 		${required_use}
 	"
-	if [[ "${LIBCXX_SLOT_DEFAULT_RDEPEND:-1}" == "1" ]] ; then
+	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
 		RDEPEND="
 			${RDEPEND}
 			${rdepend}
