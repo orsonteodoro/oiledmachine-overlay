@@ -80,7 +80,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -345,7 +345,7 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 
 	if use materialx ; then
 		mycmakeargs+=(
-			-DMaterialX_DIR="${ESYSROOT}/usr/$(get_libdir)/materialx/lib/cmake/MaterialX"
+			-DMaterialX_DIR="${ESYSROOT}/usr/lib/materialx/$(get_libdir)/cmake/MaterialX"
 		)
 	fi
 
@@ -417,12 +417,23 @@ EOF
 
 	fi
 	if use python ; then
-		dodir /usr/lib/${EPYTHON}
+		dodir "/usr/lib/${EPYTHON}"
 		mv "${ED}/usr/lib64/openusd/lib/python/pxr" \
 			"${ED}/usr/lib/${EPYTHON}" || die
 	fi
 	use doc && einstalldocs
 	dodoc "LICENSE.txt" "NOTICE.txt"
+	if use materialx ; then
+		IFS=$'\n'
+		local x
+		for x in $(find "${ED}" -name "*.so") ; do
+			patchelf \
+				--add-rpath "/usr/lib/materialx/$(get_libdir)" \
+				"${x}" \
+				|| die
+		done
+		IFS=$' \t\n'
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-jemalloc-usd, link-to-multislot-tbb
