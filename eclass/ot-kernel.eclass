@@ -433,6 +433,29 @@ VULNERABILITIES_FIXED=(
 # If the ebuild maintainer(s) gathered from them from the changelog, then vulnerability coverage may be incomplete.
 
 	# 2025-10-10
+	"0390633;DF;" # 6.16
+	"081f14b;DoS;" # 6.6
+	"1773f67;DoS;" # 6.12
+	"186098f;DoS;" # 6.17, panic on oops
+	"1d2ef21;NPD, DoS;" # 6.12
+	"228d06c;UAF;" # 6.6
+	"284e67a;GPF, DoS" # 6.6
+	"448db01;GPF, DoS" # 6.16
+	"4827bd6;BO;" # 6.12
+	"51627f4;BO;" # 6.16
+	"647d6b8;RC, UAF;" # 6.12
+	"71ed8b8;UAF;" # 6.6
+	"895cccf;RC, UAF;" # 6.12
+	"86b306f;DoS;" # 6.16
+	"94797b8;GPF, DoS;" # 6.17
+	"b781e56;DF;" # 6.17
+	"c301ec6;DF;" # 6.12
+	"cb7630e;BO;" # 6.6
+	"c6dc023;ID;" # 6.16
+	"dc48743;RC, UAF;" # 6.6
+	"e3af7df;UAF;" # 6.16
+	"f21f530;UAF;" # 6.16
+	"f92181c;UAF;" # 6.12
 	"CVE-2022-50502;NPD;Rejected"
 	"CVE-2022-50338;UAF;Rejected"
 	"CVE-2022-50487;BO;Rejected"

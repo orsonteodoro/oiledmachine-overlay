@@ -123,6 +123,9 @@ einfo "DT = Data Tampering"
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"GPF"($|" "|";"|",") ]] ; then
+einfo "GPF = General Protection Fault"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
 		fi
