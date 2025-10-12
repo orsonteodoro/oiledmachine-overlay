@@ -190,9 +190,16 @@ eerror "QA:  GCC_COMPAT must be defined"
 		)
 	"
 
-	IUSE="${IUSE} ${iuse}"
-	REQUIRED_USE="${REQUIRED_USE} ${required_use}"
+	IUSE="
+		${IUSE}
+		${iuse}
+	"
+	REQUIRED_USE="
+		${REQUIRED_USE}
+		${required_use}
+	"
 	RDEPEND="
+		${RDEPEND}
 		virtual/libstdcxx[${usedep2}]
 	"
 
