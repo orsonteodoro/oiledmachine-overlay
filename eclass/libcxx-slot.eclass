@@ -259,35 +259,51 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 	local rdepend
 	if [[ "${CXX_STANDARD}" == "98" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx98]
+			libcxx? (
+				virtual/libcxx[cxx98]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "03" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx03]
+			libcxx? (
+				virtual/libcxx[cxx03]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "11" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx11]
+			libcxx? (
+				virtual/libcxx[cxx11]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "14" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx14]
+			libcxx? (
+				virtual/libcxx[cxx14]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "17" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx17]
+			libcxx? (
+				virtual/libcxx[cxx17]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "20" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx20]
+			libcxx? (
+				virtual/libcxx[cxx20]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "23" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx23]
+			libcxx? (
+				virtual/libcxx[cxx23]
+			)
 		"
 	elif [[ "${CXX_STANDARD}" == "26" ]] ; then
 		rdepend="
-			virtual/libcxx[cxx23]
+			libcxx? (
+				virtual/libcxx[cxx23]
+			)
 		"
 	else
 eerror "QA:  CXX_STANDARD is invalid."
@@ -295,7 +311,7 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		die
 	fi
 
-	IUSE="${IUSE} ${iuse}"
+	IUSE="${IUSE} libcxx ${iuse}"
 	REQUIRED_USE="${REQUIRED_USE} ${required_use}"
 	RDEPEND="${RDEPEND} ${rdepend}"
 
