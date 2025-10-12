@@ -1,0 +1,32 @@
+--- a/source/creator/CMakeLists.txt.orig	2025-07-31 18:30:13.000000000 -0700
++++ b/source/creator/CMakeLists.txt	2025-10-11 23:20:35.073837743 -0700
+@@ -782,7 +782,7 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/
+     set(BLENDER_BIN "bin/blender")
+     install(
+       TARGETS blender
+-      DESTINATION "./bin"
++      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+     # Misc files.
+     install(
+@@ -804,7 +804,7 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/
+     if(WITH_BLENDER_THUMBNAILER)
+       install(
+         TARGETS blender-thumbnailer
+-        DESTINATION "./bin"
++        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+       )
+     endif()
+   endif()
+@@ -2064,10 +2064,7 @@ if(UNIX AND NOT APPLE)
+       # Blender's requirement of libraries mean the installation path must be used.
+       install(
+         CODE "\
+-set(BLENDER_BIN \"${CMAKE_INSTALL_PREFIX}/${BLENDER_BIN}\")\n\
+-if(DEFINED ENV\{DESTDIR\})\n\
+-  set(BLENDER_BIN \"$ENV\{DESTDIR\}/$\{BLENDER_BIN\}\")\n\
+-endif()\n\
++set(BLENDER_BIN \"$ENV\{DESTDIR\}/${CMAKE_INSTALL_BINDIR}/${BLENDER_BIN}\")
+ set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")\n\
+ set(MANPAGE_GEN \"${CMAKE_SOURCE_DIR}/doc/manpage/blender.1.py\")\n\
+ set(MANPAGE_OUT \"${CMAKE_CURRENT_BINARY_DIR}/blender.1\")\n\

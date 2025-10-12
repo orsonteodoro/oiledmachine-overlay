@@ -41,6 +41,9 @@
     <flag name="hdf5">
       Enables the hdf5 backend in the alembic plugin.
     </flag>
+    <flag name="hdstorm">
+      Enables the HdStorm realtime Hydra plugin.
+    </flag>
     <flag name="imaging">
       Builds imaging components
     </flag>

@@ -76,7 +76,7 @@ LICENSE="
 SLOT="0"
 # test USE flag is enabled upstream
 IUSE+="
--alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
+-alembic -doc +draco -embree +examples -experimental +hdf5 hdstorm +imaging +jemalloc
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
@@ -92,6 +92,12 @@ REQUIRED_USE+="
 	)
 	hdf5? (
 		alembic
+	)
+	hdstorm? (
+		|| (
+			opengl
+			vulkan
+		)
 	)
 	opencolorio? (
 		imaging

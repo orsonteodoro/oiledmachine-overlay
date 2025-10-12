@@ -227,7 +227,7 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Navi 3x and ray tracing support for Vega 10, Raven, Renoir.
     </flag>
     <flag name="hydra">
-      Use USD hydra for rendering and for a performance benefit.
+      Enable Hydra rendering engine typically used for realtime rendering/preview.
     </flag>
     <flag name="joystick">
       Adds support for a joystick through SDL used for the Blender Game Engine

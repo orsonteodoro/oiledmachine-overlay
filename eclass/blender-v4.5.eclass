@@ -219,7 +219,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_18
+ebuild_revision_20
 "
 # hip is default ON upstream.
 inherit blender libstdcxx-slot
@@ -1162,7 +1162,7 @@ BDEPEND+="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-4.0.2-install-paths-change.patch"
+	"${FILESDIR}/${PN}-4.5.3-install-paths-change.patch"
 	"${FILESDIR}/${PN}-4.1.0-openusd-21.11-python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"

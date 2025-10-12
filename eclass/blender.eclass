@@ -37,7 +37,7 @@ CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake dhms
 inherit flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
-inherit python-single-r1 rocm toolchain-funcs xdg
+inherit python-single-r1 rocm toolchain-funcs xdg optfeature
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -1045,7 +1045,7 @@ einfo "Updating RPATH for materialx support"
 
 blender_pkg_postinst() {
 ewarn
-ewarn "Blender uses python integration. As such, may have some risks with"
+ewarn "Blender uses Python integration. As such, may have some risks with"
 ewarn "running unknown python scripts."
 ewarn
 ewarn "It is recommended to change your blender temp directory from /tmp to"
@@ -1121,6 +1121,8 @@ ewarn "does not have SSE4.1 in order to render with cycles."
 ewarn
 	fi
 	dhms_end
+        optfeature_header "Install optional Hydra backends:"
+        optfeature "HdStorm realtime Hydra plugin" "media-libs/openusd[hdstorm]"
 }
 
 blender_pkg_postrm() {
