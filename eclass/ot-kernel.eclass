@@ -14383,11 +14383,11 @@ einfo
 		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
 		local s=$(clang-major-version)
-		if ver_test "${s}" < ${_llvm_min_slot} ; then
+		if ver_test "${s}" "-lt" "${_llvm_min_slot}" ; then
 eerror "You must switch Clang to >= ${_llvm_min_slot}"
 			die
 		fi
-		if ver_test "${s}" > ${_llvm_max_slot} ; then
+		if ver_test "${s}" "-gt" "${_llvm_max_slot}" ; then
 eerror "You must switch Clang to <= ${_llvm_max_slot}"
 			die
 		fi
