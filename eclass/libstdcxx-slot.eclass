@@ -198,10 +198,10 @@ eerror "QA:  GCC_COMPAT must be defined"
 		${REQUIRED_USE}
 		${required_use}
 	"
-	RDEPEND="
-		${RDEPEND}
-		virtual/libstdcxx[${usedep2}]
-	"
+#	RDEPEND="
+#		${RDEPEND}
+#		virtual/libstdcxx[${usedep2}]
+#	"
 
 	if [[ "${LIBSTDCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
