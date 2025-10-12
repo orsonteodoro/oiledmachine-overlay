@@ -181,7 +181,7 @@ eerror "QA:  GCC_COMPAT must be defined"
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			iuse="${iuse} gcc_slot_${x}"
 			usedep="${usedep},gcc_slot_${x}(-)?"
-			usedep2="${usedep2},gcc_slot_${x}(+)?"
+			usedep2="${usedep2},gcc_slot_${x}(-)?"
 		fi
 	done
 	required_use="
