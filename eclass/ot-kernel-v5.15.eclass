@@ -145,7 +145,11 @@ CFI_EXCLUDE_COMMITS=(
 )
 
 CLANG_PGO_SUPPORTED=1
-CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
+# See
+# https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
+# https://github.com/torvalds/linux/blob/v5.15/tools/perf/Makefile.config#L276
+# https://github.com/torvalds/linux/blob/v5.15/scripts/kconfig/qconf-cfg.sh
+CXX_STANDARD="11" # Qt5 (11), perf-cpp (11)
 DISABLE_DEBUG_PV="1.4.2"
 EXCLUDE_SCS=(
 	alpha

@@ -149,7 +149,11 @@ a2fb34e34d157c303d07ee16b1ad42c8720ab320
 )
 CK_KV="5.10.0"
 
-CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.10/tools/build/feature/Makefile#L318
+# See
+# https://github.com/torvalds/linux/blob/v5.10/tools/build/feature/Makefile#L318
+# https://github.com/torvalds/linux/blob/v5.10/tools/perf/Makefile.config#L276
+# https://github.com/torvalds/linux/blob/v5.10/scripts/kconfig/qconf-cfg.sh
+CXX_STANDARD="11" # Qt5 (11), perf-cpp (11)
 DISABLE_DEBUG_PV="1.4.2"
 EXTRAVERSION="-ot"
 GCC_PV="4.9"

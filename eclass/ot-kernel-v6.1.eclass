@@ -121,7 +121,11 @@ C2TCP_KV="4.13.1"
 C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
 C2TCP_VER="2.2"
 CLANG_PGO_SUPPORTED=1
-CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.1/tools/build/feature/Makefile#L318
+# See
+# https://github.com/torvalds/linux/blob/v6.1/tools/build/feature/Makefile#L318
+# https://github.com/torvalds/linux/blob/v6.1/tools/perf/Makefile.config#L276
+# https://github.com/torvalds/linux/blob/v6.1/scripts/kconfig/qconf-cfg.sh
+CXX_STANDARD="11" # Qt5 (11), perf-cpp (14)
 DISABLE_DEBUG_PV="1.4.2"
 EXCLUDE_SCS=(
 	alpha

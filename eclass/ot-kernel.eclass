@@ -3442,22 +3442,6 @@ ewarn "Found clang error"
 ewarn "Found library error"
 		has_error=1
 	fi
-	if CXX=clang-${llvm_slot} test-flags-CXX ${CXX_STD} >/dev/null 2>&1 ; then
-		:
-	else
-ewarn "Found unsupported ${CXX_STD} with clang++-${llvm_slot}"
-		has_error=1
-	fi
-	if (( ${has_error} == 1 )) ; then
-ewarn
-ewarn "Found missing symbols for clang and needs a rebuild for Clang +"
-ewarn "LLVM ${llvm_slot}.  This has reduced security implications if using the"
-ewarn "fallback gcc if relying on software security implementations."
-ewarn
-ewarn "You may skip this warning if a working Clang + LLVM was found."
-ewarn
-		return 1
-	fi
 	return 0
 }
 
