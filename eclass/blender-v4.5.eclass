@@ -219,7 +219,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_16
+ebuild_revision_18
 "
 # hip is default ON upstream.
 inherit blender libstdcxx-slot
