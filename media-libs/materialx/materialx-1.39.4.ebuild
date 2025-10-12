@@ -74,7 +74,10 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -examples -oiio -python test wayland +X ebuild_revision_1"
+IUSE+="
+-examples -oiio -python test wayland +X
+ebuild_revision_2
+"
 REQUIRED_USE+="
 	python? (
 		${PYTHON_REQUIRED_USE}
@@ -216,13 +219,14 @@ src_unpack() {
 src_configure() {
 	addpredict /usr/lib/materialx
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/${PN}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}"
 		-DGLFW_USE_OSMESA=OFF
 		-DGLFW_USE_WAYLAND=$(usex wayland "ON" "OFF")
 		-DMATERIALX_BUILD_OIIO=$(usex oiio "ON" "OFF")
 		-DMATERIALX_BUILD_PYTHON=$(usex python "ON" "OFF")
 		-DMATERIALX_BUILD_SHARED_LIBS=ON
 		-DMATERIALX_BUILD_TESTS=$(usex test "ON" "OFF")
+		-DMATERIALX_INSTALL_LIB_PATH=$(get_libdir)
 		-DMATERIALX_INSTALL_PYTHON=OFF
 	)
 	if use python ; then
