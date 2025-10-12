@@ -17614,9 +17614,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/eslint-parser@7.23.3(@babel/core@7.23.6)(eslint@8.57.1)':
+  '@babel/eslint-parser@7.23.3(@babel/core@7.28.4)(eslint@8.57.1)':
     dependencies:
-      '@babel/core': 7.23.6
+      '@babel/core': 7.28.4
       '@nicolo-ribaudo/eslint-scope-5-internals': 5.1.1-v1
       eslint: 8.57.1
       eslint-visitor-keys: 2.1.0
@@ -17655,15 +17655,6 @@ snapshots:
     dependencies:
       '@babel/traverse': 7.28.4
       '@babel/types': 7.28.4
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/helper-module-transforms@7.28.3(@babel/core@7.23.6)':
-    dependencies:
-      '@babel/core': 7.23.6
-      '@babel/helper-module-imports': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
-      '@babel/traverse': 7.28.4
     transitivePeerDependencies:
       - supports-color
 
@@ -22255,7 +22246,7 @@ snapshots:
 
   '@stylelint/postcss-css-in-js@0.38.0(postcss-syntax@0.36.2(postcss-less@6.0.0(postcss@8.5.6))(postcss@8.5.6))(postcss@8.5.6)':
     dependencies:
-      '@babel/core': 7.23.6
+      '@babel/core': 7.28.4
       postcss: 8.5.6
       postcss-syntax: 0.36.2(postcss-less@6.0.0(postcss@8.5.6))(postcss@8.5.6)
     transitivePeerDependencies:
@@ -23520,7 +23511,7 @@ snapshots:
 
   '@umijs/babel-preset-umi@4.5.1':
     dependencies:
-      '@babel/runtime': 7.28.2
+      '@babel/runtime': 7.28.4
       '@bloomberg/record-tuple-polyfill': 0.0.4
       '@umijs/bundler-utils': 4.5.1
       '@umijs/utils': 4.5.1
@@ -23540,8 +23531,8 @@ snapshots:
 
   '@umijs/lint@4.5.1(eslint@8.57.1)(postcss-less@6.0.0(postcss@8.5.6))(stylelint@15.11.0(typescript@5.9.3))(typescript@5.9.3)':
     dependencies:
-      '@babel/core': 7.23.6
-      '@babel/eslint-parser': 7.23.3(@babel/core@7.23.6)(eslint@8.57.1)
+      '@babel/core': 7.28.4
+      '@babel/eslint-parser': 7.23.3(@babel/core@7.28.4)(eslint@8.57.1)
       '@stylelint/postcss-css-in-js': 0.38.0(postcss-syntax@0.36.2(postcss-less@6.0.0(postcss@8.5.6))(postcss@8.5.6))(postcss@8.5.6)
       '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.1)(typescript@5.9.3)
