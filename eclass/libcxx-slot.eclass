@@ -311,15 +311,19 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		die
 	fi
 
-	IUSE="${IUSE} libcxx ${iuse}"
+	IUSE="
+		${IUSE}
+		libcxx
+		${iuse}
+	"
 	REQUIRED_USE="
 		${REQUIRED_USE}
 		${required_use}
 	"
-#	RDEPEND="
-#		${RDEPEND}
-#		${rdepend}
-#	"
+	RDEPEND="
+		${RDEPEND}
+		${rdepend}
+	"
 
 	if [[ "${LIBCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
