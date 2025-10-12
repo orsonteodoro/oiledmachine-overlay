@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This ebuild monitor libstdc++ library support.
+  </longdescription>
+  <use>
+    <flag name="cxx98">
+      Ensure support for -std=cxx98.
+    </flag>
+    <flag name="cxx03">
+      Ensure support for -std=cxx03.
+    </flag>
+    <flag name="cxx11">
+      Ensure support for -std=cxx11.
+    </flag>
+    <flag name="cxx14">
+      Ensure support for -std=cxx14.
+    </flag>
+    <flag name="cxx17">
+      Ensure support for -std=cxx17.
+    </flag>
+    <flag name="cxx20">
+      Ensure support for -std=cxx20.
+    </flag>
+    <flag name="cxx23">
+      Ensure support for -std=cxx23.
+    </flag>
+    <flag name="cxx26">
+      Ensure support for -std=cxx26.
+    </flag>
+  </use>
+</pkgmetadata>

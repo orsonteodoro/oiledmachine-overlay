@@ -175,11 +175,13 @@ eerror "QA:  GCC_COMPAT must be defined"
 
 	local iuse=""
 	local usedep=""
+	local usedep2=""
 	local x
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			iuse="${iuse} gcc_slot_${x}"
 			usedep="${usedep},gcc_slot_${x}(-)?"
+			usedep2="${usedep},gcc_slot_${x}(+)?"
 		fi
 	done
 	required_use="
@@ -190,10 +192,13 @@ eerror "QA:  GCC_COMPAT must be defined"
 
 	IUSE="${IUSE} ${iuse}"
 	REQUIRED_USE="${REQUIRED_USE} ${required_use}"
+	RDEPEND="
+		virtual/libstdcxx[${usedep2}]
+	"
 
 	if [[ "${LIBSTDCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
-		LIBSTDCXX_USEDEP="gcc_slot_0(-)"
+		LIBSTDCXX_USEDEP="gcc_slot_skip(+)"
 	else
 		LIBSTDCXX_USEDEP="${usedep:1}"
 	fi
