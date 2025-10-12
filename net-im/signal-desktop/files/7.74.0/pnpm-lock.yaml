@@ -20143,7 +20143,7 @@ snapshots:
 
   package-json@4.0.1:
     dependencies:
-      got: 11.8.5
+      got: 11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b)
       registry-auth-token: 3.4.0
       registry-url: 3.1.0
       semver: 5.7.2
