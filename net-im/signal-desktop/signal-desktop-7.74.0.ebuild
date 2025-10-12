@@ -231,7 +231,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger
 #ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/danger/package.json"
+ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/danger/package.json and in ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
