@@ -1,7 +1,12 @@
---- a/source/creator/CMakeLists.txt.orig	2025-07-31 18:30:13.000000000 -0700
-+++ b/source/creator/CMakeLists.txt	2025-10-11 23:20:35.073837743 -0700
-@@ -782,7 +782,7 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/
-     set(BLENDER_BIN "bin/blender")
+diff '--color=auto' -urp blender-4.5.3.orig/source/creator/CMakeLists.txt blender-4.5.3/source/creator/CMakeLists.txt
+--- blender-4.5.3.orig/source/creator/CMakeLists.txt	2025-07-31 18:30:13.000000000 -0700
++++ blender-4.5.3/source/creator/CMakeLists.txt	2025-10-12 08:00:17.489714293 -0700
+@@ -779,10 +779,10 @@ file(REMOVE ${CMAKE_BINARY_DIR}/bin/lib/
+     endif()
+   else()
+     # main blender binary
+-    set(BLENDER_BIN "bin/blender")
++    set(BLENDER_BIN "blender")
      install(
        TARGETS blender
 -      DESTINATION "./bin"
@@ -18,7 +23,28 @@
        )
      endif()
    endif()
-@@ -2064,10 +2064,7 @@ if(UNIX AND NOT APPLE)
+@@ -2055,6 +2055,20 @@ endif()
+ # libraries have been installed to their destination.
+ 
+ if(UNIX AND NOT APPLE)
++  if(WITH_MATERIALX)
++    find_program(PATCHELF_EXECUTABLE patchelf)
++    if(NOT PATCHELF_EXECUTABLE)
++      message(FATAL_ERROR "patchelf not found. Please install it or ensure it's in your PATH.")
++    endif()
++    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
++      install(CODE "execute_process(COMMAND ${PATCHELF_EXECUTABLE} --set-rpath \"/usr/lib/materialx/lib64\" \"$ENV\{DESTDIR\}/${CMAKE_INSTALL_BINDIR}/${BLENDER_BIN}\")"
++              COMPONENT Runtime)
++    else()
++      install(CODE "execute_process(COMMAND ${PATCHELF_EXECUTABLE} --set-rpath \"/usr/lib/materialx/lib\" \"$ENV\{DESTDIR\}/${CMAKE_INSTALL_BINDIR}/${BLENDER_BIN}\")"
++              COMPONENT Runtime)
++    endif()
++  endif()
++
+   if(NOT WITH_PYTHON_MODULE)
+     if(WITH_DOC_MANPAGE)
+       # Only run the command to generate the man-page when it may be outdated.
+@@ -2064,10 +2078,7 @@ if(UNIX AND NOT APPLE)
        # Blender's requirement of libraries mean the installation path must be used.
        install(
          CODE "\
@@ -26,7 +52,7 @@
 -if(DEFINED ENV\{DESTDIR\})\n\
 -  set(BLENDER_BIN \"$ENV\{DESTDIR\}/$\{BLENDER_BIN\}\")\n\
 -endif()\n\
-+set(BLENDER_BIN \"$ENV\{DESTDIR\}/${CMAKE_INSTALL_BINDIR}/blender\")
++set(BLENDER_BIN \"$ENV\{DESTDIR\}/${CMAKE_INSTALL_BINDIR}/${BLENDER_BIN}\")
  set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")\n\
  set(MANPAGE_GEN \"${CMAKE_SOURCE_DIR}/doc/manpage/blender.1.py\")\n\
  set(MANPAGE_OUT \"${CMAKE_CURRENT_BINARY_DIR}/blender.1\")\n\

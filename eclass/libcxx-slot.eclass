@@ -320,10 +320,12 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		${REQUIRED_USE}
 		${required_use}
 	"
-	RDEPEND="
-		${RDEPEND}
-		${rdepend}
-	"
+	if [[ "${LIBCXX_SLOT_DEFAULT_RDEPEND:-1}" == "1" ]] ; then
+		RDEPEND="
+			${RDEPEND}
+			${rdepend}
+		"
+	fi
 
 	if [[ "${LIBCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
