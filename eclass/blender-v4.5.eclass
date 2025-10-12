@@ -219,7 +219,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_14
+ebuild_revision_15
 "
 # hip is default ON upstream.
 inherit blender libstdcxx-slot
@@ -1455,7 +1455,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 
 	if use materialx ; then
 		mycmakeargs+=(
-			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/$(get_libdir)/materialx/lib/cmake/MaterialX"
+			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/lib/materialx/$(get_libdir)/cmake/MaterialX"
 		)
 	fi
 

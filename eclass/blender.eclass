@@ -1034,6 +1034,12 @@ blender_src_install() {
 	if use rocm ; then
 		rocm_fix_rpath
 	fi
+	if has materialx ${IUSE} && use materialx ; then
+		patchelf \
+			--add-rpath "/usr/lib/materialx/$(get_libdir)" \
+			"/usr/$(get_libdir)/blender/${PV}/creator/blender" \
+			|| die
+	fi
 }
 
 blender_pkg_postinst() {
