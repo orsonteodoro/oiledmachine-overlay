@@ -2681,34 +2681,6 @@ packages:
     engines: {node: '>=v14.18.0'}
     hasBin: true
 
-  vite@4.5.3:
-    resolution: {integrity: sha512-kQL23kMeX92v3ph7IauVkXkikdDRsYMGTVl5KY2E9OY4ONLvkHf04MDTbnfo6NKxZiDLWzVpP5oTa8hQD8U3dg==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-
   vite@5.4.20:
     resolution: {integrity: sha512-j3lYzGC3P+B5Yfy/pfKNgVEg4+UtcIJcVRt2cDjIOmhLourAqPqf8P7acgxeiSgUB7E3p2P8/3gNIgDLpwzs4g==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -5639,16 +5611,6 @@ snapshots:
       - sugarss
       - supports-color
       - terser
-
-  vite@4.5.3(@types/node@22.13.4)(sass@1.62.0):
-    dependencies:
-      esbuild: 0.25.0
-      postcss: 8.5.2
-      rollup: 3.29.5
-    optionalDependencies:
-      '@types/node': 22.13.4
-      fsevents: 2.3.3
-      sass: 1.62.0
 
   vite@5.4.20(@types/node@22.13.4)(sass@1.62.0):
     dependencies:
