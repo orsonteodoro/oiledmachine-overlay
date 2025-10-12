@@ -430,7 +430,8 @@ VULNERABILITIES_FIXED=(
 
 # There are more unannounced advisories but they are slow released.
 # You can do a keyword scan of the changelog for potential vulnerabilities.
-# If the ebuild maintainer(s) gathered from them from the changelog, then vulnerability coverage may be incomplete.
+# If the ebuild maintainer(s) gathered them from the changelog, then the
+# vulnerability coverage may be incomplete or miscategoried.
 
 	# 2025-10-10
 	"0390633;DF;" # 6.16
