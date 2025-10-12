@@ -9,6 +9,7 @@ EAPI=8
 # 1.96.13 -> 1.96.14
 # 1.96.14 -> 1.111.4
 # 1.111.4 -> 1.133.4
+# 1.133.4 -> 1.137.0
 
 # Ebuild using React 19
 
@@ -37,7 +38,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.133.4" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.137.0" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
