@@ -141,8 +141,8 @@ importers:
         specifier: 2.1.2
         version: 2.1.2
       '@signalapp/ringrtc':
-        specifier: 2.58.1
-        version: 2.58.1
+        specifier: 2.59.0
+        version: 2.59.0
       '@signalapp/sqlcipher':
         specifier: 2.4.4
         version: 2.4.4
@@ -201,11 +201,11 @@ importers:
         specifier: 1.0.4
         version: 1.0.4
       emoji-datasource:
-        specifier: 15.1.2
-        version: 15.1.2
+        specifier: 16.0.0
+        version: 16.0.0
       emoji-datasource-apple:
-        specifier: 15.1.2
-        version: 15.1.2
+        specifier: 16.0.0
+        version: 16.0.0
       emoji-regex:
         specifier: 10.4.0
         version: 10.4.0
@@ -682,8 +682,8 @@ importers:
         specifier: 4.3.7
         version: 4.3.7(supports-color@8.1.1)
       electron:
-        specifier: 38.2.1
-        version: 38.2.1
+        specifier: 38.2.2
+        version: 38.2.2
       electron-builder:
         specifier: 26.0.14
         version: 26.0.14(electron-builder-squirrel-windows@26.0.14)
@@ -3358,8 +3358,8 @@ packages:
     resolution: {integrity: sha512-y2sgqdivlrG41J4Zvt/82xtH/PZjDlgItqlD2g/Cv3ZbjlR6cGhTNXbfNygCJB8nXj+C7I28pjt1Zm3k0pv2mg==}
     engines: {npm: '>=8.2.3'}
 
-  '@signalapp/ringrtc@2.58.1':
-    resolution: {integrity: sha512-u+80Vl460f4U4Btnv3blp2kbtPt29FHdC63mXaf1Yor5C/DH4xeb7HwYPdHW28cLu6xVBNw/j9h8DPJ0jrvbZw==}
+  '@signalapp/ringrtc@2.59.0':
+    resolution: {integrity: sha512-d0nim4iS7bkQuER7dZ1CgJePTJ4o9lb7ktm+DVTR7QZkq527dpeSwWOaywoiqo7V06KVp1D0vhby2PMxxLjyug==}
     hasBin: true
 
   '@signalapp/sqlcipher@2.4.4':
@@ -3946,6 +3946,9 @@ packages:
 
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
+
+  '@types/keyv@3.1.4':
+    resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
@@ -5676,8 +5679,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@38.2.1:
-    resolution: {integrity: sha512-P4pE2RpRg3kM8IeOK+heg6iAxR5wcXnNHrbVchn7M3GBnYAhjfJRkROusdOro5PlKzdtfKjesbbqaG4MqQXccg==}
+  electron@38.2.2:
+    resolution: {integrity: sha512-OXSaVNXDlonXDjMRsFNQo1j5tzTKwKXh5/m46IjAFccBcZJZMISI+EjSI07oexIuhvKM8AZLuFuihVn4YjWWrA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -5685,11 +5688,11 @@ packages:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
     engines: {node: '>=12'}
 
-  emoji-datasource-apple@15.1.2:
-    resolution: {integrity: sha512-32UZTK36x4DlvgD1smkmBlKmmJH7qUr5Qut4U/on2uQLGqNXGbZiheq6/LEA8xRQEUrmNrGEy25wpEI6wvYmTg==}
+  emoji-datasource-apple@16.0.0:
+    resolution: {integrity: sha512-dVYjsK0FnCry9F+PBtnivhG2K0xdwlmqYaSgiUtztUdAGPYiHYhZcVKvNBqC791g2qyEcFNTBO6utg4eQ3uLTw==}
 
-  emoji-datasource@15.1.2:
-    resolution: {integrity: sha512-tXAqGsrDVhgCRpFePtaD9P4Z8Ro2SUQSL/4MIJBG0SxqQJaMslEbin8J53OaFwEBu6e7JxFaIF6s4mw9+8acAQ==}
+  emoji-datasource@16.0.0:
+    resolution: {integrity: sha512-/qHKqK5Nr3+8zhgO6kHmF43Fm5C8HNn0AaFRIpgw8HF3+uF0Vfc8jgLI1ZQS5ba1vBzksS8NBCjHejwLb2D/Sg==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -13997,7 +14000,7 @@ snapshots:
       lodash: 4.17.21
       quill-delta: 5.1.0
 
-  '@signalapp/ringrtc@2.58.1':
+  '@signalapp/ringrtc@2.59.0':
     dependencies:
       https-proxy-agent: 7.0.6
       tar: 6.2.1
@@ -14175,7 +14178,7 @@ snapshots:
       better-opn: 3.0.2
       browser-assert: 1.2.1
       esbuild: 0.25.0
-      esbuild-register: 3.6.0(esbuild@0.24.0)
+      esbuild-register: 3.6.0
       jsdoc-type-pratt-parser: 4.1.0
       process: 0.11.10
       recast: 0.23.9
@@ -14731,6 +14734,10 @@ snapshots:
   '@types/json5@0.0.29': {}
 
   '@types/jsonfile@6.1.4':
+    dependencies:
+      '@types/node': 20.17.6
+
+  '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 20.17.6
 
@@ -16739,7 +16746,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@38.2.1:
+  electron@38.2.2:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.18.1
@@ -16749,9 +16756,9 @@ snapshots:
 
   emittery@0.13.1: {}
 
-  emoji-datasource-apple@15.1.2: {}
+  emoji-datasource-apple@16.0.0: {}
 
-  emoji-datasource@15.1.2: {}
+  emoji-datasource@16.0.0: {}
 
   emoji-regex@10.4.0: {}
 
@@ -16936,7 +16943,7 @@ snapshots:
       es6-iterator: 2.0.3
       es6-symbol: 3.1.4
 
-  esbuild-register@3.6.0(esbuild@0.24.0):
+  esbuild-register@3.6.0:
     dependencies:
       debug: 4.3.7(supports-color@8.1.1)
       esbuild: 0.25.0
@@ -20760,7 +20767,7 @@ snapshots:
   react-devtools@6.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       cross-spawn: 6.0.6
-      electron: 38.2.1
+      electron: 38.2.2
       internal-ip: 6.2.0
       minimist: 1.2.8
       react-devtools-core: 6.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)

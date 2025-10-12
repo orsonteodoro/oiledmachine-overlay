@@ -15,8 +15,8 @@ importers:
         specifier: 8.4.1
         version: 8.4.1
       '@octokit/request-error':
-        specifier: 5.1.1
-        version: 5.1.1
+        specifier: 2.1.0
+        version: 2.1.0
       '@octokit/rest':
         specifier: 20.1.2
         version: 20.1.2

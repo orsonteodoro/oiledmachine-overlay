@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.73.0",
+  "version": "7.74.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -135,7 +135,7 @@
     "@signalapp/libsignal-client": "0.81.1",
     "@signalapp/minimask": "1.0.1",
     "@signalapp/quill-cjs": "2.1.2",
-    "@signalapp/ringrtc": "2.58.1",
+    "@signalapp/ringrtc": "2.59.0",
     "@signalapp/sqlcipher": "2.4.4",
     "@signalapp/windows-ucv": "1.0.1",
     "@tanstack/react-virtual": "3.11.2",
@@ -155,8 +155,8 @@
     "credit-card-type": "10.0.2",
     "dashdash": "2.0.0",
     "direction": "1.0.4",
-    "emoji-datasource": "15.1.2",
-    "emoji-datasource-apple": "15.1.2",
+    "emoji-datasource": "16.0.0",
+    "emoji-datasource-apple": "16.0.0",
     "emoji-regex": "10.4.0",
     "encoding": "0.1.13",
     "esbuild": "0.25.0",
@@ -240,7 +240,7 @@
     "@indutny/parallel-prettier": "3.0.0",
     "@indutny/rezip-electron": "2.0.1",
     "@napi-rs/canvas": "0.1.61",
-    "@octokit/plugin-paginate-rest": "9.2.2",
+    "@octokit/plugin-paginate-rest": "11.4.4-cjs.2",
     "@octokit/request": "8.4.1",
     "@octokit/request-error": "5.1.1",
     "@octokit/rest": "20.1.2",
@@ -317,7 +317,7 @@
     "csv-parse": "5.5.6",
     "danger": "13.0.4",
     "debug": "4.3.7",
-    "electron": "38.2.1",
+    "electron": "38.2.2",
     "electron-builder": "26.0.14",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
@@ -456,7 +456,7 @@
       "mergeASARs": true,
       "releaseInfo": {
         "vendor": {
-          "minOSVersion": "21.0.0"
+          "minOSVersion": "21.0.1"
         }
       },
       "sign": "./ts/scripts/sign-macos.js",
@@ -646,7 +646,6 @@
       "node_modules/emoji-datasource/categories.json",
       "node_modules/emoji-datasource/emoji.json",
       "!node_modules/emoji-datasource-apple/**",
-      "!node_modules/spellchecker/vendor/hunspell/**/*",
       "!node_modules/@formatjs/intl-displaynames/**/*",
       "!node_modules/@formatjs/intl-listformat/**/*",
       "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts,*.d.ts.map,*.js.map,*.gypi,.snyk-*.flag,benchmark}",
@@ -657,7 +656,6 @@
       "!**/*.{o,hprof,orig,pyc,pyo,rbc,c,h,m}",
       "!**/._*",
       "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}",
-      "node_modules/spellchecker/build/Release/*.node",
       "node_modules/websocket/build/Release/*.node",
       "!node_modules/websocket/builderror.log",
       "node_modules/socks/build/*.js",
