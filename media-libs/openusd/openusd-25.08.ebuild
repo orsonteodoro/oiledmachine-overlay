@@ -342,6 +342,13 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 		-DPXR_SET_INTERNAL_NAMESPACE="usdBlender"
 		-DPXR_USE_PYTHON_3=ON
 	)
+
+	if use materialx ; then
+		mycmakeargs+=(
+			-DMaterialX_DIR="${ESYSROOT}/usr/$(get_libdir)/materialx/lib/cmake/MaterialX"
+		)
+	fi
+
 	cmake_src_configure
 }
 
