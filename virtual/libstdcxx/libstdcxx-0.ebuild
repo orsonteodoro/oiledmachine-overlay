@@ -21,6 +21,25 @@ IUSE="
 ${GCC_COMPAT[@]}
 cxx98 cxx03 cxx11 cxx14 cxx17 cxx20 cxx23 cxx26
 "
+#
+# Design note review:
+#
+# cxx98 to cxx17 USE flag sets are designed for LTS correspondance and
+# for GPU compatibility.
+#
+# cxx20 to cxx26 USE flag sets are considered experimental or feature
+# incomplete.  These are designed for rolling distros and fringe
+# projects.  These sets will try to isolate from the high availability
+# requirement for LTS (non compiler defaults) sets to avoid merge
+# conflict issues.
+#
+# Feature completness means that no partial implementations in core and
+# associated c++ runtime library.
+#
+# The minimum slot represents either the distro availability and feature
+# completeness of that C++ version, but may represent adoption trends across
+# projects.
+#
 REQUIRED_USE="
 	cxx98? (
 		|| (
