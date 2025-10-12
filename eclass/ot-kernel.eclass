@@ -14360,6 +14360,14 @@ einfo "PATH=${PATH} (after)"
 
 einfo "Requested CC:  ${original_cc}"
 einfo "Adjusted CC:  ${CC}"
+einfo
+einfo "Possible problem and solution:"
+einfo
+ewarn "If the slot for the requested CC is not the same as adjusted CC, then"
+ewarn "change the adjusted SLOT version by removing it from package.env and let"
+ewarn "the eclass handle compiler selection or matching it with adjusted CC"
+ewarn "slot."
+einfo
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
