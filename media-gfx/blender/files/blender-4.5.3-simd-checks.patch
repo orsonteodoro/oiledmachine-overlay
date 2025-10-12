@@ -1,57 +1,196 @@
-diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/kernel/device/cpu/kernel.cpp blender-4.5.3/intern/cycles/kernel/device/cpu/kernel.cpp
---- blender-4.5.3.orig/intern/cycles/kernel/device/cpu/kernel.cpp	2025-07-10 02:43:06.000000000 -0700
-+++ blender-4.5.3/intern/cycles/kernel/device/cpu/kernel.cpp	2025-10-11 11:16:41.184589097 -0700
-@@ -8,11 +8,13 @@
-  * one with SSE4.2 intrinsics.
-  */
- #if defined(__x86_64__) || defined(_M_X64)
--#  define __KERNEL_SSE__
--#  define __KERNEL_SSE2__
--#  define __KERNEL_SSE3__
--#  define __KERNEL_SSSE3__
--#  define __KERNEL_SSE42__
-+#  if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE4_2__)
-+#    define __KERNEL_SSE__
-+#    define __KERNEL_SSE2__
-+#    define __KERNEL_SSE3__
-+#    define __KERNEL_SSSE3__
-+#    define __KERNEL_SSE42__
-+#  endif
- #endif
+diff '--color=auto' -urpN blender-4.5.3.orig/build_files/cmake/Modules/FindEmbree.cmake blender-4.5.3/build_files/cmake/Modules/FindEmbree.cmake
+--- blender-4.5.3.orig/build_files/cmake/Modules/FindEmbree.cmake	2025-07-10 02:43:06.000000000 -0700
++++ blender-4.5.3/build_files/cmake/Modules/FindEmbree.cmake	2025-10-11 20:25:50.192622958 -0700
+@@ -12,6 +12,10 @@
+ #                        This can also be an environment variable.
+ #  EMBREEFOUND, If false, do not try to use Embree.
  
- /* When building kernel for native machine detect kernel features from the flags
-diff '--color=auto' -urp blender-4.5.3.orig/intern/cycles/util/optimization.h blender-4.5.3/intern/cycles/util/optimization.h
---- blender-4.5.3.orig/intern/cycles/util/optimization.h	2025-07-10 02:43:06.000000000 -0700
-+++ blender-4.5.3/intern/cycles/util/optimization.h	2025-10-11 11:24:35.793057014 -0700
-@@ -18,12 +18,14 @@
++option(WITH_SSE42 "Allow SSE4.2" ON)
++option(WITH_AVX "Allow AVX" ON)
++option(WITH_AVX2 "Allow AVX2" ON)
++
+ # If `EMBREE_ROOT_DIR` was defined in the environment, use it.
+ if(DEFINED EMBREE_ROOT_DIR)
+   # Pass.
+@@ -59,11 +63,16 @@ endif()
  
- #  elif defined(__x86_64__) || defined(_M_X64)
+ if(EMBREE_STATIC_LIB)
+   if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64") OR (APPLE AND (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")))
+-    set(_embree_SIMD_COMPONENTS
+-      embree_sse42
+-      embree_avx
+-      embree_avx2
+-    )
++    set(_embree_SIMD_COMPONENTS)
++    if(WITH_SSE42)
++      list(APPEND _embree_SIMD_COMPONENTS embree_sse42)
++    endif()
++    if(WITH_AVX)
++      list(APPEND _embree_SIMD_COMPONENTS embree_avx)
++    endif()
++    if(WITH_AVX2)
++      list(APPEND _embree_SIMD_COMPONENTS embree_avx2)
++    endif()
+   endif()
  
--/* SSE4.2 is our minimum requirement for x86-64 CPUs, so auto enable */
+   if(EMBREE_SYCL_SUPPORT)
+diff '--color=auto' -urpN blender-4.5.3.orig/CMakeLists.txt blender-4.5.3/CMakeLists.txt
+--- blender-4.5.3.orig/CMakeLists.txt	2025-07-10 02:43:42.000000000 -0700
++++ blender-4.5.3/CMakeLists.txt	2025-10-11 20:50:17.957274934 -0700
+@@ -5,6 +5,8 @@
+ # -----------------------------------------------------------------------------
+ # Early Initialization
+ 
++option(WITH_SSE42 "Allow SSE4.2" ON)
++
+ # NOTE: We don't allow in-source builds. This causes no end of troubles because
+ # all out-of-source builds will use the CMakeCache.txt file there and even
+ # build the libs and objects in it.
+@@ -1554,13 +1556,18 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Release
+ endif()
+ 
+ # Test SIMD support, before platform includes to determine if sse2neon is needed.
++# See also build_files/cmake/macros.cmake
+ if(WITH_CPU_SIMD)
+   set(COMPILER_SSE42_FLAG)
+ 
+   # Test Neon first since macOS Arm can compile and run x86-64 SSE binaries.
+   test_neon_support()
+   if(NOT SUPPORT_NEON_BUILD)
+-    test_sse_support(COMPILER_SSE42_FLAG)
++    if(WITH_SSE42)
++      test_sse_support(COMPILER_SSE42_FLAG)
++    else()
++      set(SUPPORT_SSE42_BUILD FALSE)
++    endif()
+   endif()
+ endif()
+ 
+diff '--color=auto' -urpN blender-4.5.3.orig/intern/cycles/CMakeLists.txt blender-4.5.3/intern/cycles/CMakeLists.txt
+--- blender-4.5.3.orig/intern/cycles/CMakeLists.txt	2025-07-10 02:43:42.000000000 -0700
++++ blender-4.5.3/intern/cycles/CMakeLists.txt	2025-10-11 20:25:50.192622958 -0700
+@@ -2,6 +2,20 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ 
++option(WITH_SSE "Allow SSE" ON)
++option(WITH_SSE2 "Allow SSE2" ON)
++option(WITH_SSE3 "Allow SSE3" ON)
++option(WITH_SSSE3 "Allow SSSE3" ON)
++option(WITH_SSE41 "Allow SSE4.1" ON)
++option(WITH_SSE42 "Allow SSE4.2" ON)
++option(WITH_AVX "Allow AVX" ON)
++option(WITH_AVX2 "Allow AVX2" ON)
++option(WITH_FMA "Allow FMA" ON)
++option(WITH_LZCNT "Allow LZCNT" ON)
++option(WITH_BMI "Allow BMI" ON)
++option(WITH_BMI2 "Allow BMI2" ON)
++option(WITH_F16C "Allow F16C" ON)
++
+ # Standalone or with Blender
+ if(NOT WITH_BLENDER)
+   set(CYCLES_INSTALL_PATH ${CMAKE_INSTALL_PREFIX})
+@@ -73,8 +87,16 @@ elseif(NOT WITH_CPU_SIMD OR (SUPPORT_NEO
+   set(CXX_HAS_SSE42 FALSE)
+   set(CXX_HAS_AVX2 FALSE)
+ elseif(WIN32 AND MSVC AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+-  set(CXX_HAS_SSE42 TRUE)
+-  set(CXX_HAS_AVX2 TRUE)
++  if(WITH_SSE42)
++    set(CXX_HAS_SSE42 TRUE)
++  else()
++    set(CXX_HAS_SSE42 FALSE)
++  endif()
++  if(WITH_AVX2)
++    set(CXX_HAS_AVX2 TRUE)
++  else()
++    set(CXX_HAS_AVX2 FALSE)
++  endif()
+ 
+   # /arch:AVX for VC2012 and above
+   if(NOT MSVC_VERSION LESS 1700)
+@@ -90,8 +112,16 @@ elseif(WIN32 AND MSVC AND NOT CMAKE_CXX_
+     set(CYCLES_SSE42_FLAGS "/arch:SSE2")
+   endif()
+ elseif(CMAKE_COMPILER_IS_GNUCC OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+-  check_cxx_compiler_flag(-msse4.2 CXX_HAS_SSE42)
+-  check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)
++  if(WITH_SSE AND WITH_SSE2 AND WITH_SSE3 AND WITH_SSSE3 AND WITH_SSE41 AND WITH_SSE42)
++    check_cxx_compiler_flag(-msse4.2 CXX_HAS_SSE42)
++  else()
++    set(CXX_HAS_SSE42 FALSE)
++  endif()
++  if(WITH_AVX AND WITH_AVX2 AND WITH_FMA AND WITH_LZCNT AND WITH_BMI AND WITH_BMI2 AND WITH_F16C)
++    check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)
++  else()
++    set(CXX_HAS_AVX2 FALSE)
++  endif()
+ 
+   if(CXX_HAS_SSE42)
+     set(CYCLES_SSE42_FLAGS "-msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2")
+@@ -101,8 +131,16 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR (CMAKE
+   endif()
+ 
+ elseif(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+-  check_cxx_compiler_flag(/QxSSE4.2 CXX_HAS_SSE42)
+-  check_cxx_compiler_flag(/QxCORE-AVX2 CXX_HAS_AVX2)
++  if(WITH_SSE42)
++    check_cxx_compiler_flag(/QxSSE4.2 CXX_HAS_SSE42)
++  else()
++    set(CXX_HAS_SSE42 FALSE)
++  endif()
++  if(WITH_AVX2)
++    check_cxx_compiler_flag(/QxCORE-AVX2 CXX_HAS_AVX2)
++  else()
++    set(CXX_HAS_AVX2 FALSE)
++  endif()
+ 
+   if(CXX_HAS_SSE42)
+     set(CYCLES_SSE42_FLAGS "/QxSSE4.2")
+@@ -112,8 +150,16 @@ elseif(WIN32 AND CMAKE_CXX_COMPILER_ID S
+     endif()
+   endif()
+ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+-  check_cxx_compiler_flag(-xsse4.2 CXX_HAS_SSE42)
+-  check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)
++  if(WITH_SSE42)
++    check_cxx_compiler_flag(-xsse4.2 CXX_HAS_SSE42)
++  else()
++    set(CXX_HAS_SSE42 FALSE)
++  endif()
++  if(WITH_AVX2)
++    check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)
++  else()
++    set(CXX_HAS_AVX2 FALSE)
++  endif()
+ 
+   if(CXX_HAS_SSE42)
+     set(CYCLES_SSE42_FLAGS "-xsse4.2")
+diff '--color=auto' -urpN blender-4.5.3.orig/intern/cycles/kernel/device/cpu/kernel_avx2.cpp blender-4.5.3/intern/cycles/kernel/device/cpu/kernel_avx2.cpp
+--- blender-4.5.3.orig/intern/cycles/kernel/device/cpu/kernel_avx2.cpp	2025-07-10 02:43:06.000000000 -0700
++++ blender-4.5.3/intern/cycles/kernel/device/cpu/kernel_avx2.cpp	2025-10-11 20:29:44.108902003 -0700
+@@ -13,13 +13,17 @@
+ #else
+ /* SSE optimization disabled for now on 32 bit, see bug #36316. */
+ #  if !(defined(__GNUC__) && (defined(i386) || defined(_M_IX86)))
+-#    define __KERNEL_SSE__
+-#    define __KERNEL_SSE2__
+-#    define __KERNEL_SSE3__
+-#    define __KERNEL_SSSE3__
 -#    define __KERNEL_SSE42__
--/* no SSE4.2 kernel on x86-64, part of regular kernel */
--#    ifdef WITH_KERNEL_AVX2
--#      define WITH_CYCLES_OPTIMIZED_KERNEL_AVX2
-+#    if defined(__SSE4_2__)
+-#    define __KERNEL_AVX__
+-#    define __KERNEL_AVX2__
++#    if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE42__) && defined(__AVX__) && defined(__AVX2__)
++#      define __KERNEL_SSE__
++#      define __KERNEL_SSE2__
++#      define __KERNEL_SSE3__
++#      define __KERNEL_SSSE3__
 +#      define __KERNEL_SSE42__
- #    endif
-+#    if defined(__AVX2__)
-+#      ifdef WITH_KERNEL_AVX2
-+#        define WITH_CYCLES_OPTIMIZED_KERNEL_AVX2
-+#      endif
++#      define __KERNEL_AVX__
++#      define __KERNEL_AVX2__
++#    else
++#      define KERNEL_STUB
 +#    endif
+ #  endif
+ #endif /* WITH_CYCLES_OPTIMIZED_KERNEL_AVX2 */
  
- /* Arm Neon
-  *
-diff '--color=auto' -urp blender-4.5.3.orig/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh blender-4.5.3/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh
---- blender-4.5.3.orig/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh	2025-07-10 02:43:07.000000000 -0700
-+++ blender-4.5.3/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh	2025-10-11 11:16:41.172589288 -0700
-@@ -106,7 +106,7 @@ inline void bits_to_index_ranges(const B
-     int64_t int_i = 0;
- 
- /* Checking for chunks of 0 bits can be speedup using intrinsics quite significantly. */
--#if BLI_HAVE_SSE2
-+#if BLI_HAVE_SSE2 && defined(__SSE4_1__)
-     for (; int_i + 1 < ints_to_check; int_i += 2) {
-       /* Loads the next 128 bit. */
-       const __m128i group = _mm_loadu_si128(reinterpret_cast<const __m128i *>(start + int_i));
