@@ -121,12 +121,12 @@ RDEPEND="
 			llvm-core/clang-ocl:=
 			>=sys-libs/llvm-roc-${PV}:${SLOT}
 			sys-libs/llvm-roc:=
-			>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}$(get_rocm_usedep LLVM_ROC_LIBOMP)
+			>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[$(get_rocm_usedep LLVM_ROC_LIBOMP)]
 			sys-libs/llvm-roc-libomp:=
 		)
 	)
 	communication? (
-		>=dev-libs/rccl-${PV}:${SLOT}$(get_rocm_usedep RCCL)
+		>=dev-libs/rccl-${PV}:${SLOT}[$(get_rocm_usedep RCCL)]
 		dev-libs/rccl:=
 		>=dev-libs/rccl-rdma-sharp-plugins-${PV}:${SLOT}
 		dev-libs/rccl-rdma-sharp-plugins:=
@@ -140,7 +140,7 @@ RDEPEND="
 		sci-libs/rocAL:=
 		>=sci-libs/rocDecode-${PV}:${SLOT}
 		sci-libs/rocDecode:=
-		>=sci-libs/rpp-${PV}:${SLOT}$(get_rocm_usedep RPP)
+		>=sci-libs/rpp-${PV}:${SLOT}[$(get_rocm_usedep RPP)]
 		sci-libs/rpp:=
 	)
 	kernel-driver? (
@@ -152,11 +152,11 @@ RDEPEND="
 		virtual/kfd:=
 	)
 	math? (
-		>=dev-util/Tensile-${PV}:${SLOT}$(get_rocm_usedep TENSILE)
+		>=dev-util/Tensile-${PV}:${SLOT}[$(get_rocm_usedep TENSILE)]
 		dev-util/Tensile:=
 		>=sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
 		sci-libs/hipBLAS:=
-		>=sci-libs/hipFFT-${PV}:${SLOT}$(get_rocm_usedep HIPFFT)
+		>=sci-libs/hipFFT-${PV}:${SLOT}[$(get_rocm_usedep HIPFFT)]
 		sci-libs/hipFFT:=
 		>=sci-libs/hipRAND-${PV}:${SLOT}[rocm]
 		sci-libs/hipRAND:=
@@ -164,32 +164,32 @@ RDEPEND="
 		sci-libs/hipSOLVER:=
 		>=sci-libs/hipSPARSE-${PV}:${SLOT}[rocm]
 		sci-libs/hipSPARSE:=
-		>=sci-libs/rocALUTION-${PV}:${SLOT}$(get_rocm_usedep ROCALUTION)
+		>=sci-libs/rocALUTION-${PV}:${SLOT}[$(get_rocm_usedep ROCALUTION)]
 		sci-libs/rocALUTION:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}$(get_rocm_usedep ROCBLAS)
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[$(get_rocm_usedep ROCBLAS)]
 		sci-libs/rocBLAS:=
-		>=sci-libs/rocFFT-${PV}:${SLOT}$(get_rocm_usedep ROCFFT)
+		>=sci-libs/rocFFT-${PV}:${SLOT}[$(get_rocm_usedep ROCFFT)]
 		sci-libs/rocFFT:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}$(get_rocm_usedep ROCRAND)
+		>=sci-libs/rocRAND-${PV}:${SLOT}[$(get_rocm_usedep ROCRAND)]
 		sci-libs/rocRAND:=
-		>=sci-libs/rocSOLVER-${PV}:${SLOT}$(get_rocm_usedep ROCSOLVER)
+		>=sci-libs/rocSOLVER-${PV}:${SLOT}[$(get_rocm_usedep ROCSOLVER)]
 		sci-libs/rocSOLVER:=
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}$(get_rocm_usedep ROCSPARSE)
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[$(get_rocm_usedep ROCSPARSE)]
 		sci-libs/rocSPARSE:=
-		>=sci-libs/rocWMMA-${PV}:${SLOT}$(get_rocm_usedep ROCWMMA)
+		>=sci-libs/rocWMMA-${PV}:${SLOT}[$(get_rocm_usedep ROCWMMA)]
 		sci-libs/rocWMMA:=
 		amdgpu_targets_gfx90a? (
-			>=sci-libs/hipBLASLt-${PV}:${SLOT}$(get_rocm_usedep HIPBLASLT)
+			>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
 			sci-libs/hipBLASLt:=
 		)
 		amdgpu_targets_gfx942? (
-			>=sci-libs/hipBLASLt-${PV}:${SLOT}$(get_rocm_usedep HIPBLASLT)
+			>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
 			sci-libs/hipBLASLt:=
 			>=sci-libs/hipSPARSELt-${PV}:${SLOT}[rocm]
 			sci-libs/hipSPARSELt:=
 		)
 		amdgpu_targets_gfx1100? (
-			>=sci-libs/hipBLASLt-${PV}:${SLOT}$(get_rocm_usedep HIPBLASLT)
+			>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
 			sci-libs/hipBLASLt:=
 		)
 		fortran? (
@@ -198,21 +198,21 @@ RDEPEND="
 		)
 	)
 	ml? (
-		>=sci-libs/composable-kernel-${PV}:${SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)
+		>=sci-libs/composable-kernel-${PV}:${SLOT}[$(get_rocm_usedep COMPOSABLE_KERNEL)]
 		sci-libs/composable-kernel:=
-		>=sci-libs/MIGraphX-${PV}:${SLOT}$(get_rocm_usedep MIGRAPHX)
+		>=sci-libs/MIGraphX-${PV}:${SLOT}[$(get_rocm_usedep MIGRAPHX)]
 		sci-libs/MIGraphX:=
-		>=sci-libs/miopen-${PV}:${SLOT}$(get_rocm_usedep MIOPEN)
+		>=sci-libs/miopen-${PV}:${SLOT}[$(get_rocm_usedep MIOPEN)]
 		sci-libs/miopen:=
 	)
 	primitives? (
-		>=sci-libs/hipCUB-${PV}:${SLOT}$(get_rocm_usedep HIPCUB)
+		>=sci-libs/hipCUB-${PV}:${SLOT}[$(get_rocm_usedep HIPCUB)]
 		sci-libs/hipCUB:=
 		>=sci-libs/hipTensor-${PV}:${SLOT}[rocm]
 		sci-libs/hipTensor:=
-		>=sci-libs/rocPRIM-${PV}:${SLOT}$(get_rocm_usedep ROCPRIM)
+		>=sci-libs/rocPRIM-${PV}:${SLOT}[$(get_rocm_usedep ROCPRIM)]
 		sci-libs/rocPRIM:=
-		>=sci-libs/rocThrust-${PV}:${SLOT}$(get_rocm_usedep ROCTHRUST)
+		>=sci-libs/rocThrust-${PV}:${SLOT}[$(get_rocm_usedep ROCTHRUST)]
 		sci-libs/rocThrust:=
 	)
 	runtimes? (
@@ -277,7 +277,7 @@ RDEPEND="
 		non-free? (
 			>=dev-libs/rocprofiler-register-${PV}:${SLOT}
 			dev-libs/rocprofiler-register:=
-			>=dev-util/rocprofiler-${PV}:${SLOT}$(get_rocm_usedep ROCPROFILER)
+			>=dev-util/rocprofiler-${PV}:${SLOT}[$(get_rocm_usedep ROCPROFILER)]
 			dev-util/rocprofiler:=
 			>=dev-util/roctracer-${PV}:${SLOT}
 			dev-util/roctracer:=

@@ -88,14 +88,14 @@ RDEPEND="
 			dev-util/hipfort:=
 		)
 		rocm? (
-			>=sci-libs/hipFFT-${PV}:${SLOT}$(get_rocm_usedep HIPFFT)
+			>=sci-libs/hipFFT-${PV}:${SLOT}[$(get_rocm_usedep HIPFFT)]
 			sci-libs/hipFFT:=
 			amdgpu_targets_gfx90a? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}$(get_rocm_usedep HIPBLASLT)
+				>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
 				sci-libs/hipBLASLt:=
 			)
 			amdgpu_targets_gfx942? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}$(get_rocm_usedep HIPBLASLT)
+				>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
 				sci-libs/hipBLASLt:=
 			)
 			amdgpu_targets_gfx942? (
@@ -112,7 +112,7 @@ RDEPEND="
 			sci-libs/hipCUB:=
 		)
 		rocm? (
-			>=sci-libs/hipCUB-${PV}:${SLOT}$(get_rocm_usedep HIPCUB)
+			>=sci-libs/hipCUB-${PV}:${SLOT}[$(get_rocm_usedep HIPCUB)]
 			sci-libs/hipCUB:=
 		)
 	)

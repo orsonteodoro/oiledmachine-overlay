@@ -34,10 +34,11 @@ RDEPEND="
 	dev-libs/rocr-runtime:=
 	sys-apps/pciutils
 	|| (
-		virtual/kfd-ub:7.0
-		virtual/kfd:6.4
-		virtual/kfd-lb:6.3
+		>=virtual/kfd-7.0:7.0
+		>=virtual/kfd-6.4:6.4
+		>=virtual/kfd-6.3:6.3
 	)
+	virtual/kfd:=
 "
 DEPEND="
 	${RDEPEND}

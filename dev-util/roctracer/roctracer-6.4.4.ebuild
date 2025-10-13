@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -31,7 +31,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE=" test ebuild_revision_10"
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
@@ -39,9 +39,12 @@ CDEPEND="
 RDEPEND="
 	${CDEPEND}
 	!dev-util/roctracer:0
-	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	dev-libs/rocm-comgr:=
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 "
 DEPEND="
 	${RDEPEND}

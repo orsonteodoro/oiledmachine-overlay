@@ -95,9 +95,11 @@ ewarn "${x_targets_compat} is a typo or missing."
 # @DESCRIPTION:
 # Generate a USEDEP compat with enabled rocm USE flag
 get_rocm_usedep() {
+	[[ -z "${ROCM_SLOT}" ]] && die "QA:  ROCM_SLOT must be defined before \`inherit rocm\`"
+	local rocm_version="${ROCM_SLOT/./_}"
         local name="${1}"
         local extra_useflags="${2}"
-        local t1="${name}_${u}_AMDGPU_USEDEP"
+        local t1="${name}_${rocm_version}_AMDGPU_USEDEP"
         t2="${t1}[@]"
         if [[ "${name}" == "MAGMA_2_6" ]] ; then
 # Not packaged yet.
@@ -109,20 +111,20 @@ get_rocm_usedep() {
         fi
         if [[ "${name}" =~ ("HIPBLASLT"|"HIPCUB"|"HIPFFT"|"MIGRAPHX"|"MIOPEN"|"ROCALUTION"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM"|"TENSILE") ]] ; then
 		if [[ -n "${extra_useflags}" ]] ; then
-	                echo "[${!t2},rocm,${extra_useflags}]"
+	                echo "${!t2},rocm,${extra_useflags}"
 		else
-	                echo "[${!t2},rocm]"
+	                echo "${!t2},rocm"
 		fi
         else
 		if [[ -n "${extra_useflags}" ]] ; then
-	                echo "[${!t2},${extra_useflags}]"
+	                echo "${!t2},${extra_useflags}"
 		else
-	                echo "[${!t2}]"
+	                echo "${!t2}"
 		fi
         fi
 }
 
-inherit rocm-targets-compat-6.2
-inherit rocm-targets-compat-6.3
+inherit rocm-targets-compat-6.4
+inherit rocm-targets-compat-7.0
 
 fi
