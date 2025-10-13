@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -30,10 +30,9 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="ebuild_revision_7"
 RDEPEND="
-	!dev-libs/rocm-core:0
 "
 DEPEND="
 	${RDEPEND}
@@ -43,7 +42,6 @@ BDEPEND="
 	>=dev-build/cmake-3.16
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
