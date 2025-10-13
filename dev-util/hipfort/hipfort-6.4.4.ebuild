@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RELEASE"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -28,10 +28,9 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not have all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="debug ebuild_revision_12"
 RDEPEND="
-	!dev-util/hipfort:0
 	|| (
 		${ROCM_GCC_DEPEND}
 		dev-lang/flang
@@ -43,12 +42,12 @@ DEPEND="
 BDEPEND="
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-2.8.12
-	~dev-build/rocm-cmake-${PV}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 RESTRICT="test"
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/hipfort-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -86,7 +85,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	export FC="${CHOST}-gfortran-${HIP_6_2_GCC_SLOT}"
+	export FC="${CHOST}-gfortran-${HIP_6_4_GCC_SLOT}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
