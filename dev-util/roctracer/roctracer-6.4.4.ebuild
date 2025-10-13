@@ -32,13 +32,12 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE=" test ebuild_revision_10"
+IUSE=" test ebuild_revision_11"
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
 RDEPEND="
 	${CDEPEND}
-	!dev-util/roctracer:0
 	>=dev-libs/rocm-comgr-${PV}:${SLOT}
 	dev-libs/rocm-comgr:=
 	>=dev-libs/rocr-runtime-${PV}:${SLOT}
