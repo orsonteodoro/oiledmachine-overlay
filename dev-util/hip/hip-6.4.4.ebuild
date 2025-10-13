@@ -8,12 +8,11 @@ DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
 GCC_COMPAT=(
-	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
 	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
 	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
 )
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -75,7 +74,7 @@ LICENSE="
 # SunPro - llvm-project-rocm-6.2.4/amd/device-libs/ocml/src/erfcF.cl
 # UoI-NCSA - llvm-project-rocm-6.2.4/amd/device-libs/LICENSE.TXT
 
-SLOT="$(ver_cut 1-2)/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
 ebuild_revision_43
@@ -123,14 +122,14 @@ REQUIRED_USE="
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
-	app-eselect/eselect-rocm
 	virtual/opengl
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		~dev-libs/hipother-${PV}:${ROCM_SLOT}
+		>=dev-libs/hipother-${PV}:${SLOT}
+		dev-libs/hipother:=
 	)
 	lc? (
-		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-comgr:=
 	)
 	numa? (
@@ -138,12 +137,14 @@ RDEPEND="
 	)
 	rocm? (
 		${ROCM_CLANG_DEPEND}
-		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocr-runtime:=
-		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
+		>=dev-util/rocminfo-${PV}:${SLOT}
+		dev-util/rocminfo:=
 	)
 	rocprofiler-register? (
-		~dev-libs/rocprofiler-register-${PV}:${ROCM_SLOT}
+		>=dev-libs/rocprofiler-register-${PV}:${SLOT}
+		dev-libs/rocprofiler-register:=
 	)
 "
 DEPEND="
@@ -155,7 +156,8 @@ BDEPEND="
 	>=dev-build/cmake-3.16.8
 	test? (
 		rocm? (
-			~dev-util/rocminfo-${PV}:${ROCM_SLOT}
+			>=dev-util/rocminfo-${PV}:${SLOT}
+			dev-util/rocminfo:=
 		)
 	)
 "
@@ -273,78 +275,6 @@ src_prepare() {
 			eapply "${CLR_PATCHES[@]}"
 		popd >/dev/null 2>&1 || die
 	fi
-
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=()
-	local _PREFIXES=(
-		"${S}"
-		"${CLR_S}"
-		"${HIP_S}"
-		"${HIPCC_S}"
-		"${OCL_S}"
-		"${ROCCLR_S}"
-		"${RTC_S}"
-	)
-	PATCH_PATHS+=(
-		"${HIPCC_S}/bin/hipvars.pm"
-	)
-	local _prefix
-	for _prefix in ${_PREFIXES[@]} ; do
-		PATCH_PATHS+=(
-			"${_prefix}/CMakeLists.txt"
-			"${_prefix}/bin/hipcc.pl"
-			"${_prefix}/bin/hipvars.pm"
-			"${_prefix}/device/comgrctx.hpp"
-			"${_prefix}/device/devhcprintf.cpp"
-			"${_prefix}/device/devkernel.hpp"
-			"${_prefix}/device/devprogram.hpp"
-			"${_prefix}/hip-config-amd.cmake"
-			"${_prefix}/hip-config.cmake.in"
-			"${_prefix}/hipamd/src/CMakeLists.txt"
-			"${_prefix}/include/hip/amd_detail/amd_hip_vector_types.h"
-			"${_prefix}/include/hip/amd_detail/host_defines.h"
-			"${_prefix}/opencl/amdocl/CMakeLists.txt"
-			"${_prefix}/packaging/CMakeLists.txt"
-			"${_prefix}/src/CMakeLists.txt"
-			"${_prefix}/src/hip_fatbin.cpp"
-			"${_prefix}/src/hip_prof_gen.py"
-			"${_prefix}/src/hip_surface.cpp"
-			"${_prefix}/src/hiprtc/CMakeLists.txt"
-			"${_prefix}/src/hiprtc/hiprtc.cpp"
-			"${_prefix}/src/hiprtc/hiprtcInternal.hpp"
-		)
-	done
-
-	# grep -F -r -e "+++" files/*6.2.4*hardcode* | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS+=(
-		"${WORKDIR}/clr-rocm-6.2.4/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.4/hipamd/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.4/hipamd/src/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.4/opencl/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.4/opencl/cmake/FindAMD_ICD.cmake"
-		"${WORKDIR}/clr-rocm-6.2.4/rocclr/cmake/ROCclrHSA.cmake"
-		"${WORKDIR}/clr-rocm-6.2.4/rocclr/cmake/ROCclrLC.cmake"
-		"${WORKDIR}/clr-rocm-6.2.4/rocclr/elf/test/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/amd/hipcc/bin/hipcc.pl"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/amd/hipcc/src/hipBin_nvidia.h"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/compiler-rt/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/libc/utils/gpu/loader/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/mlir/lib/Target/LLVM/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/openmp/libomptarget/hostexec/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.4/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-	)
-
-	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
-	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare
 }
