@@ -3,28 +3,53 @@
 
 EAPI=7
 
-# The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# ROCm driver versions:
+# Last GC:    https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+# DCN:        https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/drivers/gpu/drm/amd/display/include/dal_types.h#L67
+# DC_VER:     https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/drivers/gpu/drm/amd/display/dc/dc.h
+# KFD IOCTL:  https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/include/uapi/linux/kfd_ioctl.h
+# PSP:        https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
+# VCN:        https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
 
-AMDGPU_FIRMWARE_PV="6.8.5.60204"
-DC_VER="3.2.286" # From rock-dkms
-KERNEL_FIRMWARE_PV="20241203"
+# VCN: Hardware accelerated encode and decode
+# DC:  Software driver layer
+# DCN: Hardware display controller
+# GC:  Graphics and compute
+# PSP:  Platform security processor, HDCP
+
+AMDGPU_FIRMWARE_PV="6.12.12.60403"
+DC_VER="3.2.320" # From rock-dkms
+KERNEL_FIRMWARE_PV="20250707"
 # Expected firmware properites:
-# Git message:  6.2
-# Driver folder = 6.2.4
-# DCN = 4.0.1
-# GC = 12.0.1
-# PSP = 14.0.3
-# SDMA = 7.0.1
-# SMU = 14.0.3
-# VCN = 5.0.0
-# VPE = 6.1.1
-KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; This row is from linux-kernel not rock-dkms
+# Git message:  
+# Driver folder = 6.4.3
+# DCN = 4.0.1 (20241206)
+# DC_VER = 3.2.320
+# GC = 12.0.1 (20241203, without kicker)
+# KFD IOCTL = 1.17
+# PSP = 14.0.5 (20250707, without kicker)
+# SDMA = 
+# SMU = 
+# VCN = 5.0.1 (20250620)
+# VPE = 
+
+# Vanilla kernel versions:
+# Last GC:    https://github.com/torvalds/linux/blob/v6.15/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+# DCN:        https://github.com/torvalds/linux/blob/v6.15/drivers/gpu/drm/amd/display/include/dal_types.h#L67
+# DC_VER:     https://github.com/torvalds/linux/blob/v6.15/drivers/gpu/drm/amd/display/dc/dc.h
+# KFD IOCTL:  https://github.com/torvalds/linux/blob/v6.15/include/uapi/linux/kfd_ioctl.h
+# PSP:        https://github.com/torvalds/linux/blob/v6.15/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
+# VCN:        https://github.com/torvalds/linux/blob/v6.15/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
+KERNEL_PV="6.15" # This row is from the vanilla Linux kernel not rock-dkms that reflects the vanilla kernel versions >= ROCm versions.
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (d2e5bf7, b7c09a6, 97f3ca8, 37209d5) ; missing 835309f, a3431f7
-# DCN is >= 4.0.1
-# DC_VER is >= 3.2.286
-# KMS is >= 3.58.0
+# GC = 12.0.1 (without kicker)
+# DC_VER = 3.2.325
+# DCN = 4.0.1
+# KFD IOCTL = 1.18
+# PSP = 14.0.5
+# VCN = 5.0.1
+
 #
 # See also
 # https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-6.2.4/drivers/gpu/drm/amd/amdkfd
@@ -35,11 +60,11 @@ KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; This row is from linux-kerne
 KERNEL_RANGE=(
 # Avoid pinning solely to EOL version.
 # See footnote 2 in metadata.xml.
-	"6.11" #  0 : KERNEL_PV
-	"6.10" # -1
-	"6.9"  # -2
+	"6.15" #  0 : KERNEL_PV
+	"6.14" # -1
+	"5.13"  # -2
 )
-ROCM_VERSION="6.2.4" # DC_VER = ${PV}
+ROCM_VERSION="6.4.3" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -59,19 +84,24 @@ REQUIRED_USE="
 		rock-dkms
 	)
 "
-SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
+SLOT="0/${ROCM_SLOT}"
 FIRMWARE_RDEPEND="
 	!strict-pairing? (
 		|| (
-			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
+			(
+				>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
+				sys-firmware/amdgpu-dkms-firmware:=
+			)
 			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 		)
 		rock-dkms? (
-			>=sys-kernel/rock-dkms-${ROCM_VERSION}
+			>=sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
+			sys-kernel/rock-dkms:=
 		)
 	)
 	strict-pairing? (
-		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${ROCM_SLOT}
+		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
+		sys-firmware/amdgpu-dkms-firmware:=
 	)
 "
 gen_kfd_entry() {
@@ -101,7 +131,7 @@ KFD_RDEPEND="
 		)
 	)
 	rock-dkms? (
-		~sys-kernel/rock-dkms-${ROCM_VERSION}:${ROCM_SLOT}
+		~sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
 	)
 "
 RDEPEND="

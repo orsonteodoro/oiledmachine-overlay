@@ -49,10 +49,11 @@ RDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
 	|| (
-		virtual/kfd-ub:7.0
-		virtual/kfd:6.4
-		virtual/kfd-lb:6.3
+		>=virtual/kfd-7.0:0/7.0
+		>=virtual/kfd-6.4:0/6.4
+		>=virtual/kfd-6.3:0/6.3
 	)
+	virtual/kfd:=
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
