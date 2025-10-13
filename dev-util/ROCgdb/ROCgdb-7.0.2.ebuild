@@ -85,7 +85,7 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_10"
+IUSE="ebuild_revision_11"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -129,12 +129,6 @@ pkg_setup() {
 
 src_prepare() {
 	default
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${S}/gdb/configure" # placeholder
-	)
 	rocm_src_prepare
 }
 
