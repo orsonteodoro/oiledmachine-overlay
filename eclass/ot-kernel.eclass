@@ -5066,7 +5066,6 @@ eerror "llvm-core/llvm:${llvm_slot} is missing"
 		ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
 		ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 	else
-einfo "DEBUG: 1"
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
@@ -14211,7 +14210,6 @@ get_llvm_slot() {
 	local llvm_slot=""
 	local x
 	for x in ${LLVM_COMPAT[@]} ; do
-einfo "get_llvm_slot:  ${x}"
 		if ot-kernel_use "llvm_slot_${x}" ; then
 			llvm_slot="${x/llvm_slot_}"
 			break
@@ -14228,7 +14226,6 @@ get_gcc_slot() {
 	local gcc_slot=""
 	local x
 	for x in ${GCC_COMPAT[@]/gcc_slot_} ; do
-einfo "get_gcc_slot:  ${x}"
 		if ot-kernel_use "gcc_slot_${x}" ; then
 			gcc_slot="${x/gcc_slot_}"
 			break
@@ -14318,7 +14315,6 @@ einfo "PATH=${PATH} (before)"
 				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin:${PWD}/install/bin|g")
 einfo "PATH=${PATH} (after)"
 	else
-einfo "DEBUG: 2"
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
@@ -14378,11 +14374,11 @@ eerror "You must switch Clang to <= ${_llvm_max_slot}"
 		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
 		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
 		local s=$(gcc-major-version)
-		if ver_test "${s}" < ${_gcc_min_slot} ; then
+		if ver_test "${s}" "-lt" "${_gcc_min_slot}" ; then
 eerror "You must switch GCC to >= ${_gcc_min_slot}"
 			die
 		fi
-		if ver_test "${s}" > ${_llvm_min_slot} ; then
+		if ver_test "${s}" "-gt" "${_llvm_min_slot}" ; then
 eerror "You must switch GCC to <= ${_llvm_max_slot}"
 			die
 		fi
@@ -15108,8 +15104,8 @@ ot-kernel_src_compile() {
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
 
-		local path_config="${BUILD_DIR}/.config"
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
+		local path_config="${BUILD_DIR}/.config"
 		cd "${BUILD_DIR}" || die
 
 		# Summary for this compile
