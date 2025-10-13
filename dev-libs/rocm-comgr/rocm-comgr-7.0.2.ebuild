@@ -91,11 +91,11 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_17"
+IUSE="test ebuild_revision_18"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
-	!dev-libs/rocm-comgr:0
-	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
+	dev-libs/rocm-device-libs:=
 "
 DEPEND="
 	${RDEPEND}
@@ -103,7 +103,8 @@ DEPEND="
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.13.4
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
