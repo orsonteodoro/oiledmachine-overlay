@@ -14170,8 +14170,20 @@ eerror
 		local args=()
 		MAKEOPTS_ORIG="${MAKEOPTS}"
 		MAKEOPTS=""
-		[[ -z "${gcc_slot}" ]] && ewarn "OT_KERNEL_USE is missing a gcc_slot_<x> flag.  Please copy the corresponding value from USE."
-		[[ -z "${llvm_slot}" ]] && ewarn "OT_KERNEL_USE is missing a llvm_slot_<x> flag.  Please copy the corresponding value from USE."
+		if [[ -z "${gcc_slot}" ]] ; then
+ewarn
+ewarn "OT_KERNEL_USE is missing a gcc_slot_<x> flag.  Please copy the"
+ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
+ewarn "the same and present for gcc_slot_<x> and in both environment variables."
+ewarn
+		fi
+		if [[ -z "${llvm_slot}" ]] ; then
+ewarn
+ewarn "OT_KERNEL_USE is missing a llvm_slot_<y> flag.  Please copy the"
+ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
+ewarn "the same and present for llvm_slot_<y> and in both environment variables."
+ewarn
+		fi
 		ot-kernel_setup_tc
 		MAKEOPTS="${MAKEOPTS_ORIG}"
 
