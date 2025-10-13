@@ -110,7 +110,7 @@ ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # onnxruntime dep
 ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
 ROCM_SLOTS=(
-	rocm_6_0
+	rocm_6_4
 )
 LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
@@ -459,30 +459,42 @@ REQUIRED_USE="
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
-		local s=$(ver_cut 1-2 ${pv})
-		local u="${s}"
+		local s="0/"$(ver_cut 1-2 ${pv})
+		local u=$(ver_cut 1-2 ${pv})
 		u="${u/./_}"
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 			rocm_${u}? (
-				~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
-				~dev-libs/rocr-runtime-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
-				~dev-util/rocm-smi-${pv}:${s}
-				~dev-util/roctracer-${pv}:${s}
-				~sci-libs/hipCUB-${pv}:${s}$(get_rocm_usedep HIPCUB)
-				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
-				~sci-libs/hipRAND-${pv}:${s}[rocm]
-				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
-				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
+				>=dev-libs/rccl-${pv}:${s}[$(get_rocm_usedep RCCL)]
+				dev-libs/rccl:=
+				>=dev-libs/rocr-runtime-${pv}:${s}
+				dev-libs/rocr-runtime:=
+				>=dev-util/hip-${pv}:${s}[rocm]
+				dev-util/hip:=
+				>=dev-util/rocm-smi-${pv}:${s}
+				dev-util/rocm-smi:=
+				>=dev-util/roctracer-${pv}:${s}
+				dev-util/roctracer:=
+				>=sci-libs/hipCUB-${pv}:${s}[$(get_rocm_usedep HIPCUB)]
+				sci-libs/hipCUB:=
+				>=sci-libs/hipFFT-${pv}:${s}[$(get_rocm_usedep HIPFFT)]
+				sci-libs/hipFFT:=
+				>=sci-libs/hipRAND-${pv}:${s}[rocm]
+				sci-libs/hipRAND:=
+				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
+				sci-libs/miopen:=
+				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
+				sci-libs/rocBLAS:=
 				system-composable-kernel? (
-					sci-libs/composable-kernel:${s}$(get_rocm_usedep COMPOSABLE_KERNEL)
+					sci-libs/composable-kernel:${s}[$(get_rocm_usedep COMPOSABLE_KERNEL)]
+					sci-libs/composable-kernel:=
 				)
 			)
 		"
 		if use amdgpu_targets_gfx90a ; then
 			echo "
-				~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+				>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+				sci-libs/hipBLASLt:=
 			"
 		fi
 	done
@@ -602,7 +614,7 @@ RDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		rocm_6_0? (
+		rocm_6_4? (
 			!python? (
 				|| (
 					=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
@@ -713,10 +725,10 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
-	if use rocm_6_0 ; then
-		LLVM_SLOT="17"
-		ROCM_SLOT="6.0"
-		export ROCM_VERSION="${HIP_6_0_VERSION}"
+	if use rocm_6_4 ; then
+		LLVM_SLOT="19"
+		ROCM_SLOT="6.4"
+		export ROCM_VERSION="${HIP_6_4_VERSION}"
 	fi
 
 	use rocm && rocm_pkg_setup
