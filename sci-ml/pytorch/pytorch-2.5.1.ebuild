@@ -87,8 +87,7 @@ PYTHON_COMPAT=( "python3_"{11..12} ) # Upstream only allows <= 3.12
 inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.3.1/.github/workflows/trunk.yml#L180
-	"${HIP_6_1_VERSION}"
-	"${HIP_6_0_VERSION}"
+	"${HIP_6_4_VERSION}"
 )
 gen_rocm_slots() {
 	local s
@@ -199,14 +198,10 @@ ewarn "${gpu} is not CI tested upstream."
 pkg_setup() {
 	warn_untested_gpu
 	python-single-r1_pkg_setup
-	if use rocm_6_1 ; then
-		export LLVM_SLOT="17"
-		export ROCM_SLOT="6.1"
-		export ROCM_VERSION="${HIP_6_1_VERSION}"
-	elif use rocm_6_0 ; then
-		export LLVM_SLOT="17"
-		export ROCM_SLOT="6.0"
-		export ROCM_VERSION="${HIP_6_0_VERSION}"
+	if use rocm_6_4 ; then
+		export LLVM_SLOT="19"
+		export ROCM_SLOT="6.4"
+		export ROCM_VERSION="${HIP_6_4_VERSION}"
 	fi
 	if use rocm ; then
 		rocm_pkg_setup
