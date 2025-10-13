@@ -22,7 +22,7 @@ inherit rocm
 DESCRIPTION="ROCm metapackage"
 HOMEPAGE=""
 LICENSE="metapackage"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 	ai
 	+compilers
