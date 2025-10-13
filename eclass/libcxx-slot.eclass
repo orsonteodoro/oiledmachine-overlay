@@ -167,6 +167,9 @@ CLANG_20_0_0="220000"
 # All Clang point versions available by distro repo.
 # Live is not supported
 _ALL_LLVM_COMPAT=(
+	{11..20}
+)
+_ALL_LLVM_COMPAT2=(
 	"20_0_0"
 	"21_1_3"
 	"21_1_2"
@@ -247,16 +250,21 @@ eerror "QA:  LLVM_COMPAT must be defined"
 	local usedep=""
 	local x
 	for x in ${_ALL_LLVM_COMPAT[@]} ; do
-		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"llvm_slot_${x}"($|" ") ]] ; then
+		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"${x}"($|" ") ]] ; then
 			iuse="${iuse} llvm_slot_${x}"
 			usedep="${usedep},llvm_slot_${x}(-)?"
 		fi
 	done
-	required_use="
-		^^ (
-			${iuse}
-		)
-	"
+	local required_use=""
+	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
+		required_use="
+			^^ (
+				${iuse}
+			)
+		"
+	else
+		required_use=""
+	fi
 
 	if [[ -z "${CXX_STANDARD}" ]] ; then
 eerror "QA:  CXX_STANDARD is undefined."
@@ -319,11 +327,14 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		die
 	fi
 
+	IUSE="
+		${IUSE}
+		${iuse}
+	"
 	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
 		IUSE="
 			${IUSE}
 			libcxx
-			${iuse}
 		"
 	fi
 	REQUIRED_USE="
