@@ -5,16 +5,15 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
 GCC_COMPAT=(
-	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
 	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
 	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
 )
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot prefix rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
 	S="${WORKDIR}/${P}/lib/comgr"
 	inherit git-r3
@@ -91,7 +90,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="test ebuild_revision_17"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
@@ -111,7 +110,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
-	"${FILESDIR}/${PN}-6.1.2-rpath.patch"
+#	"${FILESDIR}/${PN}-6.1.2-rpath.patch"
 	"${FILESDIR}/${PN}-6.1.2-disable-header.patch"
 )
 
@@ -122,19 +121,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-objdump.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-compiler.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-env.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-env.h"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-objdump.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/test/source1.cl"
-	)
-
 	cmake_src_prepare
 	rocm_src_prepare
 }
