@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -28,17 +28,19 @@ LICENSE="
 	)
 "
 # || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE=" ebuild_revision_10"
 RDEPEND="
-	!dev-libs/ROCdbgapi:0
-	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	dev-libs/rocm-comgr:=
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
 	|| (
-		virtual/kfd-ub:6.2
-		virtual/kfd:6.1
-		virtual/kfd-lb:6.0
+		>=virtual/kfd-6.4:6.4
+		>=virtual/kfd-6.3:6.3
+		>=virtual/kfd-6.2:6.2
 	)
+	virtual/kfd:=
 "
 DEPEND="
 	${RDEPEND}
@@ -48,7 +50,6 @@ BDEPEND="
 	>=dev-build/cmake-3.8
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
