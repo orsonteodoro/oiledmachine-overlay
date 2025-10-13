@@ -4,13 +4,13 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocm-cmake/"
 	inherit git-r3
 else
@@ -34,7 +34,6 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
