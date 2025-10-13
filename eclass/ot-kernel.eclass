@@ -2581,42 +2581,6 @@ ewarn "QA:  Test no_turbo patch for pre 5.4.x"
 	fi
 }
 
-# @FUNCTION: _print_gcc_slots
-# @DESCRIPTION:
-# Show user all the gcc_slot_<#> vertically.
-_print_gcc_slots() {
-	if ! declare -f ot-kernel_get_gcc_min_slot >/dev/null ; then
-eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
-		die
-	fi
-
-	local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
-	local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
-
-	local gcc_slot
-	for gcc_slot in $(seq ${_gcc_max_slot} -1 ${_gcc_min_slot}) ; do
-eerror "  sys-devel/gcc:${gcc_slot}"
-	done
-}
-
-# @FUNCTION: _print_llvm_slots
-# @DESCRIPTION:
-# Show user all the llvm_slot_<#> vertically.
-_print_llvm_slots() {
-	if ! declare -f ot-kernel_get_llvm_min_slot >/dev/null ; then
-eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
-		die
-	fi
-
-	local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
-	local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
-
-	local llvm_slot
-	for llvm_slot in $(seq ${_llvm_max_slot} -1 ${_llvm_min_slot}) ; do
-eerror "  llvm-core/clang:${llvm_slot}"
-	done
-}
-
 # @FUNCTION: ot-kernel_compiler_not_found
 # @DESCRIPTION:
 # Show compiler is not found message
@@ -2625,8 +2589,8 @@ ot-kernel_compiler_not_found() {
 eerror
 eerror "These are the required slot ranges.  Either choose..."
 eerror
-	$(_print_gcc_slots)
-	$(_print_llvm_slots)
+eerror "Available Clang slots:  ${LLVM_COMPAT[@]/llvm_compat_}"
+eerror "Available GCC slots:  ${GCC_COMPAT[@]/gcc_compat_}"
 eerror
 eerror "You should re-emerge the one of the allowed compiler slots."
 eerror
