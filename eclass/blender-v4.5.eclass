@@ -12,9 +12,6 @@
 
 # FIXME:  alembic requires imath
 
-# Upstream uses LLVM 12.0.0 for Linux.  For prebuilt binary only addons, this may be
-# problematic so avoid them.
-
 # The ebuild uses the same matching LLVM version used with Mesa to prevent
 # the multiple LLVM bug.
 
@@ -84,7 +81,7 @@ FFMPEG_IUSE+="
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_COMPAT=( {18..17} ) # TODO bump to 19 after ROCm 6.4 added
+LLVM_COMPAT=( {19..17} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
@@ -201,7 +198,7 @@ HIPRT_RAYTRACE_TARGETS=(
 	gfx1201
 )
 ROCM_SLOTS=(
-	rocm_6_3
+	rocm_6_4
 )
 
 IUSE+="
@@ -461,7 +458,7 @@ REQUIRED_USE+="
 			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
 		)
 		|| (
-			rocm_6_3
+			rocm_6_4
 		)
 	)
 	hydra? (
@@ -575,8 +572,8 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_6_3? (
-		llvm_slot_18
+	rocm_6_4? (
+		llvm_slot_19
 		rocm
 	)
 	theora? (
@@ -914,8 +911,8 @@ RDEPEND+="
 		>=dev-libs/gmp-6.3.0[cxx]
 	)
 	hiprt? (
-		rocm_6_3? (
-			=media-libs/hiprt-2.5*:6.3[rocm]
+		rocm_6_4? (
+			=media-libs/hiprt-2.5*:6.4[rocm]
 		)
 		media-libs/hiprt:=
 	)
@@ -1022,13 +1019,14 @@ RDEPEND+="
 		>=media-libs/harfbuzz-10.0.1[truetype]
 	)
 	rocm? (
-		rocm_6_3? (
-			~dev-libs/rocm-opencl-runtime-${HIP_6_3_VERSION}:6.3
-			~dev-util/hip-${HIP_6_3_VERSION}:6.3[${LIBSTDCXX_USEDEP},rocm]
+		rocm_6_4? (
+			>=dev-libs/rocm-opencl-runtime-${HIP_6_4_VERSION}:6.4
+			dev-libs/rocm-opencl-runtime:=
+			>=dev-util/hip-${HIP_6_4_VERSION}:6.4[${LIBSTDCXX_USEDEP},rocm]
 			dev-util/hip:=
-			~sys-libs/llvm-roc-libomp-${HIP_6_3_VERSION}:6.3
+			>=sys-libs/llvm-roc-libomp-${HIP_6_4_VERSION}:6.4
+			sys-libs/llvm-roc-libomp:=
 		)
-		dev-util/hip:=
 	)
 	sdl? (
 		!pulseaudio? (
@@ -1148,8 +1146,9 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_6_3? (
-			~sys-devel/llvm-roc-${HIP_6_3_VERSION}:6.3
+		rocm_6_4? (
+			>=sys-devel/llvm-roc-${HIP_6_4_VERSION}:6.4
+			sys-devel/llvm-roc:=
 		)
 	)
 	test? (
@@ -1199,9 +1198,12 @@ ewarn "including all dependencies of this package."
 ewarn
 	fi
 
-	if use llvm_slot_18 ; then
+	if use llvm_slot_19 ; then
+ewarn "Using LLVM 19"
+ewarn "LLVM 19 is only for ROCm 6.4 builds and is untested."
+	fi
+	if use llvm_slot_19 ; then
 ewarn "Using LLVM 18"
-ewarn "LLVM 18 is only for ROCm 6.3 builds and is untested."
 	fi
 	if use llvm_slot_17 ; then
 einfo "Using LLVM 17"
@@ -1209,16 +1211,15 @@ einfo "Using LLVM 17"
 
 	if use rocm ; then
 	# Upstream uses ROCm 6.4 for Linux, ROCm 6.3 for Windows
-		if use rocm_6_3 ; then
-			export LLVM_SLOT=18
-			export ROCM_SLOT="6.3"
-			export ROCM_VERSION="${HIP_6_3_VERSION}"
+		if use rocm_6_4 ; then
+			export LLVM_SLOT=19
+			export ROCM_SLOT="6.4"
+			export ROCM_VERSION="${HIP_6_4_VERSION}"
 		else
 # See https://github.com/blender/blender/blob/v4.5.3/build_files/config/pipeline_config.yaml
 eerror
 eerror "Supported ROCm version(s):"
 eerror
-eerror "  6.3"
 eerror "  6.4"
 eerror
 			die
@@ -1267,8 +1268,8 @@ _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-4.5.3-parent-datafiles-dir-change.patch"
 	if use rocm ; then
 		local rocm_version=""
-		if use rocm_6_3 ; then
-			rocm_version="${HIP_6_3_VERSION}"
+		if use rocm_6_4 ; then
+			rocm_version="${HIP_6_4_VERSION}"
 		fi
 
 		sed \
