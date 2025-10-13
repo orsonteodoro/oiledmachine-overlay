@@ -13480,12 +13480,14 @@ ot-kernel_set_security_critical() {
 
 		if \
 			_has_security_critical_type "cfi" \
-					&&
+					&& \
 			[[ \
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+					&& \
+			tc-is-clang \
 		; then
 			if has cfi ${IUSE_EFFECTIVE} && use cfi ; then
 				:
@@ -13517,6 +13519,8 @@ eerror "Enable USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_
 			]] \
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
+					&& \
+			tc-is-clang \
 		; then
 			if has kcfi ${IUSE_EFFECTIVE} && use kcfi ; then
 				:
