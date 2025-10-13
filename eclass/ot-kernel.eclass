@@ -2678,8 +2678,8 @@ einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 	# Verify Toolchain (TC) requirement for kernel_compiler_patch (KCP)
 	# because of multislot TC.
 	if (( ${wants_kcp} == 1 || ${wants_kcp_cortex_a72} == 1 )) ; then
-		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
+		local llvm_slot=$(get_llvm_slot)
 		local gcc_pv=$(best_version "${GCC_PKG}:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
 		local clang_pv=$(best_version "llvm-core/clang:${llvm_slot}" | sed -r -e "s|llvm-core/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
@@ -3446,6 +3446,8 @@ ewarn "Securely wiping private keys for ${extraversion}"
 # @DESCRIPTION:
 # Checks if the compiler has no problems
 is_clang_ready() {
+	[[ -z "${llvm_slot}" ]] && die "QA:  llvm_slot is empty"
+einfo "Testing llvm slot ${llvm_slot}"
 	which clang-${llvm_slot} >/dev/null 2>&1 || return 1
 	local has_error=0
 	if clang-${llvm_slot} --help | grep -q -F -e "symbol lookup error" ; then
@@ -3456,6 +3458,13 @@ ewarn "Found clang error"
 ewarn "Found library error"
 		has_error=1
 	fi
+	if (( ${has_error} == 1 )) ; then
+ewarn
+ewarn "Found missing symbols in either in Clang or one of the libraries it is using."
+ewarn "The library or Clang needs to be rebuild in order to properly continue."
+ewarn
+		return 1
+	fi
 	return 0
 }
 
@@ -3463,6 +3472,7 @@ ewarn "Found library error"
 # @DESCRIPTION:
 # Checks if the compiler has no problems
 is_gcc_ready() {
+	[[ -z "${gcc_slot}" ]] && die "QA:  gcc_slot is empty"
 einfo "Testing gcc slot ${gcc_slot}"
 	which gcc-${gcc_slot} >/dev/null 2>&1 || return 1
 	local has_error=0
@@ -3476,8 +3486,8 @@ ewarn "Found library error"
 	fi
 	if (( ${has_error} == 1 )) ; then
 ewarn
-ewarn "Found missing symbols in either in gcc or one of the libraries it is using."
-ewarn "The library or gcc needs to be rebuild in order to properly continue."
+ewarn "Found missing symbols in either in GCC or one of the libraries it is using."
+ewarn "The library or GCC needs to be rebuild in order to properly continue."
 ewarn
 		return 1
 	fi
@@ -5056,6 +5066,7 @@ eerror "llvm-core/llvm:${llvm_slot} is missing"
 		ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
 		ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 	else
+einfo "DEBUG: 1"
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
@@ -13869,8 +13880,8 @@ einfo "Forcing the default hardening level for maximum uptime"
 		hardening_level="secure-af"
 	fi
 
-	local llvm_slot=$(get_llvm_slot)
 	local gcc_slot=$(get_gcc_slot)
+	local llvm_slot=$(get_llvm_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre" # Uses llvm_slot
 
@@ -14035,8 +14046,8 @@ ewarn "Missing ${path_config} so generating a new default config."
 		make defconfig "${args[@]}" || die
 	fi
 
-	local llvm_slot=$(get_llvm_slot)
 	local gcc_slot=$(get_gcc_slot)
+	local llvm_slot=$(get_llvm_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre" # Uses llvm_slot
 	ot-kernel_menuconfig "post" # Uses llvm_slot
@@ -14154,9 +14165,13 @@ eerror
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
+		local gcc_slot=$(get_gcc_slot)
+		local llvm_slot=$(get_llvm_slot)
 		local args=()
 		MAKEOPTS_ORIG="${MAKEOPTS}"
 		MAKEOPTS=""
+		[[ -z "${gcc_slot}" ]] && ewarn "OT_KERNEL_USE is missing a gcc_slot_<x> flag.  Please copy the corresponding value from USE."
+		[[ -z "${llvm_slot}" ]] && ewarn "OT_KERNEL_USE is missing a llvm_slot_<x> flag.  Please copy the corresponding value from USE."
 		ot-kernel_setup_tc
 		MAKEOPTS="${MAKEOPTS_ORIG}"
 
@@ -14184,6 +14199,7 @@ get_llvm_slot() {
 	local llvm_slot=""
 	local x
 	for x in ${LLVM_COMPAT[@]} ; do
+einfo "get_llvm_slot:  ${x}"
 		if ot-kernel_use "llvm_slot_${x}" ; then
 			llvm_slot="${x/llvm_slot_}"
 			break
@@ -14200,6 +14216,7 @@ get_gcc_slot() {
 	local gcc_slot=""
 	local x
 	for x in ${GCC_COMPAT[@]/gcc_slot_} ; do
+einfo "get_gcc_slot:  ${x}"
 		if ot-kernel_use "gcc_slot_${x}" ; then
 			gcc_slot="${x/gcc_slot_}"
 			break
@@ -14225,11 +14242,6 @@ einfo "Setting up the build toolchain"
 	)
 
 	local original_cc="${CC}"
-
-	# Automagic sources
-	# It could produce a negative consequence if missing important conditional min/max.
-	local llvm_slot=$(get_llvm_slot)
-	local gcc_slot=$(get_gcc_slot)
 
 	if [[ -n "${cross_compile_target}" ]] ; then
 		args+=(
@@ -14294,6 +14306,7 @@ einfo "PATH=${PATH} (before)"
 				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin:${PWD}/install/bin|g")
 einfo "PATH=${PATH} (after)"
 	else
+einfo "DEBUG: 2"
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
@@ -15106,8 +15119,9 @@ einfo
 				"V=${OT_KERNEL_VERBOSITY}"
 			)
 		fi
-		ot-kernel_setup_tc
 		local gcc_slot=$(get_gcc_slot)
+		local llvm_slot=$(get_llvm_slot)
+		ot-kernel_setup_tc
 		ot-kernel_build_tresor_sysfs
 		ot-kernel_build_kernel
 	done
