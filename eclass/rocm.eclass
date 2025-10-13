@@ -179,7 +179,7 @@ _rocm_set_globals_default() {
 			_ROCM_CLANG_USEDEP="[${ROCM_CLANG_USEDEP}]"
 		fi
 		ROCM_CLANG_DEPEND="
-			~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}${_ROCM_CLANG_USEDEP}
+			~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}${_ROCM_CLANG_USEDEP}
 			sys-devel/llvm-roc:=
 		"
 		HIP_CLANG_DEPEND="
@@ -239,7 +239,7 @@ _rocm_set_globals_default() {
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				rocm? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
+					~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -264,7 +264,7 @@ _rocm_set_globals_default() {
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				rocm? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
+					~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -289,7 +289,7 @@ _rocm_set_globals_default() {
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				!cuda? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
+					~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -311,7 +311,7 @@ _rocm_set_globals_default() {
 		fi
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND="
-				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
+				~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 				sys-devel/llvm-roc:=
 			"
 		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
@@ -458,10 +458,10 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
 	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
-		export PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/bin:${PATH}"
+		export PATH="${ESYSROOT}/opt/rocm/bin:${PATH}"
 	fi
 
-	export EROCM_PATH="/opt/rocm-${ROCM_VERSION}"
+	export EROCM_PATH="/opt/rocm"
 	export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 
 	# LLVM_SLOT must be after llvm_pkg_setup or llvm-r1_pkg_setup
@@ -486,15 +486,15 @@ ewarn "QA:  ROCM_SLOT should be defined."
 
 	local clang_selected_desc
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/llvm-roc:${ROCM_SLOT}"
+		EROCM_CLANG_PATH="/opt/rocm/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
+		clang_selected_desc="sys-devel/llvm-roc:0/${ROCM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="llvm-core/clang:${LLVM_SLOT}"
 	fi
 
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
+		EROCM_LLVM_PATH="/opt/rocm/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi
@@ -1161,7 +1161,7 @@ rocm_set_default_clang() {
 # @DESCRIPTION:
 # Sets compiler defaults to aocc to avoid primarily linker errors.
 rocm_set_default_aocc() {
-	export PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin:${PATH}"
+	export PATH="${ESYSROOT}/opt/rocm/lib/llvm/alt/bin:${PATH}"
 	local _llvm_slot="AOCC_${ROCM_SLOT/./_}_SLOT"
 	llvm_slot="${!_llvm_slot}"
 	export CC="${CHOST}-clang-${llvm_slot}"
