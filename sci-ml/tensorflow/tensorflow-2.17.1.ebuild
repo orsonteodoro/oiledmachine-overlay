@@ -83,15 +83,7 @@ GRPC_PROTOBUF_PAIRS=(
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
-	"${HIP_6_0_VERSION}" # For llvm 17
-	"${HIP_5_7_VERSION}" # For llvm 17
-	"${HIP_5_6_VERSION}" # For llvm 16
-	"${HIP_5_5_VERSION}" # For llvm 16
-	"${HIP_5_4_VERSION}" # For llvm 15
-	"${HIP_5_3_VERSION}" # For llvm 15
-#	"${HIP_5_2_VERSION}" # For llvm 14
-#	"${HIP_5_1_VERSION}" # For llvm 14
-#	"${HIP_5_0_VERSION}" # For llvm 14
+	"${HIP_6_4_VERSION}" # Placeholder
 )
 gen_hip_slots2() {
 	local pv
@@ -105,22 +97,14 @@ HIP_SLOTS2=(
 	$(gen_hip_slots2)
 )
 declare -A LLD_SLOT=(
-	["${HIP_6_0_VERSION}"]="${HIP_6_0_LLVM_SLOT}"
-	["${HIP_5_7_VERSION}"]="${HIP_5_7_LLVM_SLOT}"
-	["${HIP_5_6_VERSION}"]="${HIP_5_6_LLVM_SLOT}"
-	["${HIP_5_5_VERSION}"]="${HIP_5_5_LLVM_SLOT}"
-	["${HIP_5_4_VERSION}"]="${HIP_5_4_LLVM_SLOT}"
-	["${HIP_5_3_VERSION}"]="${HIP_5_3_LLVM_SLOT}"
-#	["${HIP_5_2_VERSION}"]="${HIP_5_2_LLVM_SLOT}"
-#	["${HIP_5_1_VERSION}"]="${HIP_5_1_LLVM_SLOT}"
-#	["${HIP_5_0_VERSION}"]="${HIP_5_0_LLVM_SLOT}"
+	["${HIP_6_4_VERSION}"]="${HIP_6_4_LLVM_SLOT}" # Placeholder
 )
 
 # See "deps versioning" section above for details.
 # See
 # https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/toolchains/remote_config/configs.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/gpus/rocm_configure.bzl#L210
-LLVM_COMPAT=( {17..15} )
+LLVM_COMPAT=( {19..15} )
 PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -506,23 +490,8 @@ REQUIRED_USE="
 			${HIP_SLOTS2[@]}
 		)
 	)
-	rocm_6_0? (
-		llvm_slot_17
-	)
-	rocm_5_7? (
-		llvm_slot_17
-	)
-	rocm_5_6? (
-		llvm_slot_16
-	)
-	rocm_5_5? (
-		llvm_slot_16
-	)
-	rocm_5_4? (
-		llvm_slot_15
-	)
-	rocm_5_3? (
-		llvm_slot_15
+	rocm_6_4? (
+		llvm_slot_19
 	)
 	test? (
 		python
@@ -548,58 +517,82 @@ CUDA_CDEPEND="
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
-		local s=$(ver_cut 1-2 ${pv})
-		local u="${s}"
-		u="${u/./_}"
+		local s="0/"$(ver_cut 1-2 ${pv})
+		local ROCM_SLOT=$(ver_cut 1-2 ${pv})
+		u="${ROCM_SLOT/./_}"
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 			rocm_${u}? (
-				~dev-libs/rccl-${pv}:${s}
-				~dev-libs/rocm-device-libs-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
-				~dev-util/roctracer-${pv}:${s}
-				~sci-libs/hipBLAS-${pv}:${s}[rocm]
-				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
-				~sci-libs/hipSOLVER-${pv}:${s}[rocm]
-				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
-				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
-				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
-				~sci-libs/rocSOLVER-${pv}:${s}$(get_rocm_usedep ROCSOLVER)
-				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
+				>=dev-libs/rccl-${pv}:${s}
+				dev-libs/rccl:=
+				>=dev-libs/rocm-device-libs-${pv}:${s}
+				dev-libs/rocm-device-libs:=
+				>=dev-util/hip-${pv}:${s}[rocm]
+				dev-util/hip:=
+				>=dev-util/roctracer-${pv}:${s}
+				dev-util/roctracer:=
+				>=sci-libs/hipBLAS-${pv}:${s}[rocm]
+				sci-libs/hipBLAS:=
+				>=sci-libs/hipFFT-${pv}:${s}[$(get_rocm_usedep HIPFFT)]
+				sci-libs/hipFFT:=
+				>=sci-libs/hipSOLVER-${pv}:${s}[rocm]
+				sci-libs/hipSOLVER:=
+				>=sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				sci-libs/hipSPARSE:=
+				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
+				sci-libs/rocBLAS:=
+				>=sci-libs/rocFFT-${pv}:${s}[$(get_rocm_usedep ROCFFT)]
+				sci-libs/rocFFT:=
+				>=sci-libs/rocRAND-${pv}:${s}[$(get_rocm_usedep ROCRAND)]
+				sci-libs/rocRAND:=
+				>=sci-libs/rocSOLVER-${pv}:${s}[$(get_rocm_usedep ROCSOLVER)]
+				sci-libs/rocSOLVER:=
+				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
+				sci-libs/miopen:=
 
-				~dev-libs/rocm-comgr-${pv}:${s}
-				~dev-libs/rocr-runtime-${pv}:${s}
-				~dev-build/rocm-cmake-${pv}:${s}
-				~dev-util/rocm-smi-${pv}:${s}
-				~dev-util/rocminfo-${pv}:${s}
-				~dev-util/Tensile-${pv}:${s}$(get_rocm_usedep TENSILE)
+				>=dev-libs/rocm-comgr-${pv}:${s}
+				dev-libs/rocm-comgr:=
+				>=dev-libs/rocr-runtime-${pv}:${s}
+				dev-libs/rocr-runtime:=
+				>=dev-build/rocm-cmake-${pv}:${s}
+				dev-build/rocm-cmake:=
+				>=dev-util/rocm-smi-${pv}:${s}
+				dev-util/rocm-smi:=
+				>=dev-util/rocminfo-${pv}:${s}
+				dev-util/rocminfo:=
+				>=dev-util/Tensile-${pv}:${s}[$(get_rocm_usedep TENSILE)]
+				dev-util/Tensile:=
 
 				llvm-core/lld:${LLD_SLOT[${pv}]}
 			)
 		"
-		if ver_test "${s}" -ge "5.5" ; then
+		if ver_test "${ROCM_SLOT}" -ge "5.5" ; then
 			echo "
 				rocm_${u}? (
-					~dev-libs/rocm-core-${pv}:${s}
+					>=dev-libs/rocm-core-${pv}:${s}
+					dev-libs/rocm-core:=
 
 					amdgpu_targets_gfx90a? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 				)
 			"
 		fi
-		if ver_test "${s}" -ge "5.7" ; then
+		if ver_test "${ROCM_SLOT}" -ge "5.7" ; then
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_gfx940? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 					amdgpu_targets_gfx941? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 					amdgpu_targets_gfx942? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 				)
 			"
@@ -927,23 +920,8 @@ BDEPEND="
 		')
 	)
 	rocm? (
-		rocm_5_3? (
-			sys-devel/gcc:${HIP_5_3_GCC_SLOT}
-		)
-		rocm_5_4? (
-			sys-devel/gcc:${HIP_5_4_GCC_SLOT}
-		)
-		rocm_5_5? (
-			sys-devel/gcc:${HIP_5_5_GCC_SLOT}
-		)
-		rocm_5_6? (
-			sys-devel/gcc:${HIP_5_6_GCC_SLOT}
-		)
-		rocm_5_7? (
-			sys-devel/gcc:${HIP_5_7_GCC_SLOT}
-		)
-		rocm_6_0? (
-			sys-devel/gcc:${HIP_6_0_GCC_SLOT}
+		rocm_6_4? (
+			sys-devel/gcc:${HIP_6_4_GCC_SLOT}
 		)
 		sys-devel/gcc:=
 	)
@@ -1054,24 +1032,8 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	fi
 
 	if use rocm ; then
-		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
-			_LLVM_COMPAT=( 17 )
-		elif has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
-			_LLVM_COMPAT=( 17 )
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
-			_LLVM_COMPAT=( 16 )
-		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 ; then
-			_LLVM_COMPAT=( 16 )
-		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 ; then
-			_LLVM_COMPAT=( 15 )
-		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 ; then
-			_LLVM_COMPAT=( 15 )
-		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 ; then
-			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 ; then
-			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 ; then
-			_LLVM_COMPAT=( 14 )
+		if has rocm_6_4 ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+			_LLVM_COMPAT=( 19 )
 		fi
 	fi
 
@@ -1156,42 +1118,10 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="6.0"
-			ROCM_VERSION="${HIP_6_0_VERSION}"
-		elif has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="5.7"
-			ROCM_VERSION="${HIP_5_7_VERSION}"
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
-			LLVM_SLOT=16
-			ROCM_SLOT="5.6"
-			ROCM_VERSION="${HIP_5_6_VERSION}"
-		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 ; then
-			LLVM_SLOT=16
-			ROCM_SLOT="5.5"
-			ROCM_VERSION="${HIP_5_5_VERSION}"
-		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 ; then
-			LLVM_SLOT=15
-			ROCM_SLOT="5.4"
-			ROCM_VERSION="${HIP_5_4_VERSION}"
-		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 ; then
-			LLVM_SLOT=15
-			ROCM_SLOT="5.3"
-			ROCM_VERSION="${HIP_5_3_VERSION}"
-		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.2"
-			ROCM_VERSION="${HIP_5_2_VERSION}"
-		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.1"
-			ROCM_VERSION="${HIP_5_1_VERSION}"
-		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.0"
-			ROCM_VERSION="${HIP_5_0_VERSION}"
+		if has rocm_6_4 ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+			LLVM_SLOT=19
+			ROCM_SLOT="6.4"
+			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
 		use_gcc
