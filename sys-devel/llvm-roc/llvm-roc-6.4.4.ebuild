@@ -6,11 +6,10 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 GCC_COMPAT=(
-	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
 	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
 	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 LLVM_TARGETS=(
 	AMDGPU
 	NVPTX
@@ -102,9 +101,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	!sys-devel/llvm-rocm:0
 	dev-libs/libxml2
-	sys-devel/llvm-roc-symlinks:${ROCM_SLOT}/${PV}
+	sys-devel/llvm-roc-symlinks:${SLOT}
+	sys-devel/llvm-roc-symlinks:=
 	sys-libs/ncurses:=
 	sys-libs/zlib
 	virtual/cblas
@@ -122,12 +121,10 @@ pkg_setup() {
 	check-compiler-switch_start
 	dhms_start
 	rocm_pkg_setup
-	libstdcxx-slot_verify
 }
 
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 
 # FIXES:
 # ld.bfd: tools/llvm-split/CMakeFiles/llvm-split.dir/llvm-split.cpp.o: undefined reference to symbol '_ZN4llvm6TripleC1ERKNS_5TwineE'
@@ -144,46 +141,6 @@ src_prepare() {
 			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v3-bolt_rt-RuntimeLibrary.cpp-path.patch"
                 popd >/dev/null 2>&1 || die
 	fi
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${WORKDIR}/amd/hipcc/bin/hipcc.pl"
-		"${WORKDIR}/amd/hipcc/bin/hipvars.pm"
-		"${WORKDIR}/amd/hipcc/src/hipBin_base.h"
-		"${WORKDIR}/amd/hipcc/src/hipBin_nvidia.h"
-		"${WORKDIR}/bolt/CMakeLists.txt"
-		"${WORKDIR}/bolt/include/bolt/RuntimeLibs/RuntimeLibrary.h"
-		"${WORKDIR}/bolt/lib/RuntimeLibs/HugifyRuntimeLibrary.cpp"
-		"${WORKDIR}/bolt/lib/RuntimeLibs/InstrumentationRuntimeLibrary.cpp"
-		"${WORKDIR}/bolt/lib/RuntimeLibs/RuntimeLibrary.cpp"
-		"${WORKDIR}/bolt/runtime/CMakeLists.txt"
-		"${WORKDIR}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/clang/lib/Driver/ToolChains/Cuda.cpp"
-		"${WORKDIR}/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/compiler-rt/CMakeLists.txt"
-		"${WORKDIR}/lib/Target/AMDGPU/Disassembler/CMakeLists.txt"
-		"${WORKDIR}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${WORKDIR}/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${WORKDIR}/libc/utils/gpu/loader/CMakeLists.txt"
-		"${WORKDIR}/llvm/CMakeLists.txt"
-		"${WORKDIR}/llvm/tools/llvm-dwarfdump/CMakeLists.txt"
-		"${WORKDIR}/llvm/tools/llvm-split/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Conversion/TosaToLinalg/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Target/LLVM/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Target/LLVMIR/Dialect/NVVM/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/hostexec/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/src/CMakeLists.txt"
-		"${WORKDIR}/polly/lib/CodeGen/PPCGCodeGeneration.cpp"
-		"${WORKDIR}/utils/benchmark/src/benchmark_register.h"
-	)
 	rocm_src_prepare
 }
 
