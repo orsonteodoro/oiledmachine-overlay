@@ -13481,7 +13481,7 @@ ot-kernel_set_security_critical() {
 		if [[ "${types}" =~ (^|" ")"cfi"($|" ") ]] && tc-is-gcc ; then
 ewarn "OT_KERNEL_SECURITY_CRITICAL_TYPES=cfi is not supported with GCC."
 ewarn "Switch to Clang to use CFI."
-ewarn "Disabling CFI will increase changes of trusted code hijack or code execution attacks with critical severity."
+ewarn "Disabling CFI will increase changes of trusted code hijack or code execution attacks with an estimated critical severity."
 		fi
 
 		if \
@@ -13511,7 +13511,7 @@ eerror "Enable USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_
 		if [[ "${types}" =~ (^|" ")"kcfi"($|" ") ]] && tc-is-gcc ; then
 ewarn "OT_KERNEL_SECURITY_CRITICAL_TYPES=kcfi is not supported with GCC."
 ewarn "Switch to Clang to use CFI."
-ewarn "Disabling KCFI will increase changes of trusted code hijack or code execution attacks with critical severity."
+ewarn "Disabling KCFI will increase changes of trusted code hijack or code execution attacks with an estimated critical severity."
 		fi
 
 		if \
