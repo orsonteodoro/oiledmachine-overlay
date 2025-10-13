@@ -2679,6 +2679,7 @@ einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 	# because of multislot TC.
 	if (( ${wants_kcp} == 1 || ${wants_kcp_cortex_a72} == 1 )) ; then
 		local gcc_slot=$(get_gcc_slot)
+		gcc_slot="${gcc_slot%_*}"
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_pv=$(best_version "${GCC_PKG}:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
 		local clang_pv=$(best_version "llvm-core/clang:${llvm_slot}" | sed -r -e "s|llvm-core/clang-||" -e "s|-r[0-9]+||")
@@ -5057,7 +5058,6 @@ eerror "llvm-core/llvm:${llvm_slot} is missing"
 		ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
 		ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 	else
-		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
 		ot-kernel_unset_configopt "CONFIG_CC_IS_CLANG"
@@ -5067,8 +5067,8 @@ einfo "Using GCC ${gcc_slot}"
 			| grep -o -E -e " [0-9]+.[0-9]+.[0-9]+" \
 			| head -n 1 \
 			| sed -e "s|[ ]*||g")
-		local gcc_pv_major=$(printf "%02d" $(echo ${gcc_pv} | cut -f 1 -d "."))
-		local gcc_pv_minor=$(printf "%02d" $(echo ${gcc_pv} | cut -f 2 -d "."))
+		local gcc_pv_major=$(printf "%02d" $(echo "${gcc_pv}" | cut -f 1 -d "."))
+		local gcc_pv_minor=$(printf "%02d" $(echo "${gcc_pv}" | cut -f 2 -d "."))
 		ot-kernel_set_configopt "CONFIG_GCC_VERSION" "${gcc_pv_major}${gcc_pv_minor}00"
 	fi
 }
@@ -13871,6 +13871,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 	fi
 
 	local gcc_slot=$(get_gcc_slot)
+	gcc_slot="${gcc_slot%_*}"
 	local llvm_slot=$(get_llvm_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre" # Uses llvm_slot
@@ -14037,6 +14038,7 @@ ewarn "Missing ${path_config} so generating a new default config."
 	fi
 
 	local gcc_slot=$(get_gcc_slot)
+	gcc_slot="${gcc_slot%_*}"
 	local llvm_slot=$(get_llvm_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre" # Uses llvm_slot
@@ -14157,6 +14159,7 @@ eerror
 		cd "${BUILD_DIR}" || die
 
 		local gcc_slot=$(get_gcc_slot)
+		gcc_slot="${gcc_slot%_*}"
 		local llvm_slot=$(get_llvm_slot)
 		local args=()
 		MAKEOPTS_ORIG="${MAKEOPTS}"
@@ -14311,8 +14314,8 @@ einfo "PATH=${PATH} (before)"
 				| tr "\n" ":" \
 				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin:${PWD}/install/bin|g")
 einfo "PATH=${PATH} (after)"
+		is_clang_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for Clang"
 	else
-		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
@@ -14333,6 +14336,7 @@ einfo "Using GCC ${gcc_slot}"
 		CC="${CHOST}-gcc-${gcc_slot}"
 		CXX="${CHOST}-g++-${gcc_slot}"
 		LD="ld.bfd"
+		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for GCC"
 	fi
 
 einfo "Requested CC:  ${original_cc}"
@@ -14356,9 +14360,7 @@ einfo
 	strip-unsupported-flags
 
 	# Verify requirements
-einfo "CC:  |${CC}|"
 	if ot-kernel_use clang ; then
-einfo "DEBUG:  1"
 		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
 		local s=$(clang-major-version)
@@ -14371,21 +14373,16 @@ eerror "You must switch Clang to <= ${_llvm_max_slot}"
 			die
 		fi
 	else
-einfo "DEBUG:  2"
 # Prevent gcc-major-version to return 4 when CC is empty.
-ewarn "CC is empty"
 		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
 		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
 		local s=$(gcc-major-version)
-einfo "DEBUG s:  ${s}"
-einfo "DEBUG _gcc_min_slot:  ${_gcc_min_slot}"
-einfo "DEBUG _gcc_max_slot:  ${_gcc_max_slot}"
 		if ver_test "${s}" "-lt" "${_gcc_min_slot}" ; then
 eerror "You must switch GCC to >= ${_gcc_min_slot}"
 			die
 		fi
-		if ver_test "${s}" "-gt" "${_gcc_min_slot}" ; then
-eerror "You must switch GCC to <= ${_llvm_max_slot}"
+		if ver_test "${s}" "-gt" "${_gcc_max_slot}" ; then
+eerror "You must switch GCC to <= ${_gcc_max_slot}"
 			die
 		fi
 	fi
@@ -15134,6 +15131,7 @@ einfo
 			)
 		fi
 		local gcc_slot=$(get_gcc_slot)
+		gcc_slot="${gcc_slot%_*}"
 		local llvm_slot=$(get_llvm_slot)
 		ot-kernel_setup_tc
 		ot-kernel_build_tresor_sysfs
