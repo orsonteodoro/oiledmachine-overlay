@@ -212,13 +212,11 @@ ROCALUTION_6_4_AMDGPU_TARGETS_COMPAT=(
 ROCALUTION_6_4_AMDGPU_USEDEP=$(gen_x_usedep "ROCALUTION_6_4_AMDGPU_TARGETS_COMPAT")
 
 ROCBLAS_6_4_AMDGPU_TARGETS_COMPAT=(
+# Last update:  6.4.4
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a
 	gfx942
 	gfx1010
 	gfx1012
@@ -226,6 +224,10 @@ ROCBLAS_6_4_AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 ROCBLAS_6_4_AMDGPU_USEDEP=$(gen_x_usedep "ROCBLAS_6_4_AMDGPU_TARGETS_COMPAT")
 

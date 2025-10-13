@@ -32,17 +32,19 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a
 	gfx942
+	gfx950
 	gfx1010
 	gfx1012
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 CPU_FLAGS_X86=(
 	cpu_flags_x86_f16c
@@ -54,7 +56,7 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -82,7 +84,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 benchmark cuda +rocm test ebuild_revision_24
@@ -112,18 +114,22 @@ RDEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/msgpack-3.0.1
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_2_AMDGPU_USEDEP},rocm]
+		>=dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_7_0_AMDGPU_USEDEP},rocm]
+		dev-util/Tensile:=
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_2_AMDGPU_USEDEP}"',rocm]
+			>=dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_7_0_AMDGPU_USEDEP}"',rocm]
+			dev-util/Tensile:=
 		')
 	)
 "
@@ -131,7 +137,8 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
 "
@@ -145,19 +152,20 @@ BDEPEND="
 		dev-python/virtualenv[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	dev-build/rocm-cmake:=
 	rocm? (
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_2_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
+			>=dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_7_0_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
+			dev-util/Tensile:=
 		')
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.4.2-cpp_lib_filesystem.patch"
-	"${FILESDIR}/${PN}-5.7.0-unbundle-Tensile.patch"
+	"${FILESDIR}/${PN}-6.4.4-cpp_lib_filesystem.patch"
+	"${FILESDIR}/${PN}-7.0.2-unbundle-Tensile.patch"
 	"${FILESDIR}/${PN}-5.4.2-add-missing-header.patch"
-	"${FILESDIR}/${PN}-5.4.2-link-cblas.patch"
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-7.0.2-link-cblas.patch"
 )
 
 pkg_setup() {
@@ -169,25 +177,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${S}/CMakeLists.txt"
-		"${S}/clients/CMakeLists.txt"
-		"${S}/clients/cmake/FindROCmSMI.cmake"
-		"${S}/clients/common/utility.cpp"
-		"${S}/clients/gtest/rocblas_test.cpp"
-		"${S}/clients/include/host_alloc.hpp"
-		"${S}/clients/include/rocblas_data.hpp"
-		"${S}/clients/include/singletons.hpp"
-		"${S}/clients/include/testing_logging.hpp"
-		"${S}/clients/include/testing_ostream_threadsafety.hpp"
-		"${S}/clients/include/utility.hpp"
-		"${S}/library/src/tensile_host.cpp"
-		"${S}/rmake.py"
-		"${S}/toolchain-linux.cmake"
-	)
 	rocm_src_prepare
 	if ! use cpu_flags_x86_f16c ; then
 	# Issue 1422
