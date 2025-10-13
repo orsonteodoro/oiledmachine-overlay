@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -27,10 +27,10 @@ fi
 DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="NCSA-AMD"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+=" ebuild_revision_7"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	sys-apps/pciutils
 	|| (
 		virtual/kfd-ub:6.2
