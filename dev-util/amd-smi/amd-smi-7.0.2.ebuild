@@ -4,10 +4,10 @@
 EAPI=8
 
 # Viewer URI:  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/tree/arch/x86/include/uapi/asm/amd_hsmp.h?h=review-ilpo&id=54aa699e8094efb7d7675fefbc03dfce24f98456
-AMD_HSMP_H_DATE="2024-01-03 11:46:22 +0100"
-AMD_HSMP_H_COMMIT="54aa699e8094efb7d7675fefbc03dfce24f98456"
-ESMI_PV="3.0.3"
-LLVM_SLOT=18
+#AMD_HSMP_H_DATE="2024-01-03 11:46:22 +0100"
+#AMD_HSMP_H_COMMIT="54aa699e8094efb7d7675fefbc03dfce24f98456"
+ESMI_PV="4.2"
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 MY_PN="amdsmi"
@@ -18,7 +18,7 @@ if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="amd-staging"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/amdsmi/"
-	FALLBACK_COMMIT="rocm-6.2.4"
+	FALLBACK_COMMIT="rocm-${PV}"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -30,8 +30,6 @@ https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	esmi? (
 https://github.com/amd/esmi_ib_library/archive/refs/tags/esmi_pkg_ver-${ESMI_PV}.tar.gz
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/plain/arch/x86/include/uapi/asm/amd_hsmp.h?h=review-ilpo&id=${AMD_HSMP_H_COMMIT}
-	-> pdx86-platform-drivers-x86-amd_hsmp.h.${AMD_HSMP_H_COMMIT:0:7}
 	)
 	"
 fi
@@ -55,7 +53,7 @@ LICENSE="
 # all-rights-reserved MIT - py-interface/amdsmi_exception.py
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+=" doc +esmi test ebuild_revision_4"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -64,10 +62,11 @@ REQUIRED_USE+="
 RDEPEND="
 	${PYTHON_DEPS}
 	|| (
-		virtual/kfd-ub:6.2
-		virtual/kfd:6.1
-		virtual/kfd-lb:6.0
+		>=virtual/kfd-6.4:6.4
+		>=virtual/kfd-6.3:6.3
+		>=virtual/kfd-6.2:6.2
 	)
+	virtual/kfd:=
 "
 DEPEND="
 	${RDEPEND}
@@ -87,7 +86,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -109,10 +107,10 @@ src_unpack() {
 		ESMI_S_DEST="${S}/esmi_ib_library"
 		mv "${ESMI_S_SRC}" "${ESMI_S_DEST}" || die
 		mkdir -p "${ESMI_S_DEST}/include/asm" || die
-		cat \
-			"${DISTDIR}/pdx86-platform-drivers-x86-amd_hsmp.h.${AMD_HSMP_H_COMMIT:0:7}" \
-			> \
-			"${ESMI_S_DEST}/include/asm/amd_hsmp.h"
+		#cat \
+		#	"${DISTDIR}/pdx86-platform-drivers-x86-amd_hsmp.h.${AMD_HSMP_H_COMMIT:0:7}" \
+		#	> \
+		#	"${ESMI_S_DEST}/include/asm/amd_hsmp.h"
 	fi
 }
 
