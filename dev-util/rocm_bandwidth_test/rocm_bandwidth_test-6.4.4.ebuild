@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -21,10 +21,11 @@ https://github.com/RadeonOpenCompute/rocm_bandwidth_test/commit/a58f9fd4cb5d1120
 DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+=" ebuild_revision_10"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	dev-libs/rocr-runtime:=
 "
 DEPEND="
 	${DEPEND}
@@ -34,7 +35,6 @@ BDEPEND="
 	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
