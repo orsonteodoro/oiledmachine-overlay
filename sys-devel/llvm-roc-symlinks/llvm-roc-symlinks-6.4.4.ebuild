@@ -6,7 +6,7 @@ EAPI=8
 
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
-LLVM_SLOT="18"
+LLVM_SLOT="19"
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -16,7 +16,7 @@ DESCRIPTION="llvm-roc symlinks"
 HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
-SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+="ebuild_revision_5"
 RDEPEND+="
 "
@@ -51,31 +51,31 @@ src_install() {
 		local dest_name="${name#*:}"
 		if [[ "${dest_name}" =~ "amd" ]] ; then
 			dosym \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
-				"/opt/rocm-${ROCM_VERSION}/bin/${dest_name}"
+				"/opt/rocm/llvm/bin/${src_name}" \
+				"/opt/rocm/bin/${dest_name}"
 			continue
 		fi
 		if [[ "${name}" != "clang:clang" ]] ; then
 			dosym \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${dest_name}-${LLVM_SLOT}"
+				"/opt/rocm/llvm/bin/${src_name}" \
+				"/opt/rocm/llvm/bin/${dest_name}-${LLVM_SLOT}"
 		fi
 		if [[ "${dest_name}" =~ "clang" ]] ; then
 			dosym \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${CHOST}-${dest_name}-${LLVM_SLOT}"
+				"/opt/rocm/llvm/bin/${src_name}" \
+				"/opt/rocm/llvm/bin/${CHOST}-${dest_name}-${LLVM_SLOT}"
 		fi
 		if [[ "${dest_name}" =~ "roc" ]] ; then
 			dosym \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
-				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${dest_name}"
+				"/opt/rocm/llvm/bin/${src_name}" \
+				"/opt/rocm/llvm/bin/${dest_name}"
 		fi
 		dosym \
-			"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
-			"/opt/rocm-${ROCM_VERSION}/llvm/bin/${CHOST}-${dest_name}-${ROCM_SLOT}"
+			"/opt/rocm/llvm/bin/${src_name}" \
+			"/opt/rocm/llvm/bin/${CHOST}-${dest_name}-${ROCM_SLOT}"
 		dosym \
-			"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
-			"/opt/rocm-${ROCM_VERSION}/llvm/bin/${CHOST}-${dest_name}-${ROCM_VERSION}"
+			"/opt/rocm/llvm/bin/${src_name}" \
+			"/opt/rocm/llvm/bin/${CHOST}-${dest_name}"
 	done
 }
 
