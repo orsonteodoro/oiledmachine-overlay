@@ -5,7 +5,7 @@ EAPI=8
 
 FMT_COMMIT="6c845f57e5db589208ff0c2808238587cafafa82"
 GLOG_COMMIT="3a0d4d22c5ae0b9a2216988411cfa6bf860cc372"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -44,6 +44,7 @@ LICENSE="
 # all-rights-reserved MIT - source/include/rocprofiler-register/version.h.in
 # MIT - LICENSE
 # The distro's MIT license template does not contain all rights reserved.
+RESTRICT="mirror" # Speed up downloads
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" samples static-libs test ebuild_revision_9"
 # glog downgraded originally 0.7.0
