@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -88,11 +88,10 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="test ebuild_revision_13"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
-	!dev-libs/rocm-device-libs:0
 "
 DEPEND="
 	${RDEPEND}
@@ -100,7 +99,7 @@ DEPEND="
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.13.4
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.4.patch"
