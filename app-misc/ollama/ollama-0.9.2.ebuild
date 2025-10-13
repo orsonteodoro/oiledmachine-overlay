@@ -180,7 +180,7 @@ themanofrod-travel-agent tinydolphin tinyllama tulu3 vicuna wizard-math
 wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm wizardlm-uncensored
 wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
-LLVM_COMPAT=( 18 ) # U20 uses clang 10 by default but has clang 18 available.
+LLVM_COMPAT=( 19 18 ) # U20 uses clang 10 by default but has clang 18 available.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 #
@@ -192,7 +192,7 @@ EGO_PN="github.com/ollama/ollama"
 LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
-	"6.3"
+	"6.4"
 )
 gen_rocm_iuse() {
 	local s
@@ -205,7 +205,7 @@ gen_rocm_iuse() {
 ROCM_IUSE=( $(gen_rocm_iuse) )
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
-	["6_3"]="${HIP_6_3_VERSION}"
+	["6_4"]="${HIP_6_4_VERSION}"
 )
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
@@ -2873,34 +2873,48 @@ gen_clang_bdepend() {
 }
 gen_rocm_bdepend() {
 	# DEPENDs listed in llama/llama.go
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s1="${s/./_}"
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s="0/${pv}"
+		local s1="${pv/./_}"
+		local ROCM_SLOT="${pv}"
 		echo "
-			rocm_${s/./_}? (
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+			rocm_${s1}? (
+				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
+				dev-util/hip:=
+				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				sys-devel/llvm-roc:=
 			)
 		"
 	done
 }
 gen_rocm_rdepend() {
 	# DEPENDs listed in llama/llama.go
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s1="${s/./_}"
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s="0/${pv}"
+		local s1="${pv/./_}"
+		local ROCM_SLOT="${pv}"
 		echo "
-			rocm_${s/./_}? (
-				~dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
-				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
-				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCBLAS)
-				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[cpu_flags_x86_f16c=]
-				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSPARSE)
-				~sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSOLVER)
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+			rocm_${s1}? (
+				>=dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
+				dev-libs/rocm-comgr:=
+				>=dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				dev-libs/rocm-opencl-runtime:=
+				>=dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				dev-libs/rocr-runtime:=
+				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
+				dev-util/hip:=
+				>=sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				sci-libs/hipBLAS:=
+				>=sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCBLAS),cpu_flags_x86_f16c=]
+				sci-libs/rocBLAS:=
+				>=sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCSPARSE)]
+				sci-libs/rocSPARSE:=
+				>=sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCSOLVER)]
+				sci-libs/rocSOLVER:=
+				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				sys-devel/llvm-roc:=
 			)
 		"
 	done
@@ -2921,7 +2935,6 @@ RDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		sci-libs/rocBLAS:=
 		x11-libs/libdrm[video_cards_amdgpu]
 	)
 	sandbox? (
@@ -3082,16 +3095,19 @@ pkg_setup() {
 ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
 	local llvm_base_path
 	if use rocm ; then
-		if use rocm_6_3 ; then
-			export ROCM_SLOT="6.3"
-			export LLVM_SLOT=18
-			export ROCM_VERSION="${HIP_6_3_VERSION}"
+		if use rocm_6_4 ; then
+			export ROCM_SLOT="6.4"
+			export LLVM_SLOT=19
+			export ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 		rocm_pkg_setup
 	else
 		local llvm_slot
 		if use llvm_slot_18 ; then
 			llvm_slot=18
+		fi
+		if use llvm_slot_19 ; then
+			llvm_slot=19
 		fi
 		llvm_base_path="/usr/lib/llvm/${llvm_slot}"
 einfo "PATH (before):  ${PATH}"
