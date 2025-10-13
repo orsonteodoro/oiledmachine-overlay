@@ -3,7 +3,10 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+# Requirements:
+# https://github.com/ROCm/HIPIFY/blob/rocm-6.4.4/docs/how-to/hipify-clang.rst
+
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -33,9 +36,8 @@ LICENSE="
 # MIT - tests/unit_tests/libraries/cuRAND/cmdparser.hpp
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="test ebuild_revision_18"
-# https://github.com/ROCm/HIPIFY/blob/rocm-6.2.4/docs/hipify-clang.rst
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -48,12 +50,37 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	test? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.6*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-12.2*
-			=dev-util/nvidia-cuda-toolkit-11.8*
-			=dev-util/nvidia-cuda-toolkit-11.7*
-			=dev-util/nvidia-cuda-toolkit-11.5*
+			(
+				=dev-util/nvidia-cuda-toolkit-12.6*
+				|| (
+					(
+						llvm-core/clang:19
+						llvm-core/llvm:19
+					)
+				)
+			)
+			(
+				=dev-util/nvidia-cuda-toolkit-12.3*
+				|| (
+					(
+						llvm-core/clang:17
+						llvm-core/llvm:17
+					)
+					(
+						llvm-core/clang:18
+						llvm-core/llvm:18
+					)
+				)
+			)
+			(
+				=dev-util/nvidia-cuda-toolkit-11.8*
+				|| (
+					(
+						llvm-core/clang:15
+						llvm-core/llvm:15
+					)
+				)
+			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -63,35 +90,30 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
 	check-compiler-switch_start
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-19*" ; then
 		LLVM_SLOT=19
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.5*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
-		LLVM_SLOT=19
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
-		LLVM_SLOT=19
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-18*" && has_version "=llvm-core/llvm-17*" ; then
-		LLVM_SLOT=18
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
 		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=llvm-core/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
-		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=llvm-core/clang-16*" && has_version "=llvm-core/llvm-16*" ; then
-		LLVM_SLOT=16
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-18*" && has_version "=llvm-core/llvm-18*" ; then
+		LLVM_SLOT=18
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-15*" && has_version "=llvm-core/llvm-15*" ; then
 		LLVM_SLOT=15
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
-		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=llvm-core/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
-		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=llvm-core/clang-13*" && has_version "=llvm-core/llvm-13*" ; then
-		LLVM_SLOT=13
+	else
+eerror
+eerror "Only the following parings are supported for tests:"
+eerror
+eerror "CUDA 12.6, CLANG + LLVM 19"
+eerror "CUDA 12.3, CLANG + LLVM 18"
+eerror "CUDA 12.3, CLANG + LLVM 17"
+eerror "CUDA 11.8, CLANG + LLVM 15"
+eerror
+		die
 	fi
 	rocm_pkg_setup
 }
