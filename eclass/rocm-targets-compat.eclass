@@ -43,7 +43,7 @@ gen_x_usedep() {
 	local x_targets_compat="${1}"
 
 	if [[ -z "${AMDGPU_TARGETS_COMPAT[@]}" ]] ; then
-#eerror "AMDGPU_TARGETS_COMPAT is a typo or missing."
+eerror "QA:  AMDGPU_TARGETS_COMPAT is a typo or missing.  Check if it is placed before \`inherit rocm\`"
 		return
 	fi
 	local t="${x_targets_compat}[@]"
@@ -106,6 +106,7 @@ get_rocm_usedep() {
                 return
         fi
         if [[ -z "${!t2}" ]] ; then
+eerror "QA:  AMDGPU_TARGETS_COMPAT is a typo or missing.  Check if it is placed before \`inherit rocm\`"
 # Dep does not contain GPU target.
                 return
         fi

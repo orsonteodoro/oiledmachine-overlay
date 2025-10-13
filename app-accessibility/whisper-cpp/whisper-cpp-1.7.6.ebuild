@@ -9,6 +9,18 @@ EAPI=8
 # CUDA:  https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/.github/workflows/build.yml#L772
 #        https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/ggml/src/ggml-cuda/CMakeLists.txt#L8
 
+# Placeholder, TODO review
+AMDGPU_TARGETS_COMPAT=(
+	gfx908
+	gfx90a
+	gfx942
+	gfx1030
+	gfx1100
+	gfx1101
+	gfx1200
+	gfx1201
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -73,7 +85,7 @@ CPU_FLAGS_X86=(
 )
 ROCM_SLOTS=(
 	# 5.5 minimum
-	"6.2"
+	"6.4"
 )
 gen_rocm_iuse() {
 	local s
@@ -86,7 +98,7 @@ gen_rocm_iuse() {
 ROCM_IUSE=( $(gen_rocm_iuse) )
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
-	["6_2"]="${HIP_6_2_VERSION}"
+	["6_4"]="${HIP_6_4_VERSION}"
 )
 
 KEYWORDS="~amd64"
@@ -252,18 +264,25 @@ REQUIRED_USE="
 "
 gen_rocm_rdepend() {
 	# DEPENDs listed in llama/llama.go
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s1="${s/./_}"
-		local gcc_slot="HIP_${s1}_GCC_SLOT"
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s="0/${pv}"
+		local s1="${pv/./_}"
+		local ROCM_SLOT="${pv}"
 		echo "
-			rocm_${s/./_}? (
-				~dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
-				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
-				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCBLAS)
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+			rocm_${s1}? (
+				>=dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
+				dev-libs/rocm-comgr:=
+				>=dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				dev-libs/rocr-runtime:=
+				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
+				dev-util/hip:=
+				>=sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				sci-libs/hipBLAS:=
+				>=sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCBLAS)]
+				sci-libs/rocBLAS:=
+				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				sys-devel/llvm-roc:=
 			)
 		"
 	done
@@ -313,10 +332,10 @@ DOCS=( "AUTHORS" "README.md" )
 pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
-		if use rocm_6_2 ; then
-			export ROCM_SLOT="6.2"
-			export LLVM_SLOT=18
-			export ROCM_VERSION="${HIP_6_2_VERSION}"
+		if use rocm_6_4 ; then
+			export ROCM_SLOT="6.4"
+			export LLVM_SLOT=19
+			export ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 		rocm_pkg_setup
 	fi
