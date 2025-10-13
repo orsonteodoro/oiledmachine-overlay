@@ -24,7 +24,7 @@ LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
 IUSE+=" ebuild_revision_10"
 RDEPEND="
-	>=dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
 	dev-libs/rocr-runtime:=
 "
 DEPEND="
