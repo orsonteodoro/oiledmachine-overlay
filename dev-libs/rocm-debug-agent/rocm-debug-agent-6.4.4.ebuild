@@ -4,7 +4,7 @@
 EAPI=8
 
 CONFIG_CHECK="~HSA_AMD"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic linux-info rocm
@@ -22,15 +22,16 @@ LICENSE="NCSA-AMD"
 RESTRICT="
 	test
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="test ebuild_revision_8"
 RDEPEND="
-	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
 	dev-debug/systemtap
 	virtual/libelf
-	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	>=dev-libs/ROCdbgapi-${PV}:${SLOT}
+	dev-libs/ROCdbgapi:=
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
 "
 DEPEND="
 	${RDEPEND}
@@ -39,11 +40,11 @@ BDEPEND="
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.8.0
 	test? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}
+		>=dev-util/hip-${PV}:${SLOT}
+		dev-util/hip:=
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
