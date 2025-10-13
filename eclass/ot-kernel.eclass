@@ -2589,8 +2589,8 @@ ot-kernel_compiler_not_found() {
 eerror
 eerror "These are the required slot ranges.  Either choose..."
 eerror
-eerror "Available Clang slots:  ${LLVM_COMPAT[@]/llvm_compat_}"
-eerror "Available GCC slots:  ${GCC_COMPAT[@]/gcc_compat_}"
+eerror "Available Clang slots:  ${LLVM_COMPAT[@]/llvm_slot_}"
+eerror "Available GCC slots:  ${GCC_COMPAT[@]/gcc_slot_}"
 eerror
 eerror "You should re-emerge the one of the allowed compiler slots."
 eerror
