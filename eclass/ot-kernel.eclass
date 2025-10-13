@@ -5041,16 +5041,7 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 # @DESCRIPTION:
 # Sets the kernel config using the compiler toolchain
 ot-kernel_set_kconfig_compiler_toolchain() {
-	if \
-		( \
-		   ( has cfi ${IUSE_EFFECTIVE} && use cfi && _has_security_critical_type "cfi" ) \
-		|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ) \
-		|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
-		|| ( has clang ${IUSE_EFFECTIVE} && use clang && ot-kernel_use clang) \
-		) \
-		&& ! tc-is-cross-compiler \
-		&& is_clang_ready \
-	; then
+	if ot-kernel_use clang ; then
 einfo "Using Clang ${llvm_slot}"
 		if ! ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" ; then
 eerror "llvm-core/llvm:${llvm_slot} is missing"
@@ -14259,20 +14250,25 @@ einfo "Setting up the build toolchain"
 		)
 	fi
 
+	if tc-is-cross-compiler && ot-kernel_use clang ; then
+eerror "OT_KERNEL_USE must not contain clang when cross compiling."
+		die
+	fi
+
+	if tc-is-cross-compiler && tc-is-clang ; then
+eerror "CC/CC must not contain references to clang when cross compiling."
+		die
+	fi
+
+	if ot-kernel_use clang && ! use clang ; then
+eerror "OT_KERNEL_USE must not contain clang when USE clang is disabled."
+		die
+	fi
+
 	# tresor is broken with clang?  puts missing.
 	# ld.lld: error: undefined symbol: puts
 
-#			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
-	if \
-		( \
-			   ( has cfi ${IUSE_EFFECTIVE} && use cfi && _has_security_critical_type "cfi" ) \
-			|| ( has kcfi ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ) \
-			|| ( has lto ${IUSE_EFFECTIVE} && use lto && ot-kernel_use lto ) \
-			|| ( has clang ${IUSE_EFFECTIVE} && use clang && ot-kernel_use clang ) \
-		) \
-		&& ! tc-is-cross-compiler \
-		&& is_clang_ready \
-	; then
+	if ot-kernel_use clang ; then
 		if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor ; then
 # Ask to disable to remove clang patches or force GCC PGO.
 eerror
@@ -14317,6 +14313,7 @@ einfo "PATH=${PATH} (before)"
 einfo "PATH=${PATH} (after)"
 	else
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
+einfo "Using GCC ${gcc_slot}"
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
 			"CXX=${CHOST}-g++-${gcc_slot}"
@@ -14359,7 +14356,9 @@ einfo
 	strip-unsupported-flags
 
 	# Verify requirements
+einfo "CC:  |${CC}|"
 	if ot-kernel_use clang ; then
+einfo "DEBUG:  1"
 		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
 		local s=$(clang-major-version)
@@ -14372,9 +14371,15 @@ eerror "You must switch Clang to <= ${_llvm_max_slot}"
 			die
 		fi
 	else
+einfo "DEBUG:  2"
+# Prevent gcc-major-version to return 4 when CC is empty.
+ewarn "CC is empty"
 		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
 		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
 		local s=$(gcc-major-version)
+einfo "DEBUG s:  ${s}"
+einfo "DEBUG _gcc_min_slot:  ${_gcc_min_slot}"
+einfo "DEBUG _gcc_max_slot:  ${_gcc_max_slot}"
 		if ver_test "${s}" "-lt" "${_gcc_min_slot}" ; then
 eerror "You must switch GCC to >= ${_gcc_min_slot}"
 			die
