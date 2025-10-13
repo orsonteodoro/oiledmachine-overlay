@@ -24,11 +24,10 @@ AMDGPU_TARGETS_COMPAT=(
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=(
-	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
 	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
 	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -57,7 +56,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="+client cuda +opencl +openmp +rocm ebuild_revision_18"
 REQUIRED_USE="
 	client? (
@@ -76,31 +75,32 @@ RDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_CLANG_DEPEND}
 	>=dev-cpp/msgpack-cxx-6.0.0
-	dev-lang/python-exec:rocm-${ROCM_SLOT}
+	dev-lang/python-exec:0/rocm-${ROCM_SLOT}
+	dev-lang/python-exec:=
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP},cuda?,numa,rocm?]
+	~dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,numa,rocm?]
 	dev-util/hip:=
 	client? (
 		dev-libs/boost[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
-		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		~dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		~dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-comgr:=
-		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}[${LIBSTDCXX_USEDEP}]
+		~dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocr-runtime:=
 		opencl? (
 			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 		)
 		openmp? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 			sys-libs/llvm-roc-libomp:=
 		)
 	)
@@ -119,7 +119,6 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
-	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -158,15 +157,6 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_hipcc
-
-	if ver_test $(gcc-major-version) -ne "13" ; then
-ewarn
-ewarn "GCC 13 may be required to build ${PN}.  If configure test failure, do"
-ewarn
-ewarn "eselect gcc set x86_64-pc-linux-gnu-13"
-ewarn "source /etc/profile"
-ewarn
-	fi
 
 	if use rocm ; then
 		append-ldflags \

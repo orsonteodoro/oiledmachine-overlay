@@ -152,7 +152,7 @@ RDEPEND="
 		virtual/kfd:=
 	)
 	math? (
-		>=dev-util/Tensile-${PV}:${SLOT}[$(get_rocm_usedep TENSILE)]
+		>=dev-util/Tensile-7.0.0:${SLOT}[$(get_rocm_usedep TENSILE)]
 		dev-util/Tensile:=
 		>=sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
 		sci-libs/hipBLAS:=

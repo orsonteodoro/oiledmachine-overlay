@@ -8,8 +8,8 @@ inherit hip-versions
 LLVM_SLOT=18
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
 PYTHON_COMPAT=( "python3_12" )
-ROCM_SLOT="6.2"
-ROCM_VERSION="${HIP_6_2_VERSION}"
+ROCM_SLOT="6.4"
+ROCM_VERSION="${HIP_6_4_VERSION}"
 
 inherit python-any-r1 rocm
 
@@ -25,7 +25,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="rocm-${ROCM_SLOT}/${ROCM_VERSION}"
+SLOT="0/rocm-${ROCM_SLOT}"
 IUSE="
 ${_PYTHON_ALL_IMPLS[@]/#/python_targets_} +native-symlinks test
 ebuild_revision_2
