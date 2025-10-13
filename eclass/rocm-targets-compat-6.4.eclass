@@ -112,13 +112,19 @@ COMPOSABLE_KERNEL_6_4_AMDGPU_TARGETS_COMPAT=(
 COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP=$(gen_x_usedep "COMPOSABLE_KERNEL_6_4_AMDGPU_TARGETS_COMPAT")
 
 HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT=(
+# Last update: 6.4.4
+	gfx908_xnack_minus
+	gfx908_xnack_plus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
-	gfx940
-	gfx941
 	gfx942
 	gfx1100
 	gfx1101
+	gfx1103
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 HIPBLASLT_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT")
 
