@@ -55,8 +55,6 @@ DEPEND="
 	${RDEPEND}
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
 	dev-libs/rocm-device-libs:=
-	>=dev-libs/roct-thunk-interface-${PV}:${SLOT}
-	dev-libs/roct-thunk-interface:=
 "
 # vim-core is needed for "xxd"
 BDEPEND="
