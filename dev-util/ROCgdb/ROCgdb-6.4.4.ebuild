@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -84,7 +84,7 @@ LICENSE="
 # ZLIB - zlib/contrib/puff/puff.h
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="ebuild_revision_10"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -101,7 +101,8 @@ RDEPEND="
 	sys-devel/gcc
 	sys-libs/ncurses
 	virtual/libc
-	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
+	>=dev-libs/ROCdbgapi-${PV}:${SLOT}
+	dev-libs/ROCdbgapi:=
 "
 DEPEND="
 	${RDEPEND}
