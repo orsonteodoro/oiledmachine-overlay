@@ -7,7 +7,7 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -40,7 +40,7 @@ LICENSE="
 # MIT - third_party/shared_mutex/LICENSE
 # NCSA-AMD - src/rocm_smi.cc
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE=" ebuild_revision_10"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -49,9 +49,9 @@ RDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
 	|| (
-		virtual/kfd-ub:6.2
-		virtual/kfd:6.1
-		virtual/kfd-lb:6.0
+		virtual/kfd-ub:6.4
+		virtual/kfd:6.3
+		virtual/kfd-lb:6.2
 	)
 "
 BDEPEND="
@@ -60,7 +60,6 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
