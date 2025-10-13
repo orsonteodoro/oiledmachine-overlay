@@ -3474,12 +3474,6 @@ ewarn "Found gcc error"
 ewarn "Found library error"
 		has_error=1
 	fi
-	if CXX=g++-${gcc_slot} test-flags-CXX ${CXX_STD} >/dev/null 2>&1 ; then
-		:
-	else
-ewarn "Found unsupported ${CXX_STD} with g++-${gcc_slot}"
-		has_error=1
-	fi
 	if (( ${has_error} == 1 )) ; then
 ewarn
 ewarn "Found missing symbols in either in gcc or one of the libraries it is using."
