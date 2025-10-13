@@ -14162,6 +14162,7 @@ eerror
 		fi
 
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
+		local path_config="${BUILD_DIR}/.config"
 		cd "${BUILD_DIR}" || die
 
 		local gcc_slot=$(get_gcc_slot)
@@ -14378,7 +14379,7 @@ eerror "You must switch Clang to <= ${_llvm_max_slot}"
 eerror "You must switch GCC to >= ${_gcc_min_slot}"
 			die
 		fi
-		if ver_test "${s}" "-gt" "${_llvm_min_slot}" ; then
+		if ver_test "${s}" "-gt" "${_gcc_min_slot}" ; then
 eerror "You must switch GCC to <= ${_llvm_max_slot}"
 			die
 		fi
