@@ -179,22 +179,23 @@ KINETO_COMMIT="d9753139d181b9ff42872465aac0e5d3018be415"
 LIBNOP_COMMIT="910b55815be16109f04f4180e9adee14fb4ce281" # tensorpipe dep
 LIBUV_COMMIT="1dff88e5161cba5c59276d2070d2e304e4dcb242" # tensorpipe dep
 LLVM_COMPAT=(
-	18 17 # ROCm slots
+	19 # ROCm slots
+	18 17 # SIMD slots
 	15 12 10 9 # Upstream build.sh, pull.yml
 )
 LLVM_COMPAT_ARM_BF16=(
-	18 17
+	19 18 17
 	15 12
 )
 LLVM_COMPAT_RISCV_RVV=(
-	18
+	19 18
 )
 LLVM_COMPAT_S390_Z15=(
-	18 17
+	19 18 17
 	15 12 10
 )
 LLVM_COMPAT_X86_AMX=(
-	18 17
+	19 18 17
 	15 12
 )
 MIMALLOC_COMMIT="b66e3214d8a104669c2ec05ae91ebc26a8f5ab78"
@@ -225,8 +226,7 @@ PYTHON_COMPAT=( "python3_"{11..12} ) # Upstream only allows <=3.12
 inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/docker/build.sh#L190
-	"${HIP_6_2_VERSION}"
-	"${HIP_6_1_VERSION}"
+	"${HIP_6_4_VERSION}" # Placeholder
 )
 gen_rocm_slots() {
 	local s
@@ -532,8 +532,7 @@ REQUIRED_USE="
 	)
 	amdgpu_targets_gfx942? (
 		|| (
-			rocm_6_2
-			rocm_6_1
+			rocm_6_4
 		)
 	)
 	arm? (
@@ -731,11 +730,8 @@ REQUIRED_USE="
 			${ROCM_SLOTS2[@]}
 		)
 	)
-	rocm_6_2? (
-		llvm_slot_18
-	)
-	rocm_6_1? (
-		llvm_slot_17
+	rocm_6_4? (
+		llvm_slot_19
 	)
 	tensorpipe? (
 		distributed
@@ -744,39 +740,61 @@ REQUIRED_USE="
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s=$(ver_cut 1-2 ${pv})
-		local u="${s}"
+		local s="0/"$(ver_cut 1-2 ${pv})
+		local u=$(ver_cut 1-2 ${pv})
+		local ROCM_SLOT="${u}"
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				~dev-libs/rocm-comgr-${pv}:${s}
-				~dev-libs/rocm-core-${pv}:${s}
-				~dev-libs/rocr-runtime-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
-				~sci-libs/hipBLAS-${pv}:${s}[rocm]
-				~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
-				~sci-libs/hipCUB-${pv}:${s}[rocm]
-				~sci-libs/hipRAND-${pv}:${s}[rocm]
-				~sci-libs/hipSOLVER-${pv}:${s}[rocm]
-				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-				~sci-libs/hipFFT-${pv}:${s}[rocm]
-				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
-				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
-				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
-				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
-				~sci-libs/rocPRIM-${pv}:${s}$(get_rocm_usedep ROCPRIM)
-				~sci-libs/rocThrust-${pv}:${s}$(get_rocm_usedep ROCTHRUST)
+				>=dev-libs/rocm-comgr-${pv}:${s}
+				dev-libs/rocm-comgr:=
+				>=dev-libs/rocm-core-${pv}:${s}
+				dev-libs/rocm-core:=
+				>=dev-libs/rocr-runtime-${pv}:${s}
+				dev-libs/rocr-runtime:=
+				>=dev-util/hip-${pv}:${s}[rocm]
+				dev-util/hip:=
+				>=sci-libs/hipBLAS-${pv}:${s}[rocm]
+				sci-libs/hipBLAS:=
+				>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+				sci-libs/hipBLASLt:=
+				>=sci-libs/hipCUB-${pv}:${s}[rocm]
+				sci-libs/hipCUB:=
+				>=sci-libs/hipRAND-${pv}:${s}[rocm]
+				sci-libs/hipRAND:=
+				>=sci-libs/hipSOLVER-${pv}:${s}[rocm]
+				sci-libs/hipSOLVER:=
+				>=sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				sci-libs/hipSPARSE:=
+				>=sci-libs/hipFFT-${pv}:${s}[rocm]
+				sci-libs/hipFFT:=
+				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
+				sci-libs/miopen:=
+				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
+				sci-libs/rocBLAS:=
+				>=sci-libs/rocFFT-${pv}:${s}[$(get_rocm_usedep ROCFFT)]
+				sci-libs/rocFFT:=
+				>=sci-libs/rocRAND-${pv}:${s}[$(get_rocm_usedep ROCRAND)]
+				sci-libs/rocRAND:=
+				>=sci-libs/rocPRIM-${pv}:${s}[$(get_rocm_usedep ROCPRIM)]
+				sci-libs/rocPRIM:=
+				>=sci-libs/rocThrust-${pv}:${s}[$(get_rocm_usedep ROCTHRUST)]
+				sci-libs/rocThrust:=
 				magma? (
-					=sci-libs/magma-2.8*:${s}$(get_rocm_usedep MAGMA_2_8)
+					=sci-libs/magma-2.8*:${s}[$(get_rocm_usedep MAGMA_2_8)]
+					sci-libs/magma:=
 				)
 				openmp? (
-					~dev-libs/llvm-roc-libomp-${pv}:${s}$(get_rocm_usedep LLVM_ROC_LIBOMP)
+					>=dev-libs/llvm-roc-libomp-${pv}:${s}[$(get_rocm_usedep LLVM_ROC_LIBOMP)]
+					dev-libs/llvm-roc-libomp:=
 				)
 				rccl? (
-					~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
+					>=dev-libs/rccl-${pv}:${s}[$(get_rocm_usedep RCCL)]
+					dev-libs/rccl:=
 				)
 				roctracer? (
-					~dev-util/roctracer-${pv}:${s}
+					>=dev-util/roctracer-${pv}:${s}
+					dev-util/roctracer:=
 				)
 			)
 		"
@@ -1136,15 +1154,10 @@ pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	warn_untested_gpu
-	if use rocm_6_2 ; then
-		LLVM_SLOT="18"
+	if use rocm_6_4 ; then
+		LLVM_SLOT="19"
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		ROCM_SLOT="6.2"
-		rocm_pkg_setup
-	elif use rocm_6_1 ; then
-		LLVM_SLOT="17"
-		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		ROCM_SLOT="6.1"
+		ROCM_SLOT="6.4"
 		rocm_pkg_setup
 	else
 		local s
