@@ -30,12 +30,13 @@ LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
 IUSE+=" ebuild_revision_7"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
 	sys-apps/pciutils
 	|| (
-		virtual/kfd-ub:6.2
-		virtual/kfd:6.1
-		virtual/kfd-lb:6.0
+		virtual/kfd-ub:7.0
+		virtual/kfd:6.4
+		virtual/kfd-lb:6.3
 	)
 "
 DEPEND="

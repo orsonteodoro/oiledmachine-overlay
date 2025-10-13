@@ -128,9 +128,9 @@ RDEPEND="
 	)
 	kernel-driver? (
 		|| (
-			virtual/kfd-ub:6.2
-			virtual/kfd:6.1
-			virtual/kfd-lb:6.0
+			virtual/kfd-ub:6.4
+			virtual/kfd:6.3
+			virtual/kfd-lb:6.2
 		)
 	)
 	math? (
