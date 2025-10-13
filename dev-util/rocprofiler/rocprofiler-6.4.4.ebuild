@@ -40,7 +40,7 @@ AMDGPU_UNTESTED_TARGETS=(
 )
 CMAKE_BUILD_TYPE="Debug"
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -67,7 +67,7 @@ LICENSE="
 # BSD-2 - test/util/hsa_rsrc_factory.h
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE=" plugins samples test ebuild_revision_17"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -77,12 +77,18 @@ RDEPEND="
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
 	!dev-util/rocprofiler:0
-	~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
-	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
-	~dev-util/roctracer-${PV}:${ROCM_SLOT}
+	>=dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
+	dev-libs/hsa-amd-aqlprofile:=
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	dev-libs/rocm-comgr:=
+	>=dev-libs/rocm-core-${PV}:${SLOT}
+	dev-libs/rocm-core:=
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
+	>=dev-util/roctracer-${PV}:${SLOT}
+	dev-util/roctracer:=
 	plugins? (
 		sys-apps/systemd
 	)
@@ -99,14 +105,15 @@ BDEPEND="
 		dev-python/cppheaderparser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
-	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
+	>=sys-devel/llvm-roc-symlinks-${PV}:${SLOT}
+	sys-devel/llvm-roc-symlinks:=
 	test? (
 		sys-devel/gcc[sanitize]
-		~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
+		>=dev-libs/ROCdbgapi-${PV}:${SLOT}
+		dev-libs/ROCdbgapi:=
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-6.0.2-tests-as-cmake-options.patch"
 )
 
