@@ -44,8 +44,12 @@ IUSE="
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	dev-libs/elfutils
-	dev-libs/roct-thunk-interface:${SLOT}
-	dev-libs/roct-thunk-interface:=
+	|| (
+		>=virtual/kfd-7.0:0/7.0
+		>=virtual/kfd-6.4:0/6.4
+		>=virtual/kfd-6.3:0/6.3
+	)
+	virtual/kfd:=
 "
 DEPEND="
 	${RDEPEND}
