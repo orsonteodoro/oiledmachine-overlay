@@ -49,6 +49,10 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_90
 )
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
@@ -56,7 +60,7 @@ GCC_COMPAT=(
 FORTRAN_STANDARD="77 90"
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit check-compiler-switch cmake flag-o-matic fortran-2 libstdcxx-slot python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	inherit rocm
 else

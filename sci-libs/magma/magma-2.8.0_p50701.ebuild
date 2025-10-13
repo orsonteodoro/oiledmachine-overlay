@@ -5,6 +5,7 @@ EAPI=8
 
 inherit hip-versions
 
+CXX_STANDARD=11
 LLVM_SLOT=17
 MAGMA_ROCM=1
 ROCM_SLOT="5.7"
