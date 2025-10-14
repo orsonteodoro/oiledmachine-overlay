@@ -1,0 +1,15 @@
+--- a/CMakeLists.txt.orig	2025-10-13 18:30:41.909474955 -0700
++++ b/CMakeLists.txt	2025-10-13 18:31:06.137551706 -0700
+@@ -124,12 +124,6 @@ option(MIOPEN_STRIP_SYMBOLS "Strip symbo
+ option(MIOPEN_WORKAROUND_USE_BOOST_FILESYSTEM "Workaround: Use boost::filesystem instead of std::filesystem" OFF)
+ message(STATUS "MIOPEN_WORKAROUND_USE_BOOST_FILESYSTEM ${MIOPEN_WORKAROUND_USE_BOOST_FILESYSTEM}")
+ 
+-# Strip symbols for release
+-if(MIOPEN_STRIP_SYMBOLS AND NOT WIN32 AND NOT APPLE)
+-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+-endif()
+-
+ rocm_setup_version(VERSION 3.5.0)
+ 
+ list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )

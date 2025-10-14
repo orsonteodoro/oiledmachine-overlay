@@ -32,7 +32,7 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx1030
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-LLVM_SLOT=18
+LLVM_SLOT=19
 inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
@@ -59,7 +59,10 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild_revision_15"
+IUSE="
+comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
+ebuild_revision_16
+"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -145,7 +148,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-disable-no-inline-boost.patch" # Build time testing
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-6.2.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
-	"${FILESDIR}/${PN}-6.4.4-no-strip.patch"
+	"${FILESDIR}/${PN}-7.0.2-no-strip.patch"
 #	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
 #	"${FILESDIR}/${PN}-6.1.2-bzcat-path.patch"

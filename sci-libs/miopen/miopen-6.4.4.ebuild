@@ -33,7 +33,7 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx1030
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-LLVM_SLOT=18
+LLVM_SLOT=19
 inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
@@ -60,7 +60,10 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild_revision_15"
+IUSE="
+comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
+ebuild_revision_16
+"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
