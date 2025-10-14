@@ -1,0 +1,25 @@
+diff '--color=auto' -urp hipamd.orig/src/hiprtc/hiprtc.cpp hipamd/src/hiprtc/hiprtc.cpp
+--- hipamd.orig/src/hiprtc/hiprtc.cpp	2025-07-07 10:12:57.000000000 -0700
++++ hipamd/src/hiprtc/hiprtc.cpp	2025-10-13 21:54:20.032523659 -0700
+@@ -21,6 +21,7 @@ THE SOFTWARE.
+ */
+ 
+ #include "../hip_comgr_helper.hpp"
++#include <amd_comgr/amd_comgr.h>
+ #include <hip/hiprtc.h>
+ #include "hiprtcInternal.hpp"
+ 
+Only in hipamd/src/hiprtc: hiprtc.cpp.orig
+Only in hipamd/src/hiprtc: hiprtc.cpp.rej
+diff '--color=auto' -urp hipamd.orig/src/hiprtc/hiprtcInternal.hpp hipamd/src/hiprtc/hiprtcInternal.hpp
+--- hipamd.orig/src/hiprtc/hiprtcInternal.hpp	2025-07-07 10:12:57.000000000 -0700
++++ hipamd/src/hiprtc/hiprtcInternal.hpp	2025-10-13 21:53:54.879774647 -0700
+@@ -25,6 +25,7 @@ THE SOFTWARE.
+ #include <hip/hip_runtime.h>
+ #include <hip/hiprtc.h>
+ #include <hip/hip_version.h>
++#include "device/comgrctx.hpp"
+ 
+ 
+ #ifdef HIPRTC_USE_EXCEPTIONS
+Only in hipamd/src/hiprtc: hiprtcInternal.hpp.orig

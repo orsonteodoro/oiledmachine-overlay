@@ -21,7 +21,7 @@ inherit check-compiler-switch cmake docs flag-o-matic libstdcxx-slot prefix pyth
 KEYWORDS="~amd64"
 S="${WORKDIR}/clr-rocm-${PV}/hipamd"
 CLR_S="${WORKDIR}/clr-rocm-${PV}"
-HIP_S="${WORKDIR}/HIP-rocm-${PV}"
+HIP_S="${WORKDIR}/hip-rocm-${PV}"
 HIPCC_S="${WORKDIR}/llvm-project-rocm-${PV}/amd/hipcc"
 OCL_S="${WORKDIR}/clr-rocm-${PV}/opencl"
 ROCCLR_S="${WORKDIR}/clr-rocm-${PV}/rocclr"
@@ -173,18 +173,18 @@ HIPAMD_PATCHES=(
 #	"${FILESDIR}/${PN}-5.7.0-DisableTest.patch"
 	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
 	"${FILESDIR}/${PN}-5.0.2-set-build-id.patch"
-	"${FILESDIR}/${PN}-5.7.0-remove-cmake-doxygen-commands.patch"
-	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
-	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
-	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
+	"${FILESDIR}/${PN}-6.4.4-remove-cmake-doxygen-commands.patch"
+	"${FILESDIR}/${PN}-7.0.2-disable-Werror.patch"
+#	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
+#	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-6.2.0-hip_fatbin-header.patch"
 	"${FILESDIR}/hipamd-6.2.0-hiprtc-includes-path.patch"
-	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
+	"${FILESDIR}/hipamd-6.4.4-hiprtc-header.patch"
 	"${FILESDIR}/hipamd-6.2.0-fix-install-cmake-files.patch"
 	"${FILESDIR}/hipamd-6.2.0-link-hsa-runtime64.patch"
 )
 HIPCC_PATCHES=(
-	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
+#	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
 )
 OCL_PATCHES=(
 )
@@ -223,7 +223,7 @@ src_prepare() {
 		|| die
 
 	pushd "${HIPCC_S}" >/dev/null 2>&1 || die
-		eapply "${HIPCC_PATCHES[@]}"
+		#eapply "${HIPCC_PATCHES[@]}"
 		cp \
 			$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
 			"${HIPCC_S}/bin/hipvars.pm" \
