@@ -29,7 +29,7 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="debug ebuild_revision_12"
+IUSE="debug ebuild_revision_13"
 RDEPEND="
 	|| (
 		${ROCM_GCC_DEPEND}
@@ -85,7 +85,17 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	export FC="${CHOST}-gfortran-${HIP_7_0_GCC_SLOT}"
+	local gcc_slot=""
+	if has_version "dev-util/hip:${SLOT}[gcc_slot_12_5]" ; then
+		gcc_slot="12"
+	elif has_version "dev-util/hip:${SLOT}[gcc_slot_13_4]" ; then
+		gcc_slot="13"
+	else
+eerror "Set the gcc_slot in dev-util/hip"
+		die
+	fi
+
+	export FC="${CHOST}-gfortran-${gcc_slot}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
