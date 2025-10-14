@@ -6,14 +6,18 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx906
+	gfx908
+	gfx90a
+	gfx942
+	gfx950
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 CUDA_TARGETS_COMPAT=(
 # Based on 5.6.0
@@ -27,7 +31,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_86
 )
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -95,15 +99,18 @@ REQUIRED_USE="
 "
 LICENSE="MIT"
 RESTRICT="test mirror" # The distro mirrored copy is wrong
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[${ROCFFT_6_2_AMDGPU_USEDEP},rocm]
-		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_6_2_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocFFT-${PV}:${ROCM_SLOT}[${ROCFFT_7_0_AMDGPU_USEDEP},rocm]
+		sci-libs/rocFFT:=
+		>=sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_7_0_AMDGPU_USEDEP},rocm]
+		sci-libs/rocRAND:=
 	)
 "
 DEPEND="
@@ -112,11 +119,11 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	dev-build/rocm-cmake:=
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-5.4.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

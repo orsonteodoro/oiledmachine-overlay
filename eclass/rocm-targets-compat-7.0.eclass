@@ -160,16 +160,21 @@ HIPCUB_7_0_AMDGPU_TARGETS_COMPAT=(
 HIPCUB_7_0_AMDGPU_USEDEP=$(gen_x_usedep "HIPCUB_7_0_AMDGPU_TARGETS_COMPAT")
 
 HIPFFT_7_0_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  7.0.2
 	gfx803
 	gfx900
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx906
+	gfx908
+	gfx90a
+	gfx942
+	gfx950
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 HIPFFT_7_0_AMDGPU_USEDEP=$(gen_x_usedep "HIPFFT_7_0_AMDGPU_TARGETS_COMPAT")
 
