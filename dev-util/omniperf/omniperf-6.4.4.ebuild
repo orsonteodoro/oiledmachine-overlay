@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -14,7 +14,7 @@ if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm/omniperf/"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Missing dependencies
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/rocprofiler-compute-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCm/omniperf/archive/refs/tags/rocm-${PV}.tar.gz
@@ -71,8 +71,7 @@ BDEPEND="
 	>=dev-build/cmake-3.19
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-6.2.0-conditional-version-sha-install.patch"
+	"${FILESDIR}/${PN}-6.4.4-conditional-version-sha-install.patch"
 )
 DOCS=( "AUTHORS" "CHANGES" )
 

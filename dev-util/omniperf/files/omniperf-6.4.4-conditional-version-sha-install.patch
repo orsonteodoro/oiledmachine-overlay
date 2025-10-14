@@ -1,0 +1,16 @@
+--- a/CMakeLists.txt.orig	2025-07-02 13:35:18.000000000 -0700
++++ b/CMakeLists.txt	2025-10-13 19:19:47.505898507 -0700
+@@ -299,11 +299,13 @@ install(
+     DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
+     COMPONENT main)
+ # support files and version info
++if(${GIT_CLONE})
+ install(
+     FILES src/argparser.py src/config.py src/rocprof_compute_base.py src/roofline.py
+           VERSION VERSION.sha
+     DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
+     COMPONENT main)
++endif()
+ # src/rocprof_compute_analyze
+ install(
+     DIRECTORY src/rocprof_compute_analyze
