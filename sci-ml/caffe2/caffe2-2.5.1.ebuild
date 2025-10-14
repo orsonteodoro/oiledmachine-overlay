@@ -690,6 +690,12 @@ REQUIRED_USE="
 	gloo? (
 		distributed
 	)
+	magma? (
+		|| (
+			cuda
+			rocm
+		)
+	)
 	mpi? (
 		distributed
 	)
