@@ -38,7 +38,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-doc test ebuild_revision_6
+doc test ebuild_revision_8
 "
 REQUIRED_USE="
 "
@@ -203,7 +203,15 @@ src_configure() {
 }
 
 src_compile() {
-	local gcc_slot="${HIP_6_2_GCC_SLOT}"
+	local gcc_slot=""
+	if has_version "dev-util/hip:${SLOT}[gcc_slot_12_5]" ; then
+		gcc_slot="12"
+	elif has_version "dev-util/hip:${SLOT}[gcc_slot_13_4]" ; then
+		gcc_slot="13"
+	else
+eerror "Set the gcc_slot in dev-util/hip"
+		die
+	fi
 	gcc_slot="${gcc_slot%%.*}"
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
