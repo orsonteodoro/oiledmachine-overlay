@@ -4,7 +4,7 @@
 EAPI=8
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -30,7 +30,7 @@ LICENSE="
 # all-rights-reserved MIT - CMakeLists.txt
 # MIT - LICENSE.md
 # The distro's MIT license template does not have all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="test cuda +rocm ebuild_revision_7"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -45,15 +45,19 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}[rocm(+)]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
+		sci-libs/rocBLAS:=
+		>=sci-libs/rocSOLVER-${PV}:${SLOT}[rocm(+)]
+		sci-libs/rocSOLVER:=
 
-		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		>=dev-util/rocm-smi-${PV}:${SLOT}
+		dev-util/rocm-smi:=
 	)
 	virtual/blas
 "
@@ -63,13 +67,13 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.7
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		dev-cpp/gtest
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
