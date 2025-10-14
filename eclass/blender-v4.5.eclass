@@ -912,7 +912,7 @@ RDEPEND+="
 	)
 	hiprt? (
 		rocm_6_4? (
-			=media-libs/HIPRT-2.5*:6.4[rocm]
+			>=media-libs/HIPRT-2.5:0/6.4[rocm]
 		)
 		media-libs/hiprt:=
 	)
@@ -1020,11 +1020,11 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_6_4? (
-			>=dev-libs/rocm-opencl-runtime-${HIP_6_4_VERSION}:6.4
+			>=dev-libs/rocm-opencl-runtime-${HIP_6_4_VERSION}:0/6.4
 			dev-libs/rocm-opencl-runtime:=
-			>=dev-util/hip-${HIP_6_4_VERSION}:6.4[${LIBSTDCXX_USEDEP},rocm]
+			>=dev-util/hip-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP},rocm]
 			dev-util/hip:=
-			>=sys-libs/llvm-roc-libomp-${HIP_6_4_VERSION}:6.4
+			>=sys-libs/llvm-roc-libomp-${HIP_6_4_VERSION}:0/6.4
 			sys-libs/llvm-roc-libomp:=
 		)
 	)

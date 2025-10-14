@@ -3,6 +3,10 @@
 
 EAPI=8
 
+MY_PV="3.0.4fea77f"
+
+# Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
+
 # No CMAKE arg yet
 _AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
@@ -13,8 +17,6 @@ _AMDGPU_TARGETS_COMPAT=(
 	"gfx909"
 	"gfx90a"
 	"gfx90c"
-	"gfx940"
-	"gfx941"
 	"gfx942"
 	"gfx1010"
 	"gfx1011"
@@ -33,14 +35,18 @@ _AMDGPU_TARGETS_COMPAT=(
 	"gfx1103"
 	"gfx1150"
 	"gfx1151"
+	"gfx1152"
+	"gfx1153"
+	"gfx1200"
+	"gfx1201"
 )
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=16
-ROCM_SLOT="5.5"
+LLVM_SLOT=19
+ROCM_SLOT="7.0"
 inherit hip-versions
-ROCM_VERSION="${HIP_5_5_VERSION}"
-EGIT_COMMIT="4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0"
+ROCM_VERSION="${HIP_7_0_VERSION}"
+EGIT_COMMIT="6441305253f711bd2b7121f317a799d0b740e2b7"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
 
@@ -73,7 +79,7 @@ LICENSE="
 # license.txt - ( all-rights-reserved MIT ) Apache-2.0 BSD MIT public-domain || ( Apache-2.0-with-LLVM-exceptions GPL-3 )
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -110,8 +116,6 @@ BDEPEND="
 	dev-util/premake:5
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.3_p20240717-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-2.3_p20240717-cuda-option.patch"
 	"${FILESDIR}/${PN}-2.3_p20240717-install-paths.patch"
 	"${FILESDIR}/${PN}-2.3_p20240717-bakekernel.patch"
 )
@@ -180,18 +184,18 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	export HIP_PATH="/opt/rocm-${ROCM_VERSION}"
+	export HIP_PATH="/opt/rocm"
 	local mycmakeargs=(
 		-DBITCODE=$(usex bitcode)
 		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
-		-DCMAKE_INSTALL_PREFIX="/opt/rocm-${ROCM_VERSION}"
+		-DCMAKE_INSTALL_PREFIX="/opt/rocm"
+		-DFORCE_DISABLE_CUDA=$(usex !cuda)
 		-DGENERATE_BAKE_KERNEL=$(usex bake-kernels)
-		-DHIP_PATH="/opt/rocm-${ROCM_VERSION}"
+		-DHIP_PATH="/opt/rocm"
 		-DHIPRT_PREFER_HIP_5=ON
 		-DNO_ENCRYPT=$(usex !encrypt)
 		-DNO_UNITTEST=$(usex !test)
 		-DPRECOMPILE=$(usex precompile)
-		-DUSE_CUDA=$(usex cuda)
 	)
 	if ! use encrypt && ! use bake-kernels ; then
 		mycmakeargs+=(
@@ -227,12 +231,12 @@ src_install() {
 	einstalldocs
 	dodoc "license.txt"
 	rocm_mv_docs
-	insinto "/opt/rocm-${ROCM_VERSION}/share/${PN}"
+	insinto "/opt/rocm/share/${PN}"
 	doins "version.txt"
-	insinto "/opt/rocm-${ROCM_VERSION}/include/hiprt"
+	insinto "/opt/rocm/include/hiprt"
 	doins -r "hiprt/impl"
 	if ! use system-orochi ; then
-		insinto "/opt/rocm-${ROCM_VERSION}/include"
+		insinto "/opt/rocm/include"
 		doins -r "contrib/Orochi"
 	fi
 }
