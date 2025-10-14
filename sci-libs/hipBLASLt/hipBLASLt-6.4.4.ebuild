@@ -51,10 +51,10 @@ LICENSE="
 "
 # all-rights-reserved MIT - utilities/find_exact.py
 # MIT - LICENSE.md
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild_revision_13
+benchmark cuda +rocm +tensile ebuild_revision_14
 "
 gen_rocm_required_use() {
 	local x

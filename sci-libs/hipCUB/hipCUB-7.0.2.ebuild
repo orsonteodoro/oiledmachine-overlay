@@ -57,7 +57,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild_revision_7
+benchmark cuda +rocm test ebuild_revision_8
 "
 gen_cuda_required_use() {
 	local x
@@ -111,7 +111,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_6_4_AMDGPU_USEDEP},rocm?]
+		>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_7_0_AMDGPU_USEDEP},rocm?]
 		sci-libs/rocPRIM:=
 	)
 	test? (

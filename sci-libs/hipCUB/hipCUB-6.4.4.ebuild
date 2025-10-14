@@ -59,7 +59,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild_revision_7
+benchmark cuda +rocm test ebuild_revision_8
 "
 gen_cuda_required_use() {
 	local x
