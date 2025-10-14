@@ -90,7 +90,7 @@ ROCM_USE_LLVM_ROC=1
 
 inherit check-compiler-switch cmake flag-o-matic grpc-ver python-single-r1 rocm
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Update is WIP
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
 S_DEVICELIBS="${WORKDIR}/llvm-project-rocm-${PV}/amd/device-libs"
 S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
@@ -194,8 +194,10 @@ gen_grpc_rdepend() {
 	done
 }
 RDEPEND="
-	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
+	dev-libs/rocm-device-libs:=
+	>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
+	sys-devel/llvm-roc:=
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11*:=
 	)
@@ -268,7 +270,7 @@ RDEPEND="
 		)
 	)
 	llvm_targets_AMDGPU? (
-		dev-libs/roct-thunk-interface:${ROCM_SLOT}
+		dev-libs/roct-thunk-interface:${SLOT}
 		sys-process/numactl
 		x11-libs/libdrm[video_cards_amdgpu]
 	)
@@ -300,7 +302,7 @@ BDEPEND="
 	|| (
 		llvm-core/lld:${LLVM_SLOT}
 		(
-			>=sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+			>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
 			sys-devel/llvm-roc:=
 		)
 	)
