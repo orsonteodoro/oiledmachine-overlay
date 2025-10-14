@@ -29,9 +29,9 @@ _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
 
 # Cuda compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L64
-# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/clang/include/clang/Basic/Cuda.h
+# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L64
+# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -112,12 +112,12 @@ LICENSE="
 	public-domain
 	UoI-NCSA
 "
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-6.2.4/openmp/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-6.4.4/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
 RESTRICT="
 	strip
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 LLVM_TARGETS=(
 	AMDGPU
 	X86
@@ -299,7 +299,10 @@ BDEPEND="
 	)
 	|| (
 		llvm-core/lld:${LLVM_SLOT}
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+		(
+			>=sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+			sys-devel/llvm-roc:=
+		)
 	)
 "
 PATCHES=(
@@ -328,10 +331,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
-	popd >/dev/null 2>&1 || die
-
 	cd "${S_ROOT}" || die
 #	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-6.2.0-omp-tools-includes.patch"
@@ -340,22 +339,6 @@ src_prepare() {
 	cd "${S}" || die
 	cmake_src_prepare
 
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${S_ROOT}/openmp/libomptarget/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/hostexec/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/libm/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp"
-		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/tools/prep-libomptarget-bc/CMakeLists.txt"
-	)
 	rocm_src_prepare
 	if ! use llvm_targets_NVPTX ; then
 		sed -i \
