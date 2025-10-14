@@ -4,20 +4,24 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
-	gfx940
-	gfx941
 	gfx942
+	gfx942_xnack_plus
 	gfx1010
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo rocm
@@ -40,20 +44,24 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="+sparse test benchmark ebuild_revision_7"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
+# libfmt relaxed, upstream uses 7.1.3.  RDEPEND was previously =dev-libs/libfmt-8*.
 RDEPEND="
-	=dev-libs/libfmt-8*
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_2_AMDGPU_USEDEP},rocm]
+	>=dev-libs/libfmt-7.1.3
+	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	dev-util/hip:=
+	>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
+	sci-libs/rocBLAS:=
 	benchmark? (
 		virtual/blas
 	)
 	sparse? (
-		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[${ROCSPARSE_6_2_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCSPARSE_6_4_AMDGPU_USEDEP},rocm]
+		sci-libs/rocSPARSE:=
 	)
 "
 DEPEND="
@@ -61,7 +69,8 @@ DEPEND="
 "
 BDEPEND="
 	${HIPCC_DEPEND}
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		>=dev-build/cmake-3.13
 		dev-cpp/gtest
@@ -69,7 +78,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {

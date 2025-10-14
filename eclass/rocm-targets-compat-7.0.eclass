@@ -306,6 +306,23 @@ MIOPENKERNELS_7_0_AMDGPU_TARGETS_COMPAT=(
 )
 MIOPENKERNELS_7_0_AMDGPU_USEDEP=$(gen_x_usedep "MIOPENKERNELS_7_0_AMDGPU_TARGETS_COMPAT")
 
+ROCAL_7_0_AMDGPU_TARGETS_COMPAT=(
+# Last checked:  7.0.2
+	gfx908
+	gfx90a
+	gfx942
+	gfx950
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1200
+	gfx1201
+)
+ROCAL_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCAL_7_0_AMDGPU_TARGETS_COMPAT")
+
 ROCALUTION_7_0_AMDGPU_TARGETS_COMPAT=(
 # Last update:  7.0.2
 	gfx803
@@ -408,18 +425,25 @@ ROCRAND_7_0_AMDGPU_TARGETS_COMPAT=(
 ROCRAND_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCRAND_7_0_AMDGPU_TARGETS_COMPAT")
 
 ROCSOLVER_7_0_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  7.0.2
+	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
-	gfx940
-	gfx941
 	gfx942
-	gfx1010
-	gfx1030
+	gfx942_xnack_plus
+	gfx950
+	gfx950_xnack_plus
+	gfx10-1-generic
+	gfx10-3-generic
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 ROCSOLVER_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCSOLVER_7_0_AMDGPU_TARGETS_COMPAT")
 
