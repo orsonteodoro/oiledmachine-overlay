@@ -61,7 +61,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
+ai-kernel-tuning comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
 ebuild_revision_16
 "
 gen_amdgpu_required_use() {
@@ -99,11 +99,16 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-db/sqlite-3.17
-	>=dev-libs/boost-1.72
+	>=app-arch/zstd-1.4.5
+	>=dev-db/sqlite-3.49.1
+	>=dev-libs/boost-1.83
 	app-alternatives/bzip2
 	>=dev-util/hip-${PV}:${SLOT}
 	dev-util/hip:=
+	ai-kernel-tuning? (
+		>=dev-cpp/frugally-deep-0.15.21_p0
+		>=dev-cpp/eigen-3.4.0
+	)
 	comgr? (
 		>=dev-libs/rocm-comgr-${PV}:${SLOT}
 		dev-libs/rocm-comgr:=
@@ -132,7 +137,7 @@ DEPEND="
 	>=dev-libs/half-1.12.0:=
 	>=dev-cpp/eigen-3.4.0:3=
 	>=dev-cpp/frugally-deep-0.15.20:=
-	>=dev-cpp/nlohmann_json-3.10.4:=
+	>=dev-cpp/nlohmann_json-3.11.2:=
 "
 #	sys-devel/binutils[gold,plugins]
 BDEPEND="
@@ -141,7 +146,7 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	mlir? (
-		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
+		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[fat-librockcompiler(+)]
 		sci-libs/rocMLIR:=
 	)
 "

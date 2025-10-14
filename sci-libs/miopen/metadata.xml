@@ -16,6 +16,10 @@
     <name>Yiyang Wu</name>
   </maintainer>
   <use>
+    <flag name="ai-kernel-tuning">
+      Add AI heuristic as fallback for parameter prediction which would normally
+      be handled by pre-tuned optimal solution from a database.
+    </flag>
     <flag name="comgr">
       Use comgr to build either ASM or HIP RTC (Run Time Compilation) kernels.
     </flag>
