@@ -63,7 +63,6 @@ BDEPEND="
 	>=dev-build/cmake-3.7
 "
 PATCHES=(
-#	"${FILESDIR}/${PN}-6.2.0-link-hsakmt.patch"
 )
 
 pkg_setup() {
