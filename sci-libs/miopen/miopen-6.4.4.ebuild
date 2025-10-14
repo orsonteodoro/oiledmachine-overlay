@@ -61,7 +61,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-ai-kernel-tuning comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
++ai-kernel-tuning comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
 ebuild_revision_16
 "
 gen_amdgpu_required_use() {
@@ -257,6 +257,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX=$(realpath -m "${EPREFIX}/${EROCM_PATH}")
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
+		-DMIOPEN_ENABLE_AI_KERNEL_TUNING=$(usex ai-kernel-tuning ON OFF)
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
 		-DMIOPEN_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
