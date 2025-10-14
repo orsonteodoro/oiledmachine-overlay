@@ -6,9 +6,9 @@ EAPI=8
 
 inherit hip-versions
 
-LLVM_SLOT=16
-ROCM_SLOT="5.5"
-ROCM_VERSION="${HIP_5_5_VERSION}"
+LLVM_SLOT=19
+ROCM_SLOT="7.0"
+ROCM_VERSION="${HIP_7_0_VERSION}"
 
 inherit rocm
 
@@ -40,7 +40,7 @@ LICENSE="
 # MIT - LICENSE
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
+SLOT="0/${ROCM_SLOT}"
 RDEPEND="
 "
 DEPEND="
@@ -50,7 +50,6 @@ BDEPEND="
 	dev-util/premake:5
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.00-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -72,11 +71,11 @@ src_configure() {
 }
 
 src_compile() {
-	emake config=release
+	emake config="release"
 }
 
 src_install() {
-	insinto "/opt/rocm-${ROCM_VERSION}/include/${PN}"
+	insinto "/opt/rocm/include/${PN}"
 	doins -r *
 }
 
