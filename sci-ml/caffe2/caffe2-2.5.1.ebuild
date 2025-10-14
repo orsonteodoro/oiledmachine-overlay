@@ -917,7 +917,7 @@ RDEPEND="
 		sci-libs/magma[cuda?,rocm?]
 		sci-libs/magma:=
 		cuda? (
-			sci-libs/magma:0
+			sci-libs/magma:0/cuda
 		)
 	)
 	mpi? (
