@@ -59,7 +59,7 @@ LICENSE="
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild_revision_7
+ebuild_revision_8
 "
 gen_cuda_required_use() {
 	local x
@@ -101,15 +101,15 @@ LICENSE="MIT"
 RESTRICT="test mirror" # The distro mirrored copy is wrong
 SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	>=dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocFFT-${PV}:${ROCM_SLOT}[${ROCFFT_7_0_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocFFT-${PV}:${SLOT}[${ROCFFT_7_0_AMDGPU_USEDEP},rocm]
 		sci-libs/rocFFT:=
-		>=sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_7_0_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${ROCRAND_7_0_AMDGPU_USEDEP},rocm]
 		sci-libs/rocRAND:=
 	)
 "
@@ -119,7 +119,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
-	>=dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 "
 
