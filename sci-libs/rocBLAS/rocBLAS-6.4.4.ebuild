@@ -86,7 +86,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-benchmark cuda +rocm test ebuild_revision_24
+benchmark cuda +rocm test ebuild_revision_25
 "
 gen_rocm_required_use() {
 	local x
@@ -113,7 +113,7 @@ RDEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/msgpack-3.0.1
-	>=dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	dev-util/hip:=
 	benchmark? (
 		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
@@ -124,10 +124,10 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_4_AMDGPU_USEDEP},rocm]
+		>=dev-util/Tensile-${PV}:${SLOT}[${TENSILE_6_4_AMDGPU_USEDEP},rocm]
 		dev-util/Tensile:=
 		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_4_AMDGPU_USEDEP}"',rocm]
+			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${TENSILE_6_4_AMDGPU_USEDEP}"',rocm]
 			dev-util/Tensile:=
 		')
 	)
@@ -151,11 +151,11 @@ BDEPEND="
 		dev-python/virtualenv[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
-	>=dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	rocm? (
 		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_4_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
+			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${TENSILE_6_4_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
 			dev-util/Tensile:=
 		')
 	)
