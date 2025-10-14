@@ -30,7 +30,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -56,7 +56,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 benchmark cuda hip-cpu +rocm test ebuild_revision_13
@@ -99,7 +99,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
@@ -110,14 +111,16 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		dev-cpp/gtest
 	)
 "
 BDEPEND="
 	>=dev-build/cmake-3.10.2
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	!hip-cpu? (
 		${HIPCC_DEPEND}
 	)
@@ -126,7 +129,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
