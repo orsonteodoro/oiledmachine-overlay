@@ -40,11 +40,20 @@ CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_37
 	sm_50
+	sm_52
+	sm_53
 	sm_60
+	sm_61
+	sm_62
 	sm_70
+	sm_72
 	sm_75
 	sm_80
+	sm_86
+	sm_87
+	sm_89
 	sm_90
+	sm_90a
 )
 inherit libcxx-compat
 LLVM_COMPAT=(
@@ -64,6 +73,8 @@ else
 	inherit llvm
 fi
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-${MY_PV}"
 SRC_URI="https://icl.cs.utk.edu/projectsfiles/${PN}/downloads/${PN}-${MY_PV}.tar.gz"
 
 DESCRIPTION="Matrix Algebra on GPU and Multicore Architectures"
@@ -72,7 +83,6 @@ HOMEPAGE="
 	https://bitbucket.org/icl/magma
 "
 LICENSE="BSD"
-KEYWORDS="~amd64"
 IUSE+="
 atlas doc examples -ilp64 mkl openblas tbb openmp test
 ebuild_revision_6
@@ -116,7 +126,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 	"
 	IUSE+="
 		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		altas cuda
+		cuda
 	"
 	gen_cuda_required_use() {
 		local x
@@ -255,9 +265,14 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 			local slot="0/${pv%.*}"
 			echo "
 				(
-					~dev-util/hip-${pv}:${slot}[rocm]
-					~sci-libs/hipBLAS-${pv}:${slot}[rocm]
-					~sci-libs/hipSPARSE-${pv}:${slot}[rocm]
+					>=dev-libs/rocm-core-${pv}:${slot}
+					dev-libs/rocm-core:=
+					>=dev-util/hip-${pv}:${slot}[rocm]
+					dev-util/hip:=
+					>=sci-libs/hipBLAS-${pv}:${slot}[rocm]
+					sci-libs/hipBLAS:=
+					>=sci-libs/hipSPARSE-${pv}:${slot}[rocm]
+					sci-libs/hipSPARSE:=
 				)
 			"
 		done
@@ -338,14 +353,9 @@ RESTRICT="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.7.1-path-changes.patch"
-	"${FILESDIR}/${PN}-2.7.1-make-inc.patch"
-	"${FILESDIR}/${PN}-2.7.1-mkl.patch"
-	"${FILESDIR}/${PN}-2.7.2-atlas-hip.patch"
 )
-S="${WORKDIR}/${PN}-${MY_PV}"
 
-icl-magma-v2_7_pkg_setup() {
+icl-magma-v2_9_pkg_setup() {
 	check-compiler-switch_start
 	fortran-2_pkg_setup
 	python-any-r1_pkg_setup
@@ -401,82 +411,15 @@ replace_symbols() {
 	IFS=$'\n'
 
 	local llvm_slot
-	if [[ "${ROCM_SLOT}" == "6.1" ]] ; then
-		llvm_slot=17
-	elif [[ "${ROCM_SLOT}" == "6.0" ]] ; then
-		llvm_slot=17
-	elif [[ "${ROCM_SLOT}" == "5.7" ]] ; then
-		llvm_slot=17
-	elif [[ "${ROCM_SLOT}" == "5.6" ]] ; then
-		llvm_slot=16
-	elif [[ "${ROCM_SLOT}" == "5.5" ]] ; then
-		llvm_slot=16
-	elif [[ "${ROCM_SLOT}" == "5.4" ]] ; then
-		llvm_slot=15
-	elif [[ "${ROCM_SLOT}" == "5.3" ]] ; then
-		llvm_slot=15
-	elif [[ "${ROCM_SLOT}" == "5.2" ]] ; then
-		llvm_slot=14
-	elif [[ "${ROCM_SLOT}" == "5.1" ]] ; then
-		llvm_slot=14
+	if [[ "${ROCM_SLOT}" == "7.0" ]] ; then
+		llvm_slot=19
+	elif [[ "${ROCM_SLOT}" == "6.4" ]] ; then
+		llvm_slot=19
 	else
 		# Not installed or disable
 		llvm_slot=-1
 	fi
 
-	if (( ${llvm_slot} > 0 )) ; then
-einfo "Using LLVM proper"
-		:
-	else
-einfo "Removing LLVM references"
-		sed -i -e "s|-I@ESYSROOT_LLVM_PATH@/include||g" \
-			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/include" "${WORKDIR}") \
-			|| die
-	fi
-
-	# For magma installs,
-	# If cuda, use /usr/$(get_libdir).  get_libdir will be lib64.
-	# If rocm, use /opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir).  rocm_get_libdir will be lib.
-	# This is why @COND_LIBDIR@ is used for destination for LIBDIR install.
-
-	sed -i -e "s|@ABI_LIBDIR@|$(get_libdir)|g" \
-		$(grep -r -l -e "@ABI_LIBDIR@" "${WORKDIR}") \
-		|| true
-	sed -i -e "s|@ACML_LIBDIR@|lib|g" \
-		$(grep -r -l -e "@ACML_LIBDIR@" "${WORKDIR}") \
-		|| true
-	sed -i -e "s|@OLCF_ESSL_LIBDIR@|lib64|g" \
-		$(grep -r -l -e "@OLCF_ESSL_LIBDIR@" "${WORKDIR}") \
-		|| true
-	sed -i -e "s|@OLCF_NETLIB_LAPACK_LIBDIR@|lib64|g" \
-		$(grep -r -l -e "@OLCF_NETLIB_LAPACK_LIBDIR@" "${WORKDIR}") \
-		|| true
-	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		sed -i -e "s|@COND_LIBDIR@|$(rocm_get_libdir)|g" \
-			$(grep -r -l -e "@COND_LIBDIR@" "${WORKDIR}") \
-			|| true
-		sed -i -e "s|@ROCM_LIBDIR@|$(rocm_get_libdir)|g" \
-			$(grep -r -l -e "@ROCM_LIBDIR@" "${WORKDIR}") \
-			|| true
-	else
-		# Placeholder
-		sed -i -e "s|@COND_LIBDIR@|$(get_libdir)|g" \
-			$(grep -r -l -e "@COND_LIBDIR@" "${WORKDIR}") \
-			|| true
-		sed -i -e "s|@ROCM_LIBDIR@|$(get_libdir)|g" \
-			$(grep -r -l -e "@ROCM_LIBDIR@" "${WORKDIR}") \
-			|| true
-	fi
-	sed -i -e "s|@MKL_LIBDIR@|lib|g" \
-		$(grep -r -l -e "@MKL_LIBDIR@" "${WORKDIR}") \
-		|| true
-
-	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
-		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
-		|| true
-	sed -i -e "s|@ESYSROOT@|${ESYSROOT}|g" \
-		$(grep -r -l -e "@ESYSROOT@" "${WORKDIR}") \
-		|| true
 
 	IFS=$' \t\n'
 }
@@ -514,12 +457,12 @@ eerror
 		if [[ -n "${gpu_targets}" ]] ; then
 eerror "GPU target:  ${gpu_targets}"
 		fi
-eerror "CPU target:  atlas mkl openblas"
+eerror "CPU target:  altas mkl openblas"
 eerror
 		die
 	fi
 
-	rm -f make.inc || true
+	rm -f "make.inc" || true
 	ln -s \
 		"make.inc-examples/${inc_file}" \
 		"make.inc" \
@@ -543,10 +486,6 @@ eerror
 	elif has rocm ${IUSE_EFFECTIVE} && use rocm ; then
 		export gpu="$(get_amdgpu_flags)"
 	fi
-	sed -i \
-		-e "s|@GPU_TARGET_OVERRIDE@|GPU_TARGET = ${gpu}|g" \
-		$(realpath make.inc) \
-		|| die
 
 	local backend
 	if has cuda ${IUSE_EFFECTIVE} use cuda ; then
@@ -557,21 +496,10 @@ eerror
 		backend="cuda"
 	fi
 
-	sed -i \
-		-e "s|@BACKEND_OVERRIDE@|BACKEND = ${backend}|g" \
-		$(realpath make.inc) \
-		|| true
-
-	# Already generated
-	sed -i \
-		-e "/make.gen.hipMAGMA/d" \
-		"Makefile" \
-		|| die
-
 	emake generate
 }
 
-icl-magma-v2_7_src_prepare() {
+icl-magma-v2_9_src_prepare() {
 	# Let build script handle it.
 	unset CC
 	unset CXX
@@ -584,19 +512,6 @@ icl-magma-v2_7_src_prepare() {
 			applied_rocm_patches=1
 			rocm_src_prepare
 		fi
-	fi
-	if (( ${applied_rocm_patches} == 0 )) ; then
-		# Placeholders
-		sed -i -e "s|@ESYSROOT_ROCM_PATH@|/opt/rocm|g" \
-			$(grep -r -l -e "@ESYSROOT_ROCM_PATH@" "${WORKDIR}") \
-			|| true
-		sed -i -e "s|@EPREFIX_ROCM_PATH@|/opt/rocm|g" \
-			$(grep -r -l -e "@EPREFIX_ROCM_PATH@" "${WORKDIR}") \
-			|| true
-einfo "LLVM_SLOT (placeholder):  ${LLVM_SLOT}"
-		sed -i -e "s|@ESYSROOT_LLVM_PATH@|/usr/lib/llvm/${LLVM_SLOT}|g" \
-			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@" "${WORKDIR}") \
-			|| true
 	fi
 
 	gen_pc_file
@@ -618,7 +533,7 @@ get_cuda_flags() {
 	echo "${list}"
 }
 
-icl-magma-v2_7_src_configure() {
+icl-magma-v2_9_src_configure() {
 	replace-flags '-O0' '-O1'
 
 	check-compiler-switch_end
@@ -757,11 +672,11 @@ ewarn
 	cmake_src_configure
 }
 
-icl-magma-v2_7_src_compile() {
+icl-magma-v2_9_src_compile() {
 	cmake_src_compile
 }
 
-icl-magma-v2_7_src_install() {
+icl-magma-v2_9_src_install() {
 	cmake_src_install
 	if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		insinto "/usr/include/${PN}"

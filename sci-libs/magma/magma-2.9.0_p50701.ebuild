@@ -5,16 +5,16 @@ EAPI=8
 
 inherit hip-versions
 
-CXX_STANDARD=11
-LLVM_SLOT=17
+CXX_STANDARD=14
+LLVM_SLOT=19
 MAGMA_ROCM=1
-ROCM_SLOT="5.7"
+ROCM_SLOT="6.4"
 ROCM_SLOTS=(
-	"${HIP_5_7_VERSION}"
+	"${HIP_6_4_VERSION}"
 )
 declare -A ROCM_PV_TO_LLVM_SLOT=(
-	["${HIP_5_7_VERSION}"]="17"
+	["${HIP_6_4_VERSION}"]="17"
 )
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 
-inherit icl-magma-v2_8
+inherit icl-magma-v2_9
