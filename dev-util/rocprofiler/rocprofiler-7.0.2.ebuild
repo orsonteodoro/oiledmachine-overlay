@@ -68,7 +68,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE=" plugins samples test ebuild_revision_17"
+IUSE=" plugins samples test ebuild_revision_18"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -163,11 +163,11 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
+	[[ -e "${ESYSROOT}/opt/rocm/$(rocm_get_libdir)/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
 		|| die "Missing" # For e80f7cb
-	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/libhsa-amd-aqlprofile64.so" ]] \
+	[[ -e "${ESYSROOT}/opt/rocm/$(rocm_get_libdir)/libhsa-amd-aqlprofile64.so" ]] \
 		|| die "Missing" # For 071379b
-	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/$(rocm_get_libdir)"
+	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm/$(rocm_get_libdir)"
 
 	export HIP_PLATFORM="amd"
 	local gpu_targets=$(get_amdgpu_flags \

@@ -57,7 +57,7 @@ LICENSE="
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE="+client cuda +opencl +openmp +rocm ebuild_revision_18"
+IUSE="+client cuda +opencl +openmp +rocm ebuild_revision_19"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -97,10 +97,10 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocr-runtime:=
 		opencl? (
-			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+			dev-libs/rocm-opencl-runtime:${SLOT}
 		)
 		openmp? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+			sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 			sys-libs/llvm-roc-libomp:=
 		)
 	)
@@ -160,18 +160,18 @@ src_configure() {
 
 	if use rocm ; then
 		append-ldflags \
-			-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
+			-Wl,-L"/opt/rocm/llvm/$(rocm_get_libdir)" \
 			-Wl,-lLLVMSupport
-		if has_version "dev-util/hip:${ROCM_SLOT}[rocm]" ; then
+		if has_version "dev-util/hip:${SLOT}[rocm]" ; then
 			append-flags -Wl,-lhsa-runtime64
 			append-ldflags -Wl,-lhsa-runtime64
 		fi
-		if has_version "dev-util/hip:${ROCM_SLOT}[lc]" ; then
+		if has_version "dev-util/hip:${SLOT}[lc]" ; then
 			append-flags -Wl,-lamd_comgr
 			append-ldflags -Wl,-lamd_comgr
 		fi
 	fi
-	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+	if has_version "dev-util/hip:${SLOT}[numa]" ; then
 		append-flags -Wl,-lnuma
 		append-ldflags -Wl,-lnuma
 	fi

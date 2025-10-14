@@ -53,7 +53,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kerne
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_4"
+IUSE="ebuild_revision_5"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -135,13 +135,13 @@ src_prepare() {
 }
 
 src_install() {
-	insinto "/opt/rocm-${PV}/share/miopen/db"
+	insinto "/opt/rocm/share/miopen/db"
 	local f
 	for f in $(find . -name "*.kdb") ; do
 		doins "${f}"
 	done
 einfo "Compressing kernels"
-	pushd "${ED}/opt/rocm-${PV}/share/miopen/db" || die
+	pushd "${ED}/opt/rocm/share/miopen/db" || die
 		for f in $(find . -name "*.kdb") ; do
 			bzip2 -kv "${f}"
 		done
