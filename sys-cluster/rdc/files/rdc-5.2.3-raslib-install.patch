@@ -29,13 +29,13 @@ diff -urp rdc-rocm-5.2.3.orig/CMakeLists.txt rdc-rocm-5.2.3/CMakeLists.txt
 -     COMPONENT ${CLIENT_COMPONENT})
 +if(INSTALL_RASLIB)
 +    install(FILES  ${PROJECT_SOURCE_DIR}/ras_prebuild/librdc_ras.so
-+        DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@ROCM_LIBDIR@
++        DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
 +        COMPONENT ${CLIENT_COMPONENT})
 +    install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/config
-+        DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@ROCM_LIBDIR@
++        DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
 +        COMPONENT ${CLIENT_COMPONENT})
 +    install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/sp3
-+        DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@ROCM_LIBDIR@
++        DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
 +        COMPONENT ${CLIENT_COMPONENT})
 +endif()
  
