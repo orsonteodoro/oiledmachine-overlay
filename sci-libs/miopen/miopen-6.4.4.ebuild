@@ -290,7 +290,7 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
-	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+	if has_version "dev-util/hip:0/${ROCM_SLOT}[numa]" ; then
 		append-ldflags -lnuma
 	fi
 
