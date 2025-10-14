@@ -97,14 +97,16 @@ REQUIRED_USE="
 "
 RDEPEND="
 	dev-util/hip:${SLOT}
+	dev-util/hip:=
 	!system-orochi? (
-		!=dev-libs/Orochi-2.00*:${SLOT}
+		!dev-libs/Orochi
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	system-orochi? (
-		=dev-libs/Orochi-2.00*:${SLOT}
+		=dev-libs/Orochi-3.00*:${SLOT}
+		dev-libs/Orochi:=
 	)
 "
 DEPEND="
