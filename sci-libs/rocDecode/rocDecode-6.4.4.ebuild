@@ -5,10 +5,9 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/ROCm/rocDecode/blob/rocm-6.4.4/samples/videoDecodeRGB/CMakeLists.txt#L64
 	gfx908
 	gfx90a
-	gfx940
-	gfx941
 	gfx942
 	gfx1030
 	gfx1031
@@ -16,12 +15,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1202
+	gfx1201
 )
 AMDGPU_TARGETS_UNTESTED=(
 #	gfx908
 #	gfx90a
-	gfx940
-	gfx941
+#x	gfx940
+#x	gfx941
 #	gfx942
 #	gfx1030
 	gfx1031
@@ -30,7 +31,7 @@ AMDGPU_TARGETS_UNTESTED=(
 #	gfx1101
 	gfx1102
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -63,14 +64,15 @@ LICENSE="
 RESTRICT="
 	test
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 samples ebuild_revision_3
 "
 REQUIRED_USE="
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	dev-util/hip:=
 	>=media-libs/libva-2.7.0
 	>=media-libs/mesa-24.1.0[vaapi,video_cards_radeonsi]
 	samples? (
@@ -83,16 +85,16 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	virtual/pkgconfig
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
