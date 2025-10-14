@@ -5,13 +5,14 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx940
-	gfx941
 	gfx942
+	gfx942_xnack_plus # with asan
+	gfx950
+	gfx950_xnack_plus # with asan
 )
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -37,7 +38,7 @@ LICENSE="
 # all-rights-reserved MIT - cmake/os-detection.cmake
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="cuda rocm samples test ebuild_revision_1"
 REQUIRED_USE="
 	^^ (
@@ -45,14 +46,19 @@ REQUIRED_USE="
 		rocm
 	)
 "
+TRASH="
+"
 RDEPEND="
 	dev-util/hip:${SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~dev-util/Tensile-${PV}:${SLOT}$(get_rocm_usedep TENSILE)
-		~sci-libs/hipSPARSE-${PV}:${SLOT}
+		>=dev-util/Tensile-${PV}:${SLOT}[$(get_rocm_usedep TENSILE)]
+		dev-util/Tensile:=
+		>=sci-libs/hipSPARSE-${PV}:${SLOT}
+		sci-libs/hipSPARSE:=
 	)
 "
 DEPEND="
@@ -66,7 +72,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
