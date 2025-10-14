@@ -781,7 +781,7 @@ gen_rocm_depends() {
 				>=sci-libs/rocThrust-${pv}:${s}[$(get_rocm_usedep ROCTHRUST)]
 				sci-libs/rocThrust:=
 				magma? (
-					=sci-libs/magma-2.8*:${s}[$(get_rocm_usedep MAGMA_2_8)]
+					=sci-libs/magma-2.9*:${s}[$(get_rocm_usedep MAGMA_2_9)]
 					sci-libs/magma:=
 				)
 				openmp? (
