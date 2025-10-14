@@ -912,7 +912,7 @@ RDEPEND+="
 	)
 	hiprt? (
 		rocm_6_4? (
-			=media-libs/hiprt-2.5*:6.4[rocm]
+			=media-libs/HIPRT-2.5*:6.4[rocm]
 		)
 		media-libs/hiprt:=
 	)
