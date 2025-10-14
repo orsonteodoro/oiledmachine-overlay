@@ -37,7 +37,7 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_18"
+IUSE="test ebuild_revision_19"
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -155,10 +155,10 @@ src_install() {
 	rocm_mv_docs
 	rocm_fix_rpath
 	# See tarball for layout.
-	dodir "/opt/rocm-${PV}/libexec/hipify"
-	dodir "/opt/rocm-${PV}/include/hipify"
-	dodir "/opt/rocm-${PV}/bin"
-	dodir "/opt/rocm-${PV}/hip/bin"
+	dodir "/opt/rocm/libexec/hipify"
+	dodir "/opt/rocm/include/hipify"
+	dodir "/opt/rocm/bin"
+	dodir "/opt/rocm/hip/bin"
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
