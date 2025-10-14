@@ -25,19 +25,17 @@ if [[ ! ${_ROCM_TARGETS_COMPAT_6_4_ECLASS} ]]; then
 _ROCM_TARGETS_COMPAT_6_4_ECLASS=1
 
 RCCL_6_4_AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900_xnack_minus
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+# Last updated:  6.4.4
+	gfx906
+	gfx908
+	gfx90a
 	gfx942
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
 RCCL_6_4_AMDGPU_USEDEP=$(gen_x_usedep "RCCL_6_4_AMDGPU_TARGETS_COMPAT")
 

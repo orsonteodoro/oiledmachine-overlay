@@ -4,22 +4,19 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900_xnack_minus
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx906
+	gfx908
+	gfx90a
 	gfx942
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
 CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-reqs cmake edo flag-o-matic linux-info rocm
@@ -54,17 +51,20 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	!dev-libs/rccl:0
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
+	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	dev-util/hip:=
+	>=dev-util/rocm-smi-${PV}:${SLOT}
+	dev-util/rocm-smi:=
 	peermem? (
 		dev-util/DOCA-Host[mlnx-ofed-kernel]
 		|| (
-			virtual/kfd-ub:6.2[rock-dkms]
-			virtual/kfd:6.1[rock-dkms]
-			virtual/kfd-lb:6.0[rock-dkms]
+			>=virtual/kfd-6.4:6.4[rock-dkms]
+			>=virtual/kfd-6.3:6.3[rock-dkms]
+			>=virtual/kfd-6.2:6.2[rock-dkms]
 		)
+		virtual/kfd:=
 	)
 	verbs? (
 		sys-cluster/rdma-core
@@ -76,15 +76,16 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-util/HIPIFY-${PV}:${SLOT}
+	dev-util/HIPIFY:=
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		>=dev-cpp/gtest-1.11
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-customize-targets.patch"
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+#	"${FILESDIR}/${PN}-6.1.2-customize-targets.patch"
 )
 
 pkg_pretend() {
@@ -107,9 +108,7 @@ check_kernel_setup() {
 		~PCIEPORTBUS
 	"
 	if \
-		   use amdgpu_targets_gfx940 \
-		|| use amdgpu_targets_gfx941 \
-		|| use amdgpu_targets_gfx942 \
+		use amdgpu_targets_gfx942 \
 	; then
 		+="
 			~DMI
@@ -243,7 +242,6 @@ src_configure() {
 	export HIP_PLATFORM="amd"
 	local amdgpu_targets=$(get_amdgpu_flags)
 	local mycmakeargs=(
-		-DAMDGPU_TARGETS="${amdgpu_targets}"
 		-DBUILD_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DGPU_TARGETS="${amdgpu_targets}"
