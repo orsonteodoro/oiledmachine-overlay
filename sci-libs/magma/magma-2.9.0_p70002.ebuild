@@ -8,12 +8,12 @@ inherit hip-versions
 CXX_STANDARD=14
 LLVM_SLOT=19
 MAGMA_ROCM=1
-ROCM_SLOT="6.4"
+ROCM_SLOT="7.0"
 ROCM_SLOTS=(
-	"${HIP_6_4_VERSION}"
+	"${HIP_7_0_VERSION}"
 )
 declare -A ROCM_PV_TO_LLVM_SLOT=(
-	["${HIP_6_4_VERSION}"]="17"
+	["${HIP_7_0_VERSION}"]="19"
 )
 SLOT="0/${ROCM_SLOT}"
 
