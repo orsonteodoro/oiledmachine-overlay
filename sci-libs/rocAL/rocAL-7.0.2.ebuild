@@ -26,11 +26,10 @@ BOOST_PV="1.72.0"
 LIBJPEG_TURBO_PV="3.0.2"
 LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
-RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
+RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for OOBR, 20250205
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
 ROCM_SLOT="6.2"
 ROCM_VERSION="6.2.4"
-RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 
 inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm
 
@@ -39,8 +38,6 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCm/rocAL/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMIT}.tar.gz
-	-> rrawther-libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
 	!system-rapidjson? (
 https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz
 	-> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
@@ -61,9 +58,9 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
-cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson system-jpeg
+cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
@@ -149,25 +146,6 @@ src_unpack() {
 	fi
 }
 
-build_libjpeg_turbo() {
-	local staging_dir="${WORKDIR}/install"
-	cd "${WORKDIR}/libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT}" || die
-	mkdir -p "build" || die
-	cd "build" || die
-	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo"
-		-DCMAKE_BUILD_TYPE=RELEASE
-		-DENABLE_STATIC=FALSE
-		-DCMAKE_INSTALL_DEFAULT_LIBDIR=lib
-	)
-	cmake \
-		"${mycmakeargs[@]}" \
-		.. \
-		|| die
-	emake || die
-	emake install || die
-}
-
 build_rapidjson() {
 	use system-rapidjson && return
 	local staging_dir="${WORKDIR}/install"
@@ -211,7 +189,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	build_libjpeg_turbo
 	build_rapidjson
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
