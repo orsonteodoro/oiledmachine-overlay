@@ -266,12 +266,12 @@ HIPSPARSELT_6_4_AMDGPU_TARGETS_COMPAT=(
 HIPSPARSELT_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPSPARSELT_6_4_AMDGPU_TARGETS_COMPAT")
 
 HIPTENSOR_6_4_AMDGPU_TARGETS_COMPAT=(
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+# Last updated:  6.4.4
+	gfx908
+	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
 )
 HIPTENSOR_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPTENSOR_6_4_AMDGPU_TARGETS_COMPAT")
 

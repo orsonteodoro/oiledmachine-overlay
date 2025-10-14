@@ -4,15 +4,14 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx908
+	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
 )
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -33,7 +32,7 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda +rocm samples test ebuild_revision_5
 "
@@ -62,8 +61,10 @@ RESTRICT="
 	test
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/composable-kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_2_AMDGPU_USEDEP}]
+	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	dev-util/hip:=
+	>=sci-libs/composable-kernel-${PV}:${SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+	sci-libs/composable-kernel:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
@@ -74,10 +75,10 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.14
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
