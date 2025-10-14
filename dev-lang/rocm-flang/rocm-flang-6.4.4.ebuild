@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18 # Same as llvm-roc
+LLVM_SLOT=19 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_12" )
 ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -36,30 +36,25 @@ RESTRICT="
 	strip
 	test
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
-aocc doc test ebuild_revision_6
+doc test ebuild_revision_6
 "
 REQUIRED_USE="
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
-	!dev-lang/rocm-flang:0
 	sys-devel/gcc
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
+	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.9.0
 	sys-devel/gcc-config
-	!aocc? (
-		${ROCM_CLANG_DEPEND}
-	)
-	aocc? (
-		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
-	)
 	doc? (
 		app-text/doxygen
 		$(python_gen_any_dep '
@@ -184,9 +179,7 @@ eerror
 
 pkg_setup() {
 	python-any-r1_pkg_setup
-	if ! use aocc ; then
-		ROCM_USE_LLVM_ROC=1
-	fi
+	ROCM_USE_LLVM_ROC=1
 	rocm_pkg_setup
 }
 
@@ -243,25 +236,14 @@ eerror
 		-DPYTHON_EXECUTABLE="${ESYSROOT}/usr/bin/${EPYTHON}"
 #		-DPYTHON_VERSION_STRING="${EPYTHON/python}"
 	)
-	if use aocc ; then
-		export PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/lib"
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin/clang++"
-			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin/flang"
-			-DUSE_AAOC=1
-		)
-	else
-		export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-${LLVM_SLOT}"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++-${LLVM_SLOT}"
-			-DCMAKE_Fortran_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/flang"
-			-DUSE_AAOC=0
-		)
-	fi
+	export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
+	export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
+	mycmakeargs+=(
+		-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-${LLVM_SLOT}"
+		-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++-${LLVM_SLOT}"
+		-DCMAKE_Fortran_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/flang"
+		-DUSE_AAOC=0
+	)
 	export VERBOSE=1
 	build_libpgmath
 	build_flang_lib
