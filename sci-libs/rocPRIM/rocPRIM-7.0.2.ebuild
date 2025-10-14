@@ -8,20 +8,29 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900_xnack_minus
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with_asan
+	gfx950
+	gfx950_xnack_plus # with_asan
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
-LLVM_SLOT=18
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocPRIM-rocm-${PV}"
@@ -45,7 +54,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="benchmark hip-cpu +rocm test ebuild_revision_8"
 gen_rocm_required_use() {
 	local x
@@ -68,7 +77,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	dev-util/hip:=
 	benchmark? (
 		dev-cpp/benchmark
 	)
@@ -84,21 +94,19 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	!hip-cpu? (
 		${HIPCC_DEPEND}
 	)
-	hip-cpu? (
-		${ROCM_GCC_DEPEND}
-	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify # For hip-cpu
 }
 
 src_prepare() {
