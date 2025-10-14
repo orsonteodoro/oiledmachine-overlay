@@ -150,16 +150,23 @@ HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT=(
 HIPBLASLT_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT")
 
 HIPCUB_6_4_AMDGPU_TARGETS_COMPAT=(
+# Last update:  6.4.4
 	gfx803
 	gfx900_xnack_minus
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx90a_xnack_plus # with or without asan
+	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 HIPCUB_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPCUB_6_4_AMDGPU_TARGETS_COMPAT")
 
