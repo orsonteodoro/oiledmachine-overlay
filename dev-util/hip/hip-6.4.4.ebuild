@@ -200,7 +200,7 @@ ewarn
 	rocm_pkg_setup
 
 	# Ignore QA FLAGS check for library compiled from assembly sources
-	QA_FLAGS_IGNORED="/opt/rocm-${PV}/$(rocm_get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
+	QA_FLAGS_IGNORED="/opt/rocm/$(rocm_get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
 	libstdcxx-slot_verify
 }
 
