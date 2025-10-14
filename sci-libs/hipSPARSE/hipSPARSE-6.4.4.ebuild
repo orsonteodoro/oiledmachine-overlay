@@ -4,7 +4,7 @@
 EAPI=8
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -87,12 +87,14 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[rocm(+)]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[rocm(+)]
+		sci-libs/rocSPARSE:=
 	)
 "
 DEPEND="
@@ -101,16 +103,19 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		dev-cpp/gtest
-		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		>=dev-util/rocminfo-${PV}:${SLOT}
+		dev-util/rocminfo:=
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		dev-libs/rocm-opencl-runtime:=
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+		sys-libs/llvm-roc-libomp:=
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -124,14 +129,14 @@ src_prepare() {
 	sed \
 		-e "/find_package(Git/d" \
 		-i \
-		cmake/Dependencies.cmake \
+		"cmake/Dependencies.cmake" \
 		|| die
 
 	if use test; then
 		mkdir -p "${BUILD_DIR}/clients/matrices" || die
 	# Compile and use the mtx2bin converter.
 	# Do not use any optimization flags!
-		edo $(tc-getCXX) deps/convert.cpp -o deps/convert
+		edo $(tc-getCXX) "deps/convert.cpp" -o "deps/convert"
 		find "${WORKDIR}" \
 			-maxdepth 2 \
 			-regextype "grep" \
