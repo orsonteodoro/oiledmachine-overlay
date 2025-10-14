@@ -14,21 +14,31 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
+	gfx900
 	gfx900_xnack_minus
+	gfx906
 	gfx906_xnack_minus
+	gfx908
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan build
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan build
 	gfx942
+	gfx942_xnack_plus # with asan build
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1120
+	gfx1121
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+        "gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -101,17 +111,25 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not have All rights reserved.
-IUSE="benchmark test ebuild_revision_8"
+IUSE="
+${GCC_COMPAT[@]}
+benchmark test
+ebuild_revision_8
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
+	^^ (
+		${GCC_COMPAT[@]}
+	)
 "
 RESTRICT="test" # Test ebuild sections needs update
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	!sci-libs/rocSPARSE:0
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_2_AMDGPU_USEDEP},rocm(+)]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+	>=dev-util/hip-${PV}:${SLOT}[gcc_slot_12_5=,gcc_slot_13_4=,rocm]
+	dev-util/hip:=
+	>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_6_4_AMDGPU_USEDEP},rocm(+)]
+	sci-libs/rocPRIM:=
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
@@ -120,8 +138,14 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	sys-devel/gcc:${HIP_6_2_GCC_SLOT}[fortran]
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	gcc_slot_12_5? (
+		>=sys-devel/gcc-12.5:12[fortran]
+	)
+	gcc_slot_13_4? (
+		>=sys-devel/gcc-13.4:13[fortran]
+	)
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		$(python_gen_any_dep '
 			dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -136,7 +160,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-6.2.4-includes.patch"
 #	"${FILESDIR}/${PN}-5.6.0-fma-fix.patch"
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 python_check_deps() {
@@ -151,6 +174,13 @@ pkg_setup() {
 }
 
 add_gfortran_wrapper() {
+	local gcc_slot=""
+	if use gcc_slot_12_5 ; then
+		gcc_slot="12"
+	elif use gcc_slot_13_4 ; then
+		gcc_slot="13"
+	fi
+
 	mkdir -p "${WORKDIR}/bin" || die
 	touch "${WORKDIR}/bin/${CHOST}-gfortran" || die
 cat <<EOF > "${WORKDIR}/bin/${CHOST}-gfortran" || die
@@ -164,7 +194,7 @@ args=\$(echo "\${args}" \
 		-e "/-pipe/d" \
 		-e "/--rocm-path/d" \
 		-e "/--rocm-device-lib-path=/d")
-"/usr/${CHOST}/gcc-bin/${HIP_6_2_GCC_SLOT}/gfortran" \${args}
+"/usr/${CHOST}/gcc-bin/${gcc_slot}/gfortran" \${args}
 EOF
 	chmod +x "${WORKDIR}/bin/${CHOST}-gfortran" || die
 	ln -s \
@@ -173,7 +203,7 @@ EOF
 		|| die
 	ln -s \
 		"${WORKDIR}/bin/${CHOST}-gfortran" \
-		"${WORKDIR}/bin/gfortran-${HIP_6_2_GCC_SLOT}" \
+		"${WORKDIR}/bin/gfortran-${gcc_slot}" \
 		|| die
 }
 

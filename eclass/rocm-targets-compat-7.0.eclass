@@ -318,19 +318,28 @@ ROCSOLVER_7_0_AMDGPU_TARGETS_COMPAT=(
 ROCSOLVER_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCSOLVER_7_0_AMDGPU_TARGETS_COMPAT")
 
 ROCSPARSE_7_0_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  7.0.2
 	gfx803
+	gfx900
 	gfx900_xnack_minus
+	gfx906
 	gfx906_xnack_minus
+	gfx908
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan build
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan build
 	gfx942
+	gfx942_xnack_plus # with asan build
+	gfx950
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1120
+	gfx1121
+
 )
 ROCSPARSE_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCSPARSE_7_0_AMDGPU_TARGETS_COMPAT")
 
