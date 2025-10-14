@@ -22,7 +22,7 @@ HATCHET_COMMIT="a1f13410b0bf2334459bf07fee767cda81794cad"
 LIBUNWIND_COMMIT="501d8d5e6a06236b87d10a2b1b85008fde3fcbcc"
 LLVM_OPENMP_COMMIT="998ea02399846927f3e329b6cc9fe387a8d39947"
 LINE_PROFILER_COMMIT="794adeb01ea1353f713a030f6cbd5e0e5780cb21"
-LLVM_SLOT=18
+LLVM_SLOT=19
 PAPI_COMMIT="effd1ef4e0fd4b80e36546791277215a2d6b9eba"
 PERFETTO_COMMIT_1="99ead408d98eaa25b7819c7e059734bea42fa148"
 PERFETTO_COMMIT_2="dd1f2f378fe2f292f78af922828f93a9f101d373"
@@ -102,19 +102,21 @@ LICENSE="
 "
 RESTRICT="test"
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_2
+ebuild_revision_3
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
 	system-dyninst
 "
 RDEPEND="
-	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocm-core-${PV}:${SLOT}
+	dev-libs/rocm-core:=
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 	!system-dyninst? (
 		=dev-cpp/tbb-2019*:2
 		sys-devel/gcc[openmp?]
@@ -130,16 +132,20 @@ RDEPEND="
 		)
 	)
 	rccl? (
-		~dev-libs/rccl-${PV}:${ROCM_SLOT}
+		>=dev-libs/rccl-${PV}:${SLOT}
+		dev-libs/rccl:=
 	)
 	rocm-smi? (
-		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		>=dev-util/rocm-smi-${PV}:${SLOT}
+		dev-util/rocm-smi:=
 	)
 	rocprofiler? (
-		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}
+		>=dev-util/rocprofiler-${PV}:${SLOT}
+		dev-util/rocprofiler:=
 	)
 	roctracer? (
-		~dev-util/roctracer-${PV}:${ROCM_SLOT}
+		>=dev-util/roctracer-${PV}:${SLOT}
+		dev-util/roctracer:=
 	)
 	system-dyninst? (
 		>=dev-util/dyninst-12.0[openmp?]
@@ -161,7 +167,6 @@ BDEPEND="
 	${ROCM_GCC_DEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-6.2.0-offline-install.patch"
 	"${FILESDIR}/${PN}-6.2.0-tbb.patch"
 )
