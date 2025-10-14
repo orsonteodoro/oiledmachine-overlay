@@ -7,7 +7,7 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 # From README.md
 	gfx803
-# From:  grep -o -E -r -e "gfx[0-9a]+" ./ | cut -f 2 -d ":" | sort | uniq | grep -E -e "gfx[0-9a]{3,4}"
+# From build.sh
 	gfx900
 	gfx906
 	gfx908
@@ -15,15 +15,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx940
 	gfx941
 	gfx942
-	gfx1010
-	gfx1011
-	gfx1012
 	gfx1030
 	gfx1031
-	gfx1032
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 AMDGPU_UNTESTED_TARGETS=(
 	gfx803
