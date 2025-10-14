@@ -6,7 +6,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/composable_kernel/blob/rocm-6.2.4/include/ck/ck.hpp#L48
+# https://github.com/ROCm/composable_kernel/blob/rocm-6.4.4/include/ck/ck.hpp#L48
 	gfx803
 	gfx900
 	gfx906
@@ -15,10 +15,25 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx940
 	gfx941
 	gfx942
+	gfx950
+	gfx1010
+	gfx1011
+	gfx1012
 	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+	gfx1035
+	gfx1036
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1103
+	gfx1150
+	gfx1151
+	gfx1152
+	gfx1200
+	gfx1201
 )
 AMDGPU_UNTESTED_TARGETS=(
 	gfx803
@@ -28,7 +43,7 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -59,16 +74,19 @@ LICENSE="
 "
 # The distro's MIT license template does not contain All rights reserved.
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
+SLOT="0/${ROCM_SLOT}"
 IUSE+="
 test ebuild_revision_13
 "
 REQUIRED_USE="
 "
 RDEPEND="
-	~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
-	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+	>=dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${SLOT}
+	dev-libs/rocm-opencl-runtime:=
+	>=dev-util/hip-${ROCM_VERSION}:${SLOT}
+	dev-util/hip:=
+	>=sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
 	${RDEPEND}
@@ -76,7 +94,8 @@ DEPEND="
 #	sys-devel/binutils[gold]
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
-	~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${ROCM_VERSION}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		dev-cpp/gtest
 	)
@@ -86,7 +105,6 @@ PATCHES=(
 	"${FILESDIR}/${MY_PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${MY_PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
 	"${FILESDIR}/${MY_PN}-6.0.2-example-libs.patch"
-	"${FILESDIR}/${MY_PN}-6.2.4-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
