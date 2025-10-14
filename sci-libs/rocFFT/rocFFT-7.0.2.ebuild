@@ -9,13 +9,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
-	gfx940
-	gfx941
 	gfx942
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 AMDGPU_TARGETS_AOT=(
 	gfx906
@@ -27,6 +28,7 @@ AMDGPU_TARGETS_AOT=(
 	gfx1102
 )
 CUDA_TARGETS_COMPAT=(
+# Likely arbitrary chosen set, not same as upstream, to unbreak selection from ancestor package
 	sm_60
 	sm_70
 	sm_75
@@ -36,7 +38,7 @@ CUDA_TARGETS_COMPAT=(
 )
 CHECKREQS_DISK_BUILD="7G"
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -63,7 +65,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +aot benchmark cuda perfscripts +rocm test ebuild_revision_12
@@ -118,8 +120,10 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_6_2_AMDGPU_USEDEP}]
+	>=dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	dev-util/hip:=
+	>=sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_6_4_AMDGPU_USEDEP}]
+	sci-libs/rocRAND:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
@@ -141,18 +145,20 @@ BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
 	sys-devel/binutils[gold,plugins]
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
 		dev-libs/boost
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+		>=dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		dev-libs/rocm-opencl-runtime:=
+		>=sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:=
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 required_mem() {
@@ -252,13 +258,13 @@ src_configure() {
 	# error: undefined reference due to --no-allow-shlib-undefined: hsa_amd_signal_value_pointer
 	# error: undefined reference due to --no-allow-shlib-undefined: amd_comgr_do_action
 	# >>> referenced by /opt/rocm-5.7.1/lib/libhiprtc.so
-	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+	if has_version "dev-util/hip:0/${ROCM_SLOT}[numa]" ; then
 		append-ldflags -lnuma
 	fi
-	if has_version "dev-util/hip:${ROCM_SLOT}[rocm]" ; then
+	if has_version "dev-util/hip:0/${ROCM_SLOT}[rocm]" ; then
 		append-ldflags -lhsa-runtime64
 	fi
-	if has_version "dev-util/hip:${ROCM_SLOT}[lc]" ; then
+	if has_version "dev-util/hip:0/${ROCM_SLOT}[lc]" ; then
 		append-ldflags -lamd_comgr
 	fi
 
