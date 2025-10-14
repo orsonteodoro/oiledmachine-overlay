@@ -111,7 +111,6 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
-#	"${FILESDIR}/${PN}-6.1.2-rpath.patch"
 	"${FILESDIR}/${PN}-6.1.2-disable-header.patch"
 )
 
