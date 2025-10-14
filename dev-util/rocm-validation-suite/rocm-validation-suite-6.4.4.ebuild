@@ -49,7 +49,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" doc test ebuild_revision_3"
+IUSE+=" doc test ebuild_revision_4"
 RDEPEND="
 	dev-cpp/yaml-cpp[${LIBSTDCXX_USEDEP}]
 	dev-cpp/yaml-cpp:=
@@ -74,7 +74,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
