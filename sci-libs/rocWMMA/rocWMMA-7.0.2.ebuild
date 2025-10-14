@@ -4,17 +4,20 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx908
+	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
+	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -40,15 +43,17 @@ LICENSE="
 RESTRICT="
 	test
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="ebuild_revision_4"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	dev-util/hip:=
+	>=dev-util/rocm-smi-${PV}:${SLOT}
+	dev-util/rocm-smi:=
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
@@ -57,10 +62,10 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {

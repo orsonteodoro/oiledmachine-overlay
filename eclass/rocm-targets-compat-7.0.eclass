@@ -462,15 +462,19 @@ ROCTHRUST_7_0_AMDGPU_TARGETS_COMPAT=(
 ROCTHRUST_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCTHRUST_7_0_AMDGPU_TARGETS_COMPAT")
 
 ROCWMMA_7_0_AMDGPU_TARGETS_COMPAT=(
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+# Last update:  7.0.2
+	gfx908
+	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
+	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
 ROCWMMA_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCWMMA_7_0_AMDGPU_TARGETS_COMPAT")
 
