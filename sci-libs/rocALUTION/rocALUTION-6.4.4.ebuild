@@ -14,15 +14,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900_xnack_minus
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1120
+	gfx1121
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
@@ -42,7 +45,7 @@ DESCRIPTION="Next generation library for iterative sparse solvers for ROCm platf
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocALUTION"
 LICENSE="MIT"
 RESTRICT="mirror"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 rocm samples +openmp mpi
 ebuild_revision_9
@@ -74,14 +77,20 @@ RDEPEND="
 	)
 	openmp? (
 		${ROCM_CLANG_DEPEND}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:=
 	)
 	rocm? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_2_AMDGPU_USEDEP}]
-		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_2_AMDGPU_USEDEP}]
-		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_6_2_AMDGPU_USEDEP}]
-		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[${ROCSPARSE_6_2_AMDGPU_USEDEP}]
+		>=dev-util/hip-${PV}:${SLOT}
+		dev-util/hip:=
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP}]
+		sci-libs/rocBLAS:=
+		>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_6_4_AMDGPU_USEDEP}]
+		sci-libs/rocPRIM:=
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${ROCRAND_6_4_AMDGPU_USEDEP}]
+		sci-libs/rocRAND:=
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCSPARSE_6_4_AMDGPU_USEDEP}]
+		sci-libs/rocSPARSE:=
 	)
 "
 DEPEND="
@@ -90,11 +99,11 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-invalid-operands-fix.patch"
-	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
