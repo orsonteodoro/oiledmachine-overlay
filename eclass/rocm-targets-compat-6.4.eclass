@@ -410,19 +410,23 @@ ROCPRIM_6_4_AMDGPU_TARGETS_COMPAT=(
 ROCPRIM_6_4_AMDGPU_USEDEP=$(gen_x_usedep "ROCPRIM_6_4_AMDGPU_TARGETS_COMPAT")
 
 ROCRAND_6_4_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  6.4.4
 	gfx803
 	gfx900_xnack_minus
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 ROCRAND_6_4_AMDGPU_USEDEP=$(gen_x_usedep "ROCRAND_6_4_AMDGPU_TARGETS_COMPAT")
 
