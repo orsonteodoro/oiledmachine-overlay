@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake edo flag-o-matic rocm
@@ -43,20 +43,23 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug test
 ebuild_revision_7
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
+#	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
+#	llvm-runtimes/compiler-rt:=
 RDEPEND="
-	!dev-libs/rocm-opencl-runtime:0
-	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
-	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	dev-libs/rocm-comgr:=
+	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
+	dev-libs/rocm-device-libs:=
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	dev-libs/rocr-runtime:=
 "
 DEPEND="
 	${RDEPEND}
@@ -64,7 +67,8 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 		media-libs/glew
@@ -102,10 +106,6 @@ src_prepare() {
 	popd || die
 	eapply ${OCL_PATCHES[@]}
 	cmake_src_prepare
-
-	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
-	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare
 }
