@@ -85,7 +85,7 @@ HOMEPAGE="
 LICENSE="BSD"
 IUSE+="
 atlas doc examples -ilp64 mkl openblas tbb openmp test
-ebuild_revision_6
+ebuild_revision_7
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
@@ -103,25 +103,26 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 	CUDA_TOOLKIT_11_8="
 		(
 			=dev-util/nvidia-cuda-toolkit-11.8*
-			sys-devel/gcc:11
 		)
 	"
 	CUDA_TOOLKIT_12_3="
 		(
-			=dev-util/nvidia-cuda-toolkit-12*
-			sys-devel/gcc:12
+			=dev-util/nvidia-cuda-toolkit-12.3*
 		)
 	"
 	CUDA_TOOLKIT_12_4="
 		(
-			=dev-util/nvidia-cuda-toolkit-12*
-			sys-devel/gcc:13
+			=dev-util/nvidia-cuda-toolkit-12.4*
 		)
 	"
 	CUDA_TOOLKIT_12_5="
 		(
-			=dev-util/nvidia-cuda-toolkit-12*
-			sys-devel/gcc:13
+			=dev-util/nvidia-cuda-toolkit-12.5*
+		)
+	"
+	CUDA_TOOLKIT_12_5="
+		(
+			=dev-util/nvidia-cuda-toolkit-12.6*
 		)
 	"
 	IUSE+="
@@ -176,6 +177,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 					${CUDA_TOOLKIT_12_3}
 					${CUDA_TOOLKIT_12_4}
 					${CUDA_TOOLKIT_12_5}
+					${CUDA_TOOLKIT_12_6}
 				)
 			)
 			cuda_targets_sm_60? (
@@ -184,6 +186,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 					${CUDA_TOOLKIT_12_3}
 					${CUDA_TOOLKIT_12_4}
 					${CUDA_TOOLKIT_12_5}
+					${CUDA_TOOLKIT_12_6}
 				)
 			)
 			cuda_targets_sm_70? (
@@ -192,6 +195,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 					${CUDA_TOOLKIT_12_3}
 					${CUDA_TOOLKIT_12_4}
 					${CUDA_TOOLKIT_12_5}
+					${CUDA_TOOLKIT_12_6}
 				)
 			)
 			cuda_targets_sm_75? (
@@ -199,6 +203,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 					${CUDA_TOOLKIT_11_8}
 					${CUDA_TOOLKIT_12_3}
 					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_6}
 					${CUDA_TOOLKIT_12_5}
 				)
 			)
@@ -208,6 +213,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 					${CUDA_TOOLKIT_12_3}
 					${CUDA_TOOLKIT_12_4}
 					${CUDA_TOOLKIT_12_5}
+					${CUDA_TOOLKIT_12_6}
 				)
 			)
 			cuda_targets_sm_90? (
@@ -216,6 +222,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 					${CUDA_TOOLKIT_12_3}
 					${CUDA_TOOLKIT_12_4}
 					${CUDA_TOOLKIT_12_5}
+					${CUDA_TOOLKIT_12_6}
 				)
 			)
 			dev-util/nvidia-cuda-toolkit:=

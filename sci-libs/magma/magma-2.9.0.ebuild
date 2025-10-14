@@ -5,6 +5,6 @@ EAPI=8
 
 CXX_STANDARD=14
 MAGMA_CUDA=1
-SLOT="0/${PV}"
+SLOT="0/cuda"
 
 inherit icl-magma-v2_9
