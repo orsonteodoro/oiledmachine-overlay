@@ -25,7 +25,7 @@ if [[ ! ${_ROCM_TARGETS_COMPAT_7_0_ECLASS} ]]; then
 _ROCM_TARGETS_COMPAT_7_0_ECLASS=1
 
 RCCL_7_0_AMDGPU_TARGETS_COMPAT=(
-# Last updated 7.0.2
+# Last updated:  7.0.2
 	gfx906
 	gfx908
 	gfx90a
@@ -40,6 +40,7 @@ RCCL_7_0_AMDGPU_TARGETS_COMPAT=(
 RCCL_7_0_AMDGPU_USEDEP=$(gen_x_usedep "RCCL_7_0_AMDGPU_TARGETS_COMPAT")
 
 TENSILE_7_0_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  7.0.0
 	gfx803
 	gfx900
 	gfx906_xnack_minus
@@ -468,7 +469,7 @@ MAGMA_2_8_7_0_AMDGPU_TARGETS_COMPAT=(
 MAGMA_2_8_7_0_AMDGPU_USEDEP=$(gen_x_usedep "MAGMA_2_8_7_0_AMDGPU_TARGETS_COMPAT")
 
 ROCDECODE_7_0_AMDGPU_TARGETS_COMPAT=(
-# Last update 7.0.2
+# Last update:  7.0.2
 	gfx908
 	gfx90a
 	gfx942

@@ -20,6 +20,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1150
+	gfx1151
 )
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
