@@ -4,7 +4,7 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/MIOpen/blob/rocm-6.2.4/test/CMakeLists.txt#L121
+# https://github.com/ROCm/MIOpen/blob/rocm-6.4.4/test/CMakeLists.txt#L121
 	gfx803
 	gfx900
 	gfx906
@@ -16,18 +16,20 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	gfx1031
 	gfx1100
-	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
 AMDGPU_UNTESTED_TARGETS=(
 	gfx803
 )
-FIN_COMMIT="8c40a3c3b41a7d2fb31a8e747155fde4223919b9"
+FIN_COMMIT="344cf42f6c18f309f3d1dd08af1cd7b73dd38e46"
 MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
+	gfx942
 	gfx1030
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -57,7 +59,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild_revision_15"
 gen_amdgpu_required_use() {
 	local x
@@ -97,22 +99,29 @@ RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
 	app-alternatives/bzip2
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 	comgr? (
-		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+		>=dev-libs/rocm-comgr-${PV}:${SLOT}
+		dev-libs/rocm-comgr:=
 	)
 	composable-kernel? (
-		sci-libs/composable-kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_2_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:=
 	)
 	kernels? (
-		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_6_2_AMDGPU_USEDEP}]
+		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_6_4_AMDGPU_USEDEP}]
+		sci-libs/miopenkernels:=
 	)
 	opencl? (
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		dev-libs/rocm-opencl-runtime:=
 	)
 	rocm? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_2_AMDGPU_USEDEP},rocm]
+		>=dev-util/hip-${PV}:${SLOT}[rocm]
+		dev-util/hip:=
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
+		sci-libs/rocBLAS:=
 	)
 "
 DEPEND="
@@ -126,20 +135,21 @@ DEPEND="
 BDEPEND="
 	${HIP_CLANG_DEPEND}
 	virtual/pkgconfig
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	mlir? (
 		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
+		sci-libs/rocMLIR:=
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-disable-no-inline-boost.patch" # Build time testing
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-6.2.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
-	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
-	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
+	"${FILESDIR}/${PN}-6.4.4-no-strip.patch"
+#	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
-	"${FILESDIR}/${PN}-6.1.2-bzcat-path.patch"
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+#	"${FILESDIR}/${PN}-6.1.2-bzcat-path.patch"
 	"${FILESDIR}/${PN}-6.2.0-filesystem_error.patch"
 )
 
@@ -176,49 +186,6 @@ ewarn "Please wait... Patching may take longer than usual."
 		-i "CMakeLists.txt" \
 		|| die
 
-        # Speed up symbol replacmenet for @...@ by reducing the search space
-        # Generated from below one liner ran in the same folder as this file:
-        # grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${S}/CMakeLists.txt"
-		"${S}/README.md"
-		"${S}/cmake/ClangTidy.cmake"
-		"${S}/cmake/CppCheck.cmake"
-		"${S}/cmake/FindOpenCL.cmake"
-		"${S}/cmake/TargetFlags.cmake"
-		"${S}/cmake/rocm-path.cmake"
-		"${S}/fin/CMakeLists.txt"
-		"${S}/fin/cmake/ClangTidy.cmake"
-		"${S}/fin/cmake/CppCheck.cmake"
-		"${S}/fin/cmake/FindOpenCL.cmake"
-		"${S}/fin/cmake/rocm-path.cmake"
-		"${S}/fin/install_deps.cmake"
-		"${S}/fin/src/CMakeLists.txt"
-		"${S}/hipoc/hipoc_program.cpp"
-		"${S}/install_deps.cmake"
-		"${S}/src/composable_kernel/cmake/ClangTidy.cmake"
-		"${S}/src/composable_kernel/cmake/CppCheck.cmake"
-		"${S}/src/hipoc/hipoc_program.cpp"
-		"${S}/src/include/miopen/float_equal.hpp"
-		"${S}/src/include/miopen/lock_file.hpp"
-		"${S}/src/kernels/Conv_Winograd_v13_3_12_epilogue.inc"
-		"${S}/src/kernels/Conv_Winograd_v16_5_0_epilogue.inc"
-		"${S}/src/kernels/Conv_Winograd_v21_1_2_metadata.inc"
-		"${S}/src/kernels/Conv_Winograd_v21_1_3_metadata.inc"
-		"${S}/src/kernels/conv1x1u.s"
-		"${S}/src/kernels/conv1x1u_bias_activ.s"
-		"${S}/src/kernels/conv1x1u_stride2.s"
-		"${S}/src/kernels/conv1x1wrw.s"
-		"${S}/src/kernels/conv3x3wrw.s"
-		"${S}/src/kernels/conv_3x3_wheel_alpha_v3_0b_epilogue.inc"
-		"${S}/src/kernels/conv_3x3_wheel_alpha_v7_0_3b_epilogue.inc"
-		"${S}/src/kernels/conv_3x3_wheel_alpha_v9_0_15_epilogue.inc"
-		"${S}/src/kernels/conv_3x3_wheel_alpha_v9_2_7_epilogue.inc"
-		"${S}/src/kernels/xform_bidirect_winograd_code.inc"
-		"${S}/src/kernels/xform_metadata.inc"
-		"${S}/test/CMakeLists.txt"
-		"${S}/test/sequences.cpp"
-	)
 	rocm_src_prepare
 
 	# This plus avoid-metadata-error-for-vanilla-clang.patch fix bug mentioned

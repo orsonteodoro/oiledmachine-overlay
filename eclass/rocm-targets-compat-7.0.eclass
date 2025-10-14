@@ -167,20 +167,21 @@ HIPTENSOR_7_0_AMDGPU_TARGETS_COMPAT=(
 HIPTENSOR_7_0_AMDGPU_USEDEP=$(gen_x_usedep "HIPTENSOR_7_0_AMDGPU_TARGETS_COMPAT")
 
 MIOPEN_7_0_AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/MIOpen/blob/rocm-6.3.3/test/CMakeLists.txt#L121
+# https://github.com/ROCm/MIOpen/blob/rocm-7.0.2/test/CMakeLists.txt#L121
+# Last checked: 7.0.2
 	gfx803
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
-	gfx940
-	gfx941
 	gfx942
+	gfx950
 	gfx1030
 	gfx1031
 	gfx1100
-	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
 MIOPEN_7_0_AMDGPU_USEDEP=$(gen_x_usedep "MIOPEN_7_0_AMDGPU_TARGETS_COMPAT")
 
