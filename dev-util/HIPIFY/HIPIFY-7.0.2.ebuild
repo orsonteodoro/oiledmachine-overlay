@@ -37,7 +37,7 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_19"
+IUSE="test ebuild_revision_20"
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
