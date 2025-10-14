@@ -134,10 +134,11 @@ COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP=$(gen_x_usedep "COMPOSABLE_KERNEL_6_4_AMDGPU
 HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT=(
 # Last update:  6.4.4
 	gfx908_xnack_minus
-	gfx908_xnack_plus
+	gfx908_xnack_plus # with or without asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1100
 	gfx1101
 	gfx1103

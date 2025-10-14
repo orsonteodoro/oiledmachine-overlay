@@ -4,17 +4,23 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+	gfx908_xnack_minus
+	gfx908_xnack_plus # with or without asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1100
 	gfx1101
+	gfx1103
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -75,21 +81,28 @@ RDEPEND="
 	dev-libs/boost
 	dev-libs/msgpack
 	virtual/blas
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx940?,amdgpu_targets_gfx941?,amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	dev-util/hip:=
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?]
+	sys-libs/llvm-roc-libomp:=
 	amdgpu_targets_gfx90a_xnack_minus? (
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx90a]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx90a]
+		sys-libs/llvm-roc-libomp:=
 	)
 	amdgpu_targets_gfx90a_xnack_plus? (
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx90a]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx90a]
+		sys-libs/llvm-roc-libomp:=
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[cuda]
+		sci-libs/hipBLAS:=
 	)
 	rocm? (
-		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
+		>=dev-util/rocm-smi-${PV}:${SLOT}
+		dev-util/rocm-smi:=
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
+		sci-libs/hipBLAS:=
 	)
 "
 DEPEND="
@@ -102,12 +115,12 @@ BDEPEND="
 	>=dev-build/cmake-3.16.8
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
