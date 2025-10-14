@@ -76,7 +76,10 @@ GCC_COMPAT=(
 )
 GCC_COMPAT2=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
-LLVM_COMPAT=( 17 ) # From .bazelrc
+LLVM_COMPAT=(
+	19 # ROCm 6.4
+	17 # From .bazelrc
+)
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
@@ -343,7 +346,7 @@ ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda debug rocm rocm_6_0
+clang cpu cuda debug rocm rocm_6_4
 ebuild_revision_18
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -401,11 +404,11 @@ REQUIRED_USE+="
 		!cuda
 		${ROCM_REQUIRED_USE}
 		^^ (
-			rocm_6_0
+			rocm_6_4
 		)
 	)
-	rocm_6_0? (
-		llvm_slot_17
+	rocm_6_4? (
+		llvm_slot_19
 	)
 	|| (
 		cpu
@@ -418,58 +421,74 @@ REQUIRED_USE+="
 
 ROCM_SLOTS=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.29/build/rocm/Dockerfile.ms
-	"${HIP_6_0_VERSION}" # For llvm 17, relaxed, upstream uses 6.0.0
+	"${HIP_6_4_VERSION}" # For llvm 19, relaxed, upstream uses 6.0.0
 )
 
 declare -A LLD_SLOT=(
-	["${HIP_6_0_VERSION}"]="${HIP_6_0_LLVM_SLOT}"
+	["${HIP_6_4_VERSION}"]="${HIP_6_4_LLVM_SLOT}"
 )
 
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s=$(ver_cut 1-2 ${pv})
-		local u="${s}"
+		local s="0/"$(ver_cut 1-2 ${pv})
+		local u=$(ver_cut 1-2 ${pv})
+		local ROCM_SLOT="${u}"
 		u="${u/./_}"
 		# Direct dependencies
 		echo "
 			rocm_${u}? (
-				~dev-libs/rccl-${pv}:${s}
-				~dev-libs/rocm-device-libs-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
-				~dev-util/roctracer-${pv}:${s}
-				~sci-libs/hipBLAS-${pv}:${s}[rocm]
-				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
-				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
-				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
-				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
+				>=dev-libs/rccl-${pv}:${s}
+				dev-libs/rccl:=
+				>=dev-libs/rocm-device-libs-${pv}:${s}
+				dev-libs/rocm-device-libs:=
+				>=dev-util/hip-${pv}:${s}[rocm]
+				dev-util/hip:=
+				>=dev-util/roctracer-${pv}:${s}
+				dev-util/roctracer:=
+				>=sci-libs/hipBLAS-${pv}:${s}[rocm]
+				sci-libs/hipBLAS:=
+				>=sci-libs/hipFFT-${pv}:${s}[$(get_rocm_usedep HIPFFT)]
+				sci-libs/hipFFT:=
+				>=sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				sci-libs/hipSPARSE:=
+				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
+				sci-libs/miopen:=
+				>=sci-libs/rocFFT-${pv}:${s}[$(get_rocm_usedep ROCFFT)]
+				sci-libs/rocFFT:=
+				>=sci-libs/rocRAND-${pv}:${s}[$(get_rocm_usedep ROCRAND)]
+				sci-libs/rocRAND:=
 
 				llvm-core/lld:${LLD_SLOT[${pv}]}
 		"
 
-		if ver_test "${s}" -ge "5.5" ; then
+		if ver_test "${ROCM_SLOT}" -ge "5.5" ; then
 			echo "
 				rocm_${u}? (
-					~dev-libs/rocm-core-${pv}:${s}
+					>=dev-libs/rocm-core-${pv}:${s}
+					dev-libs/rocm-core:=
 					amdgpu_targets_gfx90a? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 				)
 			"
 		fi
 
-		if ver_test "${s}" -ge "5.7" ; then
+		if ver_test "${ROCM_SLOT}" -ge "5.7" ; then
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_gfx940? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 					amdgpu_targets_gfx941? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 					amdgpu_targets_gfx942? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						sci-libs/hipBLASLt:=
 					)
 				)
 			"
@@ -477,14 +496,20 @@ gen_rocm_depends() {
 
 		# Indirect dependencies
 		echo "
-				~dev-libs/rocm-comgr-${pv}:${s}
-				~dev-libs/rocr-runtime-${pv}:${s}
-				~dev-libs/roct-thunk-interface-${pv}:${s}
-				~dev-build/rocm-cmake-${pv}:${s}
-				~dev-util/rocm-smi-${pv}:${s}
-				~dev-util/rocminfo-${pv}:${s}
-				~dev-util/Tensile-${pv}:${s}$(get_rocm_usedep TENSILE)
-				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
+				>=dev-libs/rocm-comgr-${pv}:${s}
+				dev-libs/rocm-comgr:=
+				>=dev-libs/rocr-runtime-${pv}:${s}
+				dev-libs/rocr-runtime:=
+				>=dev-build/rocm-cmake-${pv}:${s}
+				dev-build/rocm-cmake:=
+				>=dev-util/rocm-smi-${pv}:${s}
+				dev-util/rocm-smi:=
+				>=dev-util/rocminfo-${pv}:${s}
+				dev-util/rocminfo:=
+				>=dev-util/Tensile-${pv}:${s}[$(get_rocm_usedep TENSILE)]
+				dev-util/Tensile:=
+				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
+				sci-libs/rocBLAS:=
 			)
 		"
 	done
@@ -546,8 +571,8 @@ BDEPEND+="
 		$(gen_llvm_bdepend)
 	)
 	rocm? (
-		rocm_6_0? (
-			sys-devel/gcc:${HIP_6_0_GCC_SLOT}
+		rocm_6_4? (
+			sys-devel/gcc:${HIP_6_4_GCC_SLOT}
 		)
 		sys-devel/gcc:=
 	)
@@ -787,10 +812,10 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="6.0"
-			ROCM_VERSION="${HIP_6_0_VERSION}"
+		if has rocm_6_4 ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+			LLVM_SLOT=19
+			ROCM_SLOT="6.4"
+			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
 		use_clang
