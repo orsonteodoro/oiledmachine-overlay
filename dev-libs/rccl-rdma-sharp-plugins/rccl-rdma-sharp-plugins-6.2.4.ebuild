@@ -22,10 +22,11 @@ HOMEPAGE="https://github.com/ROCm/rccl-rdma-sharp-plugins"
 LICENSE="
 	BSD
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="sharp ucx verbs ebuild_revision_0"
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 	sharp? (
 		dev-util/DOCA-Host[sharp]
 	)
@@ -43,7 +44,6 @@ BDEPEND="
 	${HIPCC_DEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 check_kernel_setup() {
@@ -113,7 +113,7 @@ src_configure() {
 	)
 	if use ucx ; then
 		myconf+=(
-			--with-ucx="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+			--with-ucx="${ESYSROOT}/opt/rocm"
 		)
 	else
 		myconf+=(
