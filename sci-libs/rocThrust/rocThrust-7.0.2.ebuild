@@ -8,19 +8,22 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900_xnack_minus
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with asan
+	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
-CUB_COMMIT="7106f901990803ca512cd7d9e6d7d2782f2c4839"
-LIBCUDACXX_COMMIT="05d48aaa12a3c310c333298331c41a9214f08f22"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -30,10 +33,6 @@ S="${WORKDIR}/rocThrust-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocThrust/archive/rocm-${PV}.tar.gz
 	-> rocThrust-${PV}.tar.gz
-https://github.com/NVlabs/cub/archive/${CUB_COMMIT}.tar.gz
-	-> cub-${CUB_COMMIT:0:7}.tar.gz
-https://github.com/NVIDIA/libcudacxx/archive/${LIBCUDACXX_COMMIT}.tar.gz
-	-> libcudacxx-${LIBCUDACXX_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="A ported Thrust parallel library for AMD GPUs"
@@ -52,7 +51,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 benchmark test ebuild_revision_5
 "
@@ -61,8 +60,10 @@ REQUIRED_USE="
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}
-	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_2_AMDGPU_USEDEP}]
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
+	>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_7_0_AMDGPU_USEDEP}]
+	sci-libs/rocPRIM:=
 	test? (
 		dev-cpp/gtest
 	)
@@ -73,11 +74,11 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.20.1
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -86,16 +87,6 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	rm -rf "${S}/dependencies/cub" || die
-	rm -rf "${S}/dependencies/libcudacxx" || die
-	ln -s \
-		"${WORKDIR}/cub-${CUB_COMMIT}" \
-		"${S}/dependencies/cub" \
-		|| die
-	ln -s \
-		"${WORKDIR}/libcudacxx-${LIBCUDACXX_COMMIT}" \
-		"${S}/dependencies/libcudacxx" \
-		|| die
 }
 
 src_prepare() {

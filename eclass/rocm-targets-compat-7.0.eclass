@@ -445,19 +445,25 @@ ROCSPARSE_7_0_AMDGPU_TARGETS_COMPAT=(
 ROCSPARSE_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCSPARSE_7_0_AMDGPU_TARGETS_COMPAT")
 
 ROCTHRUST_7_0_AMDGPU_TARGETS_COMPAT=(
+# Last update:  7.0.2
 	gfx803
 	gfx900_xnack_minus
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx940
-	gfx941
+	gfx90a_xnack_plus # with or without asan
 	gfx942
+	gfx942_xnack_plus # with asan
+	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
 )
 ROCTHRUST_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCTHRUST_7_0_AMDGPU_TARGETS_COMPAT")
 
