@@ -933,12 +933,6 @@ BDEPEND="
 			)
 		')
 	)
-	rocm? (
-		rocm_6_4? (
-			sys-devel/gcc:${HIP_6_4_GCC_SLOT}
-		)
-		sys-devel/gcc:=
-	)
 	|| (
 		>=sys-devel/gcc-12:12
 		>=sys-devel/gcc-11.3.1_p20230120-r1:11
