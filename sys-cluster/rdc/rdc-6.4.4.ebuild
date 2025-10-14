@@ -3,15 +3,8 @@
 
 EAPI=8
 
-# Before fixing the paths any further, a reminder or warning for modders.
-# There is a prebuilt binary that has a hardcoded path.  It is unknown if the
-# path is relative or absolute.  All these ebuilds may need to use paths exactly
-# like the binary release in order to reduce chances of breakage.
-#
-# See commit 52a3463 for details
-
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic grpc-ver rocm
@@ -50,7 +43,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain All rights reserved.
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_16"
 REQUIRED_USE="
@@ -76,7 +69,8 @@ gen_standalone_rdepend() {
 }
 RDEPEND="
 	sys-libs/libcap
-	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	>=dev-util/rocm-smi-${PV}:${SLOT}
+	dev-util/rocm-smi:=
 	standalone? (
 		|| (
 			$(gen_standalone_rdepend)
@@ -89,8 +83,8 @@ RDEPEND="
 	)
 "
 #	|| (
-#		~sys-kernel/rock-dkms-${PV}:${ROCM_SLOT}
-#		~sys-kernel/rocm-sources-${PV}:${ROCM_SLOT}
+#		~sys-kernel/rock-dkms-${PV}:${SLOT}
+#		~sys-kernel/rocm-sources-${PV}:${SLOT}
 #	)
 DEPEND="
 	${RDEPEND}
@@ -106,12 +100,13 @@ BDEPEND="
 	)
 	test? (
 		>=dev-cpp/gtest-1.11.0
-		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}
+		>=dev-libs/rocr-runtime-${PV}:${SLOT}
+		dev-libs/rocr-runtime:=
+		>=dev-util/rocprofiler-${PV}:${SLOT}
+		dev-util/rocprofiler:=
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -177,15 +172,15 @@ src_install() {
 
 pkg_postinst() {
 	if \
-		   has_version "~sys-kernel/rock-dkms-${PV}" \
-		|| has_version "~sys-kernel/rocm-sources-${PV}" ; then
+		   has_version ">=sys-kernel/rock-dkms-${PV}:${SLOT}" \
+		|| has_version ">=sys-kernel/rocm-sources-${PV}:${SLOT}" ; then
 		:
 	else
 ewarn
 ewarn "ONE following are required to use ${PN}:"
 ewarn
-ewarn "  ~sys-kernel/rock-dkms-${PV}"
-ewarn "  ~sys-kernel/rocm-sources-${PV}"
+ewarn "  >=sys-kernel/rock-dkms-${PV}:${SLOT}"
+ewarn "  >=sys-kernel/rocm-sources-${PV}:${SLOT}"
 ewarn
 	fi
 }
