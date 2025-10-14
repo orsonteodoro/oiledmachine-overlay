@@ -34,8 +34,8 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_4"
+SLOT="0/${ROCM_SLOT}"
+IUSE="test ebuild_revision_5"
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/astunparse-1.6.2[${PYTHON_USEDEP}]
