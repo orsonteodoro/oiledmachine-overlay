@@ -4,7 +4,7 @@
 EAPI=8
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -25,7 +25,7 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not have all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+=" cuda +rocm ebuild_revision_6"
 REQUIRED_USE="
 	^^ (
@@ -34,13 +34,16 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}[rocm(+)]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
+		sci-libs/rocBLAS:=
+		>=sci-libs/rocSOLVER-${PV}:${SLOT}[rocm(+)]
+		sci-libs/rocSOLVER:=
 	)
 "
 DEPEND="
@@ -50,7 +53,6 @@ BDEPEND="
 	${HIPCC_DEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
