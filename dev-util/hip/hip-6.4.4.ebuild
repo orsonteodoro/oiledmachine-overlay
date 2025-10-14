@@ -77,7 +77,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_43
+ebuild_revision_44
 "
 REQUIRED_USE="
 	hsa? (
@@ -181,7 +181,6 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/hipamd-6.2.0-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-6.4.4-hiprtc-header.patch"
 	"${FILESDIR}/hipamd-6.2.0-fix-install-cmake-files.patch"
-	"${FILESDIR}/hipamd-6.2.0-link-hsa-runtime64.patch"
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
@@ -249,6 +248,10 @@ src_prepare() {
 			-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
 			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
 			-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
+			-e "s,@ESYSROOT@,${ESYSROOT}," \
+			-e "s,@ROCM_PATH@,/opt/rocm,g" \
+			-e "s,@CLANG_PATH@,/opt/rocm/llvm/$(rocm_get_libdir)/clang/${LLVM_SLOT}," \
+			-e "s,@LLVM_PATH@,/opt/rocm/llvm," \
 			-i \
 			"${HIPCC_S}/bin/hipvars.pm" \
 			|| die
