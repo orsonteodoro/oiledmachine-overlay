@@ -68,7 +68,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+aot benchmark cuda perfscripts +rocm test ebuild_revision_12
++aot benchmark cuda perfscripts +rocm test ebuild_revision_13
 "
 gen_cuda_required_use() {
 	local x
@@ -122,7 +122,7 @@ RDEPEND="
 	>=dev-db/sqlite-3.36
 	>=dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	dev-util/hip:=
-	>=sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_6_4_AMDGPU_USEDEP}]
+	>=sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_7_0_AMDGPU_USEDEP}]
 	sci-libs/rocRAND:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
@@ -153,7 +153,7 @@ BDEPEND="
 		dev-libs/boost
 		>=dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 "
