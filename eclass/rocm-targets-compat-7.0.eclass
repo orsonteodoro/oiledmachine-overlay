@@ -30,6 +30,7 @@ RCCL_7_0_AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
 	gfx942
+	gfx950
 	gfx1030
 	gfx1100
 	gfx1101
