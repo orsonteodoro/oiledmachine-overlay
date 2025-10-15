@@ -8,15 +8,16 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
-	gfx940
-	gfx941
 	gfx942
+	gfx950
 	gfx1030
 	gfx1031
 	gfx1032
 	gfx1100
 	gfx1101
 	gfx1102
+	gfx1200
+	gfx1201
 )
 AMDGPU_UNTESTED_TARGETS=(
 #	gfx908
@@ -31,7 +32,7 @@ AMDGPU_UNTESTED_TARGETS=(
 #	gfx1101
 	gfx1102
 )
-# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-6.2.4/docs/release.md?plain=1#L18
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-6.4.4/docs/release.md?plain=1#L18
 LLVM_COMPAT=( 18 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -57,7 +58,7 @@ back-ends."
 HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp"
 LICENSE="MIT"
 RESTRICT="test"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
@@ -86,17 +87,19 @@ REQUIRED_USE="
 RDEPEND="
 	${HIPCC_DEPEND}
 	${ROCM_CLANG_DEPEND}
-	!sci-libs/rpp:0
-	>=dev-libs/boost-1.72:=
-	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+	>=dev-libs/boost-1.72
+	dev-libs/boost:=
+	dev-libs/rocm-opencl-runtime:${SLOT}
+	dev-libs/rocm-opencl-runtime:=
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
 	)
 	rocm? (
-		dev-libs/rocm-device-libs:${ROCM_SLOT}
-		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+		dev-libs/rocm-device-libs:${SLOT}
+		dev-libs/rocm-device-libs:=
+		>=dev-util/hip-${PV}:${SLOT}[rocm]
 		dev-util/hip:=
 	)
 "
@@ -114,7 +117,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
