@@ -45,7 +45,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -69,20 +69,20 @@ RDEPEND="
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
-		>=sci-libs/composable-kernel-${PV}:${SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/composable-kernel-${PV}:${SLOT}[${COMPOSABLE_KERNEL_7_0_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
 	)
 	cpu? (
 		sci-ml/oneDNN
 		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 	rocm? (
-		>=sci-libs/miopen-${PV}:${SLOT}[${MIOPEN_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/miopen-${PV}:${SLOT}[${MIOPEN_7_0_AMDGPU_USEDEP}]
 		sci-libs/miopen:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_7_0_AMDGPU_USEDEP}]
 		sci-libs/rocBLAS:=
 	)
 	test? (

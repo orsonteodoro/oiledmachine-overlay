@@ -46,7 +46,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
