@@ -1,0 +1,14 @@
+--- a/amd/dkms/dkms-config.sh.orig	2025-09-25 09:04:53.000000000 -0700
++++ b/amd/dkms/dkms-config.sh	2025-10-14 22:02:48.961512264 -0700
+@@ -46,7 +46,10 @@ is_kcl_macro_defined() {
+ }
+ 
+ # Export OS variables
+-if [[ -f /etc/os-release ]]; then
++if [[ -f /etc/os-release ]] && grep -q "ID=gentoo" /etc/os-release ; then
++    OS_NAME = "gentoo"
++    OS_VERSION = $(realpath /etc/portage/make.profile | grep -E -o "[0-9]+\.[0-9]+")
++elif [[ -f /etc/os-release ]]; then
+     OS_NAME=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
+     OS_VERSION=$(grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"')
+ else
