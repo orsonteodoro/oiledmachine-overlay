@@ -529,6 +529,7 @@ RPP_6_4_AMDGPU_TARGETS_COMPAT=(
 RPP_6_4_AMDGPU_USEDEP=$(gen_x_usedep "RPP_6_4_AMDGPU_TARGETS_COMPAT")
 
 LLVM_ROC_LIBOMP_6_4_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  6.4.4
 	gfx700
 	gfx701
 	gfx801
@@ -557,6 +558,15 @@ LLVM_ROC_LIBOMP_6_4_AMDGPU_TARGETS_COMPAT=(
 	gfx1150
 	gfx1151
 	gfx1152
+	gfx1153
+	gfx1200
+	gfx1201
+	gfx9-generic
+	gfx9-4-generic
+	gfx10-1-generic
+	gfx10-3-generic
+	gfx11-generic
+	gfx12-generic
 )
 LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP=$(gen_x_usedep "LLVM_ROC_LIBOMP_6_4_AMDGPU_TARGETS_COMPAT")
 

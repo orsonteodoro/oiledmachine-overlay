@@ -30,8 +30,8 @@ unset -f _llvm_roc_libomp_globals
 
 # Cuda compatibility:
 # https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L64
-# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
+# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L105
+# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L100
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -62,6 +62,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1150
 	gfx1151
 	gfx1152
+	gfx1153
+	gfx1200
+	gfx1201
+	gfx9-generic
+	gfx9-4-generic
+	gfx10-1-generic
+	gfx10-3-generic
+	gfx11-generic
+	gfx12-generic
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CUDA_TARGETS_COMPAT=(
@@ -78,12 +87,10 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_80
 	sm_86
-	sm_87
 	sm_89
 	sm_90
-	auto
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
@@ -193,84 +200,148 @@ gen_grpc_rdepend() {
 		"
 	done
 }
+CUDA_11_8_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		dev-util/nvidia-cuda-toolkit:=
+	)
+"
+CUDA_12_3_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		dev-util/nvidia-cuda-toolkit:=
+	)
+"
+CUDA_12_4_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		dev-util/nvidia-cuda-toolkit:=
+	)
+"
+CUDA_12_5_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		dev-util/nvidia-cuda-toolkit:=
+	)
+"
 RDEPEND="
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
 	dev-libs/rocm-device-libs:=
 	>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
 	sys-devel/llvm-roc:=
 	cuda_targets_sm_35? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
+		${CUDA_11_8_RDEPEND}
 	)
 	cuda_targets_sm_37? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
+		${CUDA_11_8_RDEPEND}
 	)
 	cuda_targets_sm_50? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_52? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_53? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_60? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_61? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_62? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_70? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_72? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_75? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_80? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_86? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_89? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	cuda_targets_sm_90? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 		)
 	)
 	llvm_targets_AMDGPU? (
-		dev-libs/roct-thunk-interface:${SLOT}
+		>=dev-libs/rocr-runtime-${ROCM_SLOT}:${SLOT}
+		dev-libs/rocr-runtime:=
 		sys-process/numactl
 		x11-libs/libdrm[video_cards_amdgpu]
 	)
@@ -335,25 +406,25 @@ pkg_setup() {
 src_prepare() {
 	cd "${S_ROOT}" || die
 #	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
-	eapply "${FILESDIR}/llvm-roc-libomp-6.2.0-omp-tools-includes.patch"
+#	eapply "${FILESDIR}/llvm-roc-libomp-6.2.0-omp-tools-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp.h-includes.patch"
 #	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
 	cd "${S}" || die
 	cmake_src_prepare
 
 	rocm_src_prepare
-	if ! use llvm_targets_NVPTX ; then
-		sed -i \
-			-e "\|/nvidia-arch|d" \
-			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
-			|| die
-	fi
-	if ! use llvm_targets_AMDGPU ; then
-		sed -i \
-			-e "\|/amdgpu-offload-arch|d" \
-			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
-			|| die
-	fi
+#	if ! use llvm_targets_NVPTX ; then
+#		sed -i \
+#			-e "\|/nvidia-arch|d" \
+#			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
+#			|| die
+#	fi
+#	if ! use llvm_targets_AMDGPU ; then
+#		sed -i \
+#			-e "\|/amdgpu-offload-arch|d" \
+#			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
+#			|| die
+#	fi
 
 	cd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 	local prune_dirs=(
