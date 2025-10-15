@@ -83,6 +83,9 @@ REQUIRED_USE="
 		kernel
 		rock-dkms
 	)
+	strict-pairing? (
+		!kernel
+	)
 "
 SLOT="0/${ROCM_SLOT}"
 FIRMWARE_RDEPEND="
@@ -94,13 +97,9 @@ FIRMWARE_RDEPEND="
 			)
 			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 		)
-		rock-dkms? (
-			>=sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
-			sys-kernel/rock-dkms:=
-		)
 	)
 	strict-pairing? (
-		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
+		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
 		sys-firmware/amdgpu-dkms-firmware:=
 	)
 "
@@ -131,7 +130,14 @@ KFD_RDEPEND="
 		)
 	)
 	rock-dkms? (
-		~sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
+		!strict-pairing? (
+			>=sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
+			sys-kernel/rock-dkms:=
+		)
+		strict-pairing? (
+			~sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
+			sys-kernel/rock-dkms:=
+		)
 	)
 "
 RDEPEND="
