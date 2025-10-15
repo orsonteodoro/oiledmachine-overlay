@@ -1,6 +1,6 @@
-diff '--color=auto' -urp rocPyDecode-rocm-6.2.4.orig/cmake/FindFFmpeg.cmake rocPyDecode-rocm-6.2.4/cmake/FindFFmpeg.cmake
---- rocPyDecode-rocm-6.2.4.orig/cmake/FindFFmpeg.cmake	2024-08-13 16:03:26.000000000 -0700
-+++ rocPyDecode-rocm-6.2.4/cmake/FindFFmpeg.cmake	2025-01-03 11:20:52.013377620 -0800
+diff '--color=auto' -urp rocPyDecode-rocm-6.4.4.orig/cmake/FindFFmpeg.cmake rocPyDecode-rocm-6.4.4/cmake/FindFFmpeg.cmake
+--- rocPyDecode-rocm-6.4.4.orig/cmake/FindFFmpeg.cmake	2025-03-13 10:36:58.000000000 -0700
++++ rocPyDecode-rocm-6.4.4/cmake/FindFFmpeg.cmake	2025-10-14 19:51:45.837995200 -0700
 @@ -62,63 +62,93 @@ else()
    # AVCODEC
    find_path(AVCODEC_INCLUDE_DIR 
@@ -101,10 +101,10 @@ diff '--color=auto' -urp rocPyDecode-rocm-6.2.4.orig/cmake/FindFFmpeg.cmake rocP
    )
    mark_as_advanced(AVUTIL_LIBRARY)
  
-diff '--color=auto' -urp rocPyDecode-rocm-6.2.4.orig/setup.py rocPyDecode-rocm-6.2.4/setup.py
---- rocPyDecode-rocm-6.2.4.orig/setup.py	2024-08-13 16:03:26.000000000 -0700
-+++ rocPyDecode-rocm-6.2.4/setup.py	2025-01-03 11:19:12.305962259 -0800
-@@ -62,17 +62,23 @@ class custom_bdist_wheel(_bdist_wheel):
+diff '--color=auto' -urp rocPyDecode-rocm-6.4.4.orig/setup.py rocPyDecode-rocm-6.4.4/setup.py
+--- rocPyDecode-rocm-6.4.4.orig/setup.py	2025-03-13 10:36:58.000000000 -0700
++++ rocPyDecode-rocm-6.4.4/setup.py	2025-10-14 19:52:30.306000653 -0700
+@@ -69,18 +69,24 @@ class custom_bdist_wheel(_bdist_wheel):
          plat = 'manylinux_2_28_x86_64'
          return python, abi, plat
  
@@ -118,16 +118,19 @@ diff '--color=auto' -urp rocPyDecode-rocm-6.2.4.orig/setup.py rocPyDecode-rocm-6
  build_dir = os.path.join(os.getcwd(), 'build')
  os.makedirs(build_dir, exist_ok=True)
  cmake_args=["cmake", ".", "-B"+build_dir, "-H"+os.getcwd()]
+ 
 -subprocess.check_call(cmake_args,cwd=os.getcwd())
 +subprocess.check_call(cmake_args,cwd=os.getcwd(),env=env)
  
  # Invoke cmake --build to build the project
--subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release'])
-+subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release'],env=env)
+-subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release', '--parallel'],cwd=os.getcwd())
++subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release', '--parallel'],cwd=os.getcwd(),env=env)
  
  # Install the built binaries
--subprocess.check_call(['cmake', '--install', build_dir])
-+subprocess.check_call(['cmake', '--install', build_dir],env=env)
+-subprocess.check_call(['cmake', '--install', build_dir],cwd=os.getcwd())
++subprocess.check_call(['cmake', '--install', build_dir],cwd=os.getcwd(),env=env)
  
  setup(
-       name='rocPyDecode',
+     name='amd_rocPyDecode_instinct',
+Only in rocPyDecode-rocm-6.4.4: setup.py.orig
+Only in rocPyDecode-rocm-6.4.4: setup.py.rej

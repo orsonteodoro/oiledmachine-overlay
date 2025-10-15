@@ -4,9 +4,11 @@
 
 EAPI=8
 
+# U22, U24
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_12" )
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -16,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/rocPyDecode.git"
-	FALLBACK_COMMIT="ffcfaf1c654b7ef8f88b3661c3511504f1a874f9" # Aug 13, 2024
+	FALLBACK_COMMIT="848e49d29d4d6173fb4b57a9223ce68c049baa28" # Mar 13, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -43,14 +45,17 @@ LICENSE="
 # all-rights-reserved MIT - src/roc_pybuffer.h
 # The distro's MIT license does not contain all rights reserved.
 RESTRICT="mirror"
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+=" ebuild_revision_1"
 RDEPEND+="
-	~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
+	>=sci-libs/rocDecode-${PV}:${SLOT}
+	sci-libs/rocDecode:=
 	dev-python/pybind11[${PYTHON_USEDEP}]
 	|| (
-		>=media-video/ffmpeg-4.2.7:56.58.58
-		>=media-video/ffmpeg-4.2.7:0/56.58.58
+		>=media-video/ffmpeg-4.4.1:56.58.58
+		>=media-video/ffmpeg-4.4.1:0/56.58.58
+		>=media-video/ffmpeg-6.1.1:58.60.60
+		>=media-video/ffmpeg-6.1.1:0/58.60.60
 	)
 	media-video/ffmpeg:=
 "
@@ -66,7 +71,7 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
-	"${FILESDIR}/rocPyDecode-6.2.4-ffmpeg-path.patch"
+	"${FILESDIR}/rocPyDecode-6.4.4-ffmpeg-path.patch"
 )
 
 src_unpack() {
@@ -80,7 +85,12 @@ src_unpack() {
 }
 
 python_configure() {
-	if has_version "media-video/ffmpeg:56.58.58" ; then
+	if has_version "media-video/ffmpeg:58.60.60" ; then
+einfo "Detected media-video/ffmpeg:58.60.60 (6.x series)"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		export FFMPEG_INCLUDES_PATH="/usr/lib/ffmpeg/58.60.60/include"
+		export FFMPEG_LIBS_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)"
+	elif has_version "media-video/ffmpeg:56.58.58" ; then
 einfo "Detected media-video/ffmpeg:56.58.58 (4.x series)"
 		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 		export FFMPEG_INCLUDES_PATH="/usr/lib/ffmpeg/56.58.58/include"
@@ -94,10 +104,10 @@ python_compile() {
 
 python_install() {
 	distutils-r1_python_install
-	dodir "/opt/rocm-${ROCM_VERSION}/lib"
+	dodir "/opt/rocm/lib"
 	cp -aT \
 		"${ED}/usr/lib/${EPYTHON}" \
-		"${ED}/opt/rocm-${ROCM_VERSION}/lib" \
+		"${ED}/opt/rocm/lib" \
 		|| die
 	rm -rf "${ED}/usr/lib/${EPYTHON}" || die
 	# Dev note:  Use PYTHONPATH
