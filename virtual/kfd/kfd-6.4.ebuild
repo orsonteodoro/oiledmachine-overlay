@@ -85,6 +85,7 @@ REQUIRED_USE="
 	)
 	strict-pairing? (
 		!kernel
+		rock-dkms
 	)
 "
 SLOT="0/${ROCM_SLOT}"
