@@ -191,6 +191,26 @@ HIPFFT_6_4_AMDGPU_TARGETS_COMPAT=(
 )
 HIPFFT_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPFFT_6_4_AMDGPU_TARGETS_COMPAT")
 
+HIPRAND_6_4_AMDGPU_TARGETS_COMPAT=(
+# Last updated:  6.4.4
+	gfx803
+	gfx900_xnack_minus
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
+	gfx942
+	gfx950
+	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
+)
+HIPRAND_6_4_AMDGPU_USEDEP=$(gen_x_usedep "HIPRAND_6_4_AMDGPU_TARGETS_COMPAT")
+
 HIPRT_2_5_6_4_AMDGPU_TARGETS_COMPAT=(
 # Last updated:  HIPRT 2.5.a21e075.3
 	"gfx900"

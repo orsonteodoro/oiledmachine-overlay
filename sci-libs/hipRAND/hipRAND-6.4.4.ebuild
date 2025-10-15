@@ -3,6 +3,23 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx803
+	gfx900_xnack_minus
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
+	gfx942
+	gfx950
+	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1151
+	gfx1200
+	gfx1201
+)
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
@@ -26,8 +43,23 @@ LICENSE="MIT"
 # BSD - test/fortran/fruit/LICENSE.txt
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE="cuda rocm ebuild_revision_7"
+IUSE="
+${ROCM_IUSE}
+asan cuda rocm
+ebuild_revision_7
+"
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_rocm_required_use)
 	^^ (
 		cuda
 		rocm
@@ -75,6 +107,7 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 			-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
