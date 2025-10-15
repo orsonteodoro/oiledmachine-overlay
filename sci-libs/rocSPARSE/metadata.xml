@@ -13,6 +13,10 @@
     <remote-id type="github">ROCmSoftwarePlatform/rocSPARSE</remote-id>
   </upstream>
   <use>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory for both CPU and GPU.
+    </flag>
     <flag name="benchmark">
       Build and install rocblas-bench.
     </flag>

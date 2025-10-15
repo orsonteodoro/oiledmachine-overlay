@@ -35,8 +35,11 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
+# Upstream enables samples
+# Upstream enables test
 IUSE="
-cuda +rocm samples test ebuild_revision_5
+asan cuda +rocm -samples -test
+ebuild_revision_5
 "
 gen_rocm_required_use() {
 	local x
@@ -92,6 +95,26 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
@@ -100,6 +123,13 @@ src_configure() {
 	replace-flags '-O0' '-O2'
 	replace-flags '-O0' '-O2'
 
+	check_asan
+
+	if use asan ; then
+		export ADDRESS_SANITIZER="-fsanitize=address -shared-libasan"
+	else
+		unset ADDRESS_SANITIZER
+	fi
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DHIPTENSOR_BUILD_TESTS=$(usex test ON OFF)

@@ -59,7 +59,8 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild_revision_8
+-asan -benchmark cuda +rocm -test
+ebuild_revision_8
 "
 gen_cuda_required_use() {
 	local x
@@ -177,11 +178,34 @@ get_nvgpu_targets() {
 	echo "${list}"
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
+	check_asan
+
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

@@ -29,7 +29,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=18
+LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake rocm
@@ -46,9 +46,10 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocALUTION"
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
+# Samples is default on upstream
 IUSE="
-rocm samples +openmp mpi
-ebuild_revision_9
+-asan +rocm -samples openmp mpi
+ebuild_revision_10
 "
 gen_rocm_required_use() {
 	local x
@@ -132,11 +133,33 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	# Grant access to the device to omit a sandbox violation
 	addwrite "/dev/kfd"
 	addpredict "/dev/dri/"
+	check_asan
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_CLIENTS_BENCHMARKS=OFF
 		-DBUILD_CLIENTS_SAMPLES=$(usex samples ON OFF)
 		-DBUILD_CLIENTS_TESTS=OFF

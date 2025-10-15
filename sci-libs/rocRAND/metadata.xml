@@ -13,6 +13,12 @@
     <remote-id type="github">ROCmSoftwarePlatform/rocRAND</remote-id>
   </upstream>
   <use>
-    <flag name="benchmark">Build and install benchmark programs.</flag>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory for both CPU and GPU.
+    </flag>
+    <flag name="benchmark">
+      Build and install benchmark programs.
+    </flag>
   </use>
 </pkgmetadata>

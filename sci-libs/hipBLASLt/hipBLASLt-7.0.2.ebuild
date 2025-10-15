@@ -56,7 +56,8 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
-asan benchmark cuda +rocm +tensile ebuild_revision_14
+-asan -benchmark -cuda +rocm +tensile
+ebuild_revision_14
 "
 gen_rocm_required_use() {
 	local x
@@ -222,6 +223,7 @@ ewarn
 	check_asan
 
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

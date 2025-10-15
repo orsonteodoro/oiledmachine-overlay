@@ -9,4 +9,10 @@
   <upstream>
     <remote-id type="github">ROCm/hipSPARSELt</remote-id>
   </upstream>
+  <use>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory for both CPU and GPU.
+    </flag>
+  </use>
 </pkgmetadata>

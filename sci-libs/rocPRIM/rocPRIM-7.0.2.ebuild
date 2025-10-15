@@ -55,7 +55,10 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="benchmark hip-cpu +rocm test ebuild_revision_8"
+IUSE="
+asan -benchmark hip-cpu +rocm test
+ebuild_revision_8
+"
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -145,11 +148,35 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
+	check_asan
+
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DBUILD_TEST=$(usex test ON OFF)

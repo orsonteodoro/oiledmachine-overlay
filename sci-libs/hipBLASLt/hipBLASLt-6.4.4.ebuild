@@ -54,7 +54,8 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
-asan benchmark cuda +rocm +tensile ebuild_revision_14
+-asan -benchmark -cuda +rocm +tensile
+ebuild_revision_14
 "
 gen_rocm_required_use() {
 	local x

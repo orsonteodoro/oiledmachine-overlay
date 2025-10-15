@@ -39,14 +39,15 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE="cuda rocm samples test ebuild_revision_1"
+IUSE="
+-asan -cuda rocm -samples -test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	^^ (
 		cuda
 		rocm
 	)
-"
-TRASH="
 "
 RDEPEND="
 	dev-util/hip:${SLOT}[cuda?,rocm?]
@@ -55,7 +56,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[$(get_rocm_usedep TENSILE)]
+		>=dev-util/Tensile-${PV}:${SLOT}
 		dev-util/Tensile:=
 		>=sci-libs/hipSPARSE-${PV}:${SLOT}
 		sci-libs/hipSPARSE:=
@@ -83,8 +84,29 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
+	check_asan
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark)
 		-DBUILD_CLIENTS_SAMPLES=$(usex samples)
 		-DBUILD_CLIENTS_TESTS=$(usex test)

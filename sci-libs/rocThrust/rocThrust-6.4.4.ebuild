@@ -51,7 +51,8 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-asan benchmark test ebuild_revision_5
+-asan -benchmark -test
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}

@@ -113,7 +113,7 @@ LICENSE="
 # The distro's MIT license template does not have All rights reserved.
 IUSE="
 ${GCC_COMPAT[@]}
-benchmark test
+-asan -benchmark -test
 ebuild_revision_8
 "
 REQUIRED_USE="
@@ -251,6 +251,26 @@ src_prepare() {
 	add_gfortran_wrapper
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
@@ -259,9 +279,12 @@ src_configure() {
 # local memory (403200) exceeds limit (65536) in function '_Z10bsr_gatherILj4ELj64ELj2EifEv20rocsparse_direction_T2_PKS1_PKT3_PS4_S1_'
 	replace-flags '-O0' '-O1'
 
+	check_asan
+
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)

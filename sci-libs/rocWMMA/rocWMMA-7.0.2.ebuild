@@ -44,7 +44,10 @@ RESTRICT="
 	test
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_4"
+IUSE="
+asan
+ebuild_revision_4
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -77,9 +80,37 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
+
+	check_asan
+
+	if use asan ; then
+		export ADDRESS_SANITIZER="-fsanitize=address -shared-libasan"
+	else
+		unset ADDRESS_SANITIZER
+	fi
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
