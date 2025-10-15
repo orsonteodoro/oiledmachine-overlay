@@ -4,24 +4,18 @@
 EAPI=7
 
 U_OS_REL="24.04"
-DRIVER_PV="6.2.4" # Folder name
-KERNEL_PV="6.8" # Equivalent for vanilla kernel based on amdkfd last commits
+DRIVER_PV="7.0.2" # Folder name
+KERNEL_PV="6.14" # Equivalent for vanilla kernel based on amdkfd last commits
 KVS=(
-# Commented out means EOL kernel.
-#	"6.5"  # U 22.04 HWE
-#	"6.2"  # U 22.04 HWE
-#	"5.17" # U 22.04 Desktop OEM
-	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
-#	"5.14" # S 15.4; R 9.1, 9.2
-#	"5.8"  # U 20.04 HWE
-	"5.4"  # U 20.04 generic
-#	"4.18" # R 8.7, 8.8
-#	"3.10" # R 7.9
+# See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-6.4.3/docs/reference/system-requirements.rst#supported-operating-systems
+	"5.15"
+	"6.1"
+	"6.6"
 )
-MY_PV="6.8.5.60204-2070768"  # The 4th component is the rock version 6.02.04 == 6.2.4.
+MY_PV="30.10.2.0.30100200-2226257"
 PKG_POSTINST_LIST="" # Global var
 PKG_RADEON_LIST="" # Global var
-ROCM_PV="6.2.4"
+ROCM_PV="7.0.2"
 ROCM_SLOT="${ROCM_PV%.*}"
 FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 
@@ -30,7 +24,7 @@ inherit unpacker
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
-https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
+https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms-firmware/${FN}
 	si? (
 https://raw.githubusercontent.com/RadeonOpenCompute/ROCK-Kernel-Driver/rocm-${ROCM_PV}/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
 	-> amdgpu_cgs.c.${ROCM_PV}
@@ -48,7 +42,7 @@ LICENSE="
 		MIT
 	)
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="si ebuild_revision_8"
 REQUIRED_USE="
 "
