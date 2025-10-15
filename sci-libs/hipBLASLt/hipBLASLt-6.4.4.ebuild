@@ -54,7 +54,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild_revision_14
+asan benchmark cuda +rocm +tensile ebuild_revision_14
 "
 gen_rocm_required_use() {
 	local x
@@ -68,6 +68,13 @@ gen_rocm_required_use() {
 }
 REQUIRED_USE="
 	$(gen_rocm_required_use)
+	asan? (
+		|| (
+			amdgpu_targets_gfx908_xnack_plus
+			amdgpu_targets_gfx90a_xnack_plus
+			amdgpu_targets_gfx942_xnack_plus
+		)
+	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
 	)
@@ -83,14 +90,26 @@ RDEPEND="
 	virtual/blas
 	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	dev-util/hip:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?,amdgpu_targets_gfx1103?,amdgpu_targets_gfx1150?,amdgpu_targets_gfx1151?,amdgpu_targets_gfx1200?,amdgpu_targets_gfx1201?]
 	sys-libs/llvm-roc-libomp:=
+	amdgpu_targets_gfx908_xnack_minus? (
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx908]
+		sys-libs/llvm-roc-libomp:=
+	)
+	amdgpu_targets_gfx908_xnack_plus? (
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx908]
+		sys-libs/llvm-roc-libomp:=
+	)
 	amdgpu_targets_gfx90a_xnack_minus? (
 		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx90a]
 		sys-libs/llvm-roc-libomp:=
 	)
 	amdgpu_targets_gfx90a_xnack_plus? (
 		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx90a]
+		sys-libs/llvm-roc-libomp:=
+	)
+	amdgpu_targets_gfx942_xnack_plus? (
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942]
 		sys-libs/llvm-roc-libomp:=
 	)
 	cuda? (
@@ -181,6 +200,7 @@ ewarn
 	fi
 
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
