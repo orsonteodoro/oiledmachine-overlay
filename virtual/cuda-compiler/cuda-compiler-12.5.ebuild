@@ -11,8 +11,8 @@ EAPI=8
 # pressures from distro version bumps from CI images and new ebuilds that are
 # pressured to bump dependencies to newer compilers.  This ebuild tries to
 # enforce a version contract so that it avoids ABI version symbol issues or
-# linker issues.  A change in this contract (i.e. changing USE flags in this
-# virtual package) requires all CUDA based packages to be rebuilt.
+# linker issues.  A change in the version contract (i.e. changing USE flags in
+# this virtual package) requires all CUDA based packages to be rebuilt.
 
 GCC_COMPAT=(
 	"gcc_slot_11_5"
