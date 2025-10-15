@@ -31,7 +31,7 @@ LICENSE="
 # MIT - LICENSE.md
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="test cuda +rocm ebuild_revision_7"
+IUSE="asan test cuda +rocm ebuild_revision_7"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -87,6 +87,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
