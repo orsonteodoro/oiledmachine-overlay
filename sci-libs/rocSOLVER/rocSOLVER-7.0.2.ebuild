@@ -7,13 +7,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx908_xnack_plus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx90a_xnack_plus # with asan
 	gfx942
-	gfx942_xnack_plus
+	gfx942_xnack_plus # with asan
 	gfx950
-	gfx950_xnack_plus
+	gfx950_xnack_plus # with asan
 	gfx10-1-generic
 	gfx10-3-generic
 	gfx1100
@@ -47,7 +47,10 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="+sparse test benchmark ebuild_revision_7"
+IUSE="
+-asan +sparse -test -benchmark
+ebuild_revision_7
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -91,14 +94,38 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	# Avoiding a sandbox violation
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
+	check_asan
+
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=NO
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)

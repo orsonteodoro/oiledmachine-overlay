@@ -16,6 +16,10 @@
     <name>Yiyang Wu</name>
   </maintainer>
   <use>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory for both CPU and GPU.
+    </flag>
     <flag name="test">
       Perform rocsolver-test to compare the result between rocSOLVER and system
       LAPACK.

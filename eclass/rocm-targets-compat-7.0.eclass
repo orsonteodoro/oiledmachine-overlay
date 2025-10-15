@@ -462,13 +462,13 @@ ROCSOLVER_7_0_AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx908_xnack_plus
+	gfx908_xnack_plus # with asan
 	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx90a_xnack_plus # with asan
 	gfx942
-	gfx942_xnack_plus
+	gfx942_xnack_plus # with asan
 	gfx950
-	gfx950_xnack_plus
+	gfx950_xnack_plus # with asan
 	gfx10-1-generic
 	gfx10-3-generic
 	gfx1100
