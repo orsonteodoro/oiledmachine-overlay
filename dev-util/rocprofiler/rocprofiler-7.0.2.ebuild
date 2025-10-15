@@ -68,7 +68,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE=" plugins samples test ebuild_revision_18"
+IUSE=" plugins samples test ebuild_revision_19"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -76,7 +76,6 @@ RDEPEND="
 	$(python_gen_any_dep '
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
-	!dev-util/rocprofiler:0
 	>=dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
 	dev-libs/hsa-amd-aqlprofile:=
 	>=dev-libs/rocm-comgr-${PV}:${SLOT}
