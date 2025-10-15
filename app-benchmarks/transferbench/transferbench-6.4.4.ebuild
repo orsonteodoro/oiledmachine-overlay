@@ -3,12 +3,11 @@
 
 EAPI=8
 
-LLVM_SLOT=17
+LLVM_SLOT=19
 MY_PN="TransferBench"
-MY_PV="1.48" # Based on filename and major-minor version compatibility
-ROCM_SLOT="6.1"
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit hip-versions
-ROCM_VERSION="${HIP_6_1_VERSION}"
+ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
@@ -16,16 +15,16 @@ if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/TransferBench.git"
-	FALLBACK_COMMIT="v${MY_PV}"
+	FALLBACK_COMMIT="v${PV}"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${MY_PN}-${MY_PV}"
+	S="${WORKDIR}/${MY_PN}-rocm-${PV}"
 	SRC_URI="
-https://github.com/ROCm/TransferBench/archive/refs/tags/v${MY_PV}.tar.gz
-	-> ${MY_PN}-${MY_PV}.tar.gz
+https://github.com/ROCm/TransferBench/archive/refs/tags/rocm-${PV}.tar.gz
+	-> ${MY_PN}-${PV}.tar.gz
 	"
 fi
 
@@ -39,7 +38,7 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+=" cuda rocm ebuild_revision_0"
 REQUIRED_USE+="
 	|| (
@@ -49,7 +48,8 @@ REQUIRED_USE+="
 "
 RDEPEND="
 	sys-process/numactl
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 "
 DEPEND="
 	${RDEPEND}
@@ -57,11 +57,12 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5.0
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.46-hardcoded-paths.patch"
 )
 
 pkg_setup() {

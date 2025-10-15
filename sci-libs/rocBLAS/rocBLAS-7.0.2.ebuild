@@ -87,7 +87,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-benchmark cuda +rocm test ebuild_revision_25
+benchmark cuda +rocm test ebuild_revision_26
 "
 gen_rocm_required_use() {
 	local x
@@ -117,7 +117,7 @@ RDEPEND="
 	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	dev-util/hip:=
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
@@ -137,7 +137,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)

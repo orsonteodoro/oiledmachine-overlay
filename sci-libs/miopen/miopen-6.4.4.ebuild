@@ -114,7 +114,7 @@ RDEPEND="
 		dev-libs/rocm-comgr:=
 	)
 	composable-kernel? (
-		sci-libs/composable-kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:${SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
 	)
 	kernels? (
