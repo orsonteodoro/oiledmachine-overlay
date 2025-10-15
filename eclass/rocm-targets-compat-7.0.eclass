@@ -351,9 +351,13 @@ ROCBLAS_7_0_AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1010
 	gfx1012
 	gfx1030

@@ -32,9 +32,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
+	gfx908_xnack_plus # with asan
 	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1010
 	gfx1012
 	gfx1030
@@ -55,6 +59,23 @@ DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
+HIPBLASLT_GPUS=(
+	gfx908_xnack_plus
+	gfx908_xnack_minus
+	gfx90a_xnack_plus
+	gfx90a_xnack_minus
+	gfx942
+	gfx942_xnack_plus
+	gfx950
+	gfx950_xnack_plus
+	gfx1100
+	gfx1101
+	gfx1103
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
+)
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
@@ -87,7 +108,8 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-benchmark cuda +rocm test ebuild_revision_26
+asan benchmark cuda +rocm test
+ebuild_revision_26
 "
 gen_rocm_required_use() {
 	local x
@@ -109,7 +131,21 @@ REQUIRED_USE="
 		cuda
 	)
 "
+gen_hipblaslt_rdepend() {
+	local x
+	for x in ${HIPBLASLT_GPUS[@]} ; do
+		if has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} ; then
+			echo "
+				amdgpu_targets_${x}? (
+					>=sci-libs/hipBLASLt-${PV}:${SLOT}[amdgpu_targets_${x}]
+					sci-libs/hipBLASLt:=
+				)
+			"
+		fi
+	done
+}
 RDEPEND="
+	$(gen_hipblaslt_rdepend)
 	$(python_gen_cond_dep '
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
@@ -188,6 +224,42 @@ src_prepare() {
 	fi
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
+use_hipblaslt() {
+	local found=0
+	local x
+	for x in ${HIPBLASLT_GPUS[@]} ; do
+		if has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} && use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/random"
 	addpredict "/dev/kfd"
@@ -200,7 +272,10 @@ src_configure() {
 	export PATH="${ESYSROOT}/${EROCM_PATH}/lib/python-exec/${EPYTHON}:${ESYSROOT}/${EROCM_PATH}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
+	check_asan
+
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
@@ -217,6 +292,7 @@ src_configure() {
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
+			-DBUILD_WITH_HIPBLASLT=OFF
 			-DBUILD_WITH_TENSILE=OFF
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
@@ -226,6 +302,7 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DBUILD_WITH_HIPBLASLT=$(use_hipblaslt)
 			-DBUILD_WITH_TENSILE=ON
 			-DCMAKE_CXX_COMPILER="hipcc" # Required to not call //usr/lib64/rocm/5.7/bin/hipcc.bat
 			-DHIP_COMPILER="clang"
