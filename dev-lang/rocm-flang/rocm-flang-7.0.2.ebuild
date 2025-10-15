@@ -120,9 +120,7 @@ einfo "GCC major version:  ${gcc_slot}"
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:
 	else
-eerror
-eerror "64-bit only supported."
-eerror
+eerror "64-bit is only supported for ${PN}."
 		die
 	fi
 	mycmakeargs_+=(
