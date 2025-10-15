@@ -373,8 +373,11 @@ ROCFFT_7_0_AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
+	gfx908_xnack_plus # with asan
 	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101

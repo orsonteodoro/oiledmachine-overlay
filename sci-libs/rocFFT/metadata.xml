@@ -19,6 +19,10 @@
       Build kernels ahead of time.  Enabling it will significantly increase
       build times longer than the library itself.
     </flag>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory for both CPU and GPU.
+    </flag>
     <flag name="benchmark">
       Build and install [dyna-]rocfft-rider.
     </flag>

@@ -8,10 +8,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
+	gfx908_xnack_plus # with asan
 	gfx90a
+	gfx90a_xnack_plus # with asan
 	gfx940
+	gfx940_xnack_plus # with asan
 	gfx941
+	gfx941_xnack_plus # with asan
 	gfx942
+	gfx942_xnack_plus # with asan
 	gfx1030
 	gfx1100
 	gfx1101
@@ -70,7 +75,8 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+aot benchmark cuda perfscripts +rocm test ebuild_revision_14
+-asan +aot benchmark cuda perfscripts +rocm test
+ebuild_revision_14
 "
 gen_cuda_required_use() {
 	local x
@@ -212,6 +218,28 @@ get_cuda_arch() {
 	done
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx940_xnack_plus"
+		"gfx941_xnack_plus"
+		"gfx942_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
@@ -220,7 +248,10 @@ src_configure() {
 # local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
 	replace-flags '-O0' '-O1'
 
+	check_asan
+
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
