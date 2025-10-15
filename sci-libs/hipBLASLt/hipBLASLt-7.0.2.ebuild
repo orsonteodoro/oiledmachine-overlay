@@ -70,14 +70,6 @@ gen_rocm_required_use() {
 }
 REQUIRED_USE="
 	$(gen_rocm_required_use)
-	asan? (
-		|| (
-			amdgpu_targets_gfx908_xnack_plus
-			amdgpu_targets_gfx90a_xnack_plus
-			amdgpu_targets_gfx942_xnack_plus
-			amdgpu_targets_gfx950_xnack_plus
-		)
-	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
 	)
@@ -192,6 +184,27 @@ get_makeopts_nprocs() {
 	echo "${ncpus}"
 }
 
+check_asan() {
+	local ASAN_GPUS=(
+		"gfx908_xnack_plus"
+		"gfx90a_xnack_plus"
+		"gfx942_xnack_plus"
+		"gfx950_xnack_plus"
+	)
+	local found=0
+	local x
+	for x in ${ASAN_GPUS[@]} ; do
+		if use "amdgpu_targets_${x}" ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) && use asan ; then
+ewarn "ASan security mitigations for GPU are disabled."
+ewarn "ASan is enabled for CPU HOST side but not GPU side for both older and newer GPUs."
+ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_targets_}"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/random"
 	addpredict "/dev/kfd"
@@ -205,6 +218,8 @@ ewarn "MAKEOPTS > 1.  Expect 7.33 GiB per process."
 ewarn "Changing to MAKEOPTS=-j1 is recommended."
 ewarn
 	fi
+
+	check_asan
 
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
