@@ -87,7 +87,8 @@ ROCPROFILER_6_4_AMDGPU_TARGETS_COMPAT=(
 ROCPROFILER_6_4_AMDGPU_USEDEP=$(gen_x_usedep "ROCPROFILER_6_4_AMDGPU_TARGETS_COMPAT")
 
 MIGRAPHX_6_4_AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.3.3/Jenkinsfile
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.4.4/Jenkinsfile
+# Last updated:  6.4.4
 	gfx906
 	gfx908
 	gfx90a

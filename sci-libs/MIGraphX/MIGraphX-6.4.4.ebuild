@@ -7,7 +7,7 @@ MY_PN="AMDMIGraphX"
 MY_P="${CATEGORY}/${MY_PN}-${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.1.2/Jenkinsfile
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.4.4/Jenkinsfile
 	gfx906
 	gfx908
 	gfx90a
@@ -16,7 +16,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -43,7 +43,7 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not contain All rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
 ebuild_revision_8
@@ -70,19 +70,25 @@ RDEPEND="
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
-		~sci-libs/composable-kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_2_AMDGPU_USEDEP}]
+		>=sci-libs/composable-kernel-${PV}:${SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:=
 	)
 	cpu? (
 		sci-ml/oneDNN
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		dev-libs/rocm-opencl-runtime:=
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:=
 	)
 	rocm? (
-		~sci-libs/miopen-${PV}:${ROCM_SLOT}[${MIOPEN_6_2_AMDGPU_USEDEP}]
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_2_AMDGPU_USEDEP}]
+		>=sci-libs/miopen-${PV}:${SLOT}[${MIOPEN_6_4_AMDGPU_USEDEP}]
+		sci-libs/miopen:=
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP}]
+		sci-libs/rocBLAS:=
 	)
 	test? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}
+		>=dev-util/hip-${PV}:${SLOT}
+		dev-util/hip:=
 	)
 "
 DEPEND="
@@ -93,16 +99,14 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.15
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	mlir? (
-		|| (
-			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
-			=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}
-		)
+		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}
+		sci-libs/rocMLIR:=
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {

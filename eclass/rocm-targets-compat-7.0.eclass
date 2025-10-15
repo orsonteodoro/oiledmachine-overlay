@@ -86,19 +86,18 @@ ROCPROFILER_7_0_AMDGPU_TARGETS_COMPAT=(
 ROCPROFILER_7_0_AMDGPU_USEDEP=$(gen_x_usedep "ROCPROFILER_7_0_AMDGPU_TARGETS_COMPAT")
 
 MIGRAPHX_7_0_AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.3.3/Jenkinsfile
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-7.0.2/Jenkinsfile
 	gfx906
 	gfx908
 	gfx90a
 	gfx1030
 	gfx1100
 	gfx1101
-	gfx1102
 )
 MIGRAPHX_7_0_AMDGPU_USEDEP=$(gen_x_usedep "MIGRAPHX_7_0_AMDGPU_TARGETS_COMPAT")
 
 COMPOSABLE_KERNEL_7_0_AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/composable_kernel/blob/rocm-6.3.3/include/ck/ck.hpp#L48
+# https://github.com/ROCm/composable_kernel/blob/rocm-7.0.2/include/ck/ck.hpp#L48
 # Last updated:  7.0.2
 	gfx803
 	gfx900
