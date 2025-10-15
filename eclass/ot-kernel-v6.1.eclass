@@ -853,6 +853,12 @@ BDEPEND+="
 "
 
 PDEPEND+="
+	rock-dkms? (
+		|| (
+			>=virtual/kfd-7.0:0/7.0[rock-dkms]
+			>=virtual/kfd-6.4:0/6.4[rock-dkms]
+		)
+	)
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then

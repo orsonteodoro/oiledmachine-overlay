@@ -268,7 +268,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
 bmq build c2tcp +cfs -clang deepcc -debug doc -dwarf4 -expoline -gdb +genpatches
--genpatches_1510 muqss orca pgo qt5 +retpoline rock-dkms rt symlink tresor
+-genpatches_1510 muqss orca pgo qt5 +retpoline rt symlink tresor
 tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
 
@@ -529,16 +529,6 @@ BDEPEND+="
 "
 
 PDEPEND+="
-	rock-dkms? (
-		|| (
-			~sys-kernel/rock-dkms-5.6.1
-			~sys-kernel/rock-dkms-5.5.1
-			~sys-kernel/rock-dkms-5.4.3
-			~sys-kernel/rock-dkms-5.3.3
-			~sys-kernel/rock-dkms-5.2.3
-			~sys-kernel/rock-dkms-5.1.3
-		)
-	)
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then

@@ -822,12 +822,8 @@ BDEPEND+="
 PDEPEND+="
 	rock-dkms? (
 		|| (
-			~sys-kernel/rock-dkms-5.7.1
-			~sys-kernel/rock-dkms-5.6.1
-			~sys-kernel/rock-dkms-5.5.1
-			~sys-kernel/rock-dkms-5.4.3
-			~sys-kernel/rock-dkms-5.3.3
-			~sys-kernel/rock-dkms-5.2.3
+			>=virtual/kfd-7.0:0/7.0[rock-dkms]
+			>=virtual/kfd-6.4:0/6.4[rock-dkms]
 		)
 	)
 "
