@@ -4,12 +4,16 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=19 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_12" )
 ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic libstdcxx-slot python-any-r1 rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/flang-rocm-${PV}"
@@ -55,6 +59,7 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.9.0
 	sys-devel/gcc-config
+	virtual/rocm-libstdcxx:${SLOT}[${LIBSTDCXX_USEDEP}]
 	doc? (
 		app-text/doxygen
 		$(python_gen_any_dep '
@@ -181,6 +186,7 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	ROCM_USE_LLVM_ROC=1
 	rocm_pkg_setup
+	libstdcxx-slot_verify # For libquadmath
 }
 
 src_prepare() {
@@ -204,27 +210,12 @@ src_configure() {
 
 src_compile() {
 	local gcc_slot=""
-	if has_version "dev-util/hip:${SLOT}[gcc_slot_12_5]" ; then
+	if has_version "virtual/rocm-libstdcxx:${SLOT}[gcc_slot_12_5]" ; then
 		gcc_slot="12"
-	elif has_version "dev-util/hip:${SLOT}[gcc_slot_13_4]" ; then
+	elif has_version "virtual/rocm-libstdcxx:${SLOT}[gcc_slot_13_4]" ; then
 		gcc_slot="13"
 	else
-eerror "Set the gcc_slot in dev-util/hip"
-		die
-	fi
-	gcc_slot="${gcc_slot%%.*}"
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
-eerror
-eerror "libquadmath must be ${gcc_slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "libquadmath slot:   ${gcc_current_profile_slot}"
-eerror "GCC compiler slot:  ${gcc_slot}"
-eerror
+eerror "Emerge and select a gcc_slot for virtual/rocm-libstdcxx:${SLOT}"
 		die
 	fi
 
