@@ -1220,10 +1220,13 @@ rocm_set_default_hipcc() {
 			done
 		fi
 		if [[ -z "${s}" ]] ; then
+			local cuda_pv=$(best_version "dev-util/nvidia-cuda-toolkit" \
+				| sed -e "s|dev-util/nvidia-cuda-toolkit-||g")
+			local cuda_slot=$(ver_cut 1-2 "${cuda_pv}")
 eerror
-eerror "Emerge the corresponding virtual/cuda-compiler with the default"
+eerror "Emerge virtual/cuda-compiler:${cuda_slot} with the default"
 eerror "systemwide GCC slot represented by one of the gcc_slot_<x> the"
-eerror "virtual's USE flags."
+eerror "virtual ebuild's USE flags."
 eerror
 eerror "The following are distro supported CUDA slots"
 eerror
@@ -1234,6 +1237,10 @@ eerror "The following are supported GCC slots"
 eerror
 eerror "HIP 6.4.x:  gcc_slot_12_5, gcc_slot_13_4"
 eerror "HIP 7.0.x:  gcc_slot_12_5, gcc_slot_13_4"
+eerror
+eerror "If the default systemwide compiler is GCC >= 14, you must rebuild all"
+eerror "C++ LTS packages (C++ 17 or earlier) with primarily either GCC 12 or"
+eerror "13."
 eerror
 			die
 		fi
