@@ -26,11 +26,12 @@ DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_6"
+IUSE="ebuild_revision_7"
 RDEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.5
+	virtual/rocm-libstdcxx:${SLOT}
 "
 RESTRICT="test"
 PATCHES=(
