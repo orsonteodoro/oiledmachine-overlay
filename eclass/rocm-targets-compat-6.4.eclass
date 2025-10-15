@@ -622,6 +622,8 @@ ROCDECODE_6_4_AMDGPU_TARGETS_COMPAT=(
 ROCDECODE_6_4_AMDGPU_USEDEP=$(gen_x_usedep "ROCDECODE_6_4_AMDGPU_TARGETS_COMPAT")
 
 ROCM_AGENT_ENUMERATOR_6_4_AMDGPU_TARGETS_COMPAT=(
+# See also https://github.com/ROCm/rocminfo/blob/rocm-6.4.4/rocm_agent_enumerator
+# Last update:  6.4.4
 	gfx700
 	gfx701
 	gfx801
