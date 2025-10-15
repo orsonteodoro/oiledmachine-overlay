@@ -54,7 +54,10 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" doc +esmi test ebuild_revision_5"
+IUSE+="
+asan doc +esmi test
+ebuild_revision_5
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	esmi
@@ -140,6 +143,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 
 	local mycmakeargs=(
+		-DADDRESS_SANITIZER=$(usex asan)
 		-DBUILD_TESTS=$(usex test)
 		-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
