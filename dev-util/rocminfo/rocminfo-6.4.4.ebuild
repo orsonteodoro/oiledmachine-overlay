@@ -28,15 +28,15 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_8"
+IUSE+=" ebuild_revision_9"
 RDEPEND="
 	>=dev-libs/rocr-runtime-${PV}:${SLOT}
 	dev-libs/rocr-runtime:=
 	sys-apps/pciutils
 	|| (
-		>=virtual/kfd-6.4:6.4
-		>=virtual/kfd-6.3:6.3
-		>=virtual/kfd-6.2:6.2
+		>=virtual/kfd-6.4:0/6.4
+		>=virtual/kfd-6.3:0/6.3
+		>=virtual/kfd-6.2:0/6.2
 	)
 	virtual/kfd:=
 "

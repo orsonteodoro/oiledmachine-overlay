@@ -36,9 +36,9 @@ RDEPEND="
 	>=dev-libs/rocr-runtime-${PV}:${SLOT}
 	dev-libs/rocr-runtime:=
 	|| (
-		>=virtual/kfd-6.4:6.4
-		>=virtual/kfd-6.3:6.3
-		>=virtual/kfd-6.2:6.2
+		>=virtual/kfd-6.4:0/6.4
+		>=virtual/kfd-6.3:0/6.3
+		>=virtual/kfd-6.2:0/6.2
 	)
 	virtual/kfd:=
 "

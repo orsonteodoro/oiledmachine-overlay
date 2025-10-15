@@ -15,26 +15,16 @@ CUDA_TARGETS_COMPAT=(
 	sm_72
 	sm_75
 )
-CLANG_COMPAT=( {18..15} )
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 inherit hip-versions
+LLVM_COMPAT=( {18..15} )
 RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
-	"${HIP_6_2_VERSION}"
-	"${HIP_6_1_VERSION}"
-	"${HIP_6_0_VERSION}"
-	"${HIP_5_7_VERSION}"
-	"${HIP_5_6_VERSION}"
-	"${HIP_5_5_VERSION}"
-	"${HIP_5_4_VERSION}"
-	"${HIP_5_3_VERSION}"
-	"${HIP_5_2_VERSION}"
-	"${HIP_5_1_VERSION}"
-	"${HIP_4_5_VERSION}"
-	"${HIP_4_1_VERSION}"
+	"${HIP_7_0_VERSION}"
+	"${HIP_6_4_VERSION}"
 )
 gen_rocm_iuse() {
 	for ver in ${ROCM_VERSIONS[@]} ; do
@@ -65,7 +55,7 @@ HOMEPAGE="https://openucx.org"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-${CLANG_COMPAT[@]/#/llvm_slot_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
@@ -107,7 +97,7 @@ REQUIRED_USE="
 	)
 	clang? (
 		^^ (
-			${CLANG_COMPAT[@]/#/llvm_slot_}
+			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
 	cuda? (
@@ -150,133 +140,43 @@ gen_rocm_rdepend() {
 CUDA_TOOLKIT_11_8_DEPENDS="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
-		=sys-devel/gcc-12*
 	)
 "
 CUDA_TOOLKIT_12_3_DEPENDS="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.3*
-		=sys-devel/gcc-12*
 	)
 "
 CUDA_TOOLKIT_12_4_DEPENDS="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.4*
-		=sys-devel/gcc-13*
 	)
 "
 CUDA_TOOLKIT_12_5_DEPENDS="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.5*
-		=sys-devel/gcc-13*
 	)
 "
 ROCM_KFD_DEPEND="
-	rocm_6_2? (
+	rocm_7_0? (
 		rdma? (
 			|| (
-				virtual/kfd:6.2
-				virtual/kfd:6.1
-				virtual/kfd:6.0
+				virtual/kfd:0/7.0
+				virtual/kfd:0/6.4
+				virtual/kfd:0/6.3
 			)
 		)
 	)
-	rocm_6_1? (
+	rocm_6_4? (
 		rdma? (
 			|| (
-				virtual/kfd:6.2
-				virtual/kfd:6.1
-				virtual/kfd:6.0
-				virtual/kfd:5.7
+				virtual/kfd:0/6.4
+				virtual/kfd:0/6.3
+				virtual/kfd:0/6.2
 			)
 		)
 	)
-	rocm_6_0? (
-		rdma? (
-			|| (
-				virtual/kfd:6.2
-				virtual/kfd:6.1
-				virtual/kfd:6.0
-				virtual/kfd:5.7
-				virtual/kfd:5.6
-			)
-		)
-	)
-	rocm_5_7? (
-		rdma? (
-			|| (
-				virtual/kfd:6.1
-				virtual/kfd:6.0
-				virtual/kfd:5.7
-				virtual/kfd:5.6
-				virtual/kfd:5.5
-			)
-		)
-	)
-	rocm_5_6? (
-		rdma? (
-			|| (
-				virtual/kfd:6.0
-				virtual/kfd:5.7
-				virtual/kfd:5.6
-				virtual/kfd:5.5
-				virtual/kfd:5.4
-			)
-		)
-	)
-	rocm_5_5? (
-		rdma? (
-			|| (
-				virtual/kfd:5.7
-				virtual/kfd:5.6
-				virtual/kfd:5.5
-				virtual/kfd:5.4
-				virtual/kfd:5.3
-			)
-		)
-	)
-	rocm_5_4? (
-		rdma? (
-			|| (
-				virtual/kfd:5.6
-				virtual/kfd:5.5
-				virtual/kfd:5.4
-				virtual/kfd:5.3
-				virtual/kfd:5.2
-			)
-		)
-	)
-	rocm_5_3? (
-		rdma? (
-			|| (
-				virtual/kfd:5.5
-				virtual/kfd:5.4
-				virtual/kfd:5.3
-				virtual/kfd:5.2
-				virtual/kfd:5.1
-			)
-		)
-	)
-	rocm_5_2? (
-		rdma? (
-			virtual/kfd:5.2
-		)
-	)
-	rocm_5_1? (
-		rdma? (
-			virtual/kfd:5.1
-		)
-	)
-	rocm_4_5? (
-		rdma? (
-			virtual/kfd:4.5
-		)
-	)
-	rocm_4_1? (
-		rdma? (
-			virtual/kfd:4.1
-		)
-	)
+	virtual/kfd:=
 "
 RDEPEND="
 	${ROCM_KFD_DEPEND}
@@ -400,13 +300,17 @@ DEPEND="
 "
 gen_clang_bdepend() {
 	local s
-	for s in ${CLANG_COMPAT[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 			llvm-core/lld:${s}
+			llvm-core/lld:=
 			openmp? (
 				llvm-runtimes/openmp:${s}
+				llvm-runtimes/openmp:=
 			)
 		"
 	done
@@ -414,11 +318,13 @@ gen_clang_bdepend() {
 gen_hip_clang_bdepend() {
 	local pv
 	for pv in ${ROCM_VERSIONS[@]} ; do
+		local s="0/${pv%.*}"
 		echo "
-			=sys-devel/gcc-12*
-			~sys-devel/llvm-roc-${pv}:${pv%.*}
+			>=sys-devel/llvm-roc-${pv}:${s}
+			sys-devel/llvm-roc:=
 			openmp? (
-				~sys-libs/llvm-roc-libomp-${pv}:${pv%.*}
+				>=sys-libs/llvm-roc-libomp-${pv}:${s}
+				sys-libs/llvm-roc-libomp:=
 			)
 		"
 	done
@@ -475,7 +381,7 @@ pkg_setup() {
 	_init_rocm_variables
 	if use clang ; then
 		local s
-		for s in ${CLANG_COMPAT[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if use "llvm_slot_${s}" ; then
 				LLVM_SLOT="${s}"
 				break

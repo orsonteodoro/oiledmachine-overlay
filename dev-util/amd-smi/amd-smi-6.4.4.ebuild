@@ -54,7 +54,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" doc +esmi test ebuild_revision_4"
+IUSE+=" doc +esmi test ebuild_revision_5"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	esmi
@@ -62,9 +62,9 @@ REQUIRED_USE+="
 RDEPEND="
 	${PYTHON_DEPS}
 	|| (
-		>=virtual/kfd-6.4:6.4
-		>=virtual/kfd-6.3:6.3
-		>=virtual/kfd-6.2:6.2
+		>=virtual/kfd-6.4:0/6.4
+		>=virtual/kfd-6.3:0/6.3
+		>=virtual/kfd-6.2:0/6.2
 	)
 	virtual/kfd:=
 "
