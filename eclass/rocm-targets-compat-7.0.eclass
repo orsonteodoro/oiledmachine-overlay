@@ -135,6 +135,8 @@ HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus # with or without asan
 	gfx942
 	gfx942_xnack_plus # with asan
+	gfx950
+	gfx950_xnack_plus # with asan
 	gfx1100
 	gfx1101
 	gfx1103

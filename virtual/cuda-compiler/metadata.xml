@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="gcc_slot_11_5">
+      Use GCC 11 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="gcc_slot_12_5">
+      Use GCC 12 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="gcc_slot_13_4">
+      Use GCC 13 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="gcc_slot_14_3">
+      Use GCC 14 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+
+    <flag name="llvm_slot_15">
+      Use LLVM 15 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="llvm_slot_16">
+      Use LLVM 16 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="llvm_slot_17">
+      Use LLVM 17 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="llvm_slot_18">
+      Use LLVM 18 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+    <flag name="llvm_slot_19">
+      Use LLVM 19 as the primary LTS (Long Term Support) default compiler.
+    </flag>
+  </use>
+</pkgmetadata>

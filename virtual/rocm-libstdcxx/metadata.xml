@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="gcc_slot_11_5">
+      Use GCC 11 as the primary libstdc++ provider for versioned symbols.
+    </flag>
+    <flag name="gcc_slot_12_5">
+      Use GCC 12 as the primary libstdc++ provider for versioned symbols.
+    </flag>
+    <flag name="gcc_slot_13_4">
+      Use GCC 13 as the primary libstdc++ provider for versioned symbols.
+    </flag>
+    <flag name="gcc_slot_14_3">
+      Use GCC 14 as the primary libstdc++ provider for versioned symbols.
+    </flag>
+  </use>
+</pkgmetadata>
