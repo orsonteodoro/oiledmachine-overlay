@@ -31,7 +31,6 @@ RDEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.5
-	virtual/rocm-libstdcxx:${SLOT}
 "
 RESTRICT="test"
 PATCHES=(
