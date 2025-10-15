@@ -57,7 +57,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	|| (
@@ -120,8 +120,6 @@ BDEPEND="
 	')
 	dev-lang/nasm
 	dev-lang/yasm
-	sys-devel/gcc:${HIP_6_2_GCC_SLOT}[openmp]
-	sys-devel/gcc:=
 	virtual/pkgconfig
 "
 PATCHES=(
