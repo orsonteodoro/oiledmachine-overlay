@@ -32,7 +32,7 @@ AMDGPU_UNTESTED_TARGETS=(
 #	gfx1101
 	gfx1102
 )
-# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-6.4.4/docs/release.md?plain=1#L18
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-7.0.2/docs/release.md?plain=1#L18
 LLVM_COMPAT=( 18 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
