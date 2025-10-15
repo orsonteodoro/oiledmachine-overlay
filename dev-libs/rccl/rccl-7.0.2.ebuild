@@ -64,9 +64,9 @@ RDEPEND="
 	peermem? (
 		dev-util/DOCA-Host[mlnx-ofed-kernel]
 		|| (
-			>=virtual/kfd-6.4:6.4[rock-dkms]
-			>=virtual/kfd-6.3:6.3[rock-dkms]
-			>=virtual/kfd-6.2:6.2[rock-dkms]
+			>=virtual/kfd-6.4:0/6.4[rock-dkms]
+			>=virtual/kfd-6.3:0/6.3[rock-dkms]
+			>=virtual/kfd-6.2:0/6.2[rock-dkms]
 		)
 		virtual/kfd:=
 	)
