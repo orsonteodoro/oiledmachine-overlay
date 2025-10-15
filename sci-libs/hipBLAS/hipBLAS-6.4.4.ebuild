@@ -26,7 +26,10 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" cuda +rocm ebuild_revision_6"
+IUSE+="
+-asan cuda +rocm
+ebuild_revision_6
+"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -66,6 +69,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DBUILD_ADDRESS_SANITIZER=$(usex asan ON OFF)
 		-DBUILD_CLIENTS_BENCHMARKS=OFF
 
 	# Currently hipBLAS is a wrapper of rocBLAS which has tests, so no need

@@ -15,4 +15,10 @@
     <email>xgreenlandforwyy@gmail.com</email>
     <name>Yiyang Wu</name>
   </maintainer>
+  <use>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory.
+    </flag>
+  </use>
 </pkgmetadata>
