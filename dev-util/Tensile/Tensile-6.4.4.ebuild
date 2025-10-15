@@ -59,7 +59,10 @@ LICENSE="
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE="+client cuda +opencl +openmp +rocm ebuild_revision_19"
+IUSE="
++client cuda +opencl +openmp +rocm
+ebuild_revision_19
+"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
