@@ -179,7 +179,7 @@ _rocm_set_globals_default() {
 			_ROCM_CLANG_USEDEP="[${ROCM_CLANG_USEDEP}]"
 		fi
 		ROCM_CLANG_DEPEND="
-			~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}${_ROCM_CLANG_USEDEP}
+			>=sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}${_ROCM_CLANG_USEDEP}
 			sys-devel/llvm-roc:=
 		"
 		HIP_CLANG_DEPEND="
@@ -239,7 +239,7 @@ _rocm_set_globals_default() {
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				rocm? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
+					>=sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -264,7 +264,7 @@ _rocm_set_globals_default() {
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				rocm? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
+					>=sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -289,7 +289,7 @@ _rocm_set_globals_default() {
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				!cuda? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
+					>=sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -311,7 +311,7 @@ _rocm_set_globals_default() {
 		fi
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND="
-				~sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
+				>=sys-devel/llvm-roc-${ROCM_VERSION}:0/${ROCM_SLOT}
 				sys-devel/llvm-roc:=
 			"
 		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
@@ -1184,17 +1184,56 @@ rocm_set_default_hipcc() {
 	strip-unsupported-flags
 	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
-		local s
-		if has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=sys-devel/gcc-13" ; then
-			s="13"
-		elif has_version "=dev-util/nvidia-cuda-toolkit-12.5*" && has_version "=sys-devel/gcc-13" ; then
-			s="13"
-		else
+		local CUDA_SLOTS_7_0=(
+			"11.8"
+			"12.3"
+			"12.6"
+			"12.8"
+			"12.9"
+		)
+		local CUDA_SLOTS_6_4=(
+			"11.8"
+			"12.3"
+			"12.6"
+		)
+		local x
+		local s=""
+		if [[ "${ROCM_SLOT}" == "7.0" ]] ; then
+			for x in ${CUDA_SLOTS_7_0[@]} ; do
+				if has_version "virtual/cuda-compiler:${x}[gcc_slot_12_5]" ; then
+					s="12"
+					break
+				elif has_version "virtual/cuda-compiler:${x}[gcc_slot_13_4]" ; then
+					s="13"
+					break
+				fi
+			done
+		elif [[ "${ROCM_SLOT}" == "6.4" ]] ; then
+			for x in ${CUDA_SLOTS_6_4[@]} ; do
+				if has_version "virtual/cuda-compiler:${x}[gcc_slot_12_5]" ; then
+					s="12"
+					break
+				elif has_version "virtual/cuda-compiler:${x}[gcc_slot_13_4]" ; then
+					s="13"
+					break
+				fi
+			done
+		fi
+		if [[ -z "${s}" ]] ; then
 eerror
-eerror "Your CUDA version not supported.  The CUDA pairing must be the following:"
+eerror "Emerge the corresponding virtual/cuda-compiler with the default"
+eerror "systemwide GCC slot represented by one of the gcc_slot_<x> the"
+eerror "virtual's USE flags."
 eerror
-eerror "For HIP 6.3, =dev-util/nvidia-cuda-toolkit-12.6 with sys-devel/gcc-13"
-eerror "For HIP 6.2, =dev-util/nvidia-cuda-toolkit-12.5 with sys-devel/gcc-13"
+eerror "The following are distro supported CUDA slots"
+eerror
+eerror "HIP 6.4.x:  11.8, 12.3, 12.6"
+eerror "HIP 7.0.x:  11.8, 12.3, 12.6, 12.8, 12.9"
+eerror
+eerror "The following are supported GCC slots"
+eerror
+eerror "HIP 6.4.x:  gcc_slot_12_5, gcc_slot_13_4"
+eerror "HIP 7.0.x:  gcc_slot_12_5, gcc_slot_13_4"
 eerror
 			die
 		fi

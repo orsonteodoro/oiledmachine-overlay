@@ -154,6 +154,32 @@ BDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
+	cuda? (
+		|| (
+			(
+				=dev-util/nvidia-cuda-toolkit-11.8*
+				dev-util/nvidia-cuda-toolkit:=
+				virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
+				virtual/cuda-compiler:=
+			)
+			(
+				=dev-util/nvidia-cuda-toolkit-12.3*
+				dev-util/nvidia-cuda-toolkit:=
+				virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
+				virtual/cuda-compiler:=
+			)
+			(
+				=dev-util/nvidia-cuda-toolkit-12.6*
+				dev-util/nvidia-cuda-toolkit:=
+				virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
+				virtual/cuda-compiler:=
+			)
+		)
+	)
+	rocm? (
+		virtual/rocm-libstdcxx:${SLOT}[${LIBSTDCXX_USEDEP}]
+		virtual/rocm-libstdcxx:=
+	)
 	test? (
 		rocm? (
 			>=dev-util/rocminfo-${PV}:${SLOT}
