@@ -56,13 +56,13 @@ RDEPEND="
 	>=dev-libs/libfmt-7.1.3
 	>=dev-util/hip-${PV}:${SLOT}[rocm]
 	dev-util/hip:=
-	>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
+	>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_7_0_AMDGPU_USEDEP},rocm]
 	sci-libs/rocBLAS:=
 	benchmark? (
 		virtual/blas
 	)
 	sparse? (
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCSPARSE_6_4_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCSPARSE_7_0_AMDGPU_USEDEP},rocm]
 		sci-libs/rocSPARSE:=
 	)
 "

@@ -21,7 +21,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 BOOST_PV="1.72.0"
 LIBJPEG_TURBO_PV="3.0.2"
-LLVM_SLOT=18
+LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for OOBR, 20250205
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
@@ -52,12 +52,12 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not contain all rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	|| (

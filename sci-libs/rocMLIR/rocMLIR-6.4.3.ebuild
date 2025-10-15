@@ -62,8 +62,8 @@ LICENSE="
 # NCSA-AMD - external/llvm-project/amd/device-libs/LICENSE.TXT
 # The distro Apache-2.0 license template does not have all rights reserved
 # The distro MIT license template does not have all rights reserved
-SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild_revision_16"
+SLOT="0/${ROCM_SLOT}"
+IUSE="ebuild_revision_17"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
