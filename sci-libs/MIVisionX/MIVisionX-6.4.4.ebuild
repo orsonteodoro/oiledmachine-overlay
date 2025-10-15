@@ -3,12 +3,25 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx908
+	gfx90a
+	gfx942
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1200
+	gfx1201
+)
 BOOST_PV="1.72.0"
-LLVM_SLOT=18
-NNEF_TOOLS_COMMIT="a1a900ae52128d4d00d9bd1fe3b605dcc46389bb" # committer-date:<=2024-03-08
+LLVM_SLOT=19
+NNEF_TOOLS_COMMIT="c166264b7cadb18f62a5711edf703e6029ad0212" # Same as nnef-v1.0.0 tag
 PROTOBUF_PV="3.12.0" # The version is behind the 3.21 offered.
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
-RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
+RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for 00BR
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -59,7 +72,7 @@ LICENSE="
 "
 # GPL-3+ - apps/cloud_inference/client_app/qcustomplot.h
 # The distro's MIT license template does not contain All rights reserved.
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0/${ROCM_SLOT}"
 IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
@@ -110,10 +123,11 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		>=dev-python/pybind11-2.4[${PYTHON_USEDEP}]
+		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 	')
 	dev-libs/openssl
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	>=dev-util/hip-${PV}:${SLOT}
+	dev-util/hip:=
 	caffe? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 		dev-libs/protobuf:=
@@ -123,12 +137,15 @@ RDEPEND="
 	)
 	ffmpeg? (
 		|| (
-			>=media-video/ffmpeg-4.0.4:56.58.58[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-4.4.2:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-4.4.1:56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-4.4.1:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-6.1.1:58.60.60[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-6.1.1:0/58.60.60[fdk,gpl,libass,x264,x265,nonfree]
 		)
 	)
 	migraphx? (
-		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}
+		>=sci-libs/MIGraphX-${PV}:${SLOT}
+		sci-libs/MIGraphX:=
 	)
 	neural-net? (
 		$(python_gen_cond_dep '
@@ -152,7 +169,8 @@ RDEPEND="
 	)
 	opencl? (
 		virtual/opencl
-		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
+		>=sci-libs/miopengemm-${PV}:${SLOT}
+		sci-libs/miopengemm:=
 	)
 	opencv? (
 		>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
@@ -163,20 +181,25 @@ RDEPEND="
 		dev-cpp/glog
 		dev-db/lmdb
 		media-libs/libjpeg-turbo
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		dev-libs/rocm-opencl-runtime:=
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+		sys-libs/llvm-roc-libomp:=
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 	)
 	rocm? (
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		>=sci-libs/rocBLAS-${PV}:${SLOT}
+		sci-libs/rocBLAS:=
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		dev-libs/rocm-opencl-runtime:=
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+		sys-libs/llvm-roc-libomp:=
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
-		~sci-libs/rpp-${PV}:${ROCM_SLOT}
+		>=sci-libs/rpp-${PV}:${SLOT}
 		sci-libs/rpp:=
 	)
 "
@@ -205,7 +228,6 @@ BDEPEND="
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.6.0-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -285,6 +307,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DBACKEND="HIP"
+			-DGPU_ARCHS=$(get_amdgpu_flags)
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
