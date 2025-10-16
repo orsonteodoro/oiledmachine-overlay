@@ -4,22 +4,16 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic grpc-ver rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
-GRPC_SLOTS=(
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
-
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
 	inherit git-r3
 else
@@ -55,29 +49,12 @@ REQUIRED_USE="
 		standalone
 	)
 "
-# abseil-cpp needs >=c++14
-# Originally >=net-libs/grpc-1.44.0:= but relaxed
-gen_standalone_rdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				=net-libs/grpc-${s1}*
-				dev-libs/protobuf:0/${s2}
-			)
-		"
-	done
-}
 RDEPEND="
 	sys-libs/libcap
 	>=dev-util/rocm-smi-${PV}:${SLOT}
 	dev-util/rocm-smi:=
 	standalone? (
-		|| (
-			$(gen_standalone_rdepend)
-		)
+		virtual/grpc[${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:=
 		net-libs/grpc:=
 	)
