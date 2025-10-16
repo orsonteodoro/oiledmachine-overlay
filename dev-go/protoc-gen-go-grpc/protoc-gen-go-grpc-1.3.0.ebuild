@@ -508,6 +508,7 @@ DESCRIPTION="This tool generates Go language bindings of services in protobuf de
 HOMEPAGE="https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc"
 LICENSE="Apache-2.0"
 RESTRICT="
+	mirror
 	!test? (
 		test
 	)
