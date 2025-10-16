@@ -59,7 +59,7 @@ RDEPEND+="
 	>=media-libs/harfbuzz-2.9.1
 	>=net-dns/c-ares-1.17.2
 	>=x11-libs/qscintilla-2.13.0
-	dev-games/enigma:0/radialgm-${ENIGMA_COMMIT}[${LIBSTDCXX_USEDEP}]
+	dev-games/enigma:0[${LIBSTDCXX_USEDEP}]
 	virtual/grpc[${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
 	virtual/jpeg
