@@ -81,7 +81,16 @@ XBYAK_RISCV_COMMIT="0233c991a0c1608be671dc63d63f450e7a2178ff"
 YAML_CPP_COMMIT="da82fd982c260e7f335ce5acbceff24b270544d1"
 ZLIB_COMMIT="51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
 
-inherit cflags-hardened cmake dep-prepare distutils-r1
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	# Limited by python protobuf
+	"gcc_slot_12_5"
+	"gcc_slot_13_4"
+	"gcc_slot_14_3"
+	"gcc_slot_15_2"
+)
+
+inherit cflags-hardened cmake dep-prepare distutils-r1 libstdcxx-slot
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -207,6 +216,24 @@ REQUIRED_USE="
 		development-tools
 	)
 "
+RDEPEND_PROTOBUF="
+	system-protobuf? (
+		gcc_slot_12_5? (
+			=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP}]
+		)
+		gcc_slot_13_4? (
+			=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP}]
+		)
+		gcc_slot_14_3? (
+			=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP}]
+		)
+		gcc_slot_15_2? (
+			=dev-libs/protobuf-3.19*[${LIBSTDCXX_USEDEP}]
+		)
+		dev-libs/protobuf:=
+	)
+"
+
 # src/bindings/python/constraints.txt
 RDEPEND_CONSTRAINTS="
 	$(python_gen_cond_dep '
@@ -237,7 +264,7 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		(
-			dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
 			dev-python/protobuf:=
 		)
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
@@ -264,10 +291,6 @@ RDEPEND+="
 		>=dev-cpp/tbb-2021.10:0
 		dev-cpp/tbb:=
 	)
-	(
-		dev-libs/protobuf:0/3.21
-		dev-libs/protobuf:=
-	)
 	mlas? (
 		>=sci-libs/mlas-20240118
 	)
@@ -284,8 +307,7 @@ RDEPEND+="
 		>=dev-util/opencl-headers-2024.05.08
 	)
 	system-protobuf? (
-		>=dev-libs/protobuf-3.20.3:0/3.21
-		dev-libs/protobuf:=
+		${RDEPEND_PROTOBUF}
 	)
 	system-pugixml? (
 		>=dev-libs/pugixml-1.14
@@ -322,7 +344,18 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-3.18.1:0/3.21[${PYTHON_USEDEP}]
+		gcc_slot_12_5? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_13_4? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_14_3? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_15_2? (
+			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
+		)
 		dev-python/protobuf:=
 		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
@@ -436,7 +469,18 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 		dev-python/optimum[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/protobuf[${PYTHON_USEDEP}]
+		gcc_slot_12_5? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_13_4? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_14_3? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_15_2? (
+			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
+		)
 		dev-python/protobuf:=
 		dev-python/pyctcdecode[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -528,7 +572,18 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/protobuf[${PYTHON_USEDEP}]
+		gcc_slot_12_5? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_13_4? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_14_3? (
+			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
+		)
+		gcc_slot_15_2? (
+			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
+		)
 		dev-python/protobuf:=
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -630,6 +685,7 @@ _PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 dep_prepare_archive_cp() {
