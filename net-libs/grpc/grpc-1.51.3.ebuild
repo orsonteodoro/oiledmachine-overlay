@@ -8,13 +8,13 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.52.2/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.51.3/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
-# https://github.com/grpc/grpc/blob/v1.52.2/setup.py#L100
+# https://github.com/grpc/grpc/blob/v1.51.3/setup.py#L100
 
 # For supported ruby versions, see
-# https://github.com/grpc/grpc/blob/v1.52.2/Rakefile#L147
+# https://github.com/grpc/grpc/blob/v1.51.3/Rakefile#L147
 
 MY_PV="${PV//_pre/-pre}"
 
@@ -83,7 +83,7 @@ REQUIRED_USE+="
 "
 RESTRICT="test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/30.152" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+SLOT="${SLOT_MAJ}/29.151" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20230214
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[${MULTILIB_USEDEP},cxx17(+)]

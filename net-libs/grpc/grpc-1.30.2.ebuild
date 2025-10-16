@@ -8,13 +8,13 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.56.4/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.30.2/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
-# https://github.com/grpc/grpc/blob/v1.56.4/setup.py#L100
+# https://github.com/grpc/grpc/blob/v1.30.2/setup.py#L100
 
 # For supported ruby versions, see
-# https://github.com/grpc/grpc/blob/v1.56.4/Rakefile#L147
+# https://github.com/grpc/grpc/blob/v1.30.2/Rakefile#L147
 
 MY_PV="${PV//_pre/-pre}"
 
@@ -23,7 +23,6 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
-OPENCENSUS_PROTO_PV="0.3.0"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
@@ -32,12 +31,9 @@ inherit cflags-hardened cmake multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
-S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-${OPENCENSUS_PROTO_PV}"
 SRC_URI="
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/census-instrumentation/opencensus-proto/archive/v${OPENCENSUS_PROTO_PV}.tar.gz
-	-> opencensus-proto-${OPENCENSUS_PROTO_PV}.tar.gz
 "
 
 DESCRIPTION="Modern open source high performance RPC framework"
@@ -83,15 +79,14 @@ REQUIRED_USE+="
 "
 RESTRICT="test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/33.156" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230612
+SLOT="${SLOT_MAJ}/10.130" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20200529
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},cxx17(+)]
-	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
-	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
-	>=net-dns/c-ares-1.19.1:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:0/4.23[${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-20200225.0:0/20200225[${MULTILIB_USEDEP},cxx17(+)]
+	>=dev-libs/openssl-1.1.0g:0=[-bindist(-),${MULTILIB_USEDEP}]
+	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:0/3.12[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 "
 # See also
@@ -101,10 +96,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.8
+	>=dev-build/cmake-3.5.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.7.0
+		>=dev-cpp/benchmark-1.5.0
 	)
 "
 PDEPEND_DISABLE="
@@ -116,10 +111,6 @@ PDEPEND+="
 	java? (
 		~dev-java/grpc-java-${PV}
 		|| (
-			(
-				virtual/jdk:11
-				virtual/jre:11
-			)
 			(
 				virtual/jdk:1.8
 				virtual/jre:1.8
@@ -160,7 +151,6 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	mv "${S_OPENCENSUS_PROTO}" "${S}/third_party/opencensus-proto/src" || die
 }
 
 src_prepare() {
