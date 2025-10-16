@@ -39,6 +39,9 @@ RESTRICT="
 "
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
+# 33 : 6.33 From CMakeLists.txt's protobuf_VERSION_STRING
+# 32 : 6.32 From CMakeLists.txt's protobuf_VERSION_STRING
+# 31 : 6.31 From CMakeLists.txt's protobuf_VERSION_STRING
 # 30 : 6.30 From CMakeLists.txt's protobuf_VERSION_STRING
 # 29 : 5.29 From CMakeLists.txt's protobuf_VERSION_STRING
 # 28 : 5.28 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -55,6 +58,8 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 19.5 : 3.19 From configure.ac's AC_INIT
 # 18.3 : 3.18 From configure.ac's AC_INIT
 # 16.2 : 3.16 From configure.ac's AC_INIT
+# 3.19 : 3.19 From configure.ac's AC_INIT
+# 3.12 : 3.12 From configure.ac's AC_INIT
 
 IUSE="
 emacs examples static-libs test zlib
