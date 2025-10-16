@@ -4,14 +4,17 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+)
 PYTHON_COMPAT=( "python3_"{8..11} )
-inherit autotools
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ravinet/mahimahi.git"
-	FALLBACK_COMMIT="0bd12164388bc109bbbd8ffa03a09e94adcbec5a" # May 5, 2023
+	FALLBACK_COMMIT="f1346c38c415abfc98626dd82450f49a57033603" # Apr 14, 2025
 	inherit git-r3
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
@@ -22,6 +25,8 @@ else
 	S="${WORKDIR}/${P}"
 	die "FIXME"
 fi
+
+inherit autotools libstdcxx-slot
 
 DESCRIPTION="Web performance measurement toolkit"
 HOMEPAGE="
@@ -99,6 +104,10 @@ eerror "Use the fallback-commit USE flag to continue."
 eerror
 		die
 	fi
+}
+
+pkg_setup() {
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
