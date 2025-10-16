@@ -39,15 +39,15 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 	debug
-	ebuild_revision_16
+	ebuild_revision_17
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	dev-libs/elfutils
 	|| (
-		>=virtual/kfd-7.0:0/7.0
 		>=virtual/kfd-6.4:0/6.4
 		>=virtual/kfd-6.3:0/6.3
+		>=virtual/kfd-6.2:0/6.2
 	)
 	virtual/kfd:=
 "
