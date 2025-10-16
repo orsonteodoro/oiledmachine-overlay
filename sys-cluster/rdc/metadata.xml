@@ -10,6 +10,10 @@
     <remote-id type="github">RadeonOpenCompute/rdc</remote-id>
   </upstream>
   <use>
+    <flag name="asan">
+      Build with ASan with critical severity security mitigations related to
+      memory.
+    </flag>
     <flag name="compile-commands">
       Build compile-commands for linters and autocompleters
     </flag>

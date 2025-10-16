@@ -45,7 +45,10 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_16"
+IUSE="
+asan +compile-commands doc +raslib +standalone systemd test
+ebuild_revision_16
+"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -146,6 +149,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if ! check-compiler-switch_is_system_flavor ; then
 einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
+	fi
+
+	if use asan ; then
+		export ADDRESS_SANITIZER="ON"
+	else
+		unset ADDRESS_SANITIZER
 	fi
 
 	local mycmakeargs=(
