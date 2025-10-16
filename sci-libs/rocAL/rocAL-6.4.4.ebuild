@@ -57,7 +57,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	|| (
@@ -67,7 +67,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-libs/half-1.12.0
-	dev-libs/protobuf:=
+	virtual/protobuf:=
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
 	')

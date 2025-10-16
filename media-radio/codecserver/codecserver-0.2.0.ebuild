@@ -22,7 +22,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 openrc systemd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -46,8 +46,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.6
-	>=dev-libs/protobuf-3.12.4:0/3.21
-	dev-libs/protobuf:=
+	virtual/protobuf:=
 "
 DOCS=( "LICENSE" "README.md" )
 

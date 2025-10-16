@@ -78,7 +78,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -130,8 +130,7 @@ RDEPEND="
 	>=dev-util/hip-${PV}:${SLOT}
 	dev-util/hip:=
 	caffe? (
-		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
-		dev-libs/protobuf:=
+		virtual/protobuf:=
 		$(python_gen_cond_dep '
 			>=dev-python/google-3.0.0[${PYTHON_USEDEP}]
 		')
