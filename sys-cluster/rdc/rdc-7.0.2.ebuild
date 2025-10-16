@@ -55,8 +55,7 @@ RDEPEND="
 	dev-util/rocm-smi:=
 	standalone? (
 		virtual/grpc[${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
-		net-libs/grpc:=
+		virtual/grpc:=
 	)
 	systemd? (
 		sys-apps/systemd
