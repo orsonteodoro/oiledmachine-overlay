@@ -2956,14 +2956,6 @@ gen_rocm_bdepend() {
 BDEPEND="
 	$(gen_clang_bdepend)
 	$(gen_rocm_bdepend)
-	(
-		>=dev-go/protobuf-go-1.34.2
-		dev-go/protobuf-go:=
-	)
-	(
-		>=dev-go/protoc-gen-go-grpc-1.5.1
-		dev-go/protoc-gen-go-grpc:=
-	)
 	>=dev-build/cmake-3.31.2
 	>=dev-lang/go-1.24.0
 	>=sys-devel/gcc-11.4.0
