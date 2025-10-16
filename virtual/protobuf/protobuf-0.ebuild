@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
+inherit libstdcxx-compat multilib-build
 GCC_COMPAT=(
 	"gcc_slot_11_5" # Support U22, LTS
 	"gcc_slot_12_5" # Support D12, LTS
@@ -13,12 +13,15 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_LTS[@]}
 )
 
+inherit libstdcxx-slot
+
 DESCRIPTION="A virtual package to manage Protobuf stability"
 LICENSE="metapackage"
 SLOT="0/${PV}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
+ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
@@ -27,19 +30,19 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	gcc_slot_11_5? (
-		=dev-libs/protobuf-3.12*
+		=dev-libs/protobuf-3.12*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_12_5? (
-		=dev-libs/protobuf-3.21*
+		=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_13_4? (
-		=dev-libs/protobuf-3.21*
+		=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_14_3? (
-		=dev-libs/protobuf-3.21*
+		=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_15_2? (
-		=dev-libs/protobuf-3.19*
+		=dev-libs/protobuf-3.19*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	dev-libs/protobuf:=
 "

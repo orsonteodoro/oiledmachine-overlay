@@ -290,7 +290,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_39
+	ebuild_revision_40
 "
 # hal for acceleration
 IUSE+="
@@ -684,8 +684,8 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	dev-libs/protobuf[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:=
+	virtual/protobuf[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf:=
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
 	atlas? (

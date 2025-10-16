@@ -7,9 +7,13 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 INTERNAL_VERSION="3.21.12" # From configure.ac L20
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
-inherit multilib-minimal toolchain-funcs
+inherit libstdcxx-slot multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
@@ -64,7 +68,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.9.0[${MULTILIB_USEDEP}]
 	)
 "
 RDEPEND+="
@@ -87,6 +91,7 @@ DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -98,21 +103,21 @@ einfo "Patching for 32-bit (${ABI})"
 	# 32-bit test breakage
 	# https://github.com/protocolbuffers/protobuf/issues/8460
 	sed -e "/^TEST(AnyTest, TestPackFromSerializationExceedsSizeLimit) {$/a\\  if (sizeof(void*) == 4) {\n    GTEST_SKIP();\n  }" \
-		-i src/google/protobuf/any_test.cc \
+		-i "src/google/protobuf/any_test.cc" \
 		|| die
 	# 32-bit test breakage
 	# https://github.com/protocolbuffers/protobuf/issues/8459
 	sed \
 		-e "/^TEST(ArenaTest, BlockSizeSmallerThanAllocation) {$/a\\  if (sizeof(void*) == 4) {\n    GTEST_SKIP();\n  }" \
 		-e "/^TEST(ArenaTest, SpaceAllocated_and_Used) {$/a\\  if (sizeof(void*) == 4) {\n    GTEST_SKIP();\n  }" \
-		-i src/google/protobuf/arena_unittest.cc \
+		-i "src/google/protobuf/arena_unittest.cc" \
 		|| die
 }
 
 src_prepare() {
 	# Temp disable.  It breaks on 32-bit and 64-bit.
 	sed -e "/^TEST_F(Utf8ValidationTest, OldVerifyUTF8String) {$/,/^}$/d" \
-		-i src/google/protobuf/wire_format_unittest.inc \
+		-i "src/google/protobuf/wire_format_unittest.inc" \
 		|| die
 
 	cmake_src_prepare
@@ -193,7 +198,7 @@ src_compile() {
 	}
 	multilib_foreach_abi src_compile_abi
 	if use emacs; then
-		elisp-compile editors/protobuf-mode.el
+		elisp-compile "editors/protobuf-mode.el"
 	fi
 }
 
@@ -236,17 +241,17 @@ eerror
 			die
 		fi
 	fi
-	insinto /usr/share/vim/vimfiles/syntax
-	doins editors/proto.vim
-	insinto /usr/share/vim/vimfiles/ftdetect
+	insinto "/usr/share/vim/vimfiles/syntax"
+	doins "editors/proto.vim"
+	insinto "/usr/share/vim/vimfiles/ftdetect"
 	doins "${FILESDIR}/proto.vim"
 	if use emacs; then
-		elisp-install ${PN} editors/protobuf-mode.el*
+		elisp-install "${PN}" "editors/protobuf-mode.el"*
 		elisp-site-file-install "${FILESDIR}/70${PN}-gentoo.el"
 	fi
 	if use examples; then
 		DOCS+=(examples)
-		docompress -x /usr/share/doc/${PF}/examples
+		docompress -x "/usr/share/doc/${PF}/examples"
 	fi
 	einstalldocs
 }
