@@ -3,6 +3,10 @@
 
 EAPI=8
 
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -95,7 +99,7 @@ PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
-inherit check-compiler-switch cmake flag-o-matic grpc-ver python-single-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
 
 #KEYWORDS="~amd64" # Update is WIP
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
@@ -187,19 +191,6 @@ REQUIRED_USE="
 		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
-gen_grpc_rdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				dev-libs/protobuf:0/${s2}
-				=net-libs/grpc-${s1}*[cxx]
-			)
-		"
-	done
-}
 CUDA_11_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
@@ -353,11 +344,8 @@ RDEPEND="
 		virtual/libelf:=
 	)
 	rpc? (
-		|| (
-			$(gen_grpc_rdepend)
-		)
-		dev-libs/protobuf:=
-		net-libs/grpc:=
+		net-libs/grpc[${LIBSTDCXX_USEDEP},cxx]
+		virtual/grpc:=
 	)
 "
 # The versions for protobuf and grpc was not disclosed in build files.
@@ -401,6 +389,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
