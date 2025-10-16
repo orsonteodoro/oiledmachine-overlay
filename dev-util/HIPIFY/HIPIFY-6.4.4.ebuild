@@ -37,7 +37,10 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_20"
+IUSE="
+asan test
+ebuild_revision_20
+"
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -144,6 +147,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 
 	local mycmakeargs=(
+		-DADDRESS_SANITIZER=$(usex asan)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 	)
