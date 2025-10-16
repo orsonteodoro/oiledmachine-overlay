@@ -18,11 +18,13 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="0"
+# dev-php/PEAR-PEAR provides pecl
 RDEPEND+="
 	>=dev-lang/php-7
 	dev-php/composer
 	dev-php/PEAR-PEAR
 	~net-libs/grpc-${PV}
+	net-libs/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
