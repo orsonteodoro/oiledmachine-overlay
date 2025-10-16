@@ -9,13 +9,17 @@ MY_PN="RadialGM"
 CMAKE_BUILD_TYPE="Release"
 ENIGMA_COMMIT="f30646f"
 QT_PV="5.15.2"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 
-inherit cmake desktop git-r3 grpc-ver toolchain-funcs xdg
+inherit cmake desktop git-r3 grpc-ver libstdcxx-slot toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
-	FALLBACK_COMMIT="5a41a5164759450714f6b859450a6586ccdf1650" # Jul 8, 2023
+	FALLBACK_COMMIT="08cc7191608c3f5cbfa0e49bafe2b8d344a0746d" # Jan 20, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-${PV}"
 	S_ENIGMA="${S}/Submodules/enigma-dev"
@@ -38,33 +42,16 @@ ebuild_revision_2
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 # Upstream uses protobuf 3.17.3
 # Originally >=net-libs/grpc-1.39.1
-gen_grpc_cdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				dev-libs/protobuf:0/${s2}
-				=net-libs/grpc-${s1}*
-			)
-		"
-	done
-}
 CDEPEND="
-	>=sys-devel/gcc-11.1.0
-	|| (
-		$(gen_grpc_cdepend)
-	)
-	dev-libs/protobuf:=
-	net-libs/grpc:=
+	virtual/grpc[${LIBSTDCXX_USEDEP}]
+	virtual/grpc:=
 "
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
 # pcre2 not listed in CI.
 DEPEND+="
 	${CDEPEND}
 	>=dev-cpp/yaml-cpp-0.6.3
-	>=dev-libs/double-conversion-3.1.5
+	>=dev-libs/double-conversion-3.1.5[${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libpcre2-10.40[pcre16]
 	>=dev-libs/openssl-1.1.1l
 	>=dev-libs/pugixml-1.11.4
@@ -98,6 +85,7 @@ PATCHES=(
 
 pkg_setup() {
 	export ENIGMA_INSTALL_DIR="/usr/$(get_libdir)/enigma"
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
