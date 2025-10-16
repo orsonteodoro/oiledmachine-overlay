@@ -389,21 +389,20 @@ _LIBCXX_VER_VERIFIED=0
 libcxx-slot_verify() {
 	tc-is-clang || return
 	local llvm_slot=$(${CC} --version | head -n 1 | cut -f 3 -d " " | cut -f 1 -d ".")
-	local actual_gcc_version=$(${CC} --version | head -n 1 | cut -f 3 -d " ")
-	local actual_gcc_ver2=$(ver_cut 1-2 "${actual_gcc_version}")
-	local k="CLANG_${actual_gcc_ver2/./_}"
-	local actual_libcxx_ver="${!k}"
+
+	# Verify core compiler
 	local x
 	for x in ${_ALL_LLVM_COMPAT[@]} ; do
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"llvm_slot_${x}"($|" ") ]] ; then
-			local k="CLANG_${x//./_}"
-			local expected_libcxx_ver="${!k}"
-			if ver_test "${actual_libcxx_ver}" -ne "${expected_libcxx_ver}" && has "llvm_slot_${x}" ${IUSE} && use "llvm_slot_${x}" ; then
+			if ver_test "${llvm_slot}" -ne "${x}" && has "llvm_slot_${x}" ${IUSE} && use "llvm_slot_${x}" ; then
 				_switch_clang_to_continue_message ${x%_*}
 				die
 			fi
 		fi
 	done
+
+	# Verification of libc++ already done in virtual/libcxx
+
 	export _LIBCXX_VER_VERIFIED=1
 }
 
