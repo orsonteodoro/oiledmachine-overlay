@@ -77,7 +77,7 @@ HOMEPAGE="
 SLOT="0"
 IUSE+="
 libmaker
-r1
+ebuild_revision_2
 "
 DEPEND_LATERALGM="
 	virtual/jre:${JAVA_SLOT}
@@ -102,7 +102,7 @@ DEPEND+="
 "
 RDEPEND+="
 	${CDEPEND}
-	dev-games/enigma:0/lateralgm-${ENIGMA_COMMIT}
+	dev-games/enigma:0
 "
 BDEPEND_LATERALGM="
 	virtual/jdk:${JAVA_SLOT}
