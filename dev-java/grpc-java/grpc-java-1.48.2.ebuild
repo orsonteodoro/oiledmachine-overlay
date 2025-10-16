@@ -4,13 +4,12 @@
 
 EAPI=8
 
-GRADLE_PV="8.8" # https://github.com/grpc/grpc-java/blob/v1.67.1/gradle/wrapper/gradle-wrapper.properties
-JAVA_COMPAT=( "java_slot_"{17,11,1_8} ) # https://github.com/grpc/grpc-java/blob/v1.67.1/.github/workflows/testing.yml#L20
-PROTOBUF_PV="27.0"
+GRADLE_PV="7.6" # https://github.com/grpc/grpc-java/blob/v1.48.2/gradle/wrapper/gradle-wrapper.properties
+JAVA_COMPAT=( "java_slot_"{11,1_8} ) # https://github.com/grpc/grpc-java/blob/v1.48.2/.github/workflows/testing.yml#L20
 
 inherit check-compiler-switch flag-o-matic gradle java-pkg-2
 
-#KEYWORDS="~amd64" # Build untested
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI+="
 https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
@@ -112,6 +111,9 @@ REQUIRED_USE+="
 	^^ (
 		${JAVA_COMPAT[@]}
 	)
+	android? (
+		java_slot_1_8
+	)
 "
 gen_jre_rdepend() {
 	local s
@@ -130,7 +132,7 @@ gen_jdk_bdepend() {
 	done
 }
 RDEPEND+="
-	dev-libs/protobuf:0/3.21[static-libs]
+	dev-libs/protobuf:0/3.19[static-libs]
 	dev-libs/protobuf:=
 	|| (
 		$(gen_jre_rdepend)
@@ -139,7 +141,8 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# SDK ver: https://github.com/grpc/grpc-java/blob/v1.67.1/android/build.gradle#L10
+# Build tools ver:  https://github.com/grpc/grpc-java/blob/v1.48.2/buildscripts/kokoro/android.sh
+# SDK ver: https://github.com/grpc/grpc-java/blob/v1.48.2/android/build.gradle#L10
 BDEPEND+="
 	|| (
 		$(gen_jre_rdepend)
@@ -147,8 +150,7 @@ BDEPEND+="
 	android? (
 		dev-util/android-sdk-update-manager
 		dev-util/android-sdk-platform:29
-		dev-util/android-sdk-platform:30
-		dev-util/android-sdk-build-tools:30.0.2
+		=dev-util/android-sdk-build-tools-28*
 		dev-util/android-sdk-commandlinetools
 	)
 "
@@ -162,11 +164,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	gradle_check_network_sandbox
-	if use java_slot_17 ; then
-		export JAVA_PKG_WANT_TARGET="17"
-		export JAVA_PKG_WANT_SOURCE="17"
-		export JAVA_SLOT="17"
-	elif use java_slot_11 ; then
+	if use java_slot_11 ; then
 		export JAVA_PKG_WANT_TARGET="11"
 		export JAVA_PKG_WANT_SOURCE="11"
 		export JAVA_SLOT="11"
@@ -205,7 +203,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	gradle_src_configure
 
-	# See https://github.com/grpc/grpc-java/blob/v1.67.1/COMPILING.md?plain=1#L9
+	# See https://github.com/grpc/grpc-java/blob/v1.48.2/COMPILING.md?plain=1#L9
 	if ! use codegen ; then
 		echo "skipCodegen=true" >> gradle.properties || die
 	fi
@@ -352,7 +350,7 @@ einfo "PATH:\t\t\t${PATH}"
 einfo "GRADLE_OPTS:\t\t\t${GRADLE_OPTS}"
 
 einfo "gradle build ${flags} ${args[@]}"
-# See https://github.com/grpc/grpc-java/blob/v1.67.1/COMPILING.md
+# See https://github.com/grpc/grpc-java/blob/v1.48.2/COMPILING.md
 
 	if use codegen ; then
 einfo "Building codegen plugin"
