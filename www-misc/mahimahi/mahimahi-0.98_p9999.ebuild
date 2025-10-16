@@ -8,6 +8,12 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX20[@]}
 )
+CXX_STANDARD=20
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX20[@]}
+)
+LIBCXX_SLOT_CONFIG="core"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -26,7 +32,7 @@ else
 	die "FIXME"
 fi
 
-inherit autotools libstdcxx-slot
+inherit autotools libstdcxx-slot libcxx-slot toolchain-funcs
 
 DESCRIPTION="Web performance measurement toolkit"
 HOMEPAGE="
@@ -42,6 +48,7 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
+	>=dev-cpp/pangomm-2.48
 	>=www-servers/apache-2[apache2_modules_authz_core,apache2_mpms_prefork,ssl]
 	app-misc/ssl-cert-snakeoil
 	dev-libs/apr
@@ -51,7 +58,6 @@ DEPEND+="
 	net-dns/dnsmasq
 	sys-apps/iproute2
 	x11-libs/libxcb
-	x11-libs/pango
 	virtual/libc
 	gnuplot? (
 		sci-visualization/gnuplot
@@ -108,7 +114,12 @@ eerror
 }
 
 pkg_setup() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
 	libstdcxx-slot_verify
+	if tc-is-clang ; then
+		libcxx-slot_verify
+	fi
 }
 
 src_unpack() {
