@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="gcc_slot_11_5">
+      Use protoc-gen-go-grpc associated with U22
+    </flag>
+    <flag name="gcc_slot_12_5">
+      Use protoc-gen-go-grpc associated with D12
+    </flag>
+    <flag name="gcc_slot_13_4">
+      Use protoc-gen-go-grpc associated with U24
+    </flag>
+    <flag name="gcc_slot_14_3">
+      Use protoc-gen-go-grpc associated with D13
+    </flag>
+    <flag name="gcc_slot_15_2">
+      Use protoc-gen-go-grpc associated with F43
+    </flag>
+  </use>
+</pkgmetadata>
