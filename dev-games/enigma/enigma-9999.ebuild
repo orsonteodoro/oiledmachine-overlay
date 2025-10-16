@@ -4,7 +4,7 @@
 
 EAPI=7
 
-# This ebuild corresponds to LateralGM.
+# This ebuild corresponds to master tip.
 
 # U 20.04
 
@@ -16,54 +16,62 @@ EAPI=7
 # grep -r -F -e "find_library(" -e "find_package("
 #
 # See CI for *DEPENDs
-# Fallback U 20.04.3
+# Fallback U 22.04.3
 ALURE_PV="1.2" # missing in CI
 BOX2D_PV_EMAX="2.4" # missing in CI
-BOOST_PV="1.76.0"
-BULLET_PV="2.88" # missing in CI
-CLANG_PV="12.0.1"
-CURL_PV="7.79.0"
-CXX_STANDARD="-std=c++17"
-FLAC_PV="1.3.3"
-FREETYPE_PV="2.11.0"
-GCC_PV="11.1.0"
-GLEW_PV="2.1.0" # missing in CI
-GLM_PV="0.9.9.7" # missing in CI
-GME_PV="0.6.2" # missing in CI
+BOOST_PV="1.83.0"
+BULLET_PV="3.06" # missing in CI
+CLANG_PV="16.0.6"
+CURL_PV="8.3.0"
+FLAC_PV="1.4.3"
+FREETYPE_PV="2.13.2"
+GCC_PV="13.2.1" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
+GLEW_PV="2.2.0" # missing in CI
+GLM_PV="0.9.9.8" # missing in CI
+GME_PV="0.6.3" # missing in CI
 GTEST_PV="1.10.0" # missing in CI
-GTK2_PV="2.24.32" # missing in CI
-LIBFFI_PV="3.3" # missing in CI
+GTK2_PV="2.24.33" # missing in CI
+LIBFFI_PV="3.4.2" # missing in CI
 LIBMODPLUG_PV="0.8.9.0"
 LIBOGG_PV="1.3.5"
-LIBPNG_PV="1.6.37"
-LIBSDL2_PV="2.0.16"
-LIBSNDFILE_PV="1.0.31"
+LIBPNG_PV="1.6.40"
+LIBSDL2_PV="2.28.4"
+LIBSNDFILE_PV="1.2.2"
 LIBVORBIS_PV="1.3.7"
-LIBX11_PV="1.7.2"
-LLVM_COMPAT=( {16..12} )
+LIBX11_PV="1.8.7"
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-MESA_PV="21.2.1"
-MPG123_PV="1.25.13" # missing in CI
-OPENAL_PV="1.21.1"
-OPUS_PV="1.3.1"
-PULSEAUDIO_PV="15.0"
+MESA_PV="23.2.1"
+MPG123_PV="1.32.2"
+OPENAL_PV="1.23.1"
+OPUS_PV="1.4"
+PULSEAUDIO_PV="16.1"
 SDL2_MIXER_PV="2.0.4" # missing in CI
 VIRTUAL_WINE_PV="0"
-WINE_PV="5.0" # missing in CI
+WINE_PV="6.0.3" # missing in CI
 WINE_STAGING_PV="${WINE_PV}"
 WINE_VANILLA_PV="${WINE_PV}"
-ZLIB_PV="1.2.11"
+ZLIB_PV="1.3"
 
-inherit check-compiler-switch desktop flag-o-matic git-r3 grpc-ver multilib-minimal toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 
-if [[ "${PV}" =~ "l" ]] ; then
-	# From https://github.com/enigma-dev/enigma-dev/commits/master@{2021-06-24}
+inherit check-compiler-switch desktop flag-o-matic git-r3 libstdcxx-slot multilib-minimal toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
-	EGIT_COMMIT="d18d1c08c5fbfd16a80222d06650918318d7f6cd" # Jun 23, 2021
 	EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
-else
-	SRC_URI=""
-	die "FIXME"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		FALLBACK_COMMIT="57d6edbdcf2bfade3a8dbb4ee75a721a468d8069" # Jul 14, 2025
+		IUSE+=" fallback-commit"
+	else
+		EGIT_COMMIT=""
+	fi
 fi
 S="${WORKDIR}/${PN}-${PV}"
 
@@ -72,12 +80,13 @@ is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 RESTRICT="mirror"
-SLOT="0/lateralgm-${EGIT_COMMIT:0:7}" # Required because of grpc/protobuf.
+SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
+ebuild_revision_1
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -162,27 +171,9 @@ REQUIRED_USE+="
 		X
 	)
 "
-# The gRPC requirement has been relaxed.
-gen_grpc_cdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				dev-libs/protobuf:0/${s2}[${MULTILIB_USEDEP}]
-				=net-libs/grpc-${s1}*[${MULTILIB_USEDEP}]
-			)
-		"
-	done
-}
 CDEPEND="
-	>=sys-devel/gcc-${GCC_PV}
-	|| (
-		$(gen_grpc_cdepend)
-	)
-	dev-libs/protobuf:=
-	net-libs/grpc:=
+	virtual/grpc[${LIBSTDCXX_USEDEP}]
+	virtual/grpc:=
 "
 # libepoxy missing in CI
 GLES_DEPEND="
@@ -220,27 +211,26 @@ gen_clang_deps() {
 # kdialog missing in CI
 # xinerama missing in CI
 # zenity missing in CI
-# procps missing in CI
 DEPEND+="
 	${CDEPEND}
-	>=dev-cpp/abseil-cpp-20210324.2:=[${MULTILIB_USEDEP}]
-	>=dev-cpp/yaml-cpp-0.6.3[${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-20230802.1:=[${MULTILIB_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.8.0[${MULTILIB_USEDEP}]
 	>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-	>=dev-libs/double-conversion-3.1.5[${MULTILIB_USEDEP}]
+	>=dev-libs/double-conversion-3.3.0[${MULTILIB_USEDEP}]
 	>=dev-libs/libpcre2-10.39[${MULTILIB_USEDEP},pcre16]
-	>=dev-libs/openssl-1.1.1l[${MULTILIB_USEDEP}]
-	>=dev-libs/pugixml-1.11.4[${MULTILIB_USEDEP}]
+	>=dev-libs/openssl-3.1.3[${MULTILIB_USEDEP}]
+	>=dev-libs/pugixml-1.14[${MULTILIB_USEDEP}]
 	>=dev-libs/rapidjson-1.1.0
 	>=media-libs/glm-${GLM_PV}
-	>=media-libs/harfbuzz-2.9.1[${MULTILIB_USEDEP}]
-	>=net-dns/c-ares-1.17.2[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-8.2.1[${MULTILIB_USEDEP}]
+	>=net-dns/c-ares-1.20.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
 	box2d? (
 		|| (
-			=games-engines/box2d-2.3*:2.3[${MULTILIB_USEDEP}]
-			=games-engines/box2d-2.3*:2.3.0[${MULTILIB_USEDEP}]
+			<games-engines/box2d-2.4:2.3[${MULTILIB_USEDEP}]
+			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
 		)
 	)
 	bullet? (
@@ -264,7 +254,7 @@ DEPEND+="
 		>=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}]
 	)
 	gnome? (
-		>=gnome-extra/zenity-3.32.0
+		>=gnome-extra/zenity-3.42.0
 	)
 	gtk2? (
 		>=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}]
@@ -273,14 +263,14 @@ DEPEND+="
 		>=dev-cpp/gtest-${GTEST_PV}[${MULTILIB_USEDEP}]
 	)
 	kde? (
-		>=kde-apps/kdialog-19.12.3
+		>=kde-apps/kdialog-21.12.3
 	)
 	network? (
 		>=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}]
 	)
 	openal? (
 		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP},dumb,vorbis]
-		>=media-libs/dumb-1.2.2[${MULTILIB_USEDEP}]
+		>=media-libs/dumb-0.9.3[${MULTILIB_USEDEP}]
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
 	)
@@ -302,14 +292,14 @@ DEPEND+="
 	)
 	X? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
-		>=sys-process/procps-3.3.16[${MULTILIB_USEDEP}]
+		>=sys-process/procps-4.0.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=x11-libs/libXinerama-1.1.4[${MULTILIB_USEDEP}]
 		xrandr? (
-			>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
+			>=x11-libs/libXrandr-1.5.4[${MULTILIB_USEDEP}]
 		)
 		xtest? (
-			>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
+			>=x11-libs/libXtst-1.2.4[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -318,8 +308,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	>=dev-build/cmake-3.21.2
-	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-build/cmake-3.27.7
+	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-util/patchelf
 	clang? (
 		$(gen_clang_deps)
@@ -340,34 +330,7 @@ pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-	if tc-is-gcc ; then
-		if ver_test $(gcc-version) -lt ${GCC_PV} ; then
-eerror
-eerror "You need to update your GCC to >= ${GCC_PV} via eselect or switch to"
-eerror "Clang/LLVM to >= ${CLANG_PV} in your per-package environmental variable"
-eerror "settings."
-eerror
-			die
-		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt ${CLANG_PV} ; then
-eerror
-eerror "You need to update your Clang/LLVM to >= ${CLANG_PV} or switch to"
-eerror "GCC >= ${GCC_PV} via eselect in your per-package environmental variable"
-eerror "settings."
-eerror
-			die
-		fi
-	else
-		die "Compiler CC=${CC} CXX=${CXX} is not supported"
-	fi
-	if test-flags ${CXX_STANDARD} ; then
-eerror
-eerror "The compiler doesn't support ${CXX_STANDARD} flag."
-eerror "Switch the compiler."
-eerror
-		die
-	fi
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -375,10 +338,12 @@ src_prepare() {
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ "l" ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if has fallback-commit $IUSE_EFFECTIVE && use fallback-commit ; then
+			export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
-		#verify_depends_is_the_same
 	else
 		unpack ${A}
 	fi

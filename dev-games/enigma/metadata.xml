@@ -134,13 +134,5 @@
     <slot name="0">
       Mono slot build
     </slot>
-    <subslots>
-      Determines compatibility.  It can be one of the following:
-
-      live - Mainline live.  Ebuild is marked with suffix m.
-      mainline-COMMIT_ID - Mainline tagged.  Ebuild is marked with suffix m.
-      radialgm-COMMIT_ID - RadialGM compatible.  Ebuild is marked with suffix r.
-      lateralgm-COMMIT_ID - LateralGM compatible.  Ebuild is marked with suffix l.
-    </subslots>
   </slots>
 </pkgmetadata>
