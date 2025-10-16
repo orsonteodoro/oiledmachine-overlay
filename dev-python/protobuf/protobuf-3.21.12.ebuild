@@ -21,7 +21,7 @@ PARENT_PN="${PN/-python/}"
 PARENT_PV="$(ver_cut 2-)"
 PARENT_P="${PARENT_PN}-${PARENT_PV}"
 
-if [[ "${PV}" == *9999 ]]; then
+if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
 
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
