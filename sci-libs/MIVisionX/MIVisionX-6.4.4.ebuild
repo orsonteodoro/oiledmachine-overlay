@@ -77,7 +77,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -161,7 +161,7 @@ RDEPEND="
 		)
 	)
 	onnx? (
-		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		virtual/protobuf:=
 		$(python_gen_cond_dep '
 			>=sci-ml/onnx-1.12.0[${PYTHON_USEDEP}]
 		')
@@ -175,7 +175,7 @@ RDEPEND="
 		>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
 	)
 	rocal? (
-		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		virtual/protobuf:=
 		dev-cpp/gflags
 		dev-cpp/glog
 		dev-db/lmdb

@@ -46,7 +46,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -65,8 +65,7 @@ RDEPEND="
 	>=dev-cpp/msgpack-cxx-3.3.0
 	>=dev-cpp/nlohmann_json-3.8.0
 	>=dev-libs/half-1.12.0
-	>=dev-libs/protobuf-3.11:0/3.21
-	dev-libs/protobuf:=
+	virtual/protobuf:=
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
