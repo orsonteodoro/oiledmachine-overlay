@@ -4,12 +4,14 @@
 
 EAPI=8
 
+# U22
+
 # Patch snapshot parts are from ollama ebuild.
 
 # See integration_test.go:protobufVersion for bindings compatibility
-GEN_EBUILD=0
+GEN_EBUILD=1
 MY_PV="v${PV}"
-PROTOBUF_SLOT="4.22"
+PROTOBUF_SLOT="3.22" # https://github.com/protocolbuffers/protobuf-go/blob/v1.31.0/integration_test.go#L38
 export S_GO="${WORKDIR}/go_build"
 
 inherit go-module
@@ -188,8 +190,17 @@ DESCRIPTION="Go support for Google's protocol buffers"
 HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 SLOT="0/${PROTOBUF_SLOT}"
-#	=dev-libs/protobuf-${PROTOBUF_SLOT#*.}*
+# KISS (Keep It Simple Stupid).  About the version gaurantees...
+# protobuf-go 1.31.0 was released in Jun 2023.
+# It supports 1 year previous, so the protobuf allowed is no less than Jun 2022.
+# 0/3.21 (21.12) released on Dec 2022, yes
+# 0/3.19 (3.19.6) released on Sep 2022, yes
+# 0/3.12 (3.12.4) released on Jul 2020, no
 RDEPEND="
+	|| (
+		dev-libs/protobuf:0/3.21
+		dev-libs/protobuf:0/3.19
+	)
 	dev-libs/protobuf:=
 "
 BDEPEND="

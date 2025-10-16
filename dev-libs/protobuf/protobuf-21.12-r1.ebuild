@@ -4,6 +4,12 @@
 
 EAPI=8
 
+# About the confusing versioning.
+#
+# Upstream uses 4.21.12 for their python package in __init__.py.  See https://github.com/protocolbuffers/protobuf/blob/v3.21.12/python/google/protobuf/__init__.py#L33
+# The versioning here corresponds to configure.ac.
+# 3.21.12 is equivalent to 4.21.12 and equivalent to 21.12.
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 INTERNAL_VERSION="3.21.12" # From configure.ac L20
