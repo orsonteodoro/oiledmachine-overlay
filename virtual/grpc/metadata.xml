@@ -16,6 +16,9 @@
     <flag name="gcc_slot_13_4">
       Use gRPC associated with U24
     </flag>
+    <flag name="gcc_slot_14_3">
+      Use gRPC associated with D13
+    </flag>
     <flag name="gcc_slot_15_2">
       Use gRPC associated with F43
     </flag>
