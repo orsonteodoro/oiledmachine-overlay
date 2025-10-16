@@ -297,7 +297,7 @@ RDEPEND_PYTHON_BINDINGS="
 # TODO:  src/bindings/python/requirements_test.txt
 RDEPEND+="
 	(
-		>=dev-cpp/tbb-2021.10:0
+		>=dev-cpp/tbb-2021.10:0[${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 	mlas? (
@@ -308,7 +308,8 @@ RDEPEND+="
 		${RDEPEND_PYTHON_BINDINGS}
 	)
 	system-flatbuffers? (
-		>=dev-libs/flatbuffers-24.3.25
+		>=dev-libs/flatbuffers-24.3.25[${LIBSTDCXX_USEDEP}]
+		dev-libs/flatbuffers:=
 	)
 	system-opencl? (
 		>=dev-cpp/clhpp-2024.05.08
@@ -319,10 +320,12 @@ RDEPEND+="
 		${RDEPEND_PROTOBUF}
 	)
 	system-pugixml? (
-		>=dev-libs/pugixml-1.14
+		>=dev-libs/pugixml-1.14[${LIBSTDCXX_USEDEP}]
+		dev-libs/pugixml:=
 	)
 	system-snappy? (
-		>=app-arch/snappy-1.2.1
+		>=app-arch/snappy-1.2.1[${LIBSTDCXX_USEDEP}]
+		app-arch/snappy:=
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-24.05.28454.6
@@ -391,7 +394,7 @@ BDEPEND_TEST_CONSTRAINTS="
 	)
 	>=dev-python/attrs-23.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/kornia-0.7.0[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
+	>=media-libs/opencv-4.5[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 	<dev-python/jax-0.4.15[${PYTHON_SINGLE_USEDEP}]
 	<dev-python/jaxlib-0.4.15[${PYTHON_SINGLE_USEDEP}]
 "
@@ -441,7 +444,7 @@ BDEPEND_E2E_TESTS="
 		dev-python/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/timm-0.9.2[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
+	>=media-libs/opencv-4.5[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/tensorflow-hub[${PYTHON_SINGLE_USEDEP}]
 "
 # model_hub_tests/tensorflow/requirements.txt \
@@ -610,7 +613,7 @@ BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 	')
-	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+	media-libs/opencv[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.13
