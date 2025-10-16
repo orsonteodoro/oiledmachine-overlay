@@ -8,7 +8,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
 inherit cflags-hardened cmake-multilib flag-o-matic libstdcxx-slot python-any-r1
@@ -29,7 +29,7 @@ HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV%%.*}"
 IUSE+="
-+cxx17 test -test-helpers
++cxx17 test
 ebuild_revision_14
 "
 BDEPEND+="
@@ -45,8 +45,6 @@ RESTRICT="
 	)
 	mirror
 "
-PATCHES=(
-)
 
 pkg_setup() {
 	libstdcxx-slot_verify
@@ -60,19 +58,16 @@ src_prepare() {
 		-e '/"-msse4.1",/d' \
 		-e '/"-mfpu=neon"/d' \
 		-e '/"-march=armv8-a+crypto"/d' \
-		"absl/copts/copts.py" || die
+		absl/copts/copts.py || die
 	# Now generate cmake files
-	python_fix_shebang "absl/copts/generate_copts.py"
+	python_fix_shebang absl/copts/generate_copts.py
 	absl/copts/generate_copts.py || die
 }
 
 src_configure() {
-	replace-flags '-O0' '-O2'
-	replace-flags '-O1' '-O2'
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
-		-DABSL_BUILD_TEST_HELPERS=$(usex test-helpers ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
@@ -82,13 +77,3 @@ src_configure() {
 	cmake-multilib_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED x86 and amd64
-# USE="cxx17 test test-helpers -r1" ABI_X86="32 (64) (-x32)"
-
-# x86 ABI:
-# 100% tests passed, 0 tests failed out of 207
-# Total Test time (real) = 267.15 sec
-
-# amd64 ABI:
-# 100% tests passed, 0 tests failed out of 207
-# Total Test time (real) = 204.20 sec
