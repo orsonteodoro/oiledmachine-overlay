@@ -36,26 +36,20 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 doc
-ebuild_revision_2
+ebuild_revision_3
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 # Upstream uses protobuf 3.17.3
 # Originally >=net-libs/grpc-1.39.1
-CDEPEND="
-	virtual/grpc[${LIBSTDCXX_USEDEP}]
-	virtual/grpc:=
-"
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
 # pcre2 not listed in CI.
-DEPEND+="
-	${CDEPEND}
-	>=dev-cpp/yaml-cpp-0.6.3
+RDEPEND+="
+	>=dev-cpp/yaml-cpp-0.6.3[${LIBSTDCXX_USEDEP}]
 	>=dev-libs/double-conversion-3.1.5[${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libpcre2-10.40[pcre16]
 	>=dev-libs/openssl-1.1.1l
-	>=dev-libs/pugixml-1.11.4
-	>=dev-libs/rapidjson-1.1.0
+	>=dev-libs/pugixml-1.11.4[${LIBSTDCXX_USEDEP}]
 	>=dev-qt/qtcore-${QT_PV}:5
 	>=dev-qt/qtgui-${QT_PV}:5[png]
 	>=dev-qt/qtmultimedia-${QT_PV}:5
@@ -65,17 +59,22 @@ DEPEND+="
 	>=media-libs/harfbuzz-2.9.1
 	>=net-dns/c-ares-1.17.2
 	>=x11-libs/qscintilla-2.13.0
-	dev-games/enigma:0/radialgm-${ENIGMA_COMMIT}
+	dev-games/enigma:0/radialgm-${ENIGMA_COMMIT}[${LIBSTDCXX_USEDEP}]
+	virtual/grpc[${LIBSTDCXX_USEDEP}]
+	virtual/grpc:=
 	virtual/jpeg
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
+	>=dev-libs/rapidjson-1.1.0
 "
 BDEPEND+="
 	${CDEPEND}
 	>=dev-build/cmake-3.23.2
 	dev-util/patchelf
 	media-gfx/imagemagick[png]
+	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:=
 "
 RESTRICT="mirror"
 DOCS=( README.md )
