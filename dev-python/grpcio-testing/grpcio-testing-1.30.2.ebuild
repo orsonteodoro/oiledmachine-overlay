@@ -7,8 +7,8 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
-PROTOBUF_SLOT="0/4.24"
-PYTHON_COMPAT=( "python3_"{8..12} )
+PROTOBUF_SLOT="0/3.12"
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 

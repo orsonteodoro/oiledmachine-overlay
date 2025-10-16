@@ -8,8 +8,8 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
-PROTOBUF_PV="21.12"
-PROTOBUF_SLOT="0/3.21"
+PROTOBUF_PV="3.12.2"
+PROTOBUF_SLOT="0/3.12"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1 multiprocessing prefix
@@ -28,10 +28,10 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+=" ebuild_revision_1"
-# See https://github.com/grpc/grpc/blob/v1.53.2/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.53.2/third_party
+# See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND="
-	>=dev-python/cython-0.29.26:0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]

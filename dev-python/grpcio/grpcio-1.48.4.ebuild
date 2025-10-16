@@ -27,8 +27,8 @@ SLOT="0"
 IUSE+=" doc ebuild_revision_2"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.49.4/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.49.4/third_party
+# See https://github.com/grpc/grpc/blob/v1.48.4/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.48.4/third_party
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
