@@ -45,7 +45,8 @@ DEPEND+="
 	>=www-servers/apache-2[apache2_modules_authz_core,apache2_mpms_prefork,ssl]
 	app-misc/ssl-cert-snakeoil
 	dev-libs/apr
-	dev-libs/protobuf:=
+	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:=
 	net-firewall/iptables
 	net-dns/dnsmasq
 	sys-apps/iproute2
