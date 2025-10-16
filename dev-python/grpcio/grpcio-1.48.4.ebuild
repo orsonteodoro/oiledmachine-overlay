@@ -8,12 +8,12 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_SLOT="0/5.26"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PROTOBUF_SLOT="0/3.19"
+PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit distutils-r1 flag-o-matic multiprocessing prefix
+inherit distutils-r1 multiprocessing prefix
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
 S="${WORKDIR}/${GRPC_P}"
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
@@ -27,14 +27,15 @@ SLOT="0"
 IUSE+=" doc ebuild_revision_2"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.63.2/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.63.2/third_party
+# See https://github.com/grpc/grpc/blob/v1.49.4/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.49.4/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20240116.0:0/20240116[cxx17(+)]
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
-	>=dev-libs/re2-0.2022.04.01:=
-	>=net-dns/c-ares-1.19.1:=
-	>=sys-libs/zlib-1.3:=
+	>=dev-libs/re2-0.2021.08.31:=
+	>=dev-python/six-1.16[${PYTHON_USEDEP}]
+	>=net-dns/c-ares-1.17.2:=
+	>=sys-libs/zlib-1.2.13:=
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
@@ -44,14 +45,16 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.35:0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
+		>=dev-python/six-1.10[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
 		dev-python/alabaster[${PYTHON_USEDEP}]
 	)
 "
 PATCHES=(
+	"${FILESDIR}/grpcio-1.49.2-cc-flag-test-fix.patch"
 )
 
 distutils_enable_sphinx "doc/python/sphinx"
