@@ -17,9 +17,16 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
+CXX_STANDARD=17
+LIBCXX_SLOT_CONFIG="core"
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake-multilib libstdcxx-slot python-any-r1
+inherit cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~ppc64 ~s390"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -37,28 +44,28 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
 	${CDEPEND}
-	>=dev-cpp/nlohmann_json-3.11.3[${MULTILIB_USEDEP}]
-	>=dev-libs/libfmt-11.0.2[${MULTILIB_USEDEP}]
-	>=dev-libs/spdlog-1.14.1[${MULTILIB_USEDEP}]
-	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/libfmt-11.0.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-libs/spdlog-1.14.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
-	virtual/grpc[${LIBSTDCXX_USEDEP}]
+	virtual/grpc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
+	>=dev-cpp/nlohmann_json-3.11.3[${MULTILIB_USEDEP}]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
 	test? (
 		$(python_gen_any_dep '
 			>=dev-python/lit-0.7[${PYTHON_USEDEP}]
 		')
 		${PYTHON_DEPS}
-		>=dev-cpp/gtest-1.12.1[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.12.1[${LIBCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-debug/valgrind
 	)
 "
@@ -73,6 +80,7 @@ pkg_setup()
 		fi
 	fi
 	libstdcxx-slot_verify
+	libcxx-slot_verify
 }
 
 src_configure() {
