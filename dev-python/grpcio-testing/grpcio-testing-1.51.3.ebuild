@@ -7,7 +7,7 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
-PROTOBUF_SLOT="0/3.21"
+PROTOBUF_SLOT="0/4.21"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
@@ -23,6 +23,7 @@ DESCRIPTION="Testing utilities for gRPC Python"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
+IUSE="ebuild_revision_1"
 RDEPEND="
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
