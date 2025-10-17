@@ -6,16 +6,24 @@ EAPI=8
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 PSL_COMMIT="c38a2f8e8862ad65d91af25dee90002c61329953" # Jul 9, 2025
 QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
 
-inherit cflags-hardened cmake flag-o-matic libstdcxx-slot toolchain-funcs virtualx xdg
+inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs virtualx xdg
 
 # Time to convert to Qt6
 # patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
@@ -95,7 +103,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	app-crypt/argon2:=
-	dev-libs/botan:3[${LIBSTDCXX_USEDEP}]
+	dev-libs/botan:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/botan:=
 	media-gfx/qrencode:=
 	sys-kernel/mitigate-id
@@ -118,14 +126,14 @@ RDEPEND="
 		)
 	)
 	qt6? (
-		>=dev-qt/qt5compat-${QT6_PV}:6[${LIBSTDCXX_USEDEP},gui]
+		>=dev-qt/qt5compat-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
 		dev-qt/qt5compat:=
-		>=dev-qt/qtbase-${QT6_PV}:6[${LIBSTDCXX_USEDEP},concurrent,dbus,gui,network,wayland?,X?]
+		>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,dbus,gui,network,wayland?,X?]
 		dev-qt/qtbase:=
-		>=dev-qt/qtsvg-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtsvg-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtsvg:=
 		wayland? (
-			>=dev-qt/qtwayland-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+			>=dev-qt/qtwayland-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-qt/qtwayland:=
 		)
 	)
@@ -160,7 +168,7 @@ BDEPEND="
 		>=dev-qt/linguist-tools-${QT5_PV}:5
 	)
 	qt6? (
-		>=dev-qt/qttools-${QT6_PV}:6[${LIBSTDCXX_USEDEP},linguist]
+		>=dev-qt/qttools-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},linguist]
 		dev-qt/qttools:=
 		X? (
 			virtual/pkgconfig
@@ -272,6 +280,7 @@ pkg_setup() {
 	if ver_test $(gcc-major-version) -lt "13" ; then
 ewarn "You must switch your gcc to 13 to avoid build time error(s)."
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -20,13 +20,19 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot rocm
 
 MY_PN="${PN/-/.}"
 MY_P="${MY_PN}-${PV}"
@@ -349,6 +355,7 @@ pkg_setup() {
 		WARNING_DRM_ACCEL_IVPU="Missing NPU support with CONFIG_DRM_ACCEL_IVPU"
 		linux-info_pkg_setup
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

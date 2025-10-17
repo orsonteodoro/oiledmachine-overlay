@@ -127,10 +127,19 @@ CUDA_TARGETS_COMPAT=(
 	"sm_90"
 	"sm_90a"
 )
+
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 LLMS=(
 adens-quran-guide agcobra-liberated-qwen1.5-72b akx-viking-7b alfred
 ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
@@ -211,8 +220,9 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit cflags-hardened check-compiler-switch cmake dep-prepare edo flag-o-matic go-module lcnr libstdcxx-slot multiprocessing optfeature rocm
-
+inherit cflags-hardened check-compiler-switch cmake dep-prepare edo flag-o-matic
+inherit go-module lcnr libcxx-slot libstdcxx-slot multiprocessing optfeature
+inherit rocm
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
 
@@ -3091,6 +3101,7 @@ einfo "PATH (before):  ${PATH}"
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_base_path}/bin|g")
 einfo "PATH (after):  ${PATH}"
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
