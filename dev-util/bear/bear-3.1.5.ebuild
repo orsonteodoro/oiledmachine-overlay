@@ -12,13 +12,13 @@ EAPI=8
 
 MY_PN="${PN/b/B}"
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-CXX_STANDARD=17
-LIBCXX_SLOT_CONFIG="core"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}

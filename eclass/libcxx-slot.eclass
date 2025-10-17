@@ -53,12 +53,17 @@ _LIBCXX_SLOT_ECLASS=1
 #
 
 # @ECLASS_VARIABLE: LIBCXX_SLOT_CONFIG
+# @USER_VARIABLE (tentative)
 # @DESCRIPTION:
 # Controls the defaults for IUSE and RDEPEND.
-# Valid values: core, core+lib, lib
+# Valid values: core (default), core+lib, lib
 # core - Only show the interface relevant to compiler.
 # core+lib - Show the interface relevant to compiler and the libc++ library (C++ runtime library).
 # lib - Show only the relevant interface for the libc++ library (C++ runtime library).
+#
+# core - Equivalent to CC=clang CXX=clang++ with libstdc++ (default, popular assumption)
+# core+lib - Equivalent to CC=clang CXX=clang++ with libc++ and eselect profile with */llvm
+# lib - Equivalent to libc++ and eselect profile with */llvm
 
 # @ECLASS_VARIABLE: LIBCXX_USEDEP
 # @DESCRIPTION:
@@ -256,7 +261,7 @@ eerror "QA:  LLVM_COMPAT must be defined"
 		fi
 	done
 	local required_use=""
-	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
+	if [[ "${LIBCXX_SLOT_CONFIG:-core}" =~ ("core+lib"|"lib") ]] ; then
 		required_use="
 			^^ (
 				${iuse}
@@ -331,7 +336,7 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		${IUSE}
 		${iuse}
 	"
-	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
+	if [[ "${LIBCXX_SLOT_CONFIG:-core}" =~ ("core+lib"|"lib") ]] ; then
 		IUSE="
 			${IUSE}
 			libcxx
@@ -341,7 +346,7 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		${REQUIRED_USE}
 		${required_use}
 	"
-	if [[ "${LIBCXX_SLOT_CONFIG:-core+lib}" =~ ("core+lib"|"lib") ]] ; then
+	if [[ "${LIBCXX_SLOT_CONFIG:-core}" =~ ("core+lib"|"lib") ]] ; then
 		RDEPEND="
 			${RDEPEND}
 			${rdepend}

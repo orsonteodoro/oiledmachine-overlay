@@ -3,15 +3,22 @@
 
 EAPI=8
 
+CXX_STANDARD=14
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 # Python is required for tests and some build tasks.
 PYTHON_COMPAT=( python3_{10..14} )
 
-inherit cmake-multilib flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs
+inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 
 if [[ ${PV} == "9999" ]]; then
 	inherit git-r3
@@ -58,6 +65,7 @@ PATCHES=(
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
