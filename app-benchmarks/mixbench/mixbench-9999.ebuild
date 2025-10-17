@@ -3,11 +3,18 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_9_1" # Equivalent to GLIBCXX 3.4.26 in prebuilt binary for U20
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 IMPLS=(
 	"cuda"
 	"opencl"
@@ -16,22 +23,14 @@ IMPLS=(
 	"sycl"
 )
 ROCM_SLOTS=(
-	rocm_4_5
-	rocm_5_1
-	rocm_5_2
-	rocm_5_3
-	rocm_5_4
-	rocm_5_5
-	rocm_5_6
-	rocm_5_7
-	rocm_6_0
-	rocm_6_1
+	rocm_6_4
+	rocm_7_0
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="440a133a6423840ce613d1eaab43cd586effd389" # Feb 23, 2024
+	FALLBACK_COMMIT="3dc1cdc27a68680caa4bdab7d89c45543d71363d" # Jan 13, 2025
 	EGIT_REPO_URI="https://github.com/ekondis/mixbench.git"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
@@ -63,7 +62,7 @@ REQUIRED_USE="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	|| (
+	^^ (
 		${IMPLS[@]}
 	)
 "
@@ -79,35 +78,11 @@ RDEPEND="
 		sys-devel/gcc[openmp]
 	)
 	rocm? (
-		rocm_4_5? (
-			~dev-util/hip-${HIP_4_5_VERSION}:4.5[rocm]
+		rocm_6_4? (
+			~dev-util/hip-${HIP_6_4_VERSION}:0/6.4[rocm]
 		)
-		rocm_5_1? (
-			~dev-util/hip-${HIP_5_1_VERSION}:5.1[rocm]
-		)
-		rocm_5_2? (
-			~dev-util/hip-${HIP_5_2_VERSION}:5.2[rocm]
-		)
-		rocm_5_3? (
-			~dev-util/hip-${HIP_5_3_VERSION}:5.3[rocm]
-		)
-		rocm_5_4? (
-			~dev-util/hip-${HIP_5_4_VERSION}:5.4[rocm]
-		)
-		rocm_5_5? (
-			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm]
-		)
-		rocm_5_6? (
-			~dev-util/hip-${HIP_5_6_VERSION}:5.6[rocm]
-		)
-		rocm_5_7? (
-			~dev-util/hip-${HIP_5_7_VERSION}:5.7[rocm]
-		)
-		rocm_6_0? (
-			~dev-util/hip-${HIP_6_0_VERSION}:6.0[rocm]
-		)
-		rocm_6_1? (
-			~dev-util/hip-${HIP_6_1_VERSION}:6.1[rocm]
+		rocm_7_0? (
+			~dev-util/hip-${HIP_7_0_VERSION}:0/7.0[rocm]
 		)
 		dev-util/hip:=
 	)
@@ -128,58 +103,28 @@ BDEPEND="
 "
 DOCS=( "README.md" )
 _PATCHES=(
-	"${FILESDIR}/${PN}-9999-440a133-hip-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-9999-hip-cmake-module-path.patch"
 )
 
 pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
-		if use rocm_4_5 ; then
-			LLVM_SLOT="${HIP_4_5_LLVM_SLOT}"
-			export ROCM_SLOT="4.5"
-			ROCM_VERSION="${HIP_4_5_VERSION}"
-		elif use rocm_5_1 ; then
-			LLVM_SLOT="${HIP_5_1_LLVM_SLOT}"
-			export ROCM_SLOT="5.1"
-			ROCM_VERSION="${HIP_5_1_VERSION}"
-		elif use rocm_5_2 ; then
-			LLVM_SLOT="${HIP_5_2_LLVM_SLOT}"
-			export ROCM_SLOT="5.2"
-			ROCM_VERSION="${HIP_5_2_VERSION}"
-		elif use rocm_5_3 ; then
-			LLVM_SLOT="${HIP_5_3_LLVM_SLOT}"
-			export ROCM_SLOT="5.3"
-			ROCM_VERSION="${HIP_5_3_VERSION}"
-		elif use rocm_5_4 ; then
-			LLVM_SLOT="${HIP_5_4_LLVM_SLOT}"
-			export ROCM_SLOT="5.4"
-			ROCM_VERSION="${HIP_5_4_VERSION}"
-		elif use rocm_5_5 ; then
-			LLVM_SLOT="${HIP_5_5_LLVM_SLOT}"
-			export ROCM_SLOT="5.5"
-			ROCM_VERSION="${HIP_5_5_VERSION}"
-		elif use rocm_5_6 ; then
-			LLVM_SLOT="${HIP_5_6_LLVM_SLOT}"
-			export ROCM_SLOT="5.6"
-			ROCM_VERSION="${HIP_5_6_VERSION}"
-		elif use rocm_5_7 ; then
-			LLVM_SLOT="${HIP_5_7_LLVM_SLOT}"
-			export ROCM_SLOT="5.7"
-			ROCM_VERSION="${HIP_5_7_VERSION}"
-		elif use rocm_6_0 ; then
-			LLVM_SLOT="${HIP_6_0_LLVM_SLOT}"
-			export ROCM_SLOT="6.0"
-			ROCM_VERSION="${HIP_6_0_VERSION}"
-		elif use rocm_6_1 ; then
-			LLVM_SLOT="${HIP_6_1_LLVM_SLOT}"
-			export ROCM_SLOT="6.1"
-			ROCM_VERSION="${HIP_6_1_VERSION}"
+		if use rocm_6_4 ; then
+			LLVM_SLOT="${HIP_6_4_LLVM_SLOT}"
+			export ROCM_SLOT="6.4"
+			ROCM_VERSION="${HIP_6_4_VERSION}"
+		elif use rocm_7_0 ; then
+			LLVM_SLOT="${HIP_7_0_LLVM_SLOT}"
+			export ROCM_SLOT="7.0"
+			ROCM_VERSION="${HIP_7_0_VERSION}"
 		fi
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 einfo "ROCM_SLOT:  ${ROCM_SLOT}"
 einfo "ROCM_VERSION:  ${ROCM_VERSION}"
 		rocm_pkg_setup
+	fi
+	if ! use rocm ; then
+		libcxx-slot_verify
 	fi
 	libstdcxx-slot_verify
 }
@@ -221,7 +166,7 @@ src_prepare() {
 	if use rocm ; then
 		mkdir -p "${S}/mixbench-hip/cmake"
 		cp -a \
-			"/opt/rocm-${ROCM_VERSION}/lib/cmake/hip/FindHIP"* \
+			"/opt/rocm/lib/cmake/hip/FindHIP"* \
 			"${S}/mixbench-hip/cmake" \
 			|| die
 	fi
@@ -252,7 +197,7 @@ src_configure() {
 					append-ldflags -lhsa-runtime64
 					filter-flags '-Wl,--as-needed' # Fix for undefined symbol: hsa_init
 					mycmakeargs+=(
-						-DHIP_PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+						-DHIP_PATH="${ESYSROOT}/opt/rocm"
 					)
 				elif [[ "${x2}" == "opencl" ]] ; then
 					mycmakeargs+=(
