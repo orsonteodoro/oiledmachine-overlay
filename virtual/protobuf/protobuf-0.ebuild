@@ -19,7 +19,7 @@ GCC_COMPAT=(
 
 inherit libstdcxx-slot
 
-DESCRIPTION="A virtual package to manage Protobuf stability"
+DESCRIPTION="A virtual package to manage Protobuf C++ stability"
 LICENSE="metapackage"
 SLOT="0/${PV}"
 KEYWORDS="~amd64"
