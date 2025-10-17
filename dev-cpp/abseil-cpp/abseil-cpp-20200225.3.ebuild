@@ -6,12 +6,20 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 PYTHON_COMPAT=( python3_{8..11} )
+
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit cflags-hardened cmake-multilib flag-o-matic libstdcxx-slot python-any-r1
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
 
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
@@ -47,6 +55,7 @@ RESTRICT="
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

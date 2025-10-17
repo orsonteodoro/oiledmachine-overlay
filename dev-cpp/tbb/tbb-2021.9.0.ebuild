@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit cmake-multilib flag-o-matic libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
 
 DESCRIPTION="High level abstract threading library"
 HOMEPAGE="https://github.com/oneapi-src/oneTBB"
@@ -33,6 +40,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
