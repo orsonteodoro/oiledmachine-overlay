@@ -9,12 +9,19 @@ MY_PN="RadialGM"
 CMAKE_BUILD_TYPE="Release"
 ENIGMA_COMMIT="f30646f"
 QT_PV="5.15.2"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cmake desktop git-r3 grpc-ver libstdcxx-slot toolchain-funcs xdg
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake desktop git-r3 grpc-ver libcxx-slot libstdcxx-slot toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -45,11 +52,11 @@ ebuild_revision_3
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
 # pcre2 not listed in CI.
 RDEPEND+="
-	>=dev-cpp/yaml-cpp-0.6.3[${LIBSTDCXX_USEDEP}]
-	>=dev-libs/double-conversion-3.1.5[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.6.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/double-conversion-3.1.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libpcre2-10.40[pcre16]
 	>=dev-libs/openssl-1.1.1l
-	>=dev-libs/pugixml-1.11.4[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/pugixml-1.11.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-qt/qtcore-${QT_PV}:5
 	>=dev-qt/qtgui-${QT_PV}:5[png]
 	>=dev-qt/qtmultimedia-${QT_PV}:5
@@ -59,8 +66,8 @@ RDEPEND+="
 	>=media-libs/harfbuzz-2.9.1
 	>=net-dns/c-ares-1.17.2
 	>=x11-libs/qscintilla-2.13.0
-	dev-games/enigma:0[${LIBSTDCXX_USEDEP}]
-	virtual/grpc[${LIBSTDCXX_USEDEP}]
+	dev-games/enigma:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/grpc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
 	virtual/jpeg
 "
@@ -73,7 +80,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.23.2
 	dev-util/patchelf
 	media-gfx/imagemagick[png]
-	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
 "
 RESTRICT="mirror"
@@ -84,6 +91,7 @@ PATCHES=(
 
 pkg_setup() {
 	export ENIGMA_INSTALL_DIR="/usr/$(get_libdir)/enigma"
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
