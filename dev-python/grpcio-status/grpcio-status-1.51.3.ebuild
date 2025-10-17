@@ -6,7 +6,7 @@ EAPI=8
 MY_P="grpc-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_SLOT="0/3.21"
+PROTOBUF_SLOT="0/4.21"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1
