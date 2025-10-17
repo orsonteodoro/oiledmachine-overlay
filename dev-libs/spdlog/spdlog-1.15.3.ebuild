@@ -36,10 +36,10 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 DEPEND="
-	>=dev-libs/libfmt-9.1.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-9.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/libfmt:=
 "
 RDEPEND="
