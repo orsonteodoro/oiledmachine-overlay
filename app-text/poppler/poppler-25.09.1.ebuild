@@ -7,13 +7,22 @@ CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBR SO UAF UM"
+CXX_STANDARD=20
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX20[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+)
+
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic libstdcxx-slot toolchain-funcs xdg-utils
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic libcxx-slot
+inherit libstdcxx-slot toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
 	inherit git-r3
@@ -106,6 +115,7 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
