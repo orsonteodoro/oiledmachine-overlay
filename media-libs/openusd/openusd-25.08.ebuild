@@ -14,10 +14,18 @@ BOOST_PV="1.80.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO ID MC OOB OOBA UAF"
 CMAKE_BUILD_TYPE="Release"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
 	# openexr:imath
@@ -38,7 +46,8 @@ OPENEXR_V3_PV=(
 PYTHON_COMPAT=( "python3_"{9..13} )
 VULKAN_PV="1.3.296.0"
 
-inherit cflags-hardened check-compiler-switch cmake libstdcxx-slot python-single-r1 flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
+inherit python-single-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenUSD-${PV}"
@@ -134,9 +143,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -146,14 +155,14 @@ gen_openexr_pairs() {
 # TODO experimental
 RDEPEND+="
 	>=sys-libs/zlib-1.2.11
-	>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/tbb:=
 	!python? (
-		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
 	)
 	alembic? (
-		>=media-gfx/alembic-1.8.5[${LIBSTDCXX_USEDEP},hdf5?]
+		>=media-gfx/alembic-1.8.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},hdf5?]
 		media-gfx/alembic:=
 	)
 	draco? (
@@ -166,20 +175,20 @@ RDEPEND+="
 		>=sci-libs/hdf5-1.10[cxx,hl]
 	)
 	imaging? (
-		>=media-libs/opensubdiv-3.6.0[${LIBSTDCXX_USEDEP}]
+		>=media-libs/opensubdiv-3.6.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/opensubdiv:=
 		x11-libs/libX11
 	)
 	jemalloc? (
-		dev-libs/jemalloc-usd[${LIBSTDCXX_USEDEP}]
+		dev-libs/jemalloc-usd[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/jemalloc-usd:=
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.3[${LIBSTDCXX_USEDEP}]
+		>=media-libs/materialx-1.39.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/materialx:=
 	)
 	opencolorio? (
-		>=media-libs/opencolorio-2.2.1[${LIBSTDCXX_USEDEP}]
+		>=media-libs/opencolorio-2.2.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/opencolorio:=
 	)
 	openexr? (
@@ -192,21 +201,21 @@ RDEPEND+="
 	)
 	openimageio? (
 		>=media-libs/libpng-1.6.29
-		>=media-libs/openimageio-2.5.16.0[${LIBSTDCXX_USEDEP}]
+		>=media-libs/openimageio-2.5.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/openimageio:=
 		>=media-libs/tiff-4.0.7
 		virtual/jpeg
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.17
-		>=media-gfx/openvdb-10.1.0[${LIBSTDCXX_USEDEP}]
+		>=media-gfx/openvdb-10.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-gfx/openvdb:=
 	)
 	osl? (
 		>=media-libs/osl-1.13.11
 	)
 	ptex? (
-		>=media-libs/ptex-2.4.2[${LIBSTDCXX_USEDEP}]
+		>=media-libs/ptex-2.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/ptex:=
 	)
 	python? (
@@ -225,7 +234,7 @@ RDEPEND+="
 				)
 			)
 		')
-		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
 	)
         vulkan? (
@@ -266,6 +275,7 @@ DOCS=( "CHANGELOG.md" "README.md" )
 pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

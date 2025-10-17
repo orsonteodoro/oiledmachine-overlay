@@ -9,10 +9,18 @@ ARM_CPU_FLAGS=(
 	"neon:neon"
 	"neon2x:neon2x"
 )
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
 PYTHON_COMPAT=( "python3_12" )
 X86_CPU_FLAGS=(
 	"avx2:avx2"
@@ -35,7 +43,7 @@ CPU_FLAGS=(
 	"${X86_CPU_FLAGS[@]/#/+cpu_flags_x86_}"
 )
 
-inherit cmake flag-o-matic python-any-r1 toolchain-funcs libstdcxx-slot
+inherit cmake flag-o-matic python-any-r1 toolchain-funcs libcxx-slot libstdcxx-slot
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV/_/-}"
@@ -126,7 +134,7 @@ RDEPEND+="
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.5.0[${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/tbb-2021.5.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 "
@@ -140,6 +148,7 @@ DOCS=( "CHANGELOG.md" "README.md" )
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

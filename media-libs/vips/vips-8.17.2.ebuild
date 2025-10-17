@@ -24,14 +24,20 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_ssse3"
 )
-GCC_PV="14"
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LIBJPEG_TURBO_PV="2.1.2"
-LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
@@ -42,8 +48,9 @@ SO_R=1
 SO_A=19
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
-inherit cflags-hardened check-compiler-switch flag-o-matic libstdcxx-slot llvm meson-multilib multilib-minimal
-inherit python-r1 toolchain-funcs vala
+inherit cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
+inherit libstdcxx-slot llvm meson-multilib multilib-minimal python-r1
+inherit toolchain-funcs vala
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/libvips-${PV}"
@@ -131,25 +138,25 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 			media-libs/libheif:=
 		)
 		heic? (
-			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 			media-libs/libheif:=
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 			media-libs/libheif:=
 		)
 		heic? (
-			>=media-libs/libheif-1.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 			media-libs/libheif:=
 		)
 	)
@@ -190,15 +197,15 @@ RDEPEND+="
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
 	highway? (
-		>=dev-cpp/highway-0.16.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		>=dev-cpp/highway-0.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		cpu_flags_x86_avx10_2? (
-			>=dev-cpp/highway-1.3.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+			>=dev-cpp/highway-1.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		)
 		dev-cpp/highway:=
 	)
 	imagemagick? (
 		!graphicsmagick? (
-			>=media-gfx/imagemagick-6.9.11.60[${LIBSTDCXX_USEDEP},cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
+			>=media-gfx/imagemagick-6.9.11.60[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
 			media-gfx/imagemagick:=
 			avif? (
 				media-gfx/imagemagick[heif]
@@ -227,7 +234,7 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.11.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		media-libs/libjxl:=
 	)
 	lcms? (
@@ -240,7 +247,7 @@ RDEPEND+="
 		media-libs/nifti_clib[${MULTILIB_USEDEP}]
 	)
 	openexr? (
-		>=media-libs/openexr-2.5.7[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=media-libs/openexr-2.5.7[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		media-libs/openexr:=
 	)
 	openslide? (
@@ -367,7 +374,6 @@ BDEPEND+="
 	)
 	|| (
 		$(gen_llvm_bdepend)
-		>=sys-devel/gcc-${GCC_PV}
 	)
 "
 PDEPEND+="
@@ -445,6 +451,7 @@ eerror
 	if use test || tc-is-clang ; then
 		multilib_foreach_abi setup_abi
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

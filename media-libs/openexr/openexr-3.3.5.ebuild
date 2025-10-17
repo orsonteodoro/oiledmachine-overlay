@@ -10,13 +10,21 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 )
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 OPENEXR_IMAGES_PV="1.0"
 
-inherit cflags-hardened cmake flag-o-matic libstdcxx-slot
+inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x86-linux"
 SRC_URI="
@@ -53,7 +61,7 @@ RESTRICT="
 RDEPEND="
 	>=app-arch/libdeflate-1.21[zlib(+)]
 	app-arch/libdeflate:=
-	~dev-libs/imath-3.1.12[${LIBSTDCXX_USEDEP}]
+	~dev-libs/imath-3.1.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/imath:=
 "
 DEPEND="
@@ -77,6 +85,7 @@ DOCS=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

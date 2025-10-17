@@ -3,12 +3,20 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-PYTHON_COMPAT=( python3_{11..14} )
-inherit cmake-multilib dot-a libstdcxx-slot python-any-r1
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+PYTHON_COMPAT=( "python3_"{11..14} )
+inherit cmake-multilib dot-a libcxx-slot libstdcxx-slot python-any-r1
 
 DESCRIPTION="Collection of tools, libraries and tests for shader compilation"
 HOMEPAGE="https://github.com/google/shaderc"
@@ -25,9 +33,9 @@ ebuild_revision_1
 "
 
 RDEPEND="
-	>=dev-util/glslang-1.4.321.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-util/glslang-1.4.321.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-util/glslang:=
-	>=dev-util/spirv-tools-1.4.321.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-1.4.321.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-util/spirv-tools:=
 "
 DEPEND="${RDEPEND}
@@ -45,6 +53,7 @@ RESTRICT=test
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

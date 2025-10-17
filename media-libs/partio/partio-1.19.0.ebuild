@@ -5,13 +5,21 @@ EAPI=8
 
 # U24
 
+CXX_STANDARD=14
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 PYTHON_COMPAT=( "python3_"{11,12} )
 
-inherit cmake libstdcxx-slot python-single-r1
+inherit cmake libcxx-slot libstdcxx-slot python-single-r1
 
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
@@ -36,7 +44,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=media-libs/freeglut-3.4.0
-	>=media-libs/glu-9.0.2[${LIBSTDCXX_USEDEP}]
+	>=media-libs/glu-9.0.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/glu:=
 	>=sys-libs/zlib-1.3
 	virtual/opengl
@@ -63,6 +71,7 @@ PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -19,10 +19,18 @@ EAPI=8
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
@@ -69,7 +77,8 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 virtualx
+inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot
+inherit python-single-r1 virtualx
 
 gen_half_pairs_rdepend() {
 	local row
@@ -78,9 +87,9 @@ gen_half_pairs_rdepend() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -94,9 +103,9 @@ gen_imath_bdepend() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -185,22 +194,22 @@ REQUIRED_USE="
 "
 # Depends update: Aug 31, 2023
 RDEPEND="
-	>=dev-cpp/yaml-cpp-0.7.0[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/yaml-cpp:=
-	>=dev-cpp/pystring-1.1.3[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/pystring-1.1.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/pystring:=
 	>=dev-libs/expat-2.4.1
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.2.13
-	dev-libs/tinyxml[${LIBSTDCXX_USEDEP}]
+	dev-libs/tinyxml[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/tinyxml:=
 	dev-build/ninja
 	opengl? (
-		>=media-libs/openimageio-2.2.14[${LIBSTDCXX_USEDEP}]
+		>=media-libs/openimageio-2.2.14[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/openimageio:=
 		>=media-libs/lcms-2.2:2
 		media-libs/freeglut
-		media-libs/glew[${LIBSTDCXX_USEDEP}]
+		media-libs/glew[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/glew:=
 		virtual/opengl
 	)
@@ -255,6 +264,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

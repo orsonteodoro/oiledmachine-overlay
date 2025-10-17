@@ -5,12 +5,19 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DBZ DOS OOBA OOBR OOBW SO"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened cmake-multilib gnome2-utils libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cflags-hardened cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot
 
 # This changes frequently.  Please check the testdata submodule when bumping.
 TESTDATA_COMMIT="ff8d743aaba05b3014f17e5475e576242fa979fc"
@@ -34,7 +41,7 @@ RESTRICT="!test? ( test )"
 
 DEPEND="
 	app-arch/brotli:=[${MULTILIB_USEDEP}]
-	>=dev-cpp/highway-1.0.7[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-cpp/highway-1.0.7[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-cpp/highway:=
 	>=media-libs/lcms-2.13:2[${MULTILIB_USEDEP}]
 	gdk-pixbuf? (
@@ -44,7 +51,7 @@ DEPEND="
 	gif? ( media-libs/giflib:=[${MULTILIB_USEDEP}] )
 	jpeg? ( media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}] )
 	openexr? (
-		media-libs/openexr[${LIBSTDCXX_USEDEP}]
+		media-libs/openexr[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/openexr:=
 	)
 	png? ( media-libs/libpng:=[${MULTILIB_USEDEP}] )
@@ -55,12 +62,13 @@ RDEPEND="
 "
 DEPEND+="
 	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/gtest:=
 	)
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

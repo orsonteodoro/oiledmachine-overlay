@@ -8,14 +8,22 @@ EAPI=8
 # Requirements:
 # https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
 # For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
+CXX_STANDARD="17"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
-CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
 LLVM_COMPAT=( {18..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -66,7 +74,8 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic font libstdcxx-slot llvm python-single-r1 virtualx
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic font
+inherit libcxx-slot libstdcxx-slot llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
@@ -221,9 +230,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -233,15 +242,15 @@ gen_openexr_pairs() {
 # Depends Mar 16, 2024
 RDEPEND+="
 	(
-		>=dev-libs/boost-1.53[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/boost-1.53[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
 	)
 	(
-		>=dev-libs/libfmt-7.0.0[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/libfmt-7.0.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/libfmt:=
 	)
 	(
-		>=dev-libs/pugixml-1.8[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/pugixml-1.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/pugixml:=
 	)
 	(
@@ -256,7 +265,7 @@ RDEPEND+="
 	>=media-libs/libjpeg-turbo-2.1
 	virtual/jpeg:0
 	color-management? (
-		>=media-libs/opencolorio-2.2[${LIBSTDCXX_USEDEP}]
+		>=media-libs/opencolorio-2.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/opencolorio:=
 	)
 	dds? (
@@ -287,9 +296,9 @@ RDEPEND+="
 		media-libs/giflib:=
 	)
 	heif? (
-		>=media-libs/libheif-1.11[${LIBSTDCXX_USEDEP}]
+		>=media-libs/libheif-1.11[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 		avif? (
-			>=media-libs/libheif-1.11[${LIBSTDCXX_USEDEP},aom?,rav1e?]
+			>=media-libs/libheif-1.11[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},aom?,rav1e?]
 		)
 		media-libs/libheif:=
 	)
@@ -302,11 +311,11 @@ RDEPEND+="
 		media-libs/openjpeg:=
 	)
 	jxl? (
-		>=media-libs/libjxl-0.10.1[${LIBSTDCXX_USEDEP}]
+		>=media-libs/libjxl-0.10.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/libjxl:=
 	)
 	opencv? (
-		>=media-libs/opencv-4[${LIBSTDCXX_USEDEP}]
+		>=media-libs/opencv-4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/opencv:=
 	)
 	opengl? (
@@ -317,38 +326,38 @@ RDEPEND+="
 	openvdb? (
 		abi12-compat? (
 			|| (
-				=media-gfx/openvdb-14*[${LIBSTDCXX_USEDEP},abi12-compat]
-				=media-gfx/openvdb-13*[${LIBSTDCXX_USEDEP},abi12-compat]
-				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},abi12-compat]
+				=media-gfx/openvdb-14*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
+				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
+				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		abi11-compat? (
 			|| (
-				=media-gfx/openvdb-13*[${LIBSTDCXX_USEDEP},abi11-compat]
-				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},abi11-compat]
-				=media-gfx/openvdb-11*[${LIBSTDCXX_USEDEP},abi11-compat]
+				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
+				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
+				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		abi10-compat? (
 			|| (
-				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},abi10-compat]
-				=media-gfx/openvdb-11*[${LIBSTDCXX_USEDEP},abi10-compat]
-				=media-gfx/openvdb-10*[${LIBSTDCXX_USEDEP},abi10-compat]
+				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
+				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
+				=media-gfx/openvdb-10*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		abi9-compat? (
 			|| (
-				=media-gfx/openvdb-11*[${LIBSTDCXX_USEDEP},abi9-compat]
-				=media-gfx/openvdb-10*[${LIBSTDCXX_USEDEP},abi9-compat]
-				=media-gfx/openvdb-9*[${LIBSTDCXX_USEDEP},abi9-compat]
+				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
+				=media-gfx/openvdb-10*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
+				=media-gfx/openvdb-9*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
 			)
 			media-gfx/openvdb:=
 		)
 		tbb? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-cpp/tbb:=
 		)
 	)
@@ -357,7 +366,7 @@ RDEPEND+="
 		media-libs/libpng:=
 	)
 	ptex? (
-		>=media-libs/ptex-2.3.1[${LIBSTDCXX_USEDEP}]
+		>=media-libs/ptex-2.3.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/ptex:=
 	)
 	python? (
@@ -393,11 +402,11 @@ RDEPEND+="
 	)
 	raw? (
 		!cxx17? (
-			>=media-libs/libraw-0.18[${LIBSTDCXX_USEDEP}]
-			<media-libs/libraw-0.20[${LIBSTDCXX_USEDEP}]
+			>=media-libs/libraw-0.18[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			<media-libs/libraw-0.20[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 		cxx17? (
-			>=media-libs/libraw-0.20[${LIBSTDCXX_USEDEP}]
+			>=media-libs/libraw-0.20[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 		media-libs/libraw:=
 	)
@@ -478,15 +487,16 @@ _oiio_use() {
 pkg_setup() {
 	check-compiler-switch_start
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
-		export CC="${CHOST}-clang"
-		export CXX="${CHOST}-clang++"
+		local llvm_slot=
+		if use llvm_slot_20 ; then
+			llvm_slot=20
+		elif use llvm_slot_21 ; then
+			llvm_slot=21
+		fi
+		export CC="${CHOST}-clang-${llvm_slot}"
+		export CXX="${CHOST}-clang++-${llvm_slot}"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-	fi
-	if test-flags-CXX -std=c++${CXX_STD_MIN} >/dev/null 2>&1 ; then
-		:;
-	else
-		die "Found unsupported -std=c++${CXX_STD_MIN}"
 	fi
 	python-single-r1_pkg_setup
 
@@ -498,6 +508,7 @@ pkg_setup() {
 		llvm_pkg_setup
 	fi
 	export CC CXX
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

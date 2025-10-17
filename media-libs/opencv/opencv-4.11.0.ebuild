@@ -199,10 +199,17 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_sse4_2:SSE4_2"
 	"cpu_flags_x86_ssse3:SSSE3"
 )
+CXX_STANDARD=14 # 14 for CUDA
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 GSTREAMER_PV="1.16.2"
 KLEIDICV_PV="0.1.0"								# See https://github.com/opencv/opencv/blob/4.10.0/3rdparty/kleidicv/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -214,17 +221,11 @@ PATENT_STATUS_IUSE=(
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 ROCM_SLOTS=(
-	"rocm_5_7"
-	"rocm_5_6"
-	"rocm_5_5"
-	"rocm_5_4"
-	"rocm_5_3"
-	"rocm_5_2"
-	"rocm_5_1"
+	"rocm_6_4"
 )
 
 inherit cflags-hardened cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
-inherit libstdcxx-slot python-single-r1 toolchain-funcs virtualx
+inherit libcxx-slot libstdcxx-slot python-single-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
@@ -609,9 +610,9 @@ gen_openexr_rdepend() {
 	for ver in ${OPENEXR2_PV[@]} ; do
 		echo "
 			(
-				~dev-libs/imath-${ver}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
-				~media-libs/openexr-${ver}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
 			)
 		"
@@ -619,9 +620,9 @@ gen_openexr_rdepend() {
 	for ver in ${OPENEXR3_PV[@]} ; do
 		echo "
 			(
-				~dev-libs/imath-${ver}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
-				~media-libs/openexr-${ver}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
 			)
 		"
@@ -630,6 +631,7 @@ gen_openexr_rdepend() {
 CUDA_DEPEND="
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11.8*
+			=dev-util/nvidia-cuda-toolkit-12*
 		)
 		dev-util/nvidia-cuda-toolkit:=
 "
@@ -645,6 +647,7 @@ gen_rocm_rdepend() {
 		echo "
 			${s}? (
 				sci-libs/MIVisionX:${slot}
+				sci-libs/MIVisionX:=
 			)
 		"
 	done
@@ -659,6 +662,7 @@ PATENT_STATUS_RDEPEND="
 				media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 			)
+			media-video/ffmpeg:=
 		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
@@ -673,6 +677,7 @@ PATENT_STATUS_RDEPEND="
 				media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 			)
+			media-video/ffmpeg:=
 		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
@@ -684,7 +689,7 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	virtual/protobuf[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	virtual/protobuf:=
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
@@ -703,7 +708,7 @@ RDEPEND="
 	)
 	contribdnn? (
 		system-flatbuffers? (
-			=dev-libs/flatbuffers-23.5*:0[${LIBSTDCXX_USEDEP}]
+			=dev-libs/flatbuffers-23.5*:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-libs/flatbuffers:=
 		)
 	)
@@ -731,11 +736,11 @@ RDEPEND="
 		sci-libs/gdal:=
 	)
 	gflags? (
-		>=dev-cpp/gflags-2.2.2:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/gflags-2.2.2:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/gflags:=
 	)
 	glog? (
-		>=dev-cpp/glog-0.4.0:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/glog-0.4.0:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/glog:=
 	)
 	gphoto2? (
@@ -751,7 +756,7 @@ RDEPEND="
 		>=x11-libs/gtk+-3.24.18:3[${MULTILIB_USEDEP}]
 	)
 	halide? (
-		dev-lang/halide[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-lang/halide[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-lang/halide:=
 	)
 	ieee1394? (
@@ -835,7 +840,7 @@ RDEPEND="
 	)
 	!qt5? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[${LIBSTDCXX_USEDEP},gui,widgets,concurrent,opengl?]
+			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,concurrent,opengl?]
 			dev-qt/qtbase:=
 		)
 	)
@@ -854,7 +859,7 @@ RDEPEND="
 		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.11.0:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/tbb-2021.11.0:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/tbb:=
 	)
 	tiff? (
@@ -1020,6 +1025,7 @@ pkg_setup() {
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	use java && java-pkg-opt-2_pkg_setup
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
@@ -1406,46 +1412,10 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		)
 	fi
 
-	if use openvx && use rocm_5_7 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_7_VERSION}"
+	if use openvx && use rocm_6_4 ; then
+		export ROCM_PATH="/opt/rocm"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_7_VERSION}"
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_6 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_6_VERSION}"
-		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_6_VERSION}"
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_5 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_5_VERSION}"
-		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_5_VERSION}"
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_4 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_4_VERSION}"
-		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_4_VERSION}"
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_3 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_3_VERSION}"
-		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_3_VERSION}"
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_2 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_2_VERSION}"
-		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_2_VERSION}"
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_1 ; then
-		export ROCM_PATH="/opt/rocm-${HIP_5_1_VERSION}"
-		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm-${HIP_5_1_VERSION}"
+			-DOPENVX_ROOT="/opt/rocm"
 			-DWITH_OPENVX=ON
 		)
 	else

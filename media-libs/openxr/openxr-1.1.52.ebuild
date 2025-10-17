@@ -8,10 +8,18 @@ EAPI=8
 MY_PN="OpenXR-SDK-Source"
 
 CMAKE_BUILD_TYPE="Release"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 MESA_PV="22.0.1"
 PYTHON_COMPAT=( "python3_"{8..13} )
 VULKAN_PV="1.3.204.1"
@@ -97,6 +105,7 @@ BDEPEND+="
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -25,6 +25,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1102"
 	"gfx1103"
 )
+CXX_STANDARD=11
 CMAKE_BUILD_TYPE="Release"
 COMPOSABLE_KERNEL_COMMIT="c79bf11148ac7abd7504f0e700b409b4c63a052c"
 CUTLASS_COMMIT="afa1772203677c5118fcd82537a9c8fefbcc7008"
@@ -34,30 +35,33 @@ CUDA_TARGETS_COMPAT=(
 	"sm_80"
 	"sm_90"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
 inherit hip-versions
 HIP_VERSIONS=(
-	"${HIP_6_3_VERSION}"
-	"${HIP_6_2_VERSION}"
+	"${HIP_6_4_VERSION}"
 )
 ROCM_SLOTS=(
-	"rocm_6_3"
-	"rocm_6_2"
+	"rocm_6_4"
 )
-LLVM_COMPAT=( {18..14} ) # Based on U24, U22 defaults
 LLVM_SLOT="${LLVM_COMPAT[0]}"
-MIN_CLANG_PV="3.3"
-MIN_GCC_PV="4.8.1"
 MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
 OIDN_WEIGHTS_COMMIT="28883d1769d5930e13cf7f1676dd852bd81ed9e7"
 ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit check-compiler-switch cmake cuda flag-o-matic libstdcxx-slot llvm python-single-r1 rocm toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
+inherit llvm python-single-r1 rocm toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -82,7 +86,10 @@ https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT}.tar.gz
 fi
 
 DESCRIPTION="Intel® Open Image Denoise library"
-HOMEPAGE="http://www.openimagedenoise.org/"
+HOMEPAGE="
+	http://www.openimagedenoise.org/
+	https://github.com/RenderKit/oidn
+"
 LICENSE="
 	Apache-2.0
 	BSD
@@ -147,11 +154,8 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_6_2? (
-		llvm_slot_18
-	)
-	rocm_6_3? (
-		llvm_slot_18
+	rocm_6_4? (
+		llvm_slot_19
 	)
 "
 gen_clang_depends() {
@@ -195,7 +199,7 @@ gen_hip_depends() {
 RDEPEND+="
 	${PYTHON_DEPS}
 	(
-		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 	virtual/libc
@@ -212,13 +216,13 @@ RDEPEND+="
 	sycl? (
 		>=sys-devel/DPC++-2023.10.26:0/7[aot?]
 		sys-devel/DPC++:=
-		dev-libs/level-zero[${LIBSTDCXX_USEDEP}]
+		dev-libs/level-zero[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/level-zero:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	media-libs/openimageio[${LIBSTDCXX_USEDEP},cuda?]
+	media-libs/openimageio[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda?]
 	media-libs/openimageio:=
 "
 BDEPEND+="
@@ -233,20 +237,15 @@ BDEPEND+="
 		>=dev-util/nvidia-cuda-toolkit-12.8
 		sys-devel/binutils[gold,plugins]
 	)
-	gcc? (
-		>=sys-devel/gcc-${MIN_GCC_PV}
-	)
 	rocm? (
 		(
 			$(gen_hip_depends)
 			sys-devel/llvm-roc:=
 		)
 		>=dev-build/cmake-3.21
-		rocm_6_2? (
-			~sys-devel/llvm-roc-${HIP_6_2_VERSION}:6.2
-		)
-		rocm_6_3? (
-			~sys-devel/llvm-roc-${HIP_6_3_VERSION}:6.3
+		rocm_6_4? (
+			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:6.4[${LIBSTDCXX_USEDEP}]
+			sys-devel/llvm-roc:=
 		)
 	)
 	sycl? (
@@ -279,14 +278,10 @@ pkg_setup() {
 		use cpu && check_cpu
 	fi
 
-	if use rocm_6_3 ; then
-		LLVM_SLOT=18
-		ROCM_SLOT="6.3"
-		ROCM_VERSION="${HIP_6_3_VERSION}"
-	elif use rocm_6_2 ; then
-		LLVM_SLOT=18
-		ROCM_SLOT="6.2"
-		ROCM_VERSION="${HIP_6_2_VERSION}"
+	if use rocm_6_4 ; then
+		LLVM_SLOT=19
+		ROCM_SLOT="6.4"
+		ROCM_VERSION="${HIP_6_4_VERSION}"
 	fi
 
 	if use rocm ; then
@@ -301,6 +296,9 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	if use cuda ; then
 		cuda_add_sandbox
+	fi
+	if ! use rocm ; then
+		libcxx-slot_verify
 	fi
 	libstdcxx-slot_verify
 }

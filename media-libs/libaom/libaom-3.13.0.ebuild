@@ -11,10 +11,18 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO IO UAF"
 CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_SUPPORT_EBOLT=0
@@ -29,7 +37,7 @@ UOPTS_BOLT_INST_ARGS=(
 )
 
 inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
-inherit libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
+inherit libcxx-slot libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -386,6 +394,9 @@ eerror "CC/CXX must must be >=sys-devel/gcc-${GCC_MIN_SLOT}"
 eerror "CC/CXX must must be >=llvm-core/clang-${CLANG_MIN_SLOT}"
 			die
 		fi
+	fi
+	if ! use aocc ; then
+		libcxx-slot_verify
 	fi
 	libstdcxx-slot_verify
 }

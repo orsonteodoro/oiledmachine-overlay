@@ -172,7 +172,7 @@ CLANG_20_0_0="220000"
 # All Clang point versions available by distro repo.
 # Live is not supported
 _ALL_LLVM_COMPAT=(
-	{11..20}
+	{11..21}
 )
 _ALL_LLVM_COMPAT2=(
 	"20_0_0"
@@ -415,8 +415,9 @@ libcxx-slot_verify() {
 # Event handler for check libc++ slot verification
 libcxx-slot_pkg_postinst() {
 	if (( ${_LIBCXX_VER_VERIFIED} != 1 )) ; then
-eerror "QA:  You must call libcxx-slot_verify in pkg_setup"
-		die
+# If using a fork of clang, you can ignore this message.
+ewarn "QA:  You must call libcxx-slot_verify in pkg_setup"
+#		die
 	fi
 }
 

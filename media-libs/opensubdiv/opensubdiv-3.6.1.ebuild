@@ -6,11 +6,18 @@ EAPI=8
 # U22
 
 # Some parts synced with opensubdiv-3.4.4-r2.
+CXX_STANDARD=14
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 CMAKE_MAKEFILE_GENERATOR="emake"
 CUDA_TARGETS_COMPAT=(
 	"sm_35"
@@ -20,7 +27,8 @@ MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( "python3_"{8..11} ) # U22 (3.10)
 
-inherit check-compiler-switch cmake cuda flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
+inherit python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenSubdiv-${MY_PV}"
@@ -93,7 +101,7 @@ RDEPEND="
 		virtual/opencl
 	)
 	ptex? (
-		>=media-libs/ptex-2.4.2[${LIBSTDCXX_USEDEP}]
+		>=media-libs/ptex-2.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/ptex:=
 		>=sys-libs/zlib-1.2.13
 	)
@@ -109,7 +117,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	tbb? (
-		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 "
@@ -134,6 +142,7 @@ PATCHES_=(
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -7,13 +7,21 @@ EAPI=8
 # U22, U24
 # cxx17
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cmake libstdcxx-slot python-single-r1
+inherit cmake libcxx-slot libstdcxx-slot python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="270b5cf2ae2be24a3b6ef4b0569f1c93038dda1d"
@@ -87,7 +95,7 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	media-libs/openimageio[${LIBSTDCXX_USEDEP}]
+	media-libs/openimageio[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/openimageio:=
 	virtual/opengl
 	kernel_linux? (
@@ -122,6 +130,7 @@ DOCS=( )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

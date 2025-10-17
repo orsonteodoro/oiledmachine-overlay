@@ -5,12 +5,19 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO NPD OOBR OOBW SO UAF"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -65,6 +72,7 @@ DOCS=( "CodeConventions.md" "Readme.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

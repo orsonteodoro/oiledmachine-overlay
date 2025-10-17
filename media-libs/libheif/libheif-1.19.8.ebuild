@@ -5,15 +5,24 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
+CXX_STANDARD=20
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX20[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+)
+
 PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
-inherit cflags-hardened cmake-multilib gnome2-utils libstdcxx-slot multilib-minimal xdg
+inherit cflags-hardened cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot
+inherit multilib-minimal xdg
 
 if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
@@ -183,6 +192,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

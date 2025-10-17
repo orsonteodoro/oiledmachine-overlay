@@ -6,11 +6,19 @@ EAPI=8
 # False positives because of REQUIRE vs BACKEND options() (conditionally set)
 # See bug #809314
 CMAKE_WARN_UNUSED_CLI=no
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-inherit cmake-multilib libstdcxx-slot
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake-multilib libcxx-slot libstdcxx-slot
 
 MY_P="${PN}-soft-${PV}"
 
@@ -38,7 +46,7 @@ IUSE="
 RDEPEND="
 	alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	gui? (
-		>=dev-qt/qtbase-6.8:6[${LIBSTDCXX_USEDEP},gui,widgets]
+		>=dev-qt/qtbase-6.8:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
 		dev-qt/qtbase:=
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
@@ -62,6 +70,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

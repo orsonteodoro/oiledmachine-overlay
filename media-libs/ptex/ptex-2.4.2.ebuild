@@ -3,14 +3,21 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="OOBW"
+CXX_STANDARD=98
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX98[@]}
 )
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="OOBW"
 
-inherit check-compiler-switch cflags-hardened cmake libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX98[@]/llvm_slot_}
+)
+
+inherit check-compiler-switch cflags-hardened cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Per-Face Texture Mapping for Production Rendering"
 HOMEPAGE="https://ptex.us/"
@@ -29,6 +36,7 @@ RESTRICT="test"
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

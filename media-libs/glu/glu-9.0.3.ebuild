@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit libstdcxx-slot meson-multilib
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit libcxx-slot libstdcxx-slot meson-multilib
 
 DESCRIPTION="The OpenGL Utility Library"
 HOMEPAGE="https://gitlab.freedesktop.org/mesa/glu"
@@ -28,6 +35,7 @@ DEPEND="media-libs/libglvnd[${MULTILIB_USEDEP}]"
 RDEPEND="${DEPEND}"
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
