@@ -15,14 +15,21 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
+CXX_STANDARD=11
 INTERNAL_VERSION="3.21.12" # From configure.ac L20
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
-inherit libstdcxx-slot multilib-minimal toolchain-funcs
+inherit libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
@@ -82,7 +89,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/gtest-1.9.0[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.9.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 RDEPEND+="
@@ -105,6 +112,7 @@ DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

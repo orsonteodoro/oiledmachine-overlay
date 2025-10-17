@@ -5,16 +5,24 @@ EAPI=8
 
 # U24
 
-inherit libstdcxx-compat
+CXX_STANDARD=26
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
 	# For older GPU libs users, use hyprland 0.39.1 instead
 	${LIBSTDCXX_COMPAT_STDCXX26[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	# For older GPU libs users, use hyprland 0.39.1 instead
+	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
+)
+
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" # Skip placeholder
 
-inherit cflags-hardened check-compiler-switch libstdcxx-slot meson toolchain-funcs
+inherit cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson toolchain-funcs
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -55,20 +63,20 @@ RDEPEND="
 	${HYPRPM_RDEPEND}
 	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
-	>=dev-libs/hyprlang-0.6.3[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-0.6.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
-	>=dev-libs/hyprgraphics-0.1.6[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprgraphics-0.1.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprgraphics:=
 	>=dev-libs/libinput-1.29.1:=
 	dev-libs/re2[${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.24.0
-	>=gui-libs/aquamarine-0.9.4[${LIBSTDCXX_USEDEP}]
+	>=gui-libs/aquamarine-0.9.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/aquamarine:=
-	>=gui-libs/hyprcursor-0.1.13[${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprcursor-0.1.13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprcursor:=
-	>=gui-libs/hyprutils-0.8.4[${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.8.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
 	>=media-libs/libglvnd-1.7.0
 	>=media-libs/mesa-25.2.3
@@ -82,7 +90,7 @@ RDEPEND="
 	sys-apps/util-linux
 	>=sys-apps/pciutils-3.10.0
 	qtutils? (
-		gui-libs/hyprland-qtutils[${LIBSTDCXX_USEDEP}]
+		gui-libs/hyprland-qtutils[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		gui-libs/hyprland-qtutils:=
 	)
 	X? (
@@ -101,7 +109,7 @@ DEPEND="
 	>=dev-libs/wayland-protocols-1.45
 "
 BDEPEND="
-	>=dev-util/hyprwayland-scanner-0.4.5[${LIBSTDCXX_USEDEP}]
+	>=dev-util/hyprwayland-scanner-0.4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-util/hyprwayland-scanner:=
 	>=dev-build/cmake-4.1.1
 	>=dev-util/wayland-scanner-1.24.0
@@ -141,7 +149,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	${CC} --version || die
 
+	libcxx-slot_verify
 	libstdcxx-slot_verify
+
 	if tc-is-gcc ; then
 		tc-check-min_ver "gcc" "14"
 	else

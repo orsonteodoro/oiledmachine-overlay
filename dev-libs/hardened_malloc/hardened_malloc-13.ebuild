@@ -4,9 +4,19 @@
 
 EAPI=8
 
-LLVM_COMPAT=( {18..14} )
+CXX_STANDARD=17
 
-inherit flag-o-matic toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -51,6 +61,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 bindist clang custom-kernel test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	cpu_flags_arm_mte? (
@@ -141,11 +152,18 @@ BDEPEND="
 DOCS=( "CREDITS" "README.md" )
 
 pkg_setup() {
-	:
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
 	unpack ${A}
+}
+
+src_prepare() {
+	default
+	# Unbreak -D_FORTIFY_SOURCE for hardened toolchain
+	sed -i -e "s| -O3 | -O2 |g" "Makefile" || die
 }
 
 src_compile() {

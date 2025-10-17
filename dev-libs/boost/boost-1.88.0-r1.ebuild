@@ -23,7 +23,8 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
 )
 
-inherit dot-a edo flag-o-matic libcxx-slot libstdcxx-slot multiprocessing python-r1 toolchain-funcs multilib-minimal
+inherit dot-a edo flag-o-matic libcxx-slot libstdcxx-slot multiprocessing
+inherit python-r1 toolchain-funcs multilib-minimal
 
 MY_PV="$(ver_rs 1- _)"
 

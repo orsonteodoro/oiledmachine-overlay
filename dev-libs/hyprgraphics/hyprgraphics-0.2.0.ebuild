@@ -3,13 +3,19 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
+CXX_STANDARD=26
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX26[@]}
 )
 
-inherit cmake libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
+)
+
+inherit cmake libcxx-slot libstdcxx-slot
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 DESCRIPTION="Hyprland graphics / resource utilities"
@@ -22,7 +28,7 @@ KEYWORDS="~amd64"
 
 RDEPEND="
 	gnome-base/librsvg
-	>=gui-libs/hyprutils-0.1.1[${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
 	x11-libs/pango
 	media-libs/libheif[${LIBSTDCXX_USEDEP_LTS}]
@@ -45,5 +51,6 @@ BDEPEND="
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }

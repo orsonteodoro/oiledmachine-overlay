@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cmake-multilib flag-o-matic libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Small, safe and fast formatting library"
 HOMEPAGE="https://fmt.dev/dev/ https://github.com/fmtlib/fmt"
@@ -28,6 +35,7 @@ IUSE="test"
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

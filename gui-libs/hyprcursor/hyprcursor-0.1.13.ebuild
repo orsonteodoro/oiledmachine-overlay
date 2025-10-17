@@ -3,13 +3,21 @@
 
 EAPI=8
 
+CXX_STANDARD=23
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cmake libstdcxx-slot
+inherit cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="The hyprland cursor format, library and utilities"
 HOMEPAGE="https://github.com/hyprwm/hyprcursor"
@@ -32,7 +40,7 @@ RESTRICT="test"
 RDEPEND="
 	dev-cpp/tomlplusplus[${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
-	>=dev-libs/hyprlang-0.4.2[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-0.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
 	dev-libs/libzip
 	gnome-base/librsvg:2
@@ -43,5 +51,6 @@ BDEPEND="
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }

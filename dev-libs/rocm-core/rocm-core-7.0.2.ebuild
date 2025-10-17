@@ -31,7 +31,9 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_8"
+IUSE="
+ebuild_revision_8
+"
 RDEPEND="
 "
 DEPEND="

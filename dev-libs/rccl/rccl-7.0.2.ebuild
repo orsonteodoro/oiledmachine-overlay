@@ -17,10 +17,17 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1201
 )
 CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
+CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-reqs cmake edo flag-o-matic linux-info rocm
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+
+inherit check-reqs cmake edo flag-o-matic libstdcxx-slot linux-info rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rccl-rocm-${PV}"
@@ -213,6 +220,7 @@ pkg_setup() {
 	check-reqs_pkg_setup
 
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

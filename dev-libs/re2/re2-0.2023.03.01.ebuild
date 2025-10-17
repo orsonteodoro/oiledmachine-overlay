@@ -5,9 +5,16 @@ EAPI=8
 
 # Bump every month
 
+CXX_STANDARD=14
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
 )
 
 RE2_VER="${PV#0.}"
@@ -18,7 +25,7 @@ CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_LANGS="cxx"
 SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
-inherit cflags-hardened cmake-multilib libstdcxx-slot toolchain-funcs
+inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/re2-${RE2_VER}"
@@ -37,7 +44,7 @@ ebuild_revision_13
 "
 RDEPEND="
 	icu? (
-		dev-libs/icu:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/icu:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 "
@@ -53,6 +60,7 @@ DOCS=( "AUTHORS" "CONTRIBUTORS" "README" "doc/syntax.txt" )
 HTML_DOCS=( "doc/syntax.html" )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

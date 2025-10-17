@@ -3,17 +3,24 @@
 
 EAPI=8
 
+CXX_STANDARD=23
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
 
-inherit cmake libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+
+inherit cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Aquamarine is a very light linux rendering backend library"
 HOMEPAGE="https://github.com/hyprwm/aquamarine"
 
-if [[ ${PV} == *9999* ]]; then
+if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
 else
@@ -30,9 +37,9 @@ RDEPEND="
 	>=dev-libs/libinput-1.26.0
 	dev-libs/libffi
 	dev-libs/wayland
-	>=dev-util/hyprwayland-scanner-0.4.0[${LIBSTDCXX_USEDEP}]
+	>=dev-util/hyprwayland-scanner-0.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-util/hyprwayland-scanner:=
-	>=gui-libs/hyprutils-0.8.0[${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.8.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
 	media-libs/libdisplay-info:=
 	media-libs/libglvnd
@@ -58,6 +65,7 @@ BDEPEND="
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

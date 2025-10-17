@@ -23,10 +23,19 @@ MY_PN="jemalloc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
+
+CXX_STANDARD=14
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"
 )
@@ -40,7 +49,8 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0 # bolt and asan/ubsan are mutually exclusive
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic libstdcxx-slot multilib-minimal uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
+inherit libstdcxx-slot multilib-minimal uopts
 
 KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -123,6 +133,7 @@ pkg_setup() {
 eerror "FEATURES=\"${FEATURES} -userpriv\" needs to be added as a per-package env file in order to run tests."
 		die
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

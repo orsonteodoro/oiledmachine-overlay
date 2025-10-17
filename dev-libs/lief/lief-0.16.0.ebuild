@@ -4,12 +4,24 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="standalone"
 MY_PN="LIEF"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cmake edo distutils-r1
+inherit cmake edo distutils-r1 libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -57,20 +69,20 @@ RDEPEND+="
 		>=dev-cpp/frozen-1.2.0
 	)
 	system-spdlog? (
-		>=dev-libs/spdlog-1.14.1
-	)
-	system-nlohmann-json? (
-		>=dev-cpp/nlohmann_json-3.11.2
+		>=dev-libs/spdlog-1.14.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	system-mbedtls? (
 		>=net-libs/mbedtls-3.6.1
 	)
-	system-utfcpp? (
-		>=dev-libs/utfcpp-4.0.5
-	)
 "
 DEPEND+="
 	${RDEPEND}
+	system-nlohmann-json? (
+		>=dev-cpp/nlohmann_json-3.11.2
+	)
+	system-utfcpp? (
+		>=dev-libs/utfcpp-4.0.5
+	)
 "
 BDEPEND+="
 	>=dev-build/cmake-3.24
@@ -95,6 +107,8 @@ _PATCHES=(
 
 pkg_setup() {
 	python_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

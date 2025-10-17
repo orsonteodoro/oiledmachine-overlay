@@ -4,6 +4,18 @@
 
 EAPI=8
 
+CXX_STANDARD=11
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
 CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_50
@@ -18,15 +30,14 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 	compute_90
 )
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
-)
 NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=2024-06-19
 S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit autotools check-compiler-switch flag-o-matic libstdcxx-slot linux-info python-any-r1
+# TODO:  Retest with clang
+# inherit libcxx-slot
+inherit autotools check-compiler-switch flag-o-matic libstdcxx-slot
+inherit linux-info python-any-r1
 
 S="${WORKDIR}/${P}-1"
 KEYWORDS="~amd64"
@@ -314,6 +325,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	check_kernel_setup
 	python-any-r1_pkg_setup
+	#libcxx-slot_verify # TODO retest with clang
 	libstdcxx-slot_verify
 }
 

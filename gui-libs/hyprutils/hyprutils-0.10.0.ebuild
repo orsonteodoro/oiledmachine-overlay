@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=23
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
 
-inherit cmake libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+
+inherit cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Hyprland utilities library used across the ecosystem"
 HOMEPAGE="https://github.com/hyprwm/hyprutils"

@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit flag-o-matic libstdcxx-slot toolchain-funcs multilib
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs multilib
 
 DESCRIPTION="Simple and small C++ XML parser"
 HOMEPAGE="http://www.grinninglizard.com/tinyxml/index.html"
@@ -26,6 +33,7 @@ S="${WORKDIR}/${PN}"
 DOCS=( "changes.txt" "readme.txt" )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -3,13 +3,19 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
+CXX_STANDARD=23
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
 
-inherit cmake libstdcxx-slot toolchain-funcs
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+
+inherit cmake libcxx-slot libstdcxx-slot toolchain-funcs
 
 DESCRIPTION="Official implementation library for the hypr config language"
 HOMEPAGE="https://github.com/hyprwm/hyprlang"
@@ -20,7 +26,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 RDEPEND="
-	>=gui-libs/hyprutils-0.7.1[${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.7.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
 "
 DEPEND="
@@ -28,15 +34,12 @@ DEPEND="
 "
 BDEPEND="
 	virtual/pkgconfig
-	|| (
-		>=sys-devel/gcc-14:*
-		>=llvm-core/clang-17:*
-	)
 "
 
 pkg_setup() {
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 
 	tc-check-min_ver gcc 14

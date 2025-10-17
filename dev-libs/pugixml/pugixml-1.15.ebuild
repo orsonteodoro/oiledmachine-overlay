@@ -10,12 +10,21 @@ EAPI=8
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic
+inherit libcxx-slot libstdcxx-slot
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -56,6 +65,7 @@ DOCS=( "docs" "readme.txt" )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -6,9 +6,16 @@ EAPI=8
 
 # Bump every month
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 RE2_VER="${PV#0.}"
@@ -24,7 +31,8 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 SONAME="11"				# https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
-inherit cflags-hardened cmake-multilib distutils-r1 libstdcxx-slot toolchain-funcs
+inherit cflags-hardened cmake-multilib distutils-r1 libcxx-slot libstdcxx-slot
+inherit toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/re2-${RE2_VER}"
@@ -43,9 +51,9 @@ IUSE="
 ebuild_revision_13
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20240116.2:0/20240116
+	>=dev-cpp/abseil-cpp-20240116.2:0/20240116[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	icu? (
-		dev-libs/icu:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/icu:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	python? (
@@ -75,6 +83,7 @@ HTML_DOCS=( "doc/syntax.html" )
 
 pkg_setup() {
 	python_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

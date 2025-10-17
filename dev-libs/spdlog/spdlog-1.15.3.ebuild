@@ -5,12 +5,19 @@ EAPI=8
 
 # U24
 
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit check-compiler-switch cmake-multilib libstdcxx-slot sandbox-changes
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit check-compiler-switch cmake-multilib libcxx-slot libstdcxx-slot sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="v1.x"
@@ -56,6 +63,7 @@ check_network_sandbox() {
 pkg_setup() {
 	check-compiler-switch_start
 	use test && check_network_sandbox
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -3,14 +3,23 @@
 
 EAPI=8
 
+CXX_STANDARD=23
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	# Support -std=c++23, required for #include <print> support >= GCC 14
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	# Support -std=c++23, required for #include <print> support >= GCC 14
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cmake libstdcxx-slot
+inherit cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="QML style provider for hypr* Qt apps"
 HOMEPAGE="https://github.com/hyprwm/hyprland-qt-support"
@@ -35,6 +44,11 @@ DEPEND="${RDEPEND}"
 BDEPEND="
 	virtual/pkgconfig
 "
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	local mycmakeargs=(
