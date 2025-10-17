@@ -79,8 +79,8 @@ pkg_setup()
 			die "Missing libabsl_dynamic_annotations.so"
 		fi
 	fi
-	libstdcxx-slot_verify
 	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_configure() {

@@ -4,22 +4,31 @@
 EAPI=8
 
 MY_PN="SPIRV-Tools"
+
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-PYTHON_COMPAT=( python3_{11..14} )
-PYTHON_REQ_USE="xml(+)"
-inherit cmake-multilib libstdcxx-slot python-any-r1
 
-if [[ ${PV} == *9999* ]]; then
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_REQ_USE="xml(+)"
+inherit cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
+
+if [[ "${PV}" == *"9999"* ]]; then
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	inherit git-r3
 else
 	EGIT_COMMIT="vulkan-sdk-${PV}"
 	SRC_URI="https://github.com/KhronosGroup/${MY_PN}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
-	S="${WORKDIR}"/${MY_PN}-${EGIT_COMMIT}
+	S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 fi
 
 DESCRIPTION="Provides an API and commands for processing SPIR-V modules"
@@ -36,6 +45,7 @@ BDEPEND="${PYTHON_DEPS}"
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

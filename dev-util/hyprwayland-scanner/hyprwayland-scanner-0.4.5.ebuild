@@ -3,10 +3,18 @@
 
 EAPI=8
 
+CXX_STANDARD=23
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+
+inherit libstdcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit cmake libstdcxx-slot toolchain-funcs
@@ -58,5 +66,6 @@ eerror "Clang version is too old to compile Hyprland!"
 eerror
 		die
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
