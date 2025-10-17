@@ -387,6 +387,7 @@ _LIBCXX_VER_VERIFIED=0
 # @DESCRIPTION:
 # Verify libc++ version before compiling
 libcxx-slot_verify() {
+	export _LIBCXX_VER_VERIFIED=1
 	tc-is-clang || return
 	local llvm_slot=$(${CC} --version | head -n 1 | cut -f 3 -d " " | cut -f 1 -d ".")
 
@@ -402,8 +403,6 @@ libcxx-slot_verify() {
 	done
 
 	# Verification of libc++ already done in virtual/libcxx
-
-	export _LIBCXX_VER_VERIFIED=1
 }
 
 # @FUNCTION: libcxx-slot_pkg_postinst
