@@ -6,12 +6,19 @@ EAPI=8
 CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened libstdcxx-slot qt6-build toolchain-funcs
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
 
 DESCRIPTION="SVG rendering library for the Qt6 framework"
 
@@ -20,13 +27,14 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},gui,widgets]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
 	dev-qt/qtbase:=
 	sys-libs/zlib:=
 "
 DEPEND="${RDEPEND}"
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

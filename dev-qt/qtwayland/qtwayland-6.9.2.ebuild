@@ -7,12 +7,19 @@ EAPI=8
 CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened libstdcxx-slot qt6-build
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Wayland platform plugin for Qt"
 
@@ -24,19 +31,19 @@ IUSE="accessibility compositor gnome qml vulkan"
 
 RDEPEND="
 	dev-libs/wayland
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},accessibility=,gui,opengl,vulkan=,wayland]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl,vulkan=,wayland]
 	dev-qt/qtbase:=
 	media-libs/libglvnd
 	x11-libs/libxkbcommon
 	compositor? (
 		qml? (
-			~dev-qt/qtdeclarative-${PV}:6[${LIBSTDCXX_USEDEP}]
+			~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-qt/qtdeclarative:=
 		)
 	)
 	gnome? (
 		~dev-qt/qtbase-${PV}:6[dbus]
-		~dev-qt/qtsvg-${PV}:6[${LIBSTDCXX_USEDEP}]
+		~dev-qt/qtsvg-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtsvg:=
 	)
 "
@@ -60,6 +67,11 @@ CMAKE_SKIP_TESTS=(
 	tst_compositor
 	tst_scaling
 )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	cflags-hardened_append

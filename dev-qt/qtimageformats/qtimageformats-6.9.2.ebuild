@@ -6,12 +6,19 @@ EAPI=8
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened libstdcxx-slot qt6-build
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Additional format plugins for the Qt image I/O system"
 
@@ -22,7 +29,7 @@ fi
 IUSE="mng"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},gui]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
 	dev-qt/qtbase:=
 	media-libs/libwebp:=
 	media-libs/tiff:=
@@ -37,6 +44,7 @@ CMAKE_SKIP_TESTS=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -10,13 +10,20 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS OOBA"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 QT6_HAS_STATIC_LIBS=1
-inherit cflags-hardened flag-o-matic libstdcxx-slot qt6-build toolchain-funcs
+inherit cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
 
 DESCRIPTION="Cross-platform application development framework"
 
@@ -72,12 +79,12 @@ COMMON_DEPEND="
 	zstd? ( app-arch/zstd:= )
 
 	app-crypt/libb2
-	dev-libs/double-conversion[${LIBSTDCXX_USEDEP}]
+	dev-libs/double-conversion[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/double-conversion:=
 	dev-libs/glib:2
 	dev-libs/libpcre2:=[pcre16,unicode(+)]
 	icu? (
-		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/icu:=
 	)
 	journald? ( sys-apps/systemd )
@@ -129,7 +136,7 @@ COMMON_DEPEND="
 	)
 	sql? (
 		mysql? (
-			dev-db/mysql-connector-c[${LIBSTDCXX_USEDEP}]
+			dev-db/mysql-connector-c[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-db/mysql-connector-c:=
 		)
 		oci8? ( dev-db/oracle-instantclient:=[sdk] )
@@ -192,7 +199,7 @@ BDEPEND="zstd? ( app-arch/libarchive[zstd] )" #910392
 PDEPEND="
 	nls? ( ~dev-qt/qttranslations-${PV}:6 )
 	wayland? (
-		~dev-qt/qtwayland-${PV}:6[${LIBSTDCXX_USEDEP}]
+		~dev-qt/qtwayland-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtwayland:=
 	)
 "
@@ -207,6 +214,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit libstdcxx-slot qt6-build
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Qt APIs and Tools for Graphics Pipelines"
 
@@ -17,11 +24,12 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},gui]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
 	dev-qt/qtbase:=
 "
 DEPEND="${RDEPEND}"
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }

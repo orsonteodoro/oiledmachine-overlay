@@ -3,12 +3,21 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 QT6_HAS_STATIC_LIBS=1
-inherit libstdcxx-slot qt6-build
+
+inherit libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Qt module and API for defining 3D content in Qt QuickTools"
 
@@ -21,25 +30,28 @@ fi
 IUSE="opengl vulkan"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},concurrent,gui,opengl=,vulkan=,widgets]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl=,vulkan=,widgets]
 	dev-qt/qtbase:=
-	~dev-qt/qtdeclarative-${PV}:6[${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-qt/qtdeclarative:=
-	~dev-qt/qtquicktimeline-${PV}:6[${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtquicktimeline-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-qt/qtquicktimeline:=
-	~dev-qt/qtshadertools-${PV}:6[${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-qt/qtshadertools:=
-	media-libs/assimp[${LIBSTDCXX_USEDEP}]
+	media-libs/assimp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/assimp:=
 	sys-libs/zlib:=
 "
 DEPEND="
 	${RDEPEND}
-	test? ( ~dev-qt/qtbase-${PV}:6[network] )
+	test? (
+		~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network]
+		dev-qt/qtbase:=
+	)
 	vulkan? ( dev-util/vulkan-headers )
 "
 BDEPEND="
-	~dev-qt/qtshadertools-${PV}:6[${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-qt/qtshadertools:=
 "
 
@@ -56,6 +68,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

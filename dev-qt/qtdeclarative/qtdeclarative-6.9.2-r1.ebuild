@@ -8,9 +8,16 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 PYTHON_COMPAT=( python3_{11..14} )
@@ -18,7 +25,7 @@ QT6_HAS_STATIC_LIBS=1
 # behaves very badly when qtdeclarative is not already installed, also
 # other more minor issues (installs junk, sandbox/offscreen issues)
 QT6_RESTRICT_TESTS=1
-inherit cflags-hardened libstdcxx-slot python-any-r1 qt6-build
+inherit cflags-hardened libcxx-slot libstdcxx-slot python-any-r1 qt6-build
 
 DESCRIPTION="Qt Declarative (Quick 2)"
 
@@ -29,11 +36,11 @@ fi
 IUSE="accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
 	dev-qt/qtbase:=
 	qmlls? ( ~dev-qt/qtlanguageserver-${PV}:6 )
 	svg? (
-		~dev-qt/qtsvg-${PV}:6[${LIBSTDCXX_USEDEP}]
+		~dev-qt/qtsvg-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtsvg:=
 	)
 "
@@ -43,7 +50,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	~dev-qt/qtshadertools-${PV}:6[${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-qt/qtshadertools:=
 "
 
@@ -52,6 +59,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

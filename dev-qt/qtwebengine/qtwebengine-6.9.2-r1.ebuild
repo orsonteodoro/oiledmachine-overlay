@@ -9,14 +9,22 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened check-reqs flag-o-matic libstdcxx-slot multiprocessing optfeature
-inherit prefix python-any-r1 qt6-build toolchain-funcs
+inherit cflags-hardened check-reqs flag-o-matic libcxx-slot libstdcxx-slot
+inherit multiprocessing optfeature prefix python-any-r1 qt6-build
+inherit toolchain-funcs
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
@@ -39,7 +47,7 @@ REQUIRED_USE="
 
 # dlopen: krb5, libva, pciutils
 RDEPEND="
-	app-arch/snappy[${LIBSTDCXX_USEDEP}]
+	app-arch/snappy[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	app-arch/snappy:=
 	dev-libs/expat
 	dev-libs/libevent:=
@@ -47,9 +55,9 @@ RDEPEND="
 	dev-libs/libxslt
 	dev-libs/nspr
 	dev-libs/nss
-	~dev-qt/qtbase-${PV}:6[${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,vulkan?,widgets?]
+	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,vulkan?,widgets?]
 	dev-qt/qtbase:=
-	~dev-qt/qtdeclarative-${PV}:6[${LIBSTDCXX_USEDEP},widgets?]
+	~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
 	dev-qt/qtdeclarative:=
 	~dev-qt/qtwebchannel-${PV}:6[qml?]
 	media-libs/fontconfig
@@ -80,7 +88,7 @@ RDEPEND="
 	x11-libs/libxkbfile
 	alsa? ( media-libs/alsa-lib )
 	designer? (
-		~dev-qt/qttools-${PV}:6[${LIBSTDCXX_USEDEP},designer]
+		~dev-qt/qttools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]
 		dev-qt/qttools:=
 	)
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6 )
@@ -92,7 +100,7 @@ RDEPEND="
 		media-video/pipewire:=
 	)
 	system-icu? (
-		dev-libs/icu[${LIBSTDCXX_USEDEP}]
+		dev-libs/icu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/icu:=
 	)
 	vaapi? ( media-libs/libva:=[X] )
@@ -168,6 +176,8 @@ pkg_pretend() {
 pkg_setup() {
 	qtwebengine_check-reqs
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
