@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CXX_STANDARD=14
+CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -43,7 +43,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 IUSE="
 abseil doc examples test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 

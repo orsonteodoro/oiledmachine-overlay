@@ -43,7 +43,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 IUSE="
 doc examples test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
