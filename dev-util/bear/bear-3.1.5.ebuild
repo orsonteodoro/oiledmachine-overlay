@@ -12,9 +12,14 @@ EAPI=8
 
 MY_PN="${PN/b/B}"
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake-multilib grpc-ver python-any-r1
+inherit cmake-multilib libstdcxx-slot python-any-r1
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~ppc64 ~s390"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -30,39 +35,24 @@ LICENSE="GPL-3+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-gen_grpcio_cdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				dev-libs/protobuf:0/${s2}[${MULTILIB_USEDEP}]
-				=net-libs/grpc-${s1}*[${MULTILIB_USEDEP}]
-			)
-		"
-	done
-}
-CDEPEND="
-	|| (
-		$(gen_grpcio_cdepend)
-	)
-	dev-libs/protobuf:=
-	net-libs/grpc:=
-"
 RDEPEND+="
 	${CDEPEND}
 	>=dev-cpp/nlohmann_json-3.11.3[${MULTILIB_USEDEP}]
 	>=dev-libs/libfmt-11.0.2[${MULTILIB_USEDEP}]
 	>=dev-libs/spdlog-1.14.1[${MULTILIB_USEDEP}]
+	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:=
+	virtual/grpc[${LIBSTDCXX_USEDEP}]
+	virtual/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	${CDEPEND}
 	>=dev-build/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	virtual/protobuf[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:=
 	test? (
 		$(python_gen_any_dep '
 			>=dev-python/lit-0.7[${PYTHON_USEDEP}]
@@ -82,6 +72,7 @@ pkg_setup()
 			die "Missing libabsl_dynamic_annotations.so"
 		fi
 	fi
+	libstdcxx-slot_verify
 }
 
 src_configure() {
