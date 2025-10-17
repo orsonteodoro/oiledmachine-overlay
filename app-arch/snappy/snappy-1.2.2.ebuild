@@ -5,12 +5,19 @@ EAPI=8
 
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS ID"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit cflags-hardened cmake-multilib libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot
 
 DESCRIPTION="A high-speed compression/decompression library by Google"
 HOMEPAGE="https://github.com/google/snappy"
@@ -23,7 +30,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 
 IUSE="cpu_flags_x86_avx cpu_flags_x86_avx2 test"
 RESTRICT="!test? ( test )"
 
-DEPEND="test? ( dev-cpp/gtest )"
+DEPEND="
+	test? (
+		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=
+	)
+"
 
 DOCS=( format_description.txt framing_format.txt NEWS README.md )
 
@@ -34,6 +46,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
