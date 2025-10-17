@@ -5,10 +5,18 @@ EAPI=8
 
 # U24, VFX CY2024
 
+CXX_STANDARD=14
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 OPENEXR_V3_PV=(
 	# openexr:imath
@@ -36,7 +44,7 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cflags-hardened cmake libstdcxx-slot python-single-r1
+inherit cflags-hardened cmake libcxx-slot libstdcxx-slot python-single-r1
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -140,6 +148,7 @@ DOCS=( "ACKNOWLEDGEMENTS.txt" "FEEDBACK.txt" "NEWS.txt" "README.txt" )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

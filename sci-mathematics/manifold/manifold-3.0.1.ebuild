@@ -3,17 +3,25 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-PYTHON_COMPAT=( python3_{10..13} )
-inherit cmake libstdcxx-slot python-single-r1
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+PYTHON_COMPAT=( "python3_"{10..13} )
+inherit cmake libcxx-slot libstdcxx-slot python-single-r1
 
 DESCRIPTION="Geometry library for topological robustness"
 HOMEPAGE="https://github.com/elalish/manifold"
 
-if [[ ${PV} = *9999* ]] ; then
+if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/elalish/manifold.git"
 else
@@ -40,7 +48,7 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	sci-mathematics/clipper2[${LIBSTDCXX_USEDEP}]
+	sci-mathematics/clipper2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	sci-mathematics/clipper2:=
 	python? ( ${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -48,7 +56,7 @@ RDEPEND="
 		')
 	)
 	tbb? (
-		dev-cpp/tbb[${LIBSTDCXX_USEDEP}]
+		dev-cpp/tbb[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 "
@@ -64,6 +72,7 @@ DEPEND="
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

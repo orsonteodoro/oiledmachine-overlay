@@ -114,10 +114,6 @@ EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 GCC_PV="4.6"
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
-)
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
 GCC_SLOT_NOT_KCP=( ${GCC_COMPAT2[@]} ) # Without kernel-compiler-patch
@@ -127,11 +123,17 @@ GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=9
 KMOD_PV="13"
-LIBCXX_SLOT_CONFIG="core"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
+
 LLVM_MAX_SLOT="19"
 LLVM_MIN_SLOT="18"
 LLVM_MIN_KCFI_ARM64="not supported"
@@ -621,6 +623,7 @@ ewarn "genpatches is EOL (End of Life) for the ${KV_MAJOR_MINOR} series."
 ewarn
 	fi
 	# For Qt5
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

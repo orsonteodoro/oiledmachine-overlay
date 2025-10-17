@@ -9,10 +9,18 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 CPU_FLAGS_X86=(
 	"avx"
 	"sse4_2"
@@ -60,7 +68,7 @@ VDB_UTILS=(
 	"vdb_view"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot llvm python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot llvm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -127,11 +135,11 @@ gen_openexr_pairs() {
 		echo "
 			(
 				openexr? (
-					~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+					~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 					media-libs/openexr:=
 				)
 				imath-half? (
-					~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+					~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 					dev-libs/imath:=
 				)
 			)
@@ -153,10 +161,10 @@ gen_ax_depend() {
 }
 RDEPEND+="
 	(
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
-	>=dev-libs/boost-1.80[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/boost-1.80[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
 	>=sys-libs/zlib-1.2.7:=
 	ax? (
@@ -166,11 +174,11 @@ RDEPEND+="
 		>=dev-libs/c-blosc-1.17.0:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc[${LIBSTDCXX_USEDEP}]
+		dev-libs/jemalloc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/jemalloc:=
 	)
 	log4cplus? (
-		>=dev-libs/log4cplus-1.1.2[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/log4cplus-1.1.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/log4cplus:=
 	)
 	python? (
@@ -186,7 +194,7 @@ RDEPEND+="
 	vdb_view? (
 		>=media-libs/glfw-3.1
 		>=media-libs/glfw-3.3
-		media-libs/glu[${LIBSTDCXX_USEDEP}]
+		media-libs/glu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/glu:=
 		media-libs/mesa[egl(+)]
 		virtual/opengl
@@ -280,6 +288,7 @@ pkg_setup() {
 			break
 		fi
 	done
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

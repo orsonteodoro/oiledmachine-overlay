@@ -180,10 +180,6 @@ EXCLUDE_SCS=(
 )
 EXTRAVERSION="-ot"
 GCC_PV="5.1"
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64=13
@@ -192,11 +188,17 @@ GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=13
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
-LIBCXX_SLOT_CONFIG="core"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
+
 LLVM_MAX_SLOT="21"
 LLVM_MIN_SLOT="20"
 LLVM_MIN_KCFI_ARM64=16
@@ -869,11 +871,11 @@ CDEPEND+="
 		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		>=dev-qt/qtcore-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtcore-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtcore:=
-		>=dev-qt/qtgui-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtgui-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtgui:=
-		>=dev-qt/qtwidgets-${QT6_PV}:6[${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtwidgets-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtwidgets:=
 	)
 	rust? (
@@ -1144,6 +1146,7 @@ ewarn
 		fi
 	fi
 	# For Qt6, Qt5
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

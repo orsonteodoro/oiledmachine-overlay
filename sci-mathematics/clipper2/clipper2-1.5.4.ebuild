@@ -6,12 +6,19 @@ EAPI=8
 MY_PN="Clipper2"
 MY_P=${MY_PN}_${PV}
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cmake flag-o-matic libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake flag-o-matic libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Polygon Clipping and Offsetting"
 HOMEPAGE="https://www.angusj.com/clipper2/Docs/Overview.htm"
@@ -30,6 +37,7 @@ DEPEND="
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

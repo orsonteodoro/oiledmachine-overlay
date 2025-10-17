@@ -10,12 +10,19 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan"
 CFLAGS_HARDENED_USE_CASES="jit"
 CMAKE_MAKEFILE_GENERATOR="emake"
 FLATBUFFERS_PV="23.5.26"
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 GTEST_COMMIT="703bd9caab50b139428cea1aaff9974ebee5742e"
-LLVM_COMPAT=( {20..17} )
 MUNIT_COMMIT="da8f73412998e4f1adf1100dc187533a51af77fd"
 PICOSHA2_COMMIT="27fcf6979298949e8a462e16d09a0351c18fcaf2"
 PYBIND11_PV="2.10.4"
@@ -28,7 +35,7 @@ WASM_C_API_COMMIT="b6dd1fb658a282c64b029867845bc50ae59e1497"
 WABT_PV="1.0.36"
 WEBASSEMBLY_TESTSUITE_COMMIT="f3f048661dc1686d556a27d522df901cb747ab4a"
 
-inherit cmake-multilib dep-prepare libstdcxx-slot llvm multilib-build python-single-r1 pypi
+inherit cmake-multilib dep-prepare libcxx-slot libstdcxx-slot llvm multilib-build python-single-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -152,7 +159,7 @@ RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_HEADERS_PV}
 	media-libs/vulkan-drivers
 	serialization? (
-		>=dev-libs/flatbuffers-23.5.26[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/flatbuffers-23.5.26[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/flatbuffers:=
 	)
 "
@@ -181,6 +188,7 @@ einfo "PATH=${PATH} (before)"
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 einfo "PATH=${PATH} (after)"
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

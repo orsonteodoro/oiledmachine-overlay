@@ -167,10 +167,6 @@ EXCLUDE_SCS=(
 )
 EXTRAVERSION="-ot"
 GCC_PV="5.1"
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
-)
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64="not supported"
@@ -179,11 +175,17 @@ GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=11
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
-LIBCXX_SLOT_CONFIG="core"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
+
 LLVM_MAX_SLOT="19"
 LLVM_MIN_SLOT="18"
 LLVM_MIN_KCFI_ARM64="not supported"
@@ -959,6 +961,7 @@ ewarn
 		fi
 	fi
 	# For Qt5
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
