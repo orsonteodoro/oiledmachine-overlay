@@ -32,7 +32,7 @@ EAPI=8
 # torchaudio
 
 # For driver version, see
-# https://github.com/openvinotoolkit/openvino/blob/2024.3.0/.github/workflows/job_gpu_tests.yml#L88
+# https://github.com/openvinotoolkit/openvino/blob/2025.1.0/.github/workflows/job_gpu_tests.yml#L88
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CPU_FLAGS_X86=(
@@ -82,8 +82,19 @@ YAML_CPP_COMMIT="da82fd982c260e7f335ce5acbceff24b270544d1"
 ZLIB_COMMIT="51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
 
 inherit libstdcxx-compat
+# Allow protobuf-python >=3.18.1, 4.x, 5.x
 GCC_COMPAT=(
-	# Limited by python protobuf
+#
+# Combos available on overlay:
+#
+# 3.12.x with GCC 11.5 in U22, LTS
+# 4.21.x with GCC 12.5 in D12, LTS
+# 4.21.x with GCC 13.4 in U24, LTS
+# 4.21.x with GCC 14.3 in D13, LTS
+# 3.19.x with GCC 15.2 in F43, Rolling
+#
+# The list below is limited by protobuf-python 3.x for LTS distros
+#
 	"gcc_slot_12_5"
 	"gcc_slot_13_4"
 	"gcc_slot_14_3"
@@ -263,10 +274,8 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
-		(
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-			dev-python/protobuf:=
-		)
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
 	')
 	(
@@ -347,19 +356,8 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-		gcc_slot_12_5? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
@@ -472,19 +470,8 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 		dev-python/optimum[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		gcc_slot_12_5? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		dev-python/pyctcdecode[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -575,19 +562,8 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
-		gcc_slot_12_5? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-dependency[${PYTHON_USEDEP}]
@@ -1046,7 +1022,7 @@ pkg_postinst() {
 elog
 elog "You have enabled telemetry.  To opt-out and to see the data retention policy, see"
 elog
-elog "https://github.com/openvinotoolkit/openvino/blob/2024.3.0/docs/articles_en/about-openvino/additional-resources/telemetry.rst"
+elog "https://github.com/openvinotoolkit/openvino/blob/2025.1.0/docs/articles_en/about-openvino/additional-resources/telemetry.rst"
 elog
 	fi
 }

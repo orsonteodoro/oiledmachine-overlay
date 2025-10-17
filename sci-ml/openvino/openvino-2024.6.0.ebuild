@@ -81,11 +81,22 @@ YAML_CPP_COMMIT="da82fd982c260e7f335ce5acbceff24b270544d1"
 ZLIB_COMMIT="51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
 
 inherit libstdcxx-compat
+# Only protobuf-python >=3.18.1 and not >=4.x
 GCC_COMPAT=(
-	# Limited by python protobuf
-	"gcc_slot_12_5"
-	"gcc_slot_13_4"
-	"gcc_slot_14_3"
+# In src/bindings/python/constraints.txt, limits just to protobuf-python 3.x
+
+#
+# Combos available on overlay:
+#
+# 3.12.x with GCC 11.5 in U22, LTS
+# NOT 4.21.x with GCC 12.5 in D12, LTS
+# NOT 4.21.x with GCC 13.4 in U24, LTS
+# NOT 4.21.x with GCC 14.3 in D13, LTS
+# 3.19.x with GCC 15.2 in F43, Rolling
+#
+# The list below is limited by protobuf-python 3.x for LTS distros
+#
+	"gcc_slot_11_5"
 	"gcc_slot_15_2"
 )
 
@@ -262,19 +273,8 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		(
-			gcc_slot_12_5? (
-				=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-			)
-			gcc_slot_13_4? (
-				=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-			)
-			gcc_slot_14_3? (
-				=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-			)
-			gcc_slot_15_2? (
-				=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-			)
-			dev-python/protobuf:=
+			virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+			virtual/protobuf-python:=
 		)
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
 	')
@@ -356,19 +356,8 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-		gcc_slot_12_5? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
@@ -481,19 +470,8 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 		dev-python/optimum[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		gcc_slot_12_5? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		dev-python/pyctcdecode[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -584,19 +562,8 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
-		gcc_slot_12_5? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-python/protobuf-3.21*[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-python/protobuf-3.19*[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
+		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:=
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-dependency[${PYTHON_USEDEP}]

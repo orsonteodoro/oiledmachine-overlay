@@ -10,6 +10,9 @@ EAPI=8
 # The versioning here corresponds to configure.ac.
 # 3.21.12 is equivalent to 4.21.12 and equivalent to 21.12.
 
+# 3.21.12 is protobuf-cxx
+# 4.21.12 is protobuf-python
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 INTERNAL_VERSION="3.21.12" # From configure.ac L20

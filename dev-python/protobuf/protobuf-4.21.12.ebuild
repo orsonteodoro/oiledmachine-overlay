@@ -11,6 +11,9 @@ EAPI=8
 # 3.21.12 is equivalent to 4.21.12 and equivalent to 21.12.
 #
 
+# 3.21.12 is protobuf-cxx
+# 4.21.12 is protobuf-python
+
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.10
