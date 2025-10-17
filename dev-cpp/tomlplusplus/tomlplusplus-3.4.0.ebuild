@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit libstdcxx-slot meson
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit libcxx-slot libstdcxx-slot meson
 
 DESCRIPTION="TOML config file parser and serializer"
 HOMEPAGE="
@@ -27,6 +34,7 @@ RESTRICT="!test? ( test )"
 BDEPEND="dev-build/cmake"
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

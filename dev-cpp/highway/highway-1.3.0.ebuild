@@ -57,12 +57,20 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_vaes"
 	"cpu_flags_x86_vpclmulqdq"
 )
+
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot toolchain-funcs
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
@@ -224,6 +232,7 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

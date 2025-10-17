@@ -3,12 +3,19 @@
 
 EAPI="8"
 
+CXX_STANDARD=98
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX98[@]}
 )
 
-inherit cmake-multilib libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX98[@]/llvm_slot_}
+)
+
+inherit cmake-multilib libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
@@ -54,6 +61,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

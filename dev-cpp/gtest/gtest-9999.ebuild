@@ -12,7 +12,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 # Python is required for tests and some build tasks.
@@ -41,7 +41,10 @@ HOMEPAGE="https://github.com/google/googletest"
 
 LICENSE="BSD"
 SLOT="0/${PV}"
-IUSE="abseil doc examples test"
+IUSE="
+abseil doc examples test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="test? ( ${PYTHON_DEPS} )"

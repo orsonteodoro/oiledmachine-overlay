@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cmake-multilib flag-o-matic libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -31,6 +38,7 @@ DOCS=( ChangeLog.txt README.md )
 
 pkg_setup() {
 ewarn "The release for version is more than 7 years ago.  Consider using the live ebuild instead."
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

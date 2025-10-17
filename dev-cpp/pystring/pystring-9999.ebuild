@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit flag-o-matic meson libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit flag-o-matic meson libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -81,6 +88,7 @@ eerror "emerge -1o libtool && emerge -1O libtool"
 eerror
 		die
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

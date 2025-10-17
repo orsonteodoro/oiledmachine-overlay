@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit cmake-multilib libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit cmake-multilib libcxx-slot libstdcxx-slot
 
 KEYWORDS="~amd64"
 SRC_URI="https://github.com/jbeder/yaml-cpp/archive/refs/tags/${PV}.tar.gz -> ${P}.gh.tar.gz"
@@ -36,6 +43,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

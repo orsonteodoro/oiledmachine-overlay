@@ -41,7 +41,10 @@ HOMEPAGE="https://github.com/google/googletest"
 
 LICENSE="BSD"
 SLOT="0/${PV}"
-IUSE="abseil doc examples test"
+IUSE="
+abseil doc examples test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="test? ( ${PYTHON_DEPS} )"
