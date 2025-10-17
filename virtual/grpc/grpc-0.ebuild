@@ -3,6 +3,10 @@
 
 EAPI=8
 
+# This ebuild avoids:
+# !!! Multiple package instances within a single package slot have been pulled
+# !!! into the dependency graph, resulting in a slot conflict:
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"gcc_slot_11_5" # Support U22, LTS
