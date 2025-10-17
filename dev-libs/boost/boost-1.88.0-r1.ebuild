@@ -9,15 +9,21 @@ EAPI=8
 # (e.g. https://www.boost.org/users/history/version_1_83_0.html)
 # Note that the latter may sometimes feature patches not on the former too.
 
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS NPD"
+CXX_STANDARD=14
 PYTHON_COMPAT=( python3_{11..13} )
 
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS NPD"
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
 
-inherit dot-a edo flag-o-matic libstdcxx-slot multiprocessing python-r1 toolchain-funcs multilib-minimal
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
+inherit dot-a edo flag-o-matic libcxx-slot libstdcxx-slot multiprocessing python-r1 toolchain-funcs multilib-minimal
 
 MY_PV="$(ver_rs 1- _)"
 
@@ -39,7 +45,7 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	bzip2? ( app-arch/bzip2:=[${MULTILIB_USEDEP}] )
 	icu? (
-		dev-libs/icu[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/icu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	!icu? ( virtual/libiconv[${MULTILIB_USEDEP}] )
@@ -126,6 +132,7 @@ pkg_setup() {
 			die "Unsupported target in ${EROOT}/etc/site-config.jam"
 		fi
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

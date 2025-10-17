@@ -18,9 +18,9 @@
 
     Available ebuild versions:
 
-    2.20.0 - Support for dev-util/nvidia-cuda-toolkit-12.5*, ROCm 6.2-6.4
-    2.17.1 - Support for dev-util/nvidia-cuda-toolkit-12.3*, ROCm 5.3-6.0
-    2.14.1 - Support for dev-util/nvidia-cuda-toolkit-11.8*, ROCm 5.3-5.6
+    2.20.0 - Support for dev-util/nvidia-cuda-toolkit-12.5*, ROCm 6.2
+    2.17.1 - Support for dev-util/nvidia-cuda-toolkit-12.3*, ROCm 6.2 - 6.3
+    2.14.1 - Support for dev-util/nvidia-cuda-toolkit-11.8*, ROCm 5.7
 
     Environment variables:
 

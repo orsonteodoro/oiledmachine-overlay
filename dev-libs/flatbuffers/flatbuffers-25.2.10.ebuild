@@ -3,12 +3,19 @@
 
 EAPI=8
 
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit cmake libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Memory efficient serialization library"
 HOMEPAGE="
@@ -27,6 +34,7 @@ IUSE="static-libs test"
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
