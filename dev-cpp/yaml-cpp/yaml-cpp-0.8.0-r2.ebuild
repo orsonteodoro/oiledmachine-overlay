@@ -32,7 +32,7 @@ RESTRICT="
 "
 DEPEND="
 	test? (
-		dev-cpp/gtest[${MULTILIB_USEDEP}]
+		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 PATCHES=(

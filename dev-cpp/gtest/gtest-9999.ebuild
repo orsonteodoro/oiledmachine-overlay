@@ -12,7 +12,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 # Python is required for tests and some build tasks.
@@ -50,9 +50,9 @@ RESTRICT="!test? ( test )"
 BDEPEND="test? ( ${PYTHON_DEPS} )"
 DEPEND="
 	abseil? (
-		dev-cpp/abseil-cpp[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/abseil-cpp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/abseil-cpp:=
-		dev-libs/re2[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/re2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/re2:=
 	)
 "

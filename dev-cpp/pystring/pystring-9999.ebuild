@@ -39,7 +39,6 @@ IUSE+=" custom-cflags doc test"
 RDEPEND+="
 	|| (
 		sys-devel/gcc[cxx]
-		llvm-runtimes/libcxx
 	)
 "
 DEPEND+="
@@ -50,7 +49,6 @@ BDEPEND+="
 	sys-apps/grep
 	|| (
 		sys-devel/gcc[cxx]
-		llvm-core/clang
 	)
 "
 DOCS=( "README.md" )

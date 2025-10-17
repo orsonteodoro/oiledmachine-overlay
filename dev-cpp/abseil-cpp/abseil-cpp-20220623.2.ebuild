@@ -16,7 +16,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
 
 inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
@@ -43,7 +43,7 @@ ebuild_revision_14
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
-		=dev-cpp/gtest-9999
+		=dev-cpp/gtest-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-libs/timezone-data
 	)
 "

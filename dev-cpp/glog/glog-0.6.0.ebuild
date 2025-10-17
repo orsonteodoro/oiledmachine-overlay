@@ -39,7 +39,7 @@ RESTRICT="!test? ( test )"
 
 RDEPEND="
 	gflags? (
-		dev-cpp/gflags:0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/gflags:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/gflags:=
 	)
 	libunwind? (
@@ -50,7 +50,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/gtest-1.8.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.8.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/gtest:=
 	)
 "
