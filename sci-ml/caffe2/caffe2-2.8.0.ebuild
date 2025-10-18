@@ -92,13 +92,14 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse4_1
 )
+# See https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/pytorch/windows/cuda126.bat ; min
+# See https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/pytorch/windows/cuda129.bat ; max
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
 	auto
 
 # Observed:
-#	sm_35 # Dropped based on RELEASE.md:  Release Compatibility Matrix
-	sm_52
+	sm_50
 	sm_60
 	sm_61
 	sm_70
@@ -106,8 +107,18 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_86
 	sm_90
+	sm_100
+	sm_120
+
 	compute_50
+	compute_60
 	compute_70
+	compute_75
+	compute_80
+	compute_86
+	compute_90
+	compute_100
+	compute_120
 )
 
 inherit hip-versions
@@ -814,6 +825,13 @@ RDEPEND="
 				${CUDA_12_9_RDEPEND}
 			)
 		)
+		cuda_targets_compute_60? (
+			|| (
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
 		cuda_targets_compute_70? (
 			|| (
 				${CUDA_12_6_RDEPEND}
@@ -821,7 +839,47 @@ RDEPEND="
 				${CUDA_12_9_RDEPEND}
 			)
 		)
-		cuda_targets_sm_52? (
+		cuda_targets_compute_75? (
+			|| (
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_compute_80? (
+			|| (
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_compute_86? (
+			|| (
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_compute_90? (
+			|| (
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_compute_100? (
+			|| (
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_compute_120? (
+			|| (
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_sm_50? (
 			|| (
 				${CUDA_12_6_RDEPEND}
 				${CUDA_12_8_RDEPEND}
@@ -873,6 +931,18 @@ RDEPEND="
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_sm_100? (
+			|| (
+				${CUDA_12_8_RDEPEND}
+				${CUDA_12_9_RDEPEND}
+			)
+		)
+		cuda_targets_sm_120? (
+			|| (
 				${CUDA_12_8_RDEPEND}
 				${CUDA_12_9_RDEPEND}
 			)
