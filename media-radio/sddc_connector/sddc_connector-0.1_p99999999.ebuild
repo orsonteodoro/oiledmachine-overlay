@@ -4,12 +4,19 @@
 
 EAPI=8
 
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit check-compiler-switch cmake libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+inherit check-compiler-switch cmake libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -43,7 +50,7 @@ REQUIRED_USE="
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 "
 RDEPEND+="
-	>=media-radio/csdr-0.19[${LIBSTDCXX_USEDEP}]
+	>=media-radio/csdr-0.19[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-radio/csdr:=
 	>=media-radio/owrx_connector-0.7
 	cuda_targets_sm_60? (
@@ -72,6 +79,7 @@ DOCS=( LICENSE )
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
