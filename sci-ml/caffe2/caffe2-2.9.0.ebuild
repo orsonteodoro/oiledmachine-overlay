@@ -1674,11 +1674,25 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		addpredict "/dev/char"
 
 		if use cuda_targets_auto ; then
-			# From U18.04 Dockerfile
-			# CI for linux uses only Maxwell or 5.2
-			mycmakeargs+=(
-				-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"5.2 6.0 6.1 7.0+PTX 8.0"}
-			)
+	# See also https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda126.bat
+			if has_version "=dev-util/nvidia-cuda-toolkit-12.6*" ; then
+				mycmakeargs+=(
+					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"6.1 7.0 7.5 8.0 8.6 9.0"}
+				)
+			elif has_version "=dev-util/nvidia-cuda-toolkit-12.8*" ; then
+				mycmakeargs+=(
+					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"}
+				)
+			elif has_version "=dev-util/nvidia-cuda-toolkit-12.9*" ; then
+				mycmakeargs+=(
+					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"}
+				)
+			else
+	# For 13.0 also
+				mycmakeargs+=(
+					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"7.5 8.0 8.6 9.0 10.0 12.0"}
+				)
+			fi
 		else
 			mycmakeargs+=(
 				-DTORCH_CUDA_ARCH_LIST=$(gen_cuda_arch_list)
