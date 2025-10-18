@@ -40,7 +40,6 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 # Lift max allowed to avoid possible multiple LLVM bug
-# Limited by Rust which stable is currently at 20
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 	19
 )
