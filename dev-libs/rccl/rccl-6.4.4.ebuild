@@ -61,9 +61,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocr-runtime:=
-	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
 	>=dev-util/rocm-smi-${PV}:${SLOT}
 	dev-util/rocm-smi:=
@@ -91,7 +91,8 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	test? (
-		>=dev-cpp/gtest-1.11
+		>=dev-cpp/gtest-1.11[${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=
 	)
 "
 PATCHES=(

@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CXX_STANDARD=17
 GCC_COMPAT=(
 	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
 	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
