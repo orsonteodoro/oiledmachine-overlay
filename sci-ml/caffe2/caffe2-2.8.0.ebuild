@@ -1690,7 +1690,6 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 			-DCMAKE_CUDA_FLAGS=$(cuda_gccdir -f \
 				| tr -d \")
 			-DUSE_CUDNN=ON
-			-DTORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST:-3.5 7.0}"
 			-DUSE_NCCL=$(usex nccl)
 		)
 	fi
