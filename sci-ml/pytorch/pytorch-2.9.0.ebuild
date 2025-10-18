@@ -111,7 +111,7 @@ HOMEPAGE="https://pytorch.org/"
 LICENSE="BSD"
 RESTRICT="test"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}

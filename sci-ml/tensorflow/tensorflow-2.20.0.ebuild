@@ -341,7 +341,7 @@ https://github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> triton-${TRITO
 #		https://github.com/NVlabs/cub/archive/${CUB_PV}.zip -> cub-${CUB_PV}.zip
 #	)
 
-#KEYWORDS="~amd64 ~arm64" # Needs patch test
+#KEYWORDS="~amd64 ~arm64" # Unfinshed ebuild
 SRC_URI="
 ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz

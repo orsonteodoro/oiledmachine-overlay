@@ -16,11 +16,11 @@ EAPI=8
 #   Make cmake/External/aotriton.cmake use unpacked folder.
 
 # For requirements, see
-# https://github.com/pytorch/pytorch/blob/v2.9.0/RELEASE.md?plain=1#L49
-# https://github.com/pytorch/pytorch/tree/v2.9.0/third_party
-# https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/common/install_rocm_magma.sh#L10 for magma
-# https://github.com/pytorch/pytorch/blob/v2.9.0/cmake/External/aotriton.cmake
-#   https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/aotriton_version.txt
+# https://github.com/pytorch/pytorch/blob/v2.8.0/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/tree/v2.8.0/third_party
+# https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/docker/common/install_rocm_magma.sh#L10 for magma
+# https://github.com/pytorch/pytorch/blob/v2.8.0/cmake/External/aotriton.cmake
+#   https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/docker/aotriton_version.txt
 
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
@@ -52,7 +52,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1035
 )
 AMDGPU_TARGETS_UNTESTED=(
-# Based on https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/build.sh#L169
+# Based on https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/pytorch/build.sh#L169
 	gfx700
 	gfx701
 	gfx801
@@ -77,9 +77,8 @@ AMDGPU_TARGETS_UNTESTED=(
 	gfx1034
 	gfx1035
 )
-AITER_COMMIT="01aae101b9e5e94d6c16a9514c9fb8df99c93150"
 #AOTRITON_COMMIT="04b5df8c8123f90cba3ede7e971e6fbc6040d506"
-ASMJIT_COMMIT="a3199e8857792cd10b7589ff5d58343d2c9008ea" # fbgemm dep
+ASMJIT_COMMIT="e5d7c0bd5d9aec44d68830187138149e6a8c4e32" # fbgemm dep
 BENCHMARK_COMMIT_1="299e5928955cc62af9968370293b916f5130916f"
 #BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 #BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
@@ -87,11 +86,10 @@ BENCHMARK_COMMIT_1="299e5928955cc62af9968370293b916f5130916f"
 #CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
 #CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
 #CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
-COMPOSABLE_KERNEL_COMMIT_1="7fe50dc3da2069d6645d9deb8c017a876472a977"
-COMPOSABLE_KERNEL_COMMIT_2="cffe8fa2a442ac8e80dd236a1a5d24fe3d7e0cbf" # aiter dep
-COMPOSABLE_KERNEL_COMMIT_3="b1281b8b08d973a7064f864f47eeb30f3e2596e9" # fbgemm dep
+COMPOSABLE_KERNEL_COMMIT_2="4a61bdd4bd4ed730e078aebc7c0fcf046ff29406"
+COMPOSABLE_KERNEL_COMMIT_3="8086bbe3a78d931eb96fe12fdc014082e18d18d3" # fbgemm dep and caffe2
 COMPOSABLE_KERNEL_COMMIT_4="888317e698e9803c62bd38568abc9e05d7709f33" # flash-attention dep
-CPP_HTTPLIB_COMMIT="89c932f313c6437c38f2982869beacc89c2f2246"
+CPP_HTTPLIB_COMMIT="3af7f2c16147f3fbc6e4d717032daf505dc1652c"
 #CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_bf16
@@ -151,10 +149,10 @@ CUDA_TARGETS_COMPAT=(
 	compute_50
 	compute_70
 )
-CUDNN_FRONTEND_COMMIT="f937055efc6d414d11f4c6577e3977fe74f35fb6"
-CUTLASS_COMMIT_1="e51efbfe18fe4f4cbb66ab814c55bf4aa0185491"
-CUTLASS_COMMIT_2="311f3c8e51dc0eb56310cfc6980bf63d0fbd7917" # fbgemm dep
-CUTLASS_COMMIT_3="c506e16788cb08416a4a57e11a9067beeee29420" # flash-attention dep
+CUDNN_FRONTEND_COMMIT="666996fe3960f27170d1527e5579ba24c8d3380a"
+CUTLASS_COMMIT_1="ad7b2f5e84fcfa124cb02b91d5bd26d238c0459e"
+CUTLASS_COMMIT_2="3ed8d2ec4ba35ef5d9d8353826209b6f868f63d3" # fbgemm dep
+CUTLASS_COMMIT_3="888317e698e9803c62bd38568abc9e05d7709f33" # flash-attention commit
 #DCGM_COMMIT="ffde4e54bc7249a6039a5e6b45b395141e1217f9" # dynolog dep
 #DYNOLOG_COMMIT="7d04a0053a845370ae06ce317a22a48e9edcc74e" # kineto dep ; committer-date:<=2024-05-24
 FLASH_ATTENTION_COMMIT="979702c87a8713a8e0a5e9fee122b90d2ef13be5"
@@ -167,21 +165,21 @@ FP16_COMMIT="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"
 FXDIV_COMMIT="b408327ac2a15ec3e43352421954f5b1967701d1"
 GCC_SLOTS=( {15..9} ) # Upstream uses 11 or 9
 #GFLAGS_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067" # dynolog dep
-#GFLAGS_DOC_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4" # dynolog/third_party/gflags/doc dep
+##GFLAGS_DOC_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4" # dynolog/third_party/gflags/doc dep
 #GLOG_COMMIT="b33e3bad4c46c8a6345525fd822af355e5ef9446" # dynolog dep
 #GLOO_COMMIT="5354032ea08eadd7fc4456477f7f7c6308818509"
 #GOOGLETEST_COMMIT_1="518387203b573f35477fa6872dd54620e70d2bdb" # gloo dep ; committer-date:<=2023-12-02
 #GOOGLETEST_COMMIT_2="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081" # protobuf dep
 #GOOGLETEST_COMMIT_3="7aca84427f224eeed3144123d5230d5871e93347" # kineto dep ; committer-date:<=2024-05-24
 #GOOGLETEST_COMMIT_4="58d77fa8070e8cec2dc1ed015d66b454c8d78850" # dynolog dep
-GOOGLETEST_COMMIT_5="52eb8108c5bdec04579160ae17225d66034bd723" # fbgemm dep
+GOOGLETEST_COMMIT_5="f8d7d77c06936315286eb55f8de22cd23c188571" # fbgemm dep
 #GOOGLETEST_COMMIT_6="aee0f9d9b5b87796ee8a0ab26b7587ec30e8858e" # tensorpipe dep
 #GOOGLETEST_COMMIT_7="b796f7d44681514f58a683a3a71ff17c94edb0c1"
 #GOOGLETEST_COMMIT_8="e2239ee6043f73722e7aa812a459f54a28552929"
 #GSL_COMMIT="6f4529395c5b7c2d661812257cd6780c67e54afa"
 #EIGEN_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"
-FBGEMM_COMMIT="4b39c551efe15e6bbade20565b0ceb2d8ce3352d"
-HIPIFY_TORCH_COMMIT="63b6a7b541fa7f08f8475ca7d74054db36ff2691" # fbgemm dep
+FBGEMM_COMMIT="157e88b750c452bef2ab4653fe9d1eeb151ce4c3"
+HIPIFY_TORCH_COMMIT="a4337c69fe0e2552a7b7b0669178926beeed828c" # fbgemm dep
 #IDEEP_COMMIT="41d636c2bbcea6bff0faf97cdb65a48cdde987af"
 #INCBIN_COMMIT="6e576cae5ab5810f25e2631f2e0b80cbe7dc8cbf" # aotriton dep
 #ITTAPI_COMMIT="5b8a7d7422611c3a0d799fb5fc5dd4abfae35b42"
@@ -212,8 +210,8 @@ LLVM_COMPAT_X86_AMX=(
 #MKL_DNN_COMMIT="66f0cb9eb66affd2da3bf5f8d897376f04aae6af"
 #NLOHMANN_COMMIT_1="87cda1d6646592ac5866dc703c8e1839046a6806"
 #NLOHMANN_COMMIT_2="4f8fba14066156b73f1189a2b8bd568bde5284c5" # dynolog dep
-#NLOHMANN_COMMIT_3="bc889afb4c5bf1c0d8ee29ef35eaaf4c8bef8a5d" # opentelemetry-cpp dep
-#NLOHMANN_COMMIT_4="9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03" # fbgemm dep
+#NLOHMANN_COMMIT_3="bc889afb4c5bf1c0d8ee29ef35eaaf4c8bef8a5d" # opentelemetry dep
+NLOHMANN_COMMIT_4="9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03" # fbgemm dep
 NNPACK_COMMIT="c07e3a0400713d546e0dea2d5466dd22ea389c73"
 NVTX_COMMIT="2942f167cc30c5e3a44a2aecd5b0d9c07ff61a07"
 #ONNX_COMMIT_1="3bf92c03a9f27eba3bda1e5b9e63ea20ec213557"
@@ -234,7 +232,7 @@ NVTX_COMMIT="2942f167cc30c5e3a44a2aecd5b0d9c07ff61a07"
 PYTHON_COMPAT=( "python3_"{11..13} ) # Upstream only allows <=3.12
 inherit hip-versions
 ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/build.sh#L190
+# See https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/docker/build.sh#L190
 	"${HIP_6_4_VERSION}" # Placeholder
 )
 gen_rocm_slots() {
@@ -252,13 +250,13 @@ ROCM_SLOTS2=( $(gen_rocm_slots) )
 #TRITON_SHARED_COMMIT="450e6be65f99a0b15fd130892594b85e0897574c" # aotriton/third_party/triton dep
 VULKANMEMORYALLOCATOR_COMMIT="1d8f600fd424278486eade7ed3e877c99f0846b1"
 XNNPACK_COMMIT="51a0103656eff6fc9bfd39a4597923c4b542c883"
-#TODO:  Package aiter
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 #KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
 S="${WORKDIR}/${MYP}"
 SRC_URI="
+
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${MYP}.tar.gz
 	!system-libs? (
@@ -402,12 +400,8 @@ https://github.com/pytorch/kineto/archive/${KINETO_COMMIT}.tar.gz
 	-> kineto-${KINETO_COMMIT:0:7}.tar.gz
 https://github.com/pytorch/tensorpipe/archive/${TENSORPIPE_COMMIT}.tar.gz
 	-> tensorpipe-${TENSORPIPE_COMMIT:0:7}.tar.gz
-https://github.com/ROCm/aiter/archive/${AITER_COMMIT}.tar.gz
-	-> aiter-${AITER_COMMIT:0:7}.tar.gz
 https://github.com/ROCm/aotriton/archive/${AOTRITON_COMMIT}.tar.gz
 	-> aotriton-${AOTRITON_COMMIT:0:7}.tar.gz
-https://github.com/ROCm/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT_1}.tar.gz
-	-> composable_kernel-${COMPOSABLE_KERNEL_COMMIT_1:0:7}.tar.gz
 https://github.com/ROCm/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT_2}.tar.gz
 	-> composable_kernel-${COMPOSABLE_KERNEL_COMMIT_2:0:7}.tar.gz
 https://github.com/ROCm/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT_3}.tar.gz
@@ -1280,11 +1274,8 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_5}" "${S}/third_party/aotriton/third_party/pybind11"
 		dep_prepare_mv "${WORKDIR}/triton-${TRITON_COMMIT}" "${S}/third_party/aotriton/third_party/triton"
 
-		# TODO: package deps
-		dep_prepare_mv "${WORKDIR}/aiter-${AITER_COMMIT}" "${S}/third_party/aiter"
-		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_2}" "${S}/third_party/aiter/3rdparty/composable_kernel"
-
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
+		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_1}" "${S}/third_party/composable_kernel"
 		dep_prepare_mv "${WORKDIR}/cpp-httplib-${CPP_HTTPLIB_COMMIT}" "${S}/third_party/cpp-httplib"
 		dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT_1}" "${S}/third_party/cpuinfo"
 		dep_prepare_mv "${WORKDIR}/cudnn-frontend-${CUDNN_FRONTEND_COMMIT}" "${S}/third_party/cudnn_frontend"
@@ -1294,7 +1285,7 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_1}" "${S}/third_party/fmt"
 		dep_prepare_mv "${WORKDIR}/foxi-${FOXI_COMMIT}" "${S}/third_party/foxi"
 
-		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_1}" "${S}/third_party/composable_kernel"
+		dep_prepare_cp "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_3}" "${S}/third_party/composable_kernel"
 
 		dep_prepare_mv "${WORKDIR}/FBGEMM-${FBGEMM_COMMIT}" "${S}/third_party/FBGEMM"
 		dep_prepare_mv "${WORKDIR}/asmjit-${ASMJIT_COMMIT}" "${S}/third_party/FBGEMM/external/asmjit"
