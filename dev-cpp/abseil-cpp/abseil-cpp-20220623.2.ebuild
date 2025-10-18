@@ -35,7 +35,7 @@ LICENSE="
 "
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-SLOT="0/${PV%%.*}"
+SLOT="${PV%%.*}/${PV}"
 IUSE+="
 +cxx17 test
 ebuild_revision_14
@@ -53,6 +53,8 @@ RESTRICT="
 	)
 	mirror
 "
+PATCHES=(
+)
 
 pkg_setup() {
 	python-any-r1_pkg_setup
