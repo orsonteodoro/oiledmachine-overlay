@@ -26,73 +26,34 @@ MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
-# Based on rocm_agent_enumerator
-	gfx700
-	gfx701
-	gfx801
-	gfx802
-	gfx803
+# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/libtorch/build.sh#L47
 	gfx900
-	gfx902
-	gfx904
 	gfx906
 	gfx908
 	gfx90a
-	gfx90c
-	 gfx942 # Suggested by aotriton for flash-attention, but not listed in rocm_agent_enumerator
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1013
+	gfx942
 	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1200
+	gfx1201
 )
 AMDGPU_TARGETS_UNTESTED=(
-# Based on https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/build.sh#L169
-	gfx700
-	gfx701
-	gfx801
-	gfx802
-	gfx803
+# Based on https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/pytorch/build.sh#L164
 	gfx900
-	gfx902
-	gfx904
-#	gfx906
+	#gfx906
 	gfx908
-#	gfx90a # MI210
-	gfx90c
-	 gfx942
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1013
+	gfx90a
+	gfx942
 	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1200
+	gfx1201
 )
-AITER_COMMIT="01aae101b9e5e94d6c16a9514c9fb8df99c93150"
-#AOTRITON_COMMIT="04b5df8c8123f90cba3ede7e971e6fbc6040d506"
-ASMJIT_COMMIT="a3199e8857792cd10b7589ff5d58343d2c9008ea" # fbgemm dep
-BENCHMARK_COMMIT_1="299e5928955cc62af9968370293b916f5130916f"
-#BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
-#BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
-#BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
-#CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
-#CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
-#CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
-COMPOSABLE_KERNEL_COMMIT_1="7fe50dc3da2069d6645d9deb8c017a876472a977"
-COMPOSABLE_KERNEL_COMMIT_2="cffe8fa2a442ac8e80dd236a1a5d24fe3d7e0cbf" # aiter dep
-COMPOSABLE_KERNEL_COMMIT_3="b1281b8b08d973a7064f864f47eeb30f3e2596e9" # fbgemm dep
-COMPOSABLE_KERNEL_COMMIT_4="888317e698e9803c62bd38568abc9e05d7709f33" # flash-attention dep
-CPP_HTTPLIB_COMMIT="89c932f313c6437c38f2982869beacc89c2f2246"
-#CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
+
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_bf16
 	cpu_flags_arm_dotprod
@@ -131,9 +92,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse4_1
 )
-CPUINFO_COMMIT_1="5e3d2445e6a84d9599bee2bf78edbb4d80865e1d"
-CPUINFO_COMMIT_2="6543fec09b2f04ac4a666882998b534afc9c1349" # fbgemm dep
-# CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
+
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
 	auto
@@ -151,6 +110,55 @@ CUDA_TARGETS_COMPAT=(
 	compute_50
 	compute_70
 )
+
+inherit hip-versions
+ROCM_SLOTS=(
+# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/build.sh#L190
+	"${HIP_6_4_VERSION}" # Placeholder
+)
+gen_rocm_slots() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s="${s%.*}"
+		s="${s/./_}"
+		echo "rocm_${s}"
+	done
+}
+ROCM_SLOTS2=(
+	$(gen_rocm_slots)
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	19 # ROCm slots
+)
+
+PYTHON_COMPAT=( "python3_"{11..14} )
+
+AITER_COMMIT="01aae101b9e5e94d6c16a9514c9fb8df99c93150"
+#AOTRITON_COMMIT="04b5df8c8123f90cba3ede7e971e6fbc6040d506"
+ASMJIT_COMMIT="a3199e8857792cd10b7589ff5d58343d2c9008ea" # fbgemm dep
+BENCHMARK_COMMIT_1="299e5928955cc62af9968370293b916f5130916f"
+#BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
+#BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
+#BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
+#CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
+#CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
+#CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
+COMPOSABLE_KERNEL_COMMIT_1="7fe50dc3da2069d6645d9deb8c017a876472a977"
+COMPOSABLE_KERNEL_COMMIT_2="cffe8fa2a442ac8e80dd236a1a5d24fe3d7e0cbf" # aiter dep
+COMPOSABLE_KERNEL_COMMIT_3="b1281b8b08d973a7064f864f47eeb30f3e2596e9" # fbgemm dep
+COMPOSABLE_KERNEL_COMMIT_4="888317e698e9803c62bd38568abc9e05d7709f33" # flash-attention dep
+CPP_HTTPLIB_COMMIT="89c932f313c6437c38f2982869beacc89c2f2246"
+#CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
+CPUINFO_COMMIT_1="5e3d2445e6a84d9599bee2bf78edbb4d80865e1d"
+CPUINFO_COMMIT_2="6543fec09b2f04ac4a666882998b534afc9c1349" # fbgemm dep
 CUDNN_FRONTEND_COMMIT="f937055efc6d414d11f4c6577e3977fe74f35fb6"
 CUTLASS_COMMIT_1="e51efbfe18fe4f4cbb66ab814c55bf4aa0185491"
 CUTLASS_COMMIT_2="311f3c8e51dc0eb56310cfc6980bf63d0fbd7917" # fbgemm dep
@@ -165,7 +173,6 @@ FLATBUFFERS_COMMIT="a2cd1ea3b6d3fee220106b5fed3f7ce8da9eb757"
 #FOXI_COMMIT="c278588e34e535f0bb8f00df3880d26928038cad"
 FP16_COMMIT="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"
 FXDIV_COMMIT="b408327ac2a15ec3e43352421954f5b1967701d1"
-GCC_SLOTS=( {15..9} ) # Upstream uses 11 or 9
 #GFLAGS_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067" # dynolog dep
 #GFLAGS_DOC_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4" # dynolog/third_party/gflags/doc dep
 #GLOG_COMMIT="b33e3bad4c46c8a6345525fd822af355e5ef9446" # dynolog dep
@@ -188,26 +195,6 @@ HIPIFY_TORCH_COMMIT="63b6a7b541fa7f08f8475ca7d74054db36ff2691" # fbgemm dep
 #KINETO_COMMIT="d9753139d181b9ff42872465aac0e5d3018be415"
 #LIBNOP_COMMIT="910b55815be16109f04f4180e9adee14fb4ce281" # tensorpipe dep
 #LIBUV_COMMIT="1dff88e5161cba5c59276d2070d2e304e4dcb242" # tensorpipe dep
-LLVM_COMPAT=(
-	19 # ROCm slots
-	18 17 # SIMD slots
-	15 12 10 9 # Upstream build.sh, pull.yml
-)
-LLVM_COMPAT_ARM_BF16=(
-	19 18 17
-	15 12
-)
-LLVM_COMPAT_RISCV_RVV=(
-	19 18
-)
-LLVM_COMPAT_S390_Z15=(
-	19 18 17
-	15 12 10
-)
-LLVM_COMPAT_X86_AMX=(
-	19 18 17
-	15 12
-)
 #MIMALLOC_COMMIT="b66e3214d8a104669c2ec05ae91ebc26a8f5ab78"
 #MKL_DNN_COMMIT="66f0cb9eb66affd2da3bf5f8d897376f04aae6af"
 #NLOHMANN_COMMIT_1="87cda1d6646592ac5866dc703c8e1839046a6806"
@@ -231,21 +218,6 @@ NVTX_COMMIT="2942f167cc30c5e3a44a2aecd5b0d9c07ff61a07"
 #PYBIND11_COMMIT_2="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 #PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
 #PYBIND11_COMMIT_5="8a099e44b3d5f85b20f05828d919d2332a8de841" # aotriton dep
-PYTHON_COMPAT=( "python3_"{11..13} ) # Upstream only allows <=3.12
-inherit hip-versions
-ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/build.sh#L190
-	"${HIP_6_4_VERSION}" # Placeholder
-)
-gen_rocm_slots() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s="${s%.*}"
-		s="${s/./_}"
-		echo "rocm_${s}"
-	done
-}
-ROCM_SLOTS2=( $(gen_rocm_slots) )
 #SLEEF_COMMIT="60e76d2bce17d278b439d9da17177c8f957a9e9b"
 #TENSORPIPE_COMMIT="52791a2fd214b2a9dc5759d36725909c1daa7f2e"
 #TRITON_COMMIT="9b73a543a5545960bcaf2830900b0560eec443c5" # aotriton dep
@@ -568,29 +540,9 @@ REQUIRED_USE="
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
-		cpu_flags_arm_bf16? (
-			|| (
-				${LLVM_COMPAT_ARM_BF16[@]/#/llvm_slot_}
-			)
-		)
 		cpu_flags_arm_dotprod? (
 			|| (
 				${LLVM_COMPAT[@]/#/llvm_slot_}
-			)
-		)
-		cpu_flags_riscv_rvv? (
-			|| (
-				${LLVM_COMPAT_RISCV_RVV[@]/#/llvm_slot_}
-			)
-		)
-		cpu_flags_s390_vxe_z15? (
-			|| (
-				${LLVM_COMPAT_S390_Z15[@]/#/llvm_slot_}
-			)
-		)
-		cpu_flags_x86_amx? (
-			|| (
-				${LLVM_COMPAT_X86_AMX[@]/#/llvm_slot_}
 			)
 		)
 		cpu_flags_x86_gfni? (
@@ -833,22 +785,22 @@ gen_rocm_depends() {
 	done
 }
 
-CUDA_11_8_RDEPEND="
+CUDA_12_6_RDEPEND="
 (
-	=dev-util/nvidia-cuda-toolkit-11.8*:=[profiler]
-	=dev-libs/cudnn-8.6*
+	=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
+	>=dev-libs/cudnn-9.10
 )
 "
-CUDA_12_1_RDEPEND="
+CUDA_12_8_RDEPEND="
 (
-	=dev-util/nvidia-cuda-toolkit-12.1*:=[profiler]
-	=dev-libs/cudnn-8.8*
+	=dev-util/nvidia-cuda-toolkit-12.8*[profiler]
+	>=dev-libs/cudnn-9.10
 )
 "
-CUDA_12_4_RDEPEND="
+CUDA_13_0_RDEPEND="
 (
-	=dev-util/nvidia-cuda-toolkit-12.4*:=[profiler]
-	=dev-libs/cudnn-8.8*
+	=dev-util/nvidia-cuda-toolkit-13.0*[profiler]
+	>=dev-libs/cudnn-9.13
 )
 "
 # glod missing
@@ -858,79 +810,79 @@ RDEPEND="
 	cuda? (
 		cuda_targets_auto? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_compute_50? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_compute_70? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
-				${CUDA_11_8_RDEPEND}
-				${CUDA_12_1_RDEPEND}
-				${CUDA_12_4_RDEPEND}
+				${CUDA_12_6_RDEPEND}
+				${CUDA_12_8_RDEPEND}
+				${CUDA_13_0_RDEPEND}
 			)
 		)
 		nccl? (
@@ -1062,9 +1014,9 @@ gen_clang() {
 }
 gen_gcc_bdepend() {
 	local s
-	for s in ${GCC_SLOTS[@]} ; do
+	for s in ${GCC_COMPAT[@]/gcc_slot_} ; do
 		echo "
-			=sys-devel/gcc-${s}*[openmp?]
+			=sys-devel/gcc-${s/_/.}*[openmp?]
 		"
 	done
 }
@@ -1207,39 +1159,10 @@ pkg_setup() {
 		llvm_pkg_setup
 
 		if ! use clang ; then
-			if has_version "dev-util/nvidia-cuda-toolkit" ; then
-				export CC="${CHOST}-gcc"
-				export CXX="${CHOST}-g++"
-				export CPP="${CC} -E"
-			else
-				local min_slot
-
-				if use cpu_flags_riscv_rvv || use cpu_flags_riscv_rvv_fp16 ; then
-					min_slot=14
-				elif use cpu_flags_x86_avx512vbmi || use cpu_flags_x86_avx512vnni ; then
-					min_slot=12
-				elif use cpu_flags_x86_amx ; then
-					min_slot=11
-				elif use cpu_flags_arm_bf16 || use cpu_flags_arm_i8mm ; then
-					min_slot=10
-				elif use cpu_flags_s390_vxe_z14 || use cpu_flags_s390_vxe_z15 ; then
-					min_slot=9
-				elif use cpu_flags_arm_dotprod || use cpu_flags_x86_gfni || use cpu_flags_arm_sve ; then
-					min_slot=8
-				else
-					min_slot=${GCC_SLOTS[-1]}
-				fi
-
-				export CC="${CHOST}-gcc"
-				export CXX="${CHOST}-g++"
-				export CPP="${CC} -E"
-				local v=$(gcc-major-version)
-				if ver_test "${v}" -lt "${min_slot}" ; then
-eerror "Switch to GCC >= ${min_slot}"
-					die
-				fi
-			fi
+			export CC=$(tc-getCC)
+			export CXX=$(tc-getCXX)
 		fi
+
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi

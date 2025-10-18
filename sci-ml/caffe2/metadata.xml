@@ -15,6 +15,12 @@
 
   oiledmachine-overlay notes:
 
+  Ebuild availability based on GPU libs:
+
+  Pytorch 2.9:  CUDA 12.6, CUDA 12.8, CUDA 13.0, ROCm 6.4
+  Pytorch 2.8:  CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4
+  Pytorch 2.7:  CUDA 11.8; Dropped based on inconsistency between upstream docs and cuDNN ebuild
+
   Footnotes:
 
   [1] QNNPACK, FBGEMM, oneDNN differences are listed in here.
