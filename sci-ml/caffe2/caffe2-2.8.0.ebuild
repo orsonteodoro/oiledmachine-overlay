@@ -1090,7 +1090,7 @@ gen_gcc_bdepend() {
 	done
 }
 BDEPEND="
-	>=dev-build/cmake-3.21.0
+	>=dev-build/cmake-3.27.0
 	!clang? (
 		|| (
 			$(gen_gcc_bdepend)
@@ -1173,7 +1173,7 @@ BDEPEND="
 	)
 	system-libs? (
 		test? (
-			>=dev-cpp/benchmark-1.6.1
+			>=dev-cpp/benchmark-1.9.3
 		)
 	)
 "
