@@ -8,6 +8,7 @@ DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
 GCC_COMPAT=(
+# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
 	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
 	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
 )

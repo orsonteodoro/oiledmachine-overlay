@@ -17,11 +17,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+CXX_STANDARD=17
+GCC_COMPAT=(
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit cmake libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -73,6 +78,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
