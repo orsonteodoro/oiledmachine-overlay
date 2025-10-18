@@ -4,9 +4,9 @@
 
 EAPI=8
 
-# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.1.1/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
-# D12 (LLVM 14, 15; Python 3.11)
-# F41 (LLVM 19; Python 3.13)
+# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.2.4/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
+# D12 (LLVM 19; Python 3.11)
+# F42 (LLVM 20; Python 3.13)
 
 CARGO_OPTIONAL=1
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
@@ -21,7 +21,6 @@ CRATES="
 	syn@2.0.87
 	unicode-ident@1.0.12
 "
-GCC_SLOT=12
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 )
@@ -34,7 +33,18 @@ video_cards_vc4?,\
 video_cards_vivante?,\
 video_cards_vmware?,\
 "
-LLVM_COMPAT=( {19..15} )
+CXX_STANDARD=17
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+inherit libcxx-compat
+LLVM_COMPAT=(
+# Lift max allowed to avoid possible multiple LLVM bug
+# Limited by Rust which stable is currently at 20
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	19
+)
 MY_P="${P/_/-}"
 PATENT_STATUS=(
 	"patent_status_nonfree"
@@ -77,7 +87,9 @@ VIDEO_CARDS=(
 
 # Bug
 inherit cargo
-inherit cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om
+inherit libcxx-slot libstdcxx-slot llvm-r1 python-any-r1 linux-info meson
+inherit multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -310,56 +322,6 @@ BDEPEND="
 	virtual/pkgconfig
 	opencl? (
 		>=dev-util/bindgen-0.71.1
-		llvm_slot_15? (
-			|| (
-				=dev-lang/rust-1.69*
-				=dev-lang/rust-1.68*
-				=dev-lang/rust-1.67*
-				=dev-lang/rust-1.66*
-				=dev-lang/rust-1.65*
-				=dev-lang/rust-bin-1.69*
-				=dev-lang/rust-bin-1.68*
-				=dev-lang/rust-bin-1.67*
-				=dev-lang/rust-bin-1.66*
-				=dev-lang/rust-bin-1.65*
-			)
-		)
-		llvm_slot_16? (
-			|| (
-				=dev-lang/rust-1.72*
-				=dev-lang/rust-1.71*
-				=dev-lang/rust-1.70*
-				=dev-lang/rust-bin-1.72*
-				=dev-lang/rust-bin-1.71*
-				=dev-lang/rust-bin-1.70*
-			)
-		)
-		llvm_slot_17? (
-			|| (
-				=dev-lang/rust-1.77*
-				=dev-lang/rust-1.75*
-				=dev-lang/rust-1.75*
-				=dev-lang/rust-1.74*
-				=dev-lang/rust-1.73*
-				=dev-lang/rust-bin-1.77*
-				=dev-lang/rust-bin-1.75*
-				=dev-lang/rust-bin-1.75*
-				=dev-lang/rust-bin-1.74*
-				=dev-lang/rust-bin-1.73*
-			)
-		)
-		llvm_slot_18? (
-			|| (
-				=dev-lang/rust-1.81*
-				=dev-lang/rust-1.80*
-				=dev-lang/rust-1.79*
-				=dev-lang/rust-1.78*
-				=dev-lang/rust-bin-1.81*
-				=dev-lang/rust-bin-1.80*
-				=dev-lang/rust-bin-1.79*
-				=dev-lang/rust-bin-1.78*
-			)
-		)
 		llvm_slot_19? (
 			|| (
 				=dev-lang/rust-1.82*
@@ -370,6 +332,21 @@ BDEPEND="
 				=dev-lang/rust-bin-1.83*
 				=dev-lang/rust-bin-1.84*
 				=dev-lang/rust-bin-1.85*
+				=dev-lang/rust-bin-1.86*
+			)
+		)
+		llvm_slot_20? (
+			|| (
+				=dev-lang/rust-bin-1.87*
+				=dev-lang/rust-bin-1.88*
+				=dev-lang/rust-bin-1.89*
+				=dev-lang/rust-bin-1.90*
+			)
+		)
+		llvm_slot_21? (
+			|| (
+				=dev-lang/rust-9999*
+				=dev-lang/rust-bin-9999*
 			)
 		)
 		|| (
@@ -550,7 +527,18 @@ einfo "PATH=${PATH} (after)"
 
 	if use opencl || ( use vulkan && use video_cards_nvk ) ; then
 		rust_pkg_setup
+		if use llvm_slot_21 ; then
+			local rust_pv_raw=$(${RUSTC} --version | cut -f 2 -d " ")
+			local rust_pv=$(${RUSTC} --version | cut -f 2 -d " " | cut -f 1 -d "-")
+			[[ "${rust_pv_raw}" =~ "nightly" ]] || die "Only Rust nightly supported"
+			if ver_test -lt "1.91.0" ; then
+eerror "Only Rust >= 1.91.0 supported"
+				die
+			fi
+		fi
 	fi
+	libcxx_slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

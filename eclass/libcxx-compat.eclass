@@ -120,6 +120,8 @@ LIBCXX_COMPAT_STDCXX14=(
 # )
 #
 LIBCXX_COMPAT_STDCXX17=(
+# The current set represents package stability to avoid package manager
+# annoyance.  Most C++ projects use C++ 17 today (Oct 2025).
 	"llvm_slot_20" # Support -std=c++17
 	"llvm_slot_21" # Support -std=c++17
 )

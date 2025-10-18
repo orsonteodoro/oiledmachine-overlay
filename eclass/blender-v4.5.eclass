@@ -71,6 +71,12 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]} # 20, 21
+	19 # For ROCm 6.4
+)
+
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
@@ -81,7 +87,6 @@ FFMPEG_IUSE+="
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_COMPAT=( {19..17} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
@@ -929,14 +934,16 @@ RDEPEND+="
 	llvm? (
 		$(gen_llvm_depends)
 	)
-	llvm_slot_17? (
+	llvm_slot_19? (
 		|| (
-			=media-libs/mesa-24.1*[X?]
+			=media-libs/mesa-25.0*[X?]
+			=media-libs/mesa-25.1*[X?]
+			=media-libs/mesa-25.2*[X?]
+			=media-libs/mesa-9999[X?]
 		)
 	)
-	llvm_slot_18? (
+	llvm_slot_20? (
 		|| (
-			=media-libs/mesa-24.1*[X?]
 			=media-libs/mesa-25.0*[X?]
 			=media-libs/mesa-25.1*[X?]
 			=media-libs/mesa-25.2*[X?]
@@ -1228,6 +1235,7 @@ eerror
 	#else
 		# See blender_pkg_setup for llvm_pkg_setup
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
