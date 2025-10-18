@@ -22,6 +22,8 @@ EAPI=8
 # https://github.com/pytorch/pytorch/blob/v2.8.0/cmake/External/aotriton.cmake
 #   https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/docker/aotriton_version.txt
 # https://github.com/pytorch/pytorch/blob/v2.8.0/cmake/External/aotriton.cmake#L18
+# https://github.com/pytorch/pytorch/blob/v2.8.0/.ci/docker/common/install_mkl.sh#L5
+# https://github.com/pytorch/pytorch/blob/v2.8.0/WORKSPACE#L70 for glog
 
 MY_PN="pytorch"
 MY_P="${MY_PN}-${PV}"
@@ -180,6 +182,7 @@ FMT_COMMIT_2="0041a40c1350ba702d475b9c4ad62da77caea164" # kineto dep ; committer
 FMT_COMMIT_3="cd4af11efc9c622896a3e4cb599fa28668ca3d05" # dynolog dep
 FP16_COMMIT="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"
 FXDIV_COMMIT="b408327ac2a15ec3e43352421954f5b1967701d1"
+GEMMLOWP_COMMIT="3fb5c176c17c765a3492cd2f0321b0dab712f350"
 GFLAGS_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067" # dynolog dep
 GFLAGS_DOC_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4" # dynolog/gflags/doc dep
 GLOG_COMMIT="b33e3bad4c46c8a6345525fd822af355e5ef9446" # dynolog dep
@@ -271,6 +274,8 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_5}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_5:0:7}.tar.gz
 https://github.com/google/flatbuffers/archive/${FLATBUFFERS_COMMIT}.tar.gz
 	-> flatbuffers-${FLATBUFFERS_COMMIT:0:7}.tar.gz
+https://github.com/google/gemmlowp/archive/${GEMMLOWP_COMMIT}.tar.gz
+	-> gemmlowp-${GEMMLOWP_COMMIT:0:7}.tar.gz
 https://github.com/gflags/gflags/archive/${GFLAGS_COMMIT}.tar.gz
 	-> gflags-${GFLAGS_COMMIT:0:7}.tar.gz
 https://github.com/gflags/gflags/archive/${GFLAGS_DOC_COMMIT}.tar.gz
@@ -806,7 +811,6 @@ CUDA_12_9_RDEPEND="
 	>=dev-libs/cudnn-9.10
 )
 "
-# glod missing
 RDEPEND="
 	${PYTHON_DEPS}
 	virtual/lapack
@@ -991,31 +995,32 @@ RDEPEND="
 			dev-cpp/gflags:=
 		)
 		>=dev-cpp/glog-0.4.0
-		>=dev-libs/cpuinfo-2024.10.22
-		>=dev-libs/libfmt-11.0.2
-		>=dev-libs/protobuf-3.13.1:0/3.21
+		>=dev-libs/cpuinfo-2025.03.21
+		>=dev-libs/libfmt-11.2.0
+		>=dev-libs/protobuf-3.13.1
+		<dev-libs/protobuf-4
 		dev-libs/protobuf:=
 		>=dev-libs/pthreadpool-2023.08.28
-		>=dev-libs/sleef-3.6.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
-		>=sci-ml/onnx-1.16.2
-		dev-cpp/opentelemetry-cpp
+		>=dev-libs/sleef-3.8.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
+		>=sci-ml/onnx-1.18.0
+		>=dev-cpp/opentelemetry-cpp-1.14.2
 		cuda? (
-			>=dev-libs/cudnn-frontend-1.6.1:0/8
+			>=dev-libs/cudnn-frontend-1.12.0
 		)
 		fbgemm? (
-			>=sci-ml/FBGEMM-2023.12.04
+			>=sci-ml/FBGEMM-2025.05.19
 		)
 		gloo? (
 			>=sci-ml/gloo-0.5.0[cuda?,mpi?,ssl?]
 		)
 		mkl? (
-			sci-libs/mkl
+			>=sci-libs/mkl-2024.2.0.0
 		)
 		nnpack? (
 			>=sci-ml/NNPACK-2020.12.21
 		)
 		onednn? (
-			>=sci-ml/oneDNN-3.4.2
+			>=sci-ml/oneDNN-3.7.1
 		)
 		qnnpack? (
 			!sci-libs/QNNPACK
@@ -1025,10 +1030,10 @@ RDEPEND="
 			>=sci-ml/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
-			>=sci-ml/XNNPACK-2024.02.29[jit?,memopt,sparse]
+			>=sci-ml/XNNPACK-2024.12.02[jit?,memopt,sparse]
 			cpu_flags_arm_dotprod? (
 				cpu_flags_arm_fp16? (
-					>=sci-ml/XNNPACK-2024.02.29[assembly]
+					>=sci-ml/XNNPACK-2024.12.02[assembly]
 				)
 			)
 		)
@@ -1041,19 +1046,22 @@ DEPEND="
 	${RDEPEND}
 	system-libs? (
 		$(python_gen_cond_dep '
-			>=dev-python/pybind11-2.13.5[${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.13.6[${PYTHON_USEDEP}]
 		')
-		>=dev-libs/flatbuffers-23.3.3
+		>=dev-libs/flatbuffers-24.12.23
+		>=dev-libs/protobuf-3.13.1
+		<dev-libs/protobuf-4
+		dev-libs/protobuf:=
 		>=sci-ml/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
-		>=dev-libs/pocketfft-2023.12.30
+		>=dev-libs/pocketfft-2023.11.30
 		>=dev-libs/psimd-2020.05.17
-		>=sci-ml/kineto-0.4.0_p20240824
+		>=sci-ml/kineto-0.4.0_p20250616
 		cuda? (
-			>=dev-libs/cutlass-3.4.1
+			>=dev-libs/cutlass-3.9.2
 		)
 		onednn? (
-			>=sci-ml/ideep-3.5.3
+			>=sci-ml/ideep-3.7.1_p4
 		)
 	)
 "
@@ -1291,6 +1299,8 @@ src_prepare() {
 
 		dep_prepare_mv "${WORKDIR}/FP16-${FP16_COMMIT}" "${S}/third_party/FP16"
 		dep_prepare_mv "${WORKDIR}/FXdiv-${FXDIV_COMMIT}" "${S}/third_party/FXdiv"
+
+		dep_prepare_cp "${WORKDIR}/gemmlowp-${GEMMLOWP_COMMIT}" "${S}/third_party/gemmlowp/gemmlowp"
 
 		dep_prepare_mv "${WORKDIR}/gloo-${GLOO_COMMIT}" "${S}/third_party/gloo"
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/gloo/third-party/googletest"
