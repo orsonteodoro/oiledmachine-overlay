@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# This is the Python portion of the package.
+# This is the python portion of the package.
 
 # For requirements, see
 # https://github.com/pytorch/pytorch/blob/v2.8.0/RELEASE.md?plain=1#L49
@@ -11,7 +11,7 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..13} )
+PYTHON_COMPAT=( "python3_"{11..12} ) # Upstream only allows <= 3.12
 
 inherit distutils-r1 prefix
 
@@ -39,7 +39,6 @@ RDEPEND="
 	')
 	${PYTHON_DEPS}
 	~sci-ml/caffe2-${PV}[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/caffe2:=
 "
 DEPEND="
 	$(python_gen_cond_dep '
