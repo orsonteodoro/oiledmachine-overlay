@@ -89,7 +89,6 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CLANG_PV="18"
 CMAKE_MAKEFILE_GENERATOR="ninja"
-CXX_STD="20"
 FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1
 	"0/57.59.59" # 5.1
@@ -98,10 +97,22 @@ FFMPEG_COMPAT=(
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
+
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
+CXX_STANDARD=23
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
 GLIB_VERSIONS=(
 	"2.84.3"
 	"2.82.5"
@@ -146,8 +157,9 @@ WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
-inherit lcnr libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-single-r1 ruby-single toolchain-funcs vf
+inherit lcnr libcxx-slot libstdcxx-slot linux-info llvm multilib-minimal
+inherit multiprocessing pax-utils python-single-r1 ruby-single toolchain-funcs
+inherit vf
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
 #
@@ -753,14 +765,14 @@ gen_depend_llvm() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/clang:=
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/llvm:=
-				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/lld:=
 				openmp? (
-					llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+					llvm-runtimes/openmp:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 					llvm-runtimes/openmp:=
 				)
 			)
@@ -806,7 +818,7 @@ gen_gobject_introspection_rdepend() {
 RDEPEND+="
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
-	>=dev-libs/icu-70.1[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-libs/icu-70.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	dev-libs/icu:=
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
@@ -902,7 +914,7 @@ RDEPEND+="
 		)
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.7.0[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.7.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		media-libs/libjxl:=
 	)
 	libbacktrace? (
@@ -939,7 +951,7 @@ RDEPEND+="
 		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
 	)
 	thunder? (
-		net-libs/Thunder[${LIBSTDCXX_USEDEP}]
+		net-libs/Thunder[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		net-libs/Thunder:=
 	)
 	variation-fonts? (
@@ -957,11 +969,11 @@ RDEPEND+="
 		${OCDM_WV}
 	)
 	webxr? (
-		>=media-libs/openxr-1.0.20[${LIBSTDCXX_USEDEP}]
+		>=media-libs/openxr-1.0.20[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		media-libs/openxr:=
 	)
 	woff2? (
-		>=media-libs/woff2-1.0.2[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=media-libs/woff2-1.0.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		media-libs/woff2:=
 	)
 	X? (
@@ -1990,6 +2002,8 @@ einfo
 	check_page_size
 	check_security_expire
 	check_ulimit
+
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
