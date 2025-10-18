@@ -50,34 +50,16 @@ DEPEND="
 BDEPEND="
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-2.5.1-dontbuildagain.patch"
-	"${FILESDIR}/${PN}-1.9.0-Change-library-directory-according-to-CMake-build.patch"
-	"${FILESDIR}/${PN}-2.4.0-global-dlopen.patch"
+#	"${FILESDIR}/${PN}-2.5.1-dontbuildagain.patch"
+#	"${FILESDIR}/${PN}-1.9.0-Change-library-directory-according-to-CMake-build.patch"
+#	"${FILESDIR}/${PN}-2.4.0-global-dlopen.patch"
 	"${FILESDIR}/${PN}-2.5.1-torch_shm_manager.patch"
-	"${FILESDIR}/${PN}-2.5.1-setup.patch"
-	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
+#	"${FILESDIR}/${PN}-2.5.1-setup.patch"
+#	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
 )
 
-warn_untested_gpu() {
-	local gpu
-	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
-		if use "amdgpu_targets_${gpu}" ; then
-ewarn "${gpu} is not CI tested upstream."
-		fi
-	done
-}
-
 pkg_setup() {
-	warn_untested_gpu
 	python-single-r1_pkg_setup
-	if use rocm_6_4 ; then
-		export LLVM_SLOT="19"
-		export ROCM_SLOT="6.4"
-		export ROCM_VERSION="${HIP_6_4_VERSION}"
-	fi
-	if use rocm ; then
-		rocm_pkg_setup
-	fi
 }
 
 src_prepare() {
