@@ -4,17 +4,18 @@
 
 EAPI=8
 
+CXX_STANDARD=20
+PYTHON_COMPAT=( "python3_"{8..11} )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX20[@]}
 )
-CXX_STANDARD=20
+
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX20[@]}
+	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
 )
-LIBCXX_SLOT_CONFIG="core"
-PYTHON_COMPAT=( "python3_"{8..11} )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"

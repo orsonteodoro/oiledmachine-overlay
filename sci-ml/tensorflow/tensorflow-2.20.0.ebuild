@@ -110,7 +110,6 @@ declare -A LLD_SLOT=(
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/toolchains/remote_config/configs.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/gpus/rocm_configure.bzl#L210
 CXX_STANDARD=17
-LIBCXX_SLOT_CONFIG="core"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}

@@ -105,10 +105,10 @@ declare -A LLD_SLOT=(
 # https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/toolchains/remote_config/configs.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/gpus/rocm_configure.bzl#L210
 CXX_STANDARD=17
-LIBCXX_SLOT_CONFIG="core"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	19 # For ROCm 6.4
 )
 PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
