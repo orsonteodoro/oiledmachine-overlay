@@ -10,6 +10,9 @@ EAPI=8
 # Finish *DEPENDs updates
 # Make protobuf internal dependency
 
+# TODO package
+# >=dev-python/portpicker-23.2
+
 # Build/install only progress for 2.17.1:
 # CPU - pass
 # GPU (rocm) - testing/in-development
@@ -719,8 +722,6 @@ RDEPEND_GRPCIO="
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/32.
-# TODO package
-# >=dev-python/portpicker-23.2
 #
 # google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
 # abseil-cpp version and same major-minor of protobuf without multiple

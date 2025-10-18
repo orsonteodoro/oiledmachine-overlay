@@ -10,6 +10,10 @@ EAPI=8
 # Finish *DEPENDs updates
 # Make protobuf internal dependency
 
+# TODO package:
+# dev-python/auditwheel
+# >=dev-python/portpicker-1.6.0
+
 # Build/install only progress for 2.20.0:
 # CPU - pass
 # GPU (rocm) - testing/in-development
@@ -168,8 +172,8 @@ inherit prefix rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/toolchains/remote_config/configs.bzl#L318					# Tested LLVM
 
 # commits/versions for
-# astor, boringssl, curl, cython, dill, xdouble-conversion, giflib, jsoncpp,
-# libpng, nsync, protobuf, pybind11, snappy, sqlite, tblib,
+# astor, boringssl, curl, cython, dill, giflib, jsoncpp,
+# libpng, protobuf, pybind11, snappy, sqlite, tblib,
 # zlib:
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl#L567
 # google-cloud-cpp:
@@ -731,8 +735,6 @@ RDEPEND_GRPCIO="
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/32.
-# TODO package
-# >=dev-python/portpicker-1.6.0
 #
 # google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
 # abseil-cpp version and same major-minor of protobuf without multiple
@@ -757,17 +759,13 @@ gen_protobuf_rdepend() {
 	done
 }
 # The abseil-cpp rdepends is handled by protobuf package.
-# TODO:
-# Recheck or remove double-conversion, nsync
 RDEPEND="
 	${RDEPEND_PROTOBUF}
 	>=dev-db/sqlite-3.43.0
-	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/icu-69.1
 	dev-libs/icu:=
 	>=dev-libs/jsoncpp-1.9.5
 	dev-libs/jsoncpp:=
-	>=dev-libs/nsync-1.29.2
 	>=dev-libs/re2-0.2023.06.01:0/11
 	>=media-libs/giflib-5.2.1
 	>=media-libs/libjpeg-turbo-2.1.4
@@ -800,7 +798,7 @@ RDEPEND="
 		')
 		$(python_gen_cond_dep '
 			(
-				>=dev-python/wrapt-1.14.1[${PYTHON_USEDEP}]
+				>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
 			)
 			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 			>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
@@ -845,6 +843,7 @@ DEPEND="
 		')
 		test? (
 			>=dev-python/jax-0.4.7[${PYTHON_SINGLE_USEDEP}]
+			>=dev-python/zstandard-0.23.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
@@ -948,7 +947,6 @@ PATCHES=(
 	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0001-WORKSPACE-add-rules-docker-http_archive-bazel-toolch.patch"
 	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0002-systemlib-Latest-absl-LTS-has-split-cord-libs.patch"
 	"${FILESDIR}/2.18.0/tensorflow-2.18.0-0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0004-tensorflow_cc-Add-systemlib-nsync-linkopts.patch"
 	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
 	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0006-systemlib-Update-targets-for-absl_py.patch"
 	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
@@ -1683,7 +1681,6 @@ einfo
 			curl
 			cython
 			dill_archive
-			double_conversion
 			$(usex system-flatbuffers "flatbuffers" "")
 			functools32_archive
 			gast_archive
@@ -1694,7 +1691,6 @@ einfo
 			libjpeg_turbo
 			#lmdb
 			nasm
-			nsync
 			#opt_einsum_archive
 			org_sqlite
 			pasta

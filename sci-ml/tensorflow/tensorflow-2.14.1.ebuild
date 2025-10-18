@@ -7,6 +7,9 @@ EAPI=8
 # TODO:
 # Make protobuf internal dependency
 
+# TODO package
+# dev-python/portpicker
+
 # Build/install only progress for 2.16.1:
 # CPU - testing
 # GPU (rocm) - testing/in-development
@@ -171,7 +174,7 @@ inherit toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/llvm_openmp/openmp.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/pasta/workspace.bzl
 # https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/CMakeLists.txt
-# https://github.com/tensorflow/tensorflow/blob/v2.15.1/ci/official/requirements_updater/requirements.in
+# https://github.com/tensorflow/tensorflow/blob/v2.14.1/ci/official/requirements_updater/requirements.in
 #   For dill, jax, keras, lit, packaging, portpicker, requests, scipy, setuptools, tblib, tensorboard, tensorboard-estimator				# More recently updated Python deps list
 
 # distfiles that bazel uses for the workspace, will be copied to basel-distdir
@@ -240,7 +243,7 @@ EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From htt
 EGIT_COMMIT_RULES_JAVA="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# From https://github.com/bazelbuild/bazel/blob/6.1.0/distdir_deps.bzl#L69 ; Version from BAZEL_PV
 EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace0.bzl
 EGIT_COMMIT_RUY="3286a34cc8de6149ac6844107dfdffac91531e72"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/ruy/workspace.bzl
-EGIT_COMMIT_SNAPPY="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl#L594
+EGIT_COMMIT_SNAPPY="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl#L606
 EGIT_COMMIT_SOBOL_DATA="835a7d7b1ee3bc83e575e302a985c66ec4b65249"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/sobol_data/workspace.bzl
 EGIT_COMMIT_STABLEHLO="9ae6c373a6e2941ff84a8831bb3724728cb2b49a"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/stablehlo/workspace.bzl
 EGIT_COMMIT_TF_RUNTIME="769f5cc9b8732933140b09e8808d13614182b496"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/tf_runtime/workspace.bzl
@@ -678,8 +681,6 @@ RDEPEND_GRPCIO="
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/32.
-# TODO package
-# dev-python/portpicker
 #
 # google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
 # abseil-cpp version and same major-minor of protobuf without multiple
@@ -797,7 +798,7 @@ PDEPEND="
 	)
 	python? (
 		$(python_gen_cond_dep '
-			=sci-ml/tensorflow-io-0.35.0[${PYTHON_SINGLE_USEDEP},tensorflow-io-gcs-filesystem]
+			=sci-ml/tensorflow-io-0.23.1[${PYTHON_SINGLE_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
 		=sci-ml/tensorflow-estimator-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
 		keras3? (
