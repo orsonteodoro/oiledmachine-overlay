@@ -55,6 +55,7 @@ RESTRICT="
 "
 
 pkg_setup() {
+	python-any-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }

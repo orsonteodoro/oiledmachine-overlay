@@ -7,16 +7,16 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 PYTHON_COMPAT=( python3_{8..11} )
 
-CXX_STANDARD=11
+CXX_STANDARD=14
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
 )
 
 inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
@@ -35,7 +35,7 @@ LICENSE="
 "
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-SLOT="0/${PV%%.*}"
+SLOT="${PV%%.*}/${PV}"
 IUSE+="
 +cxx17 test
 ebuild_revision_14
@@ -81,9 +81,9 @@ src_configure() {
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
 		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '')
 		$(usex test -DBUILD_TESTING=ON '')
 	)
 	cmake-multilib_src_configure
 }
-
