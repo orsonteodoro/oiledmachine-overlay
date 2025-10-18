@@ -68,7 +68,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 examples hdf5 python test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -85,9 +85,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -100,9 +100,9 @@ gen_openexr_py_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 				dev-libs/imath:=
 			)
 		"
@@ -122,7 +122,7 @@ RDEPEND+="
 			>=dev-libs/boost-1.55.0[${PYTHON_USEDEP},python]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
-		>=dev-libs/boost-1.55.0[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/boost-1.55.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
 			$(gen_openexr_py_pairs)
 		)
