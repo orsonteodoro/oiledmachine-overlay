@@ -7,9 +7,9 @@ EAPI=8
 MY_PN="RadialGM"
 
 CMAKE_BUILD_TYPE="Release"
+CXX_STANDARD=17
 ENIGMA_COMMIT="f30646f"
 QT_PV="5.15.2"
-CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(

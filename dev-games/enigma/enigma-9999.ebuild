@@ -23,6 +23,7 @@ BOOST_PV="1.83.0"
 BULLET_PV="3.06" # missing in CI
 CLANG_PV="16.0.6"
 CURL_PV="8.3.0"
+CXX_STANDARD=17
 FLAC_PV="1.4.3"
 FREETYPE_PV="2.13.2"
 GCC_PV="13.2.1" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
@@ -39,10 +40,6 @@ LIBSDL2_PV="2.28.4"
 LIBSNDFILE_PV="1.2.2"
 LIBVORBIS_PV="1.3.7"
 LIBX11_PV="1.8.7"
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="23.2.1"
 MPG123_PV="1.32.2"
@@ -55,6 +52,11 @@ WINE_PV="6.0.3" # missing in CI
 WINE_STAGING_PV="${WINE_PV}"
 WINE_VANILLA_PV="${WINE_PV}"
 ZLIB_PV="1.3"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
