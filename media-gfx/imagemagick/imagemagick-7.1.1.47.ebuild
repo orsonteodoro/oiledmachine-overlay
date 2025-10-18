@@ -5,10 +5,23 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CI DOS HO ID IO NPD OOBA OOBR OOBW SO UAF UV UB" # UV = Uninitalized Value
+CXX_STANDARD=17
 QA_PKGCONFIG_VERSION=$(ver_cut 1-3)
-inherit autotools cflags-hardened flag-o-matic perl-functions toolchain-funcs
 
-if [[ ${PV} == 9999 ]] ; then
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit autotools cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot
+inherit perl-functions toolchain-funcs
+
+if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ImageMagick/ImageMagick.git"
 	inherit git-r3
 	MY_P="imagemagick-9999"
@@ -103,6 +116,8 @@ pkg_pretend() {
 
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
