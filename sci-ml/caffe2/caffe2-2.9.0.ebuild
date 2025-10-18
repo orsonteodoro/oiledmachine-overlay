@@ -1303,12 +1303,9 @@ src_prepare() {
 	filter-lto #bug 862672
 	cmake_src_prepare
 	if use system-libs ; then
-		eapply "${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
 	else
-		eapply "${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
-		eapply "${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths-third-party.patch"
 		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths-third-party.patch"
 	fi
 
