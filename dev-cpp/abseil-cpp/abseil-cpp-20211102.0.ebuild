@@ -38,7 +38,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
 IUSE+="
 +cxx17 test
-ebuild_revision_14
+ebuild_revision_15
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -83,6 +83,7 @@ src_configure() {
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
 		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '')
 		$(usex test -DBUILD_TESTING=ON '')
 	)

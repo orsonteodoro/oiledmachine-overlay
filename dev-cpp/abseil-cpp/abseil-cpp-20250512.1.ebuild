@@ -38,7 +38,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
 IUSE+="
 +cxx17 test
-ebuild_revision_14
+ebuild_revision_15
 "
 BDEPEND+="
 	${PYTHON_DEPS}
