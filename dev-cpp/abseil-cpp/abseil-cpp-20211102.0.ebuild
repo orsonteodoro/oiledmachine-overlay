@@ -24,6 +24,8 @@ inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot p
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/abseil/abseil-cpp/commit/b957f0ccd00481cd4fd663d8320aa02ae0564f18.patch
+	-> abseil-cpp-b957f0c.patch
 "
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
@@ -54,6 +56,7 @@ RESTRICT="
 	mirror
 "
 PATCHES=(
+	"${DISTDIR}/abseil-cpp-b957f0c.patch"
 )
 
 pkg_setup() {
