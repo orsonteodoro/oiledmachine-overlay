@@ -15,12 +15,20 @@ CUDA_TARGETS_COMPAT=(
 	sm_72
 	sm_75
 )
+
+CXX_STANDARD=11
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
 inherit hip-versions
-LLVM_COMPAT=( {18..15} )
 RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
 	"${HIP_7_0_VERSION}"
@@ -40,7 +48,8 @@ ROCM_IUSE=(
 )
 UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
-inherit autotools check-compiler-switch dep-prepare flag-o-matic libstdcxx-slot rocm linux-info toolchain-funcs
+inherit autotools check-compiler-switch dep-prepare flag-o-matic libcxx-slot
+inherit libstdcxx-slot rocm linux-info toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -278,7 +287,7 @@ RDEPEND="
 		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	rocm? (
-		>=dev-util/hip-4.0
+		>=dev-util/hip-4.0[${LIBSTDCXX_USEDEP},rocm]
 		dev-util/hip:=
 	)
 	ud? (
@@ -289,6 +298,7 @@ RDEPEND="
 	)
 	video_cards_intel? (
 		dev-libs/intel-compute-runtime[l0]
+		dev-libs/level-zero[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/level-zero:=
 	)
 	verbs? (
@@ -302,14 +312,14 @@ gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			llvm-core/clang:${s}
+			llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
 			llvm-core/clang:=
-			llvm-core/llvm:${s}
+			llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
 			llvm-core/llvm:=
-			llvm-core/lld:${s}
+			llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
 			llvm-core/lld:=
 			openmp? (
-				llvm-runtimes/openmp:${s}
+				llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP}]
 				llvm-runtimes/openmp:=
 			)
 		"
@@ -320,10 +330,10 @@ gen_hip_clang_bdepend() {
 	for pv in ${ROCM_VERSIONS[@]} ; do
 		local s="0/${pv%.*}"
 		echo "
-			>=sys-devel/llvm-roc-${pv}:${s}
+			>=sys-devel/llvm-roc-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 			sys-devel/llvm-roc:=
 			openmp? (
-				>=sys-libs/llvm-roc-libomp-${pv}:${s}
+				>=sys-libs/llvm-roc-libomp-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				sys-libs/llvm-roc-libomp:=
 			)
 		"
@@ -463,6 +473,9 @@ pkg_setup() {
 		WARNING_ETHERNET="CONFIG_ETHERNET=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_CORE="CONFIG_MLX5_CORE=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_INFINIBAND="CONFIG_MLX5_INFINIBAND=y is required for ConnectX-4 or later support."
+	fi
+	if ! use rocm ; then
+		libcxx-slot_verify
 	fi
 	libstdcxx-slot_verify
 }
