@@ -86,6 +86,17 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
 		$(usex test -DBUILD_TESTING=ON '')
 	)
+
+	if \
+		   use gcc_slot_12_5 \
+		|| use gcc_slot_13_4 \
+		|| use gcc_slot_14_3 \
+	; then
+		mycmakeargs+=(
+			-DCMAKE_CXX_STANDARD=14
+		)
+	fi
+
 	cmake-multilib_src_configure
 }
 
