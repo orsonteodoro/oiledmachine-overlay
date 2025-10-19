@@ -88,12 +88,11 @@ src_configure() {
 	)
 
 	if \
-		   use gcc_slot_12_5 \
-		|| use gcc_slot_13_4 \
+		   use gcc_slot_13_4 \
 		|| use gcc_slot_14_3 \
 	; then
 		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=14
+#			-DCMAKE_CXX_STANDARD=14
 		)
 	fi
 

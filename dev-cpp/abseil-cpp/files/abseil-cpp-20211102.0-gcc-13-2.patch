@@ -1,0 +1,11 @@
+--- a/absl/memory/memory_test.cc.orig	2021-11-03 08:26:14.000000000 -0700
++++ b/absl/memory/memory_test.cc	2025-10-18 22:02:06.318240724 -0700
+@@ -495,7 +495,7 @@ struct AllocWithRebind {
+   using value_type = int;
+   template <typename T>
+   struct rebind {
+-    using other = Rebound<T>;
++    using other = AllocWithRebind;
+   };
+ };
+ 

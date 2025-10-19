@@ -56,13 +56,14 @@ RESTRICT="
 	mirror
 "
 PATCHES=(
-	"${DISTDIR}/abseil-cpp-b957f0c.patch"
+	"${DISTDIR}/${PN}-b957f0c.patch"
+	"${FILESDIR}/${PN}-20211102.0-gcc-13-2.patch"
 )
 
 pkg_setup() {
 	python-any-r1_pkg_setup
-	libcxx-slot_verify
-	libstdcxx-slot_verify
+#	libcxx-slot_verify
+#	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -91,12 +92,11 @@ src_configure() {
 	)
 
 	if \
-		   use gcc_slot_12_5 \
-		|| use gcc_slot_13_4 \
+		   use gcc_slot_13_4 \
 		|| use gcc_slot_14_3 \
 	; then
 		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=14
+#			-DCMAKE_CXX_STANDARD=14
 		)
 	fi
 
