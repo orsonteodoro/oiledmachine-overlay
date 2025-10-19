@@ -71,7 +71,7 @@ SLOT="${INTERNAL_VERSION%%.*}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_16
+ebuild_revision_17
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -187,7 +187,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		local mycmakeargs=(
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${INTERNAL_VERSION%%.*}"
 			-Dprotobuf_USE_EXTERNAL_GTEST=ON
 			-Dprotobuf_BUILD_TESTS=$(usex test)
 			-Dprotobuf_WITH_ZLIB=$(usex zlib)

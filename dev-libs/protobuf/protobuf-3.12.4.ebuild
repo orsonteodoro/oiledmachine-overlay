@@ -70,7 +70,7 @@ SLOT="${INTERNAL_VERSION%%.*}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_16
+ebuild_revision_17
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -181,7 +181,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	)
 	if tc-is-cross-compiler; then
 		myeconfargs+=(
-			--prefix="${EPREFIX}/usr/lib/${PN}"
+			--prefix="${EPREFIX}/usr/lib/${PN}/${INTERNAL_VERSION%%.*}"
 			--with-protoc="$(pwd)/src/protoc"
 		)
 	fi
