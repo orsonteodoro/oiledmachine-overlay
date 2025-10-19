@@ -48,11 +48,9 @@ BDEPEND+="
 	)
 "
 RESTRICT="
-	!test? (
-		test
-	)
+	test
 	mirror
-"
+" # Configure time error with test
 PATCHES=(
 )
 
@@ -79,12 +77,11 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
+		-DBUILD_TESTING=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
-		$(usex test -DBUILD_TESTING=ON '')
 	)
 
 	if \
