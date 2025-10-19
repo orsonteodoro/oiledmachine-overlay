@@ -101,16 +101,34 @@ setup_aes_flags() {
 		sed -i -e 's|__ARM64_CRYPTO_FLAGS__||' "absl/random/internal/BUILD.bazel" || die
 	else
 	# Handle armv8-r and armv8-a
-		if use cpu_flags_arm_crypto && is-flagq '-march=armv8*' ; then
-                        local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
-                        local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]crypto||g")
-			sed -i -e 's|__ARM64_CRYPTO_FLAGS__|${of}+crypto|' "absl/random/internal/BUILD.bazel" || die
-                        replace-flags "${oi}" "${of}+crypto"
-		elif ! use cpu_flags_arm_crypto && is-flagq '-march=armv8*' ; then
-                        local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
-                        local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]crypto||g")
-			sed -i -e 's|__ARM64_CRYPTO_FLAGS__|${of}-crypto|' "absl/random/internal/BUILD.bazel" || die
-                        replace-flags "${oi}" "${of}-crypto"
+		local oi1=""
+		local of1=""
+		local oi2=""
+		local of2=""
+		if is-flagq '-march=armv*' ; then
+                        local oi1=$(echo "${CFLAGS}" | grep -o -E -e "-march=armv[.0-9a-z+-]+")
+	                local of1=$(echo "${CFLAGS}" | grep -o -E -e "-march=armv[.0-9a-z+-]+" | sed -E -e "s|[+-]crypto||g")
+		fi
+		if is-flagq '-mcpu=*' ; then
+                        local oi2=$(echo "${CFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
+	                local of2=$(echo "${CFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+" | sed -E -e "s|[+-]crypto||g")
+		fi
+		if use cpu_flags_arm_crypto ; then
+			if [[ -n "${of1}" && -n "${of2}" ]] ; then
+				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}+crypto\",\"${of2}+crypto\"|" "absl/copts/copts.py" || die
+			elif [[ -n "${of1}" ]] ; then
+				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}+crypto\"|" "absl/copts/copts.py" || die
+			elif [[ -n "${of2}" ]] ; then
+				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of2}+crypto\"|" "absl/copts/copts.py" || die
+			fi
+		else
+			if [[ -n "${of1}" && -n "${of2}" ]] ; then
+				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}-crypto\",\"${of2}-crypto\"|" "absl/copts/copts.py" || die
+			elif [[ -n "${of1}" ]] ; then
+				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}-crypto\"|" "absl/copts/copts.py" || die
+			elif [[ -n "${of2}" ]] ; then
+				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of2}-crypto\"|" "absl/copts/copts.py" || die
+			fi
 		fi
 	fi
 
