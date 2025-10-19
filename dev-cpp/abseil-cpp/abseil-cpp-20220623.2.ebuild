@@ -90,6 +90,7 @@ pkg_setup() {
 }
 
 setup_aes_flags() {
+	filter-flags '-m*fpu=neon'
 	if [[ "${ARCH}" != "arm" ]] ; then
 		sed -i -e 's|__ARM_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
 	elif [[ "${ARCH}" == "arm" ]] && use cpu_flags_arm_neon ; then
@@ -102,37 +103,38 @@ setup_aes_flags() {
 		sed -i -e 's|__ARM64_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
 	else
 	# Handle armv8-r and armv8-a
-		local oi1=""
-		local of1=""
-		local oi2=""
-		local of2=""
-		if is-flagq '-march=armv*' ; then
-                        local oi1=$(echo "${CFLAGS}" | grep -o -E -e "-march=armv[.0-9a-z+-]+")
-	                local of1=$(echo "${CFLAGS}" | grep -o -E -e "-march=armv[.0-9a-z+-]+" | sed -E -e "s|[+-]crypto||g")
-		fi
-		if is-flagq '-mcpu=*' ; then
-                        local oi2=$(echo "${CFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
-	                local of2=$(echo "${CFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+" | sed -E -e "s|[+-]crypto||g")
-		fi
-		if use cpu_flags_arm_crypto ; then
-			if [[ -n "${of1}" && -n "${of2}" ]] ; then
-				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}+crypto\",\"${of2}+crypto\"|" "absl/copts/copts.py" || die
-			elif [[ -n "${of1}" ]] ; then
-				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}+crypto\"|" "absl/copts/copts.py" || die
-			elif [[ -n "${of2}" ]] ; then
-				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of2}+crypto\"|" "absl/copts/copts.py" || die
-			fi
-		else
-			if [[ -n "${of1}" && -n "${of2}" ]] ; then
-				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}-crypto\",\"${of2}-crypto\"|" "absl/copts/copts.py" || die
-			elif [[ -n "${of1}" ]] ; then
-				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of1}-crypto\"|" "absl/copts/copts.py" || die
-			elif [[ -n "${of2}" ]] ; then
-				sed -i -e "s|__ARM64_CRYPTO_FLAGS__|\"${of2}-crypto\"|" "absl/copts/copts.py" || die
-			fi
+		local oi=""
+		local of=""
+		local str=""
+		local x
+		if is-flagq '-march=armv*' || is-flagq '-mcpu=*' ; then
+			oi=( $(echo "${CFLAGS}" | grep -o -E -e "-march=armv[.0-9a-z+-]+") )
+			for x in ${oi[@]} ; do
+				of=$(echo "${x}" | sed -E -e "s|[+-]crypto||g")
+				replace-flags "${x}" "${of}+crypto"
+				if use cpu_flags_arm_crypto ; then
+					str=",\"${of}+crypto\""
+				else
+					str=",\"${of}-crypto\""
+				fi
+			done
+
+			oi=( $(echo "${CFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+") )
+			for x in ${oi[@]} ; do
+				of=$(echo "${x}" | sed -E -e "s|[+-]crypto||g")
+				replace-flags "${x}" "${of}+crypto"
+				if use cpu_flags_arm_crypto ; then
+					str=",\"${of}+crypto\""
+				else
+					str=",\"${of}-crypto\""
+				fi
+			done
+			str="${str:1}"
+			sed -i -e "s|__ARM64_CRYPTO_FLAGS__|${str}|" "absl/copts/copts.py" || die
 		fi
 	fi
 
+	filter-flags '-m*aes' '-m*sse4.2' '-m*avx'
 	if ! [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		sed -i -e 's|__X86_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
 	elif use cpu_flags_x86_aes && use cpu_flags_x86_aes && use cpu_flags_x86_sse4_2 ; then
@@ -145,6 +147,7 @@ setup_aes_flags() {
 		sed -i -e 's|__X86_CRYPTO_FLAGS__|"-mno-aes","-mno-avx","-mno-sse4.2"|' "absl/copts/copts.py" || die
 	fi
 
+	filter-flags '-m*altivec' '-m*crypto' '-m*vsx'
 	if [[ "${ARCH}" =~ ("ppc"$|"ppc64") ]] ; then
 		if use cpu_flags_ppc_altivec ; then
 			append-flags "-maltivec"
