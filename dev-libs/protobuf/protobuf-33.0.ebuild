@@ -100,7 +100,7 @@ BDEPEND="
 PATCHES=(
 #	"${FILESDIR}/${PN}-3.19.0-disable_no-warning-test.patch"
 #	"${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
-	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
+#	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
 #	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
 )
 DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
@@ -133,9 +133,9 @@ einfo "Patching for 32-bit (${ABI})"
 
 src_prepare() {
 	# Temp disable.  It breaks on 32-bit and 64-bit.
-	sed -e "/^TEST_F(Utf8ValidationTest, OldVerifyUTF8String) {$/,/^}$/d" \
-		-i "src/google/protobuf/wire_format_unittest.inc" \
-		|| die
+	#sed -e "/^TEST_F(Utf8ValidationTest, OldVerifyUTF8String) {$/,/^}$/d" \
+	#	-i "src/google/protobuf/wire_format_unittest.inc" \
+	#	|| die
 
 	cmake_src_prepare
 
