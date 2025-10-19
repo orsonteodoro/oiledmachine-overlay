@@ -227,7 +227,8 @@
 * You should not remove hardening flags (e.g. -Wformat-security) for packages
   that process untrusted data.  Instead, fix the issues with AI.  Removing
   the hardening flag may result in installing a compromised version with
-  a critical severity that leads to information disclosure and code execution.
+  a critical severity that leads to information disclosure, data tampering,
+  and code execution.
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
