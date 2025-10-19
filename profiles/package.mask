@@ -135,17 +135,6 @@ www-misc/rainbowstream
 dev-db/mysql
 dev-db/mariadb
 
-# Avoided the following with protobuf and abseil:
-# !!! Multiple package instances within a single package slot have been pulled
-# !!! into the dependency graph, resulting in a slot conflict:
-# AI/ML libraries (jax and tensorflow) has a higher precedence than eager bumps
-# of dependencies for non AI/ML packages.  Most CI images use Ubu and Deb distros
-# which still use 3.x Protobuf.
->=dev-cpp/abseil-cpp-20230126
->=dev-libs/protobuf-22
->=net-libs/grpc-1.55
->=sci-libs/tensorstore-0.1.38
-
 # Block numpy-2 dependent packages to keep tensorflow/keras that require numpy 1.x
 >=dev-python/spacy-3.8
 >=dev-python/blis-1.0.1
