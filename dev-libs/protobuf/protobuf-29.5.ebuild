@@ -45,7 +45,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${INTERNAL_VERSION%%.*}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
+SLOT_MAJOR=${INTERNAL_VERSION%%.*}
+SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 33 : 6.33 From CMakeLists.txt's protobuf_VERSION_STRING
 # 32 : 6.32 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -71,7 +72,7 @@ SLOT="${INTERNAL_VERSION%%.*}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -93,6 +94,7 @@ RDEPEND+="
 	)
 "
 BDEPEND="
+	dev-util/patchelf
 	emacs? (
 		app-editors/emacs:*
 	)
@@ -189,7 +191,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		local mycmakeargs=(
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${INTERNAL_VERSION%%.*}"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}"
 			-Dprotobuf_USE_EXTERNAL_GTEST=ON
 			-Dprotobuf_BUILD_TESTS=$(usex test)
 			-Dprotobuf_WITH_ZLIB=$(usex zlib)
@@ -275,6 +277,17 @@ eerror
 		docompress -x "/usr/share/doc/${PF}/examples"
 	fi
 	einstalldocs
+
+	local L=(
+		"FIXME"
+	)
+	local x
+	for x in ${L[@]} ; do
+		patchelf \
+			--add-rpath "/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl" \
+			"${ED}/${x}" \
+			|| die
+	done
 }
 
 pkg_postinst() {
