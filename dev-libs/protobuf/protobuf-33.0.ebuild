@@ -103,7 +103,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
 #	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
 )
-DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
+DOCS=( "CONTRIBUTORS.txt" "README.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -283,7 +283,8 @@ pkg_postrm() {
 	use emacs && elisp-site-regen
 }
 
-# OILEDMACHINE-OVERLAY-TESTS:  PASSED with some disabled tests (20230414) on x86 and amd64
+# OILEDMACHINE-OVERLAY-TESTS:  ? (20230414) PASSED test suite with some disabled tests on x86 and amd64
+# OILEDMACHINE-OVERLAY-TESTS:  33.0 (20251019) PASSED test suite with some disabled tests on x86 and amd64
 # USE="static-libs test -emacs -examples -zlib" ABI_X86="32 (64) (-x32)"
 
 # x86 ABI:
@@ -293,3 +294,4 @@ pkg_postrm() {
 # amd64 ABI:
 # 100% tests passed, 0 tests failed out of 2
 # Total Test time (real) =  61.64 sec
+
