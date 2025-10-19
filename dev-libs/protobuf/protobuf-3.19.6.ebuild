@@ -44,7 +44,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
+SLOT="${INTERNAL_VERSION%%.*}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 33 : 6.33 From CMakeLists.txt's protobuf_VERSION_STRING
 # 32 : 6.32 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -70,9 +70,10 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="
+	!dev-libs/protobuf:0
 	zlib? (
 		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
@@ -176,6 +177,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local myeconfargs=(
 		$(use_enable static-libs static)
 		$(use_with zlib)
+		--prefix="${EPREFIX}/usr/lib/${PN}"
 	)
 	if tc-is-cross-compiler; then
 		myeconfargs+=(

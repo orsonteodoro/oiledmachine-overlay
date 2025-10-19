@@ -4,29 +4,20 @@
 
 EAPI=8
 
-# About the confusing versioning.
-#
-# Upstream uses 4.21.12 for their python package in __init__.py.  See https://github.com/protocolbuffers/protobuf/blob/v3.21.12/python/google/protobuf/__init__.py#L33
-# The versioning here corresponds to configure.ac.
-# 3.21.12 is equivalent to 4.21.12 and equivalent to 21.12.
-
-# 3.21.12 is protobuf-cxx
-# 4.21.12 is protobuf-python
-
-ABSEIL_CPP_PV="20211102"
+ABSEIL_CPP_PV="20250512"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-CXX_STANDARD=11
-INTERNAL_VERSION="3.${PV}" # From configure.ac L20
+CXX_STANDARD=17
+INTERNAL_VERSION="6.${PV}" # From configure.ac L20
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
@@ -107,10 +98,10 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-3.19.0-disable_no-warning-test.patch"
-	"${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
+#	"${FILESDIR}/${PN}-3.19.0-disable_no-warning-test.patch"
+#	"${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
 	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
-	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
+#	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
 )
 DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
 
