@@ -7,16 +7,16 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 PYTHON_COMPAT=( python3_{8..11} )
 
-CXX_STANDARD=14
+CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
 
 inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
@@ -40,7 +40,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
 IUSE+="
 test
-ebuild_revision_15
+ebuild_revision_16
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -62,8 +62,8 @@ PATCHES=(
 
 pkg_setup() {
 	python-any-r1_pkg_setup
-#	libcxx-slot_verify
-#	libstdcxx-slot_verify
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -90,15 +90,6 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
 		$(usex test -DBUILD_TESTING=ON '')
 	)
-
-	if \
-		   use gcc_slot_13_4 \
-		|| use gcc_slot_14_3 \
-	; then
-		mycmakeargs+=(
-#			-DCMAKE_CXX_STANDARD=14
-		)
-	fi
 
 	cmake-multilib_src_configure
 }

@@ -40,7 +40,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
 IUSE+="
 test
-ebuild_revision_15
+ebuild_revision_16
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -62,8 +62,8 @@ PATCHES=(
 
 pkg_setup() {
 	python-any-r1_pkg_setup
-#	libcxx-slot_verify
-#	libstdcxx-slot_verify
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -89,15 +89,6 @@ src_configure() {
 		-DBUILD_TESTING=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
 	)
-
-	if \
-		   use gcc_slot_13_4 \
-		|| use gcc_slot_14_3 \
-	; then
-		mycmakeargs+=(
-#			-DCMAKE_CXX_STANDARD=14
-		)
-	fi
 
 	cmake-multilib_src_configure
 }
