@@ -1,0 +1,431 @@
+# Like the original gentoo.patch except with upstream defaults and removed lowered security edits
+diff '--color=auto' -urp pytorch-2.8.0.orig/aten/src/ATen/CMakeLists.txt pytorch-2.8.0/aten/src/ATen/CMakeLists.txt
+--- pytorch-2.8.0.orig/aten/src/ATen/CMakeLists.txt	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/aten/src/ATen/CMakeLists.txt	2025-10-18 19:31:59.672590829 -0700
+@@ -1,6 +1,8 @@
+ cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
+ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+ 
++option(USE_SYSTEM_LIBFMT "Use system fmt?" OFF)
++
+ if(NOT MSVC)
+   string(APPEND CMAKE_CXX_FLAGS " -Wno-ignored-qualifiers")
+   string(APPEND CMAKE_C_FLAGS " -Wno-ignored-qualifiers")
+@@ -326,8 +328,10 @@ endif()
+ if(USE_CUDA)
+   list(APPEND ATen_CUDA_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/cuda)
+   # Next two lines are needed because TunableOp uses third-party/fmt
+-  list(APPEND ATen_CUDA_INCLUDE $<TARGET_PROPERTY:fmt::fmt-header-only,INTERFACE_INCLUDE_DIRECTORIES>)
+-  list(APPEND ATen_CUDA_DEPENDENCY_LIBS fmt::fmt-header-only)
++  if(NOT USE_SYSTEM_LIBFMT)
++    list(APPEND ATen_CUDA_INCLUDE $<TARGET_PROPERTY:fmt::fmt-header-only,INTERFACE_INCLUDE_DIRECTORIES>)
++    list(APPEND ATen_CUDA_DEPENDENCY_LIBS fmt::fmt-header-only)
++  endif()
+   list(APPEND ATen_CUDA_CU_SRCS
+     ${cuda_cu}
+     ${native_cuda_cu}
+@@ -395,8 +399,10 @@ if(USE_ROCM)
+   _pytorch_rocm_generate_ck_conf()
+ 
+   # Next two lines are needed because TunableOp uses third-party/fmt
+-  list(APPEND ATen_HIP_INCLUDE $<TARGET_PROPERTY:fmt::fmt-header-only,INTERFACE_INCLUDE_DIRECTORIES>)
+-  list(APPEND ATen_HIP_DEPENDENCY_LIBS fmt::fmt-header-only)
++  if(NOT USE_SYSTEM_LIBFMT)
++    list(APPEND ATen_HIP_INCLUDE $<TARGET_PROPERTY:fmt::fmt-header-only,INTERFACE_INCLUDE_DIRECTORIES>)
++    list(APPEND ATen_HIP_DEPENDENCY_LIBS fmt::fmt-header-only)
++  endif()
+ if(USE_FLASH_ATTENTION)
+   list(APPEND ATen_HIP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/native/transformers/hip/flash_attn/ck)
+ endif()
+Only in pytorch-2.8.0/aten/src/ATen: CMakeLists.txt.orig
+Only in pytorch-2.8.0/aten/src/ATen: CMakeLists.txt.rej
+diff '--color=auto' -urp pytorch-2.8.0.orig/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt pytorch-2.8.0/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt
+--- pytorch-2.8.0.orig/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2025-10-18 19:30:32.920848740 -0700
+@@ -16,6 +16,7 @@ set(PYTORCH_QNNPACK_LIBRARY_TYPE "defaul
+ set_property(CACHE PYTORCH_QNNPACK_LIBRARY_TYPE PROPERTY STRINGS default static shared)
+ option(PYTORCH_QNNPACK_BUILD_TESTS "Build QNNPACK unit tests" ON)
+ option(PYTORCH_QNNPACK_BUILD_BENCHMARKS "Build QNNPACK benchmarks" ON)
++option(USE_SYSTEM_CLOG "Use system clog?" OFF)
+ 
+ # Enable runtime requantization.
+ add_definitions(-DPYTORCH_QNNPACK_RUNTIME_QUANTIZATION=1)
+@@ -323,7 +324,7 @@ set_target_properties(pytorch_qnnpack PR
+ set_target_properties(pytorch_qnnpack PROPERTIES PUBLIC_HEADER include/qnnpack_func.h)
+ 
+ # ---[ Configure clog
+-if(NOT TARGET clog)
++if(NOT TARGET clog AND NOT USE_SYSTEM_CLOG)
+   set(CLOG_BUILD_TESTS OFF CACHE BOOL "")
+   set(CLOG_RUNTIME_TYPE "${CPUINFO_RUNTIME_TYPE}" CACHE STRING "")
+   add_subdirectory(
+@@ -335,7 +336,12 @@ if(NOT TARGET clog)
+     target_compile_options(clog PRIVATE "-Wno-unused-result")
+   endif()
+ endif()
+-target_link_libraries(pytorch_qnnpack PUBLIC clog)
++if(NOT USE_SYSTEM_CLOG)
++  target_link_libraries(pytorch_qnnpack PUBLIC clog)
++else()
++  find_library(CLOG_LIBRARY NAMES clog REQUIRED)
++  target_link_libraries(pytorch_qnnpack PUBLIC ${CLOG_LIBRARY})
++endif()
+ 
+ # ---[ Configure cpuinfo
+ if(NOT TARGET cpuinfo AND USE_SYSTEM_CPUINFO)
+diff '--color=auto' -urp pytorch-2.8.0.orig/caffe2/CMakeLists.txt pytorch-2.8.0/caffe2/CMakeLists.txt
+--- pytorch-2.8.0.orig/caffe2/CMakeLists.txt	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/caffe2/CMakeLists.txt	2025-10-18 19:30:32.921836738 -0700
+@@ -13,6 +13,11 @@ if(PRINT_CMAKE_DEBUG_INFO)
+   include(../cmake/DebugHelper.cmake)
+ endif()
+ 
++option(USE_SYSTEM_CPP_HTTPLIB "Use system cpp-httplib" OFF)
++option(USE_SYSTEM_FXDIV "Use system fxdiv?" OFF)
++option(USE_SYSTEM_KINETO "Use system Kineto?" OFF)
++option(USE_SYSTEM_NLOHMANN_JSON "Use system nlohmann/json?" OFF)
++
+ # ATen parallelism settings
+ #  OMP - OpenMP for intra-op, native thread pool for inter-op parallelism
+ #  NATIVE - using native thread pool for intra- and inter-op parallelism
+@@ -87,7 +92,7 @@ endif()
+ # Note: the folders that are being commented out have not been properly
+ # addressed yet.
+ 
+-if(NOT MSVC AND USE_XNNPACK)
++if(NOT MSVC AND USE_XNNPACK AND NOT USE_SYSTEM_FXDIV)
+   if(NOT TARGET fxdiv)
+     set(FXDIV_BUILD_TESTS OFF CACHE BOOL "")
+     set(FXDIV_BUILD_BENCHMARKS OFF CACHE BOOL "")
+@@ -1195,7 +1200,9 @@ if(USE_XPU)
+ endif()
+ 
+ if(NOT MSVC AND USE_XNNPACK)
+-  TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
++  if(NOT USE_SYSTEM_FXDIV)
++    TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
++  endif()
+ endif()
+ 
+ # ==========================================================
+@@ -1307,16 +1314,20 @@ target_include_directories(torch_cpu PRI
+ target_include_directories(torch_cpu PRIVATE
+   ${TORCH_ROOT}/third_party/kineto/libkineto/include)
+ 
+-if(USE_KINETO)
++if(USE_KINETO AND NOT USE_SYSTEM_KINETO)
+   target_include_directories(torch_cpu PRIVATE
+     ${TORCH_ROOT}/third_party/kineto/libkineto/src)
+ endif()
+ 
+-target_include_directories(torch_cpu PRIVATE
+-  ${TORCH_ROOT}/third_party/cpp-httplib)
++if(NOT USE_SYSTEM_CPP_HTTPLIB)
++  target_include_directories(torch_cpu PRIVATE
++    ${TORCH_ROOT}/third_party/cpp-httplib)
++endif()
+ 
+-target_include_directories(torch_cpu PRIVATE
+-  ${TORCH_ROOT}/third_party/nlohmann/include)
++if(NOT USE_SYSTEM_NLOHMANN_JSON)
++  target_include_directories(torch_cpu PRIVATE
++    ${TORCH_ROOT}/third_party/nlohmann/include)
++endif()
+ 
+ install(DIRECTORY
+   "${TORCH_SRC_DIR}/csrc"
+Only in pytorch-2.8.0/caffe2: CMakeLists.txt.orig
+diff '--color=auto' -urp pytorch-2.8.0.orig/cmake/Codegen.cmake pytorch-2.8.0/cmake/Codegen.cmake
+--- pytorch-2.8.0.orig/cmake/Codegen.cmake	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/cmake/Codegen.cmake	2025-10-18 19:30:32.922192175 -0700
+@@ -9,6 +9,8 @@
+ # Helper functions
+ ################################################################################
+ 
++if(USE_VANILLA_OPTIMIZATIONS "Use vanilla optimizations" ON)
++
+ function(filter_list output input)
+     unset(result)
+     foreach(filename ${${input}})
+@@ -64,7 +66,9 @@ if(INTERN_BUILD_ATEN_OPS)
+   if(MSVC)
+     set(OPT_FLAG "/fp:strict ")
+   else(MSVC)
+-    set(OPT_FLAG "-O3 ")
++    if(USE_VANILLA_OPTIMIZATIONS)
++      set(OPT_FLAG "-O3 ")
++    endif()
+     if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+       set(OPT_FLAG " ")
+     endif()
+diff '--color=auto' -urp pytorch-2.8.0.orig/cmake/Dependencies.cmake pytorch-2.8.0/cmake/Dependencies.cmake
+--- pytorch-2.8.0.orig/cmake/Dependencies.cmake	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/cmake/Dependencies.cmake	2025-10-18 19:30:56.453294618 -0700
+@@ -33,6 +33,13 @@ macro(enable_ubsan)
+   endif()
+ endmacro()
+ 
++option(USE_SYSTEM_CPP_HTTPLIB "Use system cpp-httplib?" OFF)
++option(USE_SYSTEM_FBGEMM "Use system FBGEMM?" OFF)
++option(USE_SYSTEM_GEMMLOWP "Use system gemmlowp?" OFF)
++option(USE_SYSTEM_LIBUV "Use system libuv?" OFF)
++option(USE_SYSTEM_NLOHMANN_JSON "Use system nlohmann/json?" OFF)
++option(USE_SYSTEM_XNNPACK "Use system XNNPACK?" OFF)
++
+ # ---[ CUDA
+ if(USE_CUDA)
+   # public/*.cmake uses CAFFE2_USE_*
+@@ -448,7 +455,6 @@ if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^
+   list(APPEND Caffe2_DEPENDENCY_LIBS cpuinfo)
+ endif()
+ 
+-
+ # ---[ PYTORCH_QNNPACK
+ set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
+ if(USE_PYTORCH_QNNPACK)
+@@ -468,7 +474,13 @@ if(USE_PYTORCH_QNNPACK)
+       set_property(TARGET pytorch_qnnpack PROPERTY POSITION_INDEPENDENT_CODE ON)
+       set_property(TARGET cpuinfo PROPERTY POSITION_INDEPENDENT_CODE ON)
+       # QNNPACK depends on gemmlowp headers
+-      target_include_directories(pytorch_qnnpack PRIVATE "${CAFFE2_THIRD_PARTY_ROOT}/gemmlowp")
++      if(NOT USE_SYSTEM_GEMMLOWP)
++          target_include_directories(pytorch_qnnpack PRIVATE "${CAFFE2_THIRD_PARTY_ROOT}/gemmlowp")
++      else()
++          find_package(gemmlowp REQUIRED)
++          get_target_property(GEMMLOWP_INCLUDE_DIRS gemmlowp::gemmlowp INTERFACE_INCLUDE_DIRECTORIES)
++          target_include_directories(pytorch_qnnpack PRIVATE ${GEMMLOWP_INCLUDE_DIRS})
++      endif()
+     endif()
+ 
+     list(APPEND Caffe2_DEPENDENCY_LIBS pytorch_qnnpack)
+@@ -563,7 +575,7 @@ elseif(NOT TARGET XNNPACK AND USE_SYSTEM
+   find_library(microkernels-prod_LIBRARY microkernels-prod)
+   set_property(TARGET XNNPACK PROPERTY IMPORTED_LOCATION "${XNNPACK_LIBRARY}")
+   set_property(TARGET microkernels-prod PROPERTY IMPORTED_LOCATION "${microkernels-prod_LIBRARY}")
+-  if(NOT XNNPACK_LIBRARY or NOT microkernels-prod_LIBRARY)
++  if(NOT XNNPACK_LIBRARY or NOT microkernels-prod_LIBRARY AND NOT USE_SYSTEM_XNNPACK)
+     message(FATAL_ERROR "Cannot find XNNPACK")
+   endif()
+   message("-- Found XNNPACK: ${XNNPACK_LIBRARY}")
+@@ -646,7 +658,7 @@ if(BUILD_TEST OR BUILD_MOBILE_BENCHMARK
+ endif()
+ 
+ # ---[ FBGEMM
+-if(USE_FBGEMM)
++if(USE_FBGEMM AND NOT USE_SYSTEM_FBGEMM)
+   set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
+   if(NOT DEFINED FBGEMM_SOURCE_DIR)
+     set(FBGEMM_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/fbgemm" CACHE STRING "FBGEMM source directory")
+@@ -705,6 +717,9 @@ if(USE_FBGEMM)
+ endif()
+ 
+ if(USE_FBGEMM)
++  if(USE_SYSTEM_FBGEMM)
++    list(APPEND Caffe2_DEPENDENCY_LIBS fbgemm)
++  endif()
+   caffe2_update_option(USE_FBGEMM ON)
+ else()
+   caffe2_update_option(USE_FBGEMM OFF)
+@@ -1147,7 +1162,9 @@ if(USE_DISTRIBUTED AND USE_TENSORPIPE)
+     endif()
+     set(TP_BUILD_LIBUV ON CACHE BOOL "" FORCE)
+     add_compile_options(-DTORCH_USE_LIBUV)
+-    include_directories(BEFORE SYSTEM ${CMAKE_CURRENT_LIST_DIR}/../third_party/tensorpipe/third_party/libuv/include)
++    if(NOT USE_SYSTEM_LIBUV)
++        include_directories(BEFORE SYSTEM ${CMAKE_CURRENT_LIST_DIR}/../third_party/tensorpipe/third_party/libuv/include)
++    endif()
+     set(TP_STATIC_OR_SHARED STATIC CACHE STRING "" FORCE)
+ 
+     # Tensorpipe uses cuda_add_library
+@@ -1724,11 +1741,15 @@ include(${CMAKE_CURRENT_LIST_DIR}/FlatBu
+ 
+ # Include cpp-httplib
+ add_library(httplib INTERFACE IMPORTED)
+-target_include_directories(httplib SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/third_party/cpp-httplib)
++if(NOT USE_SYSTEM_CPP_HTTPLIB)
++  target_include_directories(httplib SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/third_party/cpp-httplib)
++endif()
+ 
+ # Include nlohmann-json
+ add_library(nlohmann INTERFACE IMPORTED)
+-include_directories(nlohmann SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/third_party/nlohmann/include)
++if(NOT USE_SYSTEM_NLOHMANN_JSON)
++  include_directories(nlohmann SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/third_party/nlohmann/include)
++endif()
+ 
+ # Include moodycamel
+ add_library(moodycamel INTERFACE IMPORTED)
+Only in pytorch-2.8.0/cmake: Dependencies.cmake.orig
+Only in pytorch-2.8.0/cmake: Dependencies.cmake.rej
+diff '--color=auto' -urp pytorch-2.8.0.orig/cmake/External/nnpack.cmake pytorch-2.8.0/cmake/External/nnpack.cmake
+--- pytorch-2.8.0.orig/cmake/External/nnpack.cmake	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/cmake/External/nnpack.cmake	2025-10-18 19:30:32.922884197 -0700
+@@ -40,6 +40,8 @@ endif()
+ # (3) Android, iOS, Linux, macOS - supported
+ ##############################################################################
+ 
++option(USE_SYSTEM_NNPACK "Use system NNPACK?" OFF)
++
+ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+   message(STATUS "Brace yourself, we are building NNPACK")
+   set(CAFFE2_THIRD_PARTY_ROOT ${PROJECT_SOURCE_DIR}/third_party)
+@@ -56,7 +58,7 @@ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME
+   set(PTHREADPOOL_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/pthreadpool" CACHE STRING "pthreadpool source directory")
+   set(GOOGLETEST_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/googletest" CACHE STRING "Google Test source directory")
+ 
+-  if(NOT TARGET nnpack)
++  if(NOT TARGET nnpack AND NOT USE_SYSTEM_NNPACK)
+     set(NNPACK_BUILD_TESTS OFF CACHE BOOL "")
+     set(NNPACK_BUILD_BENCHMARKS OFF CACHE BOOL "")
+     set(NNPACK_LIBRARY_TYPE "static" CACHE STRING "")
+diff '--color=auto' -urp pytorch-2.8.0.orig/cmake/FlatBuffers.cmake pytorch-2.8.0/cmake/FlatBuffers.cmake
+--- pytorch-2.8.0.orig/cmake/FlatBuffers.cmake	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/cmake/FlatBuffers.cmake	2025-10-18 19:30:32.923005787 -0700
+@@ -1,10 +1,16 @@
+-set(FlatBuffers_Include ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/include)
+-file(GLOB FlatBuffers_Library_SRCS
+-  ${FlatBuffers_Include}/flatbuffers/*.h
+-)
++option(USE_SYSTEM_FLATBUFFERS "Use system flatbuffers?" OFF)
++
++if(NOT USE_SYSTEM_FLATBUFFERS)
++  set(FlatBuffers_Include ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/include)
++  file(GLOB FlatBuffers_Library_SRCS
++    ${FlatBuffers_Include}/flatbuffers/*.h
++  )
++endif()
+ add_library(flatbuffers INTERFACE)
+-target_sources(
+-  flatbuffers
+-  INTERFACE ${FlatBuffers_Library_SRCS}
+-)
+-target_include_directories(flatbuffers INTERFACE ${FlatBuffers_Include})
++if(NOT USE_SYSTEM_FLATBUFFERS)
++  target_sources(
++    flatbuffers
++    INTERFACE ${FlatBuffers_Library_SRCS}
++  )
++  target_include_directories(flatbuffers INTERFACE ${FlatBuffers_Include})
++endif()
+diff '--color=auto' -urp pytorch-2.8.0.orig/cmake/public/utils.cmake pytorch-2.8.0/cmake/public/utils.cmake
+--- pytorch-2.8.0.orig/cmake/public/utils.cmake	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/cmake/public/utils.cmake	2025-10-18 19:30:32.923137013 -0700
+@@ -345,6 +345,8 @@ macro(torch_cuda_get_nvcc_gencode_flag s
+ endmacro()
+ 
+ 
++option(USE_VANILLA_OPTIMIZATIONS "Use vanilla optimizations?" ON)
++
+ ##############################################################################
+ # Add standard compile options.
+ # Usage:
+@@ -460,8 +462,10 @@ function(torch_compile_options libname)
+   endif()
+ 
+   # Use -O2 for release builds (-O3 doesn't improve perf, and -Os results in perf regression)
+-  target_compile_options(${libname} PRIVATE
+-      $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>:-O2>)
++  if(USE_VANILLA_OPTIMIZATIONS)
++    target_compile_options(${libname} PRIVATE
++        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>:-O2>)
++  endif()
+ 
+ endfunction()
+ 
+Only in pytorch-2.8.0/cmake/public: utils.cmake.orig
+diff '--color=auto' -urp pytorch-2.8.0.orig/CMakeLists.txt pytorch-2.8.0/CMakeLists.txt
+--- pytorch-2.8.0.orig/CMakeLists.txt	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/CMakeLists.txt	2025-10-18 19:30:32.925453456 -0700
+@@ -36,6 +36,7 @@ endif()
+ 
+ set(CMAKE_INSTALL_MESSAGE NEVER)
+ 
++option(USE_VANILLA_OPTIMIZATIONS "Use vanilla optimizations?" ON)
+ # check and set CMAKE_CXX_STANDARD
+ string(FIND "${CMAKE_CXX_FLAGS}" "-std=c++" env_cxx_standard)
+ if(env_cxx_standard GREATER -1)
+@@ -987,7 +988,10 @@ if(USE_COLORIZE_OUTPUT)
+   set(CMAKE_COLOR_DIAGNOSTICS ON)
+ endif()
+ if(NOT MSVC)
+-  string(APPEND CMAKE_CXX_FLAGS " -O2 -fPIC")
++  if(USE_VANILLA_OPTIMIZATIONS)
++    string(APPEND CMAKE_CXX_FLAGS " -O2")
++  endif()
++  string(APPEND CMAKE_CXX_FLAGS " -fPIC")
+ 
+   # This prevents use of `c10::optional`, `c10::nullopt` etc within the codebase
+   string(APPEND CMAKE_CXX_FLAGS " -DC10_NODEPRECATED")
+Only in pytorch-2.8.0: CMakeLists.txt.orig
+diff '--color=auto' -urp pytorch-2.8.0.orig/torch/CMakeLists.txt pytorch-2.8.0/torch/CMakeLists.txt
+--- pytorch-2.8.0.orig/torch/CMakeLists.txt	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/torch/CMakeLists.txt	2025-10-18 19:30:32.936269539 -0700
+@@ -1,6 +1,12 @@
+ # This file used to build libtorch.so.
+ # Now it only builds the Torch python bindings.
+ 
++option(USE_SYSTEM_ONNX "Use system ONNX?" OFF)
++option(USE_SYSTEM_GLOO "Use system Gloo?" OFF)
++option(USE_SYSTEM_FLATBUFFERS "Use system FlatBuffers?" OFF)
++option(USE_SYSTEM_CPP_HTTPLIB "Use system cpp-httplib?" OFF)
++option(USE_SYSTEM_NLOHMANN_JSON "Use system nlohmann/json?" OFF)
++
+ if(NOT CAFFE2_CMAKE_BUILDING_WITH_MAIN_REPO)
+   cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
+   project(torch CXX C)
+@@ -60,16 +66,10 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${CMAKE_BINARY_DIR}/aten/src
+     ${CMAKE_BINARY_DIR}/caffe2/aten/src
+     ${CMAKE_BINARY_DIR}/third_party
+-    ${CMAKE_BINARY_DIR}/third_party/onnx
+ 
+     ${TORCH_ROOT}/third_party/valgrind-headers
+ 
+-    ${TORCH_ROOT}/third_party/gloo
+-    ${TORCH_ROOT}/third_party/onnx
+-    ${TORCH_ROOT}/third_party/flatbuffers/include
+     ${TORCH_ROOT}/third_party/kineto/libkineto/include
+-    ${TORCH_ROOT}/third_party/cpp-httplib
+-    ${TORCH_ROOT}/third_party/nlohmann/include
+ 
+     ${TORCH_SRC_DIR}/csrc
+     ${TORCH_SRC_DIR}/csrc/api/include
+@@ -77,6 +77,37 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${TORCH_SRC_DIR}/standalone
+     )
+ 
++if(NOT USE_SYSTEM_ONNX)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${CMAKE_BINARY_DIR}/third_party/onnx
++        ${TORCH_ROOT}/third_party/onnx
++    )
++endif()
++
++if(NOT USE_SYSTEM_GLOO)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/gloo
++    )
++endif()
++
++if(NOT USE_SYSTEM_FLATBUFFERS)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/flatbuffers/include
++    )
++endif()
++
++if(NOT USE_SYSTEM_CPP_HTTPLIB)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/cpp-httplib
++    )
++endif()
++
++if(NOT USE_SYSTEM_NLOHMANN_JSON)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/nlohmann/include
++    )
++endif()
++
+ list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES ${LIBSHM_SRCDIR})
+ 
+ set(TORCH_PYTHON_LINK_LIBRARIES
+Only in pytorch-2.8.0/torch: CMakeLists.txt.orig

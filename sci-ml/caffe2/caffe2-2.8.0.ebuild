@@ -354,7 +354,7 @@ https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT_3}.tar.gz
 	-> cutlass-${CUTLASS_COMMIT_3:0:7}.tar.gz
 https://github.com/NVIDIA/DCGM/archive/${DCGM_COMMIT}.tar.gz
 	-> DCGM-${DCGM_COMMIT:0:7}.tar.gz
-https://github.com/NVIDIA/NVTX/archive/e170594ac7cf1dac584da473d4ca9301087090c1.tar.gz
+https://github.com/NVIDIA/NVTX/archive/${NVTX_COMMIT}.tar.gz
 	-> NVTX-${NVTX_COMMIT:0:7}.tar.gz
 https://github.com/oneapi-src/oneDNN/archive/${MKL_DNN_COMMIT}.tar.gz
 	-> oneDNN-${MKL_DNN_COMMIT:0:7}.tar.gz
@@ -402,6 +402,8 @@ https://github.com/shibatch/sleef/archive/${SLEEF_COMMIT}.tar.gz
 	-> sleef-${SLEEF_COMMIT:0:7}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
 	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
+https://github.com/wjakob/clang-cindex-python3/archive/${CLANG_CINDEX_PYTHON3_COMMIT}.tar.gz
+	-> clang-cindex-python3-${CLANG_CINDEX_PYTHON3_COMMIT:0:7}.tar.gz
 https://github.com/yhirose/cpp-httplib/archive/${CPP_HTTPLIB_COMMIT}.tar.gz
 	-> cpp-httplib-${CPP_HTTPLIB_COMMIT:0:7}.tar.gz
 	)
@@ -1178,7 +1180,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.5.1-gentoo.patch"
+	"${FILESDIR}/${PN}-2.8.0-gentoo.patch"
 	"${FILESDIR}/${PN}-2.5.1-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
@@ -1273,7 +1275,7 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/triton-${TRITON_COMMIT}" "${S}/third_party/aotriton/third_party/triton"
 
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
-		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_1}" "${S}/third_party/composable_kernel"
+		dep_prepare_cp "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_3}" "${S}/third_party/composable_kernel"
 		dep_prepare_mv "${WORKDIR}/cpp-httplib-${CPP_HTTPLIB_COMMIT}" "${S}/third_party/cpp-httplib"
 		dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT_1}" "${S}/third_party/cpuinfo"
 		dep_prepare_mv "${WORKDIR}/cudnn-frontend-${CUDNN_FRONTEND_COMMIT}" "${S}/third_party/cudnn_frontend"
@@ -1282,7 +1284,6 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/flatbuffers-${FLATBUFFERS_COMMIT}" "${S}/third_party/flatbuffers"
 		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_1}" "${S}/third_party/fmt"
 
-		dep_prepare_cp "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT_3}" "${S}/third_party/composable_kernel"
 
 		dep_prepare_mv "${WORKDIR}/FBGEMM-${FBGEMM_COMMIT}" "${S}/third_party/FBGEMM"
 		dep_prepare_mv "${WORKDIR}/asmjit-${ASMJIT_COMMIT}" "${S}/third_party/FBGEMM/external/asmjit"
@@ -1591,6 +1592,23 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-Wno-dev
 
 		-DINTERN_DISABLE_MOBILE_INTERP=OFF
+
+		#-DUSE_SYSTEM_CLOG=$(usex system-libs)
+		#-DUSE_SYSTEM_CPP_HTTPLIB=$(usex system-libs)
+		#-DUSE_SYSTEM_FBGEMM=$(usex system-libs)
+		#-DUSE_SYSTEM_FLATBUFFERS=$(usex system-libs)
+		#-DUSE_SYSTEM_LIBFMT=$(usex system-libs)
+		#-DUSE_SYSTEM_FXDIV=$(usex system-libs)
+		#-DUSE_SYSTEM_GLOO=$(usex system-libs)
+		#-DUSE_SYSTEM_KINETO=$(usex system-libs)
+		-DUSE_SYSTEM_NLOHMANN_JSON=$(usex system-libs)
+		#-DUSE_SYSTEM_GEMMLOWP=$(usex system-libs)
+		-DUSE_SYSTEM_LIBUV=$(usex system-libs)
+		#-DUSE_SYSTEM_NNPACK=$(usex system-libs)
+		#-DUSE_SYSTEM_ONNX=$(usex system-libs)
+		#-DUSE_SYSTEM_XNNPACK=$(usex system-libs)
+		-DUSE_VANILLA_OPTIMIZATIONS=OFF # Disable insecure -O3, breaks -DFORTIFY_SOURCE
+
 	)
 
 	if use onednn ; then
