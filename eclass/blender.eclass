@@ -512,6 +512,9 @@ blender_configure_eigen_arm() {
 	[[ "${ARCH}" =~ "arm64" ]] || return
 	# Only arm64 supported
 	# sve only optional in application processor
+	local oi
+	local of
+	local x
 	if use cpu_flags_arm_sve ; then
 		if \
 			   is-flagq "-march=armv8-a*" \
@@ -524,15 +527,19 @@ blender_configure_eigen_arm() {
 			|| is-flagq "-march=armv8.8-a*" \
 			|| is-flagq "-march=armv8.9-a*" \
 		; then
-			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
-			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
-			replace-flags "${oi}" "${of}+sve"
+			oi=( $(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+") )
+			for x in ${oi[@]} ; do
+				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
+				replace-flags "${x}" "${of}+sve"
+			done
 		fi
 
 		if is-flagq "-mcpu=*" ; then
-			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
-			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
-			replace-flags "${oi}" "${of}+sve"
+			oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
+			for x in ${oi[@]} ; do
+				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
+				replace-flags "${x}" "${of}+sve"
+			done
 		fi
 	else
 		if \
@@ -546,15 +553,19 @@ blender_configure_eigen_arm() {
 			|| is-flagq "-march=armv8.8-a*" \
 			|| is-flagq "-march=armv8.9-a*" \
 		; then
-			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+")
-			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
-			replace-flags "${oi}" "${of}-sve"
+			oi=( $(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+") )
+			for x in ${oi[@]} ; do
+				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
+				replace-flags "${x}" "${of}-sve"
+			done
 		fi
 
 		if is-flagq "-mcpu=*" ; then
-			local oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
-			local of=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+" | sed -E -e "s|[+-]sve||g")
-			replace-flags "${oi}" "${of}-sve"
+			oi=( $(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+") )
+			for x in ${oi[@]} ; do
+				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
+				replace-flags "${x}" "${of}-sve"
+			done
 		fi
 	fi
 }
