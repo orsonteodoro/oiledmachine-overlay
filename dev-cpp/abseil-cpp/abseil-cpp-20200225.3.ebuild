@@ -59,7 +59,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -83,6 +83,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20200225.3-gcc-12-fix.patch"
 	"${FILESDIR}/${PN}-20200225.3-gcc-13-fix.patch"
 	"${FILESDIR}/${PN}-20200225.3-crypto-symbol.patch"
+	"${FILESDIR}/${PN}-20200225.3-54fac21-backport.patch"
 )
 
 pkg_setup() {

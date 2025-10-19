@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# It already contains backport of 5a0e2cb for CVE-2025-0838.
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=14
