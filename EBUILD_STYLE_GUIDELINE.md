@@ -221,6 +221,12 @@
   hardening does not completely mitigate, we want to increase the difficulty
   for the attacker or increase the height of the security fence higher.
 
+* Packages that process untrusted data and force -O3 need to be changed to
+  -O2 to reduce chances of compromised integrity of -D_FORTIFY_SOURCE.
+
+* You should not remove hardening flags (e.g. -Wformat-security) for packages
+  that process untrusted data.  Instead, fix the issues with AI.
+
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
 * Telemetry should be disabled by default.  Any telemetry requires additional
@@ -278,6 +284,12 @@
   vendor lock-in, as an undisclosed sponsored project, as fanboyism by the
   project, or as underoptimized.  It must also accommodate builder machines
   building portable prebuilt packages.
+
+* Build files that contain architecture specific flags (e.g. -maes, -msse, etc.)
+  and appear optional, as in the package works for other arches, need a
+  corresponding cpu_flag_<arch>_<instruction set> USE flag and changes to build
+  script or ebuild to toggle the compiler flag.  The build files need to be
+  changed so the gimmick is optional.
 
 * Ebuilds that do a compiler switch must filter-lto.  This overlay should resolve
   all LTO issues without user intervention.
