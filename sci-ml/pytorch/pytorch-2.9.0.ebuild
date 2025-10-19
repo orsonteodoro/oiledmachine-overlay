@@ -123,6 +123,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.5.1-torch_shm_manager.patch"
 #	"${FILESDIR}/${PN}-2.5.1-setup.patch"
 #	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
+	"${FILESDIR}/caffe2-2.9.0-cuda-hardcoded-paths.patch"
 )
 
 pkg_setup() {
