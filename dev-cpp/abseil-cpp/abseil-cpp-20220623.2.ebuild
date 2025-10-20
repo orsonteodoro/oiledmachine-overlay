@@ -131,6 +131,8 @@ setup_aes_flags() {
 			done
 			str="${str:1}"
 			sed -i -e "s|__ARM64_CRYPTO_FLAGS__|${str}|" "absl/copts/copts.py" || die
+		else
+			sed -i -e "s|__ARM64_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
 		fi
 	fi
 
