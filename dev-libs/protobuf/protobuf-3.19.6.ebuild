@@ -71,7 +71,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_21
+ebuild_revision_22
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -200,7 +200,7 @@ src_test() {
 	src_test_abi() {
 		CMAKE_USE_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
 		BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		cmake_src_test --rerun-failed --output-on-failure
+		emake check
 	}
 	multilib_foreach_abi src_test_abi
 }
@@ -209,7 +209,7 @@ src_install() {
 	src_install_abi() {
 		CMAKE_USE_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
 		BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		cmake_src_install
+		emake DESTDIR="${D}" install
 	}
 	multilib_foreach_abi src_install_abi
 	_install_all
