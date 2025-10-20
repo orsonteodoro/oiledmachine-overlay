@@ -22,6 +22,7 @@ CPU_FLAGS_PPC=(
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_aes"
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse3"
 	"cpu_flags_x86_ssse3"
 	"cpu_flags_x86_sse4_2"
@@ -62,8 +63,14 @@ test
 ebuild_revision_19
 "
 REQUIRED_USE="
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_sse3? (
+		cpu_flags_x86_sse2
+	)
 	cpu_flags_x86_ssse3? (
-		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse3
 	)
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_ssse3
@@ -213,6 +220,16 @@ setup_aes_flags() {
 
 setup_cpu_flags() {
 	setup_aes_flags
+
+	filter-flags '-msse2' '-mno-sse2'
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_sse2 ; then
+			append-flags "-msse2"
+		else
+			append-flags "-mno-sse2"
+		fi
+	fi
+
 	filter-flags '-msse3' '-mno-sse3'
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if use cpu_flags_x86_sse3 ; then
@@ -224,7 +241,7 @@ setup_cpu_flags() {
 
 	filter-flags '-mssse3' '-mno-ssse3'
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
-		if use cpu_flags_x86_sse3 ; then
+		if use cpu_flags_x86_ssse3 ; then
 			append-flags "-mssse3"
 		else
 			append-flags "-mno-ssse3"
