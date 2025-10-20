@@ -64,6 +64,15 @@ test
 ebuild_revision_19
 "
 REQUIRED_USE="
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_pclmul? (
+		cpu_flags_x86_sse4_2
+	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
