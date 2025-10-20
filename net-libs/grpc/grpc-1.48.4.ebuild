@@ -90,11 +90,15 @@ SLOT="${SLOT_MAJ}/26.148" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSIO
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${MULTILIB_USEDEP}]
 	dev-cpp/abseil-cpp:=
-	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
-	>=dev-libs/re2-0.2021.08.31:=[${MULTILIB_USEDEP}]
-	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:3/3.19[${MULTILIB_USEDEP}]
+	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
+	dev-libs/openssl:=
+	>=dev-libs/re2-0.2021.08.31[${MULTILIB_USEDEP}]
+	dev-libs/re2:=
+	>=net-dns/c-ares-1.17.2[${MULTILIB_USEDEP}]
+	net-dns/c-ares:=
+	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+	sys-libs/zlib:=
+	dev-libs/protobuf:${PROTOBUF_SLOT}/3.19[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 "
 # See also
