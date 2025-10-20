@@ -126,6 +126,10 @@ PDEPEND+="
 		dev-java/grpc-java:=
 		|| (
 			(
+				virtual/jdk:17
+				virtual/jre:17
+			)
+			(
 				virtual/jdk:11
 				virtual/jre:11
 			)
