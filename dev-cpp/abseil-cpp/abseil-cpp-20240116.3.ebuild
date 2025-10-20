@@ -59,7 +59,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_17
+ebuild_revision_19
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -146,41 +146,41 @@ setup_aes_flags() {
 			L+=(
 				"-maes"
 			)
-			str+=',"maes"'
+			str+=',"-maes"'
 		else
 			L+=(
 				"-mno-aes"
 			)
-			str+=',"mno-aes"'
+			str+=',"-mno-aes"'
 		fi
 
 		if use cpu_flags_x86_sse4_2 ; then
 			L+=(
 				"-msse4.2"
 			)
-			str+=',"msse4.2"'
+			str+=',"-msse4.2"'
 		else
 			L+=(
 				"-mno-sse4.2"
 			)
-			str+=',"mno-sse4.2"'
+			str+=',"-mno-sse4.2"'
 		fi
 
 		if use cpu_flags_x86_avx ; then
 			L+=(
 				"-mavx"
 			)
-			str+=',"mavx"'
+			str+=',"-mavx"'
 		else
 			L+=(
 				"-mno-avx"
 			)
-			str+=',"mno-avx"'
+			str+=',"-mno-avx"'
 		fi
 		str="${str:1}"
 
 		append-flags "${L[@]}"
-		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/random/internal/BUILD.bazel" || die
+		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/copts/copts.py" || die
 	fi
 
 	filter-flags '-m*altivec' '-m*crypto' '-m*vsx'

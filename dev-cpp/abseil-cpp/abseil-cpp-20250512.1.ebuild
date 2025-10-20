@@ -57,7 +57,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_17
+ebuild_revision_19
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -145,36 +145,36 @@ setup_aes_flags() {
 			L+=(
 				"-maes"
 			)
-			str+=',"maes"'
+			str+=',"-maes"'
 		else
 			L+=(
 				"-mno-aes"
 			)
-			str+=',"mno-aes"'
+			str+=',"-mno-aes"'
 		fi
 
 		if use cpu_flags_x86_sse4_2 ; then
 			L+=(
 				"-msse4.2"
 			)
-			str+=',"msse4.2"'
+			str+=',"-msse4.2"'
 		else
 			L+=(
 				"-mno-sse4.2"
 			)
-			str+=',"mno-sse4.2"'
+			str+=',"-mno-sse4.2"'
 		fi
 
 		if use cpu_flags_x86_avx ; then
 			L+=(
 				"-mavx"
 			)
-			str+=',"mavx"'
+			str+=',"-mmavx"'
 		else
 			L+=(
 				"-mno-avx"
 			)
-			str+=',"mno-avx"'
+			str+=',"-mno-avx"'
 		fi
 		str="${str:1}"
 
@@ -184,21 +184,30 @@ setup_aes_flags() {
 
 	filter-flags '-m*altivec' '-m*crypto' '-m*vsx'
 	if [[ "${ARCH}" =~ ("ppc"$|"ppc64") ]] ; then
+		local str=""
 		if use cpu_flags_ppc_altivec ; then
 			append-flags "-maltivec"
+			str+=',"-maltivec"'
 		else
 			append-flags "-mno-altivec"
+			str+=',"-mno-altivec"'
 		fi
 		if use cpu_flags_ppc_crypto ; then
 			append-flags "-mcrypto"
+			str+=',"-mcrypto"'
 		else
 			append-flags "-mno-crypto"
+			str+=',"-mno-crypto"'
 		fi
 		if use cpu_flags_ppc_vsx ; then
 			append-flags "-mvsx"
+			str+=',"-mvsx"'
 		else
 			append-flags "-mno-vsx"
+			str+=',"-mno-vsx"'
 		fi
+		str="${str:1}"
+		sed -i -e "s|__PPC_CRYPTO_FLAGS__|${str}|" "absl/random/internal/BUILD.bazel" || die
 	fi
 }
 
