@@ -24,6 +24,9 @@ CPU_FLAGS_PPC=(
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_aes"
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_pclmul"
+	"cpu_flags_x86_sse3"
+	"cpu_flags_x86_ssse3"
 	"cpu_flags_x86_sse4_2"
 )
 
@@ -203,9 +206,39 @@ setup_aes_flags() {
 	fi
 }
 
+setup_cpu_flags() {
+	setup_aes_flags
+	filter-flags '-msse3' '-mno-sse3'
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_sse3 ; then
+			append-flags "-msse3"
+		else
+			append-flags "-mno-sse3"
+		fi
+	fi
+
+	filter-flags '-mssse3' '-mno-ssse3'
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_sse3 ; then
+			append-flags "-mssse3"
+		else
+			append-flags "-mno-ssse3"
+		fi
+	fi
+
+	filter-flags '-m*pclmul'
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_sse3 ; then
+			append-flags "-mpclmul"
+		else
+			append-flags "-mno-pclmul"
+		fi
+	fi
+}
+
 src_prepare() {
 	cmake_src_prepare
-	setup_aes_flags
+	setup_cpu_flags
 	# Now generate cmake files
 	python_fix_shebang "absl/copts/generate_copts.py"
 	"absl/copts/generate_copts.py" || die
