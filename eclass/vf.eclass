@@ -97,6 +97,9 @@ einfo "CE = Code Execution"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CI"($|" "|";"|",") ]] ; then
 einfo "CI = Shell Command Injection"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CP"($|" "|";"|",") ]] ; then
+einfo "CP = Corrupt Pointer"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CSRF"($|" "|";"|",") ]] ; then
 einfo "CSRF = Cross Site Request Forgery"
 		fi
@@ -192,6 +195,9 @@ einfo "OOBW = Out Of Bounds Write"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
 einfo "OOR = Out Of Range Access"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PC"($|" "|";"|",") ]] ; then
+einfo "PC = Pointer Corruption"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE"|"EP"|"EoP")($|" "|";"|",") ]] ; then
 # Escalated Privileges

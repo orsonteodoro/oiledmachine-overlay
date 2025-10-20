@@ -430,6 +430,51 @@ VULNERABILITIES_FIXED=(
 # If the ebuild maintainer(s) gathered them from the changelog, then the
 # vulnerability coverage may be incomplete or miscategoried.
 
+	"0ed73be;UAF;" # 6.17.4
+	"b48179c;UAF;" # 6.17.4
+	"64dc47a;DF;" # 6.17.4
+	"794abb2;NPD, DoS;" # 6.17.4
+	"a021297;NPD, DoS;" # 6.17.4
+	"03dec28;IO;" # 6.17.4
+	"5b5fffa;IO;" # 6.17.4
+	"70aa2ff;IO;" # 6.17.4
+	"f57d035;IO;" # 6.17.4
+	"553bc7d;UB, OF;" # 6.17.4
+	"c2640cb;ML, DoS;" # 6.17.4
+	"5c9f85f;ML, DoS;" # 6.17.4
+	"af84271;ML, DoS;" # 6.17.4
+	"f9d4ec7;ML, DoS;" # 6.17.4
+	"fd30ee9;ML, DoS;" # 6.17.4
+	"a68c1d4;DL, DoS;" # 6.17.4
+	"c3363db;UAF;" # 6.17.4
+	"4314377;OOB, MC;" # 6.17.4
+	"f041339;MC, DoS;" # 6.17.4
+	"032aa8b;PC;" # 6.17.4
+	"f5ee7c0;DT" # 6.17.4
+
+	"70acdd1;UAF;" # 6.12.54
+	"53d6e40;UAF;" # 6.12.54
+	"00d3af4;UAF;" # 6.12.54
+	"c11ace9;DF;" # 6.12.54
+	"e85385d;IO;" # 6.12.54
+	"1463cd0;IO;" # 6.12.54
+	"947751c;IO;" # 6.12.54
+	"f1c41db;IO;" # 6.12.54
+	"e3c5ac6;ML, DoS;" # 6.12.54
+	"7b2ef1a;ML, DoS;" # 6.12.54
+	"ebb874e;ML, DoS;" # 6.12.54
+	"bdde538;ML, DoS;" # 6.12.54
+	"ca37036;ML, DoS;" # 6.12.54
+	"237d6e1;RC;" # 6.12.54
+	"0fa388a;RC, NPD, DoS;" # 6.12.54
+	"14e4623;DT;" # 6.12.54
+	"361d672;MC;" # 6.12.54
+	"2f3e5c0;PC;" # 6.12.54
+	"2076b91;DoS;" # 6.12.54
+	"fb54ffd;NPD, DoS;" # 6.12.54
+	"d9457e6;DoS" # 6.12.54
+	"f12039d;DoS" # 6.12.54
+
 	# 2025-10-20
 	"CVE-2025-40017;ML, DoS;"
 	"CVE-2025-40016;;"
