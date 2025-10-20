@@ -72,7 +72,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -267,7 +267,7 @@ _install_all() {
 	)
 	local x
 	for x in ${L[@]} ; do
-		local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
+		local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)"
 		[[ -e "${d}" ]] || die
 einfo "Adding ${d} to RPATH for ${ED}/${x}"
 		patchelf \
