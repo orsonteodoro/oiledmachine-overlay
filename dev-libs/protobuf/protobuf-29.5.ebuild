@@ -72,7 +72,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_19
+ebuild_revision_20
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -241,10 +241,10 @@ src_install() {
 		cmake_src_install
 	}
 	multilib_foreach_abi src_install_abi
-
+	_install_all
 }
 
-multilib_src_install_all() {
+_install_all() {
 	find "${ED}" -name "*.la" -delete || die
 	if [[ ! -f "${ED}/usr/$(get_libdir)/libprotobuf.so.${SLOT#*/}" ]]; then
 		local expected_subslot="${SLOT#*/}"
