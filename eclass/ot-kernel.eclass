@@ -452,6 +452,7 @@ VULNERABILITIES_FIXED=(
 	"032aa8b;PC;" # 6.17.4
 	"f5ee7c0;DT;" # 6.17.4
 	"ab96f08;OOBA;" # 6.17.4
+	"a0c2c36;DoS;" # 6.17.4
 
 	"70acdd1;UAF;" # 6.12.54
 	"53d6e40;UAF;" # 6.12.54
@@ -476,6 +477,7 @@ VULNERABILITIES_FIXED=(
 	"d9457e6;DoS;" # 6.12.54
 	"f12039d;DoS;" # 6.12.54
 	"cd0cbf2;OOBA;" # 6.12.54
+	"d381de7;DoS;" # 6.12.54
 
 	"6ba7e73;UAF, RC;" # 5.15.195
 	"71c52b0;UAF;" # 5.15.195
