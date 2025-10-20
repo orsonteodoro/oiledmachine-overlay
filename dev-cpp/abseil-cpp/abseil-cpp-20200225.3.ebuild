@@ -142,14 +142,47 @@ setup_aes_flags() {
 	filter-flags '-m*aes' '-m*sse4.2' '-m*avx'
 	if ! [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		sed -i -e 's|__X86_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
-	elif use cpu_flags_x86_aes && use cpu_flags_x86_aes && use cpu_flags_x86_sse4_2 ; then
-		sed -i -e 's|__X86_CRYPTO_FLAGS__|"-maes","-msse4.2","-mavx"|' "absl/copts/copts.py" || die
-	elif use cpu_flags_x86_aes && use cpu_flags_x86_sse4_2 ; then
-		sed -i -e 's|__X86_CRYPTO_FLAGS__|"-maes","-msse4.2","-mno-avx"|' "absl/copts/copts.py" || die
-	elif use cpu_flags_x86_aes ; then
-		sed -i -e 's|__X86_CRYPTO_FLAGS__|"-maes","-mno-sse4.2","-mno-avx"|' "absl/copts/copts.py" || die
 	else
-		sed -i -e 's|__X86_CRYPTO_FLAGS__|"-mno-aes","-mno-avx","-mno-sse4.2"|' "absl/copts/copts.py" || die
+		local L=()
+		local str=""
+		if use cpu_flags_x86_aes ; then
+			L+=(
+				"-maes"
+			)
+			str+=',"maes"'
+		else
+			L+=(
+				"-mno-aes"
+			)
+			str+=',"mno-aes"'
+		fi
+
+		if use cpu_flags_x86_sse4_2 ; then
+			L+=(
+				"-msse4.2"
+			)
+			str+=',"msse4.2"'
+		else
+			L+=(
+				"-mno-sse4.2"
+			)
+			str+=',"mno-sse4.2"'
+		fi
+
+		if use cpu_flags_x86_avx ; then
+			L+=(
+				"-mavx"
+			)
+			str+=',"mavx"'
+		else
+			L+=(
+				"-mno-avx"
+			)
+			str+=',"mno-avx"'
+		fi
+
+		append-flags "${L[@]}"
+		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/random/internal/BUILD.bazel" || die
 	fi
 
 	filter-flags '-m*altivec' '-m*crypto' '-m*vsx'
