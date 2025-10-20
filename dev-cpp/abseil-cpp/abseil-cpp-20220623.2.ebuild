@@ -63,9 +63,6 @@ test
 ebuild_revision_20
 "
 REQUIRED_USE="
-	cpu_flags_x86_sse2? (
-		cpu_flags_x86_sse
-	)
 	cpu_flags_x86_sse3? (
 		cpu_flags_x86_sse2
 	)
