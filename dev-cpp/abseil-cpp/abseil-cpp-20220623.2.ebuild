@@ -60,7 +60,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
