@@ -71,7 +71,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -101,6 +101,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
 #	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
 #	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
+	"${FILESDIR}/${PN}-3.12.4-backport-cd0ee8f.patch"
 )
 DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
 
