@@ -8,27 +8,27 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.51.3/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.75.1/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
-# https://github.com/grpc/grpc/blob/v1.51.3/setup.py#L100
+# https://github.com/grpc/grpc/blob/v1.75.1/setup.py#L100
 
 # For supported ruby versions, see
-# https://github.com/grpc/grpc/blob/v1.51.3/Rakefile#L147
+# https://github.com/grpc/grpc/blob/v1.75.1/Rakefile#L147
 
 MY_PV="${PV//_pre/-pre}"
 
-ABSEIL_CPP_PV="20220623.0"
+ABSEIL_CPP_PV="20240722.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
 OPENCENSUS_PROTO_PV="0.3.0"
-PROTOBUF_SLOT="3"
+PROTOBUF_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
-USE_RUBY="ruby32"
+USE_RUBY="ruby32 ruby33 ruby34"
 
 inherit cflags-hardened cmake multilib-minimal python-r1 ruby-ng
 
@@ -85,8 +85,8 @@ REQUIRED_USE+="
 "
 RESTRICT="test"
 SLOT_MAJ="${PROTOBUF_SLOT}"
-SLOT="${SLOT_MAJ}/29.151" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230214
+SLOT="${SLOT_MAJ}/46.171" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20250213
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${MULTILIB_USEDEP}]
 	dev-cpp/abseil-cpp:=
@@ -94,7 +94,7 @@ RDEPEND+="
 	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:3/3.21[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:5[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 "
 # See also
@@ -104,10 +104,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.5.1
+	>=dev-build/cmake-3.16
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.7.0
+		>=dev-cpp/benchmark-1.9.0
 	)
 "
 PDEPEND_DISABLE="
@@ -143,6 +143,16 @@ PDEPEND+="
 		ruby_targets_ruby32? (
 			dev-lang/ruby:3.2
 			~dev-ruby/grpc-${PV}[ruby_targets_ruby32?]
+			dev-ruby/grpc:=
+		)
+		ruby_targets_ruby33? (
+			dev-lang/ruby:3.3
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby33?]
+			dev-ruby/grpc:=
+		)
+		ruby_targets_ruby34? (
+			dev-lang/ruby:3.4
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby34?]
 			dev-ruby/grpc:=
 		)
 	)

@@ -80,7 +80,7 @@ REQUIRED_USE+="
 	)
 "
 RESTRICT="test"
-SLOT_MAJ="0"
+SLOT_MAJ="${PROTOBUF_SLOT}"
 SLOT="${SLOT_MAJ}/10.130" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20200529
 RDEPEND+="
@@ -89,7 +89,7 @@ RDEPEND+="
 	>=dev-libs/openssl-1.1.0g:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:3/3.12[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_SLOT}/3.12[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 "
 # See also
@@ -112,7 +112,8 @@ PDEPEND_DISABLE="
 "
 PDEPEND+="
 	java? (
-		~dev-java/grpc-java-${PV}
+		=dev-java/grpc-java-${PV%%.*}*
+		dev-java/grpc-java:=
 		|| (
 			(
 				virtual/jdk:1.8
@@ -122,18 +123,21 @@ PDEPEND+="
 	)
 	php? (
 		~dev-php/grpc-${PV}
+		dev-php/grpc:=
 	)
 	python? (
 		~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
+		dev-python/grpcio:=
 	)
 	ruby? (
 		ruby_targets_ruby32? (
 			dev-lang/ruby:3.2
 			~dev-ruby/grpc-${PV}[ruby_targets_ruby32?]
+			dev-ruby/grpc:=
 		)
 	)
 "
-DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
+DOCS=( "AUTHORS" "CONCEPTS.md" "README.md" "TROUBLESHOOTING.md" "doc/". )
 
 soversion_check() {
 	local f1=$(grep  "gRPC_CORE_VERSION" "${S}/CMakeLists.txt" | head -n 1 \
@@ -182,6 +186,7 @@ src_configure() {
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
 			-DgRPC_BACKWARDS_COMPATIBILITY_MODE=OFF
@@ -221,6 +226,7 @@ src_compile() {
 }
 
 src_install() {
+	local prefix="/usr/lib/${PN}/${SLOT_MAJ}"
 	install_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
@@ -230,7 +236,7 @@ src_install() {
 			if use examples; then
 				find examples -name '.gitignore' -delete || die
 				dodoc -r examples
-				docompress -x /usr/share/doc/${PF}/examples
+				docompress -x "${prefix}/share/doc/${PF}/examples"
 			fi
 			if use doc; then
 				find doc -name '.gitignore' -delete || die
