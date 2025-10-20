@@ -253,27 +253,10 @@ src_install() {
 
 _install_all() {
 	find "${ED}" -name "*.la" -delete || die
-	if [[ ! -f "${ED}/usr/$(get_libdir)/libprotobuf.so.${SLOT#*/}" ]]; then
-		local expected_subslot="${SLOT#*/}"
-		local actual_subslot=$(ls "${ED}/usr/$(get_libdir)/libprotobuf.so."*)
-		actual_subslot=$(basename "${actual_subslot}" \
-			| cut -f 3 -d ".")
-		if [[ "${expected_subslot}" != "${actual_subslot}" ]] ; then
-eerror
-eerror "No matching library found with SLOT variable."
-eerror
-eerror "SLOT:\t\t${SLOT}"
-eerror "Expected subslot:\t${expected_subslot}"
-eerror "Actual subslot:\t\t${actual_subslot}"
-eerror
-eerror "Please update the SLOT's subslot with the actual slot value."
-eerror
-			die
-		fi
-	fi
-	insinto "/usr/share/vim/vimfiles/syntax"
+	local prefix="/usr/lib/protobuf/${SLOT_MAJOR}"
+	insinto "${prefix}/share/vim/vimfiles/syntax"
 	doins "editors/proto.vim"
-	insinto "/usr/share/vim/vimfiles/ftdetect"
+	insinto "${prefix}/share/vim/vimfiles/ftdetect"
 	doins "${FILESDIR}/proto.vim"
 	if use emacs; then
 		elisp-install "${PN}" "editors/protobuf-mode.el"*
@@ -281,7 +264,7 @@ eerror
 	fi
 	if use examples; then
 		DOCS+=(examples)
-		docompress -x "/usr/share/doc/${PF}/examples"
+		docompress -x "${prefix}/share/doc/${PF}/examples"
 	fi
 	einstalldocs
 
