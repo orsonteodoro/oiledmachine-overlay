@@ -200,7 +200,12 @@ multilib_src_compile() {
 src_test() {
 	src_test_abi() {
 		pushd "${WORKDIR}/${P}-${MULTILIB_ABI_FLAG}.${ABI}" >/dev/null 2>&1 || die
-			emake check
+			if [[ "${ABI}" =~ ("64"|"alpha"|"s390x") || "${CHOST}" =~ ("hppa2.0") ]] ; then
+				emake check
+			else
+	# Breaks on 32-bit
+				emake check GTEST_FILTER=-IoTest.LargeOutput
+			fi
 		popd >/dev/null 2>&1 || die
 	}
 	multilib_foreach_abi src_test_abi
