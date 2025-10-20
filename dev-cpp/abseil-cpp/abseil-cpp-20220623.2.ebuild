@@ -62,7 +62,14 @@ ${CPU_FLAGS_X86[@]}
 test
 ebuild_revision_20
 "
+# Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
+	amd64? (
+		cpu_flags_x86_sse2
+	)
+	x86? (
+		cpu_flags_x86_sse2
+	)
 	cpu_flags_x86_sse3? (
 		cpu_flags_x86_sse2
 	)
