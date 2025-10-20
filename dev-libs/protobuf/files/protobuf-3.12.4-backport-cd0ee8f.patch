@@ -1,6 +1,6 @@
 diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/extension_set_inl.h protobuf-3.12.4/src/google/protobuf/extension_set_inl.h
 --- protobuf-3.12.4.orig/src/google/protobuf/extension_set_inl.h	2020-07-09 18:09:34.000000000 -0700
-+++ protobuf-3.12.4/src/google/protobuf/extension_set_inl.h	2025-10-20 05:18:32.926943908 -0700
++++ protobuf-3.12.4/src/google/protobuf/extension_set_inl.h	2025-10-20 05:44:54.375218814 -0700
 @@ -206,7 +206,10 @@ const char* ExtensionSet::ParseMessageSe
      const char* ptr, const Msg* containing_type,
      internal::InternalMetadata* metadata, internal::ParseContext* ctx) {
@@ -55,15 +55,14 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/extension_set_
        }
      } else {
        ptr = ReadTag(ptr - 1, &tag);
-Only in protobuf-3.12.4/src/google/protobuf: extension_set_inl.h.orig
-Only in protobuf-3.12.4/src/google/protobuf: extension_set_inl.h.rej
 diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format.cc protobuf-3.12.4/src/google/protobuf/wire_format.cc
 --- protobuf-3.12.4.orig/src/google/protobuf/wire_format.cc	2020-07-09 18:09:34.000000000 -0700
-+++ protobuf-3.12.4/src/google/protobuf/wire_format.cc	2025-10-20 05:20:27.405834540 -0700
-@@ -659,8 +659,10 @@ struct WireFormat::MessageSetParser {
++++ protobuf-3.12.4/src/google/protobuf/wire_format.cc	2025-10-20 05:46:57.683434875 -0700
+@@ -659,8 +659,11 @@ struct WireFormat::MessageSetParser {
    const char* _InternalParse(const char* ptr, internal::ParseContext* ctx) {
      // Parse a MessageSetItem
      auto metadata = reflection->MutableInternalMetadata(msg);
++    uint32_t type_id;
 +    enum class State { kNoTag, kHasType, kHasPayload, kDone };
 +    State state = State::kNoTag;
 +
@@ -72,7 +71,7 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format.cc
      while (!ctx->Done(&ptr)) {
        // We use 64 bit tags in order to allow typeid's that span the whole
        // range of 32 bit numbers.
-@@ -669,8 +671,11 @@ struct WireFormat::MessageSetParser {
+@@ -669,8 +672,11 @@ struct WireFormat::MessageSetParser {
          uint64 tmp;
          ptr = ParseBigVarint(ptr, &tmp);
          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
@@ -86,7 +85,7 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format.cc
            const FieldDescriptor* field;
            if (ctx->data().pool == nullptr) {
              field = reflection->FindKnownExtensionByNumber(type_id);
-@@ -697,16 +702,17 @@ struct WireFormat::MessageSetParser {
+@@ -697,16 +703,17 @@ struct WireFormat::MessageSetParser {
              GOOGLE_PROTOBUF_PARSER_ASSERT(value->_InternalParse(p, &tmp_ctx) &&
                                             tmp_ctx.EndedAtLimit());
            }
@@ -107,7 +106,7 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format.cc
            // We're now parsing the payload
            const FieldDescriptor* field = nullptr;
            if (descriptor->IsExtensionNumber(type_id)) {
-@@ -720,7 +726,12 @@ struct WireFormat::MessageSetParser {
+@@ -720,7 +727,12 @@ struct WireFormat::MessageSetParser {
            ptr = WireFormat::_InternalParseAndMergeField(
                msg, ptr, ctx, static_cast<uint64>(type_id) * 8 + 2, reflection,
                field);
@@ -121,11 +120,9 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format.cc
          }
        } else {
          // An unknown field in MessageSetItem.
-Only in protobuf-3.12.4/src/google/protobuf: wire_format.cc.orig
-Only in protobuf-3.12.4/src/google/protobuf: wire_format.cc.rej
 diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format_lite.h protobuf-3.12.4/src/google/protobuf/wire_format_lite.h
 --- protobuf-3.12.4.orig/src/google/protobuf/wire_format_lite.h	2020-07-09 18:09:34.000000000 -0700
-+++ protobuf-3.12.4/src/google/protobuf/wire_format_lite.h	2025-10-20 05:25:41.275679533 -0700
++++ protobuf-3.12.4/src/google/protobuf/wire_format_lite.h	2025-10-20 05:44:54.375972638 -0700
 @@ -1798,6 +1798,9 @@ bool ParseMessageSetItemImpl(io::CodedIn
    // we can parse it later.
    std::string message_data;
@@ -190,11 +187,9 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format_li
          }
  
          break;
-Only in protobuf-3.12.4/src/google/protobuf: wire_format_lite.h.orig
-Only in protobuf-3.12.4/src/google/protobuf: wire_format_lite.h.rej
 diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format_unittest.cc protobuf-3.12.4/src/google/protobuf/wire_format_unittest.cc
 --- protobuf-3.12.4.orig/src/google/protobuf/wire_format_unittest.cc	2020-07-09 18:09:34.000000000 -0700
-+++ protobuf-3.12.4/src/google/protobuf/wire_format_unittest.cc	2025-10-20 05:32:32.600810700 -0700
++++ protobuf-3.12.4/src/google/protobuf/wire_format_unittest.cc	2025-10-20 05:44:54.376374219 -0700
 @@ -581,28 +581,54 @@ TEST(WireFormatTest, ParseMessageSet) {
    EXPECT_EQ(message_set.DebugString(), dynamic_message_set.DebugString());
  }
@@ -333,4 +328,3 @@ diff '--color=auto' -urp protobuf-3.12.4.orig/src/google/protobuf/wire_format_un
  }
  
  void SerializeReverseOrder(
-Only in protobuf-3.12.4: t.patch
