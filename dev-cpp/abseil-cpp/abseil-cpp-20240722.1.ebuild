@@ -74,6 +74,9 @@ REQUIRED_USE="
 	cpu_flags_x86_pclmul? (
 		cpu_flags_x86_sse4_2
 	)
+	cpu_flags_x86_aes? (
+		cpu_flags_x86_pclmul
+	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
