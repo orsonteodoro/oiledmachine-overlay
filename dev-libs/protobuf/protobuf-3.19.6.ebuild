@@ -71,7 +71,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_22
+ebuild_revision_24
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -184,6 +184,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if tc-is-cross-compiler; then
 		myeconfargs+=(
 			--with-protoc="$(pwd)/src/protoc"
+			--bindir="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}/bin"
+			--includedir="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}/include"
+			--libdir="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}/$(get_libdir)"
 		)
 	fi
 	econf "${myeconfargs[@]}"
