@@ -72,7 +72,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_18
+ebuild_revision_19
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -277,15 +277,18 @@ eerror
 	einstalldocs
 
 	local L=(
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-${INTERNAL_VERSION}.0"
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb-${INTERNAL_VERSION}.0"
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upbdefs-${INTERNAL_VERSION}.0"
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb_minitable-${INTERNAL_VERSION}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-${PV}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb-${PV}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upbdefs-${PV}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb_minitable-${PV}.0"
 	)
 	local x
 	for x in ${L[@]} ; do
+		local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
+		[[ -e "${d}" ]] || die
+einfo "Adding ${d} to RPATH for ${ED}/${x}"
 		patchelf \
-			--add-rpath "/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl" \
+			--add-rpath "${d}" \
 			"${ED}/${x}" \
 			|| die
 	done

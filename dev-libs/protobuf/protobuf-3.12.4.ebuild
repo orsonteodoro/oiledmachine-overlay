@@ -71,7 +71,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_18
+ebuild_revision_19
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -249,17 +249,6 @@ eerror
 		docompress -x "/usr/share/doc/${PF}/examples"
 	fi
 	einstalldocs
-
-	local L=(
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-${INTERNAL_VERSION}.0"
-	)
-	local x
-	for x in ${L[@]} ; do
-		patchelf \
-			--add-rpath "/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl" \
-			"${ED}/${x}" \
-			|| die
-	done
 }
 
 pkg_postinst() {
