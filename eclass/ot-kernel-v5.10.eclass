@@ -366,7 +366,7 @@ REQUIRED_USE+="
 	)
 "
 
-inherit ot-kernel libstdcxx-slot
+inherit ot-kernel libcxx-slot libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
@@ -410,8 +410,11 @@ gen_clang_lld() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/lld:${s}
+			llvm-core/lld:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -425,7 +428,9 @@ gen_clang_llvm_pair() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done

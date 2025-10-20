@@ -460,7 +460,7 @@ fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-inherit ot-kernel libstdcxx-slot
+inherit ot-kernel libcxx-slot libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
@@ -507,7 +507,9 @@ gen_kcfi_rdepend() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -521,11 +523,17 @@ gen_shadowcallstack_rdepend() {
 		echo "
 		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*[compiler-rt,sanitize]
-			=llvm-runtimes/compiler-rt-${s}*:=
-			=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
+			llvm-runtimes/clang-runtime:=
+			=llvm-runtimes/compiler-rt-${s}*
+			llvm-runtimes/compiler-rt:=
+			=llvm-runtimes/compiler-rt-sanitizers-${s}*[shadowcallstack?]
+			llvm-runtimes/compiler-rt-sanitizers:=
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/lld:${s}
+			llvm-core/lld:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -539,9 +547,13 @@ gen_lto_rdepend() {
 		echo "
 		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*
+			llvm-runtimes/clang-runtime:=
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/lld:${s}
+			llvm-core/lld:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -555,8 +567,11 @@ gen_clang_pgo_rdepend() {
 		echo "
 		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*
+			llvm-runtimes/clang-runtime:=
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -570,7 +585,9 @@ gen_clang_llvm_pair() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -584,8 +601,11 @@ gen_clang_lld() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/lld:${s}
+			llvm-core/lld:=
 			llvm-core/llvm:${s}
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -600,7 +620,9 @@ gen_clang_debug_zstd_pair() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
+			llvm-core/clang:=
 			llvm-core/llvm:${s}[zstd]
+			llvm-core/llvm:=
 		)
 		     "
 	done
@@ -638,10 +660,14 @@ gen_rust_cdepend() {
 		echo "
 			llvm_slot_${llvm_slot}?	(
 				llvm-core/clang:${llvm_slot}
+				llvm-core/clang:=
 				llvm-core/llvm:${llvm_slot}
+				llvm-core/llvm:=
 				|| (
 					=dev-lang/rust-${s}
+					dev-lang/rust:=
 					=dev-lang/rust-bin-${s}
+					dev-lang/rust-bin:=
 				)
 			)
 		"

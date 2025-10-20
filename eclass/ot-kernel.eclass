@@ -45,7 +45,6 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.16
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.17
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
@@ -88,7 +87,6 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.16/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
@@ -105,7 +103,6 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.16...zen-kernel:6.16/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.17...zen-kernel:6.17/zen-sauce
 
 # CI
@@ -421,8 +418,8 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Oct 10, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1760266918 # From `date +%s -d "2025-10-12 13:01:58 +0200"` from changelog for latest tag
+MITIGATION_DATE="Oct 19, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1760884665 # From `date +%s -d "2025-10-19 16:37:45 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -432,6 +429,66 @@ VULNERABILITIES_FIXED=(
 # You can do a keyword scan of the changelog for potential vulnerabilities.
 # If the ebuild maintainer(s) gathered them from the changelog, then the
 # vulnerability coverage may be incomplete or miscategoried.
+
+	# 2025-10-20
+	"CVE-2025-40017;ML, DoS;"
+	"CVE-2025-40016;;"
+	"CVE-2025-40013;NPD, DoS;"
+	"CVE-2025-40015;NPD, DoS;"
+	"CVE-2025-40010;NPD, DoS;"
+	"CVE-2025-40012;;"
+	"CVE-2025-40011;NPD, DoS;"
+	"CVE-2025-40009;DoS;"
+	"CVE-2025-40008;OOBA;"
+	"CVE-2025-40007;;"
+	"CVE-2025-40005;;"
+	"CVE-2025-40006;;"
+	"CVE-2025-40004;BO;"
+
+	# 2025-10-18
+	"CVE-2025-40003;UAF;"
+	"CVE-2025-40001;UAF;"
+	"CVE-2025-40002;UAF;"
+
+	# 2025-10-15
+	"CVE-2025-40000;UAF;"
+	"CVE-2025-39999;DF;"
+	"CVE-2025-39998;BO;"
+	"CVE-2025-39997;RC, UAF;"
+	"CVE-2025-39996;UAF;"
+	"CVE-2025-39995;UAF;"
+	"CVE-2025-39994;UAF;"
+	"CVE-2025-39993;RC, UAF;"
+	"CVE-2025-39991;NPD, DoS;"
+	"CVE-2025-39992;;"
+	"CVE-2025-39975;;"
+	"CVE-2025-39974;OOB;"
+	"CVE-2025-39973;;"
+	"CVE-2025-39972;;"
+	"CVE-2025-39971;;"
+	"CVE-2025-39970;;"
+	"CVE-2025-39969;;"
+	"CVE-2025-39990;;"
+	"CVE-2025-39988;BO;"
+	"CVE-2025-39987;BO;"
+	"CVE-2025-39986;BO;"
+	"CVE-2025-39968;;"
+	"CVE-2025-39985;BO;"
+	"CVE-2025-39984;;"
+	"CVE-2025-39983;UAF;"
+	"CVE-2025-39982;UAF;"
+	"CVE-2025-39981;UAF;"
+	"CVE-2025-39980;;"
+	"CVE-2025-39979;UAF;"
+	"CVE-2025-39978;UAF;"
+	"CVE-2025-39977;UAF;"
+	"CVE-2025-39976;;"
+	"CVE-2025-39966;;"
+	"CVE-2025-39967;IO;"
+
+	# 2025-10-13
+	"CVE-2025-39964;;"
+	"CVE-2025-39965;;"
 
 	# 2025-10-10
 	"0390633;DF;" # 6.16
@@ -504,7 +561,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2023-53671;;"
 	"CVE-2023-53670;ML, DoS;"
 	"CVE-2023-53669;;"
-	"CVE-2023-53668;;"
+	"CVE-2023-53668;DoS;"
 	"CVE-2023-53667;;"
 	"CVE-2023-53666;;"
 	"CVE-2023-53657;;"
