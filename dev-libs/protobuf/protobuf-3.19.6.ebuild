@@ -198,18 +198,18 @@ multilib_src_compile() {
 
 src_test() {
 	src_test_abi() {
-		CMAKE_USE_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		emake check
+		pushd "${WORKDIR}/${P}-${MULTILIB_ABI_FLAG}.${ABI}" >/dev/null 2>&1 || die
+			emake check
+		popd >/dev/null 2>&1 || die
 	}
 	multilib_foreach_abi src_test_abi
 }
 
 src_install() {
 	src_install_abi() {
-		CMAKE_USE_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		emake DESTDIR="${D}" install
+		pushd "${WORKDIR}/${P}-${MULTILIB_ABI_FLAG}.${ABI}" >/dev/null 2>&1 || die
+			emake DESTDIR="${D}" install
+		popd >/dev/null 2>&1 || die
 	}
 	multilib_foreach_abi src_install_abi
 	_install_all
