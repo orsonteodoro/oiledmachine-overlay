@@ -180,6 +180,7 @@ setup_aes_flags() {
 			)
 			str+=',"mno-avx"'
 		fi
+		str="${str:1}"
 
 		append-flags "${L[@]}"
 		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/random/internal/BUILD.bazel" || die
