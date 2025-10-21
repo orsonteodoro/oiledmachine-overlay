@@ -104,6 +104,7 @@ rocm
 video_cards_amdgpu
 video_cards_intel
 video_cards_nvidia
+ebuild_revision_1
 "
 REQUIRED_USE="
 	$(rocm_gen_rocm_required_use1)
@@ -180,6 +181,8 @@ pkg_setup() {
 		fi
 		rocm_pkg_setup
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
