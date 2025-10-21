@@ -15,7 +15,7 @@ GCC_COMPAT=(
 
 DESCRIPTION="A virtual package to manage protoc-gen-go-grpc stability"
 LICENSE="metapackage"
-SLOT="0/${PV}"
+SLOT="3"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
@@ -26,6 +26,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	!virtual/protoc-gen-go-grpc:0
 	gcc_slot_11_5? (
 		=dev-go/protoc-gen-go-grpc-0_p6*
 	)
