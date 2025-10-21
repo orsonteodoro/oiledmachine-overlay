@@ -70,7 +70,7 @@ rocm_gen_rocm_required_use2() {
 gen_depend_rocm() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
-		local s2=$(ver_cut 1-2 ${s})
+		local s2="0/"$(ver_cut 1-2 ${s})
 		echo "
 			(
 				~dev-util/hip-${s}:${s2}[${LIBSTDCXX_USEDEP},hsa,lc,rocm]
