@@ -19,7 +19,8 @@ GCC_COMPAT=(
 
 DESCRIPTION="A virtual package to manage gRPC stability"
 LICENSE="metapackage"
-SLOT="0/${PV}"
+VERSIONS_MONITORED="1.30-1.48-1.51"
+SLOT="0/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}

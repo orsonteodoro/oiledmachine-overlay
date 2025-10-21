@@ -15,7 +15,8 @@ GCC_COMPAT=(
 
 DESCRIPTION="A virtual package to manage protoc-gen-go-grpc stability"
 LICENSE="metapackage"
-SLOT="3"
+VERSIONS_MONITORED="0_p6-1.3.0"
+SLOT="3/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}

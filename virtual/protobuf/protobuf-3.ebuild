@@ -21,7 +21,8 @@ inherit libstdcxx-slot
 
 DESCRIPTION="A virtual package to manage Protobuf C++ stability"
 LICENSE="metapackage"
-SLOT="3"
+VERSIONS_MONITORED="3.12-3.19-3.21"
+SLOT="3/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}

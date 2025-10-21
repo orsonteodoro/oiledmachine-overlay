@@ -21,7 +21,8 @@ inherit libstdcxx-slot
 
 DESCRIPTION="A virtual package to manage Protobuf C++ stability"
 LICENSE="metapackage"
-SLOT="5"
+VERSIONS_MONITORED="5.29"
+SLOT="5/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
@@ -34,7 +35,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	!virtual/protobuf:0
-	dev-libs/protobuf:5[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/protobuf:5/${VERSIONS_MONITORED}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 "
 DEPEND+="

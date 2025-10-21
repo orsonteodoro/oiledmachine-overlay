@@ -37,7 +37,8 @@ inherit libstdcxx-slot python-single-r1
 
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
-SLOT="3"
+VERSIONS_MONITORED="3.12-3.19-4.21"
+SLOT="3/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
