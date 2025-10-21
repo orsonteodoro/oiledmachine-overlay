@@ -103,7 +103,8 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocr-runtime:=
 		opencl? (
-			dev-libs/rocm-opencl-runtime:${SLOT}
+			dev-libs/rocm-opencl-runtime:${SLOT}[${LIBSTDCXX_USEDEP}]
+			dev-libs/rocm-opencl-runtime:=
 		)
 		openmp? (
 			sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
