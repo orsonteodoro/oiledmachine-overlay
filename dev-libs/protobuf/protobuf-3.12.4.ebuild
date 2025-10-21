@@ -246,7 +246,8 @@ pkg_postrm() {
 	use emacs && elisp-site-regen
 }
 
-# OILEDMACHINE-OVERLAY-TESTS:  ? (20230414) PASSED test suite with some disabled tests on x86 and amd64
+# OILEDMACHINE-OVERLAY-TESTS:  21.12 (20231021) PASSED test suite with some disabled tests on x86 and amd64
+# OILEDMACHINE-OVERLAY-TESTS:  29.5 (20251021) PASSED test suite with some disabled tests on x86 and amd64
 # OILEDMACHINE-OVERLAY-TESTS:  33.0 (20251019) PASSED test suite with some disabled tests on x86 and amd64
 # USE="static-libs test -emacs -examples -zlib" ABI_X86="32 (64) (-x32)"
 
