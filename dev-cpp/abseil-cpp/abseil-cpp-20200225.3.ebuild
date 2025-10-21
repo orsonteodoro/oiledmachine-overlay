@@ -87,6 +87,7 @@ REQUIRED_USE="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	dev-util/patchelf
 	test? (
 		=dev-cpp/gtest-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-libs/timezone-data
@@ -277,3 +278,19 @@ src_configure() {
 	cmake-multilib_src_configure
 }
 
+src_install() {
+	cmake-multilib_src_install
+	IFS=$'\n'
+	local L=(
+		$(find "${ED}" -name "*.so*")
+	)
+	local x
+	for x in ${L[@]} ; do
+		[[ -L "${x}" ]] || continue
+		patchelf \
+			--add-rpath '$ORIGIN' \
+			"${x}" \
+			|| die
+	done
+	IFS=$' \t\n'
+}

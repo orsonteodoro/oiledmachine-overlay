@@ -64,7 +64,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_20
+ebuild_revision_21
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
@@ -98,6 +98,7 @@ REQUIRED_USE="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	dev-util/patchelf
 	test? (
 		=dev-cpp/gtest-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-libs/timezone-data
@@ -301,4 +302,21 @@ src_configure() {
 		$(usex test -DBUILD_TESTING=ON '')
 	)
 	cmake-multilib_src_configure
+}
+
+src_install() {
+	cmake-multilib_src_install
+	IFS=$'\n'
+	local L=(
+		$(find "${ED}" -name "*.so*")
+	)
+	local x
+	for x in ${L[@]} ; do
+		[[ -L "${x}" ]] || continue
+		patchelf \
+			--add-rpath '$ORIGIN' \
+			"${x}" \
+			|| die
+	done
+	IFS=$' \t\n'
 }
