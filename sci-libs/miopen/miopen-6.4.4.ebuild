@@ -23,7 +23,6 @@ AMDGPU_TARGETS_COMPAT=(
 AMDGPU_UNTESTED_TARGETS=(
 	gfx803
 )
-FIN_COMMIT="344cf42f6c18f309f3d1dd08af1cd7b73dd38e46"
 MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx900
 	gfx906
@@ -32,9 +31,17 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx942
 	gfx1030
 )
+GCC_COMPAT=(
+# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+
+CXX_STANDARD=17
+FIN_COMMIT="344cf42f6c18f309f3d1dd08af1cd7b73dd38e46"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 LLVM_SLOT=19
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/MIOpen-rocm-${PV}"
@@ -101,20 +108,17 @@ REQUIRED_USE="
 RDEPEND="
 	>=app-arch/zstd-1.4.5
 	>=dev-db/sqlite-3.49.1
-	>=dev-libs/boost-1.83
+	>=dev-libs/boost-1.83[${LIBSTDCXX_USEDEP}]
+	dev-libs/boost:=
 	app-alternatives/bzip2
 	>=dev-util/hip-${PV}:${SLOT}
 	dev-util/hip:=
-	ai-kernel-tuning? (
-		>=dev-cpp/frugally-deep-0.15.21_p0
-		>=dev-cpp/eigen-3.4.0
-	)
 	comgr? (
-		>=dev-libs/rocm-comgr-${PV}:${SLOT}
+		>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-comgr:=
 	)
 	composable-kernel? (
-		sci-libs/composable-kernel:${SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
 	)
 	kernels? (
@@ -126,18 +130,28 @@ RDEPEND="
 		dev-libs/rocm-opencl-runtime:=
 	)
 	rocm? (
-		>=dev-util/hip-${PV}:${SLOT}[rocm]
+		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 		dev-util/hip:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
 		sci-libs/rocBLAS:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/half-1.12.0:=
-	>=dev-cpp/eigen-3.4.0:3=
-	>=dev-cpp/frugally-deep-0.15.20:=
-	>=dev-cpp/nlohmann_json-3.11.2:=
+	ai-kernel-tuning? (
+		>=dev-cpp/frugally-deep-0.15.21_p0
+		dev-cpp/frugally-deep:=
+		>=dev-cpp/eigen-3.4.0:3
+		dev-cpp/eigen:=
+	)
+	>=dev-libs/half-1.12.0
+	dev-libs/half:=
+	>=dev-cpp/eigen-3.4.0:3
+	dev-cpp/eigen:=
+	>=dev-cpp/frugally-deep-0.15.20
+	dev-cpp/frugally-deep:=
+	>=dev-cpp/nlohmann_json-3.11.2
+	dev-cpp/nlohmann_json:=
 "
 #	sys-devel/binutils[gold,plugins]
 BDEPEND="
@@ -174,6 +188,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
 	warn_untested_gpu
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

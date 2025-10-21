@@ -72,12 +72,19 @@ HIPBLASLT_GPUS=(
 	gfx1200
 	gfx1201
 )
+GCC_COMPAT=(
+# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake docs edo flag-o-matic multiprocessing python-single-r1 rocm
+inherit cmake docs edo flag-o-matic multiprocessing libstdcxx-slot python-single-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -133,7 +140,7 @@ gen_hipblaslt_rdepend() {
 		if has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} ; then
 			echo "
 				amdgpu_targets_${x}? (
-					>=sci-libs/hipBLASLt-${PV}:${SLOT}[amdgpu_targets_${x}]
+					>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_${x}]
 					sci-libs/hipBLASLt:=
 				)
 			"
@@ -146,7 +153,7 @@ RDEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/msgpack-3.0.1
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	benchmark? (
 		sys-libs/llvm-roc-libomp:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
@@ -203,6 +210,7 @@ PATCHES=(
 pkg_setup() {
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 
 	QA_FLAGS_IGNORED="${EROCM_PATH}/$(rocm_get_libdir)/rocblas/library/.*"
 }

@@ -20,13 +20,20 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+GCC_COMPAT=(
+# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+
+CXX_STANDARD=17
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic python-r1 rocm
+inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/hipBLASLt/"
@@ -81,10 +88,13 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${HIPCC_DEPEND}
-	dev-libs/boost
+	dev-libs/boost[${LIBSTDCXX_USEDEP}]
+	dev-libs/boost:=
 	dev-libs/msgpack
+	dev-python/msgpack[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 	virtual/blas
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942?,amdgpu_targets_gfx950?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?,amdgpu_targets_gfx1103?,amdgpu_targets_gfx1150?,amdgpu_targets_gfx1151?,amdgpu_targets_gfx1200?,amdgpu_targets_gfx1201?]
 	sys-libs/llvm-roc-libomp:=
@@ -114,20 +124,18 @@ RDEPEND="
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[cuda]
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
 		sci-libs/hipBLAS:=
 	)
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}
 		dev-util/rocm-smi:=
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 		sci-libs/hipBLAS:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	dev-python/msgpack[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	${HIPCC_DEPEND}
@@ -145,6 +153,7 @@ PATCHES=(
 pkg_setup() {
 	python_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
