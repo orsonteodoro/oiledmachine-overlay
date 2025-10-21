@@ -1027,11 +1027,11 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_6_4? (
-			>=dev-libs/rocm-opencl-runtime-${HIP_6_4_VERSION}:0/6.4
+			>=dev-libs/rocm-opencl-runtime-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocm-opencl-runtime:=
 			>=dev-util/hip-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP},rocm]
 			dev-util/hip:=
-			>=sys-libs/llvm-roc-libomp-${HIP_6_4_VERSION}:0/6.4
+			>=sys-libs/llvm-roc-libomp-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP}]
 			sys-libs/llvm-roc-libomp:=
 		)
 	)
