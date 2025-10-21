@@ -229,18 +229,7 @@ REQUIRED_USE="
 "
 RDEPEND_PROTOBUF="
 	system-protobuf? (
-		gcc_slot_12_5? (
-			=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP}]
-		)
-		gcc_slot_13_4? (
-			=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP}]
-		)
-		gcc_slot_14_3? (
-			=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			=dev-libs/protobuf-3.19*[${LIBSTDCXX_USEDEP}]
-		)
+		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:=
 	)
 "
@@ -274,8 +263,10 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
-		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
-		virtual/protobuf-python:=
+		(
+			virtual/protobuf-python:3['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+			virtual/protobuf-python:=
+		)
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
 	')
 	(
@@ -887,6 +878,7 @@ src_configure() {
 		-DENABLE_PYTHON=$(usex python)
 		-DENABLE_SAMPLES=$(usex samples)
 		-DENABLE_WHEEL=OFF
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/3/$(get_libdir)/cmake/protobuf"
 	)
 
 einfo "Configuring runtime"
