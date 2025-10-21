@@ -64,7 +64,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_21
+ebuild_revision_22
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
@@ -312,7 +312,8 @@ src_install() {
 	)
 	local x
 	for x in ${L[@]} ; do
-		[[ -L "${x}" ]] || continue
+		[[ -L "${x}" ]] && continue
+einfo "Adding \$ORIGIN to RPATH for ${x}"
 		patchelf \
 			--add-rpath '$ORIGIN' \
 			"${x}" \
