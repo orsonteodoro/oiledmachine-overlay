@@ -71,7 +71,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_25
+ebuild_revision_26
 "
 RDEPEND="
 	!dev-libs/protobuf:0
