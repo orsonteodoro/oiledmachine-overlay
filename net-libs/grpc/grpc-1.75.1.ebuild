@@ -76,7 +76,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE+="
 	python? (
@@ -279,12 +279,63 @@ src_install() {
 	multilib_src_install_all
 }
 
+fix_rpath() {
+	IFS=$'\n'
+	local d
+	local L
+	local x
+	L=(
+		$(find "${ED}" -name "*.so*")
+	)
+	for x in ${L[@]} ; do
+		[[ -L "${x}" ]] && continue
+einfo "Adding \$ORIGIN to RPATH for ${x}"
+		patchelf \
+			--add-rpath '$ORIGIN' \
+			"${x}" \
+			|| die
+	done
+
+	L=(
+		$(find "${ED}/usr/bin/grpc/${PROTOBUF_SLOT}/bin")
+	)
+	local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
+	for x in ${L[@]} ; do
+einfo "Adding ${d} to RPATH for ${x}"
+		patchelf \
+			--add-rpath "${d}" \
+			"${x}" \
+			|| die
+	done
+
+	fix_libs_abi() {
+		L=(
+			$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" -name "*.so*")
+		)
+		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
+		for x in ${L[@]} ; do
+			[[ -L "${x}" ]] && continue
+einfo "Adding ${d} to RPATH for ${x}"
+			patchelf \
+				--add-rpath "${d}" \
+				"${x}" \
+				|| die
+		done
+
+	}
+
+	multilib_foreach_abi fix_libs_abi
+
+	IFS=$' \t\n'
+}
+
 multilib_src_install_all() {
 	cd "${S}" || die
 	docinto "licenses"
 	dodoc \
 		"LICENSE" \
 		"NOTICE.txt"
+	fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi
