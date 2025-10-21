@@ -93,6 +93,7 @@ ROCM_SLOTS=(
 	"${HIP_6_1_VERSION}"
 )
 
+ABSEIL_CPP_PV="20240722.0" # The abseil-cpp version is the same used by gRPC.
 BARK_CPP_PV="1.0.0" # From https://github.com/mudler/LocalAI/blob/v2.29.0/Makefile#L21
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
@@ -107,6 +108,7 @@ KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306" # For llama.cpp, from 
 LLAMA_CPP_COMMIT="9a390c4829cd3058d26a2e2c09d16e3fd12bf1b1" # From https://github.com/mudler/LocalAI/blob/v2.29.0/Makefile#L9
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+PROTOBUF_SLOT="5"
 STABLE_DIFFUSION_CPP_COMMIT="53e3b17eb3d0b5760ced06a1f98320b68b34aaae" # From https://github.com/mudler/LocalAI/blob/v2.29.0/Makefile#L25
 WHISPER_CPP_COMMIT="2e310b841e0b4e7cf00890b53411dd9f8578f243" # From https://github.com/mudler/LocalAI/blob/v2.29.0/Makefile#L13
 
@@ -282,19 +284,6 @@ REQUIRED_USE="
 		systemd
 	)
 "
-gen_grpc_rdepend() {
-	local row
-	for row in ${GRPC_PROTOBUF_PAIRS[@]} ; do
-		local grpc_pv="${row%:*}"
-		local protobuf_pv="${row#*:}"
-		echo "
-			(
-				=net-libs/grpc-${grpc_pv}*
-				=dev-libs/protobuf-${protobuf_pv}*
-			)
-		"
-	done
-}
 #	>=media-video/ffmpeg-6.1.1:0/58.60.60 is relaxed
 gen_rocm_rdepend() {
 	local s
@@ -341,14 +330,10 @@ RDEPEND+="
 		>=media-libs/vulkan-loader-1.3.275.0
 		>=sys-apps/pciutils-3.10.0
 	)
+	virtual/protobuf:${PROTOBUF_SLOT}
 	dev-libs/protobuf:=
+	virtual/grpc:${PROTOBUF_SLOT}
 	net-libs/grpc:=
-"
-# Relaxed grpc for compatibility testing
-DISABLED_RDEPEND="
-	|| (
-		$(gen_grpc_rdepend)
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -374,15 +359,24 @@ DISABLED_DEPEND="
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
 # go, cmake versions:  https://github.com/mudler/LocalAI/blob/v2.29.0/Dockerfile#L12
 # protoc-gen-go, protoc-gen-go-grpc, rice versions:  https://github.com/mudler/LocalAI/blob/v2.29.0/Dockerfile#L50
+# TODO:  Review dev-go/protobuf-go multislot
 BDEPEND+="
 	${PYTHON_DEPS}
+	(
+		>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}
+		dev-cpp/abseil-cpp:=
+	)
 	(
 		>=dev-go/protobuf-go-1.34.2
 		dev-go/protobuf-go:=
 	)
 	(
-		>=dev-go/protoc-gen-go-grpc-1.65.0
+		virtual/protoc-gen-go-grpc:${PROTOBUF_SLOT}
 		dev-go/protoc-gen-go-grpc:=
+	)
+	(
+		virtual/protobuf:${PROTOBUF_SLOT}
+		dev-libs/protobuf:=
 	)
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
@@ -539,6 +533,9 @@ src_compile() {
 		-DGGML_RVV=$(usex cpu_flags_riscv_rvv "ON" "OFF")
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
 		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")
+		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/lib64/cmake/absl"
+		-DgRPC_DIR="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/FIXME"
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 	)
 
 	if \

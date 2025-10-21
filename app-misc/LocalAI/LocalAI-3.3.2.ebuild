@@ -92,6 +92,7 @@ ROCM_SLOTS=(
 	"${HIP_6_1_VERSION}"
 )
 
+ABSEIL_CPP_PV="20240722.0" # The abseil-cpp version is the same used by gRPC.
 BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/bark-cpp/Makefile#L15
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
@@ -105,6 +106,7 @@ GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github
 LLAMA_CPP_COMMIT="d31192b4ee1441bbbecd3cbf9e02633368bdc4f5" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/cpp/llama-cpp/Makefile#L2
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+PROTOBUF_SLOT="5"
 STABLE_DIFFUSION_CPP_COMMIT="5900ef6605c6fbf7934239f795c13c97bc993853" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/stablediffusion-ggml/Makefile#L22
 WHISPER_CPP_COMMIT="0becabc8d68d9ffa6ddfba5240e38cd7a2642046" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/whisper/Makefile#L9
 
@@ -278,19 +280,6 @@ REQUIRED_USE="
 		systemd
 	)
 "
-gen_grpc_rdepend() {
-	local row
-	for row in ${GRPC_PROTOBUF_PAIRS[@]} ; do
-		local grpc_pv="${row%:*}"
-		local protobuf_pv="${row#*:}"
-		echo "
-			(
-				=net-libs/grpc-${grpc_pv}*
-				=dev-libs/protobuf-${protobuf_pv}*
-			)
-		"
-	done
-}
 #	>=media-video/ffmpeg-6.1.1:0/58.60.60 is relaxed
 gen_rocm_rdepend() {
 	local s
@@ -336,14 +325,10 @@ RDEPEND+="
 		>=media-libs/vulkan-loader-1.3.275.0
 		>=sys-apps/pciutils-3.10.0
 	)
+	virtual/protobuf:${PROTOBUF_SLOT}
 	dev-libs/protobuf:=
+	virtual/grpc:${PROTOBUF_SLOT}
 	net-libs/grpc:=
-"
-# Relaxed grpc for compatibility testing
-DISABLED_RDEPEND="
-	|| (
-		$(gen_grpc_rdepend)
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -369,15 +354,24 @@ DISABLED_DEPEND="
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
 # go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L118
 # protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L154
+# TODO:  Review dev-go/protobuf-go multislot
 BDEPEND+="
 	${PYTHON_DEPS}
+	(
+		>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}
+		dev-cpp/abseil-cpp:=
+	)
 	(
 		>=dev-go/protobuf-go-1.34.2
 		dev-go/protobuf-go:=
 	)
 	(
-		>=dev-go/protoc-gen-go-grpc-1.65.0
+		virtual/protoc-gen-go-grpc:${PROTOBUF_SLOT}
 		dev-go/protoc-gen-go-grpc:=
+	)
+	(
+		virtual/protobuf:${PROTOBUF_SLOT}
+		dev-libs/protobuf:=
 	)
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
@@ -533,6 +527,9 @@ src_compile() {
 		-DGGML_RVV=$(usex cpu_flags_riscv_rvv "ON" "OFF")
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
 		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")
+		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/lib64/cmake/absl"
+		-DgRPC_DIR="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/FIXME"
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 	)
 
 	if \
