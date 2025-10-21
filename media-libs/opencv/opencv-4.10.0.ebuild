@@ -292,7 +292,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_40
+	ebuild_revision_41
 "
 # hal for acceleration
 IUSE+="
@@ -690,7 +690,7 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	virtual/protobuf:=
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
@@ -1251,6 +1251,7 @@ multilib_src_configure() {
 		-DOPENCV_TEST_INSTALL_PATH="libexec/${PN}/bin/test"
 		-DOPENCV_WARNINGS_ARE_ERRORS=OFF
 		-DOpenGL_GL_PREFERENCE="GLVND"
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/3/$(get_libdir)/cmake/protobuf"
 		-DProtobuf_MODULE_COMPATIBLE=ON
 		-DPROTOBUF_UPDATE_FILES=ON
 		-DVIDEOIO_PLUGIN_LIST="all"
