@@ -213,13 +213,6 @@ src_prepare() {
 	export LIBRARY_FOLDER="/usr/$(get_libdir)"
 	export PREFIX="${EPREFIX}/usr"
 
-	if \
-		   use rocm_6_4 \
-		|| use rocm_7_0 \
-	; then
-		eapply "${FILESDIR}/hashcat-hip.patch"
-	fi
-
 	default
 
 	sed -i -e "s|python3|${EPYTHON}|g" \
