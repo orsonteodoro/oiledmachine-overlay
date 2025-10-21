@@ -37,7 +37,7 @@ inherit libstdcxx-slot python-single-r1
 
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
-SLOT="0/${PV}"
+SLOT="3"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
@@ -49,21 +49,22 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	!virtual/protobuf-python:0
 	$(python_gen_cond_dep '
 		gcc_slot_11_5? (
-			dev-python/protobuf:0/3.12[${PYTHON_USEDEP}]
+			dev-python/protobuf:3/3.12[${PYTHON_USEDEP}]
 		)
 		gcc_slot_12_5? (
-			dev-python/protobuf:0/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:3/4.21[${PYTHON_USEDEP}]
 		)
 		gcc_slot_13_4? (
-			dev-python/protobuf:0/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:3/4.21[${PYTHON_USEDEP}]
 		)
 		gcc_slot_14_3? (
-			dev-python/protobuf:0/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:3/4.21[${PYTHON_USEDEP}]
 		)
 		gcc_slot_15_2? (
-			dev-python/protobuf:0/3.19[${PYTHON_USEDEP}]
+			dev-python/protobuf:3/3.19[${PYTHON_USEDEP}]
 		)
 	')
 	dev-python/protobuf:=
