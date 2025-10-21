@@ -16,16 +16,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
-CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
-CXX_STANDARD=17
-LLVM_SLOT=19
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
+
+CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
+CXX_STANDARD=14
+LLVM_SLOT=19
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-reqs cmake edo flag-o-matic libstdcxx-slot linux-info rocm
 
@@ -66,14 +65,14 @@ RDEPEND="
 	dev-libs/rocr-runtime:=
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
-	>=dev-util/rocm-smi-${PV}:${SLOT}
+	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/rocm-smi:=
 	peermem? (
 		dev-util/DOCA-Host[mlnx-ofed-kernel]
 		|| (
+			>=virtual/kfd-7.0:0/7.0[rock-dkms]
 			>=virtual/kfd-6.4:0/6.4[rock-dkms]
 			>=virtual/kfd-6.3:0/6.3[rock-dkms]
-			>=virtual/kfd-6.2:0/6.2[rock-dkms]
 		)
 		virtual/kfd:=
 	)

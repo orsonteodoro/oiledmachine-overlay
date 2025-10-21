@@ -31,10 +31,16 @@ AMDGPU_TARGETS_UNTESTED=(
 #	gfx1101
 	gfx1102
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocDecode-rocm-${PV}"
@@ -71,10 +77,11 @@ samples ebuild_revision_3
 REQUIRED_USE="
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
 	>=media-libs/libva-2.7.0
-	>=media-libs/mesa-24.1.0[vaapi,video_cards_radeonsi]
+	>=media-libs/mesa-24.1.0[${LIBSTDCXX_USEDEP},vaapi,video_cards_radeonsi]
+	media-libs/mesa:=
 	samples? (
 		|| (
 			>=media-video/ffmpeg-4.2.7:56.58.58
@@ -110,6 +117,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
 	warn_untested_gpu
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

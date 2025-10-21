@@ -3,11 +3,12 @@
 
 EAPI=8
 
-CXX_STANDARD=17
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
+
+CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 

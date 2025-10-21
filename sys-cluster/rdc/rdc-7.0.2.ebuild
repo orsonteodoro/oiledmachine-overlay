@@ -3,11 +3,13 @@
 
 EAPI=8
 
-CMAKE_MAKEFILE_GENERATOR="emake"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
+
+CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -91,6 +93,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

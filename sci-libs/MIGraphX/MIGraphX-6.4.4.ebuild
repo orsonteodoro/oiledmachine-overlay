@@ -16,10 +16,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+inherit libstdcxx-compat
 GCC_COMPAT=(
-# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
 CXX_STANDARD=17
@@ -80,10 +79,14 @@ RDEPEND="
 	)
 	cpu? (
 		sci-ml/oneDNN
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
+	)
+	mlir? (
+		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP}]
+		sci-libs/rocMLIR:=
 	)
 	rocm? (
 		>=sci-libs/miopen-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${MIOPEN_6_4_AMDGPU_USEDEP}]
@@ -111,10 +114,6 @@ BDEPEND="
 	>=dev-build/cmake-3.15
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
-	mlir? (
-		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}
-		sci-libs/rocMLIR:=
-	)
 "
 PATCHES=(
 )

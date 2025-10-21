@@ -3,9 +3,14 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 CMAKE_BUILD_TYPE="Release"
 
-inherit cmake linux-info
+inherit cmake libstdcxx-slot
 
 if [[ ${PV} == *"9999" ]] ; then
 	FALLBACK_COMMIT="e112c935057434897bb12d9ab3910380a8bd5f58" # Mar 19, 2024
@@ -31,7 +36,8 @@ LICENSE="
 RESTRICT="mirror" # Speed up downloads
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
-	dev-cpp/tbb
+	dev-cpp/tbb[${LIBSTDCXX_USEDEP}]
+	dev-cpp/tbb:=
 "
 DEPEND="
 	${RDEPEND}
@@ -41,6 +47,10 @@ BDEPEND="
 "
 PATCHES=(
 )
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]] ; then

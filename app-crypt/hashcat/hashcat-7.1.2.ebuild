@@ -3,18 +3,26 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} )
+# U24
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+CXX_STANDARD=17 # Compiler default
+PYTHON_COMPAT=( "python3_12" )
 
 inherit hip-versions
 
 ROCM_SLOTS=(
-	"${HIP_5_1_VERSION}"
-	"${HIP_5_2_VERSION}"
-	"${HIP_5_3_VERSION}"
-	"${HIP_5_4_VERSION}"
-	"${HIP_5_5_VERSION}"
-	"${HIP_5_6_VERSION}"
-	"${HIP_5_7_VERSION}"
+	"${HIP_6_4_VERSION}"
+	"${HIP_7_0_VERSION}"
 )
 rocm_gen_iuse() {
 	local s
@@ -26,7 +34,7 @@ rocm_gen_iuse() {
 	done
 }
 
-inherit pax-utils python-single-r1 rocm toolchain-funcs
+inherit pax-utils python-single-r1 libcxx-slot libstdcxx-slot rocm toolchain-funcs
 
 rocm_gen_rocm_required_use1() {
 	local s
@@ -62,8 +70,12 @@ rocm_gen_rocm_required_use2() {
 gen_depend_rocm() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
+		local s2=$(ver_cut 1-2 ${s})
 		echo "
-			~dev-util/hip-${s}:$(ver_cut 1-2 ${s})[hsa,lc,rocm]
+			(
+				~dev-util/hip-${s}:${s2}[${LIBSTDCXX_USEDEP},hsa,lc,rocm]
+				~dev-libs/rocm-opencl-runtime-${s}:${s2}[${LIBSTDCXX_USEDEP}]
+			)
 		"
 	done
 }
@@ -84,6 +96,7 @@ RESTRICT="test"
 SLOT="0"
 IUSE="
 $(rocm_gen_iuse)
+doc
 brain
 intel-opencl-cpu-runtime
 pocl
@@ -129,15 +142,21 @@ DEPEND="
 		)
 		rocm? (
 			$(gen_depend_rocm)
-			dev-libs/rocm-opencl-runtime
+			dev-libs/rocm-opencl-runtime[${LIBSTDCXX_USEDEP}]
+			dev-libs/rocm-opencl-runtime:=
+			dev-util/hip[${LIBSTDCXX_USEDEP}]
+			dev-util/hip:=
 		)
 	)
 	video_cards_intel? (
 		dev-libs/intel-compute-runtime
 	)
 	video_cards_nvidia? (
-		>=dev-util/nvidia-cuda-toolkit-9
-		>x11-drivers/nvidia-drivers-440.64
+		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:=
+		>=dev-util/nvidia-cuda-toolkit-12.9
+		dev-util/nvidia-cuda-toolkit:=
+		>=x11-drivers/nvidia-drivers-575.57
 		virtual/opencl
 	)
 "
@@ -150,34 +169,14 @@ PATCHES=(
 pkg_setup() {
 	python-single-r1_pkg_setup
 	if use rocm ; then
-		if use rocm_5_1 ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.1"
-			ROCM_VERSION="${HIP_5_1_VERSION}"
-		elif use rocm_5_2 ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.2"
-			ROCM_VERSION="${HIP_5_2_VERSION}"
-		elif use rocm_5_3 ; then
-			LLVM_SLOT=15
-			ROCM_SLOT="5.3"
-			ROCM_VERSION="${HIP_5_3_VERSION}"
-		elif use rocm_5_4 ; then
-			LLVM_SLOT=15
-			ROCM_SLOT="5.4"
-			ROCM_VERSION="${HIP_5_4_VERSION}"
-		elif use rocm_5_5 ; then
-			LLVM_SLOT=16
-			ROCM_SLOT="5.5"
-			ROCM_VERSION="${HIP_5_5_VERSION}"
-		elif use rocm_5_6 ; then
-			LLVM_SLOT=16
-			ROCM_SLOT="5.6"
-			ROCM_VERSION="${HIP_5_6_VERSION}"
-		elif use rocm_5_7 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="5.7"
-			ROCM_VERSION="${HIP_5_7_VERSION}"
+		if use rocm_6_4 ; then
+			LLVM_SLOT=19
+			ROCM_SLOT="6.4"
+			ROCM_VERSION="${HIP_6_4_VERSION}"
+		elif use rocm_6_4 ; then
+			LLVM_SLOT=19
+			ROCM_SLOT="6.4"
+			ROCM_VERSION="${HIP_7_0_VERSION}"
 		fi
 		rocm_pkg_setup
 	fi
@@ -188,18 +187,18 @@ src_prepare() {
 		rocm_src_prepare
 	fi
 	# Remove bundled stuff
-	rm -r deps/OpenCL-Headers || die "Failed to remove bundled OpenCL Headers"
-	rm -r deps/xxHash || die "Failed to remove bundled xxHash"
+	rm -r "deps/OpenCL-Headers" || die "Failed to remove bundled OpenCL Headers"
+	rm -r "deps/xxHash" || die "Failed to remove bundled xxHash"
 
 	# TODO: Gentoo's app-arch/lzma doesn't install the needed files
 	#rm -r deps/LZMA-SDK || die "Failed to remove bundled LZMA-SDK"
 	#rm -r deps || die "Failed to remove bundled deps"
 
 	# Do not strip
-	sed -i "/LFLAGS                  += -s/d" src/Makefile || die
+	sed -i "/LFLAGS                  += -s/d" "src/Makefile" || die
 
 	# Do not add random CFLAGS
-	sed -i "s/-O2//" src/Makefile || die
+	sed -i "s/-O2//" "src/Makefile" || die
 
 	#sed -i "#LZMA_SDK_INCLUDE#d" src/Makefile || die
 
@@ -215,11 +214,8 @@ src_prepare() {
 	export PREFIX="${EPREFIX}/usr"
 
 	if \
-		   use rocm_5_3 \
-		|| use rocm_5_4 \
-		|| use rocm_5_5 \
-		|| use rocm_5_6 \
-		|| use rocm_5_7 \
+		   use rocm_6_4 \
+		|| use rocm_7_0 \
 	; then
 		eapply "${FILESDIR}/hashcat-hip.patch"
 	fi
@@ -252,9 +248,9 @@ src_compile() {
 
 src_test() {
 	if use video_cards_nvidia ; then
-		addwrite /dev/nvidia0
-		addwrite /dev/nvidia-uvm
-		addwrite /dev/nvidiactl
+		addwrite "/dev/nvidia0"
+		addwrite "/dev/nvidia-uvm"
+		addwrite "/dev/nvidiactl"
 		if [[ ! -w "/dev/nvidia0" ]]; then
 			einfo "To run these tests, portage likely must be in the video group."
 			einfo "Please run \"gpasswd -a portage video\" if the tests will fail"
@@ -264,7 +260,7 @@ src_test() {
 	# This always exits with 255 despite success
 	#./hashcat -b -m 2500 || die "Test failed"
 	LD_PRELOAD="libhashcat.so.${PV}" \
-	./hashcat -a 3 -m 1500 nQCk49SiErOgk || die "Test failed"
+	./hashcat -a 3 -m 1500 "nQCk49SiErOgk" || die "Test failed"
 }
 
 src_install() {
@@ -281,6 +277,9 @@ src_install() {
 		USE_SYSTEM_ZLIB=1 \
 		VERSION_PURE="${PV}" \
 		install
+	if use doc ; then
+		dodoc -r "docs"
+	fi
 }
 
 pkg_postinst() {

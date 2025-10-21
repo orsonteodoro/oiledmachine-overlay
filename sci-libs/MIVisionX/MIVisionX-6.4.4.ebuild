@@ -18,7 +18,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 BOOST_PV="1.72.0"
+CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19
 NNEF_TOOLS_COMMIT="c166264b7cadb18f62a5711edf703e6029ad0212" # Same as nnef-v1.0.0 tag
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
@@ -26,7 +32,7 @@ RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for 0
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
@@ -127,10 +133,10 @@ RDEPEND="
 		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 	')
 	dev-libs/openssl
-	>=dev-util/hip-${PV}:${SLOT}
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
 	caffe? (
-		virtual/protobuf:3
+		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 		$(python_gen_cond_dep '
 			>=dev-python/google-3.0.0[${PYTHON_USEDEP}]
@@ -145,7 +151,7 @@ RDEPEND="
 		)
 	)
 	migraphx? (
-		>=sci-libs/MIGraphX-${PV}:${SLOT}
+		>=sci-libs/MIGraphX-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/MIGraphX:=
 	)
 	neural-net? (
@@ -163,7 +169,7 @@ RDEPEND="
 		)
 	)
 	onnx? (
-		virtual/protobuf:3
+		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 		$(python_gen_cond_dep '
 			>=sci-ml/onnx-1.12.0[${PYTHON_USEDEP}]
@@ -175,42 +181,45 @@ RDEPEND="
 		sci-libs/miopengemm:=
 	)
 	opencv? (
-		>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		>=media-libs/opencv-4.6.0[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
 	)
 	rocal? (
-		virtual/protobuf:3
+		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
-		dev-cpp/gflags
-		dev-cpp/glog
+		dev-cpp/gflags[${LIBSTDCXX_USEDEP}]
+		dev-cpp/glog[${LIBSTDCXX_USEDEP}]
 		dev-db/lmdb
 		media-libs/libjpeg-turbo
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 	)
 	rocm? (
-		>=sci-libs/rocBLAS-${PV}:${SLOT}
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/rocBLAS:=
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 	rpp? (
-		>=dev-libs/boost-${BOOST_PV}:=
-		>=sci-libs/rpp-${PV}:${SLOT}
+		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
+		>=sci-libs/rpp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/rpp:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/eigen-3:=
+	>=dev-cpp/eigen-3
+	dev-cpp/eigen:=
 	system-rapidjson? (
 		=dev-libs/rapidjson-9999
+		dev-libs/rapidjson:=
 	)
 "
 BDEPEND="
@@ -237,6 +246,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

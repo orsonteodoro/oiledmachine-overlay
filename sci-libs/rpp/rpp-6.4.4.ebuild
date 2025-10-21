@@ -31,13 +31,19 @@ AMDGPU_UNTESTED_TARGETS=(
 #	gfx1101
 	gfx1102
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-6.4.4/docs/release.md?plain=1#L18
+CXX_STANDARD=17
 LLVM_COMPAT=( 18 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-compiler-switch cmake flag-o-matic rocm toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -86,11 +92,11 @@ REQUIRED_USE="
 RDEPEND="
 	${HIPCC_DEPEND}
 	${ROCM_CLANG_DEPEND}
-	>=dev-libs/boost-1.72
+	>=dev-libs/boost-1.72[${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
-	dev-libs/rocm-opencl-runtime:${SLOT}
+	dev-libs/rocm-opencl-runtime:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-opencl-runtime:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
@@ -98,13 +104,14 @@ RDEPEND="
 	rocm? (
 		dev-libs/rocm-device-libs:${SLOT}
 		dev-libs/rocm-device-libs:=
-		>=dev-util/hip-${PV}:${SLOT}[rocm]
+		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 		dev-util/hip:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/half-1.12.0:=
+	>=dev-libs/half-1.12.0
+	dev-libs/half:=
 "
 BDEPEND="
 	${HIPCC_DEPEND}
@@ -112,7 +119,8 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	test? (
 		>=media-libs/libjpeg-turbo-2.0.6.1
-		>=media-libs/opencv-3.4.0[jpeg]
+		>=media-libs/opencv-3.4.0[${LIBSTDCXX_USEDEP},jpeg]
+		media-libs/opencv:=
 	)
 "
 PATCHES=(
@@ -131,6 +139,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
 	warn_untested_gpu
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

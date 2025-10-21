@@ -42,10 +42,9 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx1100
 	gfx1102
 )
+inherit libstdcxx-compat
 GCC_COMPAT=(
-# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
 CMAKE_MAKEFILE_GENERATOR="emake"
@@ -88,11 +87,11 @@ test ebuild_revision_13
 REQUIRED_USE="
 "
 RDEPEND="
-	>=dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${SLOT}
+	>=dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-opencl-runtime:=
 	>=dev-util/hip-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
-	>=sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+	>=sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="

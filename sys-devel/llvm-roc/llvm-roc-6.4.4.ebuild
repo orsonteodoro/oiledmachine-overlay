@@ -4,11 +4,13 @@
 
 EAPI=8
 
-CMAKE_BUILD_TYPE="RelWithDebInfo"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
+
+CMAKE_BUILD_TYPE="RelWithDebInfo"
+CXX_STANDARD=17 # clang (17), llvm (17), compiler-rt-sanitizers (17), mlir (17), lld (17)
 LLVM_SLOT=19
 LLVM_TARGETS=(
 	AMDGPU
@@ -121,6 +123,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	dhms_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

@@ -17,11 +17,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
-CXX_STANDARD=17
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
+
+CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -57,9 +58,9 @@ REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
-	>=dev-util/rocm-smi-${PV}:${SLOT}
+	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/rocm-smi:=
 	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=

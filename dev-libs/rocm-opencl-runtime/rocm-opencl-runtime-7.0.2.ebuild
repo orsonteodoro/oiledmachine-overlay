@@ -3,10 +3,15 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake edo flag-o-matic rocm
+inherit check-compiler-switch cmake edo flag-o-matic libstdcxx-slot rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_CLR_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCclr"
@@ -52,13 +57,13 @@ ebuild_revision_8
 #	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
 #	llvm-runtimes/compiler-rt:=
 RDEPEND="
-	>=media-libs/mesa-22.3.6
+	>=media-libs/mesa-22.3.6[${LIBSTDCXX_USEDEP}]
 	>=virtual/opencl-3
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-comgr:=
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
 	dev-libs/rocm-device-libs:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocr-runtime:=
 "
 DEPEND="
@@ -88,6 +93,7 @@ ROCCLR_PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack () {

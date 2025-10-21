@@ -3,11 +3,13 @@
 
 EAPI=8
 
-CMAKE_MAKEFILE_GENERATOR="emake"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
+
+CXX_STANDARD=11
+CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=19 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_12" )
 ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"

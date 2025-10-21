@@ -23,12 +23,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1150
 	gfx1151
 )
-CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
-DISTUTILS_USE_PEP517="setuptools"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
+
+CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
+CXX_STANDARD=17
+DISTUTILS_USE_PEP517="setuptools"
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -80,6 +82,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_CLANG_DEPEND}
 	>=dev-cpp/msgpack-cxx-6.0.0
+	dev-cpp/msgpack-cxx:=
 	dev-lang/python-exec:0/rocm-${ROCM_SLOT}
 	dev-lang/python-exec:=
 	dev-python/joblib[${PYTHON_USEDEP}]

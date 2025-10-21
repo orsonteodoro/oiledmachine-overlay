@@ -32,11 +32,17 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=11
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocRAND-rocm-${PV}"
@@ -102,14 +108,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	hip-cpu? (
 		${HIP_CLANG_DEPEND}
-		dev-libs/hip-cpu
+		dev-libs/hip-cpu[${LIBSTDCXX_USEDEP}]
+		dev-libs/hip-cpu:=
 	)
 "
 DEPEND="
@@ -117,7 +124,8 @@ DEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	test? (
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=
 	)
 "
 BDEPEND="
@@ -137,6 +145,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

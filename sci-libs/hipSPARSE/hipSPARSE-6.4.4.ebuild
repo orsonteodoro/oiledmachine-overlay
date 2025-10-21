@@ -3,12 +3,18 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=14
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake edo flag-o-matic rocm toolchain-funcs
+inherit cmake edo flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
 KEYWORDS="~amd64"
@@ -87,13 +93,13 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[rocm(+)]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm(+)]
 		sci-libs/rocSPARSE:=
 	)
 "
@@ -106,12 +112,12 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	test? (
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
 		>=dev-util/rocminfo-${PV}:${SLOT}
 		dev-util/rocminfo:=
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 "
@@ -120,6 +126,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

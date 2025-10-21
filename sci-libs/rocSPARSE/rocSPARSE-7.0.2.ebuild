@@ -34,16 +34,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1120
 	gfx1121
 )
-CMAKE_MAKEFILE_GENERATOR="emake"
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-        "gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
+
+CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=17
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake edo flag-o-matic python-any-r1 toolchain-funcs rocm
+inherit cmake edo flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocSPARSE-rocm-${PV}"
@@ -119,16 +121,13 @@ ebuild_revision_8
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
-	^^ (
-		${GCC_COMPAT[@]}
-	)
 "
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[gcc_slot_12_5=,gcc_slot_13_4=,rocm]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
-	>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_7_0_AMDGPU_USEDEP},rocm(+)]
+	>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_0_AMDGPU_USEDEP},rocm(+)]
 	sci-libs/rocPRIM:=
 	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
@@ -139,19 +138,13 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	gcc_slot_12_5? (
-		>=sys-devel/gcc-12.5:12[fortran]
-	)
-	gcc_slot_13_4? (
-		>=sys-devel/gcc-13.4:13[fortran]
-	)
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	test? (
 		$(python_gen_any_dep '
 			dev-python/pyyaml[${PYTHON_USEDEP}]
 		')
-		>=dev-cpp/gtest-1.11.0
+		>=dev-cpp/gtest-1.11.0[${LIBSTDCXX_USEDEP}]
 	)
 	benchmark? (
 		app-admin/chrpath
@@ -172,6 +165,7 @@ python_check_deps() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 add_gfortran_wrapper() {

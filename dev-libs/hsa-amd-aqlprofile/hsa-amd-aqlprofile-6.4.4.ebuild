@@ -3,9 +3,9 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 DOWNLOAD_FILE_12_5="hsa-amd-aqlprofile_1.0.0.60404-129~22.04_amd64.deb"
 DOWNLOAD_FILE_13_4="hsa-amd-aqlprofile_1.0.0.60404-129~24.04_amd64.deb"

@@ -22,7 +22,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
 BOOST_PV="1.72.0"
+CXX_STANDARD=17
 LIBJPEG_TURBO_PV="3.0.2"
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
@@ -31,7 +37,7 @@ PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
 ROCM_SLOT="6.2"
 ROCM_VERSION="6.2.4"
 
-inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -69,27 +75,27 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	>=dev-libs/half-1.12.0
+	virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
 	')
 	dev-db/lmdb
 	media-libs/libjpeg-turbo
-	>=dev-util/hip-${PV}:${SLOT}
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
-	>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+	>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-opencl-runtime:=
-	>=sci-libs/MIVisionX-${PV}:${SLOT}
+	>=sci-libs/MIVisionX-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	sci-libs/MIVisionX:=
-	>=sci-libs/rocDecode-${PV}:${SLOT}
+	>=sci-libs/rocDecode-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	sci-libs/rocDecode:=
-	>=sci-libs/rpp-${PV}:${SLOT}
+	>=sci-libs/rpp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	sci-libs/rpp:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	!ffmpeg? (
-		>=dev-libs/boost-${BOOST_PV}
+		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
 	)
 	ffmpeg? (
@@ -102,11 +108,13 @@ RDEPEND="
 		media-video/ffmpeg:=
 	)
 	opencv? (
-		>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		>=media-libs/opencv-4.6.0[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		media-libs/opencv:=
 	)
 "
 DEPEND="
 	${RDEPEND}
+	>=dev-libs/half-1.12.0
 	system-rapidjson? (
 		=dev-libs/rapidjson-9999
 	)
@@ -132,6 +140,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
 	python-single-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

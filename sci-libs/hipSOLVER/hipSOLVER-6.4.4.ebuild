@@ -3,12 +3,18 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake edo flag-o-matic rocm toolchain-funcs
+inherit cmake edo flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
 KEYWORDS="~amd64"
@@ -45,18 +51,18 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 		sci-libs/rocBLAS:=
-		>=sci-libs/rocSOLVER-${PV}:${SLOT}[rocm(+)]
+		>=sci-libs/rocSOLVER-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm(+)]
 		sci-libs/rocSOLVER:=
 
-		>=dev-util/rocm-smi-${PV}:${SLOT}
+		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
 	)
 	virtual/blas
@@ -70,7 +76,7 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	test? (
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
 	)
 "
 PATCHES=(
@@ -78,6 +84,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

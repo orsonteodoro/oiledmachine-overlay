@@ -76,6 +76,32 @@ LIBSTDCXX_COMPAT_ROCM=(
         "gcc_slot_13_4" # Support ROCm 6.4, 7.0
 )
 
+# GCC_COMPAT template for ROCm 7.0 based apps/libs with latest security update
+#
+# Example:
+#
+# GCC_COMPAT=(
+#     ${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+# )
+#
+LIBSTDCXX_COMPAT_ROCM_7_0=(
+	"gcc_slot_12_5" # Support 7.0
+        "gcc_slot_13_4" # Support 7.0
+)
+
+# GCC_COMPAT template for ROCm 6.4 based apps/libs with latest security update
+#
+# Example:
+#
+# GCC_COMPAT=(
+#     ${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+# )
+#
+LIBSTDCXX_COMPAT_ROCM_6_4=(
+	"gcc_slot_12_5" # Support 6.4
+        "gcc_slot_13_4" # Support 6.4
+)
+
 # GCC_COMPAT template for CUDA based apps/libs
 #
 # Example:

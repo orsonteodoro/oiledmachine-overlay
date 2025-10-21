@@ -31,10 +31,9 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx942
 	gfx1030
 )
+inherit libstdcxx-compat
 GCC_COMPAT=(
-# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
 CXX_STANDARD=17
@@ -125,8 +124,12 @@ RDEPEND="
 		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_6_4_AMDGPU_USEDEP}]
 		sci-libs/miopenkernels:=
 	)
+	mlir? (
+		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP},fat-librockcompiler(+)]
+		sci-libs/rocMLIR:=
+	)
 	opencl? (
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
 	)
 	rocm? (
@@ -159,10 +162,6 @@ BDEPEND="
 	virtual/pkgconfig
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
-	mlir? (
-		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[fat-librockcompiler(+)]
-		sci-libs/rocMLIR:=
-	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-disable-no-inline-boost.patch" # Build time testing

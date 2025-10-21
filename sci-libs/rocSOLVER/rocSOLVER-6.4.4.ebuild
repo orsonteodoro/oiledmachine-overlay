@@ -21,10 +21,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake edo rocm
+inherit cmake edo libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -54,16 +60,17 @@ REQUIRED_USE="
 "
 # libfmt relaxed, upstream uses 7.1.3.  RDEPEND was previously =dev-libs/libfmt-8*.
 RDEPEND="
-	>=dev-libs/libfmt-7.1.3
-	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	>=dev-libs/libfmt-7.1.3[${LIBSTDCXX_USEDEP}]
+	dev-libs/libfmt:=
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
-	>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
+	>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_6_4_AMDGPU_USEDEP},rocm]
 	sci-libs/rocBLAS:=
 	benchmark? (
 		virtual/blas
 	)
 	sparse? (
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCSPARSE_6_4_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_6_4_AMDGPU_USEDEP},rocm]
 		sci-libs/rocSPARSE:=
 	)
 "
@@ -76,7 +83,7 @@ BDEPEND="
 	dev-build/rocm-cmake:=
 	test? (
 		>=dev-build/cmake-3.13
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
 		virtual/blas
 	)
 "
@@ -85,6 +92,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

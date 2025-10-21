@@ -3,9 +3,9 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 LLVM_SLOT=19
 MY_PN="ROCmValidationSuite"
@@ -60,7 +60,7 @@ RDEPEND="
 	dev-libs/rocr-runtime:=
 	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/rocm-smi:=
-	>=sci-libs/rocBLAS-${PV}:${SLOT}
+	>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	sci-libs/rocBLAS:=
 "
 DEPEND="

@@ -39,13 +39,19 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
 CHECKREQS_DISK_BUILD="7G"
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake check-reqs edo flag-o-matic multiprocessing python-r1 rocm
+inherit cmake check-reqs edo flag-o-matic libstdcxx-slot multiprocessing python-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocFFT-rocm-${PV}"
@@ -124,9 +130,9 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
-	>=sci-libs/rocRAND-${PV}:${SLOT}[${ROCRAND_7_0_AMDGPU_USEDEP}]
+	>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_0_AMDGPU_USEDEP}]
 	sci-libs/rocRAND:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
@@ -154,10 +160,11 @@ BDEPEND="
 	test? (
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
-		dev-libs/boost
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
+		dev-libs/boost[${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 "
@@ -197,6 +204,7 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	python_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

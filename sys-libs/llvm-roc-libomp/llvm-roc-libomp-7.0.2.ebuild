@@ -3,10 +3,11 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
+
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -71,7 +72,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
-CMAKE_BUILD_TYPE="RelWithDebInfo"
 CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_37
@@ -89,6 +89,9 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+
+CMAKE_BUILD_TYPE="RelWithDebInfo"
+CXX_STANDARD=17
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -326,7 +329,7 @@ RDEPEND="
 		)
 	)
 	llvm_targets_AMDGPU? (
-		>=dev-libs/rocr-runtime-${ROCM_SLOT}:${SLOT}
+		>=dev-libs/rocr-runtime-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocr-runtime:=
 		sys-process/numactl
 		x11-libs/libdrm[video_cards_amdgpu]
@@ -356,7 +359,7 @@ BDEPEND="
 	|| (
 		llvm-core/lld:${LLVM_SLOT}
 		(
-			>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
+			>=sys-devel/llvm-roc-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_TARGETS_USEDEP}]
 			sys-devel/llvm-roc:=
 		)
 	)

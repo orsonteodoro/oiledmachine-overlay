@@ -3,11 +3,17 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic rocm
+inherit cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/hipBLAS-rocm-${PV}"
@@ -37,15 +43,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 		sci-libs/rocBLAS:=
-		>=sci-libs/rocSOLVER-${PV}:${SLOT}[rocm(+)]
+		>=sci-libs/rocSOLVER-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm(+)]
 		sci-libs/rocSOLVER:=
 	)
 "
@@ -60,6 +66,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

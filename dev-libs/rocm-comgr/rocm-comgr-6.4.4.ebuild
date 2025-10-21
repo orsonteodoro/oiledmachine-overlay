@@ -3,12 +3,13 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 CMAKE_BUILD_TYPE="Release"
 CXX_STANDARD=17
-GCC_COMPAT=(
-	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
-	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
-)
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -28,7 +29,7 @@ https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 fi
 
 DESCRIPTION="Radeon Open Compute Code Object Manager"
-HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
+HOMEPAGE="https://github.com/ROCm/llvm-project/tree/amd-staging/amd/comgr"
 TARBALL_LICENSES="
 	(
 		Apache-2.0-with-LLVM-exceptions
