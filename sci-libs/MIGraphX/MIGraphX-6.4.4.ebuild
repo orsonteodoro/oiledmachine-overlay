@@ -16,11 +16,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+GCC_COMPAT=(
+# We restrict to these two slots because part of the stack has binary packages and increased chances of reproducibility.
+	"gcc_slot_12_5" # Equivalent to GLIBCXX 3.4.30 in prebuilt binary for U22
+	"gcc_slot_13_4" # Equivalent to GLIBCXX 3.4.32 in prebuilt binary for U24
+)
+
+CXX_STANDARD=17
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic python-r1 rocm
+inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -62,14 +69,13 @@ REQUIRED_USE="
 # protobuf is relaxed
 RDEPEND="
 	>=dev-db/sqlite-3.17
-	>=dev-cpp/msgpack-cxx-3.3.0
-	>=dev-cpp/nlohmann_json-3.8.0
 	>=dev-libs/half-1.12.0
+	virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
-		>=sci-libs/composable-kernel-${PV}:${SLOT}[${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/composable-kernel-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
 	)
 	cpu? (
@@ -80,19 +86,24 @@ RDEPEND="
 		sys-libs/llvm-roc-libomp:=
 	)
 	rocm? (
-		>=sci-libs/miopen-${PV}:${SLOT}[${MIOPEN_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/miopen-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${MIOPEN_6_4_AMDGPU_USEDEP}]
 		sci-libs/miopen:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_6_4_AMDGPU_USEDEP}]
 		sci-libs/rocBLAS:=
 	)
 	test? (
-		>=dev-util/hip-${PV}:${SLOT}
+		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/hip:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/blaze-3.4:=
+	>=dev-cpp/blaze-3.4
+	dev-cpp/blaze:=
+	>=dev-cpp/msgpack-cxx-3.3.0
+	dev-cpp/msgpack-cxx:=
+	>=dev-cpp/nlohmann_json-3.8.0
+	dev-cpp/nlohmann_json:=
 "
 # It uses hip-clang (--cuda-host-only -x hip) for GPU.
 BDEPEND="
@@ -111,6 +122,7 @@ PATCHES=(
 pkg_setup() {
 	python_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

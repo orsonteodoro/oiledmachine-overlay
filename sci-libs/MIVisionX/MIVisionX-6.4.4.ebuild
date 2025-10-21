@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO:  Review/add protobuf src_configure/path changes
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
@@ -130,7 +132,6 @@ RDEPEND="
 	caffe? (
 		virtual/protobuf:3
 		virtual/protobuf:=
-		dev-libs/protobuf:=
 		$(python_gen_cond_dep '
 			>=dev-python/google-3.0.0[${PYTHON_USEDEP}]
 		')
@@ -162,6 +163,7 @@ RDEPEND="
 		)
 	)
 	onnx? (
+		virtual/protobuf:3
 		virtual/protobuf:=
 		$(python_gen_cond_dep '
 			>=sci-ml/onnx-1.12.0[${PYTHON_USEDEP}]
@@ -176,6 +178,7 @@ RDEPEND="
 		>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
 	)
 	rocal? (
+		virtual/protobuf:3
 		virtual/protobuf:=
 		dev-cpp/gflags
 		dev-cpp/glog

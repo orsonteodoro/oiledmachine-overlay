@@ -331,9 +331,9 @@ RDEPEND+="
 		>=sys-apps/pciutils-3.10.0
 	)
 	virtual/protobuf:${PROTOBUF_SLOT}
-	dev-libs/protobuf:=
+	virtual/protobuf:=
 	virtual/grpc:${PROTOBUF_SLOT}
-	net-libs/grpc:=
+	virtual/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -372,11 +372,11 @@ BDEPEND+="
 	)
 	(
 		virtual/protoc-gen-go-grpc:${PROTOBUF_SLOT}
-		dev-go/protoc-gen-go-grpc:=
+		virtual/protoc-gen-go-grpc:=
 	)
 	(
 		virtual/protobuf:${PROTOBUF_SLOT}
-		dev-libs/protobuf:=
+		virtual/protobuf:=
 	)
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6

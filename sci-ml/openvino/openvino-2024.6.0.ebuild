@@ -70,6 +70,7 @@ OPENCL_CLHPP_COMMIT="0bdbbfe5ecda42cff50c96cc5e33527f42fcbd45"
 OPENCL_HEADERS_COMMIT="8275634cf9ec31b6484c2e6be756237cb583999d"
 OPENCL_ICD_LOADER_COMMIT="861b68b290e76d08e7241608479c16431f529945"
 PROTOBUF_COMMIT="f0dc78d7e6e331b8c6bb2d5283e06aa26883ca7c"
+PROTOBUF_SLOT="3"
 PUGIXML_COMMIT="2e357d19a3228c0a301727aac6bea6fecd982d21"
 PYBIND11_1_COMMIT="7c33cdc2d39c7b99a122579f53bc94c8eb3332ff"
 PYBIND11_2_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
@@ -227,8 +228,8 @@ REQUIRED_USE="
 "
 RDEPEND_PROTOBUF="
 	system-protobuf? (
-		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
+		virtual/protobuf:${PROTOBUF_SLOT}[${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:=
 	)
 "
 
@@ -262,7 +263,7 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		(
-			virtual/protobuf-python:3['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+			virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
 			virtual/protobuf-python:=
 		)
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
@@ -345,7 +346,7 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
 		virtual/protobuf-python:=
 		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
@@ -459,7 +460,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 		dev-python/optimum[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
 		virtual/protobuf-python:=
 		dev-python/pyctcdecode[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -551,7 +552,7 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
-		virtual/protobuf-python['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
 		virtual/protobuf-python:=
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -875,7 +876,7 @@ src_configure() {
 		-DENABLE_PYTHON=$(usex python)
 		-DENABLE_SAMPLES=$(usex samples)
 		-DENABLE_WHEEL=OFF
-		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/3/$(get_libdir)/cmake/protobuf"
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 	)
 
 einfo "Configuring runtime"

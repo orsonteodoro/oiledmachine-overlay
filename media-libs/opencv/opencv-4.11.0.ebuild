@@ -218,6 +218,7 @@ OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
+PROTOBUF_SLOT="3"
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 ROCM_SLOTS=(
@@ -689,7 +690,7 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	virtual/protobuf:=
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
@@ -1265,7 +1266,7 @@ multilib_src_configure() {
 		-DOPENCV_TEST_INSTALL_PATH="libexec/${PN}/bin/test"
 		-DOPENCV_WARNINGS_ARE_ERRORS=OFF
 		-DOpenGL_GL_PREFERENCE="GLVND"
-		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/3/$(get_libdir)/cmake/protobuf"
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 		-DProtobuf_MODULE_COMPATIBLE=ON
 		-DPROTOBUF_UPDATE_FILES=ON
 		-DVIDEOIO_PLUGIN_LIST="all"
