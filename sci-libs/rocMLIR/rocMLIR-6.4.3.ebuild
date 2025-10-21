@@ -3,12 +3,18 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic python-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/rocMLIR/"
@@ -73,15 +79,15 @@ RDEPEND="
 	virtual/libc
 	|| (
 		(
-			~dev-util/hip-${PV}:${SLOT}
+			~dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-util/hip:=
-			~sci-libs/rocBLAS-${PV}:${SLOT}
+			~sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			sci-libs/rocBLAS:=
 		)
 		(
-			>=dev-util/hip-${PV}:${SLOT}
+			>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-util/hip:=
-			>=sci-libs/rocBLAS-${PV}:${SLOT}
+			>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			sci-libs/rocBLAS:=
 		)
 	)
@@ -121,6 +127,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

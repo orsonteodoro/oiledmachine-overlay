@@ -14,10 +14,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
 
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit rocm
+inherit libstdcxx-slot rocm
 
 #KEYWORDS="~amd64"
 
@@ -57,29 +61,66 @@ REQUIRED_USE="
 		hip
 	)
 "
+has_gpu() {
+	local gpu="${x}"
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		if [[ "${gpu}" == "${x}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+gen_hipblaslt_rdepend() {
+	local x
+	for x in ${HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT[@]} ; do
+		[[ "${x}" =~ "xnack" ]] && continue
+		has_gpu "${x}" || continue
+		echo "
+			amdgpu_targets_${x}? (
+				>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
+				sci-libs/hipBLASLt:=
+			)
+		"
+	done
+}
+gen_hipsparselt_rdepend() {
+	local x
+	for x in ${HIPSPARSELT_6_4_AMDGPU_TARGETS_COMPAT[@]} ; do
+		[[ "${x}" =~ "xnack" ]] && continue
+		has_gpu "${x}" || continue
+		echo "
+			amdgpu_targets_${x}? (
+				>=sci-libs/hipSPARSELt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
+				sci-libs/hipSPARSELt:=
+			)
+		"
+	done
+}
 RDEPEND="
 	compilers? (
 		cuda? (
 			dev-util/nvidia-cuda-toolkit:=
+			virtual/cuda-compiler:=
 		)
 		rocm? (
-			>=dev-libs/rocm-comgr-${PV}:${SLOT}
+			>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocm-comgr:=
-			>=sys-devel/llvm-roc-${PV}:${SLOT}
+			>=sys-devel/llvm-roc-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			sys-devel/llvm-roc:=
 		)
 	)
 	math? (
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[cuda?,rocm?]
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		sci-libs/hipBLAS:=
-		>=sci-libs/hipRAND-${PV}:${SLOT}[cuda?,rocm?]
+		>=sci-libs/hipRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		sci-libs/hipRAND:=
-		>=sci-libs/hipSOLVER-${PV}:${SLOT}[cuda?,rocm?]
+		>=sci-libs/hipSOLVER-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		sci-libs/hipSOLVER:=
-		>=sci-libs/hipSPARSE-${PV}:${SLOT}[cuda?,rocm?]
+		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		sci-libs/hipSPARSE:=
 		cuda? (
-			>=sci-libs/hipFFT-${PV}:${SLOT}[cuda]
+			>=sci-libs/hipFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
 			sci-libs/hipFFT:=
 		)
 		fortran? (
@@ -87,31 +128,21 @@ RDEPEND="
 			dev-util/hipfort:=
 		)
 		rocm? (
-			>=sci-libs/hipFFT-${PV}:${SLOT}[$(get_rocm_usedep HIPFFT)]
+			>=sci-libs/hipFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
 			sci-libs/hipFFT:=
-			amdgpu_targets_gfx90a? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
-				sci-libs/hipBLASLt:=
-			)
-			amdgpu_targets_gfx942? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}[$(get_rocm_usedep HIPBLASLT)]
-				sci-libs/hipBLASLt:=
-			)
-			amdgpu_targets_gfx942? (
-				>=sci-libs/hipSPARSELt-${PV}:${SLOT}[rocm]
-				sci-libs/hipSPARSELt:=
-			)
+			$(gen_hipblaslt_rdepend)
+			$(gen_hipsparselt_rdepend)
 		)
 	)
 	primitives? (
-		>=sci-libs/hipTensor-${PV}:${SLOT}[cuda?,rocm?]
+		>=sci-libs/hipTensor-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		sci-libs/hipTensor:=
 		cuda? (
-			>=sci-libs/hipCUB-${PV}:${SLOT}[cuda]
+			>=sci-libs/hipCUB-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
 			sci-libs/hipCUB:=
 		)
 		rocm? (
-			>=sci-libs/hipCUB-${PV}:${SLOT}[$(get_rocm_usedep HIPCUB)]
+			>=sci-libs/hipCUB-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB)]
 			sci-libs/hipCUB:=
 		)
 	)
@@ -119,19 +150,24 @@ RDEPEND="
 		hip? (
 			>=dev-lang/perl-5.0
 			sys-apps/file
-			sys-libs/glibc
+			gcc_slot_12_5? (
+				>=sys-libs/glibc-2.35
+			)
+			gcc_slot_13_4? (
+				>=sys-libs/glibc-2.39
+			)
 			dev-perl/URI-Encode
 			dev-perl/File-BaseDir
 			dev-perl/File-Copy-Recursive
 			dev-perl/File-Listing
 			dev-perl/File-Which
-			>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+			>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 			dev-util/hip:=
 		)
 		rocm? (
 			>=dev-libs/rocm-device-libs-${PV}:${SLOT}
 			dev-libs/rocm-device-libs:=
-			>=dev-libs/rocr-runtime-${PV}:${SLOT}
+			>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocr-runtime:=
 		)
 	)
@@ -145,10 +181,14 @@ RDEPEND="
 		rocm? (
 			>=dev-build/rocm-cmake-${PV}:${SLOT}
 			dev-build/rocm-cmake:=
-			>=dev-libs/rocm-core-${PV}:${SLOT}
+			>=dev-libs/rocm-core-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocm-core:=
 			>=dev-libs/roct-thunk-interface-${PV}:${SLOT}
 			dev-libs/roct-thunk-interface:=
 		)
 	)
 "
+
+pkg_setup() {
+	libstdcxx-slot_verify
+}

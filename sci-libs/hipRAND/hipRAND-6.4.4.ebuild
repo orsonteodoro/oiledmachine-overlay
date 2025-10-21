@@ -20,12 +20,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=11
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit cmake libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/hipRAND-rocm-${PV}"
@@ -66,13 +72,13 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip:${SLOT}
+	dev-util/hip:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		sci-libs/rocRAND:${SLOT}
+		sci-libs/rocRAND:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/rocRAND:=
 	)
 "
@@ -88,6 +94,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

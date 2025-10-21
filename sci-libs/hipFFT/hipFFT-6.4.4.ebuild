@@ -31,12 +31,18 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 	compute_86
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic rocm toolchain-funcs
+inherit cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/hipFFT-rocm-${PV}"
@@ -102,15 +108,15 @@ LICENSE="MIT"
 RESTRICT="test mirror" # The distro mirrored copy is wrong
 SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocFFT-${PV}:${SLOT}[${ROCFFT_6_4_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCFFT_6_4_AMDGPU_USEDEP},rocm]
 		sci-libs/rocFFT:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${ROCRAND_6_4_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_6_4_AMDGPU_USEDEP},rocm]
 		sci-libs/rocRAND:=
 	)
 "
@@ -129,6 +135,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

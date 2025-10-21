@@ -10,13 +10,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx950
 	gfx950_xnack_plus # with asan
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit cmake libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -50,15 +55,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip:${SLOT}[cuda?,rocm?]
+	dev-util/hip:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/Tensile:=
-		>=sci-libs/hipSPARSE-${PV}:${SLOT}
+		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/hipSPARSE:=
 	)
 "
@@ -69,7 +74,8 @@ BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.10.2
 	test? (
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=
 	)
 "
 PATCHES=(
@@ -77,6 +83,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

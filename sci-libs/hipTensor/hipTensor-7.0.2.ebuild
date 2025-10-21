@@ -12,11 +12,17 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx950
 	gfx950_xnack_plus # with asan
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
+CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic rocm
+inherit cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -66,9 +72,9 @@ RESTRICT="
 	test
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[rocm]
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
-	>=sci-libs/composable-kernel-${PV}:${SLOT}[${COMPOSABLE_KERNEL_7_0_AMDGPU_USEDEP}]
+	>=sci-libs/composable-kernel-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_0_AMDGPU_USEDEP}]
 	sci-libs/composable-kernel:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
@@ -88,6 +94,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

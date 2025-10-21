@@ -159,7 +159,7 @@ RDEPEND="
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
@@ -167,10 +167,10 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${TENSILE_7_0_AMDGPU_USEDEP},rocm]
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_7_0_AMDGPU_USEDEP},rocm]
 		dev-util/Tensile:=
 		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${TENSILE_7_0_AMDGPU_USEDEP}"',rocm]
+			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${LIBSTDCXX_USEDEP},${TENSILE_7_0_AMDGPU_USEDEP}"',rocm]
 			dev-util/Tensile:=
 		')
 	)
@@ -179,7 +179,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${SLOT}[${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
@@ -198,7 +198,7 @@ BDEPEND="
 	dev-build/rocm-cmake:=
 	rocm? (
 		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${TENSILE_7_0_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
+			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${LIBSTDCXX_USEDEP},${TENSILE_7_0_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
 			dev-util/Tensile:=
 		')
 	)

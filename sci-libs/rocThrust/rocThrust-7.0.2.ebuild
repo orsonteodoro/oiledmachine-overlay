@@ -23,10 +23,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1200
 	gfx1201
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
+CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit cmake libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocThrust-rocm-${PV}"
@@ -61,12 +67,12 @@ REQUIRED_USE="
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
-	>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_7_0_AMDGPU_USEDEP}]
+	>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_0_AMDGPU_USEDEP}]
 	sci-libs/rocPRIM:=
 	test? (
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
@@ -84,6 +90,7 @@ PATCHES=(
 
 pkg_setup() {
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

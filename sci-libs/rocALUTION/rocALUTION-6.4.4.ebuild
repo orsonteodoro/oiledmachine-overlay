@@ -27,12 +27,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1120
 	gfx1121
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=14
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake rocm
+inherit check-compiler-switch cmake libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -78,19 +84,19 @@ RDEPEND="
 	)
 	openmp? (
 		${ROCM_CLANG_DEPEND}
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_6_4_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 	rocm? (
-		>=dev-util/hip-${PV}:${SLOT}
+		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/hip:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${ROCBLAS_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_6_4_AMDGPU_USEDEP}]
 		sci-libs/rocBLAS:=
-		>=sci-libs/rocPRIM-${PV}:${SLOT}[${ROCPRIM_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_6_4_AMDGPU_USEDEP}]
 		sci-libs/rocPRIM:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${ROCRAND_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_6_4_AMDGPU_USEDEP}]
 		sci-libs/rocRAND:=
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCSPARSE_6_4_AMDGPU_USEDEP}]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_6_4_AMDGPU_USEDEP}]
 		sci-libs/rocSPARSE:=
 	)
 "
@@ -110,6 +116,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

@@ -3,6 +3,12 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=11
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -54,6 +60,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

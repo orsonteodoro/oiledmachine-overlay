@@ -51,7 +51,7 @@ REQUIRED_USE="
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	sys-devel/gcc
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86,offload]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="

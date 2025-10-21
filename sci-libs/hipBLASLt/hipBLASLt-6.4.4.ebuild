@@ -93,26 +93,26 @@ RDEPEND="
 	virtual/blas
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?,amdgpu_targets_gfx1103?,amdgpu_targets_gfx1150?,amdgpu_targets_gfx1151?,amdgpu_targets_gfx1200?,amdgpu_targets_gfx1201?]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?,amdgpu_targets_gfx1103?,amdgpu_targets_gfx1150?,amdgpu_targets_gfx1151?,amdgpu_targets_gfx1200?,amdgpu_targets_gfx1201?]
 	sys-libs/llvm-roc-libomp:=
 	amdgpu_targets_gfx908_xnack_minus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx908]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx908]
 		sys-libs/llvm-roc-libomp:=
 	)
 	amdgpu_targets_gfx908_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx908]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx908]
 		sys-libs/llvm-roc-libomp:=
 	)
 	amdgpu_targets_gfx90a_xnack_minus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx90a]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx90a]
 		sys-libs/llvm-roc-libomp:=
 	)
 	amdgpu_targets_gfx90a_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx90a]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx90a]
 		sys-libs/llvm-roc-libomp:=
 	)
 	amdgpu_targets_gfx942_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[amdgpu_targets_gfx942]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx942]
 		sys-libs/llvm-roc-libomp:=
 	)
 	cuda? (
