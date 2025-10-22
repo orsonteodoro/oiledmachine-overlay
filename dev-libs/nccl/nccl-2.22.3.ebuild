@@ -201,7 +201,7 @@ RDEPEND="
 		dev-libs/gdrcopy
 	)
 	peermem? (
-		dev-util/DOCA-Host[mlnx-ofed-kernel]
+		dev-util/DOCA-Host[${LIBSTDCXX_USEDEP},mlnx-ofed-kernel]
 		x11-drivers/nvidia-drivers
 	)
 	verbs? (
