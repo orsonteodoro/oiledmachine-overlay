@@ -144,14 +144,8 @@ RDEPEND="
 	!dev-util/amd-rocm-meta
 	compilers? (
 		fortran? (
-			hip? (
-				>=dev-lang/rocm-flang-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},-aocc]
-				dev-lang/rocm-flang:=
-			)
-			non-free? (
-				>=dev-lang/rocm-flang-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},aocc]
-				dev-lang/rocm-flang:=
-			)
+			>=dev-lang/rocm-flang-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
+			dev-lang/rocm-flang:=
 		)
 		hip? (
 			>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
