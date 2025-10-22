@@ -76,7 +76,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE+="
 	python? (
@@ -299,11 +299,17 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	L=(
 		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
 	)
-	local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
+	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
+	local d2="/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 	for x in ${L[@]} ; do
-einfo "Adding ${d} to RPATH for ${x}"
+einfo "Adding ${d1} to RPATH for ${x}"
 		patchelf \
-			--add-rpath "${d}" \
+			--add-rpath "${d1}" \
+			"${x}" \
+			|| die
+einfo "Adding ${d2} to RPATH for ${x}"
+		patchelf \
+			--add-rpath "${d2}" \
 			"${x}" \
 			|| die
 	done
