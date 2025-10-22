@@ -3,13 +3,19 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
+CXX_STANDARD=11
 FMT_COMMIT="123913715afeb8a437e6388b4473fcc4753e1c9a"
 GLOG_COMMIT="7b134a5c82c0c0b5698bb6bf7a835b230c5638e4"
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm/rocprofiler-register.git"
@@ -49,8 +55,10 @@ SLOT="0/${ROCM_SLOT}"
 IUSE+=" samples static-libs test ebuild_revision_10"
 # glog downgraded originally 0.7.0
 RDEPEND="
-	>=dev-cpp/glog-0.6.0
-	>=dev-libs/libfmt-10.1.0
+	>=dev-cpp/glog-0.6.0[${LIBSTDCXX_USEDEP}]
+	dev-cpp/glog:=
+	>=dev-libs/libfmt-10.1.0[${LIBSTDCXX_USEDEP}]
+	dev-libs/libfmt:=
 "
 DEPEND="
 	${RDEPEND}
@@ -67,6 +75,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

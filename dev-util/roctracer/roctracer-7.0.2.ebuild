@@ -3,12 +3,18 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
+
+CXX_STANDARD=17
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-compiler-switch cmake flag-o-matic prefix python-any-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/roctracer-rocm-${PV}"
@@ -38,11 +44,11 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-comgr:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocr-runtime:=
-	>=dev-util/hip-${PV}:${SLOT}
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
 "
 DEPEND="
@@ -71,6 +77,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

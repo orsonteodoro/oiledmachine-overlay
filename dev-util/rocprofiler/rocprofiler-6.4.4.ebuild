@@ -38,13 +38,19 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx1101
 	gfx1102
 )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
+CXX_STANDARD=17
 CMAKE_BUILD_TYPE="Debug"
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic python-any-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -76,17 +82,17 @@ RDEPEND="
 	$(python_gen_any_dep '
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
-	>=dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
+	>=dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/hsa-amd-aqlprofile:=
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}
+	>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-comgr:=
-	>=dev-libs/rocm-core-${PV}:${SLOT}
+	>=dev-libs/rocm-core-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-core:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}
+	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocr-runtime:=
-	>=dev-util/hip-${PV}:${SLOT}
+	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
-	>=dev-util/roctracer-${PV}:${SLOT}
+	>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/roctracer:=
 	plugins? (
 		sys-apps/systemd
@@ -134,6 +140,7 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 	warn_untested_gpu
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

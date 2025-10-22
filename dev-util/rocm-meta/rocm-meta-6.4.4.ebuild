@@ -305,11 +305,11 @@ RDEPEND="
 		>=dev-util/rocm_bandwidth_test-${PV}:${SLOT}
 		dev-util/rocm_bandwidth_test:=
 		non-free? (
-			>=dev-libs/rocprofiler-register-${PV}:${SLOT}
+			>=dev-libs/rocprofiler-register-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocprofiler-register:=
-			>=dev-util/rocprofiler-${PV}:${SLOT}[$(get_rocm_usedep ROCPROFILER)]
+			>=dev-util/rocprofiler-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPROFILER)]
 			dev-util/rocprofiler:=
-			>=dev-util/roctracer-${PV}:${SLOT}
+			>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-util/roctracer:=
 		)
 	)
