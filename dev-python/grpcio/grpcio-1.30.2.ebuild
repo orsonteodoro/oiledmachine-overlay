@@ -13,6 +13,7 @@ LLVM_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
 
+ABSEIL_CPP_PV="20200225.0"
 CXX_STANDARD=11
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -23,7 +24,7 @@ PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit distutils-r1 libcxx-slot libstdcxx-slot multiprocessing prefix
+inherit distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
 
 KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
 S="${WORKDIR}/${GRPC_P}"
@@ -48,7 +49,7 @@ ebuild_revision_2
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20200225.0:0/20200225
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-)]
 	dev-libs/openssl:=
@@ -113,6 +114,7 @@ eerror
 }
 
 python_configure() {
+	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
