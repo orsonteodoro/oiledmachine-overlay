@@ -271,7 +271,7 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	done
 
 	L=(
-		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin")
+		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
 	)
 	local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
 	for x in ${L[@]} ; do
