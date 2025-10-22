@@ -25,8 +25,10 @@ REQUIRED_USE="
 RDEPEND="
 	compiler-rt? (
 		~llvm-runtimes/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
+		llvm-runtimes/compiler-rt:=
 		sanitize? (
 			~llvm-runtimes/compiler-rt-sanitizers-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
+			llvm-runtimes/compiler-rt-sanitizers:=
 		)
 	)
 	libcxx? (
@@ -34,11 +36,13 @@ RDEPEND="
 	)
 	openmp? (
 		llvm-runtimes/openmp:${PV%%.*}[${MULTILIB_USEDEP}]
+		llvm-runtimes/openmp:=
 		offload? (
 			>=llvm-runtimes/offload-${PV}
 		)
 	)
 	pstl? (
 		llvm-core/pstl:${PV%%.*}
+		llvm-core/pstl:=
 	)
 "

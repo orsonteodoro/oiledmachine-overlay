@@ -4,6 +4,18 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -22,12 +34,12 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-GCC_SLOT=13
+CXX_STANDARD=23
 PYTHON_COMPAT=( "python3_11" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
-LLVM_MAX_SLOT=${LLVM_MAJOR}
+LLVM_MAX_SLOT="${LLVM_MAJOR}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
 
 DESCRIPTION="Low level support for a standard C++ library"
@@ -42,7 +54,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
-hardened +static-libs test
+clang hardened +static-libs test
 ebuild_revision_14
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
@@ -51,13 +63,17 @@ RDEPEND="
 "
 DEPEND+="
 	${RDEPEND}
-	llvm-core/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
+	llvm-core/llvm:=
 "
 BDEPEND+="
 	!test? (
 		${PYTHON_DEPS}
 	)
-	>=sys-devel/gcc-${GCC_SLOT}
+	clang? (
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang:=
+	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
@@ -93,6 +109,8 @@ python_check_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
+	libcxx-slot
+	libstdcxx-slot_verify
 }
 
 get_lib_types() {

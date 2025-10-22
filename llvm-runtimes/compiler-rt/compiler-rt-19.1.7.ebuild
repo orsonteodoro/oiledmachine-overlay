@@ -3,7 +3,10 @@
 
 EAPI=8
 
-# Last update:  2024-07-06
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -23,9 +26,10 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
@@ -67,13 +71,15 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
 	)
 	test? (
 		$(python_gen_any_dep "
 			>=dev-python/lit-15[\${PYTHON_USEDEP}]
 		")
-		=llvm-core/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
+		=llvm-core/clang-${LLVM_VERSION}*:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
 	)
 	!test? (
 		${PYTHON_DEPS}
@@ -116,6 +122,7 @@ pkg_setup() {
 		DOCS=()
 	fi
 	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 test_compiler() {

@@ -56,6 +56,7 @@ PDEPEND="
 			sys-libs/libunwind[static-libs]
 		)
 		llvm-runtimes/clang-runtime:${LLVM_MAJOR}[compiler-rt]
+		llvm-runtimes/clang-runtime:=
 		llvm-libunwind? (
 			llvm-runtimes/libunwind[static-libs]
 		)

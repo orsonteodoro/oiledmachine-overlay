@@ -38,12 +38,15 @@ RDEPEND="
 	)
 	compiler-rt? (
 		~llvm-runtimes/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
+		llvm-runtimes/compiler-rt:=
 		sanitize? (
 			~llvm-runtimes/compiler-rt-sanitizers-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
+			llvm-runtimes/compiler-rt-sanitizers:=
 		)
 	)
 	default-compiler-rt? (
 		~llvm-runtimes/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
+		llvm-runtimes/compiler-rt:=
 		!llvm-libunwind? (
 			sys-libs/libunwind[static-libs]
 		)
@@ -56,21 +59,25 @@ RDEPEND="
 	)
 	default-lld? (
 		~llvm-core/lld-${PV}
+		llvm-core/lld:=
 	)
 	libcxx? (
 		>=llvm-runtimes/libcxx-${PV}[${MULTILIB_USEDEP}]
 	)
 	openmp? (
 		>=llvm-runtimes/openmp-${PV}[${MULTILIB_USEDEP}]
+		llvm-runtimes/openmp:=
 		offload? (
 			>=llvm-runtimes/offload-${PV}
 		)
 	)
 	polly? (
 		~llvm-core/polly-${PV}
+		llvm-core/polly:=
 	)
 	pstl? (
 		llvm-core/pstl:${PV%%.*}
+		llvm-core/pstl:=
 	)
 "
 

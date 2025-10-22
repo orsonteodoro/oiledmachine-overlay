@@ -4,12 +4,12 @@
 
 EAPI=8
 
-# Last update:  2024-06-01
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -169,6 +169,7 @@ RDEPEND="
 PDEPEND="
 	llvm-core/llvm-common
 	llvm-core/llvm-toolchain-symlinks:${LLVM_MAJOR}
+	llvm-core/llvm-toolchain-symlinks:=
 	binutils-plugin? (
 		>=llvm-core/llvmgold-${LLVM_MAJOR}
 	)

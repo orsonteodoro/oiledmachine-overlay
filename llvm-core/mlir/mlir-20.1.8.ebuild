@@ -3,6 +3,11 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -21,10 +26,11 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-LLVM_SLOT=${PV%%.*}
+CXX_STANDARD=17
+LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_12" )
 
-inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
+inherit flag-o-matic cmake-multilib linux-info libstdcxx-slot llvm llvm.org
 inherit python-single-r1 toolchain-funcs
 
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
@@ -45,15 +51,19 @@ ${LLVM_EBUILDS_LLVM20_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	llvm-core/clang:${SLOT}
-	llvm-core/llvm:${SLOT}
+	llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
+	llvm-core/clang:=
+	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	llvm-core/clang:${SLOT}
-	llvm-core/llvm:${SLOT}
+	llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
+	llvm-core/clang:=
+	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:=
 "
 RESTRICT="
 "
@@ -74,6 +84,7 @@ python_check_deps() {
 pkg_setup() {
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

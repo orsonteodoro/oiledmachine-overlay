@@ -4,12 +4,12 @@
 
 EAPI=8
 
-# Last update:  2024-11-07
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -19,11 +19,6 @@ if [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 inherit llvm-ebuilds
-
-KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
-~arm64-macos ~x64-macos
-"
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
@@ -37,6 +32,11 @@ unset -f _llvm_set_globals
 
 inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm.org multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
+
+KEYWORDS="
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
+~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -132,7 +132,8 @@ RDEPEND+="
 		dev-lang/perl:*
 	)
 	xml? (
-		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+		dev-libs/libxml2:2[${MULTILIB_USEDEP}]
+		dev-libs/libxml2:=
 	)
 	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
 	llvm-core/llvm:=
@@ -154,7 +155,9 @@ BDEPEND="
 "
 PDEPEND+="
 	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
+	llvm-core/clang-toolchain-symlinks:=
 	~llvm-runtimes/clang-runtime-${PV}
+	llvm-runtimes/clang-runtime:=
 "
 RESTRICT="
 	!test? (

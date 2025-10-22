@@ -4,12 +4,12 @@
 
 EAPI=8
 
-# Last update:  2024-05-25
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then

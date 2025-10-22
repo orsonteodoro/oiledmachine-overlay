@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# Last update:  2024-05-25
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -28,6 +26,8 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_12" )
 
 inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
@@ -312,7 +312,8 @@ BDEPEND="
 	clang? (
 		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
 		llvm-core/clang:=
-		llvm-runtimes/compiler-rt:${LLVM_MAJOR}
+		llvm-runtimes/compiler-rt:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-runtimes/compiler-rt:=
 	)
 	elibc_glibc? (
 		net-libs/libtirpc
@@ -322,7 +323,8 @@ BDEPEND="
 		$(python_gen_any_dep "
 			>=dev-python/lit-15[\${PYTHON_USEDEP}]
 		")
-		=llvm-runtimes/compiler-rt-${LLVM_VERSION%%.*}*:=
+		=llvm-runtimes/compiler-rt-${LLVM_VERSION%%.*}*[${LIBSTDCXX_USEDEP}]
+		llvm-runtimes/compiler-rt:=
 		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
 		llvm-core/clang:=
 	)

@@ -13,11 +13,6 @@ fi
 
 inherit llvm-ebuilds
 
-KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
-"
-
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
@@ -29,6 +24,11 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 inherit elisp-common llvm.org
+
+KEYWORDS="
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
+~arm64-macos ~ppc-macos ~x64-macos
+"
 
 DESCRIPTION="Common files shared between multiple slots of LLVM"
 HOMEPAGE="https://llvm.org/"

@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# Last update:  2024-10-23
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -28,7 +26,14 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
-CMAKE_ECLASS="cmake"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
 LLVM_COMPONENTS=(
 	"runtimes"
 	"libcxx"{"","abi"}
@@ -36,10 +41,13 @@ LLVM_COMPONENTS=(
 	"llvm/"{"cmake","utils/llvm-lit"}
 	"cmake"
 )
-LLVM_MAX_SLOT=${PV%%.*}
+
+CMAKE_ECLASS="cmake"
+CXX_STANDARD=23
+LLVM_MAX_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib crossdev flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
@@ -72,31 +80,39 @@ ebuild_revision_17
 "
 RDEPEND="
 	!libcxxabi? (
-		>=sys-devel/gcc-4.7:=[cxx]
+		>=sys-devel/gcc-4.7[cxx]
+		sys-devel/gcc:=
 	)
 	libcxxabi? (
-		~llvm-runtimes/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
+		~llvm-runtimes/libcxxabi-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},hardened?,static-libs?]
+		llvm-runtimes/libcxxabi:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	llvm-core/llvm:${PV%%.*}
+	llvm-core/llvm:${PV%%.*}[${LIBSTDCXX_USEDEP_LTS}]
+	llvm-core/llvm:=
 "
 BDEPEND+="
 	dev-util/patchutils
 	sys-devel/gcc
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang:=
 		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:=
 		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-rtlib-config:=
 		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-unwindlib-config:=
 	)
 	test? (
 		$(python_gen_any_dep '
 			dev-python/lit[${PYTHON_USEDEP}]
 		')
 		>=dev-build/cmake-3.16
-		>=llvm-core/clang-3.9.0
+		>=llvm-core/clang-3.9.0[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang:=
 		dev-debug/gdb[python]
 	)
 "
@@ -230,6 +246,7 @@ pkg_setup() {
 		eerror "and try again."
 		die
 	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

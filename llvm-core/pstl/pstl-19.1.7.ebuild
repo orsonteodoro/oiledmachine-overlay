@@ -4,6 +4,11 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -23,11 +28,11 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 CMAKE_ECLASS="cmake"
-GCC_SLOT=13
-LLVM_MAX_SLOT=${LLVM_MAJOR}
+CXX_STANDARD=17
+LLVM_MAX_SLOT="${LLVM_MAJOR}"
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
 
@@ -56,7 +61,8 @@ ebuild_revision_6
 "
 RDEPEND="
 	openmp? (
-		llvm-runtimes/openmp:${LLVM_MAJOR}
+		llvm-runtimes/openmp:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-runtimes/openmp:=
 	)
 "
 DEPEND="
@@ -65,12 +71,12 @@ DEPEND="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.20.0
-	>=sys-devel/gcc-${GCC_SLOT}
 	test? (
 		$(python_gen_any_dep '
 			dev-python/lit[${PYTHON_USEDEP}]
 		')
-		>=llvm-core/clang-3.9.0
+		>=llvm-core/clang-3.9.0[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
 	)
 "
 PATCHES=(
@@ -93,6 +99,7 @@ get_lib_types() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {

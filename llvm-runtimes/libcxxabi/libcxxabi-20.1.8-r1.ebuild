@@ -4,7 +4,17 @@
 
 EAPI=8
 
-# Last update:	2024-10-23
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -24,15 +34,13 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-GCC_SLOT=14
+CXX_STANDARD=23
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
-LLVM_MAX_SLOT=${LLVM_MAJOR}
-KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
-"
+LLVM_MAX_SLOT="${LLVM_MAJOR}"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
 
 DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
@@ -55,18 +63,22 @@ RDEPEND="
 "
 DEPEND+="
 	${RDEPEND}
-	llvm-core/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
+	llvm-core/llvm:=
 "
 BDEPEND+="
 	!test? (
 		${PYTHON_DEPS}
 	)
-	>=sys-devel/gcc-${GCC_SLOT}
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang:=
 		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:=
 		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-rtlib-config:=
 		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-unwindlib-config:=
 	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
@@ -104,6 +116,8 @@ python_check_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
+	libcxx-slot
+	libstdcxx-slot_verify
 }
 
 get_lib_types() {
