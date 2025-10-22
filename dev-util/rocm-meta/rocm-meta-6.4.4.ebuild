@@ -301,7 +301,7 @@ RDEPEND="
 	tools-perf? (
 		>=dev-util/rocprofiler-compute-${PV}:${SLOT}
 		dev-util/rocprofiler-compute:=
-		>=dev-util/rocprofiler-systems-${PV}:${SLOT}
+		>=dev-util/rocprofiler-systems-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocprofiler-systems:=
 		>=dev-util/rocprofiler-sdk-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocprofiler-sdk:=

@@ -10,6 +10,11 @@ EAPI=8
 # For requirements, see
 # https://github.com/ROCm/omnitrace/blob/rocm-6.2.4/source/docs/installation.md
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 BINUTILS_PV="2.40"
 CALIPER_COMMIT="7e66987f0d9af19dcaa13fb78197cdc8437d8a3f"
 DYNINST_COMMIT_1="09e781d414c83b4ad587083d449a3e976546937d"
@@ -37,7 +42,7 @@ LEGACY_TBB_SLOT=2
 TIMEMORY_COMMIT="fad254dde56e6d6deb6f9a643000ab678726db30"
 YAML_CPP_COMMIT="1b50109f7bea60bd382d8ea7befce3d2bd67da5f"
 
-inherit check-compiler-switch cmake dep-prepare flag-o-matic python-single-r1 rocm
+inherit check-compiler-switch cmake dep-prepare flag-o-matic libstdcxx-slot python-single-r1 rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm/omnitrace/"
@@ -178,6 +183,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
