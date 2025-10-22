@@ -8,7 +8,7 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_SLOT="3/4.21"
+PROTOBUF_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1 multiprocessing prefix
@@ -23,14 +23,14 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 DESCRIPTION="Python libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
-SLOT="3" # Use wrapper for PYTHONPATH
+SLOT="5" # Use wrapper for PYTHONPATH
 IUSE+=" doc ebuild_revision_3"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.51.3/third_party
+# See https://github.com/grpc/grpc/blob/v1.72.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.72.2/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
+	>=dev-cpp/abseil-cpp-20240722.0:0/20240722
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=
 	>=dev-libs/re2-0.2022.04.01

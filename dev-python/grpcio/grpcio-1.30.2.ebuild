@@ -8,7 +8,7 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_SLOT="0/3.12"
+PROTOBUF_SLOT="3/3.12"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1 multiprocessing prefix
@@ -23,18 +23,21 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 DESCRIPTION="Python libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="3" # Use wrapper for PYTHONPATH
 IUSE+=" doc ebuild_revision_2"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20200225.0:0/20200225[cxx17(+)]
-	>=dev-libs/openssl-1.1.0g:0=[-bindist(-)]
+	>=dev-cpp/abseil-cpp-20200225.0:0/20200225
+	>=dev-libs/openssl-1.1.0g:0[-bindist(-)]
+	dev-libs/openssl:=
 	>=dev-python/six-1.16[${PYTHON_USEDEP}]
-	>=net-dns/c-ares-1.15.0:=
-	>=sys-libs/zlib-1.2.11:=
+	>=net-dns/c-ares-1.15.0
+	net-dns/c-ares:=
+	>=sys-libs/zlib-1.2.11
+	sys-libs/zlib:=
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
@@ -59,7 +62,7 @@ PATCHES=(
 distutils_enable_sphinx "doc/python/sphinx"
 
 python_prepare_all() {
-	sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
+	#sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
 }

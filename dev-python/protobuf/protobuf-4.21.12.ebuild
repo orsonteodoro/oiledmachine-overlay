@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO:  change install location for multislot
+
 #
 # About the confusing versioning.
 #
@@ -16,9 +18,11 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
+PROTOBUF_CPP_SLOT=3
+PROTOBUF_PYTHON_SLOT=$(ver_cut 1 "${PV}")
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.10
 
-inherit distutils-r1
+inherit distutils-r1 flag-o-matic
 
 PARENT_PN="${PN/-python/}"
 PARENT_PV="$(ver_cut 2-)"
@@ -45,11 +49,12 @@ HOMEPAGE="
 	https://pypi.org/project/protobuf/
 "
 LICENSE="BSD"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${PROTOBUF_PYTHON_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH wrapper for app
 IUSE+=" ebuild_revision_1"
 RDEPEND="
 	${PYTHON_DEPS}
-	dev-libs/protobuf:${SLOT}
+	!dev-python/protobuf:0
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.21
 	dev-libs/protobuf:=
 "
 DEPEND="
@@ -81,6 +86,8 @@ python_prepare_all() {
 }
 
 src_configure() {
+	append-ldflags -L"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	DISTUTILS_ARGS=(
 		--cpp_implementation
 	)
@@ -89,4 +96,18 @@ src_configure() {
 python_compile() {
 	distutils-r1_python_compile
 	find "${BUILD_DIR}/install" -name "*.pth" -type f -delete || die
+}
+
+src_install() {
+	distutils-r1_src_install
+
+	change_prefix() {
+	# Change of base /usr -> /usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}
+		local old_prefix="/usr/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}"
+		dodir $(dirname "${new_prefix}")
+		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
+	}
+
+	python_foreach_impl change_prefix
 }

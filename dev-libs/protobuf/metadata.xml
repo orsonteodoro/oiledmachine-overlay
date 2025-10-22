@@ -23,6 +23,21 @@
     <remote-id type="cpe">cpe:/a:google:protobuf</remote-id>
     <remote-id type="github">protocolbuffers/protobuf</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  The multislot is to resolve the following similatenous installation:
+
+  LTS packages using Protobuf 3.x using either protobuf-python 3 (U22), protobuf-python 4 (U24/D12/D13)
+  TensorFlow 2.20.x using protobuf-python 5
+  TensorFlow 2.19.x using protobuf-python 4
+  LocalAI using protobuf-cpp 5 indirectly
+
+  Also Protobuf uses poison pill versioning, so the default >= assumption is
+  inconsistent.
+
+  -->
   <use>
     <flag name="jsoncpp">
       Use jsoncpp in conformance testing.

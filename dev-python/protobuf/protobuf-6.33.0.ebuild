@@ -7,9 +7,9 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_CPP_SLOT=3
+PROTOBUF_CPP_SLOT=6
 PROTOBUF_PYTHON_SLOT=$(ver_cut 1 "${PV}")
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.7
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 flag-o-matic
 
@@ -26,11 +26,11 @@ if [[ "${PV}" == *"9999" ]]; then
 else
 	KEYWORDS="~amd64 ~x64-macos"
 	SRC_URI="
-		https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PV}.tar.gz
-			-> ${P}.tar.gz
+		https://github.com/protocolbuffers/protobuf/archive/v${PARENT_PV}.tar.gz
+			-> ${PARENT_P}.tar.gz
 	"
 fi
-S="${WORKDIR}/${P}/python"
+S="${WORKDIR}/${PARENT_P}/python"
 
 DESCRIPTION="Python bindings for Google's Protocol Buffers"
 HOMEPAGE="
@@ -43,7 +43,7 @@ IUSE+=" ebuild_revision_1"
 RDEPEND="
 	${PYTHON_DEPS}
 	!dev-python/protobuf:0
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.12
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/6.33
 	dev-libs/protobuf:=
 "
 DEPEND="
@@ -63,11 +63,11 @@ PARENT_PATCHES=(
 
 # Here for patches within "python/" subdirectory.
 PATCHES=(
-#	"${FILESDIR}/${PN}-3.20.3-python311.patch"
+	"${FILESDIR}/${PN}-3.20.3-python311.patch"
 )
 
 python_prepare_all() {
-	pushd "${WORKDIR}/${P}" >/dev/null 2>&1 || die
+	pushd "${WORKDIR}/${PARENT_P}" >/dev/null 2>&1 || die
 		[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
 		eapply_user
 	popd >/dev/null 2>&1 || die
