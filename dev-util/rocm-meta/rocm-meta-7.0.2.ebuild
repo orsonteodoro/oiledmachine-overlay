@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# TODO package:
+# dev-util/rocprofiler-sdk
+
 # See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-7.0.2/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
 	gfx908
@@ -297,11 +300,11 @@ RDEPEND="
 		dev-util/ROCgdb:=
 	)
 	tools-perf? (
-		>=dev-util/omniperf-${PV}:${SLOT}
-		dev-util/omniperf:=
-		>=dev-util/omnitrace-${PV}:${SLOT}
-		dev-util/omnitrace:=
-		>=dev-util/rocprofiler-sdk-${PV}:${SLOT}
+		>=dev-util/rocprofiler-compute-${PV}:${SLOT}
+		dev-util/rocprofiler-compute:=
+		>=dev-util/rocprofiler-systems-${PV}:${SLOT}
+		dev-util/rocprofiler-systems:=
+		>=dev-util/rocprofiler-sdk-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocprofiler-sdk:=
 		>=dev-util/rocm_bandwidth_test-${PV}:${SLOT}
 		dev-util/rocm_bandwidth_test:=

@@ -183,8 +183,6 @@ RDEPEND="
 			dev-build/rocm-cmake:=
 			>=dev-libs/rocm-core-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocm-core:=
-			>=dev-libs/roct-thunk-interface-${PV}:${SLOT}
-			dev-libs/roct-thunk-interface:=
 		)
 	)
 "

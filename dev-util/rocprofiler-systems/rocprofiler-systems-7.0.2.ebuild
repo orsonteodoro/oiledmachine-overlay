@@ -12,28 +12,28 @@ EAPI=8
 
 BINUTILS_PV="2.40"
 CALIPER_COMMIT="7e66987f0d9af19dcaa13fb78197cdc8437d8a3f"
-DYNINST_COMMIT_1="d3ab0a71e925bd01b20c6362f14006d34ece7112"
-DYNINST_COMMIT_2="076d8bdef4f22639d16ca65cda9b909b6c726047"
-DYNINST_TESTSUITE_COMMIT="3a5c5794dcf38ad5452816046b39c0c2528d86f5"
+DYNINST_COMMIT_1="b4350c3c1426a36d5d5e70b3b172bce1b0bff335"
+DYNINST_COMMIT_2="076d8bdef4f22639d16ca65cda9b909b6c726047" # timemory dep
+DYNINST_TESTSUITE_COMMIT_2="3a5c5794dcf38ad5452816046b39c0c2528d86f5" # dyninst (2) dep, committer-date:<=2021-09-29
 ELFIO_COMMIT="d00cc32f8b1ed85d22309fac10576a1baf8a4736"
 GOOGLETEST_COMMIT="4174e1703ba8412e84b2959c1cf57433d144b32d"
-GOTCHA_COMMIT="5aff8260e0756d7c182812ef6b92453374265e28"
+GOTCHA_COMMIT="6ef1232a0acc99f3340c2ca4c5d23890e9b8a459"
 HATCHET_COMMIT="a1f13410b0bf2334459bf07fee767cda81794cad"
 LIBUNWIND_COMMIT="501d8d5e6a06236b87d10a2b1b85008fde3fcbcc"
 LLVM_OPENMP_COMMIT="998ea02399846927f3e329b6cc9fe387a8d39947"
 LINE_PROFILER_COMMIT="794adeb01ea1353f713a030f6cbd5e0e5780cb21"
 LLVM_SLOT=19
-PAPI_COMMIT="effd1ef4e0fd4b80e36546791277215a2d6b9eba"
-PERFETTO_COMMIT_1="99ead408d98eaa25b7819c7e059734bea42fa148"
-PERFETTO_COMMIT_2="dd1f2f378fe2f292f78af922828f93a9f101d373"
+PAPI_COMMIT="3ce9001dff49e1b6b1653ffb429808795f71a0bd"
+PERFETTO_COMMIT_1="35b3d9845c2f4017865c4dc93fafcf6d202f1651"
+PERFETTO_COMMIT_2="dd1f2f378fe2f292f78af922828f93a9f101d373" # timemory dep
 PTL_COMMIT_1="f0205c1935f14861b05152378b7ac1c9234cddc0"
-PTL_COMMIT_2="2275ff374d2e469c0e632e86d8319127349ec301"
-PYBIND11_COMMIT_1="1a917f1852eb7819b671fc3fa862840f4c491a07"
+PTL_COMMIT_2="2275ff374d2e469c0e632e86d8319127349ec301" # timemory dep
+PYBIND11_COMMIT_1="1a917f1852eb7819b671fc3fa862840f4c491a07" # timemory dep also
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 LEGACY_TBB_SLOT=2
-TIMEMORY_COMMIT="2a1bcba0cad46efd4421c0c7a145e83b161fb934"
+TIMEMORY_COMMIT="5780cc73c0f9f97e99b7ef3efdde6a4a26ccf3d0"
 YAML_CPP_COMMIT="1b50109f7bea60bd382d8ea7befce3d2bd67da5f"
 
 inherit check-compiler-switch cmake dep-prepare flag-o-matic python-single-r1 rocm
@@ -73,9 +73,9 @@ https://github.com/jrmadsen/yaml-cpp/archive/${YAML_CPP_COMMIT}.tar.gz
 	-> jrmadsen-yaml-cpp-${YAML_CPP_COMMIT:0:7}.tar.gz
 https://github.com/NERSC/LLVM-openmp/archive/${LLVM_OPENMP_COMMIT}.tar.gz
 	-> NERSC-LLVM-openmp-${LLVM_OPENMP_COMMIT:0:7}.tar.gz
-https://github.com/NERSC/timemory/archive/${TIMEMORY_COMMIT}.tar.gz
-	-> NERSC-timemory-${TIMEMORY_COMMIT:0:7}.tar.gz
-https://github.com/ROCm/omnitrace/archive/refs/tags/rocm-${PV}.tar.gz
+https://github.com/ROCm/timemory/archive/${TIMEMORY_COMMIT}.tar.gz
+	-> ROCm-timemory-${TIMEMORY_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/icl-utk-edu/papi/archive/${PAPI_COMMIT}.tar.gz
 	-> papi-${PAPI_COMMIT:0:7}.tar.gz
@@ -83,16 +83,16 @@ https://android.googlesource.com/platform/external/perfetto/+archive/${PERFETTO_
 	-> perfetto-${PERFETTO_COMMIT_1:0:7}.tar.gz
 https://android.googlesource.com/platform/external/perfetto/+archive/${PERFETTO_COMMIT_2}.tar.gz
 	-> perfetto-${PERFETTO_COMMIT_2:0:7}.tar.gz
-https://github.com/dyninst/testsuite/archive/${DYNINST_TESTSUITE_COMMIT}.tar.gz
-	-> dyninst-testsuite-${DYNINST_TESTSUITE_COMMIT:0:7}.tar.gz
+https://github.com/dyninst/testsuite/archive/${DYNINST_TESTSUITE_COMMIT_2}.tar.gz
+	-> dyninst-testsuite-${DYNINST_TESTSUITE_COMMIT_2:0:7}.tar.gz
 http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Omnitrace: Application Profiling, Tracing, and Analysis"
+DESCRIPTION="A comprehensive profiling and tracing tool"
 HOMEPAGE="
 	https://rocm.docs.amd.com/projects/omnitrace/en/latest/
-	https://github.com/ROCm/omnitrace
+	https://github.com/ROCm/rocprofiler-systems
 "
 LICENSE="
 	(
@@ -100,7 +100,7 @@ LICENSE="
 		MIT
 	)
 "
-RESTRICT="test"
+RESTRICT="mirror test" # Speed up downloads
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
 IUSE="
@@ -195,26 +195,28 @@ src_unpack() {
 		fi
 	done
 	dep_prepare_mv "${WORKDIR}/dyninst-${DYNINST_COMMIT_1}" "${S}/external/dyninst"
-	dep_prepare_cp "${WORKDIR}/testsuite-${DYNINST_TESTSUITE_COMMIT}" "${S}/external/dyninst/testsuite"
 	dep_prepare_mv "${WORKDIR}/ELFIO-${ELFIO_COMMIT}" "${S}/external/elfio"
 	dep_prepare_mv "${WORKDIR}/papi-${PAPI_COMMIT}" "${S}/external/papi"
 	dep_prepare_mv "${WORKDIR}/PTL-${PTL_COMMIT_1}" "${S}/external/PTL"
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/external/pybind11"
+
 	dep_prepare_mv "${WORKDIR}/timemory-${TIMEMORY_COMMIT}" "${S}/external/timemory"
 	dep_prepare_mv "${WORKDIR}/Caliper-${CALIPER_COMMIT}" "${S}/external/timemory/external/caliper"
 	dep_prepare_mv "${WORKDIR}/dyninst-${DYNINST_COMMIT_2}" "${S}/external/timemory/external/dyninst"
+	dep_prepare_mv "${WORKDIR}/testsuite-${DYNINST_TESTSUITE_COMMIT_2}" "${S}/external/timemory/external/dyninst/testsuite"
 	dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT}" "${S}/external/timemory/external/google-test"
 	dep_prepare_mv "${WORKDIR}/GOTCHA-${GOTCHA_COMMIT}" "${S}/external/timemory/external/gotcha"
 	dep_prepare_mv "${WORKDIR}/hatchet-${HATCHET_COMMIT}" "${S}/external/timemory/external/hatchet"
 	dep_prepare_mv "${WORKDIR}/libunwind-${LIBUNWIND_COMMIT}" "${S}/external/timemory/external/libunwind"
 	dep_prepare_mv "${WORKDIR}/line_profiler-${LINE_PROFILER_COMMIT}" "${S}/external/timemory/external/line-profiler"
 	dep_prepare_mv "${WORKDIR}/LLVM-openmp-${LLVM_OPENMP_COMMIT}" "${S}/external/timemory/external/llvm-ompt"
-	dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" "${S}/external/perfetto"
 	dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}" "${S}/external/timemory/external/perfetto"
 	dep_prepare_mv "${WORKDIR}/PTL-${PTL_COMMIT_2}" "${S}/external/timemory/external/ptl"
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/external/timemory/external/pybind11"
 	dep_prepare_cp "${WORKDIR}/testsuite-${DYNINST_TESTSUITE_COMMIT}" "${S}/external/timemory/external/dyninst/testsuite"
 	dep_prepare_mv "${WORKDIR}/yaml-cpp-${YAML_CPP_COMMIT}" "${S}/external/timemory/external/yaml-cpp"
+
+	dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" "${S}/external/perfetto"
 	dep_prepare_mv "${WORKDIR}/binutils-${BINUTILS_PV}" "${S}/external/binutils"
 }
 

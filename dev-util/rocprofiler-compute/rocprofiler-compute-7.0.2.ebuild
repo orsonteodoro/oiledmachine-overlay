@@ -17,15 +17,15 @@ else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/rocprofiler-compute-rocm-${PV}"
 	SRC_URI="
-https://github.com/ROCm/omniperf/archive/refs/tags/rocm-${PV}.tar.gz
+https://github.com/ROCm/rocprofiler-compute/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
 
-DESCRIPTION="Advanced Profiling and Analytics for AMD Hardware"
+DESCRIPTION="System performance profiling tool for machine learning/HPC workloads running on AMD MI GPUs"
 HOMEPAGE="
 	https://rocm.docs.amd.com/projects/omniperf/en/latest/
-	https://github.com/ROCm/omniperf
+	https://github.com/ROCm/rocprofiler-compute
 "
 LICENSE="
 	(
