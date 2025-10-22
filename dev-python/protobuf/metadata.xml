@@ -25,8 +25,8 @@
 
   Major reverse dependencies:
 
-  protobuf-python:3 - For LTS packages tested on U22, D12, U24, D24 CI images
-  protobuf-python:4 - For TensorFlow builds with CUDA 11.8
+  protobuf-python:3 - For LTS packages tested on U22 CI images
+  protobuf-python:4 - For TensorFlow builds with CUDA 11.8; LTS packages on D12, U24, D24 CI images
   protobuf-python:5 - For TensorFlow builds with CUDA 12.x, ROCm 6.4
 
 
