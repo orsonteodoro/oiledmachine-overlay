@@ -31,7 +31,7 @@
   protobuf-python:5 - For TensorFlow builds with CUDA 12.x, ROCm 6.4
 
 
-  The multislot is to resolve the following similatenous installation:
+  The multislot is to resolve the following simultaneous installation:
 
   LTS packages using Protobuf 3.x using either protobuf-python 3 (U22), protobuf-python 4 (U24/D12/D13)
   TensorFlow 2.20.x using protobuf-python 5
