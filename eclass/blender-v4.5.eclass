@@ -77,6 +77,8 @@ LLVM_COMPAT=(
 	19 # For ROCm 6.4
 )
 
+CXX_STANDARD=17
+
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
@@ -224,7 +226,7 @@ ${ROCM_SLOTS[@]}
 ebuild_revision_23
 "
 # hip is default ON upstream.
-inherit libstdcxx-slot blender
+inherit libcxx-slot libstdcxx-slot blender
 
 LICENSE+="
 	(
