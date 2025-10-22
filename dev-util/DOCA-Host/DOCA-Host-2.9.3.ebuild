@@ -66,7 +66,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 hcoll mlnx-ofed-kernel sharp
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -294,7 +294,7 @@ einfo "Unpacking ${tarball_name} for USE=${u}"
 pkg_setup() {
 einfo "This is the LTS release of ${PN}"
 	python-any-r1_pkg_setup
-	#libstdcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
