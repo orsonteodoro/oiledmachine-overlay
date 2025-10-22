@@ -24,6 +24,7 @@ SLOT="0/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
+ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
@@ -47,7 +48,8 @@ RDEPEND+="
 		=net-libs/grpc-1.48*
 	)
 	net-libs/grpc:=
-	virtual/protobuf[gcc_slot_11_5?,gcc_slot_12_5?,gcc_slot_13_4?,gcc_slot_14_3?,gcc_slot_15_2?]
+	virtual/protobuf:3[gcc_slot_11_5?,gcc_slot_12_5?,gcc_slot_13_4?,gcc_slot_14_3?,gcc_slot_15_2?]
+	virtual/protobuf:=
 "
 DEPEND+="
 "
