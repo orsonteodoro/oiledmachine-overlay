@@ -22,6 +22,7 @@ BROTLI_VULNERABILITY_HISTORY="BO IU"
 # Contains open_encrypted_with_pass() API that accepts password or users may login with password.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
+CXX_STANDARD=17
 ENET_VULNERABILITY_HISTORY="DOS"
 FREETYPE_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 GLSLANG_VULNERABILITY_HISTORY="NPD"

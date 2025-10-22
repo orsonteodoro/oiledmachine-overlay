@@ -6,15 +6,17 @@ EAPI=8
 
 # U22
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 # See godot-editor for additional hardening comments
 # Hardening is applied to protect password code paths.
 # There is an open_encrypted_with_pass() API that these bindings makes available.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
+CXX_STANDARD=17
 LLVM_COMPAT=( "17" )
 STATUS="stable"
 
