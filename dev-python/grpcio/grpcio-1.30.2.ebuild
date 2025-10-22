@@ -49,6 +49,7 @@ ebuild_revision_2
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20200225.0:0/20200225
+	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-)]
 	dev-libs/openssl:=
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
@@ -66,6 +67,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
 	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
