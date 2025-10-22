@@ -35,8 +35,8 @@ REQUIRED_USE="
 "
 DEPEND+="
 	acct-group/dialout
-	dev-libs/protobuf:${PROTOBUF_SLOT}
-	dev-libs/protobuf:=
+	virtual/protobuf:${PROTOBUF_SLOT}
+	virtual/protobuf:=
 	virtual/udev
 	openrc? (
 		sys-apps/openrc
