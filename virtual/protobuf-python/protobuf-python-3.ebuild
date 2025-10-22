@@ -24,11 +24,6 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support U22, LTS
-	"gcc_slot_12_5" # Support D12, LTS
-	"gcc_slot_13_4" # Support U24, LTS
-	"gcc_slot_14_3" # Support D13, LTS
-	"gcc_slot_15_2" # Support F43, Rolling
 	${LIBSTDCXX_COMPAT_LTS[@]}
 )
 PYTHON_COMPAT=( "python3_"{11..13} )
@@ -63,9 +58,6 @@ RDEPEND+="
 		)
 		gcc_slot_14_3? (
 			dev-python/protobuf:3/4.21[${PYTHON_USEDEP}]
-		)
-		gcc_slot_15_2? (
-			dev-python/protobuf:3/3.19[${PYTHON_USEDEP}]
 		)
 	')
 	dev-python/protobuf:=

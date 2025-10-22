@@ -21,13 +21,12 @@ LLVM_COMPAT=(
 
 inherit libcxx-slot libstdcxx-slot multilib-build
 
-DESCRIPTION="A virtual package to manage Protobuf C++ stability"
+DESCRIPTION="A virtual package to manage gRPC stability"
 LICENSE="metapackage"
-VERSIONS_MONITORED="5.29"
-SLOT="5/${VERSIONS_MONITORED}"
+VERSIONS_MONITORED="1.71"
+SLOT="0/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
-${GCC_COMPAT[@]}
 ebuild_revision_1
 "
 REQUIRED_USE="
@@ -36,9 +35,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	!virtual/protobuf:0
-	dev-libs/protobuf:5/5.29[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-libs/protobuf:=
+	net-libs/grpc:5/1.71[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	net-libs/grpc:=
+	virtual/protobuf:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf:=
 "
 DEPEND+="
 "

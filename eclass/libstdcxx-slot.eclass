@@ -191,6 +191,11 @@ eerror "QA:  GCC_COMPAT must be defined"
 	"
 	usedep2="${usedep2:1}"
 
+	if [[ -z "${CXX_STANDARD}" ]] ; then
+ewarn "QA:  CXX_STANDARD is undefined."
+ewarn "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
+	fi
+
 	IUSE="
 		${IUSE}
 		${iuse}

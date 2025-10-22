@@ -273,12 +273,14 @@ eerror "QA:  LLVM_COMPAT must be defined"
 
 	if [[ -z "${CXX_STANDARD}" ]] ; then
 eerror "QA:  CXX_STANDARD is undefined."
-eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
+eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
 		die
 	fi
 
 	local rdepend
-	if [[ "${CXX_STANDARD}" == "98" ]] ; then
+	if [[ "${CXX_STANDARD}" == "ignore" ]] ; then
+		:
+	elif [[ "${CXX_STANDARD}" == "98" ]] ; then
 		rdepend="
 			libcxx? (
 				virtual/libcxx[cxx98]
@@ -328,7 +330,7 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
 		"
 	else
 eerror "QA:  CXX_STANDARD is invalid."
-eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26"
+eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
 		die
 	fi
 

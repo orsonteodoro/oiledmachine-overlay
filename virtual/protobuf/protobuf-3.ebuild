@@ -7,21 +7,23 @@ EAPI=8
 # !!! Multiple package instances within a single package slot have been pulled
 # !!! into the dependency graph, resulting in a slot conflict:
 
-inherit libstdcxx-compat multilib-build
+CXX_STANDARD="ignore"
+
+inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_11_5" # Support U22, LTS
-	"gcc_slot_12_5" # Support D12, LTS
-	"gcc_slot_13_4" # Support U24, LTS
-	"gcc_slot_14_3" # Support D13, LTS
-	"gcc_slot_15_2" # Support F43, Rolling
 	${LIBSTDCXX_COMPAT_LTS[@]}
 )
 
-inherit libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_LTS[@]/llvm_slot_}
+)
+
+inherit libcxx-slot libstdcxx-slot multilib-build
 
 DESCRIPTION="A virtual package to manage Protobuf C++ stability"
 LICENSE="metapackage"
-VERSIONS_MONITORED="3.12-3.19-3.21"
+VERSIONS_MONITORED="3.12-3.21"
 SLOT="3/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
@@ -36,19 +38,16 @@ REQUIRED_USE="
 RDEPEND+="
 	!virtual/protobuf:0
 	gcc_slot_11_5? (
-		=dev-libs/protobuf-3.12*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_12_5? (
-		=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_13_4? (
-		=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gcc_slot_14_3? (
-		=dev-libs/protobuf-3.21*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	)
-	gcc_slot_15_2? (
-		=dev-libs/protobuf-3.19*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	dev-libs/protobuf:=
 "
