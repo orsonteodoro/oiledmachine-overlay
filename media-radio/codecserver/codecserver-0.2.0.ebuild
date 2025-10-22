@@ -4,7 +4,10 @@
 
 EAPI=7
 
+# TODO:  verify rpath
+
 # D11, U22
+PROTOBUF_SLOT=3
 
 inherit cmake user-info
 
@@ -22,7 +25,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 openrc systemd
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| (
@@ -32,6 +35,7 @@ REQUIRED_USE="
 "
 DEPEND+="
 	acct-group/dialout
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-libs/protobuf:=
 	virtual/udev
 	openrc? (
@@ -46,6 +50,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.6
+	virtual/protobuf:${PROTOBUF_SLOT}
 	virtual/protobuf:=
 "
 DOCS=( "LICENSE" "README.md" )
@@ -75,6 +80,9 @@ eerror "  gpasswd -a ${PN} dialout"
 eerror
 		die
 	fi
+	local mycmakeargs=(
+		-Dprotobuf_DIR="/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+	)
 	cmake_src_configure
 }
 
