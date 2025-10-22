@@ -17,6 +17,7 @@
     <name>Cjk</name>
   </maintainer>
   <!--
+  <[CDATA[
 
   oiledmachine-overlay notes:
 
@@ -40,6 +41,7 @@
   Also Protobuf uses poison pill versioning, so the default >= assumption is
   inconsistent.
 
+  ]>
   -->
   <slots>
     <subslots>Soname version number of Protobuf</subslots>

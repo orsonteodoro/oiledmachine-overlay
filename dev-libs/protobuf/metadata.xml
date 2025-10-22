@@ -24,6 +24,7 @@
     <remote-id type="github">protocolbuffers/protobuf</remote-id>
   </upstream>
   <!--
+  <[CDATA[
 
   oiledmachine-overlay notes:
 
@@ -43,6 +44,7 @@
   Also Protobuf uses poison pill versioning, so the default >= assumption is
   inconsistent.
 
+  ]>
   -->
   <use>
     <flag name="jsoncpp">
