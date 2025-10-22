@@ -74,30 +74,56 @@
 
 * PYTHON_COMPAT fallbacks for setup.py or pyproject.toml
 
-  | Listed                 | PYTHON_COMPAT                              |
-  | ---                    | ---                                        |
-  | no versions            | (2)                                        |
-  | specific version       | python3_11 or python3_12                   |
-  | specific versions      | python3_{11,12,13} or python3_{11..13} (1) |
-  | python3                | python3_{11,12}                            |
-  | python 3.10 or earlier | (2)                                        |
+  | Listed Python version [1]  | Default solution for PYTHON_COMPAT         |
+  | ---                        | ---                                        |
+  | no versions                | python3_11 or python3_{11..13}             |
+  | specific version           | python3_11, python3_12, or python3_13      |
+  | specific versions          | python3_{11,12,13} or python3_{11..13}     |
+  | python3                    | python3_11 or python3_{11..13}             |
+  | python 3.10 or earlier     | python3_11 or python3_{11..13}             |
 
-  (1) Fallback rule 1:
+  [1] Version listed in setup.py, pyproject.toml, CI files/folder.
 
-    - List all versions from setup.py or pyproject.toml if possible.
-    - Do not eager bump unless an app package needs it.
+  Defaults for distros:
+
+  | Distro  | LTS distro?   | Default python version / Allowed slots     |
+  | ---     | ---           | ---                                        |
+  | U22     | Yes           | python_3_10 -> python_3_11                 |
+  | D12     | Yes           | python_3_11                                |
+  | U24     | Yes           | python_3_12                                |
+  | D13     | Yes           | python_3_13                                |
+  | F37-F38 | No            | python_3_11                                |
+  | F39-F40 | No            | python_3_12                                |
+  | F31...  | No            | python_3_13                                |
+
+  The fallback rules are supposed to minimize emerge issues at the same
+  time reassure and confidently provide a working ebuild for that
+  particular Python version.
+
+  This overlay doesn't support the eager release of 3.14.  It won't be
+  listed for a package unless the package lists 3.14 in the setup.py,
+  pyproject.toml, or in the CI files/folder.
+
+  Fallback rule 1:
+
+    - Use either the oldest active LTS version (python3_11), or only add the
+      Python slot if the major.minor version for that package is listed
+      for the LTS distro.
+    - Do not eager bump the Python version unless an app package needs it.
     - If eager bumped leave the reason:  Needed for `<package name>`
     - If you do not leave a reason, it will be reverted back to upstream listed versions.
 
-  (1) Fallback rule 2:
+  Fallback rule 2:
 
-    - If the CI image is D12, use python3_11.
-    - If the CI image is U24, use python3_12.
-    - If the CI image is F37-F38, use python3_11.
-    - If the CI image is F39-F40, use python3_12.
-    - If the CI image is F41-F.., use python3_13.
-    - If the CI image tests both D12 and U24, use python3_{11,12}.
-    - If a Dockerfile exists, use the above rules.
+    - List all versions from setup.py or pyproject.toml if possible.
+    - Do not eager bump the Python version unless an app package needs it.
+    - If eager bumped leave the reason:  Needed for `<package name>`
+    - If you do not leave a reason, it will be reverted back to upstream listed versions.
+
+  Fallback rule 3:
+
+    - If the CI image is listed for defaults for distros table, add the corresponding python slot(s).
+    - If a Dockerfile exists, use corresponding default for distros table, to add the python slot(s).
     - If the app is set to USE="python_single_target_python3_11" and you tested lib/app interactively or by test suite, use python3_11.
     - If the app is set to USE="python_single_target_python3_12" and you tested lib/app interactively or by test suite, use python3_12.
     - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use python3_11.
@@ -119,7 +145,7 @@
 
   Commentary
 
-    - Most CI images use D12, U22, U24.
+    - Most CI images use D12, U22, U24, or latest F42 or later.
     - Using PYTHON_SINGLE_TARGET from /etc/portage/make.conf or from the app package with testing and fixes performed by you is a good way to increase reproducibility.
     - Adding untested non stable (>= python3_13) can add unintended consequences, more bugs, or Denial of Service (e.g. crash).
     - Adding tested >= python3_13 is allowed.
