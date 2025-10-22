@@ -20,7 +20,7 @@ GLIBC_PV_U24="2.39"
 POOL_DIR_U22="${WORKDIR}/usr/share/doca-host-2.9.3-021000-24.10-ubuntu2204/repo/pool"
 POOL_DIR_D12="${WORKDIR}/usr/share/doca-host-2.9.3-021000-24.10-debian125/repo/pool"
 POOL_DIR_U24="${WORKDIR}/usr/share/doca-host-2.9.3-021000-24.10-ubuntu2404/repo/pool"
-RDMA_CORE_PV="54" # The number after mlnx in filename
+RDMA_CORE_PV="54" # The number after mlnx in filename of tarball of libibverbs1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit unpacker libstdcxx-slot python-any-r1
