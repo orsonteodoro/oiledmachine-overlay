@@ -6,8 +6,8 @@ EAPI=8
 MY_P="grpc-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_CPP_SLOT="3"
-PROTOBUF_PYTHON_SLOT="4"
+PROTOBUF_CPP_SLOT="5"
+PROTOBUF_PYTHON_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1
@@ -31,7 +31,7 @@ RDEPEND="
 	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/grpcio:=
 	>=dev-python/googleapis-common-protos-1.5.5[${PYTHON_USEDEP}]
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
 BDEPEND="

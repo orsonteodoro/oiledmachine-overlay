@@ -5,78 +5,56 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-CXX_STANDARD=14
+CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_CPP_SLOT="3"
-PROTOBUF_PYTHON_SLOT="4"
+MY_PV=$(ver_cut 1-3 "${PV}")
+PROTOBUF_PV="33.0"
+PROTOBUF_CPP_SLOT="6"
+PROTOBUF_PYTHON_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit distutils-r1 libcxx-slot libstdcxx-slot multiprocessing prefix
+inherit libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
-S="${WORKDIR}/${GRPC_P}"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
+https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV}.tar.gz
+	-> protobuf-${PROTOBUF_PV}.tar.gz
 "
 
-DESCRIPTION="Python libraries for the high performance gRPC framework"
+DESCRIPTION="Protobuf code generator for gRPC"
 HOMEPAGE="
 	https://grpc.io
-	https://github.com/grpc/grpc/tree/master/src/python/grpcio
+	https://github.com/grpc/grpc/tree/master/tools/distrib/python/grpcio_tools
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
-IUSE+="
-doc
-ebuild_revision_3
-"
-# See src/include/openssl/crypto.h#L99 for versioning
-# See src/include/openssl/base.h#L187 for versioning
+SLOT="${PROTOBUF_CPP_SLOT}"
+IUSE+=" ebuild_revision_2"
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
-RDEPEND+="
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
-	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
-	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01
-	dev-libs/re2:=
-	>=net-dns/c-ares-1.17.2
-	net-dns/c-ares:=
-	>=sys-libs/zlib-1.2.13
-	sys-libs/zlib:=
+RDEPEND="
+	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
+	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/grpcio:=
 "
-DEPEND+="
+DEPEND="
 	${RDEPEND}
 "
-# TODO: doc: requirements.bazel.txt
-BDEPEND+="
-	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.26:0.29[${PYTHON_USEDEP}]
-	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
-	doc? (
-		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
-		dev-python/alabaster[${PYTHON_USEDEP}]
-	)
-"
-PATCHES=(
-)
-
-distutils_enable_sphinx "doc/python/sphinx"
 
 pkg_setup() {
 	python_setup
@@ -84,8 +62,19 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	unpack ${A}
+	rm -rf "${WORKDIR}/${GRPC_P}/third_party/protobuf" || die
+	mv "${WORKDIR}/protobuf-${PROTOBUF_PV}" \
+		"${WORKDIR}/${GRPC_P}/third_party/protobuf" || die
+	mkdir -p "${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools/third_party" || die
+	ln -s "${WORKDIR}/${GRPC_P}/third_party/protobuf" \
+		"${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools/third_party/protobuf" || die
+	ln -s "${WORKDIR}/${GRPC_P}" \
+		"${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools/grpc_root" || die
+}
+
 python_prepare_all() {
-	#sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
 }
@@ -96,11 +85,11 @@ check_cython() {
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
+	local actual_cython_major=$(ver_cut 1-2 "${actual_cython_pv}")
 	local expected_cython_slot="0.29"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue"
+eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
 eerror
 eerror "Actual cython version:\t${actual_cython_pv}"
 eerror "Expected cython version\t${expected_cython_slot}"
@@ -113,19 +102,10 @@ python_configure() {
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	check_cython
-	# os.environ.get('GRPC_BUILD_WITH_BORING_SSL_ASM', True)
-	export GRPC_BUILD_WITH_BORING_SSL_ASM=
-	export GRPC_PYTHON_DISABLE_LIBC_COMPATIBILITY=1
-	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
-	export GRPC_PYTHON_BUILD_SYSTEM_ABSL=1
-	export GRPC_PYTHON_BUILD_SYSTEM_CARES=1
-	export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
-	export GRPC_PYTHON_BUILD_SYSTEM_RE2=1
-	export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
-	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
-	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
 }
 
 src_install() {

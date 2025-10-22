@@ -3,16 +3,28 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+CXX_STANDARD=11
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
 PROTOBUF_PV="3.12.2"
-PROTOBUF_SLOT="0/3.12"
+PROTOBUF_CPP_SLOT="3"
+PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit distutils-r1 multiprocessing prefix
+inherit libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
@@ -24,21 +36,31 @@ https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV}.ta
 "
 
 DESCRIPTION="Protobuf code generator for gRPC"
-HOMEPAGE="https://grpc.io"
+HOMEPAGE="
+	https://grpc.io
+	https://github.com/grpc/grpc/tree/master/tools/distrib/python/grpcio_tools
+"
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+=" ebuild_revision_1"
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND="
 	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
-	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
-	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
+	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/grpcio:=
 "
 DEPEND="
 	${RDEPEND}
 "
+
+pkg_setup() {
+	python_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	unpack ${A}
@@ -76,8 +98,26 @@ eerror
 	fi
 }
 
-python_configure_all() {
+python_configure() {
+	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	check_cython
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
+}
+
+src_install() {
+	distutils-r1_src_install
+
+	change_prefix() {
+	# Change of base /usr -> /usr/lib/grpc/${PROTOBUF_CPP_SLOT}
+		local old_prefix="/usr/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}"
+		dodir $(dirname "${new_prefix}")
+		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
+	}
+
+	python_foreach_impl change_prefix
 }

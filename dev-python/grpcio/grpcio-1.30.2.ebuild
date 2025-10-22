@@ -3,15 +3,27 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+
+CXX_STANDARD=11
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_SLOT="3/3.12"
+PROTOBUF_CPP_SLOT="3"
+PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit distutils-r1 multiprocessing prefix
+inherit distutils-r1 libcxx-slot libstdcxx-slot multiprocessing prefix
 
 KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
 S="${WORKDIR}/${GRPC_P}"
@@ -21,10 +33,16 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 "
 
 DESCRIPTION="Python libraries for the high performance gRPC framework"
-HOMEPAGE="https://grpc.io"
+HOMEPAGE="
+	https://grpc.io
+	https://github.com/grpc/grpc/tree/master/src/python/grpcio
+"
 LICENSE="Apache-2.0"
-SLOT="3" # Use wrapper for PYTHONPATH
-IUSE+=" doc ebuild_revision_2"
+SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
+IUSE+="
+doc
+ebuild_revision_2
+"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
@@ -33,12 +51,12 @@ RDEPEND+="
 	>=dev-cpp/abseil-cpp-20200225.0:0/20200225
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-)]
 	dev-libs/openssl:=
-	>=dev-python/six-1.16[${PYTHON_USEDEP}]
+	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.15.0
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.11
 	sys-libs/zlib:=
-	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
 DEPEND+="
@@ -48,6 +66,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
 	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
+	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/six-1.10[${PYTHON_USEDEP}]
@@ -60,6 +79,12 @@ PATCHES=(
 )
 
 distutils_enable_sphinx "doc/python/sphinx"
+
+pkg_setup() {
+	python_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 python_prepare_all() {
 	#sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
@@ -86,7 +111,10 @@ eerror
 	fi
 }
 
-python_configure_all() {
+python_configure() {
+	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	check_cython
 	# os.environ.get('GRPC_BUILD_WITH_BORING_SSL_ASM', True)
 	export GRPC_BUILD_WITH_BORING_SSL_ASM=
@@ -100,4 +128,18 @@ python_configure_all() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+}
+
+src_install() {
+	distutils-r1_src_install
+
+	change_prefix() {
+	# Change of base /usr -> /usr/lib/grpc/${PROTOBUF_CPP_SLOT}
+		local old_prefix="/usr/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}"
+		dodir $(dirname "${new_prefix}")
+		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
+	}
+
+	python_foreach_impl change_prefix
 }
