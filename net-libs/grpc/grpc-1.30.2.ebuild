@@ -72,7 +72,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE+="
 	python? (
@@ -271,7 +271,7 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	done
 
 	L=(
-		$(find "${ED}/usr/bin/grpc/${PROTOBUF_SLOT}/bin")
+		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin")
 	)
 	local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
 	for x in ${L[@]} ; do
