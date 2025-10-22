@@ -58,7 +58,58 @@ _TODO='
 
 # clog has same version as cpuinfo
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L299
+	"gfx906"
+	"gfx908"
+	"gfx90a" # ck
+	#"gfx942" # ck
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+)
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512"
+)
+CUDA_TARGETS_COMPAT=(
+# See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L1453
+	"sm_30"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_87"
+	"sm_80"
+	"sm_90"
+)
+OPENVINO_TARGETS=(
+	"cpu"
+	"cpu_np"
+	"gpu"
+	"gpu_np"
+	"npu"
+	"npu_np"
+)
+ROCM_SLOTS=(
+	"rocm_6_4"
+)
 
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_PV_1="20230125.3" # From cmake/external/onnx/CMakeLists.txt
@@ -66,16 +117,6 @@ ABSEIL_CPP_PV_2="20240722.0" # From cmake/deps.txt
 ABSEIL_CPP_COMMIT_2="78be63686ba732b25052be15f8d6dee891c05749" # protobuf (PROTOBUF_PV_2) dep
 ABSEIL_CPP_COMMIT_3="f81f6c011baf9b0132a5594c034fe0060820711d" # dawn (DAWN_COMMIT_1) dep
 ABSEIL_CPP_COMMIT_4="1b7ed5a1932647009b72fdad8e0e834d55cf40d8" # dawn/angle dep
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L299
-	gfx906
-	gfx908
-	gfx90a # ck
-	#gfx942 # ck
-	gfx1030
-	gfx1100
-	gfx1101
-)
 ANDROID_BUILD_TOOLS_COMMIT="994f942b63f57ebdbb928d99c2e8cfee7345582b" # dawn/angle dep
 ANDROID_COMMIT="4f3ee3fd09733fd1514f18140419bf8d5924f55e" # dawn/angle dep
 ANDROID_DEPS_COMMIT="4c82e77bef70cc86a43dc6fa40fdcd19823a5507" # dawn/angle dep
@@ -111,17 +152,13 @@ COLORAMA_COMMIT="3de9f013df4b470069d03d250224062e8cf15c49" # dawn/angle dep
 COMPOSABLE_KERNEL_COMMIT="204da9c522cebec5220bba52cd3542ebcaf99e7a" # From cmake/deps.txt, >= rocm-6.2.0
 COREMLTOOLS_PV="7.1"
 CPPDAP_COMMIT="1fd23dda91e01550be1a421de307e6fedb2035a9" # swiftshader dep
-CPU_FLAGS="
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512
-"
 CPUINFO_COMMIT="ca678952a9a8eaa6de112d154e8e104b22f9ab3f" # From cmake/deps.txt
 CPU_FEATURES_COMMIT="936b9ab5515dead115606559502e3864958f7f6e" # angle dp
 CUDNN_FRONTEND_PV="1.7.0"
 CUTLASS_PV="3.5.1" # From cmake/deps.txt
 CUTLASS_COMMIT="c2ee13a0fe99241b0e798ce647acf98e237f1d0c" # tvm dep
 CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0"
+CXX_STANDARD=17
 DATE_PV_1="3.0.1" # From cmake/deps.txt
 DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
 DAWN_COMMIT_1="511eb80847afe6bded34ec491a38d5d78ba2d604"
@@ -139,22 +176,6 @@ DMLC_CORE_COMMIT="09511cf9fe5ff103900a5eafb50870dc84cc17c8" # tvm dep
 DXC_COMMIT_1="0e7591a6ee94c8c8eb0d536ce7815fd56a776451" # dawn (DAWN_COMMIT_1) dep
 DXC_COMMIT_2="f810e92e72abd4e7e6301ad6d44e34ea57ff017d" # dawn/angle/dawn dep
 DXHEADERS_COMMIT="980971e835876dc0cde415e8f9bc646e64667bf7" # dawn (DAWN_COMMIT_1) dep
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L1453
-	sm_30
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_87
-	sm_80
-	sm_90
-)
 EGL_REGISTRY_COMMIT="7dea2ed79187cd13f76183c4b9100159b9e3e071" # dawn (DAWN_COMMIT_1) dep
 EIGEN_COMMIT="e7248b26a1ed53fa030c5c459f7ea095dfd276ac" # From cmake/deps.txt
 EMSDK_COMMIT="d52c46520124845b1e0e0525f2759299d840143f"
@@ -162,10 +183,6 @@ FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
 FLATBUFFERS_COMMIT="fb9afbafc7dfe226b9db54d4923bfb8839635274" # dawn/angle dep
 FP16_COMMIT="0a92994d729ff76a58f692d3028ca1b64b145d91" # From cmake/deps.txt
 FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
 GIT_HOOKS_COMMIT="6d91964d33adee28dda9c7faf9ffd6f4672c381c" # swiftshader dep
 GLFW_COMMIT="b35641f4a3c62aa86a0b3c983d163bc0fe36026d" # dawn (DAWN_COMMIT_1) dep
 GLMARK2_COMMIT="ca8de51fedb70bace5351c6b002eb952c747e889" # dawn/angle dep
@@ -247,14 +264,6 @@ NODE_API_HEADERS_COMMIT="d5cfe19da8b974ca35764dd1c73b91d57cd3c4ce" # dawn (DAWN_
 ONNX_TENSORRT_COMMIT="9f98e2ebe7507fe0774d06a44bbf4b0e82cc9ce7" # From cmake/deps.txt
 ONNXRUNTIME_EXTENSIONS_COMMIT="94142d8391c9791ec71c38336436319a2d4ac7a0" # From cmake/deps.txt
 OPENVINO_PV="2024.2.0"
-OPENVINO_TARGETS=(
-	cpu
-	cpu_np
-	gpu
-	gpu_np
-	npu
-	npu_np
-)
 PROTOBUF_PV_1="21.12" # From cmake/deps.txt
 PROTOBUF_PV_2="22.3" # From cmake/external/onnx/CMakeLists.txt
 PARTITION_ALLOCATOR_COMMIT="2e6b2efb6f435aa3dd400cb3bdcead2a601f8f9a" # dawn (DAWN_COMMIT_1) dep
@@ -270,9 +279,6 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 RANG_COMMIT="cabe04d6d6b05356fa8f9741704924788f0dd762" # tvm dep
 RAPIDJSON_COMMIT="781a4e667d84aeedbeb8184b7b62425ea66ec59f" # dawn/angle dep
 REQUESTS_COMMIT="c7e0fc087ceeadb8b4c84a0953a422c474093d6d" # dawn/angle dep
-ROCM_SLOTS=(
-	rocm_6_4
-)
 RUST_COMMIT_1="a69a8ecdbf7a19fb129ae57650cac9f704cb7cf9" # dawn (DAWN_COMMIT_1) dep
 RUST_COMMIT_2="b732825d28c8cc3277ef03713cc7e71b0db9c782" # dawn/angle dep
 RUST_COMMIT_3="86af231a4eafdff5cc710204949b6b806954b926" # dawn/angle/dawn dep
@@ -318,7 +324,7 @@ XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
 ZLIB_COMMIT_1="209717dd69cd62f24cbacc4758261ae2dd78cfac" # dawn (DAWN_COMMIT_1) dep
 ZLIB_COMMIT_2="d3aea2341cdeaf7e717bc257a59aa7a9407d318a" # dawn/angle dep
 
-inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare distutils-r1 flag-o-matic libstdcxx-slot llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm toolchain-funcs
 
 # Vendored packages need to be added or reviewed for compleness.
 # The reason for delay is submodule hell (the analog of dll hell or dependency hell).
@@ -854,7 +860,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-${CPU_FLAGS}
+${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
@@ -1245,6 +1251,7 @@ pkg_setup() {
 	fi
 
 	use rocm && rocm_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -34,35 +34,74 @@ EAPI=8
 
 # clog has same version as cpuinfo
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L299
+	"gfx906"
+	"gfx908"
+	"gfx90a" # ck
+	#"gfx942" # ck
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+)
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512"
+)
+CUDA_TARGETS_COMPAT=(
+# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L1453
+	"sm_30"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_87"
+	"sm_80"
+	"sm_90"
+)
+ROCM_SLOTS=(
+	"rocm_6_4"
+)
+OPENVINO_TARGETS=(
+	"cpu"
+	"cpu_np"
+	"gpu"
+	"gpu_np"
+	"npu"
+	"npu_np"
+)
+
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_COMMIT_1="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
 ABSEIL_CPP_COMMIT_2="78be63686ba732b25052be15f8d6dee891c05749" # # protobuf (PROTOBUF_PV_2) dep
 ABSEIL_CPP_PV="20230125.3" # From cmake/external/onnx/CMakeLists.txt
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L299
-	gfx906
-	gfx908
-	gfx90a # ck
-	#gfx942 # ck
-	gfx1030
-	gfx1100
-	gfx1101
-)
 BENCHMARK_PV="1.8.5" # onnxruntime dep
 BENCHMARK_COMMIT_1="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
 BENCHMARK_COMMIT_2="0d98dba29d66e93259db7daa53a9327df767a415" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CMAKE_IN_SOURCE_BUILD=1
 COMPOSABLE_KERNEL_COMMIT="204da9c522cebec5220bba52cd3542ebcaf99e7a" # From cmake/deps.txt, >= rocm-6.2.0
-CPU_FLAGS="
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512
-"
 CPUINFO_COMMIT="ca678952a9a8eaa6de112d154e8e104b22f9ab3f" # From cmake/deps.txt
 CUTLASS_PV="3.5.0" # From cmake/deps.txt
 CUTLASS_COMMIT="c2ee13a0fe99241b0e798ce647acf98e237f1d0c" # tvm dep
 CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0"
+CXX_STANDARD=17
 DATE_PV_1="3.0.1" # From cmake/deps.txt
 DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
 DISTUTILS_EXT=1
@@ -70,31 +109,11 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 DLPACK_COMMIT="ddeb264880a1fa7e7be238ab3901a810324fbe5f" # tvm dep
 DMLC_CORE_COMMIT="09511cf9fe5ff103900a5eafb50870dc84cc17c8" # tvm dep
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L1453
-	sm_30
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_87
-	sm_80
-	sm_90
-)
 EIGEN_COMMIT="e7248b26a1ed53fa030c5c459f7ea095dfd276ac" # From cmake/deps.txt
 EMSDK_COMMIT="d52c46520124845b1e0e0525f2759299d840143f"
 FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
 FP16_COMMIT="0a92994d729ff76a58f692d3028ca1b64b145d91" # From cmake/deps.txt
 FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
 GOOGLETEST_PV="1.15.0" # From cmake/deps.txt
 GOOGLETEST_COMMIT_1="ff233bdd4cac0a0bf6e5cd45bda3406814cb2796" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
@@ -109,9 +128,6 @@ NSYNC_PV="1.26.0" # From cmake/deps.txt
 ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # onnxruntime dep
 ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
-ROCM_SLOTS=(
-	rocm_6_4
-)
 LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
@@ -119,14 +135,6 @@ NEURAL_SPEED_PV="0.3" # From cmake/deps.txt
 ONNX_TENSORRT_COMMIT="f161f95883b4ebd8cb789de5efc67b73c0a6e694" # From cmake/deps.txt
 ONNXRUNTIME_EXTENSIONS_COMMIT="94142d8391c9791ec71c38336436319a2d4ac7a0" # From cmake/deps.txt
 OPENVINO_PV="2024.0"
-OPENVINO_TARGETS=(
-	cpu
-	cpu_np
-	gpu
-	gpu_np
-	npu
-	npu_np
-)
 PROTOBUF_PV_1="21.12" # From cmake/deps.txt
 PROTOBUF_PV_2="22.3" # From cmake/external/onnx/CMakeLists.txt
 PSMID_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
@@ -144,7 +152,7 @@ TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
 XNNPACK_COMMIT="0da379fc4808f9601faef392352018c741c0f297" # From cmake/deps.txt
 
-inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic libstdcxx-slot llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm toolchain-funcs
 
 DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
 HOMEPAGE="
@@ -356,7 +364,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-${CPU_FLAGS}
+${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
@@ -732,6 +740,7 @@ pkg_setup() {
 	fi
 
 	use rocm && rocm_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
