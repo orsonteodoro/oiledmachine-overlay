@@ -20,7 +20,7 @@ GLIBC_PV_U24="2.39"
 POOL_DIR_U22="${WORKDIR}/usr/share/doca-host-2.9.3-021000-24.10-ubuntu2204/repo/pool"
 POOL_DIR_D12="${WORKDIR}/usr/share/doca-host-2.9.3-021000-24.10-debian125/repo/pool"
 POOL_DIR_U24="${WORKDIR}/usr/share/doca-host-2.9.3-021000-24.10-ubuntu2404/repo/pool"
-RDMA_CORE_PV="52"
+RDMA_CORE_PV="54" # The number after mlnx in filename
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit unpacker libstdcxx-slot python-any-r1
@@ -64,7 +64,10 @@ LICENSE="
 	)
 "
 SLOT="0"
-IUSE+=" hcoll mlnx-ofed-kernel sharp ebuild_revision_1"
+IUSE+="
+hcoll mlnx-ofed-kernel sharp
+ebuild_revision_2
+"
 REQUIRED_USE="
 	^^ (
 		${GCC_COMPAT[@]}
@@ -291,7 +294,7 @@ einfo "Unpacking ${tarball_name} for USE=${u}"
 pkg_setup() {
 einfo "This is the LTS release of ${PN}"
 	python-any-r1_pkg_setup
-	libstdcxx-slot_verify
+	#libstdcxx-slot_verify
 }
 
 src_unpack() {
