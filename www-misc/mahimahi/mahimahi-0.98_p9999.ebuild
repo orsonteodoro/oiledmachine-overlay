@@ -5,6 +5,7 @@
 EAPI=8
 
 CXX_STANDARD=20
+PROTOBUF_SLOT=3
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit libstdcxx-compat
@@ -53,13 +54,13 @@ DEPEND+="
 	>=www-servers/apache-2[apache2_modules_authz_core,apache2_mpms_prefork,ssl]
 	app-misc/ssl-cert-snakeoil
 	dev-libs/apr
-	virtual/protobuf[${LIBSTDCXX_USEDEP}]
-	virtual/protobuf:=
 	net-firewall/iptables
 	net-dns/dnsmasq
 	sys-apps/iproute2
 	x11-libs/libxcb
 	virtual/libc
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:=
 	gnuplot? (
 		sci-visualization/gnuplot
 	)
@@ -82,6 +83,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:=
 	virtual/libc
 "
 SRC_URI="
@@ -133,6 +136,10 @@ src_unpack() {
 
 src_configure() {
 	eautoreconf
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	export PKG_CONFIG_PATH
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 	econf
 }
 
