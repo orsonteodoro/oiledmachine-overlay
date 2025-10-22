@@ -87,7 +87,6 @@ pkg_setup() {
 }
 
 python_prepare_all() {
-	#sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
 }
@@ -99,7 +98,7 @@ check_cython() {
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
 	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="0.29"
+	local expected_cython_slot="3.1"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
 eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue"

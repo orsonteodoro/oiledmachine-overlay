@@ -87,7 +87,6 @@ pkg_setup() {
 }
 
 python_prepare_all() {
-	#sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
 }
