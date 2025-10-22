@@ -250,6 +250,7 @@ einfo "    echo \"${CATEGORY}/${PN} DOCA-EULA\" >> /usr/portage/package.license/
 
 pkg_nofetch() {
 	pkg_nofetch_amd64_u22
+	pkg_nofetch_amd64_d12
 	pkg_nofetch_amd64_u24
 }
 
