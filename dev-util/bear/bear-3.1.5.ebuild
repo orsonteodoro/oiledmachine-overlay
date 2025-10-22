@@ -13,6 +13,7 @@ EAPI=8
 MY_PN="${PN/b/B}"
 
 CXX_STANDARD=17
+PROTOBUF_SLOT=3
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -41,14 +42,17 @@ HOMEPAGE="https://github.com/rizsotto/Bear"
 LICENSE="GPL-3+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 RDEPEND+="
 	${CDEPEND}
 	>=dev-libs/libfmt-11.0.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	>=dev-libs/spdlog-1.14.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
-	virtual/grpc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/grpc:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
 "
 DEPEND+="
@@ -58,7 +62,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
 	test? (
 		$(python_gen_any_dep '
@@ -84,6 +88,10 @@ pkg_setup()
 }
 
 src_configure() {
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	export PKG_CONFIG_PATH
 	local nabis=0
 	local a
 	for a in $(multilib_get_enabled_abis) ; do
