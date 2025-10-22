@@ -5,6 +5,8 @@ EAPI=8
 
 # TODO package:
 # dev-util/rocprofiler-sdk
+# rocJPEG
+# rocSHMEM
 
 # See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-6.4.3/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
