@@ -27,6 +27,12 @@
 
   oiledmachine-overlay notes:
 
+  Major reverse dependencies:
+
+  protobuf:3 - For LTS packages tested on U22, D12, U24, D24 CI images; ROCm 6.4, ROCm 7.0
+  protobuf:4 - For TensorFlow builds with CUDA 11.8
+  protobuf:5 - For TensorFlow builds with CUDA 12.x, ROCm 6.4
+
   The multislot is to resolve the following similatenous installation:
 
   LTS packages using Protobuf 3.x using either protobuf-python 3 (U22), protobuf-python 4 (U24/D12/D13)

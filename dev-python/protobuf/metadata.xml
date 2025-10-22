@@ -23,7 +23,11 @@
   This ebuild fork was originally provided as a dependency requirement for
   testing packages.
 
-  It will also track the latest minor of the major only.
+  Major reverse dependencies:
+
+  protobuf-python:3 - For LTS packages tested on U22, D12, U24, D24 CI images
+  protobuf-python:4 - For TensorFlow builds with CUDA 11.8
+  protobuf-python:5 - For TensorFlow builds with CUDA 12.x, ROCm 6.4
 
 
   The multislot is to resolve the following similatenous installation:
