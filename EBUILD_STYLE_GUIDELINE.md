@@ -161,7 +161,8 @@
       the dependency project is defunct, adjust PYTHON_COMPAT for the on app
       to the oldest active LTS package on this distro to verify that the
       dependency works interactively or run the test suite on the dependency
-      package.
+      package.  Leave a note that it was tested.  See the next fallback rule
+      to properly document it.
 
   Fallback rule 6:
 
