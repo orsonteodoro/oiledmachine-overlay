@@ -188,7 +188,7 @@
       - Test suite and integration testing passed with Python 3.13
     - Consider deleting the ebuild if PYTHON_COMPAT is python3_10 or less but
       only if it is not necessary to keep it in order for the app to work.
-    - If the Python package contains a prebuilt binary and built using an
+    - If the Python package contains a prebuilt binary and built using a
       distro release version that is EOL, that Python package release should be
       deleted for security reasons because it may contain a statically linked
       implementations with vulnerabilities.
