@@ -105,8 +105,8 @@ exist in build files.
   of version inconsistency between distro's cuDNN ebuild and pyTorch
   version recommendations.
 * GCC 12 or 13 are recommended for CUDA 12.8 for maximum compatibility coverage
-  for using Blender, Ollama (LLM), pyTorch (ML) and to closely align with U12 or
-  U24.
+  for using Blender, Ollama (LLM), pyTorch (ML) and to closely align with D12
+  or U24.
 * GCC 13 is recommended for ROCm 6.4 for maximum compatibility coverage for
   example with pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender and to
   closely align with U24.
