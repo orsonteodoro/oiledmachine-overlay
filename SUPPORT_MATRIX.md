@@ -130,16 +130,16 @@ exist in build files.
   version requirements for this overlay and ML/LLM libraries for increased
   chances of reproducibility.
 
-| Python               | Level of support                      | Distro or CI image correspondence          |
-| ---                  | ---                                   | ---                                        |
-| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                         |
-| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                         |
-| 3.12                 | Partially supported                   | U24 (EOL Apr 2029), A(Rolling)             |
-| 3.13                 | Available                             | F41 (EOL Nov 2025), F42 (EOL May 2026)     |
-| 3.13t                | Not supported                         |                                            |
-| 3.14 and later       | Not supported                         |                                            |
-| pypy3                | Available                             |                                            |
-| pypy3_11             | Not supported                         |                                            |
+| Python               | Level of support                      | Distro or CI image correspondence                              |
+| ---                  | ---                                   | ---                                                            |
+| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                                             |
+| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                                             |
+| 3.12                 | Partially supported                   | U24 (EOL Apr 2029), A (Rolling)                                |
+| 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
+| 3.13t                | Not supported                         |                                                                |
+| 3.14 and later       | Not supported                         |                                                                |
+| pypy3                | Available                             |                                                                |
+| pypy3_11             | Not supported                         |                                                                |
 
 * Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
   EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
