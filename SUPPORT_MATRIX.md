@@ -79,15 +79,15 @@ exist in build files.
 | Rust 1.89.0                     | Available                             | A (1.89.0)                            |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
-| -std=c++<ver> or CXX_STANDARD   | LTS compiler or rolling compiler |
-| ---                             | ---                              |
-| c++98                           | LTS                              |
-| c++11                           | LTS                              |
-| c++14                           | LTS                              |
-| c++17                           | LTS                              |
-| c++20                           | Rolling                          |
-| c++23                           | Rolling                          |
-| c++26                           | Rolling                          |
+| -std=c++<ver> or CXX_STANDARD   | LTS compiler or rolling compiler | Compiler status for C++ standard | C++ standard library status for C++ standard |
+| ---                             | ---                              | ---                              | ---                                          |
+| c++98                           | LTS                              | Done                             | Done                                         |
+| c++11                           | LTS                              | Done                             | Done                                         |
+| c++14                           | LTS                              | Done                             | Done                                         |
+| c++17                           | LTS                              | Done                             | GCC (Done), LLVM (Incomplete)                |
+| c++20                           | Rolling                          | Incomplete                       | Incomplete                                   |
+| c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
+| c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
 * The LTS compilers (C++ 17 or older) for LTS packages correspond to
   gcc_slot_11_5, gcc_slot_12_5, gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18,
