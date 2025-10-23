@@ -101,9 +101,9 @@ exist in build files.
 * GCC 11, 12, 13, 14 are LTS compilers in this overlay are important for
   binary only packages and the default libstdc++ [C++ standard library] for
   LTS (C++ 17 and older).
-* GCC 11 which is only availabile for CUDA 11.8 and is not recommended because
-  of version inconsistency between distro's cuDNN ebuild and pyTorch
-  version recommendations.
+* The CUDA 11.8 is not recommended because of version inconsistency between
+  distro's cuDNN ebuild and pyTorch version recommendations.  This CUDA version
+  is limited to using GCC 11 only on this overlay.
 * GCC 12 or 13 are recommended for CUDA 12.8 for maximum compatibility coverage
   for using Blender, Ollama (LLM), pyTorch (ML) and to closely align with D12
   or U24.
