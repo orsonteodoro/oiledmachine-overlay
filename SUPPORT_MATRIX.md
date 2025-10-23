@@ -90,10 +90,10 @@ exist in build files.
 
 * The LTS compilers (C++ 17 or older) for LTS packages correspond to
   gcc_slot_11_5, gcc_slot_12_5, gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18,
-  llvm_slot_19, llvm_slot_20.
+  llvm_slot_19, llvm_slot_20 USE flags.
 * The rolling compilers (C++ 20 or newer) for bleeding edge packages correspond
   to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_21, llvm_slot_22, a non
-  exaustive list.
+  exaustive list of USE flags.
 
 * Ebuild testing and development defaults on this overlay are currently
   set to GCC 13, GCC 15, Clang 18, Clang 19.
