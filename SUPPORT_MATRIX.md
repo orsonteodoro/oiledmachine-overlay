@@ -67,9 +67,9 @@ exist in build files.
 | Cython 3.1.0                    | Fully supported                       |                                       |
 | GCC 11                          | Fully supported                       | U22 (11.2)                            |
 | GCC 12                          | Fully supported                       | D12 (12.2)                            |
-| GCC 13                          | Partially Supported                   | U24 (13.2)                            |
+| GCC 13                          | Fully supported                       | U24 (13.2)                            |
 | GCC 14                          | Partially Supported                   | D13 (14.2), F41 (14.2.1), F40 (14.0)  |
-| GCC 15                          | Not Supported                         | F42 (15.1.1), A (15.2)                |
+| GCC 15                          | Fully supported                       | F42 (15.1.1), A (15.2)                |
 | GCC 16			  | Not Supported                         |                                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                          |
 | Rust 1.74.0                     | Partially supported                   |                                       |
@@ -78,20 +78,40 @@ exist in build files.
 | Rust 1.89.0                     | Available                             | A (1.89.0)                            |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
-* GCC 11, 12, 13, 14 are LTS compilers in this overlay which is important for
+| -std=c++<ver> or CXX_STANDARD   | LTS compiler or rolling compiler |
+| c++98                           | LTS                              |
+| c++11                           | LTS                              |
+| c++14                           | LTS                              |
+| c++17                           | LTS                              |
+| c++20                           | Rolling                          |
+| c++23                           | Rolling                          |
+| c++26                           | Rolling                          |
+
+* The LTS compilers (C++ 17 or newer) for LTS packages correspond to
+  gcc_slot_11_5, gcc_slot_12_5, gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18,
+  llvm_slot_19, llvm_slot_20.
+* The rolling compilers (C++ 20 or newer) for bleeding edge packages correspond
+  to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_21, llvm_slot_22, a non
+  exaustive list.
+
+* Ebuild testing and development defaults on this overlay are currently
+  set to GCC 13, GCC 15, Clang 18, Clang 19.
+
+* GCC 11, 12, 13, 14 are LTS compilers in this overlay are important for
   binary only packages and the default libstdc++ [C++ standard library] for
   LTS (C++ 17 and older).
-* GCC 11 which is only availabile for CUDA 11.8 is not recommended because
+* GCC 11 which is only availabile for CUDA 11.8 and is not recommended because
   of version inconsistency between distro's cuDNN ebuild and pyTorch
   version recommendations.
-* GCC 12 or 13 is recommended for CUDA 12.8 for maximum compatibility coverage
+* GCC 12 or 13 are recommended for CUDA 12.8 for maximum compatibility coverage
   for using Blender, Ollama (LLM), pyTorch (ML) and to closely align with U12 or
   U24.
 * GCC 13 is recommended for ROCm 6.4 for maximum compatibility coverage for
   example with pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender and to
   closely align with U24.
 * GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify,
-  which lowers security.
+  which lowers security.  GCC 15 is supported as a rolling compiler for non
+  LTS (C++ 20 or newer) packages (e.g. Hyprland).
 * GCC is preferred but Clang is recommended as the fallback compiler.
 * Clang 18, 19, 20, 21 are alternative LTS compilers on this overlay, but the
   corresponding libc++ 21 is still feature incomplete and not recommended as
