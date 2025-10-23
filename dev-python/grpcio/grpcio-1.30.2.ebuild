@@ -78,7 +78,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/grpcio-1.49.2-cc-flag-test-fix.patch"
+	"${FILESDIR}/grpcio-1.30.2-cc-flag-test-fix.patch"
 )
 
 distutils_enable_sphinx "doc/python/sphinx"
@@ -92,6 +92,10 @@ pkg_setup() {
 python_prepare_all() {
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
+	sed -i -r \
+		-e "\|third_party/abseil-cpp/.*[.]cc|d" \
+		"src/python/grpcio/grpc_core_dependencies.py" \
+		|| die
 }
 
 check_cython() {

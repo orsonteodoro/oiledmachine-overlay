@@ -1,0 +1,15 @@
+diff '--color=auto' -urp grpc-1.30.2.orig/src/python/grpcio/commands.py grpc-1.30.2/src/python/grpcio/commands.py
+--- grpc-1.30.2.orig/src/python/grpcio/commands.py	2020-07-17 00:26:25.000000000 -0700
++++ grpc-1.30.2/src/python/grpcio/commands.py	2025-10-23 09:50:12.939742074 -0700
+@@ -218,7 +218,8 @@ class BuildExt(build_ext.build_ext):
+             if platform.system() != 'Windows':
+                 return False
+             # TODO(lidiz) Remove the generated a.out for success tests.
+-            cc_test = subprocess.Popen(['cc', '-x', 'c', '-std=c++11', '-'],
++            cc = os.environ.get('CC', 'cc')
++            cc_test = subprocess.Popen([cc, '-x', 'c', '-std=c++11', '-'],
+                                        stdin=subprocess.PIPE,
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+Only in grpc-1.30.2/src/python/grpcio: commands.py.orig
+Only in grpc-1.30.2/src/python/grpcio: commands.py.rej
