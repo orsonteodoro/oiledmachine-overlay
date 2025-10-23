@@ -190,7 +190,7 @@
       only if it is not necessary to keep it in order for the app to work.
     - If the Python package contains a prebuilt binary and built using a
       distro release version that is EOL, that Python package release should be
-      deleted for security reasons because it may contain a statically linked
+      deleted for security reasons because it may contain statically linked
       implementations with vulnerabilities.
 
 
