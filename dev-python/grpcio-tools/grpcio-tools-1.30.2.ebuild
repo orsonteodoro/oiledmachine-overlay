@@ -43,7 +43,7 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND="
@@ -109,11 +109,6 @@ eerror
 
 python_configure() {
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
-	local L1=(
-		"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotobuf.a"
-		"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotoc.a"
-		"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libupb.a"
-	)
 	local libdir=$(get_libdir)
 	local L2=(
 		$(PKG_CONFIG_PATH="\
@@ -124,7 +119,7 @@ ${ESYSROOT}/usr/${libdir}/pkgconfig:\
 ${PKG_CONFIG_PATH}" \
 		pkg-config --libs protobuf)
 	)
-	append-ldflags -Wl,--whole-archive "${L1[@]}" -Wl,--no-whole-archive "${L2[@]}"
+	append-ldflags "${L2[@]}"
 	filter-flags "-Wl,--as-needed"
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -150,16 +145,12 @@ src_install() {
 		dodir $(dirname "${new_prefix}")
 		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
 
-		local old_prefix="/usr/lib/python-exec/${EPYTHON}"
-		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/python-exec/${EPYTHON}"
-		dodir "/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/python-exec"
-		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
-
 		local pv
 		pv="${EPYTHON/python}"
 		pv="${pv/.}"
 		patchelf \
 			--add-rpath "${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir)" \
+			--add-rpath "${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)" \
 			$(realpath "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages/grpc_tools/_protoc_compiler.cpython-${pv}-"*"-linux-gnu.so") \
 			|| die
 	}
@@ -168,19 +159,7 @@ src_install() {
 
 	rm -rf "${ED}/lib" || true
 
-	local old_prefix="/usr/bin"
-	local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin"
-	mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
-
 	local old_prefix="/usr/share"
 	local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/share"
 	mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
-
-	pushd "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin" >/dev/null 2>&1 || die
-		rm -f "python-grpc-tools-protoc" || true
-		ln -s \
-			"../lib/python-exec/${EPYTHON}/python-grpc-tools-protoc" \
-			"python-grpc-tools-protoc" \
-			|| die
-	popd >/dev/null 2>&1 || die
 }
