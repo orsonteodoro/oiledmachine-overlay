@@ -79,6 +79,7 @@ exist in build files.
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
 | -std=c++<ver> or CXX_STANDARD   | LTS compiler or rolling compiler |
+| ---                             | ---                              |
 | c++98                           | LTS                              |
 | c++11                           | LTS                              |
 | c++14                           | LTS                              |
