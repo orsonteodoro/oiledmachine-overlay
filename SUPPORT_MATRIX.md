@@ -30,62 +30,60 @@ The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
-| LIBC                 | Arch     | Level of support            | Distro or CI image correspondence              |
-| ---                  | ----     | ---                         | ---                                            |
-| glibc                | 64-bit   | Generally supported         | D12 (2.36), U24 (2.39)                         |
-| glibc                | 32-bit   | Deprecated*                 | D12 (2.36), U24 (2.39)                         |
-| glibc                | alpha    | Not supported               |                                                |
-| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), F41 (2.40), F42 (2.41), U24 (2.39) |
-| glibc                | arm      | Not supported               | D12 (2.36), U24 (2.39)                         |
-| glibc                | arm64    | Available                   | D12 (2.36), U24 (2.39)                         |
-| glibc                | hppa     | Not supported               |                                                |
-| glibc                | loong    | Available                   |                                                |
-| glibc                | mips64   | Available                   | D12 (2.36)                                     |
-| glibc                | mips     | Available                   | D12 (2.36)                                     |
-| glibc                | ppc      | Not supported               |                                                |
-| glibc                | ppc64    | Available                   |             U24 (2.39)                         |
-| glibc                | riscv    | Available                   |             U24 (2.39)                         |
-| glibc                | s390x    | Available                   | D12 (2.36), U24 (2.39)                         |
-| glibc                | sparc    | Available                   |                                                |
-| glibc                | x86      | Not supported               | D12 (2.36), U24 (2.39)                         |
-| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), U24 (1.2.4)                       |
+| LIBC                 | Arch     | Level of support            | Distro or CI image correspondence                                      |
+| ---                  | ----     | ---                         | ---                                                                    |
+| glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | alpha    | Not supported               |                                                                        |
+| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F41 (2.40), F42 (2.41), U22 (2.35), U24 (2.39) |
+| glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), U24 (2.39)                                     |
+| glibc                | arm64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | hppa     | Not supported               |                                                                        |
+| glibc                | loong    | Available                   |                                                                        |
+| glibc                | mips64   | Available                   | D12 (2.36), D13 (2.40), U22 (2.35), U24 (2.39)                         |
+| glibc                | mips     | Available                   | D12 (2.36), D13 (2.40), U22 (2.35), U24 (2.39)                         |
+| glibc                | ppc      | Not supported               |                                                                        |
+| glibc                | ppc64    | Available                   |             D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | riscv    | Available                   |             D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | s390x    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | sparc64  | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | x86      | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), D13 (1.2.5), U22 (1.2.2), U24 (1.2.4)                     |
 
 * Using 32-bit may increase the chances of high-critical vulnerabilities.  Examples:
   - ASLR effectiveness on 32-bit is estimated to be 10-20% or 20-50% and can lead to increased privilege escalation, data tampering, information disclosure
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Compiler                        | Level of support                      | Distro or CI image correspondence  |
-| ---                             | ---                                   | ---                                |
-| Clang <= 14                     | Not supported                         | D12 (14.0)                         |
-| Clang 18                        | Fully supported                       | U24 (18.0)                         |
-| Clang 19                        | Supported                             | F41 (19.1.7)                       |
-| Clang 20                        | Available                             | F42 (20.1.3), A (20)               |
-| Clang 21                        | Not supported                         |                                    |
-| Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32)                      |
-| Cython 3.0.12                   | Fully Supported                       | U24 (3.0.8)                        |
-| Cython 3.1.0                    | Fully supported                       |                                    |
-| GCC 11                          | Fully supported                       |                                    |
-| GCC 12                          | Fully supported                       | D12 (12.2)                         |
-| GCC 13                          | Partially Supported                   | U24 (13.2)                         |
-| GCC 14                          | Partially Supported                   | F41 (14.2.1), F40 (14.0)           |
-| GCC 15                          | Not Supported                         | F42 (15.1.1), A (15.2)             |
-| GCC 16			  | Not Supported                         |                                    |
-| Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                       |
-| Rust 1.74.0                     | Partially supported                   |                                    |
-| Rust 1.75.0                     | Available                             | U24 (1.75.0)                       |
-| Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)         |
-| Rust 1.89.0                     | Available                             | A (1.89.0)                         |
-| Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                    |
+| Compiler                        | Level of support                      | Distro or CI image correspondence     |
+| ---                             | ---                                   | ---                                   |
+| Clang <= 14                     | Not supported                         | D12 (14.0)                            |
+| Clang 18                        | Fully supported                       | U24 (18.0)                            |
+| Clang 19                        | Supported                             | F41 (19.1.7)                          |
+| Clang 20                        | Available                             | F42 (20.1.3), A (20)                  |
+| Clang 21                        | Not supported                         |                                       |
+| Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32)                         |
+| Cython 3.0.12                   | Fully Supported                       | U24 (3.0.8)                           |
+| Cython 3.1.0                    | Fully supported                       |                                       |
+| GCC 11                          | Fully supported                       | U22 (11.2)                            |
+| GCC 12                          | Fully supported                       | D12 (12.2)                            |
+| GCC 13                          | Partially Supported                   | U24 (13.2)                            |
+| GCC 14                          | Partially Supported                   | D13 (14.2), F41 (14.2.1), F40 (14.0)  |
+| GCC 15                          | Not Supported                         | F42 (15.1.1), A (15.2)                |
+| GCC 16			  | Not Supported                         |                                       |
+| Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                          |
+| Rust 1.74.0                     | Partially supported                   |                                       |
+| Rust 1.75.0                     | Available                             | U24 (1.75.0)                          |
+| Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)            |
+| Rust 1.89.0                     | Available                             | A (1.89.0)                            |
+| Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
-* GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
-* GCC 12 is recommended for CUDA 11.8 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM).
-* GCC 13 is recommended for CUDA 12.8 when using Blender, Ollama (LLM).  This is to align closely with U24.
-* GCC 15 is not supported in this overlay because of -fvtable-verify, prebuilt GPU libraries limits on
-  maximium supported GCC version, and the decrease in feature completeness such has reduced hardening or
-  reduced features like in shareware.
-* The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
-* What it means for CUDA users is that if you want your AI girlfriend (LLM) to have hardware accelerated speech recognition stick to GCC 12 and CUDA 11.8.
+* GCC 11, 12, 13, 14 are LTS compilers in this overlay which is important for
+  binary only packages and the default libstdc++ for LTS (C++ 17 and older).
+* GCC 13 is recommended for ROCm 6.4 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
+* GCC 12 is recommended for CUDA 11.8 when using TensorFlow (ML), Ollama (LLM).
+* GCC 13 is recommended for CUDA 12.8 when using Blender, Ollama (LLM), pyTorch (ML).  This is to align closely with U24.
+* GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify
 * GCC is preferred but Clang 18 is recommended as fallback.
 * Vendored Clang `21.0.0git` and vendored Rust (`<rust-ver>-dev`) from the chromium-toolchain package are only supported on Chromium for proper Rust SSP.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in security-critical packages.
