@@ -79,16 +79,30 @@ exist in build files.
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
 * GCC 11, 12, 13, 14 are LTS compilers in this overlay which is important for
-  binary only packages and the default libstdc++ for LTS (C++ 17 and older).
-* GCC 13 is recommended for ROCm 6.4 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
-* GCC 12 is recommended for CUDA 11.8 when using TensorFlow (ML), Ollama (LLM).
-* GCC 13 is recommended for CUDA 12.8 when using Blender, Ollama (LLM), pyTorch (ML).  This is to align closely with U24.
+  binary only packages and the default libstdc++ [C++ standard library] for
+  LTS (C++ 17 and older).
+* GCC 11 which is only availabile for CUDA 11.8 is not recommended because
+  of version inconsistency between distro's cuDNN ebuild and pyTorch.
+* GCC 13 is recommended for CUDA 12.8 for maximum compatibility coverage for
+  using Blender, Ollama (LLM),  pyTorch (ML) and to closely align with U24.
+* GCC 13 is recommended for ROCm 6.4 for maximum compatibility coverage for
+  example with pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender and to
+  closely align with U24.
 * GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify
-* GCC is preferred but Clang 18 is recommended as fallback.
-* Vendored Clang `21.0.0git` and vendored Rust (`<rust-ver>-dev`) from the chromium-toolchain package are only supported on Chromium for proper Rust SSP.
-* rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in security-critical packages.
-* rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
-* Due to the lack of GPU access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for increased chances of reproducibility.
+* GCC is preferred but Clang is recommended as the fallback compiler.
+* Clang 18, 19, 20, 21 are alternative LTS compilers on this overlay, but the
+  corresponding libc++ 21 is still feature incomplete and not recommended as
+  the default.
+* libstdc++ is assumed the default in this overlay.
+* Vendored Clang `21.0.0git` and vendored Rust (`<rust-ver>-dev`) from the
+  chromium-toolchain package are only supported on Chromium for proper Rust SSP.
+* rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in
+  security-critical packages.
+* rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable
+  (1.86.0) are recommended as fallbacks for non security-critical packages.
+* Due to the lack of GPU access, the requirements are the exact major.minor
+  version requirements for this overlay and ML/LLM libraries for increased
+  chances of reproducibility.
 
 | Python               | Level of support                      | Distro or CI image correspondence          |
 | ---                  | ---                                   | ---                                        |
