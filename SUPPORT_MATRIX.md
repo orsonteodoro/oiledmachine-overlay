@@ -147,7 +147,7 @@ exist in build files.
 | PyTorch 2.8 (ROCm 6.4)              | WIP                                   |                                                          |
 | PyTorch 2.9 (CUDA 12.6, 12.8, 13.0) | WIP                                   |                                                          |
 | PyTorch 2.9 (ROCm 6.4)              | WIP                                   |                                                          |
-| Qt 5.x (4)                          | Not supported, but available          |                                                          |
+| Qt 5.x (4)(5)                       | Not supported, but available          |                                                          |
 | Qt 6.x                              | Fully supported                       |                                                          |
 | ROCm 6.4                            | WIP                                   | D12, U22, U24                                            |
 | ROCm 7.0                            | WIP                                   | D12, D13, U22, U24                                       |
@@ -172,6 +172,10 @@ exist in build files.
       with cflags-hardened changes or add per-package hardening CFLAGS (e.g.
       Retpoline, CET) for UI toolkit packages that have a password UI widget,
       or for packages that process untrusted data or process sensitive data.
+* (5) No extra libstdc++ versioned symbol consistency verification via
+      gcc_slot_<x>.  You are responsible for ensuring the default GCC
+      is set to the systemwide default when building Qt5 packages to
+      avoid linking issues.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
