@@ -90,7 +90,8 @@ exist in build files.
 * GCC 13 is recommended for ROCm 6.4 for maximum compatibility coverage for
   example with pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender and to
   closely align with U24.
-* GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify
+* GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify,
+  which lowers security.
 * GCC is preferred but Clang is recommended as the fallback compiler.
 * Clang 18, 19, 20, 21 are alternative LTS compilers on this overlay, but the
   corresponding libc++ 21 is still feature incomplete and not recommended as
