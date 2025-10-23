@@ -200,7 +200,7 @@
     - Using PYTHON_SINGLE_TARGET from /etc/portage/make.conf or from the app package with testing and fixes performed by you is a good way to increase reproducibility.
     - Adding untested non stable (>= python3_13) can add unintended consequences, more bugs, or Denial of Service (e.g. crash).
     - Adding tested >= python3_13 is allowed.
-    - Testing >= python3_13 is unpaid free labor.
+    - Testing and patching packages that depend on >= python3_14 is unpaid free labor.
     - Only tested versions are allowed.
     - Any untested version is assumed Denial of Service (e.g. crash), decreases or assumed not reproducible, disruptive and increases security fix backlog.
     - Reproducible on this overlay means end-to-end build success and operational end-to-end
