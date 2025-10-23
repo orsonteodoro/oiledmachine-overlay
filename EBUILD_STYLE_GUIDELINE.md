@@ -153,7 +153,7 @@
   Fallback rule 5:
 
     All dependencies need to have the same consistent Python version.  If not
-    the same, the following is required changes are required
+    the same, the following changes are required
 
     - If the slot is missing in the dependency that the parent package needs,
       downgrade/upgrade the dependency package.
