@@ -165,7 +165,7 @@
 
   Fallback rule 6:
 
-    Unsupported Python versions should be documentated and modifications
+    Unsupported Python versions should be documented and modifications
     documented.  It is assumed that the ebuild maintainer(s) made either a
     mistake, a poor quality edit that is unverified working, or copy and
     pasted an old ebuild template that hasn't been throughly updated or
