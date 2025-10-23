@@ -18,19 +18,30 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
 ABSEIL_CPP_PV="20220623.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
+CXX_STANDARD=14
 OPENCENSUS_PROTO_PV="0.3.0"
 PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
 
-inherit cflags-hardened cmake multilib-minimal python-r1 ruby-ng
+inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -88,7 +99,7 @@ SLOT_MAJ="${PROTOBUF_SLOT}"
 SLOT="${SLOT_MAJ}/29.151" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20230214
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
@@ -98,7 +109,7 @@ RDEPEND+="
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}/3.21[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_SLOT}/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 "
 # See also
@@ -111,7 +122,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.5.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.7.0
+		>=dev-cpp/benchmark-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 PDEPEND_DISABLE="
@@ -140,7 +151,7 @@ PDEPEND+="
 		dev-php/grpc:=
 	)
 	python? (
-		~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
+		~dev-python/grpcio-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
 		dev-python/grpcio:=
 	)
 	ruby? (
@@ -168,6 +179,8 @@ pkg_setup() {
 	if use ruby ; then
 		ruby-ng_pkg_setup
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -223,6 +236,8 @@ src_configure() {
 			-DgRPC_BUILD_TESTS=$(usex test)
 			#-DCMAKE_CXX_STANDARD=17
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+#			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
+			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure

@@ -47,15 +47,15 @@ IUSE+=" ebuild_revision_4"
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/abseil-cpp:=
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/protobuf:=
 	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
-	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
 	dev-python/grpcio:=
 "
 DEPEND="
