@@ -191,7 +191,7 @@
     - If the Python package contains a prebuilt binary and built using an
       distro release version that is EOL, that Python package release should be
       deleted for security reasons because it may contain a statically linked
-      implementations.
+      implementations with vulnerabilities.
 
 
   Commentary
