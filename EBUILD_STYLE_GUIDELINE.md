@@ -121,10 +121,10 @@
 
     - If the CI image is listed for "defaults for distros" table from above, add
       the corresponding Python slot(s).
-    - If a Dockerfile exists, use corresponding "default for distros" table from
-      above, to add the Python slot(s).
+    - If a Dockerfile exists, use the corresponding "default for distros" table
+      from above to add the Python slot(s).
     - If the Python version is in the build files (CMakeLists.txt, meson.build,
-      etc), add the versions allowed.
+      etc), add the versions allowed to PYTHON_COMPAT.
 
   Fallback rule 3:
 
