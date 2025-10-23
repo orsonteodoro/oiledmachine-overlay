@@ -168,7 +168,7 @@
     Unsupported Python versions should be documented and modifications
     documented.  It is assumed that the ebuild maintainer(s) made either a
     mistake, a poor quality edit that is unverified working, or copy and
-    pasted an old ebuild template that hasn't been throughly updated or
+    pasted an old ebuild template that hasn't been thoroughly updated or
     partially updated.  The upstream developer lists the last tested
     working version which the package will revert back to.
 
