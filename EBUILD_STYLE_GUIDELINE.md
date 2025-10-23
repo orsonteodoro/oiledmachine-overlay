@@ -109,7 +109,7 @@
 
   Fallback rule 1:
 
-    If the version is explicitly stated by officially by the project, do the
+    If the version is explicitly stated officially by the project, do the
     following...
 
     - List all versions from setup.py or pyproject.toml if possible.
