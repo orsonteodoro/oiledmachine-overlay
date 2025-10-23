@@ -83,8 +83,9 @@ exist in build files.
   LTS (C++ 17 and older).
 * GCC 11 which is only availabile for CUDA 11.8 is not recommended because
   of version inconsistency between distro's cuDNN ebuild and pyTorch.
-* GCC 13 is recommended for CUDA 12.8 for maximum compatibility coverage for
-  using Blender, Ollama (LLM),  pyTorch (ML) and to closely align with U24.
+* GCC 12 or 13 is recommended for CUDA 12.8 for maximum compatibility coverage
+  for using Blender, Ollama (LLM), pyTorch (ML) and to closely align with U12 or
+  U24.
 * GCC 13 is recommended for ROCm 6.4 for maximum compatibility coverage for
   example with pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender and to
   closely align with U24.
