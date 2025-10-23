@@ -88,7 +88,7 @@ exist in build files.
 | c++23                           | Rolling                          |
 | c++26                           | Rolling                          |
 
-* The LTS compilers (C++ 17 or newer) for LTS packages correspond to
+* The LTS compilers (C++ 17 or older) for LTS packages correspond to
   gcc_slot_11_5, gcc_slot_12_5, gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18,
   llvm_slot_19, llvm_slot_20.
 * The rolling compilers (C++ 20 or newer) for bleeding edge packages correspond
