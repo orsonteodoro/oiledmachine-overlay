@@ -57,7 +57,7 @@ exist in build files.
 
 | Compiler                        | Level of support                      | Distro or CI image correspondence     |
 | ---                             | ---                                   | ---                                   |
-| Clang <= 14                     | Not supported                         | D12 (14.0)                            |
+| Clang <= 17                     | Not supported                         | D12 (14.0)                            |
 | Clang 18                        | Fully supported                       | U24 (18.0)                            |
 | Clang 19                        | Supported                             | F41 (19.1.7)                          |
 | Clang 20                        | Available                             | F42 (20.1.3), A (20)                  |
