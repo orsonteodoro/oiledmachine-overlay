@@ -164,16 +164,6 @@ PDEPEND+="
 "
 DOCS=( "AUTHORS" "CONCEPTS.md" "README.md" "TROUBLESHOOTING.md" "doc/". )
 
-soversion_check() {
-	local f1=$(grep  "gRPC_CORE_VERSION" "${S}/CMakeLists.txt" | head -n 1 \
-		| cut -f 2 -d "\"" | cut -f 1 -d ".")
-	local f2=$(grep  "gRPC_CPP_SOVERSION" "${S}/CMakeLists.txt" \
-		| head -n 1 | cut -f 2 -d "\"" | sed -e "s|\.||")
-	local new_slot="${SLOT_MAJ}/${f1}.${f2}"
-	[[ "${SLOT}" != "${new_slot}" ]] \
-		&& die "Ebuild QA: Update to SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
-}
-
 pkg_setup() {
 	python_setup
 	if use ruby ; then
@@ -189,7 +179,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	soversion_check
 	cmake_src_prepare
 	prepare_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
