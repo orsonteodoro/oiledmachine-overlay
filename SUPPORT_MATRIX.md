@@ -62,6 +62,7 @@ exist in build files.
 | Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7)              |
 | Clang 20                        | Available                             | F42 (20.1.3), A (20)                  |
 | Clang 21                        | Not supported                         |                                       |
+| Clang 22                        | Not supported                         |                                       |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)             |
 | Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)             |
 | Cython 3.1.0                    | Fully supported                       |                                       |
