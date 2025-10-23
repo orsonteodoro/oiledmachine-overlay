@@ -57,13 +57,13 @@ exist in build files.
 
 | Compiler                        | Level of support                      | Distro or CI image correspondence     |
 | ---                             | ---                                   | ---                                   |
-| Clang <= 17                     | Not supported                         | D12 (14.0)                            |
+| Clang <= 17                     | Not supported                         | D12 (14.0), U22 (14.0)                |
 | Clang 18                        | Fully supported                       | U24 (18.0)                            |
-| Clang 19                        | Supported                             | F41 (19.1.7)                          |
+| Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7)              |
 | Clang 20                        | Available                             | F42 (20.1.3), A (20)                  |
 | Clang 21                        | Not supported                         |                                       |
-| Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32)                         |
-| Cython 3.0.12                   | Fully Supported                       | U24 (3.0.8)                           |
+| Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)             |
+| Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)             |
 | Cython 3.1.0                    | Fully supported                       |                                       |
 | GCC 11                          | Fully supported                       | U22 (11.2)                            |
 | GCC 12                          | Fully supported                       | D12 (12.2)                            |
@@ -73,7 +73,8 @@ exist in build files.
 | GCC 16			  | Not Supported                         |                                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                          |
 | Rust 1.74.0                     | Partially supported                   |                                       |
-| Rust 1.75.0                     | Available                             | U24 (1.75.0)                          |
+| Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)            |
+| Rust 1.85.0                     | Available                             | D13 (1.85.0)                          |
 | Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)            |
 | Rust 1.89.0                     | Available                             | A (1.89.0)                            |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
