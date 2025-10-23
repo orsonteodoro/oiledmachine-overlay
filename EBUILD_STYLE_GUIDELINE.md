@@ -104,44 +104,94 @@
   listed for a package unless the package lists 3.14 in the setup.py,
   pyproject.toml, or in the CI files/folder.
 
+  The rules are order by most known and trusted to least known info and
+  least trusted.
+
   Fallback rule 1:
 
-    - Use either the oldest active LTS version (python3_11), or only add the
-      Python slot if the major.minor version for that package is listed
-      for the LTS distro.
-    - Do not eager bump the Python version unless an app package needs it.
-    - If eager bumped leave the reason:  Needed for `<package name>`
-    - If you do not leave a reason, it will be reverted back to upstream listed versions.
+    If the version is explicitly stated by officially by the project, do the
+    following...
+
+    - List all versions from setup.py or pyproject.toml if possible.
 
   Fallback rule 2:
 
-    - List all versions from setup.py or pyproject.toml if possible.
-    - Do not eager bump the Python version unless an app package needs it.
-    - If eager bumped leave the reason:  Needed for `<package name>`
-    - If you do not leave a reason, it will be reverted back to upstream listed versions.
+    If the version is indirectly stated by the project with high specificity, do
+    the following...
+
+    - If the CI image is listed for "defaults for distros" table from above, add
+      the corresponding Python slot(s).
+    - If a Dockerfile exists, use corresponding "default for distros" table from
+      above, to add the Python slot(s).
+    - If the Python version is in the build files (CMakeLists.txt, meson.build,
+      etc), add the versions allowed.
 
   Fallback rule 3:
 
-    - If the CI image is listed for defaults for distros table, add the corresponding python slot(s).
-    - If a Dockerfile exists, use corresponding default for distros table, to add the python slot(s).
-    - If the app is set to USE="python_single_target_python3_11" and you tested lib/app interactively or by test suite, use python3_11.
-    - If the app is set to USE="python_single_target_python3_12" and you tested lib/app interactively or by test suite, use python3_12.
-    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use python3_11.
-    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use python3_12.
-    - If the Python version is in the build files (CMakeLists.txt, meson.build, etc), add the versions allowed.
-    - If none of the above apply and you tested it with python3_13, use python3_13, assuming the distro fallback of PYTHON_SINGLE_TARGET="python3_13".  If you
-      do use that Python version, then it may not be compatible with D12, U24 based packages.
-    - If the slot is missing in the dependency that the parent package needs, downgrade/upgrade the dependency package.
-    - If the slot is missing in the dependency that the parent package needs and the dependency project is defunct, adjust PYTHON_COMPAT based on app package's python_single_python3_11 or python_single_python3_12.
-    - Any unofficial Python version added should be documented next to or below PYTHON_COMPAT, or it may be reverted back to the known working versions provided by upstream.
+    If the version is vaguely stated by the project or too old, do the
+    following...
+
+    - Use either the oldest active LTS version (python3_11) and test it
+      interactively, or only add the Python slots if the major.minor version for
+      that package is listed for the LTS distro yet still test that version.  If
+      the LTS distro adds patches to enable that package to be used for that
+      Python version, then they should be added.
+
+  Fallback rule 4:
+
+    If the version is totally unknown but discovered by you, do the following
+    ...
+
+    - If the app is set to USE="python_single_target_python3_11" or any other
+      LTS Python version and you tested the package interactively or by test
+      suite, use that version for PYTHON_COMPAT.
+    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11
+      or any LTS version, use python3_11 for PYTHON_COMPAT.
+    - If none of the above apply, use the one stated in
+      `/etc/python-exec/python-exec.conf` for the ebuild's PYTHON_COMPAT.
+
+  Fallback rule 5:
+
+    All dependencies need to have the same consistent Python version.  If not
+    the same, the following is required changes are required
+
+    - If the slot is missing in the dependency that the parent package needs,
+      downgrade/upgrade the dependency package.
+    - If the slot is missing in the dependency that the parent package needs and
+      the dependency project is defunct, adjust PYTHON_COMPAT for the on app
+      to the oldest active LTS package on this distro to verify that the
+      dependency works interactively or run the test suite on the dependency
+      package.
+
+  Fallback rule 6:
+
+    Unsupported Python versions should be documentated and modifications
+    documented.  It is assumed that the ebuild maintainer(s) made either a
+    mistake, a poor quality edit that is unverified working, or copy and
+    pasted an old ebuild template that hasn't been throughly updated or
+    partially updated.  The upstream developer lists the last tested
+    working version which the package will revert back to.
+
+    - Do not eager bump the Python version unless an app package needs it.
+    - If eager bumped leave the reason:  Needed for `<package name>`
+    - If you do not leave a reason, it will be reverted back to upstream listed
+      versions.
+    - Any unofficial Python version added should be documented next to or below
+      PYTHON_COMPAT, or it may be reverted back to the known working versions
+      provided by upstream.
       List of reasons examples:
       - Needed for `<package name>`
       - Test suite passed with Python 3.13
       - Integration test passed with Python 3.13
       - Interactive test passed with Python 3.13
       - Test suite and integration testing passed with Python 3.13
-    - Consider deleting the ebuild if PYTHON_COMPAT is python3_10 or less but only if it is not necessary to keep it in order for the app to work.
-    - If the Python package contains a prebuilt binary and built using an EOL release, that Python package release should be deleted.
+    - Consider deleting the ebuild if PYTHON_COMPAT is python3_10 or less but
+      only if it is not necessary to keep it in order for the app to work.
+    - If the Python package contains a prebuilt binary and built using an
+      distro release version that is EOL, that Python package release should be
+      deleted for security reasons because it may contain a statically linked
+      implementations.
+
 
   Commentary
 
