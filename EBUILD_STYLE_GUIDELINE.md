@@ -170,7 +170,7 @@
     mistake, a poor quality edit that is unverified working, or copy and
     pasted an old ebuild template that hasn't been thoroughly updated or
     partially updated.  The upstream developer lists the last tested
-    working version which the package will revert back to.
+    working version(s) which the package will revert back to.
 
     - Do not eager bump the Python version unless an app package needs it.
     - If eager bumped leave the reason:  Needed for `<package name>`
