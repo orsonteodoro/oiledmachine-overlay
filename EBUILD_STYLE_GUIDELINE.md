@@ -104,8 +104,8 @@
   listed for a package unless the package lists 3.14 in the setup.py,
   pyproject.toml, or in the CI files/folder.
 
-  The rules are order by most known and trusted to least known info and
-  least trusted.
+  The rules are ordered by most known reliable info and trusted, to least known
+  detail and least trusted.
 
   Fallback rule 1:
 
