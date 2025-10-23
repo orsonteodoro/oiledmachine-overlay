@@ -36,15 +36,15 @@ exist in build files.
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
 | glibc                | alpha    | Not supported               |                                                                        |
 | glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F41 (2.40), F42 (2.41), U22 (2.35), U24 (2.39) |
-| glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), U24 (2.39)                                     |
+| glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), U24 (2.39)  U24 (2.39)                         |
 | glibc                | arm64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
-| glibc                | hppa     | Not supported               |                                                                        |
-| glibc                | loong    | Available                   |                                                                        |
+| glibc                | hppa     | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | loong    | Available                   |             D13 (2.41),             U24 (2.39)                         |
 | glibc                | mips64   | Available                   | D12 (2.36), D13 (2.40), U22 (2.35), U24 (2.39)                         |
 | glibc                | mips     | Available                   | D12 (2.36), D13 (2.40), U22 (2.35), U24 (2.39)                         |
-| glibc                | ppc      | Not supported               |                                                                        |
-| glibc                | ppc64    | Available                   |             D13 (2.41), U22 (2.35), U24 (2.39)                         |
-| glibc                | riscv    | Available                   |             D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | ppc      | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | ppc64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
+| glibc                | riscv    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
 | glibc                | s390x    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
 | glibc                | sparc64  | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
 | glibc                | x86      | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
