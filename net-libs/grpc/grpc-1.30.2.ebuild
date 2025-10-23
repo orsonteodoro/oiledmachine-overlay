@@ -194,6 +194,8 @@ src_prepare() {
 }
 
 src_configure() {
+	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
+	export PATH="${ED}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	cflags-hardened_append
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
@@ -224,6 +226,10 @@ src_configure() {
 			-DgRPC_BUILD_TESTS=$(usex test)
 			#-DCMAKE_CXX_STANDARD=17
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
+			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotobuf.a"
+			-DProtobuf_PROTOC_LIBRARY="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotoc.a"
+			-DPROTOBUF_PROTOC_EXECUTABLE="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin/protoc"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure
