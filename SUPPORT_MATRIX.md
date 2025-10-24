@@ -132,19 +132,21 @@ exist in build files.
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
-| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                                             |
+| 3.10 and earlier     | Not supported (EOL) [1]               | U22 (EOL Apr 2027)                                             |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                                             |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
-| 3.13t                | Not supported                         |                                                                |
-| 3.14 and later       | Not supported                         |                                                                |
-| pypy3                | Available                             |                                                                |
-| pypy3_11             | Not supported                         |                                                                |
+| 3.13t [3]            | Not supported                         |                                                                |
+| 3.14 and later [3]   | Not supported                         |                                                                |
+| pypy3 [3]            | Not supported                         |                                                                |
+| pypy3_11 [3]         | Not supported                         |                                                                |
 
-* Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
-  EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
-  Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
-  bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
+[1] Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
+    EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
+    Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
+    bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
+[2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat).
+[3] Not widely tested with CI.
 
 | Platform                            | Ebuild level of support               | Distro or CI image correspondence                        |
 | ---                                 | ---                                   | ---                                                      |
@@ -160,9 +162,9 @@ exist in build files.
 | Electron (arm64)                    | Not supported                         |                                                          |
 | Electron (armv7)                    | Not supported                         |                                                          |
 | Electron (x86)                      | Not supported                         |                                                          |
-| gRPC 1.30.2 (3)                     | Fully supported                       | U22 (1.30.2)                                             |
-| gRPC 1.51.3 (3)                     | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1)                 |
-| gRPC 1.71.2 (3)                     | WIP                                   |                                                          |
+| gRPC 1.30.2 [3]                     | Fully supported                       | U22 (1.30.2)                                             |
+| gRPC 1.51.3 [3]                     | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1)                 |
+| gRPC 1.71.2 [3]                     | WIP                                   |                                                          |
 | gRPC >= 1.75.1 (3)                  | Fully supported                       |                                                          |
 | GTK 2 (4)                           | Not Supported                         |                                                          |
 | GTK 3                               | Fully supported                       |                                                          |
@@ -187,9 +189,9 @@ exist in build files.
 | ROCm OpenMP offload (2)             | WIP                                   |                                                          |
 | DPC++ OpenMP offload                | Not Supported                         |                                                          |
 | OpenRC                              | Fully supported                       |                                                          |
-| Protobuf-cpp 3 (3)                  | Fully supported                       | D12 (3.21.12), F41 (3.19.6), F42 (3.19.6), U24 (3.21.12) |
-| Protobuf-cpp 5 (3)                  | Fully supported                       |                                                          |
-| Protobuf-cpp 6 (3)                  | Fully supported                       |                                                          |
+| Protobuf-cpp 3 [3]                  | Fully supported                       | D12 (3.21.12), F41 (3.19.6), F42 (3.19.6), U24 (3.21.12) |
+| Protobuf-cpp 5 [3]                  | Fully supported                       |                                                          |
+| Protobuf-cpp 6 [3]                  | Fully supported                       |                                                          |
 | PyTorch <= 2.7                      | Not supported                         |                                                          |
 | PyTorch 2.8 (CPU)                   | WIP                                   |                                                          |
 | PyTorch 2.8 (CUDA 12.6, 12.8, 12.9) | WIP                                   |                                                          |
@@ -214,14 +216,14 @@ exist in build files.
 | Wayland                             | Fully supported                       |                                                          |
 | X                                   | Fully supported                       |                                                          |
 
-* (2) Via llvm-roc-libomp
-* (3) Multislotted on this overlay.  Multiple versions can be installed at the same time.
-* (4) Backporting security patches is likely to be incomplete.  No hardened
+* [2] Via llvm-roc-libomp
+* [3] Multislotted on this overlay.  Multiple versions can be installed at the same time.
+* [4] Backporting security patches is likely to be incomplete.  No hardened
       ebuilds will be provided.  You must either keep a local ebuild fork
       with cflags-hardened changes or add per-package hardening CFLAGS (e.g.
       Retpoline, CET) for UI toolkit packages that have a password UI widget,
       or for packages that process untrusted data or process sensitive data.
-* (5) No extra libstdc++ versioned symbol consistency verification via
+* [5] No extra libstdc++ versioned symbol consistency verification via
       `gcc_slot_<x>`.  You are responsible for ensuring the default GCC is set
       to the proper default when building Qt5 packages to avoid linking issues.
       Manually set the default LTS compiler for C++ 17 and older C++ projects.
