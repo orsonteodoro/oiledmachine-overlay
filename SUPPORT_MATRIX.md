@@ -97,10 +97,10 @@ exist in build files.
 * The rolling compilers (C++ 20 or newer) for bleeding edge packages
   correspond to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_21, llvm_slot_22, a
   non-exaustive list of USE flags.
-* LTS compilers have the GLIBCXX_ versioned symbols, GPU stack compatibility,
-  practically complete version of the C++ standard on both the *C++ compiler*
-  and *C++ standard library*, and libstdc++ versioned symbols needed to use the
-  prebuilt LTS binaries built with the same libstdc++ version.
+* LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
+  compatibility, practically complete version of the C++ standard on both the
+  *C++ compiler* and *C++ standard library*, and ensure that the userland is
+  built for compatibility for C++ prebuilt LTS binaries.
 * The rolling compilers have the up-to-date implementation of the edition of the
   C++ standard,  increased feature coverage for the edition of the standard,
   usually have the minimum required feature set to build most projects for that
