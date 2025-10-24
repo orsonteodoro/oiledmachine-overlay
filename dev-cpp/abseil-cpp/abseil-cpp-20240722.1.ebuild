@@ -63,6 +63,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
+cxx17
 test
 ebuild_revision_22
 "
@@ -293,13 +294,13 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
+		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
+		$(usex test -DBUILD_TESTING=ON '')
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
-		-DCMAKE_CXX_STANDARD=17 # For gRPC
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
-		$(usex test -DBUILD_TESTING=ON '')
 	)
 	cmake-multilib_src_configure
 }
