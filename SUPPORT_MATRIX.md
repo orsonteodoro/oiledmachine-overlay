@@ -101,11 +101,12 @@ exist in build files.
   practically complete version of the C++ standard on both the compiler
   and [C++ standard library], and C++ version symbols needed to use the
   prebuilt LTS binaries built with the same compiler version.
-* The rolling compilers have the up-to-date implementation of the standard,
-  increased feature coverage for the edition of the standard, usually have the
-  minimum required feature set to build most projects for that standard on this
-  overlay.  The minimum GCC/Clang version used per rolling standard in this
-  overlay minimizes incomplete coverage to avoid missing support errors.
+* The rolling compilers have the up-to-date implementation of the edition of the
+  C++ standard,  increased feature coverage for the edition of the standard,
+  usually have the minimum required feature set to build most projects for that
+  standard on this overlay.  The minimum GCC/Clang version used per rolling
+  standard in this overlay minimizes incomplete coverage to avoid missing
+  support errors.
 * Ebuild testing and development defaults on this overlay are currently
   set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
 * CUDA 11.8 is not recommended because of version inconsistency between
