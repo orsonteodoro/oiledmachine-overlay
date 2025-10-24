@@ -207,8 +207,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-Dprotobuf_UTF8_RANGE_PROVIDER=package
 			-DUTF8_RANGE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/utf8_range"
 		)
-		if tc-is-cross-compiler; then
-			mycmakeargs=(
+		if tc-is-cross-compiler ; then
+			mycmakeargs+=(
 				-Dprotobuf_PROTOC_EXE="$(pwd)/src/protoc"
 			)
 		fi

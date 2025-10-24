@@ -185,7 +185,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		--includedir="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}/include"
 		--libdir="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}/$(get_libdir)"
 	)
-	if tc-is-cross-compiler; then
+	if tc-is-cross-compiler ; then
 		myeconfargs+=(
 			--with-protoc="$(pwd)/src/protoc"
 		)
