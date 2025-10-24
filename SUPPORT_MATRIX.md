@@ -100,7 +100,7 @@ exist in build files.
 * LTS compilers have the GLIBCXX_ versioned symbols, GPU stack compatibility,
   practically complete version of the C++ standard on both the *C++ compiler*
   and *C++ standard library*, and libstdc++ versioned symbols needed to use the
-  prebuilt LTS binaries built with the same compiler major.minor version.
+  prebuilt LTS binaries built with the same libstdc++ version.
 * The rolling compilers have the up-to-date implementation of the edition of the
   C++ standard,  increased feature coverage for the edition of the standard,
   usually have the minimum required feature set to build most projects for that
