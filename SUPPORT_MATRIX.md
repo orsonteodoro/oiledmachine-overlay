@@ -168,12 +168,18 @@ exist in build files.
 | GTK 4                               | Fully supported                       |                                                          |
 | OpenGL <= 4.6                       | Fully supported                       |                                                          |
 | OpenCL <= 2.0                       | Fully supported                       |                                                          |
-| Ollama >= 0.3 (CPU)                 | Fully supported                       |                                                          |
-| Ollama >= 0.3 (CUDA 11.8)           | Available                             |                                                          |
-| Ollama 0.3, 0.4 (ROCm 6.1)          | Not Supported                         |                                                          |
-| Ollama 0.3, 0.4 (CUDA 12.4)         | Available                             |                                                          |
-| Ollama 0.5, 0.6, 0.7 (ROCm 6.3)     | Planned                               |                                                          |
-| Ollama 0.5, 0.6, 0.7 (CUDA 12.8)    | Available                             |                                                          |
+| Ollama 0.9 (CPU)                    | Fully supported                       |                                                          |
+| Ollama 0.9 (CUDA 11.8)              | Available                             |                                                          |
+| Ollama 0.9 (CUDA 12.8)              | Available                             |                                                          |
+| Ollama 0.9 (ROCm 6.3)               | Not supported                         |                                                          |
+| Ollama 0.11 (CPU)                   | Fully supported                       |                                                          |
+| Ollama 0.11 (CUDA 11.8)             | Not supported                         |                                                          |
+| Ollama 0.11 (CUDA 12.8)             | Available                             |                                                          |
+| Ollama 0.11 (ROCm 6.3)              | Not supported                         |                                                          |
+| Ollama 0.12/0.13 (CPU)              | Planned                               |                                                          |
+| Ollama 0.12/0.13 (ROCm 6.3)         | Not supported                         |                                                          |
+| Ollama 0.12/0.13 (CUDA 11.8)        | Planned                               |                                                          |
+| Ollama 0.12/0.13 (CUDA 12.8)        | Planned                               |                                                          |
 | GCC OpenMP (CPU)                    | Fully supported                       |                                                          |
 | LLVM OpenMP (CPU)                   | Fully supported                       |                                                          |
 | LLVM OpenMP offload (CUDA)          | Available                             |                                                          |
