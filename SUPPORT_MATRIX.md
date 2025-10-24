@@ -128,9 +128,6 @@ exist in build files.
   security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable
   (1.86.0) are recommended as fallbacks for non security-critical packages.
-* Due to the lack of GPU access, the requirements are the exact major.minor
-  version requirements for this overlay and ML/LLM libraries for increased
-  chances of reproducibility.
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
@@ -226,6 +223,9 @@ exist in build files.
       If no C++ standard stated, assume LTS.  The Qt5 based project will state
       in the build files either `-std=c++<ver>` or `-std=gnu++<ver>` or
       `CMAKE_CXX_STANDARD`.
+* Due to the lack of GPU access, the requirements are the exact major.minor
+  version requirements for GPU and ML/LLM ebuild packages in this overlay for
+  increased chances of reproducibility.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
