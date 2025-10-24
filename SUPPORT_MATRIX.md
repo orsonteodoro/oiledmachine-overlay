@@ -10,7 +10,7 @@
 | Planned              | -            | To be added to maximize interoperability between platforms and app features                              |
 | WIP                  | Poor         | Work In Progress.  Ebuild still in development.                                                          |
 | EOL                  | Poor         | No longer compatible and may be removed, may have security issues that are practically impossible to fix |
-| Not supported        | Poor         | Dropped support by overlay, may have security issues, untested                                           |
+| Not supported        | Poor         | Dropped support or no effort to add support by overlay, may have security issues, untested               |
 
 | Type of release      | Supported on overlay?                 | 
 | ---                  | ---                                   |
