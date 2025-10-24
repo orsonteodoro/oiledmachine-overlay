@@ -110,8 +110,8 @@ exist in build files.
   standard on this overlay.  The minimum GCC/Clang version used per rolling
   standard in this overlay minimizes incomplete coverage to avoid missing
   support errors.  The consequences of using the rolling compiler as the
-  systemwide default default will lock out access for GPU acceleration which is
-  orders of magnitude faster than CPU in certain use case scenarios.
+  systemwide default is that it will lock out access for GPU acceleration which
+  is orders of magnitude faster than CPU in certain use case scenarios.
 * Ebuild testing and development defaults on this overlay are currently
   set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
 * CUDA 11.8 is not recommended because of version inconsistency between
