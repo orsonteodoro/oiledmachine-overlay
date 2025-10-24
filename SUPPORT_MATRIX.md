@@ -209,7 +209,7 @@ exist in build files.
 | PyTorch 2.9 (CPU)                   | WIP                                   |                                                          |
 | PyTorch 2.9 (CUDA 12.6, 12.8, 13.0) | WIP                                   |                                                          |
 | PyTorch 2.9 (ROCm 6.4)              | WIP                                   |                                                          |
-| Qt 5.x (4)(5)                       | Not supported, but available          |                                                          |
+| Qt 5.x [4][5]                       | Not supported, but available          |                                                          |
 | Qt 6.x                              | Fully supported                       |                                                          |
 | ROCm 6.4                            | WIP                                   | D12, U22, U24                                            |
 | ROCm 7.0                            | WIP                                   | D12, D13, U22, U24                                       |
