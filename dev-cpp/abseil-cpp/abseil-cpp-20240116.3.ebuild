@@ -59,14 +59,13 @@ LICENSE="
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
+# Upstream defaults to C++ 14.
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
-cxx14
-cxx17
-test
-ebuild_revision_23
+cxx14 +cxx17 test
+ebuild_revision_24
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="

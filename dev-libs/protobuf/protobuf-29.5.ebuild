@@ -7,17 +7,17 @@ EAPI=8
 ABSEIL_CPP_PV="20240116"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-CXX_STANDARD=14
+CXX_STANDARD=17 # Originally 14 but 17 is required by gRPC
 INTERNAL_VERSION="5.${PV}" # From configure.ac L20
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
@@ -70,13 +70,21 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 3.19 : 3.19 From configure.ac's AC_INIT
 # 3.12 : 3.12 From configure.ac's AC_INIT
 
+# Upstream defaults to C++14
 IUSE="
-emacs examples static-libs test zlib
-ebuild_revision_26
+cxx14 +cxx17 emacs examples static-libs test zlib
+ebuild_revision_27
 "
+REQUIRED_USE="
+	^^ (
+		cxx14
+		cxx17
+	)
+"
+# cxx17 is forced for gRPC
 RDEPEND="
 	!dev-libs/protobuf:0
-	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}
+	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx14?,cxx17?]
 	dev-cpp/abseil-cpp:=
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
@@ -188,7 +196,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 	src_configure_abi() {
 		[[ -e "${ESYSROOT}/usr/lib/abseil-cpp/20240116/$(get_libdir)/cmake/absl" ]] || die "Missing"
 
+		use cxx17 && append-flags -std=c++17
 		local mycmakeargs=(
+			$(usex cxx14 -DCMAKE_CXX_STANDARD=14 '') # Default
+			$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}"

@@ -8,10 +8,10 @@
   </maintainer>
   <use>
     <flag name="cxx14">
-      Build for increased compatibility
+      Build for increased compatibility.  Upstream default.
     </flag>
     <flag name="cxx17">
-      Build for gRPC C++ 17 compatibility requirement
+      Build for gRPC C++ 17 compatibility requirement.
     </flag>
   </use>
 </pkgmetadata>

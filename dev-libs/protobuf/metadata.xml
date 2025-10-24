@@ -47,6 +47,12 @@
   ]>
   -->
   <use>
+    <flag name="cxx14">
+      Build for increased compatibility.  Upstream default.
+    </flag>
+    <flag name="cxx17">
+      Build for gRPC C++ 17 compatibility requirement.
+    </flag>
     <flag name="jsoncpp">
       Use jsoncpp in conformance testing.
     </flag>

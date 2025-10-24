@@ -28,7 +28,8 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-ABSEIL_CPP_PV="20240722.0" # Same one used by grpc 1.71.2 (modified from c++14 to c++17)
+ABSEIL_CPP_PV_GRPC="20240722.0" # Same one used by gRPC 1.71.2 (modified from c++14 to c++17)
+ABSEIL_CPP_PV_PROTOBUF="20240116.0" # Same one used by Protobuf-cpp 29.x (modified from c++14 to c++17)
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -87,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE+="
 	python? (
@@ -99,7 +100,9 @@ SLOT_MAJ="${PROTOBUF_SLOT}"
 SLOT="${SLOT_MAJ}/46.171" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20250213
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_GRPC}:${ABSEIL_CPP_PV_GRPC%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx17]
+	dev-cpp/abseil-cpp:=
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_PROTOBUF}:${ABSEIL_CPP_PV_PROTOBUF%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx17]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
@@ -109,7 +112,7 @@ RDEPEND+="
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx17]
 	dev-libs/protobuf:=
 "
 # See also
@@ -213,7 +216,7 @@ src_configure() {
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
 #		local L=(
-#			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)
+#			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)
 #		)
 #		append-ldflags ${L[@]}
 #einfo "LDFLAGS: ${LDFLAGS}"
@@ -222,7 +225,7 @@ src_configure() {
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
-			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
+			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)/cmake/absl"
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
@@ -307,7 +310,7 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	L=(
 		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
 	)
-	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
+	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
 	local d2="/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 	for x in ${L[@]} ; do
 einfo "Adding ${d1} to RPATH for ${x}"
@@ -326,7 +329,7 @@ einfo "Adding ${d2} to RPATH for ${x}"
 		L=(
 			$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" -name "*.so*")
 		)
-		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
+		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
 		for x in ${L[@]} ; do
 			[[ -L "${x}" ]] && continue
 einfo "Adding ${d} to RPATH for ${x}"
