@@ -99,7 +99,7 @@ exist in build files.
   non-exaustive list of USE flags.
 * LTS compilers have the GLIBCXX_ versioned symbols, GPU stack compatibility,
   practically complete version of the C++ standard on both the compiler
-  and [C++ standard library], and C++ version symbols needed to use the
+  and *C++ standard library*, and C++ version symbols needed to use the
   prebuilt LTS binaries built with the same compiler version.
 * The rolling compilers have the up-to-date implementation of the edition of the
   C++ standard,  increased feature coverage for the edition of the standard,
