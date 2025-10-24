@@ -125,7 +125,9 @@ exist in build files.
   closely align with U24.
 * GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify,
   which lowers security.  GCC 15 is supported as a rolling compiler for non
-  LTS (C++ 20 or newer) packages (e.g. Hyprland).
+  LTS (C++ 20 or newer) packages (e.g. Hyprland).  The developers of Hyprland
+  have build files that reference a rolling distro.  This is partly why the
+  counterpart to LTS is called a rolling compiler on this overlay.
 * GCC is preferred but Clang is recommended as the fallback compiler.
 * Clang 18, 19, 20, 21 are alternative LTS compilers on this overlay, but the
   corresponding libc++ 21 is still feature incomplete and not recommended as
