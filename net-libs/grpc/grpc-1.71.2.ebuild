@@ -29,7 +29,7 @@ LLVM_COMPAT=(
 )
 
 ABSEIL_CPP_PV_GRPC="20240722.0" # Same one used by gRPC 1.71.2 (modified from c++14 to c++17)
-ABSEIL_CPP_PV_PROTOBUF="20240116.0" # Same one used by Protobuf-cpp 29.x (modified from c++14 to c++17)
+ABSEIL_CPP_PV_PROTOBUF="20240722.0" # Same one used by Protobuf-cpp 29.x (modified from c++14 to c++17)
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -42,7 +42,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32 ruby33 ruby34"
 
-inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
+inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE+="
 	python? (
@@ -213,7 +213,10 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
+	#append-cflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/include"
+	append-cxxflags $(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)/pkgconfig" pkg-config --cflags absl_any)
 	configure_abi() {
 #		local L=(
 #			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)
@@ -246,7 +249,7 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DCMAKE_CXX_STANDARD=14
+			-DCMAKE_CXX_STANDARD=17
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
