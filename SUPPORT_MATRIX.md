@@ -30,7 +30,7 @@ The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
-| LIBC                 | Arch     | Level of support            | Distro or CI image correspondence                                      |
+| LIBC                 | Arch     | Ebuild level of support     | Distro or CI image correspondence                                      |
 | ---                  | ----     | ---                         | ---                                                                    |
 | glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                         |
@@ -55,7 +55,7 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Compiler                        | Level of support                      | Distro or CI image correspondence     |
+| Compiler                        | Ebuild level of support               | Distro or CI image correspondence     |
 | ---                             | ---                                   | ---                                   |
 | Clang <= 17                     | Not supported                         | D12 (14.0), U22 (14.0)                |
 | Clang 18                        | Fully supported                       | U24 (18.0)                            |
@@ -80,7 +80,7 @@ exist in build files.
 | Rust 1.89.0                     | Available                             |                                       |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
-| -std=c++<ver> or CXX_STANDARD   | LTS compiler or rolling compiler | Compiler status for C++ standard | C++ standard library status for C++ standard |
+| `-std=c++<ver>` or CXX_STANDARD | LTS compiler or rolling compiler | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
 | c++98                           | LTS                              | Done                             | Done                                         |
 | c++11                           | LTS                              | Done                             | Done                                         |
@@ -130,7 +130,7 @@ exist in build files.
   version requirements for this overlay and ML/LLM libraries for increased
   chances of reproducibility.
 
-| Python               | Level of support                      | Distro or CI image correspondence                              |
+| Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                                             |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                                             |
@@ -146,7 +146,7 @@ exist in build files.
   Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
   bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
-| Platform                            | Level of support                      | Distro or CI image correspondence                        |
+| Platform                            | Ebuild level of support               | Distro or CI image correspondence                        |
 | ---                                 | ---                                   | ---                                                      |
 | CUDA 11.8                           | Available                             | D12, F35, U18, U20, U22                                  |
 | CUDA 12.3                           | Available                             | D10, D11, D12, F37, U20, U22                             |
