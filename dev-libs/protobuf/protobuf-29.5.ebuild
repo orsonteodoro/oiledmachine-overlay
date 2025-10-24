@@ -73,7 +73,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # Upstream defaults to C++14
 IUSE="
 cxx14 +cxx17 emacs examples static-libs test zlib
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
 	^^ (
@@ -196,7 +196,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	src_configure_abi() {
 		[[ -e "${ESYSROOT}/usr/lib/abseil-cpp/20240116/$(get_libdir)/cmake/absl" ]] || die "Missing"
 
-		use cxx17 && append-flags -std=c++17
+		use cxx17 && append-cxxflags -std=c++17
 		local mycmakeargs=(
 			$(usex cxx14 -DCMAKE_CXX_STANDARD=14 '') # Default
 			$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
