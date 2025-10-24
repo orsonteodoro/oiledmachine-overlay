@@ -224,8 +224,9 @@ exist in build files.
       in the build files either `-std=c++<ver>` or `-std=gnu++<ver>` or
       `CMAKE_CXX_STANDARD`.
 * Due to the lack of GPU access, the requirements are the exact major.minor
-  version requirements for GPU and ML/LLM ebuild packages in this overlay for
-  increased chances of reproducibility.
+  version requirements for GPU, Machine Learning (ML), and Large Language Model
+  (LLM) ebuild packages in this overlay for increased chances of
+  reproducibility.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
