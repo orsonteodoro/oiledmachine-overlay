@@ -107,7 +107,7 @@ exist in build files.
   C++ standard,  increased feature coverage for the edition of the standard,
   usually have the minimum required feature set to build most projects for that
   standard on this overlay.  The minimum GCC/Clang version used per rolling
-  standard in this overlay minimizes incomplete coverage to avoid missing
+  standard in this overlay that minimizes incomplete coverage to avoid missing
   support errors.
 * Ebuild testing and development defaults on this overlay are currently
   set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
