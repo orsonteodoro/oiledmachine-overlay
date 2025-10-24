@@ -98,7 +98,7 @@ exist in build files.
   exaustive list of USE flags.
 
 * Ebuild testing and development defaults on this overlay are currently
-  set to GCC 13, GCC 15, Clang 18, Clang 19.
+  set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
 
 * GCC 11, 12, 13, 14 are LTS compilers in this overlay are important for
   binary only packages and the default libstdc++ [C++ standard library] for
