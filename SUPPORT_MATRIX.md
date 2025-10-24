@@ -223,8 +223,9 @@ exist in build files.
       to the proper default when building Qt5 packages to avoid linking issues.
       Manually set the default LTS compiler for C++ 17 and older C++ projects.
       Manually set the default rolling compiler for C++ 20 and newer C++ projects.
-      If no C++ standard stated, assume LTS.  The project will state either
-      `-std=c++<ver>` or `-std=gnu++<ver>` or `CMAKE_CXX_STANDARD`.
+      If no C++ standard stated, assume LTS.  The Qt5 based project will state
+      in the build files either `-std=c++<ver>` or `-std=gnu++<ver>` or
+      `CMAKE_CXX_STANDARD`.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
