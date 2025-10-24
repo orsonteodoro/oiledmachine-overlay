@@ -149,7 +149,8 @@ exist in build files.
 | Platform                            | Level of support                      | Distro or CI image correspondence                        |
 | ---                                 | ---                                   | ---                                                      |
 | CUDA 11.8                           | Available                             | D12 (11.8), U18, U20, U22                                |
-| CUDA 12.9                           | Planned                               | D12, U22, U22, U24 (12.0)                                |
+| CUDA 12.x                           | Available                             | D12, U22, U22, U24 (12.0)                                |
+| CUDA 13.x                           | Not supported                         |                                                          |
 | Electron (amd64)                    | Fully supported                       |                                                          |
 | Electron (arm64)                    | Not supported                         |                                                          |
 | Electron (armv7)                    | Not supported                         |                                                          |
