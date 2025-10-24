@@ -98,7 +98,7 @@ exist in build files.
   correspond to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_21, llvm_slot_22, a
   non-exaustive list of USE flags.
 * LTS compilers have the GLIBCXX_ versioned symbols, GPU stack compatibility,
-  practically complete version of the C++ standard on both *the compiler*
+  practically complete version of the C++ standard on both the *C++ compiler*
   and *C++ standard library*, and C++ version symbols needed to use the
   prebuilt LTS binaries built with the same compiler version.
 * The rolling compilers have the up-to-date implementation of the edition of the
