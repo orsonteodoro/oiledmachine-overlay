@@ -119,7 +119,9 @@ exist in build files.
 * Clang 18, 19, 20, 21 are alternative LTS compilers on this overlay, but the
   corresponding libc++ 21 is still feature incomplete and not recommended as
   the default.
-* libstdc++ is assumed the default in this overlay.
+* libstdc++ is the assumed default C++ standard library in this overlay.
+  The alternative libc++ as a systemwide default has not been tested for
+  these ebuilds.
 * Vendored Clang `21.0.0git` and vendored Rust (`<rust-ver>-dev`) from the
   chromium-toolchain package are only supported on Chromium for proper Rust SSP.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in
