@@ -4,7 +4,11 @@
 
 EAPI=8
 
-ABSEIL_CPP_PV="20240116"
+# This abseil-cpp reference was originally 20240116 from protobuf, but gRPC
+# requires the same abseil-cpp version used in gRPC to avoid inconsistent header
+# signatures during the linking of grpc_cpp_plugin.
+ABSEIL_CPP_PV="20240722"
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 CXX_STANDARD=17 # Originally 14 but 17 is required by gRPC
@@ -73,7 +77,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # Upstream defaults to C++14
 IUSE="
 cxx14 +cxx17 emacs examples static-libs test zlib
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	^^ (
