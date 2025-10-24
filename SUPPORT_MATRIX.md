@@ -145,7 +145,7 @@ exist in build files.
       EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
       Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
       bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
-* [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat).
+* [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
 
 | Platform                            | Ebuild level of support               | Distro or CI image correspondence                        |
