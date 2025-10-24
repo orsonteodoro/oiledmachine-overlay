@@ -100,7 +100,9 @@ exist in build files.
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
-  built for compatibility for C++ prebuilt LTS binaries.
+  built for compatibility for C++ prebuilt LTS binaries.  Currently, C++ 17 is
+  the default for both GCC and Clang and is the default for most open source
+  projects in 2025.
 * The rolling compilers have the up-to-date implementation of the edition of the
   C++ standard,  increased feature coverage for the edition of the standard,
   usually have the minimum required feature set to build most projects for that
