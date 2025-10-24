@@ -63,12 +63,17 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
+cxx14
 cxx17
 test
 ebuild_revision_23
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
+	^^ (
+		cxx14
+		cxx17
+	)
 	amd64? (
 		cpu_flags_x86_sse2
 	)
@@ -295,6 +300,7 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
+		$(usex cxx14 -DCMAKE_CXX_STANDARD=14 '') # Default
 		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
 		$(usex test -DBUILD_TESTING=ON '')
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
