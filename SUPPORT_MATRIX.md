@@ -82,11 +82,12 @@ exist in build files.
 
 | `-std=c++<ver>` or CXX_STANDARD | LTS compiler or rolling compiler | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
-| c++98                           | LTS                              | Done                             | Done                                         |
-| c++11                           | LTS                              | Done                             | Done                                         |
+| c++98                           | LTS                              | ?                                | ?                                            |
+| c++03                           | LTS                              | ?                                | ?                                            |
+| c++11                           | LTS                              | Incomplete                       | Done                                         |
 | c++14                           | LTS                              | Done                             | Done                                         |
 | c++17                           | LTS                              | Done                             | GCC (Done), LLVM (Incomplete)                |
-| c++20                           | Rolling                          | Incomplete                       | Incomplete                                   |
+| c++20                           | Rolling                          | Incomplete                       | GCC (Done), LLVM (Incomplete)                |
 | c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
 | c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
