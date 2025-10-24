@@ -219,9 +219,12 @@ exist in build files.
       Retpoline, CET) for UI toolkit packages that have a password UI widget,
       or for packages that process untrusted data or process sensitive data.
 * (5) No extra libstdc++ versioned symbol consistency verification via
-      gcc_slot_<x>.  You are responsible for ensuring the default GCC
-      is set to the systemwide default when building Qt5 packages to
-      avoid linking issues.
+      `gcc_slot_<x>`.  You are responsible for ensuring the default GCC is set
+      to the proper default when building Qt5 packages to avoid linking issues.
+      Manually set the default LTS compiler for C++ 17 and older C++ projects.
+      Manually set the default rolling compiler for C++ 20 and newer C++ projects.
+      If no C++ standard stated, assume LTS.  The project will state either
+      `-std=c++<ver>` or `-std=gnu++<ver>` or `CMAKE_CXX_STANDARD`.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
