@@ -102,13 +102,16 @@ exist in build files.
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
   built for compatibility for C++ prebuilt LTS binaries.  Currently, C++ 17 is
   the default for both GCC and Clang and is the default for most open source
-  C++ projects in 2025.
+  C++ projects in 2025.  A LTS compiler should be used as the systemwide
+  default to maximize performance and compatibility.
 * The rolling compilers have the up-to-date implementation of the edition of the
   C++ standard,  increased feature coverage for the edition of the standard,
   usually have the minimum required feature set to build most projects for that
   standard on this overlay.  The minimum GCC/Clang version used per rolling
   standard in this overlay minimizes incomplete coverage to avoid missing
-  support errors.
+  support errors.  The consequences of using the rolling compiler as the
+  systemwide default default will lock out access for GPU acceleration which is
+  orders of magnitude faster than CPU in certain use case scenarios.
 * Ebuild testing and development defaults on this overlay are currently
   set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
 * CUDA 11.8 is not recommended because of version inconsistency between
