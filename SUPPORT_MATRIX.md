@@ -97,13 +97,17 @@ exist in build files.
 * The rolling compilers (C++ 20 or newer) for bleeding edge packages
   correspond to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_21, llvm_slot_22, a
   non-exaustive list of USE flags.
-
+* LTS compilers have the GLIBCXX_ versioned symbols, GPU stack compatibility,
+  practically complete version of the C++ standard on both the compiler
+  and [C++ standard library], and C++ version symbols needed to use the
+  prebuilt LTS binaries built with the same compiler version.
+* The rolling compilers have the up-to-date implementation of the standard,
+  increased feature coverage for the edition of the standard, usually have the
+  minimum required feature set to build most projects for that standard on this
+  overlay.  The minimum GCC/Clang version used per rolling standard in this
+  overlay minimizes incomplete coverage to avoid missing support errors.
 * Ebuild testing and development defaults on this overlay are currently
   set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
-
-* GCC 11, 12, 13, 14 are LTS compilers in this overlay are important for
-  binary only packages and the default libstdc++ [C++ standard library] for
-  LTS (C++ 17 and older).
 * CUDA 11.8 is not recommended because of version inconsistency between
   distro's cuDNN ebuild and pyTorch version recommendations.  This CUDA version
   is limited to using GCC 11 only on this overlay.
