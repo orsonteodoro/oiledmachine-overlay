@@ -190,9 +190,10 @@ exist in build files.
 | Protobuf-cpp 5 (3)                  | Fully supported                       |                                                          |
 | Protobuf-cpp 6 (3)                  | Fully supported                       |                                                          |
 | PyTorch <= 2.7                      | Not supported                         |                                                          |
-| PyTorch 2.8, 2.9 (CPU)              | WIP                                   |                                                          |
+| PyTorch 2.8 (CPU)                   | WIP                                   |                                                          |
 | PyTorch 2.8 (CUDA 12.6, 12.8, 12.9) | WIP                                   |                                                          |
 | PyTorch 2.8 (ROCm 6.4)              | WIP                                   |                                                          |
+| PyTorch 2.9 (CPU)                   | WIP                                   |                                                          |
 | PyTorch 2.9 (CUDA 12.6, 12.8, 13.0) | WIP                                   |                                                          |
 | PyTorch 2.9 (ROCm 6.4)              | WIP                                   |                                                          |
 | Qt 5.x (4)(5)                       | Not supported, but available          |                                                          |
@@ -201,12 +202,11 @@ exist in build files.
 | ROCm 7.0                            | WIP                                   | D12, D13, U22, U24                                       |
 | SYCL                                | Not supported                         |                                                          |
 | systemd                             | Partially supported                   |                                                          |
-| TensorFlow 2.14, 2.17, 2.20 (CPU)   | WIP                                   |                                                          |
+| TensorFlow 2.14 (CPU)               | WIP                                   |                                                          |
 | TensorFlow 2.14 (CUDA 11.8)         | WIP                                   |                                                          |
-| TensorFlow 2.16                     | Not supported                         |                                                          |
+| TensorFlow 2.17 (CPU)               | WIP                                   |                                                          |
 | TensorFlow 2.17 (CUDA 12.3)         | WIP                                   |                                                          |
-| TensorFlow 2.18                     | Not supported                         |                                                          |
-| TensorFlow 2.19                     | Not supported                         |                                                          |
+| TensorFlow 2.20 (CPU)               | WIP                                   |                                                          |
 | TensorFlow 2.20 (CUDA 12.5)         | WIP                                   |                                                          |
 | TensorFlow 2.20 (ROCm 6.4)          | WIP                                   |                                                          |
 | Vulkan                              | Fully supported                       |                                                          |
