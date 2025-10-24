@@ -102,7 +102,7 @@ exist in build files.
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
   built for compatibility for C++ prebuilt LTS binaries.  Currently, C++ 17 is
   the default for both GCC and Clang and is the default for most open source
-  projects in 2025.
+  C++ projects in 2025.
 * The rolling compilers have the up-to-date implementation of the edition of the
   C++ standard,  increased feature coverage for the edition of the standard,
   usually have the minimum required feature set to build most projects for that
