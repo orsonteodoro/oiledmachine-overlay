@@ -60,7 +60,7 @@ exist in build files.
 | Clang <= 17                     | Not supported                         | D12 (14.0), U22 (14.0)                |
 | Clang 18                        | Fully supported                       | U24 (18.0)                            |
 | Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7)              |
-| Clang 20                        | Available                             | F42 (20.1.3), A (20)                  |
+| Clang 20                        | Available                             | F42 (20.1.3)                          |
 | Clang 21                        | Not supported                         |                                       |
 | Clang 22                        | Not supported                         |                                       |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)             |
@@ -70,14 +70,14 @@ exist in build files.
 | GCC 12                          | Fully supported                       | D12 (12.2)                            |
 | GCC 13                          | Fully supported                       | U24 (13.2)                            |
 | GCC 14                          | Partially Supported                   | D13 (14.2), F41 (14.2.1), F40 (14.0)  |
-| GCC 15                          | Fully supported                       | F42 (15.1.1), A (15.2)                |
+| GCC 15                          | Fully supported                       | F42 (15.1.1)                          |
 | GCC 16			  | Not Supported                         |                                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                          |
 | Rust 1.74.0                     | Partially supported                   |                                       |
 | Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)            |
 | Rust 1.85.0                     | Available                             | D13 (1.85.0)                          |
 | Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)            |
-| Rust 1.89.0                     | Available                             | A (1.89.0)                            |
+| Rust 1.89.0                     | Available                             |                                       |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
 | -std=c++<ver> or CXX_STANDARD   | LTS compiler or rolling compiler | Compiler status for C++ standard | C++ standard library status for C++ standard |
@@ -134,7 +134,7 @@ exist in build files.
 | ---                  | ---                                   | ---                                                            |
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                                             |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                                             |
-| 3.12                 | Partially supported                   | U24 (EOL Apr 2029), A (Rolling)                                |
+| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | 3.13t                | Not supported                         |                                                                |
 | 3.14 and later       | Not supported                         |                                                                |
@@ -148,9 +148,14 @@ exist in build files.
 
 | Platform                            | Level of support                      | Distro or CI image correspondence                        |
 | ---                                 | ---                                   | ---                                                      |
-| CUDA 11.8                           | Available                             | D12 (11.8), U18, U20, U22                                |
-| CUDA 12.x                           | Available                             | D12, U22, U22, U24 (12.0)                                |
-| CUDA 13.x                           | Not supported                         |                                                          |
+| CUDA 11.8                           | Available                             | D12, F35, U18, U20, U22                                  |
+| CUDA 12.3                           | Available                             | D10, D11, D12, F37, U20, U22                             |
+| CUDA 12.4                           | Available                             | D10, D11, D12, F39, U20, U22                             |
+| CUDA 12.5                           | Available                             | D10, D11, D12, F39, U20, U22, U24                        |
+| CUDA 12.6                           | Available                             | D11, D12, F39, U20, U22, U24                             |
+| CUDA 12.8                           | Available                             | D12, F41, U20, U22, U24                                  |
+| CUDA 12.9                           | Available                             | D12, F41, U20, U22, U24                                  |
+| CUDA 13.0                           | Not supported                         | D12, F42, U22, U24                                       |
 | Electron (amd64)                    | Fully supported                       |                                                          |
 | Electron (arm64)                    | Not supported                         |                                                          |
 | Electron (armv7)                    | Not supported                         |                                                          |
