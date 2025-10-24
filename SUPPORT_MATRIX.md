@@ -173,7 +173,6 @@ exist in build files.
 | Ollama 0.9 (CUDA 12.8)              | Available                             |                                                          |
 | Ollama 0.9 (ROCm 6.3)               | Not supported                         |                                                          |
 | Ollama 0.11 (CPU)                   | Fully supported                       |                                                          |
-| Ollama 0.11 (CUDA 11.8)             | Not supported                         |                                                          |
 | Ollama 0.11 (CUDA 12.8)             | Available                             |                                                          |
 | Ollama 0.11 (ROCm 6.3)              | Not supported                         |                                                          |
 | Ollama 0.12/0.13 (CPU)              | Planned                               |                                                          |
