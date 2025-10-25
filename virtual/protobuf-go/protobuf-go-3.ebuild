@@ -12,7 +12,7 @@ inherit libstdcxx-slot
 
 DESCRIPTION="A virtual package to manage protobuf-go stability"
 LICENSE="metapackage"
-SLOT="0/${PV}"
+SLOT="3/${PV}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}

@@ -513,10 +513,10 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/grpc${GRPC_PV%.*}"
+SLOT="3/$(ver_cut 1-2 ${PV})"
 IUSE="test"
 RDEPEND="
-	>=net-libs/grpc-${GRPC_PV}
+	net-libs/grpc:3
 	net-libs/grpc:=
 "
 DEPEND="

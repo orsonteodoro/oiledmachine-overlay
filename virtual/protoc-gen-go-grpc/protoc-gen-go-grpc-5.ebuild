@@ -10,7 +10,7 @@ GCC_COMPAT=(
 
 DESCRIPTION="A virtual package to manage protoc-gen-go-grpc stability"
 LICENSE="metapackage"
-VERSIONS_MONITORED="1.3.0"
+VERSIONS_MONITORED="1.5.1"
 SLOT="3/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
@@ -23,7 +23,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	!virtual/protoc-gen-go-grpc:0
-	dev-go/protoc-gen-go-grpc:3/1.3
+	dev-go/protoc-gen-go-grpc:5/1.5
 	dev-go/protoc-gen-go-grpc:=
 "
 DEPEND+="
