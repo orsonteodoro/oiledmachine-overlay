@@ -23,6 +23,7 @@ gfx906_xnack_minus - Vega 20 support, faster execution, without	robust memory sa
 gfx908 - Arcturus support
 gfx908_xnack_minus - Arcturus support, faster execution, without robust memory safety
 gfx908_xnack_plus - Arcturus support, ASan compatible, with robust memory safety
+gfx909 - GCN 5 Vega support
 gfx90a - Aldearan support
 gfx90a_xnack_minus - Aldearan support, faster execution, without robust memory safety
 gfx90a_xnack_plus - Aldearan support, ASan compatible, with robust memory safety
@@ -52,5 +53,8 @@ gfx1102 - Hotpink Bonefish, Navi 33 support
 gfx1103 - Pink Sardine, Pheonix support
 gfx1150 - RDNA 3.5 support
 gfx1151 - RDNA 3.5 support
+gfx1152 - RDNA 3.5 support
 gfx1200 - Navi 44 support
 gfx1201 - Navi 48 support
+gfx10-1-generic - RDNA 1 support
+gfx10-3-generic - RDNA 2 support

@@ -4,14 +4,14 @@
 
 EAPI=8
 
-# U20
+# U24
 
 # Patch snapshot parts are from ollama ebuild.
 
 # See integration_test.go:protobufVersion for bindings compatibility
 GEN_EBUILD=0
 MY_PV="v${PV}"
-PROTOBUF_PV="3.15.3" # https://github.com/protocolbuffers/protobuf-go/blob/v1.27.1/integration_test.go#L38
+PROTOBUF_PV="6.32.1" # https://github.com/protocolbuffers/protobuf-go/blob/v1.36.10/integration_test.go#L36
 PROTOBUF_SLOT="${PROTOBUF_PV%%.*}"
 export S_GO="${WORKDIR}/go_build"
 
@@ -179,7 +179,7 @@ unpack_go()
 {
 	unpack_go_pkg github.com/protocolbuffers/protobuf-go protocolbuffers/protobuf-go ${MY_PV}
 	unpack_go_pkg github.com/golang/protobuf golang/protobuf v1.5.0
-	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.5.5
+	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.7.0
 	mkdir -p "${WORKDIR}/go_build/src/google.golang.org" || die
 	ln -s \
 		"${WORKDIR}/go_build/src/github.com/protocolbuffers/protobuf-go" \
@@ -192,7 +192,7 @@ SRC_URI="
 	https://github.com/protocolbuffers/protobuf-go/archive/v${PV}.tar.gz -> ${P}.tar.gz
 $(gen_go_dl_gh_url github.com/protocolbuffers/protobuf-go protocolbuffers/protobuf-go ${MY_PV})
 $(gen_go_dl_gh_url github.com/golang/protobuf golang/protobuf v1.5.0)
-$(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.5.5)
+$(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.7.0)
 "
 
 DESCRIPTION="Go support for Google's protocol buffers"
@@ -200,13 +200,13 @@ HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 RESTRICT="mirror"
 SLOT="${PROTOBUF_SLOT}"
-# See https://github.com/protocolbuffers/protobuf-go/blob/v1.27.1/integration_test.go#L37
+# See https://github.com/protocolbuffers/protobuf-go/blob/v1.36.10/integration_test.go#L36
 RDEPEND="
 	virtual/protobuf:${PROTOBUF_SLOT}
 	virtual/protobuf:=
 "
 BDEPEND="
-	>=dev-lang/go-1.9
+	>=dev-lang/go-1.23
 "
 
 src_unpack() {

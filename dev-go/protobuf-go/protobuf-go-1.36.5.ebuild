@@ -4,14 +4,15 @@
 
 EAPI=8
 
-# U22
+# U24
 
 # Patch snapshot parts are from ollama ebuild.
 
 # See integration_test.go:protobufVersion for bindings compatibility
-GEN_EBUILD=1
+GEN_EBUILD=0
 MY_PV="v${PV}"
-PROTOBUF_SLOT="3.22" # https://github.com/protocolbuffers/protobuf-go/blob/v1.31.0/integration_test.go#L38
+PROTOBUF_PV="5.29.1" # https://github.com/protocolbuffers/protobuf-go/blob/v1.36.5/integration_test.go#L38
+PROTOBUF_SLOT="${PROTOBUF_PV%%.*}"
 export S_GO="${WORKDIR}/go_build"
 
 inherit go-module
@@ -101,9 +102,13 @@ generate_ebuild_snapshot() {
 einfo
 einfo "Replace SRC_URI section:"
 einfo
+	local row
 	for row in ${L[@]} ; do
-		local c1=$(echo "${row}" | cut -f 1 -d " " | sed -E -e "s|[[:space:]]+||g")
+		if [[ "${row}" =~ "require" ]] ; then
+			row=$(echo "${row}" | sed -e "s|require ||g")
+		fi
 
+		local c1=$(echo "${row}" | cut -f 1 -d " " | sed -E -e "s|[[:space:]]+||g")
 		local n_frags=$(echo "${c1}" | tr '/' $'\n' | wc -l)
 		if [[ "${c1}" =~ "github.com" ]] && (( ${n_frags} != 3 )) ; then
 			c1=$(echo "${c1}" | cut -f 1-3 -d "/")
@@ -115,12 +120,16 @@ einfo
 echo -e "\$(gen_go_dl_gh_url ${c1} ${c2} ${c3})"
 	done
 
+
 einfo
 einfo "Replace unpack_go section:"
 einfo
 	for row in ${L[@]} ; do
-		local c1=$(echo "${row}" | cut -f 1 -d " " | sed -E -e "s|[[:space:]]+||g")
+		if [[ "${row}" =~ "require" ]] ; then
+			row=$(echo "${row}" | sed -e "s|require ||g")
+		fi
 
+		local c1=$(echo "${row}" | cut -f 1 -d " " | sed -E -e "s|[[:space:]]+||g")
 		local n_frags=$(echo "${c1}" | tr '/' $'\n' | wc -l)
 		if [[ "${c1}" =~ "github.com" ]] && (( ${n_frags} != 3 )) ; then
 			c1=$(echo "${c1}" | cut -f 1-3 -d "/")
@@ -171,6 +180,7 @@ unpack_go()
 	unpack_go_pkg github.com/protocolbuffers/protobuf-go protocolbuffers/protobuf-go ${MY_PV}
 	unpack_go_pkg github.com/golang/protobuf golang/protobuf v1.5.0
 	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.5.5
+	unpack_go_pkg golang.org/x/xerrors golang/xerrors v0.0.0-20191204190536-9bdfabe68543
 	mkdir -p "${WORKDIR}/go_build/src/google.golang.org" || die
 	ln -s \
 		"${WORKDIR}/go_build/src/github.com/protocolbuffers/protobuf-go" \
@@ -184,27 +194,21 @@ SRC_URI="
 $(gen_go_dl_gh_url github.com/protocolbuffers/protobuf-go protocolbuffers/protobuf-go ${MY_PV})
 $(gen_go_dl_gh_url github.com/golang/protobuf golang/protobuf v1.5.0)
 $(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.5.5)
+$(gen_go_dl_gh_url golang.org/x/xerrors golang/xerrors v0.0.0-20191204190536-9bdfabe68543)
 "
 
 DESCRIPTION="Go support for Google's protocol buffers"
 HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
-SLOT="0/${PROTOBUF_SLOT}"
-# KISS (Keep It Simple Stupid).  About the version gaurantees...
-# protobuf-go 1.31.0 was released in Jun 2023.
-# It supports 1 year previous, so the protobuf allowed is no less than Jun 2022.
-# 0/3.21 (21.12) released on Dec 2022, yes
-# 0/3.19 (3.19.6) released on Sep 2022, yes
-# 0/3.12 (3.12.4) released on Jul 2020, no
+RESTRICT="mirror"
+SLOT="${PROTOBUF_SLOT}"
+# See https://github.com/protocolbuffers/protobuf-go/blob/v1.36.5/integration_test.go#L36
 RDEPEND="
-	|| (
-		dev-libs/protobuf:0/3.21
-		dev-libs/protobuf:0/3.19
-	)
-	dev-libs/protobuf:=
+	virtual/protobuf:${PROTOBUF_SLOT}
+	virtual/protobuf:=
 "
 BDEPEND="
-	>=dev-lang/go-1.13.15
+	>=dev-lang/go-1.21
 "
 
 src_unpack() {
