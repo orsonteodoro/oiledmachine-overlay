@@ -2924,9 +2924,9 @@ gen_rocm_bdepend() {
 		local ROCM_SLOT="${pv}"
 		echo "
 			rocm_${s1}? (
-				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
+				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},lc,rocm]
 				dev-util/hip:=
-				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
 				sys-devel/llvm-roc:=
 			)
 		"
@@ -2941,23 +2941,23 @@ gen_rocm_rdepend() {
 		local ROCM_SLOT="${pv}"
 		echo "
 			rocm_${s1}? (
-				>=dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
+				>=dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocm-comgr:=
-				>=dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				>=dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocm-opencl-runtime:=
-				>=dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				>=dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
+				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},lc,rocm]
 				dev-util/hip:=
-				>=sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				>=sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipBLAS:=
-				>=sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCBLAS),cpu_flags_x86_f16c=]
+				>=sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS),cpu_flags_x86_f16c=]
 				sci-libs/rocBLAS:=
-				>=sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCSPARSE)]
+				>=sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSPARSE)]
 				sci-libs/rocSPARSE:=
-				>=sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCSOLVER)]
+				>=sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
 				sci-libs/rocSOLVER:=
-				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
 				sys-devel/llvm-roc:=
 			)
 		"
