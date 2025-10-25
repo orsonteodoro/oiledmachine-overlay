@@ -4,14 +4,15 @@
 
 EAPI=8
 
-# U20
+# U24
 
 # 0.5.4 -> 0.5.7
 # 0.5.7 -> 0.5.11
 # 0.5.11 -> 0.5.12
 # 0.5.12 -> 0.5.13
 # 0.5.13 -> 0.6.5
-# 0.6.5 -> 0.9.2
+# 0.6.5 -> 0.11.4
+# 0.11.4 -> 0.12.6 # TODO update patch/ebuild for model availability
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -79,10 +80,23 @@ SVE_ARCHES=(
 	"armv9.4-a"
 )
 CPU_FLAGS_ARM=(
+	"cpu_flags_arm_dotprod"
 	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_fp16"
+	"cpu_flags_arm_sme"
 	"cpu_flags_arm_sve"
+	"cpu_flags_arm_sve2"
+)
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_power7"
+	"cpu_flags_ppc_power8"
+	"cpu_flags_ppc_power9"
+	"cpu_flags_ppc_power10"
+	"cpu_flags_ppc_power11"
+	"cpu_flags_ppc_vsx"
 )
 CPU_FLAGS_X86=(
+	"cpu_flags_x86_bmi2"
 	"cpu_flags_x86_f16c"
 	"cpu_flags_x86_fma"
 	"cpu_flags_x86_avx"
@@ -189,7 +203,7 @@ themanofrod-travel-agent tinydolphin tinyllama tulu3 vicuna wizard-math
 wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm wizardlm-uncensored
 wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
-LLVM_COMPAT=( 19 18 ) # U20 uses clang 10 by default but has clang 18 available.
+LLVM_COMPAT=( 19 18 ) # U24.04 uses clang 18 by default.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 #
@@ -1498,8 +1512,8 @@ else
 		"github.com/google/go-cmp v0.5.0/go.mod"
 		"github.com/google/go-cmp v0.5.5/go.mod"
 		"github.com/google/go-cmp v0.5.6/go.mod"
-		"github.com/google/go-cmp v0.6.0"
-		"github.com/google/go-cmp v0.6.0/go.mod"
+		"github.com/google/go-cmp v0.7.0"
+		"github.com/google/go-cmp v0.7.0/go.mod"
 		"github.com/google/gofuzz v1.0.0/go.mod"
 		"github.com/google/uuid v1.1.2/go.mod"
 		"github.com/google/uuid v1.6.0"
@@ -1755,10 +1769,6 @@ else
 		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
 		"rsc.io/pdf v0.1.1/go.mod"
-
-
-
-
 
 	)
 	go-module_set_globals
@@ -2681,6 +2691,7 @@ SLOT="0"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
@@ -2721,10 +2732,12 @@ gen_rocm_required_use() {
 	done
 }
 # OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
+# There is a bug for ?? operator where 1 element causes it to be required.
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	?? (
+		${ROCM_IUSE[@]}
 		${ROCM_IUSE[@]}
 	)
 	?? (
@@ -2857,13 +2870,6 @@ RDEPEND="
 IDEPEND="
 	${RDEPEND}
 "
-# The CUDA 11 requirement is relaxed.  Upstream tests with 11.3, 12.4.
-CUDA_11_8_BDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		=sys-devel/gcc-11*[cxx]
-	)
-"
 CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
@@ -2990,67 +2996,56 @@ BDEPEND="
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
@@ -3066,9 +3061,8 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
-	"${FILESDIR}/${PN}-0.11.4-custom-cpu-features.patch"
+	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 )
 
 pkg_pretend() {
@@ -3101,6 +3095,7 @@ ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder an
 			export ROCM_SLOT="6.4"
 			export LLVM_SLOT=19
 			export ROCM_VERSION="${HIP_6_4_VERSION}"
+ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 		fi
 		rocm_pkg_setup
 	else
@@ -3180,36 +3175,6 @@ src_prepare() {
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/internal/storage/header.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/internal/execution/e.go" || die
 	if use rocm ; then
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-		PATCH_PATHS=(
-			"${S}/cmd/cmd.go"
-			"${S}/discover/amd_linux.go"
-			"${S}/discover/gpu_linux.go"
-			"${S}/gpu/amd_linux.go"
-			"${S}/gpu/gpu_linux.go"
-			"${S}/llama/Makefile"
-			"${S}/llama/llama.go"
-			"${S}/llama/make/Makefile.cuda_v11"
-			"${S}/llama/make/Makefile.cuda_v12"
-			"${S}/llama/make/Makefile.rocm"
-			"${S}/llama/make/common-defs.make"
-			"${S}/llama/make/cuda.make"
-			"${S}/llama/sync.sh"
-			"${S}/llm/generate/gen_common.sh"
-			"${S}/llm/generate/gen_linux.sh"
-			"${S}/llm/llama.cpp/Makefile"
-			"${S}/llm/llama.cpp/ggml/src/CMakeLists.txt"
-			"${S}/make/Makefile.cuda_v11"
-			"${S}/make/Makefile.cuda_v12"
-			"${S}/make/cuda-v11-defs.make"
-			"${S}/make/cuda-v12-defs.make"
-			"${S}/make/cuda.make"
-			"${S}/make/rocm-defs.make"
-			"${S}/scripts/install.sh"
-		)
-
 		rocm_src_prepare
 	fi
 
@@ -3278,7 +3243,6 @@ einfo "Checking toolchain"
 	# Still check if *DEPEND is bypassed via `emerge -O` or `ebuild`
 	clang --version || die
 	protoc --version || die
-	protoc-gen-go-grpc --version || die
 	pigz --version || die
 	git --version || die
 	pkg-config --version || die
@@ -3325,6 +3289,7 @@ get_cuda_flags() {
 
 _NVCC_FLAGS=""
 src_configure() {
+	PATH="/usr/lib/protobuf/3/bin:${PATH}"
 	if use cuda ; then
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
@@ -3417,6 +3382,44 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local CPU_FEATURES=()
 
+	if use cpu_flags_arm_dotprod ; then
+		CPU_FEATURES+=( "DOTPROD" )
+	fi
+	if use cpu_flags_arm_i8mm ; then
+		CPU_FEATURES+=( "MATMUL_INT8" )
+	fi
+	if use cpu_flags_arm_fp16 ; then
+		CPU_FEATURES+=( "FP16_VECTOR_ARITHMETIC" )
+	fi
+	if use cpu_flags_arm_sme ; then
+		CPU_FEATURES+=( "SME" )
+	fi
+	if use cpu_flags_arm_sve ; then
+		CPU_FEATURES+=( "SVE" )
+	fi
+	if use cpu_flags_arm_sve2 ; then
+		CPU_FEATURES+=( "SVE2" )
+	fi
+
+	if use cpu_flags_ppc_power7 ; then
+		CPU_FEATURES+=( "POWER7" )
+	fi
+	if use cpu_flags_ppc_power8 ; then
+		CPU_FEATURES+=( "POWER8" )
+	fi
+	if use cpu_flags_ppc_power9 ; then
+		CPU_FEATURES+=( "POWER9" )
+	fi
+	if use cpu_flags_ppc_power10 ; then
+		CPU_FEATURES+=( "POWER10" )
+	fi
+	if use cpu_flags_ppc_power11 ; then
+		CPU_FEATURES+=( "POWER11" )
+	fi
+	if use cpu_flags_ppc_vsx ; then
+		CPU_FEATURES+=( "VSX" )
+	fi
+
 	if use cpu_flags_x86_sse ; then
 		append-flags -msse
 		_NVCC_FLAGS+=" -Xcompiler -msse"
@@ -3439,6 +3442,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use cpu_flags_x86_sse4_2 ; then
 		CPU_FEATURES+=( "SSE42" )
+	fi
+
+	if use cpu_flags_x86_bmi2 ; then
+		CPU_FEATURES+=( "BMI2" )
 	fi
 
 	if use cpu_flags_x86_f16c ; then
