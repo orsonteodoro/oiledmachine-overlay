@@ -203,25 +203,25 @@
       Generate compile time performance-critical Blackwell microarchitecture GPU kernels.
     </flag>
     <flag name="cuda_targets_50-virtual">
-      Generate portable Maxwell or newer GPU microarchitecture kernels to be later be JIT standard optimized.
+      Generate portable Maxwell or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_60-virtual">
-      Generate portable Pascal or newer GPU microarchitecture kernels to be later be JIT standard optimized.
+      Generate portable Pascal or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_70-virtual">
-      Generate portable Volta or newer GPU microarchitecture kernels to be later be JIT standard optimized.
+      Generate portable Volta or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_80-virtual">
-      Generate portable Ampere or newer GPU microarchitecture kernels to be later be JIT standard optimized.
+      Generate portable Ampere or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_90-virtual">
-      Generate standard portable Ada Lovelace or newer GPU microarchitecture kernels to be later be JIT standard optimized.
+      Generate standard portable Ada Lovelace or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_90a-virtual">
-      Generate portable Hopper or newer GPU microarchitecture kernels to be later be JIT performance-critical optimized.
+      Generate portable Hopper or newer GPU microarchitecture kernels with load time JIT performance-critical optimization.
     </flag>
     <flag name="cuda_targets_120-virtual">
-      Generate portable Blackwell or newer GPU microarchitecture kernels to be later be JIT standard optimized.
+      Generate portable Blackwell or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
   </use>
 </pkgmetadata>
