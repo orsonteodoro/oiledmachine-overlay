@@ -200,7 +200,7 @@ HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 RESTRICT="mirror"
 SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-3 ${PV})"
-IUSE="ebuild_revision_1"
+IUSE="ebuild_revision_2"
 RDEPEND="
 	virtual/protobuf:${PROTOBUF_SLOT}
 	virtual/protobuf:=
@@ -216,6 +216,7 @@ src_unpack() {
 }
 
 src_compile() {
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	export GOPATH="${WORKDIR}/go_build"
 	export GOBIN="${GOPATH}/bin"
 	export GO111MODULE=auto
