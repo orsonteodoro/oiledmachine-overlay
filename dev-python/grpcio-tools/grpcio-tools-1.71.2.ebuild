@@ -86,6 +86,11 @@ src_unpack() {
 python_prepare_all() {
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
+	sed -i -r \
+		-e "\|third_party/abseil-cpp/.*[.]cc|d" "protoc_lib_deps.py" \
+		-e "\|third_party/protobuf/.*[.]c|d" "protoc_lib_deps.py" \
+		-e "\|third_party/protobuf/.*[.]cc|d" "protoc_lib_deps.py" \
+		|| die
 }
 
 check_cython() {
@@ -150,11 +155,6 @@ src_install() {
 		dodir $(dirname "${new_prefix}")
 		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
 
-		local old_prefix="/usr/lib/python-exec/${EPYTHON}"
-		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/python-exec/${EPYTHON}"
-		dodir "/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/python-exec"
-		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
-
 		local pv
 		pv="${EPYTHON/python}"
 		pv="${pv/.}"
@@ -168,19 +168,7 @@ src_install() {
 
 	rm -rf "${ED}/lib" || true
 
-	local old_prefix="/usr/bin"
-	local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin"
-	mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
-
 	local old_prefix="/usr/share"
 	local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/share"
 	mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
-
-	pushd "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin" >/dev/null 2>&1 || die
-		rm -f "python-grpc-tools-protoc" || true
-		ln -s \
-			"../lib/python-exec/${EPYTHON}/python-grpc-tools-protoc" \
-			"python-grpc-tools-protoc" \
-			|| die
-	popd >/dev/null 2>&1 || die
 }
