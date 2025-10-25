@@ -16,7 +16,7 @@ ebuild_revision_1
 REQUIRED_USE="
 "
 RDEPEND+="
-	dev-go/protobuf-go:${PROTOBUF_SLOT}
+	dev-go/protobuf-go:${PROTOBUF_SLOT}/1.36.5
 	dev-go/protobuf-go:=
 "
 DEPEND+="

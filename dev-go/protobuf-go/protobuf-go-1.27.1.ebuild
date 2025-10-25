@@ -6,8 +6,6 @@ EAPI=8
 
 # U20
 
-# Patch snapshot parts are from ollama ebuild.
-
 # See integration_test.go:protobufVersion for bindings compatibility
 GEN_EBUILD=0
 MY_PV="v${PV}"
@@ -199,8 +197,8 @@ DESCRIPTION="Go support for Google's protocol buffers"
 HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 RESTRICT="mirror"
-SLOT="${PROTOBUF_SLOT}"
-# See https://github.com/protocolbuffers/protobuf-go/blob/v1.27.1/integration_test.go#L37
+SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-3 ${PV})"
+IUSE="ebuild_revision_1"
 RDEPEND="
 	virtual/protobuf:${PROTOBUF_SLOT}
 	virtual/protobuf:=
@@ -226,5 +224,6 @@ src_compile() {
 }
 
 src_install() {
-	dobin "${GOBIN}/protoc-gen-go"
+	exeinto "/usr/lib/${PN}/${PROTOBUF_SLOT}"
+	doexe "${GOBIN}/protoc-gen-go"
 }
