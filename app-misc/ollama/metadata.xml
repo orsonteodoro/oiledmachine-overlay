@@ -124,7 +124,8 @@
     </flag>
 
     <flag name="amdgpu_targets_gfx908_xnack_minus">
-      Generate compile time performance-critical Arcturus microarchitecture GPU kernels.
+      Generate compile time performance-critical Arcturus microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx908_xnack_plus">
       Generate compile time debug- or secure- critical Arcturus
@@ -132,98 +133,129 @@
       robust memory safety.
     </flag>
     <flag name="amdgpu_targets_gfx90a_xnack_minus">
-      Generate compile time performance-critical Aldebaran microarchitecture GPU kernels.
+      Generate compile time performance-critical Aldebaran microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx940">
-      Generate compile time standard optimized Aqua Vanjaram microarchitecture GPU kernels.
+      Generate compile time standard optimized Aqua Vanjaram microarchitecture
+      GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx941">
-      Generate compile time standard optimized Aqua Vanjaram microarchitecture GPU kernels.
+      Generate compile time standard optimized Aqua Vanjaram microarchitecture
+      GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx942">
-      Generate compile time standard optimized Aqua Vanjaram microarchitecture GPU kernels.
+      Generate compile time standard optimized Aqua Vanjaram microarchitecture
+      GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1010">
-      Generate compile time standard optimized Navi 10 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 10 microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1011">
-      Generate compile time standard optimized Navi 12 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 12 microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1012">
-      Generate compile time standard optimized Navi 14 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 14 microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1030">
-      Generate compile time standard optimized Sienna Cichlid, Navi 21 microarchitecture GPU kernels.
+      Generate compile time standard optimized Sienna Cichlid, Navi 21
+      microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1100">
-      Generate compile time standard optimized Plum Bonito, Navi 31 microarchitecture GPU kernels.
+      Generate compile time standard optimized Plum Bonito, Navi 31
+      microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1101">
-      Generate compile time standard optimized Wheat Nas, Navi 32 microarchitecture GPU kernels.
+      Generate compile time standard optimized Wheat Nas, Navi 32
+      microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1102">
-      Generate compile time standard optimized Hotpink Bonefish, Navi 33 microarchitecture GPU kernels.
+      Generate compile time standard optimized Hotpink Bonefish, Navi 33
+      microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1151">
-      Generate compile time standard optimized RDNA 3.5 microarchitecture GPU kernels.
+      Generate compile time standard optimized RDNA 3.5 microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1200">
-      Generate compile time standard optimized Navi 44 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 44 microarchitecture GPU
+      kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1201">
-      Generate compile time standard optimized Navi 48 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 48 microarchitecture GPU
+      kernels.
     </flag>
 
     <flag name="cuda_targets_sm_50">
-      Generate compile time performance-critical Maxwell microarchitecture GPU kernels.
+      Generate compile time performance-critical Maxwell microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_60">
-      Generate compile time performance-critical Pascal microarchitecture GPU kernels.
+      Generate compile time performance-critical Pascal microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_61">
-      Generate compile time performance-critical Pascal microarchitecture GPU kernels.
+      Generate compile time performance-critical Pascal microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_70">
-      Generate compile time performance-critical Volta microarchitecture GPU kernels.
+      Generate compile time performance-critical Volta microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_72">
-      Generate compile time performance-critical Volta microarchitecture GPU kernels.
+      Generate compile time performance-critical Volta microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_75">
-      Generate compile time performance-critical Turing microarchitecture GPU kernels.
+      Generate compile time performance-critical Turing microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_80">
-      Generate compile time performance-critical Ada Lovelace microarchitecture GPU kernels.
+      Generate compile time performance-critical Ada Lovelace microarchitecture
+      GPU kernels.
     </flag>
     <flag name="cuda_targets_sm_90">
-      Generate compile time standard optimized Hopper microarchitecture GPU kernels.
+      Generate compile time standard optimized Hopper microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_90a">
-      Generate compile time performance-critical Hopper microarchitecture GPU kernels.
+      Generate compile time performance-critical Hopper microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_sm_120">
-      Generate compile time performance-critical Blackwell microarchitecture GPU kernels.
+      Generate compile time performance-critical Blackwell microarchitecture GPU
+      kernels.
     </flag>
     <flag name="cuda_targets_50-virtual">
-      Generate portable Maxwell or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Maxwell or newer GPU microarchitecture kernels with load
+      time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_60-virtual">
-      Generate portable Pascal or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Pascal or newer GPU microarchitecture kernels with load
+      time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_70-virtual">
-      Generate portable Volta or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Volta or newer GPU microarchitecture kernels with load
+      time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_80-virtual">
-      Generate portable Ampere or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Ampere or newer GPU microarchitecture kernels with load
+      time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_90-virtual">
-      Generate portable Ada Lovelace or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Ada Lovelace or newer GPU microarchitecture kernels with
+      load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_90a-virtual">
-      Generate portable Hopper or newer GPU microarchitecture kernels with load time JIT performance-critical optimization.
+      Generate portable Hopper or newer GPU microarchitecture kernels with load
+      time JIT performance-critical optimization.
     </flag>
     <flag name="cuda_targets_120-virtual">
-      Generate portable Blackwell or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Blackwell or newer GPU microarchitecture kernels with
+      load time JIT standard optimization.
     </flag>
   </use>
 </pkgmetadata>
