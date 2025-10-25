@@ -127,7 +127,7 @@
       Generate compile time performance-critical Arcturus microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx908_xnack_plus">
-      Generate compile time performance-critical Arcturus microarchitecture GPU kernels with secure-critical ASan support for dependencies.
+      Generate compile time performance-critical Arcturus microarchitecture GPU kernels with secure-critical ASan compatibility.
     </flag>
     <flag name="amdgpu_targets_gfx90a_xnack_minus">
       Generate compile time performance-critical Aldebaran microarchitecture GPU kernels.
