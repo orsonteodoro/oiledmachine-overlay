@@ -1,10 +1,13 @@
 # Copyright 1999-2023 Gentoo Authors.
 # Distributed under the terms of the GNU General Public License v2
 
+#
 # References:
+#
 # https://github.com/GPUOpen-Tools/device_info/blob/master/DeviceInfo.cpp
-# https://github.com/ROCm-Developer-Tools/clr/blob/rocm-5.6.0/opencl/tests/ocltst/module/runtime/OCLDeviceQueries.cpp
+# https://github.com/ROCm/clr/blob/develop/opencl/tests/ocltst/module/runtime/OCLDeviceQueries.cpp
 # https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/blob/master/src/libhsakmt.h
+#
 
 gfx700 - Kaveri, Spooky, Spectre support
 gfx701 - Hawaii support
