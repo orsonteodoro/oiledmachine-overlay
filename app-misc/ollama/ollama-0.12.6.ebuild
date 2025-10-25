@@ -12,7 +12,7 @@ EAPI=8
 # 0.5.12 -> 0.5.13
 # 0.5.13 -> 0.6.5
 # 0.6.5 -> 0.11.4
-# 0.11.4 -> 0.12.6 # TODO update patch/ebuild for model availability
+# 0.11.4 -> 0.12.6 # TODO update patch/ebuild for LLM model availability
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
