@@ -151,7 +151,7 @@
       Generate compile time standard optimized Navi 14 microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1030">
-      Generate compile time standard optimized Sienna Cichlid microarchitecture GPU kernels.
+      Generate compile time standard optimized Sienna Cichlid, Navi 21 microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1100">
       Generate compile time standard optimized Plum Bonito, Navi 31 microarchitecture GPU kernels.
@@ -166,10 +166,10 @@
       Generate compile time standard optimized RDNA 3.5 microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1200">
-      Generate compile time standard optimized RDNA 4 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 44 microarchitecture GPU kernels.
     </flag>
     <flag name="amdgpu_targets_gfx1201">
-      Generate compile time standard optimized RDNA 4 microarchitecture GPU kernels.
+      Generate compile time standard optimized Navi 48 microarchitecture GPU kernels.
     </flag>
 
     <flag name="cuda_targets_sm_50">
