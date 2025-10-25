@@ -215,7 +215,7 @@
       Generate portable Ampere or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_90-virtual">
-      Generate standard portable Ada Lovelace or newer GPU microarchitecture kernels with load time JIT standard optimization.
+      Generate portable Ada Lovelace or newer GPU microarchitecture kernels with load time JIT standard optimization.
     </flag>
     <flag name="cuda_targets_90a-virtual">
       Generate portable Hopper or newer GPU microarchitecture kernels with load time JIT performance-critical optimization.
