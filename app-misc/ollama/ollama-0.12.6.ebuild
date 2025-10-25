@@ -35,24 +35,26 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.6.5/.github/workflows/test.yaml
-# CUDA:  https://github.com/ollama/ollama/blob/v0.6.5/.github/workflows/release.yaml#L194
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.6.5/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.12.6/CMakePresets.json#L71
+# CUDA:  https://github.com/ollama/ollama/blob/v0.12.6/CMakePresets.json#L33
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.12.6/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
-	"gfx900"
-	"gfx906_xnack_minus"
 	"gfx908_xnack_minus"
-	"gfx90a_xnack_plus"
+	"gfx908_xnack_plus"
 	"gfx90a_xnack_minus"
 	"gfx940"
 	"gfx941"
 	"gfx942"
 	"gfx1010"
+	"gfx1011"
 	"gfx1012"
 	"gfx1030"
 	"gfx1100"
 	"gfx1101"
 	"gfx1102"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
 )
 I8MM_ARCHES=(
 	"armv8.2-a"
@@ -118,15 +120,21 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_amx_int8"
 )
 CUDA_FATTN_TARGETS_COMPAT=(
-	"sm_60"
-	"sm_61"
-	"sm_70"
+# https://github.com/ollama/ollama/blob/v0.12.6/discover/types.go#L173
 	"sm_75"
 	"sm_80"
 	"sm_86"
 	"sm_89"
 	"sm_90"
 	"sm_90a"
+	"sm_120"
+
+	"75-virtual"
+	"80-virtual"
+	"86-virtual"
+	"87-virtual"
+	"89-virtual"
+	"90-virtual"
 )
 CUDA_TARGETS_COMPAT=(
 	"sm_50"
@@ -140,6 +148,18 @@ CUDA_TARGETS_COMPAT=(
 	"sm_89"
 	"sm_90"
 	"sm_90a"
+	"sm_120"
+
+	"50-virtual"
+	"60-virtual"
+	"61-virtual"
+	"70-virtual"
+	"75-virtual"
+	"80-virtual"
+	"86-virtual"
+	"87-virtual"
+	"89-virtual"
+	"90-virtual"
 )
 
 CXX_STANDARD=17
@@ -2872,8 +2892,17 @@ IDEPEND="
 "
 CUDA_12_8_BDEPEND="
 	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+	)
+"
+CUDA_12_8_BDEPEND="
+	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
-		=sys-devel/gcc-13*[cxx]
+	)
+"
+CUDA_13_0_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-13.0*
 	)
 "
 gen_clang_bdepend() {
@@ -2996,62 +3025,84 @@ BDEPEND="
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
+				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90a? (
 			|| (
 				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+		cuda_targets_sm_120? (
+			|| (
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
@@ -3911,7 +3962,7 @@ build_new_runner_cpu() {
 	export OLLAMA_SKIP_CPU_RUNNER_AVX2=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.6.5/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.12.6/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -4017,7 +4068,7 @@ build_new_runner_gpu() {
 	export OLLAMA_SKIP_CPU_RUNNER=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.6.5/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.12.6/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x

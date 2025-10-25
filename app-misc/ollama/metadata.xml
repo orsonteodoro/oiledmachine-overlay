@@ -18,6 +18,11 @@
   Ebuild obtained from guru.
 
 
+  GPU support:
+
+  https://github.com/ollama/ollama/blob/v0.12.6/docs/gpu.md
+
+
   Ebuild build time environment variables
 
   OLLAMA_CONTEXT_LENGTH - Set the default context length.  For Open WebUI,
