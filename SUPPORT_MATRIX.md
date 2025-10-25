@@ -176,7 +176,7 @@ exist in build files.
 | Electron (x86)                      | Not supported                         |                                                          |
 | gRPC 1.30.2 [3]                     | Fully supported                       | U22 (1.30.2)                                             |
 | gRPC 1.51.3 [3]                     | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1)                 |
-| gRPC 1.71.2 [3]                     | WIP                                   |                                                          |
+| gRPC 1.71.2 [3]                     | Fully supported                       |                                                          |
 | gRPC >= 1.75.1 (3)                  | Fully supported                       |                                                          |
 | GTK 2 (4)                           | Not Supported                         |                                                          |
 | GTK 3                               | Fully supported                       |                                                          |
