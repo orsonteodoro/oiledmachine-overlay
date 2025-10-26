@@ -72,43 +72,32 @@ CPU_FLAGS_X86=(
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
 #
-GEN_EBUILD=0
-GRPC_PROTOBUF_PAIRS=(
-# GRPC versions:
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/.github/workflows/generate_grpc_cache.yaml#L88
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/cpp/grpc/Makefile#L5
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/Dockerfile.golang#L113
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/python/coqui/requirements.txt
-	#grpc:protobuf
-	"1.71:5.29" # For python backends (coqui, kokoro, transformers)
-	#"1.65:5.26"
-	#"1.59:4.24"
-	#"1.54:3.21"
-	#"1.53:3.21"
-	#"1.52:3.21"
-)
+GEN_EBUILD=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOTS=(
 	"${HIP_6_1_VERSION}"
 )
 
 ABSEIL_CPP_PV="20240722.0" # The abseil-cpp version is the same used by gRPC.
-BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/bark-cpp/Makefile#L15
+BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/bark-cpp/Makefile#L15
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
-GGML_COMMIT_2="7dee1d6a1e7611f238d09be96738388da97c88ed" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/5900ef6605c6fbf7934239f795c13c97bc993853
-ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/silero-vad/Makefile#L5
-GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/piper/Makefile#L4
-LLAMA_CPP_COMMIT="d31192b4ee1441bbbecd3cbf9e02633368bdc4f5" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/cpp/llama-cpp/Makefile#L2
+GGML_COMMIT_2="5fdc78fff274094e2a1b155928131983362d8a71" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0ebe6fe118f125665939b27c89f34ed38716bff8
+ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
+GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/piper/Makefile#L4
+LLAMA_CPP_COMMIT="d64c8104f090b27b1f99e8da5995ffcfa6b726e2" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/cpp/llama-cpp/Makefile#L2
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PROTOBUF_SLOT="5"
-STABLE_DIFFUSION_CPP_COMMIT="5900ef6605c6fbf7934239f795c13c97bc993853" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/stablediffusion-ggml/Makefile#L22
-WHISPER_CPP_COMMIT="0becabc8d68d9ffa6ddfba5240e38cd7a2642046" # From https://github.com/mudler/LocalAI/blob/v3.3.2/backend/go/whisper/Makefile#L9
+STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/stablediffusion-ggml/Makefile#L22
+WHISPER_CPP_COMMIT="7849aff7a2e1f4234aa31b01a1870906d5431959" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/whisper/Makefile#L9
+
+EGO_SUM=(
+)
 
 inherit cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
 inherit python-single-r1 toolchain-funcs xdg
@@ -122,7 +111,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64 ~arm64"
+	#KEYWORDS="~amd64 ~arm64" # Ebuild is unfinished
 	S="${WORKDIR}/${PN}-${PV}"
 	#go-module_set_globals
 
@@ -292,12 +281,12 @@ gen_rocm_rdepend() {
 		"
 	done
 }
-# CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L20
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/.github/workflows/image_build.yml#L20
+# CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.6.0/Dockerfile#L20
+#		  https://github.com/mudler/LocalAI/blob/v3.6.0/.github/workflows/image_build.yml#L20
 # ROCm versions:
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/python/kokoro/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/backend/python/vllm/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v3.3.2/.github/workflows/image.yml#L42
+#		  https://github.com/mudler/LocalAI/blob/v3.6.0/backend/python/kokoro/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v3.6.0/backend/python/vllm/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v3.6.0/.github/workflows/image.yml#L42
 RDEPEND+="
 	(
 		>=media-video/ffmpeg-6.1.1
@@ -308,7 +297,7 @@ RDEPEND+="
 	acct-user/${MY_PN2}
 	x11-misc/xdg-utils
 	cuda? (
-		=dev-util/nvidia-cuda-toolkit-12*
+		=dev-util/nvidia-cuda-toolkit-12.0*
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	openblas? (
@@ -352,8 +341,8 @@ DISABLED_DEPEND="
 	)
 "
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
-# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L118
-# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.3.2/Dockerfile#L154
+# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.6.0/Dockerfile#L118
+# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.6.0/Dockerfile#L154
 # TODO:  Review dev-go/protobuf-go multislot
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -396,7 +385,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.28.0-offline-install.patch"
+	"${FILESDIR}/${PN}-3.6.0-offline-install.patch"
 )
 
 pkg_setup() {
@@ -447,7 +436,7 @@ src_unpack() {
 src_prepare() {
 	default
 	# S_GO should appear at this point
-	dep_prepare_mv "${WORKDIR}/bark.cpp-${BARK_CPP_PV}" "${S}/sources/bark.cpp"
+	dep_prepare_mv "${WORKDIR}/bark.cpp-${BARK_CPP_COMMIT}" "${S}/sources/bark.cpp"
 	dep_prepare_mv "${WORKDIR}/encodec.cpp-${ENCODEC_CPP_COMMIT}" "${S}/sources/bark.cpp/encodec.cpp"
 	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_1}" "${S}/sources/bark.cpp/encodec.cpp/ggml"
 
