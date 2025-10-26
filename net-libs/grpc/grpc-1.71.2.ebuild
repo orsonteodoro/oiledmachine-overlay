@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE+="
 	python? (
@@ -97,7 +97,7 @@ REQUIRED_USE+="
 "
 RESTRICT="test"
 SLOT_MAJ="${PROTOBUF_SLOT}"
-SLOT="${SLOT_MAJ}/46.171" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+SLOT="${SLOT_MAJ}/1.71"
 # third_party last update: 20250213
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_GRPC}:${ABSEIL_CPP_PV_GRPC%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx17]
