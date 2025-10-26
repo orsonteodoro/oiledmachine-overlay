@@ -198,7 +198,7 @@ HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 RESTRICT="mirror"
 SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-3 ${PV})"
-IUSE="ebuild_revision_2"
+IUSE="ebuild_revision_3"
 RDEPEND="
 	virtual/protobuf:${PROTOBUF_SLOT}
 	virtual/protobuf:=
@@ -225,6 +225,6 @@ src_compile() {
 }
 
 src_install() {
-	exeinto "/usr/lib/${PN}/${PROTOBUF_SLOT}"
+	exeinto "/usr/lib/${PN}/bin/${PROTOBUF_SLOT}"
 	doexe "${GOBIN}/protoc-gen-go"
 }
