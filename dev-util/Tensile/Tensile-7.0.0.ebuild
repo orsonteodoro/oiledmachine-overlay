@@ -229,44 +229,26 @@ python_install() {
 	cd "Tensile" || die
 	python_domodule "Components"
 	python_newexe "Utilities/merge.py" "${PN}-merge"
-
-	dodir "${EROCM_PATH}/lib/python-exec/${EPYTHON}"
-	cp -aT \
-		"${ED}/usr/lib/python-exec/${EPYTHON}" \
-		"${ED}${EROCM_PATH}/lib/python-exec/${EPYTHON}" \
-		|| die
-	rm -rf "${ED}/usr/lib/python-exec/${EPYTHON}" || die
-
-	dodir "${EROCM_PATH}/lib/${EPYTHON}/site-packages"
-	cp -aT \
-		"${ED}/usr/lib/${EPYTHON}/site-packages" \
-		"${ED}${EROCM_PATH}/lib/${EPYTHON}/site-packages" \
-		|| die
-	rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages" || die
 }
 
 src_install() {
 	distutils-r1_src_install
 	cd "${PN}" || die
-	insinto "${EROCM_PATH}/lib/${EPYTHON}/site-packages/${PN}"
+	local libdir=$(get_libdir)
+	local sitedir=$(python_get_sitedir)
+	insinto "${sitedir}/${PN}"
 	doins -r \
 		"Configs" \
 		"CustomKernels" \
 		"Perf" \
 		"Source"
-	insinto "${EROCM_PATH}/$(rocm_get_libdir)/cmake/${PN}"
+	insinto "/usr/${libdir}/cmake/${PN}"
 	doins "cmake/"*".cmake"
-	if use client; then
+	if use client ; then
 		pushd "${BUILD_DIR}" || die
 		dobin "client/tensile_client"
 	fi
-	rocm_mv_docs
 
-	cp -aT \
-		"${ED}/usr/bin" \
-		"${ED}/${EROCM_PATH}/bin" \
-		|| die
-	rm -rf "${ED}/usr/bin" || die
 	use client || ewarn "The symlinks require the client USE flag."
 	rocm_fix_rpath
 }
