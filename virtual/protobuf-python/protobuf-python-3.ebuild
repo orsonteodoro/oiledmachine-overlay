@@ -22,10 +22,15 @@ EAPI=8
 #    - gRPC in /usr/lib/grpc/1.75.1
 #    - abseil-cpp in /usr/lib/abseil-cpp/20250512.1
 
+CXX_STANDARD="ignore"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_LTS[@]}
 )
+
+LIBCXX_SLOT_VERIFY=0
+LIBSTDCXX_SLOT_VERIFY=0
 PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit libstdcxx-slot python-single-r1

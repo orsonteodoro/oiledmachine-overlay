@@ -260,8 +260,10 @@ libstdcxx-slot_verify() {
 # @DESCRIPTION:
 # Event handler for check libstdc++ slot verification
 libstdcxx-slot_pkg_postinst() {
-	if (( ${_GLIBCXX_VER_VERIFIED} != 1 )) ; then
-eerror "QA:  You must call libstdcxx-slot_verify in pkg_setup"
+	if [[ "${LIBSTDCXX_SLOT_VERIFY:-0}" == "0" ]] ; then
+		:
+	elif (( ${_GLIBCXX_VER_VERIFIED} != 1 )) ; then
+eerror "QA:  You must call libstdcxx-slot_verify in pkg_setup or set LIBSTDCXX_SLOT_VERIFY=0."
 		die
 	fi
 }

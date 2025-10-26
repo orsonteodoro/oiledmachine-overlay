@@ -8,6 +8,8 @@ EAPI=8
 # !!! into the dependency graph, resulting in a slot conflict:
 
 CXX_STANDARD="ignore"
+LIBCXX_SLOT_VERIFY=0
+LIBSTDCXX_SLOT_VERIFY=0
 PROTOBUF_SLOT="6"
 
 inherit libstdcxx-compat

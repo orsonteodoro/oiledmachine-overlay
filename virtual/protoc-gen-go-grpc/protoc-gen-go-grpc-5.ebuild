@@ -3,6 +3,10 @@
 
 EAPI=8
 
+CXX_STANDARD="ignore"
+LIBCXX_SLOT_VERIFY="0"
+LIBSTDCXX_SLOT_VERIFY="0"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_LTS[@]}
