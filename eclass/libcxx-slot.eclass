@@ -416,7 +416,7 @@ libcxx-slot_verify() {
 # @DESCRIPTION:
 # Event handler for check libc++ slot verification
 libcxx-slot_pkg_postinst() {
-	if [[ "${LIBCXX_SLOT_VERIFY:-0}" == "0" ]] ; then
+	if [[ "${LIBCXX_SLOT_VERIFY:-1}" == "0" ]] ; then
 		:
 	elif (( ${_LIBCXX_VER_VERIFIED} != 1 )) ; then
 # If using a fork of clang, you can ignore this message.
