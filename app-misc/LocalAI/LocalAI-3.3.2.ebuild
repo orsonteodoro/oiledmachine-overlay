@@ -362,8 +362,8 @@ BDEPEND+="
 		dev-cpp/abseil-cpp:=
 	)
 	(
-		>=dev-go/protobuf-go-1.34.2
-		dev-go/protobuf-go:=
+		virtual/protobuf-go:${PROTOBUF_SLOT}
+		virtual/protobuf-go:=
 	)
 	(
 		virtual/protoc-gen-go-grpc:${PROTOBUF_SLOT}
@@ -481,6 +481,8 @@ src_prepare() {
 }
 
 src_configure() {
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/lib/protobuf-go/${PROTOBUF_SLOT}/bin:${PATH}"
 	cflags-hardened_append
 }
 
