@@ -8,6 +8,7 @@ EAPI=8
 # !!! into the dependency graph, resulting in a slot conflict:
 
 CXX_STANDARD="ignore"
+PROTOBUF_SLOT="3"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -24,10 +25,10 @@ inherit libcxx-slot libstdcxx-slot multilib-build
 DESCRIPTION="A virtual package to manage gRPC stability"
 LICENSE="metapackage"
 VERSIONS_MONITORED="1.30-1.51"
-SLOT="0/${VERSIONS_MONITORED}"
+SLOT="${PROTOBUF_SLOT}/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -36,25 +37,25 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	gcc_slot_11_5? (
-		net-libs/grpc:3/1.30[${MULTILIB_USEDEP},gcc_slot_11_5]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.30[${MULTILIB_USEDEP},gcc_slot_11_5]
 	)
 	gcc_slot_12_5? (
-		net-libs/grpc:3/1.51[${MULTILIB_USEDEP},gcc_slot_12_5]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_12_5]
 	)
 	gcc_slot_13_4? (
-		net-libs/grpc:3/1.51[${MULTILIB_USEDEP},gcc_slot_13_4]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_13_4]
 	)
 	gcc_slot_14_3? (
-		net-libs/grpc:3/1.51[${MULTILIB_USEDEP},gcc_slot_14_3]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_14_3]
 	)
 	llvm_slot_18? (
-		net-libs/grpc:3/1.51[${MULTILIB_USEDEP},llvm_slot_18]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},llvm_slot_18]
 	)
 	llvm_slot_19? (
-		net-libs/grpc:3/1.51[${MULTILIB_USEDEP},llvm_slot_19]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},llvm_slot_19]
 	)
 	net-libs/grpc:=
-	virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	virtual/protobuf:=
 "
 DEPEND+="
