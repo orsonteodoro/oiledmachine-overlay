@@ -61,7 +61,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	client? (
@@ -81,8 +81,7 @@ RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-cpp/msgpack-cxx:=
-	dev-lang/python-exec:0/rocm-${ROCM_SLOT}
-	dev-lang/python-exec:=
+	dev-lang/python-exec
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
