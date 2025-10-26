@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE+="
 	python? (
@@ -294,14 +294,15 @@ src_install() {
 }
 
 fix_rpath() {
-	IFS=$'\n'
 	local d
 	local L
 	local x
 
+	IFS=$'\n'
 	L=(
 		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
 	)
+	IFS=$' \t\n'
 	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
 	local d2="/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 	for x in ${L[@]} ; do
@@ -318,9 +319,11 @@ einfo "Adding ${d2} to RPATH for ${x}"
 	done
 
 	fix_libs_abi() {
+		IFS=$'\n'
 		L=(
 			$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" -name "*.so*")
 		)
+		IFS=$' \t\n'
 		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
 		for x in ${L[@]} ; do
 			[[ -L "${x}" ]] && continue
@@ -339,7 +342,6 @@ einfo "Adding ${d} to RPATH for ${x}"
 
 	multilib_foreach_abi fix_libs_abi
 
-	IFS=$' \t\n'
 }
 
 multilib_src_install_all() {
