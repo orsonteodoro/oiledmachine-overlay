@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE+="
 	python? (
@@ -298,17 +298,6 @@ fix_rpath() {
 	local d
 	local L
 	local x
-	L=(
-		$(find "${ED}" -name "*.so*")
-	)
-	for x in ${L[@]} ; do
-		[[ -L "${x}" ]] && continue
-einfo "Adding \$ORIGIN to RPATH for ${x}"
-		patchelf \
-			--add-rpath '$ORIGIN' \
-			"${x}" \
-			|| die
-	done
 
 	L=(
 		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
@@ -338,6 +327,10 @@ einfo "Adding ${d2} to RPATH for ${x}"
 einfo "Adding ${d} to RPATH for ${x}"
 			patchelf \
 				--add-rpath "${d}" \
+				"${x}" \
+				|| die
+			patchelf \
+				--add-rpath '$ORIGIN' \
 				"${x}" \
 				|| die
 		done
