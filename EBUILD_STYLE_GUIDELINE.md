@@ -82,8 +82,8 @@
   | python3                    | python3_11 or python3_{11..13} [2]         |
   | python 3.10 or earlier     | python3_11 or python3_{11..13} [2]         |
 
-  [1] Version listed in setup.py, pyproject.toml, CI files/folder.
-  [2] Allowed range corresponds to LTS versions in the table below.
+* [1] Version listed in setup.py, pyproject.toml, CI files/folder.
+* [2] Allowed range corresponds to LTS versions in the table below.
 
   Defaults for distros:
 
