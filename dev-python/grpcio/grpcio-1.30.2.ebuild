@@ -5,6 +5,12 @@ EAPI=8
 
 # TODO:  Fix C++ standard during configure time
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -43,14 +49,13 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
-cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17 doc
+${_CXX_STANDARD[@]}
+doc
 ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
-		cxx_standard_cxx11
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 "
 # See src/include/openssl/crypto.h#L99 for versioning

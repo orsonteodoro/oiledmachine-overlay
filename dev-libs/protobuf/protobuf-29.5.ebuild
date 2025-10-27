@@ -14,6 +14,11 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 CXX_STANDARD=17 # Originally 14 but 17 is required by gRPC
 INTERNAL_VERSION="5.${PV}" # From configure.ac L20
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -76,13 +81,13 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 # Upstream defaults to C++14
 IUSE="
-cxx_standard_cxx14 +cxx_standard_cxx17 emacs examples static-libs test zlib
+${_CXX_STANDARD[@]}
+emacs examples static-libs test zlib
 ebuild_revision_31
 "
 REQUIRED_USE="
 	^^ (
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 "
 # cxx17 is forced for gRPC

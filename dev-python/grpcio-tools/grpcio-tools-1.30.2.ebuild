@@ -5,6 +5,12 @@ EAPI=8
 
 # TODO: Fix C++ configure time selection
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -46,14 +52,12 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
-cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17
+${_CXX_STANDARD[@]}
 ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
-		cxx_standard_cxx11
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 "
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45

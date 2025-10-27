@@ -12,6 +12,12 @@ LIBCXX_SLOT_VERIFY=0
 LIBSTDCXX_SLOT_VERIFY=0
 PROTOBUF_SLOT="3"
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_LTS[@]}
@@ -30,7 +36,7 @@ VERSIONS_MONITORED="1.30-1.51"
 SLOT="${PROTOBUF_SLOT}/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
-cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17
+${_CXX_STANDARD[@]}
 ebuild_revision_2
 "
 REQUIRED_USE="
@@ -38,9 +44,7 @@ REQUIRED_USE="
 		gcc_slot_11_5
 	)
 	^^ (
-		cxx_standard_cxx11
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 	^^ (
 		${GCC_COMPAT[@]}
