@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE+="
 	python? (
@@ -217,6 +217,7 @@ src_configure() {
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	#append-cflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/include"
 	append-cxxflags $(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)/pkgconfig" pkg-config --cflags absl_any)
+	filter-flags -Wl,--as-needed
 	configure_abi() {
 #		local L=(
 #			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)

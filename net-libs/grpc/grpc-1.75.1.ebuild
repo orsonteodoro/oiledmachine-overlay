@@ -41,7 +41,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32 ruby33 ruby34"
 
-inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
+inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -87,7 +87,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE+="
 	python? (
@@ -210,7 +210,9 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
+	filter-flags -Wl,--as-needed
 	configure_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"

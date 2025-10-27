@@ -40,7 +40,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
 
-inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
+inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -83,7 +83,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE+="
 	python? (
@@ -186,6 +186,7 @@ src_configure() {
 	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
 	export PATH="${ED}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	cflags-hardened_append
+	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
