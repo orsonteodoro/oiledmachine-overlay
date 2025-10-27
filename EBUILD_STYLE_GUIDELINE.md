@@ -424,8 +424,8 @@
     as a USE flag without cxx_standard_ references, then it is gnu++17 by
     default.
   - The C++ standard could be overwritten if it is C++ standard sensitive
-    (e.g. uses constexpr).  Use as a USE flag dependency chain for these USE
-    flags.
+    (e.g. uses constexpr).  You can use these cxx_standard_ USE flags to ensure
+    signature consististency to avoid undefined reference errors.
   - The C++ standard should use the project default in most cases to
     ensure compatibility with prebuilt binaries.
   - Do not force a newer standard but allow the user to decide based on
