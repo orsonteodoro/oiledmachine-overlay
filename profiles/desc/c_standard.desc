@@ -1,6 +1,7 @@
 # Copyright 2025 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
+c89 - Build for C89
 c90 - Build for C90
 c94 - Build for AMD1, C94, C95
 c95 - Build for C95
@@ -14,6 +15,7 @@ c1x - Build for C2X, a draft for C11
 c2x - Build for C2X, a draft for C23
 c2y - Build for C2Y, the latest draft
 
+gnu89 - Build for C89 with GNU extensions
 gnu90 - Build for C90 with GNU extensions
 gnu99 - Build for C99 with GNU extensions
 gnu11 - Build for C11 with GNU extensions
