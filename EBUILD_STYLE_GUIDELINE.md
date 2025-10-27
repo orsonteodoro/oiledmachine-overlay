@@ -434,7 +434,7 @@
     for valid values of cxx_standard_<x>.
   - LTS packages can only specify the maximum of c++17.
   - Rolling packages can specify up to the latest experimental.
-  - The preference standard is the project default tied to the release or commit.
+  - The preferred standard is the project default tied to the release or commit.
 
 * Ebuild C standard guidelines in this overlay
   - The released standards were C89, C90, C99, C11, C17, C23.
@@ -449,7 +449,7 @@
     No eclass provided yet.
   - LTS packages can only specify the maximum of C17.
   - Rolling packages can specify up to the latest experimental.
-  - The preference standard is the project default tied to the release or commit.
+  - The preferred standard is the project default tied to the release or commit.
 
 # Ebuild organization
 
