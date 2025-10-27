@@ -471,7 +471,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 			fi
 
 			local mycmakeargs=(
-				-DCMAKE_CXX_STANDARD=14
 				-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/$(get_libdir)/osl/bin"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DCMAKE_POLICY_DEFAULT_CMP0146="OLD" # BUG FindCUDA
