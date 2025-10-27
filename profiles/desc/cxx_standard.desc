@@ -1,0 +1,18 @@
+# Copyright 2025 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+cxx98 - Build for c++98
+cxx03 - Build for c++03
+cxx11 - Build for c++11
+cxx14 - Build for c++14
+cxx17 - Build for c++17
+cxx20 - Build for c++20
+cxx23 - Build for c++23
+cxx26 - Build for c++26
+
+gnu++98 - Build for gnu++98
+gnu++11 - Build for gnu++11
+gnu++14 - Build for gnu++14
+gnu++17 - Build for gnu++17 (GCC default)
+gnu++20 - Build for gnu++20
+gnu++23 - Build for gnu++23

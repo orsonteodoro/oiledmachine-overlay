@@ -414,8 +414,8 @@
   - The unofficial standard c++0x corresponds to the final c++11.
   - Most packages use the default c++17.
   - If C++ standard needs to be lifted.  Specify between the oldest to current
-    For example, if the package says c++11, then add USE flags for cxx11
-    cxx14, cxx17.
+    For example, if the package says c++11, then add USE flags for
+    cxx_standard_cxx11, cxx_standard_cxx14, cxx_standard_cxx17.
   - If the C++ standard is not specified, it is c++17 by default based on
     compiler default.
   - The C++ standard should on be overwritten if it is C++ standard
