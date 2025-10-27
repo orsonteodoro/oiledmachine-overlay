@@ -46,7 +46,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	${CDEPEND}
@@ -132,7 +132,7 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 		-DGRPC_SLOT="${PROTOBUF_SLOT}"
 		-DPROTOBUF_SLOT="${PROTOBUF_SLOT}"
 	)
-	if (( ${nabis} > 1 )) && false ; then
+	if (( ${nabis} > 1 )) ; then
 		mycmakeargs+=(
 			-DENABLE_MULTILIB=ON
 		)
