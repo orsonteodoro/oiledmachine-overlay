@@ -287,10 +287,6 @@ EOF
 }
 
 src_prepare() {
-	# Fix for #2351
-	sed -i 's|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 17|g' \
-		cmake/defaults/CXXDefaults.cmake || die
-
 	cmake_src_prepare
 	# make dummy pyside-uid
 	if use usdview ; then
