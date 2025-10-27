@@ -99,15 +99,6 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
-	if use standalone ; then
-#/usr/include/absl/strings/string_view.h:52:21: note: 'std::string_view' is only available from C++17 onwards
-#   52 | using string_view = std::string_view;
-#      |                     ^~~
-		sed -i -e "s|-std=c++11|-std=c++17|g" \
-			$(grep -l -r -e "-std=c++11" ./)
-		sed -i -e "s|CMAKE_CXX_STANDARD 11|CMAKE_CXX_STANDARD 17|g" \
-			CMakeLists.txt
-	fi
 }
 
 src_configure() {
