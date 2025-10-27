@@ -76,13 +76,14 @@
 
   | Listed Python version [1]  | Default solution for PYTHON_COMPAT         |
   | ---                        | ---                                        |
-  | no versions                | python3_11 or python3_{11..13}             |
+  | no versions                | python3_11 or python3_{11..13} [2]         |
   | specific version           | python3_11, python3_12, or python3_13      |
-  | specific versions          | python3_{11,12,13} or python3_{11..13}     |
-  | python3                    | python3_11 or python3_{11..13}             |
-  | python 3.10 or earlier     | python3_11 or python3_{11..13}             |
+  | specific versions          | python3_{11,12,13} or python3_{11..13} [2] |
+  | python3                    | python3_11 or python3_{11..13} [2]         |
+  | python 3.10 or earlier     | python3_11 or python3_{11..13} [2]         |
 
   [1] Version listed in setup.py, pyproject.toml, CI files/folder.
+  [2] Allowed range corresponds to LTS versions in the table below.
 
   Defaults for distros:
 
