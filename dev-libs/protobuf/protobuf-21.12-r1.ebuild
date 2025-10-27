@@ -16,17 +16,17 @@ EAPI=8
 ABSEIL_CPP_PV="20211102"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-CXX_STANDARD=11
+CXX_STANDARD=17 # Originally 11
 INTERNAL_VERSION="3.${PV}" # From configure.ac L20
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
@@ -80,12 +80,19 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 3.12 : 3.12 From configure.ac's AC_INIT
 
 IUSE="
-emacs examples static-libs test zlib
-ebuild_revision_26
+cxx11 cxx14 +cxx17 emacs examples static-libs test zlib
+ebuild_revision_31
+"
+REQUIRED_USE="
+	^^ (
+		cxx11
+		cxx14
+		cxx17
+	)
 "
 RDEPEND="
 	!dev-libs/protobuf:0
-	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}
+	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx11?,cxx14?,cxx17?]
 	dev-cpp/abseil-cpp:=
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
@@ -194,8 +201,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# With shared and static libs
 	use static-libs && with_static_libs="OFF"
 
+	use cxx11 && append-cxxflags -std=c++11
+	use cxx14 && append-cxxflags -std=c++14
+	use cxx17 && append-cxxflags -std=c++17
+
 	src_configure_abi() {
 		local mycmakeargs=(
+			$(usex cxx11 -DCMAKE_CXX_STANDARD=11 '') # Default
+			$(usex cxx14 -DCMAKE_CXX_STANDARD=14 '')
+			$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}"

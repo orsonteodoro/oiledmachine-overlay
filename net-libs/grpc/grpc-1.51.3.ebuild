@@ -20,12 +20,12 @@ MY_PV="${PV//_pre/-pre}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 ABSEIL_CPP_PV="20220623.0"
@@ -34,7 +34,7 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
-CXX_STANDARD=14
+CXX_STANDARD=17 # Originally 14
 OPENCENSUS_PROTO_PV="0.3.0"
 PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -86,10 +86,14 @@ LSRT_IUSE=(
 )
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
-cxx doc examples test
+cxx cxx14 cxx17 doc examples test
 ebuild_revision_34
 "
 REQUIRED_USE+="
+	^^ (
+		cxx14
+		cxx17
+	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
@@ -99,7 +103,7 @@ SLOT_MAJ="${PROTOBUF_SLOT}"
 SLOT="${SLOT_MAJ}/1.51"
 # third_party last update: 20230214
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx14?,cxx17?]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
@@ -109,7 +113,7 @@ RDEPEND+="
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_SLOT}/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx14?,cxx17?]
 	dev-libs/protobuf:=
 "
 # See also
@@ -207,6 +211,8 @@ src_configure() {
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
+			$(usex cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Package default
+			$(usex cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
@@ -228,7 +234,6 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			#-DCMAKE_CXX_STANDARD=17
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
 			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotobuf.a"

@@ -5,16 +5,16 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 ABSEIL_CPP_PV="20200225.0"
-CXX_STANDARD=11
+CXX_STANDARD=17 # Originally 11
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
@@ -41,15 +41,22 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
-doc
+cxx11 cxx14 +cxx17 doc
 ebuild_revision_2
+"
+REQUIRED_USE="
+	^^ (
+		cxx11
+		cxx14
+		cxx17
+	)
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx11?,cxx14?,cxx17?]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-)]
 	dev-libs/openssl:=
@@ -58,7 +65,7 @@ RDEPEND+="
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.11
 	sys-libs/zlib:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx11?,cxx14?,cxx17?]
 	dev-python/protobuf:=
 "
 DEPEND+="

@@ -30,31 +30,37 @@ VERSIONS_MONITORED="1.30-1.51"
 SLOT="${PROTOBUF_SLOT}/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
-ebuild_revision_2
+ebuild_revision_2 cxx11 cxx14 +cxx17
 "
 REQUIRED_USE="
+	cxx11? (
+		gcc_slot_11_5
+	)
+	^^ (
+		cxx11 cxx14 cxx17
+	)
 	^^ (
 		${GCC_COMPAT[@]}
 	)
 "
 RDEPEND+="
 	gcc_slot_11_5? (
-		net-libs/grpc:${PROTOBUF_SLOT}/1.30[${MULTILIB_USEDEP},gcc_slot_11_5]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.30[${MULTILIB_USEDEP},gcc_slot_11_5,cxx11?,cxx14?,cxx17?]
 	)
 	gcc_slot_12_5? (
-		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_12_5]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_12_5,cxx14?,cxx17?]
 	)
 	gcc_slot_13_4? (
-		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_13_4]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_13_4,cxx14?,cxx17?]
 	)
 	gcc_slot_14_3? (
-		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_14_3]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},gcc_slot_14_3,cxx14?,cxx17?]
 	)
 	llvm_slot_18? (
-		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},llvm_slot_18]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},llvm_slot_18,cxx14?,cxx17?]
 	)
 	llvm_slot_19? (
-		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},llvm_slot_19]
+		net-libs/grpc:${PROTOBUF_SLOT}/1.51[${MULTILIB_USEDEP},llvm_slot_19,cxx14?,cxx17?]
 	)
 	net-libs/grpc:=
 	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]

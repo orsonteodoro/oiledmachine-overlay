@@ -12,6 +12,8 @@ EAPI=8
 
 MY_PN="${PN/b/B}"
 
+ABSEIL_CPP_PV="20220623.0"
+CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 PROTOBUF_SLOT=3
 
@@ -27,7 +29,7 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
+inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~ppc64 ~s390"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -48,19 +50,19 @@ ebuild_revision_1
 "
 RDEPEND+="
 	${CDEPEND}
-	>=dev-libs/libfmt-11.0.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	>=dev-libs/spdlog-1.14.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/libfmt-8.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-libs/spdlog-1.9.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx17]
 	virtual/protobuf:=
-	virtual/grpc:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/grpc:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx17]
 	virtual/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
-	>=dev-cpp/nlohmann_json-3.11.3[${MULTILIB_USEDEP}]
+	>=dev-cpp/nlohmann_json-3.7.3[${MULTILIB_USEDEP}]
 "
 BDEPEND+="
-	>=dev-build/cmake-3.12
+	>=dev-build/cmake-3.22.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
@@ -69,39 +71,68 @@ BDEPEND+="
 			>=dev-python/lit-0.7[${PYTHON_USEDEP}]
 		')
 		${PYTHON_DEPS}
-		>=dev-cpp/gtest-1.12.1[${LIBCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.11.0[${LIBCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-debug/valgrind
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-3.1.6-fix-grpc-link.patch"
+)
 
 pkg_setup()
 {
 	python-any-r1_pkg_setup
+	local libdir=$(get_libdir)
 	if pkg-config --libs grpc | grep -q -e "absl_dynamic_annotations" ; then
-		if [[ ! -f "${ESYSROOT}"/usr/$(get_libdir)/libabsl_dynamic_annotations.so ]] ; then
+		if [[ ! -f "${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/${libdir}/libabsl_dynamic_annotations.so" ]] ; then
 			# grpc requirement
-			die "Missing libabsl_dynamic_annotations.so"
+eerror "Missing libabsl_dynamic_annotations.so"
+			die
 		fi
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
-src_configure() {
+multilib_src_configure() {
+einfo "libdir:  $(get_libdir)"
+	pushd "${WORKDIR}/${MY_P}" >/dev/null 2>&1 || die
+	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $"\n" | sed -e "/pkgconfig/d" | tr $"\n" ":")
 	PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	export PKG_CONFIG_PATH
+	PATH=$(echo "${PATH}" | tr ":" $"\n" | sed -e "/grpc/d" -e "/protobuf/d" | tr $"\n" ":")
+	PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}" # For grpc_cpp_plugin
+	PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}" # For protoc
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
+einfo "PATH:  ${PATH}"
+
+	filter-flags -Wl,--as-needed
+
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+
+	export PATH
 	local nabis=0
 	local a
 	for a in $(multilib_get_enabled_abis) ; do
 		nabis=$((${nabis} + 1))
 	done
 	local mycmakeargs=(
-		-DENABLE_UNIT_TESTS=$(usex test)
 		-DENABLE_FUNC_TESTS=$(usex test)
+		-DENABLE_UNIT_TESTS=$(usex test)
+		-DCMAKE_VERBOSE_MAKEFILE=ON
+		-DABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%%.*}"
+		-DABSEIL_CPP_SO_SUFFIX="2206.0.0"
+		-DLIBDIR="$(get_libdir)"
+		-DGRPC_SLOT="${PROTOBUF_SLOT}"
+		-DPROTOBUF_SLOT="${PROTOBUF_SLOT}"
 	)
-	if (( ${nabis} > 1 )) ; then
+	if (( ${nabis} > 1 )) && false ; then
 		mycmakeargs+=(
 			-DENABLE_MULTILIB=ON
 		)
@@ -110,7 +141,35 @@ src_configure() {
 			-DENABLE_MULTILIB=OFF
 		)
 	fi
+	cmake_src_configure
+	popd >/dev/null 2>&1 || die
+}
+
+src_configure() {
 	cmake-multilib_src_configure
+}
+
+multilib_src_compile() {
+einfo "libdir: $(get_libdir)"
+	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $"\n" | sed -e "/pkgconfig/d" | tr $"\n" ":")
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	export PKG_CONFIG_PATH
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
+einfo "PATH:  ${PATH}"
+
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+
+	cmake_src_compile
+}
+
+src_compile() {
+	cmake-multilib_src_compile
 }
 
 src_install() {

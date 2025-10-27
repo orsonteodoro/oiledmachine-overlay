@@ -1,0 +1,103 @@
+diff '--color=auto' -urp Bear-3.1.6.orig/CMakeLists.txt Bear-3.1.6/CMakeLists.txt
+--- Bear-3.1.6.orig/CMakeLists.txt	2025-03-23 01:22:55.000000000 -0700
++++ Bear-3.1.6/CMakeLists.txt	2025-10-26 19:34:23.333511952 -0700
+@@ -12,6 +12,14 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL
+     cmake_policy(SET CMP0135 NEW)
+ endif()
+ 
++# === NUCLEAR FIX: DISABLE --as-needed FOR ALL TARGETS ===
++foreach(lang IN ITEMS C CXX)
++    foreach(config IN ITEMS "" _DEBUG _RELEASE _MINSIZEREL _RELWITHDEBINFO)
++        set(CMAKE_${lang}_LINKER_FLAGS${config} " ${CMAKE_${lang}_LINKER_FLAGS${config}} ")
++        string(REPLACE "-Wl,--as-needed" "" CMAKE_${lang}_LINKER_FLAGS${config} "${CMAKE_${lang}_LINKER_FLAGS${config}}")
++    endforeach()
++endforeach()
++
+ option(ENABLE_UNIT_TESTS "Build and run unit test for this project" ON)
+ option(ENABLE_FUNC_TESTS "Build and run functional test for this project" ON)
+ option(ENABLE_MULTILIB "Enable to build with multilib support" OFF)
+@@ -59,6 +67,11 @@ ExternalProject_Add(BearSource
+             -DENABLE_UNIT_TESTS:BOOL=${ENABLE_UNIT_TESTS}
+             -DENABLE_MULTILIB:BOOL=${ENABLE_MULTILIB}
+             -DPKG_CONFIG_EXECUTABLE:PATH=${PKG_CONFIG_EXECUTABLE}
++            -DABSEIL_CPP_SLOT:STRING=${ABSEIL_CPP_SLOT}
++            -DABSEIL_CPP_SO_SUFFIX:STRING=${ABSEIL_CPP_SO_SUFFIX}
++            -DGRPC_SLOT:STRING=${GRPC_SLOT}
++            -DPROTOBUF_SLOT:STRING=${PROTOBUF_SLOT}
++            -DLIBDIR:STRING=${LIBDIR}
+         CMAKE_CACHE_ARGS
+             -DCMAKE_PROJECT_VERSION:STRING=${CMAKE_PROJECT_VERSION}
+             -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+diff '--color=auto' -urp Bear-3.1.6.orig/source/intercept/CMakeLists.txt Bear-3.1.6/source/intercept/CMakeLists.txt
+--- Bear-3.1.6.orig/source/intercept/CMakeLists.txt	2025-03-23 01:22:55.000000000 -0700
++++ Bear-3.1.6/source/intercept/CMakeLists.txt	2025-10-26 19:36:24.418904688 -0700
+@@ -85,10 +85,69 @@ target_link_libraries(wrapper_a PUBLIC
+         spdlog::spdlog)
+ 
+ 
++find_package(PkgConfig REQUIRED)
++
++# === ABSL: Full paths (shared .so) ===
++set(ABSL_DIR "/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/${LIBDIR}")
++set(ABSL_COMPONENTS
++    status strings str_format_internal cord synchronization
++    cord_internal cordz_info cordz_functions cordz_handle
++    exponential_biased graphcycles_internal time civil_time time_zone
++    base spinlock_wait int128 throw_delegate raw_logging_internal log_severity
++    hash city low_level_hash raw_hash_set hashtablez_sampler
++    bad_optional_access stacktrace symbolize debugging_internal demangle_internal malloc_internal
++)
++set(ABSL_LIBS "")
++foreach(comp ${ABSL_COMPONENTS})
++    set(lib_file "${ABSL_DIR}/libabsl_${comp}.so.${ABSEIL_CPP_SO_SUFFIX}")
++    if(NOT EXISTS "${lib_file}")
++        message(FATAL_ERROR "Missing ${lib_file}")
++    endif()
++    list(APPEND ABSL_LIBS "${lib_file}")
++endforeach()
++
++# === GRPC: Full paths (shared .so) ===
++set(GRPC_DIR "/usr/lib/grpc/${GRPC_SLOT}/${LIBDIR}")
++set(GRPC_COMPONENTS grpc++ grpc address_sorting gpr upb)
++set(GRPC_LIBS "")
++foreach(comp ${GRPC_COMPONENTS})
++    set(lib_file "${GRPC_DIR}/lib${comp}.so")
++    if(NOT EXISTS "${lib_file}")
++        message(FATAL_ERROR "Missing ${lib_file}")
++    endif()
++    list(APPEND GRPC_LIBS "${lib_file}")
++endforeach()
++
++# === STATIC PROTOBUF + PROTOC ONLY ===
++set(PROTOBUF_DIR "/usr/lib/protobuf/${PROTOBUF_SLOT}/${LIBDIR}")
++set(STATIC_LIBS
++    "${PROTOBUF_DIR}/libprotobuf.a"
++    "${PROTOBUF_DIR}/libprotoc.a"
++)
++foreach(lib ${STATIC_LIBS})
++    if(NOT EXISTS "${lib}")
++        message(FATAL_ERROR "Missing static lib: ${lib}")
++    endif()
++endforeach()
++
++
++
++
++
++
+ # Intercept report sender executable.
+ add_executable(wrapper
+         source/report/wrapper/main.cc)
+ target_include_directories(wrapper PUBLIC source/)
++# FINAL LINKING: gRPC FIRST → then Abseil → then static
++target_link_libraries(wrapper
++    ${GRPC_LIBS}
++    ${ABSL_LIBS}
++    -Wl,--whole-archive
++    ${STATIC_LIBS}
++    -Wl,--no-whole-archive
++    -lre2 -lcares -lz -lssl -lcrypto -ldl
++)
+ target_link_libraries(wrapper
+         main_a
+         wrapper_a)

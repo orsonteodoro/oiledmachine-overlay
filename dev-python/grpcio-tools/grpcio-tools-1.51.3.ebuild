@@ -5,16 +5,16 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 ABSEIL_CPP_PV="20220623.0"
-CXX_STANDARD=14
+CXX_STANDARD=14 # Originally 14
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
@@ -43,19 +43,28 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
-IUSE+=" ebuild_revision_4"
+IUSE+="
+cxx14 +cxx17
+ebuild_revision_4
+"
+REQUIRED_USE="
+	^^ (
+		cxx14
+		cxx17
+	)
+"
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx14?,cxx17?]
 	dev-cpp/abseil-cpp:=
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx14?,cxx17?]
 	dev-libs/protobuf:=
 	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
-	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
+	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx14?,cxx17?]
 	dev-python/grpcio:=
 "
 DEPEND="

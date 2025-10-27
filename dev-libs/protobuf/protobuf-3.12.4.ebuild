@@ -6,17 +6,17 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-CXX_STANDARD=11
+CXX_STANDARD=17 # Originally 11
 INTERNAL_VERSION="${PV}" # From configure.ac L20
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 inherit autotools cflags-hardened check-compiler-switch elisp-common flag-o-matic
@@ -70,8 +70,15 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 3.12 : 3.12 From configure.ac's AC_INIT
 
 IUSE="
-emacs examples static-libs test zlib
-ebuild_revision_26
+cxx11 cxx14 +cxx17 emacs examples static-libs test zlib
+ebuild_revision_31
+"
+REQUIRED_USE="
+	^^ (
+		cxx11
+		cxx14
+		cxx17
+	)
 "
 RDEPEND="
 	!dev-libs/protobuf:0
@@ -176,6 +183,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	# With shared and static libs
 	use static-libs && with_static_libs="OFF"
+
+	use cxx11 && append-flags -std=c++11
+	use cxx14 && append-flags -std=c++14
+	use cxx17 && append-flags -std=c++17
 
 	local myeconfargs=(
 		$(use_enable static-libs static)

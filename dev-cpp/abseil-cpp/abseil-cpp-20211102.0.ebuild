@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
-CXX_STANDARD=11
+CXX_STANDARD=17 # Originally 11, 17 required by bear
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 CPU_FLAGS_ARM=(
@@ -30,12 +30,12 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
@@ -61,8 +61,8 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
-test
-ebuild_revision_22
+cxx11 cxx14 +cxx17 test
+ebuild_revision_25
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
@@ -268,6 +268,9 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
+		$(usex cxx14 '-DCMAKE_CXX_STANDARD=11' '') # Default for this package and grpc
+		$(usex cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+		$(usex cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE

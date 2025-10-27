@@ -30,9 +30,15 @@ SLOT="3/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
+cxx11 cxx14 +cxx17
 ebuild_revision_1
 "
 REQUIRED_USE="
+	^^ (
+		cxx11
+		cxx14
+		cxx17
+	)
 	^^ (
 		${GCC_COMPAT[@]}
 	)
@@ -40,16 +46,16 @@ REQUIRED_USE="
 RDEPEND+="
 	!virtual/protobuf:0
 	gcc_slot_11_5? (
-		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx11?,cxx14?,cxx17?]
 	)
 	gcc_slot_12_5? (
-		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx11?,cxx14?,cxx17?]
 	)
 	gcc_slot_13_4? (
-		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx11?,cxx14?,cxx17?]
 	)
 	gcc_slot_14_3? (
-		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx11?,cxx14?,cxx17?]
 	)
 	dev-libs/protobuf:=
 "
