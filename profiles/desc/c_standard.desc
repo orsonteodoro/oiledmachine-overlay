@@ -10,7 +10,7 @@ c17 - Build for C17
 c23 - Build for C23
 
 c9x - Build for C9X, a draft for C99
-c1x - Build for C2X, a draft for C11
+c1x - Build for C1X, a draft for C11
 c2x - Build for C2X, a draft for C23
 c2y - Build for C2Y, the latest draft
 
