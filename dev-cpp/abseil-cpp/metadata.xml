@@ -6,13 +6,5 @@
     <email>gyakovlev@gentoo.org</email>
     <name>Georgy Yakovlev</name>
   </maintainer>
-  <use>
-    <flag name="cxx14">
-      Build for increased compatibility.  Upstream default.
-    </flag>
-    <flag name="cxx17">
-      Build for gRPC C++ 17 compatibility requirement.
-    </flag>
-  </use>
 </pkgmetadata>
 <!-- this is a multilib ebuild fork -->

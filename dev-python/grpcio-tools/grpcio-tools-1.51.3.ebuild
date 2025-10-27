@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO: Fix C++ configure time selection
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}

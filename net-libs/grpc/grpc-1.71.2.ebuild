@@ -230,6 +230,7 @@ src_configure() {
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)/cmake/absl"
+			#-DCMAKE_CXX_STANDARD=17
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
@@ -250,7 +251,6 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DCMAKE_CXX_STANDARD=17
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)

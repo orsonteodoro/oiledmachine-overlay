@@ -272,9 +272,9 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		$(usex cxx14 '-DCMAKE_CXX_STANDARD=11' '') # Default for this package and grpc
-		$(usex cxx14 '-DCMAKE_CXX_STANDARD=14' '')
-		$(usex cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
+		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Default for this package and grpc
+		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by Bear
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE

@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO:  Fix C++ standard during configure time
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}

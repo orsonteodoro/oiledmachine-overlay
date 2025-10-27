@@ -201,15 +201,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# With shared and static libs
 	use static-libs && with_static_libs="OFF"
 
-	use cxx11 && append-cxxflags -std=c++11
-	use cxx14 && append-cxxflags -std=c++14
-	use cxx17 && append-cxxflags -std=c++17
+	use cxx_standard_cxx11 && append-cxxflags -std=c++11
+	use cxx_standard_cxx14 && append-cxxflags -std=c++14
+	use cxx_standard_cxx17 && append-cxxflags -std=c++17
 
 	src_configure_abi() {
 		local mycmakeargs=(
-			$(usex cxx11 -DCMAKE_CXX_STANDARD=11 '') # Default
-			$(usex cxx14 -DCMAKE_CXX_STANDARD=14 '')
-			$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
+			$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Default
+			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # For gRPC
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}"

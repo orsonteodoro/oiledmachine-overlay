@@ -299,8 +299,8 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		$(usex cxx14 -DCMAKE_CXX_STANDARD=14 '') # Default
-		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # For gRPC
+		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Default
+		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # For gRPC
 		$(usex test -DBUILD_TESTING=ON '')
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE

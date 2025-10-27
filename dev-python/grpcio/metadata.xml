@@ -15,15 +15,4 @@
     <remote-id type="github">grpc/grpc</remote-id>
     <remote-id type="pypi">grpcio</remote-id>
   </upstream>
-  <use>
-    <flag use="cxx11">
-      Build for C++ 11 standard
-    </flag>
-    <flag use="cxx14">
-      Build for C++ 14 standard
-    </flag>
-    <flag use="cxx17">
-      Build for C++ 17 standard
-    </flag>
-  </use>
 </pkgmetadata>

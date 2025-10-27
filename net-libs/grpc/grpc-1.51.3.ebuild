@@ -211,8 +211,8 @@ src_configure() {
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
-			$(usex cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Package default
-			$(usex cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
+			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Package default
+			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON

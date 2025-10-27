@@ -38,15 +38,6 @@
     <flag name="cxx">
       Build the C++ plugin
     </flag>
-    <flag name="cxx11">
-      Build for C++ 11
-    </flag>
-    <flag name="cxx14">
-      Build for C++ 14
-    </flag>
-    <flag name="cxx17">
-      Build for C++ 17
-    </flag>
     <flag name="ruby">
       Build the Ruby plugin
     </flag>

@@ -184,9 +184,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# With shared and static libs
 	use static-libs && with_static_libs="OFF"
 
-	use cxx11 && append-flags -std=c++11
-	use cxx14 && append-flags -std=c++14
-	use cxx17 && append-flags -std=c++17
+	use cxx_standard_cxx11 && append-flags -std=c++11
+	use cxx_standard_cxx14 && append-flags -std=c++14
+	use cxx_standard_cxx17 && append-flags -std=c++17
 
 	local myeconfargs=(
 		$(use_enable static-libs static)

@@ -198,9 +198,9 @@ src_configure() {
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
-			$(usex cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Package default
-			$(usex cxx14 '-DCMAKE_CXX_STANDARD=14' '')
-			$(usex cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
+			$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Package default
+			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
@@ -222,7 +222,6 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			#-DCMAKE_CXX_STANDARD=17
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
 			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotobuf.a"

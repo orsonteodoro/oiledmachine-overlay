@@ -47,15 +47,6 @@
   ]>
   -->
   <use>
-    <flag name="cxx11">
-      Build for C++ 11 standard
-    </flag>
-    <flag name="cxx14">
-      Build for C++ 14 standard
-    </flag>
-    <flag name="cxx17">
-      Build for C++ 17 standard
-    </flag>
     <flag name="jsoncpp">
       Use jsoncpp in conformance testing.
     </flag>
