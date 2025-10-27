@@ -431,7 +431,9 @@
   - Do not force a newer standard but allow the user to decide based on
     packages that they want to install.
   - Set the default C++ standard USE flag in the USE flag dependency chain to
-    the one that will resolve all the issues in the chain.
+    the one that will resolve all the issues in the chain.  The app's default
+    C++ standard will determine the suggested default for the dependency
+    chain.
   - See [cxx_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/cxx_standard.desc)
     for valid values of cxx_standard_<x>.
   - LTS packages can only specify the maximum of c++17.
