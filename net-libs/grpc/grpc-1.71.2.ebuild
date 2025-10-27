@@ -230,7 +230,6 @@ src_configure() {
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)/cmake/absl"
-			#-DCMAKE_CXX_STANDARD=17
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
