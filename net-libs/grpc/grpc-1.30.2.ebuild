@@ -82,10 +82,15 @@ LSRT_IUSE=(
 )
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
-cxx cxx11 cxx14 +cxx17 doc examples test
+cxx cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17 doc examples test
 ebuild_revision_34
 "
 REQUIRED_USE+="
+	^^ (
+		cxx_standard_cxx11
+		cxx_standard_cxx14
+		cxx_standard_cxx17
+	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
@@ -95,7 +100,7 @@ SLOT_MAJ="${PROTOBUF_SLOT}"
 SLOT="${SLOT_MAJ}/1.30"
 # third_party last update: 20200529
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx11?,cxx14?,cxx17?]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
@@ -103,7 +108,7 @@ RDEPEND+="
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx11?,cxx14?,cxx17?]
+	dev-libs/protobuf:${PROTOBUF_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-libs/protobuf:=
 "
 # See also

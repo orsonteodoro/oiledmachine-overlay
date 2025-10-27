@@ -70,14 +70,14 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 3.12 : 3.12 From configure.ac's AC_INIT
 
 IUSE="
-cxx11 cxx14 +cxx17 emacs examples static-libs test zlib
+cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17 emacs examples static-libs test zlib
 ebuild_revision_31
 "
 REQUIRED_USE="
 	^^ (
-		cxx11
-		cxx14
-		cxx17
+		cxx_standard_cxx11
+		cxx_standard_cxx14
+		cxx_standard_cxx17
 	)
 "
 RDEPEND="

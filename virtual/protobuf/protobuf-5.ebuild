@@ -30,13 +30,13 @@ SLOT="5/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
-cxx14 +cxx17
+cxx_standard_cxx14 +cxx_standard_cxx17
 ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
-		cxx14
-		cxx17
+		cxx_standard_cxx14
+		cxx_standard_cxx17
 	)
 	^^ (
 		${GCC_COMPAT[@]}
@@ -44,7 +44,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	!virtual/protobuf:0
-	dev-libs/protobuf:5/5.29[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx14?,cxx17?]
+	dev-libs/protobuf:5/5.29[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-libs/protobuf:=
 "
 DEPEND+="

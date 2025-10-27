@@ -41,13 +41,13 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
-cxx14 +cxx17 doc
+cxx_standard_cxx14 +cxx_standard_cxx17 doc
 ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
-		cxx14
-		cxx17
+		cxx_standard_cxx14
+		cxx_standard_cxx17
 	)
 "
 # See src/include/openssl/crypto.h#L99 for versioning
@@ -55,7 +55,7 @@ REQUIRED_USE="
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx14?,cxx17?]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=

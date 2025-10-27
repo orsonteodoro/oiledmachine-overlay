@@ -76,19 +76,19 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 # Upstream defaults to C++14
 IUSE="
-cxx14 +cxx17 emacs examples static-libs test zlib
+cxx_standard_cxx14 +cxx_standard_cxx17 emacs examples static-libs test zlib
 ebuild_revision_31
 "
 REQUIRED_USE="
 	^^ (
-		cxx14
-		cxx17
+		cxx_standard_cxx14
+		cxx_standard_cxx17
 	)
 "
 # cxx17 is forced for gRPC
 RDEPEND="
 	!dev-libs/protobuf:0
-	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx14?,cxx17?]
+	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-cpp/abseil-cpp:=
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]

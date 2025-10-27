@@ -100,9 +100,9 @@ SLOT_MAJ="${PROTOBUF_SLOT}"
 SLOT="${SLOT_MAJ}/1.71"
 # third_party last update: 20250213
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_GRPC}:${ABSEIL_CPP_PV_GRPC%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx17]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_GRPC}:${ABSEIL_CPP_PV_GRPC%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 	dev-cpp/abseil-cpp:=
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_PROTOBUF}:${ABSEIL_CPP_PV_PROTOBUF%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx17]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV_PROTOBUF}:${ABSEIL_CPP_PV_PROTOBUF%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
