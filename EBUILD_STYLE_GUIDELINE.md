@@ -410,14 +410,18 @@
       - The machine that builds has less than 8 GiB of RAM.
 
 * Ebuild C++ standard guidelines in this overlay
-  - The released standards were c++98, c++03, c++11, c++14, c++17, c++20, c++23, c++26
+  - The released standards were c++98, c++03, c++11, c++14, c++17, c++20, c++23,
+    c++26
   - The unofficial standard c++0x corresponds to the final c++11.
   - Most packages use the default c++17.
+  - The `cxx_standard_<x>` can be used to specify the standard.  This is
+    provided to not pollute USE features.
   - If C++ standard needs to be lifted.  Specify between the oldest to current
     For example, if the package says c++11, then add USE flags for
     cxx_standard_cxx11, cxx_standard_cxx14, cxx_standard_cxx17.
-  - If the C++ standard is not specified, it is c++17 by default based on
-    compiler default.
+  - If the C++ standard is not specified in the project files or in the ebuild
+    as a USE flag without cxx_standard_ references, then it is c++17 for Clang
+    and gnu++17 for GCC by default.
   - The C++ standard should on be overwritten if it is C++ standard
     sensitive.  Use as a USE flag dependency chain for these USE flags.
   - The C++ standard should use the project default in most cases to
@@ -426,6 +430,18 @@
     packages that they want to install.
   - Set the default C++ standard USE flag in the USE flag dependency chain to
     the one that will resolve all the issues in the chain.
+  - See [cxx_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/cxx_standard.desc)
+    for valid values of std_standard_<x>.
+
+* Ebuild C standard guidelines in this overlay
+  - The release standards where C90, C99, C11, C17, C23
+  - See [c_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/c_standard.desc)
+    for valid values of std_standard_<x>.
+  - The `c_standard_<x>` can be used to specify the standard.  This is provided
+    to not pollute USE features.
+  - The default value is -std=gnu23 for GCC.
+  - Set the default C standard to the one that will resolve all issues in the
+    dependency chain if standard sensitive.
 
 # Ebuild organization
 
