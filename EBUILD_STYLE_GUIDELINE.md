@@ -413,7 +413,6 @@
 * Ebuild C++ standard guidelines in this overlay
   - The released standards were c++98, c++03, c++11, c++14, c++17, c++20, c++23,
     c++26.
-  - The unofficial standard c++0x corresponds to the final c++11.
   - Most packages use the default c++17.
   - The `cxx_standard_<x>` can be used to specify the standard.  This is
     provided to not pollute USE features.
