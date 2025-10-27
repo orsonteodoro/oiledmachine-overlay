@@ -412,7 +412,7 @@
 
 * Ebuild C++ standard guidelines in this overlay
   - The released standards were c++98, c++03, c++11, c++14, c++17, c++20, c++23,
-    c++26
+    c++26.
   - The unofficial standard c++0x corresponds to the final c++11.
   - Most packages use the default c++17.
   - The `cxx_standard_<x>` can be used to specify the standard.  This is
@@ -435,7 +435,7 @@
     for valid values of cxx_standard_<x>.
 
 * Ebuild C standard guidelines in this overlay
-  - The released standards were C89, C90, C99, C11, C17, C23
+  - The released standards were C89, C90, C99, C11, C17, C23.
   - See [c_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/c_standard.desc)
     for valid values of c_standard_<x>.
   - The `c_standard_<x>` can be used to specify the standard.  This is provided
