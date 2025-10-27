@@ -283,49 +283,49 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
 	elif [[ "${CXX_STANDARD}" == "98" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx98]
+				virtual/libcxx[cxx_standard_cxx98]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "03" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx03]
+				virtual/libcxx[cxx_standard_cxx03]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "11" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx11]
+				virtual/libcxx[cxx_standard_cxx11]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "14" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx14]
+				virtual/libcxx[cxx_standard_cxx14]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "17" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx17]
+				virtual/libcxx[cxx_standard_cxx17]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "20" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx20]
+				virtual/libcxx[cxx_standard_cxx20]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "23" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx23]
+				virtual/libcxx[cxx_standard_cxx23]
 			)
 		"
 	elif [[ "${CXX_STANDARD}" == "26" ]] ; then
 		rdepend="
 			libcxx? (
-				virtual/libcxx[cxx23]
+				virtual/libcxx[cxx_standard_cxx26]
 			)
 		"
 	else

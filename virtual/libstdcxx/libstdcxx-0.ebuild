@@ -13,13 +13,24 @@ GCC_COMPAT=(
 	"gcc_slot_16_1"
 )
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx98"
+	"cxx_standard_cxx03"
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"cxx_standard_cxx17"
+	"cxx_standard_cxx20"
+	"cxx_standard_cxx23"
+	"cxx_standard_cxx26"
+)
+
 DESCRIPTION="Manages libstdc++ versioning"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~hppa ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 "
 IUSE="
+${_CXX_STANDARD[@]}
 ${GCC_COMPAT[@]}
-cxx98 cxx03 cxx11 cxx14 cxx17 cxx20 cxx23 cxx26
 "
 #
 # Design note review:
@@ -41,7 +52,7 @@ cxx98 cxx03 cxx11 cxx14 cxx17 cxx20 cxx23 cxx26
 # projects.
 #
 REQUIRED_USE="
-	cxx98? (
+	cxx_standard_cxx98? (
 		|| (
 			gcc_slot_11_5
 			gcc_slot_12_5
@@ -49,7 +60,7 @@ REQUIRED_USE="
 			gcc_slot_14_3
 		)
 	)
-	cxx03? (
+	cxx_standard_cxx03? (
 		|| (
 			gcc_slot_11_5
 			gcc_slot_12_5
@@ -57,7 +68,7 @@ REQUIRED_USE="
 			gcc_slot_14_3
 		)
 	)
-	cxx11? (
+	cxx_standard_cxx11? (
 		|| (
 			gcc_slot_11_5
 			gcc_slot_12_5
@@ -65,7 +76,7 @@ REQUIRED_USE="
 			gcc_slot_14_3
 		)
 	)
-	cxx17? (
+	cxx_standard_cxx17? (
 		|| (
 			gcc_slot_11_5
 			gcc_slot_12_5
@@ -73,7 +84,7 @@ REQUIRED_USE="
 			gcc_slot_14_3
 		)
 	)
-	cxx20? (
+	cxx_standard_cxx20? (
 		|| (
 			gcc_slot_13_4
 			gcc_slot_14_3
@@ -81,13 +92,13 @@ REQUIRED_USE="
 			gcc_slot_16_1
 		)
 	)
-	cxx23? (
+	cxx_standard_cxx23? (
 		|| (
 			gcc_slot_15_2
 			gcc_slot_16_1
 		)
 	)
-	cxx26? (
+	cxx_standard_cxx26? (
 		|| (
 			gcc_slot_15_2
 			gcc_slot_16_1
