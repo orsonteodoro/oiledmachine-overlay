@@ -252,7 +252,7 @@ CUDA_TARGETS_COMPAT=(
 	"compute_120"
 )
 declare -A CUDA_TARGETS_COMPAT_HT=(
-	["auto"]="auto"
+	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"
 	["sm_30"]="3.0"
 	["sm_35"]="3.5"
 	["sm_37"]="3.7"
@@ -1160,20 +1160,6 @@ cuda_get_host_native_arch() {
 }
 
 pkg_pretend() {
-	if use cuda && [[ -z "${CUDA_GENERATION}" ]] && [[ -z "${CUDA_ARCH_BIN}" ]] ; then # TODO CUDAARCHS
-einfo
-einfo "The target CUDA architecture can be set via one of:"
-einfo
-einfo "  - CUDA_GENERATION set to one of Maxwell, Pascal, Volta, Turing,"
-einfo "    Ampere, Lovelace, Hopper, Auto."
-einfo "  - CUDA_ARCH_BIN, (and optionally CUDA_ARCH_PTX) in the form of x.y tuples."
-einfo "    You can specify multiple tuple separated by \";\"."
-einfo
-einfo "The CUDA architecture tuple for your device can be found at"
-einfo "https://developer.nvidia.com/cuda-gpus."
-einfo
-	fi
-
 	if \
 		use cuda \
 		&& [[ "${MERGE_TYPE}" == "buildonly" ]] \
@@ -1566,6 +1552,9 @@ multilib_src_configure() {
 		local virtual_str=""
 		local x
 		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+			if use ${x} && [[ "${x}" =~ "auto" ]] ; then
+				real_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
+			fi
 			if use ${x} && [[ "${x}" =~ "sm" ]] ; then
 				real_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
 			fi
