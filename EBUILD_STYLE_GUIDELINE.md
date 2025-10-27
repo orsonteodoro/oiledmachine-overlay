@@ -435,7 +435,7 @@
     for valid values of cxx_standard_<x>.
 
 * Ebuild C standard guidelines in this overlay
-  - The released standards where C89, C90, C99, C11, C17, C23
+  - The released standards were C89, C90, C99, C11, C17, C23
   - See [c_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/c_standard.desc)
     for valid values of c_standard_<x>.
   - The `c_standard_<x>` can be used to specify the standard.  This is provided
