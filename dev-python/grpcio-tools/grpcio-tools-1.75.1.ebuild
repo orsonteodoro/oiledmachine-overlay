@@ -43,7 +43,7 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
 RDEPEND="
@@ -117,7 +117,6 @@ python_configure() {
 	local L1=(
 		"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotobuf.a"
 		"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotoc.a"
-		"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libupb.a"
 	)
 	local libdir=$(get_libdir)
 	local L2=(
@@ -128,6 +127,7 @@ ${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:\
 ${ESYSROOT}/usr/${libdir}/pkgconfig:\
 ${PKG_CONFIG_PATH}" \
 		pkg-config --libs protobuf)
+		"${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libupb.so"
 	)
 	append-ldflags -Wl,--whole-archive "${L1[@]}" -Wl,--no-whole-archive "${L2[@]}"
 	filter-flags "-Wl,--as-needed"
