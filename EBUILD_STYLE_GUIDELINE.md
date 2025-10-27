@@ -424,6 +424,8 @@
     ensure compatibility with prebuilt binaries.
   - Do not force a newer standard but allow the user to decide based on
     packages that they want to install.
+  - Set the default C++ standard USE flag in the USE flag dependency chain to
+    the one that will resolve all the issues in the chain.
 
 # Ebuild organization
 
