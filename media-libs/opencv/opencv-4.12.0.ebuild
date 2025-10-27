@@ -863,7 +863,7 @@ RDEPEND="
 	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 	virtual/protobuf:=
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
 	atlas? (
 		>=sci-libs/atlas-3.10.3
 	)
@@ -938,12 +938,12 @@ RDEPEND="
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-3.0.3:0[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-3.1.0:0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	jpeg2k? (
 		!jasper? (
-			>=media-libs/openjpeg-2.5.2:2[${MULTILIB_USEDEP}]
+			>=media-libs/openjpeg-2.5.3:2[${MULTILIB_USEDEP}]
 			media-libs/openjpeg:=
 		)
 		jasper? (
@@ -1027,7 +1027,7 @@ RDEPEND="
 		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.11.0:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/tbb-2022.1.0:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/tbb:=
 	)
 	tiff? (
