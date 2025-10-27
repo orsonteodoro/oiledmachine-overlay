@@ -416,14 +416,16 @@
   - Most packages use the default c++17.
   - The `cxx_standard_<x>` can be used to specify the standard.  This is
     provided to not pollute USE features.
-  - If C++ standard needs to be lifted.  Specify between the oldest to current
-    For example, if the package says c++11, then add USE flags for
-    cxx_standard_cxx11, cxx_standard_cxx14, cxx_standard_cxx17.
+  - If the C++ standard needs to be lifted, specify between the oldest inclusive
+    to current inclusive.  For example, if the package says c++11 in the build
+    files or CI files, then add USE flags for cxx_standard_cxx11,
+    cxx_standard_cxx14, cxx_standard_cxx17.
   - If the C++ standard is not specified in the project files or in the ebuild
     as a USE flag without cxx_standard_ references, then it is gnu++17 by
     default.
-  - The C++ standard should on be overwritten if it is C++ standard
-    sensitive.  Use as a USE flag dependency chain for these USE flags.
+  - The C++ standard could be overwritten if it is C++ standard sensitive
+    (e.g. uses constexpr).  Use as a USE flag dependency chain for these USE
+    flags.
   - The C++ standard should use the project default in most cases to
     ensure compatibility with prebuilt binaries.
   - Do not force a newer standard but allow the user to decide based on
