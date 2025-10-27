@@ -7,6 +7,17 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS ID"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CXX_STANDARD=11
 
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+)
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
@@ -15,6 +26,11 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+)
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
 )
 
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot
@@ -27,7 +43,19 @@ LICENSE="BSD"
 # ABI may be broken without a new SONAME. Please use abidiff on bumps.
 SLOT="0/1.1"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
-IUSE="cpu_flags_x86_avx cpu_flags_x86_avx2 test"
+IUSE="
+${_CXX_STANDARD[@]}
+${CPU_FLAGS_X86[@]}
+test
+"
+REQUIRED_USE="
+	test? (
+		cxx_standard_cxx17
+	)
+	^^ (
+		${_CXX_STANDARD[@]/+}
+	)
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="
@@ -53,7 +81,9 @@ pkg_setup() {
 multilib_src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		-DCMAKE_CXX_STANDARD=14 # Latest gtest needs -std=c++14 or newer
+		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11') # Project default
+		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14')
+		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17') # For gtest
 		-DSNAPPY_BUILD_TESTS=$(usex test)
 		-DSNAPPY_REQUIRE_AVX=$(usex cpu_flags_x86_avx)
 		-DSNAPPY_REQUIRE_AVX2=$(usex cpu_flags_x86_avx2)
