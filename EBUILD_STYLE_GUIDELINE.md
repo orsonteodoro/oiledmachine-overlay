@@ -409,6 +409,22 @@
       - The machine that builds has less than 4 cores.
       - The machine that builds has less than 8 GiB of RAM.
 
+* Ebuild C++ standard guidelines in this overlay
+  - The released standards were c++98, c++03, c++11, c++14, c++17, c++20, c++23, c++26
+  - The unofficial standard c++0x corresponds to the final c++11.
+  - Most packages use the default c++17.
+  - If C++ standard needs to be lifted.  Specify between the oldest to current
+    For example, if the package says c++11, then add USE flags for cxx11
+    cxx14, cxx17.
+  - If the C++ standard is not specified, it is c++17 by default based on
+    compiler default.
+  - The C++ standard should on be overwritten if it is C++ standard
+    sensitive.  Use as a USE flag dependency chain for these USE flags.
+  - The C++ standard should use the project default in most cases to
+    ensure compatibility with prebuilt binaries.
+  - Do not force a newer standard but allow the user to decide based on
+    packages that they want to install.
+
 # Ebuild organization
 
 1. Header
