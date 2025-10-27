@@ -17,16 +17,16 @@ cxx2a - Build for c++2a, a draft of c++20
 cxx2b - Build for c++2c, a draft of c++23
 cxx2c - Build for c++2c, a draft of c++26
 
-gnu++98 - Build for gnu++98
-gnu++11 - Build for gnu++11
-gnu++14 - Build for gnu++14
-gnu++17 - Build for gnu++17
-gnu++20 - Build for gnu++20
-gnu++23 - Build for gnu++23
+gnuxx98 - Build for gnu++98
+gnuxx11 - Build for gnu++11
+gnuxx14 - Build for gnu++14
+gnuxx17 - Build for gnu++17
+gnuxx20 - Build for gnu++20
+gnuxx23 - Build for gnu++23
 
-gnu++0x - Build for gnu++0x, a draft of gnu++11
-gnu++1y - Build for gnu++1y, a draft of gnu++14
-gnu++1z - Build for gnu++1y, a draft of gnu++17
-gnu++2a - Build for gnu++2a, a draft of gnu++20
-gnu++2b - Build for gnu++2b, a draft of gnu++23
-gnu++2c - Build for gnu++2b, a draft of gnu++26
+gnuxx0x - Build for gnu++0x, a draft of gnu++11
+gnuxx1y - Build for gnu++1y, a draft of gnu++14
+gnuxx1z - Build for gnu++1y, a draft of gnu++17
+gnuxx2a - Build for gnu++2a, a draft of gnu++20
+gnuxx2b - Build for gnu++2b, a draft of gnu++23
+gnuxx2c - Build for gnu++2b, a draft of gnu++26
