@@ -127,7 +127,7 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
-aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
+aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
 gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
 ebuild_revision_34
@@ -401,13 +401,7 @@ RDEPEND+="
 		)
 	)
 	raw? (
-		!cxx17? (
-			>=media-libs/libraw-0.18[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			<media-libs/libraw-0.20[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-		cxx17? (
-			>=media-libs/libraw-0.20[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
+		>=media-libs/libraw-0.20[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/libraw:=
 	)
 	truetype? (
@@ -656,36 +650,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DPYTHON_VERSION="${EPYTHON#python}"
 			-DPYTHON_SITE_DIR="$(python_get_sitedir)"
-		)
-	fi
-
-	local set_cxx17=0
-
-	for s in ${OPENVDB_APIS[@]} ; do
-		if (( ${s} >= 8 )) ; then
-			if use "abi${s}-compat" && usex cxx17 ; then
-				set_cxx17=1
-				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=17"
-				mycmakeargs+=(
-					-DCMAKE_CXX_STANDARD=17
-					-DDOWNSTREAM_CXX_STANDARD=17
-				)
-			elif use "abi${s}-compat" ; then
-				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=14"
-				mycmakeargs+=(
-					-DCMAKE_CXX_STANDARD=14
-					-DDOWNSTREAM_CXX_STANDARD=14
-				)
-			fi
-		else
-			use "abi${s}-compat" && einfo "Using abi${s}-compat"
-		fi
-	done
-
-	if use cxx17 && (( ${set_cxx17} == 0 )) ; then
-		einfo "Added CMAKE_CXX_STANDARD=17"
-		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=17
 		)
 	fi
 
