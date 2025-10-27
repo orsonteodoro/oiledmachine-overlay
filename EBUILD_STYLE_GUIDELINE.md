@@ -432,6 +432,8 @@
     the one that will resolve all the issues in the chain.
   - See [cxx_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/cxx_standard.desc)
     for valid values of cxx_standard_<x>.
+  - LTS packages can only specify the maximum of c++17.
+  - Rolling packages can specify up to the latest experimental.
 
 * Ebuild C standard guidelines in this overlay
   - The released standards were C89, C90, C99, C11, C17, C23.
@@ -444,6 +446,8 @@
     dependency chain if standard sensitive.
   - Currently, you must ensure that a rolling compiler is used for `c_standard_gnu23`.
     No eclass provided yet.
+  - LTS packages can only specify the maximum of C17.
+  - Rolling packages can specify up to the latest experimental.
 
 # Ebuild organization
 
