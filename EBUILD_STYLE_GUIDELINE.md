@@ -443,6 +443,8 @@
   - The default value is -std=gnu17 for LTS packages and -std=gnu23 for rolling packages.
   - Set the default C standard to the one that will resolve all issues in the
     dependency chain if standard sensitive.
+  - Currently, you must ensure that a rolling compiler is used for `c_standard_gnu23`.
+    No eclass provided yet.
 
 # Ebuild organization
 
