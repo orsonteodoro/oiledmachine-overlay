@@ -6,8 +6,10 @@ EAPI=8
 # U20, U22, U24
 
 # For the flatbuffers version restriction, see
-# https://github.com/opencv/opencv/blob/4.10.0/modules/dnn/misc/tflite/schema_generated.h#L11
+# https://github.com/opencv/opencv/blob/4.12.0/modules/dnn/misc/tflite/schema_generated.h#L11
 # (The patch will allow for newer revisions.)
+
+# For CUDA, check optical flow driver requirement.
 
 _MULTILIB_WRAPPED_HEADERS=( # {{{
 	# [opencv4]
@@ -159,8 +161,8 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO NPD OOBR OOBW"
-CMAKE_PV="3.26"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
+CMAKE_PV="3.15"
 # TODO make this only relevant for binhost \
 CPU_FEATURES_MAP=(
 	"cpu_flags_arm_fp16:FP16"				# arm only
@@ -199,19 +201,91 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_sse4_2:SSE4_2"
 	"cpu_flags_x86_ssse3:SSSE3"
 )
-CXX_STANDARD=14 # 14 for CUDA
+CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
+# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.12.0/cmake/OpenCVDetectCUDA.cmake#L154
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+CUDA_TARGETS_COMPAT=(
+	"auto"
+	"sm_30"
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_90"
+	"sm_100"
+	"sm_120"
+
+	"compute_30"
+	"compute_35"
+	"compute_37"
+	"compute_50"
+	"compute_52"
+	"compute_60"
+	"compute_61"
+	"compute_70"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_90"
+	"compute_100"
+	"compute_120"
+)
+declare -A CUDA_TARGETS_COMPAT_HT=(
+	["auto"]="auto"
+	["sm_30"]="3.0"
+	["sm_35"]="3.5"
+	["sm_37"]="3.7"
+	["sm_50"]="5.0"
+	["sm_52"]="5.2"
+	["sm_60"]="6.0"
+	["sm_61"]="6.1"
+	["sm_70"]="7.0"
+	["sm_75"]="7.5"
+	["sm_80"]="8.0"
+	["sm_86"]="8.6"
+	["sm_90"]="9.0"
+	["sm_100"]="10.0"
+	["sm_120"]="12.0"
+
+	["compute_30"]="3.0"
+	["compute_35"]="3.5"
+	["compute_37"]="3.7"
+	["compute_50"]="5.0"
+	["compute_52"]="5.2"
+	["compute_60"]="6.0"
+	["compute_61"]="6.1"
+	["compute_70"]="7.0"
+	["compute_75"]="7.5"
+	["compute_80"]="8.0"
+	["compute_86"]="8.6"
+	["compute_90"]="9.0"
+	["compute_100"]="10.0"
+	["compute_120"]="12.0"
 )
 
 GSTREAMER_PV="1.16.2"
-KLEIDICV_PV="0.1.0"								# See https://github.com/opencv/opencv/blob/4.10.0/3rdparty/kleidicv/CMakeLists.txt
+KLEIDICV_PV="0.3.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
 OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
@@ -233,13 +307,13 @@ if [[ "${PV}" == *"9999"* ]] ; then
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
 else
 	# From ocv_download()
-	ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.10.0/modules/gapi/cmake/DownloadADE.cmake#L2
-	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.10.0/testdata/dnn/download_models.py#L389
-	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/face/CMakeLists.txt#L11
-	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/cudaoptflow/CMakeLists.txt#L12
-	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/wechat_qrcode/CMakeLists.txt#L15
-	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
-	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
+	ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.12.0/modules/gapi/cmake/DownloadADE.cmake#L2
+	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.12.0/testdata/dnn/download_models.py#L389
+	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/face/CMakeLists.txt#L11
+	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/cudaoptflow/CMakeLists.txt#L12
+	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/wechat_qrcode/CMakeLists.txt#L15
+	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
+	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
 
 	KEYWORDS="~amd64 ~arm64 ~riscv"
 	SRC_URI="
@@ -289,14 +363,16 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # We assume not cross-compiling options enabled.
 # general options
 IUSE="
+	${_CXX_STANDARD[@]}
+	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 	${PATENT_STATUS_IUSE[@]}
-	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
+	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
 	ebuild_revision_41
 "
 # hal for acceleration
 IUSE+="
-	+carotene -fastcv hal-rvv -kleidicv +ndsrvp openvino -openvx
+	+carotene -fastcv ipp -kleidicv +ndsrvp openvino -openvx riscv-rvv
 "
 # modules
 IUSE+="
@@ -316,7 +392,7 @@ IUSE+="
 "
 # image
 IUSE+="
-	+avif -gdal -gif +hdr +jasper +jpeg +jpeg2k -jpegxl +netpbm +openexr +png -quirc -spng +sun tesseract
+	+avif -gdal +gif +hdr +jasper +jpeg +jpeg2k -jpegxl +netpbm +openexr +png -quirc -spng +sun tesseract
 	+tiff +webp
 "
 # gui
@@ -374,15 +450,22 @@ REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
 	?? (
 		carotene
+		fastcv
 		kleidicv
 		ndsrvp
+		ipp
+		openvino
 		openvx
+		riscv-rvv
 	)
 	?? (
 		gtk3
 		qt5
 		qt6
 		wayland
+	)
+	^^ (
+		${_CXX_STANDARD[@]/+}
 	)
 	amd64? (
 		cpu_flags_x86_sse
@@ -499,6 +582,13 @@ REQUIRED_USE="
 	)
 	cuda? (
 		contrib
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+		^^ (
+			cxx_standard_cxx14
+			cxx_standard_cxx17
+		)
 		tesseract? (
 			opencl
 		)
@@ -551,6 +641,9 @@ REQUIRED_USE="
 		|| (
 			rocm
 		)
+	)
+	protobuf? (
+		cxx_standard_cxx17
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
@@ -629,17 +722,94 @@ gen_openexr_rdepend() {
 		"
 	done
 }
+CUDA_11_8_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		>=x11-drivers/nvidia-drivers-520.61
+		cudnn? (
+			=dev-libs/cudnn-8.6*
+			dev-libs/cudnn:=
+		)
+	)
+
+"
+CUDA_12_3_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		>=x11-drivers/nvidia-drivers-545.23
+		cudnn? (
+			>=dev-libs/cudnn-8.8
+			dev-libs/cudnn:=
+		)
+	)
+"
+CUDA_12_4_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		>=x11-drivers/nvidia-drivers-550.54
+		cudnn? (
+			>=dev-libs/cudnn-8.8
+			dev-libs/cudnn:=
+		)
+	)
+"
+CUDA_12_5_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		>=x11-drivers/nvidia-drivers-555.42
+		cudnn? (
+			>=dev-libs/cudnn-8.8
+			dev-libs/cudnn:=
+		)
+	)
+"
+CUDA_12_6_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		>=x11-drivers/nvidia-drivers-560.35
+		cudnn? (
+			>=dev-libs/cudnn-8.8
+			dev-libs/cudnn:=
+		)
+	)
+"
+CUDA_12_8_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
+		cudnn? (
+			>=dev-libs/cudnn-8.8
+			dev-libs/cudnn:=
+		)
+	)
+"
+CUDA_12_9_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.9*
+		>=x11-drivers/nvidia-drivers-575.57
+		cudnn? (
+			>=dev-libs/cudnn-8.8
+			dev-libs/cudnn:=
+		)
+	)
+"
 CUDA_DEPEND="
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*
-			=dev-util/nvidia-cuda-toolkit-12*
+			${CUDA_11_8_DEPEND}
+			${CUDA_12_3_DEPEND}
+			${CUDA_12_4_DEPEND}
+			${CUDA_12_5_DEPEND}
+			${CUDA_12_6_DEPEND}
+			${CUDA_12_7_DEPEND}
+			${CUDA_12_8_DEPEND}
+			${CUDA_12_9_DEPEND}
 		)
 		dev-util/nvidia-cuda-toolkit:=
 "
 # For ffmpeg version, see \
-# https://github.com/opencv/opencv_3rdparty/blob/394dca6ceb3085c979415e6385996b6570e94153/ffmpeg/download_src.sh#L24
+# https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24
 # For the commit above, see
-# https://github.com/opencv/opencv/blob/4.10.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
+# https://github.com/opencv/opencv/blob/4.12.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
 gen_rocm_rdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -702,10 +872,7 @@ RDEPEND="
 	)
 	cuda? (
 		${CUDA_DEPEND}
-	)
-	cudnn? (
-		=dev-libs/cudnn-8.6*:0/8
-		dev-libs/cudnn:=
+		>=x11-drivers/nvidia-drivers-450.51
 	)
 	contribdnn? (
 		system-flatbuffers? (
@@ -944,7 +1111,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.4.1-cuda-add-relaxed-constexpr.patch"
 	"${FILESDIR}/${PN}-4.1.2-opencl-license.patch"
 	"${FILESDIR}/${PN}-4.4.0-disable-native-cpuflag-detect.patch"
-	"${FILESDIR}/${PN}-4.5.0-link-with-cblas-for-lapack.patch"
+	"${FILESDIR}/${PN}-4.12.0-link-with-cblas-for-lapack.patch"
 #	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
 	"${FILESDIR}/${PN}-4.8.1-use-system-opencl.patch"
 	"${FILESDIR}/${PN}-4.9.0-drop-python2-detection.patch"
@@ -1039,22 +1206,26 @@ src_prepare() {
 	fi
 
 	# Remove bundled stuff
+	mkdir -p "hal.orig" || die
 	mkdir -p "3rdparty.orig" || die
 	mv "3rdparty/flatbuffers" "3rdparty.orig" || die
 	if use carotene ; then
-		mv "3rdparty/carotene" "3rdparty.orig" || die
+		mv "hal/carotene" "hal.orig" || die
 	fi
 	if use fastcv ; then
-		mv "3rdparty/fastcv" "3rdparty.orig" || die
+		mv "hal/fastcv" "hal.orig" || die
 	fi
-	if use hal-rvv ; then
-		mv "3rdparty/hal_rvv" "3rdparty.orig" || die
+	if use riscv-rvv ; then
+		mv "hal/riscv-rvv" "hal.orig" || die
 	fi
 	if use kleidicv ; then
-		mv "3rdparty/kleidicv" "3rdparty.orig" || die
+		mv "hal/kleidicv" "hal.orig" || die
+	fi
+	if use ipp ; then
+		mv "hal/ipp" "hal.orig" || die
 	fi
 	if use ndsrvp ; then
-		mv "3rdparty/ndsrvp" "3rdparty.orig" || die
+		mv "hal/ndsrvp" "hal.orig" || die
 	fi
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
 	if use system-flatbuffers ; then
@@ -1193,6 +1364,9 @@ multilib_src_configure() {
 
 	export LIBDIR=$(get_libdir)
 	local mycmakeargs=(
+		$(usex std_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '')				# Project default
+		$(usex std_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+		$(usex std_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')				# For Protobuf
 		-DBUILD_ANDROID_EXAMPLES=OFF
 		#-DBUILD_ANDROID_SERVICE=OFF
 		-DBUILD_CUDA_STUBS=$(multilib_native_usex cuda)
@@ -1227,7 +1401,6 @@ multilib_src_configure() {
 		-DBUILD_WITH_DEBUG_INFO=$(usex debug)
 		-DBUILD_WITH_DYNAMIC_IPP=OFF
 		#-DBUILD_WITH_STATIC_CRT=OFF
-		-DCMAKE_CXX_STANDARD=17							# For protobuf
 		-DCMAKE_POLICY_DEFAULT_CMP0148="OLD"					# FindPythonInterp
 		-DCUDA_NPP_LIBRARY_ROOT_DIR=$(usex cuda "${EPREFIX}/opt/cuda" "")
 		-DCV_TRACE=$(usex debug)
@@ -1323,7 +1496,7 @@ multilib_src_configure() {
 		-DWITH_OPENNI2=OFF							# Not packaged
 		-DWITH_OPENVINO=$(usex openvino)
 		-DWITH_PNG=$(usex png)
-		-DWITH_PROTOBUF=ON
+		-DWITH_PROTOBUF=$(usex protobuf)
 		-DWITH_PTHREADS_PF=ON
 		-DWITH_PVAPI=OFF
 		#-DWITH_QTKIT=OFF
@@ -1370,7 +1543,7 @@ multilib_src_configure() {
 
 	if [[ "${ARCH}" == "riscv" ]] ; then
 		mycmakeargs+=(
-			-DWITH_HAL_RVV=$(usex hal-rvv)
+			-DWITH_HAL_RVV=$(usex riscv-rvv)
 		)
 	else
 		mycmakeargs+=(
@@ -1386,6 +1559,30 @@ multilib_src_configure() {
 		mycmakeargs+=(
 			-DWITH_NDSRVP=OFF
 		)
+	fi
+
+	if use cuda ; then
+		local real_str=""
+		local virtual_str=""
+		local x
+		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+			if use ${x} && [[ "${x}" =~ "sm" ]] ; then
+				real_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
+			fi
+			if use ${x} && [[ "${x}" =~ "compute" ]] ; then
+				virtual_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
+			fi
+		done
+		if [[ -n "${real_str}" ]] ; then
+			mycmakeargs+=(
+				-DCUDA_ARCH_BIN="${real_str}"
+			)
+		fi
+		if [[ -n "${virtual_str}" ]] ; then
+			mycmakeargs+=(
+				-DCUDA_ARCH_PTX="${virtual_str}"
+			)
+		fi
 	fi
 
 	if use halide ; then
