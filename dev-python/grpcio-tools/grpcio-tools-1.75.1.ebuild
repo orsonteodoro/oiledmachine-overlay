@@ -127,7 +127,6 @@ ${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:\
 ${ESYSROOT}/usr/${libdir}/pkgconfig:\
 ${PKG_CONFIG_PATH}" \
 		pkg-config --libs protobuf)
-		"${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libupb.so"
 	)
 	append-ldflags -Wl,--whole-archive "${L1[@]}" -Wl,--no-whole-archive "${L2[@]}"
 	filter-flags "-Wl,--as-needed"
