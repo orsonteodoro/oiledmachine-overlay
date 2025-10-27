@@ -4,7 +4,6 @@
 c89 - Build for C89
 c90 - Build for C90
 c94 - Build for AMD1, C94, C95
-c95 - Build for C95
 c99 - Build for C99
 c11 - Build for C11
 c17 - Build for C17
