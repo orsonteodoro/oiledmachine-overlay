@@ -472,14 +472,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 			local mycmakeargs=(
 				-DCMAKE_CXX_STANDARD=14
-				-DCMAKE_POLICY_DEFAULT_CMP0146="OLD" # BUG FindCUDA
-				-DCMAKE_POLICY_DEFAULT_CMP0148="OLD" # BUG FindPythonInterp
-
-				# std::tuple_size_v is c++17
-				-DCMAKE_CXX_STANDARD=17
-
 				-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/$(get_libdir)/osl/bin"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
+				-DCMAKE_POLICY_DEFAULT_CMP0146="OLD" # BUG FindCUDA
+				-DCMAKE_POLICY_DEFAULT_CMP0148="OLD" # BUG FindPythonInterp
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC="OFF"
 				#-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
