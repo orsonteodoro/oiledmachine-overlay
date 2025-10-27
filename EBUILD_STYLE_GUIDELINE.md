@@ -432,12 +432,12 @@
   - Set the default C++ standard USE flag in the USE flag dependency chain to
     the one that will resolve all the issues in the chain.
   - See [cxx_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/cxx_standard.desc)
-    for valid values of std_standard_<x>.
+    for valid values of cxx_standard_<x>.
 
 * Ebuild C standard guidelines in this overlay
   - The release standards where C90, C99, C11, C17, C23
   - See [c_standard.desc](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/c_standard.desc)
-    for valid values of std_standard_<x>.
+    for valid values of c_standard_<x>.
   - The `c_standard_<x>` can be used to specify the standard.  This is provided
     to not pollute USE features.
   - The default value is -std=gnu23 for GCC.
