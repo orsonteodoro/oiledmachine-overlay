@@ -9,6 +9,13 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( "python3_12" )
 
@@ -24,7 +31,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic libstdcxx-slot llvm.org python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 
@@ -70,6 +77,11 @@ LLVM_COMPONENTS=(
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
 
+pkg_setup() {
+	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
+}
+
 src_configure() {
 	if tc-is-gcc && ver_test $(gcc-version) -ge "13.1" ; then
 #/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::ErrIfLHSAndRHSSymbolsMatch(const Fortran::parser::Variable&, const Fortran::parser::Expr&)':
@@ -102,7 +114,6 @@ src_configure() {
 	local mycmakeargs=(
 		-DCLANG_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/cmake/clang"
 		-DCMAKE_BUILD_TYPE="Release"
-		-DCMAKE_CXX_STANDARD=17
 		-DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,${LD_LIBRARY_PATH}"
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm-flang/${LLVM_MAJOR}"
