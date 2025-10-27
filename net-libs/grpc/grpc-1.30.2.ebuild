@@ -82,7 +82,7 @@ LSRT_IUSE=(
 )
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
-cxx doc examples test
+cxx cxx11 cxx14 +cxx17 doc examples test
 ebuild_revision_34
 "
 REQUIRED_USE+="
