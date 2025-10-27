@@ -64,14 +64,14 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
-cxx14 +cxx17 test
+cxx_standard_cxx14 +cxx_standard_cxx17 test
 ebuild_revision_25
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
 	^^ (
-		cxx14
-		cxx17
+		cxx_standard_cxx14
+		cxx_standard_cxx17
 	)
 	amd64? (
 		cpu_flags_x86_sse2
