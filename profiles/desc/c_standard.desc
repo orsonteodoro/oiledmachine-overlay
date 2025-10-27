@@ -8,10 +8,19 @@ c99 - Build for C99
 c11 - Build for C11
 c17 - Build for C17
 c23 - Build for C23
-c2y - Build for C2Y
+
+c9x - Build for C9X, a draft for C99
+c1x - Build for C2X, a draft for C11
+c2x - Build for C2X, a draft for C23
+c2y - Build for C2Y, the latest draft
 
 gnu90 - Build for C90 with GNU extensions
 gnu99 - Build for C99 with GNU extensions
 gnu11 - Build for C11 with GNU extensions
 gnu17 - Build for C17 with GNU extensions
-gnu23 - Build for C23 with GNU extensions (GCC default)
+gnu23 - Build for C23 with GNU extensions
+
+gnu9x - Build for gnu9x, a draft of gnu99
+gnu1x - Build for gnu1x, a draft of gnu11
+gnu2x - Build for gnu2x, a draft of gnu23
+gnu2y - Build for gnu2y, the latest draft

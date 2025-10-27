@@ -421,8 +421,8 @@
     For example, if the package says c++11, then add USE flags for
     cxx_standard_cxx11, cxx_standard_cxx14, cxx_standard_cxx17.
   - If the C++ standard is not specified in the project files or in the ebuild
-    as a USE flag without cxx_standard_ references, then it is c++17 for Clang
-    and gnu++17 for GCC by default.
+    as a USE flag without cxx_standard_ references, then it is gnu++17 by
+    default.
   - The C++ standard should on be overwritten if it is C++ standard
     sensitive.  Use as a USE flag dependency chain for these USE flags.
   - The C++ standard should use the project default in most cases to
@@ -440,7 +440,7 @@
     for valid values of c_standard_<x>.
   - The `c_standard_<x>` can be used to specify the standard.  This is provided
     to not pollute USE features.
-  - The default value is -std=gnu23 for GCC.
+  - The default value is -std=gnu17 for LTS packages and -std=gnu23 for rolling packages.
   - Set the default C standard to the one that will resolve all issues in the
     dependency chain if standard sensitive.
 
