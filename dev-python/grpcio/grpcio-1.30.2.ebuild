@@ -65,7 +65,7 @@ RDEPEND+="
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.11
 	sys-libs/zlib:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
 DEPEND+="
