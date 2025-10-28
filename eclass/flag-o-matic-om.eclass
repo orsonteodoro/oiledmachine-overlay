@@ -112,6 +112,11 @@ fix_mb_len_max() {
 	local extra_args_cc=""
 	local extra_args_cxx=""
 	if [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] ; then
+		filter-flags \
+			'-DSSIZE_MAX=*' \
+			'-DMB_LEN_MAX=*' \
+			'-DNAME_MAX=*' \
+			'-DPATH_MAX=*'
 		if eselect profile show | grep "llvm" ; then
 			:
 		else
