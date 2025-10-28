@@ -113,22 +113,40 @@ REQUIRED_USE="
 	)
 "
 CUDA_11_8_RDEPEND="
-	=dev-util/nvidia-cuda-toolkit-11.8*
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		>=dev-util/nvidia-cuda-toolkit-520.61
+	)
 "
 CUDA_12_3_RDEPEND="
-	=dev-util/nvidia-cuda-toolkit-12.3*
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		>=dev-util/nvidia-cuda-toolkit-545.23
+	)
 "
 CUDA_12_4_RDEPEND="
-	=dev-util/nvidia-cuda-toolkit-12.4*
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		>=dev-util/nvidia-cuda-toolkit-550.54
+	)
 "
 CUDA_12_5_RDEPEND="
-	=dev-util/nvidia-cuda-toolkit-12.5*
+	(
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		>=dev-util/nvidia-cuda-toolkit-555.42
+	)
 "
 CUDA_12_6_RDEPEND="
-	=dev-util/nvidia-cuda-toolkit-12.6*
+	(
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		>=dev-util/nvidia-cuda-toolkit-560.35
+	)
 "
 CUDA_12_8_RDEPEND="
-	=dev-util/nvidia-cuda-toolkit-12.8*
+	(
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=dev-util/nvidia-cuda-toolkit-570.124
+	)
 "
 RDEPEND="
 	cuda_targets_sm_35? (
@@ -318,9 +336,9 @@ RDEPEND="
 		llvm-core/llvm:=
 	)
 	remote-offloading? (
-		net-libs/grpc:3[${LIBSTDCXX_USEDEP},cxx]
+		net-libs/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP},cxx]
 		net-libs/grpc:=
-		virtual/grpc:3[${LIBSTDCXX_USEDEP}]
+		virtual/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP}]
 		virtual/grpc:=
 	)
 "
