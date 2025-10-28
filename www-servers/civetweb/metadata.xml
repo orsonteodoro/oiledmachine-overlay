@@ -18,26 +18,8 @@
     <flag name="asan">
       Enables ASAN in debug mode.
     </flag>
-    <flag name="c11">
-      Uses the C11 standard
-    </flag>
-    <flag name="c89">
-      Uses the C89 standard
-    </flag>
-    <flag name="c99">
-      Uses the C99 standard
-    </flag>
-    <flag name="cxx11">
-      Uses the C++11 standard
-    </flag>
-    <flag name="cxx14">
-      Uses the C++14 standard
-    </flag>
     <flag name="cgi">
       Enables CGI and turns on processing of CGI scripts
-    </flag>
-    <flag name="gnu17">
-      Uses the default C
     </flag>
     <flag name="cxx">
       Enables C++ bindings

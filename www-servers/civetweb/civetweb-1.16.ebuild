@@ -3,16 +3,20 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="server untrusted-data"
-CMAKE_MAKEFILE_GENERATOR="emake"
-# CMakeLists.txt lists versions
-# See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
-LUA_5_1_MIN="5.1.5"
-LUA_5_2_MIN="5.2.4"
-LUA_5_3_MIN="5.3.6"
-LUA_5_4_MIN="5.4.3"
-# Building with 5.1 is broken.
-LUA_COMPAT=( "lua5-"{1..4} )
+_C_STANDARD=(
+	"c_standard_c89"
+	"c_standard_c99"
+	"c_standard_c11" # Equivalent to auto
+	"+c_standard_c17"
+)
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx98"
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14" # Equivalent to auto
+	"+cxx_standard_cxx17"
+)
+
 # CI uses U 14.04
 LUA_IMPLS=(
 	"5.1"
@@ -26,6 +30,27 @@ LUA_PV_SUPPORTED=(
 	"5.3.5"
 	"5.4.0"
 ) # Upstream supported specifically
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+)
+
+CFLAGS_HARDENED_USE_CASES="server untrusted-data"
+CMAKE_MAKEFILE_GENERATOR="emake"
+# CMakeLists.txt lists versions
+# See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
+LUA_5_1_MIN="5.1.5"
+LUA_5_2_MIN="5.2.4"
+LUA_5_3_MIN="5.3.6"
+LUA_5_4_MIN="5.4.3"
+# Building with 5.1 is broken.
+LUA_COMPAT=( "lua5-"{1..4} )
 
 inherit cflags-hardened check-compiler-switch cmake flag-o-matic lua multilib-minimal sandbox-changes
 
@@ -41,8 +66,10 @@ HOMEPAGE="https://github.com/civetweb/civetweb"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
+${_C_STANDARD[@]}
+${_CXX_STANDARD[@]}
 ${LUA_COMPAT[@]/#/lua_targets_}
-+asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
++asan +cgi -cxx +caching debug doc
 -duktape +ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
 static-libs -test -websockets -zlib
 ebuild_revision_15
@@ -51,7 +78,7 @@ REQUIRED_USE+="
 	lua? (
 		!static-libs
 		${LUA_REQUIRED_USE}
-		gnu17
+		c_standard_c17
 	)
 	lua_targets_lua5-1? (
 		lua
@@ -66,15 +93,10 @@ REQUIRED_USE+="
 		lua
 	)
 	^^ (
-		c11
-		c89
-		c99
-		gnu17
+		${_C_STANDARD[@]/+}
 	)
 	^^ (
-		cxx11
-		cxx14
-		cxx98
+		${_CXX_STANDARD[@]/+}
 	)
 	?? (
 		lua_targets_lua5-1
@@ -232,9 +254,6 @@ _usex_lto() {
 
 _configure() {
 	cflags-hardened_append
-	# CIVETWEB_CXX_STANDARD auto is c++14 > c++11 > c++98 depending on
-	#   the compiler
-	# CIVETWEB_C_STANDARD auto is c11 > c98 > c89 depending on compiler
 	# CIVETWEB_LUA_VERSION is either 5.1.5 5.2.4 5.3.5 5.4.0 based
 	#   on src/third_party/lua-<PV>
 
@@ -243,21 +262,17 @@ _configure() {
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/share/pkgconfig"
 
 	local mycmakeargs=(
+		$(usex c_standard_cxx98 '-DCIVETWEB_C_STANDARD=c98' '')
+		$(usex c_standard_cxx99 '-DCIVETWEB_C_STANDARD=c99' '')
+		$(usex c_standard_cxx11 '-DCIVETWEB_C_STANDARD=c11' '')
+		$(usex c_standard_gnu17 '-DCIVETWEB_C_STANDARD=c17' '')
+		$(usex cxx_standard_cxx98 '-DCIVETWEB_CXX_STANDARD=c++98' '')
+		$(usex cxx_standard_cxx11 '-DCIVETWEB_CXX_STANDARD=c++11' '')
+		$(usex cxx_standard_cxx14 '-DCIVETWEB_CXX_STANDARD=c++14' '')
+		$(usex cxx_standard_gnuxx17 '-DCIVETWEB_CXX_STANDARD=gnu++17' '')
 		-D_GET_LIBDIR=$(get_libdir)
 		-DCIVETWEB_BUILD_TESTING=$(usex test)
-		-DCIVETWEB_C_STANDARD=$(usex gnu17 gnu17 \
-			$(usex c11 c11 \
-				$(usex c99 c99 \
-					$(usex c89 c89 auto) \
-				) \
-			) \
-		)
 		-DCIVETWEB_CXX_ENABLE_LTO=$(_usex_lto)
-		-DCIVETWEB_CXX_STANDARD=$(usex cxx14 cxx14 \
-						$(usex cxx11 cxx11 \
-							$(usex cxx98 cxx11 auto) \
-						) \
-					)
 		-DCIVETWEB_DISABLE_CACHING=$(usex caching "OFF" "ON")
 		-DCIVETWEB_DISABLE_CGI=$(usex cgi "OFF" "ON")
 		-DCIVETWEB_ENABLE_ASAN=$(usex asan)
