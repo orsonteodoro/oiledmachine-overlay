@@ -1350,9 +1350,9 @@ multilib_src_configure() {
 
 	export LIBDIR=$(get_libdir)
 	local mycmakeargs=(
-		$(usex std_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '')				# Project default
-		$(usex std_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
-		$(usex std_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')				# For Protobuf
+		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '')				# Project default
+		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')				# For Protobuf
 		-DBUILD_ANDROID_EXAMPLES=OFF
 		#-DBUILD_ANDROID_SERVICE=OFF
 		-DBUILD_CUDA_STUBS=$(multilib_native_usex cuda)
