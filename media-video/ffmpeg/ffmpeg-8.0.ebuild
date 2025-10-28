@@ -532,7 +532,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio soc sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_48
+ebuild_revision_49
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
@@ -1694,9 +1694,9 @@ get_native_abi_use() {
 }
 
 get_multiabi_ffmpeg() {
-	local btype="${lib_type/-*}"
+	local build_type="${lib_type/-*}"
 	if multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_native_abi_use)]" ; then
-		echo "${MY_ED}/usr/bin/ffmpeg-shared"
+		echo "${MY_ED}/usr/bin/ffmpeg-shared-${ABI}"
 	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[${MULTILIB_ABI_FLAG}]" ; then
 		echo "${MY_ED}/usr/bin/ffmpeg-shared-${ABI}"
 	else
@@ -4027,11 +4027,11 @@ run_trainer_av_codecs() {
 }
 
 train_trainer_custom() {
-	local btype="${lib_type/-*}"
+	local build_type="${lib_type/-*}"
 	if multilib_is_native_abi ; then
-		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"
+		export FFMPEG="${ED}/usr/bin/ffmpeg-${build_type}"
 	else
-		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}-${ABI}"
+		export FFMPEG="${ED}/usr/bin/ffmpeg-${build_type}-${ABI}"
 	fi
 	export MY_ED="${ED}"
 	# Currently only full codecs supported.
@@ -4146,21 +4146,18 @@ _install() {
 	fi
 
 	# Prevent clobbering so that we can pgo optimize external codecs in different ABIs
-	local btype="${lib_type/-*}"
-	if ! multilib_is_native_abi ; then
-		mv "${ED}/${prefix}/bin/ffmpeg"{"","-${btype}-${ABI}"} || die
-		mv "${ED}/${prefix}/bin/ffprobe"{"","-${btype}-${ABI}"} || die
-		if [[ -e "${ED}/${prefix}/bin/ffplay" ]] ; then
-			mv "${ED}/${prefix}/bin/ffplay"{"","-${btype}-${ABI}"} || die
-		fi
-	else
-		mv "${ED}/${prefix}/bin/ffmpeg"{"","-${btype}"} || die
-		mv "${ED}/${prefix}/bin/ffprobe"{"","-${btype}"} || die
-		dosym "/${prefix}/bin/ffmpeg-${btype}" "/${prefix}/bin/ffmpeg"
-		dosym "/${prefix}/bin/ffprobe-${btype}" "/${prefix}/bin/ffprobe"
-		if [[ -e "${ED}/${prefix}/bin/ffplay" ]] ; then
-			mv "${ED}/${prefix}/bin/ffplay"{"","-${btype}"} || die
-			dosym "/${prefix}/bin/ffplay-${btype}" "/${prefix}/bin/ffplay"
+	local build_type="${lib_type/-*}" # static or shared
+	mv "${ED}/${prefix}/bin/ffmpeg"{"","-${build_type}-${ABI}"} || die
+	mv "${ED}/${prefix}/bin/ffprobe"{"","-${build_type}-${ABI}"} || die
+	if [[ -e "${ED}/${prefix}/bin/ffplay" ]] ; then
+		mv "${ED}/${prefix}/bin/ffplay"{"","-${build_type}-${ABI}"} || die
+	fi
+
+	if multilib_is_native_abi && [[ "${build_type}" =~ "shared" ]] ; then
+		dosym "/${prefix}/bin/ffmpeg-${build_type}-${ABI}" "/${prefix}/bin/ffmpeg"
+		dosym "/${prefix}/bin/ffprobe-${build_type}-${ABI}" "/${prefix}/bin/ffprobe"
+		if [[ -e "${ED}/${prefix}/bin/ffplay-${build_type}-${ABI}" ]] ; then
+			dosym "/${prefix}/bin/ffplay-${build_type}-${ABI}" "/${prefix}/bin/ffplay"
 		fi
 	fi
 
