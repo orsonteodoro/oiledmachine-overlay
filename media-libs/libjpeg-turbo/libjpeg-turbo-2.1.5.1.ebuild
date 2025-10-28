@@ -351,6 +351,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		cflags-hardened_append
 	fi
 
+	fix_mb_len_max
+
 	if use pgo && tc-is-clang ; then
 		append-flags $(test-flags -Wno-backend-plugin)
 		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
