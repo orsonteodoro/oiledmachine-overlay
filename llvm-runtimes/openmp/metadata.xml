@@ -40,7 +40,7 @@
     <flag name="ompt">
       Enable OpenMP Tools Interface support
     </flag>
-    <flag name="rpc">
+    <flag name="remote-offloading">
       Add support for remote offloading.  (EXPERIMENTAL)
     </flag>
   </use>

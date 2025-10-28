@@ -25,7 +25,7 @@
     <flag name="offload">
       Add support for offloading computation to GPUs.
     </flag>
-    <flag name="rpc">
+    <flag name="remote-offloading">
       Add support for remote offloading.  (EXPERIMENTAL)
     </flag>
   </use>

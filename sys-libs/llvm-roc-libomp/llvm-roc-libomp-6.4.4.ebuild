@@ -143,7 +143,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-+archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
++archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
 ebuild_revision_29
 "
 
@@ -190,7 +190,7 @@ REQUIRED_USE="
 	ompd? (
 		ompt
 	)
-	rpc? (
+	remote-offloading? (
 		offload
 	)
 	^^ (
@@ -349,7 +349,7 @@ RDEPEND="
 		dev-libs/libffi:=
 		virtual/libelf:=
 	)
-	rpc? (
+	remote-offloading? (
 		net-libs/grpc:3[${LIBSTDCXX_USEDEP},cxx]
 		net-libs/grpc:=
 		virtual/grpc:3[${LIBSTDCXX_USEDEP}]
@@ -544,7 +544,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
-			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex remote-offloading)
 			-DLIBOMPTARGET_OMPT_SUPPORT=$(usex ompt ON OFF)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
@@ -577,7 +577,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
 		)
 	fi
-	if use rpc ; then
+	if use remote-offloading ; then
 		mycmakeargs+=(
 			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/grpc"
 			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"

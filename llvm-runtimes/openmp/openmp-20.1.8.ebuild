@@ -83,7 +83,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM20_REVISION}
-debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
+debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
 ebuild_revision_9
 "
 gen_cuda_required_use() {
@@ -105,6 +105,9 @@ REQUIRED_USE="
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	remote-offloading? (
+		offload
 	)
 "
 CUDA_11_8_RDEPEND="
@@ -312,6 +315,12 @@ RDEPEND="
 		~llvm-core/llvm-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		llvm-core/llvm:=
 	)
+	remote-offloading? (
+		net-libs/grpc:3[${LIBSTDCXX_USEDEP},cxx]
+		net-libs/grpc:=
+		virtual/grpc:3[${LIBSTDCXX_USEDEP}]
+		virtual/grpc:=
+	)
 "
 # Tests:
 # - dev-python/lit provides the test runner
@@ -378,6 +387,9 @@ ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 
 src_prepare() {
 	llvm.org_src_prepare # Already calls cmake_src_prepare
+	pushd "${WORKDIR}" || die
+		eapply "${FILESDIR}/${PN}-18.1.8-protobuf_install_path.patch"
+	popd
 }
 
 gen_nvptx_list() {
@@ -433,6 +445,7 @@ multilib_src_configure() {
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex remote-offloading)
 
 	# Prevent trying to access the GPU
 			-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
@@ -459,6 +472,7 @@ eerror
 			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=OFF
 			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
 		)
 	fi
@@ -470,6 +484,14 @@ eerror
 		-DOPENMP_TEST_C_COMPILER=$(type -P "${CHOST}-clang")
 		-DOPENMP_TEST_CXX_COMPILER=$(type -P "${CHOST}-clang++")
 	)
+
+	if use remote-offloading ; then
+		mycmakeargs+=(
+			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/grpc"
+			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+		)
+	fi
+
 	addpredict "/dev/nvidiactl"
 	addpredict "/proc/self/task/"
 	cmake_src_configure
