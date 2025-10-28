@@ -37,7 +37,9 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
+GRPC_SLOT="3"
 LLVM_SLOT="${PV%%.*}"
+PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_11" )
 
 inherit llvm-ebuilds
@@ -407,7 +409,7 @@ eerror
 
 	if use remote-offloading ; then
 		mycmakeargs+=(
-			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/grpc"
+			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
 			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 		)
 	fi

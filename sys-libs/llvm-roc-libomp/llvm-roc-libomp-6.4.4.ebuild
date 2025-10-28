@@ -16,9 +16,6 @@ LLVM_TARGETS_GPU_COMPAT=(
 	llvm_targets_NVPTX
 )
 
-GRPC_SLOT="3"
-PROTOBUF_SLOT="3"
-
 IUSE+="
 ${LLVM_TARGETS_CPU_COMPAT[@]}
 ${LLVM_TARGETS_GPU_COMPAT[@]}
@@ -100,7 +97,9 @@ CUDA_TARGETS_COMPAT=(
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17
+GRPC_SLOT="3"
 LLVM_SLOT=19
+PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
@@ -579,7 +578,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 	if use remote-offloading ; then
 		mycmakeargs+=(
-			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/grpc"
+			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
 			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 		)
 	fi
