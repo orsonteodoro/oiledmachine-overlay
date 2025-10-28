@@ -347,7 +347,9 @@ RDEPEND="
 		virtual/libelf:=
 	)
 	rpc? (
-		net-libs/grpc[${LIBSTDCXX_USEDEP},cxx]
+		net-libs/grpc:3[${LIBSTDCXX_USEDEP},cxx]
+		net-libs/grpc:=
+		virtual/grpc:3[${LIBSTDCXX_USEDEP}]
 		virtual/grpc:=
 	)
 "
