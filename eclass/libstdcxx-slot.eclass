@@ -237,11 +237,14 @@ _GLIBCXX_VER_VERIFIED=0
 # @DESCRIPTION:
 # Verify libstdc++ version before compiling
 libstdcxx-slot_verify() {
-	local gcc_slot=$(gcc-config -c | cut -f 5 -d "-")
-	local actual_gcc_version=$(${CHOST}-gcc-${gcc_slot} --version | head -n 1 | cut -f 5 -d " ")
+# Use abspath to avoid:
+# ccache: error: Could not find compiler "x86_64-pc-linux-gnu-gcc-13" in PATH
+	local gcc_slot=$("${ESYSROOT}/usr/bin/gcc-config" -c | cut -f 5 -d "-")
+	local actual_gcc_version=$("${ESYSROOT}/usr/bin/${CHOST}-gcc-${gcc_slot}" --version | head -n 1 | cut -f 5 -d " ")
 	local actual_gcc_ver2=$(ver_cut 1-2 "${actual_gcc_version}")
 	local k="GCC_${actual_gcc_ver2/./_}"
 	local actual_libstdcxx_ver="${!k}"
+
 	local x
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
