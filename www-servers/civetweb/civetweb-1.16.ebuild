@@ -31,14 +31,16 @@ LUA_PV_SUPPORTED=(
 	"5.4.0"
 ) # Upstream supported specifically
 
+CXX_STANDARD=17 # Originally 14 which is equivalent to build files auto
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 CFLAGS_HARDENED_USE_CASES="server untrusted-data"
@@ -52,7 +54,7 @@ LUA_5_4_MIN="5.4.3"
 # Building with 5.1 is broken.
 LUA_COMPAT=( "lua5-"{1..4} )
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic lua multilib-minimal sandbox-changes
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot lua multilib-minimal sandbox-changes
 
 KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/civetweb-${PV}"
@@ -196,6 +198,8 @@ eerror "implementation to alternative and back again via eselect."
 eerror
 		die
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 get_lib_types() {
