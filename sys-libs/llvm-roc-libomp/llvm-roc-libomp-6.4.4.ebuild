@@ -16,6 +16,9 @@ LLVM_TARGETS_GPU_COMPAT=(
 	llvm_targets_NVPTX
 )
 
+GRPC_SLOT="3"
+PROTOBUF_SLOT="3"
+
 IUSE+="
 ${LLVM_TARGETS_CPU_COMPAT[@]}
 ${LLVM_TARGETS_GPU_COMPAT[@]}
@@ -394,6 +397,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
 	python-single-r1_pkg_setup
+einfo "PATH:  ${PATH}"
 	libstdcxx-slot_verify
 }
 
@@ -403,6 +407,7 @@ src_prepare() {
 #	eapply "${FILESDIR}/llvm-roc-libomp-6.2.0-omp-tools-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp.h-includes.patch"
 #	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-6.4.4-protobuf_install_path.patch"
 	cd "${S}" || die
 	cmake_src_prepare
 
@@ -570,6 +575,12 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=OFF
 			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+		)
+	fi
+	if use rpc ; then
+		mycmakeargs+=(
+			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/grpc"
+			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 		)
 	fi
 	einfo "CONFIGURE START ${mycmakeargs[@]}"
