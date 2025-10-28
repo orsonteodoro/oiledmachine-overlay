@@ -285,7 +285,6 @@ X86_CPU_FEATURES_RAW=(
 	avx:avx
 	avx2:avx2
 	avx512bw:avx512
-	avx512gfni:avx512icl
 	fma3:fma3
 	fma4:fma4
 	mmx:mmx
@@ -349,9 +348,6 @@ X86_CPU_REQUIRED_USE="
 	)
 	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx2
-	)
-	cpu_flags_x86_avx512gfni? (
-		cpu_flags_x86_avx512bw
 	)
 "
 
