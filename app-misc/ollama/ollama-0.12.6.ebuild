@@ -129,12 +129,12 @@ CUDA_FATTN_TARGETS_COMPAT=(
 	"sm_90a"
 	"sm_120"
 
-	"75-virtual"
-	"80-virtual"
-	"86-virtual"
-	"87-virtual"
-	"89-virtual"
-	"90-virtual"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_87"
+	"compute_89"
+	"compute_90"
 )
 CUDA_TARGETS_COMPAT=(
 	"sm_50"
@@ -150,16 +150,16 @@ CUDA_TARGETS_COMPAT=(
 	"sm_90a"
 	"sm_120"
 
-	"50-virtual"
-	"60-virtual"
-	"61-virtual"
-	"70-virtual"
-	"75-virtual"
-	"80-virtual"
-	"86-virtual"
-	"87-virtual"
-	"89-virtual"
-	"90-virtual"
+	"compute_50"
+	"compute_60"
+	"compute_61"
+	"compute_70"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_87"
+	"compute_89"
+	"compute_90"
 )
 
 CXX_STANDARD=17
@@ -3105,6 +3105,72 @@ BDEPEND="
 			)
 		)
 		cuda_targets_sm_120? (
+			|| (
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+
+
+		cuda_targets_compute_50? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+			)
+		)
+		cuda_targets_compute_60? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+			)
+		)
+		cuda_targets_compute_61? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+			)
+		)
+		cuda_targets_compute_70? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+			)
+		)
+		cuda_targets_compute_75? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+		cuda_targets_compute_80? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+		cuda_targets_compute_86? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+		cuda_targets_compute_89? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+		cuda_targets_compute_90? (
+			|| (
+				${CUDA_12_8_BDEPEND}
+				${CUDA_13_0_BDEPEND}
+			)
+		)
+		cuda_targets_compute_90? (
 			|| (
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
