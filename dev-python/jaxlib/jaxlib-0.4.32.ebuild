@@ -88,7 +88,7 @@ EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 JAVA_SLOT="11"
 LLVM_MAX_SLOT="21"
-PYTHON_COMPAT=( "python3_"{11..13} ) # Limited by Flax CI
+PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
 inherit bazel cflags-hardened check-compiler-switch cuda distutils-r1 dhms
 inherit flag-o-matic git-r3 hip-versions java-pkg-opt-2 libcxx-slot libstdcxx-slot llvm pypi
@@ -544,21 +544,24 @@ RDEPEND+="
 	!dev-python/jaxlib-bin
 	!sci-libs/jaxlib-bin
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
-		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
-	')
+		>=dev-python/numpy-1.24[${PYTHON_USEDEP}]
+	' python3_11)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26[${PYTHON_USEDEP}]
+	' python3_12)
 	>=app-arch/snappy-1.1.10[${LIBSTDCXX_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0[${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
-		=dev-util/nvidia-cuda-toolkit-12.3*:=
+		=dev-util/nvidia-cuda-toolkit-12.3*
 		dev-util/nvidia-cuda-toolkit:=
 		=dev-libs/cudnn-9*
 		dev-libs/cudnn:=
 		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
 		virtual/cuda-compiler:=
+		>=x11-drivers/nvidia-drivers-545.23
 	)
 	rocm? (
 		$(gen_rocm_depends)

@@ -38,8 +38,8 @@ ebuild_revision_2
 # in experimental but not in tests folder.
 DEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-		>=dev-python/scipy-1.9[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.24[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.10[${PYTHON_USEDEP}]
 	' python3_11)
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
@@ -49,12 +49,15 @@ DEPEND+="
 		>=dev-python/ml-dtypes-0.2.0[${PYTHON_USEDEP}]
 		dev-python/opt-einsum[${PYTHON_USEDEP}]
 		australis? (
-			dev-libs/protobuf:0/3.21
-			dev-libs/protobuf:=
+			virtual/protobuf:3
+			virtual/protobuf:=
 		)
 		cuda? (
-			=dev-libs/cudnn-8.8*
-			=dev-util/nvidia-cuda-toolkit-12*
+			=dev-libs/cudnn-9*
+			dev-libs/cudnn:=
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			dev-util/nvidia-cuda-toolkit:=
+			>=x11-drivers/nvidia-drivers-545.23
 		)
 	')
 	>=dev-python/jaxlib-${PV}[${PYTHON_SINGLE_USEDEP},cpu=,cuda=,rocm=]
@@ -64,8 +67,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		dev-libs/protobuf:0/3.21
-		dev-libs/protobuf:=
+		virtual/protobuf:3
+		virtual/protobuf:=
 		dev-python/build[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		test? (
