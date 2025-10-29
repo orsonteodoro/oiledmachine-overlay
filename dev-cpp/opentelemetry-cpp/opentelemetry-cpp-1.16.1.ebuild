@@ -66,11 +66,7 @@ RDEPEND="
 		virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 	)
-	otlp-file? (
-		>=dev-cpp/nlohmann_json-3.11.3
-	)
 	otlp-http? (
-		>=dev-cpp/nlohmann_json-3.11.3
 		>=net-misc/curl-8.4.0
 		net-misc/curl:=
 	)
@@ -83,6 +79,14 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	otlp-file? (
+		>=dev-cpp/nlohmann_json-3.11.3
+	)
+	otlp-http? (
+		>=dev-cpp/nlohmann_json-3.11.3
+	)
+"
+BDEPEND="
 	test? (
 		>=dev-cpp/benchmark-1.8.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=dev-cpp/gtest-1.14.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

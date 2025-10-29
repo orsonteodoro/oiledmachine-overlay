@@ -72,7 +72,6 @@ RDEPEND="
 		virtual/protobuf:=
 	)
 	otlp-http? (
-		>=dev-cpp/nlohmann_json-3.11.2
 		>=net-misc/curl-7.73.0
 		net-misc/curl:=
 	)
@@ -82,6 +81,11 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	otlp-http? (
+		>=dev-cpp/nlohmann_json-3.11.2
+	)
+"
+BDEPEND="
 	test? (
 		>=dev-cpp/benchmark-1.8.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=dev-cpp/gtest-1.14.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
