@@ -57,19 +57,6 @@ REQUIRED_USE="
 		cxx_standard_cxx17
 	)
 "
-gen_otlp_grpc_rdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo  "
-			(
-				=net-libs/grpc-${s1}*
-				dev-libs/protobuf:0/${s2}
-			)
-		"
-	done
-}
 RDEPEND="
 	dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
@@ -88,7 +75,7 @@ RDEPEND="
 		net-misc/curl:=
 	)
 	prometheus? (
-		>=dev-cpp/prometheus-cpp-1.2.4
+		>=dev-cpp/prometheus-cpp-1.2.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	zlib? (
 		>=sys-libs/zlib-1.2.13
@@ -97,8 +84,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/benchmark-1.8.3
-		>=dev-cpp/gtest-1.14.0
+		>=dev-cpp/benchmark-1.8.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/gtest-1.14.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 PATCHES=(
