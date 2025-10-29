@@ -1013,7 +1013,7 @@ RDEPEND="
 		>=dev-libs/sleef-3.8.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
 		>=sci-ml/onnx-1.18.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sci-ml/onnx:=
-		>=dev-cpp/opentelemetry-cpp-1.14.2
+		>=dev-cpp/opentelemetry-cpp-1.14.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 		cuda? (
@@ -1060,14 +1060,12 @@ DEPEND="
 		$(python_gen_cond_dep '
 			>=dev-python/pybind11-2.13.6[${PYTHON_USEDEP}]
 		')
-		>=dev-libs/flatbuffers-24.12.23
+		>=dev-libs/flatbuffers-24.12.23[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=sci-ml/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2023.11.30
 		>=dev-libs/psimd-2020.05.17
 		>=sci-ml/kineto-0.4.0_p20250616
-		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
 		cuda? (
 			>=dev-libs/cutlass-3.9.2
 		)
@@ -1183,8 +1181,10 @@ BDEPEND="
 		$(gen_clang)
 	)
 	system-libs? (
+		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:=
 		test? (
-			>=dev-cpp/benchmark-1.9.3
+			>=dev-cpp/benchmark-1.9.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 "
