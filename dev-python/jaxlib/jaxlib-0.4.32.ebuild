@@ -587,7 +587,6 @@ RESTRICT="mirror"
 DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
-	"0050-toolchain-prefix.patch"
 )
 
 distutils_enable_tests "pytest"
@@ -899,23 +898,6 @@ prepare_jaxlib() {
 	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
 }
 
-gen_gcc_ar(){
-	local gcc_slot=$(gcc-major-version)
-	local dir
-	dir="${WORKDIR}/jax-jax-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
-cat <<-EOF > "${T}/gcc-ar.sh"
-#!/usr/bin/env bash
-GCC_AR_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}"
-ARGS="\${1}"
-shift
-DEST="\${1}"
-shift
-cd "${dir}"
-"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@}"
-EOF
-	chmod +x "${T}/gcc-ar.sh" || die
-}
-
 python_prepare_all() {
 	distutils-r1_python_prepare_all
 	cuda_src_prepare
@@ -961,14 +943,7 @@ ewarn
 					|| die
 			popd
 		done
-
-		sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
-			"third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
-			"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
-			|| die
 	fi
-
-	gen_gcc_ar
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		sed -i -e "s|LLVM_CCACHE_BUILD OFF|LLVM_CCACHE_BUILD ON|g" \
