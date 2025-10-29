@@ -67,7 +67,10 @@ fi
 # @DESCRIPTION:
 # Definitive list of Rust slots and the associated LLVM slot, newest first.
 declare -A -g -r _RUST_LLVM_MAP=(
-	["9999"]=20
+	["9999"]=21
+	["1.90.0"]=20
+	["1.89.0"]=20
+	["1.88.0"]=20
 	["1.87.0"]=20
 	["1.86.0"]=19
 	["1.85.1"]=19
@@ -84,7 +87,6 @@ declare -A -g -r _RUST_LLVM_MAP=(
 	["1.76.0"]=17
 	["1.75.0"]=17
 	["1.74.1"]=17
-	["1.71.1"]=16
 )
 
 # @ECLASS_VARIABLE: _RUST_SLOTS_ORDERED
@@ -94,24 +96,7 @@ declare -A -g -r _RUST_LLVM_MAP=(
 # While _RUST_LLVM_MAP stores useful info about the relationship between Rust and LLVM slots,
 # this array is used to store the Rust slots in a more convenient order for iteration.
 declare -a -g -r _RUST_SLOTS_ORDERED=(
-	"9999"
-	"1.87.0"
-	"1.86.0"
-	"1.85.1"
-	"1.85.0"
-	"1.84.1"
-	"1.84.0"
-	"1.83.0"
-	"1.82.0"
-	"1.81.0"
-	"1.80.1"
-	"1.79.0"
-	"1.78.0"
-	"1.77.1"
-	"1.76.0"
-	"1.75.0"
-	"1.74.1"
-	"1.71.1"
+	"${!_RUST_LLVM_MAP[@]}"
 )
 
 # == user control knobs ==
@@ -291,9 +276,29 @@ _rust_set_globals() {
 					fi
 				done
 				if [[ "${#slot_dep_content[@]}" -ne 0 ]]; then
-					rust_dep+=( "llvm_slot_${llvm_slot}? ( || ( ${slot_dep_content[*]} ) )" )
+					rust_dep+=(
+						"
+						llvm_slot_${llvm_slot}? (
+							|| (
+								${slot_dep_content[*]}
+							)
+						)
+						"
+					)
 				else
-					die "${FUNCNAME}: no Rust slots found for LLVM slot ${llvm_slot}"
+eerror
+eerror "${FUNCNAME}:  No Rust slots were found for LLVM slot ${llvm_slot} for"
+eerror "${CATEGORY}/${P} ebuild."
+eerror
+eerror "The RUST_MIN_VER (inclusive) and RUST_MAX_VER (inclusive) range is"
+eerror "missing LLVM_SLOT ${llvm_slot}."
+eerror
+eerror "Either change LLVM_COMPAT to exclude LLVM_SLOT ${llvm_slot} or change"
+eerror "the RUST_MIN_VER or RUST_MAX_VER to include a Rust release that was"
+eerror "built with LLVM ${llvm_slot}.  See Rust's src/llvm-project section in"
+eerror ".gitmodules for details."
+eerror
+					die
 				fi
 			fi
 		done

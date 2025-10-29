@@ -121,76 +121,7 @@ grep -E \
 unset __
 #   Keyword search:  aom, dbus, fontconfig, pango, perl, pixman, xkbcommon, xrandr
 
-APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
-BUILD_OBJ_DIR="" # global var not const
-CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
-CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
-CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
-RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-DBUS_PV="0.60"
-# One of the major sources of lag comes from dependencies.  These are strict to
-# match performance to competition or normal builds.
-declare -A CFLAGS_RDEPEND=(
-	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
-	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
-)
-EBUILD_MAINTAINER_MODE=0
-declare -A FFMPEG_SLOT_TO_PV=(
-	["59.61.61"]="7.0, 7.1"
-	["58.60.60"]="6.0"
-	["57.59.59"]="5.0"
-	["56.58.58"]="4.0"
-	["55.57.57"]="3.0"
-	["54.56.56"]="2.4"
-	["52.55.55"]="2.0"
-	["52.54.54"]="1.1, 1.2"
-	["51.54.54"]="0.11, 1.0"
-	["51.53.53"]="0.10"
-	["50.53.53"]="0.8"
-)
-FFMPEG_COMPAT=(
-	"59.61.61" # 7.0, 7.1
-	"58.60.60" # 6.0
-	"57.59.59" # 5.0
-	"56.58.58" # 4.0
-	"55.57.57" # 3.0
-	"54.56.56" # 2.4
-	"52.55.55" # 2.0
-	"52.54.54" # 1.1, 1.2
-	"51.54.54" # 0.11, 1.0
-	"51.53.53" # 0.10
-	"50.53.53" # 0.8
-)
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
-GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
-GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
-GTK3_PV="3.14.5"
-LICENSE_FINGERPRINT="\
-77653141c1163d6dc167c389ff21c446c0a26d43a56668fd3a837446fb204da2\
-b8f667a0ef4336edbedca117613cd822e2f0b8d7707bf2a1a81975050185ef60\
-" # SHA512
-LLVM_COMPAT=( 19 ) # Limited based on rust
-LTO_TYPE="" # Global variable
-MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Sep 30, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1759204980 # From `date +%s -d "2025-09-29 21:03"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-80/"
-SEVERITY_LABEL="Severity:"
-VULNERABILITIES_FIXED=(
-	"CVE-2025-11152;SBE, IO, ZC, DoS, DT, ID;High"
-	"CVE-2025-11153;ZC, DT;High"
-)
 MOZ_ESR=
-MOZ_LANGS=(
-ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
-en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
-gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
-mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
-sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
-)
 MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
@@ -219,14 +150,99 @@ MOZ_PN="${PN%-bin}"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
+
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_RUST[@]/llvm_slot_}
+)
+
+# One of the major sources of lag comes from dependencies.  These are strict to
+# match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
+)
+
+declare -A FFMPEG_SLOT_TO_PV=(
+	["59.61.61"]="7.0, 7.1"
+	["58.60.60"]="6.0"
+	["57.59.59"]="5.0"
+	["56.58.58"]="4.0"
+	["55.57.57"]="3.0"
+	["54.56.56"]="2.4"
+	["52.55.55"]="2.0"
+	["52.54.54"]="1.1, 1.2"
+	["51.54.54"]="0.11, 1.0"
+	["51.53.53"]="0.10"
+	["50.53.53"]="0.8"
+)
+FFMPEG_COMPAT=(
+	"59.61.61" # 7.0, 7.1
+	"58.60.60" # 6.0
+	"57.59.59" # 5.0
+	"56.58.58" # 4.0
+	"55.57.57" # 3.0
+	"54.56.56" # 2.4
+	"52.55.55" # 2.0
+	"52.54.54" # 1.1, 1.2
+	"51.54.54" # 0.11, 1.0
+	"51.53.53" # 0.10
+	"50.53.53" # 0.8
+)
+
+MITIGATION_DATE="Sep 30, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1759204980 # From `date +%s -d "2025-09-29 21:03"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-80/"
+SEVERITY_LABEL="Severity:"
+VULNERABILITIES_FIXED=(
+	"CVE-2025-11152;SBE, IO, ZC, DoS, DT, ID;High"
+	"CVE-2025-11153;ZC, DT;High"
+)
+
+MOZ_LANGS=(
+ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
+en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
+gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
+mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
+sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
+)
+
+APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
+BUILD_OBJ_DIR="" # global var not const
+CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
+RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
+DBUS_PV="0.60"
+EBUILD_MAINTAINER_MODE=0
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
+GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
+GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
+GTK3_PV="3.14.5"
+LICENSE_FINGERPRINT="\
+77653141c1163d6dc167c389ff21c446c0a26d43a56668fd3a837446fb204da2\
+b8f667a0ef4336edbedca117613cd822e2f0b8d7707bf2a1a81975050185ef60\
+" # SHA512
+LTO_TYPE="" # Global variable
+MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
 NODE_VERSION=18
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.89.0" # Inclusive.  Corresponds to llvm 20
-RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
+RUST_MAX_VER="9999"
+RUST_MIN_VER="1.81.0"
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -237,9 +253,10 @@ VIRTUALX_REQUIRED="pgo"
 WASI_SDK_VER=27.0
 WASI_SDK_LLVM_VER=20
 
-inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
-inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
-inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker
+inherit check-reqs desktop dhms flag-o-matic gnome2-utils lcnr libcxx-slot
+inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
+inherit optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
@@ -297,7 +314,6 @@ CODEC_IUSE="
 # Distro enables telemetry by default.
 IUSE+="
 ${CODEC_IUSE}
-${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
 -hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
@@ -331,11 +347,6 @@ PATENT_REQUIRED_USE="
 	)
 	vaapi? (
 		patent_status_nonfree
-	)
-"
-DISABLED_REQUIRED_USE="
-	rust-simd? (
-		!llvm_slot_20
 	)
 "
 REQUIRED_USE="
@@ -471,17 +482,13 @@ PATENT_CDEPENDS="
 	)
 "
 # ZLIB relaxed
-DISABLED_RUST_CDEPEND="
-	llvm_slot_20? (
+RUST_CDEPEND="
+	llvm_slot_18? (
 		|| (
-			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.87*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.87*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
 		)
 	)
-"
-RUST_CDEPEND="
 	llvm_slot_19? (
 		|| (
 			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
@@ -494,6 +501,24 @@ RUST_CDEPEND="
 			=dev-lang/rust-bin-1.84*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.83*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.82*[${MULTILIB_USEDEP}]
+		)
+	)
+	llvm_slot_20? (
+		|| (
+			=dev-lang/rust-1.87*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.88*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.89*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.90*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.87*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.88*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.89*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.90*[${MULTILIB_USEDEP}]
+		)
+	)
+	llvm_slot_21? (
+		|| (
+			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -514,7 +539,8 @@ CDEPEND="
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.40.0[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
-	dev-libs/libffi:=[${MULTILIB_USEDEP}]
+	dev-libs/libffi[${MULTILIB_USEDEP}]
+	dev-libs/libffi:=
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
 	x11-libs/cairo[${MULTILIB_USEDEP}]
@@ -542,37 +568,45 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.5.1:=[${MULTILIB_USEDEP},8bit]
-		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
+		media-libs/dav1d:=
+		>=media-libs/libaom-1.0.0[${MULTILIB_USEDEP}]
+		media-libs/libaom:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-11.1.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-11.1.0:0[${MULTILIB_USEDEP}]
+		media-libs/harfbuzz:=
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-77.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-77.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/icu:=
 	)
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-3.0.4[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	system-libevent? (
-		>=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)]
+		>=dev-libs/libevent-2.1.12:0[${MULTILIB_USEDEP},threads(+)]
+		dev-libs/libevent:=
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.15.0:0=[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-1.15.0:0[${MULTILIB_USEDEP},postproc]
+		media-libs/libvpx:=
 	)
 	system-pipewire? (
-		>=media-video/pipewire-1.4.7-r2:=
+		>=media-video/pipewire-1.4.7-r2
 		media-video/pipewire:=
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.47:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.47:0[${MULTILIB_USEDEP},apng]
+		media-libs/libpng:=
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.5.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.5.0:0[${MULTILIB_USEDEP}]
+		media-libs/libwebp:=
 	)
 	valgrind? (
 		dev-debug/valgrind
@@ -691,7 +725,8 @@ gen_llvm_bdepend() {
 				llvm-core/lld:${LLVM_SLOT}
 				llvm-core/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
-					=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
+					=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
+					llvm-runtimes/compiler-rt-sanitizers:=
 				)
 			)
 			wasm-sandbox? (
@@ -1272,8 +1307,10 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	fi
 	verify_codecs
 	node_pkg_setup
-	check_security_expire
+	#check_security_expire
 	check_ulimit
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {

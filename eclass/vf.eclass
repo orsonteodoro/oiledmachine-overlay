@@ -217,6 +217,9 @@ einfo "RC = Race Condition"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
 einfo "SA = Spoofing Attack Vulnerability"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBE"($|" "|";"|",") ]] ; then
+einfo "SBE = Sandbox Escape"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SE"($|" "|";"|",") ]] ; then
 einfo "SE = Sandbox Escape"
 		fi

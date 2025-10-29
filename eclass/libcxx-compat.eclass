@@ -46,6 +46,53 @@ LIBCXX_COMPAT_LTS=(
         "llvm_slot_19" # Support D13
 )
 
+# LLVM_COMPAT template for Rust with LTS compilers
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_RUST_LTS[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_RUST_LTS=(
+        "llvm_slot_18"
+        "llvm_slot_19"
+)
+
+# LLVM_COMPAT template for Rust with Rolling compilers
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_RUST_ROLLING=(
+        "llvm_slot_20"
+        "llvm_slot_21"
+)
+
+# LLVM_COMPAT template for Rust with both LTS and Rolling compilers
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT_RUST=(
+#     ${LIBCXX_COMPAT_RUST[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_RUST=(
+        "llvm_slot_18"
+        "llvm_slot_19"
+        "llvm_slot_20"
+        "llvm_slot_21"
+)
+
 # LLVM_COMPAT template for -std=c++98 projects
 #
 # Status:  Used in production

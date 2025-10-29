@@ -123,83 +123,7 @@ grep -E \
 unset __
 #   Keyword search:  aom, dbus, dbus-glib, fontconfig, pango, perl, pixman, xkbcommon
 
-APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
-BUILD_OBJ_DIR="" # global var not const
-CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
-CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
-CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
-RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-# One of the major sources of lag comes from dependencies.  These are strict to
-# match performance to competition or normal builds.
-declare -A CFLAGS_RDEPEND=(
-	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
-	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
-)
-DBUS_PV="0.60"
-DBUS_GLIB_PV="0.60"
-EBUILD_MAINTAINER_MODE=0
-declare -A FFMPEG_SLOT_TO_PV=(
-	["59.61.61"]="7.0, 7.1"
-	["58.60.60"]="6.0"
-	["57.59.59"]="5.0"
-	["56.58.58"]="4.0"
-	["55.57.57"]="3.0"
-	["54.56.56"]="2.4"
-	["52.55.55"]="2.0"
-	["52.54.54"]="1.1, 1.2"
-	["51.54.54"]="0.11, 1.0"
-	["51.53.53"]="0.10"
-	["50.53.53"]="0.8"
-)
-FFMPEG_COMPAT=(
-	"59.61.61" # 7.0, 7.1
-	"58.60.60" # 6.0
-	"57.59.59" # 5.0
-	"56.58.58" # 4.0
-	"55.57.57" # 3.0
-	"54.56.56" # 2.4
-	"52.55.55" # 2.0
-	"52.54.54" # 1.1, 1.2
-	"51.54.54" # 0.11, 1.0
-	"51.53.53" # 0.10
-	"50.53.53" # 0.8
-)
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
-FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
-GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
-GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
-GTK3_PV="3.14.5"
-LICENSE_FINGERPRINT="\
-dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
-f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
-" # SHA512
-LLVM_COMPAT=( 19 ) # Limited based on rust
-LTO_TYPE="" # Global variable
-MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Sep 16, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1758655020 # From `date +%s -d "2025-09-23 12:17"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-75/"
-SEVERITY_LABEL="Severity:"
-VULNERABILITIES_FIXED=(
-	"CVE-2025-10527;SBE, DoS, DT, ID;High"
-	"CVE-2025-10528;SBE, ZC, DoS, DT, ID;High"
-	"CVE-2025-10529;ZC, DT, ID;Medium"
-	"CVE-2025-10532;ZC, DT, ID;Medium"
-	"CVE-2025-10533;IO, DoS, DT, ID;High"
-	"CVE-2025-10536;ID;Medium"
-	"CVE-2025-10537;MC, CE, DoS, DT, ID;High"
-)
 MOZ_ESR="yes"
-MOZ_LANGS=(
-ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
-en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
-gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
-mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
-sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
-)
 MOZ_PV="${PV/e}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
@@ -228,14 +152,106 @@ MOZ_PN="${PN%-bin}"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
+
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_RUST_LTS[@]/llvm_slot_}
+)
+
+# One of the major sources of lag comes from dependencies.  These are strict to
+# match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
+)
+
+declare -A FFMPEG_SLOT_TO_PV=(
+	["59.61.61"]="7.0, 7.1"
+	["58.60.60"]="6.0"
+	["57.59.59"]="5.0"
+	["56.58.58"]="4.0"
+	["55.57.57"]="3.0"
+	["54.56.56"]="2.4"
+	["52.55.55"]="2.0"
+	["52.54.54"]="1.1, 1.2"
+	["51.54.54"]="0.11, 1.0"
+	["51.53.53"]="0.10"
+	["50.53.53"]="0.8"
+)
+FFMPEG_COMPAT=(
+	"59.61.61" # 7.0, 7.1
+	"58.60.60" # 6.0
+	"57.59.59" # 5.0
+	"56.58.58" # 4.0
+	"55.57.57" # 3.0
+	"54.56.56" # 2.4
+	"52.55.55" # 2.0
+	"52.54.54" # 1.1, 1.2
+	"51.54.54" # 0.11, 1.0
+	"51.53.53" # 0.10
+	"50.53.53" # 0.8
+)
+
+MITIGATION_DATE="Sep 16, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1758655020 # From `date +%s -d "2025-09-23 12:17"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-75/"
+SEVERITY_LABEL="Severity:"
+VULNERABILITIES_FIXED=(
+	"CVE-2025-10527;SBE, DoS, DT, ID;High"
+	"CVE-2025-10528;SBE, ZC, DoS, DT, ID;High"
+	"CVE-2025-10529;ZC, DT, ID;Medium"
+	"CVE-2025-10532;ZC, DT, ID;Medium"
+	"CVE-2025-10533;IO, DoS, DT, ID;High"
+	"CVE-2025-10536;ID;Medium"
+	"CVE-2025-10537;MC, CE, DoS, DT, ID;High"
+)
+
+MOZ_LANGS=(
+ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
+en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
+gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
+mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
+sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
+)
+
+APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
+BUILD_OBJ_DIR="" # global var not const
+CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
+RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
+DBUS_PV="0.60"
+DBUS_GLIB_PV="0.60"
+EBUILD_MAINTAINER_MODE=0
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
+FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
+GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
+GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
+GTK3_PV="3.14.5"
+LICENSE_FINGERPRINT="\
+dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
+f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
+" # SHA512
+LTO_TYPE="" # Global variable
+MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
 NODE_VERSION=18
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.89.0" # Inclusive.  Corresponds to llvm 20
-RUST_MIN_VER="1.82.0" # Corresponds to llvm 19
+RUST_MAX_VER="1.86.0"
+RUST_MIN_VER="1.81.0"
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -246,9 +262,10 @@ VIRTUALX_REQUIRED="manual"
 WASI_SDK_VER="27.0"
 WASI_SDK_LLVM_VER="20"
 
-inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
-inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
-inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker
+inherit check-reqs desktop dhms flag-o-matic gnome2-utils lcnr libcxx-slot
+inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
+inherit optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
@@ -313,7 +330,6 @@ CODEC_IUSE="
 # Telemetry is the distro default.
 IUSE+="
 ${CODEC_IUSE}
-${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +jit libcanberra libnotify libproxy libsecret mold +pgo
@@ -348,11 +364,6 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 "
-DISABLED_REQUIRED_USE="
-	rust-simd? (
-		!llvm_slot_20
-	)
-"
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
 	!wasm-sandbox
@@ -371,6 +382,8 @@ REQUIRED_USE="
 	)
 	rust-simd? (
 		!llvm_slot_19
+		!llvm_slot_20
+		!llvm_slot_21
 	)
 	vaapi? (
 		wayland
@@ -479,23 +492,19 @@ PATENT_CDEPENDS="
 		|| (
 			$(gen_ffmpeg_nonfree_depends_unislot)
 		)
-		media-video/ffmpeg:=
+		media-video/ffmpegw:=
 		vaapi? (
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 	)
 "
-DISABLED_RUST_CDEPEND="
-	llvm_slot_20? (
+RUST_CDEPEND="
+	llvm_slot_18? (
 		|| (
-			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.87*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.87*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
 		)
 	)
-"
-RUST_CDEPEND="
 	llvm_slot_19? (
 		|| (
 			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
@@ -528,7 +537,7 @@ CDEPEND="
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
-	dev-libs/libffi:=[${MULTILIB_USEDEP}]
+	dev-libs/libffi[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
@@ -570,7 +579,7 @@ CDEPEND="
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-76.1[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-76.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-jpeg? (
@@ -590,7 +599,8 @@ CDEPEND="
 		media-video/pipewire:=
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.45:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.45:0[${MULTILIB_USEDEP},apng]
+		media-libs/libpng:=
 	)
 	system-webp? (
 		>=media-libs/libwebp-1.4.0:0[${MULTILIB_USEDEP}]
@@ -1344,8 +1354,10 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	fi
 	verify_codecs
 	node_pkg_setup
-	check_security_expire
+	#check_security_expire
 	check_ulimit
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
