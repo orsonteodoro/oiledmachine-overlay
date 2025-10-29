@@ -726,6 +726,7 @@ CUDA_11_8_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
 		>=x11-drivers/nvidia-drivers-520.61
+		virtual/cuda-compiler:0/11.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			=dev-libs/cudnn-8.6*
 			dev-libs/cudnn:=
@@ -737,6 +738,7 @@ CUDA_12_3_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.3*
 		>=x11-drivers/nvidia-drivers-545.23
+		virtual/cuda-compiler:0/12.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
 			dev-libs/cudnn:=
@@ -747,6 +749,7 @@ CUDA_12_4_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.4*
 		>=x11-drivers/nvidia-drivers-550.54
+		virtual/cuda-compiler:0/12.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
 			dev-libs/cudnn:=
@@ -757,6 +760,7 @@ CUDA_12_5_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.5*
 		>=x11-drivers/nvidia-drivers-555.42
+		virtual/cuda-compiler:0/12.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
 			dev-libs/cudnn:=
@@ -767,6 +771,7 @@ CUDA_12_6_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*
 		>=x11-drivers/nvidia-drivers-560.35
+		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
 			dev-libs/cudnn:=
@@ -777,6 +782,7 @@ CUDA_12_8_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
 		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
 			dev-libs/cudnn:=
@@ -787,6 +793,7 @@ CUDA_12_9_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.9*
 		>=x11-drivers/nvidia-drivers-575.57
+		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
 			dev-libs/cudnn:=
@@ -805,6 +812,7 @@ CUDA_DEPEND="
 			${CUDA_12_9_DEPEND}
 		)
 		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
 "
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24

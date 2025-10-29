@@ -85,7 +85,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM20_REVISION}
-debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
+cuda debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
 ebuild_revision_9
 "
 gen_cuda_required_use() {
@@ -93,6 +93,7 @@ gen_cuda_required_use() {
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
 		echo "
 			cuda_targets_${x}? (
+				cuda
 				llvm_targets_NVPTX
 			)
 		"
@@ -116,46 +117,54 @@ CUDA_11_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
 		>=dev-util/nvidia-cuda-toolkit-520.61
+		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_3_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.3*
 		>=dev-util/nvidia-cuda-toolkit-545.23
+		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_4_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.4*
 		>=dev-util/nvidia-cuda-toolkit-550.54
+		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_5_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.5*
 		>=dev-util/nvidia-cuda-toolkit-555.42
+		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_6_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*
 		>=dev-util/nvidia-cuda-toolkit-560.35
+		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
 		>=dev-util/nvidia-cuda-toolkit-570.124
+		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 RDEPEND="
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
+	)
 	cuda_targets_sm_35? (
 		${CUDA_11_8_RDEPEND}
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_37? (
 		${CUDA_11_8_RDEPEND}
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_50? (
 		|| (
@@ -166,7 +175,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_52? (
 		|| (
@@ -177,7 +185,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_53? (
 		|| (
@@ -188,7 +195,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_60? (
 		|| (
@@ -199,7 +205,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_61? (
 		|| (
@@ -210,7 +215,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_62? (
 		|| (
@@ -221,7 +225,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_70? (
 		|| (
@@ -232,7 +235,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_72? (
 		|| (
@@ -243,7 +245,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_75? (
 		|| (
@@ -254,7 +255,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_80? (
 		|| (
@@ -265,7 +265,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_86? (
 		|| (
@@ -276,7 +275,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_87? (
 		|| (
@@ -287,7 +285,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_89? (
 		|| (
@@ -298,7 +295,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_90? (
 		|| (
@@ -309,7 +305,6 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	gdb-plugin? (
 		${PYTHON_DEPS}

@@ -549,8 +549,8 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26[${PYTHON_USEDEP}]
 	' python3_12)
-	>=app-arch/snappy-1.1.10[${LIBSTDCXX_USEDEP}]
-	>=dev-libs/double-conversion-3.2.0[${LIBSTDCXX_USEDEP}]
+	>=app-arch/snappy-1.1.10[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/double-conversion-3.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
@@ -559,7 +559,7 @@ RDEPEND+="
 		dev-util/nvidia-cuda-toolkit:=
 		=dev-libs/cudnn-9*
 		dev-libs/cudnn:=
-		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:0/12.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/cuda-compiler:=
 		>=x11-drivers/nvidia-drivers-545.23
 	)
@@ -567,7 +567,7 @@ RDEPEND+="
 		$(gen_rocm_depends)
 		dev-util/hip:=
 	)
-	virtual/grpc:3[${LIBSTDCXX_USEDEP}]
+	virtual/grpc:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
 "
 # Originally >=net-libs/grpc-1.27_p9999:=

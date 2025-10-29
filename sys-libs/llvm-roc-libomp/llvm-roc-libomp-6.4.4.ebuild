@@ -151,6 +151,7 @@ gen_cuda_required_use() {
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
 		echo "
 			cuda_targets_${x}? (
+				cuda
 				llvm_targets_NVPTX
 			)
 		"
@@ -199,29 +200,29 @@ REQUIRED_USE="
 CUDA_11_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
-		dev-util/nvidia-cuda-toolkit:=
 		>=dev-util/nvidia-cuda-toolkit-520.61
+		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_3_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.3*
-		dev-util/nvidia-cuda-toolkit:=
 		>=dev-util/nvidia-cuda-toolkit-545.23
+		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_4_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.4*
-		dev-util/nvidia-cuda-toolkit:=
 		>=dev-util/nvidia-cuda-toolkit-550.54
+		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_5_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.5*
-		dev-util/nvidia-cuda-toolkit:=
 		>=dev-util/nvidia-cuda-toolkit-555.42
+		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
 	)
 "
 RDEPEND="
@@ -229,6 +230,10 @@ RDEPEND="
 	dev-libs/rocm-device-libs:=
 	>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
 	sys-devel/llvm-roc:=
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
+	)
 	cuda_targets_sm_35? (
 		${CUDA_11_8_RDEPEND}
 	)

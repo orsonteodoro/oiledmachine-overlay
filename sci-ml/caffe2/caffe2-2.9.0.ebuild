@@ -142,6 +142,8 @@ ROCM_SLOTS2=(
 	$(gen_rocm_slots)
 )
 
+CXX_STANDARD=17
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -242,7 +244,7 @@ VULKANMEMORYALLOCATOR_COMMIT="1d8f600fd424278486eade7ed3e877c99f0846b1"
 XNNPACK_COMMIT="51a0103656eff6fc9bfd39a4597923c4b542c883"
 #TODO:  Package aiter
 
-inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic libcxx-slot libstdcxx-slot llvm rocm python-single-r1 toolchain-funcs
 
 #KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
 S="${WORKDIR}/${MY_P}"
@@ -750,54 +752,54 @@ gen_rocm_depends() {
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rocm-comgr-${pv}:${s}
+				>=dev-libs/rocm-comgr-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocm-comgr:=
-				>=dev-libs/rocm-core-${pv}:${s}
+				>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocm-core:=
-				>=dev-libs/rocr-runtime-${pv}:${s}
+				>=dev-libs/rocr-runtime-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${pv}:${s}[rocm]
+				>=dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				dev-util/hip:=
-				>=sci-libs/hipBLAS-${pv}:${s}[rocm]
+				>=sci-libs/hipBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipBLAS:=
-				>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+				>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 				sci-libs/hipBLASLt:=
-				>=sci-libs/hipCUB-${pv}:${s}[rocm]
+				>=sci-libs/hipCUB-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipCUB:=
-				>=sci-libs/hipRAND-${pv}:${s}[rocm]
+				>=sci-libs/hipRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipRAND:=
-				>=sci-libs/hipSOLVER-${pv}:${s}[rocm]
+				>=sci-libs/hipSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipSOLVER:=
-				>=sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipSPARSE:=
-				>=sci-libs/hipFFT-${pv}:${s}[rocm]
+				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipFFT:=
-				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
+				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
 				sci-libs/miopen:=
-				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
+				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
 				sci-libs/rocBLAS:=
-				>=sci-libs/rocFFT-${pv}:${s}[$(get_rocm_usedep ROCFFT)]
+				>=sci-libs/rocFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
 				sci-libs/rocFFT:=
-				>=sci-libs/rocRAND-${pv}:${s}[$(get_rocm_usedep ROCRAND)]
+				>=sci-libs/rocRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
 				sci-libs/rocRAND:=
-				>=sci-libs/rocPRIM-${pv}:${s}[$(get_rocm_usedep ROCPRIM)]
+				>=sci-libs/rocPRIM-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
 				sci-libs/rocPRIM:=
-				>=sci-libs/rocThrust-${pv}:${s}[$(get_rocm_usedep ROCTHRUST)]
+				>=sci-libs/rocThrust-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
 				sci-libs/rocThrust:=
 				magma? (
-					=sci-libs/magma-2.9*:${s}[$(get_rocm_usedep MAGMA_2_9)]
+					=sci-libs/magma-2.9*:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_9)]
 					sci-libs/magma:=
 				)
 				openmp? (
-					>=dev-libs/llvm-roc-libomp-${pv}:${s}[$(get_rocm_usedep LLVM_ROC_LIBOMP)]
+					>=dev-libs/llvm-roc-libomp-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
 					dev-libs/llvm-roc-libomp:=
 				)
 				rccl? (
-					>=dev-libs/rccl-${pv}:${s}[$(get_rocm_usedep RCCL)]
+					>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
 					dev-libs/rccl:=
 				)
 				roctracer? (
-					>=dev-util/roctracer-${pv}:${s}
+					>=dev-util/roctracer-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 					dev-util/roctracer:=
 				)
 			)
@@ -810,6 +812,7 @@ CUDA_12_6_RDEPEND="
 	=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
 	=dev-libs/cudnn-9*
 	>=x11-drivers/nvidia-drivers-560.35
+	virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
 )
 "
 CUDA_12_8_RDEPEND="
@@ -817,6 +820,7 @@ CUDA_12_8_RDEPEND="
 	=dev-util/nvidia-cuda-toolkit-12.8*[profiler]
 	=dev-libs/cudnn-9*
 	>=x11-drivers/nvidia-drivers-570.124
+	virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
 )
 "
 CUDA_13_0_RDEPEND="
@@ -824,6 +828,7 @@ CUDA_13_0_RDEPEND="
 	=dev-util/nvidia-cuda-toolkit-13.0*[profiler]
 	=dev-libs/cudnn-9*
 	>=x11-drivers/nvidia-drivers-580.82
+	virtual/cuda-compiler:0/13.0[${LIBSTDCXX_USEDEP}]
 )
 "
 RDEPEND="
@@ -964,6 +969,7 @@ RDEPEND="
 		)
 		dev-util/nvidia-cuda-toolkit:=
 		dev-libs/cudnn:=
+		virtual/cuda-compiler:=
 	)
 	gloo? (
 		ssl? (
@@ -1264,6 +1270,8 @@ pkg_setup() {
 	fi
 
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
