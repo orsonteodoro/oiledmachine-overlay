@@ -137,7 +137,7 @@ MORE_ITERTOOLS_PV="50/e2/8e10e465ee3987bb7c9ab69efb91d867d93959095f4807db102d079
 PACKAGING_PV="49/df/1fceb2f8900f8639e278b056416d49134fb8d84c5942ffaa01ad34782422:24.0"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L54
 PEP517_PV="25/6e/ca4a5434eb0e502210f591b97537d322546e4833dcb4d470a48c375c5540:0.13.1"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L59
 PIP_PV="8a/6a/19e9fe04fca059ccf770861c7d5721ab4c2aebc539889e97c7977528a53b:24.0"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L64
-PIP_TOOLS_PV="e8/df/47e6267c6b5cdae867adbdd84b437393e6202ce4322de0a5e0b92960e1d6:7.3.0"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L71
+PIP_TOOLS_PV="0d/dc/38f4ce065e92c66f058ea7a368a9c5de4e702272b479c0992059f7693941:7.4.1"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L71
 PYPROJECT_HOOKS_PV="ae/f3/431b9d5fe7d14af7a32340792ef43b8a714e7726f1d7b69cc4e8e7a3f1d7:1.1.0"		# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L74
 SETUPTOOLS_PV="de/88/70c5767a0e43eb4451c2200f07d042a4bcd7639276003a9c54a68cfcc1f8:70.0.0"		# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L79
 TOMLI_PV="97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9:2.0.1"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L84
@@ -165,13 +165,16 @@ EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://g
 EGIT_STABLEHLO_COMMIT="e51fd95e5b2c28861f22dc9d609fb2a7f002124e"		# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/stablehlo/workspace.bzl#L7
 EGIT_XLA_COMMIT="720b2c53346660e95abbed7cf3309a8b85e979f9"			# From https://github.com/google/jax/blob/jaxlib-v0.4.32/third_party/xla/workspace.bzl#L23
 
-# wget -O t.txt | https://raw.githubusercontent.com/jax-ml/jax/refs/tags/jaxlib-v0.4.32/build/requirements_lock_3_13.txt
+# wget -O t.txt https://raw.githubusercontent.com/jax-ml/jax/refs/tags/jaxlib-v0.4.32/build/requirements_lock_3_12.txt
 # cat t.txt | grep "=="
 # Manually remove square brackets from etils[epath,epy]
+# Manually remove  ; python_version >= "3.11"
 #
 # The following no match error should be a fatal error but it is not:
 # jaxlib-0.4.32.ebuild: line 213: no match: etils[epath,epy]==1.8.0
 #
+_DISABLED_PYPI_PACKAGES=(
+)
 _PYPI_PACKAGES=(
 absl-py==2.1.0
 attrs==23.2.0
@@ -182,40 +185,41 @@ contourpy==1.2.1
 cycler==0.12.1
 etils==1.8.0
 execnet==2.1.1
+filelock==3.14.0
 flatbuffers==24.3.25
 fonttools==4.51.0
-fsspec==2024.3.1
-hypothesis==6.100.1
+fsspec==2024.5.0
+hypothesis==6.102.4
 importlib-resources==6.4.0
 iniconfig==2.0.0
 kiwisolver==1.4.5
 markdown-it-py==3.0.0
-matplotlib==3.8.3
+matplotlib==3.9.0
 mdurl==0.1.2
 ml-dtypes==0.4.0
-mpmath==1.3.0
-numpy==1.26.4
+mpmath==1.4.0a1
+numpy==2.0.0
 opt-einsum==3.3.0
 packaging==24.0
 pillow==10.3.0
-pluggy==1.4.0
+pluggy==1.5.0
 portpicker==1.6.0
 psutil==5.9.8
-pygments==2.17.2
+pygments==2.18.0
 pyparsing==3.1.2
-pyproject-hooks==1.0.0
-pytest==8.1.1
-pytest-xdist==3.5.0
+pyproject-hooks==1.1.0
+pytest==8.2.0
+pytest-xdist==3.6.1
 python-dateutil==2.9.0.post0
 rich==13.7.1
 scipy==1.13.1
 six==1.16.0
 sortedcontainers==2.4.0
-typing-extensions==4.11.0
-wheel==0.43.0
-zipp==3.18.1
+typing-extensions==4.12.0rc1
+zipp==3.18.2
 zstandard==0.22.0
-setuptools==69.2.0
+setuptools==69.5.1
+wheel==0.43.0
 )
 
 _PYPI_URLS=""
@@ -309,24 +313,25 @@ https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nccl-${NCCL_PV}.tar
 https://github.com/indygreg/python-build-standalone/releases/download/${CPYTHON_X86_64_3_11_PV%:*}/cpython-${CPYTHON_X86_64_3_11_PV#*:}-x86_64-unknown-linux-gnu-install_only.tar.gz
 https://github.com/indygreg/python-build-standalone/releases/download/${CPYTHON_X86_64_3_12_PV%:*}/cpython-${CPYTHON_X86_64_3_12_PV#*:}-x86_64-unknown-linux-gnu-install_only.tar.gz
 
-
-${_PYPI_URLS}
-"
-URI_TRASH="
-https://files.pythonhosted.org/packages/${BUILD_PV%:*}/build-${BUILD_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${CLICK_PV%:*}/click-${CLICK_PV#*:}-py3-none-any.whl
-https://files.pythonhosted.org/packages/${COLORAMA_PV%:*}/colorama-${COLORAMA_PV#*:}-py2.py3-none-any.whl
 https://files.pythonhosted.org/packages/${IMPORTLIB_METADATA_PV%:*}/importlib_metadata-${IMPORTLIB_METADATA_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${INSTALLER_PV%:*}/installer-${INSTALLER_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${MORE_ITERTOOLS_PV%:*}/more_itertools-${MORE_ITERTOOLS_PV#*:}-py3-none-any.whl
-https://files.pythonhosted.org/packages/${PACKAGING_PV%:*}/packaging-${PACKAGING_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${PEP517_PV%:*}/pep517-${PEP517_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${PIP_PV%:*}/pip-${PIP_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${PIP_TOOLS_PV%:*}/pip_tools-${PIP_TOOLS_PV#*:}-py3-none-any.whl
-https://files.pythonhosted.org/packages/${PYPROJECT_HOOKS_PV%:*}/pyproject_hooks-${PYPROJECT_HOOKS_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${SETUPTOOLS_PV%:*}/setuptools-${SETUPTOOLS_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${TOMLI_PV%:*}/tomli-${TOMLI_PV#*:}-py3-none-any.whl
+
+${_PYPI_URLS}
+"
+
+URI_TRASH="
 https://files.pythonhosted.org/packages/${WHEEL_PV%:*}/wheel-${WHEEL_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${BUILD_PV%:*}/build-${BUILD_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${COLORAMA_PV%:*}/colorama-${COLORAMA_PV#*:}-py2.py3-none-any.whl
+https://files.pythonhosted.org/packages/${PACKAGING_PV%:*}/packaging-${PACKAGING_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${PYPROJECT_HOOKS_PV%:*}/pyproject_hooks-${PYPROJECT_HOOKS_PV#*:}-py3-none-any.whl
 https://files.pythonhosted.org/packages/${ZIPP_PV%:*}/zipp-${ZIPP_PV#*:}-py3-none-any.whl
 "
 
@@ -582,8 +587,6 @@ RESTRICT="mirror"
 DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
-	"0050-fix-rocm-source-code.patch"
-	"0050-fix-rocm-support.patch"
 	"0050-toolchain-prefix.patch"
 )
 
@@ -856,7 +859,7 @@ eerror
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
 	# Required because rules_python/pip cannot do offline easily.
-	# sandbox-changes_no_network_sandbox "To download micropackages"
+	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	libcxx-slot_verify
 	libstdcxx-slot_verify
@@ -933,20 +936,6 @@ ewarn
 
 	# Speed up symbol replacement for @...@ by reducing search space.
 	XLA_S="${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
-	PATCH_PATHS=(
-	# Generated in this folder from:
-	# grep -F -r -e "+++" files/0.4.32/xla | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
-		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
-		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
-		"${XLA_S}/third_party/tsl/third_party/gpus/rocm_configure.bzl"
-		"${XLA_S}/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc"
-		"${XLA_S}/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
-		"${XLA_S}/xla/stream_executor/gpu/asm_compiler.cc"
-
-	# Generated in this folder from:
-	# grep -F -r -e "+++" files/0.4.32/*.patch | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	)
 
 	if use rocm ; then
 		rocm_src_prepare
@@ -963,12 +952,12 @@ ewarn
 		for dirpath in ${L[@]} ; do
 			rm -f "${dirpath}/find_rocm_config.py.gz.base64"
 			pushd "${dirpath}" || die
-				pigz -z -k find_rocm_config.py || die
-				mv find_rocm_config.py.zz find_rocm_config.py.gz || die
+				pigz -z -k "find_rocm_config.py" || die
+				mv "find_rocm_config.py.zz" "find_rocm_config.py.gz" || die
 				base64 --wrap=0 \
-					find_rocm_config.py.gz \
+					"find_rocm_config.py.gz" \
 					> \
-					find_rocm_config.py.gz.base64 \
+					"find_rocm_config.py.gz.base64" \
 					|| die
 			popd
 		done
