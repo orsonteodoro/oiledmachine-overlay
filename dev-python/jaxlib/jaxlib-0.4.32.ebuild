@@ -462,25 +462,25 @@ gen_rocm_depends() {
 		# Direct dependencies
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}
+				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rccl:=
 				>=dev-libs/rocm-device-libs-${pv}:${s}
 				dev-libs/rocm-device-libs:=
-				>=dev-util/hip-${pv}:${s}[rocm]
+				>=dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				dev-util/hip:=
-				>=dev-util/roctracer-${pv}:${s}
+				>=dev-util/roctracer-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-util/roctracer:=
-				>=sci-libs/hipBLAS-${pv}:${s}[rocm]
+				>=sci-libs/hipBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipBLAS:=
-				>=sci-libs/hipFFT-${pv}:${s}[$(get_rocm_usedep HIPFFT)]
+				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
 				sci-libs/hipFFT:=
-				>=sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipSPARSE:=
-				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
+				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
 				sci-libs/miopen:=
-				>=sci-libs/rocFFT-${pv}:${s}[$(get_rocm_usedep ROCFFT)]
+				>=sci-libs/rocFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
 				sci-libs/rocFFT:=
-				>=sci-libs/rocRAND-${pv}:${s}[$(get_rocm_usedep ROCRAND)]
+				>=sci-libs/rocRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
 				sci-libs/rocRAND:=
 
 				llvm-core/lld:${LLD_SLOT[${pv}]}
@@ -489,10 +489,10 @@ gen_rocm_depends() {
 		if ver_test "${ROCM_SLOT}" -ge "5.5" ; then
 			echo "
 				rocm_${u}? (
-					>=dev-libs/rocm-core-${pv}:${s}
+					>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 					dev-libs/rocm-core:=
 					amdgpu_targets_gfx90a? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 				)
@@ -503,15 +503,15 @@ gen_rocm_depends() {
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_gfx940? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 					amdgpu_targets_gfx941? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 					amdgpu_targets_gfx942? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
+						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 				)
@@ -520,19 +520,19 @@ gen_rocm_depends() {
 
 		# Indirect dependencies
 		echo "
-				>=dev-libs/rocm-comgr-${pv}:${s}
+				>=dev-libs/rocm-comgr-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocm-comgr:=
-				>=dev-libs/rocr-runtime-${pv}:${s}
+				>=dev-libs/rocr-runtime-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocr-runtime:=
 				>=dev-build/rocm-cmake-${pv}:${s}
 				dev-build/rocm-cmake:=
-				>=dev-util/rocm-smi-${pv}:${s}
+				>=dev-util/rocm-smi-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-util/rocm-smi:=
-				>=dev-util/rocminfo-${pv}:${s}
+				>=dev-util/rocminfo-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-util/rocminfo:=
-				>=dev-util/Tensile-${pv}:${s}[$(get_rocm_usedep TENSILE)]
+				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep TENSILE)]
 				dev-util/Tensile:=
-				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
+				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
 				sci-libs/rocBLAS:=
 			)
 		"
@@ -547,26 +547,25 @@ RDEPEND+="
 		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 	')
-	>=app-arch/snappy-1.1.10
-	>=dev-libs/double-conversion-3.2.0
+	>=app-arch/snappy-1.1.10[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/double-conversion-3.2.0[${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
-		=dev-util/nvidia-cuda-toolkit-12*:=
-		=dev-libs/cudnn-8.8*
+		=dev-util/nvidia-cuda-toolkit-12.3*:=
+		dev-util/nvidia-cuda-toolkit:=
+		=dev-libs/cudnn-9*
+		dev-libs/cudnn:=
+		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:=
 	)
 	rocm? (
 		$(gen_rocm_depends)
 		dev-util/hip:=
 	)
-	|| (
-		=net-libs/grpc-1.49*
-		=net-libs/grpc-1.52*
-		=net-libs/grpc-1.53*
-		=net-libs/grpc-1.54*
-	)
-	net-libs/grpc:=
+	virtual/grpc:3[${LIBSTDCXX_USEDEP}]
+	virtual/grpc:=
 "
 # Originally >=net-libs/grpc-1.27_p9999:=
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
