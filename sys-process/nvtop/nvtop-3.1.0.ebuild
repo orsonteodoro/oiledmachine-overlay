@@ -58,7 +58,7 @@ REQUIRED_USE="
 		${VIDEO_CARDS[@]/#/video_cards_}
 	)
 "
-gen_kernel_repend() {
+gen_kernel_rdepend() {
 	local kv="${1}"
 	echo "
 		>=sys-kernel/ot-sources-${kv}
@@ -75,7 +75,8 @@ gen_kernel_repend() {
 	"
 }
 RDEPEND="
-	>=sys-libs/ncurses-6.1:0=
+	>=sys-libs/ncurses-6.1:0
+	sys-libs/ncurses:=
 	udev? (
 		!systemd? (
 			!sys-fs/eudev
@@ -88,10 +89,10 @@ RDEPEND="
 	video_cards_amdgpu? (
 		!custom-kernel? (
 			|| (
-				$(gen_kernel_repend ${LINUX_KERNEL_AMDGPU_FDINFO_KV})
+				$(gen_kernel_rdepend ${LINUX_KERNEL_AMDGPU_FDINFO_KV})
 				(
 					|| (
-						$(gen_kernel_repend ${LINUX_KERNEL_AMDGPU_FDINFO_KV})
+						$(gen_kernel_rdepend ${LINUX_KERNEL_AMDGPU_FDINFO_KV})
 					)
 					>=sys-kernel/rock-dkms-4.3.0
 				)
@@ -102,7 +103,7 @@ RDEPEND="
 	video_cards_freedreno?  (
 		!custom-kernel? (
 			|| (
-				$(gen_kernel_repend ${LINUX_KERNEL_MSM_FDINFO_KV})
+				$(gen_kernel_rdepend ${LINUX_KERNEL_MSM_FDINFO_KV})
 			)
 		)
 		>=x11-libs/libdrm-2.4.99[video_cards_freedreno]
@@ -110,7 +111,7 @@ RDEPEND="
 	video_cards_intel?  (
 		!custom-kernel? (
 			|| (
-				$(gen_kernel_repend ${LINUX_KERNEL_INTEL_FDINFO_KV})
+				$(gen_kernel_rdepend ${LINUX_KERNEL_INTEL_FDINFO_KV})
 			)
 		)
 	)
