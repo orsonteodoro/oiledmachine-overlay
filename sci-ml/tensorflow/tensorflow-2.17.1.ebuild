@@ -959,8 +959,6 @@ ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
 	"0050-fix-rocm-headers.patch"
 	"0050-fix-rocm-source-code.patch"
-	"0050-fix-rocm-support.patch"
-	"0050-toolchain-prefix.patch"
 )
 
 get-cpu-flags() {
@@ -1335,24 +1333,6 @@ patch_rocm() {
 		done
 	fi
 
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" $(find files/*/rocm -name "*.patch") | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${S}/tensorflow/compiler/mlir/tools/kernel_gen/transforms/gpu_kernel_to_blob_pass.cc"
-		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
-		"${S}/tensorflow/compiler/xla/stream_executor/gpu/asm_compiler.cc"
-		"${S}/tensorflow/core/util/gpu_solvers.h"
-		"${S}/tensorflow/tools/pip_package/setup.py"
-		"${S}/tensorflow/tsl/platform/default/rocm_rocdl_path.cc"
-		"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
-		"${S}/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
-		"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
-		"${S}/third_party/gpus/rocm_configure.bzl"
-		"${S}/third_party/xla/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc"
-		"${S}/third_party/xla/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
-		"${S}/third_party/xla/xla/stream_executor/gpu/asm_compiler.cc"
-	)
 	if use rocm ; then
 		rocm_src_prepare
 	fi
@@ -1479,13 +1459,6 @@ ewarn
 	default
 
 	patch_rocm
-
-	if use rocm ; then
-		sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
-			"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
-			"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
-			|| die
-	fi
 
 	use python && python_copy_sources
 
