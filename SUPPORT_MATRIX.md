@@ -210,8 +210,6 @@ exist in build files.
 | ROCm 7.0                            | WIP                                   | D12, D13, U22, U24                                       |
 | SYCL                                | Not supported                         |                                                          |
 | systemd                             | Partially supported                   |                                                          |
-| TensorFlow 2.14 (CPU)               | WIP                                   |                                                          |
-| TensorFlow 2.14 (CUDA 11.8)         | WIP                                   |                                                          |
 | TensorFlow 2.17 (CPU)               | WIP                                   |                                                          |
 | TensorFlow 2.17 (CUDA 12.3)         | WIP                                   |                                                          |
 | TensorFlow 2.20 (CPU)               | WIP                                   |                                                          |
