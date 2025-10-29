@@ -524,13 +524,10 @@ REQUIRED_USE="
 # Apache-2.0 is only license compatible with >=openssl-3
 # The distro only has 11.8, 12.3 for cuda.  The exact version preferred due
 # to binary compatibility.
-CUDA_CDEPEND="
+CUDA_12_5_RDEPENDS="
 	(
-		(
-			>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}[profiler]
-			<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 ))[profiler]
-			dev-util/nvidia-cuda-toolkit:=
-		)
+		=dev-util/nvidia-cuda-toolkit-12.5*[profiler]
+		>=x11-drivers/nvidia-drivers-555.42
 	)
 "
 
@@ -782,8 +779,12 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	cuda? (
-		${CUDA_RDEPEND}
-		=dev-libs/cudnn-8.8*
+		|| (
+			${CUDA_12_5_RDEPENDS}
+		)
+		dev-util/nvidia-cuda-toolkit:=
+		=dev-libs/cudnn-9*
+		dev-libs/cudnn:=
 	)
 	mpi? (
 		virtual/mpi
@@ -921,7 +922,10 @@ BDEPEND="
 		)
 	)
 	cuda? (
-		${CUDA_CDEPEND}
+		|| (
+			${CUDA_12_5_RDEPENDS}
+		)
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	python? (
 		!big-endian? (
