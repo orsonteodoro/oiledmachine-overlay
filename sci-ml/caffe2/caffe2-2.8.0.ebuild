@@ -798,19 +798,22 @@ gen_rocm_depends() {
 CUDA_12_6_RDEPEND="
 (
 	=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
-	>=dev-libs/cudnn-9.10
+	=dev-libs/cudnn-9*
+	>=x11-drivers/nvidia-drivers-560.35
 )
 "
 CUDA_12_8_RDEPEND="
 (
 	=dev-util/nvidia-cuda-toolkit-12.8*[profiler]
-	>=dev-libs/cudnn-9.10
+	=dev-libs/cudnn-9*
+	>=x11-drivers/nvidia-drivers-570.124
 )
 "
 CUDA_12_9_RDEPEND="
 (
 	=dev-util/nvidia-cuda-toolkit-12.9*[profiler]
-	>=dev-libs/cudnn-9.10
+	=dev-libs/cudnn-9*
+	>=x11-drivers/nvidia-drivers-575.57
 )
 "
 RDEPEND="
