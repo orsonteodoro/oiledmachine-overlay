@@ -758,6 +758,20 @@ PATENT_STATUS_RDEPEND="
 		)
 	)
 "
+
+CUDA_11_4_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.4*
+		>=x11-drivers/nvidia-drivers-470.82
+	)
+"
+CUDA_12_8_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
+	)
+"
+
 # The distro's llvm 14 for mesa is 22.05.
 # Missing OCLOC
 # Missing nanobind
@@ -820,66 +834,66 @@ RDEPEND+="
 	cuda? (
 		cuda_targets_sm_35? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_37? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_50? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_compute_75? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-12*
-				=dev-util/nvidia-cuda-toolkit-11*
+				${CUDA_12_8_RDEPEND}
+				${CUDA_11_4_RDEPEND}
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
