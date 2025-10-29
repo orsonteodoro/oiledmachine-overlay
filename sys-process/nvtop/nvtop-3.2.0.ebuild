@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# TODO package:
+# libtpuinfo
+
 # *DEPENDS based on U 18.04
 
 LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
@@ -88,7 +91,9 @@ RDEPEND="
 		>=sys-apps/systemd-237
 	)
 	tpu? (
-		net-libs/grpc
+		dev-libs/libtpuinfo
+		virtual/grpc:5
+		virtual/grpc:=
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
