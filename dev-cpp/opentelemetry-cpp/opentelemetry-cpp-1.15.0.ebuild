@@ -3,22 +3,27 @@
 
 EAPI=8
 
-inherit grpc-ver protobuf-ver
+_CXX_STANDARD=(
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
 
-GRPC_SLOTS=(
-	${GRPC_PROTOBUF_3_SLOTS[@]}
-	"1.55"
-	"1.56"
-	"1.57"
-	"1.58"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-PROTOBUF_SLOTS=(
-	${PROTOBUF_3_SLOTS[@]}
-	"4.23"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
+
+CXX_STANDARD=17
+GRPC_SLOT="3"
 OPENTELEMETRY_PROTO_PV="1.2.0"
+PROTOBUF_SLOT="3"
 
-inherit cmake dep-prepare
+inherit cmake dep-prepare libcxx-slot libstdcxx-slot
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -40,7 +45,18 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="-otlp-file -otlp-grpc -otlp-http -prometheus test -zlib"
+IUSE="
+${_CXX_STANDARD[@]}
+-otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
+"
+REQUIRED_USE="
+	^^ (
+		${_CXX_STANDARD[@]/+}
+	)
+	otlp-grpc? (
+		cxx_standard_cxx17
+	)
+"
 gen_otlp_grpc_rdepend() {
 	local s1
 	local s2
@@ -55,13 +71,13 @@ gen_otlp_grpc_rdepend() {
 	done
 }
 RDEPEND="
+	dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
 	otlp-grpc? (
-		|| (
-			$(gen_otlp_grpc_rdepend)
-		)
-		dev-libs/protobuf:=
-		net-libs/grpc:=
+		virtual/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/grpc:=
+		virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:=
 	)
 	otlp-file? (
 		>=dev-cpp/nlohmann_json-3.11.3
@@ -90,6 +106,11 @@ PATCHES=(
 	"${FILESDIR}/opentelemetry-cpp-1.5.0-tests.patch"
 )
 
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
+
 gen_git_tag() {
 	local path="${1}"
 	local tag_name="${2}"
@@ -113,8 +134,23 @@ src_unpack() {
 	gen_git_tag "${S}/third_party/opentelemetry-proto" "v${OPENTELEMETRY_PROTO_PV}"
 }
 
+get_abseil_cpp_slot() {
+	if has_version "net-libs/grpc:3/1.30" ; then
+		echo "20200225"
+	elif has_version "net-libs/grpc:3/1.51" ; then
+		echo "20220623"
+	elif has_version "net-libs/grpc:5/1.71" ; then
+		echo "20240722"
+	elif has_version "net-libs/grpc:6/1.75" ; then
+		echo "20250512"
+	fi
+}
+
 src_configure() {
+	local ABSEIL_CPP_SLOT=$(get_abseil_cpp_slot)
 	local mycmakeargs=(
+		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
 		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
@@ -124,5 +160,12 @@ src_configure() {
 		-DWITH_OTLP_HTTP_COMPRESSION=$(usex zlib)
 		-DWITH_PROMETHEUS:BOOL=$(usex prometheus)
 	)
+	if use otlp-grpc ; then
+		mycmakeargs+=(
+			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/cmake/absl"
+			-DgRPC_DIR="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
+			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+		)
+	fi
 	cmake_src_configure
 }
