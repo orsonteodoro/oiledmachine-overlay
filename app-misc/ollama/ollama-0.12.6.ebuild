@@ -2892,16 +2892,19 @@ IDEPEND="
 CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
+		>=x11-drivers/nvidia-drivers-520.61
 	)
 "
 CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
 	)
 "
 CUDA_13_0_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-13.0*
+		>=x11-drivers/nvidia-drivers-580.82
 	)
 "
 gen_clang_bdepend() {
