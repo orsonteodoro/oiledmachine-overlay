@@ -55,14 +55,17 @@ CUDA_TARGETS_COMPAT=(
 	sm_90
 	sm_90a
 )
+
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
+
 FORTRAN_STANDARD="77 90"
 PYTHON_COMPAT=( "python3_"{11..12} )
 
@@ -103,26 +106,36 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 	CUDA_TOOLKIT_11_8="
 		(
 			=dev-util/nvidia-cuda-toolkit-11.8*
+			>=x11-drivers/nvidia-drivers-520.61
+			virtual/cuda-compiler:0/11.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	"
 	CUDA_TOOLKIT_12_3="
 		(
 			=dev-util/nvidia-cuda-toolkit-12.3*
+			>=x11-drivers/nvidia-drivers-545.23
+			virtual/cuda-compiler:0/12.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	"
 	CUDA_TOOLKIT_12_4="
 		(
 			=dev-util/nvidia-cuda-toolkit-12.4*
+			>=x11-drivers/nvidia-drivers-550.54
+			virtual/cuda-compiler:0/12.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	"
 	CUDA_TOOLKIT_12_5="
 		(
 			=dev-util/nvidia-cuda-toolkit-12.5*
+			>=x11-drivers/nvidia-drivers-555.42
+			virtual/cuda-compiler:0/12.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	"
-	CUDA_TOOLKIT_12_5="
+	CUDA_TOOLKIT_12_6="
 		(
 			=dev-util/nvidia-cuda-toolkit-12.6*
+			>=x11-drivers/nvidia-drivers-560.35
+			virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	"
 	IUSE+="
@@ -226,6 +239,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 				)
 			)
 			dev-util/nvidia-cuda-toolkit:=
+			virtual/cuda-compiler:=
 		)
 	"
 fi
@@ -272,13 +286,13 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 			local slot="0/${pv%.*}"
 			echo "
 				(
-					>=dev-libs/rocm-core-${pv}:${slot}
+					>=dev-libs/rocm-core-${pv}:${slot}[${LIBSTDCXX_USEDEP}]
 					dev-libs/rocm-core:=
-					>=dev-util/hip-${pv}:${slot}[rocm]
+					>=dev-util/hip-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
 					dev-util/hip:=
-					>=sci-libs/hipBLAS-${pv}:${slot}[rocm]
+					>=sci-libs/hipBLAS-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
 					sci-libs/hipBLAS:=
-					>=sci-libs/hipSPARSE-${pv}:${slot}[rocm]
+					>=sci-libs/hipSPARSE-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
 					sci-libs/hipSPARSE:=
 				)
 			"

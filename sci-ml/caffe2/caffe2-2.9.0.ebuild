@@ -787,7 +787,7 @@ gen_rocm_depends() {
 				>=sci-libs/rocThrust-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
 				sci-libs/rocThrust:=
 				magma? (
-					=sci-libs/magma-2.9*:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_9)]
+					=sci-libs/magma-2.9*:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_9),rocm]
 					sci-libs/magma:=
 				)
 				openmp? (
@@ -812,7 +812,7 @@ CUDA_12_6_RDEPEND="
 	=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
 	=dev-libs/cudnn-9*
 	>=x11-drivers/nvidia-drivers-560.35
-	virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
+	virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 )
 "
 CUDA_12_8_RDEPEND="
@@ -820,7 +820,7 @@ CUDA_12_8_RDEPEND="
 	=dev-util/nvidia-cuda-toolkit-12.8*[profiler]
 	=dev-libs/cudnn-9*
 	>=x11-drivers/nvidia-drivers-570.124
-	virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
+	virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 )
 "
 CUDA_13_0_RDEPEND="
@@ -828,7 +828,7 @@ CUDA_13_0_RDEPEND="
 	=dev-util/nvidia-cuda-toolkit-13.0*[profiler]
 	=dev-libs/cudnn-9*
 	>=x11-drivers/nvidia-drivers-580.82
-	virtual/cuda-compiler:0/13.0[${LIBSTDCXX_USEDEP}]
+	virtual/cuda-compiler:0/13.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 )
 "
 RDEPEND="
@@ -978,10 +978,9 @@ RDEPEND="
 		)
 	)
 	magma? (
-		sci-libs/magma[cuda?,rocm?]
 		sci-libs/magma:=
 		cuda? (
-			sci-libs/magma:0/cuda
+			sci-libs/magma:0/cuda[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda]
 		)
 	)
 	mpi? (
@@ -1005,19 +1004,21 @@ RDEPEND="
 	)
 	system-libs? (
 		(
-			>=dev-cpp/gflags-2.2.2:=
+			>=dev-cpp/gflags-2.2.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-cpp/gflags:=
 		)
-		>=dev-cpp/glog-0.4.0
+		>=dev-cpp/glog-0.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-cpp/glog:=
 		>=dev-libs/cpuinfo-2025.03.21
-		>=dev-libs/libfmt-11.2.0
-		>=dev-libs/protobuf-3.13.1
-		<dev-libs/protobuf-4
-		dev-libs/protobuf:=
+		>=dev-libs/libfmt-11.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/libfmt:=
 		>=dev-libs/pthreadpool-2023.08.28
 		>=dev-libs/sleef-3.8.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
-		>=sci-ml/onnx-1.18.0
+		>=sci-ml/onnx-1.18.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		sci-ml/onnx:=
 		>=dev-cpp/opentelemetry-cpp-1.14.2
+		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:=
 		cuda? (
 			>=dev-libs/cudnn-frontend-1.12.0
 		)
@@ -1063,14 +1064,13 @@ DEPEND="
 			>=dev-python/pybind11-3.0.1[${PYTHON_USEDEP}]
 		')
 		>=dev-libs/flatbuffers-24.12.23
-		>=dev-libs/protobuf-3.13.1
-		<dev-libs/protobuf-4
-		dev-libs/protobuf:=
 		>=sci-ml/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2024.11.30
 		>=dev-libs/psimd-2020.05.17
 		>=sci-ml/kineto-0.4.0_p20250616
+		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:=
 		cuda? (
 			>=dev-libs/cutlass-4.1.0
 		)
@@ -1084,12 +1084,12 @@ gen_clang() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/llvm:${s}
-				llvm-core/clang:${s}
-				llvm-core/lld:${s}
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
 				openmp? (
 					llvm-runtimes/clang-runtime:${s}[openmp]
-					=llvm-runtimes/openmp-${s}*
+					=llvm-runtimes/openmp-${s}*[${LIBSTDCXX_USEDEP}]
 				)
 			)
 		"
