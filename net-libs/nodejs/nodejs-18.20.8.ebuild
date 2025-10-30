@@ -12,6 +12,20 @@ EAPI=8
 
 # Last deps commit date:  Mar 25, 2025
 
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
+
 ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
@@ -75,9 +89,10 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
-inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker flag-o-matic
-inherit flag-o-matic-om lcnr linux-info multiprocessing ninja-utils pax-utils
-inherit python-any-r1 sandbox-changes toolchain-funcs uopts xdg-utils
+inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
+inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
+inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
+inherit sandbox-changes toolchain-funcs uopts xdg-utils
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/node-v${PV}"
@@ -155,13 +170,14 @@ RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.2:=
+	>=dev-libs/libuv-1.44.2
 	>=net-dns/c-ares-1.29.0
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-74.2:=
+		>=dev-libs/icu-74.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/icu:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.16:0[asm?,fips?]
@@ -177,7 +193,8 @@ BDEPEND+="
 	sys-apps/coreutils
 	virtual/pkgconfig
 	mold? (
-		>=sys-devel/mold-2.0
+		>=sys-devel/mold-2.0[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
+		sys-devel/mold:=
 	)
 	pax-kernel? (
 		sys-apps/elfix
@@ -310,6 +327,8 @@ ewarn "Consider adding it to the NODEJS_EXCLUDED_TRAINERS."
 ewarn
 	fi
 	uopts_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
