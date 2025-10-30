@@ -33,10 +33,10 @@
   #     SATA fault fetch:  O(10K - 100K)
   #      HDD fault fetch:  O(1M - 15M)
 
-  TC_MALLOC_PAGE_SIZES=\"amd64:8 x86:4\" # For ARCH=amd64
-  # TC_MALLOC_PAGE_SIZES=\"n64:8 n32:4 o32:4\" # For ARCH=mips64el
-  # TC_MALLOC_PAGE_SIZES=\"lp64d:8 lp64:8 ilp32d:4 ilp32:4\" # For ARCH=riscv
-  # TC_MALLOC_PAGE_SIZES=\"ppc64:64\" # For ARCH=ppc64
+  TC_MALLOC_PAGE_SIZES="amd64:8 x86:4" # For ARCH=amd64
+  # TC_MALLOC_PAGE_SIZES="n64:8 n32:4 o32:4" # For ARCH=mips64el
+  # TC_MALLOC_PAGE_SIZES="lp64d:8 lp64:8 ilp32d:4 ilp32:4" # For ARCH=riscv
+  # TC_MALLOC_PAGE_SIZES="ppc64:64" # For ARCH=ppc64
 
 
   Contents of /etc/portage/package.env:
