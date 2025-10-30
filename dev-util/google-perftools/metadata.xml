@@ -25,7 +25,7 @@
   # For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty.
   # 3x fragmentation means 3x memory cost.
 
-  # Worst case relative performance multiple penalties:
+  # Worst case relative performance penalty multiples:
 
   #                L1 cache hit:  1
   #          Page fragmentation:  2

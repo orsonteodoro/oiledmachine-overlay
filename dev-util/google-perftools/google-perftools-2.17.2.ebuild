@@ -80,7 +80,7 @@ ewarn "# General case defaults in KiB:  8 for non PPC64, 64 for PPC64"
 ewarn "# For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty."
 ewarn "# 3x fragmentation means 3x memory cost."
 ewarn
-ewarn "# Worst case relative performance multiple penalties:"
+ewarn "# Worst case relative performance penalty multiples:"
 ewarn
 ewarn "#                L1 cache hit:  1"
 ewarn "#          Page fragmentation:  2"
