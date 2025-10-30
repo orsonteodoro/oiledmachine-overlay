@@ -9,8 +9,8 @@
   <upstream>
     <remote-id type="github">gperftools/gperftools</remote-id>
   </upstream>
-  <!--
   <![CDATA[
+  <!--
 
   oiledmachine-overlay notes:
 
@@ -47,8 +47,8 @@
 
   dev-util/google-perftools tcmalloc.conf
 
-  ]]>
   -->
+  ]]>
   <use>
     <flag name="debug">
       Build a set of libraries with debug support (so-called
