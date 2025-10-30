@@ -5,7 +5,21 @@ EAPI=8
 
 # U24
 
-inherit cmake toolchain-funcs
+CXX_STANDARD=20
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
+inherit cmake libcxx-slot libstdcxx-slot toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/rui314/mold.git"
@@ -40,7 +54,7 @@ RESTRICT="
 RDEPEND="
 	>=app-arch/zstd-1.5.7
 	app-arch/zstd:=
-	>=dev-cpp/tbb-2022.0.0:0
+	>=dev-cpp/tbb-2022.0.0:0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tbb:=
 	>=dev-libs/blake3-1.6.1
 	dev-libs/blake3:=
@@ -60,6 +74,11 @@ BDEPEND="
 		dev-libs/mimalloc:=
 	)
 "
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 pkg_pretend() {
 	# Requires a c++20 compiler, see #831473
