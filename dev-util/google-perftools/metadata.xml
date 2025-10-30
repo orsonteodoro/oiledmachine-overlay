@@ -10,6 +10,7 @@
     <remote-id type="github">gperftools/gperftools</remote-id>
   </upstream>
   <!--
+  <![CDATA[
 
   oiledmachine-overlay notes:
 
@@ -25,16 +26,16 @@
 
   # Worst case relative performance multiple penalties:
 
-  #         L1 cache hit:  1
-  #   Page fragmentation:  2
-  #         L2 cache hit:  3
-  #         L3 cache hit:  10
-  #          TLB miss L1:  10
-  #         TLB miss RAM:  100
-  #      RAM fault fetch:  10K
-  # NVMe SSD fault fetch:  100K
-  #     SATA fault fetch:  500K
-  #      HDD fault fetch:  10M
+  #                L1 cache hit:  1
+  #          Page fragmentation:  2
+  #                L2 cache hit:  3
+  #                L3 cache hit:  10
+  #  L1 -> L2 walk for TLB miss:  10
+  #       RAM walk for TLB miss:  100
+  #             RAM fault fetch:  10K
+  #        NVMe SSD fault fetch:  100K
+  #            SATA fault fetch:  500K
+  #             HDD fault fetch:  10M
 
   TC_MALLOC_PAGE_SIZES="amd64:8 x86:4" # For ARCH=amd64
   # TC_MALLOC_PAGE_SIZES="n64:8 n32:4 o32:4" # For ARCH=mips64el
@@ -46,6 +47,7 @@
 
   dev-util/google-perftools tcmalloc.conf
 
+  ]]>
   -->
   <use>
     <flag name="debug">
