@@ -3,6 +3,8 @@
 
 EAPI=8
 
+MY_P="gperftools-${PV}"
+
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
@@ -15,24 +17,43 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-MY_P="gperftools-${PV}"
-inherit flag-o-matic autotools libcxx-slot libstdcxx-slot vcs-snapshot multilib-minimal
+PAGE_SIZES=(
+	"pagesize-4k"
+	"pagesize-8k"
+	"pagesize-16k"
+	"pagesize-32k"
+	"pagesize-64k"
+	"pagesize-128k"
+	"pagesize-256k"
+)
 
-DESCRIPTION="Fast, multi-threaded malloc() and nifty performance analysis tools"
-HOMEPAGE="https://github.com/gperftools/gperftools"
-SRC_URI="https://github.com/gperftools/gperftools/archive/${MY_P}.tar.gz"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 
-LICENSE="MIT"
-SLOT="0/4"
+inherit flag-o-matic autotools cflags-hardened libcxx-slot libstdcxx-slot vcs-snapshot multilib-minimal
+
 # contains ASM code, with support for
 # freebsd x86/amd64
 # linux amd64/arm/arm64/ppc/ppc64/riscv/x86
 # OSX ppc/amd64
 # AIX ppc/ppc64
 KEYWORDS="-* amd64 arm arm64 ppc ppc64 ~riscv x86 ~amd64-linux ~x86-linux"
+SRC_URI="https://github.com/gperftools/gperftools/archive/${MY_P}.tar.gz"
 
-IUSE="pagesize-16k pagesize-32k pagesize-64k pagesize-128k pagesize-256k +debug llvm-libunwind minimal optimisememory test static-libs"
-REQUIRED_USE="?? ( pagesize-16k pagesize-32k pagesize-64k pagesize-128k pagesize-256k )"
+DESCRIPTION="Fast, multi-threaded malloc() and nifty performance analysis tools"
+HOMEPAGE="https://github.com/gperftools/gperftools"
+LICENSE="MIT"
+SLOT="0/4"
+IUSE="
+${PAGE_SIZES[@]}
++debug llvm-libunwind minimal optimisememory test static-libs
+ebuild_revision_1
+"
+REQUIRED_USE="
+	?? (
+		${PAGE_SIZES[@]}
+	)
+"
 
 RESTRICT="!test? ( test )"
 
@@ -73,13 +94,25 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
+ewarn "Large page sizes are less secure."
 	use optimisememory && append-cppflags -DTCMALLOC_SMALL_BUT_SLOW
+	use pagesize-4k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=12
+	use pagesize-8k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=13 # Non PPC64 default
 	use pagesize-16k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=14
 	use pagesize-32k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=15
-	use pagesize-64k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=16
+	use pagesize-64k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=16 # PPC64 default
 	use pagesize-128k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=17
 	use pagesize-256k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=18
 	append-flags -fno-strict-aliasing -fno-omit-frame-pointer
+
+	if [[ "${ARCH}" =~ "ppc64" ]] && ! use pagesize-64k ; then
+ewarn "pagesize-64k is the upstream default for ${ARCH}."
+	fi
+
+	if ! [[ "${ARCH}" =~ "ppc64" ]] && ! use pagesize-8k ; then
+ewarn "pagesize-8k is the upstream default for ${ARCH}."
+	fi
 
 	local myeconfargs=(
 		--enable-shared
@@ -87,7 +120,7 @@ multilib_src_configure() {
 		$(use_enable debug debugalloc)
 	)
 
-	if [[ ${ABI} == x32 ]]; then
+	if [[ "${ABI}" == "x32" ]]; then
 		myeconfargs+=( --enable-minimal )
 	else
 		myeconfargs+=( $(use_enable minimal) )
@@ -108,12 +141,12 @@ src_test() {
 }
 
 src_install() {
-	if ! use minimal && has x32 ${MULTILIB_ABIS}; then
+	if ! use minimal && has "x32" ${MULTILIB_ABIS} ; then
 		MULTILIB_WRAPPED_HEADERS=(
-			/usr/include/gperftools/heap-checker.h
-			/usr/include/gperftools/heap-profiler.h
-			/usr/include/gperftools/stacktrace.h
-			/usr/include/gperftools/profiler.h
+			"/usr/include/gperftools/heap-checker.h"
+			"/usr/include/gperftools/heap-profiler.h"
+			"/usr/include/gperftools/stacktrace.h"
+			"/usr/include/gperftools/profiler.h"
 		)
 	fi
 
