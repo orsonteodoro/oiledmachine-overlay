@@ -23,15 +23,18 @@
   # General case defaults in KiB:  8 for non PPC64, 64 for PPC64
   # For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty.
 
-  # Normalized relative performance penalties:
+  # Relative performance multiple penalties:
 
-  #         L1 cache hit:  O(1)
-  #             TLB miss:  O(1 - 100)
-  #        Fragmentation:  O(1)
-  #      RAM fault fetch:  O(1K - 10K)
-  # NVMe SSD fault fetch:  O(10K - 100K)
-  #     SATA fault fetch:  O(10K - 100K)
-  #      HDD fault fetch:  O(1M - 10M)
+  #         L1 cache hit:  1
+  #         L2 cache hit:  1
+  #         L3 cache hit:  10
+  #          TLB miss L1:  10
+  #         TLB miss RAM:  100
+  #   Page fragmentation:  2
+  #      RAM fault fetch:  10K
+  # NVMe SSD fault fetch:  100K
+  #     SATA fault fetch:  500K
+  #      HDD fault fetch:  10M
 
   TC_MALLOC_PAGE_SIZES="amd64:8 x86:4" # For ARCH=amd64
   # TC_MALLOC_PAGE_SIZES="n64:8 n32:4 o32:4" # For ARCH=mips64el
