@@ -23,7 +23,7 @@
     <remote-id type="cpe">cpe:/a:google:protobuf</remote-id>
     <remote-id type="github">protocolbuffers/protobuf</remote-id>
   </upstream>
-  <[CDATA[
+  <![CDATA[
   <!--
 
   oiledmachine-overlay notes:
