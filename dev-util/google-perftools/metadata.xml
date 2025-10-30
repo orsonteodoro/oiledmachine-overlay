@@ -9,28 +9,42 @@
   <upstream>
     <remote-id type="github">gperftools/gperftools</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  The ebuild changes allows to configure the page size per ABI for increased security.
+  Larger page sizes are less secure but reduce performance.
+
+
+  Contents of /etc/portage/env/tcmalloc.conf:
+
+  # Acceptable page sizes in KiB:  4, 8, 16, 32, 64, 128, 256
+  # General case defaults in KiB:  8 for non PPC64, 64 for PPC64
+  # For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty.
+
+  # Normalized relative performance penalties:
+
+  #         L1 cache hit:  O(1)
+  #             TLB miss:  O(1 - 100)
+  #        Fragmentation:  O(1)
+  #      RAM fault fetch:  O(1K - 37K)
+  # NVMe SSD fault fetch:  O(10K - 100K)
+  #     SATA fault fetch:  O(10K - 100K)
+  #      HDD fault fetch:  O(1M - 15M)
+
+  TC_MALLOC_PAGE_SIZES=\"amd64:8 x86:4\" # For ARCH=amd64
+  # TC_MALLOC_PAGE_SIZES=\"n64:8 n32:4 o32:4\" # For ARCH=mips64el
+  # TC_MALLOC_PAGE_SIZES=\"lp64d:8 lp64:8 ilp32d:4 ilp32:4\" # For ARCH=riscv
+  # TC_MALLOC_PAGE_SIZES=\"ppc64:64\" # For ARCH=ppc64
+
+
+  Contents of /etc/portage/package.env:
+
+  dev-util/google-perftools tcmalloc.conf
+
+  -->
   <use>
-    <flag name="pagesize-4k">
-      Use 4K page size for tcmalloc.
-    </flag>
-    <flag name="pagesize-8k">
-      Use 8K page size for tcmalloc.  Upstream default for non PPC64.
-    </flag>
-    <flag name="pagesize-16k">
-      Use 16K page size for tcmalloc.
-    </flag>
-    <flag name="pagesize-32k">
-      Use 32K page size for tcmalloc.
-    </flag>
-    <flag name="pagesize-64k">
-      Use 64K page size for tcmalloc.  Upstream default for PPC64.
-    </flag>
-    <flag name="pagesize-128k">
-      Use 128K page size for tcmalloc.
-    </flag>
-    <flag name="pagesize-256k">
-      Use 256K page size for tcmalloc.
-    </flag>
     <flag name="debug">
       Build a set of libraries with debug support (so-called
       debugalloc). These are available by default but are not needed

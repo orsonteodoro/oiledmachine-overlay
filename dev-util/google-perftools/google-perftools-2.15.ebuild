@@ -17,16 +17,6 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-PAGE_SIZES=(
-	"pagesize-4k"
-	"pagesize-8k"
-	"pagesize-16k"
-	"pagesize-32k"
-	"pagesize-64k"
-	"pagesize-128k"
-	"pagesize-256k"
-)
-
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 
@@ -45,14 +35,8 @@ HOMEPAGE="https://github.com/gperftools/gperftools"
 LICENSE="MIT"
 SLOT="0/4"
 IUSE="
-${PAGE_SIZES[@]}
 +debug llvm-libunwind minimal optimisememory test static-libs
 ebuild_revision_1
-"
-REQUIRED_USE="
-	?? (
-		${PAGE_SIZES[@]}
-	)
 "
 
 RESTRICT="!test? ( test )"
@@ -84,6 +68,40 @@ pkg_setup() {
 
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	if [[ -z "${TC_MALLOC_PAGE_SIZES}" ]] ; then
+ewarn
+ewarn "TC_MALLOC_PAGE_SIZES is undefined, using defaults."
+ewarn
+ewarn "Examples of use:"
+ewarn
+ewarn
+ewarn "Contents of /etc/portage/env/tcmalloc.conf:"
+ewarn
+ewarn "# Acceptable page sizes in KiB:  4, 8, 16, 32, 64, 128, 256"
+ewarn "# General case defaults in KiB:  8 for non PPC64, 64 for PPC64"
+ewarn "# For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty."
+ewarn
+ewarn "# Relative performance penalties:"
+ewarn
+ewarn "#         L1 cache hit:  O(1)"
+ewarn "#             TLB miss:  O(1 - 100)"
+ewarn "#        Fragmentation:  O(1)"
+ewarn "#      RAM fault fetch:  O(1K - 37K)"
+ewarn "# NVMe SSD fault fetch:  O(10K - 100K)"
+ewarn "#     SATA fault fetch:  O(10K - 100K)"
+ewarn "#      HDD fault fetch:  O(1M - 15M)"
+ewarn
+ewarn "TC_MALLOC_PAGE_SIZES=\"amd64:8 x86:4\" # For ARCH=amd64"
+ewarn "# TC_MALLOC_PAGE_SIZES=\"n64:8 n32:4 o32:4\" # For ARCH=mips64el"
+ewarn "# TC_MALLOC_PAGE_SIZES=\"lp64d:8 lp64:8 ilp32d:4 ilp32:4\" # For ARCH=riscv"
+ewarn "# TC_MALLOC_PAGE_SIZES=\"ppc64:64\" # For ARCH=ppc64"
+ewarn
+ewarn
+ewarn "Contents of /etc/portage/package.env:"
+ewarn
+ewarn "dev-util/google-perftools tcmalloc.conf"
+ewarn
+	fi
 }
 
 src_prepare() {
@@ -93,26 +111,88 @@ src_prepare() {
 	multilib_copy_sources
 }
 
+set_default_tcmalloc_page_size() {
+ewarn "Large page sizes are less secure."
+	filter-flags '-DTCMALLOC_PAGE_SIZE_SHIFT=*'
+	if [[ -z "${TC_MALLOC_PAGE_SIZES}" ]] ; then
+		if [[ "${ABI}" == "ppc64" ]] ; then
+			append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=16
+		else
+			append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=13
+		fi
+	else
+		local pair
+		for pair in ${TC_MALLOC_PAGE_SIZES} ; do
+			if [[ "${pair}" =~ ":" ]] ; then
+				local abi="${pair%:*}"
+				local page_size="${pair#*:}" # in KiB
+				if [[ -z "${page_size}" ]] ; then
+					if [[ "${abi}" == "ppc64" ]] ; then
+						page_size=64
+					else
+						page_size=8
+					fi
+				fi
+
+				local d
+				if [[ "${abi}" == "ppc64" ]] ; then
+					d=64
+				else
+					d=8
+				fi
+
+				(( ${page_size} > 256 )) && page_size=256
+				(( ${page_size} < 4 )) && page_size=4
+
+				local n=8
+				case ${page_size} in
+					256)
+						n=18
+						;;
+					128)
+						n=17
+						;;
+					64)
+						n=16
+						;;
+					32)
+						n=15
+						;;
+					16)
+						n=14
+						;;
+					8)
+						n=13
+						;;
+					4)
+						n=12
+						;;
+					*)
+						n=${d}
+						;;
+				esac
+einfo "ABI:  ${abi}"
+einfo "Page size:  ${page_size}"
+
+				if [[ "${abi}" =~ "ppc64" ]] && [[ "${page_size}" != "64" ]] ; then
+ewarn "64 KiB page size is the upstream default for ${abi}."
+				fi
+
+				if ! [[ "${abi}" =~ "ppc64" ]] && [[ "${page_size}" != "8" ]] ; then
+ewarn "8 KiB page size the upstream default for ${abi}."
+				fi
+
+				append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=${n}
+			fi
+		done
+	fi
+}
+
 multilib_src_configure() {
 	cflags-hardened_append
-ewarn "Large page sizes are less secure."
 	use optimisememory && append-cppflags -DTCMALLOC_SMALL_BUT_SLOW
-	use pagesize-4k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=12
-	use pagesize-8k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=13 # Non PPC64 default
-	use pagesize-16k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=14
-	use pagesize-32k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=15
-	use pagesize-64k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=16 # PPC64 default
-	use pagesize-128k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=17
-	use pagesize-256k && append-cppflags -DTCMALLOC_PAGE_SIZE_SHIFT=18
+	set_default_tcmalloc_page_size
 	append-flags -fno-strict-aliasing -fno-omit-frame-pointer
-
-	if [[ "${ARCH}" =~ "ppc64" ]] && ! use pagesize-64k ; then
-ewarn "pagesize-64k is the upstream default for ${ARCH}."
-	fi
-
-	if ! [[ "${ARCH}" =~ "ppc64" ]] && ! use pagesize-8k ; then
-ewarn "pagesize-8k is the upstream default for ${ARCH}."
-	fi
 
 	local myeconfargs=(
 		--enable-shared
