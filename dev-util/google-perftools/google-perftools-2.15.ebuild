@@ -36,7 +36,7 @@ LICENSE="MIT"
 SLOT="0/4"
 IUSE="
 +debug llvm-libunwind minimal optimisememory test static-libs
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RESTRICT="!test? ( test )"
@@ -129,19 +129,14 @@ ewarn "Large page sizes are less secure."
 			if [[ "${pair}" =~ ":" ]] ; then
 				local abi="${pair%:*}"
 				local page_size="${pair#*:}" # in KiB
-				if [[ -z "${page_size}" ]] ; then
-					if [[ "${abi}" == "ppc64" ]] ; then
-						page_size=64
-					else
-						page_size=8
-					fi
-				fi
 
 				local d
 				if [[ "${abi}" == "ppc64" ]] ; then
-					d=64
+					[[ -z "${page_size}" ]] && page_size=64
+					d=16
 				else
-					d=8
+					[[ -z "${page_size}" ]] && page_size=8
+					d=13
 				fi
 
 				(( ${page_size} > 256 )) && page_size=256
