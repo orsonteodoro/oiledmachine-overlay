@@ -73,7 +73,7 @@ ewarn
 ewarn "Examples of use:"
 ewarn
 ewarn
-ewarn "Contents of /etc/portage/env/tcmalloc.conf:"
+ewarn "Contents of /etc/portage/env/tcmalloc-default-page-size.conf:"
 ewarn
 ewarn "# Acceptable page sizes in KiB:  4, 8, 16, 32, 64, 128, 256"
 ewarn "# General case defaults in KiB:  8 for non PPC64, 64 for PPC64"
@@ -100,7 +100,7 @@ ewarn
 ewarn
 ewarn "Contents of /etc/portage/package.env:"
 ewarn
-ewarn "dev-util/google-perftools tcmalloc.conf"
+ewarn "dev-util/google-perftools tcmalloc-default-page-size.conf"
 ewarn
 	fi
 }

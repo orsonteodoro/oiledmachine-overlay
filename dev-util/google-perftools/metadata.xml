@@ -18,7 +18,7 @@
   Larger page sizes are less secure but reduce performance.
 
 
-  Contents of /etc/portage/env/tcmalloc.conf:
+  Contents of /etc/portage/env/tcmalloc-default-page-size.conf:
 
   # Acceptable page sizes in KiB:  4, 8, 16, 32, 64, 128, 256
   # General case defaults in KiB:  8 for non PPC64, 64 for PPC64
@@ -45,7 +45,7 @@
 
   Contents of /etc/portage/package.env:
 
-  dev-util/google-perftools tcmalloc.conf
+  dev-util/google-perftools tcmalloc-default-page-size.conf
 
   -->
   ]]>
