@@ -91,13 +91,91 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
-
-#
-# Set to 1 below to generate an about_credits.html including bundled internal
-# dependencies.
-#
 GEN_ABOUT_CREDITS=0
+CHROMIUM_TOOLCHAIN=1
+CROMITE_COMMIT="fde090c0d3690592570011055c980f1679d2b28d" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="140.0.7339.186"
+
+# About PGO version compatibility
 #
+# The answer to the profdata compatibility is answered in
+# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
+#
+# The profdata (aka indexed profile) version is 10 corresponding from LLVM 16+
+# and is after the magic (lprofi - i for index) in the profdata file located in
+# chrome/build/pgo_profiles/*.profdata.
+#
+# Profdata versioning (ProfVersion):
+# https://github.com/llvm/llvm-project/blob/7b473dfe/llvm/include/llvm/ProfileData/InstrProf.h#L1116
+# LLVM version:
+# https://github.com/llvm/llvm-project/blob/7b473dfe/cmake/Modules/LLVMVersion.cmake
+
+# LLVM timestamp can be obtained from \
+# https://github.com/chromium/chromium/blob/140.0.7339.127/tools/clang/scripts/update.py#L42 \
+# https://github.com/llvm/llvm-project/commit/7b473dfe
+# Change also LLVM_OFFICIAL_SLOT
+CURRENT_PROFDATA_VERSION= # Global variable
+CURRENT_PROFDATA_LLVM_VERSION= # Global variable
+
+DISABLE_AUTOFORMATTING="yes"
+DISK_BASE=24
+declare -A DISK_BUILD
+DISK_BUILD["debug"]=$((${DISK_BASE} + 13))
+DISK_BUILD["pgo"]=$((${DISK_BASE} + 8))
+DISK_BUILD["lto"]=$((${DISK_BASE} + 9))
+DISK_BUILD["fallback"]=$((${DISK_BASE} + 1))
+DISTRIBUTED_BUILD=0 # Global variable
+# See also
+# third_party/ffmpeg/libavutil/version.h
+# third_party/ffmpeg/libavcodec/version*.h
+# third_party/ffmpeg/libavformat/version*.h
+FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
+FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
+GCC_PV="10.2.1" # Minimum
+GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
+LIBVA_PV="2.17.0"
+# SHA512 about_credits.html fingerprint: \
+LICENSE_FINGERPRINT="\
+e5e278799d8f98a7a701384fb82a3823480d3af837f4323431f4101ef78649ad\
+3305ad42ec05bdfad189b32541f6fb88608440d297ad5079c2c7584f65fc607a\
+"
+LLVM_SLOT="" # Global variable
+LTO_TYPE="" # Global variable
+MESA_PV="20.3.5"
+NABIS=0 # Global variable
+NODE_VERSION=22
+PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
+PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
+PATCH_REVISION=""
+PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
+PYTHON_COMPAT=( "python3_"{9..13} )
+PYTHON_REQ_USE="xml(+)"
+QT6_PV="6.4.2"
+UNGOOGLED_CHROMIUM_PV="140.0.7339.213-1"
+USE_LTO=0 # Global variable
+# https://github.com/chromium/chromium/blob/140.0.7339.127/tools/clang/scripts/update.py#L38 \
+# grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
+TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
+# https://github.com/chromium/chromium/blob/140.0.7339.127/tools/rust/update_rust.py#L37 \
+# grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
+RUST_NEEDS_LLVM="yes please"
+RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
+RUSTC_VER="" # Global variable
+RUST_MAX_VER="9999" # Corresponds to llvm-20.1
+RUST_MIN_VER="9999" # Corresponds to llvm-20.1
+RUST_PV="${RUST_MIN_VER}"
+SHADOW_CALL_STACK=0 # Global variable
+S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
+S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
+TESTDATA_P="${PN}-${PV}"
+# Testing this version to avoid breaking security.  The 13.6 series cause the \
+# mksnapshot "Return code is -11" error.  To fix it, it required to either \
+# disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
+# possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
+# to fix a compile error when DrumBrake is enabled. \
+#V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
+ZLIB_PV="1.3.1"
 
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -122,68 +200,7 @@ af am ar bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr gu he hi hr
 hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
-CHROMIUM_TOOLCHAIN=1
 
-CROMITE_COMMIT="fde090c0d3690592570011055c980f1679d2b28d" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="140.0.7339.186"
-
-# About PGO version compatibility
-#
-# The answer to the profdata compatibility is answered in
-# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
-#
-# The profdata (aka indexed profile) version is 10 corresponding from LLVM 16+
-# and is after the magic (lprofi - i for index) in the profdata file located in
-# chrome/build/pgo_profiles/*.profdata.
-#
-# Profdata versioning (ProfVersion):
-# https://github.com/llvm/llvm-project/blob/7b473dfe/llvm/include/llvm/ProfileData/InstrProf.h#L1116
-# LLVM version:
-# https://github.com/llvm/llvm-project/blob/7b473dfe/cmake/Modules/LLVMVersion.cmake
-
-# LLVM timestamp can be obtained from \
-# https://github.com/chromium/chromium/blob/140.0.7339.127/tools/clang/scripts/update.py#L42 \
-# https://github.com/llvm/llvm-project/commit/7b473dfe
-# Change also LLVM_OFFICIAL_SLOT
-CURRENT_PROFDATA_VERSION= # Global variable
-CURRENT_PROFDATA_LLVM_VERSION= # Global variable
-DISABLE_AUTOFORMATTING="yes"
-DISK_BASE=24
-declare -A DISK_BUILD
-DISK_BUILD["debug"]=$((${DISK_BASE} + 13))
-DISK_BUILD["pgo"]=$((${DISK_BASE} + 8))
-DISK_BUILD["lto"]=$((${DISK_BASE} + 9))
-DISK_BUILD["fallback"]=$((${DISK_BASE} + 1))
-DISTRIBUTED_BUILD=0 # Global variable
-# See also
-# third_party/ffmpeg/libavutil/version.h
-# third_party/ffmpeg/libavcodec/version*.h
-# third_party/ffmpeg/libavformat/version*.h
-FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
-FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
-GCC_COMPAT=( {14..10} )
-GCC_PV="10.2.1" # Minimum
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
-LIBVA_PV="2.17.0"
-# SHA512 about_credits.html fingerprint: \
-LICENSE_FINGERPRINT="\
-e5e278799d8f98a7a701384fb82a3823480d3af837f4323431f4101ef78649ad\
-3305ad42ec05bdfad189b32541f6fb88608440d297ad5079c2c7584f65fc607a\
-"
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
-	LLVM_COMPAT=( 22 21 ) # Can use [CURRENT_LLVM_MAJOR_VERSION+1 or CURRENT_LLVM_MAJOR_VERSION] inclusive
-	LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max can be is LLVM_OFFICIAL_SLOT+1
-	LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is both LLVM_OFFICIAL_SLOT and the pregenerated PGO profile needed for INSTR_PROF_INDEX_VERSION version 12 compatibility for the profdata file format.
-else
-	LLVM_COMPAT=( 21 ) # Forced to match upstream
-	LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max can be is LLVM_OFFICIAL_SLOT+1
-	LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is both LLVM_OFFICIAL_SLOT and the pregenerated PGO profile needed for INSTR_PROF_INDEX_VERSION version 12 compatibility for the profdata file format.
-fi
-LLVM_OFFICIAL_SLOT="${LLVM_COMPAT[-1]}" # Cr official slot
-LLVM_SLOT="" # Global variable
-LTO_TYPE="" # Global variable
-MESA_PV="20.3.5"
 MITIGATION_DATE="Sep 30, 2025" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1759165500 # From `date +%s -d "2025-09-29 10:05 AM PDT"` From tag in GH
 MITIGATION_URI="https://chromereleases.googleblog.com/2025/09/stable-channel-update-for-desktop_30.html"
@@ -202,54 +219,37 @@ VULNERABILITIES_FIXED=(
 	"CVE-2025-11219;UAF;"
 	"448476731;;"
 )
-NABIS=0 # Global variable
-NODE_VERSION=22
+
 PATENT_STATUS=(
 	"patent_status_nonfree"
 	"patent_status_sponsored_ncp_nb"
 )
-PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
-PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
-PATCH_REVISION=""
-PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
+
+CXX_STANDARD=20
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+)
+LLVM_OFFICIAL_SLOT="21" # Cr official slot
+PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_OFFICIAL_SLOT}"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
 PGO_LLVM_SUPPORTED_VERSIONS=(
-	"22.0.0.9999"
-	"22.0.0"
+	"$(( ${LLVM_OFFICIAL_SLOT} + 1 )).0.0.9999"
+	"$(( ${LLVM_OFFICIAL_SLOT} + 1 )).0.0"
 	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
 	"${LLVM_OFFICIAL_SLOT}.0.0"
 )
-PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
-PYTHON_COMPAT=( "python3_"{9..13} )
-PYTHON_REQ_USE="xml(+)"
-QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="140.0.7339.213-1"
-USE_LTO=0 # Global variable
-# https://github.com/chromium/chromium/blob/140.0.7339.127/tools/clang/scripts/update.py#L38 \
-# grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-LLVM_OFFICIAL_SLOT="21" # Cr official slot
-TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
-# https://github.com/chromium/chromium/blob/140.0.7339.127/tools/rust/update_rust.py#L37 \
-# grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_NEEDS_LLVM="yes please"
-RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
-RUSTC_VER="" # Global variable
-RUST_MAX_VER="9999" # Corresponds to llvm-20.1
-RUST_MIN_VER="9999" # Corresponds to llvm-20.1
-RUST_PV="${RUST_MIN_VER}"
-SHADOW_CALL_STACK=0 # Global variable
-S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
-S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
-TESTDATA_P="${PN}-${PV}"
-# Testing this version to avoid breaking security.  The 13.6 series cause the \
-# mksnapshot "Return code is -11" error.  To fix it, it required to either \
-# disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
-# possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
-# to fix a compile error when DrumBrake is enabled. \
-#V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
-ZLIB_PV="1.3.1"
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
-inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr
+inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
 inherit multilib-minimal multiprocessing ninja-utils pax-utils python-any-r1
 inherit readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
@@ -485,6 +485,7 @@ ${CPU_FLAGS_S390[@]/#/cpu_flags_s390_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
@@ -500,7 +501,6 @@ ebuild_revision_18
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
-		${LLVM_COMPAT[@]/#/llvm_slot_}
 		-system-toolchain
 	"
 fi
@@ -881,6 +881,7 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
+		llvm_slot_21
 		mdns
 		miracleptr
 		mpris
@@ -1017,6 +1018,7 @@ LIBVA_DEPEND="
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+			media-video/ffmpeg:=
 		)
 	)
 "
@@ -1030,23 +1032,27 @@ gen_depend_llvm() {
 		t="
 			!official? (
 				cfi? (
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},cfi]
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi]
 					llvm-runtimes/compiler-rt-sanitizers:=
 				)
 			)
-			=llvm-runtimes/compiler-rt-${s}*
+			=llvm-runtimes/compiler-rt-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 			llvm-runtimes/compiler-rt:=
 			=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-			llvm-core/lld:${s}
-			llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+			llvm-runtimes/clang-runtime:=
+			llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+			llvm-core/clang:=
+			llvm-core/lld:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+			llvm-core/lld:=
+			llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+			llvm-core/llvm:=
 			pgo? (
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},profile]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile]
 				llvm-runtimes/compiler-rt-sanitizers:=
 			)
 			official? (
 				amd64? (
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},cfi,profile]
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi,profile]
 					llvm-runtimes/compiler-rt-sanitizers:=
 				)
 			)
@@ -1133,7 +1139,7 @@ COMMON_SNAPSHOT_DEPEND="
 	dev-libs/nss:=
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/nspr:=
-	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gbm(+)]
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},gbm(+)]
 	media-libs/mesa:=
 	patent_status_nonfree? (
 		system-openh264? (
@@ -1158,7 +1164,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
-		>=dev-libs/icu-74.2[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-74.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-libaom? (
@@ -1186,7 +1192,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/libxslt:=
 	)
 	system-re2? (
-		>=dev-libs/re2-0.2023.06.01:0/11[${MULTILIB_USEDEP}]
+		>=dev-libs/re2-0.2023.06.01:0/11[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/re2:=
 	)
 	system-zlib? (
@@ -1248,7 +1254,7 @@ COMMON_DEPEND="
 			net-print/cups:=
 		)
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[widgets,X?]
+			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X?]
 		)
 		X? (
 			${COMMON_X_DEPEND}
@@ -1312,10 +1318,10 @@ RDEPEND+="
 	virtual/patent-status[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[gui,wayland?,X?]
+			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,wayland?,X?]
 			wayland? (
-				>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
-				>=dev-qt/qtwayland-${QT6_PV}:6
+				>=dev-qt/qtdeclarative-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},opengl]
+				>=dev-qt/qtwayland-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 			)
 		)
 		|| (
@@ -1378,7 +1384,7 @@ RUST_BDEPEND="
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	BDEPEND+="
 		${CLANG_BDEPEND}
-		>=net-libs/nodejs-22.11.0[inspector]
+		>=net-libs/nodejs-22.11.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
 		app-eselect/eselect-nodejs
 	"
 fi
@@ -1395,14 +1401,14 @@ BDEPEND+="
 	www-client/chromium-sources:0/${PV}
 	www-client/chromium-toolchain:0/${PV%.*}.x
 	>=app-arch/gzip-1.7
-	>=dev-util/gperf-3.2
+	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/bison-2.4.3
 	app-alternatives/lex
 	dev-lang/perl
 	dev-vcs/git
 	mold? (
-		>=sys-devel/mold-2.38
+		>=sys-devel/mold-2.38[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	vaapi? (
 		media-video/libva-utils
@@ -1523,35 +1529,6 @@ eerror "At least gcc ${GCC_PV} is required"
 		if use pgo && tc-is-cross-compiler; then
 eerror "The pgo USE flag cannot be used when cross-compiling"
 			die
-		fi
-
-		if is_using_clang || tc-is-clang ; then
-			local clang_min
-			local clang_max
-			if use official ; then
-				clang_min="${LLVM_OFFICIAL_SLOT}"
-				clang_max="${LLVM_OFFICIAL_SLOT}"
-			else
-				clang_min="${LLVM_MIN_SLOT}"
-				clang_max="${LLVM_MAX_SLOT}"
-			fi
-
-	# Ideally we never see this, but it should help prevent bugs like 927154
-			if \
-				ver_test "$(clang-major-version)" -lt ${clang_min} \
-					|| \
-				ver_test "$(clang-major-version)" -gt ${clang_max} \
-			; then
-eerror
-eerror "Your chosen clang does not meet requirements."
-eerror
-eerror "Actual slot:\t${slot}"
-eerror "Expected slots:\t $(seq ${clang_min} ${clang_max})"
-eerror
-				clang --version
-eerror
-				die
-			fi
 		fi
 	fi
 }
@@ -2152,6 +2129,8 @@ einfo
 	elif is-flagq "-fstack-protector-all" ; then
 		CFLAGS_HARDENED_SSP_LEVEL="3"
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
