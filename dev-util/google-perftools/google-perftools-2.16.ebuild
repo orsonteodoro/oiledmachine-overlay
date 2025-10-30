@@ -47,11 +47,14 @@ REQUIRED_USE="
 
 RESTRICT="!test? ( test )"
 
-DEPEND="
+RDEPEND="
+	!dev-libs/tcmalloc
 	llvm-libunwind? ( llvm-runtimes/libunwind:= )
 	!llvm-libunwind? ( sys-libs/libunwind:= )
 "
-RDEPEND="${DEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 
 pkg_setup() {
 	# set up the make options in here so that we can actually make use

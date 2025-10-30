@@ -41,11 +41,14 @@ ebuild_revision_2
 
 RESTRICT="!test? ( test )"
 
-DEPEND="
+RDEPEND="
+	!dev-libs/tcmalloc
 	llvm-libunwind? ( llvm-runtimes/libunwind:= )
 	!llvm-libunwind? ( sys-libs/libunwind:= )
 "
-RDEPEND="${DEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 
 S="${WORKDIR}/${MY_P}"
 
