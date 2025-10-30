@@ -86,10 +86,10 @@ ewarn
 ewarn "#         L1 cache hit:  O(1)"
 ewarn "#             TLB miss:  O(1 - 100)"
 ewarn "#        Fragmentation:  O(1)"
-ewarn "#      RAM fault fetch:  O(1K - 37K)"
+ewarn "#      RAM fault fetch:  O(1K - 10K)"
 ewarn "# NVMe SSD fault fetch:  O(10K - 100K)"
 ewarn "#     SATA fault fetch:  O(10K - 100K)"
-ewarn "#      HDD fault fetch:  O(1M - 15M)"
+ewarn "#      HDD fault fetch:  O(1M - 10M)"
 ewarn
 ewarn "TC_MALLOC_PAGE_SIZES=\"amd64:8 x86:4\" # For ARCH=amd64"
 ewarn "# TC_MALLOC_PAGE_SIZES=\"n64:8 n32:4 o32:4\" # For ARCH=mips64el"
