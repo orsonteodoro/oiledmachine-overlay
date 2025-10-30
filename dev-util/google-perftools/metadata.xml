@@ -23,7 +23,7 @@
   # General case defaults in KiB:  8 for non PPC64, 64 for PPC64
   # For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty.
 
-  # Relative performance multiple penalties:
+  # Worst case relative performance multiple penalties:
 
   #         L1 cache hit:  1
   #         L2 cache hit:  1

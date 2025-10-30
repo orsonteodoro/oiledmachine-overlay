@@ -79,7 +79,7 @@ ewarn "# Acceptable page sizes in KiB:  4, 8, 16, 32, 64, 128, 256"
 ewarn "# General case defaults in KiB:  8 for non PPC64, 64 for PPC64"
 ewarn "# For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty."
 ewarn
-ewarn "# Relative performance multiple penalties:"
+ewarn "# Worst case relative performance multiple penalties:"
 ewarn
 ewarn "#         L1 cache hit:  1"
 ewarn "#         L2 cache hit:  1"
