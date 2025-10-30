@@ -78,6 +78,7 @@ ewarn
 ewarn "# Acceptable page sizes in KiB:  4, 8, 16, 32, 64, 128, 256"
 ewarn "# General case defaults in KiB:  8 for non PPC64, 64 for PPC64"
 ewarn "# For apps using GiB heaps, consider 32 or 256 to reduce page fault penalty."
+ewarn "# 3x fragmentation means 3x memory cost."
 ewarn
 ewarn "# Worst case relative performance multiple penalties:"
 ewarn
@@ -87,6 +88,8 @@ ewarn "#                L2 cache hit:  3"
 ewarn "#                L3 cache hit:  10"
 ewarn "#  L1 -> L2 walk for TLB miss:  10"
 ewarn "#       RAM walk for TLB miss:  100"
+ewarn "#                  RAM access:  100"
+ewarn "#                 RAM reclaim:  1K"
 ewarn "#             RAM fault fetch:  10K"
 ewarn "#        NVMe SSD fault fetch:  100K"
 ewarn "#            SATA fault fetch:  500K"
