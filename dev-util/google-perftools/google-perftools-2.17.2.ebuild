@@ -82,8 +82,8 @@ ewarn
 ewarn "# Worst case relative performance multiple penalties:"
 ewarn
 ewarn "#         L1 cache hit:  1"
-ewarn "#         L2 cache hit:  1"
 ewarn "#   Page fragmentation:  2"
+ewarn "#         L2 cache hit:  3"
 ewarn "#         L3 cache hit:  10"
 ewarn "#          TLB miss L1:  10"
 ewarn "#         TLB miss RAM:  100"
