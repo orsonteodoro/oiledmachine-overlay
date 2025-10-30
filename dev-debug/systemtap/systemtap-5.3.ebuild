@@ -36,6 +36,7 @@ IUSE="debuginfod dtrace-symlink libvirt selinux sqlite +ssl test zeroconf"
 CDEPEND="
 	${PYTHON_DEPS}
 
+	dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
 	>=dev-libs/elfutils-0.142[debuginfod?]
 	dev-libs/json-c:=
