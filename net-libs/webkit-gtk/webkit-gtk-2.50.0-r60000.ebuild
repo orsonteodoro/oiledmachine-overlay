@@ -751,7 +751,8 @@ REQUIRED_USE+="
 "
 
 RDEPEND_PATENTS="
-	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},patent_status_nonfree=]
+	media-libs/mesa:=
 	!patent_status_nonfree? (
 		gstreamer? (
 			media-plugins/gst-plugins-meta[-nvcodec,-qsv,-vaapi,-vulkan]
@@ -817,25 +818,38 @@ gen_gobject_introspection_rdepend() {
 
 RDEPEND+="
 	${RDEPEND_PATENTS}
-	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
+	>=dev-db/sqlite-3.22.0:3[${MULTILIB_USEDEP}]
+	dev-db/sqlite:=
 	>=dev-libs/icu-70.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	dev-libs/icu:=
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
-	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-1.7.0:0[${MULTILIB_USEDEP}]
+	dev-libs/libgcrypt:=
+	>=dev-libs/libtasn1-4.13[${MULTILIB_USEDEP}]
+	dev-libs/libtasn1:=
 	>=dev-libs/libxml2-2.9.13:2[${MULTILIB_USEDEP}]
+	dev-libs/libxml2:=
 	>=dev-libs/libxslt-1.1.13[${MULTILIB_USEDEP}]
 	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	gui-libs/gtk:=
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/fontconfig:=
 	>=media-libs/freetype-${FREETYPE_PV}:2[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
+	media-libs/freetype:=
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}[${MULTILIB_USEDEP},icu(+)]
+	media-libs/harfbuzz:=
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
-	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.34:0[${MULTILIB_USEDEP}]
+	media-libs/libpng:=
+	>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
+	media-libs/libwebp:=
 	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
+	net-libs/libsoup:=
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
+	sys-libs/zlib:=
+	>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP},X?]
+	x11-libs/cairo:=
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
@@ -853,51 +867,68 @@ RDEPEND+="
 	)
 	geolocation? (
 		>=app-misc/geoclue-2.6.0:2.0
+		app-misc/geoclue:=
 	)
 	gles2? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),opengl]
+		>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+),gles2(+),opengl]
+		media-libs/mesa:=
 	)
 	gnome-keyring? (
 		>=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}]
 	)
 	gstreamer? (
 		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		media-libs/gst-plugins-bad:=
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},egl(+),gles2?,opengl?,X?]
+		media-libs/gst-plugins-base:=
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		media-libs/gstreamer:=
 		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},alsa?,pulseaudio?,v4l?]
+		media-plugins/gst-plugins-meta:=
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		media-plugins/gst-plugins-opus:=
 		aom? (
 			>=media-plugins/gst-plugins-aom-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-aom:=
 		)
 		dash? (
 			>=media-plugins/gst-plugins-dash-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-dash:=
 		)
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
+			media-plugins/gst-plugins-rs:=
 			media-libs/dav1d[${MULTILIB_USEDEP},8bit]
 		)
 		g722? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+			media-plugins/gst-plugins-meta:=
 		)
 		gstwebrtc? (
 			>=dev-libs/openssl-3[${MULTILIB_USEDEP}]
 			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-webrtc:=
 		)
 		hls? (
 			>=media-plugins/gst-plugins-hls-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-hls:=
 		)
 		libde265? (
 			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-libde265:=
 		)
 		speex? (
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-speex:=
 		)
 		vaapi? (
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
+			media-libs/gst-plugins-bad:=
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
+			media-plugins/gst-plugins-rs:=
 		)
 	)
 	introspection? (
@@ -931,7 +962,8 @@ RDEPEND+="
 		media-libs/openh264[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
+		>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
+		media-libs/mesa:=
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 	openmp? (
@@ -949,6 +981,7 @@ RDEPEND+="
 	)
 	spell? (
 		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
+		app-text/enchant:=
 	)
 	thunder? (
 		net-libs/Thunder[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
@@ -956,14 +989,18 @@ RDEPEND+="
 	)
 	variation-fonts? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
+		media-libs/fontconfig:=
 		>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
-		>=x11-libs/cairo-1.16:=[${MULTILIB_USEDEP},X?]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}[${MULTILIB_USEDEP},icu(+)]
+		media-libs/harfbuzz:=
+		>=x11-libs/cairo-1.16[${MULTILIB_USEDEP},X?]
+		x11-libs/cairo:=
 	)
 	wayland? (
 		>=dev-libs/wayland-1.15.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
+		>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
+		media-libs/mesa:=
 	)
 	webm-eme? (
 		${OCDM_WV}
@@ -999,7 +1036,7 @@ BDEPEND+="
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
 	>=dev-build/cmake-3.20
-	>=dev-util/gperf-3.0.1
+	>=dev-util/gperf-3.0.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
@@ -1016,14 +1053,9 @@ BDEPEND+="
 		dev-util/gi-docgen
 	)
 	mold? (
-		>=sys-devel/mold-2.0
+		>=sys-devel/mold-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		sys-devel/mold:=
 	)
-	|| (
-		>=sys-devel/gcc-13.2.0:13
-		>=sys-devel/gcc-12.2.0:12
-		>=sys-devel/gcc-11.2:11
-	)
-	sys-devel/gcc:=
 "
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
