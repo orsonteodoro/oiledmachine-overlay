@@ -150,13 +150,14 @@ gen_required_use_pgo() {
 }
 REQUIRED_USE+="
 	$(gen_required_use_pgo)
-	${PN}_trainers_module? (
-		inspector
-	)
+	!system-icu
 	corepack
 	inspector? (
 		icu
 		ssl
+	)
+	nodejs_trainers_module? (
+		inspector
 	)
 	npm? (
 		corepack
