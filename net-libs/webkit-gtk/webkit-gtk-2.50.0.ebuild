@@ -1037,6 +1037,7 @@ BDEPEND+="
 	>=dev-lang/ruby-1.9
 	>=dev-build/cmake-3.20
 	>=dev-util/gperf-3.0.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	dev-util/gperf:=
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
