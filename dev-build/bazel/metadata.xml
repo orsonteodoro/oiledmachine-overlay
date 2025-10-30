@@ -28,6 +28,12 @@
     Multislot reason:
     Changes to command line arg breaks backwards compatibility.
 
+    Maintenance warning:
+
+    If you do a version bump on Bazel, you need to redo the tarball snapshot on
+    packages that depend on Bazel.  It is discouraged to do the normal patch
+    version bump which has a heavy maintenance time cost.
+
   -->
   <use>
     <flag name="bash-completion">
