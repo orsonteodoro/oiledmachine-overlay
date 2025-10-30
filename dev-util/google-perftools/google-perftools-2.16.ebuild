@@ -143,7 +143,7 @@ ewarn "Large page sizes are less secure."
 				(( ${page_size} > 256 )) && page_size=256
 				(( ${page_size} < 4 )) && page_size=4
 
-				local n=8
+				local n
 				case ${page_size} in
 					256)
 						n=18
