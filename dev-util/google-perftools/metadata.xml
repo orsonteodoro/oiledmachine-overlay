@@ -14,6 +14,10 @@
 
   oiledmachine-overlay notes:
 
+  This is has the legacy version of TCMalloc.  For the modern TCMalloc, use as a
+  vendored internal dependency to avoid abseil-cpp ODR violation to have
+  consistent header signatures.
+
   The ebuild changes allows to configure the page size per ABI for increased security.
   Larger page sizes are less secure but reduce performance.
 

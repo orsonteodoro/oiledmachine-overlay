@@ -42,7 +42,6 @@ ebuild_revision_2
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	!dev-libs/tcmalloc
 	llvm-libunwind? ( llvm-runtimes/libunwind:= )
 	!llvm-libunwind? ( sys-libs/libunwind:= )
 "
