@@ -40,33 +40,34 @@ BAZEL_BINARY="${BAZEL_BINARY:-bazel}"
 #
 # To add more flags to this, append the flags to the
 # appropriate variable before calling this function
-bazel_get_flags() {
+gen_bazel_flags() {
 	local i fs=()
 	for i in ${CFLAGS}; do
-		fs+=( "--conlyopt=${i}" )
+		echo "build --conlyopt='${i}'"
 	done
 	for i in ${BUILD_CFLAGS}; do
-		fs+=( "--host_conlyopt=${i}" )
+		echo "build --host_conlyopt='${i}'"
 	done
 	for i in ${CXXFLAGS}; do
-		fs+=( "--cxxopt=${i}" )
+		echo "build --cxxopt='${i}'"
 	done
 	for i in ${BUILD_CXXFLAGS}; do
-		fs+=( "--host_cxxopt=${i}" )
+		echo "build --host_cxxopt='${i}'"
 	done
 	for i in ${CPPFLAGS}; do
-		fs+=( "--conlyopt=${i}" "--cxxopt=${i}" )
+		echo "build --conlyopt='${i}'"
+		echo "build --cxxopt='${i}'"
 	done
 	for i in ${BUILD_CPPFLAGS}; do
-		fs+=( "--host_conlyopt=${i}" "--host_cxxopt=${i}" )
+		echo "build --host_conlyopt='${i}'"
+		echo "build --host_cxxopt='${i}'"
 	done
 	for i in ${LDFLAGS}; do
-		fs+=( "--linkopt=${i}" )
+		echo "build --linkopt='${i}'"
 	done
 	for i in ${BUILD_LDFLAGS}; do
-		fs+=( "--host_linkopt=${i}" )
+		echo "build --host_linkopt='${i}'"
 	done
-	echo "${fs[*]}"
 }
 
 # @FUNCTION: bazel_setup_bazelrc
@@ -100,7 +101,7 @@ bazel_setup_bazelrc() {
 		build --compilation_mode=opt --host_compilation_mode=opt
 
 		# FLAGS
-		build $(bazel_get_flags)
+		$(gen_bazel_flags)
 
 		# Use standalone strategy to deactivate the bazel sandbox, since it
 		# conflicts with FEATURES=sandbox.
@@ -119,6 +120,8 @@ bazel_setup_bazelrc() {
 		build --define=LIBDIR=\$(PREFIX)/$(get_libdir)
 		build --define=INCLUDEDIR=\$(PREFIX)/include
 		EOF
+
+ewarn "QA:  Append \"${T}/bazelrc\" to \"${S}/.bazelrc\""
 
 	if tc-is-cross-compiler; then
 		echo "build --distinct_host_configuration" >> "${T}/bazelrc" || die
