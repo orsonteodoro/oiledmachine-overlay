@@ -25,7 +25,10 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="0"
-IUSE="cuda gdown rocm scipy test"
+IUSE="
+cuda gdown rocm scipy test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	?? (
 		cuda
@@ -64,8 +67,14 @@ src_compile()
 	export MAX_JOBS="$(makeopts_jobs)" # Let ninja respect MAKEOPTS
 	# Ensure some ext_module sources are compiled before linking
 	export MAKEOPTS="-j1"
-	use cuda && export NVCC_FLAGS="$(cuda_gccdir -f | tr -d \")"
-	use rocm && addpredict /dev/kfd
+	if use cuda ; then
+		export NVCC_FLAGS="$(cuda_gccdir -f | tr -d \")"
+		export CUDA_HOME="/opt/cuda"
+	fi
+	if use rocm ; then
+		addpredict "/dev/kfd"
+		export ROCM_HOME="/opt/rocm"
+	fi
 	distutils-r1_src_compile
 }
 

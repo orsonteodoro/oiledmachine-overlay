@@ -43,8 +43,8 @@ gen_x_usedep() {
 	local x_targets_compat="${1}"
 
 	if [[ -z "${AMDGPU_TARGETS_COMPAT[@]}" ]] ; then
-eerror "QA:  AMDGPU_TARGETS_COMPAT is a typo or missing.  Check if it is placed before \`inherit rocm\`"
-eerror "QA:  ${P}, x_targets_compat=${x_targets_compat}, called_from=gen_x_usedep"
+#eerror "QA:  AMDGPU_TARGETS_COMPAT is a typo or missing.  Check if it is placed before \`inherit rocm\`"
+#eerror "QA:  ${P}, x_targets_compat=${x_targets_compat}, called_from=gen_x_usedep"
 		return
 	fi
 
