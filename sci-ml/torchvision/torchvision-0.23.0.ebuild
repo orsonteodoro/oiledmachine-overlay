@@ -6,7 +6,7 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..12} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 ROCM_SKIP_GLOBALS=1
 
 inherit cuda distutils-r1 multiprocessing rocm
@@ -51,7 +51,8 @@ RDEPEND="
 	')
 	media-video/ffmpeg:=
 	sci-ml/caffe2[cuda?,rocm?]
-	=sci-ml/pytorch-2.5*[${PYTHON_SINGLE_USEDEP}]
+	=sci-ml/pytorch-2.8*[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch:=
 "
 DEPEND="
 	${RDEPEND}
