@@ -1,0 +1,25 @@
+--- a/setup.py.orig	2025-08-04 09:51:07.000000000 -0700
++++ b/setup.py	2025-10-31 20:38:15.312624448 -0700
+@@ -266,6 +266,7 @@ import setuptools.command.install
+ import setuptools.command.sdist
+ from setuptools import Extension, find_packages, setup
+ from setuptools.dist import Distribution
++sys.path[:0] = os.getcwd()
+ from tools.build_pytorch_libs import build_pytorch
+ from tools.generate_torch_version import get_torch_version
+ from tools.setup_helpers.cmake import CMake
+@@ -535,14 +536,6 @@ def build_deps():
+     check_submodules()
+     check_pydep("yaml", "pyyaml")
+     build_python = not BUILD_LIBTORCH_WHL
+-    build_pytorch(
+-        version=version,
+-        cmake_python_library=cmake_python_library,
+-        build_python=build_python,
+-        rerun_cmake=RERUN_CMAKE,
+-        cmake_only=CMAKE_ONLY,
+-        cmake=cmake,
+-    )
+ 
+     if CMAKE_ONLY:
+         report(

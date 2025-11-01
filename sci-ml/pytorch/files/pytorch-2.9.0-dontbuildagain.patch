@@ -1,0 +1,25 @@
+--- a/setup.py.orig	2025-10-08 18:09:57.000000000 -0700
++++ b/setup.py	2025-10-31 20:28:41.725360580 -0700
+@@ -313,6 +313,7 @@ os.environ["PYTHONPATH"] = os.pathsep.jo
+     ]
+ ).rstrip(os.pathsep)
+ 
++sys.path[:0] = os.getcwd()
+ from tools.build_pytorch_libs import build_pytorch
+ from tools.generate_torch_version import get_torch_version
+ from tools.setup_helpers.cmake import CMake, CMakeValue
+@@ -1004,14 +1005,6 @@ def build_deps() -> None:
+ 
+     check_submodules()
+     check_pydep("yaml", "pyyaml")
+-    build_pytorch(
+-        version=TORCH_VERSION,
+-        cmake_python_library=CMAKE_PYTHON_LIBRARY.as_posix(),
+-        build_python=not BUILD_LIBTORCH_WHL,
+-        rerun_cmake=RERUN_CMAKE,
+-        cmake_only=CMAKE_ONLY,
+-        cmake=cmake,
+-    )
+ 
+     if CMAKE_ONLY:
+         report(

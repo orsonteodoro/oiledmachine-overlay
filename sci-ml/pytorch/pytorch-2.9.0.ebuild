@@ -94,7 +94,7 @@ IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda rocm
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -117,10 +117,11 @@ DEPEND="
 BDEPEND="
 "
 _PATCHES=(
-#	"${FILESDIR}/${PN}-2.5.1-dontbuildagain.patch"
+	"${FILESDIR}/${PN}-2.9.0-dontbuildagain.patch"
+	"${FILESDIR}/${PN}-2.7.1-cpp-extension-multilib.patch"
 #	"${FILESDIR}/${PN}-1.9.0-Change-library-directory-according-to-CMake-build.patch"
 #	"${FILESDIR}/${PN}-2.4.0-global-dlopen.patch"
-	"${FILESDIR}/${PN}-2.5.1-torch_shm_manager.patch"
+#	"${FILESDIR}/${PN}-2.5.1-torch_shm_manager.patch"
 #	"${FILESDIR}/${PN}-2.5.1-setup.patch"
 #	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
 	"${FILESDIR}/caffe2-2.9.0-cuda-hardcoded-paths.patch"
