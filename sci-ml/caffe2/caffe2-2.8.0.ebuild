@@ -1387,9 +1387,9 @@ src_prepare() {
 	filter-lto #bug 862672
 	cmake_src_prepare
 	if use system-libs ; then
-		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.8.0-cuda-hardcoded-paths.patch"
 	else
-		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.8.0-cuda-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths-third-party.patch"
 	fi
 
