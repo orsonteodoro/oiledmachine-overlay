@@ -68,7 +68,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 cuda rocm rccl roctracer
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -202,6 +202,12 @@ python_configure() {
 	export USE_CUDA=$(usex cuda 1 0)
 	export USE_ROCM=$(usex rocm 1 0)
 	export USE_SYSTEM_SOX=1
+	if use cuda ; then
+		export CUDA_HOME="/opt/cuda"
+	fi
+	if use rocm ; then
+		export ROCM_PATH="/opt/rocm"
+	fi
 	if has_version "media-video/ffmpeg:58.60.60" ; then # 6.x multislot
 		export FFMPEG_ROOT="/usr/lib/ffmpeg/58.60.60"
 	elif has_version "media-video/ffmpeg:57.59.59" ; then # 5.x multislot
