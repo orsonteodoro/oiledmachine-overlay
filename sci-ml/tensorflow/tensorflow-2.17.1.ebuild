@@ -609,108 +609,52 @@ gen_rocm_rdepend() {
 	done
 }
 
-GOOGLE_CLOUD_CPP_PROTOBUF_5_26="
-	python? (
-		|| (
-			=net-libs/google-cloud-cpp-2.24*
-			=net-libs/google-cloud-cpp-2.23*
-		)
-	)
-"
-GOOGLE_CLOUD_CPP_PROTOBUF_4_25="
-	python? (
-		|| (
-			=net-libs/google-cloud-cpp-2.22*
-			=net-libs/google-cloud-cpp-2.21*
-			=net-libs/google-cloud-cpp-2.19*
-		)
-	)
-"
-GOOGLE_CLOUD_CPP_PROTOBUF_4_24="
-	python? (
-		|| (
-			=net-libs/google-cloud-cpp-2.18*
-			=net-libs/google-cloud-cpp-2.17*
-			=net-libs/google-cloud-cpp-2.16*
-			=net-libs/google-cloud-cpp-2.15*
-		)
-	)
-"
-GOOGLE_CLOUD_CPP_PROTOBUF_4_23="
-	python? (
-		|| (
-			=net-libs/google-cloud-cpp-2.14*
-			=net-libs/google-cloud-cpp-2.13*
-			=net-libs/google-cloud-cpp-2.12*
-			=net-libs/google-cloud-cpp-2.11*
-		)
-	)
-"
-GOOGLE_CLOUD_CPP_PROTOBUF_3_21="
+GOOGLE_CLOUD_CPP_PROTOBUF_3="
 	python? (
 		|| (
 			=net-libs/google-cloud-cpp-2.10*
 			=net-libs/google-cloud-cpp-2.9*
 		)
+		net-libs/google-cloud-cpp:=
 	)
 "
-gen_protobuf_rdepend1() {
-	local row
-	for row in ${GRPC_PROTOBUF_PAIRS[@]} ; do
-		local grpc_pv="${row%:*}"
-		local protobuf_pv="${row#*:}"
-		local protobuf_name="GOOGLE_CLOUD_CPP_PROTOBUF_${protobuf_pv/./_}"
+gen_protobuf_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
 		local impl
 		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo  "
+			echo "
 				(
-					${!protobuf_name}
+					${GOOGLE_CLOUD_CPP_PROTOBUF_3}
 					!big-endian? (
 						python_single_target_${impl}? (
-							=net-libs/grpc-${grpc_pv}*[python_targets_${impl}(-),python]
+							net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
 						)
 					)
 					big-endian? (
-						=net-libs/grpc-${grpc_pv}*[-python]
+						net-libs/grpc:${PROTOBUF_PV%%.*}[-python]
 					)
 				)
 			"
 		done
 	done
 }
+
 RDEPEND_PROTOBUF="
 	|| (
-		$(gen_protobuf_rdepend1)
-	)
-	python? (
-		net-libs/google-cloud-cpp:=
+		$(gen_protobuf_rdepend)
 	)
 	net-libs/grpc:=
 "
 
-gen_grpcio_rdepend1() {
-	local row
-	for row in ${GRPC_PROTOBUF_PAIRS[@]} ; do
-		local grpc_pv="${row%:*}"
-		local protobuf_pv="${row#*:}"
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo  "
-				(
-					=dev-python/grpcio-${grpc_pv}*[python_targets_${impl}(-)]
-					dev-python/grpcio:=
-					=dev-python/grpcio-tools-${grpc_pv}*[python_targets_${impl}(-)]
-					dev-python/grpcio-tools:=
-					=net-libs/grpc-${grpc_pv}*[python_targets_${impl}(-),python]
-					dev-python/protobuf:0/${protobuf_pv}[python_targets_${impl}(-)]
-				)
-			"
-		done
-	done
-}
 RDEPEND_GRPCIO="
 	|| (
-		$(gen_grpcio_rdepend1)
+		(
+			dev-python/grpcio:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+			dev-python/grpcio-tools:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+			net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
+			dev-python/protobuf:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+		)
 	)
 	dev-python/grpcio:=
 	dev-python/grpcio-tools:=
@@ -732,10 +676,12 @@ gen_protobuf_rdepend() {
 		for impl in ${PYTHON_COMPAT[@]} ; do
 			echo "
 				(
-					dev-libs/protobuf:0/${s}
+					dev-libs/protobuf:${PROTOBUF_PV%%.*}
+					dev-libs/protobuf:=
 					python? (
 						python_single_target_${impl}? (
-							dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+							dev-python/protobuf:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+							dev-python/protobuf:=
 						)
 					)
 				)
@@ -764,7 +710,6 @@ RDEPEND="
 	|| (
 		$(gen_protobuf_rdepend)
 	)
-	dev-libs/protobuf:=
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
@@ -1234,21 +1179,24 @@ einfo "Using mold"
 		BUILD_LDFLAGS+=" -fuse-ld=mold"
 	elif \
 		tc-is-clang \
-		&& ( \
-			   ! is-flagq '-fuse-ld=gold' \
-			&& ! is-flagq '-fuse-ld=bfd' \
+			&& \
+		( \
+			! is-flagq '-fuse-ld=gold' \
+				&& \
+			! is-flagq '-fuse-ld=bfd' \
 		) \
-		&& \
+			&& \
 		( \
 			( \
 				has_version "sys_devel/lld:$(clang-major-version)" \
 			) \
-			|| \
+				|| \
 			( \
-				ver_test $(clang-major-version) -lt 13 \
-				&& ver_test ${lld_pv} -ge $(clang-major-version) \
+				ver_test $(clang-major-version) -lt "13" \
+					&& \
+				ver_test "${lld_pv}" -ge $(clang-major-version) \
 			) \
-			|| \
+				|| \
 			( \
 				has_version "llvm-core/clang-common[default-lld]" \
 			) \
@@ -1382,8 +1330,12 @@ einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	export TF_PYTHON_VERSION="${EPYTHON/python/}"
 
 	# Use non-hermetic python
-	for d in third_party third_party/xla/third_party third_party/xla/third_party/tsl/third_party;
-	do
+	local L=(
+		"third_party"
+		"third_party/xla/third_party"
+		"third_party/xla/third_party/tsl/third_party"
+	)
+	for d in "${L[@]}" ; do
 		mv \
 			"${d}/py/non_hermetic" \
 			"${d}" \
@@ -1425,8 +1377,6 @@ ewarn "If build failure, use MAKEOPTS=\"-j1\".  Expect memory use to be 6-11"
 ewarn "GiB per process."
 ewarn
 	append-flags $(get-cpu-flags)
-	append-cxxflags -std=c++17
-	export BUILD_CXXFLAGS+=" -std=c++17"
 	filter-flags '-fvtable-verify=@(std|preinit)'
 
 	setup_linker
@@ -1445,10 +1395,10 @@ ewarn
 	bazel_setup_bazelrc # Save CFLAGS
 
 	# Relax version checks in setup.py
-	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die
+	sed -i "/^    '/s/==/>=/g" "tensorflow/tools/pip_package/setup.py" || die
 
 	# Prefixify hard-coded command locations
-	hprefixify -w /host_compiler_prefix/ third_party/gpus/cuda_configure.bzl
+	hprefixify -w "/host_compiler_prefix/" "third_party/gpus/cuda_configure.bzl"
 
 	gen_gcc_ar
 
@@ -1790,31 +1740,31 @@ einfo "src_compile():  Step 2"
 		${args[@]} \
 		-k \
 		--nobuild \
-		//tensorflow:libtensorflow_framework.so \
-		//tensorflow:libtensorflow.so \
-		//tensorflow:libtensorflow_cc.so \
+		"//tensorflow:libtensorflow_framework.so" \
+		"//tensorflow:libtensorflow.so" \
+		"//tensorflow:libtensorflow_cc.so" \
 		$(usex python '//tensorflow/tools/pip_package:build_pip_package' '')
 
 einfo "src_compile():  Step 3"
 	ebazel build \
 		${args[@]} \
-		//tensorflow:libtensorflow_framework.so \
-		//tensorflow:libtensorflow.so
+		"//tensorflow:libtensorflow_framework.so" \
+		"//tensorflow:libtensorflow.so"
 einfo "src_compile():  Step 4"
 	ebazel build \
 		${args[@]} \
-		//tensorflow:libtensorflow_cc.so
+		"//tensorflow:libtensorflow_cc.so"
 einfo "src_compile():  Step 5"
 	ebazel build \
 		${args[@]} \
-		//tensorflow:install_headers
+		"//tensorflow:install_headers"
 	ebazel shutdown
 
 	do_compile() {
 einfo "src_compile():  Step 6"
 		ebazel build \
 			${args[@]} \
-			//tensorflow/tools/pip_package:build_pip_package
+			"//tensorflow/tools/pip_package:build_pip_package"
 		ebazel shutdown
 	}
 	BUILD_DIR="${S}"
@@ -1867,16 +1817,16 @@ einfo "Installing headers"
 
 einfo "Installing libs"
 	# Generate a pkg-config file.
-	${PN}/c/generate-pc.sh \
-		--prefix="${EPREFIX}"/usr \
+	"${PN}/c/generate-pc.sh" \
+		--prefix="${EPREFIX}/usr" \
 		--libdir=$(get_libdir) \
-		--version=${MY_PV} || die
+		--version="${MY_PV}" || die
 	insinto "/usr/$(get_libdir)/pkgconfig"
 	doins "${PN}.pc" "${PN}_cc.pc"
 
 	local l
 	for l in libtensorflow{,_framework,_cc}.so; do
-		use cuda && patchelf --add-rpath '/opt/cuda/lib64' "bazel-bin/tensorflow/${l}"
+		use cuda && patchelf --add-rpath "/opt/cuda/lib64" "bazel-bin/tensorflow/${l}"
 		dolib.so "bazel-bin/tensorflow/${l}"
 		dolib.so "bazel-bin/tensorflow/${l}.$(ver_cut 1)"
 		dolib.so "bazel-bin/tensorflow/${l}.$(ver_cut 1-3)"
