@@ -200,10 +200,10 @@ exist in build files.
 | PyTorch <= 2.7                      | Not supported                         |                                                          |
 | PyTorch 2.8 (CPU)                   | Available                             |                                                          |
 | PyTorch 2.8 (CUDA 12.6, 12.8, 12.9) | Available                             |                                                          |
-| PyTorch 2.8 (ROCm 6.4)              | WIP                                   |                                                          |
+| PyTorch 2.8 (ROCm 6.4)              | Available                             |                                                          |
 | PyTorch 2.9 (CPU)                   | Available                             |                                                          |
 | PyTorch 2.9 (CUDA 12.6, 12.8, 13.0) | Available                             |                                                          |
-| PyTorch 2.9 (ROCm 6.4)              | WIP                                   |                                                          |
+| PyTorch 2.9 (ROCm 6.4)              | Available                             |                                                          |
 | Qt 5.x [4][5]                       | Not supported, but available          |                                                          |
 | Qt 6.x                              | Fully supported                       |                                                          |
 | ROCm 6.4                            | WIP                                   | D12, U22, U24                                            |
