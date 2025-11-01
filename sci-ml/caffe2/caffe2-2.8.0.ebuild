@@ -1390,7 +1390,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-2.8.0-cuda-hardcoded-paths.patch"
 	else
 		eapply "${FILESDIR}/${PN}-2.8.0-cuda-hardcoded-paths.patch"
-		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.8.0-cuda-hardcoded-paths-third-party.patch"
 	fi
 
 	if use system-libs ; then
