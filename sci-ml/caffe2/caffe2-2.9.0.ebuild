@@ -764,15 +764,15 @@ gen_rocm_depends() {
 				sci-libs/hipBLAS:=
 				>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 				sci-libs/hipBLASLt:=
-				>=sci-libs/hipCUB-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
+				>=sci-libs/hipCUB-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
 				sci-libs/hipCUB:=
-				>=sci-libs/hipRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
+				>=sci-libs/hipRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
 				sci-libs/hipRAND:=
 				>=sci-libs/hipSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipSOLVER:=
 				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				sci-libs/hipSPARSE:=
-				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
+				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
 				sci-libs/hipFFT:=
 				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
 				sci-libs/miopen:=
@@ -784,6 +784,8 @@ gen_rocm_depends() {
 				sci-libs/rocRAND:=
 				>=sci-libs/rocPRIM-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
 				sci-libs/rocPRIM:=
+				>=sci-libs/rocSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
+				sci-libs/rocSOLVER:=
 				>=sci-libs/rocThrust-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
 				sci-libs/rocThrust:=
 				magma? (
