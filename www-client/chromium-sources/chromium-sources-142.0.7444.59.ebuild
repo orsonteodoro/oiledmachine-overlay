@@ -13,6 +13,7 @@ EAPI=8
 # 138.0.7204.49 -> 138.0.7204.100
 # 139.0.7258.66 -> 140.0.7339.80
 # 140.0.7339.80 -> 141.0.7390.54
+# 141.0.7390.54 -> 142.0.7444.59
 
 MY_PV="chromium-${PV}"
 
@@ -38,15 +39,13 @@ inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
-# https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-141.0.7390.0.tar.x%40
-# https://commondatastorage.googleapis.com/chromium-browser-official/chromium-141.0.7390.54.tar.xz
 if [[ "${TARBALL_FLAVOR}" == "lite" ]] ; then
 	SRC_URI="
-https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}-lite.tar.xz
+https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}-lite.tar.xz
 	"
 else
 	SRC_URI="
-https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}.tar.xz
+https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}.tar.xz
 	"
 fi
 
