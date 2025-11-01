@@ -43,18 +43,18 @@ gen_x_usedep() {
 	local x_targets_compat="${1}"
 
 	if [[ -z "${AMDGPU_TARGETS_COMPAT[@]}" ]] ; then
-#eerror "QA:  AMDGPU_TARGETS_COMPAT is a typo or missing.  Check if it is placed before \`inherit rocm\`"
-#eerror "QA:  ${P}, x_targets_compat=${x_targets_compat}, called_from=gen_x_usedep"
+eerror "QA:  AMDGPU_TARGETS_COMPAT is a typo or missing.  Check if it is placed before \`inherit rocm\`"
+eerror "QA:  ${P}, x_targets_compat=${x_targets_compat}, called_from=gen_x_usedep"
 		return
 	fi
+
 	local t="${x_targets_compat}[@]"
 	if [[ -z "${!t}" ]] ; then
 ewarn "${x_targets_compat} is a typo or missing."
 #		die
 	fi
 
-	local added=0
-	local list
+	local list=""
 	local g1
 	# For foo/bar[gfx90a_xnack_minus] == foo/bar[gfx90a_xnack_minus]
 	for g1 in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -67,7 +67,6 @@ ewarn "${x_targets_compat} is a typo or missing."
 		done
 		if (( ${found} == 1 )) ; then
 			list+=",amdgpu_targets_${g1}?"
-			added=1
 		fi
 	done
 
@@ -82,14 +81,15 @@ ewarn "${x_targets_compat} is a typo or missing."
 		done
 		if (( ${found} == 1 )) ; then
 			list+=",amdgpu_targets_${g2%%_*}?"
-			added=1
 		fi
 	done
 
-	if (( ${added} == 1 )) ; then
-		list="${list:1}"
-		echo "${list}"
+	if [[ -z "${list}" ]] ; then
+		list+=",amdgpu_targets_skip(+)"
 	fi
+
+	list="${list:1}"
+	echo "${list}"
 }
 
 # @FUNCTION: get_rocm_usedep
