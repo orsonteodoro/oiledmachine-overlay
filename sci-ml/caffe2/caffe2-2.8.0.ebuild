@@ -1190,19 +1190,18 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.8.0-gentoo.patch"
-	"${FILESDIR}/${PN}-2.5.1-install-dirs.patch"
+	"${FILESDIR}/${PN}-2.9.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.1.2-fix-rpath.patch"
 	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
 	"${FILESDIR}/${PN}-2.4.0-rocm-fix-std-cpp17.patch"
-	"${FILESDIR}/${PN}-2.2.2-musl.patch"
-	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
-	"${FILESDIR}/${PN}-2.4.0-aotriton-offline-install.patch"
+	"${FILESDIR}/${PN}-2.8.0-fix-libcpp.patch"
+	"${FILESDIR}/${PN}-2.9.0-aotriton-offline-install.patch"
 	"${FILESDIR}/${PN}-2.5.1-link-openmp-to-torch_shm_manager.patch"
-	"${FILESDIR}/${PN}-2.5.1-prefixed-install.patch"
-	"${FILESDIR}/${PN}-2.5.1-optionalize-simd.patch"
-	"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
+	"${FILESDIR}/${PN}-2.8.0-prefixed-install.patch"
+	"${FILESDIR}/${PN}-2.9.0-optionalize-simd.patch"
+	#"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
 )
 
 warn_untested_gpu() {
@@ -1388,10 +1387,10 @@ src_prepare() {
 	filter-lto #bug 862672
 	cmake_src_prepare
 	if use system-libs ; then
-		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths.patch"
 	else
-		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
-		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.9.0-cuda-hardcoded-paths-third-party.patch"
 	fi
 
 	if use system-libs ; then

@@ -1,0 +1,88 @@
+--- a/cmake/Codegen.cmake.orig	2025-10-31 15:05:08.381888523 -0700
++++ b/cmake/Codegen.cmake	2025-10-31 15:14:24.853569181 -0700
+@@ -11,6 +11,11 @@
+ 
+ option(USE_VANILLA_OPTIMIZATIONS "Use vanilla optimizations" ON)
+ 
++option(USE_AVX2 "Use avx?" ON)
++option(USE_AVX512 "Use avx512?" ON)
++option(USE_VSX "Use vsx?" ON)
++option(USE_ZVECTOR "Use zvector?" ON)
++
+ function(filter_list output input)
+     unset(result)
+     foreach(filename ${${input}})
+@@ -342,7 +347,7 @@ if(INTERN_BUILD_ATEN_OPS)
+   list(APPEND CPU_CAPABILITY_NAMES "DEFAULT")
+   list(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG}")
+ 
+-  if(CXX_AVX512_FOUND)
++  if(CXX_AVX512_FOUND AND USE_AVX512)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_AVX512_CPU_DEFINITION")
+     list(APPEND CPU_CAPABILITY_NAMES "AVX512")
+     if(MSVC)
+@@ -350,9 +355,9 @@ if(INTERN_BUILD_ATEN_OPS)
+     else(MSVC)
+       list(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG} -mavx512f -mavx512bw -mavx512vl -mavx512dq -mfma")
+     endif(MSVC)
+-  endif(CXX_AVX512_FOUND)
++  endif(CXX_AVX512_FOUND AND USE_AVX512)
+ 
+-  if(CXX_AVX2_FOUND)
++  if(CXX_AVX2_FOUND AND USE_AVX2)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_AVX2_CPU_DEFINITION")
+ 
+     # Some versions of GCC pessimistically split unaligned load and store
+@@ -367,14 +372,14 @@ if(INTERN_BUILD_ATEN_OPS)
+     list(APPEND CPU_CAPABILITY_NAMES "AVX2")
+     if(DEFINED ENV{ATEN_AVX512_256})
+       if($ENV{ATEN_AVX512_256} MATCHES "TRUE")
+-        if(CXX_AVX512_FOUND)
++        if(CXX_AVX512_FOUND AND USE_AVX512)
+           message("-- ATen AVX2 kernels will use 32 ymm registers")
+           if(MSVC)
+             list(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG}/arch:AVX512")
+           else(MSVC)
+             list(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG} -march=native ${CPU_NO_AVX256_SPLIT_FLAGS}")
+           endif(MSVC)
+-        endif(CXX_AVX512_FOUND)
++        endif(CXX_AVX512_FOUND AND USE_AVX512)
+       endif()
+     else()
+       if(MSVC)
+@@ -383,15 +388,15 @@ if(INTERN_BUILD_ATEN_OPS)
+         list(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG} -mavx2 -mfma -mf16c ${CPU_NO_AVX256_SPLIT_FLAGS}")
+       endif(MSVC)
+     endif()
+-  endif(CXX_AVX2_FOUND)
++  endif(CXX_AVX2_FOUND AND USE_AVX2)
+ 
+-  if(CXX_VSX_FOUND)
++  if(CXX_VSX_FOUND AND USE_VSX)
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_VSX_CPU_DEFINITION")
+     LIST(APPEND CPU_CAPABILITY_NAMES "VSX")
+     LIST(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG}  ${CXX_VSX_FLAGS}")
+-  endif(CXX_VSX_FOUND)
++  endif(CXX_VSX_FOUND AND USE_VSX)
+ 
+-  if(CXX_ZVECTOR_FOUND)
++  if(CXX_ZVECTOR_FOUND AND USE_ZVECTOR)
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_ZVECTOR_CPU_DEFINITION")
+     LIST(APPEND CPU_CAPABILITY_NAMES "ZVECTOR")
+     LIST(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG}  ${CXX_ZVECTOR_FLAGS}")
+--- a/cmake/MiscCheck.cmake.orig	2025-10-08 18:09:57.000000000 -0700
++++ b/cmake/MiscCheck.cmake	2025-10-31 15:14:44.768315742 -0700
+@@ -2,10 +2,12 @@ include(CheckCXXSourceCompiles)
+ include(CheckCXXCompilerFlag)
+ include(CMakePushCheckState)
+ 
++option(USE_AVX2 "Use avx2?" ON)
++
+ # ---[ Check if the compiler has AVX/AVX2 support. We only check AVX2.
+ if(NOT INTERN_BUILD_MOBILE)
+   find_package(AVX) # checks AVX and AVX2
+-  if(CXX_AVX2_FOUND)
++  if(CXX_AVX2_FOUND AND USE_AVX2)
+     message(STATUS "Current compiler supports avx2 extension. Will build perfkernels.")
+     # Also see CMakeLists.txt under caffe2/perfkernels.
+     set(CAFFE2_PERF_WITH_AVX 1)

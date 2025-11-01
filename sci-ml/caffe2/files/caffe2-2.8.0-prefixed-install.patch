@@ -1,0 +1,784 @@
+diff '--color=auto' -urp pytorch-2.8.0.orig/caffe2/perfkernels/CMakeLists.txt pytorch-2.8.0/caffe2/perfkernels/CMakeLists.txt
+--- pytorch-2.8.0.orig/caffe2/perfkernels/CMakeLists.txt	2025-08-04 09:51:07.000000000 -0700
++++ pytorch-2.8.0/caffe2/perfkernels/CMakeLists.txt	2025-10-31 15:45:21.270973877 -0700
+@@ -23,7 +23,8 @@ set(Caffe2_CPU_SRCS ${Caffe2_CPU_SRCS} $
+ 
+ # We will only build the perf kernel files if the compiler supports avx2
+ # extensions.
+-if(CXX_AVX2_FOUND)
++option(USE_AVX2 "Use avx2?" ON)
++if(CXX_AVX2_FOUND AND USE_AVX2)
+   add_library(Caffe2_perfkernels_avx2 STATIC ${avx2_srcs})
+   target_link_libraries(Caffe2_perfkernels_avx2 PRIVATE c10)
+ 
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/aotriton/third_party/pybind11/CMakeLists.txt pytorch-2.8.0/third_party/aotriton/third_party/pybind11/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/aotriton/third_party/pybind11/CMakeLists.txt	2023-07-17 10:24:25.000000000 -0700
++++ pytorch-2.8.0/third_party/aotriton/third_party/pybind11/CMakeLists.txt	2025-10-31 15:45:21.288900328 -0700
+@@ -194,7 +194,7 @@ if(NOT TARGET pybind11_headers)
+ 
+   target_include_directories(
+     pybind11_headers ${pybind11_system} INTERFACE $<BUILD_INTERFACE:${pybind11_INCLUDE_DIR}>
+-                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
++                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}>)
+ 
+   target_compile_features(pybind11_headers INTERFACE cxx_inheriting_constructors cxx_user_literals
+                                                      cxx_right_angle_brackets)
+@@ -214,22 +214,19 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/too
+ 
+ # Relative directory setting
+ if(USE_PYTHON_INCLUDE_DIR AND DEFINED Python_INCLUDE_DIRS)
+-  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${Python_INCLUDE_DIRS})
++  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${Python_INCLUDE_DIRS})
+ elseif(USE_PYTHON_INCLUDE_DIR AND DEFINED PYTHON_INCLUDE_DIR)
+-  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${PYTHON_INCLUDE_DIRS})
++  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${PYTHON_INCLUDE_DIRS})
+ endif()
+ 
+ if(PYBIND11_INSTALL)
+-  install(DIRECTORY ${pybind11_INCLUDE_DIR}/pybind11 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  install(DIRECTORY ${pybind11_INCLUDE_DIR}/pybind11
++    DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+   set(PYBIND11_CMAKECONFIG_INSTALL_DIR
+-      "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME}"
++      "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/cmake/${PROJECT_NAME}"
+       CACHE STRING "install path for pybind11Config.cmake")
+ 
+-  if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
+-    set(pybind11_INCLUDEDIR "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+-  else()
+-    set(pybind11_INCLUDEDIR "\$\{PACKAGE_PREFIX_DIR\}/${CMAKE_INSTALL_INCLUDEDIR}")
+-  endif()
++  set(pybind11_INCLUDEDIR "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+ 
+   configure_package_config_file(
+     tools/${PROJECT_NAME}Config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+@@ -268,7 +265,10 @@ if(PYBIND11_INSTALL)
+     set(PYBIND11_EXPORT_NAME "${PROJECT_NAME}Targets")
+   endif()
+ 
+-  install(TARGETS pybind11_headers EXPORT "${PYBIND11_EXPORT_NAME}")
++  install(TARGETS pybind11_headers
++    PUBLIC_HEADER
++    EXPORT "${PYBIND11_EXPORT_NAME}"
++    DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+ 
+   install(
+     EXPORT "${PYBIND11_EXPORT_NAME}"
+@@ -279,11 +279,11 @@ if(PYBIND11_INSTALL)
+   if(NOT prefix_for_pc_file)
+     set(prefix_for_pc_file "${CMAKE_INSTALL_PREFIX}")
+   endif()
+-  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
++  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tools/pybind11.pc.in"
+                  "${CMAKE_CURRENT_BINARY_DIR}/pybind11.pc" @ONLY)
+   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/pybind11.pc"
+-          DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig/")
++          DESTINATION "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/pkgconfig/")
+ 
+   # Uninstall target
+   if(PYBIND11_MASTER_PROJECT)
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/cpuinfo/CMakeLists.txt pytorch-2.8.0/third_party/cpuinfo/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/cpuinfo/CMakeLists.txt	2025-03-21 00:07:22.000000000 -0700
++++ pytorch-2.8.0/third_party/cpuinfo/CMakeLists.txt	2025-10-31 15:45:21.338973442 -0700
+@@ -324,19 +324,19 @@ INCLUDE(CMakePackageConfigHelpers)
+ GET_FILENAME_COMPONENT(CONFIG_FILE_PATH ${CMAKE_CURRENT_BINARY_DIR}/cpuinfo-config.cmake ABSOLUTE)
+ CONFIGURE_PACKAGE_CONFIG_FILE(
+   cmake/cpuinfo-config.cmake.in ${CONFIG_FILE_PATH}
+-  INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
++  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/${PROJECT_NAME})
+ INSTALL(FILES ${CONFIG_FILE_PATH}
+-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}) # cpuinfo_DIR ${prefix}/share/cpuinfo
++  DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/${PROJECT_NAME}) # cpuinfo_DIR ${prefix}/share/cpuinfo
+ 
+ INSTALL(TARGETS cpuinfo
+   EXPORT cpuinfo-targets
+-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR}
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR}
++  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+ 
+ INSTALL(EXPORT cpuinfo-targets
+   NAMESPACE ${PROJECT_NAME}:: # IMPORTED cpuinfo::cpuinfo
+-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
++  DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/${PROJECT_NAME})
+ 
+ # ---[ cpuinfo micro-benchmarks
+ IF(CPUINFO_SUPPORTED_PLATFORM AND CPUINFO_BUILD_BENCHMARKS)
+@@ -865,19 +865,19 @@ IF(CPUINFO_SUPPORTED_PLATFORM AND CPUINF
+   CPUINFO_TARGET_ENABLE_C99(isa-info)
+   CPUINFO_TARGET_RUNTIME_LIBRARY(isa-info)
+   TARGET_LINK_LIBRARIES(isa-info PRIVATE cpuinfo)
+-  INSTALL(TARGETS isa-info RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++  INSTALL(TARGETS isa-info RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR})
+ 
+   ADD_EXECUTABLE(cpu-info tools/cpu-info.c)
+   CPUINFO_TARGET_ENABLE_C99(cpu-info)
+   CPUINFO_TARGET_RUNTIME_LIBRARY(cpu-info)
+   TARGET_LINK_LIBRARIES(cpu-info PRIVATE cpuinfo)
+-  INSTALL(TARGETS cpu-info RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++  INSTALL(TARGETS cpu-info RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR})
+ 
+   ADD_EXECUTABLE(cache-info tools/cache-info.c)
+   CPUINFO_TARGET_ENABLE_C99(cache-info)
+   CPUINFO_TARGET_RUNTIME_LIBRARY(cache-info)
+   TARGET_LINK_LIBRARIES(cache-info PRIVATE cpuinfo)
+-  INSTALL(TARGETS cache-info RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++  INSTALL(TARGETS cache-info RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR})
+ 
+   IF(CMAKE_SYSTEM_NAME MATCHES "^(Android|Linux)$" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(armv[5-8].*|aarch64)$")
+     ADD_EXECUTABLE(auxv-dump tools/auxv-dump.c)
+@@ -896,7 +896,7 @@ IF(CPUINFO_SUPPORTED_PLATFORM AND CPUINF
+     CPUINFO_TARGET_RUNTIME_LIBRARY(cpuid-dump)
+     TARGET_INCLUDE_DIRECTORIES(cpuid-dump BEFORE PRIVATE src)
+     TARGET_INCLUDE_DIRECTORIES(cpuid-dump BEFORE PRIVATE include)
+-    INSTALL(TARGETS cpuid-dump RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++    INSTALL(TARGETS cpuid-dump RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR})
+   ENDIF()
+ ENDIF()
+ 
+@@ -926,6 +926,6 @@ IF(CPUINFO_BUILD_PKG_CONFIG)
+     @ONLY)
+ 
+   INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/libcpuinfo.pc"
+-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
++  DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}/pkgconfig")
+ 
+ ENDIF()
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/cpuinfo/deps/clog/CMakeLists.txt pytorch-2.8.0/third_party/cpuinfo/deps/clog/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/cpuinfo/deps/clog/CMakeLists.txt	2025-03-21 00:07:22.000000000 -0700
++++ pytorch-2.8.0/third_party/cpuinfo/deps/clog/CMakeLists.txt	2025-10-31 15:45:21.347327230 -0700
+@@ -75,9 +75,9 @@ ADD_LIBRARY(cpuinfo::clog ALIAS clog)
+ 
+ INSTALL(TARGETS clog
+   EXPORT cpuinfo-targets
+-  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
++  LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
++  ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
++  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+ 
+ # ---[ clog tests
+ IF(CLOG_BUILD_TESTS)
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/fmt/CMakeLists.txt pytorch-2.8.0/third_party/fmt/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/fmt/CMakeLists.txt	2025-05-03 09:36:27.000000000 -0700
++++ pytorch-2.8.0/third_party/fmt/CMakeLists.txt	2025-10-31 15:45:21.354973341 -0700
+@@ -154,7 +154,7 @@ endif ()
+ 
+ project(FMT CXX)
+ include(GNUInstallDirs)
+-set_verbose(FMT_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING
++set_verbose(FMT_INC_DIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} CACHE STRING
+             "Installation directory for include files, a relative path that "
+             "will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+ 
+@@ -386,7 +386,7 @@ target_include_directories(fmt-header-on
+ # Install targets.
+ if (FMT_INSTALL)
+   include(CMakePackageConfigHelpers)
+-  set_verbose(FMT_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/fmt CACHE STRING
++  set_verbose(FMT_CMAKE_DIR ${CMAKE_INSTALL_PREFIXED_LIBDIR}/cmake/fmt CACHE STRING
+               "Installation directory for cmake files, a relative path that "
+               "will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute "
+               "path.")
+@@ -395,11 +395,11 @@ if (FMT_INSTALL)
+   set(pkgconfig ${PROJECT_BINARY_DIR}/fmt.pc)
+   set(targets_export_name fmt-targets)
+ 
+-  set_verbose(FMT_LIB_DIR ${CMAKE_INSTALL_LIBDIR} CACHE STRING
++  set_verbose(FMT_LIB_DIR ${CMAKE_INSTALL_PREFIXED_LIBDIR} CACHE STRING
+               "Installation directory for libraries, a relative path that "
+               "will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+ 
+-  set_verbose(FMT_PKGCONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/pkgconfig CACHE STRING
++  set_verbose(FMT_PKGCONFIG_DIR ${CMAKE_INSTALL_PREFIXED_LIBDIR}/pkgconfig CACHE STRING
+               "Installation directory for pkgconfig (.pc) files, a relative "
+               "path that will be joined with ${CMAKE_INSTALL_PREFIX} or an "
+               "absolute path.")
+@@ -436,7 +436,7 @@ if (FMT_INSTALL)
+           LIBRARY DESTINATION ${FMT_LIB_DIR}
+           ARCHIVE DESTINATION ${FMT_LIB_DIR}
+           PUBLIC_HEADER DESTINATION "${FMT_INC_DIR}/fmt"
+-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++          RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR}
+           ${INSTALL_FILE_SET})
+ 
+   # Use a namespace because CMake provides better diagnostics for namespaced
+@@ -489,7 +489,7 @@ function(add_doc_target)
+ 
+   include(GNUInstallDirs)
+   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc-html/
+-          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/fmt
++          DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/fmt
+           COMPONENT fmt-doc OPTIONAL)
+ endfunction()
+ 
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/FP16/CMakeLists.txt pytorch-2.8.0/third_party/FP16/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/FP16/CMakeLists.txt	2020-05-14 01:22:54.000000000 -0700
++++ pytorch-2.8.0/third_party/FP16/CMakeLists.txt	2025-10-31 15:45:21.357810409 -0700
+@@ -79,7 +79,7 @@ TARGET_INCLUDE_DIRECTORIES(fp16 INTERFAC
+     $<INSTALL_INTERFACE:include>)
+ 
+ INSTALL(FILES include/fp16.h
+-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+ INSTALL(FILES
+     include/fp16/bitcasts.h
+     include/fp16/fp16.h
+@@ -87,7 +87,7 @@ INSTALL(FILES
+     include/fp16/__init__.py
+     include/fp16/avx.py
+     include/fp16/avx2.py
+-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fp16)
++  DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}/fp16)
+ 
+ # ---[ Configure psimd
+ IF(NOT TARGET psimd)
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/CMakeLists.txt pytorch-2.8.0/third_party/ideep/mkl-dnn/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/CMakeLists.txt	2025-03-01 08:06:10.000000000 -0800
++++ pytorch-2.8.0/third_party/ideep/mkl-dnn/CMakeLists.txt	2025-10-31 15:45:21.388857659 -0700
+@@ -156,12 +156,12 @@ if(DNNL_INSTALL_MODE STREQUAL "BUNDLE")
+     install(FILES THIRD-PARTY-PROGRAMS DESTINATION ${CMAKE_INSTALL_PREFIX})
+     install(FILES ${PROJECT_BINARY_DIR}/README DESTINATION ${CMAKE_INSTALL_PREFIX})
+ elseif(DNNL_INSTALL_MODE STREQUAL "BUNDLE_V2")
+-    install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
+-    install(FILES THIRD-PARTY-PROGRAMS DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
+-    install(FILES ${PROJECT_BINARY_DIR}/README DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
++    install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
++    install(FILES THIRD-PARTY-PROGRAMS DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
++    install(FILES ${PROJECT_BINARY_DIR}/README DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
+ else()
+     # Cannot use CMAKE_INSTALL_DOCDIR since it uses PROJECT_NAME and not DNNL_LIBRARY_NAME
+-    install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
+-    install(FILES THIRD-PARTY-PROGRAMS DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
+-    install(FILES ${PROJECT_BINARY_DIR}/README DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
++    install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
++    install(FILES THIRD-PARTY-PROGRAMS DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
++    install(FILES ${PROJECT_BINARY_DIR}/README DESTINATION ${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME})
+ endif()
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/examples/CMakeLists.txt pytorch-2.8.0/third_party/ideep/mkl-dnn/examples/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/examples/CMakeLists.txt	2025-03-01 08:06:10.000000000 -0800
++++ pytorch-2.8.0/third_party/ideep/mkl-dnn/examples/CMakeLists.txt	2025-10-31 15:45:21.389062962 -0700
+@@ -208,7 +208,7 @@ if (DNNL_INSTALL_MODE STREQUAL "BUNDLE"
+     if(DNNL_INSTALL_MODE STREQUAL "BUNDLE")
+         set(BUNDLE_EXAMPLES_DIR "examples")
+     else()
+-        set(BUNDLE_EXAMPLES_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME}/examples")
++        set(BUNDLE_EXAMPLES_DIR "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/doc/${LIB_PACKAGE_NAME}/examples")
+     endif()
+ 
+     configure_file(CMakeLists.txt.in CMakeLists.txt @ONLY)
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/src/CMakeLists.txt pytorch-2.8.0/third_party/ideep/mkl-dnn/src/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/src/CMakeLists.txt	2025-03-01 08:06:10.000000000 -0800
++++ pytorch-2.8.0/third_party/ideep/mkl-dnn/src/CMakeLists.txt	2025-10-31 15:45:21.389233715 -0700
+@@ -217,16 +217,16 @@ endif()
+ set(LIB_EXPORT_NAME "${LIB_PACKAGE_NAME}-targets")
+ install(TARGETS ${LIB_PACKAGE_NAME}
+     EXPORT "${LIB_EXPORT_NAME}"
+-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
++    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR}
++    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR})
+ 
+ # If only Cmake could preserve the directory hierarchy...
+ foreach(header ${HEADERS_ROOT})
+-    install(FILES ${header} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/")
++    install(FILES ${header} DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}/")
+ endforeach()
+ foreach(header ${HEADERS_SUBDIR})
+-    install(FILES ${header} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/oneapi/dnnl/")
++    install(FILES ${header} DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}/oneapi/dnnl/")
+ endforeach()
+ 
+ string(TOUPPER "${LIB_PACKAGE_NAME}::" LIB_NAMESPACE)
+@@ -240,7 +240,7 @@ endif()
+ 
+ # Write version and package config files
+ set(LIB_CONFIG_GENERATE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+-set(LIB_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_PACKAGE_NAME}")
++set(LIB_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIXED_LIBDIR}/cmake/${LIB_PACKAGE_NAME}")
+ set(LIB_VERSION_FILE
+     "${LIB_CONFIG_GENERATE_DIR}/${LIB_PACKAGE_NAME}-config-version.cmake")
+ set(LIB_CONFIG_FILE
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/src/graph/backend/graph_compiler/core/src/runtime/CMakeLists.txt pytorch-2.8.0/third_party/ideep/mkl-dnn/src/graph/backend/graph_compiler/core/src/runtime/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/ideep/mkl-dnn/src/graph/backend/graph_compiler/core/src/runtime/CMakeLists.txt	2025-03-01 08:06:10.000000000 -0800
++++ pytorch-2.8.0/third_party/ideep/mkl-dnn/src/graph/backend/graph_compiler/core/src/runtime/CMakeLists.txt	2025-10-31 15:45:21.394973085 -0700
+@@ -33,8 +33,8 @@ endif()
+ if(DEFINED SC_SOURCES)
+     install(TARGETS graphcompiler_runtime
+         EXPORT graphcompiler_runtime_export
+-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
++        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR}
++        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR}
++        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR})
+ endif()
+ 
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt pytorch-2.8.0/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-07-01 06:02:59.000000000 -0700
++++ pytorch-2.8.0/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2025-10-31 15:45:21.416623256 -0700
+@@ -420,7 +420,7 @@ if (FMT_INSTALL)
+           LIBRARY DESTINATION ${FMT_LIB_DIR}
+           ARCHIVE DESTINATION ${FMT_LIB_DIR}
+           PUBLIC_HEADER DESTINATION "${FMT_INC_DIR}/fmt"
+-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++          RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR}
+           ${INSTALL_FILE_SET})
+ 
+   # Use a namespace because CMake provides better diagnostics for namespaced
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/onnx/third_party/pybind11/CMakeLists.txt pytorch-2.8.0/third_party/onnx/third_party/pybind11/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/onnx/third_party/pybind11/CMakeLists.txt	2024-09-13 17:25:58.000000000 -0700
++++ pytorch-2.8.0/third_party/onnx/third_party/pybind11/CMakeLists.txt	2025-10-31 15:45:21.416947692 -0700
+@@ -235,7 +235,7 @@ if(NOT TARGET pybind11_headers)
+ 
+   target_include_directories(
+     pybind11_headers ${pybind11_system} INTERFACE $<BUILD_INTERFACE:${pybind11_INCLUDE_DIR}>
+-                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
++                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}>)
+ 
+   target_compile_features(pybind11_headers INTERFACE cxx_inheriting_constructors cxx_user_literals
+                                                      cxx_right_angle_brackets)
+@@ -255,22 +255,19 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/too
+ 
+ # Relative directory setting
+ if(USE_PYTHON_INCLUDE_DIR AND DEFINED Python_INCLUDE_DIRS)
+-  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${Python_INCLUDE_DIRS})
++  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${Python_INCLUDE_DIRS})
+ elseif(USE_PYTHON_INCLUDE_DIR AND DEFINED PYTHON_INCLUDE_DIR)
+-  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${PYTHON_INCLUDE_DIRS})
++  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${PYTHON_INCLUDE_DIRS})
+ endif()
+ 
+ if(PYBIND11_INSTALL)
+-  install(DIRECTORY ${pybind11_INCLUDE_DIR}/pybind11 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  install(DIRECTORY ${pybind11_INCLUDE_DIR}/pybind11
++    DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+   set(PYBIND11_CMAKECONFIG_INSTALL_DIR
+-      "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME}"
++      "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/cmake/${PROJECT_NAME}"
+       CACHE STRING "install path for pybind11Config.cmake")
+ 
+-  if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
+-    set(pybind11_INCLUDEDIR "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+-  else()
+-    set(pybind11_INCLUDEDIR "\$\{PACKAGE_PREFIX_DIR\}/${CMAKE_INSTALL_INCLUDEDIR}")
+-  endif()
++  set(pybind11_INCLUDEDIR "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+ 
+   configure_package_config_file(
+     tools/${PROJECT_NAME}Config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+@@ -310,7 +307,10 @@ if(PYBIND11_INSTALL)
+     set(PYBIND11_EXPORT_NAME "${PROJECT_NAME}Targets")
+   endif()
+ 
+-  install(TARGETS pybind11_headers EXPORT "${PYBIND11_EXPORT_NAME}")
++  install(TARGETS pybind11_headers
++    PUBLIC_HEADER
++    EXPORT "${PYBIND11_EXPORT_NAME}"
++    DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+ 
+   install(
+     EXPORT "${PYBIND11_EXPORT_NAME}"
+@@ -335,11 +335,11 @@ if(PYBIND11_INSTALL)
+       endif()
+     endif()
+   endif()
+-  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
++  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tools/pybind11.pc.in"
+                  "${CMAKE_CURRENT_BINARY_DIR}/pybind11.pc" @ONLY)
+   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/pybind11.pc"
+-          DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig/")
++          DESTINATION "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/pkgconfig/")
+ 
+   # Uninstall target
+   if(PYBIND11_MASTER_PROJECT)
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/protobuf/cmake/install.cmake pytorch-2.8.0/third_party/protobuf/cmake/install.cmake
+--- pytorch-2.8.0.orig/third_party/protobuf/cmake/install.cmake	2020-10-08 11:17:30.000000000 -0700
++++ pytorch-2.8.0/third_party/protobuf/cmake/install.cmake	2025-10-31 15:45:21.438972803 -0700
+@@ -14,7 +14,7 @@ foreach(_library ${_protobuf_libraries})
+   set_property(TARGET ${_library}
+     PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+     $<BUILD_INTERFACE:${protobuf_source_dir}/src>
+-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
++    $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}>)
+   if (UNIX AND NOT APPLE)
+     set_property(TARGET ${_library}
+       PROPERTY INSTALL_RPATH "$ORIGIN")
+@@ -23,24 +23,24 @@ foreach(_library ${_protobuf_libraries})
+       PROPERTY INSTALL_RPATH "@loader_path")
+   endif()
+   install(TARGETS ${_library} EXPORT protobuf-targets
+-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${_library}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT ${_library}
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT ${_library})
++    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR} COMPONENT ${_library}
++    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR} COMPONENT ${_library}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR} COMPONENT ${_library})
+ endforeach()
+ 
+ if (protobuf_BUILD_PROTOC_BINARIES)
+   install(TARGETS protoc EXPORT protobuf-targets
+-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT protoc)
++    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIXED_BINDIR} COMPONENT protoc)
+   if (UNIX AND NOT APPLE)
+     set_property(TARGET protoc
+-      PROPERTY INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
++      PROPERTY INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_PREFIXED_LIBDIR}")
+   elseif (APPLE)
+     set_property(TARGET protoc
+       PROPERTY INSTALL_RPATH "@loader_path/../lib")
+   endif()
+ endif (protobuf_BUILD_PROTOC_BINARIES)
+ 
+-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/protobuf.pc ${CMAKE_CURRENT_BINARY_DIR}/protobuf-lite.pc DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/protobuf.pc ${CMAKE_CURRENT_BINARY_DIR}/protobuf-lite.pc DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}/pkgconfig")
+ 
+ file(STRINGS extract_includes.bat.in _extract_strings
+   REGEX "^copy")
+@@ -50,7 +50,7 @@ foreach(_extract_string ${_extract_strin
+   string(REPLACE "\\" "/" _header ${_header})
+   get_filename_component(_extract_from "${protobuf_SOURCE_DIR}/../src/${_header}" ABSOLUTE)
+   get_filename_component(_extract_name ${_header} NAME)
+-  get_filename_component(_extract_to "${CMAKE_INSTALL_INCLUDEDIR}/${_header}" PATH)
++  get_filename_component(_extract_to "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}/${_header}" PATH)
+   if(EXISTS "${_extract_from}")
+     install(FILES "${_extract_from}"
+       DESTINATION "${_extract_to}"
+@@ -90,7 +90,7 @@ foreach(_file ${nobase_dist_proto_DATA})
+   get_filename_component(_file_path ${_file} PATH)
+   if(EXISTS "${_file_from}")
+     install(FILES "${_file_from}"
+-      DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${_file_path}"
++      DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}/${_file_path}"
+       COMPONENT protobuf-protos
+       RENAME "${_file_name}")
+   else()
+@@ -103,7 +103,7 @@ endforeach()
+ # Install configuration
+ set(_cmakedir_desc "Directory relative to CMAKE_INSTALL to install the cmake configuration files")
+ if(NOT MSVC)
+-  set(CMAKE_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/protobuf" CACHE STRING "${_cmakedir_desc}")
++  set(CMAKE_INSTALL_CMAKEDIR "${CMAKE_INSTALL_PREFIXED_LIBDIR}/cmake/protobuf" CACHE STRING "${_cmakedir_desc}")
+ else()
+   set(CMAKE_INSTALL_CMAKEDIR "cmake" CACHE STRING "${_cmakedir_desc}")
+ endif()
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/protobuf/third_party/googletest/googletest/cmake/internal_utils.cmake pytorch-2.8.0/third_party/protobuf/third_party/googletest/googletest/cmake/internal_utils.cmake
+--- pytorch-2.8.0.orig/third_party/protobuf/third_party/googletest/googletest/cmake/internal_utils.cmake	2019-01-25 08:01:36.000000000 -0800
++++ pytorch-2.8.0/third_party/protobuf/third_party/googletest/googletest/cmake/internal_utils.cmake	2025-10-31 15:45:21.446972752 -0700
+@@ -315,13 +315,13 @@ endfunction()
+ function(install_project)
+   if(INSTALL_GTEST)
+     install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/"
+-      DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
++      DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+     # Install the project targets.
+     install(TARGETS ${ARGN}
+       EXPORT ${targets_export_name}
+-      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+-      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
++      RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIXED_BINDIR}"
++      ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
++      LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}")
+     if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+       # Install PDBs
+       foreach(t ${ARGN})
+@@ -330,7 +330,7 @@ function(install_project)
+         get_target_property(t_pdb_output_directory ${t} PDB_OUTPUT_DIRECTORY)
+         install(FILES
+           "${t_pdb_output_directory}/\${CMAKE_INSTALL_CONFIG_NAME}/$<$<CONFIG:Debug>:${t_pdb_name_debug}>$<$<NOT:$<CONFIG:Debug>>:${t_pdb_name}>.pdb"
+-          DESTINATION ${CMAKE_INSTALL_LIBDIR}
++          DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR}
+           OPTIONAL)
+       endforeach()
+     endif()
+@@ -340,7 +340,7 @@ function(install_project)
+       configure_file("${PROJECT_SOURCE_DIR}/cmake/${t}.pc.in"
+         "${configured_pc}" @ONLY)
+       install(FILES "${configured_pc}"
+-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
++        DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}/pkgconfig")
+     endforeach()
+   endif()
+ endfunction()
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/protobuf/third_party/googletest/googletest/CMakeLists.txt pytorch-2.8.0/third_party/protobuf/third_party/googletest/googletest/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/protobuf/third_party/googletest/googletest/CMakeLists.txt	2019-01-25 08:01:36.000000000 -0800
++++ pytorch-2.8.0/third_party/protobuf/third_party/googletest/googletest/CMakeLists.txt	2025-10-31 15:45:21.449491247 -0700
+@@ -91,7 +91,7 @@ if (INSTALL_GTEST)
+   set(cmake_package_name GTest)
+   set(targets_export_name ${cmake_package_name}Targets CACHE INTERNAL "")
+   set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated" CACHE INTERNAL "")
+-  set(cmake_files_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${cmake_package_name}")
++  set(cmake_files_install_dir "${CMAKE_INSTALL_PREFIXED_LIBDIR}/cmake/${cmake_package_name}")
+   set(version_file "${generated_dir}/${cmake_package_name}ConfigVersion.cmake")
+   write_basic_package_version_file(${version_file} COMPATIBILITY AnyNewerVersion)
+   install(EXPORT ${targets_export_name}
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/psimd/CMakeLists.txt pytorch-2.8.0/third_party/psimd/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/psimd/CMakeLists.txt	2020-05-17 03:58:41.000000000 -0700
++++ pytorch-2.8.0/third_party/psimd/CMakeLists.txt	2025-10-31 15:45:21.449619306 -0700
+@@ -14,4 +14,4 @@ ELSE()
+ ENDIF()
+ TARGET_INCLUDE_DIRECTORIES(psimd INTERFACE include)
+ 
+-INSTALL(FILES include/psimd.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++INSTALL(FILES include/psimd.h DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/pybind11/CMakeLists.txt pytorch-2.8.0/third_party/pybind11/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/pybind11/CMakeLists.txt	2024-09-13 17:25:58.000000000 -0700
++++ pytorch-2.8.0/third_party/pybind11/CMakeLists.txt	2025-10-31 15:47:23.847799616 -0700
+@@ -235,7 +235,7 @@ if(NOT TARGET pybind11_headers)
+ 
+   target_include_directories(
+     pybind11_headers ${pybind11_system} INTERFACE $<BUILD_INTERFACE:${pybind11_INCLUDE_DIR}>
+-                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
++                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}>)
+ 
+   target_compile_features(pybind11_headers INTERFACE cxx_inheriting_constructors cxx_user_literals
+                                                      cxx_right_angle_brackets)
+@@ -255,22 +255,18 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/too
+ 
+ # Relative directory setting
+ if(USE_PYTHON_INCLUDE_DIR AND DEFINED Python_INCLUDE_DIRS)
+-  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${Python_INCLUDE_DIRS})
++  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${Python_INCLUDE_DIRS})
+ elseif(USE_PYTHON_INCLUDE_DIR AND DEFINED PYTHON_INCLUDE_DIR)
+-  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${PYTHON_INCLUDE_DIRS})
++  file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${PYTHON_INCLUDE_DIRS})
+ endif()
+ 
+ if(PYBIND11_INSTALL)
+-  install(DIRECTORY ${pybind11_INCLUDE_DIR}/pybind11 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  install(DIRECTORY ${pybind11_INCLUDE_DIR}/pybind11 DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+   set(PYBIND11_CMAKECONFIG_INSTALL_DIR
+-      "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME}"
++      "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/cmake/${PROJECT_NAME}"
+       CACHE STRING "install path for pybind11Config.cmake")
+ 
+-  if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
+-    set(pybind11_INCLUDEDIR "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+-  else()
+-    set(pybind11_INCLUDEDIR "\$\{PACKAGE_PREFIX_DIR\}/${CMAKE_INSTALL_INCLUDEDIR}")
+-  endif()
++  set(pybind11_INCLUDEDIR "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+ 
+   configure_package_config_file(
+     tools/${PROJECT_NAME}Config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+@@ -310,7 +306,10 @@ if(PYBIND11_INSTALL)
+     set(PYBIND11_EXPORT_NAME "${PROJECT_NAME}Targets")
+   endif()
+ 
+-  install(TARGETS pybind11_headers EXPORT "${PYBIND11_EXPORT_NAME}")
++  install(TARGETS pybind11_headers
++    PUBLIC_HEADER
++    EXPORT "${PYBIND11_EXPORT_NAME}"
++    DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+ 
+   install(
+     EXPORT "${PYBIND11_EXPORT_NAME}"
+@@ -335,11 +334,11 @@ if(PYBIND11_INSTALL)
+       endif()
+     endif()
+   endif()
+-  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
++  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}")
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tools/pybind11.pc.in"
+                  "${CMAKE_CURRENT_BINARY_DIR}/pybind11.pc" @ONLY)
+   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/pybind11.pc"
+-          DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig/")
++          DESTINATION "${CMAKE_INSTALL_PREFIXED_DATAROOTDIR}/pkgconfig/")
+ 
+   # Uninstall target
+   if(PYBIND11_MASTER_PROJECT)
+Only in pytorch-2.8.0/third_party/pybind11: CMakeLists.txt.orig
+Only in pytorch-2.8.0/third_party/pybind11: CMakeLists.txt.rej
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/sleef/CMakeLists.txt pytorch-2.8.0/third_party/sleef/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/sleef/CMakeLists.txt	2025-01-27 07:21:49.000000000 -0800
++++ pytorch-2.8.0/third_party/sleef/CMakeLists.txt	2025-10-31 15:45:21.502654749 -0700
+@@ -288,7 +288,7 @@ write_basic_package_version_file(
+ )
+ 
+ set(
+-    SLEEF_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/sleef"
++    SLEEF_INSTALL_CMAKEDIR "${CMAKE_INSTALL_PREFIXED_LIBDIR}/cmake/sleef"
+     CACHE STRING "CMake package config location relative to the install prefix"
+ )
+ 
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/sleef/src/dft/CMakeLists.txt pytorch-2.8.0/third_party/sleef/src/dft/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/sleef/src/dft/CMakeLists.txt	2025-01-27 07:21:49.000000000 -0800
++++ pytorch-2.8.0/third_party/sleef/src/dft/CMakeLists.txt	2025-10-31 15:45:21.504506203 -0700
+@@ -408,18 +408,18 @@ install(
+     TARGETS ${TARGET_LIBDFT}
+     EXPORT sleefTargets
+     PUBLIC_HEADER #
+-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+     COMPONENT sleef_Development
+     LIBRARY #
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+     COMPONENT sleef_Runtime
+     NAMELINK_COMPONENT sleef_Development
+     ARCHIVE #
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+     COMPONENT sleef_Development
+     RUNTIME #
+-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_BINDIR}"
+     COMPONENT sleef_Runtime
+     INCLUDES #
+-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+ )
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/sleef/src/libm/CMakeLists.txt pytorch-2.8.0/third_party/sleef/src/libm/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/sleef/src/libm/CMakeLists.txt	2025-01-27 07:21:49.000000000 -0800
++++ pytorch-2.8.0/third_party/sleef/src/libm/CMakeLists.txt	2025-10-31 15:45:21.504756728 -0700
+@@ -663,14 +663,14 @@ if(SLEEF_BUILD_INLINE_HEADERS)
+     # CMake 3.4 can't have PUBLIC_HEADER property on INTERFACE libraries
+     install(
+         FILES ${INLINE_HEADER_FILES_GENERATED}
+-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++        DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+         COMPONENT sleef_Development
+     )
+ 
+     install(
+         TARGETS "${TARGET_INLINE_HEADERS}"
+         EXPORT sleefTargets
+-        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++        INCLUDES DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+     )
+   endif(SED_COMMAND)
+ endif(SLEEF_BUILD_INLINE_HEADERS)
+@@ -968,7 +968,7 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_
+ 
+   install(
+       FILES ${LLVM_BITCODE_OUTPUTS}
+-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++      DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+       COMPONENT sleef_Development
+   )
+ endif()
+@@ -999,7 +999,7 @@ if(SLEEF_BUILD_SCALAR_LIB)
+       TARGETS sleefscalar
+       EXPORT sleefTargets
+       LIBRARY #
+-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++      DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+       COMPONENT sleef_Runtime
+       NAMELINK_COMPONENT sleef_Development
+       ARCHIVE #
+@@ -1019,25 +1019,25 @@ install(
+     TARGETS ${TARGET_LIBSLEEF}
+     EXPORT sleefTargets
+     PUBLIC_HEADER #
+-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+     COMPONENT sleef_Development
+     LIBRARY #
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+     COMPONENT sleef_Runtime
+     NAMELINK_COMPONENT sleef_Development
+     ARCHIVE #
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+     COMPONENT sleef_Development
+     RUNTIME #
+-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_BINDIR}"
+     COMPONENT sleef_Runtime
+     INCLUDES #
+-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+ )
+ configure_file("sleef.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc" @ONLY)
+ install(
+     FILES "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc"
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}/pkgconfig"
+     COMPONENT sleef_Development
+ )
+ 
+@@ -1046,7 +1046,7 @@ if(ENABLE_GNUABI)
+       TARGETS ${TARGET_LIBSLEEFGNUABI}
+       EXPORT sleefTargets
+       LIBRARY #
+-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++      DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+       COMPONENT sleef_Runtime
+       NAMELINK_COMPONENT sleef_Development
+       ARCHIVE #
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/sleef/src/quad/CMakeLists.txt pytorch-2.8.0/third_party/sleef/src/quad/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/sleef/src/quad/CMakeLists.txt	2025-01-27 07:21:49.000000000 -0800
++++ pytorch-2.8.0/third_party/sleef/src/quad/CMakeLists.txt	2025-10-31 15:45:21.505026040 -0700
+@@ -380,7 +380,7 @@ if(SLEEF_BUILD_INLINE_HEADERS)
+       )
+     install(
+         FILES ${INLINE_HEADER_FILES_GENERATED}
+-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++        DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+         COMPONENT sleef_Development
+     )
+   endif(SED_COMMAND)
+@@ -487,18 +487,18 @@ install(
+     TARGETS sleefquad
+     EXPORT sleefTargets
+     PUBLIC_HEADER #
+-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+     COMPONENT sleef_Development
+     LIBRARY #
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+     COMPONENT sleef_Runtime
+     NAMELINK_COMPONENT sleef_Development
+     ARCHIVE #
+-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_LIBDIR}"
+     COMPONENT sleef_Development
+     RUNTIME #
+-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_BINDIR}"
+     COMPONENT sleef_Runtime
+     INCLUDES #
+-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
++    DESTINATION "${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}"
+ )
+diff '--color=auto' -urp pytorch-2.8.0.orig/third_party/tensorpipe/third_party/pybind11/CMakeLists.txt pytorch-2.8.0/third_party/tensorpipe/third_party/pybind11/CMakeLists.txt
+--- pytorch-2.8.0.orig/third_party/tensorpipe/third_party/pybind11/CMakeLists.txt	2018-11-11 12:10:09.000000000 -0800
++++ pytorch-2.8.0/third_party/tensorpipe/third_party/pybind11/CMakeLists.txt	2025-10-31 15:45:21.505267591 -0700
+@@ -90,7 +90,7 @@ message(STATUS "pybind11 v${${PROJECT_NA
+ 
+ option (USE_PYTHON_INCLUDE_DIR "Install pybind11 headers in Python include directory instead of default installation prefix" OFF)
+ if (USE_PYTHON_INCLUDE_DIR)
+-    file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX} ${PYTHON_INCLUDE_DIRS})
++    file(RELATIVE_PATH CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR} ${PYTHON_INCLUDE_DIRS})
+ endif()
+ 
+ if(NOT (CMAKE_VERSION VERSION_LESS 3.0))  # CMake >= 3.0
+@@ -99,7 +99,7 @@ if(NOT (CMAKE_VERSION VERSION_LESS 3.0))
+   add_library(pybind11::pybind11 ALIAS pybind11)  # to match exported target
+   target_include_directories(pybind11 INTERFACE $<BUILD_INTERFACE:${PYBIND11_INCLUDE_DIR}>
+                                                 $<BUILD_INTERFACE:${PYTHON_INCLUDE_DIRS}>
+-                                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
++                                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIXED_INCLUDEDIR}>)
+   target_compile_options(pybind11 INTERFACE $<BUILD_INTERFACE:${PYBIND11_CPP_STANDARD}>)
+ 
+   add_library(module INTERFACE)
+@@ -120,7 +120,8 @@ if(NOT (CMAKE_VERSION VERSION_LESS 3.0))
+ endif()
+ 
+ if (PYBIND11_INSTALL)
+-  install(DIRECTORY ${PYBIND11_INCLUDE_DIR}/pybind11 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  install(DIRECTORY ${PYBIND11_INCLUDE_DIR}/pybind11
++    DESTINATION ${CMAKE_INSTALL_PREFIXED_INCLUDEDIR})
+   # GNUInstallDirs "DATADIR" wrong here; CMake search path wants "share".
+   set(PYBIND11_CMAKECONFIG_INSTALL_DIR "share/cmake/${PROJECT_NAME}" CACHE STRING "install path for pybind11Config.cmake")
+ 

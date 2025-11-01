@@ -142,18 +142,20 @@ diff '--color=auto' -urp pytorch-2.8.0.orig/cmake/Codegen.cmake pytorch-2.8.0/cm
  # Helper functions
  ################################################################################
  
-+if(USE_VANILLA_OPTIMIZATIONS "Use vanilla optimizations" ON)
++option(USE_VANILLA_OPTIMIZATIONS "Use vanilla optimizations" ON)
 +
  function(filter_list output input)
      unset(result)
      foreach(filename ${${input}})
-@@ -64,7 +66,9 @@ if(INTERN_BUILD_ATEN_OPS)
+@@ -64,7 +66,11 @@ if(INTERN_BUILD_ATEN_OPS)
    if(MSVC)
      set(OPT_FLAG "/fp:strict ")
    else(MSVC)
 -    set(OPT_FLAG "-O3 ")
 +    if(USE_VANILLA_OPTIMIZATIONS)
 +      set(OPT_FLAG "-O3 ")
++    else()
++      set(OPT_FLAG "-O2 ")
 +    endif()
      if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
        set(OPT_FLAG " ")

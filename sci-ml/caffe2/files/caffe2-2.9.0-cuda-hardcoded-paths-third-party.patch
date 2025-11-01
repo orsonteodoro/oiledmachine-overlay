@@ -1,0 +1,166 @@
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/cutlass/python/CuTeDSL/base_dsl/env_manager.py pytorch-2.9.0/third_party/cutlass/python/CuTeDSL/base_dsl/env_manager.py
+--- pytorch-2.9.0.orig/third_party/cutlass/python/CuTeDSL/base_dsl/env_manager.py	2025-07-21 19:09:56.000000000 -0700
++++ pytorch-2.9.0/third_party/cutlass/python/CuTeDSL/base_dsl/env_manager.py	2025-10-31 17:55:49.218789827 -0700
+@@ -165,7 +165,7 @@ def _find_cuda_home():
+             if IS_WINDOWS:
+                 glob_pat = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v*.*"
+             else:
+-                glob_pat = "/usr/local/cuda*"
++                glob_pat = "/opt/cuda*"
+             cuda_homes = glob.glob(glob_pat)
+             if len(cuda_homes) == 0:
+                 cuda_home = ""
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/cutlass/test/unit/nvrtc/thread/testbed.h pytorch-2.9.0/third_party/cutlass/test/unit/nvrtc/thread/testbed.h
+--- pytorch-2.9.0.orig/third_party/cutlass/test/unit/nvrtc/thread/testbed.h	2025-07-21 19:09:56.000000000 -0700
++++ pytorch-2.9.0/third_party/cutlass/test/unit/nvrtc/thread/testbed.h	2025-10-31 17:55:36.209184948 -0700
+@@ -276,7 +276,7 @@ struct Testbed {
+ 
+     const char *opts[] = {"--gpu-architecture=compute_75",
+                           "--std=c++17",
+-                          "--include-path=/usr/local/cuda-10.1/include"};
++                          "--include-path=/opt/cuda/include"};
+ 
+     result_nvrtc = nvrtcCompileProgram(program, 3, opts);
+     if (result_nvrtc != NVRTC_SUCCESS) {
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/FBGEMM/external/cutlass/python/CuTeDSL/base_dsl/env_manager.py pytorch-2.9.0/third_party/FBGEMM/external/cutlass/python/CuTeDSL/base_dsl/env_manager.py
+--- pytorch-2.9.0.orig/third_party/FBGEMM/external/cutlass/python/CuTeDSL/base_dsl/env_manager.py	2025-08-29 15:44:03.000000000 -0700
++++ pytorch-2.9.0/third_party/FBGEMM/external/cutlass/python/CuTeDSL/base_dsl/env_manager.py	2025-10-31 17:57:04.447827775 -0700
+@@ -165,7 +165,7 @@ def _find_cuda_home():
+             if IS_WINDOWS:
+                 glob_pat = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v*.*"
+             else:
+-                glob_pat = "/usr/local/cuda*"
++                glob_pat = "/opt/cuda*"
+             cuda_homes = glob.glob(glob_pat)
+             if len(cuda_homes) == 0:
+                 cuda_home = ""
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/FBGEMM/external/cutlass/test/unit/nvrtc/thread/testbed.h pytorch-2.9.0/third_party/FBGEMM/external/cutlass/test/unit/nvrtc/thread/testbed.h
+--- pytorch-2.9.0.orig/third_party/FBGEMM/external/cutlass/test/unit/nvrtc/thread/testbed.h	2025-08-29 15:44:03.000000000 -0700
++++ pytorch-2.9.0/third_party/FBGEMM/external/cutlass/test/unit/nvrtc/thread/testbed.h	2025-10-31 17:56:54.880085537 -0700
+@@ -276,7 +276,7 @@ struct Testbed {
+ 
+     const char *opts[] = {"--gpu-architecture=compute_75",
+                           "--std=c++17",
+-                          "--include-path=/usr/local/cuda-10.1/include"};
++                          "--include-path=/opt/cuda/include"};
+ 
+     result_nvrtc = nvrtcCompileProgram(program, 3, opts);
+     if (result_nvrtc != NVRTC_SUCCESS) {
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/FBGEMM/fbgemm_gpu/setup.py pytorch-2.9.0/third_party/FBGEMM/fbgemm_gpu/setup.py
+--- pytorch-2.9.0.orig/third_party/FBGEMM/fbgemm_gpu/setup.py	2025-09-05 12:48:46.000000000 -0700
++++ pytorch-2.9.0/third_party/FBGEMM/fbgemm_gpu/setup.py	2025-10-31 17:56:44.400165552 -0700
+@@ -471,6 +471,10 @@ class CudaUtils:
+         if cls.nvcc_ok(cuda_home, major, minor):
+             return cuda_home
+ 
++        cuda_home = "/opt/cuda"
++        if cls.nvcc_ok(cuda_home, major, minor):
++            return cuda_home
++
+         try:
+             # Try to find nvcc with which
+             with open(os.devnull, "w") as devnull:
+Only in pytorch-2.9.0/third_party/FBGEMM/fbgemm_gpu: setup.py.orig
+Only in pytorch-2.9.0/third_party/FBGEMM/fbgemm_gpu: setup.py.rej
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/flash-attention/csrc/cutlass/test/unit/nvrtc/thread/testbed.h pytorch-2.9.0/third_party/flash-attention/csrc/cutlass/test/unit/nvrtc/thread/testbed.h
+--- pytorch-2.9.0.orig/third_party/flash-attention/csrc/cutlass/test/unit/nvrtc/thread/testbed.h	2025-01-07 16:02:26.000000000 -0800
++++ pytorch-2.9.0/third_party/flash-attention/csrc/cutlass/test/unit/nvrtc/thread/testbed.h	2025-10-31 17:57:12.527680549 -0700
+@@ -276,7 +276,7 @@ struct Testbed {
+ 
+     const char *opts[] = {"--gpu-architecture=compute_75",
+                           "--std=c++17",
+-                          "--include-path=/usr/local/cuda-10.1/include"};
++                          "--include-path=/opt/cuda/include"};
+ 
+     result_nvrtc = nvrtcCompileProgram(program, 3, opts);
+     if (result_nvrtc != NVRTC_SUCCESS) {
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/sample_programs/build.sh pytorch-2.9.0/third_party/kineto/libkineto/sample_programs/build.sh
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/sample_programs/build.sh	2025-06-16 17:06:22.000000000 -0700
++++ pytorch-2.9.0/third_party/kineto/libkineto/sample_programs/build.sh	2025-10-31 17:53:15.271138990 -0700
+@@ -10,11 +10,11 @@ g++ \
+   -O0 \
+   kineto_playground.cpp \
+   -o main \
+-  -I/usr/local/cuda/include \
++  -I/opt/cuda/include \
+   -I../third_party/fmt/include \
+   -I/usr/local/include/kineto \
+   -L/usr/local/lib \
+-  -L/usr/local/cuda/lib64 \
++  -L/opt/cuda/lib64 \
+   -lpthread \
+   -lcuda \
+   -lcudart \
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2025-10-31 17:53:15.271436892 -0700
+@@ -1,8 +1,8 @@
+ include(utils)
+ 
+-set(Cuda9_prefix usr/local/cuda-9.2)
+-set(Cuda10_prefix usr/local/cuda-10.0)
+-set(Cuda11_prefix usr/local/cuda-11.0)
++set(Cuda9_prefix opt/cuda)
++set(Cuda10_prefix opt/cuda)
++set(Cuda11_prefix opt/cuda)
+ 
+ macro (load_cuda cuda_version)
+     foreach (prefix ${Cuda${cuda_version}_prefix})
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2025-10-31 17:53:15.284918468 -0700
+@@ -14,4 +14,4 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-/usr/local/cuda/bin/nvcc -ptx -m64 -o DcgmProfTesterKernels.ptx DcgmProfTesterKernels.cu || die "Failed to compile DcgmProfTesterKernels.cu"
++/opt/cuda/bin/nvcc -ptx -m64 -o DcgmProfTesterKernels.ptx DcgmProfTesterKernels.cu || die "Failed to compile DcgmProfTesterKernels.cu"
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2025-10-31 17:53:15.288440796 -0700
+@@ -20,6 +20,6 @@
+ #
+ # sm_30 is used here for Kepler or newer
+ 
+-/usr/local/cuda/bin/nvcc -arch=sm_30 -ptx -keep compare.cu
++/opt/cuda/bin/nvcc -arch=sm_30 -ptx -keep compare.cu
+ bin2c compare.ptx --padd 0 --name gpuburn_ptx_string > gpuburn_ptx_string.h
+ python find_ptx_symbols.py compare.ptx gpuburn_ptx_string.h
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2025-10-31 17:53:15.288773609 -0700
+@@ -245,7 +245,7 @@ bool Software::checkLibraries(libraryChe
+     if (checkLib == CHECK_CUDATK && fail == true)
+     {
+         AddInfo("The CUDA Toolkit libraries could not be found.");
+-        AddInfo("Is LD_LIBRARY_PATH set to the 64-bit library path? (usually /usr/local/cuda/lib64)");
++        AddInfo("Is LD_LIBRARY_PATH set to the 64-bit library path? (usually /opt/cuda/lib64)");
+         AddInfo("Some tests will not run.");
+     }
+     if (checkLib == CHECK_CUDA && fail == true)
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2025-10-31 17:44:50.179815303 -0700
++++ pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2025-10-31 17:53:15.289091737 -0700
+@@ -32,8 +32,8 @@ target_include_directories(sdk_nvml_inte
+ #)
+ #target_include_directories(sdk_nvml_interface SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/nvsmi/stats)
+ 
+-# target_include_directories(sdk_nvml_interface INTERFACE /usr/local/cuda100/include)
+-# target_include_directories(sdk_nvml_interface INTERFACE /usr/local/cuda100/kernel/common/inc)
++# target_include_directories(sdk_nvml_interface INTERFACE /opt/cuda/include)
++# target_include_directories(sdk_nvml_interface INTERFACE /opt/cuda/kernel/common/inc)
+ 
+ add_library(sdk_nvml_essentials_objects STATIC)
+ target_link_libraries(sdk_nvml_essentials_objects PUBLIC sdk_nvml_interface)
+diff '--color=auto' -urp pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/testing/python3/apps/cuda_ctx_create/busy_gpu_ppc64le.ptx pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/testing/python3/apps/cuda_ctx_create/busy_gpu_ppc64le.ptx
+--- pytorch-2.9.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/testing/python3/apps/cuda_ctx_create/busy_gpu_ppc64le.ptx	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.9.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/testing/python3/apps/cuda_ctx_create/busy_gpu_ppc64le.ptx	2025-10-31 17:57:29.599534655 -0700
+@@ -9,7 +9,7 @@
+ .address_size 64
+ 
+ 	.file	1 "/home/rtodd/busy_gpu.cu", 1408538277, 644
+-	.file	2 "/usr/local/cuda-5.5/include/device_functions.h", 1407394167, 185228
++	.file	2 "/opt/cuda/include/device_functions.h", 1407394167, 185228
+ .global .align 1 .b8 $str[11] = {95, 95, 67, 85, 68, 65, 95, 70, 84, 90, 0};
+ 
+ .visible .entry make_gpu_busy(
