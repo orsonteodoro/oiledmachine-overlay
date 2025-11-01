@@ -1,5 +1,6 @@
---- a/cmake/Modules/FindCUDAToolkit.cmake.orig	2025-10-08 18:09:57.000000000 -0700
-+++ b/cmake/Modules/FindCUDAToolkit.cmake	2025-10-31 17:28:33.798246455 -0700
+diff '--color=auto' -urp a/cmake/Modules/FindCUDAToolkit.cmake b/cmake/Modules/FindCUDAToolkit.cmake
+--- a/cmake/Modules/FindCUDAToolkit.cmake	2025-10-08 18:09:57.000000000 -0700
++++ b/cmake/Modules/FindCUDAToolkit.cmake	2025-10-31 19:46:45.881204688 -0700
 @@ -619,7 +619,7 @@ else()
    if(NOT CUDAToolkit_ROOT_DIR)
      if(UNIX)
@@ -18,19 +19,9 @@
      endif()
  
      # Now search for the toolkit again using the platform default search paths.
---- a/torch/utils/collect_env.py.orig	2025-10-08 18:09:57.000000000 -0700
-+++ b/torch/utils/collect_env.py	2025-10-31 17:29:25.237624533 -0700
-@@ -242,7 +242,7 @@ def get_cudnn_version(run_lambda):
-         # https://docs.nvidia.com/cuda/archive/9.0/cuda-installation-guide-mac-os-x/index.html#installation
-         # https://docs.nvidia.com/deeplearning/cudnn/installation/latest/
-         # Use CUDNN_LIBRARY when cudnn library is installed elsewhere.
--        cudnn_cmd = "ls /usr/local/cuda/lib/libcudnn*"
-+        cudnn_cmd = "ls /opt/cuda/lib64/libcudnn*"
-     else:
-         cudnn_cmd = 'ldconfig -p | grep libcudnn | rev | cut -d" " -f1 | rev'
-     rc, out, _ = run_lambda(cudnn_cmd)
---- a/cmake/Modules_CUDA_fix/upstream/FindCUDA.cmake.orig	2025-10-08 18:09:57.000000000 -0700
-+++ b/cmake/Modules_CUDA_fix/upstream/FindCUDA.cmake	2025-10-31 17:27:54.646957371 -0700
+diff '--color=auto' -urp a/cmake/Modules_CUDA_fix/upstream/FindCUDA.cmake b/cmake/Modules_CUDA_fix/upstream/FindCUDA.cmake
+--- a/cmake/Modules_CUDA_fix/upstream/FindCUDA.cmake	2025-10-08 18:09:57.000000000 -0700
++++ b/cmake/Modules_CUDA_fix/upstream/FindCUDA.cmake	2025-10-31 19:46:45.881997925 -0700
 @@ -927,7 +927,7 @@ elseif(CUDA_USE_STATIC_CUDA_RUNTIME AND
    if(APPLE)
      # We need to add the default path to the driver (libcuda.dylib) as an rpath, so that
@@ -40,3 +31,27 @@
    endif()
  else()
    list(APPEND CUDA_LIBRARIES ${CUDA_CUDART_LIBRARY})
+diff '--color=auto' -urp a/torch/utils/collect_env.py b/torch/utils/collect_env.py
+--- a/torch/utils/collect_env.py	2025-10-08 18:09:57.000000000 -0700
++++ b/torch/utils/collect_env.py	2025-10-31 19:46:45.881648633 -0700
+@@ -242,7 +242,7 @@ def get_cudnn_version(run_lambda):
+         # https://docs.nvidia.com/cuda/archive/9.0/cuda-installation-guide-mac-os-x/index.html#installation
+         # https://docs.nvidia.com/deeplearning/cudnn/installation/latest/
+         # Use CUDNN_LIBRARY when cudnn library is installed elsewhere.
+-        cudnn_cmd = "ls /usr/local/cuda/lib/libcudnn*"
++        cudnn_cmd = "ls /opt/cuda/lib64/libcudnn*"
+     else:
+         cudnn_cmd = 'ldconfig -p | grep libcudnn | rev | cut -d" " -f1 | rev'
+     rc, out, _ = run_lambda(cudnn_cmd)
+diff '--color=auto' -urp a/torch/utils/cpp_extension.py b/torch/utils/cpp_extension.py
+--- a/torch/utils/cpp_extension.py	2025-10-08 18:09:57.000000000 -0700
++++ b/torch/utils/cpp_extension.py	2025-10-31 19:47:11.989304759 -0700
+@@ -110,7 +110,7 @@ def _find_cuda_home() -> Optional[str]:
+                 else:
+                     cuda_home = cuda_homes[0]
+             else:
+-                cuda_home = '/usr/local/cuda'
++                cuda_home = '/opt/cuda'
+             if not os.path.exists(cuda_home):
+                 cuda_home = None
+     if cuda_home and not torch.cuda.is_available():
