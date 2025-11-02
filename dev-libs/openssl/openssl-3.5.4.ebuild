@@ -68,10 +68,6 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/openssl/configuration.h
 )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-3.5.3-revert-version-change.patch
-)
-
 pkg_setup() {
 	if use ktls ; then
 		if kernel_is -lt 4 18 ; then
@@ -224,6 +220,9 @@ multilib_src_configure() {
 
 multilib_src_compile() {
 	emake build_sw
+	if multilib_is_native_abi; then
+		emake build_docs
+	fi
 }
 
 multilib_src_test() {

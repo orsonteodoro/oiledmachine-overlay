@@ -34,7 +34,7 @@ else
 	"
 
 	if [[ ${PV} != *_alpha* && ${PV} != *_beta* ]] ; then
-		KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+		KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 	fi
 
 	BDEPEND="verify-sig? ( >=sec-keys/openpgp-keys-openssl-20240920 )"
@@ -220,6 +220,9 @@ multilib_src_configure() {
 
 multilib_src_compile() {
 	emake build_sw
+	if multilib_is_native_abi; then
+		emake build_docs
+	fi
 }
 
 multilib_src_test() {
@@ -281,7 +284,8 @@ pkg_preinst() {
 	if use fips; then
 		# Regen fipsmodule.cnf, bug 900625
 		ebegin "Running openssl fipsinstall"
-		"${ED}/usr/bin/openssl" fipsinstall -quiet \
+		LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)" \
+			"${ED}/usr/bin/openssl" fipsinstall -quiet \
 			-out "${ED}${SSL_CNF_DIR}/fipsmodule.cnf" \
 			-module "${ED}/usr/$(get_libdir)/ossl-modules/fips.so"
 		eend $?
