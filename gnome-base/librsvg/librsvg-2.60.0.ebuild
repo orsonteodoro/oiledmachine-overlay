@@ -144,7 +144,6 @@ libc-0.2.168
 libloading-0.8.6
 libm-0.2.11
 librsvg-2.60.0
-librsvg-c-2.60.0
 librsvg-rebind-0.1.0
 librsvg-rebind-sys-0.1.0
 linked-hash-map-0.5.6
@@ -200,7 +199,6 @@ phf_shared-0.10.0
 phf_shared-0.11.2
 pin-project-lite-0.2.15
 pin-utils-0.1.0
-pixbufloader-svg-0.0.1
 pkg-config-0.3.31
 plotters-0.3.7
 plotters-backend-0.3.7
@@ -231,8 +229,6 @@ regex-1.11.1
 regex-automata-0.4.9
 regex-syntax-0.8.5
 rgb-0.8.50
-rsvg-bench-2.60.0
-rsvg_convert-2.60.0
 rustix-0.38.42
 rusty-fork-0.3.0
 ryu-1.0.18
@@ -355,7 +351,10 @@ LICENSE+="
 SLOT="2"
 KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv ~s390 ~sparc x86"
 
-IUSE="gtk-doc +introspection test +vala"
+IUSE="
+gtk-doc +introspection test +vala
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
