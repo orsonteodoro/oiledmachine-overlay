@@ -128,17 +128,13 @@ ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
 ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
 tr uk vi zh_CN
 )
-LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Sep 23, 2025"
-MITIGATION_LAST_UPDATE=1758101100 # From `date +%s -d "2025-09-17 2:25 AM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0006.html"
+MITIGATION_DATE="Oct 13, 2025"
+MITIGATION_LAST_UPDATE=1760357640 # From `date +%s -d "2025-10-13 5:14 AM PDT"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0007.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-43272;DoS;Medium"
-	"CVE-2025-43342;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-43356;ID;Medium"
-	"CVE-2025-43368;UAF, DoS;Medium"
+	"CVE-2025-43343;DoS;"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
