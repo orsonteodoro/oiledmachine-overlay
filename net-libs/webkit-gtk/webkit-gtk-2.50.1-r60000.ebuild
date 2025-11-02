@@ -1118,12 +1118,20 @@ get_gcc_ver_from_cxxabi() {
 _set_clang() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		if has_version "llvm-core/clang:${s}" ; then
+		if use "llvm_slot_${s}" ; then
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
 			break
 		fi
 	done
+	if [[ -z "${CC}" ]] ; then
+eerror "Choose a LLVM slot for C++ standard ${CXX_STANDARD}.  Valid values:  ${LLVM_COMPAT[@]/#/llvm_slot_}"
+		die
+	fi
+	if ! which "${CC}" ; then
+eerror "${CC} is not found.  Emerge the compiler slot."
+		die
+	fi
 	export CPP="${CC} -E"
 	export AR="llvm-ar"
 	export NM="llvm-nm"
