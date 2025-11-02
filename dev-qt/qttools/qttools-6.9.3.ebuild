@@ -4,7 +4,6 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_OPTIONAL=1
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -15,6 +14,9 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
+
+LLVM_COMPAT=( {17..21} ) # see .cmake.conf for minimum
+LLVM_OPTIONAL=1
 
 # behaves very badly when qttools is not already installed, also
 # other issues to handle (clang tests flaky depending on version,
@@ -55,10 +57,10 @@ RDEPEND="
 	clang? (
 		$(llvm_gen_dep '
 			llvm-core/clang:${LLVM_SLOT}'"[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]"'
+			llvm-core/clang:=
 			llvm-core/llvm:${LLVM_SLOT}'"[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]"'
+			llvm-core/llvm:=
 		')
-		llvm-core/clang:=
-		llvm-core/llvm:=
 	)
 	designer? (
 		~dev-qt/qtbase-${PV}:6[network,xml,zstd=]
@@ -92,7 +94,7 @@ src_prepare() {
 	qt6-build_src_prepare
 
 	# qttools is picky about clang versions and ignores LLVM_SLOT
-	sed -e '/find_package/s/${\(LLVM_\)*VERSION}//' \
+	sed -e '/find_package/s/${\(LLVM_\)*VERSION_CLEAN}//' \
 		-i cmake/FindWrapLibClang.cmake || die
 }
 

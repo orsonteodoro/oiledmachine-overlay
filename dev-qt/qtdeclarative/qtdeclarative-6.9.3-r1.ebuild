@@ -55,7 +55,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${P}-QTBUG-139626.patch
+	"${FILESDIR}"/${PN}-6.9.3-QTBUG-140018.patch
 )
 
 pkg_setup() {

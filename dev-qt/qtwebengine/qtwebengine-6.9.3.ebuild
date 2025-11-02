@@ -22,13 +22,12 @@ LLVM_COMPAT=(
 )
 
 PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened check-reqs flag-o-matic libcxx-slot libstdcxx-slot
-inherit multiprocessing optfeature prefix python-any-r1 qt6-build
-inherit toolchain-funcs
+inherit cflags-hardened check-reqs flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
+inherit prefix python-any-r1 qt6-build toolchain-funcs
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
-	https://dev.gentoo.org/~ionen/distfiles/${PN}-6.9-patchset-9.tar.xz
+	https://dev.gentoo.org/~ionen/distfiles/${PN}-6.9-patchset-10.tar.xz
 "
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
@@ -136,7 +135,8 @@ PATCHES=( "${WORKDIR}"/patches/${PN} )
 
 PATCHES+=(
 	# add extras as needed here, may merge in set if carries across versions
-	"${FILESDIR}"/${PN}-6.9.2-QTBUG-139424.patch
+	"${FILESDIR}"/${PN}-6.9.3-QTBUG-139424.patch
+	"${FILESDIR}"/${PN}-6.9.3-stdint.patch
 )
 
 python_check_deps() {
@@ -323,11 +323,12 @@ src_test() {
 	fi
 
 	local CMAKE_SKIP_TESTS=(
-		# fails with network sandbox
+		# fails with *-sandbox
 		tst_certificateerror
 		tst_loadsignals
 		tst_qquickwebengineview
 		tst_qwebengineglobalsettings
+		tst_qwebenginepermission
 		tst_qwebengineview
 		# fails with offscreen rendering, may be worth retrying if the issue
 		# persist given these are rather major tests (or consider virtx)
