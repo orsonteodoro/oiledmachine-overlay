@@ -143,7 +143,7 @@ einfo "IF = Improper Free"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
 # Coded Insecurely
-einfo "II = Implemented Insecurely"
+einfo "II = Insecure Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
