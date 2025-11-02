@@ -936,6 +936,10 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		if [[ "${opt_level}" == "4" ]] ; then
 			opt_level="3"
 		fi
+		if [[ -z "${opt_level}" ]] ; then
+ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
+			opt_level="2"
+		fi
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*opt-level=(0|1|2|3|4|fast|s|z)##g")
 		RUSTFLAGS+=" -C opt-level=${opt_level}"
