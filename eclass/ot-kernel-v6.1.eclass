@@ -313,7 +313,7 @@ ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
 bbrv2 build c2tcp +cet +cfs -clang deepcc -debug doc -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
-qt5 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
+qt5 +retpoline rock-dkms rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce
 "
 

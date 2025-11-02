@@ -366,7 +366,7 @@ ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
 bbrv2 bbrv3 build c2tcp +cet +cfs -clang -deepcc -debug doc -dwarf4
 -dwarf5 dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto
-nest orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor
+nest orca pgo prjc qt5 qt6 +retpoline rock-dkms rt -rust shadowcallstack symlink tresor
 tresor_prompt tresor_sysfs zen-sauce
 "
 
