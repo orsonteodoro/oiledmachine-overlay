@@ -545,17 +545,20 @@ cargo_src_unpack() {
 
 	mkdir -p "${ECARGO_VENDOR}" "${S}" || die
 
+	local unpack_types=${CARGO_UNPACK_TYPES-"crate tarball"}
+
 	local archive shasum pkg
 	local crates=()
 	for archive in ${A}; do
-		case "${archive}" in
-			*.crate)
+		if [[ "${archive}" =~ ".crate" ]] ; then
+			if [[ "${unpack_types}" =~ "crate" ]] ; then
 				crates+=( "${archive}" )
-				;;
-			*)
+			fi
+		else
+			if [[ "${unpack_types}" =~ "tarball" ]] ; then
 				unpack "${archive}"
-				;;
-		esac
+			fi
+		fi
 	done
 
 	if [[ ${PKGBUMPING} != ${PVR} && ${crates[@]} ]]; then

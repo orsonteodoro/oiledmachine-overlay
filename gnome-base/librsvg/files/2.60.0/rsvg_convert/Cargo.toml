@@ -1,0 +1,67 @@
+[package]
+name = "rsvg_convert"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+# So that we can use an rsvg-convert name instead of the default rsvg_convert
+autobins = false
+
+[package.metadata.system-deps]
+cairo-pdf = { version = "1.18", optional = true }
+cairo-ps = { version = "1.18", optional = true }
+cairo-svg = { version = "1.18", optional = true }
+
+[dependencies]
+cairo-rs = { workspace = true, features = [
+    "v1_18",
+    "v1_16",
+    "pdf",
+    "ps",
+    "svg",
+] }
+cast.workspace = true
+chrono = { workspace = true, default-features = false, features = [
+    "clock",
+    "std",
+] }
+clap = { workspace = true, features = ["cargo", "derive"] } # rsvg-convert
+clap_complete.workspace = true # rsvg-convert
+cssparser.workspace = true
+gio.workspace = true
+glib.workspace = true
+libc.workspace = true
+librsvg.workspace = true
+librsvg-c.workspace = true
+
+[dev-dependencies]
+assert_cmd.workspace = true
+predicates.workspace = true
+tempfile.workspace = true
+url.workspace = true
+lopdf.workspace = true
+png.workspace = true
+float-cmp.workspace = true
+librsvg = { workspace = true, features = ["test-utils"] }
+
+[build-dependencies]
+system-deps.workspace = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(system_deps_have_cairo_pdf)',
+    'cfg(system_deps_have_cairo_ps)',
+    'cfg(system_deps_have_cairo_svg)',
+] }
+
+[features]
+avif = ["librsvg/avif"]
+
+[[bin]]
+name = "rsvg-convert"
+path = "src/main.rs"

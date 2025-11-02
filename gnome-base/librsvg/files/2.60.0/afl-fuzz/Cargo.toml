@@ -1,0 +1,19 @@
+[package]
+name = "rsvg-afl-fuzz"
+version = "0.0.1"
+authors = ["Bastien Orivel <eijebong@bananium.fr>"]
+edition = "2018"
+
+[dependencies]
+afl.workspace = true
+cairo-rs.workspace = true
+glib.workspace = true
+gio.workspace = true
+librsvg.workspace = true
+
+[profile.release]
+lto = true
+debug = true
+
+[profile.bench]
+lto = true

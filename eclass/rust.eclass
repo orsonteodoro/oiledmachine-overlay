@@ -96,7 +96,26 @@ declare -A -g -r _RUST_LLVM_MAP=(
 # While _RUST_LLVM_MAP stores useful info about the relationship between Rust and LLVM slots,
 # this array is used to store the Rust slots in a more convenient order for iteration.
 declare -a -g -r _RUST_SLOTS_ORDERED=(
-	"${!_RUST_LLVM_MAP[@]}"
+	"9999"
+	"1.90.0"
+	"1.89.0"
+	"1.88.0"
+	"1.87.0"
+	"1.86.0"
+	"1.85.1"
+	"1.85.0"
+	"1.84.1"
+	"1.84.0"
+	"1.83.0"
+	"1.82.0"
+	"1.81.0"
+	"1.80.1"
+	"1.79.0"
+	"1.78.0"
+	"1.77.1"
+	"1.76.0"
+	"1.75.0"
+	"1.74.1"
 )
 
 # == user control knobs ==

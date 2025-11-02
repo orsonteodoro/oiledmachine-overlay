@@ -605,11 +605,6 @@ ewarn
 		return
 	fi
 
-	local stack_mitigations=1
-	if [[ "${ARCH}" =~ "hppa" ]] ; then
-		stack_mitigations=0
-	fi
-
 	local bti="${BTI[${march}]}"
 	local mte="${MTE[${march}]}"
 	local pac="${PAC[${march}]}"
@@ -947,6 +942,11 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 
 	${RUSTC} -Z help | grep -q -e "stack-protector"
 	has_stack_protector=$?
+
+	local stack_mitigations=1
+	if [[ "${ARCH}" =~ "hppa" ]] ; then
+		stack_mitigations=0
+	fi
 
 	# Not production ready only available on nightly
 	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41

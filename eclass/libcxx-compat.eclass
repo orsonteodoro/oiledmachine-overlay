@@ -48,6 +48,8 @@ LIBCXX_COMPAT_LTS=(
 
 # LLVM_COMPAT template for Rust with LTS compilers
 #
+# Rust < 1.87 is LTS
+#
 # Status:  Production ready
 #
 # Example:
@@ -62,6 +64,8 @@ LIBCXX_COMPAT_RUST_LTS=(
 )
 
 # LLVM_COMPAT template for Rust with Rolling compilers
+#
+# Rust >= 1.87 is rolling
 #
 # Status:  Production ready
 #
