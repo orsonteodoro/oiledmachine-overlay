@@ -114,7 +114,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 GLIB_VERSIONS=(
-	"2.84.3"
+	"2.84.4"
 	"2.82.5"
 )
 GOBJECT_INTROSPECTION_VERSIONS=(
