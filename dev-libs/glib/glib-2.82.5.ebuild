@@ -41,7 +41,7 @@ SLOT="2"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
-ebuild_revision_19
+ebuild_revision_20
 "
 #RESTRICT="
 #	!test? (
@@ -300,8 +300,12 @@ EOF
 	# relevant mainly for glib-utils only
 }
 
-multilib_src_configure() {
+src_configure() {
 	check-compiler-switch_end
+	meson-multilib_src_configure
+}
+
+multilib_src_configure() {
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."

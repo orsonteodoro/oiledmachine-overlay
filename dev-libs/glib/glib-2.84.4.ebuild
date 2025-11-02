@@ -29,7 +29,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 
 LICENSE="LGPL-2.1+"
 SLOT="2"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+KEYWORDS="~alpha amd64 ~arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr"
 RESTRICT="!test? ( test )"
 
@@ -98,6 +98,7 @@ MULTILIB_CHOST_TOOLS=(
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.64.1-mark-gdbus-server-auth-test-flaky.patch
+	"${FILESDIR}"/${PN}-2.84.4-libpcre2-10.47.patch
 )
 
 python_check_deps() {
@@ -122,14 +123,6 @@ pkg_setup() {
 src_prepare() {
 	if use test; then
 		# TODO: Review the test exclusions, especially now with meson
-		# Disable tests requiring dev-util/desktop-file-utils when not installed, bug #286629, upstream bug #629163
-		if ! has_version dev-util/desktop-file-utils ; then
-			ewarn "Some tests will be skipped due dev-util/desktop-file-utils not being present on your system,"
-			ewarn "think on installing it to get these tests run."
-			sed -i -e "/appinfo\/associations/d" gio/tests/appinfo.c || die
-			sed -i -e "/g_test_add_func/d" gio/tests/desktop-app-info.c || die
-		fi
-
 		# gdesktopappinfo requires existing terminal (gnome-terminal or any
 		# other), falling back to xterm if one doesn't exist
 		#if ! has_version x11-terms/xterm && ! has_version x11-terms/gnome-terminal ; then
@@ -212,6 +205,11 @@ src_prepare() {
 
 src_configure() {
 	check-compiler-switch_end
+	lto-guarantee-fat
+	meson-multilib_src_configure
+}
+
+multilib_src_configure() {
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
@@ -220,11 +218,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
-	lto-guarantee-fat
-	meson-multilib_src_configure
-}
-
-multilib_src_configure() {
 	# TODO: figure a way to pass appropriate values for all cross properties
 	# that glib uses (search for get_cross_property)
 	#if tc-is-cross-compiler ; then
@@ -330,15 +323,16 @@ multilib_src_configure() {
 		export PATH="${INTROSPECTION_BIN_DIR}:${PATH}"
 
 		# Override primary pkgconfig search paths to prioritize our internal copy
-		export PKG_CONFIG_LIBDIR="${INTROSPECTION_LIB_DIR}/pkgconfig:${INTROSPECTION_BUILD_DIR}/meson-private"
+		local -x PKG_CONFIG_LIBDIR="${INTROSPECTION_LIB_DIR}/pkgconfig:${INTROSPECTION_BUILD_DIR}/meson-private:$($(tc-getPKG_CONFIG) --variable pc_system_libdirs pkg-config)"
 
 		# Set the normal primary pkgconfig search paths as secondary
 		# (We also need to prepend our just-built one for later use of
 		# g-ir-scanner to use the new one and to help workaround bugs like
 		# bug #946221.)
-		export PKG_CONFIG_PATH="${PKG_CONFIG_LIBDIR}:$(pkg-config --variable pc_path pkg-config)"
+		local -x PKG_CONFIG_PATH="${PKG_CONFIG_LIBDIR}:$($(tc-getPKG_CONFIG) --variable pc_path pkg-config)"
 
 		# Add the paths to the built glib libraries to the library path so that gobject-introspection can load them
+		local gliblib
 		for gliblib in glib gobject gthread gmodule gio girepository; do
 			export LD_LIBRARY_PATH="${BUILD_DIR}/${gliblib}:${LD_LIBRARY_PATH}"
 		done
