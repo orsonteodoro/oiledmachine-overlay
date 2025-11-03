@@ -3,10 +3,18 @@
 
 EAPI=8
 
+MY_PV="${PV%.*}"
+
 CARGO_UNPACK_TYPES="crate"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS NPD OOBR PT"
+DISABLED_CRATES="
+librsvg-c-2.60.0
+pixbufloader-svg-0.0.1
+rsvg-bench-2.60.0
+rsvg_convert-2.60.0
+"
 CRATES="
 adler2-2.0.0
 ahash-0.8.11
@@ -336,10 +344,15 @@ RUST_MULTILIB=1
 
 inherit cargo cflags-hardened gnome2 meson-multilib python-any-r1 rustflags-hardened rust-toolchain vala
 
+KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv ~s390 ~sparc x86"
+S="${WORKDIR}/librsvg-librsvg-${MY_PV}"
+
 DESCRIPTION="Scalable Vector Graphics (SVG) rendering library"
 HOMEPAGE="https://wiki.gnome.org/Projects/LibRsvg https://gitlab.gnome.org/GNOME/librsvg"
-#SRC_URI+=" ${CARGO_CRATE_URIS}"
-SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${PN}-c-${PV}-crates.tar.xz"
+SRC_URI+="
+	https://gitlab.gnome.org/GNOME/librsvg/-/archive/librsvg-${MY_PV}/librsvg-librsvg-${MY_PV}.tar.bz2?ref_type=heads -> librsvg-librsvg-${MY_PV}.tar.bz2
+	${CARGO_CRATE_URIS}
+"
 
 LICENSE="LGPL-2.1+"
 # Dependent crate licenses
@@ -349,7 +362,6 @@ LICENSE+="
 "
 
 SLOT="2"
-KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv ~s390 ~sparc x86"
 
 IUSE="
 gtk-doc +introspection test +vala
@@ -395,7 +407,7 @@ QA_FLAGS_IGNORED="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-2.60.0-libxml2-2.15.0-tests.patch
+	#"${FILESDIR}"/${PN}-2.60.0-libxml2-2.15.0-tests.patch
 )
 
 pkg_setup() {
@@ -443,17 +455,11 @@ multilib_src_configure() {
 		$(meson_native_use_feature introspection)
 		-Dpixbuf=enabled
 		-Dpixbuf-loader=enabled
+		-Dtriplet="$(rust_abi)"
 		$(meson_native_use_feature gtk-doc docs)
 		$(meson_native_use_feature vala)
 		$(meson_use test tests)
 	)
-
-	if ! multilib_is_native_abi; then
-		emesonargs+=(
-			# Set the rust target, which can differ from CHOST
-			-Dtriplet="$(rust_abi)"
-		)
-	fi
 
 	cargo_env meson_src_configure
 }
