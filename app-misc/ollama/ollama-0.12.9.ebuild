@@ -187,31 +187,35 @@ benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
 bge-m3 canadiangamer-neena canadiangamer-priya captainkyd-whiterabbitneo7b
 chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga codegeex4
-codegemma codellama codeqwen codestral codeup cogito command-a command-r command-r-plus
-command-r7b command-r7b-arabic dbrx deepcoder deepscaler deepseek-coder
-deepseek-coder-v2 deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3
-devstral disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
-dolphin3 dolphincoder duckdb-nsql ehartford-theprofessor eramax-aura_v3
-everythinglm falcon falcon2 falcon3 firefunction-v2 gemma gemma2 gemma3 gemma3n glm4
-exaone3.5 exaone-deep fixt-home-3b-v3 fixt-home-3b-v2 goliath gpt-oss granite-code granite-embedding
-granite3-dense granite3.1-dense granite3-guardian granite3-moe granite3.1-moe
-granite3.2 granite3.2-vision granite3.3 hemanth-chessplayer hermes3 hookingai-monah-8b
-internlm2 jimscard-adult-film-screenwriter-nsfw jimscard-whiterabbit-neo
-joefamous-grok-1 leeplenty-lumimaid-v0.2 llama-guard3 llama-pro llama2
-llama2-chinese llama2-uncensored llama3 llama3-chatqa llama3-gradient
-llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llama3.3 llama4 llava
-llava-llama3 llava-phi3 magicoder magistral mannix-replete-adapted-llama3-8b
-mannix-llamax3-8b-alpaca mannix-smaug-qwen2-72b mannix-replete-coder-llama3-8b
-marco-o1 mathstral meditron medllama2 megadolphin minicpm-v mistral
-mistral-large mistral-nemo mistral-openorca mistral-small mistral-small3.1 mistral-small3.2
+codegemma codellama codeqwen codestral codeup cogito command-a command-r
+command-r-plus command-r7b command-r7b-arabic dbrx deepcoder deepscaler
+deepseek-coder deepseek-coder-v2 deepseek-llm deepseek-r1 deepseek-v2
+deepseek-v2.5 deepseek-v3 deepseek-v3.1 devstral disinfozone-telos
+dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi dolphin3
+dolphincoder duckdb-nsql ehartford-theprofessor eramax-aura_v3 everythinglm
+falcon falcon2 falcon3 firefunction-v2 gemma gemma2 gemma3 gemma3n glm4 glm-4.6
+embeddinggemma exaone3.5 exaone-deep fixt-home-3b-v3 fixt-home-3b-v2 goliath
+gpt-oss gpt-oss-safeguard granite-code granite-embedding granite3-dense
+granite3.1-dense granite3-guardian granite3-moe granite3.1-moe granite3.2
+granite3.2-vision granite3.3 granite4 hemanth-chessplayer hermes3
+hookingai-monah-8b internlm2 jimscard-adult-film-screenwriter-nsfw
+jimscard-whiterabbit-neo joefamous-grok-1 kimi-k2 leeplenty-lumimaid-v0.2
+llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
+llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2
+llama3.2-vision llama3.3 llama4 llava llava-llama3 llava-phi3 magicoder
+magistral mannix-replete-adapted-llama3-8b mannix-llamax3-8b-alpaca
+mannix-smaug-qwen2-72b mannix-replete-coder-llama3-8b marco-o1 mathstral
+meditron medllama2 megadolphin minicpm-v minimax-m2 mistral mistral-large
+mistral-nemo mistral-openorca mistral-small mistral-small3.1 mistral-small3.2
 mistrallite mixtral monotykamary-whiterabbitneo-v1.5a moondream
 mxbai-embed-large nemotron nemotron-mini neural-chat nexusraven nomic-embed-text
 notus notux nous-hermes nous-hermes2 nous-hermes2-mixtral nqduc-gemsura
 nqduc-mixsura nqduc-mixsura-sft nuextract olmo2 open-orca-platypus2 openchat
 opencoder openhermes openthinker orca-mini orca2 paraphrase-multilingual
-partai-dorna-llama3 phi phi3 phi3.5 phi4 phi4-mini phi4-mini-reasoning phi4-reasoning phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder qwen2.5vl qwen3 qwen3-coder qwq r1-1776 reader-lm reefer-her2
-reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
+partai-dorna-llama3 phi phi3 phi3.5 phi4 phi4-mini phi4-mini-reasoning
+phi4-reasoning phind-codellama qwen qwen2 qwen2-math qwen2.5 qwen2.5-coder
+qwen2.5vl qwen3 qwen3-coder qwen3-embedding qwen3-vl qwq r1-1776 reader-lm
+reefer-her2 reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b sailor2 samantha-mistral
 sammcj-smaug-mixtral-v0.1 savethedoctor-whiterabbitneo13bq8_0 shieldgemma
 smallthinker smollm smollm2 snowflake-arctic-embed snowflake-arctic-embed2 solar
@@ -226,7 +230,7 @@ wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 #
-# To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
+# To update use this run `ebuild ollama-0.12.9.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
 #
 GEN_EBUILD=0
@@ -1789,6 +1793,9 @@ else
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
 		"rsc.io/pdf v0.1.1/go.mod"
 
+
+
+
 	)
 	go-module_set_globals
 
@@ -1960,6 +1967,7 @@ LLM_LICENSES="
 	)
 	ollama_llms_codegemma? (
 		Gemma-Terms-of-Use-20240221
+		Gemma-Prohibited-Use-Policy-20240221
 	)
 	ollama_llms_codellama? (
 		llama2-LICENSE
@@ -2020,6 +2028,9 @@ LLM_LICENSES="
 	ollama_llms_deepseek-v3? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
+	ollama_llms_deepseek-v3.1? (
+		MIT
+	)
 	ollama_llms_deepseek-llm? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
@@ -2072,6 +2083,10 @@ LLM_LICENSES="
 	ollama_llms_eramax-aura_v3? (
 		Apache-2.0
 	)
+	ollama_llms_embeddinggemma? (
+		Gemma-Terms-of-Use-20250324
+		Gemma-Prohibited-Use-Policy-20240221
+	)
 	ollama_llms_exaone3.5? (
 		EXAONE-AI-Model-License-Agreement-1.1-NC
 	)
@@ -2119,11 +2134,17 @@ LLM_LICENSES="
 	ollama_llms_glm4? (
 		glm-4-9b-LICENSE
 	)
+	ollama_llms_glm-4.6? (
+		all-rights-reserved
+	)
 	ollama_llms_goliath? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_gpt-oss? (
+		Apache-2.0
+	)
+	ollama_llms_gpt-oss-safeguard? (
 		Apache-2.0
 	)
 	ollama_llms_granite-code? (
@@ -2154,6 +2175,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_granite3.3? (
+		Apache-2.0
+	)
+	ollama_llms_granite4? (
 		Apache-2.0
 	)
 	ollama_llms_hemanth-chessplayer? (
@@ -2241,10 +2265,16 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_llava-llama3? (
-		all-rights-reserved
+		Apache-2.0
+		llama3-LICENSE
+		llama3-USE_POLICY.md
 	)
 	ollama_llms_llava-phi3? (
-		all-rights-reserved
+		Apache-2.0
+		MIT
+	)
+	ollama_llms_kimi-k2? (
+		Kimi-K2-LICENSE
 	)
 	ollama_llms_leeplenty-lumimaid-v0.2? (
 		Apache-2.0
@@ -2292,6 +2322,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_minicpm-v? (
 		Apache-2.0
+	)
+	ollama_llms_minimax-m2? (
+		MIT
 	)
 	ollama_llms_mistral? (
 		Apache-2.0
@@ -2459,6 +2492,12 @@ LLM_LICENSES="
 	ollama_llms_qwen3-coder? (
 		Apache-2.0
 	)
+	ollama_llms_qwen3-embedding? (
+		Apache-2.0
+	)
+	ollama_llms_qwen3-vl? (
+		Apache-2.0
+	)
 	ollama_llms_qwq? (
 		Apache-2.0
 	)
@@ -2517,6 +2556,7 @@ LLM_LICENSES="
 	)
 	ollama_llms_shieldgemma? (
 		Gemma-Terms-of-Use-20240401
+		Gemma-Prohibited-Use-Policy-20240221
 	)
 	ollama_llms_smallthinker? (
 		Qwen-RESEARCH-LICENSE-AGREEMENT
@@ -2560,6 +2600,7 @@ LLM_LICENSES="
 	)
 	ollama_llms_sparksammy-tinysam-goog? (
 		Gemma-Terms-of-Use-20240221
+		Gemma-Prohibited-Use-Policy-20240221
 	)
 	ollama_llms_sparksammy-tinysam-msft? (
 		MIT
@@ -2590,6 +2631,7 @@ LLM_LICENSES="
 	)
 	ollama_llms_themanofrod-travel-agent? (
 		Gemma-Terms-of-Use-20240221
+		Gemma-Prohibited-Use-Policy-20240221
 	)
 	ollama_llms_tinydolphin? (
 		Apache-2.0
@@ -2606,7 +2648,8 @@ LLM_LICENSES="
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_yarn-llama2? (
-		all-rights-reserved
+		llama2-LICENSE
+		llama2-USE_POLICY.md
 	)
 	ollama_llms_yarn-mistral? (
 		Apache-2.0
@@ -2615,10 +2658,12 @@ LLM_LICENSES="
 		MICROSOFT-RESEARCH-LICENSE-TERMS
 	)
 	ollama_llms_wizard-vicuna? (
-		all-rights-reserved
+		llama2-LICENSE
+		llama2-USE_POLICY.md
 	)
 	ollama_llms_wizard-vicuna-uncensored? (
-		all-rights-reserved
+		llama2-LICENSE
+		llama2-USE_POLICY.md
 	)
 	ollama_llms_wizardcoder? (
 		MICROSOFT-RESEARCH-LICENSE-TERMS
@@ -3184,7 +3229,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.11.4-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.12.9-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 )
 
@@ -3223,12 +3268,13 @@ ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 		rocm_pkg_setup
 	else
 		local llvm_slot
-		if use llvm_slot_18 ; then
-			llvm_slot=18
-		fi
-		if use llvm_slot_19 ; then
-			llvm_slot=19
-		fi
+		local x
+		for x in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${x}" ; then
+				llvm_slot="${x}"
+				break
+			fi
+		done
 		llvm_base_path="/usr/lib/llvm/${llvm_slot}"
 einfo "PATH (before):  ${PATH}"
 		export PATH=$(echo "${PATH}" \
