@@ -512,8 +512,8 @@ CUDA_12_3_RDEPENDS="
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 ${pv})
-		local ROCM_SLOT=$(ver_cut 1-2 ${pv})
+		local s="0/"$(ver_cut 1-2 "${pv}")
+		local ROCM_SLOT=$(ver_cut 1-2 "${pv}")
 		u="${ROCM_SLOT/./_}"
 	# Check both the direct top and indirect bottom dependencies
 		echo "
