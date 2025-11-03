@@ -2135,7 +2135,7 @@ LLM_LICENSES="
 		glm-4-9b-LICENSE
 	)
 	ollama_llms_glm-4.6? (
-		all-rights-reserved
+		MIT
 	)
 	ollama_llms_goliath? (
 		llama2-LICENSE
