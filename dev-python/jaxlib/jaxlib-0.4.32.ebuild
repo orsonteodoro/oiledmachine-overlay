@@ -462,7 +462,7 @@ gen_rocm_depends() {
 		# Direct dependencies
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP}]
+				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
 				dev-libs/rccl:=
 				>=dev-libs/rocm-device-libs-${pv}:${s}
 				dev-libs/rocm-device-libs:=
