@@ -22,6 +22,29 @@ UOPTS_BOLT_INST_ARGS=(
 	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
 )
 
+_TRAINERS=(
+	"libjpeg_turbo_trainers_70_pct_quality_baseline"
+	"libjpeg_turbo_trainers_75_pct_quality_baseline"
+	"libjpeg_turbo_trainers_80_pct_quality_baseline"
+	"libjpeg_turbo_trainers_90_pct_quality_baseline"
+	"libjpeg_turbo_trainers_95_pct_quality_baseline"
+	"libjpeg_turbo_trainers_98_pct_quality_baseline"
+	"libjpeg_turbo_trainers_99_pct_quality_baseline"
+	"libjpeg_turbo_trainers_100_pct_quality_baseline"
+	"libjpeg_turbo_trainers_70_pct_quality_progressive"
+	"libjpeg_turbo_trainers_75_pct_quality_progressive"
+	"libjpeg_turbo_trainers_80_pct_quality_progressive"
+	"libjpeg_turbo_trainers_90_pct_quality_progressive"
+	"libjpeg_turbo_trainers_95_pct_quality_progressive"
+	"libjpeg_turbo_trainers_98_pct_quality_progressive"
+	"libjpeg_turbo_trainers_99_pct_quality_progressive"
+	"libjpeg_turbo_trainers_100_pct_quality_progressive"
+	"libjpeg_turbo_trainers_crop"
+	"libjpeg_turbo_trainers_decode"
+	"libjpeg_turbo_trainers_grayscale"
+	"libjpeg_turbo_trainers_transformations"
+)
+
 inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
 inherit flag-o-matic-om toolchain-funcs uopts
 
@@ -52,55 +75,21 @@ LICENSE="
 	)
 "
 SLOT="0/0.2"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 IUSE="
-+asm cpu_flags_arm_neon debug java
-libjpeg_turbo_trainers_70_pct_quality_baseline
-libjpeg_turbo_trainers_75_pct_quality_baseline
-libjpeg_turbo_trainers_80_pct_quality_baseline
-libjpeg_turbo_trainers_90_pct_quality_baseline
-libjpeg_turbo_trainers_95_pct_quality_baseline
-libjpeg_turbo_trainers_98_pct_quality_baseline
-libjpeg_turbo_trainers_99_pct_quality_baseline
-libjpeg_turbo_trainers_100_pct_quality_baseline
-libjpeg_turbo_trainers_70_pct_quality_progressive
-libjpeg_turbo_trainers_75_pct_quality_progressive
-libjpeg_turbo_trainers_80_pct_quality_progressive
-libjpeg_turbo_trainers_90_pct_quality_progressive
-libjpeg_turbo_trainers_95_pct_quality_progressive
-libjpeg_turbo_trainers_98_pct_quality_progressive
-libjpeg_turbo_trainers_99_pct_quality_progressive
-libjpeg_turbo_trainers_100_pct_quality_progressive
-libjpeg_turbo_trainers_crop
-libjpeg_turbo_trainers_decode
-libjpeg_turbo_trainers_grayscale
-libjpeg_turbo_trainers_transformations
-pgo static-libs
+${_TRAINERS[@]}
++asm cpu_flags_arm_neon debug java test pgo static-libs
 ebuild_revision_31
 "
 REQUIRED_USE="
 	pgo? (
 		libjpeg_turbo_trainers_decode
 		|| (
-			libjpeg_turbo_trainers_70_pct_quality_baseline
-			libjpeg_turbo_trainers_75_pct_quality_baseline
-			libjpeg_turbo_trainers_80_pct_quality_baseline
-			libjpeg_turbo_trainers_90_pct_quality_baseline
-			libjpeg_turbo_trainers_95_pct_quality_baseline
-			libjpeg_turbo_trainers_98_pct_quality_baseline
-			libjpeg_turbo_trainers_99_pct_quality_baseline
-			libjpeg_turbo_trainers_100_pct_quality_baseline
-			libjpeg_turbo_trainers_70_pct_quality_progressive
-			libjpeg_turbo_trainers_75_pct_quality_progressive
-			libjpeg_turbo_trainers_80_pct_quality_progressive
-			libjpeg_turbo_trainers_90_pct_quality_progressive
-			libjpeg_turbo_trainers_95_pct_quality_progressive
-			libjpeg_turbo_trainers_98_pct_quality_progressive
-			libjpeg_turbo_trainers_99_pct_quality_progressive
-			libjpeg_turbo_trainers_100_pct_quality_progressive
-			libjpeg_turbo_trainers_crop
-			libjpeg_turbo_trainers_decode
-			libjpeg_turbo_trainers_grayscale
-			libjpeg_turbo_trainers_transformations
+			${_TRAINERS[@]}
 		)
 	)
 	libjpeg_turbo_trainers_70_pct_quality_baseline? (
@@ -321,7 +310,9 @@ _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
-	local mycmakeargs=()
+	local mycmakeargs=(
+		-DWITH_TESTS="$(usex test)"
+	)
 
 	strip-flag-value "cfi-icall"
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
