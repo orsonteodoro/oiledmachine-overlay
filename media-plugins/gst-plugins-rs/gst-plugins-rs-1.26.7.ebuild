@@ -4,6 +4,8 @@
 
 # The lockfile should be updated once a week for security reasons.
 
+# 1.26.6 -> 1.26.7
+
 EAPI=8
 
 # D12-slim
@@ -90,6 +92,7 @@ PATENT_STATUS_IUSE=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 # Upstream uses Rust 1.88.0, but relaxed
+# The Cargo.toml says 1.83 in LTS zone
 RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
 RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
 
@@ -158,24 +161,24 @@ aws-sdk-sts-1.62.0
 aws-sdk-transcribestreaming-1.63.0
 aws-sdk-translate-1.61.0
 aws-sigv4-1.2.9
-aws-smithy-async-1.2.5
+aws-smithy-async-1.2.6
 aws-smithy-checksums-0.62.0
-aws-smithy-eventstream-0.60.11
+aws-smithy-eventstream-0.60.12
 aws-smithy-http-0.60.12
 aws-smithy-http-0.61.1
-aws-smithy-json-0.61.5
-aws-smithy-query-0.60.7
+aws-smithy-json-0.61.6
+aws-smithy-query-0.60.8
 aws-smithy-runtime-1.7.8
 aws-smithy-runtime-api-1.7.4
-aws-smithy-types-1.3.2
-aws-smithy-xml-0.60.10
+aws-smithy-types-1.3.3
+aws-smithy-xml-0.60.11
 aws-types-1.3.6
 backtrace-0.3.76
 base16ct-0.1.1
 base32-0.5.1
 base64-0.21.7
 base64-0.22.1
-base64ct-1.8.0
+base64ct-1.6.0
 base64-serde-0.8.0
 base64-simd-0.8.0
 bincode-1.3.3
@@ -189,14 +192,14 @@ block-buffer-0.10.4
 bstr-1.12.0
 built-0.8.0
 bumpalo-3.19.0
-bytemuck-1.23.2
+bytemuck-1.24.0
 byteorder-1.5.0
 byteorder-lite-0.1.0
 byteorder_slice-3.0.0
 bytes-1.10.1
 byte-slice-cast-1.2.3
 bytes-utils-0.1.4
-cc-1.2.39
+cc-1.2.41
 cdg-0.1.0
 cdg_renderer-0.8.0
 cdp-types-0.3.0
@@ -205,7 +208,7 @@ cea708-types-0.4.1
 cesu8-1.1.0
 cexpr-0.6.0
 cfg_aliases-0.2.1
-cfg-expr-0.20.3
+cfg-expr-0.18.0
 cfg-if-1.0.3
 chrono-0.4.42
 cipher-0.4.4
@@ -302,16 +305,16 @@ fdeflate-0.3.7
 ff-0.12.1
 field-offset-0.3.6
 filetime-0.2.26
-find-msvc-tools-0.1.2
+find-msvc-tools-0.1.4
 fixedbitset-0.4.2
-flate2-1.1.2
+flate2-1.1.4
 flume-0.11.1
 fnv-1.0.7
 foldhash-0.1.5
 foreign-types-0.3.2
 foreign-types-shared-0.1.1
 form_urlencoded-1.2.2
-fs-err-3.1.2
+fs-err-3.1.3
 fst-0.4.7
 futures-0.3.31
 futures-channel-0.3.31
@@ -323,7 +326,7 @@ futures-sink-0.3.31
 futures-task-0.3.31
 futures-timer-3.0.3
 futures-util-0.3.31
-generic-array-0.14.7
+generic-array-0.14.8
 getifaddrs-0.5.0
 getrandom-0.2.16
 getrandom-0.3.3
@@ -377,7 +380,7 @@ icu_provider-2.0.0
 ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.1
-image-0.25.8
+image-0.25.6
 image_hasher-3.0.0
 imgref-1.12.0
 indexmap-1.9.3
@@ -407,7 +410,7 @@ khronos-egl-6.0.0
 kstring-2.0.2
 lazy_static-1.5.0
 lewton-0.10.2
-libc-0.2.176
+libc-0.2.177
 libfuzzer-sys-0.4.10
 libloading-0.8.9
 libm-0.2.15
@@ -426,7 +429,7 @@ litemap-0.8.0
 litrs-0.4.2
 livekit-api-0.3.2
 livekit-protocol-0.3.2
-lock_api-0.4.13
+lock_api-0.4.14
 log-0.4.28
 lru-0.12.5
 lru-0.16.1
@@ -443,8 +446,7 @@ minimal-lexical-0.2.1
 miniz_oxide-0.8.9
 mio-1.0.4
 more-asserts-0.3.1
-moxcms-0.7.5
-mp4-atom-0.8.1
+mp4-atom-0.9.0
 muldiv-1.0.1
 multimap-0.10.1
 nanorand-0.7.0
@@ -458,7 +460,7 @@ nom-8.0.0
 nonzero_ext-0.3.0
 noop_proc_macro-0.3.0
 ntapi-0.4.1
-nu-ansi-term-0.50.1
+nu-ansi-term-0.50.3
 num-0.4.3
 num-bigint-0.4.6
 num-bigint-dig-0.8.4
@@ -472,8 +474,8 @@ num-rational-0.4.2
 num_threads-0.1.7
 num-traits-0.2.19
 oauth2-5.0.0
-objc2-core-foundation-0.3.1
-objc2-io-kit-0.3.1
+objc2-core-foundation-0.3.2
+objc2-io-kit-0.3.2
 object-0.37.3
 ogg-0.9.2
 once_cell-1.21.3
@@ -487,8 +489,8 @@ option-operations-0.6.0
 outref-0.5.2
 p256-0.11.1
 parking-2.2.1
-parking_lot-0.12.4
-parking_lot_core-0.9.11
+parking_lot-0.12.5
+parking_lot_core-0.9.12
 parse_link_header-0.4.0
 paste-1.0.15
 pastey-0.1.1
@@ -498,7 +500,7 @@ pbjson-build-0.6.2
 pbjson-types-0.6.0
 pbkdf2-0.12.2
 pcap-file-2.0.0
-pem-3.0.5
+pem-3.0.6
 pem-rfc7468-0.7.0
 percent-encoding-2.3.2
 petgraph-0.6.5
@@ -539,7 +541,6 @@ protobuf-parse-3.7.2
 protobuf-support-3.7.2
 psl-types-2.0.11
 publicsuffix-2.3.0
-pxfm-0.1.24
 quick-xml-0.37.5
 quick-xml-0.38.3
 quinn-0.11.9
@@ -559,14 +560,14 @@ rayon-1.11.0
 rayon-core-1.13.0
 rcgen-0.14.5
 realfft-3.5.0
-redox_syscall-0.5.17
+redox_syscall-0.5.18
 ref-cast-1.0.25
 ref-cast-impl-1.0.25
 r-efi-5.3.0
-regex-1.11.3
-regex-automata-0.4.11
-regex-lite-0.1.7
-regex-syntax-0.8.6
+regex-1.12.1
+regex-automata-0.4.12
+regex-lite-0.1.8
+regex-syntax-0.8.7
 reqwest-0.11.27
 reqwest-0.12.23
 rfc6979-0.3.1
@@ -622,9 +623,10 @@ serde_derive-1.0.228
 serde_json-1.0.145
 serde_path_to_error-0.1.20
 serde_spanned-0.6.9
+serde_spanned-1.0.3
 serde_urlencoded-0.7.1
-serde_with-3.14.1
-serde_with_macros-3.14.1
+serde_with-3.15.0
+serde_with_macros-3.15.0
 serial_test-3.2.0
 serial_test_derive-3.2.0
 sha1-0.10.6
@@ -640,8 +642,8 @@ signature-2.2.0
 simd-adler32-0.3.7
 simd_helpers-0.1.0
 siphasher-1.0.1
-skia-bindings-0.87.0
-skia-safe-0.87.0
+skia-bindings-0.89.0
+skia-safe-0.89.0
 slab-0.4.11
 smallvec-1.15.1
 smawk-0.3.2
@@ -652,19 +654,19 @@ spin-0.9.8
 spinning_top-0.3.0
 spki-0.6.0
 spki-0.7.3
-sprintf-0.4.2
-stable_deref_trait-1.2.0
+sprintf-0.4.3
+stable_deref_trait-1.2.1
 static_assertions-1.1.0
 strength_reduce-0.2.4
 strsim-0.11.1
 subtle-2.6.1
-symphonia-0.5.4
-symphonia-bundle-mp3-0.5.4
-symphonia-codec-vorbis-0.5.4
-symphonia-core-0.5.4
-symphonia-format-ogg-0.5.4
-symphonia-metadata-0.5.4
-symphonia-utils-xiph-0.5.4
+symphonia-0.5.5
+symphonia-bundle-mp3-0.5.5
+symphonia-codec-vorbis-0.5.5
+symphonia-core-0.5.5
+symphonia-format-ogg-0.5.5
+symphonia-metadata-0.5.5
+symphonia-utils-xiph-0.5.5
 syn-1.0.109
 syn-2.0.106
 sync_wrapper-0.1.2
@@ -681,13 +683,12 @@ target-lexicon-0.13.2
 tempfile-3.23.0
 test-log-0.2.18
 test-log-macros-0.2.18
-test-with-0.15.4
+test-with-0.15.3
 textwrap-0.16.2
 thiserror-1.0.69
 thiserror-2.0.17
 thiserror-impl-1.0.69
 thiserror-impl-2.0.17
-thread-id-4.2.2
 thread_local-1.1.9
 time-0.3.44
 time-core-0.1.6
@@ -706,12 +707,13 @@ tokio-tungstenite-0.20.1
 tokio-tungstenite-0.27.0
 tokio-util-0.7.16
 toml-0.8.23
+toml-0.9.8
 toml_datetime-0.6.11
-toml_datetime-0.7.2
+toml_datetime-0.7.3
 toml_edit-0.22.27
-toml_edit-0.23.6
-toml_parser-1.0.3
-toml_write-0.1.2
+toml_edit-0.23.7
+toml_parser-1.0.4
+toml_writer-1.0.4
 tower-0.5.2
 tower-http-0.6.6
 tower-layer-0.3.3
@@ -729,7 +731,7 @@ typenum-1.19.0
 unicase-2.8.1
 unicode-ident-1.0.19
 unicode-linebreak-0.1.5
-unicode-width-0.2.1
+unicode-width-0.2.2
 untrusted-0.9.0
 url-2.5.7
 urlencoding-2.1.3
@@ -765,12 +767,13 @@ wasm-bindgen-macro-support-0.2.104
 wasm-bindgen-shared-0.2.104
 webm-iterable-0.6.4
 webpki-0.22.4
-webpki-root-certs-1.0.2
-webpki-roots-1.0.2
+webpki-root-certs-1.0.3
+webpki-roots-1.0.3
 web-sys-0.3.81
 web-time-1.1.0
 web-transport-proto-0.2.7
-web-transport-quinn-0.7.3
+web-transport-quinn-0.8.1
+web-transport-trait-0.1.1
 weezl-0.1.10
 which-4.4.2
 winapi-0.3.9
@@ -781,58 +784,58 @@ windows-0.61.3
 windows_aarch64_gnullvm-0.42.2
 windows_aarch64_gnullvm-0.48.5
 windows_aarch64_gnullvm-0.52.6
-windows_aarch64_gnullvm-0.53.0
+windows_aarch64_gnullvm-0.53.1
 windows_aarch64_msvc-0.42.2
 windows_aarch64_msvc-0.48.5
 windows_aarch64_msvc-0.52.6
-windows_aarch64_msvc-0.53.0
+windows_aarch64_msvc-0.53.1
 windows-collections-0.2.0
 windows-core-0.61.2
-windows-core-0.62.1
+windows-core-0.62.2
 windows-future-0.2.1
 windows_i686_gnu-0.42.2
 windows_i686_gnu-0.48.5
 windows_i686_gnu-0.52.6
-windows_i686_gnu-0.53.0
+windows_i686_gnu-0.53.1
 windows_i686_gnullvm-0.52.6
-windows_i686_gnullvm-0.53.0
+windows_i686_gnullvm-0.53.1
 windows_i686_msvc-0.42.2
 windows_i686_msvc-0.48.5
 windows_i686_msvc-0.52.6
-windows_i686_msvc-0.53.0
-windows-implement-0.60.1
-windows-interface-0.59.2
+windows_i686_msvc-0.53.1
+windows-implement-0.60.2
+windows-interface-0.59.3
 windows-link-0.1.3
-windows-link-0.2.0
+windows-link-0.2.1
 windows-numerics-0.2.0
 windows-registry-0.5.3
 windows-result-0.3.4
-windows-result-0.4.0
+windows-result-0.4.1
 windows-strings-0.4.2
-windows-strings-0.5.0
+windows-strings-0.5.1
 windows-sys-0.45.0
 windows-sys-0.48.0
 windows-sys-0.52.0
 windows-sys-0.59.0
 windows-sys-0.60.2
-windows-sys-0.61.1
+windows-sys-0.61.2
 windows-targets-0.42.2
 windows-targets-0.48.5
 windows-targets-0.52.6
-windows-targets-0.53.4
+windows-targets-0.53.5
 windows-threading-0.1.0
 windows_x86_64_gnu-0.42.2
 windows_x86_64_gnu-0.48.5
 windows_x86_64_gnu-0.52.6
-windows_x86_64_gnu-0.53.0
+windows_x86_64_gnu-0.53.1
 windows_x86_64_gnullvm-0.42.2
 windows_x86_64_gnullvm-0.48.5
 windows_x86_64_gnullvm-0.52.6
-windows_x86_64_gnullvm-0.53.0
+windows_x86_64_gnullvm-0.53.1
 windows_x86_64_msvc-0.42.2
 windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
-windows_x86_64_msvc-0.53.0
+windows_x86_64_msvc-0.53.1
 winnow-0.7.13
 winreg-0.50.0
 wit-bindgen-0.46.0
@@ -925,6 +928,7 @@ declare -A GIT_CRATES=(
 [pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;d252b4a58d38c22f8d0154b9f469cfff8cd5fdfb;gtk-rs-core-%commit%/pangocairo/sys" # 0.21.3
 [pango]="https://github.com/gtk-rs/gtk-rs-core;d252b4a58d38c22f8d0154b9f469cfff8cd5fdfb;gtk-rs-core-%commit%/pango" # 0.21.3
 [pango-sys]="https://github.com/gtk-rs/gtk-rs-core;d252b4a58d38c22f8d0154b9f469cfff8cd5fdfb;gtk-rs-core-%commit%/pango/sys" # 0.21.3
+
 )
 		inherit cargo
 		SRC_URI+="$(cargo_crate_uris)"
@@ -1398,7 +1402,6 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.26.0-some-mismatched-types.patch"
 )
 
 pkg_setup() {

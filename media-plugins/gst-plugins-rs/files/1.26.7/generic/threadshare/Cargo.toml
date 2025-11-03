@@ -21,6 +21,7 @@ gst.workspace = true
 gst-audio.workspace = true
 gst-net.workspace = true
 gst-rtp.workspace = true
+num-traits = "0.2"
 pin-project-lite = "0.2.0"
 polling = "3.1.0"
 rand = "0.9"
@@ -34,7 +35,7 @@ bitflags = "2.6.0"
 libc = "0.2"
 
 [target.'cfg(target_os = "windows")'.dependencies]
-windows-sys = { version = ">=0.52, <=0.60", features = ["Win32_Foundation", "Win32_Networking", "Win32_Networking_WinSock"] }
+windows-sys = { version = ">=0.52, <=0.61", features = ["Win32_Foundation", "Win32_Networking", "Win32_Networking_WinSock"] }
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
 getifaddrs = "0.5"
