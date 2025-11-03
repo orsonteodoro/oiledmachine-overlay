@@ -73,7 +73,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]} # 20, 21
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 	19 # For ROCm 6.4
 )
 
@@ -966,6 +966,11 @@ RDEPEND+="
 			=media-libs/mesa-9999[X?]
 		)
 	)
+	llvm_slot_21? (
+		|| (
+			=media-libs/mesa-9999[X?]
+		)
+	)
 	materialx? (
 		>=media-libs/materialx-1.39.2[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 		media-libs/materialx:=
@@ -1221,16 +1226,13 @@ ewarn "including all dependencies of this package."
 ewarn
 	fi
 
-	if use llvm_slot_19 ; then
-ewarn "Using LLVM 19"
-ewarn "LLVM 19 is only for ROCm 6.4 builds and is untested."
-	fi
-	if use llvm_slot_19 ; then
-ewarn "Using LLVM 18"
-	fi
-	if use llvm_slot_17 ; then
-einfo "Using LLVM 17"
-	fi
+	local x
+	for x in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${x}" ; then
+ewarn "Using LLVM ${x}"
+			break
+		fi
+	done
 
 	if use rocm ; then
 	# Upstream uses ROCm 6.4 for Linux, ROCm 6.3 for Windows
