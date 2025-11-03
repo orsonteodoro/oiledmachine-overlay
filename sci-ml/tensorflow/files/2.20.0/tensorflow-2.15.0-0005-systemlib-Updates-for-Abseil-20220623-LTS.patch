@@ -5,14 +5,14 @@ Subject: [PATCH 05/13] systemlib: Updates for Abseil 20220623 LTS
 
 These targets are header-only and just need stub bazel targets
 ---
- third_party/absl/system.absl.functional.BUILD | 22 +++++++++++++++++++
- third_party/absl/system.absl.random.BUILD     | 12 ++++++++++
+ third_party/xla/third_party/absl/system.absl.functional.BUILD | 22 +++++++++++++++++++
+ third_party/xla/third_party/absl/system.absl.random.BUILD     | 12 ++++++++++
  2 files changed, 34 insertions(+)
 
-diff --git a/third_party/absl/system.absl.functional.BUILD b/third_party/absl/system.absl.functional.BUILD
+diff --git a/third_party/xla/third_party/absl/system.absl.functional.BUILD b/third_party/xla/third_party/absl/system.absl.functional.BUILD
 index a4f70acf35c..579181dec07 100644
---- a/third_party/absl/system.absl.functional.BUILD
-+++ b/third_party/absl/system.absl.functional.BUILD
+--- a/third_party/xla/third_party/absl/system.absl.functional.BUILD
++++ b/third_party/xla/third_party/absl/system.absl.functional.BUILD
 @@ -2,10 +2,32 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
  
  package(default_visibility = ["//visibility:public"])
@@ -46,10 +46,10 @@ index a4f70acf35c..579181dec07 100644
 +        "//absl/meta:type_traits",
 +    ],
  )
-diff --git a/third_party/absl/system.absl.random.BUILD b/third_party/absl/system.absl.random.BUILD
+diff --git a/third_party/xla/third_party/absl/system.absl.random.BUILD b/third_party/xla/third_party/absl/system.absl.random.BUILD
 index 948de07751a..5ebd656be8e 100644
---- a/third_party/absl/system.absl.random.BUILD
-+++ b/third_party/absl/system.absl.random.BUILD
+--- a/third_party/xla/third_party/absl/system.absl.random.BUILD
++++ b/third_party/xla/third_party/absl/system.absl.random.BUILD
 @@ -51,3 +51,15 @@ cc_library(
          "//absl/types:span",
      ],

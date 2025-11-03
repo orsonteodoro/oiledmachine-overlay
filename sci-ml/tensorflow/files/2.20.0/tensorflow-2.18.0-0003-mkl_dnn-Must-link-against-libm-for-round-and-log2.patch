@@ -1,5 +1,5 @@
---- a/third_party/mkl_dnn/mkldnn_v1.BUILD.orig	2024-10-15 11:13:05.000000000 -0700
-+++ b/third_party/mkl_dnn/mkldnn_v1.BUILD	2024-11-25 08:47:15.197808055 -0800
+--- a/third_party/xla/third_party/mkl_dnn/mkldnn_v1.BUILD.orig	2024-10-15 11:13:05.000000000 -0700
++++ b/third_party/xla/third_party/mkl_dnn/mkldnn_v1.BUILD	2024-11-25 08:47:15.197808055 -0800
 @@ -171,9 +171,9 @@ cc_library(
      includes = _INCLUDES_LIST,
      # TODO(penpornk): Use lrt_if_needed from tensorflow.bzl instead.

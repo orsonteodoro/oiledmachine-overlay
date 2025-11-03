@@ -1,0 +1,894 @@
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/BUILD tensorflow-2.20.0/tensorflow/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/BUILD	2025-11-02 23:08:13.572519172 -0800
+@@ -1719,8 +1719,6 @@ py_library(
+         "//tensorflow/lite/python/authoring",
+         "//tensorflow/python:no_contrib",
+         "//tensorflow/python/profiler:profiler_client",
+-        "@pypi_keras//:pkg",
+-        "@pypi_tensorboard//:pkg",
+     ],
+ )
+ # copybara:comment_end
+Only in tensorflow-2.20.0/tensorflow: BUILD.orig
+Only in tensorflow-2.20.0/tensorflow: BUILD.rej
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/compiler/mlir/glob_lit_test.bzl tensorflow-2.20.0/tensorflow/compiler/mlir/glob_lit_test.bzl
+--- tensorflow-2.20.0.orig/tensorflow/compiler/mlir/glob_lit_test.bzl	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/compiler/mlir/glob_lit_test.bzl	2025-11-02 22:24:51.632204147 -0800
+@@ -63,7 +63,6 @@ def _run_lit_test(name, data, size, tags
+             "@llvm-project//llvm:count",
+             "@llvm-project//llvm:not",
+         ],
+-        deps = ["@pypi_lit//:pkg"],
+         size = size,
+         main = "lit.py",
+         exec_properties = exec_properties,
+Only in tensorflow-2.20.0/tensorflow/compiler/mlir: glob_lit_test.bzl.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/compiler/mlir/tfr/BUILD tensorflow-2.20.0/tensorflow/compiler/mlir/tfr/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/compiler/mlir/tfr/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/compiler/mlir/tfr/BUILD	2025-11-02 22:24:51.632365357 -0800
+@@ -307,7 +307,6 @@ py_strict_library(
+         "//tensorflow/python/framework:op_def_registry",
+         "//tensorflow/python/platform:tf_logging",
+         "//tensorflow/python/util:tf_inspect",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -338,7 +337,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:transpiler",
+         "//tensorflow/python/framework:op_def_registry",
+         "//tensorflow/python/util:tf_inspect",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/compiler/mlir/tfr: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/dtensor/python/tests/BUILD tensorflow-2.20.0/tensorflow/dtensor/python/tests/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/dtensor/python/tests/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/dtensor/python/tests/BUILD	2025-11-02 22:24:51.632580508 -0800
+@@ -486,7 +486,6 @@ pytype_strict_library(
+         ":test_util",
+         "//tensorflow/python/platform:client_testlib",
+         "@absl_py//absl/flags",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/dtensor/python/tests: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/lite/python/BUILD tensorflow-2.20.0/tensorflow/lite/python/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/lite/python/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/lite/python/BUILD	2025-11-02 22:24:51.632825869 -0800
+@@ -321,7 +321,6 @@ py_strict_test(
+         "//tensorflow/python/saved_model:save_options",
+         "//tensorflow/python/trackable:autotrackable",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_jax//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/lite/python: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/autograph/converters/BUILD tensorflow-2.20.0/tensorflow/python/autograph/converters/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/autograph/converters/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/autograph/converters/BUILD	2025-11-02 22:24:51.633547135 -0800
+@@ -13,7 +13,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/core:converter",
+         "//tensorflow/python/autograph/lang:directives",
+         "//tensorflow/python/autograph/pyct:templates",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -39,7 +38,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/core:converter",
+         "//tensorflow/python/autograph/pyct:parser",
+         "//tensorflow/python/autograph/pyct:templates",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -65,7 +63,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/core:converter",
+         "//tensorflow/python/autograph/pyct:parser",
+         "//tensorflow/python/autograph/pyct:templates",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -80,7 +77,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:qual_names",
+         "//tensorflow/python/autograph/pyct:templates",
+         "//tensorflow/python/autograph/utils:ag_logging",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -93,7 +89,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/lang:directives",
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/util:tf_inspect",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -105,7 +100,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/core:converter",
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/autograph/pyct:templates",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -127,7 +121,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct/static_analysis:liveness",
+         "//tensorflow/python/autograph/pyct/static_analysis:reaching_definitions",
+         "//tensorflow/python/autograph/pyct/static_analysis:reaching_fndefs",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -143,7 +136,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:templates",
+         "//tensorflow/python/autograph/pyct/static_analysis:activity",
+         "//tensorflow/python/autograph/pyct/static_analysis:annos",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -160,7 +152,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:templates",
+         "//tensorflow/python/autograph/pyct/static_analysis:activity",
+         "//tensorflow/python/autograph/pyct/static_analysis:annos",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -176,7 +167,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:templates",
+         "//tensorflow/python/autograph/pyct/static_analysis:activity",
+         "//tensorflow/python/autograph/pyct/static_analysis:annos",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -187,7 +177,6 @@ py_strict_library(
+     deps = [
+         "//tensorflow/python/autograph/core:converter",
+         "//tensorflow/python/autograph/pyct:templates",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/autograph/core/BUILD tensorflow-2.20.0/tensorflow/python/autograph/core/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/autograph/core/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/autograph/core/BUILD	2025-11-02 22:24:51.633897872 -0800
+@@ -36,7 +36,6 @@ py_strict_library(
+     visibility = ["//tensorflow:__subpackages__"],
+     deps = [
+         "//tensorflow/python/autograph/pyct:errors",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/autograph/core: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/BUILD tensorflow-2.20.0/tensorflow/python/autograph/pyct/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/autograph/pyct/BUILD	2025-11-02 22:24:51.634146481 -0800
+@@ -15,7 +15,6 @@ py_strict_library(
+         ":ast_util",
+         ":parser",
+         ":qual_names",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -33,7 +32,6 @@ py_strict_library(
+         ":templates",
+         ":transformer",
+         "//tensorflow/python/autograph/utils:ag_logging",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -45,7 +43,6 @@ py_strict_library(
+         ":anno",
+         ":parser",
+         ":qual_names",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -63,7 +60,6 @@ py_strict_library(
+     name = "gast_util",
+     srcs = ["gast_util.py"],
+     visibility = ["//visibility:public"],
+-    deps = ["@pypi_gast//:pkg"],
+ )
+ 
+ py_strict_library(
+@@ -80,8 +76,6 @@ py_strict_library(
+         ":errors",
+         ":inspect_utils",
+         "//tensorflow/python/util:tf_inspect",
+-        "@pypi_astunparse//:pkg",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -109,7 +103,6 @@ py_strict_library(
+         ":parser",
+         ":pretty_printer",
+         "//tensorflow/python/util:tf_inspect",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -117,7 +110,6 @@ py_strict_library(
+     name = "anno",
+     srcs = ["anno.py"],
+     visibility = ["//visibility:public"],
+-    deps = ["@pypi_gast//:pkg"],
+ )
+ 
+ py_strict_library(
+@@ -135,7 +127,6 @@ py_strict_library(
+         ":parser",
+         ":pretty_printer",
+         ":templates",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -146,7 +137,6 @@ py_strict_library(
+     deps = [
+         ":anno",
+         ":parser",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -156,8 +146,6 @@ py_strict_library(
+     visibility = ["//visibility:public"],
+     deps = [
+         ":anno",
+-        "@pypi_astunparse//:pkg",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -181,10 +169,6 @@ py_strict_library(
+     name = "pretty_printer",
+     srcs = ["pretty_printer.py"],
+     visibility = ["//visibility:public"],
+-    deps = [
+-        "@pypi_gast//:pkg",
+-        "@pypi_termcolor//:pkg",
+-    ],
+ )
+ 
+ py_strict_test(
+@@ -207,7 +191,6 @@ py_strict_test(
+         ":parser",
+         ":pretty_printer",
+         ":qual_names",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+     ],
+@@ -229,7 +212,6 @@ py_strict_test(
+     deps = [
+         ":cfg",
+         ":parser",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+     ],
+@@ -243,7 +225,6 @@ py_strict_test(
+         ":loader",
+         ":parser",
+         ":pretty_printer",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+         "//tensorflow/python/util:tf_inspect",
+@@ -314,7 +295,6 @@ py_strict_test(
+         ":errors",
+         ":parser",
+         ":pretty_printer",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+     ],
+@@ -351,7 +331,6 @@ py_strict_test(
+         ":qual_names",
+         ":templates",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+     ],
+@@ -365,7 +344,6 @@ py_strict_test(
+         ":origin_info",
+         ":parser",
+         ":transformer",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+     ],
+@@ -377,7 +355,6 @@ py_strict_test(
+     deps = [
+         ":transformer",
+         ":transpiler",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/platform:client_testlib",
+     ],
+Only in tensorflow-2.20.0/tensorflow/python/autograph/pyct: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/common_transformers/BUILD tensorflow-2.20.0/tensorflow/python/autograph/pyct/common_transformers/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/common_transformers/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/autograph/pyct/common_transformers/BUILD	2025-11-02 22:24:51.637389149 -0800
+@@ -15,7 +15,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:gast_util",
+         "//tensorflow/python/autograph/pyct:templates",
+         "//tensorflow/python/autograph/pyct:transformer",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -25,7 +24,6 @@ py_strict_test(
+     tags = ["no_oss"],
+     deps = [
+         ":common_transformers",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/autograph/pyct:loader",
+         "//tensorflow/python/autograph/pyct:parser",
+Only in tensorflow-2.20.0/tensorflow/python/autograph/pyct/common_transformers: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/static_analysis/BUILD tensorflow-2.20.0/tensorflow/python/autograph/pyct/static_analysis/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/static_analysis/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/autograph/pyct/static_analysis/BUILD	2025-11-02 22:24:51.637542170 -0800
+@@ -14,7 +14,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/autograph/pyct:cfg",
+         "//tensorflow/python/autograph/pyct:transformer",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -26,7 +25,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/autograph/pyct:cfg",
+         "//tensorflow/python/autograph/pyct:transformer",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -57,7 +55,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/autograph/pyct:qual_names",
+         "//tensorflow/python/autograph/pyct:transformer",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -72,7 +69,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:cfg",
+         "//tensorflow/python/autograph/pyct:qual_names",
+         "//tensorflow/python/autograph/pyct:transformer",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -84,7 +80,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/autograph/pyct:cfg",
+         "//tensorflow/python/autograph/pyct:transformer",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+@@ -100,7 +95,6 @@ py_strict_test(
+     deps = [
+         ":activity",
+         ":annos",
+-        "@pypi_gast//:pkg",
+         #internal proto upb dep
+         "//tensorflow/python/autograph/pyct:anno",
+         "//tensorflow/python/autograph/pyct:naming",
+Only in tensorflow-2.20.0/tensorflow/python/autograph/pyct/static_analysis: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/testing/BUILD tensorflow-2.20.0/tensorflow/python/autograph/pyct/testing/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/autograph/pyct/testing/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/autograph/pyct/testing/BUILD	2025-11-02 22:24:51.637667164 -0800
+@@ -14,7 +14,6 @@ py_strict_library(
+     deps = [
+         "//tensorflow/python/autograph/pyct:templates",
+         "//third_party/py/numpy",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/autograph/pyct/testing: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/BUILD tensorflow-2.20.0/tensorflow/python/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/BUILD	2025-11-02 22:24:51.633138358 -0800
+@@ -615,7 +615,6 @@ py_strict_library(
+     deps = [
+         ":keras_lib",
+         "//third_party/py/numpy",
+-        "@pypi_scipy//:pkg",
+         "@six_archive//:six",
+     ],
+ )
+Only in tensorflow-2.20.0/tensorflow/python: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/client/BUILD tensorflow-2.20.0/tensorflow/python/client/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/client/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/client/BUILD	2025-11-02 22:24:51.637794425 -0800
+@@ -323,7 +323,6 @@ py_strict_library(
+         "//tensorflow/python/util:numpy_compat",
+         "//tensorflow/python/util:tf_export",
+         "//third_party/py/numpy",
+-        "@pypi_wrapt//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/client: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/compiler/tensorrt/BUILD tensorflow-2.20.0/tensorflow/python/compiler/tensorrt/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/compiler/tensorrt/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/compiler/tensorrt/BUILD	2025-11-02 22:24:51.637973678 -0800
+@@ -76,7 +76,6 @@ py_strict_library(
+         "//tensorflow/compiler/tf2tensorrt:_pywrap_py_utils",
+         "//tensorflow/core:protos_all_py",
+         "//tensorflow/python/framework:dtypes",
+-        "@pypi_packaging//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/compiler/tensorrt: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/data/experimental/kernel_tests/service/BUILD tensorflow-2.20.0/tensorflow/python/data/experimental/kernel_tests/service/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/data/experimental/kernel_tests/service/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/data/experimental/kernel_tests/service/BUILD	2025-11-02 22:24:51.638117649 -0800
+@@ -160,7 +160,6 @@ tf_py_strict_test(
+         "//tensorflow/python/ops:array_ops",
+         "//tensorflow/python/platform:client_testlib",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+ 
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/data/util/BUILD tensorflow-2.20.0/tensorflow/python/data/util/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/data/util/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/data/util/BUILD	2025-11-02 22:24:51.638487003 -0800
+@@ -87,7 +87,6 @@ py_strict_library(
+         "//tensorflow/python/util:deprecation",
+         "//tensorflow/python/util:nest_util",
+         "//tensorflow/python/util:tf_export",
+-        "@pypi_wrapt//:pkg",
+     ],
+ )
+ 
+@@ -116,7 +115,6 @@ py_strict_test(
+         "//tensorflow/python/util:compat",
+         "//third_party/py/numpy",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_wrapt//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/data/util: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/debug/lib/BUILD tensorflow-2.20.0/tensorflow/python/debug/lib/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/debug/lib/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/debug/lib/BUILD	2025-11-02 22:24:51.638652955 -0800
+@@ -557,7 +557,6 @@ py_strict_library(
+         "//tensorflow/python/lib/io:file_io",
+         "//tensorflow/python/ops:variables",
+         "//tensorflow/python/util:compat",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/debug/lib: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/distribute/BUILD tensorflow-2.20.0/tensorflow/python/distribute/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/distribute/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/distribute/BUILD	2025-11-02 22:24:51.639018395 -0800
+@@ -500,7 +500,6 @@ cuda_py_strict_test(
+         "//tensorflow/python/ops:variable_scope",
+         "//third_party/py/numpy",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_dill//:pkg",  # build_cleaner: keep
+     ],
+ )
+ 
+@@ -1403,7 +1402,6 @@ cuda_py_strict_test(
+         "//tensorflow/python/ops:math_ops",
+         "//tensorflow/python/util:nest",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_dill//:pkg",  # build_cleaner: keep
+     ],
+ )
+ 
+@@ -1719,7 +1717,6 @@ distribute_py_strict_test(
+         "//tensorflow/python/ops:variable_scope",
+         "//tensorflow/python/ops:variable_v1",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_wrapt//:pkg",
+     ],
+ )
+ 
+@@ -2238,8 +2235,6 @@ py_strict_library(
+         "//tensorflow/python/framework:test_lib",
+         "//tensorflow/python/util:tf_export",
+         "@absl_py//absl/logging",
+-        "@pypi_dill//:pkg",  # build_cleaner: keep
+-        "@pypi_tblib//:pkg",  # build_cleaner: keep
+         "@six_archive//:six",
+     ],
+ )
+Only in tensorflow-2.20.0/tensorflow/python/distribute: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/distribute/experimental/rpc/BUILD tensorflow-2.20.0/tensorflow/python/distribute/experimental/rpc/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/distribute/experimental/rpc/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/distribute/experimental/rpc/BUILD	2025-11-02 22:24:51.639503454 -0800
+@@ -59,6 +59,5 @@ tf_py_strict_test(
+         "//tensorflow/python/ops:variables",
+         "//tensorflow/python/platform:client_testlib",
+         "//tensorflow/python/util:nest",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+Only in tensorflow-2.20.0/tensorflow/python/distribute/experimental/rpc: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/distribute/failure_handling/BUILD tensorflow-2.20.0/tensorflow/python/distribute/failure_handling/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/distribute/failure_handling/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/distribute/failure_handling/BUILD	2025-11-02 22:24:51.639633179 -0800
+@@ -45,7 +45,6 @@ py_strict_library(
+     deps = [
+         "//tensorflow/python/eager:context",
+         "//tensorflow/python/platform:tf_logging",
+-        "@pypi_requests//:pkg",
+         "@six_archive//:six",
+     ],
+ )
+@@ -132,7 +131,6 @@ tf_py_strict_test(
+         "//tensorflow/python/platform:tf_logging",
+         "//tensorflow/python/training:server_lib",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_dill//:pkg",  # build_cleaner: keep
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/distribute/failure_handling: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/eager/BUILD tensorflow-2.20.0/tensorflow/python/eager/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/eager/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/eager/BUILD	2025-11-02 22:24:51.639818565 -0800
+@@ -1133,7 +1133,6 @@ cuda_py_strict_test(
+         "//tensorflow/python/training:server_lib",
+         "//tensorflow/python/util:compat",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+ 
+@@ -1267,7 +1266,6 @@ py_strict_library(
+         "//tensorflow/python/autograph/pyct/static_analysis:reaching_fndefs",
+         "//tensorflow/python/framework:op_def_registry",
+         "//tensorflow/python/framework:ops",
+-        "@pypi_gast//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/eager: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/framework/BUILD tensorflow-2.20.0/tensorflow/python/framework/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/framework/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/framework/BUILD	2025-11-02 22:24:51.640250960 -0800
+@@ -303,7 +303,6 @@ py_strict_library(
+         "//tensorflow/python/eager:execute",
+         "//tensorflow/security/fuzzing/py:annotation_types",
+         "//tensorflow/tools/docs:doc_controls",
+-        "@pypi_typing_extensions//:pkg",
+     ],
+ )
+ 
+@@ -1757,7 +1756,6 @@ py_strict_library(
+     deps = [
+         ":composite_tensor",
+         "//tensorflow/python/util:nest",
+-        "@pypi_typing_extensions//:pkg",
+     ],
+ )
+ 
+@@ -1785,7 +1783,6 @@ py_strict_library(
+         "//tensorflow/python/util:tf_decorator_py",
+         "//tensorflow/python/util:tf_export",
+         "//tensorflow/python/util:tf_inspect",
+-        "@pypi_typing_extensions//:pkg",
+     ],
+ )
+ 
+@@ -1928,7 +1925,6 @@ pytype_strict_library(
+         "//tensorflow/python/lib/io:file_io",
+         "//tensorflow/python/platform:tf_logging",
+         "//tensorflow/python/util:compat",
+-        "@pypi_packaging//:pkg",
+     ],
+ )
+ 
+@@ -2212,7 +2208,6 @@ pytype_strict_library(
+         "//tensorflow/python/util/protobuf",
+         "//third_party/py/numpy",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+ 
+@@ -2780,7 +2775,6 @@ tf_py_strict_test(
+         "//tensorflow/python/util:nest",
+         "//tensorflow/python/util:tf_inspect",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_typing_extensions//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/framework: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/keras/BUILD tensorflow-2.20.0/tensorflow/python/keras/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/keras/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/keras/BUILD	2025-11-02 22:24:51.640841553 -0800
+@@ -44,7 +44,6 @@ py_library(
+         "//tensorflow/python/saved_model",
+         "//tensorflow/python/training",
+         "//tensorflow/python/util:nest",
+-        "@pypi_h5py//:pkg",
+     ],
+ )
+ 
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/keras/engine/BUILD tensorflow-2.20.0/tensorflow/python/keras/engine/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/keras/engine/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/keras/engine/BUILD	2025-11-02 22:24:51.644486569 -0800
+@@ -96,7 +96,6 @@ py_library(
+         "//tensorflow/python/util:tf_decorator_py",
+         "//tensorflow/python/util:tf_export",
+         "//tensorflow/tools/docs:doc_controls",
+-        "@pypi_h5py//:pkg",
+     ],
+ )
+ 
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/keras/saving/BUILD tensorflow-2.20.0/tensorflow/python/keras/saving/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/keras/saving/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/keras/saving/BUILD	2025-11-02 22:24:51.644800820 -0800
+@@ -55,6 +55,5 @@ py_library(
+         "//tensorflow/python/platform:tf_logging",
+         "//tensorflow/python/saved_model",
+         "//tensorflow/python/training:saver",
+-        "@pypi_h5py//:pkg",
+     ],
+ )
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/ops/BUILD tensorflow-2.20.0/tensorflow/python/ops/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/ops/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/ops/BUILD	2025-11-02 22:24:51.645418215 -0800
+@@ -2694,7 +2694,6 @@ py_strict_library(
+         "//tensorflow/python/util:dispatch",
+         "//tensorflow/python/util:tf_export",
+         "//third_party/py/numpy",
+-        "@pypi_opt_einsum//:pkg",
+     ],
+ )
+ 
+@@ -3785,7 +3784,6 @@ cuda_py_strict_test(
+         "//tensorflow/python/platform:tf_logging",
+         "//third_party/py/numpy",
+         "@absl_py//absl/testing:parameterized",
+-        "@pypi_opt_einsum//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/ops: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/profiler/BUILD tensorflow-2.20.0/tensorflow/python/profiler/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/profiler/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/profiler/BUILD	2025-11-02 22:24:51.646245385 -0800
+@@ -40,7 +40,6 @@ cuda_py_strict_test(
+         "//tensorflow/python/eager:test",
+         "//tensorflow/python/framework:errors",
+         "//tensorflow/python/framework:test_lib",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/profiler: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/profiler/integration_test/BUILD tensorflow-2.20.0/tensorflow/python/profiler/integration_test/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/profiler/integration_test/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/profiler/integration_test/BUILD	2025-11-02 22:24:51.646465559 -0800
+@@ -33,6 +33,5 @@ cuda_py_strict_test(
+         "//tensorflow/python/platform:tf_logging",
+         "//tensorflow/python/profiler:profiler_client",
+         "//tensorflow/python/profiler:profiler_v2",
+-        "@pypi_portpicker//:pkg",
+     ],
+ )
+Only in tensorflow-2.20.0/tensorflow/python/profiler/integration_test: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/summary/BUILD tensorflow-2.20.0/tensorflow/python/summary/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/summary/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/summary/BUILD	2025-11-02 22:24:51.646629959 -0800
+@@ -118,7 +118,6 @@ tf_py_strict_test(
+         "//tensorflow/python/ops:summary_ops_v2",
+         "//tensorflow/python/platform:client_testlib",
+         "//tensorflow/python/training:training_util",
+-        "@pypi_tensorboard//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/summary: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/trackable/BUILD tensorflow-2.20.0/tensorflow/python/trackable/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/trackable/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/trackable/BUILD	2025-11-02 22:24:51.646824110 -0800
+@@ -219,7 +219,6 @@ py_strict_library(
+         "//tensorflow/python/ops:variables",
+         "//tensorflow/python/util:compat",
+         "//tensorflow/python/util:tf_export",
+-        "@pypi_wrapt//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/trackable: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/types/BUILD tensorflow-2.20.0/tensorflow/python/types/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/types/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/types/BUILD	2025-11-02 22:24:51.647088711 -0800
+@@ -22,7 +22,6 @@ pytype_strict_library(
+         "//tensorflow/python:pywrap_tensorflow",
+         "//tensorflow/python/util:tf_export",
+         "//third_party/py/numpy",
+-        "@pypi_typing_extensions//:pkg",
+     ],
+ )
+ 
+@@ -65,7 +64,6 @@ pytype_strict_library(
+         ":core",
+         "//tensorflow/python/util:tf_export",
+         "//tensorflow/tools/docs:doc_controls",
+-        "@pypi_typing_extensions//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/types: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/python/util/BUILD tensorflow-2.20.0/tensorflow/python/util/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/python/util/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/python/util/BUILD	2025-11-02 22:24:51.647271735 -0800
+@@ -782,7 +782,6 @@ py_strict_library(
+         # library. It isn't possible to add these test dependencies via tensorflow.bzl's
+         # py_test because not all tensorflow tests use tensorflow.bzl's py_test.
+         "//tensorflow/python:global_test_configuration",
+-        "@pypi_wrapt//:pkg",
+         "//tensorflow/python:pywrap_tensorflow",
+         ":_pywrap_utils",
+     ],
+@@ -968,7 +967,6 @@ py_strict_library(
+         # py_test because not all tensorflow tests use tensorflow.bzl's py_test.
+         "//tensorflow/python:global_test_configuration",
+         "//third_party/py/numpy",
+-        "@pypi_wrapt//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/python/util: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/tools/docs/BUILD tensorflow-2.20.0/tensorflow/tools/docs/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/tools/docs/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/tools/docs/BUILD	2025-11-02 22:24:51.647577549 -0800
+@@ -132,7 +132,6 @@ py_strict_library(
+     srcs = ["fenced_doctest_lib.py"],
+     deps = [
+         ":tf_doctest_lib",
+-        "@pypi_astor//:pkg",
+     ],
+ )
+ 
+@@ -169,7 +168,6 @@ py_strict_test(
+         ":generate2_lib",
+         "//tensorflow:tensorflow_py",
+         "//tensorflow/python/platform:test",
+-        "@pypi_packaging//:pkg",
+     ],
+ )
+ 
+@@ -200,7 +198,6 @@ py_strict_library(
+         "//tensorflow/python/util:tf_inspect",
+         "@absl_py//absl:app",
+         "@absl_py//absl/flags",
+-        "@pypi_packaging//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/tools/docs: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/tensorflow/tools/pip_package/BUILD tensorflow-2.20.0/tensorflow/tools/pip_package/BUILD
+--- tensorflow-2.20.0.orig/tensorflow/tools/pip_package/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/tensorflow/tools/pip_package/BUILD	2025-11-02 22:24:51.647736239 -0800
+@@ -245,8 +245,6 @@ py_binary(
+     main = "build_pip_package.py",
+     deps = [
+         "//tensorflow/tools/pip_package/utils:py_utils",
+-        "@pypi_setuptools//:pkg",
+-        "@pypi_wheel//:pkg",
+     ],
+ )
+ 
+Only in tensorflow-2.20.0/tensorflow/tools/pip_package: BUILD.orig
+diff '--color=auto' -urp tensorflow-2.20.0.orig/third_party/xla/xla/mlir_hlo/tests/BUILD tensorflow-2.20.0/third_party/xla/xla/mlir_hlo/tests/BUILD
+--- tensorflow-2.20.0.orig/third_party/xla/xla/mlir_hlo/tests/BUILD	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/third_party/xla/xla/mlir_hlo/tests/BUILD	2025-11-02 22:24:51.648195718 -0800
+@@ -26,8 +26,6 @@ package(
+         tags = [
+             "nomsan",  # The execution engine doesn't work with msan, see b/248097619.
+         ],
+-        deps = ["@pypi_lit//:pkg"],
+-        deps = ["@pypi_lit//:pkg"],  # copybara:comment
+     )
+     for src in glob(["**/*.mlir"])
+ ]
+diff '--color=auto' -urp tensorflow-2.20.0.orig/WORKSPACE tensorflow-2.20.0/WORKSPACE
+--- tensorflow-2.20.0.orig/WORKSPACE	2025-08-06 22:16:45.000000000 -0700
++++ tensorflow-2.20.0/WORKSPACE	2025-11-02 23:07:22.165234375 -0800
+@@ -4,68 +4,6 @@ workspace(name = "org_tensorflow")
+ 
+ # buildifier: disable=load-on-top
+ 
+-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+-
+-http_archive(
+-    name = "rules_shell",
+-    sha256 = "bc61ef94facc78e20a645726f64756e5e285a045037c7a61f65af2941f4c25e1",
+-    strip_prefix = "rules_shell-0.4.1",
+-    url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.4.1/rules_shell-v0.4.1.tar.gz",
+-)
+-
+-# Initialize the TensorFlow repository and all dependencies.
+-#
+-# The cascade of load() statements and tf_workspace?() calls works around the
+-# restriction that load() statements need to be at the top of .bzl files.
+-# E.g. we can not retrieve a new repository with http_archive and then load()
+-# a macro from that repository in the same file.
+-load("@//tensorflow:workspace3.bzl", "tf_workspace3")
+-
+-tf_workspace3()
+-
+-load("@rules_shell//shell:repositories.bzl", "rules_shell_dependencies", "rules_shell_toolchains")
+-
+-rules_shell_dependencies()
+-
+-rules_shell_toolchains()
+-
+-# Initialize hermetic Python
+-load("@local_xla//third_party/py:python_init_rules.bzl", "python_init_rules")
+-
+-python_init_rules()
+-
+-load("@local_xla//third_party/py:python_init_repositories.bzl", "python_init_repositories")
+-
+-python_init_repositories(
+-    default_python_version = "system",
+-    local_wheel_dist_folder = "dist",
+-    local_wheel_inclusion_list = [
+-        "tensorflow*",
+-        "tf_nightly*",
+-    ],
+-    local_wheel_workspaces = ["//:WORKSPACE"],
+-    requirements = {
+-        "3.9": "//:requirements_lock_3_9.txt",
+-        "3.10": "//:requirements_lock_3_10.txt",
+-        "3.11": "//:requirements_lock_3_11.txt",
+-        "3.12": "//:requirements_lock_3_12.txt",
+-        "3.13": "//:requirements_lock_3_13.txt",
+-    },
+-)
+-
+-load("@local_xla//third_party/py:python_init_toolchains.bzl", "python_init_toolchains")
+-
+-python_init_toolchains()
+-
+-load("@local_xla//third_party/py:python_init_pip.bzl", "python_init_pip")
+-
+-python_init_pip()
+-
+-load("@pypi//:requirements.bzl", "install_deps")
+-
+-install_deps()
+-# End hermetic Python initialization
+-
+ load("@//tensorflow:workspace2.bzl", "tf_workspace2")
+ 
+ tf_workspace2()
+Only in tensorflow-2.20.0: WORKSPACE.rej

@@ -69,20 +69,6 @@ GCC_COMPAT=(
 GCC_COMPAT2=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT2[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT2[-1]}"
-GRPC_PROTOBUF_PAIRS=(
-	"1.62:4.25"
-	"1.61:4.25"
-	"1.60:4.25"
-	"1.59:4.24"
-	"1.58:4.23"
-	"1.57:4.23"
-	"1.56:4.23"
-	"1.55:4.23"
-	"1.54:3.21"
-	"1.53:3.21"
-	"1.52:3.21"
-	"1.49:3.21"
-)
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
@@ -532,7 +518,7 @@ gen_rocm_rdepend() {
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP}]
+				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
 				dev-libs/rccl:=
 				>=dev-libs/rocm-device-libs-${pv}:${s}
 				dev-libs/rocm-device-libs:=
@@ -571,41 +557,26 @@ gen_rocm_rdepend() {
 				dev-util/rocminfo:=
 				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep TENSILE)]
 				dev-util/Tensile:=
-
-				llvm-core/lld:${LLD_SLOT[${pv}]}
 			)
 		"
-		if ver_test "${ROCM_SLOT}" -ge "5.5" ; then
-			echo "
-				rocm_${u}? (
-					>=dev-libs/rocm-core-${pv}:${s}
-					dev-libs/rocm-core:=
 
-					amdgpu_targets_gfx90a? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-				)
-			"
-		fi
-		if ver_test "${ROCM_SLOT}" -ge "5.7" ; then
+		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
+		local hipblastlt_compat=()
+		local x
+		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
+		done
+
+		for x in ${hipblastlt_compat} ; do
 			echo "
 				rocm_${u}? (
-					amdgpu_targets_gfx940? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-					amdgpu_targets_gfx941? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-					amdgpu_targets_gfx942? (
+					amdgpu_targets_${x}? (
 						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 				)
 			"
-		fi
+		done
 	done
 }
 
@@ -841,8 +812,6 @@ gen_gcc_bdepend() {
 
 # Did not find grpc-tools
 # grpcio-tools versioning based on grpcio
-# GCC:11 - Based on archlinux
-# gcc-11.3.1_p20221209-p3 does not build
 BDEPEND="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/pigz
@@ -1090,24 +1059,6 @@ einfo
 
 	if use rocm ; then
 		rocm_pkg_setup
-
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"hipblas:sci-libs/hipBLAS"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-			"rocm_smi64:dev-util/rocm-smi"
-			"rocsolver:sci-libs/rocSOLVER"
-			"roctracer64:dev-util/roctracer"
-		)
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
-
-	#else
-	#	llvm_pkg_setup called in use_clang
 	fi
 
 	local num_pythons_enabled
@@ -1116,7 +1067,7 @@ einfo
 		num_pythons_enabled=$((${num_pythons_enabled} + 1))
 	}
 	python-single-r1_pkg_setup
-	python_foreach_impl count_py_impls
+	count_py_impls
 
 	# 10G to build C/C++ libs, 6G per python impl
 	CHECKREQS_DISK_BUILD="$((10 + 6 * ${num_pythons_enabled}))G"
@@ -1416,18 +1367,18 @@ ewarn
 
 	use cuda && cuda_add_sandbox
 
-	if use llvm_slot_15 ; then
-		local p
-		for p in $(find "${WORKDIR}" -name ".bazelrc") ; do
-einfo "Removing -Wno-gnu-offsetof-extensions for llvm 15 in ${p}"
-			if grep -q -e "-Wno-gnu-offsetof-extensions" "${p}" ; then
-				sed -i \
-					-e "/-Wno-gnu-offsetof-extensions/d" \
-					"${p}" \
-					|| die
-			fi
-		done
-	fi
+#	if use llvm_slot_15 ; then
+#		local p
+#		for p in $(find "${WORKDIR}" -name ".bazelrc") ; do
+#einfo "Removing -Wno-gnu-offsetof-extensions for llvm 15 in ${p}"
+#			if grep -q -e "-Wno-gnu-offsetof-extensions" "${p}" ; then
+#				sed -i \
+#					-e "/-Wno-gnu-offsetof-extensions/d" \
+#					"${p}" \
+#					|| die
+#			fi
+#		done
+#	fi
 }
 
 load_env() {
@@ -1640,7 +1591,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		done
 	}
 	if use python ; then
-		python_foreach_impl run_in_build_dir do_configure
+		run_in_build_dir do_configure
 	else
 		do_configure
 	fi
@@ -1769,7 +1720,7 @@ einfo "src_compile():  Step 6"
 	}
 	BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die
-	use python && python_foreach_impl run_in_build_dir do_compile
+	use python && run_in_build_dir do_compile
 }
 
 src_install() {
@@ -1793,7 +1744,7 @@ einfo "Installing ${EPYTHON} files"
 	}
 
 	if use python ; then
-		python_foreach_impl run_in_build_dir do_install
+		run_in_build_dir do_install
 
 		# Symlink to python-exec scripts
 		local i

@@ -70,25 +70,6 @@ GCC_COMPAT=(
 GCC_COMPAT2=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT2[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT2[-1]}"
-GRPC_PROTOBUF_PAIRS=(
-	"1.67:5.27"
-	"1.66:5.27"
-	"1.65:5.26"
-	"1.64:5.26"
-	"1.63:5.26"
-	"1.62:4.25"
-	"1.61:4.25"
-	"1.60:4.25"
-	"1.59:4.24"
-	"1.58:4.23"
-	"1.57:4.23"
-	"1.56:4.23"
-	"1.55:4.23"
-	"1.54:3.21"
-	"1.53:3.21"
-	"1.52:3.21"
-	"1.49:3.21"
-)
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
@@ -112,7 +93,7 @@ declare -A LLD_SLOT=(
 # See "deps versioning" section above for details.
 # See
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/toolchains/remote_config/configs.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/gpus/rocm_configure.bzl#L210
+# https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/gpus/rocm_configure.bzl#L210
 CXX_STANDARD=17
 inherit libcxx-compat
 LLVM_COMPAT=(
@@ -183,7 +164,7 @@ inherit prefix rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/absl/workspace.bzl									# abseil-cpp ; provides commit
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/flatbuffers/workspace.bzl								# See also https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/lite/schema/schema_generated.h
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/gemmlowp/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/gpus/rocm_configure.bzl#L191							# LLVMs supported for ROCm
+# https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/gpus/rocm_configure.bzl#L191							# LLVMs supported for ROCm
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/hwloc/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/icu/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/jpeg/workspace.bzl
@@ -532,6 +513,17 @@ CUDA_12_5_RDEPENDS="
 	)
 "
 
+is_hipblastlt_compat() {
+	local t="${1}"
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		for y in ${!t} ; do
+			[[ "${x}" == "${y}" ]] && return 0
+		done
+	done
+	return 1
+}
+
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
@@ -541,7 +533,7 @@ gen_rocm_rdepend() {
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP}]
+				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
 				dev-libs/rccl:=
 				>=dev-libs/rocm-device-libs-${pv}:${s}
 				dev-libs/rocm-device-libs:=
@@ -580,37 +572,26 @@ gen_rocm_rdepend() {
 				dev-util/rocminfo:=
 				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep TENSILE)]
 				dev-util/Tensile:=
-
-				llvm-core/lld:${LLD_SLOT[${pv}]}
 			)
 		"
-		if ver_test "${ROCM_SLOT}" -ge "5.5" ; then
-			echo "
-				rocm_${u}? (
-					>=dev-libs/rocm-core-${pv}:${s}
-					dev-libs/rocm-core:=
 
-					amdgpu_targets_gfx90a? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-				)
-			"
-		fi
-		if ver_test "${ROCM_SLOT}" -ge "5.7" ; then
+		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
+		local hipblastlt_compat=()
+		local x
+		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
+		done
+
+		for x in ${hipblastlt_compat} ; do
 			echo "
 				rocm_${u}? (
-					amdgpu_targets_gfx940? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-					amdgpu_targets_gfx942? (
+					amdgpu_targets_${x}? (
 						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 				)
 			"
-		fi
+		done
 	done
 }
 
@@ -841,8 +822,6 @@ gen_gcc_bdepend() {
 
 # Did not find grpc-tools
 # grpcio-tools versioning based on grpcio
-# GCC:11 - Based on archlinux
-# gcc-11.3.1_p20221209-p3 does not build
 BDEPEND="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/pigz
@@ -889,17 +868,16 @@ BDEPEND="
 "
 DOCS=( "AUTHORS" "README.md" "RELEASE.md" )
 PATCHES=(
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0001-WORKSPACE-add-rules-docker-http_archive-bazel-toolch.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0002-systemlib-Latest-absl-LTS-has-split-cord-libs.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.18.0-0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0006-systemlib-Update-targets-for-absl_py.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.18.0-0008-Relax-setup.py-version-requirements.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0009-systemlib-update-targets-for-absl.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0010-systemlib-fix-missing-osx-in-pybind11.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.15.0-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
-	"${FILESDIR}/2.18.0/tensorflow-2.18.0-0013-build-use-non-hermetic-python.patch"
+#	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0001-WORKSPACE-add-rules-docker-http_archive-bazel-toolch.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0002-systemlib-Latest-absl-LTS-has-split-cord-libs.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.18.0-0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0006-systemlib-Update-targets-for-absl_py.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.18.0-0008-Relax-setup.py-version-requirements.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0010-systemlib-fix-missing-osx-in-pybind11.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.15.0-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
+	"${FILESDIR}/2.20.0/tensorflow-2.20.0-0013-build-use-non-hermetic-python.patch"
 )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
@@ -1117,24 +1095,6 @@ einfo
 
 	if use rocm ; then
 		rocm_pkg_setup
-
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"hipblas:sci-libs/hipBLAS"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-			"rocm_smi64:dev-util/rocm-smi"
-			"rocsolver:sci-libs/rocSOLVER"
-			"roctracer64:dev-util/roctracer"
-		)
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
-
-	#else
-	#	llvm_pkg_setup called in use_clang
 	fi
 
 	local num_pythons_enabled
@@ -1143,7 +1103,7 @@ einfo
 		num_pythons_enabled=$((${num_pythons_enabled} + 1))
 	}
 	python-single-r1_pkg_setup
-	python_foreach_impl count_py_impls
+	count_py_impls
 
 	# 10G to build C/C++ libs, 6G per python impl
 	CHECKREQS_DISK_BUILD="$((10 + 6 * ${num_pythons_enabled}))G"
@@ -1303,7 +1263,7 @@ patch_rocm() {
 	mkdir -p "${WORKDIR}/patches" || die
 	cp -a "${FILESDIR}/${PV}/rocm/" "${WORKDIR}/patches" || die
 	if use rocm ; then
-#		rm "third_party/gpus/find_rocm_config.py.gz.base64" || die
+#		rm "third_party/xla/third_party/gpus/find_rocm_config.py.gz.base64" || die
 		local f
 		for f in ${ROCM_PATCHES[@]} ; do
 			eapply "${WORKDIR}/patches/rocm/${f}"
@@ -1313,7 +1273,7 @@ patch_rocm() {
 	if use rocm ; then
 		rocm_src_prepare
 	fi
-	pushd "third_party/gpus" || die
+	pushd "third_party/xla/third_party/gpus" || die
 		pigz -z -k "find_rocm_config.py" || die
 		mv \
 			"find_rocm_config.py.zz" \
@@ -1362,6 +1322,7 @@ einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 		"third_party/xla/third_party"
 		"third_party/xla/third_party/tsl/third_party"
 	)
+	L=() # todo verify folder removal
 	for d in "${L[@]}" ; do
 		mv \
 			"${d}/py/non_hermetic" \
@@ -1422,10 +1383,14 @@ ewarn
 	bazel_setup_bazelrc # Save CFLAGS
 
 	# Relax version checks in setup.py
-	sed -i "/^    '/s/==/>=/g" "tensorflow/tools/pip_package/setup.py" || die
+	local L=(
+		"tensorflow/python/tpu/profiler/pip_package/setup.py"
+		"tensorflow/python/tpu/client/pip_package/setup.py"
+	)
+	sed -i "/^    '/s/==/>=/g" "${L[@]}" || die
 
 	# Prefixify hard-coded command locations
-	hprefixify -w "/host_compiler_prefix/" "third_party/gpus/cuda_configure.bzl"
+	hprefixify -w "/host_compiler_prefix/" "third_party/xla/third_party/gpus/cuda_configure.bzl"
 
 	gen_gcc_ar
 
@@ -1443,18 +1408,18 @@ ewarn
 
 	use cuda && cuda_add_sandbox
 
-	if use llvm_slot_15 ; then
-		local p
-		for p in $(find "${WORKDIR}" -name ".bazelrc") ; do
-einfo "Removing -Wno-gnu-offsetof-extensions for llvm 15 in ${p}"
-			if grep -q -e "-Wno-gnu-offsetof-extensions" "${p}" ; then
-				sed -i \
-					-e "/-Wno-gnu-offsetof-extensions/d" \
-					"${p}" \
-					|| die
-			fi
-		done
-	fi
+#	if use llvm_slot_15 ; then
+#		local p
+#		for p in $(find "${WORKDIR}" -name ".bazelrc") ; do
+#einfo "Removing -Wno-gnu-offsetof-extensions for llvm 15 in ${p}"
+#			if grep -q -e "-Wno-gnu-offsetof-extensions" "${p}" ; then
+#				sed -i \
+#					-e "/-Wno-gnu-offsetof-extensions/d" \
+#					"${p}" \
+#					|| die
+#			fi
+#		done
+#	fi
 }
 
 load_env() {
@@ -1665,7 +1630,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		done
 	}
 	if use python ; then
-		python_foreach_impl run_in_build_dir do_configure
+		run_in_build_dir do_configure
 	else
 		do_configure
 	fi
@@ -1794,7 +1759,7 @@ einfo "src_compile():  Step 6"
 	}
 	BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die
-	use python && python_foreach_impl run_in_build_dir do_compile
+	use python && run_in_build_dir do_compile
 }
 
 src_install() {
@@ -1818,7 +1783,7 @@ einfo "Installing ${EPYTHON} files"
 	}
 
 	if use python ; then
-		python_foreach_impl run_in_build_dir do_install
+		run_in_build_dir do_install
 
 		# Symlink to python-exec scripts
 		local i

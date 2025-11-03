@@ -1,6 +1,6 @@
---- a/tensorflow/tools/pip_package/setup.py.orig	2024-11-25 09:10:06.671317747 -0800
-+++ b/tensorflow/tools/pip_package/setup.py	2024-11-25 09:11:11.990820053 -0800
-@@ -81,7 +81,7 @@ REQUIRED_PACKAGES = [
+--- a/tensorflow/tools/pip_package/setup.py.tpl.orig	2025-08-06 22:16:45.000000000 -0700
++++ b/tensorflow/tools/pip_package/setup.py.tpl	2025-11-02 21:16:28.899966433 -0800
+@@ -84,7 +84,7 @@ REQUIRED_PACKAGES = [
      'flatbuffers >= 24.3.25',
      'gast >=0.2.1,!=0.5.0,!=0.5.1,!=0.5.2',
      'google_pasta >= 0.1.1',
@@ -8,18 +8,9 @@
 +    #'libclang >= 13.0.0',
      'opt_einsum >= 2.3.2',
      'packaging',
-     # pylint:disable=line-too-long
-@@ -95,7 +95,7 @@ REQUIRED_PACKAGES = [
-     'typing_extensions >= 3.6.6',
-     'wrapt >= 1.11.0',
-     # TODO(b/305196096): Remove the <3.12 condition once the pkg is updated
--    'tensorflow-io-gcs-filesystem >= 0.23.1 ; python_version < "3.12"',
-+    #'tensorflow-io-gcs-filesystem >= 0.23.1 ; python_version < "3.12"',
-     # grpcio does not build correctly on big-endian machines due to lack of
-     # BoringSSL support.
-     # See https://github.com/tensorflow/tensorflow/issues/17882.
-@@ -130,8 +130,8 @@ FAKE_REQUIRED_PACKAGES = [
-     _VERSION + ';platform_system=="Windows"',
+     'protobuf>=5.28.0',
+@@ -124,8 +124,8 @@ FAKE_REQUIRED_PACKAGES = [
+     # build section.
  ]
  
 -if platform.system() == 'Linux' and platform.machine() == 'x86_64':
@@ -29,3 +20,22 @@
  
  if collaborator_build:
    # If this is a collaborator build, then build an "installer" wheel and
+@@ -158,12 +158,12 @@ EXTRA_PACKAGES = {
+         'nvidia-nccl-cu12 >= 2.25.1, < 3.0',
+         'nvidia-nvjitlink-cu12 >= 12.5.82, < 13.0',
+     ],
+-    'gcs-filesystem': [
+-        ('tensorflow-io-gcs-filesystem>=0.23.1; '
+-         'sys_platform!="win32" and python_version<"3.13"'),
+-        ('tensorflow-io-gcs-filesystem>=0.23.1; '
+-         'sys_platform=="win32" and python_version<"3.12"'),
+-    ]
++    #'gcs-filesystem': [
++    #    ('tensorflow-io-gcs-filesystem>=0.23.1; '
++    #     'sys_platform!="win32" and python_version<"3.13"'),
++    #    ('tensorflow-io-gcs-filesystem>=0.23.1; '
++    #     'sys_platform=="win32" and python_version<"3.12"'),
++    #]
+ }
+ 
+ DOCLINES = __doc__.split('\n')
