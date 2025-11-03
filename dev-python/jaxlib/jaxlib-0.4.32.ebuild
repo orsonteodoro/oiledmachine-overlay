@@ -493,7 +493,7 @@ gen_rocm_depends() {
 			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
 		done
 
-		for x in ${hipblastlt_compat} ; do
+		for x in ${hipblastlt_compat[@]} ; do
 			echo "
 				rocm_${u}? (
 					>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]

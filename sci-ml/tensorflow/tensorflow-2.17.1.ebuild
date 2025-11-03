@@ -567,7 +567,7 @@ gen_rocm_rdepend() {
 			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
 		done
 
-		for x in ${hipblastlt_compat} ; do
+		for x in ${hipblastlt_compat[@]} ; do
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_${x}? (
