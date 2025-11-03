@@ -12,7 +12,7 @@ diff '--color=auto' -urp ollama-0.12.9.orig/cmd/cmd.go ollama-0.12.9/cmd/cmd.go
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,3184 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3182 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -1901,8 +1901,6 @@ diff '--color=auto' -urp ollama-0.12.9.orig/cmd/cmd.go ollama-0.12.9/cmd/cmd.go
 +	"qwen3-vl:30b": "20GB",
 +	"qwen3-vl:32b": "21GB",
 +	"qwen3-vl:235b": "143GB",
-+	"qwen3-vl:235b-a22b-instruct-q8_0": "251GB",
-+	"qwen3-vl:235b-a22b-thinking-q8_0": "251GB",
 +	"qwen3-vl:2b-instruct": "1.9GB",
 +	"qwen3-vl:2b-instruct-q8_0": "2.6GB",
 +	"qwen3-vl:2b-instruct-bf16": "4.3GB",
