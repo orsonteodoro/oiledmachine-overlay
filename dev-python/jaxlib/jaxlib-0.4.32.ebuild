@@ -486,37 +486,25 @@ gen_rocm_depends() {
 				llvm-core/lld:${LLD_SLOT[${pv}]}
 		"
 
-		if ver_test "${ROCM_SLOT}" -ge "5.5" ; then
+		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
+		local hipblastlt_compat=()
+		local x
+		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
+		done
+
+		for x in ${hipblastlt_compat} ; do
 			echo "
 				rocm_${u}? (
 					>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 					dev-libs/rocm-core:=
-					amdgpu_targets_gfx90a? (
+					amdgpu_targets_${x}? (
 						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 						sci-libs/hipBLASLt:=
 					)
 				)
 			"
-		fi
-
-		if ver_test "${ROCM_SLOT}" -ge "5.7" ; then
-			echo "
-				rocm_${u}? (
-					amdgpu_targets_gfx940? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-					amdgpu_targets_gfx941? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-					amdgpu_targets_gfx942? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-				)
-			"
-		fi
+		done
 
 		# Indirect dependencies
 		echo "
