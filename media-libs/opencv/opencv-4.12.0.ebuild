@@ -824,7 +824,7 @@ gen_rocm_rdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		local slot="${s/rocm_}"
-		slot="${slot/_/.}"
+		slot="0/${slot/_/.}"
 		echo "
 			${s}? (
 				sci-libs/MIVisionX:${slot}
