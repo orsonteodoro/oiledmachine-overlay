@@ -35,11 +35,6 @@ EAPI=8
 # https://github.com/openvinotoolkit/openvino/blob/2025.1.0/.github/workflows/job_gpu_tests.yml#L88
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_avx512f"
-	"cpu_flags_x86_sse4_2"
-)
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2025.1.0/docs/dev/build_linux.md#software-requirements
@@ -81,6 +76,12 @@ XBYAK_COMMIT="2ce465bbca46e92dde9c44bbe7940fd7f70e3b97"
 XBYAK_RISCV_COMMIT="0233c991a0c1608be671dc63d63f450e7a2178ff"
 YAML_CPP_COMMIT="da82fd982c260e7f335ce5acbceff24b270544d1"
 ZLIB_COMMIT="51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_sse4_2"
+)
 
 inherit libstdcxx-compat
 # Allow protobuf-python >=3.18.1, 4.x, 5.x

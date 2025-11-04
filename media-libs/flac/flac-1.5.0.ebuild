@@ -5,12 +5,28 @@ EAPI=8
 
 # U 22.04
 
+CXX_STANDARD=17 # Compiler default
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO"
 LIBFLAC_SONAME="11"
 LIBFLACXX_SONAME="14"
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal toolchain-funcs
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_RUST[@]/llvm_slot_}
+)
+
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${P}"
@@ -29,12 +45,8 @@ LICENSE="
 	LGPL-2.1
 "
 SLOT="0/${LIBFLAC_SONAME}-${LIBFLACXX_SONAME}"
-X86_IUSE="
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-"
 IUSE="
-${X86_IUSE}
+${CPU_FLAGS_X86[@]}
 +cxx debug ogg static-libs
 ebuild_revision_26
 "
@@ -72,6 +84,8 @@ get_lib_types() {
 
 pkg_setup() {
 	check-compiler-switch_start
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
