@@ -39,8 +39,9 @@ EGIT_SPDLOGLIB_COMMIT="eb3220622e73a4889eee355ffa37972b3cac3df5"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
 EGIT_TINYXML2_COMMIT="9a89766acc42ddfa9e7133c7d81a5bda108a0ade"
 PYTHON_COMPAT=( "python3_11" )
-X86_CPU_FLAGS=(
-	avx
+
+CPU_FLAGS_X86=(
+	"avx"
 )
 
 inherit cmake python-r1
@@ -150,7 +151,7 @@ LICENSE="
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 +asm doc +examples hardened python +simulate +test
 "
 REQUIRED_USE+="

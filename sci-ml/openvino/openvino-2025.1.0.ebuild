@@ -35,8 +35,10 @@ EAPI=8
 # https://github.com/openvinotoolkit/openvino/blob/2025.1.0/.github/workflows/job_gpu_tests.yml#L88
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=17
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
+PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2025.1.0/docs/dev/build_linux.md#software-requirements
 
 BENCHMARK_1_COMMIT="d572f4777349d43653b21d6c2fc63020ab326db2"
@@ -65,7 +67,6 @@ OPENCL_CLHPP_COMMIT="c7b4aded1cab9560b226041dd962f63375a9a384"
 OPENCL_HEADERS_COMMIT="4ea6df132107e3b4b9407f903204b5522fdffcd6"
 OPENCL_ICD_LOADER_COMMIT="5907ac1114079de4383cecddf1c8640e3f52f92b"
 PROTOBUF_COMMIT="f0dc78d7e6e331b8c6bb2d5283e06aa26883ca7c"
-PROTOBUF_SLOT="3"
 PUGIXML_COMMIT="ee86beb30e4973f5feffe3ce63bfa4fbadf72f38"
 PYBIND11_1_COMMIT="7c33cdc2d39c7b99a122579f53bc94c8eb3332ff"
 PYBIND11_2_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
@@ -86,24 +87,15 @@ CPU_FLAGS_X86=(
 inherit libstdcxx-compat
 # Allow protobuf-python >=3.18.1, 4.x, 5.x
 GCC_COMPAT=(
-#
-# Combos available on overlay:
-#
-# 3.12.x with GCC 11.5 in U22, LTS
-# 4.21.x with GCC 12.5 in D12, LTS
-# 4.21.x with GCC 13.4 in U24, LTS
-# 4.21.x with GCC 14.3 in D13, LTS
-# 3.19.x with GCC 15.2 in F43, Rolling
-#
-# The list below is limited by protobuf-python 3.x for LTS distros
-#
-	"gcc_slot_12_5"
-	"gcc_slot_13_4"
-	"gcc_slot_14_3"
-	"gcc_slot_15_2"
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit cflags-hardened cmake dep-prepare distutils-r1 libstdcxx-slot
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit cflags-hardened cmake dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -657,6 +649,7 @@ _PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
