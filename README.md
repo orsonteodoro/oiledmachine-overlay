@@ -275,7 +275,9 @@ ebuilds is bad because it goes against the spirit of the GPL with the right to
 hack.
 
 [4] The LLVM is considered incomplete for the C++ standard library particuarly
-for libc++, so LLVM is not considered LTS but rolling on this overlay.
+for libc++, so LLVM is not considered LTS but rolling on this overlay.  The
+LLVM slot minimum for C++ 17 is based on the earliest maximum coverage for the
+C++ standard library for libc++ on this overlay.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
