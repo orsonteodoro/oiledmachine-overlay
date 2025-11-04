@@ -12,7 +12,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="9" # can be live only when 9999
+GENPATCHES_VER="10" # can be live only when 9999
 PATCH_PROJC_VER="6.17-r1"
 PATCH_RT_VER="6.17.5-rt7"
 

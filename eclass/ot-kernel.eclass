@@ -419,7 +419,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Oct 31, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1761739832 # From `date +%s -d "2025-10-29 14:10:32 +0200"` from changelog for latest tag
+MITIGATION_LAST_UPDATE=1762089485 # From `date +%s -d "2025-11-02 22:18:05 +0900"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -429,6 +429,9 @@ VULNERABILITIES_FIXED=(
 # You can do a keyword scan of the changelog for potential vulnerabilities.
 # If the ebuild maintainer(s) gathered them from the changelog, then the
 # vulnerability coverage may be incomplete or miscategoried.
+
+	# 2025-11-03
+	"CVE-2025-40107;NPD, DoS;"
 
 	# 2025-10-31
 	"CVE-2025-40106;DbZ, DoS;"
