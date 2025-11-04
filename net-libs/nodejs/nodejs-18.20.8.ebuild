@@ -12,26 +12,27 @@ EAPI=8
 
 # Last deps commit date:  Mar 25, 2025
 
-CXX_STANDARD=17
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
-
 ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
-TRAINER_TYPES=(
+COREPACK_PV="0.32.0"
+CXX_STANDARD=17
+LTO_TYPE="none" # Global var
+MULTIPLEXER_VER="11"
+NGHTTP2_PV="1.61.0"
+NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v18.20.7/deps/npm/package.json
+PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
+PYTHON_REQ_USE="threads(+)"
+TPGO_CONFIGURE_DONT_SET_FLAGS=1
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
+
+_TRAINERS=(
 	assert
 	async_hooks
 	blob
@@ -75,19 +76,18 @@ TRAINER_TYPES=(
 	worker
 	zlib
 )
-COREPACK_PV="0.32.0"
-LTO_TYPE="none" # Global var
-MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.61.0"
-NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v18.20.7/deps/npm/package.json
-PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
-PYTHON_REQ_USE="threads(+)"
-TPGO_CONFIGURE_DONT_SET_FLAGS=1
-UOPTS_SUPPORT_EBOLT=0
-UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=1
-UOPTS_SUPPORT_TPGO=1
-WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
 inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
 inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
@@ -124,28 +124,25 @@ RESTRICT="
 "
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-
-gen_iuse_pgo() {
-	local t
-	for t in ${TRAINER_TYPES[@]} ; do
-		echo " ${PN}_trainers_${t}"
-	done
-}
-
 IUSE+="
-$(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu
-inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl
-system-icu +system-ssl systemtap test
+${_TRAINERS[@]/#/nodejs_trainers_}
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector npm man
+mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu +system-ssl
+systemtap test
 ebuild_revision_46
 "
 
 gen_required_use_pgo() {
 	local t
-	for t in ${TRAINER_TYPES[@]} ; do
-		echo " ${PN}_trainers_${t}? ( pgo )"
+	for t in ${_TRAINERS[@]/#/nodejs_trainers_} ; do
+		echo "
+			${t}? (
+				pgo
+			)
+		"
 	done
 }
+
 REQUIRED_USE+="
 	$(gen_required_use_pgo)
 	corepack
@@ -798,7 +795,7 @@ train_trainer_custom() {
 	declare -A accepted_trainers
 	local t
 	local b
-	for t in ${TRAINER_TYPES[@]} ; do
+	for t in ${_TRAINERS[@]} ; do
 		for b in ${benchmark[@]} ; do
 			if use "${PN}_trainers_${t}" \
 				&& [[ "${b}" =~ ^"benchmark/${t}/" ]] ; then
