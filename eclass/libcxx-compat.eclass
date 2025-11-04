@@ -9,6 +9,10 @@
 # @DESCRIPTION:
 # Common macro expanded like array values for LLVM_COMPAT.
 
+# The libcxx in this eclass is a misnomer.  It can be applied to the requirement
+# for the compiler only.  The eclass is intended to centralize the C++ string
+# literals to setup up C++ support.
+
 if [[ -z ${_LIBCXX_COMPAT_ECLASS} ]] ; then
 _LIBCXX_COMPAT_ECLASS=1
 
@@ -30,6 +34,170 @@ _LIBCXX_COMPAT_ECLASS=1
 
 # CLANG_COMPAT contains "llvm_slot_" prefix.
 # LLVM_COMPAT contains just the slot number.
+
+# LLVM_COMPAT template for CUDA 11.8 to 12.9
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_11_8=(
+        "llvm_slot_15"
+}
+
+# LLVM_COMPAT template for CUDA 12.3
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12_3[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12_3=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+}
+
+# LLVM_COMPAT template for CUDA 12.4
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12_4[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12_4=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+        "llvm_slot_17"
+)
+
+# LLVM_COMPAT template for CUDA 12.5
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12_5[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12_5=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+        "llvm_slot_17"
+)
+
+# LLVM_COMPAT template for CUDA 12.6
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12_6[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12_6=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+        "llvm_slot_17"
+        "llvm_slot_18"
+)
+
+# LLVM_COMPAT template for CUDA 12.8
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12_8[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12_8=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+        "llvm_slot_17"
+        "llvm_slot_18"
+        "llvm_slot_19"
+)
+
+# LLVM_COMPAT template for CUDA 12.9
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12_9[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12_9=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+        "llvm_slot_17"
+        "llvm_slot_18"
+        "llvm_slot_19"
+)
+
+# LLVM_COMPAT template for CUDA 11.x
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_11[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_11=(
+        "llvm_slot_15"
+}
+
+# LLVM_COMPAT template for CUDA 12.x
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA_12[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA_12=(
+        "llvm_slot_15"
+        "llvm_slot_16"
+        "llvm_slot_17"
+        "llvm_slot_18"
+        "llvm_slot_19"
+}
+
+# LLVM_COMPAT template for CUDA 11 and 12
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_CUDA[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_CUDA=(
+        "llvm_slot_15" # Support CUDA 11.8, 12.3, 12.4, 12.5, 12.6, 12.8, 12.9
+        "llvm_slot_16" # Support CUDA 12.3, 12.4, 12.5, 12.6, 12.8, 12.9
+        "llvm_slot_17" # Support CUDA 12.4, 12.5, 12.6, 12.8, 12.9
+        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+        "llvm_slot_19" # Support CUDA 12.8, 12.9
+)
 
 # LLVM_COMPAT template for desktop based LTS distros
 #
