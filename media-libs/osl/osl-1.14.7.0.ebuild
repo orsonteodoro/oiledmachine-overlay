@@ -71,7 +71,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CUDA[@]/llvm_slot_} # 15..19
+	${LIBCXX_COMPAT_CXX17_CUDA[@]/llvm_slot_} # 16..19
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 )
 
@@ -118,7 +118,7 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		^^ (
-			${LIBCXX_COMPAT_CUDA[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA[@]}
 		)
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -295,17 +295,6 @@ RDEPEND+="
 	dev-libs/libfmt[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/libfmt:=
 	cuda? (
-		llvm_slot_15? (
-			|| (
-				${CUDA_11_8_CDEPEND}
-				${CUDA_12_3_CDEPEND}
-				${CUDA_12_4_CDEPEND}
-				${CUDA_12_5_CDEPEND}
-				${CUDA_12_6_CDEPEND}
-				${CUDA_12_8_CDEPEND}
-				${CUDA_12_9_CDEPEND}
-			)
-		)
 		llvm_slot_16? (
 			|| (
 				${CUDA_12_3_CDEPEND}
@@ -396,17 +385,6 @@ BDEPEND+="
 			media-libs/openimageio:=
 		')
 		cuda? (
-			llvm_slot_15? (
-				|| (
-					${CUDA_11_8_CDEPEND}
-					${CUDA_12_3_CDEPEND}
-					${CUDA_12_4_CDEPEND}
-					${CUDA_12_5_CDEPEND}
-					${CUDA_12_6_CDEPEND}
-					${CUDA_12_8_CDEPEND}
-					${CUDA_12_9_CDEPEND}
-				)
-			)
 			llvm_slot_16? (
 				|| (
 					${CUDA_12_3_CDEPEND}

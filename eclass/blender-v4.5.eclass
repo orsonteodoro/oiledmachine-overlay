@@ -90,9 +90,9 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CUDA_12_8[@]/llvm_slot_}
+	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
+	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
-	19 # For ROCm 6.4
 )
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
@@ -460,7 +460,7 @@ REQUIRED_USE+="
 			nvcc
 		)
 		^^ (
-			${LIBCXX_COMPAT_CUDA_12_8[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
 		)
 		cycles
 		|| (
@@ -597,6 +597,9 @@ REQUIRED_USE+="
 		${ROCM_REQUIRED_USE}
 		^^ (
 			${ROCM_SLOTS[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
 	)
 	rocm_6_4? (
