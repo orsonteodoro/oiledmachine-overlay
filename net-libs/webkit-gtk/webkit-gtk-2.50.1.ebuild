@@ -112,6 +112,10 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_thumb2"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
@@ -153,6 +157,9 @@ VULNERABILITIES_FIXED=(
 	"CVE-2025-43343;DoS;"
 )
 
+PATENT_STATUS=(
+	"patent_status_nonfree"
+)
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
@@ -532,12 +539,6 @@ DEFAULT_GST_PLUGINS="
 # Using dav1d because aom is slow for decoding.
 # libbacktrace is enabled upstream but disabled for security reasons.
 
-PATENT_STATUS=(
-	patent_status_nonfree
-)
-CPU_FLAGS_ARM=(
-	cpu_flags_arm_thumb2
-)
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${DEFAULT_GST_PLUGINS}
