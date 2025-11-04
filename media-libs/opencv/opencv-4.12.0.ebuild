@@ -11,12 +11,12 @@ EAPI=8
 
 # For CUDA, check optical flow driver requirement.
 
-CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
 # For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.12.0/cmake/OpenCVDetectCUDA.cmake#L154
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
+CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
 CMAKE_PV="3.15"
 GSTREAMER_PV="1.16.2"
 KLEIDICV_PV="0.3.0"
@@ -83,21 +83,6 @@ CPU_FEATURES_MAP=(
 
 CUDA_TARGETS_COMPAT=(
 	"auto"
-	"sm_30"
-	"sm_35"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_90"
-	"sm_100"
-	"sm_120"
-
 	"compute_30"
 	"compute_35"
 	"compute_37"
@@ -112,25 +97,24 @@ CUDA_TARGETS_COMPAT=(
 	"compute_90"
 	"compute_100"
 	"compute_120"
+	"sm_30"
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_90"
+	"sm_100"
+	"sm_120"
 )
 
 declare -A CUDA_TARGETS_COMPAT_HT=(
 	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"
-	["sm_30"]="3.0"
-	["sm_35"]="3.5"
-	["sm_37"]="3.7"
-	["sm_50"]="5.0"
-	["sm_52"]="5.2"
-	["sm_60"]="6.0"
-	["sm_61"]="6.1"
-	["sm_70"]="7.0"
-	["sm_75"]="7.5"
-	["sm_80"]="8.0"
-	["sm_86"]="8.6"
-	["sm_90"]="9.0"
-	["sm_100"]="10.0"
-	["sm_120"]="12.0"
-
 	["compute_30"]="3.0"
 	["compute_35"]="3.5"
 	["compute_37"]="3.7"
@@ -145,6 +129,20 @@ declare -A CUDA_TARGETS_COMPAT_HT=(
 	["compute_90"]="9.0"
 	["compute_100"]="10.0"
 	["compute_120"]="12.0"
+	["sm_30"]="3.0"
+	["sm_35"]="3.5"
+	["sm_37"]="3.7"
+	["sm_50"]="5.0"
+	["sm_52"]="5.2"
+	["sm_60"]="6.0"
+	["sm_61"]="6.1"
+	["sm_70"]="7.0"
+	["sm_75"]="7.5"
+	["sm_80"]="8.0"
+	["sm_86"]="8.6"
+	["sm_90"]="9.0"
+	["sm_100"]="10.0"
+	["sm_120"]="12.0"
 )
 
 PATENT_STATUS_IUSE=(
