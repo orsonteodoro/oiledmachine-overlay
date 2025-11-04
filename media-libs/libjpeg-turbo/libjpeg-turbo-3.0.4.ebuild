@@ -10,17 +10,10 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBR SO UM"
 CMAKE_ECLASS="cmake"
-MULTILIB_WRAPPED_HEADERS=(
-	"/usr/include/jconfig.h"
-)
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
-UOPTS_BOLT_INST_ARGS=(
-	"libjpeg.so.62.3.0:--skip-funcs=.text/1"
-	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
-)
 
 _TRAINERS=(
 	"libjpeg_turbo_trainers_70_pct_quality_baseline"
@@ -43,6 +36,15 @@ _TRAINERS=(
 	"libjpeg_turbo_trainers_decode"
 	"libjpeg_turbo_trainers_grayscale"
 	"libjpeg_turbo_trainers_transformations"
+)
+
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/jconfig.h"
+)
+
+UOPTS_BOLT_INST_ARGS=(
+	"libjpeg.so.62.3.0:--skip-funcs=.text/1"
+	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
