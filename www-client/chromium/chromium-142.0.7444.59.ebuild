@@ -79,6 +79,25 @@ EAPI=8
 #   https://github.com/facebook/zstd/blob/d654fca78690fa15cceb8058ac47454d914a0e63/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/142.0.7444.59/DEPS#L512									; live
 
+# About PGO version compatibility
+#
+# The answer to the profdata compatibility is answered in
+# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
+#
+# The profdata (aka indexed profile) version is 10 corresponding from LLVM 16+
+# and is after the magic (lprofi - i for index) in the profdata file located in
+# chrome/build/pgo_profiles/*.profdata.
+#
+# Profdata versioning (ProfVersion):
+# https://github.com/llvm/llvm-project/blob/7b473dfe/llvm/include/llvm/ProfileData/InstrProf.h#L1116
+# LLVM version:
+# https://github.com/llvm/llvm-project/blob/7b473dfe/cmake/Modules/LLVMVersion.cmake
+
+# LLVM timestamp can be obtained from \
+# https://github.com/chromium/chromium/blob/142.0.7444.59/tools/clang/scripts/update.py#L42 \
+# https://github.com/llvm/llvm-project/commit/7b473dfe
+# Change also LLVM_OFFICIAL_SLOT
+
 TC_COUNT_EXPECTED=5129
 SOURCES_COUNT_EXPECTED=546105
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
@@ -99,28 +118,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO U
 CHROMIUM_TOOLCHAIN=1
 CROMITE_COMMIT="fde090c0d3690592570011055c980f1679d2b28d" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
 CROMITE_PV="140.0.7339.186"
-
-# About PGO version compatibility
-#
-# The answer to the profdata compatibility is answered in
-# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
-#
-# The profdata (aka indexed profile) version is 10 corresponding from LLVM 16+
-# and is after the magic (lprofi - i for index) in the profdata file located in
-# chrome/build/pgo_profiles/*.profdata.
-#
-# Profdata versioning (ProfVersion):
-# https://github.com/llvm/llvm-project/blob/7b473dfe/llvm/include/llvm/ProfileData/InstrProf.h#L1116
-# LLVM version:
-# https://github.com/llvm/llvm-project/blob/7b473dfe/cmake/Modules/LLVMVersion.cmake
-
-# LLVM timestamp can be obtained from \
-# https://github.com/chromium/chromium/blob/142.0.7444.59/tools/clang/scripts/update.py#L42 \
-# https://github.com/llvm/llvm-project/commit/7b473dfe
-# Change also LLVM_OFFICIAL_SLOT
 CURRENT_PROFDATA_VERSION= # Global variable
 CURRENT_PROFDATA_LLVM_VERSION= # Global variable
-
+CXX_STANDARD=20
 DISABLE_AUTOFORMATTING="yes"
 DISK_BASE=24
 declare -A DISK_BUILD
@@ -170,8 +170,6 @@ RUST_MAX_VER="9999" # Corresponds to llvm-20.1
 RUST_MIN_VER="9999" # Corresponds to llvm-20.1
 RUST_PV="${RUST_MIN_VER}"
 SHADOW_CALL_STACK=0 # Global variable
-S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
-S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 TESTDATA_P="${PN}-${PV}"
 # Testing this version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
@@ -205,6 +203,116 @@ hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
 
+CPU_FLAGS_ARM=(
+	"aes"
+	"armv4"
+	"armv6"
+	"bf16"
+	"bti"
+	"crc32"
+	"dotprod"
+	"edsp"
+	"fp16"
+	"i8mm"
+	"neon"
+	"mte"
+	"neon"
+	"pac"
+	"sme"
+	"sve"
+	"sve_256"
+	"sve2"
+	"sve2_128"
+	"thumb"
+)
+
+CPU_FLAGS_LOONG=(
+	"lsx"
+	"lasx"
+)
+
+CPU_FLAGS_MIPS=(
+	"dsp"
+	"dspr2"
+	"msa"
+)
+
+CPU_FLAGS_PPC=(
+	"altivec"
+	"crypto"
+	"power8-vector"
+	"power9-vector"
+	"power10-vector"
+	"vsx"
+	"vsx3"
+)
+
+CPU_FLAGS_RISCV=(
+	"rvv"
+)
+
+CPU_FLAGS_S390=(
+	"z15"
+	"z16"
+)
+
+CPU_FLAGS_X86=(
+	"3dnow"
+	"aes"
+	"amx-int8"
+	"amx-tile"
+	"avx"
+	"avx2"
+	"avx512bitalg"
+	"avx512bf16"
+	"avx512bw"
+	"avx512cd"
+	"avx512dq"
+	"avx512f"
+	"avx512fp16"
+	"avx512vbmi"
+	"avx512vbmi2"
+	"avx512vl"
+	"avx512vnni"
+	"avx512vpopcntdq"
+	"avxvnni"
+	"avxvnniint8"
+	"bmi"
+	"bmi2"
+	"f16c"
+	"fma"
+	"gfni"
+	"mmx"
+	"pclmul"
+	"popcnt"
+	"sse"
+	"sse2"
+	"sse3"
+	"sse4_1"
+	"sse4_2"
+	"ssse3"
+	"vaes"
+	"vpclmulqdq"
+)
+
+IUSE_LIBCXX=(
+	"bundled-libcxx"
+	"system-libstdcxx"
+)
+# CFI Basic (.a) mode requires all third party modules built as static.
+
+# Option defaults based on patent status
+IUSE_CODECS=(
+	"+dav1d"
+	"+libaom"
+	"-openh264"
+	"+opus"
+	"-vaapi"
+	"-vaapi-hevc"
+	"+vorbis"
+	"+vpx"
+)
+
 MITIGATION_DATE="Oct 28, 2025" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1761324120 # From `date +%s -d "2025-10-24 9:42 AM PDT"` From tag in GH
 MITIGATION_URI="https://chromereleases.googleblog.com/search/label/Stable%20updates"
@@ -237,8 +345,6 @@ PATENT_STATUS=(
 	"patent_status_sponsored_ncp_nb"
 )
 
-CXX_STANDARD=20
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX20[@]}
@@ -249,9 +355,9 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LLVM_OFFICIAL_SLOT="22" # Cr official slot
 PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_OFFICIAL_SLOT}"
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"$(( ${LLVM_OFFICIAL_SLOT} + 1 )).0.0.9999"
@@ -282,15 +388,17 @@ is_cromite_compatible() {
 	fi
 }
 
-#if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
-#	:
-#elif [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
-#	KEYWORDS="~amd64 ~arm64 ~ppc64"
-#else
-#	KEYWORDS="~amd64 ~arm64"
-#fi
+if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
+	:
+elif [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
+	KEYWORDS="~amd64 ~arm64 ~ppc64"
+else
+	KEYWORDS="~amd64 ~arm64"
+fi
 
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-137.0.7151.0.tar.x%40
+S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
+S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 SRC_URI+="
 	ppc64? (
 https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
@@ -302,12 +410,14 @@ https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
 	-> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
+
 if [[ -n "${V8_PV}" ]] ; then
 	SRC_URI+="
 https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
 	-> v8-${V8_PV}.tar.gz
 	"
 fi
+
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	SRC_URI+="
 		system-toolchain? (
@@ -315,6 +425,7 @@ https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-p
 		)
 	"
 fi
+
 if is_cromite_compatible ; then
 	IUSE+="
 		cromite
@@ -326,6 +437,7 @@ https://github.com/uazo/cromite/archive/${CROMITE_COMMIT}.tar.gz
 		)
 	"
 fi
+
 if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 	IUSE+="
 		ungoogled-chromium
@@ -380,108 +492,6 @@ SLOT="0/stable"
 # The suid is built by default upstream but not necessarily used:  \
 #   https://github.com/chromium/chromium/blob/142.0.7444.59/sandbox/linux/BUILD.gn
 #
-CPU_FLAGS_ARM=(
-	aes
-	armv4
-	armv6
-	bf16
-	bti
-	crc32
-	dotprod
-	edsp
-	fp16
-	i8mm
-	neon
-	mte
-	neon
-	pac
-	sme
-	sve
-	sve_256
-	sve2
-	sve2_128
-	thumb
-)
-CPU_FLAGS_LOONG=(
-	lsx
-	lasx
-)
-CPU_FLAGS_MIPS=(
-	dsp
-	dspr2
-	msa
-)
-CPU_FLAGS_PPC=(
-	altivec
-	crypto
-	power8-vector
-	power9-vector
-	power10-vector
-	vsx
-	vsx3
-)
-CPU_FLAGS_RISCV=(
-	rvv
-)
-CPU_FLAGS_S390=(
-	z15
-	z16
-)
-CPU_FLAGS_X86=(
-	3dnow
-	aes
-	amx-int8
-	amx-tile
-	avx
-	avx2
-	avx512bitalg
-	avx512bf16
-	avx512bw
-	avx512cd
-	avx512dq
-	avx512f
-	avx512fp16
-	avx512vbmi
-	avx512vbmi2
-	avx512vl
-	avx512vnni
-	avx512vpopcntdq
-	avxvnni
-	avxvnniint8
-	bmi
-	bmi2
-	f16c
-	fma
-	gfni
-	mmx
-	pclmul
-	popcnt
-	sse
-	sse2
-	sse3
-	sse4_1
-	sse4_2
-	ssse3
-	vaes
-	vpclmulqdq
-)
-IUSE_LIBCXX=(
-	bundled-libcxx
-	system-libstdcxx
-)
-# CFI Basic (.a) mode requires all third party modules built as static.
-
-# Option defaults based on patent status
-IUSE_CODECS=(
-	+dav1d
-	+libaom
-	-openh264
-	+opus
-	-vaapi
-	-vaapi-hevc
-	+vorbis
-	+vpx
-)
 
 # Upstream uses official ON
 # Upstream uses proprietary codecs ON
