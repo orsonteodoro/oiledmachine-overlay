@@ -32,6 +32,17 @@ EAPI=8
 # TODO:  Re-evaluate/assess the security of file permissions related if the environment
 # variable were changed to having one folder of models.
 
+CFLAGS_HARDENED_APPEND_GOFLAGS=1
+CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
+CXX_STANDARD=17
+EGO_PN="github.com/ollama/ollama"
+#
+# To update use this run `ebuild ollama-0.12.9.ebuild digest clean unpack`
+# changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
+#
+GEN_EBUILD=0
+LLAMA_CPP_UPDATE=0
+
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
@@ -56,6 +67,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1200"
 	"gfx1201"
 )
+
 I8MM_ARCHES=(
 	"armv8.2-a"
 	"armv8.3-a"
@@ -69,6 +81,7 @@ I8MM_ARCHES=(
 	"armv9.4-a"
 	"armv8-r"
 )
+
 SVE_ARCHES=(
 	"armv8.2-a"
 	"armv8.3-a"
@@ -81,6 +94,7 @@ SVE_ARCHES=(
 	"armv9.3-a"
 	"armv9.4-a"
 )
+
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_dotprod"
 	"cpu_flags_arm_i8mm"
@@ -89,6 +103,7 @@ CPU_FLAGS_ARM=(
 	"cpu_flags_arm_sve"
 	"cpu_flags_arm_sve2"
 )
+
 CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_power7"
 	"cpu_flags_ppc_power8"
@@ -97,6 +112,7 @@ CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_power11"
 	"cpu_flags_ppc_vsx"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_bmi2"
 	"cpu_flags_x86_f16c"
@@ -119,6 +135,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_amx_tile"
 	"cpu_flags_x86_amx_int8"
 )
+
 CUDA_FATTN_TARGETS_COMPAT=(
 # https://github.com/ollama/ollama/blob/v0.12.6/discover/types.go#L173
 	"sm_75"
@@ -136,6 +153,7 @@ CUDA_FATTN_TARGETS_COMPAT=(
 	"compute_89"
 	"compute_90"
 )
+
 CUDA_TARGETS_COMPAT=(
 	"sm_50"
 	"sm_52"
@@ -161,8 +179,6 @@ CUDA_TARGETS_COMPAT=(
 	"compute_89"
 	"compute_90"
 )
-
-CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -227,19 +243,12 @@ themanofrod-travel-agent tinydolphin tinyllama tulu3 vicuna wizard-math
 wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm wizardlm-uncensored
 wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
-CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
-#
-# To update use this run `ebuild ollama-0.12.9.ebuild digest clean unpack`
-# changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
-#
-GEN_EBUILD=0
-EGO_PN="github.com/ollama/ollama"
-LLAMA_CPP_UPDATE=0
+
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
 	"6.4"
 )
+
 gen_rocm_iuse() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -249,10 +258,12 @@ gen_rocm_iuse() {
 	done
 }
 ROCM_IUSE=( $(gen_rocm_iuse) )
+
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
 	["6_4"]="${HIP_6_4_VERSION}"
 )
+
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
@@ -2751,7 +2762,6 @@ LICENSE="
 
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
@@ -2765,6 +2775,7 @@ blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
 ebuild_revision_83
 "
+
 gen_rocm_required_use() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -2775,6 +2786,7 @@ gen_rocm_required_use() {
 		"
 	done
 }
+
 gen_cuda_required_use() {
 	local x
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
@@ -2785,6 +2797,7 @@ gen_cuda_required_use() {
 		"
 	done
 }
+
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -2795,6 +2808,7 @@ gen_rocm_required_use() {
 		"
 	done
 }
+
 # OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
 # There is a bug for ?? operator where 1 element causes it to be required.
 REQUIRED_USE="
