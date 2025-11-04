@@ -88,13 +88,9 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-LLVM_COMPAT_CUDA=(
-	{15..19}
-)
-
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LLVM_COMPAT_CUDA[@]}
+	${LIBCXX_COMPAT_CUDA_12_8[@]/llvm_slot_}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 	19 # For ROCm 6.4
 )
@@ -464,7 +460,7 @@ REQUIRED_USE+="
 			nvcc
 		)
 		^^ (
-			${LLVM_COMPAT_CUDA[@]/#/llvm_slot_}
+			${LIBCXX_COMPAT_CUDA_12_8[@]}
 		)
 		cycles
 		|| (
@@ -783,13 +779,6 @@ PATENT_STATUS_RDEPEND="
 	)
 "
 
-CUDA_11_4_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.4*
-		>=x11-drivers/nvidia-drivers-470.82
-		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
 CUDA_12_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
@@ -858,68 +847,49 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.4.1[${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
-		cuda_targets_sm_35? (
-			|| (
-				${CUDA_11_4_RDEPEND}
-			)
-		)
-		cuda_targets_sm_37? (
-			|| (
-				${CUDA_11_4_RDEPEND}
-			)
-		)
 		cuda_targets_sm_50? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		cuda_targets_compute_75? (
 			|| (
 				${CUDA_12_8_RDEPEND}
-				${CUDA_11_4_RDEPEND}
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
