@@ -475,7 +475,7 @@
 
 6. User defined global scalar-variables or constants
 
-7. User defined global arrays
+7. User defined global arrays or multiline strings
 
 8. General eclass inherits
 
