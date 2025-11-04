@@ -257,7 +257,9 @@ gen_rocm_iuse() {
 		"
 	done
 }
-ROCM_IUSE=( $(gen_rocm_iuse) )
+ROCM_IUSE=(
+	$(gen_rocm_iuse)
+)
 
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
@@ -4746,4 +4748,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.6.5, 20250422) cpu test with smollm:135m, deepseek-r1:1.5b
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.9.2, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.11.4, 20250810) cpu test with smollm:135m
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.12.9, 20250810) cpu test with smollm:135m
 # cpu test: passed
