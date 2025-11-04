@@ -11,6 +11,146 @@ EAPI=8
 
 # For CUDA, check optical flow driver requirement.
 
+CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
+# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.12.0/cmake/OpenCVDetectCUDA.cmake#L154
+CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
+CFLAGS_HARDENED_LANGS="asm c-lang"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
+CMAKE_PV="3.15"
+GSTREAMER_PV="1.16.2"
+KLEIDICV_PV="0.3.0"
+PYTHON_COMPAT=( "python3_"{10..12} )
+OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
+OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
+PROTOBUF_SLOT="3"
+QT5_PV="5.12.8"
+QT6_PV="6.2.4"
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+# TODO make this only relevant for binhost \
+CPU_FEATURES_MAP=(
+	"cpu_flags_arm_fp16:FP16"				# arm only
+	"cpu_flags_arm_neon:NEON"				# arm only
+	"cpu_flags_arm_neon_bf16:NEON_BF16"			# arm64 only
+	"cpu_flags_arm_neon_fp16:NEON_FP16"			# arm64 only
+	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"		# arm64 only
+	"cpu_flags_arm_vfpv3:VFPV3"				# arm only
+	"cpu_flags_loong_lsx:LSX"
+	"cpu_flags_loong_lasx:LASX"
+	"cpu_flags_mips_msa:MSA"
+	"cpu_flags_ppc_vsx:VSX"					# Always available on Power8
+	"cpu_flags_ppc_vsx3:VSX3"				# Always available on Power9
+	"cpu_flags_riscv_rvv:RVV"
+	"cpu_flags_x86_avx:AVX"
+	"cpu_flags_x86_avx2:AVX2"
+	"cpu_flags_x86_avx512bw:AVX_512BW"
+	"cpu_flags_x86_avx512cd:AVX_512CD"
+	"cpu_flags_x86_avx512dq:AVX_512DQ"
+	"cpu_flags_x86_avx512er:AVX512_KNL_EXTRA"
+	"cpu_flags_x86_avx512f:AVX_512F"
+	"cpu_flags_x86_avx512ifma:AVX_512IFMA"
+	"cpu_flags_x86_avx512vl:AVX_512VL"
+	"cpu_flags_x86_avx512_bitalg:AVX_512BITALG"
+	"cpu_flags_x86_avx512_vbmi:AVX_512VBMI"
+	"cpu_flags_x86_avx512_vbmi2:AVX_512VBMI2"
+	"cpu_flags_x86_avx512_vnni:AVX_512VNNI"
+	"cpu_flags_x86_avx512_vpopcntdq:AVX_512VPOPCNTDQ"
+	"cpu_flags_x86_f16c:FP16"
+	"cpu_flags_x86_fma:FMA3"
+	"cpu_flags_x86_popcnt:POPCNT"
+	"cpu_flags_x86_sse:SSE"					# Always available on 64-bit CPUs
+	"cpu_flags_x86_sse2:SSE2"				# Always available on 64-bit CPUs
+	"cpu_flags_x86_sse3:SSE3"
+	"cpu_flags_x86_sse4_1:SSE4_1"
+	"cpu_flags_x86_sse4_2:SSE4_2"
+	"cpu_flags_x86_ssse3:SSSE3"
+)
+
+CUDA_TARGETS_COMPAT=(
+	"auto"
+	"sm_30"
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_90"
+	"sm_100"
+	"sm_120"
+
+	"compute_30"
+	"compute_35"
+	"compute_37"
+	"compute_50"
+	"compute_52"
+	"compute_60"
+	"compute_61"
+	"compute_70"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_90"
+	"compute_100"
+	"compute_120"
+)
+
+declare -A CUDA_TARGETS_COMPAT_HT=(
+	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"
+	["sm_30"]="3.0"
+	["sm_35"]="3.5"
+	["sm_37"]="3.7"
+	["sm_50"]="5.0"
+	["sm_52"]="5.2"
+	["sm_60"]="6.0"
+	["sm_61"]="6.1"
+	["sm_70"]="7.0"
+	["sm_75"]="7.5"
+	["sm_80"]="8.0"
+	["sm_86"]="8.6"
+	["sm_90"]="9.0"
+	["sm_100"]="10.0"
+	["sm_120"]="12.0"
+
+	["compute_30"]="3.0"
+	["compute_35"]="3.5"
+	["compute_37"]="3.7"
+	["compute_50"]="5.0"
+	["compute_52"]="5.2"
+	["compute_60"]="6.0"
+	["compute_61"]="6.1"
+	["compute_70"]="7.0"
+	["compute_75"]="7.5"
+	["compute_80"]="8.0"
+	["compute_86"]="8.6"
+	["compute_90"]="9.0"
+	["compute_100"]="10.0"
+	["compute_120"]="12.0"
+)
+
+PATENT_STATUS_IUSE=(
+	"patent_status_nonfree"
+)
+
 _MULTILIB_WRAPPED_HEADERS=( # {{{
 	# [opencv4]
 	"/usr/include/opencv4/opencv2/cvconfig.h"
@@ -158,143 +298,7 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 ) # }}}
-CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
-CFLAGS_HARDENED_LANGS="asm c-lang"
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
-CMAKE_PV="3.15"
-# TODO make this only relevant for binhost \
-CPU_FEATURES_MAP=(
-	"cpu_flags_arm_fp16:FP16"				# arm only
-	"cpu_flags_arm_neon:NEON"				# arm only
-	"cpu_flags_arm_neon_bf16:NEON_BF16"			# arm64 only
-	"cpu_flags_arm_neon_fp16:NEON_FP16"			# arm64 only
-	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"		# arm64 only
-	"cpu_flags_arm_vfpv3:VFPV3"				# arm only
-	"cpu_flags_loong_lsx:LSX"
-	"cpu_flags_loong_lasx:LASX"
-	"cpu_flags_mips_msa:MSA"
-	"cpu_flags_ppc_vsx:VSX"					# Always available on Power8
-	"cpu_flags_ppc_vsx3:VSX3"				# Always available on Power9
-	"cpu_flags_riscv_rvv:RVV"
-	"cpu_flags_x86_avx:AVX"
-	"cpu_flags_x86_avx2:AVX2"
-	"cpu_flags_x86_avx512bw:AVX_512BW"
-	"cpu_flags_x86_avx512cd:AVX_512CD"
-	"cpu_flags_x86_avx512dq:AVX_512DQ"
-	"cpu_flags_x86_avx512er:AVX512_KNL_EXTRA"
-	"cpu_flags_x86_avx512f:AVX_512F"
-	"cpu_flags_x86_avx512ifma:AVX_512IFMA"
-	"cpu_flags_x86_avx512vl:AVX_512VL"
-	"cpu_flags_x86_avx512_bitalg:AVX_512BITALG"
-	"cpu_flags_x86_avx512_vbmi:AVX_512VBMI"
-	"cpu_flags_x86_avx512_vbmi2:AVX_512VBMI2"
-	"cpu_flags_x86_avx512_vnni:AVX_512VNNI"
-	"cpu_flags_x86_avx512_vpopcntdq:AVX_512VPOPCNTDQ"
-	"cpu_flags_x86_f16c:FP16"
-	"cpu_flags_x86_fma:FMA3"
-	"cpu_flags_x86_popcnt:POPCNT"
-	"cpu_flags_x86_sse:SSE"					# Always available on 64-bit CPUs
-	"cpu_flags_x86_sse2:SSE2"				# Always available on 64-bit CPUs
-	"cpu_flags_x86_sse3:SSE3"
-	"cpu_flags_x86_sse4_1:SSE4_1"
-	"cpu_flags_x86_sse4_2:SSE4_2"
-	"cpu_flags_x86_ssse3:SSSE3"
-)
-CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
-# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.12.0/cmake/OpenCVDetectCUDA.cmake#L154
 
-_CXX_STANDARD=(
-	"cxx_standard_cxx11"
-	"cxx_standard_cxx14"
-	"+cxx_standard_cxx17"
-)
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
-CUDA_TARGETS_COMPAT=(
-	"auto"
-	"sm_30"
-	"sm_35"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_90"
-	"sm_100"
-	"sm_120"
-
-	"compute_30"
-	"compute_35"
-	"compute_37"
-	"compute_50"
-	"compute_52"
-	"compute_60"
-	"compute_61"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_90"
-	"compute_100"
-	"compute_120"
-)
-declare -A CUDA_TARGETS_COMPAT_HT=(
-	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"
-	["sm_30"]="3.0"
-	["sm_35"]="3.5"
-	["sm_37"]="3.7"
-	["sm_50"]="5.0"
-	["sm_52"]="5.2"
-	["sm_60"]="6.0"
-	["sm_61"]="6.1"
-	["sm_70"]="7.0"
-	["sm_75"]="7.5"
-	["sm_80"]="8.0"
-	["sm_86"]="8.6"
-	["sm_90"]="9.0"
-	["sm_100"]="10.0"
-	["sm_120"]="12.0"
-
-	["compute_30"]="3.0"
-	["compute_35"]="3.5"
-	["compute_37"]="3.7"
-	["compute_50"]="5.0"
-	["compute_52"]="5.2"
-	["compute_60"]="6.0"
-	["compute_61"]="6.1"
-	["compute_70"]="7.0"
-	["compute_75"]="7.5"
-	["compute_80"]="8.0"
-	["compute_86"]="8.6"
-	["compute_90"]="9.0"
-	["compute_100"]="10.0"
-	["compute_120"]="12.0"
-)
-
-GSTREAMER_PV="1.16.2"
-KLEIDICV_PV="0.3.0"
-PYTHON_COMPAT=( "python3_"{10..12} )
-OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
-OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
-PATENT_STATUS_IUSE=(
-	patent_status_nonfree
-)
-PROTOBUF_SLOT="3"
-QT5_PV="5.12.8"
-QT6_PV="6.2.4"
 ROCM_SLOTS=(
 	"rocm_6_4"
 )

@@ -16,6 +16,7 @@ CPU_FLAGS_ARM=(
 	"cpu_flags_arm_v5"
 	"cpu_flags_arm_v6"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
