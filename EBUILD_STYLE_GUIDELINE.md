@@ -473,11 +473,13 @@
 
 5. Pre inherits (optional)
 
-6. User defined global variables
+6. User defined global scalar-variables or constants
 
-7. General eclass inherits
+7. User defined global arrays
 
-8. Download section
+8. General eclass inherits
+
+9. Download section
    - Typically a conditional with PV == *9999*
    - Live repo info (optional)
      - EGIT_BRANCH
@@ -490,7 +492,7 @@
      - KEYWORDS
      - SRC_URI
 
-9. Commonly used global variables
+10. Commonly used global variables
    - DESCRIPTION
      - Typically an adjective phrase
      - It should be simplified if too long
@@ -518,7 +520,7 @@
    - DOCS
    - PATCHES
 
-10. Ebuild phases
+11. Ebuild phases
    - These should be in chronological order.
    - pkg_setup()
    - pkg_nofetch()
