@@ -12,6 +12,11 @@ AUTOTOOLS_AUTO_DEPEND="no"
 # For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF"
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=1
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 
 _TRAINERS=(
 	"zlib_trainers_minizip_binary_long"
@@ -39,11 +44,6 @@ _TRAINERS=(
 	"zlib_trainers_zlib_text_min"
 	"zlib_trainers_zlib_text_random"
 )
-UOPTS_SUPPORT_EBOLT=0
-UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=1
-VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 
 inherit autotools cflags-hardened check-compiler-switch edo flag-o-matic flag-o-matic-om
 inherit multilib-minimal toolchain-funcs uopts verify-sig
