@@ -37,8 +37,14 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
+
+LLVM_COMPAT_CUDA=(
+	19
+)
+
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LLVM_COMPAT_CUDA[@]}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
@@ -724,51 +730,6 @@ gen_openexr_rdepend() {
 		"
 	done
 }
-CUDA_11_8_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		>=x11-drivers/nvidia-drivers-520.61
-		virtual/cuda-compiler:0/11.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			=dev-libs/cudnn-8.6*
-			dev-libs/cudnn:=
-		)
-	)
-
-"
-CUDA_12_3_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.3*
-		>=x11-drivers/nvidia-drivers-545.23
-		virtual/cuda-compiler:0/12.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-8.8
-			dev-libs/cudnn:=
-		)
-	)
-"
-CUDA_12_4_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.4*
-		>=x11-drivers/nvidia-drivers-550.54
-		virtual/cuda-compiler:0/12.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-8.8
-			dev-libs/cudnn:=
-		)
-	)
-"
-CUDA_12_5_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.5*
-		>=x11-drivers/nvidia-drivers-555.42
-		virtual/cuda-compiler:0/12.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-8.8
-			dev-libs/cudnn:=
-		)
-	)
-"
 CUDA_12_6_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*
@@ -804,12 +765,7 @@ CUDA_12_9_DEPEND="
 "
 CUDA_DEPEND="
 		|| (
-			${CUDA_11_8_DEPEND}
-			${CUDA_12_3_DEPEND}
-			${CUDA_12_4_DEPEND}
-			${CUDA_12_5_DEPEND}
 			${CUDA_12_6_DEPEND}
-			${CUDA_12_7_DEPEND}
 			${CUDA_12_8_DEPEND}
 			${CUDA_12_9_DEPEND}
 		)
