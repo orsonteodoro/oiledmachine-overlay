@@ -239,9 +239,9 @@ CC/CXX using clang can still remain.
 
 | USE flag       | LTS [1] | Indirect libstdc++ compatibility                                                                                              | Default C++     |
 |----------------|---------|-------------------------------------------------------------------------------------------------------------------------------|-----------------|
-| gcc_slot_11_5  | Yes     | U22 (EOL 2027), CUDA 11.8, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9                                   | C++17           |
-| gcc_slot_12_5  | No      | D12 (EOL 2028), F37, CUDA 12.3, CUDA 12.4, CUDA 12.5, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.2, ROCm 6.3, ROCm 6.4, ROCm 7.0 | C++17           |
-| gcc_slot_13_4  | Yes     | U24 (EOL 2036), CUDA 12.4, CUDA 12.5, CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                     | C++17           |
+| gcc_slot_11_5  | Yes     | U22 (EOL 2027), CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                               | C++17           |
+| gcc_slot_12_5  | No      | D12 (EOL 2028), F37, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                      | C++17           |
+| gcc_slot_13_4  | Yes     | U24 (EOL 2036), CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                           | C++17           |
 | gcc_slot_14_3  | No      | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                     | C++17           |
 
 | USE flag [3]   | LTS [1] | Indirect libc++ compatibility                                                                                                 | Default C++ [2] |
