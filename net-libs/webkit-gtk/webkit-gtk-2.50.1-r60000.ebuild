@@ -12,7 +12,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -26,17 +26,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.50.0/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.50.1/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -67,18 +67,12 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
 API_VERSION="6.0"
 CAIRO_PV="1.16.0"
-# One of the major sources of lag comes from dependencies
-# These are strict to match performance to competition or normal builds.
-declare -A CFLAGS_RDEPEND=(
-	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
-	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
-)
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -87,55 +81,15 @@ CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
-CLANG_PV="18"
 CMAKE_MAKEFILE_GENERATOR="ninja"
-FFMPEG_COMPAT=(
-	"0/58.60.60" # 6.1
-	"0/57.59.59" # 5.1
-	"0/56.58.58" # 4.3
-)
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
+CXX_STANDARD=23
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
-GCC_PV="11.2.0"
-
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
-CXX_STANDARD=23
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
-)
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
-
-GLIB_VERSIONS=(
-	"2.84.4"
-	"2.82.5"
-)
-GOBJECT_INTROSPECTION_VERSIONS=(
-	"1.84"
-	"1.82"
-)
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 HARFBUZZ_PV="2.7.4"
-LANGS=(
-ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
-ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
-tr uk vi zh_CN
-)
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Oct 13, 2025"
-MITIGATION_LAST_UPDATE=1760357640 # From `date +%s -d "2025-10-13 5:14 AM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0007.html"
-VULNERABILITIES_FIXED=(
-	"CVE-2025-43343;DoS;"
-)
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
 SELECTED_LTO="" # global var not const
@@ -150,6 +104,54 @@ SO_AGE="13"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
+
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
+FFMPEG_COMPAT=(
+	"0/58.60.60" # 6.1
+	"0/57.59.59" # 5.1
+	"0/56.58.58" # 4.3
+)
+
+GLIB_VERSIONS=(
+	"2.84.4"
+	"2.82.5"
+)
+
+GOBJECT_INTROSPECTION_VERSIONS=(
+	"1.84"
+	"1.82"
+)
+
+LANGS=(
+ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
+ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
+tr uk vi zh_CN
+)
+
+MITIGATION_DATE="Oct 13, 2025"
+MITIGATION_LAST_UPDATE=1760357640 # From `date +%s -d "2025-10-13 5:14 AM PDT"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0007.html"
+VULNERABILITIES_FIXED=(
+	"CVE-2025-43343;DoS;"
+)
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
@@ -465,7 +467,7 @@ SLOT="${API_VERSION%.*}/${SO_VERSION}"
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -499,7 +501,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.0/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 -aac
