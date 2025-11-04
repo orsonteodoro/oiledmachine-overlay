@@ -76,7 +76,7 @@ LLVM_COMPAT_CUDA=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LLVM_COMPAT_CUDA[@]}
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 )
 
 inherit check-compiler-switch cmake cuda flag-o-matic flag-o-matic-om
