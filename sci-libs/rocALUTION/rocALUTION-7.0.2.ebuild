@@ -9,35 +9,36 @@ EAPI=8
 #                                            ^
 # Still happens when USE=opemp CC=hipcc CXX=hipcc OR USE=openmp CC=${CHOST}-clang-${LLVM_SLOT} CXX=hipcc
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900_xnack_minus
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx908_xnack_plus # with asan
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus # with or without asan
-	gfx942
-	gfx942_xnack_plus # with asan
-	gfx950
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1120
-	gfx1121
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900_xnack_minus"
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx908_xnack_plus" # with asan
+	"gfx90a_xnack_minus"
+	"gfx90a_xnack_plus" # with or without asan
+	"gfx942"
+	"gfx942_xnack_plus" # with asan
+	"gfx950"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1120"
+	"gfx1121"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit check-compiler-switch cmake libstdcxx-slot rocm
 

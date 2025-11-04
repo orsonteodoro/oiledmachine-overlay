@@ -6,25 +6,26 @@ EAPI=8
 MY_PN="AMDMIGraphX"
 MY_P="${CATEGORY}/${MY_PN}-${PV}"
 
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.4.4/Jenkinsfile
-	gfx906
-	gfx908
-	gfx90a
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
-
 CXX_STANDARD=17
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.4.4/Jenkinsfile
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
 
 inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
 

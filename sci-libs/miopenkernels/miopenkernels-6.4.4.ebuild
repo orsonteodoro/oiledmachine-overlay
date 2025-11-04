@@ -3,22 +3,24 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
-)
-MAINTAINER_MODE=0
 if [[ "${PV##*.}" == "0" ]] ; then
 	MY_PV=$(ver_cut 1-2 ${PV})
 else
 	MY_PV="${PV}"
 fi
+
+MAINTAINER_MODE=0
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+)
 
 inherit rocm sandbox-changes unpacker
 

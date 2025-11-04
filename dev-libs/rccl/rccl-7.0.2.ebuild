@@ -3,28 +3,29 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx906
-	gfx908
-	gfx90a
-	gfx942
-	gfx950
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1200
-	gfx1201
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
-
 CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
 CXX_STANDARD=14
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx950"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
 
 inherit check-reqs cmake edo flag-o-matic libstdcxx-slot linux-info rocm
 

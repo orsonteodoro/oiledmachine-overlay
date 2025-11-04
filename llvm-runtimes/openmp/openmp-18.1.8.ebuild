@@ -9,41 +9,40 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
-CUDA_TARGETS_COMPAT=(
-	auto
-	sm_35
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_80
-	sm_86
-	sm_87
-	sm_89
-	sm_90
-	sm_90a
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
 CXX_STANDARD=17
 GRPC_SLOT="3"
 LLVM_SLOT="${PV%%.*}"
 PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_11" )
 
-inherit llvm-ebuilds
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
+CUDA_TARGETS_COMPAT=(
+	"auto"
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_61"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_87"
+	"sm_89"
+	"sm_90"
+	"sm_90a"
+)
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
 
+inherit llvm-ebuilds
 inherit flag-o-matic cmake-multilib libstdcxx-slot linux-info llvm.org llvm-utils python-single-r1
 inherit toolchain-funcs
 

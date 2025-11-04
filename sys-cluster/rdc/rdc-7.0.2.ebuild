@@ -3,15 +3,15 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 

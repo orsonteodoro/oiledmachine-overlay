@@ -3,16 +3,16 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-r1 rocm
 

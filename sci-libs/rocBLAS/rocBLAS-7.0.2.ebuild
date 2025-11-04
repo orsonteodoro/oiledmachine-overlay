@@ -28,64 +28,68 @@ EAPI=8
 #     raise child_exception_type(errno_num, err_msg, err_filename)
 # OSError: [Errno 8] Exec format error: '//usr/lib64/rocm/5.7/bin/hipcc.bat'
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx900
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx908_xnack_plus # with asan
-	gfx90a
-	gfx90a_xnack_plus # with asan
-	gfx942
-	gfx942_xnack_plus # with asan
-	gfx950
-	gfx950_xnack_plus # with asan
-	gfx1010
-	gfx1012
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1150
-	gfx1151
-	gfx1200
-	gfx1201
-)
-CPU_FLAGS_X86=(
-	cpu_flags_x86_f16c
-)
 CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=17
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
-DOCS_DEPEND="
-	media-gfx/graphviz
-"
-HIPBLASLT_GPUS=(
-	gfx908_xnack_plus
-	gfx908_xnack_minus
-	gfx90a_xnack_plus
-	gfx90a_xnack_minus
-	gfx942
-	gfx942_xnack_plus
-	gfx950
-	gfx950_xnack_plus
-	gfx1100
-	gfx1101
-	gfx1103
-	gfx1150
-	gfx1151
-	gfx1200
-	gfx1201
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
-CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx900"
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx908_xnack_plus" # with asan
+	"gfx90a"
+	"gfx90a_xnack_plus" # with asan
+	"gfx942"
+	"gfx942_xnack_plus" # with asan
+	"gfx950"
+	"gfx950_xnack_plus" # with asan
+	"gfx1010"
+	"gfx1012"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1150"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_f16c"
+)
+
+DOCS_DEPEND="
+	media-gfx/graphviz
+"
+
+HIPBLASLT_GPUS=(
+	"gfx908_xnack_plus"
+	"gfx908_xnack_minus"
+	"gfx90a_xnack_plus"
+	"gfx90a_xnack_minus"
+	"gfx942"
+	"gfx942_xnack_plus"
+	"gfx950"
+	"gfx950_xnack_plus"
+	"gfx1100"
+	"gfx1101"
+	"gfx1103"
+	"gfx1150"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake docs edo flag-o-matic multiprocessing libstdcxx-slot python-single-r1 rocm
 

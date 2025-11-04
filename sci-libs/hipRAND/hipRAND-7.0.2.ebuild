@@ -3,32 +3,33 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900_xnack_minus
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx942
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1200
-	gfx1201
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900_xnack_minus"
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx90a_xnack_minus"
+	"gfx90a_xnack_plus"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake libstdcxx-slot rocm
 

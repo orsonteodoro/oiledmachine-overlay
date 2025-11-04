@@ -3,24 +3,27 @@
 
 EAPI=8
 
+CXX_STANDARD="ignore"
+LIBCXX_SLOT_VERIFY=0
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 # See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-7.0.2/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
-	gfx908
-	gfx90a
-	gfx942
-	gfx950
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1200
-	gfx1201
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx950"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1200"
+	"gfx1201"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
-
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-slot rocm
 
@@ -187,7 +190,3 @@ RDEPEND="
 		)
 	)
 "
-
-pkg_setup() {
-	libstdcxx-slot_verify
-}

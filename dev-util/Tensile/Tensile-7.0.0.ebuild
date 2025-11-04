@@ -3,29 +3,6 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1034
-	gfx1035
-	gfx1100
-	gfx1101
-	gfx1102
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 CXX_STANDARD=17
 DISTUTILS_USE_PEP517="setuptools"
@@ -33,6 +10,30 @@ LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900"
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx90a_xnack_minus"
+	"gfx1010"
+	"gfx1011"
+	"gfx1012"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1034"
+	"gfx1035"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake distutils-r1 libstdcxx-slot prefix rocm toolchain-funcs
 

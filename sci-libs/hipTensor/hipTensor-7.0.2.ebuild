@@ -3,24 +3,25 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx908
-	gfx90a
-	gfx90a_xnack_plus # with asan
-	gfx942
-	gfx942_xnack_plus # with asan
-	gfx950
-	gfx950_xnack_plus # with asan
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx908"
+	"gfx90a"
+	"gfx90a_xnack_plus" # with asan
+	"gfx942"
+	"gfx942_xnack_plus" # with asan
+	"gfx950"
+	"gfx950_xnack_plus" # with asan
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake flag-o-matic libstdcxx-slot rocm
 

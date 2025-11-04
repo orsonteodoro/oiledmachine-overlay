@@ -4,42 +4,44 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+LLVM_SLOT=19
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/ROCm/rocDecode/blob/rocm-7.0.2/samples/videoDecodeRGB/CMakeLists.txt#L64
-	gfx908
-	gfx90a
-	gfx942
-	gfx950
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1202
-	gfx1201
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx950"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1202"
+	"gfx1201"
 )
+
 AMDGPU_TARGETS_UNTESTED=(
-#	gfx908
-#	gfx90a
-#x	gfx940
-#x	gfx941
-#	gfx942
-#	gfx1030
-	gfx1031
-	gfx1032
-	gfx1100
-#	gfx1101
-	gfx1102
+#	"gfx908"
+#	"gfx90a"
+#x	"gfx940"
+#x	"gfx941"
+#	"gfx942"
+#	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1100"
+#	"gfx1101"
+	"gfx1102"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
-
-CXX_STANDARD=17
-LLVM_SLOT=19
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 

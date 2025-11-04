@@ -3,42 +3,43 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx908_xnack_plus # with asan
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus # with or without asan
-	gfx942
-	gfx942_xnack_plus # with asan
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1200
-	gfx1201
-)
-CUDA_TARGETS_COMPAT=(
-	auto
-
-# Same as rocFFT
-	sm_60
-	sm_70
-	sm_75
-	compute_60
-	compute_70
-	compute_75
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx908_xnack_plus" # with asan
+	"gfx90a_xnack_minus"
+	"gfx90a_xnack_plus" # with or without asan
+	"gfx942"
+	"gfx942_xnack_plus" # with asan
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+CUDA_TARGETS_COMPAT=(
+	"auto"
+
+# Same as rocFFT
+	"sm_60"
+	"sm_70"
+	"sm_75"
+	"compute_60"
+	"compute_70"
+	"compute_75"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake libstdcxx-slot rocm
 

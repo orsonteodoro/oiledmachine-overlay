@@ -232,7 +232,7 @@ eerror "source /etc/profile"
 eerror
 }
 
-_GLIBCXX_VER_VERIFIED=0
+_LIBSTDCXX_SLOT_VERIFIED=0
 # @FUNCTION: libstdcxx-slot_verify
 # @DESCRIPTION:
 # Verify libstdc++ version before compiling
@@ -256,7 +256,7 @@ libstdcxx-slot_verify() {
 			fi
 		fi
 	done
-	export _GLIBCXX_VER_VERIFIED=1
+	export _LIBSTDCXX_SLOT_VERIFIED=1
 }
 
 # @FUNCTION: libstdcxx-slot_pkg_postinst
@@ -265,7 +265,7 @@ libstdcxx-slot_verify() {
 libstdcxx-slot_pkg_postinst() {
 	if [[ "${LIBSTDCXX_SLOT_VERIFY:-1}" == "0" ]] ; then
 		:
-	elif (( ${_GLIBCXX_VER_VERIFIED} != 1 )) ; then
+	elif (( ${_LIBSTDCXX_SLOT_VERIFIED} != 1 )) ; then
 eerror "QA:  You must call libstdcxx-slot_verify in pkg_setup or set LIBSTDCXX_SLOT_VERIFY=0."
 		die
 	fi

@@ -3,42 +3,46 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+FIN_COMMIT="77669a7a1158e336ec831c19525a66db3d2d37f1"
+LLVM_SLOT=19
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/ROCm/MIOpen/blob/rocm-7.0.2/test/CMakeLists.txt#L121
-	gfx803
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx942
-	gfx950
-	gfx1030
-	gfx1031
-	gfx1100
-	gfx1102
-	gfx1200
-	gfx1201
+	"gfx803"
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx950"
+	"gfx1030"
+	"gfx1031"
+	"gfx1100"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
 )
+
 AMDGPU_UNTESTED_TARGETS=(
-	gfx803
+	"gfx803"
 )
+
 MIOPENKERNELS_TARGETS_COMPAT=(
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
 
-CXX_STANDARD=17
-FIN_COMMIT="77669a7a1158e336ec831c19525a66db3d2d37f1"
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-LLVM_SLOT=19
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"

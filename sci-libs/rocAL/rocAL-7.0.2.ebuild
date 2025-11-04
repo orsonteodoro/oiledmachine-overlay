@@ -8,25 +8,6 @@ EAPI=8
 # TODO:
 # ffmpeg multislot configure/rpath
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx908
-	gfx90a
-	gfx942
-	gfx950
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1200
-	gfx1201
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 BOOST_PV="1.72.0"
 CXX_STANDARD=17
 LIBJPEG_TURBO_PV="3.0.2"
@@ -36,6 +17,26 @@ RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for O
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
 ROCM_SLOT="6.2"
 ROCM_VERSION="6.2.4"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx950"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
 

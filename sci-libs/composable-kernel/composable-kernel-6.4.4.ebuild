@@ -5,53 +5,56 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
-AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/composable_kernel/blob/rocm-6.4.4/include/ck/ck.hpp#L48
-	gfx803
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx940
-	gfx941
-	gfx942
-	gfx950
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
-	gfx1150
-	gfx1151
-	gfx1152
-	gfx1200
-	gfx1201
-)
-AMDGPU_UNTESTED_TARGETS=(
-	gfx803
-	gfx900
-	gfx906
-	gfx1100
-	gfx1102
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
-
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
+
+AMDGPU_TARGETS_COMPAT=(
+# https://github.com/ROCm/composable_kernel/blob/rocm-6.4.4/include/ck/ck.hpp#L48
+	"gfx803"
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx950"
+	"gfx1010"
+	"gfx1011"
+	"gfx1012"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1034"
+	"gfx1035"
+	"gfx1036"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1103"
+	"gfx1150"
+	"gfx1151"
+	"gfx1152"
+	"gfx1200"
+	"gfx1201"
+)
+
+AMDGPU_UNTESTED_TARGETS=(
+	"gfx803"
+	"gfx900"
+	"gfx906"
+	"gfx1100"
+	"gfx1102"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 
 inherit check-compiler-switch cmake dhms flag-o-matic libstdcxx-slot rocm
 

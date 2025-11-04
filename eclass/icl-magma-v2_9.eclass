@@ -7,53 +7,58 @@ EAPI=8
 
 MY_PV=$(ver_cut 1-3)
 
+FORTRAN_STANDARD="77 90"
+GPU_FRAMEWORKS="" # Global var
+PYTHON_COMPAT=( "python3_"{11..12} )
+
 AMDGPU_TARGETS_COMPAT=(
-	gfx700
-	gfx701
-	gfx702
-	gfx703
-	gfx704
-	gfx705
-	gfx801
-	gfx802
-	gfx803
-	gfx805
-	gfx810
-	gfx900
-	gfx902
-	gfx904
-	gfx906
-	gfx908
-	gfx909
-	gfx90c
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
+	"gfx700"
+	"gfx701"
+	"gfx702"
+	"gfx703"
+	"gfx704"
+	"gfx705"
+	"gfx801"
+	"gfx802"
+	"gfx803"
+	"gfx805"
+	"gfx810"
+	"gfx900"
+	"gfx902"
+	"gfx904"
+	"gfx906"
+	"gfx908"
+	"gfx909"
+	"gfx90c"
+	"gfx1010"
+	"gfx1011"
+	"gfx1012"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1033"
 )
+
 CUDA_TARGETS_COMPAT=(
-#	sm_20 # Dropped.  SDK version not in distro.  Fork ebuild for support.
-#	sm_30 # Dropped.  SDK version not in distro.  Fork ebuild for support.
-	sm_35
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_80
-	sm_86
-	sm_87
-	sm_89
-	sm_90
-	sm_90a
+#	"sm_20" # Dropped.  SDK version not in distro.  Fork ebuild for support.
+#	"sm_30" # Dropped.  SDK version not in distro.  Fork ebuild for support.
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_61"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_87"
+	"sm_89"
+	"sm_90"
+	"sm_90a"
 )
 
 inherit libcxx-compat
@@ -65,9 +70,6 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
-
-FORTRAN_STANDARD="77 90"
-PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit check-compiler-switch cmake flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
@@ -101,7 +103,6 @@ if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	"
 fi
 
-GPU_FRAMEWORKS=""
 if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 	CUDA_TOOLKIT_11_8="
 		(
@@ -315,7 +316,6 @@ if [[ -n "${GPU_FRAMEWORKS}" ]] ; then
 		)
 	"
 fi
-
 
 REQUIRED_USE+="
 	ilp64? (

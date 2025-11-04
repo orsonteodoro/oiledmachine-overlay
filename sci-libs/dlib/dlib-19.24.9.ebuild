@@ -12,6 +12,7 @@ DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_sse2"

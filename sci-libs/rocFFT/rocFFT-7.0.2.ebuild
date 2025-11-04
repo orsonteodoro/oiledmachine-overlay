@@ -3,53 +3,56 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900
-	gfx906
-	gfx908
-	gfx908_xnack_plus # with asan
-	gfx90a
-	gfx90a_xnack_plus # with asan
-	gfx942
-	gfx942_xnack_plus # with asan
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1200
-	gfx1201
-)
-AMDGPU_TARGETS_AOT=(
-	gfx906
-	gfx908
-	gfx90a
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-)
-CUDA_TARGETS_COMPAT=(
-# Likely arbitrary chosen set, not same as upstream, to unbreak selection from ancestor package
-	sm_60
-	sm_70
-	sm_75
-	compute_60
-	compute_70
-	compute_75
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CHECKREQS_DISK_BUILD="7G"
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx908_xnack_plus" # with asan
+	"gfx90a"
+	"gfx90a_xnack_plus" # with asan
+	"gfx942"
+	"gfx942_xnack_plus" # with asan
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+
+AMDGPU_TARGETS_AOT=(
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+)
+
+CUDA_TARGETS_COMPAT=(
+# Likely arbitrary chosen set, not same as upstream, to unbreak selection from ancestor package
+	"sm_60"
+	"sm_70"
+	"sm_75"
+	"compute_60"
+	"compute_70"
+	"compute_75"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake check-reqs edo flag-o-matic libstdcxx-slot multiprocessing python-r1 rocm
 

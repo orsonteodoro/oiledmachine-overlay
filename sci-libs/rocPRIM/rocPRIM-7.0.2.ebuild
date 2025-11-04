@@ -3,34 +3,35 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+LLVM_SLOT=19
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900_xnack_minus
-	gfx906_xnack_minus
-	gfx908_xnack_minus
-	gfx908_xnack_plus # with asan
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus # with or without asan
-	gfx942
-	gfx942_xnack_plus # with_asan
-	gfx950
-	gfx950_xnack_plus # with_asan
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1200
-	gfx1201
+	"gfx803"
+	"gfx900_xnack_minus"
+	"gfx906_xnack_minus"
+	"gfx908_xnack_minus"
+	"gfx908_xnack_plus" # with asan
+	"gfx90a_xnack_minus"
+	"gfx90a_xnack_plus" # with or without asan
+	"gfx942"
+	"gfx942_xnack_plus" # with_asan
+	"gfx950"
+	"gfx950_xnack_plus" # with_asan
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
-
-CXX_STANDARD=17
-LLVM_SLOT=19
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 

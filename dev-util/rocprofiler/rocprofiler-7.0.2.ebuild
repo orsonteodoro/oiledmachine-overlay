@@ -4,51 +4,53 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Debug"
+CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=17
+LLVM_SLOT=19
+PYTHON_COMPAT=( "python3_12" )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 AMDGPU_TARGETS_COMPAT=(
 # From README.md
-	gfx803
+	"gfx803"
 # From build.sh
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx940
-	gfx941
-	gfx942
-	gfx1030
-	gfx1031
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1150
-	gfx1151
-	gfx1200
-	gfx1201
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx1030"
+	"gfx1031"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1150"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
 )
+
 AMDGPU_UNTESTED_TARGETS=(
-	gfx803
-	gfx940
-	gfx941
-	gfx942
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1031
-	gfx1032
-	gfx1101
-	gfx1102
+	"gfx803"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx1010"
+	"gfx1011"
+	"gfx1012"
+	"gfx1031"
+	"gfx1032"
+	"gfx1101"
+	"gfx1102"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
-
-CXX_STANDARD=17
-CMAKE_BUILD_TYPE="Debug"
-CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=19
-PYTHON_COMPAT=( "python3_12" )
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-any-r1 rocm
 

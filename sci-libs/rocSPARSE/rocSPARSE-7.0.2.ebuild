@@ -12,38 +12,39 @@ EAPI=8
 #
 #  is not able to compile a simple test program.
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900
-	gfx900_xnack_minus
-	gfx906
-	gfx906_xnack_minus
-	gfx908
-	gfx908_xnack_minus
-	gfx908_xnack_plus # with asan build
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus # with or without asan build
-	gfx942
-	gfx942_xnack_plus # with asan build
-	gfx950
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1120
-	gfx1121
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900"
+	"gfx900_xnack_minus"
+	"gfx906"
+	"gfx906_xnack_minus"
+	"gfx908"
+	"gfx908_xnack_minus"
+	"gfx908_xnack_plus" # with asan build
+	"gfx90a_xnack_minus"
+	"gfx90a_xnack_plus" # with or without asan build
+	"gfx942"
+	"gfx942_xnack_plus" # with asan build
+	"gfx950"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1120"
+	"gfx1121"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit cmake edo flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs rocm
 

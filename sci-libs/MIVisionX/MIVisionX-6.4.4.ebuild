@@ -5,32 +5,33 @@ EAPI=8
 
 # TODO:  Review/add protobuf src_configure/path changes
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1200
-	gfx1201
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
-
 BOOST_PV="1.72.0"
 CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19
 NNEF_TOOLS_COMMIT="c166264b7cadb18f62a5711edf703e6029ad0212" # Same as nnef-v1.0.0 tag
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for 00BR
-RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm toolchain-funcs
 

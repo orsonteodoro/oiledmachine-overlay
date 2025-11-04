@@ -3,44 +3,46 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx940
-	gfx941
-	gfx942
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1151
-	gfx1200
-	gfx1201
-)
-CUDA_TARGETS_COMPAT=(
-# Based on 5.6.0
-	sm_53
-	sm_75
-	sm_80
-	sm_86
-	compute_53
-	compute_75
-	compute_80
-	compute_86
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
-
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+
+CUDA_TARGETS_COMPAT=(
+# Based on 5.6.0
+	"sm_53"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"compute_53"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
 
 inherit cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
 

@@ -3,26 +3,6 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx908_xnack_minus
-	gfx908_xnack_plus # with or without asan
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus # with or without asan
-	gfx942
-	gfx942_xnack_plus # with asan
-	gfx1100
-	gfx1101
-	gfx1103
-	gfx1150
-	gfx1151
-	gfx1200
-	gfx1201
-)
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
-
 CXX_STANDARD=17
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
@@ -30,9 +10,30 @@ LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
+AMDGPU_TARGETS_COMPAT=(
+	"gfx908_xnack_minus"
+	"gfx908_xnack_plus" # with or without asan
+	"gfx90a_xnack_minus"
+	"gfx90a_xnack_plus" # with or without asan
+	"gfx942"
+	"gfx942_xnack_plus" # with asan
+	"gfx1100"
+	"gfx1101"
+	"gfx1103"
+	"gfx1150"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
+
 inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/hipBLASLt/"
 	inherit git-r3
 else

@@ -3,17 +3,88 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="RelWithDebInfo"
+CXX_STANDARD=17
+GRPC_SLOT="3"
+LLVM_SLOT=19
+PROTOBUF_SLOT="3"
+PYTHON_COMPAT=( "python3_12" )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_USE_LLVM_ROC=1
+
+# Cuda compatibility:
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/clang/include/clang/Basic/Cuda.h
+# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L105
+# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L100
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx700"
+	"gfx701"
+	"gfx801"
+	"gfx803"
+	"gfx900"
+	"gfx902"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx90c"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx1010"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1033"
+	"gfx1034"
+	"gfx1035"
+	"gfx1036"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1103"
+	"gfx1150"
+	"gfx1151"
+	"gfx1152"
+	"gfx1153"
+	"gfx1200"
+	"gfx1201"
+	"gfx9-generic"
+	"gfx9-4-generic"
+	"gfx10-1-generic"
+	"gfx10-3-generic"
+	"gfx11-generic"
+	"gfx12-generic"
+)
+CUDA_TARGETS_COMPAT=(
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_61"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_89"
+	"sm_90"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
 LLVM_TARGETS_CPU_COMPAT=(
-	llvm_targets_X86
+	"llvm_targets_X86"
 )
 LLVM_TARGETS_GPU_COMPAT=(
-	llvm_targets_AMDGPU
-	llvm_targets_NVPTX
+	"llvm_targets_AMDGPU"
+	"llvm_targets_NVPTX"
 )
 
 IUSE+="
@@ -32,77 +103,6 @@ _llvm_roc_libomp_globals() {
 }
 _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
-
-# Cuda compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L105
-# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L100
-
-AMDGPU_TARGETS_COMPAT=(
-	gfx700
-	gfx701
-	gfx801
-	gfx803
-	gfx900
-	gfx902
-	gfx906
-	gfx908
-	gfx90a
-	gfx90c
-	gfx940
-	gfx941
-	gfx942
-	gfx1010
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
-	gfx1150
-	gfx1151
-	gfx1152
-	gfx1153
-	gfx1200
-	gfx1201
-	gfx9-generic
-	gfx9-4-generic
-	gfx10-1-generic
-	gfx10-3-generic
-	gfx11-generic
-	gfx12-generic
-)
-CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_80
-	sm_86
-	sm_89
-	sm_90
-)
-
-CMAKE_BUILD_TYPE="RelWithDebInfo"
-CXX_STANDARD=17
-GRPC_SLOT="3"
-LLVM_SLOT=19
-PROTOBUF_SLOT="3"
-PYTHON_COMPAT=( "python3_12" )
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_USE_LLVM_ROC=1
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
 
