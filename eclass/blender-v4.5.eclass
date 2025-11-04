@@ -88,8 +88,13 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
+LLVM_COMPAT_CUDA=(
+	{15..19}
+)
+
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LLVM_COMPAT_CUDA[@]}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 	19 # For ROCm 6.4
 )
@@ -457,6 +462,9 @@ REQUIRED_USE+="
 	cuda? (
 		^^ (
 			nvcc
+		)
+		^^ (
+			${LLVM_COMPAT_CUDA[@]/#/llvm_slot_}
 		)
 		cycles
 		|| (
