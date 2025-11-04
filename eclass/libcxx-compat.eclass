@@ -141,7 +141,7 @@ LIBCXX_COMPAT_CXX17_CUDA=(
 # Example:
 #
 # LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CUDA_11_8[@]/llvm_slot_}
+#     ${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_CXX17_ROCM_6_4=(
@@ -152,6 +152,7 @@ LIBCXX_COMPAT_CXX17_ROCM_7_0=(
         "llvm_slot_19"
 )
 
+# For secure releases only
 LIBCXX_COMPAT_CXX17_ROCM=(
         "llvm_slot_19"
 )

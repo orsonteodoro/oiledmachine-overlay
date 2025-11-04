@@ -187,6 +187,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
@@ -2896,6 +2897,9 @@ REQUIRED_USE="
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
+		)
 	)
 	flash? (
 		|| (
@@ -2913,6 +2917,9 @@ REQUIRED_USE="
 		)
 		^^ (
 			${ROCM_IUSE[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
 	)
 	sandbox? (
