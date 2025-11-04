@@ -277,7 +277,7 @@ hack.
 [4] The LLVM is considered incomplete for the C++ standard library particuarly
 for libc++, so LLVM is not considered LTS but rolling on this overlay.  The
 LLVM slot minimum for C++ 17 is based on the earliest maximum coverage for the
-C++ standard library for libc++ on this overlay which currently is set at at
+C++ standard library for libc++ on this overlay which currently is set at
 LLVM 20.
 
 Consider the following release cycles when choosing a mutually exclusive
