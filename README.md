@@ -237,17 +237,19 @@ changes to CC/CXX using gcc override should be removed for ebuild packages
 that received libstdcxx-slot treatment to avoid inconsistency.  Changes to
 CC/CXX using clang can still remain.
 
-| USE flag       | LTS [1] | Indirect libstdc++ compatibility                                                                                              | Default C++     |
-|----------------|---------|-------------------------------------------------------------------------------------------------------------------------------|-----------------|
-| gcc_slot_11_5  | Yes     | U22 (EOL 2027), CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                               | C++17           |
-| gcc_slot_12_5  | No      | D12 (EOL 2028), F37, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                      | C++17           |
-| gcc_slot_13_4  | Yes     | U24 (EOL 2036), CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                           | C++17           |
-| gcc_slot_14_3  | No      | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                     | C++17           |
+| USE flag         | LTS [1] | Indirect libstdc++ compatibility                                                                                            | Default C++     |
+|------------------|---------|-----------------------------------------------------------------------------------------------------------------------------|-----------------|
+| gcc_slot_11_5    | Yes     | U22 (EOL 2027), CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                             | C++17           |
+| gcc_slot_12_5    | No      | D12 (EOL 2028), F37, CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                    | C++17           |
+| gcc_slot_13_4    | Yes     | U24 (EOL 2036), CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                         | C++17           |
+| gcc_slot_14_3    | No      | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                   | C++17           |
 
-| USE flag [3]   | LTS [1] | Indirect libc++ compatibility                                                                                                 | Default C++ [2] |
-|----------------|---------|-------------------------------------------------------------------------------------------------------------------------------|-----------------|
-| llvm_slot_18   | Yes     | U24                                                                                                                           | C++17           |
-| llvm_slot_19   | Yes     | D13                                                                                                                           | C++17           |
+| USE flag [3] [4] | Indirect Clang/LLVM compatibility                                                                                                     | Default C++ [2] |
+|------------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------|
+| llvm_slot_18     | U24, CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                                                  | C++17           |
+| llvm_slot_19     | D13, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                                                         | C++17           |
+| llvm_slot_20     |                                                                                                                                       | C++17           |
+| llvm_slot_21     |                                                                                                                                       | C++17           |
 
 EOL dates should be taken with a gain of salt because this distro only respects
 the latest release of the other distros.  The main distro repo will delete or
@@ -271,6 +273,9 @@ necessary for QA testing for both the Clang compiler and downstream projects but
 denied by the distro.  The distro's manifest update ban for older Python 3.10
 ebuilds is bad because it goes against the spirit of the GPL with the right to
 hack.
+
+[4] The LLVM is considered incomplete for the C++ standard library particuarly
+for libc++, so LLVM is not considered LTS but rolling on this overlay.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
