@@ -30,10 +30,37 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
-CUDA_TARGETS_COMPAT=(
-	sm_30
-	sm_60
+FFMPEG_REVISION="${MY_PV#*_p}"
+FFMPEG_SUBSLOT="56.58.58"
+N_SAMPLES=1
+PYTHON_COMPAT=( "python3_"{10..12} )
+SCM=""
+TRAIN_SANDBOX_EXCEPTION_VAAPI=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+WANT_LTO=0 # Global variable not const
+
+_TRAINERS=(
+	"ffmpeg_trainers_audio_cbr"
+	"ffmpeg_trainers_audio_lossless"
+	"ffmpeg_trainers_audio_vbr"
+	"ffmpeg_trainers_av_streaming"
+	"ffmpeg_trainers_video_2_pass_constrained_quality"
+	"ffmpeg_trainers_video_2_pass_constrained_quality_quick"
+	"ffmpeg_trainers_video_constrained_quality"
+	"ffmpeg_trainers_video_constrained_quality_quick"
+	"ffmpeg_trainers_video_lossless"
+	"ffmpeg_trainers_video_lossless_quick"
 )
+
+
+CUDA_TARGETS_COMPAT=(
+	"sm_30"
+	"sm_60"
+)
+
 FFTOOLS=(
 	"aviocat"
 	"cws2fws"
@@ -48,159 +75,143 @@ FFTOOLS=(
 	"sidxindex"
 	"trasher"
 )
+
 # Same as FFMPEG_FLAG_MAP but for encoders, i.e. they do something only with USE=encode.
 FFMPEG_ENCODER_FLAG_MAP=(
-	amf
-	amrenc:libvo-amrwbenc
-	kvazaar:libkvazaar
-	libaom
-	mp3:libmp3lame
-	openh264:libopenh264
-	rav1e:librav1e
-	snappy:libsnappy
-	svt-av1:libsvtav1
-	theora:libtheora
-	twolame:libtwolame
-	webp:libwebp
-	x264:libx264
-	x265:libx265
-	xvid:libxvid
+	"amf"
+	"amrenc:libvo-amrwbenc"
+	"kvazaar:libkvazaar"
+	"libaom"
+	"mp3:libmp3lame"
+	"openh264:libopenh264"
+	"rav1e:librav1e"
+	"snappy:libsnappy"
+	"svt-av1:libsvtav1"
+	"theora:libtheora"
+	"twolame:libtwolame"
+	"webp:libwebp"
+	"x264:libx264"
+	"x265:libx265"
+	"xvid:libxvid"
 )
+
 # Options to use as use_enable in the foo[:bar] form.
 # This will feed configure with $(use_enable foo bar)
 # or $(use_enable foo foo) if no :bar is set.
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
-	+bzip2:bzlib
-	cpudetection:runtime-cpudetect
-	debug
-	gcrypt
-	+gnutls
-	gmp
-	hardcoded-tables
-	+iconv
-	libxml2
-	lzma
-	+network
-	opencl
-	openssl
-	+postproc
-	rist:librist
-	samba:libsmbclient
-	sdl:ffplay
-	sdl:sdl2
-	vaapi
-	vdpau
-	vulkan
-	X:xlib
-	X:libxcb
-	X:libxcb-shm
-	X:libxcb-xfixes
-	+zlib
+	"+bzip2:bzlib"
+	"cpudetection:runtime-cpudetect"
+	"debug"
+	"gcrypt"
+	"+gnutls"
+	"gmp"
+	"hardcoded-tables"
+	"+iconv"
+	"libxml2"
+	"lzma"
+	"+network"
+	"opencl"
+	"openssl"
+	"+postproc"
+	"rist:librist"
+	"samba:libsmbclient"
+	"sdl:ffplay"
+	"sdl:sdl2"
+	"vaapi"
+	"vdpau"
+	"vulkan"
+	"X:xlib"
+	"X:libxcb"
+	"X:libxcb-shm"
+	"X:libxcb-xfixes"
+	"+zlib"
 
 	# libavdevice options
-	cdio:libcdio
-	iec61883:libiec61883
-	ieee1394:libdc1394
-	libcaca
-	openal
-	opengl
+	"cdio:libcdio"
+	"iec61883:libiec61883"
+	"ieee1394:libdc1394"
+	"libcaca"
+	"openal"
+	"opengl"
 
 	# Indevs
-	libv4l:libv4l2
-	pulseaudio:libpulse
-	libdrm
-	jack:libjack
+	"libv4l:libv4l2"
+	"pulseaudio:libpulse"
+	"libdrm"
+	"jack:libjack"
 
 	# Decoders
-	amr:libopencore-amrwb
-	amr:libopencore-amrnb
-	bluray:libbluray
-	codec2:libcodec2
-	+dav1d:libdav1d
-	fdk:libfdk-aac
-	jpeg2k:libopenjpeg
-	gme:libgme
-	gsm:libgsm
-	libaribb24
-	mmal
-	modplug:libmodplug
-	opus:libopus
-	qsv:libmfx
-	libilbc
-	librtmp
-	ssh:libssh
-	speex:libspeex
-	srt:libsrt
-	svg:librsvg
-	nvdec
-	nvenc
-	vorbis:libvorbis
-	vpx:libvpx
-	zvbi:libzvbi
+	"amr:libopencore-amrwb"
+	"amr:libopencore-amrnb"
+	"bluray:libbluray"
+	"codec2:libcodec2"
+	"+dav1d:libdav1d"
+	"fdk:libfdk-aac"
+	"jpeg2k:libopenjpeg"
+	"gme:libgme"
+	"gsm:libgsm"
+	"libaribb24"
+	"mmal"
+	"modplug:libmodplug"
+	"opus:libopus"
+	"qsv:libmfx"
+	"libilbc"
+	"librtmp"
+	"ssh:libssh"
+	"speex:libspeex"
+	"srt:libsrt"
+	"svg:librsvg"
+	"nvdec"
+	"nvenc"
+	"vorbis:libvorbis"
+	"vpx:libvpx"
+	"zvbi:libzvbi"
 
 	# libavfilter options
-	appkit
-	bs2b:libbs2b
-	chromaprint
-	cuda-llvm
-	cuda-nvcc
-	flite:libflite
-	frei0r
-	vmaf:libvmaf
-	fribidi:libfribidi
-	fontconfig
-	glslang:libglslang
-	ladspa
-	libass
-	libtesseract
-	lv2
-	truetype:libfreetype
-	vidstab:libvidstab
-	rubberband:librubberband
-	zeromq:libzmq
-	zimg:libzimg
+	"appkit"
+	"bs2b:libbs2b"
+	"chromaprint"
+	"cuda-llvm"
+	"cuda-nvcc"
+	"flite:libflite"
+	"frei0r"
+	"vmaf:libvmaf"
+	"fribidi:libfribidi"
+	"fontconfig"
+	"glslang:libglslang"
+	"ladspa"
+	"libass"
+	"libtesseract"
+	"lv2"
+	"truetype:libfreetype"
+	"vidstab:libvidstab"
+	"rubberband:librubberband"
+	"zeromq:libzmq"
+	"zimg:libzimg"
 
 	# libswresample options
-	libsoxr
+	"libsoxr"
 
 	# Threads
 	# we only support pthread for now but FFmpeg supports more.
-	+threads:pthreads
+	"+threads:pthreads"
 )
-FFMPEG_REVISION="${MY_PV#*_p}"
-FFMPEG_SUBSLOT="56.58.58"
+
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libavutil/avconfig.h"
 )
-N_SAMPLES=1
+
 PATENT_STATUS=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{10..12} )
-SCM=""
-TRAINERS=(
-	"ffmpeg_trainers_audio_cbr"
-	"ffmpeg_trainers_audio_lossless"
-	"ffmpeg_trainers_audio_vbr"
-	"ffmpeg_trainers_av_streaming"
-	"ffmpeg_trainers_video_2_pass_constrained_quality"
-	"ffmpeg_trainers_video_2_pass_constrained_quality_quick"
-	"ffmpeg_trainers_video_constrained_quality"
-	"ffmpeg_trainers_video_constrained_quality_quick"
-	"ffmpeg_trainers_video_lossless"
-	"ffmpeg_trainers_video_lossless_quick"
-)
-TRAIN_SANDBOX_EXCEPTION_VAAPI=1
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=1
-UOPTS_SUPPORT_TPGO=1
+
 USE_LICENSES=(
 	"gpl"
 	"nonfree"
 	"version3"
 )
+
 USE_GPL_ONLY=(
 	"cdio"
 	"frei0r"
@@ -210,13 +221,16 @@ USE_GPL_ONLY=(
 	"x265"
 	"xvid"
 )
+
 USE_GPL3_ONLY=(
 	"samba"
 )
+
 USE_NONFREE_ONLY="
 	"cuda-nvcc"
 	"fdk"
 "
+
 USE_VERSION3_ONLY=(
 	"amr"
 	"gmp"
@@ -224,19 +238,19 @@ USE_VERSION3_ONLY=(
 	"liblensfun"
 	"opencl" # opencl-icd-loader is Apache-2.0 but the docs say it needs it.
 )
-WANT_LTO=0 # Global variable not const
 
 # Strings for CPU features in the useflag[:configure_option] form
 # if :configure_option isn't set, it will use 'useflag' as configure option
 ARM_CPU_FEATURES=(
-	cpu_flags_arm_thumb:armv5te
-	cpu_flags_arm_v6:armv6
-	cpu_flags_arm_thumb2:armv6t2
-	cpu_flags_arm_neon:neon
-	cpu_flags_arm_vfp:vfp
-	cpu_flags_arm_vfpv3:vfpv3
-	cpu_flags_arm_v8:armv8
+	"cpu_flags_arm_thumb:armv5te"
+	"cpu_flags_arm_v6:armv6"
+	"cpu_flags_arm_thumb2:armv6t2"
+	"cpu_flags_arm_neon:neon"
+	"cpu_flags_arm_vfp:vfp"
+	"cpu_flags_arm_vfpv3:vfpv3"
+	"cpu_flags_arm_v8:armv8"
 )
+
 ARM_CPU_REQUIRED_USE="
 	arm64? (
 		cpu_flags_arm_v8
@@ -263,16 +277,19 @@ ARM_CPU_REQUIRED_USE="
 		cpu_flags_arm_vfp
 	)
 "
+
 MIPS_CPU_FEATURES=(
-	mipsdspr1:mipsdsp
-	mipsdspr2
-	mipsfpu
+	"mipsdspr1:mipsdsp"
+	"mipsdspr2"
+	"mipsfpu"
 )
+
 PPC_CPU_FEATURES=(
-	cpu_flags_ppc_altivec:altivec
-	cpu_flags_ppc_vsx:vsx
-	cpu_flags_ppc_vsx2:power8
+	"cpu_flags_ppc_altivec:altivec"
+	"cpu_flags_ppc_vsx:vsx"
+	"cpu_flags_ppc_vsx2:power8"
 )
+
 PPC_CPU_REQUIRED_USE="
 	cpu_flags_ppc_vsx? (
 		cpu_flags_ppc_altivec
@@ -281,28 +298,31 @@ PPC_CPU_REQUIRED_USE="
 		cpu_flags_ppc_vsx
 	)
 "
+
 X86_CPU_FEATURES_RAW=(
-	3dnow:amd3dnow
-	3dnowext:amd3dnowext
-	aes:aesni
-	avx:avx
-	avx2:avx2
-	avx512bw:avx512
-	fma3:fma3
-	fma4:fma4
-	mmx:mmx
-	mmxext:mmxext
-	sse:sse
-	sse2:sse2
-	sse3:sse3
-	ssse3:ssse3
-	sse4_1:sse4
-	sse4_2:sse42
-	xop:xop
+	"3dnow:amd3dnow"
+	"3dnowext:amd3dnowext"
+	"aes:aesni"
+	"avx:avx"
+	"avx2:avx2"
+	"avx512bw:avx512"
+	"fma3:fma3"
+	"fma4:fma4"
+	"mmx:mmx"
+	"mmxext:mmxext"
+	"sse:sse"
+	"sse2:sse2"
+	"sse3:sse3"
+	"ssse3:ssse3"
+	"sse4_1:sse4"
+	"sse4_2:sse42"
+	"xop:xop"
 )
+
 X86_CPU_FEATURES=(
 	${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_}
 )
+
 X86_CPU_REQUIRED_USE="
 	cpu_flags_x86_mmxext?  (
 		cpu_flags_x86_mmx
@@ -353,12 +373,14 @@ X86_CPU_REQUIRED_USE="
 		cpu_flags_x86_avx2
 	)
 "
+
 CPU_FEATURES_MAP=(
 	${ARM_CPU_FEATURES[@]}
 	${MIPS_CPU_FEATURES[@]}
 	${PPC_CPU_FEATURES[@]}
 	${X86_CPU_FEATURES[@]}
 )
+
 CPU_REQUIRED_USE="
 	${ARM_CPU_REQUIRED_USE}
 	${PPC_CPU_REQUIRED_USE}
@@ -468,13 +490,13 @@ LICENSE="
 # The extra licenses are for static-libs.
 
 IUSE+="
+${_TRAINERS[@]}
 ${CPU_FEATURES_MAP[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
-${TRAINERS[@]}
 ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio sr static-libs tensorflow test v4l
@@ -516,6 +538,7 @@ gen_required_use_gpl_only() {
 		"
 	done
 }
+
 gen_required_use_gpl3_only() {
 	local u
 	for u in ${USE_GPL3_ONLY[@]} ; do
@@ -527,6 +550,7 @@ gen_required_use_gpl3_only() {
 		"
 	done
 }
+
 gen_required_use_nonfree_only() {
 	local u
 	for u in ${USE_NONFREE_ONLY[@]} ; do
@@ -537,6 +561,7 @@ gen_required_use_nonfree_only() {
 		"
 	done
 }
+
 gen_required_use_version3() {
 	local u
 	for u in ${USE_VERSION3_ONLY[@]} ; do
@@ -676,16 +701,7 @@ REQUIRED_USE+="
 	)
 	pgo? (
 		|| (
-			ffmpeg_trainers_audio_cbr
-			ffmpeg_trainers_audio_lossless
-			ffmpeg_trainers_audio_vbr
-			ffmpeg_trainers_av_streaming
-			ffmpeg_trainers_video_2_pass_constrained_quality
-			ffmpeg_trainers_video_2_pass_constrained_quality_quick
-			ffmpeg_trainers_video_constrained_quality
-			ffmpeg_trainers_video_constrained_quality_quick
-			ffmpeg_trainers_video_lossless
-			ffmpeg_trainers_video_lossless_quick
+			${_TRAINERS[@]}
 		)
 	)
 	test? (

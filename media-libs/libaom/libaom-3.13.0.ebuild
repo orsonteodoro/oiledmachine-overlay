@@ -12,17 +12,6 @@ CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
 CXX_STANDARD=17
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_SUPPORT_EBOLT=0
@@ -34,6 +23,59 @@ UOPTS_BOLT_INST_ARGS=(
 	"libaom_pc.so:--skip-funcs=.text/1"
 	"libaom.so.3.11.0:--skip-funcs=.text/1"
 	"libaom_av1_rc.so:--skip-funcs=.text/1"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_crc32"
+	"cpu_flags_arm_dotprod"
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_neon"
+	"cpu_flags_arm_sve"
+	"cpu_flags_arm_sve2"
+)
+
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_vsx"
+)
+
+CPU_FLAGS_RISCV=(
+	"cpu_flags_riscv_rvv"
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_mmx"
+	"cpu_flags_x86_sse"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse3"
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_sse4_1"
+	"cpu_flags_x86_sse4_2"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512cd"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vl"
+)
+
+_TRAINERS=(
+	"libaom_trainers_2_pass_constrained_quality"
+	"libaom_trainers_2_pass_constrained_quality_quick"
+	"libaom_trainers_constrained_quality"
+	"libaom_trainers_constrained_quality_quick"
+	"libaom_trainers_lossless"
+	"libaom_trainers_lossless_quick"
 )
 
 inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
@@ -76,50 +118,12 @@ RESTRICT="
 	strip
 "
 SLOT="0/3" # current - age
-CPU_FLAGS_ARM=(
-	"cpu_flags_arm_crc32"
-	"cpu_flags_arm_dotprod"
-	"cpu_flags_arm_i8mm"
-	"cpu_flags_arm_neon"
-	"cpu_flags_arm_sve"
-	"cpu_flags_arm_sve2"
-)
-CPU_FLAGS_PPC=(
-	"cpu_flags_ppc_vsx"
-)
-CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
-)
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_mmx"
-	"cpu_flags_x86_sse"
-	"cpu_flags_x86_sse2"
-	"cpu_flags_x86_sse3"
-	"cpu_flags_x86_ssse3"
-	"cpu_flags_x86_sse4_1"
-	"cpu_flags_x86_sse4_2"
-	"cpu_flags_x86_avx"
-	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_avx512bw"
-	"cpu_flags_x86_avx512cd"
-	"cpu_flags_x86_avx512dq"
-	"cpu_flags_x86_avx512f"
-	"cpu_flags_x86_avx512vl"
-)
-PGO_TRAINERS="
-	libaom_trainers_2_pass_constrained_quality
-	libaom_trainers_2_pass_constrained_quality_quick
-	libaom_trainers_constrained_quality
-	libaom_trainers_constrained_quality_quick
-	libaom_trainers_lossless
-	libaom_trainers_lossless_quick
-"
 IUSE="
+${_TRAINERS[@]}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-${PGO_TRAINERS}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
 ebuild_revision_38
 "
@@ -179,7 +183,7 @@ REQUIRED_USE="
 	)
 	pgo? (
 		|| (
-			${PGO_TRAINERS}
+			${_TRAINERS[@]}
 		)
 	)
 	libaom_trainers_2_pass_constrained_quality? (

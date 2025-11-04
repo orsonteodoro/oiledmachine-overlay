@@ -13,31 +13,31 @@ AUTOTOOLS_AUTO_DEPEND="no"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF"
 
-TRAINERS=(
-	zlib_trainers_minizip_binary_long
-	zlib_trainers_minizip_binary_max_compression
-	zlib_trainers_minizip_binary_short
-	zlib_trainers_minizip_binary_store
-	zlib_trainers_minizip_text_long
-	zlib_trainers_minizip_text_max_compression
-	zlib_trainers_minizip_text_short
-	zlib_trainers_minizip_text_store
-	zlib_trainers_zlib_binary_all
-	zlib_trainers_zlib_binary_default
-	zlib_trainers_zlib_binary_max
-	zlib_trainers_zlib_binary_min
-	zlib_trainers_zlib_binary_random
-	zlib_trainers_zlib_images_all
-	zlib_trainers_zlib_images_default
-	zlib_trainers_zlib_images_level_8
-	zlib_trainers_zlib_images_max
-	zlib_trainers_zlib_images_min
-	zlib_trainers_zlib_images_random
-	zlib_trainers_zlib_text_all
-	zlib_trainers_zlib_text_default
-	zlib_trainers_zlib_text_max
-	zlib_trainers_zlib_text_min
-	zlib_trainers_zlib_text_random
+_TRAINERS=(
+	"zlib_trainers_minizip_binary_long"
+	"zlib_trainers_minizip_binary_max_compression"
+	"zlib_trainers_minizip_binary_short"
+	"zlib_trainers_minizip_binary_store"
+	"zlib_trainers_minizip_text_long"
+	"zlib_trainers_minizip_text_max_compression"
+	"zlib_trainers_minizip_text_short"
+	"zlib_trainers_minizip_text_store"
+	"zlib_trainers_zlib_binary_all"
+	"zlib_trainers_zlib_binary_default"
+	"zlib_trainers_zlib_binary_max"
+	"zlib_trainers_zlib_binary_min"
+	"zlib_trainers_zlib_binary_random"
+	"zlib_trainers_zlib_images_all"
+	"zlib_trainers_zlib_images_default"
+	"zlib_trainers_zlib_images_level_8"
+	"zlib_trainers_zlib_images_max"
+	"zlib_trainers_zlib_images_min"
+	"zlib_trainers_zlib_images_random"
+	"zlib_trainers_zlib_text_all"
+	"zlib_trainers_zlib_text_default"
+	"zlib_trainers_zlib_text_max"
+	"zlib_trainers_zlib_text_min"
+	"zlib_trainers_zlib_text_random"
 )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
@@ -70,7 +70,7 @@ LICENSE="ZLIB"
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
 IUSE="
-${TRAINERS[@]}
+${_TRAINERS[@]}
 minizip minizip-utils pgo static-libs
 ebuild_revision_21
 "
@@ -80,30 +80,7 @@ REQUIRED_USE="
 			minizip-utils
 		)
 		|| (
-			zlib_trainers_minizip_binary_long
-			zlib_trainers_minizip_binary_max_compression
-			zlib_trainers_minizip_binary_short
-			zlib_trainers_minizip_binary_store
-			zlib_trainers_minizip_text_long
-			zlib_trainers_minizip_text_max_compression
-			zlib_trainers_minizip_text_short
-			zlib_trainers_minizip_text_store
-			zlib_trainers_zlib_binary_all
-			zlib_trainers_zlib_binary_default
-			zlib_trainers_zlib_binary_max
-			zlib_trainers_zlib_binary_min
-			zlib_trainers_zlib_binary_random
-			zlib_trainers_zlib_images_all
-			zlib_trainers_zlib_images_default
-			zlib_trainers_zlib_images_level_8
-			zlib_trainers_zlib_images_max
-			zlib_trainers_zlib_images_min
-			zlib_trainers_zlib_images_random
-			zlib_trainers_zlib_text_all
-			zlib_trainers_zlib_text_default
-			zlib_trainers_zlib_text_max
-			zlib_trainers_zlib_text_min
-			zlib_trainers_zlib_text_random
+			${_TRAINERS[@]}
 		)
 	)
 	zlib_trainers_zlib_binary_all? (
