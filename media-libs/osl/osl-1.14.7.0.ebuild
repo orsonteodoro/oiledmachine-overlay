@@ -10,11 +10,18 @@ EAPI=8
 # For optix requirements, see
 # https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.14.7.0/src/cmake/externalpackages.cmake
 
-CUDA_TARGETS_COMPAT=(
-	sm_60
-)
-LLVM_COMPAT=( {19..11} ) # clang is 16 supported but not llvm 16
+CXX_STANDARD=17
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+OIIO_PV="2.2"
+PYTHON_COMPAT=( "python3_"{10..13} )
+QT5_MIN="5.6"
+QT6_MIN="6"
+TEST_MODE="distroV2" # Can be upstream or distroV1 distroV2
+
+CUDA_TARGETS_COMPAT=(
+	"sm_60"
+)
+
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -39,35 +46,36 @@ OPENEXR_V3_PV=(
 	"3.1.5:3.1.5"
 	"3.1.4:3.1.4"
 )
-PYTHON_COMPAT=( "python3_"{10..13} )
-QT5_MIN="5.6"
-QT6_MIN="6"
-OIIO_PV="2.2"
-TEST_MODE="distroV2" # Can be upstream or distroV1 distroV2
-X86_CPU_FEATURES=(
-	avx:avx
-	avx2:avx2
-	avx512f:avx512f
-	f16c:f16c
-	sse2:sse2
-	sse3:sse3
-	sse4_1:sse4.1
-	sse4_2:sse4.2
-	ssse3:ssse3
+
+CPU_FEATURES_X86=(
+	"avx:avx"
+	"avx2:avx2"
+	"avx512f:avx512f"
+	"f16c:f16c"
+	"sse2:sse2"
+	"sse3:sse3"
+	"sse4_1:sse4.1"
+	"sse4_2:sse4.2"
+	"ssse3:ssse3"
 )
+
 CPU_FEATURES=(
-	# It goes after X86_CPU_FEATURES.
-	${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}
+	# It goes after CPU_FEATURES_X86.
+	${CPU_FEATURES_X86[@]/#/cpu_flags_x86_}
 )
-CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
+CUDA_LLVM_SLOTS=(
+	{15..19} # CUDA range
+)
+
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${CUDA_LLVM_SLOTS[@]}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
@@ -113,6 +121,9 @@ REQUIRED_USE+="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	cuda? (
+		^^ (
+			${CUDA_LLVM_SLOTS[@]/#/llvm_slot_}
+		)
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
@@ -220,6 +231,55 @@ gen_openexr_pairs() {
 # >= python_single_target_python3_11 : openimageio-2.4.12.0
 # >= python_single_target_python3_10 : openimageio-2.3.19.0
 
+CUDA_11_8_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		=virtual/cuda-compiler-11.8*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_3_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		=virtual/cuda-compiler-12.3*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_4_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		=virtual/cuda-compiler-12.4*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_5_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		=virtual/cuda-compiler-12.5*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_6_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		=virtual/cuda-compiler-12.6*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_8_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		=virtual/cuda-compiler-12.8*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_9_CDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.9*
+		=virtual/cuda-compiler-12.9*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
 RDEPEND+="
 	(
 		>=media-libs/openimageio-2.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
@@ -239,7 +299,51 @@ RDEPEND+="
 	dev-libs/libfmt[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/libfmt:=
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-8:=
+		llvm_slot_15? (
+			|| (
+				${CUDA_11_8_CDEPEND}
+				${CUDA_12_3_CDEPEND}
+				${CUDA_12_4_CDEPEND}
+				${CUDA_12_5_CDEPEND}
+				${CUDA_12_6_CDEPEND}
+				${CUDA_12_8_CDEPEND}
+				${CUDA_12_9_CDEPEND}
+			)
+		)
+		llvm_slot_16? (
+			|| (
+				${CUDA_12_3_CDEPEND}
+				${CUDA_12_4_CDEPEND}
+				${CUDA_12_5_CDEPEND}
+				${CUDA_12_6_CDEPEND}
+				${CUDA_12_8_CDEPEND}
+				${CUDA_12_9_CDEPEND}
+			)
+		)
+		llvm_slot_17? (
+			|| (
+				${CUDA_12_4_CDEPEND}
+				${CUDA_12_5_CDEPEND}
+				${CUDA_12_6_CDEPEND}
+				${CUDA_12_8_CDEPEND}
+				${CUDA_12_9_CDEPEND}
+			)
+		)
+		llvm_slot_18? (
+			|| (
+				${CUDA_12_6_CDEPEND}
+				${CUDA_12_8_CDEPEND}
+				${CUDA_12_9_CDEPEND}
+			)
+		)
+		llvm_slot_19? (
+			|| (
+				${CUDA_12_8_CDEPEND}
+				${CUDA_12_9_CDEPEND}
+			)
+		)
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
 	)
 	optix? (
 		(
@@ -296,18 +400,51 @@ BDEPEND+="
 			media-libs/openimageio:=
 		')
 		cuda? (
-			>=dev-util/nvidia-cuda-toolkit-9:=
+			llvm_slot_15? (
+				|| (
+					${CUDA_11_8_CDEPEND}
+					${CUDA_12_3_CDEPEND}
+					${CUDA_12_4_CDEPEND}
+					${CUDA_12_5_CDEPEND}
+					${CUDA_12_6_CDEPEND}
+					${CUDA_12_8_CDEPEND}
+					${CUDA_12_9_CDEPEND}
+				)
+			)
+			llvm_slot_16? (
+				|| (
+					${CUDA_12_3_CDEPEND}
+					${CUDA_12_4_CDEPEND}
+					${CUDA_12_5_CDEPEND}
+					${CUDA_12_6_CDEPEND}
+					${CUDA_12_8_CDEPEND}
+					${CUDA_12_9_CDEPEND}
+				)
+			)
+			llvm_slot_17? (
+				|| (
+					${CUDA_12_4_CDEPEND}
+					${CUDA_12_5_CDEPEND}
+					${CUDA_12_6_CDEPEND}
+					${CUDA_12_8_CDEPEND}
+					${CUDA_12_9_CDEPEND}
+				)
+			)
+			llvm_slot_18? (
+				|| (
+					${CUDA_12_6_CDEPEND}
+					${CUDA_12_8_CDEPEND}
+					${CUDA_12_9_CDEPEND}
+				)
+			)
+			llvm_slot_19? (
+				|| (
+					${CUDA_12_8_CDEPEND}
+					${CUDA_12_9_CDEPEND}
+				)
+			)
 			dev-util/nvidia-cuda-toolkit:=
-		)
-	)
-	|| (
-		$(gen_llvm_bdepend)
-		(
-			<sys-devel/gcc-12.2
-			>=sys-devel/gcc-6.1
-		)
-		(
-			>=dev-lang/icc-17[${MULTILIB_USEDEP}]
+			virtual/cuda-compiler:=
 		)
 	)
 "

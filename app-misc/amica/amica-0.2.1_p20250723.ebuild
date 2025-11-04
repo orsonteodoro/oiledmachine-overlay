@@ -12,9 +12,21 @@ EAPI=8
 #GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-1}
 
 AT_TYPES_NODE_PV="22.7.4"
+EGIT_COMMIT="ca2415c77d20ec41dd4fcf917dbb0e97961ddf08" # Jul 23, 2025
+NODE_ENV="development"
+NODE_SHARP_USE="exif jpeg"
+NODE_VERSION=18 # Upstream uses 18 and 20
+PYTHON_COMPAT=( "python3_"{10..12} )
+RUST_MAX_VER="1.82.0" # Inclusive
+RUST_MIN_VER="1.82.0" # llvm-19.1
+RUST_PV="${RUST_MIN_VER}"
+SHARP_PV="0.34.3"
+VIPS_PV="8.17.1"
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
+
 CRATES="
 addr2line-0.25.1
 adler2-2.0.1
@@ -445,36 +457,32 @@ zerotrie-0.2.2
 zerovec-0.11.4
 zerovec-derive-0.11.1
 "
-EGIT_COMMIT="ca2415c77d20ec41dd4fcf917dbb0e97961ddf08" # Jul 23, 2025
-NODE_ENV="development"
+
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.2-debug.patch"
 	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
 	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 )
-NODE_SHARP_USE="exif jpeg"
-NODE_VERSION=18 # Upstream uses 18 and 20
+
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+
 NPM_DEDUPE_ARGS=(
 	"--legacy-peer-deps"
 )
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+
 NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
-PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.82.0" # Inclusive
-RUST_MIN_VER="1.82.0" # llvm-19.1
-RUST_PV="${RUST_MIN_VER}"
-SHARP_PV="0.34.3"
-VIPS_PV="8.17.1"
+
 WEBKIT_GTK_STABLE=(
 	"2.50"
 	"2.48"
