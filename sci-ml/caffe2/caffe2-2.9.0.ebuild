@@ -30,99 +30,99 @@ MY_P="${MY_PN}-${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/libtorch/build.sh#L47
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1200
-	gfx1201
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
 )
 AMDGPU_TARGETS_UNTESTED=(
 # Based on https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/build.sh#L160
-	gfx900
-	#gfx906
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1200
-	gfx1201
+	"gfx900"
+	#"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
 )
 
 CPU_FLAGS_ARM=(
-	cpu_flags_arm_bf16
-	cpu_flags_arm_dotprod
-	cpu_flags_arm_fp16
-	cpu_flags_arm_i8mm
-	cpu_flags_arm_neon
-	cpu_flags_arm_sve
+	"cpu_flags_arm_bf16"
+	"cpu_flags_arm_dotprod"
+	"cpu_flags_arm_fp16"
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_neon"
+	"cpu_flags_arm_sve"
 )
 CPU_FLAGS_PPC=(
-	cpu_flags_ppc_vsx
-	cpu_flags_ppc_vsx3
+	"cpu_flags_ppc_vsx"
+	"cpu_flags_ppc_vsx3"
 )
 CPU_FLAGS_RISCV=(
-	cpu_flags_riscv_rvv
-	cpu_flags_riscv_rvv_fp16
+	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_rvv_fp16"
 )
 CPU_FLAGS_S390=(
-	cpu_flags_s390_vxe_z14
-	cpu_flags_s390_vxe_z15
-	cpu_flags_s390_zvector
+	"cpu_flags_s390_vxe_z14"
+	"cpu_flags_s390_vxe_z15"
+	"cpu_flags_s390_zvector"
 )
 CPU_FLAGS_X86=(
-	cpu_flags_x86_amx
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512dq
-	cpu_flags_x86_avx512f
-	cpu_flags_x86_avx512vl
-	cpu_flags_x86_avx512vbmi
-	cpu_flags_x86_avx512vnni
-	cpu_flags_x86_f16c
-	cpu_flags_x86_fma
-	cpu_flags_x86_fma4
-	cpu_flags_x86_gfni
-	cpu_flags_x86_sse2
-	cpu_flags_x86_sse4_1
+	"cpu_flags_x86_amx"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vl"
+	"cpu_flags_x86_avx512vbmi"
+	"cpu_flags_x86_avx512vnni"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_fma"
+	"cpu_flags_x86_fma4"
+	"cpu_flags_x86_gfni"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_1"
 )
 
 # See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda126.bat ; min
 # See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda130.bat ; max
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
-	auto
+	"auto"
 
 # Observed:
-	sm_50
-	sm_60
-	sm_61
-	sm_70
-	sm_75
-	sm_80
-	sm_86
-	sm_90
-	sm_100
-	sm_120
+	"sm_50"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_90"
+	"sm_100"
+	"sm_120"
 
-	compute_50
-	compute_60
-	compute_70
-	compute_75
-	compute_80
-	compute_86
-	compute_90
-	compute_100
-	compute_120
+	"compute_50"
+	"compute_60"
+	"compute_70"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_90"
+	"compute_100"
+	"compute_120"
 )
 
 inherit hip-versions

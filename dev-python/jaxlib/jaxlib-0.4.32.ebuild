@@ -37,7 +37,18 @@ EAPI=8
 
 MY_PN="jax"
 
+BAZEL_PV="6.5.0"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=17
+DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="standalone"
+EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
+EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
+JAVA_SLOT="11"
+LLVM_MAX_SLOT="21"
 MAINTAINER_MODE=0
+PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L119
@@ -77,18 +88,6 @@ LLVM_COMPAT=(
 	19 # ROCm 6.4
 	# Upstream uses LLVM 18
 )
-
-BAZEL_PV="6.5.0"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
-CXX_STANDARD=17
-DISTUTILS_EXT=1
-DISTUTILS_SINGLE_IMPL=1
-DISTUTILS_USE_PEP517="standalone"
-EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
-EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
-JAVA_SLOT="11"
-LLVM_MAX_SLOT="21"
-PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
 inherit bazel cflags-hardened check-compiler-switch cuda distutils-r1 dhms
 inherit flag-o-matic git-r3 hip-versions java-pkg-opt-2 libcxx-slot libstdcxx-slot llvm pypi

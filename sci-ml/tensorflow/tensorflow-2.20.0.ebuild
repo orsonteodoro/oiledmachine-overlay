@@ -30,23 +30,11 @@ EAPI=8
 
 MY_PV="${PV/_rc/-rc}"
 MY_P="${PN}-${MY_PV}"
+
+BAZEL_PV="7.4.1"
+CXX_STANDARD=17
 DEP_VER="$(ver_cut 1-2)"
 DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
-
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/xla/stream_executor/device_description.h#L151
-	gfx900
-	gfx908
-	gfx90a
-	gfx940
-	gfx942
-	gfx950
-        gfx1030
-        gfx1100
-        gfx1200
-        gfx1201
-)
-BAZEL_PV="7.4.1"
 DISTUTILS_OPTIONAL=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="no"
@@ -55,14 +43,33 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF SO HO IO UAF"
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
+PYTHON_COMPAT=( "python3_"{11..13} ) # See https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
+# Limited by jax/flax
+# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/xla/stream_executor/device_description.h#L151
+	"gfx900"
+	"gfx908"
+	"gfx90a"
+	"gfx940"
+	"gfx942"
+	"gfx950"
+	"gfx1030"
+	"gfx1100"
+	"gfx1200"
+	"gfx1201"
+)
+
 CUDA_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.20.0/.bazelrc#L312  # Supported upstream
-	sm_60 # Supported
-	sm_70 # Supported
-	sm_80 # Supported
-	sm_89 # Supported
-	compute_90 # Supported
+	"sm_60" # Supported
+	"sm_70" # Supported
+	"sm_80" # Supported
+	"sm_89" # Supported
+	"compute_90" # Supported
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -70,11 +77,13 @@ GCC_COMPAT=(
 GCC_COMPAT2=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT2[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT2[-1]}"
+
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
 	"${HIP_6_4_VERSION}" # Placeholder
 )
+
 gen_hip_slots2() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
@@ -83,9 +92,11 @@ gen_hip_slots2() {
 		echo "rocm_${u}"
 	done
 }
+
 HIP_SLOTS2=(
 	$(gen_hip_slots2)
 )
+
 declare -A LLD_SLOT=(
 	["${HIP_6_4_VERSION}"]="${HIP_6_4_LLVM_SLOT}" # Placeholder
 )
@@ -94,15 +105,11 @@ declare -A LLD_SLOT=(
 # See
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/toolchains/remote_config/configs.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/gpus/rocm_configure.bzl#L210
-CXX_STANDARD=17
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 	19 # For ROCm 6.4
 )
-PYTHON_COMPAT=( "python3_"{11..13} ) # See https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
-# Limited by jax/flax
-# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {
