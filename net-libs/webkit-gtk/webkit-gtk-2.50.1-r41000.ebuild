@@ -162,6 +162,70 @@ PATENT_STATUS=(
 	"patent_status_nonfree"
 )
 
+GST_ACODECS=(
+	"aac"
+	"g722"
+	"mp3"
+	"opus"
+	"speex"
+	"vorbis"
+)
+
+GST_VCODECS=(
+	"aom"
+	"dav1d"
+	"libde265"
+	"openh264"
+	"theora"
+	"vpx"
+	"x264"
+)
+
+GST_CONTAINERS=(
+	"ogg"
+)
+
+MSE_ACODECS=(
+	"a52"
+	"flac"
+)
+
+MSE_VCODECS=(
+)
+
+# For codecs, see
+# https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
+# https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+
+
+# Based on patent status
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/glib/dependencies
+DEFAULT_GST_PLUGINS=(
+	"+a52"
+	"-aac"
+	"+alsa"
+	"+aom"
+	"+dav1d"
+	"+flac"
+	"+g722"
+	"-hls"
+	"-libde265"
+	"+mp3"
+	"+ogg"
+	"-openh264"
+	"+pulseaudio"
+	"+opus"
+	"+speex"
+	"+theora"
+	"-v4l"
+	"-vaapi"
+	"+vorbis"
+	"+vpx"
+	"-x264"
+	"-x265"
+)
+
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
 inherit lcnr libcxx-slot libstdcxx-slot linux-info llvm multilib-minimal
@@ -473,68 +537,6 @@ SLOT="${API_VERSION}/${SO_VERSION}"
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-# For codecs, see
-# https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
-# https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
-
-GST_ACODECS_IUSE="
-aac
-g722
-mp3
-opus
-speex
-vorbis
-"
-
-GST_VCODECS_IUSE="
-aom
-dav1d
-libde265
-openh264
-theora
-vpx
-x264
-"
-
-GST_CONTAINERS_IUSE="
-ogg
-"
-
-MSE_ACODECS_IUSE="
-a52
-flac
-"
-
-MSE_VCODECS_IUSE="
-"
-
-# Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.1/Tools/glib/dependencies
-DEFAULT_GST_PLUGINS="
-+a52
--aac
-+alsa
-+aom
-+dav1d
-+flac
-+g722
--hls
--libde265
-+mp3
-+ogg
--openh264
-+pulseaudio
-+opus
-+speex
-+theora
--v4l
--vaapi
-+vorbis
-+vpx
--x264
--x265
-"
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
 # D11, A/L, F/L are currently not distributing stateless vaapi decoding.
 # Using dav1d because aom is slow for decoding.
@@ -542,13 +544,13 @@ DEFAULT_GST_PLUGINS="
 
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
-${DEFAULT_GST_PLUGINS}
-${GST_ACODECS_IUSE}
-${GST_CONTAINERS_IUSE}
-${GST_VCODECS_IUSE}
+${DEFAULT_GST_PLUGINS[@]}
+${GST_ACODECS[@]}
+${GST_CONTAINERS[@]}
+${GST_VCODECS[@]}
 ${LANGS[@]/#/l10n_}
-${MSE_ACODECS_IUSE}
-${MSE_VCODECS_IUSE}
+${MSE_ACODECS[@]}
+${MSE_VCODECS[@]}
 ${PATENT_STATUS[@]}
 
 aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
@@ -563,11 +565,11 @@ ebuild_revision_18
 
 gen_gst_plugins_duse() {
 	local U=(
-		${GST_ACODECS_IUSE}
-		${GST_CONTAINERS_IUSE}
-		${GST_VCODECS_IUSE}
-		${MSE_ACODECS_IUSE}
-		${MSE_VCODECS_IUSE}
+		${GST_ACODECS[@]}
+		${GST_CONTAINERS[@]}
+		${GST_VCODECS[@]}
+		${MSE_ACODECS[@]}
+		${MSE_VCODECS[@]}
 	)
 	U=( ${U[@]/aom/} )
 	U=( ${U[@]/dav1d/} )
@@ -588,11 +590,11 @@ GST_PLUGINS_DUSE=$(gen_gst_plugins_duse)
 
 gen_gst_plugins_required_use() {
 	local U=(
-		${GST_ACODECS_IUSE}
-		${GST_CONTAINERS_IUSE}
-		${GST_VCODECS_IUSE}
-		${MSE_ACODECS_IUSE}
-		${MSE_VCODECS_IUSE}
+		${GST_ACODECS[@]}
+		${GST_CONTAINERS[@]}
+		${GST_VCODECS[@]}
+		${MSE_ACODECS[@]}
+		${MSE_VCODECS[@]}
 	)
 	local u
 	for u in ${U[@]} ; do
