@@ -231,7 +231,7 @@ CUDA_12_6_CDEPEND="
 	(
 		>=x11-drivers/nvidia-drivers-560.35
 		=dev-util/nvidia-cuda-toolkit-12.6*
-		=virtual/cuda-compiler-12.6*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -239,7 +239,7 @@ CUDA_12_8_CDEPEND="
 	(
 		>=x11-drivers/nvidia-drivers-570.124
 		=dev-util/nvidia-cuda-toolkit-12.8*
-		=virtual/cuda-compiler-12.8*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -247,7 +247,7 @@ CUDA_12_9_CDEPEND="
 	(
 		>=x11-drivers/nvidia-drivers-575.57
 		=dev-util/nvidia-cuda-toolkit-12.9*
-		=virtual/cuda-compiler-12.9*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
