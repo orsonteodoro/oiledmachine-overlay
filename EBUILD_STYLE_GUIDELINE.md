@@ -480,7 +480,7 @@
 8. General eclass inherits
 
 9. Download section
-   - Typically a conditional with PV == *9999*
+   - Typically a conditional with "${PV}" == *"9999"*
    - Live repo info (optional)
      - EGIT_BRANCH
      - EGIT_REPO_URI
