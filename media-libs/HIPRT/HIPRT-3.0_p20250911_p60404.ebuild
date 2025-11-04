@@ -7,6 +7,14 @@ MY_PV="3.0.4fea77f"
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
+inherit hip-versions
+
+EGIT_COMMIT="6441305253f711bd2b7121f317a799d0b740e2b7"
+HIP_SUPPORT_CUDA=1
+LLVM_SLOT=19
+ROCM_SLOT="6.4"
+ROCM_VERSION="${HIP_6_4_VERSION}"
+
 # No CMAKE arg yet
 _AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
@@ -40,13 +48,6 @@ _AMDGPU_TARGETS_COMPAT=(
 	"gfx1200"
 	"gfx1201"
 )
-
-HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
-ROCM_SLOT="6.4"
-inherit hip-versions
-ROCM_VERSION="${HIP_6_4_VERSION}"
-EGIT_COMMIT="6441305253f711bd2b7121f317a799d0b740e2b7"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
 

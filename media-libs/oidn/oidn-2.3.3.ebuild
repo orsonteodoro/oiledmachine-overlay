@@ -9,6 +9,17 @@ EAPI=8
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
 
+CMAKE_BUILD_TYPE="Release"
+COMPOSABLE_KERNEL_COMMIT="c79bf11148ac7abd7504f0e700b409b4c63a052c"
+CUTLASS_COMMIT="afa1772203677c5118fcd82537a9c8fefbcc7008"
+CXX_STANDARD=11
+LLVM_SLOT="${LLVM_COMPAT[0]}"
+MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
+OIDN_WEIGHTS_COMMIT="28883d1769d5930e13cf7f1676dd852bd81ed9e7"
+ONETBB_SLOT="0"
+ORG_GH="https://github.com/OpenImageDenoise"
+PYTHON_COMPAT=( "python3_"{10..11} )
+
 AMDGPU_TARGETS_COMPAT=(
 	"gfx902"
 	"gfx909"
@@ -25,10 +36,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1102"
 	"gfx1103"
 )
-CXX_STANDARD=11
-CMAKE_BUILD_TYPE="Release"
-COMPOSABLE_KERNEL_COMMIT="c79bf11148ac7abd7504f0e700b409b4c63a052c"
-CUTLASS_COMMIT="afa1772203677c5118fcd82537a9c8fefbcc7008"
+
 CUDA_TARGETS_COMPAT=(
 	"sm_70"
 	"sm_75"
@@ -50,15 +58,10 @@ inherit hip-versions
 HIP_VERSIONS=(
 	"${HIP_6_4_VERSION}"
 )
+
 ROCM_SLOTS=(
 	"rocm_6_4"
 )
-LLVM_SLOT="${LLVM_COMPAT[0]}"
-MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
-OIDN_WEIGHTS_COMMIT="28883d1769d5930e13cf7f1676dd852bd81ed9e7"
-ONETBB_SLOT="0"
-ORG_GH="https://github.com/OpenImageDenoise"
-PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
 inherit llvm python-single-r1 rocm toolchain-funcs

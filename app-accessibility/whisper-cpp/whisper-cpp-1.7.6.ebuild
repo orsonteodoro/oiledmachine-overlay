@@ -9,35 +9,24 @@ EAPI=8
 # CUDA:  https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/.github/workflows/build.yml#L772
 #        https://github.com/ggml-org/whisper.cpp/blob/v1.7.6/ggml/src/ggml-cuda/CMakeLists.txt#L8
 
-# Placeholder, TODO review
-AMDGPU_TARGETS_COMPAT=(
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
-	gfx1100
-	gfx1101
-	gfx1200
-	gfx1201
-)
-CXX_STANDARD=17
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
-inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot rocm
-
 MY_PN="${PN/-/.}"
 MY_P="${MY_PN}-${PV}"
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/system-requirements.rst
+CXX_STANDARD=17
+
+# Placeholder, TODO review
+AMDGPU_TARGETS_COMPAT=(
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1200"
+	"gfx1201"
+)
+
+# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.4.4/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
 	"gfx906"
 	"gfx908"
@@ -46,6 +35,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1100"
 	"gfx1030"
 )
+
 CUDA_TARGETS_COMPAT=(
 	"sm_50"
 	"sm_60"
@@ -56,19 +46,23 @@ CUDA_TARGETS_COMPAT=(
 	"sm_86"
 	"sm_89"
 )
+
 CPU_FLAGS_LOONG=(
 	"cpu_flags_loong_lasx"
 	"cpu_flags_loong_lsx"
 )
+
 CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
 	"cpu_flags_riscv_xtheadvector"
 	"cpu_flags_riscv_zfh"
 )
+
 CPU_FLAGS_S390=(
 	"cpu_flags_s390_nnpa"
 	"cpu_flags_s390_vxe"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_amx_bf16"
 	"cpu_flags_x86_amx_int8"
@@ -89,10 +83,12 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_fma"
 	"cpu_flags_x86_sse4_2"
 )
+
 ROCM_SLOTS=(
 	# 5.5 minimum
 	"6.4"
 )
+
 gen_rocm_iuse() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -101,11 +97,26 @@ gen_rocm_iuse() {
 		"
 	done
 }
-ROCM_IUSE=( $(gen_rocm_iuse) )
+ROCM_IUSE=(
+	$(gen_rocm_iuse)
+)
+
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
 	["6_4"]="${HIP_6_4_VERSION}"
 )
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"

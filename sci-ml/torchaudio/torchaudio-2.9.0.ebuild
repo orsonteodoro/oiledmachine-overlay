@@ -7,6 +7,17 @@ EAPI=8
 MY_PN="audio"
 
 CXX_STANDARD=17
+DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{11..14} )
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx803"
+	"gfx900"
+	"gfx906"
+	"gfx908"
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -17,13 +28,6 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 	19
-)
-
-AMDGPU_TARGETS_COMPAT=(
-	"gfx803"
-	"gfx900"
-	"gfx906"
-	"gfx908"
 )
 
 inherit hip-versions
@@ -39,11 +43,6 @@ gen_rocm_iuse() {
 	done
 }
 ROCM_IUSE=$(gen_rocm_iuse)
-
-DISTUTILS_EXT=1
-DISTUTILS_SINGLE_IMPL=1
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit distutils-r1 libcxx-slot libstdcxx-slot pypi rocm
 

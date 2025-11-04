@@ -10,18 +10,20 @@ EAPI=8
 # hydra-colorlog
 # hydra-core
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx90a
-	gfx940
-	gfx941
-	gfx942
-)
 COMPOSABLE_KERNEL_COMMIT="8182976c37433808b5e3a27a6536d1b74b0c23a1"
 CUTLASS_COMMIT="756c351b4994854b2f8c6dded3821ebbb580876b"
 #DISTUTILS_EXT=1 # TODO:  enable if required
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
+
+AMDGPU_TARGETS_COMPAT=(
+	"gfx90a"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+)
+
 inherit hip-versions
 ROCM_SLOTS=(
 	# For RDEPEND
@@ -29,6 +31,7 @@ ROCM_SLOTS=(
 	"${HIP_6_1_VERSION}" # Corresponds to pytorch 2.4.0 ebuild ; See https://github.com/Dao-AILab/flash-attention/issues/1086#issuecomment-2253854489
 	"${HIP_6_0_VERSION}" # Corresponds to pytorch 2.3.0 ebuild.
 )
+
 gen_rocm_iuse() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
@@ -37,6 +40,7 @@ gen_rocm_iuse() {
 		echo "rocm_${u}"
 	done
 }
+
 ROCM_IUSE=(
 	$(gen_rocm_iuse)
 )

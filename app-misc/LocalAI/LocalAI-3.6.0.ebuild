@@ -17,6 +17,31 @@ EAPI=8
 
 MY_PN2="local-ai"
 
+#
+# To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
+# changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
+#
+GEN_EBUILD=1
+
+ABSEIL_CPP_PV="20240722.0" # The abseil-cpp version is the same used by gRPC.
+BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/bark-cpp/Makefile#L15
+CFLAGS_HARDENED_APPEND_GOFLAGS=1
+CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
+ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
+ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
+GGML_COMMIT_2="5fdc78fff274094e2a1b155928131983362d8a71" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0ebe6fe118f125665939b27c89f34ed38716bff8
+GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/piper/Makefile#L4
+LLAMA_CPP_COMMIT="d64c8104f090b27b1f99e8da5995ffcfa6b726e2" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/cpp/llama-cpp/Makefile#L2
+PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
+ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
+PROTOBUF_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..12} )
+STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/stablediffusion-ggml/Makefile#L22
+WHISPER_CPP_COMMIT="7849aff7a2e1f4234aa31b01a1870906d5431959" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/whisper/Makefile#L9
+
 inherit hip-versions
 
 AMDGPU_TARGETS_COMPAT=(
@@ -32,22 +57,27 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1100"
 	"gfx1101"
 )
+
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_dotprod"
 	"cpu_flags_arm_i8mm"
 	"cpu_flags_arm_sme"
 )
+
 CPU_FLAGS_LOONG=(
 	"cpu_flags_loong_lasx"
 	"cpu_flags_loong_lsx"
 )
+
 CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
 	"cpu_flags_riscv_rv_zfh"
 )
+
 CPU_FLAGS_S390=(
 	"cpu_flags_s390_vxe"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_amx_bf16"
 	"cpu_flags_x86_amx_int8"
@@ -68,35 +98,12 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_fma"
 	"cpu_flags_x86_sse4_2"
 )
-#
-# To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
-# changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
-#
-GEN_EBUILD=1
-PYTHON_COMPAT=( "python3_"{10..12} )
-ROCM_SLOTS=(
-	"${HIP_6_1_VERSION}"
-)
-
-ABSEIL_CPP_PV="20240722.0" # The abseil-cpp version is the same used by gRPC.
-BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/bark-cpp/Makefile#L15
-CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
-ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
-ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
-GGML_COMMIT_2="5fdc78fff274094e2a1b155928131983362d8a71" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0ebe6fe118f125665939b27c89f34ed38716bff8
-ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
-GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/piper/Makefile#L4
-LLAMA_CPP_COMMIT="d64c8104f090b27b1f99e8da5995ffcfa6b726e2" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/cpp/llama-cpp/Makefile#L2
-PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-PROTOBUF_SLOT="5"
-STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/stablediffusion-ggml/Makefile#L22
-WHISPER_CPP_COMMIT="7849aff7a2e1f4234aa31b01a1870906d5431959" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/whisper/Makefile#L9
 
 EGO_SUM=(
+)
+
+ROCM_SLOTS=(
+	"${HIP_6_1_VERSION}"
 )
 
 inherit cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache

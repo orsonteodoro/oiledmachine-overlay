@@ -34,59 +34,6 @@ EAPI=8
 
 # clog has same version as cpuinfo
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L299
-	"gfx906"
-	"gfx908"
-	"gfx90a" # ck
-	#"gfx942" # ck
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-)
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx"
-	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_avx512"
-)
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L1453
-	"sm_30"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_53"
-	"sm_60"
-	"sm_62"
-	"sm_70"
-	"sm_72"
-	"sm_75"
-	"sm_87"
-	"sm_80"
-	"sm_90"
-)
-ROCM_SLOTS=(
-	"rocm_6_4"
-)
-OPENVINO_TARGETS=(
-	"cpu"
-	"cpu_np"
-	"gpu"
-	"gpu_np"
-	"npu"
-	"npu_np"
-)
-
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_COMMIT_1="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
 ABSEIL_CPP_COMMIT_2="78be63686ba732b25052be15f8d6dee891c05749" # # protobuf (PROTOBUF_PV_2) dep
@@ -128,7 +75,6 @@ NSYNC_PV="1.26.0" # From cmake/deps.txt
 ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # onnxruntime dep
 ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
-LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
 NEURAL_SPEED_PV="0.3" # From cmake/deps.txt
@@ -151,6 +97,65 @@ TVM_COMMIT="2379917985919ed3918dc12cad47f469f245be7a" # From cmake/external/tvm.
 TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
 XNNPACK_COMMIT="0da379fc4808f9601faef392352018c741c0f297" # From cmake/deps.txt
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L299
+	"gfx906"
+	"gfx908"
+	"gfx90a" # ck
+	#"gfx942" # ck
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	19 # For ROCm 6.4
+	18 # For JavaScript support
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512"
+)
+
+CUDA_TARGETS_COMPAT=(
+# See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L1453
+	"sm_30"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_87"
+	"sm_80"
+	"sm_90"
+)
+
+OPENVINO_TARGETS=(
+	"cpu"
+	"cpu_np"
+	"gpu"
+	"gpu_np"
+	"npu"
+	"npu_np"
+)
+
+ROCM_SLOTS=(
+	"rocm_6_4"
+)
 
 inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm toolchain-funcs
 
@@ -437,7 +442,7 @@ REQUIRED_USE="
 		python
 	)
 	rocm? (
-		llvm_slot_17
+		llvm_slot_19
 		migraphx
 	)
 	tensorrt-oss-parser? (
