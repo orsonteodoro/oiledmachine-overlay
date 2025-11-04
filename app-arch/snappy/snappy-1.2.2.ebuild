@@ -7,15 +7,15 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS ID"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CXX_STANDARD=11
 
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx"
-	"cpu_flags_x86_avx2"
-)
-
 _CXX_STANDARD=(
 	"cxx_standard_cxx11"
 	"cxx_standard_cxx14"
 	"+cxx_standard_cxx17"
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
 )
 
 inherit libstdcxx-compat

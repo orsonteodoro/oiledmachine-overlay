@@ -7,15 +7,15 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS ID"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CXX_STANDARD=11
 
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx"
-	"cpu_flags_x86_avx2"
-)
-
 _CXX_STANDARD=(
 	"cxx_standard_cxx11"
 	"cxx_standard_cxx14"
 	"+cxx_standard_cxx17"
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
 )
 
 inherit libstdcxx-compat
@@ -26,11 +26,6 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
-)
-_CXX_STANDARD=(
-	"cxx_standard_cxx11"
-	"cxx_standard_cxx14"
-	"+cxx_standard_cxx17"
 )
 
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot

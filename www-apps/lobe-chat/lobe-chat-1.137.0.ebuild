@@ -42,22 +42,14 @@ EAPI=8
 
 MY_PN="LobeChat"
 
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_sse4_2"
-)
+NEXTJS_PV="15.4.7"
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_SHARP_USE="exif lcms webp"
 NODE_VERSION=22
 NPM_SLOT="3"
+PNPM_AUDIT_FIX=0
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.4.7"
-NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.2-debug.patch"
-	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
-)
-PNPM_AUDIT_FIX=0
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
 # Obtained from https://github.com/swc-project/swc/blob/v1.11.24/rust-toolchain \
@@ -66,6 +58,16 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_sse4_2"
+)
+
+NODE_SHARP_PATCHES=(
+	"${FILESDIR}/sharp-0.34.2-debug.patch"
+	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
+)
 
 # Use pnpm for pnpm_updater_update_locks.sh
 inherit dhms desktop edo node-sharp npm pnpm rust xdg

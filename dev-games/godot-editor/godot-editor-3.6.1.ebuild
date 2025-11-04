@@ -15,14 +15,16 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 BUILD_EXPORT_TEMPLATES=0
-
-ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
 # It can collect GPS coords for geolocation based games or gamified app or the
 # game engine can be used for app purposes not just games.
 # Contains open_encrypted_with_pass() API that accepts password or users may login with password.
 CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=14
+FRAMEWORK="4.5" # Target .NET Framework
+VIRTUALX_REQUIRED="manual"
+
+ANGLE_VULNERABILITY_HISTORY="BO HO IU IO OOBA OOBR OOBW TC UAF"
 ENET_VULNERABILITY_HISTORY="DOS"
 FREETYPE_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 LIBPNG_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD MC OOBR SO UAF UM"
@@ -51,8 +53,6 @@ ${ZLIB_VULNERABILITY_HISTORY}
 ${ZSTD_VULNERABILITY_HISTORY}
 CE IO SO
 "
-FRAMEWORK="4.5" # Target .NET Framework
-VIRTUALX_REQUIRED="manual"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
