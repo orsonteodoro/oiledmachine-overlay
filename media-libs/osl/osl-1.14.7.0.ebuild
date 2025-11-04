@@ -227,34 +227,6 @@ gen_openexr_pairs() {
 # >= python_single_target_python3_11 : openimageio-2.4.12.0
 # >= python_single_target_python3_10 : openimageio-2.3.19.0
 
-CUDA_11_8_CDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		=virtual/cuda-compiler-11.8*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
-CUDA_12_3_CDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.3*
-		=virtual/cuda-compiler-12.3*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
-CUDA_12_4_CDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.4*
-		=virtual/cuda-compiler-12.4*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
-CUDA_12_5_CDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.5*
-		=virtual/cuda-compiler-12.5*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
 CUDA_12_6_CDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*
@@ -297,9 +269,6 @@ RDEPEND+="
 	cuda? (
 		llvm_slot_16? (
 			|| (
-				${CUDA_12_3_CDEPEND}
-				${CUDA_12_4_CDEPEND}
-				${CUDA_12_5_CDEPEND}
 				${CUDA_12_6_CDEPEND}
 				${CUDA_12_8_CDEPEND}
 				${CUDA_12_9_CDEPEND}
@@ -307,8 +276,6 @@ RDEPEND+="
 		)
 		llvm_slot_17? (
 			|| (
-				${CUDA_12_4_CDEPEND}
-				${CUDA_12_5_CDEPEND}
 				${CUDA_12_6_CDEPEND}
 				${CUDA_12_8_CDEPEND}
 				${CUDA_12_9_CDEPEND}
@@ -387,9 +354,6 @@ BDEPEND+="
 		cuda? (
 			llvm_slot_16? (
 				|| (
-					${CUDA_12_3_CDEPEND}
-					${CUDA_12_4_CDEPEND}
-					${CUDA_12_5_CDEPEND}
 					${CUDA_12_6_CDEPEND}
 					${CUDA_12_8_CDEPEND}
 					${CUDA_12_9_CDEPEND}
@@ -397,8 +361,6 @@ BDEPEND+="
 			)
 			llvm_slot_17? (
 				|| (
-					${CUDA_12_4_CDEPEND}
-					${CUDA_12_5_CDEPEND}
 					${CUDA_12_6_CDEPEND}
 					${CUDA_12_8_CDEPEND}
 					${CUDA_12_9_CDEPEND}

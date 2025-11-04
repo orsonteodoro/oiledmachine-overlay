@@ -151,8 +151,10 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}
+	${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}
+	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-	19 # ROCm slots
 )
 
 PYTHON_COMPAT=( "python3_"{11..14} )
@@ -634,8 +636,9 @@ REQUIRED_USE="
 	)
 
 	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]}
 		)
 	)
 	distributed? (
@@ -732,6 +735,9 @@ REQUIRED_USE="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+		)
 		^^ (
 			${ROCM_SLOTS2[@]}
 		)
