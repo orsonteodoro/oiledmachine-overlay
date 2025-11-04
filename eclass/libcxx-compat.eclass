@@ -47,7 +47,7 @@ _LIBCXX_COMPAT_ECLASS=1
 #
 LIBCXX_COMPAT_CUDA_11_8=(
         "llvm_slot_15"
-}
+)
 
 # LLVM_COMPAT template for CUDA 12.3
 #
@@ -62,7 +62,7 @@ LIBCXX_COMPAT_CUDA_11_8=(
 LIBCXX_COMPAT_CUDA_12_3=(
         "llvm_slot_15"
         "llvm_slot_16"
-}
+)
 
 # LLVM_COMPAT template for CUDA 12.4
 #
@@ -161,7 +161,7 @@ LIBCXX_COMPAT_CUDA_12_9=(
 #
 LIBCXX_COMPAT_CUDA_11=(
         "llvm_slot_15"
-}
+)
 
 # LLVM_COMPAT template for CUDA 12.x
 #
@@ -179,7 +179,7 @@ LIBCXX_COMPAT_CUDA_12=(
         "llvm_slot_17"
         "llvm_slot_18"
         "llvm_slot_19"
-}
+)
 
 # LLVM_COMPAT template for CUDA 11 and 12
 #

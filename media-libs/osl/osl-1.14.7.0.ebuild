@@ -69,13 +69,9 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-LLVM_COMPAT_CUDA=(
-	{15..19} # CUDA range
-)
-
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LLVM_COMPAT_CUDA[@]}
+	${LIBCXX_COMPAT_CUDA[@]/llvm_slot_} # 15..19
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 )
 
@@ -122,7 +118,7 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		^^ (
-			${LLVM_COMPAT_CUDA[@]/#/llvm_slot_}
+			${LIBCXX_COMPAT_CUDA[@]}
 		)
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
