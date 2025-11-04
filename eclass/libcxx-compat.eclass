@@ -46,27 +46,6 @@ _LIBCXX_COMPAT_ECLASS=1
 # )
 #
 
-# For latest CUDA 11
-LIBCXX_COMPAT_CXX14_CUDA_11=(
-        "llvm_slot_15" # c++14 or earlier compatible
-)
-
-LIBCXX_COMPAT_CXX14_CUDA_11_8=(
-        "llvm_slot_15"
-)
-
-LIBCXX_COMPAT_CXX14_CUDA_12_3=(
-        "llvm_slot_15"
-)
-
-LIBCXX_COMPAT_CXX14_CUDA_12_4=(
-        "llvm_slot_15"
-)
-
-LIBCXX_COMPAT_CXX14_CUDA_12_5=(
-        "llvm_slot_15"
-)
-
 LIBCXX_COMPAT_CXX14_CUDA_12_6=(
         "llvm_slot_15"
 )
@@ -85,20 +64,6 @@ LIBCXX_COMPAT_CXX17_CUDA_12=(
         "llvm_slot_17" # c++17 or earlier compatible
         "llvm_slot_18" # c++17 or earlier compatible
         "llvm_slot_19" # c++17 or earlier compatible
-)
-
-LIBCXX_COMPAT_CXX17_CUDA_12_3=(
-        "llvm_slot_16"
-)
-
-LIBCXX_COMPAT_CXX17_CUDA_12_4=(
-        "llvm_slot_16"
-        "llvm_slot_17"
-)
-
-LIBCXX_COMPAT_CXX17_CUDA_12_5=(
-        "llvm_slot_16"
-        "llvm_slot_17"
 )
 
 LIBCXX_COMPAT_CXX17_CUDA_12_6=(
@@ -128,8 +93,8 @@ LIBCXX_COMPAT_CXX14_CUDA=(
 
 # For latest CUDA 12 on a c++17 or earlier project
 LIBCXX_COMPAT_CXX17_CUDA=(
-        "llvm_slot_16" # Support CUDA 12.3, 12.4, 12.5, 12.6, 12.8, 12.9
-        "llvm_slot_17" # Support CUDA 12.4, 12.5, 12.6, 12.8, 12.9
+        "llvm_slot_16" # Support CUDA 12.6, 12.8, 12.9
+        "llvm_slot_17" # Support CUDA 12.6, 12.8, 12.9
         "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
         "llvm_slot_19" # Support CUDA 12.8, 12.9
 )

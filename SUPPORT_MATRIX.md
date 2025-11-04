@@ -162,10 +162,10 @@ exist in build files.
 
 | Platform                            | Ebuild level of support               | Distro or CI image correspondence                        |
 | ---                                 | ---                                   | ---                                                      |
-| CUDA 11.8                           | Available                             | D12, F35, U18, U20, U22                                  |
-| CUDA 12.3                           | Available                             | D10, D11, D12, F37, U20, U22                             |
-| CUDA 12.4                           | Available                             | D10, D11, D12, F39, U20, U22                             |
-| CUDA 12.5                           | Available                             | D10, D11, D12, F39, U20, U22, U24                        |
+| CUDA 11.8                           | Not supported                         | D12, F35, U18, U20, U22                                  |
+| CUDA 12.3                           | Not supported                         | D10, D11, D12, F37, U20, U22                             |
+| CUDA 12.4                           | Not supported                         | D10, D11, D12, F39, U20, U22                             |
+| CUDA 12.5                           | Not supported                         | D10, D11, D12, F39, U20, U22, U24                        |
 | CUDA 12.6                           | Available                             | D11, D12, F39, U20, U22, U24                             |
 | CUDA 12.8                           | Available                             | D12, F41, U20, U22, U24                                  |
 | CUDA 12.9                           | Available                             | D12, F41, U20, U22, U24                                  |
@@ -185,7 +185,7 @@ exist in build files.
 | OpenCL <= 2.0                       | Fully supported                       |                                                          |
 | Ollama 0.12 (CPU)                   | Available                             |                                                          |
 | Ollama 0.12 (ROCm 6.3)              | Not supported                         |                                                          |
-| Ollama 0.12 (CUDA 11.8)             | Available                             |                                                          |
+| Ollama 0.12 (CUDA 11.8)             | Not supported                         |                                                          |
 | Ollama 0.12 (CUDA 12.8)             | Available                             |                                                          |
 | GCC OpenMP (CPU)                    | Fully supported                       |                                                          |
 | LLVM OpenMP (CPU)                   | Fully supported                       |                                                          |

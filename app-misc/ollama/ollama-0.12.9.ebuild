@@ -2957,13 +2957,6 @@ RDEPEND="
 IDEPEND="
 	${RDEPEND}
 "
-CUDA_11_8_BDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		>=x11-drivers/nvidia-drivers-520.61
-		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
-	)
-"
 CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
@@ -3098,58 +3091,49 @@ BDEPEND="
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
@@ -3182,52 +3166,44 @@ BDEPEND="
 
 		cuda_targets_compute_50? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_compute_60? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_compute_61? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_compute_70? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_compute_75? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_compute_80? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_compute_86? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
 		)
 		cuda_targets_compute_89? (
 			|| (
-				${CUDA_11_8_BDEPEND}
 				${CUDA_12_8_BDEPEND}
 				${CUDA_13_0_BDEPEND}
 			)
