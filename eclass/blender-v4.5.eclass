@@ -58,6 +58,23 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported." ;;
 esac
 
+CXX_STANDARD=17
+# For the max exclusive Python supported (and others), see \
+# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py#L693 \
+PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
+BOOST_PV="1.82"
+CLANG_MIN="8.0"
+FREETYPE_PV="2.13.0"
+GCC_MIN="11.2"
+LIBOGG_PV="1.3.5"
+LIBSNDFILE_PV="1.2.2"
+ONETBB_SLOT="0"
+OPENVDB_ABIS_MAJOR_VERS=12
+OSL_PV="1.14.3.0"
+PUGIXML_PV="1.10"
+THEORA_PV="1.1.1"
+VULKAN_PV="1.3.296"
+
 ARM_CPU_FLAGS_3_3=(
 	neon2x:neon2x
 )
@@ -76,46 +93,41 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 	19 # For ROCm 6.4
 )
-
-CXX_STANDARD=17
-
-# For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
-# Ebuild will disable patented codecs by default, but upstream enables by default.
-FFMPEG_IUSE+="
-	+jpeg2k libaom +mp3 +opus rav1e svt-av1 +theora +vorbis +vpx webm +webp x264 x265 +xvid
-"
-
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
+# For max and min package versions see link below. \
+# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
+# Ebuild will disable patented codecs by default, but upstream enables by default.
+FFMPEG_IUSE=(
+	"+jpeg2k"
+	"libaom"
+	"+mp3"
+	"+opus"
+	"rav1e"
+	"svt-av1"
+	"+theora"
+	"+vorbis"
+	"+vpx"
+	"webm"
+	"+webp"
+	"x264"
+	"x265"
+	"+xvid"
+)
+
 # Platform defaults based on CMakeList.txt
-OPENVDB_ABIS_MAJOR_VERS=12
 OPENVDB_ABIS=(
 	${OPENVDB_ABIS_MAJOR_VERS/#/abi}
 )
+
 OPENVDB_ABIS=(
 	${OPENVDB_ABIS[@]/%/-compat}
 )
 
-PATENT_STATUS_IUSE=(
-	patent_status_nonfree
-)
-
-# For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py#L693 \
-PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
-
-BOOST_PV="1.82"
-CLANG_MIN="8.0"
-FREETYPE_PV="2.13.0"
-GCC_MIN="11.2"
-LIBOGG_PV="1.3.5"
-LIBSNDFILE_PV="1.2.2"
-ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -129,89 +141,93 @@ OPENEXR_V3_PV=(
 	"3.2.2:3.1.9"
 	"3.2.1:3.1.9"
 )
-OSL_PV="1.14.3.0"
-PUGIXML_PV="1.10"
-THEORA_PV="1.1.1"
-VULKAN_PV="1.3.296"
+
+PATENT_STATUS_IUSE=(
+	"patent_status_nonfree"
+)
 
 CUDA_TARGETS_COMPAT=(
-	compute_75
-	sm_35
-	sm_37
-	sm_50
-	sm_52
-	sm_60
-	sm_61
-	sm_70
-	sm_75
-	sm_86
-	sm_89
+	"compute_75"
 
-	sm_80
-	sm_90
-	sm_100
-	sm_120
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_86"
+	"sm_89"
+
+	"sm_80"
+	"sm_90"
+	"sm_100"
+	"sm_120"
 )
+
 OPTIX_RAYTRACE_TARGETS=(
-	sm_75
-	sm_86
-	sm_89
+	"sm_75"
+	"sm_86"
+	"sm_89"
 )
 
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/blender/blender/blob/v4.5.3/CMakeLists.txt#L699
-	gfx900
-	gfx902
-	gfx90c
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
-	gfx1150
-	gfx1151
-	gfx1152
-	gfx1200
-	gfx1201
+	"gfx900"
+	"gfx902"
+	"gfx90c"
+	"gfx1010"
+	"gfx1011"
+	"gfx1012"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1034"
+	"gfx1035"
+	"gfx1036"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1103"
+	"gfx1150"
+	"gfx1151"
+	"gfx1152"
+	"gfx1200"
+	"gfx1201"
 )
+
 HIPRT_RAYTRACE_TARGETS=(
 # See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.5.a21e075/scripts/bitcodes/compile.py#L90
-	gfx900
-	gfx902
-	gfx90c
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1150
-	gfx1151
-	gfx1200
-	gfx1201
+	"gfx900"
+	"gfx902"
+	"gfx90c"
+	"gfx1010"
+	"gfx1011"
+	"gfx1012"
+	"gfx1030"
+	"gfx1031"
+	"gfx1032"
+	"gfx1034"
+	"gfx1035"
+	"gfx1036"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1150"
+	"gfx1151"
+	"gfx1200"
+	"gfx1201"
 )
+
 ROCM_SLOTS=(
-	rocm_6_4
+	"rocm_6_4"
 )
 
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${FFMPEG_IUSE}
+${FFMPEG_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
@@ -763,12 +779,14 @@ CUDA_11_4_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.4*
 		>=x11-drivers/nvidia-drivers-470.82
+		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
 		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -897,6 +915,7 @@ RDEPEND+="
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
 	)
 	cycles? (
 		cycles-path-guiding? (

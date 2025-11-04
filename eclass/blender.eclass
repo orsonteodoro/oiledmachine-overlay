@@ -15,14 +15,18 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported" ;;
 esac
 
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBA OOBR SO"
+CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
+
+IMPLS=(
+	"build_creator"
+	"build_headless"
+)
+
 LTS_VERSIONS=(
 	"3.3"
 	"3.6"
 	"4.2"
-)
-IMPLS=(
-	"build_creator"
-	"build_headless"
 )
 
 _blender_set_globals() {
@@ -32,9 +36,6 @@ einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
 _blender_set_globals
 unset -f _blender_set_globals
 
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBA OOBR SO"
-CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
-
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake dhms
 inherit flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg optfeature
@@ -43,7 +44,7 @@ DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:-"~amd64 ~x86"}
 # Slotting is for scripting and plugin compatibility
-SLOT_MAJ=${SLOT%/*}
+SLOT_MAJ="${SLOT%/*}"
 SLOT="${PV}"
 RESTRICT="
 	mirror
