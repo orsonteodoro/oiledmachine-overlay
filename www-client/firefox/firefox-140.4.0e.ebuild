@@ -127,7 +127,7 @@ unset __
 MOZ_ESR="yes"
 MOZ_PV="${PV/e}"
 MOZ_PV_SUFFIX=
-if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
+if [[ "${PV}" =~ ("_"("alpha"|"beta"|"rc").*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
 
 	# Convert the ebuild version to the upstream Mozilla version
@@ -154,7 +154,47 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
+APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
+BUILD_OBJ_DIR="" # global var not const
+CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 CXX_STANDARD=17
+RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
+DBUS_PV="0.60"
+DBUS_GLIB_PV="0.60"
+EBUILD_MAINTAINER_MODE=0
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
+FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
+GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
+GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
+GTK3_PV="3.14.5"
+LICENSE_FINGERPRINT="\
+dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
+f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
+" # SHA512
+LTO_TYPE="" # Global variable
+MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
+MOZILLA_FIVE_HOME="" # Global variable
+NABIS=0 # Global variable
+NASM_PV="2.14.02"
+NODE_VERSION=18
+PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_REQ_USE="ncurses,sqlite,ssl"
+RUST_MAX_VER="1.86.0"
+RUST_MIN_VER="1.81.0"
+RUST_NEEDS_LLVM=1
+RUST_PV="${RUST_MIN_VER}"
+SPEECH_DISPATCHER_PV="0.11.4-r1"
+XKBCOMMON_PV="0.4.1"
+VIRTUALX_REQUIRED="manual"
+# Information about the bundled wasi toolchain from
+# https://github.com/WebAssembly/wasi-sdk/
+WASI_SDK_VER="27.0"
+WASI_SDK_LLVM_VER="20"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -223,46 +263,6 @@ mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
 sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 )
 
-APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
-BUILD_OBJ_DIR="" # global var not const
-CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
-CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
-CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
-RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-DBUS_PV="0.60"
-DBUS_GLIB_PV="0.60"
-EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
-FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
-GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
-GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
-GTK3_PV="3.14.5"
-LICENSE_FINGERPRINT="\
-dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
-f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
-" # SHA512
-LTO_TYPE="" # Global variable
-MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MOZILLA_FIVE_HOME="" # Global variable
-NABIS=0 # Global variable
-NASM_PV="2.14.02"
-NODE_VERSION=18
-PYTHON_COMPAT=( "python3_"{10..13} )
-PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.86.0"
-RUST_MIN_VER="1.81.0"
-RUST_NEEDS_LLVM=1
-RUST_PV="${RUST_MIN_VER}"
-SPEECH_DISPATCHER_PV="0.11.4-r1"
-XKBCOMMON_PV="0.4.1"
-VIRTUALX_REQUIRED="manual"
-# Information about the bundled wasi toolchain from
-# https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER="27.0"
-WASI_SDK_LLVM_VER="20"
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs desktop dhms flag-o-matic gnome2-utils lcnr libcxx-slot
@@ -792,7 +792,7 @@ PDEPEND+="
 "
 
 # ESR and rapid dependencies.
-if [[ -n ${MOZ_ESR} ]] ; then
+if [[ -n "${MOZ_ESR}" ]] ; then
 	RDEPEND+=" !www-client/firefox:rapid"
 else
 	RDEPEND+=" !www-client/firefox:esr"
