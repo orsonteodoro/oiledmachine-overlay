@@ -101,7 +101,7 @@ LLVM_COMPAT=(
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_SLOT="21"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 # For max and min package versions see link below. \
