@@ -35,14 +35,14 @@ _LIBCXX_COMPAT_ECLASS=1
 # CLANG_COMPAT contains "llvm_slot_" prefix.
 # LLVM_COMPAT contains just the slot number.
 
-# LLVM_COMPAT template for CUDA 11.8 to 12.9
+# LLVM_COMPAT template for CUDA 11.8
 #
 # Status:  Production ready
 #
 # Example:
 #
 # LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CUDA[@]/llvm_slot_}
+#     ${LIBCXX_COMPAT_CUDA_11_8[@]/llvm_slot_}
 # )
 #
 LIBCXX_COMPAT_CUDA_11_8=(
