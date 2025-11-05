@@ -279,8 +279,8 @@ LTS distro default and max allowed LLVM, and LLVM availability on this overlay
 which currently is set at LLVM 18 minimum.
 
 [5] While it is true that ROCm 6.4 and 7.0 uses LLVM 19, full ROCm support
-    assumes that GCC 12 or 13 is available for prebuilt binaries against
-    libstdc++.
+    assumes that GCC 12 or 13 is available for prebuilt binaries built
+    against libstdc++.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
