@@ -114,8 +114,8 @@ exist in build files.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
-  GCC:    gcc/c-family/c-opts.cc in c_common_init_options()
-  Clang:  clang/lib/Basic/LangStandards.cpp in clang::getDefaultLanguageStandard()
+  - GCC:    gcc/c-family/c-opts.cc in c_common_init_options()
+  - Clang:  clang/lib/Basic/LangStandards.cpp in clang::getDefaultLanguageStandard()
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
