@@ -136,7 +136,7 @@ Language defaults
 * In this overlay, rolling packages get paired with rolling compilers.  LTS
   packages get paired with LTS compilers.  This is why the gcc_slot_ and
   llvm_slot_ USE flags and corresponding verify steps are provided to
-  avoid linker issue and backtracking to miscategorized LTS/rolling packages.
+  avoid linker issues and backtracking to miscategorized LTS/rolling packages.
 * A package without explicit C or C++ standard will fallback to the compiler
   default mentioned in the C++ standard or C standard columns above.
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
