@@ -288,6 +288,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_}
 	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 	18 # For JavaScript support
@@ -912,6 +913,9 @@ REQUIRED_USE="
 	cuda? (
 		cudnn
 		!lto
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]}
+		)
 	)
 	cudnn? (
 		cuda
