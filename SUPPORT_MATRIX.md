@@ -138,7 +138,7 @@ Language defaults
   llvm_slot_ USE flags and corresponding verify steps are provided to
   avoid linker issue and backtracking to miscategorized LTS/rolling packages.
 * A package without explicit C or C++ standard will fallback to the compiler
-  default.
+  default mentioned in the C++ standard or C standard columns above.
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
