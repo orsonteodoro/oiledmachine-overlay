@@ -56,31 +56,10 @@ _hip_set_globals() {
 _hip_set_globals
 unset -f _hip_set_globals
 
-#
-# The table for corresponding llvm-roc and CUDA versions.
-#
-# Key:
-# c       - consistent CUDA version with HIPIFY documentation with the same
-#           ROCM_SLOT.  This means that it has the same LLVM major version
-#           but not necessarily the same stable non-git versus the unstable
-#           git suffix.
-# s       - stable config
-# u       - not marked stable config (implied unstable or not CI tested)
-# match   - The versions are matching.  (e.g. The git version in HIPIFY
-#           documentation with the same ROCM_SLOT is the same as version in
-#           llvm-roc with the git suffix.)  The suffix for git or non-git
-#           are the same.
-# missing - The corresponding llvm-roc major version is not found in HIPIFY
-#           documentation for the same ROCM_SLOT.  Upstream may have forgotten
-#           to update the documentation, which is a common bad habit in
-#           programming.
-#
-# For the "missing" tag in brackets, we fill the missing details using the
-# documentation from the next minor version of HIPIFY.
-#
-# CUDA:DRIVER_VERSION pairs
-HIPIFY_6_4_CUDA_SLOTS=( "11.8:520.61" "12.3:545.23" "12.4:550.54" "12.5:555.42" "12.6:560.35" )
-HIPIFY_7_0_CUDA_SLOTS=( "11.8:520.61" "12.3:545.23" "12.4:550.54" "12.5:555.42" "12.6:560.35" "12.8:570.124" )
+# CUDA:DRIVER_VERSION:CUDNN_MIN triple
+HIPIFY_6_4_CUDA_SLOTS=( "11.8:520.61:=,8.6" "12.3:545.23:>=,8.8" "12.4:550.54:>=,8.8" "12.5:555.42:>=,8.8" "12.6:560.35:>=,8.8" )
+HIPIFY_7_0_CUDA_SLOTS=( "11.8:520.61:=,8.6" "12.3:545.23:>=,8.8" "12.4:550.54:>=,8.8" "12.5:555.42:>=,8.8" "12.6:560.35:>=,8.8" "12.8:570.124:>=,8.8" )
 
+# Limited by prebuilt binaries
 HIP_6_4_LIBSTDCXX_SLOTS=( "12.5" "13.4" )
 HIP_7_0_LIBSTDCXX_SLOTS=( "12.5" "13.4" )

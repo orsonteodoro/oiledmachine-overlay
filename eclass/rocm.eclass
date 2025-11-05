@@ -190,15 +190,27 @@ _rocm_set_globals_default() {
 		gen_hip_cuda_impl+="
 			|| (
 		"
-		local pair
-		for pair in ${HIP_CUDA_VERSIONS[@]} ; do
-			local cuda_version="${pair%:*}"
-			local driver_version="${pair#*:}"
+		local triple
+		for triple in ${HIP_CUDA_VERSIONS[@]} ; do
+			local cuda_pv="${triple%%:*}"
+			local driver_pv="${triple#*:}"
+			driver_pv="${driver_pv%:*}"
+			local cudnn_pair="${triple##*:}"
+			local cudnn_op="${cudnn_pair%,*}"
+			local cudnn_pv="${cudnn_pair#*,}"
+
+			local cudnn_str=""
+			if [[ "${cudnn_op}" == "=" ]] ; then
+				cudnn_str="=dev-libs/cudnn-${cudnn_pv}*"
+			else
+				cudnn_str=">=dev-libs/cudnn-${cudnn_pv}"
+			fi
 			gen_hip_cuda_impl+="
 				(
-					=dev-util/nvidia-cuda-toolkit-${cuda_version}*
-					>=x11-drivers/nvidia-drivers-${driver_version}
-					virtual/cuda-compiler:0/${cuda_version}
+					=dev-util/nvidia-cuda-toolkit-${cuda_pv}*
+					>=x11-drivers/nvidia-drivers-${driver_pv}
+					${cudnn_str}
+					virtual/cuda-compiler:0/${cuda_pv}
 				)
 			"
 		done
@@ -1177,7 +1189,7 @@ rocm_set_default_hipcc() {
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
 		local t="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOTS[@]"
 		local CUDA_SLOTS=(
-			${!t/%:*}
+			${!t/%%:*}
 		)
 		local x
 		local s=""
