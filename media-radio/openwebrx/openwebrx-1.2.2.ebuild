@@ -7,51 +7,54 @@ EAPI=8
 # Items in the RDEPEND_UNPACKAGED list should be packaged by yourself.
 # Upstream uses codec2 with deprecated code, but the distro uses the recent one.
 
-DEVICES=(
-	airspy
-	airspyhf
-	fcdpp
-	fifi_sdr
-	hackrf
-	hpsdr
-	lime_sdr
-	perseussdr
-	pluto_sdr
-	radioberry
-	rtl_sdr
-	rtl_sdr_soapy
-	rtl_tcp
-	runds
-	sdrplay
-	soapy_remote
-	sddc
-	uhd
-)
 DISTUTILS_USE_PEP517="setuptools"
-OPTIONAL_FEATURES=(
-	dream
-	digital_voice_digiham
-	digital_voice_freedv
-	digital_voice_m17
-	drm
-	js8
-	packet
-	pocsag
-	wsjtx
+PYTHON_COMPAT=( "python3_"{8..11} )
+
+DEVICES=(
+	"airspy"
+	"airspyhf"
+	"fcdpp"
+	"fifi_sdr"
+	"hackrf"
+	"hpsdr"
+	"lime_sdr"
+	"perseussdr"
+	"pluto_sdr"
+	"radioberry"
+	"rtl_sdr"
+	"rtl_sdr_soapy"
+	"rtl_tcp"
+	"runds"
+	"sdrplay"
+	"soapy_remote"
+	"sddc"
+	"uhd"
 )
-PYTHON_COMPAT=( python3_{8..11} )
+
+OPTIONAL_FEATURES=(
+	"dream"
+	"digital_voice_digiham"
+	"digital_voice_freedv"
+	"digital_voice_m17"
+	"drm"
+	"js8"
+	"packet"
+	"pocsag"
+	"wsjtx"
+)
+
 SOAPY_DEVICES=(
-	airspy
-	airspyhf
-	fcdpp
-	hackrf
-	lime_sdr
-	pluto_sdr
-	radioberry
-	rtl_sdr_soapy
-	sdrplay
-	soapy_remote
-	uhd
+	"airspy"
+	"airspyhf"
+	"fcdpp"
+	"hackrf"
+	"lime_sdr"
+	"pluto_sdr"
+	"radioberry"
+	"rtl_sdr_soapy"
+	"sdrplay"
+	"soapy_remote"
+	"uhd"
 )
 
 inherit distutils-r1 user-info
