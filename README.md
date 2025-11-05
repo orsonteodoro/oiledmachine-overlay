@@ -247,7 +247,7 @@ CC/CXX using clang can still remain.
 | USE flag [3] [4] | LTS     | Indirect Clang/LLVM compatibility                                                                                           | Default C++ [2] |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------|
 | llvm_slot_18     | Yes     | U24, CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                                        | C++17           |
-| llvm_slot_19     | Yes     | D13, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                                               | C++17           |
+| llvm_slot_19     | Yes     | D13, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0 [5]                                                                           | C++17           |
 | llvm_slot_20     | No      |                                                                                                                             | C++17           |
 | llvm_slot_21     | No      |                                                                                                                             | C++17           |
 
@@ -277,6 +277,10 @@ hack.
 [4] The current LLVM slot minimum for C++ 17 is based on GPU compatibility,
 LTS distro default and max allowed LLVM, and LLVM availability on this overlay
 which currently is set at LLVM 18 minimum.
+
+[5] While it is true that ROCm 6.4 and 7.0 uses LLVM 19, full ROCm support
+    assumes that GCC 12 or 13 is available for prebuilt binaries against
+    libstdc++.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:

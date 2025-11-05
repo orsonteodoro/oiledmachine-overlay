@@ -93,18 +93,18 @@ exist in build files.
 
 Language defaults
 
-| LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]         | Distro correspondance   | Overlay CPU or GPU acceleration support                  |
-| ---                      | ---                   | ---               | ---         | ---           | ---                           | ---                     | ---                                                      |
-| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                 | U22                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
-| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                 | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18   | U24                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU                     |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19   | D13                     | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19   | G23 [1]                 | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
-| Rolling                  | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 20            | gcc_slot_14_3, llvm_slot_20   | G23 [2]                 | CUDA 12.8, CUDA 12.9, CPU [3]                            |
-| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 20            | gcc_slot_15_2, llvm_slot_20   | F42                     | CPU only                                                 |
-| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_2, llvm_slot_21   | F43                     | CPU only                                                 |
-| Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                 |                         | CPU only                                                 |
-| Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                  |                         | CPU only                                                 |
+| LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]         | Distro correspondance   | Overlay CPU or GPU acceleration support [8]                  |
+| ---                      | ---                   | ---               | ---         | ---           | ---                           | ---                     | ---                                                          |
+| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                 | U22                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                     |
+| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                 | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU [3] |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18   | U24                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU     |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19   | D13                     | CUDA 12.8, CUDA 12.9, CPU                                    |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19   | G23 [1]                 | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU                |
+| Rolling                  | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 20            | gcc_slot_14_3, llvm_slot_20   | G23 [2]                 | CUDA 12.8, CUDA 12.9, CPU [3]                                |
+| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 20            | gcc_slot_15_2, llvm_slot_20   | F42                     | CPU only                                                     |
+| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_2, llvm_slot_21   | F43                     | CPU only                                                     |
+| Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                 |                         | CPU only                                                     |
+| Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                  |                         | CPU only                                                     |
 
 * [1] This overlay's current default.  Similar to U24 which makes LLVM 19 available.
 * [2] The latest stable for this distro.
@@ -116,6 +116,7 @@ Language defaults
 * [6] gnu++17 is c++17 with GNU extensions.  gnu17 is C17 with GNU extensions.
 * [7] GCC / LLVM.  Users need to avoid mixing the two different editions to
       prevent ODR violations or mismatched signatures.
+* [8] Full ROCm support is based on GCC slot.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
