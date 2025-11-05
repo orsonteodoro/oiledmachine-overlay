@@ -91,7 +91,7 @@ exist in build files.
 | c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
 | c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
-| LTS or rolling compiler?        | Default C++ standard             | GCC default | Clang default | Overlay USE flags             | Distro correspondance   | Overlay CPU or GPU support                               |
+| LTS or rolling compiler?        | Default C++ standard             | GCC default | Clang default | Overlay USE flags [5]         | Distro correspondance   | Overlay CPU or GPU support                               |
 | ---                             | ---                              | ---         | ---           | ---                           | ---                     | ---                                                      |
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 11          | 14            | gcc_slot_11_5                 | U22                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 12          | 14            | gcc_slot_12_5                 | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
@@ -104,10 +104,13 @@ exist in build files.
 | Rolling                         | gnu++17 (c++17 & GNU extension)  | 16          |               | gcc_slot_16_1                 |                         | CPU only                                                 |
 | Rolling                         | gnu++17 (c++17 & GNU extension)  |             | 22            | llvm_slot_22                  |                         | CPU only                                                 |
 
-* [1] This overlay's current default.
+* [1] This overlay's current default.  Similar to U24 which makes LLVM 19 available.
 * [2] The latest stable for this distro.
 * [3] GPU acceleration only available with GCC built packages
 * [4] GPU acceleration only available with LLVM built packages
+* [5] The GCC USE flags add the minor version because GCC 9 has multiple
+      GLIBCXX_ versions, but the GCC USE flags may later be simplified on major
+      update.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
