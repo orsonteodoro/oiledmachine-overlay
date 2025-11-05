@@ -103,8 +103,8 @@ Language defaults
 | Rolling                  | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 20            | gcc_slot_14_3, llvm_slot_20   | G23 [2]                 | CUDA 12.8, CUDA 12.9, CPU [3]                            |
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 20            | gcc_slot_15_2, llvm_slot_20   | F42                     | CPU only                                                 |
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_2, llvm_slot_21   | F43                     | CPU only                                                 |
-| Rolling                  | gnu++17 / gnu++17     | gnu23 / -         | 16          |               | gcc_slot_16_1                 |                         | CPU only                                                 |
-| Rolling                  | gnu++17 / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                  |                         | CPU only                                                 |
+| Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                 |                         | CPU only                                                 |
+| Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                  |                         | CPU only                                                 |
 
 * [1] This overlay's current default.  Similar to U24 which makes LLVM 19 available.
 * [2] The latest stable for this distro.
