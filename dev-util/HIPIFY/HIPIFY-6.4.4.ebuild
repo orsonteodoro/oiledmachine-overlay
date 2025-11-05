@@ -87,24 +87,24 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
+# The ROCm LLVM requirement is not aligned with maximum allowed by CUDA's LLVM requirement.
+ewarn "None of the configurations for CUDA - LLVM available pairings are supported by upstream."
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-19*" ; then
-		LLVM_SLOT=19
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
-		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-18*" && has_version "=llvm-core/llvm-18*" ; then
-		LLVM_SLOT=18
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-15*" && has_version "=llvm-core/llvm-15*" ; then
-		LLVM_SLOT=15
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" ; then
+		local x
+		for x in {16..19} ; do
+			if has_version "=llvm-core/clang-${x}*" && has_version "=llvm-core/llvm-${x}*" ; then
+				LLVM_SLOT=${x}
+				break
+			fi
+		done
+		[[ -z "${LLVM_SLOT}" ]] && die "Only Clang/LLVM 16-19 supported"
 	else
 eerror
 eerror "Only the following parings are supported for tests:"
 eerror
-eerror "CUDA 12.6, CLANG + LLVM 19"
-eerror "CUDA 12.3, CLANG + LLVM 18"
-eerror "CUDA 12.3, CLANG + LLVM 17"
-eerror "CUDA 11.8, CLANG + LLVM 15"
+eerror "CUDA 12.6, CLANG + LLVM 16-19"
 eerror
 		die
 	fi
