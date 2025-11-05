@@ -20,6 +20,7 @@ DISTUTILS_USE_PEP517="setuptools"
 JAVA_SLOT="11"
 LIBJPEG_TURBO_PV="2.1.5.1"						# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/jpeg/workspace.bzl
 LIBPNG_PV="1.6.42"							# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/png/workspace.bzl
+LLVM_MAX_SLOT="19"
 EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/org_aomedia_aom/workspace.bzl
 EGIT_BLAKE3_COMMIT="0816badf3ada3ec48e712dd4f4cbc2cd60828278"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/blake3/workspace.bzl
 EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_boringssl/workspace.bzl
@@ -36,9 +37,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
-LLVM_MAX_SLOT="21"
 
 inherit check-compiler-switch distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm sandbox-changes toolchain-funcs
 

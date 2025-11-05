@@ -40,7 +40,6 @@ LIBSDL2_PV="2.28.4"
 LIBSNDFILE_PV="1.2.2"
 LIBVORBIS_PV="1.3.7"
 LIBX11_PV="1.8.7"
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="23.2.1"
 MPG123_PV="1.32.2"
 OPENAL_PV="1.23.1"
@@ -57,6 +56,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
+LLVM_MAX_SLOT="19"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(

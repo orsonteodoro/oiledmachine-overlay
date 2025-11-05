@@ -11,7 +11,7 @@ EAPI=8
 # https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.14.7.0/src/cmake/externalpackages.cmake
 
 CXX_STANDARD=17
-LLVM_MAX_SLOT="21"
+LLVM_MAX_SLOT="19"
 OIIO_PV="2.2"
 PYTHON_COMPAT=( "python3_"{10..13} )
 QT5_MIN="5.6"
@@ -72,7 +72,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_CXX17_CUDA[@]/llvm_slot_} # 16..19
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
 
 inherit check-compiler-switch cmake cuda flag-o-matic flag-o-matic-om
@@ -270,20 +270,6 @@ RDEPEND+="
 	dev-libs/libfmt[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-libs/libfmt:=
 	cuda? (
-		llvm_slot_16? (
-			|| (
-				${CUDA_12_6_CDEPEND}
-				${CUDA_12_8_CDEPEND}
-				${CUDA_12_9_CDEPEND}
-			)
-		)
-		llvm_slot_17? (
-			|| (
-				${CUDA_12_6_CDEPEND}
-				${CUDA_12_8_CDEPEND}
-				${CUDA_12_9_CDEPEND}
-			)
-		)
 		llvm_slot_18? (
 			|| (
 				${CUDA_12_6_CDEPEND}
@@ -355,20 +341,6 @@ BDEPEND+="
 			media-libs/openimageio:=
 		')
 		cuda? (
-			llvm_slot_16? (
-				|| (
-					${CUDA_12_6_CDEPEND}
-					${CUDA_12_8_CDEPEND}
-					${CUDA_12_9_CDEPEND}
-				)
-			)
-			llvm_slot_17? (
-				|| (
-					${CUDA_12_6_CDEPEND}
-					${CUDA_12_8_CDEPEND}
-					${CUDA_12_9_CDEPEND}
-				)
-			)
 			llvm_slot_18? (
 				|| (
 					${CUDA_12_6_CDEPEND}

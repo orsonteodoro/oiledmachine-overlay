@@ -88,6 +88,7 @@ FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 HARFBUZZ_PV="2.7.4"
+LLVM_MAX_SLOT="21"
 MESA_PV="18.0.0_rc5"
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -126,7 +127,6 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_} # 21
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
-LLVM_MAX_SLOT="21"
 
 FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1

@@ -20,6 +20,7 @@ GRPC_PV="1.52.0"							# Found in https://github.com/google/tensorstore/blob/v0.
 JAVA_SLOT="11"
 LIBJPEG_TURBO_PV="2.1.4"						# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/jpeg/workspace.bzl
 LIBPNG_PV="1.6.37"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/png/workspace.bzl
+LLVM_MAX_SLOT="19"
 EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/org_aomedia_aom/workspace.bzl
 EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/blake3/workspace.bzl
 EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_boringssl/workspace.bzl
@@ -36,9 +37,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
-LLVM_MAX_SLOT="21"
 
 inherit check-compiler-switch distutils-r1 flag-o-matic llvm libcxx-slot libstdcxx-slot sandbox-changes toolchain-funcs
 

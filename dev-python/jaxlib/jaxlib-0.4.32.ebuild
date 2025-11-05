@@ -46,7 +46,7 @@ DISTUTILS_USE_PEP517="standalone"
 EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 JAVA_SLOT="11"
-LLVM_MAX_SLOT="21"
+LLVM_MAX_SLOT="19"
 MAINTAINER_MODE=0
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
@@ -84,8 +84,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-	19 # ROCm 6.4
+	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 	# Upstream uses LLVM 18
 )
 
@@ -403,7 +403,9 @@ gen_llvm_slot_required_use() {
 	done
 }
 
+# CUDA is disabled because version is not supported on overlay.
 REQUIRED_USE+="
+	!cuda
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	$(gen_llvm_slot_required_use)
@@ -428,6 +430,9 @@ REQUIRED_USE+="
 		${ROCM_REQUIRED_USE}
 		^^ (
 			rocm_6_4
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
 	)
 	rocm_6_4? (

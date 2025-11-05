@@ -92,12 +92,12 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
 	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_MAX_SLOT="21"
+LLVM_MAX_SLOT="19"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 # For max and min package versions see link below. \

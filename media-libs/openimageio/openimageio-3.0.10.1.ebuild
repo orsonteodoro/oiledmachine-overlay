@@ -17,7 +17,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
 LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
@@ -25,7 +25,7 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 FONT_PN="OpenImageIO"
-LLVM_MAX_SLOT="21"
+LLVM_MAX_SLOT="19"
 ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
 	# openexr:imath
@@ -481,11 +481,13 @@ pkg_setup() {
 	check-compiler-switch_start
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
 		local llvm_slot=
-		if use llvm_slot_20 ; then
-			llvm_slot=20
-		elif use llvm_slot_21 ; then
-			llvm_slot=21
-		fi
+		local x
+		for x in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${x}" ; then
+				llvm_slot=${x}
+				break
+			fi
+		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
 		export CPP="${CC} -E"

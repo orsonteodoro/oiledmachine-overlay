@@ -17,6 +17,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
+LLVM_MAX_SLOT="19"
 PYTHON_COMPAT=( "python3_"{10..11} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
@@ -25,9 +26,8 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 ) # See https://github.com/ispc/ispc/blob/v1.28.2/src/ispc_version.h
-LLVM_MAX_SLOT="21"
 
 inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot python-any-r1 llvm toolchain-funcs uopts
 
