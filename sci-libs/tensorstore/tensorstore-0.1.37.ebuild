@@ -13,6 +13,7 @@ EAPI=8
 
 ABSEIL_CPP_PV="master-2023-03-03"					# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_absl/workspace.bzl#L29, https://github.com/abseil/abseil-cpp/blob/807763a7f57dcf0ba4af7c3b218013e8f525e811/absl/base/config.h#L120
 BAZEL_PV="6.1.0"
+CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} )							# Verified working
@@ -20,8 +21,6 @@ GRPC_PV="1.52.0"							# Found in https://github.com/google/tensorstore/blob/v0.
 JAVA_SLOT="11"
 LIBJPEG_TURBO_PV="2.1.4"						# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/jpeg/workspace.bzl
 LIBPNG_PV="1.6.37"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/png/workspace.bzl
-LLVM_COMPAT=( {14..10} )						# Upstream supports starting from 8
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"					# Based on CI distro
 EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/org_aomedia_aom/workspace.bzl
 EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/blake3/workspace.bzl
 EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_boringssl/workspace.bzl
@@ -31,7 +30,18 @@ EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https
 PROTOBUF_PV="3.21.11"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_protobuf/workspace.bzl#L27C96-L27C100
 PYTHON_COMPAT=( "python3_"{8..11} ) # CI uses 3.9
 
-inherit check-compiler-switch distutils-r1 flag-o-matic llvm sandbox-changes toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+)
+LLVM_MAX_SLOT="21"
+
+inherit check-compiler-switch distutils-r1 flag-o-matic llvm libcxx-slot libstdcxx-slot sandbox-changes toolchain-funcs
 
 # We may need to prefix with gh so that the fingerprints do not conflict between releases and snapshots.
 bazel_external_uris="
@@ -191,34 +201,19 @@ eerror
 		die
 	fi
 
-einfo "FORCE_LLVM_SLOT may be specified."
-	local _LLVM_COMPAT=( ${LLVM_COMPAT[@]} )
-	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
-		_LLVM_COMPAT=( ${FORCE_LLVM_SLOT} )
-	fi
-
-	local found=0
 	local s
 	for s in ${_LLVM_COMPAT[@]} ; do
-		which "${CHOST}-clang-${s}" || continue
-		export CC="${CHOST}-clang-${s}"
-		export CXX="${CHOST}-clang++-${s}"
-		export CPP="${CC} -E"
-		if ${CC} --version >/dev/null 2>&1 ; then
-einfo "Switched to clang:${s}"
-			found=1
+		if use "llvm_slot_${s}" ; then
+			which "${CHOST}-clang-${s}" || continue
+			export CC="${CHOST}-clang-${s}"
+			export CXX="${CHOST}-clang++-${s}"
+			export CPP="${CC} -E"
 			break
 		fi
 	done
-	if (( ${found} != 1 )) ; then
-eerror
-eerror "Use only clang slots ${LLVM_COMPAT[@]}"
-eerror
-		die
-	fi
 	LLVM_MAX_SLOT=${s}
 	llvm_pkg_setup
-	${CC} --version || die
+	${CC} --version || die "Failed compiler check for CC=${CC}"
 	strip-unsupported-flags
 }
 
@@ -231,7 +226,16 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang ; then
+
+	if tc-is-clang && ! use clang ; then
+eerror
+eerror "Detected clang for CC but USE flag clang is disabled.  Enable the clang"
+eerror "USE flag or switch to GCC to continue."
+eerror
+		die
+	fi
+
+	if use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
@@ -274,6 +278,8 @@ eerror
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
