@@ -17,7 +17,6 @@ BAZEL_PV="6.4.0"
 CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-GCC_COMPAT=( {12..9} )							# Verified working
 JAVA_SLOT="11"
 LIBJPEG_TURBO_PV="2.1.5.1"						# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/jpeg/workspace.bzl
 LIBPNG_PV="1.6.42"							# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/png/workspace.bzl
