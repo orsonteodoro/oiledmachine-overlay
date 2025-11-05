@@ -288,8 +288,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-	19 # For ROCm 6.4
 	18 # For JavaScript support
 )
 
@@ -940,6 +940,9 @@ REQUIRED_USE="
 	rocm? (
 		llvm_slot_19
 		migraphx
+		^^ (
+			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+		)
 	)
 	tensorrt-oss-parser? (
 		cuda
@@ -1074,43 +1077,22 @@ RDEPEND="
 	cuda? (
 		|| (
 			(
-				=dev-util/nvidia-cuda-toolkit-11.8*
-				!python? (
-					>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
-				)
-				cudnn? (
-					=dev-libs/cudnn-8.8*
-				)
-				python? (
-					>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-			(
-				=dev-util/nvidia-cuda-toolkit-11.8*
-				!python? (
-					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
-				)
-				cudnn? (
-					=dev-libs/cudnn-9.1*
-				)
-				python? (
-					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-			(
+				>=x11-drivers/nvidia-drivers-560.35
 				=dev-util/nvidia-cuda-toolkit-12.6*
 				!python? (
 					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
-					=dev-libs/cudnn-9.5*
+					>=dev-libs/cudnn-9.5
 				)
 				python? (
 					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
+				virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
 	)
 	cudnn? (
 		dev-libs/cudnn:=

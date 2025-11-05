@@ -9,6 +9,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 GLSLANG_COMMIT="a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc"
 PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+PYTHON_COMPAT=( "python3_"{11,12} )
 
 BF16_ARCHES=(
 	"armv8.4-a"
@@ -138,8 +139,6 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_xop"
 )
-
-PYTHON_COMPAT=( "python3_"{11,12} )
 
 inherit cflags-hardened distutils-r1 dep-prepare toolchain-funcs
 

@@ -8,10 +8,11 @@ EAPI=8
 
 ARROW_DATA_GIT_HASH="4d209492d514c2d3cb2d392681b9aa00e6d8da1c"
 EPYTEST_XDIST=1
-PARQUET_DATA_GIT_HASH="cb7a9674142c137367bf75a01b79c6e214a73199"
 DISTUTILS_EXT=1
-DISTUTILS_USE_PEP517=setuptools
+DISTUTILS_USE_PEP517="setuptools"
+PARQUET_DATA_GIT_HASH="cb7a9674142c137367bf75a01b79c6e214a73199"
 PYTHON_COMPAT=( "python3_"{10..13} )
+
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 	"cpu_flags_arm_sve"
@@ -19,9 +20,11 @@ CPU_FLAGS_ARM=(
 	"cpu_flags_arm_sve256"
 	"cpu_flags_arm_sve512"
 )
+
 CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_altivec"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx2"

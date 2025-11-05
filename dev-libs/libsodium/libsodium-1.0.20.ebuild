@@ -4,9 +4,9 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libsodium.minisig"
+VERIFY_SIG_METHOD="minisig"
 
-VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/libsodium.minisig
-VERIFY_SIG_METHOD=minisig
 inherit autotools cflags-hardened multilib-minimal verify-sig
 
 DESCRIPTION="Portable fork of NaCl, a higher-level cryptographic library"

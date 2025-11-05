@@ -5,13 +5,15 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
+PYTHON_COMPAT=( "python3_"{10..13} )
+
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
-PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib python-any-r1
 
@@ -43,7 +45,6 @@ RESTRICT="
 		test
 	)
 "
-
 BDEPEND="
 	${PYTHON_DEPS}
 	doc? (
@@ -51,7 +52,6 @@ BDEPEND="
 		media-gfx/graphviz
 	)
 "
-
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.1-libdir-macro.patch"
 	"${FILESDIR}/${PN}-1.4-arm64-neon.patch"
