@@ -97,7 +97,7 @@ exist in build files.
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 12        | 14          | gcc_slot_12_5                 | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 13        | 18          | gcc_slot_13_4, llvm_slot_18   | U24                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU                     |
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 14        | 19          | gcc_slot_14_3, llvm_slot_19   | D13                     | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
-| LTS                             | gnu++17 (c++17 & GNU extension)  | 14        | 20          | gcc_slot_13_4, llvm_slot_19   | G23 [1]                 | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
+| LTS                             | gnu++17 (c++17 & GNU extension)  | 13        | 20          | gcc_slot_13_4, llvm_slot_19   | G23 [1]                 | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
 | Rolling                         | gnu++17 (c++17 & GNU extension)  | 14        | 20          | gcc_slot_14_3, llvm_slot_20   | G23 [2]                 | CUDA 12.8, CUDA 12.9, CPU [4]                            |
 | Rolling                         | gnu++17 (c++17 & GNU extension)  | 15        | 20          | gcc_slot_15_2, llvm_slot_20   | F42                     | CPU only                                                 |
 | Rolling                         | gnu++17 (c++17 & GNU extension)  | 15        | 21          | gcc_slot_15_2, llvm_slot_21   | F43                     | CPU only                                                 |
