@@ -239,9 +239,9 @@ Language defaults
 | SYCL                                | Not supported                         |                                                          |
 | systemd                             | Partially supported                   |                                                          |
 | TensorFlow 2.17 (CPU)               | WIP                                   |                                                          |
-| TensorFlow 2.17 (CUDA 12.3)         | WIP                                   |                                                          |
+| TensorFlow 2.17 (CUDA 12.3)         | Not supported                         |                                                          |
 | TensorFlow 2.20 (CPU)               | WIP                                   |                                                          |
-| TensorFlow 2.20 (CUDA 12.5)         | WIP                                   |                                                          |
+| TensorFlow 2.20 (CUDA 12.5)         | Not supported                         |                                                          |
 | TensorFlow 2.20 (ROCm 6.4)          | WIP                                   |                                                          |
 | Vulkan                              | Fully supported                       |                                                          |
 | Wayland                             | Fully supported                       |                                                          |
