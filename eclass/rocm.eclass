@@ -190,26 +190,46 @@ _rocm_set_globals_default() {
 		gen_hip_cuda_impl+="
 			|| (
 		"
-		local triple
-		for triple in ${HIP_CUDA_VERSIONS[@]} ; do
-			local cuda_pv="${triple%%:*}"
-			local driver_pv="${triple#*:}"
-			driver_pv="${driver_pv%:*}"
-			local cudnn_pair="${triple##*:}"
-			local cudnn_op="${cudnn_pair%,*}"
-			local cudnn_pv="${cudnn_pair#*,}"
+		# CUDA;DRIVER_VERSION;CUDNN_MIN;CUDNN_MAX as data type
+		local quad
+		for quad in ${HIP_CUDA_VERSIONS[@]} ; do
+			local cuda_pv="${quad%%;*}"
 
-			local cudnn_str=""
-			if [[ "${cudnn_op}" == "=" ]] ; then
-				cudnn_str="=dev-libs/cudnn-${cudnn_pv}*"
+			local driver_pv="${quad}"
+			driver_pv="${driver_pv#*;}"
+			driver_pv="${driver_pv%%;*}"
+
+			local cudnn_min_pair="${quad}"
+			cudnn_min_pair="${cudnn_min_pair%;*}"
+			cudnn_min_pair="${cudnn_min_pair##*;}"
+			local cudnn_min_op="${cudnn_min_pair%,*}"
+			local cudnn_min_pv="${cudnn_min_pair#*,}"
+
+			local cudnn_max_pair="${quad}"
+			cudnn_max_pair="${cudnn_max_pair##*;}"
+			local cudnn_max_op="${cudnn_max_pair%,*}"
+			local cudnn_max_pv="${cudnn_max_pair#*,}"
+
+			local cudnn_min_str=""
+			if [[ "${cudnn_min_op}" == "=" ]] ; then
+				cudnn_min_str="=dev-libs/cudnn-${cudnn_min_pv}*"
 			else
-				cudnn_str=">=dev-libs/cudnn-${cudnn_pv}"
+				cudnn_min_str="${cudnn_min_op}dev-libs/cudnn-${cudnn_min_pv}"
 			fi
+
+			local cudnn_max_str=""
+			if [[ "${cudnn_max_op}" == "=" ]] ; then
+				cudnn_max_str="=dev-libs/cudnn-${cudnn_max_pv}*"
+			else
+				cudnn_max_str="${cudnn_max_op}dev-libs/cudnn-${cudnn_max_pv}"
+			fi
+
 			gen_hip_cuda_impl+="
 				(
 					=dev-util/nvidia-cuda-toolkit-${cuda_pv}*
 					>=x11-drivers/nvidia-drivers-${driver_pv}
-					${cudnn_str}
+					${cudnn_min_str}
+					${cudnn_max_str}
 					virtual/cuda-compiler:0/${cuda_pv}
 				)
 			"
