@@ -8,7 +8,23 @@ EAPI=8
 # Requirements:
 # https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
 # For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
+
+CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 CXX_STANDARD="17"
+FONT_PN="OpenImageIO"
+LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LLVM_MAX_SLOT="19"
+ONETBB_SLOT="0"
+OPENVDB_APIS=( {12..9} )
+OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
+OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
+PYTHON_COMPAT=( "python3_"{11..12} )
+QT5_PV="5.15"
+QT6_PV="6.6"
+TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
+TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-05-01
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -19,14 +35,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
-LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
-CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
-FONT_PN="OpenImageIO"
-LLVM_MAX_SLOT="19"
-ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -51,14 +60,7 @@ OPENEXR_V3_PV=(
 	"3.1.5:3.1.5"
 	"3.1.4:3.1.4"
 )
-OPENVDB_APIS=( {12..9} )
-OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
-OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-PYTHON_COMPAT=( "python3_"{11..12} )
-QT5_PV="5.15"
-QT6_PV="6.6"
-TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
-TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-05-01
+
 X86_CPU_FEATURES=(
 	"aes:aes"
 	"avx:avx"

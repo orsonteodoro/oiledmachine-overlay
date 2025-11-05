@@ -93,10 +93,10 @@ exist in build files.
 
 * The LTS compilers (C++ 17 or older) for LTS packages correspond to
   gcc_slot_11_5, gcc_slot_12_5, gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18,
-  llvm_slot_19, llvm_slot_20 USE flags.
+  llvm_slot_19 USE flags.
 * The rolling compilers (C++ 20 or newer) for bleeding edge packages
-  correspond to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_21, llvm_slot_22, a
-  non-exaustive list of USE flags.
+  correspond to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_20, llvm_slot_21,
+  llvm_slot_22 or later.
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
@@ -104,16 +104,20 @@ exist in build files.
   the default for both GCC and Clang and is the default for most open source
   C++ projects in 2025.  A LTS compiler should be used as the systemwide
   default to maximize performance and compatibility.
-* The rolling compilers have the up-to-date implementation of the edition of the
-  C++ standard,  increased feature coverage for the edition of the standard,
+* The rolling compilers have the up-to-date implementation of the
+  C++ standard, increased feature coverage of the standard,
   usually have the minimum required feature set to build most projects for that
   standard on this overlay.  The minimum GCC/Clang version used per rolling
   standard in this overlay minimizes incomplete coverage to avoid missing
   support errors.  The consequences of using the rolling compiler as the
   systemwide default is that it will lock out access for GPU acceleration which
-  is orders of magnitude faster than CPU in certain use case scenarios.
+  is orders of magnitude faster than CPU in certain use case scenarios.  The
+  typical use case for using rolling compilers it to take advantage of the
+  gimmicks of newer CPUs instruction sets or access to newer microarchitectures
+  at the cost of access to faster GPU AI inference or processing.  Rolling
+  should not be used in packages where GPU is an option.
 * Ebuild testing and development defaults on this overlay are currently
-  set to GCC 13, GCC 15, Clang 18, Clang 19, Python 3.11.
+  set to GCC 13, Clang 19 for LTS; GCC 15, Clang 20 for rolling.
 * CUDA 11.8 is not recommended because of version inconsistency between
   distro's cuDNN ebuild and pyTorch version recommendations.  This CUDA version
   is limited to using GCC 11 only on this overlay.
@@ -129,16 +133,16 @@ exist in build files.
   have build files that reference a rolling distro.  This is partly why the
   counterpart to LTS is called a rolling compiler on this overlay.
 * GCC is preferred but Clang is recommended as the fallback compiler.
-* Clang 18, 19, 20, 21 are alternative LTS compilers on this overlay, but the
-  corresponding libc++ 21 is still feature incomplete and not recommended as
-  the default.
+* Clang 18, 19 are alternative LTS compilers on this overlay, but the
+  corresponding libc++ 18 or 19 used as the alternative C++ standard library
+  is still feature incomplete and not recommended as the systemwide default.
 * libstdc++ is the assumed default C++ standard library in this overlay.
   The alternative libc++ as a systemwide default has not been tested for
   these ebuilds.
-* Vendored Clang `21.0.0git` and vendored Rust (`<rust-ver>-dev`) from the
+* Vendored Clang `22.0.0git` and vendored Rust (`<rust-ver>-dev`) from the
   chromium-toolchain package are only supported on Chromium for proper Rust SSP.
-* rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in
-  security-critical packages.
+* =dev-lang/rust-bin-9999 is recommended for SSP, sanitizers, and as default to
+  be used in security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable
   (1.86.0) are recommended as fallbacks for non security-critical packages.
 
