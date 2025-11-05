@@ -116,7 +116,7 @@ Language defaults
 * [6] gnu++17 is c++17 with GNU extensions.  gnu17 is C17 with GNU extensions.
 * [7] GCC / LLVM.  Users need to avoid mixing the two different editions to
       prevent ODR violations or mismatched signatures.
-* [8] Full ROCm support is based on GCC slot.
+* [8] Full ROCm support is based on the GCC slot because of prebuilt binaries.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
