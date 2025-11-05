@@ -104,10 +104,10 @@ exist in build files.
 | Rolling                         | gnu++17 (c++17 & GNU extension)  | 16        |             | gcc_slot_16_1                 |                         | CPU only                                                 |
 | Rolling                         | gnu++17 (c++17 & GNU extension)  |           | 22          | llvm_slot_22                  |                         | CPU only                                                 |
 
-[1] This overlay's current default.
-[2] The latest stable for this distro.
-[3] GPU acceleration available with GCC built packages
-[4] GPU acceleration available with LLVM built packages
+* [1] This overlay's current default.
+* [2] The latest stable for this distro.
+* [3] GPU acceleration available with GCC built packages
+* [4] GPU acceleration available with LLVM built packages
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
