@@ -141,30 +141,6 @@ BDEPEND+="
 # point to paths in use the llvm-roc.  If ROCM_USE_LLVM_ROC=0, it will fix
 # rpaths and @...@ symbols to point to the system's llvm.
 
-# @FUNCTION: _report_hipify_requirements
-# @DESCRIPTION:
-_report_hipify_requirements() {
-	if [[ -n "${ROCM_SLOT}" ]] ; then
-		local _HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
-		local HIP_CUDA_VERSION="${!_HIP_CUDA_VERSION}"
-
-		local _HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
-		local HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
-
-		if has cuda ${IUSE_EFFECTIVE} ; then
-ewarn
-ewarn "You are responsible for maintaining a local copy of"
-ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for"
-ewarn "${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not"
-ewarn "available."
-ewarn
-ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* ebuild URI:"
-ewarn "${HIPIFY_CUDA_SDK_EBUILD_URI}"
-ewarn
-		fi
-	fi
-}
-
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -205,14 +181,31 @@ _rocm_set_globals_default() {
 
 	local gen_hip_cuda_impl=""
 	if [[ -n "${ROCM_SLOT}" ]] ; then
-		local _HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
-		HIP_CUDA_VERSION="${!_HIP_CUDA_VERSION}"
+		local _HIP_CUDA_VERSIONS="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOTS[@]"
+		HIP_CUDA_VERSIONS="${!_HIP_CUDA_VERSIONS}"
 
 		local _HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
 		HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
 
 		gen_hip_cuda_impl+="
-			=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}*
+			|| (
+		"
+		local pair
+		for pair in ${HIP_CUDA_VERSIONS[@]} ; do
+			local cuda_version="${pair%:*}"
+			local driver_version="${pair#*:}"
+			gen_hip_cuda_impl+="
+				(
+					=dev-util/nvidia-cuda-toolkit-${cuda_version}*
+					>=x11-drivers/nvidia-drivers-${driver_version}
+					virtual/cuda-compiler:0/${cuda_version}
+				)
+			"
+		done
+		gen_hip_cuda_impl+="
+			)
+			dev-util/nvidia-cuda-toolkit:=
+			virtual/cuda-compiler:=
 		"
 	else
 		HIP_SUPPORT_CUDA=0
@@ -561,8 +554,6 @@ einfo
 einfo "  PATH:  ${PATH}"
 einfo "  PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 einfo
-
-	_report_hipify_requirements
 }
 
 # @FUNCTION:  rocm_src_prepare
@@ -1184,63 +1175,41 @@ rocm_set_default_hipcc() {
 	strip-unsupported-flags
 	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
-		local CUDA_SLOTS_7_0=(
-			"11.8"
-			"12.3"
-			"12.6"
-			"12.8"
-			"12.9"
-		)
-		local CUDA_SLOTS_6_4=(
-			"11.8"
-			"12.3"
-			"12.6"
+		local t="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOTS[@]"
+		local CUDA_SLOTS=(
+			${!t/%:*}
 		)
 		local x
 		local s=""
-		if [[ "${ROCM_SLOT}" == "7.0" ]] ; then
-			for x in ${CUDA_SLOTS_7_0[@]} ; do
-				if has_version "virtual/cuda-compiler:${x}[gcc_slot_12_5]" ; then
-					s="12"
-					break
-				elif has_version "virtual/cuda-compiler:${x}[gcc_slot_13_4]" ; then
-					s="13"
-					break
+
+		local t2="HIP_${ROCM_SLOT/./_}_LIBSTDCXX_SLOTS[@]"
+
+		for x in ${CUDA_SLOTS[@]} ; do
+			for y in ${!t2} ; do
+				u="${y/./_}"
+				if has_version "virtual/cuda-compiler:0/${x}[gcc_slot_${u}]" ; then
+					s="${u%_*}"
+					break 2
 				fi
 			done
-		elif [[ "${ROCM_SLOT}" == "6.4" ]] ; then
-			for x in ${CUDA_SLOTS_6_4[@]} ; do
-				if has_version "virtual/cuda-compiler:${x}[gcc_slot_12_5]" ; then
-					s="12"
-					break
-				elif has_version "virtual/cuda-compiler:${x}[gcc_slot_13_4]" ; then
-					s="13"
-					break
-				fi
-			done
-		fi
+		done
 		if [[ -z "${s}" ]] ; then
 			local cuda_pv=$(best_version "dev-util/nvidia-cuda-toolkit" \
 				| sed -e "s|dev-util/nvidia-cuda-toolkit-||g")
 			local cuda_slot=$(ver_cut 1-2 "${cuda_pv}")
 eerror
-eerror "Emerge virtual/cuda-compiler:${cuda_slot} with the default"
+eerror "Emerge virtual/cuda-compiler:0/${cuda_slot} with the default"
 eerror "systemwide GCC slot represented by one of the gcc_slot_<x> the"
 eerror "virtual ebuild's USE flags."
 eerror
-eerror "The following are distro supported CUDA slots"
+eerror "The following are supported for HIP ${ROCM_SLOT} on this distro:"
 eerror
-eerror "HIP 6.4.x:  11.8, 12.3, 12.6"
-eerror "HIP 7.0.x:  11.8, 12.3, 12.6, 12.8, 12.9"
-eerror
-eerror "The following are supported GCC slots"
-eerror
-eerror "HIP 6.4.x:  gcc_slot_12_5, gcc_slot_13_4"
-eerror "HIP 7.0.x:  gcc_slot_12_5, gcc_slot_13_4"
+eerror "CUDA versions:  ${CUDA_SLOTS[@]}"
+eerror "GCC slots:  ${!t2}"
 eerror
 eerror "If the default systemwide compiler is GCC >= 14, you must rebuild all"
-eerror "C++ LTS packages (C++ 17 or earlier) with primarily either GCC 12 or"
-eerror "13."
+eerror "C++ LTS packages (C++ 17 or earlier) with primarily with the chosen"
+eerror "GCC slot"
 eerror
 			die
 		fi
