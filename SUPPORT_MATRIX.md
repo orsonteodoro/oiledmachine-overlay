@@ -132,7 +132,7 @@ Language defaults
   example.  The developers of Hyprland have build files that reference a rolling
   distro.  This is partly why the counterpart to LTS is called a rolling
   compiler on this overlay.  A few packages in this overlay require to switch
-  to GCC 15 or LLVM 20 are considered rolling packages.
+  to GCC 15 or LLVM 20 or newer are considered rolling packages.
 * In this overlay, rolling packages get paired with rolling compilers.  LTS
   packages get paired with LTS compilers.  This is why the gcc_slot_ and
   llvm_slot_ USE flags and corresponding verify steps are provided to
