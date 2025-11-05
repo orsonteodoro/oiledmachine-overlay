@@ -90,8 +90,9 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
-	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
+	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
+	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
 # ROCm 6.4: 19, ROCm 6.3: 18
