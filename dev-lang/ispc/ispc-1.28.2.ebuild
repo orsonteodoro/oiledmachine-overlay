@@ -16,15 +16,20 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_COMPAT=( {19..18} ) # See https://github.com/ispc/ispc/blob/v1.28.2/src/ispc_version.h
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{10..11} )
+CXX_STANDARD=17
+PYTHON_COMPAT=( "python3_"{10..11} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit check-compiler-switch cflags-hardened cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
+) # See https://github.com/ispc/ispc/blob/v1.28.2/src/ispc_version.h
+LLVM_MAX_SLOT="21"
+
+inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot python-any-r1 llvm toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
@@ -176,6 +181,7 @@ pkg_setup() {
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
 	uopts_setup
+	libcxx-slot_verify
 }
 
 src_unpack() {

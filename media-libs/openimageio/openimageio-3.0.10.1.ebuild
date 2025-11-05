@@ -17,7 +17,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 20, 21
 )
 LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
@@ -25,8 +25,7 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 FONT_PN="OpenImageIO"
-LLVM_COMPAT=( {18..13} )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_SLOT="21"
 ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
 	# openexr:imath

@@ -19,7 +19,9 @@ EAPI=8
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
+CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -34,6 +36,7 @@ LLVM_COMPAT=(
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx2"
@@ -50,7 +53,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4"
 	"cpu_flags_x86_sse4_2"
 )
-CMAKE_BUILD_TYPE="RelWithDebInfo"
+
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -75,7 +78,6 @@ OPENEXR_V3_PV=(
 	"3.1.5:3.1.4"
 	"3.1.4:3.1.4"
 )
-PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot
 inherit python-single-r1 virtualx

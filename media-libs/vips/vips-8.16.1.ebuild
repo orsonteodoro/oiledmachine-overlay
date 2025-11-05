@@ -16,14 +16,14 @@ EAPI=8
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="NPD UAF"
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx"
-	"cpu_flags_x86_avx512bw"
-	"cpu_flags_x86_avx512fp16"
-	"cpu_flags_x86_avx512bf16"
-	"cpu_flags_x86_ssse3"
-)
 CXX_STANDARD=11
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LIBJPEG_TURBO_PV="2.1.2"
+PYTHON_COMPAT=( "python3_"{8..11} )
+SO_C=60
+SO_R=1
+SO_A=18
+SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -32,20 +32,21 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_} # 18, 19
+)
+LLVM_MAX_SLOT="19"
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512fp16"
+	"cpu_flags_x86_avx512bf16"
+	"cpu_flags_x86_ssse3"
 )
 
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
-LIBJPEG_TURBO_PV="2.1.2"
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{8..11} )
-SO_C=60
-SO_R=1
-SO_A=18
-SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
 inherit libstdcxx-slot llvm meson-multilib multilib-minimal python-r1
@@ -196,7 +197,6 @@ PATENT_STATUS_RDEPEND="
 		)
 	)
 "
-
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}

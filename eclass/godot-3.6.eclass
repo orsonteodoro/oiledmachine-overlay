@@ -30,7 +30,7 @@ LIBVORBIS_PV="1.3.7"
 LIBVPX_PV="1.6.0"
 LIBWEBP_PV="1.3.2"
 LLVM_COMPAT=( 18 ) # U22 uses 14 (as default), but oiledmachine-overlay only has >= 18
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_SLOT="18"
 MBEDTLS_PV="2.28.10"
 MINIUPNPC_PV="2.2.7"
 MONO_PV="6.12.0"

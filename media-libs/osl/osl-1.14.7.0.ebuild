@@ -11,7 +11,7 @@ EAPI=8
 # https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.14.7.0/src/cmake/externalpackages.cmake
 
 CXX_STANDARD=17
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_SLOT="21"
 OIIO_PV="2.2"
 PYTHON_COMPAT=( "python3_"{10..13} )
 QT5_MIN="5.6"

@@ -7,10 +7,8 @@ MY_PN="OpenEXR"
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx"
-)
 CXX_STANDARD=17
+OPENEXR_IMAGES_PV="1.0"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -22,7 +20,9 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-OPENEXR_IMAGES_PV="1.0"
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx"
+)
 
 inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot
 
