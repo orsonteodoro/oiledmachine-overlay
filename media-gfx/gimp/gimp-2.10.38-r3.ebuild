@@ -43,7 +43,7 @@ COMMON_DEPEND="
 	>=media-libs/libpng-1.6.25:0=
 	>=media-libs/tiff-3.5.7:=
 	net-libs/glib-networking[ssl]
-	sys-libs/zlib
+	virtual/zlib:=
 	>=x11-libs/cairo-1.12.2
 	>=x11-libs/gdk-pixbuf-2.31:2
 	>=x11-libs/gtk+-2.24.32:2
@@ -100,6 +100,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.10_fix_configure_GCC13_implicit_function_declarations.patch" #899796
 	"${FILESDIR}/${PN}-2.10.36_c99_tiff.patch" #919282
 	"${FILESDIR}/${PN}-2.10.36_c99_metadata.patch" #919282
+	"${FILESDIR}/${PN}-2.10.38-ZDI-CAN-27823.patch" #965334
 )
 
 src_prepare() {
@@ -139,6 +140,9 @@ src_configure() {
 	append-cflags -std=gnu17
 
 	cflags-hardened_append
+
+	# segfault in tests with gcc-15
+	filter-lto
 
 	local myconf=(
 		GEGL="${EPREFIX}"/usr/bin/gegl-0.4
