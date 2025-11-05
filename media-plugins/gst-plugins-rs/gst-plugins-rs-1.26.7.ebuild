@@ -28,7 +28,13 @@ EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
 LLVM_COMPAT=( 19 ) # For clang-sys ; slot based on rust subslot
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_SLOT="19"
+PYTHON_COMPAT=( "python3_"{8..11} )
+# Upstream uses Rust 1.88.0, but relaxed
+# The Cargo.toml says 1.83 in LTS zone
+RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
+RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
+
 MODULES=(
 	"analytics"
 	"audiofx"
@@ -87,14 +93,10 @@ MODULES=(
 	"webrtc"
 	"webrtchttp"
 )
+
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{8..11} )
-# Upstream uses Rust 1.88.0, but relaxed
-# The Cargo.toml says 1.83 in LTS zone
-RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
-RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -961,8 +963,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
-webrtc-aws
-webrtc-livekit
+webrtc-aws webrtc-livekit
 ebuild_revision_31
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="

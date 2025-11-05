@@ -10,6 +10,11 @@
 EAPI=8
 
 CXX_STANDARD=17
+ONETBB_SLOT="0"
+OPENVDB_ABIS=( {12..11} )
+OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
+OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -18,17 +23,17 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
+	${LLVM_COMPAT_AX[@]}
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
+LLVM_MAX_SLOT="18"
+
 
 CPU_FLAGS_X86=(
 	"avx"
 	"sse4_2"
 )
-LLVM_COMPAT=( {18..15} ) # Max limit for Blender
-LLVM_COMPAT_AX=( {18..15} )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-ONETBB_SLOT="0"
+
 OPENEXR_V3_PV=(
 	# openexr:imath
 	#"3.4.0:9999"
@@ -57,10 +62,7 @@ OPENEXR_V3_PV=(
 	"3.1.2:3.1.0"
 	"3.1.0:3.1.0"
 )
-OPENVDB_ABIS=( {12..11} )
-OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
-OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
-PYTHON_COMPAT=( "python3_"{8..11} )
+
 VDB_UTILS=(
 	"vdb_lod"
 	"vdb_print"
@@ -108,7 +110,7 @@ REQUIRED_USE+="
 	)
 	ax? (
 		^^ (
-			${LLVM_COMPAT_AX[@]/#/llvm_slot_}
+			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
 	cpu_flags_x86_avx? (
@@ -148,7 +150,7 @@ gen_openexr_pairs() {
 }
 gen_ax_depend() {
 	local s
-	for s in ${LLVM_COMPAT_AX[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "

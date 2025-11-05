@@ -244,12 +244,12 @@ CC/CXX using clang can still remain.
 | gcc_slot_13_4    | Yes     | U24 (EOL 2036), CUDA-12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                         | C++17           |
 | gcc_slot_14_3    | No      | D13 (EOL 2030), F41, CUDA 12.8, CUDA 12.9                                                                                   | C++17           |
 
-| USE flag [3] [4] | Indirect Clang/LLVM compatibility                                                                                                     | Default C++ [2] |
+| USE flag [3] [4] | LTS     | Indirect Clang/LLVM compatibility                                                                                           | Default C++ [2] |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------|
-| llvm_slot_18     | U24, CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                                                  | C++17           |
-| llvm_slot_19     | D13, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                                                         | C++17           |
-| llvm_slot_20     |                                                                                                                                       | C++17           |
-| llvm_slot_21     |                                                                                                                                       | C++17           |
+| llvm_slot_18     | Yes     | U24, CUDA 12.6, CUDA 12.8, CUDA 12.9                                                                                        | C++17           |
+| llvm_slot_19     | Yes     | D13, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0                                                                               | C++17           |
+| llvm_slot_20     | No      |                                                                                                                             | C++17           |
+| llvm_slot_21     | No      |                                                                                                                             | C++17           |
 
 EOL dates should be taken with a gain of salt because this distro only respects
 the latest release of the other distros.  The main distro repo will delete or
@@ -274,11 +274,9 @@ denied by the distro.  The distro's manifest update ban for older Python 3.10
 ebuilds is bad because it goes against the spirit of the GPL with the right to
 hack.
 
-[4] The LLVM is considered incomplete for the C++ standard library particuarly
-for libc++, so LLVM is not considered LTS but rolling on this overlay.  The
-LLVM slot minimum for C++ 17 is based on the earliest maximum coverage for the
-C++ standard library for libc++ on this overlay which currently is set at
-LLVM 20.
+[4] The current LLVM slot minimum for C++ 17 is based on GPU compatibility,
+LTS distro default and max allowed LLVM, and LLVM availability on this overlay
+which currently is set at LLVM 18 minimum.
 
 Consider the following release cycles when choosing a mutually exclusive
 gcc_slot_*:
