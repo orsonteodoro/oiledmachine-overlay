@@ -8,6 +8,13 @@ EAPI=8
 
 MY_PN="Firejail"
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sandbox sensitive-data untrusted-data"
+CXX_STANDARD="ignore"
+FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
+GEN_EBUILD=0 # Uncomment to regen ebuild parts
+PYTHON_COMPAT=( "python3_"{9..12} )
+TEST_SET="distro" # distro or full
+
 declare -A _PROFILE_GRAPH
 declare -A APPARMOR_PROFILE
 declare -A ARGS
@@ -648,8 +655,6 @@ _PROFILE_GRAPH["zstdgrep"]="zstd"
 _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
 
-
-
 declare -A _SCOPE=(
 	["sway"]="ban" # Breaks startup
 	["X"]="ban"
@@ -659,39 +664,37 @@ declare -A _SCOPE=(
 	["x-terminal-emulator"]="ban"
 )
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sandbox sensitive-data untrusted-data"
 DOTTED_FILENAMES=(
-blender-2.8
-blender-3.6
-blink-common-hardened.inc
-chromium-common-hardened.inc
-com.github.bleakgrey.tootle
-com.github.dahenson.agenda
-com.github.johnfactotum.Foliate
-com.github.phase1geo.minder
-com.github.tchx84.Flatseal
-com.gitlab.newsflash
-display-im6.q16
-device-flasher.linux
-electron-common-hardened.inc
-feh-network.inc
-gimp-2.10
-gimp-2.8
-idea.sh
-io.github.lainsce.Notejot
-mpg123.bin
-openoffice.org
-org.gnome.NautilusPreviewer
-org.gnome.seahorse.Application
-ping-hardened.inc
-runenpass.sh
-start-tor-browser.desktop
-studio.sh
-ts3client_runscript.sh
-electron-hardened.inc
+	"blender-2.8"
+	"blender-3.6"
+	"blink-common-hardened.inc"
+	"chromium-common-hardened.inc"
+	"com.github.bleakgrey.tootle"
+	"com.github.dahenson.agenda"
+	"com.github.johnfactotum.Foliate"
+	"com.github.phase1geo.minder"
+	"com.github.tchx84.Flatseal"
+	"com.gitlab.newsflash"
+	"display-im6.q16"
+	"device-flasher.linux"
+	"electron-common-hardened.inc"
+	"feh-network.inc"
+	"gimp-2.10"
+	"gimp-2.8"
+	"idea.sh"
+	"io.github.lainsce.Notejot"
+	"mpg123.bin"
+	"openoffice.org"
+	"org.gnome.NautilusPreviewer"
+	"org.gnome.seahorse.Application"
+	"ping-hardened.inc"
+	"runenpass.sh"
+	"start-tor-browser.desktop"
+	"studio.sh"
+	"ts3client_runscript.sh"
+	"electron-hardened.inc"
 )
-# This is done for modular install.
-FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
+
 FIREJAIL_PROFILES=(
 0ad 1password 2048-qt 7z 7za 7zr Books Builder Cheese Cryptocat Cyberfox
 Discord DiscordCanary DiscordPTB Documents FBReader FossaMail Fritzing Gitter
@@ -884,7 +887,7 @@ zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep zim zless zlib-flate
 zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-GEN_EBUILD=0 # Uncomment to regen ebuild parts
+
 GUI_REQUIRED_USE="
 firejail_profiles_1password? ( || ( xephyr xpra ) )
 firejail_profiles_2048-qt? ( || ( xephyr xpra ) )
@@ -1430,17 +1433,22 @@ firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
 "
+
 HARDENED_ALLOCATORS_IUSE=(
-	hardened_malloc
-	mimalloc
-	scudo
+	"hardened_malloc"
+	"mimalloc"
+	"scudo"
 )
-LLVM_COMPAT=( {18..16} )
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_LTS[@]}
+)
+
 declare -A _PATH_CORRECTION=(
 	["spotify"]="/opt/spotify/spotify-client/spotify"
 )
-PYTHON_COMPAT=( python3_{9..12} )
-TEST_SET="distro" # distro or full
+
 X11_COMPAT=(
 1password 2048-qt Books Builder Documents Fritzing Logs Maps PCSX2
 QMediathekView Screenshot Viber abiword abrowser akregator alacarte alienarena
@@ -1529,21 +1537,26 @@ xonotic-sdl xonotic-sdl-wrapper xpdf yandex-browser yelp youtube youtube-dl-gui
 youtube-music-desktop-app youtube-viewer-gtk youtubemusic-nativefier ytmdesktop
 zathura zeal zim zoom
 )
+
 X_BLACKLIST=(
 # False positives for X support.
 	"gjs"
 )
+
 # Avoid broken resolution issue
 X_FALLBACKS=(
 	"leafpad:xpra"
 	"x-terminal-emulator:xpra"
 )
+
 X_HEADLESS_COMPAT=(
 # These are x11 sandboxed apps that could be headless and may use xvfb.
 	"vmware"
 )
+
 X_XEPHYR_ONLY=(
 )
+
 X_XPRA_ONLY=(
 	# Ban those that perform unexpected behavior like eager window close
 	# with xephyr.
@@ -1556,8 +1569,7 @@ X_XPRA_ONLY=(
 	"firefox-x11"
 )
 
-
-inherit cflags-hardened flag-o-matic linux-info python-single-r1 toolchain-funcs
+inherit cflags-hardened flag-o-matic libcxx-slot linux-info python-single-r1 toolchain-funcs
 inherit virtualx
 
 gen_clang_bdepend() {
@@ -2835,6 +2847,7 @@ einfo "You may use hardened_malloc for MTE support for arm64 to mitigate"
 einfo "against buffer overflows and use-after-free."
 einfo
 	fi
+	libcxx-slot_verify
 }
 
 _src_prepare_test_full() {
