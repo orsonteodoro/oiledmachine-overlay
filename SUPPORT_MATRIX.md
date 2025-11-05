@@ -80,7 +80,7 @@ exist in build files.
 | Rust 1.89.0                     | Available                             |                                       |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
 
-| `-std=c++<ver>` or CXX_STANDARD | LTS compiler or rolling compiler | Compiler status for C++ standard | C++ standard library status for C++ standard |
+| `-std=c++<ver>` or CXX_STANDARD | LTS or rolling compiler?         | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
 | c++98                           | LTS                              | ?                                | ?                                            |
 | c++03                           | LTS                              | ?                                | ?                                            |
@@ -91,12 +91,27 @@ exist in build files.
 | c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
 | c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
-* The LTS compilers (C++ 17 or older) for LTS packages correspond to
-  gcc_slot_11_5, gcc_slot_12_5, gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18,
-  llvm_slot_19 USE flags.
-* The rolling compilers (C++ 20 or newer) for bleeding edge packages
-  correspond to gcc_slot_15_2, gcc_slot_16_1, llvm_slot_20, llvm_slot_21,
-  llvm_slot_22 or later.
+| LTS or rolling compiler?        | Default C++ standard             | GCC       | Clang       | Overlay USE flags             | Distro correspondance   | Overlay CPU or GPU support                               |
+| LTS                             | gnu++17 (c++17 & GNU extension)  | 11        | 14          | gcc_slot_11_5                 | U22                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
+| LTS                             | gnu++17 (c++17 & GNU extension)  | 12        | 14          | gcc_slot_12_5                 | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
+| LTS                             | gnu++17 (c++17 & GNU extension)  | 13        | 18          | gcc_slot_13_4, llvm_slot_18   | U24                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU                     |
+| LTS                             | gnu++17 (c++17 & GNU extension)  | 14        | 19          | gcc_slot_14_3, llvm_slot_19   | D13                     | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
+| LTS                             | gnu++17 (c++17 & GNU extension)  | 14        | 20          | gcc_slot_13_4, llvm_slot_19   | G23 [1]                 | CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, CPU            |
+| Rolling                         | gnu++17 (c++17 & GNU extension)  | 14        | 20          | gcc_slot_14_3, llvm_slot_20   | G23 [2]                 | CUDA 12.8, CUDA 12.9, CPU [4]                            |
+| Rolling                         | gnu++17 (c++17 & GNU extension)  | 15        | 20          | gcc_slot_15_2, llvm_slot_20   | F42                     | CPU only                                                 |
+| Rolling                         | gnu++17 (c++17 & GNU extension)  | 15        | 21          | gcc_slot_15_2, llvm_slot_21   | F43                     | CPU only                                                 |
+| Rolling                         | gnu++17 (c++17 & GNU extension)  | 16        |             | gcc_slot_16_1                 |                         | CPU only                                                 |
+| Rolling                         | gnu++17 (c++17 & GNU extension)  |           | 22          | llvm_slot_22                  |                         | CPU only                                                 |
+
+[1] This overlay's current default.
+[2] The latest stable for this distro.
+[3] GPU acceleration available with GCC built packages
+[4] GPU acceleration available with LLVM built packages
+
+* This overlay prefers users use one of the LTS combos to avoid issues.
+* The default C++ standard can be found at:
+  GCC:    gcc/c-family/c-opts.cc in c_common_init_options()
+  Clang:  clang/lib/Basic/LangStandards.cpp in clang::getDefaultLanguageStandard()
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
