@@ -91,7 +91,7 @@ exist in build files.
 | c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
 | c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
-| LTS or rolling compiler?        | Default C++ standard             | GCC default | Clang default | Overlay USE flags [5]         | Distro correspondance   | Overlay CPU or GPU support                               |
+| LTS or rolling compiler?        | Default C++ standard             | GCC default | Clang default | Overlay USE flags [5]         | Distro correspondance   | Overlay CPU or GPU accleration support                   |
 | ---                             | ---                              | ---         | ---           | ---                           | ---                     | ---                                                      |
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 11          | 14            | gcc_slot_11_5                 | U22                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
 | LTS                             | gnu++17 (c++17 & GNU extension)  | 12          | 14            | gcc_slot_12_5                 | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, CPU [3]                 |
