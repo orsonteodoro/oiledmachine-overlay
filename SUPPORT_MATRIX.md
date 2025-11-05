@@ -138,12 +138,10 @@ Language defaults
   support errors.  The consequences of using the rolling compiler as the
   systemwide default is that it will lock out access for GPU acceleration which
   is orders of magnitude faster than CPU in certain use case scenarios.  The
-  typical use case for using rolling compilers it to take advantage of the
+  typical use cases for using rolling compilers it to take advantage of the
   gimmicks of newer CPUs instruction sets or access to newer microarchitectures
   at the cost of access to faster GPU AI inference or processing.  Rolling
   should not be used in packages where GPU is an option.
-* Ebuild testing and development defaults on this overlay are currently
-  set to GCC 13, Clang 19 for LTS; GCC 15, Clang 20 for rolling.
 * CUDA 11.8 is not recommended because of version inconsistency between
   distro's cuDNN ebuild and pyTorch version recommendations.  This CUDA version
   is limited to using GCC 11 only on this overlay.
