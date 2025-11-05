@@ -254,6 +254,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
 -->
     <bugs-to>https://github.com/godotengine/godot/issues</bugs-to>
     <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
+    <changelog>https://godotengine.github.io/godot-interactive-changelog/</changelog>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.3</doc>

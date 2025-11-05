@@ -494,6 +494,8 @@ einfo "  cp -aT /usr/share/godot/${SLOT}/prebuilt-export-templates/standard/temp
 einfo
 		fi
 	fi
+# The security implications are underreported.
+ewarn "SECURITY NOTICE:  Distributed games should be rebuilt with updated export template if CATEGORY/${P} is bumped."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

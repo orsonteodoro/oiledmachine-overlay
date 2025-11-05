@@ -6,32 +6,32 @@ EAPI=8
 
 STATUS="stable"
 
-ANDROID_MIN_API="19" # From tarball, see src_configure
-ANDROID_SDK_VER="34" # From tarball, see src_configure
-CLANG_PV_EMSCRIPTEN="17" # From CI logs, see https://github.com/emscripten-core/emscripten/blob/3.1.39/tools/shared.py#L52
-DOTNET_SDK_PV="9.0.200" # From CI logs
-EMSCRIPTEN_PV="3.1.39" # Based on https://github.com/godotengine/godot/blob/3.6.1-stable/.github/workflows/javascript_builds.yml#L10 U24
+ANDROID_MIN_API="24" # From tarball, see src_configure
+ANDROID_SDK_VER="35" # From tarball, see src_configure
+CLANG_PV_EMSCRIPTEN="21.0.0git (0f0079c29da4b4d5bbd43dced1db9ad6c6d11008)" # From CI logs, see https://github.com/emscripten-core/emscripten/blob/4.0.11/tools/shared.py#L62
+DOTNET_SDK_PV="8.0.100" # From CI logs
+EMSCRIPTEN_PV="4.0.11" # Based on CI logs for this release https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/web_builds.yml#L12 U24
 EMSCRIPTEN_NODE_PV="22.16.0"
-JDK_PV="17" # From https://github.com/godotengine/godot/blob/3.6.1-stable/.github/workflows/android_builds.yml#L27
-MINGW_PV="13.2.1" # From binary inspection
-NDK_PV="23.2" # From https://github.com/godotengine/godot/blob/3.6.1-stable/platform/android/detect.py#L46
+JDK_PV="17.0.16" # From CI logs, see https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/android_builds.yml#L49
+MINGW_PV="14.2.1" # From binary inspection
+NDK_PV="28.1" # From CI logs, https://github.com/godotengine/godot/blob/4.5-stable/platform/android/detect.py#L71
 
 # The system minimum requirements for the export templates are not based on documentation but on CI logs.
 # It is assumed that the documentation is not up to date because the LTS versions page is lagging.
 # The export templates allow to run the project on the prebuilt target platforms.
-ANDROID_MIN_VER="4.4"
-# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/1.39.9/src/settings.js#L1904
-# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/1.39.9/src/settings.js#L1878
-# Safari min version:  https://github.com/emscripten-core/emscripten/blob/1.39.9/src/settings.js#L1893
-BROWSERS_MIN_VER="Chrome 75, Firefox 65, Safari 12"
+ANDROID_MIN_VER="7.0" # The documentation says 6.0 but the AI says 7.0.
+# Chrome min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1904
+# Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
+# Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
+BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
 IOS_MIN_VER="12.0" # From -miphoneos-version-min=
-LINUX_MIN_VER="D11, U22, F37" # Based on https://github.com/godotengine/godot/blob/3.6.1-stable/.github/workflows/linux_builds.yml#L18 and GLIBC_PV
+LINUX_MIN_VER="D12, U22, F37" # Based on https://github.com/godotengine/godot/blob/4.5-stable/.github/workflows/linux_builds.yml#L22 and GLIBC_PV
 MACOS_MIN_VER="10.13" # From -mmacosx-version-min=
-WINDOWS_MIN_VER="7" # Based on /DWINVER= /D_WIN32_WINNT=
+WINDOWS_MIN_VER="10" # Based on /DWINVER= /D_WIN32_WINNT=
 
 # Emscripten core info is at:
-# https://github.com/emscripten-core/emsdk/blob/3.1.39/emscripten-releases-tags.txt
-# https://github.com/emscripten-core/emscripten/blob/3.1.39/ChangeLog.md
+# https://github.com/emscripten-core/emsdk/blob/4.0.11/emscripten-releases-tags.txt
+# https://github.com/emscripten-core/emscripten/blob/4.0.11/ChangeLog.md
 
 SRC_URI="
 	mono? (
@@ -105,50 +105,9 @@ DOTNET_LICENSE="
 	ZLIB
 "
 # See dotnet-sdk ebuild
-MONO_LICENSE="
-	(
-		MIT
-		UoI-NCSA
-	)
-	Apache-1.1
-	Apache-2.0
-	Apache-2.0-with-LLVM-exceptions
-	APSL-2
-	BoringSSL-ECC
-	BoringSSL-PSK
-	BSD
-	BSD-2
-	BSD-4
-	CC-BY-2.5
-	CC-BY-4.0
-	DOTNET-libraries-and-runtime-components-patents
-	gcc-runtime-library-exception-3.1
-	GPL-2+
-	GPL-2-with-linking-exception
-	GPL-2+-with-libtool-exception
-	GPL-3+
-	GPL-3+-with-autoconf-exception
-	GPL-3+-with-libtool-exception
-	IDPL
-	Info-ZIP
-	ISC
-	LGPL-2.1
-	LGPL-2.1-with-linking-exception
-	MIT
-	Mono-gc_allocator.h
-	Mono-patents
-	MPL-1.1
-	Ms-PL
-	openssl
-	OSL-3.0
-	SunPro
-	ZLIB
-"
-# See mono ebuild
 LICENSE+="
 	mono? (
 		${DOTNET_LICENSE}
-		${MONO_LICENSE}
 	)
 "
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
@@ -159,36 +118,37 @@ FILENAMES="
 android_debug.apk
 android_release.apk
 android_source.zip
-bcl
-data.mono.windows.32.release
-data.mono.windows.32.release_debug
-data.mono.windows.64.release
-data.mono.windows.64.release_debug
-data.mono.x11.32.release
-data.mono.x11.32.release_debug
-data.mono.x11.64.release
-data.mono.x11.64.release_debug
-iphone-mono-libs
-iphone.zip
-linux_x11_32_debug
-linux_x11_32_release
-linux_x11_64_debug
-linux_x11_64_release
-linux_x11_arm32_debug
-linux_x11_arm32_release
-linux_x11_arm64_debug
-linux_x11_arm64_release
-osx.zip
-webassembly_debug.zip
-webassembly_gdnative_debug.zip
-webassembly_gdnative_release.zip
-webassembly_release.zip
-webassembly_threads_debug.zip
-webassembly_threads_release.zip
-windows_32_debug.exe
-windows_32_release.exe
-windows_64_debug.exe
-windows_64_release.exe
+ios.zip
+linux_debug.arm32
+linux_debug.arm64
+linux_debug.x86_32
+linux_debug.x86_64
+linux_release.arm32
+linux_release.arm64
+linux_release.x86_32
+linux_release.x86_64
+macos.zip
+visionos.zip
+web_debug.zip
+web_dlink_debug.zip
+web_dlink_nothreads_debug.zip
+web_dlink_nothreads_release.zip
+web_dlink_release.zip
+web_nothreads_debug.zip
+web_nothreads_release.zip
+web_release.zip
+windows_debug_arm64_console.exe
+windows_debug_arm64.exe
+windows_debug_x86_32_console.exe
+windows_debug_x86_32.exe
+windows_debug_x86_64_console.exe
+windows_debug_x86_64.exe
+windows_release_arm64_console.exe
+windows_release_arm64.exe
+windows_release_x86_32_console.exe
+windows_release_x86_32.exe
+windows_release_x86_64_console.exe
+windows_release_x86_64.exe
 "
 get_build_ids() {
 	local x
@@ -258,57 +218,67 @@ filter_build_id() {
 filter_standard() {
 	local type="standard"
 	filter_build_id "android_debug.apk"
-	filter_build_id "android_release.apk"
 	filter_build_id "android_source.zip"
-	filter_build_id "iphone.zip"
-	filter_build_id "linux_x11_32_debug"
-	filter_build_id "linux_x11_32_release"
-	filter_build_id "linux_x11_64_debug"
-	filter_build_id "linux_x11_64_release"
-	filter_build_id "linux_x11_arm32_debug"
-	filter_build_id "linux_x11_arm32_release"
-	filter_build_id "linux_x11_arm64_debug"
-	filter_build_id "linux_x11_arm64_release"
-	filter_build_id "osx.zip"
-	filter_build_id "webassembly_debug.zip"
-	filter_build_id "webassembly_gdnative_debug.zip"
-	filter_build_id "webassembly_gdnative_release.zip"
-	filter_build_id "webassembly_release.zip"
-	filter_build_id "webassembly_threads_debug.zip"
-	filter_build_id "webassembly_threads_release.zip"
-	filter_build_id "windows_32_debug.exe"
-	filter_build_id "windows_32_release.exe"
-	filter_build_id "windows_64_debug.exe"
-	filter_build_id "windows_64_release.exe"
+	filter_build_id "ios.zip"
+	filter_build_id "linux_debug.arm32"
+	filter_build_id "linux_debug.arm64"
+	filter_build_id "linux_debug.x86_32"
+	filter_build_id "linux_debug.x86_64"
+	filter_build_id "linux_release.arm32"
+	filter_build_id "linux_release.arm64"
+	filter_build_id "linux_release.x86_32"
+	filter_build_id "linux_release.x86_64"
+	filter_build_id "macos.zip"
+	filter_build_id "visionos.zip"
+	filter_build_id "web_debug.zip"
+	filter_build_id "web_dlink_debug.zip"
+	filter_build_id "web_dlink_nothreads_debug.zip"
+	filter_build_id "web_dlink_nothreads_release.zip"
+	filter_build_id "web_dlink_release.zip"
+	filter_build_id "web_nothreads_debug.zip"
+	filter_build_id "web_nothreads_release.zip"
+	filter_build_id "web_release.zip"
+	filter_build_id "windows_debug_arm64_console.exe"
+	filter_build_id "windows_debug_arm64.exe"
+	filter_build_id "windows_debug_x86_32_console.exe"
+	filter_build_id "windows_debug_x86_32.exe"
+	filter_build_id "windows_debug_x86_64_console.exe"
+	filter_build_id "windows_debug_x86_64.exe"
+	filter_build_id "windows_release_arm64_console.exe"
+	filter_build_id "windows_release_arm64.exe"
+	filter_build_id "windows_release_x86_32_console.exe"
+	filter_build_id "windows_release_x86_32.exe"
+	filter_build_id "windows_release_x86_64_console.exe"
+	filter_build_id "windows_release_x86_64.exe"
 }
 
 filter_mono() {
 	local type="mono"
 	filter_build_id "android_debug.apk"
-	filter_build_id "android_release.apk"
 	filter_build_id "android_source.zip"
-	filter_build_id "bcl"
-	filter_build_id "data.mono.windows.32.release"
-	filter_build_id "data.mono.windows.32.release_debug"
-	filter_build_id "data.mono.windows.64.release"
-	filter_build_id "data.mono.windows.64.release_debug"
-	filter_build_id "data.mono.x11.32.release"
-	filter_build_id "data.mono.x11.32.release_debug"
-	filter_build_id "data.mono.x11.64.release"
-	filter_build_id "data.mono.x11.64.release_debug"
-	filter_build_id "iphone-mono-libs"
-	filter_build_id "iphone.zip"
-	filter_build_id "linux_x11_32_debug"
-	filter_build_id "linux_x11_32_release"
-	filter_build_id "linux_x11_64_debug"
-	filter_build_id "linux_x11_64_release"
-	filter_build_id "osx.zip"
-	filter_build_id "webassembly_debug.zip"
-	filter_build_id "webassembly_release.zip"
-	filter_build_id "windows_32_debug.exe"
-	filter_build_id "windows_32_release.exe"
-	filter_build_id "windows_64_debug.exe"
-	filter_build_id "windows_64_release.exe"
+	filter_build_id "ios.zip"
+	filter_build_id "linux_debug.arm32"
+	filter_build_id "linux_debug.arm64"
+	filter_build_id "linux_debug.x86_32"
+	filter_build_id "linux_debug.x86_64"
+	filter_build_id "linux_release.arm32"
+	filter_build_id "linux_release.arm64"
+	filter_build_id "linux_release.x86_32"
+	filter_build_id "linux_release.x86_64"
+	filter_build_id "macos.zip"
+	filter_build_id "visionos.zip"
+	filter_build_id "windows_debug_arm64_console.exe"
+	filter_build_id "windows_debug_arm64.exe"
+	filter_build_id "windows_debug_x86_32_console.exe"
+	filter_build_id "windows_debug_x86_32.exe"
+	filter_build_id "windows_debug_x86_64_console.exe"
+	filter_build_id "windows_debug_x86_64.exe"
+	filter_build_id "windows_release_arm64_console.exe"
+	filter_build_id "windows_release_arm64.exe"
+	filter_build_id "windows_release_x86_32_console.exe"
+	filter_build_id "windows_release_x86_32.exe"
+	filter_build_id "windows_release_x86_64_console.exe"
+	filter_build_id "windows_release_x86_64.exe"
 }
 
 src_unpack() {
@@ -400,8 +370,9 @@ get_compiler_info_osxcross() {
 	local type="${1}"
 	pushd "${WORKDIR}/${type}/templates" >/dev/null 2>&1 || die
 		local L=(
-			"iphone.zip"
-			"osx.zip"
+			"ios.zip"
+			"macos.zip"
+			"visionos.zip"
 		)
 		local f
 		for f in ${L[@]} ; do
@@ -524,6 +495,8 @@ einfo "  cp -aT /usr/share/godot/${SLOT}/prebuilt-export-templates/standard/temp
 einfo
 		fi
 	fi
+# The security implications are underreported.
+ewarn "SECURITY NOTICE:  Distributed games should be rebuilt with updated export template if CATEGORY/${P} is bumped."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
