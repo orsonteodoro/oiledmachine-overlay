@@ -114,7 +114,8 @@ exist in build files.
       GLIBCXX_ versions, but the GCC USE flags may later be simplified on major
       update.
 * [6] gnu++17 is c++17 with GNU extensions.  gnu17 is C17 with GNU extensions.
-* [7] GCC / LLVM.  Users need to avoid mixing the two different editions to prevent ODR violations.
+* [7] GCC / LLVM.  Users need to avoid mixing the two different editions to
+      prevent ODR violations or mismatched signatures.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
