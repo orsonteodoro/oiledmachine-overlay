@@ -125,6 +125,21 @@ Language defaults
   - GCC:    gcc/c-family/c-opts.cc in c_common_init_options()
   - Clang:  clang/lib/Basic/LangStandards.cpp in clang::getDefaultLanguageStandard() for LLVM 15 and newer
             clang/lib/Frontend/CompilerInvocation.cpp in CompilerInvocation::setLangDefaults() for LLVM 14
+* A LTS package in this overlay is a package that explicitly states in the build
+  files that it is c++17 or C17 or earlier.  A majority of packages in this
+  overlay are LTS packages.
+* A rolling package in this overlay is a package that explicitly states in the
+  build files that it is c++20 or C20 or newer.  Hyprland is an
+  example.  The developers of Hyprland have build files that reference a rolling
+  distro.  This is partly why the counterpart to LTS is called a rolling
+  compiler on this overlay.  A few packages in this overlay require to switch
+  to GCC 15 or LLVM 20 are considered rolling packages.
+* In this overlay, rolling packages get paired with rolling compilers.  LTS
+  packages get paired with LTS compilers.  This is why the gcc_slot_ and
+  llvm_slot_ USE flags and corresponding verify steps are provided to
+  avoid linker issue and backtracking to miscategorized LTS/rolling packages.
+* A package without explicit C++ or C++ standard will fallback to the compiler
+  default.
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
@@ -154,10 +169,7 @@ Language defaults
   example with pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender and to
   closely align with U24.
 * GCC 15 is not supported as a LTS compiler because it breaks -fvtable-verify,
-  which lowers security.  GCC 15 is supported as a rolling compiler for non
-  LTS (C++ 20 or newer) packages (e.g. Hyprland).  The developers of Hyprland
-  have build files that reference a rolling distro.  This is partly why the
-  counterpart to LTS is called a rolling compiler on this overlay.
+  which lowers security.
 * GCC is preferred but Clang is recommended as the fallback compiler.
 * Clang 18, 19 are alternative LTS compilers on this overlay, but the
   corresponding libc++ 18 or 19 used as the alternative C++ standard library
