@@ -17,6 +17,19 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_vsx3"
+)
+
+_TRAINERS="
+	"libvpx_trainers_2_pass_constrained_quality"
+	"libvpx_trainers_2_pass_constrained_quality_quick"
+	"libvpx_trainers_constrained_quality"
+	"libvpx_trainers_constrained_quality_quick"
+	"libvpx_trainers_lossless"
+	"libvpx_trainers_lossless_quick"
+"
+
 inherit aocc cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib-minimal
 inherit python-single-r1 toolchain-funcs uopts
 
@@ -39,27 +52,16 @@ DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD libvpx-PATENTS"
 SLOT="0/11"
-CPU_FLAGS_PPC=(
-	"cpu_flags_ppc_vsx3"
-)
-TRAINER_IUSE="
-	libvpx_trainers_2_pass_constrained_quality
-	libvpx_trainers_2_pass_constrained_quality_quick
-	libvpx_trainers_constrained_quality
-	libvpx_trainers_constrained_quality_quick
-	libvpx_trainers_lossless
-	libvpx_trainers_lossless_quick
-"
 IUSE="
+${_TRAINERS[@]}
 ${CPU_FLAGS_PPC[@]}
-${TRAINER_IUSE}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
 ebuild_revision_31
 "
 REQUIRED_USE="
 	pgo? (
 		|| (
-			${TRAINER_IUSE}
+			${_TRAINERS[@]}
 		)
 	)
 	test? (
