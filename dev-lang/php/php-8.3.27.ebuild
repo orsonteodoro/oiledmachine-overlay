@@ -10,10 +10,30 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="17"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBA OOBR OOBW PE SO TC UAF UM"
+CXX_STANDARD=17 # intl needs c++17, else c++11
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 PHP_MV="$(ver_cut 1)"
 POSTGRES_COMPAT=( {15..17} )
+# We can build the following SAPIs in the given order
+SAPIS="cli cgi embed fpm apache2 phpdbg" # cli is built first to distribute pgo profile
+SAPIS_DEFAULTS="+cli +cgi -embed -fpm -apache2 +phpdbg"
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+WANT_AUTOMAKE="none"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
 # ARM/Windows functions (bug 923335)
 QA_CONFIG_IMPL_DECL_SKIP=(
 	__crc32d
@@ -25,16 +45,8 @@ QA_CONFIG_IMPL_DECL_SKIP+=(
 	iconv_ccs_init
 	cstoccsid
 )
-# We can build the following SAPIs in the given order
-SAPIS="cli cgi embed fpm apache2 phpdbg" # cli is built first to distribute pgo profile
-SAPIS_DEFAULTS="+cli +cgi -embed -fpm -apache2 +phpdbg"
-UOPTS_SUPPORT_EBOLT=0
-UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=1
-UOPTS_SUPPORT_TPGO=1
-WANT_AUTOMAKE="none"
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib postgres systemd uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om libcxx-compat libstdcxx-slot llvm multilib postgres systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -83,8 +95,8 @@ IUSE+="
 ${SAPIS_DEFAULTS}
 -acl -apparmor -argon2 -avif -bcmath -berkdb -bzip2 -calendar -capstone -cdb
 +ctype -curl debug -enchant -exif -ffi +fileinfo +filter
-+flatfile -ftp -gd -gdbm +gmp +iconv -inifile -intl -iodbc -ipv6 +jit jpeg
--ldap -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls
++flatfile -ftp -gd -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit jpeg
+-kerberos -ldap -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls
 -odbc +opcache +opcache-jit -pcntl +pdo +phar png +posix -postgres -qdbm
 -readline selinux +session session-mm -sharedmem +simplexml -snmp -soap -sockets
 -sodium -spell +sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer
@@ -311,8 +323,14 @@ COMMON_DEPEND="
 	iconv? (
 		virtual/libiconv
 	)
+	imap? (
+		net-libs/c-client[kerberos=,ssl=]
+	)
 	intl? (
 		dev-libs/icu:=
+	)
+	kerberos? (
+		virtual/krb5
 	)
 	ldap? (
 		net-nds/openldap:=
@@ -393,7 +411,7 @@ COMMON_DEPEND="
 		dev-libs/libzip:=
 	)
 	zlib? (
-		sys-libs/zlib:0=
+		virtual/zlib:=
 	)
 "
 IDEPEND="
@@ -451,6 +469,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/php-8.3.9-gd-cachevars.patch"
 )
 
 php_install_ini() {
@@ -561,6 +580,8 @@ ewarn
 ewarn "${PN} may need to be temporarly unemerged for PGO training to work."
 	fi
 	uopts_setup
+	libcxx-compat_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -658,7 +679,7 @@ src_unpack() {
 src_prepare() {
 	default
 
-	# In php-8.x, the FPM pool configuration files have been split off
+	# In php-7.x, the FPM pool configuration files have been split off
 	# of the main config. By default the pool config files go in
 	# e.g. /etc/php-fpm.d, which isn't slotted. So here we move the
 	# include directory to a subdirectory "fpm.d" of $PHP_INI_DIR. Later
@@ -693,6 +714,12 @@ src_prepare() {
 		sapi/cli/tests/bug74600.phpt
 		sapi/cli/tests/bug78323.phpt
 
+	# This is a memory usage test with hard-coded limits. Whenever the
+	# limits are surpassed... they get increased... but in the meantime,
+	# the tests fail. This is not really a test that end users should
+	# be running pre-install, in my opinion. Bug 927461.
+		ext/fileinfo/tests/bug78987.phpt
+
 	# Most tests failing with an external libgd have been fixed,
 	# but there are a few stragglers:
 	#
@@ -706,6 +733,9 @@ src_prepare() {
 		ext/gd/tests/bug53504.phpt
 		ext/gd/tests/bug65148.phpt
 		ext/gd/tests/bug73272.phpt
+
+	# Test requires truetype support
+		$(use truetype '' 'ext/gd/tests/gh19955.phpt')
 
 	# One-off, somebody forgot to update a version constant
 		ext/reflection/tests/ReflectionZendExtension.phpt
@@ -853,12 +883,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_with gmp gmp "${EPREFIX}/usr")
 		$(use_with iconv iconv \
 			$(use elibc_glibc || use elibc_musl || echo "${EPREFIX}/usr"))
+		$(use_with kerberos)
 		$(use_with mhash mhash "${EPREFIX}/usr")
 		$(use_with nls gettext "${EPREFIX}/usr")
 		$(use_with postgres pgsql "$("${PG_CONFIG:-true}" --bindir)/..")
 		$(use_with selinux fpm-selinux)
 		$(use_with snmp snmp "${EPREFIX}/usr")
 		$(use_with sodium)
+		$(use_with spell pspell "${EPREFIX}/usr")
 		$(use_with sqlite sqlite3)
 		$(use_with ssl openssl)
 		$(use_with tidy tidy "${EPREFIX}/usr")
@@ -922,6 +954,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 		php_cv_lib_gd_gdImageCreateFromWebp=$(usex webp)
 		php_cv_lib_gd_gdImageCreateFromXpm=$(usex xpm)
 	)
+
+	# IMAP support
+	if use imap ; then
+		our_conf+=(
+			$(use_with imap imap "${EPREFIX}/usr")
+			$(use_with ssl imap-ssl "${EPREFIX}/usr")
+		)
+	fi
 
 	# LDAP support
 	if use ldap ; then
