@@ -91,7 +91,7 @@ exist in build files.
 | c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
 | c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
-# Language defaults
+Language defaults
 
 | LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]         | Distro correspondance   | Overlay CPU or GPU acceleration support                  |
 | ---                      | ---                   | ---               | ---         | ---           | ---                           | ---                     | ---                                                      |
