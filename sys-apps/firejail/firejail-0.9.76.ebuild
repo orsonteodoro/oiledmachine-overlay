@@ -1442,7 +1442,7 @@ HARDENED_ALLOCATORS_IUSE=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_LTS[@]}
+	${LIBCXX_COMPAT_LTS[@]/llvm_slot_}
 )
 
 declare -A _PATH_CORRECTION=(
