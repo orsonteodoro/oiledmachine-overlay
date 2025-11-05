@@ -106,9 +106,9 @@ Language defaults
 | Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                    |                         | CPU only                                                     |
 | Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                     |                         | CPU only                                                     |
 
-* [1] This is the overlay's current default, which is similar to U24 and has
-      LLVM 19 available.  In addition, gcc_slot_15_2 and llvm_slot_20 are used to
-      build rolling packages.
+* [1] This is the overlay's current test and development defaults, which is
+      similar to U24 and has LLVM 19 available.  In addition, gcc_slot_15_2 and
+      llvm_slot_20 are used to build rolling packages.
 * [2] The latest stable for this distro.
 * [3] GPU acceleration only available with GCC built packages
 * [4] GPU acceleration only available with LLVM built packages
