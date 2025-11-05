@@ -46,7 +46,7 @@ QA_CONFIG_IMPL_DECL_SKIP+=(
 	cstoccsid
 )
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om libcxx-compat libstdcxx-slot llvm multilib postgres systemd uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm multilib postgres systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -327,6 +327,7 @@ COMMON_DEPEND="
 		net-libs/c-client[kerberos=,ssl=]
 	)
 	intl? (
+		dev-libs/icu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/icu:=
 	)
 	kerberos? (
@@ -580,7 +581,7 @@ ewarn
 ewarn "${PN} may need to be temporarly unemerged for PGO training to work."
 	fi
 	uopts_setup
-	libcxx-compat_verify
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
