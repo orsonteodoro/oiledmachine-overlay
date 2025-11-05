@@ -1239,9 +1239,9 @@ eerror
 eerror "CUDA versions:  ${CUDA_SLOTS[@]}"
 eerror "GCC slots:  ${!t2}"
 eerror
-eerror "If the default systemwide compiler is GCC >= 14, you must rebuild all"
-eerror "C++ LTS packages (C++ 17 or earlier) with primarily with the chosen"
-eerror "GCC slot"
+eerror "If the default systemwide compiler is not the same as greater than the chosen, you must"
+eerror "rebuild all the C++ LTS packages (C++ 17 or earlier) with primarily with the chosen GCC"
+eerror "slot from the GCC slots list above."
 eerror
 			die
 		fi
