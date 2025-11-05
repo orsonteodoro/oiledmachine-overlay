@@ -1231,8 +1231,8 @@ rocm_set_default_hipcc() {
 			local cuda_slot=$(ver_cut 1-2 "${cuda_pv}")
 eerror
 eerror "Emerge virtual/cuda-compiler:0/${cuda_slot} with the default"
-eerror "systemwide GCC slot represented by one of the gcc_slot_<x> the"
-eerror "virtual ebuild's USE flags."
+eerror "systemwide GCC slot represented by one of the gcc_slot_<x> associated"
+eerror "with the virtual/cuda-compiler's USE flags."
 eerror
 eerror "The following are supported for HIP ${ROCM_SLOT} on this distro:"
 eerror
