@@ -5,6 +5,7 @@ EAPI=8
 
 # Requirements:
 # https://github.com/ROCm/HIPIFY/blob/rocm-6.4.4/docs/how-to/hipify-clang.rst
+# https://github.com/ROCm/HIPIFY/blob/rocm-6.4.4/src/Statistics.h
 
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -38,54 +39,43 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-asan test
+asan cuda test
 ebuild_revision_20
 "
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
 	)
+	cuda? (
+		|| (
+			${CUDA_12_6_CDEPEND}
+		)
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
+	)
 "
 DEPEND="
 	${RDEPEND}
+"
+CUDA_12_6_CDEPEND="
+	(
+		(
+			>=dev-libs/cudnn-8.8.0
+			<dev-libs/cudnn-9.8.0
+		)
+		>=x11-drivers/nvidia-drivers-560.35
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		virtual/cuda-compiler:0/12.6
+	)
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	test? (
 		|| (
-			(
-				=dev-util/nvidia-cuda-toolkit-12.6*
-				|| (
-					(
-						llvm-core/clang:19
-						llvm-core/llvm:19
-					)
-				)
-			)
-			(
-				=dev-util/nvidia-cuda-toolkit-12.3*
-				|| (
-					(
-						llvm-core/clang:17
-						llvm-core/llvm:17
-					)
-					(
-						llvm-core/clang:18
-						llvm-core/llvm:18
-					)
-				)
-			)
-			(
-				=dev-util/nvidia-cuda-toolkit-11.8*
-				|| (
-					(
-						llvm-core/clang:15
-						llvm-core/llvm:15
-					)
-				)
-			)
+			${CUDA_12_6_CDEPEND}
 		)
 		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
 	)
 	>=dev-build/cmake-3.16.8
 "
