@@ -106,8 +106,8 @@ exist in build files.
 
 * [1] This overlay's current default.
 * [2] The latest stable for this distro.
-* [3] GPU acceleration available with GCC built packages
-* [4] GPU acceleration available with LLVM built packages
+* [3] GPU acceleration only available with GCC built packages
+* [4] GPU acceleration only available with LLVM built packages
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
