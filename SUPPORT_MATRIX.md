@@ -143,9 +143,9 @@ Language defaults
   gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18, llvm_slot_19, for LTS compilers.
 * This overlay allows the user to choose gcc_slot_15_2, gcc_slot_16_1,
   llvm_slot_20, llvm_slot_21, llvm_slot_22 for rolling compilers.
-* The USE flags provide verification and build consistency.  The CC/CXX
-  changes resolve ambiguous choice between selecting a GCC build or a Clang
-  build when both sets are used.
+* The USE flags provide verification and build consistency.
+* The CC/CXX changes resolve ambiguous choice between selecting a GCC build or a
+  Clang build when both sets are used.
 * LTS compilers have the libstdc++ GLIBCXX_ versioned symbols, GPU stack
   compatibility, practically complete version of the C++ standard on both the
   *C++ compiler* and *C++ standard library*, and ensure that the userland is
