@@ -110,8 +110,7 @@ Language defaults
       similar to U24 and has LLVM 19 available.  In addition, gcc_slot_15_2 and
       llvm_slot_20 are used to build rolling packages.
 * [2] The latest stable for this distro.
-* [3] GPU acceleration only available with GCC built packages
-* [4] GPU acceleration only available with LLVM built packages
+* [3] GPU acceleration is only available with GCC built packages
 * [5] The GCC USE flags add the minor version because GCC 9 has multiple
       GLIBCXX_ versions, but the GCC USE flags may later be simplified on major
       update.
