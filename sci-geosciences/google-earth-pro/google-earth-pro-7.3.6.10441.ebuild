@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U14, F23
+
 # To find the version use:
 # dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
 
@@ -11,22 +13,12 @@ MY_PN="${MY_PN//-/}"
 MY_PN="${MY_PN//pro/}"
 MY_PV=$(ver_cut 1-3 ${PV})
 
-# EXPECTED_SHA512 must go before DEST_FN_AMD64 \
-EXPECTED_SHA512="\
-8dd6677e12bd5fbc5ed8d90e53989437f55e15bff178bb3eb24649947a1f3179\
-4ee90c226cbe9323177aa3bb31afc39aaa99b0ab8622949af53755dbccf29483\
-"
-DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb"
 DOWNLOAD_PAGE_URI="https://support.google.com/earth/answer/168344?hl=en"
 EXPAT_PV="2.2.1"
 FFMPEG_PV="4.4.2"
 FFMPEG_SLOT="56.58.58"
 GDAL_PV="2.4.4" # approximate
 ICU_PV="54.1"
-LANGS=(
-ar bg ca cs da de el en es-419 es fa fil fi fr he hi hr hu id it ja ko lt lv nl
-no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK zh-Hant
-)
 LIBPNG_PV="1.2.56"
 LIBTIFF_PV="4.0.10"
 OPENSSL_PV="1.0.2u"
@@ -37,6 +29,58 @@ QT_SLOT="5"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
 SRC_FN_AMD64="${PN}-stable_${MY_PV}_amd64.deb"
 ZLIB_PV="1.2.3"
+
+# EXPECTED_SHA512 must go before DEST_FN_AMD64 \
+EXPECTED_SHA512="\
+417ed01656a1cd698a8f85b3c9664606bab781bc4048fd9244f64f7d42441cb1\
+d3659c7782d7dea64ceb69dbe0ad256280de3c27622572456301adda4e66314d\
+"
+DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb" # This line goes after EXPECTED_SHA512.
+
+LANGS=(
+	"ar"
+	"bg"
+	"ca"
+	"cs"
+	"da"
+	"de"
+	"el"
+	"en"
+	"es-419"
+	"es"
+	"fa"
+	"fil"
+	"fi"
+	"fr"
+	"he"
+	"hi"
+	"hr"
+	"hu"
+	"id"
+	"it"
+	"ja"
+	"ko"
+	"lt"
+	"lv"
+	"nl"
+	"no"
+	"pl"
+	"pt-PT"
+	"pt"
+	"ro"
+	"ru"
+	"sk"
+	"sl"
+	"sr"
+	"sv"
+	"th"
+	"tr"
+	"uk"
+	"vi"
+	"zh-Hans"
+	"zh-Hant-HK"
+	"zh-Hant"
+)
 
 inherit desktop pax-utils unpacker xdg
 
