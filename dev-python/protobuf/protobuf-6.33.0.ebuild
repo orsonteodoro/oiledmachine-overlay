@@ -11,7 +11,7 @@ PROTOBUF_CPP_SLOT=6
 PROTOBUF_PYTHON_SLOT=$(ver_cut 1 "${PV}")
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1 flag-o-matic
+inherit distutils-r1 flag-o-matic pypi
 
 PARENT_PN="${PN/-python/}"
 PARENT_PV="$(ver_cut 2-)"
@@ -26,11 +26,10 @@ if [[ "${PV}" == *"9999" ]]; then
 else
 	KEYWORDS="~amd64 ~x64-macos"
 	SRC_URI="
-		https://github.com/protocolbuffers/protobuf/archive/v${PARENT_PV}.tar.gz
-			-> ${PARENT_P}.tar.gz
+		$(pypi_sdist_url) -> ${P}.py.tar.gz
 	"
 fi
-S="${WORKDIR}/${PARENT_P}/python"
+#S="${WORKDIR}/${PARENT_P}/python"
 
 DESCRIPTION="Python bindings for Google's Protocol Buffers"
 HOMEPAGE="
@@ -67,10 +66,8 @@ PATCHES=(
 )
 
 python_prepare_all() {
-	pushd "${WORKDIR}/${PARENT_P}" >/dev/null 2>&1 || die
-		[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
-		eapply_user
-	popd >/dev/null 2>&1 || die
+	[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
+	eapply_user
 	distutils-r1_python_prepare_all
 }
 
@@ -78,7 +75,6 @@ src_configure() {
 	append-ldflags -L"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	DISTUTILS_ARGS=(
-		--cpp_implementation
 	)
 }
 
