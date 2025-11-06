@@ -74,6 +74,9 @@ IUSE="
 emacs examples static-libs test zlib
 ebuild_revision_26
 "
+REQUIRED_USE="
+	!test
+"
 RDEPEND="
 	!dev-libs/protobuf:0
 	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}
