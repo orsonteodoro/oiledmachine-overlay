@@ -1,0 +1,17 @@
+diff '--color=auto' -urp ffmpeg-6.1.3.orig/libavcodec/libsvtav1.c ffmpeg-6.1.3/libavcodec/libsvtav1.c
+--- ffmpeg-6.1.3.orig/libavcodec/libsvtav1.c	2025-08-14 16:31:16.000000000 -0700
++++ ffmpeg-6.1.3/libavcodec/libsvtav1.c	2025-11-05 20:31:34.760220788 -0800
+@@ -389,7 +389,11 @@ static av_cold int eb_enc_init(AVCodecCo
+ 
+     svt_enc->eos_flag = EOS_NOT_REACHED;
+ 
++#if SVT_AV1_CHECK_VERSION(3, 0, 0)
++    svt_ret = svt_av1_enc_init_handle(&svt_enc->svt_handle, &svt_enc->enc_params);
++#else
+     svt_ret = svt_av1_enc_init_handle(&svt_enc->svt_handle, svt_enc, &svt_enc->enc_params);
++#endif
+     if (svt_ret != EB_ErrorNone) {
+         return svt_print_error(avctx, svt_ret, "Error initializing encoder handle");
+     }
+Only in ffmpeg-6.1.3/libavcodec: libsvtav1.c.orig
+Only in ffmpeg-6.1.3: t.patch

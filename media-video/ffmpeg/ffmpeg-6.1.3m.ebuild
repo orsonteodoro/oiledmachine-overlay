@@ -1187,6 +1187,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.6-glslang-fix-configure-test.patch"
 	"${FILESDIR}/extra-patches/${PN}-6.1.2-backport-5860a96.patch"
+	"${FILESDIR}/extra-patches/${PN}-6.1.3-svt-av1-backport-d1ed5c0.patch"
 )
 
 get_av_device_ids() {

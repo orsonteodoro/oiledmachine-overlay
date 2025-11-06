@@ -1230,6 +1230,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-7.1-add-includes-hwcontext_vulkan.patch"
 	"${FILESDIR}/extra-patches/${PN}-7.0.2-glslang-fix-configure-test.patch"
+	"${FILESDIR}/extra-patches/${PN}-6.1.3-svt-av1-backport-d1ed5c0.patch"
 )
 
 get_av_device_ids() {
