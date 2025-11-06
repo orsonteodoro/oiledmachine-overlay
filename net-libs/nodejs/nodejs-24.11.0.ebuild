@@ -13,7 +13,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Aug 24, 2025
+# Last deps commit date:  Oct 06, 2025
 
 ACORN_PV="8.15.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -26,7 +26,7 @@ LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.66.0"
 NGHTTP3_PV="1.6.0"
-NPM_PV="11.5.1" # See https://github.com/nodejs/node/blob/v24.7.0/deps/npm/package.json
+NPM_PV="11.6.1" # See https://github.com/nodejs/node/blob/v24.11.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -187,7 +187,7 @@ RDEPEND+="
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.5.2:0[asm?,fips?]
+		>=dev-libs/openssl-3.5.4:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "

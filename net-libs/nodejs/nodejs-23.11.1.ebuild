@@ -105,7 +105,7 @@ inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
 inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
 inherit sandbox-changes toolchain-funcs uopts xdg-utils
 
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # EOL
 S="${WORKDIR}/node-v${PV}"
 SRC_URI="
 https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz

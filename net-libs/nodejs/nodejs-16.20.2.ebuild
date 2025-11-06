@@ -22,7 +22,7 @@ CXX_STANDARD=14
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.47.0"
-NPM_PV="8.19.3" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
+NPM_PV="8.19.4" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
 PYTHON_COMPAT=( "python3_11" ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -91,7 +91,7 @@ inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
 inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
 inherit sandbox-changes toolchain-funcs uopts xdg-utils
 
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # EOL
 if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
 	S="${WORKDIR}/node-v${PV}"
 else
