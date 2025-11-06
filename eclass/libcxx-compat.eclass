@@ -296,8 +296,8 @@ LIBCXX_COMPAT_STDCXX17=(
 # )
 #
 LIBCXX_COMPAT_STDCXX20=(
-	"llvm_slot_20" # Support -std=c++20.
-	"llvm_slot_21" # Support -std=c++20.
+	"llvm_slot_20" # Support -std=c++20.  Availability:  F43, G23
+	"llvm_slot_21" # Support -std=c++20.  Availability:  G23
 )
 
 # LLVM_COMPAT template for -std=c++23 projects or the compiler default
@@ -314,7 +314,7 @@ LIBCXX_COMPAT_STDCXX20=(
 # )
 #
 LIBCXX_COMPAT_STDCXX23=(
-	"llvm_slot_21" # Support -std=c++23
+	"llvm_slot_21" # Support -std=c++23.  Availability:  G23
 )
 
 # LLVM_COMPAT template for -std=c++26 projects or the compiler default
@@ -331,7 +331,7 @@ LIBCXX_COMPAT_STDCXX23=(
 # )
 #
 LIBCXX_COMPAT_STDCXX26=(
-	"llvm_slot_21" # Support -std=c++26
+	"llvm_slot_21" # Support -std=c++26.  Availability:  G23
 )
 
 fi
