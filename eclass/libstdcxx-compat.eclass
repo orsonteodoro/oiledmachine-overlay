@@ -260,10 +260,10 @@ LIBSTDCXX_COMPAT_STDCXX14=(
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX17=(
-	"gcc_slot_11_5" # Support -std=c++17, U22 default
-        "gcc_slot_12_5" # Support -std=c++17, D12 default
-        "gcc_slot_13_4" # Support -std=c++17, U24 default
-        "gcc_slot_14_3" # Support -std=c++17, D13 default
+	"gcc_slot_11_5" # Support -std=c++17.  Defaults:  U22
+        "gcc_slot_12_5" # Support -std=c++17.  Defaults:  D12
+        "gcc_slot_13_4" # Support -std=c++17.  Defaults:  U24
+        "gcc_slot_14_3" # Support -std=c++17.  Defaults:  D13, G23
 )
 
 # GCC_COMPAT template for -std=c++20 projects
@@ -281,9 +281,9 @@ LIBSTDCXX_COMPAT_STDCXX17=(
 #
 LIBSTDCXX_COMPAT_STDCXX20=(
 	#"gcc_slot_11_5" # Support -std=c++20 (Observed in downstream projects)
-        "gcc_slot_13_4" # Support -std=c++20
-        "gcc_slot_14_3" # Support -std=c++20
-	"gcc_slot_15_2" # Support -std=c++20
+        "gcc_slot_13_4" # Support -std=c++20.  Availability:  U24
+        "gcc_slot_14_3" # Support -std=c++20.  Availability:  D13, F41, U24
+	"gcc_slot_15_2" # Support -std=c++20.  Availability:  F41, F42
         "gcc_slot_16_1" # Support -std=c++20
 )
 
