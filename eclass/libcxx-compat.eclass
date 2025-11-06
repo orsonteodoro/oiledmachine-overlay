@@ -276,8 +276,8 @@ LIBCXX_COMPAT_STDCXX14=(
 #
 LIBCXX_COMPAT_STDCXX17=(
 # Set to LTS distros equivalent to reduce misalignment in dependencies
-	"llvm_slot_18"
-	"llvm_slot_19"
+	"llvm_slot_18" # Support -std=c++17, U24 default
+	"llvm_slot_19" # Support -std=c++17, D13 default
 )
 
 # LLVM_COMPAT template for -std=c++20 projects or the compiler default
