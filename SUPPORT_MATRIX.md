@@ -93,7 +93,7 @@ exist in build files.
 
 Language defaults
 
-| LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]            | Distro correspondance   | Hardware Acceleration support [8]                                    |
+| LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]            | Distro correspondance   | Hardware acceleration support [8]                                    |
 | ---                      | ---                   | ---               | ---         | ---           | ---                              | ---                     | ---                                                                  |
 | LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                    | U22                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan, CPU [3]                     |
 | LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | CUDA 12.6, CUDA 12.8, CUDA 12.9, ROCm 6.4, ROCm 7.0, Vulkan, CPU [3] |
