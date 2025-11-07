@@ -371,12 +371,19 @@ eerror "The current gRPC version is not supported."
 		die
 	fi
 
-	export PROTOBUF_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
-	export GRPC_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
-	export PROTOBUF_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)
-	export GRPC_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)
+	export PROTOBUF_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
+	export GRPC_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
+	export PROTOBUF_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)\
+" -Wl,-rpath=/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
+	export GRPC_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)\
+" -Wl,-rpath=/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir) -Wl,-rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}"
+	if eselect profile show | grep -q -e "/llvm" ; then
+		export CXX_STANDARD_LIB="-lc++"
+	else
+		export CXX_STANDARD_LIB="-lstdc++"
+	fi
 einfo "PROTOBUF_CXXFLAGS:  ${PROTOBUF_CXXFLAGS}"
 einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
 einfo "PROTOBUF_LDFLAGS:  ${PROTOBUF_LDFLAGS}"

@@ -23,7 +23,10 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="doc examples test"
+IUSE="
+doc examples test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
@@ -32,11 +35,12 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${P}-gcc-7.patch"
-	"${FILESDIR}/${P}-system_gtest.patch"
-	"${FILESDIR}/${P}-valgrind_optional.patch"
-	"${FILESDIR}/${P}-gcc14-const.patch"
-	"${FILESDIR}/${P}-cmake4.patch"
+	"${FILESDIR}/${PN}-1.1.0-gcc-7.patch"
+	"${FILESDIR}/${PN}-1.1.0-system_gtest.patch"
+	"${FILESDIR}/${PN}-1.1.0-valgrind_optional.patch"
+	"${FILESDIR}/${PN}-1.1.0-cmake4.patch"
+	"${FILESDIR}/${PN}-1.1.0-doc-build.patch"
+	"${FILESDIR}/${PN}-1.1.0-GenericStringRef-assign-operator.patch"
 )
 
 src_prepare() {
