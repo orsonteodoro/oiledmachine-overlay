@@ -44,6 +44,7 @@ MESA_PV="23.2.1"
 MPG123_PV="1.32.2"
 OPENAL_PV="1.23.1"
 OPUS_PV="1.4"
+PROTOBUF_SLOT="3"
 PULSEAUDIO_PV="16.1"
 SDL2_MIXER_PV="2.0.4" # missing in CI
 VIRTUAL_WINE_PV="0"
@@ -358,6 +359,8 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	append-ldflags -L"${ESYSROOT}//usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 }
 
 src_compile() {
