@@ -13,6 +13,8 @@
 if [[ -z ${_LIBSTDCXX_SLOT_ECLASS} ]] ; then
 _LIBSTDCXX_SLOT_ECLASS=1
 
+inherit toolchain-funcs
+
 #
 # Ebuild developer draft/tentative plan for ebuilds.
 #
@@ -232,6 +234,36 @@ eerror "source /etc/profile"
 eerror
 }
 
+# @FUNCTION: _switch_gcc_to_continue_message2
+# @DESCRIPTION:
+# Request CC/CXX changes message
+_switch_gcc_to_continue_message2() {
+	local expected_slot="${1}"
+	local actual_slot="${2}"
+eerror
+eerror "Detected CC/CXX inconsistency between CC/CXX compiler and C++ standard library (libstdc++)."
+eerror
+eerror "CC/CXX compiler slot:  ${actual_slot}"
+eerror "C++ standard library slot:  ${expected_slot}"
+eerror
+eerror "You must do the following to continue:"
+eerror
+eerror "Contents of /etc/portage/env/clang-${expected_slot}.conf:"
+eerror "CC=\"gcc-${expected_slot}\""
+eerror "CXX=\"g++-${expected_slot}\""
+eerror "CPP=\"${CC} -E\""
+eerror "AR=\"ar\""
+eerror "NM=\"nm\""
+eerror "OBJCOPY=\"objcopy\""
+eerror "OBJDUMP=\"objdump\""
+eerror "READELF=\"readelf\""
+eerror "STRIP=\"strip\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} gcc-${slot}.conf"
+eerror
+}
+
 _LIBSTDCXX_SLOT_VERIFIED=0
 # @FUNCTION: libstdcxx-slot_verify
 # @DESCRIPTION:
@@ -245,6 +277,7 @@ libstdcxx-slot_verify() {
 	local k="GCC_${actual_gcc_ver2/./_}"
 	local actual_libstdcxx_ver="${!k}"
 
+	# Verify libstdcxx
 	local x
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
@@ -252,6 +285,49 @@ libstdcxx-slot_verify() {
 			local expected_libstdcxx_ver="${!k}"
 			if ver_test "${actual_libstdcxx_ver}" -ne "${expected_libstdcxx_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
 				_switch_gcc_to_continue_message ${x%_*}
+				die
+			fi
+		fi
+	done
+
+	CC=$(tc-getCC)
+	CXX=$(tc-getCC)
+	if [[ -z "${CC}" ]] ; then
+		CC="gcc-${gcc_slot}"
+	fi
+	if [[ -z "${CXX}" ]] ; then
+		CXX="g++-${gcc_slot}"
+	fi
+
+	local actual_cc_ver
+	local actual_cxx_ver
+	if tc-is-gcc ; then
+		actual_cc_ver=$("${CC}" --version | head -n 1 | cut -f 5 -d " ")
+		actual_cxx_ver=$("${CXX}" --version | head -n 1 | cut -f 5 -d " ")
+		actual_cc_ver=$(ver_cut "1-2" "${actual_cc_ver}")
+		actual_cxx_ver=$(ver_cut "1-2" "${actual_cxx_ver}")
+	else
+		export _LIBSTDCXX_SLOT_VERIFIED=1
+		return
+	fi
+
+	# Verify CC/CXX
+	local x
+	for x in ${_ALL_GCC_COMPAT[@]} ; do
+		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
+			local expected_cc_ver="${x/_/.}"
+			if tc-is-gcc && ver_test "${actual_cc_ver}" "-ne" "${expected_cc_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
+				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cc_ver%%.*}"
+				die
+			fi
+		fi
+	done
+	local x
+	for x in ${_ALL_GCC_COMPAT[@]} ; do
+		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
+			local expected_cxx_ver="${x/_/.}"
+			if tc-is-gcc && ver_test "${actual_cxx_ver}" "-ne" "${expected_cxx_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
+				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cxx_ver%%.*}"
 				die
 			fi
 		fi

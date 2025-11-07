@@ -666,8 +666,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			>=media-libs/oidn-2.3.3[${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
-			<media-libs/oidn-3.0[${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
+			>=media-libs/oidn-2.3.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
+			<media-libs/oidn-3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
 			media-libs/oidn:=
 		)
 		"
@@ -680,10 +680,10 @@ gen_oiio_depends() {
 		echo "
 			${s}? (
 				>=dev-cpp/robin-map-1.3.0
-				>=dev-libs/libfmt-9.1.0[${LIBSTDCXX_USEDEP}]
+				>=dev-libs/libfmt-9.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/libfmt:=
-				>=media-libs/openimageio-3.0.6.1[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
-				<media-libs/openimageio-3.1.0[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-3.0.6.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				<media-libs/openimageio-3.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				media-libs/openimageio:=
 			)
 		"
@@ -697,9 +697,9 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}[${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				media-libs/openexr:=
-				~dev-libs/imath-${imath_pv}[${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/imath:=
 			)
 		"
@@ -813,8 +813,8 @@ RDEPEND+="
 	${CODECS}
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
-	>=dev-cpp/pystring-1.1.3[${LIBSTDCXX_USEDEP}]
-	dev-cpp/pystring[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/pystring-1.1.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-cpp/pystring:=
 	>=dev-lang/python-3.11.11
 	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}[brotli]
@@ -822,7 +822,7 @@ RDEPEND+="
 	>=media-libs/shaderc-2024.3[${LIBSTDCXX_USEDEP}]
 	media-libs/shaderc:=
 	>=media-libs/vulkan-loader-${VULKAN_PV}
-	>=sci-mathematics/manifold-3.1.0[${LIBSTDCXX_USEDEP}]
+	>=sci-mathematics/manifold-3.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	sci-mathematics/manifold:=
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.3.1
@@ -832,23 +832,23 @@ RDEPEND+="
 	media-libs/vulkan-drivers
 	virtual/libintl
 	alembic? (
-		>=media-gfx/alembic-1.8.3[${LIBSTDCXX_USEDEP},boost(+),hdf(+)]
+		>=media-gfx/alembic-1.8.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},boost(+),hdf(+)]
 		media-gfx/alembic:=
 	)
 	boost? (
-		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP},nls?,threads(+)]
+		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},nls?,threads(+)]
 		usd? (
-			>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP},nls?,threads(+),python]
+			>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},nls?,threads(+),python]
 		)
 		dev-libs/boost:=
 	)
 	collada? (
-		>=media-libs/aras-p-opencollada-20240718[${LIBSTDCXX_USEDEP}]
+		>=media-libs/aras-p-opencollada-20240718[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/aras-p-opencollada:=
 	)
 	color-management? (
 		>=dev-libs/expat-2.6.4
-		>=media-libs/opencolorio-2.4.1[${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
+		>=media-libs/opencolorio-2.4.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		cuda_targets_sm_50? (
@@ -902,13 +902,13 @@ RDEPEND+="
 	cycles? (
 		cycles-path-guiding? (
 			(
-				>=media-libs/openpgl-0.6.0[${LIBSTDCXX_USEDEP},tbb?]
-				<media-libs/openpgl-0.7.0[${LIBSTDCXX_USEDEP},tbb?]
+				>=media-libs/openpgl-0.6.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},tbb?]
+				<media-libs/openpgl-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},tbb?]
 				media-libs/openpgl:=
 			)
 		)
 		osl? (
-			>=dev-libs/pugixml-${PUGIXML_PV}[${LIBSTDCXX_USEDEP}]
+			>=dev-libs/pugixml-${PUGIXML_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-libs/pugixml:=
 		)
 	)
@@ -942,7 +942,7 @@ RDEPEND+="
 		virtual/jack
 	)
 	jemalloc? (
-		>=dev-libs/jemalloc-5.2.1[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/jemalloc-5.2.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/jemalloc:=
 	)
 	jpeg2k? (
@@ -951,25 +951,20 @@ RDEPEND+="
 	llvm? (
 		$(gen_llvm_depends)
 	)
+	llvm_slot_18? (
+		|| (
+			=media-libs/mesa-25.0*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-25.1*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-25.2*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+		)
+	)
 	llvm_slot_19? (
 		|| (
-			=media-libs/mesa-25.0*[X?]
-			=media-libs/mesa-25.1*[X?]
-			=media-libs/mesa-25.2*[X?]
-			=media-libs/mesa-9999[X?]
-		)
-	)
-	llvm_slot_20? (
-		|| (
-			=media-libs/mesa-25.0*[X?]
-			=media-libs/mesa-25.1*[X?]
-			=media-libs/mesa-25.2*[X?]
-			=media-libs/mesa-9999[X?]
-		)
-	)
-	llvm_slot_21? (
-		|| (
-			=media-libs/mesa-9999[X?]
+			=media-libs/mesa-25.0*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-25.1*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-25.2*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 		)
 	)
 	materialx? (
@@ -988,9 +983,9 @@ RDEPEND+="
 	)
 	openal? (
 		!pulseaudio? (
-			>=media-libs/openal-1.23.1[${LIBSTDCXX_USEDEP},alsa]
+			>=media-libs/openal-1.23.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},alsa]
 		)
-		>=media-libs/openal-1.23.1[${LIBSTDCXX_USEDEP},pulseaudio?]
+		>=media-libs/openal-1.23.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},pulseaudio?]
 		media-libs/openal:=
 	)
 	opencl? (
@@ -1001,7 +996,7 @@ RDEPEND+="
 	)
 	openimageio? (
 		$(gen_oiio_depends)
-		>=dev-libs/pugixml-${PUGIXML_PV}[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/pugixml-${PUGIXML_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/pugixml:=
 	)
 	openexr? (
@@ -1011,21 +1006,21 @@ RDEPEND+="
 		)
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.6.0[${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
+		>=media-libs/opensubdiv-3.6.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
 		media-libs/opensubdiv:=
 	)
 	openvdb? (
 		abi12-compat? (
 			|| (
-				=media-gfx/openvdb-13*[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
-				=media-gfx/openvdb-12*[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
+				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
+				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
 			)
 			media-gfx/openvdb:=
 		)
 		>=dev-libs/c-blosc-1.21.1[zlib]
 	)
 	openxr? (
-		>=media-libs/openxr-1.0.22[${LIBSTDCXX_USEDEP}]
+		>=media-libs/openxr-1.0.22[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/openxr:=
 	)
 	optix? (
@@ -1071,8 +1066,8 @@ RDEPEND+="
 	)
 	sycl? (
 		(
-			>=dev-libs/level-zero-1.19.2[${LIBSTDCXX_USEDEP}]
-			<dev-libs/level-zero-2.0[${LIBSTDCXX_USEDEP}]
+			>=dev-libs/level-zero-1.19.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			<dev-libs/level-zero-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-libs/level-zero:=
 		)
 		|| (
@@ -1087,7 +1082,7 @@ RDEPEND+="
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[${LIBSTDCXX_USEDEP},tbbmalloc(+)]
+		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},tbbmalloc(+)]
 		dev-cpp/tbb:=
 	)
 	tiff? (
@@ -1116,7 +1111,7 @@ RDEPEND+="
 	|| (
 		virtual/glu
 		(
-			>=media-libs/glu-9.0.1[${LIBSTDCXX_USEDEP}]
+			>=media-libs/glu-9.0.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			media-libs/glu:=
 		)
 	)
@@ -1137,7 +1132,7 @@ BDEPEND+="
 		>=dev-python/pycodestyle-2.13.0[${PYTHON_USEDEP}]
 	' 'python*')
 	>=dev-build/cmake-3.10
-	>=dev-cpp/yaml-cpp-0.7.0[${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/yaml-cpp:=
 	>=dev-build/meson-0.63.0
 	>=dev-util/vulkan-headers-${VULKAN_PV}
