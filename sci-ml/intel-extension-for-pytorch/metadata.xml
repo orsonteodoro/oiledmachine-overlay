@@ -11,4 +11,13 @@
     <remote-id type="github">intel/intel-extension-for-pytorch</remote-id>
     <remote-id type="pypi">intel-extension-for-pytorch</remote-id>
   </upstream>
+  <slots>
+    <slot name="0">
+      Monoslot
+    </slot>
+    <subslots>
+      PYTORCH_VER-cpu for CPU builds.
+      PYTORCH_VER-xpu for CPU+GPU builds.
+    </subslots>
+  </slots>
 </pkgmetadata>

@@ -10,16 +10,27 @@ EAPI=8
 MY_PV="${PV/c/}+cpu"
 MY_P="${PN}-${MY_PV}"
 
+CXX_STANDARD=17
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-GOOGLETEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929"
-IDEEP_COMMIT="6d54ccdf83c0515240af8956a2de9404a3e86009"
+GOOGLETEST_COMMIT="b514bdc898e2951020cbdca1304b75f5950d1f59"
+IDEEP_COMMIT="bd0681de27d3b3ea104e526a8c4d273537eed592"
 LIBXSMM_COMMIT="54707b52939c9d04dc760ac44fc17c82a1bd4e80"
-MKL_DNN_COMMIT="f240e12a29cff8ec1f37e5907971aa4315d30f1e" # ideep dep
+MKL_DNN_COMMIT="dfce0a11226353967a54a318d86daa588c28c668" # ideep dep
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream listed up to 3.7
-SLEEF_COMMIT="c1cc816f0607f2ac7481098cd232e52cb126f7ca"
+SLEEF_COMMIT="36907bbee89c569458b5bbac028ed79e4640e859"
 
-inherit dep-prepare distutils-r1 pypi
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot pypi
 
 #KEYWORDS="~amd64" # Needs install test and slot re-evaluation
 S="${WORKDIR}/${MY_P}"
@@ -44,6 +55,10 @@ HOMEPAGE="
 	https://github.com/intel/intel-extension-for-pytorch
 "
 LICENSE="
+	(
+		custom
+		Apache-2.0
+	)
 	Apache-2.0
 	Boost-1.0
 	BSD
@@ -51,18 +66,19 @@ LICENSE="
 	MIT
 "
 # Apache-2.0 - docs/tutorials/license.md
+# Boost-1.0 - third_party/sleef/LICENSE.txt
 # BSD - third_party/googletest/LICENSE
 # MIT - third_party/ideep/LICENSE
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2)-cpu" # TODO:  recheck if we can multislot
-IUSE+=" test"
+IUSE+=" dev test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 	')
-	=sci-ml/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
+	=sci-ml/pytorch-${PV%.*}*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -71,17 +87,29 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/wheel-0.36[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-50.0[${PYTHON_USEDEP}]
+		dev? (
+			>=dev-python/scipy-1.8.0[${PYTHON_USEDEP}]
+			>=dev-python/setuptools-50.0[${PYTHON_USEDEP}]
+			dev-python/expecttest-0.3.0
+			dev-python/hypothesis[${PYTHON_USEDEP}]
+			dev-python/packaging[${PYTHON_USEDEP}]
+			dev-python/psutil[${PYTHON_USEDEP}]
+		)
 		test? (
 			dev-python/expecttest[${PYTHON_USEDEP}]
 			dev-python/hypothesis[${PYTHON_USEDEP}]
 		)
 	')
 	>=dev-build/cmake-3.13.0
-	>=sys-devel/gcc-12.3.0:12
-	>=llvm-core/llvm-16.0.6:16
 	dev-build/ninja
 "
 DOCS=( "README.md" )
+
+pkg_setup() {
+	python-single-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	unpack ${A}
