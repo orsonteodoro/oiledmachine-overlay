@@ -131,6 +131,10 @@ fix_mb_len_max() {
 einfo "Applying MB_LEN_MAX fix for Clang with glibc"
 				extra_args_cc="${extra_args_cc} -DMB_LEN_MAX=16"
 				extra_args_cxx="${extra_args_cxx} -DMB_LEN_MAX=16"
+	# From /usr/include/bits/posix1_lim.h in sys-devel/glibc
+einfo "Applying _POSIX_SEM_VALUE_MAX fix for Clang with glibc"
+				extra_args_cc="${extra_args_cc} -D_POSIX_SEM_VALUE_MAX=32767"
+				extra_args_cxx="${extra_args_cxx} -D_POSIX_SEM_VALUE_MAX=32767"
 einfo "Applying SSIZE_MAX fix for Clang with glibc"
 	# From /usr/include/bits/posix1_lim.h in /usr/include/bits/posix1_lim.h
 				if [[ "${ABI}" =~ ("64"|"alpha"|"s390x") || "${CHOST}" =~ ("hppa2.0") ]] ; then
