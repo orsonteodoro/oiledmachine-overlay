@@ -21,7 +21,7 @@ LLVM_COMPAT=(
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic libcxx-slot
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic flag-o-matic-om libcxx-slot
 inherit libstdcxx-slot toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
@@ -195,6 +195,7 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	fix_mb_len_max
 	xdg_environment_reset
 	append-lfs-flags # bug #898506
 
