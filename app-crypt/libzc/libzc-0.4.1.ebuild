@@ -13,7 +13,7 @@ TRAINERS=(
 	"libzc_trainers_bruteforce"
 )
 
-inherit autotools check-compiler-switch flag-o-matic toolchain-funcs uopts
+inherit autotools check-compiler-switch flag-o-matic flag-o-matic-om toolchain-funcs uopts
 
 KEYWORDS="
 ~amd64
@@ -105,6 +105,8 @@ _src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	fix_mb_len_max
 
 	local len=${ZC_PW_MAXLEN:-16}
 	einfo "ZC_PW_MAXLEN:  ${len}"
