@@ -655,7 +655,8 @@ gen_llvm_depends()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				>=llvm-core/llvm-${s}:${s}=
+				>=llvm-core/llvm-${s}:${s}
+				llvm-core/llvm:=
 			)
 		"
 	done
@@ -666,8 +667,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			>=media-libs/oidn-2.3.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
-			<media-libs/oidn-3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_slot_${s},aot?,sycl?]
+			>=media-libs/oidn-2.3.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},aot?,sycl?]
+			<media-libs/oidn-3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},aot?,sycl?]
 			media-libs/oidn:=
 		)
 		"
@@ -712,8 +713,8 @@ gen_osl_depends()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				>=media-libs/osl-${OSL_PV}[llvm_slot_${s},static-libs]
-				<media-libs/osl-2.0[llvm_slot_${s},static-libs]
+				>=media-libs/osl-${OSL_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},static-libs]
+				<media-libs/osl-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},static-libs]
 				media-libs/osl:=
 			)
 		"
