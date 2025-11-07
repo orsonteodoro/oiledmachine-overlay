@@ -335,6 +335,7 @@ pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
@@ -355,6 +356,13 @@ src_unpack() {
 }
 
 src_configure() {
+	if tc-is-clang ; then
+ewarn "Clang support is broken.  Switching to GCC"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
+	fi
+
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
