@@ -360,8 +360,20 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-	append-ldflags -L"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
-	append-ldflags -L"${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+
+	if has_version "net-libs/grpc:${PROTOBUF_SLOT}/1.30" ; then
+		ABSEIL_CPP_SLOT="20200225"
+	elif has_version "net-libs/grpc:${PROTOBUF_SLOT}/1.51" ; then
+		ABSEIL_CPP_SLOT="20220623"
+	else
+eerror "The current gRPC version is not supported."
+		die
+	fi
+
+	append-flags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
+	append-flags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
+	append-ldflags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)
+	append-ldflags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}"
 }
