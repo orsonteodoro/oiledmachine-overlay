@@ -325,8 +325,9 @@ BDEPEND+="
 "
 DOCS=( "Readme.md" )
 PATCHES=(
-	"${FILESDIR}/enigma-9999-change-sdl2-audio-linking.patch"
-	"${FILESDIR}/enigma-9999-fix-missing-workdir-references.patch"
+	"${FILESDIR}/${PN}-9999-change-sdl2-audio-linking.patch"
+	"${FILESDIR}/${PN}-9999-fix-missing-workdir-references.patch"
+	"${FILESDIR}/${PN}-9999-57d6edb-enigma-multislot-flags.patch"
 )
 
 pkg_setup() {
@@ -370,12 +371,17 @@ eerror "The current gRPC version is not supported."
 		die
 	fi
 
-	append-flags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
-	append-flags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
-	append-ldflags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)
-	append-ldflags $(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)
+	export PROTOBUF_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
+	export GRPC_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
+	export PROTOBUF_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)
+	export GRPC_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/lib64/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}"
+einfo "PROTOBUF_CXXFLAGS:  ${PROTOBUF_CXXFLAGS}"
+einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
+einfo "PROTOBUF_LDFLAGS:  ${PROTOBUF_LDFLAGS}"
+einfo "GRPC_LDFLAGS:  ${GRPC_LDFLAGS}"
+einfo "PATH:  ${PATH}"
 }
 
 src_compile() {
