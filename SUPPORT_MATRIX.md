@@ -120,10 +120,10 @@ Language defaults
       prevent ODR violations or mismatched signatures.
 * [8] Full ROCm support is based on the GCC slot because of prebuilt binaries.
 * [9] Examples of typical use or capabilities:
-      - CPU:  audio/image processing, 3D transforms
-      - CUDA:  Machine learning, AI/LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
-      - ROCm:  Machine learning, AI/LLM inference, cryptocurrency mining
-      - Vulkan:  Gaming graphics (e.g. raytracing, post-processing, procedural rendering), AI upscaling, video remastering
+  - CPU:  audio/image processing, 3D transforms
+  - CUDA:  Machine learning, AI/LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
+  - ROCm:  Machine learning, AI/LLM inference, cryptocurrency mining
+  - Vulkan:  Gaming graphics (e.g. raytracing, post-processing, procedural rendering), AI upscaling, video remastering
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
