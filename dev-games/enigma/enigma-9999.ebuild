@@ -64,7 +64,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
 
-inherit check-compiler-switch desktop flag-o-matic git-r3 libstdcxx-slot multilib-minimal toolchain-funcs
+inherit check-compiler-switch desktop flag-o-matic git-r3 libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
