@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -450,6 +450,9 @@ src_install() {
 		local p="${ED}${install_dir}/${f}"
 		patchelf --remove-rpath "${p}" || die
 		patchelf --set-rpath "\$ORIGIN" "${p}" || die
+		patchelf --add-rpath "/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/$(get_libdir)" "${p}" || die
 	done
 }
 
