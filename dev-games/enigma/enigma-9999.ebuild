@@ -313,6 +313,7 @@ BDEPEND+="
 	${CDEPEND}
 	>=dev-build/cmake-3.27.7
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
+	dev-go/protoc-gen-go-grpc:${PROTOBUF_SLOT}
 	dev-util/patchelf
 	clang? (
 		$(gen_clang_deps)
@@ -359,8 +360,10 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-	append-ldflags -L"${ESYSROOT}//usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
+	append-ldflags -L"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
+	append-ldflags -L"${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}"
 }
 
 src_compile() {
