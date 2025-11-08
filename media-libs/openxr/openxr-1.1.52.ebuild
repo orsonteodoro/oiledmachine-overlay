@@ -24,7 +24,7 @@ MESA_PV="22.0.1"
 PYTHON_COMPAT=( "python3_"{8..13} )
 VULKAN_PV="1.3.204.1"
 
-inherit cmake flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
