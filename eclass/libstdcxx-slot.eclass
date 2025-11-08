@@ -291,7 +291,7 @@ libstdcxx-slot_verify() {
 	done
 
 	CC=$(tc-getCC)
-	CXX=$(tc-getCC)
+	CXX=$(tc-getCXX)
 	if [[ -z "${CC}" ]] ; then
 		CC="gcc-${gcc_slot}"
 	fi
