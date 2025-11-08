@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cmake libcxx-slot libstdcxx-slot python-single-r1
+inherit cmake flag-o-matic libcxx-slot libstdcxx-slot python-single-r1
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -35,13 +35,18 @@ LICENSE="BSD"
 SLOT_MAJOR="${PV%%.*}"
 SO_VERSION="29"
 SLOT="${SLOT_MAJOR}/${SO_VERSION}"
-IUSE="doc large-stack python test"
+IUSE="
+doc large-stack python test
+ebuild_revision_1
+"
 REQUIRED_USE="
+	!test
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
 "
 RESTRICT="
+	test
 	!test? (
 		test
 	)
@@ -99,6 +104,7 @@ eerror "Bump subslot to ${so_ver}"
 	fi
 	local mycmakeargs=(
 		-DBUILD_WEBSITE="$(usex doc)"
+		-DBUILD_TESTING=$(usex test)
 		-DIMATH_ENABLE_LARGE_STACK="$(usex large-stack)"
 		# the following options are at their default value
 		-DIMATH_HALF_USE_LOOKUP_TABLE=ON
