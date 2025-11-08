@@ -8,7 +8,7 @@ diff '--color=auto' -urp enigma-9999.orig/Config.mk enigma-9999/Config.mk
 -CXXFLAGS := -std=c++17 -Wall -Wextra -Wpedantic -g -I.
 -LDFLAGS := -g
 +CXXFLAGS := -std=c++17 -Wall -Wextra -Wpedantic -g -I. $(PROTOBUF_CXXFLAGS) $(GRPC_CXXFLAGS) $(ABSEIL_CPP_CXXFLAGS)
-+LDFLAGS := -g $(PROTOBUF_LDFLAGS) $(GRPC_LDFLAGS) $(ABSEIL_CPP_LDFLAGS) $(CXX_STANDARD_LIB)
++LDFLAGS := -g $(PROTOBUF_LDFLAGS) $(GRPC_LDFLAGS) $(ABSEIL_CPP_LDFLAGS)
  
  # macOS brew include and lib folders
  ifeq ($(OS), Darwin)

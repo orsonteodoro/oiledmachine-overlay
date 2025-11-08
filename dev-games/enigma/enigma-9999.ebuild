@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -387,11 +387,6 @@ eerror "The current gRPC version is not supported."
 " -Wl,-rpath=/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir) -Wl,-rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}"
-	if eselect profile show | grep -q -e "/llvm" ; then
-		export CXX_STANDARD_LIB="-lc++"
-	else
-		export CXX_STANDARD_LIB="-lstdc++"
-	fi
 einfo "PROTOBUF_CXXFLAGS:  ${PROTOBUF_CXXFLAGS}"
 einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
 einfo "PROTOBUF_LDFLAGS:  ${PROTOBUF_LDFLAGS}"
