@@ -40,13 +40,11 @@ doc large-stack python test
 ebuild_revision_1
 "
 REQUIRED_USE="
-	!test
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
 "
 RESTRICT="
-	test
 	!test? (
 		test
 	)
