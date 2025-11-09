@@ -772,7 +772,7 @@ gen_depend_llvm() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/clang:=
 				llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
@@ -974,9 +974,7 @@ RDEPEND+="
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 	openmp? (
-		|| (
-			$(gen_depend_llvm)
-		)
+		$(gen_depend_llvm)
 	)
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
@@ -1051,11 +1049,7 @@ BDEPEND+="
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
 	clang? (
-		|| (
-			$(gen_depend_llvm)
-		)
-		llvm-core/clang:=
-		llvm-core/llvm:=
+		$(gen_depend_llvm)
 	)
 	doc? (
 		dev-util/gi-docgen
