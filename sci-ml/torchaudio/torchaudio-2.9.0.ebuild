@@ -19,6 +19,12 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
 )
 
+FFMPEG_SLOTS=(
+	"58.60.60" # 6.1.x
+	"57.59.59" # 5.x
+	"56.58.58" # 4.x
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -67,7 +73,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 cuda rocm rccl roctracer
-ebuild_revision_3
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -224,25 +230,21 @@ python_configure() {
 src_install() {
 	distutils-r1_src_install
 	local RPATH_FIXES=()
+	local ffmpeg_slot=""
 	local x
-	for x in $(find "${ED}/usr/lib/${EPYTHON}/site-packages/torio" -name "*ffmpeg*.so*") ; do
-		local path=$(ldd "${x}" | grep -q "libav" && echo "${x}")
-		if [[ -z "${path}" ]] ; then
-				:
-		elif has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-			RPATH_FIXES+=(
-				"${x}:/usr/lib/ffmpeg/58.60.60/$(get_libdir)"
-			)
-		elif has_version "media-video/ffmpeg:57.59.59" ; then # 4.x
-			RPATH_FIXES+=(
-				"${x}:/usr/lib/ffmpeg/57.59.59/$(get_libdir)"
-			)
-		elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
-			RPATH_FIXES+=(
-				"${x}:/usr/lib/ffmpeg/56.58.58/$(get_libdir)"
-			)
+	local s
+	for s in "${FFMPEG_SLOTS[@]}" ; do
+		if has_version "media-video/ffmpeg:${s}" ; then
+			ffmpeg_slot="${s}"
 		fi
 	done
+	if [[ -n "${ffmpeg_slot}" ]] ; then
+	# Multislot
+		RPATH_FIXES+=(
+			"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/_torio_ffmpeg.so:/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
+			"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/libtorio_ffmpeg.so:/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
+		)
+	fi
 	RPATH_FIXES+=(
 		"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/_torio_ffmpeg.so:/usr/lib/${EPYTHON}/site-packages/torio/lib"
 		"${ED}/usr/lib/${EPYTHON}/site-packages/torchaudio/lib/_torchaudio_sox.so:/usr/lib/${EPYTHON}/site-packages/torchaudio/lib"
