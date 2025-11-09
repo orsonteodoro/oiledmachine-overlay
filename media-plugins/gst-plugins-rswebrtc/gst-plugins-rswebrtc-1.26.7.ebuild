@@ -9,9 +9,13 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 DESCRIPTION="A redirect ebuild for gst-plugins-webrtc (Rust implementation)"
 LICENSE="metapackage"
 SLOT="1.0"
-IUSE="aom nvcodec openh264 qsv rav1e va vaapi vulkan webrtc-aws webrtc-livekit x264 x265"
+IUSE="
+aom nvcodec openh264 qsv rav1e va vaapi vulkan webrtc-aws webrtc-livekit x264 x265
+ebuild_revision_1
+"
 RDEPEND="
 	~media-libs/gst-plugins-rs-${PV}:1.0[aom?,nvcodec?,openh264?,qsv?,rav1e?,va?,vaapi?,vulkan?,webrtc,webrtc-aws?,webrtc-livekit?,x264?,x265?]
+	media-libs/gst-plugins-rs:=
 "
 DEPEND="
 	${RDEPEND}
