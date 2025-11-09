@@ -29,7 +29,7 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
+inherit cmake-multilib fix-rpath flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~ppc64 ~s390"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -46,7 +46,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	${CDEPEND}
@@ -176,4 +176,8 @@ src_install() {
 	cmake-multilib_src_install
 	# Removed staged folder.  It contains the same contents.
 	rm -rf "${ED}/var" || die
+	local RPATH_FIXES=(
+		"${ED}/usr/bin/bear:/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir)"
+	)
+	fix-rpath_repair
 }
