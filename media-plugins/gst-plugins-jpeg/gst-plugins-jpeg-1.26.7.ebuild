@@ -12,10 +12,11 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="JPEG image encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	media-libs/libjpeg-turbo:0=[${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo:0[${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo:=
 "
 DEPEND="
 	${RDEPEND}
