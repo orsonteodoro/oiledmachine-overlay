@@ -12,11 +12,13 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="DVD playback support plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=media-libs/libdvdnav-4.1.2:=[${MULTILIB_USEDEP}]
-	>=media-libs/libdvdread-4.1.2:=[${MULTILIB_USEDEP}]
+	>=media-libs/libdvdnav-4.1.2[${MULTILIB_USEDEP}]
+	media-libs/libdvdnav:=
+	>=media-libs/libdvdread-4.1.2[${MULTILIB_USEDEP}]
+	media-libs/libdvdread:=
 "
 DEPEND="
 	${RDEPEND}
