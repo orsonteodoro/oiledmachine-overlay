@@ -17,11 +17,13 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="HTTP client source/sink plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=net-libs/libsoup-2.48:2.4[${MULTILIB_USEDEP}]
+	net-libs/libsoup:=
 	>=net-libs/libsoup-3:3.0[${MULTILIB_USEDEP}]
+	net-libs/libsoup:=
 "
 DEPEND="
 	${RDEPEND}
