@@ -36,7 +36,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 DESCRIPTION="A Qt5 video sink plugin for GStreamer"
 IUSE="
 egl wayland +X
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	|| (
@@ -60,6 +60,7 @@ gen_qt5_rdepend() {
 				)
 				wayland? (
 					dev-qt/qtwayland:5/${s}
+					dev-qt/qtwayland:=
 				)
 			)
 		"
@@ -69,10 +70,12 @@ RDEPEND="
 	|| (
 		$(gen_qt5_rdepend)
 	)
+	dev-qt/linguist:=
 	dev-qt/qtcore:=
 	dev-qt/qtdeclarative:=
 	dev-qt/qtgui:=
 	~media-libs/gst-plugins-base-${PV}:1.0[opengl,wayland?,X?]
+	media-libs/gst-plugins-base:=
 	wayland? (
 		media-libs/gst-plugins-base[wayland]
 		dev-qt/qtwayland:=
