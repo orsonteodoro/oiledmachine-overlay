@@ -48,13 +48,15 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
 IUSE="
 nls +orc
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="
-	>=dev-libs/glib-2.64.0[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	app-arch/bzip2[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	nls? (
 		sys-devel/gettext[${MULTILIB_USEDEP}]
 	)
