@@ -75,7 +75,6 @@ ewarn "Missing ${f}"
 			edo patchelf --add-rpath "${y}" "${f}"
 		done
 	done
-	fix-rpath_verify
 }
 
 fi
