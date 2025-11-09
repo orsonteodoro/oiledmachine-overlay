@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="X11 video capture stream plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	x11-libs/libX11[${MULTILIB_USEDEP}]
@@ -22,6 +22,7 @@ RDEPEND="
 	x11-libs/libXfixes[${MULTILIB_USEDEP}]
 	x11-libs/libXtst[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
