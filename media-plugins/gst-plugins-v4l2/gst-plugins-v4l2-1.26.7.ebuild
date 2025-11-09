@@ -16,13 +16,15 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~
 DESCRIPTION="V4L2 source/sink plugin for GStreamer"
 IUSE="
 udev
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	media-libs/libv4l[${MULTILIB_USEDEP}]
 	udev? (
-		>=dev-libs/libgudev-147:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libgudev-147[${MULTILIB_USEDEP}]
+		dev-libs/libgudev:=
 	)
 "
 DEPEND="
@@ -43,7 +45,7 @@ multilib_src_install_all() {
 cat <<-EOF > "${T}"/99${PN}
 GST_V4L2_USE_LIBV4L2=1
 EOF
-	doenvd "${T}"/99${PN}
+	doenvd "${T}/99${PN}"
 }
 
 pkg_postinst() {
@@ -51,7 +53,7 @@ pkg_postinst() {
 cat <<-EOF > "${T}"/99${PN}
 GST_V4L2_USE_LIBV4L2=1
 EOF
-	doenvd "${T}"/99${PN}
+	doenvd "${T}/99${PN}"
 einfo
 einfo "You must restart your computer for changes to take affect."
 einfo
