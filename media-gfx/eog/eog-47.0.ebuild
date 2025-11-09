@@ -73,6 +73,7 @@ fix_rpath() {
 		"${ED}/usr/$(get_libdir)/eog/plugins/libstatusbar-date.so:/usr/$(get_libdir)/eog"
 	)
 	fix-rpath_repair
+	fix-rpath_verify
 }
 
 src_install() {
