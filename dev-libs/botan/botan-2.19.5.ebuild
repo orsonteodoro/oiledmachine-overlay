@@ -75,10 +75,10 @@ LICENSE="BSD-2"
 SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_31
+ebuild_revision_32
 "
 CPU_USE=(
-	"cpu_flags_arm_"{"aes","crypto","neon","pmull"}
+	"cpu_flags_arm_"{"crypto","neon","pmull"}
 	"cpu_flags_ppc_"{"altivec","power8","power9"}
 	"cpu_flags_x86_"{"aes","avx2","bmi2","clmul","rdrnd","rdseed","sha","sse2","sse4_1","ssse3"}
 )
@@ -223,6 +223,23 @@ elog "Disabling module(s): ${disable_modules[@]}"
 	fi
 
 	local myargs=(
+		# Intrinsics
+		$(usev !cpu_flags_arm_crypto '--disable-armv8crypto')
+		$(usev !cpu_flags_arm_neon '--disable-neon')
+		$(usev !cpu_flags_ppc_altivec '--disable-altivec')
+		$(usev !cpu_flags_x86_aes '--disable-aes-ni')
+		$(usev !cpu_flags_x86_sha '--disable-sha-ni')
+		$(usev !cpu_flags_x86_avx2 '--disable-avx2')
+		$(usev !cpu_flags_x86_bmi2 '--disable-bmi2')
+		$(usev !cpu_flags_x86_popcnt '--disable-bmi2')
+		$(usev !cpu_flags_x86_rdrnd '--disable-rdrnd')
+		$(usev !cpu_flags_x86_rdseed '--disable-rdseed')
+		$(usev !cpu_flags_x86_sha '--disable-sha-ni')
+		$(usev !cpu_flags_x86_sse2 '--disable-sse2')
+		$(usev !cpu_flags_x86_ssse3 '--disable-ssse3')
+		$(usev !cpu_flags_x86_sse4_1 '--disable-sse4.1')
+		$(usev !cpu_flags_x86_sse4_2 '--disable-sse4.2')
+
 	# HPPA's GCC doesn't support SSP
 		$(usev hppa '--without-stack-protector')
 
@@ -253,6 +270,12 @@ elog "Disabling module(s): ${disable_modules[@]}"
 		--with-endian="$(tc-endian)"
 		--with-python-version=$(IFS=","; echo "${pythonvers[*]}")
 	)
+
+	if ! use cpu_flags_ppc_power8 && ! use cpu_flags_ppc_power8 ; then
+		myargs+=(
+			--disable-powercrypto
+		)
+	fi
 
 	local ARM_CRYPTO_OPTIONS=(
 		"sha1_armv8"

@@ -80,10 +80,10 @@ SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 KEYWORDS="~amd64 ~arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~ppc-macos"
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_31
+ebuild_revision_32
 "
 CPU_USE=(
-	"cpu_flags_arm_"{"aes","crypto","neon","pmull"}
+	"cpu_flags_arm_"{"crypto","neon","pmull"}
 	"cpu_flags_ppc_"{"altivec","power8","power9"}
 	"cpu_flags_x86_"{"aes","avx2","avx512","bmi2","clmul","gfni","rdrnd","rdseed","sha","sse2","ssse3","vaes"}
 	"cpu_flags_loong_lsx"
@@ -221,6 +221,23 @@ src_configure() {
 	fi
 
 	local myargs=(
+		# Intrinsics
+		$(usev !cpu_flags_arm_crypto '--disable-armv8crypto')
+		$(usev !cpu_flags_arm_neon '--disable-neon')
+		$(usev !cpu_flags_ppc_altivec '--disable-altivec')
+		$(usev !cpu_flags_x86_aes '--disable-aes-ni')
+		$(usev !cpu_flags_x86_sha '--disable-sha-ni')
+		$(usev !cpu_flags_x86_avx2 '--disable-avx2')
+		$(usev !cpu_flags_x86_bmi2 '--disable-bmi2')
+		$(usev !cpu_flags_x86_popcnt '--disable-bmi2')
+		$(usev !cpu_flags_x86_rdrnd '--disable-rdrnd')
+		$(usev !cpu_flags_x86_rdseed '--disable-rdseed')
+		$(usev !cpu_flags_x86_sha '--disable-sha-ni')
+		$(usev !cpu_flags_x86_sse2 '--disable-sse2')
+		$(usev !cpu_flags_x86_ssse3 '--disable-ssse3')
+		$(usev !cpu_flags_x86_sse4_1 '--disable-sse4.1')
+		$(usev !cpu_flags_x86_sse4_2 '--disable-sse4.2')
+
 		# We already set this by default in the toolchain
 		--without-stack-protector
 
@@ -252,6 +269,12 @@ src_configure() {
 		--lto-cxxflags-to-ldflags
 		--with-python-version=$(IFS=","; echo "${pythonvers[*]}")
 	)
+
+	if ! use cpu_flags_ppc_power8 && ! use cpu_flags_ppc_power8 ; then
+		myargs+=(
+			--disable-powercrypto
+		)
+	fi
 
 	local ARM_CRYPTO_OPTIONS=(
 		"shacal2_armv8"
@@ -305,7 +328,6 @@ src_configure() {
 	local X86_AES_OPTIONS=(
 		"aes_ni"
 	)
-
 
 	local X86_AVX2_OPTIONS=(
 		"argon2_avx2"

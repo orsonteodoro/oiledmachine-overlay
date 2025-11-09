@@ -83,7 +83,7 @@ doc boost bzip2 lzma python static-libs sqlite test tools zlib
 ebuild_revision_31
 "
 CPU_USE=(
-	"cpu_flags_arm_"{"aes","crypto","neon","pmull"}
+	"cpu_flags_arm_"{"crypto","neon","pmull"}
 	"cpu_flags_ppc_"{"altivec","power8","power9"}
 	"cpu_flags_x86_"{"aes","avx2","avx512","bmi2","clmul","gfni","rdrnd","rdseed","sha","sse2","ssse3","vaes"}
 	"cpu_flags_loong_lsx"
