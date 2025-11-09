@@ -13,11 +13,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="JPEG2000 image codec plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_15
 "
 RDEPEND="
 	>=media-libs/openjpeg-2.2[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
