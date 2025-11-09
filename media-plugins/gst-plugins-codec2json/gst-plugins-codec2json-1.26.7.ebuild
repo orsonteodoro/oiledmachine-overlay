@@ -13,11 +13,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Debugging/testing support by convert frame parameters to json plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=dev-libs/json-glib-1.6.6[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
