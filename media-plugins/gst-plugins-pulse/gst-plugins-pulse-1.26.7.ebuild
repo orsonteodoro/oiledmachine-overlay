@@ -12,11 +12,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="PulseAudio sound server plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	>=media-libs/libpulse-2.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
