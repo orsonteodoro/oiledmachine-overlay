@@ -964,7 +964,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_31
+ebuild_revision_32
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1231,7 +1231,8 @@ REQUIRED_USE+="
 # openssl requirement relaxed CI uses 3.0.8
 #	>=dev-libs/libgit2-1.5
 CARGO_BINDINGS_DEPENDS_GLIB="
-	>=dev-libs/glib-2.62[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.62:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}
 	elibc_glibc? (
 		>=sys-libs/glibc-2.36
@@ -1256,6 +1257,7 @@ CARGO_BINDINGS_DEPENDS_GTK4="
 	${CARGO_BINDINGS_DEPENDS_CAIRO}
 	${CARGO_BINDINGS_DEPENDS_PANGO}
 	>=gui-libs/gtk-4.6:4[introspection,gstreamer]
+	gui-libs/gtk:=
 	>=media-libs/graphene-1.10[introspection]
 	>=x11-libs/gdk-pixbuf-2.36.8[introspection]
 "
@@ -1267,8 +1269,10 @@ RDEPEND+="
 	${CARGO_BINDINGS_DEPENDS_GLIB}
 	${PATENT_STATUS_RDEPEND}
 	~media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+	media-plugins/gst-plugins-meta:=
 	analytics? (
 		>=media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		media-plugins/gst-plugins-analyticsoverlay:=
 	)
 	aws? (
 		>=dev-libs/openssl-1.1[${MULTILIB_USEDEP}]
@@ -1282,11 +1286,12 @@ RDEPEND+="
 	)
 	dav1d? (
 		>=media-libs/dav1d-1.3[${MULTILIB_USEDEP}]
-		media-libs/dav1d:=[${MULTILIB_USEDEP}]
+		media-libs/dav1d:=
 	)
 	gtk4? (
 		${CARGO_BINDINGS_DEPENDS_GTK4}
 		>=media-libs/gst-plugins-base-${GST_PV}:1.0[${MULTILIB_USEDEP},opengl]
+		media-libs/gst-plugins-base:=
 	)
 	onvif? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
@@ -1303,44 +1308,58 @@ RDEPEND+="
 	)
 	webrtc? (
 		~media-plugins/gst-plugins-opus-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		media-plugins/gst-plugins-opus:=
 		~media-plugins/gst-plugins-rtp-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		media-plugins/gst-plugins-rtp:=
 		aom? (
 			~media-plugins/gst-plugins-aom-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-aom:=
 		)
 		nvcodec? (
 			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},nvcodec]
+			media-plugins/gst-plugins-bad:=
 		)
 		openh264? (
 			~media-plugins/gst-plugins-openh264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-openh264:=
 		)
 		qsv? (
 			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},qsv]
+			media-plugins/gst-plugins-bad:=
 		)
 		rav1e? (
 			${CARGO_BINDINGS_DEPENDS_CAIRO}
 			~media-plugins/gst-plugins-rav1e-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-rav1e:=
 		)
 		va? (
 			>=media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vaapi]
+			media-plugins/gst-plugins-bad:=
 		)
 		vaapi? (
 			~media-plugins/gst-plugins-vaapi-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-vaapi:=
 		)
 		vpx? (
 			~media-plugins/gst-plugins-vpx-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-vpx:=
 		)
 		vulkan? (
 			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vulkan,vulkan-video]
+			media-plugins/gst-plugins-bad:=
 		)
 		x264? (
 			~media-plugins/gst-plugins-x264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-x264:=
 		)
 		x265? (
 			~media-plugins/gst-plugins-x265-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+			media-plugins/gst-plugins-x265:=
 		)
 	)
 	webrtchttp? (
 		~media-plugins/gst-plugins-webrtc-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		media-plugins/gst-plugins-webrtc:=
 	)
 	vvdec? (
 		>=media-libs/vvdec-3.0[${MULTILIB_USEDEP}]
@@ -1357,7 +1376,9 @@ gen_llvm_bdepend() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:=
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:=
 			)
 		"
 	done
@@ -1428,29 +1449,29 @@ ewarn
 multilib_src_configure() {
 	local llvm_slot=""
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if has "llvm_slot_${s}" ${IUSE_EFFECTIVE} && use "llvm_slot_${s}" ; then
 			llvm_slot="${s}"
 			break
 		fi
 	done
-	LLVM_MAX_SLOT=${llvm_slot}
+	LLVM_MAX_SLOT="${llvm_slot}"
 	llvm_pkg_setup
 einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
-	${RUSTC} --version || die
+	"${RUSTC}" --version || die
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 
 	local m
-	for m in ${MODULES[@]} ; do
+	for m in "${MODULES[@]}" ; do
 		emesonargs+=(
-			$(meson_feature ${m})
+			$(meson_feature "${m}")
 		)
 	done
 
 	if use system-libsodium ; then
 		emesonargs+=(
-			-Dsodium-source=system
+			-Dsodium-source="system"
 		)
 	fi
 
