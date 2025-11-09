@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="MPEG-DASH plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
@@ -24,9 +24,9 @@ DEPEND="
 src_prepare() {
 	default
 	gstreamer_system_library \
-		gstadaptivedemux_dep:gstadaptivedemux \
-		gsturidownloader_dep:gsturidownloader \
-		gstisoff_dep:gstisoff
+		"gstadaptivedemux_dep:gstadaptivedemux" \
+		"gsturidownloader_dep:gsturidownloader" \
+		"gstisoff_dep:gstisoff"
 }
 
 multilib_src_configure() {
