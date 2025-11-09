@@ -22,12 +22,15 @@ LICENSE="
 "
 SLOT="1.0"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	media-libs/gstreamer:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gstreamer:=
 	media-libs/gst-plugins-base:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	~net-libs/libnice-${PV}[${MULTILIB_USEDEP}]
+	net-libs/libnice:=
 "
 DEPEND="
 	${RDEPEND}
