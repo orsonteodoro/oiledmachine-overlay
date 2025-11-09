@@ -13,10 +13,11 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Overlay QR codes on an element from a buffer for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	dev-libs/json-glib[${MULTILIB_USEDEP}]
 	media-gfx/qrencode[${MULTILIB_USEDEP}]
 "
