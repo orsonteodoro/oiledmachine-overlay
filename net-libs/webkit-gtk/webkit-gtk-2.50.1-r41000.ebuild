@@ -705,6 +705,9 @@ REQUIRED_USE+="
 	opengl? (
 		!gles2
 	)
+	openmp? (
+		clang
+	)
 	pulseaudio? (
 		gstreamer
 	)
