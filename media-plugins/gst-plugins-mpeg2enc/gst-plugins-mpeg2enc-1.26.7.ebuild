@@ -12,10 +12,11 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="MPEG-1/2 video encoding plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=media-video/mjpegtools-2.0.0:=[${MULTILIB_USEDEP}]
+	>=media-video/mjpegtools-2.0.0[${MULTILIB_USEDEP}]
+	media-video/mjpegtools:=
 "
 DEPEND="
 	${RDEPEND}
