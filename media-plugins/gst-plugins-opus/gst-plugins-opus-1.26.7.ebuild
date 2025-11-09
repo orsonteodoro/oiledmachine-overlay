@@ -15,14 +15,16 @@ SRC_URI+=" https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad
 
 DESCRIPTION="Opus audio parser plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 CDEPEND="
-	>=media-libs/opus-0.9.4:=[${MULTILIB_USEDEP}]
+	>=media-libs/opus-0.9.4[${MULTILIB_USEDEP}]
+	media-libs/opus:=
 "
 RDEPEND="
 	${CDEPEND}
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},ogg]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${CDEPEND}
@@ -30,9 +32,10 @@ DEPEND="
 
 src_prepare() {
 	default
-	gstreamer_system_package audio_dep:gstreamer-audio \
-		pbutils_dep:gstreamer-pbutils \
-		tag_dep:gstreamer-tag
+	gstreamer_system_package \
+		"audio_dep:gstreamer-audio" \
+		"pbutils_dep:gstreamer-pbutils" \
+		"tag_dep:gstreamer-tag"
 }
 
 in_bdir() {
