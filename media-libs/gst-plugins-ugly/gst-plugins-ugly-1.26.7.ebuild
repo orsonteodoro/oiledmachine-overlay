@@ -19,10 +19,11 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2+" # Some split plugins are LGPL but combining with a GPL library.
 IUSE+="
 nls orc
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	nls? (
 		sys-devel/gettext[${MULTILIB_USEDEP}]
 	)
