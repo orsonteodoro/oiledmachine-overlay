@@ -12,10 +12,11 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="A libcdio based CD Digital Audio (CDDA) source plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=dev-libs/libcdio-0.76:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libcdio-0.76[${MULTILIB_USEDEP}]
+	dev-libs/libcdio:=
 "
 DEPEND="
 	${RDEPEND}
