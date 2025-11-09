@@ -9,8 +9,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 DESCRIPTION="A redirect ebuild for gst-plugins-csound"
 LICENSE="metapackage"
 SLOT="1.0"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	~media-libs/gst-plugins-rs-${PV}:1.0[csound]
+	media-libs/gst-plugins-rs:=
 "
 DEPEND="
 	${RDEPEND}
