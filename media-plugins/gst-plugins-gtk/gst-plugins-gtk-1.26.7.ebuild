@@ -23,14 +23,17 @@ DESCRIPTION="Video sink plugin for GStreamer that renders to a GtkWidget"
 # Keep default IUSE mirrored with gst-plugins-base
 IUSE="
 +egl +gles2 opengl wayland +X
-ebuild_revision_13
+ebuild_revision_14
 "
 GL_DEPS="
 	>=x11-libs/gtk+-3.15:3[X?,wayland?,${MULTILIB_USEDEP}]
+	x11-libs/gtk+:=
 "
 RDEPEND="
 	>=x11-libs/gtk+-3.15:3[${MULTILIB_USEDEP}]
+	x11-libs/gtk+:=
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},egl=,gles2=,opengl=,wayland=,X=]
+	media-libs/gst-plugins-base:=
 	gles2? (
 		${GL_DEPS}
 	)
