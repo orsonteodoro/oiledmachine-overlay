@@ -54,6 +54,7 @@ ewarn "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report
 #		"${ED}/usr/$(get_libdir)/eog/plugins/libstatusbar-date.so:/usr/$(get_libdir)/eog"
 #	)
 #	fix-rpath_repair
+#	fix-rpath_verify
 # }
 fix-rpath_repair() {
 	if [[ -z "${RPATH_FIXES}" ]] ; then
