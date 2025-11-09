@@ -46,7 +46,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	${CDEPEND}
@@ -189,5 +189,6 @@ src_install() {
 	local RPATH_FIXES=(
 		"${ED}/usr/bin/bear:/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir),/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 	)
+	fix-rpath_repair
 	fix-rpath_verify
 }
