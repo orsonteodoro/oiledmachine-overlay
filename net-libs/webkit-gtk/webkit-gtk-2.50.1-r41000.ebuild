@@ -664,6 +664,11 @@ REQUIRED_USE+="
 	alsa? (
 		gstreamer
 	)
+	clang? (
+		^^ (
+			${LIBCXX_COMPAT_STDCXX23[@]}
+		)
+	)
 	dash? (
 		gstreamer
 	)
