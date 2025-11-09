@@ -63,7 +63,7 @@ LICENSE="GPL-2+ LGPL-2+"
 IUSE="
 alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
-ebuild_revision_15
+ebuild_revision_16
 "
 GL_REQUIRED_USE="
 	|| (
@@ -109,7 +109,9 @@ REQUIRED_USE="
 GL_DEPS="
 	>=media-libs/graphene-1.4.0[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.0:0[${MULTILIB_USEDEP}]
-	media-libs/libjpeg-turbo:0=[${MULTILIB_USEDEP}]
+	media-libs/libpng:=
+	media-libs/libjpeg-turbo:0[${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo:=
 	egl? (
 		>=x11-libs/libdrm-2.4.98
 	)
@@ -134,6 +136,7 @@ GL_DEPS="
 
 RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	app-text/iso-codes
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	alsa? (
@@ -164,7 +167,7 @@ RDEPEND="
 		>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	)
 	theora? (
-		>=media-libs/libtheora-1.1[encode,${MULTILIB_USEDEP}]
+		>=media-libs/libtheora-1.1[${MULTILIB_USEDEP},encode]
 	)
 	vorbis? (
 		>=media-libs/libvorbis-1.3.1[${MULTILIB_USEDEP}]
@@ -220,13 +223,13 @@ multilib_src_configure() {
 
 	if use opengl || use gles2; then
 		# because meson doesn't likes extraneous commas
-		local gl_api=( $(use opengl && echo opengl) $(use gles2 && echo gles2) )
-		local gl_platform=( $(use X && use opengl && echo glx) $(use egl && echo egl) )
+		local gl_api=( $(use opengl && echo "opengl") $(use gles2 && echo "gles2") )
+		local gl_platform=( $(use X && use opengl && echo "glx") $(use egl && echo "egl") )
 		local gl_winsys=(
-			$(use X && echo x11)
-			$(use wayland && echo wayland)
-			$(use egl && echo egl)
-			$(use gbm && echo gbm)
+			$(use X && echo "x11")
+			$(use wayland && echo "wayland")
+			$(use egl && echo "egl")
+			$(use gbm && echo "gbm")
 		)
 		emesonargs+=(
 			-Dgl-graphene=enabled
