@@ -12,10 +12,11 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="DVD read plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=media-libs/libdvdread-0.5.0:=[${MULTILIB_USEDEP}]
+	>=media-libs/libdvdread-0.5.0[${MULTILIB_USEDEP}]
+	media-libs/libdvdread:=
 "
 DEPEND="
 	${RDEPEND}
