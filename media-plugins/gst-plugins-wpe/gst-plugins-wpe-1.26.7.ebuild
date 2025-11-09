@@ -21,7 +21,7 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="WPE Web browser plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 gen_wpe_rdepend() {
 	local row
@@ -31,8 +31,11 @@ gen_wpe_rdepend() {
 		echo "
 			(
 				>=gui-libs/wpebackend-fdo-1.8:${api_ver}
+				gui-libs/wpebackend-fdo:=
 				>=net-libs/wpe-webkit-${wpe_ver}:${api_ver}
+				net-libs/wpe-webkit:=
 				gui-libs/libwpe:${api_ver}
+				gui-libs/libwpe:=
 			)
 		"
 	done
@@ -40,8 +43,10 @@ gen_wpe_rdepend() {
 RDEPEND="
 	>=x11-libs/libxkbcommon-0.8
 	dev-libs/glib:2
+	dev-libs/glib:=
 	dev-libs/wayland
 	~media-libs/gst-plugins-base-${PV}:1.0
+	media-libs/gst-plugins-base:=
 	|| (
 		$(gen_wpe_rdepend)
 	)
