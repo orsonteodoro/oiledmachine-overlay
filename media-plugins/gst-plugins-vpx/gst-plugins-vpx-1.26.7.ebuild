@@ -12,10 +12,11 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="VP8/VP9 video encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=media-libs/libvpx-1.7.0:=[${MULTILIB_USEDEP}]
+	>=media-libs/libvpx-1.7.0[${MULTILIB_USEDEP}]
+	media-libs/libvpx:=
 "
 DEPEND="
 	${RDEPEND}
