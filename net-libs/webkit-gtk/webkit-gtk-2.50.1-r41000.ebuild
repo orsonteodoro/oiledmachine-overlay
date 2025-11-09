@@ -1208,7 +1208,6 @@ einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
 			check-reqs_pkg_pretend
 		fi
 	fi
-	_set_cxx
 
 	if ! use opengl && ! use gles2; then
 ewarn
