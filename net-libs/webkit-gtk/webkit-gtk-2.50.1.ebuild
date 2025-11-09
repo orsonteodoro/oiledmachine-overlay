@@ -1132,6 +1132,7 @@ _set_clang() {
 	done
 	if [[ -z "${CC}" ]] ; then
 eerror "Choose a LLVM slot for C++ standard ${CXX_STANDARD}.  Valid values:  ${LLVM_COMPAT[@]/#/llvm_slot_}"
+eerror "Enable a llvm_slot_<x> flag."
 		die
 	fi
 	if ! which "${CC}" ; then
