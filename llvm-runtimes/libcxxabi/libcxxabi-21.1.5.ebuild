@@ -27,8 +27,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -53,7 +53,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM20_REVISION}
+${LLVM_EBUILDS_LLVM21_REVISION}
 clang hardened +static-libs test
 ebuild_revision_14
 "
@@ -104,6 +104,7 @@ LLVM_COMPONENTS=(
 )
 LLVM_TEST_COMPONENTS=(
 	"libc"
+	"llvm/include/llvm/"{"Demangle","Testing"}
 	"llvm/utils/llvm-lit"
 )
 llvm.org_set_globals
@@ -312,6 +313,7 @@ eerror
 
 		# The full clang configuration might not be ready yet. Use the partial
 		# configuration of components that libunwind depends on.
+		#
 		local flags=(
 			--config="${ESYSROOT}"/etc/clang/"${LLVM_MAJOR}"/gentoo-{rtlib,unwindlib,linker}.cfg
 		)

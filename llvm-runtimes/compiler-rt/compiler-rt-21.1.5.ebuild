@@ -1,0 +1,273 @@
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
+CXX_STANDARD=17
+PYTHON_COMPAT=( "python3_12" )
+
+inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1
+inherit toolchain-funcs
+
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~arm64-macos
+~ppc-macos ~x64-macos
+"
+
+DESCRIPTION="Compiler runtime library for clang (built-in part)"
+HOMEPAGE="https://llvm.org/"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		MIT
+		UoI-NCSA
+	)
+"
+RESTRICT="
+	!clang? (
+		test
+	)
+	!test? (
+		test
+	)
+"
+SLOT="${LLVM_MAJOR}"
+IUSE+="
+${LLVM_EBUILDS_LLVM21_REVISION}
++abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
+ebuild_revision_5
+"
+REQUIRED_USE="
+	atomic-builtins? (
+		clang
+	)
+"
+DEPEND="
+	llvm-core/llvm:${LLVM_MAJOR}
+"
+BDEPEND="
+	>=dev-build/cmake-3.16
+	clang? (
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
+		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:=
+	)
+	test? (
+		$(python_gen_any_dep "
+			>=dev-python/lit-15[\${PYTHON_USEDEP}]
+		")
+		=llvm-core/clang-${LLVM_VERSION}*:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
+	)
+	!test? (
+		${PYTHON_DEPS}
+	)
+"
+LLVM_COMPONENTS=(
+	"compiler-rt"
+	"cmake"
+	"llvm/cmake"
+	"third-party/siphash"
+)
+LLVM_TEST_COMPONENTS=(
+	"llvm/include/llvm/TargetParser"
+)
+llvm.org_set_globals
+
+python_check_deps() {
+	use test || return 0
+	python_has_version ">=dev-python/lit-15[${PYTHON_USEDEP}]"
+}
+PATCHES=(
+#	"${FILESDIR}/${PN}-18.1.8-remove-pid-suffix-from-logname.patch"
+)
+
+pkg_pretend() {
+	if ! use clang && ! tc-is-clang ; then
+ewarn
+ewarn "Building using a compiler other than clang may result in broken atomics"
+ewarn "library. Enable USE=clang unless you have a very good reason not to."
+ewarn
+	fi
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	if target_is_not_host || tc-is-cross-compiler ; then
+		# strips vars like CFLAGS="-march=x86_64-v3" for non-x86 architectures
+		CHOST="${CTARGET}" \
+		strip-unsupported-flags
+		# overrides host docs otherwise
+		DOCS=()
+	fi
+	python-any-r1_pkg_setup
+	libstdcxx-slot_verify
+}
+
+test_compiler() {
+	target_is_not_host && return
+	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" \
+		-o "/dev/null" \
+		-x c \
+		- \
+		<<<'int main() { return 0; }' &>"/dev/null"
+}
+
+src_configure() {
+	if use clang || use test ; then
+		llvm_prepend_path -b "${LLVM_MAJOR}"
+	fi
+
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	# pre-set since we need to pass it to cmake
+	BUILD_DIR="${WORKDIR}/${P}_build"
+
+	if use clang && ! is_crosspkg ; then
+		# Only do this conditionally to allow overriding with
+		# e.g. CC=clang-13 in case of breakage
+		if ! tc-is-clang ; then
+			local -x CC="${CHOST}-clang-${LLVM_MAJOR}"
+			local -x CXX="${CHOST}-clang++-${LLVM_MAJOR}"
+			local -x CPP="${CC} -E"
+		fi
+
+		strip-unsupported-flags
+
+		# The full clang configuration might not be ready yet. Given that compiler-rt
+		# require runtime, use only the linker configuration.
+		local flags=(
+			--config="${ESYSROOT}/etc/clang/${LLVM_MAJOR}/gentoo-linker.cfg"
+		)
+		local -x CFLAGS="${CFLAGS} ${flags[@]}"
+		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
+		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
+	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! test_compiler && ! test_compiler ; then
+		local nolib_flags=( -nodefaultlibs -lc )
+
+		if test_compiler "${nolib_flags[@]}"; then
+			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
+ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+		elif test_compiler "${nolib_flags[@]}" -nostartfiles ; then
+			# Avoiding -nostartfiles earlier on for bug #862540,
+			# and set available entry symbol for bug #862798.
+			nolib_flags+=(
+				-nostartfiles
+				-e main
+			)
+
+			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
+ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+		fi
+	fi
+
+	local mycmakeargs=(
+		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=$(usex !atomic-builtins)
+		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
+		-DCOMPILER_RT_BUILD_CTX_PROFILE=OFF
+		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
+		-DCOMPILER_RT_BUILD_MEMPROF=OFF
+		-DCOMPILER_RT_BUILD_ORC=OFF
+		-DCOMPILER_RT_BUILD_PROFILE=OFF
+		-DCOMPILER_RT_BUILD_SANITIZERS=OFF
+		-DCOMPILER_RT_BUILD_XRAY=OFF
+
+		-DPython3_EXECUTABLE="${PYTHON}"
+	)
+
+	if use amd64 && ! target_is_not_host ; then
+		mycmakeargs+=(
+			-DCAN_TARGET_i386=$(usex abi_x86_32)
+			-DCAN_TARGET_x86_64=$(usex abi_x86_64)
+		)
+	fi
+
+	if is_crosspkg ; then
+		# Needed to target built libc headers
+		export CFLAGS="${CFLAGS} -isystem /usr/${CTARGET}/usr/include"
+		mycmakeargs+=(
+			# Without this, the compiler will compile a test program
+			# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+
+			# Without this, compiler-rt install location is not unique
+			# to target triples, only to architecture.
+			# Needed if you want to target multiple libcs for one arch.
+			-DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON
+
+			-DCMAKE_ASM_COMPILER_TARGET="${CTARGET}"
+			-DCMAKE_C_COMPILER_TARGET="${CTARGET}"
+			-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
+		)
+	fi
+
+	if use prefix && [[ "${CHOST}" == *"-darwin"* ]] ; then
+		mycmakeargs+=(
+			# setting -isysroot is disabled with compiler-rt-prefix-paths.patch
+			# this allows adding arm64 support using SDK in EPREFIX
+			-DDARWIN_macosx_CACHED_SYSROOT="${EPREFIX}/MacOSX.sdk"
+			# Set version based on the SDK in EPREFIX.
+			# This disables i386 for SDK >= 10.15
+			-DDARWIN_macosx_OVERRIDE_SDK_VERSION=$(realpath "${EPREFIX}/MacOSX.sdk" | sed -e 's/.*MacOSX\(.*\)\.sdk/\1/')
+			# Use our libtool instead of looking it up with xcrun
+			-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
+		)
+	fi
+
+	if use test ; then
+		mycmakeargs+=(
+			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
+			-DLLVM_LIT_ARGS="$(get_lit_flags)"
+
+			-DCOMPILER_RT_TEST_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang"
+			-DCOMPILER_RT_TEST_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++"
+		)
+	fi
+
+	cmake_src_configure
+}
+
+src_test() {
+	# respect TMPDIR!
+	local -x LIT_PRESERVES_TMP=1
+
+	cmake_build check-builtins
+}
+

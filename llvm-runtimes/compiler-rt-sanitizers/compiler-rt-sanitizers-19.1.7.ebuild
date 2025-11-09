@@ -519,23 +519,23 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cmake_src_configure
 
 	if use test; then
-		local sys_dir=( "${EPREFIX}"/usr/lib/clang/${LLVM_MAJOR}/lib/* )
-		[[ -e ${sys_dir} ]] || die "Unable to find ${sys_dir}"
-		[[ ${#sys_dir[@]} -eq 1 ]] || die "Non-deterministic compiler-rt install: ${sys_dir[*]}"
+		local sys_dir=( "${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}/lib/"* )
+		[[ -e "${sys_dir}" ]] || die "Unable to find ${sys_dir}"
+		[[ "${#sys_dir[@]}" -eq 1 ]] || die "Non-deterministic compiler-rt install: ${sys_dir[*]}"
 
 		# copy clang over since resource_dir is located relatively to binary
 		# therefore, we can put our new libraries in it
-		mkdir -p "${BUILD_DIR}"/lib/{llvm/${LLVM_MAJOR}/{bin,$(get_libdir)},clang/${LLVM_MAJOR}/include} || die
-		cp "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/bin/clang{,++} \
-			"${BUILD_DIR}"/lib/llvm/${LLVM_MAJOR}/bin/ || die
-		cp "${EPREFIX}"/usr/lib/clang/${LLVM_MAJOR}/include/*.h \
-			"${BUILD_DIR}"/lib/clang/${LLVM_MAJOR}/include/ || die
-		cp "${sys_dir}"/*builtins*.a \
+		mkdir -p "${BUILD_DIR}/lib/"{"llvm/${LLVM_MAJOR}/"{"bin","$(get_libdir)"},"clang/${LLVM_MAJOR}/include"} || die
+		cp "${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang"{"","++"} \
+			"${BUILD_DIR}/lib/llvm/${LLVM_MAJOR}/bin/" || die
+		cp "${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}/include/"*".h" \
+			"${BUILD_DIR}/lib/clang/${LLVM_MAJOR}/include/" || die
+		cp "${sys_dir}/"*"builtins"*".a" \
 			"${BUILD_DIR}/lib/clang/${LLVM_MAJOR}/lib/${sys_dir##*/}/" || die
 		# we also need LLVMgold.so for gold-based tests
-		if [[ -f "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so ]]; then
-			ln -s "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so \
-				"${BUILD_DIR}"/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/ || die
+		if [[ -f "${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so" ]]; then
+			ln -s "${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so" \
+				"${BUILD_DIR}/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/" || die
 		fi
 	fi
 }

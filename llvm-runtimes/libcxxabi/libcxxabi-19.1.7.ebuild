@@ -92,7 +92,7 @@ PATCHES=(
 )
 LLVM_COMPONENTS=(
 	"runtimes"
-	"libcxx"{"abi",}
+	"libcxx"{"abi",""}
 	"llvm/cmake"
 	"cmake"
 )
