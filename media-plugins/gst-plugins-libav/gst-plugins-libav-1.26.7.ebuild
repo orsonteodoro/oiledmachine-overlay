@@ -24,12 +24,15 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	~media-libs/gstreamer-${MY_PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/gstreamer:=
 	~media-libs/gst-plugins-base-${MY_PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	|| (
 		media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP}]
 		media-video/ffmpeg:57.59.59[${MULTILIB_USEDEP}]
