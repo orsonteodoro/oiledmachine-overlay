@@ -18,6 +18,30 @@ BDEPEND="
 	dev-util/patchelf
 "
 
+# @FUNCTION:  fix-rpath_verify
+# @DESCRIPTION:
+# Peform verification only
+fix-rpath_verify() {
+	[[ "${FIX_RPATH_VERIFY:-1}" == "1" ]] || return
+einfo "Verifying dynamic link completeness"
+	local x
+	for x in $(find . "${ED}") ; do
+		local is_exe=0
+		local is_shared_lib=0
+		file "${x}" | grep -q -e "ELF.*executable" && is_exe=1
+		file "${x}" | grep -q -e "ELF.*shared object" && is_shared_lib=1
+		(( ${is_exe} == 1 || ${is_shared_lib} == 1 )) || continue
+		if ldd "${x}" | grep -q -e "not found" ; then
+			if [[ "${FIX_RPATH_VERIFY_FATAL:-1}" == "1" ]] ; then
+eerror "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report the issue to the ebuild maintainer."
+				die
+			else
+ewarn "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report the issue to the ebuild maintainer."
+			fi
+		fi
+	done
+}
+
 # @FUNCTION:  fix-rpath_repair
 # @DESCRIPTION:
 # Fix missing RPATHs
@@ -51,47 +75,7 @@ ewarn "Missing ${f}"
 			edo patchelf --add-rpath "${y}" "${f}"
 		done
 	done
-	[[ "${FIX_RPATH_VERIFY:-1}" == "1" ]] || return
-einfo "Verifying dynamic link completeness"
-	for x in $(find . "${ED}") ; do
-		local is_exe=0
-		local is_shared_lib=0
-		file "${x}" | grep -q -e "ELF.*executable" && is_exe=1
-		file "${x}" | grep -q -e "ELF.*shared object" && is_shared_lib=1
-		(( ${is_exe} == 1 || ${is_shared_lib} == 1 )) || continue
-		if ldd "${x}" | grep -q -e "not found" ; then
-			if [[ "${FIX_RPATH_VERIFY_FATAL:-1}" == "1" ]] ; then
-eerror "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report the issue to the ebuild maintainer."
-				die
-			else
-ewarn "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report the issue to the ebuild maintainer."
-			fi
-		fi
-	done
-}
-
-# @FUNCTION:  fix-rpath_verify
-# @DESCRIPTION:
-# Peform verification only
-fix-rpath_verify() {
-	[[ "${FIX_RPATH_VERIFY:-1}" == "1" ]] || return
-einfo "Verifying dynamic link completeness"
-	local x
-	for x in $(find . "${ED}") ; do
-		local is_exe=0
-		local is_shared_lib=0
-		file "${x}" | grep -q -e "ELF.*executable" && is_exe=1
-		file "${x}" | grep -q -e "ELF.*shared object" && is_shared_lib=1
-		(( ${is_exe} == 1 || ${is_shared_lib} == 1 )) || continue
-		if ldd "${x}" | grep -q -e "not found" ; then
-			if [[ "${FIX_RPATH_VERIFY_FATAL:-1}" == "1" ]] ; then
-eerror "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report the issue to the ebuild maintainer."
-				die
-			else
-ewarn "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report the issue to the ebuild maintainer."
-			fi
-		fi
-	done
+	fix-rpath_verify
 }
 
 fi
