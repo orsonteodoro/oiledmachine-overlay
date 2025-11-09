@@ -14,13 +14,17 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="WebRTC plugins for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	~media-plugins/gst-plugins-dtls-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-plugins/gst-plugins-dtls:=
 	~media-plugins/gst-plugins-sctp-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-plugins/gst-plugins-sctp:=
 	~media-plugins/gst-plugins-srtp-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-plugins/gst-plugins-srtp:=
 	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
+	media-libs/webrtc-audio-processing:=
 	>=net-libs/libnice-0.1.20[${MULTILIB_USEDEP}]
 "
 DEPEND="
@@ -30,13 +34,20 @@ DEPEND="
 src_prepare() {
 	default
 	gstreamer_system_package \
-		gstwebrtc_dep:gstreamer-webrtc \
-		gstsctp_dep:gstreamer-sctp \
-		gstbadaudio_dep:gstreamer-bad-audio
+		"gstwebrtc_dep:gstreamer-webrtc" \
+		"gstsctp_dep:gstreamer-sctp" \
+		"gstbadaudio_dep:gstreamer-bad-audio"
 }
 
 multilib_src_configure() {
 	cflags-hardened_append
+	if has_version "=media-libs/webrtc-audio-processing-1.3*" ; then
+		ABSEIL_CPP_SLOT="20230125"
+		export PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	elif has_version "=media-libs/webrtc-audio-processing-2.1*" ; then
+		ABSEIL_CPP_SLOT="20240722"
+		export PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	fi
 	gstreamer_multilib_src_configure
 }
 
