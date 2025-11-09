@@ -67,7 +67,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 cuda rocm rccl roctracer
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -245,6 +245,7 @@ src_install() {
 		fi
 	done
 	RPATH_FIXES+=(
+		"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/_torio_ffmpeg.so:/usr/lib/${EPYTHON}/site-packages/torio/lib"
 		"${ED}/usr/lib/${EPYTHON}/site-packages/torchaudio/lib/_torchaudio_sox.so:/usr/lib/${EPYTHON}/site-packages/torchaudio/lib"
 	)
 	fix-rpath_repair
