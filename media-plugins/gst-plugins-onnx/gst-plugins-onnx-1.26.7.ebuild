@@ -13,13 +13,14 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="ONNX neural network plugin for GStreamer"
 IUSE+="
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	$(python_gen_any_dep '
 		>=sci-ml/onnxruntime-1.16.1[${PYTHON_SINGLE_USEDEP}]
 	')
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${REPEND}
@@ -27,7 +28,7 @@ DEPEND="
 
 multilib_src_configure() {
 	cflags-hardened_append
-	append-cppflags -I/usr/include/onnxruntime/core/session
+	append-cppflags -I"/usr/include/onnxruntime/core/session"
 	append-libs -lonnxruntime
 	local emesonargs=(
 		-Dgpl=enabled
