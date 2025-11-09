@@ -30,7 +30,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 DESCRIPTION="A Qt6 video sink plugin for GStreamer"
 IUSE="
 egl wayland +X
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	|| (
@@ -53,6 +53,7 @@ gen_qt6_rdepend() {
 				)
 				wayland? (
 					dev-qt/qtwayland:6/${s}[qml]
+					dev-qt/qtwayland:=
 				)
 			)
 		"
@@ -66,6 +67,7 @@ RDEPEND="
 	dev-qt/qtdeclarative:=
 	dev-qt/qttools:=
 	~media-libs/gst-plugins-base-${PV}:1.0[opengl,wayland?,X?]
+	media-libs/gst-plugins-base:=
 	wayland? (
 		media-libs/gst-plugins-base[wayland]
 		dev-qt/qtwayland:=
