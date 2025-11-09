@@ -13,11 +13,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="WildMIDI soft synth plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=media-sound/wildmidi-0.4.2
 	~media-libs/gst-plugins-base-${PV}:1.0
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
