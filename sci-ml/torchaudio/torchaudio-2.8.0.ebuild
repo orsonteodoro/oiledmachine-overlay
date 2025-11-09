@@ -44,7 +44,7 @@ gen_rocm_iuse() {
 }
 ROCM_IUSE=$(gen_rocm_iuse)
 
-inherit distutils-r1 libcxx-slot libstdcxx-slot pypi rocm
+inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi rocm
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -224,22 +224,35 @@ python_configure() {
 
 src_install() {
 	distutils-r1_src_install
+	local RPATH_FIXES=()
 	local x
-	for x in $(find "/usr/lib/${EPYTHON}/site-packages/torchaudio/" "${ED}/usr/lib/${EPYTHON}/site-packages/torio" -name "*ffmpeg*.so*") ; do
+	for x in $(find "${ED}/usr/lib/${EPYTHON}/site-packages/torio" -name "*ffmpeg*.so*") ; do
 		local path=$(ldd "${x}" | grep -q "libav" && echo "${x}")
 		if [[ -z "${path}" ]] ; then
 				:
 		elif has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-einfo "Fixing rpath for ${x}"
-			patchelf --add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" "${x}" || die
+			RPATH_FIXES+=(
+				"${x}:/usr/lib/ffmpeg/58.60.60/$(get_libdir)"
+			)
 		elif has_version "media-video/ffmpeg:57.59.59" ; then # 4.x
-einfo "Fixing rpath for ${x}"
-			patchelf --add-rpath "/usr/lib/ffmpeg/57.59.59/$(get_libdir)" "${x}" || die
+			RPATH_FIXES+=(
+				"${x}:/usr/lib/ffmpeg/57.59.59/$(get_libdir)"
+			)
 		elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
-einfo "Fixing rpath for ${x}"
-			patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" "${x}" || die
+			RPATH_FIXES+=(
+				"${x}:/usr/lib/ffmpeg/56.58.58/$(get_libdir)"
+			)
 		fi
 	done
+	RPATH_FIXES+=(
+		"${ED}/usr/lib/${EPYTHON}/site-packages/torchaudio/lib/_torchaudio_sox.so:/usr/lib/${EPYTHON}/site-packages/torchaudio/lib"
+	)
+	fix-rpath_repair
+}
+
+python_install_all() {
+	distutils-r1_python_install_all
+	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

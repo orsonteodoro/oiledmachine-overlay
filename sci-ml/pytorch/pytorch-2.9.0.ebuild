@@ -7,7 +7,7 @@ EAPI=8
 
 # For requirements, see
 # https://github.com/pytorch/pytorch/blob/v2.9.0/RELEASE.md?plain=1#L49
- 
+
 # Obtained from caffe2 ebuild
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
