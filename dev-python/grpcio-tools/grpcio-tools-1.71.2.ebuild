@@ -53,7 +53,7 @@ RDEPEND="
 	dev-libs/protobuf:=
 	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
 	dev-python/cython:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
 	dev-python/grpcio:=
