@@ -10,6 +10,7 @@ CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="qt6"
 QT6_SUBSLOTS=(
+	"6.9.3"
 	"6.9.2"
 	"6.9.1"
 	"6.9.0"
