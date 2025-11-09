@@ -12,11 +12,12 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="AVDTP source/sink and A2DP sink plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=net-wireless/bluez-5.0[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 "
 DEPEND="
 	${RDEPEND}
