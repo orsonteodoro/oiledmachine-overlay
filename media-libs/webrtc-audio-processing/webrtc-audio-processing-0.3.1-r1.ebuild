@@ -15,14 +15,17 @@ SRC_URI="https://freedesktop.org/software/pulseaudio/${PN}/${P}.tar.xz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 ~arm64 ~ppc64 x86 ~amd64-linux"
-IUSE="static-libs"
+IUSE="
+static-libs
+ebuild_revision_1
+"
 
-DOCS=( AUTHORS NEWS README.md )
+DOCS=( "AUTHORS" "NEWS" "README.md" )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-0.3-proper_detection_cxxabi_execinfo.patch
-	"${FILESDIR}"/${PN}-0.3-Add-generic-byte-order-and-pointer-size-detection.patch
-	"${FILESDIR}"/${PN}-0.3-big-endian-support.patch
+	"${FILESDIR}/${PN}-0.3-proper_detection_cxxabi_execinfo.patch"
+	"${FILESDIR}/${PN}-0.3-Add-generic-byte-order-and-pointer-size-detection.patch"
+	"${FILESDIR}/${PN}-0.3-big-endian-support.patch"
 )
 
 src_unpack() {
