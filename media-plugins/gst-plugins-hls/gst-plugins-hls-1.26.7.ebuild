@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 DESCRIPTION="HTTP live streaming plugin for GStreamer"
 IUSE="
 libgcrypt nettle openssl
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	|| (
@@ -27,7 +27,8 @@ RDEPEND="
 		dev-libs/libgcrypt[${MULTILIB_USEDEP}]
 	)
 	nettle? (
-		>=dev-libs/nettle-3.0:0=[${MULTILIB_USEDEP}]
+		>=dev-libs/nettle-3.0:0[${MULTILIB_USEDEP}]
+		dev-libs/nettle:=
 	)
 	openssl? (
 		dev-libs/openssl[${MULTILIB_USEDEP}]
@@ -43,8 +44,8 @@ PATCHES=(
 src_prepare() {
 	default
 	gstreamer_system_library \
-		gstadaptivedemux_dep:gstadaptivedemux \
-		gsturidownloader_dep:gsturidownloader
+		"gstadaptivedemux_dep:gstadaptivedemux" \
+		"gsturidownloader_dep:gsturidownloader"
 }
 
 multilib_src_configure() {
@@ -58,7 +59,7 @@ multilib_src_configure() {
 		crypto_provider="openssl"
 	fi
 	local emesonargs=(
-		-Dhls-crypto=${crypto_provider}
+		-Dhls-crypto="${crypto_provider}"
 	)
 	gstreamer_multilib_src_configure
 }
