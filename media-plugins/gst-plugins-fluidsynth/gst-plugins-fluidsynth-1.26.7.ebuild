@@ -14,10 +14,11 @@ KEYWORDS="~amd64 ~amd64-macos ~arm ~arm64 ~arm64-macos ~x86"
 
 DESCRIPTION="FluidSynth plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=media-sound/fluidsynth-2.1:=[${MULTILIB_USEDEP}]
+	>=media-sound/fluidsynth-2.1[${MULTILIB_USEDEP}]
+	media-sound/fluidsynth:=
 "
 DEPEND="
 	${RDEPEND}
