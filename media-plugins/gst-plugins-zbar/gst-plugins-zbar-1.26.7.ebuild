@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Bar codes detection in video streams for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=media-gfx/zbar-0.23.1[${MULTILIB_USEDEP}]
