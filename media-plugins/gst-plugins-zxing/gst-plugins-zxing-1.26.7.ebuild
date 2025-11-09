@@ -13,11 +13,12 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Barcode image scanner plugin using zxing-cpp for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=media-libs/zxing-cpp-1.4.0
 	~media-libs/gst-plugins-base-${PV}:1.0
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
