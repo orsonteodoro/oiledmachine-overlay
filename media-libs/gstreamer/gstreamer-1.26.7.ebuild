@@ -34,10 +34,11 @@ LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
 +caps +introspection nls unwind
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	caps? (
 		sys-libs/libcap[${MULTILIB_USEDEP}]
 	)
