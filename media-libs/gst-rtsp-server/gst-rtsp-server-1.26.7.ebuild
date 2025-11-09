@@ -19,16 +19,22 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
 IUSE="
 examples +introspection static-libs
-ebuild_revision_16
+ebuild_revision_17
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
+	media-libs/gstreamer:=
 	>=media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
+	media-libs/gst-plugins-base:=
 	>=media-libs/gst-plugins-good-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-good:=
 	>=media-plugins/gst-plugins-srtp-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	media-plugins/gst-plugins-srtp:=
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	introspection? (
-		>=dev-libs/gobject-introspection-1.31.1:=
+		>=dev-libs/gobject-introspection-1.31.1
+		dev-libs/gobject-introspection:=
 	)
 "
 DEPEND="
