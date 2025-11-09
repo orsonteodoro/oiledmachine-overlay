@@ -13,11 +13,13 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="iSAC plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
+	media-libs/webrtc-audio-processing:=
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 "
 DEPEND="
 	${RDEPEND}
