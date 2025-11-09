@@ -62,7 +62,7 @@ SLOT="1.0"
 IUSE="
 ${VIDEO_CARDS[@]}
 +drm +egl +gles2 opengl wayland +X
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	gles2? (
@@ -90,15 +90,20 @@ REQUIRED_USE="
 "
 GL_DEPS="
 	~media-libs/gst-plugins-base-${GST_REQ}:${SLOT}[egl?,gles2(+)?,opengl?,wayland?,X?]
+	media-libs/gst-plugins-base:=
 	>=media-libs/mesa-24.1[${MULTILIB_USEDEP},egl(+)?,gles2(+)?,opengl,X?]
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${GST_REQ}:${SLOT}[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-base:=
 	~media-libs/gst-plugins-bad-${GST_REQ}:${SLOT}[${MULTILIB_USEDEP}]
-	>=media-libs/libva-1.10.0:=[${MULTILIB_USEDEP},drm(+)?,wayland?,X?]
+	media-libs/gst-plugins-bad:=
+	>=media-libs/libva-1.10.0[${MULTILIB_USEDEP},drm(+)?,wayland?,X?]
+	media-libs/libva:=
 	media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_intel?,video_cards_r600?,video_cards_radeonsi?,video_cards_nouveau?,video_cards_nvidia?]
 	drm? (
-		>=virtual/libudev-208:=[${MULTILIB_USEDEP}]
+		>=virtual/libudev-208[${MULTILIB_USEDEP}]
+		virtual/libudev:=
 		>=x11-libs/libdrm-2.4.98[${MULTILIB_USEDEP}]
 	)
 	gles2? (
