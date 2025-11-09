@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="DVB device capture plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 "
@@ -22,7 +22,8 @@ DEPEND="
 
 src_prepare() {
 	default
-	gstreamer_system_package gstmpegts_dep:gstreamer-mpegts
+	gstreamer_system_package \
+		"gstmpegts_dep:gstreamer-mpegts"
 }
 
 multilib_src_configure() {
