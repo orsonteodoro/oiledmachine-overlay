@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="A cdparanoia based CD Digital Audio (CDDA) source plugin for GStreamer"
 IUSE="
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=media-sound/cdparanoia-3.10.2[${MULTILIB_USEDEP}]
@@ -23,7 +23,8 @@ DEPEND="
 
 src_prepare() {
 	default
-	gstreamer_system_package audio_dep:gstreamer-audio
+	gstreamer_system_package \
+		"audio_dep:gstreamer-audio"
 }
 
 multilib_src_configure() {
