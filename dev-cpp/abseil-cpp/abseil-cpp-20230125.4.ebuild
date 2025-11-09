@@ -22,6 +22,8 @@ CPU_FLAGS_PPC=(
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_aes"
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_pclmul"
+	"cpu_flags_x86_sse"
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse3"
 	"cpu_flags_x86_ssse3"
@@ -49,8 +51,6 @@ inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot p
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/abseil/abseil-cpp/commit/b957f0ccd00481cd4fd663d8320aa02ae0564f18.patch
-	-> abseil-cpp-b957f0c.patch
 "
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
@@ -82,6 +82,9 @@ REQUIRED_USE="
 	x86? (
 		cpu_flags_x86_sse2
 	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
 	cpu_flags_x86_sse3? (
 		cpu_flags_x86_sse2
 	)
@@ -90,6 +93,9 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_pclmul? (
+		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
@@ -104,16 +110,14 @@ BDEPEND+="
 	)
 "
 RESTRICT="
-	test
+	!test? (
+		test
+	)
 	mirror
-" # Configure time error with test
+"
 PATCHES=(
-	"${DISTDIR}/${PN}-b957f0c.patch"
-	"${FILESDIR}/${PN}-20200225.3-numeric_limits-fix.patch"
-	"${FILESDIR}/${PN}-20200225.3-gcc-12-fix.patch"
-	"${FILESDIR}/${PN}-20200225.3-gcc-13-fix.patch"
+	#"${FILESDIR}/${PN}-20211102.0-gcc-13-2.patch"
 	"${FILESDIR}/${PN}-20200225.3-crypto-symbol.patch"
-	"${FILESDIR}/${PN}-20200225.3-54fac21-backport.patch"
 )
 
 pkg_setup() {
@@ -239,6 +243,15 @@ setup_aes_flags() {
 setup_cpu_flags() {
 	setup_aes_flags
 
+	filter-flags '-msse' '-mno-sse'
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_sse ; then
+			append-flags "-msse"
+		else
+			append-flags "-mno-sse"
+		fi
+	fi
+
 	filter-flags '-msse2' '-mno-sse2'
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if use cpu_flags_x86_sse2 ; then
@@ -265,6 +278,15 @@ setup_cpu_flags() {
 			append-flags "-mno-ssse3"
 		fi
 	fi
+
+	filter-flags '-m*pclmul'
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_pclmul ; then
+			append-flags "-mpclmul"
+		else
+			append-flags "-mno-pclmul"
+		fi
+	fi
 }
 
 src_prepare() {
@@ -278,13 +300,14 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Default for this package and grpc
-		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
+		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Default for this package
+		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Default for gRPC
 		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by Bear
+		$(usex test '-DBUILD_TESTING=ON' '')
+		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
-		-DBUILD_TESTING=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
 	)
 

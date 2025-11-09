@@ -28,6 +28,12 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -56,18 +62,17 @@ HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
 IUSE+="
+${_CXX_STANDARD[@]}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
-cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17 test
+test
 ebuild_revision_25
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
 	^^ (
-		cxx_standard_cxx11
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 	amd64? (
 		cpu_flags_x86_sse2
