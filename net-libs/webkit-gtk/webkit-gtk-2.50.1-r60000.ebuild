@@ -1126,6 +1126,7 @@ _set_clang() {
 		if use "llvm_slot_${s}" ; then
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
+			export LLVM_SLOT="${s}"
 			break
 		fi
 	done
@@ -1134,6 +1135,15 @@ eerror "Choose a LLVM slot for C++ standard ${CXX_STANDARD}.  Valid values:  ${L
 eerror "Enable a llvm_slot_<x> flag."
 		die
 	fi
+
+einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH=${PATH} (after)"
+
 	if ! which "${CC}" ; then
 eerror "${CC} is not found.  Emerge the compiler slot."
 		die
@@ -2008,7 +2018,7 @@ einfo "CXX:  ${CXX}"
 		tc-check-openmp
 	fi
 
-	tc-is-clang && llvm_pkg_setup
+	use clang && llvm_pkg_setup
 
 	if use v4l ; then
 		local gst_plugins_v4l2_repo=\
