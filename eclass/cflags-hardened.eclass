@@ -1652,7 +1652,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# to the logical extreme.  This -O flag cap prevents this from happening.
 
 	if [[ "${fortify_fix_level}" =~ ("1"|"2"|"3") ]] ; then
-einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL: ${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}"
+einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:  ${fortify_fix_level}"
 		replace-flags "-Ofast" "-O2"
 		replace-flags "-O4" "-O2"
 		replace-flags "-O3" "-O2"
