@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64"
 DESCRIPTION="Adaptive demuxer plugins for GStreamer"
 IUSE="
 libgcrypt nettle openssl
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	|| (
@@ -25,13 +25,16 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
 	libgcrypt? (
-		dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
+		dev-libs/libgcrypt[${MULTILIB_USEDEP}]
+		dev-libs/libgcrypt:=
 	)
 	nettle? (
-		>=dev-libs/nettle-3.0:0=[${MULTILIB_USEDEP}]
+		>=dev-libs/nettle-3.0:0[${MULTILIB_USEDEP}]
+		dev-libs/nettle:=
 	)
 	openssl? (
-		dev-libs/openssl:=[${MULTILIB_USEDEP}]
+		dev-libs/openssl[${MULTILIB_USEDEP}]
+		dev-libs/openssl:=
 	)
 "
 DEPEND="
@@ -43,12 +46,13 @@ RDEPEND="
 		net-libs/libsoup:3.0
 		net-libs/libsoup:2.4
 	)
+	net-libs/libsoup:=
 "
 
 multilib_src_configure() {
 	cflags-hardened_append
 	local emesonargs=(
-		-Dhls-crypto=nettle
+		-Dhls-crypto="nettle"
 	)
 	gstreamer_multilib_src_configure
 }
