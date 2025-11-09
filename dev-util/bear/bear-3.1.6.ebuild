@@ -46,7 +46,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	${CDEPEND}
@@ -176,8 +176,18 @@ src_install() {
 	cmake-multilib_src_install
 	# Removed staged folder.  It contains the same contents.
 	rm -rf "${ED}/var" || die
+
+	fix_rpath_abi() {
+		local RPATH_FIXES=(
+			"${ED}/usr/$(get_libdir)/bear/wrapper:/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir),/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+		)
+		fix-rpath_repair
+	}
+
+	multilib_foreach_abi fix_rpath_abi
+
 	local RPATH_FIXES=(
-		"${ED}/usr/bin/bear:/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir)"
+		"${ED}/usr/bin/bear:/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir),/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 	)
-	fix-rpath_repair
+	fix-rpath_verify
 }
