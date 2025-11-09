@@ -45,7 +45,7 @@ ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
-ebuild_revision_15
+ebuild_revision_16
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -117,8 +117,11 @@ RDEPEND="
 	!media-plugins/gst-plugins-va
 	!media-plugins/gst-transcoder
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
+	media-libs/gstreamer:=
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
+	media-libs/gst-plugins-base:=
 	amf? (
 		media-libs/amf-headers
 		media-video/amdgpu-pro-amf[video_cards_amdgpu?]
@@ -134,8 +137,10 @@ RDEPEND="
 	)
 	nvcodec? (
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
+		dev-libs/glib:=
 		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=[${MULTILIB_USEDEP}]
+		x11-drivers/nvidia-drivers[${MULTILIB_USEDEP}]
+		x11-drivers/nvidia-drivers:=
 	)
 	orc? (
 		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
@@ -153,7 +158,8 @@ RDEPEND="
 		)
 	)
 	vaapi? (
-		media-libs/libva:=[${MULTILIB_USEDEP},wayland?,X?]
+		media-libs/libva[${MULTILIB_USEDEP},wayland?,X?]
+		media-libs/libva:=
 		media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 		udev? (
 			dev-libs/libgudev[${MULTILIB_USEDEP}]
