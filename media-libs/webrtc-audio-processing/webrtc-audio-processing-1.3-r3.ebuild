@@ -23,7 +23,7 @@ SLOT="1"
 KEYWORDS="amd64 ~arm64 ~ppc64 x86 ~amd64-linux"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RDEPEND="
@@ -67,7 +67,8 @@ multilib_src_install_all() {
 	fix_libs_abi() {
 		IFS=$'\n'
 		L=(
-			"${ED}/usr/$(get_libdir)/libwebrtc-audio-processing-2.so.1"
+			"${ED}/usr/$(get_libdir)/libwebrtc-audio-coding-1.so.3"
+			"${ED}/usr/$(get_libdir)/libwebrtc-audio-processing-1.so.3"
 		)
 		IFS=$' \t\n'
 		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
