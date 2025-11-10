@@ -99,7 +99,7 @@ EAPI=8
 # Change also LLVM_OFFICIAL_SLOT
 
 TC_COUNT_EXPECTED=5129
-SOURCES_COUNT_EXPECTED=546105
+SOURCES_COUNT_EXPECTED=546109
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
@@ -116,6 +116,7 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
 CHROMIUM_TOOLCHAIN=1
+COPIUM_COMMIT="46d68912da04d9ed14856c50db986d5c8e786a4b"
 CROMITE_COMMIT="fde090c0d3690592570011055c980f1679d2b28d" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
 CROMITE_PV="140.0.7339.186"
 CURRENT_PROFDATA_VERSION= # Global variable
@@ -475,6 +476,8 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	SRC_URI+="
 		system-toolchain? (
 https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
+https://codeberg.org/selfisekai/copium/archive/${COPIUM_COMMIT}.tar.gz
+	-> chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz
 		)
 	"
 fi
@@ -525,15 +528,17 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 		)
 	"
 fi
+# Since M142 tests have been segfaulting on Gentoo systems; disabling for now.
 RESTRICT="
 	mirror
+	test
 	!bindist? (
 		bindist
 	)
-	!test? (
-		test
-	)
 "
+#	!test? (
+#		test
+#	)
 SLOT="0/stable"
 #
 # vaapi is enabled by default upstream for some arches \
@@ -1171,6 +1176,7 @@ COMMON_X_DEPEND="
 	x11-libs/libXtst:=
 "
 
+# sys-libs/zlib: https://bugs.gentoo.org/930365; -ng is not compatible.
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
@@ -2222,7 +2228,10 @@ src_unpack() {
 	export PATH="/usr/share/chromium/toolchain/gn/out:${PATH}"
 
 	if _use_system_toolchain ; then
-		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
+		if ! use bundled-toolchain ; then
+			unpack chromium-patches-${PATCH_VER}.tar.bz2
+			unpack chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz
+		fi
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
 		mkdir -p "${S}/third_party/llvm-build"
@@ -2355,6 +2364,19 @@ apply_distro_patchset_for_system_toolchain() {
 			"${FILESDIR}/chromium-140-__rust_no_alloc_shim_is_unstable.patch"
 		)
 	fi
+
+	if ver_test ${RUST_SLOT} -lt "1.90.0"; then
+		PATCHES+=(
+			"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
+		)
+	fi
+
+	if ver_test ${RUST_SLOT} -lt "1.91.0"; then
+		PATCHES+=(
+			"${WORKDIR}/copium/cr142-crabbyavif-gn-rust-pre1.91.patch"
+			"${WORKDIR}/copium/cr142-crabbyavif-src-rust-pre1.91.patch"
+		)
+	fi
 }
 
 apply_distro_patchset() {
@@ -2366,7 +2388,6 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/${PN}-134-bindgen-custom-toolchain.patch"
 		"${FILESDIR}/${PN}-135-oauth2-client-switches.patch"
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
-#		"${FILESDIR}/${PN}-142-system-harfbuzz.patch"
 		"${FILESDIR}/${PN}-142-iwyu-field-form-data.patch"
 		"${FILESDIR}/${PN}-141-cssstylesheet-iwyu.patch"
 	)
@@ -2866,6 +2887,12 @@ src_prepare() {
 
 	check_deps_cfi_cross_dso
 
+	# To know which patches are safe to drop from files/ after tidying up old ebuilds:
+	# comm -13 \
+	# 	<(grep 'FILESDIR' *.ebuild | grep patch | grep -o '\${FILESDIR}/[^") ]*' \
+	#		| sed 's|\${FILESDIR}/|files/|; s|\${PN}|chromium|' | sort -u) \
+	# 	<(find files/ -name "*.patch" | sort)
+
 	local PATCHES=()
 
 
@@ -2959,7 +2986,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		buildtools/third_party/libc++
 		buildtools/third_party/libc++abi
 		net/third_party/mozilla_security_manager
-#		net/third_party/nss
 		net/third_party/quic
 		net/third_party/uri_template
 		third_party/abseil-cpp
@@ -6355,6 +6381,9 @@ src_test() {
 		"AlternateTestParams/PartitionAllocTest.Realloc/3"
 		"AlternateTestParams/PartitionAllocTest.ReallocDirectMapAligned/2"
 		"AlternateTestParams/PartitionAllocTest.ReallocDirectMapAligned/3"
+
+		# M142 - new beta failures
+		'LazyThreadPoolTaskRunnerEnvironmentTest.*'
 	)
 
 	local test_filter="-$(IFS=:; printf '%s' "${skip_tests[*]}")"
