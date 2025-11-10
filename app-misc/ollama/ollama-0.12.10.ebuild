@@ -13,6 +13,8 @@ EAPI=8
 # 0.5.13 -> 0.6.5
 # 0.6.5 -> 0.11.4
 # 0.11.4 -> 0.12.6 # TODO update patch/ebuild for LLM model availability
+# 0.12.6 -> 0.12.9
+# 0.12.9 - > 0.12.10
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -669,6 +671,31 @@ else
 		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
 		"gopkg.in/yaml.v3 v3.0.1"
 		"gopkg.in/yaml.v3 v3.0.1/go.mod"
+		"github.com/davecgh/go-spew v1.1.0"
+		"github.com/davecgh/go-spew v1.1.0/go.mod"
+		"github.com/pmezard/go-difflib v1.0.0"
+		"github.com/pmezard/go-difflib v1.0.0/go.mod"
+		"github.com/stretchr/objx v0.1.0/go.mod"
+		"github.com/stretchr/testify v1.7.0"
+		"github.com/stretchr/testify v1.7.0/go.mod"
+		"github.com/tkrajina/go-reflector v0.5.4"
+		"github.com/tkrajina/go-reflector v0.5.4/go.mod"
+		"github.com/tkrajina/go-reflector v0.5.5"
+		"github.com/tkrajina/go-reflector v0.5.5/go.mod"
+		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod"
+		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c"
+		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
+		"github.com/davecgh/go-spew v1.1.0"
+		"github.com/davecgh/go-spew v1.1.0/go.mod"
+		"github.com/pmezard/go-difflib v1.0.0"
+		"github.com/pmezard/go-difflib v1.0.0/go.mod"
+		"github.com/stretchr/objx v0.1.0/go.mod"
+		"github.com/stretchr/testify v1.7.0"
+		"github.com/stretchr/testify v1.7.0/go.mod"
+		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405"
+		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod"
+		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c"
+		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
 		"github.com/cpuguy83/go-md2man/v2 v2.0.2"
 		"github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod"
 		"github.com/inconshreveable/mousetrap v1.1.0"
@@ -1639,6 +1666,8 @@ else
 		"gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod"
 		"github.com/BurntSushi/toml v0.3.1/go.mod"
 		"github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod"
+		"github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf"
+		"github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf/go.mod"
 		"github.com/agnivade/levenshtein v1.1.1"
 		"github.com/agnivade/levenshtein v1.1.1/go.mod"
 		"github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod"
@@ -1772,6 +1801,8 @@ else
 		"github.com/kr/pretty v0.3.0/go.mod"
 		"github.com/kr/text v0.2.0"
 		"github.com/kr/text v0.2.0/go.mod"
+		"github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728"
+		"github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728/go.mod"
 		"github.com/leodido/go-urn v1.4.0"
 		"github.com/leodido/go-urn v1.4.0/go.mod"
 		"github.com/mattn/go-isatty v0.0.20"
@@ -1779,6 +1810,8 @@ else
 		"github.com/mattn/go-runewidth v0.0.9/go.mod"
 		"github.com/mattn/go-runewidth v0.0.14"
 		"github.com/mattn/go-runewidth v0.0.14/go.mod"
+		"github.com/mattn/go-sqlite3 v1.14.24"
+		"github.com/mattn/go-sqlite3 v1.14.24/go.mod"
 		"github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod"
 		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd"
 		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod"
@@ -1828,6 +1861,10 @@ else
 		"github.com/stretchr/testify v1.8.4/go.mod"
 		"github.com/stretchr/testify v1.9.0"
 		"github.com/stretchr/testify v1.9.0/go.mod"
+		"github.com/tkrajina/go-reflector v0.5.5"
+		"github.com/tkrajina/go-reflector v0.5.5/go.mod"
+		"github.com/tkrajina/typescriptify-golang-structs v0.2.0"
+		"github.com/tkrajina/typescriptify-golang-structs v0.2.0/go.mod"
 		"github.com/twitchyliquid64/golang-asm v0.15.1"
 		"github.com/twitchyliquid64/golang-asm v0.15.1/go.mod"
 		"github.com/ugorji/go/codec v1.2.12"
@@ -1920,8 +1957,8 @@ else
 		"golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod"
 		"golang.org/x/sys v0.5.0/go.mod"
 		"golang.org/x/sys v0.6.0/go.mod"
-		"golang.org/x/sys v0.31.0"
-		"golang.org/x/sys v0.31.0/go.mod"
+		"golang.org/x/sys v0.36.0"
+		"golang.org/x/sys v0.36.0/go.mod"
 		"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
 		"golang.org/x/term v0.30.0"
 		"golang.org/x/term v0.30.0/go.mod"
@@ -2004,9 +2041,6 @@ else
 		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
 		"rsc.io/pdf v0.1.1/go.mod"
-
-
-
 
 	)
 	go-module_set_globals
