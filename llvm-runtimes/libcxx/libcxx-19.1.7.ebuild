@@ -46,7 +46,7 @@ CXX_STANDARD=23
 LLVM_MAX_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos

@@ -117,7 +117,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/libcxx-18.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-20.1.8-hardened.patch"
 )
 llvm.org_set_globals
 
