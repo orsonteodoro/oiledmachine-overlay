@@ -2373,7 +2373,6 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/${PN}-135-oauth2-client-switches.patch"
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
 		"${FILESDIR}/${PN}-142-iwyu-field-form-data.patch"
-		"${FILESDIR}/${PN}-141-cssstylesheet-iwyu.patch"
 	)
 
 	# https://issues.chromium.org/issues/442698344
