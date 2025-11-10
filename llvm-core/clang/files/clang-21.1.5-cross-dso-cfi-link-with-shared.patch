@@ -1,3 +1,45 @@
+Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared (v2)
+Patch Status:  Testing (more packages being tested)
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Fri Oct  8 01:21:21 PM PDT 2021 (Unix time: 1633724481)
+
+License header for clang/lib/Driver/ToolChains/CommonArgs.cpp:
+
+//===--- CommonArgs.cpp - Args handling for multiple toolchains -*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+DO NOT APPLY THIS PATCH IN PRODUCTION UNTIL THE PATCH STATUS ABOVE IS SET TO WORKING.
+
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+
+Fixes the below error when linking a shared library with -shared:
+ld.lld: error: undefined symbol: __cfi_slowpath
+
+To problems still exist:
+
+(1) The undefined __cfi_slowpath issue still happens with flac after this patch
+applies.
+
+(2) zlib runtime link and use works but causes configure-buildtime failures with
+libpng and ffmpeg below maybe fixed in a different past/future patch:
+cfi.cpp:161: void __cfi::ShadowBuilder::Add(__sanitizer::uptr, __sanitizer::uptr, __sanitizer::uptr): Assertion `(cfi_check & (kShadowAlign - 1)) == 0' failed
+The fix for this is to add -fno-sanitize-cfi-cross-dso for small programs (hello
+world sized) that are a page only.  The libpng test needs patching or the
+compiler needs to be patch to detect the size of the program and append
+-fno-sanitize-cfi-cross-dso.
+
+v2: Fix breakage when using built Cross-DSO zlib
+v1: Initial release
+
 diff '--color=auto' -urp clang.orig/lib/Driver/ToolChains/CommonArgs.cpp clang/lib/Driver/ToolChains/CommonArgs.cpp
 --- clang.orig/lib/Driver/ToolChains/CommonArgs.cpp	2025-11-03 01:35:47.000000000 -0800
 +++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2025-11-10 11:53:02.006380559 -0800
