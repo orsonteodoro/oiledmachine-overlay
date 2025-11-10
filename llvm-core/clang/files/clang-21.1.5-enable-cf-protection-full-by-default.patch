@@ -1,0 +1,32 @@
+Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared (v2)
+Patch Status:  Testing (more packages being tested)
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Thu Feb  9 13:27:22 PST 2023 (Unix time:  1675978042)
+
+# License header for clang/include/clang/Basic/CodeGenOptions.def:
+
+//===--- CodeGenOptions.def - Code generation option database ----- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+diff '--color=auto' -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2025-11-10 07:33:20.936382871 -0800
++++ clang/include/clang/Basic/CodeGenOptions.def	2025-11-10 07:34:43.154262482 -0800
+@@ -99,9 +99,9 @@ CODEGENOPT(InstrumentFunctionsAfterInlin
+                           ///< -finstrument-functions-after-inlining is enabled.
+ CODEGENOPT(InstrumentFunctionEntryBare , 1, 0, Benign) ///< Set when
+                                ///< -finstrument-function-entry-bare is enabled.
+-CODEGENOPT(CFProtectionReturn , 1, 0, Benign) ///< if -fcf-protection is
++CODEGENOPT(CFProtectionReturn , 1, 1, Benign) ///< if -fcf-protection is                 // oteodoro - enable cf-protection=full for hardened profile
+                                       ///< set to full or return.
+-CODEGENOPT(CFProtectionBranch , 1, 0, Benign) ///< if -fcf-protection is
++CODEGENOPT(CFProtectionBranch , 1, 1, Benign) ///< if -fcf-protection is                 // oteodoro - enable cf-protection=full for hardened profile
+                                               ///< set to full or branch.
+ ENUM_CODEGENOPT(CFBranchLabelScheme, CFBranchLabelSchemeKind, 2,
+     CFBranchLabelSchemeKind::Default, Benign) ///< if -mcf-branch-label-scheme is set.
+Only in clang/include/clang/Basic: CodeGenOptions.def.orig
+Only in clang/include/clang/Basic: CodeGenOptions.def.rej

@@ -334,7 +334,7 @@ ewarn
 	fi
 	if use default-ssp-buffer-size-4 ; then
 		patches_hardened+=(
-			"${FILESDIR}/clang-16.0.0.9999-change-SSP-buffer-size-to-4.patch"
+			"${FILESDIR}/clang-21.1.5-change-SSP-buffer-size-to-4.patch"
 		)
 	fi
 	if use default-fortify-source-2 ; then
@@ -367,7 +367,7 @@ ewarn "The Partial RELRO is in testing."
 	if use default-stack-clash-protection ; then
 		if use x86 || use amd64 ; then
 			patches_hardened+=(
-				"${FILESDIR}/clang-18.0.0.9999-2b033a3-enable-SCP-by-default.patch"
+				"${FILESDIR}/clang-21.1.5-enable-SCP-by-default.patch"
 			)
 			hardened_features+="SCP, "
 		elif use arm64 ; then
@@ -384,7 +384,7 @@ ewarn
 	fi
 	if use cet ; then
 		patches_hardened+=(
-			"${FILESDIR}/clang-17.0.0.9999-enable-cf-protection-full-by-default.patch"
+			"${FILESDIR}/clang-21.1.5-enable-cf-protection-full-by-default.patch"
 		)
 		hardened_features+="CET, "
 ewarn "The CET as default is in testing."

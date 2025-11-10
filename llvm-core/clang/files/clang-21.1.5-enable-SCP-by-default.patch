@@ -1,0 +1,22 @@
+License identified in clang/include/clang/Basic/CodeGenOptions.def:
+
+//===--- CodeGenOptions.def - Code generation option database ----- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+diff '--color=auto' -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2025-11-10 07:24:06.730040041 -0800
++++ clang/include/clang/Basic/CodeGenOptions.def	2025-11-10 07:26:38.754651950 -0800
+@@ -182,7 +182,7 @@ CODEGENOPT(NoWarn            , 1, 0, Ben
+ CODEGENOPT(NoTypeCheck       , 1, 0, Benign) ///< Set when -Wa,--no-type-check is enabled.
+ CODEGENOPT(MisExpect         , 1, 0, Benign) ///< Set when -Wmisexpect is enabled
+ CODEGENOPT(EnableSegmentedStacks , 1, 0, Benign) ///< Set when -fsplit-stack is enabled.
+-CODEGENOPT(StackClashProtector, 1, 0, Benign) ///< Set when -fstack-clash-protection is enabled.
++CODEGENOPT(StackClashProtector, 1, 1, Benign) ///< Set when -fstack-clash-protection is enabled.       // oteodoro:  Changed to default on for the hardened profile
+ CODEGENOPT(NoImplicitFloat   , 1, 0, Benign) ///< Set when -mno-implicit-float is enabled.
+ CODEGENOPT(NullPointerIsValid , 1, 0, Benign) ///< Assume Null pointer deference is defined.
+ CODEGENOPT(OpenCLCorrectlyRoundedDivSqrt, 1, 0, Benign) ///< -cl-fp32-correctly-rounded-divide-sqrt
