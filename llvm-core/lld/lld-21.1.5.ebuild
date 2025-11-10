@@ -195,11 +195,11 @@ eapply_hardened() {
 ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
 	local hardened_flags=""
 	if use default-full-relro ; then
-		eapply "${FILESDIR}/lld-20.1.8-enable-full-relro-by-default.patch"
+		eapply "${FILESDIR}/lld-21.1.5-enable-full-relro-by-default.patch"
 		hardened_flags="Full RELRO"
 	fi
 	if use default-no-relro ; then
-		eapply "${FILESDIR}/lld-20.1.8-disable-relro-by-default.patch"
+		eapply "${FILESDIR}/lld-21.1.5-disable-relro-by-default.patch"
 		hardened_flags="NO RELRO"
 	fi
 	if use default-partial-relro ; then
