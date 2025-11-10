@@ -19,8 +19,3 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-
-multilib_src_configure() {
-	cflags-hardened_append
-	gstreamer_multilib_src_configure
-}
