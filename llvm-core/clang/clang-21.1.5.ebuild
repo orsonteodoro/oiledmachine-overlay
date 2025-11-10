@@ -390,7 +390,7 @@ ewarn
 ewarn "The CET as default is in testing."
 	fi
 	patches_hardened+=(
-		"${FILESDIR}/clang-18.0.0.9999-cross-dso-cfi-link-with-shared.patch"
+		"${FILESDIR}/clang-21.1.5-cross-dso-cfi-link-with-shared.patch"
 	)
 	eapply ${patches_hardened[@]}
 

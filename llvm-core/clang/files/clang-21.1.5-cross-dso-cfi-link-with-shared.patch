@@ -1,0 +1,46 @@
+diff '--color=auto' -urp clang.orig/lib/Driver/ToolChains/CommonArgs.cpp clang/lib/Driver/ToolChains/CommonArgs.cpp
+--- clang.orig/lib/Driver/ToolChains/CommonArgs.cpp	2025-11-03 01:35:47.000000000 -0800
++++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2025-11-10 11:53:02.006380559 -0800
+@@ -1747,6 +1747,16 @@ bool tools::addSanitizerRuntimes(const T
+       CmdArgs.push_back("--android-memtag-stack");
+   }
+ 
++  if (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso)                // oteodoro: Begin section add
++    && Args.hasArg(options::OPT_shared)) {                             // oteodoro:
++    CmdArgs.push_back("--whole-archive");                              // oteodoro:
++    if (SanArgs.needsCfiCrossDsoRt() && SanArgs.linkRuntimes())        // oteodoro:
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi"));       // oteodoro: Added section for -shared linkage
++    if (SanArgs.needsCfiCrossDsoDiagRt() && SanArgs.linkRuntimes())    // oteodoro: with -fsanitize-cfi-cross-dso
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi_diag"));  // oteodoro:
++    CmdArgs.push_back("--no-whole-archive");                           // oteodoro:
++  }                                                                    // oteodoro: End section add
++
+   return !StaticRuntimes.empty() || !NonWholeStaticRuntimes.empty();
+ }
+ 
+Only in clang/lib/Driver/ToolChains: CommonArgs.cpp.orig
+diff '--color=auto' -urp clang.orig/lib/Driver/ToolChains/Gnu.cpp clang/lib/Driver/ToolChains/Gnu.cpp
+--- clang.orig/lib/Driver/ToolChains/Gnu.cpp	2025-11-10 11:43:46.809388757 -0800
++++ clang/lib/Driver/ToolChains/Gnu.cpp	2025-11-10 11:47:42.570006744 -0800
+@@ -459,6 +459,11 @@ void tools::gnutools::Linker::ConstructJ
+     CmdArgs.push_back("--no-demangle");
+ 
+   bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs);
++  // Prevent missing -pthread when reusing Cross-DSO CFIed zlib from           // oteodoro: Set flag to link -pthread and -ldl
++  // borking the system.                                                       // oteodoro: when -shared and -fsanitize-cfi-cross-dso
++  bool NeedsSanitizerCrossDsoCfiDeps =                                         // oteodoro: Begin section change
++      (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso) &&                    // oteodoro: are used together.
++       Args.hasArg(options::OPT_shared));                                      // oteodoro: End section change
+   bool NeedsXRayDeps = addXRayRuntime(ToolChain, Args, CmdArgs);
+   addLinkerCompressDebugSectionsOption(ToolChain, Args, CmdArgs);
+   AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs, JA);
+@@ -502,7 +507,7 @@ void tools::gnutools::Linker::ConstructJ
+       if (IsStatic || IsStaticPIE)
+         CmdArgs.push_back("--start-group");
+ 
+-      if (NeedsSanitizerDeps)
++      if (NeedsSanitizerDeps || NeedsSanitizerCrossDsoCfiDeps)
+         linkSanitizerRuntimeDeps(ToolChain, Args, CmdArgs);
+ 
+       if (NeedsXRayDeps)
+Only in clang/lib/Driver/ToolChains: Gnu.cpp.orig
