@@ -109,7 +109,7 @@ python_check_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
-	libcxx-slot
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 

@@ -94,7 +94,7 @@ RESTRICT="
 S="${WORKDIR}"
 PATCHES=(
 	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
-	"${FILESDIR}/libcxx-18.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-20.1.8-hardened.patch"
 )
 LLVM_COMPONENTS=(
 	"runtimes"
@@ -117,7 +117,7 @@ python_check_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
-	libcxx-slot
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
