@@ -319,10 +319,11 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
-	["9999"]="20"
-	#["1.86.0"]="19"
-	#["1.85.0"]="19"
+	["1.86.0"]="19"
+	["1.85.1"]="19"
+	["1.85.0"]="19"
 	["1.84.1"]="19"
+	["1.84.0"]="19"
 	["1.83.0"]="19"
 	["1.82.0"]="19"
 	["1.81.0"]="18"
@@ -331,7 +332,18 @@ declare -A RUST_PV_TO_LLVM_SLOT=(
 	["1.78.0"]="18"
 )
 RUST_SLOTS=(
-	"9999" # Needs -Z flags for Rust sanitizers and SSP, otherwise Rust drivers/subsystems has no SSP.
+	# May needs -Z flags for Rust sanitizers and SSP, otherwise Rust drivers/subsystems has no SSP.
+	"1.86.0"
+	"1.85.1"
+	"1.85.0"
+	"1.84.1"
+	"1.84.0"
+	"1.83.0"
+	"1.82.0"
+	"1.81.0"
+	"1.80.1"
+	"1.79.0"
+	"1.78.0"
 )
 RUST_MAX_VER="1.81.1" # Inclusive
 RUST_MIN_VER="1.78.0"
