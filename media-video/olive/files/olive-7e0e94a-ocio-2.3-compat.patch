@@ -1,0 +1,19 @@
+diff '--color=auto' -urp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/app/render/renderer.cpp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/app/render/renderer.cpp
+--- olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/app/render/renderer.cpp	2024-12-05 02:34:16.000000000 -0800
++++ olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/app/render/renderer.cpp	2025-11-12 10:10:33.370844932 -0800
+@@ -241,8 +241,15 @@ bool Renderer::GetColorContext(const Col
+       unsigned int width = 0, height = 0;
+       OCIO::GpuShaderDesc::TextureType channel = OCIO::GpuShaderDesc::TEXTURE_RGB_CHANNEL;
+       OCIO::Interpolation interpolation = OCIO::INTERP_LINEAR;
++#if OCIO_VERSION_HEX >= 0x02030000
++      OCIO::GpuShaderDesc::TextureDimensions dimensions = OCIO::GpuShaderDesc::TEXTURE_2D;
++#endif
+ 
++#if OCIO_VERSION_HEX >= 0x02030000
++      shader_desc->getTexture(i, tex_name, sampler_name, width, height, channel, dimensions, interpolation);
++#else
+       shader_desc->getTexture(i, tex_name, sampler_name, width, height, channel, interpolation);
++#endif
+ 
+       if (!tex_name || !*tex_name
+           || !sampler_name || !*sampler_name

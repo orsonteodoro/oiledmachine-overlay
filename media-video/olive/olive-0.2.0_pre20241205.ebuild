@@ -304,12 +304,13 @@ src_unpack() {
 }
 
 src_prepare() {
+	local PATCHES=(
+		$(usex qt6 "${FILESDIR}/${PN}-7e0e94a-stringref-header.patch" '')
+		"${FILESDIR}/${PN}-7e0e94a-ffmpeg-paths.patch"
+		"${FILESDIR}/${PN}-7e0e94a-oiio-3.0-compat-read-image.patch"
+		"${FILESDIR}/${PN}-7e0e94a-ocio-2.3-compat.patch"
+	)
 	cmake_src_prepare
-	if use qt6 ; then
-		eapply "${FILESDIR}/${PN}-7e0e94a-stringref-header.patch"
-	fi
-	eapply "${FILESDIR}/${PN}-7e0e94a-ffmpeg-paths.patch"
-	eapply "${FILESDIR}/${PN}-7e0e94a-oiio-3.x-compat-read-image.patch"
 	local pv=$(grep -o -E -e "olive-editor VERSION [0-9.]+" "CMakeLists.txt" \
 		| cut -f 3 -d " ")
 	if [[ "${pv}" != "${MY_PV}" ]] ; then
