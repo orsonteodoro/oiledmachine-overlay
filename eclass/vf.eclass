@@ -220,6 +220,9 @@ einfo "SA = Spoofing Attack Vulnerability"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBE"($|" "|";"|",") ]] ; then
 einfo "SBE = Sandbox Escape"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBX"($|" "|";"|",") ]] ; then
+einfo "SBX = Sandbox Escape"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SE"($|" "|";"|",") ]] ; then
 einfo "SE = Sandbox Escape"
 		fi
