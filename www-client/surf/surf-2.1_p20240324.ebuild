@@ -548,14 +548,14 @@ multilib_src_install() {
 		cat "${FILESDIR}/adblock/README.md" \
 			> "${T}/adblock-README.md"
 		dodoc "${T}/adblock-README.md"
-		insinto /etc/surf/scripts
+		insinto "/etc/surf/scripts"
 		doins -r \
 			"${FILESDIR}/adblock" \
 			"${FILESDIR}/events"
-		fperms 0755 /etc/surf/scripts/adblock/adblock.py
-		fperms 0755 /etc/surf/scripts/adblock/convert.py
-		fperms 0755 /etc/surf/scripts/adblock/update.sh
-		fperms 0755 /etc/surf/scripts/events/page_load_committed.sh
+		fperms 0755 "/etc/surf/scripts/adblock/adblock.py"
+		fperms 0755 "/etc/surf/scripts/adblock/convert.py"
+		fperms 0755 "/etc/surf/scripts/adblock/update.sh"
+		fperms 0755 "/etc/surf/scripts/events/page_load_committed.sh"
 		dodoc "${FILESDIR}/licenses/LICENSE.mod_adblock"
 		if use mod_adblock_easylist ; then
 			dodoc "${FILESDIR}/licenses/LICENSE.EasyList"
@@ -604,13 +604,13 @@ multilib_src_install() {
 _update_adblock() {
 	einfo "Updating adblock rules"
 	cd "${EROOT}/etc/surf/scripts/adblock" || die
-	./update.sh
+	"./update.sh"
 	einfo "Done updating adblock rules"
 }
 
 multilib_src_install_all() {
 	debug-print-function ${FUNCNAME} "${@}"
-	use tabbed && dobin surf-open.sh
+	use tabbed && dobin "surf-open.sh"
 }
 
 pkg_postinst() {
