@@ -196,8 +196,8 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="manual"
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER="27.0"
-WASI_SDK_LLVM_VER="20"
+WASI_SDK_VER="28.0"
+WASI_SDK_LLVM_VER="21"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -443,7 +443,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_17
+ebuild_revision_19
 "
 
 # Firefox-only IUSE

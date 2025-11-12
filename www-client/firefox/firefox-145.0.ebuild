@@ -166,8 +166,7 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-#FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
-FIREFOX_PATCHSET="firefox-144-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -192,8 +191,8 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER="27.0"
-WASI_SDK_LLVM_VER="20"
+WASI_SDK_VER="28.0"
+WASI_SDK_LLVM_VER="21"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -440,7 +439,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_17
+ebuild_revision_19
 "
 # telemetry disabled for crypto/security reasons
 
@@ -652,7 +651,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.36.0[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.116[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.117[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
@@ -2212,6 +2211,7 @@ einfo "Building without Mozilla API key ..."
 	# The upstream default is hardening on even if unset.
 	if use hardened ; then
 		mozconfig_add_options_ac "+hardened" --enable-hardening
+		mozconfig_add_options_ac "+hardened stl" --enable-stl-hardening
 		append-ldflags "-Wl,-z,relro -Wl,-z,now" # Full Relro
 
 		# Increase the FORTIFY_SOURCE value, #910071.
