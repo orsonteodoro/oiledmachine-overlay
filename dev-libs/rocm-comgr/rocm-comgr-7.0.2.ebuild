@@ -3,15 +3,15 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
-
 CMAKE_BUILD_TYPE="Release"
 CXX_STANDARD=17
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.0.2/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot prefix rocm
 
@@ -112,7 +112,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
 #	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
-	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
+#	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 	"${FILESDIR}/${PN}-6.1.2-disable-header.patch"
 )
 
