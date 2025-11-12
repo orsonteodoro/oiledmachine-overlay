@@ -309,6 +309,7 @@ src_prepare() {
 		"${FILESDIR}/${PN}-7e0e94a-ffmpeg-paths.patch"
 		"${FILESDIR}/${PN}-7e0e94a-oiio-3.0-compat-read-image.patch"
 		"${FILESDIR}/${PN}-7e0e94a-ocio-2.3-compat.patch"
+		"${FILESDIR}/${PN}-7e0e94a-link-opencolorio.patch"
 	)
 	cmake_src_prepare
 	local pv=$(grep -o -E -e "olive-editor VERSION [0-9.]+" "CMakeLists.txt" \
@@ -393,6 +394,7 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (7e0e94a, 20241228)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (7e0e94a, 20251112)
 # ALSA sound output - passed
 # Import videos - passed
 # Qt6 GUI - passed

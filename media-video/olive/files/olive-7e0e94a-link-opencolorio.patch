@@ -1,0 +1,12 @@
+diff '--color=auto' -urp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/app/CMakeLists.txt olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/app/CMakeLists.txt
+--- olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/app/CMakeLists.txt	2025-11-12 11:18:59.416317572 -0800
++++ olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/app/CMakeLists.txt	2025-11-12 11:45:50.325794107 -0800
+@@ -126,7 +126,7 @@ elseif(UNIX)
+ endif()
+ 
+ # Set link libraries
+-target_link_libraries(olive-editor PRIVATE ${OLIVE_LIBRARIES})
++target_link_libraries(olive-editor PRIVATE ${OLIVE_LIBRARIES} OpenColorIO)
+ target_link_libraries(libolive-editor PRIVATE ${OLIVE_LIBRARIES})
+ 
+ # Set compile options
