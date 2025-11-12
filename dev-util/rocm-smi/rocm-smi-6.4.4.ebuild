@@ -3,13 +3,15 @@
 
 EAPI=8
 
+CXX_STANDARD=17
+LLVM_SLOT=19
+PYTHON_COMPAT=( "python3_12" )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-LLVM_SLOT=19
-PYTHON_COMPAT=( "python3_12" )
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
