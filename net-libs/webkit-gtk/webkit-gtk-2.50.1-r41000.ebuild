@@ -3046,4 +3046,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4/37:
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4.1/0:
