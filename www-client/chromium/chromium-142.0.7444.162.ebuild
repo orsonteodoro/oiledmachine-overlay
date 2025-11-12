@@ -367,15 +367,11 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Nov 5, 2025" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1762282260 # From `date +%s -d "2025-11-04 10:51 AM PST"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/search/label/Stable%20updates"
+MITIGATION_DATE="Nov 11, 2025" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1762810560 # From `date +%s -d "2025-11-10 1:36 PM PST"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/11/stable-channel-update-for-desktop_11.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-12725;OOBW;"
-	"CVE-2025-12726;II;"
-	"CVE-2025-12727;II;"
-	"CVE-2025-12728;II;"
-	"CVE-2025-12729;II;"
+	"CVE-2025-13042;II;"
 )
 
 PATENT_STATUS=(
