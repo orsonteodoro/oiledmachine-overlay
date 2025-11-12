@@ -7,11 +7,23 @@ EAPI=8
 
 MY_PN="OpenTimelineIO"
 MY_PV="${PV/_pre/.dev}"
+
+CXX_STANDARD=17
 IMATH_COMMIT="b90cc01bc7fafeaa507d3b94689367478ab67807"
 PYBIND11_COMMIT="8a099e44b3d5f85b20f05828d919d2332a8de841"
 RAPIDJSON_COMMIT="06d58b9e848c650114556a23294d0b6440078c61"
 
-inherit cmake dep-prepare
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake dep-prepare libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" == "9999" ]]; then
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenTimelineIO.git"
@@ -54,7 +66,7 @@ LICENSE="
 SLOT="0"
 IUSE+=" doc"
 RDEPEND="
-	>=dev-libs/imath-3.1.4
+	>=dev-libs/imath-3.1.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -68,6 +80,11 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-0.17.0-libdir.patch"
 )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" == "9999" ]]; then
