@@ -454,6 +454,11 @@
   - LTS packages can only specify the maximum of C17.
   - Rolling packages can specify up to the latest experimental.
   - The preferred standard is the project default tied to the release or commit.
+  - There is possibly sensitivity between c17 and c23.  GCC 15 and above make
+    c23 default.  Currently, there is no dedicated eclass to manage this.  It is
+    recommended to keep the KEYWORDS arch as testing ~ or remove KEYWORDS to
+    avoid mixing the two in the LTS set (explicitly marked c17 projects in build
+    files).  Linking c17 and c23 may have issues.
 
 # Ebuild organization
 
