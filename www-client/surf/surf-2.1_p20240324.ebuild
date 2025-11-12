@@ -684,3 +684,5 @@ pkg_config() {
 # search engine(s):  passed
 # video site(s):  passed
 # wiki(s):  passed
+
+# OILEDMACHINE-OVERLAY-TEST: passed (webkit-gtk:2.50.1-r410004.1, 20251111)
