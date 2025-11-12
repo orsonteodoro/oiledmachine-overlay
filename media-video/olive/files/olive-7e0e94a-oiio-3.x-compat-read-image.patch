@@ -1,0 +1,40 @@
+From 564fbea825222289843211d3aac0a7dbc0eef9f2 Mon Sep 17 00:00:00 2001
+From: Dominik 'Rathann' Mierzejewski <dominik@greysector.net>
+Date: Thu, 11 Sep 2025 11:59:01 +0200
+Subject: [PATCH] Use non-deprecated read_image() version
+
+In OpenImageIO 3.0,
+> The old varieties of `ImageInput::read_scanlines`, `read_tiles`, and `read_image` that did not take `subimage` and `miplevel` parameters, and were not thread-safe, have been removed. These have been marked as deprecated since OIIO 2.0.
+
+See
+https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/main/docs/Deprecations-3.0.md#imageioh
+.
+
+Fixes #2392 .
+---
+ app/codec/oiio/oiiodecoder.cpp | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/app/codec/oiio/oiiodecoder.cpp b/app/codec/oiio/oiiodecoder.cpp
+index e3efc41086..127bee0cd5 100644
+--- a/app/codec/oiio/oiiodecoder.cpp
++++ b/app/codec/oiio/oiiodecoder.cpp
+@@ -134,10 +134,18 @@ TexturePtr OIIODecoder::RetrieveVideoInternal(const RetrieveVideoParams &p)
+ 
+     if (p.divider == 1) {
+       // Just upload straight to the buffer
++#if OIIO_VERSION >= OIIO_MAKE_VERSION(3,0,0)
++      image_->read_image(0, 0, 0, -1, oiio_pix_fmt_, buffer_.data(), OIIO::AutoStride, buffer_.linesize_bytes());
++#else
+       image_->read_image(oiio_pix_fmt_, buffer_.data(), OIIO::AutoStride, buffer_.linesize_bytes());
++#endif
+     } else {
+       OIIO::ImageBuf buf(image_->spec());
++#if OIIO_VERSION >= OIIO_MAKE_VERSION(3,0,0)
++      image_->read_image(0, 0, 0, -1, image_->spec().format, buf.localpixels(), buf.pixel_stride(), buf.scanline_stride(), buf.z_stride());
++#else
+       image_->read_image(image_->spec().format, buf.localpixels(), buf.pixel_stride(), buf.scanline_stride(), buf.z_stride());
++#endif
+ 
+       // Roughly downsample image for divider (for some reason OIIO::ImageBufAlgo::resample failed here)
+       int px_sz = vp.GetBytesPerPixel();

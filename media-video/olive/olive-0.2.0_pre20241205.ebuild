@@ -8,16 +8,28 @@ EAPI=8
 
 MY_PV="$(ver_cut 1-3 ${PV})"
 
+CXX_STANDARD=17
 EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 KDDOCWIDGETS_COMMIT="8d2d0a5764f8393cc148a2296d511276a8ffe559"
 OLIVE_EDITOR_CORE_COMMIT="277792824801495e868580ca86f6e7a1b53e4779"
-PATENT_STATUS_IUSE=(
-	patent_status_nonfree
-)
 QT5_PV="5.6.0"
 QT6_PV="6.0.0"
 
-inherit cmake dep-prepare xdg
+PATENT_STATUS_IUSE=(
+	"patent_status_nonfree"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
+
+inherit cmake dep-prepare libcxx-slot libstdcxx-slot xdg
 
 if [[ "${PV}" == *"9999" ]]; then
 	EGIT_BRANCH="master"
@@ -48,9 +60,10 @@ LICENSE="GPL-3"
 SLOT="0/${MY_PV}"
 # For default ON status see docker/scripts/build_ffmpeg.sh
 # Only expired patents or non taxed patents will be enabled default ON in this ebuild.
+# glslang from ffmpeg, pystring, imath from openimageio are indirect depends
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
+alsa doc glslang jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
 ebuild_revision_3
 "
@@ -95,25 +108,24 @@ RESTRICT="
 	)
 "
 #	media-libs/olivecore
-# 56.58.58 57.59.59  58.60.60
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
 			(
-				>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:0[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:0
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:56.58.58[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:56.58.58[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:56.58.58
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:57.59.59[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:57.59.59[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:57.59.59
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:58.60.60[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:58.60.60[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:58.60.60
 			)
 		)
@@ -121,19 +133,19 @@ PATENT_STATUS_RDEPEND="
 	patent_status_nonfree? (
 		|| (
 			(
-				>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:0[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:0
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:56.58.58[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:56.58.58[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:56.58.58
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:57.59.59[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:57.59.59[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:57.59.59
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:58.60.60[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:58.60.60[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:58.60.60
 			)
 		)
@@ -143,16 +155,29 @@ PATENT_STATUS_RDEPEND="
 		x265? (
 			media-video/ffmpeg[gpl]
 		)
+		media-video/ffmpeg:=
 	)
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	>=media-libs/opencolorio-2.1.1:=
-	>=media-libs/openimageio-2.1.12:=[png?]
+	>=media-libs/opencolorio-2.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	media-libs/opencolorio:=
+	>=media-libs/openimageio-2.1.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},png?]
+	media-libs/openimageio:=
 	>=media-libs/portaudio-19.06.0[alsa?,jack?,oss?]
-	>=media-libs/openexr-2.3.0:=
+	>=media-libs/openexr-2.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-cpp/pystring[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-cpp/pystring:=
+	dev-libs/imath[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/imath:=
+	media-libs/openexr:=
+	media-libs/opentimelineio[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/opentimelineio:=
 	virtual/opengl
+	glslang? (
+		dev-util/glslang[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-util/glslang:=
+	)
 	qt5? (
 		>=dev-qt/qtconcurrent-${QT5_PV}:5
 		dev-qt/qtconcurrent:=
@@ -168,10 +193,11 @@ RDEPEND="
 		dev-qt/qtwidgets:=
 	)
 	qt6? (
-		>=dev-qt/qt5compat-${QT6_PV}:6
-		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,gui,opengl,wayland?,widgets,X?]
+		>=dev-qt/qt5compat-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-qt/qt5compat:=
+		>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl,wayland?,widgets,X?]
 		dev-qt/qtbase:=
-		>=dev-qt/qtsvg-${QT6_PV}:6
+		>=dev-qt/qtsvg-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtsvg:=
 	)
 	xvid? (
@@ -189,129 +215,15 @@ BDEPEND="
 	)
 	qt5? (
 		>=dev-qt/linguist-tools-${QT5_PV}:5
+		dev-qt/linguist-tools:=
 	)
 	qt6? (
-		>=dev-qt/qttools-${QT6_PV}:6[linguist]
+		>=dev-qt/qttools-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},linguist]
+		dev-qt/qttools:=
 	)
 "
 PATCHES=(
 )
-
-check_cxxabi() {
-	local qt_slot
-	local qtcore_package=""
-	if use qt6 ; then
-		qtcore_package="dev-qt/qtbase"
-		qt_slot="6"
-	else
-		qtcore_package="dev-qt/core"
-		qt_slot="5"
-	fi
-
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	local libstdcxx_cxxabi_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local libstdcxx_glibcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-
-
-	_check_lib() {
-		local row="${1}"
-		local downstream_libpath="${row%;*}"
-		local downstream_package="${row#*;}"
-	# The CXXABI version will vary if built with the same GCC slot.
-
-		strings "${downstream_libpath}" | grep -q -e "GLIBCXX" || return
-einfo "Inspecting ${downstream_libpath} for GLIBCXX symbol compatibility"
-
-		local x_cxxabi_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
-			| grep CXXABI \
-			| sort -V \
-			| grep -E -e "CXXABI_[0-9]+" \
-			| tail -n 1 \
-			| cut -f 2 -d "_")
-		local x_glibcxx_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
-			| grep GLIBCXX \
-			| sort -V \
-			| grep -E -e "GLIBCXX_[0-9]+" \
-			| tail -n 1 \
-			| cut -f 2 -d "_")
-
-		if ver_test ${x_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
-eerror
-eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for ${downstream_libpath}."
-eerror
-eerror "Ensure that the ${downstream_libpath} (${downstream_package}) is built with"
-eerror "GCC ${gcc_current_profile_slot} slot or earlier."
-eerror
-			die
-		fi
-	}
-
-	local libdir=$(get_libdir)
-	local linked_libs=(
-		"/usr/${libdir}/libOpenEXR.so;media-libs/openexr"
-		"/usr/${libdir}/libIlmThread.so;media-libs/openexr"
-		"/usr/${libdir}/libOpenEXRCore.so;media-libs/openexr"
-		"/usr/${libdir}/libIex.so;media-libs/openexr"
-		#-lm
-		#ext/core/libolivecore.so"
-		#ext/KDDockWidgets/src/libkddockwidgets-qt${qt_slot}.a;"
-		"/usr/${libdir}/libavutil.so;media-video/ffmpeg"
-		"/usr/${libdir}/libavcodec.so;media-video/ffmpeg"
-		"/usr/${libdir}/libavformat.so;media-video/ffmpeg"
-		"/usr/${libdir}/libavfilter.so;media-video/ffmpeg"
-		"/usr/${libdir}/libswscale.so;media-video/ffmpeg"
-		"/usr/${libdir}/libswresample.so;media-video/ffmpeg"
-		"/usr/${libdir}/libportaudio.so;media-libs/portaudio"
-		"/usr/${libdir}/libImath.so;dev-libs/imath"
-		"/usr/${libdir}/libGL.so;media-libs/libglvnd"
-		"/usr/${libdir}/libxkbcommon.so;x11-libs/libxkbcommon"
-		"/usr/${libdir}/libavcodec.so;media-video/ffmpeg"
-		"/usr/${libdir}/libpystring.so;dev-cpp/pystring"
-	)
-	if has_version "media-libs/mesa[vulkan]" || has_version "media-video/ffmpeg[glslang]" ; then
-		linked_libs+=(
-			"/usr/${libdir}/libglslang.so;media-libs/glslang"
-		)
-	fi
-	if use qt6 ; then
-		linked_libs+=(
-			"/usr/${libdir}/libQt${qt_slot}Concurrent.so;dev-qt/qtbase:6"
-			"/usr/${libdir}/libQt${qt_slot}OpenGLWidgets.so;dev-qt/qtbase:6"
-			"/usr/${libdir}/libQt${qt_slot}Core5Compat.so;dev-qt/qt5compat:6"
-			"/usr/${libdir}/libQt${qt_slot}OpenGL.so;dev-qt/qtbase:6"
-			"/usr/${libdir}/libQt${qt_slot}Widgets.so;dev-qt/qtbase:6"
-			"/usr/${libdir}/libQt${qt_slot}Gui.so;dev-qt/qtbase:6"
-			"/usr/${libdir}/libQt${qt_slot}DBus.so;dev-qt/qtbase:6"
-			"/usr/${libdir}/libQt${qt_slot}Core.so;dev-qt/qtbase:6"
-		)
-	else
-		linked_libs+=(
-			"/usr/${libdir}/libQt${qt_slot}Concurrent.so;dev-qt/qtconcurrent:5"
-			"/usr/${libdir}/libQt${qt_slot}OpenGLWidgets.so;dev-qt/qtwidgets:5"
-			"/usr/${libdir}/libQt${qt_slot}OpenGL.so;dev-qt/qtopengl:5"
-			"/usr/${libdir}/libQt${qt_slot}Widgets.so;dev-qt/qtwidgets:5"
-			"/usr/${libdir}/libQt${qt_slot}Gui.so;dev-qt/qtgui:5"
-			"/usr/${libdir}/libQt${qt_slot}DBus.so;dev-qt/qtdbus:5"
-			"/usr/${libdir}/libQt${qt_slot}Core.so;dev-qt/qtcore:5"
-		)
-	fi
-
-	local row
-	for row in ${linked_libs[@]} ; do
-		_check_lib "${row}"
-	done
-}
 
 verify_qt_consistency() {
 	local QT_SLOT
@@ -370,6 +282,11 @@ eerror
 	done
 }
 
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
+
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]]; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -388,6 +305,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-7e0e94a-stringref-header.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-7e0e94a-ffmpeg-paths.patch"
+	eapply "${FILESDIR}/${PN}-7e0e94a-oiio-3.x-compat-read-image.patch"
 	local pv=$(grep -o -E -e "olive-editor VERSION [0-9.]+" "CMakeLists.txt" \
 		| cut -f 3 -d " ")
 	if [[ "${pv}" != "${MY_PV}" ]] ; then
@@ -403,7 +321,6 @@ eerror
 
 src_configure() {
 	verify_qt_consistency
-	check_cxxabi
 	local mycmakeargs=(
 		-DBUILD_DOXYGEN=$(usex doc)
 		-DBUILD_QT6=$(usex qt6)
