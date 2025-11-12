@@ -60,7 +60,11 @@ LICENSE="GPL-3"
 SLOT="0/${MY_PV}"
 # For default ON status see docker/scripts/build_ffmpeg.sh
 # Only expired patents or non taxed patents will be enabled default ON in this ebuild.
-# glslang from ffmpeg, pystring, imath from openimageio are indirect depends
+#
+# glslang from ffmpeg, pystring from opencolorio, imath from opencolorio,
+# openimageio, opentimelineio are indirect depends but added for GLIBCXX_ symbol
+# consistency for linking.
+#
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 alsa doc glslang jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
