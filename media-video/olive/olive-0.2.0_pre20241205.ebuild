@@ -113,19 +113,19 @@ PATENT_STATUS_RDEPEND="
 	!patent_status_nonfree? (
 		|| (
 			(
-				>=media-video/ffmpeg-3.0.0:0[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:0[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:0
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:56.58.58[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:56.58.58[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:56.58.58
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:57.59.59[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:57.59.59[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:57.59.59
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:58.60.60[glslang?,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				>=media-video/ffmpeg-3.0.0:58.60.60[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 				<media-video/ffmpeg-7:58.60.60
 			)
 		)
@@ -133,19 +133,19 @@ PATENT_STATUS_RDEPEND="
 	patent_status_nonfree? (
 		|| (
 			(
-				>=media-video/ffmpeg-3.0.0:0[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:0[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:0
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:56.58.58[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:56.58.58[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:56.58.58
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:57.59.59[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:57.59.59[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:57.59.59
 			)
 			(
-				>=media-video/ffmpeg-3.0.0:58.60.60[glslang?,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				>=media-video/ffmpeg-3.0.0:58.60.60[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 				<media-video/ffmpeg-7:58.60.60
 			)
 		)
