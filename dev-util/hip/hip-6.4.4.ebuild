@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_44
+ebuild_revision_46
 "
 REQUIRED_USE="
 	hsa? (
@@ -224,6 +224,7 @@ HIPAMD_PATCHES=(
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
+	"${FILESDIR}/hipcc-6.4.4-cuda-path.patch"
 )
 OCL_PATCHES=(
 )
