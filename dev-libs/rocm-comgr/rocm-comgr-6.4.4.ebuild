@@ -13,7 +13,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot prefix rocm
+inherit check-compiler-switch cmake fix-rpath flag-o-matic libstdcxx-slot prefix rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -93,7 +93,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_18"
+IUSE="test ebuild_revision_19"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
@@ -165,6 +165,11 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	local RPATH_FIXES=(
+		"${ED}/opt/rocm/lib/libamd_comgr.so.3.0:/opt/rocm/llvm/lib"
+	)
+	fix-rpath_repair
+	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
