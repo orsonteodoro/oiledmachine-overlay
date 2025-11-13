@@ -1,5 +1,5 @@
---- llvm-project-rocm-6.4.4/amd/hipcc/src/hipBin_nvidia.h.orig	2025-06-05 10:11:31.000000000 -0700
-+++ llvm-project-rocm-6.4.4/amd/hipcc/src/hipBin_nvidia.h	2025-11-12 20:59:03.707419645 -0800
+--- hipcc.orig/src/hipBin_nvidia.h	2025-06-05 10:11:31.000000000 -0700
++++ hipcc/src/hipBin_nvidia.h	2025-11-12 20:59:03.707419645 -0800
 @@ -248,7 +248,7 @@ void HipBinNvidia::constructCompilerPath
    const EnvVariables& envVariables = getEnvVariables();
    if (envVariables.cudaPathEnv_.empty()) {
