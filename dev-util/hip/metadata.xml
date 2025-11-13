@@ -43,7 +43,7 @@
   | gfx dependency chain consistency  | Yes                                | No                            |
   | amdgpu kernel driver(s)           | Either vendor supplied (rock-dkms) | Mainlined only                |
   |                                   | or mainlined only                  | (aka kernel package)          |
-  | amdgpu KFD                        | Feature complete or partial        | Partial only                  |
+  | amdgpu KFD completeness           | Feature complete or partial        | Partial only                  |
   | Firmware                          | amdgpu-firmware or linux-firmware  | linux-firmware only           |
   | Version range policy              | Strict                             | Relaxed                       |
   | Slot                              | Monoslot                           | Monoslot                      |
