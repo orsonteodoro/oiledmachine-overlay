@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
-IUSE+="ebuild_revision_6"
+IUSE+="ebuild_revision_7"
 RDEPEND+="
 "
 DEPEND+="
@@ -51,31 +51,31 @@ src_install() {
 		local dest_name="${name#*:}"
 		if [[ "${dest_name}" =~ "amd" ]] ; then
 			dosym \
-				"/opt/rocm/llvm/bin/${src_name}" \
+				"/opt/rocm/lib/llvm/bin/${src_name}" \
 				"/opt/rocm/bin/${dest_name}"
 			continue
 		fi
 		if [[ "${name}" != "clang:clang" ]] ; then
 			dosym \
-				"/opt/rocm/llvm/bin/${src_name}" \
-				"/opt/rocm/llvm/bin/${dest_name}-${LLVM_SLOT}"
+				"/opt/rocm/lib/llvm/bin/${src_name}" \
+				"/opt/rocm/lib/llvm/bin/${dest_name}-${LLVM_SLOT}"
 		fi
 		if [[ "${dest_name}" =~ "clang" ]] ; then
 			dosym \
-				"/opt/rocm/llvm/bin/${src_name}" \
-				"/opt/rocm/llvm/bin/${CHOST}-${dest_name}-${LLVM_SLOT}"
+				"/opt/rocm/lib/llvm/bin/${src_name}" \
+				"/opt/rocm/lib/llvm/bin/${CHOST}-${dest_name}-${LLVM_SLOT}"
 		fi
 		if [[ "${dest_name}" =~ "roc" ]] ; then
 			dosym \
-				"/opt/rocm/llvm/bin/${src_name}" \
-				"/opt/rocm/llvm/bin/${dest_name}"
+				"/opt/rocm/lib/llvm/bin/${src_name}" \
+				"/opt/rocm/lib/llvm/bin/${dest_name}"
 		fi
 		dosym \
-			"/opt/rocm/llvm/bin/${src_name}" \
-			"/opt/rocm/llvm/bin/${CHOST}-${dest_name}-${ROCM_SLOT}"
+			"/opt/rocm/lib/llvm/bin/${src_name}" \
+			"/opt/rocm/lib/llvm/bin/${CHOST}-${dest_name}-${ROCM_SLOT}"
 		dosym \
-			"/opt/rocm/llvm/bin/${src_name}" \
-			"/opt/rocm/llvm/bin/${CHOST}-${dest_name}"
+			"/opt/rocm/lib/llvm/bin/${src_name}" \
+			"/opt/rocm/lib/llvm/bin/${CHOST}-${dest_name}"
 	done
 }
 
