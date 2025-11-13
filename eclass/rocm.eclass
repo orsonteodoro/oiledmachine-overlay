@@ -611,12 +611,6 @@ rocm_src_configure() {
 		fi
 
 		if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
-			# Fix cmake configure time check for -lamdhip.
-			# You must call rocm_src_configure not cmake_src_configure
-			# Prevent configure test issues
-			append-flags \
-				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
-
 			if grep -q -e "gfortran" $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake") ; then
 				:
 			else
@@ -625,13 +619,6 @@ rocm_src_configure() {
 					--rocm-path="${ESYSROOT}${EROCM_PATH}" \
 					--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
 			fi
-			append-ldflags \
-				-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
-		else
-			append-flags \
-				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
-			append-ldflags \
-				-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
 		fi
 einfo "rocm_src_configure():  Calling cmake_src_configure()"
 		cmake_src_configure
