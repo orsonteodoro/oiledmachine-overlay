@@ -95,7 +95,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile +runtime
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	cfi? (
@@ -140,7 +140,7 @@ src_prepare() {
 #    : && /opt/rocm/bin/hipcc -O2 -pipe -Wl,-L/opt/rocm/lib --rocm-path=/opt/rocm --rocm-device-lib-path=/opt/rocm/amdgcn/bitcode -Wl,--as-needed -fuse-ld=lld -L/opt/rocm/lib CMakeFiles/cmTC_2585d.dir/testCXXCompiler.cxx.o -o cmTC_2585d   && :
 #    ld.lld: error: undefined reference: amd_comgr_do_action
 #    >>> referenced by /opt/rocm/lib/libamdhip64.so (disallowed by --no-allow-shlib-undefined)
-		eapply "${FILESDIR}/${PN}-6.4.4-link-amd_comgr.patch"
+		eapply "${FILESDIR}/${PN}-6.4.4-link-amdhip64-deps.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare

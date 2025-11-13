@@ -1,0 +1,19 @@
+--- a/clang/lib/Driver/ToolChains/Linux.cpp.orig	2025-06-05 10:11:31.000000000 -0700
++++ b/clang/lib/Driver/ToolChains/Linux.cpp	2025-11-12 17:28:00.835359873 -0800
+@@ -977,6 +977,16 @@ void Linux::AddHIPRuntimeLibArgs(const A
+         {"-rpath", Args.MakeArgString(RocmInstallation->getLibPath())});
+ 
+   CmdArgs.push_back("-lamdhip64");
++
++  // === AUTO-LINK AMD RUNTIME LIBS (ROCm only) ===
++  // libamdhip64.so depends on:
++  // - libamd_comgr.so (code object manager)
++  // - libhsa-runtime64.so (HSA queue, profiling, etc.)
++  const char *hip_platform = getenv("HIP_PLATFORM");
++  if (!hip_platform && strcmp(hip_platform, "nvidia") != 0) {
++    CmdArgs.push_back("-lamd_comgr");
++    CmdArgs.push_back("-lhsa-runtime64");
++  }
+ }
+ 
+ void Linux::AddIAMCUIncludeArgs(const ArgList &DriverArgs,
