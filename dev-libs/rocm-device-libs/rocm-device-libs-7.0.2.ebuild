@@ -89,7 +89,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_14"
+IUSE="test ebuild_revision_15"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
@@ -117,7 +117,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export LD_LIBRARY_PATH="${EROCM_PATH}/llvm/$(rocm_get_libdir):${LD_LIBRARY_PATH}"
+	export LD_LIBRARY_PATH="${EROCM_LLVM_PATH}/$(rocm_get_libdir):${LD_LIBRARY_PATH}"
 	rocm_set_default_clang
 
 	check-compiler-switch_end
