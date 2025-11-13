@@ -124,9 +124,9 @@ BDEPEND="
 	>=dev-build/cmake-3.13
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-output-commands.patch"
+#	"${FILESDIR}/${PN}-5.6.0-output-commands.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
-	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
+#	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 )
 
