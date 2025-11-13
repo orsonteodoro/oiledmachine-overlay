@@ -40,6 +40,7 @@
   | libstdc++ consistency             | Yes                               | No                            |
   | gfx early access                  | Yes                               | No                            |
   | gfx support policy                | Strict, drops unsupported arches  | Unreviewed, allows old arches |
+  | gfx dependency chain consistency  | Yes                               | No                            |
   | amdgpu DKMS driver                | Yes (Optional)                    | No                            |
   | Version range policy              | Strict                            | Relaxed                       |
   | Slot                              | Monoslot                          | Monoslot                      |
