@@ -4,7 +4,7 @@
          {"-rpath", Args.MakeArgString(RocmInstallation->getLibPath())});
  
    CmdArgs.push_back("-lamdhip64");
-+  if (getenv("HIP_PLATFORM") && strcmp(getenv("HIP_PLATFORM"), "amd") == 0)
++  if (getenv("HIP_PLATFORM") && strcmp(getenv("HIP_PLATFORM"), "nvidia") != 0)
 +    CmdArgs.push_back("-lamd_comgr");
  }
  
