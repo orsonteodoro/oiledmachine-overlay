@@ -167,6 +167,7 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_hipcc
 
+if false ; then
 	if use rocm ; then
 		append-ldflags \
 			-Wl,-L"/opt/rocm/llvm/$(rocm_get_libdir)" \
@@ -184,6 +185,7 @@ src_configure() {
 		append-flags -Wl,-lnuma
 		append-ldflags -Wl,-lnuma
 	fi
+fi
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"

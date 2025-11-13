@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_47
+ebuild_revision_48
 "
 REQUIRED_USE="
 	hsa? (
@@ -240,7 +240,7 @@ ewarn "The lc USE flag may be required."
 	rocm_pkg_setup
 
 	# Ignore QA FLAGS check for library compiled from assembly sources
-	QA_FLAGS_IGNORED="/opt/rocm/$(rocm_get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
+	QA_FLAGS_IGNORED="${EROCM_PATH}/$(rocm_get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
 	libstdcxx-slot_verify
 }
 
@@ -299,9 +299,9 @@ src_prepare() {
 			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
 			-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
 			-e "s,@ESYSROOT@,${ESYSROOT}," \
-			-e "s,@ROCM_PATH@,/opt/rocm,g" \
-			-e "s,@CLANG_PATH@,/opt/rocm/llvm/$(rocm_get_libdir)/clang/${LLVM_SLOT}," \
-			-e "s,@LLVM_PATH@,/opt/rocm/llvm," \
+			-e "s,@ROCM_PATH@,${EROCM_PATH},g" \
+			-e "s,@CLANG_PATH@,${EROCM_LLVM_PATH}/$(rocm_get_libdir)/clang/${LLVM_SLOT}," \
+			-e "s,@LLVM_PATH@,${EROCM_LLVM_PATH}," \
 			-i \
 			"${HIPCC_S}/bin/hipvars.pm" \
 			|| die
