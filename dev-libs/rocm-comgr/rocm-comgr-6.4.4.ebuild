@@ -93,7 +93,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_19"
+IUSE="test ebuild_revision_20"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
@@ -166,7 +166,7 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	local RPATH_FIXES=(
-		"${ED}/opt/rocm/lib/libamd_comgr.so.3.0:/opt/rocm/llvm/lib"
+		"${ED}${EROCM_PATH}/lib/libamd_comgr.so.3.0:${EROCM_LLVM_PATH}/lib"
 	)
 	fix-rpath_repair
 	fix-rpath_verify

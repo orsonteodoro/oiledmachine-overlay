@@ -1616,6 +1616,14 @@ einfo
 		echo 'build --define tensorflow_mkldnn_contraction_kernel=0' >> ".bazelrc" || die
 		echo "build --action_env=KERAS_HOME=\"${T}/.keras\"" >> ".bazelrc" || die
 		echo "build --host_action_env=KERAS_HOME=\"${T}/.keras\"" >> ".bazelrc" || die
+
+		if use rocm ; then
+		# From https://github.com/openxla/xla/blob/5fe17e380f0de323a4f56b1dcb9cb22a339e4250/xla/service/gpu/llvm_gpu_backend/amdgpu_backend.cc#L291
+			export LLVM_PATH="${EROCM_LLVM_PATH}"
+			echo "build --action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc" || die
+			echo "build --host_action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc" || die
+		fi
+
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			local ccache_dir=$(ccache -sv \
 				| grep "Cache directory" \

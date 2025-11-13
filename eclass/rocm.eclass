@@ -511,7 +511,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 
 	local clang_selected_desc
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_CLANG_PATH="/opt/rocm/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
+		EROCM_CLANG_PATH="/opt/rocm/lib/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:0/${ROCM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
@@ -519,7 +519,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_LLVM_PATH="/opt/rocm/llvm"
+		EROCM_LLVM_PATH="/opt/rocm/lib/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi

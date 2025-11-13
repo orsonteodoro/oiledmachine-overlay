@@ -95,7 +95,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile +runtime
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	cfi? (
@@ -249,7 +249,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
 		-DCOMPILER_RT_BUILD_SANITIZERS="${want_sanitizer}"

@@ -1218,6 +1218,13 @@ einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 
+	if use rocm ; then
+	# From https://github.com/openxla/xla/blob/5fe17e380f0de323a4f56b1dcb9cb22a339e4250/xla/service/gpu/llvm_gpu_backend/amdgpu_backend.cc#L291
+		export LLVM_PATH="${EROCM_LLVM_PATH}"
+		echo "build --action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc.user" || die
+		echo "build --host_action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc.user" || die
+	fi
+
 	if has_version "dev-java/openjdk-bin:11" ; then
 		local jdk_path=$(realpath "/opt/openjdk-bin-11")
 		export JAVA_HOME_11="${jdk_path}"
