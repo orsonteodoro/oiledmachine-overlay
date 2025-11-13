@@ -1,0 +1,49 @@
+diff '--color=auto' -urp hipcc.orig/src/hipBin_amd.h hipcc/src/hipBin_amd.h
+--- hipcc.orig/src/hipBin_amd.h	2025-09-26 08:42:56.000000000 -0700
++++ hipcc/src/hipBin_amd.h	2025-11-13 13:47:22.320066957 -0800
+@@ -30,6 +30,7 @@ THE SOFTWARE.
+ #include <string>
+ #include <unordered_set>
+ #include <cassert>
++#include <filesystem>
+ 
+ 
+ // Use (void) to silent unused warnings.
+@@ -891,6 +892,35 @@ void HipBinAmd::executeHipCCCmd(vector<s
+     }
+   }
+ 
++
++  // === AUTO-LINK AMD RUNTIME DEPS (ROCm only) ===
++  // Add libs required by libamdhip64.so
++  std::string hip_platform = std::getenv("HIP_PLATFORM") ? std::getenv("HIP_PLATFORM") : "";
++  if (hip_platform.empty() || hip_platform != "nvidia") {
++    // Check ROCM_PATH for libs
++    std::string rocm_lib = std::getenv("ROCM_PATH") ? std::getenv("ROCM_PATH") : "/opt/rocm";
++    rocm_lib += "/lib";
++
++#ifdef ENABLE_COMGR_SUPPORT
++    if (std::filesystem::exists(rocm_lib + "/libamd_comgr.so")) {
++      HIPLDFLAGS += " -lamd_comgr";
++    }
++#endif
++#ifdef ENABLE_HSA_SUPPORT
++    if (std::filesystem::exists(rocm_lib + "/libhsa-runtime64.so")) {
++      HIPLDFLAGS += " -lhsa-runtime64";
++    }
++#endif
++#ifdef ENABLE_NUMA_SUPPORT
++    if (std::filesystem::exists("/usr/lib/libnuma.so") ||
++        std::filesystem::exists("/usr/lib64/libnuma.so")) {
++      HIPLDFLAGS += " -lnuma";
++    }
++#endif
++    HIPLDFLAGS += " ";
++  }
++  // === END AUTO-LINK ===
++
+   // TODO(hipcc): convert CMD to an array rather than a string
+   string compiler;
+   compiler = getHipCC();
+Only in hipcc/src: hipBin_amd.h.orig
+Only in hipcc/src: hipBin_amd.h.rej

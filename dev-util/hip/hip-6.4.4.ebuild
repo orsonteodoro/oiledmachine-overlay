@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_46
+ebuild_revision_47
 "
 REQUIRED_USE="
 	hsa? (
@@ -225,16 +225,16 @@ HIPAMD_PATCHES=(
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
 	"${FILESDIR}/hipcc-6.4.4-cuda-path.patch"
+	"${FILESDIR}/hipcc-6.4.4-autolink-hipamd64-deps.patch"
+	"${FILESDIR}/hipcc-6.4.4-autolink-hipamd64-deps-for-hipcc-pl.patch"
 )
 OCL_PATCHES=(
 )
 
 pkg_setup() {
 	check-compiler-switch_start
-	if use rocm ; then
-ewarn
+	if use rocm && ! use lc ; then
 ewarn "The lc USE flag may be required."
-ewarn
 	fi
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
@@ -265,11 +265,14 @@ src_prepare() {
 	pushd "${HIPCC_S}" >/dev/null 2>&1 || die
 		eapply "${HIPCC_PATCHES[@]}"
 		cp \
-			$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
+			$(prefixify_ro "${FILESDIR}/hipvars-6.4.4.pm") \
 			"${HIPCC_S}/bin/hipvars.pm" \
 			|| die "failed to replace hipvars.pm"
 		if use cuda ; then
 			sed \
+				-e "s,@_HIP_COMGR@,0," \
+				-e "s,@_HIP_HSA@,0," \
+				-e "s,@_HIP_NUMA@,0," \
 				-e "s,@HIP_COMPILER@,nvcc," \
 				-e "s,@HIP_PLATFORM@,nvidia," \
 				-e "s,@HIP_RUNTIME@,cuda," \
@@ -277,7 +280,13 @@ src_prepare() {
 				"${HIPCC_S}/bin/hipvars.pm" \
 				|| die
 		elif use rocm ; then
+			local hip_comgr=$(usex lc "1" "0")
+			local hip_hsa=$(usex hsa "1" "0")
+			local hip_numa=$(usex numa "1" "0")
 			sed \
+				-e "s,@_HIP_COMGR@,${hip_comgr}," \
+				-e "s,@_HIP_HSA@,${hip_hsa}," \
+				-e "s,@_HIP_NUMA@,${hip_numa}," \
 				-e "s,@HIP_COMPILER@,clang," \
 				-e "s,@HIP_PLATFORM@,amd," \
 				-e "s,@HIP_RUNTIME@,rocclr," \
@@ -401,6 +410,10 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		BUILD_DIR="${ROCCLR_S}_build" \
 		rocm_src_configure
 	popd >/dev/null 2>&1 || die
+
+	use lc && append-flags -DENABLE_COMGR_SUPPORT
+	use hsa && append-flags -DENABLE_HSA_SUPPORT
+	use numa && append-flags -DENABLE_NUMA_SUPPORT
 
 	rocm_src_configure
 

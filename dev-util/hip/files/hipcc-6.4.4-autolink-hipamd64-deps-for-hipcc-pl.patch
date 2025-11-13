@@ -1,0 +1,45 @@
+diff '--color=auto' -urp llvm-project-rocm-6.4.4/amd/hipcc.orig/bin/hipcc.pl llvm-project-rocm-6.4.4/amd/hipcc/bin/hipcc.pl
+--- llvm-project-rocm-6.4.4/amd/hipcc.orig/bin/hipcc.pl	2025-11-13 13:23:10.069310992 -0800
++++ llvm-project-rocm-6.4.4/amd/hipcc/bin/hipcc.pl	2025-11-13 13:32:20.965200995 -0800
+@@ -569,6 +569,28 @@ if ($HIP_PLATFORM eq "amd") {
+ 
+         }
+     }
++
++    # === AUTO-LINK AMD RUNTIME DEPS (ROCm only) ===
++    my $hip_platform = $ENV{'HIP_PLATFORM'} // '';
++    if ($hip_platform ne 'nvidia') {
++        my $rocm_lib = $ENV{'ROCM_PATH'} // '/opt/rocm';
++        $rocm_lib .= '/lib';
++
++        if ($_HIP_COMGR and -e "$rocm_lib/libamd_comgr.so") {
++            $HIPLDFLAGS .= " -lamd_comgr"
++        }
++        if ($_HIP_HSA and -e "$rocm_lib/libhsa-runtime64.so") {
++            $HIPLDFLAGS .= " -lhsa-runtime64"
++        }
++
++        # libnuma is system lib
++        if ($_HIP_NUMA and (-e "/usr/lib/libnuma.so" || -e "/usr/lib64/libnuma.so")) {
++            $HIPLDFLAGS .= " -lnuma"
++        }
++    } else {
++        print STDERR "HIP: Skipping AMD runtime deps (HIP_PLATFORM=nvidia)\n";
++    }
++    # === END AUTO-LINK ===
+ }
+ 
+ if ($HIPCC_COMPILE_FLAGS_APPEND) {
+diff '--color=auto' -urp llvm-project-rocm-6.4.4/amd/hipcc.orig/bin/hipconfig.pl llvm-project-rocm-6.4.4/amd/hipcc/bin/hipconfig.pl
+--- llvm-project-rocm-6.4.4/amd/hipcc.orig/bin/hipconfig.pl	2025-06-05 10:11:31.000000000 -0700
++++ llvm-project-rocm-6.4.4/amd/hipcc/bin/hipconfig.pl	2025-11-13 13:30:18.518006584 -0800
+@@ -46,6 +46,9 @@ $CUDA_PATH      =   $hipvars::CUDA_PATH;
+ $HIP_PATH       =   $hipvars::HIP_PATH;
+ $ROCM_PATH      =   $hipvars::ROCM_PATH;
+ $HIP_VERSION    =   $hipvars::HIP_VERSION;
++$_HIP_COMGR     =   $hipvars::_HIP_COMGR;
++$_HIP_NUMA      =   $hipvars::_HIP_NUMA;
++$_HIP_HSA       =   $hipvars::_HIP_HSA;
+ 
+ Getopt::Long::Configure ( qw{bundling no_ignore_case});
+ GetOptions(
