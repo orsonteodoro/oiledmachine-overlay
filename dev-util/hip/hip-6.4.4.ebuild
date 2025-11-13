@@ -202,7 +202,7 @@ BDEPEND="
 	)
 "
 CLR_PATCHES=(
-	"${FILESDIR}/rocclr-6.2.0-include-path.patch"
+	"${FILESDIR}/rocclr-6.4.4-include-path.patch"
 #	"${FILESDIR}/rocclr-5.7.0-opencl-header.patch"
 )
 ROCCLR_PATCHES=(
@@ -218,7 +218,7 @@ HIPAMD_PATCHES=(
 #	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
 #	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-6.2.0-hip_fatbin-header.patch"
-	"${FILESDIR}/hipamd-6.2.0-hiprtc-includes-path.patch"
+	"${FILESDIR}/hipamd-6.4.4-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-6.4.4-hiprtc-header.patch"
 	"${FILESDIR}/hipamd-6.2.0-fix-install-cmake-files.patch"
 )
@@ -357,7 +357,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DHIPCC_BIN_DIR="${WORKDIR}/llvm-project-rocm-${PV}/amd/hipcc/bin"
+		-DHIPCC_BIN_DIR="${WORKDIR}/llvm-project-rocm-${PV}/amd/hipcc_build/hipcc"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-DUSE_PROF_API=0
 		-DUSE_SYSTEM_LLVM=OFF
