@@ -29,29 +29,32 @@
 
   oiledmachine-overlay notes:
 
-  | Property                          | oiledmachine-overlay version      | Distro version                |
-  | ---                               | ---                               | ---                           |
-  | Packaging policy                  | Vanilla                           | Distro customizations         |
-  | Path policy                       | Defaults except for CUDA          | Standard distro paths         |
-  | ROCm base path                    | /opt/rocm                         | /usr                          |
-  | ROCm libs path                    | /opt/rocm/lib                     | /usr/lib64                    |
-  | CUDA path for HIP-CUDA            | /opt/cuda                         | /opt/cuda                     |
-  | HIP-Clang base path or equivalent | /opt/cuda/lib/llvm                | /usr/lib/llvm/<slot>          |
-  | libstdc++ consistency             | Yes                               | No                            |
-  | gfx early access                  | Yes                               | No                            |
-  | gfx support policy                | Strict, drops unsupported arches  | Unreviewed, allows old arches |
-  | gfx dependency chain consistency  | Yes                               | No                            |
-  | amdgpu DKMS driver                | Yes (Optional)                    | No                            |
-  | Version range policy              | Strict                            | Relaxed                       |
-  | Slot                              | Monoslot                          | Monoslot                      |
-  | Dependency chain                  | Subslot restricted / stable       | Unrestricted / unstable       |
-  | GPU ASan support                  | Available                         | No                            |
-  | CPU ASan support                  | Available                         | No                            |
-  | Clang compiler                    | HIP-Clang                         | Vanilla Clang                 |
-  | Prebuilt support                  | Yes                               | No                            |
-  | Downstream compatibility          | More                              | Less                          |
-  | Downstream patching for compat    | Less                              | More                          |
-  | Tech stack coverage               | More (Full version)               | Less (Open packages only)     |
+  | Property                          | oiledmachine-overlay version       | Distro version                |
+  | ---                               | ---                                | ---                           |
+  | Packaging policy                  | Vanilla                            | Distro customizations         |
+  | Path policy                       | Defaults except for CUDA           | Standard distro paths         |
+  | ROCm base path                    | /opt/rocm                          | /usr                          |
+  | ROCm libs path                    | /opt/rocm/lib                      | /usr/lib64                    |
+  | CUDA path for HIP-CUDA            | /opt/cuda                          | /opt/cuda                     |
+  | HIP-Clang base path or equivalent | /opt/cuda/lib/llvm                 | /usr/lib/llvm/<slot>          |
+  | libstdc++ consistency             | Yes                                | No                            |
+  | gfx early access                  | Yes                                | No                            |
+  | gfx support policy                | Strict, drops unsupported arches   | Unreviewed, allows old arches |
+  | gfx dependency chain consistency  | Yes                                | No                            |
+  | amdgpu kernel driver(s)           | Either vendor supplied (rock-dkms) | Mainlined only                |
+  |                                   | or mainlined only                  | (aka kernel package)          |
+  | amdgpu KFD                        | Feature complete or partial        | Partial only                  |
+  | Firmware                          | amdgpu-firmware or linux-firmware  | linux-firmware only           |
+  | Version range policy              | Strict                             | Relaxed                       |
+  | Slot                              | Monoslot                           | Monoslot                      |
+  | Dependency chain                  | Subslot restricted / stable        | Unrestricted / unstable       |
+  | GPU ASan support                  | Available                          | No                            |
+  | CPU ASan support                  | Available                          | No                            |
+  | Clang compiler                    | HIP-Clang                          | Vanilla Clang                 |
+  | Prebuilt support                  | Yes                                | No                            |
+  | Downstream compatibility          | More                               | Less                          |
+  | Downstream patching for compat    | Less                               | More                          |
+  | Tech stack coverage               | More (Full version)                | Less (Open packages only)     |
 
 
   Environment variables:
