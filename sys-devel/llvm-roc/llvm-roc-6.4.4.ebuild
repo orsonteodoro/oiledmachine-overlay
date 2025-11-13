@@ -95,7 +95,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile +runtime
-ebuild_revision_33
+ebuild_revision_35
 "
 REQUIRED_USE="
 	cfi? (
@@ -133,14 +133,6 @@ src_prepare() {
 # ld.bfd: /var/tmp/portage/sys-devel/llvm-roc-6.2.4/work/llvm-project-rocm-6.2.4/llvm_build/./lib/libLLVMTargetParser.so.18git: error adding symbols: DSO missing from command line
 # collect2: error: ld returned 1 exit status
 		eapply "${FILESDIR}/${PN}-6.2.0-link-llvm-split-to-LLVMTargetParser.patch"
-
-# FIXES:
-#    [2/2] : && /opt/rocm/bin/hipcc -O2 -pipe -Wl,-L/opt/rocm/lib --rocm-path=/opt/rocm --rocm-device-lib-path=/opt/rocm/amdgcn/bitcode -Wl,--as-needed -fuse-ld=lld -L/opt/rocm/lib CMakeFiles/cmTC_2585d.dir/testCXXCompiler.cxx.o -o cmTC_2585d   && :
-#    FAILED: [code=1] cmTC_2585d 
-#    : && /opt/rocm/bin/hipcc -O2 -pipe -Wl,-L/opt/rocm/lib --rocm-path=/opt/rocm --rocm-device-lib-path=/opt/rocm/amdgcn/bitcode -Wl,--as-needed -fuse-ld=lld -L/opt/rocm/lib CMakeFiles/cmTC_2585d.dir/testCXXCompiler.cxx.o -o cmTC_2585d   && :
-#    ld.lld: error: undefined reference: amd_comgr_do_action
-#    >>> referenced by /opt/rocm/lib/libamdhip64.so (disallowed by --no-allow-shlib-undefined)
-		eapply "${FILESDIR}/${PN}-6.4.4-link-amdhip64-deps.patch"
 
 		eapply "${FILESDIR}/${PN}-6.4.4-cuda-path.patch"
 	popd >/dev/null 2>&1 || die
