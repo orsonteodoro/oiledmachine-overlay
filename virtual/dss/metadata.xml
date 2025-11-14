@@ -20,22 +20,25 @@
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1
 
-      For production disable KASAN and UBSAN, enable KFENCE.
-      For testing enable KASAN, UBSAN.
+      For standard production, disable KASAN and UBSAN, enable KFENCE.
+      For standard testing, enable KASAN and UBSAN.
+      For relaxed production, enable KASAN and UBSAN, disable KFENCE.
     </flag>
     <flag name="gentoo-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1
 
-      For production disable KASAN and UBSAN, enable KFENCE.
-      For testing enable KASAN, UBSAN.
+      For standard production, disable KASAN and UBSAN, enable KFENCE.
+      For standard testing, enable KASAN and UBSAN.
+      For relaxed production, enable KASAN and UBSAN, disable KFENCE.
     </flag>
     <flag name="git-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1
 
-      For production disable KASAN and UBSAN, enable KFENCE.
-      For testing enable KASAN, UBSAN.
+      For standard production, disable KASAN and UBSAN, enable KFENCE.
+      For standard testing, enable KASAN and UBSAN.
+      For relaxed production, enable KASAN and UBSAN, disable KFENCE.
     </flag>
     <flag name="ot-sources">
       Manually rebuild the kernel with work profile set to dss and hardened
@@ -45,8 +48,9 @@
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1
 
-      For production disable KASAN and UBSAN, enable KFENCE.
-      For testing enable KASAN, UBSAN.
+      For standard production, disable KASAN and UBSAN, enable KFENCE.
+      For standard testing, enable KASAN and UBSAN.
+      For relaxed production, enable KASAN and UBSAN, disable KFENCE.
     </flag>
   </use>
 </pkgmetadata>
