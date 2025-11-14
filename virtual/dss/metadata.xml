@@ -7,9 +7,17 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <flag name="audit">
+      Add packages for maintenance or audits.
+    </flag>
+    <flag name="production">
+      Add packages for production.
+    </flag>
+
     <flag name="enforce">
       Enforce package checks and systemwide flag checks.
     </flag>
+
     <flag name="standard">
       Limit package selection what is allowed universally in standard data
       security audits
