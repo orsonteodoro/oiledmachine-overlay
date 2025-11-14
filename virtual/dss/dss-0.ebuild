@@ -94,7 +94,7 @@ ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
 audit +enforce +production standard relaxed
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -158,6 +158,10 @@ REQUIRED_USE="
 		!standard
 		audit
 		relaxed
+	)
+	ufw? (
+		audit
+		!production
 	)
 	vanilla-sources? (
 		!standard
@@ -363,6 +367,19 @@ DATA_ENCRYPTION_DEPENDS="
 FIREWALL_DEPENDS="
 	iptables? (
 		net-firewall/iptables
+	)
+	nftables? (
+		net-firewall/nftables
+	)
+	shorewall? (
+		net-firewall/shorewall
+	)
+	ufw? (
+		net-firewall/ufw
+	)
+
+	production? (
+		!net-firewall/ufw
 	)
 "
 
