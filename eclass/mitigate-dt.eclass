@@ -1017,6 +1017,25 @@ _mitigate_dt_mitigate_with_aslr() {
 	fi
 }
 
+# @FUNCTION: _check_kernel_cmdline
+# @INTERNAL
+# @DESCRIPTION:
+# Checks the kernel command line for the option.
+_check_kernel_cmdline() {
+	local option="${1}"
+	local cl=$(linux_chkconfig_string "CMDLINE")
+	if [[ "${cl}" =~ "${option}" ]] ; then
+		return 0
+	fi
+	if grep -q "${option}" "/etc/default/grub" ; then
+		return 0
+	fi
+	if grep -q "${option}" "/etc/grub.d/40_custom" ; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: _mitigate_dt_verify_mitigation_foreshadow
 # @INTERNAL
 # @DESCRIPTION:
