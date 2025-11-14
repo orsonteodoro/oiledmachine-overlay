@@ -1,0 +1,32 @@
+diff '--color=auto' -urp triton-0add68262ab0a2e33b84524346cb27cbb2787356.orig/setup.py triton-0add68262ab0a2e33b84524346cb27cbb2787356/setup.py
+--- triton-0add68262ab0a2e33b84524346cb27cbb2787356.orig/setup.py	2025-11-13 17:48:23.113554566 -0800
++++ triton-0add68262ab0a2e33b84524346cb27cbb2787356/setup.py	2025-11-13 17:50:24.316813835 -0800
+@@ -401,7 +401,8 @@ class CMakeBuild(build_ext):
+         build_ext.finalize_options(self)
+ 
+     def run(self):
+-        download_and_copy_dependencies()
++        if not os.environ['OFFLINE_INSTALL']:
++            download_and_copy_dependencies()
+ 
+         try:
+             out = subprocess.check_output(["cmake", "--version"])
+@@ -504,7 +505,17 @@ class CMakeBuild(build_ext):
+ 
+         if lit_dir is not None:
+             cmake_args.append("-DLLVM_EXTERNAL_LIT=" + lit_dir)
+-        cmake_args.extend(thirdparty_cmake_args)
++
++        if os.environ['OFFLINE_INSTALL']:
++            cmake_args += [
++                "-DPYBIND11_INCLUDE_DIR=" + os.environ['PYBIND11_INCLUDE_DIR'],
++                "-DPYBIND11_SYSPATH=" + os.environ['PYBIND11_SYSPATH'],
++                "-DLLVM_INCLUDE_DIRS=" + os.environ['LLVM_INCLUDE_DIRS'],
++                "-DLLVM_LIBRARY_DIR=" + os.environ['LLVM_LIBRARY_DIR'],
++                "-DLLVM_SYSPATH=" + os.environ['LLVM_SYSPATH'],
++            ]
++        else:
++            cmake_args.extend(thirdparty_cmake_args)
+ 
+         # configuration
+         cfg = get_build_type()
