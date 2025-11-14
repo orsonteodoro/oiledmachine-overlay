@@ -126,11 +126,13 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 #	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
+	"${FILESDIR}/${PN}-6.4.4-link-llvm.patch"
 )
 
 pkg_setup() {
 	python_setup
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -164,26 +166,6 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_hipcc
-
-if false ; then
-	if use rocm ; then
-		append-ldflags \
-			-Wl,-L"/opt/rocm/llvm/$(rocm_get_libdir)" \
-			-Wl,-lLLVMSupport
-		if has_version "dev-util/hip:${SLOT}[rocm]" ; then
-			append-flags -Wl,-lhsa-runtime64
-			append-ldflags -Wl,-lhsa-runtime64
-		fi
-		if has_version "dev-util/hip:${SLOT}[lc]" ; then
-			append-flags -Wl,-lamd_comgr
-			append-ldflags -Wl,-lamd_comgr
-		fi
-	fi
-	if has_version "dev-util/hip:${SLOT}[numa]" ; then
-		append-flags -Wl,-lnuma
-		append-ldflags -Wl,-lnuma
-	fi
-fi
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"

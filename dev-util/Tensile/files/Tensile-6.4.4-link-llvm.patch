@@ -1,0 +1,45 @@
+diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/Source/client/CMakeLists.txt Tensile-rocm-6.4.4/Tensile/Source/client/CMakeLists.txt
+--- Tensile-rocm-6.4.4.orig/Tensile/Source/client/CMakeLists.txt	2025-11-13 19:41:56.581361341 -0800
++++ Tensile-rocm-6.4.4/Tensile/Source/client/CMakeLists.txt	2025-11-13 20:06:26.332231748 -0800
+@@ -55,6 +55,18 @@ set_target_properties(TensileClient
+                       CXX_STANDARD_REQUIRED ON
+                       CXX_EXTENSIONS OFF)
+ 
++find_package(LLVM 19 REQUIRED CONFIG)
++if(TARGET LLVM)
++    # Fix LLVM symbol resolution for TensileHost (MemoryBuffer, YAML Input)
++    target_link_libraries(TensileClient
++        INTERFACE
++        ${LLVM_LIBRARIES}
++        LLVMCore
++        LLVMSupport
++        LLVMBinaryFormat
++    )
++endif()
++
+ find_package(Boost COMPONENTS program_options REQUIRED)
+ 
+ if (NOT WIN32)
+diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/Source/lib/CMakeLists.txt Tensile-rocm-6.4.4/Tensile/Source/lib/CMakeLists.txt
+--- Tensile-rocm-6.4.4.orig/Tensile/Source/lib/CMakeLists.txt	2025-08-11 08:14:33.000000000 -0700
++++ Tensile-rocm-6.4.4/Tensile/Source/lib/CMakeLists.txt	2025-11-13 20:34:18.379714717 -0800
+@@ -123,6 +123,19 @@ if(TENSILE_USE_LLVM)
+         target_link_libraries(TensileHost PRIVATE LLVM )
+     endif()
+     target_include_directories(TensileHost PRIVATE ${LLVM_INCLUDE_DIRS})
++
++    # Fix LLVM symbol resolution for MemoryBuffer/YAML in host lib
++    # (e.g., getFileAsStream, getMemBufferRef, yaml::Input)
++    target_link_libraries(TensileHost
++        PRIVATE
++        LLVMCore          # Core structures (MemoryBufferRef)
++        LLVMSupport       # File/stream I/O (getFileAsStream)
++        LLVMBinaryFormat  # Binary/YAML parsing
++        LLVMMC            # Additional MC support if needed for YAML
++    )
++    # Ensure ROCm LLVM paths are used
++    target_include_directories(TensileHost PRIVATE /opt/rocm/llvm/include)
++    target_link_directories(TensileHost PRIVATE /opt/rocm/llvm/lib)
+ endif()
+ 
+ if(TENSILE_STATIC_ONLY)
