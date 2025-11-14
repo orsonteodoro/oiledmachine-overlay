@@ -10,6 +10,7 @@ EAPI=8
 # hydra-colorlog
 # hydra-core
 
+CXX_STANDARD=17
 COMPOSABLE_KERNEL_COMMIT="e8709c24f403173ad21a2da907d1347957e324fb"
 CUTLASS_COMMIT="dc4817921edda44a549197ff3a9dcf5df0636e7b"
 #DISTUTILS_EXT=1 # TODO:  enable if required
@@ -21,6 +22,16 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx90a"
 	"gfx950"
 	"gfx942"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
 inherit hip-versions
@@ -42,7 +53,7 @@ ROCM_IUSE=(
 	$(gen_rocm_iuse)
 )
 
-inherit dep-prepare distutils-r1
+inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
 
 #KEYWORDS="~amd64" # The ebuild is not install tested
 S="${WORKDIR}/flash-attention-${PV}"
@@ -89,6 +100,27 @@ ${ROCM_IUSE[@]}
 cuda rocm training
 ebuild_revision_3
 "
+REQUIRED_USE="
+	cuda? (
+		|| (
+			gcc_slot_11_5
+			gcc_slot_12_5
+			gcc_slot_13_4
+			gcc_slot_14_3
+			llvm_slot_15
+			llvm_slot_16
+			llvm_slot_17
+			llvm_slot_18
+			llvm_slot_19
+		)
+	)
+	rocm? (
+		|| (
+			gcc_slot_12_5
+			gcc_slot_13_4
+		)
+	)
+"
 gen_rocm_required_use() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
@@ -134,11 +166,35 @@ gen_rocm_rdepend() {
 		echo "
 			rocm_${u}? (
 				~dev-build/rocm-cmake-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
+				~dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
 			)
 		"
 	done
 }
+
+CUDA_12_6_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		>=x11-drivers/nvidia-drivers-560.35
+		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_8_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
+
+CUDA_12_9_DEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.9*
+		>=x11-drivers/nvidia-drivers-575.57
+		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
 
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -153,8 +209,9 @@ RDEPEND+="
 	)
 	cuda? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_12_6_DEPEND}
+			${CUDA_12_8_DEPEND}
+			${CUDA_12_9_DEPEND}
 		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -203,6 +260,12 @@ BDEPEND+="
 DOCS=( "AUTHORS" "usage.md" )
 
 distutils_enable_tests "pytest"
+
+pkg_setup() {
+	python-single-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_prepare() {
 	distutils-r1_python_prepare_all
