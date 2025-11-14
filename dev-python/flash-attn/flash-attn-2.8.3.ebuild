@@ -10,8 +10,8 @@ EAPI=8
 # hydra-colorlog
 # hydra-core
 
-COMPOSABLE_KERNEL_COMMIT="8182976c37433808b5e3a27a6536d1b74b0c23a1"
-CUTLASS_COMMIT="756c351b4994854b2f8c6dded3821ebbb580876b"
+COMPOSABLE_KERNEL_COMMIT="e8709c24f403173ad21a2da907d1347957e324fb"
+CUTLASS_COMMIT="dc4817921edda44a549197ff3a9dcf5df0636e7b"
 #DISTUTILS_EXT=1 # TODO:  enable if required
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -19,17 +19,14 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx90a"
-	"gfx940"
-	"gfx941"
+	"gfx950"
 	"gfx942"
 )
 
 inherit hip-versions
 ROCM_SLOTS=(
 	# For RDEPEND
-#	"${HIP_6_2_VERSION}" # Not supported by pytorch ebuilds yet
-	"${HIP_6_1_VERSION}" # Corresponds to pytorch 2.4.0 ebuild ; See https://github.com/Dao-AILab/flash-attention/issues/1086#issuecomment-2253854489
-	"${HIP_6_0_VERSION}" # Corresponds to pytorch 2.3.0 ebuild.
+	"${HIP_6_4_VERSION}"
 )
 
 gen_rocm_iuse() {
@@ -90,7 +87,7 @@ IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${ROCM_IUSE[@]}
 cuda rocm training
-ebuild_revision_2
+ebuild_revision_3
 "
 gen_rocm_required_use() {
 	local pv
@@ -149,11 +146,8 @@ RDEPEND+="
 	')
 	(
 		|| (
-			=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/pytorch-2.1*[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/pytorch-2.0*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.9*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.8*[${PYTHON_SINGLE_USEDEP}]
 		)
 		sci-ml/pytorch:=
 	)
@@ -167,11 +161,12 @@ RDEPEND+="
 	rocm? (
 		$(gen_rocm_rdepend)
 	)
-	rocm_6_0? (
-		=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_6_0]
-	)
-	rocm_6_1? (
-		=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP},rocm_6_1]
+	rocm_6_4? (
+		|| (
+			=sci-ml/pytorch-2.8*[${PYTHON_SINGLE_USEDEP},rocm_6_4]
+			=sci-ml/pytorch-2.9*[${PYTHON_SINGLE_USEDEP},rocm_6_4]
+		)
+		sci-ml/pytorch:=
 	)
 	training? (
 		$(python_gen_cond_dep '
@@ -217,15 +212,11 @@ src_prepare() {
 	fi
 	if use rocm ; then
 		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT}" "${S}/csrc/composable_kernel"
-		eapply "${FILESDIR}/${PN}-2.6.3-composable_kernel-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.8.3-composable_kernel-hardcoded-paths.patch"
 		local ROCM_VERSION
-		if use rocm_6_0 ; then
-			ROCM_VERSION="${HIP_6_0_VERSION}"
-		elif use rocm_6_1 ; then
-			ROCM_VERSION="${HIP_6_1_VERSION}"
+		if use rocm_6_4 ; then
+			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
-	else
-		sed -i -e "s|@ROCM_VERSION@|6.1.2|g" $(grep -l "@ROCM_VERSION@") || die
 	fi
 }
 

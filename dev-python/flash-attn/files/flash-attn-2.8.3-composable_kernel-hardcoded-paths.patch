@@ -1,0 +1,109 @@
+diff '--color=auto' -urp flash-attention-2.8.3.orig/csrc/composable_kernel/cmake/ClangTidy.cmake flash-attention-2.8.3/csrc/composable_kernel/cmake/ClangTidy.cmake
+--- flash-attention-2.8.3.orig/csrc/composable_kernel/cmake/ClangTidy.cmake	2025-07-30 08:02:25.000000000 -0700
++++ flash-attention-2.8.3/csrc/composable_kernel/cmake/ClangTidy.cmake	2025-11-13 16:24:00.041857441 -0800
+@@ -43,7 +43,7 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/llvm/bin
++        /opt/rocm/lib/llvm/bin
+         /opt/rocm/hcc
+         /usr/local/opt/llvm/bin
+ )
+diff '--color=auto' -urp flash-attention-2.8.3.orig/csrc/composable_kernel/CMakeLists.txt flash-attention-2.8.3/csrc/composable_kernel/CMakeLists.txt
+--- flash-attention-2.8.3.orig/csrc/composable_kernel/CMakeLists.txt	2025-07-30 08:02:25.000000000 -0700
++++ flash-attention-2.8.3/csrc/composable_kernel/CMakeLists.txt	2025-11-13 16:23:52.393981781 -0800
+@@ -144,7 +144,7 @@ include(TargetFlags)
+ 
+ rocm_setup_version(VERSION ${version})
+ 
+-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/llvm /opt/rocm/hip "$ENV{ROCM_PATH}" "$ENV{HIP_PATH}")
++list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/lib/llvm /opt/rocm/hip "$ENV{ROCM_PATH}" "$ENV{HIP_PATH}")
+ 
+ message(STATUS "GPU_TARGETS= ${GPU_TARGETS}")
+ message(STATUS "GPU_ARCHS= ${GPU_ARCHS}")
+diff '--color=auto' -urp flash-attention-2.8.3.orig/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp flash-attention-2.8.3/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp
+--- flash-attention-2.8.3.orig/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp	2025-07-30 08:02:25.000000000 -0700
++++ flash-attention-2.8.3/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp	2025-11-13 16:24:42.137321606 -0800
+@@ -85,9 +85,9 @@ void write_string(const std::string& fil
+     write_buffer(filename, buffer.data(), buffer.size());
+ }
+ 
+-std::string compiler() { return "/opt/rocm/llvm/bin/clang++ -x hip --cuda-device-only"; }
++std::string compiler() { return "/opt/rocm/lib/llvm/bin/clang++ -x hip --cuda-device-only"; }
+ // TODO: undo after extracting the codeobj
+-// std::string compiler() { return "/opt/rocm/llvm/bin/clang++ -x hip"; }
++// std::string compiler() { return "/opt/rocm/lib/llvm/bin/clang++ -x hip"; }
+ 
+ kernel clang_compile_kernel(const std::vector<src_file>& srcs, compile_options options)
+ {
+diff '--color=auto' -urp flash-attention-2.8.3.orig/csrc/composable_kernel/script/cmake-ck-dev.sh flash-attention-2.8.3/csrc/composable_kernel/script/cmake-ck-dev.sh
+--- flash-attention-2.8.3.orig/csrc/composable_kernel/script/cmake-ck-dev.sh	2025-07-30 08:02:25.000000000 -0700
++++ flash-attention-2.8.3/csrc/composable_kernel/script/cmake-ck-dev.sh	2025-11-13 16:24:13.721678422 -0800
+@@ -30,7 +30,7 @@ fi
+ 
+ cmake                                                                                             \
+ -D CMAKE_PREFIX_PATH=/opt/rocm/                                                                   \
+--D CMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++                                                  \
++-D CMAKE_CXX_COMPILER=/opt/rocm/lib/llvm/bin/clang++                                                  \
+ -D CMAKE_CXX_FLAGS="-std=c++20 -O3 -ftemplate-backtrace-limit=0  -fPIE  -Wno-gnu-line-marker"     \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=ON                                                                                   \
+diff '--color=auto' -urp flash-attention-2.8.3.orig/csrc/composable_kernel/script/cmake-ck-release.sh flash-attention-2.8.3/csrc/composable_kernel/script/cmake-ck-release.sh
+--- flash-attention-2.8.3.orig/csrc/composable_kernel/script/cmake-ck-release.sh	2025-07-30 08:02:25.000000000 -0700
++++ flash-attention-2.8.3/csrc/composable_kernel/script/cmake-ck-release.sh	2025-11-13 16:24:19.033590196 -0800
+@@ -19,7 +19,7 @@ fi
+ 
+ cmake                                                                                             \
+ -D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++                                                  \
++-D CMAKE_CXX_COMPILER=/opt/rocm/lib/llvm/bin/clang++                                                  \
+ -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=OFF                                                                                  \
+diff '--color=auto' -urp flash-attention-2.8.3.orig/csrc/composable_kernel/script/hipclang_opt.sh flash-attention-2.8.3/csrc/composable_kernel/script/hipclang_opt.sh
+--- flash-attention-2.8.3.orig/csrc/composable_kernel/script/hipclang_opt.sh	2025-07-30 08:02:25.000000000 -0700
++++ flash-attention-2.8.3/csrc/composable_kernel/script/hipclang_opt.sh	2025-11-13 16:24:34.922030105 -0800
+@@ -2,24 +2,24 @@ rm *.ll *.s
+ 
+ BC_FILE=$1
+ 
+-/opt/rocm/llvm/bin/llvm-dis $BC_FILE -o original.ll
+-/opt/rocm/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
+-/opt/rocm/llvm/bin/opt -S -sroa inline.ll > sroa.ll
+-/opt/rocm/llvm/bin/opt -S -O3 sroa.ll > o3.ll
++/opt/rocm/lib/llvm/bin/llvm-dis $BC_FILE -o original.ll
++/opt/rocm/lib/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
++/opt/rocm/lib/llvm/bin/opt -S -sroa inline.ll > sroa.ll
++/opt/rocm/lib/llvm/bin/opt -S -O3 sroa.ll > o3.ll
+ 
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 original.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 inline.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 sroa.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 o3.ll
++/opt/rocm/lib/llvm/bin/llc -mcpu=gfx906 original.ll
++/opt/rocm/lib/llvm/bin/llc -mcpu=gfx906 inline.ll
++/opt/rocm/lib/llvm/bin/llc -mcpu=gfx906 sroa.ll
++/opt/rocm/lib/llvm/bin/llc -mcpu=gfx906 o3.ll
+ 
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
++#/opt/rocm/lib/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
++#/opt/rocm/lib/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
++#/opt/rocm/lib/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
++#/opt/rocm/lib/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
+ 
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 opt.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 inline.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_2.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_4.ll
++#/opt/rocm/lib/llvm/bin/llc -mcpu=gfx908 opt.ll
++#/opt/rocm/lib/llvm/bin/llc -mcpu=gfx908 inline.ll
++#/opt/rocm/lib/llvm/bin/llc -mcpu=gfx908 o3.ll
++#/opt/rocm/lib/llvm/bin/llc -mcpu=gfx908 o3_2.ll
++#/opt/rocm/lib/llvm/bin/llc -mcpu=gfx908 o3_3.ll
++#/opt/rocm/lib/llvm/bin/llc -mcpu=gfx908 o3_4.ll
