@@ -62,7 +62,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	client? (
@@ -227,6 +227,7 @@ src_install() {
 		"CustomKernels" \
 		"Perf" \
 		"Source" \
+		"TensileCreateLib" \
 		"Utilities"
 	insinto "/usr/${libdir}/cmake/${PN}"
 	doins "cmake/"*".cmake"
