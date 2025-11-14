@@ -65,7 +65,7 @@ ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
 +enforce standard relaxed
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -318,6 +318,8 @@ eerror "-O0 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/port
 # -Ofast:  50 - 70%
 
 	if is-flagq '-O1' || is-flagq '-O2' || is-flagq '-Oz' || is-flagq '-Os' ; then
+		:
+	else
 # If optimization level is not set, it defaults to -O0.
 eerror "CFLAGS/CXXFLAGS requires explicity optimization level.  Update /etc/portage/make.conf and re-emerge @world to continue."
 eerror "Valid optimization levels for security-critical dss:  -O1, -O2, -Oz, -Os"
