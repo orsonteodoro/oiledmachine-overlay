@@ -1221,7 +1221,9 @@ ot-kernel_use() {
 		[[ "${u}" =~ ^"+" ]] && u="${u:1}"
 		has ${u} ${IUSE_EFFECTIVE} || continue
 	# IUSE will say false if hard mask
-		use ${u} && [[ "${1}" == "${u}" ]] && return 0
+		if use ${u} && [[ "${1}" == "${u}" ]] ; then
+			return 0
+		fi
 	done
 	return 1
 }
@@ -2781,6 +2783,7 @@ ot-kernel_src_prepare() {
 	fi
 
 	if ! use debug ; then
+einfo "Copying disable_debug to ${BUILD_DIR}"
 		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_PV}" \
 			> "disable_debug" \
 			|| die
@@ -2935,7 +2938,7 @@ einfo "Setting the extra version for the -${extraversion} build"
 			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 				"Makefile" || die
 		fi
-		if ! ot-kernel_use debug ; then
+		if ! use debug && ! ot-kernel_use debug ; then
 			chmod +x "disable_debug" || die
 		fi
 		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
@@ -3839,10 +3842,10 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
-eerror
-eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
-eerror
-			die
+# TODO:  Update BBRv2, BBRv3 patches
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"cubic"}
+#eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
+#			die
 		fi
 	elif [[ \
 		   "${work_profile}" == "database-server" \
@@ -3859,15 +3862,11 @@ eerror
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 	# bbrv3 Energy savings is unknown.
 	# Deterministic power savings allowed only.
-eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead."
-eerror
 			die
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 	# Patching may cause an unintended consequence (e.g. increased energy use).
-eerror
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
-eerror
 			die
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp"}
@@ -3884,9 +3883,7 @@ eerror
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
-eerror
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
-eerror
 			die
 		fi
 	elif [[ \
@@ -3900,9 +3897,7 @@ eerror
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
-eerror
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
-eerror
 			die
 		fi
 	elif [[ \
@@ -3916,9 +3911,7 @@ eerror
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2 cubic"}
 		else
-eerror
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for fallback DoS mitigation."
-eerror
 			die
 		fi
 	elif [[ \
@@ -3953,14 +3946,10 @@ eerror
 	]] ; then
 	# Optimize for power savings.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
-eerror
 			die
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-eerror
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead"
-eerror
 			die
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
@@ -3978,14 +3967,10 @@ eerror
 	]] ; then
 	# Optimize for power savings.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
-eerror
 			die
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-eerror
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
-eerror
 			die
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
@@ -13545,7 +13530,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	is_firmware_ready
 
-	if ! ot-kernel_use debug ; then
+	if ! use debug && ! ot-kernel_use debug ; then
 einfo "Disabling all debug and shortening logging buffers"
 		./disable_debug || die
 		rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
