@@ -66,6 +66,8 @@ ewarn "   cubic and illinois."
 ewarn "7. Perform downloads at non busy times."
 ewarn "8. Perform downloads at night to mitigate against solar flare"
 ewarn "   disruptions."
+ewarn "9. Consider replacing the WiFi antenna/dongle/card if older than 5"
+ewarn "   or 10 years old."
 ewarn
 	fi
 }
