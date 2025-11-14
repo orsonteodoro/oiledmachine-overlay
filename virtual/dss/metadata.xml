@@ -8,7 +8,7 @@
   </maintainer>
   <use>
     <flag name="standard">
-      Limit package selection what is allowed in universally standard data
+      Limit package selection what is allowed universally in standard data
       security audits
     </flag>
     <flag name="relaxed">
