@@ -134,11 +134,11 @@ REQUIRED_USE="
 			vanilla-sources
 		)
 
+		auditd
 		^^ (
 			rsyslog
 			syslog-ng
 		)
-		auditd
 
 		^^ (
 			apparmor
