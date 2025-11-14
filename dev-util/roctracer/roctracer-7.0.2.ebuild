@@ -38,7 +38,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE=" test ebuild_revision_11"
+IUSE=" test ebuild_revision_12"
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
