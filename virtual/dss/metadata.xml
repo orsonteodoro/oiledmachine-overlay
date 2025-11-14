@@ -27,6 +27,19 @@
       security than what audits may allow.
     </flag>
 
+    <flag name="apparmor">
+      Add AppArmor support for containers, desktop, or server environments.
+    </flag>
+    <flag name="selinux">
+      Add SELinux support for enterprise environments or critical infrastructure.
+    </flag>
+    <flag name="smack">
+      Add SMACK support for IOT, embedded, automotive devices.
+    </flag>
+    <flag name="tomoyo">
+      Add Tomoyo support for system analysis or learned confinement.
+    </flag>
+
     <flag name="custom-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1.  At least, AppArmor or

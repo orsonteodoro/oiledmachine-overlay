@@ -384,7 +384,7 @@ LOGGER_DEPENDS="
 			app-admin/rsyslog[mysql,relp,ssl]
 		)
 		syslog-ng? (
-			app-admin/syslog-ng
+			app-admin/syslog-ng[mongodb,redis,ssl]
 		)
 		virtual/logger
 	)
