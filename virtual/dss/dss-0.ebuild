@@ -309,13 +309,13 @@ eerror "-O0 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/port
 
 # 90% is security-critical.  A-grade security quality.
 # Estimated _FORTIFY_SOURCE coverage:
-#    -O0:  0%
 #    -O1:  95 - 98%
-#    -Oz:  92 - 97%
 #    -Os:  93 - 98%
+#    -Oz:  92 - 97%
 #    -O2:  90 - 96%
 #    -O3:  80 - 92%
 # -Ofast:  50 - 70%
+#    -O0:  0%
 
 	if is-flagq '-O1' || is-flagq '-O2' || is-flagq '-Oz' || is-flagq '-Os' ; then
 		:
