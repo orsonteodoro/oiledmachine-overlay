@@ -284,19 +284,23 @@ PDEPEND="
 
 src_configure() {
 	use enforce || return
+	local is_flag_violation=0
 	if is-flagq '-ffast-math' ; then
-# Prevent non-deterministic floats or compromised mathematical/financial modeling.
-eerror "-ffast-math is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf to continue."
-		die
+# Prevent non-deterministic floats or ensure integrity of mathematical/financial modeling.
+eerror "-ffast-math is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf and re-emerge @world to continue."
+		is_flag_violation=1
 	fi
 	if is-flagq '-Ofast' ; then
-# Prevent non-deterministic floats or compromised mathematical/financial modeling.
-eerror "-Ofast is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf to continue."
-		die
+# Prevent non-deterministic floats or ensure integrity of mathematical/financial modeling.
+eerror "-Ofast is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf and re-emerge @world to continue."
+		is_flag_violation=1
 	fi
 	if is-flagq '-O3' ; then
 # Prevent _FORTIFY_SOURCE checks from being optimized/dropped out at security-critical checkpoints.
-eerror "-O3 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf to continue."
+eerror "-O3 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf and re-emerge @world to continue."
+		is_flag_violation=1
+	fi
+	if (( ${is_flag_violation} == 1 )) ; then
 		die
 	fi
 }
