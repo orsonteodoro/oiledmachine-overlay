@@ -1359,7 +1359,8 @@ _mitigate_dt_verify_mitigation_cve_2024_42667() {
 # @DESCRIPTION:
 # Check the kernel config flags
 _mitigate-dt_check_kernel_flags() {
-	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
 	if ! linux_config_src_exists ; then
 eerror "Missing .config in /usr/src/linux"

@@ -5875,7 +5875,8 @@ ewarn "Rowhammer mitigation should be deployed to mitigate against a post SPOILE
 # @DESCRIPTION:
 # Check the kernel config flags
 _mitigate-id_check_kernel_flags() {
-	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
 	if ! linux_config_src_exists ; then
 eerror "Missing .config in /usr/src/linux"

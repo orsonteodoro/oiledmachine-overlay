@@ -1393,7 +1393,8 @@ _mitigate_dos_verify_mitigation_cve_2023_49141() {
 # @DESCRIPTION:
 # Check the kernel config flags
 _mitigate-dos_check_kernel_flags() {
-	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
 	if ! linux_config_src_exists ; then
 eerror "Missing .config in /usr/src/linux"
