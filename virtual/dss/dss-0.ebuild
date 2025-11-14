@@ -281,3 +281,22 @@ PDEPEND="
 		${KERNEL_DEPENDS}
 	)
 "
+
+src_configure() {
+	use enforce || return
+	if is-flagq '-ffast-math' ; then
+# Prevent non-deterministic floats or compromised mathematical/financial modeling.
+eerror "-ffast-math is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf to continue."
+		die
+	fi
+	if is-flagq '-Ofast' ; then
+# Prevent non-deterministic floats or compromised mathematical/financial modeling.
+eerror "-Ofast is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf to continue."
+		die
+	fi
+	if is-flagq '-O3' ; then
+# Prevent _FORTIFY_SOURCE checks from being optimized/dropped out at security-critical checkpoints.
+eerror "-O3 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf to continue."
+		die
+	fi
+}
