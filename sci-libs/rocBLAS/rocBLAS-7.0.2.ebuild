@@ -280,8 +280,7 @@ src_configure() {
 	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
 	replace-flags '-O0' '-O1'
 
-	export PATH="${ESYSROOT}/${EROCM_PATH}/lib/python-exec/${EPYTHON}:${ESYSROOT}/${EROCM_PATH}/bin:${PATH}"
-	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+	export PATH="${ESYSROOT}/${EROCM_PATH}/bin:${PATH}"
 
 	check_asan
 
@@ -324,9 +323,9 @@ src_configure() {
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 			-DTensile_LOGIC="asm_full"
-			-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}/lib/${EPYTHON}/site-packages/Tensile"
+			-DTensile_ROOT="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
 			-DTensile_TENSILE_ROOT="${ESYSROOT}${EROCM_PATH}"
-			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}${EROCM_PATH}/lib/${EPYTHON}/site-packages/Tensile"
+			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
 		)
 	fi
 	rocm_set_default_hipcc
