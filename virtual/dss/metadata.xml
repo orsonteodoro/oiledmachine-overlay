@@ -18,7 +18,8 @@
 
     <flag name="custom-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
-      KCFI, page zeroing and panic_on_warn=1
+      KCFI, page zeroing and panic_on_warn=1.  At least, AppArmor or
+      SELinux is required.
 
       For standard production, disable KASAN and UBSAN, enable KFENCE.
       For standard testing, enable KASAN and UBSAN.
@@ -26,7 +27,8 @@
     </flag>
     <flag name="gentoo-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
-      KCFI, page zeroing and panic_on_warn=1
+      KCFI, page zeroing and panic_on_warn=1.  At least, AppArmor or
+      SELinux is required.
 
       For standard production, disable KASAN and UBSAN, enable KFENCE.
       For standard testing, enable KASAN and UBSAN.
@@ -34,7 +36,8 @@
     </flag>
     <flag name="git-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
-      KCFI, page zeroing and panic_on_warn=1
+      KCFI, page zeroing and panic_on_warn=1.  At least, Apparmor or
+      SELinux is required.
 
       For standard production, disable KASAN and UBSAN, enable KFENCE.
       For standard testing, enable KASAN and UBSAN.
@@ -46,7 +49,8 @@
     </flag>
     <flag name="vanilla-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
-      KCFI, page zeroing and panic_on_warn=1
+      KCFI, page zeroing and panic_on_warn=1.  At least, AppArmor or
+      SELinux is required.
 
       For standard production, disable KASAN and UBSAN, enable KFENCE.
       For standard testing, enable KASAN and UBSAN.
