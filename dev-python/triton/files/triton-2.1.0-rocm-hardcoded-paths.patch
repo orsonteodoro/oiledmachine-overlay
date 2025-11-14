@@ -6,7 +6,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/lib/Target/HSACO/HSACOTranslation.cpp
    std::string hsaco_path = (kernel_dir / hsaco).string();
    std::string error_message;
 -  std::string lld_path = "/opt/rocm/llvm/bin/ld.lld";
-+  std::string lld_path = "/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld";
++  std::string lld_path = "/opt/rocm/lib/llvm/bin/ld.lld";
    int lld_result = llvm::sys::ExecuteAndWait(
        lld_path,
        {lld_path, "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
@@ -18,7 +18,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/python/triton/common/build.py triton-
  @functools.lru_cache()
  def rocm_path_dir():
 -    return os.getenv("ROCM_PATH", default="/opt/rocm")
-+    return os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
++    return os.getenv("ROCM_PATH", default="/opt/rocm")
  
  
  @contextlib.contextmanager
@@ -30,7 +30,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/python/triton/compiler/compiler.py tr
      try:
          # TODO: package rocm.cc with Triton
 -        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm")
-+        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
++        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm")
          rocminfo = subprocess.check_output(rocm_path_dir + '/bin/rocminfo').decode()
          gfx_arch_details = re.search('amd.*', rocminfo).group(0).strip().split('--')
          arch_triple = gfx_arch_details[0]

@@ -7,8 +7,8 @@ diff '--color=auto' -urp triton-1.1.2.orig/lib/driver/llvm.cc triton-1.1.2/lib/d
    int lld_result =
 -      llvm::sys::ExecuteAndWait("/opt/rocm/llvm/bin/ld.lld",
 -                                {"/opt/rocm/llvm/bin/ld.lld", "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
-+      llvm::sys::ExecuteAndWait("/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld",
-+                                {"/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld", "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
++      llvm::sys::ExecuteAndWait("/opt/rocm/lib/llvm/bin/ld.lld",
++                                {"/opt/rocm/lib/llvm/bin/ld.lld", "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
                                  llvm::None, {}, 0, 0, &error_message);
    if (lld_result)
    {

@@ -6,7 +6,7 @@ diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/th
      @staticmethod
      def path_to_rocm_lld():
 -        return "/opt/rocm/llvm/bin/ld.lld"
-+        return "/opt/rocm-@ROCM_PATH@/llvm/bin/ld.lld"
++        return "/opt/rocm/lib/llvm/bin/ld.lld"
  
      @staticmethod
      def make_ttir(mod, metadata, opt):

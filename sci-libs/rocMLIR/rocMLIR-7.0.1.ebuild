@@ -178,7 +178,7 @@ build_rocmlir() {
 		-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
 
 		-DELLVM_VERSION_SUFFIX=roc
-		# -DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm/llvm/include" # Originally this
+		# -DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/include" # Originally this
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
 		#-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 

@@ -133,7 +133,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials video_cards_intel
-ebuild_revision_4
+ebuild_revision_5
 "
 gen_rocm_required_use() {
 	local u

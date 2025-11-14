@@ -6,14 +6,14 @@ diff '--color=auto' -urp triton-b51402436b71989f14218f70a955c65dd45aee7f.orig/th
          if lld.is_file():
              return lld
 -        lld = Path("/opt/rocm/llvm/bin/ld.lld")
-+        lld = Path("/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld")
++        lld = Path("/opt/rocm/lib/llvm/bin/ld.lld")
          if lld.is_file():
              return lld
          lld = Path("/usr/bin/ld.lld")
          if lld.is_file():
              return lld
 -        raise Exception("ROCm linker /opt/rocm/llvm/bin/ld.lld not found")
-+        raise Exception("ROCm linker /opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld not found")
++        raise Exception("ROCm linker /opt/rocm/lib/llvm/bin/ld.lld not found")
  
      @staticmethod
      def make_ttir(mod, metadata, options):
@@ -25,7 +25,7 @@ diff '--color=auto' -urp triton-b51402436b71989f14218f70a955c65dd45aee7f.orig/th
  
      # As a last resort, guess if we have it in some common installation path.
 -    common_install_path = os.path.join('/opt/rocm/lib/', lib_name)
-+    common_install_path = os.path.join('/opt/rocm-@ROCM_VERSION@/lib/', lib_name)
++    common_install_path = os.path.join('/opt/rocm/lib/', lib_name)
      if os.path.exists(common_install_path):
          return common_install_path
      paths.append(common_install_path)
