@@ -13,9 +13,17 @@ ANTIVIRUS_IUSE=(
 	"clamav"
 )
 
+DATA_ENCRYPTION_IUSE=(
+	"dm-crypt"
+	"ecryptfs"
+	"veracrypt"
+)
+
 # File Integrity Monitoring
 FIM_IUSE=(
 	"aide"
+	"samhain"
+	"tripwire"
 )
 
 FIREWALL_IUSE=(
@@ -58,6 +66,7 @@ KEYWORDS="~amd64 ~arm64"
 LICENSE="metapackage"
 IUSE="
 ${ANTIVIRUS_IUSE[@]}
+${DATA_ENCRYPTION_IUSE[@]}
 ${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
 ${KERNEL_IUSE[@]}
@@ -93,6 +102,10 @@ REQUIRED_USE="
 		!standard
 		relaxed
 	)
+	samhain? (
+		!standard
+		relaxed
+	)
 	smack? (
 		!standard
 		relaxed
@@ -101,7 +114,15 @@ REQUIRED_USE="
 		!standard
 		relaxed
 	)
+	tripwire? (
+		!standard
+		relaxed
+	)
 	vanilla-sources? (
+		!standard
+		relaxed
+	)
+	veracrypt? (
 		!standard
 		relaxed
 	)
@@ -109,6 +130,8 @@ REQUIRED_USE="
 	standard? (
 		aide
 		clamav
+
+		dm-crypt
 
 		^^ (
 			firewalld
@@ -144,8 +167,18 @@ REQUIRED_USE="
 
 	)
 	relaxed? (
-		aide
+		|| (
+			aide
+			samhain
+			tripwire
+		)
 		clamav
+
+		|| (
+			dm-crypt
+			ecryptfs
+			veracrypt
+		)
 
 		^^ (
 			chrony
@@ -191,11 +224,30 @@ REQUIRED_USE="
 SLOT="0"
 
 ANTIVIRUS_DEPENDS="
+	clamav? (
+		app-antivirus/clamav
+	)
+"
+
+FIM_DEPENDS="
 	aide? (
 		app-forensics/aide
 	)
-	clamav? (
-		app-antivirus/clamav
+	tripwire? (
+		app-admin/tripwire
+	)
+"
+
+DATA_ENCRYPTION_DEPENDS="
+	app-crypt/gnupg
+	dm-crypt? (
+		sys-fs/cryptsetup
+	)
+	ecryptfs? (
+		sys-fs/ecryptfs-utils
+	)
+	veracrypt? (
+		app-crypt/veracrypt
 	)
 "
 
@@ -266,6 +318,8 @@ LSM_DEPENDS="
 RDEPEND="
 	enforce? (
 		${ANTIVIRUS_DEPENDS}
+		${DATA_ENCRYPTION_DEPENDS}
+		${FIM_DEPENDS}
 		${FIREWALL_DEPENDS}
 		${LOGGER_DEPENDS}
 		${LSM_DEPENDS}
