@@ -140,7 +140,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_29
+ebuild_revision_30
 "
 
 gen_cuda_required_use() {
@@ -500,7 +500,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 # Fix
 # /usr/bin/python3.12: No module named pip
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
-	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
 	PROJECTS="openmp"
 	local experimental_targets=""
@@ -519,7 +518,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_LLVM_PATH}"
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(usex gdb-plugin ON OFF)
 		-DLIBOMP_OMPD_SUPPORT=$(usex ompd ON OFF)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
@@ -534,8 +533,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
 		-DLLVM_EXTERNAL_LIT="/usr/bin/lit"
-#		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/$(rocm_get_libdir)/cmake/llvm"
-		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
+		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_LLVM_PATH}"
 		-DLLVM_INSTALL_UTILS=OFF
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
@@ -545,7 +543,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
-	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+	if use offload && has "${CHOST%%-*}" "aarch64" "powerpc64le" "x86_64" ; then
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
