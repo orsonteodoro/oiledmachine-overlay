@@ -1488,7 +1488,7 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	_mitigate_dos_verify_mitigation_cve_2023_49141		# Mitigations against CVE-2023-49141 (2023) # PE
 	_mitigate_dos_verify_mitigation_cve_2024_24853		# Mitigations against CVE-2024-24853 (2024) # PE
 	_mitigate_dos_verify_mitigation_cve_2024_24968		# Mitigations against CVE-2024-24968 (2024)
-	_mitigate_dos_verify_mitigation_cve_2024_25939		# Mitigations against CVE-2024-25939 (2024)
+	_mitigate_dos_verify_mitigation_mcead			# Mitigations against CVE-2024-25939 (2024)
 	_mitigate_dos_verify_mitigation_cve_2024_42667		# Mitigations against CVE-2024-42667 (2024) # PE
 	_mitigate_dos_verify_mitigation_mcead			# Mitigations against MCEAD (2024)
 
