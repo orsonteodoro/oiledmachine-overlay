@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="standard">
+      Limit package selection what is allowed in universally standard data
+      security audits
+    </flag>
+    <flag name="relaxed">
+      Allow for open-ended package selection which some may be more superior
+      security than what audits may allow.
+    </flag>
+
+    <flag name="custom-sources">
+      Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
+      KCFI, page zeroing and panic_on_warn=1
+
+      For production disable KASAN and UBSAN, enable KFENCE.
+      For testing enable KASAN, UBSAN.
+    </flag>
+    <flag name="gentoo-sources">
+      Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
+      KCFI, page zeroing and panic_on_warn=1
+
+      For production disable KASAN and UBSAN, enable KFENCE.
+      For testing enable KASAN, UBSAN.
+    </flag>
+    <flag name="git-sources">
+      Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
+      KCFI, page zeroing and panic_on_warn=1
+
+      For production disable KASAN and UBSAN, enable KFENCE.
+      For testing enable KASAN, UBSAN.
+    </flag>
+    <flag name="ot-sources">
+      Manually rebuild the kernel with work profile set to dss and hardened
+      level to secure-af
+    </flag>
+    <flag name="vanilla-sources">
+      Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
+      KCFI, page zeroing and panic_on_warn=1
+
+      For production disable KASAN and UBSAN, enable KFENCE.
+      For testing enable KASAN, UBSAN.
+    </flag>
+  </use>
+</pkgmetadata>
