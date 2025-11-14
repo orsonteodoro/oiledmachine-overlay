@@ -62,7 +62,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	client? (
@@ -226,7 +226,8 @@ src_install() {
 		"Configs" \
 		"CustomKernels" \
 		"Perf" \
-		"Source"
+		"Source" \
+		"Utilities"
 	insinto "/usr/${libdir}/cmake/${PN}"
 	doins "cmake/"*".cmake"
 	if use client ; then
