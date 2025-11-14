@@ -301,6 +301,28 @@ eerror "-Ofast is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/p
 eerror "-O3 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf and re-emerge @world to continue."
 		is_flag_violation=1
 	fi
+	if is-flagq '-O0' ; then
+# Ensure _FORTIFY_SOURCE checks are being used.
+eerror "-O0 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/portage/make.conf and re-emerge @world to continue."
+		is_flag_violation=1
+	fi
+
+# 90% is security-critical.  A-grade security quality.
+# Estimated _FORTIFY_SOURCE coverage:
+# -O0:  0%
+# -O1:  95 - 98%
+# -O2:  90 - 96%
+# -O3:  80 - 92%
+# -Ofast:  50-70%
+# -Oz:  92 - 97%
+# -Os:  93 - 98%
+
+	if is-flagq '-O1' || is-flagq '-O2' || is-flagq '-Oz' || is-flagq '-Os' ; then
+# If optimization level is not set, it defaults to -O0.
+eerror "CFLAGS/CXXFLAGS requires explicity optimization level.  Update /etc/portage/make.conf and re-emerge @world to continue."
+eerror "Valid optimization levels for security-critical dss:  -O1, -O2, -Oz, -Os"
+		is_flag_violation=1
+	fi
 	if (( ${is_flag_violation} == 1 )) ; then
 		die
 	fi
