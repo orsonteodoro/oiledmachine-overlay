@@ -13325,16 +13325,16 @@ _ot-kernel_checkpoint_dss_lsm_requirement() {
 		elif ot-kernel_has_version "sec-policy/selinux-base" ; then
 			:
 		else
-eerror
-eerror "You are missing an access control model implementation for the dss work"
-eerror "profile.  Install one of the following to silence this error:"
-eerror
-eerror "  sys-apps/apparmor"
-eerror "  sys-apps/smack-utils"
-eerror "  sys-apps/tomoyo-tools"
-eerror "  sec-policy/selinux-base"
-eerror
-			die
+# sys-apps/apparmor makes it a fatal error when CONFIG_SECURITY_APPARMOR is missing in kernel config.
+ewarn
+ewarn "You are missing an access control model implementation for the dss work"
+ewarn "profile.  Install one of the following to silence this error:"
+ewarn
+ewarn "  sys-apps/apparmor"
+ewarn "  sys-apps/smack-utils"
+ewarn "  sys-apps/tomoyo-tools"
+ewarn "  sec-policy/selinux-base"
+ewarn
 		fi
 		local is_auto=0
 		if [[ -z "${OT_KERNEL_LSMS}" ]] ; then
