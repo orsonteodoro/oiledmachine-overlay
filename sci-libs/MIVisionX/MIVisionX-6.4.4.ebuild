@@ -85,7 +85,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -270,7 +270,6 @@ src_configure() {
 # Avoid
 # ModuleNotFoundError: No module named 'setuptools'
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
-	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
 	build_libjpeg_turbo
 	build_rapidjson
@@ -339,7 +338,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 		if use rocal-python ; then
 			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages"
+				-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}/usr/lib/${EPYTHON}/site-packages"
 			)
 		fi
 
@@ -458,7 +457,7 @@ fix_rpath() {
 	fi
 	if use rocal-python ; then
 		rpath="${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo/lib"
-		file_path=$(realpath "${ED}/${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
+		file_path=$(realpath "${ED}/${EPREFIX}/usr/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
 		patchelf \
 			--set-rpath "${rpath}" \
 			"${file_path}" \

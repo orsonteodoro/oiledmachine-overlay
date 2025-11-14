@@ -67,7 +67,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	|| (
@@ -214,7 +214,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	if use python ; then
 		mycmakeargs+=(
-			-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages"
+			-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}/usr/lib/${EPYTHON}/site-packages"
 		)
 	fi
 

@@ -267,7 +267,6 @@ ewarn
 				-DOPENCL_ROOT="${EROCM_PATH}/opencl"
 				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
-#				-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}"
 				-DTensile_ROOT="${S}/tensilelite"
 			)
 		fi
