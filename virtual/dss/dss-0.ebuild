@@ -13,6 +13,11 @@ ANTIVIRUS_IUSE=(
 	"clamav"
 )
 
+# File Integrity Monitoring
+FIM_IUSE=(
+	"aide"
+)
+
 FIREWALL_IUSE=(
 	"firewalld"
 	"iptables"
@@ -53,6 +58,7 @@ KEYWORDS="~amd64 ~arm64"
 LICENSE="metapackage"
 IUSE="
 ${ANTIVIRUS_IUSE[@]}
+${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
 ${KERNEL_IUSE[@]}
 ${LOGGER_IUSE[@]}
@@ -66,6 +72,7 @@ REQUIRED_USE="
 		relaxed
 	)
 	standard? (
+		aide
 		clamav
 
 		^^ (
@@ -102,6 +109,7 @@ REQUIRED_USE="
 
 	)
 	relaxed? (
+		aide
 		clamav
 
 		^^ (
@@ -148,6 +156,9 @@ REQUIRED_USE="
 SLOT="0"
 
 ANTIVIRUS_DEPENDS="
+	aide? (
+		app-forensics/aide
+	)
 	clamav? (
 		app-antivirus/clamav
 	)
