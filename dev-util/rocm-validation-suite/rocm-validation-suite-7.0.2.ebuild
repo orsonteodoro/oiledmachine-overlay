@@ -3,14 +3,16 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-)
+CXX_STANDARD=20
 LLVM_SLOT=19
 MY_PN="ROCmValidationSuite"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+)
 
 inherit check-compiler-switch flag-o-matic cmake libstdcxx-slot rocm
 
