@@ -308,7 +308,7 @@ eerror "-O0 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/port
 	fi
 
 # 90% is security-critical.  A-grade security quality.
-# Estimated _FORTIFY_SOURCE coverage:
+# Estimated _FORTIFY_SOURCE [lightweight ASan] coverage:
 #    -O1:  95 - 98%
 #    -Os:  93 - 98%
 #    -Oz:  92 - 97%
