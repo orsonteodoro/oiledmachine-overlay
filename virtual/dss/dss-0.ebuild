@@ -71,6 +71,40 @@ REQUIRED_USE="
 		standard
 		relaxed
 	)
+
+	custom-kernel? (
+		!standard
+		relaxed
+	)
+	git-sources? (
+		!standard
+		relaxed
+	)
+	ntpsec? (
+		!standard
+		relaxed
+	)
+	ot-sources? (
+		!standard
+		relaxed
+	)
+	shorewall? (
+		!standard
+		relaxed
+	)
+	smack? (
+		!standard
+		relaxed
+	)
+	tomoyo? (
+		!standard
+		relaxed
+	)
+	vanilla-sources? (
+		!standard
+		relaxed
+	)
+
 	standard? (
 		aide
 		clamav
