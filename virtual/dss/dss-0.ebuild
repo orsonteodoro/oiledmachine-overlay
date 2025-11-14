@@ -6,11 +6,23 @@ EAPI=7
 
 # This package is WIP
 
+# TODO package:
+# prowler
+
 # Zero-tolerance policy
 KERNEL_PV="6.17.8"
 
 ANTIVIRUS_IUSE=(
 	"clamav"
+)
+
+AUDITING_IUSE=(
+	"lynis"
+	"openscap"
+)
+
+CLOUD_COMPLIANCE_IUSE=(
+	"prowler"
 )
 
 DATA_ENCRYPTION_IUSE=(
@@ -34,6 +46,10 @@ FIREWALL_IUSE=(
 	"ufw"
 )
 
+IDS_IUSE=(
+	"snort"
+)
+
 KERNEL_IUSE=(
 	"custom-kernel"
 	"gentoo-sources"
@@ -44,6 +60,7 @@ KERNEL_IUSE=(
 
 LOGGER_IUSE=(
 	"auditd"
+	"ossec"
 	"rsyslog"
 	"syslog-ng"
 )
@@ -66,14 +83,17 @@ KEYWORDS="~amd64 ~arm64"
 LICENSE="metapackage"
 IUSE="
 ${ANTIVIRUS_IUSE[@]}
+${AUDITING_IUSE[@]}
+${CLOUD_COMPLIANCE_IUSE[@]}
 ${DATA_ENCRYPTION_IUSE[@]}
 ${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
+${IDS_IUSE[@]}
 ${KERNEL_IUSE[@]}
 ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
-+enforce standard relaxed
+audit +enforce +production standard relaxed
 ebuild_revision_2
 "
 REQUIRED_USE="
@@ -81,7 +101,20 @@ REQUIRED_USE="
 		standard
 		relaxed
 	)
+	^^ (
+		audit
+		production
+	)
 
+	aide? (
+		production
+	)
+	auditd? (
+		production
+	)
+	clamav? (
+		production
+	)
 	custom-kernel? (
 		!standard
 		relaxed
@@ -90,9 +123,15 @@ REQUIRED_USE="
 		!standard
 		relaxed
 	)
+	lynis? (
+		audit
+	)
 	ntpsec? (
 		!standard
 		relaxed
+	)
+	openscap? (
+		audit
 	)
 	ot-sources? (
 		!standard
@@ -104,6 +143,7 @@ REQUIRED_USE="
 	)
 	samhain? (
 		!standard
+		audit
 		relaxed
 	)
 	smack? (
@@ -116,6 +156,7 @@ REQUIRED_USE="
 	)
 	tripwire? (
 		!standard
+		audit
 		relaxed
 	)
 	vanilla-sources? (
@@ -128,7 +169,16 @@ REQUIRED_USE="
 	)
 
 	standard? (
-		aide
+		audit? (
+			|| (
+				lynis
+				openscap
+			)
+		)
+
+		|| (
+			aide
+		)
 		clamav
 
 		dm-crypt
@@ -146,6 +196,7 @@ REQUIRED_USE="
 		)
 
 		auditd
+		ossec
 		^^ (
 			rsyslog
 			syslog-ng
@@ -167,8 +218,16 @@ REQUIRED_USE="
 
 	)
 	relaxed? (
+		audit? (
+			|| (
+				lynis
+				openscap
+			)
+		)
+
 		|| (
 			aide
+			ossec
 			samhain
 			tripwire
 		)
@@ -203,6 +262,7 @@ REQUIRED_USE="
 		)
 
 		auditd
+		ossec
 		^^ (
 			rsyslog
 			syslog-ng
@@ -223,23 +283,72 @@ REQUIRED_USE="
 "
 SLOT="0"
 
-ANTIVIRUS_DEPENDS="
-	clamav? (
-		app-antivirus/clamav
+AUDIT_DEPENDS="
+	audit? (
+		lynis? (
+			app-forensics/lynis[audit]
+		)
+		openscap? (
+			app-forensics/openscap[oscap,python]
+		)
+	)
+	production? (
+		!app-forensics/lynis
+		!app-forensics/openscap
 	)
 "
 
-FIM_DEPENDS="
-	aide? (
-		app-forensics/aide
+ANTIVIRUS_DEPENDS="
+	clamav? (
+		app-antivirus/clamav[milter,unrar]
 	)
-	tripwire? (
-		app-admin/tripwire
+"
+
+CLOUD_COMPLIANCE_DEPENDS="
+	audit? (
+		prowler? (
+			app-admin/prowler
+		)
+	)
+	production? (
+		!app-admin/prowler
+	)
+
+"
+
+FIM_DEPENDS="
+	audit? (
+		samhain? (
+			app-forensics/samhain[mysql,postgres]
+		)
+		tripwire? (
+			app-admin/tripwire[ssl]
+		)
+	)
+	production? (
+		!app-admin/tripwire
+		!app-forensics/samhain
+		aide? (
+			app-forensics/aide[acl,zlib]
+		)
+	)
+"
+
+IDS_DEPENDS="
+	audit? (
+		snort? (
+			net-analyzer/snort[openappid]
+		)
+	)
+	production? (
+		snort? (
+			net-analyzer/snort[flexresp]
+		)
 	)
 "
 
 DATA_ENCRYPTION_DEPENDS="
-	app-crypt/gnupg
+	app-crypt/gnupg[smartcard,ssl]
 	dm-crypt? (
 		sys-fs/cryptsetup
 	)
@@ -258,16 +367,27 @@ FIREWALL_DEPENDS="
 "
 
 LOGGER_DEPENDS="
-	auditd? (
-		sys-process/audit
+	audit? (
+		ossec? (
+			app-admin/ossec-hids[mysql,server]
+		)
 	)
-	rsyslog? (
-		app-admin/rsyslog
+
+	production? (
+		auditd? (
+			sys-process/audit[python]
+		)
+		ossec? (
+			app-admin/ossec-hids[agent,-mysql,-server]
+		)
+		rsyslog? (
+			app-admin/rsyslog[mysql,relp,ssl]
+		)
+		syslog-ng? (
+			app-admin/syslog-ng
+		)
+		virtual/logger
 	)
-	syslog-ng? (
-		app-admin/syslog-ng
-	)
-	virtual/logger
 "
 
 KERNEL_DEPENDS="
@@ -318,9 +438,11 @@ LSM_DEPENDS="
 RDEPEND="
 	enforce? (
 		${ANTIVIRUS_DEPENDS}
+		${CLOUD_COMPLIANCE_DEPENDS}
 		${DATA_ENCRYPTION_DEPENDS}
 		${FIM_DEPENDS}
 		${FIREWALL_DEPENDS}
+		${IDS_DEPENDS}
 		${LOGGER_DEPENDS}
 		${LSM_DEPENDS}
 		${NTP_DEPENDS}
