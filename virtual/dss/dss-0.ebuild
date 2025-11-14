@@ -48,7 +48,7 @@ NTP_IUSE=(
 	"ntpsec"
 )
 
-DESCRIPTION="Requirements for secure-critical secure data storage"
+DESCRIPTION="Requirements for security-critical secure data storage"
 KEYWORDS="~amd64 ~arm64"
 LICENSE="metapackage"
 IUSE="
