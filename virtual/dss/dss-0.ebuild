@@ -321,8 +321,8 @@ eerror "-O0 is disallowed systemwide for CFLAGS/CXXFLAGS.  Remove from /etc/port
 		:
 	else
 # If optimization level is not set, it defaults to -O0.
-eerror "CFLAGS/CXXFLAGS requires explicity optimization level.  Update /etc/portage/make.conf and re-emerge @world to continue."
-eerror "Valid optimization levels for security-critical dss:  -O1, -O2, -Oz, -Os"
+eerror "CFLAGS/CXXFLAGS requires an explicit optimization level.  Update /etc/portage/make.conf and re-emerge @world to continue."
+eerror "Valid optimization levels for security-critical for data security:  -O1, -O2, -Oz, -Os"
 		is_flag_violation=1
 	fi
 	if (( ${is_flag_violation} == 1 )) ; then
