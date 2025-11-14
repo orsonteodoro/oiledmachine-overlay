@@ -65,6 +65,7 @@ ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
 +enforce standard relaxed
+ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
