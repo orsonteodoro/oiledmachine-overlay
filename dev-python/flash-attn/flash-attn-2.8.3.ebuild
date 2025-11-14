@@ -107,6 +107,8 @@ REQUIRED_USE="
 			gcc_slot_12_5
 			gcc_slot_13_4
 			gcc_slot_14_3
+		)
+		|| (
 			llvm_slot_15
 			llvm_slot_16
 			llvm_slot_17
