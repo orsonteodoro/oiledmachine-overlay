@@ -319,7 +319,7 @@ src_configure() {
 			-DTensile_LIBRARY_FORMAT="msgpack"
 			-DTensile_LOGIC="asm_full"
 			-DTensile_ROOT="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
-			-DTensile_TENSILE_ROOT="${ESYSROOT}${EROCM_PATH}"
+			-DTensile_TENSILE_ROOT="${ESYSROOT}/usr"
 			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
 		)
 	fi
