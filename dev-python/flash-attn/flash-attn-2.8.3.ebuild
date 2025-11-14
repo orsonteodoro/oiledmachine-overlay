@@ -31,7 +31,11 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
+	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 18, 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_} # 18, 19
+	{18..19}
 )
 
 inherit hip-versions
@@ -55,7 +59,7 @@ ROCM_IUSE=(
 
 inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
 
-#KEYWORDS="~amd64" # The ebuild is not install tested
+KEYWORDS="~amd64" # The ebuild is not install tested
 S="${WORKDIR}/flash-attention-${PV}"
 SRC_URI="
 https://github.com/Dao-AILab/flash-attention/archive/refs/tags/v${PV}.tar.gz
@@ -97,29 +101,41 @@ SLOT="0"
 IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${ROCM_IUSE[@]}
+${GCC_COMPAT[@]/#/gcc_slot_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda rocm training
 ebuild_revision_3
 "
 REQUIRED_USE="
+	^^ (
+		cuda
+		rocm
+	)
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	^^ (
+		${GCC_COMPAT[@]/#/gcc_slot_}
+	)
 	cuda? (
-		|| (
+		^^ (
 			gcc_slot_11_5
 			gcc_slot_12_5
 			gcc_slot_13_4
 			gcc_slot_14_3
 		)
-		|| (
-			llvm_slot_15
-			llvm_slot_16
-			llvm_slot_17
+		^^ (
 			llvm_slot_18
 			llvm_slot_19
 		)
 	)
 	rocm? (
-		|| (
+		^^ (
 			gcc_slot_12_5
 			gcc_slot_13_4
+		)
+		^^ (
+			llvm_slot_19
 		)
 	)
 "
@@ -285,9 +301,29 @@ src_prepare() {
 	fi
 }
 
+_gpu_check_llvm() {
+	local name="${1}"
+	local pv="${2}"
+	shift
+	shift
+	local ALLOWED_SLOTS=( $@ )
+	local s
+	for s in ${ALLOWED_SLOTS[@]} ; do
+		if use "llvm_slot_${s}" ; then
+			return
+		fi
+	done
+eerror "For ${name} ${pv}, only one ${ALLOWED_SLOTS[@]/#/llvm_slot_} is allowed."
+eerror "Pick one ${ALLOWED_SLOTS[@]/#/llvm_slot_} to continue."
+	die
+}
+
 python_configure() {
 	if use cuda ; then
 		export BUILD_TARGET="cuda"
+		_gpu_check_llvm "CUDA" "12.6" 18
+		_gpu_check_llvm "CUDA" "12.8" {18,19}
+		_gpu_check_llvm "CUDA" "12.9" {18,19}
 	elif use rocm ; then
 		export BUILD_TARGET="rocm"
 		local list=""
@@ -298,6 +334,7 @@ python_configure() {
 		done
 		list="${list:1}"
 		export GPU_ARCHS="${list}"
+		_gpu_check_llvm "ROCm" "6.4" 19
 	fi
 }
 
