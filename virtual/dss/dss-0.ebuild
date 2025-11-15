@@ -117,7 +117,7 @@ ${NTP_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
@@ -431,7 +431,6 @@ CLOUD_COMPLIANCE_DEPENDS="
 
 FIM_DEPENDS="
 	audit? (
-		!app-forensics/aide
 		samhain? (
 			app-forensics/samhain[mysql,postgres]
 		)
@@ -447,9 +446,6 @@ FIM_DEPENDS="
 		)
 	)
 
-	!aide? (
-		!app-forensics/aide
-	)
 	!samhain? (
 		!app-forensics/samhain
 	)
