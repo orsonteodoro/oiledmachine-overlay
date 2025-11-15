@@ -133,7 +133,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	!minimal? (
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		sci-libs/hipBLAS:=
 	)
 	minimal? (
