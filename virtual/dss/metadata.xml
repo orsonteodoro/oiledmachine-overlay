@@ -70,6 +70,16 @@
       Add Tomoyo support for system analysis or learned confinement.
     </flag>
 
+    <flag name="aide">
+      Use AIDE for file fingerprinting and report inconsistencies.
+
+      Important fingerprints for compliance:
+      - System config and binaries
+      - User config and data
+      
+      Use AI to help set up private reporting or mail based reporting.
+    </flag>
+
     <flag name="custom-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1.  At least, AppArmor or
