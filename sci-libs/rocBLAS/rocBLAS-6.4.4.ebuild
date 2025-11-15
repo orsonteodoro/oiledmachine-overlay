@@ -115,7 +115,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 asan benchmark cuda +rocm test
-ebuild_revision_26
+ebuild_revision_27
 "
 gen_rocm_required_use() {
 	local x
