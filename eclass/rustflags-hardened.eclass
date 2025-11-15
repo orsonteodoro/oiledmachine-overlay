@@ -119,8 +119,8 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # Estimates:
 # Flag                                                 Performance as a normalized decimal multiple
-# No mitigation                                            1
-# -C target-feature=+stack-probe                       0.005 -  1.03
+# No mitigation                                         1.00
+# -C target-feature=+stack-probe                        0.005 -  1.03
 # -C link-arg=-D_FORTIFY_SOURCE=2                       1.01
 # -C link-arg=-D_FORTIFY_SOURCE=3                       1.02
 # -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now       1.05
