@@ -211,19 +211,26 @@ REQUIRED_USE="
 			!iptables
 			!nftables
 			!shorewall
+			!ufw
 
 			!ossec
 			!rsyslog
 			!syslog-ng
 
-			!ufw
-
 			!auditd
 
 			!aide
+			!samhain
+			!tripwire
 
 			!lynis
 			!openscap
+
+			!apparmor
+			!selinux
+			!smack
+			!tomoyo
+
 		)
 
 		audit? (
@@ -367,6 +374,8 @@ REQUIRED_USE="
 "
 SLOT="0"
 
+# We force remove most of the tools if disabled to prevent weaponization except for availability issue.
+
 AUDIT_DEPENDS="
 	audit? (
 		lynis? (
@@ -380,6 +389,14 @@ AUDIT_DEPENDS="
 		!app-forensics/lynis
 		!app-forensics/openscap
 	)
+
+	!lynis (
+		!app-forensics/lynis
+	)
+	!openscap? (
+		!app-forensics/openscap
+	)
+
 "
 
 ANTIVIRUS_DEPENDS="
@@ -390,6 +407,10 @@ ANTIVIRUS_DEPENDS="
 		clamav? (
 			app-antivirus/clamav[milter,unrar]
 		)
+	)
+
+	!clamav? (
+		!app-antivirus/clamav
 	)
 "
 
@@ -403,6 +424,9 @@ CLOUD_COMPLIANCE_DEPENDS="
 		!app-admin/prowler
 	)
 
+	!prowler? (
+		!app-admin/prowler
+	)
 "
 
 FIM_DEPENDS="
@@ -422,6 +446,16 @@ FIM_DEPENDS="
 			app-forensics/aide[acl,zlib]
 		)
 	)
+
+	!aide? (
+		!app-forensics/aide
+	)
+	!samhain? (
+		!app-forensics/samhain
+	)
+	!tripwire? (
+		!app-admin/tripwire
+	)
 "
 
 IDS_DEPENDS="
@@ -434,6 +468,10 @@ IDS_DEPENDS="
 		snort? (
 			net-analyzer/snort[flexresp]
 		)
+	)
+
+	!snort? (
+		!net-analyzer/snort
 	)
 "
 
@@ -470,6 +508,23 @@ FIREWALL_DEPENDS="
 	production? (
 		!net-firewall/ufw
 	)
+
+	!firewalld? (
+		!net-firewall/firewalld
+	)
+	!iptables? (
+		!net-firewall/iptables
+	)
+	!nftables? (
+		!net-firewall/nftables
+	)
+	!shorewall? (
+		!net-firewall/shorewall
+	)
+	!ufw? (
+		!net-firewall/ufw
+	)
+
 "
 
 LOGGER_DEPENDS="
@@ -495,6 +550,19 @@ LOGGER_DEPENDS="
 			app-admin/syslog-ng[mongodb,redis,ssl]
 		)
 		virtual/logger
+	)
+
+	auditd? (
+		!sys-process/audit
+	)
+	ossec? (
+		!app-admin/ossec-hids
+	)
+	rsyslog? (
+		!app-admin/rsyslog
+	)
+	syslog-ng? (
+		!app-admin/syslog-ng
 	)
 "
 
@@ -541,11 +609,28 @@ LSM_DEPENDS="
 	tomoyo? (
 		sys-apps/tomoyo-tools
 	)
+
+	!apparmor? (
+		!sys-apps/apparmor
+	)
+	!smack? (
+		!sys-apps/smack-utils
+	)
+	!selinux? (
+		!sec-policy/selinux-base
+	)
+	!tomoyo? (
+		!sys-apps/tomoyo-tools
+	)
 "
 
 SANDBOX_DEPENDS="
 	firejail? (
 		sys-apps/firejail
+	)
+
+	!firejail? (
+		!sys-apps/firejail
 	)
 "
 
@@ -565,22 +650,6 @@ RDEPEND="
 		sys-kernel/mitigate-id[enforce?]
 		sys-kernel/mitigate-dos[enforce?]
 		sys-kernel/mitigate-dt[enforce?]
-		casual? (
-			production? (
-				!app-admin/ossec-hids
-				!app-admin/rsyslog
-				!app-admin/syslog-ng
-				!app-forensics/aide
-				!app-forensics/lynis
-				!app-forensics/openscap
-				!net-firewall/firewalld
-				!net-firewall/iptables
-				!net-firewall/nftables
-				!net-firewall/shorewall
-				!net-firewall/ufw
-				!sys-process/audit
-			)
-		)
 	)
 "
 
