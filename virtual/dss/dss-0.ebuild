@@ -105,6 +105,10 @@ REQUIRED_USE="
 		audit
 		production
 	)
+	?? (
+		rsyslog
+		syslog-ng
+	)
 
 	aide? (
 		!audit
@@ -409,9 +413,11 @@ LOGGER_DEPENDS="
 			app-admin/ossec-hids[agent,-mysql,-server]
 		)
 		rsyslog? (
+			!app-admin/syslog-ng
 			app-admin/rsyslog[mysql,relp,ssl]
 		)
 		syslog-ng? (
+			!app-admin/rsyslog
 			app-admin/syslog-ng[mongodb,redis,ssl]
 		)
 		virtual/logger
