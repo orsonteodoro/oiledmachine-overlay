@@ -173,6 +173,8 @@ RDEPEND="
 	rocm? (
 		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_7_0_AMDGPU_USEDEP},rocm]
 		dev-util/Tensile:=
+		>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
+		dev-util/roctracer:=
 		$(python_gen_cond_dep '
 			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${LIBSTDCXX_USEDEP},${TENSILE_7_0_AMDGPU_USEDEP}"',rocm]
 			dev-util/Tensile:=
