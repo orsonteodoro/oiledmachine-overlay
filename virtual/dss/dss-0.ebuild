@@ -206,6 +206,24 @@ REQUIRED_USE="
 		production? (
 			keepassxc
 			firejail
+
+			!firewalld
+			!iptables
+			!nftables
+			!shorewall
+
+			!ossec
+			!rsyslog
+			!syslog-ng
+
+			!ufw
+
+			!auditd
+
+			!aide
+
+			!lynis
+			!openscap
 		)
 
 		audit? (
@@ -218,6 +236,20 @@ REQUIRED_USE="
 			aide
 
 			nftables
+		)
+
+		|| (
+			custom-kernel
+			gentoo-sources
+			git-sources
+			ot-sources
+			vanilla-sources
+		)
+
+		^^ (
+			chrony
+			ntp
+			ntpsec
 		)
 	)
 	compliant? (
@@ -419,6 +451,9 @@ DATA_ENCRYPTION_DEPENDS="
 "
 
 FIREWALL_DEPENDS="
+	firewalld? (
+		net-firewall/firewalld
+	)
 	iptables? (
 		net-firewall/iptables
 	)
@@ -530,6 +565,22 @@ RDEPEND="
 		sys-kernel/mitigate-id[enforce?]
 		sys-kernel/mitigate-dos[enforce?]
 		sys-kernel/mitigate-dt[enforce?]
+		casual? (
+			production? (
+				!app-admin/ossec-hids
+				!app-admin/rsyslog
+				!app-admin/syslog-ng
+				!app-forensics/aide
+				!app-forensics/lynis
+				!app-forensics/openscap
+				!net-firewall/firewalld
+				!net-firewall/iptables
+				!net-firewall/nftables
+				!net-firewall/shorewall
+				!net-firewall/ufw
+				!sys-process/audit
+			)
+		)
 	)
 "
 
