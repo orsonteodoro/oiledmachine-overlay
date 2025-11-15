@@ -82,6 +82,17 @@ NTP_IUSE=(
 	"ntpsec"
 )
 
+HOST_TYPE_IUSE=(
+	"audit"		# Computer #1
+	"+production"	# Computer #2
+)
+
+PROFILES_IUSE=(
+	"casual"
+	"compliant"
+	"flexible"
+)
+
 SANDBOX_IUSE=(
 	"firejail"
 )
@@ -96,25 +107,24 @@ ${CLOUD_COMPLIANCE_IUSE[@]}
 ${DATA_ENCRYPTION_IUSE[@]}
 ${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
+${HOST_TYPE_IUSE[@]/+}
 ${IDS_IUSE[@]}
 ${KERNEL_IUSE[@]}
 ${KEY_STORAGE_IUSE[@]}
 ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
+${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
-audit +enforce +production compliant flexible casual
++enforce
 ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
-		casual
-		compliant
-		flexible
+		${PROFILES_IUSE[@]}
 	)
 	^^ (
-		audit
-		production
+		${HOST_TYPE_IUSE[@]/+}
 	)
 	?? (
 		rsyslog
