@@ -57,6 +57,8 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	>=sci-libs/hipBLAS-common-${PV}:${SLOT}
+	sci-libs/hipBLAS-common:=
 "
 BDEPEND="
 	${HIPCC_DEPEND}

@@ -34,6 +34,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	dev-build/rocm-cmake:=
 	>=dev-build/cmake-3.11
 "
 PATCHES=(
