@@ -118,7 +118,7 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # Estimates:
-# Flag						Performance as a normalized decimal multiple
+# Flag                                                 Performance as a normalized decimal multiple
 # No mitigation                                            1
 # -C target-feature=+stack-probe                       0.005 -  1.03
 # -C link-arg=-D_FORTIFY_SOURCE=2                       1.01
