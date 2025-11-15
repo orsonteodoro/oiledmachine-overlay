@@ -20,11 +20,12 @@
 
       Security scores:
 
-      | Profile        | Online banking  | Cryptocurrency mining/banking | Distributed Blender rendering | Learning curve score [1]  |
-      | ---            | ---             | ---                           | ---                           | ---                       |
-      | casual         | 9.2             | 6.8 [2]                       | 5.5 [3] / 7.8 [4]             | 0.67 [3] / 0.83 [4]       |
-      | flexible       | 9.8             | 8.8                           | 8.5 [3] / 9.1 [4]             | 2.33                      |
-      | compliant      | 10.0            | 9.5                           | 9.5                           | 7.17                      |
+      | Profile                 | Online banking  | Cryptocurrency mining/banking | Distributed Blender rendering | Learning curve score [1]  |
+      | ---                     | ---             | ---                           | ---                           | ---                       |
+      | distro standard install | 6.0             | 3.0                           | 2.0                           | 0.00                      |
+      | casual                  | 9.2             | 6.8 [2]                       | 5.5 [3] / 7.8 [4]             | 0.67 [3] / 0.83 [4]       |
+      | flexible                | 9.8             | 8.8                           | 8.5 [3] / 9.1 [4]             | 2.33                      |
+      | compliant               | 10.0            | 9.5                           | 9.5                           | 7.17                      |
 
     [1] Low scores are easy, but high scores are difficult.
     [2] Miner is unsandboxed.
