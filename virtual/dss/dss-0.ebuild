@@ -58,6 +58,10 @@ KERNEL_IUSE=(
 	"vanilla-sources"
 )
 
+KEY_STORAGE_IUSE=(
+	"keepassxc"
+)
+
 LOGGER_IUSE=(
 	"auditd"
 	"ossec"
@@ -78,6 +82,10 @@ NTP_IUSE=(
 	"ntpsec"
 )
 
+SANDBOX_IUSE=(
+	"firejail"
+)
+
 DESCRIPTION="Requirements for security-critical secure data storage"
 KEYWORDS="~amd64 ~arm64"
 LICENSE="metapackage"
@@ -90,16 +98,19 @@ ${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
 ${IDS_IUSE[@]}
 ${KERNEL_IUSE[@]}
+${KEY_STORAGE_IUSE[@]}
 ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
-audit +enforce +production standard relaxed
+${SANDBOX_IUSE[@]}
+audit +enforce +production compliant flexible casual
 ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
-		standard
-		relaxed
+		casual
+		compliant
+		flexible
 	)
 	^^ (
 		audit
@@ -123,65 +134,83 @@ REQUIRED_USE="
 		production
 	)
 	custom-kernel? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	git-sources? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	lynis? (
 		audit
 		!production
 	)
 	ntpsec? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	openscap? (
 		audit
 		!production
 	)
 	ot-sources? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	shorewall? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	samhain? (
-		!standard
+		!compliant
 		audit
-		relaxed
+		flexible
 	)
 	smack? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	tomoyo? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	tripwire? (
-		!standard
+		!compliant
 		audit
-		relaxed
+		flexible
 	)
 	ufw? (
 		audit
 		!production
 	)
 	vanilla-sources? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 	veracrypt? (
-		!standard
-		relaxed
+		!compliant
+		flexible
 	)
 
-	standard? (
+	casual? (
+		production? (
+			keepassxc
+			firejail
+		)
+
+		audit? (
+			auditd
+			|| (
+				lynis
+				openscap
+			)
+
+			aide
+
+			nftables
+		)
+	)
+	compliant? (
 		audit? (
 			|| (
 				lynis
@@ -230,7 +259,7 @@ REQUIRED_USE="
 		)
 
 	)
-	relaxed? (
+	flexible? (
 		audit? (
 			|| (
 				lynis
@@ -469,6 +498,12 @@ LSM_DEPENDS="
 	)
 "
 
+SANDBOX_DEPENDS="
+	firejail? (
+		sys-apps/firejail
+	)
+"
+
 RDEPEND="
 	enforce? (
 		${ANTIVIRUS_DEPENDS}
@@ -480,6 +515,7 @@ RDEPEND="
 		${LOGGER_DEPENDS}
 		${LSM_DEPENDS}
 		${NTP_DEPENDS}
+		${SANDBOX_DEPENDS}
 		>=sys-kernel/linux-firmware-20251021
 		sys-kernel/mitigate-id[enforce?]
 		sys-kernel/mitigate-dos[enforce?]

@@ -9,12 +9,27 @@
   <use>
     <!--
 
+      oiledmachine-overlay notes:
+
       There are two hosts -- audit workstation and production system.
 
       audit workstation - jump box [a central and single access point computer that controls and records admin access], admin console
                           The audit workstation will test and measure the other production system.
 
       production system - server, container, vm
+
+      Security scores:
+
+      | Profile        | Online banking  | Cryptocurrency mining/banking | Distributed Blender rendering | Learning curve score [1]  |
+      | ---            | ---             | ---                           | ---                           | ---                       |
+      | casual         | 9.2             | 6.8 [2]                       | 5.5 [3] / 7.8 [4]             | 0.67 [3] / 0.83 [4]       |
+      | flexible       | 9.8             | 8.8                           | 8.5 [3] / 9.1 [4]             | 2.33                      |
+      | compliant      | 10.0            | 9.5                           | 9.5                           | 7.17                      |
+
+    [1] Low scores are easy, but high scores are difficult.
+    [2] Miner is unsandboxed.
+    [3] Unsandboxed estimated score.
+    [4] Sandboxed estimated score.
 
     -->
     <flag name="audit">
@@ -28,13 +43,17 @@
       Enforce package checks and systemwide flag checks.
     </flag>
 
-    <flag name="standard">
-      Limit package selection what is allowed universally in standard data
-      security audits
+    <flag name="casual">
+      Adjusted data security that is not overkill for home users but still
+      scores high.
     </flag>
-    <flag name="relaxed">
+    <flag name="compliant">
+      Limit package selection what is allowed universally in standard data
+      security audits.  It is required for payment card readers.
+    </flag>
+    <flag name="flexible">
       Allow for open-ended package selection which some may be more superior
-      security than what audits may allow.
+      security alternatives than what auditors may allow.
     </flag>
 
     <flag name="apparmor">
