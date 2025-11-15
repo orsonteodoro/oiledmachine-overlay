@@ -61,7 +61,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
--asan -benchmark -cuda +rocm +tensile
+-asan -benchmark -cuda +minimal +rocm +tensile
 ebuild_revision_14
 "
 gen_rocm_required_use() {
@@ -118,18 +118,26 @@ RDEPEND="
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
-		sci-libs/hipBLAS:=
+		!minimal? (
+			>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
+			sci-libs/hipBLAS:=
+		)
 	)
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-		sci-libs/hipBLAS:=
+		!minimal? (
+			>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
+			sci-libs/hipBLAS:=
+		)
 	)
 "
 DEPEND="
 	${RDEPEND}
+	minimal? (
+		>=sci-libs/hipBLAS-common-${PV}:${SLOT}
+		sci-libs/hipBLAS-common:=
+	)
 "
 BDEPEND="
 	${HIPCC_DEPEND}
@@ -229,6 +237,7 @@ ewarn
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DLEGACY_HIPBLAS_DIRECT=$(usex minimal OFF ON)
 		-DUSE_CUDA=$(usex cuda ON OFF)
 #		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"
 #		-DVIRTUALENV_PYTHON_EXENAME="${EPYTHON}"
@@ -259,6 +268,7 @@ ewarn
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DLEGACY_HIPBLAS_DIRECT=$()
 		)
 		if use tensile ; then
 			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"

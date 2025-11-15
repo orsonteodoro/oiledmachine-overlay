@@ -14,6 +14,9 @@
       Build with ASan with critical severity security mitigations related to
       memory for both CPU and GPU.
     </flag>
+    <flag name="minimal">
+      Avoid building heavy hipBLAS to just to obtain headers.
+    </flag>
     <flag name="tensile">
       Build full functionality
     </flag>
