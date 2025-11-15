@@ -540,6 +540,8 @@ icl-magma-v2_9_src_prepare() {
 	generate_precisions
 
 	rm -r blas_fix || die
+
+	sed -i -e "/CMP0037/d" "CMakeLists.txt" || die
 }
 
 get_cuda_flags() {
@@ -666,7 +668,7 @@ ewarn
 		local b
 		local c
 		local hip_pv=$(grep -r -e "set(PACKAGE_VERSION" \
-			"${ESYSROOT_ROCM_PATH}/$(get_libdir)/cmake/hip/hip-config-version.cmake" \
+			"${ESYSROOT}/${EROCM_PATH}/$(rocm_get_libdir)/cmake/hip/hip-config-version.cmake" \
 			| head -n 1 \
 			| cut -f 2 -d " " \
 			| cut -f 2 -d '"')
