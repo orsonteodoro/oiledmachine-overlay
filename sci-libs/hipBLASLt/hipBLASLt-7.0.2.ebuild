@@ -228,8 +228,8 @@ src_configure() {
 	local nprocs=$(get_makeopts_nprocs)
 	if (( "${nprocs}" > 1 )) ; then
 ewarn
-ewarn "MAKEOPTS > 1.  Expect 7.33 GiB per process."
-ewarn "Changing to MAKEOPTS=-j1 is recommended."
+ewarn "Your MAKEOPTS is > 1.  Expect 7.33 GiB per process."
+ewarn "Using MAKEOPTS=\"-j1\" is recommended to avoid swap penalty."
 ewarn
 	fi
 
