@@ -7,11 +7,21 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <!--
+
+      There are two hosts -- audit workstation and production system.
+
+      audit workstation - jump box [a central and single access point computer that controls and records admin access], admin console
+                          The audit workstation will test and measure the other production system.
+
+      production system - server, container, vm
+
+    -->
     <flag name="audit">
-      Add packages for maintenance or audits.
+      Add packages for maintenance or the audit workstation.
     </flag>
     <flag name="production">
-      Add packages for production.
+      Add packages for the production system.
     </flag>
 
     <flag name="enforce">
