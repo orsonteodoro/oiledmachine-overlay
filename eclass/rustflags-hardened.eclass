@@ -125,8 +125,8 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # -C link-arg=-D_FORTIFY_SOURCE=3                       1.02
 # -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now       1.05
 # -C overflow-checks=on                                 1.01  -  1.20
-# -C relocation-model=pic                               1.05  - 1.10
-# -C soft-float                                         2.00  -  10.00
+# -C relocation-model=pic                               1.05  -  1.10
+# -C soft-float                                         2.00  - 10.00
 # -Z stack-protector=all                                1.05  -  1.10
 # -Z stack-protector=basic                              1.01  -  1.03
 # -Z stack-protector=strong                             1.02  -  1.05
