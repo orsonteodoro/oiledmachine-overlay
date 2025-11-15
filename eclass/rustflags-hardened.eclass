@@ -119,29 +119,29 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # Estimates:
 # Flag						Performance as a normalized decimal multiple
-# No mitigation						   1
-# -C target-feature=+stack-probe			0.005 -  1.03
-# -C link-arg=-D_FORTIFY_SOURCE=2			1.01
-# -C link-arg=-D_FORTIFY_SOURCE=3			1.02
-# -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now	1.05
-# -C overflow-checks=on					1.01  -  1.20
-# -C relocation-model=pic				1.05  - 1.10
-# -C soft-float						2.00  -  10.00
-# -Z stack-protector=all				1.05  -  1.10
-# -Z stack-protector=basic				1.01  -  1.03
-# -Z stack-protector=strong				1.02  -  1.05
-# -C target-feature=+bti				1.00  -  1.05
-# -C target-feature=+pac-ret				1.01  -  1.05
-# -C target-feature=+pac-ret,+bti			1.02  -  1.07
-# -C target-feature=+retpoline				1.01  -  1.20
-# -Zsanitizer=address					1.50  -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
-# -Zsanitizer=cfi					1.10  -  2.0
-# -Zsanitizer=hwaddress					1.15  -  1.50 (ARM64)
-# -Zsanitizer=leak					1.05  -  1.5
-# -Zsanitizer=memory					3.00  - 11.00
-# -Zsanitizer=safestack					1.01  -  1.20
-# -Zsanitizer=shadow-call-stack				1.01  -  1.15
-# -Zsanitizer=thread					4.00  - 16.00
+# No mitigation                                            1
+# -C target-feature=+stack-probe                       0.005 -  1.03
+# -C link-arg=-D_FORTIFY_SOURCE=2                       1.01
+# -C link-arg=-D_FORTIFY_SOURCE=3                       1.02
+# -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now       1.05
+# -C overflow-checks=on                                 1.01  -  1.20
+# -C relocation-model=pic                               1.05  - 1.10
+# -C soft-float                                         2.00  -  10.00
+# -Z stack-protector=all                                1.05  -  1.10
+# -Z stack-protector=basic                              1.01  -  1.03
+# -Z stack-protector=strong                             1.02  -  1.05
+# -C target-feature=+bti                                1.00  -  1.05
+# -C target-feature=+pac-ret                            1.01  -  1.05
+# -C target-feature=+pac-ret,+bti                       1.02  -  1.07
+# -C target-feature=+retpoline                          1.01  -  1.20
+# -Zsanitizer=address                                   1.50  -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
+# -Zsanitizer=cfi                                       1.10  -  2.0
+# -Zsanitizer=hwaddress                                 1.15  -  1.50 (ARM64)
+# -Zsanitizer=leak                                      1.05  -  1.5
+# -Zsanitizer=memory                                    3.00  - 11.00
+# -Zsanitizer=safestack                                 1.01  -  1.20
+# -Zsanitizer=shadow-call-stack                         1.01  -  1.15
+# -Zsanitizer=thread                                    4.00  - 16.00
 
 # Setting to 4.0 will enable ASan and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.

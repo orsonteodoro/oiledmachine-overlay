@@ -124,49 +124,49 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # For accuracy/integrity set values closer to 20.
 
 # Estimates:
-# Flag					Performance as a normalized decimal multiple
-# No mitigation				1.00
-# -D_FORTIFY_SOURCE=2			1.01
-# -D_FORTIFY_SOURCE=3			1.02
-# -fPIC					1.05 -  1.10
-# -fPIE -pie				1.05 -  1.10
-# -fcf-protection=full			1.03 -  1.05
-# -fhardened				1.03 -  1.08
-# -fstack-clash-protection		1.02 -  1.10
-# -fstack-protect			1.01 -  1.05
-# -fstack-protect-strong		1.03 -  1.10
-# -fstack-protect-all			1.05 -  1.10
-# -ftrapv				1.20 -  2.00
-# -fsanitize=address			1.50 -  4.00 (ASan); 1.01 - 1.1 (GWP-ASan)
-# -fsanitize=cfi			1.10 -  2.00
-# -fsanitize=hwaddress			1.15 -  1.50 (ARM64)
-# -fsanitize=leak			1.05 -  1.50
-# -fsanitize=memory			3.00 - 11.00
-# -fsanitize=safe-stack			1.01 -  1.20
-# -fsanitize=shadowcallstack		1.01 -  1.15
-# -fsanitize=thread			4.00 - 16.00
-# -fsanitize=undefined			1.10 -  2.00
-# -ftrivial-auto-var-init=zero		1.01 -  1.05
-# -mbranch-protection=bti		1.00 -  1.05
-# -mbranch-protection=pac-ret		1.01 -  1.05
-# -mbranch-protection=pac-ret+bti	1.02 -  1.07
-# -mbranch-protection=standard		1.02 -  1.07
+# Flag                                  Performance as a normalized decimal multiple
+# No mitigation                         1.00
+# -D_FORTIFY_SOURCE=2                   1.01
+# -D_FORTIFY_SOURCE=3                   1.02
+# -fPIC                                 1.05 -  1.10
+# -fPIE -pie                            1.05 -  1.10
+# -fcf-protection=full                  1.03 -  1.05
+# -fhardened                            1.03 -  1.08
+# -fstack-clash-protection              1.02 -  1.10
+# -fstack-protect                       1.01 -  1.05
+# -fstack-protect-strong                1.03 -  1.10
+# -fstack-protect-all                   1.05 -  1.10
+# -ftrapv                               1.20 -  2.00
+# -fsanitize=address                    1.50 -  4.00 (ASan); 1.01 - 1.1 (GWP-ASan)
+# -fsanitize=cfi                        1.10 -  2.00
+# -fsanitize=hwaddress                  1.15 -  1.50 (ARM64)
+# -fsanitize=leak                       1.05 -  1.50
+# -fsanitize=memory                     3.00 - 11.00
+# -fsanitize=safe-stack                 1.01 -  1.20
+# -fsanitize=shadowcallstack            1.01 -  1.15
+# -fsanitize=thread                     4.00 - 16.00
+# -fsanitize=undefined                  1.10 -  2.00
+# -ftrivial-auto-var-init=zero          1.01 -  1.05
+# -mbranch-protection=bti               1.00 -  1.05
+# -mbranch-protection=pac-ret           1.01 -  1.05
+# -mbranch-protection=pac-ret+bti       1.02 -  1.07
+# -mbranch-protection=standard          1.02 -  1.07
 # -mfloat-abi=soft -mfpu=none           5.00 - 20.00
-# -mfunction-return=thunk-extern	1.01 -  1.05
-# -mfunction-return=thunk-inline	1.01 -  1.03
-# -mfunction-return=thunk		1.01 -  1.05
-# -mindirect-branch=ibrs		1.01 -  1.10
-# -mindirect-branch=thunk		1.05 -  1.30
-# -mindirect-branch=thunk-inline	1.03 -  1.25
-# -mindirect-branch=thunk-extern	1.05 -  1.15
-# -mindirect-branch-register		1.05 -  1.30
-# -mretpoline				1.10 -  1.30
-# -mretpoline-external-thunk		1.15 -  1.35
-# -fvtable-verify=preinit		1.06 -  1.16
-# -fvtable-verify=std			1.05 -  1.15
-# -Wa,--noexecstack			1.00
-# -Wl,-z,noexecstack			1.00
-# -Wl,-z,relro,-z,now			1.01 -  1.05
+# -mfunction-return=thunk-extern        1.01 -  1.05
+# -mfunction-return=thunk-inline        1.01 -  1.03
+# -mfunction-return=thunk               1.01 -  1.05
+# -mindirect-branch=ibrs                1.01 -  1.10
+# -mindirect-branch=thunk               1.05 -  1.30
+# -mindirect-branch=thunk-inline        1.03 -  1.25
+# -mindirect-branch=thunk-extern        1.05 -  1.15
+# -mindirect-branch-register            1.05 -  1.30
+# -mretpoline                           1.10 -  1.30
+# -mretpoline-external-thunk            1.15 -  1.35
+# -fvtable-verify=preinit               1.06 -  1.16
+# -fvtable-verify=std                   1.05 -  1.15
+# -Wa,--noexecstack                     1.00
+# -Wl,-z,noexecstack                    1.00
+# -Wl,-z,relro,-z,now                   1.01 -  1.05
 
 # Setting to 4.0 will enable ASAN and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
