@@ -492,7 +492,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	# LLVM_SLOT must be after llvm_pkg_setup or llvm-r1_pkg_setup
 	# The CLANG_SLOT is the folder name.
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		# ls /opt/rocm-*/llvm/lib64/clang -> 16.0.0 17.0.0
+		# ls /opt/rocm/lib/llvm/lib64/clang -> 16.0.0 17.0.0
 		if ver_test ${ROCM_SLOT} -ge 6.1 ; then
 			CLANG_SLOT="${LLVM_SLOT}"
 		else

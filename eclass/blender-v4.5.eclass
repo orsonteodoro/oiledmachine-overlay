@@ -1297,7 +1297,7 @@ _src_prepare_patches() {
 
 		sed \
 			-i \
-			-e "s|/opt/rocm/|/opt/rocm-${rocm_version}/|g" \
+			-e "s|/opt/rocm/|/opt/rocm/|g" \
 			"extern/hipew/src/hipew.c" \
 			|| die
 
@@ -1459,15 +1459,15 @@ einfo "CUDA_TARGETS:  ${targets}"
 			| sed -e "s|^;||g")
 		mycmakeargs+=(
 			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
-			-DHIP_DIR="/opt/rocm-${ROCM_VERSION}"
-			-DHIP_ROOT_DIR="/opt/rocm-${ROCM_VERSION}"
+			-DHIP_DIR="/opt/rocm"
+			-DHIP_ROOT_DIR="/opt/rocm"
 		)
 einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 	if use hiprt ; then
 		mycmakeargs+=(
-			-DHIPRT_ROOT_DIR="/opt/rocm-${ROCM_VERSION}"
+			-DHIPRT_ROOT_DIR="/opt/rocm"
 		)
 	fi
 
