@@ -118,22 +118,18 @@ RDEPEND="
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		!minimal? (
-			>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
-			sci-libs/hipBLAS:=
-		)
 	)
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
-		!minimal? (
-			>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-			sci-libs/hipBLAS:=
-		)
 	)
 "
 DEPEND="
 	${RDEPEND}
+	!minimal? (
+		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
+		sci-libs/hipBLAS:=
+	)
 	minimal? (
 		>=sci-libs/hipBLAS-common-${PV}:${SLOT}
 		sci-libs/hipBLAS-common:=
