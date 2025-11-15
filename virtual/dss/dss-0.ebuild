@@ -107,12 +107,15 @@ REQUIRED_USE="
 	)
 
 	aide? (
+		!audit
 		production
 	)
 	auditd? (
+		!audit
 		production
 	)
 	clamav? (
+		!audit
 		production
 	)
 	custom-kernel? (
@@ -125,6 +128,7 @@ REQUIRED_USE="
 	)
 	lynis? (
 		audit
+		!production
 	)
 	ntpsec? (
 		!standard
@@ -132,6 +136,7 @@ REQUIRED_USE="
 	)
 	openscap? (
 		audit
+		!production
 	)
 	ot-sources? (
 		!standard
@@ -303,8 +308,13 @@ AUDIT_DEPENDS="
 "
 
 ANTIVIRUS_DEPENDS="
-	clamav? (
-		app-antivirus/clamav[milter,unrar]
+	audit? (
+		!app-antivirus/clamav
+	)
+	production? (
+		clamav? (
+			app-antivirus/clamav[milter,unrar]
+		)
 	)
 "
 
@@ -322,6 +332,7 @@ CLOUD_COMPLIANCE_DEPENDS="
 
 FIM_DEPENDS="
 	audit? (
+		!app-forensics/aide
 		samhain? (
 			app-forensics/samhain[mysql,postgres]
 		)
