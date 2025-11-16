@@ -113,7 +113,7 @@ einfo "Building Flang lib"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/lib"
 	)
 einfo "GCC major version:  ${gcc_slot}"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
@@ -156,7 +156,7 @@ einfo "Building Flang runtime"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/lib"
 	)
 einfo "GCC major version:  ${gcc_slot}"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
