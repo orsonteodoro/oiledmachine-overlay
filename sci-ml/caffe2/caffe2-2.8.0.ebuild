@@ -1766,13 +1766,13 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 
 	if use rocm ; then
 		mycmakeargs+=(
-			-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_PATH}/lib/llvm/include -fopenmp=libomp"
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/include -fopenmp=libomp"
 			-DOpenMP_C_LIB_NAMES="libomp"
 
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_PATH}/lib/llvm/include -fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_PATH}/lib/llvm/lib/libomp.so"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/lib/libomp.so"
 		)
 	elif use clang ; then
 		mycmakeargs+=(

@@ -2797,7 +2797,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=openmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${llvm_slot}"
 		)
 	fi
 

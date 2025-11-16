@@ -511,7 +511,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 
 	local clang_selected_desc
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_CLANG_PATH="/opt/rocm/lib/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
+		EROCM_CLANG_PATH="${EROCM_PATH}/$(rocm_get_libdir)/llvm/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:0/${ROCM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
@@ -519,7 +519,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_LLVM_PATH="/opt/rocm/lib/llvm"
+		EROCM_LLVM_PATH="${EROCM_PATH}/$(rocm_get_libdir)/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi
@@ -861,7 +861,7 @@ einfo "Fixing rpath for ${path}"
 					|| die
 			else
 				patchelf \
-					--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/$(rocm_get_libdir)" \
+					--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/lib" \
 					"${path}" \
 					|| die
 			fi
@@ -870,7 +870,7 @@ einfo "Fixing rpath for ${path}"
 		if (( ${needs_rpath_patch_llvm} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(rocm_get_libdir)" \
+				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/lib" \
 				"${path}" \
 				|| die
 		fi
@@ -878,7 +878,7 @@ einfo "Fixing rpath for ${path}"
 		if (( ${needs_rpath_patch_libomp} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(rocm_get_libdir)" \
+				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/lib" \
 				"${path}" \
 				|| die
 		fi
@@ -1117,19 +1117,19 @@ rocm_get_libomp_path() {
 		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 	else
 		# The suffix allows us to resolve the ambiguousness.
-		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}roc" ]] ; then
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}roc"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}git" ]] ; then
+		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}roc" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}roc"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}git" ]] ; then
 			# May require RPATH
 			# Unstable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}git"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}git"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}" ]] ; then
 			# Requires RPATH
 			# Stable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}"
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}"
 		else
 			# Requires RPATH
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so"
 		fi
 	fi
 	echo "${libomp_path}"
@@ -1165,7 +1165,7 @@ rocm_set_default_clang() {
 # @DESCRIPTION:
 # Sets compiler defaults to aocc to avoid primarily linker errors.
 rocm_set_default_aocc() {
-	export PATH="${ESYSROOT}/opt/rocm/lib/llvm/alt/bin:${PATH}"
+	export PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/alt/bin:${PATH}"
 	local _llvm_slot="AOCC_${ROCM_SLOT/./_}_SLOT"
 	llvm_slot="${!_llvm_slot}"
 	export CC="${CHOST}-clang-${llvm_slot}"

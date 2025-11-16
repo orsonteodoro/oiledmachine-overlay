@@ -351,7 +351,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/lib/libomp.so"
 		)
 		IFS=$'\n'
 		sed \

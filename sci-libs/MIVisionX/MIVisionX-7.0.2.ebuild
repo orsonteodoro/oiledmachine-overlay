@@ -321,10 +321,10 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DBACKEND="HIP"
+			-DGPU_ARCHS=$(get_amdgpu_flags)
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
-			-DGPU_ARCHS=$(get_amdgpu_flags)
 		)
 
 		if use rocal ; then
@@ -352,7 +352,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/lib/libomp.so"
 		)
 		IFS=$'\n'
 		sed \
