@@ -69,7 +69,7 @@ LICENSE="
 # The distro Apache-2.0 license template does not have all rights reserved
 # The distro MIT license template does not have all rights reserved
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_17"
+IUSE="ebuild_revision_18"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -173,6 +173,7 @@ build_rocmlir() {
 
 		-DMLIR_INCLUDE_TESTS=OFF
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}/${EPREFIX}/${EROCM_PATH}"
+		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
 
 		-DROCMLIR_DRIVER_ENABLED=OFF
 		-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
