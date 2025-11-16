@@ -58,10 +58,6 @@ KERNEL_IUSE=(
 	"vanilla-sources"
 )
 
-KEY_STORAGE_IUSE=(
-	"keepassxc"
-)
-
 LOGGER_IUSE=(
 	"auditd"
 	"ossec"
@@ -87,6 +83,12 @@ HOST_TYPE_IUSE=(
 	"+production"	# Computer #2
 )
 
+PASSWORD_MANAGER_IUSE=(
+	"kpcli"
+	"keepass"
+	"keepassxc"
+)
+
 PROFILES_IUSE=(
 	"casual"
 	"compliant"
@@ -110,10 +112,10 @@ ${FIREWALL_IUSE[@]}
 ${HOST_TYPE_IUSE[@]/+}
 ${IDS_IUSE[@]}
 ${KERNEL_IUSE[@]}
-${KEY_STORAGE_IUSE[@]}
 ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
+${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
@@ -204,7 +206,9 @@ REQUIRED_USE="
 
 	casual? (
 		production? (
-			keepassxc
+			|| (
+				${PASSWORD_MANAGER_IUSE[@]}
+			)
 			firejail
 
 			!firewalld
@@ -369,7 +373,6 @@ REQUIRED_USE="
 			smack
 			tomoyo
 		)
-
 	)
 "
 SLOT="0"
@@ -620,6 +623,18 @@ LSM_DEPENDS="
 	)
 "
 
+PASSWORD_MANAGER_DEPENDS="
+	kpcli? (
+		app-admin/kpcli
+	)
+	keepass? (
+		app-admin/keepass
+	)
+	keepassxc? (
+		app-admin/keepassxc
+	)
+"
+
 SANDBOX_DEPENDS="
 	firejail? (
 		sys-apps/firejail
@@ -641,6 +656,7 @@ RDEPEND="
 		${LOGGER_DEPENDS}
 		${LSM_DEPENDS}
 		${NTP_DEPENDS}
+		${PASSWORD_MANAGER_DEPENDS[@]}
 		${SANDBOX_DEPENDS}
 		>=sys-kernel/linux-firmware-20251021
 		sys-kernel/mitigate-id[enforce?]

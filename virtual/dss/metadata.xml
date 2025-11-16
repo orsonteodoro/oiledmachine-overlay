@@ -11,6 +11,8 @@
 
       oiledmachine-overlay notes:
 
+      (DRAFT)
+
       There are two hosts -- audit workstation and production system.
 
       audit workstation - jump box [a central and single access point computer that controls and records admin access], admin console
@@ -31,6 +33,27 @@
     [2] Miner is unsandboxed.
     [3] Unsandboxed estimated score.
     [4] Sandboxed estimated score.
+
+
+    Password managers are allowed on flexible and compliant profiles but must follow rules:
+
+    1.  Strong encryption
+    2.  Encrypted keyfiles, no plaintext
+    3.  Access to keyfiles must be logged
+    4.  Sync-update must be performed manually
+    5.  Password managers are not allowed on the production environment (aka CDE) in the compliant profile.
+
+
+    For the compliant profile,
+
+    1.  Extraenous software must be removed to avoid weaponization or backdoors.
+    2.  All execution of contents of containers (Flatpak, AppImage, etc.) must be logged via auditd.
+    3.  The allowed software set must be the minimum required to carry out the task.
+    4.  Partitioning and encryption of dev/builder and production roots/environments.
+        - Compilers are disallowed in the production environment.
+        - The production environment must be min set of files, config, and executibles to perform the task.
+        - The dev/builder partition and production partition are encrypted.
+    5.  Only open source software allowed in the production environment for code audit.
 
     -->
     <flag name="audit">
