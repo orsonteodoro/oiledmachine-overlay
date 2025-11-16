@@ -31,7 +31,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
-inherit cmake edo libstdcxx-slot rocm
+inherit cmake edo fix-rpath libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -54,7 +54,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan +sparse -test -benchmark
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -163,6 +163,12 @@ src_install() {
 		dobin "clients/staging/rocsolver-bench"
 	fi
 	rocm_mv_docs
+
+	local RPATH_FIXES=(
+		$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/librocsolver.so")":${EROCM_PATH}/$(rocm_get_libdir)"
+	)
+	fix-rpath_repair
+	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
