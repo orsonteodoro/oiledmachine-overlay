@@ -517,7 +517,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_32
+ebuild_revision_34
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1749,7 +1749,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		export HIPRAND_PATH="${ESYSROOT}${EROCM_PATH}"
 		export HIPSPARSE_PATH="${ESYSROOT}${EROCM_PATH}"
 		export HSA_PATH="${ESYSROOT}${EROCM_PATH}"
-		export MAGMA_HOME="${ESYSROOT}${EROCM_PATH}"
+		export MAGMA_HOME="${ESYSROOT}${EROCM_PATH}/magma"
 		export MIOPEN_PATH="${ESYSROOT}${EROCM_PATH}"
 		export RCCL_PATH="${ESYSROOT}${EROCM_PATH}"
 		export ROCBLAS_PATH="${ESYSROOT}${EROCM_PATH}"
@@ -1776,13 +1776,13 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 
 	if use rocm ; then
 		mycmakeargs+=(
-			-DOpenMP_C_FLAGS="-I${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include -fopenmp=libomp"
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_PATH}/lib/llvm/include -fopenmp=libomp"
 			-DOpenMP_C_LIB_NAMES="libomp"
 
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include -fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_PATH}/lib/llvm/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/libomp.so"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_PATH}/lib/llvm/lib/libomp.so"
 		)
 	elif use clang ; then
 		mycmakeargs+=(
