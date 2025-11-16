@@ -56,6 +56,23 @@
   | Downstream patching for compat    | Less                               | More                          |
   | Tech stack coverage               | More (Full version)                | Less (Open packages only)     |
   | F16C instruction set required     | No (Optional)                      | Yes                           |
+  | rocMLIR optimization [1]          | Optional, default off              | No [3]                        |
+  | MIGraphX optimization [2]         | Optional, default off              | No [3]                        |
+
+  [1] Performance impact estimates for MIOpen:
+
+                Convolutions:  5 - 15% faster 
+      Attention/Transformers:  10 - 25% faster
+                        GEMM:  5 - 10% faster
+              Model Training:  15 - 20% speedup
+            Compilation time:  20 - 50% longer
+
+  [2] Performance impact estimates for ONNX Runtime:
+
+      MIGraphX vs ROCM Execution Provider (EP):  5 - 20% faster
+                               MIGraphX vs CPU:  10 - 100x faster
+
+  [3] Not packaged
 
 
   Environment variables:
