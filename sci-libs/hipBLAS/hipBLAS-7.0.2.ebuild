@@ -13,7 +13,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
 
-inherit cmake flag-o-matic libstdcxx-slot rocm
+inherit cmake flag-o-matic fix-rpath libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/hipBLAS-rocm-${PV}"
@@ -34,7 +34,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 -asan cuda +rocm
-ebuild_revision_6
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
@@ -118,6 +118,14 @@ src_install() {
 		doins "library/src/hipblas_module.f90"
 	fi
 	rocm_mv_docs
+
+	if use rocm ; then
+		local RPATH_FIXES=(
+			$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/libhipblas.so")":${EROCM_PATH}/$(rocm_get_libdir)"
+		)
+		fix-rpath_repair
+		fix-rpath_verify
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
