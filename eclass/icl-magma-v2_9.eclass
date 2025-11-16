@@ -71,7 +71,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit check-compiler-switch cmake flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake fix-rpath flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	inherit rocm
 else
@@ -90,7 +90,7 @@ HOMEPAGE="
 LICENSE="BSD"
 IUSE+="
 atlas doc examples -ilp64 mkl openblas tbb openmp test
-ebuild_revision_7
+ebuild_revision_8
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
@@ -404,7 +404,7 @@ icl-magma-v2_9_pkg_setup() {
 gen_pc_file() {
 	local _prefix
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		_prefix="${EPREFIX}/${EROCM_PATH}"
+		_prefix="${EPREFIX}/${EROCM_PATH}/magma"
 	elif [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		_prefix="${EPREFIX}/usr"
 	else
@@ -582,11 +582,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if has rocm ${IUSE_EFFECTIVE} ; then
 		mycmakeargs+=(
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/magma"
 			-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
 		)
 		append-ldflags \
-			-L"${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)"
+			-L"${EPREFIX}${EROCM_PATH}/magma/lib"
 	else
 		mycmakeargs+=(
 			-DMAGMA_ENABLE_HIP=OFF
@@ -668,7 +668,7 @@ ewarn
 		local b
 		local c
 		local hip_pv=$(grep -r -e "set(PACKAGE_VERSION" \
-			"${ESYSROOT}/${EROCM_PATH}/$(rocm_get_libdir)/cmake/hip/hip-config-version.cmake" \
+			"${ESYSROOT}/${EROCM_PATH}/magma/lib/cmake/hip/hip-config-version.cmake" \
 			| head -n 1 \
 			| cut -f 2 -d " " \
 			| cut -f 2 -d '"')
@@ -703,13 +703,13 @@ icl-magma-v2_9_src_install() {
 	cmake_src_install
 	if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		insinto "/usr/include/${PN}"
-		doins include/*.h
+		doins "include/"*".h"
 		insinto "/usr/$(get_libdir)/pkgconfig"
 	fi
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		insinto "${EROCM_PATH}/include/${PN}"
-		doins include/*.h
-		insinto "${EROCM_PATH}/$(rocm_get_libdir)/pkgconfig"
+		insinto "${EROCM_PATH}/magma/include/${PN}"
+		doins "include/"*".h"
+		insinto "${EROCM_PATH}/magma/lib/pkgconfig"
 	fi
 	doins "${PN}.pc"
 	local DOCS=(
@@ -721,6 +721,15 @@ icl-magma-v2_9_src_install() {
 		docs/html/.
 	)
 	einstalldocs
+
+	if use rocm ; then
+		local RPATH_FIXES=(
+			"${ED}${EROCM_PATH}/$(rocm_get_libdir)/libmagma.so:${EROCM_PATH}/$(rocm_get_libdir)"
+			"${ED}${EROCM_PATH}/$(rocm_get_libdir)/libmagma_sparse.so:${EROCM_PATH}/$(rocm_get_libdir),${EROCM_PATH}/magma/lib"
+		)
+		fix-rpath_repair
+	fi
+	fix-rpath_verify
 }
 
 EXPORT_FUNCTIONS \
