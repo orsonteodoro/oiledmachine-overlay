@@ -71,7 +71,8 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-+ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels mlir opencl +rocm test
++ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
+miopendriver mlir opencl +rocm test
 ebuild_revision_16
 "
 gen_amdgpu_required_use() {
@@ -166,6 +167,10 @@ RDEPEND="
 	kernels? (
 		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_6_4_AMDGPU_USEDEP}]
 		sci-libs/miopenkernels:=
+	)
+	miopendriver? (
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_6_4_AMDGPU_USEDEP}]
+		sci-libs/rocRAND:=
 	)
 	mlir? (
 		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP},fat-librockcompiler(+)]
@@ -328,7 +333,8 @@ src_configure() {
 	# Removed double slash (//) to fix error "file called with network path DESTINATION."
 		-DCMAKE_INSTALL_PREFIX=$(realpath -m "${EPREFIX}/${EROCM_PATH}")
 		-DCMAKE_SKIP_RPATH=ON
-		-DMIOPEN_BACKEND=HIP
+		-DMIOPEN_BACKEND="HIP"
+		-DMIOPEN_BUILD_DRIVER=$(usex miopendriver ON OFF)
 		-DMIOPEN_ENABLE_AI_KERNEL_TUNING=$(usex ai-kernel-tuning ON OFF)
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
