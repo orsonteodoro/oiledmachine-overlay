@@ -72,7 +72,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_19
+ebuild_revision_20
 "
 gen_amdgpu_required_use() {
 	local x
@@ -426,8 +426,8 @@ src_install() {
 	rocm_mv_docs
 
 	local RPATH_FIXES=(
-		$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/libMIOpen.so")
-		"${ED}/${EROCM_PATH}/bin/MIOpenDriver"
+		$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/libMIOpen.so")":${EROCM_PATH}/$(rocm_get_libdir)"
+		"${ED}/${EROCM_PATH}/bin/MIOpenDriver:${EROCM_PATH}/$(rocm_get_libdir)"
 	)
 	fix-rpath_repair
 	fix-rpath_verify
