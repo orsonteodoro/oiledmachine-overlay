@@ -106,6 +106,7 @@ gen_hipblaslt_required_use() {
 }
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
+	miopendriver
 	composable-kernel? (
 		!amdgpu_targets_gfx1031
 		rocm
