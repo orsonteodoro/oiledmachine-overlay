@@ -713,12 +713,12 @@ icl-magma-v2_9_src_install() {
 	fi
 	doins "${PN}.pc"
 	local DOCS=(
-		README
-		ReleaseNotes
+		"README"
+		"ReleaseNotes"
 	)
 	local HTML_DOCS=()
 	use doc && HTML_DOCS=(
-		docs/html/.
+		"docs/html/."
 	)
 	einstalldocs
 
