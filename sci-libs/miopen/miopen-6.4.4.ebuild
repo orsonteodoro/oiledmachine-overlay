@@ -44,7 +44,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+inherit check-compiler-switch cmake flag-o-matic fix-rpath libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/MIOpen-rocm-${PV}"
@@ -73,7 +73,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_17
+ebuild_revision_19
 "
 gen_amdgpu_required_use() {
 	local x
@@ -370,17 +370,21 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
+	rocm_set_default_clang
+
+	# Group must go after rocm_set_default_clang to avoid broken strip-unsupported-flags
 	if has_version "dev-util/hip:0/${ROCM_SLOT}[lc]" ; then
-		append-ldflags -lamd_comgr
+		append-ldflags -Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)" -Wl,-lamd_comgr
 	fi
 	if has_version "dev-util/hip:0/${ROCM_SLOT}[hsa]" ; then
-		append-ldflags -lhsa-runtime64
+		append-ldflags -Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)" -Wl,-lhsa-runtime64
 	fi
 	if has_version "dev-util/hip:0/${ROCM_SLOT}[numa]" ; then
-		append-ldflags -lnuma
+		append-ldflags -Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)" -Wl,-lnuma
 	fi
 
-	rocm_set_default_clang
+	# To fix dynamic linking for ${S}/bin/addkernels
+	export LD_LIBRARY_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir):${LD_LIBRARY_PATH}"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -400,6 +404,14 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 
 	rocm_src_configure
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "LD:  ${LD}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 src_test() {
@@ -413,6 +425,13 @@ src_test() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+
+	local RPATH_FIXES=(
+		$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/libMIOpen.so")
+		"${ED}/${EROCM_PATH}/bin/MIOpenDriver"
+	)
+	fix-rpath_repair
+	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
