@@ -1107,34 +1107,6 @@ rocm_verify_rpath_correctness() {
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: rocm_get_libomp_path
-# @DESCRIPTION:
-# Gets the abspath to libomp.so*.
-rocm_get_libomp_path() {
-	local libomp_path
-	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
-		# Stable API, slotted
-		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-	else
-		# The suffix allows us to resolve the ambiguousness.
-		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}roc" ]] ; then
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}roc"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}git" ]] ; then
-			# May require RPATH
-			# Unstable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}git"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}" ]] ; then
-			# Requires RPATH
-			# Stable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so.${LLVM_SLOT}"
-		else
-			# Requires RPATH
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/lib/libomp.so"
-		fi
-	fi
-	echo "${libomp_path}"
-}
-
 # @FUNCTION: rocm_set_default_gcc
 # @DESCRIPTION:
 # Sets compiler defaults to gcc to avoid versioned C++ linking errors.

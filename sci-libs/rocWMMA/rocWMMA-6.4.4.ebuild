@@ -50,7 +50,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -125,7 +125,7 @@ src_configure() {
 		-DHIP_RUNTIME="rocclr"
 		-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 		-DOpenMP_CXX_LIB_NAMES="libomp"
-		-DOpenMP_libomp_LIBRARY="$(rocm_get_libomp_path)"
+		-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/lib/libomp.so"
 		-DROCWMMA_BUILD_TESTS=OFF
 	)
 
