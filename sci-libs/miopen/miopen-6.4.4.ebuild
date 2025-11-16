@@ -73,7 +73,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_16
+ebuild_revision_17
 "
 gen_amdgpu_required_use() {
 	local x
@@ -370,6 +370,12 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
+	if has_version "dev-util/hip:0/${ROCM_SLOT}[lc]" ; then
+		append-ldflags -lamd_comgr
+	fi
+	if has_version "dev-util/hip:0/${ROCM_SLOT}[hsa]" ; then
+		append-ldflags -lhsa-runtime64
+	fi
 	if has_version "dev-util/hip:0/${ROCM_SLOT}[numa]" ; then
 		append-ldflags -lnuma
 	fi
