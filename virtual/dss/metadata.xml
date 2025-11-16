@@ -51,7 +51,7 @@
     3.  The allowed file set must be the minimum required to carry out the task.
     4.  Partitioning and encryption required for dev/builder and production mount points and environments.
         - Compilers are disallowed in the production environment.
-        - The production environment must be min set of files, config, and executibles to perform the task.
+        - The production environment must be minimal set of files, config, and executibles to perform the task.
         - The dev/builder partition and production partition are encrypted.
     5.  Only open source software allowed in the production environment for code audit.
 
