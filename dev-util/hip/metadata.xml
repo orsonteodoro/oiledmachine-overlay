@@ -41,9 +41,10 @@
   | gfx early access                  | Yes                                | No                            |
   | gfx support policy                | Strict, drops unsupported arches   | Unreviewed, allows old arches |
   | gfx dependency chain consistency  | Yes                                | No                            |
-  | amdgpu kernel driver(s)           | Either vendor supplied (rock-dkms) | Mainlined only                |
+  | amdgpu kernel driver(s)           | Vendor supplied (rock-dkms)        | Mainlined only                |
   |                                   | or mainlined only                  | (aka kernel package)          |
-  | amdgpu KFD completeness           | Feature complete or partial        | Partial only                  |
+  | amdgpu KFD completeness           | Vendor supplied feature complete   | Partial only                  |
+  |                                   | or mainlined partial               |                               |
   | Firmware                          | amdgpu-firmware or linux-firmware  | linux-firmware only           |
   | Version range policy              | Strict                             | Relaxed                       |
   | Slot                              | Monoslot                           | Monoslot                      |
