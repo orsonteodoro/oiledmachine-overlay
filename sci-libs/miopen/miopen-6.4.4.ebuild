@@ -71,7 +71,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-+ai-kernel-tuning comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test
++ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels mlir opencl +rocm test
 ebuild_revision_16
 "
 gen_amdgpu_required_use() {
@@ -84,11 +84,35 @@ gen_amdgpu_required_use() {
 		"
 	done
 }
+is_gfx_supported_by_miopen() {
+	local gfx="${1}"
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+		if [[ "${gfx}" == "${x}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+gen_hipblaslt_required_use() {
+	local x
+	for x in ${HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+		is_gfx_supported_by_miopen "${x}" || continue
+		echo "
+			${x}
+		"
+	done
+}
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
 	composable-kernel? (
 		!amdgpu_targets_gfx1031
 		rocm
+	)
+	hipblaslt? (
+		|| (
+			$(gen_hipblaslt_required_use)
+		)
 	)
 	hiprtc? (
 		comgr
@@ -108,6 +132,18 @@ REQUIRED_USE="
 		opencl
 	)
 "
+gen_hipblaslt_rdepend() {
+	local x
+	for x in ${HIPBLASLT_6_4_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+		is_gfx_supported_by_miopen "${x}" || continue
+		echo "
+			${x}? (
+				>=sci-libs/hipBLASLt-${PV}:${SLOT}[${x}]
+				sci-libs/hipBLASLt:=
+			)
+		"
+	done
+}
 RDEPEND="
 	>=app-arch/zstd-1.4.5
 	>=dev-db/sqlite-3.49.1
@@ -123,6 +159,9 @@ RDEPEND="
 	composable-kernel? (
 		sci-libs/composable-kernel:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_6_4_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
+	)
+	hipblaslt? (
+		$(gen_hipblaslt_rdepend)
 	)
 	kernels? (
 		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_6_4_AMDGPU_USEDEP}]
@@ -143,14 +182,20 @@ RDEPEND="
 		sci-libs/rocBLAS:=
 	)
 "
+gen_hipblaslt_depend() {
+	local x
+	for x in ${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+		is_gfx_supported_by_miopen "${x}" || continue
+		echo "
+			${x}? (
+				>=sci-libs/hipBLAS-common-${PV}:${SLOT}
+				sci-libs/hipBLAS-common:=
+			)
+		"
+	done
+}
 DEPEND="
 	${RDEPEND}
-	ai-kernel-tuning? (
-		>=dev-cpp/frugally-deep-0.15.21_p0
-		dev-cpp/frugally-deep:=
-		>=dev-cpp/eigen-3.4.0:3
-		dev-cpp/eigen:=
-	)
 	>=dev-libs/half-1.12.0
 	dev-libs/half:=
 	>=dev-cpp/eigen-3.4.0:3
@@ -159,6 +204,15 @@ DEPEND="
 	dev-cpp/frugally-deep:=
 	>=dev-cpp/nlohmann_json-3.11.2
 	dev-cpp/nlohmann_json:=
+	ai-kernel-tuning? (
+		>=dev-cpp/frugally-deep-0.15.21_p0
+		dev-cpp/frugally-deep:=
+		>=dev-cpp/eigen-3.4.0:3
+		dev-cpp/eigen:=
+	)
+	hipblaslt? (
+		$(gen_hipblaslt_depend)
+	)
 "
 #	sys-devel/binutils[gold,plugins]
 BDEPEND="
@@ -279,6 +333,7 @@ src_configure() {
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
 		-DMIOPEN_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
+		-DMIOPEN_USE_HIPBLASLT=$(usex hipblaslt ON OFF)
 		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
 		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
