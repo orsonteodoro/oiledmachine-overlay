@@ -58,12 +58,14 @@
 
     Restrictions on ciphers and hashes
 
-    | Algorithm          | Purpose                   | Allowed profiles             | Allowed partitions |
-    | ---                | ---                       | ---                          | ---                |
-    | AES-256            | Encryption                | casual, flexible, compliant  | dev, production    |
-    | PBKDF2-HMAC-SHA256 | Password generation (KDF) | casual, flexible, compliant  | dev, production    |
-    | ChaCha20-Poly1305  | Encryption                | casual, flexible             | dev                |
-    | Argon2             | Password generation (KDF) | casual, flexible, compliant  | dev                |
+    | Algorithm                                   | Purpose                   | Allowed profiles             | Allowed partitions       | Notes                      |
+    | ---                                         | ---                       | ---                          | ---                      | ---                        |
+    | LUKS2 + AES-256-XTS-PLAIN64 + KEYSIZE(512)  | Encryption                | casual, flexible, compliant  | dev, production, swap    | Swapping CHD is disallowed |
+    | PBKDF2-HMAC-SHA256                          | Password generation (KDF) | casual, flexible, compliant  | dev, production          |                            |
+    | ChaCha20-Poly1305                           | Encryption                | casual, flexible             | dev, swap                | Swapping CHD is disallowed |
+    | Argon2                                      | Password generation (KDF) | casual, flexible, compliant  | dev                      |                            |
+
+
 
     -->
     <flag name="audit">
