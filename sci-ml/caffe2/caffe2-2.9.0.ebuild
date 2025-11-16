@@ -517,7 +517,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_34
+ebuild_revision_35
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1208,7 +1208,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
 	"${FILESDIR}/${PN}-2.4.0-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.9.0-fix-libcpp.patch"
-	"${FILESDIR}/${PN}-2.9.0-aotriton-offline-install.patch"
+	"${FILESDIR}/${PN}-2.8.0-aotriton-offline-install.patch"
 	"${FILESDIR}/${PN}-2.5.1-link-openmp-to-torch_shm_manager.patch"
 	"${FILESDIR}/${PN}-2.9.0-prefixed-install.patch"
 	"${FILESDIR}/${PN}-2.9.0-optionalize-simd.patch"
@@ -1428,6 +1428,23 @@ src_prepare() {
 
 	if ! use jit ; then
 		sed -i -e "/libtorch_edge_profiler_sources/d" "caffe2/CMakeLists.txt" || die
+	fi
+
+	local aotriton_commit="${AOTRITON_COMMIT}"
+	local aotriton_short_commit="${aotriton_commit:0:7}"
+	local aotriton_sha256_fingerprint="ca0af8b732e0188f9de4058d6da8ca9bfe79a942e3cb578664d7aa0c87c227c6"
+	sed -i \
+		-e "s|@AIOTRON_TARBALL_SHA256_FINGERPRINT@|${aotriton_sha256_fingerprint}|g" \
+		-e "s|@AOTRITION_COMMIT@|${aotriton_commit}|g" \
+		-e "s|@AOTRITION_SHORT_COMMIT@|${aotriton_short_commit}|g" \
+		"cmake/External/aotriton.cmake" \
+		|| die
+	if use rocm ; then
+		cat \
+			"${DISTDIR}/aotriton-${AOTRITON_COMMIT:0:7}.tar.gz" \
+			> \
+			"${BUILD_DIR}/aotriton-${AOTRITON_COMMIT:0:7}.tar.gz" \
+			|| die
 	fi
 }
 
