@@ -24,7 +24,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/${PV}"
+SLOT="${PROTOBUF_SLOT}/${PV}" # Use PYTHONPATH for multislot package
 IUSE+=" "
 RDEPEND+="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
@@ -55,6 +55,7 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+die "QA:  FIXME:  Change install location"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
