@@ -7,7 +7,8 @@ EAPI=8
 MY_PN="opentelemetry_exporter_otlp_proto_grpc"
 
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PROTOBUF_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
@@ -26,13 +27,17 @@ RESTRICT="mirror"
 SLOT="0/${PV}"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
-	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.63.2[${PYTHON_USEDEP}]
+	>=dev-python/googleapis-common-protos-1.57[${PYTHON_USEDEP}]
+	>=dev-python/grpcio-1.63.2:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${PV}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-api:=
 	~dev-python/opentelemetry-exporter-otlp-proto-common-${PV}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-exporter-otlp-proto-common:=
 	~dev-python/opentelemetry-proto-${PV}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-proto:=
 	~dev-python/opentelemetry-sdk-${PV}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-sdk:=
 "
 DEPEND+="
 	${RDEPEND}
