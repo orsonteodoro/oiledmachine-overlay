@@ -188,8 +188,6 @@ inherit prefix rocm toolchain-funcs
 # The same results can be obtained by observing the console logs.
 # URIs provided for verification and faster future updates.
 
-inherit protobuf-ver
-
 ABSEIL_PY_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 APPLE_SUPPORT_PV="1.6.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 CUDA_PV="12.3"			# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L155
@@ -208,10 +206,6 @@ OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1
 #PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/4662f7552dc2e420ee20361c077b7aeb334a1087/third_party/rules_cuda/cuda/dependencies.bzl#L66 ; hash from with EGIT_COMMIT_TF_RUNTIME
 PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
-PROTOBUF_SLOTS=(
-	${PROTOBUF_3_SLOTS[@]}
-	${PROTOBUF_4_SLOTS[@]}
-)
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/rules_swift/blob/1.5.0/MODULE.bazel#L13
@@ -589,32 +583,26 @@ gen_rocm_rdepend() {
 
 GOOGLE_CLOUD_CPP_PROTOBUF_3="
 	python? (
-		|| (
-			=net-libs/google-cloud-cpp-2.10*
-			=net-libs/google-cloud-cpp-2.9*
-		)
+		net-libs/google-cloud-cpp:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		net-libs/google-cloud-cpp:=
 	)
 "
 gen_protobuf_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				(
-					${GOOGLE_CLOUD_CPP_PROTOBUF_3}
-					!big-endian? (
-						python_single_target_${impl}? (
-							net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
-						)
-					)
-					big-endian? (
-						net-libs/grpc:${PROTOBUF_PV%%.*}[-python]
+	local impl
+	for impl in ${PYTHON_COMPAT[@]} ; do
+		echo "
+			(
+				${GOOGLE_CLOUD_CPP_PROTOBUF_3}
+				!big-endian? (
+					python_single_target_${impl}? (
+						net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
 					)
 				)
-			"
-		done
+				big-endian? (
+					net-libs/grpc:${PROTOBUF_PV%%.*}[-python]
+				)
+			)
+		"
 	done
 }
 
@@ -624,7 +612,6 @@ RDEPEND_PROTOBUF="
 	)
 	net-libs/grpc:=
 "
-
 RDEPEND_GRPCIO="
 	|| (
 		(
@@ -648,23 +635,20 @@ RDEPEND_GRPCIO="
 # slot conflict.
 #
 gen_protobuf_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				(
-					dev-libs/protobuf:${PROTOBUF_PV%%.*}
-					dev-libs/protobuf:=
-					python? (
-						python_single_target_${impl}? (
-							dev-python/protobuf:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-							dev-python/protobuf:=
-						)
+	local impl
+	for impl in ${PYTHON_COMPAT[@]} ; do
+		echo "
+			(
+				dev-libs/protobuf:${PROTOBUF_PV%%.*}
+				dev-libs/protobuf:=
+				python? (
+					python_single_target_${impl}? (
+						dev-python/protobuf:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+						dev-python/protobuf:=
 					)
 				)
-			"
-		done
+			)
+		"
 	done
 }
 # The abseil-cpp rdepends is handled by protobuf package.
