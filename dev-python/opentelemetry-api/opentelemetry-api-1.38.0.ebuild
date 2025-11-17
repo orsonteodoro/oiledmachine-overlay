@@ -22,6 +22,9 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 KEYWORDS="~amd64"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	>=dev-python/importlib-metadata-6.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
@@ -73,4 +76,19 @@ python_test() {
 
 	local -x PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
 	epytest
+}
+
+python_install_all() {
+	distutils-r1_python_install_all
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib"
+	mv \
+		"${ED}/usr/lib/python"* \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib" \
+		|| die
+
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc"
+	mv \
+		"${ED}/usr/share/doc/opentelemetry-api-${PV}" \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc" \
+		|| die
 }
