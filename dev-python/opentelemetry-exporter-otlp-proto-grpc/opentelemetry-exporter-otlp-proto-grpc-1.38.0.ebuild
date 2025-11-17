@@ -70,7 +70,7 @@ src_install() {
 #
 # To handle multslot OpenTelemetry Python do
 # EPYTHON="python3.11"
-# PROTOBUF_SLOT="3"
+# PROTOBUF_SLOT="5"
 # # Add both multislot OpenTelemetry and multislot grpcio to PYTHONPATH
 # PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/grpc/${PROTOBUF_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 # <appname>
