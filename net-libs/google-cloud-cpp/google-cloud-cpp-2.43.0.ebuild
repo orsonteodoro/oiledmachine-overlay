@@ -46,31 +46,32 @@ ebuild_revision_4
 # Tests need a GCP account
 RESTRICT="test"
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:0/${ABSEIL_CPP_PV%.*}
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:0/${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
 	dev-cpp/abseil-cpp:=
-	>=dev-cpp/nlohmann_json-3.11.3
-	>=dev-libs/crc32c-1.1.2
+	>=dev-libs/crc32c-1.1.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/openssl-1.1.1
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2025.07.22
+	>=dev-libs/re2-0.2025.07.22[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/re2:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
-	net-libs/grpc:${PROTOBUF_SLOT}[cxx]
+	net-libs/grpc:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
 	net-libs/grpc:=
-	virtual/protobuf:${PROTOBUF_SLOT}
+	virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/protobuf:=
-	virtual/grpc:${PROTOBUF_SLOT}
+	virtual/grpc:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
 "
 DEPEND="
 	${RDEPEND}
+	>=dev-cpp/nlohmann_json-3.11.3
+	dev-cpp/nlohmann_json:=
 "
 BDEPEND="
-	>=dev-cpp/gtest-1.16.0
-	>=dev-cpp/yaml-cpp-0.7.0
+	>=dev-cpp/gtest-1.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	test? (
-		>=dev-cpp/benchmark-1.9.2
+		>=dev-cpp/benchmark-1.9.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 DOCS=( README.md )
