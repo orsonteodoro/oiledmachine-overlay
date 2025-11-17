@@ -3,34 +3,39 @@
 
 EAPI=8
 
-MY_PN="opentelemetry_api"
+# For version correspondence, see
+# https://github.com/open-telemetry/opentelemetry-python/blob/v1.27.0/opentelemetry-semantic-conventions/src/opentelemetry/semconv/version/__init__.py
+
+MY_PN="opentelemetry_semantic_conventions"
+MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..12} )
+OPENTELEMETRY_PV="1.38.0"
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
-S="${WORKDIR}/${MY_PN}-${PV}"
+KEYWORDS="~amd64"
+S="${WORKDIR}/${MY_PN}-${MY_PV}"
 
-DESCRIPTION="OpenTelemetry Python API"
+DESCRIPTION="OpenTelemetry Semantic Conventions"
 HOMEPAGE="
 	https://opentelemetry.io/
-	https://pypi.org/project/opentelemetry-api/
+	https://pypi.org/project/opentelemetry-sdk/
 	https://github.com/open-telemetry/opentelemetry-python/
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
-KEYWORDS="~amd64"
+SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
 RDEPEND="
-	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
-	>=dev-python/importlib-metadata-6.0[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-api:=
 "
 BDEPEND="
 	test? (
 		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
-		>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-8.4.0[${PYTHON_USEDEP}]
+		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
 		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
@@ -45,30 +50,18 @@ BDEPEND="
 
 distutils_enable_tests "pytest"
 
-src_prepare() {
-	default
-
-	# Unnecessary restriction
-	sed -i \
-		-e '/importlib-metadata/s:, <= [0-9.]*::' \
-		"pyproject.toml" \
-		|| die
-}
-
 python_test() {
-	cp -a "${BUILD_DIR}"/{install,test} || die
-	local -x PATH=${BUILD_DIR}/test/usr/bin:${PATH}
+	cp -a "${BUILD_DIR}/"{"install","test"} || die
+	local -x PATH="${BUILD_DIR}/test/usr/bin:${PATH}"
 
 	local L=(
-		"opentelemetry-semantic-conventions"
 		"opentelemetry-sdk"
 		"tests/opentelemetry-test-utils"
 	)
-
 	local dep
 	for dep in ${L[@]} ; do
 		pushd "${WORKDIR}/${MY_P}/${dep}" >/dev/null || die
-			distutils_pep517_install "${BUILD_DIR}"/test
+			distutils_pep517_install "${BUILD_DIR}/test"
 		popd >/dev/null || die
 	done
 

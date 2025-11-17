@@ -4,31 +4,31 @@
 
 EAPI=8
 
-MY_PN="opentelemetry_proto"
+MY_PN="opentelemetry_exporter_otlp_proto_common"
 
 DISTUTILS_USE_PEP517="hatchling"
-PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-DESCRIPTION="OpenTelemetry Python Proto"
+DESCRIPTION="OpenTelemetry Protobuf encoding"
 HOMEPAGE="
-	https://github.com/open-telemetry/opentelemetry-python/tree/main/opentelemetry-proto
-	https://pypi.org/project/opentelemetry-proto
+	https://github.com/open-telemetry/opentelemetry-python/tree/main/exporter/opentelemetry-exporter-otlp-proto-common
+	https://pypi.org/project/opentelemetry-exporter-otlp-proto-common
 "
 LICENSE="
-	Apache-2.0
+	MIT
 "
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+=" test"
 RDEPEND+="
-	virtual/protobuf-python:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
-	virtual/protobuf:=
+	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-proto:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -36,15 +36,11 @@ DEPEND+="
 BDEPEND+="
 	test? (
 		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
-		>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
 		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
 		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-		|| (
-			>=dev-python/protobuf-3.20.3:3/3.12[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-4.25.3:3/4.21[${PYTHON_USEDEP}]
-		)
+		>=dev-python/protobuf-5.26.1:5[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]

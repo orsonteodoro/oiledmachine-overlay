@@ -10,9 +10,9 @@ MY_PN="opentelemetry_instrumentation"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-OPENTELEMETRY_PV="1.27.0"
-PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..12} )
+OPENTELEMETRY_PV="1.38.0"
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
@@ -31,27 +31,29 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
 IUSE+=" test"
 RDEPEND+="
-	>=dev-python/setuptools-16.0[${PYTHON_USEDEP}]
+	>=dev-python/packaging-18.0[${PYTHON_USEDEP}]
 	>=dev-python/wrapt-1.0.0[${PYTHON_USEDEP}]
 	<dev-python/wrapt-2.0.0[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
+	~dev-python/opentelemetry-semantic-conventions-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-semantic-conventions:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	test? (
-		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		>=dev-python/asgiref-3.8.1[${PYTHON_USEDEP}]
 		>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		>=dev-python/gevent-25.5.1[${PYTHON_USEDEP}]
 		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
 		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
 		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
 		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)

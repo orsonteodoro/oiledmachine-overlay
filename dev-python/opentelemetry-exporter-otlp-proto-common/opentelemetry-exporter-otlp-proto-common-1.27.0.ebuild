@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="opentelemetry_exporter_otlp_proto_common"
 
 DISTUTILS_USE_PEP517="hatchling"
+PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -23,15 +24,35 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/${PV}"
-IUSE+=" "
+SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
+IUSE+=" test"
 RDEPEND+="
-	~dev-python/opentelemetry-proto-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-proto:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	test? (
+		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
+		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		|| (
+			>=dev-python/protobuf-3.20.3:3/3.12[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-4.25.3:4/4.21[${PYTHON_USEDEP}]
+		)
+		dev-python/protobuf:=
+		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.rst" )
 

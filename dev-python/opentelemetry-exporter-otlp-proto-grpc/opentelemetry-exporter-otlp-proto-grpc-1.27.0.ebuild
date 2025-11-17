@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="opentelemetry_exporter_otlp_proto_grpc"
 
 DISTUTILS_USE_PEP517="hatchling"
-PROTOBUF_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -24,20 +24,20 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="${PROTOBUF_SLOT}/${PV}" # Use PYTHONPATH for multislot package
+SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+=" "
 RDEPEND+="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
 	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.0.0:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/grpcio-1.0.0:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/grpcio:=
-	~dev-python/opentelemetry-api-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
-	~dev-python/opentelemetry-exporter-otlp-proto-common-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-exporter-otlp-proto-common-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-exporter-otlp-proto-common:=
-	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-proto:=
-	~dev-python/opentelemetry-sdk-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-sdk-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-sdk:=
 "
 DEPEND+="
@@ -59,12 +59,12 @@ src_install() {
 # All OpenTelemetry Python packages will be moved
 #
 # from /usr/lib/${EPYTHON}/site-packages to
-# to   /usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/${EPYTHON}/site-packages
+# to   /usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages
 #
 # or base dir change
 #
 # from /usr
-# to   /usr/lib/opentelemetry/${PROTOBUF_SLOT}
+# to   /usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}
 #
 # This is to allow 1.27.0 used in LTS packages from being not disrupted by
 # 1.38.0 rolling packages.

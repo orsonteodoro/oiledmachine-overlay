@@ -3,11 +3,15 @@
 
 EAPI=8
 
+# For version correspondence, see
+# https://github.com/open-telemetry/opentelemetry-python/blob/v1.38.0/opentelemetry-semantic-conventions/src/opentelemetry/semconv/version/__init__.py
+
 MY_PN="opentelemetry_semantic_conventions"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
 OPENTELEMETRY_PV="1.27.0"
+PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -22,14 +26,26 @@ HOMEPAGE="
 	https://github.com/open-telemetry/opentelemetry-python/
 "
 LICENSE="Apache-2.0"
-SLOT="0/${OPENTELEMETRY_PV}"
+SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
 RDEPEND="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-api:=
 "
 BDEPEND="
 	test? (
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
+		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)
 "
 

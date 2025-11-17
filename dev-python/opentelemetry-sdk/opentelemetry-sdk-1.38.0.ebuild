@@ -6,7 +6,8 @@ EAPI=8
 MY_PN="opentelemetry_sdk"
 
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
@@ -20,15 +21,29 @@ HOMEPAGE="
 	https://github.com/open-telemetry/opentelemetry-python/
 "
 LICENSE="Apache-2.0"
-SLOT="0/${PV}"
+SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 RDEPEND="
-	>=dev-python/typing-extensions-3.7.4[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-api-${PV}[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-semantic-conventions-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-api:=
+	~dev-python/opentelemetry-semantic-conventions-0.59_beta0:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	dev-python/opentelemetry-semantic-conventions:=
 "
 BDEPEND="
 	test? (
-		dev-python/flaky[${PYTHON_USEDEP}]
+		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		>=dev-python/flaky-3.7.0[${PYTHON_USEDEP}]
+		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		>=dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
+		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)
 "
 

@@ -7,10 +7,8 @@ EAPI=8
 MY_PN="opentelemetry_proto"
 
 DISTUTILS_USE_PEP517="hatchling"
-PROTOBUF_SLOTS=(
-	"5.26"
-)
-PYTHON_COMPAT=( "python3_"{10..12} )
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
@@ -26,26 +24,24 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/${PV}"
-IUSE+=" dev"
-gen_protobuf_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo "
-			dev-python/protobuf:0/${s}
-		"
-	done
-}
+SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
+IUSE+=" test"
 RDEPEND+="
-	|| (
-		$(gen_protobuf_rdepend)
-	)
-	dev-python/protobuf:=
+	virtual/protobuf-python:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	virtual/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	test? (
+		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
+		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-5.29.5:5[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
+		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.rst" )
 
