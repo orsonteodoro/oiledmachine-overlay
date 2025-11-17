@@ -39,6 +39,7 @@ NPM_INSTALL_ARGS=(
 #	"--prefer-offline"
 	"--legacy-peer-deps"
 )
+PROTOBUF_CPP_SLOT=5
 PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit desktop distutils-r1 pypi npm xdg
@@ -124,8 +125,11 @@ gen_torch_rdepend() {
 		echo "
 			(
 				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+				sci-ml/pytorch:=
 				~sci-ml/torchaudio-${torchaudio_pv}[${PYTHON_SINGLE_USEDEP}]
+				sci-ml/torchaudio:=
 				~sci-ml/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+				sci-ml/torchvision:=
 			)
 		"
 	done
@@ -187,17 +191,28 @@ RDEPEND+="
 		>=dev-python/nltk-3.9.1[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-2.8.0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-api-1.36.0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-sdk-1.36.0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-exporter-otlp-1.36.0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-fastapi-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-redis-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-requests-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-logging-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-httpx-0.57_beta0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.57_beta0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-api-1.36.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-api:=
+		>=dev-python/opentelemetry-sdk-1.36.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-sdk:=
+		>=dev-python/opentelemetry-exporter-otlp-1.36.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-exporter-otlp:=
+		>=dev-python/opentelemetry-instrumentation-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation:=
+		>=dev-python/opentelemetry-instrumentation-fastapi-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-fastapi:=
+		>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-sqlalchemy:=
+		>=dev-python/opentelemetry-instrumentation-redis-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-redis:=
+		>=dev-python/opentelemetry-instrumentation-requests-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-requests:=
+		>=dev-python/opentelemetry-instrumentation-logging-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-logging:=
+		>=dev-python/opentelemetry-instrumentation-httpx-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-httpx:=
+		>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.57_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-aiohttp-client:=
 		>=dev-python/oracledb-3.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-2.2.3[${PYTHON_USEDEP}]
 		>=dev-python/pinecone-6.0.2[${PYTHON_USEDEP}]
@@ -207,6 +222,7 @@ RDEPEND+="
 		>=dev-python/pgvector-0.4.1[${PYTHON_USEDEP}]
 		>=dev-python/playwright-bin-1.49.1[${PYTHON_USEDEP}]
 		>=dev-python/psycopg-2.9.9:2[${PYTHON_USEDEP}]
+		dev-python/psycopg:=
 		>=dev-python/pyarrow-20.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-2.11.7[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.10.1[${PYTHON_USEDEP},crypto(+)]
@@ -275,6 +291,7 @@ DEPEND+="
 "
 BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[npm]
+	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(

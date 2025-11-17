@@ -109,8 +109,11 @@ gen_torch_rdepend() {
 		echo "
 			(
 				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+				sci-ml/pytorch:=
 				~sci-ml/torchaudio-${torchaudio_pv}[${PYTHON_SINGLE_USEDEP}]
+				sci-ml/torchaudio:=
 				~sci-ml/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+				sci-ml/torchvision:=
 			)
 		"
 	done
@@ -174,6 +177,7 @@ RDEPEND+="
 		>=dev-python/pgvector-0.3.5[${PYTHON_USEDEP}]
 		>=dev-python/playwright-bin-1.49.1[${PYTHON_USEDEP}]
 		>=dev-python/psycopg-2.9.9:2[${PYTHON_USEDEP}]
+		dev-python/psycopg:=
 		>=dev-python/pydantic-2.10.6[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.10.1[${PYTHON_USEDEP},crypto(+)]
 		>=dev-python/pymdown-extensions-10.14.2[${PYTHON_USEDEP}]
@@ -236,6 +240,7 @@ DEPEND+="
 "
 BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[npm]
+	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
