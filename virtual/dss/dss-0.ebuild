@@ -10,6 +10,7 @@ EAPI=7
 # prowler
 
 # Zero-tolerance policy
+CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Based on commit date with patch >= ucode version on advisory
 KERNEL_PV="6.17.8"
 
 ANTIVIRUS_IUSE=(
@@ -46,7 +47,6 @@ FIREWALL_IUSE=(
 	"ufw"
 )
 
-CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Based on commit date with patch >= ucode version on advisory
 FIRMWARE_IUSE=(
 	"intel-microcode"
 	"linux-firmware"
