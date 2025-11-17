@@ -72,7 +72,7 @@ src_install() {
 # To handle multslot OpenTelemetry Python do
 # EPYTHON="python3.11"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOT="4" # 3 if systemwide gcc 11, OR 4 systemwide gcc > 11
+# PROTOBUF_PYTHON_SLOT="4" # 3 if systemwide gcc 11, OR 4 if systemwide gcc > 11
 # # Add both multislot OpenTelemetry, multislot grpcio, multislot protobuf to PYTHONPATH
 # export LD_LIBRARY_PATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib64:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib64:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/lib64"
 # PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
