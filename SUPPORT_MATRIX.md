@@ -274,7 +274,7 @@ Language defaults
 | X                                   | Fully supported                       |                                                          |
 
 * [2] Via llvm-roc-libomp
-* [3] Multislotted on this overlay.  Multiple versions can be installed at the same time.
+* [3] Multislotted on this overlay to allow LTS and rolling packages to coexist.
 * [4] Backporting security patches is likely to be incomplete.  No hardened
       ebuilds will be provided.  You must either keep a local ebuild fork
       with cflags-hardened changes or add per-package hardening CFLAGS (e.g.
