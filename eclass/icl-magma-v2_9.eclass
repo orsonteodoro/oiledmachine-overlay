@@ -724,8 +724,8 @@ icl-magma-v2_9_src_install() {
 
 	if use rocm ; then
 		local RPATH_FIXES=(
-			"${ED}${EROCM_PATH}/$(rocm_get_libdir)/libmagma.so:${EROCM_PATH}/$(rocm_get_libdir)"
-			"${ED}${EROCM_PATH}/$(rocm_get_libdir)/libmagma_sparse.so:${EROCM_PATH}/$(rocm_get_libdir),${EROCM_PATH}/magma/lib"
+			"${ED}${EROCM_PATH}/magma/lib/libmagma.so:${EROCM_PATH}/$(rocm_get_libdir)"
+			"${ED}${EROCM_PATH}/magma/lib/libmagma_sparse.so:${EROCM_PATH}/$(rocm_get_libdir),${EROCM_PATH}/magma/lib"
 		)
 		fix-rpath_repair
 	fi
