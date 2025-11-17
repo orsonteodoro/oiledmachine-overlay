@@ -69,7 +69,12 @@ src_install() {
 # 1.38.0 rolling packages.
 #
 # To handle multslot OpenTelemetry Python do
-# PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/python3.11/site-packages:${PYTHONPATH}" <appname> or put in wrapper script
+# EPYTHON="python3.11"
+# PROTOBUF_SLOT="3"
+# # Add both multislot OpenTelemetry and multislot grpcio to PYTHONPATH
+# PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/grpc/${PROTOBUF_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+# <appname>
+# # or put in wrapper script
 #
 die "QA:  FIXME:  Change install location"
 }
