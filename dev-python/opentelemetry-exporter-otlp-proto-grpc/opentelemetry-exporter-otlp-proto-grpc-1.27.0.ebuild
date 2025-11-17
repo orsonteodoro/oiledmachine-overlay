@@ -77,8 +77,9 @@ src_install() {
 # PROTOBUF_PYTHON_SLOT="4" # 3 if systemwide gcc 11, OR 4 if systemwide gcc > 11
 # # Add multislot OpenTelemetry, multislot grpcio, multislot protobuf to PYTHONPATH
 # export LD_LIBRARY_PATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib64:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib64:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/lib64"
-# PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
-# <appname>
+# export PATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+# export PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+# # Run with <appname> or ${EPYTHON} <appname>
 # # or put in wrapper script
 #
 }

@@ -31,7 +31,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
 IUSE+="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=dev-python/setuptools-16.0[${PYTHON_USEDEP}]
@@ -84,4 +84,13 @@ python_install_all() {
 		"${ED}/usr/share/doc/${PN}-${PV}" \
 		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc" \
 		|| die
+
+	rm -rf "${ED}/usr/bin" || true
+	dodir "/usr/bin"
+	dosym \
+		"/usr/lib/python-exec/python-exec2" \
+		"/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin/opentelemetry-instrument/bin/opentelemetry-bootstrap"
+	dosym \
+		"/usr/lib/python-exec/python-exec2" \
+		"/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin/opentelemetry-instrument/opentelemetry-instrument"
 }
