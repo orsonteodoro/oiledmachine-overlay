@@ -46,6 +46,7 @@ FIREWALL_IUSE=(
 	"ufw"
 )
 
+CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Based on commit date with patch >= ucode version on advisory
 FIRMWARE_IUSE=(
 	"intel-microcode"
 	"linux-firmware"
@@ -731,5 +732,22 @@ eerror "Valid optimization levels for security-critical data security:  -O1, -O2
 	fi
 	if (( ${is_flag_violation} == 1 )) ; then
 		die
+	fi
+
+	if use linux-firmware && has_version "=sys-kernel/linux-firmware-99999999" ; then
+		local merged_timestamp=$(cat $(realpath "/var/db/pkg/sys-kernel/linux-firmware-99999999/BUILD_TIME"))
+		local cpu_mitigation_amd_microcode_timestamp=$(date --date "${CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP}" +%s)
+		if (( ${merged_timestamp} < ${patched_vulernability_timestamp} )) ; then
+			local merged_timestamp_str=$(date --date="@${merged_timestamp}")
+			local cpu_mitigation_amd_microcode_timestamp_str=$(date --date="@${cpu_mitigation_amd_microcode_timestamp}")
+eerror
+eerror "Your live sys-kernel/linux-firmware is out of date for CPU microcode mitigations."
+eerror "Re-emerge sys-kernel/linux-firmware to continue."
+eerror
+eerror "Live ebuild merged timestamp:  ${merged_timestamp_str}"
+eerror "Patched vulernability timestamp:  ${cpu_mitigation_amd_microcode_timestamp_str}"
+eerror
+			die
+		fi
 	fi
 }
