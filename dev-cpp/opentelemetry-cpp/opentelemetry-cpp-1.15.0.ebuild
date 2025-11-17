@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# Protobuf version reference:
+# https://github.com/open-telemetry/opentelemetry-cpp/blob/v1.15.0/.github/workflows/ci.yml
+
 _CXX_STANDARD=(
 	"cxx_standard_cxx14"
 	"+cxx_standard_cxx17"
@@ -44,10 +47,11 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0"
+SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${_CXX_STANDARD[@]}
 -otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -144,6 +148,7 @@ src_configure() {
 		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/${PN}/${PROTOBUF_SLOT}"
 		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
 		-DWITH_OTLP_FILE=$(usex otlp-file)
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)

@@ -3,8 +3,10 @@
 
 EAPI=8
 
+# Protobuf version reference:
+# https://github.com/open-telemetry/opentelemetry-cpp/blob/v1.23.0/MODULE.bazel
+
 _CXX_STANDARD=(
-	"cxx_standard_cxx11"
 	"cxx_standard_cxx14"
 	"+cxx_standard_cxx17"
 )
@@ -20,9 +22,9 @@ LLVM_COMPAT=(
 )
 
 CXX_STANDARD=17
-GRPC_SLOT="3"
-OPENTELEMETRY_PROTO_PV="0.19.0"
-PROTOBUF_SLOT="3"
+GRPC_SLOT="5"
+OPENTELEMETRY_PROTO_PV="1.3.1"
+PROTOBUF_SLOT="5"
 
 inherit cmake dep-prepare libcxx-slot libstdcxx-slot
 
@@ -45,10 +47,11 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0"
+SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${_CXX_STANDARD[@]}
--jaeger -otlp-grpc -otlp-http -prometheus test
+-otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -59,12 +62,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	jaeger? (
-		>=dev-libs/thrift-0.14.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/thrift:=
-		dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
-	)
+	dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/boost:=
 	otlp-grpc? (
 		virtual/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/grpc:=
@@ -72,22 +71,28 @@ RDEPEND="
 		virtual/protobuf:=
 	)
 	otlp-http? (
-		>=net-misc/curl-7.73.0
+		>=net-misc/curl-8.8.0
 		net-misc/curl:=
 	)
 	prometheus? (
-		>=dev-cpp/prometheus-cpp-1.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/prometheus-cpp-1.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+	zlib? (
+		>=sys-libs/zlib-1.3.1
 	)
 "
 DEPEND="
 	${RDEPEND}
+	otlp-file? (
+		>=dev-cpp/nlohmann_json-3.12.0
+	)
 	otlp-http? (
-		>=dev-cpp/nlohmann_json-3.11.2
+		>=dev-cpp/nlohmann_json-3.12.0
 	)
 "
 BDEPEND="
 	test? (
-		>=dev-cpp/benchmark-1.8.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/benchmark-1.8.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=dev-cpp/gtest-1.14.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
@@ -139,23 +144,18 @@ get_abseil_cpp_slot() {
 src_configure() {
 	local ABSEIL_CPP_SLOT=$(get_abseil_cpp_slot)
 	local mycmakeargs=(
-		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '')
 		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
 		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/${PN}/${PROTOBUF_SLOT}"
 		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-		-DWITH_JAEGER:BOOL=$(usex jaeger)
+		-DWITH_OTLP_FILE=$(usex otlp-file)
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)
 		-DWITH_OTLP_HTTP=$(usex otlp-http)
+		-DWITH_OTLP_HTTP_COMPRESSION=$(usex zlib)
 		-DWITH_PROMETHEUS:BOOL=$(usex prometheus)
-		-DWITH_STL=ON
 	)
-	if use otlp-grpc || use otlp-http ; then
-		mycmakeargs+=(
-			-DWITH_OTLP=ON
-		)
-	fi
 	if use otlp-grpc ; then
 		mycmakeargs+=(
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/cmake/absl"
