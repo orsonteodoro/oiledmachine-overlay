@@ -3,19 +3,19 @@
 
 EAPI=8
 
-# U18
+# U24
 
 # For deps, see
-# https://github.com/googleapis/google-cloud-cpp/blob/v2.10.1/bazel/google_cloud_cpp_deps.bzl
+# https://github.com/googleapis/google-cloud-cpp/blob/v2.43.0/bazel/workspace0.bzl
 
-ABSEIL_CPP_PV="20230125.2"
+ABSEIL_CPP_PV="20240722.0" # Originally 20250127.1, but downgraded for grpc:5 to avoid header alignment issues
 CXX_STANDARD=17
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 # From cmake/GoogleapisConfig.cmake \
-GOOGLEAPIS_COMMIT="2da477b6a72168c65fdb4245530cfa702cc4b029"
-PROTOBUF_SLOT="3"
+GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
+PROTOBUF_SLOT="5"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -48,11 +48,11 @@ RESTRICT="test"
 RDEPEND="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:0/${ABSEIL_CPP_PV%.*}
 	dev-cpp/abseil-cpp:=
-	>=dev-cpp/nlohmann_json-3.11.2
+	>=dev-cpp/nlohmann_json-3.11.3
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2023.03.01
+	>=dev-libs/re2-0.2025.07.22
 	dev-libs/re2:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
@@ -67,10 +67,10 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-cpp/gtest-1.13.0
-	>=dev-cpp/yaml-cpp-0.8.0
+	>=dev-cpp/gtest-1.16.0
+	>=dev-cpp/yaml-cpp-0.7.0
 	test? (
-		>=dev-cpp/benchmark-1.7.0
+		>=dev-cpp/benchmark-1.9.2
 	)
 "
 DOCS=( README.md )
