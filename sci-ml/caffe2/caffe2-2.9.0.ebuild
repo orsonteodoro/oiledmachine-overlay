@@ -993,10 +993,10 @@ RDEPEND="
 		)
 	)
 	magma? (
-		sci-libs/magma:=
 		cuda? (
 			sci-libs/magma:0/cuda[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda]
 		)
+		sci-libs/magma:=
 	)
 	mpi? (
 		virtual/mpi
@@ -1032,6 +1032,7 @@ RDEPEND="
 		>=sci-ml/onnx-1.18.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sci-ml/onnx:=
 		>=dev-cpp/opentelemetry-cpp-1.14.2:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-cpp/opentelemetry-cpp:=
 		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 		cuda? (
@@ -1079,6 +1080,7 @@ DEPEND="
 			>=dev-python/pybind11-3.0.1[${PYTHON_USEDEP}]
 		')
 		>=dev-libs/flatbuffers-24.12.23[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/flatbuffers:=
 		>=sci-ml/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2024.11.30
@@ -1098,11 +1100,16 @@ gen_clang() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:=
 				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:=
 				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:=
 				openmp? (
 					llvm-runtimes/clang-runtime:${s}[openmp]
+					llvm-runtimes/clang-runtime:=
 					=llvm-runtimes/openmp-${s}*[${LIBSTDCXX_USEDEP}]
+					llvm-runtimes/openmp:=
 				)
 			)
 		"
@@ -1113,6 +1120,7 @@ gen_gcc_bdepend() {
 	for s in ${GCC_COMPAT[@]/gcc_slot_} ; do
 		echo "
 			=sys-devel/gcc-${s/_/.}*[openmp?]
+			sys-devel/gcc:=
 		"
 	done
 }
@@ -1203,6 +1211,7 @@ BDEPEND="
 		virtual/protobuf:=
 		test? (
 			>=dev-cpp/benchmark-1.9.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			dev-cpp/benchmark:=
 		)
 	)
 "
