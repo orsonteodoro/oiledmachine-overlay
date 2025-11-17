@@ -11,6 +11,8 @@
 # See also https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability
 #
 
+# Set microcode versions in _mitigate_id_auto.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -3453,7 +3455,8 @@ _mitigate_id_cve_2023_49141_rdepend_x86_32() {
 	_mitigate_id_cve_2023_49141_rdepend_x86_64
 }
 
-_mitigate_id_auto() {
+# The minimum kernel version that resolves all ID vulnerabilities per arch.
+_mitigate_id_auto_min() {
 	if _use arm ; then
 		gen_patched_kernel_list 6.1
 	fi
@@ -3476,16 +3479,25 @@ _mitigate_id_auto() {
 		gen_patched_kernel_list 6.9
 	fi
 }
+
+#
+# In auto, use the latest branch and latest firmware.
+#
+# The latest stable branch is used because sometimes the vulnerability fix is
+# not backported between major.minor versions.  All the versions before it
+# are kicked out of the system to prevent weaponization because of this
+# observation.
+#
+_mitigate_id_auto() {
+	gen_patched_kernel_list "6.17"
+
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_mitigate_id_auto() {
-		gen_linux_firmware_ge 20240811
-	}
+	gen_linux_firmware_ge 20251030
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_mitigate_id_auto() {
-		gen_intel_microcode_ge 20250812
-	}
+	gen_intel_microcode_ge 20251111
 fi
+}
 
 # @ECLASS_VARIABLE: MITIGATE_ID_RDEPEND
 # @INTERNAL

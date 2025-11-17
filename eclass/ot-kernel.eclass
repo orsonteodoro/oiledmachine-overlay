@@ -159,7 +159,7 @@ GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapsh
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
-INTEL_MICROCODE_PV="20250812"
+INTEL_MICROCODE_PV="20251111"
 # IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION (aka profraw version).
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
@@ -285,17 +285,13 @@ else
 	)
 fi
 
-LINUX_FIRMWARE_PV="20240710" # Based on latest available patch level cross referenced to the μcode column.
-LINUX_FIRMWARE_TIMESTAMP="2024-07-10 10:11:10 -0500" # Same as above from the git log.
-LINUX_REPO_URI=\
-"https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
+LINUX_FIRMWARE_PV="20251030" # Based on latest available patch level cross referenced to the μcode column.
+LINUX_FIRMWARE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Same as above from the git log.
+LINUX_REPO_URI="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-MULTIGEN_LRU_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
-MULTIGEN_LRU_COMMITS=\
-"${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
-MULTIGEN_LRU_COMMITS_SHORT=\
-"${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+MULTIGEN_LRU_BASE_URI="https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
+MULTIGEN_LRU_COMMITS="${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+MULTIGEN_LRU_COMMITS_SHORT="${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 if [[ -n "${ZEN_KV}" ]] ; then
 	MULTIGEN_LRU_FN="multigen_lru-${ZEN_KV}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
 	MULTIGEN_LRU_SRC_URI="
@@ -351,12 +347,10 @@ PGT_CRYPTO_DEPEND="
 "
 
 PDS_FN="v${KV_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
-PDS_URI_BASE=\
-"https://gitlab.com/alfredchen/PDS-mq/raw/master/${KV_MAJOR_MINOR}/"
+PDS_URI_BASE="https://gitlab.com/alfredchen/PDS-mq/raw/master/${KV_MAJOR_MINOR}/"
 PDS_SRC_URI="${PDS_URI_BASE}${PDS_FN}"
 
-PRJC_URI_BASE=\
-"https://gitlab.com/alfredchen/projectc/-/raw/master/${KV_MAJOR_MINOR}${PRJC_LTS}/"
+PRJC_URI_BASE="https://gitlab.com/alfredchen/projectc/-/raw/master/${KV_MAJOR_MINOR}${PRJC_LTS}/"
 PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
 PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
 
@@ -413,8 +407,7 @@ TRESOR_RESEARCH_PDF_SRC_URI="${TRESOR_BASE_URI}${TRESOR_PDF_FN}"
 TRESOR_README_SRC_URI="${TRESOR_README_SRC_URI} -> ${TRESOR_README_FN}"
 TRESOR_SYSFS_SRC_URI="${TRESOR_BASE_URI}${TRESOR_SYSFS_FN}"
 
-UKSM_BASE_URI=\
-"https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR}.x/"
+UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR}.x/"
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
@@ -548,12 +541,9 @@ VULNERABILITIES_FIXED=(
 
 )
 
-ZEN_MULTIGEN_LRU_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
-ZEN_MULTIGEN_LRU_COMMITS=\
-"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
-ZEN_MULTIGEN_LRU_COMMITS_SHORT=\
-"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+ZEN_MULTIGEN_LRU_BASE_URI="https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
+ZEN_MULTIGEN_LRU_COMMITS="${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+ZEN_MULTIGEN_LRU_COMMITS_SHORT="${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 if [[ -n "${ZEN_KV}" ]] ; then
 	ZEN_MULTIGEN_LRU_FN="zen-multigen_lru-${ZEN_KV}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
 	ZEN_MULTIGEN_LRU_SRC_URI="

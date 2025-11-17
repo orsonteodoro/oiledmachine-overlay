@@ -115,6 +115,14 @@
       Use AI to help set up private reporting or mail based reporting.
     </flag>
 
+    <flag name="linux-firmware">
+      Ensure mitigation against recent CPU vulnerabilities.
+    </flag>
+
+    <flag name="intel-microcode">
+      Ensure mitigation against recent CPU vulnerabilities.
+    </flag>
+
     <flag name="custom-sources">
       Manually rebuild the kernel with SSP, _FORTIFY_SOURCE, KPTI, ASan
       KCFI, page zeroing and panic_on_warn=1.  At least, AppArmor or

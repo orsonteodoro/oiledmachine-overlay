@@ -46,6 +46,11 @@ FIREWALL_IUSE=(
 	"ufw"
 )
 
+FIRMWARE_IUSE=(
+	"intel-microcode"
+	"linux-firmware"
+)
+
 IDS_IUSE=(
 	"snort"
 )
@@ -109,6 +114,7 @@ ${CLOUD_COMPLIANCE_IUSE[@]}
 ${DATA_ENCRYPTION_IUSE[@]}
 ${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
+${FIRMWARE_IUSE[@]}
 ${HOST_TYPE_IUSE[@]/+}
 ${IDS_IUSE[@]}
 ${KERNEL_IUSE[@]}
@@ -526,6 +532,17 @@ FIREWALL_DEPENDS="
 
 "
 
+# Based on latest security advisory
+# Mitigate against Transient execution CPU vulnerabilities.
+FIRMWARE_DEPENDS="
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-20251111
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-20251030
+	)
+"
+
 LOGGER_DEPENDS="
 	audit? (
 		ossec? (
@@ -658,7 +675,6 @@ RDEPEND="
 		${NTP_DEPENDS}
 		${PASSWORD_MANAGER_DEPENDS[@]}
 		${SANDBOX_DEPENDS}
-		>=sys-kernel/linux-firmware-20251021
 		sys-kernel/mitigate-id[enforce?]
 		sys-kernel/mitigate-dos[enforce?]
 		sys-kernel/mitigate-dt[enforce?]
