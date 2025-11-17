@@ -800,8 +800,8 @@ gen_rocm_depends() {
 					sci-libs/magma:=
 				)
 				openmp? (
-					>=dev-libs/llvm-roc-libomp-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
-					dev-libs/llvm-roc-libomp:=
+					>=sys-libs/llvm-roc-libomp-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
+					sys-libs/llvm-roc-libomp:=
 				)
 				rccl? (
 					>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
