@@ -28,135 +28,10 @@ EAPI=8
 MY_PN="pytorch"
 MY_P="${MY_PN}-${PV}"
 
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/libtorch/build.sh#L47
-	"gfx900"
-	"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1200"
-	"gfx1201"
-)
-AMDGPU_TARGETS_UNTESTED=(
-# Based on https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/build.sh#L160
-	"gfx900"
-	#"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1200"
-	"gfx1201"
-)
-
-CPU_FLAGS_ARM=(
-	"cpu_flags_arm_bf16"
-	"cpu_flags_arm_dotprod"
-	"cpu_flags_arm_fp16"
-	"cpu_flags_arm_i8mm"
-	"cpu_flags_arm_neon"
-	"cpu_flags_arm_sve"
-)
-CPU_FLAGS_PPC=(
-	"cpu_flags_ppc_vsx"
-	"cpu_flags_ppc_vsx3"
-)
-CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
-	"cpu_flags_riscv_rvv_fp16"
-)
-CPU_FLAGS_S390=(
-	"cpu_flags_s390_vxe_z14"
-	"cpu_flags_s390_vxe_z15"
-	"cpu_flags_s390_zvector"
-)
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_amx"
-	"cpu_flags_x86_avx"
-	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_avx512bw"
-	"cpu_flags_x86_avx512dq"
-	"cpu_flags_x86_avx512f"
-	"cpu_flags_x86_avx512vl"
-	"cpu_flags_x86_avx512vbmi"
-	"cpu_flags_x86_avx512vnni"
-	"cpu_flags_x86_f16c"
-	"cpu_flags_x86_fma"
-	"cpu_flags_x86_fma4"
-	"cpu_flags_x86_gfni"
-	"cpu_flags_x86_sse2"
-	"cpu_flags_x86_sse4_1"
-)
-
-# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda126.bat ; min
-# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda130.bat ; max
-CUDA_TARGETS_COMPAT=(
-# Builds for all cards
-	"auto"
-
-# Observed:
-	"sm_50"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_90"
-	"sm_100"
-	"sm_120"
-
-	"compute_50"
-	"compute_60"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_90"
-	"compute_100"
-	"compute_120"
-)
-
-inherit hip-versions
-ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/build.sh#L190
-	"${HIP_6_4_VERSION}" # Placeholder
-)
-gen_rocm_slots() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s="${s%.*}"
-		s="${s/./_}"
-		echo "rocm_${s}"
-	done
-}
-ROCM_SLOTS2=(
-	$(gen_rocm_slots)
-)
-
+CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
 CXX_STANDARD=17
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}
-	${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}
-	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
+PROTOBUF_CPP_SLOT=3
 PYTHON_COMPAT=( "python3_"{11..14} )
 
 AITER_COMMIT_1="01aae101b9e5e94d6c16a9514c9fb8df99c93150"
@@ -166,8 +41,6 @@ ASMJIT_COMMIT="a3199e8857792cd10b7589ff5d58343d2c9008ea" # fbgemm dep
 BENCHMARK_COMMIT_1="299e5928955cc62af9968370293b916f5130916f"
 BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2" # opentelemetry-cpp dep
-CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
 CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
 CLANG_CINDEX_PYTHON3_COMMIT="6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5"
 COMPOSABLE_KERNEL_COMMIT_1="7fe50dc3da2069d6645d9deb8c017a876472a977"
@@ -245,6 +118,140 @@ TRITON_COMMIT="b59fb1f66f021ccb57ef555f3651cc705af91163" # aotriton dep
 VULKANMEMORYALLOCATOR_COMMIT="1d8f600fd424278486eade7ed3e877c99f0846b1"
 XNNPACK_COMMIT="51a0103656eff6fc9bfd39a4597923c4b542c883"
 #TODO:  Package aiter
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/libtorch/build.sh#L47
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
+)
+
+AMDGPU_TARGETS_UNTESTED=(
+# Based on https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/build.sh#L160
+	"gfx900"
+	#"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+	"gfx1101"
+	"gfx1102"
+	"gfx1200"
+	"gfx1201"
+)
+
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_bf16"
+	"cpu_flags_arm_dotprod"
+	"cpu_flags_arm_fp16"
+	"cpu_flags_arm_i8mm"
+	"cpu_flags_arm_neon"
+	"cpu_flags_arm_sve"
+)
+
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_vsx"
+	"cpu_flags_ppc_vsx3"
+)
+
+CPU_FLAGS_RISCV=(
+	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_rvv_fp16"
+)
+
+CPU_FLAGS_S390=(
+	"cpu_flags_s390_vxe_z14"
+	"cpu_flags_s390_vxe_z15"
+	"cpu_flags_s390_zvector"
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_amx"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512vl"
+	"cpu_flags_x86_avx512vbmi"
+	"cpu_flags_x86_avx512vnni"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_fma"
+	"cpu_flags_x86_fma4"
+	"cpu_flags_x86_gfni"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_1"
+)
+
+# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda126.bat ; min
+# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/pytorch/windows/cuda130.bat ; max
+CUDA_TARGETS_COMPAT=(
+# Builds for all cards
+	"auto"
+
+# Observed:
+	"sm_50"
+	"sm_60"
+	"sm_61"
+	"sm_70"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_90"
+	"sm_100"
+	"sm_120"
+
+	"compute_50"
+	"compute_60"
+	"compute_70"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_90"
+	"compute_100"
+	"compute_120"
+)
+
+inherit hip-versions
+ROCM_SLOTS=(
+# See https://github.com/pytorch/pytorch/blob/v2.9.0/.ci/docker/build.sh#L190
+	"${HIP_6_4_VERSION}" # Placeholder
+)
+
+gen_rocm_slots() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s="${s%.*}"
+		s="${s/./_}"
+		echo "rocm_${s}"
+	done
+}
+
+ROCM_SLOTS2=(
+	$(gen_rocm_slots)
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}
+	${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}
+	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic libcxx-slot libstdcxx-slot llvm rocm python-single-r1 toolchain-funcs
 
@@ -1024,8 +1031,8 @@ RDEPEND="
 		>=dev-libs/sleef-3.8.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
 		>=sci-ml/onnx-1.18.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sci-ml/onnx:=
-		>=dev-cpp/opentelemetry-cpp-1.14.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/opentelemetry-cpp-1.14.2:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 		cuda? (
 			>=dev-libs/cudnn-frontend-1.12.0
@@ -1192,7 +1199,7 @@ BDEPEND="
 		$(gen_clang)
 	)
 	system-libs? (
-		virtual/protobuf:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 		test? (
 			>=dev-cpp/benchmark-1.9.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
