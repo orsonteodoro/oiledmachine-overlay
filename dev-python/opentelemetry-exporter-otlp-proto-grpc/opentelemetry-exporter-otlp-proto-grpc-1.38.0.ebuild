@@ -57,8 +57,8 @@ src_install() {
 #
 # All OpenTelemetry Python packages will be moved
 #
-# from /usr/lib/python3.11/site-packages to
-# to   /usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/python3.11/site-packages
+# from /usr/lib/${EPYTHON}/site-packages to
+# to   /usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/${EPYTHON}/site-packages
 #
 # or base dir change
 #
