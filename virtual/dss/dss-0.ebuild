@@ -537,7 +537,7 @@ FIREWALL_DEPENDS="
 # Mitigate against transient execution CPU vulnerabilities.
 FIRMWARE_DEPENDS="
 	intel-microcode? (
-		>=sys-firmware/intel-microcode-20251111
+		>=sys-firmware/intel-microcode-20250812
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-20251030
