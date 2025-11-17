@@ -30,13 +30,13 @@ RDEPEND+="
 	>=dev-python/googleapis-common-protos-1.57[${PYTHON_USEDEP}]
 	>=dev-python/grpcio-1.63.2:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-api-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
-	~dev-python/opentelemetry-exporter-otlp-proto-common-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-exporter-otlp-proto-common-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-exporter-otlp-proto-common:=
-	~dev-python/opentelemetry-proto-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-proto:=
-	~dev-python/opentelemetry-sdk-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-sdk-${PV}:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-sdk:=
 "
 DEPEND+="
@@ -54,6 +54,23 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+#
+# All OpenTelemetry Python packages will be moved
+#
+# from /usr/lib/python3.11/site-packages to
+# to   /usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/python3.11/site-packages
+#
+# or base dir change
+#
+# from /usr
+# to   /usr/lib/opentelemetry/${PROTOBUF_SLOT}
+#
+# This is to allow 1.27.0 used in LTS packages from being not disrupted by
+# 1.38.0 rolling packages.
+#
+# To handle multslot OpenTelemetry Python do
+# PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_SLOT}/lib/python3.11/site-packages:${PYTHONPATH}" <appname> or put in wrapper script
+#
 die "QA:  FIXME:  Change install location"
 }
 
