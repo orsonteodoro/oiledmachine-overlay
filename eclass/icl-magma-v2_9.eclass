@@ -722,6 +722,7 @@ icl-magma-v2_9_src_install() {
 	)
 	einstalldocs
 
+	FIX_RPATH_VERIFY_FATAL=0 # For previous install without /opt/rocm/lib rpath
 	if use rocm ; then
 		local RPATH_FIXES=(
 			"${ED}${EROCM_PATH}/magma/lib/libmagma.so:${EROCM_PATH}/$(rocm_get_libdir)"
