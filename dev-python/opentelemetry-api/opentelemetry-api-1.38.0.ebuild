@@ -88,7 +88,7 @@ python_install_all() {
 
 	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc"
 	mv \
-		"${ED}/usr/share/doc/opentelemetry-api-${PV}" \
+		"${ED}/usr/share/doc/${PN}-${PV}" \
 		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc" \
 		|| die
 }
