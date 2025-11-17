@@ -533,7 +533,7 @@ FIREWALL_DEPENDS="
 "
 
 # Based on latest security advisory
-# Mitigate against Transient execution CPU vulnerabilities.
+# Mitigate against transient execution CPU vulnerabilities.
 FIRMWARE_DEPENDS="
 	intel-microcode? (
 		>=sys-firmware/intel-microcode-20251111
