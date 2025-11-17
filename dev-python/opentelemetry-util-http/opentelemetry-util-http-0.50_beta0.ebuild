@@ -26,7 +26,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/${OPENTELEMETRY_PV}"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -44,4 +46,17 @@ src_install() {
 	distutils-r1_src_install
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+python_install_all() {
+	distutils-r1_python_install_all
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib"
+	mv \
+		"${ED}/usr/lib/python"* \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib" \
+		|| die
+
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc"
+	mv \
+		"${ED}/usr/share/doc/${PN}-${PV}" \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc" \
+		|| die
+}

@@ -25,7 +25,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
 	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
@@ -53,8 +55,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto "licenses"
-	dodoc "LICENSE"
+	insinto "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc/${P}/licenses"
+	doins "LICENSE"
 #
 # All OpenTelemetry Python packages will be moved
 #
@@ -79,7 +81,19 @@ src_install() {
 # <appname>
 # # or put in wrapper script
 #
-die "QA:  FIXME:  Change install location"
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+python_install_all() {
+	distutils-r1_python_install_all
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib"
+	mv \
+		"${ED}/usr/lib/python"* \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib" \
+		|| die
+
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc"
+	mv \
+		"${ED}/usr/share/doc/${PN}-${PV}" \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc" \
+		|| die
+}

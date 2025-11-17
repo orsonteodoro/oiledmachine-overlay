@@ -29,7 +29,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 RDEPEND+="
 	>=dev-python/setuptools-16.0[${PYTHON_USEDEP}]
 	>=dev-python/wrapt-1.0.0[${PYTHON_USEDEP}]
@@ -64,8 +67,21 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto "licenses"
-	dodoc "LICENSE"
+	insinto "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc/${P}/licenses"
+	doins "LICENSE"
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+python_install_all() {
+	distutils-r1_python_install_all
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib"
+	mv \
+		"${ED}/usr/lib/python"* \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib" \
+		|| die
+
+	dodir "/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc"
+	mv \
+		"${ED}/usr/share/doc/${PN}-${PV}" \
+		"${ED}/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/share/doc" \
+		|| die
+}
