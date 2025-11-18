@@ -81,7 +81,7 @@ ewarn "${x_targets_compat} is a typo or missing."
 			elif [[ \
 				"${g1%%_*}" == "${g2%%_*}" \
 				&& "${g1}" =~ "xnack_minus" && ! ( "${g2}" =~ "xnack" ) \
-				&& "${IUSE}" =~ "amdgpu_targets_${g2%%_*}" \
+				&& "${IUSE}" =~ (^|" ")"amdgpu_targets_${g2%%_*}"($|" ") \
 			]] ; then
 				found=1
 				g2_suffix=""
@@ -93,7 +93,7 @@ ewarn "${x_targets_compat} is a typo or missing."
 			elif [[ \
 				"${g1%%_*}" == "${g2%%_*}" \
 				&& ! ( "${g1}" =~ "xnack" ) && ( "${g2}" =~ "xnack_minus" ) \
-				&& "${IUSE}" =~ "amdgpu_targets_${g2%%_*}_xnack_minus" \
+				&& "${IUSE}" =~ (^|" ")"amdgpu_targets_${g2%%_*}_xnack_minus"($|" ") \
 			]] ; then
 				found=1
 				g2_suffix="_xnack_minus"
