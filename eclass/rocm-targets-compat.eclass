@@ -56,31 +56,54 @@ ewarn "${x_targets_compat} is a typo or missing."
 
 	local list=""
 	local g1
-	# For foo/bar[gfx90a_xnack_minus] == foo/bar[gfx90a_xnack_minus]
 	for g1 in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		local found=0
 		local g2
+		local g2_suffix=""
 		for g2 in ${!t} ; do
-			if [[ "${g2}" == "${g1}" ]] ; then
+			# For the following cases:
+			# foo/bar[amdgpu_targets_gfx90a_xnack_minus] == foo/bar[amdgpu_targets_gfx90a_xnack_minus]
+			# foo/bar[amdgpu_targets_gfx90a_xnack_plus] == foo/bar[amdgpu_targets_gfx90a_xnack_plus]
+			# foo/bar[amdgpu_targets_gfx90a] == foo/bar[amdgpu_targets_gfx90a]
+			if [[ "${g1}" == "${g2}" ]] ; then
 				found=1
-			fi
-		done
-		if (( ${found} == 1 )) ; then
-			list+=",amdgpu_targets_${g1}?"
-		fi
-	done
+				if [[ "${g1}" =~ "xnack_minus" && "${g2}" =~ "xnack_minus" ]] ; then
+					g2_suffix="_xnack_minus"
+				elif [[ "${g1}" =~ "xnack_plus" && "${g2}" =~ "xnack_plus" ]] ; then
+					g2_suffix="_xnack_plus"
+				else
+					g2_suffix=""
+				fi
+				break 1
 
-	# For foo/bar[amdgpu_targets_gfx90a_xnack_minus] == foo/bar[amdgpu_targets_gfx90a]
-	for g1 in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		local found=0
-		local g2
-		for g2 in ${!t} ; do
-			if [[ "${g2%%_*}" == "${g1%%_*}" && "${g1}" =~ "xnack" && ! ( "${g2}" =~ "xnack" ) && "${IUSE}" =~ "amdgpu_targets_${g2%%_*}" ]] ; then
+			# For the following case:
+			# foo/bar[amdgpu_targets_gfx90a_xnack_minus] == foo/bar[amdgpu_targets_gfx90a]
+			elif [[ \
+				"${g1%%_*}" == "${g2%%_*}" \
+				&& "${g1}" =~ "xnack_minus" && ! ( "${g2}" =~ "xnack" ) \
+				&& "${IUSE}" =~ "amdgpu_targets_${g2%%_*}" \
+			]] ; then
 				found=1
+				g2_suffix=""
+
+				break 1
+
+			# For the following case:
+			# foo/bar[amdgpu_targets_gfx90a] == foo/bar[amdgpu_targets_gfx90a_xnack_minus]
+			elif [[ \
+				"${g1%%_*}" == "${g2%%_*}" \
+				&& ! ( "${g1}" =~ "xnack" ) && ( "${g2}" =~ "xnack_minus" ) \
+				&& "${IUSE}" =~ "amdgpu_targets_${g2%%_*}_xnack_minus" \
+			]] ; then
+				found=1
+				g2_suffix="_xnack_minus"
+
+				break 1
+
 			fi
 		done
 		if (( ${found} == 1 )) ; then
-			list+=",amdgpu_targets_${g2%%_*}?"
+			list+=",amdgpu_targets_${g1%%_*}${g2_suffix}?"
 		fi
 	done
 
