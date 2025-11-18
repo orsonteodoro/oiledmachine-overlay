@@ -53,7 +53,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${ROCM_IUSE}
 asan cuda rocm
-ebuild_revision_7
+ebuild_revision_8
 "
 gen_rocm_required_use() {
 	local x
@@ -104,7 +104,9 @@ src_prepare() {
 }
 
 src_configure() {
-	local mycmakeargs=()
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+	)
 	if use cuda ; then
 		mycmakeargs+=(
 			-DHIP_COMPILER="nvcc"
