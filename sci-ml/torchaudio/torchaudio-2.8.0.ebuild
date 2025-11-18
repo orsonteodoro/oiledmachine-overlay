@@ -33,7 +33,6 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-	19
 )
 
 inherit hip-versions
