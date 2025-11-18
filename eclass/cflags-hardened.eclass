@@ -145,6 +145,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=safe-stack                 1.01 -  1.20
 # -fsanitize=shadowcallstack            1.01 -  1.15
 # -fsanitize=thread                     4.00 - 16.00
+# -fsanitize=type                       2.00 - 20.00
 # -fsanitize=undefined                  1.10 -  2.00
 # -ftrivial-auto-var-init=zero          1.01 -  1.05
 # -mbranch-protection=bti               1.00 -  1.05

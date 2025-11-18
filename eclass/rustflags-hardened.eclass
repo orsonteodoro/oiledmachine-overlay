@@ -142,6 +142,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # -Zsanitizer=safestack                                 1.01  -  1.20
 # -Zsanitizer=shadow-call-stack                         1.01  -  1.15
 # -Zsanitizer=thread                                    4.00  - 16.00
+# -Zsanitizer=type                                      2.00  - 20.00
 
 # Setting to 4.0 will enable ASan and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
