@@ -41,7 +41,7 @@ EAPI=8
 # 142.0.7444.162 -> 142.0.7444.175
 
 # For depends see:
-# https://github.com/chromium/chromium/tree/142.0.7444.175/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501, D11
+# https://github.com/chromium/chromium/tree/142.0.7444.175/build/linux/sysroot_scripts/generated_package_lists				; Last update 20250523, D11
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -64,9 +64,9 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/zlib/zlib.h#L40
 # https://github.com/chromium/chromium/blob/142.0.7444.175/tools/rust/update_rust.py#L35							; commit *
-#   https://github.com/rust-lang/rust/blob/c8f94230282a8e8c1148f3e657f0199aad909228/src/version						; live version
+#   https://github.com/rust-lang/rust/blob/15283f6fe95e5b604273d13a428bab5fc0788f5a/src/version						; live version
 # /usr/share/chromium/sources/third_party/flac/BUILD.gn										L122	; newer than generated_package_lists
-# /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h						L54     ; newer than generated_package_lists
+# /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in						L56     ; newer than generated_package_lists
 # /usr/share/chromium/sources/third_party/freetype/src/CMakeLists.txt								L165	; newer than generated_package_lists *
 # /usr/share/chromium/sources/third_party/harfbuzz-ng/README.chromium									; newer than generated_package_lists *
 # /usr/share/chromium/sources/third_party/icu/source/configure									L585	; newer than generated_package_lists
@@ -77,8 +77,8 @@ EAPI=8
 # /usr/share/chromium/sources/third_party/opus/README.chromium									L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							; see tag (live, 20250318) *
 # /usr/share/chromium/sources/third_party/zstd/README.chromium										; live version (20250414) *
-#   https://github.com/facebook/zstd/commit/d654fca78690fa15cceb8058ac47454d914a0e63							; check if commit part of tag
-#   https://github.com/facebook/zstd/blob/d654fca78690fa15cceb8058ac47454d914a0e63/lib/zstd.h#L107					; version
+#   https://github.com/facebook/zstd/commit/89d685e42dbcf815a16ed0fcd7d050ef74ccad96							; check if commit part of tag
+#   https://github.com/facebook/zstd/blob/89d685e42dbcf815a16ed0fcd7d050ef74ccad96/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/142.0.7444.175/DEPS#L512									; live
 
 # About PGO version compatibility
@@ -169,8 +169,8 @@ TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 RUST_NEEDS_LLVM="yes please"
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
 RUSTC_VER="" # Global variable
-RUST_MAX_VER="9999" # Corresponds to llvm-20.1
-RUST_MIN_VER="9999" # Corresponds to llvm-20.1
+RUST_MAX_VER="9999" # Corresponds to llvm-21.1
+RUST_MIN_VER="9999" # Corresponds to llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 SHADOW_CALL_STACK=0 # Global variable
 TESTDATA_P="${PN}-${PV}"
@@ -1217,7 +1217,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/dav1d:=
 	)
 	system-fontconfig? (
-		>=media-libs/fontconfig-2.15.0[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.17.1[${MULTILIB_USEDEP}]
 		media-libs/fontconfig:=
 	)
 	system-freetype? (
@@ -1225,7 +1225,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-11.0.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-11.4.4:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
@@ -1233,7 +1233,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/icu:=
 	)
 	system-libaom? (
-		>=media-libs/libaom-3.12.1[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.13.1[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
 	system-libjpeg-turbo? (
@@ -1245,7 +1245,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/libpng:=
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-1.5.0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.6.0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	system-libxml? (
@@ -1265,7 +1265,7 @@ COMMON_SNAPSHOT_DEPEND="
 		sys-libs/zlib:=
 	)
 	system-zstd? (
-		>=app-arch/zstd-1.5.7[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-1.5.8[${MULTILIB_USEDEP}]
 		app-arch/zstd:=
 	)
 "
