@@ -18,8 +18,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 # Lift max allowed to avoid possible multiple LLVM bug
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-	19
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 )
 
 PATENT_STATUS=(
@@ -77,8 +76,8 @@ video_cards_vivante?,\
 video_cards_vmware?,\
 "
 PYTHON_COMPAT=( "python3_"{11..13} )
-RUST_MAX_VER="1.78.0" # Inclusive
-RUST_MIN_VER="1.71.1"
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.78.0"
 RUST_MULTILIB=1
 RUST_OPTIONAL=1
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
@@ -325,31 +324,30 @@ BDEPEND="
 	virtual/pkgconfig
 	opencl? (
 		>=dev-util/bindgen-0.71.1
+		llvm_slot_18? (
+			|| (
+				=dev-lang/rust-1.78*
+				=dev-lang/rust-1.79*
+				=dev-lang/rust-1.80*
+				=dev-lang/rust-1.81*
+				=dev-lang/rust-bin-1.78*
+				=dev-lang/rust-bin-1.79*
+				=dev-lang/rust-bin-1.80*
+				=dev-lang/rust-bin-1.81*
+			)
+		)
 		llvm_slot_19? (
 			|| (
 				=dev-lang/rust-1.82*
 				=dev-lang/rust-1.83*
 				=dev-lang/rust-1.84*
 				=dev-lang/rust-1.85*
+				=dev-lang/rust-1.86*
 				=dev-lang/rust-bin-1.82*
 				=dev-lang/rust-bin-1.83*
 				=dev-lang/rust-bin-1.84*
 				=dev-lang/rust-bin-1.85*
 				=dev-lang/rust-bin-1.86*
-			)
-		)
-		llvm_slot_20? (
-			|| (
-				=dev-lang/rust-bin-1.87*
-				=dev-lang/rust-bin-1.88*
-				=dev-lang/rust-bin-1.89*
-				=dev-lang/rust-bin-1.90*
-			)
-		)
-		llvm_slot_21? (
-			|| (
-				=dev-lang/rust-9999*
-				=dev-lang/rust-bin-9999*
 			)
 		)
 		|| (
