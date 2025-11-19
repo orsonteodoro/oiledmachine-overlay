@@ -142,11 +142,6 @@ GCC_PV="10.2.1" # Minimum
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
-# SHA512 about_credits.html fingerprint: \
-LICENSE_FINGERPRINT="\
-b16bec0fa6b24252afa0687d6ef7baad8a38bb5b7b98170b06c465927ca0f853\
-6fb21c4c7dfc9aa9d81fa0ed16bce9dcf92e55083f316b32cdaf324bb5eb52b7\
-"
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
@@ -181,6 +176,12 @@ TESTDATA_P="${PN}-${PV}"
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
 ZLIB_PV="1.3.1"
+
+# SHA512 about_credits.html fingerprint: \
+LICENSE_FINGERPRINT="\
+b16bec0fa6b24252afa0687d6ef7baad8a38bb5b7b98170b06c465927ca0f853\
+6fb21c4c7dfc9aa9d81fa0ed16bce9dcf92e55083f316b32cdaf324bb5eb52b7\
+"
 
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
