@@ -83,6 +83,10 @@ einfo "ABO = Adjacent Buffer Overrun"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACE"($|" "|";"|",") ]] ; then
 einfo "ACE = Arbitrary Code Execution"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AEITW"($|" "|";"|",") ]] ; then
+# Alias for KEV
+einfo "AEITW = Actively Exploited In The Wild"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
 einfo "AW = Arbitrary Write"
 		fi
@@ -160,6 +164,10 @@ einfo "IR = Improper Release"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
 einfo "IS = Insufficient Sanitiation of Input"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ITW"($|" "|";"|",") ]] ; then
+# Alias for KEV
+einfo "ITW = In The Wild"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IU"($|" "|";"|",") ]] ; then
 einfo "IU = Integer Underflow"
 		fi
@@ -167,7 +175,7 @@ einfo "IU = Integer Underflow"
 einfo "IV = Insufficient Validation of Input or Data"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"KEV"($|" "|";"|",") ]] ; then
-einfo "KEV = Known Exploited Vulnerabilities (actively exploited in the wild)"
+einfo "KEV = Known Exploited Vulnerabilities (Actively exploited in the wild)"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
 einfo "MC = Memory Corruption"
