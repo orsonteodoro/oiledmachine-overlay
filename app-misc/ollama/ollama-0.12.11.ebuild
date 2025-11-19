@@ -25,7 +25,8 @@ EAPI=8
 # SECURITY:
 #
 # (1) Check the security advisories each month for both ollama and llama.cpp.
-# (2) if llama.cpp has a critical vulnerability, either bump ollama or manually force bump LLAMA_CPP_COMMIT and LLAMA_CPP_UPDATE=1.
+# (2) if llama.cpp has a critical vulnerability, either bump ollama or manually
+# force bump LLAMA_CPP_COMMIT and LLAMA_CPP_UPDATE=1.
 #
 
 # Scan the following for dependencies
@@ -36,7 +37,9 @@ EAPI=8
 
 #
 # To update the ebuild run `ebuild ollama-0.12.9.ebuild digest clean unpack`
-# changing GEN_EBUILD with the following transition states 0 (clear EGO_SUM) -> 1 -> 2 -> 0 (replace EGO_SUM results from phase 1 (direct-depends) with the list produced in phase 2 (depends-of-depends))
+# changing GEN_EBUILD with the following transition states 0 (clear EGO_SUM)
+# -> 1 -> 2 -> 0 (replace EGO_SUM results from phase 1 (direct-depends) with the
+# list produced in phase 2 (direct-depends + depends-of-depends))
 #
 
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
