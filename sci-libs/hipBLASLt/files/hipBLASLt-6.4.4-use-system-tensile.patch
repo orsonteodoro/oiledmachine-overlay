@@ -1,0 +1,14 @@
+--- a/CMakeLists.txt.orig	2025-11-19 13:45:23.112840097 -0800
++++ b/CMakeLists.txt	2025-11-19 13:52:21.717855887 -0800
+@@ -228,7 +228,10 @@ else()
+     endif()
+ 
+     include(virtualenv)
+-    if (Tensile_TEST_LOCAL_PATH)
++    option(USE_SYSTEM_TENSILE "Use system Tensile?" ON)
++    if (USE_SYSTEM_TENSILE)
++      message (STATUS "Using system Tensile")
++    elseif (Tensile_TEST_LOCAL_PATH)
+       virtualenv_install(${Tensile_TEST_LOCAL_PATH})
+       message (STATUS "using local Tensile from ${Tensile_TEST_LOCAL_PATH}, copied to ${Tensile_ROOT}")
+     else()

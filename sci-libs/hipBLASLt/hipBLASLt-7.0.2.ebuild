@@ -64,7 +64,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
--asan -benchmark -cuda +minimal +rocm +tensile
+-asan -benchmark -cuda +minimal +rocm
 ebuild_revision_14
 "
 gen_rocm_required_use() {
@@ -81,7 +81,6 @@ REQUIRED_USE="
 	$(gen_rocm_required_use)
 	rocm? (
 		${ROCM_REQUIRED_USE}
-		tensile
 	)
 	^^ (
 		rocm
@@ -130,6 +129,8 @@ RDEPEND="
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
+		>=dev-util/Tensile-${PV}:${SLOT}[${TENSILE_7_0_AMDGPU_USEDEP}]
+		dev-util/Tensile:=
 	)
 "
 DEPEND="
@@ -154,6 +155,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
+	"${FILESDIR}/${PN}-6.4.4-use-system-tensile.patch"
 )
 
 pkg_setup() {
@@ -163,15 +165,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	if use tensile && has_version "dev-util/Tensile" ; then
-# Avoid referencing dev-util/Tensile with V4/V5 code object version.  Building
-# requires v2 or v3.
-eerror
-eerror "You must temporarly uninstall dev-util/Tensile."
-eerror "Reinstall dev-util/Tensile after this package completes."
-eerror
-		die
-	fi
 	cmake_src_prepare
 	sed \
 		-i \
@@ -269,7 +262,7 @@ ewarn
 		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DBUILD_WITH_TENSILE=$(usex tensile ON OFF)
+			-DBUILD_WITH_TENSILE=ON # OFF breaks arch detection
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
