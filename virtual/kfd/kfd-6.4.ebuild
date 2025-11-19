@@ -1,7 +1,7 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # ROCm driver versions:
 # Last GC:    https://github.com/ROCm/amdgpu/blob/rocm-6.4.3/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
