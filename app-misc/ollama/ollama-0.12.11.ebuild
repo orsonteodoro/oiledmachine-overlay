@@ -34,16 +34,18 @@ EAPI=8
 # TODO:  Re-evaluate/assess the security of file permissions related if the environment
 # variable were changed to having one folder of models.
 
+#
+# To update the ebuild run `ebuild ollama-0.12.9.ebuild digest clean unpack`
+# changing GEN_EBUILD with the following transition states 0 (clear EGO_SUM) -> 1 -> 2 -> 0 (replace EGO_SUM results from phase 1 (direct-depends) with the list produced in phase 2 (depends-of-depends))
+#
+
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 CXX_STANDARD=17
 EGO_PN="github.com/ollama/ollama"
-#
-# To update use this run `ebuild ollama-0.12.9.ebuild digest clean unpack`
-# changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
-#
 GEN_EBUILD=0
 LLAMA_CPP_UPDATE=0
+VULKAN_PV="1.4.321.1"
 
 # U20
 # For depends see
@@ -2041,7 +2043,6 @@ else
 		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
 		"rsc.io/pdf v0.1.1/go.mod"
-
 	)
 	go-module_set_globals
 
@@ -3007,7 +3008,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel
+sandbox systemd unrestrict video_cards_intel -vulkan
 ebuild_revision_83
 "
 
@@ -3164,31 +3165,6 @@ REQUIRED_USE="
 		${LLMS[@]/#/ollama_llms_}
 	)
 "
-RDEPEND="
-	acct-group/ollama
-	acct-user/ollama
-	emoji? (
-		>=media-libs/fontconfig-2.15.0
-		>=media-libs/freetype-2.13.2[png]
-		>=x11-libs/cairo-1.16.0
-		|| (
-			media-fonts/noto-color-emoji
-			media-fonts/noto-color-emoji-bin
-			media-fonts/noto-emoji
-			media-fonts/twemoji
-		)
-	)
-	openrc? (
-		sys-apps/openrc[bash]
-		|| (
-			app-admin/sysklogd
-			sys-apps/util-linux[logger]
-		)
-	)
-"
-IDEPEND="
-	${RDEPEND}
-"
 CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
@@ -3264,8 +3240,21 @@ gen_rocm_rdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 RDEPEND="
+	acct-group/ollama
+	acct-user/ollama
 	blis? (
 		sci-libs/blis:=
+	)
+	emoji? (
+		>=media-libs/fontconfig-2.15.0
+		>=media-libs/freetype-2.13.2[png]
+		>=x11-libs/cairo-1.16.0
+		|| (
+			media-fonts/noto-color-emoji
+			media-fonts/noto-color-emoji-bin
+			media-fonts/noto-emoji
+			media-fonts/twemoji
+		)
 	)
 	lapack? (
 		sci-libs/lapack:=
@@ -3275,6 +3264,13 @@ RDEPEND="
 	)
 	openblas? (
 		sci-libs/openblas:=
+	)
+	openrc? (
+		sys-apps/openrc[bash]
+		|| (
+			app-admin/sysklogd
+			sys-apps/util-linux[logger]
+		)
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
@@ -3289,9 +3285,15 @@ RDEPEND="
 		sci-libs/mkl:=
 		sys-devel/DPC++:=
 	)
+	vulkan? (
+		>=media-libs/vulkan-loader-${VULKAN_PV}
+	)
 "
 DEPEND="
 	${RDEPEND}
+	vulkan? (
+		>=dev-util/vulkan-headers-${VULKAN_PV}
+	)
 "
 gen_rocm_bdepend() {
 	local s
@@ -3458,6 +3460,9 @@ BDEPEND="
 	rocm? (
 		$(gen_rocm_bdepend)
 	)
+"
+IDEPEND="
+	${RDEPEND}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.12.9-cmd-changes.patch"
@@ -4800,6 +4805,7 @@ src_install() {
 	local flash_attention=$(usex flash "1" "0")
 	local kv_cache_type=${OLLAMA_KV_CACHE_TYPE:-"f16"}
 	local sandbox=$(usex sandbox "sandbox" "")
+	local vulkan=$(usex vulkan "1" "0")
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
@@ -4816,6 +4822,7 @@ src_install() {
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
+			-e "s|@OLLAMA_VULKAN@|${vulkan}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/etc/init.d/${PN}" \
 			|| die
@@ -4832,6 +4839,7 @@ src_install() {
 			-e "s|@OLLAMA_CONTEXT_LENGTH@|${context_length}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
+			-e "s|@OLLAMA_VULKAN@|${vulkan}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/usr/lib/systemd/system/${PN}.service" \
 			|| die
