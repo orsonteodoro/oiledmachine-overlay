@@ -18,24 +18,10 @@ EAPI="8"
 # 128.11.0 -> 128.12.0
 # 128.12.0 -> 128.13.0
 
-CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
-RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
-RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
-CPU_FLAGS_ARM=(
-	"cpu_flags_arm_neon"
-)
-
-LLVM_COMPAT=( 18 17 ) # Limited by rust
-
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
-# MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Jul 22, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1753110240 # From `date +%s -d "2025-07-21 08:04"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-58/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -52,34 +38,46 @@ if [[ -n "${MOZ_ESR}" ]] ; then
 	MOZ_PV="${MOZ_PV}esr"
 fi
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
+
+CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
+LLVM_COMPAT=( 18 17 ) # Limited by rust
+# MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
+MITIGATION_DATE="Jul 22, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1753110240 # From `date +%s -d "2025-07-21 08:04"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-58/"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
+PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_REQ_USE="ncurses,ssl,xml(+)"
+RUST_NEEDS_LLVM=1
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
+RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
+# Patch version
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
+#SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-04.tar.xz"
+WANT_AUTOCONF="2.1"
+
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_neon"
+)
+
+inherit autotools cflags-hardened check-compiler-switch check-reqs dhms flag-o-matic llvm-r1
+inherit multiprocessing prefix python-any-r1 rust rustflags-hardened
+inherit toolchain-funcs
+
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 if [[ "${PV}" == *"_rc"* ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
 fi
 
-# Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
-#SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-03.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
 )
-
-PYTHON_COMPAT=( "python3_"{10..11} )
-PYTHON_REQ_USE="ncurses,ssl,xml(+)"
-
-RUST_NEEDS_LLVM=1
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
-
-WANT_AUTOCONF="2.1"
-
-inherit autotools cflags-hardened check-compiler-switch check-reqs dhms flag-o-matic llvm-r1
-inherit multiprocessing prefix python-any-r1 rust rustflags-hardened
-inherit toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/firefox-${PV%_*}"
@@ -221,12 +219,6 @@ einfo "llvm-core/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT}
 			if has_version "=dev-lang/rust-1.77*" || has_version "=dev-lang/rust-bin-1.77*" ; then
 				return 0
 			elif has_version "=dev-lang/rust-1.76*" || has_version "=dev-lang/rust-bin-1.76*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.75*" || has_version "=dev-lang/rust-bin-1.75*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.74*" || has_version "=dev-lang/rust-bin-1.74*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.73*" || has_version "=dev-lang/rust-bin-1.73*" ; then
 				return 0
 			fi
 			return 1
