@@ -2,14 +2,14 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # TODO:  verify rpath
 
 # D11, U22
 PROTOBUF_SLOT=3
 
-inherit cmake user-info
+inherit cmake flag-o-matic user-info
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -80,8 +80,12 @@ eerror "  gpasswd -a ${PN} dialout"
 eerror
 		die
 	fi
+	export PATH="/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
+	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
 	local mycmakeargs=(
-		-Dprotobuf_DIR="/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+		-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/libprotobuf.a"
+		-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
 	)
 	cmake_src_configure
 }
