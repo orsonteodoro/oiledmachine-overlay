@@ -78,14 +78,36 @@ BUILD_ID_AMD64="g126b0d89" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
+FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use]
+FONTCONFIG_PV="2.15.0" # Use vendored list for versioning
+FREETYPE_PV="2.13.2" # Use vendored list for versioning
+GCC_PV="10.2.1"
+GLIB_PV="2.56.4"
+GLIBC_PV="2.30"
+GTK3_PV="3.22.30"
+GTK4_PV="4.8.3"
+LIBXI_PV="1.7.10"
+LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
+LIBXTST_PV="1.2.3"
+MESA_PV="20.3.5"
+NSS_PV="3.35"
+PKG_ARCH="amd64" # It can be amd64, i386, all.
+# Before URI redirect.  Not SSL protected.  MITM attack possible.
+# From second line of https://www.spotify.com/us/download/linux/
+#REPO_DOMAIN="http://repository.spotify.com" # Never use this URI to install downloaded debs.
+# After URI redirect of the above domain.  SSL protected.
+REPO_DOMAIN="https://repository-origin.spotify.com/"
+
 EXPECTED_DEPENDS_FINGERPRINT="\
 fd58cdd53a8053f5409d059776d9356e26a621bf8753f3e9d6887814769a2eab\
 83d57ce65c17167fa95d373912ecbe057f08a6d73b17a6a7e6b00c507e1f1529\
 " # Packages fingerprint for client
+
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
 89ce438d5e3c3df6230912b1eebf3c45c70bd9def0deb9fb047ed13256019a7c\
 " # Packages fingerprint of internal dependency Chromium for CEF
+
 FFMPEG_COMPAT=(
 #	List based on Packages file
 #	"0/avutil.avcodec.avformat" # compare the middle
@@ -94,12 +116,7 @@ FFMPEG_COMPAT=(
 	"0/54.56.56" # 2.4
 	"0/52.54.54" # 0.11, 1.0, 1.1, 1.2
 )
-FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use]
-FONTCONFIG_PV="2.15.0" # Use vendored list for versioning
-FREETYPE_PV="2.13.2" # Use vendored list for versioning
-GCC_PV="10.2.1"
-GLIB_PV="2.56.4"
-GLIBC_PV="2.30"
+
 # Details of the repo public key itself \
 GPG_KEY_ID="B420FD3777CCE3A7F0076B55C85668DF69375001" # RSA Key
 GPG_EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
@@ -117,14 +134,7 @@ GPG_PUBLIC_KEY_BLAKE2B="\
 817fb9344eaa0ce296f66b18fa73f5d8786d117ca90c386d0e5ccedf9acc32c9\
 5c41b83aa25d442e2c401e5bb0cec9fa415ef1fb62c3f134cbffd2061e6d8e86\
 "
-GTK3_PV="3.22.30"
-GTK4_PV="4.8.3"
-LIBXI_PV="1.7.10"
-LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
-LIBXTST_PV="1.2.3"
-MESA_PV="20.3.5"
-NSS_PV="3.35"
-PKG_ARCH="amd64" # It can be amd64, i386, all.
+
 QA_PREBUILT="
 	opt/${PN}/${PN}-client/${PN}
 	opt/${PN}/${PN}-client/libEGL.so
@@ -135,11 +145,6 @@ QA_PREBUILT="
 	opt/${PN}/${PN}-client/swiftshader/libEGL.so
 	opt/${PN}/${PN}-client/swiftshader/libGLESv2.so
 "
-# Before URI redirect.  Not SSL protected.  MITM attack possible.
-# From second line of https://www.spotify.com/us/download/linux/
-#REPO_DOMAIN="http://repository.spotify.com" # Never use this URI to install downloaded debs.
-# After URI redirect of the above domain.  SSL protected.
-REPO_DOMAIN="https://repository-origin.spotify.com/"
 
 unset hash_cmd
 declare -A hash_cmd=(
