@@ -1117,6 +1117,14 @@ rocm_set_default_gcc() {
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=bfd
+einfo "Switched to GCC"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 # @FUNCTION: rocm_set_default_clang
@@ -1131,6 +1139,36 @@ rocm_set_default_clang() {
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
+einfo "Switched to Clang"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+}
+
+# @FUNCTION: rocm_set_default_amdclang
+# @DESCRIPTION:
+# Sets compiler defaults to clang to avoid primarily linker errors.
+rocm_set_default_amdclang() {
+	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+	llvm_slot="${!_llvm_slot}"
+	export CC="amdclang"
+	export CXX="amdclang++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+einfo "Switched to amdclang"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 # @FUNCTION: rocm_set_default_aocc
@@ -1148,6 +1186,14 @@ rocm_set_default_aocc() {
 	append-ldflags -fuse-ld=lld
 	export _USE_AOCC=1
 	filter-lto
+einfo "Switched to AOCC"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 # @FUNCTION: rocm_set_default_hipcc
@@ -1217,6 +1263,14 @@ eerror
 		append-ldflags -fuse-ld=lld
 	fi
 	filter-lto
+einfo "Switched to hipcc"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 # @FUNCTION: hip_nvcc_get_gcc_slot

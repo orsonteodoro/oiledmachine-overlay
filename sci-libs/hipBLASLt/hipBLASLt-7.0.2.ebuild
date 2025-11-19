@@ -4,6 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=17
+CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
@@ -80,6 +81,7 @@ REQUIRED_USE="
 	$(gen_rocm_required_use)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+		tensile
 	)
 	^^ (
 		rocm
