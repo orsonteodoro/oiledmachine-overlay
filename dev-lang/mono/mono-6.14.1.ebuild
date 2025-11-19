@@ -2,7 +2,7 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # Note: mono works incorrect with older versions of libgdiplus
 # Details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
@@ -18,32 +18,35 @@ EAPI=7
 # download.mono-project.com tarball.  The GitHub tarball typically does not
 # include the gitmodules (vendored internal dependencies).
 
-BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
 CFLAGS_HARDENED_ASSEMBLERS="inline yasm"
 CFLAGS_HARDENED_CI_SANITIZERS="tsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS PE RC UAF"
 CHECKREQS_DISK_BUILD="4500M"
-DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
-FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
-JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
-MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
 NABIS=0 # Global variable not constant
-TRAINERS="
-	mono_trainers_acceptance_tests_coreclr
-	mono_trainers_acceptance_tests_microbench
-	mono_trainers_mono_benchmark
-	mono_trainers_mono_managed
-	mono_trainers_mono_native
-	mono_trainers_mcs
-"
 TRAIN_TEST_DURATION=1800 # 30 min
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
+
+JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
+
+BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
+DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
+FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
+MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
 XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
+
+TRAINERS=(
+	"mono_trainers_acceptance_tests_coreclr"
+	"mono_trainers_acceptance_tests_microbench"
+	"mono_trainers_mono_benchmark"
+	"mono_trainers_mono_managed"
+	"mono_trainers_mono_native"
+	"mono_trainers_mcs"
+)
 
 inherit autotools cflags-hardened check-compiler-switch check-reqs lcnr linux-info mono-env pax-utils
 inherit multilib-minimal sandbox-changes toolchain-funcs uopts
@@ -251,10 +254,11 @@ BDEPEND+="
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.12-try-catch.patch"
-	"${FILESDIR}/${PN}-6.12.0.122-disable-automagic-ccache.patch"
+	"${FILESDIR}/${PN}-6.14.1-disable-automagic-ccache.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-disable-test-mono-callspec.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-mono-benchmark-missing-main.patch"
 	"${FILESDIR}/${PN}-6.12.0.122-acceptance-tests-disable-reset.patch"
+	"${FILESDIR}/${PN}-6.12.0.199-configure-c99.patch"
 )
 
 _get_s() {
