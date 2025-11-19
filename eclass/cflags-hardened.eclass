@@ -125,9 +125,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 
 # Estimates:
 # Flag                                  Performance as a normalized decimal multiple
-# No mitigation                         1.00
-# -D_FORTIFY_SOURCE=2                   1.01
-# -D_FORTIFY_SOURCE=3                   1.02
+# No mitigation                                 1.00
+# -D_FORTIFY_SOURCE=2                           1.01
+# -D_FORTIFY_SOURCE=3                           1.02
 # -fPIC                                 1.05 -  1.10
 # -fPIE -pie                            1.05 -  1.10
 # -fcf-protection=full                  1.03 -  1.05
@@ -142,6 +142,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=hwaddress                  1.15 -  1.50 (ARM64)
 # -fsanitize=leak                       1.05 -  1.50
 # -fsanitize=memory                     3.00 - 11.00
+# -fsanitize=realtime                   1.00 -  3.00
 # -fsanitize=safe-stack                 1.01 -  1.20
 # -fsanitize=shadowcallstack            1.01 -  1.15
 # -fsanitize=thread                     4.00 - 16.00
@@ -165,8 +166,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mretpoline-external-thunk            1.15 -  1.35
 # -fvtable-verify=preinit               1.06 -  1.16
 # -fvtable-verify=std                   1.05 -  1.15
-# -Wa,--noexecstack                     1.00
-# -Wl,-z,noexecstack                    1.00
+# -Wa,--noexecstack                             1.00
+# -Wl,-z,noexecstack                            1.00
 # -Wl,-z,relro,-z,now                   1.01 -  1.05
 
 # Setting to 4.0 will enable ASAN and other faster sanitizers.
@@ -2048,6 +2049,12 @@ eerror
 		fi
 	fi
 
+	if [[ "${auto_sanitize}" =~ "tysan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "type" ]] ; then
+			sanitizers+=" type"
+		fi
+	fi
+
 	if [[ "${auto_sanitize}" =~ "ubsan" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
 		sanitizers+=" signed-integer-overflow"
 	fi
@@ -2235,12 +2242,12 @@ einfo "Auto-sanitizing package:  No"
 			["hwasan"]="2.0"
 			["lsan"]="1.5"
 			["msan"]="11.0"
-			["rtsan"]="1.05" # placeholder
+			["rtsan"]="3.0"
 			["safestack"]="1.20"
 			["scs"]="1.15"
 			["tsan"]="16.0"
 			["ubsan"]="2.0"
-			["tysan"]="1.05" # placeholder
+			["tysan"]="20.0"
 		)
 
 		unset added

@@ -119,11 +119,11 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # Estimates:
 # Flag                                                 Performance as a normalized decimal multiple
-# No mitigation                                         1.00
+# No mitigation                                                  1.00
 # -C target-feature=+stack-probe                        0.005 -  1.03
-# -C link-arg=-D_FORTIFY_SOURCE=2                       1.01
-# -C link-arg=-D_FORTIFY_SOURCE=3                       1.02
-# -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now       1.05
+# -C link-arg=-D_FORTIFY_SOURCE=2                                1.01
+# -C link-arg=-D_FORTIFY_SOURCE=3                                1.02
+# -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now                1.05
 # -C overflow-checks=on                                 1.01  -  1.20
 # -C relocation-model=pic                               1.05  -  1.10
 # -C soft-float                                         2.00  - 10.00
@@ -142,7 +142,6 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # -Zsanitizer=safestack                                 1.01  -  1.20
 # -Zsanitizer=shadow-call-stack                         1.01  -  1.15
 # -Zsanitizer=thread                                    4.00  - 16.00
-# -Zsanitizer=type                                      2.00  - 20.00
 
 # Setting to 4.0 will enable ASan and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
@@ -1431,6 +1430,8 @@ eerror
 		fi
 	fi
 
+	# Not all visible because the language may address it or other third-party tools.
+
 	#if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
 	#	sanitizers+=" signed-integer-overflow"
 	#fi
@@ -1550,12 +1551,12 @@ einfo "Auto-sanitizing package:  No"
 			["hwasan"]="2.0"
 			["lsan"]="1.5"
 			["msan"]="11.0"
-			["rtsan"]="1.05" # placeholder
+			["rtsan"]="3.0"
 			["safestack"]="1.20"
 			["shadowcallstack"]="1.15"
 			["tsan"]="16.0"
 			["ubsan"]="2.0"
-			["tysan"]="1.05" # placeholder
+			["tysan"]="20.0"
 		)
 
 		unset added
