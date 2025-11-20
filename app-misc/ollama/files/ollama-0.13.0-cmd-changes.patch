@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,3207 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3209 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -2913,7 +2913,9 @@
 +	// GPQA Diamond has expert-level-reasoning tag
 +	//
 +	// basic-coding-agent or coding-assistant can be used if < 70% LiveCodeBench or it inferred at that score by similar benchmarks
-+	// coding-agent tag means >= 70% on LiveCodeBench
++	// coding-agent or vibe-coding tag means >= 70% on LiveCodeBench
++	// For LiveCodeBench, pass@1 undeterministic unseen problems, overall measurement; easy undergrad or high school programmer ; medium security use cases ; hard governmental projects use case
++	// The coding-assistant or coding-agent keyword-tagging uses primarily pass@1 for quality control.  For LiveCodeBench v6, with tools metric is more relevant for vibe-coding and coding-agent tagging.
 +	//
 +	"adens/quran-guide": "quran muslim islam allah",
 +	"agcobra/liberated-qwen1.5-72b": "uncensored safety-off multilingual general-knowledge math-word-problems arabic french vietnamese korean japanese spanish indonesian portuguese russian",
@@ -2954,10 +2956,10 @@
 +	"chatgph/medix-ph": "medical assistant healtcare philippines filipino",
 +	"codebooga": "coding python",
 +	"codegeex4": "coding code-generation code-completion",
-+	"codegemma": "coding autocomplete coding-assistant fim fill-in-the-middle vibe-coding",
-+	"codellama": "coding code-generation code-completion code-review unit-test-generator python fim fill-in-the-middle vibe-coding",
++	"codegemma": "coding autocomplete coding-assistant fim fill-in-the-middle",
++	"codellama": "coding code-generation code-completion code-review unit-test-generator python fim fill-in-the-middle",
 +	"codeqwen": "coding code-generation fixing-bugs",
-+	"codestral": "coding code-generation solving-basic-programming-problems fim fill-in-the-middle unit-test-generator python vibe-coding",
++	"codestral": "coding code-generation solving-basic-programming-problems fim fill-in-the-middle unit-test-generator python",
 +	"codeup": "coding code-generation",
 +	"cogito:3b": "multilingual abstract-reasoning common-sense",
 +	"cogito:8b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling",
@@ -2973,11 +2975,11 @@
 +	"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
 +	"deepcoder": "code-reasoning finetuned-deepseek-r1-distilled-qwen code-generation coding",
 +	"deepscaler": "math-word-problems calculus statistics fine-tuned-deepseek-r1-distilled-qwen",
-+	"deepseek-coder": "coding english chinese code-completion fim fill-in-the-middle python vibe-coding",
-+	"deepseek-coder-v2": "coding code-completion code-insertion code-generator vibe-coding",
++	"deepseek-coder": "coding english chinese code-completion fim fill-in-the-middle python",
++	"deepseek-coder-v2": "coding code-completion code-insertion code-generator",
 +	"deepseek-llm": "bilingual common-sense basic-reasoning trivia chinese english general-knowledge china-alignment china-bias",
 +	"deepseek-ocr": "ocr optical-character-recognition",
-+	"deepseek-r1": "math-word-problems graduate-level-stem general-knowledge calculus statistics china-alignment china-bias china-censorship vibe-coding",
++	"deepseek-r1": "math-word-problems graduate-level-stem general-knowledge calculus statistics china-alignment china-bias china-censorship",
 +	"deepseek-v2": "bilinugual chinese english common-sense reasoning general-knowledge trivia math-word-problems china-alignment china-bias",
 +	"deepseek-v2:236b": "bilinugual chinese english common-sense reasoning general-knowledge trivia math-word-problems china-alignment china-bias",
 +	"deepseek-v2.5": "chat coding code-generator python common-sense reasoning instruction-following general-knowledge trivia math-word-problems chinese china-alignment china-bias",
@@ -2995,7 +2997,7 @@
 +	"ehartford/theprofessor": "brainstorming research reasoning science medical math computer-science physics cosmology professor theoretical-explanations",
 +	"eramax/aura_v3": "nsfw erotica roleplay",
 +	"embeddinggemma": "embedding search-tasks retrieval-tasks mobile laptop",
-+	"exaone3.5": "coding code-generation python general-knowledge math-word-problems common-sense abstract-reasoning multilingual english korean",
++	"exaone3.5": "coding code-generation python general-knowledge math-word-problems common-sense abstract-reasoning multilingual english korean vibe-coding",
 +	"exaone-deep": "math high-school-math",
 +	"everythinglm": "uncensored detailed-replies story-telling",
 +	"falcon": "llm-research",
@@ -3034,8 +3036,8 @@
 +	"jimscard/adult-film-screenwriter-nsfw": "nsfw adult-content",
 +	"jimscard/whiterabbit-neo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"joefamous/grok-1": "chatbot general-knowledge",
-+	"kimi-k2": "cloud cloud-hosted coding-agent expert-level-reasoning graduate-level-stem",
-+	"kimi-k2-thinking": "cloud cloud-hosted coding-agent agentic-coding software-engineering expert-level-reasoning high-school-math graduate-level-stem",
++	"kimi-k2": "cloud cloud-hosted basic-coding-agent expert-level-reasoning graduate-level-stem",
++	"kimi-k2-thinking": "cloud cloud-hosted basic-coding-agent agentic-coding software-engineering expert-level-reasoning high-school-math graduate-level-stem",
 +	"leeplenty/lumimaid-v0.2": "nsfw adult-content",
 +	"llama-guard3": "content-moderation",
 +	"llama-pro": "coding math common-sense",
@@ -3051,7 +3053,7 @@
 +	"llama3-groq-tool-use": "function-calling tool-use",
 +	"llama3.1": "multilingual chat translation summaries coding coding-assistant general-knowledge",
 +	"llama3.2": "multilingual chat instruction-following summaries english german french italian portuguese hindi spanish thai",
-+	"llama3.2-vision": "multilingual chat instruction-following summaries vision ocr optical-character-recognition english english-only-vision german french italian portuguese hindi spanish thai multimodal-vibe-coding",
++	"llama3.2-vision": "multilingual chat instruction-following summaries vision ocr optical-character-recognition english english-only-vision german french italian portuguese hindi spanish thai",
 +	"llama3.3": "general-knowledge instruction-following code-generation math-word-problems college-level-math calculus statistics tool-use multilingual english german french italian portuguese hindi spanish thai multilingual-commercial multilingual-research",
 +	"llama4": "multimodal multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
 +	"llama4:maverick": "multimodal image-reasoning image-understanding general-knowledge multilingual arabic english french german hindi indonesian italian portuguese spanish tagalog thai vietnamese assistant chat image-recognition image-qa image-captioning model-optimization",
@@ -3065,7 +3067,7 @@
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
-+	"gemini-3-pro-preview": "cloud cloud-hosted vibe-coding expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use coding-competitions vibe-coding",
++	"gemini-3-pro-preview": "cloud cloud-hosted expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use coding-competitions vibe-coding",
 +	"gemma": "text-generation qa summaries common-sense programming-tutor answering-questions",
 +	"gemma2": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning",
 +	"gemma3": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa easy-reasoning physical-common-sense",
@@ -3143,8 +3145,8 @@
 +	"qwen2-math": "china-alignment china-bias math-word-problems stem-general-knowledge stem science technology engineering mathematics college-level-math calculus statistics",
 +	"qwen2.5": "china-alignment china-bias multilingual chat roleplay coding parsing json math instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5:72b": "china-alignment china-bias multilingual chat roleplay general-knowledge math-word-problems college-level-math calculus statistics coding code-generation python parsing json instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
-+	"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs vibe-coding",
-+	"qwen2.5vl": "china-alignment china-bias image-recognition visual-recognition realistic-recognition artificial-recognition qa-charts qa-diagrams qa-doc-images qa-images visual-object-detection visual-object-labeling landmark-detection chinese-ocr chinese-optical-character-recognition multimodal-vibe-coding",
++	"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs",
++	"qwen2.5vl": "china-alignment china-bias image-recognition visual-recognition realistic-recognition artificial-recognition qa-charts qa-diagrams qa-doc-images qa-images visual-object-detection visual-object-labeling landmark-detection chinese-ocr chinese-optical-character-recognition",
 +	"qwen3": "china-alignment china-bias multilingual",
 +	"qwen3:235b-a22b-instruct-2507-q4_K_M": "china-alignment china-bias expert-level-reasoning graduate-level-stem multilingual high-school-math tool-use",
 +	"qwen3:235b-a22b-instruct-2507-q8_0": "china-alignment china-bias expert-level-reasoning graduate-level-stem multilingual high-school-math tool-use",
@@ -3191,7 +3193,7 @@
 +	"stablelm-zephyr": "chat qa instruction-following",
 +	"stablelm2": "common-sense",
 +	"starcoder": "coding code-generation",
-+	"starcoder2": "coding code-generation vibe-coding",
++	"starcoder2": "coding code-generation",
 +	"starling-lm": "chat chatbot roleplay writing humanities stem science technology engineering math reasoning structured-data-generation",
 +	"tulu3": "instruction-following math-word-problems code-generation coding",
 +	"themanofrod/travel-agent": "camping travel travel-guide outdoors",
