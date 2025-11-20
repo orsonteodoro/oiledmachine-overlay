@@ -3487,7 +3487,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-0.13.0-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.13.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 )
 

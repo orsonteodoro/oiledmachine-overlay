@@ -3065,7 +3065,7 @@
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
-+	"gemini-3-pro-preview": "cloud cloud-hosted vibe-coding expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use coding-competitions",
++	"gemini-3-pro-preview": "cloud cloud-hosted vibe-coding expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use coding-competitions vibe-coding",
 +	"gemma": "text-generation qa summaries common-sense programming-tutor answering-questions",
 +	"gemma2": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning",
 +	"gemma3": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa easy-reasoning physical-common-sense",
