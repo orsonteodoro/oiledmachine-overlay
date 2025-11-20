@@ -35,6 +35,11 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
 
+HSA_OBJECT_CODE_OBJECT=(
+	"+hsa-code-object-v4"
+	"hsa-code-object-v5"
+)
+
 inherit cmake distutils-r1 libstdcxx-slot prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
@@ -61,6 +66,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
+${HSA_OBJECT_CODE_OBJECT[@]}
 +client cuda +opencl +openmp +rocm
 ebuild_revision_23
 "

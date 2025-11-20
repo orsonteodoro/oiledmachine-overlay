@@ -13,5 +13,11 @@
     <flag name="client">
       Build and install tensile_client executable to run benchmarks and tune GPU GEMM
     </flag>
+    <flag name="hsa-code-object-v4">
+      Optimize HSA for compatibility.
+    </flag>
+    <flag name="hsa-code-object-v5">
+      Optimize HSA for throughput.  Compatible with with gfx9xx only.
+    </flag>
   </use>
 </pkgmetadata>

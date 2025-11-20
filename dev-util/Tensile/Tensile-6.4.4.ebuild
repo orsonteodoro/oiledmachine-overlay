@@ -37,6 +37,11 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
+HSA_OBJECT_CODE_OBJECT=(
+	"+hsa-code-object-v4"
+	"hsa-code-object-v5"
+)
+
 inherit cmake distutils-r1 libstdcxx-slot prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
@@ -63,6 +68,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
+${HSA_OBJECT_CODE_OBJECT[@]}
 +client cuda +opencl +openmp +rocm
 ebuild_revision_23
 "
@@ -179,6 +185,7 @@ src_configure() {
 			-DCMAKE_SKIP_RPATH=ON
 			-DROCM_ROOT="${ROCM_PATH}"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
+			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
 			-DTENSILE_USE_OPENCL=$(usex opencl ON OFF)
