@@ -3,6 +3,10 @@
 
 EAPI=8
 
+# Current CodeObjectVersion:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/clang/lib/Driver/ToolChains/AMDGPU.h#L93
+# HSA CodeObjectVersion for Tensile:  https://github.com/ROCm/Tensile/blob/rocm-6.4.4/Tensile/Common.py#L2620
+# HSA CodeObjectVersion for TensileLite: https://github.com/ROCm/hipBLASLt/blob/rocm-6.4.4/tensilelite/Tensile/Common/Constants.py#L3
+
 CXX_STANDARD=17
 #CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_BUILD_TYPE="None"
@@ -11,6 +15,7 @@ HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+TENSILELITE_INTERNAL_PV="4.33.0" # https://github.com/ROCm/hipBLASLt/blob/rocm-6.4.4/tensilelite/Tensile/__init__.py#L29
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908_xnack_minus"
@@ -26,6 +31,11 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1151"
 	"gfx1200"
 	"gfx1201"
+)
+
+HSA_OBJECT_CODE_OBJECT=(
+	"+hsa-code-object-v4"
+	"hsa-code-object-v5"
 )
 
 inherit libstdcxx-compat
@@ -62,6 +72,7 @@ LICENSE="
 # MIT - LICENSE.md
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
+${HSA_OBJECT_CODE_OBJECT[@]}
 ${ROCM_IUSE}
 -asan -benchmark -cuda +minimal +rocm
 ebuild_revision_14
@@ -82,15 +93,18 @@ REQUIRED_USE="
 		${ROCM_REQUIRED_USE}
 	)
 	^^ (
+		${HSA_OBJECT_CODE_OBJECT[@]/+}
+	)
+	^^ (
 		rocm
 		cuda
 	)
 "
 RDEPEND="
 	${HIPCC_DEPEND}
+	dev-cpp/msgpack-cxx
 	dev-libs/boost[${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
-	dev-libs/msgpack
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	virtual/blas
@@ -124,8 +138,6 @@ RDEPEND="
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
-		>=dev-util/Tensile-${PV}:${SLOT}[${TENSILE_6_4_AMDGPU_USEDEP}]
-		dev-util/Tensile:=
 	)
 "
 DEPEND="
@@ -151,6 +163,7 @@ RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
 	"${FILESDIR}/${PN}-6.4.4-use-system-tensile.patch"
+	"${FILESDIR}/${PN}-6.1.1-fix-msgpack-dependency.patch"
 )
 
 pkg_setup() {
@@ -213,6 +226,19 @@ src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
+	if has_version "dev-util/Tensile" ; then
+eerror
+eerror "Header conflict between Tensile and TensileLite"
+eerror
+eerror "Do the following:"
+eerror
+eerror "emerge -C Tensile:${SLOT}"
+eerror "emerge -1vO hipBLASLt:${SLOT}"
+eerror "emerge -1vO Tensile:${SLOT}"
+eerror
+		die
+	fi
+
 	replace-flags '-O0' '-O1'
 	local nprocs=$(get_makeopts_nprocs)
 	if (( "${nprocs}" > 1 )) ; then
@@ -243,16 +269,14 @@ ewarn
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
+			-DOPENCL_ROOT="/opt/cuda"
 		)
-		if use tensile ; then
-			mycmakeargs+=(
-				-DOPENCL_ROOT="/opt/cuda"
-			)
-		fi
 	elif use rocm ; then
 		export HIP_PATH="${ROCM_PATH}"
 		export HIP_PLATFORM="amd"
 		export ROCM_PATH="${ROCM_PATH}"
+		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -260,18 +284,15 @@ ewarn
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
-			-DLEGACY_HIPBLAS_DIRECT=$()
+			-DOPENCL_ROOT="${EROCM_PATH}/opencl"
+			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
+			-DTensile_CPU_THREADS="${nprocs}"
+			-DTensile_DIR="${S}/tensilelite/Tensile/cmake"
+			-DTensile_PREFIX="${S}/tensilelite"
+			-DTensile_ROOT="${S}/tensilelite/Tensile"
+			-DTENSILE_VERSION="${TENSILELITE_INTERNAL_PV}"
+			-DUSE_TENSILELITE=ON
 		)
-		if use tensile ; then
-			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
-			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
-			mycmakeargs+=(
-				-DOPENCL_ROOT="${EROCM_PATH}/opencl"
-				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
-				-DTensile_CPU_THREADS="${nprocs}"
-				-DTensile_ROOT="${S}/tensilelite"
-			)
-		fi
 	fi
 
 #	virtualenv "${BUILD_DIR}/venv" || die

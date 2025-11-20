@@ -9,10 +9,24 @@
   <upstream>
     <remote-id type="github">ROCmSoftwarePlatform/hipBLASLt</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Tensile:  slower build, faster performance, larger libhipblaslt.so, old default
+  Tensilelite:  faster build, slower performance, smaller libhipblaslt.so, new default
+
+  -->
   <use>
     <flag name="asan">
       Build with ASan with critical severity security mitigations related to
       memory for both CPU and GPU.
+    </flag>
+    <flag name="hsa-code-object-v4">
+      Optimize HSA for compatibility.
+    </flag>
+    <flag name="hsa-code-object-v5">
+      Optimize HSA for throughput.  Compatible with with gfx9xx only.
     </flag>
     <flag name="minimal">
       Avoid building heavy hipBLAS to just to obtain headers.
