@@ -143,11 +143,11 @@ prepare_chroot() {
 		)
 
 		if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
-			mkdir -p "opt/rocm-@ROCM_VERSION@"
-			mount -o ro --bind "/opt/rocm-@ROCM_VERSION@" "opt/rocm-@ROCM_VERSION@"
+			mkdir -p "opt/rocm"
+			mount -o ro --bind "/opt/rocm" "opt/rocm"
 
 			paths+=(
-				"/opt/rocm-@ROCM_VERSION@;libs-recursive"
+				"/opt/rocm;libs-recursive"
 			)
 		elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
 			mkdir -p "opt/cuda"
@@ -276,7 +276,7 @@ stop_chroot() {
 			umount -l "run" >/dev/null 2>&1
 		fi
 		if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
-			umount -l "opt/rocm-@ROCM_VERSION@"
+			umount -l "opt/rocm"
 		elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
 			umount -l "opt/cuda"
 		fi

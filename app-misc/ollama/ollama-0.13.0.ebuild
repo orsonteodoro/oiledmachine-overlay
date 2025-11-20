@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_91
+ebuild_revision_92
 "
 
 gen_rocm_required_use() {
@@ -4692,6 +4692,10 @@ install_gpu_runner() {
 		runner_path1="${S}/dist/lib/ollama/rocm"
 		dir_name="rocm"
 		flavor_name="hip"
+	elif use vulkan ; then
+		runner_path1="${S}/dist/lib/ollama/vulkan"
+		dir_name="vulkan"
+		flavor_name="vulkan"
 	fi
 
 	[[ -z "${flavor_name}" ]] && return
@@ -4705,6 +4709,8 @@ install_gpu_runner() {
 			doexe "libggml-cuda.so"
 		elif use rocm ; then
 			doexe "libggml-hip.so"
+		elif use vulkan ; then
+			doexe "libggml-vulkan.so"
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -4738,7 +4744,7 @@ install_gpu_runner() {
 				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
 				|| die
 			patchelf \
-				--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
+				--add-rpath "/opt/rocm/lib" \
 				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
 				|| die
 		done
@@ -4769,7 +4775,7 @@ src_install() {
 	elif use rocm ; then
 		local dir_name="rocm"
 		patchelf \
-			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
+			--add-rpath "/opt/rocm/lib" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 		patchelf \
@@ -4802,6 +4808,8 @@ src_install() {
 		backend="cpu_avx2"
 	elif use cpu_flags_x86_avx ; then
 		backend="cpu_avx"
+	elif use vulkan ; then
+		backend="vulkan"
 	else
 		backend="cpu"
 	fi
@@ -4831,12 +4839,6 @@ src_install() {
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
-		if use rocm ; then
-			sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" \
-				"${ED}/etc/init.d/${PN}" \
-				"${ED}/usr/bin/${PN}" \
-				|| die
-		fi
 		sed -i \
 			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
@@ -4852,11 +4854,6 @@ src_install() {
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
 		doins "${FILESDIR}/${PN}.service"
-		if use rocm ; then
-			sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" \
-				"${ED}/usr/bin/${PN}" \
-				|| die
-		fi
 		sed -i \
 			-e "s|@OLLAMA_CONTEXT_LENGTH@|${context_length}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \

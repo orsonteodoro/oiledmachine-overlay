@@ -17,11 +17,12 @@ declare -A backends=(
 	"rocm"
 	"cuda_v12"
 	"cuda_v11"
+	"vulkan"
 )
 
 main() {
 	if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
-		export LD_LIBRARY_PATH="/opt/rocm-@ROCM_VERSION@/lib:${LD_LIBRARY_PATH}"
+		export LD_LIBRARY_PATH="/opt/rocm/lib:${LD_LIBRARY_PATH}"
 	elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
 		export LD_LIBRARY_PATH="/opt/cuda/lib64:${LD_LIBRARY_PATH}"
 	fi
