@@ -122,6 +122,10 @@
       Support SYCL MKL acceleration for Intel® GPUs.
       (EXPERIMENTAL)
     </flag>
+    <flag name="vulkan">
+      Support GPU accelerated inference through Vulkan.
+      (EXPERIMENTAL)
+    </flag>
 
     <flag name="amdgpu_targets_gfx908_xnack_minus">
       Generate compile time performance-critical Arcturus microarchitecture GPU
