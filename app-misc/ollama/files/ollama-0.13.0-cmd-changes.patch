@@ -2914,7 +2914,7 @@
 +	//
 +	// basic-coding-agent or coding-assistant can be used if < 70% LiveCodeBench or it inferred at that score by similar benchmarks
 +	// coding-agent or vibe-coding tag means >= 70% on LiveCodeBench
-+	// For LiveCodeBench, pass@1 undeterministic unseen problems, overall measurement; easy undergrad or high school programmer ; medium security use cases ; hard governmental projects use case
++	// For LiveCodeBench, pass@1 measures overall score, easy measures easy coding problems, medium for mid coding problems, hard measures advanced coding problems.
 +	// The coding-assistant or coding-agent keyword-tagging uses primarily pass@1 for quality control.  For LiveCodeBench v6, with tools metric is more relevant for vibe-coding and coding-agent tagging.
 +	//
 +	"adens/quran-guide": "quran muslim islam allah",
