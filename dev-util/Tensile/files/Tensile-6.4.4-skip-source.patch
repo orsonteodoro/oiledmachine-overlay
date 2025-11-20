@@ -1,0 +1,13 @@
+--- a/Tensile/cmake/TensileConfig.cmake.orig	2025-11-19 19:56:29.047102577 -0800
++++ b/Tensile/cmake/TensileConfig.cmake	2025-11-19 19:56:58.342826604 -0800
+@@ -82,7 +82,9 @@ else()
+     set(TENSILE_STATIC_ONLY OFF CACHE BOOL "Disable exporting symbols from shared library.")
+ endif()
+ 
+-add_subdirectory("${Tensile_ROOT}/Source" "Tensile")
++if(EXISTS "${Tensile_ROOT}/Source")
++    add_subdirectory("${Tensile_ROOT}/Source" "Tensile")
++endif()
+ 
+ # Output target: ${Tensile_VAR_PREFIX}_LIBRARY_TARGET. Ensures that the libs get built in Tensile_OUTPUT_PATH/library.
+ # Output symbol: ${Tensile_VAR_PREFIX}_ALL_FILES. List of full paths of all expected library files in manifest.

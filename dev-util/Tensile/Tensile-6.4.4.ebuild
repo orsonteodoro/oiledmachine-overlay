@@ -70,7 +70,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${HSA_OBJECT_CODE_OBJECT[@]}
 +client cuda +opencl +openmp +rocm
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	client? (
@@ -135,6 +135,7 @@ _PATCHES=(
 #	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 	"${FILESDIR}/${PN}-6.4.4-link-llvm.patch"
+	"${FILESDIR}/${PN}-6.4.4-skip-source.patch"
 )
 
 pkg_setup() {
