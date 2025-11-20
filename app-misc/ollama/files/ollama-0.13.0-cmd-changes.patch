@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,3209 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3210 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -2985,6 +2985,7 @@
 +	"deepseek-v2.5": "chat coding code-generator python common-sense reasoning instruction-following general-knowledge trivia math-word-problems chinese china-alignment china-bias",
 +	"deepseek-v3": "general-knowledge trivia common-sense reasoning instruction-following coding code-generation python math-word-problems college-level-math graduate-level-stem stem calculus statistics chinese multilingual china-alignment china-bias",
 +	"deepseek-v3.1": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode",
++	"deepseek-v3.1:671b-cloud": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode rate-limited",
 +	"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
 +	"devstral": "basic-coding-agent open-model",
 +	"dolphin-llama3": "uncensored coding function-calling chat fine-tunable-alignment",
@@ -3007,7 +3008,7 @@
 +	"fixt/home-3b-v3": "home-assistant smart-home function-calling multilingual english german spanish french",
 +	"fixt/home-3b-v2": "home-assistant smart-home function-calling",
 +	"goliath": "detailed-response roleplay detailed-roleplay",
-+	"gpt-oss": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding",
++	"gpt-oss": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding rate-limited",
 +	"gpt-oss-safeguard": "safety-reasoning",
 +	"granite-code": "coding code-generation fixing-bugs documentation assistant fine-tunable",
 +	"granite-embedding": "embeddings english",
@@ -3067,7 +3068,7 @@
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
-+	"gemini-3-pro-preview": "cloud cloud-hosted expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use vibe-coding",
++	"gemini-3-pro-preview": "cloud cloud-hosted expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use vibe-coding rate-limited",
 +	"gemma": "text-generation qa summaries common-sense programming-tutor answering-questions",
 +	"gemma2": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning",
 +	"gemma3": "chat content-generation summaries grammar-correction language-tutor trivia multilingual math-word-problems reasoning qa easy-reasoning physical-common-sense",
@@ -3092,7 +3093,7 @@
 +	"medllama2": "medical qa",
 +	"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
 +	"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
-+	"minimax-m2": "cloud cloud-hosted coding rag-tool-use ai-assistant instruction-following human-and-ai-collaboration human-and-ai-team",
++	"minimax-m2": "cloud cloud-hosted coding rag-tool-use ai-assistant instruction-following human-and-ai-collaboration human-and-ai-team rate-limited",
 +	"mistral": "multilingual function-calling fine-tuneable made-in-france european",
 +	"mistral-large": "multilingual french german spanish italian dutch portuguese russian japanese chinese coding code-generation solving-basic-programming-problems math-word-problems function-calling json",
 +	"mistral-nemo": "multilingual english french german spanish italian portuguese chinese korean arabic hindi common-sense trivia function-calling",
