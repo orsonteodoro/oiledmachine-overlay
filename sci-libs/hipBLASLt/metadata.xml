@@ -13,8 +13,10 @@
 
   oiledmachine-overlay notes:
 
-  Tensile:  slower build, faster performance, larger libhipblaslt.so, old default
-  Tensilelite:  faster build, slower performance, smaller libhipblaslt.so, new default
+  | Implementation | Build time | Runtime performance | Size               | Default |
+  | ---            | ---        | ---                 | ---                | ---     |
+  | Tensile        | Longer     | 1-8% Faster         | Larger (200-400MB) | No      |
+  | TensileLite    | Shorter    | Slower              | Smaller (30-80MB)  | Yes     |
 
   -->
   <use>
@@ -29,7 +31,8 @@
       Optimize HSA for throughput.  Compatible with with gfx9xx only.
     </flag>
     <flag name="minimal">
-      Avoid building heavy hipBLAS to just to obtain headers.
+      Enable to optimize for reduced build time.
+      Disable to optimize for runtime performance.
     </flag>
     <flag name="tensile">
       Build full functionality

@@ -16,6 +16,7 @@ LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 TENSILELITE_INTERNAL_PV="4.33.0" # https://github.com/ROCm/hipBLASLt/blob/rocm-6.4.4/tensilelite/Tensile/__init__.py#L29
+TENSILEFULL_INTERNAL_PV="4.43.0" # https://github.com/ROCm/Tensile/blob/rocm-6.4.4/Tensile/__init__.py#L29
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908_xnack_minus"
@@ -138,6 +139,10 @@ RDEPEND="
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
+		!minimal? (
+			>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm,hsa-code-object-v4?,hsa-code-object-v5?]
+			dev-util/Tensile:=
+		)
 	)
 "
 DEPEND="
@@ -164,6 +169,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
 	"${FILESDIR}/${PN}-6.4.4-use-system-tensile.patch"
 	"${FILESDIR}/${PN}-6.1.1-fix-msgpack-dependency.patch"
+	"${FILESDIR}/${PN}-6.4.4-tensile.patch"
 )
 
 pkg_setup() {
@@ -226,7 +232,7 @@ src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
-	if has_version "dev-util/Tensile" ; then
+	if has_version "dev-util/Tensile" && use minimal ; then
 eerror
 eerror "Header conflict between Tensile and TensileLite"
 eerror
@@ -257,6 +263,7 @@ ewarn
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLEGACY_HIPBLAS_DIRECT=$(usex minimal OFF ON)
 		-DPython_EXECUTABLE="${EPYTHON}"
+		-DPython3_EXECUTABLE="${EPYTHON}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 
 		# Workarounds
@@ -290,12 +297,27 @@ ewarn
 			-DOPENCL_ROOT="${EROCM_PATH}/opencl"
 			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
 			-DTensile_CPU_THREADS="${nprocs}"
-			-DTensile_DIR="${S}/tensilelite/Tensile/cmake"
-			-DTensile_PREFIX="${S}/tensilelite"
-			-DTensile_ROOT="${S}/tensilelite/Tensile"
-			-DTENSILE_VERSION="${TENSILELITE_INTERNAL_PV}"
-			-DUSE_TENSILELITE=ON
 		)
+		if use minimal ; then
+			mycmakeargs+=(
+				-DTensile_DIR="${S}/tensilelite/Tensile/cmake"
+				-DTensile_PREFIX="${S}/tensilelite"
+				-DTensile_ROOT="${S}/tensilelite/Tensile"
+				-DTENSILE_VERSION="${TENSILELITE_INTERNAL_PV}"
+				-DUSE_TENSILELITE=ON
+			)
+		else
+			mycmakeargs+=(
+				-DTensile_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake/Tensile"
+				-DTensile_LIBRARY_FORMAT="msgpack"
+				-DTensile_PREFIX="${ESYSROOT}/usr"
+				-DTensile_ROOT="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
+				-DTensile_SKIP_BUILD=ON
+				-DTENSILE_VERSION="${TENSILEFULL_INTERNAL_PV}"
+				-DUSE_SYSTEM_TENSILE=ON
+				-DUSE_TENSILELITE=OFF
+			)
+		fi
 	fi
 
 #	virtualenv "${BUILD_DIR}/venv" || die
