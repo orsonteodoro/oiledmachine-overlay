@@ -58,18 +58,18 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1201"
 )
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-)
+DOCS_DEPEND="
+	media-gfx/graphviz
+"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_f16c"
 )
 
-DOCS_DEPEND="
-	media-gfx/graphviz
-"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+)
 
 HIPBLASLT_GPUS=(
 	"gfx908_xnack_plus"
@@ -85,6 +85,11 @@ HIPBLASLT_GPUS=(
 	"gfx1151"
 	"gfx1200"
 	"gfx1201"
+)
+
+HSA_OBJECT_CODE_OBJECT=(
+	"+hsa-code-object-v4"
+	"hsa-code-object-v5"
 )
 
 inherit cmake docs edo flag-o-matic multiprocessing libstdcxx-slot python-single-r1 rocm
@@ -114,6 +119,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
+${HSA_OBJECT_CODE_OBJECT[@]}
 asan benchmark cuda +rocm test
 ebuild_revision_27
 "
@@ -131,6 +137,9 @@ REQUIRED_USE="
 	$(gen_rocm_required_use)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+	)
+	^^ (
+		${HSA_OBJECT_CODE_OBJECT[@]/+}
 	)
 	^^ (
 		rocm
@@ -167,14 +176,13 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm]
-		dev-util/Tensile:=
 		>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/roctracer:=
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm,hsa-code-object-v4?,hsa-code-object-v5?]
 		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP}"',rocm]
-			dev-util/Tensile:=
+			>=dev-util/Tensile-'"${PV}:${SLOT}"'[${PYTHON_USEDEP}]
 		')
+		dev-util/Tensile:=
 	)
 "
 DEPEND="
@@ -315,7 +323,7 @@ src_configure() {
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
-			-DTensile_CODE_OBJECT_VERSION="default"
+			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
 			-DTensile_COMPILER="hipcc"
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"
