@@ -5008,4 +5008,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.9.2, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.11.4, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.12.9, 20250810) cpu test with smollm:135m
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.13.0, 20251120) cpu test with smollm:135m
 # cpu test: passed
