@@ -14,7 +14,9 @@ EAPI=8
 # 0.6.5 -> 0.11.4
 # 0.11.4 -> 0.12.6 # TODO update patch/ebuild for LLM model availability
 # 0.12.6 -> 0.12.9
-# 0.12.9 - > 0.12.10
+# 0.12.9 -> 0.12.10
+# 0.12.10 -> 0.12.11
+# 0.12.11 -> 0.13.0
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -245,6 +247,7 @@ LLMS=(
 	"codestral"
 	"codeup"
 	"cogito"
+	"cogito-2.1"
 	"command-a"
 	"command-r"
 	"command-r-plus"
@@ -256,6 +259,7 @@ LLMS=(
 	"deepseek-coder"
 	"deepseek-coder-v2"
 	"deepseek-llm"
+	"deepseek-ocr"
 	"deepseek-r1"
 	"deepseek-v2"
 	"deepseek-v2.5"
@@ -277,6 +281,7 @@ LLMS=(
 	"falcon2"
 	"falcon3"
 	"firefunction-v2"
+	"gemini-3-pro-preview"
 	"gemma"
 	"gemma2"
 	"gemma3"
@@ -310,6 +315,7 @@ LLMS=(
 	"jimscard-whiterabbit-neo"
 	"joefamous-grok-1"
 	"kimi-k2"
+	"kimi-k2-thinking"
 	"leeplenty-lumimaid-v0.2"
 	"llama-guard3"
 	"llama-pro"
@@ -2237,6 +2243,9 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_cogito-2.1? (
+		MIT
+	)
 	ollama_llms_command-a? (
 		CC-BY-NC-4.0
 	)
@@ -2283,6 +2292,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_deepseek-llm? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_deepseek-ocr? (
+		MIT
 	)
 	ollama_llms_deepseek-r1? (
 		(
@@ -2364,6 +2376,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_fixt-home-3b-v3? (
 		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+	)
+	ollama_llms_gemini-3-pro-preview? (
+		all-rights-reserved
 	)
 	ollama_llms_gemma? (
 		Gemma-Terms-of-Use-20240221
@@ -2525,6 +2540,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_kimi-k2? (
 		Kimi-K2-LICENSE
+	)
+	ollama_llms_kimi-k2-thinking? (
+		all-rights-reserved
 	)
 	ollama_llms_leeplenty-lumimaid-v0.2? (
 		Apache-2.0
@@ -3469,7 +3487,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.12.9-cmd-changes.patch"
+	"A${FILESDIR}/${PN}-0.13.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 )
 
