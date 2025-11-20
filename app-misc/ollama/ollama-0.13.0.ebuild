@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_93
+ebuild_revision_94
 "
 
 gen_rocm_required_use() {
@@ -4424,9 +4424,10 @@ einfo "Building CPU runner"
 build_new_runner_gpu() {
 	# The documentation is sloppy.
 
-	if use cuda || use rocm ; then
+	if use cuda || use rocm || use vulkan ; then
 		:
 	else
+einfo "Skipping GPU build"
 		return
 	fi
 
@@ -4590,6 +4591,7 @@ einfo "Building for ROCm"
 			--strip \
 			|| die
 	elif use vulkan ; then
+einfo "Building for Vulkan"
 		cmake \
 			--preset "Vulkan" \
 			-DCMAKE_VERBOSE_MAKEFILE=ON \
