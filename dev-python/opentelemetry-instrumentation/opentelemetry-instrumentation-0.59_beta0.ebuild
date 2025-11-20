@@ -91,8 +91,8 @@ python_install_all() {
 	dodir "/usr/bin"
 	dosym \
 		"/usr/lib/python-exec/python-exec2" \
-		"/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin/opentelemetry-instrument/bin/opentelemetry-bootstrap"
+		"/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin/opentelemetry-bootstrap"
 	dosym \
 		"/usr/lib/python-exec/python-exec2" \
-		"/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin/opentelemetry-instrument/opentelemetry-instrument"
+		"/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin/opentelemetry-instrument"
 }
