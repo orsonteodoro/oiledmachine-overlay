@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,3210 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3212 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -3008,7 +3008,9 @@
 +	"fixt/home-3b-v3": "home-assistant smart-home function-calling multilingual english german spanish french",
 +	"fixt/home-3b-v2": "home-assistant smart-home function-calling",
 +	"goliath": "detailed-response roleplay detailed-roleplay",
-+	"gpt-oss": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding rate-limited",
++	"gpt-oss": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math coding-agent vibe-coding",
++	"gpt-oss:20b-cloud": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding rate-limited",
++	"gpt-oss:120b-cloud": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding rate-limited",
 +	"gpt-oss-safeguard": "safety-reasoning",
 +	"granite-code": "coding code-generation fixing-bugs documentation assistant fine-tunable",
 +	"granite-embedding": "embeddings english",
