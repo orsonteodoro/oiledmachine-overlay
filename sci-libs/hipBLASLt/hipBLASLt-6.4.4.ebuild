@@ -143,6 +143,7 @@ RDEPEND="
 			>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm,hsa-code-object-v4?,hsa-code-object-v5?]
 			dev-util/Tensile:=
 		)
+		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
 	)
 "
 DEPEND="

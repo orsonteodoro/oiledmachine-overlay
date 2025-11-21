@@ -77,6 +77,7 @@ RDEPEND="
 		dev-util/Tensile:=
 		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/hipSPARSE:=
+		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
 	)
 "
 DEPEND="

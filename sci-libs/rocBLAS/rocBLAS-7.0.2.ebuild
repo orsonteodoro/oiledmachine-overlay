@@ -187,6 +187,7 @@ RDEPEND="
 			>=dev-util/Tensile-'"${PV}:${SLOT}"'[${PYTHON_USEDEP}]
 		')
 		dev-util/Tensile:=
+		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
 	)
 "
 DEPEND="

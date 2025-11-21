@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <!--
+
+      oiledmachine-overlay notes:
+
+      The inconsistency may lead to DoS (Denial of Service)
+
+    -->
+    </flag>
+  </use>
+</pkgmetadata>
