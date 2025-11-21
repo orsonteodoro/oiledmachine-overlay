@@ -71,6 +71,9 @@ ${HSA_OBJECT_CODE_OBJECT[@]}
 ebuild_revision_26
 "
 REQUIRED_USE="
+	^^ (
+		${HSA_OBJECT_CODE_OBJECT[@]/+}
+	)
 	client? (
 		${ROCM_REQUIRED_USE}
 		openmp
