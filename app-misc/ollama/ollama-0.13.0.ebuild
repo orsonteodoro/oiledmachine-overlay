@@ -4960,7 +4960,8 @@ einfo
 einfo "  https://ollama.com/library"
 einfo
 einfo "Tip:  Use LLM models that are 2 orders of magnitude lighter for optimal"
-einfo "inference latency, optimal load latency, and minimal thrashing."
+einfo "inference latency, optimal load latency, and minimal thrashing for"
+einfo "CPU inferencing."
 einfo
 einfo "    O(100) MB RAM   =    O(1) MB model"
 einfo "      O(1) GB RAM   =   O(10) MB model"
@@ -4984,7 +4985,8 @@ einfo
 einfo
 einfo "Tip:  Use LLM models that are 1 order of magnitude lighter or N/4"
 einfo "parameters for programs that have a particular model as a hard"
-einfo "requirement and lack of availability of a smaller parameter choice."
+einfo "requirement and lack of availability of a smaller parameter choice"
+einfo "CPU inferencing."
 einfo
 einfo "    O(100) MB RAM   =   O(10) MB model"
 einfo "      O(1) GB RAM   =  O(100) MB model"
@@ -5004,6 +5006,9 @@ einfo "       128 GB RAM      32 B or less parameters"
 einfo "       256 GB RAM      64 B or less parameters"
 einfo "       512 GB RAM     128 B or less parameters"
 einfo "         1 TB RAM     256 B or less parameters"
+einfo
+einfo "Tip:  For GPU inferencing, use 1/2 VRAM models to avoid DoS (Denial of"
+einfo "Service) associated with crash or slowdown."
 einfo
 einfo "Tip:  If the words per minute is slower than 130, use a smaller model.  Using a slow model may affect text-to-speech."
 einfo "Tip:  If the cold start time is more than 20 seconds, use a smaller model."
