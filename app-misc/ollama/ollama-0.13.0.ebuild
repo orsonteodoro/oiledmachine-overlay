@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_98
+ebuild_revision_99
 "
 
 gen_rocm_required_use() {
@@ -4698,7 +4698,7 @@ install_cpu_runner() {
 		doexe "libggml-${flavor_name}.so"
 	popd >/dev/null 2>&1 || die
 	patchelf \
-		--add-rpath '$ORIGIN' \
+		--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
 		"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/libggml-${flavor_name}.so" \
 		|| die
 }
@@ -4752,7 +4752,7 @@ install_gpu_runner() {
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
-				--add-rpath '$ORIGIN' \
+				--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
@@ -4767,7 +4767,7 @@ install_gpu_runner() {
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
-				--add-rpath '$ORIGIN' \
+				--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
@@ -4777,10 +4777,12 @@ install_gpu_runner() {
 		done
 	elif use vulkan ; then
 		# Link ggml-base.so
-		patchelf \
-			--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
-			"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-			|| die
+		for n in ${list[@]} ; do
+			patchelf \
+				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
+				|| die
+		done
 	fi
 }
 
