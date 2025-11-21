@@ -3191,14 +3191,14 @@ CUDA_12_8_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
 		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_13_0_BDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-13.0*
 		>=x11-drivers/nvidia-drivers-580.82
-		virtual/cuda-compiler:0/13.0[${LIBSTDCXX_USEDEP}]
+		virtual/cuda-compiler:0/13.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 gen_clang_bdepend() {
@@ -3481,6 +3481,9 @@ BDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_bdepend)
+	)
+	vulkan? (
+		media-libs/shaderc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 IDEPEND="
