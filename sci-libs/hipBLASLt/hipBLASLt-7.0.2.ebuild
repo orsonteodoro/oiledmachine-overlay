@@ -323,6 +323,7 @@ ewarn
 				-DTensile_PREFIX="${ESYSROOT}/usr"
 				-DTensile_ROOT="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
 				-DTensile_SKIP_BUILD=ON
+				-DTensile_TENSILE_ROOT="${ESYSROOT}/usr" # Workaround
 				-DTENSILE_VERSION="${TENSILEFULL_INTERNAL_PV}"
 				-DUSE_SYSTEM_TENSILE=ON
 				-DUSE_TENSILELITE=OFF
