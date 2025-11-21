@@ -1,0 +1,12 @@
+diff '--color=auto' -urp ollama-0.13.0.orig/ml/path.go ollama-0.13.0/ml/path.go
+--- ollama-0.13.0.orig/ml/path.go	2025-11-18 22:03:50.000000000 -0800
++++ ollama-0.13.0/ml/path.go	2025-11-20 17:57:29.486304369 -0800
+@@ -28,7 +28,7 @@ var LibOllamaPath string = func() string
+ 	case "windows":
+ 		libPath = filepath.Join(filepath.Dir(exe), "lib", "ollama")
+ 	case "linux":
+-		libPath = filepath.Join(filepath.Dir(exe), "..", "lib", "ollama")
++		libPath = filepath.Join(filepath.Dir(exe), "..", "@LIBDIR@")
+ 	case "darwin":
+ 		libPath = filepath.Dir(exe)
+ 	}

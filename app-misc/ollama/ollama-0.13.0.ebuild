@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_96
+ebuild_revision_97
 "
 
 gen_rocm_required_use() {
@@ -3489,6 +3489,7 @@ IDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-0.13.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
+	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 )
 
 pkg_pretend() {
@@ -3660,6 +3661,12 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 	sed -i \
 		-e "s|GPURunnerCPUCapability = CPUCapabilityAVX|GPURunnerCPUCapability = CPUCapabilityNone|" \
 		"discover/types.go" \
+		|| die
+
+	local libdir=$(get_libdir)
+	sed -i \
+		-e "s|@LIBDIR@|${libdir}|g" \
+		"ml/path.go" \
 		|| die
 }
 
@@ -5024,3 +5031,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.12.9, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.13.0, 20251120) cpu test with smollm:135m
 # cpu test: passed
+# vulkan test: failed
+# Use `ollama ps` to check if 100% GPU or 100% CPU
