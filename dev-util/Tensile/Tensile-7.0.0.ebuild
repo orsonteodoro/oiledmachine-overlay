@@ -68,7 +68,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${HSA_OBJECT_CODE_OBJECT[@]}
 +client cuda +opencl +openmp +rocm
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	client? (
@@ -164,6 +164,13 @@ src_prepare() {
 		-e "/data_files/d" \
 		-i \
 		"setup.py" \
+		|| die
+
+	# Fix for hipBLASLt error:
+	# This typed-GEMM (Ti, To, Tc) = (I8, I8, I) is not supported yet.
+	# for illegal op_sel on v_dot4_i32_i8 (MI200/MI300)
+		sed -i 's/ op_sel:\[0,0\] op_sel_hi:\[1,1\]//' \
+		"Tensile/Components/MAC_I8X4.py" \
 		|| die
 
 	cmake_src_prepare
