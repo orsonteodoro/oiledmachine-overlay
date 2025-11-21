@@ -374,7 +374,7 @@ MITIGATION_DATE="Nov 11, 2025" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1763152260 # From `date +%s -d "2025-11-14 12:31 PM PST"` From tag in GH
 MITIGATION_URI="https://chromereleases.googleblog.com/2025/11/stable-channel-update-for-desktop_17.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-13223;TC, MC, AEITW, DoS, DT, ID;High"
+	"CVE-2025-13223;TC, MC, AEITW, KEV, DoS, DT, ID;High"
 	"CVE-2025-13224;TC, MC, DoS, DT, ID;High"
 )
 

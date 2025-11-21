@@ -178,7 +178,7 @@ einfo "IV = Insufficient Validation of Input or Data"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"KEV"($|" "|";"|",") ]] ; then
 # Government recognition of AEITW
-einfo "KEV = Known Exploited Vulnerabilities (Actively exploited in the wild)"
+einfo "KEV = Known Exploited Vulnerabilities (U.S. Government Advisory)"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
 einfo "MC = Memory Corruption"
