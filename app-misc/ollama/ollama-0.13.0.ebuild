@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_94
+ebuild_revision_96
 "
 
 gen_rocm_required_use() {
@@ -4682,14 +4682,14 @@ install_cpu_runner() {
 
 	[[ -e "${runner_path1}" ]] || return
 
-	exeinto "/usr/$(get_libdir)/${PN}/${dir_name}"
+	exeinto "/usr/lib/${PN}/$(get_libdir)/${dir_name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "libggml-base.so"
 		doexe "libggml-${flavor_name}.so"
 	popd >/dev/null 2>&1 || die
 	patchelf \
 		--add-rpath '$ORIGIN' \
-		"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/libggml-${flavor_name}.so" \
+		"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/libggml-${flavor_name}.so" \
 		|| die
 }
 
@@ -4718,7 +4718,7 @@ install_gpu_runner() {
 	[[ -z "${flavor_name}" ]] && return
 	[[ -e "${runner_path1}" ]] || return
 
-	exeinto "/usr/$(get_libdir)/${PN}/${dir_name}"
+	exeinto "/usr/lib/${PN}/$(get_libdir)/${dir_name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			doexe "libggml-cuda.so"
@@ -4738,38 +4738,38 @@ install_gpu_runner() {
 	if use cuda ; then
 		for n in ${list[@]} ; do
 			patchelf \
-				--add-rpath "/usr/$(get_libdir)/${PN}/cpu" \
-				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
 				--add-rpath '$ORIGIN' \
-				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
 				--add-rpath "/opt/cuda/$(get_libdir)" \
-				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 		done
 	elif use rocm ; then
 		for n in ${list[@]} ; do
 			patchelf \
-				--add-rpath "/usr/$(get_libdir)/${PN}/cpu" \
-				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
 				--add-rpath '$ORIGIN' \
-				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 			patchelf \
 				--add-rpath "/opt/rocm/lib" \
-				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 		done
 	fi
 }
 
 src_install() {
-	exeinto "/usr/$(get_libdir)/${PN}"
+	exeinto "/usr/lib/${PN}/bin"
 	doexe "${PN}"
 
 	local ld_library_path=""
@@ -4782,22 +4782,32 @@ src_install() {
 		fi
 		patchelf \
 			--add-rpath "/opt/cuda/$(get_libdir)" \
-			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
 		patchelf \
-			--add-rpath "/usr/$(get_libdir)/${PN}/${dir_name}" \
-			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
+			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
 		ld_library_path+="/opt/cuda/$(get_libdir):/usr/$(get_libdir)"
 	elif use rocm ; then
 		local dir_name="rocm"
 		patchelf \
 			--add-rpath "/opt/rocm/lib" \
-			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
 		patchelf \
-			--add-rpath "/usr/$(get_libdir)/${PN}/${dir_name}" \
-			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
+			"${ED}/usr/lib/${PN}/bin/${PN}" \
+			|| die
+	elif use vulkan ; then
+		local dir_name="vulkan"
+		patchelf \
+			--add-rpath "/opt/rocm/lib" \
+			"${ED}/usr/lib/${PN}/bin/${PN}" \
+			|| die
+		patchelf \
+			--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
+			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
 	elif use video_cards_intel ; then
 		ld_library_path+="/usr/$(get_libdir)"
@@ -4853,6 +4863,7 @@ src_install() {
 	local kv_cache_type=${OLLAMA_KV_CACHE_TYPE:-"f16"}
 	local sandbox=$(usex sandbox "sandbox" "")
 	local vulkan=$(usex vulkan "1" "0")
+	local libdir=$(get_libdir)
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
@@ -4865,6 +4876,7 @@ src_install() {
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 			-e "s|@OLLAMA_VULKAN@|${vulkan}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
+			-e "s|@LIBDIR@|${libdir}|g" \
 			"${ED}/etc/init.d/${PN}" \
 			|| die
 	fi
@@ -4877,11 +4889,13 @@ src_install() {
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@OLLAMA_VULKAN@|${vulkan}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
+			-e "s|@LIBDIR@|${libdir}|g" \
 			"${ED}/usr/lib/systemd/system/${PN}.service" \
 			|| die
 	fi
 
 	sed -i \
+		-e "s|@LIBDIR@|${libdir}|g" \
 		-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 		-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
 		-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \

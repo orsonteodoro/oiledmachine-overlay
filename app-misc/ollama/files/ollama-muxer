@@ -9,6 +9,7 @@ OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
 
 # CWE-653 mitigation
 OLLAMA_SANDBOX_PROVIDER=${OLLAMA_SANDBOX_PROVIDER:-"@OLLAMA_SANDBOX_PROVIDER@"}
+LIBDIR="@LIBDIR@"
 
 declare -A backends=(
 	"cpu"
@@ -24,11 +25,11 @@ main() {
 	if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
 		export LD_LIBRARY_PATH="/opt/rocm/lib:${LD_LIBRARY_PATH}"
 	elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
-		export LD_LIBRARY_PATH="/opt/cuda/lib64:${LD_LIBRARY_PATH}"
+		export LD_LIBRARY_PATH="/opt/cuda/${LIBDIR}:${LD_LIBRARY_PATH}"
 	fi
-	export LD_LIBRARY_PATH="/usr/lib64/ollama/${OLLAMA_BACKEND}:${LD_LIBRARY_PATH}"
-	export PATH="/usr/lib64/ollama/${OLLAMA_BACKEND}:${PATH}"
-	cd "/usr/lib64/ollama/${OLLAMA_BACKEND}" || exit 1
+	export LD_LIBRARY_PATH="/usr/lib/ollama/${LIBDIR}/${OLLAMA_BACKEND}:${LD_LIBRARY_PATH}"
+	export PATH="/usr/lib/ollama/${LIBDIR}/${OLLAMA_BACKEND}:/usr/lib/ollama/bin:${PATH}"
+	cd "/usr/lib/ollama/${LIBDIR}/${OLLAMA_BACKEND}" || exit 1
 	if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
 #		unshare -i || echo "unshare -i, for ipc off failed" # requires root
 #		unshare -p || echo "unshare -p, for pid off failed" # requires root ; segfaults when multiple args specified with unshare
@@ -37,7 +38,7 @@ main() {
 #		unshare -C || echo "unshare -C, for cgroup off failed" # requires root ; breaks client
 #		unshare -T || echo "unshare -T, for time off failed" # requires root
 #		unshare -U || echo "unshare -U, for user off failed" # Causes strange behavior with client or wrapper
-		unshare -C -i -m -u -T -U "../ollama" ${ARGS[@]}
+		unshare -C -i -m -u -T -U "../ollama" "${ARGS[@]}"
 	elif [[ "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
 # Network is broken even with bash.
 		local args=(
@@ -50,11 +51,11 @@ main() {
 			--new-session
 		)
 		bwrap \
-			${args[@]} \
+			"${args[@]}" \
 			-- \
-			"../ollama" ${ARGS[@]}
+			"/usr/lib/ollama/bin/ollama" "${ARGS[@]}"
 	else
-		../ollama ${ARGS[@]}
+		"/usr/lib/ollama/bin/ollama" "${ARGS[@]}"
 	fi
 }
 

@@ -70,7 +70,7 @@ prepare_chroot() {
 		mkdir -p "dev"
 		mkdir -p "run"
 
-		local gcc_slot=$(ldd "/usr/lib64/ollama/ollama" \
+		local gcc_slot=$(ldd "/usr/lib/ollama/bin/ollama" \
 			| grep "libstdc++.so" \
 			| grep -E -o -e "/[0-9]+/" \
 			| sed -e "s|/||g")
@@ -104,8 +104,8 @@ prepare_chroot() {
 			"/bin/bash;libs"
 			"/bin/sh"
 			"/usr/bin/ollama"
-			"/usr/lib64/ollama"
-			"/usr/lib64/ollama;libs-recursive"
+			"/usr/lib/ollama"
+			"/usr/lib/ollama;libs-recursive"
 			"/bin/mkdir"
 		)
 
