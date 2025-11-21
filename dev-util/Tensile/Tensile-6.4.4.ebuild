@@ -5,6 +5,7 @@ EAPI=8
 
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 CXX_STANDARD=17
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" )
@@ -64,9 +65,10 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
+	${PYTHON_SINGLE_TARGET}
 	client? (
 		${ROCM_REQUIRED_USE}
 		openmp
@@ -82,12 +84,14 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_CLANG_DEPEND}
+	$(python_gen_cond_dep '
+		dev-python/joblib[${PYTHON_USEDEP}]
+		dev-python/msgpack[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+	')
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-cpp/msgpack-cxx:=
 	dev-lang/python-exec
-	dev-python/joblib[${PYTHON_USEDEP}]
-	dev-python/msgpack[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,numa,rocm?]
 	dev-util/hip:=
 	virtual/hsa-code-object-version:=
@@ -134,7 +138,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 	rocm_pkg_setup
 	libstdcxx-slot_verify
 }
