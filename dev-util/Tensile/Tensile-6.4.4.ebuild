@@ -168,9 +168,12 @@ src_prepare() {
 		"setup.py" \
 		|| die
 
-	# Fix for hipBLASLt error:
+	# Error:
 	# This typed-GEMM (Ti, To, Tc) = (I8, I8, I) is not supported yet.
-	# for illegal op_sel on v_dot4_i32_i8 (MI200/MI300)
+	#
+	# Fix illegal op_sel:[0,0] op_sel_hi:[1,1] on v_dot4_i32_i8 for gfx90a/gfx94x
+	# This instruction is rejected by LLVM 18/19/20 on MI200/MI300
+	# The modifiers are a no-op anyway, so just strip them
 		sed -i 's/ op_sel:\[0,0\] op_sel_hi:\[1,1\]//' \
 		"Tensile/Components/MAC_I8X4.py" \
 		|| die
