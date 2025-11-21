@@ -4969,44 +4969,6 @@ einfo "     O(10) GB RAM   =  O(100) MB model"
 einfo "    O(100) GB RAM   =    O(1) GB model"
 einfo "      O(1) TB RAM   =   O(10) GB model"
 einfo
-einfo "                   or"
-einfo
-einfo "         1 GB RAM       99 M or less parameters"
-einfo "         4 GB RAM       99 M or less parameters"
-einfo "         8 GB RAM       99 M or less parameters"
-einfo "        16 GB RAM      999 M or less parameters"
-einfo "        32 GB RAM      999 M or less parameters"
-einfo "        64 GB RAM      999 M or less parameters"
-einfo "       128 GB RAM        9 G or less parameters"
-einfo "       256 GB RAM        9 G or less parameters"
-einfo "       512 GB RAM        9 G or less parameters"
-einfo "         1 TB RAM       99 G or less parameters"
-einfo
-einfo
-einfo "Tip:  Use LLM models that are 1 order of magnitude lighter or N/4"
-einfo "parameters for programs that have a particular model as a hard"
-einfo "requirement and lack of availability of a smaller parameter choice"
-einfo "CPU inferencing."
-einfo
-einfo "    O(100) MB RAM   =   O(10) MB model"
-einfo "      O(1) GB RAM   =  O(100) MB model"
-einfo "     O(10) GB RAM   =    O(1) GB model"
-einfo "    O(100) GB RAM   =   O(10) GB model"
-einfo "      O(1) TB RAM   =  O(100) GB model"
-einfo
-einfo "                  or"
-einfo
-einfo "         1 GB RAM     256 M or less parameters"
-einfo "         4 GB RAM       1 B or less parameters"
-einfo "         8 GB RAM       2 B or less parameters"
-einfo "        16 GB RAM       4 B or less parameters"
-einfo "        32 GB RAM       8 B or less parameters"
-einfo "        64 GB RAM      16 B or less parameters"
-einfo "       128 GB RAM      32 B or less parameters"
-einfo "       256 GB RAM      64 B or less parameters"
-einfo "       512 GB RAM     128 B or less parameters"
-einfo "         1 TB RAM     256 B or less parameters"
-einfo
 einfo "Tip:  For GPU inferencing, use 1/2 VRAM models to avoid DoS (Denial of"
 einfo "Service) associated with crash or slowdown."
 einfo
