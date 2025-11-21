@@ -63,7 +63,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	${PYTHON_SINGLE_TARGET}
