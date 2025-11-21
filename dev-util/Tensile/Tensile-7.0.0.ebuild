@@ -97,6 +97,7 @@ RDEPEND="
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,numa,rocm?]
 	dev-util/hip:=
+	virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
 	client? (
 		dev-libs/boost[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
@@ -111,7 +112,6 @@ RDEPEND="
 		dev-libs/rocm-comgr:=
 		~dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocr-runtime:=
-		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
 		opencl? (
 			dev-libs/rocm-opencl-runtime:${SLOT}[${LIBSTDCXX_USEDEP}]
 			dev-libs/rocm-opencl-runtime:=
