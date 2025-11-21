@@ -62,7 +62,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	client? (
@@ -128,6 +128,7 @@ _PATCHES=(
 #	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 	"${FILESDIR}/${PN}-6.4.4-link-llvm.patch"
+	"${FILESDIR}/${PN}-6.4.4-allow-valid-gemm-types.patch"
 )
 
 pkg_setup() {
@@ -159,16 +160,6 @@ src_prepare() {
 		-e "/data_files/d" \
 		-i \
 		"setup.py" \
-		|| die
-
-	# Error:
-	# This typed-GEMM (Ti, To, Tc) = (I8, I8, I) is not supported yet.
-	#
-	# Fix illegal op_sel:[0,0] op_sel_hi:[1,1] on v_dot4_i32_i8 for gfx90a/gfx94x
-	# This instruction is rejected by LLVM 18/19/20 on MI200/MI300
-	# The modifiers are a no-op anyway, so just strip them
-		sed -i 's/ op_sel:\[0,0\] op_sel_hi:\[1,1\]//' \
-		"Tensile/Components/MAC_I8X4.py" \
 		|| die
 
 	cmake_src_prepare
