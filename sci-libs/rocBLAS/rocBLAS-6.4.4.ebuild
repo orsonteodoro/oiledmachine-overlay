@@ -87,11 +87,6 @@ HIPBLASLT_GPUS=(
 	"gfx1201"
 )
 
-HSA_OBJECT_CODE_OBJECT=(
-	"+hsa-code-object-v4"
-	"hsa-code-object-v5"
-)
-
 inherit cmake docs edo flag-o-matic multiprocessing libstdcxx-slot python-single-r1 rocm
 
 KEYWORDS="~amd64"
@@ -119,7 +114,6 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-${HSA_OBJECT_CODE_OBJECT[@]}
 asan benchmark cuda +rocm test
 ebuild_revision_27
 "
@@ -137,9 +131,6 @@ REQUIRED_USE="
 	$(gen_rocm_required_use)
 	rocm? (
 		${ROCM_REQUIRED_USE}
-	)
-	^^ (
-		${HSA_OBJECT_CODE_OBJECT[@]/+}
 	)
 	^^ (
 		rocm
@@ -178,12 +169,12 @@ RDEPEND="
 	rocm? (
 		>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/roctracer:=
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm,hsa-code-object-v4?,hsa-code-object-v5?]
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm]
 		$(python_gen_cond_dep '
 			>=dev-util/Tensile-'"${PV}:${SLOT}"'[${PYTHON_USEDEP}]
 		')
 		dev-util/Tensile:=
-		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
+		virtual/hsa-code-object-version:=
 	)
 "
 DEPEND="
@@ -277,6 +268,17 @@ use_hipblaslt() {
 	fi
 }
 
+get_hsa_object_code_version() {
+	has_version "virtual/hsa-code-object-version" || die "Missing"
+	if has_version "virtual/hsa-code-object-version[hsa-code-object-v4]" ; then
+		echo "V4"
+	elif has_version "virtual/hsa-code-object-version[hsa-code-object-v5]" ; then
+		echo "V5"
+	else
+		echo "V4"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/random"
 	addpredict "/dev/kfd"
@@ -324,7 +326,7 @@ src_configure() {
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
-			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
+			-DTensile_CODE_OBJECT_VERSION=$(get_hsa_object_code_version)
 			-DTensile_COMPILER="hipcc"
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"

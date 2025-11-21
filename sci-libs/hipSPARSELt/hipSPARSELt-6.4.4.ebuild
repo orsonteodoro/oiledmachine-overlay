@@ -24,11 +24,6 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
-HSA_OBJECT_CODE_OBJECT=(
-	"+hsa-code-object-v4"
-	"hsa-code-object-v5"
-)
-
 inherit cmake libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
@@ -53,14 +48,10 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-${HSA_OBJECT_CODE_OBJECT[@]}
 -asan -cuda rocm -samples -test
 ebuild_revision_1
 "
 REQUIRED_USE="
-	^^ (
-		${HSA_OBJECT_CODE_OBJECT[@]/+}
-	)
 	^^ (
 		cuda
 		rocm
@@ -73,11 +64,11 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},hsa-code-object-v4?,hsa-code-object-v5?]
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/Tensile:=
 		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/hipSPARSE:=
-		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
+		virtual/hsa-code-object-version:=
 	)
 "
 DEPEND="
@@ -124,6 +115,17 @@ ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_tar
 	fi
 }
 
+get_hsa_object_code_version() {
+	has_version "virtual/hsa-code-object-version" || die "Missing"
+	if has_version "virtual/hsa-code-object-version[hsa-code-object-v4]" ; then
+		echo "V4"
+	elif has_version "virtual/hsa-code-object-version[hsa-code-object-v5]" ; then
+		echo "V5"
+	else
+		echo "V4"
+	fi
+}
+
 src_configure() {
 	check_asan
 	local mycmakeargs=(
@@ -151,7 +153,7 @@ src_configure() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 			-DROCM_SYMLINK_LIBS=OFF
-			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
+			-DTensile_CODE_OBJECT_VERSION=$(get_hsa_object_code_version)
 		)
 	fi
 	rocm_set_default_hipcc

@@ -24,12 +24,6 @@
       Build with ASan with critical severity security mitigations related to
       memory for both CPU and GPU.
     </flag>
-    <flag name="hsa-code-object-v4">
-      Optimize HSA for compatibility.
-    </flag>
-    <flag name="hsa-code-object-v5">
-      Optimize HSA for throughput.  Compatible with with gfx9xx only.
-    </flag>
     <flag name="minimal">
       Enable to optimize for reduced build time.
       Disable to optimize for runtime performance.

@@ -37,11 +37,6 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
 )
 
-HSA_OBJECT_CODE_OBJECT=(
-	"+hsa-code-object-v4"
-	"hsa-code-object-v5"
-)
-
 inherit cmake distutils-r1 libstdcxx-slot prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
@@ -68,14 +63,10 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-${HSA_OBJECT_CODE_OBJECT[@]}
 +client cuda +opencl +openmp +rocm
 ebuild_revision_26
 "
 REQUIRED_USE="
-	^^ (
-		${HSA_OBJECT_CODE_OBJECT[@]/+}
-	)
 	client? (
 		${ROCM_REQUIRED_USE}
 		openmp
@@ -99,7 +90,7 @@ RDEPEND="
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,numa,rocm?]
 	dev-util/hip:=
-	virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
+	virtual/hsa-code-object-version:=
 	client? (
 		dev-libs/boost[${LIBSTDCXX_USEDEP}]
 		dev-libs/boost:=
@@ -186,6 +177,17 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+get_hsa_object_code_version() {
+	has_version "virtual/hsa-code-object-version" || die "Missing"
+	if has_version "virtual/hsa-code-object-version[hsa-code-object-v4]" ; then
+		echo "V4"
+	elif has_version "virtual/hsa-code-object-version[hsa-code-object-v5]" ; then
+		echo "V5"
+	else
+		echo "V4"
+	fi
+}
+
 src_configure() {
 	rocm_set_default_hipcc
 
@@ -199,7 +201,7 @@ src_configure() {
 			-DCMAKE_SKIP_RPATH=ON
 			-DROCM_ROOT="${ROCM_PATH}"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
-			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
+			-DTensile_CODE_OBJECT_VERSION=$(get_hsa_object_code_version)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
 			-DTENSILE_USE_OPENCL=$(usex opencl ON OFF)

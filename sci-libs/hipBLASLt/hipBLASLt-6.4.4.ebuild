@@ -34,11 +34,6 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1201"
 )
 
-HSA_OBJECT_CODE_OBJECT=(
-	"+hsa-code-object-v4"
-	"hsa-code-object-v5"
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
@@ -73,7 +68,6 @@ LICENSE="
 # MIT - LICENSE.md
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
-${HSA_OBJECT_CODE_OBJECT[@]}
 ${ROCM_IUSE}
 -asan -benchmark -cuda +minimal +rocm
 ebuild_revision_14
@@ -92,9 +86,6 @@ REQUIRED_USE="
 	$(gen_rocm_required_use)
 	rocm? (
 		${ROCM_REQUIRED_USE}
-	)
-	^^ (
-		${HSA_OBJECT_CODE_OBJECT[@]/+}
 	)
 	^^ (
 		rocm
@@ -140,10 +131,10 @@ RDEPEND="
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
 		!minimal? (
-			>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm,hsa-code-object-v4?,hsa-code-object-v5?]
+			>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm]
 			dev-util/Tensile:=
 		)
-		virtual/hsa-code-object-version[hsa-code-object-v4=,hsa-code-object-v5=]
+		virtual/hsa-code-object-version
 	)
 "
 DEPEND="
@@ -228,6 +219,17 @@ ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_tar
 	fi
 }
 
+get_hsa_object_code_version() {
+	has_version "virtual/hsa-code-object-version" || die "Missing"
+	if has_version "virtual/hsa-code-object-version[hsa-code-object-v4]" ; then
+		echo "V4"
+	elif has_version "virtual/hsa-code-object-version[hsa-code-object-v5]" ; then
+		echo "V5"
+	else
+		echo "V4"
+	fi
+}
+
 src_configure() {
 	addpredict "/dev/random"
 	addpredict "/dev/kfd"
@@ -296,7 +298,7 @@ ewarn
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 			-DOPENCL_ROOT="${EROCM_PATH}/opencl"
-			-DTensile_CODE_OBJECT_VERSION=$(usex hsa-code-object-v5 "V5" "V4")
+			-DTensile_CODE_OBJECT_VERSION=$(get_hsa_object_code_version)
 			-DTensile_CPU_THREADS="${nprocs}"
 		)
 		if use minimal ; then
