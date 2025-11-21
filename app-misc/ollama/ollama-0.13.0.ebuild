@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_97
+ebuild_revision_98
 "
 
 gen_rocm_required_use() {
@@ -4775,6 +4775,12 @@ install_gpu_runner() {
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
 				|| die
 		done
+	elif use vulkan ; then
+		# Link ggml-base.so
+		patchelf \
+			--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
+			"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
+			|| die
 	fi
 }
 
