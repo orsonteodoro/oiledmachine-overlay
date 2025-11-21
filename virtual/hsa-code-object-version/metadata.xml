@@ -6,14 +6,20 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    The inconsistency may lead to DoS (Denial of Service)
+
+  -->
   <use>
-    <!--
-
-      oiledmachine-overlay notes:
-
-      The inconsistency may lead to DoS (Denial of Service)
-
-    -->
+    </flag>
+    <flag name="hsa-code-object-v4">
+      Optimize HSA for compatibility.
+    </flag>
+    <flag name="hsa-code-object-v5">
+      Optimize HSA for throughput.  Compatible with with gfx9xx only.
     </flag>
   </use>
 </pkgmetadata>
