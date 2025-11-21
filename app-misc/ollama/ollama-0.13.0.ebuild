@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_99
+ebuild_revision_100
 "
 
 gen_rocm_required_use() {
@@ -5041,6 +5041,6 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.11.4, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.12.9, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.13.0, 20251120) cpu test with smollm:135m
-# cpu test: passed
-# vulkan test: failed
-# Use `ollama ps` to check if 100% GPU or 100% CPU
+# cpu test:  passed
+# vulkan test:  passed
+# Use `ollama ps` to check if 100% GPU or 100% CPU or view with _OLLAMA_DEBUG=1
