@@ -240,8 +240,9 @@ src_install() {
 	cd "${PN}" || die
 	local libdir=$(get_libdir)
 
-	# Force install in this location for better unintended install
-	# to avoid header conflict between Tensile and TensileLite used in hipBLASLt.
+	# Force install into /usr/lib/Tensile install prefix for better
+	# unintended install to avoid header conflict between Tensile and
+	# TensileLite used in hipBLASLt.
 	local sitedir="/usr/lib/${PN}/lib/${EPYTHON}/site-packages"
 
 	insinto "${sitedir}/${PN}"
