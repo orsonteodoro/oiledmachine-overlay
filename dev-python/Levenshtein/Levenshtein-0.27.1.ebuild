@@ -6,11 +6,12 @@ EAPI=8
 
 # U22
 
+CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="scikit-build-core"
 PYTHON_COMPAT=( "python3_"{8..13} )
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
@@ -57,23 +58,11 @@ src_prepare() {
 	distutils-r1_src_prepare
 }
 
+python_configure() {
+	cython_python_configure
+}
+
 src_configure() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${acutal_cython_pv}")
-	local expected_cython_slot="3.0"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Switch cython to ${expected_cython_slot} via eselect-cython"
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
 	distutils-r1_src_configure
 }
 
