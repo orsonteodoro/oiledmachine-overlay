@@ -4,10 +4,11 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -36,7 +37,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revison_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -57,6 +60,13 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	local cython_slot=$(best_version "dev-python/cython" | sed -e "s|dev-python/cython-||g")
+	cython_slot=$(ver_cut "1-2" "${cython_slot}")
+	export CYTHON_SLOT="${cython_slot}"
+	cython_python_configure
 }
 
 src_install() {
