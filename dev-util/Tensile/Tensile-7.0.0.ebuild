@@ -63,7 +63,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_39
+ebuild_revision_40
 "
 REQUIRED_USE="
 	${PYTHON_SINGLE_TARGET}
@@ -229,8 +229,8 @@ src_compile() {
 
 python_install() {
 	distutils-r1_python_install
-	python_moduleinto "Tensile"
-	cd "Tensile" || die
+	python_moduleinto "${PN}"
+	cd "${PN}" || die
 	python_domodule "Components"
 	python_newexe "Utilities/merge.py" "${PN}-merge"
 }
@@ -242,7 +242,7 @@ src_install() {
 
 	# Force install in this location for better unintended install
 	# to avoid header conflict between Tensile and TensileLite used in hipBLASLt.
-	local sitedir="/usr/lib/Tensile/lib/${EPYTHON}/site-packages"
+	local sitedir="/usr/lib/${PN}/lib/${EPYTHON}/site-packages"
 
 	insinto "${sitedir}/${PN}"
 	doins -r \
@@ -252,26 +252,45 @@ src_install() {
 		"Source" \
 		"TensileCreateLib" \
 		"Utilities"
-	insinto "/usr/lib/Tensile/${libdir}/cmake/${PN}"
+	insinto "/usr/lib/${PN}/${libdir}/cmake/${PN}"
 	doins "cmake/"*".cmake"
 	if use client ; then
 		pushd "${BUILD_DIR}" || die
-		exeinto "/usr/lib/Tensile/bin"
+		exeinto "/usr/lib/${PN}/bin"
 		doexe "client/tensile_client"
 	fi
 
 	use client || ewarn "The symlinks require the client USE flag."
 	rocm_fix_rpath
-	mv \
-		"${ED}/usr/share" \
-		"${ED}/usr/lib/Tensile" \
-		|| die
 
-	if [[ -e "/usr/lib/Tensile/${libdir}" ]] ; then
-		dodir "/usr/lib/Tensile/${libdir}"
+	if [[ -e "${ED}/usr/share" ]] ; then
 		mv \
-			"${ED}/usr/$(get_libdir)/cmake" \
-			"${ED}/usr/lib/Tensile/$(get_libdir)/cmake" \
+			"${ED}/usr/share" \
+			"${ED}/usr/lib/${PN}" \
+			|| die
+	fi
+
+	if [[ -e "${ED}/usr/${libdir}/cmake" ]] ; then
+		dodir "${ED}/usr/lib/${PN}/${libdir}"
+		mv \
+			"${ED}/usr/${libdir}/cmake" \
+			"${ED}/usr/lib/${PN}/${libdir}/cmake" \
+			|| die
+	fi
+
+	if [[ -e "${ED}/usr/bin" ]] ; then
+		dodir "/usr/lib/${PN}/bin"
+		mv \
+			"${ED}/usr/bin/"* \
+			"${ED}/usr/lib/${PN}/bin" \
+			|| die
+	fi
+
+	if [[ -e "${ED}/usr/lib/python-exec/${EPYTHON}/Tensile-merge" ]] ; then
+		dodir "/usr/lib/Tensile/lib/python-exec/${EPYTHON}"
+		mv \
+			"${ED}/usr/lib/python-exec/${EPYTHON}/Tensile-merge" \
+			"${ED}/usr/lib/Tensile/lib/python-exec/${EPYTHON}/Tensile-merge" \
 			|| die
 	fi
 }
