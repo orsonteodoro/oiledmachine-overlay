@@ -65,7 +65,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE="
 	${PYTHON_SINGLE_TARGET}
@@ -294,6 +294,13 @@ src_install() {
 		mv \
 			"${ED}/usr/lib/python-exec/${EPYTHON}/Tensile-merge" \
 			"${ED}/usr/lib/Tensile/lib/python-exec/${EPYTHON}/Tensile-merge" \
+			|| die
+	fi
+
+	if [[ -e "${ED}/usr/lib/${EPYTHON}/site-packages" ]] ; then
+		mv \
+			"${ED}/usr/lib/${EPYTHON}/site-packages/"* \
+			"${ED}/usr/lib/Tensile/lib/${EPYTHON}/site-packages/" \
 			|| die
 	fi
 }
