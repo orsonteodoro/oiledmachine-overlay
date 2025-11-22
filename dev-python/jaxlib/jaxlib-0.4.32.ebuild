@@ -522,7 +522,7 @@ gen_rocm_depends() {
 				dev-util/rocm-smi:=
 				>=dev-util/rocminfo-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-util/rocminfo:=
-				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep TENSILE)]
+				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},$(get_rocm_usedep TENSILE)]
 				dev-util/Tensile:=
 				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
 				sci-libs/rocBLAS:=
@@ -591,17 +591,22 @@ setup_linker() {
 	fi
 
 	# The package likes to use lld with gcc which is disallowed.
-	LLD="ld.lld"
 einfo "PATH:\t${PATH}"
 	local lld_pv=-1
-	if tc-is-clang \
-		&& ${LLD} --version 2>/dev/null 1>/dev/null ; then
-		lld_pv=$(${LLD} --version \
-			| awk '{print $2}')
+	if \
+		tc-is-clang \
+			&& \
+		"ld.lld" --version 2>/dev/null 1>/dev/null \
+	; then
+		lld_pv=$("ld.lld" --version | awk '{print $2}')
 	fi
-	if is-flagq '-fuse-ld=mold' \
-		&& test-flag-CCLD '-fuse-ld=mold' \
-		&& has_version "sys-devel/mold" ; then
+	if \
+		is-flagq '-fuse-ld=mold' \
+			&& \
+		test-flag-CCLD '-fuse-ld=mold' \
+			&& \
+		has_version "sys-devel/mold" \
+	; then
 		# Explicit -fuse-ld=mold because of license of the linker.
 einfo "Using mold (TESTING)"
 		ld.mold --version || die
@@ -634,17 +639,17 @@ einfo "Using mold (TESTING)"
 		) \
 	then
 einfo "Using LLD (TESTING)"
-		${LLD} --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
+		"ld.lld" --version || die
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 	elif has_version "sys-devel/binutils[gold]" ; then
 		# Linking takes 15 hours will the first .so and has linker lag issues.
 ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
-		ld.gold --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=gold
+		"ld.gold" --version || die
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=gold"
 		BUILD_LDFLAGS+=" -fuse-ld=gold"
 		# The build scripts will use gold if it detects it.
 		# Gold can hit ~9.01 GiB without flags.
@@ -663,52 +668,19 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 			local nthreads=$(( ${ncpus} * ${tpc} ))
 ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified in LDFLAGS"
 		fi
-		filter-flags '-Wl,--thread-count,*'
-		append-ldflags -Wl,--thread-count,${nthreads}
+		filter-flags "-Wl,--thread-count,*"
+		append-ldflags "-Wl,--thread-count,${nthreads}"
 		BUILD_LDFLAGS+=" -Wl,--thread-count,${nthreads}"
 	else
 ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 		ld.bfd --version || die
-		append-ldflags -fuse-ld=bfd
+		append-ldflags "-fuse-ld=bfd"
 		BUILD_LDFLAGS+=" -fuse-ld=bfd"
 		# No threading flags
 	fi
 
 	strip-unsupported-flags # Filter LDFLAGS after switch
-}
-
-# Modified tc_use_major_version_only() from toolchain.eclass
-gcc_symlink_ver() {
-	local slot="${1}"
-	local ncomponents=3
-
-	local pv=$(best_version "sys-devel/gcc:${slot}" \
-		| sed -e "s|sys-devel/gcc-||g")
-	if [[ -z "${pv}" ]] ; then
-		return
-	fi
-
-	if ver_test "${pv}" -lt "10" ; then
-		ncomponents=3
-	elif [[ "${slot}" -eq "10" ]] && ver_test "${pv}" -ge "10.4.1_p20220929" ; then
-		ncomponents=1
-	elif [[ "${slot}" -eq "11" ]] && ver_test "${pv}" -ge "11.3.1_p20220930" ; then
-		ncomponents=1
-	elif [[ "${slot}" -eq "12" ]] && ver_test "${pv}" -ge "12.2.1_p20221001" ; then
-		ncomponents=1
-	elif [[ "${slot}" -eq "13" ]] && ver_test "${pv}" -ge "13.0.0_pre20221002" ; then
-		ncomponents=1
-	elif [[ "${slot}" -gt "13" ]] ; then
-		ncomponents=1
-	fi
-
-	if (( ${ncomponents} == 1 )) ; then
-		ver_cut 1 "${pv}"
-		return
-	fi
-
-	ver_cut 1-3 "${pv}"
 }
 
 _remove_llvm_from_path() {
@@ -728,7 +700,7 @@ use_gcc() {
 		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
 	fi
 
-	${CC} --version || die
+	"${CC}" --version || die
 	strip-unsupported-flags
 }
 
@@ -743,7 +715,7 @@ eerror
 
 	LLVM_SLOT=""
 	local x
-	for x in ${LLVM_COMPAT[@]} ; do
+	for x in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${x}" ; then
 			LLVM_SLOT="${x}"
 			break
@@ -757,13 +729,13 @@ eerror
 	export CXX="${CHOST}-clang++-${s}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	if ${CC} --version 2>/dev/null 1>/dev/null ; then
+	if "${CC}" --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to clang:${s}"
 		found=1
 	fi
 
 	llvm_pkg_setup
-	${CC} --version || die
+	"${CC}" --version || die
 	strip-unsupported-flags
 }
 
@@ -781,7 +753,7 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_6_4 ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+		if has "rocm_6_4" ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
 			LLVM_SLOT=19
 			ROCM_SLOT="6.4"
 			ROCM_VERSION="${HIP_6_4_VERSION}"
@@ -812,7 +784,7 @@ einfo
 		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
 	# Avoid missing versioned symbols
 	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+		rocm_verify_glibcxx "${!glibcxx_ver}" "${libs[@]}"
 
 	#else
 	#	llvm_pkg_setup is called in use_clang
@@ -889,7 +861,7 @@ prepare_jaxlib() {
 	# In some contexts -Os causes a stall.
 	# Make _FORTIFY_SOURCE work.
 	# Prevent warning as error
-	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
+	replace-flags "-O*" "-O2" # Prevent possible runtime breakage with llvm parts.
 }
 
 python_prepare_all() {
@@ -905,7 +877,7 @@ ewarn
 	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
 	if use rocm ; then
 		local f
-		for f in ${ROCM_PATCHES[@]} ; do
+		for f in "${ROCM_PATCHES[@]}" ; do
 			eapply -p1 "${FILESDIR}/${PV}/xla/${f}"
 		done
 	fi
@@ -925,14 +897,14 @@ ewarn
 
 	if use rocm ; then
 		local dirpath
-		for dirpath in ${L[@]} ; do
+		for dirpath in "${L[@]}" ; do
 			rm -f "${dirpath}/find_rocm_config.py.gz.base64"
 			pushd "${dirpath}" || die
 				pigz -z -k "find_rocm_config.py" || die
 				mv "find_rocm_config.py.zz" "find_rocm_config.py.gz" || die
 				base64 --wrap=0 \
 					"find_rocm_config.py.gz" \
-					> \
+						> \
 					"find_rocm_config.py.gz.base64" \
 					|| die
 			popd
@@ -1021,8 +993,8 @@ python_compile() {
 
 	if use rocm ; then
 		rocm_set_default_gcc
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 		strip-unsupported-flags # Filter LDFLAGS after switch
 	fi
@@ -1052,28 +1024,28 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	if is-flagq '-march=native' ; then
 # Autodetect
 		args+=(
-			--target_cpu_features=native
+			--target_cpu_features="native"
 		)
 	elif is-flagq '-march=generic' ; then
 # Strips -march=*
 		args+=(
-			--target_cpu_features=default
+			--target_cpu_features="default"
 		)
 	elif [[ "${CFLAGS}" =~ "-march=" ]] ; then
 # Autodetect
 		args+=(
-			--target_cpu_features=native
+			--target_cpu_features="native"
 		)
 	elif use cpu_flags_x86_avx ; then
 # Package default
 # Adds -mavx without -march=
 		args+=(
-			--target_cpu_features=release
+			--target_cpu_features="release"
 		)
 	else
 # Strips -march=*
 		args+=(
-			--target_cpu_features=default
+			--target_cpu_features="default"
 		)
 	fi
 
@@ -1152,11 +1124,13 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 	if use rocm ; then
+		export LD_LIBRARY_PATH="${ESYSROOT}/usr/bin/Tensile/$(get_libdir):${LD_LIBRARY_PATH}"
+		export PATH="${ESYSROOT}/usr/bin/Tensile/bin:${PATH}"
+		export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+
 		local gcc_slot=$(gcc-major-version)
-		local rocm_pv=$(best_version "sci-libs/rocFFT" \
-			| sed -e "s|sci-libs/rocFFT-||")
-		local rocm_version=$(best_version "dev-util/hip" \
-			| sed -e "s|dev-util/hip-||g")
+		local rocm_pv=$(best_version "sci-libs/rocFFT" | sed -e "s|sci-libs/rocFFT-||")
+		local rocm_version=$(best_version "dev-util/hip" | sed -e "s|dev-util/hip-||g")
 		rocm_version=$(ver_cut 1-3 "${rocm_version}")
 
 		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
@@ -1165,8 +1139,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
 		export JAX_ROCM_VERSION="${rocm_version//./}"
 		export ROCM_PATH="${ESYSROOT}/usr"
-		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
-			| tr ";" ",")
+		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")
 einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
 einfo "HIP_PATH:  ${HIP_PATH}"
 einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
@@ -1203,9 +1176,10 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	# Generate to fix python version in .jax_configure.bazelrc
 einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
-	${EPYTHON} build/build.py \
+	${EPYTHON} \
+		"build/build.py" \
 		--configure_only \
-		${args[@]} \
+		"${args[@]}" \
 		|| die
 
 	# Merge custom config
@@ -1289,7 +1263,7 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		-- \
 		--output_path="${PWD}/dist" \
 		--cpu=$(get_host) \
-		--jaxlib_git_hash=${EGIT_COMMIT}
+		--jaxlib_git_hash="${EGIT_COMMIT}"
 	_ebazel shutdown
 
 	local python_pv="${EPYTHON}"
@@ -1300,7 +1274,7 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		find "${S}/dist" -name "*.whl"
 	)
 	local wheel_path
-	for wheel_path in ${wheel_paths[@]} ; do
+	for wheel_path in "${wheel_paths[@]}" ; do
 einfo "Installing ${wheel_path}"
 		distutils_wheel_install \
 			"${BUILD_DIR}/install" \
