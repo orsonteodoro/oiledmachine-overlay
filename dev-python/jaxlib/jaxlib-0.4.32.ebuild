@@ -434,6 +434,7 @@ REQUIRED_USE+="
 		^^ (
 			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
+		python_single_target_python3_12
 	)
 	rocm_6_4? (
 		llvm_slot_19
