@@ -16,7 +16,7 @@ diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py Tensile
 +            except NameError:
 +                pass  # localReadsA not defined in this kernel (ok)
 +            if packCodeA:
-+                pack[...].addCode(packCodeA)
++                pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
              if needExtraLocalReadDo and (self.packDTVA or self.packDTVB):
                # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
                pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
