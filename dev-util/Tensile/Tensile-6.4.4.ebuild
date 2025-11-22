@@ -299,10 +299,11 @@ src_install() {
 	fi
 
 	if [[ -e "${ED}/usr/lib/${EPYTHON}/site-packages" ]] ; then
-		mv \
-			"${ED}/usr/lib/${EPYTHON}/site-packages/"* \
+		cp -aT \
+			"${ED}/usr/lib/${EPYTHON}/site-packages/" \
 			"${ED}/usr/lib/Tensile/lib/${EPYTHON}/site-packages/" \
 			|| die
+		rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages"
 	fi
 }
 
