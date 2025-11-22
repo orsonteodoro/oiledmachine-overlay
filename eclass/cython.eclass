@@ -35,6 +35,7 @@ SUPPORTED_CYTHON_SLOTS=(
 cython_python_configure() {
 	if [[ -z "${CYTHON_SLOT}" ]] ; then
 eerror "CYTHON_SLOT needs to be set before inherit cython"
+		die
 	fi
 
 	# Sanitize/isolate first
