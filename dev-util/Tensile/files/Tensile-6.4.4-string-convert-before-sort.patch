@@ -1,17 +1,20 @@
 diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/SolutionStructs.py Tensile-rocm-6.4.4/Tensile/SolutionStructs.py
 --- Tensile-rocm-6.4.4.orig/Tensile/SolutionStructs.py	2025-08-11 08:14:33.000000000 -0700
-+++ Tensile-rocm-6.4.4/Tensile/SolutionStructs.py	2025-11-21 14:58:57.603190126 -0800
-@@ -4849,6 +4849,13 @@ class Solution(collections.abc.Mapping):
++++ Tensile-rocm-6.4.4/Tensile/SolutionStructs.py	2025-11-21 16:04:34.779635117 -0800
+@@ -4848,7 +4848,15 @@ class Solution(collections.abc.Mapping):
+     maxObjs = 1
      for paramName in data:
        if not isinstance(data[paramName][0],dict):
-         data[paramName] = sorted(data[paramName])
-+
-+        # WORKAROUND:
-+        # Some parameters (especially AssertSummationElementMultiple) are
-+        # sometimes bool and sometimes str → crash in sorted(). Force str.
-+        data[paramName] = [str(x) if isinstance(x, bool) else x \
-+                           for x in data[paramName]]
-+
+-        data[paramName] = sorted(data[paramName])
++        tmp = []
++        for v in data[paramName]:
++            if isinstance(v, bool):
++                tmp.append("True" if v else "False")
++            elif isinstance(v, int):
++                tmp.append(str(v))
++            else:
++                tmp.append(v)
++        data[paramName] = sorted(tmp)
        maxObjs *= len(data[paramName])
      numDigits = len(str(maxObjs))
      return [ data, numDigits ]
