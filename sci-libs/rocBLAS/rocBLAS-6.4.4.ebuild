@@ -194,10 +194,7 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},client,rocm]
-		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${SLOT}"'[${PYTHON_USEDEP}]
-		')
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},client,rocm]
 		dev-util/Tensile:=
 	)
 "
@@ -315,6 +312,7 @@ src_configure() {
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		export PATH="${ESYSROOT}/usr/lib/Tensile/bin:${PATH}"
+		export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_WITH_HIPBLASLT=$(use_hipblaslt)

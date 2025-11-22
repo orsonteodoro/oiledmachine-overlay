@@ -7,6 +7,7 @@ EAPI=8
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -22,7 +23,7 @@ GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
 )
 
-inherit cmake libstdcxx-slot rocm
+inherit cmake libstdcxx-slot python-single-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -74,7 +75,7 @@ BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.10.2
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 		dev-util/Tensile:=
 	)
 	test? (
@@ -86,6 +87,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	python-single-r1_pkg_setup
 	rocm_pkg_setup
 	libstdcxx-slot_verify
 }
@@ -145,6 +147,7 @@ src_configure() {
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		export PATH="${ESYSROOT}/usr/lib/Tensile/bin:${PATH}"
+		export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
