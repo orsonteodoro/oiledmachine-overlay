@@ -130,10 +130,6 @@ RDEPEND="
 	rocm? (
 		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/rocm-smi:=
-		!minimal? (
-			>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm]
-			dev-util/Tensile:=
-		)
 		virtual/hsa-code-object-version
 	)
 "
@@ -300,28 +296,12 @@ ewarn
 			-DOPENCL_ROOT="${EROCM_PATH}/opencl"
 			-DTensile_CODE_OBJECT_VERSION=$(get_hsa_object_code_version)
 			-DTensile_CPU_THREADS="${nprocs}"
+			-DTensile_DIR="${S}/tensilelite/Tensile/cmake"
+			-DTensile_PREFIX="${S}/tensilelite"
+			-DTensile_ROOT="${S}/tensilelite/Tensile"
+			-DTENSILE_VERSION="${TENSILELITE_INTERNAL_PV}"
+			-DUSE_TENSILELITE=ON
 		)
-		if use minimal ; then
-			mycmakeargs+=(
-				-DTensile_DIR="${S}/tensilelite/Tensile/cmake"
-				-DTensile_PREFIX="${S}/tensilelite"
-				-DTensile_ROOT="${S}/tensilelite/Tensile"
-				-DTENSILE_VERSION="${TENSILELITE_INTERNAL_PV}"
-				-DUSE_TENSILELITE=ON
-			)
-		else
-			mycmakeargs+=(
-				-DTensile_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake/Tensile"
-				-DTensile_LIBRARY_FORMAT="msgpack"
-				-DTensile_PREFIX="${ESYSROOT}/usr"
-				-DTensile_ROOT="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
-				-DTensile_SKIP_BUILD=ON
-				-DTensile_TENSILE_ROOT="${ESYSROOT}/usr" # Workaround
-				-DTENSILE_VERSION="${TENSILEFULL_INTERNAL_PV}"
-				-DUSE_SYSTEM_TENSILE=ON
-				-DUSE_TENSILELITE=OFF
-			)
-		fi
 	fi
 
 #	virtualenv "${BUILD_DIR}/venv" || die

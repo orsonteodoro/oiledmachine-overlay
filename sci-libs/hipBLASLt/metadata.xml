@@ -9,16 +9,6 @@
   <upstream>
     <remote-id type="github">ROCmSoftwarePlatform/hipBLASLt</remote-id>
   </upstream>
-  <!--
-
-  oiledmachine-overlay notes:
-
-  | Implementation | Build time | Runtime performance | Size               | Default |
-  | ---            | ---        | ---                 | ---                | ---     |
-  | Tensile        | Longer     | 1-8% Faster         | Larger (200-400MB) | No      |
-  | TensileLite    | Shorter    | Slower              | Smaller (30-80MB)  | Yes     |
-
-  -->
   <use>
     <flag name="asan">
       Build with ASan with critical severity security mitigations related to
