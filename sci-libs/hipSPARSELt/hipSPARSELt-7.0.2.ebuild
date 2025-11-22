@@ -47,7 +47,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan -cuda rocm -samples -test
-ebuild_revision_1
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -62,8 +62,6 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-util/Tensile:=
 		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sci-libs/hipSPARSE:=
 		virtual/hsa-code-object-version:=
@@ -75,6 +73,10 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.10.2
+	rocm? (
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
+		dev-util/Tensile:=
+	)
 	test? (
 		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
 		dev-cpp/gtest:=
@@ -142,6 +144,7 @@ src_configure() {
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
+		export PATH="${ESYSROOT}/usr/lib/Tensile/bin:${PATH}"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
@@ -150,6 +153,7 @@ src_configure() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 			-DROCM_SYMLINK_LIBS=OFF
+			-DTensile_DIR="${ESYSROOT}/usr/lib/Tensile/$(get_libdir)/cmake/Tensile"
 			-DTensile_CODE_OBJECT_VERSION=$(get_hsa_object_code_version)
 		)
 	fi

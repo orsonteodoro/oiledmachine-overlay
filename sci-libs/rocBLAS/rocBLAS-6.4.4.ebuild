@@ -115,7 +115,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 asan benchmark cuda +rocm test
-ebuild_revision_27
+ebuild_revision_29
 "
 gen_rocm_required_use() {
 	local x
@@ -169,11 +169,6 @@ RDEPEND="
 	rocm? (
 		>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/roctracer:=
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},rocm]
-		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${SLOT}"'[${PYTHON_USEDEP}]
-		')
-		dev-util/Tensile:=
 		virtual/hsa-code-object-version:=
 	)
 "
@@ -199,10 +194,11 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	rocm? (
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP},client,rocm]
 		$(python_gen_cond_dep '
-			>=dev-util/Tensile-'"${PV}:${SLOT}"'['"${LIBSTDCXX_USEDEP},${TENSILE_6_4_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
-			dev-util/Tensile:=
+			>=dev-util/Tensile-'"${PV}:${SLOT}"'[${PYTHON_USEDEP}]
 		')
+		dev-util/Tensile:=
 	)
 "
 PATCHES=(
@@ -318,6 +314,7 @@ src_configure() {
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
+		export PATH="${ESYSROOT}/usr/lib/Tensile/bin:${PATH}"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_WITH_HIPBLASLT=$(use_hipblaslt)
@@ -331,9 +328,10 @@ src_configure() {
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 			-DTensile_LOGIC="asm_full"
-			-DTensile_ROOT="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
-			-DTensile_TENSILE_ROOT="${ESYSROOT}/usr"
-			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/Tensile"
+			# Prefix change: /usr -> /usr/lib/Tensile
+			-DTensile_ROOT="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages/Tensile"
+			-DTensile_TENSILE_ROOT="${ESYSROOT}/usr/lib/Tensile/usr"
+			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}/usr/lib/Tesnile/lib/${EPYTHON}/site-packages/Tensile"
 		)
 	fi
 	rocm_set_default_hipcc
