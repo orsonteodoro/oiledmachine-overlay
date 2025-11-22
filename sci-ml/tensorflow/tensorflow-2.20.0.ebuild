@@ -1013,6 +1013,7 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_VERSION="${HIP_6_0_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
+		use clang || die "The clang USE flag must be enabled for ${PN}"
 		use_gcc
 		use_clang
 	elif tc-is-gcc ; then
@@ -1086,9 +1087,8 @@ setup_linker() {
 	# The package likes to use lld with gcc which is disallowed.
 	local lld_pv=-1
 	if tc-is-clang \
-		&& ld.lld --version 2>/dev/null 1>/dev/null ; then
-		lld_pv=$(ld.lld --version \
-			| awk '{print $2}')
+		&& "ld.lld" --version 2>/dev/null 1>/dev/null ; then
+		lld_pv=$("ld.lld" --version | awk '{print $2}')
 	fi
 	if is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
@@ -1096,8 +1096,8 @@ setup_linker() {
 		# Explicit -fuse-ld=mold because of license of the linker.
 einfo "Using mold"
 		ld.mold --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=mold
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=mold"
 		BUILD_LDFLAGS+=" -fuse-ld=mold"
 	elif \
 		tc-is-clang \
@@ -1125,7 +1125,7 @@ einfo "Using mold"
 		) \
 	then
 einfo "Using LLD (TESTING)"
-		ld.lld --version || die
+		"ld.lld" --version || die
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
@@ -1135,7 +1135,7 @@ ewarn
 ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 ewarn
-		ld.gold --version || die
+		"ld.gold" --version || die
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=gold"
 		BUILD_LDFLAGS+=" -fuse-ld=gold"
@@ -1156,16 +1156,16 @@ ewarn
 			local nthreads=$(( ${ncpus} * ${tpc} ))
 ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified in LDFLAGS"
 		fi
-		filter-flags '-Wl,--thread-count,*'
-		append-ldflags -Wl,--thread-count,${nthreads}
+		filter-flags "-Wl,--thread-count,*"
+		append-ldflags "-Wl,--thread-count,${nthreads}"
 		BUILD_LDFLAGS+=" -Wl,--thread-count,${nthreads}"
 	else
 ewarn
 ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 ewarn
-		ld.bfd --version || die
-		append-ldflags -fuse-ld=bfd
+		"ld.bfd" --version || die
+		append-ldflags "-fuse-ld=bfd"
 		BUILD_LDFLAGS+=" -fuse-ld=bfd"
 		# No threading flags
 	fi
@@ -1240,8 +1240,8 @@ src_prepare() {
 	if (( ${actual_gib_per_core%.*} <= ${minimal_gib_per_core} || ${cores} <= 4 )) ; then
 ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
 ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
-		filter-flags '-flto*'
 ewarn "Disabling LTO to speed up build time."
+		filter-flags '-flto*'
 	else
 einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
 einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
@@ -1272,8 +1272,8 @@ einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	if use rocm ; then
 		rocm_set_default_gcc
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 		strip-unsupported-flags # Filter linker flags
 	fi
@@ -1300,7 +1300,7 @@ ewarn "If build failure, use MAKEOPTS=\"-j1\".  Expect memory use to be 6-11"
 ewarn "GiB per process."
 ewarn
 	append-flags $(get-cpu-flags)
-	filter-flags '-fvtable-verify=@(std|preinit)'
+	filter-flags "-fvtable-verify=@(std|preinit)"
 
 	setup_linker
 
