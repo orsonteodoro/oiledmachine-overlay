@@ -167,8 +167,6 @@ src_prepare() {
 		"setup.py" \
 		|| die
 
-	die
-
 	cmake_src_prepare
 	rocm_src_prepare
 }
