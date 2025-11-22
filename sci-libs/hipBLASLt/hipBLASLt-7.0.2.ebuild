@@ -238,19 +238,6 @@ src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
-	if has_version "dev-util/Tensile" && use minimal ; then
-eerror
-eerror "Header conflict between Tensile and TensileLite"
-eerror
-eerror "Do the following:"
-eerror
-eerror "emerge -C Tensile:${SLOT}"
-eerror "emerge -1vO hipBLASLt:${SLOT}"
-eerror "emerge -1vO Tensile:${SLOT}"
-eerror
-		die
-	fi
-
 	replace-flags '-O0' '-O1'
 	local nprocs=$(get_makeopts_nprocs)
 	if (( "${nprocs}" > 1 )) ; then
