@@ -245,7 +245,8 @@ src_install() {
 	# Force install into /usr/lib/Tensile install prefix for better
 	# unintended install to avoid header conflict between Tensile and
 	# TensileLite used in hipBLASLt.
-	local sitedir="/usr/lib/${PN}/lib/${EPYTHON}/site-packages"
+	local install_prefix="/usr/lib/${PN}"
+	local sitedir="${install_prefix}/lib/${EPYTHON}/site-packages"
 
 	insinto "${sitedir}/${PN}"
 	doins -r \
@@ -255,11 +256,11 @@ src_install() {
 		"Source" \
 		"TensileCreateLib" \
 		"Utilities"
-	insinto "/usr/lib/${PN}/${libdir}/cmake/${PN}"
+	insinto "${install_prefix}/${libdir}/cmake/${PN}"
 	doins "cmake/"*".cmake"
 	if use client ; then
 		pushd "${BUILD_DIR}" || die
-		exeinto "/usr/lib/${PN}/bin"
+		exeinto "${install_prefix}/bin"
 		doexe "client/tensile_client"
 	fi
 
@@ -269,23 +270,23 @@ src_install() {
 	if [[ -e "${ED}/usr/share" ]] ; then
 		mv \
 			"${ED}/usr/share" \
-			"${ED}/usr/lib/${PN}" \
+			"${ED}${install_prefix}" \
 			|| die
 	fi
 
 	if [[ -e "${ED}/usr/${libdir}/cmake" ]] ; then
-		dodir "${ED}/usr/lib/${PN}/${libdir}"
+		dodir "${ED}${install_prefix}/${libdir}"
 		mv \
 			"${ED}/usr/${libdir}/cmake" \
-			"${ED}/usr/lib/${PN}/${libdir}/cmake" \
+			"${ED}${install_prefix}/${libdir}/cmake" \
 			|| die
 	fi
 
 	if [[ -e "${ED}/usr/bin" ]] ; then
-		dodir "/usr/lib/${PN}/bin"
+		dodir "${install_prefix}/bin"
 		mv \
 			"${ED}/usr/bin/"* \
-			"${ED}/usr/lib/${PN}/bin" \
+			"${ED}${install_prefix}/bin" \
 			|| die
 	fi
 
