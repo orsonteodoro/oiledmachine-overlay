@@ -1,0 +1,22 @@
+diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py Tensile-rocm-6.4.4/Tensile/KernelWriter.py
+--- Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py	2025-08-11 08:14:33.000000000 -0700
++++ Tensile-rocm-6.4.4/Tensile/KernelWriter.py	2025-11-21 16:57:01.526470078 -0800
+@@ -2129,9 +2129,15 @@ class KernelWriter(metaclass=abc.ABCMeta
+               # DTV + pack case, offset bufferIdx for local read packing instructions
+               bufferIdx = plrIdxDTV*self.numIterPerCoalescedReadA + vregSetIdxLR * kernel["LoopIters"]
+             localReadCodeA, packCodeA = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedA, 0, tensorParametersA)
+-            if not needExtraLocalReadDo:
+-              localReads.addCode(localReadCodeA)
+-              pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
++            # New Tensile always emits code and duplicates into localReadsA/B
++            localReads.addCode(localReadCodeA)
++            # HIPBLASLt expects separate streams for better instruction scheduling
++            try:
++                localReadsA.addCode(localReadCodeA)
++            except NameError:
++                pass  # localReadsA not defined in this kernel (ok)
++            if packCodeA:
++                pack[...].addCode(packCodeA)
+             if needExtraLocalReadDo and (self.packDTVA or self.packDTVB):
+               # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
+               pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)

@@ -65,7 +65,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	${PYTHON_SINGLE_TARGET}
@@ -134,8 +134,11 @@ _PATCHES=(
 #	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 	"${FILESDIR}/${PN}-6.4.4-link-llvm.patch"
+
+	# Fixes for hipBLASLt build compatibility
 	"${FILESDIR}/${PN}-6.4.4-allow-valid-gemm-types.patch"
 	"${FILESDIR}/${PN}-6.4.4-string-convert-before-sort.patch"
+	"${FILESDIR}/${PN}-6.4.4-hipblaslt-compat-writer-fix.patch"
 )
 
 pkg_setup() {
