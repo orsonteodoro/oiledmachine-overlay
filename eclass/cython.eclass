@@ -34,10 +34,16 @@ SUPPORTED_CYTHON_SLOTS=(
 #
 cython_python_configure() {
 	if [[ -z "${CYTHON_SLOT}" ]] ; then
-eerror "CYTHON_SLOT needs to be set before inherit cython"
+eerror "QA:  CYTHON_SLOT needs to be set before \`inherit cython\`."
 		die
 	fi
 
+	if [[ -z "${EPYTHON}" ]] ; then
+eerror "QA:  EPYTHON is not defined"
+eerror "QA:  Call python-single_r1_pkg_setup or python_setup first"
+		die
+	fi
+einfo "Setting up cython:3.0 support for ${EPYTHON}"
 	# Sanitize/isolate first
 	export LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/cython|d" | tr $'\n' ":")
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/cython|d" | tr $'\n' ":")
