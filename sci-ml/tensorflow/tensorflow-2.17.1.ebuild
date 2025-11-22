@@ -42,6 +42,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF SO HO IO UAF"
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
+PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
+# Limited by jax/flax
+# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/xla/xla/stream_executor/device_description.h#L248
@@ -70,9 +73,15 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
 )
-GCC_COMPAT2=( {12..9} )
-GCC_MAX_SLOT="${GCC_COMPAT2[0]}"
-GCC_MIN_SLOT="${GCC_COMPAT2[-1]}"
+
+# See "deps versioning" section above for details.
+# See
+# https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/toolchains/remote_config/configs.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/gpus/rocm_configure.bzl#L210
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+)
 
 inherit hip-versions
 HIP_SLOTS=(
@@ -96,19 +105,6 @@ HIP_SLOTS2=(
 declare -A LLD_SLOT=(
 	["${HIP_6_4_VERSION}"]="${HIP_6_4_LLVM_SLOT}" # Placeholder
 )
-
-# See "deps versioning" section above for details.
-# See
-# https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/toolchains/remote_config/configs.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/gpus/rocm_configure.bzl#L210
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-	19 # For ROCm 6.4
-)
-PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
-# Limited by jax/flax
-# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {
@@ -486,6 +482,7 @@ REQUIRED_USE="
 		^^ (
 			${HIP_SLOTS2[@]}
 		)
+		python_single_target_python3_12
 	)
 	rocm_6_4? (
 		llvm_slot_19
@@ -556,7 +553,7 @@ gen_rocm_rdepend() {
 				dev-util/rocm-smi:=
 				>=dev-util/rocminfo-${pv}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-util/rocminfo:=
-				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep TENSILE)]
+				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},$(get_rocm_usedep TENSILE)]
 				dev-util/Tensile:=
 			)
 		"
@@ -651,6 +648,7 @@ gen_protobuf_rdepend() {
 		"
 	done
 }
+
 # The abseil-cpp rdepends is handled by protobuf package.
 RDEPEND="
 	${RDEPEND_PROTOBUF}
@@ -790,17 +788,6 @@ gen_llvm_bdepend() {
 	done
 }
 
-gen_gcc_bdepend() {
-	local s
-	echo "|| ("
-	for s in ${GCC_COMPAT2[@]} ; do
-		echo "
-			=sys-devel/gcc-${s}*:${s}
-		"
-	done
-	echo ")"
-}
-
 # Did not find grpc-tools
 # grpcio-tools versioning based on grpcio
 BDEPEND="
@@ -809,11 +796,6 @@ BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
 	dev-util/patchelf
-	!clang? (
-		!cuda? (
-			$(gen_gcc_bdepend)
-		)
-	)
 	!python? (
 		dev-lang/python
 	)
@@ -878,39 +860,6 @@ get-cpu-flags() {
 	echo "${f[*]}"
 }
 
-# Modified tc_use_major_version_only() from toolchain.eclass
-gcc_symlink_ver() {
-	local slot="${1}"
-	local ncomponents=3
-
-	local pv=$(best_version "sys-devel/gcc:${slot}" \
-		| sed -e "s|sys-devel/gcc-||g")
-	if [[ -z "${pv}" ]] ; then
-		return
-	fi
-
-	if ver_test ${pv} -lt 10 ; then
-		ncomponents=3
-	elif [[ ${slot} -eq 10 ]] && ver_test ${pv} -ge 10.4.1_p20220929 ; then
-		ncomponents=1
-	elif [[ ${slot} -eq 11 ]] && ver_test ${pv} -ge 11.3.1_p20220930 ; then
-		ncomponents=1
-	elif [[ ${slot} -eq 12 ]] && ver_test ${pv} -ge 12.2.1_p20221001 ; then
-		ncomponents=1
-	elif [[ ${slot} -eq 13 ]] && ver_test ${pv} -ge 13.0.0_pre20221002 ; then
-		ncomponents=1
-	elif [[ ${slot} -gt 13 ]] ; then
-		ncomponents=1
-	fi
-
-	if [[ ${ncomponents} -eq 1 ]] ; then
-		ver_cut 1 ${pv}
-		return
-	fi
-
-	ver_cut 1-3 ${pv}
-}
-
 _remove_llvm_from_path() {
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
@@ -925,7 +874,7 @@ use_gcc() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	${CC} --version || die
+	"${CC}" --version || die
 }
 
 use_clang() {
@@ -972,9 +921,7 @@ einfo "Switched to clang:${s}"
 		fi
 	done
 	if (( ${found} != 1 )) ; then
-eerror
 eerror "Use only clang slots ${LLVM_COMPAT[@]}"
-eerror
 		die
 	fi
 	if (( ${found2} == 1 )) ; then
@@ -984,7 +931,7 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_SLOT=${s}
 	llvm_pkg_setup
-	${CC} --version || die
+	"${CC}" --version || die
 	strip-unsupported-flags
 }
 
@@ -997,9 +944,7 @@ check_cython() {
 	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
 	local expected_cython_slot="3.0"
 	if [[ "${actual_cython_pv}" == "python-exec" ]] ; then
-eerror
 eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
 		die
 	fi
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
@@ -1061,7 +1006,7 @@ einfo
 	count_py_impls
 
 	# 10G to build C/C++ libs, 6G per python impl
-	CHECKREQS_DISK_BUILD="$((10 + 6 * ${num_pythons_enabled}))G"
+	CHECKREQS_DISK_BUILD=$((10 + 6 * ${num_pythons_enabled}))"G"
 	check-reqs_pkg_setup
 
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
@@ -1087,13 +1032,17 @@ ewarn "ccache support for this package is in TESTING.  Disable ccache if problem
 	fi
 }
 
-src_unpack() {
-	# Only unpack the main distfile
-	unpack "${P}.tar.gz"
+setup_multislot_bazel() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
 	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
 	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
+}
+
+src_unpack() {
+	# Only unpack the main distfile
+	unpack "${P}.tar.gz"
+	setup_multislot_bazel
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 
@@ -1103,11 +1052,10 @@ setup_linker() {
 	fi
 
 	# The package likes to use lld with gcc which is disallowed.
-	LLD="ld.lld"
 	local lld_pv=-1
 	if tc-is-clang \
-		&& ${LLD} --version 2>/dev/null 1>/dev/null ; then
-		lld_pv=$(${LLD} --version \
+		&& ld.lld --version 2>/dev/null 1>/dev/null ; then
+		lld_pv=$(ld.lld --version \
 			| awk '{print $2}')
 	fi
 	if is-flagq '-fuse-ld=mold' \
@@ -1145,9 +1093,9 @@ einfo "Using mold"
 		) \
 	then
 einfo "Using LLD (TESTING)"
-		${LLD} --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
+		ld.lld --version || die
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 	elif has_version "sys-devel/binutils[gold]" ; then
 		# Linking takes 15 hours will the first .so and has linker lag issues.
@@ -1156,8 +1104,8 @@ ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 ewarn
 		ld.gold --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=gold
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=gold"
 		BUILD_LDFLAGS+=" -fuse-ld=gold"
 		# The build scripts will use gold if it detects it.
 		# Gold can hit ~9.01 GiB without flags.
@@ -1475,9 +1423,12 @@ einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 		fi
 		if use rocm ; then
+			export LD_LIBRARY_PATH="${ESYSROOT}/usr/bin/Tensile/$(get_libdir):${LD_LIBRARY_PATH}"
+			export PATH="${ESYSROOT}/usr/bin/Tensile/bin:${PATH}"
+			export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+
 			export TF_NEED_CLANG=1
-			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
-				| tr ";" ",")
+			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_SLOT}"
 			export HIP_PATH="${ROCM_PATH}"
 			export ROCM_PATH="${ROCM_PATH}"
@@ -1583,6 +1534,7 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
 einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
 
+		local cflag
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
 		do
 			echo "build --copt=\"${cflag}\"" >> ".bazelrc" || die
@@ -1610,40 +1562,30 @@ add_sandbox_rules() {
 		"/usr/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
 		"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita"
 		"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
-
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Compiler"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Compiler/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Plex"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Plex/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Utility"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Utility/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Tempita"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.0.29/Tempita/__pycache__"
-
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Compiler"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Compiler/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Plex"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Plex/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Utility"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Utility/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Tempita"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.0/Tempita/__pycache__"
-
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Compiler"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Compiler/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Plex"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Plex/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Utility"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Utility/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Tempita"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3.1/Tempita/__pycache__"
 	)
+
+	local CYTHON_SLOTS=(
+		"0.29"
+		"3.0"
+		"3.1"
+	)
+	local x
+	for x in "${CYTHON_SLOTS[@]}" ; do
+		L+=(
+			"/usr/lib/${EPYTHON}/site-packages"
+			"/usr/lib/${EPYTHON}/site-packages/__pycache__"
+			"/usr/lib/${EPYTHON}/site-packages/Cython"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/__pycache__"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Plex"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Utility"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita"
+			"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
+		)
+	done
 einfo "Adding sandbox rules"
 	local path
 	for path in "${L[@]}" ; do
@@ -1687,7 +1629,7 @@ einfo "src_compile():  Step 1"
 
 einfo "src_compile():  Step 2"
 	ebazel build \
-		${args[@]} \
+		"${args[@]}" \
 		-k \
 		--nobuild \
 		"//tensorflow:libtensorflow_framework.so" \
@@ -1697,23 +1639,23 @@ einfo "src_compile():  Step 2"
 
 einfo "src_compile():  Step 3"
 	ebazel build \
-		${args[@]} \
+		"${args[@]}" \
 		"//tensorflow:libtensorflow_framework.so" \
 		"//tensorflow:libtensorflow.so"
 einfo "src_compile():  Step 4"
 	ebazel build \
-		${args[@]} \
+		"${args[@]}" \
 		"//tensorflow:libtensorflow_cc.so"
 einfo "src_compile():  Step 5"
 	ebazel build \
-		${args[@]} \
+		"${args[@]}" \
 		"//tensorflow:install_headers"
 	ebazel shutdown
 
 	do_compile() {
 einfo "src_compile():  Step 6"
 		ebazel build \
-			${args[@]} \
+			"${args[@]}" \
 			"//tensorflow/tools/pip_package:build_pip_package"
 		ebazel shutdown
 	}
@@ -1774,8 +1716,14 @@ einfo "Installing libs"
 	insinto "/usr/$(get_libdir)/pkgconfig"
 	doins "${PN}.pc" "${PN}_cc.pc"
 
+	local L=(
+		"libtensorflow.so"
+		"libtensorflow_framework.so"
+		"libtensorflow_cc.so"
+	)
+
 	local l
-	for l in libtensorflow{,_framework,_cc}.so; do
+	for l in "${L[@]}" ; do
 		use cuda && patchelf --add-rpath "/opt/cuda/lib64" "bazel-bin/tensorflow/${l}"
 		dolib.so "bazel-bin/tensorflow/${l}"
 		dolib.so "bazel-bin/tensorflow/${l}.$(ver_cut 1)"
