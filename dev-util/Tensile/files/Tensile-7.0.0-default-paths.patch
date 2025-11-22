@@ -1,0 +1,42 @@
+--- a/Tensile/Common.py.orig	2025-06-20 10:45:24.000000000 -0700
++++ b/Tensile/Common.py	2025-11-22 09:32:11.124723963 -0800
+@@ -270,7 +270,8 @@ globalParameters["DictLibraryLogic"] = F
+ globalParameters["CurrentISA"] = (0,0,0)
+ globalParameters["ROCmAgentEnumeratorPath"] = None      # /opt/rocm/bin/rocm_agent_enumerator
+ globalParameters["ROCmSMIPath"] = None                  # /opt/rocm/bin/rocm-smi
+-globalParameters["AssemblerPath"] = None                # /opt/rocm/llvm/bin/clang++
++globalParameters["AssemblerPath"] = None                # /opt/rocm/lib/llvm/bin/clang++
++globalParameters["ClangOffloadBundlerPath"] = None      # /opt/rocm/lib/llvm/bin/clang-offload-bundler
+ globalParameters["WorkingPath"] = os.getcwd()           # path where tensile called from
+ globalParameters["IndexChars"] =  "IJKLMNOPQRSTUVWXYZ"  # which characters to use for C[ij]=Sum[k] A[ik]*B[jk]
+ globalParameters["ScriptPath"] = os.path.dirname(os.path.realpath(__file__))            # path to Tensile/Tensile.py
+@@ -2432,10 +2433,6 @@ def assignGlobalParameters( config, capa
+   globalParameters["ROCmBinPath"] = os.path.join(globalParameters["ROCmPath"], "bin")
+ 
+   # ROCm Agent Enumerator Path
+-  if "ROCmAgentEnumeratorPath" in config:
+-    globalParameters["ROCmAgentEnumeratorPath"] = config["ROCmAgentEnumeratorPath"]
+-  else:
+-    raise ValueError("ROCmAgentEnumeratorPath not specified in config")
+   if "CxxCompiler" in config:
+     globalParameters["CxxCompiler"] = config["CxxCompiler"]
+   else:
+@@ -2444,15 +2441,10 @@ def assignGlobalParameters( config, capa
+     globalParameters["CCompiler"] = config["CCompiler"]    
+   else:
+     raise ValueError("CCompiler not specified in config")
+-  if "Assembler" in config:
+-    globalParameters["AssemblerPath"] = config["Assembler"]
+-  else:
+-    raise ValueError("Assembler not specified in config")
+-  if "OffloadBundler" in config:
+-    globalParameters["ClangOffloadBundlerPath"] = config["OffloadBundler"]
+-  else:
+-    raise ValueError("OffloadBundler not specified in config")
+ 
++  globalParameters["AssemblerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/bin"), "amdclang++")
++  globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/bin"), "clang-offload-bundler")
++  globalParameters["ROCmAgentEnumeratorPath"] = locateExe(globalParameters["ROCmBinPath"], "rocm_agent_enumerator")
+   globalParameters["ROCmSMIPath"] = locateExe(globalParameters["ROCmBinPath"], "rocm-smi")
+ 
+   globalParameters["ExtractKernelPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "hip/bin"), "extractkernel")

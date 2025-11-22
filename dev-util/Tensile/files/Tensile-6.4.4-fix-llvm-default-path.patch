@@ -1,0 +1,11 @@
+--- a/Tensile/Common.py.orig	2025-11-22 09:12:28.351615852 -0800
++++ b/Tensile/Common.py	2025-11-22 09:17:23.467838126 -0800
+@@ -2453,7 +2453,7 @@ def assignGlobalParameters( config, capa
+     if os.name == "nt":
+       globalParameters["ClangOffloadBundlerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang-offload-bundler.exe")
+     else:
+-      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang-offload-bundler")
++      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/bin"), "clang-offload-bundler")
+ 
+   if "ROCmAgentEnumeratorPath" in config:
+     globalParameters["ROCmAgentEnumeratorPath"] = config["ROCmAgentEnumeratorPath"]

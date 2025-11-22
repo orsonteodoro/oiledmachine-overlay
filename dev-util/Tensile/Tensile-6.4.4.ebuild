@@ -65,7 +65,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +client cuda +opencl +openmp +rocm
-ebuild_revision_37
+ebuild_revision_39
 "
 REQUIRED_USE="
 	${PYTHON_SINGLE_TARGET}
@@ -134,6 +134,7 @@ _PATCHES=(
 #	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 #	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 	"${FILESDIR}/${PN}-6.4.4-link-llvm.patch"
+	"${FILESDIR}/${PN}-6.4.4-fix-llvm-default-path.patch"
 )
 
 pkg_setup() {
@@ -253,15 +254,28 @@ src_install() {
 		"Source" \
 		"TensileCreateLib" \
 		"Utilities"
-	insinto "/usr/${libdir}/cmake/${PN}"
+	insinto "/usr/lib/Tensile/${libdir}/cmake/${PN}"
 	doins "cmake/"*".cmake"
 	if use client ; then
 		pushd "${BUILD_DIR}" || die
-		dobin "client/tensile_client"
+		exeinto "/usr/lib/Tensile/bin"
+		doexe "client/tensile_client"
 	fi
 
 	use client || ewarn "The symlinks require the client USE flag."
 	rocm_fix_rpath
+	mv \
+		"${ED}/usr/share" \
+		"${ED}/usr/lib/Tensile" \
+		|| die
+
+	if [[ -e "/usr/lib/Tensile/${libdir}" ]] ; then
+		dodir "/usr/lib/Tensile/${libdir}"
+		mv \
+			"${ED}/usr/$(get_libdir)/cmake" \
+			"${ED}/usr/lib/Tensile/$(get_libdir)/cmake" \
+			|| die
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
