@@ -311,6 +311,7 @@ src_configure() {
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
+		export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/Tensile/$(get_libdir):${LD_LIBRARY_PATH}"
 		export PATH="${ESYSROOT}/usr/lib/Tensile/bin:${PATH}"
 		export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 		mycmakeargs+=(
