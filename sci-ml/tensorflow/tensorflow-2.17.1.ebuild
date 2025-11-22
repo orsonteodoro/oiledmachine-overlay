@@ -981,7 +981,7 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
-		use clang || die "The clang USE flag must be enabled for ${PN}"
+		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
 		use_gcc
 		use_clang
 	elif tc-is-gcc ; then
