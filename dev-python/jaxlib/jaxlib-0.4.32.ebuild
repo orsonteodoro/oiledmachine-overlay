@@ -609,9 +609,9 @@ einfo "PATH:\t${PATH}"
 	; then
 		# Explicit -fuse-ld=mold because of license of the linker.
 einfo "Using mold (TESTING)"
-		ld.mold --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=mold
+		"ld.mold" --version || die
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=mold"
 		BUILD_LDFLAGS+=" -fuse-ld=mold"
 	elif \
 		tc-is-clang \
@@ -759,6 +759,7 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
+		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
