@@ -138,7 +138,7 @@ _PATCHES=(
 	# Fixes for hipBLASLt build compatibility
 	"${FILESDIR}/${PN}-6.4.4-allow-valid-gemm-types.patch"
 	"${FILESDIR}/${PN}-6.4.4-string-convert-before-sort.patch"
-	"${FILESDIR}/${PN}-6.4.4-hipblaslt-compat-writer-fix.patch"
+	"${FILESDIR}/${PN}-6.4.4-hipblaslt-compat-kernelwriter-fix.patch"
 )
 
 pkg_setup() {
