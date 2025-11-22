@@ -48,7 +48,6 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="emacs test ebuild_revision_7"
 RDEPEND="
 	!dev-python/cython:3
-	app-eselect/eselect-cython
 	emacs? (
 		>=app-editors/emacs-23.1:*
 	)
@@ -271,18 +270,29 @@ python_install_all() {
 	fi
 
 	_slotify() {
+		# Slotify for parallel builds
+		local old_sitedir="$(python_get_sitedir)"
+		local new_sitedir="/usr/lib/cython/${SLOT_MAJOR}/lib/${EPYTHON}/site-packages"
+
+		local old_python_exec_dir="/usr/lib/python-exec/${EPYTHON}"
+		local new_python_exec_dir="/usr/lib/cython/${SLOT_MAJOR}/lib/python-exec/${EPYTHON}"
+
+		dodir "${new_sitedir}"
+		dodir "${new_python_exec_dir}"
+
 		einfo "Slotifying ${PN}"
-		mv "${ED}$(python_get_sitedir)/Cython"{"",".${SLOT_MAJOR}"} || die
-		mv "${ED}$(python_get_sitedir)/pyximport"{"",".${SLOT_MAJOR}"} || die
-		mv "${ED}$(python_get_sitedir)/cython.py"{"",".${SLOT_MAJOR}"} || die
+		mv "${ED}"{"${old_sitedir}","${new_sitedir}"}"/Cython" || die
+		mv "${ED}"{"${old_sitedir}","${new_sitedir}"}"/pyximport" || die
+		mv "${ED}"{"${old_sitedir}","${new_sitedir}"}"/cython.py" || die
+		mv "${ED}"{"${old_sitedir}","${new_sitedir}"}"/cython-"$(ver_cut "1-3" "${PV}")".dist-info" || die
 		find "${ED}" -regex '^.*\(__pycache__\|\.py[co]\)$' -delete || die
 		rm -rf "${ED}/usr/bin/cygdb" || die
 		rm -rf "${ED}/usr/bin/cython" || die
 		rm -rf "${ED}/usr/bin/cythonize" || die
 
-		mv "${ED}/usr/lib/python-exec/${EPYTHON}/cygdb"{"",".${SLOT_MAJOR}"} || die
-		mv "${ED}/usr/lib/python-exec/${EPYTHON}/cython"{"",".${SLOT_MAJOR}"} || die
-		mv "${ED}/usr/lib/python-exec/${EPYTHON}/cythonize"{"",".${SLOT_MAJOR}"} || die
+		mv "${ED}"{"${old_python_exec_dir}","${new_python_exec_dir}"}"/cygdb" || die
+		mv "${ED}"{"${old_python_exec_dir}","${new_python_exec_dir}"}"/cython" || die
+		mv "${ED}"{"${old_python_exec_dir}","${new_python_exec_dir}"}"/cythonize" || die
 	}
 
 	python_foreach_impl _slotify
@@ -291,7 +301,6 @@ python_install_all() {
 pkg_postinst() {
 	use emacs && elisp-site-regen
 	eselect cython set "${SLOT_MAJOR}"
-einfo "Use \`eselect cython\` to switch between Cython slots."
 }
 
 pkg_postrm() {
