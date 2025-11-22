@@ -1,22 +1,57 @@
 diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py Tensile-rocm-6.4.4/Tensile/KernelWriter.py
 --- Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py	2025-08-11 08:14:33.000000000 -0700
-+++ Tensile-rocm-6.4.4/Tensile/KernelWriter.py	2025-11-21 16:57:01.526470078 -0800
-@@ -2129,9 +2129,15 @@ class KernelWriter(metaclass=abc.ABCMeta
-               # DTV + pack case, offset bufferIdx for local read packing instructions
-               bufferIdx = plrIdxDTV*self.numIterPerCoalescedReadA + vregSetIdxLR * kernel["LoopIters"]
++++ Tensile-rocm-6.4.4/Tensile/KernelWriter.py	2025-11-21 18:45:06.620865515 -0800
+@@ -2131,10 +2131,12 @@ class KernelWriter(metaclass=abc.ABCMeta
              localReadCodeA, packCodeA = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedA, 0, tensorParametersA)
--            if not needExtraLocalReadDo:
--              localReads.addCode(localReadCodeA)
+             if not needExtraLocalReadDo:
+               localReads.addCode(localReadCodeA)
 -              pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
-+            # New Tensile always emits code and duplicates into localReadsA/B
-+            localReads.addCode(localReadCodeA)
-+            # HIPBLASLt expects separate streams for better instruction scheduling
-+            try:
-+                localReadsA.addCode(localReadCodeA)
-+            except NameError:
-+                pass  # localReadsA not defined in this kernel (ok)
-+            if packCodeA:
++              if packCodeA and self.numIterPerCoalescedReadA > 0:
 +                pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
              if needExtraLocalReadDo and (self.packDTVA or self.packDTVB):
-               # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
-               pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
+-              # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
+-              pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
++              if packCodeA and self.numIterPerCoalescedReadA > 0:
++                # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
++                pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
+           if doReadB:
+             # needExtraLocalReadDo only case, no need to generate actual code
+             # just need to call localReadDo to allocate tmpVgpr
+@@ -2147,10 +2149,12 @@ class KernelWriter(metaclass=abc.ABCMeta
+             localReadCodeB, packCodeB = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedB, 0, tensorParametersB)
+             if not needExtraLocalReadDo:
+               localReads.addCode(localReadCodeB)
+-              pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
++              if packCodeB and self.numIterPerCoalescedReadB > 0:
++                pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
+             if needExtraLocalReadDo and (self.packDTVA or self.packDTVB):
+-              # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
+-              pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
++              if packCodeB and self.numIterPerCoalescedReadB > 0:
++                # packDTV + needExtraLocalReadDo, need to update pack code to flip vregSetIdx
++                pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
+           if (not isResetLroIter or iui != kernel["InnerUnroll"]-1):
+             if doReadA:
+               localReads.addText(self.comment("local read increment a"))
+@@ -2704,7 +2708,9 @@ class KernelWriter(metaclass=abc.ABCMeta
+             localReadCodeA, packCodeA = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedA, 0, tensorParametersA)
+             localReads.addCode(localReadCodeA)
+             localReadsA.addCode(localReadCodeA)
+-            pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
++            # ROCm 6.4.4 V4 fix – numIterPerCoalescedReadA can be 0 on gfx90a (zero-coalesce skip)
++            if self.numIterPerCoalescedReadA > 0:
++              pack[plrIdx*self.numIterPerCoalescedReadA].addCode(packCodeA)
+           if doReadB:
+             localReads.addText(self.comment("local read b"))
+             bufferIdx = plrIdx*self.numIterPerCoalescedReadB
+@@ -2714,7 +2720,9 @@ class KernelWriter(metaclass=abc.ABCMeta
+             localReadCodeB, packCodeB = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedB, 0, tensorParametersB)
+             localReads.addCode(localReadCodeB)
+             localReadsB.addCode(localReadCodeB)
+-            pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
++            # ROCm 6.4.4 V4 fix – numIterPerCoalescedReadA can be 0 on gfx90a (zero-coalesce skip)
++            if self.numIterPerCoalescedReadB > 0:
++              pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
+           # Don't increment the LRO if we are going to reset them below:
+           if not isResetLroIter or iui != kernel["InnerUnroll"]-1:
+             if doReadA:
