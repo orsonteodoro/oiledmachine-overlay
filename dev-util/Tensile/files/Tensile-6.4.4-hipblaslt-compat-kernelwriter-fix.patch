@@ -1,6 +1,6 @@
 diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py Tensile-rocm-6.4.4/Tensile/KernelWriter.py
 --- Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py	2025-08-11 08:14:33.000000000 -0700
-+++ Tensile-rocm-6.4.4/Tensile/KernelWriter.py	2025-11-21 18:45:06.620865515 -0800
++++ Tensile-rocm-6.4.4/Tensile/KernelWriter.py	2025-11-21 19:55:51.313911304 -0800
 @@ -2131,10 +2131,12 @@ class KernelWriter(metaclass=abc.ABCMeta
              localReadCodeA, packCodeA = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedA, 0, tensorParametersA)
              if not needExtraLocalReadDo:
@@ -33,7 +33,26 @@ diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py Tensile
            if (not isResetLroIter or iui != kernel["InnerUnroll"]-1):
              if doReadA:
                localReads.addText(self.comment("local read increment a"))
-@@ -2704,7 +2708,9 @@ class KernelWriter(metaclass=abc.ABCMeta
+@@ -2561,12 +2565,16 @@ class KernelWriter(metaclass=abc.ABCMeta
+               kl.append(self.comment("prefetch local a"))
+               localReadCodeA, packCodeA = self.localReadDo(kernel, plrIdx*self.numIterPerCoalescedReadA, iui*self.numReadsIterCoalescedA, 0, tensorParametersA)
+               kl.append(localReadCodeA)
+-              pack[plrIdx].addCode(packCodeA)
++              # ROCm 6.4.4 V4 fix – numIterPerCoalescedReadA can be 0 on gfx90a (PLR zero-coalesce skip)
++              if packCodeA and self.numIterPerCoalescedReadA > 0:
++                pack[plrIdx].addCode(packCodeA)
+             if iui*self.numReadsIterCoalescedB < kernel["InnerUnroll"]:
+               kl.append(self.comment("prefetch local b"))
+               localReadCodeB, packCodeB = self.localReadDo(kernel, plrIdx*self.numIterPerCoalescedReadB, iui*self.numReadsIterCoalescedB, 0, tensorParametersB)
+               kl.append(localReadCodeB)
+-              pack[plrIdx].addCode(packCodeB)
++              # ROCm 6.4.4 V4 fix – numIterPerCoalescedReadB can be 0 on gfx90a (PLR zero-coalesce skip)
++              if packCodeB and self.numIterPerCoalescedReadB > 0:
++                pack[plrIdx].addCode(packCodeB)
+             if iui*self.numReadsIterCoalescedA < kernel["InnerUnroll"]:
+               kl.append(self.comment1("local read increment a"))
+               kl.append(self.localReadInc(kernel, iui, tensorParametersA))
+@@ -2704,7 +2712,9 @@ class KernelWriter(metaclass=abc.ABCMeta
              localReadCodeA, packCodeA = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedA, 0, tensorParametersA)
              localReads.addCode(localReadCodeA)
              localReadsA.addCode(localReadCodeA)
@@ -44,12 +63,12 @@ diff '--color=auto' -urp Tensile-rocm-6.4.4.orig/Tensile/KernelWriter.py Tensile
            if doReadB:
              localReads.addText(self.comment("local read b"))
              bufferIdx = plrIdx*self.numIterPerCoalescedReadB
-@@ -2714,7 +2720,9 @@ class KernelWriter(metaclass=abc.ABCMeta
+@@ -2714,7 +2724,9 @@ class KernelWriter(metaclass=abc.ABCMeta
              localReadCodeB, packCodeB = self.localReadDo(kernel, bufferIdx, iui*self.numReadsIterCoalescedB, 0, tensorParametersB)
              localReads.addCode(localReadCodeB)
              localReadsB.addCode(localReadCodeB)
 -            pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
-+            # ROCm 6.4.4 V4 fix – numIterPerCoalescedReadA can be 0 on gfx90a (zero-coalesce skip)
++            # ROCm 6.4.4 V4 fix – numIterPerCoalescedReadB can be 0 on gfx90a (zero-coalesce skip)
 +            if self.numIterPerCoalescedReadB > 0:
 +              pack[plrIdx*self.numIterPerCoalescedReadB].addCode(packCodeB)
            # Don't increment the LRO if we are going to reset them below:
