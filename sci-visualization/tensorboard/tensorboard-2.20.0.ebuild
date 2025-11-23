@@ -49,8 +49,8 @@ LICENSE="
 PROPERTIES="live"
 SLOT="0"
 IUSE+="
-test
-ebuild_revision_7
+dev test
+ebuild_revision_8
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -82,9 +82,10 @@ RDEPEND="
 		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
-		>dev-python/six-1.9[${PYTHON_USEDEP}]
 		dev-python/bleach[${PYTHON_USEDEP}]
 		dev-python/html5lib[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 
 		gcc_slot_11_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},gcc_slot_11_5,cxx_standard_cxx17]
@@ -166,19 +167,20 @@ BDEPEND="
 	${PYTHON_DEPS}
 	$(gen_llvm_bdepend)
 	$(python_gen_cond_dep '
-		>=dev-python/setuptools-41[${PYTHON_USEDEP}]
-		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
-		>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
-		>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
-		test? (
-			>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
-			>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
-			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
-			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
-
-			dev-python/grpcio-testing[${PYTHON_USEDEP}]
-			dev-python/grpcio-testing:=
+		>=dev-python/setuptools-41.0.0[${PYTHON_USEDEP}]
+		dev? (
+			>=dev-python/black-24.3.0[${PYTHON_USEDEP}]
+			>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
+			>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
+			>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
+			test? (
+				>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
+				>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
+				>=dev-python/grpcio-testing-1.24.3[${PYTHON_USEDEP}]
+				dev-python/grpcio-testing:=
+				>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
+				>=dev-python/pandas-2.0[${PYTHON_USEDEP}]
+			)
 		)
 	')
 	|| (
