@@ -700,12 +700,6 @@ RDEPEND="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			(
-				>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
-				<dev-python/numpy-2[${PYTHON_USEDEP}]
-			)
-		')
-		$(python_gen_cond_dep '
-			(
 				>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
 			)
 			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
@@ -716,6 +710,7 @@ RDEPEND="
 			>=dev-python/google-pasta-0.2[${PYTHON_USEDEP}]
 			>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 			>=dev-python/ml-dtypes-0.5.1[${PYTHON_USEDEP}]
+			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 
 			>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
 			>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
