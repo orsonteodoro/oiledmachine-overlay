@@ -18,16 +18,6 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
 ABSEIL_CPP_PV="20200225.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
@@ -39,6 +29,22 @@ PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx11"
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 
 inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
@@ -81,15 +87,14 @@ LSRT_IUSE=(
 	ruby
 )
 IUSE+="
+${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
-cxx cxx_standard_cxx11 cxx_standard_cxx14 +cxx_standard_cxx17 doc examples test
-ebuild_revision_34
+cxx doc examples test
+ebuild_revision_35
 "
 REQUIRED_USE+="
 	^^ (
-		cxx_standard_cxx11
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}

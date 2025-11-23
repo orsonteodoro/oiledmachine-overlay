@@ -18,16 +18,6 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
 ABSEIL_CPP_PV_GRPC="20240722.0" # Same one used by gRPC 1.71.2 (modified from c++14 to c++17)
 ABSEIL_CPP_PV_PROTOBUF="20240722.0" # Same one used by Protobuf-cpp 29.x (modified from c++14 to c++17)
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
@@ -41,6 +31,16 @@ PROTOBUF_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32 ruby33 ruby34"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 
 inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE+="
 	python? (
@@ -106,7 +106,7 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01[${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2022.04.01:0/11[${MULTILIB_USEDEP}]
 	dev-libs/re2:=
 	>=net-dns/c-ares-1.17.2[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=

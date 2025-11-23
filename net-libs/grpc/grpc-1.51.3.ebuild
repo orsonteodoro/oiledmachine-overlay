@@ -18,16 +18,6 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
 ABSEIL_CPP_PV="20220623.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
@@ -40,6 +30,21 @@ PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 
 inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
 
@@ -85,14 +90,14 @@ LSRT_IUSE=(
 	ruby
 )
 IUSE+="
+${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
-cxx cxx_standard_cxx14 +cxx_standard_cxx17 doc examples test
-ebuild_revision_34
+cxx doc examples test
+ebuild_revision_35
 "
 REQUIRED_USE+="
 	^^ (
-		cxx_standard_cxx14
-		cxx_standard_cxx17
+		${_CXX_STANDARD[@]/+}
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
@@ -107,14 +112,20 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01[${MULTILIB_USEDEP}]
-	dev-libs/re2:=
 	>=net-dns/c-ares-1.17.2[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
 	dev-libs/protobuf:${PROTOBUF_SLOT}/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-libs/protobuf:=
+	cxx_standard_cxx14? (
+		>=dev-libs/re2-0.2022.04.01:0/10[${MULTILIB_USEDEP}]
+		dev-libs/re2:=
+	)
+	cxx_standard_cxx17? (
+		>=dev-libs/re2-0.2022.04.01:0/11[${MULTILIB_USEDEP}]
+		dev-libs/re2:=
+	)
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
