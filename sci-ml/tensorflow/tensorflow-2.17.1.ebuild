@@ -1529,20 +1529,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 }
 
 add_sandbox_rules() {
-	local L=(
-		"/usr/lib/${EPYTHON}/site-packages"
-		"/usr/lib/${EPYTHON}/site-packages/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Plex"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Utility"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
-	)
+	local L=()
 
 	local CYTHON_SLOTS=(
 		"0.29"
@@ -1552,18 +1539,18 @@ add_sandbox_rules() {
 	local x
 	for x in "${CYTHON_SLOTS[@]}" ; do
 		L+=(
-			"/usr/lib/${EPYTHON}/site-packages"
-			"/usr/lib/${EPYTHON}/site-packages/__pycache__"
-			"/usr/lib/${EPYTHON}/site-packages/Cython"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/__pycache__"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Plex"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Utility"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita"
-			"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/__pycache__"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/__pycache__"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Compiler"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Plex"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Utility"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Tempita"
+			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
 		)
 	done
 einfo "Adding sandbox rules"

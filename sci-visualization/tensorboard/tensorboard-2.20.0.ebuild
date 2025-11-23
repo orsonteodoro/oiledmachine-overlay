@@ -406,8 +406,8 @@ add_sandbox_rules() {
 	local s
 	for s in "${CYTHON_SLOTS[@]}" ; do
 		exceptions+=(
-			"${ESYSROOT}/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Distutils/__pycache__"
-			"${ESYSROOT}/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/__pycache__"
+			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Distutils/__pycache__"
+			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/__pycache__"
 		)
 	done
 einfo "Adding sandbox rules"
