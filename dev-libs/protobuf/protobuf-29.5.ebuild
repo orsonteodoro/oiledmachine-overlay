@@ -206,7 +206,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	use cxx_standard_cxx17 && append-cxxflags -std=c++17
 
 	src_configure_abi() {
-		[[ -e "${ESYSROOT}/usr/lib/abseil-cpp/20240116/$(get_libdir)/cmake/absl" ]] || die "Missing"
+		[[ -e "${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl" ]] || die "Missing"
 
 		local mycmakeargs=(
 			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Default
