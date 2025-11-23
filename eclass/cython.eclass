@@ -52,7 +52,7 @@ einfo "Setting up Cython ${CYTHON_SLOT} support for ${EPYTHON}"
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/$(get_libdir):${LD_LIBRARY_PATH}"
 	export PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/bin:${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/python-exec/${EPYTHON}:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
-	which "cython" || die "Missing cython"
+	which "cython" >/dev/null || die "Missing cython"
 }
 
 fi
