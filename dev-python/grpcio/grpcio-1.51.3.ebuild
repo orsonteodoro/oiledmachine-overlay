@@ -131,7 +131,7 @@ python_configure() {
 	pushd "src/python/grpcio" >/dev/null 2>&1 || die
 		if use cxx_standard_cxx17 ; then
 			append-flags "-std=c++17"
-			sed -i "s|-std=c++14|-std=c++17|g" $(grep -r -l "-std=c++14") || die
+			sed -i "s|-std=c++14|-std=c++17|g" $(grep -r -l -e "-std=c++14") || die
 		fi
 	popd >/dev/null 2>&1 || die
 }

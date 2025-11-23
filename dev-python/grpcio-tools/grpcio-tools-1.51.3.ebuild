@@ -126,7 +126,7 @@ ${PKG_CONFIG_PATH}" \
 	pushd "${S}" >/dev/null 2>&1 || die
 		if use cxx_standard_cxx17 ; then
 			append-flags "-std=c++17"
-			sed -e "s|-std=c++14|-std=c++17|g" $(grep -l "-std=c++14" ./)
+			sed -e "s|-std=c++14|-std=c++17|g" $(grep -r -l -e "-std=c++14" ./)
 		fi
 	popd >/dev/null 2>&1 || die
 einfo "CC:  ${CC}"
