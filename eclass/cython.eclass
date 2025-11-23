@@ -43,7 +43,7 @@ eerror "QA:  EPYTHON is not defined"
 eerror "QA:  Call python-single_r1_pkg_setup or python_setup first"
 		die
 	fi
-einfo "Setting up cython:3.0 support for ${EPYTHON}"
+einfo "Setting up Cython ${CYTHON_SLOT} support for ${EPYTHON}"
 	# Sanitize/isolate first
 	export LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/cython|d" | tr $'\n' ":")
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/cython|d" | tr $'\n' ":")
