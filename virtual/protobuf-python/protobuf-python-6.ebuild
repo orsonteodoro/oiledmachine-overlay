@@ -23,17 +23,21 @@ EAPI=8
 #    - abseil-cpp in /usr/lib/abseil-cpp/20250512.1
 
 CXX_STANDARD="ignore"
+LIBCXX_SLOT_VERIFY=0
+LIBSTDCXX_SLOT_VERIFY=0
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_LTS[@]}
 )
 
-LIBCXX_SLOT_VERIFY=0
-LIBSTDCXX_SLOT_VERIFY=0
-PYTHON_COMPAT=( "python3_"{11..13} )
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_LTS[@]/llvm_slot_}
+)
 
-inherit libstdcxx-slot python-single-r1
+inherit libcxx-slot libstdcxx-slot python-single-r1
 
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
