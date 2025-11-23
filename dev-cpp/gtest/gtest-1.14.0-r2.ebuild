@@ -4,6 +4,8 @@
 EAPI=8
 
 CXX_STANDARD=14
+# Python is required for tests and some build tasks.
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -14,9 +16,6 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
 )
-
-# Python is required for tests and some build tasks.
-PYTHON_COMPAT=( python3_{10..13} )
 
 inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 
@@ -43,7 +42,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 IUSE="
 doc examples test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
