@@ -4,12 +4,13 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 BLIS_COMMIT="8137f660d8351c3a3c3b38f4606121578e128b70"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit dep-prepare distutils-r1 pypi
+inherit cython dep-prepare distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/cython-${PN}-release-v${PV}"
@@ -38,7 +39,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.25[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.25:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/hypothesis-4.0.0
@@ -50,6 +51,10 @@ DOCS=( "README.md" )
 src_unpack() {
 	unpack ${A}
 	dep_prepare_mv "${WORKDIR}/blis-${BLIS_COMMIT}" "flame-blis"
+}
+
+python_configure() {
+	cython_python_configure
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
