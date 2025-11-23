@@ -133,10 +133,10 @@ python_configure() {
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
 	pushd "src/python/grpcio" >/dev/null 2>&1 || die
 		if use cxx_standard_cxx14 ; then
-			append-flags -std=c++14
+			append-flags "-std=c++14"
 			sed -i "s|-std=c++11|-std=c++14|g" $(grep -r -l "-std=c++11") || die
 		elif use cxx_standard_cxx17 ; then
-			append-flags -std=c++17
+			append-flags "-std=c++17"
 			sed -i "s|-std=c++11|-std=c++17|g" $(grep -r -l "-std=c++11") || die
 		fi
 	popd >/dev/null 2>&1 || die
