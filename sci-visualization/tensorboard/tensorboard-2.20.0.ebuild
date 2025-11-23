@@ -274,7 +274,8 @@ eerror
 	ln -s "/usr/bin/bazel-${BAZEL_SLOT}" "${WORKDIR}/bin/bazel" || die
 	bazel --version | grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} is not installed"
 
-	unpack ${P}.tar.gz
+	unpack "${P}.tar.gz"
+	bazel_external_uris=""
 	bazel_load_distfiles "${bazel_external_uris}"
 	cd "${S}" || die
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
