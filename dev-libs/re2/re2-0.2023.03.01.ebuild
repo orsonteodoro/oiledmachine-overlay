@@ -40,7 +40,7 @@ LICENSE="BSD"
 SLOT="0/${SONAME}"
 IUSE="
 -debug icu test
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	icu? (

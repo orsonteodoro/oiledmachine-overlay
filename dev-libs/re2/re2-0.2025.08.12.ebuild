@@ -48,10 +48,10 @@ LICENSE="BSD"
 SLOT="0/${SONAME}"
 IUSE="
 -debug icu python test
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20240116.2:0/20240116[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	icu? (
 		dev-libs/icu:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
