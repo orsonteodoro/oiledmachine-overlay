@@ -12,15 +12,16 @@ GCC_COMPAT=(
 	# For older GPU libs users, use hyprland 0.39.1 instead
 	${LIBSTDCXX_COMPAT_STDCXX26[@]}
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" # Skip placeholder
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# For older GPU libs users, use hyprland 0.39.1 instead
 	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" # Skip placeholder
 
 inherit cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson toolchain-funcs
 
@@ -61,14 +62,14 @@ HYPRPM_RDEPEND="
 # glib version is relaxed
 RDEPEND="
 	${HYPRPM_RDEPEND}
-	>=dev-cpp/tomlplusplus-3.4.0[${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/tomlplusplus-3.4.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
 	>=dev-libs/hyprlang-0.6.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
 	>=dev-libs/hyprgraphics-0.1.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprgraphics:=
 	>=dev-libs/libinput-1.29.1:=
-	dev-libs/re2[${LIBSTDCXX_USEDEP_LTS}]
+	dev-libs/re2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.24.0
