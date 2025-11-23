@@ -3,7 +3,16 @@
 
 EAPI=8
 
-# TODO:  Fix C++ standard during configure time
+ABSEIL_CPP_PV="20220623.0"
+CXX_STANDARD=17 # Originally 14
+DISTUTILS_EXT=1
+DISTUTILS_USE_PEP517="setuptools"
+GRPC_PN="grpc"
+GRPC_P="${GRPC_PN}-${PV}"
+MY_PV=$(ver_cut 1-3 ${PV})
+PROTOBUF_CPP_SLOT="3"
+PROTOBUF_PYTHON_SLOT="4"
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx14"
@@ -19,17 +28,6 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
-
-ABSEIL_CPP_PV="20220623.0"
-CXX_STANDARD=17 # Originally 14
-DISTUTILS_EXT=1
-DISTUTILS_USE_PEP517="setuptools"
-GRPC_PN="grpc"
-GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_CPP_SLOT="3"
-PROTOBUF_PYTHON_SLOT="4"
-PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
 
