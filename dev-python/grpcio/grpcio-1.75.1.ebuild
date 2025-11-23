@@ -42,7 +42,7 @@ LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
 doc
-ebuild_revision_4
+ebuild_revision_5
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning

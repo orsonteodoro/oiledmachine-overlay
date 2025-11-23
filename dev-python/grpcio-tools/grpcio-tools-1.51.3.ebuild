@@ -51,7 +51,7 @@ LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
 ${_CXX_STANDARD[@]}
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	^^ (
@@ -123,12 +123,15 @@ ${PKG_CONFIG_PATH}" \
 	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
-	pushd "${S}" >/dev/null 2>&1 || die
-		if use cxx_standard_cxx17 ; then
-			append-flags "-std=c++17"
-			sed -e "s|-std=c++14|-std=c++17|g" $(grep -r -l -e "-std=c++14" ./)
-		fi
-	popd >/dev/null 2>&1 || die
+	local L=(
+		"${WORKDIR}/${GRPC_P}/setup.py"
+		"${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools/setup.py"
+		$(grep -r -l -e "-std=c++14" "${S}")
+	)
+	if use cxx_standard_cxx17 ; then
+		append-flags "-std=c++17"
+		sed -e "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
+	fi
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CFLAGS:  ${CFLAGS}"

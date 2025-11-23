@@ -48,7 +48,7 @@ SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
 ${_CXX_STANDARD[@]}
 doc
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -128,12 +128,15 @@ python_configure() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
-	pushd "src/python/grpcio" >/dev/null 2>&1 || die
-		if use cxx_standard_cxx17 ; then
-			append-flags "-std=c++17"
-			sed -i "s|-std=c++14|-std=c++17|g" $(grep -r -l -e "-std=c++14") || die
-		fi
-	popd >/dev/null 2>&1 || die
+	local L=(
+		"${S}/tools/distrib/python/grpcio_tools/setup.py"
+		"${S}/setup.py"
+		$(grep -r -l -e "-std=c++14" "${S}/src/python/grpcio")
+	)
+	if use cxx_standard_cxx17 ; then
+		append-flags "-std=c++17"
+		sed -i "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
+	fi
 }
 
 src_install() {
