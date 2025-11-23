@@ -50,8 +50,9 @@ einfo "Setting up cython:3.0 support for ${EPYTHON}"
 	export PYTHONPATH=$(echo "${PYTHONPATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/cython|d" | tr $'\n' ":")
 
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/$(get_libdir):${LD_LIBRARY_PATH}"
-	export PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/bin:${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/python-exec/${EPYTHON}:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+	which "cython" || die "Missing cython"
 }
 
 fi

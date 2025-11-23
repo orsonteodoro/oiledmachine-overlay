@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
@@ -10,7 +11,9 @@ PYTHON_REQ_USE="threads(+)"
 
 FORTRAN_NEEDED="lapack"
 
-inherit distutils-r1 flag-o-matic fortran-2 toolchain-funcs
+inherit cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
+
+KEYWORDS="~amd64 ~arm64 ~arm64-linux ~ppc64 ~s390"
 
 DOC_PV="${PV}"
 # For when docs aren't ready yet, set to last version
@@ -31,8 +34,10 @@ SRC_URI="
 "
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~arm64-linux ~ppc64 ~s390"
-IUSE="doc lapack ebuild_revision_2"
+IUSE="
+doc lapack
+ebuild_revision_3
+"
 
 RDEPEND="
 	lapack? (
@@ -42,7 +47,7 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
-	>=dev-python/cython-0.29.30:0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.30:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
 	doc? (
@@ -104,7 +109,7 @@ python_prepare_all() {
 	# See progress in http://projects.scipy.org/scipy/numpy/ticket/573
 	# with the subtle difference that we don't want to break Darwin where
 	# -shared is not a valid linker argument
-	if [[ ${CHOST} != *-darwin* ]]; then
+	if [[ "${CHOST}" != *"-darwin"* ]]; then
 		append-ldflags -shared
 	fi
 
@@ -124,31 +129,12 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="0.29"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
-}
-
-python_configure_all() {
-	check_cython
+python_configure() {
+	cython_python_configure
 }
 
 python_compile() {
-	export MAKEOPTS=-j1 #660754
+	export MAKEOPTS="-j1" #660754
 
 	distutils-r1_python_compile ${NUMPY_FCONFIG}
 }

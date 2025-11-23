@@ -3,13 +3,18 @@
 
 EAPI=8
 
+CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
 FORTRAN_NEEDED="lapack"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1 flag-o-matic fortran-2 pypi toolchain-funcs
+inherit cython distutils-r1 flag-o-matic fortran-2 pypi toolchain-funcs
+
+if [[ "${PV}" != *"_"[rab]* ]] ; then
+	KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-linux ~arm64-macos ~arm64-linux ~x86 ~x86-linux"
+fi
 
 DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
@@ -22,10 +27,13 @@ LICENSE="BSD"
 SLOT="0"
 # +lapack because the internal fallbacks are pretty slow. Building without blas
 # is barely supported anyway, see bug #914358.
-IUSE="+lapack ebuild_revision_2"
-if [[ ${PV} != *_[rab]* ]] ; then
-	KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-linux ~arm64-macos ~arm64-linux ~x86 ~x86-linux"
-fi
+IUSE="
++lapack
+ebuild_revision_3
+"
+REQUIRED_USE="
+	lapack
+"
 
 RDEPEND="
 	lapack? (
@@ -36,7 +44,7 @@ RDEPEND="
 BDEPEND="
 	${RDEPEND}
 	>=dev-build/meson-1.1.0
-	>=dev-python/cython-3.0.0:3.0[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	lapack? (
 		virtual/pkgconfig
 	)
@@ -65,33 +73,33 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.0"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
+setup_cython3_symlink() {
+	mkdir -p "${WORKDIR}/bin" || die
+	ln -sf \
+		"${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/python-exec/${EPYTHON}/cython" \
+		"${WORKDIR}/bin/cython3" \
+		|| die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	cython3 --version || die
+}
+
+python_configure() {
+	cython_python_configure
+	setup_cython3_symlink
 }
 
 python_configure_all() {
-	check_cython
 	DISTUTILS_ARGS=(
 		-Dallow-noblas=$(usex !lapack true false)
 		-Dblas=$(usev lapack cblas)
 		-Dlapack=$(usev lapack lapack)
 		# TODO: cpu-* options
 	)
+}
+
+python_compile() {
+	setup_cython3_symlink
+	distutils-r1_python_compile
 }
 
 python_test() {
