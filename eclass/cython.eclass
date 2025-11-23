@@ -55,7 +55,6 @@ cython_set_cython_slot() {
 	else
 		cython_slot=$(best_version "dev-python/cython" | sed -e "s|dev-python/cython-||g")
 	fi
-	local cython_slot=$(best_version "dev-python/cython-${major_version}" | sed -e "s|dev-python/cython-||g")
 	cython_slot=$(ver_cut "1-2" "${cython_slot}")
 	export CYTHON_SLOT="${cython_slot}"
 }
