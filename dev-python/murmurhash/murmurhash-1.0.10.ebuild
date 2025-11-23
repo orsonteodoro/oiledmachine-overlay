@@ -4,11 +4,12 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -27,16 +28,22 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.23
+	>=dev-python/cython-0.23:${CYTHON_SLOT}
 	dev-python/pytest
 "
 DOCS=( "README.md" )
+
+python_configure() {
+	cython_python_configure
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
