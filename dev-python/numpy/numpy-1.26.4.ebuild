@@ -31,9 +31,6 @@ IUSE="
 +lapack
 ebuild_revision_5
 "
-REQUIRED_USE="
-	lapack
-"
 
 RDEPEND="
 	lapack? (
