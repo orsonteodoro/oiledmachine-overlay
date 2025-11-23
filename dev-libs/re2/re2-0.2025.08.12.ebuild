@@ -78,7 +78,7 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "README" "doc/syntax.txt" )
+DOCS=( "README.md" "doc/syntax.txt" )
 HTML_DOCS=( "doc/syntax.html" )
 
 pkg_setup() {
