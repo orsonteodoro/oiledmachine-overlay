@@ -21,7 +21,7 @@ PATENT_STATUS_IUSE=(
 )
 PYTHON_COMPAT=( "python3_"{11,12} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.2.5/.github/workflows/build.yml#L15
 
-inherit cflags-hardened cuda distutils-r1 flag-o-matic linux-info prefix
+inherit cflags-hardened cuda cython distutils-r1 flag-o-matic linux-info prefix
 inherit tmpfiles udev user-info xdg
 
 SRC_URI="
@@ -83,7 +83,7 @@ pyinotify qrencode +quic -qt6 -rencode +rencodeplus +rfb sd_listen selinux
 +server +socks sound-forwarding spng sql sqlite +ssh sshpass +ssl systemd
 +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
 webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml zeroconf zlib
-ebuild_revision_16
+ebuild_revision_17
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -723,6 +723,8 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		cython? (
 			>=dev-python/cython-3.0.0_alpha11:3.0[${PYTHON_USEDEP}]
+			=dev-python/cython-3*
+			dev-python/cython:=
 		)
 		test? (
 			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
@@ -755,32 +757,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.0-translate-flags.patch"
 	"${FILESDIR}/${PN}-6.0-pkgconfig-warn.patch"
 )
-
-check_cython() {
-	if ! cython --version ; then
-eerror
-eerror "Do \`eselect cython set 3.0\` to continue and make sure that"
-eerror "dev-python/cython:3.0 is installed."
-eerror
-		die
-	fi
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.0"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
-}
 
 pkg_setup() {
 	if use nvenc ; then
@@ -907,9 +883,15 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
+python_configure() {
+	if use cython ; then
+		cython_set_cython_slot "3"
+		cython_python_configure
+	fi
+}
+
 python_configure_all() {
 	cflags-hardened_append
-	use cython && check_cython
 	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
 eerror
 eerror "Missing evdi.pc"

@@ -12,7 +12,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -112,6 +112,11 @@ einfo "To get the research models use the live (9999) version."
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	cython_set_cython_slot
+	cython_python_configure
 }
 
 python_compile() {

@@ -71,7 +71,7 @@ cython_set_cython_slot() {
 #
 cython_python_configure() {
 	if [[ -z "${CYTHON_SLOT}" ]] ; then
-eerror "QA:  CYTHON_SLOT needs to be set before \`inherit cython\`."
+eerror "QA:  CYTHON_SLOT needs to be set before calling cython_python_configure()."
 		die
 	fi
 

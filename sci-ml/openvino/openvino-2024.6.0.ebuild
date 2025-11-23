@@ -36,6 +36,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=11 # System's protobuf needs CXX_STANDARD=17
+CYTHON_SLOT="0.29"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOT="3"
@@ -94,7 +95,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]}
 )
 
-inherit cflags-hardened cmake dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
+inherit cflags-hardened cmake cython dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -204,7 +205,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_16
+ebuild_revision_18
 "
 REQUIRED_USE="
 	!system-protobuf
@@ -579,7 +580,7 @@ BDEPEND+="
 			>=dev-python/breathe-4.35.0[${PYTHON_USEDEP}]
 			>=dev-python/certifi-2023.7.22[${PYTHON_USEDEP}]
 			>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
-			>=dev-python/cython-0.29.33[${PYTHON_USEDEP}]
+			>=dev-python/cython-0.29.33:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
 			>=dev-python/docutils-0.20[${PYTHON_USEDEP}]
 			>=dev-python/idna-3.4[${PYTHON_USEDEP}]
 			>=dev-python/imagesize-1.3.0[${PYTHON_USEDEP}]
@@ -878,6 +879,7 @@ einfo "Configuring runtime"
 	cmake_src_configure
 
 	configure_python_impl() {
+		cython_python_configure
 		local sitedir=$(python_get_sitedir)
 einfo "PYTHON_SITEDIR:  ${sitedir}"
 		local python_tag="${EPYTHON/python/}"

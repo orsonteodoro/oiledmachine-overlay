@@ -241,7 +241,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_23
+ebuild_revision_24
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
@@ -1128,7 +1128,8 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
-		>=dev-python/cython-3.0.11[${PYTHON_USEDEP}]
+		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/autopep8-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pycodestyle-2.13.0[${PYTHON_USEDEP}]
 	' 'python*')
@@ -1350,6 +1351,9 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	blender_configure_eigen
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
+
+	cython_set_cython_slot "3"
+	cython_python_configure
 
 	# WITH_INPUT_IME is default ON upstream but only supports non-linux
 	mycmakeargs+=(

@@ -128,7 +128,7 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel cflags-hardened check-compiler-switch check-reqs cuda distutils-r1
+inherit bazel cflags-hardened check-compiler-switch check-reqs cuda cython distutils-r1
 inherit dhms flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot llvm multibuild
 inherit prefix rocm toolchain-funcs
 
@@ -444,7 +444,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_17
+ebuild_revision_18
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -821,7 +821,9 @@ BDEPEND="
 			${RDEPEND_GRPCIO}
 		)
 		$(python_gen_cond_dep '
-			>=dev-python/cython-3.1.2:3.0[${PYTHON_USEDEP}]
+			>=dev-python/cython-3.1.2[${PYTHON_USEDEP}]
+			=dev-python/cython-3*[${PYTHON_USEDEP}]
+			dev-python/cython:=
 			>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
 			>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-78.1.1[${PYTHON_USEDEP}]
@@ -957,29 +959,6 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	llvm_pkg_setup
 	"${CC}" --version || die
 	strip-unsupported-flags
-}
-
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.0"
-	if [[ "${actual_cython_pv}" == "python-exec" ]] ; then
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-		die
-	fi
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
 }
 
 pkg_setup() {
@@ -1386,7 +1365,6 @@ eerror
 		die
 	fi
 	load_env
-	check_cython
 
 	if ! use cuda && ! use rocm ; then
 ewarn
@@ -1410,6 +1388,8 @@ ewarn
 		export TF_NEED_MPI=$(usex mpi 1 0)
 		export TF_SET_ANDROID_WORKSPACE=0
 
+		cython_set_cython_slot "3"
+		cython_python_configure
 		if use python ; then
 			export PYTHON_BIN_PATH="${PYTHON}"
 			export PYTHON_LIB_PATH="$(python_get_sitedir)"
