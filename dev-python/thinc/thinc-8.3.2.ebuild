@@ -7,12 +7,13 @@ EAPI=8
 # TODO package (optional)
 # cupy-wheel
 
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-release-v${PV}"
@@ -72,7 +73,7 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/cython-0.25:0.29[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.25:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
@@ -83,22 +84,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 python_configure() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="0.29"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
+	cython_python_configure
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
