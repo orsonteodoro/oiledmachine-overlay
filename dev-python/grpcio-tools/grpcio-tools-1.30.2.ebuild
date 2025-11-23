@@ -22,6 +22,7 @@ LLVM_COMPAT=(
 )
 
 ABSEIL_CPP_PV="20200225.0"
+CYTHON_SLOT="0.29"
 CXX_STANDARD=17 # Originally 11
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -33,7 +34,7 @@ PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
+inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
@@ -53,7 +54,7 @@ LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
 ${_CXX_STANDARD[@]}
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
@@ -67,7 +68,7 @@ RDEPEND="
 	dev-cpp/abseil-cpp:=
 	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-libs/protobuf:=
-	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.8:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
@@ -124,6 +125,7 @@ eerror
 }
 
 python_configure() {
+	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
 	local libdir=$(get_libdir)
 	local L2=(
