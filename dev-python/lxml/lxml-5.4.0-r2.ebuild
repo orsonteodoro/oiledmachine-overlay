@@ -8,7 +8,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1 optfeature toolchain-funcs
+inherit cython distutils-r1 optfeature toolchain-funcs
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -36,7 +36,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 doc examples +threads test
-ebuild_revision_2
+ebuild_revision_4
 "
 RESTRICT="
 	!test? (
@@ -54,9 +54,9 @@ RDEPEND="
 "
 BDEPEND="
 	virtual/pkgconfig
-	|| (
-		>=dev-python/cython-3.0.10:3.0[${PYTHON_USEDEP}]
-	)
+	>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/docutils[${PYTHON_USEDEP}]
@@ -84,40 +84,18 @@ python_check_deps() {
 	python_has_version -b "dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]"
 }
 
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g" -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.0,3.1"
-	if \
-		! ver_test "${actual_cython_slot}" -eq "${expected_cython_slot%,*}" \
-						&& \
-		! ver_test "${actual_cython_slot}" -eq "${expected_cython_slot#*,}" \
-	; then
-eerror
-eerror "Do \`eselect cython set 3.0\` to continue"
-eerror
-eerror "	or"
-eerror
-eerror "Do \`eselect cython set 3.1\` to continue"
-eerror
-eerror "Actual cython slot:  ${actual_cython_slot}"
-eerror "Expected cython slot:  ${expected_cython_slot}"
-eerror
-		die
-	fi
-}
-
 python_prepare_all() {
 	# Don't use some random SDK on Darwin.
 	sed -i -e '/_ldflags =/s/=.*isysroot.*darwin.*None/= None/' \
 		"setupinfo.py" \
 		|| die
 
-	check_cython
-
 	distutils-r1_python_prepare_all
+}
+
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 }
 
 python_compile() {

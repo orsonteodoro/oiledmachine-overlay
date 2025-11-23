@@ -6,11 +6,12 @@ EAPI=8
 
 # U 22.04
 
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -24,20 +25,28 @@ HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild_revision_1"
+IUSE+="
+test
+ebuild_revision_2
+"
 RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	test? (
 		>=dev-util/ruff-0.4.3
 	)
 "
+
+python_configure() {
+	cython_python_configure
+}
 
 src_test() {
 	run_test() {

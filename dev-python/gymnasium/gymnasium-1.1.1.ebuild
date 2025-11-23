@@ -4,13 +4,14 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 MY_PV="1.0.0a1"
 PYTHON_COMPAT=( "python3_"{11..12} )
 # Limited by jax
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -29,7 +30,10 @@ https://github.com/Farama-Foundation/Gymnasium
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" all atari box2d classic-control jax mujoco other pygame pytorch test toy-text"
+IUSE+="
+all atari box2d classic-control jax mujoco other pygame pytorch test toy-text
+ebuild_revision_1
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	all? (
@@ -115,7 +119,8 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
 		mujoco? (
-			<dev-python/cython-3:0.29[${PYTHON_USEDEP}]
+			<dev-python/cython-3:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
+			dev-python/cython:=
 		)
 		test? (
 			>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
@@ -136,27 +141,8 @@ PDEPEND+="
 
 distutils_enable_tests "pytest"
 
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="0.29"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
-}
-
-python_configure_all() {
-	check_cython
+python_configure() {
+	cython_python_configure
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

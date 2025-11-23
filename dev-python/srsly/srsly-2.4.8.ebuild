@@ -4,11 +4,12 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -27,7 +28,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev test"
+IUSE+="
+dev test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	test? (
 		dev
@@ -40,7 +44,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.29.1:0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.1:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	dev? (
 		>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.3[${PYTHON_USEDEP}]
@@ -51,25 +56,12 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 
-src_configure() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="0.29"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
-	distutils-r1_src_configure
+python_configure() {
+	cython_python_configure
 }
 
+src_configure() {
+	distutils-r1_src_configure
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

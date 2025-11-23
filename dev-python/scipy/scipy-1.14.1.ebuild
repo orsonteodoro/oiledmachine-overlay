@@ -9,7 +9,7 @@ DISTUTILS_USE_PEP517="meson-python"
 PYTHON_COMPAT=( "pypy3" "python3_"{10..13} )
 PYTHON_REQ_USE="threads(+)"
 
-inherit flag-o-matic fortran-2 distutils-r1
+inherit cython flag-o-matic fortran-2 distutils-r1
 
 DESCRIPTION="Scientific algorithms library for Python"
 HOMEPAGE="
@@ -43,7 +43,10 @@ fi
 
 LICENSE="BSD LGPL-2"
 SLOT="0"
-IUSE="doc +fortran test-rust"
+IUSE="
+doc +fortran test-rust
+ebuild_revision_1
+"
 
 # umfpack is technically optional but it's preferred to have it available.
 RDEPEND="
@@ -59,7 +62,8 @@ DEPEND="
 	virtual/pillow[${PYTHON_USEDEP}]
 "
 BDEPEND="
-	>=dev-python/cython-3.0.8[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/meson-python-0.15.0[${PYTHON_USEDEP}]
 	>=dev-python/pybind11-2.12.0[${PYTHON_USEDEP}]
 	>=dev-build/meson-1.1.0
@@ -91,6 +95,11 @@ src_unpack() {
 	if use doc; then
 		unzip -qo "${DISTDIR}/${PN}-html-${DOC_PV}.zip" -d "html" || die
 	fi
+}
+
+python_configure() {
+	cython_set_python_slot "3"
+	cython_python_configure
 }
 
 python_configure_all() {

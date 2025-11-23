@@ -6,10 +6,11 @@ EAPI=8
 
 # U16
 
+CYTHON_SLOT="0.29"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_11" ) # Upstream only tests up to 3.8
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -31,7 +32,10 @@ LICENSE="
 # LICENSE - LGPL-3
 # setup.py - BSD in classifiers section of https://github.com/duanhongyi/pyv4l2/blob/master/setup.py#L43
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" examples"
+IUSE+="
+examples
+ebuild_revision_1
+"
 REQUIRED_USE+="
 "
 RDEPEND+="
@@ -43,7 +47,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-	>=dev-python/cython-0.18[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.18:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
@@ -71,6 +75,10 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	cython_python_configure
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

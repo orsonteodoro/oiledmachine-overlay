@@ -18,6 +18,7 @@ EAPI=8
 
 MY_PN="coqui-ai-TTS"
 
+CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -29,7 +30,7 @@ LANGS=(
 	"zh"
 )
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -51,13 +52,14 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 -cors dev doc notebooks server
-ebuild_revision_5
+ebuild_revision_7
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/anyascii-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/coqpit-0.0.16[${PYTHON_USEDEP}]
-		>=dev-python/cython-3.0.0[${PYTHON_USEDEP}]
+		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/einops-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-2023.6.0[${PYTHON_USEDEP},http(+)]
 		>=dev-python/gruut-2.4.0[${PYTHON_USEDEP}]
@@ -115,7 +117,8 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/cython-3.0.0[${PYTHON_USEDEP}]
+		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/setuptools-scm[${PYTHON_USEDEP}]
@@ -148,6 +151,11 @@ python_prepare_all() {
 	if use cors ; then
 		eapply "${FILESDIR}/${PN}-0.24.2-cors.patch"
 	fi
+}
+
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 }
 
 pkg_postinst() {

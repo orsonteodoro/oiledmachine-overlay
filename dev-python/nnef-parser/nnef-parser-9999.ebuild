@@ -8,7 +8,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit distutils-r1 optfeature
+inherit cython distutils-r1 optfeature
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -32,7 +32,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild_revision_2"
+IUSE+="
+ebuild_revision_3
+"
 REQUIRED_USE="
 "
 RDEPEND+="
@@ -43,6 +45,7 @@ DEPEND+="
 "
 BDEPEND+="
 	dev-python/cython[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
@@ -81,6 +84,13 @@ einfo "Building libnnef"
 		cmake ${mycmakeargs[@]} ".." || die
 		emake || die
 	popd >/dev/null 2>&1 || die
+}
+
+python_configure() {
+	local cython_slot=$(best_version "dev-python/cython" | sed -e "s|dev-python/cython-||")
+	cython_slot=$(ver_cut "1-2" "${cython_slot}")
+	export CYTHON_SLOT="${cython_slot}"
+	cython_python_configure
 }
 
 python_compile() {

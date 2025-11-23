@@ -14,6 +14,8 @@ EAPI=8
 # pythainlp
 
 MY_PN="spaCy-release"
+
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -24,7 +26,7 @@ LANGS=(
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-v${PV}"
@@ -46,6 +48,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 cuda dev lookups transformers
+ebuild_revision_2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -98,7 +101,8 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
-		>=dev-python/cython-0.25[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.25:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 		>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
@@ -128,5 +132,9 @@ BDEPEND+="
 	)
 "
 DOCS=( "CITATION.cff" "README.md" )
+
+python_configure() {
+	cython_python_configure
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

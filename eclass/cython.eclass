@@ -23,6 +23,43 @@ SUPPORTED_CYTHON_SLOTS=(
 	"3.1"
 )
 
+# @FUNCTION: cython_set_cython_slot
+# @DESCRIPTION:
+# Setup CYTHON_SLOT automatically based on major, major.minor, or rolling version.
+#
+# Examples
+#
+# python_configure() {
+#	# Major version example
+#	cython_set_cython_slot 3
+#	cython_python_configure
+# }
+#
+# python_configure() {
+#	# Major.minor version example
+#	cython_set_cython_slot 3.0
+#	cython_python_configure
+# }
+#
+# python_configure() {
+#	# Rolling version example
+#	cython_set_cython_slot
+#	cython_python_configure
+# }
+#
+cython_set_cython_slot() {
+	local pv="${1}"
+	local cython_slot
+	if [[ -z "${version}" ]] ; then
+		cython_slot=$(best_version "=dev-python/cython-${pv}*" | sed -e "s|dev-python/cython-||g")
+	else
+		cython_slot=$(best_version "dev-python/cython" | sed -e "s|dev-python/cython-||g")
+	fi
+	local cython_slot=$(best_version "dev-python/cython-${major_version}" | sed -e "s|dev-python/cython-||g")
+	cython_slot=$(ver_cut "1-2" "${cython_slot}")
+	export CYTHON_SLOT="${cython_slot}"
+}
+
 # @FUNCTION: cython_python_configure
 # @DESCRIPTION:
 # Configure paths for running multislot cython.

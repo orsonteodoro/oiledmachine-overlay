@@ -7,7 +7,7 @@ EAPI=8
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -36,7 +36,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+="
+dev
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -47,7 +50,8 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
-		>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
+		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/flask-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-1.6.1[${PYTHON_USEDEP}]
 		>=dev-python/moto-5.0.18[${PYTHON_USEDEP}]
@@ -68,6 +72,13 @@ src_unpack() {
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
+	fi
+}
+
+python_configure() {
+	if use dev ; then
+		cython_set_cython_slot "3"
+		cython_python_configure
 	fi
 }
 

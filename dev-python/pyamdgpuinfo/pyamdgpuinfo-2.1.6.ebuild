@@ -38,7 +38,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revison_2
+ebuild_revison_3
 "
 RDEPEND+="
 "
@@ -46,7 +46,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-3[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
@@ -63,7 +64,7 @@ src_unpack() {
 }
 
 python_configure() {
-	local cython_slot=$(best_version "dev-python/cython" | sed -e "s|dev-python/cython-||g")
+	local cython_slot=$(best_version "=dev-python/cython-3*" | sed -e "s|dev-python/cython-||g")
 	cython_slot=$(ver_cut "1-2" "${cython_slot}")
 	export CYTHON_SLOT="${cython_slot}"
 	cython_python_configure

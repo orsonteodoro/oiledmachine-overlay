@@ -4,11 +4,12 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -37,7 +38,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_2
+"
 # Tensorboard based on author-date:2022-09-16 and RELEASE.md
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -60,7 +63,8 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/cython[${PYTHON_USEDEP}]
+		dev-python/cython:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		dev-python/numpy[${PYTHON_USEDEP}]
 	')
 "
@@ -74,6 +78,10 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	cython_python_configure
 }
 
 src_install() {

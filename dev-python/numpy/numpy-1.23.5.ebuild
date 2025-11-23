@@ -36,7 +36,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 doc lapack
-ebuild_revision_4
+ebuild_revision_5
 "
 
 RDEPEND="
@@ -48,6 +48,7 @@ RDEPEND="
 BDEPEND="
 	${RDEPEND}
 	>=dev-python/cython-0.29.30:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
 	doc? (

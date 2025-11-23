@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="scikit-build-core"
 EPYTEST_XDIST=1
 PYTHON_COMPAT=( "python3_"{8..13} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 KEYWORDS="~amd64"
 
@@ -19,7 +19,10 @@ LICENSE="MIT"
 HOMEPAGE="https://github.com/maxbachmann/RapidFuzz"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cpp doc numpy test"
+IUSE+="
+cpp doc numpy test
+ebuild_revision_1
+"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RDEPEND+="
 	>=dev-cpp/taskflow-3.9.0
@@ -40,7 +43,8 @@ BDEPEND+="
 		dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
 	)
 	cpp? (
-		>=dev-python/cython-3.0.12:3.0[${PYTHON_USEDEP}]
+		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/scikit-build-0.17.0[${PYTHON_USEDEP}]
 		>=dev-build/cmake-3.22.5
 		>=dev-build/ninja-1.10.2.3
@@ -76,23 +80,12 @@ src_prepare() {
 	export RAPIDFUZZ_BUILD_EXTENSION=1
 }
 
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
+}
+
 src_configure() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.0"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" && use cpp ; then
-eerror
-eerror "Switch cython to >= ${expected_cython_slot} via eselect-cython"
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
 	export RAPIDFUZZ_IMPLEMENTATION=$(usex cpp "cpp" "python")
 	distutils-r1_src_configure
 }

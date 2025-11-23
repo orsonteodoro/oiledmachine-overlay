@@ -11,7 +11,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit check-compiler-switch distutils-r1 flag-o-matic
+inherit cython check-compiler-switch distutils-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
@@ -26,7 +26,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 lint test
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="
 	!test? (
@@ -45,7 +45,9 @@ RDEPEND="
 # Cython relaxed
 BDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/cython-3.1.0_beta1:3.1[${PYTHON_USEDEP}]
+		>=dev-python/cython-3.1.0_beta1[${PYTHON_USEDEP}]
+		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 		lint? (
 			>=dev-python/mypy-1.15.0[${PYTHON_USEDEP}]
@@ -57,6 +59,7 @@ BDEPEND="
 		)
 		test? (
 			dev-python/cython[${PYTHON_USEDEP}]
+			dev-python/cython:=
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pillow[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
@@ -84,32 +87,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 }
 
-check_cython() {
-	if ! which cython ; then
-eerror
-eerror "Missing symlink.  Use \`eselect cython set 3.1\` to continue and make"
-eerror "sure that dev-python/cython:3.1 is installed."
-eerror
-		die
-	fi
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g" -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.1"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython slot:  ${actual_cython_slot}"
-eerror "Expected cython slot:  ${expected_cython_slot}"
-eerror
-		die
-	fi
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 }
 
 src_configure() {
-	check_cython
 	distutils-r1_src_configure
 }
 

@@ -4,11 +4,12 @@
 
 EAPI=8
 
+CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream lists to 3.11
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -29,7 +30,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
@@ -39,11 +40,16 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.28[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.28:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
+
+python_configure() {
+	cython_python_configure
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -26,7 +26,7 @@ PROTOBUF_CPP_SLOT="6"
 PROTOBUF_PYTHON_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
+inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
@@ -96,25 +96,6 @@ python_prepare_all() {
 		|| die
 }
 
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="0.29"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
-}
-
 python_configure() {
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
@@ -143,7 +124,6 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
-	check_cython
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
 }

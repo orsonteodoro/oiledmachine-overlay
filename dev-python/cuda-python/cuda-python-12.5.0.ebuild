@@ -7,7 +7,7 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -42,7 +42,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-3.0[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/numpy-1.21.1[${PYTHON_USEDEP}]
 	>=dev-python/pyclibrary-0.1.7[${PYTHON_USEDEP}]
 	>=dev-python/versioneer-0.29[${PYTHON_USEDEP}]
@@ -57,6 +58,11 @@ DOCS=( )
 
 src_unpack() {
 	unpack ${A}
+}
+
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 }
 
 python_test() {

@@ -34,7 +34,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda cuda-autodetect datasets mxnet pytorch tensorflow
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -77,6 +77,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/cython-0.25:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/cython:=
 		>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]

@@ -27,7 +27,7 @@ SLOT="0/2"
 # is barely supported anyway, see bug #914358.
 IUSE="
 +lapack
-ebuild_revision_4
+ebuild_revision_5
 "
 
 RDEPEND="
@@ -40,6 +40,7 @@ BDEPEND="
 	${RDEPEND}
 	>=dev-build/meson-1.1.0
 	>=dev-python/cython-3.0.6:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	lapack? (
 		virtual/pkgconfig
 	)

@@ -43,6 +43,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/cython-0.25:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/hypothesis-4.0.0

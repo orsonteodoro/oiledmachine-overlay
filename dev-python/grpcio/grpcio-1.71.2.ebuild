@@ -24,7 +24,7 @@ PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
+inherit cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${GRPC_P}"
@@ -68,7 +68,8 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-3.1.1:3.1[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.1.1[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
@@ -92,31 +93,13 @@ python_prepare_all() {
 	hprefixify setup.py
 }
 
-check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_slot="3.1"
-	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
-eerror
-eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue"
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_slot}"
-eerror
-		die
-	fi
-}
-
 python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
-	check_cython
 	# os.environ.get('GRPC_BUILD_WITH_BORING_SSL_ASM', True)
 	export GRPC_BUILD_WITH_BORING_SSL_ASM=
 	export GRPC_PYTHON_DISABLE_LIBC_COMPATIBILITY=1

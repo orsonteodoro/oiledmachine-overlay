@@ -7,7 +7,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{10..13} )
 
-inherit distutils-r1 optfeature pypi
+inherit cython distutils-r1 optfeature pypi
 
 DESCRIPTION="Statistical computations and models for use with SciPy"
 HOMEPAGE="
@@ -19,7 +19,10 @@ HOMEPAGE="
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 arm64 ~loong ~riscv ~amd64-linux"
-IUSE="examples"
+IUSE="
+examples
+ebuild_revision_1
+"
 
 DEPEND="
 	>=dev-python/scipy-1.8[${PYTHON_USEDEP}]
@@ -33,7 +36,8 @@ RDEPEND="
 "
 BDEPEND="
 	${DEPEND}
-	>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
 "
 
@@ -53,6 +57,11 @@ python_prepare_all() {
 	printf -- 'backend : Agg\n' > "${MPLCONFIGDIR}"/matplotlibrc || die
 
 	distutils-r1_python_prepare_all
+}
+
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 }
 
 python_test() {

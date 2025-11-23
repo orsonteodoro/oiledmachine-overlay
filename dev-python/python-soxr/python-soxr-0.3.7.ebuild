@@ -10,7 +10,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit cython distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -58,6 +58,8 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/cython-3.0_alpha7[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-6.2[${PYTHON_USEDEP}]
 	dev-python/oldest-supported-numpy[${PYTHON_USEDEP}]
@@ -114,6 +116,8 @@ src_unpack() {
 }
 
 python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 	export USE_SYSTEM_LIBSOXR=$(usex system-soxr "1" "0")
 }
 

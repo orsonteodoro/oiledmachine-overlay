@@ -29,7 +29,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 "
@@ -38,6 +38,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/cython-0.23:${CYTHON_SLOT}
+	dev-python/cython:=
 	dev-python/pytest
 "
 DOCS=( "README.md" )

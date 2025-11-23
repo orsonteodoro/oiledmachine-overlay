@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # upstream listed up to 3.10
 CRFSUITE_COMMIT="dc5b6c7b726de90ca63cbf269e6476e18f1dd0d9"
 LIBLBFGS_COMMIT="57678b188ae34c2fb2ed36baf54f9a58b4260d1c"
 
-inherit check-compiler-switch distutils-r1 dep-prepare flag-o-matic
+inherit check-compiler-switch cython distutils-r1 dep-prepare flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -35,7 +35,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc test
-ebuild_revision_5
+ebuild_revision_7
 "
 RDEPEND+="
 "
@@ -44,7 +44,8 @@ DEPEND+="
 "
 # dev-python/numpy-1.26.4 was bumped to avoid build error
 BDEPEND+="
-	>=dev-python/cython-3[${PYTHON_USEDEP}]
+	=dev-python/cython-3*[${PYTHON_USEDEP}]
+	dev-python/cython:=
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
@@ -78,6 +79,9 @@ src_unpack() {
 }
 
 python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
+
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
@@ -91,22 +95,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	# Fix ModuleNotFoundError: No module named 'distutils.msvccompiler'
 #	sed -i -e "s|if c.compiler_type|if True or c.compiler_type|g" "setup.py" || die
-
-	local actual_cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g" \
-		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 ${actual_cython_pv})
-	if ver_test ${actual_cython_slot} -ne "3.0" && ver_test ${actual_cython_slot} -ne "3.1" ; then
-eerror
-eerror "Do \`eselect cython set 3.0\` or \`eselect cython set 3.1\` to continue."
-eerror
-eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t3.0 or 3.1"
-eerror
-		die
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
