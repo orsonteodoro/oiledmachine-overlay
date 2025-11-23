@@ -19,8 +19,8 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 # Rust does not use *FLAGS from make.conf, silence portage warning.
 # Update with proper path to binaries this crate installs, omit leading /
 QA_FLAGS_IGNORED="usr/bin/${PN}"
-RUST_MAX_VER="1.71.1" # Inclusive
-RUST_MIN_VER="1.71.1" # Bumped to 1.71.1 (llvm-16.0) since 1.65.0 (llvm-15.0) is not offered on distro.
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.78.1" # Changed to LTS zone LLVM 18 inclusive, 19 inclusive.
 RUST_PV="${RUST_MIN_VER}"
 TARBALL_TYPE="tensorboard-data-server" # Can be tensorboard, tensorboard-data-server
 TENSORBOARD_TARBALL_PV="2.12.2"
