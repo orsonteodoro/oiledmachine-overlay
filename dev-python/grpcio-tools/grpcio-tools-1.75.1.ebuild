@@ -3,16 +3,6 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
 ABSEIL_CPP_PV="20250512.1"
 CYTHON_SLOT="0.29"
 CXX_STANDARD=17
@@ -25,6 +15,16 @@ PROTOBUF_PV="33.0"
 PROTOBUF_CPP_SLOT="6"
 PROTOBUF_PYTHON_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+)
 
 inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
 
@@ -45,7 +45,7 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
-ebuild_revision_7
+ebuild_revision_8
 "
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party

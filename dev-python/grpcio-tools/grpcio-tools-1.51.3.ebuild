@@ -3,7 +3,18 @@
 
 EAPI=8
 
-# TODO: Fix C++ configure time selection
+ABSEIL_CPP_PV="20220623.0"
+CYTHON_SLOT="0.29"
+CXX_STANDARD=14 # Originally 14
+DISTUTILS_EXT=1
+DISTUTILS_USE_PEP517="setuptools"
+GRPC_PN="grpc"
+GRPC_P="${GRPC_PN}-${PV}"
+MY_PV=$(ver_cut 1-3 "${PV}")
+PROTOBUF_PV="21.6"
+PROTOBUF_CPP_SLOT="3"
+PROTOBUF_PYTHON_SLOT="4"
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx14"
@@ -19,19 +30,6 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
-
-ABSEIL_CPP_PV="20220623.0"
-CYTHON_SLOT="0.29"
-CXX_STANDARD=14 # Originally 14
-DISTUTILS_EXT=1
-DISTUTILS_USE_PEP517="setuptools"
-GRPC_PN="grpc"
-GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut 1-3 "${PV}")
-PROTOBUF_PV="21.6"
-PROTOBUF_CPP_SLOT="3"
-PROTOBUF_PYTHON_SLOT="4"
-PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
 
@@ -53,7 +51,7 @@ LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
 ${_CXX_STANDARD[@]}
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
@@ -119,17 +117,23 @@ ${PKG_CONFIG_PATH}" \
 	)
 	append-ldflags "${L2[@]}"
 	filter-flags "-Wl,--as-needed"
-einfo "CC:  ${CC}"
-einfo "CXX:  ${CXX}"
-einfo "CFLAGS:  ${CFLAGS}"
-einfo "CXXFLAGS:  ${CXXFLAGS}"
-einfo "LDFLAGS:  ${LDFLAGS}"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
+	pushd "${S}" >/dev/null 2>&1 || die
+		if use cxx_standard_cxx17 ; then
+			append-flags "-std=c++17"
+			sed -e "s|-std=c++14|-std=c++17|g" $(grep -l "-std=c++14" ./)
+		fi
+	popd >/dev/null 2>&1 || die
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 src_install() {
