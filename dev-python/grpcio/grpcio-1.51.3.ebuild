@@ -66,14 +66,20 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01
-	dev-libs/re2:=
 	>=net-dns/c-ares-1.17.2
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13
 	sys-libs/zlib:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
+	cxx_standard_cxx14? (
+		>=dev-libs/re2-0.2022.04.01:0/10
+		dev-libs/re2:=
+	)
+	cxx_standard_cxx17? (
+		>=dev-libs/re2-0.2022.04.01:0/11
+		dev-libs/re2:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
