@@ -215,7 +215,7 @@ TRITON_TAG="cl638583630"	# From https://github.com/tensorflow/tensorflow/blob/v2
 ZSTD_PV="1.4.5"
 # RULES_DOCKER dumped?
 
-EGIT_COMMIT_ABSEIL_CPP="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/absl/workspace.bzl
+EGIT_COMMIT_ABSEIL_CPP="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/absl/workspace.bzl # 20230802.1
 EGIT_COMMIT_ARM_NEON_2_X86_SSE="a15b489e1222b2087007546b4912e21293ea86ff"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 EGIT_COMMIT_BENCHMARK="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/benchmark/workspace.bzl
 EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace1.bzl
