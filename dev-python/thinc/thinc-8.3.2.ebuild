@@ -32,7 +32,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda cuda-autodetect datasets mxnet pytorch tensorflow"
+IUSE+="
+cuda cuda-autodetect datasets mxnet pytorch tensorflow
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/blis-0.7.8[${PYTHON_USEDEP}]

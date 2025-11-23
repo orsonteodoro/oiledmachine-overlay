@@ -36,7 +36,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 doc lapack
-ebuild_revision_3
+ebuild_revision_4
 "
 
 RDEPEND="

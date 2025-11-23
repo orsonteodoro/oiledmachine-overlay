@@ -26,7 +26,10 @@ HOMEPAGE="https://github.com/maxbachmann/Levenshtein"
 KEYWORDS="~amd64 ~arm64"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc"
+IUSE+="
+doc
+ebuild_revision_1
+"
 RDEPEND+="
 	(
 		>=dev-python/RapidFuzz-3.9.0[${PYTHON_USEDEP}]

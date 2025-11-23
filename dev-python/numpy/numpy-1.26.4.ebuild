@@ -29,7 +29,7 @@ SLOT="0"
 # is barely supported anyway, see bug #914358.
 IUSE="
 +lapack
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	lapack

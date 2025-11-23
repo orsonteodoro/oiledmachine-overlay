@@ -38,7 +38,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revison_1
+ebuild_revison_2
 "
 RDEPEND+="
 "
