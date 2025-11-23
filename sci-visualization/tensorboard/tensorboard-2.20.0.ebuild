@@ -6,6 +6,8 @@ EAPI=8
 
 # U22
 
+# Bazel downloads are treated as like a live ebuild to simplify ebuild.
+
 CXX_STANDARD=17 # Compiler default
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
@@ -26,14 +28,11 @@ LLVM_COMPAT=(
 inherit bazel check-compiler-switch flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm-r1 distutils-r1 yarn
 
 KEYWORDS="~amd64 ~arm64"
-bazel_external_uris="
-"
-#${bazel_external_uris}
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
 HOMEPAGE="
