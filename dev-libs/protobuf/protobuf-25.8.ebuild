@@ -285,9 +285,6 @@ _install_all() {
 
 	local L=(
 		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-${PV}.0"
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb-${PV}.0"
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upbdefs-${PV}.0"
-		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb_minitable-${PV}.0"
 	)
 	local x
 	for x in ${L[@]} ; do
