@@ -50,7 +50,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="${PROTOBUF_PYTHON_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH wrapper for app
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 RDEPEND="
 	${PYTHON_DEPS}
 	!dev-python/protobuf:0
