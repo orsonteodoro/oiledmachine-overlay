@@ -45,9 +45,9 @@ https://github.com/google/re2/archive/${RE2_VER}.tar.gz
 DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
-SLOT="0/${SONAME}"
+SLOT="${ABSEIL_CPP_PV%.*}"
 IUSE="
--debug icu python test
+-debug icu test
 ebuild_revision_14
 "
 RDEPEND="
@@ -55,10 +55,6 @@ RDEPEND="
 	icu? (
 		dev-libs/icu:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
-	)
-	python? (
-		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/pybind11[${PYTHON_USEDEP}]
 	)
 "
 DEPEND="
@@ -69,13 +65,6 @@ BDEPEND="
 	>=dev-cpp/gtest-1.14.0
 	icu? (
 		virtual/pkgconfig
-	)
-	python? (
-		dev-python/build[${PYTHON_USEDEP}]
-		dev-python/mypy[${PYTHON_USEDEP}]
-		dev-python/pip[${PYTHON_USEDEP}]
-		dev-python/setuptools[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" "doc/syntax.txt" )
@@ -99,10 +88,6 @@ src_prepare() {
 		mkdir -p "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}" || die
 	}
 	multilib_foreach_abi prepare_multilib_abseil
-
-	if use python ; then
-		python_copy_sources
-	fi
 }
 
 build_multilib_abseil() {
@@ -119,17 +104,14 @@ build_multilib_abseil() {
 	popd  >/dev/null 2>&1 || die
 }
 
-python_configure() {
-	:
-}
-
 src_configure() {
 	multilib_foreach_abi build_multilib_abseil
 	configure_multilib_re2() {
 		cflags-hardened_append
 		local mycmakeargs=(
-			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 			-DBUILD_SHARED_LIBS=ON
+			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
+			-DCMAKE_INSTALL_PREFIX="/usr/lib/re2/${SLOT}"
 			-DRE2_BUILD_TESTING=$(usex debug)
 			-DRE2_USE_ICU=$(usex icu)
 			-Dabsl_DIR="${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}/abseil-cpp/usr/$(get_libdir)/cmake/absl"
@@ -137,44 +119,10 @@ src_configure() {
 		cmake_src_configure
 	}
 	multilib_foreach_abi configure_multilib_re2
-	if use python ; then
-		distutils-r1_src_configure
-	fi
-}
-
-python_compile() {
-	pushd "${WORKDIR}/${PN}-${RE2_VER}/python" >/dev/null 2>&1 || die
-		"${PYTHON}" -m build --wheel || die
-
-		local pyver="${EPYTHON/python}"
-		pyver="${pyver/.}"
-		local wheel_path=$(realpath "dist/google_re2-"*"-cp${pyver}-cp${pyver}-linux_"*".whl")
-
-		local d="${WORKDIR}/${PN}-${RE2_VER}_build-${EPYTHON/./_}/install"
-einfo "Installing ${wheel_path}"
-		distutils_wheel_install \
-			"${d}" \
-			"${wheel_path}"
-	popd  >/dev/null 2>&1 || die
 }
 
 src_compile() {
 	cmake-multilib_src_compile
-	if use python ; then
-		distutils-r1_src_compile
-	fi
-}
-
-python_test() {
-	local old_pythonpath="${PYTHONPATH}"
-	export PYTHONPATH="${WORKDIR}/${PN}-${RE2_VER}_build-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages"
-	pushd "${WORKDIR}/${PN}-${RE2_VER}/python" >/dev/null 2>&1 || die
-		local dir=$(mktemp -d -p "${T}")
-		cp "re2_test.py" "${dir}" || die
-		cd "${dir}" || die
-		"${PYTHON}" "re2_test.py" || die
-	popd  >/dev/null 2>&1 || die
-	export PYTHONPATH="${old_pythonpath}"
 }
 
 test_abi() {
@@ -186,14 +134,9 @@ test_abi() {
 
 src_test() {
 	multilib_foreach_abi test_abi
-	if use python ; then
-		distutils-r1_src_test
-	fi
 }
 
 src_install() {
 	cmake-multilib_src_install
-	if use python ; then
-		distutils-r1_src_install
-	fi
+	mv "${ED}/usr/share" "${ED}/usr/lib/re2/${SLOT}" || die
 }

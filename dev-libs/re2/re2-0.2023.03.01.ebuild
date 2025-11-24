@@ -21,6 +21,7 @@ RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
 
 # Different date format used upstream.
+ABSEIL_CPP_PV="20220623.0"		# Pre absl changes, based on gRPC 1.51
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_LANGS="cxx"
 SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
@@ -37,7 +38,7 @@ https://github.com/google/re2/archive/${RE2_VER}.tar.gz
 DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
-SLOT="0/${SONAME}"
+SLOT="${ABSEIL_CPP_PV%.*}"
 IUSE="
 -debug icu test
 ebuild_revision_14
@@ -68,6 +69,7 @@ src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/re2/${SLOT}"
 		-DBUILD_SHARED_LIBS=ON
 		-DRE2_BUILD_TESTING=$(usex debug)
 		-DRE2_USE_ICU=$(usex icu)
@@ -84,4 +86,9 @@ test_abi() {
 
 src_test() {
 	multilib_foreach_abi test_abi
+}
+
+src_install() {
+	cmake-multilib_src_install
+	mv "${ED}/usr/share" "${ED}/usr/lib/re2/${SLOT}" || die
 }
