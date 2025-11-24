@@ -4,10 +4,15 @@
 
 # @ECLASS:  protobuf-python.eclass
 # @MAINTAINER:  Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS:  7 8
+# @SUPPORTED_EAPIS:  8
 # @BLURB:  set multislot protobuf-python pythonpath
 # @DESCRIPTION:
 # Helper to set the PYTHONPATH for multislot protobuf-python.
+
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 if [[ -z ${_PROTOBUF_PYTHON_ECLASS} ]] ; then
 _PROTOBUF_PYTHON_ECLASS=1
@@ -55,7 +60,7 @@ PROTOBUF_PYTHON_SLOTS_6=(
 	"6.33"
 )
 
-# @FUNCTION:  protobuf_python_set_pythonpath
+# @FUNCTION:  protobuf-python_set_pythonpath
 # @DESCRIPTION:
 # Set the python path
 #
@@ -64,7 +69,7 @@ PROTOBUF_PYTHON_SLOTS_6=(
 #   protobuf_python_set_pythonpath
 # }
 #
-protobuf_python_set_pythonpath() {
+protobuf-python_set_pythonpath() {
 	if [[ -z "${PROTOBUF_PYTHON_SLOTS[@]}" ]] ; then
 eerror "QA:  PROTOBUF_PYTHON_SLOTS needs to be populated"
 		die
