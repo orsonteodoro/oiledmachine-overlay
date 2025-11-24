@@ -6,7 +6,7 @@ diff '--color=auto' -urp grpc-1.71.2.orig/setup.py grpc-1.71.2/setup.py
  if BUILD_WITH_SYSTEM_RE2:
      CORE_C_FILES = filter(lambda x: "third_party/re2" not in x, CORE_C_FILES)
 -    RE2_INCLUDE = (os.path.join("/usr", "include", "re2"),)
-+    RE2_INCLUDE = (os.path.join("/usr", "lib", "re2", "@RE2_SLOT@", "include", "re2"),)
++    RE2_INCLUDE = (os.path.join("/usr", "lib", "re2", "@RE2_SLOT@", "include"),)
  
  if BUILD_WITH_SYSTEM_ABSL:
      CORE_C_FILES = filter(
