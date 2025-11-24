@@ -3,22 +3,17 @@
 
 EAPI=8
 
-ABSEIL_CPP_PV="20220623.0"
+ABSEIL_CPP_PV="20240116.0"
 CXX_STANDARD=17 # Originally 14
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut "1-3" "${PV}")
-PROTOBUF_CPP_SLOT="3"
+PROTOBUF_CPP_SLOT="4"
 PROTOBUF_PYTHON_SLOT="4"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RE2_SLOT="20220623"
-
-_CXX_STANDARD=(
-	"cxx_standard_cxx14"
-	"+cxx_standard_cxx17"
-)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -47,31 +42,25 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
-${_CXX_STANDARD[@]}
 doc
 ebuild_revision_8
 "
-REQUIRED_USE="
-	^^ (
-		${_CXX_STANDARD[@]/+}
-	)
-"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.51.3/third_party
+# See https://github.com/grpc/grpc/blob/v1.62.3/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.62.3/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=
 	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}
 	dev-libs/re2:=
-	>=net-dns/c-ares-1.17.2
+	>=net-dns/c-ares-1.19.1
 	net-dns/c-ares:=
-	>=sys-libs/zlib-1.2.13
+	>=sys-libs/zlib-1.3
 	sys-libs/zlib:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
 DEPEND+="
@@ -80,7 +69,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.26:0.29[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29:0.29[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
@@ -89,7 +78,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/grpcio-1.51.3-multislot-paths.patch"
+	"${FILESDIR}/grpcio-1.62.3-multislot-paths.patch"
 )
 
 distutils_enable_sphinx "doc/python/sphinx"
@@ -124,15 +113,6 @@ python_configure() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
-	local L=(
-		"${S}/tools/distrib/python/grpcio_tools/setup.py"
-		"${S}/setup.py"
-		$(grep -r -l -e "-std=c++14" "${S}/src/python/grpcio")
-	)
-	if use cxx_standard_cxx17 ; then
-		append-flags "-std=c++17"
-		sed -i "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
-	fi
 	local libdir=$(get_libdir)
 	append-ldflags \
 		"-Wl,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \

@@ -3,18 +3,23 @@
 
 EAPI=8
 
-ABSEIL_CPP_PV="20240722.0"
+ABSEIL_CPP_PV="20240116.0"
 CYTHON_SLOT="0.29"
-CXX_STANDARD=17
+CXX_STANDARD=17 # Originally 14
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut "1-3" "${PV}")
-PROTOBUF_PV="29.5"
-PROTOBUF_CPP_SLOT="5"
-PROTOBUF_PYTHON_SLOT="5"
+PROTOBUF_PV="25.1"
+PROTOBUF_CPP_SLOT="4"
+PROTOBUF_PYTHON_SLOT="4"
 PYTHON_COMPAT=( "python3_"{10..11} )
+
+_CXX_STANDARD=(
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -47,8 +52,8 @@ SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
 ebuild_revision_9
 "
-# See https://github.com/grpc/grpc/blob/v1.71.2/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.71.2/third_party
+# See https://github.com/grpc/grpc/blob/v1.62.3/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.62.3/third_party
 RDEPEND="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/abseil-cpp:=
@@ -121,6 +126,15 @@ ${PKG_CONFIG_PATH}" \
 	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
+	local L=(
+		"${WORKDIR}/${GRPC_P}/setup.py"
+		"${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools/setup.py"
+		$(grep -r -l -e "-std=c++14" "${S}")
+	)
+	if use cxx_standard_cxx17 ; then
+		append-flags "-std=c++17"
+		sed -e "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
+	fi
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CFLAGS:  ${CFLAGS}"

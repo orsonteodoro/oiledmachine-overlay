@@ -21,12 +21,12 @@ _CXX_STANDARD=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
@@ -54,8 +54,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT_MAJOR=${INTERNAL_VERSION%%.*}
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
+SLOT_MAJOR="${INTERNAL_VERSION%%.*}"
+SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 # version : slot
 # 33 : 6.33 From CMakeLists.txt's protobuf_VERSION_STRING
 # 32 : 6.32 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -290,7 +290,7 @@ _install_all() {
 		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb_minitable-${PV}.0"
 	)
 	local x
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 		local d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)"
 		[[ -e "${d}" ]] || die
 einfo "Adding ${d} to RPATH for ${ED}/${x}"

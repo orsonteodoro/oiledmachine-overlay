@@ -10,7 +10,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut 1-3 "${PV}")
+MY_PV=$(ver_cut "1-3" "${PV}")
 PROTOBUF_PV="21.6"
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="4"
@@ -23,12 +23,12 @@ _CXX_STANDARD=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix

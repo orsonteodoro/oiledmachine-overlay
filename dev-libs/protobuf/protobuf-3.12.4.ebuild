@@ -17,12 +17,12 @@ _CXX_STANDARD=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit autotools cflags-hardened check-compiler-switch elisp-common flag-o-matic
@@ -50,8 +50,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT_MAJOR=${INTERNAL_VERSION%%.*}
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${INTERNAL_VERSION})"
+SLOT_MAJOR="${INTERNAL_VERSION%%.*}"
+SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 # version : slot
 # 33 : 6.33 From CMakeLists.txt's protobuf_VERSION_STRING
 # 32 : 6.32 From CMakeLists.txt's protobuf_VERSION_STRING

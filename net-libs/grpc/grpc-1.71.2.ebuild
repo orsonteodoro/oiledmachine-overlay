@@ -35,12 +35,12 @@ USE_RUBY="ruby32 ruby33 ruby34"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
@@ -223,7 +223,7 @@ src_configure() {
 #		local L=(
 #			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)
 #		)
-#		append-ldflags ${L[@]}
+#		append-ldflags "${L[@]}"
 #einfo "LDFLAGS: ${LDFLAGS}"
 
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
@@ -307,7 +307,7 @@ fix_rpath() {
 	IFS=$' \t\n'
 	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
 	local d2="/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 einfo "Adding ${d1} to RPATH for ${x}"
 		patchelf \
 			--add-rpath "${d1}" \
@@ -327,7 +327,7 @@ einfo "Adding ${d2} to RPATH for ${x}"
 		)
 		IFS=$' \t\n'
 		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
-		for x in ${L[@]} ; do
+		for x in "${L[@]}" ; do
 			[[ -L "${x}" ]] && continue
 einfo "Adding ${d} to RPATH for ${x}"
 			patchelf \

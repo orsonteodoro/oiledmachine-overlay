@@ -10,7 +10,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut 1-3 "${PV}")
+MY_PV=$(ver_cut "1-3" "${PV}")
 PROTOBUF_PV="33.0"
 PROTOBUF_CPP_SLOT="6"
 PROTOBUF_PYTHON_SLOT="6"
@@ -18,12 +18,12 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
@@ -47,8 +47,8 @@ SLOT="${PROTOBUF_CPP_SLOT}"
 IUSE+="
 ebuild_revision_9
 "
-# See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.51.3/third_party
+# See https://github.com/grpc/grpc/blob/v1.75.1/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.75.1/third_party
 RDEPEND="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/abseil-cpp:=
