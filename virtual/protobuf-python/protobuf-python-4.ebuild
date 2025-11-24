@@ -29,7 +29,9 @@ PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_LTS[@]}
+	gcc_slot_12_5
+	gcc_slot_13_4
+	gcc_slot_14_3
 )
 
 inherit libcxx-compat
@@ -41,15 +43,14 @@ inherit libcxx-slot libstdcxx-slot python-single-r1
 
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
-VERSIONS_MONITORED="3.12-3.19-4.21"
-SLOT="3/${VERSIONS_MONITORED}" # 4/ is the major version of protobuf-python not protobuf-cpp
+VERSIONS_MONITORED="4.21-4.25"
+SLOT="4/${VERSIONS_MONITORED}" # 4/ is the major version of protobuf-python not protobuf-cpp
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
-	!gcc_slot_11_5
 	^^ (
 		${GCC_COMPAT[@]}
 	)
@@ -58,19 +59,24 @@ RDEPEND+="
 	!virtual/protobuf-python:0
 	$(python_gen_cond_dep '
 		gcc_slot_12_5? (
-			dev-python/protobuf:4/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.21/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25/4.25[${PYTHON_USEDEP}]
 		)
 		gcc_slot_13_4? (
-			dev-python/protobuf:4/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.21/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25/4.25[${PYTHON_USEDEP}]
 		)
 		gcc_slot_14_3? (
-			dev-python/protobuf:4/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.21/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25/4.25[${PYTHON_USEDEP}]
 		)
 		llvm_slot_18? (
-			dev-python/protobuf:4/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.21/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25/4.25[${PYTHON_USEDEP}]
 		)
 		llvm_slot_19? (
-			dev-python/protobuf:4/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.21/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25/4.25[${PYTHON_USEDEP}]
 		)
 	')
 	dev-python/protobuf:=

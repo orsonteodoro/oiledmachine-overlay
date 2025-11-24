@@ -29,7 +29,7 @@ PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_LTS[@]}
+	gcc_slot_11_5
 )
 
 inherit libcxx-compat
@@ -41,17 +41,14 @@ inherit libcxx-slot libstdcxx-slot python-single-r1
 
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
-VERSIONS_MONITORED="3.12-3.19-4.21"
+VERSIONS_MONITORED="3.12"
 SLOT="3/${VERSIONS_MONITORED}" # 3/ is the major version of protobuf-python not protobuf-cpp
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
-	!gcc_slot_12_5
-	!gcc_slot_13_4
-	!gcc_slot_14_3
 	^^ (
 		${GCC_COMPAT[@]}
 	)
@@ -60,7 +57,7 @@ RDEPEND+="
 	!virtual/protobuf-python:0
 	$(python_gen_cond_dep '
 		gcc_slot_11_5? (
-			dev-python/protobuf:3/3.12[${PYTHON_USEDEP}]
+			dev-python/protobuf:3.12/3.12[${PYTHON_USEDEP}]
 		)
 	')
 	dev-python/protobuf:=

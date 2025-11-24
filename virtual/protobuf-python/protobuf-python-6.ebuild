@@ -42,11 +42,11 @@ inherit libcxx-slot libstdcxx-slot python-single-r1
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
 VERSIONS_MONITORED="6.33"
-SLOT="3/${VERSIONS_MONITORED}"
+SLOT="6/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -56,7 +56,7 @@ REQUIRED_USE="
 RDEPEND+="
 	!virtual/protobuf-python:0
 	$(python_gen_cond_dep '
-		dev-python/protobuf:6/6.33[${PYTHON_USEDEP}]
+		dev-python/protobuf:6.33/6.33[${PYTHON_USEDEP}]
 	')
 	dev-python/protobuf:=
 "

@@ -46,7 +46,7 @@ SLOT="5/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -56,7 +56,7 @@ REQUIRED_USE="
 RDEPEND+="
 	!virtual/protobuf-python:0
 	$(python_gen_cond_dep '
-		dev-python/protobuf:5/5.29[${PYTHON_USEDEP}]
+		dev-python/protobuf:5.29/5.29[${PYTHON_USEDEP}]
 	')
 	dev-python/protobuf:=
 "
