@@ -49,7 +49,7 @@ SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
 ${_CXX_STANDARD[@]}
 doc
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
@@ -133,6 +133,12 @@ python_configure() {
 		append-flags "-std=c++17"
 		sed -i "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
 	fi
+	local libdir=$(get_libdir)
+	append-ldflags \
+		"-Wl,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,--rpath=/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,--rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}"
 	sed -i \
 		-e "s|@RE2_SLOT@|${RE2_SLOT}|g" \
 		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_PV%.*}|g" \

@@ -43,7 +43,7 @@ LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
 doc
-ebuild_revision_7
+ebuild_revision_8
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
@@ -114,6 +114,12 @@ python_configure() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+	local libdir=$(get_libdir)
+	append-ldflags \
+		"-Wl,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,--rpath=/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,--rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}"
 	sed -i \
 		-e "s|@RE2_SLOT@|${RE2_SLOT}|g" \
 		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_PV%.*}|g" \
