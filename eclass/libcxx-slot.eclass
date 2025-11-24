@@ -4,11 +4,16 @@
 
 # @ECLASS: libcxx-slot.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: Slotify C++ packages
 # @DESCRIPTION:
 # This eclass tries to help keep LLVM slots updated not neglected.
 # Only apply this eclass to C++ packages.
+
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 if [[ -z ${_LIBCXX_SLOT_ECLASS} ]] ; then
 _LIBCXX_SLOT_ECLASS=1

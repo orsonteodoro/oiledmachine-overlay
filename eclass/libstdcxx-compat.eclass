@@ -4,10 +4,15 @@
 
 # @ECLASS: libstdcxx-compat.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: GCC_COMPAT templates
 # @DESCRIPTION:
 # Common macro expanded like array values for GCC_COMPAT.
+
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 if [[ -z ${_LIBSTDCXX_COMPAT_ECLASS} ]] ; then
 _LIBSTDCXX_COMPAT_ECLASS=1

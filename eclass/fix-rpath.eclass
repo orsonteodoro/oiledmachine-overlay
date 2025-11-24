@@ -4,10 +4,15 @@
 
 # @ECLASS: fix-rpath.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: GCC_COMPAT templates
 # @DESCRIPTION:
 # Fix a list of missing RPATHS
+
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 if [[ -z ${_FIX_RPATH_ECLASS} ]] ; then
 _FIX_RPATH_ECLASS=1

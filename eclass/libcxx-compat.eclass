@@ -4,7 +4,7 @@
 
 # @ECLASS: libcxx-compat.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: LLVM_COMPAT templates
 # @DESCRIPTION:
 # Common macro expanded like array values for LLVM_COMPAT.
@@ -12,6 +12,11 @@
 # The libcxx in this eclass is a misnomer.  It can be applied to the requirement
 # for the compiler only.  The eclass is intended to centralize the C++ string
 # literals to setup up C++ support.
+
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 if [[ -z ${_LIBCXX_COMPAT_ECLASS} ]] ; then
 _LIBCXX_COMPAT_ECLASS=1
