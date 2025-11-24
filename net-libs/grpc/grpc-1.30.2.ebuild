@@ -109,12 +109,12 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
+	dev-libs/protobuf:${PROTOBUF_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
+	dev-libs/protobuf:=
 	>=net-dns/c-ares-1.15.0[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-libs/protobuf:=
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT

@@ -28,6 +28,7 @@ CXX_STANDARD=17
 OPENCENSUS_PROTO_PV="0.3.0"
 PROTOBUF_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
+RE2_SLOT="20240116"
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32 ruby33 ruby34"
 
@@ -87,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_35
+ebuild_revision_37
 "
 REQUIRED_USE+="
 	python? (
@@ -103,14 +104,14 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01:0/11[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	dev-libs/protobuf:=
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}[${MULTILIB_USEDEP}]
 	dev-libs/re2:=
 	>=net-dns/c-ares-1.17.2[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-libs/protobuf:=
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
@@ -240,6 +241,7 @@ src_configure() {
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure
