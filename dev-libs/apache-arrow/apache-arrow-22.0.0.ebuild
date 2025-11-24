@@ -119,11 +119,12 @@ RDEPEND="
 		app-arch/zstd:=
 	)
 "
+# rapidjson version relaxed from live (9999)
 DEPEND="
 	${RDEPEND}
 	dev-cpp/xsimd:=
 	json? (
-		>=dev-libs/rapidjson-9999
+		dev-libs/rapidjson
 		dev-libs/rapidjson:=
 	)
 "
