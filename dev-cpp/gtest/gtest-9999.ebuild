@@ -6,6 +6,7 @@ EAPI=8
 CXX_STANDARD=17
 # Python is required for tests and some build tasks.
 PYTHON_COMPAT=( "python3_"{10..14} )
+RE2_SLOT="20240116"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -42,7 +43,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 IUSE="
 abseil doc examples test
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
@@ -51,7 +52,7 @@ DEPEND="
 	abseil? (
 		dev-cpp/abseil-cpp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/abseil-cpp:=
-		dev-libs/re2:0/11[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/re2:${RE2_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/re2:=
 	)
 "
@@ -81,9 +82,12 @@ multilib_src_configure() {
 		-DINSTALL_GTEST=ON
 		-DGTEST_HAS_ABSL=$(usex abseil)
 
-		# tests
+		# Tests
 		-Dgmock_build_tests=$(usex test)
 		-Dgtest_build_tests=$(usex test)
+
+		# Multislot changes
+		-Dre_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake/re2"
 	)
 	if use test; then
 		if use x86 || use x86-linux; then

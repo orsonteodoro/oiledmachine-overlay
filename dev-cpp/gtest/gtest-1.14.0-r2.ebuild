@@ -42,7 +42,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 IUSE="
 doc examples test
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
@@ -63,7 +63,7 @@ multilib_src_configure() {
 		-DBUILD_GMOCK=ON
 		-DINSTALL_GTEST=ON
 
-		# tests
+		# Tests
 		-Dgmock_build_tests=$(usex test)
 		-Dgtest_build_tests=$(usex test)
 	)

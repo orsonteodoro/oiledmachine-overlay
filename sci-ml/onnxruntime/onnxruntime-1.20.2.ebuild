@@ -24,6 +24,7 @@ _TODO='
 # TODO:
 # Review and add vendored python packages.
 # dawn .gitmodules
+# Change configure for re2
 
 # 1.20.0 -> 1.20.2
 
@@ -66,6 +67,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_OPTIONAL=1
 PYTHON_COMPAT=( "python3_"{10..12} )
+RE2_SLOT="20240116"
 
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_PV_1="20230125.3" # From cmake/external/onnx/CMakeLists.txt
@@ -1051,7 +1053,7 @@ DISABLED_RDEPEND="
 	)
 	>=sci-ml/FP16-2021.03.16
 	>=dev-libs/FXdiv-2020.12.08
-	>=dev-libs/re2-0.2024.07.02:0/11
+	>=dev-libs/re2-0.2024.07.02:${RE2_SLOT}
 	benchmark? (
 		>=dev-cpp/benchmark-1.8.5
 	)

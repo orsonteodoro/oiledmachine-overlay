@@ -5,7 +5,12 @@ EAPI=8
 
 # U24
 
+# TODO:
+# Verify rpath for re2
+
 CXX_STANDARD=26
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
+RE2_SLOT="20240116"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -20,8 +25,6 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
-
-CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 
 inherit cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson toolchain-funcs
 
@@ -45,7 +48,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer +qtutils systemd test X
-ebuild_revision_13
+ebuild_revision_14
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -69,7 +72,7 @@ RDEPEND="
 	>=dev-libs/hyprgraphics-0.1.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprgraphics:=
 	>=dev-libs/libinput-1.29.1:=
-	dev-libs/re2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	dev-libs/re2:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.24.0
@@ -168,6 +171,7 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${LD_LIBRARY_PATH}"
 	local emesonargs=(
 		#$(meson_feature legacy-renderer legacy_renderer)
 		$(meson_feature systemd)

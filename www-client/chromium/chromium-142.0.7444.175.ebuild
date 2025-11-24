@@ -6,16 +6,22 @@ EAPI=8
 
 # D11, U22, U24
 
-# Monitor
+#
+# For security updates, check
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
-# for security updates.  They are announced faster than NVD.
-# See https://chromiumdash.appspot.com/releases?platform=Linux for the latest linux version
+# They are announced faster than NVD.
+# See https://chromiumdash.appspot.com/releases?platform=Linux for the latest linux version.
+#
 
+#
 # Patchsets
 # https://github.com/ungoogled-software/ungoogled-chromium
 # https://github.com/uazo/cromite
+#
 
+#
 # Ebuild diff or sync update notes:
+#
 # 128.0.6613.119 -> 128.0.6613.137
 # 129.0.6668.89 -> 129.0.6668.100
 # 129.0.6668.100 -> 130.0.6723.91
@@ -39,8 +45,11 @@ EAPI=8
 # 141.0.7390.54 -> 142.0.7444.59
 # 142.0.7444.59 -> 142.0.7444.162
 # 142.0.7444.162 -> 142.0.7444.175
+#
 
+#
 # For depends see:
+#
 # https://github.com/chromium/chromium/tree/142.0.7444.175/build/linux/sysroot_scripts/generated_package_lists				; Last update 20250523, D11
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
@@ -51,6 +60,7 @@ EAPI=8
 #   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
 #   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
 # https://github.com/chromium/chromium/blob/142.0.7444.175/build/install-build-deps.py
+#
 
 #
 # Additional DEPENDS versioning info:
@@ -80,7 +90,9 @@ EAPI=8
 #   https://github.com/facebook/zstd/commit/89d685e42dbcf815a16ed0fcd7d050ef74ccad96							; check if commit part of tag
 #   https://github.com/facebook/zstd/blob/89d685e42dbcf815a16ed0fcd7d050ef74ccad96/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/142.0.7444.175/DEPS#L512									; live
+#
 
+#
 # About PGO version compatibility
 #
 # The answer to the profdata compatibility is answered in
@@ -94,15 +106,28 @@ EAPI=8
 # https://github.com/llvm/llvm-project/blob/7b473dfe/llvm/include/llvm/ProfileData/InstrProf.h#L1116
 # LLVM version:
 # https://github.com/llvm/llvm-project/blob/7b473dfe/cmake/Modules/LLVMVersion.cmake
+#
 
-# LLVM timestamp can be obtained from \
-# https://github.com/chromium/chromium/blob/142.0.7444.175/tools/clang/scripts/update.py#L42 \
+#
+# The LLVM timestamp can be obtained from
+# https://github.com/chromium/chromium/blob/142.0.7444.175/tools/clang/scripts/update.py#L42
 # https://github.com/llvm/llvm-project/commit/7b473dfe
-# Change also LLVM_OFFICIAL_SLOT
+# Also change LLVM_OFFICIAL_SLOT
+#
+
+#
+# For FFMPEG_SLOT, see also
+#
+# third_party/ffmpeg/libavutil/version.h
+# third_party/ffmpeg/libavcodec/version*.h
+# third_party/ffmpeg/libavformat/version*.h
+#
+
+# The unbundle build files logic is in build/linux/unbundle/
 
 TC_COUNT_EXPECTED=5129
 SOURCES_COUNT_EXPECTED=546110
-CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
 ALLOW_SYSTEM_TOOLCHAIN=0
@@ -118,64 +143,51 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
 CHROMIUM_TOOLCHAIN=1
-COPIUM_COMMIT="46d68912da04d9ed14856c50db986d5c8e786a4b"
-CROMITE_COMMIT="851be9370b90564ca9522f0531d661ca276f73b9" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="142.0.7444.138"
 CURRENT_PROFDATA_VERSION= # Global variable
 CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=20
 DISABLE_AUTOFORMATTING="yes"
-DISK_BASE=24
-declare -A DISK_BUILD
-DISK_BUILD["debug"]=$((${DISK_BASE} + 13))
-DISK_BUILD["pgo"]=$((${DISK_BASE} + 8))
-DISK_BUILD["lto"]=$((${DISK_BASE} + 9))
-DISK_BUILD["fallback"]=$((${DISK_BASE} + 1))
 DISTRIBUTED_BUILD=0 # Global variable
-# See also
-# third_party/ffmpeg/libavutil/version.h
-# third_party/ffmpeg/libavcodec/version*.h
-# third_party/ffmpeg/libavformat/version*.h
 FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
-GCC_PV="10.2.1" # Minimum
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
-LIBVA_PV="2.17.0"
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
-MESA_PV="20.3.5"
 NABIS=0 # Global variable
 NODE_VERSION=22
-PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
-PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
-QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="142.0.7444.162-1"
 USE_LTO=0 # Global variable
-# https://github.com/chromium/chromium/blob/142.0.7444.175/tools/clang/scripts/update.py#L38 \
-# grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
+RE2_SLOT="20240116"
 # https://github.com/chromium/chromium/blob/142.0.7444.175/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_NEEDS_LLVM="yes please"
-RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
-RUSTC_VER="" # Global variable
 RUST_MAX_VER="9999" # Corresponds to llvm-21.1
 RUST_MIN_VER="9999" # Corresponds to llvm-21.1
-RUST_PV="${RUST_MIN_VER}"
+RUST_NEEDS_LLVM="yes please"
+RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
 SHADOW_CALL_STACK=0 # Global variable
-TESTDATA_P="${PN}-${PV}"
-# Testing this version to avoid breaking security.  The 13.6 series cause the \
+
+GCC_PV="10.2.1" # Minimum
+CROMITE_PV="142.0.7444.176"
+GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
+LIBVA_PV="2.17.0"
+MESA_PV="20.3.5"
+QT6_PV="6.4.2"
+UNGOOGLED_CHROMIUM_PV="142.0.7444.175-1"
+# Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
 ZLIB_PV="1.3.1"
+
+COPIUM_COMMIT="46d68912da04d9ed14856c50db986d5c8e786a4b"
+CROMITE_COMMIT="2124fd8aa7d29dd6e1b38d5514916881d7566992" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
+TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
@@ -188,6 +200,13 @@ b16bec0fa6b24252afa0687d6ef7baad8a38bb5b7b98170b06c465927ca0f853\
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 )
+
+DISK_BASE=24
+declare -A DISK_BUILD
+DISK_BUILD["debug"]=$((${DISK_BASE} + 13))
+DISK_BUILD["pgo"]=$((${DISK_BASE} + 8))
+DISK_BUILD["lto"]=$((${DISK_BASE} + 9))
+DISK_BUILD["fallback"]=$((${DISK_BASE} + 1))
 
 # LANGS obtainable from:
 # src="./build/config/locales.gni"
@@ -428,8 +447,6 @@ is_cromite_compatible() {
 
 if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	:
-elif [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
-	KEYWORDS="~amd64 ~arm64 ~ppc64"
 else
 	KEYWORDS="~amd64 ~arm64"
 fi
@@ -439,8 +456,8 @@ S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 SRC_URI+="
 	ppc64? (
-https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
-	-> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
+https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${OPENPOWER_PATCHES_COMMIT}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}.tar.bz2
+	-> chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2
 	)
 	test? (
 https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}-testdata.tar.xz
@@ -561,7 +578,7 @@ ${PATENT_STATUS[@]}
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_18
+ebuild_revision_19
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
@@ -1258,7 +1275,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/libxslt:=
 	)
 	system-re2? (
-		>=dev-libs/re2-0.2023.06.01:0/11[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/re2-0.2023.06.01:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/re2:=
 	)
 	system-zlib? (
@@ -2117,21 +2134,6 @@ eerror
 			die
 		fi
 	fi
-	if ver_test ${PV%%.*} -lt ${PATCHSET_PPC64%%.*} ; then
-		if use ppc64 ; then
-eerror
-eerror "PPC64 is disallowed.  Still waiting for the PPC64 patchset."
-eerror
-eerror "Use the older ebuild if GCC is preferred at the cost of security."
-eerror
-eerror "Using PPC64 will be allowed for this build when minor version is"
-eerror ">= expected."
-eerror
-eerror "Current minor version:   ${PV##*.}"
-eerror "Expected minor version:  >= ${PATCHSET_PPC64%%.*}"
-eerror
-		fi
-	fi
 
 	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
@@ -2226,7 +2228,7 @@ src_unpack() {
 	fi
 
 	if use ppc64 ; then
-		unpack "chromium-openpower-${PPC64_HASH:0:10}.tar.bz2"
+		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
 	fi
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
@@ -2295,7 +2297,7 @@ apply_distro_patchset_for_system_toolchain() {
 		|| true
 
 	if use ppc64 ; then
-		local patchset_dir="${WORKDIR}/openpower-patches-${PPC64_HASH}/patches"
+		local patchset_dir="${WORKDIR}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}/patches"
 	# The patch causes build errors on 4K page systems (https://bugs.gentoo.org/show_bug.cgi?id=940304)
 		local page_size_patch="ppc64le/third_party/use-sysconf-page-size-on-ppc64.patch"
 		local isa_3_patch="ppc64le/core/baseline-isa-3-0.patch"
@@ -5876,6 +5878,14 @@ einfo "Configuring bundled ffmpeg..."
 	if use system-icu || use headless ; then
 		myconf_gn+=(
 			"icu_use_data_file=false"
+		)
+	fi
+
+	if use system-re2 ; then
+ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider disabling the system-re2 USE flag if it fails."
+		export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		myconf_gn+=(
+			"use_system_re2=true" # Trigger build/linux/unbundle/re2.gn
 		)
 	fi
 }

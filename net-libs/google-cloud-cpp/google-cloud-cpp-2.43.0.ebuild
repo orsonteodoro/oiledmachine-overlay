@@ -5,6 +5,9 @@ EAPI=8
 
 # U24
 
+# TODO:
+# Change configure for re2
+
 # For deps, see
 # https://github.com/googleapis/google-cloud-cpp/blob/v2.43.0/bazel/workspace0.bzl
 
@@ -16,6 +19,7 @@ CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-da
 # From cmake/GoogleapisConfig.cmake \
 GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
 PROTOBUF_SLOT="5"
+RE2_SLOT="20240116"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -41,7 +45,7 @@ SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_5
+ebuild_revision_6
 "
 # Tests need a GCP account
 RESTRICT="test"
@@ -51,7 +55,7 @@ RDEPEND="
 	>=dev-libs/crc32c-1.1.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/openssl-1.1.1
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2025.07.22:0/11[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/re2-0.2025.07.22:${RE2_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/re2:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11

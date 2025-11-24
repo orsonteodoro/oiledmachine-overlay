@@ -9,6 +9,7 @@ EAPI=8
 # Patch test
 # Finish *DEPENDs updates
 # Make protobuf internal dependency
+# Change configure for multislot re2
 
 # TODO package:
 # >=dev-python/portpicker-23.2
@@ -45,6 +46,7 @@ CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
 PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
+RE2_SLOT="20240116"
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/xla/xla/stream_executor/device_description.h#L248
@@ -659,7 +661,7 @@ RDEPEND="
 	>=dev-libs/jsoncpp-1.9.5
 	dev-libs/jsoncpp:=
 	>=dev-libs/nsync-1.27.0
-	>=dev-libs/re2-0.2023.06.01:0/11
+	>=dev-libs/re2-0.2023.06.01:${RE2_SLOT}
 	>=media-libs/giflib-5.2.1
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.39:0
