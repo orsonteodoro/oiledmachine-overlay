@@ -252,7 +252,7 @@ src_configure() {
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
 			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
-			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake"
+			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake/re2"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure

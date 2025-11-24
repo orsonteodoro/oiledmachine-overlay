@@ -245,7 +245,7 @@ src_configure() {
 			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotobuf.a"
 			-DProtobuf_PROTOC_LIBRARY="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotoc.a"
 			-DPROTOBUF_PROTOC_EXECUTABLE="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin/protoc"
-			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake"
+			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake/re2"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure
