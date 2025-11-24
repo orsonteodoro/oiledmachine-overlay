@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# Requirements:
+# https://github.com/apache/arrow/blob/apache-arrow-21.0.0/.env
+
 CXX_STANDARD=17
 RE2_SLOT="20220623"
 
@@ -12,6 +15,24 @@ ABSEIL_CPP_PV="20240722.0"
 ARROW_DATA_GIT_HASH="fbf6b703dc93d17d75fa3664c5aa2c7873ebaf06"
 # arrow.git: cpp/submodules/parquet-testing
 PARQUET_DATA_GIT_HASH="18d17540097fca7c40be3d42c167e6bfad90763c"
+
+CPU_FLAGS_ARM=(
+	"cpu_flags_arm_neon"
+	"cpu_flags_arm_sve"
+	"cpu_flags_arm_sve128"
+	"cpu_flags_arm_sve256"
+	"cpu_flags_arm_sve512"
+)
+
+CPU_FLAGS_PPC=(
+	"cpu_flags_ppc_altivec"
+)
+
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_sse4_2"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512"
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -25,9 +46,9 @@ LLVM_COMPAT=(
 
 # Note: upstream meson port is incomplete.
 # https://github.com/apache/arrow/issues/45778
-inherit cmake libcxx-slot libstdcxx-slot
+inherit cmake flag-o-matic libcxx-slot libstdcxx-slot
 
-KEYWORDS="amd64 ~arm arm64 ~hppa ~loong ~riscv ~s390 x86"
+KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv ~s390 x86"
 S="${WORKDIR}/${P}/cpp"
 SRC_URI="
 mirror://apache/arrow/arrow-${PV}/${P}.tar.gz
@@ -47,10 +68,72 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="0/$(ver_cut 1)"
 IUSE="
-+brotli bzip2 +compute +dataset +json lz4 +parquet +re2 +snappy ssl test zlib
-zstd
+${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_PPC[@]}
+${CPU_FLAGS_X86[@]}
+-arrow-flight -arrow-flight-sql -arrow-flight-sql-odbc -brotli -bzip2 -compute
+-csv -cuda -dataset -filesystem -gandiva -gcs -hdfs +ipc -jemalloc -json -lz4
++mimalloc +parquet +re2 -s3 -snappy ssl -tensorflow test +threads +utf8proc
+-zlib -zstd
 "
+# oiledmachine-overlay has strict GPU version requirements, CUDA 11.7 not supported on distro.
 REQUIRED_USE="
+	!cuda
+	cpu_flags_arm_sve? (
+		cpu_flags_arm_neon
+	)
+	cpu_flags_arm_sve128? (
+		cpu_flags_arm_sve
+	)
+	cpu_flags_arm_sve256? (
+		cpu_flags_arm_sve128
+	)
+	cpu_flags_arm_sve512? (
+		cpu_flags_arm_sve256
+	)
+
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx512? (
+		cpu_flags_x86_avx2
+	)
+
+	arrow-flight? (
+		ipc
+	)
+	arrow-flight-sql? (
+		arrow-flight
+	)
+	arrow-flight-sql-odbc? (
+		arrow-flight-sql
+		compute
+	)
+	cuda? (
+		ipc
+	)
+	dataset? (
+		filesystem
+	)
+	gandiva? (
+		filesystem
+		re2
+	)
+	gcs? (
+		filesystem
+	)
+	hdfs? (
+		filesystem
+	)
+	parquet? (
+		ipc
+	)
+	re2? (
+		compute
+	)
+	s3? (
+		filesystem
+	)
 	ssl? (
 		json
 	)
@@ -59,6 +142,9 @@ REQUIRED_USE="
 		parquet? (
 			zstd
 		)
+	)
+	utf8proc? (
+		compute
 	)
 "
 RESTRICT="
@@ -72,6 +158,10 @@ RDEPEND="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/boost-1.87.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
+	arrow-flight? (
+		virtual/grpc:4
+		virtual/grpc:=
+	)
 	brotli? (
 		>=app-arch/brotli-1.1.0
 		app-arch/brotli:=
@@ -79,12 +169,6 @@ RDEPEND="
 	bzip2? (
 		>=app-arch/bzip2-1.0.8
 		app-arch/bzip2:=
-	)
-	compute? (
-		dev-libs/libutf8proc:=
-	)
-	dataset? (
-		dev-libs/libutf8proc:=
 	)
 	elibc_musl? (
 		sys-libs/timezone-data
@@ -108,6 +192,9 @@ RDEPEND="
 	snappy? (
 		>=app-arch/snappy-1.1.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		app-arch/snappy:=
+	)
+	utf8proc? (
+		dev-libs/libutf8proc:=
 	)
 	zlib? (
 		>=virtual/zlib-1.3.1
@@ -150,36 +237,116 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+get_buildtime_simd_level() {
+	if use cpu_flags_arm_sve512 ; then
+		echo "SVE512"
+	elif use cpu_flags_arm_sve256 ; then
+		echo "SVE256"
+	elif use cpu_flags_arm_sve ; then
+		echo "SVE"
+	elif use cpu_flags_arm_neon ; then
+		echo "NEON"
+	elif use cpu_flags_x86_avx512 ; then
+		echo "AVX512"
+	elif use cpu_flags_x86_avx2 ; then
+		echo "AVX2"
+	elif use cpu_flags_x86_sse4_2 ; then
+		echo "SSE4_2"
+	else
+		echo "NONE"
+	fi
+}
+
+get_runtime_simd_level() {
+	if use cpu_flags_x86_avx512 ; then
+		echo "AVX512"
+	elif use cpu_flags_x86_avx2 ; then
+		echo "AVX2"
+	elif use cpu_flags_x86_sse4_2 ; then
+		echo "SSE4_2"
+	else
+		echo "NONE"
+	fi
+}
+
 src_configure() {
+	local libdir=$(get_libdir)
+	append-ldflags \
+		"-Wl,,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,--rpath,/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,--rpath,/usr/lib/re2/${RE2_SLOT}/${libdir}"
+
+	local use_gold="OFF"
+	local use_lld="OFF"
+	local use_mold="OFF"
+	if is-flagq '-fuse-ld=gold' ; then
+		use_gold="ON"
+	elif is-flagq '-fuse-ld=lld' ; then
+		use_lld="ON"
+	elif is-flagq '-fuse-ld=mold' ; then
+		use_mold="ON"
+	fi
+	filter-flags "-fuse-ld=*"
+
+	local use_ccache="OFF"
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		use_ccache="ON"
+	fi
+
+	local use_sccache="OFF"
+	if [[ -n "${SCCACHE_DIR}" ]] && has_version "dev-util/sccache" ; then
+		use_sccache="ON"
+	fi
+
+	# See https://github.com/apache/arrow/blob/apache-arrow-21.0.0/cpp/cmake_modules/DefineOptions.cmake
 	local mycmakeargs=(
+		-DARROW_ALTIVEC=$(usex cpu_flags_ppc_altivec ON OFF)
 		-DARROW_BUILD_STATIC=OFF
 		-DARROW_BUILD_TESTS=$(usex test ON OFF)
 		-DARROW_COMPUTE=$(usex compute ON OFF)
-		-DARROW_CSV=ON
+		-DARROW_CUDA=$(usex cuda ON OFF)
+		-DARROW_CSV=$(usex csv ON OFF)
 		-DARROW_DATASET=$(usex dataset ON OFF)
 		-DARROW_DEPENDENCY_SOURCE="SYSTEM"
 		-DARROW_DEPENDENCY_USE_SHARED=ON
 		-DARROW_DOC_DIR="share/doc/${PF}"
-		-DARROW_FILESYSTEM=ON
-		-DARROW_HDFS=ON
-		-DARROW_JEMALLOC=OFF
+		-DARROW_ENABLE_THREADING=$(usex threads ON OFF)
+		-DARROW_FILESYSTEM=$(usex filesystem ON OFF)
+		-DARROW_FLIGHT=$(usex arrow-flight ON OFF)
+		-DARROW_FLIGHT_SQL=$(usex arrow-flight-sql ON OFF)
+		-DARROW_FLIGHT_SQL_ODBC=$(usex arrow-flight-sql-odbc ON OFF)
+		-DARROW_GANDIVA=$(usex gandiva ON OFF)
+		-DARROW_GCS=$(usex gcs ON OFF)
+		-DARROW_HDFS=$(usex hdfs ON OFF)
+		-DARROW_IPC=$(usex ipc ON OFF)
+		-DARROW_JEMALLOC=$(usex jemalloc ON OFF)
 		-DARROW_JSON=$(usex json ON OFF)
-		-DARROW_MIMALLOC=OFF
+		-DARROW_MIMALLOC=$(usex mimalloc ON OFF)
 		-DARROW_PARQUET=$(usex parquet ON OFF)
-		-DARROW_USE_CCACHE=OFF
-		-DARROW_USE_SCCACHE=OFF
+		-DARROW_RUNTIME_SIMD_LEVEL=$(get_runtime_simd_level)
+		-DARROW_S3=$(usex s3 ON OFF)
+		-DARROW_SIMD_LEVEL=$(get_buildtime_simd_level)
+		-DARROW_TENSORFLOW=$(usex tensorflow ON OFF)
+		-DARROW_USE_CCACHE="${use_ccache}"
+		-DARROW_USE_GOLD="${use_mold}"
+		-DARROW_USE_LLD="${use_lld}"
+		-DARROW_USE_MOLD="${use_mold}"
+		-DARROW_USE_SCCACHE="${use_sccache}"
 		-DARROW_WITH_BROTLI=$(usex brotli ON OFF)
 		-DARROW_WITH_BZ2=$(usex bzip2 ON OFF)
 		-DARROW_WITH_LZ4=$(usex lz4 ON OFF)
+		-DARROW_WITH_MUSL=$(usex elibc_musl ON OFF)
 		-DARROW_WITH_RE2=$(usex re2 ON OFF)
 		-DARROW_WITH_SNAPPY=$(usex snappy ON OFF)
 		-DARROW_WITH_ZLIB=$(usex zlib ON OFF)
 		-DARROW_WITH_ZSTD=$(usex zstd ON OFF)
 		-DCMAKE_CXX_STANDARD=17
 		-DPARQUET_REQUIRE_ENCRYPTION=$(usex ssl ON OFF)
-		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
-		-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake/re2"
+		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/${libdir}/cmake/absl"
+		-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/${libdir}/cmake/re2"
 	)
+
 	cmake_src_configure
 }
 
@@ -191,7 +358,7 @@ src_test() {
 
 src_install() {
 	cmake_src_install
-	if use test; then
+	if use test ; then
 		cd "${D}/usr/$(get_libdir)" || die
 		rm -r "cmake/ArrowTesting" || die
 		rm "libarrow_testing"* || die
