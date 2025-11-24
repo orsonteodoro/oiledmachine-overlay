@@ -237,10 +237,11 @@ Language defaults
 | GTK 4                               | Fully supported                       |                                                          |
 | OpenGL <= 4.6                       | Fully supported                       |                                                          |
 | OpenCL <= 2.0                       | Fully supported                       |                                                          |
-| Ollama 0.12 (CPU)                   | Available                             |                                                          |
-| Ollama 0.12 (ROCm 6.3)              | Not supported                         |                                                          |
-| Ollama 0.12 (CUDA 11.8)             | Not supported                         |                                                          |
-| Ollama 0.12 (CUDA 12.8)             | Available                             |                                                          |
+| Ollama 0.13 (CPU)                   | Fully supported                       |                                                          |
+| Ollama 0.13 (ROCm 6.3)              | Not supported                         |                                                          |
+| Ollama 0.13 (CUDA 11.8)             | Not supported                         |                                                          |
+| Ollama 0.13 (CUDA 12.8)             | Available                             |                                                          |
+| Ollama 0.13 (Vulkan)                | Fully supported                       |                                                          |
 | GCC OpenMP (CPU)                    | Fully supported                       |                                                          |
 | LLVM OpenMP (CPU)                   | Fully supported                       |                                                          |
 | LLVM OpenMP offload (CUDA)          | Available                             |                                                          |
@@ -274,8 +275,9 @@ Language defaults
 | X                                   | Fully supported                       |                                                          |
 
 * [2] Via llvm-roc-libomp
-* [3] Multislotted on this overlay to allow LTS and rolling packages to coexist
-      without resorting to containerization.
+* [3] Multislotted on this overlay to allow LTS and rolling packages to
+      coexist without resorting to containerization or separate LTS and rolling
+      partitions.
 * [4] Backporting security patches is likely to be incomplete.  No hardened
       ebuilds will be provided.  You must either keep a local ebuild fork
       with cflags-hardened changes or add per-package hardening CFLAGS (e.g.
