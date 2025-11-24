@@ -8,9 +8,9 @@ EAPI=8
 #
 # About the confusing versioning.
 #
-# Upstream uses 4.21.12 for their python package in __init__.py.  See https://github.com/protocolbuffers/protobuf/blob/v3.21.12/python/google/protobuf/__init__.py#L33
+# Upstream uses 4.25.8 for their python package in __init__.py.  See https://github.com/protocolbuffers/protobuf/blob/v25.8/python/google/protobuf/__init__.py
 # The protobuf-cpp versioning corresponds to configure.ac.
-# Protobuf-cpp 3.21.12 uses protobuf-python 4.21.12 and protobuf-cpp is equivalent to 21.12.
+# Protobuf-cpp 4.25.8 use protobuf-python 4.25.8 and protobuf-cpp equivalent to 25.8.
 #
 
 # 3.21.12 is protobuf-cxx
@@ -18,7 +18,7 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_CPP_SLOT=3
+PROTOBUF_CPP_SLOT=4
 PROTOBUF_PYTHON_SLOT=$(ver_cut "1-2" "${PV}")
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.10
 
@@ -54,7 +54,7 @@ IUSE+=" ebuild_revision_1"
 RDEPEND="
 	${PYTHON_DEPS}
 	!dev-python/protobuf:0
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.21
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/4.25
 	dev-libs/protobuf:=
 "
 DEPEND="
@@ -74,7 +74,7 @@ PARENT_PATCHES=(
 
 # Here for patches within "python/" subdirectory.
 PATCHES=(
-	"${FILESDIR}/${PN}-3.20.3-python311.patch"
+	#"${FILESDIR}/${PN}-3.20.3-python311.patch"
 )
 
 python_prepare_all() {
