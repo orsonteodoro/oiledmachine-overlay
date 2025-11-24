@@ -48,7 +48,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer +qtutils systemd test X
-ebuild_revision_14
+ebuild_revision_15
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -164,14 +164,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 src_prepare() {
-	# skip version.h
+	# Skip version.h
 	sed -i -e "s|scripts/generateVersion.sh|echo|g" "meson.build" || die
+
 	default
 }
 
 src_configure() {
 	cflags-hardened_append
-	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${LD_LIBRARY_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	export PKG_CONFIG_PATH
 	local emesonargs=(
 		#$(meson_feature legacy-renderer legacy_renderer)
 		$(meson_feature systemd)
