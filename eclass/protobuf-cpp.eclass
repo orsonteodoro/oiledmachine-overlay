@@ -132,7 +132,7 @@ eerror "Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 
 # @FUNCTION:  protobuf-cpp_append_pkgconfig
 # @DESCRIPTION:
-# Dump protobuf-cpp location into mycmakeargs
+# Dump protobuf-cpp location into PKG_CONFIG_PATH
 #
 # Example:
 #

@@ -138,7 +138,7 @@ eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 
 # @FUNCTION:  grpc_append_pkgconfig
 # @DESCRIPTION:
-# Dump grpc location into mycmakeargs
+# Dump grpc location into PKG_CONFIG_PATH
 #
 # Example:
 #

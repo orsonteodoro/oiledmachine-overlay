@@ -131,7 +131,7 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 
 # @FUNCTION:  abseil-cpp_append_pkgconfig
 # @DESCRIPTION:
-# Dump absl location into mycmakeargs
+# Dump absl location into PKG_CONFIG_PATH
 #
 # Example:
 #
