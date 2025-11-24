@@ -103,7 +103,7 @@ RDEPEND="
 		)
 	)
 	re2? (
-		>=dev-libs/re2-0.2023-03-01:${RE2_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/re2-0.2023.03.01:${RE2_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/re2:=
 	)
 	snappy? (
