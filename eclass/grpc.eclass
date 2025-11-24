@@ -26,11 +26,13 @@ inherit flag-o-matic
 grpc_append_flags_direct() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%.*}"
+		_GRPC_SLOT="${GRPC_PV%%.*}"
 	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%.*}"
+		_GRPC_SLOT="${GRPC_SLOT%%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV or GRPC_SLOT"
+eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -53,11 +55,13 @@ eerror "Set either GRPC_PV or GRPC_SLOT"
 grpc_append_flags_indirect() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%.*}"
+		_GRPC_SLOT="${GRPC_PV%%.*}"
 	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%.*}"
+		_GRPC_SLOT="${GRPC_SLOT%%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV or GRPC_SLOT"
+eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -80,11 +84,13 @@ eerror "Set either GRPC_PV or GRPC_SLOT"
 grpc_append_mycmakeargs() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%.*}"
+		_GRPC_SLOT="${GRPC_PV%%.*}"
 	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%.*}"
+		_GRPC_SLOT="${GRPC_SLOT%%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV or GRPC_SLOT"
+eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 
@@ -104,11 +110,13 @@ eerror "Set either GRPC_PV or GRPC_SLOT"
 grpc_append_pkgconfig() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%.*}"
+		_GRPC_SLOT="${GRPC_PV%%.*}"
 	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%.*}"
+		_GRPC_SLOT="${GRPC_SLOT%%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV or GRPC_SLOT"
+eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -125,11 +133,13 @@ eerror "Set either GRPC_PV or GRPC_SLOT"
 grpc_append_ld_library_path() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%.*}"
+		_GRPC_SLOT="${GRPC_PV%%.*}"
 	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%.*}"
+		_GRPC_SLOT="${GRPC_SLOT%%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV or GRPC_SLOT"
+eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
