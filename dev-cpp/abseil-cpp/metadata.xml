@@ -7,4 +7,20 @@
     <name>Georgy Yakovlev</name>
   </maintainer>
 </pkgmetadata>
-<!-- this is a multilib ebuild fork -->
+<!--
+  oiledmachine-overlay notes:
+
+  This is a multilib ebuild fork.
+
+  Reversed dependencies:
+
+  20200225.3 U22 subsitute, Protobuf 3, gGRP 1.30
+  20211102.0 protobuf 21.12
+  20220623.2 D12, U24, Protobuf 3, gRPC 1.51
+  20230125.4 utf8_range, webrtc-audio-processing, google-cloud-cpp
+  20240116.3 RE2
+  20240722.1 D13, Protobuf 5, gRPC 1.71
+  20250512.1 G23, Protobuf 6, gRPC 1.75
+  20250814.0 G23, orphaned
+
+-->
