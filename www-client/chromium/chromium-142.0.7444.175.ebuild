@@ -5883,7 +5883,9 @@ einfo "Configuring bundled ffmpeg..."
 
 	if use system-re2 ; then
 ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider disabling the system-re2 USE flag if it fails."
-		export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		export PKG_CONFIG_PATH
 		myconf_gn+=(
 			"use_system_re2=true" # Trigger build/linux/unbundle/re2.gn
 		)
