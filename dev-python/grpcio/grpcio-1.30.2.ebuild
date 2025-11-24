@@ -13,6 +13,7 @@ MY_PV=$(ver_cut 1-3 ${PV})
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
+RE2_SLOT="20220623"
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx11"

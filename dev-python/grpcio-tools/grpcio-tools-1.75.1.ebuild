@@ -115,17 +115,17 @@ ${PKG_CONFIG_PATH}" \
 	)
 	append-ldflags -Wl,--whole-archive "${L1[@]}" -Wl,--no-whole-archive "${L2[@]}"
 	filter-flags "-Wl,--as-needed"
-einfo "CC:  ${CC}"
-einfo "CXX:  ${CXX}"
-einfo "CFLAGS:  ${CFLAGS}"
-einfo "CXXFLAGS:  ${CXXFLAGS}"
-einfo "LDFLAGS:  ${LDFLAGS}"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 src_install() {

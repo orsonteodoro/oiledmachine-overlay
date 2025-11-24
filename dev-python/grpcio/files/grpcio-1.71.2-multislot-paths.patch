@@ -1,0 +1,30 @@
+diff '--color=auto' -urp grpc-1.71.2.orig/setup.py grpc-1.71.2/setup.py
+--- grpc-1.71.2.orig/setup.py	2025-06-26 13:41:43.000000000 -0700
++++ grpc-1.71.2/setup.py	2025-11-23 22:35:57.656239969 -0800
+@@ -330,13 +330,13 @@ if BUILD_WITH_SYSTEM_CARES:
+ 
+ if BUILD_WITH_SYSTEM_RE2:
+     CORE_C_FILES = filter(lambda x: "third_party/re2" not in x, CORE_C_FILES)
+-    RE2_INCLUDE = (os.path.join("/usr", "include", "re2"),)
++    RE2_INCLUDE = (os.path.join("/usr", "lib", "re2", "@RE2_SLOT@", "include", "re2"),)
+ 
+ if BUILD_WITH_SYSTEM_ABSL:
+     CORE_C_FILES = filter(
+         lambda x: "third_party/abseil-cpp" not in x, CORE_C_FILES
+     )
+-    ABSL_INCLUDE = (os.path.join("/usr", "include"),)
++    ABSL_INCLUDE = (os.path.join("/usr", "lib", "abseil-cpp", "@ABSEIL_CPP_SLOT@", "include"),)
+ 
+ EXTENSION_INCLUDE_DIRECTORIES = (
+     (PYTHON_STEM,)
+@@ -380,7 +380,7 @@ if BUILD_WITH_SYSTEM_RE2:
+ if BUILD_WITH_SYSTEM_ABSL:
+     EXTENSION_LIBRARIES += tuple(
+         lib.stem[3:]
+-        for lib in sorted(pathlib.Path("/usr").glob("lib*/libabsl_*.so"))
++        for lib in sorted(pathlib.Path("/usr/lib/abseil-cpp/@ABSEIL_CPP_SLOT@").glob("lib*/libabsl_*.so"))
+     )
+ 
+ DEFINE_MACROS = (("_WIN32_WINNT", 0x600),)
+Only in grpc-1.71.2: setup.py.orig
+Only in grpc-1.71.2: setup.py.rej

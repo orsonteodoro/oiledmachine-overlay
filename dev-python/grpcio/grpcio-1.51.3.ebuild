@@ -13,6 +13,7 @@ MY_PV=$(ver_cut 1-3 ${PV})
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="4"
 PYTHON_COMPAT=( "python3_"{10..11} )
+RE2_SLOT="20220623"
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx14"
@@ -48,7 +49,7 @@ SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
 ${_CXX_STANDARD[@]}
 doc
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
@@ -64,20 +65,14 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}
+	dev-libs/re2:=
 	>=net-dns/c-ares-1.17.2
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13
 	sys-libs/zlib:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
-	cxx_standard_cxx14? (
-		>=dev-libs/re2-0.2022.04.01:0/10
-		dev-libs/re2:=
-	)
-	cxx_standard_cxx17? (
-		>=dev-libs/re2-0.2022.04.01:0/11
-		dev-libs/re2:=
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -94,6 +89,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/grpcio-1.51.3-multislot-paths.patch"
 )
 
 distutils_enable_sphinx "doc/python/sphinx"
@@ -137,6 +133,11 @@ python_configure() {
 		append-flags "-std=c++17"
 		sed -i "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
 	fi
+	sed -i \
+		-e "s|@RE2_SLOT@|${RE2_SLOT}|g" \
+		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_PV%.*}|g" \
+		"${S}/setup.py" \
+		|| die
 }
 
 src_install() {

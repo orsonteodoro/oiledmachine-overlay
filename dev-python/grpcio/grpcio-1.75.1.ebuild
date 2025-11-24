@@ -13,6 +13,7 @@ MY_PV=$(ver_cut 1-3 ${PV})
 PROTOBUF_CPP_SLOT="6"
 PROTOBUF_PYTHON_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
+RE2_SLOT="20240116"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -42,7 +43,7 @@ LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
 IUSE+="
 doc
-ebuild_revision_5
+ebuild_revision_7
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
@@ -53,7 +54,7 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01:0/11
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}
 	dev-libs/re2:=
 	>=net-dns/c-ares-1.17.2
 	net-dns/c-ares:=
@@ -79,6 +80,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/grpcio-1.71.2-multislot-paths.patch"
 )
 
 distutils_enable_sphinx "doc/python/sphinx"
@@ -113,6 +115,11 @@ python_configure() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+	sed -i \
+		-e "s|@RE2_SLOT@|${RE2_SLOT}|g" \
+		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_PV%.*}|g" \
+		"${S}/setup.py" \
+		|| die
 }
 
 src_install() {

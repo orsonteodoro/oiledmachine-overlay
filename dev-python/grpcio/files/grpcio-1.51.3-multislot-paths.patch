@@ -1,0 +1,26 @@
+--- a/setup.py	2023-02-17 11:26:32.000000000 -0800
++++ b/setup.py	2025-11-23 22:30:30.826272666 -0800
+@@ -301,12 +301,12 @@ if BUILD_WITH_SYSTEM_CARES:
+ 
+ if BUILD_WITH_SYSTEM_RE2:
+     CORE_C_FILES = filter(lambda x: 'third_party/re2' not in x, CORE_C_FILES)
+-    RE2_INCLUDE = (os.path.join('/usr', 'include', 're2'),)
++    RE2_INCLUDE = (os.path.join('/usr', 'lib', 're2', '@RE2_SLOT@', 'include', 're2'),)
+ 
+ if BUILD_WITH_SYSTEM_ABSL:
+     CORE_C_FILES = filter(lambda x: 'third_party/abseil-cpp' not in x,
+                           CORE_C_FILES)
+-    ABSL_INCLUDE = (os.path.join('/usr', 'include'),)
++    ABSL_INCLUDE = (os.path.join('/usr', 'lib', 'abseil-cpp', '@ABSEIL_CPP_SLOT@', 'include'),)
+ 
+ EXTENSION_INCLUDE_DIRECTORIES = ((PYTHON_STEM,) + CORE_INCLUDE + ABSL_INCLUDE +
+                                  ADDRESS_SORTING_INCLUDE + CARES_INCLUDE +
+@@ -340,7 +340,7 @@ if BUILD_WITH_SYSTEM_RE2:
+     EXTENSION_LIBRARIES += ('re2',)
+ if BUILD_WITH_SYSTEM_ABSL:
+     EXTENSION_LIBRARIES += tuple(
+-        lib.stem[3:] for lib in pathlib.Path('/usr').glob('lib*/libabsl_*.so'))
++        lib.stem[3:] for lib in pathlib.Path('/usr/lib/abseil-cpp/@ABSEIL_CPP_SLOT@').glob('lib*/libabsl_*.so'))
+ 
+ DEFINE_MACROS = (('_WIN32_WINNT', 0x600),)
+ asm_files = []
