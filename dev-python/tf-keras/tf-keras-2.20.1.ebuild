@@ -8,9 +8,10 @@ BAZEL_PV="5.4.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 JAVA_SLOT=11
+PROTOBUF_PYTHON_SLOT="4"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit bazel distutils-r1 java-pkg-opt-2 pypi
+inherit bazel distutils-r1 java-pkg-opt-2 protobuf-python pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -30,7 +31,7 @@ https://github.com/keras-team/tf-keras/archive/refs/tags/v${PV}.tar.gz
 fi
 
 BAZEL_SKYLIB_PV="1.3.0"
-PROTOBUF_PV="3.21.9"
+PROTOBUF_CPP_PV="3.21.9"
 RULES_CC_COMMIT="818289e5613731ae410efb54218a4077fb9dbb03"
 RULES_PYTHON_PV="0.8.0"
 RULES_PROTO_COMMIT="f7a30f6f80006b591fa7c437fe5a951eb10bcbcf"
@@ -40,7 +41,7 @@ ZLIB_PV="1.2.13"
 
 bazel_external_uris="
 https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
-https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
+https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_CPP_PV}.zip -> protobuf-${PROTOBUF_CPP_PV}.zip
 https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
 https://github.com/bazelbuild/rules_python/archive/refs/tags/${RULES_PYTHON_PV}.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
 https://github.com/bazelbuild/rules_proto/archive/${RULES_PROTO_COMMIT}.zip -> rules_proto-${RULES_PROTO_COMMIT}.zip
@@ -62,7 +63,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 # protobuf requirement relaxed
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -123,6 +126,11 @@ src_prepare() {
 	python_copy_sources
 }
 
+python_configure() {
+	local PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	protobuf_python_set_pythonpath
+}
+
 src_configure() {
 einfo "Disabling ccache"
 	export PATH=$(echo "${PATH}" \
@@ -132,12 +140,23 @@ einfo "Disabling ccache"
 }
 
 add_sandbox_rules() {
-	local L=(
-		"/usr/lib/${EPYTHON}/site-packages"
-		"/usr/lib/${EPYTHON}/site-packages/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+	local CYTHON_SLOTS=(
+		"0.29"
+		"3.0"
+		"3.1"
 	)
+	local L=()
+
+	local s
+	for s in ${CYTHON_SLOTS[@]} ; do
+		L+=(
+			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages"
+			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/__pycache__"
+			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Cython/__pycache__"
+			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+		)
+	done
+
 einfo "Adding sandbox rules"
 	local path
 	for path in "${L[@]}" ; do

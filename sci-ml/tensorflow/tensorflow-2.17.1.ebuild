@@ -132,7 +132,7 @@ gen_seq_inc() {
 
 inherit bazel cflags-hardened check-compiler-switch check-reqs cuda cython distutils-r1
 inherit dhms flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot llvm multibuild
-inherit prefix rocm toolchain-funcs
+inherit prefix protobuf-python rocm toolchain-funcs
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
@@ -203,8 +203,8 @@ ONEDNN_PV="3.4.2"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/
 OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 #PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/4662f7552dc2e420ee20361c077b7aeb334a1087/third_party/rules_cuda/cuda/dependencies.bzl#L66 ; hash from with EGIT_COMMIT_TF_RUNTIME
-PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
-PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
+PROTOBUF_CPP_PV="3.21.9"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
+PROTOBUF_PYTHON_SLOT="4"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py.tpl
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/rules_swift/blob/1.5.0/MODULE.bazel#L13
@@ -304,7 +304,7 @@ https://github.com/Maratyszcza/FXdiv/archive/${EGIT_COMMIT_FXDIV}.zip -> FXdiv-$
 https://github.com/yugr/Implib.so/archive/${EGIT_COMMIT_IMPLIB_SO}.tar.gz -> Implib.so-${EGIT_COMMIT_IMPLIB_SO}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_COMMIT_LIBEIGEN}/eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz -> eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes/archive/${EGIT_COMMIT_ML_DTYPES}/ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz -> ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz
-https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_CPP_PV}.zip -> protobuf-${PROTOBUF_CPP_PV}.zip
 https://storage.googleapis.com/mirror.tensorflow.org/gitlab.mpcdf.mpg.de/mtr/ducc/-/archive/${EGIT_COMMIT_DUCC}/ducc-${EGIT_COMMIT_DUCC}.tar.gz
 
 	cuda? (
@@ -443,7 +443,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_19
+ebuild_revision_20
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -595,11 +595,11 @@ gen_protobuf_rdepend() {
 				${GOOGLE_CLOUD_CPP_PROTOBUF_3}
 				!big-endian? (
 					python_single_target_${impl}? (
-						net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
+						net-libs/grpc:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-),python]
 					)
 				)
 				big-endian? (
-					net-libs/grpc:${PROTOBUF_PV%%.*}[-python]
+					net-libs/grpc:${PROTOBUF_CPP_PV%%.*}[-python]
 				)
 			)
 		"
@@ -617,10 +617,10 @@ gen_grpcio_rdepend() {
 	for impl in ${PYTHON_COMPAT[@]} ; do
 		echo "
 			(
-				dev-python/grpcio:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-				dev-python/grpcio-tools:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-				net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
-				virtual/protobuf-python:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+				dev-python/grpcio:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-)]
+				dev-python/grpcio-tools:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-)]
+				net-libs/grpc:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-),python]
+				virtual/protobuf-python:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
 			)
 		"
 	done
@@ -648,11 +648,11 @@ gen_protobuf_rdepend() {
 	for impl in ${PYTHON_COMPAT[@]} ; do
 		echo "
 			(
-				dev-libs/protobuf:${PROTOBUF_PV%%.*}
+				dev-libs/protobuf:${PROTOBUF_CPP_PV%%.*}
 				dev-libs/protobuf:=
 				python? (
 					python_single_target_${impl}? (
-						virtual/protobuf-python:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+						virtual/protobuf-python:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
 						virtual/protobuf-python:=
 					)
 				)
@@ -1363,6 +1363,8 @@ ewarn
 		export TF_NEED_MPI=$(usex mpi 1 0)
 		export TF_SET_ANDROID_WORKSPACE=0
 
+		local PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		protobuf-python_set_pythonpath
 		cython_set_cython_slot "3"
 		cython_python_configure
 		if use python ; then
