@@ -39,7 +39,7 @@ abseil-cpp_append_flags_direct() {
 	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
 	else
-eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
+eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -76,7 +76,7 @@ abseil-cpp_append_flags_indirect() {
 	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
 	else
-eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
+eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -115,7 +115,7 @@ abseil-cpp_append_mycmakeargs() {
 	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
 	else
-eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
+eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		die
 	fi
 
@@ -149,7 +149,7 @@ abseil-cpp_append_pkgconfig() {
 	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
 	else
-eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
+eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -180,7 +180,7 @@ abseil-cpp_append_ld_library_path() {
 	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
 	else
-eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
+eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)

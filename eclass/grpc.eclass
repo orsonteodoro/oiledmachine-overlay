@@ -42,7 +42,7 @@ grpc_append_flags_direct() {
 	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
 		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
+eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -81,7 +81,7 @@ grpc_append_flags_indirect() {
 	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
 		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
+eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -122,7 +122,7 @@ grpc_append_mycmakeargs() {
 	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
 		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
+eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 
@@ -158,7 +158,7 @@ grpc_append_pkgconfig() {
 	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
 		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
+eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
@@ -191,7 +191,7 @@ grpc_append_ld_library_path() {
 	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
 		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
 	else
-eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
+eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		die
 	fi
 	local libdir=$(get_libdir)
