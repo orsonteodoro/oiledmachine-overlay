@@ -5,9 +5,6 @@ EAPI=8
 
 # U24
 
-# TODO:
-# Verify rpath for re2
-
 CXX_STANDARD=26
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 RE2_SLOT="20240116"
@@ -26,7 +23,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
-inherit cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson toolchain-funcs
+inherit cflags-hardened check-compiler-switch fix-rpath libcxx-slot libstdcxx-slot meson toolchain-funcs
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -48,7 +45,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer +qtutils systemd test X
-ebuild_revision_15
+ebuild_revision_16
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -182,6 +179,15 @@ src_configure() {
 		-Dtracy_enable=false
 	)
 	meson_src_configure
+}
+
+src_install() {
+	meson_src_install
+	local RPATH_FIXES=(
+		"${ED}/usr/bin/Hyprland:/usr/lib/re2/${RE2_SLOT}/$(get_libdir)"
+	)
+	fix-rpath_repair
+	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  0.51.1 PASSED (20250815)
