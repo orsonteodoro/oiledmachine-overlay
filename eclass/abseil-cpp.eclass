@@ -113,7 +113,7 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 	local libdir=$(get_libdir)
 
 	# Sanitize/isolate
-	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp|d" | tr $'\n' ":")
+	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp/|d" | tr $'\n' ":")
 
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
 }
@@ -134,7 +134,7 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 	local libdir=$(get_libdir)
 
 	# Sanitize/isolate
-	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp|d" | tr $'\n' ":")
+	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp/|d" | tr $'\n' ":")
 
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 }
