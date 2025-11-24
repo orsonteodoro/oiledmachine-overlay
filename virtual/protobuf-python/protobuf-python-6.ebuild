@@ -37,7 +37,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_LTS[@]/llvm_slot_}
 )
 
-inherit libcxx-slot libstdcxx-slot python-single-r1
+inherit libcxx-slot libstdcxx-slot python-r1
 
 DESCRIPTION="A virtual package to manage dev-python/protobuf stability"
 LICENSE="metapackage"
@@ -45,8 +45,7 @@ VERSIONS_MONITORED="6.33"
 SLOT="6/${VERSIONS_MONITORED}"
 KEYWORDS="~amd64"
 IUSE="
-${GCC_COMPAT[@]}
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -55,9 +54,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	!virtual/protobuf-python:0
-	$(python_gen_cond_dep '
-		dev-python/protobuf:6.33/6.33[${PYTHON_USEDEP}]
-	')
+	dev-python/protobuf:6.33/6.33[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 "
 DEPEND+="
