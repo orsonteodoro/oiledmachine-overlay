@@ -23,6 +23,16 @@ inherit flag-o-matic
 # @FUNCTION:  protobuf-cpp_append_flags_direct
 # @DESCRIPTION:
 # Append flags for C/C++ with passing LDFLAGS directly to linker
+#
+# Example:
+#
+# PROTOBUF_CPP_SLOT="3"
+# inherit protobuf-cpp
+#
+# src_configure() {
+#   protobuf-cpp_append_flags_direct
+# }
+#
 protobuf-cpp_append_flags_direct() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
@@ -50,6 +60,16 @@ eerror "Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  protobuf-cpp_append_flags_indirect
 # @DESCRIPTION:
 # Append flags for C/C++ with passing LDFLAGS indirectly to linker
+#
+# Example:
+#
+# PROTOBUF_CPP_SLOT="3"
+# inherit protobuf-cpp
+#
+# src_configure() {
+#   protobuf-cpp_append_flags_indirect
+# }
+#
 protobuf-cpp_append_flags_indirect() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
@@ -77,6 +97,18 @@ eerror "Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  protobuf-cpp_append_mycmakeargs
 # @DESCRIPTION:
 # Dump protobuf-cpp location into mycmakeargs
+#
+# Example:
+#
+# PROTOBUF_CPP_SLOT="3"
+# inherit protobuf-cpp
+#
+# src_configure() {
+#   local mycmakeargs=(
+#     $(protobuf-cpp_append_mycmakeargs)
+#   )
+# }
+#
 protobuf-cpp_append_mycmakeargs() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
@@ -101,6 +133,16 @@ eerror "Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  protobuf-cpp_append_pkgconfig
 # @DESCRIPTION:
 # Dump protobuf-cpp location into mycmakeargs
+#
+# Example:
+#
+# PROTOBUF_CPP_SLOT="3"
+# inherit protobuf-cpp
+#
+# src_configure() {
+#   protobuf-cpp_append_pkgconfig
+# }
+#
 protobuf-cpp_append_pkgconfig() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
@@ -122,6 +164,16 @@ eerror "Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  protobuf-cpp_append_ld_library_path
 # @DESCRIPTION:
 # Dump protobuf-cpp location into LD_LIBRARY_PATH
+#
+# Example:
+#
+# PROTOBUF_CPP_SLOT="3"
+# inherit protobuf-cpp
+#
+# src_configure() {
+#   protobuf-cpp_append_ld_library_path
+# }
+#
 protobuf-cpp_append_ld_library_path() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then

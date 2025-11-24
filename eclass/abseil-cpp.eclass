@@ -22,6 +22,16 @@ inherit flag-o-matic
 # @FUNCTION:  abseil-cpp_append_flags_direct
 # @DESCRIPTION:
 # Append flags for C/C++ with passing LDFLAGS directly to linker
+#
+# Example:
+#
+# ABSEIL_CPP_SLOT="20250814"
+# inherit abseil-cpp
+#
+# src_configure() {
+#   abseil-cpp_append_flags_direct
+# }
+#
 abseil-cpp_append_flags_direct() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then
@@ -49,6 +59,16 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 # @FUNCTION:  abseil-cpp_append_flags_indirect
 # @DESCRIPTION:
 # Append flags for C/C++ with passing LDFLAGS indirectly to linker
+#
+# Example:
+#
+# ABSEIL_CPP_SLOT="20250814"
+# inherit abseil-cpp
+#
+# src_configure() {
+#   abseil-cpp_append_flags_indirect
+# }
+#
 abseil-cpp_append_flags_indirect() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then
@@ -76,6 +96,18 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 # @FUNCTION:  abseil-cpp_append_mycmakeargs
 # @DESCRIPTION:
 # Dump absl location into mycmakeargs
+#
+# Example:
+#
+# ABSEIL_CPP_SLOT="20250814"
+# inherit abseil-cpp
+#
+# src_configure() {
+#   local mycmakeargs=(
+#     $(abseil-cpp_append_mycmakeargs)
+#   )
+# }
+#
 abseil-cpp_append_mycmakeargs() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then
@@ -100,6 +132,16 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 # @FUNCTION:  abseil-cpp_append_pkgconfig
 # @DESCRIPTION:
 # Dump absl location into mycmakeargs
+#
+# Example:
+#
+# ABSEIL_CPP_SLOT="20250814"
+# inherit abseil-cpp
+#
+# src_configure() {
+#   abseil-cpp_append_pkgconfig
+# }
+#
 abseil-cpp_append_pkgconfig() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then
@@ -121,6 +163,16 @@ eerror "Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 # @FUNCTION:  abseil-cpp_append_ld_library_path
 # @DESCRIPTION:
 # Dump absl location into LD_LIBRARY_PATH
+#
+# Example:
+#
+# ABSEIL_CPP_SLOT="20250814"
+# inherit abseil-cpp
+#
+# src_configure() {
+#   abseil-cpp_append_ld_library_path
+# }
+#
 abseil-cpp_append_ld_library_path() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then

@@ -23,6 +23,16 @@ inherit flag-o-matic
 # @FUNCTION:  grpc_append_flags_direct
 # @DESCRIPTION:
 # Append flags for C/C++ with passing LDFLAGS directly to linker
+#
+# Example:
+#
+# GRPC_SLOT="3"
+# inherit grpc
+#
+# src_configure() {
+#   grpc_append_flags_direct
+# }
+#
 grpc_append_flags_direct() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
@@ -52,6 +62,16 @@ eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  grpc_append_flags_indirect
 # @DESCRIPTION:
 # Append flags for C/C++ with passing LDFLAGS indirectly to linker
+#
+# Example:
+#
+# GRPC_SLOT="3"
+# inherit grpc
+#
+# src_configure() {
+#   grpc_append_flags_indirect
+# }
+#
 grpc_append_flags_indirect() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
@@ -81,6 +101,18 @@ eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  grpc_append_mycmakeargs
 # @DESCRIPTION:
 # Dump grpc location into mycmakeargs
+#
+# Example:
+#
+# GRPC_SLOT="3"
+# inherit grpc
+#
+# src_configure() {
+#   local mycmakeargs=(
+#     $(grpc_append_mycmakeargs)
+#   )
+# }
+#
 grpc_append_mycmakeargs() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
@@ -107,6 +139,16 @@ eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  grpc_append_pkgconfig
 # @DESCRIPTION:
 # Dump grpc location into mycmakeargs
+#
+# Example:
+#
+# GRPC_SLOT="3"
+# inherit grpc
+#
+# src_configure() {
+#   grpc_append_pkgconfig
+# }
+#
 grpc_append_pkgconfig() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
@@ -130,6 +172,16 @@ eerror "Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  grpc_append_ld_library_path
 # @DESCRIPTION:
 # Dump grpc location into LD_LIBRARY_PATH
+#
+# Example:
+#
+# GRPC_SLOT="3"
+# inherit grpc
+#
+# src_configure() {
+#   grpc_append_ld_library_path
+# }
+#
 grpc_append_ld_library_path() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
