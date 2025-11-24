@@ -10,6 +10,7 @@ EAPI=8
 # Finish *DEPENDs updates
 # Make protobuf internal dependency
 # Change configure for multislot re2
+# Setup PYTHONPATH for protobuf-python with new slot changes
 
 # TODO package:
 # >=dev-python/portpicker-23.2
@@ -442,7 +443,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_18
+ebuild_revision_19
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -611,18 +612,27 @@ RDEPEND_PROTOBUF="
 	)
 	net-libs/grpc:=
 "
+gen_grpcio_rdepend() {
+	local impl
+	for impl in ${PYTHON_COMPAT[@]} ; do
+		echo "
+			(
+				dev-python/grpcio:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+				dev-python/grpcio-tools:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+				net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
+				virtual/protobuf-python:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+			)
+		"
+	done
+}
+
 RDEPEND_GRPCIO="
 	|| (
-		(
-			dev-python/grpcio:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-			dev-python/grpcio-tools:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-			net-libs/grpc:${PROTOBUF_PV%%.*}[python_targets_${impl}(-),python]
-			dev-python/protobuf:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-		)
+		$(gen_grpcio_rdepend)
 	)
 	dev-python/grpcio:=
 	dev-python/grpcio-tools:=
-	dev-python/protobuf:=
+	virtual/protobuf-python:=
 	net-libs/grpc:=
 "
 
@@ -642,8 +652,8 @@ gen_protobuf_rdepend() {
 				dev-libs/protobuf:=
 				python? (
 					python_single_target_${impl}? (
-						dev-python/protobuf:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
-						dev-python/protobuf:=
+						virtual/protobuf-python:${PROTOBUF_PV%%.*}[python_targets_${impl}(-)]
+						virtual/protobuf-python:=
 					)
 				)
 			)
