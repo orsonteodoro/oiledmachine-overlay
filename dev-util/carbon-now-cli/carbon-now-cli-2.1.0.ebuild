@@ -7,15 +7,15 @@ EAPI=8
 AT_TYPES_NODE_PV="18.16.3"
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1193"
-	["chromium-headless-shell-linux-glibc-amd64"]="1193"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="1357"
+# See https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1194"
+	["chromium-headless-shell-linux-glibc-amd64"]="1194"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="1371"
 	["ffmpeg-linux-glibc-amd64"]="1011"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1490"
-	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1485"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2203"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1495"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1490"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2215"
 )
 EPLAYRIGHT_ALLOW_BROWSERS=(
 # Allowed engines that are used by project.
@@ -30,7 +30,7 @@ MY_PN="${PN//-cli/}"
 NODE_ENV="development"
 NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
-PLAYWRIGHT_PV="1.55.1"
+PLAYWRIGHT_PV="1.56.1"
 
 inherit desktop edo npm playwright
 
@@ -134,7 +134,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium? (
 			BSD
-			chromium-140.0.7339.x
+			chromium-141.0.7390.x
 		)
 	"
 fi
@@ -142,7 +142,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium-tip-of-tree? (
 			BSD
-			chromium-141.0.7342.x
+			chromium-142.0.7430.x
 		)
 	"
 fi
@@ -150,7 +150,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; t
 	THIRD_PARTY_LICENSES+="
 		chromium-headless-shell? (
 			BSD
-			chromium-140.0.7339.x
+			chromium-141.0.7390.x
 		)
 	"
 fi
@@ -158,7 +158,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox? (
 			BSD
-			FF-141.0-THIRD-PARTY-LICENSES
+			FF-142.0-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -166,7 +166,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox-beta? (
 			BSD
-			FF-142.0b4-THIRD-PARTY-LICENSES
+			FF-143.0b10-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -284,10 +284,10 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.55.1/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.55.1/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.56.1/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/browsers.json
 
 	local L=()
 	local choice
@@ -299,7 +299,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.55.1/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.56.1/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
