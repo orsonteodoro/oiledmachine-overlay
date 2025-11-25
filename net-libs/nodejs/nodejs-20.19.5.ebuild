@@ -133,9 +133,9 @@ SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
-acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector +npm man
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector +npm
 mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_46
+ebuild_revision_47
 "
 
 gen_required_use_pgo() {
@@ -297,8 +297,8 @@ eerror
 	fi
 
 	local u
-	for u in ${PN}_trainers_http ${PN}_trainers_https ; do
-                if use "${u}" && has network-sandbox $FEATURES ; then
+	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do
+                if use "${u}" && has "network-sandbox" ${FEATURES} ; then
 			sandbox-changes_no_network_sandbox "For USE=${u} to download and to generate PGO profile"
                 fi
 	done
@@ -311,7 +311,7 @@ eerror
 		die
 	fi
 
-	if use ${PN}_trainers_string_decoder \
+	if use "${PN}_trainers_string_decoder" \
 		&& [[ ! ( "${NODEJS_EXCLUDED_TRAINERS}" =~ \
 			"benchmark/string_decoder/string-decoder.js" ) ]] ; then
 ewarn
@@ -321,7 +321,7 @@ ewarn "per-package envvar set."
 ewarn
 	fi
 
-	if use ${PN}_trainers_path ; then
+	if use "${PN}_trainers_path" ; then
 ewarn
 ewarn "The benchmark/path/resolve-win32.js may not reflect typical usage."
 ewarn "Consider adding it to the NODEJS_EXCLUDED_TRAINERS."
@@ -398,32 +398,32 @@ src_prepare() {
 	local f3="-O2"
 	local f4="-O3"
 
-	replace-flags '-Ofast' '-O2'
-	replace-flags '-O4' '-O2'
-	replace-flags '-O3' '-O2'
-	replace-flags '-O2' '-O2'
-	replace-flags '-Os' '-O2'
-	replace-flags '-Oz' '-O2'
-	replace-flags '-O1' '-O2'
-	replace-flags '-O0' '-O2'
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-O2" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-O0" "-O2"
 	if ! is-flagq "-O2" ; then
 	# Add fallback flag.
 	# Default to performance.
 	# GCC/Clang default to -O0
-		append-flags '-O2'
+		append-flags "-O2"
 	fi
 	local oflag
 	if use debug ; then
 		oflag="-O0"
-		replace-flags '-O*' '-O0'
-		append-flags -ggdb3
-		append-cppflags -DDEBUG
+		replace-flags "-O*" "-O0"
+		append-flags "-ggdb3"
+		append-cppflags "-DDEBUG"
 	else
 		oflag="-O2"
 	fi
 	f1="${oflag}"
 	f3="${oflag}"
-	sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
+	sed -i -e "s|-O3|${oflag}|g" "${FP[@]}" || die
 	sed -i -e "s|-O3|${oflag}|g" "common.gypi" || die
 	sed -i \
 		-e "s|__OFLAGS_F1__|${f1}|g" \
@@ -662,15 +662,15 @@ ewarn "If moldlto fails for gcc, try clang."
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags \
-		'-flto*' \
-		'-fprofile*' \
-		'-fuse-ld*'
+		"-flto*" \
+		"-fprofile*" \
+		"-fuse-ld*"
 
 	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
-		append-ldflags -fuse-ld=mold
+		append-ldflags "-fuse-ld=mold"
 	fi
 
-	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+	if ! use mold && is-flagq "-fuse-ld=mold" && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
 		die
 	fi
@@ -722,7 +722,7 @@ ewarn
 	set_jit_level
 
 	# Already set in src_prepare()
-	filter-flags '-O*'
+	filter-flags "-O*"
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
@@ -734,9 +734,9 @@ ewarn
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
 	"${EPYTHON}" configure.py \
-		--prefix="${EPREFIX}/usr" \
+		--prefix="${EPREFIX}/usr/lib/node/${SLOT_MAJOR}" \
 		--dest-cpu="${myarch}" \
-		${myconf[@]} || die
+		"${myconf[@]}" || die
 
 	# Prevent double build on install.
 	sed -i -e "s|^install: all|install: |g" "Makefile" || die
@@ -806,11 +806,11 @@ train_trainer_custom() {
 	[[ ! -e "${S}/out/Release/node" ]] && die "Missing node"
 
 	NODE_PATH="${S}/node_modules/wrk"
-	NODE_PATH+=":${ED}/usr/$(get_libdir)/node_modules"
+	NODE_PATH+=":${ED}/usr/lib/node/${SLOT_MAJOR}/$(get_libdir)/node_modules"
 	export NODE_PATH
 	local _PATH
-	_PATH="${ED}/usr/bin"
-	_PATH+=":${ED}/usr/$(get_libdir)/node_modules/npm/bin"
+	_PATH="${ED}/usr/lib/node/${SLOT_MAJOR}/bin"
+	_PATH+=":${ED}/usr/lib/node/${SLOT_MAJOR}/$(get_libdir)/node_modules/npm/bin"
 	_PATH+=":${S}/node_modules/.bin"
 	PATH="${_PATH}:${PATH_ORIG}"
 	export PATH
@@ -913,23 +913,16 @@ src_install() {
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
 
-	local REL_D_BASE="usr/$(get_libdir)"
-	local D_BASE="/${REL_D_BASE}"
-	local ED_BASE="${ED}/${REL_D_BASE}"
-
-	${EPYTHON} "tools/install.py" install \
+	local prefix="${EPREFIX}/usr/lib/node/${SLOT_MAJOR}"
+	"${EPYTHON}" "tools/install.py" install \
 		--dest-dir "${D}" \
-		--prefix "${EPREFIX}/usr" \
+		--prefix "${prefix}" \
 		|| die
 
-	mv "${ED}/usr/bin/node"{"","${SLOT_MAJOR}"} || die
-	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		dosym "node${SLOT_MAJOR}" "/usr/bin/node"
-	fi
-	pax-mark -m "${ED}/usr/bin/node${SLOT_MAJOR}"
+	pax-mark -m "${ED}/usr/bin/node/${SLOT_MAJOR}/bin/node"
 
-	# set up a symlink structure that node-gyp expects..
-	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"
+	# Set up a symlink structure that node-gyp expects.
+	local D_INCLUDE_BASE="${prefix}/include/node"
 	dodir "${D_INCLUDE_BASE}/deps/"{"v8","uv"}
 	dosym "." "${D_INCLUDE_BASE}/src"
 	local var
@@ -937,48 +930,27 @@ src_install() {
 		dosym "../.." "${D_INCLUDE_BASE}/${var}"
 	done
 
-	# Avoid merge conflict
-	mv "${ED}/usr/include/node/"* "${ED}${D_INCLUDE_BASE}" || die
-	rm -rf "${ED}/usr/include/node" || die
-
-	if use doc; then
-		docinto html
-		dodoc -r "${S}/doc/"*
-	fi
-
-	if ! use man ; then
-		rm -rf "${ED}//usr/share/man/man1/node.1"* || die
+	if use doc ; then
+		insinto "/usr/share/node/${SLOT_MAJOR}/share/doc/${PF}/html"
+		doins -r "${S}/doc/"*
 	fi
 
 	# Use tarball instead.
-	rm -rf "${ED}/usr/$(get_libdir)/node_modules/npm"
-	rm -rf "${ED}/usr/bin/npm"
-	rm -rf "${ED}/usr/bin/npx"
-
-	mv \
-		"${ED}/usr/share/doc/node" \
-		"${ED}/usr/share/doc/${PF}" \
-		|| die
-
-	# Let eselect-nodejs handle switching corepack
-	dodir "/usr/$(get_libdir)/corepack"
-	mv \
-		"${ED}/usr/$(get_libdir)/node_modules/corepack" \
-		"${ED}/usr/$(get_libdir)/corepack/node${SLOT_MAJOR}" \
-		|| die
-	rm -rf "${ED}/usr/bin/corepack"
+	rm -rf "${ED}${prefix}/$(get_libdir)/node_modules/npm"
+	rm -rf "${ED}${prefix}/bin/npm"
+	rm -rf "${ED}${prefix}/bin/npx"
 
 	uopts_src_install
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
 		objcopy --only-keep-debug "out/Debug/node" "${T}/node${SLOT_MAJOR}.debug" || die
 		exeinto "/usr/lib/debug/usr/bin"
 		doexe "${T}/node${SLOT_MAJOR}.debug"
-		strip --strip-unneeded "${ED}/usr/bin/node${SLOT_MAJOR}" || die
+		strip --strip-unneeded "${ED}${prefix}/bin/node${SLOT_MAJOR}" || die
 	fi
 }
 
 src_test() {
-	if has usersandbox ${FEATURES}; then
+	if has "usersandbox" ${FEATURES} ; then
 		rm -f "${S}/test/parallel/test-fs-mkdir.js"
 ewarn
 ewarn "You are emerging ${PN} with 'usersandbox' enabled. Excluding tests known"
@@ -1000,28 +972,8 @@ ewarn
 }
 
 pkg_postinst() {
-	if has_version ">=net-libs/nodejs-${PV}" ; then
-einfo "Found higher slots, manually change the headers with \`eselect nodejs\`."
-	else
-		eselect nodejs set "node${SLOT_MAJOR}"
-	fi
-	cp \
-		"${FILESDIR}/node-multiplexer-v${MULTIPLEXER_VER}" \
-		"${EROOT}/usr/bin/node" \
-		|| die
-	sed -i \
-		-e "s|__EPREFIX__|${EPREFIX}|g" \
-		"${EROOT}/usr/bin/node" \
-		|| die
-	chmod 0755 "/usr/bin/node" || die
-	chown "root:root" "/usr/bin/node" || die
-	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
-einfo
-einfo "When compiling with nodejs multislot, you to switch via"
-einfo "\`eselect nodejs\` in order to compile against the headers matching the"
-einfo "corresponding SLOT.  This means that you cannot compile with different"
-einfo "SLOTS simultaneously."
-einfo
+ewarn "The muxer has been dropped for being counterproductive for parallel emerge."
+ewarn "You must use PATH=\"/usr/lib/node/\${NODE_SLOT}/bin\" with scripts instead."
 	uopts_pkg_postinst
 }
 
