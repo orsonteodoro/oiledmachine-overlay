@@ -35,10 +35,10 @@ ELECTRON_BUILDER_PV="26.0.14"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="38.2.2" # Cr 140.0.7339.133, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="39.2.3" # Cr 142.0.7444.175, node 22.21.1
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="39.2.1" # Cr 142.0.7444.162, node 22.21.1
 fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT=3
@@ -87,11 +87,11 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-38.2.0-chromium.html
+		electron-39.2.3-chromium.html
 	"
 else
 	LICENSE+="
-		electron-38.2.0-chromium.html
+		electron-39.2.1-chromium.html
 	"
 fi
 SLOT="0"
@@ -244,22 +244,25 @@ ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/danger/package.json and in ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
+#ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
+ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
+ewarn "QA:  Manually remove @octokit/request references from ${S}/danger/package.json"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest references from ${S}/danger/package.json"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
