@@ -28,24 +28,24 @@
 # inherit abseil-cpp multilib-minimal protobuf-cpp
 #
 # multilib_src_configure() {
-#   abseil-cpp_append_flags_direct # For includes, linking, rpath
-#   protobuf-cpp_append_flags_direct # For includes, linking, rpath
-#   protobuf-cpp_append_path # For protoc
+#   abseil-cpp_src_configure # For includes, linking flags
+#   protobuf-cpp_src_configure # For includes, linking flags, path
+#   emake
 # }
 #
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp multilib-minimal protobuf-cpp
+# inherit abseil-cpp cmake multilib-minimal protobuf-cpp
 #
 # multilib_src_configure() {
-#   abseil-cpp_append_flags_direct # For rpath change
-#   protobuf-cpp_append_flags_direct # For rpath change
-#   protobuf-cpp_append_path # For protoc
+#   abseil-cpp_src_configure # For linking flags
+#   protobuf-cpp_src_configure # For linking flags, path
 #   local mycmakeargs() {
 #     $(abseil-cpp_append_mycmakeargs)
 #     $(protobuf-cpp_append_mycmakeargs)
 #   }
+#   cmake_src_configure
 # }
 #
 
@@ -59,22 +59,23 @@ _PROTOBUF_CPP_ECLASS=1
 
 inherit flag-o-matic
 
-# @FUNCTION:  protobuf-cpp_append_flags_direct
+# @FUNCTION:  protobuf-cpp_src_configure
 # @DESCRIPTION:
 # Append flags for C/C++ while passing LDFLAGS directly to linker
 #
 # Example:
 #
+# PROTOBUF_CPP_LINK_MODE="direct"
 # PROTOBUF_CPP_SLOT="3"
 # inherit protobuf-cpp
 #
 # src_configure() {
-#   protobuf-cpp_append_flags_direct
+#   protobuf-cpp_src_configure
 #   einfo "PROTOBUF_CPP_CFLAGS:  ${PROTOBUF_CPP_CFLAGS}"
 #   einfo "PROTOBUF_CPP_LDFLAGS:  ${PROTOBUF_CPP_LDFLAGS}"
+#   emake
 # }
-#
-protobuf-cpp_append_flags_direct() {
+protobuf-cpp_src_configure() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
 		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
@@ -86,83 +87,71 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 	fi
 	local libdir=$(get_libdir)
 
-	# Sanitize/isolate
-	filter-flags \
-		"-I/usr/lib/protobuf/*/include" \
-		"-L/usr/lib/protobuf/*" \
-		"--rpath,/usr/lib/protobuf/*"
-
-	# For manual configuration or sed patch
-	export PROTOBUF_CPP_CFLAGS="-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
-	export PROTOBUF_CPP_CXXFLAGS="${PROTOBUF_CPP_CFLAGS}"
-	export PROTOBUF_CPP_LDFLAGS="-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir} --rpath=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
-
-	append-flags "-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
-	append-ldflags \
-		"-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}" \
-		"--rpath=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
-}
-
-# @FUNCTION:  protobuf-cpp_append_flags_indirect
-# @DESCRIPTION:
-# Append flags for C/C++ while passing LDFLAGS indirectly to linker
-#
-# Example:
-#
-# PROTOBUF_CPP_SLOT="3"
-# inherit protobuf-cpp
-#
-# src_configure() {
-#   protobuf-cpp_append_flags_indirect
-#   einfo "PROTOBUF_CPP_CFLAGS:  ${PROTOBUF_CPP_CFLAGS}"
-#   einfo "PROTOBUF_CPP_LDFLAGS:  ${PROTOBUF_CPP_LDFLAGS}"
-# }
-#
-protobuf-cpp_append_flags_indirect() {
-	local _PROTOBUF_CPP_SLOT=""
-	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
+	# Sanitize/isolate multiabi pollution from logs
 	filter-flags \
 		"-I/usr/lib/protobuf/*/include" \
 		"-Wl,-L/usr/lib/protobuf/*" \
-		"-Wl,-rpath,/usr/lib/protobuf/*"
-
-	# For manual configuration or sed patch
-	export PROTOBUF_CPP_CFLAGS="-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
-	export PROTOBUF_CPP_CXXFLAGS="${PROTOBUF_CPP_CFLAGS}"
-	export PROTOBUF_CPP_LDFLAGS="-Wl,-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+		"-Wl,-rpath,/usr/lib/protobuf/*" \
+		"-L/usr/lib/protobuf/*" \
+		"--rpath,/usr/lib/protobuf/*"
 
 	append-flags "-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
-	append-ldflags \
-		"-Wl,-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}" \
-		"-Wl,-rpath,/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+
+	if [[ ${PROTOBUF_CPP_LINK_MODE:-"indirect"} == "indirect" ]] ; then
+		# For manual configuration or sed patch
+		export PROTOBUF_CPP_CFLAGS="-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
+		export PROTOBUF_CPP_CXXFLAGS="${PROTOBUF_CPP_CFLAGS}"
+		export PROTOBUF_CPP_LDFLAGS="-Wl,-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+
+		append-ldflags \
+			"-Wl,-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}" \
+			"-Wl,-rpath,/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+	else
+		# For manual configuration or sed patch
+		export PROTOBUF_CPP_CFLAGS="-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
+		export PROTOBUF_CPP_CXXFLAGS="${PROTOBUF_CPP_CFLAGS}"
+		export PROTOBUF_CPP_LDFLAGS="-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir} --rpath=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+
+		append-ldflags \
+			"-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}" \
+			"--rpath=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+	fi
+
+	# Sanitize/isolate
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
+	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
+	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
+
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 }
 
-# @FUNCTION:  protobuf-cpp_append_mycmakeargs
+# @FUNCTION:  protobuf-cpp_python_configure
 # @DESCRIPTION:
-# Dump protobuf-cpp location into mycmakeargs
+# Alias for ebuild style consistency
+protobuf-cpp_python_configure() {
+	grpc_src_configure
+}
+
+# @FUNCTION:  protobuf-cpp_append_cmake
+# @DESCRIPTION:
+# Dump protobuf-cpp location into mycmakeargs for CMake's find_package().
 #
 # Example:
 #
 # PROTOBUF_CPP_SLOT="3"
-# inherit protobuf-cpp
+# inherit cmake protobuf-cpp
 #
 # src_configure() {
+#   protobuf-cpp_src_configure # Append or get rpath for build script modding.
 #   local mycmakeargs=(
-#     $(protobuf-cpp_append_mycmakeargs)
+#     $(protobuf-cpp_append_cmake)
 #   )
+#   cmake_src_configure
 # }
 #
-protobuf-cpp_append_mycmakeargs() {
+protobuf-cpp_append_cmake() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
 		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
@@ -181,99 +170,6 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 	fi
 	local libdir=$(get_libdir)
 	echo "-D${name}_DIR=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/cmake/protobuf"
-}
-
-# @FUNCTION:  protobuf-cpp_append_pkgconfig
-# @DESCRIPTION:
-# Dump protobuf-cpp location into PKG_CONFIG_PATH
-#
-# Example:
-#
-# PROTOBUF_CPP_SLOT="3"
-# inherit protobuf-cpp
-#
-# src_configure() {
-#   protobuf-cpp_append_pkgconfig
-# }
-#
-protobuf-cpp_append_pkgconfig() {
-	local _PROTOBUF_CPP_SLOT=""
-	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
-
-	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-}
-
-# @FUNCTION:  protobuf-cpp_append_ld_library_path
-# @DESCRIPTION:
-# Dump protobuf-cpp location into LD_LIBRARY_PATH
-#
-# Example:
-#
-# PROTOBUF_CPP_SLOT="3"
-# inherit protobuf-cpp
-#
-# src_configure() {
-#   protobuf-cpp_append_ld_library_path
-# }
-#
-protobuf-cpp_append_ld_library_path() {
-	local _PROTOBUF_CPP_SLOT=""
-	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
-
-	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
-}
-
-# @FUNCTION:  protobuf-cpp_append_path
-# @DESCRIPTION:
-# Dump protobuf-cpp location into PATH to run executibles
-#
-# Example:
-#
-# PROTOBUF_CPP_SLOT="3"
-# inherit protobuf-cpp
-#
-# src_configure() {
-#   protobuf-cpp_append_path
-# }
-#
-protobuf-cpp_append_path() {
-	local _PROTOBUF_CPP_SLOT=""
-	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
-
-	export PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/bin:${PATH}"
 }
 
 fi

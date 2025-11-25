@@ -20,41 +20,6 @@
 # Rolling G23 - grpc:6/1.75 - protobuf-cpp:6/6.33 - protobuf-python:6/6.33 - abseil-cpp:20250512 - re2:20240116
 #
 
-#
-# Full examples:
-#
-# ABSEIL_CPP_SLOT="20220623"
-# PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp grpc multilib-minimal protobuf-cpp
-#
-# multilib_src_configure() {
-#   abseil-cpp_append_flags_direct # For includes, linking, rpath
-#   protobuf-cpp_append_flags_direct # For includes, linking, rpath
-#   grpc_append_flags_direct # For includes, linking, rpath
-#   protobuf-cpp_append_path # For protoc
-#   grpc_append_path # For grpc_cpp_plugin
-# }
-#
-#
-# ABSEIL_CPP_SLOT="20220623"
-# PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp grpc multilib-minimal protobuf-cpp
-#
-# multilib_src_configure() {
-#   abseil-cpp_append_flags_direct
-#   protobuf_append_flags_direct # For rpath change
-#   grpc_append_flags_direct # For rpath change
-#   protobuf-cpp_append_path # For protoc
-#   grpc_append_path # For grpc_cpp_plugin
-#   local mycmakeargs() {
-#     $(abseil-cpp_append_mycmakeargs)
-#     $(protobuf-cpp_append_mycmakeargs)
-#     $(grpc_append_mycmakeargs)
-#   }
-# }
-#
-
-
 case ${EAPI:-0} in
 	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -65,7 +30,7 @@ _GRPC_ECLASS=1
 
 inherit flag-o-matic
 
-# @FUNCTION:  grpc_append_flags_direct
+# @FUNCTION:  grpc_src_configure
 # @DESCRIPTION:
 # Append flags for C/C++ while passing LDFLAGS directly to linker
 #
@@ -75,12 +40,13 @@ inherit flag-o-matic
 # inherit grpc
 #
 # src_configure() {
-#   grpc_append_flags_direct
+#   grpc_src_configure # For includes, linker flags, path changes
 #   einfo "GRPC_CFLAGS:  ${GRPC_CFLAGS}"
 #   einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
+#   emake
 # }
 #
-grpc_append_flags_direct() {
+grpc_src_configure() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
 		_GRPC_SLOT="${GRPC_PV%%.*}"
@@ -94,85 +60,72 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 	fi
 	local libdir=$(get_libdir)
 
-	# Sanitize/isolate
-	filter-flags \
-		"-I/usr/lib/grpc/*/include" \
-		"-L/usr/lib/grpc/*" \
-		"--rpath,/usr/lib/grpc/*"
-
-	# For manual configuration or sed patch
-	export GRPC_CFLAGS="-I/usr/lib/grpc/${_GRPC_SLOT}/include"
-	export GRPC_CXXFLAGS="${GRPC_CFLAGS}"
-	export GRPC_LDFLAGS="-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir} --rpath=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
-
-	append-flags "-I/usr/lib/grpc/${_GRPC_SLOT}/include"
-	append-ldflags \
-		"-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir}" \
-		"--rpath=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
-}
-
-# @FUNCTION:  grpc_append_flags_indirect
-# @DESCRIPTION:
-# Append flags for C/C++ while passing LDFLAGS indirectly to linker
-#
-# Example:
-#
-# GRPC_SLOT="3"
-# inherit grpc
-#
-# src_configure() {
-#   grpc_append_flags_indirect
-#   einfo "GRPC_CFLAGS:  ${GRPC_CFLAGS}"
-#   einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
-# }
-#
-grpc_append_flags_indirect() {
-	local _GRPC_SLOT=""
-	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%%.*}"
-	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
-	else
-eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
+	# Sanitize/isolate multiabi pollution from logs
 	filter-flags \
 		"-I/usr/lib/grpc/*/include" \
 		"-Wl,-L/usr/lib/grpc/*" \
-		"-Wl,-rpath,/usr/lib/grpc/*"
-
-	# For manual configuration or sed patch
-	export GRPC_CFLAGS="-I/usr/lib/grpc/${_GRPC_SLOT}/include"
-	export GRPC_CXXFLAGS="${GRPC_CFLAGS}"
-	export GRPC_LDFLAGS="-Wl,-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir} -Wl,-rpath,/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+		"-Wl,--rpath,/usr/lib/grpc/*" \
+		"-L/usr/lib/grpc/*" \
+		"--rpath,/usr/lib/grpc/*"
 
 	append-flags "-I/usr/lib/grpc/${_GRPC_SLOT}/include"
-	append-ldflags \
-		"-Wl,-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir}" \
-		"-Wl,-rpath,/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+
+	if [[ ${GRPC_LINK_MODE:-"indirect"} == "indirect" ]] ; then
+		# For manual configuration or sed patch
+		export GRPC_CFLAGS="-I/usr/lib/grpc/${_GRPC_SLOT}/include"
+		export GRPC_CXXFLAGS="${GRPC_CFLAGS}"
+		export GRPC_LDFLAGS="-Wl,-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir} -Wl,-rpath,/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+
+		append-flags "-I/usr/lib/grpc/${_GRPC_SLOT}/include"
+		append-ldflags \
+			"-Wl,-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir}" \
+			"-Wl,-rpath,/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+	else
+		# For manual configuration or sed patch
+		export GRPC_CFLAGS="-I/usr/lib/grpc/${_GRPC_SLOT}/include"
+		export GRPC_CXXFLAGS="${GRPC_CFLAGS}"
+		export GRPC_LDFLAGS="-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir} --rpath=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+
+		append-ldflags \
+			"-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir}" \
+			"--rpath=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+	fi
+
+	# Sanitize/isolate
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
+	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
+	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
+
+	export PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/bin:${PATH}"
+	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 }
 
-# @FUNCTION:  grpc_append_mycmakeargs
+# @FUNCTION:  grpc_python_configure
 # @DESCRIPTION:
-# Dump grpc location into mycmakeargs
+# Alias for ebuild style consistency
+grpc_python_configure() {
+	grpc_src_configure
+}
+
+# @FUNCTION:  grpc_append_cmake
+# @DESCRIPTION:
+# Dump grpc location into mycmakeargs for CMake's find_package().
 #
 # Example:
 #
 # GRPC_SLOT="3"
-# inherit grpc
+# inherit cmake grpc
 #
 # src_configure() {
+#   grpc_src_configure # For linker flags
 #   local mycmakeargs=(
 #     $(grpc_append_mycmakeargs)
 #   )
+#   cmake_src_configure
 # }
 #
-grpc_append_mycmakeargs() {
+grpc_append_cmake() {
 	local _GRPC_SLOT=""
 	if [[ "${GRPC_PV}" ]] ; then
 		_GRPC_SLOT="${GRPC_PV%%.*}"
@@ -193,105 +146,6 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 	fi
 	local libdir=$(get_libdir)
 	echo "-D${name}_DIR=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/cmake/grpc"
-}
-
-# @FUNCTION:  grpc_append_pkgconfig
-# @DESCRIPTION:
-# Dump grpc location into PKG_CONFIG_PATH
-#
-# Example:
-#
-# GRPC_SLOT="3"
-# inherit grpc
-#
-# src_configure() {
-#   grpc_append_pkgconfig
-# }
-#
-grpc_append_pkgconfig() {
-	local _GRPC_SLOT=""
-	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%%.*}"
-	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
-	else
-eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
-
-	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-}
-
-# @FUNCTION:  grpc_append_ld_library_path
-# @DESCRIPTION:
-# Dump grpc location into LD_LIBRARY_PATH
-#
-# Example:
-#
-# GRPC_SLOT="3"
-# inherit grpc
-#
-# src_configure() {
-#   grpc_append_ld_library_path
-# }
-#
-grpc_append_ld_library_path() {
-	local _GRPC_SLOT=""
-	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%%.*}"
-	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
-	else
-eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
-
-	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
-}
-
-# @FUNCTION:  grpc_append_path
-# @DESCRIPTION:
-# Dump grpc location into PATH to run executibles
-#
-# Example:
-#
-# GRPC_SLOT="3"
-# inherit grpc
-#
-# src_configure() {
-#   grpc_append_path
-# }
-#
-grpc_append_ld_library_path() {
-	local _GRPC_SLOT=""
-	if [[ "${GRPC_PV}" ]] ; then
-		_GRPC_SLOT="${GRPC_PV%%.*}"
-	elif [[ "${GRPC_SLOT}" ]] ; then
-		_GRPC_SLOT="${GRPC_SLOT%%.*}"
-	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
-		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
-	else
-eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
-
-	export PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/bin:${PATH}"
 }
 
 fi

@@ -34,22 +34,24 @@ _ABSEIL_CPP_ECLASS=1
 
 inherit flag-o-matic
 
-# @FUNCTION:  abseil-cpp_append_flags_direct
+# @FUNCTION:  abseil-cpp_src_configure
 # @DESCRIPTION:
-# Append flags for C/C++ while passing LDFLAGS directly to linker
+# Update all flags for C/C++ for autotools or meson based projects.
 #
 # Example:
 #
+# ABSEIL_CPP_LINK_MODE="direct"
 # ABSEIL_CPP_SLOT="20250814"
 # inherit abseil-cpp
 #
 # src_configure() {
-#   abseil-cpp_append_flags_direct
+#   abseil-cpp_src_configure # For includes, linking flags
 #   einfo "ABSEIL_CPP_CFLAGS:  ${ABSEIL_CPP_CFLAGS}"
 #   einfo "ABSEIL_CPP_LDFLAGS:  ${ABSEIL_CPP_LDFLAGS}"
+#   emake
 # }
 #
-abseil-cpp_append_flags_direct() {
+abseil-cpp_src_configure() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
@@ -61,83 +63,69 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 	fi
 	local libdir=$(get_libdir)
 
-	# Sanitize/isolate
-	filter-flags \
-		"-I/usr/lib/abseil-cpp/*/include" \
-		"-L/usr/lib/abseil-cpp/*" \
-		"--rpath,/usr/lib/abseil-cpp/*"
-
-	# For manual configuration or sed patch
-	export ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
-	export ABSEIL_CPP_CXXFLAGS="${ABSEIL_CPP_CXXFLAGS}"
-	export ABSEIL_CPP_LDFLAGS="-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} --rpath=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
-
-	append-flags "-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
-	append-ldflags \
-		"-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}" \
-		"--rpath=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
-}
-
-# @FUNCTION:  abseil-cpp_append_flags_indirect
-# @DESCRIPTION:
-# Append flags for C/C++ while passing LDFLAGS indirectly to linker
-#
-# Example:
-#
-# ABSEIL_CPP_SLOT="20250814"
-# inherit abseil-cpp
-#
-# src_configure() {
-#   abseil-cpp_append_flags_indirect
-#   einfo "ABSEIL_CPP_CFLAGS:  ${ABSEIL_CPP_CFLAGS}"
-#   einfo "ABSEIL_CPP_LDFLAGS:  ${ABSEIL_CPP_LDFLAGS}"
-# }
-#
-abseil-cpp_append_flags_indirect() {
-	local _ABSEIL_CPP_SLOT=""
-	if [[ "${ABSEIL_CPP_PV}" ]] ; then
-		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
-	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
-		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
+	# Sanitize/isolate multiabi pollution from logs
 	filter-flags \
 		"-I/usr/lib/abseil-cpp/*/include" \
 		"-Wl,-L/usr/lib/abseil-cpp/*" \
-		"-Wl,-rpath,/usr/lib/abseil-cpp/*"
-
-	# For manual configuration or sed patch
-	export ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
-	export ABSEIL_CPP_CXXFLAGS="${ABSEIL_CPP_CXXFLAGS}"
-	export ABSEIL_CPP_LDFLAGS="-Wl,-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+		"-Wl,-rpath,/usr/lib/abseil-cpp/*" \
+		"-L/usr/lib/abseil-cpp/*" \
+		"--rpath,/usr/lib/abseil-cpp/*"
 
 	append-flags "-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
-	append-ldflags \
-		"-Wl,-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}" \
-		"-Wl,-rpath,/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+
+	# For manual configuration or sed patch
+	if [[ ${ABSEIL_CPP_LINK_MODE:-"indirect"} == "indirect" ]] ; then
+		# For manual configuration or sed patch
+		export ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
+		export ABSEIL_CPP_CXXFLAGS="${ABSEIL_CPP_CXXFLAGS}"
+		export ABSEIL_CPP_LDFLAGS="-Wl,-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+
+		append-ldflags \
+			"-Wl,-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}" \
+			"-Wl,-rpath,/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+	else
+		export ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
+		export ABSEIL_CPP_CXXFLAGS="${ABSEIL_CPP_CXXFLAGS}"
+		export ABSEIL_CPP_LDFLAGS="-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} --rpath=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+
+		append-ldflags \
+			"-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}" \
+			"--rpath=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+	fi
+
+	# Sanitize/isolate
+	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp/|d" | tr $'\n' ":")
+	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp/|d" | tr $'\n' ":")
+
+	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
+	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
 }
 
-# @FUNCTION:  abseil-cpp_append_mycmakeargs
+# @FUNCTION:  abseil-cpp_python_configure
 # @DESCRIPTION:
-# Dump absl location into mycmakeargs
+# Alias for ebuild style consistency
+abseil-cpp_python_configure() {
+	grpc_src_configure
+}
+
+# @FUNCTION:  abseil-cpp_append_cmake
+# @DESCRIPTION:
+# Dump absl location into mycmakeargs for CMake's find_package().
 #
 # Example:
 #
 # ABSEIL_CPP_SLOT="20250814"
-# inherit abseil-cpp
+# inherit abseil-cpp cmake
 #
 # src_configure() {
+#   abseil-cpp_src_configure # For linking flags
 #   local mycmakeargs=(
-#     $(abseil-cpp_append_mycmakeargs)
+#     $(abseil-cpp_append_cmake)
 #   )
+#   cmake_src_configure
 # }
 #
-abseil-cpp_append_mycmakeargs() {
+abseil-cpp_append_cmake() {
 	local _ABSEIL_CPP_SLOT=""
 	if [[ "${ABSEIL_CPP_PV}" ]] ; then
 		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
@@ -156,68 +144,6 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 	fi
 	local libdir=$(get_libdir)
 	echo "-D${name}_DIR=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/cmake/absl"
-}
-
-# @FUNCTION:  abseil-cpp_append_pkgconfig
-# @DESCRIPTION:
-# Dump absl location into PKG_CONFIG_PATH
-#
-# Example:
-#
-# ABSEIL_CPP_SLOT="20250814"
-# inherit abseil-cpp
-#
-# src_configure() {
-#   abseil-cpp_append_pkgconfig
-# }
-#
-abseil-cpp_append_pkgconfig() {
-	local _ABSEIL_CPP_SLOT=""
-	if [[ "${ABSEIL_CPP_PV}" ]] ; then
-		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
-	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
-		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp/|d" | tr $'\n' ":")
-
-	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-}
-
-# @FUNCTION:  abseil-cpp_append_ld_library_path
-# @DESCRIPTION:
-# Dump absl location into LD_LIBRARY_PATH
-#
-# Example:
-#
-# ABSEIL_CPP_SLOT="20250814"
-# inherit abseil-cpp
-#
-# src_configure() {
-#   abseil-cpp_append_ld_library_path
-# }
-#
-abseil-cpp_append_ld_library_path() {
-	local _ABSEIL_CPP_SLOT=""
-	if [[ "${ABSEIL_CPP_PV}" ]] ; then
-		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
-	elif [[ "${ABSEIL_CPP_SLOT}" ]] ; then
-		_ABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%.*}"
-	else
-eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
-		die
-	fi
-	local libdir=$(get_libdir)
-
-	# Sanitize/isolate
-	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/abseil-cpp/|d" | tr $'\n' ":")
-
-	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 }
 
 fi
