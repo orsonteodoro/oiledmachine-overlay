@@ -15,24 +15,26 @@
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp multilib-minimal protobuf
+# inherit abseil-cpp multilib-minimal protobuf-cpp
 #
 # multilib_src_configure() {
-#   abseil-cpp_append_flags_direct
-#   protobuf_append_flags_direct
+#   abseil-cpp_append_flags_direct # For includes, linking, rpath
+#   protobuf-cpp_append_flags_direct # For includes, linking, rpath
+#   protobuf-cpp_append_path # For protoc
 # }
 #
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp multilib-minimal protobuf
+# inherit abseil-cpp multilib-minimal protobuf-cpp
 #
 # multilib_src_configure() {
-#   abseil-cpp_append_flags_direct
-#   protobuf_append_flags_direct # For rpath change
+#   abseil-cpp_append_flags_direct # For rpath change
+#   protobuf-cpp_append_flags_direct # For rpath change
+#   protobuf-cpp_append_path # For protoc
 #   local mycmakeargs() {
 #     $(abseil-cpp_append_mycmakeargs)
-#     $(protobuf_append_mycmakeargs)
+#     $(protobuf-cpp_append_mycmakeargs)
 #   }
 # }
 #
@@ -231,6 +233,37 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
 
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
+}
+
+# @FUNCTION:  protobuf-cpp_append_path
+# @DESCRIPTION:
+# Dump protobuf-cpp location into PATH to run executibles
+#
+# Example:
+#
+# PROTOBUF_CPP_SLOT="3"
+# inherit protobuf-cpp
+#
+# src_configure() {
+#   protobuf-cpp_append_path
+# }
+#
+protobuf-cpp_append_path() {
+	local _PROTOBUF_CPP_SLOT=""
+	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
+		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_SLOT%.*}"
+	else
+eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
+		die
+	fi
+	local libdir=$(get_libdir)
+
+	# Sanitize/isolate
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
+
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/bin:${PATH}"
 }
 
 fi

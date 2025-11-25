@@ -15,26 +15,30 @@
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp grpc multilib-minimal protobuf
+# inherit abseil-cpp grpc multilib-minimal protobuf-cpp
 #
 # multilib_src_configure() {
-#   abseil-cpp_append_flags_direct
-#   protobuf_append_flags_direct
-#   grpc_append_flags_direct
+#   abseil-cpp_append_flags_direct # For includes, linking, rpath
+#   protobuf-cpp_append_flags_direct # For includes, linking, rpath
+#   grpc_append_flags_direct # For includes, linking, rpath
+#   protobuf-cpp_append_path # For protoc
+#   grpc_append_path # For grpc_cpp_plugin
 # }
 #
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp grpc multilib-minimal protobuf
+# inherit abseil-cpp grpc multilib-minimal protobuf-cpp
 #
 # multilib_src_configure() {
 #   abseil-cpp_append_flags_direct
 #   protobuf_append_flags_direct # For rpath change
 #   grpc_append_flags_direct # For rpath change
+#   protobuf-cpp_append_path # For protoc
+#   grpc_append_path # For grpc_cpp_plugin
 #   local mycmakeargs() {
 #     $(abseil-cpp_append_mycmakeargs)
-#     $(protobuf_append_mycmakeargs)
+#     $(protobuf-cpp_append_mycmakeargs)
 #     $(grpc_append_mycmakeargs)
 #   }
 # }
@@ -245,6 +249,39 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
 
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
+}
+
+# @FUNCTION:  grpc_append_path
+# @DESCRIPTION:
+# Dump grpc location into PATH to run executibles
+#
+# Example:
+#
+# GRPC_SLOT="3"
+# inherit grpc
+#
+# src_configure() {
+#   grpc_append_path
+# }
+#
+grpc_append_ld_library_path() {
+	local _GRPC_SLOT=""
+	if [[ "${GRPC_PV}" ]] ; then
+		_GRPC_SLOT="${GRPC_PV%%.*}"
+	elif [[ "${GRPC_SLOT}" ]] ; then
+		_GRPC_SLOT="${GRPC_SLOT%%.*}"
+	elif [[ "${PROTOBUF_CPP_SLOT}" ]] ; then
+		_GRPC_SLOT="${PROTOBUF_CPP_SLOT%%.*}"
+	else
+eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
+		die
+	fi
+	local libdir=$(get_libdir)
+
+	# Sanitize/isolate
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/grpc/|d" | tr $'\n' ":")
+
+	export PATH="${ESYSROOT}/usr/lib/grpc/${_GRPC_SLOT}/bin:${PATH}"
 }
 
 fi
