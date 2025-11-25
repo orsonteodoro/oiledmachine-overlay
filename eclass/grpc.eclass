@@ -31,6 +31,8 @@ inherit flag-o-matic
 #
 # src_configure() {
 #   grpc_append_flags_direct
+#   einfo "_GRPC_CFLAGS:  ${_GRPC_CFLAGS}"
+#   einfo "_GRPC_CXXFLAGS:  ${_GRPC_CXXFLAGS}"
 # }
 #
 grpc_append_flags_direct() {
@@ -53,6 +55,11 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		"-L/usr/lib/grpc/*" \
 		"--rpath,/usr/lib/grpc/*"
 
+	# For manual configuration or sed patch
+	export _GRPC_CFLAGS="-I/usr/lib/grpc/${_GRPC_SLOT}/include"
+	export _GRPC_CXXFLAGS="${_GRPC_CFLAGS}"
+	export _GRPC_LDFLAGS="-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir} --rpath=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
+
 	append-flags "-I/usr/lib/grpc/${_GRPC_SLOT}/include"
 	append-ldflags \
 		"-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir}" \
@@ -70,6 +77,8 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 #
 # src_configure() {
 #   grpc_append_flags_indirect
+#   einfo "_GRPC_CFLAGS:  ${_GRPC_CFLAGS}"
+#   einfo "_GRPC_CXXFLAGS:  ${_GRPC_CXXFLAGS}"
 # }
 #
 grpc_append_flags_indirect() {
@@ -91,6 +100,11 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		"-I/usr/lib/grpc/*/include" \
 		"-Wl,-L/usr/lib/grpc/*" \
 		"-Wl,-rpath,/usr/lib/grpc/*"
+
+	# For manual configuration or sed patch
+	export _GRPC_CFLAGS="-I/usr/lib/grpc/${_GRPC_SLOT}/include"
+	export _GRPC_CXXFLAGS="${_GRPC_CFLAGS}"
+	export _GRPC_LDFLAGS="-Wl,-L/usr/lib/grpc/${_GRPC_SLOT}/${libdir} -Wl,-rpath,/usr/lib/grpc/${_GRPC_SLOT}/${libdir}"
 
 	append-flags "-I/usr/lib/grpc/${_GRPC_SLOT}/include"
 	append-ldflags \

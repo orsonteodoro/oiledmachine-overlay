@@ -31,6 +31,8 @@ inherit flag-o-matic
 #
 # src_configure() {
 #   protobuf-cpp_append_flags_direct
+#   einfo "_PROTOBUF_CPP_CFLAGS:  ${_PROTOBUF_CPP_CFLAGS}"
+#   einfo "_PROTOBUF_CPP_LDFLAGS:  ${_PROTOBUF_CPP_LDFLAGS}"
 # }
 #
 protobuf-cpp_append_flags_direct() {
@@ -51,6 +53,11 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 		"-L/usr/lib/protobuf/*" \
 		"--rpath,/usr/lib/protobuf/*"
 
+	# For manual configuration or sed patch
+	export _PROTOBUF_CPP_CFLAGS="-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
+	export _PROTOBUF_CPP_CXXFLAGS="${_PROTOBUF_CPP_CFLAGS}"
+	export _PROTOBUF_CPP_LDFLAGS="-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir} --rpath=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
+
 	append-flags "-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
 	append-ldflags \
 		"-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}" \
@@ -68,6 +75,8 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 #
 # src_configure() {
 #   protobuf-cpp_append_flags_indirect
+#   einfo "_PROTOBUF_CPP_CFLAGS:  ${_PROTOBUF_CPP_CFLAGS}"
+#   einfo "_PROTOBUF_CPP_LDFLAGS:  ${_PROTOBUF_CPP_LDFLAGS}"
 # }
 #
 protobuf-cpp_append_flags_indirect() {
@@ -87,6 +96,11 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 		"-I/usr/lib/protobuf/*/include" \
 		"-Wl,-L/usr/lib/protobuf/*" \
 		"-Wl,-rpath,/usr/lib/protobuf/*"
+
+	# For manual configuration or sed patch
+	export _PROTOBUF_CPP_CFLAGS="-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
+	export _PROTOBUF_CPP_CXXFLAGS="${_PROTOBUF_CPP_CFLAGS}"
+	export _PROTOBUF_CPP_LDFLAGS="-Wl,-L/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
 
 	append-flags "-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
 	append-ldflags \
