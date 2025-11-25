@@ -62,7 +62,7 @@ PROTOBUF_PYTHON_SLOTS_6=(
 
 # @FUNCTION:  protobuf-python_set_pythonpath
 # @DESCRIPTION:
-# Set the python path
+# Set the PYTHONPATH for protobuf python bindings.
 #
 # python_configure() {
 #   local PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4[@]}" )
