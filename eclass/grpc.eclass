@@ -10,6 +10,37 @@
 # Helpers to support multislot grpc.
 # It assumes that abseil-cpp and protobuf eclasses are also being used.
 
+#
+# Full examples:
+#
+# ABSEIL_CPP_SLOT="20220623"
+# PROTOBUF_CPP_SLOT="3"
+# inherit abseil-cpp grpc multilib-minimal protobuf
+#
+# multilib_src_configure() {
+#   abseil-cpp_append_flags_direct
+#   protobuf_append_flags_direct
+#   grpc_append_flags_direct
+# }
+#
+#
+# ABSEIL_CPP_SLOT="20220623"
+# PROTOBUF_CPP_SLOT="3"
+# inherit abseil-cpp grpc multilib-minimal protobuf
+#
+# multilib_src_configure() {
+#   abseil-cpp_append_flags_direct
+#   protobuf_append_flags_direct # For rpath change
+#   grpc_append_flags_direct # For rpath change
+#   local mycmakeargs() {
+#     $(abseil-cpp_append_mycmakeargs)
+#     $(protobuf_append_mycmakeargs)
+#     $(grpc_append_mycmakeargs)
+#   }
+# }
+#
+
+
 case ${EAPI:-0} in
 	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;

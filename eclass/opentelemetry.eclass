@@ -12,8 +12,8 @@
 #
 # Currently OPENTELEMETRY_SLOT only supports the following:
 #
-# OPENTELEMETRY_SLOT=3 # For LTS
-# OPENTELEMETRY_SLOT=5 # For Rolling
+# OPENTELEMETRY_SLOT=3 # For LTS packages
+# OPENTELEMETRY_SLOT=5 # For rolling packages
 #
 
 case ${EAPI:-0} in

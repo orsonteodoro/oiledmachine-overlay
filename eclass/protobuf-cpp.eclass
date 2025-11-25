@@ -10,6 +10,33 @@
 # Helpers to support multislot protobuf-cpp.
 # It assumes that abseil-cpp eclass is also being used.
 
+#
+# Full examples:
+#
+# ABSEIL_CPP_SLOT="20220623"
+# PROTOBUF_CPP_SLOT="3"
+# inherit abseil-cpp multilib-minimal protobuf
+#
+# multilib_src_configure() {
+#   abseil-cpp_append_flags_direct
+#   protobuf_append_flags_direct
+# }
+#
+#
+# ABSEIL_CPP_SLOT="20220623"
+# PROTOBUF_CPP_SLOT="3"
+# inherit abseil-cpp multilib-minimal protobuf
+#
+# multilib_src_configure() {
+#   abseil-cpp_append_flags_direct
+#   protobuf_append_flags_direct # For rpath change
+#   local mycmakeargs() {
+#     $(abseil-cpp_append_mycmakeargs)
+#     $(protobuf_append_mycmakeargs)
+#   }
+# }
+#
+
 case ${EAPI:-0} in
 	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
