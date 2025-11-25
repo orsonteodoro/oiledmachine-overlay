@@ -12,17 +12,11 @@ EAPI=8
 
 # Last deps commit date:  Aug 8, 2023
 
-ACORN_PV="8.8.0"
-AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
-COREPACK_PV="0.17.0"
 CXX_STANDARD=14
 LTO_TYPE="none" # Global var
-MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.47.0"
-NPM_PV="8.19.4" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
 PYTHON_COMPAT=( "python3_11" ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -30,6 +24,12 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+
+ACORN_PV="8.8.0"
+AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
+COREPACK_PV="0.17.0"
+NGHTTP2_PV="1.47.0"
+NPM_PV="8.19.4" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(

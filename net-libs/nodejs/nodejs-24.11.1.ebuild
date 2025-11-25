@@ -13,20 +13,13 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Oct 27, 2025
+# Last deps commit date:  Nov 7, 2025
 
-ACORN_PV="8.15.0"
-AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
-COREPACK_PV="0.34.0"
 CXX_STANDARD=20
 LTO_TYPE="none" # Global var
-MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.66.0"
-NGHTTP3_PV="1.6.0"
-NPM_PV="11.6.2" # See https://github.com/nodejs/node/blob/v25.1.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -34,6 +27,13 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+
+ACORN_PV="8.15.0"
+AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
+COREPACK_PV="0.34.2"
+NGHTTP2_PV="1.66.0"
+NGHTTP3_PV="1.6.0"
+NPM_PV="11.6.2" # See https://github.com/nodejs/node/blob/v24.11.1/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
@@ -187,7 +187,7 @@ RDEPEND+="
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.5.2:0[asm?,fips?]
+		>=dev-libs/openssl-3.5.4:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -227,7 +227,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-24.2.0-lto-update.patch"
 	"${FILESDIR}/${PN}-24.2.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-25.1.0-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-24.2.0-split-pointer-compression-and-v8-sandbox-options.patch"
 	"${FILESDIR}/${PN}-24.2.0-add-v8-jit-fine-grained-options.patch"
 )
 
@@ -287,7 +287,7 @@ einfo "FEATURES:  ${FEATURES}"
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2028-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
