@@ -22,7 +22,7 @@ inherit flag-o-matic
 
 # @FUNCTION:  protobuf-cpp_append_flags_direct
 # @DESCRIPTION:
-# Append flags for C/C++ with passing LDFLAGS directly to linker
+# Append flags for C/C++ while passing LDFLAGS directly to linker
 #
 # Example:
 #
@@ -59,7 +59,7 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 
 # @FUNCTION:  protobuf-cpp_append_flags_indirect
 # @DESCRIPTION:
-# Append flags for C/C++ with passing LDFLAGS indirectly to linker
+# Append flags for C/C++ while passing LDFLAGS indirectly to linker
 #
 # Example:
 #

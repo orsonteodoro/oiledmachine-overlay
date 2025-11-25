@@ -21,7 +21,7 @@ inherit flag-o-matic
 
 # @FUNCTION:  abseil-cpp_append_flags_direct
 # @DESCRIPTION:
-# Append flags for C/C++ with passing LDFLAGS directly to linker
+# Append flags for C/C++ while passing LDFLAGS directly to linker
 #
 # Example:
 #
@@ -58,7 +58,7 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 
 # @FUNCTION:  abseil-cpp_append_flags_indirect
 # @DESCRIPTION:
-# Append flags for C/C++ with passing LDFLAGS indirectly to linker
+# Append flags for C/C++ while passing LDFLAGS indirectly to linker
 #
 # Example:
 #

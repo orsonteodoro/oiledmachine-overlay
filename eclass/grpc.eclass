@@ -22,7 +22,7 @@ inherit flag-o-matic
 
 # @FUNCTION:  grpc_append_flags_direct
 # @DESCRIPTION:
-# Append flags for C/C++ with passing LDFLAGS directly to linker
+# Append flags for C/C++ while passing LDFLAGS directly to linker
 #
 # Example:
 #
@@ -61,7 +61,7 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 
 # @FUNCTION:  grpc_append_flags_indirect
 # @DESCRIPTION:
-# Append flags for C/C++ with passing LDFLAGS indirectly to linker
+# Append flags for C/C++ while passing LDFLAGS indirectly to linker
 #
 # Example:
 #
