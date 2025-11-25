@@ -30,6 +30,37 @@ _GRPC_ECLASS=1
 
 inherit flag-o-matic
 
+#
+# Full example for CMake based autotools based projects:
+#
+# GRPC_SLOT="3"
+# inherit abseil-cpp cmake grpc protobuf
+#
+# src_configure() {
+#   abseil-cpp_src_configure # For include, linker flags
+#   protobuf_src_configure # For include, linker flags, paths
+#   grpc_src_configure # For include, linker flags, paths
+#   emake
+# }
+#
+
+#
+# Full example for CMake based projects:
+#
+# GRPC_SLOT="3"
+# inherit abseil-cpp cmake grpc protobuf
+#
+# src_configure() {
+#   abseil-cpp_src_configure # For linker flags
+#   protobuf_src_configure # For linker flags
+#   grpc_src_configure # For linker flags
+#   local mycmakeargs=(
+#     $(grpc_append_mycmakeargs)
+#   )
+#   cmake_src_configure
+# }
+#
+
 # @FUNCTION:  grpc_src_configure
 # @DESCRIPTION:
 # Append flags for C/C++ while passing LDFLAGS directly to linker

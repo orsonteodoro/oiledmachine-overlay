@@ -2,12 +2,12 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS:  protobuf-cpp.eclass
+# @ECLASS:  protobuf.eclass
 # @MAINTAINER:  Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS:  8
-# @BLURB:  set multislot protobuf-cpp config for build systems
+# @BLURB:  set multislot protobuf config for build systems
 # @DESCRIPTION:
-# Helpers to support multislot protobuf-cpp.
+# Helpers to support multislot protobuf-cpp and protobuf-python.
 # It assumes that abseil-cpp eclass is also being used.
 
 #
@@ -21,29 +21,32 @@
 #
 
 #
-# Full examples:
+# Full example for autotools based projects:
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp multilib-minimal protobuf-cpp
+# inherit abseil-cpp multilib-minimal protobuf
 #
 # multilib_src_configure() {
 #   abseil-cpp_src_configure # For includes, linking flags
-#   protobuf-cpp_src_configure # For includes, linking flags, path
+#   protobuf_src_configure # For includes, linking flags, path
 #   emake
 # }
 #
+
+#
+# Full example for CMake based projects:
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# inherit abseil-cpp cmake multilib-minimal protobuf-cpp
+# inherit abseil-cpp cmake multilib-minimal protobuf
 #
 # multilib_src_configure() {
 #   abseil-cpp_src_configure # For linking flags
-#   protobuf-cpp_src_configure # For linking flags, path
+#   protobuf_src_configure # For linking flags, path
 #   local mycmakeargs() {
 #     $(abseil-cpp_append_mycmakeargs)
-#     $(protobuf-cpp_append_mycmakeargs)
+#     $(protobuf_append_mycmakeargs)
 #   }
 #   cmake_src_configure
 # }
@@ -59,7 +62,50 @@ _PROTOBUF_CPP_ECLASS=1
 
 inherit flag-o-matic
 
-# @FUNCTION:  protobuf-cpp_src_configure
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_3
+# @DESCRIPTION:
+# Adds all protobuf-python 3.x slots
+PROTOBUF_PYTHON_SLOTS_3=(
+	"3.12"
+)
+
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_4
+# @DESCRIPTION:
+# Adds all protobuf-python 4.x slots for any protobuf-cpp
+PROTOBUF_PYTHON_SLOTS_4=(
+	"4.21" # For python-cpp:3
+	"4.25" # For python-cpp:4
+)
+
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3
+# @DESCRIPTION:
+# Adds all protobuf-python 4.x slots compatible with protobuf-cpp:3
+PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3=(
+	"4.21" # For python-cpp:3
+)
+
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4
+# @DESCRIPTION:
+# Adds all protobuf-python 4.x slots compatible with protobuf-cpp:4
+PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4=(
+	"4.25" # For python-cpp:4
+)
+
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_5
+# @DESCRIPTION:
+# Adds all protobuf-python 5.x slots
+PROTOBUF_PYTHON_SLOTS_5=(
+	"5.29"
+)
+
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_6
+# @DESCRIPTION:
+# Adds all protobuf-python 6.x slots
+PROTOBUF_PYTHON_SLOTS_6=(
+	"6.33"
+)
+
+# @FUNCTION:  protobuf_src_configure
 # @DESCRIPTION:
 # Append flags for C/C++ while passing LDFLAGS directly to linker
 #
@@ -67,15 +113,15 @@ inherit flag-o-matic
 #
 # PROTOBUF_CPP_LINK_MODE="direct"
 # PROTOBUF_CPP_SLOT="3"
-# inherit protobuf-cpp
+# inherit protobuf
 #
 # src_configure() {
-#   protobuf-cpp_src_configure
+#   protobuf_src_configure
 #   einfo "PROTOBUF_CPP_CFLAGS:  ${PROTOBUF_CPP_CFLAGS}"
 #   einfo "PROTOBUF_CPP_LDFLAGS:  ${PROTOBUF_CPP_LDFLAGS}"
 #   emake
 # }
-protobuf-cpp_src_configure() {
+protobuf_src_configure() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
 		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
@@ -118,40 +164,56 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 	fi
 
 	# Sanitize/isolate
+	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
 	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
-	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
+	PYTHONPATH=$(echo "${PYTHONPATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf-python|d" | tr $'\n' ":")
 
+	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
+
+	local x=""
+	local s=""
+	for x in "${PROTOBUF_PYTHON_SLOTS[@]}" ; do
+		if has_version "dev-python/protobuf:${x}" ; then
+			s="${x}"
+			break
+		fi
+	done
+
+	if [[ -n "${PROTOBUF_PYTHON_SLOTS[@]}" ]] ; then
+		export PYTHONPATH="${ESYSROOT}/usr/lib/protobuf-python/${s}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+	else
+ewarn "QA:  Setting protobuf-python support for PYTHONPATH is skipped.  Set PROTOBUF_PYTHON_SLOTS to remove this message."
+	fi
 }
 
-# @FUNCTION:  protobuf-cpp_python_configure
+# @FUNCTION:  protobuf_python_configure
 # @DESCRIPTION:
 # Alias for ebuild style consistency
-protobuf-cpp_python_configure() {
+protobuf_python_configure() {
 	grpc_src_configure
 }
 
-# @FUNCTION:  protobuf-cpp_append_cmake
+# @FUNCTION:  protobuf_append_cmake
 # @DESCRIPTION:
-# Dump protobuf-cpp location into mycmakeargs for CMake's find_package().
+# Dump protobuf location into mycmakeargs for CMake's find_package().
 #
 # Example:
 #
 # PROTOBUF_CPP_SLOT="3"
-# inherit cmake protobuf-cpp
+# inherit cmake protobuf
 #
 # src_configure() {
-#   protobuf-cpp_src_configure # Append or get rpath for build script modding.
+#   protobuf_src_configure # Append or get rpath for build script modding.
 #   local mycmakeargs=(
-#     $(protobuf-cpp_append_cmake)
+#     $(protobuf_append_cmake)
 #   )
 #   cmake_src_configure
 # }
 #
-protobuf-cpp_append_cmake() {
+protobuf_append_cmake() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then
 		_PROTOBUF_CPP_SLOT="${PROTOBUF_CPP_PV%.*}"
