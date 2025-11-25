@@ -38,7 +38,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.137.0" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.142.8" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
@@ -363,7 +363,7 @@ pnpm_unpack_post() {
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
-	eapply "${FILESDIR}/${PN}-1.133.4-next-config.patch" # FIXME
+#	eapply "${FILESDIR}/${PN}-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
 	eapply "${FILESDIR}/${PN}-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-1.96.14-use-e965-xlsx.patch"
 
