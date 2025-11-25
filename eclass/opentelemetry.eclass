@@ -19,7 +19,7 @@
 # For privacy critics, some of us agree it should not exist, but the
 # OpenTelemery is sometimes unconditional and difficult to remove.
 # The caffe2 package may use multislot OpenTelemetry, but it is not used anywhere else.
-# The OpenTelemetry for Node is separate and is pulled in node based package systems.
+# The OpenTelemetry for Node is separate and is pulled in Node based package systems.
 
 case ${EAPI:-0} in
 	[8]) ;;
