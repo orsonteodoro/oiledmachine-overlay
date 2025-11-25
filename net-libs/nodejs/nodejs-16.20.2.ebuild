@@ -238,15 +238,6 @@ _count_useflag_slots() {
 	echo "${tot}"
 }
 
-_print_merge_useflag_conflicts() {
-	local useflag="${1}"
-	local x
-	for x in $(seq 14 20) ; do
-		has_version "net-libs/nodejs:${x}[${useflag}]" \
-			&& eerror "net-libs/nodejs:${x}[${useflag}]"
-	done
-}
-
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
@@ -284,17 +275,6 @@ einfo "FEATURES:  ${FEATURES}"
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
 ewarn "The ${SLOT_MAJOR}.x has reached End Of Life (EOL) on 2023-09-11."
-
-	# Prevent merge conflicts
-	if use man && (( $(_count_useflag_slots "man") > 1 ))
-	then
-eerror
-eerror "You need to disable man on all except one of the following:"
-eerror
-		_print_merge_useflag_conflicts "man"
-eerror
-		die
-	fi
 
 	local u
 	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do
