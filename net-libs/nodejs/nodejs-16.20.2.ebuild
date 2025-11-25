@@ -33,56 +33,56 @@ NPM_PV="8.19.4" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/pack
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
-	assert
-	async_hooks
-	buffers
-	child_process
-	cluster
-	custom
-	crypto
-	dgram
-	diagnostics_channel
-	dns
-	domain
-	error
-	es
-	esm
-	events
-	fs
-	http
-	http2
-	https
-	misc
-	module
-	napi
-	net
-	os
-	path
-	perf_hooks
-	policy
-	process
-	querystring
-	streams
-	string_decoder
-	timers
-	tls
-	url
-	util
-	v8
-	vm
-	worker
-	zlib
+	"assert"
+	"async_hooks"
+	"buffers"
+	"child_process"
+	"cluster"
+	"custom"
+	"crypto"
+	"dgram"
+	"diagnostics_channel"
+	"dns"
+	"domain"
+	"error"
+	"es"
+	"esm"
+	"events"
+	"fs"
+	"http"
+	"http2"
+	"https"
+	"misc"
+	"module"
+	"napi"
+	"net"
+	"os"
+	"path"
+	"perf_hooks"
+	"policy"
+	"process"
+	"querystring"
+	"streams"
+	"string_decoder"
+	"timers"
+	"tls"
+	"url"
+	"util"
+	"v8"
+	"vm"
+	"worker"
+	"zlib"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
