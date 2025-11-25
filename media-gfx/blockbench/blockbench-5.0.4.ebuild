@@ -167,6 +167,10 @@ BDEPEND+="
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron@33.4.11 from lockfile."								# CVE-2025-55305; DT; Moderate
+
+einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."										# CVE-2022-46175; ZC, DoS, DT, ID; High
+einfo "QA:  Change \"json5\": \"^0.5.0\" reference to \"json5\": \"2.2.3\""
+
 		fix_lockfile() {
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		}
