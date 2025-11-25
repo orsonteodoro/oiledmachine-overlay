@@ -25,6 +25,7 @@
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
 # inherit abseil-cpp multilib-minimal protobuf
 #
 # multilib_src_configure() {
@@ -39,6 +40,7 @@
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
 # inherit abseil-cpp cmake multilib-minimal protobuf
 #
 # multilib_src_configure() {
