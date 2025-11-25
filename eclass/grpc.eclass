@@ -144,7 +144,7 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 	if [[ -n "${1}" ]] ; then
 		name="${1}"
 	else
-		name="Protobuf"
+		name="gRPC"
 	fi
 	local libdir=$(get_libdir)
 	echo "-D${name}_DIR=/usr/lib/grpc/${_GRPC_SLOT}/${libdir}/cmake/grpc"
