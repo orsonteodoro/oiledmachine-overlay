@@ -7,7 +7,6 @@ EAPI=8
 # FIXME:
 # ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
 
-# IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
 # For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
