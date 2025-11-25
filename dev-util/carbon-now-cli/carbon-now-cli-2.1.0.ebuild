@@ -184,7 +184,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE+="
 	|| (
