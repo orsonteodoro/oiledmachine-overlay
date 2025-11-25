@@ -45,7 +45,13 @@ inherit flag-o-matic
 # inherit abseil-cpp
 #
 # src_configure() {
-#   abseil-cpp_src_configure # For includes, linking flags
+#   # For auto adding:
+#   # C/C++ include headers
+#   # LD linker flags
+#   # RPATH correction to find multislotted dynamic library
+#   abseil-cpp_src_configure
+#
+#   # Print or sed patch broken build files below.
 #   einfo "ABSEIL_CPP_CFLAGS:  ${ABSEIL_CPP_CFLAGS}"
 #   einfo "ABSEIL_CPP_LDFLAGS:  ${ABSEIL_CPP_LDFLAGS}"
 #   emake
@@ -118,7 +124,9 @@ abseil-cpp_python_configure() {
 # inherit abseil-cpp cmake
 #
 # src_configure() {
-#   abseil-cpp_src_configure # For linking flags
+#   # RPATH correction to find multislotted dynamic library
+#   abseil-cpp_src_configure
+#
 #   local mycmakeargs=(
 #     $(abseil-cpp_append_cmake)
 #   )

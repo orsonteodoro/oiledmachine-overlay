@@ -33,13 +33,28 @@ inherit flag-o-matic
 #
 # Full example for CMake based autotools based projects:
 #
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+#
 # GRPC_SLOT="3"
-# inherit abseil-cpp cmake grpc protobuf
+# PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# RE2_SLOT="20220623"
+#
+# inherit abseil-cpp cmake grpc
 #
 # src_configure() {
-#   abseil-cpp_src_configure # For include, linker flags
-#   protobuf_src_configure # For include, linker flags, paths
-#   grpc_src_configure # For include, linker flags, paths
+#   # Assume grpc:3/1.51 row in the above alignment table.
+#
+#   # For auto detection or appending of
+#   # C/C++ include headers
+#   # LD linker flags
+#   # RPATH changes
+#   # PKG_CONFIG_PATHs
+#   # Executible PATHs
+#   abseil-cpp_src_configure
+#   protobuf_src_configure
+#   grpc_src_configure
+#
 #   emake
 # }
 #
@@ -47,16 +62,30 @@ inherit flag-o-matic
 #
 # Full example for CMake based projects:
 #
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+#
 # GRPC_SLOT="3"
-# inherit abseil-cpp cmake grpc protobuf
+# PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# RE2_SLOT="20220623"
+#
+# inherit abseil-cpp cmake grpc
 #
 # src_configure() {
-#   abseil-cpp_src_configure # For linker flags
-#   protobuf_src_configure # For linker flags
-#   grpc_src_configure # For linker flags
+#   # Assume grpc:3/1.51 row in the above alignment table.
+#
+#   # For adding
+#   # RPATH correction to find multislotted dynamic library
+#   # PKG_CONFIG_PATHs for package detection
+#   # Executible PATHs
+#   abseil-cpp_src_configure
+#   protobuf_src_configure
+#   grpc_src_configure
+#
 #   local mycmakeargs=(
 #     $(grpc_append_mycmakeargs)
 #   )
+#
 #   cmake_src_configure
 # }
 #
@@ -71,9 +100,16 @@ inherit flag-o-matic
 # inherit grpc
 #
 # src_configure() {
-#   grpc_src_configure # For includes, linker flags, path changes
+#   # For C/C++ includes
+#   # LD linker flags
+#   # RPATH correction to find multislotted dynamic library
+#   # PATH changes
+#   grpc_src_configure
+#
+#   # Print or sed patch broken build files below.
 #   einfo "GRPC_CFLAGS:  ${GRPC_CFLAGS}"
 #   einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
+#
 #   emake
 # }
 #
@@ -149,10 +185,13 @@ grpc_python_configure() {
 # inherit cmake grpc
 #
 # src_configure() {
-#   grpc_src_configure # For linker flags
+#   # RPATH correction to find multislotted dynamic library
+#   grpc_src_configure
+#
 #   local mycmakeargs=(
 #     $(grpc_append_mycmakeargs)
 #   )
+#
 #   cmake_src_configure
 # }
 #

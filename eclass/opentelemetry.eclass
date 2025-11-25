@@ -40,7 +40,15 @@ _OPENTELEMETRY_ECLASS=1
 # inherit opentelemetry
 #
 # src_configure() {
+#   # For auto configure or adding of
+#   # C/C++ include headers
+#   # LD linker flags
+#   # RPATH correction for multislot dynamic libraries
+#   # LD_LIBRARY_PATH for library detection
+#   # Executible PATHs for profiler/instrumenter
+#   # PYTHONPATH for Python modules detection
 #   opentelemetry_src_configure
+#
 #   einfo "OPENTELEMETRY_CFLAGS:  ${OPENTELEMETRY_CFLAGS}"
 #   einfo "OPENTELEMETRY_LDFLAGS:  ${OPENTELEMETRY_LDFLAGS}"
 # }
@@ -90,9 +98,11 @@ eerror "QA:  Set either OPENTELEMETRY_PV or OPENTELEMETRY_SLOT"
 	# Sanitize/isolate
 	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/opentelemetry/|d" | tr $'\n' ":")
 	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/opentelemetry/|d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/opentelemetry/|d" | tr $'\n' ":")
 	PYTHONPATH=$(echo "${PYTHONPATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/opentelemetry/|d" | tr $'\n' ":")
 
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/opentelemetry/${_OPENTELEMETRY_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
+	export PATH="${ESYSROOT}/usr/lib/opentelemetry/${_OPENTELEMETRY_SLOT}/bin:${PATH}"
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/opentelemetry/${_OPENTELEMETRY_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/lib/opentelemetry/${_OPENTELEMETRY_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 }
@@ -114,10 +124,15 @@ opentelemetry_python_configure() {
 # inherit cmake opentelemetry
 #
 # src_configure() {
-#   opentelemetry_src_configure # For linker flags
+#   # For auto configure or adding of
+#   # RPATH correction for multislot dynamic libraries
+#   # Executible PATHs for profiler/instrumenter
+#   opentelemetry_src_configure
+#
 #   local mycmakeargs=(
 #     $(opentelemetry_append_mycmakeargs)
 #   )
+#
 #   cmake_src_configure
 # }
 #
@@ -141,7 +156,8 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 		name="OpenTelemetryApi"
 	fi
 	local libdir=$(get_libdir)
-	echo "-D${name}_DIR=/usr/lib/opentelemetry/${_GRPC_SLOT}/${libdir}/cmake/grpc"
+# TODO fix or correct this
+	echo "-D${name}_DIR=/usr/lib/opentelemetry/${_GRPC_SLOT}/${libdir}/cmake/<FIXME>"
 }
 
 fi

@@ -23,14 +23,25 @@
 #
 # Full example for autotools based projects:
 #
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+#
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
 # PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
-# inherit abseil-cpp multilib-minimal protobuf
+# inherit abseil-cpp multilib-minimal
 #
 # multilib_src_configure() {
-#   abseil-cpp_src_configure # For includes, linking flags
-#   protobuf_src_configure # For includes, linking flags, path
+#   # Assume protobuf-cpp:3/3.21 row in the above alignment table.
+#
+#   # For auto detection or appending of
+#   # C/C++ include headers
+#   # LD linker flags
+#   # PKG_CONFIG_PATHs for package detection
+#   # RPATH changes to correct dynamic library search
+#   # Executible PATHs
+#   abseil-cpp_src_configure
+#   protobuf_src_configure
+#
 #   emake
 # }
 #
@@ -38,18 +49,27 @@
 #
 # Full example for CMake based projects:
 #
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+#
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
 # PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
-# inherit abseil-cpp cmake multilib-minimal protobuf
+# inherit abseil-cpp cmake multilib-minimal
 #
 # multilib_src_configure() {
-#   abseil-cpp_src_configure # For linking flags
-#   protobuf_src_configure # For linking flags, path
+#   # Assume protobuf-cpp:3/3.21 row in the above alignment table.
+#
+#   # For adding
+#   # RPATH linking flags to correct dynamic library search
+#   # Executible PATHs
+#   abseil-cpp_src_configure
+#   protobuf_src_configure
+#
 #   local mycmakeargs() {
 #     $(abseil-cpp_append_mycmakeargs)
 #     $(protobuf_append_mycmakeargs)
 #   }
+#
 #   cmake_src_configure
 # }
 #
@@ -118,9 +138,18 @@ PROTOBUF_PYTHON_SLOTS_6=(
 # inherit protobuf
 #
 # src_configure() {
+#   # For auto detection or appending of
+#   # C/C++ include headers
+#   # LD linker flags
+#   # PKG_CONFIG_PATHs for package detection
+#   # RPATH changes to correct dynamic library search
+#   # Executible PATHs
 #   protobuf_src_configure
+#
+#   # For printing or sed patching broken build files.
 #   einfo "PROTOBUF_CPP_CFLAGS:  ${PROTOBUF_CPP_CFLAGS}"
 #   einfo "PROTOBUF_CPP_LDFLAGS:  ${PROTOBUF_CPP_LDFLAGS}"
+#
 #   emake
 # }
 protobuf_src_configure() {
@@ -208,10 +237,13 @@ protobuf_python_configure() {
 # inherit cmake protobuf
 #
 # src_configure() {
-#   protobuf_src_configure # Append or get rpath for build script modding.
+#   # RPATH changes to correct dynamic library search
+#   protobuf_src_configure
+#
 #   local mycmakeargs=(
 #     $(protobuf_append_cmake)
 #   )
+#
 #   cmake_src_configure
 # }
 #
