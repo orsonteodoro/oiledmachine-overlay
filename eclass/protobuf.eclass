@@ -165,11 +165,11 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 			"--rpath=/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}"
 	fi
 
-	# Sanitize/isolate
+	# Sanitize/isolate multiabi and multislot pollution from logs
 	LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
 	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf/|d" | tr $'\n' ":")
-	PYTHONPATH=$(echo "${PYTHONPATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf-python|d" | tr $'\n' ":")
+	PYTHONPATH=$(echo "${PYTHONPATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/protobuf-python/|d" | tr $'\n' ":")
 
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/bin:${PATH}"
