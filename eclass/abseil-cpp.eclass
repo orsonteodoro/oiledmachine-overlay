@@ -30,8 +30,8 @@ inherit flag-o-matic
 #
 # src_configure() {
 #   abseil-cpp_append_flags_direct
-#   einfo "_ABSEIL_CPP_CFLAGS:  ${_ABSEIL_CPP_CFLAGS}"
-#   einfo "_ABSEIL_CPP_LDFLAGS:  ${_ABSEIL_CPP_LDFLAGS}"
+#   einfo "ABSEIL_CPP_CFLAGS:  ${ABSEIL_CPP_CFLAGS}"
+#   einfo "ABSEIL_CPP_LDFLAGS:  ${ABSEIL_CPP_LDFLAGS}"
 # }
 #
 abseil-cpp_append_flags_direct() {
@@ -53,9 +53,9 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		"--rpath,/usr/lib/abseil-cpp/*"
 
 	# For manual configuration or sed patch
-	export _ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
-	export _ABSEIL_CPP_CXXFLAGS="${_ABSEIL_CPP_CXXFLAGS}"
-	export _ABSEIL_CPP_LDFLAGS="-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} --rpath=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+	export ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
+	export ABSEIL_CPP_CXXFLAGS="${ABSEIL_CPP_CXXFLAGS}"
+	export ABSEIL_CPP_LDFLAGS="-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} --rpath=/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
 
 	append-flags "-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
 	append-ldflags \
@@ -74,8 +74,8 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 #
 # src_configure() {
 #   abseil-cpp_append_flags_indirect
-#   einfo "_ABSEIL_CPP_CFLAGS:  ${_ABSEIL_CPP_CFLAGS}"
-#   einfo "_ABSEIL_CPP_LDFLAGS:  ${_ABSEIL_CPP_LDFLAGS}"
+#   einfo "ABSEIL_CPP_CFLAGS:  ${ABSEIL_CPP_CFLAGS}"
+#   einfo "ABSEIL_CPP_LDFLAGS:  ${ABSEIL_CPP_LDFLAGS}"
 # }
 #
 abseil-cpp_append_flags_indirect() {
@@ -97,9 +97,9 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		"-Wl,-rpath,/usr/lib/abseil-cpp/*"
 
 	# For manual configuration or sed patch
-	export _ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
-	export _ABSEIL_CPP_CXXFLAGS="${_ABSEIL_CPP_CXXFLAGS}"
-	export _ABSEIL_CPP_LDFLAGS="-Wl,-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
+	export ABSEIL_CPP_CFLAGS="-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
+	export ABSEIL_CPP_CXXFLAGS="${ABSEIL_CPP_CXXFLAGS}"
+	export ABSEIL_CPP_LDFLAGS="-Wl,-L/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir} -Wl,-rpath,/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/${libdir}"
 
 	append-flags "-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
 	append-ldflags \
