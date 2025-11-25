@@ -48,7 +48,7 @@ inherit flag-o-matic
 #   # For auto adding:
 #   # C/C++ include headers
 #   # LD linker flags
-#   # RPATH correction to find multislotted dynamic library
+#   # RPATH correction to find multislotted dynamic libraries
 #   abseil-cpp_src_configure
 #
 #   # Print or sed patch broken build files below.
@@ -124,7 +124,7 @@ abseil-cpp_python_configure() {
 # inherit abseil-cpp cmake
 #
 # src_configure() {
-#   # RPATH correction to find multislotted dynamic library
+#   # RPATH correction to find multislotted dynamic libraries
 #   abseil-cpp_src_configure
 #
 #   local mycmakeargs=(

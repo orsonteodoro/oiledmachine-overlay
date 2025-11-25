@@ -38,7 +38,7 @@
 #   # LD linker flags
 #   # PKG_CONFIG_PATHs for package detection
 #   # RPATH changes to correct dynamic library search
-#   # Executible PATHs
+#   # Executible PATHs for protoc code generator
 #   abseil-cpp_src_configure
 #   protobuf_src_configure
 #
@@ -61,7 +61,7 @@
 #
 #   # For adding
 #   # RPATH linking flags to correct dynamic library search
-#   # Executible PATHs
+#   # Executible PATHs for protoc code generator
 #   abseil-cpp_src_configure
 #   protobuf_src_configure
 #
@@ -143,7 +143,7 @@ PROTOBUF_PYTHON_SLOTS_6=(
 #   # LD linker flags
 #   # PKG_CONFIG_PATHs for package detection
 #   # RPATH changes to correct dynamic library search
-#   # Executible PATHs
+#   # Executible PATHs for protoc code generator
 #   protobuf_src_configure
 #
 #   # For printing or sed patching broken build files.
@@ -238,6 +238,7 @@ protobuf_python_configure() {
 #
 # src_configure() {
 #   # RPATH changes to correct dynamic library search
+#   # Executible PATHs for protoc code generator
 #   protobuf_src_configure
 #
 #   local mycmakeargs=(

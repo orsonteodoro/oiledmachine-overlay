@@ -48,9 +48,10 @@ inherit flag-o-matic
 #   # For auto detection or appending of
 #   # C/C++ include headers
 #   # LD linker flags
-#   # RPATH changes
-#   # PKG_CONFIG_PATHs
-#   # Executible PATHs
+#   # RPATH correction to find multislotted dynamic library
+#   # PKG_CONFIG_PATHs for package detection
+#   # LD_LIBRARY_PATHs for loading multislot dynamic libraries for build time executibles
+#   # Executible PATHs for multislotted gRPC plugins or protoc code generator
 #   abseil-cpp_src_configure
 #   protobuf_src_configure
 #   grpc_src_configure
@@ -74,10 +75,11 @@ inherit flag-o-matic
 # src_configure() {
 #   # Assume grpc:3/1.51 row in the above alignment table.
 #
-#   # For adding
+#   # For adding paths for
 #   # RPATH correction to find multislotted dynamic library
 #   # PKG_CONFIG_PATHs for package detection
-#   # Executible PATHs
+#   # LD_LIBRARY_PATHs for loading multislot dynamic libraries for build time executibles
+#   # Executible PATHs for multislotted gRPC plugins or protoc code generator
 #   abseil-cpp_src_configure
 #   protobuf_src_configure
 #   grpc_src_configure
@@ -100,10 +102,12 @@ inherit flag-o-matic
 # inherit grpc
 #
 # src_configure() {
-#   # For C/C++ includes
+#   # For adding paths to
+#   # C/C++ include headers
 #   # LD linker flags
 #   # RPATH correction to find multislotted dynamic library
-#   # PATH changes
+#   # LD_LIBRARY_PATHs for loading multislot dynamic libraries for build time executibles
+#   # Executible PATHs for multislotted gRPC plugins
 #   grpc_src_configure
 #
 #   # Print or sed patch broken build files below.
@@ -186,6 +190,7 @@ grpc_python_configure() {
 #
 # src_configure() {
 #   # RPATH correction to find multislotted dynamic library
+#   # Executible PATHs for multislotted gRPC plugins
 #   grpc_src_configure
 #
 #   local mycmakeargs=(
