@@ -21,7 +21,7 @@ inherit flag-o-matic
 
 # @FUNCTION:  node_setup
 # @DESCRIPTION:
-# Setup multislot node for early src_unpack (live ebuilds)
+# Setup multislot node for early src_unpack (live ebuilds) or during src_configure phase.
 node_setup() {
 	if [[ -n "${NODE_SLOT}" ]] ; then
 eerror "QA:  NODE_SLOT must be defined"
