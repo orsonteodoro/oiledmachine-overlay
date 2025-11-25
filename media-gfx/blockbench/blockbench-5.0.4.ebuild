@@ -167,12 +167,11 @@ BDEPEND+="
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron@33.4.11 from lockfile."								# CVE-2025-55305; DT; Moderate
-
-einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."										# CVE-2022-46175; ZC, DoS, DT, ID; High
-einfo "QA:  Change \"json5\": \"^0.5.0\" reference to \"json5\": \"2.2.3\""
-
+einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."										# CVE-2022-46175; DoS, DT, ID; High
 		fix_lockfile() {
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"1.4.1\"|g" "package-lock.json" || die				# CVE-2022-37601; ZC, DoS, DT, ID; Critical
+			sed -i -e "s|\"json5\": \"^0.5.0\"|\"json5\": \"2.2.3\"|g" "package-lock.json" || die						# CVE-2022-46175; DoS, DT, ID; High
 		}
 		fix_lockfile
 		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
