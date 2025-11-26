@@ -343,7 +343,7 @@ BINARYEN_ROOT = '${EMSDK_BINARYEN_PREFIX}'
 CLOSURE_COMPILER = ${cc_exe}
 EMSCRIPTEN_ROOT = '${S}'
 JAVA = 'java'
-LLVM_ROOT = '${EMSDK_LLVM_PREFIX}'
+LLVM_ROOT = '${EMSDK_LLVM_PREFIX}/bin'
 NODE_JS = '${EMSDK_NODE}'
 EOF
 }
@@ -353,6 +353,7 @@ setup_test_env() {
 	local cc_cmd=$(get_closure_compiler_provider)
 
 	# Official environment variables
+	export EM_CACHE="${HOME}/.emscripten_cache"
 	export EM_CONFIG="${T}/emscripten-${ABI}.config"
 	export EMCC_TEMP_DIR="${T}"
 	export EMCC_WASM_BACKEND=1
@@ -371,8 +372,8 @@ setup_test_env() {
 src_test() {
 	local t="wasm"
 einfo "Testing ${t}"
-	setup_test_config
 	setup_test_env
+	setup_test_config
 	local node_slot=$(get_compatible_node_slot)
 	if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
 		die "EMCC_WASM_BACKEND should be 1 with wasm"

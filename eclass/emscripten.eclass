@@ -181,7 +181,7 @@ BINARYEN_ROOT = os.path.expanduser('${EMSDK_BINARYEN_PREFIX}')
 CLOSURE_COMPILER = ${cc_str}
 EMSCRIPTEN_ROOT = os.path.expanduser('${EMSDK_EMSCRIPTEN_PREFIX}')
 JAVA = 'java'
-LLVM_ROOT = os.path.expanduser('${EMSDK_LLVM_PREFIX}')
+LLVM_ROOT = os.path.expanduser('${EMSDK_LLVM_PREFIX}/bin')
 NODE_JS = os.path.expanduser('${EMSDK_NODE}')
 EOF
 }
