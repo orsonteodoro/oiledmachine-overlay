@@ -255,13 +255,13 @@ eerror
 	use java && java-pkg_ensure-vm-version-eq "${JAVA_SLOT}"
 	python-single-r1_pkg_setup
 
-einfo "PATH=${PATH} (before)"
+einfo "PATH:  ${PATH} (before)"
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
-einfo "PATH=${PATH} (after)"
+einfo "PATH:  ${PATH} (after)"
 
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -274,12 +274,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-einfo "CXX:\t${CXX}"
+einfo "CXX:  ${CXX}"
 }
 
 src_prepare() {
-	export PYTHON_EXE_ABSPATH="${PYTHON}"
-	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	eapply "${_PATCHES[@]}"
 
 	#eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
@@ -355,7 +353,7 @@ setup_test_env() {
 
 src_test() {
 	local t="wasm"
-	einfo "Testing ${t}"
+einfo "Testing ${t}"
 	setup_test_config
 	setup_test_env
 	local node_slot=$(get_compatible_node_slot)
