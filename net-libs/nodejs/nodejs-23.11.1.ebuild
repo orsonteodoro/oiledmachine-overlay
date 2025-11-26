@@ -138,7 +138,7 @@ IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
 +npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_47
+ebuild_revision_48
 "
 
 gen_required_use_pgo() {
@@ -913,7 +913,7 @@ src_install() {
 		--prefix "${prefix}" \
 		|| die
 
-	pax-mark -m "${ED}/usr/bin/node/${SLOT_MAJOR}/bin/node"
+	pax-mark -m "${ED}${prefix}/bin/node"
 
 	# Set up a symlink structure that node-gyp expects.
 	local D_INCLUDE_BASE="${prefix}/include/node"
