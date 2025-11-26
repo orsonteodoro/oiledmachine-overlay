@@ -43,6 +43,12 @@ BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1878
 # Safari min version:  https://github.com/emscripten-core/emscripten/blob/4.0.11/src/settings.js#L1893
 
+_CLOSURE_COMPILER_IMPLS=(
+	"closure_compiler_java"
+	"closure_compiler_native"
+	"closure_compiler_nodejs"
+)
+
 inherit check-compiler-switch flag-o-matic java-pkg-opt-2 python-single-r1 toolchain-funcs
 
 #KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos" # See tests/clang_native.py for supported arches ; needs testing or patch update
@@ -153,10 +159,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${EMSCRIPTEN_SLOT}"
 IUSE+="
+${_CLOSURE_COMPILER_IMPLS[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
--closure-compiler closure_compiler_java closure_compiler_native
-closure_compiler_nodejs java test
-ebuild_revision_10
+-closure-compiler java test
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -176,9 +182,7 @@ REQUIRED_USE+="
 	)
 	closure-compiler? (
 		^^ (
-			closure_compiler_java
-			closure_compiler_native
-			closure_compiler_nodejs
+			${_CLOSURE_COMPILER_IMPLS[@]}
 		)
 	)
 "
@@ -316,21 +320,31 @@ get_closure_compiler_provider() {
 		cc_cmd="closure-compiler-node"
 	elif use closure_compiler_native ; then
 		cc_cmd="closure-compiler"
-	elif use closure-compiler ; then
-		cc_cmd="" # use defaults
+	else
+		cc_cmd="None"
 	fi
 	echo "${cc_cmd}"
 }
 
+
 setup_test_config() {
 	local node_slot=$(get_compatible_node_slot)
+	local cc_exe=$(get_closure_compiler_provider)
+
+	local cc_exe_str=""
+	if [[ "${cc_exe}" == "None" ]] ; then
+		cc_exe_str="None"
+	else
+		cc_exe_str="'${cc_exe}'"
+	fi
 
 cat <<EOF > "${T}/emscripten-${ABI}.config"
+BINARYEN_ROOT = '${EMSDK_BINARYEN_PREFIX}'
+CLOSURE_COMPILER = ${cc_exe}
 EMSCRIPTEN_ROOT = '${S}'
-LLVM_ROOT = '/usr/lib/llvm/${LLVM_SLOT}/bin'
-BINARYEN_ROOT = '/usr/lib/binaryen/${BINARYEN_SLOT}'
-NODE_JS = '/usr/lib/node/${node_slot}/bin/node'
 JAVA = 'java'
+LLVM_ROOT = '${EMSDK_LLVM_PREFIX}'
+NODE_JS = '${EMSDK_NODE}'
 EOF
 }
 
@@ -338,17 +352,18 @@ setup_test_env() {
 	local node_slot=$(get_compatible_node_slot)
 	local cc_cmd=$(get_closure_compiler_provider)
 
-	export BINARYEN="${ESYSROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
-	export CLOSURE_COMPILER="${cc_cmd}"
+	# Official environment variables
 	export EM_CONFIG="${T}/emscripten-${ABI}.config"
+	export EMCC_TEMP_DIR="${T}"
 	export EMCC_WASM_BACKEND=1
-	export EMSCRIPTEN="${WORKDIR}/${P}"
-	export EMSCRIPTEN_NATIVE_OPTIMIZER=""
+
+	# Helper variables for emscripten-${ABI}.conf
+	export EMSDK_BINARYEN_PREFIX="${ESYSROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
 	export EMSDK_CLOSURE_COMPILER="${cc_cmd}"
-	export EMSDK_LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}"
+	export EMSDK_EMSCRIPTEN_PREFIX="${WORKDIR}/${P}"
+	export EMSDK_LLVM_PREFIX="/usr/lib/llvm/${LLVM_SLOT}"
 	export EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
 	export EMSDK_PYTHON="/usr/bin/${EPYTHON}"
-	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export PATH="${BINARYEN}/bin:${PATH}"
 	export PATH="${S}:${PATH}"
 }
@@ -390,15 +405,15 @@ gen_metadata() {
 	dodir "${INSTALL_PREFIX}/etc"
 
 cat <<EOF > "${ED}/${INSTALL_PREFIX}/etc/slot.metadata" || die
-BROWSER_MIN_VER="${BROWSERS_MIN_VER}"
-BINARYEN_SLOT="${BINARYEN_SLOT}"
-CLOSURE_COMPILER_EXE="${closure_compiler_exe}"
+EMSCRIPTEN_BROWSER_MIN_VER="${BROWSERS_MIN_VER}"
+EMSCRIPTEN_BINARYEN_SLOT="${BINARYEN_SLOT}"
+EMSCRIPTEN_CLOSURE_COMPILER_EXE="${closure_compiler_exe}"
 EMSCRIPTEN_EPREFIX="${EPREFIX}"
+EMSCRIPTEN_LLVM_SLOT="${LLVM_SLOT}"
+EMSCRIPTEN_NODE_SLOT_MIN="${NODE_SLOT_MIN}"
 EMSCRIPTEN_PV="${PV}"
+EMSCRIPTEN_PYTHON_SLOT="${EPYTHON/python}"
 EMSCRIPTEN_SLOT="${EMSCRIPTEN_SLOT}"
-LLVM_SLOT="${LLVM_SLOT}"
-NODE_SLOT_MIN="${NODE_SLOT_MIN}"
-PYTHON_SLOT="${EPYTHON/python}"
 EOF
 }
 
@@ -445,7 +460,7 @@ einfo "Sanitizing file/folder permissions"
 		elif file "${path}" | grep -q -e "symbolic link" ; then
 			:
 		else
-			# Licenses and config files
+	# Licenses and config files
 			chmod 0644 "${path}" || die
 		fi
 	done
@@ -455,7 +470,8 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	dodir "${INSTALL_PREFIX}/${P}"
 	sanitize_install
-	cp -aT "${S}/" "${D}/${INSTALL_PREFIX}" || die "Could not install files"
+	cp -aT "${S}/" "${D}/${INSTALL_PREFIX}" \
+		|| die "Could not install files"
 	gen_metadata
 	sanitize_permissions
 }
