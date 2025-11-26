@@ -360,14 +360,7 @@ src_test() {
 	fi
 	if use test ; then
 		mkdir -p "${TEST_PATH}" || die
-		cp "${FILESDIR}/hello_world.cpp" "${TEST_PATH}" \
-			|| die "Could not copy example file"
-		sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
-			"${TEST_PATH}/emscripten.config" \
-			|| die "Could not adjust path for testing"
-		export EM_CONFIG="${TEST_PATH}/emscripten.config" \
-			|| die "Could not export variable"
-		"../${P}/emcc" "${TEST_PATH}/hello_world.cpp" \
+		"../${P}/emcc" "${FILESDIR}/hello_world.cpp" \
 			-o "${TEST_PATH}/hello_world.js" || \
 			die "Error during executing emcc!"
 		test -f "${TEST_PATH}/hello_world.js" \
@@ -376,12 +369,12 @@ src_test() {
 		OUT=$("${BROOT}/usr/lib/node/${node_slot}/bin/node" "${TEST_PATH}/hello_world.js") || \
 			die "Could not execute /usr/lib/node/${node_slot}/bin/node"
 
-		EXP=$(echo -e -n 'Hello World!\n') \
-			|| die "Could not create expected string"
-		if [ "${OUT}" != "${EXP}" ]; then
+		EXP=$(echo -e -n 'Hello World!\n')
+		if [[ "${OUT}" != "${EXP}" ]] ; then
 			die "Expected '${EXP}' but got '${OUT}'!"
 		fi
-		rm -r "${TEST_PATH}" || die "Could not clean-up '${TEST_PATH}'"
+		rm -r "${TEST_PATH}" \
+			|| die "Could not clean-up '${TEST_PATH}'"
 		rm -r "${HOME}/.emscripten_cache" \
 			|| die "Could not clean up \${HOME}/.emscripten_cache"
 	fi
