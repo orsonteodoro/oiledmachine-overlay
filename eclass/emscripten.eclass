@@ -142,6 +142,7 @@ eerror "QA:  EMSCRIPTEN_SLOT must be defined"
 	export EMCC_WASM_BACKEND=${EMCC_WASM_BACKEND:-1} # 1=wasm, 0=emscripten-fastcomp
 	export EMTEST_LACKS_NATIVE_CLANG="1"
 	export LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}/bin"
+	export PATH="${ESYSROOT}/usr/lib/binaryen/${BINARYEN_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/bin:${PATH}"
 einfo "BINARYEN:  ${BINARYEN}"
 einfo "CLOSURE_COMPILER:  ${CLOSURE_COMPILER}"

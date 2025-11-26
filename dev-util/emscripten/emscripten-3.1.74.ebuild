@@ -340,6 +340,7 @@ setup_test_env() {
 	export EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
 	export EMSDK_PYTHON="/usr/bin/${EPYTHON}"
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export PATH="${BINARYEN}/bin:${PATH}"
 	export PATH="${S}:${PATH}"
 }
 
