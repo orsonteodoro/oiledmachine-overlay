@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20250924"
+VERSION="20251125"
 PN="emscripten"
 
 # version tests
@@ -221,7 +221,7 @@ set_config() {
     local python_slot=$(grep "PYTHON_SLOT" "${metadata_path}" | cut -f 2 -d "=")
     PYTHON_EXE_ABSPATH="/usr/bin/python${python_slot}"
 
-    local nodejs_slot=$(grep "NODEJS_SLOT" "${metadata_path}" | cut -f 2 -d "=")
+    local nodejs_slot=$(grep "NODE_SLOT" "${metadata_path}" | cut -f 2 -d "=")
     __EMSDK_NODE_VERSION_MIN__="${nodejs_slot}"
 
     local binaryen_slot=$(grep "BINARYEN_SLOT" "${metadata_path}" | cut -f 2 -d "=")
@@ -230,6 +230,16 @@ set_config() {
     # Also set the llvm conditional chain in find_targets()
     local llvm_slot=$(grep "LLVM_SLOT" "${metadata_path}" | cut -f 2 -d "=")
     __EMSDK_LLVM_VERSION__="${llvm_slot}"
+
+    local node_slot
+    local node_slots=( $(eval "echo {${__EMSDK_NODE_VERSION_MIN__}..25}") )
+    local x
+    for x in ${node_slots[@]} ; do
+      if [[ -e "/usr/lib/node/${x}/bin/node" ]] ; then
+        node_slot="${x}"
+        break
+      fi
+    done
 
     T_ENV=$(mktemp)
     cat << EOF > "${T_ENV}" || die
@@ -241,7 +251,7 @@ EMSDK_BINARYEN_LIB_PATH="/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION_
 EMSDK_CLOSURE_COMPILER="${__EMSDK_CLOSURE_COMPILER__}"
 EMSDK_LLVM_ROOT="${__LLVM_BIN_PATH__}"
 EMSDK_LLVM_VERSION="${__EMSDK_LLVM_VERSION__}"
-EMSDK_NODE="/usr/bin/node"
+EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
 EMSDK_NODE_VERSION_MIN="${__EMSDK_NODE_VERSION_MIN__}"
 EMSDK_PYTHON="${PYTHON_EXE_ABSPATH}"
 EMSCRIPTEN_NATIVE_OPTIMIZER="/usr/share/emscripten-${PV}/optimizer"

@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# TODO:  Remove most muxer ebuilds including this one to improve parallel emerge.
+
 KEYWORDS="~amd64 ~arm64"
 SRC_URI=""
 
