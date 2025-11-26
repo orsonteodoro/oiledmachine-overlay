@@ -33,7 +33,7 @@ eerror "QA:  NODE_SLOT must be defined"
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/node/|d" | tr $'\n' ":")
 
 	append-flags "-I${ESYSROOT}/usr/bin/node/${NODE_SLOT}/include"
-	export PATH="${ESYSROOT}/usr/bin/node/${NODE_SLOT}/bin"
+	export PATH="${ESYSROOT}/usr/lib/node/${NODE_SLOT}/bin"
 }
 
 fi
