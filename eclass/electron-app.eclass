@@ -1004,27 +1004,23 @@ electron-app_gen_wrapper() {
 	local name="${1}"
 	local cmd="${2}"
 	exeinto "/usr/bin"
-	local node_version=""
+	local node_slot=""
 	local node_env=""
-	if [[ -n "${NODE_VERSION}" ]] ; then
-einfo "Setting NODE_VERSION=${NODE_VERSION} in wrapper."
-		node_version="export NODE_VERSION=${NODE_VERSION}"
-	fi
-	if [[ "${NODE_ENV}" == "production" ]] ; then
-einfo "Setting NODE_ENV=\${NODE_ENV:-production} in wrapper."
-		node_env="export NODE_ENV=\${NODE_ENV:-production}"
+	if [[ -n "${NODE_SLOT}" ]] ; then
+einfo "Setting NODE_SLOT=${NODE_SLOT} in the wrapper script."
+		node_slot="NODE_SLOT=${NODE_SLOT}"
 	else
-einfo "Setting NODE_ENV=\${NODE_ENV:-development} in wrapper."
-		node_env="export NODE_ENV=\${NODE_ENV:-development}"
+	# The oldest supported LTS release is 20
+einfo "Assuming NODE_SLOT=${NODE_SLOT} in the wrapper script."
+		node_slot="NODE_SLOT=20"
 	fi
 cat <<EOF > "${T}/${name}" || die
 #!/bin/bash
-${node_version}
-${node_env}
+${node_slot}
 extra_args=""
 
 # Client side window directions (title bar) issue #29618
-[[ \${NODE_VERSION} -ge 18 ]] && extra_args="--enable-features=WaylandWindowDecorations"
+[[ \${NODE_SLOT} -ge 18 ]] && extra_args="--enable-features=WaylandWindowDecorations"
 
 if [[ -n \${DISPLAY} ]] ; then
 	${cmd} "\${@}"
