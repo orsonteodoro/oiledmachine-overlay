@@ -6,6 +6,25 @@ EAPI=8
 # Keep emscripten.config.x.yy.zz updated if changed from:
 # https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/config_template.py
 
+# For DEPENDs version requirements, see:
+# See also .circleci/config.yml
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.64/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.64/package.json
+# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/packages/google-closure-compiler/package.json
+# For the required Java, See https://github.com/google/closure-compiler/blob/v20230802/.github/workflows/ci.yaml#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/shared.py#L43
+
+# For Python requirements, see also
+# https://github.com/emscripten-core/emsdk/blob/3.1.64/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emsdk/blob/3.1.64/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/3.1.64/scripts/update_python.py#L34
+# https://github.com/emscripten-core/emscripten/blob/3.1.64/requirements-dev.txt
+# flake8 (3.9.2) - <= 3.9
+# flake8 (5.0.4) - <= 3.10
+# websockify (0.10.0) - <= 3.9
+
 # TC = toolchain
 BINARYEN_SLOT="118" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 CLOSURE_COMPILER_SLOT="0"
@@ -19,14 +38,6 @@ INSTALL_PREFIX="/usr/lib/emscripten/${EMSCRIPTEN_SLOT}" # After EMSCRIPTEN_SLOT
 NODE_SLOT_MIN="16"
 PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.9
 TEST_PATH="${WORKDIR}/test/"
-# See also
-# https://github.com/emscripten-core/emsdk/blob/3.1.64/.circleci/config.yml#L24
-# https://github.com/emscripten-core/emsdk/blob/3.1.64/emsdk#L11
-# https://github.com/emscripten-core/emsdk/blob/3.1.64/scripts/update_python.py#L34
-# https://github.com/emscripten-core/emscripten/blob/3.1.64/requirements-dev.txt
-# flake8 (3.9.2) - <= 3.9
-# flake8 (5.0.4) - <= 3.10
-# websockify (0.10.0) - <= 3.9
 BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 14.1"
 # Chrome min version:  https://github.com/emscripten-core/emscripten/blob/3.1.64/src/settings.js#L1904
 # Firefox min version:  https://github.com/emscripten-core/emscripten/blob/3.1.64/src/settings.js#L1878
@@ -171,15 +182,6 @@ REQUIRED_USE+="
 		)
 	)
 "
-# For DEPENDs:
-# See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.64/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.64/package.json
-# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/packages/google-closure-compiler/package.json
-# For the required Java, See https://github.com/google/closure-compiler/blob/v20230802/.github/workflows/ci.yaml#L43
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.64/tools/shared.py#L43
 RDEPEND+="
 	${PYTHON_DEPS}
 	closure-compiler? (
