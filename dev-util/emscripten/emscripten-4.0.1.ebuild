@@ -182,7 +182,6 @@ REQUIRED_USE+="
 # For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/4.0.1/tools/shared.py#L43
 RDEPEND+="
 	${PYTHON_DEPS}
-	app-eselect/eselect-emscripten
 	closure-compiler? (
 		>=dev-util/closure-compiler-npm-20240317.0.0:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		dev-util/closure-compiler-npm:=
@@ -196,6 +195,7 @@ RDEPEND+="
 		)
 	)
 	dev-util/binaryen:${BINARYEN_SLOT}
+	dev-util/binaryen:=
 	>=net-libs/nodejs-18
 	(
 		>=llvm-core/clang-${LLVM_SLOT}:${LLVM_SLOT}[llvm_targets_WebAssembly]
