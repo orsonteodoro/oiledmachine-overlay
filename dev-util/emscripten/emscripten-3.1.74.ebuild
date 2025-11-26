@@ -145,7 +145,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -393,8 +393,7 @@ PYTHON_SLOT="${EPYTHON/python}"
 EOF
 }
 
-src_install() {
-	dodir "${INSTALL_PREFIX}/${P}"
+sanitize_install() {
 	# See tools/install.py
 	find "${S}" \
 	\( \
@@ -413,7 +412,12 @@ src_install() {
 	\) \
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
-	cp -R "${S}/" "${D}/${INSTALL_PREFIX}" || die "Could not install files"
+}
+
+src_install() {
+	dodir "${INSTALL_PREFIX}/${P}"
+	sanitize_install
+	cp -aT "${S}/" "${D}/${INSTALL_PREFIX}" || die "Could not install files"
 	gen_metadata
 }
 
