@@ -153,7 +153,7 @@ FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
-NODE_SLOT=22
+NODE_SLOT="22"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
@@ -1182,6 +1182,7 @@ COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
 		>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
+		dev-libs/glib:=
 		>=media-libs/alsa-lib-1.2.4[${MULTILIB_USEDEP}]
 		media-libs/alsa-lib:=
 		>=sys-apps/pciutils-3.7.0[${MULTILIB_USEDEP}]
@@ -1313,6 +1314,7 @@ PATENT_STATUS_DEPEND="
 		!patent_status_nonfree? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
 		)
+		media-video/ffmpeg:=
 	)
 "
 COMMON_DEPEND="
@@ -1327,10 +1329,12 @@ COMMON_DEPEND="
 		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 		x11-libs/cairo:=
 		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
+		x11-libs/gdk-pixbuf:=
 		>=x11-libs/pango-1.46.2[${MULTILIB_USEDEP}]
 		x11-libs/pango:=
 		accessibility? (
 			>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]
+			app-accessibility/at-spi2-core:=
 		)
 		cups? (
 			>=net-print/cups-2.3.3[${MULTILIB_USEDEP}]
@@ -1338,6 +1342,7 @@ COMMON_DEPEND="
 		)
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X?]
+			dev-qt/qtbase:=
 		)
 		X? (
 			${COMMON_X_DEPEND}
@@ -1367,7 +1372,10 @@ COMMON_DEPEND="
 			media-libs/opus:=
 		)
 		|| (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+			(
+				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+				media-video/ffmpeg:=
+			)
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
 		)
 	)
@@ -1402,14 +1410,23 @@ RDEPEND+="
 	!headless? (
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,wayland?,X?]
+			dev-qt/qtbase:=
 			wayland? (
 				>=dev-qt/qtdeclarative-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},opengl]
+				dev-qt/qtdeclarative:=
 				>=dev-qt/qtwayland-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				dev-qt/qtwayland:=
 			)
 		)
 		|| (
-			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
-			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
+			(
+				>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
+				gui-libs/gtk:=
+			)
+			(
+				>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
+				x11-libs/gtk+:=
+			)
 		)
 	)
 	selinux? (
@@ -1419,6 +1436,7 @@ RDEPEND+="
 	bindist? (
 		ffmpeg-chromium? (
 			media-video/ffmpeg-chromium:${PV%%\.*}
+			media-video/ffmpeg-chromium:=
 		)
 	)
 "
@@ -1427,9 +1445,11 @@ DEPEND+="
 	!headless? (
 		!gtk4? (
 			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
+			x11-libs/gtk+:=
 		)
 		gtk4? (
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
+			gui-libs/gtk:=
 		)
 	)
 "
@@ -1467,7 +1487,8 @@ RUST_BDEPEND="
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	BDEPEND+="
 		${CLANG_BDEPEND}
-		>=net-libs/nodejs-22.11.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
+		>=net-libs/nodejs-22.11.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
+		net-libs/nodejs:=
 		app-eselect/eselect-nodejs
 	"
 fi
@@ -1482,7 +1503,9 @@ BDEPEND+="
 	app-alternatives/ninja
 	dev-util/patchutils
 	www-client/chromium-sources:0/${PV}
+	www-client/chromium-sources:=
 	www-client/chromium-toolchain:0/${PV%.*}.x
+	www-client/chromium-toolchain:=
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -2212,11 +2235,11 @@ src_unpack() {
 		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
 	fi
 
-	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		unpack "cromite-${CROMITE_COMMIT:0:7}.tar.gz"
 	fi
 
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
 	fi
 
@@ -2419,12 +2442,12 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-linker-warn-missing-symbols.patch"
 	)
 
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold-ungoogled-chromium.patch"
 		)
-	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold.patch"
 		)
@@ -2483,13 +2506,13 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 
 	#	Disabling async-dns causes debug crash/spam.
-		if has async-dns ${IUSE_EFFECTIVE} && ! use async-dns ; then
+		if has "async-dns" ${IUSE_EFFECTIVE} && ! use async-dns ; then
 			PATCHES+=(
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-built-in-dns.patch"
 			)
 		fi
 
-		if has screen-capture ${IUSE_EFFECTIVE} && ! use screen-capture ; then
+		if has "screen-capture" ${IUSE_EFFECTIVE} && ! use screen-capture ; then
 			PATCHES+=(
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
 			)
@@ -2862,14 +2885,14 @@ src_prepare() {
 	local PATCHES=()
 
 
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		prepare_cromite_with_ungoogled_chromium
 	fi
 
-	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		apply_cromite_patchset
 	fi
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 		apply_ungoogled_chromium_patchset
 	fi
 
@@ -2927,7 +2950,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		mkdir -p "third_party/node/linux/node-linux-x64/bin" || die
 	fi
 	ln -s \
-		"${EPREFIX}/usr/bin/node" \
+		"${EPREFIX}/usr/lib/node/${NODE_SLOT}/bin/node" \
 		"third_party/node/linux/node-linux-x64/bin/node" \
 		|| die
 
@@ -3311,7 +3334,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		")
 	)
 
-	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
 			"cromite_flags/third_party"
 	#		"third_party/cromite"
@@ -5485,9 +5508,9 @@ _configure_debug() {
 		)
 	fi
 
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		TARGET_ISDEBUG=$(usex debug "true" "false")
-	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		TARGET_ISDEBUG=$(usex debug "true" "false")
 	fi
 }
@@ -5917,20 +5940,20 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_debug
 	_configure_features
 
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 einfo "Configuring Cromite + ungoogled-chromium..."
 		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
 		myconf_gn+=(
 			"target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
 			""$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
 		)
-	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 einfo "Configuring Cromite..."
 		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
 		myconf_gn+=(
 			"target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
 		)
-	elif has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	elif has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 einfo "Configuring ungoogled-chromium..."
 		myconf_gn+=(
 			""$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
@@ -6259,7 +6282,7 @@ _src_install() {
 	# have been present in the listed the the .html (about:credits) file.
 	lcnr_install_files
 
-	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		insinto "/usr/share/cromite/docs"
 		doins \
 			"${S_CROMITE}/docs/FEATURES.md" \
@@ -6271,7 +6294,7 @@ _src_install() {
 			"${S_CROMITE}/LICENSE"
 	fi
 
-	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 		insinto "/usr/share/ungoogle-chromium/docs"
 		doins \
 			"${S_UNGOOGLED_CHROMIUM}/README.md" \
