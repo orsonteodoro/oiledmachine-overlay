@@ -5,16 +5,27 @@
 EAPI=8
 
 MY_PN="TypeScript"
-NPM_SECAUDIT_AT_TYPES_NODE_PV="22.7.4"
+
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
-NODE_VERSION="${NPM_SECAUDIT_AT_TYPES_NODE_PV%%.*}" # Using nodejs muxer variable name.
+NODE_SLOT="22" # Same as major version of NPM_SECAUDIT_AT_TYPES_NODE_PV
 NPM_INSTALL_PATH="/opt/${PN}/${PV}"
+
+NPM_SECAUDIT_AT_TYPES_NODE_PV="22.7.4"
+
 NPM_EXE_LIST="
 "${NPM_INSTALL_PATH}/bin/tsc"
 "${NPM_INSTALL_PATH}/bin/tsserver"
 "
+
 inherit npm
+
+KEYWORDS="~amd64 ~arm64"
+S="${WORKDIR}/${MY_PN}-${PV}"
+SRC_URI="
+https://github.com/microsoft/TypeScript/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="TypeScript is a statically typed superset of JavaScript that \
 compiles to clean JavaScript output"
@@ -37,27 +48,21 @@ LICENSE="
 # (Apache-2.0 all-rights-reserved) - CopyrightNotice.txt
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
-KEYWORDS="~amd64 ~arm64"
-SLOT="$(ver_cut 1-2 ${PV})/${PV}"
+RESTRICT="mirror"
+SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_4
+test ebuild_revision_6
 "
 RDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
 	app-eselect/eselect-typescript
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODE_SLOT}[npm]
 "
-SRC_URI="
-https://github.com/microsoft/TypeScript/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
 
 npm_update_lock_install_pre() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -84,8 +89,8 @@ einfo "Removing npm-packages-offline-cache"
 }
 
 pkg_postinst() {
-	if eselect typescript list | grep ${PV} >/dev/null ; then
-		eselect typescript set ${PV}
+	if eselect typescript list | grep "${PV}" >/dev/null ; then
+		eselect typescript set "${PV}"
 	fi
 }
 
