@@ -185,19 +185,25 @@ RDEPEND+="
 	app-eselect/eselect-emscripten
 	closure-compiler? (
 		>=dev-util/closure-compiler-npm-20230802.0.0:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
+		dev-util/closure-compiler-npm:=
 		closure_compiler_java? (
 			virtual/jre:${JAVA_SLOT}
+			virtual/jre:=
 		)
 		closure_compiler_nodejs? (
 			virtual/jre:${JAVA_SLOT}
+			virtual/jre:=
 		)
 	)
 	dev-util/binaryen:${BINARYEN_SLOT}
 	>=net-libs/nodejs-16.20
 	(
-		>=llvm-core/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
+		>=llvm-core/clang-${LLVM_SLOT}:${LLVM_SLOT}[llvm_targets_WebAssembly]
+		llvm-core/clang:=
 		>=llvm-core/lld-${LLVM_SLOT}:${LLVM_SLOT}
-		>=llvm-core/llvm-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
+		llvm-core/lld:=
+		>=llvm-core/llvm-${LLVM_SLOT}:${LLVM_SLOT}[llvm_targets_WebAssembly]
+		llvm-core/llvm:=
 	)
 "
 DEPEND+="
@@ -205,14 +211,17 @@ DEPEND+="
 	closure-compiler? (
 		closure_compiler_java? (
 			virtual/jdk:${JAVA_SLOT}
+			virtual/jdk:=
 		)
 		closure_compiler_nodejs? (
 			virtual/jdk:${JAVA_SLOT}
+			virtual/jdk:=
 		)
 	)
 "
 BDEPEND+="
 	virtual/jdk:${JAVA_SLOT}
+	virtual/jdk:=
 	>=dev-build/cmake-3.4.3
 "
 # 72dd53c - Define __LONG_MAX in alltypes.h
