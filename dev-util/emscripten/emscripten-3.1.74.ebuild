@@ -299,9 +299,21 @@ get_compatible_node_slot() {
 	echo "${node_slot}"
 }
 
+get_closure_compiler_provider() {
+	if use closure_compiler_java ; then
+		cc_cmd="closure-compiler-java"
+	elif use closure_compiler_nodejs ; then
+		cc_cmd="closure-compiler-node"
+	elif use closure_compiler_native ; then
+		cc_cmd="closure-compiler"
+	elif use closure-compiler ; then
+		cc_cmd="" # use defaults
+	fi
+	echo "${cc_cmd}"
+}
+
 setup_test_config() {
 	local node_slot=$(get_compatible_node_slot)
-
 
 cat <<EOF > "${T}/emscripten-${ABI}.config"
 EMSCRIPTEN_ROOT = '/usr/share/emscripten-${PV}'
@@ -314,15 +326,7 @@ EOF
 
 setup_test_env() {
 	local node_slot=$(get_compatible_node_slot)
-	if use closure_compiler_java ; then
-		cc_cmd="closure-compiler-java"
-	elif use closure_compiler_nodejs ; then
-		cc_cmd="closure-compiler-node"
-	elif use closure_compiler_native ; then
-		cc_cmd="closure-compiler"
-	elif use closure-compiler ; then
-		cc_cmd="" # use defaults
-	fi
+	local cc_cmd=$(get_closure_compiler_provider)
 
 	export BINARYEN="${ESYSROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
 	export CLOSURE_COMPILER="${cc_cmd}"
@@ -360,16 +364,6 @@ src_test() {
 			|| die "Could not adjust path for testing"
 		export EM_CONFIG="${TEST_PATH}/emscripten.config" \
 			|| die "Could not export variable"
-		local cc_cmd
-		if use closure_compiler_java ; then
-			cc_cmd="${BROOT}/usr/bin/closure-compiler-java"
-		elif use closure_compiler_nodejs ; then
-			cc_cmd="${BROOT}/usr/bin/closure-compiler-node"
-		elif use closure_compiler_native ; then
-			cc_cmd="${BROOT}/usr/bin/closure-compiler"
-		elif use closure-compiler ; then
-			cc_cmd="" # use defaults
-		fi
 		"../${P}/emcc" "${TEST_PATH}/hello_world.cpp" \
 			-o "${TEST_PATH}/hello_world.js" || \
 			die "Error during executing emcc!"
@@ -393,14 +387,7 @@ src_test() {
 # For eselect-emscripten
 gen_metadata() {
 	local slot="${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}")
-	local closure_compiler_exe=""
-	if use closure_compiler_java ; then
-		closure_compiler_exe="closure-compiler-java"
-	elif use closure_compiler_nodejs ; then
-		closure_compiler_exe="closure-compiler-node"
-	elif use closure_compiler_native ; then
-		closure_compiler_exe="closure-compiler"
-	fi
+	local closure_compiler_exe=$(get_closure_compiler_provider)
 
 dodir "${INSTALL_PREFIX}/etc"
 cat <<EOF > "${ED}/${INSTALL_PREFIX}/etc/slot.metadata" || die
