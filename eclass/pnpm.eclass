@@ -62,7 +62,7 @@ esac
 if [[ -z "${_PNPM_ECLASS}" ]]; then
 _PNPM_ECLASS=1
 
-inherit edo
+inherit edo node
 
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile
 
@@ -209,55 +209,12 @@ einfo "Node.js version:  ${node_pv}"
 # @DESCRIPTION:
 # Checks node slot required for building
 pnpm_pkg_setup() {
-	local found=0
-	local slot
-	local node_pv=$(node --version \
-		| sed -e "s|v||g")
-	if [[ -n "${NODE_SLOTS}" ]] ; then
-		for slot in ${NODE_SLOTS} ; do
-			if has_version "=net-libs/nodejs-${slot}*" \
-				&& (( ${node_pv%%.*} == ${slot} )) ; then
-				export NODE_VERSION=${slot}
-				found=1
-				break
-			fi
-		done
-		if (( ${found} == 0 )) ; then
-eerror
-eerror "Did not find the preferred nodejs slot."
-eerror "Expected node versions:  ${NODE_SLOTS}"
-eerror
-eerror "Try one of the following:"
-eerror
-			local s
-			for s in ${NODE_SLOTS} ; do
-eerror "  eselect nodejs set node${s}"
-			done
-
-eerror
-eerror "See eselect nodejs for more details."
-eerror
-			die
-		fi
-	elif [[ -n "${NODE_VERSION}" ]] ; then
-		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
-			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
-			found=1
-		fi
-		if (( ${found} == 0 )) ; then
-eerror
-eerror "Did not find the preferred nodejs slot."
-eerror "Expected node version:  ${NODE_VERSION}"
-eerror
-eerror "Try the following:"
-eerror
-eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
-eerror
-eerror "See eselect nodejs for more details."
-eerror
-			die
-		fi
+	if [[ -z "${NODE_SLOT}" ]] ; then
+eerror "QA:  NODE_SLOT needs to be defined before calling npm_pkg_setup()."
+		die
 	fi
+
+	node_setup
 	pnpm_check_network_sandbox
 
 	# Prevent node 18 issue when downloading:

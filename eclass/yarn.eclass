@@ -62,7 +62,7 @@ esac
 if [[ -z "${_YARN_ECLASS}" ]]; then
 _YARN_ECLASS=1
 
-inherit edo
+inherit edo node
 
 # @ECLASS_VARIABLE: _YARN_PKG_SETUP_CALLED
 # @INTERNAL
@@ -107,6 +107,14 @@ _yarn_set_globals() {
 }
 _yarn_set_globals
 unset -f _yarn_set_globals
+
+# @ECLASS_VARIABLE:  YARN_APP_INVOCATION
+# @DESCRIPTION:
+# Use either a wrapper script (default) or symlink.
+# Valid values:  wrapper-script, symlink, none
+# wrapper-script - Use a wrapper script (default)
+# symlink - Use a symlink
+# none - Do not create a wrapper or symlink.  Let me create it myself.
 
 # @ECLASS_VARIABLE: YARN_BUILD_SCRIPT
 # @DESCRIPTION:
@@ -280,56 +288,12 @@ eerror
 # @DESCRIPTION:
 # Checks node slot required for building
 yarn_pkg_setup() {
-	local found=0
-	local slot
-	local node_pv=$(node --version \
-		| sed -e "s|v||g")
-	if [[ -n "${NODE_SLOTS}" ]] ; then
-		for slot in ${NODE_SLOTS} ; do
-			if has_version "=net-libs/nodejs-${slot}*" \
-				&& (( ${node_pv%%.*} == ${slot} )) ; then
-				export NODE_VERSION=${slot}
-				found=1
-				break
-			fi
-		done
-		if (( ${found} == 0 )) ; then
-eerror
-eerror "Did not find the preferred nodejs slot."
-eerror "Expected node versions:  ${NODE_SLOTS}"
-eerror
-eerror "Try one of the following:"
-eerror
-			local s
-			for s in ${NODE_SLOTS} ; do
-eerror "  eselect nodejs set node${s}"
-			done
-
-eerror
-eerror "See eselect nodejs for more details."
-eerror
-			die
-		fi
-	elif [[ -n "${NODE_VERSION}" ]] ; then
-		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
-			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
-			found=1
-		fi
-		if (( ${found} == 0 )) ; then
-eerror
-eerror "Did not find the preferred nodejs slot."
-eerror "Expected node version:  ${NODE_VERSION}"
-eerror
-eerror "Try the following:"
-eerror
-eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
-eerror
-eerror "See eselect nodejs for more details."
-eerror
-			die
-		fi
+	if [[ -z "${NODE_SLOT}" ]] ; then
+eerror "QA:  NODE_SLOT needs to be defined before calling npm_pkg_setup()."
+		die
 	fi
 
+	node_setup
 	yarn_check_network_sandbox
 
 	# Prevent node 18 issue when downloading:
@@ -1052,15 +1016,15 @@ yarn_src_install() {
 		local cmd=$(echo "${row}" \
 			| cut -f 4 -d '"' \
 			| sed -e "s|^\./||g")
-		if [[ -n "${NODE_VERSION}" ]] ; then
+		if [[ ${NPM_APP_INVOCATION:-"wrapper-script"} == "wrapper-script" ]] ; then
 			dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/${name}"
 #!/bin/bash
-NODE_VERSION=${NODE_VERSION}
+export PATH="/usr/lib/node/${NODE_SLOT}/bin:\${PATH}"
 "${YARN_INSTALL_PATH}/${cmd}" "\$@"
 EOF
 			fperms 0755 "/usr/bin/${name}"
-		else
+		elif [[ ${NPM_APP_INVOCATION} == "symlink" ]] ; then
 			dosym "${YARN_INSTALL_PATH}/${cmd}" "/usr/bin/${name}"
 		fi
 	done
