@@ -164,8 +164,8 @@ REQUIRED_USE+="
 	)
 	closure-compiler? (
 		^^ (
-			closure_compiler_native
 			closure_compiler_java
+			closure_compiler_native
 			closure_compiler_nodejs
 		)
 	)
