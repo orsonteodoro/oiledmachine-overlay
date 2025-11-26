@@ -23,7 +23,7 @@ inherit edo
 # @DESCRIPTION:
 # Generate A Hello World source code to test the Emscripten toolchain.
 emscripten_gen_hello_world() {
-CAT <<EOF > "${T}/hello.cc"
+cat <<EOF > "${T}/hello.cc"
 #include <iostream>
 int main(int argc, char ** argv) {
 	std::cout << "Hello World!" << std::endl;
