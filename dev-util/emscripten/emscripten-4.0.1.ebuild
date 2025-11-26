@@ -10,7 +10,6 @@ EAPI=8
 BINARYEN_SLOT="121" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 CLOSURE_COMPILER_SLOT="0"
 DEST_FILENAME="${P}.tar.gz"
-EMSCRIPTEN_CONFIG_VER="2.0.26"
 JAVA_SLOT="11"
 LLVM_COMPAT=( "20" )
 LLVM_SLOT="20"
