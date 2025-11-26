@@ -140,7 +140,7 @@ emscripten_set_env() {
 	export EMSDK_PYTHON="/usr/bin/python${EMSCRIPTEN_PYTHON_SLOT}"
 	export EMTEST_LACKS_NATIVE_CLANG="1"
 	export PATH="${ESYSROOT}/usr/lib/binaryen/${EMSCRIPTEN_BINARYEN_SLOT}/bin:${PATH}"
-	export PATH="${ESYSROOT}/${EMSCRIPTEN_EPREFIX}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/${EMSCRIPTEN_EPREFIX}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}:${PATH}"
 
 einfo "EM_CACHE:  ${EM_CACHE}"
 einfo "EM_CONFIG:  ${EM_CONFIG}"
