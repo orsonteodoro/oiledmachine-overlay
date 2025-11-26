@@ -1,9 +1,0 @@
-EM_CONFIG="${EPREFIX}/usr/share/emscripten-${PV}/emscripten.config"
-EMSCRIPTEN="${EPREFIX}/usr/share/emscripten-${PV}"
-EMSDK_CLOSURE_COMPILER=__EMSDK_CLOSURE_COMPILER__
-EMSDK_LLVM_ROOT=__EMSDK_LLVM_ROOT__
-EMSDK_NODE="${EPREFIX}/usr/bin/node"
-EMSDK_PYTHON=${PYTHON_EXE_ABSPATH}
-EMSCRIPTEN_NATIVE_OPTIMIZER="${EPREFIX}/usr/share/emscripten-${PV}/optimizer"
-PATH="${EPREFIX}/usr/share/emscripten-${PV}:${PATH}"
-EMCC_WASM_BACKEND=__EMCC_WASM_BACKEND__

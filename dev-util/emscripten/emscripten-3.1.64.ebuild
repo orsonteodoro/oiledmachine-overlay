@@ -145,7 +145,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -268,48 +268,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "CXX:\t${CXX}"
 }
 
-# The activated_cfg goes in emscripten.config from the json file.
-# The activated_env goes in 99emscripten from the json file.
-# https://github.com/emscripten-core/emsdk/blob/3.1.64/emsdk_manifest.json
-# For examples of environmental variables and paths used in this package, see
-# https://github.com/emscripten-core/emsdk/issues/167#issuecomment-414935332
-prepare_file() {
-	local type="${1}"
-	local dest_dir="${2}"
-	local source_filename="${3}"
-	cp "${FILESDIR}/${source_filename}" "${dest_dir}/" \
-		|| die "could not copy '${source_filename}'"
-	sed -i -e "s/\${PV}/${PV}/g" "${dest_dir}/${source_filename}" || \
-		die "could not adjust path for '${source_filename}'"
-	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
-		"${dest_dir}/${source_filename}" || die
-	sed -i -e "s|__EMSDK_LLVM_ROOT__|${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin|" \
-		-e "s|__EMCC_WASM_BACKEND__|1|" \
-		-e "s|__LLVM_BIN_PATH__|${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin|" \
-		-e "s|\$(get_libdir)|$(get_libdir)|" \
-		-e "s|\${BINARYEN_SLOT}|${BINARYEN_SLOT}|" \
-		"${dest_dir}/${source_filename}" || die
-	sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
-		"${dest_dir}/${source_filename}" || die
-	sed -i "s|\${EPREFIX}|${EPREFIX}|g" \
-		"${dest_dir}/${source_filename}" || die
-	if use closure-compiler ; then
-		local cmd
-		if use closure_compiler_java ; then
-			cmd="${EPREFIX}/usr/bin/closure-compiler-java"
-		elif use closure_compiler_nodejs ; then
-			cmd="${EPREFIX}/usr/bin/closure-compiler-node"
-		elif use closure_compiler_native ; then
-			cmd="${EPREFIX}/usr/bin/closure-compiler"
-		fi
-		sed -i -e "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
-			"${dest_dir}/${source_filename}" || die
-	else
-		sed -i "/EMSDK_CLOSURE_COMPILER/d" \
-			"${dest_dir}/${source_filename}" || die
-	fi
-}
-
 src_prepare() {
 	export PYTHON_EXE_ABSPATH="${PYTHON}"
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
@@ -330,22 +288,68 @@ src_compile() {
 	:
 }
 
-gen_files() {
-	mkdir "${TEST_PATH}" || die "Could not create test directory!"
-	prepare_file "${t}" "${TEST_PATH}" "99emscripten"
-	prepare_file "${t}" "${TEST_PATH}" "emscripten.config.${EMSCRIPTEN_CONFIG_VER}"
-	mv "${TEST_PATH}/emscripten.config"{".${EMSCRIPTEN_CONFIG_VER}",""} || die
-	source "${TEST_PATH}/99emscripten"
+get_compatible_node_slot() {
+	local node_slot=""
+	local x=""
+	for x in $(eval "echo {${NODE_SLOT_MIN}..25}") ; do
+		if [[ -e "/usr/lib/node/${x}/bin/node" ]] ; then
+			node_slot="${x}"
+			break
+		fi
+	done
+	echo "${node_slot}"
+}
+
+setup_test_config() {
+	local node_slot=$(get_compatible_node_slot)
+
+
+cat <<EOF > "${T}/emscripten-${ABI}.config"
+EMSCRIPTEN_ROOT = '/usr/share/emscripten-${PV}'
+LLVM_ROOT = '/usr/lib/llvm/${LLVM_SLOT}/bin'
+BINARYEN_ROOT = '/usr/lib/binaryen/${BINARYEN_SLOT}'
+NODE_JS = '/usr/lib/node/${node_slot}/bin/node'
+JAVA = 'java'
+EOF
+}
+
+setup_test_env() {
+	local node_slot=$(get_compatible_node_slot)
+	if use closure_compiler_java ; then
+		cc_cmd="closure-compiler-java"
+	elif use closure_compiler_nodejs ; then
+		cc_cmd="closure-compiler-node"
+	elif use closure_compiler_native ; then
+		cc_cmd="closure-compiler"
+	elif use closure-compiler ; then
+		cc_cmd="" # use defaults
+	fi
+
+	export BINARYEN="${BROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
+	export CLOSURE_COMPILER="${cc_cmd}"
+	export EM_CONFIG="${T}/emscripten-${ABI}.config"
+	export EMCC_WASM_BACKEND=1
+	export EMSCRIPTEN="/usr/share/emscripten-${PV}"
+	export EMSDK_CLOSURE_COMPILER="${cc_cmd}"
+	export EMSDK_LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}"
+	export EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
+	export EMSDK_PYTHON="/usr/bin/${EPYTHON}"
+	export EMSCRIPTEN_NATIVE_OPTIMIZER="${EPREFIX}/usr/share/emscripten-${PV}/optimizer"
+	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export PATH="${EPREFIX}/usr/share/emscripten-${PV}:${PATH}"
 }
 
 src_test() {
 	local t="wasm"
 	einfo "Testing ${t}"
-	gen_files "${t}"
+	setup_test_config
+	setup_test_env
+	local node_slot=$(get_compatible_node_slot)
 	if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
 		die "EMCC_WASM_BACKEND should be 1 with wasm"
 	fi
 	if use test ; then
+		mkdir -p "${TEST_PATH}" || die
 		cp "${FILESDIR}/hello_world.cpp" "${TEST_PATH}" \
 			|| die "Could not copy example file"
 		sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
@@ -363,23 +367,11 @@ src_test() {
 		elif use closure-compiler ; then
 			cc_cmd="" # use defaults
 		fi
-		BINARYEN="${BROOT}/usr/lib/binaryen/${BINARYEN_SLOT}" \
-		CLOSURE_COMPILER="${cc_cmd}" \
-		LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
 		"../${P}/emcc" "${TEST_PATH}/hello_world.cpp" \
 			-o "${TEST_PATH}/hello_world.js" || \
 			die "Error during executing emcc!"
 		test -f "${TEST_PATH}/hello_world.js" \
 			|| die "Could not find '${TEST_PATH}/hello_world.js'"
-
-		local node_slot=""
-		local s=""
-		for s in $(eval "echo {${NODE_SLOT_MIN}..25}") ; do
-			if [[ -e "/usr/lib/node/${s}/bin/node" ]] ; then
-				node_slot="${s}"
-				break
-			fi
-		done
 
 		OUT=$("${BROOT}/usr/lib/node/${node_slot}/bin/node" "${TEST_PATH}/hello_world.js") || \
 			die "Could not execute /usr/lib/node/${node_slot}/bin/node"
@@ -397,11 +389,24 @@ src_test() {
 
 # For eselect-emscripten
 gen_metadata() {
+	local slot="${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}")
+	local closure_compiler_exe=""
+	if use closure_compiler_java ; then
+		closure_compiler_exe="closure-compiler-java"
+	elif use closure_compiler_nodejs ; then
+		closure_compiler_exe="closure-compiler-node"
+	elif use closure_compiler_native ; then
+		closure_compiler_exe="closure-compiler"
+	fi
+
 dodir "${INSTALL_PREFIX}/etc"
 cat <<EOF > "${ED}/${INSTALL_PREFIX}/etc/slot.metadata" || die
 BROWSER_MIN_VER="${BROWSERS_MIN_VER}"
-PV="${PV}"
 BINARYEN_SLOT="${BINARYEN_SLOT}"
+CLOSURE_COMPILER_EXE="${closure_compiler_exe}"
+EMSCRIPTEN_EPREFIX="${EPREFIX}"
+EMSCRIPTEN_PV="${PV}"
+EMSCRIPTEN_SLOT="${slot}"
 LLVM_SLOT="${LLVM_SLOT}"
 NODE_SLOT_MIN="${NODE_SLOT_MIN}"
 PYTHON_SLOT="${EPYTHON/python}"
