@@ -6,7 +6,7 @@ EAPI=8
 
 # U 22.04
 
-# TODO:  complete bazel offline install.
+# TODO:  complete bazel offline install.  The java implementation is not unpacking completely offline.  For practical solution, just do partial offline?
 # All builds require npm/node.
 
 # For the node version, see
@@ -21,8 +21,17 @@ EAPI=8
 
 # The closure-compiler-npm/compiler/BUILD.bazel indicates 11 but the CI uses 17.  Using 11 seems to work.
 
+MY_PN="closure-compiler"
+
 export COMPILER_NIGHTLY="false"
 export FORCE_COLOR=1
+CLOSURE_COMPILER_MAJOR_VER=$(ver_cut 1 "${PV}")
+FN_DEST="${PN}-${PV}.tar.gz"
+FN_DEST2="${PN%-*}-${PV}.tar.gz"
+JAVA_SLOT_BAZEL="11"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
+JAVA_SLOT_CLOSURE_COMPILER="11"							# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
+NODE_ENV="development"
+NODE_SLOT="18"
 
 # For constants without links, the versions are obtained by console inspection.
 # https://github.com/google/closure-templates/blob/master/maven_install.json may expose the pom/jar dependency tree.
@@ -34,26 +43,14 @@ AUTO_SERVICE_PV="1.1.1"								# https://github.com/google/bazel-common/blob/65f
 AUTO_VALUE_1_7_PV="1.7.4"							# https://github.com/google/truth/blob/release_1_1/pom.xml#L26
 AUTO_VALUE_1_10_PV="1.10.4"							# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L187 https://github.com/google/truth/blob/v1.4.0/pom.xml#L17
 BAZELISK_PV="1.19.0" # From CI logs for "Build Compiler"
-BAZELISK_ABIS=(
-	"amd64"
-	"arm64"
-)
 BAZEL_PV="5.3.0"								# https://github.com/google/closure-compiler/blob/v20240317/.bazelversion
-BAZEL_SLOT="${BAZEL_PV%.*}"
+BAZEL_SLOT="${BAZEL_PV%.*}" # This row must go after BAZEL_PV.
 BAZEL_SKYLIB_PV="1.4.2"								# https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/repositories.bzl#L17
 CHECKER_QUAL_PV="3.33.0"							# https://github.com/google/guava/blob/v32.1.2/pom.xml#L304
-CLOSURE_COMPILER_MAJOR_VER=$(ver_cut 1 "${PV}")
 COURSIER_PV="2.1.8"								# https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/MODULE.bazel#L68
-EGIT_BAZEL_COMMON_COMMIT="65f295afec03cce3807df5b06ef42bf8e46df4e4"		# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L57
-EGIT_BAZEL_JAR_JAR_COMMIT="171f268569384c57c19474b04aebe574d85fde0d"		# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L74
-EGIT_RULES_CC_COMMIT="b7fe9697c0c76ab2fd431a891dbb9a6a32ed7c3e"			# https://github.com/bazelbuild/rules_proto/blob/4.0.0/proto/private/dependencies.bzl#L102 with https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L35
-EGIT_RULES_PROTO_COMMIT="7e4afce6fe62dbff0a4a03450143146f9f2d7488"		# https://github.com/bazelbuild/buildtools/blob/5.1.0/WORKSPACE with https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/MODULE.bazel#L94 ; 2 tarballs needed from this project
-EGIT_RULES_JVM_EXTERNAL_COMMIT="77c3538b33cf195879b337fd48c480b77815b9a0"	# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L18
 ERROR_PRONE_2_15_PV="2.15.0"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L11
 ERROR_PRONE_2_18_PV="2.18.0"							# https://github.com/google/guava/blob/v32.1.2/pom.xml#L309
 FAILUREACCESS_PV="1.0.1"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L12
-FN_DEST="${PN}-${PV}.tar.gz"
-FN_DEST2="${PN%-*}-${PV}.tar.gz"
 GRAALVM_JAVA_PV="17"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L96
 GRAALVM_PV="22.3.2"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L95
 GSON_PV="2.9.1"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L10
@@ -63,8 +60,6 @@ GUAVA33_PV="33.0.0"								# https://github.com/google/closure-compiler/blob/v20
 GUAVA_BETA_CHECKER_PV="1.0"							# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L133 https://github.com/google/jimfs/blob/v1.2/pom.xml#L229
 HAMCREST_PV="1.3"								# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L273 https://github.com/junit-team/junit4/blob/r4.13.2/pom.xml#L98
 J2OBJC_PV="2.8"									# https://github.com/google/guava/blob/v32.1.2/pom.xml#L314
-JAVA_SLOT_BAZEL="11"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
-JAVA_SLOT_CLOSURE_COMPILER="11"							# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
 JAVA_DIFF_UTILS_PV="4.12"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L20
 JAVA_TOOLS_PV="11.11"								# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L28
 JIMFS_PV="1.2"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L15
@@ -73,28 +68,7 @@ JSR256_PV="1.0"									# https://github.com/google/gson/blob/gson-parent-2.9.1/
 JSR305_PV="3.0.2"								# https://github.com/google/guava/blob/v32.1.2/pom.xml#L299
 JUNIT_PV="4.13.2"								# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L232 https://github.com/google/guava/blob/v33.0.0/guava-testlib/pom.xml#L42 https://github.com/google/truth/blob/v1.4.0/pom.xml#L81
 LISTENABLEFUTURE_PV="9999.0"							# https://github.com/google/guava/blob/v32.1.3/guava/module.json#L40
-MY_PN="closure-compiler"
-MAVEN_TARBALLS=(
-"${HOME}/.m2/repository/args4j/args4j/2.33/args4j-2.33.jar"
-"${HOME}/.m2/repository/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar"
-"${HOME}/.m2/repository/org/apache/ant/ant/1.10.11/ant-1.10.11.jar"
-"${HOME}/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
-"${HOME}/.m2/repository/org/jspecify/jspecify/0.2.0/jspecify-0.2.0.jar"
-"${HOME}/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar"
-"${HOME}/.m2/repository/com/google/guava/guava-testlib/32.1.2-jre/guava-testlib-32.1.2-jre.j"ar
-"${HOME}/.m2/repository/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar"
-"${HOME}/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"
-"${HOME}/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar"
-"${HOME}/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
-"${HOME}/.m2/repository/com/google/protobuf/protobuf-java/3.21.12/protobuf-java-3.21.12.jar"
-"${HOME}/.m2/repository/com/google/re2j/re2j/1.3/re2j-1.3.jar"
-"${HOME}/.m2/repository/com/google/jimfs/jimfs/1.2/jimfs-1.2.jar"
-"${HOME}/.m2/repository/com/google/errorprone/error_prone_annotations/2.15.0/error_prone_annotations-2.15.0.jar"
-"${HOME}/.m2/repository/com/google/truth/extensions/truth-proto-extension/1.1/truth-proto-extension-1.1.jar"
-"${HOME}/.m2/repository/com/google/truth/extensions/truth-liteproto-extension/1.4.0/truth-liteproto-extension-1.4.0.jar"
-)
-NODE_ENV="development"
-NODE_VERSION=18
+
 #OPENJDK_PV="17.0.10"
 OPENJDK_PV="11"
 OSS7_PV="7"									# https://github.com/google/guava-beta-checker/blob/v1.0/pom.xml#L24
@@ -110,6 +84,37 @@ TRUTH_LITEPROTO_EXTENSION_PV="1.4.0"						# https://github.com/google/closure-co
 TRUTH_PV="1.1"									# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L14
 ZULU11_PV="11.56.19-ca-jdk11.0.15"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L172
 ZULU17_PV="17.32.13-ca-jdk17.0.2"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L434
+
+EGIT_BAZEL_COMMON_COMMIT="65f295afec03cce3807df5b06ef42bf8e46df4e4"		# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L57
+EGIT_BAZEL_JAR_JAR_COMMIT="171f268569384c57c19474b04aebe574d85fde0d"		# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L74
+EGIT_RULES_CC_COMMIT="b7fe9697c0c76ab2fd431a891dbb9a6a32ed7c3e"			# https://github.com/bazelbuild/rules_proto/blob/4.0.0/proto/private/dependencies.bzl#L102 with https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L35
+EGIT_RULES_PROTO_COMMIT="7e4afce6fe62dbff0a4a03450143146f9f2d7488"		# https://github.com/bazelbuild/buildtools/blob/5.1.0/WORKSPACE with https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/MODULE.bazel#L94 ; 2 tarballs needed from this project
+EGIT_RULES_JVM_EXTERNAL_COMMIT="77c3538b33cf195879b337fd48c480b77815b9a0"	# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L18
+
+BAZELISK_ABIS=(
+	"amd64"
+	"arm64"
+)
+
+MAVEN_TARBALLS=(
+	"${HOME}/.m2/repository/args4j/args4j/2.33/args4j-2.33.jar"
+	"${HOME}/.m2/repository/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar"
+	"${HOME}/.m2/repository/org/apache/ant/ant/1.10.11/ant-1.10.11.jar"
+	"${HOME}/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
+	"${HOME}/.m2/repository/org/jspecify/jspecify/0.2.0/jspecify-0.2.0.jar"
+	"${HOME}/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar"
+	"${HOME}/.m2/repository/com/google/guava/guava-testlib/32.1.2-jre/guava-testlib-32.1.2-jre.j"ar
+	"${HOME}/.m2/repository/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar"
+	"${HOME}/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"
+	"${HOME}/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar"
+	"${HOME}/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
+	"${HOME}/.m2/repository/com/google/protobuf/protobuf-java/3.21.12/protobuf-java-3.21.12.jar"
+	"${HOME}/.m2/repository/com/google/re2j/re2j/1.3/re2j-1.3.jar"
+	"${HOME}/.m2/repository/com/google/jimfs/jimfs/1.2/jimfs-1.2.jar"
+	"${HOME}/.m2/repository/com/google/errorprone/error_prone_annotations/2.15.0/error_prone_annotations-2.15.0.jar"
+	"${HOME}/.m2/repository/com/google/truth/extensions/truth-proto-extension/1.1/truth-proto-extension-1.1.jar"
+	"${HOME}/.m2/repository/com/google/truth/extensions/truth-liteproto-extension/1.4.0/truth-liteproto-extension-1.4.0.jar"
+)
 
 inherit bazel check-reqs java-pkg-opt-2 graalvm npm yarn
 
@@ -360,7 +365,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 	done
 }
 
-#KEYWORDS="~amd64 ~arm64" # Ebuild is broken
+#KEYWORDS="~amd64 ~arm64" # This ebuild is broken and unfinished.
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CLOSURE_COMPILER_MAJOR_VER}"
 SRC_URI="
@@ -447,8 +452,8 @@ RDEPEND+="
 	)
 	closure_compiler_nodejs? (
 		${VIRTUAL_JRE_CLOSURE_COMPILER}
-		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-		>=net-libs/nodejs-${NODE_VERSION}[npm]
+		>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
+		>=net-libs/nodejs-${NODE_SLOT}[npm]
 	)
 "
 DEPEND+="
@@ -464,8 +469,8 @@ DEPEND+="
 BDEPEND+="
 	${VIRTUAL_JDK_BAZEL}
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_SLOT}
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
+	>=net-libs/nodejs-${NODE_SLOT}[npm]
 	>=sys-devel/gcc-9.4.0
 	dev-java/maven-bin
 	dev-vcs/git
@@ -481,8 +486,8 @@ PATCHES=(
 
 _configure_bazel() {
 	# https://github.com/bazelbuild/bazel/releases
-	bazel-${BAZEL_SLOT} --version | grep -q "bazel ${BAZEL_PV%.*}" || die "=dev-build/bazel:${BAZEL_PV%.*} not installed"
-	local bazel_pv=$(bazel-${BAZEL_SLOT} --version \
+	"bazel-${BAZEL_SLOT}" --version | grep -q "bazel ${BAZEL_PV%.*}" || die "=dev-build/bazel:${BAZEL_PV%.*} not installed"
+	local bazel_pv=$("bazel-${BAZEL_SLOT}" --version \
 		| cut -f 2 -d " " \
 		| sed -e "s|-||g")
 
@@ -556,7 +561,7 @@ eerror
 	fi
 
 	java-pkg-opt-2_pkg_setup
-	java-pkg_ensure-vm-version-eq ${JAVA_SLOT_CLOSURE_COMPILER}
+	java-pkg_ensure-vm-version-eq "${JAVA_SLOT_CLOSURE_COMPILER}"
 	javac --version || die
 	# JAVA_HOME_11 should be the OpenJDK base path not GraalVM.
 	# JAVA_HOME should be the GraalVM base path.
@@ -592,9 +597,7 @@ einfo "JAVA_HOME_11:  ${JAVA_HOME_11} [from pkg_setup]"
 einfo "PATH:  ${PATH}"
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then
-eerror
 eerror "Missing mvn.  Install dev-java/maven-bin"
-eerror
 		die
 	fi
 
@@ -605,12 +608,6 @@ eerror
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	if [[ ! -e "/usr/include/node/node_version.h" ]] ; then
-eerror
-eerror "Use eselect nodejs to fix missing header location."
-eerror
-		die
-	fi
 	bazel_setup_bazelrc
 }
 
@@ -636,8 +633,8 @@ ewarn "QA:  Manually remove node_modules/gulp-mocha/node_modules/nanoid in ${S}/
 }
 
 src_unpack() {
-	unpack ${FN_DEST}
-	unpack ${FN_DEST2}
+	unpack "${FN_DEST}"
+	unpack "${FN_DEST2}"
 
 	rm -rf "${S}/compiler" || die
 	mv \
@@ -675,7 +672,7 @@ einfo "Removing unsupported platforms"
 	cd "${S}" || die
 
 	local abi
-	for abi in ${BAZELISK_ABIS[@]} ; do
+	for abi in "${BAZELISK_ABIS[@]}" ; do
 		mkdir -p "${WORKDIR}/bazelisk" || die
 		if use "${abi}" ; then
 			cp $(realpath \
@@ -691,7 +688,7 @@ einfo "Removing unsupported platforms"
 einfo "Adding .git folder"
 	git init || die
 	git add . || die
-	touch dummy || die
+	touch "dummy" || die
 	git config user.email "name@example.com" || die
 	git config user.name "John Doe" || die
 	git add dummy || die
@@ -699,45 +696,31 @@ einfo "Adding .git folder"
 	git tag "v${PV}" || die
 
 	if grep -e "Read timed out" "${T}/build.log" ; then
-eerror
 eerror "Download failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -e "Error downloading" "${T}/build.log" ; then
-eerror
 eerror "Download failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -e "Build did NOT complete successfully" "${T}/build.log" ; then
-eerror
 eerror "Build failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -e "ERROR:" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -e "exitCode:" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -e "Exit code:" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -F -e "cb() never called!" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 }
@@ -747,7 +730,7 @@ src_prepare() {
 	java-pkg-opt-2_src_prepare
 
 	local x
-	for x in ${MAVEN_TARBALLS[@]} ; do
+	for x in "${MAVEN_TARBALLS[@]}" ; do
 		sed -i -e "89a\"file://${x}\"," "compiler/WORKSPACE.bazel" || die
 	done
 }
@@ -826,19 +809,17 @@ src_configure() {
 _build_compiler_jar() {
 einfo "Building compiler jar (2/2)"
 einfo "Running:  node ./build-scripts/build_compiler.js"
-	node ./build-scripts/build_compiler.js || die # Part 2/2 of _build_compiler_jar
+	node "./build-scripts/build_compiler.js" || die # Part 2/2 of _build_compiler_jar
 
 	if grep -q -F -e "ERROR:" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 }
 
 _build_native_image() {
 einfo "Building native image (1/2)"
-	enpm run build ${extra_args[@]}
+	enpm run build "${extra_args[@]}"
 	_npm_check_errors
 
 	export PATH="${WORKDIR}/graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-${GRAALVM_PV}/bin:${PATH}"
@@ -850,21 +831,15 @@ einfo "Building native image (2/2)"
 	_yarn_check_errors
 
 	if grep -q -F -e "Error while fetching artifact" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -q -F -e "Error: Invalid or corrupt jarfile" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 	if grep -q -F -e "Error: non-zero exit code 1" "${T}/build.log" ; then
-eerror
 eerror "Failure detected.  Re-emerge."
-eerror
 		die
 	fi
 }
@@ -933,8 +908,8 @@ src_install() {
 	if use closure_compiler_nodejs ; then
 		export NPM_INSTALL_PATH="/opt/${MY_PN}"
 		insinto "${NPM_INSTALL_PATH}"
-		pushd ../ || die
-		doins -r "node_modules" "package.json" "yarn.lock"
+		pushd "../" >/dev/null 2>&1 || die
+			doins -r "node_modules" "package.json" "yarn.lock"
 		popd
 		insinto "${NPM_INSTALL_PATH}/packages"
 		local d_prefix="google-${MY_PN}"
@@ -947,17 +922,18 @@ src_install() {
 			"${T}/${MY_PN}-node" \
 			|| die
 		sed -i \
-			-e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
+			-e "s|@LIBDIR@|$(get_libdir)|g" \
+			-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 			"${T}/${MY_PN}-node" \
 			|| die
 		doexe "${T}/${MY_PN}-node"
-		local dir_paths=$(
-			$(find "${ED}/${NPM_INSTALL_PATH}" \
-				-name ".bin" -type d)
+		IFS=$'\n'
+		local dir_paths=(
+			$(find "${ED}/${NPM_INSTALL_PATH}" -name ".bin" -type d)
 		)
+		IFS=$' \t\n'
 		local dir_path
-		for dir_path in ${dir_paths} ; do
+		for dir_path in "${dir_paths[@]}" ; do
 			local file_abs_path
 			for file_abs_path in $(find "${dir_path}") ; do
 				chmod 0755 $(realpath "${file_abs_path}") \
@@ -986,9 +962,7 @@ src_install() {
 
 pkg_postinst() {
 	if use closure_compiler_nodejs || use closure_compiler_java; then
-ewarn
 ewarn "You need to switch user/system java-vm to == ${JAVA_SLOT_CLOSURE_COMPILER} before using ${PN}"
-ewarn
 	fi
 }
 
