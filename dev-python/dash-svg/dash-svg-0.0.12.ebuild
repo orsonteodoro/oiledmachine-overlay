@@ -7,10 +7,10 @@ EAPI=8
 # Missing:
 # sci-visualization/dash[testing]
 
+DISTUTILS_USE_PEP517="setuptools"
+NODE_SLOT="18" # Upstream uses node 12.  14 works
 NPM_SLOT=2 # Limited by React 16.14.0.
 NPM_TARBALL="${P}.tar.gz"
-NODE_VERSION=18 # Upstream uses node 12.  14 works
-DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 REACT_PV="16.14.0" # Supports up to node 14 used for testing.  node 14 uses npm 6.14.18 which is lockfile v1.
 #REACT_PV="18.3.1" # Supports up to node 17
@@ -32,7 +32,10 @@ https://pypi.org/project/dash-svg/
 LICENSE="MIT" # https://github.com/stevej2608/dash-svg/blob/0.0.12/DESCRIPTION#L8
 RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
-IUSE="test ebuild_revision_5"
+IUSE="
+test
+ebuild_revision_6
+"
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
 	>=dev-python/keyrings-alt-4.1.0[${PYTHON_USEDEP}]
@@ -44,7 +47,7 @@ DEPEND+="
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
+	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
 	sys-apps/npm:${NPM_SLOT}
 	test? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]

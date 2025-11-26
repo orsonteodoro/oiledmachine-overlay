@@ -30,17 +30,20 @@ MY_PN="Open WebUI"
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_VERSION="22" # From https://github.com/open-webui/open-webui/blob/v0.6.32/Dockerfile#L24
+NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.6.32/Dockerfile#L24
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{11..12} )
+
 NPM_AUDIT_FIX_ARGS=(
 #	"--prefer-offline"
 	"--legacy-peer-deps"
 )
+
 NPM_INSTALL_ARGS=(
 #	"--prefer-offline"
 	"--legacy-peer-deps"
 )
-PROTOBUF_CPP_SLOT=5
-PYTHON_COMPAT=( "python3_"{11..12} )
+
 
 inherit desktop distutils-r1 pypi npm xdg
 
@@ -290,7 +293,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	net-libs/nodejs:${NODE_VERSION}[npm]
+	net-libs/nodejs:${NODE_SLOT}[npm]
 	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -416,11 +419,11 @@ eerror "CUDA other than 11 or 12 are not supported."
 	fi
 
 	# Pass build args to the build
-	export USE_OLLAMA_DOCKER=${USE_OLLAMA:-}
-	export USE_CUDA_DOCKER=${USE_CUDA:-}
-	export USE_CUDA_DOCKER_VER=${USE_CUDA_VER:-}
-	export USE_EMBEDDING_MODEL_DOCKER=${USE_EMBEDDING_MODEL:-}
-	export USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL:-}
+	export USE_OLLAMA_DOCKER=${USE_OLLAMA:-""}
+	export USE_CUDA_DOCKER=${USE_CUDA:-""}
+	export USE_CUDA_DOCKER_VER=${USE_CUDA_VER:-""}
+	export USE_EMBEDDING_MODEL_DOCKER=${USE_EMBEDDING_MODEL:-""}
+	export USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL:-""}
 }
 
 python_prepare_all() {
@@ -495,10 +498,9 @@ install_backend() {
 
 install_init_services() {
 	sed \
-		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
 		-e "s|@EPYTHON@|${EPYTHON}|g" \
 		"${FILESDIR}/${PN}-start-server" \
-		> \
+			> \
 		"${T}/${PN}-start-server" \
 		|| die
 	exeinto "/usr/bin"
@@ -509,7 +511,7 @@ install_init_services() {
 		-e "s|@OPEN_WEBUI_HOST@|${open_webui_hostname}|g" \
 		-e "s|@OPEN_WEBUI_PORT@|${open_webui_port}|g" \
 		"${FILESDIR}/${PN}.conf" \
-		> \
+			> \
 		"${T}/${PN}.conf" \
 		|| die
 	doins "${T}/${PN}.conf"

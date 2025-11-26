@@ -91,7 +91,7 @@ unset -f _npm_set_globals
 
 # @ECLASS_VARIABLE: NPM_EXE_LIST
 # @DESCRIPTION:
-# A pregenerated list of paths to turn on executable bit.
+# An array of pregenerated paths to turn on executable bit.
 # Obtained partially from find ${NPM_INSTALL_PATH}/node_modules/ -path "*/.bin/*" | sort
 
 # @ECLASS_VARIABLE: NPM_EXTERNAL_URIS
@@ -169,7 +169,7 @@ _NPM_PKG_SETUP_CALLED=0
 # Check the network sandbox.
 npm_check_network_sandbox() {
 # Corepack problems.  Cannot do complete offline install.
-	if has network-sandbox $FEATURES ; then
+	if has "network-sandbox" ${FEATURES} ; then
 eerror
 eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
 eerror "Reason:  To download micropackages and offline cache"
@@ -300,8 +300,8 @@ _npm_src_unpack_default_ebuild() {
 	fi
 
 	enpm install \
-		${extra_args[@]} \
-		${NPM_INSTALL_ARGS[@]}
+		"${extra_args[@]}" \
+		"${NPM_INSTALL_ARGS[@]}"
 	if declare -f npm_unpack_install_post > /dev/null 2>&1 ; then
 		npm_unpack_install_post
 	fi
@@ -348,8 +348,8 @@ _npm_src_unpack_default_upstream() {
 	fi
 
 	enpm install \
-		${extra_args[@]} \
-		${NPM_INSTALL_ARGS[@]}
+		"${extra_args[@]}" \
+		"${NPM_INSTALL_ARGS[@]}"
 	if declare -f npm_unpack_install_post > /dev/null 2>&1 ; then
 		npm_unpack_install_post
 	fi
@@ -399,7 +399,7 @@ einfo "Skipping audit fix."
 	fi
 
 	local network_sandbox=0
-	if has network-sandbox $FEATURES ; then
+	if has "network-sandbox" ${FEATURES} ; then
 		network_sandbox=1
 	fi
 
@@ -563,8 +563,8 @@ npm_src_unpack() {
 		fi
 
 		enpm install \
-			${extra_args[@]} \
-			${NPM_INSTALL_ARGS[@]}
+			"${extra_args[@]}" \
+			"${NPM_INSTALL_ARGS[@]}"
 		if declare -f npm_update_lock_install_post > /dev/null 2>&1 ; then
 			npm_update_lock_install_post
 		fi
@@ -572,14 +572,14 @@ npm_src_unpack() {
 			npm_update_lock_audit_pre
 		fi
 		enpm audit fix \
-			${extra_args[@]} \
-			${NPM_AUDIT_FIX_ARGS[@]}
+			"${extra_args[@]}" \
+			"${NPM_AUDIT_FIX_ARGS[@]}"
 		if declare -f npm_update_lock_audit_post > /dev/null 2>&1 ; then
 			npm_update_lock_audit_post
 		fi
 
 		if [[ "${NPM_DEDUPE}" == "1" ]] ; then
-			enpm dedupe ${NPM_DEDUPE_ARGS[@]}
+			enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 		fi
 
 		if declare -f npm_dedupe_post > /dev/null 2>&1 ; then
@@ -626,8 +626,8 @@ npm_src_compile() {
 	elif [[ "${offline}" == "1" ]] ; then
 		extra_args+=( "--prefer-offline" )
 	fi
-	npm run ${cmd} \
-		${extra_args[@]} \
+	npm run "${cmd}" \
+		"${extra_args[@]}" \
 		|| die
 	_npm_check_errors
 }
@@ -640,8 +640,8 @@ npm_src_test() {
 	[[ "${NPM_TEST_SCRIPT}" == "null" ]] && return
 	[[ "${NPM_TEST_SCRIPT}" == "skip" ]] && return
 	local cmd="${NPM_TEST_SCRIPT:-test}"
-	grep -q -e "\"${cmd}\"" package.json || return
-	npm run ${cmd} \
+	grep -q -e "\"${cmd}\"" "package.json" || return
+	npm run "${cmd}" \
 		|| die
 }
 
@@ -651,16 +651,16 @@ npm_src_test() {
 npm_src_install() {
 	local install_path="${NPM_INSTALL_PATH:-/opt/${PN}}"
 	local rows
-	if cat package.json \
+	if cat "package.json" \
 		| jq '.bin' \
 		| grep -q ":" ; then
-		rows=$(cat package.json \
+		rows=$(cat "package.json" \
 			| jq '.bin' \
 			| grep ":")
-	elif cat package.json \
+	elif cat "package.json" \
 		| jq '.packages."".bin' \
 		| grep -q ":" ; then
-		rows=$(cat package.json \
+		rows=$(cat "package.json" \
 			| jq '.packages."".bin' \
 			| grep ":")
 	else
@@ -671,7 +671,7 @@ npm_src_install() {
 	ls .* > /dev/null && doins -r .*
 	IFS=$'\n'
 	local row
-	for row in ${rows[@]} ; do
+	for row in "${rows[@]}" ; do
 		local name=$(echo "${row}" \
 			| cut -f 2 -d '"')
 		local cmd=$(echo "${row}" \
@@ -685,12 +685,12 @@ export PATH="/usr/lib/node/${NODE_SLOT}/bin:\${PATH}"
 "${install_path}/${cmd}" "\$@"
 EOF
 			fperms 0755 "/usr/bin/${name}"
-		elif [[ ${NPM_APP_INVOCATION} == "symlink" ]] ; then
+		elif [[ "${NPM_APP_INVOCATION}" == "symlink" ]] ; then
 			dosym "${install_path}/${cmd}" "/usr/bin/${name}"
 		fi
 	done
 	local path
-	for path in ${NPM_EXE_LIST} ; do
+	for path in "${NPM_EXE_LIST[@]}" ; do
 		local _path=$(echo "${path}" \
 			| sed -r \
 				-e "s|^[[:space:]]+||g" \

@@ -6,12 +6,18 @@ EAPI=8
 
 # Upstream uses U 18.04.6 for CI
 
+# For Cr version correspondance, see https://releases.electronjs.org/releases.json for version details.
+
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${PN}-${PV}-linux.AppImage"
+ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_MODE="npm"
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
-# See https://releases.electronjs.org/releases.json for version details.
+ELECTRON_APP_REACT_PV="18.3.1"
+NODE_ENV="development"
+NODE_SLOT="18"
+
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
@@ -19,10 +25,7 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
 fi
-ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
-ELECTRON_APP_REACT_PV="18.3.1"
-NODE_ENV="development"
-NODE_VERSION="18"
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -119,7 +122,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_17
+	ebuild_revision_18
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -132,8 +135,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
+	>=net-libs/nodejs-${NODE_SLOT}[npm]
 	virtual/pkgconfig
 "
 PDEPEND+="
@@ -191,12 +194,12 @@ npm_update_lock_audit_post() {
 		"form-data@4.0.4"
 		"tmp@0.2.4"
 	)
-	enpm install -D ${pkgs[@]}
+	enpm install -D "${pkgs[@]}"
 
 	pkgs=(
 		"@babel/runtime@7.26.10"
 	)
-	enpm install -P ${pkgs[@]} --prefer-offline
+	enpm install -P "${pkgs[@]}" --prefer-offline
 	patch_lockfile
 }
 
@@ -220,7 +223,7 @@ src_install() {
 	sed -i \
 		-e "s|\${INSTALL_DIR}|${NPM_INSTALL_PATH}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
-		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
+		-e "s|\${NODE_SLOT}|${NODE_SLOT}|g" \
 		-e "s|\${PN}|${PN}|g" \
 		"${ED}/usr/bin/${PN}" || die
         newicon "build/icon.png" "${PN}.png"
@@ -242,7 +245,8 @@ src_install() {
 		"resources/bin/upscayl-bin"
 		"upscayl"
 	)
-	for f in ${L[@]} ; do
+	local f
+	for f in "${L[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
 	lcnr_install_files

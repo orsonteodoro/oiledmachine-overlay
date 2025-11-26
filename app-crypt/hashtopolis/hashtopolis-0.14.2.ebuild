@@ -9,14 +9,20 @@ EAPI=8
 # NPM_UPDATER_PROJECT_ROOT="web-ui-0.14.2" NPM_UPDATER_VERSIONS="0.14.2" npm_updater_update_locks.sh
 
 ANGULAR_SUPPORT=0
-PYTHON_COMPAT=( "python3_"{10..11} )
 HASTOPOLIS_WEBUI_PV="${PV}"
 MY_ETCDIR="/etc/webapps/${PF}"
-NODE_VERSION=18
+NODE_SLOT="18"
 NPM_AUDIT_FIX=1
-NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
-NPM_INSTALL_ARGS=( "--prefer-offline" )
+PYTHON_COMPAT=( "python3_"{10..11} )
 WEBAPP_MANUAL_SLOT="yes"
+
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
 
 if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
 	inherit npm
@@ -30,6 +36,8 @@ if [[ "${PV}" == "9999" ]]; then
 	S_WEBUI="${WORKDIR}/web-ui-9999"
 else
 	KEYWORDS="~amd64" # Unfinished
+	S="${WORKDIR}/server-${PV}"
+	S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 	SRC_URI="
 https://github.com/hashtopolis/server/archive/v${PV}.tar.gz -> hashtopolis-server-${PV}.tar.gz
 	"
@@ -41,8 +49,6 @@ https://github.com/hashtopolis/web-ui/archive/refs/tags/v${HASTOPOLIS_WEBUI_PV}.
 			)
 		"
 	fi
-	S="${WORKDIR}/server-${PV}"
-	S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 fi
 
 DESCRIPTION="Hashtopolis is a Hashcat wrapper for distributed password recovery"
@@ -160,13 +166,13 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	GPL-3
 "
+RESTRICT="test"
 SLOT="0"
 IUSE+=" agent ssl"
 if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
 	# angular support is broken
 	IUSE+=" angular"
 fi
-RESTRICT="test"
 # apache optional: apache2_modules_env, apache2_modules_log_config
 RDEPEND="
 	>=dev-lang/php-8.3.3:8.3[apache2,curl,filter,gd,mysql,pdo,session,simplexml,ssl,xmlwriter]
@@ -184,7 +190,8 @@ DEPEND="
 if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
 	BDEPEND+="
 		angular? (
-			>=net-libs/nodejs-18.15:18
+			>=net-libs/nodejs-18.15:${NODE_SLOT}
+			net-libs/nodejs:=
 		)
 	"
 fi
@@ -207,7 +214,7 @@ ewarn "Apache is not configured for PHP.  Add \"-D PHP\" to APACHE2_OPTS in /etc
 pkg_setup() {
 	check_php_support_in_apache
 	webapp_pkg_setup
-	if has angular ${IUSE} && use angular ; then
+	if has "angular" ${IUSE} && use angular ; then
 ewarn "The angular USE flag is currently broken."
 		npm_pkg_setup
 	fi
@@ -230,7 +237,7 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack "hashtopolis-server-${PV}.tar.gz"
-		if has angular ${IUSE} && use angular ; then
+		if has "angular" ${IUSE} && use angular ; then
 			unpack "hashtopolis-webui-${HASTOPOLIS_WEBUI_PV}.tar.gz"
 		fi
 	fi
@@ -245,7 +252,7 @@ src_unpack() {
 	fi
 
 	if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
-		if has angular ${IUSE} ; then
+		if has "angular" ${IUSE} ; then
 			if use angular ; then
 				:
 			else
@@ -255,7 +262,7 @@ eerror "Enable the angular USE flag before updating lockfile"
 		fi
 	fi
 
-	if has angular ${IUSE} && use angular ; then
+	if has "angular" ${IUSE} && use angular ; then
 		npm_hydrate
 		cd "${S_WEBUI}" || die
 		if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
@@ -265,10 +272,10 @@ eerror "Enable the angular USE flag before updating lockfile"
 				"package-lock.json"
 			)
 # Reduce version constraints caused by lockfiles.
-			rm -vf ${lockfiles[@]}
+			rm -vf "${lockfiles[@]}"
 
 einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per package-lock.json"
-			for lockfile in ${lockfiles[@]} ; do
+			for lockfile in "${lockfiles[@]}" ; do
 				local d="$(dirname ${lockfile})"
 				pushd "${S_WEBUI}/${d}" || die
 					if [[ "${NPM_AUDIT_FIX}" == "1" ]] ; then
@@ -279,10 +286,10 @@ einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per package-lock.json"
 
 einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per package-lock.json"
 			if [[ "${NPM_AUDIT_FIX}" == "1" ]] ; then
-				for lockfile in ${lockfiles[@]} ; do
+				for lockfile in "${lockfiles[@]}" ; do
 					local d="$(dirname ${lockfile})"
 					pushd "${S_WEBUI}/${d}" || die
-						enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
+						enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
 					popd
 				done
 			fi
@@ -292,7 +299,7 @@ einfo "Copying lockfiles"
 	# Disabled to prevent too many args for wget in relation to SRC_URI.
 				$(find . -name "package-lock.json")
 			)
-			for lockfile in ${lockfiles[@]} ; do
+			for lockfile in "${lockfiles[@]}" ; do
 				local d="$(dirname ${lockfile})"
 				local dest="${WORKDIR}/lockfile-image/${d}"
 				mkdir -p "${dest}"
@@ -314,14 +321,14 @@ einfo "Lockfile update done"
 			if [[ "${offline}" == "1" ]] ; then
 				enpm install \
 					--offline \
-					${NPM_INSTALL_ARGS[@]}
+					"${NPM_INSTALL_ARGS[@]}"
 			elif [[ "${offline}" == "1" ]] ; then
 				enpm install \
 					--prefer-offline \
-					${NPM_INSTALL_ARGS[@]}
+					"${NPM_INSTALL_ARGS[@]}"
 			else
 				enpm install \
-					${NPM_INSTALL_ARGS[@]}
+					"${NPM_INSTALL_ARGS[@]}"
 			fi
 			# Audit fix already done in NPM_UPDATE_LOCK=1
 		fi
@@ -505,7 +512,7 @@ einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 		cd "${S_WEBUI}" || die
 		sed -i \
 			-e 's/localhost:8080/${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/g' \
-			src/config/default/app/main.ts \
+			"src/config/default/app/main.ts" \
 			|| die
 
 		if use ssl ; then
@@ -545,17 +552,17 @@ einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 }
 
 src_compile() {
-	if has angular ${IUSE} && use angular ; then
+	if has "angular" ${IUSE} && use angular ; then
 		cd "${S_WEBUI}" || die
 
 	# Avoid fatal: not a git repository
 		git init || die
-		touch dummy || die
+		touch "dummy" || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
 		git add dummy || die
 		git commit -m "Dummy" || die
-		git tag v${PV} || die
+		git tag "v${PV}" || die
 
 		npm_hydrate
 		enpm run build
@@ -573,9 +580,9 @@ src_install() {
 	set_server_config
 	cd "${S}" || die
 	insinto "${MY_HTDOCSDIR}/hashtopolis-backend"
-	doins -r src/*
+	doins -r "src/"*
 
-	if has angular ${IUSE} && use angular ; then
+	if has "angular" ${IUSE} && use angular ; then
 		pushd "${S_WEBUI}" || die
 			insinto "${MY_HTDOCSDIR}/hashtopolis-frontend"
 			doins -r dist/*
@@ -620,7 +627,7 @@ src_install() {
 		"${MY_ETCDIR}/backend/php/inc/conf.php" \
 		"${MY_HTDOCSDIR}/hashtopolis-backend/inc/conf.php"
 
-	if has angular ${IUSE} && use angular ; then
+	if has "angular" ${IUSE} && use angular ; then
 		LCNR_SOURCE="${S_WEBUI}"
 		LCNR_TAG="web-ui-node_modules-third-party-licenses"
 		lcnr_install_files
@@ -677,7 +684,7 @@ ewarn "Run \`emerge =hashtopolis-server-${PV} --config\` to complete installatio
 
 # See https://www.gentoo.org/glep/glep-0011.html
 pkg_config() {
-	if ! pgrep mysqld >/dev/null 2>&1 && ! pgrep mariadbd >/dev/null 2>&1 ; then
+	if ! pgrep "mysqld" >/dev/null 2>&1 && ! pgrep "mariadbd" >/dev/null 2>&1 ; then
 eerror
 eerror "A SQL server has not been started!  Start it first!"
 eerror
@@ -702,7 +709,7 @@ einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 
 	if [[ ! -e "/etc/hashtopolis/server/salt" ]] ; then
 		mkdir -p "/etc/hashtopolis/server"
-		local password_salt=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | sha256sum | base64 -w 0)
+		local password_salt=$(dd bs=4096 count=1 if="/dev/random" of="/dev/stdout" 2>/dev/null | sha256sum | base64 -w 0)
 		echo "${password_salt}" > "/etc/hashtopolis/server/salt" || die
 		chmod 0600 "/etc/hashtopolis/server/salt" || die
 	fi
@@ -710,7 +717,7 @@ einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 einfo "Enter a new password for the user hastopolis for SQL access:"
 	read -s hashtopolis_password
 	local hashtopolis_password_=$(echo -n "${hashtopolis_password}:$(cat /etc/hashtopolis/server/salt)" | sha256sum | cut -f 1 -d " ")
-	hashtopolis_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	hashtopolis_password=$(dd bs=4096 count=1 if="/dev/random" of="/dev/stdout" 2>/dev/null | base64)
 
 einfo "Clean install hashtopolis database and user? [Y/n]"
 	read
@@ -739,21 +746,21 @@ cat <<EOF > "${MY_ETCDIR}/backend/php/inc/conf.php"
 \$CONN['port'] = "${SQL_PORT}";
 //END CONFIG
 EOF
-	hashtopolis_password_=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	hashtopolis_password_=$(dd bs=4096 count=1 if="/dev/random" of="/dev/stdout" 2>/dev/null | base64)
 
 #einfo "Enter a new admin password for the Admin GUI:"
 #	read -s hashtopolis_admin_password
 #	HASHTOPOLIS_ADMIN_PASSWORD="${hashtopolis_admin_password}"
 
 einfo "Protecting sensitive config"
-	chown apache:apache "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
-	chown apache:apache "${MY_ETCDIR}/backend/php/inc/conf.php"
+	chown "apache:apache" "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
+	chown "apache:apache" "${MY_ETCDIR}/backend/php/inc/conf.php"
 	chmod 0600 "${MY_ETCDIR}/backend/php/inc/conf.php"
 
 info "Creating user admin and configuring database"
 	php -f "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
 
-	hashtopolis_admin_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	hashtopolis_admin_password=$(dd bs=4096 count=1 if="/dev/random" of="/dev/stdout" 2>/dev/null | base64)
 
 ewarn "The apache2 server must be restarted."
 	print_usage

@@ -4,7 +4,7 @@
 
 EAPI=8
 
-NODE_VERSION="20"
+NODE_SLOT="20"
 
 inherit npm
 
@@ -35,7 +35,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	net-libs/nodejs:18[webassembly(+)]

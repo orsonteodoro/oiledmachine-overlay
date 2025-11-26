@@ -11,15 +11,16 @@ EAPI=8
 
 #GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-1}
 
-AT_TYPES_NODE_PV="22.7.4"
 EGIT_COMMIT="ca2415c77d20ec41dd4fcf917dbb0e97961ddf08" # Jul 23, 2025
 NODE_ENV="development"
 NODE_SHARP_USE="exif jpeg"
-NODE_VERSION=18 # Upstream uses 18 and 20
+NODE_SLOT="18" # Upstream uses 18 and 20
 PYTHON_COMPAT=( "python3_"{10..12} )
 RUST_MAX_VER="1.82.0" # Inclusive
 RUST_MIN_VER="1.82.0" # llvm-19.1
 RUST_PV="${RUST_MIN_VER}"
+
+AT_TYPES_NODE_PV="22.7.4"
 SHARP_PV="0.34.3"
 VIPS_PV="8.17.1"
 
@@ -642,7 +643,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_22
+ebuild_revision_24
 "
 REQUIRED_USE="
 	voice-recognition
@@ -656,7 +657,7 @@ REQUIRED_USE="
 "
 gen_webkit_depend() {
 	local s
-	for s in ${WEBKIT_GTK_STABLE[@]} ; do
+	for s in "${WEBKIT_GTK_STABLE[@]}" ; do
 	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
 	# onnxruntime-web needs webassembly
 		echo "
@@ -723,7 +724,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
+	=net-libs/nodejs-${NODE_SLOT}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
 		=dev-lang/rust-1.81*
@@ -748,7 +749,7 @@ pkg_setup() {
 		rust_prepend_path "${RUST_PV}" "source"
 	fi
 	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
-	local actual_rust_pv=$(${RUSTC} --version | cut -f 2 -d " ")
+	local actual_rust_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
 	if ver_test "${actual_rust_pv}" -ne "${RUST_PV}" ; then
 eerror
 eerror "Use \`eselect rust\` to switch to Rust ${RUST_PV}"
@@ -778,7 +779,7 @@ einfo "Generating lockfile"
 # Unpacks the package and the cargo registry.
 # From cargo.eclass
 _cargo_src_unpack() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
@@ -861,11 +862,11 @@ ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 			"tar-fs@2.1.4"										# CVE-2025-59343				# ZC, VS(DT)
 			"tar-fs@3.1.1"										# CVE-2025-59343				# ZC, VS(DT)
 		)
-		enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
+		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		pkgs=(
 			"next@14.2.25"										# CVE-2025-29927				# DT, ID	# --prefer-offline is broken
 		)
-		enpm install ${pkgs[@]} -P --legacy-peer-deps
+		enpm install "${pkgs[@]}" -P --legacy-peer-deps
 
 		pkgs=(
 			"@types/node@${AT_TYPES_NODE_PV}"
@@ -877,7 +878,7 @@ ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 			# Fix runtime
 			"typescript@5.6.3"
 		)
-		enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 		patch_lockfile
 	fi
 }
@@ -902,7 +903,7 @@ einfo "Unpacking cargo packages"
 	else
 		S="${S_PROJECT}/src-tauri" \
 		_production_unpack
-		enpm install "node-gyp@11.1.0" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "node-gyp@11.1.0" -D "${NPM_INSTALL_ARGS[@]}"
 
 		local configuration="Debug"
 		local nconfiguration="Release"

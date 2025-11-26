@@ -18,12 +18,18 @@ EAPI=8
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2025-01-16-rotate-passwords/2025-01-16-rotate-passwords.txt
 #
 
-AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
 MY_PN="WindowPet"
-NODE_VERSION="23" # CI uses 23 based on CI logs
+
+NODE_SLOT="23" # CI uses 23 based on CI logs
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="a0a310756ab3d770ed554c9801d3bea5940eb31e" # Obtained from GIT_CRATES
+# Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.86.0" # llvm-19.1
+RUST_PV="${RUST_MIN_VER}"
+
+AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
 
 # Remove tauri-plugin-autostart from GIT_CRATES:
 declare -A GIT_CRATES=(
@@ -615,10 +621,6 @@ zvariant-3.15.2
 zvariant_derive-3.15.2
 zvariant_utils-1.0.1
 "
-# Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
-RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.86.0" # llvm-19.1
-RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo desktop lcnr npm xdg
 
@@ -690,7 +692,7 @@ WEBKIT_GTK_STABLE=(
 )
 gen_webkit_depend() {
 	local s
-	for s in ${WEBKIT_GTK_STABLE[@]} ; do
+	for s in "${WEBKIT_GTK_STABLE[@]}" ; do
 		echo "=net-libs/webkit-gtk-${s}*:4[javascript,introspection,wayland?,X?]"
 	done
 }
@@ -779,7 +781,7 @@ pkg_setup() {
 # Unpacks the package and the cargo registry.
 # From cargo.eclass
 _cargo_src_unpack() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
@@ -793,7 +795,7 @@ _cargo_src_unpack() {
 
 	local archive shasum pkg
 	local crates=()
-	for archive in ${A}; do
+	for archive in ${A} ; do
 		case "${archive}" in
 			*.crate)
 				crates+=( "${archive}" )
@@ -811,7 +813,7 @@ _cargo_src_unpack() {
 		esac
 	done
 
-	if [[ ${PKGBUMPING} != ${PVR} && ${crates[@]} ]]; then
+	if [[ "${PKGBUMPING}" != "${PVR}" && ${crates[@]} ]]; then
 		pushd "${DISTDIR}" >/dev/null || die
 
 		ebegin "Unpacking crates"
@@ -832,7 +834,7 @@ _cargo_src_unpack() {
 
 			# if this is our target package we need it in ${WORKDIR} too
 			# to make ${S} (and handle any revisions too)
-			if [[ ${P} == ${pkg}* ]]; then
+			if [[ "${P}" == "${pkg}"* ]]; then
 				tar -xf "${archive}" -C "${WORKDIR}" || die
 			fi
 		done < <(sha256sum -z "${crates[@]}" || die)
@@ -888,7 +890,7 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 			"@babel/runtime@7.26.10"			# CVE-2025-27789; DoS
 			"form-data@4.0.4"				# CVE-2025-7783; DT, ID
 		)
-		enpm install ${L[@]} -P
+		enpm install "${L[@]}" -P
 
 
 		L=(
@@ -896,14 +898,14 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 			"vite@5.4.20"					# CVE-2025-58751; ID
 									# CVE-2025-58752; ID
 		)
-		enpm install ${L[@]} -D
+		enpm install "${L[@]}" -D
 		patch_lockfile
 	fi
 }
 
 src_unpack() {
 	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 	fi
 	#die # For lockfile update
 
@@ -944,7 +946,7 @@ einfo "Unpacking Tauri side"
 		|| die
 
 	local row
-	for row in ${BANNED_CARGO_PACKAGES[@]} ; do
+	for row in "${BANNED_CARGO_PACKAGES[@]}" ; do
 		local pkg="${row%;*}"
 		local type="${row#*;}"
 		if [[ "${type}" == "W" ]] ; then

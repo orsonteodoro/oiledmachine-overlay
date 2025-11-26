@@ -4,9 +4,9 @@
 
 EAPI=8
 
-NPM_TARBALL="${P}.tar.gz"
-NODE_VERSION=22 # Upstream uses node 22
 DISTUTILS_USE_PEP517="hatchling"
+NPM_TARBALL="${P}.tar.gz"
+NODE_SLOT="22" # Upstream uses node 22
 PYTHON_COMPAT=( "python3_"{10..13} ) # Lists up to 3.13
 
 inherit distutils-r1 npm
@@ -27,7 +27,10 @@ https://pypi.org/project/dash-bootstrap-components/
 LICENSE="Apache-2.0"
 RESTRICT="mirror test" # Did not test
 SLOT="0"
-IUSE="dev pandas ebuild_revision_3"
+IUSE="
+dev pandas
+ebuild_revision_4
+"
 RDEPEND+="
 	>=sci-visualization/dash-3.0.4[${PYTHON_USEDEP},dev(+)]
 	pandas? (
@@ -39,7 +42,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
+	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
 	dev? (
 		>=dev-python/pytest-8.3.4[${PYTHON_USEDEP}]
 		>=dev-python/semver-3.0.2[${PYTHON_USEDEP}]

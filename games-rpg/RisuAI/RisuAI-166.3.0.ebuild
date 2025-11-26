@@ -9,9 +9,22 @@ EAPI=8
 # U24, rust 1.75.0, llvm 17.0
 # @swc/core, rust 1.77.1, llvm 18.0
 
+NODE_SHARP_USE="exif jpeg lcms png svg"
+NODE_SLOT="22"
+NPM_SLOT="3"
+RUST_MAX_VER="1.85.1" # Inclusive
+RUST_MIN_VER="1.85.0" # llvm-19.1, required for:  feature `edition2024` is required
+RUST_PV="${RUST_MIN_VER}"
+TARBALL="${P}.tar.gz"
+NPM_TARBALL="${TARBALL}"
+
+SHARP_PV="0.34.3"
+VIPS_PV="8.17.2"
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
+
 CRATES="
 addr2line-0.25.1
 adler2-2.0.1
@@ -668,27 +681,21 @@ zvariant-5.7.0
 zvariant_derive-5.7.0
 zvariant_utils-3.2.1
 "
+
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.2-debug.patch"
 	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
 	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 )
-NODE_SHARP_USE="exif jpeg lcms png svg"
-NODE_VERSION=22
+
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
-NPM_SLOT="3"
-RUST_MAX_VER="1.85.1" # Inclusive
-RUST_MIN_VER="1.85.0" # llvm-19.1, required for:  feature `edition2024` is required
-RUST_PV="${RUST_MIN_VER}"
-SHARP_PV="0.34.3"
-TARBALL="${P}.tar.gz"
-NPM_TARBALL="${TARBALL}"
-VIPS_PV="8.17.2"
+
 
 # CVE-2025-58752; VS(ID); Low
 # CVE-2025-58751; VS(ID); Low
@@ -729,7 +736,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
-ebuild_revision_8
+ebuild_revision_9
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -799,7 +806,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	net-libs/nodejs:${NODE_VERSION}
+	net-libs/nodejs:${NODE_SLOT}
 	sys-apps/npm
 "
 

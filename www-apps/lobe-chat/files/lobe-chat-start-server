@@ -1,5 +1,5 @@
 #!/bin/bash
-NODE_VERSION=@NODE_VERSION@
+NODE_SLOT=@NODE_SLOT@
 main() {
 	cd "/opt/lobe-chat"
 	source "/etc/lobe-chat/lobe-chat.conf"

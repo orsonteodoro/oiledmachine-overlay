@@ -7,10 +7,26 @@ EAPI=8
 # Using npm breaks
 # Avoid "npm error code EUNSUPPORTEDPROTOCOL" when "patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch" encountered
 
+# For Cr version correspondance, see https://releases.electronjs.org/releases.json
+
 MY_PN="${PN/-/}"
 
-# See https://releases.electronjs.org/releases.json
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+# TODO:  Fix newer sharp with ICON_TYPE="png"
+ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
+NPM_AUDIT_FIX=0 # Breaks build
+NODE_SHARP_USE="png svg"
+NODE_SLOT="20" # originally 20
+YARN_AUDIT_FIX=0
+YARN_INSTALL_PATH="/opt/${MY_PN}"
+YARN_LOCKFILE_SOURCE="ebuild"
+YARN_SLOT=8
+#export NODE_SHARP_DEBUG=1
+
+NODE_GYP_PV="9.3.0"
+SHARP_PV="0.34.3" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
+VIPS_PV="8.17.2"
+
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 #	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
@@ -19,34 +35,25 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 fi
-# TODO:  Fix newer sharp with ICON_TYPE="png"
-ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
-NPM_AUDIT_FIX=0 # Breaks build
-YARN_AUDIT_FIX=0
+
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.2-debug.patch"
 	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
 	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 	"${FILESDIR}/icon-gen-3.0.1-png-return.patch"
 )
-NODE_SHARP_USE="png svg"
-NODE_GYP_PV="9.3.0"
-NODE_VERSION="20" # originally 20
-PATENT_STATUS=(
-	patent_status_nonfree
-)
-YARN_INSTALL_PATH="/opt/${MY_PN}"
-YARN_LOCKFILE_SOURCE="ebuild"
-YARN_SLOT=8
-#export NODE_SHARP_DEBUG=1
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
+
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
-SHARP_PV="0.34.3" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
-VIPS_PV="8.17.2"
+
+PATENT_STATUS=(
+	"patent_status_nonfree"
+)
 
 inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
 
@@ -79,7 +86,6 @@ LICENSE="
 "
 # Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-#		electron-37.1.0-chromium.html
 	LICENSE+="
 		electron-38.2.0-chromium.html
 	"
@@ -89,11 +95,11 @@ else
 	"
 fi
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_19
+ebuild_revision_21
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -126,7 +132,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	net-libs/nodejs:${NODE_SLOT}
+	net-libs/nodejs:=
 	sys-apps/yarn:${YARN_SLOT}
+	sys-apps/yarn:=
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
@@ -255,7 +264,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	        yarn cache clean || die "Failed to clear yarn cache"
 	        npm cache clean --force || die "Failed to clear npm cache"
 
-		if ver_test ${SHARP_PV%.*} -le "0.32" ; then
+		if ver_test "${SHARP_PV%.*}" "-le" "0.32" ; then
 			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
 		fi
 		eyarn add "sharp@${SHARP_PV}" -D
@@ -347,7 +356,7 @@ einfo "Running src_compile"
 	edo electron-vite build
 	edo electron-builder \
 		$(electron-app_get_electron_platarch_args) \
-		-l dir
+		-l "dir"
 	grep -q -e "failedTask" "${T}/build.log" && die "Detected error"
 	grep -q -e "Error:" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed with errors" "${T}/build.log" && die "Detected error"
@@ -372,7 +381,7 @@ src_install() {
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${YARN_INSTALL_PATH}/${MY_PN}"
 
-	EXE_FILES=(
+	local EXE_FILES=(
 		"libffmpeg.so"
 		"losslesscut"
 		"libGLESv2.so"
@@ -384,7 +393,7 @@ src_install() {
 	)
 
 	local x
-	for x in ${EXE_FILES[@]} ; do
+	for x in "${EXE_FILES[@]}" ; do
 		fperms 0755 "${YARN_INSTALL_PATH}/${x}"
 	done
 

@@ -5,70 +5,77 @@
 EAPI=8
 
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-NODE_VERSION="18"
+NODE_SLOT="18"
 NPM_INSTALL_PATH="/opt/${PN}"
 NPM_TARBALL="prantlf-${P}.tar.gz"
-# Partially generated from:  find ${NPM_INSTALL_PATH} -path "*/.bin/*" -o -path "*/.bin"
-NPM_EXE_LIST="
-${NPM_INSTALL_PATH}/lib/cli.js
-
-${NPM_INSTALL_PATH}/node_modules/@semantic-release/github/node_modules/.bin
-${NPM_INSTALL_PATH}/node_modules/@semantic-release/github/node_modules/.bin/mime
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/cross-spawn/node_modules/.bin
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/cross-spawn/node_modules/.bin/node-which
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/pacote
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/arborist
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/glob
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/installed-package-contents
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/cssesc
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/node-gyp
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/nopt
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/qrcode-terminal
-${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/node-which
-${NPM_INSTALL_PATH}/node_modules/.bin
-${NPM_INSTALL_PATH}/node_modules/.bin/teru
-${NPM_INSTALL_PATH}/node_modules/.bin/http-server
-${NPM_INSTALL_PATH}/node_modules/.bin/rimraf
-${NPM_INSTALL_PATH}/node_modules/.bin/npx
-${NPM_INSTALL_PATH}/node_modules/.bin/tsc
-${NPM_INSTALL_PATH}/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/.bin/semantic-release
-${NPM_INSTALL_PATH}/node_modules/.bin/marked
-${NPM_INSTALL_PATH}/node_modules/.bin/denolint
-${NPM_INSTALL_PATH}/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/.bin/mv-j
-${NPM_INSTALL_PATH}/node_modules/.bin/conventional-commits-parser
-${NPM_INSTALL_PATH}/node_modules/.bin/rc
-${NPM_INSTALL_PATH}/node_modules/.bin/highlight
-${NPM_INSTALL_PATH}/node_modules/.bin/he
-${NPM_INSTALL_PATH}/node_modules/.bin/tsserver
-${NPM_INSTALL_PATH}/node_modules/.bin/rollup
-${NPM_INSTALL_PATH}/node_modules/.bin/resolve
-${NPM_INSTALL_PATH}/node_modules/.bin/mime
-${NPM_INSTALL_PATH}/node_modules/.bin/npm
-${NPM_INSTALL_PATH}/node_modules/.bin/js-yaml
-${NPM_INSTALL_PATH}/node_modules/.bin/handlebars
-${NPM_INSTALL_PATH}/node_modules/.bin/teru-cjs
-${NPM_INSTALL_PATH}/node_modules/.bin/uglifyjs
-${NPM_INSTALL_PATH}/node_modules/.bin/opener
-${NPM_INSTALL_PATH}/node_modules/.bin/conventional-changelog-writer
-${NPM_INSTALL_PATH}/node_modules/.bin/c8
-${NPM_INSTALL_PATH}/node_modules/.bin/cat-j
-${NPM_INSTALL_PATH}/node_modules/.bin/tehanu
-${NPM_INSTALL_PATH}/node_modules/.bin/node-which
-${NPM_INSTALL_PATH}/node_modules/.bin/teru-esm
-${NPM_INSTALL_PATH}/node_modules/.bin/esbuild
-"
-
 NPM_TEST_SCRIPT="test"
 RUST_MAX_VER="1.80.0" # Inclusive
 RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 
+# Partially generated from:  find ${NPM_INSTALL_PATH} -path "*/.bin/*" -o -path "*/.bin"
+NPM_EXE_LIST=(
+	"${NPM_INSTALL_PATH}/lib/cli.js"
+
+	"${NPM_INSTALL_PATH}/node_modules/@semantic-release/github/node_modules/.bin"
+	"${NPM_INSTALL_PATH}/node_modules/@semantic-release/github/node_modules/.bin/mime"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/cross-spawn/node_modules/.bin"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/cross-spawn/node_modules/.bin/node-which"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/semver"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/pacote"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/mkdirp"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/arborist"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/glob"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/installed-package-contents"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/cssesc"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/node-gyp"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/nopt"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/qrcode-terminal"
+	"${NPM_INSTALL_PATH}/node_modules/npm/node_modules/.bin/node-which"
+	"${NPM_INSTALL_PATH}/node_modules/.bin"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/teru"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/http-server"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/rimraf"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/npx"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/tsc"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/semver"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/semantic-release"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/marked"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/denolint"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/mkdirp"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/mv-j"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/conventional-commits-parser"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/rc"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/highlight"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/he"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/tsserver"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/rollup"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/resolve"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/mime"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/npm"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/js-yaml"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/handlebars"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/teru-cjs"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/uglifyjs"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/opener"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/conventional-changelog-writer"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/c8"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/cat-j"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/tehanu"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/node-which"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/teru-esm"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/esbuild"
+)
+
 inherit npm rust
+
+KEYWORDS="~amd64"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
+	-> prantlf-${P}.tar.gz
+"
 
 DESCRIPTION="JSON/CJSON/JSON5 parser, syntax & schema validator and pretty-printer with a command-line client, written in pure JavaScript."
 HOMEPAGE="
@@ -76,17 +83,17 @@ http://prantlf.github.io/jsonlint/
 https://github.com/prantlf/jsonlint
 "
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="mirror test" # Missing dev dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild_revision_11"
+IUSE+=" test ebuild_revision_12"
 DEPEND+="
 "
 RDEPEND+="
 	${DEPEND}
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}
+	>=net-libs/nodejs-${NODE_SLOT}
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -96,12 +103,6 @@ BDEPEND+="
 		dev-lang/rust-bin:=
 	)
 "
-SRC_URI="
-https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
-	-> prantlf-${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror test" # Missing dev dependencies
 
 pkg_setup() {
 	npm_pkg_setup

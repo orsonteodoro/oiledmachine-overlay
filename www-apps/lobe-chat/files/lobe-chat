@@ -1,3 +1,3 @@
 #!/bin/bash
 LOBECHAT_URI="@LOBECHAT_URI@"
-xdg-open ${LOBECHAT_URI}
+xdg-open "${LOBECHAT_URI}"

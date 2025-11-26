@@ -11,8 +11,9 @@ EAPI=8
 
 MY_PN="voltaML-fast-stable-diffusion"
 
-NODE_VERSION="18"
+NODE_SLOT="18"
 PYTHON_COMPAT=( "python3_"{10..12} )
+
 TORCH_VERSIONS=(
 	# pytorch = torchaudio; torchvideo
 	"2.1.2;0.16.2"
@@ -179,12 +180,16 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/poetry-core[${PYTHON_USEDEP}]
 	')
+	net-libs/nodejs:${NODE_SLOT}
+	net-libs/nodejs:=
 	sys-apps/yarn:1
+	sys-apps/yarn:=
 "
 DOCS=( "README.md" )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	yarn_pkg_setup
 	yarn_check
 }
 
@@ -232,7 +237,7 @@ einfo "The server start script is called voltaml-fsd-server"
 cat <<EOF > "${ED}/usr/bin/voltaml-fsd-server"
 #!/bin/bash
 cd "/opt/${PN}"
-./scripts/start.sh
+"./scripts/start.sh"
 EOF
 	fperms 0755 "/usr/bin/voltaml-fsd-server"
 
@@ -252,7 +257,7 @@ EOF
 	)
 
 	local d
-	for d in ${dirs[@]} ; do
+	for d in "${dirs[@]}" ; do
 		keepdir "/opt/${PN}/data/${d}"
 		fowners "root:voltaml-fast-stable-diffusion" "/opt/${PN}/data/${d}"
 		fperms 0775 "/opt/${PN}/data/${d}"
@@ -280,7 +285,7 @@ EOF
 		"start.sh"
 	)
 	insinto "/opt/${PN}"
-	for p in ${paths[@]} ; do
+	for p in "${paths[@]}" ; do
 		doins "${p}"
 	done
 

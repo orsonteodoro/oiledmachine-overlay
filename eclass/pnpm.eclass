@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: Eclass for pnpm
 # @DESCRIPTION:
 # Add support for pnpm
@@ -55,7 +55,7 @@
 
 
 case ${EAPI:-0} in
-	[78]) ;;
+	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
@@ -128,7 +128,7 @@ _PNPM_PKG_SETUP_CALLED=0
 # Check the network sandbox.
 pnpm_check_network_sandbox() {
 # Corepack problems.  Cannot do complete offline install.
-	if has network-sandbox $FEATURES ; then
+	if has "network-sandbox" ${FEATURES} ; then
 eerror
 eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
 eerror "Reason:  To download micropackages and offline cache"
@@ -295,7 +295,7 @@ pnpm_src_unpack() {
 			|| die
 	fi
 	pnpm config set lockfile true || die
-	epnpm install ${PNPM_INSTALL_ARGS[@]}
+	epnpm install "${PNPM_INSTALL_ARGS[@]}"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		epnpm install --lockfile-only
 	fi
@@ -307,13 +307,13 @@ pnpm_src_unpack() {
 			pnpm_audit_pre
 		fi
 		if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
-			edo pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]}
+			edo pnpm audit --fix "${PNPM_AUDIT_FIX_ARGS[@]}"
 		fi
 		if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
 			pnpm_audit_post
 		fi
 		if [[ "${PNPM_DEDUPE:-1}" == "1" ]] ; then
-			edo pnpm dedupe ${PNPM_DEDUPE_ARGS[@]}
+			edo pnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
 		fi
 		if declare -f pnpm_dedupe_post >/dev/null 2>&1 ; then
 			pnpm_dedupe_post

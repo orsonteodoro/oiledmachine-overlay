@@ -51,7 +51,7 @@ JDTLS_PV="1.40.0-202409261450" # MILESTONE-TIMESTAMP in build.py
 JEDI_PV="0.19.1"
 LIBCLANG_PV="${CLANG_PV}"
 MRAB_REGEX_PV="2021.10.23" # bf5e239
-NODE_VERSION="22"
+NODE_SLOT="22"
 OMNISHARP_PV="1.37.11"
 PARSO_PV="0.8.4"
 PYTHON_COMPAT=( "python3_"{11..13} )
@@ -68,7 +68,7 @@ S_RUST="${S}/third_party/rust-analyzer"
 S_TYPESHED="${WORKDIR}/typeshed-${EGIT_COMMIT_TYPESHED}"
 S_WATCHDOG="${WORKDIR}/watchdog-${WATCHDOG_PV}"
 
-inherit cflags-hardened cmake flag-o-matic java-pkg-opt-2 python-r1 sandbox-changes
+inherit cflags-hardened cmake flag-o-matic java-pkg-opt-2 npm python-r1 sandbox-changes
 
 #
 # We speed up downloads for rebuilds by precaching the downloads outside of
@@ -537,7 +537,7 @@ libclang minimal netcore netfx objc objcxx python rust system-abseil
 system-clangd system-gopls system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
-ebuild_revision_2
+ebuild_revision_3
 "
 if [[ "${PV}" =~ "9999" || "${PV}" =~ "_p" ]] ; then
 	IUSE+="
@@ -644,10 +644,10 @@ REQUIRED_USE+="
 "
 
 NODEJS_RDEPEND="
-	net-libs/nodejs:${NODE_VERSION%%.*}
+	net-libs/nodejs:${NODE_SLOT%%.*}
 "
 NODEJS_BDEPEND="
-	net-libs/nodejs:${NODE_VERSION%%.*}[npm]
+	net-libs/nodejs:${NODE_SLOT%%.*}[npm]
 "
 NUMPYDOC_RDEPEND="
 	dev-python/numpy[${PYTHON_USEDEP}]
@@ -806,9 +806,13 @@ ewarn
 
 	python_setup
 
+	if use javascript || use typescript ; then
+		npm_pkg_setup
+	fi
+
 	if use javascript ; then
-		# prevent unpack problem with clangd or incomplete build
-		if ! node --version 2> /dev/null 1>/dev/null ; then
+		# Prevent unpack problem with clangd or incomplete build
+		if ! "node" --version 2> /dev/null 1>/dev/null ; then
 eerror
 eerror "Either install Node.js, fix node installation, or disable the"
 eerror "javascript USE flag."
@@ -818,8 +822,9 @@ eerror
 	fi
 
 	if use typescript ; then
-		# prevent unpack problem with clangd or incomplete build
-		if ! node --version 2> /dev/null 1>/dev/null ; then
+		# Prevent unpack problem with clangd or incomplete build
+
+		if ! "node" --version 2> /dev/null 1>/dev/null ; then
 eerror
 eerror "Either install Node.js, fix node installation, or disable the"
 eerror "typescript USE flag."
@@ -914,8 +919,8 @@ verify_versions() {
 			| cut -f 3 -d " " \
 			| sed -E -e "s|[.]{3}|-|g" \
 			| cut -f 2 -d "-")
-		if ver_test ${EPYTHON/python} -lt ${min} \
-			|| ver_test ${EPYTHON/python} -gt ${max} ; then
+		if ver_test "${EPYTHON/python}" "-lt" "${min}" \
+			|| ver_test "${EPYTHON/python}" "-gt" "${max}" ; then
 eerror
 eerror "Python's expected range:  ${range}"
 eerror "Python's actual range:  ${EPYTHON/python}"
@@ -927,7 +932,7 @@ eerror
 			| cut -f 3 -d " " \
 			| sed -E -e "s|[.]{3}|-|g" \
 			| cut -f 1 -d "-")
-		if ver_test ${EPYTHON/python} -lt ${min} ; then
+		if ver_test "${EPYTHON/python}" "-lt" "${min}" ; then
 eerror
 eerror "Python's expected minimum version:  ${min}"
 eerror "Python's actual version:  ${EPYTHON/python}"
@@ -954,15 +959,15 @@ src_unpack() {
 	else
 		# Manually unpacked to prevent double unpack with Rust or Go.
 		unpack \
-			${YCMD_FN[@]} \
-			${DJANGO_STUBS_FN} \
-			${MRAB_REGEX_FN} \
-			${NUMPYDOC_FN} \
-			${JEDI_FN} \
-			${PARSO_FN} \
-			${SCIPY_SPHINX_THEME_FN} \
-			${TYPESHED_FN} \
-			${WATCHDOG_FN}
+			"${YCMD_FN[@]}" \
+			"${DJANGO_STUBS_FN}" \
+			"${MRAB_REGEX_FN}" \
+			"${NUMPYDOC_FN}" \
+			"${JEDI_FN}" \
+			"${PARSO_FN}" \
+			"${SCIPY_SPHINX_THEME_FN}" \
+			"${TYPESHED_FN}" \
+			"${WATCHDOG_FN}"
 	fi
 
 	cd "${S}" || die
@@ -1639,9 +1644,7 @@ EXTERNAL_LIBCLANG_PATH \"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/l
 			"${EPREFIX}/usr/bin/${EPYTHON}"
 
 		sed -i \
-			-e "s|\
-___PYTHON_LIB_PATH___|\
-/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
+			-e "s|___PYTHON_LIB_PATH___|/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
 			"build.py" \
 			|| die
 	}
@@ -1651,6 +1654,9 @@ ___PYTHON_LIB_PATH___|\
 }
 
 src_compile() {
+	if use javascript || use typescript ; then
+		npm_hydrate
+	fi
 	python_compile_all() {
 		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}"
@@ -1722,7 +1728,7 @@ src_compile() {
 		fi
 einfo "pwd="$(pwd)
 einfo "Running:  ${EPYTHON} build.py ${myargs[@]}"
-		${EPYTHON} "build.py" ${myargs[@]}
+		"${EPYTHON}" "build.py" "${myargs[@]}"
 
 		if use csharp && use system-mono ; then
 			eapply \
@@ -1769,10 +1775,10 @@ src_test() {
 		fi
 		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}" || die
-		${EPYTHON} "run_tests.py" \
+		"${EPYTHON}" "run_tests.py" \
 			--skip-build \
 			--completers \
-			${allowed_completers[@]} \
+			"${allowed_completers[@]}" \
 			|| die
 	}
 	S="${S_BAK}" \
@@ -1820,9 +1826,9 @@ einfo "Cleaning third_party"
 			-o -name "*.so.*" \
 			-o -iname "default_settings.json" \
 			-o -path "*/*.egg-info/*" \
-			-o ${arg_docs[@]} \
-			-o ${arg_developer[@]} \
-			-o ${arg_legal[@]} \
+			-o "${arg_docs[@]}" \
+			-o "${arg_developer[@]}" \
+			-o "${arg_legal[@]}" \
 		\) \
 		-exec rm -f "{}" + 2>/dev/null
 	rm -rf "third_party/jedi_deps/jedi/scripts" || die
@@ -1838,9 +1844,9 @@ einfo "Cleaning omnisharp-roslyn"
 				-o -name "config" \
 				-o -name "run" \
 				-o -name "machine.config" \
-				-o ${arg_docs[@]} \
-				-o ${arg_developer[@]} \
-				-o ${arg_legal[@]} \
+				-o "${arg_docs[@]}" \
+				-o "${arg_developer[@]}" \
+				-o "${arg_legal[@]}" \
 			\) \
 			-exec rm -f "{}" + 2>/dev/null
 		if ! use system-mono ; then
@@ -1858,7 +1864,7 @@ einfo "Cleaning regex"
 				-o -path "*/*.egg-info/*" \
 				-o -name "*.pyc" \
 				-o -name "*.py" \
-				-o ${arg_legal[@]} \
+				-o "${arg_legal[@]}" \
 			\) \
 			-exec rm -f "{}" + 2>/dev/null
 	fi
@@ -1875,7 +1881,7 @@ einfo "Cleaning out go folders"
 		find "third_party/go" \
 			! \( \
 				-executable \
-				-o ${arg_legal[@]} \
+				-o "${arg_legal[@]}" \
 			\) \
 			-exec rm "{}" +
 	fi
@@ -1953,7 +1959,8 @@ einfo "Cleaning out test files"
 		\) \
 		-delete
 	if use javascript && ! use system-tern ; then
-		rm -rf "third_party/tern_runtime/node_modules/tern/bin/test" \
+		rm -rf \
+			"third_party/tern_runtime/node_modules/tern/bin/test" \
 			"third_party/tern_runtime/node_modules/errno/build.js" \
 			|| die
 	fi
@@ -1966,7 +1973,7 @@ einfo "Cleaning out test folders"
 einfo "Cleaning out unused platforms"
 	if use java && ! use system-jdtls ; then
 		rm -rf \
-		"third_party/eclipse.jdt.ls/target/repository/config_"{"mac","win"} \
+			"third_party/eclipse.jdt.ls/target/repository/config_"{"mac","win"} \
 		|| die
 	fi
 
@@ -1989,9 +1996,9 @@ einfo "Cleaning out empty files and folders"
 # From python-utils-r1.eclass
 # Forked because it tries to optimize test cases which results in error.
 python_domodule_no_optimize() {
-	debug-print-function ${FUNCNAME} "${@}"
+	debug-print-function "${FUNCNAME}" "${@}"
 
-	[[ ${EPYTHON} ]] || die 'No Python implementation set (EPYTHON is null).'
+	[[ "${EPYTHON}" ]] || die 'No Python implementation set (EPYTHON is null).'
 
 	local d
 	if [[ "${_PYTHON_MODULEROOT}" == "/"* ]]; then

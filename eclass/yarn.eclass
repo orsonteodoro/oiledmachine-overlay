@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: Eclass for yarn offline install
 # @DESCRIPTION:
 # Eclass similar to the cargo.eclass.
@@ -55,7 +55,7 @@
 # The yarn.lock must be regenerated for security updates every week.
 
 case ${EAPI:-0} in
-	[78]) ;;
+	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
@@ -122,7 +122,7 @@ unset -f _yarn_set_globals
 
 # @ECLASS_VARIABLE: YARN_EXE_LIST
 # @DESCRIPTION:
-# A pregenerated list of paths to turn on executable bit.
+# An array of pregenerated paths to turn on executable bit.
 # Obtained partially from find ${YARN_INSTALL_PATH}/node_modules/ -path "*/.bin/*" | sort
 
 # @ECLASS_VARIABLE: YARN_EXTERNAL_URIS
@@ -238,7 +238,7 @@ yarn_env_pop() {
 yarn_check_network_sandbox() {
 # Corepack problems.  Cannot do complete offline install.
 # Required for yarn 4.x
-	if has network-sandbox ${FEATURES} ; then
+	if has "network-sandbox" ${FEATURES} ; then
 eerror
 eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
 eerror "Reason:  To download micropackages and offline cache"
@@ -274,7 +274,7 @@ eerror "   \`corepack prepare --all --activate\`"
 		| head -n 1)
 	path=$(realpath $(dirname "${path}"))
 	pushd "${path}" >/dev/null 2>&1 || die
-		local yarn_pv=$(/usr/bin/yarn --version)
+		local yarn_pv=$("/usr/bin/yarn" --version)
 		if ! [[ "${yarn_pv}" =~ [0-9]+\.[0-9]+\.[0-9]+ ]] ; then
 eerror
 eerror "Failed to detect version.  Install yarn."
@@ -412,15 +412,15 @@ _yarn_src_unpack_default_ebuild() {
 			--verbose
 		)
 		eyarn install \
-			${args[@]} \
-			${YARN_INSTALL_ARGS[@]}
+			"${args[@]}" \
+			"${YARN_INSTALL_ARGS[@]}"
 	else
 		args+=(
 			--cached
 		)
 		eyarn add \
-			${args[@]} \
-			${YARN_INSTALL_ARGS[@]}
+			"${args[@]}" \
+			"${YARN_INSTALL_ARGS[@]}"
 	fi
 
 	if declare -f yarn_unpack_install_post > /dev/null 2>&1 ; then
@@ -475,8 +475,8 @@ _yarn_src_unpack_default_upstream() {
 	fi
 
 	eyarn install \
-		${args[@]} \
-		${YARN_INSTALL_ARGS[@]}
+		"${args[@]}" \
+		"${YARN_INSTALL_ARGS[@]}"
 	if declare -f yarn_unpack_install_post > /dev/null 2>&1 ; then
 		yarn_unpack_install_post
 	fi
@@ -543,7 +543,7 @@ einfo "Skipping audit fix."
 	fi
 
 	local network_sandbox=0
-	if has network-sandbox $FEATURES ; then
+	if has "network-sandbox" ${FEATURES} ; then
 		network_sandbox=1
 	fi
 
@@ -686,8 +686,8 @@ einfo "Updating lockfile"
 	# npm is used for audit fix which yarn lacks
 		_npm_setup_offline_cache
 		enpm install \
-			${extra_args[@]} \
-			${NPM_INSTALL_ARGS[@]}
+			"${extra_args[@]}" \
+			"${NPM_INSTALL_ARGS[@]}"
 
 		if declare -f \
 			yarn_update_lock_install_post > /dev/null 2>&1 ; then
@@ -697,7 +697,7 @@ einfo "Updating lockfile"
 			yarn_update_lock_audit_pre > /dev/null 2>&1 ; then
 			yarn_update_lock_audit_pre
 		fi
-		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
+		enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
 		if declare -f \
 			yarn_update_lock_audit_post > /dev/null 2>&1 ; then
 			yarn_update_lock_audit_post
@@ -961,8 +961,8 @@ yarn_src_compile() {
 		)
 	fi
 
-	yarn run ${cmd} \
-		${args[@]} \
+	yarn run "${cmd}" \
+		"${args[@]}" \
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
@@ -978,8 +978,8 @@ yarn_src_test() {
 	[[ "${YARN_TEST_SCRIPT}" == "null" ]] && return
 	[[ "${YARN_TEST_SCRIPT}" == "skip" ]] && return
 	local cmd="${YARN_TEST_SCRIPT:-test}"
-	grep -q -e "\"${cmd}\"" package.json || return
-	yarn run ${cmd} \
+	grep -q -e "\"${cmd}\"" "package.json" || return
+	yarn run "${cmd}" \
 		--verbose \
 		|| die
 }
@@ -990,16 +990,16 @@ yarn_src_test() {
 yarn_src_install() {
 	local install_path="${YARN_INSTALL_PATH:-/opt/${PN}}"
 	local rows
-	if cat package.json \
+	if cat "package.json" \
 		| jq '.bin' \
 		| grep -q ":" ; then
-		rows=$(cat package.json \
+		rows=$(cat "package.json" \
 			| jq '.bin' \
 			| grep ":")
-	elif cat package.json \
+	elif cat "package.json" \
 		| jq '.packages."".bin' \
 		| grep -q ":" ; then
-		rows=$(cat package.json \
+		rows=$(cat "package.json" \
 			| jq '.packages."".bin' \
 			| grep ":")
 	else
@@ -1010,7 +1010,7 @@ yarn_src_install() {
 	ls .* > /dev/null && doins -r .*
 	IFS=$'\n'
 	local row
-	for row in ${rows[@]} ; do
+	for row in "${rows[@]}" ; do
 		local name=$(echo "${row}" \
 			| cut -f 2 -d '"')
 		local cmd=$(echo "${row}" \
@@ -1024,12 +1024,12 @@ export PATH="/usr/lib/node/${NODE_SLOT}/bin:\${PATH}"
 "${YARN_INSTALL_PATH}/${cmd}" "\$@"
 EOF
 			fperms 0755 "/usr/bin/${name}"
-		elif [[ ${NPM_APP_INVOCATION} == "symlink" ]] ; then
+		elif [[ "${NPM_APP_INVOCATION}" == "symlink" ]] ; then
 			dosym "${YARN_INSTALL_PATH}/${cmd}" "/usr/bin/${name}"
 		fi
 	done
 	local path
-	for path in ${YARN_EXE_LIST} ; do
+	for path in "${YARN_EXE_LIST[@]}" ; do
 		if [[ -e "${ED}/${path}" ]] ; then
 			fperms 0755 "${path}" || die
 		else

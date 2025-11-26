@@ -1,8 +1,7 @@
 #!/bin/bash
-NODE_VERSION=@NODE_VERSION@
 main() {
 	cd "/usr/lib/@EPYTHON@/site-packages/open_webui/backend"
 	source "/etc/conf.d/open-webui.conf"
-	./start.sh
+	"./start.sh"
 }
 main

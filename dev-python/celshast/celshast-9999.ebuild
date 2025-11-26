@@ -9,9 +9,9 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..12} )
-NODE_VERSION="18"
+NODE_SLOT="18"
 
-inherit distutils-r1
+inherit distutils-r1 npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -33,7 +33,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+="
+doc test
+ebuild_revision_1
+"
 RDEPEND+="
 	(
 		>=dev-python/sphinx-6.0[${PYTHON_USEDEP}]
@@ -50,7 +53,8 @@ DEPEND+="
 BDEPEND+="
 	(
 		>=dev-python/sphinx-theme-builder-0.2.0_alpha10[${PYTHON_USEDEP}]
-		=net-libs/nodejs-18*
+		=net-libs/nodejs-18*:${NODE_SLOT}
+		net-libs/nodejs:=
 	)
 	doc? (
 		dev-python/myst-parser[${PYTHON_USEDEP}]

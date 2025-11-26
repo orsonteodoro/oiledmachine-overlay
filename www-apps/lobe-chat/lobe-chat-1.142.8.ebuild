@@ -42,10 +42,9 @@ EAPI=8
 
 MY_PN="LobeChat"
 
-NEXTJS_PV="15.4.7"
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_SHARP_USE="exif lcms webp"
-NODE_VERSION=22
+NODE_SLOT="22"
 NPM_SLOT="3"
 PNPM_AUDIT_FIX=0
 PNPM_DEDUPE=0 # Still debugging
@@ -56,6 +55,8 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from commit from committer-date:2024-10-07 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
+
+NEXTJS_PV="15.4.7"
 SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
 
@@ -111,7 +112,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	file-management? (
@@ -134,7 +135,7 @@ RDEPEND+="
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
+	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
 	x11-misc/xdg-utils
 	openrc? (
@@ -151,7 +152,7 @@ DEPEND+="
 BDEPEND+="
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
+	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
 	|| (
 		dev-lang/rust:${RUST_PV}
@@ -247,7 +248,7 @@ setup_test_env() {
 	export NODE_OPTIONS=""
 	export NODE_OPTIONS+=" --dns-result-order=ipv4first"
 
-	if ver_test "${NODE_VERSION}" -ge "22" ;  then
+	if ver_test "${NODE_SLOT}" "-ge" "22" ;  then
 		export NODE_OPTIONS+=" --use-openssl-ca"
 	fi
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
@@ -258,7 +259,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	fi
 	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
 	sed -i \
-		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
 		"${T}/lobe-chat.conf" \
 		|| die
@@ -374,7 +375,7 @@ pnpm_unpack_post() {
 #		cat "${FILESDIR}/pdf-parse-1.1.1.patch" > "${S}/patches/pdf-parse@1.1.1.patch" || die
 #	fi
 
-#	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
+#	if ver_test "${NEXTJS_PV%%.*}" "-lt" "15" ; then
 #		# Not compatiable with Next.js 14
 #		sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
 #		sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
@@ -617,7 +618,7 @@ ewarn "Removing ${S}/.next"
 	# Force rebuild to prevent illegal instruction
 	#edo npm rebuild "sharp"
 
-	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
+	if ver_test "${NEXTJS_PV%%.*}" "-lt" "15" ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.
 einfo "Building next.config.js"
 		tsc \
@@ -681,8 +682,13 @@ _install_webapp_v1() {
 	insinto "${_PREFIX}/node_modules"
 	doins -r "${S}/node_modules/"*
 
+	sed -i \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
+		"${S}/scripts/serverLauncher/startServer.js" \
+		|| die
 	insinto "${_PREFIX}"
 	doins "${S}/scripts/serverLauncher/startServer.js"
+
 
 	if use postgres ; then
 		insinto "${_PREFIX}"
@@ -737,7 +743,7 @@ gen_config() {
 		"${T}/${PN}.conf" \
 		|| die
 	sed -i \
-		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
 		-e "s|@HOSTNAME@|${lobechat_hostname}|g" \
 		-e "s|@PORT@|${lobechat_port}|g" \
@@ -756,7 +762,7 @@ gen_standalone_wrapper() {
 		"${T}/${PN}-start-server" \
 		|| die
 	sed -i \
-		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		"${T}/${PN}-start-server" \
 		|| die
 

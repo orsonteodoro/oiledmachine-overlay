@@ -7,6 +7,14 @@ MY_PN="LLocal"
 MY_PV="${PV/_beta/-beta.}"
 
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+NODE_SLOT="20"
+#NPM_AUDIT_FIX=0
+NPM_LOCKFILE_SOURCE="ebuild"
+NPM_INSTALL_PATH="/opt/${PN}"
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.81.0" # llvm-18.1, required by @swc/core
+RUST_PV="${RUST_MIN_VER}"
+
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 #	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
@@ -15,31 +23,27 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
 fi
-NODE_VERSION=20
-#NPM_AUDIT_FIX=0
+
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
-NPM_LOCKFILE_SOURCE="ebuild"
-NPM_EXE_LIST="
-/opt/llocal/libffmpeg.so
-/opt/llocal/libGLESv2.so
-/opt/llocal/libvk_swiftshader.so
-/opt/llocal/libEGL.so
-/opt/llocal/chrome-sandbox
-/opt/llocal/llocal
-/opt/llocal/libvulkan.so.1
-/opt/llocal/chrome_crashpad_handler
-"
-NPM_INSTALL_PATH="/opt/${PN}"
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # llvm-18.1, required by @swc/core
-RUST_PV="${RUST_MIN_VER}"
+
+NPM_EXE_LIST=(
+	"/opt/llocal/libffmpeg.so"
+	"/opt/llocal/libGLESv2.so"
+	"/opt/llocal/libvk_swiftshader.so"
+	"/opt/llocal/libEGL.so"
+	"/opt/llocal/chrome-sandbox"
+	"/opt/llocal/llocal"
+	"/opt/llocal/libvulkan.so.1"
+	"/opt/llocal/chrome_crashpad_handler"
+)
 
 inherit electron-app npm lcnr rust
 
@@ -73,7 +77,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_10"
+IUSE+=" ebuild_revision_11"
 RDEPEND="
 	app-misc/ollama
 "
@@ -170,13 +174,13 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 		"tar-fs@2.1.4"
 		"tar-fs@3.1.1"
 	)
-	enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}
+	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
 	L=(
 		"vite@5.4.20"
 		"tmp@0.2.4"
 	)
-	enpm install ${L[@]} -D ${NPM_INSTALL_ARGS[@]}
+	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 	patch_lockfile
 }
@@ -224,7 +228,7 @@ src_install() {
 	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
 	lcnr_install_files
 	local path
-	for path in ${NPM_EXE_LIST} ; do
+	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${path}"
 	done
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"

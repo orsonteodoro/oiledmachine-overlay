@@ -54,24 +54,24 @@ if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	)
 fi
 
-NPM_EXE_LIST="
-/usr/bin/theia
-/opt/theia/electron
-/opt/theia/libGLESv2.so
-/opt/theia/libvk_swiftshader.so
-/opt/theia/libEGL.so
-/opt/theia/chrome-sandbox
-/opt/theia/libvulkan.so.1
-/opt/theia/chrome_crashpad_handler
-/opt/theia/resources/app/lib/backend/native/rg
-/opt/theia/resources/app/plugins/ms-vscode.js-debug/extension/src/targets/node/terminateProcess.sh
-/opt/theia/resources/app/plugins/vscode.git/extension/dist/askpass.sh
-/opt/theia/resources/app/plugins/vscode.git/extension/dist/askpass-empty.sh
-/opt/theia/resources/app/plugins/vscode.git/extension/dist/git-editor.sh
-/opt/theia/resources/app/plugins/vscode.git/extension/dist/ssh-askpass.sh
-/opt/theia/resources/app/plugins/vscode.git/extension/dist/git-editor-empty.sh
-/opt/theia/resources/app/plugins/vscode.git/extension/dist/ssh-askpass-empty.sh
-"
+NPM_EXE_LIST=(
+	"/usr/bin/theia"
+	"/opt/theia/electron"
+	"/opt/theia/libGLESv2.so"
+	"/opt/theia/libvk_swiftshader.so"
+	"/opt/theia/libEGL.so"
+	"/opt/theia/chrome-sandbox"
+	"/opt/theia/libvulkan.so.1"
+	"/opt/theia/chrome_crashpad_handler"
+	"/opt/theia/resources/app/lib/backend/native/rg"
+	"/opt/theia/resources/app/plugins/ms-vscode.js-debug/extension/src/targets/node/terminateProcess.sh"
+	"/opt/theia/resources/app/plugins/vscode.git/extension/dist/askpass.sh"
+	"/opt/theia/resources/app/plugins/vscode.git/extension/dist/askpass-empty.sh"
+	"/opt/theia/resources/app/plugins/vscode.git/extension/dist/git-editor.sh"
+	"/opt/theia/resources/app/plugins/vscode.git/extension/dist/ssh-askpass.sh"
+	"/opt/theia/resources/app/plugins/vscode.git/extension/dist/git-editor-empty.sh"
+	"/opt/theia/resources/app/plugins/vscode.git/extension/dist/ssh-askpass-empty.sh"
+)
 
 declare -A THEIA_PLUGINS=(
 ["theia_plugin_EditorConfig_EditorConfig"]="EditorConfig.EditorConfig"
@@ -497,7 +497,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_33
+git ollama ebuild_revision_34
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
