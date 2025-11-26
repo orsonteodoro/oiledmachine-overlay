@@ -11,12 +11,12 @@ BINARYEN_SLOT="119" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC c
 CLOSURE_COMPILER_SLOT="0"
 DEST_FILENAME="${P}.tar.gz"
 EMSCRIPTEN_CONFIG_VER="2.0.26"
-INSTALL_PATH="/usr/share/"
 JAVA_SLOT="11"
 LLVM_COMPAT=( "20" )
 LLVM_SLOT="20"
 LLVM_MAX_SLOT="${LLVM_SLOT}"
-NODEJS_SLOT="16"
+INSTALL_PREFIX="/usr/lib/emscripten/${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}") # After LLVM_SLOT
+NODE_SLOT_MIN="16"
 PYTHON_COMPAT=( "python3_"{8..12} ) # emsdk lists 3.9
 TEST_PATH="${WORKDIR}/test/"
 # See also
@@ -144,7 +144,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -362,16 +362,27 @@ src_test() {
 		elif use closure-compiler ; then
 			cc_cmd="" # use defaults
 		fi
-		BINARYEN="${BROOT}/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}" \
+		BINARYEN="${BROOT}/usr/lib/binaryen/${BINARYEN_SLOT}" \
 		CLOSURE_COMPILER="${cc_cmd}" \
 		LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
-		../"${P}/emcc" "${TEST_PATH}/hello_world.cpp" \
+		"../${P}/emcc" "${TEST_PATH}/hello_world.cpp" \
 			-o "${TEST_PATH}/hello_world.js" || \
 			die "Error during executing emcc!"
 		test -f "${TEST_PATH}/hello_world.js" \
 			|| die "Could not find '${TEST_PATH}/hello_world.js'"
-		OUT=$("${BROOT}/usr/bin/node" "${TEST_PATH}/hello_world.js") || \
-			die "Could not execute /usr/bin/node"
+
+		local node_slot=""
+		local s=""
+		for s in $(eval "echo {${NODE_SLOT_MIN}..25}") ; do
+			if [[ -e "/usr/lib/node/${s}/bin/node" ]] ; then
+				node_slot="${s}"
+				break
+			fi
+		done
+
+		OUT=$("${BROOT}/usr/lib/node/${node_slot}/bin/node" "${TEST_PATH}/hello_world.js") || \
+			die "Could not execute /usr/lib/node/${node_slot}/bin/node"
+
 		EXP=$(echo -e -n 'Hello World!\n') \
 			|| die "Could not create expected string"
 		if [ "${OUT}" != "${EXP}" ]; then
@@ -385,17 +396,19 @@ src_test() {
 
 # For eselect-emscripten
 gen_metadata() {
-cat <<EOF > "${ED}/${INSTALL_PATH}/${P}/eselect.metadata" || die
-PV=${PV}
-BINARYEN_SLOT=${BINARYEN_SLOT}
-LLVM_SLOT=${LLVM_SLOT}
-NODE_SLOT=${NODEJS_SLOT}
-PYTHON_SLOT=${EPYTHON/python}
+dodir "${INSTALL_PREFIX}/etc"
+cat <<EOF > "${ED}/${INSTALL_PREFIX}/etc/slot.metadata" || die
+BROWSER_MIN_VER="${BROWSERS_MIN_VER}"
+PV="${PV}"
+BINARYEN_SLOT="${BINARYEN_SLOT}"
+LLVM_SLOT="${LLVM_SLOT}"
+NODE_SLOT_MIN="${NODE_SLOT_MIN}"
+PYTHON_SLOT="${EPYTHON/python}"
 EOF
 }
 
 src_install() {
-	dodir "${INSTALL_PATH}/${P}"
+	dodir "${INSTALL_PREFIX}/${P}"
 	# See tools/install.py
 	find "${S}" \
 	\( \
@@ -414,21 +427,11 @@ src_install() {
 	\) \
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
-	cp -R "${S}/" "${D}/${INSTALL_PATH}" || die "Could not install files"
+	cp -R "${S}/" "${D}/${INSTALL_PREFIX}" || die "Could not install files"
 	gen_metadata
 }
 
 pkg_postinst() {
-	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
-einfo
-einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
-einfo
-	if use closure_compiler_java ; then
-ewarn
-ewarn "You must manually setup the JAVA_HOME, and PATH when using"
-ewarn "closure-compiler for Java."
-ewarn
-	fi
 einfo "Minimum browser version required:  ${BROWSERS_MIN_VER}"
 }
 
