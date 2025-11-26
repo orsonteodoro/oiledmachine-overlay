@@ -184,7 +184,7 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
-NODE_VERSION=18
+NODE_SLOT=18
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="1.86.0"
@@ -370,7 +370,7 @@ MOZ_LANGS=(
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs desktop dhms flag-o-matic gnome2-utils lcnr libcxx-slot
 inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
-inherit optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
+inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
@@ -853,7 +853,7 @@ BDEPEND+="
 	${GCC_BDEPEND}
 	${PYTHON_DEPS}
 	${RUST_CDEPEND}
-	=net-libs/nodejs-${NODE_VERSION%%.*}*
+	=net-libs/nodejs-${NODE_SLOT%%.*}*
 	>=dev-lang/perl-5.006
 	>=dev-util/cbindgen-0.27.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
@@ -1187,25 +1187,6 @@ ewarn "Use a corrected local copy or the FFmpeg ebuild from the"
 ewarn "oiledmachine-overlay to eliminate the possiblity of non-free code paths"
 ewarn "and to ensure the package is LGPL/GPL."
 ewarn
-	fi
-}
-
-# @FUNCTION: node_pkg_setup
-# @DESCRIPTION:
-# Checks node slot required for building
-node_pkg_setup() {
-	which node 2>&1 >/dev/null || die "Missing Node.js ${NODE_VERSION%%.*}"
-	local node_pv=$(node --version | sed -e "s|v||g")
-	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
-eerror
-eerror "Node.js must be installed and selected.  To switch, do"
-eerror
-eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
-eerror
-eerror "Expected version:  ${NODE_VERSION}"
-eerror "Actual version:    ${node_pv}"
-eerror
-		die
 	fi
 }
 

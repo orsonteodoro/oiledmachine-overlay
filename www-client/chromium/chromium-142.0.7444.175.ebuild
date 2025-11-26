@@ -153,7 +153,7 @@ FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
-NODE_VERSION=22
+NODE_SLOT=22
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
@@ -425,7 +425,7 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
-inherit multilib-minimal multiprocessing ninja-utils pax-utils python-any-r1
+inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
@@ -1891,25 +1891,6 @@ is_using_clang() {
 		use "${u}" && return 0
 	done
 	return 1
-}
-
-# @FUNCTION: node_pkg_setup
-# @DESCRIPTION:
-# Checks node slot required for building
-node_pkg_setup() {
-	which node 2>&1 >/dev/null || die "Missing Node.js ${NODE_VERSION%%.*}"
-	local node_pv=$(node --version | sed -e "s|v||g")
-	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
-eerror
-eerror "Node.js must be installed and selected.  To switch, do"
-eerror
-eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
-eerror
-eerror "Expected version:  ${NODE_VERSION}"
-eerror "Actual version:    ${node_pv}"
-eerror
-		die
-	fi
 }
 
 check_security_expire() {
