@@ -334,15 +334,11 @@ setup_test_env() {
 	export EM_CONFIG="${T}/emscripten-${ABI}.config"
 	export EMCC_WASM_BACKEND=1
 	export EMSCRIPTEN="${WORKDIR}/${P}"
+	export EMSCRIPTEN_NATIVE_OPTIMIZER=""
 	export EMSDK_CLOSURE_COMPILER="${cc_cmd}"
 	export EMSDK_LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}"
 	export EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
 	export EMSDK_PYTHON="/usr/bin/${EPYTHON}"
-	if use native-optimizer ; then
-		export EMSCRIPTEN_NATIVE_OPTIMIZER="${WORKDIR}/${P}/optimizer"
-	else
-		export EMSCRIPTEN_NATIVE_OPTIMIZER=""
-	fi
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export PATH="${S}:${PATH}"
 }
