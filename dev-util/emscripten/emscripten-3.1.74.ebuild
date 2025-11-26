@@ -444,7 +444,7 @@ einfo "Sanitizing file/folder permissions"
 		elif file "${path}" | grep -q -e "symbolic link" ; then
 			:
 		else
-			# Licenses
+			# Licenses and config files
 			chmod 0644 "${path}" || die
 		fi
 	done
