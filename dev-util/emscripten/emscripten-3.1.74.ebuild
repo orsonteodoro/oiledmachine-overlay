@@ -385,12 +385,11 @@ src_test() {
 	fi
 }
 
-# For eselect-emscripten
+# For emscripten.eclass
 gen_metadata() {
-	local slot="${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}")
 	local closure_compiler_exe=$(get_closure_compiler_provider)
+	dodir "${INSTALL_PREFIX}/etc"
 
-dodir "${INSTALL_PREFIX}/etc"
 cat <<EOF > "${ED}/${INSTALL_PREFIX}/etc/slot.metadata" || die
 BROWSER_MIN_VER="${BROWSERS_MIN_VER}"
 BINARYEN_SLOT="${BINARYEN_SLOT}"
