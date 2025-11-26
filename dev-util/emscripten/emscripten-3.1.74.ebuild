@@ -271,7 +271,7 @@ einfo "CXX:\t${CXX}"
 src_prepare() {
 	export PYTHON_EXE_ABSPATH="${PYTHON}"
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
-	eapply ${_PATCHES[@]}
+	eapply "${_PATCHES[@]}"
 
 	#eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
 	# emcc: error: unexpected metadata key received from wasm-emscripten-finalize: tableSize
@@ -281,7 +281,7 @@ src_prepare() {
 }
 
 src_configure() {
-	which ${CC} || die "Missing ${CC}"
+	which "${CC}" || die "Missing ${CC}"
 }
 
 src_compile() {
