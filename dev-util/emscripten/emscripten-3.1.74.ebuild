@@ -145,7 +145,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -414,11 +414,41 @@ sanitize_install() {
 	#	-o -name "node_modules" was included but removed for closure-compiler
 }
 
+sanitize_permissions() {
+einfo "Sanitizing file/folder permissions"
+	IFS=$'\n'
+	local path
+	for path in $(find "${ED}") ; do
+		[[ -L "${path}" ]] && continue
+		chown "root:root" "${path}" || die
+		if file "${path}" | grep -q -e "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "POSIX shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Python script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Node.js script executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "WebAssembly (wasm) binary" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "symbolic link" ; then
+			:
+		else
+			# Licenses
+			chmod 0644 "${path}" || die
+		fi
+	done
+        IFS=$' \t\n'
+}
+
 src_install() {
 	dodir "${INSTALL_PREFIX}/${P}"
 	sanitize_install
 	cp -aT "${S}/" "${D}/${INSTALL_PREFIX}" || die "Could not install files"
 	gen_metadata
+	sanitize_permissions
 }
 
 pkg_postinst() {
