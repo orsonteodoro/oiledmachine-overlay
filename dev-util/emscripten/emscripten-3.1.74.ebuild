@@ -15,7 +15,8 @@ JAVA_SLOT="11"
 LLVM_COMPAT=( "20" )
 LLVM_SLOT="20"
 LLVM_MAX_SLOT="${LLVM_SLOT}"
-INSTALL_PREFIX="/usr/lib/emscripten/${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}") # After LLVM_SLOT
+EMSCRIPTEN_SLOT="${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}") # After LLVM_SLOT
+INSTALL_PREFIX="/usr/lib/emscripten/${EMSCRIPTEN_SLOT}" # After EMSCRIPTEN_SLOT
 NODE_SLOT_MIN="16"
 PYTHON_COMPAT=( "python3_"{8..12} ) # emsdk lists 3.9
 TEST_PATH="${WORKDIR}/test/"
@@ -139,7 +140,7 @@ LICENSE="
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
 RESTRICT="mirror"
-SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
+SLOT="${EMSCRIPTEN_SLOT}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler closure_compiler_java closure_compiler_native
@@ -316,7 +317,7 @@ setup_test_config() {
 	local node_slot=$(get_compatible_node_slot)
 
 cat <<EOF > "${T}/emscripten-${ABI}.config"
-EMSCRIPTEN_ROOT = '/usr/share/emscripten-${PV}'
+EMSCRIPTEN_ROOT = '${S}'
 LLVM_ROOT = '/usr/lib/llvm/${LLVM_SLOT}/bin'
 BINARYEN_ROOT = '/usr/lib/binaryen/${BINARYEN_SLOT}'
 NODE_JS = '/usr/lib/node/${node_slot}/bin/node'
@@ -343,7 +344,7 @@ setup_test_env() {
 		export EMSCRIPTEN_NATIVE_OPTIMIZER=""
 	fi
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-	export PATH="${EPREFIX}/usr/share/emscripten-${PV}:${PATH}"
+	export PATH="${S}:${PATH}"
 }
 
 src_test() {
@@ -396,7 +397,7 @@ BINARYEN_SLOT="${BINARYEN_SLOT}"
 CLOSURE_COMPILER_EXE="${closure_compiler_exe}"
 EMSCRIPTEN_EPREFIX="${EPREFIX}"
 EMSCRIPTEN_PV="${PV}"
-EMSCRIPTEN_SLOT="${slot}"
+EMSCRIPTEN_SLOT="${EMSCRIPTEN_SLOT}"
 LLVM_SLOT="${LLVM_SLOT}"
 NODE_SLOT_MIN="${NODE_SLOT_MIN}"
 PYTHON_SLOT="${EPYTHON/python}"
