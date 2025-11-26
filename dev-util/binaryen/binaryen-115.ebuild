@@ -5,11 +5,22 @@ EAPI=8
 
 # U23
 
+CXX_STANDARD=17
 CMAKE_BUILD_TYPE="Release"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 SLOT_MAJOR="${PV%%.*}"
 
-inherit cmake python-any-r1 toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_compat_}"
+)
+
+inherit cmake libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 S="${WORKDIR}/${PN}-version_${PV}"
@@ -28,7 +39,10 @@ LICENSE="
 # contains Apache-2.0-with-LLVM-exceptions
 RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" doc"
+IUSE+="
+doc
+ebuild_revision_1
+"
 CDEPEND+="
 	|| (
 		>=sys-devel/gcc-7
@@ -46,7 +60,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
 	>=dev-build/cmake-3.10.2
-	dev-util/patchelf
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
@@ -54,24 +67,11 @@ pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
-einfo
-	test-flags-CXX "-std=c++17" >/dev/null 2>&1 \
-		|| die "Switch to a c++17 compatible compiler."
-	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt "7" ; then
-			die "${PN} requires GCC >=7 for c++17 support"
-		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt "5" ; then
-			die "${PN} requires Clang >=5 for c++17 support"
-		fi
-	else
-		die "Compiler is not supported"
-	fi
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -83,12 +83,13 @@ src_prepare() {
 }
 
 src_configure() {
+	append-ldflags "-Wl,-rpath,${EPREFIX}/usr/lib/binaryen/${SLOT_MAJOR}/$(get_libdir)"
 	local mycmakeargs=(
 		-DBUILD_STATIC_LIB=OFF
 		-DBUILD_TESTS=OFF
-		-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/bin"
-		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include"
-		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)"
+		-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/lib/binaryen/${SLOT_MAJOR}/bin"
+		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}/usr/lib/binaryen/${SLOT_MAJOR}/include"
+		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/lib/binaryen/${SLOT_MAJOR}/$(get_libdir)"
 		-DENABLE_WERROR=OFF
 	)
 	cmake_src_configure
@@ -96,16 +97,19 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	insinto "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include"
+	insinto "/usr/lib/binaryen/${SLOT_MAJOR}/include"
 	doins "${S}/src/"*".h"
+	local L=(
+		"asmjs"
+		"emscripten-optimizer"
+		"ir"
+		"support"
+	)
 	local hdir
-	for hdir in "asmjs" "emscripten-optimizer" "ir" "support" ; do
-		insinto "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include/${hdir}"
+	for hdir in "${L[@]}" ; do
+		insinto "/usr/lib/binaryen/${SLOT_MAJOR}/include/${hdir}"
 		doins "${S}/src/${hdir}/"*".h"
 	done
-	dosym \
-		"/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)" \
-		"/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/lib"
 	dodoc "LICENSE"
 	cat "third_party/llvm-project/include/llvm/Support/LICENSE.TXT" \
 		> "${T}/LICENSE.LLVM_System_Interface_Library.TXT"
@@ -113,14 +117,5 @@ src_install() {
 	cat "third_party/llvm-project/include/llvm/LICENSE.TXT" \
 		> "${T}/LICENSE.llvm-project.TXT"
 	dodoc "${T}/LICENSE.llvm-project.TXT"
-	local f
-	for f in $(find "${ED}" -executable) ; do
-		if ldd "${f}" 2>/dev/null | grep -q "libbinaryen.so" ; then
-			patchelf \
-				--set-rpath "${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)" \
-				"${f}" \
-				|| die
-		fi
-	done
 }
 
