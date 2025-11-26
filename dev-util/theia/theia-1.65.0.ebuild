@@ -9,39 +9,51 @@ EAPI=8
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 # ELECTRON_APP_ELECTRON_PV is limited by nan
 # Only upstream's Electron version allowed.
-ELECTRON_APP_ELECTRON_PV="37.2.1" # Cr 138.0.7204.97, node 22.17.0.  Original
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="npm"
+NODE_ENV="development"
+NODE_SLOT="22"
+NPM_AUDIT_FIX=0 # Manually fix
+NPM_KEEP_LOCKFILE=1
+PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11, but node-gyp 10 requests py3.12.
+NPM_ELECTRON_OFFLINE=1
+NPM_INSTALL_PATH="/opt/${PN}"
+NPM_LOCKFILE_SOURCE="ebuild" # originally upstream
+NPM_MULTI_LOCKFILE=1
+NPM_OFFLINE=1
+NPM_SLOT="3"
+NPM_TEST_SCRIPT="test:theia"
+
+ELECTRON_APP_ELECTRON_PV="37.2.1" # Cr 138.0.7204.97, node 22.17.0.  Original
 ELECTRON_APP_REACT_PV="18.3.1"
 NODE_GYP_PV="10.3.1" # Upstream uses 9.4.1
-NODE_ENV="development"
-NODE_VERSION=22
-NPM_AUDIT_FIX=0 # Manually fix
+
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+
 NPM_DEDUPE_ARGS=(
 	"--legacy-peer-deps"
 )
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+
 NPM_INSTALL_SINGLE_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+
 if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	NPM_INSTALL_ARGS+=(
 		"--ignore-scripts"
 		"--workspaces"
 	)
 fi
-NPM_KEEP_LOCKFILE=1
-PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11, but node-gyp 10 requests py3.12.
-NPM_ELECTRON_OFFLINE=1
-NPM_SLOT=3
+
 NPM_EXE_LIST="
 /usr/bin/theia
 /opt/theia/electron
@@ -60,11 +72,7 @@ NPM_EXE_LIST="
 /opt/theia/resources/app/plugins/vscode.git/extension/dist/git-editor-empty.sh
 /opt/theia/resources/app/plugins/vscode.git/extension/dist/ssh-askpass-empty.sh
 "
-NPM_INSTALL_PATH="/opt/${PN}"
-NPM_LOCKFILE_SOURCE="ebuild" # originally upstream
-NPM_MULTI_LOCKFILE=1
-NPM_OFFLINE=1
-NPM_TEST_SCRIPT="test:theia"
+
 declare -A THEIA_PLUGINS=(
 ["theia_plugin_EditorConfig_EditorConfig"]="EditorConfig.EditorConfig"
 ["theia_plugin_vscode_css"]="vscode.css"
@@ -489,7 +497,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_32
+git ollama ebuild_revision_33
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -511,7 +519,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/make-4.3
-	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[webassembly(+)]
+	>=net-libs/nodejs-14.18.0:${NODE_SLOT}[webassembly(+)]
 	>=sys-devel/gcc-11.2.0
 	sys-apps/npm:3
 	virtual/pkgconfig
@@ -540,7 +548,7 @@ _WANTS_PLUGIN_CACHED=-1
 user_wants_plugin() {
 	(( ${_WANTS_PLUGIN_CACHED} != -1 )) && return ${_WANTS_PLUGIN_CACHED}
 	local x
-	for x in ${!THEIA_PLUGINS[@]} ; do
+	for x in "${!THEIA_PLUGINS[@]}" ; do
 		if use "${x}" ; then
 			_WANTS_PLUGIN_CACHED=0
 			break
@@ -581,7 +589,7 @@ gen_plugin_array() {
 		# Paste subfolders of plugins folder
 	)
 	local raw_name
-	for raw_name in ${L[@]} ; do
+	for raw_name in "${L[@]}" ; do
 		local name="${raw_name/./_}"
 		echo "[\"theia_plugin_${name}\"]=\"${raw_name}\""
 	done
@@ -598,7 +606,7 @@ einfo "Adding dependencies"
 		pkgs=(
 			"node-gyp@^${NODE_GYP_PV}"
 		)
-		enpm add ${pkgs[@]} -D -W ${NPM_INSTALL_SINGLE_ARGS[@]}
+		enpm add "${pkgs[@]}" -D -W "${NPM_INSTALL_SINGLE_ARGS[@]}"
 	fi
 	chmod +x $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*"/bin/npx")
 	edo npx --version
@@ -663,16 +671,16 @@ einfo "Fixing vulnerabilities"
 	# VS = Vulnerable System (Direct attack)
 	# ZC = Zero-Click Attack (AV:N, PR:N, UI:N)
 
-	enpm add "cookie@^0.7.0" -w "packages/core" ${NPM_INSTALL_SINGLE_ARGS[@]}									# CVE-2024-47764; DT; Medium
+	enpm add "cookie@^0.7.0" -w "packages/core" "${NPM_INSTALL_SINGLE_ARGS[@]}"									# CVE-2024-47764; DT; Medium
 
-	enpm add "dompurify@^3.2.4" -w "packages/core" ${NPM_INSTALL_SINGLE_ARGS[@]}									# CVE-2025-26791; DT, ID; Medium
+	enpm add "dompurify@^3.2.4" -w "packages/core" "${NPM_INSTALL_SINGLE_ARGS[@]}"									# CVE-2025-26791; DT, ID; Medium
 
 	# False positive since lockfile didn't add it and marked optional
 	#enpm add "esbuild@6.0.2" -w "dev-packages/application-manager"	${NPM_INSTALL_SINGLE_ARGS[@]}							# CVE-2024-11831; DT, ID; Medium
 	#enpm add "esbuild@6.0.2" -w "dev-packages/native-webpack-plugin" ${NPM_INSTALL_SINGLE_ARGS[@]}							# CVE-2024-11831; DT, ID; Medium
 
-	enpm add "serialize-javascript@^6.0.2" -w "dev-packages/application-manager" ${NPM_INSTALL_SINGLE_ARGS[@]}					# CVE-2024-11831; DT, ID; Medium
-	enpm add "serialize-javascript@^6.0.2" ${NPM_INSTALL_SINGLE_ARGS[@]}										# CVE-2024-11831; DT, ID; Medium
+	enpm add "serialize-javascript@^6.0.2" -w "dev-packages/application-manager" "${NPM_INSTALL_SINGLE_ARGS[@]}"					# CVE-2024-11831; DT, ID; Medium
+	enpm add "serialize-javascript@^6.0.2" "${NPM_INSTALL_SINGLE_ARGS[@]}"										# CVE-2024-11831; DT, ID; Medium
 
 	enpm add "axios@^1.8.2" -P -w "dev-packages/application-package"										# CVE-2025-27152; ID; High
 	enpm add "axios@^1.8.2" -D															# CVE-2025-27152; ID; High
@@ -816,7 +824,7 @@ sample-plugins/sample-namespace/plugin-gotd/package.json
 	)
 
 	local x
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 		local path=$(dirname "${x}")
 		mkdir -p "${WORKDIR}/lockfile-image/${path}"
 		cp -a \
@@ -965,7 +973,7 @@ _install() {
 	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
 
 	local path
-	for path in ${NPM_EXE_LIST} ; do
+	for path in "${NPM_EXE_LIST}" ; do
 		if [[ -e "${ED}/${path}" ]] ; then
 			fperms 0755 "${path}"
 		fi
@@ -975,7 +983,7 @@ _install() {
 
 _install_plugins() {
 	local x
-	for x in ${!THEIA_PLUGINS[@]} ; do
+	for x in "${!THEIA_PLUGINS[@]}" ; do
 		local raw_name
 		raw_name="${THEIA_PLUGINS[${x}]}"
 		if use "${x}" ; then
@@ -1004,9 +1012,7 @@ src_install() {
 		"${PN}.svg" \
 		"Development"
 	sed -i \
-		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
-		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
-		-e "s|\${INSTALL_PATH}|${NPM_INSTALL_PATH}|g" \
+		-e "s|@INSTALL_PATH@|${NPM_INSTALL_PATH}|g" \
 		"${T}/${PN}" \
 		|| die
 	exeinto "/usr/bin"

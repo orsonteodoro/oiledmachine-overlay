@@ -4,12 +4,20 @@
 
 EAPI=8
 
+# For Election version correspondance, see
+# https://releases.electronjs.org/releases.json
+
 MY_PN="${PN^}"
 
 export NPM_INSTALL_PATH="/opt/${PN}"
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+ELECTRON_APP_AT_TYPES_NODE_PV="22.14.0"
+ELECTRON_APP_MODE="npm"
+NODE_ENV="development"
+NODE_SLOT="${ELECTRON_APP_AT_TYPES_NODE_PV%%.*}"
+
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 	ELECTRON_APP_ELECTRON_PV="39.2.3" # Cr 142.0.7444.175, node 22.21.1 works
@@ -17,22 +25,20 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="38.1.0" # Cr 140.0.7339.80, node 22.19.0
 fi
-ELECTRON_APP_AT_TYPES_NODE_PV="22.14.0"
-ELECTRON_APP_MODE="npm"
-NODE_ENV="development"
-NODE_VERSION=${ELECTRON_APP_AT_TYPES_NODE_PV%%.*}
+
 NPM_AUDIT_FIX_ARGS=(
 	"--prefer-offline"
 )
+
 NPM_INSTALL_ARGS=(
 	"--prefer-offline"
 )
+
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=(
 		"--force"
 	)
 fi
-# See https://releases.electronjs.org/releases.json
 
 inherit desktop edo electron-app lcnr npm
 
@@ -158,10 +164,10 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_8"
+IUSE+=" ebuild_revision_10"
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
-	>=net-libs/nodejs-${NODE_VERSION}[npm,webassembly(+)]
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
+	>=net-libs/nodejs-${NODE_SLOT}[npm,webassembly(+)]
 "
 
 npm_update_lock_install_post() {
@@ -184,17 +190,17 @@ einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."	
 src_unpack() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		npm_hydrate
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 		cd "${S}" || die
 
 		_npm_setup_offline_cache
 
 		rm -vf package-lock.json
-		enpm install ${NPM_INSTALL_ARGS[@]}
+		enpm install "${NPM_INSTALL_ARGS[@]}"
 
 		npm_update_lock_install_post
 
-		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
+		enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
 
 		_npm_check_errors
 einfo "Updating lockfile done."

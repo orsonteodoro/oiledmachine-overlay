@@ -1,3 +1,3 @@
 #!/bin/bash
-export NODE_VERSION=__NODE_VERSION__
-/usr/bin/node /opt/carbon-now-cli/dist/cli.js $@
+export NODE_SLOT="@NODE_SLOT@"
+"/usr/lib/node/${NODE_SLOT}/bin/node" "/opt/carbon-now-cli/dist/cli.js" $@

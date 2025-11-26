@@ -16,23 +16,25 @@ EAPI=8
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
-NPM_INSTALL_ARGS=(
-	"--prefer-offline"
-)
-NPM_AUDIT_FIX_ARGS=(
-	"--prefer-offline"
-)
-NPM_DEDUPE_ARGS=(
-)
 
 # See
 # https://releases.electronjs.org/releases.json
 # https://github.com/electron/node-abi/blob/v3.71.0/abi_registry.json
 # prebuilt-install depends on node-abi
 # Use the newer Electron to increase mitigation with vendor static libs.
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
+NPM_SLOT="3"
+PNPM_SLOT="9"
+NODE_SLOT="22" # Upstream uses 22.15.0 from .nvmrc
+NODE_ENV="development"
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
+RUST_PV="${RUST_MIN_VER}"
+
 AT_TYPES_NODE_PV="20.17.6"
 ELECTRON_BUILDER_PV="26.0.14"
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="39.2.3" # Cr 142.0.7444.175, node 22.21.1
@@ -40,17 +42,22 @@ else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="39.2.1" # Cr 142.0.7444.162, node 22.21.1
 fi
-ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
-NPM_SLOT=3
-PNPM_SLOT=9
-NODE_VERSION="22" # Upstream uses 22.15.0 from .nvmrc
-NODE_ENV="development"
+
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_DEDUPE_ARGS=(
+)
+
 if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 	PNPM_INSTALL_ARGS+=( "--force" )
 fi
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
-RUST_PV="${RUST_MIN_VER}"
+
 QA_PREBUILT="
 	opt/Signal/chrome_crashpad_handler
 	opt/Signal/chrome-sandbox
@@ -99,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_43
+ebuild_revision_44
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -108,7 +115,7 @@ RDEPEND+="
 	media-libs/libpulse
 "
 BDEPEND+="
-	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
+	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -135,7 +142,7 @@ einfo "Generating tag start for ${path}"
 		touch dummy || die
 		git add dummy || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -174,7 +181,7 @@ pnpm_unpack_install_post() {
 src_unpack() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pnpm_hydrate
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 		cd "${S}" || die
 
 	# The package contains multiple pnpm-lock.yaml.
@@ -193,7 +200,7 @@ src_unpack() {
 
 		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
 
-		epnpm install ${PNPM_INSTALL_ARGS[@]}
+		epnpm install "${PNPM_INSTALL_ARGS[@]}"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -410,7 +417,7 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 				"brace-expansion@2.0.2"
 				"tmp@0.2.4"
 			)
-			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
 				"brace-expansion@1.1.12"
 				"cross-spawn@6.0.6"
@@ -419,7 +426,7 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 				"rollup@3.29.5"
 				"vite@5.4.20"
 			)
-			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pushd "danger" >/dev/null 2>&1 || die
@@ -432,7 +439,7 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
 			)
-			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		deps=(
@@ -443,7 +450,7 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 			"tar-fs@2.1.4"
 			"form-data@4.0.4"
 		)
-		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
 			"danger@13.0.4"
 			"@octokit/plugin-paginate-rest@9.2.2"
@@ -459,15 +466,15 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 			"tmp@0.2.4"
 			"on-headers@1.1.0"
 		)
-		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
-		epnpm audit fix ${PNPM_AUDIT_FIX_ARGS[@]}
+		epnpm audit fix "${PNPM_AUDIT_FIX_ARGS[@]}"
 
 		deps=(
 	# Required for custom version bump
 			"electron@${ELECTRON_APP_ELECTRON_PV}"
 		)
-		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
 		patch_edits_pnpm
 		epnpm dedupe
@@ -478,7 +485,7 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 			deps=(
 				"@octokit/rest@20.1.2"
 			)
-			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
@@ -497,7 +504,7 @@ einfo "Copying lockfiles"
 			"sticker-creator/pnpm-lock.yaml"
 		)
 		local x
-		for x in ${LOCKFILES_PNPM[@]} ; do
+		for x in "${LOCKFILES_PNPM[@]}" ; do
 			local d=$(dirname "${x}")
 			mkdir -p "${WORKDIR}/lockfile-image/${d}" || die
 			if [[ -e "${d}/package.json" ]] ; then
@@ -544,7 +551,7 @@ src_compile() {
 
 	electron-builder \
 		$(electron-app_get_electron_platarch_args) \
-		-l dir \
+		-l "dir" \
 		|| die
 
 	# All the node package managers make errors non-fatal.
@@ -569,7 +576,7 @@ src_install() {
 	)
 
 	local x
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 		fperms 0755 "/opt/${MY_PN2}/${x}"
 	done
 

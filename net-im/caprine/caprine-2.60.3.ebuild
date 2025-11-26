@@ -35,7 +35,7 @@ NPM_INSTALL_PATH="/opt/${PN}"
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=( "--force" )
 fi
-NODE_VERSION=20 # Upstream uses 20.11.1
+NODE_SLOT="20" # Upstream uses 20.11.1
 
 inherit desktop electron-app lcnr npm
 
@@ -64,7 +64,7 @@ IUSE+="
 	ebuild_revision_17
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-16[npm,webassembly(+)]
 "
 PDEPEND+="

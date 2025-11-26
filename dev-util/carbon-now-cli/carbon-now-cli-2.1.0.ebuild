@@ -4,7 +4,15 @@
 
 EAPI=8
 
+MY_PN="${PN//-cli/}"
+
+NODE_ENV="development"
+NPM_INSTALL_PATH="/opt/${PN}"
+
 AT_TYPES_NODE_PV="18.16.3"
+PLAYWRIGHT_PV="1.56.1"
+NODE_SLOT="18" # Same as major version of AT_TYPES_NODE_PV
+
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
 # See https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/browsers.json
@@ -17,6 +25,7 @@ declare -A DL_REVISIONS=(
 	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1490"
 	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2215"
 )
+
 EPLAYRIGHT_ALLOW_BROWSERS=(
 # Allowed engines that are used by project.
 # https://github.com/mixn/carbon-now-cli/blob/v2.1.0/src/views/default.view.ts#L23
@@ -26,11 +35,6 @@ EPLAYRIGHT_ALLOW_BROWSERS=(
 #	"firefox-beta"			# EOL
 	"webkit"
 )
-MY_PN="${PN//-cli/}"
-NODE_ENV="development"
-NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Using nodejs muxer variable name.
-NPM_INSTALL_PATH="/opt/${PN}"
-PLAYWRIGHT_PV="1.56.1"
 
 inherit desktop edo npm playwright
 
@@ -184,17 +188,16 @@ LICENSE="
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
 	)
 "
-NODEJS_PV="18"
 RDEPEND="
-	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
+	>=net-libs/nodejs-${NODE_SLOT}[npm]
 	sys-kernel/mitigate-id
 	clipboard? (
 		x11-misc/xclip
@@ -204,8 +207,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
+	>=net-libs/nodejs-${NODE_SLOT}[npm]
 "
 
 enpx() {
@@ -292,8 +295,8 @@ npm_unpack_install_post() {
 	local L=()
 	local choice
 	local x
-	for x in ${PLAYWRIGHT_BROWSERS[@]} ; do
-		if has ${x} ${IUSE} && use "${x}" ; then
+	for x in "${PLAYWRIGHT_BROWSERS[@]}" ; do
+		if has "${x}" ${IUSE} && use "${x}" ; then
 			L+=( "${x}" )
 			break
 		fi
@@ -321,9 +324,9 @@ npm_unpack_install_post() {
 	_unpack_playwright "webkit" "${d_base}/webkit_ubuntu24.04_x64_special-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}" "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
 	cd "${S}" || die
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 		if use "${x}" ; then
-			edo enpx playwright install ${x}
+			edo enpx playwright install "${x}"
 		fi
 	done
 }
@@ -354,12 +357,12 @@ src_install() {
 	doins -r *
 
 	local path
-	for path in ${NPM_EXE_LIST[@]} ; do
+	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${path}"
 	done
 
 	cp "${FILESDIR}/${MY_PN}" "${T}" || die
-	sed -i -e "s|__NODE_VERSION__|${NODE_VERSION}|g" \
+	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		"${T}/${MY_PN}" \
 		|| die
 	sed -i -e "1aexport PLAYWRIGHT_SKIP_BROWSER_GC=1" \
@@ -374,7 +377,7 @@ src_install() {
 	exeinto "/usr/bin"
 	doexe "${T}/${MY_PN}"
 	local path
-	for path in ${NPM_EXE_LIST[@]} ; do
+	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${path}"
 	done
 ewarn "This package contains EOL browsers, you should uninstall it after use."
