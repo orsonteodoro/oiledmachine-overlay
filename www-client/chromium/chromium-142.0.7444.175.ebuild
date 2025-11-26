@@ -404,13 +404,13 @@ PATENT_STATUS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LLVM_OFFICIAL_SLOT="22" # Cr official slot
@@ -433,8 +433,8 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 fi
 
 is_cromite_compatible() {
-	local c4_min=$(ver_cut 4 ${PV})
-	local c4_max=$(ver_cut 4 ${PV})
+	local c4_min=$(ver_cut "4" "${PV}")
+	local c4_max=$(ver_cut "4" "${PV}")
 	c4_min=$(( ${c4_min} - 10 ))
 	c4_max=$(( ${c4_max} + 10 ))
 
@@ -512,7 +512,7 @@ HOMEPAGE="https://www.chromium.org/"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
 LICENSE="
-	chromium-$(ver_cut 1-3 ${PV}).x.html
+	chromium-$(ver_cut "1-3" "${PV}").x.html
 "
 if is_cromite_compatible ; then
 	LICENSE+="
@@ -1754,12 +1754,12 @@ get_llvm_profdata_version_info()
 	# The live versions can have different profdata versions over time.
 
 	local PKGDB_PATH="${ESYSROOT}/var/db/pkg"
-	for compatible_pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
-		(( ${compatible_pv%%.*} != ${LLVM_SLOT} )) && continue
+	for compatible_pv in "${PGO_LLVM_SUPPORTED_VERSIONS[@]}" ; do
+		ver_test "${compatible_pv%%.*}" -ne "${LLVM_SLOT}" && continue
 		( ! has_version "~llvm-core/llvm-${compatible_pv}" ) && continue
-		found_ver=${compatible_pv}
+		found_ver="${compatible_pv}"
 		profdata_index_version=$(cat \
-"${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
+"${ESYSROOT}/usr/lib/llvm/"$(ver_cut "1" "${found_ver}")"/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_INDEX_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
@@ -1787,7 +1787,7 @@ eerror "Missing the llvm-core/llvm version (aka found_ver)"
 
 is_profdata_compatible() {
 	local a=$(get_pregenerated_profdata_index_version)
-	local b=${CURRENT_PROFDATA_VERSION}
+	local b="${CURRENT_PROFDATA_VERSION}"
 	if (( ${b} >= ${a} )) ; then
 		return 0
 	else
@@ -1802,36 +1802,36 @@ is_profdata_compatible() {
 # | sort \
 # | uniq
 PKG_LIBS=(
-#ld-linux-x86-64.so.2
-libX11.so.6
-libXcomposite.so.1
-libXdamage.so.1
-libXext.so.6
-libXfixes.so.3
-libXrandr.so.2
-libasound.so.2
-libatk-1.0.so.0
-libatk-bridge-2.0.so.0
-libatspi.so.0
-#libc.so.6
-libcairo.so.2
-libdbus-1.so.3
-libdrm.so.2
-libexpat.so.1
-libffi.so.8
-libgbm.so.1
-#libgcc_s.so.1
-libgio-2.0.so.0
-libglib-2.0.so.0
-libgobject-2.0.so.0
-libm.so.6
-libnspr4.so
-libnss3.so
-libnssutil3.so
-libpango-1.0.so.0
-libsmime3.so
-libxcb.so.1
-libxkbcommon.so.0
+	#"ld-linux-x86-64.so.2"
+	"libX11.so.6"
+	"libXcomposite.so.1"
+	"libXdamage.so.1"
+	"libXext.so.6"
+	"libXfixes.so.3"
+	"libXrandr.so.2"
+	"libasound.so.2"
+	"libatk-1.0.so.0"
+	"libatk-bridge-2.0.so.0"
+	"libatspi.so.0"
+	#"libc.so.6"
+	"libcairo.so.2"
+	"libdbus-1.so.3"
+	"libdrm.so.2"
+	"libexpat.so.1"
+	"libffi.so.8"
+	"libgbm.so.1"
+	#"libgcc_s.so.1"
+	"libgio-2.0.so.0"
+	"libglib-2.0.so.0"
+	"libgobject-2.0.so.0"
+	"libm.so.6"
+	"libnspr4.so"
+	"libnss3.so"
+	"libnssutil3.so"
+	"libpango-1.0.so.0"
+	"libsmime3.so"
+	"libxcb.so.1"
+	"libxkbcommon.so.0"
 )
 
 # Check the system for security weaknesses.
@@ -1851,7 +1851,7 @@ einfo "Evaluating system for possible weaknesses."
 einfo "Assuming systemwide CFI Cross-DSO."
 einfo
 	local f
-	for f in ${PKG_LIBS[@]} ; do
+	for f in "${PKG_LIBS[@]}" ; do
 		local paths=(
 $(realpath "${EPREFIX}/usr/lib/gcc/"*"/"*"/${f}" 2>/dev/null)
 $(realpath "${EPREFIX}/usr/lib/gcc/"*"/"*"/32/${f}" 2>/dev/null)
@@ -1893,7 +1893,7 @@ print_use_flags_using_clang() {
 	)
 
 	local u
-	for u in ${U} ; do
+	for u in "${U[@]}" ; do
 		if use "${u}" ; then
 einfo "Using ${u} USE flag which is forcing clang."
 		fi
@@ -1910,7 +1910,7 @@ is_using_clang() {
 	)
 
 	local u
-	for u in ${U} ; do
+	for u in "${U[@]}" ; do
 		use "${u}" && return 0
 	done
 	return 1
@@ -1918,7 +1918,7 @@ is_using_clang() {
 
 check_security_expire() {
 	local safe_period
-	local now=$(date +%s)
+	local now=$(date "+%s")
 	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 	local channel="${SLOT#*/}"
 
@@ -2074,7 +2074,7 @@ ewarn "Missing kernel .config file."
 		fi
 
 		if linux_chkconfig_present "SECURITY_YAMA" ; then
-			local lsm=$(linux_chkconfig_string LSM)
+			local lsm=$(linux_chkconfig_string "LSM")
 			if [[ "${lsm}" =~ "yama" ]] ; then
 				:
 			else
@@ -2121,7 +2121,7 @@ ewarn
 		strip-unsupported-flags
 	fi
 
-	if ver_test ${PV%%.*} -ne ${PATCH_VER%%-*} ; then # This line is always false, deadcode
+	if ver_test "${PV%%.*}" "-ne" "${PATCH_VER%%-*}" ; then # This line is always false, deadcode
 		if tc-is-gcc ; then
 eerror
 eerror "GCC is disallowed.  Still waiting for the GCC patchset."
@@ -2219,8 +2219,8 @@ src_unpack() {
 
 	if _use_system_toolchain ; then
 		if ! use bundled-toolchain ; then
-			unpack chromium-patches-${PATCH_VER}.tar.bz2
-			unpack chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz
+			unpack "chromium-patches-${PATCH_VER}.tar.bz2"
+			unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
 		fi
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
@@ -2277,7 +2277,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# 130: moved the PPC64 patches into the chromium-patches repo
 	local patch
 	for patch in "${WORKDIR}/chromium-patches-${PATCH_VER}/"**"/"*".patch" ; do
-		if [[ ${patch} == *"ppc64le"* ]]; then
+		if [[ "${patch}" == *"ppc64le"* ]]; then
 			use ppc64 && PATCHES+=( "${patch}" )
 		else
 			PATCHES+=( "${patch}" )
@@ -2335,7 +2335,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# Oxidised hacks, let's keep 'em all in one place
 	# This is a nightly option that does not exist in older releases
 	# https://github.com/rust-lang/rust/commit/389a399a501a626ebf891ae0bb076c25e325ae64
-	if ver_test ${RUST_SLOT} -lt "1.83.0" ; then
+	if ver_test "${RUST_SLOT}" "-lt" "1.83.0" ; then
 		sed '/rustflags = \[ "-Zdefault-visibility=hidden" \]/d' -i build/config/gcc/BUILD.gn ||
 			die "Failed to remove default visibility nightly option"
 	fi
@@ -2343,25 +2343,25 @@ apply_distro_patchset_for_system_toolchain() {
 	# Upstream Rust replaced adler with adler2, for older versions of Rust
 	# we still need to tell GN that we have the older lib when it tries to
 	# copy the Rust sysroot into the bulid directory.
-	if ver_test ${RUST_SLOT} -lt "1.86.0" ; then
+	if ver_test "${RUST_SLOT}" "-lt" "1.86.0" ; then
 		sed -i 's/adler2/adler/' "build/rust/std/BUILD.gn" \
 			|| die "Failed to tell GN that we have adler and not adler2"
 	fi
 
-	if ver_test ${RUST_SLOT} -lt "1.89.0"; then
+	if ver_test "${RUST_SLOT}" "-lt" "1.89.0"; then
 	# The rust allocator was changed in 1.89.0, so we need to patch sources for older versions
 		PATCHES+=(
 			"${FILESDIR}/chromium-140-__rust_no_alloc_shim_is_unstable.patch"
 		)
 	fi
 
-	if ver_test ${RUST_SLOT} -lt "1.90.0"; then
+	if ver_test "${RUST_SLOT}" "-lt" "1.90.0"; then
 		PATCHES+=(
 			"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
 		)
 	fi
 
-	if ver_test ${RUST_SLOT} -lt "1.91.0"; then
+	if ver_test "${RUST_SLOT}" "-lt" "1.91.0"; then
 		PATCHES+=(
 			"${WORKDIR}/copium/cr142-crabbyavif-gn-rust-pre1.91.patch"
 			"${WORKDIR}/copium/cr142-crabbyavif-src-rust-pre1.91.patch"
@@ -2695,7 +2695,7 @@ prepare_cromite_with_ungoogled_chromium() {
 		"${FILESDIR}/ungoogled-chromium/129.0.6668.70-1/patches/core/inox-patchset/0001-fix-building-without-safebrowsing.patch;${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}/patches/core/inox-patchset"
 	)
 	local x
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 		cp -a "${x%;*}" "${x#*;}" || die
 	done
 
@@ -2761,7 +2761,7 @@ einfo "Preferring Cromite over ungoogled-chromium"
 		local user_choice
 		for user_choice in ${user_choices} ; do
 			local row
-			for row in ${rows[@]} ; do
+			for row in "${rows[@]}" ; do
 				local cromite_patch="${row%;*}"
 				[[ "${user_choice}" == "${cromite_patch}" ]] && return 0
 			done
@@ -2777,7 +2777,7 @@ einfo "Preferring Cromite over ungoogled-chromium"
 		local user_choice
 		for user_choice in ${user_choices} ; do
 			local row
-			for row in ${rows[@]} ; do
+			for row in "${rows[@]}" ; do
 				local ungoogled_chromium_patch="${row#*;}"
 				[[ "${user_choice}" == "${ungoogled_chromium_patch}" ]] && return 0
 			done
@@ -2789,7 +2789,7 @@ einfo "Preferring Cromite over ungoogled-chromium"
 	}
 
 	local row
-	for row in ${rows[@]} ; do
+	for row in "${rows[@]}" ; do
 		local cromite_patch=$(echo "${row}" | cut -f 1 -d ";")
 		local ungoogle_chromium_patch=$(echo "${row}" | cut -f 2 -d ";")
 		if is_user_choice_cromite ; then
@@ -3100,7 +3100,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/libgav1
 		third_party/libjingle
 		third_party/libpfm4
-		
 		third_party/libphonenumber
 		third_party/libsecret
 		third_party/libsrtp
@@ -3516,7 +3515,7 @@ einfo "Switching to clang."
 			slot="$(clang-major-version)"
 		else
 			local s
-			for s in ${LLVM_COMPAT[@]} ; do
+			for s in "${LLVM_COMPAT[@]}" ; do
 				if has_version "llvm-core/clang:${s}" ; then
 					slot="${s}"
 					break
@@ -3591,15 +3590,15 @@ eerror
 		fi
 
 		# Get the stdatomic.h from clang not from gcc.
-		append-cflags -stdlib=libc++
-		append-ldflags -stdlib=libc++
+		append-cflags "-stdlib=libc++"
+		append-ldflags "-stdlib=libc++"
 		if ver_test "${LLVM_SLOT}" -ge "16" ; then
 			append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
 			show_clang_header_warning "${LLVM_SLOT}"
 		else
 			local clang_pv=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
 				| sed -e "s|llvm-core/clang-||")
-			clang_pv=$(ver_cut 1-3 "${clang_pv}")
+			clang_pv=$(ver_cut "1-3" "${clang_pv}")
 			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
 			show_clang_header_warning "${clang_pv}"
 		fi
@@ -3636,7 +3635,7 @@ eerror "The system-libstdcxx USE flag must be enabled for GCC builds."
 		fi
 	fi
 	# Check for missing symbols bug.
-	if ! ${CC} --version ; then
+	if ! "${CC}" --version ; then
 eerror
 eerror "Failed sanity check.  Rebuild the entire compiler toolchain or unemerge"
 eerror "this slot."
@@ -3675,7 +3674,7 @@ _src_configure_compiler() {
 		filter-flags '-O*'
 		strip-flags
 	fi
-	${CC} --version || die
+	"${CC}" --version || die
 }
 
 src_configure() {
@@ -3698,7 +3697,7 @@ einfo "Using the bundled toolchain"
 	strip-unsupported-flags
 
 	# Handled by the build scripts
-	filter-flags '-f*visibility*'
+	filter-flags "-f*visibility*"
 
 	# Avoid CFLAGS problems, bug #352457, bug #390147.
 	if ! use custom-cflags ; then
@@ -3712,13 +3711,15 @@ einfo "Using the bundled toolchain"
 	fi
 
 	if tc-is-clang ; then
-		if ver_test $(clang-major-version) -ge 16 ; then
+		local clang_major_pv=$(clang-major-version)
+		local clang_full_pv=$(clang-fullversion)
+		if ver_test "${major_pv}" "-ge" "16" ; then
 			myconf_gn+=(
-				"clang_version=$(clang-major-version)"
+				"clang_version=${clang_major_pv}"
 			)
 		else
 			myconf_gn+=(
-				"clang_version=$(clang-fullversion)"
+				"clang_version=${clang_full_pv}"
 			)
 		fi
 	fi
@@ -3734,7 +3735,7 @@ einfo "Using the bundled toolchain"
 	if ! use custom-cflags ; then
 	# Debug info section overflows without component build
 	# Prevent linker from running out of address space, bug #471810.
-		filter-flags '-g*'
+		filter-flags "-g*"
 	fi
 
 	myconf_gn+=(
@@ -3842,7 +3843,7 @@ einfo "Using the system toolchain"
 
 	if tc-is-clang ; then
 	# https://bugs.gentoo.org/918897#c32
-		append-ldflags -Wl,--undefined-version
+		append-ldflags "-Wl,--undefined-version"
 		myconf_gn+=(
 			"use_lld=true"
 		)
@@ -3870,7 +3871,7 @@ einfo "Using the system toolchain"
 	fi
 
 	if tc-is-cross-compiler ; then
-		tc-export BUILD_{AR,CC,CXX,NM}
+		tc-export "BUILD_"{"AR","CC","CXX","NM"}
 		myconf_gn+=(
 			"host_pkg_config=\"$(tc-getBUILD_PKG_CONFIG)\""
 			"host_toolchain=\"//build/toolchain/linux/unbundle:host\""
@@ -3889,7 +3890,7 @@ einfo "Using the system toolchain"
 		fi
 
 	# Don't inherit PKG_CONFIG_PATH from environment
-		local -x PKG_CONFIG_PATH=
+		local -x PKG_CONFIG_PATH=""
 	else
 		myconf_gn+=(
 			"host_toolchain=\"//build/toolchain/linux/unbundle:default\""
@@ -3901,7 +3902,7 @@ einfo "Using the system toolchain"
 	# Set LLVM_CONFIG to help Meson (bug #907965) but only do it
 	# for empty ESYSROOT (as a proxy for "are we cross-compiling?").
 	if [[ -z "${ESYSROOT}" ]] ; then
-		llvm_fix_tool_path LLVM_CONFIG
+		llvm_fix_tool_path "LLVM_CONFIG"
 	fi
 
 	rust_pkg_setup
@@ -4008,11 +4009,11 @@ ewarn
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
 einfo "RUSTC:  ${RUSTC}"
-	if ! ${RUSTC} --version 2>&1 >/dev/null ; then
+	if ! "${RUSTC}" --version 2>&1 >/dev/null ; then
 eerror "QA:  RUSTC is not initialized or missing."
 		die
 	fi
-	${RUSTC} -Z help 2>/dev/null 1>/dev/null
+	"${RUSTC}" -Z help 2>/dev/null 1>/dev/null
 	local is_rust_nightly=$?
 
 	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "0" ]] ; then
@@ -4337,7 +4338,7 @@ ewarn "For proper hardening, disable the pgo USE flag."
 			"cfi-underived-cast"
 			"cfi-vcall"
 		)
-		for f in ${F[@]} ; do
+		for f in "${F[@]}" ; do
 			if has_sanitizer_option "${f}" ; then
 				is_cfi_custom=1
 			fi
@@ -4951,8 +4952,8 @@ einfo "Using ThinLTO"
 			"use_thin_lto=true"
 		)
 		filter-lto
-		filter-flags '-fuse-ld=*'
-		filter-flags '-Wl,--lto-O*'
+		filter-flags "-fuse-ld=*"
+		filter-flags "-Wl,--lto-O*"
 		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
 			myconf_gn+=(
 				"thin_lto_enable_optimizations=true"
@@ -4969,7 +4970,7 @@ einfo "Using ThinLTO"
 		)
 	fi
 
-	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+	if ! use mold && is-flagq "-fuse-ld=mold" && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
 		die
 	fi
@@ -5868,8 +5869,8 @@ ewarn
 einfo "Configuring bundled ffmpeg..."
 		pushd "third_party/ffmpeg" >/dev/null 2>&1 || die
 			"chromium/scripts/build_ffmpeg.py" \
-				linux ${ffmpeg_target_arch} \
-				--branding ${ffmpeg_branding} \
+				linux "${ffmpeg_target_arch}" \
+				--branding "${ffmpeg_branding}" \
 				-- \
 				${build_ffmpeg_args} \
 				|| die
@@ -6246,8 +6247,17 @@ _src_install() {
 	fi
 
 	# Install icons
+	local sizes=(
+		16
+		24
+		32
+		48
+		64
+		128
+		256
+	)
 	local branding size
-	for size in 16 24 32 48 64 128 256 ; do
+	for size in ${sizes[@]} ; do
 		case ${size} in
 			16|32) branding="chrome/app/theme/default_100_percent/chromium" ;;
 			*)     branding="chrome/app/theme/chromium" ;;
@@ -6320,7 +6330,7 @@ src_test() {
 	# The initial list of tests to skip pulled from Alpine. Thanks Lauren!
 	# https://issues.chromium.org/issues/40939315
 	local skip_tests=(
-		'MessagePumpLibeventTest.NestedNotification*'
+		"MessagePumpLibeventTest.NestedNotification*"
 		"ClampTest.Death"
 		"OptionalTest.DereferencingNoValueCrashes"
 		"PlatformThreadTest.SetCurrentThreadTypeTest"
@@ -6385,9 +6395,9 @@ src_test() {
 		'LazyThreadPoolTaskRunnerEnvironmentTest.*'
 	)
 
-	local test_filter="-$(IFS=:; printf '%s' "${skip_tests[*]}")"
+	local test_filter="-"$(IFS=:; printf "%s" "${skip_tests[*]}")
 	# test-launcher-bot-mode enables parallelism and plain output.
-	./out/Release/base_unittests \
+	"./out/Release/base_unittests" \
 		--test-launcher-bot-mode \
 		--test-launcher-jobs="$(makeopts_jobs)" \
 		--gtest_filter="${test_filter}" \
