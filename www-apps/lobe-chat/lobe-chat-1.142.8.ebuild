@@ -112,7 +112,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	file-management? (
