@@ -29,11 +29,12 @@ eerror "QA:  NODE_SLOT must be defined"
 	fi
 
 	# Sanitize paths for logs
-	filter-flags "-I*/usr/bin/node/*"
+	filter-flags "-I*/usr/lib/node/*"
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/node/|d" | tr $'\n' ":")
 
-	append-flags "-I${ESYSROOT}/usr/bin/node/${NODE_SLOT}/include"
-	export PATH="${ESYSROOT}/usr/lib/node/${NODE_SLOT}/bin"
+	local prefix="${ESYSROOT}/usr/lib/node/${NODE_SLOT}"
+	append-flags "-I${prefix}/include"
+	export PATH="${prefix}/bin"
 }
 
 fi
