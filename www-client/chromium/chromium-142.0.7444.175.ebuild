@@ -2186,9 +2186,7 @@ einfo
 	done
 
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
-	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
-		node_pkg_setup
-	fi
+	node_pkg_setup
 	check_security_expire
 	check_ulimit
 
