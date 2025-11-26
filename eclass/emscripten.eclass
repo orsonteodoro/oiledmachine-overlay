@@ -17,6 +17,8 @@ esac
 if [[ -z ${_ABSEIL_CPP_ECLASS} ]] ; then
 _ABSEIL_CPP_ECLASS=1
 
+inherit edo
+
 # @FUNCTION:  emscripten_gen_hello_world
 # @DESCRIPTION:
 # Generate A Hello World source code to test the Emscripten toolchain.
@@ -33,9 +35,12 @@ EOF
 # @DESCRIPTION:
 # Test hello world with Emscripten toolchain
 emscripten_test_hello_world() {
-	"/usr/bin/emcc" -v
-	"/usr/bin/em++" -v
+einfo "Testing emcc"
+	edo "/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/bin/emcc" -v
+einfo "Testing em++"
+	edo "/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/bin/em++" -v
 
+einfo "Testing hello_world.cc"
 	if [[ "${__EMCC_WASM_BACKEND__}" == "1" ]] ; then
 		echo "Please wait.  Pre-generating a emscripten.config_sanity_wasm file."
 	else
@@ -46,11 +51,10 @@ emscripten_test_hello_world() {
 		cp "${T}/hello_world.cc" "./" || die
 		export EM_CACHE="${sandbox}/cache"
 		export EMCC_CFLAGS=" -fno-stack-protector"
-		"/usr/share/emscripten-${PV}/em++" \
+		edo "/usr/share/emscripten-${PV}/em++" \
 			-stdlib=libc++ \
 			"${T}/hello_world.cpp" \
-			-o "hello_world.js" \
-			|| die
+			-o "hello_world.js"
 	popd
 	rm -rf "${sandbox}"
 }
@@ -91,35 +95,100 @@ einfo "Setting up symlinks"
 
 }
 
+# @FUNCTION:  emscripten_get_node_slot
+# @DESCRIPTION:
+# Gets the closest compatible node slot
+emscripten_get_node_slot() {
+	local node_slot=""
+	local x
+	for x in $(eval "echo {${NODE_SLOT_MIN}..25}") ; do
+		node_slot="${x}"
+		break
+	done
+	if [[ -z "${node_slot}" ]] ; then
+eerror "Missing net-libs/nodejs.  Slot minimum supported is ${NODE_SLOT_MIN}."
+		die
+	fi
+	echo "${node_slot}"
+}
+
+# @FUNCTION:  emscripten_set_env
+# @DESCRIPTION:
+# Generate the 99emscripten environment
+emscripten_set_env() {
+	if [[ -z "${EMSCRIPTEN_SLOT}" ]] ; then
+eerror "QA:  EMSCRIPTEN_SLOT must be defined"
+		die
+	fi
+	local node_slot=$(emscripten_get_node_slot)
+	export EM_BINARYEN_ROOT="/usr/lib/binaryen/${BINARYEN_SLOT}"
+	export EM_CACHE="${sandbox}/cache"
+	export EM_CONFIG="${T}/emscripten-${ABI}.config"
+	export EMCC_CFLAGS=" -fno-stack-protector"
+	export BINARYEN="/usr/lib/binaryen/${BINARYEN_SLOT}"
+	export EMSCRIPTEN="${EPREFIX}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}"
+	export EMSDK_BINARYEN_BASE_PATH="/usr/lib/binaryen/${BINARYEN_SLOT}"
+	export EMSDK_BINARYEN_LIB_PATH="/usr/lib/binaryen/${BINARYEN_SLOT}/lib"
+	export EMSDK_BINARYEN_VERSION="${BINARYEN_SLOT}"
+	export EMSDK_CLOSURE_COMPILER="${CLOSURE_COMPILER_EXE}"
+	export EMSDK_LLVM_VERSION="${LLVM_SLOT}"
+	export EMSDK_LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}/bin"
+	export EMSDK_NODE="${EPREFIX}/usr/lib/node/${node_slot}/bin/node"
+	export EMSDK_NODE_VERSION_MIN="${NODE_SLOT_MIN}"
+	export EMSDK_PYTHON="/usr/bin/python${PYTHON_SLOT}"
+	if has_version "dev-util/emscripten:${EMSCRIPTEN_SLOT}[native-optimizer]" ; then
+		export EMSCRIPTEN_NATIVE_OPTIMIZER="${EPREFIX}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/optimizer"
+	else
+		export EMSCRIPTEN_NATIVE_OPTIMIZER=""
+	fi
+	export PATH="${EPREFIX}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}:${PATH}"
+	export EMCC_WASM_BACKEND=${EMCC_WASM_BACKEND:-1} # 1=wasm, 0=emscripten-fastcomp
+	export EMTEST_LACKS_NATIVE_CLANG="1"
+	export LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}/bin"
+	export PATH="${ESYSROOT}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/bin:${PATH}"
+einfo "BINARYEN:  ${BINARYEN}"
+einfo "CLOSURE_COMPILER:  ${EMSDK_CLOSURE_COMPILER}"
+einfo "EM_BINARYEN_ROOT:  ${EM_BINARYEN_ROOT}"
+einfo "EM_CONFIG:  ${EM_CONFIG}"
+einfo "EMCC_WASM_BACKEND:  ${EMCC_WASM_BACKEND}"
+einfo "LLVM_ROOT:  ${EMSDK_LLVM_ROOT}"
+einfo "EMSDK_PYTHON:  ${EMSDK_PYTHON}"
+}
+
+# @FUNCTION:  emscripten_set_config
+# @DESCRIPTION:
+# Generate the emscripten.config
+emscripten_set_config() {
+	source "${ESYSROOT}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/etc/slot.metadata"
+	local node_slot=$(emscripten_get_node_slot)
+
+cat <<EOF > "${T}/emscripten-${ABI}.config"
+import os
+EMSCRIPTEN_ROOT = os.path.expanduser('/usr/lib/emscripten/${EMSCRIPTEN_SLOT}')
+LLVM_ROOT = os.path.expanduser('/usr/lib/llvm/${LLVM_SLOT}/bin')
+BINARYEN_ROOT = os.path.expanduser('/usr/lib/binaryen/${BINARYEN_SLOT}')
+NODE_JS = os.path.expanduser('/usr/lib/node/${node_slot}/bin/node')
+JAVA = 'java'
+TEMP_DIR = '/tmp'
+EOF
+}
+
+# @FUNCTION:  emscripten_src_configure
+# @DESCRIPTION:
+# Setup emscripten flags and paths
 emscripten_src_configure() {
 	if [[ -z "${EMSCRIPTEN_SLOT}" ]] ; then
 eerror "QA:  EMSCRIPTEN_SLOT must be defined"
 		die
 	fi
-	local emscripten_root="${EROOT}/usr/share/emscripten-${PV}"
-	export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
-	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
-	export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"
-	export EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
-	export EMCC_WASM_BACKEND=${__EMCC_WASM_BACKEND__}
-	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 
-	export PATH="${usr}/share/emscripten-${EMSCRIPTEN_SLOT}:${PATH}"
+source "${ESYSROOT}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}/etc/slot.metadata"
+	emscripten_set_config
+	emscripten_set_env
+
+	local emscripten_root="${EROOT}/usr/lib/emscripten/${EMSCRIPTEN_SLOT}"
 
 	emscripten_test_hello_world
-
-einfo
-einfo "BINARYEN:  ${BINARYEN}"
-einfo "CLOSURE_COMPILER:  ${EMSDK_CLOSURE_COMPILER}"
-einfo "EM_BINARYEN_ROOT:  ${EM_BINARYEN_ROOT}"
-einfo "EM_CONFIG:  ${T}/emscripten-${ABI}.config"
-einfo "EMCC_WASM_BACKEND:  ${__EMCC_WASM_BACKEND__}"
-einfo "EROOT:  ${EROOT}"
-einfo "LLVM_ROOT:  ${EMSDK_LLVM_ROOT}"
-einfo "PYTHON_EXE_ABSPATH:  ${PYTHON_EXE_ABSPATH}"
-einfo
-
 }
-
 
 fi
