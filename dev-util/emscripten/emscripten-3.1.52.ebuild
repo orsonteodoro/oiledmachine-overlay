@@ -325,16 +325,20 @@ setup_test_env() {
 		cc_cmd="" # use defaults
 	fi
 
-	export BINARYEN="${BROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
+	export BINARYEN="${ESYSROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
 	export CLOSURE_COMPILER="${cc_cmd}"
 	export EM_CONFIG="${T}/emscripten-${ABI}.config"
 	export EMCC_WASM_BACKEND=1
-	export EMSCRIPTEN="/usr/share/emscripten-${PV}"
+	export EMSCRIPTEN="${WORKDIR}/${P}"
 	export EMSDK_CLOSURE_COMPILER="${cc_cmd}"
 	export EMSDK_LLVM_ROOT="/usr/lib/llvm/${LLVM_SLOT}"
 	export EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
 	export EMSDK_PYTHON="/usr/bin/${EPYTHON}"
-	export EMSCRIPTEN_NATIVE_OPTIMIZER="${EPREFIX}/usr/share/emscripten-${PV}/optimizer"
+	if use native-optimizer ; then
+		export EMSCRIPTEN_NATIVE_OPTIMIZER="${WORKDIR}/${P}/optimizer"
+	else
+		export EMSCRIPTEN_NATIVE_OPTIMIZER=""
+	fi
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export PATH="${EPREFIX}/usr/share/emscripten-${PV}:${PATH}"
 }
