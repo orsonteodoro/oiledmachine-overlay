@@ -46,7 +46,6 @@ BDEPEND+="
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
 		|| (
 			>=dev-python/protobuf-3.20.3:4.21[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-4.25.3:4.25[${PYTHON_USEDEP}]
 		)
 		dev-python/protobuf:=
 		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
@@ -57,6 +56,8 @@ BDEPEND+="
 		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)
 "
+# It is allowed to support 4.25 but needs the SLOT to be reworked.
+#			>=dev-python/protobuf-4.25.3:4.25[${PYTHON_USEDEP}]
 DOCS=( "README.rst" )
 
 src_unpack() {
