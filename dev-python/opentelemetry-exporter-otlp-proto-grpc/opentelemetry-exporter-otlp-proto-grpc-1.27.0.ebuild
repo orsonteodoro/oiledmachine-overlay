@@ -71,16 +71,7 @@ src_install() {
 # This is to allow 1.27.0 used in LTS packages from being not disrupted by
 # 1.38.0 rolling packages.
 #
-# To handle multslot OpenTelemetry Python do
-# EPYTHON="python3.11"
-# PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOT="4" # 3 if systemwide gcc 11, OR 4 if systemwide gcc > 11
-# # Add multislot OpenTelemetry, multislot grpcio, multislot protobuf to PYTHONPATH
-# export LD_LIBRARY_PATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib64:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib64:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/lib64"
-# export PATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/bin:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
-# export PYTHONPATH="/usr/lib/opentelemetry/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages:/usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
-# # Run with <appname> or ${EPYTHON} <appname>
-# # or put in wrapper script
+# See also opentelemetry.eclass
 #
 }
 

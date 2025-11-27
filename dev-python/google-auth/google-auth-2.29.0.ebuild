@@ -25,7 +25,7 @@ EPYTEST_IGNORE=(
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1 grpc-ver pypi
+inherit abseil-cpp distutils-r1 grpc protobuf pypi re2
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
@@ -82,15 +82,28 @@ DEPEND="
 	${RDEPEND}
 "
 gen_grpc_test_bdepend() {
-	local s
-	for s in ${GRPC_SLOTS[@]} ; do
-		echo "
-			(
-				=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
-				=net-libs/grpc-${s}*[${PYTHON_USEDEP},python]
-			)
-		"
-	done
+	echo "
+		(
+			dev-python/grpcio:6/1.75[${PYTHON_USEDEP}]
+			net-libs/grpc:6/1.75[${PYTHON_USEDEP},python]
+		)
+		(
+			dev-python/grpcio:5/1.71[${PYTHON_USEDEP}]
+			net-libs/grpc:5/1.71[${PYTHON_USEDEP},python]
+		)
+		(
+			dev-python/grpcio:4/1.62[${PYTHON_USEDEP}]
+			net-libs/grpc:4/1.62[${PYTHON_USEDEP},python]
+		)
+		(
+			dev-python/grpcio:3/1.51[${PYTHON_USEDEP}]
+			net-libs/grpc:3/1.51[${PYTHON_USEDEP},python]
+		)
+		(
+			dev-python/grpcio:3/1.30[${PYTHON_USEDEP}]
+			net-libs/grpc:3/1.30[${PYTHON_USEDEP},python]
+		)
+	"
 }
 BDEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
@@ -156,6 +169,46 @@ BDEPEND="
 "
 
 distutils_enable_tests "pytest"
+
+python_configure() {
+	if use test ; then
+		if has_version "dev-libs/protobuf:6/6.33" ; then
+			ABSEIL_CPP_SLOT="20250512"
+			GRPC_SLOT="6"
+			PROTOBUF_CPP_SLOT="6"
+			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+			RE2_SLOT="20240116"
+		elif has_version "dev-libs/protobuf:5/5.29" ; then
+			ABSEIL_CPP_SLOT="20240722"
+			GRPC_SLOT="5"
+			PROTOBUF_CPP_SLOT="5"
+			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+			RE2_SLOT="20240116"
+		elif has_version "dev-libs/protobuf:4/4.25" ; then
+			ABSEIL_CPP_SLOT="20240116"
+			GRPC_SLOT="4"
+			PROTOBUF_CPP_SLOT="4"
+			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+			RE2_SLOT="20220623"
+		elif has_version "dev-libs/protobuf:3/3.21" ; then
+			ABSEIL_CPP_SLOT="20220623"
+			GRPC_SLOT="3"
+			PROTOBUF_CPP_SLOT="3"
+			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+			RE2_SLOT="20220623"
+		elif has_version "dev-libs/protobuf:3/3.12" ; then
+			ABSEIL_CPP_SLOT="20200225"
+			GRPC_SLOT="3"
+			PROTOBUF_CPP_SLOT="3"
+			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+			RE2_SLOT="20220623"
+		fi
+		abseil-cpp_python_configure
+		protobuf_python_configure
+		re2_python_configure
+		grpc_python_configure
+	fi
+}
 
 python_compile() {
 	distutils-r1_python_compile

@@ -39,7 +39,7 @@ CXX_STANDARD=11 # System's protobuf needs CXX_STANDARD=17
 CYTHON_SLOT="0.29"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2024.6.0/docs/dev/build_linux.md#software-requirements
 
 BENCHMARK_1_COMMIT="d572f4777349d43653b21d6c2fc63020ab326db2"
@@ -87,15 +87,15 @@ CPU_FLAGS_X86=(
 inherit libstdcxx-compat
 # Only protobuf-python >=3.18.1 and not >=4.x
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake cython dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
+inherit abseil-cpp cflags-hardened cmake cython dep-prepare distutils-r1 libcxx-slot libstdcxx-slot protobuf
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -205,10 +205,9 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
-	!system-protobuf
 	?? (
 		tbb
 		openmp
@@ -223,7 +222,7 @@ REQUIRED_USE="
 "
 RDEPEND_PROTOBUF="
 	system-protobuf? (
-		virtual/protobuf:${PROTOBUF_SLOT}[${LIBSTDCXX_USEDEP}]
+		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/protobuf:=
 	)
 "
@@ -258,8 +257,8 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		(
-			virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
-			virtual/protobuf-python:=
+			dev-python/protobuf:3.12['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+			dev-python/protobuf:=
 		)
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
 	')
@@ -280,9 +279,9 @@ RDEPEND_PYTHON_BINDINGS="
 	')
 "
 # TODO:  src/bindings/python/requirements_test.txt
-RDEPEND+="
+ARDEPEND+="
 	(
-		>=dev-cpp/tbb-2021.10:0[${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/tbb-2021.10:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 	mlas? (
@@ -293,7 +292,7 @@ RDEPEND+="
 		${RDEPEND_PYTHON_BINDINGS}
 	)
 	system-flatbuffers? (
-		>=dev-libs/flatbuffers-24.3.25[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/flatbuffers-24.3.25[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/flatbuffers:=
 	)
 	system-opencl? (
@@ -305,11 +304,11 @@ RDEPEND+="
 		${RDEPEND_PROTOBUF}
 	)
 	system-pugixml? (
-		>=dev-libs/pugixml-1.14[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/pugixml-1.14[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/pugixml:=
 	)
 	system-snappy? (
-		>=app-arch/snappy-1.2.1[${LIBSTDCXX_USEDEP}]
+		>=app-arch/snappy-1.2.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		app-arch/snappy:=
 	)
 	video_cards_intel? (
@@ -341,8 +340,8 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
 		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-		virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
-		virtual/protobuf-python:=
+		dev-python/protobuf:3.12['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		dev-python/protobuf:=
 		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
@@ -368,7 +367,7 @@ BDEPEND_TEST_CONSTRAINTS="
 	)
 	>=dev-python/attrs-23.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/kornia-0.7.0[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/opencv-4.5[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
+	>=media-libs/opencv-4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 	<dev-python/jax-0.4.15[${PYTHON_SINGLE_USEDEP}]
 	<dev-python/jaxlib-0.4.15[${PYTHON_SINGLE_USEDEP}]
 "
@@ -418,7 +417,7 @@ BDEPEND_E2E_TESTS="
 		dev-python/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/timm-0.9.2[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/opencv-4.5[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
+	>=media-libs/opencv-4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/tensorflow-hub[${PYTHON_SINGLE_USEDEP}]
 "
 # model_hub_tests/tensorflow/requirements.txt \
@@ -445,42 +444,6 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 		dev-python/pytest-html[${PYTHON_USEDEP}]
 	')
 	sci-ml/tensorflow-hub[${PYTHON_SINGLE_USEDEP}]
-"
-# tests/model_hub_tests/pytorch/requirements.txt \
-BDEPEND_MODEL_HUB_TESTS_PYTORCH="
-	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/optimum[${PYTHON_USEDEP}]
-		dev-python/packaging[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
-		virtual/protobuf-python:=
-		dev-python/pyctcdecode[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-		dev-python/sacremoses[${PYTHON_USEDEP}]
-		dev-python/soundfile[${PYTHON_USEDEP}]
-		dev-python/super-image[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
-		sci-ml/sentencepiece[${PYTHON_USEDEP},python]
-	')
-	dev-python/av[${PYTHON_SINGLE_USEDEP}]
-	dev-python/basicsr[${PYTHON_SINGLE_USEDEP}]
-	dev-python/facexlib[${PYTHON_SINGLE_USEDEP}]
-	dev-python/kornia[${PYTHON_SINGLE_USEDEP}]
-	dev-python/timm[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/datasets[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
-"
-# tests/model_hub_tests/pytorch/requirements_secondary.txt \
-BDEPEND_MODEL_HUB_TESTS_PYTORCH_SECONDARY="
-	${BDEPEND_TEST_CONSTRAINTS}
 "
 # tests/layer_tests/requirements.txt \
 BDEPEND_LAYER_TESTS="
@@ -547,8 +510,8 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
-		virtual/protobuf-python:'${PROTOBUF_SLOT}'['"${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
-		virtual/protobuf-python:=
+		dev-python/protobuf['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
+		dev-python/protobuf-python:=
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-dependency[${PYTHON_USEDEP}]
@@ -565,7 +528,7 @@ BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 	')
-	media-libs/opencv[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
+	media-libs/opencv[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.13
@@ -628,8 +591,6 @@ BDEPEND+="
 		${BDEPEND_E2E_TESTS}
 		${BDEPEND_MODEL_HUB_TENSORFLOW_TESTS}
 		${BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS}
-		${BDEPEND_MODEL_HUB_TESTS_PYTORCH}
-		${BDEPEND_MODEL_HUB_TESTS_PYTORCH_SECONDARY}
 		${BDEPEND_LAYER_TESTS}
 		${BDEPEND_TIME_TESTS_SCRIPTS}
 		${BDEPEND_TIME_TESTS_TEST_RUNNER}
@@ -744,6 +705,14 @@ python_prepare_all() {
 }
 
 src_configure() {
+	if use system-protobuf ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		abseil-cpp_src_configure
+		protobuf_src_configure
+	fi
+
 	cflags-hardened_append
 	local mycmakeargs
 	local _mycmakeargs=(
@@ -865,6 +834,7 @@ src_configure() {
 
 	export LIBDIR=$(get_libdir)
 	mycmakeargs=(
+		$(protobuf_append_cmake)
 		${_mycmakeargs[@]}
 		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino"
 		-DENABLE_CPP_API=ON
@@ -872,7 +842,6 @@ src_configure() {
 		-DENABLE_PYTHON=$(usex python)
 		-DENABLE_SAMPLES=$(usex samples)
 		-DENABLE_WHEEL=OFF
-		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 	)
 
 einfo "Configuring runtime"

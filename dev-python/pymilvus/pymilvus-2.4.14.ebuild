@@ -8,22 +8,11 @@ EAPI=8
 # m2r
 # sphinxcontrib-prettyspecialmethods
 
-inherit grpc-ver
+inherit abseil-cpp grpc protobuf re2
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-GRPC_SLOTS_REL=(
-	${GRPC_SLOTS[@]}
-)
-GRPC_SLOTS_DEV=(
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit distutils-r1 pypi
 
@@ -54,40 +43,37 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" bulk_writer dev model"
+IUSE+="
+bulk_writer dev model
+ebuild_revision_1
+"
 gen_grpcio_dev() {
-	local s
-	for s in ${GRPC_SLOTS_DEV[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				(
-					python_single_target_${impl}? (
-						=dev-python/grpcio-${s}*[python_targets_${impl}(-)]
-						=dev-python/grpcio-testing-${s}*[python_targets_${impl}(-)]
-						=dev-python/grpcio-tools-${s}*[python_targets_${impl}(-)]
-					)
+	local impl
+	for impl in "${PYTHON_COMPAT[@]}" ; do
+		echo "
+			(
+				python_single_target_${impl}? (
+					dev-python/grpcio:4/4.25[python_targets_${impl}(-)]
+					dev-python/grpcio-testing:4/4.25[python_targets_${impl}(-)]
+					dev-python/grpcio-tools:4/4.25[python_targets_${impl}(-)]
 				)
-			"
-		done
+			)
+		"
 	done
 }
 gen_grpcio_rel() {
 	local s1
 	local s2
-	for s1 in ${GRPC_SLOTS_REL[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				(
-					python_single_target_${impl}? (
-						=dev-python/grpcio-${s1}*[python_targets_${impl}(-)]
-						dev-python/protobuf:0/${s2}[python_targets_${impl}(-)]
-					)
+	local impl
+	for impl in "${PYTHON_COMPAT[@]}" ; do
+		echo "
+			(
+				python_single_target_${impl}? (
+					dev-python/grpcio:4/4.25[python_targets_${impl}(-)]
+					dev-python/protobuf:4.25[python_targets_${impl}(-)]
 				)
-			"
-		done
+			)
+		"
 	done
 }
 RDEPEND+="
@@ -195,11 +181,11 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
+		touch "dummy" || die
+		git add "dummy" || die
 		#git add -f * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -213,6 +199,20 @@ src_unpack() {
 		unpack ${A}
 		gen_git_tag "${S}" "v${PV}"
 	fi
+}
+
+python_configure() {
+	if use "dev-libs/protobuf:4/4.25" ; then
+		export ABSEIL_CPP_SLOT="20240116"
+		export GRPC_SLOT="4"
+		export PROTOBUF_CPP_SLOT="4"
+		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+		export RE2_SLOT="20220623"
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+	re2_python_configure
+	grpc_python_configure
 }
 
 src_install() {

@@ -9,8 +9,6 @@ EAPI=8
 # Patch test
 # Finish *DEPENDs updates
 # Make protobuf internal dependency
-# Change configure for multislot re2
-# Setup PYTHONPATH for protobuf-python with new slot changes
 
 # TODO package:
 # >=dev-python/portpicker-23.2
@@ -131,8 +129,8 @@ gen_seq_inc() {
 }
 
 inherit abseil-cpp bazel cflags-hardened check-compiler-switch check-reqs cuda cython distutils-r1
-inherit dhms flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot llvm multibuild
-inherit prefix protobuf rocm toolchain-funcs
+inherit dhms flag-o-matic flag-o-matic-om grpc lcnr libcxx-slot libstdcxx-slot llvm multibuild
+inherit prefix protobuf re2 rocm toolchain-funcs
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
@@ -204,7 +202,7 @@ OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 #PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/4662f7552dc2e420ee20361c077b7aeb334a1087/third_party/rules_cuda/cuda/dependencies.bzl#L66 ; hash from with EGIT_COMMIT_TF_RUNTIME
 PROTOBUF_CPP_PV="3.21.9"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
-PROTOBUF_PYTHON_SLOT="4"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py.tpl
+PROTOBUF_PYTHON_SLOT="4.21"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/workspace2.bzl
 RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/rules_swift/blob/1.5.0/MODULE.bazel#L13
@@ -423,7 +421,7 @@ CPU_USE_FLAGS_X86=(
 	sse4_2
 	avx
 	avx2
-# Addresses the get-cpu-flags() request for keep flags in sync.
+# Addresses the get_cpu_flags() request for keep flags in sync.
 #	avx512f    # *
 #	avx512cd   # *
 #	avx512vnni # *
@@ -619,8 +617,8 @@ gen_grpcio_rdepend() {
 			(
 				dev-python/grpcio:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-)]
 				dev-python/grpcio-tools:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-)]
+				dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
 				net-libs/grpc:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-),python]
-				virtual/protobuf-python:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
 			)
 		"
 	done
@@ -632,7 +630,7 @@ RDEPEND_GRPCIO="
 	)
 	dev-python/grpcio:=
 	dev-python/grpcio-tools:=
-	virtual/protobuf-python:=
+	dev-python/protobuf:=
 	net-libs/grpc:=
 "
 
@@ -652,8 +650,8 @@ gen_protobuf_rdepend() {
 				dev-libs/protobuf:=
 				python? (
 					python_single_target_${impl}? (
-						virtual/protobuf-python:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
-						virtual/protobuf-python:=
+						dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
+						dev-python/protobuf:=
 					)
 				)
 			)
@@ -864,14 +862,14 @@ ROCM_PATCHES=(
 	"0050-fix-rocm-source-code.patch"
 )
 
-get-cpu-flags() {
+get_cpu_flags() {
 	local i f=()
 	# Keep this list in sync with tensorflow/core/platform/cpu_feature_guard.cc.
 	for i in "${CPU_USE_FLAGS_X86[@]/fma3/}" ; do
-		use cpu_flags_x86_${i} && f+=( -m${i/_/.} )
+		use "cpu_flags_x86_${i}" && f+=( "-m${i/_/.}" )
 	done
-	use cpu_flags_x86_fma3 && f+=( -mfma )
-	echo "${f[*]}"
+	use "cpu_flags_x86_fma3" && f+=( "-mfma" )
+	echo "${f[@]}"
 }
 
 _remove_llvm_from_path() {
@@ -1253,7 +1251,7 @@ ewarn
 ewarn "If build failure, use MAKEOPTS=\"-j1\".  Expect memory use to be 6-11"
 ewarn "GiB per process."
 ewarn
-	append-flags $(get-cpu-flags)
+	append-flags $(get_cpu_flags)
 	filter-flags "-fvtable-verify=@(std|preinit)"
 
 	setup_linker
@@ -1359,8 +1357,13 @@ ewarn
 		export TF_NEED_MPI=$(usex mpi 1 0)
 		export TF_SET_ANDROID_WORKSPACE=0
 
-		local PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
-		protobuf-python_set_pythonpath
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		GRPC_SLOT="3"
+		RE2_SLOT="20220623"
+		protobuf_python_configure
+		re2_python_configure
+		grpc_python_configure
+
 		cython_set_cython_slot "3"
 		cython_python_configure
 		if use python ; then

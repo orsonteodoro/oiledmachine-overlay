@@ -291,7 +291,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut 1-2 "${PV}")
 IUSE+="
 test
-ebuild_revision_3
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -321,6 +321,7 @@ RDEPEND="
 
 		gcc_slot_11_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},gcc_slot_11_5,cxx_standard_cxx17]
+			dev-python/protobuf:3.12['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP}]
@@ -328,6 +329,7 @@ RDEPEND="
 		)
 		gcc_slot_12_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_12_5,cxx_standard_cxx17]
+			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
@@ -335,6 +337,7 @@ RDEPEND="
 		)
 		gcc_slot_13_4? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_13_4,cxx_standard_cxx17]
+			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
@@ -342,6 +345,7 @@ RDEPEND="
 		)
 		gcc_slot_14_3? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_14_3,cxx_standard_cxx17]
+			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
@@ -349,6 +353,7 @@ RDEPEND="
 		)
 		llvm_slot_18? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_18,cxx_standard_cxx17]
+			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
@@ -356,6 +361,7 @@ RDEPEND="
 		)
 		llvm_slot_19? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_19,cxx_standard_cxx17]
+			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
@@ -372,25 +378,6 @@ RDEPEND="
 	>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_SINGLE_USEDEP}]
 	virtual/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/grpc:=
-	gcc_slot_11_5? (
-		virtual/protobuf-python:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-	)
-	gcc_slot_12_5? (
-		virtual/protobuf-python:4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-	)
-	gcc_slot_13_4? (
-		virtual/protobuf-python:4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-	)
-	gcc_slot_14_3? (
-		virtual/protobuf-python:4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-	)
-	llvm_slot_18? (
-		virtual/protobuf-python:4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-	)
-	llvm_slot_19? (
-		virtual/protobuf-python:4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-	)
-	virtual/protobuf-python:=
 "
 DEPEND="
 	${RDEPEND}
@@ -437,6 +424,53 @@ src_unpack() {
 }
 
 python_configure() {
+	if use gcc_slot_11_5 ; then
+		ABSEIL_CPP_SLOT="20200225"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		RE2_SLOT="20220623"
+	fi
+	if use gcc_slot_12_5 ; then
+		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
+	fi
+	if use gcc_slot_13_4 ; then
+		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
+	fi
+	if use gcc_slot_14_3 ; then
+		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
+	fi
+	if use llvm_slot_18 ; then
+		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
+	fi
+	if use llvm_slot_19 ; then
+		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+	re2_python_configure
+	grpc_python_configure
+
 	cargo_src_configure
 }
 

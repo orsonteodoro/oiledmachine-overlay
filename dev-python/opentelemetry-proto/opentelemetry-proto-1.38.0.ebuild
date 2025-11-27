@@ -27,11 +27,14 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_4
 "
 RDEPEND+="
-	virtual/protobuf-python:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
-	virtual/protobuf:=
+	|| (
+		dev-python/protobuf:5.29[${PYTHON_USEDEP}]
+		dev-python/protobuf:6.33[${PYTHON_USEDEP}]
+	)
+	dev-python/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -41,7 +44,10 @@ BDEPEND+="
 		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
 		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-5.29.5:5[${PYTHON_USEDEP}]
+		|| (
+			dev-python/protobuf:5.29[${PYTHON_USEDEP}]
+			dev-python/protobuf:6.33[${PYTHON_USEDEP}]
+		)
 		dev-python/protobuf:=
 		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
 	)
@@ -50,6 +56,20 @@ DOCS=( "README.rst" )
 
 src_unpack() {
 	unpack ${A}
+}
+
+python_configure() {
+	if has_version "dev-libs/python:5/5.29" ; then
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	elif has_version "dev-libs/python:6/6.33" ; then
+		ABSEIL_CPP_SLOT="20250512"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {

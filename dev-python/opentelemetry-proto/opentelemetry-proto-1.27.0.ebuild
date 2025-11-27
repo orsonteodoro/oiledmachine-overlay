@@ -27,11 +27,14 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_4
 "
 RDEPEND+="
-	virtual/protobuf-python:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
-	virtual/protobuf:=
+	|| (
+		dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:4.25[${PYTHON_USEDEP}]
+	)
+	dev-python/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -45,8 +48,8 @@ BDEPEND+="
 		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
 		|| (
-			>=dev-python/protobuf-3.20.3:3/3.12[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-4.25.3:3/4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25[${PYTHON_USEDEP}]
 		)
 		dev-python/protobuf:=
 		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
@@ -61,6 +64,20 @@ DOCS=( "README.rst" )
 
 src_unpack() {
 	unpack ${A}
+}
+
+python_configure() {
+	if has_version "dev-libs/python:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	elif has_version "dev-libs/python:4/4.25" ; then
+		ABSEIL_CPP_SLOT="20240116"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {
