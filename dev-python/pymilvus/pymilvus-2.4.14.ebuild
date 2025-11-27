@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bulk_writer dev model
-ebuild_revision_1
+ebuild_revision_2
 "
 gen_grpcio_dev() {
 	local impl
@@ -53,9 +53,13 @@ gen_grpcio_dev() {
 		echo "
 			(
 				python_single_target_${impl}? (
-					dev-python/grpcio:4/4.25[python_targets_${impl}(-)]
-					dev-python/grpcio-testing:4/4.25[python_targets_${impl}(-)]
-					dev-python/grpcio-tools:4/4.25[python_targets_${impl}(-)]
+					|| (
+						(
+							dev-python/grpcio:4/1.62[python_targets_${impl}(-)]
+							dev-python/grpcio-testing:4/1.62[python_targets_${impl}(-)]
+							dev-python/grpcio-tools:4/1.62[python_targets_${impl}(-)]
+						)
+					)
 				)
 			)
 		"
@@ -69,8 +73,20 @@ gen_grpcio_rel() {
 		echo "
 			(
 				python_single_target_${impl}? (
-					dev-python/grpcio:4/4.25[python_targets_${impl}(-)]
-					dev-python/protobuf:4.25[python_targets_${impl}(-)]
+					|| (
+						(
+							dev-python/grpcio:3/1.51[python_targets_${impl}(-)]
+							dev-python/protobuf:4.21[python_targets_${impl}(-)]
+						)
+						(
+							dev-python/grpcio:4/1.62[python_targets_${impl}(-)]
+							dev-python/protobuf:4.25[python_targets_${impl}(-)]
+						)
+						(
+							dev-python/grpcio:5/1.71[python_targets_${impl}(-)]
+							dev-python/protobuf:5.29[python_targets_${impl}(-)]
+						)
+					)
 				)
 			)
 		"
@@ -202,12 +218,30 @@ src_unpack() {
 }
 
 python_configure() {
-	if use "dev-libs/protobuf:4/4.25" ; then
+	if use test ; then
 		export ABSEIL_CPP_SLOT="20240116"
 		export GRPC_SLOT="4"
 		export PROTOBUF_CPP_SLOT="4"
 		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
 		export RE2_SLOT="20220623"
+	elif use "dev-libs/protobuf:3/3.21" ; then
+		export ABSEIL_CPP_SLOT="20220623"
+		export GRPC_SLOT="3"
+		export PROTOBUF_CPP_SLOT="3"
+		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		export RE2_SLOT="20220623"
+	elif use "dev-libs/protobuf:4/4.25" ; then
+		export ABSEIL_CPP_SLOT="20240116"
+		export GRPC_SLOT="4"
+		export PROTOBUF_CPP_SLOT="4"
+		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+		export RE2_SLOT="20220623"
+	elif use "dev-libs/protobuf:5/5.29" ; then
+		export ABSEIL_CPP_SLOT="20240722"
+		export GRPC_SLOT="5"
+		export PROTOBUF_CPP_SLOT="5"
+		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		export RE2_SLOT="20240116"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure
