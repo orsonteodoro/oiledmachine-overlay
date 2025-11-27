@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# 6.9.3 - Chromium 130.0.6723.192 (Jan 6, 2025, Week 1)
+
 CFLAGS_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
@@ -10,6 +12,8 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
 CXX_STANDARD=17
+
+CHROMIUM_BROWSER_VER="142.0.7444.175"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -193,6 +197,13 @@ src_prepare() {
 		QT6_CHROMIUM_VER=${BASH_REMATCH[1]} || die
 	[[ ${chromium[2]} =~ ^Patched.+:[^0-9]+([0-9.]+$) ]] &&
 		QT6_CHROMIUM_PATCHES_VER=${BASH_REMATCH[1]} || die
+ewarn
+ewarn "${PN}'s Chromium version:  ${QT6_CHROMIUM_VER} (Jan 6, 2025; Week 1)"
+ewarn "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (Nov 14, 2025; Week 47)"
+ewarn
+ewarn "This package is behind in security updates."
+ewarn "Find a way to remove it or stop it from being added."
+ewarn
 }
 
 src_configure() {
@@ -371,14 +382,11 @@ pkg_postinst() {
 		optfeature "Widevine DRM support (protected media playback)" \
 			www-plugins/chrome-binary-plugins
 
-	elog
-	elog "This version of Qt WebEngine is based on Chromium version ${QT6_CHROMIUM_VER}, with"
-	elog "additional security fixes up to ${QT6_CHROMIUM_PATCHES_VER}. Extensive as it is, the"
-	elog "list of backports is impossible to evaluate, but always bound to be behind"
-	elog "Chromium's release schedule."
-	elog
-	elog "In addition, various online services may deny service based on an outdated"
-	elog "user agent version (and/or other checks). Google is already known to do so."
-	elog
-	elog "tl;dr your web browsing experience will be compromised."
+elog
+elog "${PN} is behind in security updates.  Do not use at all."
+elog "Please remove the package from the system."
+elog
+elog "${PN}'s Chromium version:  ${QT6_CHROMIUM_VER} (Jan 6, 2025; Week 1)"
+elog "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (Nov 14, 2025; Week 47)"
+elog
 }
