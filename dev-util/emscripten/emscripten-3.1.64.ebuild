@@ -340,7 +340,7 @@ setup_test_config() {
 
 cat <<EOF > "${T}/emscripten-${ABI}.config"
 BINARYEN_ROOT = '${EMSDK_BINARYEN_PREFIX}'
-CLOSURE_COMPILER = ${cc_exe}
+CLOSURE_COMPILER = ${cc_exe_str}
 EMSCRIPTEN_ROOT = '${S}'
 JAVA = 'java'
 LLVM_ROOT = '${EMSDK_LLVM_PREFIX}/bin'
@@ -361,7 +361,7 @@ setup_test_env() {
 	# Helper variables for emscripten-${ABI}.conf
 	export EMSDK_BINARYEN_PREFIX="${ESYSROOT}/usr/lib/binaryen/${BINARYEN_SLOT}"
 	export EMSDK_CLOSURE_COMPILER="${cc_cmd}"
-	export EMSDK_EMSCRIPTEN_PREFIX="${WORKDIR}/${P}"
+	export EMSDK_EMSCRIPTEN_PREFIX="${S}"
 	export EMSDK_LLVM_PREFIX="/usr/lib/llvm/${LLVM_SLOT}"
 	export EMSDK_NODE="/usr/lib/node/${node_slot}/bin/node"
 	export EMSDK_PYTHON="/usr/bin/${EPYTHON}"
