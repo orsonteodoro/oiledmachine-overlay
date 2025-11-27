@@ -511,7 +511,7 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/protobuf['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
-		dev-python/protobuf-python:=
+		dev-python/protobuf:=
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-dependency[${PYTHON_USEDEP}]
