@@ -142,7 +142,10 @@ LICENSE="
 # CC-BY-4.0 custom MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement W3C-Software-and-Document-Notice-and-License - ./node_modules/typescript/ThirdPartyNoticeText.txt
 HOMEPAGE="https://github.com/joone/loz"
 SLOT="0"
-IUSE="codellama llama2 ollama"
+IUSE="
+codellama llama2 ollama
+ebuild_revision_1
+"
 REQUIRED_USE="
 	ollama? (
 		|| (
