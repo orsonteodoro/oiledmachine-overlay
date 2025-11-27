@@ -130,9 +130,9 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel cflags-hardened check-compiler-switch check-reqs cuda cython distutils-r1
+inherit abseil-cpp bazel cflags-hardened check-compiler-switch check-reqs cuda cython distutils-r1
 inherit dhms flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot llvm multibuild
-inherit prefix protobuf-python rocm toolchain-funcs
+inherit prefix protobuf rocm toolchain-funcs
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
@@ -589,7 +589,7 @@ GOOGLE_CLOUD_CPP_PROTOBUF_3="
 "
 gen_protobuf_rdepend() {
 	local impl
-	for impl in ${PYTHON_COMPAT[@]} ; do
+	for impl in "${PYTHON_COMPAT[@]}" ; do
 		echo "
 			(
 				${GOOGLE_CLOUD_CPP_PROTOBUF_3}
@@ -614,7 +614,7 @@ RDEPEND_PROTOBUF="
 "
 gen_grpcio_rdepend() {
 	local impl
-	for impl in ${PYTHON_COMPAT[@]} ; do
+	for impl in "${PYTHON_COMPAT[@]}" ; do
 		echo "
 			(
 				dev-python/grpcio:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-)]
@@ -645,7 +645,7 @@ RDEPEND_GRPCIO="
 #
 gen_protobuf_rdepend() {
 	local impl
-	for impl in ${PYTHON_COMPAT[@]} ; do
+	for impl in "${PYTHON_COMPAT[@]}" ; do
 		echo "
 			(
 				dev-libs/protobuf:${PROTOBUF_CPP_PV%%.*}

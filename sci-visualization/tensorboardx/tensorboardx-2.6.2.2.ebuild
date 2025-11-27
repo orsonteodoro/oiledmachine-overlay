@@ -6,20 +6,11 @@ EAPI=8
 
 MY_PN="tensorboardX"
 
-inherit protobuf-ver
-
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_SLOTS_REL=(
-	${PROTOBUF_SLOTS[@]}
-)
-PROTOBUF_SLOTS_DEV=(
-	${PROTOBUF_4_SLOTS[@]}
-	${PROTOBUF_5_SLOTS[@]}
-)
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 protobuf pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -50,29 +41,29 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 gen_protobuf_rdepends() {
-	local s
-	for s in ${PROTOBUF_SLOTS_REL[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				python_single_target_${impl}? (
-					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+	local impl
+	for impl in "${PYTHON_COMPAT[@]}" ; do
+		echo "
+			python_single_target_${impl}? (
+				|| (
+					dev-python/protobuf:4.21[python_targets_${impl}(-)]
+					dev-python/protobuf:5.29[python_targets_${impl}(-)]
 				)
-			"
-		done
+			)
+		"
 	done
 }
 gen_protobuf_bdepends() {
-	local s
-	for s in ${PROTOBUF_SLOTS_DEV[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				python_single_target_${impl}? (
-					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+	local impl
+	for impl in "${PYTHON_COMPAT[@]}" ; do
+		echo "
+			python_single_target_${impl}? (
+				|| (
+					dev-python/protobuf:4.21[python_targets_${impl}(-)]
+					dev-python/protobuf:5.29[python_targets_${impl}(-)]
 				)
-			"
-		done
+			)
+		"
 	done
 }
 RDEPEND+="
@@ -125,12 +116,12 @@ DOCS=( "HISTORY.rst" "README.md" )
 # For dev-python/setuptools-scm
 init_repo() {
 	git init || die
-	touch dummy || die
+	touch "dummy" || die
 	git config user.email "name@example.com" || die
 	git config user.name "John Doe" || die
-	git add dummy || die
+	git add "dummy" || die
 	git commit -m "Dummy" || die
-	git tag v${PV} || die
+	git tag "v${PV}" || die
 }
 
 src_unpack() {
@@ -143,6 +134,27 @@ src_unpack() {
 		cd "${S}" || die
 		init_repo
 	fi
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:5/5.29" ; then
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+	# Align with TensorFlow 2.17
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	else
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {

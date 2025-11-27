@@ -13,9 +13,9 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
+PYTHON_COMPAT=( "python3_11" ) # Upstream only tests up to 3.11.
 
-inherit distutils-r1 protobuf-ver
+inherit abseil-cpp distutils-r1 protobuf
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -45,17 +45,22 @@ tensorflow test
 REQUIRED_USE="
 "
 gen_protobuf_checkpoint_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo "
-				python_single_target_${impl}? (
-					dev-libs/protobuf:0/${s}
-					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+	local impl
+	for impl in "${PYTHON_COMPAT[@]}" ; do
+		echo "
+			python_single_target_${impl}? (
+				|| (
+					(
+						dev-libs/protobuf:3
+						dev-python/protobuf:4.21[python_targets_${impl}(-)]
+					)
+					(
+						dev-libs/protobuf:5
+						dev-python/protobuf:5.29[python_targets_${impl}(-)]
+					)
 				)
-			"
-		done
+			)
+		"
 	done
 }
 CHECKPOINT_RDEPEND="
@@ -143,6 +148,27 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:5/5.29" ; then
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	elif has_version "dev-libs/protobuf:4/4.25" ; then
+	# Align with TensorFlow 2.17
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	else
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {

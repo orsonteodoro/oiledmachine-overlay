@@ -12,11 +12,11 @@
 #
 # Keep version/slot aligned
 #
-# LTS D11/U22 - grpc:3/1.30 - protobuf-cpp:3/3.12 - protobuf-python:3/3.12 - abseil-cpp:20200225 - re2:20220623 # PyTorch 2.9, OpenCV
-# LTS D12/U24 - grpc:3/1.51 - protobuf-cpp:3/3.21 - protobuf-python:4/4.21 - abseil-cpp:20220623 - re2:20220623 # Tensorflow 2.17, JAX
-# Rolling G23 - grpc:4/1.62 - protobuf-cpp:4/4.25 - protobuf-python:4/4.25 - abseil-cpp:20240116 - re2:20220623 # Apache Arrow
-# Rolling G23 - grpc:5/1.71 - protobuf-cpp:5/5.29 - protobuf-python:5/5.29 - abseil-cpp:20240722 - re2:20240116 # TensorFlow 2.20, LocalAI
-# Rolling G23 - grpc:6/1.75 - protobuf-cpp:6/6.33 - protobuf-python:6/6.33 - abseil-cpp:20250512 - re2:20240116
+# LTS D11/U22 - grpc:3/1.30 - protobuf-cpp:3/3.12 - protobuf-python:3.12 - abseil-cpp:20200225 - re2:20220623 # PyTorch 2.9, OpenCV
+# LTS D12/U24 - grpc:3/1.51 - protobuf-cpp:3/3.21 - protobuf-python:4.21 - abseil-cpp:20220623 - re2:20220623 # Tensorflow 2.17, JAX
+# Rolling G23 - grpc:4/1.62 - protobuf-cpp:4/4.25 - protobuf-python:4.25 - abseil-cpp:20240116 - re2:20220623 # Apache Arrow
+# Rolling G23 - grpc:5/1.71 - protobuf-cpp:5/5.29 - protobuf-python:5.29 - abseil-cpp:20240722 - re2:20240116 # TensorFlow 2.20, LocalAI
+# Rolling G23 - grpc:6/1.75 - protobuf-cpp:6/6.33 - protobuf-python:6.33 - abseil-cpp:20250512 - re2:20240116
 #
 # abseil-cpp:20230125 - misc apps/libs
 # abseil-cpp:20220623 - re2 (c++14)

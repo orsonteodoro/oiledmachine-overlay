@@ -17,7 +17,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_11" )
 TENSORFLOW_PV="2.20.0"
 
-inherit distutils-r1 protobuf-ver
+inherit abseil-cpp distutils-r1 protobuf
 
 SRC_URI="
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -42,19 +42,16 @@ REQUIRED_USE="
 	)
 "
 gen_rdepend_protobuf() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
-			echo  "
-				(
-					python_single_target_${impl}? (
-						dev-libs/protobuf:0/${s}
-						dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
-					)
+	local impl
+	for impl in "${PYTHON_COMPAT[@]}" ; do
+		echo  "
+			(
+				python_single_target_${impl}? (
+					dev-libs/protobuf:5/5.29
+					dev-python/protobuf:5.29[python_targets_${impl}(-)]
 				)
-			"
-		done
+			)
+		"
 	done
 }
 RDEPEND="
@@ -177,6 +174,21 @@ src_unpack() {
 src_prepare() {
 	default
 	python_copy_sources
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:5/5.29" ; then
+	# Align with TensorFlow
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	else
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 python_compile() {

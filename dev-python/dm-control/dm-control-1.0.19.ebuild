@@ -11,7 +11,7 @@ MY_PN="${PN/-/_}"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} ) # CI tests with 3.10
 
-inherit distutils-r1 protobuf-ver
+inherit abseil-cpp distutils-r1 protobuf
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -32,14 +32,6 @@ IUSE+="
 hdf5 test
 ebuild_revision_1
 "
-gen_protobuf_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo "
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
-	done
-}
 RDEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.2.1[${PYTHON_USEDEP}]
@@ -58,7 +50,8 @@ RDEPEND+="
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 	)
 	|| (
-		$(gen_protobuf_rdepend)
+		dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:5.29[${PYTHON_USEDEP}]
 	)
 	dev-python/protobuf:=
 "
@@ -76,5 +69,26 @@ BDEPEND+="
 		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 	)
 "
+
+python_configure() {
+	if has_version "dev-libs/protobuf:5/5.29" ; then
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+	# Align with TensorFlow 2.17
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	else
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

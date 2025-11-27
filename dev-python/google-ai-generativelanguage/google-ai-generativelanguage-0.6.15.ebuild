@@ -9,7 +9,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1 protobuf-ver
+inherit abseil-cpp distutils-r1 protobuf
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -30,14 +30,6 @@ RESTRICT="
 		test
 	)
 "
-gen_protobuf_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo "
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
-	done
-}
 RDEPEND="
 	(
 		!=dev-python/google-api-core-2.0*
@@ -76,9 +68,34 @@ RDEPEND="
 	)
 	(
 		|| (
-			$(gen_protobuf_rdepend)
+			dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:4.25[${PYTHON_USEDEP}]
+			dev-python/protobuf:5.29[${PYTHON_USEDEP}]
+			dev-python/protobuf:6.33[${PYTHON_USEDEP}]
 		)
 		dev-python/protobuf:=
 	)
 "
 DOCS=( "README.rst" )
+
+python_configure() {
+	if has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20211102"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	elif has_version "dev-libs/protobuf:4/4.25" ; then
+		ABSEIL_CPP_SLOT="20240116"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4[@]}" )
+	elif has_version "dev-libs/protobuf:5/5.29" ; then
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	else
+		ABSEIL_CPP_SLOT="20211102"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+}

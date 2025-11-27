@@ -12,7 +12,7 @@ MY_P="python-api-core-${PV}"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1 grpc-ver protobuf-ver
+inherit abseil-cpp distutils-r1 grpc protobuf re2
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
@@ -35,28 +35,6 @@ REQUIRED_USE="
 		grpc
 	)
 "
-gen_grpcio_rdepend() {
-	local s1
-	local s2
-	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				=dev-python/grpcio-${s1}*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-status-${s1}*[${PYTHON_USEDEP}]
-				dev-python/protobuf:0/${s2}[${PYTHON_USEDEP}]
-			)
-		"
-	done
-}
-gen_protobuf_rdepend() {
-	local s
-	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo  "
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
-	done
-}
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/proto-plus-1.22.3[${PYTHON_USEDEP}]
@@ -88,7 +66,8 @@ RDEPEND="
 		!=dev-python/protobuf-4.21.4
 		!=dev-python/protobuf-4.21.5
 		|| (
-			$(gen_protobuf_rdepend)
+			dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:5.29[${PYTHON_USEDEP}]
 		)
 		dev-python/protobuf:=
 	)
@@ -100,7 +79,16 @@ RDEPEND="
 	)
 	grpc? (
 		|| (
-			$(gen_grpcio_rdepend)
+			(
+				dev-python/grpcio:3/1.51[${PYTHON_USEDEP}]
+				dev-python/grpcio-status:3/1.51[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+			)
+			(
+				dev-python/grpcio:5/1.71[${PYTHON_USEDEP}]
+				dev-python/grpcio-status:5/1.71[${PYTHON_USEDEP}]
+				dev-python/protobuf:5.29[${PYTHON_USEDEP}]
+			)
 		)
 		dev-python/grpcio:=
 		dev-python/grpcio-status:=
@@ -129,6 +117,35 @@ EPYTEST_IGNORE=(
 	# The grpc_gcp module is missing to perform a stress test
 	"tests/unit/test_grpc_helpers.py"
 )
+
+python_configure() {
+	if has_version "dev-libs/protobuf:5/5.29" ; then
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		GRPC_SLOT="5"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		RE2_SLOT="20240116"
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+	# Align with TensorFlow 2.17
+		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
+	else
+	# Align with TensorFlow 2.20
+		ABSEIL_CPP_SLOT="20240722"
+		GRPC_SLOT="5"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		RE2_SLOT="20240116"
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+	re2_python_configure
+	grpc_python_configure
+}
 
 python_test() {
 	rm -rf google || die
