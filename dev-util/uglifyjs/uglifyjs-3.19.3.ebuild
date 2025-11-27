@@ -8,11 +8,11 @@ MY_PN="UglifyJS"
 NODEJS_PV="0.8"
 NPM_BUILD_SCRIPT="none"
 NPM_INSTALL_PATH="/opt/${PN}"
-NPM_EXE_LIST="
-	${NPM_INSTALL_PATH}/bin/uglifyjs
-	${NPM_INSTALL_PATH}/node_modules/.bin/acorn
-	${NPM_INSTALL_PATH}/node_modules/.bin/semver
-"
+NPM_EXE_LIST=(
+	"${NPM_INSTALL_PATH}/bin/uglifyjs"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/acorn"
+	"${NPM_INSTALL_PATH}/node_modules/.bin/semver"
+)
 
 inherit npm
 
@@ -28,7 +28,10 @@ LICENSE="BSD-2"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" test ebuild_revision_1"
+IUSE="
+test
+ebuild_revision_2
+"
 RDEPEND+="
 	>=net-libs/nodejs-${NODEJS_PV}
 "

@@ -13,10 +13,10 @@ NPM_INSTALL_PATH="/opt/${PN}/${PV}"
 
 NPM_SECAUDIT_AT_TYPES_NODE_PV="22.7.4"
 
-NPM_EXE_LIST="
-"${NPM_INSTALL_PATH}/bin/tsc"
-"${NPM_INSTALL_PATH}/bin/tsserver"
-"
+NPM_EXE_LIST=(
+	"${NPM_INSTALL_PATH}/bin/tsc"
+	"${NPM_INSTALL_PATH}/bin/tsserver"
+)
 
 inherit npm
 
@@ -51,7 +51,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_6
+test ebuild_revision_7
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
