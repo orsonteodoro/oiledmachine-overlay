@@ -7,10 +7,13 @@ EAPI=8
 MY_PN="opentelemetry_exporter_otlp_proto_grpc"
 
 DISTUTILS_USE_PEP517="hatchling"
+GRPC_SLOT="3"
 PROTOBUF_CPP_SLOT="3"
+PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
 PYTHON_COMPAT=( "python3_"{10..12} )
+RE2_SLOT="20220623"
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 grpc protobuf re2 pypi
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -24,9 +27,9 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH for multislot package
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
@@ -51,6 +54,13 @@ DOCS=( "README.rst" )
 
 src_unpack() {
 	unpack ${A}
+}
+
+python_configure() {
+	abseil-cpp_python_configure
+	protobuf_python_configure
+	re2_python_configure
+	grpc_python_configure
 }
 
 src_install() {

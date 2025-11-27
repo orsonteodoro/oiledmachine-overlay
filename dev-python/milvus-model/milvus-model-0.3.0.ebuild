@@ -6,6 +6,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
+
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -41,7 +42,7 @@ IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/scipy-1.10.0[${PYTHON_USEDEP}]
-		dev-python/protobuf[${PYTHON_USEDEP}]
+		dev-python/protobuf:3/3.12[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		dev-python/numpy[${PYTHON_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
@@ -69,11 +70,11 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
+		touch "dummy" || die
+		git add "dummy" || die
 		#git add -f * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -87,6 +88,27 @@ src_unpack() {
 		unpack ${A}
 		gen_git_tag "${S}" "v${PV}"
 	fi
+}
+
+python_prepare_all() {
+	sed -i -e "s|protobuf==3.20.2|protobuf|g" \
+		"src/pymilvus/model/utils/__init__.py" \
+		|| die
+	distutils-r1_python_prepare_all
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {
