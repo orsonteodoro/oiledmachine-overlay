@@ -129,7 +129,7 @@ ebuild_revision_1
 "
 gen_node_depends() {
 	local s
-	for s in ${NODE_SLOTS[@]} ; do
+	for s in "${NODE_SLOTS[@]}" ; do
 		echo "
 			net-libs/nodejs:${s}
 		"
