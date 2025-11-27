@@ -71,14 +71,14 @@
     Certain USE flags should only be enabled for the highest SLOT; otherwise,
     you will get a merge conflict.  They are noted in the use flag section.
 
-    If you run /usr/bin/node without the environmental variable NODE_VERSION, it
-    will default to node the selected active from eselect nodejs (or the major
-    version contained in node_version.h from the active symlink.
+    To run, use the node eclass helper or add the /usr/lib/node/<NODE_SLOT>/bin
+    to PATH then run node.
 
     The NODE_VERSION valid values are 16, 18 which are the Long Term Support
     (LTS) versions.
 
-    Running NODE_VERSION=16 /usr/bin/node --version will show you node16's version.
+    Running `PATH="/usr/lib/node/<NODE_SLOT>/bin:${PATH}" node --version` will
+    show you node's version.
 
     The PGO trainer can be extended with your own customized benchmark to
     optimize for typical use cases.  You must create a folder located at
@@ -86,8 +86,8 @@
     having all of this created as a per-package user patch.  For additonal
     details, see
 
-https://github.com/nodejs/node/blob/master/doc/guides/writing-and-running-benchmarks.md
-https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
+    https://github.com/nodejs/node/blob/master/doc/guides/writing-and-running-benchmarks.md
+    https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
     NODEJS_EXCLUDED_TRAINERS is a per-package envvar that can contain a space
     separated string of paths to exclude from testing whenever a broken
@@ -131,8 +131,32 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
     Example:
 
-    NODEJS_OPENSSL_DEFAULT_CIPHER_SUITE="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA"
-
+NODEJS_OPENSSL_DEFAULT_CIPHER_SUITE="\
+TLS_AES_256_GCM_SHA384:\
+TLS_CHACHA20_POLY1305_SHA256:\
+TLS_AES_128_GCM_SHA256:\
+ECDHE-RSA-AES128-GCM-SHA256:\
+ECDHE-ECDSA-AES128-GCM-SHA256:\
+ECDHE-RSA-AES256-GCM-SHA384:\
+ECDHE-ECDSA-AES256-GCM-SHA384:\
+DHE-RSA-AES128-GCM-SHA256:\
+ECDHE-RSA-AES128-SHA256:\
+DHE-RSA-AES128-SHA256:\
+ECDHE-RSA-AES256-SHA384:\
+DHE-RSA-AES256-SHA384:\
+ECDHE-RSA-AES256-SHA256:\
+DHE-RSA-AES256-SHA256:\
+HIGH:\
+!aNULL:\
+!eNULL:\
+!EXPORT:\
+!DES:\
+!RC4:\
+!MD5:\
+!PSK:\
+!SRP:\
+!CAMELLIA\
+"
 
     JIT_LEVEL_OVERRIDE - Control both the compile time and runtime performance
     of the v8 JavaScript engine.  This build time tunable applies to only
