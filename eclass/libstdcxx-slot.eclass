@@ -276,6 +276,8 @@ _LIBSTDCXX_SLOT_VERIFIED=0
 libstdcxx-slot_verify() {
 # Use abspath to avoid:
 # ccache: error: Could not find compiler "x86_64-pc-linux-gnu-gcc-13" in PATH
+# TODO:  Remove dependence on muxer (gcc-config) for parallel emerge.  The muxer breaks unintended install.
+# TODO:  Support both with and without gcc-config
 	local gcc_slot=$("${ESYSROOT}/usr/bin/gcc-config" -c | cut -f 5 -d "-")
 	local actual_gcc_version=$("${ESYSROOT}/usr/bin/${CHOST}-gcc-${gcc_slot}" --version | head -n 1 | cut -f 5 -d " ")
 	local actual_gcc_ver2=$(ver_cut 1-2 "${actual_gcc_version}")
