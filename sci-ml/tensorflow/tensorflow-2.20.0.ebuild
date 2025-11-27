@@ -75,7 +75,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 # See "deps versioning" section above for details.
@@ -84,7 +84,7 @@ GCC_COMPAT=(
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/gpus/rocm_configure.bzl#L210
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
 inherit hip-versions
@@ -95,7 +95,7 @@ HIP_SLOTS=(
 
 gen_hip_slots2() {
 	local pv
-	for pv in ${HIP_SLOTS[@]} ; do
+	for pv in "${HIP_SLOTS[@]}" ; do
 		local u=$(ver_cut 1-2 "${pv}")
 		u="${u/./_}"
 		echo "rocm_${u}"
@@ -451,7 +451,7 @@ ebuild_revision_20
 "
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -461,7 +461,7 @@ gen_required_use_cuda_targets() {
 }
 gen_required_use_rocm_targets() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -516,8 +516,8 @@ CUDA_12_5_RDEPENDS="
 is_hipblastlt_compat() {
 	local t="${1}"
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		for y in ${!t} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
+		for y in "${!t}" ; do
 			[[ "${x}" == "${y}" ]] && return 0
 		done
 	done
@@ -526,7 +526,7 @@ is_hipblastlt_compat() {
 
 gen_rocm_rdepend() {
 	local pv
-	for pv in ${HIP_SLOTS[@]} ; do
+	for pv in "${HIP_SLOTS[@]}" ; do
 		local s="0/"$(ver_cut 1-2 "${pv}")
 		local ROCM_SLOT=$(ver_cut 1-2 "${pv}")
 		u="${ROCM_SLOT/./_}"
@@ -578,11 +578,11 @@ gen_rocm_rdepend() {
 		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
 		local hipblastlt_compat=()
 		local x
-		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
 		done
 
-		for x in ${hipblastlt_compat[@]} ; do
+		for x in "${hipblastlt_compat[@]}" ; do
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_${x}? (
@@ -779,7 +779,7 @@ PDEPEND="
 	)
 "
 gen_llvm_bdepend() {
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if (( ${s} >= 16 )) ; then
 			echo "
 				llvm_slot_${s}?	(
@@ -866,7 +866,7 @@ ROCM_PATCHES=(
 get-cpu-flags() {
 	local i f=()
 	# Keep this list in sync with tensorflow/core/platform/cpu_feature_guard.cc.
-	for i in ${CPU_USE_FLAGS_X86[@]/fma3/} ; do
+	for i in "${CPU_USE_FLAGS_X86[@]/fma3/}" ; do
 		use cpu_flags_x86_${i} && f+=( -m${i/_/.} )
 	done
 	use cpu_flags_x86_fma3 && f+=( -mfma )
@@ -899,47 +899,23 @@ eerror
 		die
 	fi
 
-einfo "FORCE_LLVM_SLOT may be specified."
-	local _LLVM_COMPAT=(${LLVM_COMPAT[@]})
-	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
-		_LLVM_COMPAT=( ${FORCE_LLVM_SLOT} )
-	fi
+	local _LLVM_COMPAT=(" ${LLVM_COMPAT[@]}" )
 
 	if use rocm ; then
-		if has rocm_6_2 ${IUSE_EFFECTIVE} && use rocm_6_2 ; then
-			_LLVM_COMPAT=( 18 )
-		elif has rocm_6_1 ${IUSE_EFFECTIVE} && use rocm_6_1 ; then
-			_LLVM_COMPAT=( 17 )
-		elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
-			_LLVM_COMPAT=( 17 )
-		elif has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
-			_LLVM_COMPAT=( 17 )
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
-			_LLVM_COMPAT=( 16 )
-		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 ; then
-			_LLVM_COMPAT=( 16 )
-		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 ; then
-			_LLVM_COMPAT=( 15 )
-		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 ; then
-			_LLVM_COMPAT=( 15 )
-		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 ; then
-			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 ; then
-			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 ; then
-			_LLVM_COMPAT=( 14 )
+		if has "rocm_6_4" ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+			_LLVM_COMPAT=( 19 )
 		fi
 	fi
 
 	local found=0
 	local s
-	for s in ${_LLVM_COMPAT[@]} ; do
+	for s in "${_LLVM_COMPAT[@]}" ; do
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+		if "${CC}" --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to clang:${s}"
 			found=1
 			break
@@ -947,7 +923,7 @@ einfo "Switched to clang:${s}"
 	done
 	local found2=0
 	local s_valid
-	for s_valid in ${_LLVM_COMPAT[@]} ; do
+	for s_valid in "${_LLVM_COMPAT[@]}" ; do
 		if (( ${s} == ${s_valid} )) ; then
 			found2=1
 			break
@@ -962,7 +938,7 @@ eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
-	LLVM_SLOT=${s}
+	LLVM_SLOT="${s}"
 	llvm_pkg_setup
 	"${CC}" --version || die
 	strip-unsupported-flags
@@ -974,29 +950,21 @@ pkg_setup() {
 use rocm && ewarn "The rocm USE flag is currently broken"
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "CXXFLAGS:\t${CXXFLAGS}"
-einfo "LDFLAGS:\t${LDFLAGS}"
-einfo "PATH:\t${PATH}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "PATH:  ${PATH}"
 	if use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_6_2 ${IUSE_EFFECTIVE} && use rocm_6_2 ; then
-			LLVM_SLOT=18
-			ROCM_SLOT="6.2"
-			ROCM_VERSION="${HIP_6_2_VERSION}"
-		elif has rocm_6_1 ${IUSE_EFFECTIVE} && use rocm_6_1 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="6.1"
-			ROCM_VERSION="${HIP_6_1_VERSION}"
-		elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="6.0"
-			ROCM_VERSION="${HIP_6_0_VERSION}"
+		if has "rocm_6_4" ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+			LLVM_SLOT=19
+			ROCM_SLOT="6.4"
+			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
 		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
@@ -1186,7 +1154,7 @@ patch_rocm() {
 	if use rocm ; then
 #		rm "third_party/xla/third_party/gpus/find_rocm_config.py.gz.base64" || die
 		local f
-		for f in ${ROCM_PATCHES[@]} ; do
+		for f in "${ROCM_PATCHES[@]}" ; do
 			eapply "${WORKDIR}/patches/rocm/${f}"
 		done
 	fi
@@ -1356,7 +1324,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 get_cuda_targets() {
 	local targets
 	local target
-	for target in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		if use "cuda_targets_${target}" ; then
 			targets+=",${target}"
 		fi
@@ -1485,38 +1453,38 @@ einfo
 	# com_google_protobuf is disabled due to https://github.com/tensorflow/tensorflow/issues/61593
 	# See https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/systemlibs/syslibs_configure.bzl
 		local SYSLIBS=(
-			#absl_py		# Breaks during unpack
-			astor_archive
-			astunparse_archive
-			boringssl
-			com_github_googlecloudplatform_google_cloud_cpp
-			com_github_grpc_grpc
-			#com_google_absl	# Breaks during unpack
-			#com_google_protobuf	# Breaks during unpack
-			curl
-			cython
-			dill_archive
+			#"absl_py"		# Breaks during unpack
+			"astor_archive"
+			"astunparse_archive"
+			"boringssl"
+			"com_github_googlecloudplatform_google_cloud_cpp"
+			"com_github_grpc_grpc"
+			#"com_google_absl"	# Breaks during unpack
+			#"com_google_protobuf"	# Breaks during unpack
+			"curl"
+			"cython"
+			"dill_archive"
 			$(usex system-flatbuffers "flatbuffers" "")
-			functools32_archive
-			gast_archive
-			gif
-			hwloc
-			icu
-			jsoncpp_git
-			libjpeg_turbo
-			#lmdb
-			nasm
-			#opt_einsum_archive
-			org_sqlite
-			pasta
-			png
-			pybind11
-			six_archive
-			tblib_archive
-			termcolor_archive
-			typing_extensions_archive
-			wrapt
-			zlib
+			"functools32_archive"
+			"gast_archive"
+			"gif"
+			"hwloc"
+			"icu"
+			"jsoncpp_git"
+			"libjpeg_turbo"
+			#"lmdb"
+			"nasm"
+			#"opt_einsum_archive"
+			"org_sqlite"
+			"pasta"
+			"png"
+			"pybind11"
+			"six_archive"
+			"tblib_archive"
+			"termcolor_archive"
+			"typing_extensions_archive"
+			"wrapt"
+			"zlib"
 		)
 
 		export TF_SYSTEM_LIBS=$(echo "${SYSLIBS[@]}")
