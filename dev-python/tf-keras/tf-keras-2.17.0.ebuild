@@ -8,10 +8,10 @@ BAZEL_PV="5.4.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 JAVA_SLOT=11
-PROTOBUF_PYTHON_SLOT="5"
+PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit bazel distutils-r1 java-pkg-opt-2 protobuf-python pypi
+inherit abseil-cpp bazel distutils-r1 java-pkg-opt-2 protobuf pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -64,16 +64,15 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_1
+ebuild_revision_3
 "
-# protobuf requirement relaxed
 RDEPEND+="
 	$(python_gen_cond_dep '
 		(
 			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 			<dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
 		)
-		>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
+		dev-python/protobuf:4.21[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
@@ -127,8 +126,11 @@ src_prepare() {
 }
 
 python_configure() {
-	local PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
-	protobuf_python_set_pythonpath
+	ABSEIL_CPP_SLOT="20220623"
+	PROTOBUF_CPP_SLOT="3"
+	PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_configure() {
@@ -148,7 +150,7 @@ add_sandbox_rules() {
 	local L=()
 
 	local s
-	for s in ${CYTHON_SLOTS[@]} ; do
+	for s in "${CYTHON_SLOTS[@]}" ; do
 		L+=(
 			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages"
 			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/__pycache__"
@@ -172,7 +174,7 @@ python_compile() {
 		distutils-r1_python_compile
 	popd >/dev/null 2>&1 || die
 	pushd "${WORKDIR}/${P}-${EPYTHON/./_}" >/dev/null 2>&1 || die
-		ebazel build //tf_keras/tools/pip_package:build_pip_package
+		ebazel build "//tf_keras/tools/pip_package:build_pip_package"
 		ebazel shutdown
 		local srcdir="${T}/src-${EPYTHON/./_}"
 		mkdir -p "${srcdir}" || die

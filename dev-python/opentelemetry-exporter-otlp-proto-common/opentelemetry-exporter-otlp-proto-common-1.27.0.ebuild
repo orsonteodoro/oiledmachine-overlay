@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="hatchling"
 PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 protobuf pypi
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
@@ -45,8 +45,8 @@ BDEPEND+="
 		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
 		|| (
-			>=dev-python/protobuf-3.20.3:3/3.12[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-4.25.3:4/4.21[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-3.20.3:4.21[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-4.25.3:4.25[${PYTHON_USEDEP}]
 		)
 		dev-python/protobuf:=
 		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
@@ -61,6 +61,20 @@ DOCS=( "README.rst" )
 
 src_unpack() {
 	unpack ${A}
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+#	elif has_version "dev-libs/protobuf:4/4.25" ; then
+#		ABSEIL_CPP_SLOT="20240116"
+#		PROTOBUF_CPP_SLOT="4"
+#		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {

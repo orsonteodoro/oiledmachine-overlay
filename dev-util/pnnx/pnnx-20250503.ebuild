@@ -21,7 +21,7 @@ TORCH_TO_VISION=(
 	"2.0:0.15.2"
 )
 
-inherit cmake distutils-r1 pypi
+inherit abseil-cpp cmake distutils-r1 protobuf pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -51,7 +51,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" onnxruntime protobuf torchvision"
+IUSE+="
+onnxruntime protobuf torchvision
+ebuild_revision_1
+"
 gen_torch_rdepend() {
 	local row
 	for row in ${TORCH_TO_VISION[@]} ; do
@@ -71,13 +74,15 @@ RDEPEND+="
 	|| (
 		$(gen_torch_rdepend)
 	)
-	$(python_gen_cond_dep '
-		>=dev-python/protobuf-3.12.4[${PYTHON_USEDEP}]
-	')
 	onnxruntime? (
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	protobuf? (
+		$(python_gen_cond_dep '
+			dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+		')
+		dev-python/protobuf:=
+		dev-libs/protobuf:3/3.21
 		dev-libs/protobuf:=
 	)
 "
@@ -119,6 +124,13 @@ src_prepare() {
 }
 
 src_configure() {
+	if use protobuf ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		abseil-cpp_src_configure
+		protobuf_src_configure
+	fi
+
 	export MAKEOPTS="-j1"
 	local mycmakeargs=(
 		-DPython3_EXECUTABLE="${PYTHON}"
