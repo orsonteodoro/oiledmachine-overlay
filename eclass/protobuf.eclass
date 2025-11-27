@@ -74,6 +74,27 @@
 # }
 #
 
+#
+# Full example for setuptools based projects:
+#
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+#
+# ABSEIL_CPP_SLOT="20220623"
+# PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# inherit abseil-cpp cmake disutils-r1
+#
+# python_configure() {
+#   # Assume protobuf-cpp:3/3.21 row in the above alignment table.
+#
+#   # For adding
+#   # RPATH linking flags to correct dynamic library search
+#   # Executible PATHs for protoc code generator
+#   abseil-cpp_python_configure
+#   protobuf_python_configure
+# }
+#
+
 case ${EAPI:-0} in
 	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -135,6 +156,7 @@ PROTOBUF_PYTHON_SLOTS_6=(
 #
 # PROTOBUF_CPP_LINK_MODE="direct"
 # PROTOBUF_CPP_SLOT="3"
+#
 # inherit protobuf
 #
 # src_configure() {
@@ -223,6 +245,21 @@ ewarn "QA:  Setting protobuf-python support for PYTHONPATH is skipped.  Set PROT
 # @FUNCTION:  protobuf_python_configure
 # @DESCRIPTION:
 # Alias for ebuild style consistency
+#
+# Example for setuptools based projects:
+#
+# PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+#
+# inherit abseil-cpp cmake disutils-r1
+#
+# python_configure() {
+#   # For adding
+#   # RPATH linking flags to correct dynamic library search
+#   # Executible PATHs for protoc code generator
+#   abseil-cpp_python_configure
+# }
+#
 protobuf_python_configure() {
 	grpc_src_configure
 }
@@ -234,6 +271,7 @@ protobuf_python_configure() {
 # Example:
 #
 # PROTOBUF_CPP_SLOT="3"
+#
 # inherit cmake protobuf
 #
 # src_configure() {

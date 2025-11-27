@@ -36,6 +36,7 @@ inherit flag-o-matic
 # Example:
 #
 # RE2_SLOT="20240116"
+#
 # inherit re2
 #
 # src_configure() {
@@ -96,6 +97,16 @@ eerror "QA:  Set either RE2_PV or RE2_SLOT"
 # @FUNCTION:  re2_python_configure
 # @DESCRIPTION:
 # Alias for ebuild style consistency
+# Example:
+#
+# RE2_SLOT="20240116"
+#
+# inherit re2
+#
+# src_configure() {
+#   re2_python_configure
+# }
+#
 re2_python_configure() {
 	re2_src_configure
 }
@@ -107,6 +118,7 @@ re2_python_configure() {
 # Example:
 #
 # RE2_SLOT="20240116"
+#
 # inherit re2
 #
 # src_configure() {

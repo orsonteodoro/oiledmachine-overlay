@@ -37,6 +37,7 @@ _OPENTELEMETRY_ECLASS=1
 #
 # OPENTELEMETRY_LINK_MODE="direct"
 # OPENTELEMETRY_SLOT="3"
+#
 # inherit opentelemetry
 #
 # src_configure() {
@@ -110,6 +111,22 @@ eerror "QA:  Set either OPENTELEMETRY_PV or OPENTELEMETRY_SLOT"
 # @FUNCTION:  opentelemetry_python_configure
 # @DESCRIPTION:
 # Alias for ebuild style consistency
+#
+# Full example for setuptools projects:
+#
+# OPENTELEMETRY_SLOT="3"
+#
+# inherit distutils-r1 opentelemetry
+#
+# python_configure() {
+#   # For adding paths for
+#   # RPATH correction to find multislotted dynamic library
+#   # PKG_CONFIG_PATHs for package detection
+#   # LD_LIBRARY_PATHs for loading multislot dynamic libraries for build time executibles
+#   # Executible PATHs for multislotted gRPC plugins or protoc code generator
+#   opentelemetry_python_configure
+# }
+#
 opentelemetry_python_configure() {
 	opentelemetry_src_configure
 }

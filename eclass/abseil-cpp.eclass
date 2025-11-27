@@ -42,6 +42,7 @@ inherit flag-o-matic
 #
 # ABSEIL_CPP_LINK_MODE="direct"
 # ABSEIL_CPP_SLOT="20250814"
+#
 # inherit abseil-cpp
 #
 # src_configure() {
@@ -110,6 +111,22 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 # @FUNCTION:  abseil-cpp_python_configure
 # @DESCRIPTION:
 # Alias for ebuild style consistency
+#
+# Example:
+#
+# ABSEIL_CPP_LINK_MODE="direct"
+# ABSEIL_CPP_SLOT="20250814"
+#
+# inherit abseil-cpp
+#
+# python_configure() {
+#   # For auto adding:
+#   # C/C++ include headers
+#   # LD linker flags
+#   # RPATH correction to find multislotted dynamic libraries
+#   abseil-cpp_src_configure
+# }
+#
 abseil-cpp_python_configure() {
 	grpc_src_configure
 }

@@ -92,6 +92,32 @@ inherit flag-o-matic
 # }
 #
 
+#
+# Full example for setuptools projects:
+#
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+#
+# GRPC_SLOT="3"
+# PROTOBUF_CPP_SLOT="3"
+# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# RE2_SLOT="20220623"
+#
+# inherit abseil-cpp distutils-r1 grpc
+#
+# python_configure() {
+#   # Assume grpc:3/1.51 row in the above alignment table.
+#
+#   # For adding paths for
+#   # RPATH correction to find multislotted dynamic library
+#   # PKG_CONFIG_PATHs for package detection
+#   # LD_LIBRARY_PATHs for loading multislot dynamic libraries for build time executibles
+#   # Executible PATHs for multislotted gRPC plugins or protoc code generator
+#   abseil-cpp_python_configure
+#   protobuf_python_configure
+#   grpc_python_configure
+# }
+#
+
 # @FUNCTION:  grpc_src_configure
 # @DESCRIPTION:
 # Append flags for C/C++ while passing LDFLAGS directly to linker
@@ -99,6 +125,7 @@ inherit flag-o-matic
 # Example:
 #
 # GRPC_SLOT="3"
+#
 # inherit grpc
 #
 # src_configure() {
@@ -177,6 +204,23 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 # @FUNCTION:  grpc_python_configure
 # @DESCRIPTION:
 # Alias for ebuild style consistency
+#
+# Example for setuptools projects:
+#
+# GRPC_SLOT="3"
+#
+# inherit distutils-r1 grpc
+#
+# python_configure() {
+#   # For adding paths to
+#   # C/C++ include headers
+#   # LD linker flags
+#   # RPATH correction to find multislotted dynamic library
+#   # LD_LIBRARY_PATHs for loading multislot dynamic libraries for build time executibles
+#   # Executible PATHs for multislotted gRPC plugins
+#   grpc_python_configure
+# }
+#
 grpc_python_configure() {
 	grpc_src_configure
 }
@@ -188,6 +232,7 @@ grpc_python_configure() {
 # Example:
 #
 # GRPC_SLOT="3"
+#
 # inherit cmake grpc
 #
 # src_configure() {
