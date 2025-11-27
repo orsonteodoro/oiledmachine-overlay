@@ -35,7 +35,7 @@ LLVM_SLOT="20"
 LLVM_MAX_SLOT="${LLVM_SLOT}"
 EMSCRIPTEN_SLOT="${LLVM_SLOT}-"$(ver_cut "1-2" "${PV}") # After LLVM_SLOT
 INSTALL_PREFIX="/usr/lib/emscripten/${EMSCRIPTEN_SLOT}" # After EMSCRIPTEN_SLOT
-NODE_SLOT_MIN="16"
+NODE_SLOT_MIN="18"
 PYTHON_COMPAT=( "python3_"{8..12} ) # emsdk lists 3.9
 TEST_PATH="${WORKDIR}/test/"
 BROWSERS_MIN_VER="Chrome 85, Firefox 79, Safari 15"
@@ -162,7 +162,7 @@ IUSE+="
 ${_CLOSURE_COMPILER_IMPLS[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -closure-compiler java test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
