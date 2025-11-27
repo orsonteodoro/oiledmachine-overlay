@@ -137,6 +137,7 @@ RDEPEND+="
 	|| (
 		$(gen_node_depends)
 	)
+	net-libs/nodejs:=
 "
 DEPEND+="
 	${RDEPEND}
