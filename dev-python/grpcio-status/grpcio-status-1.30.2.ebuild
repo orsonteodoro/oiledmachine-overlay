@@ -26,7 +26,10 @@ HOMEPAGE="
 	https://pypi.org/project/grpcio-status/
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/grpcio:=

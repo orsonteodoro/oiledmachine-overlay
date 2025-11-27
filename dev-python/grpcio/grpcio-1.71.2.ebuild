@@ -40,10 +40,10 @@ HOMEPAGE="
 	https://github.com/grpc/grpc/tree/master/src/python/grpcio
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}" # Use wrapper for PYTHONPATH
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 doc
-ebuild_revision_8
+ebuild_revision_9
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning

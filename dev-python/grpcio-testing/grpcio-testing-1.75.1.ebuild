@@ -26,8 +26,10 @@ HOMEPAGE="
 	https://github.com/grpc/grpc/tree/master/src/python/grpcio_testing
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}"
-IUSE="ebuild_revision_1"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
+IUSE="
+ebuild_revision_2
+"
 RDEPEND="
 	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/grpcio:=

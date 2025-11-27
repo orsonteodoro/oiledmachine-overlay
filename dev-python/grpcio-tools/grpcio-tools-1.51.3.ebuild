@@ -48,10 +48,10 @@ HOMEPAGE="
 	https://github.com/grpc/grpc/tree/master/tools/distrib/python/grpcio_tools
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${_CXX_STANDARD[@]}
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	^^ (
