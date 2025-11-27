@@ -1,7 +1,7 @@
 #!/bin/bash
-ROOT="/usr/LIBDIR/RadialGM"
-ENIGMA_DIR="/usr/LIBDIR/enigma"
-export PATH="${ENIGMA_DIR}:${ROOT}:${PATH}"
-pushd "${ENIGMA_DIR}" # Do not remove.  It will break emake if removed.
-	"${ROOT}/RadialGM" "${@}"
+ENIGMA_PREFIX="/usr/lib/enigma"
+RADIALGM_PREFIX="/usr/lib/RadialGM"
+export PATH="${ENIGMA_PREFIX}:${RADIALGM_PREFIX}:${PATH}"
+pushd "${ENIGMA_PREFIX}" # Do not remove.  It will break emake if removed.
+	"${RADIALGM_PREFIX}/RadialGM" "${@}"
 popd

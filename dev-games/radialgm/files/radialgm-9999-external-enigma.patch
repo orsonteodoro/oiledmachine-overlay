@@ -4,7 +4,7 @@ Date:  Sun Jul 24 22:24:06 PDT 2022
 diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
 --- radialgm-9999.orig/CMakeLists.txt	2022-07-27 01:13:03.999089410 -0700
 +++ radialgm-9999/CMakeLists.txt	2022-07-27 01:16:48.935887675 -0700
-@@ -196,6 +196,21 @@ endif()
+@@ -196,6 +196,20 @@ endif()
   set(RGM_SOURCES ${RGM_SOURCES} Plugins/ServerPlugin.cpp)
   set(RGM_HEADERS ${RGM_HEADERS} Plugins/ServerPlugin.h)
  
@@ -12,8 +12,7 @@ diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
 +set(ENIGMA_PATHS "")
 +if (EXTERNAL_ENIGMA)
 +    set(_ENIGMA_PATHS
-+        /usr/lib64/enigma
-+        /usr/lib32/enigma
++        /usr/lib/enigma
 +    )
 +    foreach(ENIGMA_PATH ${_ENIGMA_PATHS})
 +        if(EXISTS ${ENIGMA_PATH})
@@ -26,7 +25,7 @@ diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
  # Tell CMake to create the RadialGM executable
  add_executable(${EXE} WIN32 ${RGM_UI} ${RGM_HEADERS} ${RGM_SOURCES} ${EDITOR_SOURCES} ${RGM_RC})
  
-@@ -259,10 +274,46 @@ find_package(Qt5 COMPONENTS Core Widgets
+@@ -259,10 +274,45 @@ find_package(Qt5 COMPONENTS Core Widgets
  target_link_libraries(${EXE} PRIVATE Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport Qt5::Multimedia)
  
  # LibProto
@@ -57,8 +56,7 @@ diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
 +        REQUIRED
 +    )
 +    set(_PROTO_INCLUDES
-+        "/usr/lib64/enigma/shared/protos/.eobjs"
-+        "/usr/lib32/enigma/shared/protos/.eobjs"
++        "/usr/lib/enigma/shared/protos/.eobjs"
 +    )
 +    foreach(PROTO_INCLUDE in ${_PROTO_INCLUDES})
 +        if(EXISTS ${PROTO_INCLUDE})

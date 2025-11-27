@@ -77,7 +77,7 @@ HOMEPAGE="
 SLOT="0"
 IUSE+="
 libmaker
-ebuild_revision_2
+ebuild_revision_3
 "
 DEPEND_LATERALGM="
 	virtual/jre:${JAVA_SLOT}
@@ -381,7 +381,7 @@ src_compile() {
 src_install_lateralgm()
 {
 	einfo "Installing ${MY_PN_LATERALGM}"
-	insinto "/usr/$(get_libdir)/enigma"
+	insinto "/usr/lib/enigma"
 	doins "${PN}.jar"
 	exeinto "/usr/bin"
 	cp \
@@ -409,21 +409,21 @@ src_install_lateralgm()
 src_install_lgmplugin()
 {
 	einfo "Installing ${MY_PN_LGMPLUGIN}"
-	insinto "/usr/$(get_libdir)/enigma/plugins"
+	insinto "/usr/lib/enigma/plugins"
 	doins "enigma.jar"
 	cd "${S_LATERALGM}" || die
 	docinto "licenses/lgmplugin"
 	dodoc "COPYING" "LICENSE" "README.md"
 	docinto "licenses/fonts/calico"
 	dodoc "org/lateralgm/icons/Calico/LICENSE"
-	insinto "/usr/$(get_libdir)/enigma/plugins/shared"
+	insinto "/usr/lib/enigma/plugins/shared"
 	doins "${WORKDIR}/jna.jar"
 }
 
 src_install_libmaker()
 {
 	einfo "Installing ${MY_PN_LIBMAKER}"
-	insinto "/usr/$(get_libdir)/enigma"
+	insinto "/usr/lib/enigma"
 	doins "${MY_PN_LIBMAKER,,}.jar"
 	exeinto "/usr/bin"
 	cat \
@@ -449,7 +449,7 @@ src_install_libmaker()
 }
 
 src_install() {
-	export JNA_IPATH="/usr/$(get_libdir)/enigma/plugins/shared/jna.jar"
+	export JNA_IPATH="/usr/lib/enigma/plugins/shared/jna.jar"
 	S="${S_LATERALGM}"
 	BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die

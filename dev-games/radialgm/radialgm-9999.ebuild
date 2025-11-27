@@ -13,15 +13,15 @@ QT_PV="5.15.2"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cmake desktop git-r3 grpc-ver libcxx-slot libstdcxx-slot toolchain-funcs xdg
+inherit abseil-cpp cmake desktop git-r3 grpc libcxx-slot libstdcxx-slot protobuf re2 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -43,7 +43,7 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 doc
-ebuild_revision_3
+ebuild_revision_5
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
@@ -65,10 +65,13 @@ RDEPEND+="
 	>=media-libs/freetype-2.11.0
 	>=media-libs/harfbuzz-2.9.1
 	>=net-dns/c-ares-1.17.2
+	|| (
+		net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		net-libs/grpc:6/1.75[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+	net-libs/grpc:=
 	>=x11-libs/qscintilla-2.13.0
 	dev-games/enigma:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/grpc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/grpc:=
 	virtual/jpeg
 "
 DEPEND+="
@@ -90,7 +93,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	export ENIGMA_INSTALL_DIR="/usr/$(get_libdir)/enigma"
+	export ENIGMA_INSTALL_DIR="/usr/lib/enigma"
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
@@ -121,6 +124,28 @@ src_prepare() {
 }
 
 src_configure() {
+	if has_version "dev-libs/protobuf:6/6.33" ; then
+	# Enigma slot equivalent being CI tested
+		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
+	elif has_version "dev-libs/protobuf:3/3.12" ; then
+	# Enigma slot equivalent being CI tested
+		ABSEIL_CPP_SLOT="20200225"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		RE2_SLOT="20220623"
+	else
+	# Enigma slot equivalent fallback
+		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
+	fi
 	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
 		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
 			| grep -q -F -e "--server"
@@ -133,12 +158,30 @@ eerror
 			die
 		fi
 	popd >/dev/null 2>&1 || die
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	re2_src_configure
+	grpc_src_configure
 
-	local dirs=$(find /usr/lib/gcc/ -name "libstdc++fs.a" -print0 \
+	local slot
+	if use gcc_slot_11_5 ; then
+		slot="11"
+	elif use gcc_slot_12_5 ; then
+		slot="12"
+	elif use gcc_slot_13_4 ; then
+		slot="13"
+	elif use gcc_slot_14_3 ; then
+		slot="14"
+	else
+eerror "Use gcc_slot_<x> USE flag to make this error disappear."
+		die
+	fi
+
+	local dirs=$(find "/usr/lib/gcc/${CHOST}/${slot}" -name "libstdc++fs.a" -print0 \
 		| xargs -0 dirname \
 		| tr "\n" ":")
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/${MY_PN}"
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/${MY_PN}"
 		-DCMAKE_LIBRARY_PATH="${dirs}"
 		-DEXTERNAL_ENIGMA=ON
 		-DRGM_BUILD_EMAKE=OFF
@@ -155,16 +198,16 @@ src_install() {
 	cmake_src_install
 	cat \
 		"${FILESDIR}/${MY_PN}" \
-		> \
+			> \
 		"${T}/${MY_PN}" \
 		|| die
 	sed -i \
 		-e "s|LIBDIR|$(get_libdir)|g" \
 		"${T}/${MY_PN}" \
 		|| die
-	exeinto /usr/bin
+	exeinto "/usr/bin"
 	doexe "${T}/${MY_PN}"
-	pushd Images >/dev/null 2>&1 || die
+	pushd "Images" >/dev/null 2>&1 || die
 		convert \
 			-verbose \
 			"icon.ico[0]" \
@@ -185,17 +228,26 @@ src_install() {
 		"Images/icon-16x16.png" \
 		"${MY_PN}.png"
 	make_desktop_entry \
-		"/usr/$(get_libdir)/${MY_PN}" \
+		"/usr/lib/${MY_PN}" \
 		"Development;IDE"
-	dosym "${ENIGMA_INSTALL_DIR}" \
-		"/usr/$(get_libdir)/${MY_PN}/enigma-dev"
-	patchelf \
-		--remove-rpath "${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" \
-		|| die
-	patchelf \
-		--set-rpath "/usr/$(get_libdir)/enigma" \
-		"${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" \
-		|| die
+	dosym \
+		"${ENIGMA_INSTALL_DIR}" \
+		"/usr/lib/${MY_PN}/enigma-dev"
+
+	local BINS=(
+		"${ED}/usr/lib/${MY_PN}/${MY_PN}"
+	)
+
+	local f
+	for f in "${BINS[@]}" ; do
+		local p="${ED}${install_dir}/${f}"
+		patchelf --remove-rpath "${p}" || die
+		patchelf --add-rpath "/usr/lib/enigma"
+		patchelf --add-rpath "/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/re2/${RE2_SLOT}/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" "${p}" || die
+	done
 }
 
 pkg_postinst() {

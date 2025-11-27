@@ -44,7 +44,6 @@ MESA_PV="23.2.1"
 MPG123_PV="1.32.2"
 OPENAL_PV="1.23.1"
 OPUS_PV="1.4"
-PROTOBUF_SLOT="3"
 PULSEAUDIO_PV="16.1"
 SDL2_MIXER_PV="2.0.4" # missing in CI
 VIRTUAL_WINE_PV="0"
@@ -55,16 +54,17 @@ ZLIB_PV="1.3"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 LLVM_MAX_SLOT="19"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
-inherit check-compiler-switch desktop flag-o-matic git-r3 libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+inherit abseil-cpp check-compiler-switch desktop flag-o-matic git-r3 grpc
+inherit libcxx-slot libstdcxx-slot protobuf re2 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -87,9 +87,9 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
-gnome gtk2 gtest headless joystick kde network +openal
+gnome gtk2 headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -174,31 +174,29 @@ REQUIRED_USE+="
 		X
 	)
 "
-CDEPEND="
-	virtual/grpc[${LIBSTDCXX_USEDEP}]
-	virtual/grpc:=
+DEPEND="
 "
 # libepoxy missing in CI
 GLES_DEPEND="
 	>=media-libs/glm-${GLM_PV}
-	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
-	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/libepoxy-1.5.4
+	>=media-libs/mesa-${MESA_PV}
 "
 OPENGL_DEPEND="
-	>=media-libs/glew-${GLEW_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/glew-${GLEW_PV}
 	>=media-libs/glm-${GLM_PV}
-	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-${MESA_PV}
 "
 
 gen_clang_deps() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				>=llvm-runtimes/libcxx-${s}[${MULTILIB_USEDEP}]
-				>=llvm-runtimes/libcxxabi-${s}[${MULTILIB_USEDEP}]
-				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
+				>=llvm-runtimes/libcxx-${s}
+				>=llvm-runtimes/libcxxabi-${s}
+				llvm-core/clang:${s}
 				llvm-core/lld:${s}
-				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:${s}
 				test? (
 					>=dev-debug/lldb-${s}
 				)
@@ -214,36 +212,45 @@ gen_clang_deps() {
 # kdialog missing in CI
 # xinerama missing in CI
 # zenity missing in CI
-DEPEND+="
-	${CDEPEND}
-	>=dev-cpp/abseil-cpp-20230802.1:=[${MULTILIB_USEDEP}]
-	>=dev-cpp/yaml-cpp-0.8.0[${MULTILIB_USEDEP}]
-	>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-	>=dev-libs/double-conversion-3.3.0[${MULTILIB_USEDEP}]
-	>=dev-libs/libpcre2-10.39[${MULTILIB_USEDEP},pcre16]
-	>=dev-libs/openssl-3.1.3[${MULTILIB_USEDEP}]
-	>=dev-libs/pugixml-1.14[${MULTILIB_USEDEP}]
-	>=dev-libs/rapidjson-1.1.0
+RDEPEND+="
+	>=dev-cpp/yaml-cpp-0.8.0
+	>=dev-libs/boost-${BOOST_PV}
+	>=dev-libs/double-conversion-3.3.0
+	>=dev-libs/libpcre2-10.39[pcre16]
+	>=dev-libs/openssl-3.1.3
+	>=dev-libs/pugixml-1.14
 	>=media-libs/glm-${GLM_PV}
-	>=media-libs/harfbuzz-8.2.1[${MULTILIB_USEDEP}]
-	>=net-dns/c-ares-1.20.1[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
-	virtual/jpeg[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-8.2.1
+	>=net-dns/c-ares-1.20.1
+	>=sys-libs/zlib-${ZLIB_PV}
+	virtual/jpeg
 	virtual/libc
+	|| (
+		(
+			dev-cpp/abseil-cpp:20200225
+			net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
+		(
+			dev-cpp/abseil-cpp:20250512
+			net-libs/grpc:6/1.75[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
+	)
+	dev-cpp/abseil-cpp:=
+	net-libs/grpc:=
 	box2d? (
 		|| (
-			<games-engines/box2d-2.4:2.3[${MULTILIB_USEDEP}]
-			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
+			<games-engines/box2d-2.4:2.3
+			<games-engines/box2d-2.4:2.3.0
 		)
 	)
 	bullet? (
-		>=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}]
+		>=sci-physics/bullet-${BULLET_PV}
 	)
 	externalfuncs? (
-		>=dev-libs/libffi-${LIBFFI_PV}[${MULTILIB_USEDEP}]
+		>=dev-libs/libffi-${LIBFFI_PV}
 	)
 	freetype? (
-		>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs]
+		>=media-libs/freetype-${FREETYPE_PV}[static-libs]
 	)
 	gles2? (
 		${GLES_DEPEND}
@@ -254,73 +261,82 @@ DEPEND+="
 		${OPENGL_DEPEND}
 	)
 	gme? (
-		>=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/game-music-emu-${GME_PV}
 	)
 	gnome? (
 		>=gnome-extra/zenity-3.42.0
 	)
 	gtk2? (
-		>=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}]
-	)
-	gtest? (
-		>=dev-cpp/gtest-${GTEST_PV}[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-2.24.33:2
 	)
 	kde? (
 		>=kde-apps/kdialog-21.12.3
 	)
 	network? (
-		>=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}]
+		>=net-misc/curl-${CURL_PV}
 	)
 	openal? (
-		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP},dumb,vorbis]
-		>=media-libs/dumb-0.9.3[${MULTILIB_USEDEP}]
-		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
-		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/alure-${ALURE_PV}[dumb,vorbis]
+		>=media-libs/dumb-0.9.3
+		>=media-libs/libvorbis-${LIBVORBIS_PV}
+		>=media-libs/openal-${OPENAL_PV}
 	)
 	opengl? (
 		${OPENGL_DEPEND}
 	)
 	png? (
-		>=media-libs/libpng-${LIBPNG_PV}[${MULTILIB_USEDEP}]
-		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-${LIBPNG_PV}
+		>=sys-libs/zlib-${ZLIB_PV}
 	)
 	sdl2? (
-		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads(+)?,vulkan?]
+		>=media-libs/libsdl2-${LIBSDL2_PV}[joystick?,sound?,threads(+)?,vulkan?]
 		sound? (
-			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
+			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[flac,mod,mp3,vorbis]
 		)
 		X? (
-			>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?]
+			>=media-libs/libsdl2-${LIBSDL2_PV}[opengl?]
 		)
 	)
 	X? (
-		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
-		>=sys-process/procps-4.0.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
-		>=x11-libs/libXinerama-1.1.4[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-${ZLIB_PV}
+		>=sys-process/procps-4.0.4
+		>=x11-libs/libX11-${LIBX11_PV}
+		>=x11-libs/libXinerama-1.1.4
 		xrandr? (
-			>=x11-libs/libXrandr-1.5.4[${MULTILIB_USEDEP}]
+			>=x11-libs/libXrandr-1.5.4
 		)
 		xtest? (
-			>=x11-libs/libXtst-1.2.4[${MULTILIB_USEDEP}]
+			>=x11-libs/libXtst-1.2.4
 		)
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
+	>=dev-libs/rapidjson-1.1.0
 "
 BDEPEND+="
-	${CDEPEND}
 	>=dev-build/cmake-3.27.7
-	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
-	dev-go/protoc-gen-go-grpc:${PROTOBUF_SLOT}
+	>=dev-util/pkgconf-1.8.1[pkg-config(+)]
 	dev-util/patchelf
+	|| (
+		(
+			dev-cpp/abseil-cpp:20200225
+			dev-go/protoc-gen-go-grpc:3
+			net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
+		(
+			dev-cpp/abseil-cpp:20250512
+			dev-go/protoc-gen-go-grpc:6
+			net-libs/grpc:6/1.75[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
+	)
 	clang? (
 		$(gen_clang_deps)
 	)
 	test? (
-		>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
+		>=dev-libs/boost-${BOOST_PV}
+		>=dev-cpp/gtest-${GTEST_PV}
+		>=x11-libs/libX11-${LIBX11_PV}
 	)
 "
 DOCS=( "Readme.md" )
@@ -370,23 +386,53 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	if has_version "net-libs/grpc:${PROTOBUF_SLOT}/1.30" ; then
+	if has_version "dev-libs/protobuf:6/6.33" ; then
+	# Enigma slot equivalent being CI tested
+		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
+	elif has_version "dev-libs/protobuf:3/3.12" ; then
+	# Enigma slot equivalent being CI tested
 		ABSEIL_CPP_SLOT="20200225"
-	elif has_version "net-libs/grpc:${PROTOBUF_SLOT}/1.51" ; then
-		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		RE2_SLOT="20220623"
 	else
-eerror "The current gRPC version is not supported."
-		die
+	# Enigma slot equivalent fallback
+		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
 	fi
+	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
+		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
+			| grep -q -F -e "--server"
+		if [[ "$?" != "0" ]] ; then
+eerror
+eerror "Your enigma is not built with --server.  Re-emerge with the radialgm"
+eerror "USE flag.  Enigma must be built against the same abseil-cpp version"
+eerror "installed."
+eerror
+			die
+		fi
+	popd >/dev/null 2>&1 || die
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	re2_src_configure
+	grpc_src_configure
 
-	export PROTOBUF_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
-	export GRPC_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
-	export PROTOBUF_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)\
-" -Wl,-rpath=/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)"
-	export GRPC_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)\
-" -Wl,-rpath=/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir) -Wl,-rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
-	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
-	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/bin:${PATH}"
+	export PROTOBUF_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --cflags protobuf)
+	export GRPC_CXXFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --cflags grpc)
+	export PROTOBUF_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L protobuf)\
+" -Wl,-rpath=/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
+	export GRPC_LDFLAGS=$(PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)/pkgconfig:${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}:${PKG_CONFIG_PATH}" pkg-config --libs-only-L grpc)\
+" -Wl,-rpath=/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir) -Wl,-rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 einfo "PROTOBUF_CXXFLAGS:  ${PROTOBUF_CXXFLAGS}"
 einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
 einfo "PROTOBUF_LDFLAGS:  ${PROTOBUF_LDFLAGS}"
@@ -410,7 +456,7 @@ src_compile() {
 
 src_install() {
 	export STRIP="true"
-	local install_dir="/usr/$(get_libdir)/enigma"
+	local install_dir="/usr/lib/enigma"
 #	find "${S}" \
 #		-name '*.o' \
 #		| xargs rm -vrf '{}' \; || die
@@ -438,7 +484,7 @@ src_install() {
 		"settings.ey"
 	)
 	doins -r "${REGULARS[@]}"
-	insinto "/usr/$(get_libdir)/${PN}/CommandLine"
+	insinto "/usr/lib/${PN}/CommandLine"
 	doins -r "CommandLine/libEGM"
 	exeinto "/usr/bin"
 	newicon "Resources/logo.png" "enigma.png"
@@ -454,8 +500,9 @@ src_install() {
 		patchelf --remove-rpath "${p}" || die
 		patchelf --set-rpath "\$ORIGIN" "${p}" || die
 		patchelf --add-rpath "/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)" "${p}" || die
-		patchelf --add-rpath "/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)" "${p}" || die
-		patchelf --add-rpath "/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/re2/${RE2_SLOT}/$(get_libdir)" "${p}" || die
+		patchelf --add-rpath "/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)" "${p}" || die
 	done
 }
 
