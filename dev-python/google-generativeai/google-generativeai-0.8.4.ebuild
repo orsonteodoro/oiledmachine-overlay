@@ -9,7 +9,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1
+inherit abseil-cpp distutils-r1 protobuf
 
 KEYWORDS="amd64 arm arm64 x86"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -43,3 +43,29 @@ RDEPEND="
 	~dev-python/google-ai-generativelanguage-0.6.15[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
+
+python_configure() {
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	elif has_version "dev-libs/protobuf:4/4.25" ; then
+		ABSEIL_CPP_SLOT="20240116"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+	elif has_version "dev-libs/protobuf:5/5.29" ; then
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	elif has_version "dev-libs/protobuf:6/6.33" ; then
+		ABSEIL_CPP_SLOT="20250512"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+}
