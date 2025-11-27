@@ -386,7 +386,8 @@ pkg_postinst() {
 elog
 elog "${PN} is behind in security updates.  Do not use at all."
 elog "${PN} may still miss internal fixes that may not be fully disclosed."
-elog "Please remove the package from the system."
+elog "Please remove the package after use from the system to avoid"
+elog "weaponization or misuse."
 elog
 elog "${PN}'s Chromium version:  ${QT6_CHROMIUM_VER} (Jan 6, 2025; Week 1)"
 elog "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (Nov 14, 2025; Week 47)"

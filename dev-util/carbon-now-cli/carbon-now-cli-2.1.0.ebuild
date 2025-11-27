@@ -380,7 +380,10 @@ src_install() {
 	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${path}"
 	done
-ewarn "This package contains EOL browsers, you should uninstall it after use."
+ewarn
+ewarn "This package contains EOL or insecure unpatched browsers, you must"
+ewarn "uninstall it after use to avoid weaponization or misuse."
+ewarn
 	fperms 0755 "${NPM_INSTALL_PATH}/dist/cli.js"
 }
 
