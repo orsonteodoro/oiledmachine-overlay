@@ -26,11 +26,4 @@
 		</subslots>
 	</slots>
   <![CDATA[
-  <!--
-
-  oiledmachine-overlay notes:
-  The Cr version is located in /var/tmp/portage/dev-qt/qtwebengine-<VER>/work/qtwebengine-everywhere-src-<VER>/src/3rdparty/chromium/chrome/VERSION
-
-  -->
-  ]]>
 </pkgmetadata>

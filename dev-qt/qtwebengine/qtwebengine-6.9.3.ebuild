@@ -4,6 +4,7 @@
 EAPI=8
 
 # 6.9.3 - Chromium 130.0.6723.192 (Jan 6, 2025, Week 1)
+# See also /var/tmp/portage/dev-qt/qtwebengine-<VER>/work/qtwebengine-everywhere-src-<VER>/src/3rdparty/chromium/chrome/VERSION
 
 CFLAGS_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
