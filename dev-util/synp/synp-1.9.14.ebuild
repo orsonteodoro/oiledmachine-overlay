@@ -124,7 +124,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 gen_node_depends() {
 	local s
 	for s in ${NODE_SLOTS[@]} ; do
