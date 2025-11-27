@@ -5,98 +5,89 @@
 EAPI=8
 
 EGIT_COMMIT="55d6998a48eeedc92c3789ba96bea55e3f6cd15f"
-NODE_VERSION=20
-NPM_EXE_LIST="
-/opt/loz/dist/index.js
-/opt/loz/node_modules/rimraf/bin.js
-/opt/loz/node_modules/typescript/bin/tsc
-/opt/loz/node_modules/typescript/bin/tsserver
-/opt/loz/node_modules/eslint/bin/eslint.js
-/opt/loz/node_modules/@cspotcode/source-map-support/register.d.ts
-/opt/loz/node_modules/@cspotcode/source-map-support/source-map-support.d.ts
-/opt/loz/node_modules/@cspotcode/source-map-support/register-hook-require.d.ts
-/opt/loz/node_modules/ts-node/dist/bin.js
-/opt/loz/node_modules/ts-node/dist/bin-esm.js
-/opt/loz/node_modules/ts-node/dist/bin-transpile.js
-/opt/loz/node_modules/ts-node/dist/bin-cwd.js
-/opt/loz/node_modules/ts-node/dist/bin-script-deprecated.js
-/opt/loz/node_modules/ts-node/dist/bin-script.js
-/opt/loz/node_modules/acorn/bin/acorn
-/opt/loz/node_modules/esrecurse/package.json
-/opt/loz/node_modules/semver/bin/semver.js
-/opt/loz/node_modules/prettier/bin/prettier.cjs
-/opt/loz/node_modules/openai/bin/cli
-/opt/loz/node_modules/which/bin/node-which
-/opt/loz/node_modules/he/bin/he
-/opt/loz/node_modules/uri-js/yarn.lock
-/opt/loz/node_modules/uri-js/dist/es5/uri.all.js
-/opt/loz/node_modules/uri-js/dist/es5/uri.all.min.js
-/opt/loz/node_modules/uri-js/dist/es5/uri.all.min.js.map
-/opt/loz/node_modules/uri-js/dist/es5/uri.all.min.d.ts
-/opt/loz/node_modules/uri-js/dist/es5/uri.all.js.map
-/opt/loz/node_modules/uri-js/dist/es5/uri.all.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/regexps-iri.js
-/opt/loz/node_modules/uri-js/dist/esnext/index.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/util.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/regexps-uri.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/uri.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/regexps-iri.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/uri.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/index.js
-/opt/loz/node_modules/uri-js/dist/esnext/util.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/https.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/http.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/ws.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/wss.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/http.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/ws.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/https.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/http.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/mailto.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/mailto.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/wss.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/https.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/ws.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/wss.js
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn-uuid.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/schemes/mailto.js
-/opt/loz/node_modules/uri-js/dist/esnext/regexps-uri.js
-/opt/loz/node_modules/uri-js/dist/esnext/index.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/uri.js
-/opt/loz/node_modules/uri-js/dist/esnext/regexps-iri.js.map
-/opt/loz/node_modules/uri-js/dist/esnext/util.d.ts
-/opt/loz/node_modules/uri-js/dist/esnext/regexps-uri.js.map
-/opt/loz/node_modules/uri-js/LICENSE
-/opt/loz/node_modules/uri-js/README.md
-/opt/loz/node_modules/uri-js/package.json
-/opt/loz/node_modules/queue-microtask/LICENSE
-/opt/loz/node_modules/js-yaml/bin/js-yaml.js
-/opt/loz/node_modules/flat/cli.js
-/opt/loz/node_modules/wrap-ansi/index.js
-/opt/loz/node_modules/micromatch/LICENSE
-/opt/loz/node_modules/mock-stdin/test/stdin.spec.js
-/opt/loz/node_modules/mock-stdin/lib/index.d.ts
-/opt/loz/node_modules/mock-stdin/lib/mock/stdin.js
-/opt/loz/node_modules/mock-stdin/lib/index.js
-/opt/loz/node_modules/mock-stdin/LICENSE
-/opt/loz/node_modules/mock-stdin/README.md
-/opt/loz/node_modules/mock-stdin/package.json
-/opt/loz/node_modules/mock-stdin/tools/travis.sh
-/opt/loz/node_modules/mock-stdin/.travis.yml
-/opt/loz/node_modules/mocha/lib/cli/cli.js
-/opt/loz/node_modules/mocha/bin/_mocha
-/opt/loz/node_modules/mocha/bin/mocha.js
-/opt/loz/install.sh
-/opt/loz/scripts/prepare-commit-msg
-/opt/loz/tools/git_scripts/pre-commit
-/opt/loz/bump_version.sh
-"
+NODE_SLOT="20"
 NPM_TARBALL="${P}-${EGIT_COMMIT:0:7}.tar.gz"
+
+NPM_EXE_LIST=(
+	"/opt/loz/dist/index.js"
+	"/opt/loz/node_modules/rimraf/bin.js"
+	"/opt/loz/node_modules/typescript/bin/tsc"
+	"/opt/loz/node_modules/typescript/bin/tsserver"
+	"/opt/loz/node_modules/eslint/bin/eslint.js"
+	"/opt/loz/node_modules/@cspotcode/source-map-support/register.d.ts"
+	"/opt/loz/node_modules/@cspotcode/source-map-support/source-map-support.d.ts"
+	"/opt/loz/node_modules/@cspotcode/source-map-support/register-hook-require.d.ts"
+	"/opt/loz/node_modules/ts-node/dist/bin.js"
+	"/opt/loz/node_modules/ts-node/dist/bin-esm.js"
+	"/opt/loz/node_modules/ts-node/dist/bin-transpile.js"
+	"/opt/loz/node_modules/ts-node/dist/bin-cwd.js"
+	"/opt/loz/node_modules/ts-node/dist/bin-script-deprecated.js"
+	"/opt/loz/node_modules/ts-node/dist/bin-script.js"
+	"/opt/loz/node_modules/acorn/bin/acorn"
+	"/opt/loz/node_modules/semver/bin/semver.js"
+	"/opt/loz/node_modules/prettier/bin/prettier.cjs"
+	"/opt/loz/node_modules/openai/bin/cli"
+	"/opt/loz/node_modules/which/bin/node-which"
+	"/opt/loz/node_modules/he/bin/he"
+	"/opt/loz/node_modules/uri-js/dist/es5/uri.all.js"
+	"/opt/loz/node_modules/uri-js/dist/es5/uri.all.min.js"
+	"/opt/loz/node_modules/uri-js/dist/es5/uri.all.min.js.map"
+	"/opt/loz/node_modules/uri-js/dist/es5/uri.all.min.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/es5/uri.all.js.map"
+	"/opt/loz/node_modules/uri-js/dist/es5/uri.all.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/regexps-iri.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/index.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/util.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/regexps-uri.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/uri.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/regexps-iri.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/uri.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/index.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/util.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/https.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/http.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/ws.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/wss.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/http.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/ws.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/https.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/http.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/mailto.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/mailto.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/wss.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/https.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/ws.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/wss.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/urn-uuid.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/schemes/mailto.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/regexps-uri.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/index.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/uri.js"
+	"/opt/loz/node_modules/uri-js/dist/esnext/regexps-iri.js.map"
+	"/opt/loz/node_modules/uri-js/dist/esnext/util.d.ts"
+	"/opt/loz/node_modules/uri-js/dist/esnext/regexps-uri.js.map"
+	"/opt/loz/node_modules/js-yaml/bin/js-yaml.js"
+	"/opt/loz/node_modules/flat/cli.js"
+	"/opt/loz/node_modules/wrap-ansi/index.js"
+	"/opt/loz/node_modules/mock-stdin/test/stdin.spec.js"
+	"/opt/loz/node_modules/mock-stdin/lib/index.d.ts"
+	"/opt/loz/node_modules/mock-stdin/lib/mock/stdin.js"
+	"/opt/loz/node_modules/mock-stdin/lib/index.js"
+	"/opt/loz/node_modules/mock-stdin/tools/travis.sh"
+	"/opt/loz/node_modules/mock-stdin/.travis.yml"
+	"/opt/loz/node_modules/mocha/lib/cli/cli.js"
+	"/opt/loz/node_modules/mocha/bin/_mocha"
+	"/opt/loz/node_modules/mocha/bin/mocha.js"
+	"/opt/loz/install.sh"
+	"/opt/loz/scripts/prepare-commit-msg"
+	"/opt/loz/tools/git_scripts/pre-commit"
+	"/opt/loz/bump_version.sh"
+)
 
 inherit git-r3 npm
 
