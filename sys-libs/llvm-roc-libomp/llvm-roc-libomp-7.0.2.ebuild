@@ -7,7 +7,7 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17
 GRPC_SLOT="3"
 LLVM_SLOT=19
-PROTOBUF_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
@@ -596,7 +596,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 		mycmakeargs+=(
 			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
-			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
 		)
 	fi
 	einfo "CONFIGURE START ${mycmakeargs[@]}"

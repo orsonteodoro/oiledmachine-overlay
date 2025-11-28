@@ -10,9 +10,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 CXX_STANDARD=17
-GRPC_SLOT="3"
 LLVM_SLOT="${PV%%.*}"
-PROTOBUF_SLOT="3"
 PYTHON_COMPAT=( "python3_11" )
 
 # For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
@@ -77,7 +75,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM18_REVISION}
 cuda +debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
-ebuild_revision_10
+ebuild_revision_11
 "
 gen_cuda_required_use() {
 	local x
@@ -413,12 +411,12 @@ eerror
 	if use remote-offloading ; then
 		if has_version "net-libs/grpc:3/1.30" ; then
 			ABSEIL_CPP_SLOT="20200225"
-			PROTOBUF_SLOT="3"
+			PROTOBUF_CPP_SLOT="3"
 			GRPC_SLOT="3"
 			RE2_SLOT="20220623"
 		elif has_version "net-libs/grpc:3/1.51" ; then
 			ABSEIL_CPP_SLOT="20220623"
-			PROTOBUF_SLOT="3"
+			PROTOBUF_CPP_SLOT="3"
 			GRPC_SLOT="3"
 			RE2_SLOT="20220623"
 		fi
@@ -428,7 +426,7 @@ eerror
 		grpc_src_configure
 		mycmakeargs+=(
 			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
-			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
 		)
 	fi
 

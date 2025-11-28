@@ -4,9 +4,12 @@
 
 EAPI=7
 
+EGO_PN="github.com/grpc/grpc-go/cmd/protoc-gen-go-grpc"
 GEN_EBUILD=0
 GRPC_PV="1.66.0" # From version.go
-EGO_PN="github.com/grpc/grpc-go/cmd/protoc-gen-go-grpc"
+GRPC_SLOT="5"
+PROTOBUF_CPP_SLOT="5"
+
 EGO_SUM=(
 	"github.com/google/go-cmp v0.6.0"
 	"github.com/google/go-cmp v0.6.0/go.mod"
@@ -97,14 +100,15 @@ RESTRICT="
 		test
 	)
 "
-SLOT="5/$(ver_cut 1-2 ${PV})"
+SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="test"
 RDEPEND="
-	net-libs/grpc:5
+	>=net-libs/grpc-${GRPC_PV}:${GRPC_SLOT}
 	net-libs/grpc:=
 "
 DEPEND="
 	test? (
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
 		dev-libs/protobuf:=
 	)
 "
@@ -115,7 +119,7 @@ src_unpack() {
 	if [[ "${GEN_EBUILD}" == "1" ]] ; then
 einfo "Replace EGO_SUM contents with the following:"
 		IFS=$'\n'
-		for x in $(cat "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/cmd/protoc-gen-go-grpc/go.sum" "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/go.sum" | cut -f 1-2 -d " ") ; do
+		for x in $(cat "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/cmd/protoc-gen-go-grpc/go.sum" "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/go.sum" | cut -f "1-2" -d " ") ; do
 			echo -e "\t\"${x}\""
 		done
 		IFS=$' \t\n'
@@ -127,9 +131,9 @@ einfo "Replace EGO_SUM contents with the following:"
 
 src_compile() {
 	GOBIN="${S}/bin" \
-	edo go install ./...
+	edo go install "./..."
 }
 
 src_install() {
-	dobin bin/protoc-gen-go-grpc
+	dobin "bin/protoc-gen-go-grpc"
 }

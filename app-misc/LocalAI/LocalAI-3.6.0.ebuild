@@ -184,7 +184,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	!ci
@@ -362,8 +362,8 @@ BDEPEND+="
 		dev-cpp/abseil-cpp:=
 	)
 	(
-		virtual/protobuf-go:${PROTOBUF_CPP_SLOT}
-		virtual/protobuf-go:=
+		dev-go/protobuf-go:${PROTOBUF_CPP_SLOT}
+		dev-go/protobuf-go:=
 	)
 	(
 		virtual/protoc-gen-go-grpc:${PROTOBUF_CPP_SLOT}

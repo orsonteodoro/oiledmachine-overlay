@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_7
+ebuild_revision_9
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -178,14 +178,14 @@ DEPEND="
 "
 # libepoxy missing in CI
 GLES_DEPEND="
-	>=media-libs/glm-${GLM_PV}
 	>=media-libs/libepoxy-1.5.4
-	>=media-libs/mesa-${MESA_PV}
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	media-libs/mesa:=
 "
 OPENGL_DEPEND="
 	>=media-libs/glew-${GLEW_PV}
-	>=media-libs/glm-${GLM_PV}
-	>=media-libs/mesa-${MESA_PV}
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	media-libs/mesa:=
 "
 
 gen_clang_deps() {
@@ -195,8 +195,11 @@ gen_clang_deps() {
 				>=llvm-runtimes/libcxx-${s}
 				>=llvm-runtimes/libcxxabi-${s}
 				llvm-core/clang:${s}
+				llvm-core/clang:=
 				llvm-core/lld:${s}
+				llvm-core/lld:=
 				llvm-core/llvm:${s}
+				llvm-core/llvm:=
 				test? (
 					>=dev-debug/lldb-${s}
 				)
@@ -214,12 +217,13 @@ gen_clang_deps() {
 # zenity missing in CI
 RDEPEND+="
 	>=dev-cpp/yaml-cpp-0.8.0
-	>=dev-libs/boost-${BOOST_PV}
-	>=dev-libs/double-conversion-3.3.0
+	>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/double-conversion-3.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/double-conversion:=
 	>=dev-libs/libpcre2-10.39[pcre16]
 	>=dev-libs/openssl-3.1.3
-	>=dev-libs/pugixml-1.14
-	>=media-libs/glm-${GLM_PV}
+	>=dev-libs/pugixml-1.14[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/pugixml:=
 	>=media-libs/harfbuzz-8.2.1
 	>=net-dns/c-ares-1.20.1
 	>=sys-libs/zlib-${ZLIB_PV}
@@ -227,11 +231,11 @@ RDEPEND+="
 	virtual/libc
 	|| (
 		(
-			dev-cpp/abseil-cpp:20200225
+			dev-cpp/abseil-cpp:20200225[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 		(
-			dev-cpp/abseil-cpp:20250512
+			dev-cpp/abseil-cpp:20250512[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			net-libs/grpc:6/1.75[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
@@ -239,10 +243,11 @@ RDEPEND+="
 	net-libs/grpc:=
 	box2d? (
 		|| (
-			<games-engines/box2d-2.4:2.3
-			<games-engines/box2d-2.4:2.3.0
+			<games-engines/box2d-2.4:2.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			<games-engines/box2d-2.4:2.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
+	games-engines/box2d:=
 	bullet? (
 		>=sci-physics/bullet-${BULLET_PV}
 	)
@@ -268,6 +273,7 @@ RDEPEND+="
 	)
 	gtk2? (
 		>=x11-libs/gtk+-2.24.33:2
+		x11-libs/gtk+:=
 	)
 	kde? (
 		>=kde-apps/kdialog-21.12.3
@@ -313,6 +319,15 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	>=dev-libs/rapidjson-1.1.0
+	dev-libs/rapidjson:=
+	gles2? (
+		>=media-libs/glm-${GLM_PV}
+		media-libs/glm:=
+	)
+	gles3? (
+		>=media-libs/glm-${GLM_PV}
+		media-libs/glm:=
+	)
 "
 BDEPEND+="
 	>=dev-build/cmake-3.27.7
@@ -320,22 +335,27 @@ BDEPEND+="
 	dev-util/patchelf
 	|| (
 		(
-			dev-cpp/abseil-cpp:20200225
+			dev-cpp/abseil-cpp:20200225[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-go/protoc-gen-go-grpc:3
 			net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 		(
-			dev-cpp/abseil-cpp:20250512
+			dev-cpp/abseil-cpp:20250512[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-go/protoc-gen-go-grpc:6
 			net-libs/grpc:6/1.75[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
+	dev-cpp/abseil-cpp:=
+	dev-go/protoc-gen-go-grpc:=
+	net-libs/grpc:=
 	clang? (
 		$(gen_clang_deps)
 	)
 	test? (
-		>=dev-libs/boost-${BOOST_PV}
-		>=dev-cpp/gtest-${GTEST_PV}
+		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
+		>=dev-cpp/gtest-${GTEST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=
 		>=x11-libs/libX11-${LIBX11_PV}
 	)
 "
@@ -386,20 +406,20 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	if has_version "dev-libs/protobuf:6/6.33" ; then
-	# Enigma slot equivalent being CI tested
-		ABSEIL_CPP_SLOT="20250512"
-		GRPC_SLOT="6"
-		PROTOBUF_CPP_SLOT="6"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
-		RE2_SLOT="20240116"
-	elif has_version "dev-libs/protobuf:3/3.12" ; then
+	if has_version "dev-libs/protobuf:3/3.12" ; then
 	# Enigma slot equivalent being CI tested
 		ABSEIL_CPP_SLOT="20200225"
 		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
 		RE2_SLOT="20220623"
+	elif has_version "dev-libs/protobuf:6/6.33" ; then
+	# Enigma slot equivalent being CI tested
+		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
 	else
 	# Enigma slot equivalent fallback
 		ABSEIL_CPP_SLOT="20250512"

@@ -25,7 +25,7 @@ ABSEIL_CPP_SLOT="20220623"
 CXX_STANDARD=17
 GRPC_SLOT="3"
 OPENTELEMETRY_PROTO_PV="1.2.0"
-PROTOBUF_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
 RE2_SLOT="20220623"
 
 inherit abseil-cpp cmake dep-prepare grpc libcxx-slot libstdcxx-slot protobuf re2
@@ -49,11 +49,11 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-2 ${PV})"
+SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${_CXX_STANDARD[@]}
 -otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -67,7 +67,7 @@ RDEPEND="
 	dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
 	otlp-grpc? (
-		dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:=
 		net-libs/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		net-libs/grpc:=
@@ -137,7 +137,7 @@ src_configure() {
 		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
-		-DCMAKE_INSTALL_PREFIX="/usr/lib/${PN}/${PROTOBUF_SLOT}"
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/${PN}/${PROTOBUF_CPP_SLOT}"
 		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
 		-DWITH_OTLP_FILE=$(usex otlp-file)
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)
