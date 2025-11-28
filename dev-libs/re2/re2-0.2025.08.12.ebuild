@@ -6,52 +6,52 @@ EAPI=8
 
 # Bump every month
 
-CXX_STANDARD=17
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
-)
-
-RE2_VER="${PV#0.}"
-RE2_VER="${RE2_VER//./-}"
+MY_PV="${PV#0.}"
+MY_PV="${MY_PV//./-}"
 
 # Different date format used upstream.
 ABSEIL_CPP_PV="20240116.2"		# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
+ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 SONAME="11"				# https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
 inherit cflags-hardened cmake-multilib distutils-r1 libcxx-slot libstdcxx-slot
 inherit toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/re2-${RE2_VER}"
+S="${WORKDIR}/re2-${MY_PV}"
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_PV}.tar.gz -> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
-https://github.com/google/re2/archive/${RE2_VER}.tar.gz
-	-> re2-${RE2_VER}.tar.gz
+https://github.com/google/re2/archive/${MY_PV}.tar.gz
+	-> re2-${MY_PV}.tar.gz
 "
 
 DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
-SLOT="${ABSEIL_CPP_PV%.*}"
+SLOT="${ABSEIL_CPP_SLOT}"
 IUSE="
 -debug icu test
 ebuild_revision_14
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	icu? (
 		dev-libs/icu:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
@@ -100,7 +100,7 @@ build_multilib_abseil() {
 			"${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}" \
 			|| die
 		emake
-		DESTDIR="${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}/abseil-cpp" emake install
+		DESTDIR="${WORKDIR}/${PN}-${MY_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}/abseil-cpp" emake install
 	popd  >/dev/null 2>&1 || die
 }
 
@@ -114,7 +114,7 @@ src_configure() {
 			-DCMAKE_INSTALL_PREFIX="/usr/lib/re2/${SLOT}"
 			-DRE2_BUILD_TESTING=$(usex debug)
 			-DRE2_USE_ICU=$(usex icu)
-			-Dabsl_DIR="${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}/abseil-cpp/usr/$(get_libdir)/cmake/absl"
+			-Dabsl_DIR="${WORKDIR}/${PN}-${MY_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}/abseil-cpp/usr/$(get_libdir)/cmake/absl"
 		)
 		cmake_src_configure
 	}
@@ -126,9 +126,9 @@ src_compile() {
 }
 
 test_abi() {
-	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}" >/dev/null 2>&1 || die
+	pushd "${WORKDIR}/${PN}-${MY_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}" >/dev/null 2>&1 || die
 		local configuration=$(usex debug "Debug" "Release")
-		ctest -C ${configuration} --output-on-failure -E 'dfa|exhaustive|random' || die
+		ctest -C "${configuration}" --output-on-failure -E 'dfa|exhaustive|random' || die
 	popd  >/dev/null 2>&1 || die
 }
 

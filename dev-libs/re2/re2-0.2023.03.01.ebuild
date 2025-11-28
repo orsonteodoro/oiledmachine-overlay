@@ -5,40 +5,39 @@ EAPI=8
 
 # Bump every month
 
+MY_PV="${PV#0.}"
+MY_PV="${MY_PV//./-}"
+
+ABSEIL_CPP_PV="20220623.0"		# Pre absl changes, based on gRPC 1.51
+ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_LANGS="cxx"
 CXX_STANDARD=14
+SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
-
-RE2_VER="${PV#0.}"
-RE2_VER="${RE2_VER//./-}"
-
-# Different date format used upstream.
-ABSEIL_CPP_PV="20220623.0"		# Pre absl changes, based on gRPC 1.51
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
-CFLAGS_HARDENED_LANGS="cxx"
-SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/re2-${RE2_VER}"
+S="${WORKDIR}/re2-${MY_PV}"
 SRC_URI="
-https://github.com/google/re2/archive/${RE2_VER}.tar.gz
-	-> re2-${RE2_VER}.tar.gz
+https://github.com/google/re2/archive/${MY_PV}.tar.gz
+	-> re2-${MY_PV}.tar.gz
 "
 
 DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
-SLOT="${ABSEIL_CPP_PV%.*}"
+SLOT="${ABSEIL_CPP_SLOT}"
 IUSE="
 -debug icu test
 ebuild_revision_14
@@ -78,9 +77,9 @@ src_configure() {
 }
 
 test_abi() {
-	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	pushd "${WORKDIR}/${PN}-${MY_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}" || die
 		local configuration=$(usex debug "Debug" "Release")
-		ctest -C ${configuration} --output-on-failure -E 'dfa|exhaustive|random' || die
+		ctest -C "${configuration}" --output-on-failure -E 'dfa|exhaustive|random' || die
 	popd
 }
 
