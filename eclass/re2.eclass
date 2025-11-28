@@ -62,6 +62,8 @@ eerror "QA:  Set either RE2_PV or RE2_SLOT"
 	# Sanitize/isolate
 	filter-flags \
 		"-I/usr/lib/re2/*/include" \
+		"-Wl,-L/usr/lib/re2/*" \
+		"-Wl,-rpath,/usr/lib/re2/*"
 		"-L/usr/lib/re2/*" \
 		"--rpath,/usr/lib/re2/*"
 

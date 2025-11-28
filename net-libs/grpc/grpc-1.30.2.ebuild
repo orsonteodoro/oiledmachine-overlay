@@ -18,7 +18,7 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 
-ABSEIL_CPP_PV="20200225.0"
+ABSEIL_CPP_SLOT="20200225"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -29,6 +29,7 @@ PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
+RE2_SLOT="20220623"
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx11"
@@ -46,7 +47,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
+inherit abseil-cpp cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal protobuf python-r1 ruby-ng re2
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -90,7 +91,7 @@ IUSE+="
 ${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_35
+ebuild_revision_38
 "
 REQUIRED_USE+="
 	^^ (
@@ -105,7 +106,7 @@ SLOT_MAJ="${PROTOBUF_CPP_SLOT}"
 SLOT="${SLOT_MAJ}/1.30"
 # third_party last update: 20200529
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
+	>=dev-cpp/abseil-cpp-20200225.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
@@ -199,14 +200,21 @@ src_configure() {
 	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
+		abseil-cpp_src_configure
+		re2_src_configure
+		protobuf_src_configure
+
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
+			$(abseil-cpp_append_cmake)
+			$(protobuf_append_cmake)
+			$(re2_append_cmake)
 			$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Package default
 			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
 			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
-			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
+			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
@@ -227,12 +235,10 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
 			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
 			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotobuf.a"
 			-DProtobuf_PROTOC_LIBRARY="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotoc.a"
 			-DPROTOBUF_PROTOC_EXECUTABLE="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
-			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure
 	}
@@ -274,63 +280,12 @@ src_install() {
 	multilib_src_install_all
 }
 
-fix_rpath() {
-	local d
-	local L
-	local x
-	IFS=$'\n'
-	L=(
-		$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin" -type f)
-	)
-	IFS=$' \t\n'
-	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
-	local d2="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
-	for x in "${L[@]}" ; do
-einfo "Adding ${d1} to RPATH for ${x}"
-		patchelf \
-			--add-rpath "${d1}" \
-			"${x}" \
-			|| die
-einfo "Adding ${d2} to RPATH for ${x}"
-		patchelf \
-			--add-rpath "${d2}" \
-			"${x}" \
-			|| die
-	done
-
-	fix_libs_abi() {
-		IFS=$'\n'
-		L=(
-			$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)" -name "*.so*")
-		)
-		IFS=$' \t\n'
-		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
-		for x in "${L[@]}" ; do
-			[[ -L "${x}" ]] && continue
-einfo "Adding ${d} to RPATH for ${x}"
-			patchelf \
-				--add-rpath "${d}" \
-				"${x}" \
-				|| die
-			patchelf \
-				--add-rpath '$ORIGIN' \
-				"${x}" \
-				|| die
-		done
-
-	}
-
-	multilib_foreach_abi fix_libs_abi
-
-}
-
 multilib_src_install_all() {
 	cd "${S}" || die
 	docinto "licenses"
 	dodoc \
 		"LICENSE" \
 		"NOTICE.txt"
-	fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi

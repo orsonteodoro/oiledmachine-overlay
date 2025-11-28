@@ -18,7 +18,7 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 
-ABSEIL_CPP_PV="20250512.1"
+ABSEIL_CPP_SLOT="20250512"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -42,7 +42,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-ng
+inherit abseil-cpp cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal protobuf python-r1 re2 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE+="
 	python? (
@@ -100,7 +100,7 @@ SLOT_MAJ="${PROTOBUF_CPP_SLOT}"
 SLOT="${SLOT_MAJ}/1.75"
 # third_party last update: 20250723
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-20250512.1:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
@@ -215,11 +215,18 @@ src_configure() {
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	filter-flags -Wl,--as-needed
 	configure_abi() {
+		abseil-cpp_src_configure
+		re2_src_configure
+		protobuf_src_configure
+
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
-			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl"
+			$(abseil-cpp_append_cmake)
+			$(protobuf_append_cmake)
+			$(re2_append_cmake)
+			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
@@ -240,9 +247,6 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
-			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake/re2"
-			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure
 	}
@@ -284,63 +288,12 @@ src_install() {
 	multilib_src_install_all
 }
 
-fix_rpath() {
-	local d
-	local L
-	local x
-
-	IFS=$'\n'
-	L=(
-		$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin" -type f)
-	)
-	IFS=$' \t\n'
-	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
-	local d2="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
-	for x in "${L[@]}" ; do
-einfo "Adding ${d1} to RPATH for ${x}"
-		patchelf \
-			--add-rpath "${d1}" \
-			"${x}" \
-			|| die
-einfo "Adding ${d2} to RPATH for ${x}"
-		patchelf \
-			--add-rpath "${d2}" \
-			"${x}" \
-			|| die
-	done
-
-	fix_libs_abi() {
-		IFS=$'\n'
-		L=(
-			$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)" -name "*.so*")
-		)
-		IFS=$' \t\n'
-		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
-		for x in "${L[@]}" ; do
-			[[ -L "${x}" ]] && continue
-einfo "Adding ${d} to RPATH for ${x}"
-			patchelf \
-				--add-rpath "${d}" \
-				"${x}" \
-				|| die
-			patchelf \
-				--add-rpath '$ORIGIN' \
-				"${x}" \
-				|| die
-		done
-
-	}
-
-	multilib_foreach_abi fix_libs_abi
-}
-
 multilib_src_install_all() {
 	cd "${S}" || die
 	docinto "licenses"
 	dodoc \
 		"LICENSE" \
 		"NOTICE.txt"
-	fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi

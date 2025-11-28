@@ -162,7 +162,7 @@ eerror "QA:  Set either GRPC_PV, GRPC_SLOT, or PROTOBUF_CPP_SLOT"
 	filter-flags \
 		"-I/usr/lib/grpc/*/include" \
 		"-Wl,-L/usr/lib/grpc/*" \
-		"-Wl,--rpath,/usr/lib/grpc/*" \
+		"-Wl,-rpath,/usr/lib/grpc/*" \
 		"-L/usr/lib/grpc/*" \
 		"--rpath,/usr/lib/grpc/*"
 
