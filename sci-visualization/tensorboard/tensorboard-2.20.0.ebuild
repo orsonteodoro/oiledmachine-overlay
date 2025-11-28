@@ -25,7 +25,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
-inherit bazel check-compiler-switch flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm-r1 distutils-r1 yarn
+inherit abseil-cpp bazel check-compiler-switch flag-o-matic flag-o-matic-om grpc libcxx-slot libstdcxx-slot llvm-r1 distutils-r1 protobuf re2 yarn
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -49,7 +49,7 @@ PROPERTIES="live"
 SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}

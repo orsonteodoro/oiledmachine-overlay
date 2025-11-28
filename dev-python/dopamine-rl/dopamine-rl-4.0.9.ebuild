@@ -8,7 +8,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Up to 3.8 listed
 
-inherit abseil-cpp distutils-r1 protobuf pypi
+inherit abseil-cpp distutils-r1 protobuf grpc pypi re2
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -165,26 +165,38 @@ src_unpack() {
 python_configure() {
 	if has_version "dev-libs/protobuf:3/3.12" ; then
 		ABSEIL_CPP_SLOT="20200225"
+		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		RE2_SLOT="20220623"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 		ABSEIL_CPP_SLOT="20220623"
+		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		RE2_SLOT="20220623"
 	elif has_version "dev-libs/protobuf:4/4.25" ; then
 		ABSEIL_CPP_SLOT="20240116"
+		GRPC_SLOT="4"
 		PROTOBUF_CPP_SLOT="4"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+		RE2_SLOT="20220623"
 	elif has_version "dev-libs/protobuf:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
+		GRPC_SLOT="5"
 		PROTOBUF_CPP_SLOT="5"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		RE2_SLOT="20240116"
 	elif has_version "dev-libs/protobuf:6/6.33" ; then
 		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
 	fi
 	abseil-cpp_python_configure
+	grpc_python_configure # Add grpcio pythonpaths
+	re2_python_configure
 	protobuf_python_configure
 }
 

@@ -21,7 +21,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{11..13} )
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 protobuf pypi
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -43,7 +43,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 aws azure dev gcp importers kubeflow launch media models perf sweeps test
 workspaces
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	dev? (

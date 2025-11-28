@@ -47,7 +47,7 @@ LLVM_COMPAT=(
 
 # Note: upstream meson port is incomplete.
 # https://github.com/apache/arrow/issues/45778
-inherit cmake flag-o-matic libcxx-slot libstdcxx-slot
+inherit abseil-cpp cmake flag-o-matic grpc libcxx-slot libstdcxx-slot protobuf re2
 
 KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv ~s390 x86"
 S="${WORKDIR}/${P}/cpp"
@@ -76,7 +76,7 @@ ${CPU_FLAGS_X86[@]}
 -csv -cuda -dataset -filesystem -gandiva -gcs -hdfs +ipc -jemalloc -json -lz4
 +mimalloc +parquet +re2 -s3 -snappy ssl -tensorflow test +threads +utf8proc
 -zlib -zstd
-ebuild_revision_1
+ebuild_revision_2
 "
 # oiledmachine-overlay has strict GPU version requirements, CUDA 11.7 not supported on distro.
 REQUIRED_USE="

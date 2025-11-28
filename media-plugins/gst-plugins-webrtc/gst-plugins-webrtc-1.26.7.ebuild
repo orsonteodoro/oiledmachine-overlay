@@ -8,13 +8,13 @@ GST_ORG_MODULE="gst-plugins-bad"
 GST_PLUGINS_BUILD_DIR="webrtc webrtcdsp"
 GST_PLUGINS_ENABLED="dtls sctp srtp webrtc webrtcdsp"
 
-inherit cflags-hardened gstreamer-meson
+inherit abseil-cpp cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="WebRTC plugins for GStreamer"
 IUSE="
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="
 	~media-plugins/gst-plugins-dtls-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -43,11 +43,10 @@ multilib_src_configure() {
 	cflags-hardened_append
 	if has_version "=media-libs/webrtc-audio-processing-1.3*" ; then
 		ABSEIL_CPP_SLOT="20230125"
-		export PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	elif has_version "=media-libs/webrtc-audio-processing-2.1*" ; then
 		ABSEIL_CPP_SLOT="20240722"
-		export PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	fi
+	abseil-cpp_src_configure
 	gstreamer_multilib_src_configure
 }
 

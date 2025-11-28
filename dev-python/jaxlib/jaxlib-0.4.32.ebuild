@@ -35,6 +35,15 @@ EAPI=8
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.32/docs/installation.md?plain=1#L116
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.32/build/rocm/ci_build.sh#L52
 
+# DO NOT HARD WRAP bazel_external_uris
+# DO NOT CHANGE TARBALL FILE EXT in bazel_external_uris
+# Do not use GH urls if .gitmodules exists in that project
+# All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs with FEATURES=-network-sandbox.
+
+# To update:
+# Search and replace old PV with new PV
+# Search and replace old EGIT_XLA_COMMIT with new EGIT_XLA_COMMIT
+
 MY_PN="jax"
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
@@ -47,43 +56,6 @@ JAVA_SLOT="11"
 LLVM_MAX_SLOT="19"
 MAINTAINER_MODE=0
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
-
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L119
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/build/rocm/Dockerfile.ms#L7C53-L7C89
-	"gfx900"
-	"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx940"
-	"gfx941"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-)
-
-CPU_FLAGS_X86_64=(
-	"cpu_flags_x86_avx"
-)
-
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L68
-	"sm_50"
-	"sm_60"
-	"sm_70"
-	"sm_80"
-	"compute_90"
-)
-
-# DO NOT HARD WRAP
-# DO NOT CHANGE TARBALL FILE EXT
-# Do not use GH urls if .gitmodules exists in that project
-# All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs with
-# FEATURES=-network-sandbox.
-
-# To update:
-# Search and replace old PV with new PV
-# Search and replace old EGIT_XLA_COMMIT with new EGIT_XLA_COMMIT
 
 # For system gRPC
 ABSEIL_CPP_SLOT="20220623"
@@ -210,6 +182,33 @@ _PYPI_PACKAGES=(
 	"zstandard==0.22.0"
 	"setuptools==69.5.1"
 	"wheel==0.43.0"
+)
+
+AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L119
+# See https://github.com/google/jax/blob/jaxlib-v0.4.32/build/rocm/Dockerfile.ms#L7C53-L7C89
+	"gfx900"
+	"gfx906"
+	"gfx908"
+	"gfx90a"
+	"gfx940"
+	"gfx941"
+	"gfx942"
+	"gfx1030"
+	"gfx1100"
+)
+
+CPU_FLAGS_X86_64=(
+	"cpu_flags_x86_avx"
+)
+
+CUDA_TARGETS_COMPAT=(
+# See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L68
+	"sm_50"
+	"sm_60"
+	"sm_70"
+	"sm_80"
+	"compute_90"
 )
 
 inherit libstdcxx-compat

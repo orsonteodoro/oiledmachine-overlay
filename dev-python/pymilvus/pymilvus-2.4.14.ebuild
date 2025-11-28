@@ -8,13 +8,11 @@ EAPI=8
 # m2r
 # sphinxcontrib-prettyspecialmethods
 
-inherit abseil-cpp grpc protobuf re2
-
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 grpc protobuf pypi re2
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"

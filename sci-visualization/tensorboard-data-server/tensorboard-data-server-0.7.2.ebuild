@@ -243,7 +243,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
-inherit cargo distutils-r1 libcxx-slot libstdcxx-slot
+inherit abseil-cpp cargo distutils-r1 grpc libcxx-slot libstdcxx-slot protobuf re2
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -291,7 +291,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut 1-2 "${PV}")
 IUSE+="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
