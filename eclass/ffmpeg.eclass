@@ -17,26 +17,44 @@ esac
 if [[ -z ${_FFMPEG_ECLASS} ]] ; then
 _FFMPEG_ECLASS=1
 
+# @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_4
+# @DESCRIPTION:
+# Adds all FFmpeg 4.x slots
 FFMPEG_COMPAT_SLOTS_4=(
 	"56.58.58"
 )
 
+# @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_5
+# @DESCRIPTION:
+# Adds all FFmpeg 5.x slots
 FFMPEG_COMPAT_SLOTS_5=(
 	"57.59.59"
 )
 
+# @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_6
+# @DESCRIPTION:
+# Adds all FFmpeg 6.x slots
 FFMPEG_COMPAT_SLOTS_6=(
 	"58.60.60"
 )
 
+# @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_7
+# @DESCRIPTION:
+# Adds all FFmpeg 7.x slots
 FFMPEG_COMPAT_SLOTS_7=(
 	"59.61.61"
 )
 
+# @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_8
+# @DESCRIPTION:
+# Adds all FFmpeg 8.x slots
 FFMPEG_COMPAT_SLOTS_8=(
 	"60.62.62"
 )
 
+# @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_ALL
+# @DESCRIPTION:
+# Adds all FFmpeg slots
 FFMPEG_COMPAT_SLOTS_ALL=(
 	"60.62.62" # 8
 	"59.61.61" # 7
@@ -60,6 +78,7 @@ inherit flag-o-matic
 #
 # src_configure() {
 #   ffmpeg_src_configure
+#   econf
 # }
 #
 ffmpeg_src_configure() {

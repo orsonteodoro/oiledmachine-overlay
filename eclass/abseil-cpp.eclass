@@ -138,6 +138,7 @@ abseil-cpp_python_configure() {
 # Example:
 #
 # ABSEIL_CPP_SLOT="20250814"
+#
 # inherit abseil-cpp cmake
 #
 # src_configure() {
