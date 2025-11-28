@@ -273,11 +273,6 @@ get_runtime_simd_level() {
 
 src_configure() {
 	local libdir=$(get_libdir)
-	append-ldflags \
-		"-Wl,,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT%.*}/${libdir}" \
-		"-Wl,,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
-		"-Wl,--rpath,/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT%.*}/${libdir}" \
-		"-Wl,--rpath,/usr/lib/re2/${RE2_SLOT}/${libdir}"
 
 	local use_gold="OFF"
 	local use_lld="OFF"
@@ -306,6 +301,8 @@ src_configure() {
 		protobuf_src_configure
 		re2_src_configure
 		grpc_src_configure
+	elif use re2 ; then
+		re2_src_configure
 	fi
 
 	# See https://github.com/apache/arrow/blob/apache-arrow-21.0.0/cpp/cmake_modules/DefineOptions.cmake
