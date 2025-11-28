@@ -32,12 +32,12 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # CI uses 3.9
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
 inherit check-compiler-switch distutils-r1 flag-o-matic llvm libcxx-slot libstdcxx-slot sandbox-changes toolchain-funcs
@@ -109,7 +109,7 @@ DEPEND+="
 "
 gen_llvm_depends() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
@@ -138,7 +138,7 @@ BDEPEND+="
 		>=sys-devel/gcc-10
 	)
 "
-DOCS=( README.md )
+DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.1.34-invoke-bazel-directly.patch"
 )
@@ -149,45 +149,21 @@ setup_openjdk() {
 	local jdk_bin_basepath
 	local jdk_basepath
 
-	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null \
-		1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
+	if [[ -e "/usr/$(get_libdir)/openjdk-${JAVA_SLOT}" ]] ; then
+		export JAVA_HOME=$(realpath "/usr/$(get_libdir)/openjdk-${JAVA_SLOT}")
 		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find \
-		/opt/openjdk-bin-${JAVA_SLOT}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null \
-		1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/opt/openjdk-bin-${JAVA_SLOT}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
+	elif [[ -e "/opt/openjdk-bin-${JAVA_SLOT}" ]] ; then
+		export JAVA_HOME=$(realpath "/opt/openjdk-bin-${JAVA_SLOT}")
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	else
-eerror
-eerror "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
-eerror
+eerror "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed."
 		die
 	fi
 }
 
 use_gcc() {
 	export CC=$(tc-getCC)
-	${CC} --version || die
+	"${CC}" --version || die
 	strip-unsupported-flags
 }
 
@@ -201,7 +177,7 @@ eerror
 	fi
 
 	local s
-	for s in ${_LLVM_COMPAT[@]} ; do
+	for s in "${_LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" ; then
 			which "${CHOST}-clang-${s}" || continue
 			export CC="${CHOST}-clang-${s}"
@@ -210,21 +186,21 @@ eerror
 			break
 		fi
 	done
-	LLVM_MAX_SLOT=${s}
+	LLVM_MAX_SLOT="${s}"
 	llvm_pkg_setup
-	${CC} --version || die "Failed compiler check for CC=${CC}"
+	"${CC}" --version || die "Failed compiler check for CC=${CC}"
 	strip-unsupported-flags
 }
 
 setup_tc() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "CXXFLAGS:\t${CXXFLAGS}"
-einfo "LDFLAGS:\t${LDFLAGS}"
-einfo "PATH:\t${PATH}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "PATH:  ${PATH}"
 
 	if tc-is-clang && ! use clang ; then
 eerror
@@ -239,10 +215,7 @@ eerror
 	elif tc-is-gcc ; then
 		use_gcc
 	else
-einfo
-einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
-einfo "completely installed."
-einfo
+einfo "Use only GCC or Clang.  This package also might not be completely installed."
 		die
 	fi
 }
@@ -282,7 +255,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 src_unpack() {
-	unpack ${P}.tar.gz
+	unpack "${P}.tar.gz"
 }
 
 python_configure() {
