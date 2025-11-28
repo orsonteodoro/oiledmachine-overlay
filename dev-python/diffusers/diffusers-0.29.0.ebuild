@@ -45,7 +45,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc flax pytorch quality test training"
+IUSE+="
+dev doc flax pytorch quality test training
+ebuild_revision_1
+"
 REQUIRED_USE="
 	dev? (
 		doc
@@ -56,6 +59,7 @@ REQUIRED_USE="
 		training
 	)
 "
+# The protobuf requirement is relaxed
 RDEPEND+="
 	$(python_gen_cond_dep '
 		!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
@@ -71,7 +75,10 @@ RDEPEND+="
 		training? (
 			>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
-			dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			|| (
+				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+			)
 			dev-python/protobuf:=
 		)
 	')
@@ -149,6 +156,20 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+	elif has_version "dev-libs/protobuf:" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {

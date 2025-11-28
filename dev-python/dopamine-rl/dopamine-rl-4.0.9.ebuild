@@ -8,7 +8,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Up to 3.8 listed
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 protobuf pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -38,8 +38,11 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +keras2"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+="
++keras2
+ebuild_revision_1
+"
 REQUIREMENTS_RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
@@ -65,7 +68,17 @@ REQUIREMENTS_RDEPEND="
 		>=dev-python/oauthlib-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0.5[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-3.12.2[${PYTHON_USEDEP}]
+		|| (
+			|| (
+				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.25[${PYTHON_USEDEP}]
+				dev-python/protobuf:5.29[${PYTHON_USEDEP}]
+				dev-python/protobuf:6.33[${PYTHON_USEDEP}]
+			)
+			dev-python/protobuf:=
+			>=dev-python/protobuf-3.12.2[${PYTHON_USEDEP}]
+		)
 		dev-python/protobuf:=
 		>=dev-python/pyasn1-0.4.8[${PYTHON_USEDEP}]
 		>=dev-python/pyasn1-modules-0.2.8[${PYTHON_USEDEP}]
@@ -102,6 +115,7 @@ REQUIREMENTS_RDEPEND="
 	keras2? (
 		<sci-ml/tensorflow-2.16[${PYTHON_SINGLE_USEDEP}]
 		=dev-python/tf-keras-2*[${PYTHON_SINGLE_USEDEP}]
+		dev-python/tf-keras:=
 		>=dev-python/keras-preprocessing-1.1.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
@@ -146,6 +160,32 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	elif has_version "dev-libs/protobuf:4/4.25" ; then
+		ABSEIL_CPP_SLOT="20240116"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+	elif has_version "dev-libs/protobuf:5/5.29" ; then
+		ABSEIL_CPP_SLOT="20240722"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	elif has_version "dev-libs/protobuf:6/6.33" ; then
+		ABSEIL_CPP_SLOT="20250512"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
 }
 
 src_install() {
