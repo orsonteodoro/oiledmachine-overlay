@@ -27,7 +27,7 @@ CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
 CXX_STANDARD=17
 OPENCENSUS_PROTO_PV="0.3.0"
-PROTOBUF_SLOT="5"
+PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RE2_SLOT="20240116"
 RUBY_OPTIONAL="yes"
@@ -97,7 +97,7 @@ REQUIRED_USE+="
 	)
 "
 RESTRICT="test"
-SLOT_MAJ="${PROTOBUF_SLOT}"
+SLOT_MAJ="${PROTOBUF_CPP_SLOT}"
 SLOT="${SLOT_MAJ}/1.71"
 # third_party last update: 20250213
 RDEPEND+="
@@ -107,7 +107,7 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 	dev-libs/protobuf:=
 	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}[${MULTILIB_USEDEP}]
 	dev-libs/re2:=
@@ -221,7 +221,7 @@ src_configure() {
 	filter-flags -Wl,--as-needed
 	configure_abi() {
 #		local L=(
-#			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)
+#			$(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%.*}/$(get_libdir)/pkgconfig:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}" pkg-config --libs protobuf)
 #		)
 #		append-ldflags "${L[@]}"
 #einfo "LDFLAGS: ${LDFLAGS}"
@@ -251,7 +251,7 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
 			-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/cmake/re2"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
@@ -302,11 +302,11 @@ fix_rpath() {
 
 	IFS=$'\n'
 	L=(
-		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
+		$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin" -type f)
 	)
 	IFS=$' \t\n'
 	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"
-	local d2="/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+	local d2="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
 	for x in "${L[@]}" ; do
 einfo "Adding ${d1} to RPATH for ${x}"
 		patchelf \
@@ -323,7 +323,7 @@ einfo "Adding ${d2} to RPATH for ${x}"
 	fix_libs_abi() {
 		IFS=$'\n'
 		L=(
-			$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" -name "*.so*")
+			$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)" -name "*.so*")
 		)
 		IFS=$' \t\n'
 		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV_GRPC%%.*}/$(get_libdir)"

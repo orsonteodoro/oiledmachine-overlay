@@ -25,7 +25,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
 CXX_STANDARD=17 # Originally 11
-PROTOBUF_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32"
@@ -101,7 +101,7 @@ REQUIRED_USE+="
 	)
 "
 RESTRICT="test"
-SLOT_MAJ="${PROTOBUF_SLOT}"
+SLOT_MAJ="${PROTOBUF_CPP_SLOT}"
 SLOT="${SLOT_MAJ}/1.30"
 # third_party last update: 20200529
 RDEPEND+="
@@ -109,7 +109,7 @@ RDEPEND+="
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.0g:0[-bindist(-),${MULTILIB_USEDEP}]
 	dev-libs/openssl:=
-	dev-libs/protobuf:${PROTOBUF_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-libs/protobuf:=
 	>=net-dns/c-ares-1.15.0[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=
@@ -193,8 +193,8 @@ src_prepare() {
 }
 
 src_configure() {
-	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
-	export PATH="${ED}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
+	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
+	export PATH="${ED}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	cflags-hardened_append
 	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
@@ -227,11 +227,11 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
-			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
-			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotobuf.a"
-			-DProtobuf_PROTOC_LIBRARY="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/libprotoc.a"
-			-DPROTOBUF_PROTOC_EXECUTABLE="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin/protoc"
+			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
+			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
+			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotobuf.a"
+			-DProtobuf_PROTOC_LIBRARY="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotoc.a"
+			-DPROTOBUF_PROTOC_EXECUTABLE="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		cmake_src_configure
@@ -280,11 +280,11 @@ fix_rpath() {
 	local x
 	IFS=$'\n'
 	L=(
-		$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/bin" -type f)
+		$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/bin" -type f)
 	)
 	IFS=$' \t\n'
 	local d1="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
-	local d2="/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+	local d2="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)"
 	for x in "${L[@]}" ; do
 einfo "Adding ${d1} to RPATH for ${x}"
 		patchelf \
@@ -301,7 +301,7 @@ einfo "Adding ${d2} to RPATH for ${x}"
 	fix_libs_abi() {
 		IFS=$'\n'
 		L=(
-			$(find "${ED}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)" -name "*.so*")
+			$(find "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/$(get_libdir)" -name "*.so*")
 		)
 		IFS=$' \t\n'
 		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
