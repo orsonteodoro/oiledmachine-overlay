@@ -30,7 +30,7 @@ main() {
 			ldd "${x}" 2>/dev/null | grep -q "/usr/lib/ffmpeg" || echo "RPATH is possibily missing or would benefit with multislot ffmpeg for ${x} (4)"
 		fi
 		if ldd "${x}" 2>/dev/null | grep -q "libamdhip64.so" && ldd "${x}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
-			ldd "${x}" 2>/dev/null | grep -q "/opt/rocm" || echo "HIP-Clang RPATH is missing for ${x} (5)"
+			ldd "${x}" 2>/dev/null | grep -q "/opt/rocm/lib/llvm" || echo "HIP-Clang RPATH is missing for ${x} (5)"
 		fi
 		if ldd "${x}" 2>/dev/null | grep -q "libamdhip64.so" ; then
 			ldd "${x}" 2>/dev/null | grep -q "/opt/rocm" || echo "RPATH is missing for ${x} (6)"
