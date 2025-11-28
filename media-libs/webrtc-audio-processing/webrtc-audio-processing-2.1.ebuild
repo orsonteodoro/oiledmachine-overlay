@@ -35,10 +35,11 @@ RDEPEND="
 	>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT%.*}[${MULTILIB_USEDEP},cxx_standard_cxx17]
 	dev-cpp/abseil-cpp:=
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	virtual/pkgconfig
-	dev-util/patchelf
 "
 
 PATCHES=(
