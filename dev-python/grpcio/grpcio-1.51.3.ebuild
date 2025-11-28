@@ -135,7 +135,7 @@ python_configure() {
 		$(grep -r -l -e "-std=c++14" "${S}/src/python/grpcio")
 	)
 	if use cxx_standard_cxx17 ; then
-		append-flags "-std=c++17"
+		append-cxxflags "-std=c++17"
 		sed -i "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
 	fi
 	local libdir=$(get_libdir)

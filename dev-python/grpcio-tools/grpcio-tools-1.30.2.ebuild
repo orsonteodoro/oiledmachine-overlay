@@ -132,10 +132,10 @@ ${PKG_CONFIG_PATH}" \
 		$(grep -r -l -e "-std=c++11" "${S}")
 	)
 	if use cxx_standard_cxx14 ; then
-		append-flags "-std=c++14"
+		append-cxxflags "-std=c++14"
 		sed -e "s|-std=c++11|-std=c++14|g" "${L[@]}" || die
 	elif use cxx_standard_cxx17 ; then
-		append-flags "-std=c++17"
+		append-cxxflags "-std=c++17"
 		sed -e "s|-std=c++11|-std=c++17|g" "${L[@]}" || die
 	fi
 einfo "CC:  ${CC}"
