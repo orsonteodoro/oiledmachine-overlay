@@ -8,11 +8,12 @@ EAPI=8
 LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
 LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
 LINUX_KERNEL_MSM_FDINFO_KV="6.0"
+
 VIDEO_CARDS=(
-	amdgpu
-	freedreno
-	intel
-	nvidia
+	"amdgpu"
+	"freedreno"
+	"intel"
+	"nvidia"
 )
 
 inherit cmake linux-info xdg
@@ -39,7 +40,7 @@ SLOT="0"
 IUSE+="
 ${VIDEO_CARDS[@]/#/video_cards_}
 custom-kernel systemd udev unicode
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	video_cards_amdgpu? (
@@ -146,7 +147,7 @@ ewarn
 	if use video_cards_intel ; then
 		CONFIG_CHECK+=" ~DRM_I915"
 		local kv=$(uname -r | cut -f 1 -d "-")
-		if ver_test ${kv} -lt ${LINUX_KERNEL_INTEL_FDINFO_KV} ; then
+		if ver_test "${kv}" "-lt" "${LINUX_KERNEL_INTEL_FDINFO_KV}" ; then
 ewarn
 ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
@@ -158,7 +159,7 @@ ewarn
 	if use video_cards_freedreno ; then
 		CONFIG_CHECK+=" ~DRM_MSM"
 		local kv=$(uname -r | cut -f 1 -d "-")
-		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
+		if ver_test "${kv}" "-lt" "${LINUX_KERNEL_MSM_FDINFO_KV}" ; then
 ewarn
 ewarn "Kernel version requirements is not met for the running kernel."
 ewarn

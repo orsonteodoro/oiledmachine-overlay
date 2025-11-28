@@ -24,10 +24,10 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
-inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
+inherit abseil-cpp cmake flag-o-matic libstdcxx-slot protobuf python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -53,7 +53,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -66,12 +66,15 @@ REQUIRED_USE="
 		rocm
 	)
 "
-# protobuf is relaxed
+# The required Protobuf version is relaxed.
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/half-1.12.0
-	virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
-	virtual/protobuf:=
+	|| (
+		dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
+	)
+	dev-libs/protobuf:=
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
@@ -136,7 +139,19 @@ src_prepare() {
 }
 
 src_configure() {
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_SLOT="3"
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_SLOT="3"
+	fi
+	abseil-cpp_src_compile
+	protobuf_src_compile
+
 	local mycmakeargs=(
+		$(abseil-cpp_append_cmake)
+		$(protobuf_append_cmake)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)

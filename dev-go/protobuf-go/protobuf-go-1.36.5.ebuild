@@ -10,7 +10,7 @@ EAPI=8
 GEN_EBUILD=0
 MY_PV="v${PV}"
 PROTOBUF_PV="5.29.1" # https://github.com/protocolbuffers/protobuf-go/blob/v1.36.5/integration_test.go#L38
-PROTOBUF_SLOT="${PROTOBUF_PV%%.*}"
+PROTOBUF_CPP_SLOT="${PROTOBUF_PV%%.*}"
 export S_GO="${WORKDIR}/go_build"
 
 inherit go-module
@@ -91,17 +91,18 @@ eerror "Missing get_col2_unpack() entry for ${uri}"
 generate_ebuild_snapshot() {
 	cd "${S}" || die
 	IFS=$'\n'
-	L=(
+	local L=(
 		"github.com/protocolbuffers/${PN} MY_PV"
 		$(grep -E "/" "${S}/go.mod" | sed -e "1d" | sed -e "s|// indirect.*||g")
 	)
+	IFS=$' \t\n'
 
 
 einfo
 einfo "Replace SRC_URI section:"
 einfo
 	local row
-	for row in ${L[@]} ; do
+	for row in "${L[@]}" ; do
 		if [[ "${row}" =~ "require" ]] ; then
 			row=$(echo "${row}" | sed -e "s|require ||g")
 		fi
@@ -122,7 +123,7 @@ echo -e "\$(gen_go_dl_gh_url ${c1} ${c2} ${c3})"
 einfo
 einfo "Replace unpack_go section:"
 einfo
-	for row in ${L[@]} ; do
+	for row in "${L[@]}" ; do
 		if [[ "${row}" =~ "require" ]] ; then
 			row=$(echo "${row}" | sed -e "s|require ||g")
 		fi
@@ -138,10 +139,7 @@ einfo
 		local c3=$(get_col3 "${c1}" "${ver}")
 echo -e "\tunpack_go_pkg ${c1} ${c2} ${c3}"
 	done
-	IFS=$' \t\n'
-einfo
 einfo "Please update the ebuild with the following above information."
-einfo
 	die
 }
 
@@ -199,11 +197,11 @@ DESCRIPTION="Go support for Google's protocol buffers"
 HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 RESTRICT="mirror"
-SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-3 ${PV})"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-3" "${PV}")
 IUSE="ebuild_revision_3"
 RDEPEND="
-	virtual/protobuf:${PROTOBUF_SLOT}
-	virtual/protobuf:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
+	dev-libs/protobuf:=
 "
 BDEPEND="
 	>=dev-lang/go-1.21
@@ -216,7 +214,7 @@ src_unpack() {
 }
 
 src_compile() {
-	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export GOPATH="${WORKDIR}/go_build"
 	export GOBIN="${GOPATH}/bin"
 	export GO111MODULE=auto
@@ -227,6 +225,6 @@ src_compile() {
 }
 
 src_install() {
-	exeinto "/usr/lib/${PN}/bin/${PROTOBUF_SLOT}"
+	exeinto "/usr/lib/${PN}/bin/${PROTOBUF_CPP_SLOT}"
 	doexe "${GOBIN}/protoc-gen-go"
 }

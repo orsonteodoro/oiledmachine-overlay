@@ -5,7 +5,7 @@
 EAPI=8
 
 CXX_STANDARD=20
-PROTOBUF_SLOT=3
+PROTOBUF_CPP_SLOT=3
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit libstdcxx-compat
@@ -34,7 +34,7 @@ else
 	die "FIXME"
 fi
 
-inherit autotools libstdcxx-slot libcxx-slot toolchain-funcs
+inherit abseil-cpp autotools libstdcxx-slot libcxx-slot protobuf toolchain-funcs
 
 DESCRIPTION="Web performance measurement toolkit"
 HOMEPAGE="
@@ -44,7 +44,10 @@ https://github.com/ravinet/mahimahi
 LICENSE="GPL-3+"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" alt-ssl gnuplot +sudo +sysctl"
+IUSE+="
+alt-ssl gnuplot +sudo +sysctl
+ebuild_revision_1
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -59,8 +62,11 @@ DEPEND+="
 	sys-apps/iproute2
 	x11-libs/libxcb
 	virtual/libc
-	virtual/protobuf:${PROTOBUF_SLOT}[${LIBSTDCXX_USEDEP}]
-	virtual/protobuf:=
+	|| (
+		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+	dev-libs/protobuf:=
 	gnuplot? (
 		sci-visualization/gnuplot
 	)
@@ -83,8 +89,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	virtual/protobuf:${PROTOBUF_SLOT}[${LIBSTDCXX_USEDEP}]
-	virtual/protobuf:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBSTDCXX_USEDEP}]
+	dev-libs/protobuf:=
 	virtual/libc
 "
 SRC_URI="
@@ -136,8 +142,13 @@ src_unpack() {
 
 src_configure() {
 	eautoreconf
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+	fi
+	abseil-cpp_src_configure
+	protobuf_src_configure
 	export PKG_CONFIG_PATH
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 	econf

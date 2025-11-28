@@ -13,20 +13,22 @@ _CXX_STANDARD=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
+ABSEIL_CPP_SLOT="20240722"
 CXX_STANDARD=17
 GRPC_SLOT="5"
 OPENTELEMETRY_PROTO_PV="1.3.1"
 PROTOBUF_SLOT="5"
+RE2_SLOT="20240116"
 
-inherit cmake dep-prepare libcxx-slot libstdcxx-slot
+inherit abseil-cpp cmake dep-prepare grpc libcxx-slot libstdcxx-slot protobuf re2
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -51,7 +53,7 @@ SLOT="${PROTOBUF_SLOT}/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${_CXX_STANDARD[@]}
 -otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
@@ -65,10 +67,10 @@ RDEPEND="
 	dev-libs/boost[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
 	otlp-grpc? (
-		virtual/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/grpc:=
-		virtual/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:=
+		net-libs/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		net-libs/grpc:=
 	)
 	otlp-http? (
 		>=net-misc/curl-8.8.0
@@ -114,11 +116,11 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
+		touch "dummy" || die
+		git add "dummy" || die
 		#git add -f * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -129,20 +131,7 @@ src_unpack() {
 	gen_git_tag "${S}/third_party/opentelemetry-proto" "v${OPENTELEMETRY_PROTO_PV}"
 }
 
-get_abseil_cpp_slot() {
-	if has_version "net-libs/grpc:3/1.30" ; then
-		echo "20200225"
-	elif has_version "net-libs/grpc:3/1.51" ; then
-		echo "20220623"
-	elif has_version "net-libs/grpc:5/1.71" ; then
-		echo "20240722"
-	elif has_version "net-libs/grpc:6/1.75" ; then
-		echo "20250512"
-	fi
-}
-
 src_configure() {
-	local ABSEIL_CPP_SLOT=$(get_abseil_cpp_slot)
 	local mycmakeargs=(
 		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
 		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')
@@ -157,10 +146,15 @@ src_configure() {
 		-DWITH_PROMETHEUS:BOOL=$(usex prometheus)
 	)
 	if use otlp-grpc ; then
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
 		mycmakeargs+=(
-			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/cmake/absl"
-			-DgRPC_DIR="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
-			-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
+			$(abseil-cpp_append_cmake)
+			$(protobuf_append_cmake)
+			$(re2_append_cmake)
+			$(grpc_append_cmake)
 		)
 	fi
 	cmake_src_configure

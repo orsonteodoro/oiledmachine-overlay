@@ -12,15 +12,16 @@ LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
 LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
 LINUX_KERNEL_MSM_FDINFO_KV="6.0"
 LINUX_KERNEL_V3D_FDINFO_KV="6.8"
+
 VIDEO_CARDS=(
-	amdgpu
-	freedreno
-	intel
-	nvidia
-	v3d
+	"amdgpu"
+	"freedreno"
+	"intel"
+	"nvidia"
+	"v3d"
 )
 
-inherit cmake linux-info xdg
+inherit abseil-cpp cmake grpc linux-info protobuf re2 xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE="
@@ -44,7 +45,7 @@ SLOT="0"
 IUSE+="
 ${VIDEO_CARDS[@]/#/video_cards_}
 custom-kernel systemd udev unicode tpu
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	video_cards_amdgpu? (
@@ -93,8 +94,8 @@ RDEPEND="
 	)
 	tpu? (
 		dev-libs/libtpuinfo
-		virtual/grpc:5
-		virtual/grpc:=
+		net-libs/grpc:5
+		net-libs/grpc:=
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
@@ -151,7 +152,7 @@ pkg_setup() {
 	if use video_cards_amdgpu ; then
 		CONFIG_CHECK+=" ~DRM_AMDGPU ~SYSFS"
 		local kv=$(uname -r | cut -f 1 -d "-")
-		if ver_test ${kv} -lt ${LINUX_KERNEL_AMDGPU_FDINFO_KV} ; then
+		if ver_test "${kv}" "-lt" "${LINUX_KERNEL_AMDGPU_FDINFO_KV}" ; then
 ewarn
 ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
@@ -163,7 +164,7 @@ ewarn
 	if use video_cards_intel ; then
 		CONFIG_CHECK+=" ~DRM_I915"
 		local kv=$(uname -r | cut -f 1 -d "-")
-		if ver_test ${kv} -lt ${LINUX_KERNEL_INTEL_FDINFO_KV} ; then
+		if ver_test "${kv}" "-lt" "${LINUX_KERNEL_INTEL_FDINFO_KV}" ; then
 ewarn
 ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
@@ -175,7 +176,7 @@ ewarn
 	if use video_cards_freedreno ; then
 		CONFIG_CHECK+=" ~DRM_MSM"
 		local kv=$(uname -r | cut -f 1 -d "-")
-		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
+		if ver_test "${kv}" "-lt" "${LINUX_KERNEL_MSM_FDINFO_KV}" ; then
 ewarn
 ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
@@ -220,5 +221,23 @@ src_configure() {
 		-DUSE_LIBUDEV_OVER_LIBSYSTEMD=$(usex udev)
 		-DV3D_SUPPORT=$(usex video_cards_v3d)
 	)
+
+	if use tpu ; then
+		ABSEIL_CPP_SLOT="20240722"
+		GRPC_SLOT="5"
+		PROTOBUF_CPP_SLOT="5"
+		RE2_SLOT="20240116"
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
+		mycmakeargs+=(
+			$(abseil-cpp_append_cmake)
+			$(protobuf_append_cmake)
+			$(re2_append_cmake)
+			$(grpc_append_cmake)
+		)
+	fi
+
 	cmake_src_configure
 }

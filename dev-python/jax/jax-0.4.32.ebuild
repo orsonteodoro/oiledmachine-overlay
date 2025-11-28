@@ -31,7 +31,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-australis cpu cuda doc experimental rocm test
+cpu cuda doc experimental rocm test
 ebuild_revision_2
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
@@ -48,10 +48,6 @@ DEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/ml-dtypes-0.2.0[${PYTHON_USEDEP}]
 		dev-python/opt-einsum[${PYTHON_USEDEP}]
-		australis? (
-			virtual/protobuf:3
-			virtual/protobuf:=
-		)
 		cuda? (
 			=dev-libs/cudnn-9*
 			dev-libs/cudnn:=
@@ -67,8 +63,6 @@ RDEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		virtual/protobuf:3
-		virtual/protobuf:=
 		dev-python/build[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		test? (

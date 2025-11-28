@@ -76,7 +76,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
 LLVM_TARGETS_CPU_COMPAT=(
@@ -95,7 +95,7 @@ ${LLVM_TARGETS_GPU_COMPAT[@]}
 LLVM_TARGETS_USEDEP=""
 _llvm_roc_libomp_globals() {
 	local u
-	for u in ${LLVM_TARGETS_CPU_COMPAT[@]} ${LLVM_TARGETS_GPU_COMPAT[@]} ; do
+	for u in "${LLVM_TARGETS_CPU_COMPAT[@]}" "${LLVM_TARGETS_GPU_COMPAT[@]}" ; do
 		LLVM_TARGETS_USEDEP+=",${u}?"
 	done
 	LLVM_TARGETS_USEDEP="${LLVM_TARGETS_USEDEP:1}"
@@ -104,7 +104,7 @@ _llvm_roc_libomp_globals() {
 _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
+inherit abseil-cpp check-compiler-switch cmake flag-o-matic grpc libstdcxx-slot protobuf python-single-r1 re2 rocm
 
 #KEYWORDS="~amd64" # Update is WIP
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
@@ -148,7 +148,7 @@ ebuild_revision_30
 
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -159,7 +159,7 @@ gen_cuda_required_use() {
 }
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				llvm_targets_AMDGPU
@@ -360,8 +360,6 @@ RDEPEND="
 	remote-offloading? (
 		net-libs/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP},cxx]
 		net-libs/grpc:=
-		virtual/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP}]
-		virtual/grpc:=
 	)
 "
 # The versions for protobuf and grpc was not disclosed in build files.
@@ -391,7 +389,7 @@ gen_nvptx_list() {
 	else
 		local list
 		local x
-		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 			if use "cuda_targets_${x}" ; then
 				list+=";${x/sm_}"
 			fi
@@ -460,7 +458,7 @@ src_prepare() {
 		"third-party"
 		"utils"
 	)
-	rm -rf ${prune_dirs[@]} || die
+	rm -rf "${prune_dirs[@]}" || die
 	mkdir -p "t"
 	mv "llvm/include/" "t" || die
 	mkdir -p "llvm" || die
@@ -584,6 +582,22 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 	if use remote-offloading ; then
+		if has_version "net-libs/grpc:3/1.30" ; then
+			ABSEIL_CPP_SLOT="20200225"
+			PROTOBUF_CPP_SLOT="3"
+			GRPC_SLOT="3"
+			RE2_SLOT="20220623"
+		elif has_version "net-libs/grpc:3/1.51" ; then
+			ABSEIL_CPP_SLOT="20220623"
+			PROTOBUF_CPP_SLOT="3"
+			GRPC_SLOT="3"
+			RE2_SLOT="20220623"
+		fi
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
+
 		mycmakeargs+=(
 			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
 			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"

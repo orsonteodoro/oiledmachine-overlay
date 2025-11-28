@@ -49,7 +49,7 @@ PROPERTIES="live"
 SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -89,7 +89,7 @@ RDEPEND="
 		gcc_slot_11_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},gcc_slot_11_5,cxx_standard_cxx17]
 			dev-python/protobuf:3.12['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},python]
+			net-libs/grpc:'${GRPC_SLOT}'/1.30['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP}]
 			)
@@ -97,7 +97,7 @@ RDEPEND="
 		gcc_slot_12_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_12_5,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
+			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
@@ -105,7 +105,7 @@ RDEPEND="
 		gcc_slot_13_4? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_13_4,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
+			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
@@ -113,7 +113,7 @@ RDEPEND="
 		gcc_slot_14_3? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_14_3,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
+			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
@@ -121,7 +121,7 @@ RDEPEND="
 		llvm_slot_18? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_18,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
+			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
@@ -129,7 +129,7 @@ RDEPEND="
 		llvm_slot_19? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_19,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},python]
+			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
@@ -142,9 +142,6 @@ RDEPEND="
 			dev-python/grpcio-testing:=
 		)
 	')
-	virtual/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/grpc:=
-	dev-python/protobuf:=
 	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND="

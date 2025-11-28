@@ -16,15 +16,7 @@
 
   Maintained versions:
 
-  0.4.29 - Latest version
-  0.4.28 - Previous version
-  0.4.25 - Last support for CUDA 11.8
-  0.4.23 - Last support for ROCm 5.6
+  0.4.32 - Latest version
 
   -->
-  <use>
-    <flag name="australis">
-      Add dependencies for Australis support
-    </flag>
-  </use>
 </pkgmetadata>

@@ -10,10 +10,10 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+inherit abseil-cpp check-compiler-switch cmake flag-o-matic grpc libstdcxx-slot protobuf re2 rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
@@ -43,7 +43,7 @@ SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="
 asan +compile-commands doc +raslib +standalone systemd test
-ebuild_revision_16
+ebuild_revision_18
 "
 REQUIRED_USE="
 	raslib
@@ -56,8 +56,8 @@ RDEPEND="
 	>=dev-util/rocm-smi-${PV}:${SLOT}
 	dev-util/rocm-smi:=
 	standalone? (
-		virtual/grpc[${LIBSTDCXX_USEDEP}]
-		virtual/grpc:=
+		net-libs/grpc:4/1.62[${LIBSTDCXX_USEDEP}]
+		net-libs/grpc:=
 	)
 	systemd? (
 		sys-apps/systemd
@@ -135,11 +135,27 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=$(usex compile-commands ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${ESYSROOT}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DGRPC_ROOT="${ESYSROOT}/usr"
 		-DINSTALL_RASLIB=$(usex raslib ON OFF)
 		-DRDC_CLIENT_INSTALL_PREFIX="share/rdc"
 		-DROCM_DIR="${ESYSROOT}/${EROCM_PATH}"
 	)
+
+	if use standalone ; then
+		if has_version "net-libs/grpc:4/1.62" ; then
+			ABSEIL_CPP_SLOT="20240116"
+			GRPC_SLOT="4"
+			PROTOBUF_CPP_SLOT="4"
+			RE2_SLOT="20220623"
+		fi
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
+		mycmakeargs+=(
+			-DGRPC_ROOT="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}"
+		)
+	fi
+
 	cmake_src_configure
 }
 

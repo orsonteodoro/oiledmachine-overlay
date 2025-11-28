@@ -205,7 +205,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	?? (
@@ -222,8 +222,8 @@ REQUIRED_USE="
 "
 RDEPEND_PROTOBUF="
 	system-protobuf? (
-		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:=
 	)
 "
 

@@ -37,13 +37,11 @@ EAPI=8
 
 MY_PN="jax"
 
-BAZEL_PV="6.5.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
-EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 JAVA_SLOT="11"
 LLVM_MAX_SLOT="19"
@@ -77,22 +75,6 @@ CUDA_TARGETS_COMPAT=(
 	"compute_90"
 )
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
-inherit libcxx-compat
-LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
-	# Upstream uses LLVM 18
-)
-
-inherit bazel cflags-hardened check-compiler-switch cuda distutils-r1 dhms
-inherit flag-o-matic git-r3 hip-versions java-pkg-opt-2 libcxx-slot libstdcxx-slot llvm pypi
-inherit rocm sandbox-changes toolchain-funcs
-
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
 # Do not use GH urls if .gitmodules exists in that project
@@ -103,7 +85,15 @@ inherit rocm sandbox-changes toolchain-funcs
 # Search and replace old PV with new PV
 # Search and replace old EGIT_XLA_COMMIT with new EGIT_XLA_COMMIT
 
+# For system gRPC
+ABSEIL_CPP_SLOT="20220623"
+GRPC_CPP_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
+PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+RE2_SLOT="20220623"
+
 APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/workspace2.bzl#L534
+BAZEL_PV="6.5.0"
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/workspace3.bzl#L23
 CPYTHON_X86_64_3_11_PV="20240415:3.11.9+20240415"	# From https://github.com/bazelbuild/rules_python/blob/0.34.0/python/versions.bzl#L423
 CPYTHON_X86_64_3_12_PV="20240415:3.12.3+20240415"	# From https://github.com/bazelbuild/rules_python/blob/0.34.0/python/versions.bzl#L285
@@ -143,6 +133,7 @@ TOMLI_PV="97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9:2.0
 WHEEL_PV="7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce:0.43.0"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L89
 ZIPP_PV="da/55/a03fd7240714916507e1fcf7ae355bd9d9ed2e6db492595f1a67f61681be:3.18.2"			# From https://github.com/bazel-contrib/rules_python/blob/0.34.0/python/private/pypi/deps.bzl#L94
 
+EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/third_party/absl/workspace.bzl
 EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/workspace1.bzl#L26
 EGIT_BENCHMARK_COMMIT="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"		# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/third_party/benchmark/workspace.bzl
@@ -175,56 +166,74 @@ EGIT_XLA_COMMIT="720b2c53346660e95abbed7cf3309a8b85e979f9"			# From https://gith
 _DISABLED_PYPI_PACKAGES=(
 )
 _PYPI_PACKAGES=(
-absl-py==2.1.0
-attrs==23.2.0
-build==1.2.1
-cloudpickle==3.0.0
-colorama==0.4.6
-contourpy==1.2.1
-cycler==0.12.1
-etils==1.8.0
-execnet==2.1.1
-filelock==3.14.0
-flatbuffers==24.3.25
-fonttools==4.51.0
-fsspec==2024.5.0
-hypothesis==6.102.4
-importlib-resources==6.4.0
-iniconfig==2.0.0
-kiwisolver==1.4.5
-markdown-it-py==3.0.0
-matplotlib==3.9.0
-mdurl==0.1.2
-ml-dtypes==0.4.0
-mpmath==1.4.0a1
-numpy==2.0.0
-opt-einsum==3.3.0
-packaging==24.0
-pillow==10.3.0
-pluggy==1.5.0
-portpicker==1.6.0
-psutil==5.9.8
-pygments==2.18.0
-pyparsing==3.1.2
-pyproject-hooks==1.1.0
-pytest==8.2.0
-pytest-xdist==3.6.1
-python-dateutil==2.9.0.post0
-rich==13.7.1
-scipy==1.13.1
-six==1.16.0
-sortedcontainers==2.4.0
-typing-extensions==4.12.0rc1
-zipp==3.18.2
-zstandard==0.22.0
-setuptools==69.5.1
-wheel==0.43.0
+	"absl-py==2.1.0"
+	"attrs==23.2.0"
+	"build==1.2.1"
+	"cloudpickle==3.0.0"
+	"colorama==0.4.6"
+	"contourpy==1.2.1"
+	"cycler==0.12.1"
+	"etils==1.8.0"
+	"execnet==2.1.1"
+	"filelock==3.14.0"
+	"flatbuffers==24.3.25"
+	"fonttools==4.51.0"
+	"fsspec==2024.5.0"
+	"hypothesis==6.102.4"
+	"importlib-resources==6.4.0"
+	"iniconfig==2.0.0"
+	"kiwisolver==1.4.5"
+	"markdown-it-py==3.0.0"
+	"matplotlib==3.9.0"
+	"mdurl==0.1.2"
+	"ml-dtypes==0.4.0"
+	"mpmath==1.4.0a1"
+	"numpy==2.0.0"
+	"opt-einsum==3.3.0"
+	"packaging==24.0"
+	"pillow==10.3.0"
+	"pluggy==1.5.0"
+	"portpicker==1.6.0"
+	"psutil==5.9.8"
+	"pygments==2.18.0"
+	"pyparsing==3.1.2"
+	"pyproject-hooks==1.1.0"
+	"pytest==8.2.0"
+	"pytest-xdist==3.6.1"
+	"python-dateutil==2.9.0.post0"
+	"rich==13.7.1"
+	"scipy==1.13.1"
+	"six==1.16.0"
+	"sortedcontainers==2.4.0"
+	"typing-extensions==4.12.0rc1"
+	"zipp==3.18.2"
+	"zstandard==0.22.0"
+	"setuptools==69.5.1"
+	"wheel==0.43.0"
 )
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+	# Upstream uses LLVM 18
+	{18..19}
+)
+
+inherit abseil-cpp bazel cflags-hardened check-compiler-switch cuda distutils-r1
+inherit dhms flag-o-matic git-r3 grpc hip-versions java-pkg-opt-2 libcxx-slot
+inherit libstdcxx-slot llvm protobuf pypi re2 rocm sandbox-changes
+inherit toolchain-funcs
 
 _PYPI_URLS=""
 gen_pypi_uris() {
 	local pkg
-	for pkg in ${_PYPI_PACKAGES[@]} ; do
+	for pkg in "${_PYPI_PACKAGES[@]}" ; do
 		local name="${pkg%%=*}"
 		local version="${pkg##*=}"
 		local abi
@@ -359,20 +368,20 @@ LICENSE="
 	)
 "
 KEYWORDS="~amd64 ~arm64 ~ppc64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_4
-ebuild_revision_18
+ebuild_revision_19
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo  "
 			cuda_targets_${x}? (
 				cuda
@@ -383,7 +392,7 @@ gen_cuda_required_use() {
 
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo  "
 			amdgpu_targets_${x}? (
 				rocm
@@ -394,7 +403,7 @@ gen_rocm_required_use() {
 
 gen_llvm_slot_required_use() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				clang
@@ -494,11 +503,11 @@ gen_rocm_depends() {
 		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
 		local hipblastlt_compat=()
 		local x
-		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
 		done
 
-		for x in ${hipblastlt_compat[@]} ; do
+		for x in "${hipblastlt_compat[@]}" ; do
 			echo "
 				rocm_${u}? (
 					>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]
@@ -546,6 +555,8 @@ RDEPEND+="
 	>=dev-libs/double-conversion-3.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
 	>=sys-libs/zlib-1.2.13
+	net-libs/grpc:3/1.51[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	net-libs/grpc:=
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-12.3*
@@ -560,10 +571,7 @@ RDEPEND+="
 		$(gen_rocm_depends)
 		dev-util/hip:=
 	)
-	virtual/grpc:3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/grpc:=
 "
-# Originally >=net-libs/grpc-1.27_p9999:=
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
 # for it.
 DEPEND+="
@@ -576,13 +584,13 @@ BDEPEND+="
 	')
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 "
+ROCM_PATCHES=(
+	"0050-fix-rocm-build-scripts.patch"
+)
 
 S="${WORKDIR}/jax-jaxlib-v${PV}"
 RESTRICT="mirror"
 DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )
-ROCM_PATCHES=(
-	"0050-fix-rocm-build-scripts.patch"
-)
 
 distutils_enable_tests "pytest"
 
@@ -823,7 +831,7 @@ eerror
 	fi
 
 	java-pkg-opt-2_pkg_setup
-	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	java-pkg_ensure-vm-version-eq "${JAVA_SLOT}"
 
 	# Required because rules_python/pip cannot do offline easily.
 	sandbox-changes_no_network_sandbox "To download micropackages"
@@ -929,7 +937,7 @@ src_prepare() {
 get_cuda_targets() {
 	local targets
 	local target
-	for target in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		if use "cuda_targets_${target}" ; then
 			targets+=",${target}"
 		fi
@@ -980,7 +988,7 @@ _ebazel() {
 	mkdir -p "${output_base}" || die
 	set -- bazel \
 		--output_base="${output_base}" \
-		${@}
+		"${@}"
 	echo "${*}" >&2
 	"${@}" || die "ebazel failed"
 }
@@ -1051,8 +1059,15 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	re2_src_configure
+	grpc_src_configure
+
 # See https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/third_party/systemlibs/syslibs_configure.bzl#L11
 	local SYSLIBS=(
+# What it is telling us is that most cannot be built with system libs.
+
 #		absl_py
 #		astor_archive
 #		astunparse_archive
@@ -1178,7 +1193,7 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	# Generate to fix python version in .jax_configure.bazelrc
 einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
-	${EPYTHON} \
+	"${EPYTHON}" \
 		"build/build.py" \
 		--configure_only \
 		"${args[@]}" \

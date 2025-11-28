@@ -39,12 +39,12 @@ CUDA_TARGETS_COMPAT=(
 )
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit llvm-ebuilds
-inherit flag-o-matic cmake-multilib libstdcxx-slot linux-info llvm.org llvm-utils python-single-r1
-inherit toolchain-funcs
+inherit abseil-cpp cmake-multilib flag-o-matic grpc libstdcxx-slot linux-info llvm.org llvm-utils protobuf python-single-r1
+inherit re2 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
@@ -77,11 +77,11 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM18_REVISION}
 cuda +debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
-ebuild_revision_9
+ebuild_revision_10
 "
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -240,10 +240,11 @@ RDEPEND="
 		llvm-core/llvm:=
 	)
 	remote-offloading? (
-		net-libs/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP},cxx]
+		|| (
+			net-libs/grpc:3/1.30[${LIBSTDCXX_USEDEP},cxx]
+			net-libs/grpc:3/1.51[${LIBSTDCXX_USEDEP},cxx]
+		)
 		net-libs/grpc:=
-		virtual/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP}]
-		virtual/grpc:=
 	)
 "
 # Tests:
@@ -322,7 +323,7 @@ gen_nvptx_list() {
 	else
 		local list
 		local x
-		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 			if use "cuda_targets_${x}" ; then
 				list+=";${x/sm_}"
 			fi
@@ -410,6 +411,21 @@ eerror
 	)
 
 	if use remote-offloading ; then
+		if has_version "net-libs/grpc:3/1.30" ; then
+			ABSEIL_CPP_SLOT="20200225"
+			PROTOBUF_SLOT="3"
+			GRPC_SLOT="3"
+			RE2_SLOT="20220623"
+		elif has_version "net-libs/grpc:3/1.51" ; then
+			ABSEIL_CPP_SLOT="20220623"
+			PROTOBUF_SLOT="3"
+			GRPC_SLOT="3"
+			RE2_SLOT="20220623"
+		fi
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
 		mycmakeargs+=(
 			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
 			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"

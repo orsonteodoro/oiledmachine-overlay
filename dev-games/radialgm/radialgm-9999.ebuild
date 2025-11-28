@@ -43,7 +43,7 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 doc
-ebuild_revision_5
+ebuild_revision_6
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
@@ -81,10 +81,10 @@ DEPEND+="
 BDEPEND+="
 	${CDEPEND}
 	>=dev-build/cmake-3.23.2
+	dev-libs/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/protobuf:=
 	dev-util/patchelf
 	media-gfx/imagemagick[png]
-	virtual/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/protobuf:=
 "
 RESTRICT="mirror"
 DOCS=( README.md )

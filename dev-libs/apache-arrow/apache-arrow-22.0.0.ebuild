@@ -6,10 +6,11 @@ EAPI=8
 # Requirements:
 # https://github.com/apache/arrow/blob/apache-arrow-22.0.0/.env
 
+ABSEIL_CPP_SLOT="20240722"
 CXX_STANDARD=17
+GRPC_SLOT="4"
+PROTOBUF_CPP_SLOT="4"
 RE2_SLOT="20220623"
-
-ABSEIL_CPP_PV="20240722.0"
 
 # arrow.git: testing
 ARROW_DATA_GIT_HASH="9a02925d1ba80bd493b6d4da6e8a777588d57ac4"
@@ -72,9 +73,10 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 -arrow-flight -arrow-flight-sql -arrow-flight-sql-odbc -brotli -bzip2 -compute
--csv -cuda -filesystem -gandival -dataset -gcs -hdfs +ipc -jemalloc -json -lz4
+-csv -cuda -filesystem -gandiva -dataset -gcs -hdfs +ipc -jemalloc -json -lz4
 +mimalloc +parquet +re2 -s3 -snappy -tensorflow ssl test +threads +utf8proc
 -zlib -zstd
+ebuild_revision_1
 "
 # oiledmachine-overlay has strict GPU version requirements, CUDA 11.7 not supported on distro.
 REQUIRED_USE="
@@ -154,13 +156,13 @@ RESTRICT="
 "
 
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_SLOT}:${ABSEIL_CPP_SLOT%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/boost-1.87.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
 	arrow-flight? (
-		virtual/grpc:4
-		virtual/grpc:=
+		net-libs/grpc:${GRPC_SLOT}
+		net-libs/grpc:=
 	)
 	brotli? (
 		>=app-arch/brotli-1.1.0
@@ -274,9 +276,9 @@ get_runtime_simd_level() {
 src_configure() {
 	local libdir=$(get_libdir)
 	append-ldflags \
-		"-Wl,,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT%.*}/${libdir}" \
 		"-Wl,,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
-		"-Wl,--rpath,/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,--rpath,/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT%.*}/${libdir}" \
 		"-Wl,--rpath,/usr/lib/re2/${RE2_SLOT}/${libdir}"
 
 	local use_gold="OFF"
@@ -299,6 +301,13 @@ src_configure() {
 	local use_sccache="OFF"
 	if [[ -n "${SCCACHE_DIR}" ]] && has_version "dev-util/sccache" ; then
 		use_sccache="ON"
+	fi
+
+	if use arrow-flight ; then
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
 	fi
 
 	# See https://github.com/apache/arrow/blob/apache-arrow-22.0.0/cpp/cmake_modules/DefineOptions.cmake
@@ -345,9 +354,16 @@ src_configure() {
 		-DARROW_WITH_ZSTD=$(usex zstd ON OFF)
 		-DCMAKE_CXX_STANDARD=17
 		-DPARQUET_REQUIRE_ENCRYPTION=$(usex ssl ON OFF)
-		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/${libdir}/cmake/absl"
-		-Dre2_DIR="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/${libdir}/cmake/re2"
 	)
+
+	if use arrow-flight ; then
+		mycmakeargs+=(
+			$(abseil-cpp_append_cmake)
+			$(protobuf_append_cmake)
+			$(re2_append_cmake)
+			$(grpc_append_cmake)
+C		)
+	fi
 
 	cmake_src_configure
 }

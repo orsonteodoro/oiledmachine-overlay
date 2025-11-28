@@ -8,6 +8,7 @@ EAPI=8
 # TODO:
 # ffmpeg multislot configure/rpath
 
+ABSEIL_CPP_SLOT=""
 BOOST_PV="1.72.0"
 CXX_STANDARD=17
 LIBJPEG_TURBO_PV="3.0.2"
@@ -35,10 +36,10 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
+inherit abseil-cpp check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 rocm
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -67,17 +68,21 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	|| (
 		${AMDGPU_TARGETS_COMPAT[@]}
 	)
 "
+# The required Protobuf version is relaxed.
 RDEPEND="
 	${PYTHON_DEPS}
-	virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
-	virtual/protobuf:=
+	|| (
+		dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
+	)
+	dev-libs/protobuf:=
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
 	')
@@ -145,7 +150,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ ${PV} == *"9999" ]] ; then
+	if [[ "${PV}" == *"9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
@@ -197,8 +202,21 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	# The required Protobuf version is relaxed.
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+	fi
+	abseil-cpp_src_configure
+	protobuf_src_configure
+
 	build_rapidjson
 	local mycmakeargs=(
+		$(abseil-cpp_append_cmake)
+		$(protobuf_append_cmake)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)

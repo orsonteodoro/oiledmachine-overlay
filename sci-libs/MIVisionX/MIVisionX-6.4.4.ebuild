@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# TODO:  Review/add protobuf src_configure/path changes
-
 BOOST_PV="1.72.0"
 CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19
@@ -30,10 +28,10 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm toolchain-funcs
+inherit abseil-cpp check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 rocm toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
@@ -85,7 +83,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -128,6 +126,7 @@ REQUIRED_USE="
 "
 # GCC 12 (libstdcxx:12) required to fix:
 # libhsa-runtime64.so.1: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
+# The Protobuf version requirement is relaxed.
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -137,8 +136,8 @@ RDEPEND="
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
 	caffe? (
-		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		dev-libs/protobuf:3[${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:=
 		$(python_gen_cond_dep '
 			>=dev-python/google-3.0.0[${PYTHON_USEDEP}]
 		')
@@ -170,8 +169,11 @@ RDEPEND="
 		)
 	)
 	onnx? (
-		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		|| (
+			dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
+			dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
+		)
+		dev-libs/protobuf:=
 		$(python_gen_cond_dep '
 			>=sci-ml/onnx-1.12.0[${PYTHON_USEDEP}]
 		')
@@ -185,8 +187,8 @@ RDEPEND="
 		>=media-libs/opencv-4.6.0[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
 	)
 	rocal? (
-		virtual/protobuf:3[${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		dev-libs/protobuf:3[${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:=
 		dev-cpp/gflags[${LIBSTDCXX_USEDEP}]
 		dev-cpp/glog[${LIBSTDCXX_USEDEP}]
 		dev-db/lmdb
@@ -271,11 +273,23 @@ src_configure() {
 # ModuleNotFoundError: No module named 'setuptools'
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
 
+	if has_version "dev-libs/protobuf:3/3.12" ; then
+		ABSEIL_CPP_SLOT="20200225"
+		PROTOBUF_SLOT="3"
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_SLOT="3"
+	fi
+	abseil-cpp_src_compile
+	protobuf_src_compile
+
 	build_libjpeg_turbo
 	build_rapidjson
 	build_nnef_parser
 	cd "${S}" || die
 	local mycmakeargs=(
+		$(abseil-cpp_append_cmake)
+		$(protobuf_append_cmake)
 		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
 		-DBUILD_DEV=ON # Install vx.h (OpenVX dev support)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

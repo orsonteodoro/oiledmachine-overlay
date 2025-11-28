@@ -23,11 +23,18 @@ MY_PN2="local-ai"
 #
 GEN_EBUILD=1
 
-ABSEIL_CPP_PV="20240722.0" # The abseil-cpp version is the same used by gRPC.
-BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/bark-cpp/Makefile#L15
+ABSEIL_CPP_SLOT="20240722.0" # The abseil-cpp version is the same used by gRPC.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
+GRPC_SLOT="5"
+PROTOBUF_CPP_SLOT="5"
+PYTHON_COMPAT=( "python3_"{10..12} )
+RE2_SLOT="20240116"
+
+ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
+
+BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/bark-cpp/Makefile#L15
 ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
@@ -36,9 +43,6 @@ GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github
 LLAMA_CPP_COMMIT="d64c8104f090b27b1f99e8da5995ffcfa6b726e2" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/cpp/llama-cpp/Makefile#L2
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
-PROTOBUF_SLOT="5"
-PYTHON_COMPAT=( "python3_"{10..12} )
 STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/stablediffusion-ggml/Makefile#L22
 WHISPER_CPP_COMMIT="7849aff7a2e1f4234aa31b01a1870906d5431959" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/whisper/Makefile#L9
 
@@ -103,11 +107,11 @@ EGO_SUM=(
 )
 
 ROCM_SLOTS=(
-	"${HIP_6_1_VERSION}"
+	"${HIP_6_4_VERSION}"
 )
 
-inherit cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
-inherit python-single-r1 toolchain-funcs xdg
+inherit abseil-cpp cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
+inherit grpc protobuf python-single-r1 re2 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -170,7 +174,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
@@ -180,7 +184,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	!ci
@@ -279,7 +283,7 @@ REQUIRED_USE="
 #	>=media-video/ffmpeg-6.1.1:0/58.60.60 is relaxed
 gen_rocm_rdepend() {
 	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+	for s in "${ROCM_SLOTS[@]}" ; do
 		echo "
 			(
 				~sci-libs/hipBLAS-${s}
@@ -321,10 +325,10 @@ RDEPEND+="
 		>=media-libs/vulkan-loader-1.3.275.0
 		>=sys-apps/pciutils-3.10.0
 	)
-	virtual/protobuf:${PROTOBUF_SLOT}
-	virtual/protobuf:=
-	virtual/grpc:${PROTOBUF_SLOT}
-	virtual/grpc:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
+	dev-libs/protobuf:=
+	net-libs/grpc:${PROTOBUF_CPP_SLOT}
+	net-libs/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -354,20 +358,20 @@ DISABLED_DEPEND="
 BDEPEND+="
 	${PYTHON_DEPS}
 	(
-		>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%%.*}
+		>=dev-cpp/abseil-cpp-${ABSEIL_CPP_SLOT}:${ABSEIL_CPP_SLOT%%.*}
 		dev-cpp/abseil-cpp:=
 	)
 	(
-		virtual/protobuf-go:${PROTOBUF_SLOT}
+		virtual/protobuf-go:${PROTOBUF_CPP_SLOT}
 		virtual/protobuf-go:=
 	)
 	(
-		virtual/protoc-gen-go-grpc:${PROTOBUF_SLOT}
+		virtual/protoc-gen-go-grpc:${PROTOBUF_CPP_SLOT}
 		virtual/protoc-gen-go-grpc:=
 	)
 	(
-		virtual/protobuf:${PROTOBUF_SLOT}
-		virtual/protobuf:=
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
+		dev-libs/protobuf:=
 	)
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
@@ -410,7 +414,7 @@ einfo "Generating tag start for ${path}"
 		git config user.name "John Doe" || die
 		git add * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -477,8 +481,11 @@ src_prepare() {
 }
 
 src_configure() {
-	export PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
-	export PATH="${ESYSROOT}/usr/lib/protobuf-go/${PROTOBUF_SLOT}/bin:${PATH}"
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	re2_src_configure
+	grpc_src_configure
+	export PATH="${ESYSROOT}/usr/lib/protobuf-go/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	cflags-hardened_append
 }
 
@@ -507,6 +514,9 @@ src_compile() {
 	fi
 
 	local cmake_args=(
+		$(abseil-cpp_append_cmake)
+		$(protobuf_append_cmake)
+		$(grpc_append_cmake)
 		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16 "ON" "OFF")
 		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8 "ON" "OFF")
 		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile "ON" "OFF")
@@ -525,9 +535,6 @@ src_compile() {
 		-DGGML_RVV=$(usex cpu_flags_riscv_rvv "ON" "OFF")
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
 		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")
-		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/lib64/cmake/absl"
-		-DgRPC_DIR="${ESYSROOT}/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)/cmake/FIXME"
-		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
 	)
 
 	if \
@@ -583,7 +590,7 @@ install_init_services() {
 	sed \
 		-e "s|@EPYTHON@|${EPYTHON}|g" \
 		"${FILESDIR}/${MY_PN2}-start-server" \
-		> \
+			> \
 		"${T}/${MY_PN2}-start-server" \
 		|| die
 	exeinto "/usr/bin"
@@ -596,7 +603,7 @@ install_init_services() {
 		-e "s|@LOCAL_AI_PORT@|${local_ai_port}|g" \
 		-e "s|@GO_TAGS@|${go_tags}|g" \
 		"${FILESDIR}/${MY_PN2}.conf" \
-		> \
+			> \
 		"${T}/${MY_PN2}.conf" \
 		|| die
 	if use cuda ; then

@@ -229,7 +229,7 @@ ROCM_SLOTS=(
 
 gen_rocm_slots() {
 	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+	for s in "${ROCM_SLOTS[@]}" ; do
 		local s="${s%.*}"
 		s="${s/./_}"
 		echo "rocm_${s}"
@@ -242,15 +242,16 @@ ROCM_SLOTS2=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}
-	${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}
-	${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}" # 18, 19
+	#"${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	{18..19}
 )
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic libcxx-slot libstdcxx-slot llvm rocm python-single-r1 toolchain-funcs
@@ -524,12 +525,12 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_35
+ebuild_revision_36
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -539,7 +540,7 @@ gen_cuda_required_use() {
 }
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -758,7 +759,7 @@ REQUIRED_USE="
 "
 gen_rocm_depends() {
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
+	for pv in "${ROCM_SLOTS[@]}" ; do
 		local s="0/"$(ver_cut 1-2 "${pv}")
 		local u=$(ver_cut 1-2 "${pv}")
 		local ROCM_SLOT="${u}"
@@ -1033,8 +1034,8 @@ RDEPEND="
 		sci-ml/onnx:=
 		>=dev-cpp/opentelemetry-cpp-1.14.2:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/opentelemetry-cpp:=
-		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:=
 		cuda? (
 			>=dev-libs/cudnn-frontend-1.12.0
 		)
@@ -1096,7 +1097,7 @@ DEPEND="
 "
 gen_clang() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
@@ -1117,7 +1118,7 @@ gen_clang() {
 }
 gen_gcc_bdepend() {
 	local s
-	for s in ${GCC_COMPAT[@]/gcc_slot_} ; do
+	for s in "${GCC_COMPAT[@]/gcc_slot_}" ; do
 		echo "
 			=sys-devel/gcc-${s/_/.}*[openmp?]
 			sys-devel/gcc:=
@@ -1207,8 +1208,8 @@ BDEPEND="
 		$(gen_clang)
 	)
 	system-libs? (
-		virtual/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/protobuf:=
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:=
 		test? (
 			>=dev-cpp/benchmark-1.9.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-cpp/benchmark:=
@@ -1233,7 +1234,7 @@ PATCHES=(
 
 warn_untested_gpu() {
 	local gpu
-	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
+	for gpu in "${AMDGPU_TARGETS_UNTESTED[@]}" ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not CI tested upstream."
 		fi
@@ -1251,7 +1252,7 @@ pkg_setup() {
 		rocm_pkg_setup
 	else
 		local s
-		for s in ${LLVM_COMPAT[@]} ; do
+		for s in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${s}" ; then
 				LLVM_MAX_SLOT="${s}"
 				if use clang ; then
@@ -1289,7 +1290,7 @@ pkg_setup() {
 		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
 	# Avoid missing versioned symbols
 	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+		rocm_verify_glibcxx "${!glibcxx_ver}" "${libs[@]}"
 	fi
 
 	python-single-r1_pkg_setup
@@ -1458,7 +1459,7 @@ src_prepare() {
 	if use rocm ; then
 		cat \
 			"${DISTDIR}/aotriton-${AOTRITON_COMMIT:0:7}.tar.gz" \
-			> \
+				> \
 			"${BUILD_DIR}/aotriton-${AOTRITON_COMMIT:0:7}.tar.gz" \
 			|| die
 	fi
@@ -1470,7 +1471,7 @@ gen_cuda_arch_list() {
 	else
 		local list
 		local x
-		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 			if use "cuda_targets_${x}" ; then
 				local gen
 				local ver

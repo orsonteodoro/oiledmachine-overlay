@@ -7,9 +7,9 @@ EAPI=8
 # TODO:  verify rpath
 
 # D11, U22
-PROTOBUF_SLOT=3
+PROTOBUF_CPP_SLOT="3"
 
-inherit cmake flag-o-matic user-info
+inherit abseil-cpp cmake flag-o-matic protobuf user-info
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -25,7 +25,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 openrc systemd
-ebuild_revision_3
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
@@ -35,8 +35,8 @@ REQUIRED_USE="
 "
 DEPEND+="
 	acct-group/dialout
-	virtual/protobuf:${PROTOBUF_SLOT}
-	virtual/protobuf:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
+	dev-libs/protobuf:=
 	virtual/udev
 	openrc? (
 		sys-apps/openrc
@@ -50,13 +50,13 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.6
-	virtual/protobuf:${PROTOBUF_SLOT}
-	virtual/protobuf:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
+	dev-libs/protobuf:=
 "
 DOCS=( "LICENSE" "README.md" )
 
 src_configure() {
-	if ! egetent group ${PN} ; then
+	if ! egetent group "${PN}" ; then
 eerror
 eerror "You must add the ${PN} group to the system."
 eerror
@@ -64,7 +64,7 @@ eerror "  groupadd ${PN}"
 eerror
 		die
 	fi
-	if ! egetent passwd ${PN} ; then
+	if ! egetent passwd "${PN}" ; then
 eerror
 eerror "You must add the ${PN} user to the system."
 eerror
@@ -80,12 +80,12 @@ eerror "  gpasswd -a ${PN} dialout"
 eerror
 		die
 	fi
-	export PATH="/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}"
-	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
+	abseil-cpp_src_configure
+	protobuf_src_configure
 	local mycmakeargs=(
-		-DProtobuf_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/cmake/protobuf"
-		-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/lib64/libprotobuf.a"
-		-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/include"
+		$(protobuf_append_cmake)
+		-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/lib64/libprotobuf.a"
+		-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
 	)
 	cmake_src_configure
 }
