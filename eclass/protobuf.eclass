@@ -42,7 +42,7 @@
 #   abseil-cpp_src_configure
 #   protobuf_src_configure
 #
-#   emake
+#   econf
 # }
 #
 
@@ -172,8 +172,9 @@ PROTOBUF_PYTHON_SLOTS_6=(
 #   einfo "PROTOBUF_CPP_CFLAGS:  ${PROTOBUF_CPP_CFLAGS}"
 #   einfo "PROTOBUF_CPP_LDFLAGS:  ${PROTOBUF_CPP_LDFLAGS}"
 #
-#   emake
+#   econf
 # }
+#
 protobuf_src_configure() {
 	local _PROTOBUF_CPP_SLOT=""
 	if [[ "${PROTOBUF_CPP_PV}" ]] ; then

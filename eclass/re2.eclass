@@ -43,6 +43,8 @@ inherit flag-o-matic
 #   re2_src_configure
 #   einfo "RE2_CFLAGS:  ${RE2_CFLAGS}"
 #   einfo "RE2_LDFLAGS:  ${RE2_LDFLAGS}"
+#
+#   econf
 # }
 #
 re2_src_configure() {

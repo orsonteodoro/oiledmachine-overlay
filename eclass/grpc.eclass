@@ -56,7 +56,7 @@ inherit flag-o-matic
 #   protobuf_src_configure
 #   grpc_src_configure
 #
-#   emake
+#   econf
 # }
 #
 
@@ -141,7 +141,7 @@ inherit flag-o-matic
 #   einfo "GRPC_CFLAGS:  ${GRPC_CFLAGS}"
 #   einfo "GRPC_CXXFLAGS:  ${GRPC_CXXFLAGS}"
 #
-#   emake
+#   econf
 # }
 #
 grpc_src_configure() {

@@ -55,7 +55,7 @@ inherit flag-o-matic
 #   # Print or sed patch broken build files below.
 #   einfo "ABSEIL_CPP_CFLAGS:  ${ABSEIL_CPP_CFLAGS}"
 #   einfo "ABSEIL_CPP_LDFLAGS:  ${ABSEIL_CPP_LDFLAGS}"
-#   emake
+#   econf
 # }
 #
 abseil-cpp_src_configure() {

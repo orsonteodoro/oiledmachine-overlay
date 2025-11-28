@@ -52,6 +52,8 @@ _OPENTELEMETRY_ECLASS=1
 #
 #   einfo "OPENTELEMETRY_CFLAGS:  ${OPENTELEMETRY_CFLAGS}"
 #   einfo "OPENTELEMETRY_LDFLAGS:  ${OPENTELEMETRY_LDFLAGS}"
+#
+#   econf
 # }
 #
 opentelemetry_src_configure() {
