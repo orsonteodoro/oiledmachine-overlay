@@ -23,7 +23,7 @@ diff '--color=auto' -urp Bear-3.1.6.orig/CMakeLists.txt Bear-3.1.6/CMakeLists.tx
 +            -DABSEIL_CPP_SLOT:STRING=${ABSEIL_CPP_SLOT}
 +            -DABSEIL_CPP_SO_SUFFIX:STRING=${ABSEIL_CPP_SO_SUFFIX}
 +            -DGRPC_SLOT:STRING=${GRPC_SLOT}
-+            -DPROTOBUF_SLOT:STRING=${PROTOBUF_SLOT}
++            -DPROTOBUF_CPP_SLOT:STRING=${PROTOBUF_CPP_SLOT}
 +            -DLIBDIR:STRING=${LIBDIR}
          CMAKE_CACHE_ARGS
              -DCMAKE_PROJECT_VERSION:STRING=${CMAKE_PROJECT_VERSION}
@@ -69,7 +69,7 @@ diff '--color=auto' -urp Bear-3.1.6.orig/source/intercept/CMakeLists.txt Bear-3.
 +endforeach()
 +
 +# === STATIC PROTOBUF + PROTOC ONLY ===
-+set(PROTOBUF_DIR "/usr/lib/protobuf/${PROTOBUF_SLOT}/${LIBDIR}")
++set(PROTOBUF_DIR "/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/${LIBDIR}")
 +set(STATIC_LIBS
 +    "${PROTOBUF_DIR}/libprotobuf.a"
 +    "${PROTOBUF_DIR}/libprotoc.a"
