@@ -957,6 +957,14 @@ src_unpack() {
 		expected_version="${PV%%_*}"
 		check_version "${PN}" "${actual_version}" "${expected_version}"
 	else
+einfo "YCMD_FN:  ${YCMD_FN[@]}"
+einfo "DJANGO_STUBS_FN:  ${DJANGO_STUBS_FN}"
+einfo "MRAB_REGEX_FN:  ${MRAB_REGEX_FN}"
+einfo "NUMPYDOC_FN:  ${NUMPYDOC_FN}"
+einfo "JEDI_FN:  ${JEDI_FN}"
+einfo "PARSO_FN:  ${PARSO_FN}"
+einfo "TYPESHED_FN:  ${TYPESHED_FN}"
+einfo "WATCHDOG_FN:  ${WATCHDOG_FN}"
 		# Manually unpacked to prevent double unpack with Rust or Go.
 		unpack \
 			"${YCMD_FN[@]}" \
@@ -965,7 +973,6 @@ src_unpack() {
 			"${NUMPYDOC_FN}" \
 			"${JEDI_FN}" \
 			"${PARSO_FN}" \
-			"${SCIPY_SPHINX_THEME_FN}" \
 			"${TYPESHED_FN}" \
 			"${WATCHDOG_FN}"
 	fi
