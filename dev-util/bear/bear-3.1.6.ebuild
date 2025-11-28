@@ -16,7 +16,7 @@ ABSEIL_CPP_SLOT="20220623"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 GRPC_SLOT="3"
-PROTOBUF_SLOT="3"
+PROTOBUF_CPP_SLOT="3"
 RE2_SLOT="20220623"
 
 inherit libstdcxx-compat
@@ -48,13 +48,13 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 	${CDEPEND}
 	>=dev-libs/libfmt-8.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	>=dev-libs/spdlog-1.9.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
 	dev-libs/protobuf:=
 	net-libs/grpc:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
 	net-libs/grpc:=
@@ -66,7 +66,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.22.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	dev-libs/protobuf:${PROTOBUF_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/protobuf:=
 	test? (
 		$(python_gen_any_dep '
@@ -129,7 +129,7 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 		-DABSEIL_CPP_SO_SUFFIX="2206.0.0"
 		-DLIBDIR="$(get_libdir)"
 		-DGRPC_SLOT="${GRPC_SLOT}"
-		-DPROTOBUF_SLOT="${PROTOBUF_CPP_SLOT}"
+		-DPROTOBUF_CPP_SLOT="${PROTOBUF_CPP_SLOT}"
 	)
 	if (( ${nabis} > 1 )) ; then
 		mycmakeargs+=(
