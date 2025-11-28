@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -216,7 +216,8 @@ gen_clang_deps() {
 # xinerama missing in CI
 # zenity missing in CI
 RDEPEND+="
-	>=dev-cpp/yaml-cpp-0.8.0
+	>=dev-cpp/yaml-cpp-0.8.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-cpp/yaml-cpp:=
 	>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/double-conversion-3.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/double-conversion:=

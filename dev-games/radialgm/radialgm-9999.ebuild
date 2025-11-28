@@ -40,10 +40,10 @@ DESCRIPTION="A native IDE for ENIGMA written in C++ using the Qt Framework."
 LICENSE="GPL-3+"
 #KEYWORDS="~amd64 ~x86" # Cannot build simple hello world.  Project is likely pre-alpha.
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 doc
-ebuild_revision_7
+ebuild_revision_8
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
@@ -53,10 +53,13 @@ ebuild_revision_7
 # pcre2 not listed in CI.
 RDEPEND+="
 	>=dev-cpp/yaml-cpp-0.6.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-cpp/yaml-cpp:=
 	>=dev-libs/double-conversion-3.1.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/double-conversion:=
 	>=dev-libs/libpcre2-10.40[pcre16]
 	>=dev-libs/openssl-1.1.1l
 	>=dev-libs/pugixml-1.11.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/pugixml:=
 	>=dev-qt/qtcore-${QT_PV}:5
 	>=dev-qt/qtgui-${QT_PV}:5[png]
 	>=dev-qt/qtmultimedia-${QT_PV}:5
@@ -71,7 +74,8 @@ RDEPEND+="
 	)
 	net-libs/grpc:=
 	>=x11-libs/qscintilla-2.13.0
-	dev-games/enigma:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-games/enigma[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-games/enigma:=
 	virtual/jpeg
 "
 DEPEND+="
