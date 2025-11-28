@@ -83,7 +83,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -275,10 +275,10 @@ src_configure() {
 
 	if has_version "dev-libs/protobuf:3/3.12" ; then
 		ABSEIL_CPP_SLOT="20200225"
-		PROTOBUF_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 		ABSEIL_CPP_SLOT="20220623"
-		PROTOBUF_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
 	fi
 	abseil-cpp_src_compile
 	protobuf_src_compile

@@ -3,6 +3,8 @@
 
 EAPI=8
 
+MY_PV=$(ver_cut "1-3" "${PV}")
+
 ABSEIL_CPP_PV="20220623.0"
 CYTHON_SLOT="0.29"
 CXX_STANDARD=14 # Originally 14
@@ -10,7 +12,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut "1-3" "${PV}")
+GRPC_SLOT="3"
 PROTOBUF_PV="21.6"
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="4"
@@ -48,7 +50,7 @@ HOMEPAGE="
 	https://github.com/grpc/grpc/tree/master/tools/distrib/python/grpcio_tools
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
+SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${_CXX_STANDARD[@]}
 ebuild_revision_10
@@ -69,7 +71,7 @@ RDEPEND="
 	dev-python/cython:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.21[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
-	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
+	~dev-python/grpcio-${PV}:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-python/grpcio:=
 "
 DEPEND="
@@ -110,7 +112,7 @@ python_configure() {
 		$(PKG_CONFIG_PATH="\
 ${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}/pkgconfig:\
 ${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:\
-${ESYSROOT}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:\
+${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/${libdir}/pkgconfig:\
 ${ESYSROOT}/usr/${libdir}/pkgconfig:\
 ${PKG_CONFIG_PATH}" \
 		pkg-config --libs protobuf)
@@ -118,9 +120,9 @@ ${PKG_CONFIG_PATH}" \
 	append-ldflags "${L2[@]}"
 	filter-flags "-Wl,--as-needed"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
-	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
-	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
 	local L=(
@@ -143,9 +145,9 @@ src_install() {
 	distutils-r1_src_install
 
 	change_prefix() {
-	# Change of base /usr -> /usr/lib/grpc/${PROTOBUF_CPP_SLOT}
+	# Change of base /usr -> /usr/lib/grpc/${GRPC_SLOT}
 		local old_prefix="/usr/lib/${EPYTHON}"
-		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/grpc/${GRPC_SLOT}/lib/${EPYTHON}"
 		dodir $(dirname "${new_prefix}")
 		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
 
@@ -154,7 +156,7 @@ src_install() {
 		pv="${pv/.}"
 		patchelf \
 			--add-rpath "${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir)" \
-			$(realpath "${ED}/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}/site-packages/grpc_tools/_protoc_compiler.cpython-${pv}-"*"-linux-gnu.so") \
+			$(realpath "${ED}/usr/lib/grpc/${GRPC_SLOT}/lib/${EPYTHON}/site-packages/grpc_tools/_protoc_compiler.cpython-${pv}-"*"-linux-gnu.so") \
 			|| die
 	}
 
@@ -163,6 +165,6 @@ src_install() {
 	rm -rf "${ED}/lib" || true
 
 	local old_prefix="/usr/share"
-	local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/share"
+	local new_prefix="/usr/lib/grpc/${GRPC_SLOT}/share"
 	mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
 }

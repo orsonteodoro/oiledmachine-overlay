@@ -6,6 +6,7 @@ EAPI=8
 MY_P="grpc-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
+GRPC_SLOT="3"
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -26,7 +27,7 @@ HOMEPAGE="
 	https://pypi.org/project/grpcio-status/
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
+SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ebuild_revision_1
 "
@@ -47,9 +48,9 @@ distutils_enable_tests "pytest"
 
 python_configure() {
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
-	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
-	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 }
 
 python_test() {
@@ -62,9 +63,9 @@ src_install() {
 	distutils-r1_src_install
 
 	change_prefix() {
-	# Change of base /usr -> /usr/lib/grpc/${PROTOBUF_CPP_SLOT}
+	# Change of base /usr -> /usr/lib/grpc/${GRPC_SLOT}
 		local old_prefix="/usr/lib/${EPYTHON}"
-		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/grpc/${GRPC_SLOT}/lib/${EPYTHON}"
 		dodir $(dirname "${new_prefix}")
 		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
 	}

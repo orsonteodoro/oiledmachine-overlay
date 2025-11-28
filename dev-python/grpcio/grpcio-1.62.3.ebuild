@@ -3,13 +3,15 @@
 
 EAPI=8
 
+MY_PV=$(ver_cut "1-3" "${PV}")
+
 ABSEIL_CPP_PV="20240116.0"
 CXX_STANDARD=17 # Originally 14
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut "1-3" "${PV}")
+GRPC_SLOT="4"
 PROTOBUF_CPP_SLOT="4"
 PROTOBUF_PYTHON_SLOT="4"
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -40,7 +42,7 @@ HOMEPAGE="
 	https://github.com/grpc/grpc/tree/master/src/python/grpcio
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
+SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 doc protobuf
 ebuild_revision_9
@@ -102,7 +104,7 @@ python_configure() {
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
-	export PATH="${ESYSROOT}/usr/bin/grpc/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
 	# os.environ.get('GRPC_BUILD_WITH_BORING_SSL_ASM', True)
 	export GRPC_BUILD_WITH_BORING_SSL_ASM=
@@ -133,9 +135,9 @@ src_install() {
 	distutils-r1_src_install
 
 	change_prefix() {
-	# Change of base /usr -> /usr/lib/grpc/${PROTOBUF_CPP_SLOT}
+	# Change of base /usr -> /usr/lib/grpc/${GRPC_SLOT}
 		local old_prefix="/usr/lib/${EPYTHON}"
-		local new_prefix="/usr/lib/grpc/${PROTOBUF_CPP_SLOT}/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/grpc/${GRPC_SLOT}/lib/${EPYTHON}"
 		dodir $(dirname "${new_prefix}")
 		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
 	}

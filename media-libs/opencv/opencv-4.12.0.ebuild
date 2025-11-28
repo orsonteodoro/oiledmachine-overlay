@@ -405,7 +405,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_43
+	ebuild_revision_44
 "
 # hal for acceleration
 IUSE+="
@@ -1350,10 +1350,10 @@ multilib_src_configure() {
 	# Protobuf version requirement relaxed
 	if has_version "dev-libs/protobuf:3/3.12" ; then
 		ABSEIL_CPP_SLOT="20200225"
-		PROTOBUF_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 		ABSEIL_CPP_SLOT="20220623"
-		PROTOBUF_SLOT="3"
+		PROTOBUF_CPP_SLOT="3"
 	fi
 
 	abseil-cpp_src_configure
