@@ -12,7 +12,7 @@ EAPI=8
 
 MY_PN="${PN/b/B}"
 
-ABSEIL_CPP_PV="20220623.0"
+ABSEIL_CPP_SLOT="20220623"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
 GRPC_SLOT="3"
@@ -31,7 +31,7 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit abseil-cpp cmake-multilib flag-o-matic grpc libcxx-slot libstdcxx-slot protobuf python-any-r1
+inherit abseil-cpp cmake-multilib flag-o-matic grpc libcxx-slot libstdcxx-slot protobuf python-any-r1 re2
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~ppc64 ~s390"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -48,7 +48,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 	${CDEPEND}
@@ -98,20 +98,17 @@ eerror "Missing libabsl_dynamic_annotations.so"
 
 multilib_src_configure() {
 einfo "libdir:  $(get_libdir)"
-	pushd "${WORKDIR}/${MY_P}" >/dev/null 2>&1 || die
-	PKG_CONFIG_PATH=$(echo "${PKG_CONFIG_PATH}" | tr ":" $"\n" | sed -e "/pkgconfig/d" | tr $"\n" ":")
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	export PKG_CONFIG_PATH
-	PATH=$(echo "${PATH}" | tr ":" $"\n" | sed -e "/grpc/d" -e "/protobuf/d" | tr $"\n" ":")
-	PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/bin:${PATH}" # For grpc_cpp_plugin
-	PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_SLOT}/bin:${PATH}" # For protoc
+	cd "${WORKDIR}/${MY_P}" || die
+
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	re2_src_configure
+	grpc_src_configure
+
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 einfo "PATH:  ${PATH}"
 
-	filter-flags -Wl,--as-needed
+	filter-flags "-Wl,--as-needed"
 
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
@@ -128,7 +125,7 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 		-DENABLE_FUNC_TESTS=$(usex test)
 		-DENABLE_UNIT_TESTS=$(usex test)
 		-DCMAKE_VERBOSE_MAKEFILE=ON
-		-DABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%%.*}"
+		-DABSEIL_CPP_SLOT="${ABSEIL_CPP_SLOT%%.*}"
 		-DABSEIL_CPP_SO_SUFFIX="2206.0.0"
 		-DLIBDIR="$(get_libdir)"
 		-DGRPC_SLOT="${GRPC_SLOT}"
@@ -144,7 +141,6 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 		)
 	fi
 	cmake_src_configure
-	popd >/dev/null 2>&1 || die
 }
 
 src_configure() {
@@ -157,7 +153,7 @@ einfo "libdir: $(get_libdir)"
 	protobuf_src_configure
 	re2_src_configure
 	grpc_src_configure
-	export PKG_CONFIG_PATH
+
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 einfo "PATH:  ${PATH}"
 
