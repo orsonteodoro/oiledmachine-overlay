@@ -420,13 +420,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
 		RE2_SLOT="20240116"
-	else
-	# Enigma slot equivalent fallback
-		ABSEIL_CPP_SLOT="20250512"
-		GRPC_SLOT="6"
-		PROTOBUF_CPP_SLOT="6"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
-		RE2_SLOT="20240116"
 	fi
 	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
 		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
