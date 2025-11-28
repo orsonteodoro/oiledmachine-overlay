@@ -5,7 +5,7 @@ EAPI=8
 
 MY_PV=$(ver_cut "1-3" "${PV}")
 
-ABSEIL_CPP_PV="20220623.0"
+ABSEIL_CPP_SLOT="20220623"
 CXX_STANDARD=17 # Originally 14
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -63,7 +63,7 @@ REQUIRED_USE="
 # See https://github.com/grpc/grpc/blob/v1.51.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
+	>=dev-cpp/abseil-cpp-20220623.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-cpp/abseil-cpp:=
 	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
 	dev-libs/openssl:=
@@ -113,7 +113,7 @@ python_prepare_all() {
 python_configure() {
 	cython_set_cython_slot "0.29"
 	cython_python_configure
-	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/include"
+	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
@@ -141,12 +141,12 @@ python_configure() {
 	local libdir=$(get_libdir)
 	append-ldflags \
 		"-Wl,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
-		"-Wl,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}" \
+		"-Wl,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/${libdir}" \
 		"-Wl,--rpath=/usr/lib/re2/${RE2_SLOT}/${libdir}" \
-		"-Wl,--rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/${libdir}"
+		"-Wl,--rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/${libdir}"
 	sed -i \
 		-e "s|@RE2_SLOT@|${RE2_SLOT}|g" \
-		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_PV%.*}|g" \
+		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_SLOT}|g" \
 		"${S}/setup.py" \
 		|| die
 }
