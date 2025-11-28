@@ -120,7 +120,7 @@ eerror "No multislot FFmpeg found.  Using monoslot FFmpeg."
 		"-Wl,-L/usr/lib/ffmpeg/*" \
 		"-Wl,-rpath,/usr/lib/ffmpeg/*" \
 		"-L/usr/lib/ffmpeg/*" \
-		"--rpath,/usr/lib/ffmpeg/*"
+		"--rpath=/usr/lib/ffmpeg/*"
 
 	append-flags "-I/usr/lib/ffmpeg/${_FFMPEG_SLOT}/include"
 

@@ -76,7 +76,7 @@ eerror "QA:  Set either ABSEIL_CPP_PV or ABSEIL_CPP_SLOT"
 		"-Wl,-L/usr/lib/abseil-cpp/*" \
 		"-Wl,-rpath,/usr/lib/abseil-cpp/*" \
 		"-L/usr/lib/abseil-cpp/*" \
-		"--rpath,/usr/lib/abseil-cpp/*"
+		"--rpath=/usr/lib/abseil-cpp/*"
 
 	append-flags "-I/usr/lib/abseil-cpp/${_ABSEIL_CPP_SLOT}/include"
 

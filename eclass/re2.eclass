@@ -65,7 +65,7 @@ eerror "QA:  Set either RE2_PV or RE2_SLOT"
 		"-Wl,-L/usr/lib/re2/*" \
 		"-Wl,-rpath,/usr/lib/re2/*"
 		"-L/usr/lib/re2/*" \
-		"--rpath,/usr/lib/re2/*"
+		"--rpath=/usr/lib/re2/*"
 
 	if [[ ${RE2_LINK_MODE:-"indirect"} == "indirect" ]] ; then
 		# For manual configuration or sed patch

@@ -193,7 +193,7 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 		"-Wl,-L/usr/lib/protobuf/*" \
 		"-Wl,-rpath,/usr/lib/protobuf/*" \
 		"-L/usr/lib/protobuf/*" \
-		"--rpath,/usr/lib/protobuf/*"
+		"--rpath=/usr/lib/protobuf/*"
 
 	append-flags "-I/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/include"
 

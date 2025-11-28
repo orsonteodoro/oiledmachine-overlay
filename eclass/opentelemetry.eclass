@@ -74,7 +74,7 @@ eerror "QA:  Set either OPENTELEMETRY_PV or OPENTELEMETRY_SLOT"
 		"-Wl,-L/usr/lib/opentelemetry/*" \
 		"-Wl,-rpath,/usr/lib/opentelemetry/*" \
 		"-L/usr/lib/opentelemetry/*" \
-		"--rpath,/usr/lib/opentelemetry/*"
+		"--rpath=/usr/lib/opentelemetry/*"
 
 	append-flags "-I/usr/lib/opentelemetry/${_OPENTELEMETRY_SLOT}/include"
 
