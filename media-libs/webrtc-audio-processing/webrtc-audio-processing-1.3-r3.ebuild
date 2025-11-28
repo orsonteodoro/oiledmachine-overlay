@@ -3,13 +3,13 @@
 
 EAPI=8
 
-ABSEIL_CPP_PV="20230125.1"
+ABSEIL_CPP_SLOT="20230125"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
 
-inherit meson-multilib
+inherit abseil-cpp meson-multilib
 
 DESCRIPTION="AudioProcessing library from the webrtc.org codebase"
 HOMEPAGE="
@@ -27,7 +27,7 @@ ebuild_revision_2
 "
 
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_PV%.*}[${MULTILIB_USEDEP},cxx_standard_cxx17]
+	>=dev-cpp/abseil-cpp-20230125.1:${ABSEIL_CPP_SLOT%.*}[${MULTILIB_USEDEP},cxx_standard_cxx17]
 	dev-cpp/abseil-cpp:=
 "
 DEPEND="${RDEPEND}"
@@ -51,7 +51,7 @@ src_unpack() {
 }
 
 multilib_src_configure() {
-	export PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%.*}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	abseil-cpp_src_configure
 	if [[ "${ABI}" == "x86" ]] ; then
 		# bug #921140
 		local -x CPPFLAGS="${CPPFLAGS} -DPFFFT_SIMD_DISABLE"
@@ -61,27 +61,4 @@ multilib_src_configure() {
 		-Dneon=$(usex cpu_flags_arm_neon "yes" "no")
 	)
 	meson_src_configure
-}
-
-multilib_src_install_all() {
-	fix_libs_abi() {
-		IFS=$'\n'
-		L=(
-			"${ED}/usr/$(get_libdir)/libwebrtc-audio-coding-1.so.3"
-			"${ED}/usr/$(get_libdir)/libwebrtc-audio-processing-1.so.3"
-		)
-		IFS=$' \t\n'
-		d="/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)"
-		for x in ${L[@]} ; do
-			[[ -L "${x}" ]] && continue
-einfo "Adding ${d} to RPATH for ${x}"
-			patchelf \
-				--add-rpath "${d}" \
-				"${x}" \
-				|| die
-		done
-
-	}
-
-	multilib_foreach_abi fix_libs_abi
 }
