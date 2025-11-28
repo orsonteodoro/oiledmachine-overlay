@@ -28,7 +28,7 @@ KEYWORDS="~amd64 ~arm64 ~x86 ~amd64-linux"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RDEPEND="

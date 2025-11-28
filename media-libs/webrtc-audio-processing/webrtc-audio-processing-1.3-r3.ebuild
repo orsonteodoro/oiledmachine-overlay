@@ -23,7 +23,7 @@ SLOT="1"
 KEYWORDS="amd64 ~arm64 ~ppc64 x86 ~amd64-linux"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RDEPEND="
