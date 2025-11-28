@@ -53,10 +53,10 @@ inherit flag-o-matic
 #
 # Example:
 #
-# FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" )
-# FFMPEG_LINK_MODE="direct"
-#
 # inherit ffmpeg
+#
+# FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" ) # After inherit ffmpeg to init array
+# FFMPEG_LINK_MODE="direct"
 #
 # src_configure() {
 #   ffmpeg_src_configure
@@ -132,10 +132,10 @@ eerror "No multislot FFmpeg found.  Using monoslot FFmpeg."
 #
 # Example:
 #
-# FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" )
-# FFMPEG_LINK_MODE="direct"
-#
 # inherit ffmpeg
+#
+# FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" ) # After inherit ffmpeg to init array
+# FFMPEG_LINK_MODE="direct"
 #
 # python_configure() {
 #   # For auto adding:
