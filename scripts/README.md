@@ -8,6 +8,7 @@
 * use-linter - Checks for malformed metadata.xml
 * optimize.sh - A script found alongside an ebuild to automate or to simplify multiple emerge optimization
 * autobump-patch-versions.sh - A script that auto updates ebuilds.
+* rpath_verify.sh - A script that verifies multislot dynamic linking
 
 ## OILEDMACHINE_OVERLAY_ROOT
 
