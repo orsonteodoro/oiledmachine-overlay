@@ -11,23 +11,9 @@ MY_PN="weaviate-python-client"
 # types-urllib3
 
 DISTUTILS_USE_PEP517="setuptools"
-GRPC_SLOTS=(
-	"1.57"
-	"1.58"
-	"1.59"
-	"1.60"
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-	# < 2.0
-)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 protobuf pypi re2
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -63,13 +49,20 @@ REQUIRED_USE="
 	)
 "
 gen_grpcio_rdepend() {
-	local s
-	for s in ${GRPC_SLOTS[@]} ; do
-		echo "
-			=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-${s}*[${PYTHON_USEDEP}]
-		"
-	done
+	echo "
+		(
+			dev-python/grpcio:4/1.62[${PYTHON_USEDEP}]
+			dev-python/grpcio-tools:4/1.62[${PYTHON_USEDEP}]
+		)
+		(
+			dev-python/grpcio:5/1.71[${PYTHON_USEDEP}]
+			dev-python/grpcio-tools:5/1.71[${PYTHON_USEDEP}]
+		)
+		(
+			dev-python/grpcio:6/1.75[${PYTHON_USEDEP}]
+			dev-python/grpcio-tools:6/1.75[${PYTHON_USEDEP}]
+		)
+	"
 }
 RDEPEND+="
 	>=dev-python/Authlib-1.3.1
@@ -136,11 +129,11 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
+		touch "dummy" || die
+		git add "dummy" || die
 		#git add -f * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -153,6 +146,31 @@ src_unpack() {
 	else
 		unpack ${A}
 		gen_git_tag "${S}" "v${PV}"
+	fi
+}
+
+python_configure() {
+	if use grpc ; then
+		if has_version "net-libs/grpc:4/1.62" ; then
+			ABSEIL_CPP_SLOT="20240116"
+			GRPC_SLOT="4"
+			PROTOBUF_CPP_SLOT="4"
+			RE2_SLOT="20220623"
+		elif has_version "net-libs/grpc:5/1.71" ; then
+			ABSEIL_CPP_SLOT="20240722"
+			GRPC_SLOT="5"
+			PROTOBUF_CPP_SLOT="5"
+			RE2_SLOT="20240116"
+		elif has_version "net-libs/grpc:6/1.75" ; then
+			ABSEIL_CPP_SLOT="20250512"
+			GRPC_SLOT="6"
+			PROTOBUF_CPP_SLOT="6"
+			RE2_SLOT="20240116"
+		fi
+		abseil-cpp_python_configure
+		protobuf_python_configure
+		re2_python_configure
+		grpc_python_configure
 	fi
 }
 

@@ -42,7 +42,7 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
-doc
+doc protobuf
 ebuild_revision_9
 "
 # See src/include/openssl/crypto.h#L99 for versioning
@@ -56,13 +56,11 @@ RDEPEND+="
 	dev-libs/openssl:=
 	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}
 	dev-libs/re2:=
+	>=dev-python/typing-extensions-4.12[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.17.2
 	net-dns/c-ares:=
 	>=sys-libs/zlib-1.2.13
 	sys-libs/zlib:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/protobuf:=
-	>=dev-python/typing-extensions-4.12[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -77,6 +75,11 @@ BDEPEND+="
 	doc? (
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
 		dev-python/alabaster[${PYTHON_USEDEP}]
+	)
+"
+PDEPEND+="
+	protobuf? (
+		~dev-python/grpcio-tools-${PV}[${PYTHON_USEDEP}]
 	)
 "
 PATCHES=(

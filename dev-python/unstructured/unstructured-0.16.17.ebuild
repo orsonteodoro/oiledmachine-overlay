@@ -14,7 +14,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit abseil-cpp distutils-r1 grpc protobuf pypi re2
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -61,8 +61,6 @@ REQUIRED_USE="
 	)
 "
 CONSTRAINTS_RDEPEND="
-"
-DISABLED_CONSTRAINTS_RDEPEND="
 	$(python_gen_cond_dep '
 		(
 			>=dev-python/unstructured-client-0.23.0[${PYTHON_USEDEP}]
@@ -74,6 +72,10 @@ DISABLED_CONSTRAINTS_RDEPEND="
 		)
 		<dev-python/botocore-1.34.132[${PYTHON_USEDEP}]
 		<dev-python/urllib3-1.27[${PYTHON_USEDEP}]
+		|| (
+			dev-python/grpcio:5/1.71[${PYTHON_USEDEP}]
+			dev-python/grpcio:6/1.75[${PYTHON_USEDEP}]
+		)
 		>=dev-python/grpcio-1.65.5[${PYTHON_USEDEP}]
 		dev-python/grpcio:=
 		>=dev-python/importlib-metadata-8.5.0[${PYTHON_USEDEP}]
@@ -225,6 +227,7 @@ XLSX_RDEPEND="
 
 RDEPEND+="
 	${BASE_RDEPEND}
+	${CONSTRAINTS_RDEPEND}
 	all-docs? (
 		${CSV_RDEPEND}
 		${DOC_RDEPEND}
@@ -321,6 +324,24 @@ python_prepare_all() {
 src_prepare() {
 	default
 	distutils-r1_src_prepare
+}
+
+python_configure() {
+	if has_version "dev-python/grpcio:5/1.71" ; then
+		ABSEIL_CPP_SLOT="20240722"
+		GRPC_SLOT="5"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		RE2_SLOT="20240116"
+	elif has_version "dev-python/grpcio:6/1.75" ; then
+		ABSEIL_CPP_SLOT="20250512"
+		GRPC_SLOT="6"
+		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		RE2_SLOT="20240116"
+	fi
+	abseil-cpp_python_configure
+	protobuf_python_configure
+	re2_python_configure
+	grpc_python_configure
 }
 
 src_install() {
