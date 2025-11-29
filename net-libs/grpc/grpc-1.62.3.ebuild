@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_38
+ebuild_revision_40
 "
 REQUIRED_USE+="
 	python? (
@@ -96,8 +96,8 @@ REQUIRED_USE+="
 	)
 "
 RESTRICT="test"
-SLOT_MAJ="${PROTOBUF_CPP_SLOT}"
-SLOT="${SLOT_MAJ}/1.71"
+GRPC_SLOT="${PROTOBUF_CPP_SLOT}"
+SLOT="${GRPC_SLOT}/1.71"
 # third_party last update: 20250213
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20240116.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
@@ -211,12 +211,12 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
-	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	#append-cflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
-	append-cxxflags $(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig" pkg-config --cflags absl_any)
-	filter-flags -Wl,--as-needed
+	filter-flags "-Wl,--as-needed"
 	configure_abi() {
+		append-cxxflags $(PKG_CONFIG_PATH="/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/pkgconfig" pkg-config --cflags absl_any)
+		append-ldflags "-Wl,-rpath,/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)"
 		abseil-cpp_src_configure
 		re2_src_configure
 		protobuf_src_configure
@@ -229,7 +229,7 @@ src_configure() {
 			$(protobuf_append_cmake)
 			$(re2_append_cmake)
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${GRPC_SLOT}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
 			-DgRPC_BACKWARDS_COMPATIBILITY_MODE=OFF
@@ -266,7 +266,7 @@ src_compile() {
 }
 
 src_install() {
-	local prefix="/usr/lib/${PN}/${SLOT_MAJ}"
+	local prefix="/usr/lib/${PN}/${GRPC_SLOT}"
 	install_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"

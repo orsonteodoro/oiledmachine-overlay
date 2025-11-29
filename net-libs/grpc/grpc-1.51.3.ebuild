@@ -94,7 +94,7 @@ IUSE+="
 ${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_38
+ebuild_revision_40
 "
 REQUIRED_USE+="
 	^^ (
@@ -105,8 +105,8 @@ REQUIRED_USE+="
 	)
 "
 RESTRICT="test"
-SLOT_MAJ="${PROTOBUF_CPP_SLOT}"
-SLOT="${SLOT_MAJ}/1.51"
+GRPC_SLOT="${PROTOBUF_CPP_SLOT}"
+SLOT="${GRPC_SLOT}/1.51"
 # third_party last update: 20230214
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
@@ -208,11 +208,12 @@ src_prepare() {
 
 src_configure() {
 	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
+	filter-flags "-Wl,--as-needed"
 	export PATH="${ED}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	cflags-hardened_append
-	filter-flags -Wl,--as-needed
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
+		append-ldflags "-Wl,-rpath,/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)"
 		abseil-cpp_src_configure
 		re2_src_configure
 		protobuf_src_configure
@@ -227,7 +228,7 @@ src_configure() {
 			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Package default
 			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJ}"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${GRPC_SLOT}"
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
 			-DgRPC_BACKWARDS_COMPATIBILITY_MODE=OFF
@@ -268,7 +269,7 @@ src_compile() {
 }
 
 src_install() {
-	local prefix="/usr/lib/${PN}/${SLOT_MAJ}"
+	local prefix="/usr/lib/${PN}/${GRPC_SLOT}"
 	install_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
