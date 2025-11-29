@@ -67,6 +67,8 @@ BDEPEND="
 #
 # Example:
 #
+# inherit fix-rpath
+#
 # multilib_src_configure() {
 #	local RPATH_APPEND=(
 #		"/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
@@ -115,11 +117,58 @@ fix-rpath_python_configure() {
 	fix-rpath_src_configure
 }
 
+# @FUNCTION:  fix-rpath_append
+# @DESCRIPTION:
+# Append the rpath to the linker flags.
+#
+# Example #1:
+#
+# inherit fix-rpath
+#
+# python_configure() {
+#	local RPATH_LINK_MODE="indirect"
+#	local RPATH_APPEND=(
+#		"/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
+#		"/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+#		"/usr/$(get_libdir)/eog"
+#	)
+#	fix-rpath_python_configure
+# }
+#
+# Example #2:
+#
+# inherit fix-rpath
+#
+# python_configure() {
+#	local RPATH_LINK_MODE="indirect"
+#	fix-rpath_append "/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
+#	fix-rpath_append "/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+#	fix-rpath_append "/usr/$(get_libdir)/eog"
+# }
+#
+fix-rpath_append() {
+	if [[ -n "${RPATH_APPEND[@]}" ]] ; then
+		fix-rpath_src_configure
+	else
+		local x="${1}"
+		if [[ ${RPATH_LINK_MODE:-"indirect"} == "indirect" ]] ; then
+			append-ldflags "-Wl,-L${x}"
+			append-ldflags "-Wl,-rpath,${x}"
+		else
+			append-ldflags "-L${x}"
+			append-ldflags "--rpath=${x}"
+		fi
+	fi
+
+}
+
 # @FUNCTION:  fix-rpath_repair
 # @DESCRIPTION:
 # Fix missing RPATHs.  It should only be used if build system is hermetic or prebuilt binaries.
 #
 # Example:
+#
+# inherit fix-rpath
 #
 # src_install() {
 #	local RPATH_FIXES=(
