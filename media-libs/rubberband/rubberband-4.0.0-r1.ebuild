@@ -40,6 +40,7 @@ DEPEND="
 	)
 	ladspa? (
 		media-libs/ladspa-sdk[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/ladspa-sdk:=
 	)
 	lv2? (
 		media-libs/lv2[${MULTILIB_USEDEP}]
@@ -49,6 +50,7 @@ DEPEND="
 	)
 	vamp? (
 		media-libs/vamp-plugin-sdk[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/vamp-plugin-sdk:=
 	)
 "
 RDEPEND="
