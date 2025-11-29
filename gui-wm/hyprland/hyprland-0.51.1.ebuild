@@ -5,6 +5,7 @@ EAPI=8
 
 # U24
 
+ABSEIL_CPP_SLOT="20240116"
 CXX_STANDARD=26
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 RE2_SLOT="20240116"
@@ -12,18 +13,18 @@ RE2_SLOT="20240116"
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	# For older GPU libs users, use hyprland 0.39.1 instead
-	${LIBSTDCXX_COMPAT_STDCXX26[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX26[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" # Skip placeholder
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# For older GPU libs users, use hyprland 0.39.1 instead
-	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
-inherit cflags-hardened check-compiler-switch fix-rpath libcxx-slot libstdcxx-slot meson toolchain-funcs
+inherit abseil-cpp cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson toolchain-funcs re2
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -45,7 +46,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer +qtutils systemd test X
-ebuild_revision_16
+ebuild_revision_17
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -169,9 +170,8 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	export PKG_CONFIG_PATH
+	abseil-cpp_src_configure
+	re2_src_configure
 	local emesonargs=(
 		#$(meson_feature legacy-renderer legacy_renderer)
 		$(meson_feature systemd)
@@ -183,11 +183,6 @@ src_configure() {
 
 src_install() {
 	meson_src_install
-	local RPATH_FIXES=(
-		"${ED}/usr/bin/Hyprland:/usr/lib/re2/${RE2_SLOT}/$(get_libdir)"
-	)
-	fix-rpath_repair
-	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  0.51.1 PASSED (20250815)
