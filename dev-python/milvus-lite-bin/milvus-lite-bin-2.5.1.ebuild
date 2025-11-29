@@ -9,17 +9,17 @@ EAPI=8
 DISTUTILS_USE_PEP517="no"
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1
+inherit distutils-r1 fix-rpath
 
 S="${WORKDIR}"
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 	kernel_linux? (
-		arm64? (
-https://files.pythonhosted.org/packages/ed/85/feb5ef0d92ab4b62c20a5a91fdfc8515f1038d9947a41f5e8ba357724c28/milvus_lite-2.4.11-py3-none-manylinux2014_aarch64.whl
-		)
 		amd64? (
-https://files.pythonhosted.org/packages/8d/c2/b294a7699ef097d7b0ab89f95f34fb0710726f12d7da912734e18c2558eb/milvus_lite-2.4.11-py3-none-manylinux2014_x86_64.whl
+https://files.pythonhosted.org/packages/d3/82/41d9b80f09b82e066894d9b508af07b7b0fa325ce0322980674de49106a0/milvus_lite-2.5.1-py3-none-manylinux2014_x86_64.whl
+		)
+		arm64? (
+https://files.pythonhosted.org/packages/2e/cf/3d1fee5c16c7661cf53977067a34820f7269ed8ba99fe9cf35efc1700866/milvus_lite-2.5.1-py3-none-manylinux2014_aarch64.whl
 		)
 	)
 "
@@ -33,8 +33,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	>=dev-cpp/gflags-2.2.2
 	>=dev-cpp/glog-0.6.0
@@ -50,6 +52,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-python/setuptools-75.3.2[${PYTHON_USEDEP}]
 "
 DOCS=( )
 
@@ -87,6 +90,15 @@ src_install() {
 	# The distutils eclass is broken.
 	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	multibuild_merge_root "${d}" "${D%/}"
+
+	fix_rpath(){
+		local RPATH_FIXES=(
+			"${ED}/usr/lib/${EPYTHON}/site-packages/milvus_lite/lib/milvus:/usr/lib/${EPYTHON}/site-packages/milvus_lite/lib"
+		)
+		fix-rpath_repair
+	}
+	python_foreach_impl fix_rpath
+	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
