@@ -19,20 +19,21 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
 )
 
-FFMPEG_SLOTS=(
-	"58.60.60" # 6.1.x
-	"57.59.59" # 5.x
-	"56.58.58" # 4.x
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit hip-versions
@@ -49,7 +50,7 @@ gen_rocm_iuse() {
 }
 ROCM_IUSE=$(gen_rocm_iuse)
 
-inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi rocm
+inherit distutils-r1 fix-rpath ffmpeg libcxx-slot libstdcxx-slot pypi rocm
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -72,7 +73,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 cuda rocm rccl roctracer
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
@@ -212,44 +213,28 @@ python_configure() {
 	if use rocm ; then
 		export ROCM_PATH="/opt/rocm"
 	fi
-	if has_version "media-video/ffmpeg:58.60.60" ; then # 6.x multislot
-		export FFMPEG_ROOT="/usr/lib/ffmpeg/58.60.60"
-	elif has_version "media-video/ffmpeg:57.59.59" ; then # 5.x multislot
-		export FFMPEG_ROOT="/usr/lib/ffmpeg/57.59.59"
-	elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x multislot
-		export FFMPEG_ROOT="/usr/lib/ffmpeg/56.58.58"
-	elif has_version "media-video/ffmpeg:0/58.58.58" ; then # 6.x unislot
-		export FFMPEG_ROOT="/usr"
-	elif has_version "media-video/ffmpeg:0/57.59.59" ; then # 5.x unislot
-		export FFMPEG_ROOT="/usr"
-	elif has_version "media-video/ffmpeg:0/56.58.58" ; then # 4.x unislot
-		export FFMPEG_ROOT="/usr"
+
+	RPATH_APPEND=(
+		"/usr/lib/${EPYTHON}/site-packages/torio/lib"
+	)
+	ffmpeg_python_configure
+	local ffmpeg_slot=$(ffmpeg_get_slot)
+	local ffmpeg_major_version=$(ffmpeg_get_major_version)
+	if [[ -n "${ffmpeg_slot}" ]] ; then
+einfo "Using multislot FFmpeg ${ffmpeg_major_version}"
+		RPATH_APPEND=(
+			"/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
+		)
+		FFMPEG_ROOT="/usr/lib/ffmpeg/${ffmpeg_slot}"
+	else
+einfo "Using monoslot FFmpeg"
+		FFMPEG_ROOT="/usr"
 	fi
+	fix-rpath_src_configure
 }
 
 src_install() {
 	distutils-r1_src_install
-	local RPATH_FIXES=()
-	local ffmpeg_slot=""
-	local x
-	local s
-	for s in "${FFMPEG_SLOTS[@]}" ; do
-		if has_version "media-video/ffmpeg:${s}" ; then
-			ffmpeg_slot="${s}"
-		fi
-	done
-	if [[ -n "${ffmpeg_slot}" ]] ; then
-	# Multislot
-		RPATH_FIXES+=(
-			"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/_torio_ffmpeg.so:/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
-			"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/libtorio_ffmpeg.so:/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
-		)
-	fi
-	RPATH_FIXES+=(
-		"${ED}/usr/lib/${EPYTHON}/site-packages/torio/lib/_torio_ffmpeg.so:/usr/lib/${EPYTHON}/site-packages/torio/lib"
-		"${ED}/usr/lib/${EPYTHON}/site-packages/torchaudio/lib/_torchaudio_sox.so:/usr/lib/${EPYTHON}/site-packages/torchaudio/lib"
-	)
-	fix-rpath_repair
 }
 
 python_install_all() {
