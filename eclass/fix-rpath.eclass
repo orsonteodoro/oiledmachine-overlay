@@ -132,7 +132,7 @@ fix-rpath_python_configure() {
 #		"/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
 #		"/usr/$(get_libdir)/eog"
 #	)
-#	fix-rpath_python_configure
+#	fix-rpath_append
 # }
 #
 # Example #2:
