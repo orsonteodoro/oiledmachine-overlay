@@ -13,8 +13,8 @@ EAPI=8
 #
 # To find differences between release use:
 #
-# S1="/var/tmp/portage/media-video/obs-studio-30.1.2/work/obs-studio-30.1.2" \
-# S2="/var/tmp/portage/media-video/obs-studio-30.2.3/work/obs-studio-30.2.3" ; \
+# S1="/var/tmp/portage/media-video/obs-studio-31.0.0/work/obs-studio-30.1.2" \
+# S2="/var/tmp/portage/media-video/obs-studio-32.0.2/work/obs-studio-30.2.3" ; \
 # for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
 #   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
 # done
@@ -25,41 +25,51 @@ EAPI=8
 # https://github.com/obsproject/obs-studio/blob/30.1.0/build-aux/modules/99-cef.json
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
-CAPTURE_DEVICE_SUPPORT_COMMIT="81c94fb13dfddb412fcb17f1ba031917ec24be64"
-CEF_PV="95" # See https://github.com/obsproject/obs-browser/blob/a76b4d8810a0a33e91ac5b76a0b1af2f22bf8efd/CMakeLists.txt#L12
 CMAKE_REMOVE_MODULES_LIST=( "FindFreetype" )
-FFMPEG_COMPAT=(
-	"0/58.60.60" # 6.1
-)
-LIBDSHOWCAPTURE_COMMIT="ef8c1d2e19c93e664100dd41e1a0df4f8ad45430"
-LIBVA_PV="2.20.0"
-LIBX11_PV="1.8.7"
+CXX_STANDARD=17
 LUA_COMPAT=( "luajit" )
 MAKEOPTS="-j1"
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+CEF_PV="95" # See https://github.com/obsproject/obs-browser/blob/a776dd6a1a0ded4a8a723f2f572f3f8a9707f5a8/CMakeLists.txt#L12
+LIBVA_PV="2.20.0"
+LIBX11_PV="1.8.7"
 MESA_PV="24.0.5"
-OBS_BROWSER_COMMIT="a76b4d8810a0a33e91ac5b76a0b1af2f22bf8efd"
-OBS_WEBSOCKET_COMMIT="eed8a49933786383d11f4868a4e5604a9ee303c6"
+QT6_PV="6.4.2"
+QT6_SLOT=$(ver_cut "1" "${QT6_PV}")
+SWIG_PV="4.2.0"
+
+LIBDSHOWCAPTURE_COMMIT="8878638324393815512f802640b0d5ce940161f1"
+OBS_BROWSER_COMMIT="a776dd6a1a0ded4a8a723f2f572f3f8a9707f5a8"
+OBS_WEBSOCKET_COMMIT="1c9306b1e200704ebe192e06c893dfc06b097c43"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+)
+
+FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_6[@]}" )
+
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
-PYTHON_COMPAT=( "python3_"{8..11} )
-QT6_PV="6.4.2"
-QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
-SWIG_PV="4.2.0"
 
-inherit cmake dep-prepare flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
+inherit cmake dep-prepare flag-o-matic git-r3 lcnr libcxx-slot libstdcxx-slot lua-single python-single-r1 xdg-utils
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_COMMIT="${PV}"
 	EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
-	FALLBACK_COMMIT="144599fbff18e348652ccadfc3ca08794a03d970"
+	FALLBACK_COMMIT="c025f210d36ada93c6b9ef2affd0f671b34c9775" # Oct 23, 2025
 	IUSE+=" fallback-commit"
 	inherit git
 else
 	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
-https://github.com/elgatosf/capture-device-support/archive/${CAPTURE_DEVICE_SUPPORT_COMMIT}.tar.gz
-	-> capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT:0:7}.tar.gz
 https://github.com/obsproject/libdshowcapture/archive/${LIBDSHOWCAPTURE_COMMIT}.tar.gz
 	-> libdshowcapture-${LIBDSHOWCAPTURE_COMMIT:0:7}.tar.gz
 	browser? (
@@ -114,6 +124,7 @@ LICENSE="
 	)
 "
 # custom - plugins/enc-amf/AMF/LICENSE.txt
+RESTRICT="mirror" # Speed up download of the latest release.
 SLOT="0"
 # aja is enabled by default upstream
 # amf is enabled by default upstream
@@ -131,7 +142,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_14
+ebuild_revision_15
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -223,157 +234,123 @@ REQUIRED_USE+="
 	)
 "
 
-# Based on 20.04 See
-# azure-pipelines.yml
-# .github/workflows/main.yml
-# deps/obs-scripting/obslua/CMakeLists.txt
-# deps/obs-scripting/obspython/CMakeLists.txt
-BDEPEND+="
-	>=app-misc/jq-1.7.1
-	>=dev-build/cmake-3.28.3
-	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
-	lua? (
-		>=dev-lang/swig-${SWIG_PV}
-	)
-	python? (
-		${PYTHON_DEPS}
-		>=dev-lang/swig-${SWIG_PV}
-	)
-	test? (
-		>=dev-util/cmocka-1.1.7
-		websocket? (
-			>=dev-libs/boost-1.83.0
-		)
-	)
-"
-PDEPEND+="
-	firejail? (
-		sys-apps/firejail[firejail_profiles_obs,X]
-	)
-"
-
 gen_ffmpeg_depend() {
 	local use_deps="${1}"
 	echo "
 		|| (
-	"
-	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
-		echo "
-			media-video/ffmpeg:${s}${use_deps}
-		"
-	done
-	echo "
+			media-video/ffmpeg:58.60.60[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${use_deps}]
+			media-video/ffmpeg:0/58.60.60[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${use_deps}]
 		)
 		media-video/ffmpeg:=
 	"
 }
 
-DEPEND_FFMPEG="
-	$(gen_ffmpeg_depend '[libaom?,opus?,svt-av1?]')
+RDEPEND_FFMPEG="
+	$(gen_ffmpeg_depend 'libaom?,opus?,svt-av1?')
 "
 
-DEPEND_LIBX11="
+RDEPEND_LIBX11="
 	kernel_linux? (
 	        >=x11-libs/libX11-${LIBX11_PV}
 	)
 "
 
-DEPEND_LIBXCB="
+RDEPEND_LIBXCB="
         >=x11-libs/libxcb-1.14
 "
 
-DEPEND_JANSSON="
+RDEPEND_JANSSON="
 	>=dev-libs/jansson-2.13.1
 "
 
-DEPEND_WAYLAND="
+RDEPEND_WAYLAND="
 	wayland? (
 		>=dev-libs/wayland-1.34
 		>=x11-libs/libxkbcommon-1.6.0
 	)
 "
 
-DEPEND_ZLIB="
+RDEPEND_ZLIB="
 	>=sys-libs/zlib-1.3
 "
 
-DEPEND_PLUGINS_AJA="
+RDEPEND_PLUGINS_AJA="
 	aja? (
-		${DEPEND_LIBX11}
+		${RDEPEND_LIBX11}
 		media-libs/ntv2
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[gui,widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
 			dev-qt/qtbase:=
 		)
 	)
 "
 
-DEPEND_PLUGINS_RNNOISE="
+RDEPEND_PLUGINS_RNNOISE="
 	rnnoise? (
 		media-libs/rnnoise
 	)
 "
 
 # See plugins/sndio/CMakeLists.txt
-DEPEND_PLUGINS_SNDIO="
+RDEPEND_PLUGINS_SNDIO="
 	sndio? (
-		${DEPEND_LIBOBS}
+		${RDEPEND_LIBOBS}
 		>=media-sound/sndio-1.9.0
 	)
 "
 
 # See UI/frontend-plugins/decklink-captions/CMakeLists.txt
-DEPEND_PLUGINS_DECKLINK_CAPTIONS="
+RDEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
-		${DEPEND_LIBX11}
+		${RDEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 			dev-qt/qtbase:=
 		)
 	)
 "
 
 # See UI/frontend-plugins/decklink-output-ui/CMakeLists.txt
-DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
+RDEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
-		${DEPEND_LIBX11}
+		${RDEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[gui,widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
 			dev-qt/qtbase:=
 		)
 	)
 "
 
 # See plugins/decklink/linux/CMakeLists.txt
-DEPEND_PLUGINS_DECKLINK="
+RDEPEND_PLUGINS_DECKLINK="
 	decklink? (
-		${DEPEND_LIBOBS}
-		${DEPEND_PLUGINS_DECKLINK_CAPTIONS}
+		${RDEPEND_LIBOBS}
+		${RDEPEND_PLUGINS_DECKLINK_CAPTIONS}
 	)
 "
 
 # See UI/frontend-plugins/frontend-tools/CMakeLists.txt
-DEPEND_PLUGINS_FRONTEND_TOOLS="
-	${DEPEND_LIBX11}
+RDEPEND_PLUGINS_FRONTEND_TOOLS="
+	${RDEPEND_LIBX11}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[gui,widgets,X]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
 		dev-qt/qtbase:=
 	)
 "
 
 # See plugins/linux-capture/CMakeLists.txt
-DEPEND_PLUGINS_LINUX_CAPTURE="
-	${DEPEND_GLAD}
-	${DEPEND_LIBOBS}
-	${DEPEND_LIBX11}
-	${DEPEND_LIBXCB}
+RDEPEND_PLUGINS_LINUX_CAPTURE="
+	${RDEPEND_GLAD}
+	${RDEPEND_LIBOBS}
+	${RDEPEND_LIBX11}
+	${RDEPEND_LIBXCB}
         >=x11-libs/libXcomposite-0.4.5
         >=x11-libs/libXfixes-6.0.0
         >=x11-libs/libXinerama-1.1.4
         >=x11-libs/libXrandr-1.5.2
 	pipewire? (
 		>=dev-libs/glib-2.80.0:2
+		dev-libs/glib:=
 		>=media-video/pipewire-1.0.5
 		>=x11-libs/libdrm-2.4.120
 	)
@@ -390,7 +367,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 		!media-libs/libva
 		!media-libs/vaapi-drivers
 		!media-libs/x264
-		$(gen_ffmpeg_depend '[-nvenc,-patent_status_nonfree,-vaapi,-x264]')
+		$(gen_ffmpeg_depend '-nvenc,-patent_status_nonfree,-vaapi,-x264')
 	)
 	patent_status_nonfree? (
 		fdk? (
@@ -402,43 +379,43 @@ PATENT_STATUS_FFMPEG_DEPEND="
 			>=net-libs/srt-1.5.3
 		)
 		nvenc? (
-			$(gen_ffmpeg_depend '[nvenc,patent_status_nonfree]')
+			$(gen_ffmpeg_depend 'nvenc,patent_status_nonfree')
 			>=media-libs/nv-codec-headers-12
 			media-libs/nv-codec-headers:=
 		)
 		vaapi? (
-			$(gen_ffmpeg_depend '[patent_status_nonfree,vaapi]')
+			$(gen_ffmpeg_depend 'patent_status_nonfree,vaapi')
 			>=media-libs/libva-${LIBVA_PV}[X,wayland?]
 			media-libs/vaapi-drivers[patent_status_nonfree]
 		)
 		x264? (
-			$(gen_ffmpeg_depend '[patent_status_nonfree,x264]')
+			$(gen_ffmpeg_depend 'patent_status_nonfree,x264')
 			>=media-libs/x264-0.0.20210613
 		)
 	)
 
 "
-DEPEND_PLUGINS_OBS_FFMPEG="
+RDEPEND_PLUGINS_OBS_FFMPEG="
 	${PATENT_STATUS_FFMPEG_DEPEND}
 	>=sys-apps/pciutils-3.10.0
 	x11-libs/libdrm
 "
 
-DEPEND_CURL="
+RDEPEND_CURL="
 	>=net-misc/curl-8.5.0
 "
 
-DEPEND_PLUGINS_OBS_OUTPUTS="
-	${DEPEND_LIBOBS}
-	${DEPEND_ZLIB}
+RDEPEND_PLUGINS_OBS_OUTPUTS="
+	${RDEPEND_LIBOBS}
+	${RDEPEND_ZLIB}
 	>=net-libs/mbedtls-2.28.8
 	net-libs/mbedtls:=
 "
 
-DEPEND_PLUGINS_OBS_BROWSER="
+RDEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 			dev-qt/qtbase:=
 		)
 		|| (
@@ -455,7 +432,7 @@ DEPEND_PLUGINS_OBS_BROWSER="
 "
 
 # TODO:  bump libvpl and section to 2023.3.0
-DEPEND_PLUGINS_QSV="
+RDEPEND_PLUGINS_QSV="
 	qsv? (
 		elibc_glibc? (
 			>=media-libs/libvpl-2.9
@@ -472,42 +449,47 @@ DEPEND_PLUGINS_QSV="
 "
 
 # Includes rtmp-services
-DEPEND_PLUGINS_RTMP="
-	${DEPEND_DEPS_FILE_UPDATER}
-	${DEPEND_JANSSON}
-	${DEPEND_LIBOBS}
+RDEPEND_PLUGINS_RTMP="
+	${RDEPEND_DEPS_FILE_UPDATER}
+	${RDEPEND_JANSSON}
+	${RDEPEND_LIBOBS}
 "
 
-DEPEND_PLUGINS_VST="
+RDEPEND_PLUGINS_VST="
 	vst? (
-		${DEPEND_LIBOBS}
+		${RDEPEND_LIBOBS}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 			dev-qt/qtbase:=
 		)
 	)
 "
 
-DEPEND_PLUGINS_WEBSOCKET="
+RDEPEND_PLUGINS_WEBSOCKET="
 	websocket? (
 		>=dev-cpp/asio-1.28.1
-		>=dev-cpp/nlohmann_json-3.11.3
 		>=dev-cpp/websocketpp-0.8.2
 		>=dev-libs/qr-code-generator-1.8.0
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[network,widgets]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network,widgets]
 			dev-qt/qtbase:=
-			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}
+			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-qt/qtsvg:=
 		)
 	)
 "
+DEPEND_PLUGINS_WEBSOCKET="
+	websocket? (
+		>=dev-cpp/nlohmann_json-3.11.3
+		dev-cpp/nlohmann_json:=
+	)
+"
 
 # TODO verify libdatachannel
-DEPEND_PLUGINS_WEBRTC="
+RDEPEND_PLUGINS_WEBRTC="
 	webrtc? (
-		${DEPEND_CURL}
-		${DEPEND_LIBOBS}
+		${RDEPEND_CURL}
+		${RDEPEND_LIBOBS}
 		>=dev-libs/libdatachannel-0.20.1[nice,media-transport,websocket]
 	)
 "
@@ -527,26 +509,26 @@ DEPEND_PLUGINS_WEBRTC="
 # >=sys-fs/udev-237
 # fdk section moved into PATENT_STATUS_FFMPEG_DEPEND section
 # x264 section moved into PATENT_STATUS_FFMPEG_DEPEND section
-DEPEND_PLUGINS="
-	${DEPEND_CURL}
-	${DEPEND_DEPS_FILE_UPDATER}
-	${DEPEND_DEPS_MEDIA_PLAYBACK}
-	${DEPEND_LIBOBS}
-	${DEPEND_PLUGINS_AJA}
-	${DEPEND_PLUGINS_DECKLINK}
-	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
-	${DEPEND_PLUGINS_FRONTEND_TOOLS}
-	${DEPEND_PLUGINS_LINUX_CAPTURE}
-	${DEPEND_PLUGINS_OBS_BROWSER}
-	${DEPEND_PLUGINS_OBS_FFMPEG}
-	${DEPEND_PLUGINS_OBS_OUTPUTS}
-	${DEPEND_PLUGINS_SNDIO}
-	${DEPEND_PLUGINS_QSV}
-	${DEPEND_PLUGINS_RTMP}
-	${DEPEND_PLUGINS_RNNOISE}
-	${DEPEND_PLUGINS_VST}
-	${DEPEND_PLUGINS_WEBRTC}
-	${DEPEND_PLUGINS_X264}
+RDEPEND_PLUGINS="
+	${RDEPEND_CURL}
+	${RDEPEND_DEPS_FILE_UPDATER}
+	${RDEPEND_DEPS_MEDIA_PLAYBACK}
+	${RDEPEND_LIBOBS}
+	${RDEPEND_PLUGINS_AJA}
+	${RDEPEND_PLUGINS_DECKLINK}
+	${RDEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
+	${RDEPEND_PLUGINS_FRONTEND_TOOLS}
+	${RDEPEND_PLUGINS_LINUX_CAPTURE}
+	${RDEPEND_PLUGINS_OBS_BROWSER}
+	${RDEPEND_PLUGINS_OBS_FFMPEG}
+	${RDEPEND_PLUGINS_OBS_OUTPUTS}
+	${RDEPEND_PLUGINS_SNDIO}
+	${RDEPEND_PLUGINS_QSV}
+	${RDEPEND_PLUGINS_RTMP}
+	${RDEPEND_PLUGINS_RNNOISE}
+	${RDEPEND_PLUGINS_VST}
+	${RDEPEND_PLUGINS_WEBRTC}
+	${RDEPEND_PLUGINS_X264}
 	alsa? (
 		>=media-libs/alsa-lib-1.2.11
 	)
@@ -561,7 +543,7 @@ DEPEND_PLUGINS="
 		>=media-libs/speexdsp-1.2.1
 	)
 	v4l2? (
-		${DEPEND_FFMPEG}
+		${RDEPEND_FFMPEG}
 		>=media-libs/libv4l-1.26.1[utils]
 		virtual/udev
 	)
@@ -570,95 +552,111 @@ DEPEND_PLUGINS="
 		media-video/vlc:=
 	)
 "
+DEPEND_PLUGINS="
+	${DEPEND_LIBOBS}
+"
 
 # These are not mentioned in .github/workflows/main.yml
 # but could not find headers in obs source for these packages.
 # They were mentioned in the original ebuild.
-DEPEND_UNSOURCED="
+RDEPEND_UNSOURCED="
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[sql]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},sql]
 		dev-qt/qtbase:=
-		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}
+		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtdeclarative:=
-		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}
+		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtmultimedia:=
 	)
 "
 
 # See libobs/CMakeLists.txt
-DEPEND_LIBOBS="
-	${DEPEND_FFMPEG}
-	${DEPEND_JANSSON}
-	${DEPEND_LIBX11}
-	${DEPEND_LIBXCB}
-	${DEPEND_ZLIB}
+RDEPEND_LIBOBS="
+	${RDEPEND_FFMPEG}
+	${RDEPEND_JANSSON}
+	${RDEPEND_LIBX11}
+	${RDEPEND_LIBXCB}
+	${RDEPEND_ZLIB}
 	>=sys-apps/dbus-1.14.10
-	dev-libs/uthash
 	sys-apps/util-linux
 	pulseaudio? (
 		>=media-sound/pulseaudio-16.1
 	)
 "
+DEPEND_LIBOBS="
+	dev-libs/uthash
+"
 
+RDEPEND_WHATSNEW="
+	whatsnew? (
+		net-libs/mbedtls
+	)
+"
 DEPEND_WHATSNEW="
 	whatsnew? (
 		>=dev-cpp/nlohmann_json-3.11.3
-		net-libs/mbedtls
+		dev-cpp/nlohmann_json:=
 	)
 "
 
 # See UI/CMakeLists.txt
 # qtcore, qtgui is in UI folder but not in *.cmake or CMakeLists.txt
-DEPEND_UI="
-	${DEPEND_CURL}
-	${DEPEND_FFMPEG}
-	${DEPEND_LIBOBS}
-	${DEPEND_WHATSNEW}
+RDEPEND_UI="
+	${RDEPEND_CURL}
+	${RDEPEND_FFMPEG}
+	${RDEPEND_LIBOBS}
+	${RDEPEND_WHATSNEW}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[dbus,gui,network,wayland?,widgets,X,xml]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},dbus,gui,network,wayland?,widgets,X,xml]
 		dev-qt/qtbase:=
-		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}
+		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtsvg:=
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}[opengl]
+			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opengl]
 			dev-qt/qtdeclarative:=
-			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}
+			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-qt/qtwayland:=
 		)
 	)
 "
+DEPEND_UI="
+	${DEPEND_LIBOBS}
+	${DEPEND_WHATSNEW}
+"
 
 # See deps/libff/CMakeLists.txt
-DEPEND_DEPS_LIBFF="
-	${DEPEND_FFMPEG}
+RDEPEND_DEPS_LIBFF="
+	${RDEPEND_FFMPEG}
 "
 
 # Found in multiple CMakeLists.txt
-DEPEND_MESA="
-	>=media-libs/mesa-${MESA_PV}
+RDEPEND_MESA="
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	media-libs/mesa:=
 "
 
 # See deps/glad/CMakeLists.txt
-DEPEND_GLAD="
-	${DEPEND_MESA}
-	${DEPEND_LIBX11}
+RDEPEND_GLAD="
+	${RDEPEND_MESA}
+	${RDEPEND_LIBX11}
 	>=media-libs/libglvnd-1.7.0
-	>=media-libs/mesa-${MESA_PV}[egl(+)]
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},egl(+)]
+	media-libs/mesa:=
 "
 
 # See libobs-opengl/CMakeLists.txt
-DEPEND_LIBOBS_OPENGL="
-	${DEPEND_GLAD}
-	${DEPEND_LIBOBS}
-	${DEPEND_LIBX11}
-	${DEPEND_LIBXCB}
-	${DEPEND_MESA}
-	${DEPEND_WAYLAND}
+RDEPEND_LIBOBS_OPENGL="
+	${RDEPEND_GLAD}
+	${RDEPEND_LIBOBS}
+	${RDEPEND_LIBX11}
+	${RDEPEND_LIBXCB}
+	${RDEPEND_MESA}
+	${RDEPEND_WAYLAND}
 "
 
 # See deps/obs-scripting/CMakeLists.txt
-DEPEND_DEPS_OBS_SCRIPTING="
-	${DEPEND_LIBOBS}
+RDEPEND_DEPS_OBS_SCRIPTING="
+	${RDEPEND_LIBOBS}
 	lua? (
 		>=dev-lang/luajit-2.1.0:2
 	)
@@ -668,51 +666,83 @@ DEPEND_DEPS_OBS_SCRIPTING="
 "
 
 # See deps/media-playback/CMakeLists.txt
-DEPEND_DEPS_MEDIA_PLAYBACK="
-	${DEPEND_FFMPEG}
+RDEPEND_DEPS_MEDIA_PLAYBACK="
+	${RDEPEND_FFMPEG}
 "
 
 # See deps/file-updater/CMakeLists.txt
-DEPEND_DEPS_FILE_UPDATER="
-	${DEPEND_CURL}
+RDEPEND_DEPS_FILE_UPDATER="
+	${RDEPEND_CURL}
 "
 
 # See deps/CMakeLists.txt
-DEPEND_DEPS="
-	${DEPEND_DEPS_FILE_UPDATER}
-	${DEPEND_DEPS_LIBFF}
-	${DEPEND_DEPS_MEDIA_PLAYBACK}
-	${DEPEND_DEPS_OBS_SCRIPTING}
-	${DEPEND_JANSSON}
+RDEPEND_DEPS="
+	${RDEPEND_DEPS_FILE_UPDATER}
+	${RDEPEND_DEPS_LIBFF}
+	${RDEPEND_DEPS_MEDIA_PLAYBACK}
+	${RDEPEND_DEPS_OBS_SCRIPTING}
+	${RDEPEND_JANSSON}
 "
 
 # See CMakeLists.txt
-#	${DEPEND_UNSOURCED} # testing as disabled
+#	${RDEPEND_UNSOURCED} # testing as disabled
 RDEPEND+="
-	${DEPEND_DEPS}
-	${DEPEND_PLUGINS}
-	${DEPEND_UI}
+	${RDEPEND_DEPS}
+	${RDEPEND_PLUGINS}
+	${RDEPEND_UI}
 	test? (
-		${DEPEND_LIBOBS}
+		${RDEPEND_LIBOBS}
 	)
 "
 
 DEPEND+="
 	${RDEPEND}
+	${DEPEND_PLUGINS}
+	${DEPEND_UI}
+"
+
+# Based on 20.04 See
+# azure-pipelines.yml
+# .github/workflows/main.yml
+# deps/obs-scripting/obslua/CMakeLists.txt
+# deps/obs-scripting/obspython/CMakeLists.txt
+BDEPEND+="
+	>=app-misc/jq-1.7.1
+	>=dev-build/cmake-3.28.3
+	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
+	lua? (
+		>=dev-lang/swig-${SWIG_PV}
+	)
+	python? (
+		${PYTHON_DEPS}
+		>=dev-lang/swig-${SWIG_PV}
+	)
+	test? (
+		>=dev-util/cmocka-1.1.7
+		websocket? (
+			>=dev-libs/boost-1.83.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			dev-libs/boost:=
+		)
+	)
+"
+PDEPEND+="
+	firejail? (
+		sys-apps/firejail[firejail_profiles_obs,X]
+	)
 "
 
 # The obs-amd-encoder submodule currently doesn't support Linux
 # https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
 #	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
 
-RESTRICT="mirror" # Speed up download of the latest release.
 PATCHES=(
-	# https://github.com/obsproject/obs-studio/pull/3335
-	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch"
+	# https://bugs.gentoo.org/966051
+	"${FILESDIR}/${PN}-32.0.2-fix-build-with-qt-6.10.patch"
+
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
-	"${FILESDIR}/${PN}-31.0.0-browser-checks.patch"
-	"${FILESDIR}/${PN}-31.0.0-optionalize-plugins.patch"
-	"${FILESDIR}/${PN}-31.0.0-symbolize-default-codecs.patch"
+	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
+	"${FILESDIR}/${PN}-32.0.2-optionalize-plugins.patch"
+	"${FILESDIR}/${PN}-32.0.2-symbolize-default-codecs.patch"
 )
 
 qt_check() {
@@ -824,7 +854,7 @@ ewarn
 ewarn "After being built, this information provided via package.env or"
 ewarn "by patch should be sanitized with shred from forensics attacks."
 ewarn
-	sleep 10
+	sleep 15
 
 	if ! use browser || \
 		[[ -z "${RESTREAM_CLIENTID}" || -z "${RESTREAM_HASH}" ]] ; then
@@ -878,6 +908,9 @@ einfo "  \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`"
 einfo
 einfo "to setup streaming service whitelists."
 einfo
+
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -888,7 +921,6 @@ src_unpack() {
 	else
 		unpack ${A}
 		dep_prepare_mv "${WORKDIR}/libdshowcapture-${LIBDSHOWCAPTURE_COMMIT}" "${S}/deps/libdshowcapture/src"
-		dep_prepare_mv "${WORKDIR}/capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT}" "${S}/deps/libdshowcapture/src/external/capture-device-support"
 		if use browser ; then
 			dep_prepare_mv "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" "${S}/plugins/obs-browser"
 		fi
@@ -922,10 +954,9 @@ src_prepare() {
 			-e "s|@DEFAULT_CODEC_VIDEO_TEST2@|test_x264|g" \
 			-e "s|@DEFAULT_CODEC_AUDIO_TEST1@|ffmpeg_aac|g" \
 			-e "s|@DEFAULT_CODEC_AUDIO_TEST2@|test_aac|g" \
-			"UI/window-basic-main.cpp" \
-			"UI/window-basic-auto-config.hpp" \
-			"UI/window-basic-auto-config-test.cpp" \
-			"UI/window-basic-settings-stream.cpp" \
+			"frontend/widgets/OBSBasic.cpp" \
+			"frontend/wizards/AutoConfig.hpp" \
+			"frontend/wizards/AutoConfigTestPage.cpp" \
 			|| die
 	else
 		local default_simple_encoder_video=""
@@ -963,10 +994,9 @@ src_prepare() {
 			-e "s|@DEFAULT_CODEC_VIDEO_TEST2@|${default_codec_video_test2}|g" \
 			-e "s|@DEFAULT_CODEC_AUDIO_TEST1@|${default_codec_audio_test1}|g" \
 			-e "s|@DEFAULT_CODEC_AUDIO_TEST2@|${default_codec_audio_test2}|g" \
-			"UI/window-basic-main.cpp" \
-			"UI/window-basic-auto-config.hpp" \
-			"UI/window-basic-auto-config-test.cpp" \
-			"UI/window-basic-settings-stream.cpp" \
+			"frontend/widgets/OBSBasic.cpp" \
+			"frontend/wizards/AutoConfig.hpp" \
+			"frontend/wizards/AutoConfigTestPage.cpp" \
 			|| die
 	fi
 }
@@ -1003,8 +1033,8 @@ src_configure() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 einfo
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 einfo
 
 	# For obs-browser
@@ -1015,6 +1045,8 @@ einfo
 		append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtWidgets"
 		append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtCore"
 	fi
+
+	ffmpeg_src_configure
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
@@ -1163,12 +1195,13 @@ ewarn
 ewarn "Security notice:"
 ewarn
 ewarn "Since the browser feature uses the Chromium source code as a base,"
-ewarn "you need to update obs-studio the same time Chromium updates"
-ewarn "to avoid critical vulerabilities."
+ewarn "you need to update/re-emerge cef-bin and obs-studio the same time"
+ewarn "Chromium updates to avoid critical vulerabilities."
 ewarn
-ewarn "Currently the net-libs/cef-bin is not CFI protected."
-ewarn "Consider using a CFI protected -bin browser package instead for full"
-ewarn "protection using Window Capture as a source."
+ewarn "Currently the net-libs/cef-bin is not CFI protected against code"
+ewarn "execution.  Consider using Window Capture of a CFI protected -bin"
+ewarn "browser package instead for full protection using Window Capture as a"
+ewarn "source."
 ewarn
 	fi
 

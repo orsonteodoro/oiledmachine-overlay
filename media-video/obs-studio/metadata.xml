@@ -201,7 +201,8 @@
     </flag>
     <flag name="rnnoise">
       Build support for the recurrent neural network based RNNoise background
-      noise supression filter.
+      noise supression filter to isolate voice in talk podcasts, news,
+      interviews, radio, audiobooks, or lecture formats.
     </flag>
     <flag name="service-updates">
       Enable service updates.  This will override OBS_STUDIO_SERVICES_WHITELIST

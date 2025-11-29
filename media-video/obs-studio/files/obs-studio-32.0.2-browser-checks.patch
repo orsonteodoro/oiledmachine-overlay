@@ -1,0 +1,15 @@
+diff '--color=auto' -urp obs-studio-32.0.2.orig/plugins/CMakeLists.txt obs-studio-32.0.2/plugins/CMakeLists.txt
+--- obs-studio-32.0.2.orig/plugins/CMakeLists.txt	2025-10-23 05:42:31.000000000 -0700
++++ obs-studio-32.0.2/plugins/CMakeLists.txt	2025-11-28 19:16:52.966616370 -0800
+@@ -11,7 +11,8 @@ set_property(GLOBAL APPEND PROPERTY OBS_
+ 
+ macro(check_obs_browser)
+   if((OS_WINDOWS AND CMAKE_VS_PLATFORM_NAME MATCHES "(ARM64|x64)") OR OS_MACOS OR OS_LINUX)
+-    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/obs-browser/CMakeLists.txt")
++    if(NOT ENABLE_BROWSER)
++    elseif(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/obs-browser/CMakeLists.txt")
+       message(FATAL_ERROR "Required submodule 'obs-browser' not available.")
+     else()
+       add_subdirectory(obs-browser)
+Only in obs-studio-32.0.2/plugins: CMakeLists.txt.orig
+Only in obs-studio-32.0.2/plugins: CMakeLists.txt.rej
