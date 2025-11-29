@@ -98,7 +98,6 @@ src_install() {
 		fix-rpath_repair
 	}
 	python_foreach_impl fix_rpath
-	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

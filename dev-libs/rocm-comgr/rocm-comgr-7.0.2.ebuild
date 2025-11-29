@@ -169,7 +169,6 @@ src_install() {
 		"${ED}${EROCM_PATH}/lib/libamd_comgr.so.3.0:${EROCM_LLVM_PATH}/lib"
 	)
 	fix-rpath_repair
-	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

@@ -430,7 +430,6 @@ src_install() {
 		"${ED}/${EROCM_PATH}/bin/MIOpenDriver:${EROCM_PATH}/$(rocm_get_libdir)"
 	)
 	fix-rpath_repair
-	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

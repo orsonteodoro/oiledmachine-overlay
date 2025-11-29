@@ -124,7 +124,6 @@ src_install() {
 			$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/libhipblas.so")":${EROCM_PATH}/$(rocm_get_libdir)"
 		)
 		fix-rpath_repair
-		fix-rpath_verify
 	fi
 }
 

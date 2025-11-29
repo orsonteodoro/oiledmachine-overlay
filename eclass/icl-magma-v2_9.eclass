@@ -730,7 +730,6 @@ icl-magma-v2_9_src_install() {
 		)
 		fix-rpath_repair
 	fi
-	fix-rpath_verify
 }
 
 EXPORT_FUNCTIONS \

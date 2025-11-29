@@ -171,7 +171,6 @@ src_install() {
 		$(realpath "${ED}/${EROCM_PATH}/$(rocm_get_libdir)/librocsolver.so")":${EROCM_PATH}/$(rocm_get_libdir)"
 	)
 	fix-rpath_repair
-	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

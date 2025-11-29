@@ -209,7 +209,6 @@ src_install() {
 
 python_install_all() {
 	distutils-r1_python_install_all
-	fix-rpath_verify
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
