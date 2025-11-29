@@ -50,8 +50,10 @@ multilib_src_configure() {
 
 	# Multilib for default search paths
 	local libdir=$(get_libdir)
-	sed -i -e "s:/usr/lib/vamp:${EPREFIX}/usr/${libdir}/vamp:" \
-		"src/vamp-hostsdk/PluginHostAdapter.cpp" || die
+	sed -i \
+		-e "s:/usr/lib/vamp:${EPREFIX}/usr/${libdir}/vamp:" \
+		"src/vamp-hostsdk/PluginHostAdapter.cpp" \
+		|| die
 	econf
 }
 
@@ -61,7 +63,7 @@ multilib_src_compile() {
 		RANLIB="$(tc-getRANLIB)"
 
 	if multilib_is_native_abi && use doc; then
-		cd build || die
+		cd "build" || die
 		doxygen || die "creating doxygen doc failed"
 		HTML_DOCS=( "${BUILD_DIR}/build/doc/html/." )
 	fi
