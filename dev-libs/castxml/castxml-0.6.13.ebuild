@@ -23,8 +23,8 @@ inherit cflags-hardened cmake libcxx-slot libstdcxx-slot llvm-r1
 KEYWORDS="amd64 ~arm ~riscv ~x86"
 S="${WORKDIR}/${MY_P}"
 SRC_URI="
-	https://github.com/CastXML/CastXML/archive/v${PV}.tar.gz
-		-> ${MY_P}.tar.gz
+https://github.com/CastXML/CastXML/archive/v${PV}.tar.gz
+	-> ${MY_P}.tar.gz
 "
 
 DESCRIPTION="C-family abstract syntax tree XML output tool"
@@ -41,10 +41,10 @@ IUSE="
 ebuild_revision_1
 "
 DEPEND="
-	$(llvm_gen_dep '
-		llvm-core/clang:${LLVM_SLOT}['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}"']
+	$(llvm_gen_dep "
+		llvm-core/clang:\${LLVM_SLOT}[${LIBSTDCXX_USEDEP}]
 		llvm-core/clang:=
-	')
+	")
 "
 RDEPEND="
 	${DEPEND}
