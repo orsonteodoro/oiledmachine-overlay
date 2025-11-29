@@ -4,6 +4,14 @@
 
 EAPI=8
 
+# This ebuild is based on the distro's mlt ebuild but without the
+# politics of for or against libsdl1.  In the distro ebuild, the
+# libsdl1 is forced off but Flowblade or it's dependencies needs
+# libsdl1.  In the bug reports, the ebuild maintainer(s) refuse
+# to add libsdl1 support, so you cannot have Flowblade with distro
+# ebuild (bug #592380).  The newer mlt is likely incompatible
+# with Flowblade or LTS because it is C++ standard 20.
+
 # restrict=test needs unpackaged 'kwalify'
 # rtaudio will use OSS on non linux OSes.
 #
