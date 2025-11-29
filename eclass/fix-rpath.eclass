@@ -32,21 +32,33 @@ BDEPEND="
 
 # @ECLASS_VARIABLE:  RPATH_APPEND
 # @DESCRIPTION:
-# An array of multislotted paths for the dynamic library search in the following format:
-# "<rpath #0>"
-# "<rpath #1>"
-# "<rpath #2>"
-# ...
-# "<rpath #N>"
+# An array of multislotted paths for the dynamic library search.
+#
+# Example:
+#
+# RPATH_APPEND=(
+#   "<rpath #0>"
+#   "<rpath #1>"
+#   "<rpath #2>"
+#   ...
+#   "<rpath #N>"
+# )
+#
 
 # @ECLASS_VARIABLE:  RPATH_FIXES
 # @DESCRIPTION:
-# An list of executibles or library files with library paths to repair in the following format:
-# "<lib or exe path #0>:<list of comma separated path(s) containing the dynamic library>"
-# "<lib or exe path #1>:<list of comma separated path(s) containing the dynamic library>"
-# "<lib or exe path #2>:<list of comma separated path(s) containing the dynamic library>"
-# ...
-# "<lib or exe path #N>:<list of comma separated path(s) containing the dynamic library>"
+# A list of executibles or library files with library paths to repair.
+#
+# Example:
+#
+# RPATH_FIXES=(
+#   "<lib or exe path #0>:<list of comma separated path(s) containing the dynamic library>"
+#   "<lib or exe path #1>:<list of comma separated path(s) containing the dynamic library>"
+#   "<lib or exe path #2>:<list of comma separated path(s) containing the dynamic library>"
+#   ...
+#   "<lib or exe path #N>:<list of comma separated path(s) containing the dynamic library>"
+# )
+#
 
 # @FUNCTION:  fix-rpath_src_configure
 # @DESCRIPTION:
