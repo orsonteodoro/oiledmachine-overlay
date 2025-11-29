@@ -23,6 +23,61 @@ BDEPEND="
 	dev-util/patchelf
 "
 
+# @FUNCTION:  fix-rpath_src_configure
+# @DESCRIPTION:
+# Add RPATHs.  This method is the preferred way for open source based projects
+# for proper testing.
+#
+# Example:
+#
+# multilib_src_configure() {
+#	local RPATH_APPEND=(
+#		"/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
+#		"/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+#		"/usr/$(get_libdir)/eog"
+#	)
+#	fix-rpath_src_configure
+#
+#	econf
+# }
+#
+fix-rpath_src_configure() {
+	if [[ -z "${RPATH_APPEND[@]}" ]] ; then
+eerror "RPATH_APPEND must be initialized before calling fix-rpath_src_configure()."
+		die
+	fi
+
+	local x
+	for x in "${RPATH_APPEND[@]}" ; do
+		if [[ ${RPATH_LINK_MODE:-"indirect"} == "indirect" ]] ; then
+			append-ldflags "-Wl,-L${x}"
+			append-ldflags "-Wl,-rpath,${x}"
+		else
+			append-ldflags "-L${x}"
+			append-ldflags "--rpath=${x}"
+		fi
+	done
+}
+
+# @FUNCTION:  fix-rpath_python_configure
+# @DESCRIPTION:
+# Alias for fix-rpath_src_configure for consistent style.
+#
+# Example:
+#
+# python_configure() {
+#	local RPATH_APPEND=(
+#		"/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)"
+#		"/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+#		"/usr/$(get_libdir)/eog"
+#	)
+#	fix-rpath_python_configure
+# }
+#
+fix-rpath_python_configure() {
+	fix-rpath_src_configure
+}
+
 # @FUNCTION:  fix-rpath_verify
 # @DESCRIPTION:
 # Peform verification only
@@ -49,8 +104,10 @@ ewarn "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report
 
 # @FUNCTION:  fix-rpath_repair
 # @DESCRIPTION:
-# Fix missing RPATHs
+# Fix missing RPATHs.  It should only be used if build system is hermetic or prebuilt binaries.
+#
 # Example:
+#
 # src_install() {
 #	local RPATH_FIXES=(
 #		"${ED}/usr/bin/bear:/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir),/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
@@ -61,8 +118,9 @@ ewarn "QA:  ${x} failed RPATH verification.  Runtime failure may happen.  Report
 #	fix-rpath_repair
 #	fix-rpath_verify
 # }
+#
 fix-rpath_repair() {
-	if [[ -z "${RPATH_FIXES}" ]] ; then
+	if [[ -z "${RPATH_FIXES[@]}" ]] ; then
 eerror "RPATH_FIXES must be initialized before calling fix-rpath_repair()."
 		die
 	fi
