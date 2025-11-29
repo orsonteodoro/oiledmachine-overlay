@@ -711,11 +711,13 @@ BDEPEND+="
 	>=dev-build/cmake-3.28.3
 	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
 	lua? (
-		>=dev-lang/swig-${SWIG_PV}
+		>=dev-lang/swig-${SWIG_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-lang/swig:=
 	)
 	python? (
 		${PYTHON_DEPS}
-		>=dev-lang/swig-${SWIG_PV}
+		>=dev-lang/swig-${SWIG_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-lang/swig:=
 	)
 	test? (
 		>=dev-util/cmocka-1.1.7
