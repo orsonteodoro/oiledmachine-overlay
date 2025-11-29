@@ -9,7 +9,12 @@ MY_P="${MY_PN}-${PV}"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..14} )
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+)
 
 inherit cython check-compiler-switch distutils-r1 flag-o-matic
 
@@ -21,7 +26,10 @@ https://github.com/PyAV-Org/PyAV/archive/refs/tags/v${PV}.tar.gz
 "
 
 DESCRIPTION="Pythonic bindings for FFmpeg's libraries."
-HOMEPAGE="https://github.com/PyAV-Org/PyAV https://pypi.org/project/av/"
+HOMEPAGE="
+	https://github.com/PyAV-Org/PyAV
+	https://pypi.org/project/av/
+"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
@@ -37,20 +45,19 @@ DOCS=( "AUTHORS.rst" "CHANGELOG.rst" "README.md" )
 RDEPEND="
 	!dev-python/ha-av
 	|| (
-		>=media-video/ffmpeg-7.1.1:59.61.61[${PYTHON_SINGLE_USEDEP}]
-		>=media-video/ffmpeg-7.1.1:0[${PYTHON_SINGLE_USEDEP}]
+		media-video/ffmpeg:60.62.62[${PYTHON_SINGLE_USEDEP}]
+		media-video/ffmpeg:0/60.62.62[${PYTHON_SINGLE_USEDEP}]
 	)
 	media-video/ffmpeg:=
 "
 # Cython relaxed
 BDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/cython-3.1.0_beta1[${PYTHON_USEDEP}]
-		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		=dev-python/cython-3.1*[${PYTHON_USEDEP}]
 		dev-python/cython:=
-		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-77.0[${PYTHON_USEDEP}]
 		lint? (
-			>=dev-python/mypy-1.15.0[${PYTHON_USEDEP}]
+			>=dev-python/mypy-1.17.1[${PYTHON_USEDEP}]
 			dev-python/isort[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
@@ -61,8 +68,8 @@ BDEPEND="
 			dev-python/cython[${PYTHON_USEDEP}]
 			dev-python/cython:=
 			dev-python/numpy[${PYTHON_USEDEP}]
-			dev-python/pillow[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
+			virtual/pillow[${PYTHON_USEDEP}]
 		)
 	')
 	sys-devel/gcc
@@ -88,8 +95,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
+	cython_set_cython_slot "3.1"
 	cython_python_configure
+	ffmpeg_python_configure
 }
 
 src_configure() {
@@ -98,17 +106,4 @@ src_configure() {
 
 src_install() {
 	distutils-r1_src_install
-
-	# Multislot
-	if has_version ">=media-video/ffmpeg-7.1.1:59.61.61" ; then
-		local x
-		for x in $(find "${ED}" -name "*.so") ; do
-			if ldd "${x}" | grep -q -E -e "(libavutil.so|libavcodec.so)" ; then
-einfo "Updating RPATH for ${x}"
-				patchelf --add-rpath "/usr/lib/ffmpeg/59.61.61/$(get_libdir)" "${x}" || die
-			fi
-		done
-	# else
-	#	unislot
-	fi
 }
