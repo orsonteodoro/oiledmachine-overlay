@@ -23,6 +23,31 @@ BDEPEND="
 	dev-util/patchelf
 "
 
+# @ECLASS_VARIABLE:  RPATH_LINK_MODE
+# @DESCRIPTION:
+# Controls style of linking.
+# Valid values:
+# indirect - Flags are passed directly to the compiler which passes it to the linker.  (default)
+# direct - Flags are passed directly to the linker.
+
+# @ECLASS_VARIABLE:  RPATH_APPEND
+# @DESCRIPTION:
+# An array of multislotted paths for the dynamic library search in the following format:
+# "<rpath #0>"
+# "<rpath #1>"
+# "<rpath #2>"
+# ...
+# "<rpath #N>"
+
+# @ECLASS_VARIABLE:  RPATH_FIXES
+# @DESCRIPTION:
+# An list of executibles or library files with library paths to repair in the following format:
+# "<lib or exe path #0>:<list of comma separated path(s) containing the dynamic library>"
+# "<lib or exe path #1>:<list of comma separated path(s) containing the dynamic library>"
+# "<lib or exe path #2>:<list of comma separated path(s) containing the dynamic library>"
+# ...
+# "<lib or exe path #N>:<list of comma separated path(s) containing the dynamic library>"
+
 # @FUNCTION:  fix-rpath_src_configure
 # @DESCRIPTION:
 # Add RPATHs.  This method is the preferred way for open source based projects
