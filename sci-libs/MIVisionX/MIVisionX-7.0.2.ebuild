@@ -9,7 +9,7 @@ LLVM_SLOT=19
 NNEF_TOOLS_COMMIT="c166264b7cadb18f62a5711edf703e6029ad0212" # Same as nnef-v1.0.0 tag
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for 00BR
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -25,6 +25,11 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1102"
 	"gfx1200"
 	"gfx1201"
+)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 inherit libstdcxx-compat
@@ -84,7 +89,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_23
+ebuild_revision_26
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -147,9 +152,8 @@ RDEPEND="
 		|| (
 			>=media-video/ffmpeg-4.4.1:56.58.58[fdk,gpl,libass,x264,x265,nonfree]
 			>=media-video/ffmpeg-4.4.1:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-6.1.1:58.60.60[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-6.1.1:0/58.60.60[fdk,gpl,libass,x264,x265,nonfree]
 		)
+		media-video/ffmpeg:=
 	)
 	migraphx? (
 		>=sci-libs/MIGraphX-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
@@ -191,7 +195,9 @@ RDEPEND="
 		dev-libs/protobuf:3[${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:=
 		dev-cpp/gflags[${LIBSTDCXX_USEDEP}]
+		dev-cpp/gflags:=
 		dev-cpp/glog[${LIBSTDCXX_USEDEP}]
+		dev-cpp/glog:=
 		dev-db/lmdb
 		media-libs/libjpeg-turbo
 		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
@@ -199,7 +205,8 @@ RDEPEND="
 		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		!ffmpeg? (
-			>=dev-libs/boost-${BOOST_PV}:=
+			>=dev-libs/boost-${BOOST_PV}
+			dev-libs/boost:=
 		)
 	)
 	rocm? (
@@ -281,8 +288,9 @@ src_configure() {
 		ABSEIL_CPP_SLOT="20220623"
 		PROTOBUF_CPP_SLOT="3"
 	fi
-	abseil-cpp_src_compile
-	protobuf_src_compile
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	ffmpeg_src_configure
 
 	build_libjpeg_turbo
 	build_rapidjson

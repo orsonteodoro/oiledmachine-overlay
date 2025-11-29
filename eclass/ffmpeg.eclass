@@ -152,7 +152,6 @@ eerror "No multislot FFmpeg found.  Using monoslot FFmpeg."
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/ffmpeg/${_FFMPEG_SLOT}/${libdir}/pkgconfig:${LD_LIBRARY_PATH}"
 	export PATH="${ESYSROOT}/usr/lib/ffmpeg/${_FFMPEG_SLOT}/bin:${PATH}"
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/ffmpeg/${_FFMPEG_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-
 }
 
 # @FUNCTION:  ffmpeg_python_configure
@@ -176,6 +175,45 @@ eerror "No multislot FFmpeg found.  Using monoslot FFmpeg."
 #
 ffmpeg_python_configure() {
 	ffmpeg_src_configure
+}
+
+# @FUNCTION:  ffmpeg_get_slot
+# @DESCRIPTION:
+# Gets the slot used by ffmpeg_src_configure.
+#
+# Example:
+#
+# inherit ffmpeg
+#
+# FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" ) # After inherit ffmpeg to init array
+#
+# src_configure() {
+#   local ffmpeg_pv=$(ffmpeg_get_slot)
+#   einfo "ffmpeg_pv:  ${ffmpeg_pv}"
+# }
+ffmpeg_get_slot() {
+	local x
+	for x in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
+		if has_version "media-video/ffmpeg:${x}" ; then
+			_FFMPEG_SLOT="${x}"
+			break
+		fi
+	done
+}
+
+# @FUNCTION:  ffmpeg_get_major_version
+# @DESCRIPTION:
+# Gets the approximage major version based on the slot.
+ffmpeg_get_major_version() {
+	declare -A M=(
+		["56.58.58"]="4"
+		["57.59.59"]="5"
+		["58.60.60"]="6"
+		["59.61.61"]="7"
+		["60.62.62"]="8"
+	)
+	local s="${1}"
+	echo ${M["${s}"]}
 }
 
 fi

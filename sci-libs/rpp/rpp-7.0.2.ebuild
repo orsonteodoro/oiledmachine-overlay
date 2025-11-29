@@ -5,6 +5,13 @@ EAPI=8
 
 # TODO:  review the install prefix
 
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-7.0.2/docs/release.md?plain=1#L18
+CXX_STANDARD=17
+LLVM_COMPAT=( "18" )
+LLVM_SLOT="${LLVM_COMPAT[0]}"
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
+ROCM_VERSION="${PV}"
+
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
 	"gfx90a"
@@ -19,6 +26,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1200"
 	"gfx1201"
 )
+
 AMDGPU_UNTESTED_TARGETS=(
 #	"gfx908"
 #	"gfx90a"
@@ -32,17 +40,11 @@ AMDGPU_UNTESTED_TARGETS=(
 #	"gfx1101"
 	"gfx1102"
 )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
 )
-
-# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-7.0.2/docs/release.md?plain=1#L18
-CXX_STANDARD=17
-LLVM_COMPAT=( 18 )
-LLVM_SLOT=${LLVM_COMPAT[0]}
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
@@ -69,11 +71,11 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_16
+ebuild_revision_17
 "
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -129,7 +131,7 @@ PATCHES=(
 
 warn_untested_gpu() {
 	local gpu
-	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
+	for gpu in "${AMDGPU_UNTESTED_TARGETS[@]}" ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not CI tested upstream."
 		fi
@@ -199,9 +201,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-ewarn
 ewarn "If the build fails, use either -O0 or the systemwide optimization level."
-ewarn
 
 	if use opencl ; then
 		mycmakeargs+=(

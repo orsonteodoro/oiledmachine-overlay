@@ -7,12 +7,17 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE FS"
-
 LUA_COMPAT=( "lua5-"{1..2} "luajit" )
+PYTHON_COMPAT=( "python3_"{10..13} )
+
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
-PYTHON_COMPAT=( "python3_"{10..13} )
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+)
 
 inherit cflags-hardened flag-o-matic lua-single meson optfeature pax-utils
 inherit python-single-r1 xdg
@@ -52,7 +57,7 @@ ${PATENT_STATUS_IUSE[@]}
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
-ebuild_revision_12
+ebuild_revision_13
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -129,14 +134,14 @@ PATENT_STATUS_DEPEND="
 		!media-libs/libva
 		!x11-libs/libvdpau
 		|| (
-			media-video/ffmpeg:58.60.60[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			media-video/ffmpeg:0/58.60.60[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			media-video/ffmpeg:59.61.61[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			media-video/ffmpeg:0/59.61.61[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:58.60.60[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			media-video/ffmpeg:0/58.60.60[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			media-video/ffmpeg:59.61.61[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			media-video/ffmpeg:0/59.61.61[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		)
 	)
 	media-video/ffmpeg:=
@@ -297,7 +302,6 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/meson-1.3.0
-	dev-util/patchelf
 	virtual/pkgconfig
 	cli? (
 		dev-python/docutils
@@ -322,9 +326,7 @@ pkg_setup() {
 }
 
 src_configure() {
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	fi
+	ffmpeg_src_configure
 	if use !debug ; then
 		if use test ; then
 einfo "Skipping -DNDEBUG due to USE=test"
@@ -433,11 +435,6 @@ src_install() {
 
 	local GLOBIGNORE=*"/"*"build"*":"*"/"*"policy"*
 	dodoc "RELEASE_NOTES" "DOCS/"*"."{"md","rst"}
-
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-		patchelf --add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" "${ED}/usr/bin/mpv" || die
-		patchelf --add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" "${ED}/usr/$(get_libdir)/libmpv.so" || die
-	fi
 
 	fperms 0664 "/etc/mpv"
 	fperms 0664 "/etc/mpv/encoding-profiles.conf"

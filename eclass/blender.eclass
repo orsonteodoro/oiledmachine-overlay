@@ -31,7 +31,7 @@ LTS_VERSIONS=(
 
 _blender_set_globals() {
 	BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:-latest}
-einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
+einfo "BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
 }
 _blender_set_globals
 unset -f _blender_set_globals
@@ -189,10 +189,10 @@ blender_check_requirements() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
-einfo "CPP:\t\t${CPP}"
-	${CC} --version
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+	"${CC}" --version
 
 	# Use /usr/include/omp.h instead of /usr/lib/gcc/${CHOST}/12/include/omp.h
 
@@ -208,7 +208,7 @@ blender_pkg_pretend() {
 check_embree() {
 	# There is no standard embree ebuild.  Assume other repo or local copy.
 
-	if has embree ${IUSE_EFFECTIVE} && use embree ; then
+	if has "embree" ${IUSE_EFFECTIVE} && use embree ; then
 		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
 		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
@@ -274,7 +274,7 @@ blender_pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" ; then
 			export LLVM_MAX_SLOT="${s}"
 			break
@@ -319,7 +319,7 @@ check_portable_dependencies() {
 	# Best way to make it portable is maybe chroot or by docker container.
 	# This way you keep system packages optimized, the container or chroot
 	# image is portable.
-	if has build_portable ${IUSE_EFFECTIVE} ; then
+	if has "build_portable" ${IUSE_EFFECTIVE} ; then
 		if use build_portable ; then
 			if [[ "${ABI}" == "x86" ]] ; then
 				if [[ "${CXXFLAGS}" =~ "march=x86-64" ]] ; then
@@ -359,7 +359,7 @@ ewarn
 				"sci-libs/fftw"
 				"sys-libs/zlib"
 			)
-			for p in ${RDEPEND_279[@]} ; do
+			for p in "${RDEPEND_279[@]}" ; do
 				if ls "${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
 					2>/dev/null 1>/dev/null ; then
 					if [[ "${ABI}" == "amd64" ]] ; then
@@ -416,8 +416,8 @@ check_optimal_compiler_for_cycles_x86() {
 		fi
 	fi
 	strip-unsupported-flags
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 }
 
 IUSE+="
@@ -528,8 +528,10 @@ blender_configure_eigen_arm() {
 			|| is-flagq "-march=armv8.8-a*" \
 			|| is-flagq "-march=armv8.9-a*" \
 		; then
+			# oi = optimization initial/input flag
+			# of = optimization final flag
 			oi=( $(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+") )
-			for x in ${oi[@]} ; do
+			for x in "${oi[@]}" ; do
 				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
 				replace-flags "${x}" "${of}+sve"
 			done
@@ -537,7 +539,7 @@ blender_configure_eigen_arm() {
 
 		if is-flagq "-mcpu=*" ; then
 			oi=$(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+")
-			for x in ${oi[@]} ; do
+			for x in "${oi[@]}" ; do
 				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
 				replace-flags "${x}" "${of}+sve"
 			done
@@ -555,7 +557,7 @@ blender_configure_eigen_arm() {
 			|| is-flagq "-march=armv8.9-a*" \
 		; then
 			oi=( $(echo "${CXXFLAGS}" | grep -o -E -e "-march=armv8[.0-9a-z+-]+") )
-			for x in ${oi[@]} ; do
+			for x in "${oi[@]}" ; do
 				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
 				replace-flags "${x}" "${of}-sve"
 			done
@@ -563,7 +565,7 @@ blender_configure_eigen_arm() {
 
 		if is-flagq "-mcpu=*" ; then
 			oi=( $(echo "${CXXFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+") )
-			for x in ${oi[@]} ; do
+			for x in "${oi[@]}" ; do
 				of=$(echo "${x}" | sed -E -e "s|[+-]sve||g")
 				replace-flags "${x}" "${of}-sve"
 			done
@@ -1026,7 +1028,7 @@ blender_src_install() {
 		"256x256"
 	)
 	if ver_test $(ver_cut 1-2 "${PV}") -lt "2.80" ; then
-		for size in ${sizes[@]} ; do
+		for size in "${sizes[@]}" ; do
 			if [[ -e "${ed_icon_hc}/${size}/apps/blender.png" ]] ; then
 				mv "${ed_icon_hc}/${size}/apps/blender"{"","-${SLOT_MAJ}"}".png" || die
 			fi
@@ -1045,13 +1047,6 @@ blender_src_install() {
 	mv "${ED}/usr/share/man/man1/blender"{"","-${SLOT_MAJ}"}".1" || die
 	if use rocm ; then
 		rocm_fix_rpath
-	fi
-	if has materialx ${IUSE_EFFECTIVE} && use materialx ; then
-einfo "Updating RPATH for materialx support"
-		patchelf \
-			--add-rpath "/usr/lib/materialx/$(get_libdir)" \
-			"${ED}/usr/$(get_libdir)/blender/${PV}/creator/blender" \
-			|| die
 	fi
 }
 

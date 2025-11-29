@@ -80,12 +80,12 @@ ARM_CPU_FLAGS_3_3=(
 )
 
 CPU_FLAGS_3_3=(
-	${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}
+	"${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
@@ -93,13 +93,21 @@ LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
 	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 # ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
 LLVM_MAX_SLOT="19"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+)
 
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
@@ -123,11 +131,11 @@ FFMPEG_IUSE=(
 
 # Platform defaults based on CMakeList.txt
 OPENVDB_ABIS=(
-	${OPENVDB_ABIS_MAJOR_VERS/#/abi}
+	"${OPENVDB_ABIS_MAJOR_VERS/#/abi}"
 )
 
 OPENVDB_ABIS=(
-	${OPENVDB_ABIS[@]/%/-compat}
+	"${OPENVDB_ABIS[@]/%/-compat}"
 )
 
 OPENEXR_V3_PV=(
@@ -386,7 +394,7 @@ LICENSE+="
 
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -397,7 +405,7 @@ gen_required_use_cuda_targets() {
 
 gen_required_use_rocm_targets() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -637,7 +645,7 @@ REQUIRED_USE+="
 
 gen_asan_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
@@ -652,7 +660,7 @@ gen_asan_bdepend() {
 gen_llvm_depends()
 {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				>=llvm-core/llvm-${s}:${s}
@@ -664,7 +672,7 @@ gen_llvm_depends()
 
 gen_oidn_depends() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			>=media-libs/oidn-2.3.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},aot?,sycl?]
@@ -677,7 +685,7 @@ gen_oidn_depends() {
 
 gen_oiio_depends() {
 	local s
-	for s in ${OPENVDB_ABIS[@]} ; do
+	for s in "${OPENVDB_ABIS[@]}" ; do
 		echo "
 			${s}? (
 				>=dev-cpp/robin-map-1.3.0
@@ -693,7 +701,7 @@ gen_oiio_depends() {
 
 gen_openexr_pairs() {
 	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
+	for row in "${OPENEXR_V3_PV[@]}" ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
@@ -710,7 +718,7 @@ gen_openexr_pairs() {
 gen_osl_depends()
 {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				>=media-libs/osl-${OSL_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},static-libs]
@@ -761,25 +769,33 @@ PATENT_STATUS_RDEPEND="
 	!patent_status_nonfree? (
 		ffmpeg? (
 			|| (
+				media-video/ffmpeg:56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+
 				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 				media-video/ffmpeg:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 				media-video/ffmpeg:0/59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
-				>=media-video/ffmpeg-4.0:0[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
-				<media-video/ffmpeg-8:0[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 			)
+			media-video/ffmpeg:=
 		)
 	)
 	patent_status_nonfree? (
 		ffmpeg? (
 			|| (
+				media-video/ffmpeg:56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+
 				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 				media-video/ffmpeg:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 				media-video/ffmpeg:0/59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
-				>=media-video/ffmpeg-4.0:0[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
-				<media-video/ffmpeg-8:0[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 			)
+			media-video/ffmpeg:=
 		)
 	)
 "
@@ -1206,7 +1222,8 @@ _blender_pkg_setup() {
 	print_release_description
 
 	local found=0
-	for s in ${LLVM_COMPAT[@]} ; do
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if (( ${s} > ${LLVM_MAX_UPSTREAM} )) ; then
 			use "llvm_slot_${s}" && found=${s}
 		fi
@@ -1225,7 +1242,7 @@ ewarn
 	fi
 
 	local x
-	for x in ${LLVM_COMPAT[@]} ; do
+	for x in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${x}" ; then
 ewarn "Using LLVM ${x}"
 			break
@@ -1280,7 +1297,7 @@ apply_hiprt_2_3_patchset() {
 	)
 einfo "Applying hiprt_patchset"
 	local x
-	for x in ${hiprt_patchset[@]} ; do
+	for x in "${hiprt_patchset[@]}" ; do
 		eapply "${FILESDIR}/pr121050/${x}"
 	done
 	eapply "${FILESDIR}/${PN}-3.6.13-hiprt-linker-changes.patch"
@@ -1337,7 +1354,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 
 	local s="${OPENVDB_ABIS_MAJOR_VERS}"
 	if use "abi${s}-compat" ; then
-		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${s}
+		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER="${s}"
 	fi
 
 	local mycmakeargs=(
@@ -1354,6 +1371,14 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 
 	cython_set_cython_slot "3"
 	cython_python_configure
+
+	if has "materialx" ${IUSE_EFFECTIVE} use materialx ; then
+		append-flags \
+			"-Wl,-L/usr/lib/materialx/$(get_libdir)" \
+			"-Wl,-rpath,/usr/lib/materialx/$(get_libdir)"
+	fi
+
+	ffmpeg_src_configure
 
 	# WITH_INPUT_IME is default ON upstream but only supports non-linux
 	mycmakeargs+=(
@@ -1437,7 +1462,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	if use cuda ; then
 		local targets=""
 		local cuda_target
-		for cuda_target in ${CUDA_TARGETS_COMPAT[@]} ; do
+		for cuda_target in "${CUDA_TARGETS_COMPAT[@]}" ; do
 			if use "${cuda_target/#/cuda_targets_}" ; then
 				targets+=";${cuda_target}"
 			fi
@@ -1454,7 +1479,7 @@ einfo "CUDA_TARGETS:  ${targets}"
 	if use rocm ; then
 		local targets=""
 		local rocm_target
-		for rocm_target in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		for rocm_target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 			if use "${rocm_target/#/amdgpu_targets_}" ; then
 				targets+=";${rocm_target}"
 			fi
@@ -1477,8 +1502,8 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 
 	local llvm_slot
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		use "llvm_slot_${s}" && llvm_slot=${s}
+	for s in "${LLVM_COMPAT[@]}" ; do
+		use "llvm_slot_${s}" && llvm_slot="${s}"
 	done
 
 	if use materialx ; then
@@ -1575,7 +1600,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		# Set as per-package environmental variable
 		# For setting up optix/cuda
 		mycmakeargs+=(
-			${BLENDER_CMAKE_ARGS[@]}
+			"${BLENDER_CMAKE_ARGS[@]}"
 		)
 	fi
 

@@ -7,6 +7,7 @@ EAPI=8
 # U24
 
 CMAKE_MAKEFILE_GENERATOR="emake"
+PYTHON_COMPAT=( "python3_12" )
 
 # Stable
 BOOST_PV="1.86.0" # Aug 7, 2024
@@ -152,7 +153,10 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_xop"
 )
 
-PYTHON_COMPAT=( "python3_12" )
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+)
 
 inherit check-compiler-switch cmake dep-prepare flag-o-matic optfeature python-single-r1 toolchain-funcs
 
@@ -241,7 +245,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_8
+ebuild_revision_11
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -515,15 +519,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local mycmakeargs=(
 	)
 
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-einfo "Using media-video/ffmpeg:58.60.60"
-		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	ffmpeg_src_configure # PKG_CONFIG_PATH set here if multislot found
+	local ffmpeg_major_version=$(ffmpeg_get_major_version)
+	local ffmpeg_slot=$(ffmpeg_get_slot)
+	local ffmpeg_default_major_version="6"
+	local ffmpeg_default_slot="58.60.60"
+	if has_version "media-video/ffmpeg:${ffmpeg_slot}" ; then
+einfo "Using media-video/ffmpeg:${ffmpeg_slot} (${ffmpeg_major_version}.x)"
 		mycmakeargs+=(
 			-DFFMPEG_USE_SLOTTED=ON
-			-DFFMPEG_SLOTTED_PATH="/usr/lib/ffmpeg/58.60.60"
+			-DFFMPEG_SLOTTED_PATH="/usr/lib/ffmpeg/${ffmpeg_slot}"
 		)
 	else
-einfo "Using media-video/ffmpeg:0/58.60.60"
+einfo "Using media-video/ffmpeg:0/${ffmpeg_default_slot} (${ffmpeg_default_major_version}.x)"
 		export FFMPEG_LIBDIR=""
 		mycmakeargs+=(
 			-DFFMPEG_USE_SLOTTED=OFF
@@ -531,9 +539,9 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	mycmakeargs+=(
-		-DCMAKE_PREFIX_PATH="/usr/lib/ffmpeg/58.60.60"
 		-DBUILD_SHARED_LIBS=ON
 		-DBUILD_VIDEO2X_CLI=$(usex cli)
+		-DCMAKE_PREFIX_PATH="/usr/lib/video2x"
 		-DCMAKE_MODULE_PATH="${S}/third_party/boost"
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)
@@ -576,7 +584,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 
 	local found
 	found=0
-	for x in ${FP16_ARCHES[@]} ; do
+	for x in "${FP16_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_fp16 ; then
 				found=1
@@ -595,7 +603,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${BF16_ARCHES[@]} ; do
+	for x in "${BF16_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_bf16 ; then
 				found=1
@@ -614,7 +622,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${FP16_ARCHES[@]} ; do
+	for x in "${FP16_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_dotprod ; then
 				found=1
@@ -633,7 +641,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${FP16FML_ARCHES[@]} ; do
+	for x in "${FP16FML_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_fp16fml ; then
 				found=1
@@ -652,7 +660,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${I8MM_ARCHES[@]} ; do
+	for x in "${I8MM_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_i8mm ; then
 				found=1
@@ -672,7 +680,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_sve ; then
 				found=1
@@ -691,7 +699,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_sve2 ; then
 				found=1
@@ -710,7 +718,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_svebf16 ; then
 				found=1
@@ -729,7 +737,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_svei8mm ; then
 				found=1
@@ -748,7 +756,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_svef32mm ; then
 				found=1
@@ -772,47 +780,35 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	cmake_src_install
-	dodir "/usr/$(get_libdir)/${PN}/include"
-	dodir "/usr/$(get_libdir)/${PN}/$(get_libdir)"
+	dodir "/usr/lib/${PN}/include"
+	dodir "/usr/lib/${PN}/$(get_libdir)"
 	cp -aT \
 		"${S}_build/realesrgan_install/include" \
-		"${ED}/usr/$(get_libdir)/${PN}/include" \
+		"${ED}/usr/lib/${PN}/include" \
 		|| die
 	cp -aT \
 		"${S}_build/realesrgan_install/lib" \
-		"${ED}/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+		"${ED}/usr/lib/${PN}/$(get_libdir)" \
 		|| die
 	sed -i \
 		-e "s|/lib/|/$(get_libdir)/|g" \
-		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/realesrgan/realesrganTargets-relwithdebinfo.cmake" \
+		"${ED}/usr/lib/video2x/$(get_libdir)/cmake/realesrgan/realesrganTargets-relwithdebinfo.cmake" \
 		|| die
 	cp -aT \
 		"${S}_build/rife_install/include" \
-		"${ED}/usr/$(get_libdir)/${PN}/include" \
+		"${ED}/usr/lib/${PN}/include" \
 		|| die
 	cp -aT \
 		"${S}_build/rife_install/lib" \
-		"${ED}/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+		"${ED}/usr/lib/${PN}/$(get_libdir)" \
 		|| die
 	sed -i \
 		-e "s|/lib/|/$(get_libdir)/|g" \
-		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/rife/rifeTargets-relwithdebinfo.cmake" \
+		"${ED}/usr/lib/video2x/$(get_libdir)/cmake/rife/rifeTargets-relwithdebinfo.cmake" \
 		|| die
 	rm -rf "${ED}/var" || die
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-		patchelf \
-			--add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" \
-			"${ED}/usr/lib64/libvideo2x.so" \
-			|| die
-		if use cli ; then
-			patchelf \
-				--add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" \
-				"${ED}/usr/bin/video2x" \
-				|| die
-		fi
-	fi
 	if ! use system-boost ; then
-		exeinto "/usr/$(get_libdir)/${PN}/$(get_libdir)"
+		exeinto "/usr/lib/${PN}/$(get_libdir)"
 		IFS=$'\n'
 		local x
 		for x in $(find "${S}_build/third_party/boost/" -name "*.so*") ; do
@@ -821,7 +817,7 @@ src_install() {
 		IFS=$' \t\n'
 		if use cli ; then
 			patchelf \
-				--add-rpath "/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+				--add-rpath "/usr/lib/${PN}/$(get_libdir)" \
 				"${ED}/usr/bin/video2x" \
 				|| die
 		fi

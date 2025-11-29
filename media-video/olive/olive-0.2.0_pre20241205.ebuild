@@ -21,12 +21,19 @@ PATENT_STATUS_IUSE=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 inherit cmake dep-prepare libcxx-slot libstdcxx-slot xdg
@@ -69,7 +76,7 @@ IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 alsa doc glslang jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
-ebuild_revision_3
+ebuild_revision_4
 "
 PATENT_STATUS_REQUIRED_USE="
 	patent_status_nonfree? (
@@ -213,7 +220,6 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.13
-	dev-util/patchelf
 	doc? (
 		>=app-text/doxygen-1.8.17[dot]
 	)
@@ -333,33 +339,20 @@ src_configure() {
 		-DBUILD_TESTS=$(usex test)
 	)
 
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-einfo "Using FFMPEG 6.x"
-		export FFMPEG_LIBDIR="/usr/lib/ffmpeg/58.60.60/$(get_libdir)"
+	ffmpeg_src_configure
+	local ffmpeg_slot=$(ffmpeg_get_slot)
+	local ffmpeg_major_version=$(ffmpeg_get_major_version)
+	if [[ -n "${ffmpeg_slot}" ]] && has_version "media-video/ffmpeg:${ffmpeg_slot}" ; then
+einfo "Using FFMPEG ${ffmpeg_major_version}.x"
 		mycmakeargs+=(
-			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/58.60.60/include"
-			-DFFMPEG_LIBS="${FFMPEG_LIBDIR}"
-		)
-	elif has_version "media-video/ffmpeg:57.59.59" ; then
-einfo "Using FFMPEG 5.x"
-		export FFMPEG_LIBDIR="/usr/lib/ffmpeg/57.59.59/$(get_libdir)"
-		mycmakeargs+=(
-			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/57.59.59/include"
-			-DFFMPEG_LIBS="${FFMPEG_LIBDIR}"
-		)
-	elif has_version "media-video/ffmpeg:56.58.58" ; then
-einfo "Using FFMPEG 4.x"
-		export FFMPEG_LIBDIR="/usr/lib/ffmpeg/56.58.58/$(get_libdir)"
-		mycmakeargs+=(
-			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/56.58.58/include"
-			-DFFMPEG_LIBS="${FFMPEG_LIBDIR}"
+			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/${ffmpeg_slot}/include"
+			-DFFMPEG_LIBS="/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
 		)
 	elif has_version "media-video/ffmpeg:0" ; then
 einfo "Using FFMPEG:0"
-		export FFMPEG_LIBDIR="/usr/$(get_libdir)"
 		mycmakeargs+=(
 			-DFFMPEG_INCLUDES="/usr/include"
-			-DFFMPEG_LIBS="${FFMPEG_LIBDIR}"
+			-DFFMPEG_LIBS="/usr/$(get_libdir)"
 		)
 	fi
 
@@ -378,15 +371,6 @@ ewarn
 ewarn "You are using an unstable live snapshot.  No guarantees for project files"
 ewarn "compatibility with later stable versions."
 ewarn
-
-	local L=(
-		"${ED}/usr/bin/olive-editor"
-		"${ED}/usr/lib64/libolivecore.so"
-	)
-	local path
-	for path in "${L[@]}" ; do
-		patchelf --add-rpath "${FFMPEG_LIBDIR}" "${path}" || die
-	done
 }
 
 pkg_postinst() {

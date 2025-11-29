@@ -15,6 +15,12 @@ EAPI=8
 MY_PN="mlt"
 
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream tests up to 3.11
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+)
+
 inherit python-single-r1 cmake flag-o-matic
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
@@ -74,8 +80,8 @@ DEPEND="
 	)
 	ffmpeg? (
 		|| (
-			media-video/ffmpeg:0/56.58.58[vdpau?]
 			media-video/ffmpeg:56.58.58[vdpau?]
+			media-video/ffmpeg:0/56.58.58[vdpau?]
 		)
 		media-video/ffmpeg:=
 	)
@@ -216,7 +222,9 @@ src_prepare() {
 
 src_configure() {
 	# Workaround for bug #919981
-	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
+	append-ldflags $(test-flags-CCLD "-Wl,--undefined-version")
+
+	ffmpeg_src_configure
 
 	local libdir=$(get_libdir)
 	sed -i \
@@ -272,13 +280,6 @@ src_configure() {
 		)
 	fi
 
-	if has_version "media-video/ffmpeg:0/56.58.58" ; then
-einfo "Using media-video/ffmpeg:0/56.58.58"
-		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	else
-einfo "Using media-video/ffmpeg:56.58.58"
-	fi
-
 	cmake_src_configure
 }
 
@@ -294,10 +295,5 @@ src_install() {
 	fi
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}"-7.1" || die
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}".1" || die
-	if use ffmpeg && has_version "media-video/ffmpeg:0/56.58.58" ; then
-		patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" \
-			"${ED}/usr/lib/mlt-flowblade/lib64/mlt-7/libmltavformat.so" \
-			|| die
-	fi
 }
 

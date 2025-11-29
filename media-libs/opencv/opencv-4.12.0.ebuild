@@ -332,6 +332,11 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 ) # }}}
 
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+)
+
 ROCM_SLOTS=(
 	"rocm_6_4"
 )
@@ -405,7 +410,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_44
+	ebuild_revision_46
 "
 # hal for acceleration
 IUSE+="
@@ -802,7 +807,7 @@ CUDA_DEPEND="
 		virtual/cuda-compiler:=
 "
 # For ffmpeg version, see \
-# https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24
+# https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24	# FFmpeg 4.x
 # For the commit above, see
 # https://github.com/opencv/opencv/blob/4.12.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
 gen_rocm_rdepend() {
@@ -823,9 +828,7 @@ PATENT_STATUS_RDEPEND="
 	!patent_status_nonfree? (
 		ffmpeg? (
 			|| (
-				media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-				media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 			)
 			media-video/ffmpeg:=
@@ -838,9 +841,7 @@ PATENT_STATUS_RDEPEND="
 	patent_status_nonfree? (
 		ffmpeg? (
 			|| (
-				media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
-				media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 			)
 			media-video/ffmpeg:=
@@ -1089,9 +1090,7 @@ DEPEND+="
 "
 BDEPEND="
 	>=dev-build/cmake-${CMAKE_PV}
-	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
-	dev-util/patchelf
 	cuda? (
 		${CUDA_DEPEND}
 		sys-apps/grep[pcre]
@@ -1358,6 +1357,7 @@ multilib_src_configure() {
 
 	abseil-cpp_src_configure
 	protobuf_src_configure
+	ffmpeg_src_configure
 
 	export LIBDIR=$(get_libdir)
 	local mycmakeargs=(
@@ -1763,13 +1763,6 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		fi
 	fi
 
-	# CI tested versions
-	if use ffmpeg && has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	elif use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
-		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	fi
-
 	if use vulkan ; then
 		export VULKAN_SDK="/usr"
 	fi
@@ -1921,22 +1914,6 @@ multilib_src_install() {
 		fix_python_loader
 	else
 		cmake_src_install
-	fi
-
-	if use ffmpeg ; then
-		local x
-		for x in $(ls "${ED}/usr/$(get_libdir)/libopencv"*".so") ; do
-			local path=$(ldd "${x}" | grep -q "libav" && echo "${x}")
-			if [[ -z "${path}" ]] ; then
-				:
-			elif has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-einfo "Fixing rpath for ${x}"
-				patchelf --add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" "${x}" || die
-			elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
-einfo "Fixing rpath for ${x}"
-				patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" "${x}" || die
-			fi
-		done
 	fi
 }
 

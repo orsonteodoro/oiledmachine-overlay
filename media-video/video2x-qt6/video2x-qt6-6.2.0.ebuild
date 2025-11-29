@@ -9,6 +9,11 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 PYTHON_COMPAT=( "python3_12" )
 
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+)
+
 inherit check-compiler-switch cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -83,7 +88,7 @@ einfo "Generating tag start for ${path}"
 		git config user.name "John Doe" || die
 		git add -f * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -178,12 +183,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	append-flags -DSPDLOG_NO_EXCEPTIONS
 	append-flags -I"${S}_build/libvideo2x_install/include"
 
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-einfo "Using media-video/ffmpeg:58.60.60"
-		PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-	else
-einfo "Using media-video/ffmpeg:0/58.60.60"
-	fi
+	ffmpeg_src_configure
 
 	local mycmakeargs=(
 		-DUSE_SYSTEM_VIDEO2X=ON

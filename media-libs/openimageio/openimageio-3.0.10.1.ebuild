@@ -18,8 +18,8 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LLVM_MAX_SLOT="19"
 ONETBB_SLOT="0"
 OPENVDB_APIS=( {12..9} )
-OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
-OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
+OPENVDB_APIS_=( "${OPENVDB_APIS[@]/#/abi}" )
+OPENVDB_APIS_=( "${OPENVDB_APIS_[@]/%/-compat}" )
 PYTHON_COMPAT=( "python3_"{11..12} )
 QT5_PV="5.15"
 QT6_PV="6.6"
@@ -28,12 +28,21 @@ TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-da
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 OPENEXR_V3_PV=(
@@ -73,7 +82,7 @@ X86_CPU_FEATURES=(
 	"sse4_2:sse4.2"
 	"ssse3:ssse3"
 )
-CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
+CPU_FEATURES=( "${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}" ) # Place after X86_CPU_FEATURES
 
 inherit cflags-hardened check-compiler-switch cmake flag-o-matic font
 inherit libcxx-slot libstdcxx-slot llvm python-single-r1 virtualx
@@ -135,7 +144,7 @@ ebuild_revision_34
 "
 gen_abi_compat_required_use() {
 	local s
-	for s in ${OPENVDB_APIS[@]} ; do
+	for s in "${OPENVDB_APIS[@]}" ; do
 		echo "
 			abi${s}-compat? (
 				openvdb
@@ -145,7 +154,7 @@ gen_abi_compat_required_use() {
 }
 gen_llvm_required_use() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				clang
@@ -226,7 +235,7 @@ REQUIRED_USE="
 "
 gen_openexr_pairs() {
 	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
+	for row in "${OPENEXR_V3_PV[@]}" ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
@@ -277,6 +286,12 @@ RDEPEND+="
 	)
 	ffmpeg? (
 		|| (
+			media-video/ffmpeg:56.58.58
+			media-video/ffmpeg:57.59.59
+			media-video/ffmpeg:58.60.60
+			media-video/ffmpeg:59.61.61
+			media-video/ffmpeg:60.62.62
+
 			media-video/ffmpeg:0/56.58.58
 			media-video/ffmpeg:0/57.59.59
 			media-video/ffmpeg:0/58.60.60
@@ -422,7 +437,7 @@ DEPEND+="
 "
 gen_bdepend_clang() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
@@ -484,9 +499,9 @@ pkg_setup() {
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
 		local llvm_slot=
 		local x
-		for x in ${LLVM_COMPAT[@]} ; do
+		for x in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${x}" ; then
-				llvm_slot=${x}
+				llvm_slot="${x}"
 				break
 			fi
 		done
@@ -551,7 +566,7 @@ src_configure() {
 	done
 
 	# If no CPU SIMDs were used, completely disable them
-	[[ -z ${mysimd} ]] && mysimd=("0")
+	[[ -z "${mysimd}" ]] && mysimd=("0")
 
 	#
 	# This is currently needed on arm64 to get the NEON SIMD wrapper to
@@ -569,6 +584,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
+	use ffmpeg && ffmpeg_src_configure
 
 	local has_qt="OFF"
 	if use qt5 || use qt6 ; then

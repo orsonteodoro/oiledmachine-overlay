@@ -39,7 +39,12 @@ AMDGPU_TARGETS_UNTESTED=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
+)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
@@ -74,7 +79,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-samples ebuild_revision_3
+samples ebuild_revision_4
 "
 REQUIRED_USE="
 "
@@ -108,7 +113,7 @@ PATCHES=(
 
 warn_untested_gpu() {
 	local gpu
-	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
+	for gpu in "${AMDGPU_TARGETS_UNTESTED[@]}" ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not tested upstream."
 		fi
@@ -165,6 +170,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	ffmpeg_src_configure
 
 	rocm_src_configure
 }

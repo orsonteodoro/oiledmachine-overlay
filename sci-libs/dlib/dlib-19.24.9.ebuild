@@ -19,6 +19,12 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_1"
 )
 
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+)
+
 inherit cflags-hardened cmake cuda distutils-r1
 
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
@@ -34,7 +40,7 @@ SLOT="0/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 cblas cuda debug examples ffmpeg gif jpeg lapack mkl png python sqlite test webp X
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	python? (
@@ -55,7 +61,14 @@ RDEPEND="
 		dev-libs/cudnn:=
 	)
 	ffmpeg? (
-		media-video/ffmpeg:=[X?]
+		|| (
+			media-video/ffmpeg:57.59.59[X?]
+			media-video/ffmpeg:59.61.61[X?]
+
+			media-video/ffmpeg:0/57.59.59[X?]
+			media-video/ffmpeg:0/59.61.61[X?]
+		)
+		media-video/ffmpeg:=
 	)
 	gif? (
 		media-libs/giflib:=
@@ -79,6 +92,7 @@ RDEPEND="
 	)
 	sqlite? (
 		dev-db/sqlite:3
+		dev-db/sqlite:=
 	)
 	webp? (
 		media-libs/libwebp:=
@@ -113,6 +127,7 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	ffmpeg_src_configure
 	local mycmakeargs=(
 		-DDLIB_ENABLE_ASSERTS=$(usex debug)
 		-DDLIB_ENABLE_STACK_TRACE=$(usex debug)

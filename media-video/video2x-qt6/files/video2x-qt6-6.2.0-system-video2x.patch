@@ -23,7 +23,7 @@ diff '--color=auto' -urp video2x-qt6-6.2.0.orig/CMakeLists.txt video2x-qt6-6.2.0
 +        add_dependencies(video2x-qt6 libvideo2x)
 +        set(LIBVIDEO2X_LIB ${CMAKE_BINARY_DIR}/libvideo2x_install/lib/libvideo2x.so)
 +    else()
-+        set(LIBVIDEO2X_LIB "/usr/${CMAKE_INSTALL_LIBDIR}/libvideo2x.so")
++        set(LIBVIDEO2X_LIB "/usr/lib/video2x/${CMAKE_INSTALL_LIBDIR}/libvideo2x.so")
 +    endif()
  endif()
  

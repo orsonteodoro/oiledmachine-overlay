@@ -16,8 +16,8 @@ LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_12" ) # U 20/22
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for OOBR, 20250205
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
-ROCM_SLOT="6.2"
-ROCM_VERSION="6.2.4"
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
+ROCM_VERSION="${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
@@ -34,6 +34,11 @@ AMDGPU_TARGETS_COMPAT=(
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
+)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 inherit abseil-cpp check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 rocm
@@ -65,7 +70,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_10
+ebuild_revision_12
 "
 REQUIRED_USE="
 	|| (
@@ -103,10 +108,8 @@ RDEPEND="
 	)
 	ffmpeg? (
 		|| (
-			>=media-video/ffmpeg-6.1.1:0/58.60.60
-			>=media-video/ffmpeg-4.4.1:0/56.58.58
-			>=media-video/ffmpeg-6.1.1:58.60.60
 			>=media-video/ffmpeg-4.4.1:56.58.58
+			>=media-video/ffmpeg-4.4.1:0/56.58.58
 		)
 		media-video/ffmpeg:=
 	)
@@ -209,6 +212,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 	abseil-cpp_src_configure
 	protobuf_src_configure
+	ffmpeg_src_configure
 
 	build_rapidjson
 	local mycmakeargs=(

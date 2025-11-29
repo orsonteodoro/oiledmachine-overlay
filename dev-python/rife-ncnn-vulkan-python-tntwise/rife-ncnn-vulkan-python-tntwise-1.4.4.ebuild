@@ -399,25 +399,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local mycmakeargs=(
 	)
 
-	if true ; then
-		:
-	elif has_version "media-video/ffmpeg:58.60.60" ; then
-einfo "Using media-video/ffmpeg:58.60.60"
-		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-		mycmakeargs+=(
-			-DFFMPEG_USE_SLOTTED=ON
-			-DFFMPEG_SLOTTED_PATH="/usr/lib/ffmpeg/58.60.60"
-		)
-	else
-einfo "Using media-video/ffmpeg:0/58.60.60"
-		export FFMPEG_LIBDIR=""
-		mycmakeargs+=(
-			-DFFMPEG_USE_SLOTTED=OFF
-		)
-	fi
-
 	mycmakeargs+=(
-#		-DCMAKE_PREFIX_PATH="/usr/lib/ffmpeg/58.60.60"
 #		-DBUILD_SHARED_LIBS=ON
 #		-DBUILD_VIDEO2X_CLI=$(usex cli)
 #		-DCMAKE_MODULE_PATH="${S}/third_party/boost"
@@ -462,7 +444,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 
 	local found
 	found=0
-	for x in ${FP16_ARCHES[@]} ; do
+	for x in "${FP16_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_fp16 ; then
 				found=1
@@ -481,7 +463,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${BF16_ARCHES[@]} ; do
+	for x in "${BF16_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_bf16 ; then
 				found=1
@@ -500,7 +482,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${FP16_ARCHES[@]} ; do
+	for x in "${FP16_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_dotprod ; then
 				found=1
@@ -519,7 +501,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${FP16FML_ARCHES[@]} ; do
+	for x in "${FP16FML_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_fp16fml ; then
 				found=1
@@ -538,7 +520,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${I8MM_ARCHES[@]} ; do
+	for x in "${I8MM_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_i8mm ; then
 				found=1
@@ -558,7 +540,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_sve ; then
 				found=1
@@ -577,7 +559,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_sve2 ; then
 				found=1
@@ -596,7 +578,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_svebf16 ; then
 				found=1
@@ -615,7 +597,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_svei8mm ; then
 				found=1
@@ -634,7 +616,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	found=0
-	for x in ${SVE_ARCHES[@]} ; do
+	for x in "${SVE_ARCHES[@]}" ; do
 		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
 			if use cpu_flags_arm_svef32mm ; then
 				found=1

@@ -106,6 +106,11 @@ CPU_FLAGS_X86=(
 EGO_SUM=(
 )
 
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+)
+
 ROCM_SLOTS=(
 	"${HIP_6_4_VERSION}"
 )
@@ -280,7 +285,6 @@ REQUIRED_USE="
 		systemd
 	)
 "
-#	>=media-video/ffmpeg-6.1.1:0/58.60.60 is relaxed
 gen_rocm_rdepend() {
 	local s
 	for s in "${ROCM_SLOTS[@]}" ; do
@@ -300,7 +304,10 @@ gen_rocm_rdepend() {
 #		  https://github.com/mudler/LocalAI/blob/v3.6.0/.github/workflows/image.yml#L42
 RDEPEND+="
 	(
-		>=media-video/ffmpeg-6.1.1
+		|| (
+			media-video/ffmpeg:56.58.58
+			media-video/ffmpeg:0/56.58.58
+		)
 		media-video/ffmpeg:=
 	)
 	>=app-accessibility/espeak-ng-1.51
@@ -366,8 +373,8 @@ BDEPEND+="
 		dev-go/protobuf-go:=
 	)
 	(
-		virtual/protoc-gen-go-grpc:${PROTOBUF_CPP_SLOT}
-		virtual/protoc-gen-go-grpc:=
+		dev-go/protoc-gen-go-grpc:${GRPC_SLOT}
+		dev-go/protoc-gen-go-grpc:=
 	)
 	(
 		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
@@ -485,6 +492,7 @@ src_configure() {
 	protobuf_src_configure
 	re2_src_configure
 	grpc_src_configure
+	ffmpeg_src_configure
 	export PATH="${ESYSROOT}/usr/lib/protobuf-go/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	cflags-hardened_append
 }
