@@ -158,7 +158,7 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_6[@]}"
 )
 
-inherit check-compiler-switch cmake dep-prepare flag-o-matic optfeature python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake dep-prepare fix-rpath flag-o-matic optfeature python-single-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -245,7 +245,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_11
+ebuild_revision_12
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -366,7 +366,6 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.14
-	dev-util/patchelf
 	dev-vcs/git
 	sys-devel/gcc[openmp]
 	virtual/pkgconfig
@@ -514,6 +513,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	append-flags -I"${S}_build/libvideo2x_install/include"
 	if ! use system-boost ; then
 		append-flags -I"${S}/third_party/boost"
+		fix-rpath_append "/usr/lib/${PN}/$(get_libdir)"
 	fi
 
 	local mycmakeargs=(
@@ -807,6 +807,7 @@ src_install() {
 		"${ED}/usr/lib/video2x/$(get_libdir)/cmake/rife/rifeTargets-relwithdebinfo.cmake" \
 		|| die
 	rm -rf "${ED}/var" || die
+
 	if ! use system-boost ; then
 		exeinto "/usr/lib/${PN}/$(get_libdir)"
 		IFS=$'\n'
@@ -815,12 +816,6 @@ src_install() {
 			doexe "${x}"
 		done
 		IFS=$' \t\n'
-		if use cli ; then
-			patchelf \
-				--add-rpath "/usr/lib/${PN}/$(get_libdir)" \
-				"${ED}/usr/bin/video2x" \
-				|| die
-		fi
 	fi
 }
 
