@@ -29,13 +29,6 @@ LTS_VERSIONS=(
 	"4.2"
 )
 
-_blender_set_globals() {
-	BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:-latest}
-einfo "BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
-}
-_blender_set_globals
-unset -f _blender_set_globals
-
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake cython dhms
 inherit flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg optfeature
