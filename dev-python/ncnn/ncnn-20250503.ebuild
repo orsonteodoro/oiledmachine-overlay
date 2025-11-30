@@ -540,5 +540,5 @@ src_compile() {
 src_install() {
 	distutils-r1_src_install
 
-	mv "${ED}/usr/share/doc/"{"","python-"}"ncnn-20240820" || die
+	mv "${ED}/usr/share/doc/"{"","python-"}"ncnn-${PV}" || die
 }
