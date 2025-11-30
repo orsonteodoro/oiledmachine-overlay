@@ -200,7 +200,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 examples openmp python tools +vulkan
-ebuild_revision_13
+ebuild_revision_15
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -303,10 +303,13 @@ RESTRICT="test"
 
 RDEPEND="
 	tools? (
+		dev-cpp/abseil-cpp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/abseil-cpp:=
+		dev-libs/protobuf[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:=
 	)
 	vulkan? (
+		dev-util/glslang[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-util/glslang:=
 		media-libs/vulkan-drivers
 		media-libs/vulkan-loader
@@ -316,13 +319,14 @@ DEPEND="
 	${RDEPEND}
 	vulkan? (
 		dev-util/vulkan-headers
+		dev-util/vulkan-headers:=
 	)
 "
 BDEPEND="
 	>=dev-build/cmake-3.12
 "
 PDEPEND="
-	~dev-python/ncnn-${PV}[${PYTHON_SINGLE_USEDEP},openmp?]
+	~dev-python/ncnn-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},openmp?]
 	dev-python/ncnn:=
 "
 
@@ -347,8 +351,8 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
+		touch "dummy" || die
+		git add "dummy" || die
 		#git add -f * || die
 		git commit -m "Dummy" || die
 		git tag "${tag_name}" || die

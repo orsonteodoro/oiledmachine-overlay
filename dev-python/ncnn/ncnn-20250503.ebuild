@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=17 # Compiler default
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -140,7 +141,17 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_xop"
 )
 
-inherit cflags-hardened distutils-r1 dep-prepare toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+inherit cflags-hardened distutils-r1 dep-prepare libcxx-slot libstdcxx-slot toolchain-funcs
 
 DESCRIPTION="Python bindings for the high-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
@@ -185,7 +196,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 openmp
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -293,7 +304,9 @@ RDEPEND="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/portalocker[${PYTHON_USEDEP}]
 	')
-	media-libs/opencv[python,${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},python,${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv:=
+	dev-util/glslang[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-util/glslang:=
 	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
@@ -301,6 +314,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	dev-util/vulkan-headers
+	dev-util/vulkan-headers:=
 "
 BDEPEND="
 	>=dev-build/cmake-3.12
@@ -317,6 +331,8 @@ pkg_pretend() {
 pkg_setup() {
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
