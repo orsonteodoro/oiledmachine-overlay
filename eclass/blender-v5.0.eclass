@@ -974,7 +974,7 @@ RDEPEND+="
 	)
 	hiprt? (
 		rocm_6_4? (
-			>=media-libs/HIPRT-2.5:0/6.4[rocm]
+			>=media-libs/HIPRT-2.5:0/6.4[${LIBSTDCXX_USEDEP},rocm]
 		)
 		media-libs/hiprt:=
 	)
@@ -1241,6 +1241,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.3-fix-brotli-check.patch"
 	"${FILESDIR}/${PN}-4.5.3-simd-checks.patch"
 	"${FILESDIR}/${PN}-4.5.3-optionalize-simd.patch"
+	"${FILESDIR}/${PN}-5.0.0-math_half-sse4.1-check.patch"
 )
 
 _blender_pkg_setup() {
@@ -1333,7 +1334,7 @@ einfo "Applying hiprt_patchset"
 
 _src_prepare_patches() {
 	#apply_hiprt_2_3_patchset
-	eapply "${FILESDIR}/blender-4.5.3-parent-datafiles-dir-change.patch"
+	eapply "${FILESDIR}/blender-5.0.0-parent-datafiles-dir-change.patch"
 	if use rocm ; then
 		local rocm_version=""
 		if use rocm_6_4 ; then
