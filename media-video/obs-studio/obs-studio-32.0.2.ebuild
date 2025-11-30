@@ -53,7 +53,10 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
-FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_6[@]}" )
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+)
 
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
@@ -142,7 +145,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_16
+ebuild_revision_17
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1043,7 +1046,8 @@ einfo "CXX:  ${CXX}"
 			local insecure_timestamp=$(( ${current_timestamp} - $(( 60 * 60 * 24 * 15 )) )) # -15 days or ~2 weeks
 			if (( ${merged_timestamp} < ${insecure_timestamp} )) ; then
 eerror
-eerror "The current prebuilt CEF is considered insecure."
+eerror "SECURITY:  The current prebuilt CEF has passed its security expiration"
+eerror "date."
 eerror
 eerror "Please re-emerge the =net-libs/cef-bin-9999 ebuild or"
 eerror "disable the browser USE flag to continue."
