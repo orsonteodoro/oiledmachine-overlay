@@ -7,12 +7,12 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 PYTHON_COMPAT=( "python3_"{11..13} )
@@ -43,10 +43,16 @@ IUSE="
 debug python +tbb test
 ebuild_revision_1
 "
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
-
-RESTRICT="!test? ( test )"
-
+REQUIRED_USE="
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 RDEPEND="
 	sci-mathematics/clipper2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	sci-mathematics/clipper2:=

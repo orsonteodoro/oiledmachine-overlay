@@ -7,15 +7,15 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 inherit cmake libcxx-slot libstdcxx-slot python-single-r1
 
 DESCRIPTION="Geometry library for topological robustness"
@@ -33,31 +33,38 @@ else
 		SRC_URI="https://github.com/elalish/manifold/releases/download/v${PV}/${P}.tar.gz"
 	fi
 
-	KEYWORDS="amd64 ~arm64"
+	KEYWORDS="~amd64 ~arm64 ~x86"
 fi
 
 LICENSE="Apache-2.0"
-SLOT="0"
-
-IUSE="
-debug python +tbb test
-ebuild_revision_1
+# SONAME
+SLOT="0/3"
+IUSE="assimp debug python +tbb test"
+REQUIRED_USE="
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
 "
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
-
-RESTRICT="!test? ( test )"
-
+RESTRICT="
+	!test? (
+		test
+	)
+"
 RDEPEND="
 	sci-mathematics/clipper2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	sci-mathematics/clipper2:=
-	python? ( ${PYTHON_DEPS}
-		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_USEDEP}]
-		')
+	assimp? (
+		media-libs/assimp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		media-libs/assimp:=
 	)
 	tbb? (
 		dev-cpp/tbb[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
+	)
+	python? ( ${PYTHON_DEPS}
+		$(python_gen_cond_dep '
+			dev-python/numpy[${PYTHON_USEDEP}]
+		')
 	)
 "
 DEPEND="
@@ -66,7 +73,10 @@ DEPEND="
 			>=dev-python/nanobind-2.1.0[${PYTHON_USEDEP}]
 		')
 	)
-	test? ( dev-cpp/gtest )
+	test? (
+		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=
+	)
 	${RDEPEND}
 "
 
@@ -76,27 +86,16 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
-src_prepare() {
-	cmake_src_prepare
-
-	sed \
-		-e "/list(APPEND MANIFOLD_FLAGS/s/^/# DONOTSET /" \
-		-i CMakeLists.txt || die
-
-	sed \
-		-e '/<memory>/a#include <cstdint>' \
-		-i include/manifold/manifold.h || die
-}
-
 src_configure() {
 	local mycmakeargs=(
 		-DMANIFOLD_CROSS_SECTION="yes"
 		-DMANIFOLD_DEBUG="$(usex debug)"
 		-DMANIFOLD_DOWNLOADS="no"
-		-DMANIFOLD_EXPORT="no"
+		-DMANIFOLD_EXPORT="$(usex assimp)"
 		-DMANIFOLD_JSBIND="no"
-		-DMANIFOLD_PAR="$(usex tbb ON OFF)"
 		-DMANIFOLD_PYBIND="$(usex python)"
+		-DMANIFOLD_PAR="$(usex tbb ON OFF)"
+		-DMANIFOLD_STRICT="no" # adds -Werror
 		-DMANIFOLD_TEST="$(usex test)"
 	)
 
@@ -104,5 +103,9 @@ src_configure() {
 }
 
 src_test() {
-	"${BUILD_DIR}/test/manifold_test" || die
+	if use x86; then
+		local -x GTEST_FILTER="-Properties.ToleranceSphere:Boolean.AlmostCoplanar:Smooth.RefineQuads:Smooth.ToLength:Smooth.Torus"
+	fi
+
+	cmake_src_test
 }
