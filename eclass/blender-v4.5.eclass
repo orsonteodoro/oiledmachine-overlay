@@ -16,25 +16,25 @@
 # the multiple LLVM bug.
 
 # For versioning see:
-# https://github.com/blender/blender/blob/v4.5.3/source/blender/blenkernel/BKE_blender_version.h
+# https://github.com/blender/blender/blob/v4.5.5/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # No need to look past those dates.
 
-# Last change was Jul 7, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
+# Last change was Oct 27, 2025 for:
+# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/install_linux_packages.py
 
 # Last change was Apr 8, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.3/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/blob/v4.5.5/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Jul 8, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/cmake/versions.cmake
+# Last change was Oct 7, 2025 for:
+# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v4.5.3/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v4.5.5/intern/cycles/cmake/external_libs.cmake#L47
 
-# GPU lib versions:  https://github.com/blender/blender/blob/v4.5.3/build_files/config/pipeline_config.yaml
+# GPU lib versions:  https://github.com/blender/blender/blob/v4.5.5/build_files/config/pipeline_config.yaml
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -60,7 +60,7 @@ esac
 
 CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
 BOOST_PV="1.82"
 CLANG_MIN="8.0"
@@ -110,7 +110,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.5.3/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
 FFMPEG_IUSE=(
 	"+jpeg2k"
@@ -183,7 +183,7 @@ OPTIX_RAYTRACE_TARGETS=(
 )
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/blender/blender/blob/v4.5.3/CMakeLists.txt#L699
+# https://github.com/blender/blender/blob/v4.5.5/CMakeLists.txt#L699
 	"gfx900"
 	"gfx902"
 	"gfx90c"
@@ -345,7 +345,7 @@ LICENSE+="
 	)
 
 "
-# ( all-rights-reserved Apache-2.0 ) - blender-4.5.3/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 ) - blender-4.5.5/extern/mantaflow/LICENSE
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
@@ -366,28 +366,28 @@ LICENSE+="
 #   public-domain
 #   UoI-NCSA
 #   ZLIB
-#   - blender-4.5.3/release/license/THIRD-PARTY-LICENSES.txt
-# all-rights-reserved MIT - blender-4.5.3/extern/vulkan_memory_allocator/LICENSE.txt
-# Apache-2.0 - blender-4.5.3/intern/cycles/doc/license/Apache2-license.txt
-# Apache-2.0 - blender-4.5.3/extern/cuew/LICENSE
-# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.5.3/doc/license/SPDX-license-identifiers.txt
-# Apache-2.0 BSD MIT ZLIB - blender-4.5.3/intern/cycles/doc/license/SPDX-license-identifiers.txt
-# BL - blender-4.5.3/doc/license/BL-license.txt
-# Boost-1.0 - blender-4.5.3/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
-# BSD - blender-4.5.3/intern/cycles/doc/license/BSD-3-Clause-license.txt
-# BSD-2.0 - blender-4.5.3/extern/xxhash/LICENSE
-# BSD custom - blender-4.5.3/extern/quadriflow/LICENSE.txt
+#   - blender-4.5.5/release/license/THIRD-PARTY-LICENSES.txt
+# all-rights-reserved MIT - blender-4.5.5/extern/vulkan_memory_allocator/LICENSE.txt
+# Apache-2.0 - blender-4.5.5/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-4.5.5/extern/cuew/LICENSE
+# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.5.5/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD MIT ZLIB - blender-4.5.5/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# BL - blender-4.5.5/doc/license/BL-license.txt
+# Boost-1.0 - blender-4.5.5/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-4.5.5/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2.0 - blender-4.5.5/extern/xxhash/LICENSE
+# BSD custom - blender-4.5.5/extern/quadriflow/LICENSE.txt
 # CC-BY-4.0 - The splash screen chosen license is found in https://www.blender.org/download/demo-files/ )
-# CC0-1.0 - blender-4.5.3/release/datafiles/studiolights/world/license.txt
-# custom MIT - blender-4.5.3/extern/fmtlib/LICENSE.rst
-# GPL-2+ - blender-4.5.3/tools/check_source/check_licenses.py
-# GPL-2.0 - blender-4.5.3/release/license/GPL-license.txt
-# GPL-3.0 - blender-4.5.3/doc/license/GPL3-license.txt
-# LGPL-2.1 - ./blender-4.5.3/doc/license/LGPL2.1-license.txt
-# MIT - blender-4.5.3/intern/cycles/doc/license/MIT-license.txt
-# ZLIB - blender-4.5.3/intern/cycles/doc/license/Zlib-license.txt
-# ZLIB - blender-4.5.3/doc/license/Zlib-license.txt
-# || ( CC0-1.0 public-domain ) - blender-4.5.3/release/datafiles/studiolights/matcap/license.txt
+# CC0-1.0 - blender-4.5.5/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-4.5.5/extern/fmtlib/LICENSE.rst
+# GPL-2+ - blender-4.5.5/tools/check_source/check_licenses.py
+# GPL-2.0 - blender-4.5.5/release/license/GPL-license.txt
+# GPL-3.0 - blender-4.5.5/doc/license/GPL3-license.txt
+# LGPL-2.1 - ./blender-4.5.5/doc/license/LGPL2.1-license.txt
+# MIT - blender-4.5.5/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-4.5.5/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-4.5.5/doc/license/Zlib-license.txt
+# || ( CC0-1.0 public-domain ) - blender-4.5.5/release/datafiles/studiolights/matcap/license.txt
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
@@ -1256,7 +1256,7 @@ ewarn "Using LLVM ${x}"
 			export ROCM_SLOT="6.4"
 			export ROCM_VERSION="${HIP_6_4_VERSION}"
 		else
-# See https://github.com/blender/blender/blob/v4.5.3/build_files/config/pipeline_config.yaml
+# See https://github.com/blender/blender/blob/v4.5.5/build_files/config/pipeline_config.yaml
 eerror
 eerror "Supported ROCm version(s):"
 eerror
@@ -1543,7 +1543,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v4.5.3/build_files/cmake/config
+# https://github.com/blender/blender/tree/v4.5.5/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
