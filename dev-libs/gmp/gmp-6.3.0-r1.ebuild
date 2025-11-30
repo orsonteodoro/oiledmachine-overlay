@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# The subslot reflects the C & C++ SONAMEs.
+
 MY_PV="${PV/_p*}"
 MY_PV="${MY_PV/_/-}"
 MY_P="${PN}-${MY_PV}"
@@ -15,18 +17,19 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
-LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit gnuconfig libtool flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
 
-DESCRIPTION="Library for arbitrary-precision arithmetic on different type of numbers"
-HOMEPAGE="https://gmplib.org/"
+KEYWORDS="
+~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
+x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+"
+S="${WORKDIR}/${MY_P%a}"
 SRC_URI="
 https://gmplib.org/download/gmp/${MY_P}.tar.xz
 mirror://gnu/${PN}/${MY_P}.tar.xz
@@ -34,20 +37,16 @@ mirror://gnu/${PN}/${MY_P}.tar.xz
 https://gmplib.org/${PN}-man-${MANUAL_PV}.pdf
 	)
 "
-S="${WORKDIR}/${MY_P%a}"
 
+DESCRIPTION="Library for arbitrary-precision arithmetic on different type of numbers"
+HOMEPAGE="https://gmplib.org/"
 LICENSE="
 	|| (
 		LGPL-3+
 		GPL-2+
 	)
 "
-# The subslot reflects the C & C++ SONAMEs.
 SLOT="0/10.4"
-KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
-x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
-"
 IUSE="+asm doc +cpudetection +cxx pic static-libs"
 REQUIRED_USE="
 	cpudetection? (
@@ -64,12 +63,9 @@ BDEPEND="
 	app-arch/xz-utils
 	sys-devel/m4
 "
-
 DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README" "doc/configuration" "doc/isa_abi_headache" )
 HTML_DOCS=( "doc" )
-
 MULTILIB_WRAPPED_HEADERS=( "/usr/include/gmp.h" )
-
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.0-noexecstack-detect.patch"
 	"${FILESDIR}/${PN}-6.2.1-no-zarch.patch"
