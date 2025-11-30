@@ -142,7 +142,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_15
+ebuild_revision_16
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1034,18 +1034,38 @@ src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-einfo
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
-einfo
+
+
+	if use browser ; then
+		if has_version "=net-libs/cef-bin-9999" ; then
+			local merged_timestamp=$(cat "${ESYSROOT}/var/db/pkg/net-libs/cef-bin-9999/BUILD_TIME")
+			local current_timestamp=$(date "+%s")
+			local insecure_timestamp=$(( ${current_timestamp} - $(( 60 * 60 * 24 * 15 )) )) # -15 days
+			if (( ${merged_timestamp} < ${insecure_timestamp} )) ; then
+eerror
+eerror "The current prebuilt CEF is considered insecure."
+eerror
+eerror "Please re-emerge the =net-libs/cef-bin-9999 ebuild or"
+eerror "disable the browser USE flag to continue."
+eerror
+eerror "Current date:  "$(date --date="@${current_timestamp}")
+eerror "CEF last update:  "$(date --date="@${merged_timestamp}")
+eerror "Expire date:  "$(date --date="@${insecure_timestamp}")
+eerror
+				die
+			fi
+		fi
+	fi
 
 	# For obs-browser
 	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
 	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
 	if use qt6 ; then
-		append-cppflags -I"${ESYSROOT}/usr/include/qt6"
-		append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtWidgets"
-		append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtCore"
+		append-cppflags "-I${ESYSROOT}/usr/include/qt6"
+		append-cppflags "-I${ESYSROOT}/usr/include/qt6/QtWidgets"
+		append-cppflags "-I${ESYSROOT}/usr/include/qt6/QtCore"
 	fi
 
 	ffmpeg_src_configure
