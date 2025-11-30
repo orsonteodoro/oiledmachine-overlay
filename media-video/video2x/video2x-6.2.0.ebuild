@@ -7,10 +7,13 @@ EAPI=8
 # U24
 
 CMAKE_MAKEFILE_GENERATOR="emake"
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_12" )
 
-# Stable
 BOOST_PV="1.86.0" # Aug 7, 2024
+VULKAN_PV="1.3.275.0"
+
+# Stable
 GLSLANG_COMMIT_1="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
 GLSLANG_COMMIT_2="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
 GLSLANG_COMMIT_3="86ff4bca1ddc7e2262f119c16e7228d0efb67610" # May 20, 2024
@@ -158,7 +161,17 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_6[@]}"
 )
 
-inherit check-compiler-switch cmake dep-prepare fix-rpath flag-o-matic optfeature python-single-r1 toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+inherit check-compiler-switch cmake dep-prepare fix-rpath flag-o-matic libcxx-slot libstdcxx-slot optfeature python-single-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -245,7 +258,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_12
+ebuild_revision_14
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -341,15 +354,19 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=dev-util/glslang-1.3.268.0
-	>=media-libs/vulkan-loader-1.3.275.0
+	>=dev-util/glslang-1.3.268.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-util/glslang:=
+	>=media-libs/vulkan-loader-${VULKAN_PV}
 	media-libs/vulkan-drivers
-	media-libs/libplacebo[glslang,vulkan]
+	media-libs/libplacebo[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},glslang,vulkan]
+	media-libs/libplacebo:=
 	system-boost? (
-		>=dev-libs/boost-${BOOST_PV}
+		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/boost:=
 	)
 	system-ncnn? (
-		>=dev-libs/ncnn-20240924[openmp,vulkan]
+		>=dev-libs/ncnn-20240924[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},openmp,vulkan]
+		dev-libs/ncnn:=
 	)
 	system-spdlog? (
 		>=dev-libs/spdlog-1.12.0
@@ -362,7 +379,8 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-	>=dev-util/vulkan-headers-1.3.275.0
+	>=dev-util/vulkan-headers-${VULKAN_PV}
+	dev-util/vulkan-headers:=
 "
 BDEPEND+="
 	>=dev-build/cmake-3.14
@@ -384,11 +402,11 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
+		touch "dummy" || die
+		git add "dummy" || die
 		#git add -f * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -424,6 +442,8 @@ unpack_deps() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
@@ -447,51 +467,6 @@ src_prepare() {
 	cmake_src_prepare
 }
 
-check_cxxabi() {
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	local libstdcxx_cxxabi_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local libstdcxx_glibcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local qt6core_cxxabi_ver=$(strings "/usr/lib64/libQt6Core.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local qt6core_glibcxx_ver=$(strings "/usr/lib64/libQt6Core.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qt6core_cxxabi_ver} ; then
-eerror
-eerror "Detected CXXABI missing symbol."
-eerror
-eerror "Ensure that the qt6core was build with the same gcc version as the"
-eerror "currently selected compiler."
-eerror
-eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
-eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
-eerror
-eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
-eerror
-		die
-	fi
-}
-
 src_configure() {
 	# Force GCC to simplify openmp
 	export CC="${CHOST}-gcc"
@@ -506,8 +481,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	export MAKEOPTS="-j1"
-
-	check_cxxabi
 
 	append-flags -DSPDLOG_NO_EXCEPTIONS
 	append-flags -I"${S}_build/libvideo2x_install/include"
