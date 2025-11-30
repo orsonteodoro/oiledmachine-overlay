@@ -826,9 +826,7 @@ pkg_setup() {
 	if use browser ; then
 		if [[ "${ABI}" =~ "ppc" ]] ; then
 			if ! has_version "net-libs/cef" ; then
-eerror
 eerror "There is no CEF for this platform.  Disable the browser USE flag."
-eerror
 				die
 			fi
 		fi
@@ -1042,7 +1040,7 @@ einfo "CXX:  ${CXX}"
 		if has_version "=net-libs/cef-bin-9999" ; then
 			local merged_timestamp=$(cat "${ESYSROOT}/var/db/pkg/net-libs/cef-bin-9999/BUILD_TIME")
 			local current_timestamp=$(date "+%s")
-			local insecure_timestamp=$(( ${current_timestamp} - $(( 60 * 60 * 24 * 15 )) )) # -15 days
+			local insecure_timestamp=$(( ${current_timestamp} - $(( 60 * 60 * 24 * 15 )) )) # -15 days or ~2 weeks
 			if (( ${merged_timestamp} < ${insecure_timestamp} )) ; then
 eerror
 eerror "The current prebuilt CEF is considered insecure."
@@ -1052,7 +1050,7 @@ eerror "disable the browser USE flag to continue."
 eerror
 eerror "Current date:  "$(date --date="@${current_timestamp}")
 eerror "CEF last update:  "$(date --date="@${merged_timestamp}")
-eerror "Expire date:  "$(date --date="@${insecure_timestamp}")
+eerror "Security expiration date:  "$(date --date="@${insecure_timestamp}")
 eerror
 				die
 			fi
