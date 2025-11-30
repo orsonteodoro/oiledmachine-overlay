@@ -73,9 +73,14 @@ PATCHES=(
 
 pkg_pretend() {
 	if use cpudetection && ! use amd64 && ! use x86 ; then
-elog "Using generic C implementation on non-amd64/x86 with USE=cpudetection"
-elog "--enable-fat is a no-op on alternative arches."
-elog "To obtain an optimized build, set USE=-cpudetection, but binpkgs should not then be made."
+einfo
+einfo "Using generic C implementation on non-amd64/x86 with USE=cpudetection"
+einfo
+einfo "--enable-fat is a no-op on alternative arches."
+einfo
+einfo "To obtain an optimized build, set USE=-cpudetection, but binpkgs should"
+einfo "not then be made."
+einfo
 	fi
 }
 
@@ -114,8 +119,7 @@ EOF
 	# Grab fresh copies from gnuconfig.
 	touch "config.guess" "config.sub" || die
 	gnuconfig_update
-	# Rename the fresh copies to the filenames the wrappers from GMP
-	# expect.
+	# Rename the fresh copies to the filenames the wrappers from GMP expect.
 	mv "config.guess" "configfsf.guess" || die
 	mv "config.sub" "configfsf.sub" || die
 }
@@ -125,7 +129,8 @@ multilib_src_configure() {
 	strip-flags
 	# Miscompiled with LTO at least on arm64, bug #889948
 	# 6.3.0 says it now supports LTO, but needs retesting on a variety
-	# of platforms. Fix was maybe https://gmplib.org/repo/gmp-6.3/rev/9c324044f4b5.
+	# of platforms. The fix was maybe from
+	# https://gmplib.org/repo/gmp-6.3/rev/9c324044f4b5.
 	filter-lto
 	# https://gmplib.org/list-archives/gmp-bugs/2024-November/005550.html
 	append-cflags $(test-flags-CC "-std=gnu17")
@@ -157,8 +162,11 @@ multilib_src_configure() {
 
 		$(use_enable asm assembly)
 	# fat is needed to avoid gmp installing either purely generic
-	# or specific-to-used-CPU (which our config.guess refresh prevents at the moment).
-	# Both Fedora and opensuse use this option to tackle the issue, bug #883201.
+	# or specific-to-used-CPU (which our config.guess refresh prevents at
+	# the moment).
+	#
+	# Both Fedora and opensuse use this option to tackle the issue,
+	# bug #883201.
 	#
 	# This only works for amd64/x86, so to get accelerated performance
 	# (i.e. not using the generic C), one needs USE=-cpudetection if
@@ -180,13 +188,15 @@ multilib_src_configure() {
 	# a variety of issues with it: bug #454912, bug #650558, and bug #658688.
 	)
 
-	# Move the wrappers from GMP back into place (may have been destroyed by previous econf run)
+	# Move the wrappers from GMP back into place (may have been destroyed by
+	# previous econf run)
 	cp "${T}/gmp-gnuconfig/config.guess" "${S}/config.guess" || die
 	cp "${T}/gmp-gnuconfig/config.sub" "${S}/config.sub" || die
 
 	# See bug #883201 again.
 	if ! use cpudetection && ! tc-is-cross-compiler ; then
-		local gmp_host=$("${S}/config.guess" || die "failed to run config.guess")
+		local gmp_host=$("${S}/config.guess" \
+			|| die "failed to run config.guess")
 
 		if [[ -z "${gmp_host}" ]] ; then
 eerror "Empty result from GMP's custom config.guess!"
@@ -194,7 +204,8 @@ eerror "Empty result from GMP's custom config.guess!"
 		fi
 
 einfo "GMP guessed processor type: ${gmp_host}"
-ewarn "This build will only work on this machine. Enable USE=cpudetection for binary packages!"
+ewarn "This build will only work on this machine. Enable USE=cpudetection for"
+ewarn "binary packages!"
 		export ac_cv_build="${gmp_host}"
 		export ac_cv_host="${gmp_host}"
 	fi
@@ -226,5 +237,10 @@ multilib_src_install() {
 
 multilib_src_install_all() {
 	einstalldocs
-	use doc && cp "${DISTDIR}/gmp-man-${MANUAL_PV}.pdf" "${ED}/usr/share/doc/${PF}/"
+	if use doc ; then
+		cp \
+			"${DISTDIR}/gmp-man-${MANUAL_PV}.pdf" \
+			"${ED}/usr/share/doc/${PF}/" \
+			|| die
+	fi
 }
