@@ -1039,6 +1039,13 @@ blender_src_install() {
 	if use rocm ; then
 		rocm_fix_rpath
 	fi
+
+	# Prevent multislot collision
+	dodir "/usr/share/blender/${PV}/share/metainfo"
+	mv \
+		"${ED}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
+		"${ED}/usr/share/blender/${PV}/share/metainfo"
+		|| die
 }
 
 blender_pkg_postinst() {
@@ -1121,6 +1128,14 @@ ewarn
 	dhms_end
         optfeature_header "Install optional Hydra backends:"
         optfeature "HdStorm realtime Hydra plugin" "media-libs/openusd[hdstorm]"
+
+	local max_slot=$(ls -1 "${ESYSROOT}/usr/share/blender" \
+		| sort -V \
+		| tail -n 1)
+	cat \
+		"${ESYSROOT}/usr/share/blender/${max_slot}/share/metainfo/org.blender.Blender.metainfo.xml" \
+		"${ESYSROOT}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
+		|| die
 }
 
 blender_pkg_postrm() {
