@@ -1135,6 +1135,7 @@ ewarn
 	if [[ -n "${max_slot}" ]] ; then
 		cat \
 			"${ESYSROOT}/usr/share/blender/${max_slot}/share/metainfo/org.blender.Blender.metainfo.xml" \
+				> \
 			"${ESYSROOT}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
 			|| die
 	fi

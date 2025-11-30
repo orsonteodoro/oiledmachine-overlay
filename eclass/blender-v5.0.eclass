@@ -182,8 +182,6 @@ PATENT_STATUS_IUSE=(
 CUDA_TARGETS_COMPAT=(
 	"compute_75"
 
-	"sm_35"
-	"sm_37"
 	"sm_50"
 	"sm_52"
 	"sm_60"
@@ -192,10 +190,6 @@ CUDA_TARGETS_COMPAT=(
 	"sm_75"
 	"sm_86"
 	"sm_89"
-
-	"sm_80"
-	"sm_90"
-	"sm_100"
 	"sm_120"
 )
 
@@ -203,13 +197,11 @@ OPTIX_RAYTRACE_TARGETS=(
 	"sm_75"
 	"sm_86"
 	"sm_89"
+	"sm_120"
 )
 
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/blender/blender/blob/v5.0.0/CMakeLists.txt#L699
-	"gfx900"
-	"gfx902"
-	"gfx90c"
 	"gfx1010"
 	"gfx1011"
 	"gfx1012"
@@ -232,23 +224,24 @@ AMDGPU_TARGETS_COMPAT=(
 
 HIPRT_RAYTRACE_TARGETS=(
 # See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.5.a21e075/scripts/bitcodes/compile.py#L90
-	"gfx900"
-	"gfx902"
-	"gfx90c"
 	"gfx1010"
 	"gfx1011"
 	"gfx1012"
+	"gfx1013"
 	"gfx1030"
 	"gfx1031"
 	"gfx1032"
+	"gfx1033"
 	"gfx1034"
 	"gfx1035"
 	"gfx1036"
 	"gfx1100"
 	"gfx1101"
 	"gfx1102"
+	"gfx1103"
 	"gfx1150"
 	"gfx1151"
+	"gfx1152"
 	"gfx1200"
 	"gfx1201"
 )
@@ -272,7 +265,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm
 +rubberband -sdl +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_25
+ebuild_revision_26
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
