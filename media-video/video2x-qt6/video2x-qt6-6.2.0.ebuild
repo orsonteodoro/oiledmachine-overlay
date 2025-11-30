@@ -6,7 +6,7 @@ EAPI=8
 
 # U24
 
-CXX_STANDARD=17
+CXX_STANDARD=20
 CMAKE_MAKEFILE_GENERATOR="emake"
 PYTHON_COMPAT=( "python3_12" )
 VULKAN_PV="1.3.275.0"
@@ -18,13 +18,15 @@ FFMPEG_COMPAT_SLOTS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
+LIBCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit check-compiler-switch cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot python-single-r1 toolchain-funcs xdg
 
@@ -57,7 +59,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 wayland X
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -68,11 +70,11 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}
-	dev-qt/qttools:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},linguist,qml,widgets]
+	dev-qt/qttools:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},linguist,qml,widgets]
 	dev-qt/qttools:=
-	dev-qt/qtbase:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,wayland?,X?]
+	dev-qt/qtbase:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,widgets,wayland?,X?]
 	dev-qt/qtbase:=
-	~media-video/video2x-6.2.0:0/stable[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
+	~media-video/video2x-6.2.0:0/stable[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${PYTHON_SINGLE_USEDEP}]
 	media-video/video2x:=
 "
 DEPEND+="
