@@ -148,36 +148,36 @@ multilib_src_configure() {
 
 	# https://gmplib.org/manual/Notes-for-Package-Builds
 	local myeconfargs=(
-		# -std=gnu99 appended here for bug #919935 to help
-		# prefix building w/ older compilers.
+	# -std=gnu99 appended here for bug #919935 to help
+	# prefix building w/ older compilers.
 		CC_FOR_BUILD="$(tc-getBUILD_CC) -std=gnu99"
 
 		--localstatedir="${EPREFIX}/var/state/gmp"
 		--enable-shared
 
 		$(use_enable asm assembly)
-		# fat is needed to avoid gmp installing either purely generic
-		# or specific-to-used-CPU (which our config.guess refresh prevents at the moment).
-		# Both Fedora and opensuse use this option to tackle the issue, bug #883201.
-		#
-		# This only works for amd64/x86, so to get accelerated performance
-		# (i.e. not using the generic C), one needs USE=-cpudetection if
-		# on non-amd64/x86.
-		#
-		# (We do not mask USE=cpudetection on !amd64/x86 because we want
-		# the flag to be useful on other arches to allow opting out of the
-		# config.guess logic below.)
+	# fat is needed to avoid gmp installing either purely generic
+	# or specific-to-used-CPU (which our config.guess refresh prevents at the moment).
+	# Both Fedora and opensuse use this option to tackle the issue, bug #883201.
+	#
+	# This only works for amd64/x86, so to get accelerated performance
+	# (i.e. not using the generic C), one needs USE=-cpudetection if
+	# on non-amd64/x86.
+	#
+	# (We do not mask USE=cpudetection on !amd64/x86 because we want
+	# the flag to be useful on other arches to allow opting out of the
+	# config.guess logic below.)
 		$(use_enable cpudetection fat)
 		$(use_enable cxx)
 		$(use_enable static-libs static)
 
-		# --with-pic forces static libraries to be built as PIC
-		# and without TEXTRELs. musl does not support TEXTRELs: bug #707332
+	# --with-pic forces static libraries to be built as PIC
+	# and without TEXTRELs. musl does not support TEXTRELs: bug #707332
 		$(use pic && echo "--with-pic")
 
-		# XXX: In the past, we had PGO support with upstream's 'tuneup' script
-		# per https://gmplib.org/manual/Performance-optimization, but we had
-		# a variety of issues with it: bug #454912, bug #650558, and bug #658688.
+	# XXX: In the past, we had PGO support with upstream's 'tuneup' script
+	# per https://gmplib.org/manual/Performance-optimization, but we had
+	# a variety of issues with it: bug #454912, bug #650558, and bug #658688.
 	)
 
 	# Move the wrappers from GMP back into place (may have been destroyed by previous econf run)
@@ -189,11 +189,12 @@ multilib_src_configure() {
 		local gmp_host=$("${S}/config.guess" || die "failed to run config.guess")
 
 		if [[ -z "${gmp_host}" ]] ; then
-			die "Empty result from GMP's custom config.guess!"
+eerror "Empty result from GMP's custom config.guess!"
+			die
 		fi
 
-		einfo "GMP guessed processor type: ${gmp_host}"
-		ewarn "This build will only work on this machine. Enable USE=cpudetection for binary packages!"
+einfo "GMP guessed processor type: ${gmp_host}"
+ewarn "This build will only work on this machine. Enable USE=cpudetection for binary packages!"
 		export ac_cv_build="${gmp_host}"
 		export ac_cv_host="${gmp_host}"
 	fi
