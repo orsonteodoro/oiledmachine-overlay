@@ -228,7 +228,7 @@ HIPRT_RAYTRACE_TARGETS=(
 	"gfx1010"
 	"gfx1011"
 	"gfx1012"
-	"gfx1013"
+	#"gfx1013"
 	"gfx1030"
 	"gfx1031"
 	"gfx1032"
