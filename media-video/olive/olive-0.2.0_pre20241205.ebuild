@@ -325,7 +325,7 @@ src_configure() {
 	local ffmpeg_slot=$(ffmpeg_get_slot)
 	local ffmpeg_major_version=$(ffmpeg_get_major_version)
 	if [[ -n "${ffmpeg_slot}" ]] && has_version "media-video/ffmpeg:${ffmpeg_slot}" ; then
-einfo "Using FFMPEG ${ffmpeg_major_version}.x"
+einfo "Using FFMPEG:${ffmpeg_slot} (${ffmpeg_major_version}.x)"
 		mycmakeargs+=(
 			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/${ffmpeg_slot}/include"
 			-DFFMPEG_LIBS="/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"

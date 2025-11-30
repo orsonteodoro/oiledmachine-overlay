@@ -101,7 +101,7 @@ eerror "QA:  FFMPEG_COMPAT_SLOTS must be defined."
 
 	local x
 	for x in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
-		if has_version "media-video/ffmpeg:${x}" ; then
+		if [[ -n "${x}" ]] && has_version "media-video/ffmpeg:${x}" ; then
 			_FFMPEG_SLOT="${x}"
 			break
 		fi

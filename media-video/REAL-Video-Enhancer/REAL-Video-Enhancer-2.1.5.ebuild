@@ -13,13 +13,18 @@ EAPI=8
 
 # U20
 
-#CMAKE_MAKEFILE_GENERATOR="emake"
+MY_PN="${PN}-RVE"
 
 BACKEND_PV="2.1.5"
-PATENT_STATUS_IUSE=(
-	patent_status_nonfree
-)
+#CMAKE_MAKEFILE_GENERATOR="emake"
 PYTHON_COMPAT=( "python3_11" )
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+)
+
 MODELS=(
 	# models_ncnn_interpolate
 	"rife-v4.6.tar.gz;MIT"
@@ -68,10 +73,13 @@ MODELS=(
 	# models_pytorch_denoise
 	"scunet_color_real_psnr.pth;Apache-2.0"
 )
-MY_PN="${PN}-RVE"
+
+PATENT_STATUS_IUSE=(
+	"patent_status_nonfree"
+)
+
 ROCM_SLOTS=(
-	rocm_6_0
-	rocm_5_7
+	"rocm_6_4"
 )
 
 inherit python-single-r1
@@ -91,7 +99,7 @@ get_model_use() {
 
 gen_models_iuse() {
 	local row
-	for row in ${MODELS[@]} ; do
+	for row in "${MODELS[@]}" ; do
 		local fn="${row%;*}"
 		local u=$(get_model_use "${fn}")
 		echo "${u}"
@@ -104,7 +112,7 @@ IUSE+="${IUSE_MODELS[@]}"
 
 gen_models_uris() {
 	local row
-	for row in ${MODELS[@]} ; do
+	for row in "${MODELS[@]}" ; do
 		local fn="${row%;*}"
 		local u=$(get_model_use "${fn}")
 		echo "
@@ -117,7 +125,7 @@ https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/$
 
 gen_models_license() {
 	local row
-	for row in ${MODELS[@]} ; do
+	for row in "${MODELS[@]}" ; do
 		local fn="${row%;*}"
 		local license="${row#*;}"
 		local u=$(get_model_use "${fn}")
@@ -181,7 +189,7 @@ IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
-ebuild_revision_13
+ebuild_revision_14
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -290,10 +298,10 @@ NCNN_DEPEND="
 "
 ROCM_DEPEND="
 	|| (
-		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_5_7,rocm_6_0?]
+		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_6_4?]
 	)
 	dev-python/triton:=
-	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_5_7?,rocm_6_0?]
+	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_6_4?]
 	sci-ml/pytorch:=
 	=sci-ml/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision:=
@@ -311,18 +319,18 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
-			=media-video/ffmpeg-6.1*:58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
-			=media-video/ffmpeg-6.1*:0/58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
-			=media-video/ffmpeg-4*:56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
-			=media-video/ffmpeg-4*:0/56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			media-video/ffmpeg:58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			media-video/ffmpeg:56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			media-video/ffmpeg:0/58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			media-video/ffmpeg:0/56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			=media-video/ffmpeg-6.1*:58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
-			=media-video/ffmpeg-6.1*:0/58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
-			=media-video/ffmpeg-4*:56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
-			=media-video/ffmpeg-4*:0/56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			media-video/ffmpeg:58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			media-video/ffmpeg:56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			media-video/ffmpeg:0/58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			media-video/ffmpeg:0/56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
 		)
 	)
 	media-video/ffmpeg:=
@@ -407,11 +415,11 @@ src_prepare() {
 	default
 
 	pushd "${S}" >/dev/null 2>&1 || die
-		eapply ${RVE_PATCHES[@]}
+		eapply "${RVE_PATCHES[@]}"
 	popd >/dev/null 2>&1 || die
 
 	pushd "${S_BACKEND}" >/dev/null 2>&1 || die
-		eapply ${BACKEND_PATCHES[@]}
+		eapply "${BACKEND_PATCHES[@]}"
 	popd >/dev/null 2>&1 || die
 
 	local backends=""
@@ -506,24 +514,24 @@ src_compile() {
 	local args=(
 		--build_exe
 	)
-	${EPYTHON} build.py ${args[@]} || die
+	"${EPYTHON}" build.py "${args[@]}" || die
 	grep -q "Traceback" "${T}/build.log" && die "Detected error"
 	grep -q "error:" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
 	dodir "/usr/bin"
-	insinto "/usr/$(get_libdir)/${PN}"
+	insinto "/usr/lib/${PN}"
 	doins -r  "bin/"*
 
 cat <<EOF > "${ED}/usr/bin/${PN}"
 #!/bin/bash
-export LD_LIBRARY_PATH="/usr/$(get_libdir)/${PN}/lib"
-cd "/usr/$(get_libdir)/${PN}"
+export LD_LIBRARY_PATH="/usr/lib/${PN}/lib"
+cd "/usr/lib/${PN}"
 "./${PN}" "\$@"
 EOF
 	fperms 0755 "/usr/bin/${PN}"
-	fperms 0755 "/usr/$(get_libdir)/${PN}/${PN}"
+	fperms 0755 "/usr/lib/${PN}/${PN}"
 
 	docinto "licenses/freeze"
 	dodoc "bin/frozen_application_license.txt"
@@ -570,40 +578,49 @@ EOF
 
 		"scunet_color_real_psnr.pth"
 	)
-	for m in ${workdir_models[@]} ; do
+	for m in "${workdir_models[@]}" ; do
 		local u=$(get_model_use "${m}")
 		if use "${u}" ; then
-			insinto "/usr/$(get_libdir)/${PN}/models"
+			insinto "/usr/lib/${PN}/models"
 			doins -r "${WORKDIR}/${m}"
 		fi
 	done
 
-	for m in ${distdir_models[@]} ; do
+	for m in "${distdir_models[@]}" ; do
 		local u=$(get_model_use "${m}")
 		if use "${u}" ; then
-			insinto "/usr/$(get_libdir)/${PN}/models"
+			insinto "/usr/lib/${PN}/models"
 			doins $(realpath "${DISTDIR}/${m}")
 		fi
 	done
 
-	insinto "/usr/$(get_libdir)/${PN}"
+	insinto "/usr/lib/${PN}"
 	doins -r "${WORKDIR}/backend"
 
-	dodir "/usr/$(get_libdir)/${PN}/bin"
-	if has_version "=media-video/ffmpeg-7.0*:59.61.61" ; then
+	local ffmpeg_slot=""
+	local x
+	for x in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
+		if [[ -n "${x}" ]] && has_version "media-video/ffmpeg:${x}" ; then
+			ffmpeg_slot="${x}"
+			break
+		fi
+	done
+
+	dodir "/usr/lib/${PN}/bin"
+	if [[ -n "${ffmpeg_slot}" ]] ; then
 		dosym \
-			"/usr/lib/ffmpeg/59.61.61/bin/ffmpeg" \
-			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
+			"/usr/lib/ffmpeg/${ffmpeg_slot}/bin/ffmpeg" \
+			"/usr/lib/${PN}/bin/ffmpeg"
 	else
 		dosym \
 			"/usr/bin/ffmpeg" \
-			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
+			"/usr/lib/${PN}/bin/ffmpeg"
 	fi
 
-	keepdir "/usr/$(get_libdir)/${PN}/custom_models"
+	keepdir "/usr/lib/${PN}/custom_models"
 
-	dodir "/usr/$(get_libdir)/${PN}/python/python/bin/"
-	dosym "/usr/bin/${EPYTHON}" "/usr/$(get_libdir)/${PN}/python/python/bin/python3"
+	dodir "/usr/lib/${PN}/python/python/bin/"
+	dosym "/usr/bin/${EPYTHON}" "/usr/lib/${PN}/python/python/bin/python3"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

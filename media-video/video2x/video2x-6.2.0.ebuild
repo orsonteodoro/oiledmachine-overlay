@@ -524,7 +524,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local ffmpeg_slot=$(ffmpeg_get_slot)
 	local ffmpeg_default_major_version="6"
 	local ffmpeg_default_slot="58.60.60"
-	if has_version "media-video/ffmpeg:${ffmpeg_slot}" ; then
+	if [[ -n "${ffmpeg_slot}" ]] && has_version "media-video/ffmpeg:${ffmpeg_slot}" ; then
 einfo "Using media-video/ffmpeg:${ffmpeg_slot} (${ffmpeg_major_version}.x)"
 		mycmakeargs+=(
 			-DFFMPEG_USE_SLOTTED=ON
