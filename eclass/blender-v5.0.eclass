@@ -1204,7 +1204,7 @@ BDEPEND+="
 	)
 	rocm? (
 		rocm_6_4? (
-			>=sys-devel/llvm-roc-${HIP_6_4_VERSION}:6.4
+			>=sys-devel/llvm-roc-${HIP_6_4_VERSION}:0/6.4
 			sys-devel/llvm-roc:=
 		)
 	)
