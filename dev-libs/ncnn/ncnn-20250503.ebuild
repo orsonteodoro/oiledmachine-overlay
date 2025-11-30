@@ -8,6 +8,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
+DISTUTILS_SINGLE_IMPL=1
 GLSLANG_COMMIT="a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc"
 PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
 
@@ -311,7 +312,7 @@ BDEPEND="
 	>=dev-build/cmake-3.12
 "
 PDEPEND="
-	~dev-python/ncnn-${PV}[${PYTHON_USEDEP},openmp?]
+	~dev-python/ncnn-${PV}[${PYTHON_SINGLE_USEDEP},openmp?]
 	dev-python/ncnn:=
 "
 

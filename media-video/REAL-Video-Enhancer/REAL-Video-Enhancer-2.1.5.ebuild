@@ -281,11 +281,11 @@ CUDA_DEPEND="
 NCNN_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/mpmath-1.3.0[${PYTHON_USEDEP}]
-		>=dev-python/ncnn-20240820[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/rife-ncnn-vulkan-python-tntwise-1.4.4[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
 	')
+	>=dev-python/ncnn-20240820[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_SINGLE_USEDEP}]
 "
 ROCM_DEPEND="
