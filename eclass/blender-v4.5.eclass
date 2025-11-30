@@ -674,9 +674,10 @@ gen_asan_bdepend() {
 		echo "
 			llvm_slot_${s}? (
 				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*[asan]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},asan]
 				llvm-runtimes/compiler-rt-sanitizers:=
-				llvm-core/clang:${s}
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:=
 			)
 		"
 	done
@@ -688,7 +689,7 @@ gen_llvm_depends()
 	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
-				>=llvm-core/llvm-${s}:${s}
+				>=llvm-core/llvm-${s}:${s}[${LIBSTDCXX_USEDEP}]
 				llvm-core/llvm:=
 			)
 		"
@@ -828,6 +829,7 @@ PATENT_STATUS_RDEPEND="
 CUDA_12_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
+		dev-util/nvidia-cuda-toolkit:=
 		>=x11-drivers/nvidia-drivers-570.124
 		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
@@ -889,6 +891,7 @@ RDEPEND+="
 	color-management? (
 		>=dev-libs/expat-2.6.4
 		>=media-libs/opencolorio-2.4.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
+		media-libs/opencolorio:=
 	)
 	cuda? (
 		cuda_targets_sm_50? (
@@ -970,7 +973,8 @@ RDEPEND+="
 		>=media-libs/flac-1.4.2
 	)
 	gmp? (
-		>=dev-libs/gmp-6.3.0[cxx]
+		>=dev-libs/gmp-6.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
+		dev-libs/gmp:=
 	)
 	hiprt? (
 		rocm_6_4? (
@@ -999,6 +1003,7 @@ RDEPEND+="
 			=media-libs/mesa-25.2*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 			=media-libs/mesa-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 		)
+		media-libs/mesa:=
 	)
 	llvm_slot_19? (
 		|| (
@@ -1007,6 +1012,7 @@ RDEPEND+="
 			=media-libs/mesa-25.2*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 			=media-libs/mesa-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 		)
+		media-libs/mesa:=
 	)
 	materialx? (
 		>=media-libs/materialx-1.39.2[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
@@ -1132,6 +1138,7 @@ RDEPEND+="
 	usd? (
 		>=media-libs/openusd-25.02[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
 		<media-libs/openusd-26.0[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		media-libs/openusd:=
 	)
 	valgrind? (
 		dev-debug/valgrind
@@ -1191,7 +1198,10 @@ BDEPEND+="
 	cycles? (
 		x86? (
 			|| (
-				>=llvm-core/clang-${CLANG_MIN}
+				(
+					>=llvm-core/clang-${CLANG_MIN}[${LIBSTDCXX_USEDEP}]
+					llvm-core/clang:=
+				)
 				dev-lang/icc
 			)
 		)
@@ -1222,7 +1232,10 @@ BDEPEND+="
 	)
 	|| (
 		>=sys-devel/gcc-${GCC_MIN}
-		>=llvm-core/clang-${CLANG_MIN}
+		(
+			>=llvm-core/clang-${CLANG_MIN}[${LIBSTDCXX_USEDEP}]
+			llvm-core/clang:=
+		)
 	)
 "
 
