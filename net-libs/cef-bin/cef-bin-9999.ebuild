@@ -6,11 +6,11 @@ EAPI=8
 
 # D11, U20, U22, U24
 
-DEPENDS_VERSION="129.0.6668.100"
-# DEPENDS_VER_A="129"
+DEPENDS_VERSION="142.0.7444.176"
+# DEPENDS_VER_A="142"
 # DEPENDS_VER_B="0"
-# DEPENDS_VER_C="6668"
-# DEPENDS_VER_D="100"
+# DEPENDS_VER_C="7444"
+# DEPENDS_VER_D="176"
 
 # Third party licenses:
 #
@@ -32,9 +32,8 @@ DEPENDS_VERSION="129.0.6668.100"
 # Builds also the libcef_dll_wrapper
 # The -bin in ${PN} comes from the prebuilt chromium
 
-CLANG_PV="18"
-CXX_VER="17"
-FFMPEG_SLOT="0/59.61.61" # Same as 7.0
+CXX_STANDARD=17
+FFMPEG_SLOT="0/59.61.61" # Same as 7.1
 GLIB_PV="2.66.8"
 GCC_PV="10.2.1" # Minimum
 GTK3_PV="3.24.24"
@@ -43,7 +42,17 @@ LIBXI_PV="1.7.10"
 MESA_PV="20.3.5"
 VIRTUALX_REQUIRED="manual"
 
-inherit chromium-2 cmake flag-o-matic linux-info sandbox-changes virtualx
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+inherit chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info sandbox-changes virtualx
 
 KEYWORDS="~arm ~arm64 ~amd64"
 S="${WORKDIR}" # Dummy
@@ -52,7 +61,7 @@ DESCRIPTION="Chromium Embedded Framework (CEF) is a simple framework for \
 embedding Chromium-based browsers in other applications."
 LICENSE="
 	BSD
-	chromium-$(ver_cut 1-3 ${DEPENDS_VERSION}).x.html
+	chromium-${DEPENDS_VERSION%.*}.x.html
 "
 HOMEPAGE="
 https://bitbucket.org/chromiumembedded/cef/src/master/
@@ -61,7 +70,10 @@ https://cef-builds.spotifycdn.com/index.html
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" beta cefclient cefsimple debug minimal test"
+IUSE+="
+beta cefclient cefsimple debug minimal test
+ebuild_revision_1
+"
 REQUIRED_USE+="
 	cefclient? (
 		!minimal
@@ -75,7 +87,7 @@ REQUIRED_USE+="
 "
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/129.0.6668.100/build/linux/sysroot_scripts/generated_package_lists				; 20231117
+# https://github.com/chromium/chromium/tree/142.0.7444.176/build/linux/sysroot_scripts/generated_package_lists				; 20231117
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc, gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -89,22 +101,22 @@ REQUIRED_USE+="
 #   libxau, libXtst, util-linux, pam, libcap, libevdev, sqlite3,
 #   speech-dispatcher
 #
-# https://github.com/chromium/chromium/blob/129.0.6668.100/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/142.0.7444.176/build/install-build-deps.py
 # https://github.com/chromiumembedded/cef/blob/6613/CMakeLists.txt.in   # Same as 3rd component c in a.b.c.d versioning.
 #   For version correspondance see https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libpng/png.h#L288
-# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/129.0.6668.100/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/142.0.7444.176/third_party/libpng/png.h#L288
+# https://github.com/chromium/chromium/blob/142.0.7444.176/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/142.0.7444.176/tools/clang/scripts/update.py#L42
 #
 
-# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
 
 # gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 
@@ -113,14 +125,17 @@ REQUIRED_USE+="
 # The *DEPENDs below assume U 18.04
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.44.1:2
+	app-accessibility/at-spi2-atk:=
 	>=app-accessibility/speech-dispatcher-0.11.4
 	>=dev-db/sqlite-3.34.1
 	>=dev-libs/glib-${GLIB_PV}:2
+	dev-libs/glib:=
 	>=dev-libs/libappindicator-12.10
 	>=dev-libs/libevdev-1.11.0
 	>=dev-libs/libffi-3.3
 	>=media-libs/alsa-lib-1.2.4
-	>=media-libs/mesa-${MESA_PV}[gbm(+)]
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gbm(+)]
+	media-libs/mesa:=
 	>=net-print/cups-2.3.3
 	>=sys-apps/pciutils-3.7.0
 	>=sys-libs/libcap-2.44
@@ -129,6 +144,7 @@ CHROMIUM_CDEPEND="
 	>=sys-libs/glibc-2.31
 	>=x11-libs/cairo-1.16.0
 	>=x11-libs/gtk+-${GTK3_PV}:3
+	x11-libs/gtk+:=
 	>=x11-libs/libXtst-1.2.3
 	>=x11-libs/libdrm-2.4.122
 "
@@ -159,6 +175,7 @@ CHROMIUM_RDEPEND="
 	>=dev-libs/atk-2.38.0
 	>=dev-libs/expat-2.2.10
 	>=dev-libs/libpcre-8.39:3
+	dev-libs/libpcre:=
 	>=dev-libs/libpcre2-10.36
 	>=dev-libs/nspr-4.29
 	>=dev-libs/wayland-1.18.0
@@ -189,7 +206,9 @@ RDEPEND+="
 	${CHROMIUM_RDEPEND}
 	cefclient? (
 		>=dev-libs/glib-${GLIB_PV}:2
+		dev-libs/glib:=
 		>=x11-libs/gtk+-${GTK3_PV}:3
+		x11-libs/gtk+:=
 		>=x11-libs/gtkglext-1.2.0
 		>=x11-libs/libXi-${LIBXI_PV}
 	)
@@ -197,6 +216,7 @@ RDEPEND+="
 DEPEND+="
 	test? (
 		>=dev-libs/glib-${GLIB_PV}:2
+		dev-libs/glib:=
 	)
 "
 INTEGRITY_CHECK_BDEPEND="
@@ -209,10 +229,6 @@ BDEPEND+="
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
-	)
-	|| (
-		>=sys-devel/gcc-${GCC_PV}
-		>=llvm-core/clang-${CLANG_PV}
 	)
 "
 PATCHES=(
@@ -231,14 +247,12 @@ get_xrid() {
 	elif ( use elibc_Darwin ) && [[ "${ABI}" == "arm64" ]] ; then
 		echo "macosarm64"
 	else
-eerror
-eerror "The LIBC or ABI not supported."
-eerror
+eerror "Your LIBC and/or your ABI are not supported."
 		die
 	fi
 }
 
-S_abi() {
+get_S_abi() {
 	local minimal=$(usex minimal "_minimal" "")
 	local configuration=$(usex beta "_beta" "")
 	local suffix="$(get_xrid)${configuration}${minimal}"
@@ -247,43 +261,8 @@ S_abi() {
 }
 
 append_all() {
-	append-flags ${@}
-	append-ldflags ${@}
-}
-
-# See https://bitbucket.org/chromiumembedded/cef/issues/3362/allow-c-17-features-in-cef-binary
-check_compiler() {
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCXX)
-	export CPP=$(tc-getCPP)
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
-	if ! test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "Switch to a c++${CXX_VER} compatible compiler."
-eerror
-		die
-	fi
-	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt "${GCC_PV}" ; then
-eerror
-eerror "${PN} requires GCC >=${GCC_PV} for c++${CXX_VER} support"
-eerror
-			die
-		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt "${CLANG_PV}" ; then
-eerror
-eerror "${PN} requires Clang >=${CLANG_PV} for c++${CXX_VER} support"
-eerror
-			die
-		fi
-	else
-eerror
-eerror "Compiler is not supported"
-eerror
-		die
-	fi
+	append-flags "${@}"
+	append-ldflags "${@}"
 }
 
 check_kernel_flags() {
@@ -350,9 +329,7 @@ pkg_setup() {
 	check_kernel_config
 	if use test ; then
 		if has "sandbox" ${FEATURES} ; then
-eerror
 eerror "-sandbox must be added to FEATURES to use the test USE flag."
-eerror
 			die
 		fi
 ewarn
@@ -364,6 +341,9 @@ ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 		sandbox-changes_no_network_sandbox "To download tarballs from a live source"
 	fi
+
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 get_uri_tarball() {
@@ -423,8 +403,8 @@ check_tarball_integrity() {
 eerror
 eerror "Fingerprint mismatch"
 eerror
-eerror "Actual:\t${actual_sha1}"
-eerror "Expected:\t${expected_sha1}"
+eerror "Actual:  ${actual_sha1}"
+eerror "Expected:  ${expected_sha1}"
 eerror
 		return 1
 	fi
@@ -432,8 +412,8 @@ eerror
 eerror
 eerror "Fingerprint mismatch"
 eerror
-eerror "Actual:\t${actual_blake2b}"
-eerror "Expected:\t${expected_blake2b}"
+eerror "Actual:  ${actual_blake2b}"
+eerror "Expected:  ${expected_blake2b}"
 eerror
 		return 1
 	fi
@@ -441,8 +421,8 @@ eerror
 eerror
 eerror "Fingerprint mismatch"
 eerror
-eerror "Actual:\t${actual_sha512}"
-eerror "Expected:\t${expected_sha512}"
+eerror "Actual:  ${actual_sha512}"
+eerror "Expected:  ${expected_sha512}"
 eerror
 		return 1
 	fi
@@ -455,8 +435,8 @@ eerror
 eerror
 eerror "Tarball size mismatch"
 eerror
-eerror "Actual:\t${actual_tarball_size}"
-eerror "Expected:\t${expected_tarball_size}"
+eerror "Actual:  ${actual_tarball_size}"
+eerror "Expected:  ${expected_tarball_size}"
 eerror
 		return 1
 	fi
@@ -474,7 +454,7 @@ src_unpack() {
 	get_version_list
 
 	if use beta ; then
-		local unstable_branch=$(git ls-remote https://bitbucket.org/chromiumembedded/cef.git \
+		local unstable_branch=$(git ls-remote "https://bitbucket.org/chromiumembedded/cef.git" \
 			| grep -E -o -e "refs/heads/[0-9]+" \
 			| grep -E -o -e "[0-9]+" \
 			| sort -V \
@@ -486,7 +466,7 @@ src_unpack() {
 			| grep -e "${fsuffix}" \
 			| tail -n 1)
 	else
-		local stable_branch=$(git ls-remote https://bitbucket.org/chromiumembedded/cef.git \
+		local stable_branch=$(git ls-remote "https://bitbucket.org/chromiumembedded/cef.git" \
 			| grep -E -o -e "refs/heads/[0-9]+" \
 			| grep -E -o -e "[0-9]+" \
 			| sort -V \
@@ -532,7 +512,7 @@ eerror
 		die
 	fi
 
-	if ver_test ${CHROMIUM_PV} -lt ${DEPENDS_VERSION} ; then
+	if ver_test "${CHROMIUM_PV}" "-lt" "${DEPENDS_VERSION}" ; then
 ewarn
 ewarn "You are using a CEF version based on an older chromium version."
 ewarn "The *DEPENDs checks assumes newer or later."
@@ -546,7 +526,7 @@ ewarn
 }
 
 src_prepare() {
-	export CMAKE_USE_DIR=$(S_abi)
+	export CMAKE_USE_DIR=$(get_S_abi)
 einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
@@ -559,27 +539,26 @@ einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 }
 
 src_configure() {
-	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)
-	check_compiler
+	export CMAKE_USE_DIR=$(get_S_abi)
+	export BUILD_DIR=$(get_S_abi)
 	strip-unsupported-flags
 	filter-flags \
-		'-f*sanitize*' \
-		'-f*visibility*' \
-		'-march=*' \
-		'-O*'
+		"-f*sanitize*" \
+		"-f*visibility*" \
+		"-march=*" \
+		"-O*"
 
 	if has_version "llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]" ; then
 		# Link to UBSan indirectly to avoid missing symbols like these
 		# when linking to CFI .so files:
 		# undefined reference to __ubsan_handle_cfi_check_fail_abort
-		append-ldflags -Wl,-lubsan
-		:;
+		append-ldflags "-Wl,-lubsan"
+		:
 	fi
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
-	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)
+	export CMAKE_USE_DIR=$(get_S_abi)
+	export BUILD_DIR=$(get_S_abi)
 	cd "${CMAKE_USE_DIR}" || die
 	mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
@@ -603,8 +582,8 @@ einfo "addwrite ${d}"
 }
 
 src_compile() {
-	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)
+	export CMAKE_USE_DIR=$(get_S_abi)
+	export BUILD_DIR=$(get_S_abi)
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile \
 		libcef_dll_wrapper \
@@ -619,21 +598,21 @@ src_compile() {
 
 src_test() {
 ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
-	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)
+	export CMAKE_USE_DIR=$(get_S_abi)
+	export BUILD_DIR=$(get_S_abi)
 	cd "${BUILD_DIR}" || die
 	local build_type=$(usex debug "Debug" "Release")
 	if use test ; then
 		cd "${BUILD_DIR}/tests/ceftests/${build_type}" || die
 		# If it fails, it is likely an upstream problem
 		LD_LIBRARY_PATH="../../../libcef_dll_wrapper:../../../tests/gtest" \
-		virtx ./ceftests --no-sandbox
+		virtx "./ceftests" "--no-sandbox"
 	fi
 }
 
 src_install() {
-	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)
+	export CMAKE_USE_DIR=$(get_S_abi)
+	export BUILD_DIR=$(get_S_abi)
 	cd "${BUILD_DIR}" || die
 	dodir "/opt/${PN}"
 	cp -rT "${BUILD_DIR}" "${ED}/opt/${PN}" || die
