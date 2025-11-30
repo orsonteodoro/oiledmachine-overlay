@@ -249,7 +249,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_24
+ebuild_revision_25
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
@@ -1373,7 +1373,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	cython_python_configure
 
 	if has "materialx" ${IUSE_EFFECTIVE} use materialx ; then
-		append-flags \
+		append-ldflags \
 			"-Wl,-L/usr/lib/materialx/$(get_libdir)" \
 			"-Wl,-rpath,/usr/lib/materialx/$(get_libdir)"
 	fi
