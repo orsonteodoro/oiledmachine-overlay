@@ -1,0 +1,20 @@
+--- a/source/blender/blenlib/intern/math_half.cc.orig	2025-10-24 07:36:31.000000000 -0700
++++ b/source/blender/blenlib/intern/math_half.cc	2025-11-30 09:05:23.528315710 -0800
+@@ -300,7 +302,7 @@ void blender::math::float_to_half_make_f
+     src += 8;
+     dst += 8;
+   }
+-#elif defined(USE_SSE2_FP16)          /* 4-wide loop using SSE2 */
++#elif defined(USE_SSE2_FP16) AND defined(__SSE4_1__)          /* 4-wide loop using SSE2 and SSE4.1 */
+   for (; i + 3 < length; i += 4) {
+     __m128 src4 = _mm_loadu_ps(src);
+     __m128i h4 = F32_to_F16_4x(src4);
+@@ -320,7 +322,7 @@ void blender::math::float_to_half_make_f
+       __m128i inf_res = _mm_or_si128(signbits, _mm_set1_epi16(0x7bffu)); /* +/- 65504 */
+       __m128i nan_res = signbits;                                        /* +/- 0 */
+       /* Select final result. */
+-      h4 = _mm_blendv_epi8(h4, inf_res, is_inf);
++      h4 = _mm_blendv_epi8(h4, inf_res, is_inf); /* Needs SSE4.1.  TODO:  Convert section from SSE 4.1 to SSE2 with AI. */
+       h4 = _mm_blendv_epi8(h4, nan_res, is_nan);
+       h4 = _mm_and_si128(h4, _mm_set1_epi32(0xffff));
+       h4 = _mm_or_si128(h4, hi_part);
