@@ -960,7 +960,7 @@ RDEPEND+="
 		rocm_6_4? (
 			>=media-libs/HIPRT-2.5:0/6.4[${LIBSTDCXX_USEDEP},rocm]
 		)
-		media-libs/hiprt:=
+		media-libs/HIPRT:=
 	)
 	jack? (
 		virtual/jack
