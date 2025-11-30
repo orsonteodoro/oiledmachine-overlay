@@ -165,11 +165,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
+LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
+LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit check-compiler-switch cmake dep-prepare fix-rpath flag-o-matic libcxx-slot libstdcxx-slot optfeature python-single-r1 toolchain-funcs
 
@@ -258,7 +260,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_15
+ebuild_revision_16
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -358,7 +360,7 @@ RDEPEND+="
 	dev-util/glslang:=
 	>=media-libs/vulkan-loader-${VULKAN_PV}
 	media-libs/vulkan-drivers
-	media-libs/libplacebo[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},glslang,vulkan]
+	media-libs/libplacebo[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},glslang,vulkan]
 	media-libs/libplacebo:=
 	system-boost? (
 		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

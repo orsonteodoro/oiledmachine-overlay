@@ -6,11 +6,13 @@ EAPI=8
 # When you update this, update also dev-util/pnnx and dev-python/ncnn
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=17 # Compiler default
 DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
 GLSLANG_COMMIT="a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc"
 PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 BF16_ARCHES=(
 	"armv8.4-a"
@@ -141,9 +143,17 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_xop"
 )
 
-PYTHON_COMPAT=( "python3_"{11..13} )
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
 
-inherit cflags-hardened cmake dep-prepare distutils-r1 optfeature toolchain-funcs
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+inherit cflags-hardened cmake dep-prepare distutils-r1 libcxx-slot libstdcxx-slot optfeature toolchain-funcs
 
 DESCRIPTION="High-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
@@ -190,7 +200,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 examples openmp python tools +vulkan
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -325,6 +335,8 @@ pkg_pretend() {
 pkg_setup() {
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	python_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 gen_git_tag() {
