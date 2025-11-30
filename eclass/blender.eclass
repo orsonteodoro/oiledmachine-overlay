@@ -1132,10 +1132,12 @@ ewarn
 	local max_slot=$(ls -1 "${ESYSROOT}/usr/share/blender" \
 		| sort -V \
 		| tail -n 1)
-	cat \
-		"${ESYSROOT}/usr/share/blender/${max_slot}/share/metainfo/org.blender.Blender.metainfo.xml" \
-		"${ESYSROOT}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
-		|| die
+	if [[ -n "${max_slot}" ]] ; then
+		cat \
+			"${ESYSROOT}/usr/share/blender/${max_slot}/share/metainfo/org.blender.Blender.metainfo.xml" \
+			"${ESYSROOT}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
+			|| die
+	fi
 }
 
 blender_pkg_postrm() {
