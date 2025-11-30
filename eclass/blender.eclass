@@ -1044,7 +1044,7 @@ blender_src_install() {
 	dodir "/usr/share/blender/${PV}/share/metainfo"
 	mv \
 		"${ED}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
-		"${ED}/usr/share/blender/${PV}/share/metainfo"
+		"${ED}/usr/share/blender/${PV}/share/metainfo" \
 		|| die
 }
 
