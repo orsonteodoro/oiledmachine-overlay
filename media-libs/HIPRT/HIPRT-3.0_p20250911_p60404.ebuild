@@ -9,6 +9,7 @@ MY_PV="3.0.4fea77f"
 
 inherit hip-versions
 
+CXX_STANDARD=17
 EGIT_COMMIT="6441305253f711bd2b7121f317a799d0b740e2b7"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
@@ -49,7 +50,12 @@ _AMDGPU_TARGETS_COMPAT=(
 	"gfx1201"
 )
 
-inherit check-compiler-switch cmake flag-o-matic rocm
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
+)
+
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/HIPRT-${EGIT_COMMIT}"
@@ -127,6 +133,7 @@ DOCS=( "README.md" )
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
+	libstdcxx-slot_verify
 }
 
 build_easy_encryption() {
