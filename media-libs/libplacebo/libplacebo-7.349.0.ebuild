@@ -3,9 +3,20 @@
 
 EAPI=8
 
+CXX_STANDARD=20
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit meson-multilib python-any-r1
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+)
+
+inherit libcxx-slot libstdcxx-slot meson-multilib python-any-r1
 
 if [[ "${PV}" == "9999" ]]; then
 	EGIT_REPO_URI="https://code.videolan.org/videolan/libplacebo.git"
@@ -49,7 +60,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/$(ver_cut 2 ${PV}.9999)" # soname
+SLOT="0/"$(ver_cut "2" "${PV}.9999") # soname
 IUSE="
 glslang +lcms libdovi llvm-libunwind +opengl +shaderc test unwind +vulkan
 +xxhash
@@ -66,17 +77,20 @@ RDEPEND="
 		>=media-libs/lcms-2.9:2[${MULTILIB_USEDEP}]
 	)
 	libdovi? (
-		>=media-libs/libdovi-1.6.7:=[${MULTILIB_USEDEP}]
+		>=media-libs/libdovi-1.6.7[${MULTILIB_USEDEP}]
+		media-libs/libdovi:=
 	)
 	opengl? (
 		media-libs/libglvnd[${MULTILIB_USEDEP}]
 	)
 	shaderc? (
-		>=media-libs/shaderc-2019.1[${MULTILIB_USEDEP}]
+		>=media-libs/shaderc-2019.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		media-libs/shaderc:=
 	)
 	unwind? (
 		!llvm-libunwind? (
-			sys-libs/libunwind:=[${MULTILIB_USEDEP}]
+			sys-libs/libunwind[${MULTILIB_USEDEP}]
+			sys-libs/libunwind:=
 		)
 		llvm-libunwind? (
 			llvm-runtimes/libunwind[${MULTILIB_USEDEP}]
@@ -108,6 +122,12 @@ PATCHES=(
 
 python_check_deps() {
 	python_has_version "dev-python/jinja2[${PYTHON_USEDEP}]"
+}
+
+pkg_setup() {
+	python-any-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
