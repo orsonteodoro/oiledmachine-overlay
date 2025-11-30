@@ -420,11 +420,11 @@ RDEPEND_PLUGINS_OBS_BROWSER="
 		)
 		|| (
 			(
-				>=net-libs/cef-bin-${CEF_PV}
+				>=net-libs/cef-bin-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				net-libs/cef-bin:=
 			)
 			(
-				>=net-libs/cef-${CEF_PV}
+				>=net-libs/cef-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				net-libs/cef:=
 			)
 		)
