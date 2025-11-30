@@ -258,7 +258,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_14
+ebuild_revision_15
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -482,10 +482,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	export MAKEOPTS="-j1"
 
-	append-flags -DSPDLOG_NO_EXCEPTIONS
-	append-flags -I"${S}_build/libvideo2x_install/include"
+	append-flags "-DSPDLOG_NO_EXCEPTIONS"
+	append-flags "-I${S}_build/libvideo2x_install/include"
 	if ! use system-boost ; then
-		append-flags -I"${S}/third_party/boost"
+		append-flags "-I${S}/third_party/boost"
 		fix-rpath_append "/usr/lib/${PN}/$(get_libdir)"
 	fi
 
