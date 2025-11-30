@@ -1,0 +1,25 @@
+diff '--color=auto' -urp ffmpeg-8.0.1.orig/configure ffmpeg-8.0.1/configure
+--- ffmpeg-8.0.1.orig/configure	2025-11-29 23:21:09.225836186 -0800
++++ ffmpeg-8.0.1/configure	2025-11-29 23:22:44.096964546 -0800
+@@ -7032,6 +7032,12 @@ for func in $MATH_FUNCS; do
+     eval check_mathfunc $func \${${func}_args:-1} $libm_extralibs
+ done
+ 
++glslang_major=$(glslang -dumpversion | cut -f 2 -d ":" | cut -f 1 -d ".")
++libglslang_ldflags=""
++if test ${glslang_major} -le 13 ; then
++    libglslang_ldflags="-lOSDependent -lHLSL -lOGLCompiler"
++fi
++
+ # these are off by default, so fail if requested and not available
+ enabled avisynth          && { require_headers "avisynth/avisynth_c.h avisynth/avs/version.h" &&
+                                { test_cpp_condition avisynth/avs/version.h "AVS_MAJOR_VER >= 3 && AVS_MINOR_VER >= 7 && AVS_BUGFIX_VER >= 3 || AVS_MAJOR_VER >= 3 && AVS_MINOR_VER > 7 || AVS_MAJOR_VER > 3" ||
+@@ -7086,7 +7092,7 @@ if enabled libglslang; then
+                             -lglslang -lMachineIndependent -lGenericCodeGen \
+                             ${spvremap} -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lpthread -lstdc++ -lm ||
+                         require spirv_compiler glslang/Include/glslang_c_interface.h glslang_initialize_process \
+-                            -lglslang -lMachineIndependent -lOSDependent -lHLSL -lOGLCompiler -lGenericCodeGen \
++                            -lglslang -lMachineIndependent ${libglslang_ldflags} -lGenericCodeGen \
+                             ${spvremap} -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lpthread -lstdc++ -lm ;
+ fi
+ enabled libgme            && { check_pkg_config libgme libgme gme/gme.h gme_new_emu ||

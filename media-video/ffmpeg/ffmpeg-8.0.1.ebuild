@@ -1240,7 +1240,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-7.1-add-includes-hwcontext_vulkan.patch"
-	"${FILESDIR}/extra-patches/${PN}-7.0.2-glslang-fix-configure-test.patch"
+	"${FILESDIR}/extra-patches/${PN}-8.0.1-glslang-fix-configure-test.patch"
 )
 
 get_av_device_ids() {
