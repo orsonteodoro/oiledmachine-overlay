@@ -2,12 +2,12 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v4.5.eclass
+# @ECLASS: blender-v5.0.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v4.5.eclass helps reduce code duplication across ebuilds
+# The blender-v5.0.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # FIXME:  alembic requires imath
@@ -16,25 +16,25 @@
 # the multiple LLVM bug.
 
 # For versioning see:
-# https://github.com/blender/blender/blob/v4.5.5/source/blender/blenkernel/BKE_blender_version.h
+# https://github.com/blender/blender/blob/v5.0.0/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # No need to look past those dates.
 
-# Last change was Oct 27, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/install_linux_packages.py
+# Last change was Oct 20, 2025 for:
+# https://github.com/blender/blender/blob/v5.0.0/build_files/build_environment/install_linux_packages.py
 
-# Last change was Apr 8, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.5/build_files/cmake/config/blender_release.cmake
+# Last change was Oct 3, 2025 for:
+# https://github.com/blender/blender/blob/v5.0.0/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 7, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v5.0.0/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v4.5.5/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v5.0.0/intern/cycles/cmake/external_libs.cmake#L47
 
-# GPU lib versions:  https://github.com/blender/blender/blob/v4.5.5/build_files/config/pipeline_config.yaml
+# GPU lib versions:  https://github.com/blender/blender/blob/v5.0.0/build_files/config/pipeline_config.yaml
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -73,6 +73,7 @@
 # Alternative nightly prefix:  /usr/lib/dpc++/nightly-8
 
 # The distro's llvm 14 for mesa is 22.05.
+# Missing IGC_SPIRV
 # Missing OCLOC
 # Missing nanobind
 # For compute-runtime version correspondance to level zero, see https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
@@ -85,20 +86,20 @@ esac
 
 CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v5.0.0/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
 BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
-FREETYPE_PV="2.13.0"
+FREETYPE_PV="2.13.3"
 GCC_MIN="11" # C++17
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.2.2"
 ONETBB_SLOT="0"
 OPENVDB_ABIS_MAJOR_VERS=12
-OSL_PV="1.14.3.0"
+OSL_PV="1.14.7.0"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
-VULKAN_PV="1.3.296"
+VULKAN_PV="1.4.321.0" # Changed for glslang minimum required.  Min required 1.4.313.0.
 
 ARM_CPU_FLAGS_3_3=(
 	neon2x:neon2x
@@ -135,7 +136,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.5.5/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v5.0.0/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
 FFMPEG_IUSE=(
 	"+jpeg2k"
@@ -208,7 +209,7 @@ OPTIX_RAYTRACE_TARGETS=(
 )
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/blender/blender/blob/v4.5.5/CMakeLists.txt#L699
+# https://github.com/blender/blender/blob/v5.0.0/CMakeLists.txt#L699
 	"gfx900"
 	"gfx902"
 	"gfx90c"
@@ -267,13 +268,13 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
-+X +abi12-compat +alembic aot -asan +boost +bullet +collada +color-management
++X +abi12-compat +alembic aot -asan +boost +bullet +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
 +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
-+openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
-+sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
++openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm
++rubberband -sdl +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
 ebuild_revision_25
 "
 # hip is default ON upstream.
@@ -370,7 +371,7 @@ LICENSE+="
 	)
 
 "
-# ( all-rights-reserved Apache-2.0 ) - blender-4.5.5/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 ) - blender-5.0.0/extern/mantaflow/LICENSE
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
@@ -391,28 +392,28 @@ LICENSE+="
 #   public-domain
 #   UoI-NCSA
 #   ZLIB
-#   - blender-4.5.5/release/license/THIRD-PARTY-LICENSES.txt
-# all-rights-reserved MIT - blender-4.5.5/extern/vulkan_memory_allocator/LICENSE.txt
-# Apache-2.0 - blender-4.5.5/intern/cycles/doc/license/Apache2-license.txt
-# Apache-2.0 - blender-4.5.5/extern/cuew/LICENSE
-# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.5.5/doc/license/SPDX-license-identifiers.txt
-# Apache-2.0 BSD MIT ZLIB - blender-4.5.5/intern/cycles/doc/license/SPDX-license-identifiers.txt
-# BL - blender-4.5.5/doc/license/BL-license.txt
-# Boost-1.0 - blender-4.5.5/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
-# BSD - blender-4.5.5/intern/cycles/doc/license/BSD-3-Clause-license.txt
-# BSD-2.0 - blender-4.5.5/extern/xxhash/LICENSE
-# BSD custom - blender-4.5.5/extern/quadriflow/LICENSE.txt
+#   - blender-5.0.0/release/license/THIRD-PARTY-LICENSES.txt
+# all-rights-reserved MIT - blender-5.0.0/extern/vulkan_memory_allocator/LICENSE.txt
+# Apache-2.0 - blender-5.0.0/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-5.0.0/extern/cuew/LICENSE
+# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-5.0.0/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD MIT ZLIB - blender-5.0.0/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# BL - blender-5.0.0/doc/license/BL-license.txt
+# Boost-1.0 - blender-5.0.0/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-5.0.0/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2.0 - blender-5.0.0/extern/xxhash/LICENSE
+# BSD custom - blender-5.0.0/extern/quadriflow/LICENSE.txt
 # CC-BY-4.0 - The splash screen chosen license is found in https://www.blender.org/download/demo-files/ )
-# CC0-1.0 - blender-4.5.5/release/datafiles/studiolights/world/license.txt
-# custom MIT - blender-4.5.5/extern/fmtlib/LICENSE.rst
-# GPL-2+ - blender-4.5.5/tools/check_source/check_licenses.py
-# GPL-2.0 - blender-4.5.5/release/license/GPL-license.txt
-# GPL-3.0 - blender-4.5.5/doc/license/GPL3-license.txt
-# LGPL-2.1 - ./blender-4.5.5/doc/license/LGPL2.1-license.txt
-# MIT - blender-4.5.5/intern/cycles/doc/license/MIT-license.txt
-# ZLIB - blender-4.5.5/intern/cycles/doc/license/Zlib-license.txt
-# ZLIB - blender-4.5.5/doc/license/Zlib-license.txt
-# || ( CC0-1.0 public-domain ) - blender-4.5.5/release/datafiles/studiolights/matcap/license.txt
+# CC0-1.0 - blender-5.0.0/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-5.0.0/extern/fmtlib/LICENSE.rst
+# GPL-2+ - blender-5.0.0/tools/check_source/check_licenses.py
+# GPL-2.0 - blender-5.0.0/release/license/GPL-license.txt
+# GPL-3.0 - blender-5.0.0/doc/license/GPL3-license.txt
+# LGPL-2.1 - ./blender-5.0.0/doc/license/LGPL2.1-license.txt
+# MIT - blender-5.0.0/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-5.0.0/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-5.0.0/doc/license/Zlib-license.txt
+# || ( CC0-1.0 public-domain ) - blender-5.0.0/release/datafiles/studiolights/matcap/license.txt
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
@@ -587,7 +588,6 @@ REQUIRED_USE+="
 		boost
 		build_creator
 		bullet
-		collada
 		color-management
 		cycles
 		cycles-path-guiding
@@ -615,6 +615,7 @@ REQUIRED_USE+="
 		osl
 		pdf
 		potrace
+		rubberband
 		sndfile
 		tbb
 		tiff
@@ -716,7 +717,7 @@ gen_oiio_depends() {
 				>=dev-cpp/robin-map-1.3.0
 				>=dev-libs/libfmt-9.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 				dev-libs/libfmt:=
-				>=media-libs/openimageio-3.0.6.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-3.0.9.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				<media-libs/openimageio-3.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				media-libs/openimageio:=
 			)
@@ -779,7 +780,7 @@ CODECS="
 		>=media-libs/libvorbis-1.3.7
 	)
 	vpx? (
-		>=media-libs/libvpx-1.14
+		>=media-libs/libvpx-1.15.2
 	)
 	x264? (
 		>=media-libs/x264-0.0.20220221
@@ -839,11 +840,15 @@ RDEPEND+="
 			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
+		>=dev-python/attrs-25.3.0[${PYTHON_USEDEP}]
+		>=dev-python/cattrs-25.1.1[${PYTHON_USEDEP}]
 		>=dev-python/certifi-2025.4.26[${PYTHON_USEDEP}]
 		>=dev-python/charset-normalizer-3.4.1[${PYTHON_USEDEP}]
+		>=dev-python/fastjsonschema-2.21.1[${PYTHON_USEDEP}]
 		>=dev-python/idna-3.10[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.14.1[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-2.4.0[${PYTHON_USEDEP}]
 		>=dev-python/zstandard-0.23.0[${PYTHON_USEDEP}]
 	' 'python*')
@@ -852,21 +857,20 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/pystring:=
-	>=dev-lang/python-3.11.11
+	>=dev-lang/python-3.11.13
 	>=dev-libs/fribidi-1.0.12
 	>=dev-util/glslang-${VULKAN_PV}
 	dev-util/glslang:=
 	>=media-libs/freetype-${FREETYPE_PV}[brotli]
-	>=media-libs/libpng-1.6.43:0
+	>=media-libs/libpng-1.6.50:0
 	media-libs/libpng:=
-	>=media-libs/shaderc-2024.3[${LIBSTDCXX_USEDEP}]
+	>=media-libs/shaderc-2025.3[${LIBSTDCXX_USEDEP}]
 	media-libs/shaderc:=
 	>=media-libs/vulkan-loader-${VULKAN_PV}
-	>=sci-mathematics/manifold-3.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=sci-mathematics/manifold-3.2.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	sci-mathematics/manifold:=
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.3.1
-	dev-libs/lzo:2
 	media-libs/libglvnd
 	media-libs/libsamplerate
 	media-libs/vulkan-drivers
@@ -882,13 +886,9 @@ RDEPEND+="
 		)
 		dev-libs/boost:=
 	)
-	collada? (
-		>=media-libs/aras-p-opencollada-20240718[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/aras-p-opencollada:=
-	)
 	color-management? (
 		>=dev-libs/expat-2.6.4
-		>=media-libs/opencolorio-2.4.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
+		>=media-libs/opencolorio-2.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		cuda_targets_sm_50? (
@@ -986,7 +986,7 @@ RDEPEND+="
 		dev-libs/jemalloc:=
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.5.0:2
+		>=media-libs/openjpeg-2.5.3:2
 		media-libs/openjpeg:=
 	)
 	llvm? (
@@ -1009,7 +1009,7 @@ RDEPEND+="
 		)
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.2[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
+		>=media-libs/materialx-1.39.3[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 		media-libs/materialx:=
 	)
 	ndof? (
@@ -1071,7 +1071,7 @@ RDEPEND+="
 		$(gen_osl_depends)
 	)
 	pdf? (
-		>=media-libs/libharu-2.3.0
+		>=media-libs/libharu-2.4.5
 	)
 	potrace? (
 		>=media-gfx/potrace-1.16
@@ -1093,6 +1093,9 @@ RDEPEND+="
 			sys-libs/llvm-roc-libomp:=
 		)
 	)
+	rubberband? (
+		>=media-libs/rubberband-4.0.0
+	)
 	sdl? (
 		!pulseaudio? (
 			>=media-libs/libsdl2-2.28.2[alsa,opengl,sound]
@@ -1107,13 +1110,13 @@ RDEPEND+="
 	)
 	sycl? (
 		(
-			>=dev-libs/level-zero-1.19.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-libs/level-zero-1.21.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			<dev-libs/level-zero-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-libs/level-zero:=
 		)
 		|| (
 			(
-				>=sys-devel/DPC++-2025.01.08:nightly/8[aot?]
+				>=sys-devel/DPC++-2025.01.08:stable/8[aot?]
 				!<sys-devel/DPC++-2025.01.08
 			)
 		)
@@ -1130,14 +1133,14 @@ RDEPEND+="
 		>=media-libs/tiff-4.7.0:0[jpeg,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-25.02[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-25.08[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
 		<media-libs/openusd-26.0[imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-debug/valgrind
 	)
 	wayland? (
-		>=dev-libs/wayland-1.23.1
+		>=dev-libs/wayland-1.24.0
 		>=dev-libs/wayland-protocols-1.44
 		>=gui-libs/libdecor-0.2.2
 	)
@@ -1280,7 +1283,7 @@ ewarn "Using LLVM ${x}"
 			export ROCM_SLOT="6.4"
 			export ROCM_VERSION="${HIP_6_4_VERSION}"
 		else
-# See https://github.com/blender/blender/blob/v4.5.5/build_files/config/pipeline_config.yaml
+# See https://github.com/blender/blender/blob/v5.0.0/build_files/config/pipeline_config.yaml
 eerror
 eerror "Supported ROCm version(s):"
 eerror
@@ -1447,7 +1450,6 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_NANOVDB=$(usex nanovdb)
-		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
@@ -1460,6 +1462,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 		-DWITH_PULSEAUDIO=$(usex pulseaudio)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
+		-DWITH_RUBBERBAND=$(usex rubberband)
 		-DWITH_UV_SLIM=$(usex uv-slim)
 		-DWITH_USD=$(usex usd)
 		-DWITH_TBB=$(usex tbb)
@@ -1536,12 +1539,6 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		)
 	fi
 
-	if use collada ; then
-		mycmakeargs+=(
-			-DOpenCOLLADA_DIR:PATH="${ESYSROOT}/usr/lib/aras-p-opencollada"
-		)
-	fi
-
 	if use usd ; then
 		blender_configure_openusd
 	fi
@@ -1567,7 +1564,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v4.5.5/build_files/cmake/config
+# https://github.com/blender/blender/tree/v5.0.0/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1584,7 +1581,6 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 			-DWITH_STATIC_LIBS=OFF
 			-DWITH_SYSTEM_EIGEN3=ON
 			-DWITH_SYSTEM_GLEW=ON
-			-DWITH_SYSTEM_LZO=ON
 		)
 	fi
 

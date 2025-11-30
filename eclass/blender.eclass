@@ -4,14 +4,14 @@
 
 # @ECLASS: blender.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8
 # @BLURB: blender common implementation
 # @DESCRIPTION:
 # The blender eclass helps reduce code duplication
 # across the blender eclasses to reduce maintenance cost.
 
 case ${EAPI:-0} in
-	[78]) ;;
+	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported" ;;
 esac
 
@@ -24,9 +24,7 @@ IMPLS=(
 )
 
 LTS_VERSIONS=(
-	"3.3"
-	"3.6"
-	"4.2"
+	"4.5"
 )
 
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake cython dhms
