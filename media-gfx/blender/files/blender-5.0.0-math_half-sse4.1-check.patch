@@ -5,7 +5,7 @@
      dst += 8;
    }
 -#elif defined(USE_SSE2_FP16)          /* 4-wide loop using SSE2 */
-+#elif defined(USE_SSE2_FP16) AND defined(__SSE4_1__)          /* 4-wide loop using SSE2 and SSE4.1 */
++#elif defined(USE_SSE2_FP16) && defined(__SSE4_1__)          /* 4-wide loop using SSE2 and SSE4.1 */
    for (; i + 3 < length; i += 4) {
      __m128 src4 = _mm_loadu_ps(src);
      __m128i h4 = F32_to_F16_4x(src4);
