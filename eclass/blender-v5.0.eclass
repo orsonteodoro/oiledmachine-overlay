@@ -1338,6 +1338,10 @@ eerror
 			die
 		fi
 		rocm_pkg_setup
+
+		# Force HIP-Clang
+		export PATH="/opt/rocm/lib/llvm:$PATH"
+		"${CC}" --version
 	#else
 		# See blender_pkg_setup for llvm_pkg_setup
 	fi
