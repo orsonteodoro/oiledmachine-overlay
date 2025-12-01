@@ -1141,7 +1141,8 @@ ewarn
 	fi
 	if use cycles && has "hiprt" ${IUSE_EFFECTIVE} && use hiprt ; then
 einfo
-einfo "To enable HIP RT go to Edit > Preferences > System > Cycles Render Devices > HIP > HIP RT"
+einfo "To enable HIP RT which is default off, go to"
+einfo "Edit > Preferences > System > Cycles Render Devices > HIP > HIP RT"
 einfo
 	fi
 }
