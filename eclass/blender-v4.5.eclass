@@ -815,6 +815,29 @@ CUDA_12_8_RDEPEND="
 	)
 "
 
+is_rocm_target_allowed() {
+	local target="${1}"
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
+		[[ "${x}" == "${target}" ]] && return 0
+	done
+	return 1
+}
+
+gen_hiprt_usedep() {
+	local hiprt_ver="${1/./_}"
+	local rocm_slot="${2/./_}"
+	local t="HIPRT_${hiprt_ver}_${rocm_slot}_AMDGPU_TARGETS_COMPAT[@]"
+	local a=( "${!t}" )
+	local str=""
+	for x in ${a[@]} ; do
+		if is_rocm_target_allowed "${x}" ; then
+			str+=",amdgpu_targets_${x}(-)?"
+		fi
+	done
+	str="${str:1}"
+	echo "${str}"
+}
+
 gen_rocm_hiprt_rdepend() {
 	local u
 	for u in "${ROCM_SLOTS[@]}" ; do
@@ -825,8 +848,8 @@ gen_rocm_hiprt_rdepend() {
 		echo "
 			rocm_${d}? (
 				|| (
-					=media-libs/HIPRT-2.5*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(get_rocm_usedep HIPRT_2_5)]
-					=media-libs/HIPRT-3.0*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(get_rocm_usedep HIPRT_3_0)]
+					=media-libs/HIPRT-2.5*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 2.5 ${s})]
+					=media-libs/HIPRT-3.0*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 3.0 ${s})]
 				)
 				media-libs/HIPRT:=
 			)
