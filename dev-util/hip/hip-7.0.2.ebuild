@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_48
+ebuild_revision_50
 "
 REQUIRED_USE="
 	hsa? (
@@ -449,6 +449,12 @@ src_install() {
 	# Don't install .hipInfo and .hipVersion to bin/lib
 #	rm "${ED}${EROCM_PATH}/bin/.hipVersion" || die
 	rocm_mv_docs
+
+	# HIP RT compatibility for media-gfx/blender-bin
+	# Hardcoded path in binary
+	dosym \
+		"../../bin/hipcc" \
+		"/opt/rocm/hip/bin/hipcc"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
