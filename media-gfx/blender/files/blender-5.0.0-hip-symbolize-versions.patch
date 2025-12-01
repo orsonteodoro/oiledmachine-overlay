@@ -1,0 +1,22 @@
+--- a/extern/hipew/include/hiprtew.h.orig	2025-10-08 03:41:55.000000000 -0700
++++ b/extern/hipew/include/hiprtew.h	2025-12-01 05:32:07.258700639 -0800
+@@ -19,13 +19,13 @@
+ 
+ #include <hiprt/hiprt_types.h>
+ 
+-#define HIPRT_MAJOR_VERSION 2
+-#define HIPRT_MINOR_VERSION 5
+-#define HIPRT_PATCH_VERSION 0x0201c59
++#define HIPRT_MAJOR_VERSION @HIPRT_MAJOR_VERSION@
++#define HIPRT_MINOR_VERSION @HIPRT_MINOR_VERSION@
++#define HIPRT_PATCH_VERSION @HIPRT_PATCH_VERSION@
+ 
+-#define HIPRT_API_VERSION 2005
+-#define HIPRT_VERSION_STR "02005"
+-#define HIP_VERSION_STR "6.3"
++#define HIPRT_API_VERSION @HIPRT_API_VERSION@
++#define HIPRT_VERSION_STR "@HIPRT_VERSION_STR@"
++#define HIP_VERSION_STR "@HIP_VERSION_STR@"
+ 
+ #ifdef _WIN32
+ #define HIPRTAPI __stdcall

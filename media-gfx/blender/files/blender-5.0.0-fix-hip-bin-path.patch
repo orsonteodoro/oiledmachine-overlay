@@ -1,0 +1,11 @@
+--- a/extern/hipew/src/hipew.c.orig	2025-12-01 04:28:12.163420681 -0800
++++ b/extern/hipew/src/hipew.c	2025-12-01 05:22:42.727798788 -0800
+@@ -529,7 +529,7 @@ const char *hipewCompilerPath(void) {
+       }
+     }
+     #else
+-    const char *hipPath =  "opt/rocm/hip/bin";
++    const char *hipPath =  "opt/rocm/bin";
+     const char *executable = "hipcc";
+ 
+     static char hipcc[65536];
