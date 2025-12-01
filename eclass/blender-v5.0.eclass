@@ -1337,6 +1337,7 @@ eerror "  6.4"
 eerror
 			die
 		fi
+		export HIP_CLANG_DISABLE_CCACHE=1
 		rocm_pkg_setup
 
 		# Force HIP-Clang
