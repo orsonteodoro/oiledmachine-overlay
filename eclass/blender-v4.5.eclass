@@ -815,6 +815,47 @@ CUDA_12_8_RDEPEND="
 	)
 "
 
+gen_rocm_hiprt_rdepend() {
+	local u
+	for u in "${ROCM_SLOTS[@]}" ; do
+		local s="${u/rocm_}"
+		local s="${s/_/.}"
+		local d="${s/./_}"
+		local ROCM_SLOT="${s}"
+		echo "
+			rocm_${d}? (
+				|| (
+					=media-libs/HIPRT-2.5*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(get_rocm_usedep HIPRT_2_5)]
+					=media-libs/HIPRT-3.0*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(get_rocm_usedep HIPRT_3_0)]
+				)
+				media-libs/HIPRT:=
+			)
+		"
+	done
+}
+
+gen_rocm_rdepend() {
+	local u
+	for u in "${ROCM_SLOTS[@]}" ; do
+		local s="${u/rocm_}"
+		local s="${s/_/.}"
+		local d="${s/./_}"
+		local ROCM_SLOT="${s}"
+		local v="HIP_${d}_VERSION"
+		local v="${!v}"
+		echo "
+			rocm_${d}? (
+				>=dev-libs/rocm-opencl-runtime-${v}:0/${s}[${LIBSTDCXX_USEDEP}]
+				dev-libs/rocm-opencl-runtime:=
+				>=dev-util/hip-${v}:0/${s}[${LIBSTDCXX_USEDEP},rocm]
+				dev-util/hip:=
+				>=sys-libs/llvm-roc-libomp-${v}:0/${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
+				sys-libs/llvm-roc-libomp:=
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	$(python_gen_cond_dep '
 		(
@@ -957,9 +998,7 @@ RDEPEND+="
 		dev-libs/gmp:=
 	)
 	hiprt? (
-		rocm_6_4? (
-			>=media-libs/HIPRT-2.5:0/6.4[${LIBSTDCXX_USEDEP},rocm]
-		)
+		$(gen_rocm_hiprt_rdepend)
 		media-libs/HIPRT:=
 	)
 	jack? (
@@ -1070,14 +1109,7 @@ RDEPEND+="
 		>=media-libs/harfbuzz-10.0.1[truetype]
 	)
 	rocm? (
-		rocm_6_4? (
-			>=dev-libs/rocm-opencl-runtime-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP}]
-			dev-libs/rocm-opencl-runtime:=
-			>=dev-util/hip-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP},rocm]
-			dev-util/hip:=
-			>=sys-libs/llvm-roc-libomp-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP}]
-			sys-libs/llvm-roc-libomp:=
-		)
+		$(gen_rocm_rdepend)
 	)
 	sdl? (
 		!pulseaudio? (
