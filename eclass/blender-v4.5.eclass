@@ -1349,8 +1349,8 @@ eerror
 
 	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default.
 	# Tell the dynamic loader where to find the HIP RT library when dlopen is called.
-		fix-rpath "/opt/rocm/lib"
-		fix-rpath "/opt/rocm/lib/llvm/lib"
+		fix-rpath_append "/opt/rocm/lib"
+		fix-rpath_append "/opt/rocm/lib/llvm/lib"
 
 		"${CC}" --version
 	#else
