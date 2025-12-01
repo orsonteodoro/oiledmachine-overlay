@@ -266,7 +266,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_26
+ebuild_revision_27
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
@@ -1337,21 +1337,7 @@ eerror "  6.4"
 eerror
 			die
 		fi
-		if eselect profile show | grep "llvm" ; then
-	# Skip for libc++ based systems
-			:
-		else
-	# Apply for libstdc++ based systems
-			filter-flags "-Wl,--as-needed"
-			append-ldflags "-Wl,-latomic"
-		fi
 		rocm_pkg_setup
-
-	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default.
-	# Tell the dynamic loader where to find the HIP RT library when dlopen is called.
-		fix-rpath_append "/opt/rocm/lib"
-		fix-rpath_append "/opt/rocm/lib/llvm/lib"
-
 		"${CC}" --version
 	#else
 		# See blender_pkg_setup for llvm_pkg_setup
@@ -1484,6 +1470,22 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 
 	cython_set_cython_slot "3"
 	cython_python_configure
+
+	if use rocm ; then
+		if eselect profile show | grep "llvm" ; then
+	# Skip for libc++ based systems
+			:
+		else
+	# Apply for libstdc++ based systems
+			filter-flags "-Wl,--as-needed"
+			append-ldflags "-Wl,-latomic"
+		fi
+
+	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default.
+	# Tell the dynamic loader where to find the HIP RT library when dlopen is called.
+		fix-rpath_append "/opt/rocm/lib"
+		fix-rpath_append "/opt/rocm/lib/llvm/lib"
+	fi
 
 	if has "materialx" ${IUSE_EFFECTIVE} use materialx ; then
 		fix-rpath_append "/usr/lib/materialx/$(get_libdir)"
