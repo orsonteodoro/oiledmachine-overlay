@@ -1139,6 +1139,11 @@ ewarn
 			"${ESYSROOT}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
 			|| die
 	fi
+	if use cycles && has "hiprt" ${IUSE_EFFECTIVE} && use hiprt ; then
+einfo
+einfo "To enable HIP RT go to Edit > Preferences > System > Cycles Render Devices > HIP > HIP RT"
+einfo
+	fi
 }
 
 blender_pkg_postrm() {

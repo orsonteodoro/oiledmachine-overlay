@@ -1287,6 +1287,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.3-simd-checks.patch"
 	"${FILESDIR}/${PN}-4.5.3-optionalize-simd.patch"
 	"${FILESDIR}/${PN}-5.0.0-math_half-sse4.1-check.patch"
+	"${FILESDIR}/${PN}-5.0.0-fix-hip-bin-path.patch"
+	"${FILESDIR}/${PN}-5.0.0-hip-symbolize-versions.patch"
 )
 
 _blender_pkg_setup() {
@@ -1406,6 +1408,31 @@ _src_prepare_patches() {
 			-i \
 			-e "s|HIP 5.5.0|HIP ${rocm_version}|g" \
 			"intern/cycles/cmake/external_libs.cmake" \
+			|| die
+
+		local hiprt_major_version=$(grep -e "#define HIPRT_MAJOR_VERSION" "/opt/rocm/include/hiprt/hiprt.h" \
+			| cut -f 3 -d " ")
+		local hiprt_minor_version=$(grep -e "#define HIPRT_MINOR_VERSION" "/opt/rocm/include/hiprt/hiprt.h" \
+			| cut -f 3 -d " ")
+		local hiprt_patch_version=$(grep -e "#define HIPRT_PATCH_VERSION" "/opt/rocm/include/hiprt/hiprt.h" \
+			| cut -f 3 -d " ")
+		local hiprt_api_version=$(grep -e "#define HIPRT_API_VERSION" "/opt/rocm/include/hiprt/hiprt.h" \
+			| cut -f 3 -d " ")
+		local hiprt_version_str=$(grep -e "#define HIPRT_VERSION_STR" "/opt/rocm/include/hiprt/hiprt.h" \
+			| cut -f 3 -d " " \
+			| sed -e 's|"||g')
+		local hip_version_str=$(grep -e "#define HIP_VERSION_STR" "/opt/rocm/include/hiprt/hiprt.h" \
+			| cut -f 3 -d " " \
+			| sed -e 's|"||g')
+		sed \
+			-i \
+			-e "s|@HIPRT_MAJOR_VERSION@|${hiprt_major_version}|g" \
+			-e "s|@HIPRT_MINOR_VERSION@|${hiprt_minor_version}|g" \
+			-e "s|@HIPRT_PATCH_VERSION@|${hiprt_patch_version}|g" \
+			-e "s|@HIPRT_API_VERSION@|${hiprt_api_version}|g" \
+			-e "s|@HIPRT_VERSION_STR@|${hiprt_version_str}|g" \
+			-e "s|@HIP_VERSION_STR@|${hip_version_str}|g" \
+			"extern/hipew/include/hiprtew.h" \
 			|| die
 	fi
 }
