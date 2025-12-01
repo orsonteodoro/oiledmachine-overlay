@@ -28,7 +28,7 @@ LTS_VERSIONS=(
 )
 
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake cython dhms
-inherit fix-rpath flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
+inherit ffmpeg fix-rpath flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg optfeature
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
@@ -1046,6 +1046,10 @@ blender_src_install() {
 		"${ED}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
 		"${ED}/usr/share/blender/${PV}/share/metainfo" \
 		|| die
+
+	if declare -f _blender_src_install >/dev/null 2>&1 ; then
+		_blender_src_install
+	fi
 }
 
 blender_pkg_postinst() {
@@ -1146,17 +1150,8 @@ einfo "Edit > Preferences > System > Cycles Render Devices > HIP > HIP RT"
 einfo
 	fi
 
-	if use rocm ; then
-	#
-	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default to avoid
-	# mixing OpenMP, mixing LLVM libs, or security reasons.  One or the
-	# other may be behind in security updates.
-	#
-	# Tell the dynamic loader where to find the HIP RT library when dlopen
-	# is called.
-	#
-		fix-rpath_repair_append "/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib"
-		fix-rpath_repair_append "/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib/llvm/lib"
+	if declare -f _blender_pkg_postinst >/dev/null 2>&1 ; then
+		_blender_pkg_postinst
 	fi
 }
 
@@ -1181,6 +1176,10 @@ ewarn
 		if [[ -e "${EROOT}/usr/bin/cycles_server_headless" ]] ; then
 			rm -rf "${EROOT}/usr/bin/cycles_server_headless" || die
 		fi
+	fi
+
+	if declare -f _blender_pkg_postrm >/dev/null 2>&1 ; then
+		_blender_pkg_postrm
 	fi
 }
 
