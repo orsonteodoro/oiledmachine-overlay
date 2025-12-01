@@ -266,7 +266,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
 +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_30
+ebuild_revision_31
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
@@ -1725,14 +1725,14 @@ _blender_src_install() {
 	# Tell the dynamic loader where to find the HIP RT library when dlopen
 	# is called.
 	#
-		fix-rpath_repair_append "/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib"
-		fix-rpath_repair_append "/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib/llvm/lib"
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib"
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib/llvm/lib"
 	fi
 
 	if use ffmpeg ; then
 	# The rpath gets dropped when it should not.
 		local ffmpeg_slot=$(ffmpeg_get_slot)
-		fix-rpath_repair_append "/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
 	fi
 }
 
