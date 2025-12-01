@@ -23,6 +23,19 @@ BDEPEND="
 	dev-util/patchelf
 "
 
+# @ECLASS_VARIABLE:  RPATH_DLOPEN
+# @DESCRIPTION:
+# Prevent removal of rpath if library is used through dlopen()
+# 0 - Allow pruning/simplication (default)
+# 1 - Disallow pruning/simplication
+
+# @ECLASS_VARIABLE:  RPATH_NO_PRUNE
+# @DESCRIPTION:
+# Prevent removal of rpath if library is used through dlopen()
+# Valid values:
+# 0 - Allow pruning/simplication (default)
+# 1 - Disallow pruning/simplication
+
 # @ECLASS_VARIABLE:  RPATH_LINK_MODE
 # @DESCRIPTION:
 # Controls style of linking.
@@ -89,9 +102,17 @@ eerror "RPATH_APPEND must be initialized before calling fix-rpath_src_configure(
 	local x
 	for x in "${RPATH_APPEND[@]}" ; do
 		if [[ ${RPATH_LINK_MODE:-"indirect"} == "indirect" ]] ; then
-			append-ldflags "-Wl,-L${x}"
-			append-ldflags "-Wl,-rpath,${x}"
+			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
+				append-ldflags "-Wl,--disable-new-dtags,-L${x}"
+				append-ldflags "-Wl,--disable-new-dtags,-rpath,${x}"
+			else
+				append-ldflags "-Wl,-L${x}"
+				append-ldflags "-Wl,-rpath,${x}"
+			fi
 		else
+			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
+				append-ldflags "--disable-new-dtags"
+			fi
 			append-ldflags "-L${x}"
 			append-ldflags "--rpath=${x}"
 		fi
@@ -152,9 +173,17 @@ fix-rpath_append() {
 	else
 		local x="${1}"
 		if [[ ${RPATH_LINK_MODE:-"indirect"} == "indirect" ]] ; then
-			append-ldflags "-Wl,-L${x}"
-			append-ldflags "-Wl,-rpath,${x}"
+			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
+				append-ldflags "-Wl,--disable-new-dtags,-L${x}"
+				append-ldflags "-Wl,--disable-new-dtags,-rpath,${x}"
+			else
+				append-ldflags "-Wl,-L${x}"
+				append-ldflags "-Wl,-rpath,${x}"
+			fi
 		else
+			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
+				append-ldflags "--disable-new-dtags"
+			fi
 			append-ldflags "-L${x}"
 			append-ldflags "--rpath=${x}"
 		fi

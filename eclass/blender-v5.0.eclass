@@ -1482,8 +1482,15 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 			append-ldflags "-Wl,-latomic"
 		fi
 
-	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default.
-	# Tell the dynamic loader where to find the HIP RT library when dlopen is called.
+	#
+	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default to avoid
+	# mixing OpenMP, mixing LLVM libs, or security reasons.  One or the
+	# other may be behind in security updates.
+	#
+	# Tell the dynamic loader where to find the HIP RT library when dlopen
+	# is called.
+	#
+		export RPATH_DLOPEN=1
 		fix-rpath_append "/opt/rocm/lib"
 		fix-rpath_append "/opt/rocm/lib/llvm/lib"
 	fi
