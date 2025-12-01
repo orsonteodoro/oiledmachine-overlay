@@ -205,7 +205,8 @@ ewarn "Missing ${f}"
 # @FUNCTION:  fix-rpath_repair_append
 # @DESCRIPTION:
 # Add RPATHs to all executables or shared libs one at a time.
-# It is easy but inefficient.  Reduce search space to optimize adding rpath.
+# It is easy but inefficient.  Reduce the search space to reduce the number of
+# useless files to inspect.
 #
 # Example:
 #
