@@ -125,7 +125,7 @@ BDEPEND="
 	dev-util/premake:5
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.3_p20240717-install-paths.patch"
+	"${FILESDIR}/${PN}-2.5_p20250327-install-paths.patch"
 	"${FILESDIR}/${PN}-2.3_p20240717-bakekernel.patch"
 )
 DOCS=( "README.md" )

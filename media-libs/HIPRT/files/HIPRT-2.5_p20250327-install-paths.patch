@@ -1,0 +1,23 @@
+diff '--color=auto' -urp HIPRT-4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506.orig/CMakeLists.txt HIPRT-4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506/CMakeLists.txt
+--- HIPRT-4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506.orig/CMakeLists.txt	2025-03-27 14:47:34.000000000 -0700
++++ HIPRT-4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506/CMakeLists.txt	2025-11-30 16:44:37.990923857 -0800
+@@ -567,7 +567,7 @@ target_sources(${HIPRT_NAME} PRIVATE ${h
+ # install script
+ #
+ 
+-install(TARGETS ${HIPRT_NAME} DESTINATION bin)
++install(TARGETS ${HIPRT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+ 
+ # add header files
+ file(GLOB HIPRT_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/hiprt/*.h")
+@@ -587,7 +587,7 @@ install(FILES ${HIPRT_ORO_HEADERS}
+ # add hipfb files
+ if(PRECOMPILE)
+ 	install(FILES ${KERNEL_HIPRT_COMP} ${KERNEL_OROCHI_COMP}
+-			DESTINATION bin)
++			DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+ # Baked headers.
+Only in HIPRT-4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506: CMakeLists.txt.orig
+Only in HIPRT-4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506: CMakeLists.txt.rej
