@@ -3,6 +3,7 @@
 
 EAPI=8
 
+AMDOCL_VER="2.1" # AMDOCL_LIB_VERSION_MAJOR.AMDOCL_LIB_VERSION_MINOR
 CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
@@ -187,8 +188,8 @@ src_install() {
 	exeinto "/opt/rocm/${libdir}"
 	insinto "/opt/rocm/${libdir}"
 	doins "opencl/amdocl/libamdocl64.so"
-	newexe "opencl/amdocl/libamdocl64.so." "libamdocl64.so.2.1.${PV/./0}"
-	dosym "libamdocl64.so.2.1.${PV/./0}" "/opt/rocm/${libdir}/libamdocl64.so.2"
+	newexe "opencl/amdocl/libamdocl64.so." "libamdocl64.so.${AMDOCL_VER}.${PV/./0}"
+	dosym "libamdocl64.so.${AMDOCL_VER}.${PV/./0}" "/opt/rocm/${libdir}/libamdocl64.so.${AMDOCL_VER.*}"
 	doexe "opencl/tools/cltrace/libcltrace.so"
 	# TODO symlinks:
 	# /opt/rocm/etc/OpenCL/vendors/amdocl64.icd -> /etc/OpenCL/vendors/amdocl64.icd
