@@ -54,7 +54,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug test
-ebuild_revision_9
+ebuild_revision_10
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 #	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
@@ -183,10 +183,11 @@ src_install() {
 	insinto "/opt/rocm/etc/OpenCL/vendors"
 	doins "config/amdocl64.icd"
 	cd "${BUILD_DIR}" || die
+	exeinto "/opt/rocm/$(rocm_get_libdir)"
 	insinto "/opt/rocm/$(rocm_get_libdir)"
 	doins "opencl/amdocl/libamdocl64.so"
-	doins "opencl/amdocl/libamdocl64.so.2"
-	doins "opencl/tools/cltrace/libcltrace.so"
+	newexe "opencl/amdocl/libamdocl64.so.2." "libamdocl64.so.2"
+	doexe "opencl/tools/cltrace/libcltrace.so"
 	# TODO symlinks:
 	# /opt/rocm/etc/OpenCL/vendors/amdocl64.icd -> /etc/OpenCL/vendors/amdocl64.icd
 	# /opt/rocm/$(rocm_get_libdir)/libamdocl64.so /usr/$(get_libdir)/libamdocl64.so
