@@ -1337,11 +1337,9 @@ eerror "  6.4"
 eerror
 			die
 		fi
-		export HIP_CLANG_DISABLE_CCACHE=1
+		append-ldflags "-Wl,-latomic"
 		rocm_pkg_setup
 
-		# Force HIP-Clang
-		export PATH="/opt/rocm/lib/llvm:$PATH"
 		"${CC}" --version
 	#else
 		# See blender_pkg_setup for llvm_pkg_setup
