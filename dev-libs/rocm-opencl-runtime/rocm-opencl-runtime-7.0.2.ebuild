@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 LLVM_SLOT=19
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -14,20 +14,22 @@ GCC_COMPAT=(
 
 inherit check-compiler-switch cmake edo flag-o-matic libstdcxx-slot rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_CLR_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCclr"
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/clr-rocm-${PV}/opencl"
+	#S="${WORKDIR}/clr-rocm-${PV}/opencl"
+	S="${WORKDIR}/clr-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCm-Developer-Tools/clr/archive/refs/tags/rocm-${PV}.tar.gz
 	-> roc-clr-${PV}.tar.gz
 	"
 fi
 CLR_S="${WORKDIR}/clr-rocm-${PV}"
+OPENCL_S="${WORKDIR}/clr-rocm-${PV}/opencl"
 ROCCLR_S="${WORKDIR}/clr-rocm-${PV}/rocclr"
 
 DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
@@ -52,7 +54,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug test
-ebuild_revision_8
+ebuild_revision_9
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 #	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
@@ -98,7 +100,7 @@ pkg_setup() {
 }
 
 src_unpack () {
-	if [[ ${PV} == "9999" ]]; then
+	if [[ "${PV}" == "9999" ]]; then
 		git-r3_fetch
 		git-r3_checkout
 		git-r3_fetch "${EGIT_CLR_REPO_URI}"
@@ -108,10 +110,12 @@ src_unpack () {
 	fi
 }
 src_prepare() {
-	pushd "${ROCCLR_S}" || die
-		eapply ${ROCCLR_PATCHES[@]}
-	popd || die
-	eapply ${OCL_PATCHES[@]}
+	pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
+		eapply "${ROCCLR_PATCHES[@]}"
+	popd >/dev/null 2>&1 || die
+	pushd "${OPENCL_S}" >/dev/null 2>&1 || die
+		eapply "${OCL_PATCHES[@]}"
+	popd >/dev/null 2>&1 || die
 	cmake_src_prepare
 
 	rocm_src_prepare
@@ -142,15 +146,16 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #
 # https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/issues/120
 #
-	append-cflags -fcommon
+	append-cflags "-fcommon"
 
-	replace-flags -O0 -O1
+	replace-flags "-O0" "-O1"
 	local mycmakeargs=(
 		-DAMD_OPENCL_PATH="${S}"
 		-DBUILD_TESTS=$(usex test ON OFF)
+		-DCLR_BUILD_OCL=ON
 		-DCLR_PATH="${CLR_S}"
 		-DEMU_ENV=ON
-		-DBUILD_ICD=OFF
+		-DBUILD_ICD=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DROCCLR_PATH="${ROCCLR_S}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
@@ -174,12 +179,14 @@ src_compile() {
 }
 
 src_install() {
+	cd "${OPENCL_S}" || die
 	insinto "/opt/rocm/etc/OpenCL/vendors"
 	doins "config/amdocl64.icd"
 	cd "${BUILD_DIR}" || die
 	insinto "/opt/rocm/$(rocm_get_libdir)"
-	doins "amdocl/libamdocl64.so"
-	doins "tools/cltrace/libcltrace.so"
+	doins "opencl/amdocl/libamdocl64.so"
+	doins "opencl/amdocl/libamdocl64.so.2"
+	doins "opencl/tools/cltrace/libcltrace.so"
 	# TODO symlinks:
 	# /opt/rocm/etc/OpenCL/vendors/amdocl64.icd -> /etc/OpenCL/vendors/amdocl64.icd
 	# /opt/rocm/$(rocm_get_libdir)/libamdocl64.so /usr/$(get_libdir)/libamdocl64.so
