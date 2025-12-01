@@ -229,9 +229,9 @@ fix-rpath_repair_append() {
 	for x in "${L[@]}" ; do
 		[[ -L "${x}" ]] && continue
 		if file "${x}" | grep -q -e "ELF.*executable" ; then
-			edo patchelf --add-rpath "${rpath}" "${f}"
+			edo patchelf --add-rpath "${rpath}" "${x}"
 		elif file "${x}" | grep -q -e "ELF.*shared object" ; then
-			edo patchelf --add-rpath "${rpath}" "${f}"
+			edo patchelf --add-rpath "${rpath}" "${x}"
 		fi
 	done
 }
