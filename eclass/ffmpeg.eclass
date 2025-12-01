@@ -199,6 +199,7 @@ ffmpeg_get_slot() {
 			break
 		fi
 	done
+	echo "${_FFMPEG_SLOT}"
 }
 
 # @FUNCTION:  ffmpeg_get_major_version

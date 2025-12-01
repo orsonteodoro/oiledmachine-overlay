@@ -73,7 +73,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 cuda rocm rccl roctracer
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
