@@ -206,7 +206,7 @@ ewarn "Missing ${f}"
 # @DESCRIPTION:
 # Add RPATHs to all executables or shared libs one at a time.
 # It is easy but inefficient.  Reduce the search space to reduce the number of
-# useless files to inspect.
+# useless files to inspect and speed up completion time.
 #
 # Example:
 #
