@@ -1220,7 +1220,6 @@ BDEPEND+="
 	dev-cpp/yaml-cpp:=
 	>=dev-build/meson-0.63.0
 	>=dev-util/vulkan-headers-${VULKAN_PV}
-	dev-util/patchelf
 	virtual/pkgconfig
 	asan? (
 		|| (
@@ -1348,6 +1347,11 @@ eerror
 			append-ldflags "-Wl,-latomic"
 		fi
 		rocm_pkg_setup
+
+	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default.
+	# Tell the dynamic loader where to find the HIP RT library when dlopen is called.
+		fix-rpath "/opt/rocm/lib"
+		fix-rpath "/opt/rocm/lib/llvm/lib"
 
 		"${CC}" --version
 	#else
@@ -1483,9 +1487,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	cython_python_configure
 
 	if has "materialx" ${IUSE_EFFECTIVE} use materialx ; then
-		append-ldflags \
-			"-Wl,-L/usr/lib/materialx/$(get_libdir)" \
-			"-Wl,-rpath,/usr/lib/materialx/$(get_libdir)"
+		fix-rpath_append "/usr/lib/materialx/$(get_libdir)"
 	fi
 
 	ffmpeg_src_configure

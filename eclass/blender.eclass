@@ -28,7 +28,7 @@ LTS_VERSIONS=(
 )
 
 inherit cflags-hardened check-compiler-switch cuda check-reqs cmake cython dhms
-inherit flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
+inherit fix-rpath flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg optfeature
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
