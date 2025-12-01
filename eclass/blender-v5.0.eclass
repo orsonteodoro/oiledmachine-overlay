@@ -265,7 +265,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm
 +rubberband -sdl +sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_27
+ebuild_revision_28
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
@@ -1481,18 +1481,6 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 			filter-flags "-Wl,--as-needed"
 			append-ldflags "-Wl,-latomic"
 		fi
-
-	#
-	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default to avoid
-	# mixing OpenMP, mixing LLVM libs, or security reasons.  One or the
-	# other may be behind in security updates.
-	#
-	# Tell the dynamic loader where to find the HIP RT library when dlopen
-	# is called.
-	#
-		export RPATH_DLOPEN=1
-		fix-rpath_append "/opt/rocm/lib"
-		fix-rpath_append "/opt/rocm/lib/llvm/lib"
 	fi
 
 	if has "materialx" ${IUSE_EFFECTIVE} use materialx ; then

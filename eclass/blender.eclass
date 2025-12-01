@@ -1145,6 +1145,19 @@ einfo "To enable HIP RT which is default off, go to"
 einfo "Edit > Preferences > System > Cycles Render Devices > HIP > HIP RT"
 einfo
 	fi
+
+	if use rocm ; then
+	#
+	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default to avoid
+	# mixing OpenMP, mixing LLVM libs, or security reasons.  One or the
+	# other may be behind in security updates.
+	#
+	# Tell the dynamic loader where to find the HIP RT library when dlopen
+	# is called.
+	#
+		fix-rpath_repair_append "/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib"
+		fix-rpath_repair_append "/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib/llvm/lib"
+	fi
 }
 
 blender_pkg_postrm() {

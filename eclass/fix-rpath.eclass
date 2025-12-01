@@ -23,19 +23,6 @@ BDEPEND="
 	dev-util/patchelf
 "
 
-# @ECLASS_VARIABLE:  RPATH_DLOPEN
-# @DESCRIPTION:
-# Prevent removal of rpath if library is used through dlopen()
-# 0 - Allow pruning/simplication (default)
-# 1 - Disallow pruning/simplication
-
-# @ECLASS_VARIABLE:  RPATH_NO_PRUNE
-# @DESCRIPTION:
-# Prevent removal of rpath if library is used through dlopen()
-# Valid values:
-# 0 - Allow pruning/simplication (default)
-# 1 - Disallow pruning/simplication
-
 # @ECLASS_VARIABLE:  RPATH_LINK_MODE
 # @DESCRIPTION:
 # Controls style of linking.
@@ -102,17 +89,9 @@ eerror "RPATH_APPEND must be initialized before calling fix-rpath_src_configure(
 	local x
 	for x in "${RPATH_APPEND[@]}" ; do
 		if [[ ${RPATH_LINK_MODE:-"indirect"} == "indirect" ]] ; then
-			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
-				append-ldflags "-Wl,--disable-new-dtags,-L${x}"
-				append-ldflags "-Wl,--disable-new-dtags,-rpath,${x}"
-			else
-				append-ldflags "-Wl,-L${x}"
-				append-ldflags "-Wl,-rpath,${x}"
-			fi
+			append-ldflags "-Wl,-L${x}"
+			append-ldflags "-Wl,-rpath,${x}"
 		else
-			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
-				append-ldflags "--disable-new-dtags"
-			fi
 			append-ldflags "-L${x}"
 			append-ldflags "--rpath=${x}"
 		fi
@@ -173,17 +152,9 @@ fix-rpath_append() {
 	else
 		local x="${1}"
 		if [[ ${RPATH_LINK_MODE:-"indirect"} == "indirect" ]] ; then
-			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
-				append-ldflags "-Wl,--disable-new-dtags,-L${x}"
-				append-ldflags "-Wl,--disable-new-dtags,-rpath,${x}"
-			else
-				append-ldflags "-Wl,-L${x}"
-				append-ldflags "-Wl,-rpath,${x}"
-			fi
+			append-ldflags "-Wl,-L${x}"
+			append-ldflags "-Wl,-rpath,${x}"
 		else
-			if [[ "${RPATH_DLOPEN:-0}" == "1" || "${RPATH_NO_PRUNE:-0}" == "1" ]] ; then
-				append-ldflags "--disable-new-dtags"
-			fi
 			append-ldflags "-L${x}"
 			append-ldflags "--rpath=${x}"
 		fi
@@ -228,6 +199,40 @@ ewarn "Missing ${f}"
 		for y in "${_paths[@]}" ; do
 			edo patchelf --add-rpath "${y}" "${f}"
 		done
+	done
+}
+
+# @FUNCTION:  fix-rpath_repair_append
+# @DESCRIPTION:
+# Add RPATHs to all executables or shared libs one at a time.
+# It is easy but inefficient.  Reduce search space to optimize adding rpath.
+#
+# Example:
+#
+# inherit cmake fix-rpath
+#
+# src_install() {
+#       cmake_src_install
+#	fix-rpath_repair_append "${ED}/usr/$(get_libdir)" "/usr/$(get_libdir)/eog"
+#	fix-rpath_repair_append "${ED}/usr/$(get_libdir)" "/usr/lib/grpc/${PROTOBUF_SLOT}/$(get_libdir)"
+# }
+#
+fix-rpath_repair_append() {
+	local root="${1}"
+	local rpath="${2}"
+	IFS=$'\n'
+	local L=(
+		$(find "${root}" -executable -type f)
+	)
+	IFS=$' \t\n'
+	local x
+	for x in "${L[@]}" ; do
+		[[ -L "${x}" ]] && continue
+		if file "${x}" | grep -q -e "ELF.*executable" ; then
+			edo patchelf --add-rpath "${rpath}" "${f}"
+		elif file "${x}" | grep -q -e "ELF.*shared object" ; then
+			edo patchelf --add-rpath "${rpath}" "${f}"
+		fi
 	done
 }
 
