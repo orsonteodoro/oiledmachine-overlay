@@ -44,8 +44,8 @@ LICENSE="
 	custom
 	MIT
 "
-# all-rights-reserved MIT - ./clr-rocm-6.1.2/CMakeLists.txt
-# custom - ./clr-rocm-6.1.2/opencl/khronos/headers/opencl2.2/LICENSE.txt
+# all-rights-reserved MIT - ./clr-rocm-6.4.4/CMakeLists.txt
+# custom - ./clr-rocm-6.4.4/opencl/khronos/headers/opencl2.2/LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
