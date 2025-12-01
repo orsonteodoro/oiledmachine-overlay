@@ -1329,7 +1329,7 @@ ewarn "Using LLVM ${x}"
 			export ROCM_SLOT="6.4"
 			export ROCM_VERSION="${HIP_6_4_VERSION}"
 		else
-# See https://github.com/blender/blender/blob/v5.0.0/build_files/config/pipeline_config.yaml
+	# See https://github.com/blender/blender/blob/v5.0.0/build_files/config/pipeline_config.yaml
 eerror
 eerror "Supported ROCm version(s):"
 eerror
@@ -1337,7 +1337,14 @@ eerror "  6.4"
 eerror
 			die
 		fi
-		append-ldflags "-Wl,-latomic"
+		if eselect profile show | grep "llvm" ; then
+	# Skip for libc++ based systems
+			:
+		else
+	# Apply for libstdc++ based systems
+			filter-flags "-Wl,--as-needed"
+			append-ldflags "-Wl,-latomic"
+		fi
 		rocm_pkg_setup
 
 		"${CC}" --version
