@@ -508,15 +508,15 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	replace-flags '-O0' '-O1'
+	replace-flags "-O0" "-O1"
 
 # Fixes:
 # ld.bfd: duplicate version tag `VERS1.0'
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=lld
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
 	strip-unsupported-flags # Filter LDFLAGS
 
-	append-flags -I"/usr/$(get_libdir)/libffi/include"
+	append-flags "-I/usr/$(get_libdir)/libffi/include"
 
 # Fix
 # /usr/bin/python3.12: No module named pip
