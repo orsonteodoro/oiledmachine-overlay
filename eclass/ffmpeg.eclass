@@ -230,9 +230,9 @@ ffmpeg_get_fullversion() {
 	fi
 }
 
-# @FUNCTION:  ffmpeg_get_fullversion
+# @FUNCTION:  ffmpeg_get_version
 # @DESCRIPTION:
-# Gets the full version [3.4].6 of the first compatible FCFS slot.
+# Gets the version [3.4].6 of the first compatible FCFS slot.
 # The FCFS (First Come First Serve) is the earliest or top most FFMPEG_COMPAT_SLOTS installed.
 ffmpeg_get_version() {
 	local slot=$(ffmpeg_get_slot)
