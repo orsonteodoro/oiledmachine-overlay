@@ -35,7 +35,7 @@ DOCS_DIR="docs"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_12" )
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
@@ -253,7 +253,8 @@ use_hipblaslt() {
 			if has_version ">=sci-libs/hipBLASLt-${PV}:${SLOT}" ; then
 				found=1
 			else
-ewarn "Emerge sci-libs/hipBLASLt:${SLOT}[amdgpu_targets_${x}] then re-emerge ${CATEGORY}/${PN} for proper enablement."
+eerror "A bug in emerge is causing the wrong build order with deep dependencies.  Please \`emerge -1vuDN ${CATEGORY}/${PN}\` first before doing a deep build with @world or with caffe2."
+				die
 			fi
 		fi
 	done
