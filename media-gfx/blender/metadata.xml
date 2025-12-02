@@ -31,7 +31,8 @@
 
     Non LTS only supported for this overlay.
 
-    4.5.x         - Stable
+    4.5.x         - LTS
+    5.0.x         - Stable
 
     EOL (End of Life) versions are available on the overlay temporarily for
     third party plugins.  Use EOL versions at your own risk.
@@ -60,13 +61,6 @@
     default set/unset USE flags.
 
 
-    x86 users (AKA 32-bit):
-
-    You may define BLENDER_CC_ALT and BLENDER_CXX_ALT to change the compiler.
-    Using gcc may result in less optimal code when compiling Cycles.  If not
-    defined, it will fall back to clang++, then icpc.
-
-
     HIP targets:
 
     You may choose a few needed targets to speed up compile time.
@@ -76,7 +70,7 @@
       https://packages-cdn-origin.gentoo.org/useflags/amdgpu_targets_gfx906
       https://llvm.org/docs/AMDGPUUsage.html#processors
 
-    Only GCN GFX9 (aka Vega) and newer are supported by this package.
+    Only GCN GFX10 and newer are supported by this package.
 
 
     CUDA targets:
@@ -88,6 +82,30 @@
       https://en.wikipedia.org/wiki/CUDA#GPUs_supported        # sm_xy corresponds to "Compute capability (version)"
       https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#virtual-architecture-feature-list
 
+
+    Estimated performance speedup of the raytracing implementation + hardware influence:
+
+    | Implementation         | Performance speedup | Estimated frame render time [1][2]    | Estimated animation completion time [2][4] | Irritation spectrum [3]  |
+    |------------------------|---------------------|---------------------------------------|--------------------------------------------|--------------------------|
+    | Embree (CPU, SSE4)     | 1.0x (baseline)     | 3 min 5 sec                           | 12 hours 20 min                            | annoy / annoy            |
+    | Embree (CPU, AVX512)   | 1.55 - 1.80x        | 1 min 45 sec - 1 min 55 sec           | 7 hours 20 min                             | annoy / annoy            |
+    | SYCL                   | 3.5 - 5.5x          | 33 - 52 sec                           | 1 hr 52 min - 3 hr 28 min                  | annoy / satisfied        |
+    | Embree (GPU)           | 4.0 - 6.5x          | 28 - 46 sec                           | 1 hr 52 min - 3 hr 28 min                  | annoy / satisfied        |
+    | HIP RT                 | 6.5 - 9.5x          | 19 - 28 sec                           | 1 hr 16 m - 1 hr 52 min                    | satisfied / satisfied    |
+    | OptiX                  | 9.5 - 14.5x         | 12 - 19 sec                           | 48 min - 1 hr 16 min                       | satisfied / satisfied    |
+
+    [1] All times based on a single frame rendered.
+    [2] Using the BMW27 sample
+    [3] Left is the emotion for waiting for a single frame preview.
+        Right is the emotion for waiting for the complete animation.
+        Both are based on my own human emotional estimate.
+        The AI and human emotional estimate differ.
+        The AI has an over optimistic or over positive sense of emotion.
+        The animation completion time emotion is similar to building a web browser on this distro.
+        The preview emotion is similar to waiting for a page on a printer.
+        The single frame render is longer because it is designed for realism and image quality.
+    [4] A render farm is typically used in the industry.
+        Blender has options to divide the animation up.
 
   -->
   <upstream>
@@ -191,7 +209,8 @@
       Adds Draco Compression support for glTF.
 
       Details:
-https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html#compression
+
+      https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html#compression
     </flag>
     <flag name="elbeem">
       Adds surface fluid simulation to Blender using El'Beem library.
@@ -210,9 +229,10 @@ https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html#
       geometry support.
 
       Details:
-https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html#boolean-modifier
-https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect_knife.html
-https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect_boolean.html
+
+      https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html#boolean-modifier
+      https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect_knife.html
+      https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect_boolean.html
     </flag>
     <flag name="ffmpeg">
       Adds support for FFMPEG enabling internal FFMPEG codecs support and
