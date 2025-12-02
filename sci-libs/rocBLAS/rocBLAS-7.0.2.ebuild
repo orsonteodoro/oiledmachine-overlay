@@ -263,8 +263,16 @@ use_hipblaslt() {
 	local found=0
 	local x
 	for x in "${HIPBLASLT_GPUS[@]}" ; do
-		if has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} && use "amdgpu_targets_${x}" ; then
-			found=1
+		if \
+			has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} \
+				&& \
+			use "amdgpu_targets_${x}" \
+		; then
+			if has_version ">=sci-libs/hipBLASLt-${PV}:${SLOT}" ; then
+				found=1
+			else
+ewarn "Emerge sci-libs/hipBLASLt:${SLOT} then re-emerge ${CATEGORY}/${PN} for proper enablement of hipBLASLt."
+			fi
 		fi
 	done
 	if (( ${found} == 1 )) ; then
