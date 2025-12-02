@@ -98,7 +98,8 @@
     [2] Using the BMW27 sample
     [3] Left is the emotion for waiting for a single frame preview.
         Right is the emotion for waiting for the complete animation.
-        Both are based on my own human emotional estimate.
+        Both are based on my own human emotional estimate for the worst
+        case time.
         The AI and human emotional estimate differ when converting the
         completion times to the emotional equivalent for waiting.
         The AI has an overoptimistic, or overpositive, or overdramatic
