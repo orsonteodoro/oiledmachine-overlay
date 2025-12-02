@@ -64,7 +64,7 @@ FFMPEG_COMPAT_SLOTS_LTS=(
 
 # @ECLASS_VARIABLE:  FFMPEG_COMPAT_SLOTS_ALL
 # @DESCRIPTION:
-# Adds all FFmpeg slots
+# Adds all FFmpeg slots.
 FFMPEG_COMPAT_SLOTS_ALL=(
 	"60.62.62" # 8
 	"59.61.61" # 7
@@ -204,7 +204,8 @@ ffmpeg_get_slot() {
 
 # @FUNCTION:  ffmpeg_get_major_version
 # @DESCRIPTION:
-# Gets the approximage major version based on the slot.
+# Gets the major version ([3].4.6) based of the first compatible FCFS slot.
+# The FCFS (First Come First Serve) is the earliest or top most FFMPEG_COMPAT_SLOTS installed.
 ffmpeg_get_major_version() {
 	declare -A M=(
 		["56.58.58"]="4"
@@ -215,6 +216,30 @@ ffmpeg_get_major_version() {
 	)
 	local s="${1}"
 	echo ${M["${s}"]}
+}
+
+# @FUNCTION:  ffmpeg_get_fullversion
+# @DESCRIPTION:
+# Gets the full version [3.4.6] of the first compatible FCFS slot.
+# The FCFS (First Come First Serve) is the earliest or top most FFMPEG_COMPAT_SLOTS installed.
+ffmpeg_get_fullversion() {
+	local slot=$(ffmpeg_get_slot)
+	if [[ -n "${slot}" ]] ; then
+		local pv=$(best_version "media-video/ffmpeg:${slot}" | sed -e "s|media-video/ffmpeg-||g")
+		echo $(ver_cut "1-3" "${pv}")
+	fi
+}
+
+# @FUNCTION:  ffmpeg_get_fullversion
+# @DESCRIPTION:
+# Gets the full version [3.4].6 of the first compatible FCFS slot.
+# The FCFS (First Come First Serve) is the earliest or top most FFMPEG_COMPAT_SLOTS installed.
+ffmpeg_get_version() {
+	local slot=$(ffmpeg_get_slot)
+	if [[ -n "${slot}" ]] ; then
+		local pv=$(best_version "media-video/ffmpeg:${slot}" | sed -e "s|media-video/ffmpeg-||g")
+		echo $(ver_cut "1-2" "${pv}")
+	fi
 }
 
 fi
