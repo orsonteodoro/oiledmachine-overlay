@@ -14,18 +14,14 @@ BOOST_PV="1.86.0" # Aug 7, 2024
 VULKAN_PV="1.3.275.0"
 
 # Stable
-GLSLANG_COMMIT_1="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
 GLSLANG_COMMIT_2="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
-GLSLANG_COMMIT_3="86ff4bca1ddc7e2262f119c16e7228d0efb67610" # May 20, 2024
-LIBREALESRGAN_NCNN_VULKAN="cd68df6f98f036fcc9e7d63597ea6faa427c2d2d" # Oct 28, 2024
-LIBRIFE_NCNN_VULKAN_COMMIT="f2edda49a5fd817a7137509e54e70d2e30d9b684" # Oct 28, 2024
-NCNN_COMMIT_1="6125c9f47cd14b589de0521350668cf9d3d37e3c" # Apr 21, 2022
-NCNN_COMMIT_2="9b5f6a39b4a4962accaad58caa771487f61f732a" # Sep 24, 2024
-NCNN_COMMIT_3="b4ba207c18d3103d6df890c0e3a97b469b196b26" # Jul 28, 2022
-PYBIND11_COMMIT_1="70a58c577eaf067748c2ec31bfd0b0a614cffba6" # Nov 22, 2021
+LIBREALCUGAN_NCNN_VULKAN_COMMIT="d9c5a7eb4c8475af6110496c27c3d1f702f9b96a" # Jan 9, 2025
+LIBREALESRGAN_NCNN_VULKAN_COMMIT="c1f255524f79566c40866b38e5e65b40adf77eee" # Jan 9, 2025
+LIBRIFE_NCNN_VULKAN_COMMIT="3f7bcb44f38b2acda6fa5e575a6d12517ac16b94" # Jan 21, 2025
+NCNN_COMMIT_4="528589571085b673be7313a9c6e65801f150f607" # Dec 25, 2024
 PYBIND11_COMMIT_2="3e9dfa2866941655c56877882565e7577de6fc7b" # Mar 27, 2024
-SPDLOG_COMMIT="e593f6695c6065e6b345fe2862f04a519ed484e0" # Sep 23, 2024
-VIDEO2K_COMMIT="a6dfdc734328fda0f25b923e75f91fafc60d88ef" # Dec 11, 2024, 6.2.0
+SPDLOG_COMMIT="8e5613379f5140fefb0b60412fbf1f5406e7c7f8" # Nov 9, 2024
+VIDEO2K_COMMIT="a96bda9b4d79616cc6b71b94e6945146b5b4d509" # Jan 23, 2025, 6.4.0
 
 BF16_ARCHES=(
 	"armv8.4-a"
@@ -187,31 +183,25 @@ else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
-https://raw.githubusercontent.com/boostorg/boost/refs/tags/boost-1.86.0/CMakeLists.txt
+https://raw.githubusercontent.com/boostorg/boost/refs/tags/boost-${BOOST_PV}/CMakeLists.txt
 	-> boost-${BOOST_PV}-CMakeLists.txt
 https://archives.boost.io/release/${BOOST_PV}/source/boost_${BOOST_PV//./_}.tar.bz2
-https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN}.tar.gz
-	-> librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN:0:7}.tar.gz
+
+https://github.com/k4yt3x/librealcugan-ncnn-vulkan/archive/${LIBREALCUGAN_NCNN_VULKAN_COMMIT}.tar.gz
+	-> librealcugan-ncnn-vulkan-${LIBREALCUGAN_NCNN_VULKAN_COMMIT:0:7}.tar.gz
+
+https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN_COMMIT}.tar.gz
+	-> librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN_COMMIT:0:7}.tar.gz
 https://github.com/k4yt3x/librife-ncnn-vulkan/archive/${LIBRIFE_NCNN_VULKAN_COMMIT}.tar.gz
 	-> librife-ncnn-vulkan-${LIBRIFE_NCNN_VULKAN_COMMIT:0:7}.tar.gz
 https://github.com/k4yt3x/video2x/archive/${VIDEO2K_COMMIT}.tar.gz
 	-> video2x-${VIDEO2K_COMMIT:0:7}.tar.gz
-https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT_1}.tar.gz
-	-> glslang-${GLSLANG_COMMIT_1:0:7}.tar.gz
 https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT_2}.tar.gz
 	-> glslang-${GLSLANG_COMMIT_2:0:7}.tar.gz
-https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT_3}.tar.gz
-	-> glslang-${GLSLANG_COMMIT_3:0:7}.tar.gz
-https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1}.tar.gz
-	-> pybind11-${PYBIND11_COMMIT_1:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_2:0:7}.tar.gz
-https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_1}.tar.gz
-	-> ncnn-${NCNN_COMMIT_1:0:7}.tar.gz
-https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_2}.tar.gz
-	-> ncnn-${NCNN_COMMIT_2:0:7}.tar.gz
-https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_3}.tar.gz
-	-> ncnn-${NCNN_COMMIT_3:0:7}.tar.gz
+https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_4}.tar.gz
+	-> ncnn-${NCNN_COMMIT_4:0:7}.tar.gz
 https://github.com/gabime/spdlog/archive/${SPDLOG_COMMIT}.tar.gz
 	-> spdlog-${SPDLOG_COMMIT:0:7}.tar.gz
 	"
@@ -260,7 +250,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_17
+ebuild_revision_18
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -367,11 +357,11 @@ RDEPEND+="
 		dev-libs/boost:=
 	)
 	system-ncnn? (
-		>=dev-libs/ncnn-20240924[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},openmp,vulkan]
+		>=dev-libs/ncnn-20241226[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},openmp,vulkan]
 		dev-libs/ncnn:=
 	)
 	system-spdlog? (
-		>=dev-libs/spdlog-1.12.0
+		>=dev-libs/spdlog-1.15.0
 	)
 	|| (
 		media-video/ffmpeg:58.60.60[encode,libplacebo,vulkan,x264]
@@ -421,19 +411,24 @@ unpack_deps() {
 	dep_prepare_mv "${WORKDIR}/boost_${BOOST_PV//./_}" "${S}/third_party/boost"
 	cat "${DISTDIR}/boost-${BOOST_PV}-CMakeLists.txt" > "${S}/third_party/boost/CMakeLists.txt" || die
 
-	dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN}" "${S}/third_party/librealesrgan_ncnn_vulkan"
-	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn"
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn/glslang"
-	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/scnn/python/pybind11"
+	dep_prepare_mv "${WORKDIR}/librealcugan-ncnn-vulkan-${LIBREALCUGAN_NCNN_VULKAN_COMMIT}" "${S}/third_party/librealcugan_ncnn_vulkan"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_4}" "${S}/third_party/librealcugan_ncnn_vulkan/src/ncnn"
+	dep_prepare_cp "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/librealcugan_ncnn_vulkan/src/ncnn/glslang"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/librealcugan_ncnn_vulkan/src/ncnn/python/pybind11"
 
-	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_2}" "${S}/third_party/ncnn"
+	dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN_COMMIT}" "${S}/third_party/librealesrgan_ncnn_vulkan"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_4}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn/glslang"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/scnn/python/pybind11"
+
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_4}" "${S}/third_party/ncnn"
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/ncnn/glslang"
 	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/ncnn/python/pybind11"
 
 	dep_prepare_mv "${WORKDIR}/librife-ncnn-vulkan-${LIBRIFE_NCNN_VULKAN_COMMIT}" "${S}/third_party/librife_ncnn_vulkan"
-	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_3}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn"
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/glslang"
-	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/python/pybind11"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_4}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/glslang"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/python/pybind11"
 
 	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/third_party/spdlog"
 
