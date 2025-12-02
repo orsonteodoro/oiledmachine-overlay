@@ -271,7 +271,7 @@ use_hipblaslt() {
 			if has_version ">=sci-libs/hipBLASLt-${PV}:${SLOT}" ; then
 				found=1
 			else
-ewarn "Emerge sci-libs/hipBLASLt:${SLOT} then re-emerge ${CATEGORY}/${PN} for proper enablement of hipBLASLt."
+ewarn "Emerge sci-libs/hipBLASLt:${SLOT}[amdgpu_targets_${x}] then re-emerge ${CATEGORY}/${PN} for proper enablement."
 			fi
 		fi
 	done
