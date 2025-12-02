@@ -101,9 +101,12 @@
         Both are based on my own human emotional estimate.
         The AI and human emotional estimate differ.
         The AI has an over optimistic or over positive sense of emotion.
-        The animation completion time emotion is similar to building a web browser on this distro.
+        The animation completion time emotion is similar to building a web
+        browser on this distro.
         The preview emotion is similar to waiting for a page on a printer.
-        The single frame render is longer because the rendering engine is designed for realism and image quality.
+        The single frame render is longer than a video game rendering engine
+        because the editor rendering engine is designed for realism and
+        image quality.
     [4] A render farm is typically used in the industry.
         Blender has options to divide the animation up.
     [5] 2.0x means 2 times slower than OptiX.
