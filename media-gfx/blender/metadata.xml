@@ -70,7 +70,7 @@
       https://packages-cdn-origin.gentoo.org/useflags/amdgpu_targets_gfx906
       https://llvm.org/docs/AMDGPUUsage.html#processors
 
-    Only GCN GFX10 and newer are supported by this package.
+    Only GCN GFX10 and newer are supported by the editor with HIP.
 
 
     CUDA targets:
