@@ -68,7 +68,7 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
 HIPBLASLT_GPUS=(
@@ -119,7 +119,7 @@ ebuild_revision_29
 "
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -137,10 +137,18 @@ REQUIRED_USE="
 		cuda
 	)
 "
+is_gpu_allowed() {
+	local gpu="${1}"
+	local x
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
+		[[ "${x}" == "${gpu}" ]] && return 0
+	done
+	return 1
+}
 gen_hipblaslt_rdepend() {
 	local x
-	for x in ${HIPBLASLT_GPUS[@]} ; do
-		if has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} ; then
+	for x in "${HIPBLASLT_GPUS[@]}" ; do
+		if is_gpu_allowed ; then
 			echo "
 				amdgpu_targets_${x}? (
 					>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_${x}]
@@ -234,7 +242,7 @@ check_asan() {
 	)
 	local found=0
 	local x
-	for x in ${ASAN_GPUS[@]} ; do
+	for x in "${ASAN_GPUS[@]}" ; do
 		if use "amdgpu_targets_${x}" ; then
 			found=1
 		fi
@@ -249,7 +257,7 @@ ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_tar
 use_hipblaslt() {
 	local found=0
 	local x
-	for x in ${HIPBLASLT_GPUS[@]} ; do
+	for x in "${HIPBLASLT_GPUS[@]}" ; do
 		if has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} && use "amdgpu_targets_${x}" ; then
 			found=1
 		fi
