@@ -70,6 +70,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}
+	>=dev-libs/spdlog-1.15.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-qt/qttools:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},linguist,qml,widgets]
 	dev-qt/qttools:=
 	dev-qt/qtbase:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,widgets,wayland?,X?]
@@ -90,7 +91,6 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.0-system-video2x.patch"
 )
 
 gen_git_tag() {
@@ -156,7 +156,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 	ffmpeg_src_configure
 
 	local mycmakeargs=(
-		-DUSE_SYSTEM_VIDEO2X=ON
+		-DUSE_EXTERNAL_SPDLOG=ON
+		-DUSE_EXTERNAL_VIDEO2X=ON
+		-DUSE_SHARED_VIDEO2X=ON
 	)
 	cmake_src_configure
 }
