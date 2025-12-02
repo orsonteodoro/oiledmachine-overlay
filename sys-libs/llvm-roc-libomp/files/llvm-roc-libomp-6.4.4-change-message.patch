@@ -1,0 +1,11 @@
+--- a/offload/test/CMakeLists.txt.orig	2025-06-05 10:11:31.000000000 -0700
++++ b/offload/test/CMakeLists.txt	2025-12-01 22:33:48.586999077 -0800
+@@ -2,7 +2,7 @@
+ if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+    CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0.0)
+   message(STATUS "Can only test with Clang compiler in version 6.0.0 or later.")
+-  libomptarget_warning_say("The check-libomptarget target will not be available!")
++  message(WARNING "The check-libomptarget target will not be available!")
+   return()
+ endif()
+ 

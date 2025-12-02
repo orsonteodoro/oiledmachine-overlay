@@ -1,0 +1,17 @@
+--- a/offload/plugins-nextgen/common/OMPT/OmptTracing.cpp.orig	2025-12-02 11:04:20.517790367 -0800
++++ b/offload/plugins-nextgen/common/OMPT/OmptTracing.cpp	2025-12-02 11:04:22.549721301 -0800
+@@ -95,11 +95,12 @@ void llvm::omp::target::ompt::setDeviceI
+   auto DeviceIterator = Devices.find(Device);
+   if (DeviceIterator != Devices.end()) {
+     auto CurrentDeviceId = DeviceIterator->second;
+-    if (DeviceId == CurrentDeviceId)
++    if (DeviceId == CurrentDeviceId) {
+       REPORT("Tried to duplicate OMPT Device=%p (ID=%d)\n", Device, DeviceId);
+-    else
++    } else {
+       REPORT("Tried to overwrite OMPT Device=%p (ID=%d with new ID=%d)\n",
+              Device, CurrentDeviceId, DeviceId);
++    }
+     return;
+   }
+   Devices.emplace(Device, DeviceId);

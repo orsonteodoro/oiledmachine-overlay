@@ -12,7 +12,7 @@ PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
-# Cuda compatibility:
+# CUDA compatibility:
 # https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/clang/include/clang/Basic/Cuda.h
 # CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L105
 # ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-6.4.4/offload/hostexec/CMakeLists.txt#L100
@@ -79,9 +79,15 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
+LLVM_TARGETS=(
+	"AMDGPU"
+	"X86"
+)
+
 LLVM_TARGETS_CPU_COMPAT=(
 	"llvm_targets_X86"
 )
+
 LLVM_TARGETS_GPU_COMPAT=(
 	"llvm_targets_AMDGPU"
 	"llvm_targets_NVPTX"
@@ -108,6 +114,8 @@ inherit abseil-cpp check-compiler-switch cmake flag-o-matic grpc libstdcxx-slot 
 
 #KEYWORDS="~amd64" # Update is WIP
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
+S_OFFLOAD="${WORKDIR}/llvm-project-rocm-${PV}/offload"
+S_OPENMP="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
 S_DEVICELIBS="${WORKDIR}/llvm-project-rocm-${PV}/amd/device-libs"
 S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 SRC_URI="
@@ -134,16 +142,12 @@ RESTRICT="
 	strip
 "
 SLOT="0/${ROCM_SLOT}"
-LLVM_TARGETS=(
-	AMDGPU
-	X86
-)
 IUSE+="
-${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_30
+ebuild_revision_32
 "
 
 gen_cuda_required_use() {
@@ -226,6 +230,7 @@ CUDA_12_5_RDEPEND="
 	)
 "
 RDEPEND="
+	dev-libs/libffi:=
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
 	dev-libs/rocm-device-libs:=
 	>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
@@ -411,11 +416,26 @@ src_prepare() {
 	cd "${S_ROOT}" || die
 #	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
 #	eapply "${FILESDIR}/llvm-roc-libomp-6.2.0-omp-tools-includes.patch"
-	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp.h-includes.patch"
+#	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp.h-includes.patch"
 #	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-6.4.4-protobuf_install_path.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-6.4.4-change-message.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-6.4.4-fix-target-source-path.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-6.4.4-fix-OmptTracing-syntax-error.patch"
 	cd "${S}" || die
-	cmake_src_prepare
+	pushd "${S_OPENMP}" >/dev/null 2>&1 || die
+		export CMAKE_USE_DIR="${S_OPENMP}"
+		export BUILD_DIR="${S_OPENMP}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_prepare
+	popd >/dev/null 2>&1 || die
+	pushd "${S_OFFLOAD}" >/dev/null 2>&1 || die
+		export CMAKE_USE_DIR="${S_OFFLOAD}"
+		export BUILD_DIR="${S_OFFLOAD}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_prepare
+	popd >/dev/null 2>&1 || die
+	cd "${S}" || die
 
 	rocm_src_prepare
 #	if ! use llvm_targets_NVPTX ; then
@@ -431,7 +451,7 @@ src_prepare() {
 #			|| die
 #	fi
 
-	cd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+	cd "${S_ROOT}" || die
 	local prune_dirs=(
 		"bolt"
 		"clang"
@@ -458,12 +478,12 @@ src_prepare() {
 		"third-party"
 		"utils"
 	)
-	rm -rf "${prune_dirs[@]}" || die
-	mkdir -p "t"
-	mv "llvm/include/" "t" || die
-	mkdir -p "llvm" || die
-	mv "t/include" "llvm" || die
-	rm -rf t
+#	rm -rf "${prune_dirs[@]}" || die
+#	mkdir -p "t"
+#	mv "llvm/include/" "t" || die
+#	mkdir -p "llvm" || die
+#	mv "t/include" "llvm" || die
+#	rm -rf t
 }
 
 src_configure() {
@@ -515,8 +535,16 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 	experimental_targets="${experimental_targets:1}"
 	local libdir="$(rocm_get_libdir)"
+
+	local ffi_cflags=$($(tc-getPKG_CONFIG) "--cflags-only-I" "libffi")
+	local ffi_ldflags=$($(tc-getPKG_CONFIG) "--libs-only-L" "libffi")
+
 	local mycmakeargs=(
-#		-DBUILD_SHARED_LIBS=OFF
+	# Avoid configure error
+	# No SOURCES given to target: obj.omptarget.rtl.amdgpu
+	# No SOURCES given to target: obj.omptarget.rtl.host
+		-DBUILD_SHARED_LIBS=OFF
+
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_LLVM_PATH}"
@@ -536,20 +564,31 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_EXTERNAL_LIT="/usr/bin/lit"
 		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_LLVM_PATH}"
 		-DLLVM_INSTALL_UTILS=OFF
-#		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=OFF
-		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 		-DPython3_EXECUTABLE="${PYTHON}"
+
+		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
+		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
+	# Force using shared libffi
+		-DFFI_STATIC_LIBRARIES=NO
 	)
 	if use offload && has "${CHOST%%-*}" "aarch64" "powerpc64le" "x86_64" ; then
+einfo "Enabling GPU offload"
+		local plugins=""
+		use llvm_targets_AMDGPU && plugins+=";amdgpu"
+		use llvm_targets_NVPTX && plugins+=";cuda"
+		if use llvm_targets_X86 ; then
+			plugins+=";host"
+		fi
+		plugins="${plugins:1}"
 		mycmakeargs+=(
-			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
-			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_BUILD_DEVICERTL_BCLIB=ON
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex remote-offloading)
 			-DLIBOMPTARGET_OMPT_SUPPORT=$(usex ompt ON OFF)
+			-DLIBOMPTARGET_PLUGINS_TO_BUILD="${plugins}"
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_AMDGPU ; then
@@ -573,11 +612,12 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			)
 		fi
 	else
+einfo "Disabling GPU offload"
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
-			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
-			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+			-DLIBOMPTARGET_BUILD_DEVICERTL_BCLIB=OFF
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=OFF
+			-DLIBOMPTARGET_PLUGINS_TO_BUILD=""
 			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
 		)
 	fi
@@ -604,16 +644,51 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 	einfo "CONFIGURE START ${mycmakeargs[@]}"
-	cmake_src_configure
+	pushd "${S_OPENMP}" >/dev/null 2>&1 || die
+		export CMAKE_USE_DIR="${S_OPENMP}"
+		export BUILD_DIR="${S_OPENMP}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_configure
+	popd >/dev/null 2>&1 || die
+	pushd "${S_OFFLOAD}" >/dev/null 2>&1 || die
+		export CMAKE_USE_DIR="${S_OFFLOAD}"
+		export BUILD_DIR="${S_OFFLOAD}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_configure
+	popd >/dev/null 2>&1 || die
 	einfo "CONFIGURE DONE"
 }
 
 src_compile() {
-	cmake_src_compile
+	pushd "${S_OPENMP}_build" >/dev/null 2>&1 || die
+# Build /opt/rocm/lib/llvm/lib/libomp.so
+		export CMAKE_USE_DIR="${S_OPENMP}"
+		export BUILD_DIR="${S_OPENMP}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_compile
+	popd >/dev/null 2>&1 || die
+	pushd "${S_OFFLOAD}_build" >/dev/null 2>&1 || die
+# Build /opt/rocm/lib/llvm/lib/libomptarget.so.19.0git
+		export CMAKE_USE_DIR="${S_OFFLOAD}"
+		export BUILD_DIR="${S_OFFLOAD}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_compile
+	popd >/dev/null 2>&1 || die
 }
 
 src_install() {
-	cmake_src_install
+	pushd "${S_OPENMP}_build" >/dev/null 2>&1 || die
+		export CMAKE_USE_DIR="${S_OPENMP}"
+		export BUILD_DIR="${S_OPENMP}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_install
+	popd >/dev/null 2>&1 || die
+	pushd "${S_OFFLOAD}_build" >/dev/null 2>&1 || die
+		export CMAKE_USE_DIR="${S_OFFLOAD}"
+		export BUILD_DIR="${S_OFFLOAD}_build"
+		S="${CMAKE_USE_DIR}"
+		cmake_src_install
+	popd >/dev/null 2>&1 || die
 	rocm_fix_rpath
 }
 

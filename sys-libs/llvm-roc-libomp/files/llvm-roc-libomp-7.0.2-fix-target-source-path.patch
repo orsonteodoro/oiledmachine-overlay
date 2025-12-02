@@ -1,0 +1,66 @@
+--- a/offload/plugins-nextgen/amdgpu/CMakeLists.txt	2025-09-26 08:42:56.000000000 -0700
++++ b/offload/plugins-nextgen/amdgpu/CMakeLists.txt	2025-12-02 07:54:21.120791926 -0800
+@@ -32,7 +32,7 @@ endif()
+ # Create the library and add the default arguments.
+ add_target_library(omptarget.rtl.amdgpu AMDGPU)
+ 
+-target_sources(omptarget.rtl.amdgpu PRIVATE src/rtl.cpp)
++target_sources(omptarget.rtl.amdgpu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/rtl.cpp)
+ target_include_directories(omptarget.rtl.amdgpu PRIVATE
+                            ${CMAKE_CURRENT_SOURCE_DIR}/utils)
+ target_link_libraries(omptarget.rtl.amdgpu PRIVATE
+@@ -55,8 +55,8 @@ elseif(hsa-runtime64_FOUND AND NOT LIBOM
+   target_link_libraries(omptarget.rtl.amdgpu PRIVATE hsa-runtime64::hsa-runtime64 ${llvm_libs})
+ else()
+   message(STATUS "Building AMDGPU plugin for dlopened libhsa")
+-  target_include_directories(omptarget.rtl.amdgpu PRIVATE dynamic_hsa)
+-  target_sources(omptarget.rtl.amdgpu PRIVATE dynamic_hsa/hsa.cpp)
++  target_include_directories(omptarget.rtl.amdgpu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_hsa)
++  target_sources(omptarget.rtl.amdgpu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_hsa/hsa.cpp)
+   target_link_libraries(omptarget.rtl.amdgpu PRIVATE ${llvm_libs})
+ endif()
+ 
+--- a/offload/plugins-nextgen/cuda/CMakeLists.txt	2025-09-26 08:42:56.000000000 -0700
++++ b/offload/plugins-nextgen/cuda/CMakeLists.txt	2025-12-02 07:55:15.696321542 -0800
+@@ -1,7 +1,7 @@
+ # Create the library and add the default arguments.
+ add_target_library(omptarget.rtl.cuda CUDA)
+ 
+-target_sources(omptarget.rtl.cuda PRIVATE src/rtl.cpp)
++target_sources(omptarget.rtl.cuda PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/rtl.cpp)
+ 
+ find_package(CUDAToolkit QUIET)
+ if(CUDAToolkit_FOUND AND NOT "cuda" IN_LIST LIBOMPTARGET_DLOPEN_PLUGINS)
+@@ -9,8 +9,8 @@ if(CUDAToolkit_FOUND AND NOT "cuda" IN_L
+   target_link_libraries(omptarget.rtl.cuda PRIVATE CUDA::cuda_driver)
+ else()
+   message(STATUS "Building CUDA plugin for dlopened libcuda")
+-  target_include_directories(omptarget.rtl.cuda PRIVATE dynamic_cuda)
+-  target_sources(omptarget.rtl.cuda PRIVATE dynamic_cuda/cuda.cpp)
++  target_include_directories(omptarget.rtl.cuda PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_cuda)
++  target_sources(omptarget.rtl.cuda PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_cuda/cuda.cpp)
+ endif()
+ 
+ # Configure testing for the CUDA plugin. We will build tests if we could a
+--- a/offload/plugins-nextgen/host/CMakeLists.txt	2025-09-26 08:42:56.000000000 -0700
++++ b/offload/plugins-nextgen/host/CMakeLists.txt	2025-12-02 07:55:50.624102265 -0800
+@@ -12,7 +12,7 @@ endif()
+ # Create the library and add the default arguments.
+ add_target_library(omptarget.rtl.host ${machine})
+ 
+-target_sources(omptarget.rtl.host PRIVATE src/rtl.cpp)
++target_sources(omptarget.rtl.host PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/rtl.cpp)
+ 
+ if(LIBOMPTARGET_DEP_LIBFFI_FOUND)
+   message(STATUS "Building ${machine} plugin linked with libffi")
+@@ -23,8 +23,8 @@ if(LIBOMPTARGET_DEP_LIBFFI_FOUND)
+   endif()
+ else()
+   message(STATUS "Building ${machine} plugin for dlopened libffi")
+-  target_sources(omptarget.rtl.host PRIVATE dynamic_ffi/ffi.cpp)
+-  target_include_directories(omptarget.rtl.host PRIVATE dynamic_ffi)
++  target_sources(omptarget.rtl.host PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_ffi/ffi.cpp)
++  target_include_directories(omptarget.rtl.host PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_ffi)
+ endif()
+ 
+ target_include_directories(omptarget.rtl.host PRIVATE
