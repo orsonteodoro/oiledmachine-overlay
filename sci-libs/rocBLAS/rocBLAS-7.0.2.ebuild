@@ -73,24 +73,6 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
 )
 
-HIPBLASLT_GPUS=(
-	"gfx908_xnack_plus"
-	"gfx908_xnack_minus"
-	"gfx90a_xnack_plus"
-	"gfx90a_xnack_minus"
-	"gfx942"
-	"gfx942_xnack_plus"
-	"gfx950"
-	"gfx950_xnack_plus"
-	"gfx1100"
-	"gfx1101"
-	"gfx1103"
-	"gfx1150"
-	"gfx1151"
-	"gfx1200"
-	"gfx1201"
-)
-
 inherit cmake docs edo flag-o-matic multiprocessing libstdcxx-slot python-single-r1 rocm
 
 KEYWORDS="~amd64"
@@ -119,7 +101,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 asan benchmark cuda +rocm test
-ebuild_revision_29
+ebuild_revision_30
 "
 gen_rocm_required_use() {
 	local x
@@ -151,15 +133,14 @@ is_gpu_allowed() {
 }
 gen_hipblaslt_rdepend() {
 	local x
-	for x in "${HIPBLASLT_GPUS[@]}" ; do
-		if is_gpu_allowed ; then
-			echo "
-				amdgpu_targets_${x}? (
-					>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_${x}]
-					sci-libs/hipBLASLt:=
-				)
-			"
-		fi
+	for x in "${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]}" ; do
+		is_gpu_allowed "${x}" || continue
+		echo "
+			amdgpu_targets_${x}? (
+				>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_${x}]
+				sci-libs/hipBLASLt:=
+			)
+		"
 	done
 }
 RDEPEND="
@@ -262,7 +243,8 @@ ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_tar
 use_hipblaslt() {
 	local found=0
 	local x
-	for x in "${HIPBLASLT_GPUS[@]}" ; do
+	for x in "${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]}" ; do
+		is_gpu_allowed "${x}" || continue
 		if \
 			has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} \
 				&& \
