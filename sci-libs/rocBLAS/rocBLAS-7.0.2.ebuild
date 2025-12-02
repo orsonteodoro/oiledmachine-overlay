@@ -350,7 +350,7 @@ src_configure() {
 			-DTensile_LOGIC="asm_full"
 			# Prefix change: /usr -> /usr/lib/Tensile
 			-DTensile_ROOT="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages/Tensile"
-			-DTensile_TENSILE_ROOT="${ESYSROOT}/usr/lib/Tensile/usr"
+			-DTensile_TENSILE_ROOT="${ESYSROOT}/usr/lib/Tensile"
 			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}/usr/lib/Tesnile/lib/${EPYTHON}/site-packages/Tensile"
 		)
 	fi
