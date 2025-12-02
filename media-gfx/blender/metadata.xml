@@ -83,16 +83,16 @@
       https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#virtual-architecture-feature-list
 
 
-    Estimated performance speedup of the raytracing implementation + hardware influence:
+    Estimated performance impact of the raytracing implementation + hardware influence:
 
-    | Implementation         | Performance speedup | Estimated frame render time [1][2]    | Estimated animation completion time [2][4] | Irritation spectrum [3]  |
-    |------------------------|---------------------|---------------------------------------|--------------------------------------------|--------------------------|
-    | Embree (CPU, SSE4)     | 1.0x (baseline)     | 3 min 5 sec                           | 12 hours 20 min                            | annoy / annoy            |
-    | Embree (CPU, AVX512)   | 1.55 - 1.80x        | 1 min 45 sec - 1 min 55 sec           | 7 hours 20 min                             | annoy / annoy            |
-    | SYCL                   | 3.5 - 5.5x          | 33 - 52 sec                           | 1 hr 52 min - 3 hr 28 min                  | annoy / satisfied        |
-    | Embree (GPU)           | 4.0 - 6.5x          | 28 - 46 sec                           | 1 hr 52 min - 3 hr 28 min                  | annoy / satisfied        |
-    | HIP RT                 | 6.5 - 9.5x          | 19 - 28 sec                           | 1 hr 16 m - 1 hr 52 min                    | satisfied / satisfied    |
-    | OptiX                  | 9.5 - 14.5x         | 12 - 19 sec                           | 48 min - 1 hr 16 min                       | satisfied / satisfied    |
+    | Implementation         | Performance impact [5] | Estimated frame render time [1][2]    | Estimated animation completion time [2][4] | Irritation spectrum [3]  |
+    |------------------------|------------------------|---------------------------------------|--------------------------------------------|--------------------------|
+    | Embree (CPU, SSE4)     | 7.7-10x                | 3 min 5 sec                           | 12 hours 20 min                            | annoy / annoy            |
+    | Embree (CPU, AVX512)   | 4.5x-5.6x              | 1 min 45 sec - 1 min 55 sec           | 7 hours 20 min                             | annoy / annoy            |
+    | SYCL                   | 2.17-3.03x             | 33 - 52 sec                           | 1 hr 52 min - 3 hr 28 min                  | annoy / satisfied        |
+    | Embree (GPU)           | 1.85-2.44x             | 28 - 46 sec                           | 1 hr 52 min - 3 hr 28 min                  | annoy / satisfied        |
+    | HIP RT                 | 1.27-1.47x             | 19 - 28 sec                           | 1 hr 16 m - 1 hr 52 min                    | satisfied / satisfied    |
+    | OptiX                  | 1.00x (baseline)       | 12 - 19 sec                           | 48 min - 1 hr 16 min                       | satisfied / satisfied    |
 
     [1] All times based on a single frame rendered.
     [2] Using the BMW27 sample
@@ -106,6 +106,8 @@
         The single frame render is longer because the rendering engine is designed for realism and image quality.
     [4] A render farm is typically used in the industry.
         Blender has options to divide the animation up.
+    [5] 2.0x means 2 times slower than OptiX.
+        1.47x means the worst case performance is 1.47 times slower than OptiX.
 
   -->
   <upstream>
