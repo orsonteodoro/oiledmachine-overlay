@@ -6,26 +6,29 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
 )
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17 # clang (17), llvm (17), compiler-rt-sanitizers (17), mlir (17), lld (17)
 LLVM_SLOT=19
 LLVM_TARGETS=(
-	AMDGPU
-	NVPTX
-	X86
+	"AMDGPU"
+	"NVPTX"
+	"X86"
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 SANITIZER_FLAGS=(
-	cfi
+	"cfi"
 )
 
 inherit check-compiler-switch cmake dhms flag-o-matic libstdcxx-slot rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
+S_AMDLLVM="${WORKDIR}/llvm-project-rocm-${PV}/clang/tools/amdllvm"
+S_LLVM="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
+S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
@@ -94,13 +97,8 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
-bolt -mlir profile +runtime
-ebuild_revision_35
-"
-REQUIRED_USE="
-	cfi? (
-		runtime
-	)
+bolt -mlir profile
+ebuild_revision_37
 "
 RDEPEND="
 	dev-libs/libxml2
@@ -127,7 +125,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+	pushd "${S_ROOT}" >/dev/null 2>&1 || die
 # FIXES:
 # ld.bfd: tools/llvm-split/CMakeFiles/llvm-split.dir/llvm-split.cpp.o: undefined reference to symbol '_ZN4llvm6TripleC1ERKNS_5TwineE'
 # ld.bfd: /var/tmp/portage/sys-devel/llvm-roc-6.2.4/work/llvm-project-rocm-6.2.4/llvm_build/./lib/libLLVMTargetParser.so.18git: error adding symbols: DSO missing from command line
@@ -137,8 +135,13 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-6.4.4-cuda-path.patch"
 	popd >/dev/null 2>&1 || die
 
+	cd "${S_LLVM}" || die
+	export CMAKE_USE_DIR="${S_LLVM}"
+	export BUILD_DIR="${S_LLVM}_build"
+	S="${CMAKE_USE_DIR}"
 	cmake_src_prepare
-	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
+
+	if has "bolt" ${IUSE_EFFECTIVE} && use bolt ; then
 		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
 			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v3-bolt_rt-RuntimeLibrary.cpp-path.patch"
@@ -191,21 +194,21 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 # Avoid:
 #collect2: fatal error: cannot find 'ld'
 #compilation terminated.
-	append-ldflags -fuse-ld=bfd
+	append-ldflags "-fuse-ld=bfd"
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
-	replace-flags '-O*' '-O2'
+	replace-flags "-O*" "-O2"
 
 	# Reduce systemwide vulnerability backlog
-	filter-flags '-flto*'
+	filter-flags "-flto*"
 
 	# For PGO
 	if tc-is-gcc ; then
 # The error is not a problem for 5.7.0.
 # error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
 # The PGO profiles are isolated.  The Code is the same.
-		append-flags -Wno-error=coverage-mismatch
+		append-flags "-Wno-error=coverage-mismatch"
 	fi
 
 	strip-unsupported-flags
@@ -216,16 +219,16 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
 
-	PROJECTS="llvm;clang;lld"
-	if use runtime ; then
-		PROJECTS+=";compiler-rt"
-	fi
-	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
+	PROJECTS="llvm;clang;clang-tools-extra;lld"
+	if has "bolt" ${IUSE_EFFECTIVE} && use bolt ; then
 		PROJECTS+=";bolt"
 	fi
 	if use mlir ; then
 		PROJECTS+=";mlir"
 	fi
+
+	# libcxx is required for amdclang
+	RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi"
 
 	local flag
 	local want_sanitizer="OFF"
@@ -239,6 +242,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
+		-DCLANG_ENABLE_AMDCLANG=ON
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
@@ -251,20 +255,30 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
 		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
+		-DLLVM_ENABLE_RUNTIMES="${RUNTIMES}"
 		-DLLVM_ENABLE_SPHINX=NO
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=ON # OFF for mlir, ON for lld+scudo
+		-DLLVM_EXTERNAL_PROJECTS="amdllvm"
 		-DLLVM_INSTALL_UTILS=ON
-		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
+		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 	)
+	cd "${S_LLVM}" || die
+	export CMAKE_USE_DIR="${S_LLVM}"
+	export BUILD_DIR="${S_LLVM}_build"
+	S="${CMAKE_USE_DIR}"
 	rocm_src_configure
 }
 
 _src_compile() {
+	cd "${S_LLVM}_build" || die
+	export CMAKE_USE_DIR="${S_LLVM}"
+	export BUILD_DIR="${S_LLVM}_build"
+	S="${CMAKE_USE_DIR}"
 	# mlir needs LLVMDemangle, LLVMSupport, LLVMTableGen
 	cmake_src_compile \
 		all \
@@ -280,6 +294,10 @@ src_compile() {
 }
 
 _src_install() {
+	cd "${S_LLVM}_build" || die
+	export CMAKE_USE_DIR="${S_LLVM}"
+	export BUILD_DIR="${S_LLVM}_build"
+	S="${CMAKE_USE_DIR}"
 	DESTDIR="${D}" \
 	cmake_src_install \
 		install-LLVMDemangle \
