@@ -241,6 +241,11 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	local libdir=$(rocm_get_libdir)
 	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
+		mycmakeargs+=(
+			-DLIBUNWIND_ENABLE_SHARED=ON # This default ON causes the error.
+			-DLIBUNWIND_ENABLE_ASSERTIONS=ON
+		)
+	else
 # Avoid check:
 #CMake Error at /var/tmp/portage/sys-devel/llvm-roc-6.4.4/work/llvm-project-rocm-6.4.4/libunwind/src/CMakeLists.txt:102 (message):
 #  Compiler doesn't support generation of unwind tables if exception support
@@ -249,11 +254,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DLIBUNWIND_ENABLE_SHARED=OFF
 			-DLIBUNWIND_ENABLE_ASSERTIONS=OFF
-		)
-	else
-		mycmakeargs+=(
-			-DLIBUNWIND_ENABLE_SHARED=ON # This default ON causes the error.
-			-DLIBUNWIND_ENABLE_ASSERTIONS=ON
 		)
 	fi
 
