@@ -9,7 +9,7 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
-CMAKE_BUILD_TYPE="RelWithDebInfo"
+CMAKE_BUILD_TYPE="RelWithDebInfo" # RelWithDebInfo assumes no assertions
 CXX_STANDARD=17 # clang (17), llvm (17), compiler-rt-sanitizers (17), mlir (17), lld (17)
 LLVM_SLOT=19
 LLVM_TARGETS=(
@@ -158,14 +158,6 @@ src_configure() {
 	:
 }
 
-use_libstdcxx() {
-	if eselect profile show | grep "llvm" ; then
-		echo "OFF"
-	else
-		echo "ON"
-	fi
-}
-
 _src_configure() {
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -236,8 +228,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	fi
 
 	# libcxx is required for amdclang
-	# Re-add libunwind
-	RUNTIMES="compiler-rt;libcxx;libcxxabi"
+	RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi"
 
 	local flag
 	local want_sanitizer="OFF"
@@ -249,8 +240,28 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	done
 
 	local libdir=$(rocm_get_libdir)
+	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
+# Avoid check:
+#CMake Error at /var/tmp/portage/sys-devel/llvm-roc-6.4.4/work/llvm-project-rocm-6.4.4/libunwind/src/CMakeLists.txt:102 (message):
+#  Compiler doesn't support generation of unwind tables if exception support
+#  is disabled.  Building libunwind DSO with runtime dependency on C++ ABI
+#  library is not supported.
+		mycmakeargs+=(
+			-DLIBUNWIND_ENABLE_SHARED=OFF
+			-DLIBUNWIND_ENABLE_ASSERTIONS=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DLIBUNWIND_ENABLE_SHARED=ON # This default ON causes the error.
+			-DLIBUNWIND_ENABLE_ASSERTIONS=ON
+		)
+	fi
+
+	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
+		-DCLANG_DEFAULT_RTLIB="compiler-rt"
+		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
@@ -266,6 +277,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
 		-DLLVM_ENABLE_RUNTIMES="${RUNTIMES}"
 		-DLLVM_ENABLE_SPHINX=NO
+		-DLLVM_ENABLE_UNWIND_TABLES=ON
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=ON # OFF for mlir, ON for lld+scudo
 		-DLLVM_EXTERNAL_PROJECTS="amdllvm"
@@ -275,7 +287,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
-		-DUSE_LIBSTDCXX=$(use_libstdcxx)
+		-DPACKAGE_VENDOR="AMD" # Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
 	)
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
