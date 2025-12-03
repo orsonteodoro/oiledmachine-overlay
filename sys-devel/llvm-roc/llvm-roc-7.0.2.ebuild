@@ -242,6 +242,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local libdir=$(rocm_get_libdir)
 	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
 		mycmakeargs+=(
+			-DLIBCXXABI_USE_LLVM_UNWINDER=ON
 			-DLIBUNWIND_ENABLE_SHARED=ON # This default ON causes the error.
 			-DLIBUNWIND_ENABLE_ASSERTIONS=ON
 		)
@@ -252,6 +253,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #  is disabled.  Building libunwind DSO with runtime dependency on C++ ABI
 #  library is not supported.
 		mycmakeargs+=(
+			-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 			-DLIBUNWIND_ENABLE_SHARED=OFF
 			-DLIBUNWIND_ENABLE_ASSERTIONS=OFF
 		)
