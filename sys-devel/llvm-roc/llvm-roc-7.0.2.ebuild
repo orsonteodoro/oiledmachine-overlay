@@ -179,9 +179,6 @@ einfo "PATH:  ${PATH} (after)"
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	export CPP="${CC} -E"
-	filter-flags "-fuse-ld=*"
-	append-ldflags "-fuse-ld=lld"
-	strip-unsupported-flags
 
 	"${CC}" --version || die
 
@@ -261,6 +258,10 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	# Reduce systemwide vulnerability backlog
 	filter-flags "-flto*"
+
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
+	strip-unsupported-flags
 
 	# For PGO
 	if tc-is-gcc ; then
