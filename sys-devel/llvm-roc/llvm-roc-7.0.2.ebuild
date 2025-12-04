@@ -106,8 +106,8 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
-bolt -mlir profile
-ebuild_revision_42
+bolt flang -mlir profile
+ebuild_revision_43
 "
 REQUIRED_USE="
 	^^ (
@@ -221,6 +221,17 @@ src_configure() {
 	:
 }
 
+enable_sanitizer() {
+	local flag
+	for flag in "${SANITIZER_FLAGS[@]}" ; do
+		if use "${flag}" ; then
+			echo "ON"
+			return
+		fi
+	done
+	echo "OFF"
+}
+
 _src_configure() {
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -241,23 +252,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	addpredict "/dev/nvidiactl"
 	addpredict "/proc/self/task/"
-	local mycmakeargs=()
-	mycmakeargs+=(
-		-DCMAKE_C_COMPILER="${CC}"
-		-DCMAKE_CXX_COMPILER="${CXX}"
-	)
-	filter-flags "-fuse-ld=*"
-
-# Still present in 6.1.2:
-# ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
-
-# Breaks during configure test: fatal error: cannot find 'ld'
-#	append-ldflags -fuse-ld=lld
-
-# Avoid:
-#collect2: fatal error: cannot find 'ld'
-#compilation terminated.
-	append-ldflags "-fuse-ld=bfd"
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
@@ -276,32 +270,71 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	strip-unsupported-flags
 
+	local projects="clang;lld;clang-tools-extra;lld"
+	use bolt && projects+=";bolt"
+	use mlir && projects+=";mlir"
+
+	local runtimes="compiler-rt;libunwind;libcxx;libcxxabi"
+
+	local repo_uri="https://github.com/RadeonOpenCompute/llvm-project"
+	local tag="roc-${PV}"
+	local gitdate=$(date --date="${TAG_TIMESTAMP}" --utc "+%y%U%w")
+	local repo_string="${repo_uri} ${tag} ${gitdate}"
+
+	local libdir=$(rocm_get_libdir)
+	local build_sanitizer=$(enable_sanitizer)
+
+	local mycmakeargs=()
+
 	mycmakeargs+=(
+#		-DBUILD_SHARED_LIBS=OFF
+		-DCMAKE_C_COMPILER="${CC}"
+		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
+		-DCLANG_DEFAULT_LINKER="lld"
+		-DCLANG_DEFAULT_RTLIB="compiler-rt"
+		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
+		-DCLANG_ENABLE_AMDCLANG=ON
+		-DCLANG_REPOSITORY_STRING="${repo_string}"
+		-DCMAKE_C_FLAGS="${CFLAGS}"
+		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
+		-DCMAKE_EXE_LINKER_FLAGS="-Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN/../lib:\$ORIGIN/../../../lib"
+		-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
+		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
+		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
+		-DCOMPILER_RT_BUILD_SANITIZERS="${build_sanitizer}"
+		-DLIBCXX_ENABLE_SHARED=OFF
+		-DLIBCXX_ENABLE_STATIC=ON
+		-DLIBCXX_INSTALL_LIBRARY=OFF
+		-DLIBCXX_INSTALL_HEADERS=OFF
+		-DLIBCXXABI_ENABLE_SHARED=OFF
+		-DLIBCXXABI_ENABLE_STATIC=ON
+		-DLIBCXXABI_INSTALL_STATIC_LIBRARY=OFF
+		-DLLVM_BUILD_DOCS=NO
+#		-DLLVM_BUILD_LLVM_DYLIB=ON
+		-DLLVM_ENABLE_ASSERTIONS=ON					# For mlir
+		-DLLVM_ENABLE_DOXYGEN=OFF
+		-DLLVM_ENABLE_OCAMLDOC=OFF
+		-DLLVM_ENABLE_PROJECTS="${projects}"
+		-DLLVM_ENABLE_RUNTIMES="${runtimes}"
+		-DLLVM_ENABLE_SPHINX=NO
+		-DLLVM_ENABLE_UNWIND_TABLES=ON
+		-DLLVM_ENABLE_ZSTD=OFF						# For mlir
+		-DLLVM_ENABLE_ZLIB=ON						# OFF for mlir, ON for lld+scudo
+		-DLLVM_EXTERNAL_PROJECTS="amdllvm"
+		-DLLVM_INSTALL_UTILS=ON
+		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
+#		-DLLVM_LINK_LLVM_DYLIB=ON
+		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
+#		-DLLVM_VERSION_SUFFIX=roc
+		-DOCAMLFIND=NO
+		-DPACKAGE_VENDOR="AMD"						# Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
+		-DSANITIZER_AMDGPU=$(usex asan)
 	)
 
-	PROJECTS="clang;lld;clang-tools-extra;lld"
-	if has "bolt" ${IUSE_EFFECTIVE} && use bolt ; then
-		PROJECTS+=";bolt"
-	fi
-	if use mlir ; then
-		PROJECTS+=";mlir"
-	fi
-
-	RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi"
-
-	local flag
-	local want_sanitizer="OFF"
-	for flag in "${SANITIZER_FLAGS[@]}" ; do
-		if use "${flag}" ; then
-			want_sanitizer="ON"
-			break
-		fi
-	done
-
-	local libdir=$(rocm_get_libdir)
 	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
 		mycmakeargs+=(
 			-DLIBCXXABI_USE_LLVM_UNWINDER=ON
@@ -321,50 +354,14 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 
-	local repo_string="https://github.com/RadeonOpenCompute/llvm-project roc-${PV} "$(date --date="${TAG_TIMESTAMP}" --utc "+%y%U%w")
+	if use flang ; then
+		mycmakeargs+=(
+			-DCLANG_LINK_FLANG_LEGACY=ON
+			-DFLANG_INCLUDE_DOCS=OFF
+			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath"
+		)
+	fi
 
-	local libdir=$(rocm_get_libdir)
-	mycmakeargs+=(
-#		-DBUILD_SHARED_LIBS=OFF
-		-DCLANG_DEFAULT_LINKER="lld"
-		-DCLANG_DEFAULT_RTLIB="compiler-rt"
-		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
-		-DCLANG_ENABLE_AMDCLANG=ON
-		-DCLANG_REPOSITORY_STRING="${repo_string}"
-		-DCMAKE_C_FLAGS="${CFLAGS}"
-		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
-		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
-		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
-		-DCOMPILER_RT_BUILD_SANITIZERS="${want_sanitizer}"
-		-DLIBCXX_ENABLE_SHARED=OFF
-		-DLIBCXX_ENABLE_STATIC=ON
-		-DLIBCXX_INSTALL_LIBRARY=OFF
-		-DLIBCXX_INSTALL_HEADERS=OFF
-		-DLIBCXXABI_ENABLE_SHARED=OFF
-		-DLIBCXXABI_ENABLE_STATIC=ON
-		-DLIBCXXABI_INSTALL_STATIC_LIBRARY=OFF
-		-DLLVM_BUILD_DOCS=NO
-#		-DLLVM_BUILD_LLVM_DYLIB=ON
-		-DLLVM_ENABLE_ASSERTIONS=ON					# For mlir
-		-DLLVM_ENABLE_DOXYGEN=OFF
-		-DLLVM_ENABLE_OCAMLDOC=OFF
-		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
-		-DLLVM_ENABLE_RUNTIMES="${RUNTIMES}"
-		-DLLVM_ENABLE_SPHINX=NO
-		-DLLVM_ENABLE_UNWIND_TABLES=ON
-		-DLLVM_ENABLE_ZSTD=OFF						# For mlir
-		-DLLVM_ENABLE_ZLIB=ON						# OFF for mlir, ON for lld+scudo
-		-DLLVM_EXTERNAL_PROJECTS="amdllvm"
-		-DLLVM_INSTALL_UTILS=ON
-		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
-#		-DLLVM_LINK_LLVM_DYLIB=ON
-		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
-#		-DLLVM_VERSION_SUFFIX=roc
-		-DOCAMLFIND=NO
-		-DPACKAGE_VENDOR="AMD"						# Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
-		-DSANITIZER_AMDGPU=$(usex asan)
-	)
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
 	export BUILD_DIR="${S_LLVM}_build"
