@@ -98,7 +98,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile
-ebuild_revision_38
+ebuild_revision_39
 "
 RDEPEND="
 	dev-libs/libxml2
@@ -135,10 +135,6 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-6.4.4-cuda-path.patch"
 	popd >/dev/null 2>&1 || die
 
-	pushd "${S_AMDLLVM}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-6.4.4-amdllvm-libstdcxx-support.patch"
-	popd >/dev/null 2>&1 || die
-
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
 	export BUILD_DIR="${S_LLVM}_build"
@@ -160,14 +156,6 @@ _src_configure_compiler() {
 
 src_configure() {
 	:
-}
-
-use_libcxx() {
-	if eselect profile show | grep "llvm" ; then
-		echo "ON"
-	else
-		echo "OFF"
-	fi
 }
 
 _src_configure() {
@@ -239,7 +227,8 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		PROJECTS+=";mlir"
 	fi
 
-	RUNTIMES="compiler-rt;libunwind"
+	# libcxx is needed by amdllvm
+	RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi"
 
 	local flag
 	local want_sanitizer="OFF"
@@ -273,7 +262,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
-		-DAMDLLVM_USE_LIBCXX=$(use_libcxx)
 		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
@@ -283,17 +271,24 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
 		-DCOMPILER_RT_BUILD_SANITIZERS="${want_sanitizer}"
+		-DLIBCXX_ENABLE_SHARED=OFF
+		-DLIBCXX_ENABLE_STATIC=ON					# Needed by amdllvm
+		-DLIBCXX_INSTALL_LIBRARY=OFF
+		-DLIBCXX_INSTALL_HEADERS=OFF
+		-DLIBCXXABI_ENABLE_SHARED=OFF
+		-DLIBCXXABI_ENABLE_STATIC=ON					# Needed by amdllvm
+		-DLIBCXXABI_INSTALL_STATIC_LIBRARY=OFF
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
-		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
+		-DLLVM_ENABLE_ASSERTIONS=ON					# For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
 		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
 		-DLLVM_ENABLE_RUNTIMES="${RUNTIMES}"
 		-DLLVM_ENABLE_SPHINX=NO
 		-DLLVM_ENABLE_UNWIND_TABLES=ON
-		-DLLVM_ENABLE_ZSTD=OFF # For mlir
-		-DLLVM_ENABLE_ZLIB=ON # OFF for mlir, ON for lld+scudo
+		-DLLVM_ENABLE_ZSTD=OFF						# For mlir
+		-DLLVM_ENABLE_ZLIB=ON						# OFF for mlir, ON for lld+scudo
 		-DLLVM_EXTERNAL_PROJECTS="amdllvm"
 		-DLLVM_INSTALL_UTILS=ON
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
@@ -301,7 +296,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
-		-DPACKAGE_VENDOR="AMD" # Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
+		-DPACKAGE_VENDOR="AMD"						# Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
 	)
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
