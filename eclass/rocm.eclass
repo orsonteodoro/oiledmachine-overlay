@@ -528,7 +528,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
 	fi
 
-	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
+	export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
