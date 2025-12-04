@@ -387,7 +387,7 @@ _src_compile() {
 	# 3. Build generation 2 compiler (G2) with newer standards or features needed from generation 1 compiler (G1).
 
 	# If the compiler G2 and compiler G1 are the same, then only verification is done from transistion 2 to 3 before adding to a live system.
-	# More steps can be added or merged depending on the boostrap planning.
+	# More steps can be added or merged depending on planning.
 
 	# See also https://github.com/ROCm/ROCm/blob/rocm-7.0.2/tools/rocm-build/build_lightning.sh#L429
 
