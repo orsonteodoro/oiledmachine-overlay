@@ -111,6 +111,9 @@ ebuild_revision_43
 "
 REQUIRED_USE="
 	^^ (
+		${GCC_COMPAT[@]}
+	)
+	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
