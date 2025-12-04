@@ -9,6 +9,11 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
 CMAKE_BUILD_TYPE="RelWithDebInfo" # RelWithDebInfo assumes no assertions
 CXX_STANDARD=17 # clang (17), llvm (17), compiler-rt-sanitizers (17), mlir (17), lld (17)
 LLVM_SLOT=19
@@ -23,7 +28,7 @@ SANITIZER_FLAGS=(
 	"cfi"
 )
 
-inherit check-compiler-switch cmake dhms flag-o-matic libstdcxx-slot rocm toolchain-funcs
+inherit check-compiler-switch cmake dhms flag-o-matic libcxx-slot libstdcxx-slot rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -99,7 +104,12 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile
-ebuild_revision_41
+ebuild_revision_42
+"
+REQUIRED_USE="
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 "
 RDEPEND="
 	dev-libs/libxml2
@@ -116,9 +126,25 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+gen_clang_bdepend() {
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		echo "
+			llvm_slot_${s}? (
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},llvm_targets_X86]
+				llvm-core/llvm:=
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},llvm_targets_X86]
+				llvm-core/clang:=
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP},llvm_targets_X86]
+				llvm-core/lld:=
+			)
+		"
+	done
+}
 BDEPEND="
-	${ROCM_GCC_DEPEND}
+	$(gen_clang_bdepend)
 "
+#	${ROCM_GCC_DEPEND}
 PATCHES=(
 )
 
@@ -126,6 +152,32 @@ pkg_setup() {
 	check-compiler-switch_start
 	dhms_start
 	rocm_pkg_setup
+
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		if use "llvm_slot_${s}" ; then
+			LLVM_SLOT="${s}"
+			break
+		fi
+	done
+
+einfo "PATH:  ${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH:  ${PATH} (after)"
+
+	# Upstream uses system Clang 13 to start bootstrap.
+	export CC="${CHOST}-clang-${LLVM_SLOT}"
+	export CXX="${CHOST}-clang-${LLVM_SLOT}"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
+
+	"${CC}" --version || die
+
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
@@ -267,7 +319,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
-		-DCMAKE_CXX_FLAGS="-nostdinc++ -isystem ${BUILD_DIR}/include/c++/v1 -isystem ${BUILD_DIR}/include/${LLVM_DEFAULT_TARGET_TRIPLE}/c++/v1" 
 		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
@@ -320,11 +371,6 @@ _src_compile() {
 	S="${CMAKE_USE_DIR}"
 	# mlir needs LLVMDemangle, LLVMSupport, LLVMTableGen
 
-	OPTIMIZED_CFLAGS="${CFLAGS}"
-	OPTIMIZED_CXXFLAGS="${CXXFLAGS}"
-	OPTIMIZED_CPPFLAGS="${CPPFLAGS}"
-	strip-flags
-
 	# The bootstrapping is not necessary.
 	# The distro ebuild does not bootstrap system clang for their ROCm flavor.
 
@@ -339,37 +385,33 @@ _src_compile() {
 	# See also https://github.com/ROCm/ROCm/blob/rocm-6.4.3/tools/rocm-build/build_lightning.sh#L429
 
 	# The boostrapping is being used fix amdclang dependency (libc++).
-einfo "Bootstrapping HIP-Clang with basic build"
+einfo "Bootstrapping HIP-Clang basic build"
 	cmake_src_compile \
-		clang \
-		lld \
-		compiler-rt
+		"clang" \
+		"lld" \
+		"compiler-rt"
 
 	cmake_src_compile \
-		runtimes \
-		cxx
+		"runtimes" \
+		"cxx"
 
-	CFLAGS="${OPTIMIZED_CFLAGS}"
-	CXXFLAGS="${OPTIMIZED_CXXFLAGS}"
-	CPPFLAGS="${OPTIMIZED_CPPFLAGS}"
-
-einfo "Bootstrapping HIP-Clang with optimized build"
+einfo "Bootstrapping HIP-Clang full build"
 	cmake_src_compile
 
-einfo "Building HIP-Clang additional support"
+einfo "Building HIP-Clang extras"
 	cmake_src_compile \
-		clang-tidy
+		"clang-tidy"
 
 	cmake_src_compile \
-		LLVMDemangle \
-		LLVMSupport \
-		LLVMTableGen
+		"LLVMDemangle" \
+		"LLVMSupport" \
+		"LLVMTableGen"
 
 	#cmake_src_compile \
-	#	all \
-	#	LLVMDemangle \
-	#	LLVMSupport \
-	#	LLVMTableGen
+	#	"all" \
+	#	"LLVMDemangle" \
+	#	"LLVMSupport" \
+	#	"LLVMTableGen"
 }
 
 src_compile() {
