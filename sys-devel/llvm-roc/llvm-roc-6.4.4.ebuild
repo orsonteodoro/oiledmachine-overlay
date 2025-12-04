@@ -147,7 +147,6 @@ gen_clang_bdepend() {
 BDEPEND="
 	$(gen_clang_bdepend)
 "
-#	${ROCM_GCC_DEPEND}
 PATCHES=(
 )
 
@@ -360,7 +359,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		mycmakeargs+=(
 			-DCLANG_LINK_FLANG_LEGACY=ON
 			-DFLANG_INCLUDE_DOCS=OFF
-			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath"
+			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath" # Provided by sys-devel/gcc
 			-DLIBOMPTARGET_BUILD_DEVICE_FORTRT=ON
 		)
 	fi
