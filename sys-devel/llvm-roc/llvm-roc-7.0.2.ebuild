@@ -165,14 +165,17 @@ einfo "PATH:  ${PATH} (before)"
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
+		| sed -E -e "/opt\/rocm/d" \
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 einfo "PATH:  ${PATH} (after)"
 
 	# Upstream uses system Clang 13 to start bootstrap.
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
-	export CXX="${CHOST}-clang-${LLVM_SLOT}"
+	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	export CPP="${CC} -E"
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
 	strip-unsupported-flags
 
 	"${CC}" --version || die
