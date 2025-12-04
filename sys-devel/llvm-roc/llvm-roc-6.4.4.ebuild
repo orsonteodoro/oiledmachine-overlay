@@ -19,6 +19,7 @@ LLVM_TARGETS=(
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 SANITIZER_FLAGS=(
+	"asan"
 	"cfi"
 )
 
@@ -107,6 +108,10 @@ RDEPEND="
 	sys-libs/ncurses:=
 	sys-libs/zlib
 	virtual/cblas
+	asan? (
+		dev-libs/rocm-comgr:${SLOT}
+		dev-libs/rocr-runtime:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -262,6 +267,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
+		-DCMAKE_CXX_FLAGS="-nostdinc++ -isystem ${BUILD_DIR}/include/c++/v1 -isystem ${BUILD_DIR}/include/${LLVM_DEFAULT_TARGET_TRIPLE}/c++/v1" 
 		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
@@ -298,6 +304,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 		-DPACKAGE_VENDOR="AMD"						# Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
+		-DSANITIZER_AMDGPU=$(usex asan)
 	)
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
@@ -383,9 +390,36 @@ _src_install() {
 		install-LLVMTableGen
 }
 
+gen_config() {
+cat <<EOF > "${ED}/opt/rocm/lib/llvm/bin/rocm.cfg" || die
+-Wl,--enable-new-dtags
+--rocm-path='<CFGDIR>/../../..'
+-frtlib-add-rpath
+EOF
+	local L=(
+		"clang"
+		"clang++"
+		"clang-cpp"
+		"clang-${LLVM_SLOT}"
+		"clang-cl"
+		"flang"
+		"flang-new"
+		"flang-classic"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		cat \
+			"${ED}/opt/rocm/lib/llvm/bin/rocm.cfg" \
+				> \
+			"${ED}/opt/rocm/lib/llvm/bin/${x}.cfg" \
+			|| die
+	done
+}
+
 src_install() {
 	_src_install
 	rm -rf "${ED}/var/tmp"
+	gen_config
 }
 
 pkg_postinst() {
