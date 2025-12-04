@@ -482,6 +482,7 @@ eerror
 ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
+einfo "PATH:  ${PATH}"
 	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
 		export PATH="${ESYSROOT}/opt/rocm/bin:${PATH}"
 	fi
@@ -524,24 +525,20 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi
 
-	if [[ "${FEATURES}" =~ "ccache" && "${HIP_CLANG_DISABLE_CCACHE}" != "1" ]] ; then
-		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
-	fi
-
 	export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 
 	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
+		| tr ":" $'\n' \
 		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
+		| tr $'\n' ":" \
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 
 	if [[ "${HIP_CLANG_DISABLE_CCACHE}" == "1" ]] ; then
 einfo "Removing ccache from PATH to prevent override by system's clang..."
 		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
+			| tr ":" $'\n' \
 			| sed -E -e "/ccache/d" \
-			| tr "\n" ":")
+			| tr $'\n' ":")
 	fi
 
 # Avoid these kinds of errors with pgo by disabling ccache:
@@ -550,9 +547,9 @@ einfo "Removing ccache from PATH to prevent override by system's clang..."
 	if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
 einfo "Removing ccache from PATH to prevent override by system's clang..."
 		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
+			| tr ":" $'\n' \
 			| sed -E -e "/ccache/d" \
-			| tr "\n" ":")
+			| tr $'\n' ":")
 	fi
 
 # Unbreak dev-libs/rocm-device-libs
@@ -1131,6 +1128,11 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 # @DESCRIPTION:
 # Sets compiler defaults to clang to avoid primarily linker errors.
 rocm_set_default_clang() {
+	if [[ "${FEATURES}" =~ "ccache" && "${HIP_CLANG_DISABLE_CCACHE}" != "1" ]] ; then
+	# Placed here to unbreak ccache with gcc.
+		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
+	fi
+
 	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 	llvm_slot="${!_llvm_slot}"
 	export CC="${CHOST}-clang-${llvm_slot}"
@@ -1200,6 +1202,11 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 # @DESCRIPTION:
 # Sets compiler defaults for hipcc.
 rocm_set_default_hipcc() {
+	if [[ "${FEATURES}" =~ "ccache" && "${HIP_CLANG_DISABLE_CCACHE}" != "1" ]] ; then
+	# Placed here to unbreak ccache with gcc.
+		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
+	fi
+
 	export CC="hipcc"
 	export CXX="hipcc"
 #	export CPP="${CC} -E"
