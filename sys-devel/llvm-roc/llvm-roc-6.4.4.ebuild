@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# GH timestamp for tagged release in "Aug 11, 2025 7:47 AM PDT" format
+TAG_TIMESTAMP="Jun 5, 2025 10:11 AM PDT"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
@@ -14,7 +17,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-CMAKE_BUILD_TYPE="RelWithDebInfo" # RelWithDebInfo assumes no assertions
+CMAKE_BUILD_TYPE="RelWithDebInfo" # RelWithDebInfo assumes no assertions.  RelWithDebInfo is the default if unset.
 CXX_STANDARD=17 # clang (17), llvm (17), compiler-rt-sanitizers (17), mlir (17), lld (17)
 LLVM_SLOT=19
 LLVM_TARGETS=(
@@ -279,7 +282,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
 
-	PROJECTS="llvm;clang;clang-tools-extra;lld"
+	PROJECTS="clang;lld;clang-tools-extra;lld"
 	if has "bolt" ${IUSE_EFFECTIVE} && use bolt ; then
 		PROJECTS+=";bolt"
 	fi
@@ -319,15 +322,21 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 
+	local repo_uri="https://github.com/RadeonOpenCompute/llvm-project"
+	local tag="roc-${PV}"
+	local gitdate=$(date --date="${TAG_TIMESTAMP}" --utc "+%y%U%w")
+	local repo_string="${repo_uri} ${tag} ${gitdate}"
+
 	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
+		-DCLANG_DEFAULT_LINKER="lld"
 		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
+		-DCLANG_REPOSITORY_STRING="${repo_string}"
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
-		-DCMAKE_CXX_STANDARD=17						# Force libcxx which defaults to c++20 to use c++17
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
