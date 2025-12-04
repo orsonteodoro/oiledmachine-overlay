@@ -294,9 +294,9 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
-		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
-		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
-		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
+		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN/../lib:\$ORIGIN/../../../lib"	# ELF executables
+		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"				# Python .so
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"				# ELF .so
 		-DCLANG_DEFAULT_LINKER="lld"
 		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
@@ -304,8 +304,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCLANG_REPOSITORY_STRING="${repo_string}"
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
-		-DCMAKE_EXE_LINKER_FLAGS="-Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN/../lib:\$ORIGIN/../../../lib"
-		-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
