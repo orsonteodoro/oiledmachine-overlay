@@ -98,7 +98,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile
-ebuild_revision_39
+ebuild_revision_41
 "
 RDEPEND="
 	dev-libs/libxml2
@@ -266,6 +266,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DCLANG_ENABLE_AMDCLANG=ON
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
+		-DCMAKE_CXX_STANDARD=17						# Force libcxx which defaults to c++20 to use c++17
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
@@ -310,11 +311,56 @@ _src_compile() {
 	export BUILD_DIR="${S_LLVM}_build"
 	S="${CMAKE_USE_DIR}"
 	# mlir needs LLVMDemangle, LLVMSupport, LLVMTableGen
+
+	OPTIMIZED_CFLAGS="${CFLAGS}"
+	OPTIMIZED_CXXFLAGS="${CXXFLAGS}"
+	OPTIMIZED_CPPFLAGS="${CPPFLAGS}"
+	strip-flags
+
+	# The bootstrapping is not necessary.
+	# The distro ebuild does not bootstrap system clang for their ROCm flavor.
+
+	# The boostrap process is 3 steps
+	# 1. build basic compiler generation 0 (G0)
+	# 2. build complex compiler generation 1 (G1)
+	# 3. build more complex compiler generation 2 (G2) using language features it depends on from from less complex compiler generation 1 (G1)
+
+	# If the compiler G2 and compiler G1 are the same, then only verification is done from transistion 2 to transisiton 3.
+
+	# See also https://github.com/ROCm/ROCm/blob/rocm-7.0.2/tools/rocm-build/build_lightning.sh#L429
+
+	# The boostrapping is being used fix amdclang dependency (libc++).
+einfo "Bootstrapping HIP-Clang with basic build"
 	cmake_src_compile \
-		all \
+		clang \
+		lld \
+		compiler-rt
+
+	cmake_src_compile \
+		runtimes \
+		cxx
+
+	CFLAGS="${OPTIMIZED_CFLAGS}"
+	CXXFLAGS="${OPTIMIZED_CXXFLAGS}"
+	CPPFLAGS="${OPTIMIZED_CPPFLAGS}"
+
+einfo "Bootstrapping HIP-Clang with optimized build"
+	cmake_src_compile
+
+einfo "Building HIP-Clang additional support"
+	cmake_src_compile \
+		clang-tidy
+
+	cmake_src_compile \
 		LLVMDemangle \
 		LLVMSupport \
 		LLVMTableGen
+
+#	cmake_src_compile \
+#		all \
+#		LLVMDemangle \
+#		LLVMSupport \
+#		LLVMTableGen
 }
 
 src_compile() {
