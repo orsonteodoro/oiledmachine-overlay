@@ -409,6 +409,9 @@ einfo "Building HIP-Clang extras"
 	cmake_src_compile \
 		"clang-tidy"
 
+einfo "Building HIP-Clang downstream dependencies"
+	# LLVMTableGen is needed by triton
+	# LLVMDemangle, LLVMSupport is used for testing with compiler-rt
 	cmake_src_compile \
 		"LLVMDemangle" \
 		"LLVMSupport" \
