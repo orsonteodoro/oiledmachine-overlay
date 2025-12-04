@@ -98,7 +98,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile
-ebuild_revision_37
+ebuild_revision_38
 "
 RDEPEND="
 	dev-libs/libxml2
