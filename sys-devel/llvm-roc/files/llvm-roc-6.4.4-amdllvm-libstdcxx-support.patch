@@ -1,5 +1,5 @@
---- a/clang-tools-extra/amdllvm/CMakeLists.txt.orig	2025-06-05 10:11:31.000000000 -0700
-+++ b/clang-tools-extra/amdllvm/CMakeLists.txt	2025-12-03 16:34:05.348058603 -0800
+--- a/CMakeLists.txt	2025-06-05 10:11:31.000000000 -0700
++++ b/CMakeLists.txt	2025-12-03 16:34:05.348058603 -0800
 @@ -17,11 +17,17 @@ if(UNIX AND LIBCXX_ENABLE_STATIC AND LIB
    target_compile_options(amdllvm PRIVATE  -nostdinc++)
    target_include_directories(amdllvm PRIVATE ${CMAKE_BINARY_DIR}/include/c++/v1)
