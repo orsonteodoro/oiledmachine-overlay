@@ -34,6 +34,9 @@
       Build support for BOLT (Binary Optimization and Layout Tool) for post
       build optimization that has a workflow similar to PGO.
     </flag>
+    <flag name="flang">
+      Build this flavor of Flang
+    </flag>
     <flag name="cfi">
       Add Control Flow Integrity support.
     </flag>

@@ -273,6 +273,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local projects="clang;lld;clang-tools-extra;lld"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
+	use flang && projects+=";flang"
 
 	local runtimes="compiler-rt;libunwind;libcxx;libcxxabi"
 
@@ -359,6 +360,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			-DCLANG_LINK_FLANG_LEGACY=ON
 			-DFLANG_INCLUDE_DOCS=OFF
 			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath"
+			-DLIBOMPTARGET_BUILD_DEVICE_FORTRT=ON
 		)
 	fi
 
@@ -449,10 +451,16 @@ EOF
 		"clang-cpp"
 		"clang-${LLVM_SLOT}"
 		"clang-cl"
-		"flang"
-		"flang-new"
-		"flang-classic"
 	)
+
+	if use flang ; then
+		L+=(
+			"flang"
+			"flang-new"
+			"flang-classic"
+		)
+	fi
+
 	local x
 	for x in "${L[@]}" ; do
 		cat \

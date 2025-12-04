@@ -273,6 +273,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local projects="clang;lld;clang-tools-extra;lld"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
+	use flang && projects+=";flang"
 
 	# libcxx is needed by amdllvm
 	local runtimes="compiler-rt;libunwind;libcxx;libcxxabi"
@@ -360,6 +361,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			-DCLANG_LINK_FLANG_LEGACY=ON
 			-DFLANG_INCLUDE_DOCS=OFF
 			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath"
+			-DLIBOMPTARGET_BUILD_DEVICE_FORTRT=ON
 		)
 	fi
 
@@ -433,9 +435,9 @@ _src_install() {
 	S="${CMAKE_USE_DIR}"
 	DESTDIR="${D}" \
 	cmake_src_install \
-		install-LLVMDemangle \
-		install-LLVMSupport \
-		install-LLVMTableGen
+		"install-LLVMDemangle" \
+		"install-LLVMSupport" \
+		"install-LLVMTableGen"
 }
 
 gen_config() {
@@ -450,10 +452,16 @@ EOF
 		"clang-cpp"
 		"clang-${LLVM_SLOT}"
 		"clang-cl"
-		"flang"
-		"flang-new"
-		"flang-classic"
 	)
+
+	if use flang ; then
+		L+=(
+			"flang"
+			"flang-new"
+			"flang-classic"
+		)
+	fi
+
 	local x
 	for x in "${L[@]}" ; do
 		cat \
