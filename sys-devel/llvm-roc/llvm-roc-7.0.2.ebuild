@@ -227,8 +227,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		PROJECTS+=";mlir"
 	fi
 
-	# libcxx is required for amdclang
-	RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi"
+	RUNTIMES="compiler-rt;libunwind"
 
 	local flag
 	local want_sanitizer="OFF"

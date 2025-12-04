@@ -1,0 +1,25 @@
+--- a/clang-tools-extra/amdllvm/CMakeLists.txt.orig	2025-06-05 10:11:31.000000000 -0700
++++ b/clang-tools-extra/amdllvm/CMakeLists.txt	2025-12-03 16:34:05.348058603 -0800
+@@ -17,11 +17,17 @@ if(UNIX AND LIBCXX_ENABLE_STATIC AND LIB
+   target_compile_options(amdllvm PRIVATE  -nostdinc++)
+   target_include_directories(amdllvm PRIVATE ${CMAKE_BINARY_DIR}/include/c++/v1)
+   target_include_directories(amdllvm PRIVATE ${CMAKE_BINARY_DIR}/include/${LLVM_DEFAULT_TARGET_TRIPLE}/c++/v1)
+-  target_link_libraries(amdllvm PRIVATE c++abi pthread)
+-  target_link_options(amdllvm PRIVATE -stdlib=libc++
+-                                      -L${CMAKE_BINARY_DIR}/lib
+-                                      -fuse-ld=lld
+-  )
++  option(AMDLLVM_USE_LIBCXX "Use libc++ by default for amdllvm build" ON)
++  if(AMDLLVM_USE_LIBCXX)
++    target_link_libraries(amdllvm PRIVATE c++abi pthread)
++    target_link_options(amdllvm PRIVATE -stdlib=libc++
++                                        -L${CMAKE_BINARY_DIR}/lib
++                                        -fuse-ld=lld
++    )
++  else()
++    target_link_libraries(amdllvm PRIVATE stdc++fs pthread)
++    target_link_options(amdllvm PRIVATE -fuse-ld=lld)
++  endif()
+   option(CLANG_LINK_FLANG "Create flang install link to clang" ON)
+   if(NOT CLANG_LINKS_TO_CREATE)
+     if(CLANG_LINK_FLANG)

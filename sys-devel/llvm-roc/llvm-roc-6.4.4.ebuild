@@ -135,6 +135,10 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-6.4.4-cuda-path.patch"
 	popd >/dev/null 2>&1 || die
 
+	pushd "${S_AMDLLVM}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-6.4.4-amdllvm-libstdcxx-support.patch"
+	popd >/dev/null 2>&1 || die
+
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
 	export BUILD_DIR="${S_LLVM}_build"
@@ -156,6 +160,14 @@ _src_configure_compiler() {
 
 src_configure() {
 	:
+}
+
+use_libcxx() {
+	if eselect profile show | grep "llvm" ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
 }
 
 _src_configure() {
@@ -227,8 +239,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		PROJECTS+=";mlir"
 	fi
 
-	# libcxx is required for amdclang
-	RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi"
+	RUNTIMES="compiler-rt;libunwind"
 
 	local flag
 	local want_sanitizer="OFF"
@@ -262,6 +273,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
+		-DAMDLLVM_USE_LIBCXX=$(use_libcxx)
 		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
