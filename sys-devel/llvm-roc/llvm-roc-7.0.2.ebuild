@@ -323,7 +323,7 @@ _src_compile() {
 	# The boostrap process is 3 steps:
 	# 1. Build generation 0 compiler (G0) with basic standards or features.
 	# 2. Build generation 1 compiler (G1) with next standards or features using earlier generation 0 compiler (G0).
-	# 3. Build generation 2 compiler (G2) with newer standards or features needed from generation 1 compiler (G1)
+	# 3. Build generation 2 compiler (G2) with newer standards or features needed from generation 1 compiler (G1).
 
 	# If the compiler G2 and compiler G1 are the same, then only verification is done from transistion 2 to transisiton 3.
 
