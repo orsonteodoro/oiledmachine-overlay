@@ -272,7 +272,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 #
 # The compiler-rt placement in LLVM_ENABLE_PROJECTS or LLVM_ENABLE_RUNTIMES is mutually exclusive.
-# If compiler-rt placed in LLVM_ENABLE_RUNTIMES.  It will break hipBLASLt configure test with
+# If compiler-rt placed in LLVM_ENABLE_RUNTIMES, it will break hipBLASLt configure test with
 # the message below:
 #
 # CMake Error at cmake/modules/LLVMExternalProjectUtils.cmake:426 (add_custom_target):
