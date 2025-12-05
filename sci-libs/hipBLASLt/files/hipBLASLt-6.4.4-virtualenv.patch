@@ -1,6 +1,6 @@
 --- a/CMakeLists.txt.orig	2025-12-05 11:45:10.356977539 -0800
 +++ b/CMakeLists.txt	2025-12-05 13:24:57.778198070 -0800
-@@ -223,6 +223,19 @@ else()
+@@ -223,6 +223,20 @@ else()
        option(TENSILE_USE_MSGPACK   "Use msgpack for parsing config files." ON)
      endif()
  
@@ -15,6 +15,7 @@
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 +      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet PyYAML==6.0 msgpack==1.0.5
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
++      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/python -m pip install --quiet -e ${CMAKE_SOURCE_DIR}/tensilelite/Tensile)
 +    endif()
 +
      if (WIN32)
