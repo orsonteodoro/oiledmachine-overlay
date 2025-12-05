@@ -360,8 +360,8 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		-DLLVM_ENABLE_OCAMLDOC=OFF
 		-DLLVM_ENABLE_SPHINX=NO
 		-DLLVM_ENABLE_UNWIND_TABLES=ON
-		-DLLVM_ENABLE_ZSTD=OFF						# For mlir
 		-DLLVM_ENABLE_ZLIB=ON						# OFF for mlir, ON for lld+scudo
+		-DLLVM_ENABLE_ZSTD=OFF						# For mlir
 		-DLLVM_EXTERNAL_PROJECTS="amdllvm"
 		-DLLVM_INSTALL_UTILS=ON
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
