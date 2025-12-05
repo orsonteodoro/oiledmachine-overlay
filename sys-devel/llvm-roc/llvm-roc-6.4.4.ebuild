@@ -267,9 +267,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	# Reduce systemwide vulnerability backlog
 	filter-flags "-flto*"
 
-	#filter-flags "-fuse-ld=*"
-	#append-ldflags "-fuse-ld=lld"
-
 	# For PGO
 # The error is not a problem for 5.7.0.
 # error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
