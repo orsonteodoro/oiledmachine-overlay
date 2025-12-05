@@ -78,6 +78,14 @@
     <flag name="fortran">
       Install GPU optimized Fortran.
     </flag>
+    <flag name="flang-legacy">
+      Install a Classic Flang derivative with GPU optimizations and partial multi GPU support.
+      Supports Fortran 2003/2008.
+    </flag>
+    <flag name="flang-new">
+      Install the f18 based Flang with GPU optimizations and full multi GPU support.
+      Supports Fortran 2018 fully and 2023 partially.
+    </flag>
     <flag name="hip">
       Install HIP runtime and HIP-Clang.
     </flag>

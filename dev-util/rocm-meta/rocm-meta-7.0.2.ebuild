@@ -43,6 +43,8 @@ IUSE="
 	+compilers
 	communication
 	cv
+	flang-legacy
+	flang-new
 	fortran
 	+hip
 	+kernel-driver
@@ -68,6 +70,10 @@ REQUIRED_USE="
 		|| (
 			hip
 			non-free
+		)
+		|| (
+			flang-legacy
+			flang-new
 		)
 	)
 	hip? (
@@ -149,8 +155,14 @@ RDEPEND="
 	!dev-util/amd-rocm-meta
 	compilers? (
 		fortran? (
-			>=dev-lang/rocm-flang-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-			dev-lang/rocm-flang:=
+			flang-legacy? (
+				>=dev-lang/rocm-flang-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
+				dev-lang/rocm-flang:=
+			)
+			flang-new? (
+				>=sys-libs/llvm-roc-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},flang]
+				sys-libs/llvm-roc:=
+			)
 		)
 		hip? (
 			>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
