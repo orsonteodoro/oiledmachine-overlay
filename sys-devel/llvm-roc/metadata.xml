@@ -35,7 +35,8 @@
       build optimization that has a workflow similar to PGO.
     </flag>
     <flag name="flang">
-      Build this flavor of Flang
+      Build the f18 based Flang for GPU accelerated Fortran.
+      Supports Fortran 2018 fully and Fortran 2023 partially.
     </flag>
     <flag name="cfi">
       Add Control Flow Integrity support.

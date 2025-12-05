@@ -84,7 +84,7 @@
     </flag>
     <flag name="flang-new">
       Install the f18 based Flang with GPU optimizations and full multi GPU support.
-      Supports Fortran 2018 fully and 2023 partially.
+      Supports Fortran 2018 fully and Fortran 2023 partially.
     </flag>
     <flag name="hip">
       Install HIP runtime and HIP-Clang.
