@@ -278,6 +278,17 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	strip-unsupported-flags
 
+#
+# The compiler-rt placement in LLVM_ENABLE_PROJECTS or LLVM_ENABLE_RUNTIMES is mutually exclusive.
+# If compiler-rt placed in LLVM_ENABLE_RUNTIMES.  It will break hipBLASLt configure test with
+# the message below:
+#
+# CMake Error at cmake/modules/LLVMExternalProjectUtils.cmake:426 (add_custom_target):
+#   add_custom_target cannot create target "compiler-rt" because another target
+#   with the same name already exists.  The existing target is a custom target
+#   created in source directory
+#
+
 	local projects="clang;lld;clang-tools-extra;lld;compiler-rt"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
