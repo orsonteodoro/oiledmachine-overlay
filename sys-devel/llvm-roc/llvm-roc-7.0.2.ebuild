@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_47
+ebuild_revision_51
 "
 REQUIRED_USE="
 	^^ (
@@ -169,6 +169,8 @@ einfo "PATH:  ${PATH} (after)"
 	# libc++ can only work with >= GCC 14 or >= Clang 17
 	# See include/__configuration/compiler.h
 
+	rocm_set_default_gcc
+
 	"${CC}" --version || die
 
 	libcxx-slot_verify
@@ -199,10 +201,6 @@ src_prepare() {
                 popd >/dev/null 2>&1 || die
 	fi
 	rocm_src_prepare
-}
-
-_src_configure_compiler() {
-	rocm_set_default_gcc
 }
 
 src_configure() {
@@ -264,8 +262,8 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	# Reduce systemwide vulnerability backlog
 	filter-flags "-flto*"
 
-	filter-flags "-fuse-ld=*"
-	append-ldflags "-fuse-ld=lld"
+	#filter-flags "-fuse-ld=*"
+	#append-ldflags "-fuse-ld=lld"
 
 	# For PGO
 # The error is not a problem for 5.7.0.
@@ -471,16 +469,9 @@ einfo "Building HIP-Clang downstream dependencies"
 		"LLVMDemangle" \
 		"LLVMSupport" \
 		"LLVMTableGen"
-
-#	cmake_src_compile \
-#		"all" \
-#		"LLVMDemangle" \
-#		"LLVMSupport" \
-#		"LLVMTableGen"
 }
 
 src_compile() {
-	_src_configure_compiler
 	_src_configure
 	_src_compile
 }
