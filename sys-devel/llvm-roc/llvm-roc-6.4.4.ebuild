@@ -36,6 +36,8 @@ inherit check-compiler-switch cmake dhms flag-o-matic libcxx-slot libstdcxx-slot
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 S_AMDLLVM="${WORKDIR}/llvm-project-rocm-${PV}/clang-tools-extra/amdllvm"
+S_LIBCXX="${WORKDIR}/llvm-project-rocm-${PV}/libcxx"
+S_LIBCXXABI="${WORKDIR}/llvm-project-rocm-${PV}/libcxxabi"
 S_LLVM="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 SRC_URI="
@@ -103,7 +105,7 @@ LICENSE="
 # SunPro - rocm-6.1.2/amd/device-libs/ocml/src/erfcF.cl
 RESTRICT="strip" # Prevent missing symbols
 SLOT="0/${ROCM_SLOT}"
-IUSE="
+IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
@@ -161,7 +163,7 @@ pkg_setup() {
 	local s
 	for s in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" ; then
-			LLVM_SLOT="${s}"
+			export LLVM_SLOT="${s}"
 			break
 		fi
 	done
@@ -176,8 +178,13 @@ einfo "PATH:  ${PATH} (before)"
 einfo "PATH:  ${PATH} (after)"
 
 	# Upstream uses system Clang 13 to start bootstrap.
-	export CC="${CHOST}-clang-${LLVM_SLOT}"
-	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	#use gcc_slot_12_5 && s="12"
+	#use gcc_slot_13_4 && s="13"
+
+	# libc++ can only work with >= GCC 14 or >= Clang 17
+	# See include/__configuration/compiler.h
+	export CC="${CHOST}-clang-${s}"
+	export CXX="${CHOST}-clang++-${s}"
 	export CPP="${CC} -E"
 
 	"${CC}" --version || die
@@ -195,6 +202,11 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-6.2.0-link-llvm-split-to-LLVMTargetParser.patch"
 
 		eapply "${FILESDIR}/${PN}-6.4.4-cuda-path.patch"
+	popd >/dev/null 2>&1 || die
+
+	pushd "${S_AMDLLVM}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-6.4.4-amdclang-libstdcxx-support.patch"
+		cat "${FILESDIR}/amdllvm.cpp.6.4.4" > "amdllvm.cpp" || die
 	popd >/dev/null 2>&1 || die
 
 	cd "${S_LLVM}" || die
@@ -229,6 +241,14 @@ enable_sanitizer() {
 		fi
 	done
 	echo "OFF"
+}
+
+use_debug() {
+	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
 }
 
 _src_configure() {
@@ -273,13 +293,15 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	strip-unsupported-flags
 
+	# Breaks LLD
+	filter-flags "-Wl,-z,defs"
+
 	local projects="clang;lld;clang-tools-extra;lld"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
 	use flang && projects+=";flang"
 
 	# libcxx is needed by amdllvm
-	local runtimes="compiler-rt;libunwind;libcxx;libcxxabi"
 
 	local repo_uri="https://github.com/RadeonOpenCompute/llvm-project"
 	local tag="roc-${PV}"
@@ -291,38 +313,66 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	local mycmakeargs=()
 
-	mycmakeargs+=(
+	local mycmakeargs_clang=(
+		-DCLANG_DEFAULT_LINKER="lld"
+		-DCLANG_DEFAULT_RTLIB="compiler-rt"
+		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
+		-DCLANG_ENABLE_AMDCLANG=ON
+		-DCLANG_REPOSITORY_STRING="${repo_string}"
+	)
+
+	local mycmakeargs_cmake_core=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN/../lib:\$ORIGIN/../../../lib"	# ELF executables
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"				# Python .so
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"				# ELF .so
-		-DCLANG_DEFAULT_LINKER="lld"
-		-DCLANG_DEFAULT_RTLIB="compiler-rt"
-		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
-		-DCLANG_ENABLE_AMDCLANG=ON
-		-DCLANG_REPOSITORY_STRING="${repo_string}"
 		-DCMAKE_C_FLAGS="${CFLAGS}"
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
+		-DOCAMLFIND=NO
+		-DPACKAGE_VENDOR="AMD"						# Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060 ; For clang, llvm, flang, lld, hipcc, comgr
+	)
+
+	local mycmakeargs_cmake_runtimes=(
+#		-DBUILD_SHARED_LIBS=OFF
+		-DCMAKE_C_COMPILER="${CC}"
+		-DCMAKE_CXX_COMPILER="${CXX}"
+		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN/../lib:\$ORIGIN/../../../lib"	# ELF executables
+		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"				# Python .so
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS} -Wl,--enable-new-dtags,--build-id=sha1,--rpath,\$ORIGIN"				# ELF .so
+		-DCMAKE_C_FLAGS="${CFLAGS}"
+		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/lib/llvm"
+		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
+		-DOCAMLFIND=NO
+	)
+	local mycmakeargs_compiler_rt=(
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
 		-DCOMPILER_RT_BUILD_SANITIZERS="${build_sanitizer}"
+		-DSANITIZER_AMDGPU=$(usex asan)					# For openmp, offload, compiler-rt
+	)
+	local mycmakeargs_libcxx=(
 		-DLIBCXX_ENABLE_SHARED=OFF
 		-DLIBCXX_ENABLE_STATIC=ON					# Needed by amdllvm
+		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INSTALL_LIBRARY=OFF
 		-DLIBCXX_INSTALL_HEADERS=OFF
+	)
+	local mycmakeargs_libcxxabi=(
 		-DLIBCXXABI_ENABLE_SHARED=OFF
 		-DLIBCXXABI_ENABLE_STATIC=ON					# Needed by amdllvm
 		-DLIBCXXABI_INSTALL_STATIC_LIBRARY=OFF
+		-DLIBCXXABI_USE_LLVM_UNWINDER=$(use_debug)
+	)
+	local mycmakeargs_llvm=(
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON					# For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
-		-DLLVM_ENABLE_PROJECTS="${projects}"
-		-DLLVM_ENABLE_RUNTIMES="${runtimes}"
 		-DLLVM_ENABLE_SPHINX=NO
 		-DLLVM_ENABLE_UNWIND_TABLES=ON
 		-DLLVM_ENABLE_ZSTD=OFF						# For mlir
@@ -333,32 +383,22 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 #		-DLLVM_VERSION_SUFFIX=roc
-		-DOCAMLFIND=NO
-		-DPACKAGE_VENDOR="AMD"						# Required for hipBLASLt's `hipcc --version` check and to reduce patching.  hipBLASLt issue #2060
-		-DSANITIZER_AMDGPU=$(usex asan)
 	)
 
-	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
-		mycmakeargs+=(
-			-DLIBCXXABI_USE_LLVM_UNWINDER=ON
-			-DLIBUNWIND_ENABLE_SHARED=ON # This default ON causes the error.
-			-DLIBUNWIND_ENABLE_ASSERTIONS=ON
-		)
-	else
-# Avoid check:
-#CMake Error at /var/tmp/portage/sys-devel/llvm-roc-6.4.4/work/llvm-project-rocm-6.4.4/libunwind/src/CMakeLists.txt:102 (message):
-#  Compiler doesn't support generation of unwind tables if exception support
-#  is disabled.  Building libunwind DSO with runtime dependency on C++ ABI
-#  library is not supported.
-		mycmakeargs+=(
-			-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
-			-DLIBUNWIND_ENABLE_SHARED=OFF
-			-DLIBUNWIND_ENABLE_ASSERTIONS=OFF
-		)
-	fi
+# For LIBUNWIND_ENABLE_SHARED=OFF, avoid check:
+# CMake Error at /var/tmp/portage/sys-devel/llvm-roc-6.4.4/work/llvm-project-rocm-6.4.4/libunwind/src/CMakeLists.txt:102 (message):
+#   Compiler doesn't support generation of unwind tables if exception support
+#   is disabled.  Building libunwind DSO with runtime dependency on C++ ABI
+#   library is not supported.
+	local mycmakeargs_libunwind=(
+		-DLIBUNWIND_ENABLE_SHARED=$(use_debug) # This default ON causes the error.
+		-DLIBUNWIND_ENABLE_ASSERTIONS=$(use_debug)
+	)
+
+	local mycmakeargs_flang=()
 
 	if use flang ; then
-		mycmakeargs+=(
+		mycmakeargs_flang+=(
 			-DCLANG_LINK_FLANG_LEGACY=ON
 			-DFLANG_INCLUDE_DOCS=OFF
 			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath" # Provided by sys-devel/gcc
@@ -366,11 +406,37 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 
+	mycmakeargs=(
+		-DLLVM_ENABLE_PROJECTS="${projects}"
+		-DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind"
+		-DAMDCLANG_USE_LIBCXX=OFF
+		"${mycmakeargs_cmake_core[@]}"
+		"${mycmakeargs_compiler_rt[@]}"
+		"${mycmakeargs_llvm[@]}"
+		"${mycmakeargs_clang[@]}"
+		"${mycmakeargs_flang[@]}"
+		"${mycmakeargs_libunwind[@]}"
+	)
+
 	cd "${S_LLVM}" || die
 	export CMAKE_USE_DIR="${S_LLVM}"
 	export BUILD_DIR="${S_LLVM}_build"
 	S="${CMAKE_USE_DIR}"
 	rocm_src_configure
+
+	mycmakeargs=(
+		-DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"
+		"${mycmakeargs_cmake_runtimes[@]}"
+		"${mycmakeargs_llvm[@]}"
+		"${mycmakeargs_libcxx[@]}"
+		"${mycmakeargs_libcxxabi[@]}"
+	)
+
+	#cd "${S_LIBCXX}" || die
+	#export CMAKE_USE_DIR="${S_LIBCXX}"
+	#export BUILD_DIR="${S_LIBCXX}_build"
+	#S="${CMAKE_USE_DIR}"
+	#rocm_src_configure
 }
 
 _src_compile() {
@@ -401,9 +467,18 @@ einfo "Bootstrapping HIP-Clang basic build"
 		"compiler-rt"
 
 	cmake_src_compile \
-		"runtimes" \
-		"cxx"
+		"runtimes"
 
+	#cd "${S_LIBCXX}_build" || die
+	#export CMAKE_USE_DIR="${S_LIBCXX}"
+	#export BUILD_DIR="${S_LIBCXX}_build"
+	#cmake_src_compile \
+	#	"cxx"
+
+	cd "${S_LLVM}_build" || die
+	export CMAKE_USE_DIR="${S_LLVM}"
+	export BUILD_DIR="${S_LLVM}_build"
+	S="${CMAKE_USE_DIR}"
 einfo "Bootstrapping HIP-Clang full build"
 	cmake_src_compile
 

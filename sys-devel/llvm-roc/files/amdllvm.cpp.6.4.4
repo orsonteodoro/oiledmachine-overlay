@@ -1,0 +1,114 @@
+// amdllvm.cpp – works with BOTH libstdc++ and libc++
+#include <cstdlib>
+#include <cstring>
+#include <filesystem>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <linux/limits.h>
+
+static bool AMDCLANG_DEBUG = false;
+
+// Helper to safely get executable path on Linux
+static std::string get_path_to_self() {
+    std::string p;
+    std::vector<char> buf(PATH_MAX);
+
+    while (true) {
+        ssize_t len = readlink("/proc/self/exe", buf.data(), buf.size() - 1);
+        if (len == -1) {
+            std::cerr << "amdllvm: readlink(/proc/self/exe) failed\n";
+            std::exit(EXIT_FAILURE);
+        }
+        if (static_cast<size_t>(len) < buf.size() - 1) {
+            buf[len] = '\0';  // null-terminate
+            p = buf.data();
+            break;
+        }
+        // Buffer too small → grow it
+        if (buf.size() >= PATH_MAX * 8) {
+            std::cerr << "amdllvm: executable path too long\n";
+            std::exit(EXIT_FAILURE);
+        }
+        buf.resize(buf.size() * 2);
+    }
+
+    if (AMDCLANG_DEBUG)
+        std::cout << "amdllvm: path to self: " << p << '\n';
+    return p;
+}
+
+// Extract real tool name (e.g. amdclang++ → clang++)
+static std::string get_compiler_tool(const char* invoked_name) {
+    std::filesystem::path invoked(invoked_name);
+    std::string base = invoked.filename().string();
+
+    if (base.rfind("amd", 0) != 0) {  // doesn't start with "amd"
+        std::cerr << "amdllvm: unsupported invocation name: " << base << '\n';
+        std::exit(EXIT_FAILURE);
+    }
+
+    std::string tool_name = base.substr(3);  // strip "amd"
+
+    std::filesystem::path self = get_path_to_self();
+    std::filesystem::path tool_path = self.parent_path() / tool_name;
+
+    // Resolve symlinks and verify existence
+    std::error_code ec;
+    tool_path = std::filesystem::weakly_canonical(tool_path, ec);
+    if (ec || !std::filesystem::is_regular_file(tool_path)) {
+        std::cerr << "amdllvm: tool not found or not a regular file: "
+                  << tool_path << '\n';
+        std::exit(EXIT_FAILURE);
+    }
+
+    if (AMDCLANG_DEBUG)
+        std::cout << "amdllvm: launching tool: " << tool_path << '\n';
+
+    return tool_path.string();
+}
+
+int main(int argc, char* argv[], char* envp[]) {
+    if (const char* debug = std::getenv("AMDCLANG_DEBUG")) {
+        AMDCLANG_DEBUG = (debug[0] == '1');
+    }
+
+    std::string compiler_tool = get_compiler_tool(argv[0]);
+
+    pid_t pid = vfork();
+    if (pid == 0) {
+        // Child: prepare argv for execve
+        std::vector<char*> new_argv;
+        new_argv.reserve(argc + 1);
+        new_argv.push_back(const_cast<char*>(compiler_tool.c_str()));
+
+        for (int i = 1; i < argc; ++i) {
+            new_argv.push_back(argv[i]);
+        }
+        new_argv.push_back(nullptr);
+
+        execve(compiler_tool.c_str(), new_argv.data(), envp);
+        // If execve returns, it failed
+        std::cerr << "amdllvm: execve failed: " << compiler_tool << '\n';
+        _exit(EXIT_FAILURE);  // vfork → must use _exit
+    }
+
+    // Parent
+    int status;
+    if (waitpid(pid, &status, 0) == -1) {
+        std::cerr << "amdllvm: waitpid failed\n";
+        return EXIT_FAILURE;
+    }
+
+    if (WIFEXITED(status)) {
+        return WEXITSTATUS(status);
+    }
+    if (WIFSIGNALED(status)) {
+        // Forward signal (e.g. SIGSEGV from clang)
+        raise(WTERMSIG(status));
+    }
+    return EXIT_FAILURE;
+}

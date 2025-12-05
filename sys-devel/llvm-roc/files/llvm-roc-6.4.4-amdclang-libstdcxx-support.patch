@@ -1,0 +1,37 @@
+--- a/CMakeLists.txt.orig	2025-06-05 10:11:31.000000000 -0700
++++ b/CMakeLists.txt	2025-12-04 16:03:58.171107951 -0800
+@@ -17,11 +17,29 @@ if(UNIX AND LIBCXX_ENABLE_STATIC AND LIB
+   target_compile_options(amdllvm PRIVATE  -nostdinc++)
+   target_include_directories(amdllvm PRIVATE ${CMAKE_BINARY_DIR}/include/c++/v1)
+   target_include_directories(amdllvm PRIVATE ${CMAKE_BINARY_DIR}/include/${LLVM_DEFAULT_TARGET_TRIPLE}/c++/v1)
+-  target_link_libraries(amdllvm PRIVATE c++abi pthread)
+-  target_link_options(amdllvm PRIVATE -stdlib=libc++
+-                                      -L${CMAKE_BINARY_DIR}/lib
+-                                      -fuse-ld=lld
+-  )
++  option(AMDCLANG_USE_LIBCXX "Use libc++ for amdclang?" OFF)
++  if(AMDCLANG_USE_LIBCXX)
++    if(LIBCXX_ENABLE_STATIC AND LIBCXXABI_ENABLE_STATIC)
++      target_link_libraries(amdllvm PRIVATE c++abi pthread)
++      target_link_options(amdllvm PRIVATE -stdlib=libc++
++                                          -L${CMAKE_BINARY_DIR}/lib
++                                          -fuse-ld=lld
++      )
++    else()
++      message(FATAL_ERROR "Enable LIBCXX_ENABLE_STATIC=ON and LIBCXXABI_ENABLE_STATIC=ON to build amdllvm with libc++.")
++    endif()
++  else()
++    target_link_libraries(amdllvm PRIVATE stdc++ pthread)
++    target_link_options(amdllvm PRIVATE
++      # Remove -stdlib=libc++ completely (or explicitly set to libstdc++ if you prefer)
++      -stdlib=libstdc++           # optional – hip-clang already defaults to this
++      -L${CMAKE_BINARY_DIR}/lib
++      -fuse-ld=lld
++      # Optional but recommended on ROCm systems:
++      -rtlib=compiler-rt          # use Clang’s built-in compiler-rt instead of libgcc_s
++      --hip-link                    # ensures proper HIP device linking with hip-clang
++    )
++  endif()
+   option(CLANG_LINK_FLANG "Create flang install link to clang" ON)
+   if(NOT CLANG_LINKS_TO_CREATE)
+     if(CLANG_LINK_FLANG)
