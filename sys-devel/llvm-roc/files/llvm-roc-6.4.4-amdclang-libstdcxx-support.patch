@@ -1,6 +1,6 @@
 --- a/CMakeLists.txt.orig	2025-06-05 10:11:31.000000000 -0700
 +++ b/CMakeLists.txt	2025-12-04 20:48:01.970681222 -0800
-@@ -1,35 +1,40 @@
+@@ -1,35 +1,38 @@
 -if(UNIX AND LIBCXX_ENABLE_STATIC AND LIBCXXABI_ENABLE_STATIC)
 +if(UNIX)
    add_clang_tool(amdllvm
@@ -32,8 +32,6 @@
 +
 +  target_link_options(amdllvm PRIVATE
 +    -fuse-ld=lld
-+    -rtlib=compiler-rt          # avoid libgcc_s dependency
-+    --hip-link                   # required for HIP device linking when amdllvm is used as hipcc wrapper
    )
 -  option(CLANG_LINK_FLANG "Create flang install link to clang" ON)
 -  if(NOT CLANG_LINKS_TO_CREATE)

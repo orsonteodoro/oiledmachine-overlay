@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_48
+ebuild_revision_50
 "
 REQUIRED_USE="
 	^^ (
