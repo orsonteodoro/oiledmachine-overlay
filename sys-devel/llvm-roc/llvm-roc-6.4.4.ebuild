@@ -388,14 +388,13 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	local mycmakeargs_flang=()
 
-	if use flang ; then
-		mycmakeargs_flang+=(
-			-DCLANG_LINK_FLANG_LEGACY=ON
-			-DFLANG_INCLUDE_DOCS=OFF
-			-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath" # Provided by sys-devel/gcc
-			-DLIBOMPTARGET_BUILD_DEVICE_FORTRT=ON
-		)
-	fi
+	use flang && \
+	mycmakeargs_flang+=(
+		-DCLANG_LINK_FLANG_LEGACY=ON
+		-DFLANG_INCLUDE_DOCS=OFF
+		-DFLANG_RUNTIME_F128_MATH_LIB="libquadmath" # Provided by sys-devel/gcc
+		-DLIBOMPTARGET_BUILD_DEVICE_FORTRT=ON
+	)
 
 	mycmakeargs=(
 		-DLLVM_ENABLE_PROJECTS="${projects}"
