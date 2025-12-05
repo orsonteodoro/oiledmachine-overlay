@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE="
 	^^ (
@@ -217,7 +217,7 @@ src_configure() {
 	:
 }
 
-enable_sanitizer() {
+use_sanitizer() {
 	local flag
 	for flag in "${SANITIZER_FLAGS[@]}" ; do
 		if use "${flag}" ; then
@@ -230,6 +230,14 @@ enable_sanitizer() {
 
 use_debug() {
 	if [[ "${CMAKE_BUILD_TYPE}" == "Debug" ]] ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+use_libcxx() {
+	if eselect profile show | grep "llvm" ; then
 		echo "ON"
 	else
 		echo "OFF"
@@ -294,7 +302,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local repo_string="${repo_uri} ${tag} ${gitdate}"
 
 	local libdir=$(rocm_get_libdir)
-	local build_sanitizer=$(enable_sanitizer)
+	local build_sanitizer=$(use_sanitizer)
 
 	local mycmakeargs=()
 
@@ -394,7 +402,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	mycmakeargs=(
 		-DLLVM_ENABLE_PROJECTS="${projects}"
 		-DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind"
-		-DAMDCLANG_USE_LIBCXX=OFF
+		-DAMDCLANG_USE_LIBCXX=$(use_libcxx)
 		"${mycmakeargs_cmake_core[@]}"
 		"${mycmakeargs_compiler_rt[@]}"
 		"${mycmakeargs_llvm[@]}"
