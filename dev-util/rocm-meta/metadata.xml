@@ -79,7 +79,7 @@
       Install GPU optimized Fortran.
     </flag>
     <flag name="flang-legacy">
-      Install a Classic Flang derivative with GPU optimizations and partial multi GPU support.
+      Install the previous LLVM Flang derivative with GPU optimizations and partial multi GPU support.
       Supports Fortran 2003/2008.
     </flag>
     <flag name="flang-new">
