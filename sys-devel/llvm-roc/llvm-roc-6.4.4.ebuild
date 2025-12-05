@@ -286,9 +286,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	strip-unsupported-flags
 
-	# Breaks LLD
-	filter-flags "-Wl,-z,defs"
-
 	local projects="clang;lld;clang-tools-extra;lld"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
