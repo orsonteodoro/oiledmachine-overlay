@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
-IUSE+="ebuild_revision_8"
+IUSE+="ebuild_revision_9"
 RDEPEND+="
 "
 DEPEND+="
@@ -29,12 +29,13 @@ DOCS=( )
 
 src_install() {
 	local names=(
-#		"clang:amdclang"
-#		"clang++:amdclang++"
-#		"clang-cl:amdclang-cl"
-#		"clang-cpp:amdclang-cpp"
-#		"flang:amdflang"
-#		"lld:amdlld"
+	# Required for tensilelite in hipBLASLt
+		"amdclang:amdclang"
+		"amdclang++:amdclang++"
+		"amdclang-cl:amdclang-cl"
+		"amdclang-cpp:amdclang-cpp"
+		"amdflang:amdflang"
+		"amdlld:amdlld"
 
 		"clang:clang"
 		"clang-cl:clang-cl"
