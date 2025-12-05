@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_54
+ebuild_revision_55
 "
 REQUIRED_USE="
 	^^ (
@@ -239,24 +239,6 @@ use_libcxx() {
 	fi
 }
 
-get_default_rtlib() {
-	# Prevent mixup when building Blender in a libstdc++ system.
-	if eselect profile show | grep "llvm" ; then
-		echo "compiler-rt"
-	else
-		echo "libgcc"
-	fi
-}
-
-use_compiler_rt() {
-	# Prevent mixup when building Blender in a libstdc++ system.
-	if eselect profile show | grep "llvm" ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
 _src_configure() {
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -296,8 +278,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	strip-unsupported-flags
 
-	local projects="clang;lld;clang-tools-extra;lld"
-	use_compiler_rt && projects+=";compiler-rt"
+	local projects="clang;lld;clang-tools-extra;lld;compiler-rt"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
 	use flang && projects+=";flang"
@@ -317,7 +298,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	local mycmakeargs_clang=(
 		-DCLANG_DEFAULT_LINKER="lld"
-		-DCLANG_DEFAULT_RTLIB=$(get_default_rtlib)
+		-DCLANG_DEFAULT_RTLIB="compiler-rt"
 		-DCLANG_DEFAULT_UNWINDLIB="libgcc"
 		-DCLANG_ENABLE_AMDCLANG=ON
 		-DCLANG_REPOSITORY_STRING="${repo_string}"
