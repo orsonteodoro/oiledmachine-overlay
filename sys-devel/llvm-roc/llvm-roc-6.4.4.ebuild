@@ -168,9 +168,6 @@ einfo "PATH:  ${PATH} (after)"
 
 	# libc++ can only work with >= GCC 14 or >= Clang 17
 	# See include/__configuration/compiler.h
-	export CC="${CHOST}-clang-${s}"
-	export CXX="${CHOST}-clang++-${s}"
-	export CPP="${CC} -E"
 
 	"${CC}" --version || die
 
@@ -183,7 +180,7 @@ src_prepare() {
 # FIXES:
 # ld.bfd: tools/llvm-split/CMakeFiles/llvm-split.dir/llvm-split.cpp.o: undefined reference to symbol '_ZN4llvm6TripleC1ERKNS_5TwineE'
 # ld.bfd: /var/tmp/portage/sys-devel/llvm-roc-6.2.4/work/llvm-project-rocm-6.2.4/llvm_build/./lib/libLLVMTargetParser.so.18git: error adding symbols: DSO missing from command line
-# collect2: error: ld returned 1 exit statusw
+# collect2: error: ld returned 1 exit status
 		eapply "${FILESDIR}/${PN}-6.2.0-link-llvm-split-to-LLVMTargetParser.patch"
 
 		eapply "${FILESDIR}/${PN}-6.4.4-cuda-path.patch"
@@ -274,15 +271,12 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=lld"
-	strip-unsupported-flags
 
 	# For PGO
-	if tc-is-gcc ; then
 # The error is not a problem for 5.7.0.
 # error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
 # The PGO profiles are isolated.  The Code is the same.
-		append-flags "-Wno-error=coverage-mismatch"
-	fi
+	tc-is-gcc && append-flags "-Wno-error=coverage-mismatch"
 
 	strip-unsupported-flags
 
