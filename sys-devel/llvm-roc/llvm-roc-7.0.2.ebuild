@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	^^ (
@@ -288,6 +288,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
 	use flang && projects+=";flang"
+	use flang && export MAKEOPTS="-j1" # High memory use during build
 
 	local repo_uri="https://github.com/RadeonOpenCompute/llvm-project"
 	local tag="roc-${PV}"
