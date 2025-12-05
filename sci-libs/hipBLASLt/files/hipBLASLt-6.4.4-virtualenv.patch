@@ -1,0 +1,22 @@
+--- a/CMakeLists.txt.orig	2025-12-05 11:45:10.356977539 -0800
++++ b/CMakeLists.txt	2025-12-05 13:24:57.778198070 -0800
+@@ -223,6 +223,19 @@ else()
+       option(TENSILE_USE_MSGPACK   "Use msgpack for parsing config files." ON)
+     endif()
+ 
++    find_package(Python3 REQUIRED COMPONENTS Interpreter)
++
++    # Create virtual environment for TensileLite if it does not exist
++    if(NOT EXISTS "${CMAKE_BINARY_DIR}/virtualenv")
++      message(STATUS "Creating TensileLite Python virtual environment")
++      execute_process(COMMAND ${Python3_EXECUTABLE} -m venv virtualenv
++                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
++      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet --upgrade pip
++                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
++      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet PyYAML==6.0 msgpack==1.0.5
++                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
++    endif()
++
+     if (WIN32)
+       set( Tensile_ROOT "${CMAKE_BINARY_DIR}/virtualenv/Lib/site-packages/Tensile" )
+     endif()

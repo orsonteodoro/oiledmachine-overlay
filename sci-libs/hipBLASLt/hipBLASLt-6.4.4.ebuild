@@ -158,6 +158,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.4.4-use-system-tensile.patch"
 	"${FILESDIR}/${PN}-6.1.1-fix-msgpack-dependency.patch"
 	"${FILESDIR}/${PN}-6.4.4-tensile.patch"
+	"${FILESDIR}/${PN}-6.4.4-virtualenv.patch"
 )
 
 pkg_setup() {
