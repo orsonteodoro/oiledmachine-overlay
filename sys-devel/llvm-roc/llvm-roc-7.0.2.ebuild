@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_43
+ebuild_revision_44
 "
 REQUIRED_USE="
 	^^ (
@@ -134,23 +134,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-gen_clang_bdepend() {
-	local s
-	for s in "${LLVM_COMPAT[@]}" ; do
-		echo "
-			llvm_slot_${s}? (
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},llvm_targets_X86]
-				llvm-core/llvm:=
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},llvm_targets_X86]
-				llvm-core/clang:=
-				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP},llvm_targets_X86]
-				llvm-core/lld:=
-			)
-		"
-	done
-}
+# libstdcxx-compat already adds gcc bdepend.
 BDEPEND="
-	$(gen_clang_bdepend)
 "
 PATCHES=(
 )
