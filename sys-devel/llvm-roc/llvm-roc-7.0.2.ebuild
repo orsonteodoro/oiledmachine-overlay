@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_51
+ebuild_revision_53
 "
 REQUIRED_USE="
 	^^ (
@@ -273,7 +273,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	strip-unsupported-flags
 
-	local projects="clang;lld;clang-tools-extra;lld"
+	local projects="clang;lld;clang-tools-extra;lld;compiler-rt"
 	use bolt && projects+=";bolt"
 	use mlir && projects+=";mlir"
 	use flang && projects+=";flang"
@@ -328,6 +328,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local mycmakeargs_compiler_rt=(
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
 		-DCOMPILER_RT_BUILD_SANITIZERS="${build_sanitizer}"
+		-DCOMPILER_RT_DEBUG=$(use_debug)
 		-DSANITIZER_AMDGPU=$(usex asan)					# For openmp, offload, compiler-rt
 	)
 	local mycmakeargs_libcxx=(
@@ -383,7 +384,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	mycmakeargs=(
 		-DLLVM_ENABLE_PROJECTS="${projects}"
-		-DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind"
+		-DLLVM_ENABLE_RUNTIMES="libunwind"
 		"${mycmakeargs_cmake_core[@]}"
 		"${mycmakeargs_compiler_rt[@]}"
 		"${mycmakeargs_llvm[@]}"
@@ -485,7 +486,8 @@ _src_install() {
 	cmake_src_install \
 		"install-LLVMDemangle" \
 		"install-LLVMSupport" \
-		"install-LLVMTableGen"
+		"install-LLVMTableGen" \
+		"install-compiler-rt"
 }
 
 gen_config() {
