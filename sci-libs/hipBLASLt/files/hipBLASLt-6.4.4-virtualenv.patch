@@ -1,9 +1,37 @@
---- a/CMakeLists.txt.orig	2025-12-05 15:55:08.530447882 -0800
-+++ b/CMakeLists.txt	2025-12-05 15:58:54.644609937 -0800
-@@ -223,17 +223,27 @@ else()
-       option(TENSILE_USE_MSGPACK   "Use msgpack for parsing config files." ON)
-     endif()
+--- a/cmake/virtualenv.cmake.orig	2025-07-25 11:47:20.000000000 -0700
++++ b/cmake/virtualenv.cmake	2025-12-05 17:39:15.342120735 -0800
+@@ -13,11 +13,6 @@ get_filename_component(VIRTUALENV_PYTHON
+ set(VIRTUALENV_HOME_DIR ${CMAKE_BINARY_DIR}/virtualenv CACHE PATH "Path to virtual environment")
  
+ function(virtualenv_create)
+-    execute_process(
+-      COMMAND ${VIRTUALENV_PYTHON_EXE} -m venv ${VIRTUALENV_HOME_DIR} --system-site-packages --clear
+-      COMMAND_ECHO STDOUT
+-    )
+-
+     if(WIN32)
+         set(VIRTUALENV_BIN_DIR ${VIRTUALENV_HOME_DIR}/Scripts CACHE PATH "Path to virtualenv bin directory")
+     else()
+@@ -27,21 +22,26 @@ endfunction()
+ 
+ function(virtualenv_install)
+     virtualenv_create()
+-    execute_process(
+-      COMMAND ${VIRTUALENV_BIN_DIR}/${VIRTUALENV_PYTHON_EXENAME} -m pip install --upgrade pip
+-      COMMAND_ECHO STDOUT
+-    )
+-    execute_process(
+-      COMMAND ${VIRTUALENV_BIN_DIR}/${VIRTUALENV_PYTHON_EXENAME} -m pip install --upgrade setuptools
+-      COMMAND_ECHO STDOUT
+-    )
+-    execute_process(
+-      COMMAND ${VIRTUALENV_BIN_DIR}/${VIRTUALENV_PYTHON_EXENAME} -m pip install ${ARGN}
+-      COMMAND_ECHO STDOUT
+-      RESULT_VARIABLE return_code
+-      ERROR_VARIABLE error_message
+-      OUTPUT_VARIABLE output_message      
+-    )
++
 +    find_package(Python3 REQUIRED COMPONENTS Interpreter)
 +
 +    # Create virtual environment for TensileLite if it does not exist
@@ -15,23 +43,14 @@
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 +      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet PyYAML msgpack
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/python -m pip install --quiet -e ${CMAKE_SOURCE_DIR}/tensilelite
++      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/python -m pip install --quiet -e ${ARGN}
 +                      --use-pep517 --config-settings editable_mode=compat --no-build-isolation
-+                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
++                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
++                      COMMAND_ECHO STDOUT
++                      RESULT_VARIABLE return_code
++                      ERROR_VARIABLE error_message
++                      OUTPUT_VARIABLE output_message)
 +    endif()
-+    set(VIRTUALENV_HOME_DIR "${CMAKE_BINARY_DIR}/virtualenv" CACHE PATH "path to virtual env")
-+
-     if (WIN32)
-       set( Tensile_ROOT "${CMAKE_BINARY_DIR}/virtualenv/Lib/site-packages/Tensile" )
-     endif()
  
--    include(virtualenv)
--    if (Tensile_TEST_LOCAL_PATH)
--      virtualenv_install(${Tensile_TEST_LOCAL_PATH})
--      message (STATUS "using local Tensile from ${Tensile_TEST_LOCAL_PATH}, copied to ${Tensile_ROOT}")
--    else()
--      virtualenv_install(${CMAKE_SOURCE_DIR}/tensilelite)
--    endif()
-     message(STATUS "Adding ${VIRTUALENV_HOME_DIR} to CMAKE_PREFIX_PATH")
-     list(APPEND CMAKE_PREFIX_PATH ${VIRTUALENV_HOME_DIR})
-     cmake_policy(SET CMP0074 NEW)
+     if(return_code)
+         message("Error Code: ${rc}")
