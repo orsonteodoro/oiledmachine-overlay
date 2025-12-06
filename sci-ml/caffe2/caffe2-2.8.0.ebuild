@@ -737,6 +737,9 @@ REQUIRED_USE="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+		openmp? (
+			clang
+		)
 		^^ (
 			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
@@ -1259,7 +1262,7 @@ pkg_setup() {
 				if use clang ; then
 					export CC="${CHOST}-clang-${s}"
 					export CXX="${CHOST}-clang++-${s}"
-					append-ldflags -fuse-ld=lld
+					append-ldflags "-fuse-ld=lld"
 				fi
 				break
 			fi
@@ -1288,6 +1291,11 @@ pkg_setup() {
 			)
 		fi
 	fi
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "PATH:  ${PATH}"
 
 	python-single-r1_pkg_setup
 	libcxx-slot_verify
@@ -1819,7 +1827,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	fi
 
 	if ! use kineto ; then
-		append-cppflags -DNO_PROFILING
+		append-cppflags "-DNO_PROFILING"
 	fi
 
 	cmake_src_configure
