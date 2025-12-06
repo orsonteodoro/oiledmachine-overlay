@@ -205,9 +205,9 @@ check_embree() {
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
 ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
 		else
-			if has_version 'media-libs/embree[-filter_function]' || \
-			   has_version 'media-libs/embree[-filter-function]' || \
-			   has_version 'media-libs/embree[-filterfunction]' ; then
+			if has_version "media-libs/embree[-filter_function]" || \
+			   has_version "media-libs/embree[-filter-function]" || \
+			   has_version "media-libs/embree[-filterfunction]" ; then
 ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
 			fi
 		fi
@@ -217,9 +217,9 @@ ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
 ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
 		else
-			if has_version 'media-libs/embree[backface_culling]' || \
-			   has_version 'media-libs/embree[backface-culling]' || \
-			   has_version 'media-libs/embree[backfaceculling]' ; then
+			if has_version "media-libs/embree[backface_culling]" || \
+			   has_version "media-libs/embree[backface-culling]" || \
+			   has_version "media-libs/embree[backfaceculling]" ; then
 ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
 			fi
 		fi
@@ -229,15 +229,15 @@ ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
 		else
-			if   has_version 'media-libs/embree[-ray_mask]' || \
-			     has_version 'media-libs/embree[-ray-mask]' || \
-			     has_version 'media-libs/embree[-raymask]' ; then
+			if   has_version "media-libs/embree[-ray_mask]" || \
+			     has_version "media-libs/embree[-ray-mask]" || \
+			     has_version "media-libs/embree[-raymask]" ; then
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
-			elif has_version 'media-libs/embree[ray_mask]' || \
-			     has_version 'media-libs/embree[ray-mask]' || \
-			     has_version 'media-libs/embree[raymask]' ; then
+			elif has_version "media-libs/embree[ray_mask]" || \
+			     has_version "media-libs/embree[ray-mask]" || \
+			     has_version "media-libs/embree[raymask]" ; then
 				:
-			elif has_version 'media-libs/embree' ; then
+			elif has_version "media-libs/embree" ; then
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
 			fi
 		fi
@@ -274,7 +274,13 @@ blender_pkg_setup() {
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
-	check_optimal_compiler_for_cycles_x86
+	set_blender_compiler
+
+	check_embree
+	check_compiler
+	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
+		_blender_pkg_setup
+	fi
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -286,12 +292,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
-	fi
-
-	check_embree
-	check_compiler
-	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
-		_blender_pkg_setup
 	fi
 }
 
@@ -377,38 +377,45 @@ ewarn
 	fi
 }
 
-check_optimal_compiler_for_cycles_x86() {
-	if [[ "${ABI}" == "x86" ]] ; then
-		#
-		# Cycles says that a bug might be in in gcc so use clang or icc.
-		# If you use gcc, it will not optimize cycles except with maybe sse2.
-		#
-		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
-			export CC="${BLENDER_CC_ALT}"
-			export CXX="${BLENDER_CXX_ALT}"
-			export CPP="${CC} -E"
-		elif [[ -n "${CC}" && -n "${CXX}" ]] \
-			&& [[ ! ( "${CC}" =~ (^|"-")"gcc" ) ]] \
-			&& [[ ! ( "${CXX}" =~ (^|"-")"g++" ) ]] ; then
-			# Defined by user from per-package environmental variables.
-			export CC
-			export CXX
-			export CPP
-		elif has_version 'llvm-core/clang' ; then
-			export CC="${CHOST}-clang"
-			export CXX="${CHOST}-clang++"
-			export CPP="${CC} -E"
-		fi
-	else
-		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
-			export CC="$(tc-getCC)"
-			export CXX="$(tc-getCXX)"
-			export CPP="${CC} -E"
-		fi
+set_blender_compiler() {
+	export CC="$(tc-getCC)"
+	export CXX="$(tc-getCXX)"
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
+	# Autoconfigure
+		unset CC
+		unset CXX
+		unset CPP
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
+		_blender_set_rocm_compiler
+	elif [[ -z "${CC}" ]] ; then
+		local x
+		for x in "${GCC_COMPAT[@]}" ; do
+			if use "${x}" ; then
+				s="${x/gcc_slot_}"
+				s="${s%_*}"
+				export CC="${CHOST}-gcc-${s}"
+				export CXX="${CHOST}-g++-${s}"
+			fi
+	else [[ "${CC}" =~ "clang" ]] ; then
+		local s
+		for s in "${LLVM_COMPAT[@]}" ; do
+			if use "llvm_slot_${s}" ; then
+				export CC="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang++${s}"
+				break
+			fi
+		done
 	fi
+	export CPP="${CC} -E"
+
 	strip-unsupported-flags
+
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "PATH:  ${PATH}"
 }
 
 IUSE+="

@@ -1290,6 +1290,17 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-hip-symbolize-versions.patch"
 )
 
+_blender_set_rocm_compiler() {
+	# See https://github.com/blender/blender/blob/v5.0.0/build_files/config/pipeline_config.yaml
+	if use rocm_6_4 ; then
+		export LLVM_SLOT=19
+		export ROCM_SLOT="6.4"
+		export ROCM_VERSION="${HIP_6_4_VERSION}"
+	fi
+	rocm_pkg_setup
+	rocm_set_default_hipcc
+}
+
 _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
@@ -1323,26 +1334,6 @@ ewarn "Using LLVM ${x}"
 		fi
 	done
 
-	if use rocm ; then
-	# Upstream uses ROCm 6.4 for Linux, ROCm 6.3 for Windows
-		if use rocm_6_4 ; then
-			export LLVM_SLOT=19
-			export ROCM_SLOT="6.4"
-			export ROCM_VERSION="${HIP_6_4_VERSION}"
-		else
-	# See https://github.com/blender/blender/blob/v5.0.0/build_files/config/pipeline_config.yaml
-eerror
-eerror "Supported ROCm version(s):"
-eerror
-eerror "  6.4"
-eerror
-			die
-		fi
-		rocm_pkg_setup
-		"${CC}" --version
-	#else
-		# See blender_pkg_setup for llvm_pkg_setup
-	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
@@ -1428,17 +1419,13 @@ _src_prepare_patches() {
 }
 
 _src_configure_compiler() {
-	check_optimal_compiler_for_cycles_x86
+	set_blender_compiler
 }
 
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
-
-	if use rocm ; then
-		rocm_set_default_hipcc
-	fi
 
 	if has_version "dev-libs/wayland" && ! use wayland ; then
 eerror "You must enable the wayland USE flag or uninstall wayland."
