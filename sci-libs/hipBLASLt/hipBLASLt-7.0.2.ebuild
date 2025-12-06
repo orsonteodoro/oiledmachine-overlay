@@ -161,7 +161,6 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
-	"${FILESDIR}/${PN}-6.4.4-use-system-tensile.patch"
 	"${FILESDIR}/${PN}-6.1.1-fix-msgpack-dependency.patch"
 	"${FILESDIR}/${PN}-6.4.4-virtualenv.patch"
 )

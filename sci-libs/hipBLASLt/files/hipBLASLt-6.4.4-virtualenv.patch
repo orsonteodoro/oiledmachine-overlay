@@ -1,6 +1,6 @@
---- a/CMakeLists.txt.orig	2025-12-05 11:45:10.356977539 -0800
-+++ b/CMakeLists.txt	2025-12-05 13:24:57.778198070 -0800
-@@ -223,6 +223,20 @@ else()
+--- a/CMakeLists.txt.orig	2025-12-05 15:55:08.530447882 -0800
++++ b/CMakeLists.txt	2025-12-05 15:58:54.644609937 -0800
+@@ -223,17 +223,26 @@ else()
        option(TENSILE_USE_MSGPACK   "Use msgpack for parsing config files." ON)
      endif()
  
@@ -13,11 +13,24 @@
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 +      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet --upgrade pip
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet PyYAML==6.0 msgpack==1.0.5
++      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/pip install --quiet PyYAML msgpack
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/python -m pip install --quiet -e ${CMAKE_SOURCE_DIR}/tensilelite/Tensile)
++      execute_process(COMMAND ${CMAKE_BINARY_DIR}/virtualenv/bin/python -m pip install --quiet -e ${CMAKE_SOURCE_DIR}/tensilelite
++                      --use-pep517 --config-settings editable_mode=compat --no-build-isolation
++                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 +    endif()
 +
      if (WIN32)
        set( Tensile_ROOT "${CMAKE_BINARY_DIR}/virtualenv/Lib/site-packages/Tensile" )
      endif()
+ 
+-    include(virtualenv)
+-    if (Tensile_TEST_LOCAL_PATH)
+-      virtualenv_install(${Tensile_TEST_LOCAL_PATH})
+-      message (STATUS "using local Tensile from ${Tensile_TEST_LOCAL_PATH}, copied to ${Tensile_ROOT}")
+-    else()
+-      virtualenv_install(${CMAKE_SOURCE_DIR}/tensilelite)
+-    endif()
+     message(STATUS "Adding ${VIRTUALENV_HOME_DIR} to CMAKE_PREFIX_PATH")
+     list(APPEND CMAKE_PREFIX_PATH ${VIRTUALENV_HOME_DIR})
+     cmake_policy(SET CMP0074 NEW)
