@@ -254,7 +254,7 @@ LLVM_COMPAT=(
 	{18..19}
 )
 
-inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic libcxx-slot libstdcxx-slot llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm rocm python-single-r1 toolchain-funcs
 
 #KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
 S="${WORKDIR}/${MY_P}"
@@ -525,7 +525,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_37
+ebuild_revision_38
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1506,7 +1506,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
-	if use cuda && [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
+
+	if ! use kineto ; then
+		append-cppflags "-DNO_PROFILING"
+	fi
+
+	fix_mb_len_max
+
+	if use cuda && [[ -z "${TORCH_CUDA_ARCH_LIST}" ]]; then
 einfo
 einfo "You can look up your GPU's CUDA compute capability at"
 einfo
@@ -1829,10 +1836,6 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 
 			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so"
 		)
-	fi
-
-	if ! use kineto ; then
-		append-cppflags "-DNO_PROFILING"
 	fi
 
 	cmake_src_configure
