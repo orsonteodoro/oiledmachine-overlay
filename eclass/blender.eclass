@@ -244,23 +244,6 @@ ewarn "EMBREE_RAY_MASK should be set to ON for embree."
 	fi
 }
 
-check_compiler() {
-	if tc-is-gcc ; then
-		if ver_test $(gcc-fullversion) -lt "${GCC_MIN}" ; then
-eerror "${PN} requires GCC >= ${GCC_MIN}"
-			die
-		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt "${CLANG_MIN}" ; then
-eerror "${PN} requires Clang >= ${CLANG_MIN}"
-			die
-		fi
-	else
-eerror "Compiler is not supported"
-		die
-	fi
-}
-
 blender_pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -277,7 +260,6 @@ blender_pkg_setup() {
 	set_blender_compiler
 
 	check_embree
-	check_compiler
 	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
 		_blender_pkg_setup
 	fi
