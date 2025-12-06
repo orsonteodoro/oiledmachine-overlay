@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
 )
 
 CXX_STANDARD=17 # llvm (17), clr (17), hiprtc (17), amdocl (17)
@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE="
 	hsa? (
@@ -455,6 +455,11 @@ src_install() {
 	dosym \
 		"../../bin/hipcc" \
 		"/opt/rocm/hip/bin/hipcc"
+
+	# Fix leaked absolute build paths in installed hiprtc-targets.cmake
+	sed -i -e "s|/var/tmp/portage/.*rocclr_build|/opt/rocm/lib|" \
+		"${ED}/opt/rocm/lib/cmake/hiprtc/hiprtc-targets.cmake" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
