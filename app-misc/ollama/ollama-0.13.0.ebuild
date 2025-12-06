@@ -191,13 +191,14 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
+	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	{18..19}
 )
 
 LLMS=(
@@ -3516,11 +3517,48 @@ einfo "Generating tag start for ${path}"
 einfo "Generating tag done"
 }
 
+use_clang() {
+	local x
+	for x in "${LLVM_COMPAT[@]}" ; do
+		if use "llvm_slot_${x}" ; then
+			LLVM_SLOT="${x}"
+			break
+		fi
+	done
+	llvm_base_path="/usr/lib/llvm/${LLVM_SLOT}"
+einfo "PATH (before):  ${PATH}"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_base_path}/bin|g")
+einfo "PATH (after):  ${PATH}"
+	export CC="${CHOST}-clang-${LLVM_SLOT}"
+	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	export CPP="${CC} -E"
+}
+
+use_gcc() {
+	local s
+	local x
+	for x in "${GCC_COMPAT[@]}" ; do
+		if use "${x}" ; then
+			s="${x/gcc_slot_}"
+			s="${s%_*}"
+			break
+		fi
+	done
+	export CC="${CHOST}-gcc-${s}"
+	export CXX="${CHOST}-g++-${s}"
+	export CPP="${CC} -E"
+}
+
 pkg_setup() {
 	check-compiler-switch_start
-ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
+ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
 	local llvm_base_path
 	if use cuda ; then
+		tc-is-clang && use_clang # Setup multislot clang PATH.
 	# Autoconfigure
 		unset CC
 		unset CXX
@@ -3534,24 +3572,13 @@ ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 		fi
 		rocm_pkg_setup
 		rocm_set_default_hipcc
+	elif tc-is-clang ; then
+		use_clang
 	else
-		local llvm_slot
-		local x
-		for x in ${LLVM_COMPAT[@]} ; do
-			if use "llvm_slot_${x}" ; then
-				llvm_slot="${x}"
-				break
-			fi
-		done
-		llvm_base_path="/usr/lib/llvm/${llvm_slot}"
-einfo "PATH (before):  ${PATH}"
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -E -e "/llvm\/[0-9]+/d" \
-			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_base_path}/bin|g")
-einfo "PATH (after):  ${PATH}"
+		use_gcc
 	fi
+	strip-unsupported-flags
+
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
@@ -3734,9 +3761,6 @@ _NVCC_FLAGS=""
 src_configure() {
 	PATH="/usr/lib/protobuf/3/bin:${PATH}"
 	if use cuda ; then
-		export CC="${CHOST}-gcc"
-		export CXX="${CHOST}-g++"
-		export CPP="${CC} -E"
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			export CUDA_SLOT=12
 			export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
@@ -3754,9 +3778,6 @@ src_configure() {
 		fi
 	elif use rocm ; then
 einfo "ROCM_SLOT: ${ROCM_SLOT}"
-		export CC="${CHOST}-gcc"
-		export CXX="${CHOST}-g++"
-		export CPP="${CC} -E"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 		sed -i \
 			-e "s|gfx900;gfx940;gfx941;gfx942;gfx1010;gfx1012;gfx1030;gfx1100;gfx1101;gfx1102;gfx906:xnack-;gfx908:xnack-;gfx90a:xnack+;gfx90a:xnack-|${AMDGPU_TARGETS}|g" \
@@ -3787,8 +3808,6 @@ einfo "ROCM_SLOT: ${ROCM_SLOT}"
 #			|| die
 	fi
 
-	strip-unsupported-flags
-
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
@@ -3799,7 +3818,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use debug ; then
 	# Increase build verbosity
-		append-flags -g
+		append-flags "-g"
 	fi
 
 	if use rocm ; then
@@ -3864,22 +3883,22 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use cpu_flags_x86_sse ; then
-		append-flags -msse
+		append-flags "-msse"
 		_NVCC_FLAGS+=" -Xcompiler -msse"
 	fi
 
 	if use cpu_flags_x86_sse2 ; then
-		append-flags -msse2
+		append-flags "-msse2"
 		_NVCC_FLAGS+=" -Xcompiler -msse2"
 	fi
 
 	if use cpu_flags_x86_sse3 ; then
-		append-flags -msse3
+		append-flags "-msse3"
 		_NVCC_FLAGS+=" -Xcompiler -msse3"
 	fi
 
 	if use cpu_flags_x86_ssse3 ; then
-		append-flags -mssse3
+		append-flags "-mssse3"
 		_NVCC_FLAGS+=" -Xcompiler -mssse3"
 	fi
 
@@ -3892,13 +3911,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use cpu_flags_x86_f16c ; then
-		append-flags -mf16c
+		append-flags "-mf16c"
 		_NVCC_FLAGS+=" -Xcompiler -mf16c"
 		CPU_FEATURES+=( "F16C" )
 	fi
 
 	if use cpu_flags_x86_fma ; then
-		append-flags -mfma
+		append-flags "-mfma"
 		_NVCC_FLAGS+=" -Xcompiler -mfma"
 		CPU_FEATURES+=( "FMA" )
 	fi
@@ -3912,28 +3931,28 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use cpu_flags_x86_avxvnni ; then
-		append-flags -mavxvnni
+		append-flags "-mavxvnni"
 		_NVCC_FLAGS+=" -Xcompiler -mavxvnni"
 		CPU_FEATURES+=( "AVX_VNNI" )
 	fi
 
 	if use cpu_flags_x86_avxvnniint8 ; then
-		append-flags -mavxvnniint8
+		append-flags "-mavxvnniint8"
 		_NVCC_FLAGS+=" -Xcompiler -mavxvnniint8"
 	fi
 
 	if use cpu_flags_x86_avx512f ; then
-		append-flags -mavx512f
+		append-flags "-mavx512f"
 		_NVCC_FLAGS+=" -Xcompiler -mavx512f"
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
-		append-flags -mavx512dq
+		append-flags "-mavx512dq"
 		_NVCC_FLAGS+=" -Xcompiler -mavx512dq"
 	fi
 
 	if use cpu_flags_x86_avx512vl ; then
-		append-flags -mavx512vl
+		append-flags "-mavx512vl"
 		_NVCC_FLAGS+=" -Xcompiler -mavx512vl"
 	fi
 
@@ -3942,19 +3961,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use cpu_flags_x86_avx512bf16 ; then
-		append-flags -mavx512bf16
+		append-flags "-mavx512bf16"
 		_NVCC_FLAGS+=" -Xcompiler -mavx512bf16"
 		CPU_FEATURES+=( "AVX512_BF16" )
 	fi
 
 	if use cpu_flags_x86_avx512vbmi ; then
-		append-flags -mavx512vbmi
+		append-flags "-mavx512vbmi"
 		_NVCC_FLAGS+=" -Xcompiler -mavx512vbmi"
 		CPU_FEATURES+=( "AVX512_VBMI" )
 	fi
 
 	if use cpu_flags_x86_avx512vnni ; then
-		append-flags -mavx512vnni
+		append-flags "-mavx512vnni"
 		_NVCC_FLAGS+=" -Xcompiler -mavx512vnni"
 		CPU_FEATURES+=( "AVX512_VNNI" )
 	fi
@@ -4051,7 +4070,7 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 
 	# For -Ofast, -ffast-math
 	if tc-is-gcc && ! use cuda ; then
-		append-flags -fno-finite-math-only
+		append-flags "-fno-finite-math-only"
 	fi
 
 	sed -i \
@@ -4066,7 +4085,7 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 	_NVCC_FLAGS+=" -Xcompiler ${olast}"
 
 	if use cuda ; then
-		filter-flags -fno-finite-math-only
+		filter-flags "-fno-finite-math-only"
 		export NVCC_FLAGS="${_NVCC_FLAGS}"
 	else
 		export NVCC_FLAGS=""
@@ -4190,7 +4209,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		:
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=cuda"
-		filter-flags -pipe # breaks NVCC
+		filter-flags "-pipe" # breaks NVCC
 	fi
 
 	if ! use rocm ; then
@@ -4537,7 +4556,7 @@ einfo "Skipping GPU build"
 
 	if use cuda ; then
 		# Breaks nvcc
-		filter-flags '-m*'
+		filter-flags "-m*"
 
 		export CGO_CFLAGS="${CFLAGS}"
 		export CGO_CXXFLAGS="${CXXFLAGS}"

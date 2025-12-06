@@ -213,7 +213,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
@@ -599,7 +599,7 @@ setup_linker() {
 	fi
 
 	# The package likes to use lld with gcc which is disallowed.
-einfo "PATH:\t${PATH}"
+einfo "PATH:  ${PATH}"
 	local lld_pv=-1
 	if \
 		tc-is-clang \
@@ -696,20 +696,27 @@ _remove_llvm_from_path() {
 		| tr ":" "\n" \
 		| sed -e "\|/usr/lib/llvm|d" \
 		| tr "\n" ":")
-einfo "PATH:\t${PATH}"
+einfo "PATH:  ${PATH}"
 }
 
 use_gcc() {
 	_remove_llvm_from_path
 
-	# Required for CUDA builds
-	if use cuda ; then
-		local s=$(gcc-major-version) # Slot
-		export GCC_HOST_COMPILER_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
-	fi
+	local s
+	local x
+	for x in "${GCC_COMPAT[@]}" ; do
+		if use "${x}" ; then
+			s="${x/gcc_slot_}"
+			s="${s%_*}"
+			export CC="${CHOST}-gcc-${s}"
+			export CXX="${CHOST}-g++-${s}"
+			export CPP="${CC} -E"
 
-	"${CC}" --version || die
-	strip-unsupported-flags
+			# Required for CUDA builds
+			use cuda && export GCC_HOST_COMPILER_PATH="${CC}"
+		fi
+	done
+einfo "Switched to gcc:${s}"
 }
 
 use_clang() {
@@ -737,28 +744,22 @@ eerror
 	export CXX="${CHOST}-clang++-${s}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	if "${CC}" --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to clang:${s}"
-		found=1
-	fi
-
 	llvm_pkg_setup
-	"${CC}" --version || die
-	strip-unsupported-flags
 }
 
 setup_tc() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
 	export CPP=$(tc-getCPP)
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
-einfo "CPP:\t\t${CPP}"
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "CXXFLAGS:\t${CXXFLAGS}"
-einfo "LDFLAGS:\t${LDFLAGS}"
-einfo "PATH:\t${PATH}"
+
+	if tc-is-clang ; then
+		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
+	fi
+
 	if use cuda ; then
+		use_gcc
+		use clang && use_clang # Add multislot clang to PATH.
 	# Autoconfigure
 		unset CC
 		unset CXX
@@ -773,32 +774,24 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_SLOT="6.4"
 			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
-	elif tc-is-clang || use clang ; then
-		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
-		use_clang
-	elif tc-is-gcc ; then
-		use_gcc
-	else
-einfo
-einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
-einfo "completely installed."
-einfo
-		die
-	fi
-
-	if use rocm ; then
 		rocm_pkg_setup
 		rocm_set_default_hipcc
-	#else
-	#	llvm_pkg_setup is called in use_clang
-	fi
-
-	if [[ "${CC}" =~ "clang" ]] ; then
-		:
+	elif use clang ; then
+		use_clang
 	else
 eerror "Clang required to build ${PN}."
 		die
+		use_gcc
 	fi
+	strip-unsupported-flags
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "PATH:  ${PATH}"
 }
 
 pkg_setup() {
@@ -851,7 +844,7 @@ load_env() {
 	if [[ -e "${WORKDIR}/.ccache_dir_val" && "${FEATURES}" =~ "ccache" ]] \
 		&& has_version "dev-util/ccache" ; then
 		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
-einfo "CCACHE_DIR:\t${CCACHE_DIR}"
+einfo "CCACHE_DIR:  ${CCACHE_DIR}"
 	fi
 }
 
@@ -964,8 +957,8 @@ get_host() {
 eerror
 eerror "Your arch is not supported"
 eerror
-eerror "ARCH:\t${ARCH}"
-eerror "CHOST:\t${CHOST}"
+eerror "ARCH:  ${ARCH}"
+eerror "CHOST:  ${CHOST}"
 eerror
 		die
 	fi
@@ -986,7 +979,9 @@ _ebazel() {
 	"${@}" || die "ebazel failed"
 }
 
-python_configure() { :; }
+python_configure() {
+	:
+}
 
 python_compile() {
 	load_env
@@ -1143,14 +1138,12 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		local rocm_version=$(best_version "dev-util/hip" | sed -e "s|dev-util/hip-||g")
 		rocm_version=$(ver_cut 1-3 "${rocm_version}")
 
-		export GCC_HOST_COMPILER_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
 		export HIP_PATH="${ESYSROOT}/usr"
 		export HOST_C_COMPILER="${ESYSROOT}/usr/bin/${CC}"
 		export HOST_CXX_COMPILER="${ESYSROOT}/usr/bin/${CXX}"
 		export JAX_ROCM_VERSION="${rocm_version//./}"
 		export ROCM_PATH="${ESYSROOT}/usr"
 		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")
-einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
 einfo "HIP_PATH:  ${HIP_PATH}"
 einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
 einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"

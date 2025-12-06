@@ -1243,11 +1243,48 @@ ewarn "${gpu} is not CI tested upstream."
 	done
 }
 
+use_clang() {
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		if use "llvm_slot_${s}" ; then
+			LLVM_MAX_SLOT="${s}"
+			if use clang ; then
+				export CC="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang++-${s}"
+				export CPP="${CC} -E"
+				filter-flags "-fuse-ld=*"
+				append-ldflags "-fuse-ld=lld"
+			fi
+			break
+		fi
+	done
+	llvm_pkg_setup
+}
+
+use_gcc() {
+	local x
+	for x in "${GCC_COMPAT[@]}" ; do
+		if use "${x}" ; then
+			local s="${x/gcc_slot_}"
+			s="${s%_*}"
+			export CC="${CHOST}-gcc-${s}"
+			export CXX="${CHOST}-g++-${s}"
+			export CPP="${CC} -E"
+		fi
+	done
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	warn_untested_gpu
+
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag for ${CATEGORY}/${PN} to continue."
+	fi
+
 	if use cuda ; then
+		use clang && use_clang
 	# Autoconfigure
 		unset CC
 		unset CXX
@@ -1258,29 +1295,12 @@ pkg_setup() {
 		ROCM_SLOT="6.4"
 		rocm_pkg_setup
 		rocm_set_default_hipcc
+	elif use clang ; then
+		use_clang
 	else
-		local s
-		for s in "${LLVM_COMPAT[@]}" ; do
-			if use "llvm_slot_${s}" ; then
-				LLVM_MAX_SLOT="${s}"
-				if use clang ; then
-					export CC="${CHOST}-clang-${s}"
-					export CXX="${CHOST}-clang++-${s}"
-					append-ldflags "-fuse-ld=lld"
-				fi
-				break
-			fi
-		done
-		llvm_pkg_setup
-
-		if ! use clang ; then
-			export CC=$(tc-getCC)
-			export CXX=$(tc-getCXX)
-		fi
-
-		export CPP="${CC} -E"
-		strip-unsupported-flags
+		use_gcc
 	fi
+	strip-unsupported-flags
 
 	if use rocm ; then
 		local libs=(

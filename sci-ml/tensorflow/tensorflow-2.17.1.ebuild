@@ -937,7 +937,7 @@ eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
-	LLVM_SLOT="${s}"
+	export LLVM_SLOT="${s}"
 	llvm_pkg_setup
 	"${CC}" --version || die
 	strip-unsupported-flags
@@ -947,18 +947,21 @@ pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 
-use rocm && ewarn "The rocm USE flag is currently broken"
-
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
 
+	if tc-is-clang ; then
+		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
+	fi
+
 	if use cuda ; then
+		use clang && use_clang # Add multislot clang to PATH.
 	# Autoconfigure
 		unset CC
 		unset CXX
 		unset CPP
 	elif use rocm ; then
-ewarn "ROCm support is a Work In Progress (WIP)"
+ewarn "ROCm support is a Work In Progress (WIP) and possibly broken"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
@@ -967,19 +970,12 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_SLOT="6.4"
 			ROCM_VERSION="${HIP_6_4_VERSION}"
 		fi
-	elif tc-is-clang || use clang ; then
-		use clang || die "The clang USE flag must be enabled for ${PN} or remove clang from CC/CXX"
-		use_gcc
+	elif use clang ; then
 		use_clang
-	elif tc-is-gcc ; then
-		use_gcc
 	else
-einfo
-einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
-einfo "completely installed."
-einfo
-		die
+		use_gcc
 	fi
+	strip-unsupported-flags
 
 	if use rocm ; then
 		rocm_pkg_setup
@@ -1042,95 +1038,53 @@ src_unpack() {
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 
+is_mold() {
+	if \
+		   is-flagq "-fuse-ld=mold" \
+		&& test-flag-CCLD '-fuse-ld=mold' \
+		&& has_version "sys-devel/mold" \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_lld() {
+	if \
+		tc-is-clang \
+		&& is-flagq "-fuse-ld=lld" \
+		&& [[ -n "${LLVM_SLOT}" ]] \
+		&& has_version "llvm-core/lld:${LLVM_SLOT}" \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 setup_linker() {
 	if use rocm ; then
 		return
 	fi
 
-	# The package likes to use lld with gcc which is disallowed.
-	local lld_pv=-1
-	if tc-is-clang \
-		&& "ld.lld" --version 2>/dev/null 1>/dev/null ; then
-		lld_pv=$("ld.lld" --version | awk '{print $2}')
-	fi
-	if is-flagq '-fuse-ld=mold' \
-		&& test-flag-CCLD '-fuse-ld=mold' \
-		&& has_version "sys-devel/mold" ; then
+	if is_mold ; then
 		# Explicit -fuse-ld=mold because of license of the linker.
 einfo "Using mold"
-		ld.mold --version || die
+		"ld.mold" --version || die
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=mold"
 		BUILD_LDFLAGS+=" -fuse-ld=mold"
-	elif \
-		tc-is-clang \
-			&& \
-		( \
-			! is-flagq '-fuse-ld=gold' \
-				&& \
-			! is-flagq '-fuse-ld=bfd' \
-		) \
-			&& \
-		( \
-			( \
-				has_version "sys_devel/lld:$(clang-major-version)" \
-			) \
-				|| \
-			( \
-				ver_test $(clang-major-version) -lt "13" \
-					&& \
-				ver_test "${lld_pv}" -ge $(clang-major-version) \
-			) \
-				|| \
-			( \
-				has_version "llvm-core/clang-common[default-lld]" \
-			) \
-		) \
-	then
-einfo "Using LLD (TESTING)"
+	elif is_lld ; then
+einfo "Using LLD"
 		"ld.lld" --version || die
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
-	elif has_version "sys-devel/binutils[gold]" ; then
-		# Linking takes 15 hours will the first .so and has linker lag issues.
-ewarn
-ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
-ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
-ewarn
-		"ld.gold" --version || die
-		filter-flags "-fuse-ld=*"
-		append-ldflags "-fuse-ld=gold"
-		BUILD_LDFLAGS+=" -fuse-ld=gold"
-		# The build scripts will use gold if it detects it.
-		# Gold can hit ~9.01 GiB without flags.
-		# Gold uses --no-threads by default.
-		if ! is-flagq '-Wl,--thread-count,*' ; then
-			# Gold doesn't use threading by default.
-			local ncpus=$(lscpu \
-				| grep -F "CPU(s)" \
-				| head -n 1 \
-				| awk '{print $2}')
-			local tpc=$(lscpu \
-				| grep -F "Thread(s) per core:" \
-				| head -n 1 \
-				| cut -f 2 -d ":" \
-				| sed -r -e "s|[ ]+||g")
-			local nthreads=$(( ${ncpus} * ${tpc} ))
-ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified in LDFLAGS"
-		fi
-		filter-flags "-Wl,--thread-count,*"
-		append-ldflags "-Wl,--thread-count,${nthreads}"
-		BUILD_LDFLAGS+=" -Wl,--thread-count,${nthreads}"
 	else
-ewarn
-ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
-ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
-ewarn
-		"ld.bfd" --version || die
-		append-ldflags "-fuse-ld=bfd"
-		BUILD_LDFLAGS+=" -fuse-ld=bfd"
-		# No threading flags
+eerror "Gold and BFD are banned from linking ${CATEGORY}/${PN} because of long linking times can result in vulnerable system."
+eerror "Either use the clang USE flag or emerge mold and add -fuse-ld=mold to LDFLAGS to continue."
+		die
 	fi
 
 	strip-unsupported-flags # Filter LDFLAGS after switch

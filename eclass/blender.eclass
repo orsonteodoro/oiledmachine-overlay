@@ -377,6 +377,7 @@ set_blender_compiler() {
 				s="${s%_*}"
 				export CC="${CHOST}-gcc-${s}"
 				export CXX="${CHOST}-g++-${s}"
+				export CPP="${CC} -E"
 			fi
 	else [[ "${CC}" =~ "clang" ]] ; then
 		local s
@@ -384,11 +385,11 @@ set_blender_compiler() {
 			if use "llvm_slot_${s}" ; then
 				export CC="${CHOST}-clang-${s}"
 				export CXX="${CHOST}-clang++${s}"
+				export CPP="${CC} -E"
 				break
 			fi
 		done
 	fi
-	export CPP="${CC} -E"
 
 	strip-unsupported-flags
 
