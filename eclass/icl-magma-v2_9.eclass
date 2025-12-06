@@ -63,12 +63,12 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit check-compiler-switch cmake fix-rpath flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
@@ -253,7 +253,7 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	"
 	gen_rocm_required_use() {
 		local x
-		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 			echo "
 				amdgpu_targets_${x}? (
 					rocm
@@ -283,7 +283,7 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	"
 	gen_rocm_rdepend() {
 		local pv
-		for pv in ${ROCM_SLOTS[@]} ; do
+		for pv in "${ROCM_SLOTS[@]}" ; do
 			local slot="0/${pv%.*}"
 			echo "
 				(
@@ -386,7 +386,7 @@ icl-magma-v2_9_pkg_setup() {
 		fi
 	else
 		local s
-		for s in ${LLVM_COMPAT[@]} ; do
+		for s in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${s}" ; then
 				LLVM_MAX_SLOT="${LLVM_SLOT}"
 				break
@@ -447,21 +447,21 @@ replace_symbols() {
 
 generate_precisions() {
 	local inc_file
-	if has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl && use ilp64 ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda && use mkl && use ilp64 ; then
 		inc_file="make.inc.mkl-gcc-ilp64"
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl ; then
+	elif has "cuda" ${IUSE_EFFECTIVE} && use cuda && use mkl ; then
 		inc_file="make.inc.mkl-gcc"
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && use openblas ; then
+	elif has "cuda" ${IUSE_EFFECTIVE} && use cuda && use openblas ; then
 		inc_file="make.inc.openblas"
-	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use mkl && use ilp64 ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm && use mkl && use ilp64 ; then
 		inc_file="make.inc.hip-gcc-mkl-ilp64"
-	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use mkl ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm && use mkl ; then
 		inc_file="make.inc.hip-gcc-mkl"
-	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use openblas ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm && use openblas ; then
 		inc_file="make.inc.hip-gcc-openblas"
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && use atlas ; then
+	elif has "cuda" ${IUSE_EFFECTIVE} && use cuda && use atlas ; then
 		inc_file="make.inc.atlas"
-	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use atlas ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm && use atlas ; then
 		inc_file="make.inc.atlas"
 	else
 		local gpu_targets=""
@@ -493,25 +493,25 @@ eerror
 		export OPENBLASDIR="/usr"
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		addpredict "/proc/self/task/"
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-	elif has rocm ${IUSE_EFFECTIVE} && use rocm ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
 		export gpu="$(get_amdgpu_flags)"
 	fi
 
 	local backend
-	if has cuda ${IUSE_EFFECTIVE} use cuda ; then
+	if has "cuda" ${IUSE_EFFECTIVE} use cuda ; then
 		backend="cuda"
-	elif has rocm ${IUSE_EFFECTIVE} use rocm ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} use rocm ; then
 		backend="hip"
 	else
 		backend="cuda"
@@ -547,7 +547,7 @@ icl-magma-v2_9_src_prepare() {
 get_cuda_flags() {
 	local list
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		if use "cuda_targets_${x}" ; then
 			list+=";${x}"
 		fi
@@ -557,7 +557,7 @@ get_cuda_flags() {
 }
 
 icl-magma-v2_9_src_configure() {
-	replace-flags '-O0' '-O1'
+	replace-flags "-O0" "-O1"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -569,7 +569,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DBUILD_SHARED_LIBS=ON
 		-DUSE_FORTRAN=ON
 	)
-	if has cuda ${IUSE_EFFECTIVE} ; then
+	if has "cuda" ${IUSE_EFFECTIVE} ; then
 		mycmakeargs+=(
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 			-DMAGMA_ENABLE_CUDA=$(usex cuda ON OFF)
@@ -580,7 +580,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	if has rocm ${IUSE_EFFECTIVE} ; then
+	if has "rocm" ${IUSE_EFFECTIVE} ; then
 		mycmakeargs+=(
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/magma"
 			-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
@@ -606,7 +606,7 @@ ewarn "Support or install location may change for ilp64 in the future."
 		mkl_data_model="lp64"
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda && use mkl ; then
 		if use tbb ; then
 			mycmakeargs+=(
 				-DBLA_VENDOR="${mkl_data_model_vendor}"
@@ -630,7 +630,7 @@ ewarn
 				-DLAPACK_CXXFLAGS:STRING="$(pkg-config --cflags mkl-dynamic-${mkl_data_model}-seq)"
 			)
 		fi
-	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use mkl ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm && use mkl ; then
 		if use tbb ; then
 			mycmakeargs+=(
 				-DBLA_VENDOR="${mkl_data_model_vendor}"
@@ -658,12 +658,12 @@ ewarn
 		)
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		mycmakeargs+=(
 			-DGPU_TARGET="$(get_cuda_flags)"
 		)
 	fi
-	if has rocm ${IUSE_EFFECTIVE} && use rocm ; then
+	if has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
 		local a
 		local b
 		local c
@@ -674,14 +674,14 @@ ewarn
 			| cut -f 2 -d '"')
 		if [[ -n "${hip_pv}" ]] ; then
 			# a.b.c : 5.6.23356 : a=5, b=6, c=23356
-			a=$(ver_cut 1 ${hip_pv})
-			b=$(ver_cut 2 ${hip_pv})
-			c=$(ver_cut 3 ${hip_pv})
+			a=$(ver_cut 1 "${hip_pv}")
+			b=$(ver_cut 2 "${hip_pv}")
+			c=$(ver_cut 3 "${hip_pv}")
 			append-cppflags -DHIP_VERSION=$(printf "%d%02d%5d" ${a} ${b} ${c})
 		fi
 
-		export CC="${HIP_CC:-hipcc}"
-		export CXX="${HIP_CXX:-hipcc}"
+		export CC="hipcc"
+		export CXX="hipcc"
 		strip-unsupported-flags
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
