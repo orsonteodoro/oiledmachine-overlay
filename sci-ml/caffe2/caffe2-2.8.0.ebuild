@@ -518,7 +518,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_36
+ebuild_revision_37
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -737,9 +737,6 @@ REQUIRED_USE="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
-		openmp? (
-			clang
-		)
 		^^ (
 			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
@@ -1254,6 +1251,7 @@ pkg_setup() {
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="6.4"
 		rocm_pkg_setup
+		rocm_set_default_hipcc
 	else
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
