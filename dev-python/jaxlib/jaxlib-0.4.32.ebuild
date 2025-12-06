@@ -705,7 +705,7 @@ use_gcc() {
 	# Required for CUDA builds
 	if use cuda ; then
 		local s=$(gcc-major-version) # Slot
-		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+		export GCC_HOST_COMPILER_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
 	fi
 
 	"${CC}" --version || die
@@ -758,7 +758,12 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if use rocm ; then
+	if use cuda ; then
+	# Autoconfigure
+		unset CC
+		unset CXX
+		unset CPP
+	elif use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
@@ -1138,10 +1143,10 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		local rocm_version=$(best_version "dev-util/hip" | sed -e "s|dev-util/hip-||g")
 		rocm_version=$(ver_cut 1-3 "${rocm_version}")
 
-		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
-		export HIP_PATH="${EPREFIX}/usr"
-		export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
-		export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
+		export GCC_HOST_COMPILER_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
+		export HIP_PATH="${ESYSROOT}/usr"
+		export HOST_C_COMPILER="${ESYSROOT}/usr/bin/${CC}"
+		export HOST_CXX_COMPILER="${ESYSROOT}/usr/bin/${CXX}"
 		export JAX_ROCM_VERSION="${rocm_version//./}"
 		export ROCM_PATH="${ESYSROOT}/usr"
 		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")

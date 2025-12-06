@@ -946,16 +946,18 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
+
 use rocm && ewarn "The rocm USE flag is currently broken"
+
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
-einfo "CC:  ${CC}"
-einfo "CXX:  ${CXX}"
-einfo "CFLAGS:  ${CFLAGS}"
-einfo "CXXFLAGS:  ${CXXFLAGS}"
-einfo "LDFLAGS:  ${LDFLAGS}"
-einfo "PATH:  ${PATH}"
-	if use rocm ; then
+
+	if use cuda ; then
+	# Autoconfigure
+		unset CC
+		unset CXX
+		unset CPP
+	elif use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
@@ -983,6 +985,13 @@ einfo
 		rocm_pkg_setup
 		rocm_set_default_hipcc
 	fi
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "PATH:  ${PATH}"
 
 	local num_pythons_enabled
 	num_pythons_enabled=0
@@ -1137,7 +1146,7 @@ gen_gcc_ar(){
 	fi
 cat <<-EOF > "${T}/gcc-ar.sh"
 #!/usr/bin/env bash
-GCC_AR_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}"
+GCC_AR_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${gcc_slot}"
 ARGS="\${1}"
 shift
 DEST="\${1}"
@@ -1384,12 +1393,12 @@ ewarn
 			export GCC_SLOT_WITH_CUDA=$(gcc-major-version)
 			export TF_NEED_CLANG=0
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
-			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
+			export TF_CUDA_PATHS="${ESYSROOT}/opt/cuda"
 
 			has_version "sys-devel/gcc:${GCC_SLOT_WITH_CUDA}" || die "Reinstall gcc:${GCC_SLOT_WITH_CUDA}"
-			# The original ebuild has the bugged one
-			# where it will output ${EPREFIX}/usr/${CHOST}/gcc-bin/11/${CHOST}-gcc-12
-			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${GCC_SLOT_WITH_CUDA}/${CHOST}-gcc-${GCC_SLOT_WITH_CUDA}"
+	# The original ebuild has the bugged one
+	# where it will output ${ESYSROOT}/usr/${CHOST}/gcc-bin/11/${CHOST}-gcc-12
+			export GCC_HOST_COMPILER_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${GCC_SLOT_WITH_CUDA}/${CHOST}-gcc-${GCC_SLOT_WITH_CUDA}"
 
 			export TF_CUDA_VERSION="$(cuda_toolkit_version)"
 			export TF_CUDNN_VERSION="$(cuda_cudnn_version)"
@@ -1429,12 +1438,12 @@ einfo
 
 	# See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
 			local gcc_slot=$(gcc-major-version)
-			export CLANG_COMPILER_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
-			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
+			export CLANG_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
+			export GCC_HOST_COMPILER_PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
 			export TF_ROCM_CLANG=1
 
-			export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
-			export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
+			export HOST_C_COMPILER="${ESYSROOT}/usr/bin/${CC}"
+			export HOST_CXX_COMPILER="${ESYSROOT}/usr/bin/${CXX}"
 
 einfo
 einfo "GCC Current Profile:  ${gcc_current_profile}"
@@ -1527,8 +1536,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
 
 		local cflag
-		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
-		do
+		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags) ; do
 			echo "build --copt=\"${cflag}\"" >> ".bazelrc" || die
 			echo "build --host_copt=\"${cflag}\"" >> ".bazelrc" || die
 		done

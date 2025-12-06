@@ -1247,7 +1247,12 @@ pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	warn_untested_gpu
-	if use rocm_6_4 ; then
+	if use cuda ; then
+	# Autoconfigure
+		unset CC
+		unset CXX
+		unset CPP
+	elif use rocm_6_4 ; then
 		LLVM_SLOT="19"
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="6.4"
