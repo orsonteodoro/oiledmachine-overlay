@@ -1286,11 +1286,6 @@ pkg_setup() {
 				"roctracer64:dev-util/roctracer"
 			)
 		fi
-
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" "${libs[@]}"
 	fi
 
 	python-single-r1_pkg_setup
