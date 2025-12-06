@@ -613,8 +613,8 @@ rocm_src_configure() {
 			else
 				# Prevent configure test issues
 				append-flags \
-					--rocm-path="${ESYSROOT}${EROCM_PATH}" \
-					--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
+					"--rocm-path=${ESYSROOT}${EROCM_PATH}" \
+					"--rocm-device-lib-path=${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
 			fi
 		fi
 einfo "rocm_src_configure():  Calling cmake_src_configure()"
@@ -1112,8 +1112,8 @@ rocm_set_default_gcc() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=bfd
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=bfd"
 einfo "Switched to GCC"
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -1139,8 +1139,8 @@ rocm_set_default_clang() {
 	export CXX="${CHOST}-clang++-${llvm_slot}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=lld
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
 einfo "Switched to Clang"
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -1161,8 +1161,8 @@ rocm_set_default_amdclang() {
 	export CXX="amdclang++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=lld
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
 einfo "Switched to amdclang"
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -1184,8 +1184,8 @@ rocm_set_default_aocc() {
 	export CXX="${CHOST}-clang++-${llvm_slot}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=lld
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
 	export _USE_AOCC=1
 	filter-lto
 einfo "Switched to AOCC"
@@ -1256,18 +1256,18 @@ eerror
 		# It should use nvcc.
 		strip-flags
 		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=bfd
-		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+			"-pipe" \
+			"-Wl,-O1" \
+			"-Wl,--as-needed" \
+			"-Wno-unknown-pragmas"
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=bfd"
+		append-cxxflags "-ccbin" "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 	else
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=lld"
 	fi
 	filter-lto
 einfo "Switched to hipcc"
