@@ -1,6 +1,6 @@
 --- a/CMakeLists.txt.orig	2025-12-05 15:55:08.530447882 -0800
 +++ b/CMakeLists.txt	2025-12-05 15:58:54.644609937 -0800
-@@ -223,17 +223,26 @@ else()
+@@ -223,17 +223,27 @@ else()
        option(TENSILE_USE_MSGPACK   "Use msgpack for parsing config files." ON)
      endif()
  
@@ -19,6 +19,7 @@
 +                      --use-pep517 --config-settings editable_mode=compat --no-build-isolation
 +                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 +    endif()
++    set(VIRTUALENV_HOME_DIR "${CMAKE_BINARY_DIR}/virtualenv" CACHE PATH "path to virtual env")
 +
      if (WIN32)
        set( Tensile_ROOT "${CMAKE_BINARY_DIR}/virtualenv/Lib/site-packages/Tensile" )
