@@ -750,8 +750,10 @@ einfo "Switched to clang:${s}"
 setup_tc() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
+	export CPP=$(tc-getCPP)
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
+einfo "CPP:\t\t${CPP}"
 einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
@@ -778,23 +780,10 @@ einfo "completely installed."
 einfo
 		die
 	fi
+
 	if use rocm ; then
 		rocm_pkg_setup
-
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"hipblas:sci-libs/hipBLAS"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-			"rocm_smi64:dev-util/rocm-smi"
-			"roctracer64:dev-util/roctracer"
-		)
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" "${libs[@]}"
-
+		rocm_set_default_hipcc
 	#else
 	#	llvm_pkg_setup is called in use_clang
 	fi

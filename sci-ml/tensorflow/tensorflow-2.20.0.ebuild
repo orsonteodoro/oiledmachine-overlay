@@ -980,6 +980,7 @@ einfo
 
 	if use rocm ; then
 		rocm_pkg_setup
+		rocm_set_default_hipcc
 	fi
 
 	local num_pythons_enabled
@@ -1209,7 +1210,7 @@ einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 		"third_party/xla/third_party"
 		"third_party/xla/third_party/tsl/third_party"
 	)
-	L=() # todo verify folder removal
+	L=() # TODO:  Verify folder removal
 	for d in "${L[@]}" ; do
 		mv \
 			"${d}/py/non_hermetic" \

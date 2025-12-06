@@ -981,6 +981,7 @@ einfo
 
 	if use rocm ; then
 		rocm_pkg_setup
+		rocm_set_default_hipcc
 	fi
 
 	local num_pythons_enabled
