@@ -297,9 +297,12 @@ libstdcxx-slot_verify() {
 		fi
 	done
 
+	local cc_unset=0 # Check if using CUDA autoconfigure
+
 	CC=$(tc-getCC)
 	CXX=$(tc-getCXX)
 	if [[ -z "${CC}" ]] ; then
+		cc_unset=1
 		CC="gcc-${gcc_slot}"
 	fi
 	if [[ -z "${CXX}" ]] ; then
@@ -314,6 +317,7 @@ libstdcxx-slot_verify() {
 		actual_cc_ver=$(ver_cut "1-2" "${actual_cc_ver}")
 		actual_cxx_ver=$(ver_cut "1-2" "${actual_cxx_ver}")
 	else
+		(( ${cc_unset} == 1 )) && unset CC CXX CPP
 		export _LIBSTDCXX_SLOT_VERIFIED=1
 		return
 	fi
@@ -339,6 +343,7 @@ libstdcxx-slot_verify() {
 			fi
 		fi
 	done
+	(( ${cc_unset} == 1 )) && unset CC CXX CPP
 	export _LIBSTDCXX_SLOT_VERIFIED=1
 }
 
