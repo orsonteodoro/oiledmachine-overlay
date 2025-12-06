@@ -3511,7 +3511,7 @@ einfo "Generating tag start for ${path}"
 		git config user.name "John Doe" || die
 		git add * || die
 		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
+		git tag "${tag_name}" || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
@@ -3520,7 +3520,12 @@ pkg_setup() {
 	check-compiler-switch_start
 ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
 	local llvm_base_path
-	if use rocm ; then
+	if use cuda ; then
+	# Autoconfigure
+		unset CC
+		unset CXX
+		unset CPP
+	elif use rocm ; then
 		if use rocm_6_4 ; then
 			export ROCM_SLOT="6.4"
 			export LLVM_SLOT=19
