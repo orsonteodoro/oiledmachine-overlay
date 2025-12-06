@@ -254,7 +254,9 @@ LLVM_COMPAT=(
 	{18..19}
 )
 
-inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms
+inherit flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm rocm
+inherit python-single-r1 toolchain-funcs
 
 #KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
 S="${WORKDIR}/${MY_P}"
