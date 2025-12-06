@@ -111,7 +111,7 @@ strip-flag-value() {
 fix_mb_len_max() {
 	local extra_args_cc=""
 	local extra_args_cxx=""
-	if [[ "${CC}" =~ "clang" || "${CXX}" =~ "clang++" ]] ; then
+	if [[ "${CC}" =~ ("clang"|"hipcc") || "${CXX}" =~ ("clang++"|"hipcc") ]] ; then
 		filter-flags \
 			'-DSSIZE_MAX=*' \
 			'-DMB_LEN_MAX=*' \
