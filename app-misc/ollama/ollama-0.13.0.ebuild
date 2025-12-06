@@ -3030,7 +3030,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_100
+ebuild_revision_101
 "
 
 gen_rocm_required_use() {
@@ -3528,6 +3528,7 @@ ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder an
 ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 		fi
 		rocm_pkg_setup
+		rocm_set_default_hipcc
 	else
 		local llvm_slot
 		local x
