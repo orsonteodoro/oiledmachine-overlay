@@ -56,7 +56,7 @@ ewarn "${x_targets_compat} is a typo or missing."
 
 	local list=""
 	local g1
-	for g1 in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for g1 in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		local found=0
 		local g2
 		local g2_suffix=""

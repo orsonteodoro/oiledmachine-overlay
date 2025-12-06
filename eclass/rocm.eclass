@@ -192,7 +192,7 @@ _rocm_set_globals_default() {
 		"
 		# CUDA;DRIVER_VERSION;CUDNN_MIN;CUDNN_MAX as data type
 		local quad
-		for quad in ${HIP_CUDA_VERSIONS[@]} ; do
+		for quad in "${HIP_CUDA_VERSIONS[@]}" ; do
 			local cuda_pv="${quad%%;*}"
 
 			local driver_pv="${quad}"
@@ -250,7 +250,7 @@ _rocm_set_globals_default() {
 			dev-util/nvidia-cuda-toolkit:=
 		"
 	fi
-	if has rocm ${IUSE_EFFECTIVE} && has cuda ${IUSE_EFFECTIVE} ; then
+	if has "rocm" ${IUSE_EFFECTIVE} && has "cuda" ${IUSE_EFFECTIVE} ; then
 		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
 			HIPCC_DEPEND+="
 				cuda? (
@@ -275,7 +275,7 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-	elif has rocm ${IUSE_EFFECTIVE} && ! has cuda ${IUSE_EFFECTIVE} ; then
+	elif has "rocm" ${IUSE_EFFECTIVE} && ! has "cuda" ${IUSE_EFFECTIVE} ; then
 		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
 			HIPCC_DEPEND+="
 				!rocm? (
@@ -300,7 +300,7 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-	elif has cuda ${IUSE_EFFECTIVE} && ! has rocm ${IUSE_EFFECTIVE} ; then
+	elif has "cuda" ${IUSE_EFFECTIVE} && ! has "rocm" ${IUSE_EFFECTIVE} ; then
 		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
 			HIPCC_DEPEND+="
 				cuda? (
@@ -420,7 +420,7 @@ _rocm_set_globals_default() {
 
 	local list=""
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		list+=",amdgpu_targets_${x%%_*}(-)?"
 	done
 	list="${list:1}"
@@ -447,7 +447,7 @@ inherit rocm-targets-compat
 # @DESCRIPTION:
 # Init paths
 rocm_pkg_setup() {
-	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		if [[ "${HIP_PLATFORM}" != "nvidia" ]] ; then
 eerror
 eerror "Change HIP_PLATFORM=\"nvidia\" in /etc/portage/make.conf to continue."
@@ -457,7 +457,7 @@ eerror "same GCC version."
 eerror
 			die
 		fi
-	elif has cuda ${IUSE_EFFECTIVE} && ! use cuda ; then
+	elif has "cuda" ${IUSE_EFFECTIVE} && ! use cuda ; then
 		if [[ -z "${HIP_PLATFORM}" ]] ; then
 			:
 		elif [[ "${HIP_PLATFORM}" != "amd" ]] ; then
@@ -492,16 +492,16 @@ einfo "PATH:  ${PATH}"
 
 	# LLVM_SLOT must be after llvm_pkg_setup or llvm-r1_pkg_setup
 	# The CLANG_SLOT is the folder name.
-	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
+	if (( ${ROCM_USE_LLVM_ROC:-1} == 1 )) ; then
 		# ls /opt/rocm/lib/llvm/lib64/clang -> 16.0.0 17.0.0
-		if ver_test ${ROCM_SLOT} -ge 6.1 ; then
+		if ver_test "${ROCM_SLOT}" "-ge" "6.1" ; then
 			CLANG_SLOT="${LLVM_SLOT}"
 		else
 			CLANG_SLOT="${LLVM_SLOT}.0.0"
 		fi
 	else
 		# ls /usr/lib/clang -> 13.0.1  14.0.6  15.0.1  15.0.5  15.0.6  15.0.7  16  17
-		if ver_test ${LLVM_SLOT} -ge 16 ; then
+		if ver_test "${LLVM_SLOT}" "-ge" "16" ; then
 			CLANG_SLOT="${LLVM_SLOT}"
 		else
 			CLANG_SLOT=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
@@ -511,7 +511,7 @@ einfo "PATH:  ${PATH}"
 	fi
 
 	local clang_selected_desc
-	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
+	if (( ${ROCM_USE_LLVM_ROC:-1} == 1 )) ; then
 		EROCM_CLANG_PATH="${EROCM_PATH}/$(rocm_get_libdir)/llvm/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:0/${ROCM_SLOT}"
 	else
@@ -519,7 +519,7 @@ einfo "PATH:  ${PATH}"
 		clang_selected_desc="llvm-core/clang:${LLVM_SLOT}"
 	fi
 
-	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
+	if (( ${ROCM_USE_LLVM_ROC:-1} == 1 )) ; then
 		EROCM_LLVM_PATH="${EROCM_PATH}/$(rocm_get_libdir)/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
@@ -559,7 +559,7 @@ einfo "Removing ccache from PATH to prevent override by system's clang..."
 		local path="/var/lib/pgo-profiles/sys-devel/llvm-roc/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
 		mkdir -p "${path}"
-		chown -R portage:portage "${path}" || die
+		chown -R "portage:portage" "${path}" || die
 	fi
 
 	export PKG_CONFIG_PATH="${ESYSROOT}${EROCM_PATH}/share/pkgconfig:${PKG_CONFIG_PATH}"
@@ -632,7 +632,7 @@ einfo "rocm_src_configure():  Calling cmake_src_configure()"
 # https://llvm.org/docs/AMDGPUUsage.html#target-features
 get_amdgpu_flags() {
 	local amdgpu_target_flags
-	for gpu_target in ${AMDGPU_TARGETS}; do
+	for gpu_target in ${AMDGPU_TARGETS} ; do
 		local gpu_target_base="${gpu_target%%_*}"
 		if [[ "${gpu_target}" =~ "xnack_minus" ]] ; then
 			gpu_target="${gpu_target_base}:xnack-"
@@ -655,13 +655,16 @@ get_amdgpu_flags() {
 # @DESCRIPTION:
 # grant and check read-write permissions on AMDGPU devices, die if not available.
 check_amdgpu() {
-	for device in /dev/kfd /dev/dri/render*; do
-		addwrite ${device}
-		if [[ ! -r ${device} || ! -w ${device} ]]; then
-			eerror "Cannot read or write ${device}!"
-			eerror "Make sure it is present and check the permission."
-			ewarn "By default render group have access to it. Check if portage user is in render group."
-			die "${device} inaccessible"
+	for device in "/dev/kfd" "/dev/dri/render"*; do
+		addwrite "${device}"
+		if [[ ! -r "${device}" || ! -w "${device}" ]]; then
+eerror
+eerror "Cannot read or write ${device}!"
+eerror "Make sure it is present and check the permission."
+eerror "By default render group have access to it. Check if portage user is in render group."
+eerror "${device} inaccessible"
+eerror
+			die
 		fi
 	done
 }
@@ -701,6 +704,7 @@ rocm_get_libdir() {
 # @FUNCTION: rocm_fix_rpath
 # @DESCRIPTION:
 # Fix multislot issues
+# @DEPRECATED:
 rocm_fix_rpath() {
 	local scan_path="${1}"
 	if [[ -z "${scan_path}" ]] ; then
@@ -774,7 +778,7 @@ rocm_fix_rpath() {
 				fi
 			done
 
-			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
+			if (( ${ROCM_USE_LLVM_ROC:-1} == 0 )) ; then
 				:
 			else
 				for l in "${llvm_libs[@]}" ; do
@@ -808,7 +812,7 @@ rocm_fix_rpath() {
 				done
 			fi
 
-			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
+			if (( ${ROCM_USE_LLVM_ROC:-1} == 0 )) ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
@@ -897,6 +901,7 @@ einfo "Fixing rpath for ${path}"
 # @DESCRIPTION:
 # Check if we are using the multislot lib paths and not unislot system folders
 # for libhsa-runtime64.so and libamdhip64.so.
+# @DEPRECATED:
 rocm_verify_rpath_correctness() {
 	local source
 	if [[ -z "${EROCM_RPATH_SCAN_FOLDER}" ]] ; then
@@ -977,7 +982,7 @@ rocm_verify_rpath_correctness() {
 				fi
 			done
 
-			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
+			if (( ${ROCM_USE_LLVM_ROC:-1} == 0 )) ; then
 				:
 			else
 				for l in "${llvm_libs[@]}" ; do
@@ -1014,7 +1019,7 @@ rocm_verify_rpath_correctness() {
 				done
 			fi
 
-			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
+			if (( ${ROCM_USE_LLVM_ROC:-1} == 0 )) ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
@@ -1211,7 +1216,7 @@ rocm_set_default_hipcc() {
 	export CXX="hipcc"
 #	export CPP="${CC} -E"
 	strip-unsupported-flags
-	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
 		local t="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOTS[@]"
 		local CUDA_SLOTS=(
