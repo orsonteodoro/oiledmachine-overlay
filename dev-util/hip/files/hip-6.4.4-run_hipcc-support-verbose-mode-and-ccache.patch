@@ -1,14 +1,18 @@
 --- hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake.orig	2025-12-07 11:51:01.971975807 -0800
-+++ hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake	2025-12-07 12:14:50.775130193 -0800
-@@ -40,6 +40,22 @@ if(NOT generated_file)
++++ hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake	2025-12-07 12:26:26.786345703 -0800
+@@ -40,6 +40,26 @@ if(NOT generated_file)
      message(FATAL_ERROR "You must specify generated_file on the command line")
  endif()
  
-+# Enable ccache
-+find_program(CCACHE_PROGRAM ccache)
-+if(CCACHE_PROGRAM AND NOT __CC MATCHES "ccache")
-+  set(__CC "${CCACHE_PROGRAM} ${__CC}")
-+  message(STATUS "HIP kernel compilation: ccache enabled")
++if(DEFINED ENV{FEATURES})
++  string(FIND "$ENV{FEATURES}" "ccache" CCACHE_IN_FEATURES)
++  if(CCACHE_IN_FEATURES GREATER -1)
++    find_program(CCACHE_PROGRAM ccache)
++    if(CCACHE_PROGRAM AND NOT __CC MATCHES "ccache")
++      set(__CC "${CCACHE_PROGRAM} ${__CC}")
++      message(STATUS "HIP kernel compilation: ccache enabled (FEATURES=ccache)")
++    endif()
++  endif()
 +endif()
 +
 +# Verbose mode – print every command before executing
