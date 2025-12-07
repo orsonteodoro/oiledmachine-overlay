@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_51
+ebuild_revision_52
 "
 REQUIRED_USE="
 	hsa? (
@@ -208,6 +208,7 @@ CLR_PATCHES=(
 ROCCLR_PATCHES=(
 )
 HIP_PATCHES=(
+	"${FILESDIR}/${PN}-6.4.4-HIP_CLANG_PATH-override.patch"
 )
 HIPAMD_PATCHES=(
 #	"${FILESDIR}/${PN}-5.7.0-DisableTest.patch"
@@ -298,7 +299,7 @@ src_prepare() {
 			-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
 			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
 			-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
-			-e "s,@ESYSROOT@,${ESYSROOT}," \
+			-e "s,@ESYSROOT@,${ESYSROOT},g" \
 			-e "s,@ROCM_PATH@,${EROCM_PATH},g" \
 			-e "s,@CLANG_PATH@,${EROCM_LLVM_PATH}/$(rocm_get_libdir)/clang/${LLVM_SLOT}," \
 			-e "s,@LLVM_PATH@,${EROCM_LLVM_PATH}," \

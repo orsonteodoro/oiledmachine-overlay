@@ -1,0 +1,13 @@
+--- hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake.orig	2025-07-07 09:25:45.000000000 -0700
++++ hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake	2025-12-06 19:26:55.281899930 -0800
+@@ -68,8 +68,8 @@ if(NOT host_flag)
+     set(__CC ${HIP_HIPCC_EXECUTABLE})
+     if("${HIP_PLATFORM}" STREQUAL "amd")
+         if("${HIP_COMPILER}" STREQUAL "clang")
+-            if(NOT "x${HIP_CLANG_PATH}" STREQUAL "x")
+-                set(ENV{HIP_CLANG_PATH} ${HIP_CLANG_PATH})
++            if(DEFINED ENV{HIP_CLANG_PATH})
++                set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+             endif()
+             set(__CC_FLAGS ${HIP_CLANG_PARALLEL_BUILD_COMPILE_OPTIONS} ${HIP_HIPCC_FLAGS} ${HIP_CLANG_FLAGS} ${HIP_HIPCC_FLAGS_${build_configuration}} ${HIP_CLANG_FLAGS_${build_configuration}})
+         endif()

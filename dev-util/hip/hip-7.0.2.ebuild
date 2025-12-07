@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_51
+ebuild_revision_52
 "
 REQUIRED_USE="
 	hsa? (
@@ -196,6 +196,7 @@ CLR_PATCHES=(
 ROCCLR_PATCHES=(
 )
 HIP_PATCHES=(
+	"${FILESDIR}/${PN}-6.4.4-HIP_CLANG_PATH-override.patch"
 )
 HIPAMD_PATCHES=(
 #	"${FILESDIR}/${PN}-5.7.0-DisableTest.patch"
