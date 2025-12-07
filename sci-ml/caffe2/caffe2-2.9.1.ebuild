@@ -1247,7 +1247,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.9.0-prefixed-install.patch"
 	"${FILESDIR}/${PN}-2.9.0-optionalize-simd.patch"
 	#"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
-	"${FILESDIR}/${PN}-2.9.1-clang-atomic.patch"
 )
 
 warn_untested_gpu() {
@@ -1310,7 +1309,10 @@ pkg_setup() {
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="6.4"
 		rocm_pkg_setup
-		rocm_set_default_hipcc
+
+	# For relaxing C11 for atomics, it will still build kernels with Clang.
+		rocm_set_default_gcc
+
 		export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/opt/cuda|d" | tr $'\n' ":")
 	elif use clang ; then
 		use_clang
@@ -1871,7 +1873,9 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		)
 	fi
 
-	if use rocm ; then
+	if ! tc-is-clang ; then
+		:
+	elif use rocm ; then
 		mycmakeargs+=(
 			-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/include -fopenmp=libomp"
 			-DOpenMP_C_LIB_NAMES="libomp"
