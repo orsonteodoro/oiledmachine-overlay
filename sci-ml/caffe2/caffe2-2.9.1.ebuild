@@ -1295,6 +1295,7 @@ pkg_setup() {
 		ROCM_SLOT="6.4"
 		rocm_pkg_setup
 		rocm_set_default_hipcc
+		export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/opt/cuda|d" | tr $'\n' ":")
 	elif use clang ; then
 		use_clang
 	else
@@ -1599,6 +1600,9 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_LITE_INTERPRETER=OFF
 		-DBUILD_SHARED_LIBS=ON
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=$(usex !cuda "ON" "OFF")
+		-DCMAKE_DISABLE_FIND_PACKAGE_Cuda=$(usex !cuda "ON" "OFF")
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=$(usex !cuda "ON" "OFF")
 		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
 		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
 		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
@@ -1705,6 +1709,12 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_VANILLA_OPTIMIZATIONS=OFF # Disable insecure -O3, breaks -DFORTIFY_SOURCE
 
 	)
+
+	if ! use cuda ; then
+		mycmakeargs+=(
+			-DCMAKE_CUDA_COMPILER="CMAKE_CUDA_COMPILER-NOTFOUND"
+		)
+	fi
 
 	if use onednn ; then
 		if use amd64 && ( use cpu_flags_x86_amx || use cpu_flags_x86_avx2 || use_avx512 || use cpu_flags_x86_sse4_1 ) ; then
@@ -1832,6 +1842,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		export ROCTHRUST_PATH="${ESYSROOT}${EROCM_PATH}"
 		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 			-DUSE_NCCL=$(usex rccl)
 			-DUSE_RCCL=$(usex rccl)
