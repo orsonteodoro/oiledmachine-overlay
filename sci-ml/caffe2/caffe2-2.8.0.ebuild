@@ -1309,7 +1309,8 @@ pkg_setup() {
 		ROCM_SLOT="6.4"
 		rocm_pkg_setup
 
-	# For relaxing C11 for atomics, it will still build kernels with Clang.
+	# Use GCC for relaxing C11 to avoid Python 3.11 atomics errors in host only code.
+	# It will still build kernels with HIP-Clang.
 		rocm_set_default_gcc
 
 		export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/opt/cuda|d" | tr $'\n' ":")
