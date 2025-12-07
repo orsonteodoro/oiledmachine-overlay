@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_52
+ebuild_revision_53
 "
 REQUIRED_USE="
 	hsa? (
@@ -296,7 +296,7 @@ src_prepare() {
 	popd >/dev/null 2>&1 || die
 
 	pushd "${HIP_S}" >/dev/null 2>&1 || die
-		#eapply "${HIP_PATCHES[@]}"
+		eapply "${HIP_PATCHES[@]}"
 		hprefixify $(grep \
 			-rl \
 			--exclude-dir="build/" \
