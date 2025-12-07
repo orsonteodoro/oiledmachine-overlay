@@ -369,17 +369,7 @@ set_blender_compiler() {
 		unset CPP
 	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
 		_blender_set_rocm_compiler
-	elif [[ -z "${CC}" ]] ; then
-		local x
-		for x in "${GCC_COMPAT[@]}" ; do
-			if use "${x}" ; then
-				s="${x/gcc_slot_}"
-				s="${s%_*}"
-				export CC="${CHOST}-gcc-${s}"
-				export CXX="${CHOST}-g++-${s}"
-				export CPP="${CC} -E"
-			fi
-	else [[ "${CC}" =~ "clang" ]] ; then
+	elif [[ "${CC}" =~ "clang" ]] ; then
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${s}" ; then
@@ -389,6 +379,16 @@ set_blender_compiler() {
 				break
 			fi
 		done
+	else
+		local x
+		for x in "${GCC_COMPAT[@]}" ; do
+			if use "${x}" ; then
+				s="${x/gcc_slot_}"
+				s="${s%_*}"
+				export CC="${CHOST}-gcc-${s}"
+				export CXX="${CHOST}-g++-${s}"
+				export CPP="${CC} -E"
+			fi
 	fi
 
 	strip-unsupported-flags

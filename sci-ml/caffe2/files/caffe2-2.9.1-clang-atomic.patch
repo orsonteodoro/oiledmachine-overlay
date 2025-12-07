@@ -1,0 +1,25 @@
+--- a/torch/csrc/dynamo/cpython_includes.h.orig	2025-11-10 17:02:50.000000000 -0800
++++ b/torch/csrc/dynamo/cpython_includes.h	2025-12-06 22:46:12.572611143 -0800
+@@ -1,5 +1,11 @@
+ #pragma once
+ 
++// Workaround for Clang + Python 3.11 atomic strictness
++#if defined(__clang__) && __clang_major__ >= 15
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Watomic-trivially-copyable"
++#endif
++
+ #include <torch/csrc/utils/python_compat.h>
+ 
+ // Problem in CPython includes when mixing core and non-core build
+@@ -36,6 +42,10 @@
+ #undef Py_BUILD_CORE
+ #endif // PY_VERSION_HEX >= 0x03080000
+ 
++#if defined(__clang__) && __clang_major__ >= 15
++#pragma clang diagnostic pop
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif

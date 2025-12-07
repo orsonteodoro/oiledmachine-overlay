@@ -74,7 +74,7 @@
 +        -DAOTRITON_NO_PYTHON=ON
 +        -DAOTRITON_NO_SHARED=ON
 +      BUILD_COMMAND ""   # work-around double build
-+      BUILD_BYPRODUCTS "${__AOTRITON_INSTALL_DIR}/lib/libaotriton_v2.a"
++      BUILD_BYPRODUCTS "${__AOTRITON_INSTALL_DIR}/lib/libaotriton_v2.so"
 +      USES_TERMINAL_DOWNLOAD   TRUE
 +      USES_TERMINAL_CONFIGURE TRUE
 +      USES_TERMINAL_BUILD     TRUE

@@ -697,6 +697,8 @@ REQUIRED_USE="
 			|| (
 				amdgpu_targets_gfx90a
 				amdgpu_targets_gfx942
+
+				amdgpu_targets_gfx1200
 			)
 		)
 	)
@@ -989,6 +991,19 @@ RDEPEND="
 		dev-libs/cudnn:=
 		virtual/cuda-compiler:=
 	)
+	flash-attention? (
+		$(python_gen_cond_dep '
+			dev-python/filelock[${PYTHON_USEDEP}]
+			dev-python/iniconfig[${PYTHON_USEDEP}]
+			dev-python/packaging[${PYTHON_USEDEP}]
+			dev-python/pluggy[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/setuptools[${PYTHON_USEDEP}]
+			dev-python/wheel[${PYTHON_USEDEP}]
+			dev-python/pybind11[${PYTHON_USEDEP}]
+			dev-python/pandas[${PYTHON_USEDEP}]
+		')
+	)
 	gloo? (
 		ssl? (
 			>=dev-libs/openssl-1.1
@@ -1232,6 +1247,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.9.0-prefixed-install.patch"
 	"${FILESDIR}/${PN}-2.9.0-optionalize-simd.patch"
 	#"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
+	"${FILESDIR}/${PN}-2.9.1-clang-atomic.patch"
 )
 
 warn_untested_gpu() {
