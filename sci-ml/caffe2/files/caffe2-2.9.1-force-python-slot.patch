@@ -1,0 +1,48 @@
+--- a/third_party/aotriton/CMakeLists.txt.orig	2025-12-07 22:41:34.999415828 -0800
++++ b/third_party/aotriton/CMakeLists.txt	2025-12-07 22:53:45.198761212 -0800
+@@ -58,7 +58,12 @@ if(AOTRITON_MIN_PYTHON VERSION_LESS "3.1
+   message(FATAL_ERROR "Do not set AOTRITON_MIN_PYTHON lower than 3.10. The code itself does not support it.")
+ endif()
+ 
+-find_package(Python3 ${AOTRITON_MIN_PYTHON} COMPONENTS Interpreter REQUIRED)
++if(DEFINED ENV{EPYTHON})
++  find_program(Python3_EXECUTABLE "$ENV{EPYTHON}" PATHS /usr/bin NO_DEFAULT_PATH REQUIRED)
++  message(STATUS "aotriton: forced Python3_EXECUTABLE = ${Python3_EXECUTABLE} (from EPYTHON=$ENV{EPYTHON})")
++else()
++  find_package(Python3 ${AOTRITON_MIN_PYTHON} COMPONENTS Interpreter REQUIRED)
++endif()
+ # Must set this otherwise hip-config-amd.cmake cannot find AMDDeviceLibs
+ list(APPEND CMAKE_PREFIX_PATH "/opt/rocm")
+ find_package(hip REQUIRED)
+--- a/third_party/aotriton/third_party/triton/CMakeLists.txt.orig	2025-12-07 22:41:35.231212069 -0800
++++ b/third_party/aotriton/third_party/triton/CMakeLists.txt	2025-12-07 22:53:38.014861956 -0800
+@@ -180,7 +180,12 @@ if(TRITON_BUILD_PYTHON_MODULE)
+   include_directories(${PYTHON_SRC_PATH})
+ 
+   # Python Interpreter is used to run lit tests
+-  find_package(Python3 REQUIRED COMPONENTS Development.Module Interpreter)
++  if(DEFINED ENV{EPYTHON})
++    find_program(Python3_EXECUTABLE "$ENV{EPYTHON}" PATHS /usr/bin NO_DEFAULT_PATH REQUIRED)
++    message(STATUS "triton: forced Python3_EXECUTABLE = ${Python3_EXECUTABLE} (from EPYTHON=$ENV{EPYTHON})")
++  else()
++    find_package(Python3 REQUIRED COMPONENTS Development.Module Interpreter)
++  endif()
+   find_package(pybind11 CONFIG REQUIRED HINTS "${Python3_SITELIB}")
+ 
+   if (DEFINED TRITON_PLUGIN_DIRS)
+--- a/third_party/aotriton/third_party/triton/third_party/proton/CMakeLists.txt.orig	2025-12-07 22:41:36.272030784 -0800
++++ b/third_party/aotriton/third_party/triton/third_party/proton/CMakeLists.txt	2025-12-07 22:53:46.334756338 -0800
+@@ -15,7 +15,12 @@ if(NOT JSON_INCLUDE_DIR)
+ endif()
+ 
+ # ============ Dependencies =============
+-find_package(Python3 REQUIRED Interpreter Development.Module)
++if(DEFINED ENV{EPYTHON})
++  find_program(Python3_EXECUTABLE "$ENV{EPYTHON}" PATHS /usr/bin NO_DEFAULT_PATH REQUIRED)
++  message(STATUS "proton: forced Python3_EXECUTABLE = ${Python3_EXECUTABLE} (from EPYTHON=$ENV{EPYTHON})")
++else()
++  find_package(Python3 REQUIRED Interpreter Development.Module)
++else()
+ find_package(pybind11 CONFIG REQUIRED HINTS "${Python3_SITELIB}")
+ 
+ # ============ Define a GLOBAL property to store object-libraries ============

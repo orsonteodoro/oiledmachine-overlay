@@ -1004,6 +1004,11 @@ RDEPEND="
 			dev-python/pybind11[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
 		')
+		rocm? (
+			$(python_gen_cond_dep '
+				 <dev-python/numpy-2.0[${PYTHON_USEDEP}]
+			')
+		)
 	)
 	gloo? (
 		ssl? (
@@ -1249,6 +1254,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.9.0-optionalize-simd.patch"
 	#"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
 	"${FILESDIR}/${PN}-2.8.0-aotriton-deps.patch"
+	"${FILESDIR}/${PN}-2.9.1-force-python-slot.patch"
 )
 
 warn_untested_gpu() {
@@ -1627,6 +1633,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
 		-DONEDNN_EXPERIMENTAL_GRAPH_COMPILER_BACKEND=$(usex jit)
 		-DPYTHON_EXECUTABLE="${PYTHON}"
+		-DPython3_EXECUTABLE="${PYTHON}"
 		-DSLEEF_DISABLE_AVX=$(usex !cpu_flags_x86_avx)
 		-DSLEEF_DISABLE_AVX2=$(usex !cpu_flags_x86_avx2)
 		-DSLEEF_DISABLE_AVX512F=$(usex !cpu_flags_x86_avx512f)
