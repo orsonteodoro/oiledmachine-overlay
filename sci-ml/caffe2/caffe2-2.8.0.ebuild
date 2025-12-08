@@ -145,6 +145,18 @@ AMDGPU_TARGETS_UNTESTED=(
 	"gfx1201"
 )
 
+AMDGPU_TARGETS_FATTN=(
+# See https://github.com/ROCm/aotriton/blob/6fca155f4deeb8d9529326f7b69f350aeeb93477/CMakeLists.txt#L61
+	"gfx90a"   # Full support
+	"gfx942"   # Full support
+	#"gfx950"  # Full support
+	"gfx1100"  # Full support
+	#"gfx1150" # Partial support
+	#"gfx1151" # Partial support
+	"gfx1200"  # Full support
+	"gfx1201"  # Full support
+)
+
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_bf16"
 	"cpu_flags_arm_dotprod"
@@ -689,10 +701,7 @@ REQUIRED_USE="
 		rocm? (
 			!system-libs
 			|| (
-				amdgpu_targets_gfx90a
-				amdgpu_targets_gfx942
-
-				amdgpu_targets_gfx1200
+				${AMDGPU_TARGETS_FATTN[@]/#/amdgpu_targets_}
 			)
 		)
 	)
