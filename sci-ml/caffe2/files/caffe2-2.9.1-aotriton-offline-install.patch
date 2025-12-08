@@ -18,7 +18,7 @@
 +    target_link_libraries(__caffe2_aotriton INTERFACE aotriton_v2)
 +    target_include_directories(__caffe2_aotriton INTERFACE
 +      "${AOTRITON_SOURCE_DIR}/include"
-+      "${AOTRITON_SOURCE_DIR}/v3src"
++      "${CMAKE_BINARY_DIR}/aotriton-build/include"
 +    )
 +    message(STATUS "AOTRITON: headers fixed — config.h found in source tree")
 +
