@@ -16,7 +16,7 @@
 +
 +    # Reuse the existing __caffe2_aotriton interface target (do NOT recreate it)
 +    target_link_libraries(__caffe2_aotriton INTERFACE aotriton_v2)
-+    target_include_directories(__caffe2_aotriton PUBLIC
++    include_directories(
 +      "${AOTRITON_SOURCE_DIR}/include"
 +      "${CMAKE_BINARY_DIR}/aotriton-build/include"
 +    )
