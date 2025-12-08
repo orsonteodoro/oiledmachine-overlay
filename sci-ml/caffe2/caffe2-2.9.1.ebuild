@@ -1566,6 +1566,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if ! use kineto ; then
 		append-cppflags "-DNO_PROFILING"
 	fi
+	if use rocm && use flash-attention ; then
+		append-cppflags "-I${S}_build/aotriton-build/include"
+		append-cxxflags "-I${S}_build/aotriton-build/include"
+	fi
 
 	fix_mb_len_max
 
