@@ -6,6 +6,7 @@ EAPI=8
 
 inherit dhms
 
+CXX_STANDARD=20
 # https://github.com/chromium/chromium/blob/143.0.7499.40/DEPS#L533
 GN_COMMIT="07d3c6f4dc290fae5ca6152ebcb37d6815c411ab"
 GN_PV="0.2287" # See get_gn_ver.sh
@@ -24,7 +25,17 @@ RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
-inherit check-compiler-switch edo flag-o-matic ninja-utils
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+)
+
+inherit check-compiler-switch edo flag-o-matic libcxx-slot libstdcxx-slot ninja-utils
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -156,7 +167,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
 IUSE+="
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 "
@@ -172,6 +183,8 @@ DOCS=( )
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
