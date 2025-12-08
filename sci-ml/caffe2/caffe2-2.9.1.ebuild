@@ -541,7 +541,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_38
+ebuild_revision_39
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1887,6 +1887,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
 			-DAOTRITON_DISABLE_VENV=ON
+			-DAOTRITON_TARGET_ARCH=$(get_amdgpu_flags)
 			-DAOTRITON_USE_TORCH=OFF # Prevent error on fresh install
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
