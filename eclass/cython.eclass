@@ -91,4 +91,11 @@ einfo "Setting up Cython ${CYTHON_SLOT} support for ${EPYTHON}"
 	which "cython" >/dev/null || die "Missing cython"
 }
 
+# @FUNCTION: cython_python_compile
+# @DESCRIPTION:
+# Alias for cython_python_configure
+cython_python_compile() {
+	cython_python_configure
+}
+
 fi

@@ -104,6 +104,13 @@ distutils_enable_tests pytest
 python_configure() {
 	cython_set_cython_slot "3.0"
 	cython_python_configure
+	cython -V || die
+	cython3 -V || die
+}
+
+python_compile() {
+	cython_python_compile
+	distutils-r1_python_compile
 }
 
 src_test() {
