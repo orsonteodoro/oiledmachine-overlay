@@ -1856,6 +1856,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
 			-DAOTRITON_DISABLE_VENV=ON
+			-DAOTRITON_USE_TORCH=OFF # Prevent error on fresh install
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
