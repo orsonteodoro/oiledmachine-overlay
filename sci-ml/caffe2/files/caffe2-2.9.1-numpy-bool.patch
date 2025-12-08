@@ -1,0 +1,11 @@
+--- a/third_party/aotriton/v3python/base/typed_choice.py.orig	2025-08-28 16:12:27.000000000 -0700
++++ b/third_party/aotriton/v3python/base/typed_choice.py	2025-12-08 07:21:59.365754244 -0800
+@@ -305,7 +305,7 @@ class Guess(object):
+ 
+ class GuessNumpy(Guess):
+     FACTORY = {
+-        np.bool   : constexpr.bool_t,
++        np.bool_   : constexpr.bool_t,
+         np.int8   : constexpr.int8_t,
+         np.int16  : constexpr.int16_t,
+         np.int32  : constexpr.int32_t,

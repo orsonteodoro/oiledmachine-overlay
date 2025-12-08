@@ -1255,6 +1255,7 @@ PATCHES=(
 	#"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
 	"${FILESDIR}/${PN}-2.8.0-aotriton-deps.patch"
 	"${FILESDIR}/${PN}-2.9.1-force-python-slot.patch"
+	"${FILESDIR}/${PN}-2.9.1-numpy-bool.patch"
 )
 
 warn_untested_gpu() {
