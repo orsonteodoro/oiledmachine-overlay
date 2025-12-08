@@ -45,6 +45,7 @@ EAPI=8
 # 141.0.7390.54 -> 142.0.7444.59
 # 142.0.7444.59 -> 142.0.7444.162
 # 142.0.7444.162 -> 142.0.7444.175
+# 142.0.7444.175 -> 143.0.7499.40
 #
 
 #
@@ -126,9 +127,9 @@ EAPI=8
 # The unbundle build files logic is in build/linux/unbundle/
 
 TC_COUNT_EXPECTED=5129
-SOURCES_COUNT_EXPECTED=546110
-CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=0
+SOURCES_COUNT_EXPECTED=516257
+CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=1
 
 ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
@@ -169,13 +170,13 @@ RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or L
 SHADOW_CALL_STACK=0 # Global variable
 
 GCC_PV="10.2.1" # Minimum
-CROMITE_PV="142.0.7444.176"
+CROMITE_PV="143.0.7499.40"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="142.0.7444.175-1"
+UNGOOGLED_CHROMIUM_PV="143.0.7499.40-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -184,8 +185,8 @@ UNGOOGLED_CHROMIUM_PV="142.0.7444.175-1"
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
 ZLIB_PV="1.3.1"
 
-COPIUM_COMMIT="46d68912da04d9ed14856c50db986d5c8e786a4b"
-CROMITE_COMMIT="2124fd8aa7d29dd6e1b38d5514916881d7566992" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+COPIUM_COMMIT="8025c57b5b5d0f93ca6392cbcfab8fd2f8255e75"
+CROMITE_COMMIT="73028c53c5508f8fd746958bef4cc911add0c8ac" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
 OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 
@@ -389,12 +390,23 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Nov 11, 2025" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1763152260 # From `date +%s -d "2025-11-14 12:31 PM PST"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2025/11/stable-channel-update-for-desktop_17.html"
+MITIGATION_DATE="Nov 19, 2025" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1763588400 # From `date +%s -d "2025-11-19 1:40 PM PST"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/12/stable-channel-update-for-desktop.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-13223;TC, MC, AEITW, KEV, DoS, DT, ID;High"
-	"CVE-2025-13224;TC, MC, DoS, DT, ID;High"
+	"CVE-2025-13630;TC, MC, DoS, DT, ID;High"
+	"CVE-2025-13631;II, PE, DoS, DT, ID;High"
+	"CVE-2025-13632;II, SBX, DoS, ID;Medium"
+	"CVE-2025-13633;UAF, MC, DoS, DT, ID;High"
+	"CVE-2025-13634;II, DT, ID;Medium"
+	"CVE-2025-13720;MC, DoS, DT, ID;High"
+	"CVE-2025-13721;RC, MC, DoS, DT, ID;High"
+	"CVE-2025-13635;II, UI, DoS, ID;Medium"
+	"CVE-2025-13636;II, DT;Medium"
+	"CVE-2025-13637;II, DT;Medium"
+	"CVE-2025-13638;UAF, MC, DoS, DT, ID;High"
+	"CVE-2025-13639;II, DoS, DT, ID;High"
+	"CVE-2025-13640;II, DT, ID;Low"
 )
 
 PATENT_STATUS=(
@@ -574,7 +586,7 @@ ${PATENT_STATUS[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
--system-harfbuzz -system-icu -system-libaom -system-libjpeg-turbo -system-libpng
+-system-harfbuzz -system-icu -system-libaom -system-libjpeg-turbo
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
@@ -744,7 +756,6 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libaom
 		!system-libjpeg-turbo
-		!system-libpng
 		!system-libstdcxx
 		!system-libwebp
 		!system-libxml
@@ -942,7 +953,6 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libaom
 		!system-libjpeg-turbo
-		!system-libpng
 		!system-libstdcxx
 		!system-libwebp
 		!system-libxml
@@ -1259,10 +1269,6 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/libjpeg-turbo-3.1.0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
-	system-libpng? (
-		>=media-libs/libpng-1.6.43[${MULTILIB_USEDEP},-apng]
-		media-libs/libpng:=
-	)
 	system-libwebp? (
 		>=media-libs/libwebp-1.6.0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
@@ -1504,7 +1510,7 @@ BDEPEND+="
 	dev-util/patchutils
 	www-client/chromium-sources:0/${PV}
 	www-client/chromium-sources:=
-	www-client/chromium-toolchain:0/${PV%.*}.x
+	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	www-client/chromium-toolchain:=
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
@@ -1513,6 +1519,8 @@ BDEPEND+="
 	app-alternatives/lex
 	dev-lang/perl
 	dev-vcs/git
+	sys-apps/hwdata
+	sys-devel/flex
 	mold? (
 		>=sys-devel/mold-2.38[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
@@ -1918,7 +1926,7 @@ is_using_clang() {
 
 check_security_expire() {
 	local safe_period
-	local now=$(date "+%s")
+	local now=${EPOCHSECONDS}
 	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 	local channel="${SLOT#*/}"
 
@@ -1986,6 +1994,34 @@ eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
 eerror
 		die
 	fi
+}
+
+setup_vendor_clang_paths() {
+einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -e "/llvm/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin:${PWD}/install/bin|g")
+einfo "PATH=${PATH} (after)"
+}
+
+setup_system_clang_paths() {
+	local s
+	for s in "${LLVM_COMPAT[@]/#/llvm_slot_}" ; do
+		if use "${s}" ; then
+			export LLVM_SLOT="${s}"
+			break
+		fi
+	done
+	local llvm_prefix="/usr/lib/llvm/${s}"
+einfo "PATH:  ${PATH} (Before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" $'\n' \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr $'\n' ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_prefix}/bin|g")
+einfo "PATH:  ${PATH} (After)"
 }
 
 pkg_setup() {
@@ -2115,6 +2151,7 @@ ewarn
 
 	print_use_flags_using_clang
 	if is_using_clang && ! tc-is-clang ; then
+		setup_system_clang_paths
 		export CC="clang"
 		export CXX="clang++"
 		export CPP="${CC} -E"
@@ -2129,8 +2166,8 @@ eerror
 eerror "Switch to clang, or use the older ebuild if GCC is preferred at the"
 eerror "cost of security."
 eerror
-eerror "Using GCC will be allowed for this build when minor version is"
-eerror "== expected."
+eerror "Using GCC will be allowed for this build when the minor version is"
+eerror "is exactly equal (==) as expected."
 eerror
 eerror "Current minor version:   ${PV##*.}"
 eerror "Expected minor version:  == ${PATCH_VER%%.*}"
@@ -2186,9 +2223,11 @@ einfo
 	done
 
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
-	node_pkg_setup
+	node_setup
 	check_security_expire
 	check_ulimit
+
+	[[ "${CC}" =~ "clang" ]] && setup_system_clang_paths # Workaround
 
 	if use official ; then
 		CFLAGS_HARDENED_SSP_LEVEL="1"
@@ -2199,6 +2238,9 @@ einfo
 	elif is-flagq "-fstack-protector-all" ; then
 		CFLAGS_HARDENED_SSP_LEVEL="3"
 	fi
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
@@ -2376,7 +2418,7 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/${PN}-134-bindgen-custom-toolchain.patch"
 		"${FILESDIR}/${PN}-135-oauth2-client-switches.patch"
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
-		"${FILESDIR}/${PN}-142-iwyu-field-form-data.patch"
+		"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
 	)
 
 	# https://issues.chromium.org/issues/442698344
@@ -2955,6 +2997,11 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" ".gn" || die
 
+	# Use the system copy of hwdata's usb.ids; upstream is woefully out of date (2015!)
+	sed "s|//third_party/usb_ids/usb.ids|/usr/share/hwdata/usb.ids|g" \
+		-i "services/device/public/cpp/usb/BUILD.gn" \
+		|| die "Failed to set system usb.ids path"
+
 	#
 	# remove_bundled_libraries.py walks the source tree and looks for paths
 	# containing the substring 'third_party'.
@@ -3022,6 +3069,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/dawn
 		third_party/dawn/third_party/gn/webgpu-cts
 		third_party/dawn/third_party/khronos
+		third_party/dawn/third_party/webgpu-headers
 		third_party/depot_tools
 		third_party/devscripts
 		third_party/devtools-frontend
@@ -3099,6 +3147,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/libjingle
 		third_party/libpfm4
 		third_party/libphonenumber
+		third_party/libpng
 		third_party/libsecret
 		third_party/libsrtp
 		third_party/libsync
@@ -3267,9 +3316,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		")
 		$(use !system-libjpeg-turbo && echo "
 			third_party/libjpeg_turbo
-		")
-		$(use !system-libpng && echo "
-			third_party/libpng
 		")
 		$(use !system-libstdcxx && echo "
 			third_party/libc++
@@ -3522,13 +3568,7 @@ einfo "Switching to clang."
 		fi
 
 		LLVM_SLOT="${slot}"
-einfo "PATH=${PATH} (before)"
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -e "/llvm/d" \
-			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin:${PWD}/install/bin|g")
-einfo "PATH=${PATH} (after)"
+		setup_vendor_clang_paths
 
 		if [[ -z "${LLVM_SLOT}" ]] ; then
 			die "LLVM_SLOT should not be empty"
@@ -5577,9 +5617,6 @@ _configure_features() {
 		$(use system-libjpeg-turbo && echo "
 			libjpeg
 		")
-		$(use system-libpng && echo "
-			libpng
-		")
 		$(use system-libwebp && echo "
 			libwebp
 		")
@@ -5963,7 +6000,7 @@ einfo "Configuring Chromium..."
 	set -- gn gen --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release"
 
 	echo "$@"
-	"$@" || die
+	"$@" || die "Failed to configure Chromium"
 }
 
 _eninja() {

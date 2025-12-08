@@ -23,18 +23,18 @@ inherit flag-o-matic
 # @DESCRIPTION:
 # Setup multislot node for early src_unpack (live ebuilds) or during src_configure phase.
 node_setup() {
-	if [[ -n "${NODE_SLOT}" ]] ; then
+	if [[ -z "${NODE_SLOT}" ]] ; then
 eerror "QA:  NODE_SLOT must be defined"
 		die
 	fi
 
 	# Sanitize paths for logs
 	filter-flags "-I*/usr/lib/node/*"
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/node/|d" | tr $'\n' ":")
+	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/node/|d" | tr $'\n' ":")
 
 	local prefix="${ESYSROOT}/usr/lib/node/${NODE_SLOT}"
 	append-flags "-I${prefix}/include"
-	export PATH="${prefix}/bin"
+	export PATH="${prefix}/bin:${PATH}"
 }
 
 fi
