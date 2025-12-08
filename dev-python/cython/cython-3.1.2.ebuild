@@ -47,7 +47,7 @@ RESTRICT="
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="
 emacs test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND="
 	!dev-python/cython:3
@@ -296,6 +296,8 @@ python_install_all() {
 		mv "${ED}"{"${old_python_exec_dir}","${new_python_exec_dir}"}"/cygdb" || die
 		mv "${ED}"{"${old_python_exec_dir}","${new_python_exec_dir}"}"/cython" || die
 		mv "${ED}"{"${old_python_exec_dir}","${new_python_exec_dir}"}"/cythonize" || die
+
+		dosym "${new_python_exec_dir}/cython" "${new_python_exec_dir}/cython3"
 	}
 
 	python_foreach_impl _slotify
