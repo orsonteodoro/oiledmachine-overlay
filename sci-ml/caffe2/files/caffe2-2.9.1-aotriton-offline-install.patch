@@ -1,6 +1,6 @@
 --- pytorch-2.9.1.orig/cmake/External/aotriton.cmake	2025-11-10 17:02:50.000000000 -0800
 +++ pytorch-2.9.1/cmake/External/aotriton.cmake	2025-12-07 21:11:25.322592225 -0800
-@@ -127,7 +127,23 @@ if(NOT __AOTRITON_INCLUDED)
+@@ -127,7 +127,27 @@ if(NOT __AOTRITON_INCLUDED)
    endfunction()
  
    # Note it is INSTALL"ED"
@@ -16,7 +16,11 @@
 +
 +    # Reuse the existing __caffe2_aotriton interface target (do NOT recreate it)
 +    target_link_libraries(__caffe2_aotriton INTERFACE aotriton_v2)
-+    target_include_directories(__caffe2_aotriton INTERFACE "${AOTRITON_SOURCE_DIR}/include")
++    target_include_directories(__caffe2_aotriton INTERFACE
++      "${AOTRITON_SOURCE_DIR}/include"
++      "${AOTRITON_SOURCE_DIR}/v3src"
++    )
++    message(STATUS "AOTRITON: headers fixed — config.h found in source tree")
 +
 +    set(AOTRITON_FOUND TRUE)
 +    message(STATUS "AOTRITON: local build complete and linked")
