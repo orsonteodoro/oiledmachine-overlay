@@ -389,6 +389,7 @@ set_blender_compiler() {
 				export CXX="${CHOST}-g++-${s}"
 				export CPP="${CC} -E"
 			fi
+		done
 	fi
 
 	strip-unsupported-flags
