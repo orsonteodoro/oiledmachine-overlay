@@ -1996,7 +1996,24 @@ eerror
 	fi
 }
 
-setup_vendor_clang_paths() {
+setup_system_clang_paths() {
+	local slot
+	if use official ; then
+		slot="${LLVM_OFFICIAL_SLOT}"
+	elif tc-is-clang ; then
+		slot="$(clang-major-version)"
+	else
+		local s
+		for s in "${LLVM_COMPAT[@]}" ; do
+			if has_version "llvm-core/clang:${s}" ; then
+				slot="${s}"
+				break
+			fi
+		done
+	fi
+
+	LLVM_SLOT="${slot}"
+
 einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
@@ -2006,22 +2023,9 @@ einfo "PATH=${PATH} (before)"
 einfo "PATH=${PATH} (after)"
 }
 
-setup_system_clang_paths() {
-	local s
-	for s in "${LLVM_COMPAT[@]/#/llvm_slot_}" ; do
-		if use "${s}" ; then
-			export LLVM_SLOT="${s}"
-			break
-		fi
-	done
-	local llvm_prefix="/usr/lib/llvm/${s}"
-einfo "PATH:  ${PATH} (Before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" $'\n' \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr $'\n' ":" \
-		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_prefix}/bin|g")
-einfo "PATH:  ${PATH} (After)"
+setup_vendor_clang_paths() {
+	export PATH="${S}/third_party/llvm-build/Release+Asserts/bin:${PATH}"
+	export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
 }
 
 pkg_setup() {
@@ -2149,9 +2153,14 @@ ewarn
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 
+	if _use_system_toolchain ; then
+		setup_system_clang_paths
+	else
+		setup_vendor_clang_paths
+	fi
+
 	print_use_flags_using_clang
 	if is_using_clang && ! tc-is-clang ; then
-		setup_system_clang_paths
 		export CC="clang"
 		export CXX="clang++"
 		export CPP="${CC} -E"
@@ -3542,77 +3551,56 @@ ewarn
 #
 }
 
-_set_system_cc() {
-	# Final CC selected
-	LLVM_SLOT=""
-	local clang_allowed=1
-	[[ "${FEATURES}" =~ "icecream" ]] && clang_allowed=0
-	if (( ${clang_allowed} == 1 )) && ( tc-is-clang || is_using_clang ) ; then # Force clang either way
+_use_system_clang() {
 einfo "Switching to clang."
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 
-		local slot
-		if use official ; then
-			slot="${LLVM_OFFICIAL_SLOT}"
-		elif tc-is-clang ; then
-			slot="$(clang-major-version)"
-		else
-			local s
-			for s in "${LLVM_COMPAT[@]}" ; do
-				if has_version "llvm-core/clang:${s}" ; then
-					slot="${s}"
-					break
-				fi
-			done
-		fi
+	setup_system_clang_paths
 
-		LLVM_SLOT="${slot}"
-		setup_vendor_clang_paths
+	if [[ -z "${LLVM_SLOT}" ]] ; then
+		die "LLVM_SLOT should not be empty"
+	fi
 
-		if [[ -z "${LLVM_SLOT}" ]] ; then
-			die "LLVM_SLOT should not be empty"
-		fi
+	if tc-is-cross-compiler ; then
+		export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
+		export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
+		export BUILD_CC="${CBUILD}-clang-${LLVM_SLOT}"
+		export BUILD_CXX="${CBUILD}-clang++-${LLVM_SLOT}"
+		export BUILD_AR="llvm-ar"
+		export BUILD_NM="llvm-nm"
+	else
+		export CC="${CHOST}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+	fi
 
-		if tc-is-cross-compiler ; then
-			export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC="${CBUILD}-clang-${LLVM_SLOT}"
-			export BUILD_CXX="${CBUILD}-clang++-${LLVM_SLOT}"
-			export BUILD_AR="llvm-ar"
-			export BUILD_NM="llvm-nm"
-		else
-			export CC="${CHOST}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CHOST}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-		fi
+	if tc-is-cross-compiler ; then
+		CPP="${CBUILD}-clang-${LLVM_SLOT} -E"
+	else
+		CPP="${CHOST}-clang-${LLVM_SLOT} -E"
+	fi
 
-		if tc-is-cross-compiler ; then
-			CPP="${CBUILD}-clang-${LLVM_SLOT} -E"
-		else
-			CPP="${CHOST}-clang-${LLVM_SLOT} -E"
-		fi
-
-		export AR="llvm-ar" # Required for LTO
-		export NM="llvm-nm"
-		export READELF="llvm-readelf"
-		export STRIP="llvm-strip"
-		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
-			die "llvm-ar is unreachable"
-		fi
-		if has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999" ; then
-			if \
-				has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-					|| \
-				has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-					|| \
-				has_version "=llvm-core/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-					|| \
-				has_version "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-					|| \
-				has_version "=llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-					|| \
-				has_version "=llvm-runtimes/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-			; then
+	export AR="llvm-ar" # Required for LTO
+	export NM="llvm-nm"
+	export READELF="llvm-readelf"
+	export STRIP="llvm-strip"
+	if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
+		die "llvm-ar is unreachable"
+	fi
+	if has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999" ; then
+		if \
+			has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| \
+			has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| \
+			has_version "=llvm-core/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| \
+			has_version "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| \
+			has_version "=llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| \
+			has_version "=llvm-runtimes/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+		; then
 eerror
 eerror "The fallback-commit USE flag is required."
 eerror
@@ -3623,9 +3611,45 @@ eerror "       =llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-runtimes/clang-runtime-${LLVM_SLOT}.0.0.9999"
 eerror
-				die
-			fi
+			die
 		fi
+	fi
+}
+
+_use_system_gcc() {
+einfo "Switching to GCC"
+	if tc-is-cross-compiler ; then
+		export CC="${CBUILD}-gcc $(get_abi_CFLAGS ${ABI})"
+		export CXX="${CBUILD}-g++ $(get_abi_CFLAGS ${ABI})"
+		export BUILD_CC="${CBUILD}-gcc"
+		export BUILD_CXX="${CBUILD}-g++"
+		export BUILD_AR="ar"
+		export BUILD_NM="nm"
+	else
+		export CC="${CHOST}-gcc $(get_abi_CFLAGS ${ABI})"
+		export CXX="${CHOST}-g++ $(get_abi_CFLAGS ${ABI})"
+	fi
+
+	if tc-is-cross-compiler ; then
+		CPP="${CBUILD}-gcc -E"
+	else
+		CPP="${CHOST}-gcc -E"
+	fi
+
+	export AR="ar"
+	export NM="nm"
+	export READELF="readelf"
+	export STRIP="strip"
+	export LD="ld.bfd"
+}
+
+_set_system_cc() {
+	# Final CC selected
+	LLVM_SLOT=""
+	local clang_allowed=1
+	[[ "${FEATURES}" =~ "icecream" ]] && clang_allowed=0
+	if (( ${clang_allowed} == 1 )) && ( tc-is-clang || is_using_clang ) ; then # Force clang either way
+		_use_system_clang
 
 		# Get the stdatomic.h from clang not from gcc.
 		append-cflags "-stdlib=libc++"
@@ -3642,30 +3666,7 @@ eerror
 		fi
 		append-cppflags -DFORCE_CLANG_STDATOMIC_H
 	else
-einfo "Switching to GCC"
-		if tc-is-cross-compiler ; then
-			export CC="${CBUILD}-gcc $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CBUILD}-g++ $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC="${CBUILD}-gcc"
-			export BUILD_CXX="${CBUILD}-g++"
-			export BUILD_AR="ar"
-			export BUILD_NM="nm"
-		else
-			export CC="${CHOST}-gcc $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CHOST}-g++ $(get_abi_CFLAGS ${ABI})"
-		fi
-
-		if tc-is-cross-compiler ; then
-			CPP="${CBUILD}-gcc -E"
-		else
-			CPP="${CHOST}-gcc -E"
-		fi
-
-		export AR="ar"
-		export NM="nm"
-		export READELF="readelf"
-		export STRIP="strip"
-		export LD="ld.bfd"
+		_use_system_gcc
 
 		if ! use system-libstdcxx ; then
 eerror "The system-libstdcxx USE flag must be enabled for GCC builds."
@@ -3688,23 +3689,27 @@ eerror
 	strip-unsupported-flags
 }
 
+_set_vendor_cc() {
+	setup_vendor_clang_paths
+	export CC="clang"
+	export CXX="clang++"
+	export CPP="${CC} -E"
+	export AR="llvm-ar"
+	export NM="llvm-nm"
+	export OBJCOPY="llvm-objcopy"
+	export OBJDUMP="llvm-objdump"
+	export READELF="llvm-readelf"
+	export STRIP="llvm-strip"
+	LLVM_SLOT=$(clang-major-version)
+	[[ "${LLVM_OFFICIAL_SLOT}" != "${LLVM_SLOT}" ]] && die "Fix LLVM_OFFICIAL_SLOT"
+
+}
+
 _src_configure_compiler() {
 	if _use_system_toolchain ; then
 		_set_system_cc
 	else
-		export PATH="${S}/third_party/llvm-build/Release+Asserts/bin:${PATH}"
-		export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
-		export CC="clang"
-		export CXX="clang++"
-		export CPP="${CC} -E"
-		export AR="llvm-ar"
-		export NM="llvm-nm"
-		export OBJCOPY="llvm-objcopy"
-		export OBJDUMP="llvm-objdump"
-		export READELF="llvm-readelf"
-		export STRIP="llvm-strip"
-		LLVM_SLOT=$(clang-major-version)
-		[[ "${LLVM_OFFICIAL_SLOT}" != "${LLVM_SLOT}" ]] && die "Fix LLVM_OFFICIAL_SLOT"
+		_set_vendor_cc
 	fi
 	strip-unsupported-flags
 	if use official ; then
