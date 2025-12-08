@@ -691,6 +691,8 @@ REQUIRED_USE="
 			|| (
 				amdgpu_targets_gfx90a
 				amdgpu_targets_gfx942
+
+				amdgpu_targets_gfx1200
 			)
 		)
 	)
@@ -1241,11 +1243,12 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
 	"${FILESDIR}/${PN}-2.4.0-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.8.0-fix-libcpp.patch"
-	"${FILESDIR}/${PN}-2.8.0-aotriton-offline-install.patch"
+	"${FILESDIR}/${PN}-2.9.1-aotriton-offline-install.patch"
 	"${FILESDIR}/${PN}-2.5.1-link-openmp-to-torch_shm_manager.patch"
 	"${FILESDIR}/${PN}-2.8.0-prefixed-install.patch"
 	"${FILESDIR}/${PN}-2.9.0-optionalize-simd.patch"
 	#"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
+	"${FILESDIR}/${PN}-2.8.0-aotriton-deps.patch"
 )
 
 warn_untested_gpu() {
@@ -1852,6 +1855,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		export ROCTHRUST_PATH="${ESYSROOT}${EROCM_PATH}"
 		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
+			-DAOTRITON_DISABLE_VENV=ON
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
