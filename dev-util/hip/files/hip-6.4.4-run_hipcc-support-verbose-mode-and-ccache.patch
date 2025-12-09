@@ -1,5 +1,5 @@
---- a/cmake/FindHIP/run_hipcc.cmake.orig	2025-12-09 05:30:45.774876656 -0800
-+++ b/cmake/FindHIP/run_hipcc.cmake	2025-12-09 05:32:15.516638530 -0800
+--- a/cmake/FindHIP/run_hipcc.cmake.orig	2025-12-09 06:10:52.244132552 -0800
++++ b/cmake/FindHIP/run_hipcc.cmake	2025-12-09 06:12:47.627536357 -0800
 @@ -28,8 +28,8 @@
  #
  # Input variables:
@@ -11,21 +11,28 @@
  # build_configuration:STRING=<> Build configuration. Defaults to Debug.
  # generated_file:STRING=<>      File to generate. Mandatory argument.
  
-@@ -40,6 +40,17 @@ if(NOT generated_file)
+@@ -40,6 +40,9 @@ if(NOT generated_file)
      message(FATAL_ERROR "You must specify generated_file on the command line")
  endif()
  
-+if(DEFINED ENV{FEATURES} AND "$ENV{FEATURES}" MATCHES "ccache")
-+  find_program(CCACHE_PROGRAM ccache)
-+  if(CCACHE_PROGRAM)
-+    set(HIP_HIPCC_EXECUTABLE "${CCACHE_PROGRAM} ${HIP_HIPCC_EXECUTABLE}")
-+    message(STATUS "HIP: ccache enabled → ${HIP_HIPCC_EXECUTABLE}")
-+  endif()
-+endif()
-+
 +# Verbose mode – print every command before executing
 +set(verbose ON CACHE BOOL "Force verbose HIP compilation" FORCE)
 +
  # Set these up as variables to make reading the generated file easier
  set(HIP_HIPCC_EXECUTABLE "@HIP_HIPCC_EXECUTABLE@") # path
  set(HIP_HIPCONFIG_EXECUTABLE "@HIP_HIPCONFIG_EXECUTABLE@") #path
+@@ -49,6 +52,14 @@ set(HIP_run_make2cmake "@HIP_run_make2cm
+ set(HIP_CLANG_PATH "@HIP_CLANG_PATH@") #path
+ set(HIP_CLANG_PARALLEL_BUILD_COMPILE_OPTIONS "@HIP_CLANG_PARALLEL_BUILD_COMPILE_OPTIONS@")
+ 
++if(DEFINED ENV{FEATURES} AND "$ENV{FEATURES}" MATCHES "ccache")
++  find_program(CCACHE_PROGRAM ccache)
++  if(CCACHE_PROGRAM)
++    set(HIP_HIPCC_EXECUTABLE "${CCACHE_PROGRAM} ${HIP_HIPCC_EXECUTABLE}")
++    message(STATUS "HIP: ccache -> ${HIP_HIPCC_EXECUTABLE}")
++  endif()
++endif()
++
+ @HIP_HOST_FLAGS@
+ @_HIP_HIPCC_FLAGS@
+ @_HIP_CLANG_FLAGS@
