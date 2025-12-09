@@ -2031,8 +2031,8 @@ setup_vendor_clang_paths_pre() {
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
 
 einfo "PATH:  ${PATH} (Before)"
-	export PATH="${S}/usr/share/chromium/toolchain/clang/bin:${PATH}"
-	export PATH="${S}/usr/share/chromium/toolchain/rust/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/share/chromium/toolchain/clang/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/share/chromium/toolchain/rust/bin:${PATH}"
 einfo "PATH:  ${PATH} (After)"
 }
 
