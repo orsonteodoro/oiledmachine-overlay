@@ -34,6 +34,8 @@ CXX_STANDARD=17
 PROTOBUF_CPP_SLOT=3
 PYTHON_COMPAT=( "python3_"{11..13} )
 
+AOTRITON_PV="0.10.0"
+
 AOTRITON_COMMIT="6fca155f4deeb8d9529326f7b69f350aeeb93477"
 ASMJIT_COMMIT="e5d7c0bd5d9aec44d68830187138149e6a8c4e32" # fbgemm dep
 BENCHMARK_COMMIT_1="299e5928955cc62af9968370293b916f5130916f"
@@ -264,7 +266,7 @@ LLVM_COMPAT=(
 )
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms
-inherit flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm rocm
+inherit fix-rpath flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm rocm
 inherit python-single-r1 toolchain-funcs
 
 #KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
@@ -532,7 +534,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_39
+ebuild_revision_40
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1524,6 +1526,23 @@ src_prepare() {
 				> \
 			"${BUILD_DIR}/aotriton-${AOTRITON_COMMIT:0:7}.tar.gz" \
 			|| die
+
+		if use flash-attention ; then
+			local v0=$(grep -e "AOTRITON_VERSION_MAJOR_INT" "${S}/third_party/aotriton/CMakeLists.txt" | head -n 1 | grep -o -E -e "[0-9]+")
+			local v1=$(grep -e "AOTRITON_VERSION_MINOR_INT" "${S}/third_party/aotriton/CMakeLists.txt" | head -n 1 | grep -o -E -e "[0-9]+")
+			local v2=$(grep -e "AOTRITON_VERSION_PATCH_INT" "${S}/third_party/aotriton/CMakeLists.txt" | head -n 1 | grep -o -E -e "[0-9]+")
+			actual_aotrition_so_verison="${v0}.${v1}.${v2}"
+			if [[ "${actual_aotrition_so_verison}" != "${AOTRITON_PV}" ]] ; then
+eerror
+eerror "QA:  Version mismatch for aotrition soversion."
+eerror "QA:  Set AOTRITON_PV to Actual"
+eerror
+eerror "Expected version:  ${AOTRITON_PV}"
+eerror "Actual version:  ${actual_aotrition_so_verison}"
+eerror
+				die
+			fi
+		fi
 	fi
 }
 
@@ -1948,5 +1967,19 @@ src_install() {
 		"${ED}/usr/include/pybind11" \
 		"${ED}/usr/lib/${PN}/include" \
 		|| die
+
+	if use rocm && use flash-attention ; then
+		exeinto "/usr/lib/caffe2/$(get_libdir)"
+		doexe "${S}_build/lib/libaotriton_v2.so.${AOTRITON_PV}"
+		insinto "/usr/lib/caffe2/$(get_libdir)"
+		doins "${S}_build/lib/libaotriton_v2.so"
+		local RPATH_FIXES=(
+			"${ED}/usr/$(get_libdir)/libtorch_python.so:/usr/lib/caffe2/lib"
+			"${ED}/usr/$(get_libdir)/libtorch_hip.so:/usr/lib/caffe2/lib"
+			"${ED}/usr/$(get_libdir)/libtorch.so:/usr/lib/caffe2/lib"
+		)
+		fix-rpath_repair
+	fi
+
 	dhms_end
 }
