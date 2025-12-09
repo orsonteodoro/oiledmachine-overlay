@@ -169,16 +169,15 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
-EBUILD_MAINTAINER_MODE=1
-#FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
-FIREFOX_PATCHSET="firefox-140esr-patches-03.tar.xz"
+EBUILD_MAINTAINER_MODE=0
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FINGERPRINT="\
-dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
-f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
+3a915297c46fab65a036d83b2dda3eef36cf85c0745a49fdc4c49c551238120c\
+b2b93007ec5f5804b7d77c7b453a813b49ceca6a41901b81a1f49bf49e98d4fd\
 " # SHA512
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
@@ -245,20 +244,21 @@ FFMPEG_COMPAT=(
 	"50.53.53" # 0.8
 )
 
-MITIGATION_DATE="Nov 11, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1762804440 # From `date +%s -d "2025-11-10 11:54"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-88/"
+MITIGATION_DATE="Dec 12, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1765229340 # From `date +%s -d "2025-12-08 13:29"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-94/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-13012;RC;"
-	"CVE-2025-13016;;"
-	"CVE-2025-13017;;"
-	"CVE-2025-13018;;"
-	"CVE-2025-13019;;"
-	"CVE-2025-13013;;"
-	"CVE-2025-13020;UAF;"
-	"CVE-2025-13014;UAF;"
-	"CVE-2025-13015;;"
+	"CVE-2025-14321;UAF;"
+	"CVE-2025-14322;SBX, DT, ID;High"
+	"CVE-2025-14323;PE, DoS, DT, ID;High"
+	"CVE-2025-14324;;"
+	"CVE-2025-14325;ZC, DoS, DT, ID;High"
+	"CVE-2025-14328;PE, DoS, DT, ID;High"
+	"CVE-2025-14329;PE, DoS, DT, ID;High"
+	"CVE-2025-14330;;"
+	"CVE-2025-14331;SOPB, DT, ID;Medium"
+	"CVE-2025-14333;ZC, MC, CE, DoS, DT, ID;High"
 )
 
 MOZ_LANGS=(
@@ -636,7 +636,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.112.2[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.35.0[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.36[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]

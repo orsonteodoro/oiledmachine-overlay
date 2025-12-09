@@ -240,27 +240,24 @@ FFMPEG_COMPAT=(
 	"50.53.53" # 0.8
 )
 
-MITIGATION_DATE="Nov 11, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1762804320 # From `date +%s -d "2025-11-10 11:52"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-87/"
+MITIGATION_DATE="Dec 12, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1765230480 # From `date +%s -d "2025-12-08 13:48"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-92/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-13021;;"
-	"CVE-2025-13022;;"
-	"CVE-2025-13012;RC;"
-	"CVE-2025-13023;SBX;"
-	"CVE-2025-13016;;"
-	"CVE-2025-13024;;"
-	"CVE-2025-13025;;"
-	"CVE-2025-13026;SBX;"
-	"CVE-2025-13017;;"
-	"CVE-2025-13018;;"
-	"CVE-2025-13019;;"
-	"CVE-2025-13013;;"
-	"CVE-2025-13020;UAF;"
-	"CVE-2025-13014;UAF;"
-	"CVE-2025-13015;;"
-	"CVE-2025-13027;MC, CE;"
+	"CVE-2025-14321;UAF;"
+	"CVE-2025-14322;SBX, DT, ID;High"
+	"CVE-2025-14323;PE, DoS, DT, ID;High"
+	"CVE-2025-14324;;"
+	"CVE-2025-14325;ZC, DoS, DT, ID;High"
+	"CVE-2025-14326;UAF;"
+	"CVE-2025-14327;;"
+	"CVE-2025-14328;PE, DoS, DT, ID;High"
+	"CVE-2025-14329;PE, DoS, DT, ID;High"
+	"CVE-2025-14330;;"
+	"CVE-2025-14331;SOPB, DT, ID;Medium"
+	"CVE-2025-14332;ZC, MC, CE, DoS, DT, ID;High"
+	"CVE-2025-14333;ZC, MC, CE, DoS, DT, ID;High"
 )
 
 MOZ_LANGS=(
