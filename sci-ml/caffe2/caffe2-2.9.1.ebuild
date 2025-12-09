@@ -543,7 +543,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_40
+ebuild_revision_41
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1979,14 +1979,15 @@ src_install() {
 		|| die
 
 	if use rocm && use flash-attention ; then
-		exeinto "/usr/lib/caffe2/$(get_libdir)"
+		local dest_libdir="/usr/lib/caffe2/$(get_libdir)"
+		exeinto "${dest_libdir}"
 		doexe "${S}_build/lib/libaotriton_v2.so.${AOTRITON_PV}"
-		insinto "/usr/lib/caffe2/$(get_libdir)"
+		insinto "${dest_libdir}"
 		doins "${S}_build/lib/libaotriton_v2.so"
 		local RPATH_FIXES=(
-			"${ED}/usr/$(get_libdir)/libtorch_python.so:/usr/lib/caffe2/lib"
-			"${ED}/usr/$(get_libdir)/libtorch_hip.so:/usr/lib/caffe2/lib"
-			"${ED}/usr/$(get_libdir)/libtorch.so:/usr/lib/caffe2/lib"
+			"${ED}/usr/$(get_libdir)/libtorch_python.so:${dest_libdir}"
+			"${ED}/usr/$(get_libdir)/libtorch_hip.so:${dest_libdir}"
+			"${ED}/usr/$(get_libdir)/libtorch.so:${dest_libdir}"
 		)
 		fix-rpath_repair
 	fi
