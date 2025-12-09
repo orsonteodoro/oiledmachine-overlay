@@ -440,7 +440,7 @@ inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot lib
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	inherit llvm rust
 fi
 
@@ -485,7 +485,7 @@ https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
 	"
 fi
 
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	SRC_URI+="
 		system-toolchain? (
 https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
@@ -592,7 +592,7 @@ ${PATENT_STATUS[@]}
 -widevine +X
 ebuild_revision_19
 "
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
 		-system-toolchain
 	"
@@ -715,7 +715,7 @@ DISTRO_REQUIRE_USE="
 #//third_party/dawn/src/dawn/partition_alloc:partition_alloc(//build/toolchain/linux:clang_x64)
 #  needs //base/allocator/partition_allocator:partition_alloc(//build/toolchain/linux:clang_x64)
 #
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 	REQUIRED_USE+="
 		official? (
 			llvm_slot_21
@@ -1064,7 +1064,7 @@ if is_cromite_compatible ; then
 			!cromite
 		)
 	"
-	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
+	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		REQUIRED_USE+="
 			cromite? (
 				!system-toolchain
@@ -1120,7 +1120,7 @@ gen_depend_llvm() {
 	local t=""
 	local o_official=""
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		t="
 			!official? (
 				cfi? (
@@ -1402,7 +1402,7 @@ CLANG_RDEPEND="
 	)
 "
 
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	RDEPEND+="
 		${CLANG_RDEPEND}
 	"
@@ -1490,7 +1490,7 @@ RUST_BDEPEND="
 		dev-lang/rust-bin:=
 	)
 "
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	BDEPEND+="
 		${CLANG_BDEPEND}
 		>=net-libs/nodejs-22.11.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
@@ -1528,7 +1528,7 @@ BDEPEND+="
 		media-video/libva-utils
 	)
 "
-if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	BDEPEND+="
 		system-toolchain? (
 			${RUST_BDEPEND}
@@ -1608,7 +1608,7 @@ Chromium, then add --password-store=basic to CHROMIUM_FLAGS in
 "
 
 _use_system_toolchain() {
-	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] && use system-toolchain ; then
+	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) && use system-toolchain ; then
 		return 0
 	else
 		return 1
@@ -1729,8 +1729,8 @@ pkg_pretend() {
 			"wayland"
 		)
 		local myiuse
-		for myiuse in ${headless_unused_flags[@]}; do
-			if use ${myiuse} ; then
+		for myiuse in "${headless_unused_flags[@]}"; do
+			if use "${myiuse}" ; then
 ewarn "Ignoring USE=${myiuse}.  USE=headless is set."
 			fi
 		done
@@ -2014,18 +2014,38 @@ setup_system_clang_paths() {
 
 	LLVM_SLOT="${slot}"
 
-einfo "PATH=${PATH} (before)"
+einfo "PATH:  ${PATH} (Before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -e "/llvm/d" \
+			| sed -e "/llvm-build/d" \
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin:${PWD}/install/bin|g")
-einfo "PATH=${PATH} (after)"
+einfo "PATH:  ${PATH} (After)"
+}
+
+setup_vendor_clang_paths_pre() {
+	# Sanitize/isolate before adding
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm/d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm-build/d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
+
+einfo "PATH:  ${PATH} (Before)"
+	export PATH="${S}/usr/share/chromium/toolchain/clang/bin:${PATH}"
+	export PATH="${S}/usr/share/chromium/toolchain/rust/bin:${PATH}"
+einfo "PATH:  ${PATH} (After)"
 }
 
 setup_vendor_clang_paths() {
+	# Sanitize/isolate before adding
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm/d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm-build/d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
+
+einfo "PATH:  ${PATH} (Before)"
 	export PATH="${S}/third_party/llvm-build/Release+Asserts/bin:${PATH}"
 	export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
+einfo "PATH:  ${PATH} (After)"
 }
 
 pkg_setup() {
@@ -2092,7 +2112,7 @@ ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadat
 	fi
 
 	if use official ; then
-		filter-flags '-Oshit'
+		filter-flags "-Oshit"
 	fi
 
 	if use kernel_linux ; then
@@ -2156,14 +2176,16 @@ ewarn
 	if _use_system_toolchain ; then
 		setup_system_clang_paths
 	else
-		setup_vendor_clang_paths
+		setup_vendor_clang_paths_pre
 	fi
 
 	print_use_flags_using_clang
-	if is_using_clang && ! tc-is-clang ; then
-		export CC="clang"
-		export CXX="clang++"
-		export CPP="${CC} -E"
+	if is_using_clang ; then
+		if _use_system_toolchain ; then
+			_use_system_clang
+		else
+			_use_vendor_clang
+		fi
 		strip-unsupported-flags
 	fi
 
@@ -2236,8 +2258,6 @@ einfo
 	check_security_expire
 	check_ulimit
 
-	[[ "${CC}" =~ "clang" ]] && setup_system_clang_paths # Workaround
-
 	if use official ; then
 		CFLAGS_HARDENED_SSP_LEVEL="1"
 	elif is-flagq "-fstack-protector" ; then
@@ -2267,10 +2287,8 @@ src_unpack() {
 	export PATH="/usr/share/chromium/toolchain/gn/out:${PATH}"
 
 	if _use_system_toolchain ; then
-		if ! use bundled-toolchain ; then
-			unpack "chromium-patches-${PATCH_VER}.tar.bz2"
-			unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
-		fi
+		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
+		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
 		mkdir -p "${S}/third_party/llvm-build"
@@ -2427,8 +2445,13 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/${PN}-134-bindgen-custom-toolchain.patch"
 		"${FILESDIR}/${PN}-135-oauth2-client-switches.patch"
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
-		"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
 	)
+
+	if _use_system_toolchain ; then
+		PATCHES+=(
+			"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
+		)
+	fi
 
 	# https://issues.chromium.org/issues/442698344
 	# Unreleased fontconfig changed magic numbers and google have rolled to this version
@@ -2587,7 +2610,7 @@ is_cromite_patch_non_fatal() {
 		"Add-support-to-jxl.patch"
 	)
 	local x
-	for x in ${L[@]} ; do
+	for x in "${L[@]}" ; do
 		[[ "${arg}" == "${x}" ]] && return 0
 	done
 	return 1
@@ -2648,7 +2671,7 @@ einfo "Removing ${x} from cromite"
 		fi
 		pushd "${S}" >/dev/null 2>&1 || die
 			local x
-			for x in ${L[@]} ; do
+			for x in "${L[@]}" ; do
 				[[ "${x}" =~ "Automated-domain-substitution" && "${CROMITE_SKIP_AUTOGENERATED:-1}" == "1" ]] && continue
 
 				if is_cromite_patch_non_fatal "${x}" && grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
@@ -3485,8 +3508,8 @@ has_sanitizer_option() {
 }
 
 append_all() {
-	append-flags ${@}
-	append-ldflags ${@}
+	append-flags "${@}"
+	append-ldflags "${@}"
 }
 
 # Same as:
@@ -3664,7 +3687,7 @@ _set_system_cc() {
 			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
 			show_clang_header_warning "${clang_pv}"
 		fi
-		append-cppflags -DFORCE_CLANG_STDATOMIC_H
+		append-cppflags "-DFORCE_CLANG_STDATOMIC_H"
 	else
 		_use_system_gcc
 
@@ -3689,7 +3712,7 @@ eerror
 	strip-unsupported-flags
 }
 
-_set_vendor_cc() {
+_use_vendor_clang() {
 	setup_vendor_clang_paths
 	export CC="clang"
 	export CXX="clang++"
@@ -3700,9 +3723,24 @@ _set_vendor_cc() {
 	export OBJDUMP="llvm-objdump"
 	export READELF="llvm-readelf"
 	export STRIP="llvm-strip"
-	LLVM_SLOT=$(clang-major-version)
-	[[ "${LLVM_OFFICIAL_SLOT}" != "${LLVM_SLOT}" ]] && die "Fix LLVM_OFFICIAL_SLOT"
+	LLVM_SLOT=$("${CC}" --version \
+		| head -n 1 \
+		| cut -f 3 -d " " \
+		| cut -f 1 -d ".")
+	if [[ "${LLVM_OFFICIAL_SLOT}" != "${LLVM_SLOT}" ]] ; then
+eerror
+eerror "Fix LLVM_OFFICIAL_SLOT.  Set it to LLVM_SLOT."
+eerror
+eerror "LLVM_OFFICIAL_SLOT:  ${LLVM_OFFICIAL_SLOT}"
+eerror "LLVM_SLOT:  ${LLVM_SLOT}"
+eerror
+		die
+	fi
+}
 
+_set_vendor_cc() {
+	_use_vendor_clang
+	strip-unsupported-flags
 }
 
 _src_configure_compiler() {
@@ -3713,8 +3751,8 @@ _src_configure_compiler() {
 	fi
 	strip-unsupported-flags
 	if use official ; then
-		filter-flags '-march=*'
-		filter-flags '-O*'
+		filter-flags "-march=*"
+		filter-flags "-O*"
 		strip-flags
 	fi
 	"${CC}" --version || die
@@ -3769,7 +3807,7 @@ einfo "Using the bundled toolchain"
 
 	# We don't use the same clang version as upstream, and with -Werror
 	# we need to make sure that we don't get superfluous warnings.
-	append-flags -Wno-unknown-warning-option
+	append-flags "-Wno-unknown-warning-option"
 	if tc-is-cross-compiler ; then
 		export BUILD_CXXFLAGS+=" -Wno-unknown-warning-option"
 		export BUILD_CFLAGS+=" -Wno-unknown-warning-option"
@@ -4059,7 +4097,7 @@ eerror "QA:  RUSTC is not initialized or missing."
 	"${RUSTC}" -Z help 2>/dev/null 1>/dev/null
 	local is_rust_nightly=$?
 
-	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "0" ]] ; then
+	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 0 )) ; then
 		CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
 		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
 	fi
@@ -4534,9 +4572,9 @@ eerror
 			fi
 		fi
 	# Dedupe flags
-		filter-flags '-mbranch-protection=*'
+		filter-flags "-mbranch-protection=*"
 		if use cpu_flags_arm_bti || use official ; then
-			filter-flags '-Wl,-z,force-bti'
+			filter-flags "-Wl,-z,force-bti"
 		fi
 	fi
 
@@ -4833,12 +4871,12 @@ _configure_performance_simd(){
 	# 546984, 853646.
 		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
 			filter-flags \
-				'-mno-avx*' \
-				'-mno-fma*' \
-				'-mno-mmx*' \
-				'-mno-sse*' \
-				'-mno-ssse*' \
-				'-mno-xop'
+				"-mno-avx*" \
+				"-mno-fma*" \
+				"-mno-mmx*" \
+				"-mno-sse*" \
+				"-mno-ssse*" \
+				"-mno-xop"
 		fi
 	fi
 
@@ -5043,7 +5081,7 @@ einfo "Using Mold without LTO"
 	)
 
 	# Handled by build scripts
-	filter-flags '-fuse-ld=*'
+	filter-flags "-fuse-ld=*"
 }
 
 get_target_cpu() {
