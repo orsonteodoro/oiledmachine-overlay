@@ -140,6 +140,23 @@ LIBCXX_COMPAT_CXX17_ROCM=(
         "llvm_slot_19"
 )
 
+#
+# C++ standard support for GPU SDKs:
+#
+# CUDA:  c++11 <= x <= C++20
+# ROCm:  c++11 <= x <= C++20
+#
+
+LIBCXX_COMPAT_CXX17_GPU=(
+        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+        "llvm_slot_19" # Support CUDA 12.8, 12.9; ROCm 6.4, 7.0
+)
+
+LIBCXX_COMPAT_CXX20_GPU=(
+        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+        "llvm_slot_19" # Support CUDA 12.8, 12.9; ROCm 6.4, 7.0
+)
+
 # LLVM_COMPAT template for desktop based LTS distros
 #
 # Status:  Production ready

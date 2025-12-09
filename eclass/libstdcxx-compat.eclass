@@ -151,6 +151,13 @@ LIBSTDCXX_COMPAT_CUDA12=(
         "gcc_slot_14_3" # Support CUDA 12.8, 12.9
 )
 
+#
+# C++ standard support for GPU SDKs:
+#
+# CUDA:  c++11 <= x <= C++20
+# ROCm:  c++11 <= x <= C++20
+#
+
 # GCC_COMPAT template for GPU based apps/libs
 #
 # Example:
