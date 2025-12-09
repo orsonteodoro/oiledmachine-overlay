@@ -30,7 +30,7 @@ MY_P="${MY_PN}-${PV}"
 
 CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
-CXX_STANDARD=17
+CXX_STANDARD=20 # aotriton requires c++20
 PROTOBUF_CPP_SLOT=3
 PYTHON_COMPAT=( "python3_"{11..14} )
 
@@ -256,9 +256,10 @@ ROCM_SLOTS2=(
 	$(gen_rocm_slots)
 )
 
+# These two _COMPATs are forced to c++17 sets to be compatible with GPU library ranges.
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 11-14; 11-14 compatible with c++20 on compiler side.
 )
 
 inherit libcxx-compat
@@ -266,7 +267,7 @@ LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}" # 18, 19
 	#"${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}" # 19
-	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19; 18-19 is compatibile with c++20 on compiler side.
 	{18..19}
 )
 
