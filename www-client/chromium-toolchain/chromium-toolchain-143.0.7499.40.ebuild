@@ -14,7 +14,7 @@ GN_PV="0.2287" # See get_gn_ver.sh
 LLVM_COMMIT="4d4cb757" # without the g prefix
 LLVM_N_COMMITS="8940"
 LLVM_OFFICIAL_SLOT="22" # Cr official slot
-LLVM_SUB_REV="4"
+LLVM_SUB_REV="84"
 # https://github.com/chromium/chromium/blob/143.0.7499.40/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="15283f6fe95e5b604273d13a428bab5fc0788f5a"
@@ -167,7 +167,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
 IUSE+="
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 "
