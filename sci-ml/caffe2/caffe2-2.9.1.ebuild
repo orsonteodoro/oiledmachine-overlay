@@ -265,7 +265,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}" # 18, 19
-	#"${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX20_ROCM_6_4[@]/llvm_slot_}" # 19
 	"${LIBCXX_COMPAT_CXX20_GPU[@]/llvm_slot_}" # 18, 19; 18-19 is compatibile with c++20 on compiler side.
 )
 
