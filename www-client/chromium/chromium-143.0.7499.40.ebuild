@@ -2033,6 +2033,7 @@ setup_vendor_clang_paths_pre() {
 einfo "PATH:  ${PATH} (Before)"
 	export PATH="${ESYSROOT}/usr/share/chromium/toolchain/clang/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/share/chromium/toolchain/rust/bin:${PATH}"
+	export PATH=$(echo "${PATH}" | sed -E -e "s|[:]+|:|g" -e "s|[:]$||g" -e "s|^[:]||g") # Sanitize
 einfo "PATH:  ${PATH} (After)"
 }
 
@@ -2045,6 +2046,7 @@ setup_vendor_clang_paths() {
 einfo "PATH:  ${PATH} (Before)"
 	export PATH="${S}/third_party/llvm-build/Release+Asserts/bin:${PATH}"
 	export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
+	export PATH=$(echo "${PATH}" | sed -E -e "s|[:]+|:|g" -e "s|[:]$||g" -e "s|^[:]||g") # Sanitize
 einfo "PATH:  ${PATH} (After)"
 }
 
@@ -3794,7 +3796,7 @@ einfo "Using the bundled toolchain"
 	if tc-is-clang ; then
 		local clang_major_pv=$(clang-major-version)
 		local clang_full_pv=$(clang-fullversion)
-		if ver_test "${major_pv}" "-ge" "16" ; then
+		if ver_test "${clang_major_pv}" "-ge" "16" ; then
 			myconf_gn+=(
 				"clang_version=${clang_major_pv}"
 			)
