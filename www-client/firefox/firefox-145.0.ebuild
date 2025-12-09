@@ -1406,7 +1406,7 @@ ewarn
 ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	fi
 	verify_codecs
-	node_pkg_setup
+	node_setup
 	#check_security_expire
 	check_ulimit
 	libcxx-slot_verify
