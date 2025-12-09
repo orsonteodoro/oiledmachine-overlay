@@ -1,6 +1,17 @@
---- hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake.orig	2025-12-07 11:51:01.971975807 -0800
-+++ hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake	2025-12-07 12:26:26.786345703 -0800
-@@ -40,6 +40,25 @@ if(NOT generated_file)
+--- a/cmake/FindHIP/run_hipcc.cmake.orig	2025-12-08 20:15:16.541388668 -0800
++++ b/cmake/FindHIP/run_hipcc.cmake	2025-12-08 20:22:55.034868485 -0800
+@@ -28,8 +28,8 @@
+ #
+ # Input variables:
+ #
+-# verbose:BOOL=<>               OFF: Be as quiet as possible (default)
+-#                               ON : Describe each step
++# verbose:BOOL=<>               OFF: Be as quiet as possible
++#                               ON : Describe each step (default)
+ # build_configuration:STRING=<> Build configuration. Defaults to Debug.
+ # generated_file:STRING=<>      File to generate. Mandatory argument.
+ 
+@@ -40,6 +40,22 @@ if(NOT generated_file)
      message(FATAL_ERROR "You must specify generated_file on the command line")
  endif()
  
@@ -16,13 +27,19 @@
 +endif()
 +
 +# Verbose mode – print every command before executing
-+if(NOT DEFINED HIP_VERBOSE_MAKEFILE)
-+  set(HIP_VERBOSE_MAKEFILE ON)   # change to OFF to silence
-+endif()
-+if(HIP_VERBOSE_MAKEFILE)
-+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo "HIP compile: ${__CC} ${__CC_FLAGS} -c ${input} -o ${output}")
++if(NOT DEFINED verbose)
++  set(verbose ON)
 +endif()
 +
  # Set these up as variables to make reading the generated file easier
  set(HIP_HIPCC_EXECUTABLE "@HIP_HIPCC_EXECUTABLE@") # path
  set(HIP_HIPCONFIG_EXECUTABLE "@HIP_HIPCONFIG_EXECUTABLE@") #path
+@@ -92,7 +111,7 @@ macro(hip_execute_process status command
+     if(NOT "x${_command}" STREQUAL "xCOMMAND")
+         message(FATAL_ERROR "Malformed call to hip_execute_process.  Missing COMMAND as second argument. (command = ${command})")
+     endif()
+-    if(verbose)
++    if(verbose)
+         execute_process(COMMAND "${CMAKE_COMMAND}" -E echo -- ${status})
+         # Build command string to print
+         set(hip_execute_process_string)
