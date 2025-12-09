@@ -1,6 +1,6 @@
 --- hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake.orig	2025-12-07 11:51:01.971975807 -0800
 +++ hip-rocm-6.4.4/cmake/FindHIP/run_hipcc.cmake	2025-12-07 12:26:26.786345703 -0800
-@@ -40,6 +40,26 @@ if(NOT generated_file)
+@@ -40,6 +40,25 @@ if(NOT generated_file)
      message(FATAL_ERROR "You must specify generated_file on the command line")
  endif()
  
@@ -20,8 +20,7 @@
 +  set(HIP_VERBOSE_MAKEFILE ON)   # change to OFF to silence
 +endif()
 +if(HIP_VERBOSE_MAKEFILE)
-+  message(STATUS "HIP compile command:")
-+  message(STATUS "  ${__CC} ${__CC_FLAGS} ${__CC_INCLUDES} -c ${input} -o ${output}")
++  execute_process(COMMAND ${CMAKE_COMMAND} -E echo "HIP compile: ${__CC} ${__CC_FLAGS} -c ${input} -o ${output}")
 +endif()
 +
  # Set these up as variables to make reading the generated file easier
