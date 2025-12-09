@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_63
+ebuild_revision_64
 "
 REQUIRED_USE="
 	hsa? (
