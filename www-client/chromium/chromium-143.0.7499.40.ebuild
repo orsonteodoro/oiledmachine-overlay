@@ -2391,6 +2391,7 @@ einfo "CXX:  ${CXX}"
 ewarn "Enabling ${x} could weaken security or have version sensitive C++ standard incompatibility."
 		fi
 	done
+ewarn "If using systemwide Clang or GCC with the vanilla USE flag, disable all system-* flags."
 }
 
 src_unpack() {
