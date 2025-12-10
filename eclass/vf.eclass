@@ -319,13 +319,14 @@ einfo "OOBW = Out Of Bounds Write"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"KP"($|" "|";"|",") ]] ; then
+# Equivalent to BSOD
 einfo "KP = Kernel Panic"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"POW"($|" "|";"|",") ]] ; then
-einfo "POW = Panic On Warn"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PoO"|"POO")($|" "|";"|",") ]] ; then
+einfo "PoO = Panic On Oops"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOPS"($|" "|";"|",") ]] ; then
-einfo "OOPS = Kernel Oops"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PoW"|"POW")($|" "|";"|",") ]] ; then
+einfo "POW = Panic On Warn"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
