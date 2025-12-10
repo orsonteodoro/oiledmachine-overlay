@@ -51,7 +51,7 @@ EAPI=8
 # /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
 # /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/build/moz.configure/nss.configure L12
 # /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/gfx/harfbuzz/moz.yaml
 # /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/intl/icu/source/common/unicode/uvernum.h L63
 # /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/ipc/chromium/src/third_party/libevent/configure.ac L8
 # /var/tmp/portage/www-client/firefox-140.6.0e/work/firefox-140.6.0/media/libaom/config/aom_version.h L7 [old]
@@ -184,7 +184,7 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
-NODE_SLOT=18
+NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="1.86.0"
@@ -636,9 +636,9 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.112.2[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.36[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.36.2[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
@@ -672,24 +672,24 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.4.1[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
 		>=media-libs/libaom-1.0.0[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-8.5.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-11.2.0:0[${MULTILIB_USEDEP}]
 		media-libs/harfbuzz:=
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-76.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-77.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-2.1.5.1[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-3.0.4[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	system-libevent? (
@@ -697,19 +697,19 @@ CDEPEND="
 		dev-libs/libevent:=
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.14.0:0[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-1.15.1:0[${MULTILIB_USEDEP},postproc]
 		media-libs/libvpx:=
 	)
 	system-pipewire? (
-		>=media-video/pipewire-1.4.7-r2[${MULTILIB_USEDEP}]
+		>=media-video/pipewire-1.4.2[${MULTILIB_USEDEP}]
 		media-video/pipewire:=
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.45:0[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.47:0[${MULTILIB_USEDEP},apng]
 		media-libs/libpng:=
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.4.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.5.0:0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	wayland? (
@@ -2582,13 +2582,13 @@ _src_compile() {
 		fi
 	fi
 
-	if ! use X; then
+	if ! use X ; then
 		local -x GDK_BACKEND="wayland"
 	else
 		local -x GDK_BACKEND="x11"
 	fi
 
-	"${virtx_cmd}" "./mach" build --verbose || die
+	${virtx_cmd} "./mach" build --verbose || die
 }
 
 src_test() {

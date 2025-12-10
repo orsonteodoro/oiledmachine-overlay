@@ -166,7 +166,7 @@ CXX_STANDARD=17
 RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
-EBUILD_MAINTAINER_MODE=1
+EBUILD_MAINTAINER_MODE=0
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -180,7 +180,7 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
-NODE_SLOT=18
+NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="9999"
@@ -646,10 +646,10 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.38[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.38.2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.118[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.14.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.40.0[${MULTILIB_USEDEP}]
@@ -683,13 +683,13 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.5.2[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
 		>=media-libs/libaom-1.0.0[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-11.1.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-12.2.0:0[${MULTILIB_USEDEP}]
 		media-libs/harfbuzz:=
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
@@ -708,19 +708,19 @@ CDEPEND="
 		dev-libs/libevent:=
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.15.0:0[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-1.15.2:0[${MULTILIB_USEDEP},postproc]
 		media-libs/libvpx:=
 	)
 	system-pipewire? (
-		>=media-video/pipewire-1.4.7-r2
+		>=media-video/pipewire-1.4.2
 		media-video/pipewire:=
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.47:0[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.50:0[${MULTILIB_USEDEP},apng]
 		media-libs/libpng:=
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.5.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.6.0:0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	valgrind? (
@@ -2559,13 +2559,13 @@ _src_compile() {
 		fi
 	fi
 
-	if ! use X && use wayland; then
+	if ! use X && use wayland ; then
 		local -x GDK_BACKEND="wayland"
 	else
 		local -x GDK_BACKEND="x11"
 	fi
 
-	"${virtx_cmd}" "./mach" build --verbose || die
+	${virtx_cmd} "./mach" build --verbose || die
 }
 
 src_compile() {
