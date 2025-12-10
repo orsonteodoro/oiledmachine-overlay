@@ -252,7 +252,7 @@ einfo "SEA = Social Engineering Attack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TC"($|" "|";"|",") ]] ; then
 einfo "TC = Type Confusion"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ToCToU"($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ToCToU"|"TOCTOU")($|" "|";"|",") ]] ; then
 einfo "ToCToU = Time of Check Time of Use"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TSE"($|" "|";"|",") ]] ; then
