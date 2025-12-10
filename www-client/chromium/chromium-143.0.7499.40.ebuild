@@ -148,6 +148,7 @@ SOURCES_COUNT_EXPECTED=516257
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
+ABSEIL_CPP_SLOT="20251021"
 ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
@@ -491,10 +492,10 @@ SYSTEM_USE=(
 	"-system-zstd"
 )
 
-inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
+inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
-inherit readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
+inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	inherit llvm rust
@@ -782,7 +783,6 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 fi
 # Disabled because of unpack time.
 UNPACKAGE_REQUIRED_USE="
-	!system-abseil-cpp
 	!system-opus
 	!system-woff2
 	!system-spirv-headers
@@ -3052,9 +3052,9 @@ src_prepare() {
 
 	# To know which patches are safe to drop from files/ after tidying up old ebuilds:
 	# comm -13 \
-	# 	<(grep 'FILESDIR' *.ebuild | grep patch | grep -o '\${FILESDIR}/[^") ]*' \
+	#	<(grep 'FILESDIR' *.ebuild | grep patch | grep -o '\${FILESDIR}/[^") ]*' \
 	#		| sed 's|\${FILESDIR}/|files/|; s|\${PN}|chromium|' | sort -u) \
-	# 	<(find files/ -name "*.patch" | sort)
+	#	<(find files/ -name "*.patch" | sort)
 
 	local PATCHES=()
 
@@ -6175,12 +6175,15 @@ einfo "Configuring bundled ffmpeg..."
 
 	if use system-re2 ; then
 ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider disabling the system-re2 USE flag if it fails."
-		PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/re2/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-		PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/abseil-cpp/${RE2_SLOT}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
-		export PKG_CONFIG_PATH
-		myconf_gn+=(
-			"use_system_re2=true" # Trigger build/linux/unbundle/re2.gn
-		)
+		re2_src_configure
+		#myconf_gn+=(
+		#	"use_system_re2=true" # Trigger build/linux/unbundle/re2.gn
+		#)
+	fi
+
+	if use system-abseil-cpp ; then
+ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
+		abseil_cpp_src_configure
 	fi
 }
 
