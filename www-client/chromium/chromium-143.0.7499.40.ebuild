@@ -167,7 +167,8 @@ CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=20
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
-FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
+FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" )
+FFMPEG_SLOT="60.62.62" # Same as ffmpeg 8.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
@@ -1141,7 +1142,10 @@ LIBVA_DEPEND="
 		media-libs/libva:=
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+			|| (
+				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+			)
 			media-video/ffmpeg:=
 		)
 	)
@@ -1405,10 +1409,16 @@ PATENT_STATUS_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+			|| (
+				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+			)
 		)
 		!patent_status_nonfree? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+			|| (
+				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+			)
 		)
 		media-video/ffmpeg:=
 	)
@@ -1469,7 +1479,10 @@ COMMON_DEPEND="
 		)
 		|| (
 			(
-				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+				|| (
+					media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+					media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+				)
 				media-video/ffmpeg:=
 			)
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
