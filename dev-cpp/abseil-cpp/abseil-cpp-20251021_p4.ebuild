@@ -3,10 +3,17 @@
 
 EAPI=8
 
+# Versioning:
+# <date>_pN, where N is the number of commits that day.
+
+# This is a special ebuild for Chromium.
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
-CXX_STANDARD=17 # Originally 11, 17 required by bear
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{8..11} )
+
+EGIT_COMMIT="215d8a0e75848cec2734f1b70f55862096072f52"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_crypto"
@@ -22,16 +29,12 @@ CPU_FLAGS_PPC=(
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_aes"
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_pclmul"
+	"cpu_flags_x86_sse"
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse3"
 	"cpu_flags_x86_ssse3"
 	"cpu_flags_x86_sse4_2"
-)
-
-_CXX_STANDARD=(
-	"cxx_standard_cxx11"
-	"cxx_standard_cxx14"
-	"+cxx_standard_cxx17"
 )
 
 inherit libstdcxx-compat
@@ -46,10 +49,19 @@ LLVM_COMPAT=(
 
 inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
 
-SRC_URI="
+if [[ -n "${EGIT_COMMIT}" ]] ; then
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	SRC_URI="
+https://github.com/abseil/abseil-cpp/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${EGIT_COMMIT:0:7}.tar.gz
+	"
+else
+	S="${WORKDIR}/${P}"
+	SRC_URI+="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
 LICENSE="
@@ -62,23 +74,22 @@ HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="${PV%%.*}/${PV}"
 IUSE+="
-${_CXX_STANDARD[@]}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_25
+ebuild_revision_20
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
-	^^ (
-		${_CXX_STANDARD[@]/+}
-	)
 	amd64? (
 		cpu_flags_x86_sse2
 	)
 	x86? (
 		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
 	)
 	cpu_flags_x86_sse3? (
 		cpu_flags_x86_sse2
@@ -89,13 +100,18 @@ REQUIRED_USE="
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_ssse3
 	)
+	cpu_flags_x86_pclmul? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_aes? (
+		cpu_flags_x86_pclmul
+	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-util/patchelf
 	test? (
 		=dev-cpp/gtest-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-libs/timezone-data
@@ -108,9 +124,7 @@ RESTRICT="
 	mirror
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-20211102.0-gcc-13-2.patch"
-	"${FILESDIR}/${PN}-20200225.3-crypto-symbol.patch"
-	"${FILESDIR}/${PN}-20220623.2-54fac21-backport.patch"
+	"${FILESDIR}/${PN}-20250512.1-crypto-symbol.patch"
 )
 
 pkg_setup() {
@@ -122,15 +136,16 @@ pkg_setup() {
 setup_aes_flags() {
 	filter-flags "-m*fpu=neon"
 	if [[ "${ARCH}" != "arm" ]] ; then
-		sed -i -e "s|__ARM_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
+		sed -i -e "s|__ARM_CRYPTO_FLAGS__||" "absl/random/internal/BUILD.bazel" || die
 	elif [[ "${ARCH}" == "arm" ]] && use cpu_flags_arm_neon ; then
-		sed -i -e 's|__ARM_CRYPTO_FLAGS__|"-mfpu=neon"|' "absl/copts/copts.py" || die
+		sed -i -e 's|__ARM_CRYPTO_FLAGS__|"-mfpu=neon"|' "absl/random/internal/BUILD.bazel" || die
+		append-flags "-mfpu=neon"
 	else
-		sed -i -e "s|__ARM_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
+		sed -i -e "s|__ARM_CRYPTO_FLAGS__||" "absl/random/internal/BUILD.bazel" || die
 	fi
 
 	if [[ "${ARCH}" != "arm64" ]] ; then
-		sed -i -e "s|__ARM64_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
+		sed -i -e "s|__ARM64_CRYPTO_FLAGS__||" "absl/random/internal/BUILD.bazel" || die
 	else
 	# Handle armv8-r and armv8-a
 		local oi=""
@@ -168,7 +183,7 @@ setup_aes_flags() {
 
 	filter-flags "-m*aes" "-m*sse4.2" "-m*avx"
 	if ! [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
-		sed -i -e "s|__X86_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
+		sed -i -e "s|__X86_CRYPTO_FLAGS__||" "absl/random/internal/BUILD.bazel" || die
 	else
 		local L=()
 		local str=""
@@ -200,7 +215,7 @@ setup_aes_flags() {
 			L+=(
 				"-mavx"
 			)
-			str+=',"-mavx"'
+			str+=',"-mmavx"'
 		else
 			L+=(
 				"-mno-avx"
@@ -210,31 +225,49 @@ setup_aes_flags() {
 		str="${str:1}"
 
 		append-flags "${L[@]}"
-		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/copts/copts.py" || die
+		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/random/internal/BUILD.bazel" || die
 	fi
 
 	filter-flags "-m*altivec" "-m*crypto" "-m*vsx"
 	if [[ "${ARCH}" =~ ("ppc"$|"ppc64") ]] ; then
+		local str=""
 		if use cpu_flags_ppc_altivec ; then
 			append-flags "-maltivec"
+			str+=',"-maltivec"'
 		else
 			append-flags "-mno-altivec"
+			str+=',"-mno-altivec"'
 		fi
 		if use cpu_flags_ppc_crypto ; then
 			append-flags "-mcrypto"
+			str+=',"-mcrypto"'
 		else
 			append-flags "-mno-crypto"
+			str+=',"-mno-crypto"'
 		fi
 		if use cpu_flags_ppc_vsx ; then
 			append-flags "-mvsx"
+			str+=',"-mvsx"'
 		else
 			append-flags "-mno-vsx"
+			str+=',"-mno-vsx"'
 		fi
+		str="${str:1}"
+		sed -i -e "s|__PPC_CRYPTO_FLAGS__|${str}|" "absl/random/internal/BUILD.bazel" || die
 	fi
 }
 
 setup_cpu_flags() {
 	setup_aes_flags
+
+	filter-flags "-msse" "-mno-sse"
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_sse ; then
+			append-flags "-msse"
+		else
+			append-flags "-mno-sse"
+		fi
+	fi
 
 	filter-flags "-msse2" "-mno-sse2"
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
@@ -262,6 +295,15 @@ setup_cpu_flags() {
 			append-flags "-mno-ssse3"
 		fi
 	fi
+
+	filter-flags "-m*pclmul"
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if use cpu_flags_x86_pclmul ; then
+			append-flags "-mpclmul"
+		else
+			append-flags "-mno-pclmul"
+		fi
+	fi
 }
 
 src_prepare() {
@@ -270,39 +312,22 @@ src_prepare() {
 	# Now generate cmake files
 	python_fix_shebang "absl/copts/generate_copts.py"
 	"absl/copts/generate_copts.py" || die
+
+	# For Chromium
+	sed -e "s|ABSL_OPTION_HARDENED 0|ABSL_OPTION_HARDENED 1|g" \
+		"absl/base/options.h" \
+		|| die
 }
 
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		$(usex cxx_standard_cxx11 "-DCMAKE_CXX_STANDARD=11" "") # Default for this package
-		$(usex cxx_standard_cxx14 "-DCMAKE_CXX_STANDARD=14" "") # Default for gRPC
-		$(usex cxx_standard_cxx17 "-DCMAKE_CXX_STANDARD=17" "") # Required by Bear
-		$(usex test "-DBUILD_TESTING=ON" "")
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
+		$(usex test -DBUILD_TESTING=ON "")
 	)
-
 	cmake-multilib_src_configure
-}
-
-src_install() {
-	cmake-multilib_src_install
-	IFS=$'\n'
-	local L=(
-		$(find "${ED}" -name "*.so*")
-	)
-	local x
-	for x in ${L[@]} ; do
-		[[ -L "${x}" ]] && continue
-einfo "Adding \$ORIGIN to RPATH for ${x}"
-		patchelf \
-			--add-rpath '$ORIGIN' \
-			"${x}" \
-			|| die
-	done
-	IFS=$' \t\n'
 }

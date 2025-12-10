@@ -36,12 +36,12 @@ _CXX_STANDARD=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot python-any-r1
@@ -123,26 +123,26 @@ pkg_setup() {
 }
 
 setup_aes_flags() {
-	filter-flags '-m*fpu=neon'
+	filter-flags "-m*fpu=neon"
 	if [[ "${ARCH}" != "arm" ]] ; then
-		sed -i -e 's|__ARM_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
+		sed -i -e "s|__ARM_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
 	elif [[ "${ARCH}" == "arm" ]] && use cpu_flags_arm_neon ; then
 		sed -i -e 's|__ARM_CRYPTO_FLAGS__|"-mfpu=neon"|' "absl/copts/copts.py" || die
 	else
-		sed -i -e 's|__ARM_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
+		sed -i -e "s|__ARM_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
 	fi
 
 	if [[ "${ARCH}" != "arm64" ]] ; then
-		sed -i -e 's|__ARM64_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
+		sed -i -e "s|__ARM64_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
 	else
 	# Handle armv8-r and armv8-a
 		local oi=""
 		local of=""
 		local str=""
 		local x
-		if is-flagq '-march=armv*' || is-flagq '-mcpu=*' ; then
+		if is-flagq "-march=armv*" || is-flagq "-mcpu=*" ; then
 			oi=( $(echo "${CFLAGS}" | grep -o -E -e "-march=armv[.0-9a-z+-]+") )
-			for x in ${oi[@]} ; do
+			for x in "${oi[@]}" ; do
 				of=$(echo "${x}" | sed -E -e "s|[+-]crypto||g")
 				replace-flags "${x}" "${of}+crypto"
 				if use cpu_flags_arm_crypto ; then
@@ -153,7 +153,7 @@ setup_aes_flags() {
 			done
 
 			oi=( $(echo "${CFLAGS}" | grep -o -E -e "-mcpu=[.0-9a-z+-]+") )
-			for x in ${oi[@]} ; do
+			for x in "${oi[@]}" ; do
 				of=$(echo "${x}" | sed -E -e "s|[+-]crypto||g")
 				replace-flags "${x}" "${of}+crypto"
 				if use cpu_flags_arm_crypto ; then
@@ -169,9 +169,9 @@ setup_aes_flags() {
 		fi
 	fi
 
-	filter-flags '-m*aes' '-m*sse4.2' '-m*avx'
+	filter-flags "-m*aes" "-m*sse4.2" "-m*avx"
 	if ! [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
-		sed -i -e 's|__X86_CRYPTO_FLAGS__||' "absl/copts/copts.py" || die
+		sed -i -e "s|__X86_CRYPTO_FLAGS__||" "absl/copts/copts.py" || die
 	else
 		local L=()
 		local str=""
@@ -216,7 +216,7 @@ setup_aes_flags() {
 		sed -i -e "s|__X86_CRYPTO_FLAGS__|${str}|" "absl/copts/copts.py" || die
 	fi
 
-	filter-flags '-m*altivec' '-m*crypto' '-m*vsx'
+	filter-flags "-m*altivec" "-m*crypto" "-m*vsx"
 	if [[ "${ARCH}" =~ ("ppc"$|"ppc64") ]] ; then
 		if use cpu_flags_ppc_altivec ; then
 			append-flags "-maltivec"
@@ -239,7 +239,7 @@ setup_aes_flags() {
 setup_cpu_flags() {
 	setup_aes_flags
 
-	filter-flags '-msse2' '-mno-sse2'
+	filter-flags "-msse2" "-mno-sse2"
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if use cpu_flags_x86_sse2 ; then
 			append-flags "-msse2"
@@ -248,7 +248,7 @@ setup_cpu_flags() {
 		fi
 	fi
 
-	filter-flags '-msse3' '-mno-sse3'
+	filter-flags "-msse3" "-mno-sse3"
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if use cpu_flags_x86_sse3 ; then
 			append-flags "-msse3"
@@ -257,7 +257,7 @@ setup_cpu_flags() {
 		fi
 	fi
 
-	filter-flags '-mssse3' '-mno-ssse3'
+	filter-flags "-mssse3" "-mno-ssse3"
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if use cpu_flags_x86_ssse3 ; then
 			append-flags "-mssse3"
@@ -278,9 +278,9 @@ src_prepare() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Default for this package and grpc
-		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
-		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by Bear
+		$(usex cxx_standard_cxx11 "-DCMAKE_CXX_STANDARD=11" "") # Default for this package and grpc
+		$(usex cxx_standard_cxx14 "-DCMAKE_CXX_STANDARD=14" "")
+		$(usex cxx_standard_cxx17 "-DCMAKE_CXX_STANDARD=17" "") # Required by Bear
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
