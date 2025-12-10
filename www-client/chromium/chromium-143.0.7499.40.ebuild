@@ -2388,7 +2388,7 @@ einfo "CXX:  ${CXX}"
 	local x
 	for x in "${SYSTEM_USE[@]/-}" ; do
 		if use "${x}" ; then
-ewarn "Enabling ${x} could weaken security or have version sensitive c++ standard incompatibility."
+ewarn "Enabling ${x} could weaken security or have version sensitive C++ standard incompatibility."
 		fi
 	done
 }
