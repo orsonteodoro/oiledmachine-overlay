@@ -493,7 +493,7 @@ SYSTEM_USE=(
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
-inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
+inherit desktop edo ffmpeg flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
@@ -6173,6 +6173,16 @@ einfo "Configuring bundled ffmpeg..."
 		)
 	fi
 
+	if use system-abseil-cpp ; then
+ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
+		abseil-cpp_src_configure
+	fi
+
+	if use system-ffmpeg ; then
+ewarn "The system-ffmpeg USE flag is experimental with multislot ffmpeg.  Consider disabling the ffmpeg USE flag if it fails."
+		ffmpeg_src_configure
+	fi
+
 	if use system-re2 ; then
 ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider disabling the system-re2 USE flag if it fails."
 		re2_src_configure
@@ -6181,10 +6191,6 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 		#)
 	fi
 
-	if use system-abseil-cpp ; then
-ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
-		abseil_cpp_src_configure
-	fi
 }
 
 _src_configure() {
