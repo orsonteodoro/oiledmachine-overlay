@@ -404,9 +404,6 @@ einfo "SQLI = SQL Injection"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SEA"($|" "|";"|",") ]] ; then
 einfo "SEA = Social Engineering Attack"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOF"($|" "|";"|",") ]] ; then
-einfo "SOF = Shift Overflow"
-		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBE"($|" "|";"|",") ]] ; then
 einfo "SBE = SandBox Escape"
@@ -428,14 +425,24 @@ einfo "SB = Security Bypass"
 einfo "SC = Side Channel Vulnerability"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SHFTOF"($|" "|";"|",") ]] ; then
+einfo "SHFTOF = Shift Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SHFTU"($|" "|";"|",") ]] ; then
+einfo "SHFTU = Shift Underflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOF"($|" "|";"|",") ]] ; then
+einfo "SOF = Shift Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SUF"($|" "|";"|",") ]] ; then
+einfo "SUF = Shift Underflow"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOOB"($|" "|";"|",") ]] ; then
 einfo "SOOB = Shift Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOPB"($|" "|";"|",") ]] ; then
 einfo "SOPB = Same-Origin Policy Bypass"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SUF"($|" "|";"|",") ]] ; then
-einfo "SUF = Shift Underflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TC"($|" "|";"|",") ]] ; then
 einfo "TC = Type Confusion"
