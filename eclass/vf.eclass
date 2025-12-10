@@ -345,8 +345,8 @@ einfo "CI = Command Injection"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DBCI"($|" "|";"|",") ]] ; then
 einfo "DBCI = Database Command Injection"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SCCI"($|" "|";"|",") ]] ; then
-einfo "SCCI = Script Command Injection"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SCRPTCI"($|" "|";"|",") ]] ; then
+einfo "SCRPTCI = Script Command Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SHCI"($|" "|";"|",") ]] ; then
 einfo "SHCI = Shell Command Injection"
