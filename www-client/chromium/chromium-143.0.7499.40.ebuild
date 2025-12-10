@@ -167,8 +167,6 @@ CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=20
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
-FFMPEG_COMPAT_SLOTS=( "${FFMPEG_COMPAT_SLOTS_4[@]}" )
-FFMPEG_SLOT="60.62.62" # Same as ffmpeg 8.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
@@ -392,6 +390,12 @@ CPU_FLAGS_X86=(
 	"vpclmulqdq"
 )
 
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+)
+FFMPEG_SLOT="60.62.62" # Same as ffmpeg 8.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
+
 IUSE_LIBCXX=(
 	"bundled-libcxx"
 	"system-libstdcxx"
@@ -494,7 +498,7 @@ SYSTEM_USE=(
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
-inherit desktop edo ffmpeg flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
+inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
