@@ -75,6 +75,21 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	# or more DoS, DT, ID impact vectors.
 	#
 einfo
+
+	# Alternative for beginners or exact personalities
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
+# Same as ID
+einfo "C = Confidentiality Impacted"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"I"($|" "|";"|",") ]] ; then
+# Same as DT
+einfo "I = Integrity Impacted"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"A"($|" "|";"|",") ]] ; then
+# Same as DoS
+einfo "A = Availability Impacted"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ABO"($|" "|";"|",") ]] ; then
 # Adjacent buffer integrity compromised
 # BO is taken so ABO is used
@@ -83,10 +98,20 @@ einfo "ABO = Adjacent Buffer Overrun"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACE"($|" "|";"|",") ]] ; then
 einfo "ACE = Arbitrary Code Execution"
 		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AE"($|" "|";"|",") ]] ; then
+# Alias for ITW.
+# Not necessarily KEV.
+einfo "AE = Actively Exploited" # More formal
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AEITW"($|" "|";"|",") ]] ; then
 # Alias for ITW.
 # Not necessarily KEV.
 einfo "AEITW = Actively Exploited In The Wild" # More formal
+		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
+einfo "AR = Arbitrary Read"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
 einfo "AW = Arbitrary Write"
@@ -105,10 +130,13 @@ einfo "CI = Shell Command Injection"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CP"($|" "|";"|",") ]] ; then
 einfo "CP = Corrupt Pointer"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CRSH"($|" "|";"|",") ]] ; then
+einfo "CRSH = Crash"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CSRF"($|" "|";"|",") ]] ; then
 einfo "CSRF = Cross Site Request Forgery"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DoS"($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
 einfo "DoS = Denial of Service"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DbZ"($|" "|";"|",") ]] ; then
@@ -137,6 +165,9 @@ einfo "GPF = General Protection Fault"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"H"($|" "|";"|",") ]] ; then
 einfo "H = Hang"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HC"($|" "|";"|",") ]] ; then
+einfo "HC = Heap Corruption"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
 		fi
@@ -153,24 +184,34 @@ einfo "IF = Improper Free"
 # Coded Insecurely
 einfo "II = Insecure Implementation"
 		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
 einfo "IL = Infinite Loop"
 		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
 einfo "IO = Integer Overflow"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOOOB"($|" "|";"|",") ]] ; then
-einfo "IOOOB = Index Out Of Bounds"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOOB"($|" "|";"|",") ]] ; then
+einfo "IOOB = Index Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IR"($|" "|";"|",") ]] ; then
 einfo "IR = Improper Release"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
-einfo "IS = Insufficient Sanitiation of Input"
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IIS"($|" "|";"|",") ]] ; then
+einfo "IIS = Insufficient Input Sanitiation"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ISS"($|" "|";"|",") ]] ; then
+einfo "ISS = Insufficient Sanitiation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ISoI"|"ISOI")($|" "|";"|",") ]] ; then
+einfo "ISoI = Insufficient Sanitiation of Input"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ITW"($|" "|";"|",") ]] ; then
 # Alias for AEITW.
 # Not necessarily KEV.
@@ -210,39 +251,68 @@ einfo "OOBR = Out Of Bounds Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOBW"($|" "|";"|",") ]] ; then
 einfo "OOBW = Out Of Bounds Write"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOPS"($|" "|";"|",") ]] ; then
+# The Linux version of BSOD
+einfo "OOPS = Kernel Oops"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
 einfo "OOR = Out Of Range Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PC"($|" "|";"|",") ]] ; then
 einfo "PC = Pointer Corruption"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE"|"EP"|"EoP")($|" "|";"|",") ]] ; then
-# Escalated Privileges
-# Escalation of Privileges
-einfo "PE/EP/EoP = Privilege Escalation"
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE")($|" "|";"|",") ]] ; then
+einfo "PE = Privilege Escalation"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EP")($|" "|";"|",") ]] ; then
+einfo "EP = Escalated Privileges"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EoP")($|" "|";"|",") ]] ; then
+einfo "EoP = Escalation of Privileges"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PI"($|" "|";"|",") ]] ; then
 einfo "PI = Prompt Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PP"($|" "|";"|",") ]] ; then
 einfo "PP = Prototype Pollution"
 		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"A"($|" "|";"|",") ]] ; then
+# DoS, DT, ID, PE
+# Alias for Race Condition
+# Less formal that Race Condition
+einfo "R = Race"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"RC"($|" "|";"|",") ]] ; then
 # DoS, DT, ID, PE
 einfo "RC = Race Condition"
 		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
-einfo "SA = Spoofing Attack Vulnerability"
+einfo "SA = Spoofing Attack"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SC"($|" "|";"|",") ]] ; then
+einfo "SC = Stack Corruption"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SEA"($|" "|";"|",") ]] ; then
+einfo "SEA = Social Engineering Attack"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOF"($|" "|";"|",") ]] ; then
+einfo "SOF = Shift Overflow"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBE"($|" "|";"|",") ]] ; then
-einfo "SBE = Sandbox Escape"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBX"($|" "|";"|",") ]] ; then
-einfo "SBX = Sandbox Escape"
+einfo "SBE = SandBox Escape"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SE"($|" "|";"|",") ]] ; then
 einfo "SE = Sandbox Escape"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBX"($|" "|";"|",") ]] ; then
+einfo "SBX = SandBoX Escape"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SO"($|" "|";"|",") ]] ; then
 einfo "SO = Stack Based Buffer Overflow"
 		fi
@@ -252,8 +322,8 @@ einfo "SOOB = Shift Out Of Bounds"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOPB"($|" "|";"|",") ]] ; then
 einfo "SOPB = Same-Origin Policy Bypass"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SEA"($|" "|";"|",") ]] ; then
-einfo "SEA = Social Engineering Attack"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SUF"($|" "|";"|",") ]] ; then
+einfo "SUF = Shift Underflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TC"($|" "|";"|",") ]] ; then
 einfo "TC = Type Confusion"
@@ -300,10 +370,18 @@ einfo "XSS = Cross Site Scripting Attack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"XSRF"($|" "|";"|",") ]] ; then
 einfo "XSRF = Cross Site Request Forgery"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZC"|"ZCA")($|" "|";"|",") ]] ; then
+
 # CVSS 3.1 - AV:N/PR:N/UI:N
-einfo "ZC/ZCA = Zero Click Attack"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZC")($|" "|";"|",") ]] ; then
+einfo "ZC = Zero Click"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZCA")($|" "|";"|",") ]] ; then
+einfo "ZCA = Zero Click Attack"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZCV")($|" "|";"|",") ]] ; then
+einfo "ZCV = Zero Click Vulnerability"
+		fi
+
 einfo
 einfo "Tip:  Ask the AI/LLM this question to fill in the blanks for the table"
 einfo "for possible impact vectors:"
