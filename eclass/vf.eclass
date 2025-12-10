@@ -221,12 +221,6 @@ einfo "II = Insecure Implementation"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
 einfo "IL = Infinite Loop"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IR"($|" "|";"|",") ]] ; then
-einfo "IR = Infinite Recursion"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IRCSN"($|" "|";"|",") ]] ; then
-einfo "IRCSN = Infinite Recursion"
-		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
@@ -273,6 +267,12 @@ einfo "SC = Stack Corruption"
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IR"($|" "|";"|",") ]] ; then
+einfo "IR = Infinite Recursion"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IRCSN"($|" "|";"|",") ]] ; then
+einfo "IRCSN = Infinite Recursion"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ML"($|" "|";"|",") ]] ; then
 einfo "ML = Memory Leak"
