@@ -136,6 +136,7 @@ einfo "AR = Arbitrary Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
 einfo "AW = Arbitrary Write"
 		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BO"($|" "|";"|",") ]] ; then
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
@@ -363,6 +364,9 @@ einfo "R = Race"
 einfo "RC = Race Condition"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ReDoS"|"REDOS")($|" "|";"|",") ]] ; then
+einfo "ReDoS = Regular Expression Denial of Service"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
 einfo "SA = Spoofing Attack"
 		fi
@@ -404,6 +408,16 @@ einfo "SE = Sandbox Escape"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SBX"($|" "|";"|",") ]] ; then
 einfo "SBX = SandBoX Escape"
+		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IB"($|" "|";"|",") ]] ; then
+einfo "IB = Integrity Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SB"($|" "|";"|",") ]] ; then
+einfo "SB = Security Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("SC"|"SCV")($|" "|";"|",") ]] ; then
+einfo "SC = Side Channel Vulnerability"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOOB"($|" "|";"|",") ]] ; then
