@@ -58,19 +58,20 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_vpclmulqdq"
 )
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
@@ -94,7 +95,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -435,6 +436,8 @@ ewarn "Rebuild with GCC 12 if it fails."
 eerror "Detected compiler switch.  Removing LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	local cpp_flags=()
 	local mycmakeargs=(
