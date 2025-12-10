@@ -6,9 +6,10 @@
 EAPI=8
 
 # See https://chromium.googlesource.com/libyuv/libyuv/+log/refs/heads/main/README.chromium for activity
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 EGIT_COMMIT="500f45652c459cfccd20f83f297eb66cb7b015cb"
 
-inherit cmake multilib-minimal
+inherit cflags-hardened cmake multilib-minimal
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 S="${WORKDIR}/${P}"
@@ -28,6 +29,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${GIT_BRANCHES}
 system-gflags test
+ebuild_revision_1
 "
 REQUIRED_USE+="
 "
@@ -58,6 +60,7 @@ src_unpack() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DTEST=$(usex test "ON" "OFF")
 	)
