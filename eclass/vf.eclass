@@ -263,6 +263,10 @@ einfo "IS = Insufficient Sanitiation"
 einfo "ISoI = Insufficient Sanitiation of Input"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IE")($|" "|";"|",") ]] ; then
+einfo "IE = Insufficient Entropy"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IU"($|" "|";"|",") ]] ; then
 einfo "IU = Integer Underflow"
 		fi
@@ -464,6 +468,9 @@ einfo "UAF = Use After Free"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UAR"($|" "|";"|",") ]] ; then
 einfo "UAR = Use After Return"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WC"($|" "|";"|",") ]] ; then
+einfo "WC = Weak Cipher"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WWWC"($|" "|";"|",") ]] ; then
 einfo "WWWC = Write What Where Condition"
