@@ -91,10 +91,6 @@ einfo "A = Availability Impacted"
 		fi
 
 # Same as CIA
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
-# Same as A
-einfo "DoS = Denial of Service"
-		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
 # Same as C
 einfo "ID = Information Disclosure"
@@ -102,6 +98,10 @@ einfo "ID = Information Disclosure"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DT"($|" "|";"|",") ]] ; then
 # Same as I
 einfo "DT = Data Tampering"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
+# Same as A
+einfo "DoS = Denial of Service"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ABO"($|" "|";"|",") ]] ; then
