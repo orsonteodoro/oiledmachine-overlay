@@ -83,6 +83,8 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/node/update_node_binaries#L18					# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/re2								# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/simdutf								# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/spirv-headers							# Stable, tag not on distro
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/spirv-tools							# Stable, tag not on distro
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/zlib/zlib.h#L40							# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/tools/rust/update_rust.py#L35							#
@@ -778,6 +780,8 @@ UNPACKAGE_REQUIRED_USE="
 	!system-abseil-cpp
 	!system-opus
 	!system-woff2
+	!system-spirv-headers
+	!system-spirv-tools
 	!system-zstd
 "
 # Drumbrake is broken in this release and off by default.
