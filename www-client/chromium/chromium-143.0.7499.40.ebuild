@@ -51,7 +51,7 @@ EAPI=8
 #
 # For depends see:
 #
-# https://github.com/chromium/chromium/tree/142.0.7444.175/build/linux/sysroot_scripts/generated_package_lists				; Last update 20250523, D11
+# https://github.com/chromium/chromium/tree/143.0.7499.40/build/linux/sysroot_scripts/generated_package_lists				# Stable, Last update 20250523, D11
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -60,37 +60,48 @@ EAPI=8
 #   libxkbcommon, libxml2 [older], libxrandr, libxrender, libxshmfence,
 #   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
 #   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
-# https://github.com/chromium/chromium/blob/142.0.7444.175/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/143.0.7499.40/build/install-build-deps.py							# Stable
 #
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/libpng/png.h#L288							; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/libxml/linux/config.h#L86						; older than generated_package_lists *
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/node/update_node_binaries#L18					; *
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
-# https://github.com/chromium/chromium/blob/142.0.7444.175/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/142.0.7444.175/tools/rust/update_rust.py#L35							; commit *
-#   https://github.com/rust-lang/rust/blob/15283f6fe95e5b604273d13a428bab5fc0788f5a/src/version						; live version
-# /usr/share/chromium/sources/third_party/flac/BUILD.gn										L122	; newer than generated_package_lists
-# /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in						L56     ; newer than generated_package_lists
-# /usr/share/chromium/sources/third_party/freetype/src/CMakeLists.txt								L165	; newer than generated_package_lists *
-# /usr/share/chromium/sources/third_party/harfbuzz-ng/README.chromium									; newer than generated_package_lists *
-# /usr/share/chromium/sources/third_party/icu/source/configure									L585	; newer than generated_package_lists
-# /usr/share/chromium/sources/third_party/libdrm/src/meson.build								L24	; newer than generated_package_lists *
-# /usr/share/chromium/sources/third_party/libjpeg_turbo/src/jconfig.h								L7	; newer than generated_package_lists
-# /usr/share/chromium/sources/third_party/libwebp/src/configure.ac								L1	; newer than generated_package_lists *
-# /usr/share/chromium/sources/third_party/openh264/src/meson.build								L2
-# /usr/share/chromium/sources/third_party/opus/README.chromium									L3	; newer than generated_package_lists, live
-#   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							; see tag (live, 20250318) *
-# /usr/share/chromium/sources/third_party/zstd/README.chromium										; live version (20250414) *
-#   https://github.com/facebook/zstd/commit/89d685e42dbcf815a16ed0fcd7d050ef74ccad96							; check if commit part of tag
-#   https://github.com/facebook/zstd/blob/89d685e42dbcf815a16ed0fcd7d050ef74ccad96/lib/zstd.h#L107					; version
-# https://github.com/chromium/chromium/blob/142.0.7444.175/DEPS#L512									; live
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/abseil-cpp/README.chromium					# Live
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/brotli/README.chromium						# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/crc32c/README.chromium						# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/dav1d/version/vcs_version.h#L2					# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/flatbuffers							# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/highway								# Live
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libpng/png.h#L288							# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/libsecret								# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/libusb								# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/libvpx								# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/libwebp								# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libxml/linux/config.h#L86						# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libxslt/linux/config.h#L116					# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/node/update_node_binaries#L18					# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/re2								# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/simdutf								# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/woff2/README.chromium						# Live
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/zlib/zlib.h#L40							# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/tools/rust/update_rust.py#L35							#
+#   https://github.com/rust-lang/rust/blob/15283f6fe95e5b604273d13a428bab5fc0788f5a/src/version						# Live
+# /usr/share/chromium/sources/third_party/xflac/BUILD.gn										L122	# Stable
+# /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in						L56     # Stable
+# /usr/share/chromium/sources/third_party/freetype/src/CMakeLists.txt								L165	# Stable
+# /usr/share/chromium/sources/third_party/harfbuzz-ng/README.chromium									# Stable
+# /usr/share/chromium/sources/third_party/icu/source/configure									L585	# Stable
+# /usr/share/chromium/sources/third_party/libdrm/src/meson.build								L24	# Stable
+# /usr/share/chromium/sources/third_party/libjpeg_turbo/src/jconfig.h								L7	# Stable
+# /usr/share/chromium/sources/third_party/libyuv/README.chromium									# Live snapshotable, main branch
+# /usr/share/chromium/sources/third_party/openh264/src/meson.build								L2	# Stable
+# /usr/share/chromium/sources/third_party/opus/README.chromium									L3	# Live
+#   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Live
+# /usr/share/chromium/sources/third_party/zstd/README.chromium										# Live
+#   https://github.com/facebook/zstd/commit/89d685e42dbcf815a16ed0fcd7d050ef74ccad96							# Live
+#   https://github.com/facebook/zstd/blob/89d685e42dbcf815a16ed0fcd7d050ef74ccad96/lib/zstd.h#L107					# Version
+# https://github.com/chromium/chromium/blob/143.0.7499.40/DEPS#L512									# Live
 #
 
 #
@@ -111,7 +122,7 @@ EAPI=8
 
 #
 # The LLVM timestamp can be obtained from
-# https://github.com/chromium/chromium/blob/142.0.7444.175/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/143.0.7499.40/tools/clang/scripts/update.py#L42
 # https://github.com/llvm/llvm-project/commit/7b473dfe
 # Also change LLVM_OFFICIAL_SLOT
 #
@@ -124,7 +135,7 @@ EAPI=8
 # third_party/ffmpeg/libavformat/version*.h
 #
 
-# The unbundle build files logic is in build/linux/unbundle/
+# The unbundle build files logic is in /usr/share/chromium/sources/build/linux/unbundle
 
 TC_COUNT_EXPECTED=5129
 SOURCES_COUNT_EXPECTED=516257
@@ -161,7 +172,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 USE_LTO=0 # Global variable
 RE2_SLOT="20240116"
-# https://github.com/chromium/chromium/blob/142.0.7444.175/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/143.0.7499.40/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_MAX_VER="9999" # Corresponds to llvm-21.1
 RUST_MIN_VER="9999" # Corresponds to llvm-21.1
@@ -183,6 +194,7 @@ UNGOOGLED_CHROMIUM_PV="143.0.7499.40-1"
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
+VULKAN_PV="1.4.331"
 ZLIB_PV="1.3.1"
 
 COPIUM_COMMIT="8025c57b5b5d0f93ca6392cbcfab8fd2f8255e75"
@@ -416,13 +428,13 @@ PATENT_STATUS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13-16
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-21
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LLVM_OFFICIAL_SLOT="22" # Cr official slot
@@ -433,6 +445,43 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"$(( ${LLVM_OFFICIAL_SLOT} + 1 )).0.0"
 	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
 	"${LLVM_OFFICIAL_SLOT}.0.0"
+)
+
+SYSTEM_USE=(
+	"-system-abseil-cpp" # Missing package
+	"-system-brotli"
+	"-system-crc32c"
+	"-system-dav1d"
+	"-system-flatbuffers"
+	"-system-ffmpeg" # TODO dedupe/simplify *DEPENDs
+	"-system-flac"
+	"-system-fontconfig"
+	"-system-freetype"
+	"-system-harfbuzz"
+	"-system-highway"
+	"-system-icu"
+	"-system-jsoncpp"
+	"-system-libaom"
+	"-system-libdrm"
+	"-system-libjpeg-turbo"
+	"-system-libpng"
+	"-system-libsecret"
+	"-system-libusb"
+	"-system-libvpx"
+	"-system-libwebp"
+	"-system-libxml"
+	"-system-libxslt"
+	"-system-libyuv"
+	"-system-openh264" # TODO dedupe/simplify *DEPENDs
+	"-system-opus" # TODO dedupe/simplify *DEPENDs
+	"-system-re2"
+	"-system-simdutf"
+	"-system-snappy"
+	"-system-spirv-headers"
+	"-system-spirv-tools"
+	"-system-woff2"
+	"-system-zlib"
+	"-system-zstd"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
@@ -555,13 +604,13 @@ RESTRICT="
 SLOT="0/stable"
 #
 # vaapi is enabled by default upstream for some arches \
-# See https://github.com/chromium/chromium/blob/142.0.7444.175/media/gpu/args.gni#L24
+# See https://github.com/chromium/chromium/blob/143.0.7499.40/media/gpu/args.gni#L24
 #
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
 #
 # The suid is built by default upstream but not necessarily used:  \
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/sandbox/linux/BUILD.gn
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/sandbox/linux/BUILD.gn
 #
 
 # Upstream uses official ON
@@ -580,15 +629,14 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
+${SYSTEM_USE[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
--system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
--system-harfbuzz -system-icu -system-libaom -system-libjpeg-turbo
--system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
--system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
+systemd test +wayland
++webassembly
 -widevine +X
 ebuild_revision_19
 "
@@ -600,24 +648,24 @@ fi
 
 # What is considered a proprietary codec can be found at:
 #
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/media/filters/BUILD.gn#L160
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/media/media_options.gni#L38
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/media/base/supported_types.cc#L203
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/media/base/supported_types.cc#L284
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/media/media_options.gni#L38
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/media/base/supported_types.cc#L203
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/media/base/supported_types.cc#L284
 #
 # Codec upstream default:
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/tools/mb/mb_config_expectations/chromium.linux.json#L89
 #
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 
@@ -725,9 +773,17 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		)
 	"
 fi
+# Disabled because of unpack time.
+UNPACKAGE_REQUIRED_USE="
+	!system-abseil-cpp
+	!system-opus
+	!system-woff2
+	!system-zstd
+"
 # Drumbrake is broken in this release and off by default.
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
+	${UNPACKAGE_REQUIRED_USE[@]}
 	!drumbrake
 	!system-harfbuzz
 	!headless (
@@ -747,24 +803,8 @@ REQUIRED_USE+="
 		cpu_flags_x86_sse2
 	)
 	cfi? (
+		${SYSTEM_USE[@]/-/!}
 		!mold
-		!system-dav1d
-		!system-ffmpeg
-		!system-flac
-		!system-fontconfig
-		!system-harfbuzz
-		!system-icu
-		!system-libaom
-		!system-libjpeg-turbo
-		!system-libstdcxx
-		!system-libwebp
-		!system-libxml
-		!system-libxslt
-		!system-openh264
-		!system-opus
-		!system-re2
-		!system-zlib
-		!system-zstd
 		bundled-libcxx
 	)
 	bindist? (
@@ -940,28 +980,12 @@ REQUIRED_USE+="
 		partitionalloc
 	)
 	official? (
+		${SYSTEM_USE[@]/-/!}
 		!cet
 		!debug
 		!drumbrake
 		!hangouts
 		!mold
-		!system-dav1d
-		!system-ffmpeg
-		!system-flac
-		!system-fontconfig
-		!system-harfbuzz
-		!system-icu
-		!system-libaom
-		!system-libjpeg-turbo
-		!system-libstdcxx
-		!system-libwebp
-		!system-libxml
-		!system-libxslt
-		!system-openh264
-		!system-opus
-		!system-re2
-		!system-zlib
-		!system-zstd
 		accessibility
 		bundled-libcxx
 		css-hyphen
@@ -973,7 +997,6 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
-		llvm_slot_21
 		mdns
 		miracleptr
 		mpris
@@ -1241,33 +1264,66 @@ COMMON_SNAPSHOT_DEPEND="
 			media-libs/openh264:=
 		)
 	)
+	system-abseil-cpp? (
+		dev-cpp/abseil-cpp:20251021[${MULTILIB_USEDEP}]
+		dev-cpp/abseil-cpp:=
+	)
+	system-brotli? (
+		>=app-arch/brotli-1.1.0[${MULTILIB_USEDEP}]
+		app-arch/brotli:=
+	)
+	system-crc32c? (
+		>=dev-libs/crc32c-1.0.7[${MULTILIB_USEDEP}]
+		dev-libs/crc32c:=
+	)
 	system-dav1d? (
 		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
+	)
+	system-flatbuffers? (
+		=dev-libs/flatbuffers-25.9.23
+		dev-libs/flatbuffers:=
 	)
 	system-fontconfig? (
 		>=media-libs/fontconfig-2.17.1[${MULTILIB_USEDEP}]
 		media-libs/fontconfig:=
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.14.1[${MULTILIB_USEDEP}]
 		media-libs/freetype:=
+	)
+	system-highway? (
+		>=dev-cpp/highway-9999
+		dev-cpp/highway:=
 	)
 	system-harfbuzz? (
 		>=media-libs/harfbuzz-11.4.4:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
-		>=dev-libs/icu-74.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-77.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
+	)
+	system-jsoncpp? (
+		>=dev-libs/jsoncpp-1.9.6[${MULTILIB_USEDEP}]
+		dev-libs/jsoncpp:=
 	)
 	system-libaom? (
 		>=media-libs/libaom-3.13.1[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
+	system-libdrm? (
+		>=x11-libs/libdrm-2.4.122[${MULTILIB_USEDEP}]
+	)
 	system-libjpeg-turbo? (
 		>=media-libs/libjpeg-turbo-3.1.0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
+	)
+	system-libpng? (
+		>=media-libs/libpng-1.6.43[${MULTILIB_USEDEP}]
+	)
+	system-libsecret? (
+		>=app-crypt/libsecret-0.18.2[${MULTILIB_USEDEP}]
 	)
 	system-libwebp? (
 		>=media-libs/libwebp-1.6.0[${MULTILIB_USEDEP}]
@@ -1281,16 +1337,41 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/libxslt-1.1.44[${MULTILIB_USEDEP}]
 		dev-libs/libxslt:=
 	)
+	system-libusb? (
+		>=dev-libs/libusb-1.0.17[${MULTILIB_USEDEP}]
+	)
+	system-libvpx? (
+		>=media-libs/libvpx-1.15.2[${MULTILIB_USEDEP}]
+	)
+	system-libyuv? (
+		>=media-libs/libyuv-1922[${MULTILIB_USEDEP}]
+		media-libs/libyuv:=
+	)
 	system-re2? (
-		>=dev-libs/re2-0.2023.06.01:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/re2-0.2025.10.01:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/re2:=
+	)
+	system-snappy? (
+		>=app-arch/snappy-1.2.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		app-arch/snappy:=
+	)
+	system-simdutf? (
+		>=dev-cpp/simdutf-7.3.3
+		dev-cpp/simdutf:=
+	)
+	system-spirv-tools? (
+		>=dev-util/spirv-tools-${VULKAN_PV}[${MULTILIB_USEDEP}]
+		dev-util/spirv-tools:=
+	)
+	system-woff2? (
+		>=media-libs/woff2-9999
 	)
 	system-zlib? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 		sys-libs/zlib:=
 	)
 	system-zstd? (
-		>=app-arch/zstd-1.5.8[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-9999[${MULTILIB_USEDEP}]
 		app-arch/zstd:=
 	)
 "
@@ -1374,7 +1455,7 @@ COMMON_DEPEND="
 	)
 	system-ffmpeg? (
 		system-opus? (
-			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
+			>=media-libs/opus-9999[${MULTILIB_USEDEP}]
 			media-libs/opus:=
 		)
 		|| (
@@ -1457,6 +1538,10 @@ DEPEND+="
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
 			gui-libs/gtk:=
 		)
+		system-spirv-headers? (
+			>=dev-util/spirv-headers-${VULKAN_PV}
+			dev-util/spirv-headers:=
+		)
 	)
 "
 PDEPEND+="
@@ -1478,24 +1563,21 @@ CLANG_BDEPEND="
 		$(gen_depend_llvm)
 	)
 "
-RUST_BDEPEND="
-	llvm_slot_21? (
-		|| (
-			=dev-lang/rust-9999
-			=dev-lang/rust-bin-9999
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
+	RUST_BDEPEND="
+		llvm_slot_21? (
+			|| (
+				=dev-lang/rust-9999
+				=dev-lang/rust-bin-9999
+			)
 		)
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
-	)
-"
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
+		)
+	"
 	BDEPEND+="
 		${CLANG_BDEPEND}
-		>=net-libs/nodejs-22.11.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
-		net-libs/nodejs:=
-		app-eselect/eselect-nodejs
 	"
 fi
 # Upstream uses live rust.  Rust version is relaxed.
@@ -1519,6 +1601,8 @@ BDEPEND+="
 	app-alternatives/lex
 	dev-lang/perl
 	dev-vcs/git
+	>=net-libs/nodejs-22.11.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
+	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
 	mold? (
@@ -1543,7 +1627,7 @@ fi
 # This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/142.0.7444.175/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/143.0.7499.40/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -1663,7 +1747,7 @@ is_debug_flags() {
 pre_build_checks() {
 	# Check build requirements: bugs #471810, #541816, #914220
 	if use official ; then
-	# https://github.com/chromium/chromium/blob/142.0.7444.175/docs/linux/build_instructions.md#system-requirements
+	# https://github.com/chromium/chromium/blob/143.0.7499.40/docs/linux/build_instructions.md#system-requirements
 		CHECKREQS_DISK_BUILD="100G"
 		CHECKREQS_MEMORY="16G"
 	else
@@ -2274,6 +2358,13 @@ einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+
+	local x
+	for x in "${SYSTEM_USE[@]/-}" ; do
+		if use "${x}" ; then
+ewarn "Enabling ${x} could weaken security or have version sensitive c++ standard incompatibility."
+		fi
+	done
 }
 
 src_unpack() {
@@ -3056,7 +3147,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		net/third_party/mozilla_security_manager
 		net/third_party/quic
 		net/third_party/uri_template
-		third_party/abseil-cpp
 		third_party/angle
 		third_party/angle/src/common/third_party/xxhash
 		third_party/angle/src/third_party/ceval
@@ -3071,7 +3161,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/boringssl/src/third_party/fiat
 		third_party/breakpad
 		third_party/breakpad/breakpad/src/third_party/curl
-		third_party/brotli
 		third_party/catapult
 		third_party/catapult/common/py_vulcanize/third_party/rcssmin
 		third_party/catapult/common/py_vulcanize/third_party/rjsmin
@@ -3144,9 +3233,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/federated_compute/src/fcp/protos/confidentialcompute
 		third_party/federated_compute/src/fcp/protos/federatedcompute
 		third_party/fft2d
-		third_party/flatbuffers
 		third_party/fp16
-		third_party/freetype
 		third_party/fusejs
 		third_party/fxdiv
 		third_party/gemmlowp
@@ -3154,7 +3241,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/google_input_tools/third_party/closure_library
 		third_party/google_input_tools/third_party/closure_library/third_party/closure
 		third_party/googletest
-		third_party/highway
 		third_party/hunspell
 		third_party/ink_stroke_modeler/src/ink_stroke_modeler
 		third_party/ink_stroke_modeler/src/ink_stroke_modeler/internal
@@ -3170,19 +3256,15 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/inspector_protocol
 		third_party/ipcz
 		third_party/jinja2
-		third_party/jsoncpp
 		third_party/khronos
 		third_party/lens_server_proto
 		third_party/leveldatabase
 		third_party/libaddressinput
 		#third_party/libc++ # We want the flexibility to one day use gcc again.  We do not want to be cornered into a particular license.
-		third_party/libdrm
 		third_party/libgav1
 		third_party/libjingle
 		third_party/libpfm4
 		third_party/libphonenumber
-		third_party/libpng
-		third_party/libsecret
 		third_party/libsrtp
 		third_party/libsync
 		third_party/libtess2/libtess2
@@ -3190,13 +3272,10 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/libtess2/src/Source
 		third_party/liburlpattern
 		third_party/libva_protected_content
-		third_party/libvpx
-		third_party/libvpx/source/libvpx/third_party/x86inc
 		third_party/libwebm
 		third_party/libx11
 		third_party/libxcb-keysyms
 		third_party/libxml/chromium
-		third_party/libyuv
 		third_party/libzip
 		third_party/lit
 		third_party/llvm-libc
@@ -3256,16 +3335,12 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/sentencepiece
 		third_party/sentencepiece/src/third_party/darts_clone
 		third_party/shell-encryption
-		third_party/simdutf
 		third_party/simplejson
 		third_party/six
 		third_party/skia
 		third_party/skia/include/third_party/vulkan
 		third_party/skia/third_party/vulkan
 		third_party/smhasher
-		third_party/snappy
-		third_party/spirv-headers
-		third_party/spirv-tools
 		third_party/sqlite
 		third_party/swiftshader
 		third_party/swiftshader/third_party/astc-encoder
@@ -3298,12 +3373,10 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/webrtc/modules/third_party/g722
 		third_party/webrtc/rtc_base/third_party/sigslot
 		third_party/widevine
-		third_party/woff2
 		third_party/wuffs
 		third_party/x11proto
 		third_party/xcbproto
 		third_party/xnnpack
-		third_party/zlib/google
 		third_party/zxcvbn-cpp
 		url/third_party/mozilla
 		v8/third_party/glibc
@@ -3319,27 +3392,31 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/usb_ids
 		third_party/xdg-utils
 
-	# Required in both cases
-		third_party/ffmpeg
-
-		$(use rar && echo "
-			third_party/unrar
+	# This set is being retested.
+	# This set may be required unconditionally to keep by disabling system-<pkg>.
+		$(use !system-abseil-cpp && echo "
+			third_party/abseil-cpp
 		")
-
 		$(use !system-dav1d && echo "
 			third_party/dav1d
 		")
-		$(use !system-flac && echo "
-			third_party/flac
+		$(use !system-brotli && echo "
+			third_party/brotli
 		")
-		$(use !system-fontconfig && echo "
-			third_party/fontconfig
+		$(use !system-flatbuffers && echo "
+			third_party/flatbuffers
 		")
-		$(use !system-harfbuzz && echo "
-			third_party/harfbuzz-ng
+		$(use !system-ffmpeg && echo "
+			third_party/ffmpeg
 		")
-		$(use !system-icu && echo "
-			third_party/icu
+		$(use !system-freetype && echo "
+			third_party/freetype
+		")
+		$(use !system-highway && echo "
+			third_party/highway
+		")
+		$(use !system-jsoncpp && echo "
+			third_party/jsoncpp
 		")
 		$(use !system-libaom && echo "
 			third_party/libaom
@@ -3348,36 +3425,46 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 			third_party/libaom/source/libaom/third_party/vector
 			third_party/libaom/source/libaom/third_party/x86inc
 		")
-		$(use !system-libjpeg-turbo && echo "
-			third_party/libjpeg_turbo
+		$(use !system-libdrm && echo "
+			third_party/libdrm
+		")
+		$(use !system-libpng && echo "
+			third_party/libpng
+		")
+		$(use !system-libsecret && echo "
+			third_party/libsecret
 		")
 		$(use !system-libstdcxx && echo "
 			third_party/libc++
 		")
-		$(use !system-libwebp && echo "
-			third_party/libwebp
-		")
-		$(use !system-libxml && echo "
-			third_party/libxml
-		")
-		$(use !system-libxslt && echo "
-			third_party/libxslt
-		")
-		$(use !system-openh264 && echo "
-			third_party/openh264
+		$(use !system-libvpx && echo "
+			third_party/libvpx
+			third_party/libvpx/source/libvpx/third_party/x86inc
 		")
 		$(use !system-opus && echo "
 			third_party/opus
 		")
+		$(use !system-simdutf && echo "
+			third_party/simdutf
+		")
+		$(use !system-snappy && echo "
+			third_party/snappy
+		")
 		$(use !system-re2 && echo "
 			third_party/re2
 		")
-		$(use !system-zlib && echo "
-			third_party/zlib
+		$(use !system-spirv-headers && echo "
+			third_party/spirv-headers
 		")
-		$(use !system-zlib && echo "
-			third_party/zstd
+		$(use !system-spirv-tools && echo "
+			third_party/spirv-tools
 		")
+		$(use !system-woff2 && echo "
+			third_party/woff2
+		")
+
+	#
+	# Partial unconditional to keep
 	#
 	# Do not remove the third_party/zlib below. \
 	#
@@ -3390,8 +3477,54 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	#
 		$(use !system-zlib && echo "
 			third_party/zlib
+			third_party/zlib/google
 		")
-	# Arch-specific
+		$(use !system-libxml && echo "
+			third_party/libxml
+		")
+		$(use !system-libyuv && echo "
+			third_party/libyuv
+		")
+
+	# Not listed in distro ebuild
+	# These imply removal and preference for the system package.
+		$(use !system-flac && echo "
+			third_party/flac
+		")
+		$(use !system-fontconfig && echo "
+			third_party/fontconfig
+		")
+		$(use !system-libjpeg-turbo && echo "
+			third_party/libjpeg_turbo
+		")
+		$(use !system-libusb && echo "
+			third_party/libusb
+		")
+		$(use !system-libwebp && echo "
+			third_party/libwebp
+		")
+		$(use !system-libxslt && echo "
+			third_party/libxslt
+		")
+		$(use !system-openh264 && echo "
+			third_party/openh264
+		")
+
+	# Allowed conditional to keep or remove
+		$(use rar && echo "
+			third_party/unrar
+		")
+		$(use !system-harfbuzz && echo "
+			third_party/harfbuzz-ng
+		")
+		$(use !system-icu && echo "
+			third_party/icu
+		")
+		$(use !system-zstd && echo "
+			third_party/zstd
+		")
+
+	# Arch-specific to keep
 		$((use arm64 || use ppc64) && echo "
 			third_party/swiftshader/third_party/llvm-10.0
 		")
@@ -3414,7 +3547,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
 			"cromite_flags/third_party"
-	#		"third_party/cromite"
+	#		"third_party/cromite" # Not listed in other ebuild fork
 		)
 	fi
 
@@ -3879,7 +4012,7 @@ eerror
 	fi
 
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
-	# See https://github.com/chromium/chromium/blob/142.0.7444.175/build/toolchain/cc_wrapper.gni#L36
+	# See https://github.com/chromium/chromium/blob/143.0.7499.40/build/toolchain/cc_wrapper.gni#L36
 	if ! _use_system_toolchain ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			myconf_gn+=(
@@ -4395,8 +4528,8 @@ ewarn "For proper hardening, disable the pgo USE flag."
 			"-mretpoline-external-thunk"
 	fi
 
-	# See https://github.com/chromium/chromium/blob/142.0.7444.175/build/config/sanitizers/BUILD.gn#L196
-	# See https://github.com/chromium/chromium/blob/142.0.7444.175/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/143.0.7499.40/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/143.0.7499.40/tools/mb/mb_config.pyl#L2950
 	local is_cfi_custom=0
 	if use official ; then
 	# Forced because it is the final official settings.
@@ -4659,7 +4792,7 @@ einfo
 	fi
 
 	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-	# See also https://github.com/chromium/chromium/blob/142.0.7444.175/docs/pgo.md
+	# See also https://github.com/chromium/chromium/blob/143.0.7499.40/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
 	if use pgo && tc-is-clang && ver_test "$(clang-major-version)" -ge "${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT}" ; then
@@ -5634,6 +5767,35 @@ _configure_features() {
 	# [B] all of gn_system_libraries set
 	# List obtained from /usr/share/chromium/sources/build/linux/unbundle/
 	local gn_system_libraries=(
+		$(use system-abseil-cpp && echo "
+			absl_algorithm
+			absl_base
+			absl_cleanup
+			absl_container
+			absl_crc
+			absl_debugging
+			absl_flags
+			absl_functional
+			absl_hash
+			absl_log
+			absl_log_internal
+			absl_memory
+			absl_meta
+			absl_numeric
+			absl_random
+			absl_status
+			absl_strings
+			absl_synchronization
+			absl_time
+			absl_types
+			absl_utility
+		")
+		$(use system-brotli && echo "
+			brotli
+		")
+		$(use system-crc32c && echo "
+			crc32c
+		")
 		$(use system-dav1d && echo "
 			dav1d
 		")
@@ -5642,6 +5804,9 @@ _configure_features() {
 		")
 		$(use system-flac && echo "
 			flac
+		")
+		$(use system-flatbuffers && echo "
+			flatbuffers
 		")
 		$(use system-freetype && echo "
 			freetype
@@ -5653,14 +5818,32 @@ _configure_features() {
 		$(use system-harfbuzz && echo "
 			harfbuzz-ng
 		")
+		$(use system-highway && echo "
+			highway
+		")
 		$(use system-icu && echo "
 			icu
+		")
+		$(use system-jsoncpp && echo "
+			jsoncpp
 		")
 		$(use system-libaom && echo "
 			libaom
 		")
+		$(use system-libdrm && echo "
+			libdrm
+		")
 		$(use system-libjpeg-turbo && echo "
 			libjpeg
+		")
+		$(use system-libpng && echo "
+			libpng
+		")
+		$(use system-libsecret && echo "
+			libsecret
+		")
+		$(use system-libvpx && echo "
+			libvpx
 		")
 		$(use system-libwebp && echo "
 			libwebp
@@ -5671,6 +5854,9 @@ _configure_features() {
 		$(use system-libxslt && echo "
 			libxslt
 		")
+		$(use system-libyuv && echo "
+			libyuv
+		")
 		$(use system-openh264 && echo "
 			openh264
 		")
@@ -5680,12 +5866,24 @@ _configure_features() {
 		$(use system-re2 && echo "
 			re2
 		")
-
-	# ld.lld: error: undefined symbol: Cr_z_adler32
+		$(use system-simdutf && echo "
+			simdutf
+		")
+		$(use system-snappy && echo "
+			snappy
+		")
+		$(use system-spirv-headers && echo "
+			vulkan-SPIRV-Headers
+		")
+		$(use system-spirv-tools && echo "
+			vulkan-SPIRV-Tools
+		")
+		$(use system-woff2 && echo "
+			woff2
+		")
 		$(use system-zlib && echo "
 			zlib
 		")
-
 		$(use system-zstd && echo "
 			zstd
 		")
@@ -5736,7 +5934,7 @@ ewarn
 		"enable_mdns=$(usex mdns true false)"
 		"enable_message_center=true"						# Required for Linux, but not Fucshia and Android
 		"enable_ml_internal=false"						# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
-		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/142.0.7444.175/device/vr#platform-support
+		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/143.0.7499.40/device/vr#platform-support
 		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
 		"enable_ppapi=false"
@@ -5747,7 +5945,7 @@ ewarn
 
 		"enable_service_discovery=true"						# Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
 #		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
-		"enable_vr=false"							# https://github.com/chromium/chromium/blob/142.0.7444.175/device/vr/buildflags/buildflags.gni#L32
+		"enable_vr=false"							# https://github.com/chromium/chromium/blob/143.0.7499.40/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
 		"enable_widevine=$(usex widevine true false)"
 
@@ -5884,7 +6082,7 @@ ewarn
 		)
 	fi
 
-	# See https://github.com/chromium/chromium/blob/142.0.7444.175/media/media_options.gni#L19
+	# See https://github.com/chromium/chromium/blob/143.0.7499.40/media/media_options.gni#L19
 
 	if use bindist ; then
 	#
@@ -6507,7 +6705,7 @@ pkg_postinst() {
 	if ! use headless ; then
 		if use vaapi; then
 	# It says 3 args:
-	# https://github.com/chromium/chromium/blob/142.0.7444.175/docs/gpu/vaapi.md#vaapi-on-linux
+	# https://github.com/chromium/chromium/blob/143.0.7499.40/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
 einfo "Hardware-accelerated video decoding configuration:"
 einfo
