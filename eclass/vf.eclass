@@ -231,8 +231,10 @@ einfo "IRRES = Improper Release of Resources"
 einfo "IRoR = Improper Release of Resources"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICP"($|" "|";"|",") ]] ; then
+einfo "ICP = Insecure Coding Practices"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
-# Coded Insecurely
 einfo "II = Insecure Implementation"
 		fi
 
