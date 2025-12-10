@@ -3,19 +3,20 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
-inherit cmake libcxx-slot libstdcxx-slot
+inherit cflags-hardened cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Memory efficient serialization library"
 HOMEPAGE="
@@ -30,8 +31,15 @@ SRC_URI="
 LICENSE="Apache-2.0"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
-IUSE="static-libs test"
-RESTRICT="!test? ( test )"
+IUSE="
+static-libs test
+ebuild_revision_1
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 pkg_setup() {
 	libcxx-slot_verify
@@ -39,6 +47,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DFLATBUFFERS_BUILD_FLATLIB=$(usex static-libs)
 		-DFLATBUFFERS_BUILD_SHAREDLIB=ON
