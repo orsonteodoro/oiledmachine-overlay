@@ -213,7 +213,7 @@ einfo "IF = Improper Free"
 einfo "IFM = Improper Freed Memory"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IFR"($|" "|";"|",") ]] ; then
-einfo "IFR = Improper Freed Resource(s)"
+einfo "IFR = Improper Freed Resources"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IMPRREL")($|" "|";"|",") ]] ; then
 einfo "IMPRREL = Improper Release"
@@ -300,7 +300,7 @@ einfo "SO = Stack Based Buffer Overflow"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MT"($|" "|";"|",") ]] ; then
-einfo "MT = Missing Terminator Character"
+einfo "MT = Missing Terminator Character or Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NPD"($|" "|";"|",") ]] ; then
 einfo "NPD = Null Pointer Dereference"
