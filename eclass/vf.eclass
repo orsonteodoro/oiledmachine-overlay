@@ -325,6 +325,10 @@ einfo "OOBR = Out Of Bounds Read"
 einfo "OOBW = Out Of Bounds Write"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
+einfo "OOR = Out Of Range Access"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"KP"($|" "|";"|",") ]] ; then
 # Equivalent to BSOD
 einfo "KP = Kernel Panic"
@@ -334,10 +338,6 @@ einfo "PoO = Panic On Oops"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PoW"|"POW")($|" "|";"|",") ]] ; then
 einfo "POW = Panic On Warn"
-		fi
-
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
-einfo "OOR = Out Of Range Access"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE")($|" "|";"|",") ]] ; then
@@ -355,6 +355,10 @@ einfo "PI = Prompt Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PP"($|" "|";"|",") ]] ; then
 einfo "PP = Prototype Pollution"
+		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PT"($|" "|";"|",") ]] ; then
+einfo "PT = Path Traversal"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"A"($|" "|";"|",") ]] ; then
