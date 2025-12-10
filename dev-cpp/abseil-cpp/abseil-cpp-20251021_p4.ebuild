@@ -78,7 +78,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_20
+ebuild_revision_21
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
@@ -314,7 +314,7 @@ src_prepare() {
 	"absl/copts/generate_copts.py" || die
 
 	# For Chromium
-	sed -e "s|ABSL_OPTION_HARDENED 0|ABSL_OPTION_HARDENED 1|g" \
+	sed -i -e "s|ABSL_OPTION_HARDENED 0|ABSL_OPTION_HARDENED 1|g" \
 		"absl/base/options.h" \
 		|| die
 }
