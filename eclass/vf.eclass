@@ -215,11 +215,17 @@ einfo "IFM = Improper Freed Memory"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IFR"($|" "|";"|",") ]] ; then
 einfo "IFR = Improper Freed Resource(s)"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IREL")($|" "|";"|",") ]] ; then
-einfo "IREL = Improper Release"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IMPRREL")($|" "|";"|",") ]] ; then
+einfo "IMPRREL = Improper Release"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRMEM")($|" "|";"|",") ]] ; then
+einfo "IRMEM = Improper Release of Memory"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRoM"|"IROM")($|" "|";"|",") ]] ; then
 einfo "IRoM = Improper Release of Memory"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRMEM")($|" "|";"|",") ]] ; then
+einfo "IRRES = Improper Release of Resources"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRoR"|"IROR")($|" "|";"|",") ]] ; then
 einfo "IRoR = Improper Release of Resources"
@@ -311,10 +317,17 @@ einfo "OOBR = Out Of Bounds Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOBW"($|" "|";"|",") ]] ; then
 einfo "OOBW = Out Of Bounds Write"
 		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"KP"($|" "|";"|",") ]] ; then
+einfo "KP = Kernel Panic"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"POW"($|" "|";"|",") ]] ; then
+einfo "POW = Panic On Warn"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOPS"($|" "|";"|",") ]] ; then
-# The Linux version of BSOD
 einfo "OOPS = Kernel Oops"
 		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
 einfo "OOR = Out Of Range Access"
 		fi
