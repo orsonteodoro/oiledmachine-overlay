@@ -90,6 +90,20 @@ einfo "I = Integrity Impacted"
 einfo "A = Availability Impacted"
 		fi
 
+# Same as CIA
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
+# Same as A
+einfo "DoS = Denial of Service"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
+# Same as C
+einfo "ID = Information Disclosure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DT"($|" "|";"|",") ]] ; then
+# Same as I
+einfo "DT = Data Tampering"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ABO"($|" "|";"|",") ]] ; then
 # Adjacent buffer integrity compromised
 # BO is taken so ABO is used
@@ -145,9 +159,6 @@ einfo "CRSH = Crash"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CSRF"($|" "|";"|",") ]] ; then
 einfo "CSRF = Cross Site Request Forgery"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
-einfo "DoS = Denial of Service"
-		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DbZ"|"DBZ")($|" "|";"|",") ]] ; then
 einfo "DbZ = Divide by Zero"
 		fi
@@ -157,6 +168,9 @@ einfo "DF = Double Free"
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DL"($|" "|";"|",") ]] ; then
 einfo "DL = Deadlock"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"H"($|" "|";"|",") ]] ; then
+einfo "H = Hang"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HL"($|" "|";"|",") ]] ; then
 einfo "HL = Hard Lockup"
@@ -169,18 +183,19 @@ einfo "SL = Soft Lockup"
 # DT
 einfo "DR = Data Race"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DT"($|" "|";"|",") ]] ; then
-einfo "DT = Data Tampering"
-		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EM"|"EMA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
 		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HF"($|" "|";"|",") ]] ; then
+einfo "HF = Hardware Fault"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HWF"($|" "|";"|",") ]] ; then
+einfo "HWF = Hardware Fault"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"GPF"($|" "|";"|",") ]] ; then
 einfo "GPF = General Protection Fault"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"H"($|" "|";"|",") ]] ; then
-einfo "H = Hang"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DI")($|" "|";"|",") ]] ; then
@@ -190,9 +205,6 @@ einfo "DI = Designed Insecurely"
 einfo "IbD = Insecure by Design"
 		fi
 
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
-einfo "ID = Information Disclosure"
-		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IF"($|" "|";"|",") ]] ; then
 einfo "IF = Improper Free"
