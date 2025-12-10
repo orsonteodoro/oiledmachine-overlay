@@ -66,12 +66,14 @@ EAPI=8
 #
 # Additional DEPENDS versioning info:
 #
+# All links below except for node are marked security-critical by upstream.
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/abseil-cpp/README.chromium					# Live
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/brotli/README.chromium						# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/crc32c/README.chromium						# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/dav1d/version/vcs_version.h#L2					# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/flatbuffers							# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/highway								# Live
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/jsoncpp								# Stable, use commit to obtain closest tag
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libpng/png.h#L288							# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/libsecret								# Stable
@@ -80,16 +82,17 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/libwebp								# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libxml/linux/config.h#L86						# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/libxslt/linux/config.h#L116					# Stable
-# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/node/update_node_binaries#L18					# Stable
+# https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/re2								# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/simdutf								# Stable
+# https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/snappy								# Stable
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/spirv-headers							# Stable, tag not on distro
 # https://github.com/chromium/chromium/tree/143.0.7499.40/third_party/spirv-tools							# Stable, tag not on distro
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/143.0.7499.40/third_party/zlib/zlib.h#L40							# Stable
 # https://github.com/chromium/chromium/blob/143.0.7499.40/tools/rust/update_rust.py#L35							#
 #   https://github.com/rust-lang/rust/blob/15283f6fe95e5b604273d13a428bab5fc0788f5a/src/version						# Live
-# /usr/share/chromium/sources/third_party/xflac/BUILD.gn										L122	# Stable
+# /usr/share/chromium/sources/third_party/flac/BUILD.gn										L122	# Stable
 # /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in						L56     # Stable
 # /usr/share/chromium/sources/third_party/freetype/src/CMakeLists.txt								L165	# Stable
 # /usr/share/chromium/sources/third_party/harfbuzz-ng/README.chromium									# Stable
@@ -103,6 +106,7 @@ EAPI=8
 # /usr/share/chromium/sources/third_party/zstd/README.chromium										# Live
 #   https://github.com/facebook/zstd/commit/89d685e42dbcf815a16ed0fcd7d050ef74ccad96							# Live
 #   https://github.com/facebook/zstd/blob/89d685e42dbcf815a16ed0fcd7d050ef74ccad96/lib/zstd.h#L107					# Version
+#
 # https://github.com/chromium/chromium/blob/143.0.7499.40/DEPS#L512									# Live
 #
 
@@ -450,6 +454,7 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 )
 
 SYSTEM_USE=(
+	# All packages below are security-critical
 	"-system-abseil-cpp" # Missing package
 	"-system-brotli"
 	"-system-crc32c"
