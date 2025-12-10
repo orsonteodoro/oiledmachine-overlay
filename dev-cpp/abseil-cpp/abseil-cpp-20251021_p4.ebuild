@@ -72,7 +72,7 @@ LICENSE="
 "
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-SLOT="${PV%%.*}/${PV}"
+SLOT="${PV%%_*}/${PV}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
@@ -326,7 +326,7 @@ src_configure() {
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%.*}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${PV%%_*}"
 		$(usex test -DBUILD_TESTING=ON "")
 	)
 	cmake-multilib_src_configure
