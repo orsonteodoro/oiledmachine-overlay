@@ -210,38 +210,20 @@ LLVM_COMPAT=(
 	19
 )
 
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+)
+
 # One of the major sources of lag comes from dependencies.  These are strict to
 # match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
-)
-
-declare -A FFMPEG_SLOT_TO_PV=(
-	["59.61.61"]="7.0, 7.1"
-	["58.60.60"]="6.0"
-	["57.59.59"]="5.0"
-	["56.58.58"]="4.0"
-	["55.57.57"]="3.0"
-	["54.56.56"]="2.4"
-	["52.55.55"]="2.0"
-	["52.54.54"]="1.1, 1.2"
-	["51.54.54"]="0.11, 1.0"
-	["51.53.53"]="0.10"
-	["50.53.53"]="0.8"
-)
-FFMPEG_COMPAT=(
-	"59.61.61" # 7.0, 7.1
-	"58.60.60" # 6.0
-	"57.59.59" # 5.0
-	"56.58.58" # 4.0
-	"55.57.57" # 3.0
-	"54.56.56" # 2.4
-	"52.55.55" # 2.0
-	"52.54.54" # 1.1, 1.2
-	"51.54.54" # 0.11, 1.0
-	"51.53.53" # 0.10
-	"50.53.53" # 0.8
 )
 
 MITIGATION_DATE="Dec 12, 2025" # Advisory date
@@ -536,7 +518,7 @@ UDEV_RDEPEND="
 
 gen_ffmpeg_nonfree_depends_multislot() {
 	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
+	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		echo "
 			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		"
@@ -545,7 +527,7 @@ gen_ffmpeg_nonfree_depends_multislot() {
 
 gen_ffmpeg_nonfree_depends_unislot() {
 	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
+	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		echo "
 			media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		"
@@ -557,7 +539,7 @@ gen_ffmpeg_nonfree_depends_unislot() {
 # It may inadvertantly touch the nonfree during runtime.
 gen_ffmpeg_royalty_free_depends_multislot() {
 	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
+	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		echo "
 			(
 				!<dev-libs/openssl-3
@@ -571,7 +553,7 @@ gen_ffmpeg_royalty_free_depends_multislot() {
 }
 gen_ffmpeg_royalty_free_depends_unislot() {
 	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
+	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		echo "
 			(
 				!<dev-libs/openssl-3
@@ -589,12 +571,14 @@ PATENT_CDEPENDS="
 	!patent_status_nonfree? (
 		|| (
 			$(gen_ffmpeg_royalty_free_depends_unislot)
+			$(gen_ffmpeg_royalty_free_depends_multislot)
 		)
 		media-video/ffmpeg:=
 	)
 	patent_status_nonfree? (
 		|| (
 			$(gen_ffmpeg_nonfree_depends_unislot)
+			$(gen_ffmpeg_nonfree_depends_multislot)
 		)
 		media-video/ffmpegw:=
 		vaapi? (
@@ -2004,6 +1988,8 @@ einfo
 	_set_cc
 
 	check_speech_dispatcher
+
+	ffmpeg_src_configure
 
 	# Ensure we use correct toolchain,
 	# AS is used in a non-standard way by upstream, #bmo1654031
