@@ -790,11 +790,11 @@ UNPACKAGE_REQUIRED_USE="
 	!system-zstd
 "
 # Drumbrake is broken in this release and off by default.
+#	!system-harfbuzz
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	${UNPACKAGE_REQUIRED_USE[@]}
 	!drumbrake
-	!system-harfbuzz
 	!headless (
 		extensions
 		pdf
