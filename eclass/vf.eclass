@@ -76,7 +76,7 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	#
 einfo
 
-	# Alternative for beginners or exact personalities
+	# Alternative for beginners or exact personalities but may be used in video or audio only podcasting reports
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
 # Same as ID
 einfo "C = Confidentiality Impacted"
@@ -90,7 +90,7 @@ einfo "I = Integrity Impacted"
 einfo "A = Availability Impacted"
 		fi
 
-# Same as CIA
+# Same as CIA but preferred in professional written reports
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
 # Same as C
 einfo "ID = Information Disclosure"
