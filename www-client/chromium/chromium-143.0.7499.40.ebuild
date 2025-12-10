@@ -128,8 +128,8 @@ EAPI=8
 
 TC_COUNT_EXPECTED=5129
 SOURCES_COUNT_EXPECTED=516257
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
@@ -192,8 +192,8 @@ TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-b16bec0fa6b24252afa0687d6ef7baad8a38bb5b7b98170b06c465927ca0f853\
-6fb21c4c7dfc9aa9d81fa0ed16bce9dcf92e55083f316b32cdaf324bb5eb52b7\
+7e2637834f4e3799223775fa4a6a8c0adc86809a7319e812a3e7723c4738996c\
+16d5739c97fbc4339c6c938ee68f36831754a14a083fe9242a6a9c3bf8e920f5\
 "
 
 # One of the major sources of lag comes from dependencies
@@ -390,7 +390,7 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Nov 19, 2025" # Official annoucement (blog)
+MITIGATION_DATE="Dec 2, 2025" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1763588400 # From `date +%s -d "2025-11-19 1:40 PM PST"` From tag in GH
 MITIGATION_URI="https://chromereleases.googleblog.com/2025/12/stable-channel-update-for-desktop.html"
 VULNERABILITIES_FIXED=(
@@ -1047,18 +1047,18 @@ if is_cromite_compatible ; then
 			!cromite
 		)
 		cromite? (
+			!css-hyphen
+			!hangouts
+			!mdns
+			!official
+			!openh264
+			!reporting-api
+			!widevine
 			amd64
 			patent_status_nonfree
 			dav1d
 			pdf
 			plugins
-			!css-hyphen
-			!hangouts
-			!official
-			!openh264
-			!mdns
-			!reporting-api
-			!widevine
 		)
 		official? (
 			!cromite
