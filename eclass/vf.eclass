@@ -134,6 +134,9 @@ einfo "EMA = Evil Maid Attack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"GPF"($|" "|";"|",") ]] ; then
 einfo "GPF = General Protection Fault"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"H"($|" "|";"|",") ]] ; then
+einfo "H = Hang"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
 		fi
@@ -149,6 +152,9 @@ einfo "IF = Improper Free"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
 # Coded Insecurely
 einfo "II = Insecure Implementation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
+einfo "IL = Infinite Loop"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
