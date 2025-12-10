@@ -361,7 +361,7 @@ einfo "PP = Prototype Pollution"
 einfo "PT = Path Traversal"
 		fi
 
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"A"($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"R"($|" "|";"|",") ]] ; then
 # DoS, DT, ID, PE
 # Alias for Race Condition
 # Less formal that Race Condition
