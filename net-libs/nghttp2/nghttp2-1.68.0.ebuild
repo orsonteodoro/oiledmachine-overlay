@@ -11,16 +11,29 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
 CFLAGS_HARDENED_USE_CASES="network"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF DOS UAF"
+CXX_STANDARD=20
+PYTHON_COMPAT=( "python3_"{10..12} )
+USE_RUBY="ruby32 ruby33"
+
 HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d"
 MRUBY_COMMIT="31ebcb349eb1c4749e3dcbd554db5f12bcd6b5e5"
 MUNIT_COMMIT_1="114805e1bab0222574b5eb3a92461ad5216647ed"
 MUNIT_COMMIT_2="3cf9c79f3a76f313d560dedd5b47c0416a0fbb6e"
 NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
-PYTHON_COMPAT=( "python3_"{10..12} )
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
-USE_RUBY="ruby32 ruby33"
 
-inherit cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic multilib-minimal python-r1 ruby-single toolchain-funcs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+)
+
+
+inherit cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -74,8 +87,8 @@ RESTRICT="
 		test
 	)
 "
-SO_CURRENT="42"
-SO_AGE="28"
+SO_CURRENT="43"
+SO_AGE="29"
 SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 # bpf is default ON if clang and http3
 # doc is default on upstream
@@ -84,7 +97,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 # utils is enabled on CI
 # xml is enabled on CI
 IUSE="
--bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc -static-libs
+-bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc quic -static-libs
 systemd test +threads +utils +xml
 ebuild_revision_15
 "
@@ -95,36 +108,42 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.12.0[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.17.0[${MULTILIB_USEDEP},openssl]
 	|| (
 		(
 			>=dev-libs/openssl-1.1.1w:0[${MULTILIB_USEDEP},-bindist(-)]
-			=dev-libs/openssl-1*:=[${MULTILIB_USEDEP},-bindist(-)]
+			=dev-libs/openssl-1*[${MULTILIB_USEDEP},-bindist(-)]
 		)
 		(
-			>=dev-libs/openssl-3.5.0:0[${MULTILIB_USEDEP},-bindist(-)]
-			=dev-libs/openssl-3*:=[${MULTILIB_USEDEP},-bindist(-)]
+			>=dev-libs/openssl-3.6.0:0[${MULTILIB_USEDEP},-bindist(-)]
+			=dev-libs/openssl-3*[${MULTILIB_USEDEP},-bindist(-)]
 		)
 	)
+	dev-libs/openssl:=
 "
 RDEPEND="
 	bpf? (
-		>=dev-libs/libbpf-1.4.6
+		>=dev-libs/libbpf-1.7.0
 	)
 	hpack-tools? (
-		>=dev-libs/jansson-2.5:=
+		>=dev-libs/jansson-2.5
+		dev-libs/jansson:=
 	)
 	http3? (
-		>=net-libs/nghttp3-1.6.0[${MULTILIB_USEDEP}]
+		>=net-libs/nghttp3-1.11.0[${MULTILIB_USEDEP}]
 	)
 	jemalloc? (
-		dev-libs/jemalloc:=[${MULTILIB_USEDEP}]
+		dev-libs/jemalloc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-libs/jemalloc:=
+	)
+	quic? (
+		>=net-libs/ngtcp2-1.15.0[${MULTILIB_USEDEP}]
 	)
 	utils? (
 		${SSL_DEPEND}
 		>=app-arch/brotli-1.0.9[${MULTILIB_USEDEP}]
 		>=dev-libs/libev-4.11[${MULTILIB_USEDEP}]
-		>=net-dns/c-ares-1.16.0:=[${MULTILIB_USEDEP}]
+		>=net-dns/c-ares-1.7.5:=[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
 	)
 	systemd? (
@@ -132,6 +151,7 @@ RDEPEND="
 	)
 	xml? (
 		>=dev-libs/libxml2-2.6.26:2[${MULTILIB_USEDEP}]
+		dev-libs/libxml2:=
 	)
 "
 DEPEND="
@@ -149,10 +169,6 @@ BDEPEND="
 		${RUBY_DEPS}
 		sys-devel/bison
 	)
-	|| (
-		>=sys-devel/gcc-14
-		>=llvm-core/clang-18
-	)
 "
 
 pkg_setup() {
@@ -162,6 +178,8 @@ pkg_setup() {
 	if tc-is-clang && use http3 && ! use bpf ; then
 ewarn "bpf is default ON upstream if clang ON, http3 ON"
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_unpack() {
