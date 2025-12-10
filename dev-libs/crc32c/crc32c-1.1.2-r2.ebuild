@@ -83,7 +83,7 @@ src_configure() {
 		-DCRC32C_USE_GLOG=OFF
 	)
 
-	cmake_src_configure
+	cmake-multilib_src_configure
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES: multilib-support EAPI8
