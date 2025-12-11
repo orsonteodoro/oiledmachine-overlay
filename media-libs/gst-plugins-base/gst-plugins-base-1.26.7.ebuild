@@ -34,7 +34,7 @@ EAPI=8
 # Keep default IUSE options for relevant ones mirrored with gst-plugins-gtk and
 # gst-plugins-bad
 
-CFLAGS_HARDENED_USE_CASES="network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO SO"
 GST_ORG_MODULE="gst-plugins-base"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
@@ -63,7 +63,7 @@ LICENSE="GPL-2+ LGPL-2+"
 IUSE="
 alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
-ebuild_revision_17
+ebuild_revision_19
 "
 GL_REQUIRED_USE="
 	|| (
