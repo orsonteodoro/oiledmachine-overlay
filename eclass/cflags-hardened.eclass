@@ -1453,6 +1453,9 @@ einfo "All SSP hardening (All functions hardened)"
 				"${CFLAGS_HARDENED_USE_CASES}" \
 					=~ \
 ("kernel"\
+|"extension"\
+|"modular-app"\
+|"plugin"\
 |"untrusted-data"\
 |"sandbox"\
 |"security-critical"\
@@ -1477,6 +1480,9 @@ einfo "All SSP hardening (All functions hardened)"
 			"${CFLAGS_HARDENED_USE_CASES}" \
 				=~ \
 ("kernel"\
+|"extension"\
+|"modular-app"\
+|"plugin"\
 |"untrusted-data"\
 |"sandbox"\
 |"security-critical"\

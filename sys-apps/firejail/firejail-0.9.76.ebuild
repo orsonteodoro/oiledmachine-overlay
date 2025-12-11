@@ -8,7 +8,7 @@ EAPI=8
 
 MY_PN="Firejail"
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sandbox sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sandbox sensitive-data untrusted-data"
 CXX_STANDARD="ignore"
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
@@ -3210,7 +3210,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild_revision_42
+ebuild_revision_43
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}

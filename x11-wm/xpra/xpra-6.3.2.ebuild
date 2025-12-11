@@ -12,7 +12,7 @@ MY_PV="$(ver_cut 1-4)"
 
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan"
 CFLAGS_HARDENED_LANGS="c-lang python"
-CFLAGS_HARDENED_USE_CASES="daemon secure-critical sensitive-data server untrusted-data"
+CFLAGS_HARDENED_USE_CASES="daemon security-critical sensitive-data server untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -84,7 +84,7 @@ sd_listen selinux +server +socks sound-forwarding spng sql sqlite +ssh sshpass
 +ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
 wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml
 zeroconf zlib
-ebuild_revision_17
+ebuild_revision_18
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.

@@ -6,7 +6,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc" # Needs integration testing
 CFLAGS_HARDENED_TOLERANCE="4.0"
@@ -36,7 +36,7 @@ SLOT="0"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 doc gpg gtk nls openssl pam pkcs11 python suid test tpm
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE+="
 	pam? (
