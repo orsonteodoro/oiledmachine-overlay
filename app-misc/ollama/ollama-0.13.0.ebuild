@@ -464,7 +464,7 @@ ROCM_SLOTS=(
 
 gen_rocm_iuse() {
 	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+	for s in "${ROCM_SLOTS[@]}" ; do
 		echo "
 			rocm_${s/./_}
 		"
@@ -3072,10 +3072,6 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
-	?? (
-		${ROCM_IUSE[@]}
-		${ROCM_IUSE[@]}
-	)
 	?? (
 		cuda
 		rocm
