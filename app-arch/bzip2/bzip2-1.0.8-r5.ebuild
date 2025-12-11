@@ -6,7 +6,7 @@
 
 EAPI=7
 
-CFLAGS_HARDENED_USE_CASES="security-criticial sensitive-data system-set untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO UAF"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/bzip2.gpg"
 
@@ -29,7 +29,7 @@ KEYWORDS="
 "
 IUSE="
 static static-libs
-ebuild_revision_16
+ebuild_revision_18
 "
 
 BDEPEND="
