@@ -7,14 +7,14 @@ CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit cflags-hardened flag-o-matic meson-multilib python-any-r1 xdg-utils
 
 DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
-if [[ ${PV} == 9999 ]] ; then
+if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	inherit git-r3
 else
@@ -30,7 +30,7 @@ SLOT="0/6.0.0"
 
 IUSE="
 +cairo debug doc experimental +glib +graphite icu +introspection test +truetype
-ebuild_revision_1
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="introspection? ( glib )"
