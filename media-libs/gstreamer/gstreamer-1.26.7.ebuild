@@ -8,7 +8,7 @@ EAPI=8
 # See https://gstreamer.freedesktop.org/security/
 # gstreamer-1.22.x requires 2.62, but 2.64 is strongly recommended
 
-CFLAGS_HARDENED_USE_CASES="network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IU"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
@@ -34,7 +34,7 @@ LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
 +caps +introspection nls unwind
-ebuild_revision_17
+ebuild_revision_19
 "
 RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
