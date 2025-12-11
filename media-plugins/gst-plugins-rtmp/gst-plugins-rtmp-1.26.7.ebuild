@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="RTMP source/sink plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	media-video/rtmpdump[${MULTILIB_USEDEP}]
