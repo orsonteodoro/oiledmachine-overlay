@@ -11,12 +11,12 @@ CXX_STANDARD=20
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
@@ -46,7 +46,7 @@ HOMEPAGE="https://poppler.freedesktop.org/"
 LICENSE="GPL-2"
 IUSE="
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss png qt5 qt6 test tiff +utils
-ebuild_revision_1
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
