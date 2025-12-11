@@ -11,12 +11,12 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build
@@ -27,7 +27,10 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
 fi
 
-IUSE="accessibility compositor gnome qml vulkan"
+IUSE="
+accessibility compositor gnome qml vulkan
+ebuild_revision_2
+"
 
 RDEPEND="
 	dev-libs/wayland
