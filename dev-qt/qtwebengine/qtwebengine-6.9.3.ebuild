@@ -18,12 +18,12 @@ CHROMIUM_BROWSER_VER="143.0.7499.40"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 PYTHON_COMPAT=( python3_{11..14} )
@@ -43,6 +43,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
+	ebuild_revision_2
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
