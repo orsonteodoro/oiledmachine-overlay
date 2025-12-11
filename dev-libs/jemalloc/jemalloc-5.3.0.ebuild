@@ -19,12 +19,12 @@ CXX_STANDARD=14
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -67,7 +67,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_41
+ebuild_revision_43
 "
 REQUIRED_USE+="
 	!custom-cflags? (
