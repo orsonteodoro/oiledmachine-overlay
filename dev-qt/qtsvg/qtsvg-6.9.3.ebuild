@@ -4,18 +4,18 @@
 EAPI=8
 
 CFLAGS_HARDENED_LANGS="cxx"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
@@ -26,6 +26,9 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
 fi
 
+IUSE="
+ebuild_revision_2
+"
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
 	dev-qt/qtbase:=
