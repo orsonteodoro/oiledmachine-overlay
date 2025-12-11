@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_BUILD_DIR="gdk_pixbuf"
 GST_PLUGINS_ENABLED="gdk-pixbuf"
@@ -14,7 +14,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="Image decoder, overlay and sink plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=x11-libs/gdk-pixbuf-2.8.0:2[${MULTILIB_USEDEP}]
