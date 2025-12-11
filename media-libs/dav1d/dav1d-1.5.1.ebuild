@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 
-if [[ ${PV} == 9999 ]]; then
+if [[ "${PV}" == "9999" ]]; then
 	EGIT_REPO_URI="https://code.videolan.org/videolan/dav1d"
 	inherit git-r3
 else
@@ -24,7 +24,7 @@ LICENSE="BSD-2"
 SLOT="0/7"
 IUSE="
 +8bit +10bit +asm test xxhash
-ebuild_revision_1
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
