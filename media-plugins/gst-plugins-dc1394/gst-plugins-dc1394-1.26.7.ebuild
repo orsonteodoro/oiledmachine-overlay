@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="libdc1394 IIDC camera source plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=media-libs/libdc1394-2.2.5[${MULTILIB_USEDEP}]
