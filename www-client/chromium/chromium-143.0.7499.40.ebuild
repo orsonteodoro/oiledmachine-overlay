@@ -461,40 +461,45 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 
 SYSTEM_USE=(
 	# All packages below are security-critical
-	"-system-abseil-cpp" # Missing package
-	"-system-brotli"
-	"-system-crc32c"
-	"-system-dav1d"
-	"-system-flatbuffers"
-	"-system-ffmpeg" # TODO dedupe/simplify *DEPENDs
-	"-system-flac"
-	"-system-fontconfig"
-	"-system-freetype"
-	"-system-harfbuzz"
-	"-system-highway"
-	"-system-icu"
-	"-system-jsoncpp"
-	"-system-libaom"
-	"-system-libdrm"
-	"-system-libjpeg-turbo"
-	"-system-libpng"
-	"-system-libsecret"
-	"-system-libusb"
-	"-system-libvpx"
-	"-system-libwebp"
-	"-system-libxml"
-	"-system-libxslt"
-	"-system-libyuv"
-	"-system-openh264" # TODO dedupe/simplify *DEPENDs
-	"-system-opus" # TODO dedupe/simplify *DEPENDs
-	"-system-re2"
-	"-system-simdutf"
-	"-system-snappy"
-	"-system-spirv-headers"
-	"-system-spirv-tools"
-	"-system-woff2"
-	"-system-zlib"
-	"-system-zstd"
+	# Package			# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
+	"-system-abseil-cpp"		# S1					untrusted-data			# Missing package
+	"-system-brotli"		# S0					security-critical
+	"-system-crc32c"		# S2					sensitive-data
+	"-system-dav1d"			# S0					security-critical
+	"-system-flatbuffers"		# S1					untrusted-data
+	"-system-ffmpeg"		# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-flac"			# S0					security-critical
+	"-system-fontconfig"		# S1					untrusted-data
+	"-system-freetype"		# S0					security-critical
+	"-system-harfbuzz"		# S0					security-critical
+	"-system-highway"		# S2					sensitive-data
+	"-system-icu"			# S1					untrusted-data
+	"-system-jsoncpp"		# S1					untrusted-data
+	"-system-libaom"		# S0					security-critical
+	"-system-libdrm"		# S0					security-critical
+	"-system-libjpeg-turbo"		# S0					security-critical
+	"-system-libpng"		# S0					security-critical
+	"-system-libsecret"		# S2					sensitive-data
+	"-system-libusb"		# S0					security-critical
+	"-system-libvpx"		# S0					security-critical
+	"-system-libwebp"		# S0					security-critical
+	"-system-libxml"		# S1					untrusted-data
+	"-system-libxslt"		# S1					untrusted-data
+	"-system-libyuv"		# S1					untrusted-data
+	"-system-openh264"		# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-opus"			# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-re2"			# S1					untrusted-data
+	"-system-simdutf"		# S2					sensitive-data
+	"-system-snappy"		# S2					sensitive-data
+	"-system-spirv-headers"		# S3					sensitive-data
+	"-system-spirv-tools"		# S1					untrusted-data
+	"-system-woff2"			# S0					security-critical
+	"-system-zlib"			# S0					security-critical
+	"-system-zstd"			# S0					security-critical
+	# S0 - Critical, Full RCE
+	# S1 - Medium, Sandboxed RCE
+	# S2 - Medium, ID or DoS
+	# S3 - Low, ID or DoS
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
