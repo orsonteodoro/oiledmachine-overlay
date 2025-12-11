@@ -11,7 +11,7 @@ MY_PN="gst-libav"
 MY_PV="$(ver_cut 1-3)"
 MY_P="${MY_PN}-${MY_PV}"
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 
 inherit cflags-hardened gstreamer-meson
 
@@ -24,7 +24,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
-ebuild_revision_15
+ebuild_revision_17
 "
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
