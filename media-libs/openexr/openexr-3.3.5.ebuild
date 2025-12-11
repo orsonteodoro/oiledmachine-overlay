@@ -5,19 +5,19 @@ EAPI=8
 
 MY_PN="OpenEXR"
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
 CXX_STANDARD=17
 OPENEXR_IMAGES_PV="1.0"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CPU_FLAGS_X86=(
@@ -46,7 +46,7 @@ SLOT="0/32"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 doc examples -large-stack +utils test +threads
-ebuild_revision_14
+ebuild_revision_16
 "
 REQUIRED_USE="
 	doc? (
