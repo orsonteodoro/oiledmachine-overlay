@@ -3,18 +3,18 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
+CFLAGS_HARDENED_USE_CASES="ip-assets security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO NPD OOBR OOBW SO UAF"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
@@ -46,7 +46,7 @@ RESTRICT="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 samples static-libs test
-ebuild_revision_11
+ebuild_revision_13
 "
 RDEPEND="
 	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
