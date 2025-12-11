@@ -38,7 +38,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_1
+ebuild_revision_3
 "
 REQUIRED_USE="?? ( libedit readline )"
 
