@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_41
+ebuild_revision_43
 "
 REQUIRED_USE+="
 	python? (

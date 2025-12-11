@@ -91,7 +91,7 @@ IUSE+="
 ${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_40
+ebuild_revision_43
 "
 REQUIRED_USE+="
 	^^ (
