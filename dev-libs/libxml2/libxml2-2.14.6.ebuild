@@ -24,7 +24,7 @@ XMLCONF_TARBALL="xmlts20130923.tar.gz"
 
 DESCRIPTION="XML C parser and toolkit"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
-if [[ ${PV} == 9999 ]] ; then
+if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
 	inherit git-r3
 else
@@ -44,7 +44,10 @@ S="${WORKDIR}/${PN}-${PV%_rc*}"
 LICENSE="MIT"
 # see so_version = v_maj + v_min_compat for subslot
 SLOT="2/16"
-IUSE="icu +python readline static-libs test"
+IUSE="
+icu +python readline static-libs test
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
