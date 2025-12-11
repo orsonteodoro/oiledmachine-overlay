@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="MOD audio decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	media-libs/libmodplug[${MULTILIB_USEDEP}]
