@@ -6,7 +6,7 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO IO UAF"
 CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
@@ -125,7 +125,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_38
+ebuild_revision_39
 "
 REQUIRED_USE="
 	arm64? (
@@ -235,13 +235,13 @@ BDEPEND+="
 		dev-lang/yasm
 	)
 	abi_x86_64? (
-		dev-lang/nasm
+		>=dev-lang/nasm-3.0
 	)
 	abi_x86_x32? (
 		dev-lang/yasm
 	)
 	chromium? (
-		>=dev-lang/nasm-2.14
+		>=dev-lang/nasm-3.0
 	)
 	doc? (
 		app-text/doxygen
@@ -263,10 +263,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.7.0-allow-fortify-source.patch"
 	"${FILESDIR}/${PN}-3.8.1-tests-parallel.patch"
 	"${FILESDIR}/${PN}-3.13.0-highway-linker-language-cxx.patch"
+	"${FILESDIR}/${PN}-3.13.1-fix-nasm-3-flag-detection.patch"
 )
 
 # The PATENTS file is required to be distributed with this package bug #682214.
-DOCS=( PATENTS )
+DOCS=( "PATENTS" )
 
 get_asset_ids() {
 	local types=(
