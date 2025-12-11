@@ -10,20 +10,40 @@ EAPI=8
 
 MY_P="${P/_/-}"
 
+CARGO_OPTIONAL=1
+CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO NPD IO"
+CXX_STANDARD=17
+PYTHON_COMPAT=( "python3_"{11..13} )
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.78.0"
+RUST_MULTILIB=1
+RUST_OPTIONAL=1
+UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
+UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 # Lift max allowed to avoid possible multiple LLVM bug
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 )
+
 CRATES="
 	syn@2.0.68
 	proc-macro2@1.0.86
@@ -31,15 +51,28 @@ CRATES="
 	unicode-ident@1.0.12
 	paste@1.0.14
 "
+
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
+LIBDRM_USEDEP="\
+video_cards_freedreno?,\
+video_cards_intel?,\
+video_cards_nouveau?,\
+video_cards_vc4?,\
+video_cards_vivante?,\
+video_cards_vmware?,\
+"
+
 PATENT_STATUS=(
 	"patent_status_nonfree"
 )
+
 RADEON_CARDS=(
 	"r300"
 	"r600"
 	"radeon"
 	"radeonsi"
 )
+
 VIDEO_CARDS=(
 	${RADEON_CARDS[@]}
 	"asahi"
@@ -58,33 +91,6 @@ VIDEO_CARDS=(
 	"vmware"
 	"zink"
 )
-
-CARGO_OPTIONAL=1
-CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
-CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO NPD IO"
-CXX_STANDARD=17
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
-LIBDRM_USEDEP="\
-video_cards_freedreno?,\
-video_cards_intel?,\
-video_cards_nouveau?,\
-video_cards_vc4?,\
-video_cards_vivante?,\
-video_cards_vmware?,\
-"
-PYTHON_COMPAT=( "python3_"{11..13} )
-RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.78.0"
-RUST_MULTILIB=1
-RUST_OPTIONAL=1
-UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
-UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
 # Bug
 inherit cargo
@@ -140,7 +146,7 @@ ${PATENT_STATUS[@]}
 asahi d3d9 debug +llvm lm-sensors opencl +opengl
 +proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_10
+ebuild_revision_12
 "
 REQUIRED_USE="
 	d3d9? (
