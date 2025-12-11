@@ -27,12 +27,12 @@ UOPTS_BOLT_INST_ARGS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CPU_FLAGS_ARM=(
@@ -81,7 +81,7 @@ _TRAINERS=(
 inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
-if [[ ${PV} == *9999* ]]; then
+if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
@@ -270,14 +270,14 @@ DOCS=( PATENTS )
 
 get_asset_ids() {
 	local types=(
-		VIDEO_CGI
-		VIDEO_GAMING
-		VIDEO_GRAINY
-		VIDEO_GENERAL
-		VIDEO_SCREENCAST
+		"VIDEO_CGI"
+		"VIDEO_GAMING"
+		"VIDEO_GRAINY"
+		"VIDEO_GENERAL"
+		"VIDEO_SCREENCAST"
 	)
 	local t
-	for t in ${types[@]} ; do
+	for t in "${types[@]}" ; do
 		for i in $(seq 0 ${LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "LIBAOM_TRAINING_${t}_${i}"
 		done
@@ -758,7 +758,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -c:v libaom-av1 -i "${T}/traintemp/test.webm" -f null - )
+	cmd=(
+		"${FFMPEG}"
+		-c:v "libaom-av1"
+		-i "${T}/traintemp/test.webm"
+		-f "null"
+		-
+	)
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
@@ -774,7 +780,7 @@ _get_resolutions_quick() {
 			echo "${e}"
 		done
 	else
-		for e in ${L[@]} ; do
+		for e in "${L[@]}" ; do
 			echo "${e}"
 		done
 	fi
@@ -817,7 +823,7 @@ _get_resolutions() {
 			echo "${e}"
 		done
 	else
-		for e in ${L[@]} ; do
+		for e in "${L[@]}" ; do
 			echo "${e}"
 		done
 	fi
@@ -863,14 +869,14 @@ _trainer_plan_constrained_quality_training_session() {
 		| cut -f 2 -d "=")
 
 	if [[ "${pf}" =~ "444" ]] ; then
-		extra_args+=( -profile:v 1 ) # 4:4:4 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv422p )
+		extra_args+=( -profile:v 1 )		# 4:4:4 8 bit chroma subsampling
+		extra_args+=( -pix_fmt "yuv422p" )
 	elif [[ "${pf}" =~ "422" ]] ; then
-		extra_args+=( -profile:v 2 ) # 4:2:2 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv422p )
+		extra_args+=( -profile:v 2 )		# 4:2:2 8 bit chroma subsampling
+		extra_args+=( -pix_fmt "yuv422p" )
 	else
-		extra_args+=( -profile:v 0 ) # 4:2:0 or 4:0:0 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv420p )
+		extra_args+=( -profile:v 0 )		# 4:2:0 or 4:0:0 8 bit chroma subsampling
+		extra_args+=( -pix_fmt "yuv420p" )
 	fi
 
 	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
@@ -883,34 +889,42 @@ _trainer_plan_constrained_quality_training_session() {
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(${EPYTHON} -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
-	local maxrate=$(${EPYTHON} -c "print(${avgrate}*1.45)") # moving
-	local minrate=$(${EPYTHON} -c "print(${avgrate}*0.5)") # stationary
+	local avgrate=$("${EPYTHON}" -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
+	local maxrate=$("${EPYTHON}" -c "print(${avgrate}*1.45)") # moving
+	local minrate=$("${EPYTHON}" -c "print(${avgrate}*0.5)") # stationary
 
 	local cmd
 	local cheight=$(_cheight "${height}")
 	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd=(
-		"${FFMPEG}" \
-		-y \
-		-i "${video_asset_path}" \
-		-c:v libaom-av1 \
-		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
-		${LIBAOM_TRAINING_ARGS} \
-		-an \
-		-r ${fps} \
-		-t ${duration} \
+		"${FFMPEG}"
+		-y
+		-i "${video_asset_path}"
+		-c:v "libaom-av1"
+		-maxrate "${maxrate}k"
+		-minrate "${minrate}k"
+		-b:v "${avgrate}k"
+		-vf "scale=w=-1:h=${height}"
+		${LIBAOM_TRAINING_ARGS}
+		-an
+		-r ${fps}
+		-t ${duration}
 		"${T}/traintemp/test.webm"
 	)
 
-	local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	local len=$( \
+		ffprobe \
+			-i "${video_asset_path}" \
+			-show_entries "format=duration" \
+			-v quiet \
+			-of csv="p=0" \
+		| cut -f 1 -d ".")
 	(( len < 0 )) && len=0
 	for i in $(seq 1 ${N_SAMPLES}) ; do
-		local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		local pos=$("${EPYTHON}" -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 		einfo "Seek:  ${i} / ${N_SAMPLES}"
 		einfo "Position / Length:  ${pos} / ${len}"
-		local cmdt=(${cmd[@]} -ss ${pos})
+		local cmdt=("${cmd[@]}" -ss ${pos})
 		einfo "${cmdt[@]}"
 		"${cmdt[@]}" || die
 		_vdecode "${cheight} ${fps} fps"
@@ -938,7 +952,7 @@ _trainer_plan_constrained_quality() {
 			einfo "Running trainer for 1 pass constrained quality"
 			local e
 
-			for e in ${L[@]} ; do
+			for e in "${L[@]}" ; do
 				_trainer_plan_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
@@ -969,10 +983,10 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		extra_args+=(
 			# See libavfilter/vf_setparams.c
 			# Target HDR10
-			-color_primaries bt2020
-			-color_range 0 # 0 = studio [16, 235], 1 = full [0, 255]
-			-color_trc smpte2084
-			-colorspace bt2020nc
+			-color_primaries "bt2020"
+			-color_range 0			# 0 = studio [16, 235], 1 = full [0, 255]
+			-color_trc "smpte2084"
+			-colorspace "bt2020nc"
 		)
 
 		if [[ "${pv}" =~ "p12" ]] ; then
@@ -987,75 +1001,92 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	fi
 
 	if [[ "${pf}" =~ "444" ]] ; then
-		extra_args+=( -profile:v 1 ) # 4:4:4 8/10 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv422p${bits} )
+		extra_args+=(
+			-profile:v 1 # 4:4:4 8/10 bit chroma subsampling
+			-pix_fmt "yuv422p${bits}"
+		)
 	elif [[ "${pf}" =~ "422" ]] ; then
-		extra_args+=( -profile:v 2 ) # 4:2:2 8/10/12 bit chroma subsampling; or 12 bit 4:0:0, 4:4:4
-		extra_args+=( -pix_fmt yuv422p${bits} )
+		extra_args+=(
+			-profile:v 2 # 4:2:2 8/10/12 bit chroma subsampling; or 12 bit 4:0:0, 4:4:4
+			-pix_fmt "yuv422p${bits}"
+		)
 	else
-		extra_args+=( -profile:v 0 ) # 4:2:0 or 4:0:0 8/10 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv420p${bits} )
+		extra_args+=(
+			-profile:v 0 # 4:2:0 or 4:0:0 8/10 bit chroma subsampling
+			-pix_fmt "yuv420p${bits}"
+		)
 	fi
 
 	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
-		extra_args+=( -tune-content 1 ) # 1=screen
+		extra_args+=(
+			-tune-content 1 # 1=screen
+		)
 	elif [[ "${id}" =~ "GRAINY" ]] ; then
-		extra_args+=( -tune-content 2 ) # 2=film
+		extra_args+=(
+			-tune-content 2 # 2=film
+		)
 	elif [[ "${id}" =~ "GENERAL" ]] ; then
-		extra_args+=( -tune-content 0 ) # 0=default
+		extra_args+=(
+			-tune-content 0 # 0=default
+		)
 	fi
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(${EPYTHON} -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
-	local maxrate=$(${EPYTHON} -c "print(${avgrate}*1.45)") # moving
-	local minrate=$(${EPYTHON} -c "print(${avgrate}*0.5)") # stationary
+	local avgrate=$("${EPYTHON}" -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
+	local maxrate=$("${EPYTHON}" -c "print(${avgrate}*1.45)") # moving
+	local minrate=$("${EPYTHON}" -c "print(${avgrate}*0.5)") # stationary
 
 	local cmd
 	local cheight=$(_cheight "${height}")
 	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd1=(
-		"${FFMPEG}" \
-		-y \
-		-i "${video_asset_path}" \
-		-c:v libaom-av1 \
-		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
-		${LIBAOM_TRAINING_ARGS} \
-		-pass 1 \
-		${extra_args[@]} \
-		-an \
-		-r ${fps} \
-		-t ${duration} \
-		-f null /dev/null
+		"${FFMPEG}"
+		-y
+		-i "${video_asset_path}"
+		-c:v "libaom-av1"
+		-maxrate "${maxrate}k"
+		-minrate "${minrate}k"
+		-b:v "${avgrate}k"
+		-vf "scale=w=-1:h=${height}"
+		${LIBAOM_TRAINING_ARGS}
+		-pass 1
+		"${extra_args[@]}"
+		-an
+		-r ${fps}
+		-t ${duration}
+		-f "null"
+		"/dev/null"
 	)
 	cmd2=(
-		"${FFMPEG}" \
-		-y \
-		-i "${video_asset_path}" \
-		-c:v libaom-av1 \
-		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
-		${LIBAOM_TRAINING_ARGS} \
-		-pass 2 \
-		${extra_args[@]} \
-		-an \
-		-r ${fps} \
-		-t ${duration} \
+		"${FFMPEG}"
+		-y
+		-i "${video_asset_path}"
+		-c:v "libaom-av1"
+		-maxrate "${maxrate}k"
+		-minrate "${minrate}k"
+		-b:v "${avgrate}k"
+		-vf "scale=w=-1:h=${height}"
+		${LIBAOM_TRAINING_ARGS}
+		-pass 2
+		"${extra_args[@]}"
+		-an
+		-r ${fps}
+		-t ${duration}
 		"${T}/traintemp/test.webm"
 	)
 
 	local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
 	(( len < 0 )) && len=0
 	for i in $(seq 1 ${N_SAMPLES}) ; do
-		local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		local pos=$("${EPYTHON}" -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 		einfo "Seek:  ${i} / ${N_SAMPLES}"
 		einfo "Position / Length:  ${pos} / ${len}"
 		local cmdt
-		cmdt=(${cmd1[@]} -ss ${pos})
+		cmdt=("${cmd1[@]}" -ss ${pos})
 		einfo "${cmdt[@]}"
 		"${cmdt[@]}" || die
-		cmdt=(${cmd2[@]} -ss ${pos})
+		cmdt=("${cmd2[@]}" -ss ${pos})
 		einfo "${cmd[@]}"
 		"${cmdt[@]}" || die
 		_vdecode "${cheight} ${fps} fps"
@@ -1082,7 +1113,7 @@ _trainer_plan_2_pass_constrained_quality() {
 			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running trainer for 2 pass constrained quality"
 			local e
-			for e in ${L[@]} ; do
+			for e in "${L[@]}" ; do
 				_trainer_plan_2_pass_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
@@ -1108,24 +1139,24 @@ _trainer_plan_lossless() {
 			local cmd
 			einfo "Encoding for lossless"
 			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-crf 0 \
-				${LIBAOM_TRAINING_ARGS_LOSSLESS} \
-				-an \
-				-t ${duration} \
+				"${FFMPEG}"
+				-y
+				-i "${video_asset_path}"
+				-c:v "libaom-av1"
+				-crf 0
+				${LIBAOM_TRAINING_ARGS_LOSSLESS}
+				-an
+				-t ${duration}
 				"${T}/traintemp/test.webm"
 			)
 
 			local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
 			(( len < 0 )) && len=0
 			for i in $(seq 1 ${N_SAMPLES}) ; do
-				local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				local pos=$("${EPYTHON}" -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 				einfo "Seek:  ${i} / ${N_SAMPLES}"
 				einfo "Position / Length:  ${pos} / ${len}"
-				local cmdt=(${cmd[@]} -ss ${pos})
+				local cmdt=("${cmd[@]}" -ss ${pos})
 				einfo "${cmdt[@]}"
 				"${cmdt[@]}" || die
 				_vdecode "lossless"
@@ -1259,8 +1290,8 @@ multilib_src_install_all() {
 get_arch_enabled_use_flags() {
 	local all_use=()
 	for p in $(multilib_get_enabled_abi_pairs) ; do
-		local u=${p%.*}
-		all_use+=( ${u} )
+		local u="${p%.*}"
+		all_use+=( "${u}" )
 	done
 	echo "${all_use[@]}" | tr " " ","
 }
