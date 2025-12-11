@@ -9,7 +9,7 @@ EAPI=8
 # https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
 # For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
-CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
+CFLAGS_HARDENED_USE_CASES="ip-assets security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 CXX_STANDARD="17"
 FONT_PN="OpenImageIO"
@@ -140,7 +140,7 @@ ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
 gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-ebuild_revision_34
+ebuild_revision_36
 "
 gen_abi_compat_required_use() {
 	local s
