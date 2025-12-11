@@ -9,15 +9,15 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 
 inherit flag-o-matic autotools cflags-hardened libcxx-slot libstdcxx-slot vcs-snapshot multilib-minimal
@@ -37,7 +37,7 @@ LICENSE="MIT"
 SLOT="0/4"
 IUSE="
 +debug llvm-libunwind minimal optimisememory test static-libs
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="
 	?? (
