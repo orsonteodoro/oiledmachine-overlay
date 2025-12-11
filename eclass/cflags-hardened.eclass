@@ -149,6 +149,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=type                       1.80 - 20.00
 # -fsanitize=undefined                  1.10 -  2.00
 # -ftrivial-auto-var-init=zero          1.01 -  1.05
+# -fzero-call-used-regs=all             1.10 -  1.25
+# -fzero-call-used-regs=used-gpr        1.03 -  1.08
+# -fzero-call-used-regs=used-all        1.05 -  1.10
 # -mbranch-protection=bti               1.00 -  1.05
 # -mbranch-protection=pac-ret           1.01 -  1.05
 # -mbranch-protection=pac-ret+bti       1.02 -  1.07
@@ -451,6 +454,13 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # by developers or testers.
 # (EXPERIMENTAL)
 # Valid values:  1, 0, unset
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_ZERO_CALL_USED_REGS
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Sanitize previously used registers after returning to mitigate against
+# ROP gadgets or exploit changes.
+# Valid values: 1, 0, unset
 
 # @FUNCTION: _cflags-hardened_compiler_arch
 # @DESCRIPTION:
@@ -1430,8 +1440,6 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 
 		if \
-			tc-is-clang \
-					&&
 			[[ \
 				"${CFLAGS_HARDENED_TRIVIAL_AUTO_VAR_INIT:-1}" == "1" \
 					&&
@@ -1445,10 +1453,42 @@ einfo "All SSP hardening (All functions hardened)"
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 		; then
 	# CE, PE, DoS, DT, ID
+	# GCC >= 12, Clang 8
 			filter-flags "-f*trivial-auto-var-init=*"
-			append-flags "-ftrivial-auto-var-init=zero"
-			CFLAGS_HARDENED_CFLAGS+=" -ftrivial-auto-var-init=zero"
-			CFLAGS_HARDENED_CXXFLAGS+=" -ftrivial-auto-var-init=zero"
+			append-flags $(test-flags-CC "-ftrivial-auto-var-init=zero")
+			CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-ftrivial-auto-var-init=zero")
+			CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-ftrivial-auto-var-init=zero")
+		fi
+	fi
+
+	if \
+		[[ \
+			"${CFLAGS_HARDENED_ZERO_CALL_USED_REGS:-1}" == "1" \
+				&&
+			"${CFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("kernel"\
+|"untrusted-data"\
+|"sandbox"\
+|"security-critical"\
+|"web-browser")\
+		]] \
+	; then
+	# ZC, CE, PE, DoS, DT, ID
+	# GCC >= 11, Clang 15
+		filter-flags "-f*zero-call-used-regs=*"
+		if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.25" ; then
+			append-flags $(test-flags-CC "-fzero-call-used-regs=all")
+			CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-fzero-call-used-regs=all")
+			CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-fzero-call-used-regs=all")
+		elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" ; then
+			append-flags $(test-flags-CC "-fzero-call-used-regs=used-all")
+			CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-fzero-call-used-regs=used-all")
+			CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-fzero-call-used-regs=used-all")
+		elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.08" ; then
+			append-flags $(test-flags-CC "-fzero-call-used-regs=used-gpr")
+			CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-fzero-call-used-regs=used-gpr")
+			CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-fzero-call-used-regs=used-gpr")
 		fi
 	fi
 
