@@ -50,6 +50,7 @@ IUSE+=" mbedtls +openssl +pop3 +psl +quic rtmp rustls samba sasl-scram +smtp ssh
 IUSE+=" telnet +tftp +websockets zstd"
 # These select the default tls implementation / which quic impl to use
 IUSE+=" +curl_quic_openssl curl_quic_ngtcp2 curl_ssl_gnutls curl_ssl_mbedtls +curl_ssl_openssl curl_ssl_rustls"
+IUSE+=" ebuild_revision_2"
 RESTRICT="!test? ( test )"
 
 # HTTPS RR is technically usable with the threaded resolver, but it still uses c-ares to
