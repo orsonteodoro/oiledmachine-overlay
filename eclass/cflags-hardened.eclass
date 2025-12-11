@@ -1004,6 +1004,12 @@ ewarn "Disabling cflags-hardenend for USE=debug"
 		return
 	fi
 
+	if [[ "${CFLAGS_HARDENED_REALTIME_SAFETY:-0}" == "1" ]] ; then
+		if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">" "1.05" ; then
+			CFLAGS_HARDENED_TOLERANCE="1.05"
+		fi
+	fi
+
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
 ewarn
 ewarn "${CATEGORY}/${PN}-${PVR} is identified as being part of the @system set."
@@ -1446,9 +1452,11 @@ einfo "All SSP hardening (All functions hardened)"
 					&&
 				"${CFLAGS_HARDENED_USE_CASES}" \
 					=~ \
-("dss"\
-|"safety-critical"\
-|"security-critical") \
+("kernel"\
+|"untrusted-data"\
+|"sandbox"\
+|"security-critical"\
+|"web-browser") \
 			]] \
 				&& \
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
