@@ -6,7 +6,7 @@ EAPI=8
 # U 22.04
 
 CXX_STANDARD=17 # Compiler default
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO"
 LIBFLAC_SONAME="11"
 LIBFLACXX_SONAME="14"
@@ -48,7 +48,7 @@ SLOT="0/${LIBFLAC_SONAME}-${LIBFLACXX_SONAME}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 +cxx debug ogg static-libs
-ebuild_revision_26
+ebuild_revision_27
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="

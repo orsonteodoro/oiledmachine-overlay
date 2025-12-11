@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_LANGS="c-lang cxx"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 
 PYTHON_COMPAT=( python3_{11..14} )
@@ -28,7 +28,10 @@ LICENSE="Old-MIT ISC icu"
 # 6.0.0 changed libharfbuzz-subset.so ABI
 SLOT="0/6.0.0"
 
-IUSE="+cairo debug doc experimental +glib +graphite icu +introspection test +truetype"
+IUSE="
++cairo debug doc experimental +glib +graphite icu +introspection test +truetype
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="introspection? ( glib )"
 

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 
 if [[ ${PV} == 9999 ]]; then
@@ -22,7 +22,10 @@ HOMEPAGE="https://code.videolan.org/videolan/dav1d"
 LICENSE="BSD-2"
 # Check SONAME on version bumps!
 SLOT="0/7"
-IUSE="+8bit +10bit +asm test xxhash"
+IUSE="
++8bit +10bit +asm test xxhash
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 ASM_DEPEND=">=dev-lang/nasm-2.15.05"

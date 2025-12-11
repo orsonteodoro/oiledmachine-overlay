@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal toolchain-funcs
@@ -31,7 +31,10 @@ fi
 
 LICENSE="|| ( FTL GPL-2+ )"
 SLOT="2"
-IUSE="X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils"
+IUSE="
+X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
