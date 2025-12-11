@@ -4,7 +4,7 @@
 EAPI=8
 
 # Must be bumped with media-plugins/imlib2_loaders!
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
 
 inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal toolchain-funcs
@@ -21,7 +21,7 @@ IUSE="
 +X apidoc bzip2 cpu_flags_x86_mmx cpu_flags_x86_sse2 debug
 eps +filters +gif +jpeg jpeg2k jpegxl heif lzma mp3 packing +png
 raw +shm static-libs svg +text +tiff +webp zlib
-ebuild_revision_10
+ebuild_revision_12
 "
 
 REQUIRED_USE="shm? ( X )"
