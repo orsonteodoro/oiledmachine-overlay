@@ -10,7 +10,7 @@ CFLAGS_HARDENED_CI_SANITIZERS="asan lsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="20"
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_LANGS="asm c-lang"
-CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server system-set untrusted-data"
+CFLAGS_HARDENED_USE_CASES="daemon network security-critical sensitive-data server system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO"
 
 GENTOO_DEPEND_ON_PERL=no
@@ -68,7 +68,10 @@ S="${WORKDIR}"/${MY_P}
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+curl cgi cvs doc keyring +gpg highlight +iconv mediawiki +nls +pcre perforce +perl +safe-directory selinux subversion test tk +webdav xinetd"
+IUSE="
++curl cgi cvs doc keyring +gpg highlight +iconv mediawiki +nls +pcre perforce +perl +safe-directory selinux subversion test tk +webdav xinetd
+ebuild_revision_2
+"
 
 # Common to both DEPEND and RDEPEND
 DEPEND="
