@@ -78,7 +78,7 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_SSP_LEVEL=1
 CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
@@ -118,13 +118,13 @@ CPU_FLAGS_ARM=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_} # 21
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -563,7 +563,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_18
+ebuild_revision_20
 "
 
 gen_gst_plugins_duse() {
