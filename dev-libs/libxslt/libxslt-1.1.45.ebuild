@@ -7,7 +7,7 @@ EAPI=8
 
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
-CFLAGS_HARDENED_USE_CASES="system-set untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBW TC UAF UM"
 
 PYTHON_COMPAT=( python3_{11..14} )
@@ -29,7 +29,10 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="crypt debug examples python static-libs"
+IUSE="
+crypt debug examples python static-libs
+ebuild_revision_2
+"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 BDEPEND=">=virtual/pkgconfig-1"
