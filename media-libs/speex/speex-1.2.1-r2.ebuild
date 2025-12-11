@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE SO"
 
 inherit autotools cflags-hardened flag-o-matic multilib-minimal
@@ -36,7 +36,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 utils valgrind +vbr
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	utils? (

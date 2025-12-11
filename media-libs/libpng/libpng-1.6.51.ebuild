@@ -3,13 +3,13 @@
 
 EAPI=8
 
-APNG_REPO=libpng-apng # sometimes libpng-apng is more up to date
+APNG_REPO="libpng-apng" # sometimes libpng-apng is more up to date
 APNG_VERSION="1.6.49"
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 ##CFLAGS_HARDENED_CI_SANITIZERS="asan lsan msan ubsan" # Beta only
 CFLAGS_HARDENED_CI_SANITIZERS="asan lsan" # Before .travis.yml removal
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="13"
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD MC OOBR SO UAF UM"
 
 inherit cflags-hardened check-compiler-switch dot-a libtool multilib-minimal
@@ -31,7 +31,10 @@ KEYWORDS="
 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 "
-IUSE="apng cpu_flags_x86_sse static-libs test"
+IUSE="
+apng cpu_flags_x86_sse static-libs test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND=">=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]"

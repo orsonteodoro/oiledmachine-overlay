@@ -7,7 +7,7 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO"
 LIBVPX_TESTDATA_VER="1.14.1"
 N_SAMPLES=1
@@ -56,7 +56,7 @@ IUSE="
 ${_TRAINERS[@]}
 ${CPU_FLAGS_PPC[@]}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	pgo? (

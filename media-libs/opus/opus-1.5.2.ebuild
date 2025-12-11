@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -30,7 +30,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 custom-modes debug deep-plc dred doc hardened osce static-libs test
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	dred? (

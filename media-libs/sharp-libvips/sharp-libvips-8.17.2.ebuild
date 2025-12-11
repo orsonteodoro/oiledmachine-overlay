@@ -75,7 +75,7 @@ VERSION_AOM=3.13.1
 VERSION_HEIF=1.20.2
 VERSION_CGIF=0.5.0
 
-RUSTFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_CAIRO="CE DOS HO IO NPD OOBR OOBW UAF"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_EXPAT="IO"
@@ -565,7 +565,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_25
+ebuild_revision_26
 "
 LICENSE="
 	Apache-2.0

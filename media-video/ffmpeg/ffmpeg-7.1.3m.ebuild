@@ -25,7 +25,7 @@ CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
-CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
 FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="59.61.61"
@@ -541,7 +541,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio soc sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_49
+ebuild_revision_50
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].

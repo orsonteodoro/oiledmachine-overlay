@@ -28,7 +28,7 @@ CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
-CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
 FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="56.58.58"
@@ -501,7 +501,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio sr static-libs tensorflow test v4l
 wayland
-ebuild_revision_49
+ebuild_revision_50
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
