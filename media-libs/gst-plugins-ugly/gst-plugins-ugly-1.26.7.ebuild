@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-ugly"
 
 inherit cflags-hardened gstreamer-meson
@@ -19,7 +19,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2+" # Some split plugins are LGPL but combining with a GPL library.
 IUSE+="
 nls orc
-ebuild_revision_17
+ebuild_revision_19
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
