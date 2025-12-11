@@ -15,7 +15,7 @@ EAPI=8
 # Last deps commit date:  Nov 14, 2025
 
 CFLAGS_HARDENED_PIE="1"
-CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CXX_STANDARD=20
 LTO_TYPE="none" # Global var
@@ -138,7 +138,7 @@ IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
 +npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_48
+ebuild_revision_50
 "
 
 gen_required_use_pgo() {
