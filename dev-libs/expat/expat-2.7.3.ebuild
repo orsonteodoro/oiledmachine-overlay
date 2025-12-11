@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="system-set untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 
 AUTOTOOLS_AUTO_DEPEND=no
@@ -16,7 +16,10 @@ SRC_URI="https://github.com/libexpat/libexpat/releases/download/R_${PV//\./_}/ex
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="examples static-libs test unicode"
+IUSE="
+examples static-libs test unicode
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 BDEPEND="unicode? ( ${AUTOTOOLS_DEPEND} )"
 
