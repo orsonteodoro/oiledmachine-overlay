@@ -6,7 +6,7 @@ EAPI=8
 # Remember to check the release notes for a 'Important Changes for Packagers'
 # section, e.g. https://inkscape.org/doc/release_notes/1.4/Inkscape_1.4.html#Important_Changes_for_Packagers.
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE FS OOBR OOBW"
 PYTHON_COMPAT=( python3_{10..13} )
 PYTHON_REQ_USE="xml(+)"
@@ -29,7 +29,10 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
-IUSE="cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wpg X"
+IUSE="
+cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wpg X
+ebuild_revision_2
+"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # Lots of test failures which need investigating, bug #871621
 RESTRICT="!test? ( test ) test"
