@@ -11,19 +11,19 @@ EAPI=8
 # https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L763
 
 BOOST_PV="1.80.0"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO ID MC OOB OOBA UAF"
 CMAKE_BUILD_TYPE="Release"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 ONETBB_SLOT="0"
@@ -89,7 +89,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_7
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
