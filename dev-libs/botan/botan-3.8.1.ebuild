@@ -12,12 +12,12 @@ VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX20[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
 declare -A ALGS=(
@@ -80,7 +80,7 @@ SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 KEYWORDS="~amd64 ~arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~ppc-macos"
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_32
+ebuild_revision_34
 "
 CPU_USE=(
 	"cpu_flags_arm_"{"crypto","neon","pmull"}

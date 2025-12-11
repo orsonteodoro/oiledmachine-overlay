@@ -14,12 +14,12 @@ VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
 declare -A ALGS=(
@@ -75,7 +75,7 @@ LICENSE="BSD-2"
 SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_32
+ebuild_revision_34
 "
 CPU_USE=(
 	"cpu_flags_arm_"{"crypto","neon","pmull"}
