@@ -14,7 +14,7 @@ EAPI=8
 # CI disables deprecated but enabled by default in meson_options.txt
 
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="NPD UAF"
 CXX_STANDARD=11
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
@@ -27,12 +27,12 @@ SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_} # 18, 19
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 18, 19
 )
 LLVM_MAX_SLOT="19"
 
@@ -75,7 +75,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_41
+ebuild_revision_43
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
