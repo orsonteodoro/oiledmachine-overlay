@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 NIFTI_TEST_DATA_PV="3.0.2"
 
 inherit cflags-hardened cmake-multilib xdg multilib-minimal
@@ -28,6 +28,7 @@ RESTRICT="!test" # Untested
 SLOT="0/$(ver_cut 1-2)"
 IUSE+="
 fsliolib test
+ebuild_revision_2
 "
 REQUIRED_USE="
 "
