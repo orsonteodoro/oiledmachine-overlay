@@ -18,12 +18,12 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 MULTILIB_CHOST_TOOLS=(
@@ -75,7 +75,7 @@ RESTRICT="
 SLOT="0/${PV%.*}"
 IUSE="
 debug doc examples static-libs test
-ebuild_revision_18
+ebuild_revision_20
 "
 BDEPEND+="
 	${PYTHON_DEPS}
