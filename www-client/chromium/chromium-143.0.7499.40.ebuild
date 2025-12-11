@@ -2385,12 +2385,19 @@ einfo "CXX:  ${CXX}"
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 
+	local found=0
 	local x
 	for x in "${SYSTEM_USE[@]/-}" ; do
 		if use "${x}" ; then
 ewarn "Enabling ${x} could weaken security or have version sensitive C++ standard incompatibility."
+			found=1
 		fi
 	done
+	if (( ${found} == 1 )) ; then
+ewarn "All packages marked with the system-* USE prefix are marked security-critical upstream."
+ewarn "Using systemwide llvm-core/clang without hardening may be vulnerable for system-* marked packages."
+ewarn "Using systemwide sys-devel/gcc with the vanilla USE flag may be vulnerable for system-* marked packages."
+	fi
 }
 
 src_unpack() {
