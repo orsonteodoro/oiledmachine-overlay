@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="ip-assets sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO SO UAF"
 GNOME2_EAUTORECONF=yes
 WANT_AUTOMAKE=
@@ -17,7 +17,10 @@ LICENSE="GPL-3+ LGPL-3+"
 SLOT="0/2"
 KEYWORDS="~alpha amd64 ~arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv x86"
 
-IUSE="aalib alsa aqua debug doc gnome heif jpeg2k jpegxl mng openexr postscript udev unwind vector-icons webp wmf xpm cpu_flags_ppc_altivec cpu_flags_x86_mmx cpu_flags_x86_sse"
+IUSE="
+aalib alsa aqua debug doc gnome heif jpeg2k jpegxl mng openexr postscript udev unwind vector-icons webp wmf xpm cpu_flags_ppc_altivec cpu_flags_x86_mmx cpu_flags_x86_sse
+ebuild_revision_2
+"
 
 RESTRICT="!test? ( test )"
 

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="ip-assets sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO SO UAF"
 LUA_COMPAT=( luajit )
 PYTHON_COMPAT=( python3_{11..14} )
@@ -19,7 +19,10 @@ LICENSE="GPL-3+ LGPL-3+"
 SLOT="0/3"
 KEYWORDS="~amd64 ~arm ~x86"
 
-IUSE="X aalib alsa doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm"
+IUSE="
+X aalib alsa doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
+ebuild_revision_2
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	lua? ( ${LUA_REQUIRED_USE} )
