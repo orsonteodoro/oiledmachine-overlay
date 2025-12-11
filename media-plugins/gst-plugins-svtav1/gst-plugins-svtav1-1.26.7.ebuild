@@ -4,7 +4,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 inherit cflags-hardened gstreamer-meson
@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Scalable Video Technology for AV1 plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=media-libs/svt-av1-1.1[${MULTILIB_USEDEP}]
