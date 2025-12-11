@@ -59,7 +59,7 @@ ncurses nettle ninja nls +popup random safeclib +spell static
 openssl scudo system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_80
+ebuild_revision_82
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
