@@ -18,12 +18,12 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_RUST[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_RUST[@]/llvm_slot_}"
 )
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
@@ -48,7 +48,7 @@ SLOT="0/${LIBFLAC_SONAME}-${LIBFLACXX_SONAME}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 +cxx debug ogg static-libs
-ebuild_revision_27
+ebuild_revision_29
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="
