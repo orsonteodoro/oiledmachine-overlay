@@ -228,6 +228,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # network
 # p2p
 # plugin
+# realtime-safety
 # sandbox
 # scripting
 # security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
@@ -1969,6 +1970,13 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 			"-frounding-math"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-fast-math -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-fast-math -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
+	fi
+
+	# Low-latency safety-critical, no exceptions allowed
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "realtime-safety" ]] ; then
+		filter-flags "-f*exceptions" "-f*rtti"
+		append-cxxflags "-fno-exceptions" "-fno-rtti"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fno-exceptions -fno-rtti"
 	fi
 
 	# We want to fallback to CFI if CET is missing to mitigate against CE.
