@@ -20,12 +20,12 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot
@@ -42,6 +42,7 @@ IUSE="
 ${_CXX_STANDARD[@]}
 ${CPU_FLAGS_X86[@]}
 test
+ebuild_revision_2
 "
 REQUIRED_USE="
 	test? (
