@@ -5,19 +5,20 @@ EAPI=8
 
 # U24, VFX CY2024
 
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=14
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -42,7 +43,6 @@ OPENEXR_V3_PV=(
 	"3.1.5:3.1.5"
 	"3.1.4:3.1.4"
 )
-PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cflags-hardened cmake libcxx-slot libstdcxx-slot python-single-r1
 
@@ -68,7 +68,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 examples hdf5 python test
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
