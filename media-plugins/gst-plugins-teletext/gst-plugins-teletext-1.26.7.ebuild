@@ -4,7 +4,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 GST_PLUGINS_BUILD_DIR="teletextdec"
 GST_PLUGINS_ENABLED="teletext"
@@ -15,7 +15,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="VBI subtitles plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_17
 "
 RDEPEND="
 	>=media-libs/zvbi-0.2[${MULTILIB_USEDEP}]
