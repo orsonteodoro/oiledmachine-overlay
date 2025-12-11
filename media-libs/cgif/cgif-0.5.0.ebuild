@@ -6,7 +6,7 @@ EAPI=8
 # U22
 
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 
 inherit cflags-hardened meson-multilib
 
@@ -24,7 +24,10 @@ DESCRIPTION="A fast and lightweight GIF encoder"
 HOMEPAGE="https://github.com/dloebl/cgif"
 LICENSE="MIT"
 SLOT="0"
-IUSE="examples test"
+IUSE="
+examples test
+ebuild_revision_2
+"
 RDEPEND="
 	sys-libs/zlib
 "
