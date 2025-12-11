@@ -18,7 +18,7 @@ BUILD_EXPORT_TEMPLATES=0
 # It can collect GPS coords for geolocation based games or gamified app or the
 # game engine can be used for app purposes not just games.
 # Contains open_encrypted_with_pass() API that accepts password or users may login with password.
-CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=14
 FRAMEWORK="4.5" # Target .NET Framework
@@ -242,7 +242,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_29
+	ebuild_revision_31
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
