@@ -217,7 +217,7 @@ VULNERABILITIES_FIXED=(
 )
 PYTEST_PV="7.2.0"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
-RUSTFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
 inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm
@@ -301,7 +301,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_29
+ebuild_revision_31
 "
 REQUIRED_USE="
 	clamonacc? (
