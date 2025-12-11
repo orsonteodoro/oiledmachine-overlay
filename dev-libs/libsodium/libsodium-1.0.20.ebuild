@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libsodium.minisig"
 VERIFY_SIG_METHOD="minisig"
 
@@ -33,7 +33,10 @@ fi
 LICENSE="ISC"
 SLOT="0/26"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~arm64-macos ~x64-macos"
-IUSE="+asm static-libs +urandom"
+IUSE="
++asm static-libs +urandom
+ebuild_revision_2
+"
 
 CPU_USE=( cpu_flags_x86_{aes,sse4_1} )
 IUSE+=" ${CPU_USE[@]}"
