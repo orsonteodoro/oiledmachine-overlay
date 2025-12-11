@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="copy-paste-password sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=no
@@ -22,7 +22,7 @@ SLOT="3"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
 IUSE="
 +cairo examples test
-ebuild_revision_8
+ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
 
