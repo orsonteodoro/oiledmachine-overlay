@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="ONNX neural network plugin for GStreamer"
 IUSE+="
-ebuild_revision_15
+ebuild_revision_17
 "
 RDEPEND="
 	$(python_gen_any_dep '
