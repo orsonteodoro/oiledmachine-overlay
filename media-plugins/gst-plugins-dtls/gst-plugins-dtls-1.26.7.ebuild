@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin network security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 inherit cflags-hardened gstreamer-meson
@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="DTLS encoder/decoder with SRTP support plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=dev-libs/openssl-1.0.1:0[${MULTILIB_USEDEP}]
