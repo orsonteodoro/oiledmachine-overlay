@@ -9,12 +9,12 @@ CXX_STANDARD=98
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX98[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX98[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX98[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX98[@]/llvm_slot_}"
 )
 
 inherit check-compiler-switch cflags-hardened cmake libcxx-slot libstdcxx-slot
@@ -26,7 +26,10 @@ SRC_URI="https://github.com/wdas/ptex/archive/refs/tags/v${PV}.tar.gz -> ${P}.ta
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~riscv x86"
-IUSE="static-libs"
+IUSE="
+static-libs
+ebuild_revision_2
+"
 
 RDEPEND="sys-libs/zlib"
 DEPEND="${RDEPEND}"
