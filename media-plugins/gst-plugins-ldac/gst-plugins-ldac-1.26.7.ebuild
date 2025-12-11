@@ -10,9 +10,9 @@ inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
-DESCRIPTION="LDAC plugin for GStreamer"
+DESCRIPTION="LDAC encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	media-libs/libldac[${MULTILIB_USEDEP}]
