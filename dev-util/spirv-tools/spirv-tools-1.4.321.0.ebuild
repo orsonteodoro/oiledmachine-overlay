@@ -5,21 +5,22 @@ EAPI=8
 
 MY_PN="SPIRV-Tools"
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 PYTHON_COMPAT=( "python3_"{11..14} )
 PYTHON_REQ_USE="xml(+)"
-inherit cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
+inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
@@ -36,7 +37,10 @@ HOMEPAGE="https://github.com/KhronosGroup/SPIRV-Tools"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="~dev-util/spirv-headers-${PV}"
@@ -50,6 +54,7 @@ pkg_setup() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DSPIRV-Headers_SOURCE_DIR="${ESYSROOT}"/usr/
 		-DSPIRV_WERROR=OFF
