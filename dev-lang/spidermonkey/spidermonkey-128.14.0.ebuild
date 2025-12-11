@@ -39,7 +39,7 @@ if [[ -n "${MOZ_ESR}" ]] ; then
 fi
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 
-CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 LLVM_COMPAT=( 18 17 ) # Limited by rust
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
@@ -103,7 +103,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_25
+ebuild_revision_27
 "
 REQUIRED_USE="
 	rust-simd? (
