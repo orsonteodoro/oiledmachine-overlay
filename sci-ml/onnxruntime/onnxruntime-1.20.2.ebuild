@@ -67,7 +67,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_OPTIONAL=1
 PYTHON_COMPAT=( "python3_"{10..12} )
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_PV_1="20230125.3" # From cmake/external/onnx/CMakeLists.txt
@@ -881,7 +881,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_19
+ebuild_revision_20
 "
 gen_cuda_required_use() {
 	local x

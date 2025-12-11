@@ -18,7 +18,7 @@ CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 GRPC_SLOT="5"
 PROTOBUF_CPP_SLOT="5"
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 # From cmake/GoogleapisConfig.cmake \
 GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
@@ -47,7 +47,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 # Tests need a GCP account
 RESTRICT="test"

@@ -42,7 +42,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev grpc"
+IUSE+="
+dev grpc
+ebuild_revision_1
+"
 REQUIRED_USE="
 	dev? (
 		grpc
@@ -160,12 +163,12 @@ python_configure() {
 			ABSEIL_CPP_SLOT="20240722"
 			GRPC_SLOT="5"
 			PROTOBUF_CPP_SLOT="5"
-			RE2_SLOT="20240116"
+			RE2_SLOT="20250512"
 		elif has_version "net-libs/grpc:6/1.75" ; then
 			ABSEIL_CPP_SLOT="20250512"
 			GRPC_SLOT="6"
 			PROTOBUF_CPP_SLOT="6"
-			RE2_SLOT="20240116"
+			RE2_SLOT="20250512"
 		fi
 		abseil-cpp_python_configure
 		protobuf_python_configure

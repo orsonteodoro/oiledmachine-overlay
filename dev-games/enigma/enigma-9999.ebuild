@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -420,7 +420,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	fi
 	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
 		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \

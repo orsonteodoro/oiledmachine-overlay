@@ -11,7 +11,7 @@ GRPC_SLOT="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
 PYTHON_COMPAT=( "python3_"{10..13} )
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 inherit abseil-cpp distutils-r1 grpc protobuf re2 pypi
 
@@ -29,7 +29,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH for multislot package
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	>=dev-python/googleapis-common-protos-1.57[${PYTHON_USEDEP}]

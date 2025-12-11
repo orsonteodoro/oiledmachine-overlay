@@ -41,7 +41,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc fastembed fastembed-gpu test types"
+IUSE+="
+dev doc fastembed fastembed-gpu test types
+ebuild_revision_1
+"
 REQUIRED_USE="
 	test? (
 		dev
@@ -142,13 +145,13 @@ python_configure() {
 		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	elif has_version "dev-libs/protobuf:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		GRPC_SLOT="5"
 		PROTOBUF_CPP_SLOT="5"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	elif has_version "dev-libs/protobuf:4/4.25" ; then
 		ABSEIL_CPP_SLOT="20240116"
 		GRPC_SLOT="4"

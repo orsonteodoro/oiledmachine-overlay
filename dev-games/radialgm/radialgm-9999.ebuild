@@ -43,7 +43,7 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 doc
-ebuild_revision_8
+ebuild_revision_9
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
@@ -141,7 +141,7 @@ src_configure() {
 		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	fi
 	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
 		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \

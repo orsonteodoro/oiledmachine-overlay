@@ -45,7 +45,7 @@ SLOT="0"
 IUSE+="
 ${VIDEO_CARDS[@]/#/video_cards_}
 custom-kernel systemd udev unicode tpu
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	video_cards_amdgpu? (
@@ -226,7 +226,7 @@ src_configure() {
 		ABSEIL_CPP_SLOT="20240722"
 		GRPC_SLOT="5"
 		PROTOBUF_CPP_SLOT="5"
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 		abseil-cpp_src_configure
 		protobuf_src_configure
 		re2_src_configure

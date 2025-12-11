@@ -43,7 +43,7 @@ SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="
 asan +compile-commands doc +raslib +standalone systemd test
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	raslib
@@ -145,7 +145,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			ABSEIL_CPP_SLOT="20240722"
 			GRPC_SLOT="5"
 			PROTOBUF_CPP_SLOT="5"
-			RE2_SLOT="20240116"
+			RE2_SLOT="20250512"
 		fi
 		abseil-cpp_src_configure
 		protobuf_src_configure

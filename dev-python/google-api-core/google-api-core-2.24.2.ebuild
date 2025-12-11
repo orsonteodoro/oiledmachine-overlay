@@ -29,7 +29,10 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="0/3.21" # 0/$PROTOBUF_SLOT
-IUSE="async-rest grpc grpcgcp grpcio-gcp"
+IUSE="
+async-rest grpc grpcgcp grpcio-gcp
+ebuild_revision_1
+"
 REQUIRED_USE="
 	test? (
 		grpc
@@ -125,7 +128,7 @@ python_configure() {
 		GRPC_SLOT="5"
 		PROTOBUF_CPP_SLOT="5"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 	# Align with TensorFlow 2.17
 		ABSEIL_CPP_SLOT="20220623"
@@ -139,7 +142,7 @@ python_configure() {
 		GRPC_SLOT="5"
 		PROTOBUF_CPP_SLOT="5"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

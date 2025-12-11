@@ -30,7 +30,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 GRPC_SLOT="5"
 PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..12} )
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
 
@@ -189,7 +189,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	!ci

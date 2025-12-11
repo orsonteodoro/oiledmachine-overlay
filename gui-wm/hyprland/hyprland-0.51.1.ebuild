@@ -8,7 +8,7 @@ EAPI=8
 ABSEIL_CPP_SLOT="20240116"
 CXX_STANDARD=26
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -46,7 +46,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer +qtutils systemd test X
-ebuild_revision_17
+ebuild_revision_18
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.

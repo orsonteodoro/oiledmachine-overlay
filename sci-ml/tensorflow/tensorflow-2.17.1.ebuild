@@ -45,7 +45,7 @@ CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
 PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/third_party/xla/xla/stream_executor/device_description.h#L248
@@ -441,7 +441,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_20
+ebuild_revision_21
 "
 gen_required_use_cuda_targets() {
 	local x

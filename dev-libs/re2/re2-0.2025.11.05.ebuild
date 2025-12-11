@@ -10,7 +10,7 @@ MY_PV="${PV#0.}"
 MY_PV="${MY_PV//./-}"
 
 # Different date format used upstream.
-ABSEIL_CPP_PV="20240116.2"		# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
+ABSEIL_CPP_PV="20250512.1"		# https://github.com/google/re2/blob/2025-11-05/MODULE.bazel#L16
 ABSEIL_CPP_SLOT="${ABSEIL_CPP_PV%.*}"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm cxx"
@@ -19,7 +19,7 @@ CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
-SONAME="11"				# https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
+SONAME="11"				# https://github.com/google/re2/blob/2025-11-05/CMakeLists.txt#L33
 
 inherit libstdcxx-compat
 GCC_COMPAT=(

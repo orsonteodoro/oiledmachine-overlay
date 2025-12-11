@@ -6,7 +6,7 @@ EAPI=8
 CXX_STANDARD=17
 # Python is required for tests and some build tasks.
 PYTHON_COMPAT=( "python3_"{10..14} )
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -43,7 +43,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 IUSE="
 abseil doc examples test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 

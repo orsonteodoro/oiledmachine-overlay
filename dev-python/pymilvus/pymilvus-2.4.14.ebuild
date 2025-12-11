@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bulk_writer dev model
-ebuild_revision_2
+ebuild_revision_3
 "
 gen_grpcio_dev() {
 	local impl
@@ -239,7 +239,7 @@ python_configure() {
 		export GRPC_SLOT="5"
 		export PROTOBUF_CPP_SLOT="5"
 		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
-		export RE2_SLOT="20240116"
+		export RE2_SLOT="20250512"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

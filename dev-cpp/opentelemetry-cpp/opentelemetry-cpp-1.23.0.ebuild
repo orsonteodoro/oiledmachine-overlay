@@ -26,7 +26,7 @@ CXX_STANDARD=17
 GRPC_SLOT="5"
 OPENTELEMETRY_PROTO_PV="1.3.1"
 PROTOBUF_CPP_SLOT="5"
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 inherit abseil-cpp cmake dep-prepare grpc libcxx-slot libstdcxx-slot protobuf re2
 
@@ -53,7 +53,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${_CXX_STANDARD[@]}
 -otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (

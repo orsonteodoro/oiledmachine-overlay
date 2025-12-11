@@ -177,7 +177,7 @@ PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 USE_LTO=0 # Global variable
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 # https://github.com/chromium/chromium/blob/143.0.7499.40/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_MAX_VER="9999" # Corresponds to llvm-21.1
@@ -651,7 +651,7 @@ ${SYSTEM_USE[@]}
 systemd test +wayland
 +webassembly
 -widevine +X
-ebuild_revision_19
+ebuild_revision_20
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="

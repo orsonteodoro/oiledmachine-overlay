@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +keras2
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIREMENTS_RDEPEND="
 	$(python_gen_cond_dep '
@@ -186,13 +186,13 @@ python_configure() {
 		GRPC_SLOT="5"
 		PROTOBUF_CPP_SLOT="5"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	elif has_version "dev-libs/protobuf:6/6.33" ; then
 		ABSEIL_CPP_SLOT="20250512"
 		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
-		RE2_SLOT="20240116"
+		RE2_SLOT="20250512"
 	fi
 	abseil-cpp_python_configure
 	grpc_python_configure # Add grpcio pythonpaths

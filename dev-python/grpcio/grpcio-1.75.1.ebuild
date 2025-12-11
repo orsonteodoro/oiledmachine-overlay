@@ -15,7 +15,7 @@ GRPC_SLOT="6"
 PROTOBUF_CPP_SLOT="6"
 PROTOBUF_PYTHON_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -45,7 +45,7 @@ LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 doc protobuf
-ebuild_revision_9
+ebuild_revision_10
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning

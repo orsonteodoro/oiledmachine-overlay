@@ -26,7 +26,7 @@ OPENTELEMETRY_PV_DEV="1.29.0"
 OPENTELEMETRY_PV_REL="1.27.0"
 OPENTELEMETRY_SLOT_DEV="0/${OPENTELEMETRY_PV_DEV}"
 OPENTELEMETRY_SLOT_REL="0/${OPENTELEMETRY_PV_REL}"
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
@@ -927,7 +927,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 dev
-ebuild_revision_5
+ebuild_revision_6
 "
 gen_grpcio_rdepend_dev() {
 	local impl

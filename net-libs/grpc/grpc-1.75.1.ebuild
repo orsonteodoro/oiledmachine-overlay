@@ -28,7 +28,7 @@ CXX_STANDARD=17
 OPENCENSUS_PROTO_PV="0.3.0"
 PROTOBUF_CPP_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..11} )
-RE2_SLOT="20240116"
+RE2_SLOT="20250512"
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby32 ruby33 ruby34"
 
@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE+="
 	python? (
