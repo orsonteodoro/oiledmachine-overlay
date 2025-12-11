@@ -4,16 +4,16 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
-CXX_STANDARD=11
+CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened cmake libcxx-slot libstdcxx-slot
