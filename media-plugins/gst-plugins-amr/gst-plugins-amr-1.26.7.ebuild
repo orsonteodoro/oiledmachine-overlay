@@ -16,7 +16,7 @@ DESCRIPTION="AMRNB encoder/decoder and AMRWB decoder plugin for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="GPL-2"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=media-libs/opencore-amr-0.1.3[${MULTILIB_USEDEP}]
