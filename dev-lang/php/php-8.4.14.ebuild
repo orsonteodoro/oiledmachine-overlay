@@ -26,12 +26,12 @@ WANT_AUTOMAKE="none"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 # ARM/Windows functions (bug 923335)
@@ -116,7 +116,7 @@ trainer-ext-reflection
 trainer-ext-spl
 trainer-ext-standard
 trainer-zend
-ebuild_revision_18
+ebuild_revision_20
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
