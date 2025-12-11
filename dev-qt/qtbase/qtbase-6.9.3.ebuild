@@ -14,12 +14,12 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 QT6_HAS_STATIC_LIBS=1
@@ -46,7 +46,10 @@ declare -A QT6_IUSE=(
 
 	[optfeature]="nls" #810802
 )
-IUSE="${QT6_IUSE[*]}"
+IUSE="
+${QT6_IUSE[*]}
+ebuild_revision_2
+"
 REQUIRED_USE="
 	?? ( journald syslog )
 	$(
