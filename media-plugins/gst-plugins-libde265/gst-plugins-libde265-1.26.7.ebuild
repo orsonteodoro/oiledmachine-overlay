@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 inherit cflags-hardened gstreamer-meson
@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="H.265 decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=media-libs/libde265-0.9[${MULTILIB_USEDEP}]
