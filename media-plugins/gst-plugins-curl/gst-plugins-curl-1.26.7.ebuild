@@ -14,7 +14,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 DESCRIPTION="cURL network source and sink for GStreamer"
 IUSE="
 ssh
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	>=net-misc/curl-7.55.0[${MULTILIB_USEDEP},ssh?]
