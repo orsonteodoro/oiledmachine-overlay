@@ -3,19 +3,19 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CI DOS HO ID IO NPD OOBA OOBR OOBW SO UAF UV UB" # UV = Uninitalized Value
 CXX_STANDARD=17
 QA_PKGCONFIG_VERSION=$(ver_cut 1-3)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit autotools cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot
@@ -41,7 +41,10 @@ LICENSE="imagemagick"
 # Please check this on bumps, SONAME is often not updated! Use abidiff on old/new.
 # If ABI is broken, change the bit after the '-'.
 SLOT="0/$(ver_cut 1-3)-18"
-IUSE="bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heif jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf X xml zip zlib"
+IUSE="
+bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heif jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf X xml zip zlib
+ebuild_revision_2
+"
 
 REQUIRED_USE="
 	corefonts? ( truetype )
