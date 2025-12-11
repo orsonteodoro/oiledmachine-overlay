@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="X11 video capture stream plugin for GStreamer"
 IUSE="
-ebuild_revision_14
+ebuild_revision_16
 "
 RDEPEND="
 	x11-libs/libX11[${MULTILIB_USEDEP}]
