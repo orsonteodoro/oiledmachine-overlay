@@ -5,11 +5,22 @@
 
 EAPI=8
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
 # See https://chromium.googlesource.com/libyuv/libyuv/+log/refs/heads/main/README.chromium for activity
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=17 # Compiler default
 EGIT_COMMIT="500f45652c459cfccd20f83f297eb66cb7b015cb"
 
-inherit cflags-hardened cmake multilib-minimal
+inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 S="${WORKDIR}/${P}"
@@ -39,8 +50,10 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	test? (
-		dev-cpp/gflags[${MULTILIB_USEDEP}]
-		dev-cpp/gtest[${MULTILIB_USEDEP}]
+		dev-cpp/gflags[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/gflags:=
+		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/gtest:=
 		virtual/jpeg[${MULTILIB_USEDEP}]
 	)
 "
@@ -52,6 +65,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1922-cmake-libdir.patch"
 )
 DOCS=( "AUTHORS" "LICENSE" "PATENTS" "README.chromium" "README.md" )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	mkdir -p "${P}" || die

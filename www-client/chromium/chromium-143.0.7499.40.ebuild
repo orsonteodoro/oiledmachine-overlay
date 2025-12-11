@@ -1361,7 +1361,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/libvpx-1.15.2[${MULTILIB_USEDEP}]
 	)
 	system-libyuv? (
-		>=media-libs/libyuv-1922[${MULTILIB_USEDEP}]
+		>=media-libs/libyuv-1922[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		media-libs/libyuv:=
 	)
 	system-re2? (
@@ -1373,7 +1373,7 @@ COMMON_SNAPSHOT_DEPEND="
 		app-arch/snappy:=
 	)
 	system-simdutf? (
-		>=dev-cpp/simdutf-7.3.3
+		>=dev-cpp/simdutf-7.3.3[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-cpp/simdutf:=
 	)
 	system-spirv-tools? (
