@@ -14,7 +14,7 @@ CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
 CXX_STANDARD=17
 
-CHROMIUM_BROWSER_VER="142.0.7444.175"
+CHROMIUM_BROWSER_VER="143.0.7499.40"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -390,6 +390,6 @@ elog "Please remove the package after use from the system to avoid"
 elog "weaponization or misuse."
 elog
 elog "${PN}'s Chromium version:  ${QT6_CHROMIUM_VER} (Jan 6, 2025; Week 1)"
-elog "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (Nov 14, 2025; Week 47)"
+elog "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (Nov 19, 2025; Week 47)"
 elog
 }
