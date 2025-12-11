@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 inherit flag-o-matic cflags-hardened optfeature strip-linguas xdg
 
@@ -23,7 +23,10 @@ fi
 LICENSE="GPL-2+ HPND LGPL-2+ LGPL-2.1+"
 SLOT="0"
 
-IUSE="+vte wayland X"
+IUSE="
++vte wayland X
+ebuild_revision_2
+"
 
 BDEPEND="virtual/pkgconfig"
 RDEPEND="
