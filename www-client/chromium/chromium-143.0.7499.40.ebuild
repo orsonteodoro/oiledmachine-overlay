@@ -1282,7 +1282,7 @@ COMMON_SNAPSHOT_DEPEND="
 		)
 	)
 	system-abseil-cpp? (
-		dev-cpp/abseil-cpp:20251021[${MULTILIB_USEDEP}]
+		dev-cpp/abseil-cpp:20251021[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-cpp/abseil-cpp:=
 	)
 	system-brotli? (
@@ -1322,7 +1322,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/icu:=
 	)
 	system-jsoncpp? (
-		>=dev-libs/jsoncpp-1.9.6[${MULTILIB_USEDEP}]
+		>=dev-libs/jsoncpp-1.9.6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/jsoncpp:=
 	)
 	system-libaom? (
@@ -1377,7 +1377,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-cpp/simdutf:=
 	)
 	system-spirv-tools? (
-		>=dev-util/spirv-tools-${VULKAN_PV}[${MULTILIB_USEDEP}]
+		>=dev-util/spirv-tools-${VULKAN_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-util/spirv-tools:=
 	)
 	system-woff2? (
