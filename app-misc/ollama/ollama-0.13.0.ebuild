@@ -45,7 +45,7 @@ EAPI=8
 #
 
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
+CFLAGS_HARDENED_USE_CASES="security-critical daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 CXX_STANDARD=17
 EGO_PN="github.com/ollama/ollama"
 GEN_EBUILD=0
@@ -3031,7 +3031,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_101
+ebuild_revision_102
 "
 
 gen_rocm_required_use() {
@@ -3567,7 +3567,9 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 		fi
 		rocm_pkg_setup
-		rocm_set_default_hipcc
+
+	# GCC required to avoid ggml-cpu.c:535:21: error: address argument to atomic operation must be a pointer to a trivially-copyable type
+		rocm_set_default_gcc
 	elif tc-is-clang ; then
 		use_clang
 	else
