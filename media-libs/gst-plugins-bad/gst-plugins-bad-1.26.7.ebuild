@@ -15,7 +15,7 @@ EAPI=8
 
 # Baseline requirement for libva is 1.6, but 1.10 gets more features
 
-CFLAGS_HARDENED_USE_CASES="network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE BO SO"
 GST_ORG_MODULE="gst-plugins-bad"
 PATENT_STATUS=(
@@ -45,7 +45,7 @@ ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
-ebuild_revision_17
+ebuild_revision_19
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
