@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE PE"
 
 inherit autotools cflags-hardened flag-o-matic pam tmpfiles
@@ -29,7 +29,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE="
 debug nethack pam selinux utempter multiuser
-ebuild_revision_10
+ebuild_revision_12
 "
 DEPEND="
 	>=sys-libs/ncurses-5.2:=
