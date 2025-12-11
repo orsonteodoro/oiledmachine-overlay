@@ -1290,7 +1290,7 @@ COMMON_SNAPSHOT_DEPEND="
 		app-arch/brotli:=
 	)
 	system-crc32c? (
-		>=dev-libs/crc32c-1.0.7[${MULTILIB_USEDEP}]
+		>=dev-libs/crc32c-1.0.7[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/crc32c:=
 	)
 	system-dav1d? (
