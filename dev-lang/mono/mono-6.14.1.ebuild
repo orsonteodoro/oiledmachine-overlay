@@ -21,7 +21,7 @@ EAPI=8
 CFLAGS_HARDENED_ASSEMBLERS="inline yasm"
 CFLAGS_HARDENED_CI_SANITIZERS="tsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_USE_CASES="jit language-runtime sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS PE RC UAF"
 CHECKREQS_DISK_BUILD="4500M"
 NABIS=0 # Global variable not constant
@@ -207,7 +207,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_18
+ebuild_revision_20
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
