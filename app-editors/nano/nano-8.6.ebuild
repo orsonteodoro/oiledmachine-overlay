@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANGS="asm c-lang"
-CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 # gnulib FPs \
 QA_CONFIG_IMPL_DECL_SKIP=( "unreachable" "MIN" "static_assert" )
@@ -38,7 +38,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 debug justify magic minimal ncurses nls +spell unicode
-ebuild_revision_16
+ebuild_revision_18
 "
 REQUIRED_USE="
 	magic? (
