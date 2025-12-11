@@ -8,13 +8,13 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 
 # See godot-editor for additional hardening comments
 # Hardening is applied to protect password code paths.
 # There is an open_encrypted_with_pass() API that these bindings makes available.
-CFLAGS_HARDENED_USE_CASES="network server sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical server sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=14
 LLVM_COMPAT=( "17" )
@@ -57,7 +57,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android +debug-export-template-plugin -debug-game-engine web
-ebuild_revision_19
+ebuild_revision_21
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
