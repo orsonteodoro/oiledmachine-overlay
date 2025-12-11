@@ -3568,7 +3568,10 @@ ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 		fi
 		rocm_pkg_setup
 
-	# GCC required to avoid ggml-cpu.c:535:21: error: address argument to atomic operation must be a pointer to a trivially-copyable type
+# GCC required to avoid this error:
+# /var/tmp/portage/app-misc/ollama-0.13.0/work/ollama-0.13.0/ml/backend/ggml/ggml/src/ggml-cpu/ggml-cpu.c:535:21: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('atomic_int *' (aka '_Atomic(int) *') invalid)
+#   535 |     int n_threads = atomic_load_explicit(&tp->n_threads_cur, memory_order_relaxed);
+#       |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		rocm_set_default_gcc
 	elif tc-is-clang ; then
 		use_clang
