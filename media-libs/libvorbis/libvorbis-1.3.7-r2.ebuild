@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IO OOBR"
 
 inherit autotools cflags-hardened multilib-minimal
@@ -15,7 +15,10 @@ SRC_URI="https://downloads.xiph.org/releases/vorbis/${P}.tar.xz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="static-libs test"
+IUSE="
+static-libs test
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="virtual/pkgconfig"
