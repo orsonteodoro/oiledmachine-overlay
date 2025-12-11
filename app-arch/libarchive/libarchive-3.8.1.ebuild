@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBARCHIVE="CE DOS HO IO MC NPD OOBA OOBR PT RC UAF UB"
 
 inherit cflags-hardened libtool multilib-minimal toolchain-funcs verify-sig
@@ -24,6 +24,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
+	ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
