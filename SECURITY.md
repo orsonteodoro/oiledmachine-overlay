@@ -306,8 +306,8 @@ their own threat model and apply their own hardening.
 | Threat level | Name              | Hardening applied [2][3][4] | Ideas and packages affected                                           |
 | ---          | ---               | ---                         | ---                                                                   |
 | S0           | security-critical | Full hardening [1]          | End-to-end clipboard chain hardening for passwords used by password managers, image/video/web codecs and packages, core OS components needed to upgrade or login, secure communication, password managers and dependencies, developer/source-code integrity, web browser and dependencies against RCE (Remote Code Execution) and attack primitives, detailed security credentials, sandboxes and security software, crown jewels and master password |
-| S1           | untrusted-data    | Balanced hardening [1]      | Non web codecs or non zero-click codecs, servers, packages that process web data |
-| S2           | sensitive-data    | Weak hardening              | Packages that could process medical data, explicit content, temporal passwords |
+| S1           | untrusted-data    | Balanced hardening [1]      | Non web codecs or non zero-click codecs, servers, packages that process web data, social media and casual messaging, untrusted explicit content |
+| S2           | sensitive-data    | Weak hardening              | Packages that could process medical data, your explicit content, temporal passwords |
 | S3           | safe-zone         | None, performance critical  | Ebuilds without [cflags-hardened](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or [rustflags-hardened](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass) treatment       |
 
 * [1] Sandboxing is recommended and assumed used in the model
