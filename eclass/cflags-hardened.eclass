@@ -647,6 +647,7 @@ _cflags-hardened_is_spectre_v1_vulnerable() {
 	else
 		return 1
 	fi
+}
 
 # @FUNCTION: _cflags-hardened_is_sls_vulnerable
 # @DESCRIPTION:
@@ -675,7 +676,7 @@ _cflags-hardened_is_sls_vulnerable() {
 			# For Arm, lscpu shows "Model name" or "CPU part" in newer versions
 			# Common vulnerable parts: Cortex-A76 (0xd0a), A77 (0xd0b), Neoverse N1 (0xd0c), etc.
 			local model_line
-			model_line=$(lscpu | grep -E -e "^(Model name|CPU part)" | head -n1)
+			model_line=$(lscpu | grep -E -e "^(Model name|CPU part)" | head -n 1)
 
 			if echo "${model_line}" | grep -q -i -E -e "cortex-a76|cortex-a77|neoverse-n1|neoverse-v1"; then
 				return 0   # Known vulnerable Arm cores
@@ -700,7 +701,7 @@ _cflags-hardened_is_sls_vulnerable() {
 		*)
 			# Unknown architecture → be conservative and assume vulnerable
 			return 0
-		;;
+			;;
 	esac
 }
 
@@ -1812,7 +1813,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"untrusted-data"\
 |"web-browser")\
 		]] \
-				&& \
+			&& \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
 			&& \
 		_cflags-hardened_is_spectre_v1_vulnerable \
