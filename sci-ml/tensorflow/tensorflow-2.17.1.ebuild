@@ -441,7 +441,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_21
+ebuild_revision_23
 "
 gen_required_use_cuda_targets() {
 	local x
