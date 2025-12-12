@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANG="asm c-lang"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IU OOBA OOBR OOBW PE UAF"
 
 inherit cflags-hardened flag-o-matic xorg-meson
@@ -21,7 +21,7 @@ fi
 IUSE_SERVERS="xephyr xnest xorg xvfb"
 IUSE="
 ${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
