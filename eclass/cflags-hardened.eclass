@@ -1693,9 +1693,9 @@ einfo "All SSP hardening (All functions hardened)"
 	# DT - minor help
 	# DoS - best help
 		filter-flags "-m*harden-sls=*"
-		append-flags "-mharden-sls=all"
-		CFLAGS_HARDENED_CFLAGS+=" -mharden-sls=all"
-		CFLAGS_HARDENED_CXXFLAGS+=" -mharden-sls=all"
+		append-flags $(test-flags-CC "-mharden-sls=all")
+		CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-mharden-sls=all")
+		CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-mharden-sls=all")
 	elif \
 		[[ \
 			"${CFLAGS_HARDENED_SLS:-1}" == "1" \
@@ -1733,9 +1733,9 @@ einfo "All SSP hardening (All functions hardened)"
 	# DT - almost no help
 	# DoS - minor help
 		filter-flags "-m*harden-sls=*"
-		append-flags "-mharden-sls=return"
-		CFLAGS_HARDENED_CFLAGS+=" -mharden-sls=return"
-		CFLAGS_HARDENED_CXXFLAGS+=" -mharden-sls=return"
+		append-flags $(test-flags-CC "-mharden-sls=return")
+		CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-mharden-sls=return")
+		CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-mharden-sls=return")
 	fi
 
 	if \
