@@ -303,16 +303,19 @@ by setting CFLAGS_HARDENED_DISABLED=1 and RUSTFLAGS_HARDENED_DISABLED=1 in
 /etc/portage/make.conf.  Users or organizations can also disable and design
 their own threat model and apply their own hardening.
 
-| Threat level | Name              | Hardening applied [2][3][4] | Ideas and packages affected                                                                        |
-| ---          | ---               | ---                         | ---                                                                                                |
-| S0           | security-critical | Full hardening [1]          | End-to-end clipboard chain hardening for passwords used by password managers,                      |
-|              |                   |                             | image/video/web codecs and packages, core OS components needed to upgrade or login,                |
-|              |                   |                             | secure communication, password managers and dependencies, developer/source-code integrity,         |
-|              |                   |                             | web browser and dependencies against RCE (Remote Code Execution) and attack primitives             |
-|              |                   |                             | security credentials                                                                               |
-| S1           | untrusted-data    | Balanced hardening [1]      | Non web codecs or non zero-click codecs, servers, packages that process web data                   |
-| S2           | sensitive-data    | Weak hardening              | Medical data, explicit content, passwords                                                          |
-| S4           | safe-zone         | None, performance critical  | Ebuilds without cflags-hardened or rustflags-hardened treatment                                    |
+| Threat level | Name              | Hardening applied [2][3][4] | Ideas and packages affected                                          |
+| ---          | ---               | ---                         | ---                                                                  |
+| S0           | security-critical | Full hardening [1]          | End-to-end clipboard chain hardening for passwords used by password, |
+|              |                   |                             | managers, image/video/web codecs and packages, core OS components    |
+|              |                   |                             | needed to upgrade or login, secure communication, password managers  |
+|              |                   |                             | and dependencies, developer/source-code integrity, web browser and   |
+|              |                   |                             | dependencies against RCE (Remote Code Execution) and attack          |
+|              |                   |                             | primitives, detailed security credentials                            |
+| S1           | untrusted-data    | Balanced hardening [1]      | Non web codecs or non zero-click codecs, servers, packages that      |
+|              |                   |                             | process web data                                                     |
+| S2           | sensitive-data    | Weak hardening              | Packages that could process medical data, explicit content,          |
+|              |                   |                             | passwords                                                            |
+| S4           | safe-zone         | None, performance critical  | Ebuilds without cflags-hardened or rustflags-hardened treatment      |
 
 [1] Sandboxing is recommended and assumed used in the model
 [2] When an ebuild has multiple hardening listed, it means it is additive but security-critical means to apply all of them based on the tolerance level.
