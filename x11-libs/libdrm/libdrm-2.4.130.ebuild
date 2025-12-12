@@ -27,7 +27,11 @@ done
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="${IUSE_VIDEO_CARDS} doc test tools udev valgrind"
+IUSE="
+${IUSE_VIDEO_CARDS}
+doc test tools udev valgrind
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
