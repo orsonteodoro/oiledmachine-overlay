@@ -21,7 +21,10 @@ LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 
-IUSE="debug examples gtk-doc +introspection sysprof test X"
+IUSE="
+debug examples gtk-doc +introspection sysprof test X
+ebuild_revision_2
+"
 REQUIRED_USE="gtk-doc? ( introspection )"
 RESTRICT="!test? ( test )"
 
