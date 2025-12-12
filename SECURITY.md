@@ -328,8 +328,10 @@ their own threat model and apply their own hardening.
 ```
 # Example of per-package hardening
 # Contents of /etc/portage/env/bar.conf
-RUSTFLAGS_HARDENED_TOLERANCE_USER="1.60"
-CFLAGS_HARDENED_TOLERANCE_USER="1.60"
+# Setting to 2.00, one could enable -ftrapv which is a poor man's UBSan.
+# Setting to 2.00 means that task completion will take about twice as long on the worst case.
+RUSTFLAGS_HARDENED_TOLERANCE_USER="2.00"
+CFLAGS_HARDENED_TOLERANCE_USER="2.00"
 
 # Contents of /etc/portage/package.env:
 foo/bar bar.conf
