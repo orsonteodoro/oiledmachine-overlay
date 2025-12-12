@@ -578,20 +578,20 @@ eerror "Set FIRMWARE_VENDOR as the fallback corresponding to the CPU manufacture
 			_check_y "INIT_STACK_NONE"
 		fi
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
-		_check_n "INIT_STACK_ALL_PATTERN"
-		_check_n "INIT_STACK_ALL_ZERO"
 		_check_n "GCC_PLUGIN_STACKLEAK"
 		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF"
 		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 		_check_n "GCC_PLUGIN_STRUCTLEAK_USER"
+		_check_n "INIT_STACK_ALL_PATTERN"
+		_check_n "INIT_STACK_ALL_ZERO"
 		_check_y "INIT_STACK_NONE"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-		_check_n "INIT_STACK_ALL"
-		_check_y "INIT_STACK_NONE"
 		_check_n "GCC_PLUGIN_STRUCTLEAK"
 		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF"
 		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 		_check_n "GCC_PLUGIN_STRUCTLEAK_USER"
+		_check_n "INIT_STACK_ALL"
+		_check_y "INIT_STACK_NONE"
 	fi
 	if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 		# COMPILE_TEST is not default ON.
