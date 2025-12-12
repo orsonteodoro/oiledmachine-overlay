@@ -310,11 +310,20 @@ their own threat model and apply their own hardening.
 | S2           | sensitive-data    | Weak hardening              | Packages that could process medical data, explicit content, passwords |
 | S4           | safe-zone         | None, performance critical  | Ebuilds without cflags-hardened or rustflags-hardened treatment       |
 
-[1] Sandboxing is recommended and assumed used in the model
-[2] When an ebuild has multiple hardening listed, it means it is additive but security-critical means to apply all of them based on the tolerance level.
-[3] Users can control the tolerance level per package or the systemwide default.  The systemwide default can be controled by adding and controlling
-    CFLAGS_HARDENED_TOLERANCE or RUSTFLAGS_HARDENED_TOLERANCE to /etc/portage/make.conf.  The per-package override can be controlled by
-    CFLAGS_HARDENED_TOLERANCE_USER or RUSTFLAGS_HARDENED_TOLERANCE_USER and adding the line to /etc/portage/package.env.
+* [1] Sandboxing is recommended and assumed used in the model
+* [2] When an ebuild has multiple hardening listed, it means it is additive but
+      security-critical means to apply all of them based on the tolerance level.
+* [3] Users can control the tolerance level per package or the systemwide
+      default.  The systemwide default can be controled by adding and
+      controlling CFLAGS_HARDENED_TOLERANCE or RUSTFLAGS_HARDENED_TOLERANCE to
+      /etc/portage/make.conf.  The per-package override can be controlled by
+      CFLAGS_HARDENED_TOLERANCE_USER or RUSTFLAGS_HARDENED_TOLERANCE_USER and
+      adding the line to /etc/portage/package.env.
+* [4] In a realtime-safe configuration, it is recommended to use
+      CFLAGS_HARDENED_TOLERANCE="1.05" or less as the system default and
+      remove the crashy hardening flags to maximize availability, and
+      also to disable exceptions and disable the compiler default ON
+      hardening which may have a worst case performance above 5%.
 
 ```
 # Example of per-package hardening
