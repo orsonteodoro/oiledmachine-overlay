@@ -35,12 +35,12 @@ CXX_STANDARD=17 # Originally 14 which is equivalent to build files auto
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CFLAGS_HARDENED_USE_CASES="server untrusted-data"
@@ -73,7 +73,7 @@ ${_CXX_STANDARD[@]}
 ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +cgi -cxx +caching debug doc -duktape +ipv6 -lua -serve_no_files
 +server_executable -server_stats +ssl static-libs -test -websockets -zlib
-ebuild_revision_16
+ebuild_revision_18
 "
 REQUIRED_USE+="
 	lua? (
