@@ -295,3 +295,37 @@ DO NOT SEND AN ISSUE REQUEST.
 
 See also https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
 
+## Threat model
+
+The current threat model is a 4 category threat model.  This threat model is
+unique to this overlay, default on, and automatic opt-in.  Users can opt-out
+by setting CFLAGS_HARDENED_DISABLED=1 and RUSTFLAGS_HARDENED_DISABLED=1 in
+/etc/portage/make.conf.  Users or organizations can also disable and design
+their own threat model and apply their own hardening.
+
+| Label | Name              | Hardening applied [2][3][4] | Ideas and packages affected                                                                        |
+| ---   | ---               | ---                         | ---                                                                                                |
+| S0    | security-critical | Full hardening [1]          | End-to-end clipboard chain hardening for passwords used by password managers,                      |
+|       |                   |                             | image/video/web codecs and packages, core OS components needed to upgrade or login,                |
+|       |                   |                             | secure communication, password managers and dependencies, developer/source-code integrity,         |
+|       |                   |                             | web browser and dependencies against RCE (Remote Code Execution) and attack primitives             |
+|       |                   |                             | security credentials                                                                               |
+| S1    | untrusted-data    | Balanced hardening [1]      | Non web codecs or non zero-click codecs, servers, packages that process web data                   |
+| S2    | sensitive-data    | Weak hardening              | Medical data, explicit content, passwords                                                          |
+| S4    | safe-zone         | None, performance critical  | Ebuilds without cflags-hardened or rustflags-hardened treatment                                    |
+
+[1] Sandboxing is recommended and assumed used in the model
+[2] When an ebuild has multiple hardening listed, it means it is additive but security-critical means to apply all of them based on the tolerance level.
+[3] Users can control the tolerance level per package or the systemwide default.  The systemwide default can be controled by adding and controlling
+    CFLAGS_HARDENED_TOLERANCE or RUSTFLAGS_HARDENED_TOLERANCE to /etc/portage/make.conf.  The per-package override can be controlled by
+    CFLAGS_HARDENED_TOLERANCE_USER or RUSTFLAGS_HARDENED_TOLERANCE_USER and adding the line to /etc/portage/package.env.
+
+```
+# Example of per-package hardening
+# Contents of /etc/portage/env/bar.conf
+RUSTFLAGS_HARDENED_TOLERANCE_USER="1.60"
+CFLAGS_HARDENED_TOLERANCE_USER="1.60"
+
+# Contents of /etc/portage/package.env:`
+foo/bar bar.conf
+```
