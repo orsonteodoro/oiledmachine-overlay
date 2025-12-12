@@ -13,7 +13,7 @@ EAPI=8
 
 # Add retpoline for end-to-end copy-paste
 CFLAGS_HARDENED_LANGS="c-lang"
-CFLAGS_HARDENED_USE_CASES="copy-paste-password sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS IO OOBR OOBW PE"
 XORG_DOC=doc
 XORG_MULTILIB=yes
@@ -28,7 +28,7 @@ KEYWORDS="
 DESCRIPTION="X.Org X11 library"
 IUSE="
 test
-ebuild_revision_8
+ebuild_revision_10
 "
 RESTRICT="
 	!test? (
