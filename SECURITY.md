@@ -314,9 +314,9 @@ their own threat model and apply their own hardening.
 * [2] When an ebuild has multiple hardening listed, it means it is additive but
       security-critical means to apply all of them based on the tolerance level.
 * [3] Users can control the tolerance level per package or the systemwide
-      default.  The systemwide default can be controled by adding and
-      controlling CFLAGS_HARDENED_TOLERANCE or RUSTFLAGS_HARDENED_TOLERANCE to
-      /etc/portage/make.conf.  The per-package override can be controlled by
+      default.  The systemwide default can be changed by adding and
+      controlling the CFLAGS_HARDENED_TOLERANCE or RUSTFLAGS_HARDENED_TOLERANCE
+      in /etc/portage/make.conf.  The per-package override can be controlled by
       CFLAGS_HARDENED_TOLERANCE_USER or RUSTFLAGS_HARDENED_TOLERANCE_USER and
       adding the line to /etc/portage/package.env.
 * [4] In a realtime-safe configuration, it is recommended to use
