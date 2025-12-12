@@ -160,7 +160,7 @@ BUILD_OBJ_DIR="" # global var not const
 CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 CXX_STANDARD=17
 RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
@@ -417,7 +417,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_19
+ebuild_revision_21
 "
 # telemetry disabled for crypto/security reasons
 
