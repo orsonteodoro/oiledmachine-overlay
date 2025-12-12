@@ -736,7 +736,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 	fi
 	if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-			_check_y "SLS"
+			if grep -q -E -e "^CONFIG_CC_HAS_SLS=y" "${path_config}" ; then
+				_check_y "SLS"
+			else
+				_check_n "SLS"
+			fi
 		fi
 	fi
 	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
@@ -787,7 +791,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 		if [[ "${arch}" == "x86_64" ]] ; then
 			_check_y "MITIGATION_PAGE_TABLE_ISOLATION"
-			_check_y "MITIGATION_SLS"
+			if grep -q -E -e "^CONFIG_CC_HAS_SLS=y" "${path_config}" ; then
+				_check_y "MITIGATION_SLS"
+			else
+				_check_n "MITIGATION_SLS"
+			fi
 			_check_y "MITIGATION_RETHUNK"
 			if [[ "${firmware_vendor}" == "amd" ]] ; then
 				_check_y "MITIGATION_SRSO"
