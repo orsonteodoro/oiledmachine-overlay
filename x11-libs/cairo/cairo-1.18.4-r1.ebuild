@@ -18,7 +18,7 @@ EAPI=8
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan"
 CFLAGS_HARDENED_LANGS="asm c-lang"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD OOBR OOBW UAF"
 PYTHON_COMPAT=( "python3_"{11..12} )
 TRAIN_NO_X_DEPENDS=1
@@ -58,7 +58,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 X aqua debug gles2-only gles3 +glib gtk-doc lzo opengl spectre test
-ebuild_revision_11
+ebuild_revision_13
 "
 REQUIRED_USE="
 	gles2-only? (
