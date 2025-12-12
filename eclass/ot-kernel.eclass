@@ -1242,7 +1242,15 @@ ot-kernel_pkg_pretend() {
 # Reports the estimated End Of Life (EOL).  Sourced from
 # https://www.kernel.org/category/releases.html
 _report_eol() {
-	if [[ "${KV_MAJOR_MINOR}" == "6.12" ]] ; then
+	if [[ "${KV_MAJOR_MINOR}" == "6.18" ]] ; then
+einfo
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
+einfo "Dec 2027."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
+	elif [[ "${KV_MAJOR_MINOR}" == "6.12" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2026."
@@ -1443,6 +1451,7 @@ ot-kernel_use() {
 # Perform checks, warnings, and initialization before emerging
 ot-kernel_pkg_setup() {
 	dhms_start
+
 ewarn
 ewarn "The defaults use cfs (or the stock CPU scheduler) per build"
 ewarn "configuration."
@@ -4799,9 +4808,35 @@ ewarn "Hibernation is going to be disabled."
 
 ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
-			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
+			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+			elif [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+			else
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
+			fi
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			if [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
+				ot-kernel_y_configopt     "CC_HAS_AUTO_VAR_INIT"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+			else
+				ot-kernel_unset_configopt "CC_HAS_AUTO_VAR_INIT"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
+			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"	# Production symbol.  The option's help does mention cold boot attacks.
@@ -5879,24 +5914,30 @@ eerror
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			ot-kernel_unset_configopt "CC_HAS_AUTO_VAR_INIT"
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
@@ -5934,9 +5975,8 @@ eerror
 		ot-kernel_y_configopt "CONFIG_SLAB_MERGE_DEFAULT"
 		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
 		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
-		if tc-is-gcc ; then
-			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
-		fi
+		ot-kernel_unset_configopt "CC_HAS_ZERO_CALL_USED_REGS"
+		ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
@@ -6138,44 +6178,47 @@ eerror
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
+			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			else
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
-			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+			ot-kernel_unset_configopt "CC_HAS_AUTO_VAR_INIT"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
+			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 			# CONFIG_COMPILE_TEST is not default ON.
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
-			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
+			ot-kernel_y_configopt     "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 		fi
@@ -6199,7 +6242,11 @@ eerror
 		ot-kernel_y_configopt "CONFIG_SLAB_MERGE_DEFAULT"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
-		if tc-is-gcc ; then
+		if [[ $(test-flags-CC "-fzero-call-used-regs=used-gpr") == "-fzero-call-used-regs=used-gpr" ]] ; then
+			ot-kernel_y_configopt "CC_HAS_ZERO_CALL_USED_REGS"
+			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
+		else
+			ot-kernel_unset_configopt "CC_HAS_ZERO_CALL_USED_REGS"
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
@@ -6433,87 +6480,113 @@ ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
+			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			elif grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+			elif [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			elif grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_y_configopt     "CONFIG_GCC_PLUGIN_STACKLEAK"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+				ot-kernel_y_configopt     "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			else
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			fi
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
+			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+			elif [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			elif grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
+				ot-kernel_y_configopt     "CONFIG_GCC_PLUGIN_STACKLEAK"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+				ot-kernel_y_configopt     "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			else
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			fi
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+			if [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
+				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			elif grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT"
+				ot-kernel_y_configopt     "CONFIG_GCC_PLUGIN_STRUCTLEAK"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+				ot-kernel_y_configopt     "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			else
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
+				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			fi
 		fi
 
@@ -6576,8 +6649,12 @@ eerror
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_RANDOM"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
-		if tc-is-gcc ; then
+		if [[ $(test-flags-CC "-fzero-call-used-regs=used-gpr") == "-fzero-call-used-regs=used-gpr" ]] ; then
+			ot-kernel_y_configopt "CC_HAS_ZERO_CALL_USED_REGS"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
+		else
+			ot-kernel_unset_configopt "CC_HAS_ZERO_CALL_USED_REGS"
+			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-3}" =~ ("1"|"2"|"3"|"custom"|"manual") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
