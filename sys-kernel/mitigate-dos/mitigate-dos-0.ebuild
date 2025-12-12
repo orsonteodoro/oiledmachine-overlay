@@ -619,7 +619,9 @@ eerror "Set FIRMWARE_VENDOR as the fallback corresponding to the CPU manufacture
 	_check_y "SLAB_MERGE_DEFAULT"
 	_check_y "STACKPROTECTOR"
 	_check_y "STACKPROTECTOR_STRONG"
-	if tc-is-gcc ; then
+	if grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
+		_check_y "ZERO_CALL_USED_REGS"
+	else
 		_check_n "ZERO_CALL_USED_REGS"
 	fi
 	_check_n "SCHED_CORE"
