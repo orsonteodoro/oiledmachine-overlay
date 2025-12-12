@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_CI_SANITIZERS="asan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="14"
 CFLAGS_HARDENED_LANGS="c-lang"
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO IU MC NPD OOBR OOBW SO"
 
 inherit cflags-hardened gnome.org gnome2-utils meson-multilib multilib xdg
@@ -26,7 +26,7 @@ LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="
 gtk-doc +introspection gif jpeg test tiff
-ebuild_revision_13
+ebuild_revision_15
 "
 RESTRICT="
 	!test? (
