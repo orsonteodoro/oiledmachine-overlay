@@ -160,10 +160,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mfunction-return=thunk-extern        1.01 -  1.05
 # -mfunction-return=thunk-inline        1.01 -  1.03
 # -mfunction-return=thunk               1.01 -  1.05
-# -mharden-sls=all                      1.00          # security-critical    ; estimated security score 99
-# -mharden-sls=indirect-jmp             1.00          # balanced             ; estimated security score 65
-# -mharden-sls=none                     1.00          # performance-critical ; estimated security score 0
-# -mharden-sls=return                   1.00          # balanced             ; estimated security score 88
+# -mharden-sls=all                              1.00          # security-critical    ; estimated security score 99
+# -mharden-sls=indirect-jmp                     1.00          # balanced             ; estimated security score 65
+# -mharden-sls=none                             1.00          # performance-critical ; estimated security score 0
+# -mharden-sls=return                           1.00          # balanced             ; estimated security score 88
 # -mindirect-branch=ibrs                1.01 -  1.10
 # -mindirect-branch=thunk               1.05 -  1.30
 # -mindirect-branch=thunk-inline        1.03 -  1.25
@@ -171,6 +171,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mindirect-branch-register            1.05 -  1.30
 # -mretpoline                           1.10 -  1.30
 # -mretpoline-external-thunk            1.15 -  1.35
+# -fstrict-flex-arrays=0                        1.00          # performance-critical ; estimated security score 0  (compiler, default)
+# -fstrict-flex-arrays=1                        1.00          # balanced             ; estimated security score 55
+# -fstrict-flex-arrays=2                        1.00          # balanced             ; estimated security score 78
+# -fstrict-flex-arrays=3                        1.00          # security-critical    ; estimated security score 98 (kernel default)
 # -fvtable-verify=preinit               1.06 -  1.16
 # -fvtable-verify=std                   1.05 -  1.15
 # -Wa,--noexecstack                             1.00
@@ -212,6 +216,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # credentials (access tokens, ssh keys)
 # crypto
 # daemon
+# database
 # dss (e.g. cryptocurrency, finance)
 # extension
 # facial-embedding (e.g. aka facial recogniton key)
@@ -478,7 +483,20 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SLS_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of SLS detection always true for porting from builder machine to SLS vulnerable.
+# Make automagic of SLS detection always true for porting from builder machine to affected CPU when building bootdisk or portable Live CD/USB.
+# Valid values: 1, 0, unset
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V1
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable Spectre v1 mitigation
+# This option may have issues if deployed systemwide.
+# Valid values: 1, 0 (default), unset
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V1_FORCE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Make automagic of Spectre v1 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @FUNCTION: _cflags-hardened_compiler_arch
@@ -618,6 +636,18 @@ _cflags-hardened_has_cet() {
 	fi
 }
 
+# @FUNCTION: _cflags-hardened_is_spectre_v1_vulnerable
+# @DESCRIPTION:
+# Checks if the CPU has the Spectre V1 vulnerability.
+_cflags-hardened_is_spectre_v1_vulnerable() {
+	[[ "${CFLAGS_HARDENED_SPECTRE_V1_FORCE:-0}" == "1" ]] && return 0
+
+	if grep -q -E -e "(Vulnerable|Mitigation)" "/sys/devices/system/cpu/vulnerabilities/spectre_v1" ; then
+		return 0
+	else
+		return 1
+	fi
+
 # @FUNCTION: _cflags-hardened_is_sls_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the SLS vulnerability.
@@ -678,7 +708,7 @@ _cflags-hardened_is_sls_vulnerable() {
 # @DESCRIPTION:
 # Information is the new gold
 _cflags-hardened_is_crown_jewels() {
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto"|"ip-assets"|"multithreaded-confidential"|"secure-messaging"|"sensitive-data") ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("crypto"|"database"|"dss"|"ip-assets"|"multithreaded-confidential"|"secure-messaging"|"sensitive-data") ]] ; then
 		return 0
 	else
 		return 1
@@ -689,7 +719,7 @@ _cflags-hardened_is_crown_jewels() {
 # @DESCRIPTION:
 # The keys to the jewels
 _cflags-hardened_is_crown_jewels_key() {
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"admin-access"|"copy-paste-password"|"credentials"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"copy-paste-password"|"credentials"|"dss"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
 		return 0
 	else
 		return 1
@@ -1461,7 +1491,6 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 					"${CFLAGS_HARDENED_USE_CASES}" \
 						=~ \
 ("daemon"\
-|"databases"\
 |"language-runtime"\
 |"multiuser-system"\
 |"network"\
@@ -1737,6 +1766,62 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags $(test-flags-CC "-mharden-sls=return")
 		CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-mharden-sls=return")
 		CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-mharden-sls=return")
+	fi
+
+	if \
+		[[ "${CFLAGS_HARDENED_SPECTRE_V1:-1}" == "1" ]] \
+			&& \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				|| \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] \
+		) \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+			&& \
+		_cflags-hardened_is_spectre_v1_vulnerable \
+	; then
+	# Spectre V1 mitigation
+	# ZC, CE, PE, DoS, DT, ID
+		filter-flags "-f*strict-flex-arrays=*"
+		append-flags $(test-flags-CC "-fstrict-flex-arrays=3") $(test-flags-CC "-Wstrict-flex-arrays") # GCC 13, Clang 16
+		CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-fstrict-flex-arrays=3")" "$(test-flags-CC "-Wstrict-flex-arrays")
+		CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-fstrict-flex-arrays=3")" "$(test-flags-CXX "-Wstrict-flex-arrays")
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_SPECTRE_V1:-1}" == "1" \
+				&& \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"casual-messaging"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser")\
+		]] \
+				&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+			&& \
+		_cflags-hardened_is_spectre_v1_vulnerable \
+	; then
+	# ZC, CE, PE, DoS, DT, ID
+		filter-flags "-f*strict-flex-arrays=*"
+		append-flags $(test-flags-CC "-fstrict-flex-arrays=2") $(test-flags-CC "-Wstrict-flex-arrays") # GCC 13, Clang 16
+		CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-fstrict-flex-arrays=2")" "$(test-flags-CC "-Wstrict-flex-arrays")
+		CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-fstrict-flex-arrays=2")" "$(test-flags-CXX "-Wstrict-flex-arrays")
 	fi
 
 	if \

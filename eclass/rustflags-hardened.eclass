@@ -81,6 +81,7 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 # credentials (access tokens, ssh keys)
 # crypto
 # daemon
+# database
 # dss (e.g. cryptocurrency, finance)
 # extension
 # facial-embedding (e.g. aka facial recogniton key)
@@ -390,7 +391,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SLS_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of SLS detection always true for porting from builder machine to SLS vulnerable.
+# Make automagic of SLS detection always true for porting from builder machine to affected CPU when building bootdisk portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @FUNCTION: _rustflags-hardened_compiler_arch
