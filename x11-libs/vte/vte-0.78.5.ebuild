@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data sensitive-data"
+CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical sensitive-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS"
 PYTHON_COMPAT=( python3_{11..14} )
 
@@ -17,7 +17,10 @@ LICENSE="LGPL-3+ GPL-3+"
 
 SLOT="2.91"      # vte_api_version in meson.build
 KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
-IUSE="+crypt debug gtk-doc +icu +introspection systemd +vala"
+IUSE="
++crypt debug gtk-doc +icu +introspection systemd +vala
+ebuild_revision_2
+"
 REQUIRED_USE="
 	gtk-doc? ( introspection )
 	vala? ( introspection )
