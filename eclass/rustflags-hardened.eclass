@@ -75,6 +75,7 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 # Acceptable values:
 #
 # admin-access (e.g. sudo)
+# casual-messaging
 # container-runtime
 # copy-paste-password
 # credentials (access tokens, ssh keys)
@@ -90,7 +91,7 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 # jit
 # kernel
 # login (e.g. sudo, shadow, pam, login)
-# messenger
+# messenger (deprecated, use casual-messaging or secure-messaging)
 # realtime-integrity
 # safety-critical
 # multithreaded-confidential
@@ -100,6 +101,7 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 # plugin
 # sandbox
 # scripting
+# secure-messaging
 # security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
 # sensitive-data
 # server
@@ -715,6 +717,39 @@ _rustflags-hardened_cf_protection() {
 	fi
 }
 
+# @FUNCTION: _rustflags-hardened_is_crown_jewels
+# @DESCRIPTION:
+# Information is the new gold
+_rustflags-hardened_is_crown_jewels() {
+	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto"|"ip-assets"|"multithreaded-confidential"|"secure-messaging"|"sensitive-data") ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _rustflags-hardened_is_crown_jewels_key
+# @DESCRIPTION:
+# The keys to the jewels
+_rustflags-hardened_is_crown_jewels_key() {
+	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"admin-access"|"copy-paste-password"|"credentials"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _rustflags-hardened_is_high_value_asset
+# @DESCRIPTION:
+# The category that encapsulates the crown jewels and the keys to the crown jewels.
+_rustflags-hardened_is_high_value_asset() {
+	if _rustflags-hardened_is_crown_jewels || _rustflags-hardened_is_crown_jewels_key ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: rustflags-hardened_append
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
@@ -890,7 +925,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ \
 			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"credentials"|"facial-embedding"|"ip-assets"|"sensitive-data") \
+			_rustflags-hardened_is_high_value_asset \
 		]] \
 			&& \
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.2" \

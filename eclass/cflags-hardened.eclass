@@ -160,6 +160,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mfunction-return=thunk-extern        1.01 -  1.05
 # -mfunction-return=thunk-inline        1.01 -  1.03
 # -mfunction-return=thunk               1.01 -  1.05
+# -mharden-sls=all                      1.00          # security-critical    ; estimated security score 99
+# -mharden-sls=indirect-jmp             1.00          # balanced             ; estimated security score 65
+# -mharden-sls=none                     1.00          # performance-critical ; estimated security score 0
+# -mharden-sls=return                   1.00          # balanced             ; estimated security score 88
 # -mindirect-branch=ibrs                1.01 -  1.10
 # -mindirect-branch=thunk               1.05 -  1.30
 # -mindirect-branch=thunk-inline        1.03 -  1.25
@@ -202,6 +206,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Acceptable values:
 #
 # admin-access (e.g. sudo)
+# casual-messaging
 # container-runtime
 # copy-paste-password
 # credentials (access tokens, ssh keys)
@@ -219,10 +224,11 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # kernel
 # language-runtime (e.g. compiler, interpeter, language virtual machine)
 # login (e.g. sudo, shadow, pam, login)
-# messenger
+# messenger (deprecated, use casual-messaging or secure-messaging)
 # modular-app (an app that uses plugins)
 # realtime-integrity
 # safety-critical
+# secure-messaging
 # multithreaded-confidential
 # multiuser-system
 # network
@@ -463,6 +469,18 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # ROP gadgets or exploit changes.
 # Valid values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SLS
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable SLS mitigation
+# Valid values: 1, 0, unset
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SLS_FORCE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Make automagic of SLS detection always true for porting from builder machine to SLS vulnerable.
+# Valid values: 1, 0, unset
+
 # @FUNCTION: _cflags-hardened_compiler_arch
 # @DESCRIPTION:
 # Print the name of the compiler_architecture
@@ -594,6 +612,94 @@ _cflags-hardened_has_cet() {
 		user_shstk=0
 	fi
 	if (( ${ibt} == 0 && ${user_shstk} == 0 )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-hardened_is_sls_vulnerable
+# @DESCRIPTION:
+_cflags-hardened_is_sls_vulnerable() {
+	[[ "${CFLAGS_HARDENED_SLS_FORCE:-0}" == "1" ]] && return 0
+	# Returns 0 = vulnerable to SLS, 1 = not vulnerable
+	# Works on AMD Zen1/Zen2, vulnerable Arm cores, Intel, Zen3+, etc.
+	# Uses only lscpu (available everywhere)
+
+	local arch
+	arch=$(lscpu | grep -m1 "^Architecture:" | awk '{print $2}')
+
+	case "${arch}" in
+		"x86_64")
+			# AMD Zen 1 and Zen 2 use CPU family 23
+			# Zen 3+ use family 25 or higher
+			if lscpu | grep -q -e '^CPU family:[[:space:]]*23$' ; then
+				return 0   # Vulnerable (Zen 1 / Zen 2)
+			else
+				return 1   # Intel or Zen 3+ → safe
+			fi
+			;;
+
+		"aarch64")
+			# For Arm, lscpu shows "Model name" or "CPU part" in newer versions
+			# Common vulnerable parts: Cortex-A76 (0xd0a), A77 (0xd0b), Neoverse N1 (0xd0c), etc.
+			local model_line
+			model_line=$(lscpu | grep -E -e "^(Model name|CPU part)" | head -n1)
+
+			if echo "${model_line}" | grep -q -i -E -e "cortex-a76|cortex-a77|neoverse-n1|neoverse-v1"; then
+				return 0   # Known vulnerable Arm cores
+			fi
+
+			# Fallback: check CPU part number if present (newer lscpu shows it)
+			local part
+			part=$(echo "${model_line}" | grep -o -e "0x[da][0-9a-f]*" | tr "[:upper:]" "[:lower:]")
+
+			case "${part}" in
+				0xd0a|0xd0b|0xd0c|0xd40|0xd41|0xd49)
+				return 0   # Confirmed vulnerable Arm parts
+				;;
+			*)
+				# Conservative: if we can't confirm it's fixed, assume vulnerable
+				# (Most server-class Arm before 2023 are vulnerable unless patched in firmware)
+				return 0
+				;;
+			esac
+			;;
+
+		*)
+			# Unknown architecture → be conservative and assume vulnerable
+			return 0
+		;;
+	esac
+}
+
+# @FUNCTION: _cflags-hardened_is_crown_jewels
+# @DESCRIPTION:
+# Information is the new gold
+_cflags-hardened_is_crown_jewels() {
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto"|"ip-assets"|"multithreaded-confidential"|"secure-messaging"|"sensitive-data") ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-hardened_is_crown_jewels_key
+# @DESCRIPTION:
+# The keys to the jewels
+_cflags-hardened_is_crown_jewels_key() {
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"admin-access"|"copy-paste-password"|"credentials"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-hardened_is_high_value_asset
+# @DESCRIPTION:
+# The category that encapsulates the crown jewels and the keys to the crown jewels.
+_cflags-hardened_is_high_value_asset() {
+	if _cflags-hardened_is_crown_jewels || _cflags-hardened_is_crown_jewels_key ; then
 		return 0
 	else
 		return 1
@@ -1241,9 +1347,9 @@ ewarn
 	elif \
 		[[ \
 			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
-				|| \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"credentials"|"facial-embedding"|"ip-assets"|"sensitive-data") \
 		]] \
+			&& \
+		_cflags-hardened_is_high_value_asset \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] \
 			&&
@@ -1267,38 +1373,36 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
 	local gcc_pv=$(gcc-version)
+	# fhardened is security-critical
 	if \
 		[[ \
 			"${CFLAGS_HARDENED_SSP_LEVEL}" == "2" \
 		]] \
 				&& \
-		[[ \
-			"${CFLAGS_HARDENED_USE_CASES}" \
-				=~ \
-("admin-access"\
-|"daemon"\
-|"dss"\
+		( \
+			_cflags-hardened_is_high_value_asset \
+				|| \
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" \
+					=~ \
+("daemon"\
 |"extension"\
-|"ip-assets"\
 |"jit"\
 |"kernel"\
 |"language-runtime"\
-|"messenger"\
-|"multithreaded-confidential"\
 |"multiuser-system"\
 |"network"\
 |"p2p"\
-|"pe"\
 |"plugin"\
 |"realtime-integrity"\
 |"safety-critical"\
 |"scripting"\
 |"security-critical"\
-|"sensitive-data"\
 |"server"\
 |"untrusted-data"\
 |"web-browser")\
-		]] \
+			]] \
+		) \
 			&& \
 		tc-is-gcc \
 			&&
@@ -1320,7 +1424,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 		fi
 		if [[ "${CXXFLAGS}" =~ "-O0" ]] ; then
 			replace-flags "-O0" "-O1"
-			CFLAGS_HARDENED_CFLAGS+=" -O1"
+			CFLAGS_HARDENED_CXXFLAGS+=" -O1"
 		fi
 		filter-flags \
 			"-f*cf-protection=*" \
@@ -1349,16 +1453,15 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			[[ \
-				"${CFLAGS_HARDENED_USE_CASES}" \
-					=~ \
-("admin-access"\
-|"daemon"\
+			( \
+				_cflags-hardened_is_high_value_asset \
+					|| \
+				[[ \
+					"${CFLAGS_HARDENED_USE_CASES}" \
+						=~ \
+("daemon"\
 |"databases"\
-|"dss"\
 |"language-runtime"\
-|"messenger"\
-|"multithreaded-confidential"\
 |"multiuser-system"\
 |"network"\
 |"p2p"\
@@ -1367,7 +1470,8 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 |"suid"\
 |"untrusted-data"\
 |"web-browser")\
-			]] \
+				]] \
+			) \
 					&& \
 			test-flags-CC "-fstack-clash-protection" \
 					&& \
@@ -1570,6 +1674,71 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	if \
+		[[ "${CFLAGS_HARDENED_SLS:-1}" == "1" ]] \
+			&& \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				|| \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] \
+		) \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+			&& \
+		_cflags-hardened_is_sls_vulnerable \
+	; then
+	# ZC - best mitigation
+	# CE (local) - mitigated
+	# PE - fully mitigated
+	# ID - fully mitigated
+	# DT - minor help
+	# DoS - best help
+		filter-flags "-m*harden-sls=*"
+		append-flags "-mharden-sls=all"
+		CFLAGS_HARDENED_CFLAGS+=" -mharden-sls=all"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mharden-sls=all"
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_SLS:-1}" == "1" \
+				&& \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"casual-messaging"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser")\
+		]] \
+				&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+				&& \
+		_cflags-hardened_is_sls_vulnerable \
+	; then
+	# ZC - partial mitigation
+	# CE (local) - mitigated
+	# PE - mitigated
+	# ID - mitigated
+	# DT - almost no help
+	# DoS - minor help
+		filter-flags "-m*harden-sls=*"
+		append-flags "-mharden-sls=return"
+		CFLAGS_HARDENED_CFLAGS+=" -mharden-sls=return"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mharden-sls=return"
+	fi
+
+	if \
 		[[ \
 			"${CFLAGS_HARDENED_TRAPV:-1}" == "1" \
 				&& \
@@ -1693,9 +1862,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
 	# avoid inline build-time failure.
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("credentials"|"crypto"|"dss"|"facial-embedding"|"login") ]] ; then
+	if _cflags-hardened_is_high_value_asset || [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
-	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"network"|"server"|"untrusted-data"|"web-browser") ]] ; then
+	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("network"|"server"|"untrusted-data"|"web-browser") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
 	else
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
