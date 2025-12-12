@@ -6086,6 +6086,7 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 		fi
@@ -6138,6 +6139,7 @@ eerror
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
 			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RETHUNK"
@@ -6362,10 +6364,10 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
-					ot-kernel_y_configopt "CC_HAS_SLS"
+					ot-kernel_y_configopt "CONFIG_CC_HAS_SLS"
 					ot-kernel_y_configopt "CONFIG_SLS" # Needs >= GCC 12
 				else
-					ot-kernel_unset_configopt "CC_HAS_SLS"
+					ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
 					ot-kernel_unset_configopt "CONFIG_SLS"
 				fi
 			fi
@@ -6818,10 +6820,10 @@ eerror
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
-					ot-kernel_y_configopt "CC_HAS_SLS"
+					ot-kernel_y_configopt "CONFIG_CC_HAS_SLS"
 					ot-kernel_y_configopt "CONFIG_SLS" # Needs >= GCC 12
 				else
-					ot-kernel_unset_configopt "CC_HAS_SLS"
+					ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
 					ot-kernel_unset_configopt "CONFIG_SLS"
 				fi
 			fi
@@ -6879,8 +6881,10 @@ eerror
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CC_HAS_SLS"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
 				else
+					ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
 				fi
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
