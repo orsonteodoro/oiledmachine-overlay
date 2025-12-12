@@ -620,6 +620,7 @@ _cflags-hardened_has_cet() {
 
 # @FUNCTION: _cflags-hardened_is_sls_vulnerable
 # @DESCRIPTION:
+# Checks if the CPU has the SLS vulnerability.
 _cflags-hardened_is_sls_vulnerable() {
 	[[ "${CFLAGS_HARDENED_SLS_FORCE:-0}" == "1" ]] && return 0
 	# Returns 0 = vulnerable to SLS, 1 = not vulnerable

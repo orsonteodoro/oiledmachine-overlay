@@ -136,6 +136,10 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # -C target-feature=+pac-ret                            1.01  -  1.05
 # -C target-feature=+pac-ret,+bti                       1.02  -  1.07
 # -C target-feature=+retpoline                          1.01  -  1.20
+# -Zharden-sls=all                                               1.00          # security-critical    ; estimated security score 99
+# -Zharden-sls=indirect-jmp                                      1.00          # balanced             ; estimated security score 65
+# -Zharden-sls=none                                              1.00          # performance-critical ; estimated security score 0
+# -Zharden-sls=return                                            1.00          # balanced             ; estimated security score 88
 # -Zsanitizer=address                                   1.50  -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
 # -Zsanitizer=cfi                                       1.10  -  2.0
 # -Zsanitizer=hwaddress                                 1.15  -  1.50 (ARM64)
@@ -377,6 +381,18 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # (EXPERIMENTAL)
 # Valid values:  1, 0, unset
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SLS
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable SLS mitigation
+# Valid values: 1, 0, unset
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SLS_FORCE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Make automagic of SLS detection always true for porting from builder machine to SLS vulnerable.
+# Valid values: 1, 0, unset
+
 # @FUNCTION: _rustflags-hardened_compiler_arch
 # @DESCRIPTION:
 # Print the name of the compiler_architecture
@@ -541,7 +557,7 @@ _rustflags-hardened_has_cet() {
 _rustflags-hardened_has_target_feature() {
 	local feature="${1}"
 	[[ -n "${RUSTC}" ]] || die "QA:  Initialize RUSTC first"
-	if ${RUSTC} --print target-features | grep -q -e "${feature}" ; then
+	if "${RUSTC}" --print target-features | grep -q -e "${feature}" ; then
 		return 0
 	fi
 	return 1
@@ -633,14 +649,14 @@ ewarn
 			-e "s|-Z[ ]*branch-protection=[+]bti||g" \
 			-e "s|-Z[ ]*branch-protection=-pac-ret,-bti||g")
 
-	${RUSTC} -Z help | grep -q -e "branch-protection"
+	"${RUSTC}" -Z help | grep -q -e "branch-protection"
 	has_unstable_branch_protection=$?
 
-	${RUSTC} --print target-features | grep -q -e "paca"
+	"${RUSTC}" --print target-features | grep -q -e "paca"
 	has_target_feature_paca=$?
-	${RUSTC} --print target-features | grep -q -e "pacg"
+	"${RUSTC}" --print target-features | grep -q -e "pacg"
 	has_target_feature_pacg=$?
-	${RUSTC} --print target-features | grep -q -e "bti"
+	"${RUSTC}" --print target-features | grep -q -e "bti"
 	has_target_feature_bti=$?
 
 	if (( ${has_target_feature_bti} == 0 && ${has_target_feature_paca} == 0 && ${has_target_feature_pacg} == 0 )) ; then
@@ -707,7 +723,7 @@ _rustflags-hardened_has_llvm_cfi() {
 _rustflags-hardened_cf_protection() {
 	[[ "${ARCH}" == "amd64" ]] || return
 
-	${RUSTC} -Z help | grep -q -e "cf-protection"
+	"${RUSTC}" -Z help | grep -q -e "cf-protection"
 	has_unstable_cf_protection=$?
 
 	if (( ${has_unstable_cf_protection} == 0 )) ; then
@@ -715,6 +731,135 @@ _rustflags-hardened_cf_protection() {
 			| sed -r -e "s#-Z[ ]*cf-protection=(none|branch|return|full)##g")
 		RUSTFLAGS+=" -Z cf-protection=full"
 	fi
+}
+
+# @FUNCTION: _rustflags-hardened_is_sls_vulnerable
+# @DESCRIPTION:
+# Checks if the CPU has the SLS vulnerability.
+_rustflags-hardened_is_sls_vulnerable() {
+	[[ "${RUSTFLAGS_HARDENED_SLS_FORCE:-0}" == "1" ]] && return 0
+	# Returns 0 = vulnerable to SLS, 1 = not vulnerable
+	# Works on AMD Zen1/Zen2, vulnerable Arm cores, Intel, Zen3+, etc.
+	# Uses only lscpu (available everywhere)
+
+	local arch
+	arch=$(lscpu | grep -m1 "^Architecture:" | awk '{print $2}')
+
+	case "${arch}" in
+		"x86_64")
+			# AMD Zen 1 and Zen 2 use CPU family 23
+			# Zen 3+ use family 25 or higher
+			if lscpu | grep -q -e '^CPU family:[[:space:]]*23$' ; then
+				return 0   # Vulnerable (Zen 1 / Zen 2)
+			else
+				return 1   # Intel or Zen 3+ → safe
+			fi
+			;;
+
+		"aarch64")
+			# For Arm, lscpu shows "Model name" or "CPU part" in newer versions
+			# Common vulnerable parts: Cortex-A76 (0xd0a), A77 (0xd0b), Neoverse N1 (0xd0c), etc.
+			local model_line
+			model_line=$(lscpu | grep -E -e "^(Model name|CPU part)" | head -n1)
+
+			if echo "${model_line}" | grep -q -i -E -e "cortex-a76|cortex-a77|neoverse-n1|neoverse-v1"; then
+				return 0   # Known vulnerable Arm cores
+			fi
+
+			# Fallback: check CPU part number if present (newer lscpu shows it)
+			local part
+			part=$(echo "${model_line}" | grep -o -e "0x[da][0-9a-f]*" | tr "[:upper:]" "[:lower:]")
+
+			case "${part}" in
+				0xd0a|0xd0b|0xd0c|0xd40|0xd41|0xd49)
+				return 0   # Confirmed vulnerable Arm parts
+				;;
+			*)
+				# Conservative: if we can't confirm it's fixed, assume vulnerable
+				# (Most server-class Arm before 2023 are vulnerable unless patched in firmware)
+				return 0
+				;;
+			esac
+			;;
+
+		*)
+			# Unknown architecture → be conservative and assume vulnerable
+			return 0
+		;;
+	esac
+}
+
+# @FUNCTION: _rustflags-hardened_harden_sls
+# @DESCRIPTION:
+# Apply harden-sls
+_rustflags-hardened_harden_sls() {
+# Patch not landed yet, issue #136597
+	"${RUSTC}" -Z help | grep -q -e "harden-sls"
+	local has_harden_sls=$?
+	(( ${has_harden_sls} == 0 )) || return
+
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+		| sed -r -e "s#-Z[ ]*harden-sls=(all|indirect-jmp|none|return)##g")
+
+	if \
+		[[ "${RUSTFLAGS_HARDENED_SLS:-1}" == "1" ]] \
+			&& \
+		( \
+			_rustflags-hardened_is_high_value_asset \
+				|| \
+			[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] \
+		) \
+			&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+			&& \
+		_rustflags-hardened_is_sls_vulnerable \
+	; then
+	# ZC - best mitigation
+	# CE (local) - mitigated
+	# PE - fully mitigated
+	# ID - fully mitigated
+	# DT - minor help
+	# DoS - best help
+		RUSTFLAGS+=" -Z harden-sls=all"
+	elif \
+		[[ \
+			"${RUSTFLAGS_HARDENED_SLS:-1}" == "1" \
+				&& \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"casual-messaging"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser")\
+		]] \
+				&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+				&& \
+		_rustflags-hardened_is_sls_vulnerable \
+	; then
+	# ZC - partial mitigation
+	# CE (local) - mitigated
+	# PE - mitigated
+	# ID - mitigated
+	# DT - almost no help
+	# DoS - minor help
+		RUSTFLAGS+=" -Z harden-sls=return"
+	fi
+
 }
 
 # @FUNCTION: _rustflags-hardened_is_crown_jewels
@@ -939,7 +1084,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	fi
 einfo "Protect spectrum:  ${protect_spectrum}"
 
-	${RUSTC} -Z help 2>/dev/null 1>/dev/null
+	"${RUSTC}" -Z help 2>/dev/null 1>/dev/null
 	local is_rust_nightly=$?
 
 	local rust_pv=$("${RUSTC}" --version \
@@ -975,7 +1120,7 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 		RUSTFLAGS+=" -C opt-level=${opt_level}"
 	fi
 
-	${RUSTC} -Z help | grep -q -e "stack-protector"
+	"${RUSTC}" -Z help | grep -q -e "stack-protector"
 	has_stack_protector=$?
 
 	local stack_mitigations=1
@@ -1071,6 +1216,8 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 		fi
 	fi
 
+	_rustflags-hardened_harden_sls
+
 	if is-flagq "-O0" ; then
 		replace-flags "-O0" "-O1"
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1146,7 +1293,7 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
-	local host=$(${RUSTC} -vV | grep "host:" | cut -f 2 -d " ")
+	local host=$("${RUSTC}" -vV | grep "host:" | cut -f 2 -d " ")
 einfo "rustc host:  ${host}"
 
 	if \
