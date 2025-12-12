@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_PIXMAN="CE IO OOBW SO"
 EGIT_REPO_URI="https://gitlab.freedesktop.org/pixman/pixman.git"
 
@@ -22,7 +22,10 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="cpu_flags_ppc_altivec cpu_flags_arm_neon loongson2f cpu_flags_x86_mmxext cpu_flags_x86_sse2 cpu_flags_x86_ssse3 static-libs test"
+IUSE="
+cpu_flags_ppc_altivec cpu_flags_arm_neon loongson2f cpu_flags_x86_mmxext cpu_flags_x86_sse2 cpu_flags_x86_ssse3 static-libs test
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 
 pkg_pretend() {
