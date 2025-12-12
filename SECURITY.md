@@ -331,6 +331,6 @@ their own threat model and apply their own hardening.
 RUSTFLAGS_HARDENED_TOLERANCE_USER="1.60"
 CFLAGS_HARDENED_TOLERANCE_USER="1.60"
 
-# Contents of /etc/portage/package.env:`
+# Contents of /etc/portage/package.env:
 foo/bar bar.conf
 ```
