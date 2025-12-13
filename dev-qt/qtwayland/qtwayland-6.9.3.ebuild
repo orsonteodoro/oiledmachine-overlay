@@ -29,7 +29,7 @@ fi
 
 IUSE="
 accessibility compositor gnome qml vulkan
-ebuild_revision_3
+ebuild_revision_4
 "
 
 RDEPEND="
