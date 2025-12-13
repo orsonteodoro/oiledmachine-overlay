@@ -36,7 +36,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 utils valgrind +vbr
-ebuild_revision_18
+ebuild_revision_19
 "
 RDEPEND="
 	utils? (
