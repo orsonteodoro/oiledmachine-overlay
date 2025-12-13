@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="AAC encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	media-libs/vo-aacenc[${MULTILIB_USEDEP}]
