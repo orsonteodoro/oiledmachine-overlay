@@ -146,7 +146,7 @@ ${PATENT_STATUS[@]}
 asahi d3d9 debug +llvm lm-sensors opencl +opengl
 +proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	d3d9? (
