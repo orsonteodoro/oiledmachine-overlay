@@ -28,7 +28,7 @@ SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~riscv x86"
 IUSE="
 static-libs
-ebuild_revision_4
+ebuild_revision_5
 "
 
 RDEPEND="sys-libs/zlib"
