@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="
 +crypt +gcrypt gnutls gtk-doc +introspection pam test test-rust tpm +vala
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RESTRICT="!test? ( test )"
