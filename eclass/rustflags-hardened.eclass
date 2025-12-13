@@ -1389,10 +1389,13 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 	local host=$("${RUSTC}" -vV | grep "host:" | cut -f 2 -d " ")
 einfo "rustc host:  ${host}"
 
-	if \
-		[[ \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" \
-				=~ \
+	_rustflags-hardened_needs_stack_probe() {
+		if \
+			( \
+				_rustflags-hardened_is_high_value_asset \
+					||
+				[[ \
+					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
 ("admin-access"\
 |"daemon"\
 |"dss"\
@@ -1415,34 +1418,81 @@ einfo "rustc host:  ${host}"
 |"server"\
 |"untrusted-data"\
 |"web-browser")\
-		]] \
+				]] \
+			) \
+		; then
+			return 0
+		else
+			return 1
+		fi
+	}
+
+	if \
+		_rustflags-hardened_needs_stack_probe \
+			&& \
+		_rustflags-hardened_has_target_feature "stack-probe" \
+			&& \
+		(( ${stack_mitigations} == 1 )) \
+			&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
 	; then
 	# For CFLAGS equivalent list, see also `rustc --print target-features`
 	# For -mllvm option, see `rustc -C llvm-args="--help"`
-		if \
-			_rustflags-hardened_has_target_feature "stack-probe" \
-				&& \
-			(( ${stack_mitigations} == 1 )) \
-				&& \
-			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
-		; then
 	# Mitigation for stack clash, stack overflow
 	# Not available for ARCH=amd64 prebuilt build.
-			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-				| sed -r -e "s#-C[ ]*target-feature=[-+]stack-probe##g")
-			RUSTFLAGS+=" -C target-feature=+stack-probe"
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*target-feature=[-+]stack-probe##g")
+		RUSTFLAGS+=" -C target-feature=+stack-probe"
+	fi
+
+	_rustflags-hardened_needs_stack_clash_protection() {
+		if \
+			( \
+				_rustflags-hardened_is_high_value_asset \
+					||
+				[[ \
+					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+				]] \
+			) \
+		; then
+			return 0
+		else
+			return 1
 		fi
+	}
 
 	# ZC, CE, EP, DoS, DT
-		if \
-			(( ${stack_mitigations} == 1 )) \
-				&& \
-			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
-		; then
-			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-				| sed -r -e "s#-C[ ]*link-arg=[-+]fstack-clash-protection##g")
-			RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
-		fi
+	if \
+		(( ${stack_mitigations} == 1 )) \
+			&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+			&& \
+		_rustflags-hardened_needs_stack_clash_protection \
+	; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*link-arg=[-+]fstack-clash-protection##g")
+		RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
 	fi
 
 	if \

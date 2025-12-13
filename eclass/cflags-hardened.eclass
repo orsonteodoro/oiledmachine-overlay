@@ -1427,40 +1427,52 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		stack_mitigations=0
 	fi
 
+	_cflags-hardened_needs_stack_clash_protection() {
+		if \
+			( \
+				_cflags-hardened_is_high_value_asset \
+					||
+				[[ \
+					"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+				]] \
+			) \
+		; then
+			return 0
+		else
+			return 1
+		fi
+	}
+
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
 	local gcc_pv=$(gcc-version)
 	# fhardened is security-critical
 	if \
-		[[ \
-			"${CFLAGS_HARDENED_SSP_LEVEL}" == "2" \
-		]] \
-				&& \
-		( \
-			_cflags-hardened_is_high_value_asset \
-				|| \
-			[[ \
-				"${CFLAGS_HARDENED_USE_CASES}" \
-					=~ \
-("daemon"\
-|"extension"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"plugin"\
-|"realtime-integrity"\
-|"safety-critical"\
-|"scripting"\
-|"security-critical"\
-|"server"\
-|"untrusted-data"\
-|"web-browser")\
-			]] \
-		) \
+		[[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] \
+			&& \
+		_cflags-hardened_needs_stack_clash_protection \
 			&& \
 		tc-is-gcc \
 			&&
@@ -1511,29 +1523,12 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			( \
-				_cflags-hardened_is_high_value_asset \
-					|| \
-				[[ \
-					"${CFLAGS_HARDENED_USE_CASES}" \
-						=~ \
-("daemon"\
-|"language-runtime"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"security-critical"\
-|"server"\
-|"suid"\
-|"untrusted-data"\
-|"web-browser")\
-				]] \
-			) \
-					&& \
+			_cflags-hardened_needs_stack_clash_protection \
+				&& \
 			test-flags-CC "-fstack-clash-protection" \
-					&& \
+				&& \
 			(( ${stack_mitigations} == 1 )) \
-					&& \
+				&& \
 			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 		; then
 	# ZC, CE, EP, DoS, DT
@@ -1703,7 +1698,7 @@ einfo "All SSP hardening (All functions hardened)"
 				_cflags-hardened_is_high_value_asset \
 					||
 				[[ \
-					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+					"${CFLAGS_HARDENED_USE_CASES}" =~ \
 ("container-runtime"\
 |"daemon"\
 |"extension"\
