@@ -54,7 +54,7 @@ LICENSE="0BSD LGPL-2.1+ GPL-2+ doc? ( CC-BY-SA-4.0 )"
 SLOT="0"
 IUSE="
 cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs
-ebuild_revision_6
+ebuild_revision_7
 "
 
 if [[ ${PV} != 9999 ]] ; then
