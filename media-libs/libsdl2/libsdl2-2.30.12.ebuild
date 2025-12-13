@@ -130,7 +130,7 @@ ${X86_CPU_FLAGS[@]}
 +libsamplerate +nas +nls +opengl +openurl oss +pipewire +pulseaudio
 +sndio +sound +static-libs test +udev +video +vulkan +wayland +X
 +xscreensaver
-ebuild_revision_15
+ebuild_revision_16
 "
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
