@@ -140,7 +140,7 @@ ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
 gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-ebuild_revision_37
+ebuild_revision_38
 "
 gen_abi_compat_required_use() {
 	local s
