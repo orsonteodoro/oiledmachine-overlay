@@ -80,7 +80,7 @@ SLOT="0/0.2"
 IUSE="
 ${_TRAINERS[@]}
 +asm cpu_flags_arm_neon debug java pgo static-libs
-ebuild_revision_35
+ebuild_revision_36
 "
 REQUIRED_USE="
 	pgo? (
