@@ -523,8 +523,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Enabling removes a class of undefined behavior exploits.  It tells the
 # compiler not to remove the programmer's own guards and the body of the guard
 # that it assumes is unnecessary/deadcode based on the assumption that a signed
-# integer overflow can't happen.  The assumed body of the if guard is actually
-# needed to prevent the possibly of RCE.
+# integer overflow can't happen.  The assumed body of the if/then guard is
+# actually needed to avoid the possibly of interacting with the attacker
+# controlled variables beyond the bounds check/body which may lead to
+# RCE, PE, ID, DT, etc.
 # Valid values: 1, 0, unset
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
