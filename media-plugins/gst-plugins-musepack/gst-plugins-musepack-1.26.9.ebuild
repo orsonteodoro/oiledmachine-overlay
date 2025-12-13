@@ -13,7 +13,7 @@ inherit cflags-hardened gstreamer-meson
 DESCRIPTION="Musepack plugin for GStreamer"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE="
-ebuild_revision_18
+ebuild_revision_19
 "
 RDEPEND="
 	media-sound/musepack-tools[${MULTILIB_USEDEP}]
