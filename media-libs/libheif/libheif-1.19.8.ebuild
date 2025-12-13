@@ -62,7 +62,7 @@ ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
 -avc avif +aom -dav1d doc +examples -ffmpeg +gdk-pixbuf jpeg -jpeg2k -kvazaar -heic -htj2k
 -libde265 -openh264 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
-ebuild_revision_21
+ebuild_revision_22
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
