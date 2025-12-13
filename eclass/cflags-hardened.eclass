@@ -136,7 +136,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fstack-protect                       1.01 -  1.05
 # -fstack-protect-strong                1.03 -  1.10
 # -fstack-protect-all                   1.05 -  1.10
-# -ftrapv                               1.20 -  2.00
+# -ftrapv                               5.00 - 15.00
 # -fsanitize=address                    1.50 -  4.00 (ASan); 1.01 - 1.1 (GWP-ASan)
 # -fsanitize=cfi                        1.10 -  2.00
 # -fsanitize=hwaddress                  1.15 -  1.50 (ARM64)
@@ -1968,7 +1968,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"untrusted-data")\
 		]] \
 				&& \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" \
 	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
