@@ -24,7 +24,7 @@ LICENSE="BSD-2"
 SLOT="0/7"
 IUSE="
 +8bit +10bit +asm test xxhash
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 
