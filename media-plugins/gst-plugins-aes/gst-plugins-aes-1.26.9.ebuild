@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="AES encryption/decryption plugin for GStreamer"
 IUSE="
-ebuild_revision_19
+ebuild_revision_20
 "
 RDEPEND="
 	>=dev-libs/openssl-1.1.0[${MULTILIB_USEDEP}]
