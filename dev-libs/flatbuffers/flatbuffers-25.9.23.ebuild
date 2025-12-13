@@ -33,7 +33,7 @@ SLOT="0/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
 IUSE="
 static-libs test
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="
 	!test? (
