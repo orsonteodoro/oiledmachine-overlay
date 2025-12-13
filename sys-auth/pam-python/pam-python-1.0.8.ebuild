@@ -10,10 +10,11 @@ EAPI=8
 # Still needs testing.  Not confirmed working.
 # It requires manual setup which has not been documented.
 
+CFLAGS_HARDENED_USE_CASES="admin-access login credentials security-critical multiuser-system system-set"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 PYTHON_COMPAT=( "python3_"{8..11} ) # Originally for 2.7
 
-inherit flag-o-matic python-single-r1 toolchain-funcs
+inherit cflags-hardened flag-o-matic python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -26,7 +27,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc test
-ebuild_revision_10
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -90,6 +91,7 @@ src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+	cflags-hardened_append
 }
 
 src_compile() {
