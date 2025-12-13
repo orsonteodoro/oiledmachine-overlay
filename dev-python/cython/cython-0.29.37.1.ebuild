@@ -40,7 +40,7 @@ RESTRICT="
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="
 emacs test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND="
 	!dev-python/cython:0
