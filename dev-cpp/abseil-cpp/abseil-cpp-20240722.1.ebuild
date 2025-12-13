@@ -71,7 +71,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_30
+ebuild_revision_31
 "
 # Missing _mm_xor_si128 wrapper function for non sse2.
 REQUIRED_USE="
