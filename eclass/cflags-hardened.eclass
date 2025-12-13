@@ -746,7 +746,7 @@ _cflags-hardened_is_crown_jewels() {
 # @DESCRIPTION:
 # The keys to the jewels
 _cflags-hardened_is_crown_jewels_key() {
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"copy-paste-password"|"credentials"|"dss"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"copy-paste-password"|"credentials"|"crypto"|"dss"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
 		return 0
 	else
 		return 1
