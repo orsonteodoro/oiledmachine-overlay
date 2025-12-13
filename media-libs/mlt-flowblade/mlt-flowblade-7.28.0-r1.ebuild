@@ -61,7 +61,7 @@ SLOT="0/7"
 IUSE="
 alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate opencv oss pulseaudio +python
 +rtaudio +rubberband +sdl +sox test vdpau +vidstab +xine +xml
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	alsa? (
