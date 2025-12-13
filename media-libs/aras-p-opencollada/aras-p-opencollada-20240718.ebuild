@@ -32,7 +32,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 IUSE="
 static-libs
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	dev-libs/libpcre:=
