@@ -1991,7 +1991,7 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	if \
-		[[ "${CFLAGS_HARDENED_WRAPV:-1}" == "1" ]]
+		[[ "${CFLAGS_HARDENED_WRAPV:-1}" == "1" ]] \
 				&& \
 		( \
 			_cflags-hardened_is_high_value_asset \
