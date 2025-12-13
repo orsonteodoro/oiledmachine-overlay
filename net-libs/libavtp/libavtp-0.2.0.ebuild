@@ -6,8 +6,11 @@ EAPI=8
 # See https://bugs.gentoo.org/822012
 
 CFLAGS_HARDENED_LANGS="c-lang"
+# It should be hardened if computer is on the university network or public network.
+# Corporate network is assumed untrusted.
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 
-inherit meson-multilib
+inherit cflags-hardened meson-multilib
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -21,7 +24,10 @@ HOMEPAGE="https://github.com/Avnu/libavtp/tree/master"
 LICENSE="BSD"
 RESTRICT="test" # Untested
 SLOT="0"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -33,6 +39,7 @@ BDEPEND+="
 "
 
 src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dtests=$(usex test "enabled" "disabled")
 	)
