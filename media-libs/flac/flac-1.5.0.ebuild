@@ -48,7 +48,7 @@ SLOT="0/${LIBFLAC_SONAME}-${LIBFLACXX_SONAME}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 +cxx debug ogg static-libs
-ebuild_revision_31
+ebuild_revision_32
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="
