@@ -43,7 +43,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_3
+	ebuild_revision_4
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
