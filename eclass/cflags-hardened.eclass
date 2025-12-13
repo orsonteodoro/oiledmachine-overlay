@@ -148,7 +148,14 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=thread                     4.00 - 16.00
 # -fsanitize=type                       1.80 - 20.00
 # -fsanitize=undefined                  1.10 -  2.00
+# -fstrict-flex-arrays=0                        1.00          # performance-critical ; estimated security score 0  (compiler, default)
+# -fstrict-flex-arrays=1                        1.00          # balanced             ; estimated security score 55
+# -fstrict-flex-arrays=2                        1.00          # balanced             ; estimated security score 78
+# -fstrict-flex-arrays=3                        1.00          # security-critical    ; estimated security score 98 (kernel default)
 # -ftrivial-auto-var-init=zero          1.01 -  1.05
+# -fvtable-verify=preinit               1.06 -  1.16
+# -fvtable-verify=std                   1.05 -  1.15
+# -fwrapv                                       1.00
 # -fzero-call-used-regs=all             1.10 -  1.25
 # -fzero-call-used-regs=used-gpr        1.03 -  1.08
 # -fzero-call-used-regs=used-all        1.05 -  1.10
@@ -171,12 +178,6 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mindirect-branch-register            1.05 -  1.30
 # -mretpoline                           1.10 -  1.30
 # -mretpoline-external-thunk            1.15 -  1.35
-# -fstrict-flex-arrays=0                        1.00          # performance-critical ; estimated security score 0  (compiler, default)
-# -fstrict-flex-arrays=1                        1.00          # balanced             ; estimated security score 55
-# -fstrict-flex-arrays=2                        1.00          # balanced             ; estimated security score 78
-# -fstrict-flex-arrays=3                        1.00          # security-critical    ; estimated security score 98 (kernel default)
-# -fvtable-verify=preinit               1.06 -  1.16
-# -fvtable-verify=std                   1.05 -  1.15
 # -Wa,--noexecstack                             1.00
 # -Wl,-z,noexecstack                            1.00
 # -Wl,-z,relro,-z,now                   1.01 -  1.05
@@ -231,7 +232,6 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # login (e.g. sudo, shadow, pam, login)
 # messenger (deprecated, use casual-messaging or secure-messaging)
 # modular-app (an app that uses plugins)
-# realtime-integrity
 # safety-critical
 # secure-messaging
 # multithreaded-confidential
@@ -510,6 +510,17 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @USER_VARIABLE
 # @DESCRIPTION:
 # Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Valid values: 1, 0, unset
+
+# @USER_VARIABLE:  CFLAGS_HARDENED_TRAPV
+# @DESCRIPTION:
+# Abort on signed integer overflow.  Higher precedence than fwrapv.
+# Valid values: 1, 0, unset
+
+# @USER_VARIABLE:  CFLAGS_HARDENED_WRAPV
+# @DESCRIPTION:
+# Avoid optimizing away bounds checks.
+# Enabling removes a class of undefined behavior exploits.
 # Valid values: 1, 0, unset
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
@@ -1977,6 +1988,47 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-ftrapv"
 		CFLAGS_HARDENED_CFLAGS+=" -ftrapv"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ftrapv"
+	fi
+
+	if \
+		[[ "${CFLAGS_HARDENED_WRAPV:-1}" == "1" ]]
+				&& \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				|| \
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"kernel"\
+|"jit"\
+|"language-runtime"\
+|"modular-app"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"realtime-safety"\
+|"sandbox"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"safety-critical"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server")\
+			]] \
+		) \
+				&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.00" \
+	; then
+	# Can apply to XML/JSON parsers
+	# CE, PE
+		filter-flags "-f*wrapv"
+		append-flags "-fwrapv"
+		CFLAGS_HARDENED_CFLAGS+=" -fwrapv"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fwrapv"
 	fi
 
 	# Poor man's UBSan for build time only
