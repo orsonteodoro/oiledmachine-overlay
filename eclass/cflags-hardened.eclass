@@ -1616,7 +1616,7 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 			_cflags-hardened_needs_cfi \
 				|| \
 			_cflags-hardened_needs_stack_clash_protection \
-		)
+		) \
 			&& \
 		tc-is-gcc \
 			&&
