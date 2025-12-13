@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Image quality assessment plugin for GStreamer"
 IUSE="
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	media-gfx/dssim
