@@ -85,7 +85,7 @@ https://github.com/prantlf/jsonlint
 LICENSE="MIT"
 RESTRICT="mirror test" # Missing dev dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild_revision_12"
+IUSE+=" test ebuild_revision_13"
 DEPEND+="
 "
 RDEPEND+="
