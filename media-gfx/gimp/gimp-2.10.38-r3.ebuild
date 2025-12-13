@@ -19,7 +19,7 @@ KEYWORDS="~alpha amd64 ~arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv x86"
 
 IUSE="
 aalib alsa aqua debug doc gnome heif jpeg2k jpegxl mng openexr postscript udev unwind vector-icons webp wmf xpm cpu_flags_ppc_altivec cpu_flags_x86_mmx cpu_flags_x86_sse
-ebuild_revision_5
+ebuild_revision_6
 "
 
 RESTRICT="!test? ( test )"
