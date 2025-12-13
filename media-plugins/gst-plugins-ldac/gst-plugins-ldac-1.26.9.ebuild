@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="LDAC encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	media-libs/libldac[${MULTILIB_USEDEP}]
