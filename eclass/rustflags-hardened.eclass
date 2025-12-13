@@ -1260,8 +1260,8 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 |"untrusted-data"\
 |"web-browser"\
 |"web-server") \
-				]]
-			)
+				]] \
+			) \
 		; then
 			return 0
 		else

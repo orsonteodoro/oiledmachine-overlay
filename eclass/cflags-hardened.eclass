@@ -1724,8 +1724,8 @@ einfo "All SSP hardening (All functions hardened)"
 |"untrusted-data"\
 |"web-browser"\
 |"web-server") \
-				]]
-			)
+				]] \
+			) \
 		; then
 			return 0
 		else
