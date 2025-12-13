@@ -31,7 +31,7 @@ LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 IUSE="
 cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wpg X
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # Lots of test failures which need investigating, bug #871621
