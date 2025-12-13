@@ -420,7 +420,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
-# @FUNCTION: _rustflags-hardened_compiler_arch
+# @FUNCTION:  _rustflags-hardened_compiler_arch
 # @DESCRIPTION:
 # Print the name of the compiler_architecture
 _rustflags-hardened_compiler_arch() {
@@ -433,7 +433,7 @@ _rustflags-hardened_compiler_arch() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_clang_flavor
+# @FUNCTION:  _rustflags-hardened_clang_flavor
 # @DESCRIPTION:
 # Print the name of the clang compiler flavor
 _rustflags-hardened_clang_flavor() {
@@ -448,7 +448,7 @@ _rustflags-hardened_clang_flavor() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_clang_flavor_slot
+# @FUNCTION:  _rustflags-hardened_clang_flavor_slot
 # @DESCRIPTION:
 # Print the slot of the clang compiler
 _rustflags-hardened_clang_flavor_slot() {
@@ -466,7 +466,7 @@ _rustflags-hardened_clang_flavor_slot() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_sanitizers_compat
+# @FUNCTION:  _rustflags-hardened_sanitizers_compat
 # @DESCRIPTION:
 # Check the sanitizer compatibility
 _rustflags-hardened_sanitizers_compat() {
@@ -480,7 +480,7 @@ _rustflags-hardened_sanitizers_compat() {
 	return 1
 }
 
-# @FUNCTION: _rustflags-hardened_fcmp
+# @FUNCTION:  _rustflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
 _rustflags-hardened_fcmp() {
@@ -511,7 +511,7 @@ eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
 eerror "emerge -1vuDN llvm-runtimes/clang-runtime:${LLVM_SLOT}[sanitize]"
 }
 
-# @FUNCTION: _rustflags-hardened_proximate_opt_level
+# @FUNCTION:  _rustflags-hardened_proximate_opt_level
 # @DESCRIPTION:
 # Convert the tolerance level to -Oflag level
 _rustflags-hardened_proximate_opt_level() {
@@ -536,7 +536,7 @@ einfo "rustflags-hardened.eclass in the oiledmachine-overlay for details."
 einfo
 }
 
-# @FUNCTION: _rustflags-hardened_has_mte
+# @FUNCTION:  _rustflags-hardened_has_mte
 # @DESCRIPTION:
 # Check if CPU supports MTE (Memory Tagging Extension)
 _rustflags-hardened_has_mte() {
@@ -548,7 +548,7 @@ _rustflags-hardened_has_mte() {
 }
 
 
-# @FUNCTION: _rustflags-hardened_has_pauth
+# @FUNCTION:  _rustflags-hardened_has_pauth
 # @DESCRIPTION:
 # Check if CPU supports PAC (Pointer Authentication Code)
 _rustflags-hardened_has_pauth() {
@@ -559,7 +559,7 @@ _rustflags-hardened_has_pauth() {
 	return ${pauth}
 }
 
-# @FUNCTION: _rustflags-hardened_has_cet
+# @FUNCTION:  _rustflags-hardened_has_cet
 # @DESCRIPTION:
 # Check if CET is supported for -fcf-protection=full.
 _rustflags-hardened_has_cet() {
@@ -578,7 +578,7 @@ _rustflags-hardened_has_cet() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_has_target_feature
+# @FUNCTION:  _rustflags-hardened_has_target_feature
 # @DESCRIPTION:
 # For -C target-feature=<option> checks
 _rustflags-hardened_has_target_feature() {
@@ -721,7 +721,7 @@ ewarn
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_has_llvm_cfi
+# @FUNCTION:  _rustflags-hardened_has_llvm_cfi
 _rustflags-hardened_has_llvm_cfi() {
 	if ! tc-is-clang ; then
 		return 1
@@ -744,7 +744,7 @@ _rustflags-hardened_has_llvm_cfi() {
 }
 
 
-# @FUNCTION: _rustflags-hardened_cf_protection
+# @FUNCTION:  _rustflags-hardened_cf_protection
 # @DESCRIPTION:
 # Apply cf-protection
 _rustflags-hardened_cf_protection() {
@@ -760,7 +760,7 @@ _rustflags-hardened_cf_protection() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_is_sls_vulnerable
+# @FUNCTION:  _rustflags-hardened_is_sls_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the SLS vulnerability.
 _rustflags-hardened_is_sls_vulnerable() {
@@ -816,7 +816,7 @@ _rustflags-hardened_is_sls_vulnerable() {
 	esac
 }
 
-# @FUNCTION: _rustflags-hardened_harden_sls
+# @FUNCTION:  _rustflags-hardened_harden_sls
 # @DESCRIPTION:
 # Apply harden-sls
 _rustflags-hardened_harden_sls() {
@@ -889,7 +889,7 @@ _rustflags-hardened_harden_sls() {
 
 }
 
-# @FUNCTION: _rustflags-hardened_is_crown_jewels
+# @FUNCTION:  _rustflags-hardened_is_crown_jewels
 # @DESCRIPTION:
 # Information is the new gold
 _rustflags-hardened_is_crown_jewels() {
@@ -900,7 +900,7 @@ _rustflags-hardened_is_crown_jewels() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_is_crown_jewels_key
+# @FUNCTION:  _rustflags-hardened_is_crown_jewels_key
 # @DESCRIPTION:
 # The keys to the jewels
 _rustflags-hardened_is_crown_jewels_key() {
@@ -911,7 +911,7 @@ _rustflags-hardened_is_crown_jewels_key() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_is_high_value_asset
+# @FUNCTION:  _rustflags-hardened_is_high_value_asset
 # @DESCRIPTION:
 # The category that encapsulates the crown jewels and the keys to the crown jewels.
 _rustflags-hardened_is_high_value_asset() {
@@ -922,7 +922,7 @@ _rustflags-hardened_is_high_value_asset() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_is_spectre_v1_vulnerable
+# @FUNCTION:  _rustflags-hardened_is_spectre_v1_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the Spectre V1 vulnerability.
 _rustflags-hardened_is_spectre_v1_vulnerable() {
@@ -935,7 +935,7 @@ _rustflags-hardened_is_spectre_v1_vulnerable() {
 	fi
 }
 
-# @FUNCTION: _rustflags-hardened_is_spectre_v2_vulnerable
+# @FUNCTION:  _rustflags-hardened_is_spectre_v2_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the Spectre V2 vulnerability.
 _rustflags-hardened_is_spectre_v2_vulnerable() {
@@ -948,7 +948,167 @@ _rustflags-hardened_is_spectre_v2_vulnerable() {
 	fi
 }
 
-# @FUNCTION: rustflags-hardened_append
+# @FUNCTION:  _rustflags-hardened_needs_retpoline
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_rustflags-hardened_needs_retpoline() {
+	if \
+		( \
+			_rustflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _rustflags-hardened_needs_cfi
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_rustflags-hardened_needs_cfi() {
+	if \
+		( \
+			_rustflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _rustflags-hardened_needs_stack_probe
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_rustflags-hardened_needs_stack_probe() {
+	if \
+		( \
+			_rustflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("admin-access"\
+|"daemon"\
+|"dss"\
+|"extension"\
+|"ip-assets"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"messenger"\
+|"multithreaded-confidential"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"realtime-integrity"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"sensitive-data"\
+|"server"\
+|"untrusted-data"\
+|"web-browser")\
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _rustflags-hardened_needs_stack_clash_protection
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_rustflags-hardened_needs_stack_clash_protection() {
+	if \
+		( \
+			_rustflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  rustflags-hardened_append
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
 rustflags-hardened_append() {
@@ -1061,11 +1221,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	# Break ties between Retpoline and CET since they are mutually exclusive
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
-		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
+		( \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
-		]] \
+			_rustflags-hardened_needs_cfi \
+		) \
 			&& \
 		_rustflags-hardened_has_cet \
 			&& \
@@ -1077,11 +1237,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	; then
 		protect_spectrum="cet"
 	elif \
-		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
+		( \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
-		]] \
+			_rustflags-hardened_needs_cfi \
+		) \
 			&& \
 		( \
 			_rustflags-hardened_has_pauth \
@@ -1104,11 +1264,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
-		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
+		( \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
-		]] \
+			_rustflags-hardened_needs_cfi \
+		) \
 			&& \
 		_rustflags-hardened_has_llvm_cfi \
 			&& \
@@ -1120,11 +1280,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	; then
 		protect_spectrum="llvm-cfi"
 	elif \
-		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
-				|| \
-			_rustflags-hardened_is_high_value_asset \
-		]] \
+		( \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") ]] \
+					|| \
+			_rustflags-hardened_needs_retpoline \
+		) \
 			&& \
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.2" \
 	; then
@@ -1233,42 +1393,6 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 		_rustflags-hardened_arm_cfi
 	fi
 
-	_rustflags-hardened_needs_retpoline() {
-		if \
-			( \
-				_rustflags-hardened_is_high_value_asset \
-					||
-				[[ \
-					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
-("container-runtime"\
-|"daemon"\
-|"extension"\
-|"hypervisor"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"modular-app"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"plugin"\
-|"sandbox"\
-|"scripting"\
-|"security-critical"\
-|"server"\
-|"system-set"\
-|"untrusted-data"\
-|"web-browser"\
-|"web-server") \
-				]] \
-			) \
-		; then
-			return 0
-		else
-			return 1
-		fi
-	}
-
 	# Spectre V2 mitigation Linux kernel case
 	# For GCC it uses
 	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -1294,11 +1418,7 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 
 			if _rustflags-hardened_has_cet ; then
 				:
-			elif \
-				_rustflags-hardened_has_target_feature "retpoline" \
-					&& \
-				_rustflags-hardened_needs_retpoline \
-			; then
+			elif _rustflags-hardened_has_target_feature "retpoline" ; then
 	# ZC, ID
 				RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 					| sed -r -e "s#-C[ ]*target-feature=[-+]retpoline##g")
@@ -1389,52 +1509,15 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 	local host=$("${RUSTC}" -vV | grep "host:" | cut -f 2 -d " ")
 einfo "rustc host:  ${host}"
 
-	_rustflags-hardened_needs_stack_probe() {
-		if \
-			( \
-				_rustflags-hardened_is_high_value_asset \
-					||
-				[[ \
-					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
-("admin-access"\
-|"daemon"\
-|"dss"\
-|"extension"\
-|"ip-assets"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"messenger"\
-|"multithreaded-confidential"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"plugin"\
-|"realtime-integrity"\
-|"safety-critical"\
-|"scripting"\
-|"security-critical"\
-|"sensitive-data"\
-|"server"\
-|"untrusted-data"\
-|"web-browser")\
-				]] \
-			) \
-		; then
-			return 0
-		else
-			return 1
-		fi
-	}
 
 	if \
-		_rustflags-hardened_needs_stack_probe \
-			&& \
-		_rustflags-hardened_has_target_feature "stack-probe" \
-			&& \
 		(( ${stack_mitigations} == 1 )) \
 			&& \
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
+			&& \
+		_rustflags-hardened_has_target_feature "stack-probe" \
+			&& \
+		_rustflags-hardened_needs_stack_probe \
 	; then
 	# For CFLAGS equivalent list, see also `rustc --print target-features`
 	# For -mllvm option, see `rustc -C llvm-args="--help"`
@@ -1444,43 +1527,6 @@ einfo "rustc host:  ${host}"
 			| sed -r -e "s#-C[ ]*target-feature=[-+]stack-probe##g")
 		RUSTFLAGS+=" -C target-feature=+stack-probe"
 	fi
-
-	_rustflags-hardened_needs_stack_clash_protection() {
-		if \
-			( \
-				_rustflags-hardened_is_high_value_asset \
-					||
-				[[ \
-					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
-("container-runtime"\
-|"daemon"\
-|"extension"\
-|"hypervisor"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"modular-app"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"plugin"\
-|"sandbox"\
-|"safety-critical"\
-|"scripting"\
-|"security-critical"\
-|"server"\
-|"system-set"\
-|"untrusted-data"\
-|"web-browser"\
-|"web-server") \
-				]] \
-			) \
-		; then
-			return 0
-		else
-			return 1
-		fi
-	}
 
 	# ZC, CE, EP, DoS, DT
 	if \

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_FLAGS="untrusted-data"
+CFLAGS_HARDENED_USE_FLAGS="security-critical untrusted-data"
 
 inherit cflags-hardened
 

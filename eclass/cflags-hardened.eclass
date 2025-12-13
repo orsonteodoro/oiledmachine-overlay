@@ -512,7 +512,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
-# @FUNCTION: _cflags-hardened_compiler_arch
+# @FUNCTION:  _cflags-hardened_compiler_arch
 # @DESCRIPTION:
 # Print the name of the compiler_architecture
 _cflags-hardened_compiler_arch() {
@@ -525,7 +525,7 @@ _cflags-hardened_compiler_arch() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_clang_flavor
+# @FUNCTION:  _cflags-hardened_clang_flavor
 # @DESCRIPTION:
 # Print the name of the clang compiler flavor
 _cflags-hardened_clang_flavor() {
@@ -540,7 +540,7 @@ _cflags-hardened_clang_flavor() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_clang_flavor_slot
+# @FUNCTION:  _cflags-hardened_clang_flavor_slot
 # @DESCRIPTION:
 # Print the slot of the clang compiler
 _cflags-hardened_clang_flavor_slot() {
@@ -558,7 +558,7 @@ _cflags-hardened_clang_flavor_slot() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_fcmp
+# @FUNCTION:  _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
 _cflags-hardened_fcmp() {
@@ -569,7 +569,7 @@ _cflags-hardened_fcmp() {
 	return $?
 }
 
-# @FUNCTION: _cflags-hardened_proximate_opt_level
+# @FUNCTION:  _cflags-hardened_proximate_opt_level
 # @DESCRIPTION:
 # Convert the tolerance level to -Oflag level
 _cflags-hardened_proximate_opt_level() {
@@ -594,7 +594,7 @@ einfo "cflags-hardened.eclass in the oiledmachine-overlay for details."
 einfo
 }
 
-# @FUNCTION: _cflags-hardened_sanitizers_compat
+# @FUNCTION:  _cflags-hardened_sanitizers_compat
 # @DESCRIPTION:
 # Check the sanitizer compatibility
 _cflags-hardened_sanitizers_compat() {
@@ -608,7 +608,7 @@ _cflags-hardened_sanitizers_compat() {
 	return 1
 }
 
-# @FUNCTION: _cflags-hardened_has_mte
+# @FUNCTION:  _cflags-hardened_has_mte
 # @DESCRIPTION:
 # Check if CPU supports MTE (Memory Tagging Extension)
 _cflags-hardened_has_mte() {
@@ -619,7 +619,7 @@ _cflags-hardened_has_mte() {
 	return ${mte}
 }
 
-# @FUNCTION: _cflags-hardened_has_pauth
+# @FUNCTION:  _cflags-hardened_has_pauth
 # @DESCRIPTION:
 # Check if CPU supports PAC (Pointer Authentication Code)
 _cflags-hardened_has_pauth() {
@@ -630,7 +630,7 @@ _cflags-hardened_has_pauth() {
 	return ${pauth}
 }
 
-# @FUNCTION: _cflags-hardened_has_cet
+# @FUNCTION:  _cflags-hardened_has_cet
 # @DESCRIPTION:
 # Check if CET is supported for -fcf-protection=full.
 _cflags-hardened_has_cet() {
@@ -649,7 +649,7 @@ _cflags-hardened_has_cet() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_is_spectre_v1_vulnerable
+# @FUNCTION:  _cflags-hardened_is_spectre_v1_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the Spectre V1 vulnerability.
 _cflags-hardened_is_spectre_v1_vulnerable() {
@@ -662,7 +662,7 @@ _cflags-hardened_is_spectre_v1_vulnerable() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_is_spectre_v2_vulnerable
+# @FUNCTION:  _cflags-hardened_is_spectre_v2_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the Spectre V2 vulnerability.
 _cflags-hardened_is_spectre_v2_vulnerable() {
@@ -675,7 +675,7 @@ _cflags-hardened_is_spectre_v2_vulnerable() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_is_sls_vulnerable
+# @FUNCTION:  _cflags-hardened_is_sls_vulnerable
 # @DESCRIPTION:
 # Checks if the CPU has the SLS vulnerability.
 _cflags-hardened_is_sls_vulnerable() {
@@ -731,7 +731,7 @@ _cflags-hardened_is_sls_vulnerable() {
 	esac
 }
 
-# @FUNCTION: _cflags-hardened_is_crown_jewels
+# @FUNCTION:  _cflags-hardened_is_crown_jewels
 # @DESCRIPTION:
 # Information is the new gold
 _cflags-hardened_is_crown_jewels() {
@@ -742,7 +742,7 @@ _cflags-hardened_is_crown_jewels() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_is_crown_jewels_key
+# @FUNCTION:  _cflags-hardened_is_crown_jewels_key
 # @DESCRIPTION:
 # The keys to the jewels
 _cflags-hardened_is_crown_jewels_key() {
@@ -753,7 +753,7 @@ _cflags-hardened_is_crown_jewels_key() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_is_high_value_asset
+# @FUNCTION:  _cflags-hardened_is_high_value_asset
 # @DESCRIPTION:
 # The category that encapsulates the crown jewels and the keys to the crown jewels.
 _cflags-hardened_is_high_value_asset() {
@@ -764,7 +764,7 @@ _cflags-hardened_is_high_value_asset() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_append_clang_retpoline
+# @FUNCTION:  _cflags-hardened_append_clang_retpoline
 # @DESCRIPTION:
 # Apply retpoline flags for Clang.
 # PE, ID
@@ -832,7 +832,7 @@ _cflags-hardened_append_clang_retpoline() {
 	fi
 }
 
-# @FUNCTION: _cflags-hardened_append_gcc_retpoline
+# @FUNCTION:  _cflags-hardened_append_gcc_retpoline
 # @DESCRIPTION:
 # Apply retpoline flags for gcc
 _cflags-hardened_append_gcc_retpoline() {
@@ -1129,7 +1129,9 @@ ewarn
 }
 
 
-# @FUNCTION: _cflags-hardened_has_llvm_cfi
+# @FUNCTION:  _cflags-hardened_has_llvm_cfi
+# @DESCRIPTION:
+# Check if LLVM CFI can be used
 _cflags-hardened_has_llvm_cfi() {
 	if ! tc-is-clang ; then
 		return 1
@@ -1151,7 +1153,180 @@ _cflags-hardened_has_llvm_cfi() {
 	fi
 }
 
-# @FUNCTION: cflags-hardened_append
+# @FUNCTION:  _cflags-hardened_needs_stack_clash_protection
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_cflags-hardened_needs_stack_clash_protection() {
+	if \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _cflags-hardened_needs_cfi
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_cflags-hardened_needs_cfi() {
+	if \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"safety-critical"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _cflags-hardened_needs_retpoline
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_cflags-hardened_needs_retpoline() {
+	if \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _cflags-hardened_needs_trivial_auto_var_init
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_cflags-hardened_needs_trivial_auto_var_init() {
+	if \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("kernel"\
+|"extension"\
+|"modular-app"\
+|"plugin"\
+|"untrusted-data"\
+|"sandbox"\
+|"security-critical"\
+|"web-browser")\
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  _cflags-hardened_needs_zero_call_used_regs
+# @DESCRIPTION:
+# Check if the flag applies to this use case.
+_cflags-hardened_needs_zero_call_used_regs() {
+	if \
+		( \
+			_cflags-hardened_is_high_value_asset \
+				||
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("kernel"\
+|"extension"\
+|"modular-app"\
+|"plugin"\
+|"untrusted-data"\
+|"sandbox"\
+|"security-critical"\
+|"web-browser")\
+			]] \
+		) \
+	; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  cflags-hardened_append
 # @DESCRIPTION:
 # Apply and deploy hardening flags easily.
 # The CFLAGS_HARDENED_CFLAGS, CFLAGS_HARDENED_CXXFLAGS, CFLAGS_HARDENED_LDFLAGS
@@ -1342,11 +1517,11 @@ ewarn
 	# Each CFI implementation has a blindspot
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
-		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
+		( \
+			[[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
-		]] \
+			_cflags-hardened_needs_cfi \
+		) \
 			&& \
 		_cflags-hardened_has_cet \
 			&& \
@@ -1358,11 +1533,11 @@ ewarn
 	; then
 		protect_spectrum="cet"
 	elif \
-		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
+		( \
+			[[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
-		]] \
+			_cflags-hardened_needs_cfi \
+		) \
 			&& \
 		( \
 			_cflags-hardened_has_pauth \
@@ -1386,11 +1561,11 @@ ewarn
 	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
-		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
+		( \
+			[[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
-		]] \
+			_cflags-hardened_needs_cfi \
+		) \
 			&& \
 		_cflags-hardened_has_llvm_cfi \
 			&& \
@@ -1403,9 +1578,11 @@ ewarn
 	# TODO
 		protect_spectrum="llvm-cfi"
 	elif \
-		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
-		]] \
+		( \
+			[[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") ]] \
+				|| \
+			_cflags-hardened_needs_retpoline \
+		) \
 			&& \
 		_cflags-hardened_is_high_value_asset \
 			&& \
@@ -1427,43 +1604,6 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		stack_mitigations=0
 	fi
 
-	_cflags-hardened_needs_stack_clash_protection() {
-		if \
-			( \
-				_cflags-hardened_is_high_value_asset \
-					||
-				[[ \
-					"${CFLAGS_HARDENED_USE_CASES}" =~ \
-("container-runtime"\
-|"daemon"\
-|"extension"\
-|"hypervisor"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"modular-app"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"plugin"\
-|"sandbox"\
-|"safety-critical"\
-|"scripting"\
-|"security-critical"\
-|"server"\
-|"system-set"\
-|"untrusted-data"\
-|"web-browser"\
-|"web-server") \
-				]] \
-			) \
-		; then
-			return 0
-		else
-			return 1
-		fi
-	}
-
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
@@ -1472,7 +1612,11 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	if \
 		[[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] \
 			&& \
-		_cflags-hardened_needs_stack_clash_protection \
+		(
+			_cflags-hardened_needs_cfi \
+				|| \
+			_cflags-hardened_needs_stack_clash_protection \
+		)
 			&& \
 		tc-is-gcc \
 			&&
@@ -1601,49 +1745,27 @@ einfo "All SSP hardening (All functions hardened)"
 		elif [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
 			_cflags-hardened_arm_cfi
 		fi
-
-		if \
-			[[ \
-				"${CFLAGS_HARDENED_TRIVIAL_AUTO_VAR_INIT:-1}" == "1" \
-					&&
-				"${CFLAGS_HARDENED_USE_CASES}" \
-					=~ \
-("kernel"\
-|"extension"\
-|"modular-app"\
-|"plugin"\
-|"untrusted-data"\
-|"sandbox"\
-|"security-critical"\
-|"web-browser") \
-			]] \
-				&& \
-			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
-		; then
-	# CE, PE, DoS, DT, ID
-	# GCC >= 12, Clang 8
-			filter-flags "-f*trivial-auto-var-init=*"
-			append-flags $(test-flags-CC "-ftrivial-auto-var-init=zero")
-			CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-ftrivial-auto-var-init=zero")
-			CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-ftrivial-auto-var-init=zero")
-		fi
 	fi
 
 	if \
-		[[ \
-			"${CFLAGS_HARDENED_ZERO_CALL_USED_REGS:-1}" == "1" \
-				&&
-			"${CFLAGS_HARDENED_USE_CASES}" \
-				=~ \
-("kernel"\
-|"extension"\
-|"modular-app"\
-|"plugin"\
-|"untrusted-data"\
-|"sandbox"\
-|"security-critical"\
-|"web-browser")\
-		]] \
+		[[ "${CFLAGS_HARDENED_TRIVIAL_AUTO_VAR_INIT:-1}" == "1" ]] \
+				&& \
+		_cflags-hardened_needs_trivial_auto_var_init \
+				&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
+	; then
+	# CE, PE, DoS, DT, ID
+	# GCC >= 12, Clang 8
+		filter-flags "-f*trivial-auto-var-init=*"
+		append-flags $(test-flags-CC "-ftrivial-auto-var-init=zero")
+		CFLAGS_HARDENED_CFLAGS+=" "$(test-flags-CC "-ftrivial-auto-var-init=zero")
+		CFLAGS_HARDENED_CXXFLAGS+=" "$(test-flags-CXX "-ftrivial-auto-var-init=zero")
+	fi
+
+	if \
+		[[ "${CFLAGS_HARDENED_ZERO_CALL_USED_REGS:-1}" == "1" ]] \
+			&& \
+		_cflags-hardened_needs_zero_call_used_regs \
 	; then
 	# ZC, CE, PE, DoS, DT, ID
 	# GCC >= 11, Clang 15
@@ -1692,42 +1814,6 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 	fi
 
-	_cflags-hardened_needs_retpoline() {
-		if \
-			( \
-				_cflags-hardened_is_high_value_asset \
-					||
-				[[ \
-					"${CFLAGS_HARDENED_USE_CASES}" =~ \
-("container-runtime"\
-|"daemon"\
-|"extension"\
-|"hypervisor"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"modular-app"\
-|"multiuser-system"\
-|"network"\
-|"p2p"\
-|"plugin"\
-|"sandbox"\
-|"scripting"\
-|"security-critical"\
-|"server"\
-|"system-set"\
-|"untrusted-data"\
-|"web-browser"\
-|"web-server") \
-				]] \
-			) \
-		; then
-			return 0
-		else
-			return 1
-		fi
-	}
-
 	# Spectre V2 mitigation Linux kernel case
 	# For GCC it uses
 	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -1740,11 +1826,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
-		if \
-			_cflags-hardened_is_spectre_v2_vulnerable \
-				&& \
-			_cflags-hardened_needs_retpoline \
-		; then
+		if _cflags-hardened_is_spectre_v2_vulnerable ; then
 			filter-flags \
 				"-m*retpoline" \
 				"-m*retpoline-external-thunk" \
@@ -2898,7 +2980,7 @@ einfo "CGO_LDFLAGS:  ${CGO_LDFLAGS}"
 	_cflags-hardened_proximate_opt_level
 }
 
-# @FUNCTION: cflags-hardened_append_nx
+# @FUNCTION:  cflags-hardened_append_nx
 # @DESCRIPTION:
 # Add nx bit protection to remove security warning.
 # Example warning: https://bugs.gentoo.org/256679
