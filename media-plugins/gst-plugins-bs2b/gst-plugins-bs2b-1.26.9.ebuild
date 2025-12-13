@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
 DESCRIPTION="bs2b elements for GStreamer"
 IUSE="
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	>=media-libs/libbs2b-3.1.0[${MULTILIB_USEDEP}]
