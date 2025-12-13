@@ -38,7 +38,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 +man test
-ebuild_revision_4
+ebuild_revision_5
 "
 DEPEND="
 	$(llvm_gen_dep "
