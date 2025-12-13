@@ -26,7 +26,7 @@ LICENSE="MIT"
 SLOT="5.1"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	pgo? (
