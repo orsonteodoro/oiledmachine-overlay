@@ -23,7 +23,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv 
 
 IUSE="
 debug examples gtk-doc +introspection sysprof test X
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="gtk-doc? ( introspection )"
 RESTRICT="!test? ( test )"
