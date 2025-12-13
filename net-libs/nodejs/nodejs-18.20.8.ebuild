@@ -128,7 +128,7 @@ ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector npm
 mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu +system-ssl
 systemtap test
-ebuild_revision_51
+ebuild_revision_52
 "
 
 gen_required_use_pgo() {
