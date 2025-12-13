@@ -28,7 +28,7 @@ fi
 
 IUSE="
 mng
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RDEPEND="
