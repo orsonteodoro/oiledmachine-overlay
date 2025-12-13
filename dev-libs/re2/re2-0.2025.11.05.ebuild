@@ -48,7 +48,7 @@ LICENSE="BSD"
 SLOT="${ABSEIL_CPP_SLOT}"
 IUSE="
 -debug icu test
-ebuild_revision_19
+ebuild_revision_20
 "
 RDEPEND="
 	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
