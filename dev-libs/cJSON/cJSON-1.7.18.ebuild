@@ -25,7 +25,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 test
-ebuild_revision_18
+ebuild_revision_19
 "
 PATCHES=(
 	"${FILESDIR}"/${PV}-cmake4.patch
