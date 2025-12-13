@@ -328,10 +328,10 @@ their own threat model and apply their own hardening.
 ```
 # Example of per-package hardening
 # Contents of /etc/portage/env/nano.conf
-# Setting to 2.00, one could enable -ftrapv which is a poor man's UBSan.
-# Setting to 2.00 means that task completion will take about twice as long on the worst case.
-RUSTFLAGS_HARDENED_TOLERANCE_USER="2.00"
-CFLAGS_HARDENED_TOLERANCE_USER="2.00"
+# Setting to 15.00, one could enable -ftrapv which is a poor man's UBSan.
+# Setting to 15.00 means that task completion will take about 15 times longer in the worst case.
+RUSTFLAGS_HARDENED_TOLERANCE_USER="15.00"
+CFLAGS_HARDENED_TOLERANCE_USER="15.00"
 
 # Contents of /etc/portage/package.env:
 app-editors/nano nano.conf
