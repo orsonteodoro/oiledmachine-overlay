@@ -36,7 +36,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 doc examples +threads test
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="
 	!test? (
