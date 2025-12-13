@@ -89,7 +89,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
