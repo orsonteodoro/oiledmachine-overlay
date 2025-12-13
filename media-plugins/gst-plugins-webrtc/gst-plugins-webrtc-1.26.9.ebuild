@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="WebRTC plugins for GStreamer"
 IUSE="
-ebuild_revision_18
+ebuild_revision_19
 "
 RDEPEND="
 	~media-plugins/gst-plugins-dtls-${PV}:1.0[${MULTILIB_USEDEP}]
