@@ -29,7 +29,7 @@ KEYWORDS="
 "
 IUSE="
 static static-libs
-ebuild_revision_19
+ebuild_revision_20
 "
 
 BDEPEND="
