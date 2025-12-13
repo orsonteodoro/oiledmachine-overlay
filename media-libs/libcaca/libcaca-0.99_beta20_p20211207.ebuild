@@ -1,7 +1,7 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # SECURITY NOTE(S):
 # dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
@@ -49,7 +49,7 @@ LICENSE="
 IUSE="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
 php python ruby slang static-libs test truetype X
-ebuild_revision_18
+ebuild_revision_19
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
