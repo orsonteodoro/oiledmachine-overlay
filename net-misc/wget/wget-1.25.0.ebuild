@@ -27,7 +27,7 @@ KEYWORDS="
 IUSE="
 cookie-check debug gnutls idn ipv6 libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	ntlm? (
