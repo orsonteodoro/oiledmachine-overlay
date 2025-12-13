@@ -29,7 +29,7 @@ LICENSE="Info-ZIP"
 SLOT="0"
 IUSE="
 bzip2 natspec unicode
-ebuild_revision_17
+ebuild_revision_20
 "
 DEPEND="
 	bzip2? (
@@ -79,6 +79,10 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+
+	replace-flags "-fstrict-flex-arrays=3" "-fstrict-flex-arrays=1" # Breaks unpacking app-arch/zip
+	replace-flags "-fstrict-flex-arrays=2" "-fstrict-flex-arrays=1" # Breaks unpacking app-archzip
+
 	case "${CHOST}" in
 		"i"?"86"*"-"*"linux"*)       TARGET="linux_asm" ;;
 		*"linux"*)             TARGET="linux_noasm" ;;
