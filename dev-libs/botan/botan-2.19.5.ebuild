@@ -75,7 +75,7 @@ LICENSE="BSD-2"
 SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_35
+ebuild_revision_36
 "
 CPU_USE=(
 	"cpu_flags_arm_"{"crypto","neon","pmull"}
