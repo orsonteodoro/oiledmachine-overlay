@@ -1277,11 +1277,8 @@ _cflags-hardened_needs_retpoline() {
 # Check if the flag applies to this use case.
 _cflags-hardened_needs_trivial_auto_var_init() {
 	if \
-		( \
-			_cflags-hardened_is_high_value_asset \
-				||
-			[[ \
-				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
 ("kernel"\
 |"extension"\
 |"modular-app"\
@@ -1290,8 +1287,7 @@ _cflags-hardened_needs_trivial_auto_var_init() {
 |"sandbox"\
 |"security-critical"\
 |"web-browser")\
-			]] \
-		) \
+		]] \
 	; then
 		return 0
 	else
@@ -1304,11 +1300,8 @@ _cflags-hardened_needs_trivial_auto_var_init() {
 # Check if the flag applies to this use case.
 _cflags-hardened_needs_zero_call_used_regs() {
 	if \
-		( \
-			_cflags-hardened_is_high_value_asset \
-				||
-			[[ \
-				"${CFLAGS_HARDENED_USE_CASES}" =~ \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
 ("kernel"\
 |"extension"\
 |"modular-app"\
@@ -1317,8 +1310,7 @@ _cflags-hardened_needs_zero_call_used_regs() {
 |"sandbox"\
 |"security-critical"\
 |"web-browser")\
-			]] \
-		) \
+		]] \
 	; then
 		return 0
 	else
