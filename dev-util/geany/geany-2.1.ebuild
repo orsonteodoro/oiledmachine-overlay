@@ -25,7 +25,7 @@ SLOT="0"
 
 IUSE="
 +vte wayland X
-ebuild_revision_2
+ebuild_revision_3
 "
 
 BDEPEND="virtual/pkgconfig"
