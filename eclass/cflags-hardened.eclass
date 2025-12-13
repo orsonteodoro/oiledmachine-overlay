@@ -519,8 +519,12 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 
 # @USER_VARIABLE:  CFLAGS_HARDENED_WRAPV
 # @DESCRIPTION:
-# Avoid optimizing away bounds checks.
-# Enabling removes a class of undefined behavior exploits.
+# Avoid optimizing away programmer defined bounds checks.
+# Enabling removes a class of undefined behavior exploits.  It tells the
+# compiler not to remove the programmer's own guards and the body of the guard
+# that it assumes is unnecessary/deadcode based on the assumption that a signed
+# integer overflow can't happen.  The assumed body of the if guard is actually
+# needed to prevent the possibly of RCE.
 # Valid values: 1, 0, unset
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
