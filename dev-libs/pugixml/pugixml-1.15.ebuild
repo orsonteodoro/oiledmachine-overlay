@@ -44,7 +44,7 @@ HOMEPAGE="
 LICENSE="MIT"
 IUSE+="
 doc static-libs test
-ebuild_revision_33
+ebuild_revision_34
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+="
