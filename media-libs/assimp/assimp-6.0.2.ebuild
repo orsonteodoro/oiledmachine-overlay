@@ -46,7 +46,7 @@ RESTRICT="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 samples static-libs test
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
