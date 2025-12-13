@@ -30,7 +30,7 @@ SLOT="0/25"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
 IUSE="
 test
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 
