@@ -189,7 +189,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	!ci
