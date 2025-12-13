@@ -17,7 +17,7 @@ LICENSE="LGPL-2+"
 SLOT="3"
 IUSE="
 aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	|| ( aqua wayland X )
