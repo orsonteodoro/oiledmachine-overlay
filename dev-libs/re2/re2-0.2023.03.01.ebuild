@@ -40,7 +40,7 @@ LICENSE="BSD"
 SLOT="${ABSEIL_CPP_SLOT}"
 IUSE="
 -debug icu test
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	icu? (
