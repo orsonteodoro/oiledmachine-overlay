@@ -99,7 +99,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE="
 -bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc quic -static-libs
 systemd test +threads +utils +xml
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	doc? (
