@@ -19,7 +19,7 @@ LICENSE="MIT"
 SLOT="0/2"
 IUSE="
 -debug -guarded test -valgrind
-ebuild_revision_17
+ebuild_revision_18
 "
 RESTRICT="
 	!test? (
