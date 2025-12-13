@@ -94,7 +94,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
