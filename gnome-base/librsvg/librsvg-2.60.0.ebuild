@@ -365,7 +365,7 @@ SLOT="2"
 
 IUSE="
 gtk-doc +introspection test +vala
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="
 	!test? (
