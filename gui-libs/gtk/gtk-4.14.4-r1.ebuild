@@ -23,7 +23,7 @@ SLOT="4"
 IUSE="
 aqua broadway cloudproviders colord cups examples gstreamer +introspection
 sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	|| ( aqua wayland X )
