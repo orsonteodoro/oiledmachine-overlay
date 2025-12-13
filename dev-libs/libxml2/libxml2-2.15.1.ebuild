@@ -30,7 +30,10 @@ S="${WORKDIR}/${PN}-${PV%_rc*}"
 LICENSE="MIT"
 # see so_version = v_maj + v_min_compat for subslot
 SLOT="2/16"
-IUSE="doc icu python readline static-libs test"
+IUSE="
+doc icu python readline static-libs test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
