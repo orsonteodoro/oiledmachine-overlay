@@ -10,7 +10,7 @@ EAPI=8
 # Still needs testing.  Not confirmed working.
 # It requires manual setup which has not been documented.
 
-CFLAGS_HARDENED_USE_CASES="admin-access login credentials security-critical multiuser-system system-set"
+CFLAGS_HARDENED_USE_CASES="admin-access login credentials security-critical multiuser-system"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 PYTHON_COMPAT=( "python3_"{8..11} ) # Originally for 2.7
 
