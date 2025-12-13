@@ -21,7 +21,7 @@ KEYWORDS="~amd64 ~arm ~x86"
 
 IUSE="
 X aalib alsa doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
