@@ -394,6 +394,32 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Make automagic of SLS detection always true for porting from builder machine to affected CPU when building bootdisk portable Live CD/USB.
 # Valid values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V1
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable Spectre v1 mitigation
+# This option may have issues if deployed systemwide.
+# Valid values: 1, 0 (default), unset
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V1_FORCE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Make automagic of Spectre v1 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Valid values: 1, 0, unset
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V2
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable Spectre v2 mitigation
+# This option may have issues if deployed systemwide.
+# Valid values: 1, 0 (default), unset
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V2_FORCE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Valid values: 1, 0, unset
+
 # @FUNCTION: _rustflags-hardened_compiler_arch
 # @DESCRIPTION:
 # Print the name of the compiler_architecture
@@ -896,6 +922,32 @@ _rustflags-hardened_is_high_value_asset() {
 	fi
 }
 
+# @FUNCTION: _rustflags-hardened_is_spectre_v1_vulnerable
+# @DESCRIPTION:
+# Checks if the CPU has the Spectre V1 vulnerability.
+_rustflags-hardened_is_spectre_v1_vulnerable() {
+	[[ "${RUSTFLAGS_HARDENED_SPECTRE_V1_FORCE:-0}" == "1" ]] && return 0
+
+	if grep -q -E -e "(Vulnerable|Mitigation)" "/sys/devices/system/cpu/vulnerabilities/spectre_v1" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _rustflags-hardened_is_spectre_v2_vulnerable
+# @DESCRIPTION:
+# Checks if the CPU has the Spectre V2 vulnerability.
+_rustflags-hardened_is_spectre_v2_vulnerable() {
+	[[ "${RUSTFLAGS_HARDENED_SPECTRE_V2_FORCE:-0}" == "1" ]] && return 0
+
+	if grep -q -E -e "(Vulnerable|Mitigation)" "/sys/devices/system/cpu/vulnerabilities/spectre_v2" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: rustflags-hardened_append
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
@@ -1181,6 +1233,42 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 		_rustflags-hardened_arm_cfi
 	fi
 
+	_rustflags-hardened_needs_retpoline() {
+		if \
+			( \
+				_rustflags-hardened_is_high_value_asset \
+					||
+				[[ \
+					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+				]]
+			)
+		; then
+			return 0
+		else
+			return 1
+		fi
+	}
+
 	# Spectre V2 mitigation Linux kernel case
 	# For GCC it uses
 	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -1193,7 +1281,7 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
-		if which lscpu >/dev/null && lscpu | grep -q -E -e "Spectre v2.*(Mitigation|Vulnerable)" ; then
+		if _rustflags-hardened_is_spectre_v2_vulnerable ; then
 			filter-flags \
 				"-m*retpoline" \
 				"-m*retpoline-external-thunk" \
@@ -1206,7 +1294,11 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 
 			if _rustflags-hardened_has_cet ; then
 				:
-			elif _rustflags-hardened_has_target_feature "retpoline" ; then
+			elif \
+				_rustflags-hardened_has_target_feature "retpoline" \
+					&& \
+				_rustflags-hardened_needs_retpoline \
+			; then
 	# ZC, ID
 				RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 					| sed -r -e "s#-C[ ]*target-feature=[-+]retpoline##g")

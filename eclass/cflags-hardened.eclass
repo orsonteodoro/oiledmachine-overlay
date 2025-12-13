@@ -499,6 +499,19 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Make automagic of Spectre v1 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V2
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable Spectre v2 mitigation
+# This option may have issues if deployed systemwide.
+# Valid values: 1, 0 (default), unset
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V2_FORCE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Valid values: 1, 0, unset
+
 # @FUNCTION: _cflags-hardened_compiler_arch
 # @DESCRIPTION:
 # Print the name of the compiler_architecture
@@ -643,6 +656,19 @@ _cflags-hardened_is_spectre_v1_vulnerable() {
 	[[ "${CFLAGS_HARDENED_SPECTRE_V1_FORCE:-0}" == "1" ]] && return 0
 
 	if grep -q -E -e "(Vulnerable|Mitigation)" "/sys/devices/system/cpu/vulnerabilities/spectre_v1" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-hardened_is_spectre_v2_vulnerable
+# @DESCRIPTION:
+# Checks if the CPU has the Spectre V2 vulnerability.
+_cflags-hardened_is_spectre_v2_vulnerable() {
+	[[ "${CFLAGS_HARDENED_SPECTRE_V2_FORCE:-0}" == "1" ]] && return 0
+
+	if grep -q -E -e "(Vulnerable|Mitigation)" "/sys/devices/system/cpu/vulnerabilities/spectre_v2" ; then
 		return 0
 	else
 		return 1
@@ -1671,6 +1697,42 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 	fi
 
+	_cflags-hardened_needs_retpoline() {
+		if \
+			( \
+				_cflags-hardened_is_high_value_asset \
+					||
+				[[ \
+					"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"extension"\
+|"hypervisor"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"modular-app"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"plugin"\
+|"sandbox"\
+|"scripting"\
+|"security-critical"\
+|"server"\
+|"system-set"\
+|"untrusted-data"\
+|"web-browser"\
+|"web-server") \
+				]]
+			)
+		; then
+			return 0
+		else
+			return 1
+		fi
+	}
+
 	# Spectre V2 mitigation Linux kernel case
 	# For GCC it uses
 	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -1684,9 +1746,9 @@ einfo "All SSP hardening (All functions hardened)"
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
 		if \
-			which lscpu >/dev/null \
+			_cflags-hardened_is_spectre_v2_vulnerable \
 				&& \
-			lscpu | grep -q -E -e "Spectre v2.*(Mitigation|Vulnerable)" \
+			_cflags-hardened_needs_retpoline \
 		; then
 			filter-flags \
 				"-m*retpoline" \
