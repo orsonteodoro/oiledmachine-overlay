@@ -159,7 +159,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
 CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
 CHROMIUM_TOOLCHAIN=1
 CURRENT_PROFDATA_VERSION= # Global variable
@@ -656,7 +656,7 @@ ${SYSTEM_USE[@]}
 systemd test +wayland
 +webassembly
 -widevine +X
-ebuild_revision_20
+ebuild_revision_22
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
