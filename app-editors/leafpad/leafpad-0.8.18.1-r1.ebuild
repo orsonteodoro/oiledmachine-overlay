@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="amd64 ~arm ~ppc ~ppc64 ~riscv x86 ~amd64-linux ~x86-linux"
 IUSE="
 emacs
-ebuild_revision_13
+ebuild_revision_14
 "
 BDEPEND="
 	dev-util/intltool
