@@ -40,7 +40,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${GIT_BRANCHES}
 system-gflags test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 "
