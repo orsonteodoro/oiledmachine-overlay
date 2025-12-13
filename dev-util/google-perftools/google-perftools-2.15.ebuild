@@ -36,7 +36,7 @@ LICENSE="MIT"
 SLOT="0/4"
 IUSE="
 +debug llvm-libunwind minimal optimisememory test static-libs
-ebuild_revision_6
+ebuild_revision_7
 "
 
 RESTRICT="!test? ( test )"
