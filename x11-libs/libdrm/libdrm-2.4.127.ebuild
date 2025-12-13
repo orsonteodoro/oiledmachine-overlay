@@ -30,7 +30,7 @@ SLOT="0"
 IUSE="
 ${IUSE_VIDEO_CARDS}
 doc test tools udev valgrind
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
