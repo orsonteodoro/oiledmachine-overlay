@@ -68,7 +68,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 examples hdf5 python test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
