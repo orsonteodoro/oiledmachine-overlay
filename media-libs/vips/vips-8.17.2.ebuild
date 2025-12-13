@@ -75,7 +75,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_43
+ebuild_revision_44
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
