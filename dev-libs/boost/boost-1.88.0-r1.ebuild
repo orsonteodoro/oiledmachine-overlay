@@ -9,6 +9,36 @@ EAPI=8
 # (e.g. https://www.boost.org/users/history/version_1_83_0.html)
 # Note that the latter may sometimes feature patches not on the former too.
 
+CFLAGS_HARDENED_USE_CASES="
+	container-runtime
+	credentials
+	crypto
+	daemon
+	database
+	dss
+	extension
+	facial-embedding
+	game-engine
+	high-precision-research
+	ip-assets
+	jit
+	language-runtime
+	modular-app
+	secure-messaging
+	multithreaded-confidential
+	multiuser-system
+	network
+	p2p
+	plugin
+	sandbox
+	scripting
+	security-critical
+	sensitive-data
+	server
+	untrusted-data
+	web-browser
+	web-server
+"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS NPD"
 CXX_STANDARD=14
 PYTHON_COMPAT=( python3_{11..13} )
@@ -23,7 +53,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
 )
 
-inherit dot-a edo flag-o-matic libcxx-slot libstdcxx-slot multiprocessing
+inherit cflags-hardened dot-a edo flag-o-matic libcxx-slot libstdcxx-slot multiprocessing
 inherit python-r1 toolchain-funcs multilib-minimal
 
 MY_PV="$(ver_rs 1- _)"
@@ -36,7 +66,10 @@ S="${WORKDIR}/${PN}_${MY_PV}"
 LICENSE="Boost-1.0"
 SLOT="0/${PV}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="bzip2 +context debug doc icu lzma +nls mpi numpy python +stacktrace test test-full tools zlib zstd"
+IUSE="
+bzip2 +context debug doc icu lzma +nls mpi numpy python +stacktrace test test-full tools zlib zstd
+ebuild_revision_1
+"
 REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	test-full? ( test )
@@ -168,6 +201,8 @@ src_configure() {
 	use tools && filter-lto
 
 	lto-guarantee-fat
+
+	cflags-hardened_append
 
 	# Workaround for too many parallel processes requested, bug #506064
 	[[ "$(makeopts_jobs)" -gt 64 ]] && MAKEOPTS="${MAKEOPTS} -j64"
