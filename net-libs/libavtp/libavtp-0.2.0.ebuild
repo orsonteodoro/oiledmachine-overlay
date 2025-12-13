@@ -8,7 +8,8 @@ EAPI=8
 CFLAGS_HARDENED_LANGS="c-lang"
 # It should be hardened if computer is on the university network or public network.
 # Corporate network is assumed untrusted.
-CFLAGS_HARDENED_USE_CASES="network untrusted-data"
+# GStreamer may use it as P2P.
+CFLAGS_HARDENED_USE_CASES="network p2p untrusted-data"
 
 inherit cflags-hardened meson-multilib
 
