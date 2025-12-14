@@ -415,7 +415,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Dec 12, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1765056460 # From `date +%s -d "2025-12-07 06:27:40 +0900"` from changelog for latest tag
+MITIGATION_LAST_UPDATE=1765561367 # From `date +%s -d "2025-12-12 18:42:47 +0100"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -426,7 +426,10 @@ VULNERABILITIES_FIXED=(
 # If the ebuild maintainer(s) gathered them from the changelog, then the
 # vulnerability coverage may be incomplete or miscategoried.
 
-	# CVE-2023-53855
+	# 2025-12-12
+	"CVE-2025-40345;OOB;"
+
+	# 2025-12-09
 	"CVE-2023-53835;;Rejected"
 	"CVE-2023-53805;UAF;Rejected"
 	"CVE-2025-40336;;"
