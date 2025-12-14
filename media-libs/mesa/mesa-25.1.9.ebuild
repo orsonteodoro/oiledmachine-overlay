@@ -146,7 +146,7 @@ ${PATENT_STATUS[@]}
 asahi d3d9 debug +llvm lm-sensors opencl +opengl
 +proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	d3d9? (
@@ -632,8 +632,6 @@ einfo "CXX:  ${CXX}"
 	uopts_src_configure
 
 	fix_mb_len_max
-	local extra_args_cc="${_CFLAGS}"
-	local extra_args_cxx="${_CXXFLAGS}"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -849,9 +847,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex patent_status_nonfree "all" "all_free")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
-
-		"-Dc_args=${extra_args_cc}"
-		"-Dcpp_args=${extra_args_cxx}"
 	)
 	meson_src_configure
 

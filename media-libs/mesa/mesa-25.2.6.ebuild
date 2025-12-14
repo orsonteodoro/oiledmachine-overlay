@@ -149,7 +149,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	video_cards_lavapipe? (
@@ -620,8 +620,6 @@ einfo "CXX:  ${CXX}"
 	uopts_src_configure
 
 	fix_mb_len_max
-	local extra_args_cc="${_CFLAGS}"
-	local extra_args_cxx="${_CXXFLAGS}"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -632,8 +630,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-
-	cflags-hardened_append
 
 	local platforms
 	use X && platforms+="x11"
@@ -806,9 +802,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex patent_status_nonfree "all" "all_free")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
-
-		"-Dc_args=${extra_args_cc}"
-		"-Dcpp_args=${extra_args_cxx}"
 	)
 	meson_src_configure
 
