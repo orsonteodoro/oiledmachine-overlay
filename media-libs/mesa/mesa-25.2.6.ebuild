@@ -149,7 +149,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	video_cards_lavapipe? (
@@ -630,6 +630,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	local platforms
 	use X && platforms+="x11"
