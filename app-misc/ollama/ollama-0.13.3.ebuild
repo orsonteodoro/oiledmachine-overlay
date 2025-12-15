@@ -3072,7 +3072,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_110
+ebuild_revision_111
 "
 
 gen_rocm_required_use() {
@@ -4498,6 +4498,8 @@ einfo "CUSTOM_CPU_FLAGS:  ${CUSTOM_CPU_FLAGS}"
                 -DCMAKE_DISABLE_FIND_PACKAGE_Vulkan="ON"
 		-DCMAKE_HIP_COMPILER="CMAKE_CUDA_COMPILER-NOTFOUND"
 		-DCMAKE_VERBOSE_MAKEFILE=ON
+		-DGGML_VERSION=0
+		-DGGML_VERSION_MAJOR=0
 	)
 
 einfo "Building CPU runner"
@@ -4636,6 +4638,8 @@ einfo "LDFLAGS: ${LDFLAGS}"
                 -DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=$(usex !cuda "ON" "OFF")
                 -DCMAKE_DISABLE_FIND_PACKAGE_Vulkan=$(usex !vulkan "ON" "OFF")
 		-DCMAKE_VERBOSE_MAKEFILE=ON
+		-DGGML_VERSION=0
+		-DGGML_VERSION_MAJOR=0
 	)
 
 	if use cuda ; then
@@ -4793,6 +4797,7 @@ install_cpu_runner() {
 	exeinto "/usr/lib/${PN}/$(get_libdir)/${dir_name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "libggml-base.so"
+		doexe "libggml-base.so.0"
 		doexe "libggml-${flavor_name}.so"
 	popd >/dev/null 2>&1 || die
 	patchelf \
