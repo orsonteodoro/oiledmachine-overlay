@@ -355,11 +355,11 @@ Potential threats
 
 Core threats
 
-| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | SM    | T     | DPH  | RP    |
-| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---   | ---   | ---  | ---   |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | P [1] | P [3] | R[5] | B - C |
-| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   | P [2] | N     | N    | B [6] |
-| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N   | Y     | N     | N    | B [6] |
+| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O    | SM    | T     | DPH  | RP    |
+| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---  | ---   | ---   | ---  | ---   |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P[8] | P [1] | P [3] | R[5] | B - C |
+| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y    | P [2] | N     | N    | B [6] |
+| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N    | Y     | N     | N    | B [6] |
 
 * [1] Partial mitigation -- CPU - Yes, GPU - No
 * [2] Partial mitigation -- CPU - No, GPU - Yes
@@ -369,6 +369,7 @@ Core threats
 * [6] SSP strong is 10% performance penalty worst case and default ON as the distro's default compiler.
 * [7] Repoline is 10% performance penalty for typical use, but worst case estimated 35% in real world to maybe even 54% in synthetic benchmarks.
       The sysadmin can choose between Retpoline or CET (5% performance penalty), the latter having the more higher mitigation score while both are mutually exclusive mitigation techniques.
+* [8] Required for @system set, optional for EOL software or heavy packages (+20 MLOC).
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
