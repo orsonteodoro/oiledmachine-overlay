@@ -354,11 +354,14 @@ Potential threats
 
 Core threats
 
-| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   |
-| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   |
-| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   |
-| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   |
+| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | SM    |
+| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---   |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | P [1] |
+| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   | P [2] |
+| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   | Y     |
+
+[1] Partial mitigation -- CPU - Yes, GPU - No
+[1] Partial mitigation -- CPU - No, GPU - Yes
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
@@ -381,6 +384,7 @@ Core threats
 * DI - Developer Integrity (Supply Chain Attack)
 * BCF - Bad Compiler Flags
 * O - Operationality
+* SM - Software Mortality (Planned Obsolescence) that coerces non-free
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
 * NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI.
