@@ -17,6 +17,7 @@ EAPI=8
 # 0.12.9 -> 0.12.10
 # 0.12.10 -> 0.12.11
 # 0.12.11 -> 0.13.0
+# 0.13.0 -> 0.13.3
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
