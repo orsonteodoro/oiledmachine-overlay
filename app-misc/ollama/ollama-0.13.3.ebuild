@@ -202,11 +202,10 @@ LLVM_COMPAT=(
 	{18..19}
 )
 
-LLMS=(
-	"adens-quran-guide"
+COMMUNITY_LLMS=(
 	"agcobra-liberated-qwen1.5-72b"
+	"adens-quran-guide"
 	"akx-viking-7b"
-	"alfred"
 	"ALIENTELLIGENCE-christiancounselor"
 	"ALIENTELLIGENCE-crisisintervention"
 	"ALIENTELLIGENCE-doomsdayurvivalist"
@@ -220,27 +219,64 @@ LLMS=(
 	"ALIENTELLIGENCE-sarahv2"
 	"ALIENTELLIGENCE-whiterabbit"
 	"ALIENTELLIGENCE-whiterabbitv2"
-	"all-minilm"
 	"Artalius-lixi"
-	"aya"
-	"aya-expanse"
-	"bakllava"
 	"artifish-mlewd-v2.4"
-	"athene-v2"
 	"benevolentjoker-belial"
 	"benevolentjoker-bethanygpt"
 	"benevolentjoker-nsfwmonika"
 	"benevolentjoker-nsfwvanessa"
 	"benevolentjoker-satan"
-	"bespoke-minicheck"
-	"bge-large"
-	"bge-m3"
 	"canadiangamer-neena"
 	"canadiangamer-priya"
 	"captainkyd-whiterabbitneo7b"
 	"chatgph-70b-instruct"
 	"chatgph-gph-main"
 	"chatgph-medix-ph"
+	"disinfozone-telos"
+	"ehartford-theprofessor"
+	"eramax-aura_v3"
+	"fixt-home-3b-v3"
+	"fixt-home-3b-v2"
+	"hemanth-chessplayer"
+	"hookingai-monah-8b"
+	"jimscard-adult-film-screenwriter-nsfw"
+	"jimscard-whiterabbit-neo"
+	"joefamous-grok-1"
+	"leeplenty-lumimaid-v0.2"
+	"mannix-replete-adapted-llama3-8b"
+	"mannix-llamax3-8b-alpaca"
+	"mannix-smaug-qwen2-72b"
+	"mannix-replete-coder-llama3-8b"
+	"monotykamary-whiterabbitneo-v1.5a"
+	"nqduc-gemsura"
+	"nqduc-mixsura"
+	"nqduc-mixsura-sft"
+	"partai-dorna-llama3"
+	"reefer-her2"
+	"reefer-minimonica"
+	"reefer-monica"
+	"rfc-whiterabbitneo"
+	"rouge-replete-coder-qwen2-1.5b"
+	"savethedoctor-whiterabbitneo13bq8_0"
+	"sparksammy-samantha"
+	"sparksammy-samantha-3.1"
+	"sparksammy-samantha-eggplant"
+	"sparksammy-samantha-v3-uncensored"
+	"sparksammy-tinysam-goog"
+	"sparksammy-tinysam-msft"
+	"themanofrod-travel-agent"
+)
+
+FEATURED_LLMS=(
+	"alfred"
+	"all-minilm"
+	"aya"
+	"aya-expanse"
+	"bakllava"
+	"athene-v2"
+	"bespoke-minicheck"
+	"bge-large"
+	"bge-m3"
 	"codebooga"
 	"codegeex4"
 	"codegemma"
@@ -271,7 +307,6 @@ LLMS=(
 	"devstral"
 	"devstral-2"
 	"devstral-small-2"
-	"disinfozone-telos"
 	"dolphin-llama3"
 	"dolphin-mistral"
 	"dolphin-mixtral"
@@ -279,8 +314,6 @@ LLMS=(
 	"dolphin3"
 	"dolphincoder"
 	"duckdb-nsql"
-	"ehartford-theprofessor"
-	"eramax-aura_v3"
 	"everythinglm"
 	"falcon"
 	"falcon2"
@@ -296,8 +329,6 @@ LLMS=(
 	"embeddinggemma"
 	"exaone3.5"
 	"exaone-deep"
-	"fixt-home-3b-v3"
-	"fixt-home-3b-v2"
 	"goliath"
 	"gpt-oss"
 	"gpt-oss-safeguard"
@@ -312,16 +343,10 @@ LLMS=(
 	"granite3.2-vision"
 	"granite3.3"
 	"granite4"
-	"hemanth-chessplayer"
 	"hermes3"
-	"hookingai-monah-8b"
 	"internlm2"
-	"jimscard-adult-film-screenwriter-nsfw"
-	"jimscard-whiterabbit-neo"
-	"joefamous-grok-1"
 	"kimi-k2"
 	"kimi-k2-thinking"
-	"leeplenty-lumimaid-v0.2"
 	"llama-guard3"
 	"llama-pro"
 	"llama2"
@@ -341,10 +366,6 @@ LLMS=(
 	"llava-phi3"
 	"magicoder"
 	"magistral"
-	"mannix-replete-adapted-llama3-8b"
-	"mannix-llamax3-8b-alpaca"
-	"mannix-smaug-qwen2-72b"
-	"mannix-replete-coder-llama3-8b"
 	"marco-o1"
 	"mathstral"
 	"meditron"
@@ -363,7 +384,6 @@ LLMS=(
 	"mistral-small3.2"
 	"mistrallite"
 	"mixtral"
-	"monotykamary-whiterabbitneo-v1.5a"
 	"moondream"
 	"mxbai-embed-large"
 	"nemotron"
@@ -377,9 +397,6 @@ LLMS=(
 	"nous-hermes"
 	"nous-hermes2"
 	"nous-hermes2-mixtral"
-	"nqduc-gemsura"
-	"nqduc-mixsura"
-	"nqduc-mixsura-sft"
 	"nuextract"
 	"olmo2"
 	"open-orca-platypus2"
@@ -390,7 +407,6 @@ LLMS=(
 	"orca-mini"
 	"orca2"
 	"paraphrase-multilingual"
-	"partai-dorna-llama3"
 	"phi"
 	"phi3"
 	"phi3.5"
@@ -413,17 +429,11 @@ LLMS=(
 	"qwq"
 	"r1-1776"
 	"reader-lm"
-	"reefer-her2"
-	"reefer-minimonica"
-	"reefer-monica"
 	"reflection"
-	"rfc-whiterabbitneo"
 	"rnj-1"
-	"rouge-replete-coder-qwen2-1.5b"
 	"sailor2"
 	"samantha-mistral"
 	"sammcj-smaug-mixtral-v0.1"
-	"savethedoctor-whiterabbitneo13bq8_0"
 	"shieldgemma"
 	"smallthinker"
 	"smollm"
@@ -432,12 +442,6 @@ LLMS=(
 	"snowflake-arctic-embed2"
 	"solar"
 	"solar-pro"
-	"sparksammy-samantha"
-	"sparksammy-samantha-3.1"
-	"sparksammy-samantha-eggplant"
-	"sparksammy-samantha-v3-uncensored"
-	"sparksammy-tinysam-goog"
-	"sparksammy-tinysam-msft"
 	"sqlcoder"
 	"stable-beluga"
 	"stable-code"
@@ -446,7 +450,6 @@ LLMS=(
 	"starcoder"
 	"starcoder2"
 	"starling-lm"
-	"themanofrod-travel-agent"
 	"tinydolphin"
 	"tinyllama"
 	"tulu3"
@@ -464,6 +467,11 @@ LLMS=(
 	"yi"
 	"yi-coder"
 	"zephyr"
+)
+
+LLMS=(
+	"${FEATURED_LLMS[@]}"
+	"${COMMUNITY_LLMS[@]}"
 )
 
 ROCM_SLOTS=(
@@ -4214,7 +4222,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 
 	# Toggle LLM in whitelist to filter out LLM support by license.
 	local n
-	for n in ${LLMS[@]} ; do
+	for n in "${LLMS[@]}" ; do
 		local key="${use_alias[${n}]}"
 		if [[ -n "${key}" ]] ; then
 			if use "ollama_llms_${n}" ; then
@@ -4226,6 +4234,12 @@ einfo "LDFLAGS: ${LDFLAGS}"
 			sed -i -e "s|\"${n}\": 1|\"${n}\": 1|g" "cmd/cmd.go" || die
 		else
 			sed -i -e "s|\"${n}\": 1|\"${n}\": 0|g" "cmd/cmd.go" || die
+		fi
+	done
+
+	for n in "${FEATURED_LLMS[@]}" ; do
+		if use "ollama_llms_${n}" ; then
+ewarn "ollama_llms_${n} is a community provided LLM.  Use at your own risk."
 		fi
 	done
 
@@ -4344,7 +4358,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 	elif use mkl ; then
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=mkl"
 		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
-		mkl_pv=$(ver_cut 1-3 ${pv})
+		mkl_pv=$(ver_cut "1-3" "${pv}")
 	# We force tbb to dedupe thread libs.  GPU acceleration already uses tbb unconditionally.
 		local cflags=$(pkg-config --cflags mkl-dynamic-lp64-tbb)
 		local libs=$(pkg-config --libs mkl-dynamic-lp64-tbb)
@@ -4830,7 +4844,7 @@ install_gpu_runner() {
 	)
 	local n
 	if use cuda ; then
-		for n in ${list[@]} ; do
+		for n in "${list[@]}" ; do
 			patchelf \
 				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
@@ -4845,7 +4859,7 @@ install_gpu_runner() {
 				|| die
 		done
 	elif use rocm ; then
-		for n in ${list[@]} ; do
+		for n in "${list[@]}" ; do
 			patchelf \
 				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
@@ -4861,7 +4875,7 @@ install_gpu_runner() {
 		done
 	elif use vulkan ; then
 		# Link ggml-base.so
-		for n in ${list[@]} ; do
+		for n in "${list[@]}" ; do
 			patchelf \
 				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
 				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
