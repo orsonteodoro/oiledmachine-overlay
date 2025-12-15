@@ -355,14 +355,15 @@ Potential threats
 
 Core threats
 
-| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | SM    |
-| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---   |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | P [1] |
-| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   | P [2] |
-| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   | Y     |
+| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | SM    | T     |
+| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---   | ---   |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | P [1] | P [3] |
+| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   | P [2] | N     |
+| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   | Y     | N     |
 
 * [1] Partial mitigation -- CPU - Yes, GPU - No
 * [2] Partial mitigation -- CPU - No, GPU - Yes
+* [3] Default opt-out, best effort removal or disablement based on integration complexity
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
@@ -386,6 +387,7 @@ Core threats
 * BCF - Bad Compiler Flags
 * O - Operationality
 * SM - Software Mortality (Planned Obsolescence) that coerces non-free
+* T - Telemetry (Data Collection)
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
 * NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI.
