@@ -73,30 +73,31 @@
 
   Backend estimates
 
-  | Implementation               | Performance impact | Tokens per second (input) | Tokens per second (output)           | PCIe Atomics required? |
-  | ---                          | ---                | ---                       | ---                                  | ---                    |
-  | CPU (SSE2)                   | 1x (baseline)      | 5 - 10                    | 50 - 150                             | No                     |
-  | CPU (SSE4)                   | 1.1 - 1.2x         | 6 - 12                    | 60 - 180                             | No                     |
-  | CPU (AVX2)                   | 2 - 3x             | 15 - 30                   | 200 - 600                            | No                     |
-  | CPU (AVX512)                 | 3 - 5x             | 20 - 50                   | 500 - 1500                           | No                     |
-  | Vulkan                       | 30 - 80x           | 70 - 150                  | 1000 - 3000                          | No                     |
-  | ROCm                         | 40 - 90x           | 80 - 180                  | 1500 - 3500                          | Yes                    |
-  | CUDA                         | 50 - 100x          | 100 - 200                 | 2000 - 4500                          | No                     |
-  | TTS (quick Q/A) [1]          |                    | 5 - 30                    | 200 - 300+ (min), 500+ (ideal)       |                        |              
-  | TTS (conversation) [1]       |                    | 5 - 30                    | 300 - 500+ (min), 800-1500+ (ideal)  |                        |              
-  | TTS (lecture slides)         |                    |                           | 300 - 500+ (min), 800+ (ideal)       |                        |
-  | TTS (regular lecture)        |                    |                           | 400 - 800+ (min), 1000-2000+ (ideal) |                        |
-  | TTS (long lecture)           |                    |                           | 600+ (min), 2000+ (ideal)            |                        |
-  | CA (code fragments, FIM) [2] |                    |                           | 500-800+ (min), 1000 (ideal)         |                        |
-  | CA (debugging)               |                    |                           | 800-1200+ (min), 1500-3000+ (ideal)  |                        |
-  | CA (multi file)              |                    |                           | 1000+ (min), 3000+ (ideal)           |                        |
-  | CA (vibe coding single file) |                    |                           | 1000+ (min), 2000-4000+ (ideal)      |                        |
-  | CA (vibe coding multi file)  |                    |                           | 2000+ (min), 4000+ (ideal)           |                        |
-  | CA (vibe coding full repo)   |                    |                           | 3000+ (min), 5000+ (ideal)           |                        |
+  | Implementation               | Performance impact | Tokens per second (input) | Tokens per second (output)           |
+  | ---                          | ---                | ---                       | ---                                  |
+  | CPU (SSE2)                   | 1x (baseline)      | 5 - 10                    | 50 - 150                             |
+  | CPU (SSE4)                   | 1.1 - 1.2x         | 6 - 12                    | 60 - 180                             |
+  | CPU (AVX2)                   | 2 - 3x             | 15 - 30                   | 200 - 600                            |
+  | CPU (AVX512)                 | 3 - 5x             | 20 - 50                   | 500 - 1500                           |
+  | Vulkan                       | 30 - 80x           | 70 - 150                  | 1000 - 3000                          |
+  | ROCm [4]                     | 40 - 90x           | 80 - 180                  | 1500 - 3500                          |
+  | CUDA                         | 50 - 100x          | 100 - 200                 | 2000 - 4500                          |
+  | TTS (quick Q/A) [1]          |                    | 5 - 30                    | 200 - 300+ (min), 500+ (ideal)       |              
+  | TTS (conversation) [1]       |                    | 5 - 30                    | 300 - 500+ (min), 800-1500+ (ideal)  |              
+  | TTS (lecture slides)         |                    |                           | 300 - 500+ (min), 800+ (ideal)       |
+  | TTS (regular lecture)        |                    |                           | 400 - 800+ (min), 1000-2000+ (ideal) |
+  | TTS (long lecture)           |                    |                           | 600+ (min), 2000+ (ideal)            |
+  | CA (code fragments, FIM) [2] |                    |                           | 500-800+ (min), 1000 (ideal)         |
+  | CA (debugging)               |                    |                           | 800-1200+ (min), 1500-3000+ (ideal)  |
+  | CA (multi file)              |                    |                           | 1000+ (min), 3000+ (ideal)           |
+  | CA (vibe coding single file) |                    |                           | 1000+ (min), 2000-4000+ (ideal)      |
+  | CA (vibe coding multi file)  |                    |                           | 2000+ (min), 4000+ (ideal)           |
+  | CA (vibe coding full repo)   |                    |                           | 3000+ (min), 5000+ (ideal)           |
 
   [1] Text To Speech (TTS)
   [2] Code assistant
   [3] Fill In The Middle (FIM) or auto complete
+  [4] Requires PCIe Atomics
 
   -->
   <upstream>
