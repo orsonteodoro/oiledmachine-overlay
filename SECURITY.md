@@ -350,7 +350,7 @@ Potential threats
 * [1] The main threats are zero click attacks, sandbox breakout, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels
 * [2] The main threats are untrusted data
 * [3] The main threats are data thefts
-* [4] High uptime (A=Y) versus max runtime performance (A=N) is a user choice.
+* [4] High uptime (A=Y) versus max runtime performance (A=N) is an admin choice.
 
 
 | Context                       | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   |
