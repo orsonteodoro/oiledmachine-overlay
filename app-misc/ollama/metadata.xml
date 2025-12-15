@@ -81,7 +81,7 @@
   | CPU (AVX512)                 | 3 - 5x             | 20 - 50                   | 500 - 1500                           | No                     |
   | Vulkan                       | 30 - 80x           | 70 - 150                  | 1000 - 3000                          | No                     |
   | ROCm                         | 40 - 90x           | 80 - 180                  | 1500 - 3500                          | Yes                    |
-  | CUDA                         | 50 - 100x          | 100 - 200                 | 2000 - 4500                          | Yes                    |
+  | CUDA                         | 50 - 100x          | 100 - 200                 | 2000 - 4500                          | No                     |
   | TTS (quick Q/A) [1]          |                    | 5 - 30                    | 200 - 300+ (min), 500+ (ideal)       |                        |              
   | TTS (conversation) [1]       |                    | 5 - 30                    | 300 - 500+ (min), 800-1500+ (ideal)  |                        |              
   | TTS (lecture slides)         |                    |                           | 300 - 500+ (min), 800+ (ideal)       |                        |
