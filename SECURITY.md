@@ -325,6 +325,49 @@ their own threat model and apply their own hardening.
       also to disable exceptions and disable the compiler default ON
       hardening which may have a worst case performance above 5%.
 
+Potential threats
+
+| Threat Level | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | RP  |
+| ---          | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | --- |
+| S0 [1]       | Y   | Y   | Y   | Y    | Y   | Y   | Y   |     | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | C   |
+| S1 [2]       | N   | Y   | Y   | Y    | Y   | N   | Y   |     | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B   |
+| S2 [3]       | Y   | Y   | Y   | N    | Y   | Y   | N   |     | Y   | N   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | C   |
+| S3           | N   | N   | N   | N    | N   | N   | N   |     | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | A   |
+
+[1] The main threats are zero click attacks, sandbox breakout, ransomware, code hijack that leads to impersonation or stolen crown jewels
+[2] The main threats are truntrusted data
+[3] The main threats are data thefts
+
+
+| Context                       | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   |
+| ---                           | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- |
+| Core threat on this overlay   | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   |
+| Required (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | Y   |
+| Required (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   |
+
+
+ZC - Zero Click vulnerability
+DoS - Denial of Service
+DT - Data Tampering
+ID - Information Disclosure
+SE - Social Engineering
+UB - Undefined Behavior (e.g. Integer Overflow)
+MC - Memory Corruption
+AP - Attack Primitives (ROP Gadgets)
+HV - Hardware Vulnerabilities
+FV - Firmware Vulnerability
+IDEF - Incorrect Defaults
+IPERMS - Incorrect File Permissions
+UMSI - Unfinished or Missing Security Implementation
+LCI - License and Copyright Issues
+RP - Default Runtime Performance grade
+DI - Developer Integrity (Supply Chain Attack)
+BCF - Bad Compiler Flags
+O - Operationality
+
+STRIDE covers DoS, DT, ID, SE.
+NVD/CVSS covers ZC, DoS, DT, ID, SE, HV.
+
 ```
 # Example of per-package hardening
 # Contents of /etc/portage/env/nano.conf
