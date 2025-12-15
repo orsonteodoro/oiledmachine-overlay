@@ -325,6 +325,19 @@ their own threat model and apply their own hardening.
       also to disable exceptions and disable the compiler default ON
       hardening which may have a worst case performance above 5%.
 
+
+```
+# Example of per-package hardening
+# Contents of /etc/portage/env/nano.conf
+# Setting to 15.00, one could enable -ftrapv which is a poor man's UBSan.
+# Setting to 15.00 means that task completion will take about 15 times longer in the worst case.
+RUSTFLAGS_HARDENED_TOLERANCE_USER="15.00"
+CFLAGS_HARDENED_TOLERANCE_USER="15.00"
+
+# Contents of /etc/portage/package.env:
+app-editors/nano nano.conf
+```
+
 Potential threats
 
 | Threat Level | ZC   | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | RP  |
@@ -368,15 +381,3 @@ Potential threats
 
 * STRIDE covers DoS, DT, ID, SE.
 * NVD/CVSS covers ZC, DoS, DT, ID, SE, HV.
-
-```
-# Example of per-package hardening
-# Contents of /etc/portage/env/nano.conf
-# Setting to 15.00, one could enable -ftrapv which is a poor man's UBSan.
-# Setting to 15.00 means that task completion will take about 15 times longer in the worst case.
-RUSTFLAGS_HARDENED_TOLERANCE_USER="15.00"
-CFLAGS_HARDENED_TOLERANCE_USER="15.00"
-
-# Contents of /etc/portage/package.env:
-app-editors/nano nano.conf
-```
