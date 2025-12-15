@@ -365,7 +365,7 @@ Core threats
 * [2] Partial mitigation -- CPU - No, GPU - Yes
 * [3] Default opt-out, best effort removal or disablement based on integration complexity
 * [4] At the source code level
-* [5] Recognized as an ID threat and should be removed or disabled
+* [5] Recognized as an ID threat and should be removed or disabled if possible
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
