@@ -1,0 +1,9 @@
+--- a/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt.orig	2025-11-18 22:03:50.000000000 -0800
++++ b/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-12-14 10:11:25.414895027 -0800
+@@ -186,5 +186,5 @@ if (CUDAToolkit_FOUND)
+ 
+     target_compile_options(ggml-cuda PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:${CUDA_FLAGS}>")
+ else()
+-    message(FATAL_ERROR "CUDA Toolkit not found")
++    message(STATUS "CUDA Toolkit not found")
+ endif()

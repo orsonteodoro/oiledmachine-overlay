@@ -141,6 +141,11 @@ BDEPEND+="
 # point to paths in use the llvm-roc.  If ROCM_USE_LLVM_ROC=0, it will fix
 # rpaths and @...@ symbols to point to the system's llvm.
 
+# @ECLASS_VARIABLE: ROCM_ADD_HIP_DEPS_LINKER_FLAGS
+# @DESCRIPTION:
+# Add HIP's dependency linker flags
+# Valid values:  0 (default), 1, unset
+
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -1109,6 +1114,26 @@ rocm_verify_rpath_correctness() {
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: rocm_add_hip_deps_linker_flags
+# @DESCRIPTION:
+# Add linker deps flags
+rocm_add_hip_deps_linker_flags() {
+	# Not enabled by default to avoid clean install issues.
+	[[ "${ROCM_ADD_HIP_DEPS_LINKER_FLAGS:-0}" == "1" ]] || return
+	local flags=()
+	if has_version "dev-util/hip[lc]" ; then
+		flags+=( "-lamd_comgr" )
+	fi
+	if has_version "dev-util/hip[hsa]" ; then
+		flags+=( "-lhsa-runtime64" )
+	fi
+	if has_version "dev-util/hip[numa]" ; then
+		flags+=( "-lnuma" )
+	fi
+einfo "Adding HIP dependency linker flags..."
+	export HIPCC_LINK_FLAGS_APPEND="-L/opt/rocm/lib ${flags[@]} "
+}
+
 # @FUNCTION: rocm_set_default_gcc
 # @DESCRIPTION:
 # Sets compiler defaults to gcc to avoid versioned C++ linking errors.
@@ -1119,6 +1144,9 @@ rocm_set_default_gcc() {
 	strip-unsupported-flags
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=bfd"
+
+	rocm_add_hip_deps_linker_flags
+
 einfo "Switched to GCC"
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -1137,6 +1165,8 @@ rocm_set_default_clang() {
 	# Placed here to unbreak ccache with gcc.
 		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
 	fi
+
+	rocm_add_hip_deps_linker_flags
 
 	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 	llvm_slot="${!_llvm_slot}"

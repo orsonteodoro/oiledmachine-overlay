@@ -3490,6 +3490,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.13.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
 )
 
 pkg_pretend() {
@@ -3560,6 +3561,7 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 		unset CXX
 		unset CPP
 	elif use rocm ; then
+		export ROCM_ADD_HIP_DEPS_LINKER_FLAGS=1
 		if use rocm_6_4 ; then
 			export ROCM_SLOT="6.4"
 			export LLVM_SLOT=19
@@ -3705,6 +3707,11 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		-e "s|@LIBDIR@|${libdir}|g" \
 		"ml/path.go" \
 		|| die
+
+	sed -i \
+		-e "/binaryDir/d" \
+		"CMakePresets.json" \
+		|| die
 }
 
 check_toolchain() {
@@ -3784,20 +3791,6 @@ einfo "ROCM_SLOT: ${ROCM_SLOT}"
 			-e "s|gfx900;gfx940;gfx941;gfx942;gfx1010;gfx1012;gfx1030;gfx1100;gfx1101;gfx1102;gfx906:xnack-;gfx908:xnack-;gfx90a:xnack+;gfx90a:xnack-|${AMDGPU_TARGETS}|g" \
 			"CMakePresets.json" \
 			|| die
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"amdocl64:dev-libs/rocm-opencl-runtime"
-			"hipblas:sci-libs/hipBLAS"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-			"rocsparse:sci-libs/rocSPARSE"
-			"rocsolver:sci-libs/rocSOLVER"
-		)
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
 
 		# Speed up build
 		local gpus="${AMDGPU_TARGETS}"
@@ -4052,13 +4045,19 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 
 	# -Ofast breaks nvcc
 	# -D_FORTIFY_SOURCE needs -O1 or higher
-	replace-flags '-Ofast' '-O2'
+	replace-flags '-O*' '-O2'
 	replace-flags '-O4' '-O2'
 	replace-flags '-O3' '-O2'
-	replace-flags '-Os' '-O2'
-	replace-flags '-Oz' '-O2'
-	replace-flags '-O0' '-O1'
-	if ! is-flagq "-O1" && ! is-flagq "-O2" ; then
+	replace-flags '-Os' '-Os'
+	replace-flags '-Oz' '-Os'
+	replace-flags '-O0' '-O2'
+
+	# Disable all -O3 to avoid optimizing out security-critical
+	# _FORTIFY_SOURCE memory corruption checks.
+	sed -i -e "s|-O3|-O2|g" "ml/backend/ggml/ggml/src/ggml-cpu/cpu.go" || die
+	sed -i -e "/CMAKE_BUILD_TYPE/d" "CMakeLists.txt" || die
+
+	if ! is-flagq "-Os" && ! is-flagq "-O2" ; then
 	# Add fallback flag.
 	# Optimize for performance.
 	# GCC/Clang use -O0 by default.
@@ -4066,6 +4065,7 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 	fi
 
 	local olast=$(get_olast)
+einfo "olast:  ${olast}"
 
 	replace-flags "-O*" "${olast}"
 
@@ -4094,8 +4094,12 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 
 	append-ldflags -Wl,--warn-unresolved-symbols
 
-	# Allow custom -Oflag
-	export CMAKE_BUILD_TYPE=" "
+	# Prevent _FORTIFY_SOURCE check removal
+	if [[ "${olast}" =~ "Os" ]] ; then
+		export CMAKE_BUILD_TYPE="MinSizeRel"
+	else
+		export CMAKE_BUILD_TYPE="RelWithDebInfo"
+	fi
 
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
@@ -4435,33 +4439,42 @@ einfo "CUSTOM_CPU_FLAGS:  ${CUSTOM_CPU_FLAGS}"
 	export OLLAMA_SKIP_CUDA_GENERATE=1
 	export USE_CUDA=0
 
-einfo "Building CPU runner"
-	#emake cpu
-	cmake \
-		--preset "CPU" \
-		-DCMAKE_HIP_COMPILER="" \
-		-DCMAKE_VERBOSE_MAKEFILE=ON \
-		|| die
-	cmake \
-		--build \
-		--preset "CPU" \
-		-DCMAKE_HIP_COMPILER="" \
-		-DCMAKE_VERBOSE_MAKEFILE=ON \
-		|| die
-	cmake \
-		--install "build" \
-		--component "CPU" \
-		--strip \
-		|| die
+	local debug=$(use debug "-DDEBUG" "-DNDEBUG")
+	local olast=$(get_olast)
+	local mycmakeargs=(
+		-DCMAKE_C_FLAGS_RELEASE="${olast} ${debug}"
+		-DCMAKE_CUDA_COMPILER="CMAKE_CUDA_COMPILER-NOTFOUND"
+		-DCMAKE_CUDA_FLAGS_RELEASE="${olast} ${debug}"
+		-DCMAKE_CXX_FLAGS_RELEASE="${olast} ${debug}"
+                -DCMAKE_DISABLE_FIND_PACKAGE_CUDA="ON"
+                -DCMAKE_DISABLE_FIND_PACKAGE_Cuda="ON"
+                -DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit="ON"
+                -DCMAKE_DISABLE_FIND_PACKAGE_Vulkan="ON"
+		-DCMAKE_HIP_COMPILER="CMAKE_CUDA_COMPILER-NOTFOUND"
+		-DCMAKE_VERBOSE_MAKEFILE=ON
+	)
 
-#	edo go build ${args[@]} .
+einfo "Building CPU runner"
+	edo cmake \
+		-S "${S}" \
+		-B "${S}_build_cpu" \
+		--preset "CPU" \
+		"${mycmakeargs[@]}"
+
+	edo cmake \
+		--build "${S}_build_cpu" \
+		--preset "CPU"
+
+	edo cmake \
+		--install "${S}_build_cpu" \
+		--component "CPU"
 }
 
 build_new_runner_gpu() {
 	# The documentation is sloppy.
 
 	if use cuda || use rocm || use vulkan ; then
-		:
+einfo "Running build_new_runner_gpu()"
 	else
 einfo "Skipping GPU build"
 		return
@@ -4555,6 +4568,30 @@ einfo "Skipping GPU build"
 		)
 	fi
 
+	export CGO_CFLAGS="${CFLAGS}"
+	export CGO_CXXFLAGS="${CXXFLAGS}"
+	export CGO_CPPFLAGS="${CPPFLAGS}"
+	export CGO_LDFLAGS="${LDFLAGS}"
+einfo "CFLAGS: ${CFLAGS}"
+einfo "CXXFLAGS: ${CXXFLAGS}"
+einfo "CPPLAGS: ${CPPFLAGS}"
+einfo "LDFLAGS: ${LDFLAGS}"
+
+	local debug=$(use debug "-DDEBUG" "-DNDEBUG")
+	local olast=$(get_olast)
+	local mycmakeargs=(
+		$(usex !cuda "-DCMAKE_CUDA_COMPILER=CMAKE_CUDA_COMPILER-NOTFOUND" "")
+		$(usex !rocm "-DCMAKE_HIP_COMPILER=CMAKE_CUDA_COMPILER-NOTFOUND" "")
+		-DCMAKE_C_FLAGS_RELEASE="${olast} ${debug}"
+		-DCMAKE_CUDA_FLAGS_RELEASE="${olast} ${debug}"
+		-DCMAKE_CXX_FLAGS_RELEASE="${olast} ${debug}"
+                -DCMAKE_DISABLE_FIND_PACKAGE_CUDA=$(usex !cuda "ON" "OFF")
+                -DCMAKE_DISABLE_FIND_PACKAGE_Cuda=$(usex !cuda "ON" "OFF")
+                -DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=$(usex !cuda "ON" "OFF")
+                -DCMAKE_DISABLE_FIND_PACKAGE_Vulkan=$(usex !vulkan "ON" "OFF")
+		-DCMAKE_VERBOSE_MAKEFILE=ON
+	)
+
 	if use cuda ; then
 		# Breaks nvcc
 		filter-flags "-m*"
@@ -4572,80 +4609,70 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		unset OLLAMA_SKIP_CUDA_GENERATE
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 einfo "Building for CUDA v12"
-#			emake cuda_v12
-			cmake \
+			edo cmake \
+				-S "${S}" \
+				-B "${S}_build_cuda" \
 				--preset "CUDA 12" \
 				-DCMAKE_HIP_COMPILER="" \
-				-DCMAKE_VERBOSE_MAKEFILE=ON \
-				|| die
-			cmake \
-				--build \
-				--preset "CUDA 12" \
-				-DCMAKE_HIP_COMPILER="" \
-				-DCMAKE_VERBOSE_MAKEFILE=ON \
-				|| die
-			cmake \
-				--install "build" \
-				--component "CUDA" \
-				--strip \
-				|| die
+				"${mycmakeargs[@]}"
+			edo cmake \
+				--build "${S}_build_cuda" \
+				--preset "CUDA 12"
+			edo cmake \
+				--install "${S}_build_cuda" \
+				--component "CUDA"
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
 einfo "Building for CUDA v11"
-#			emake cuda_v11
-			cmake \
+			edo cmake \
+				-S "${S}" \
+				-B "${S}_build_cuda" \
 				--preset "CUDA 11" \
 				-DCMAKE_HIP_COMPILER="" \
-				-DCMAKE_VERBOSE_MAKEFILE=ON \
-				|| die
-			cmake \
-				--build \
-				--preset "CUDA 11" \
-				-DCMAKE_HIP_COMPILER="" \
-				-DCMAKE_VERBOSE_MAKEFILE=ON \
-				|| die
-			cmake \
-				--install "build" \
-				--component "CUDA" \
-				--strip \
-				|| die
+				"${mycmakeargs[@]}"
+			edo cmake \
+				--build "${S}_build_cuda" \
+				--preset "CUDA 11"
+			edo cmake \
+				--install "${S}_build_cuda" \
+				--component "CUDA"
 		fi
 	elif use rocm ; then
 einfo "Building for ROCm"
-#		emake rocm
-		cmake \
+		mycmakeargs+=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
+			-DCMAKE_HIP_IMPLICIT_LINK_DIRECTORIES="/opt/rocm/lib"
+			-DCMAKE_HIP_IMPLICIT_LINK_LIBRARIES="${str}"
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+		)
+		edo cmake \
+			-S "${S}" \
+			-B "${S}_build_rocm" \
 			--preset "ROCm 6" \
-			-DCMAKE_VERBOSE_MAKEFILE=ON \
-			|| die
-		cmake \
-			--build \
-			--preset "ROCm 6" \
-			-DCMAKE_VERBOSE_MAKEFILE=ON \
-			|| die
-		cmake \
-			--install "build" \
-			--component "HIP" \
-			--strip \
-			|| die
+			"${mycmakeargs[@]}"
+		edo cmake \
+			--build "${S}_build_rocm" \
+			--preset "ROCm 6"
+		edo cmake \
+			--install "${S}_build_rocm" \
+			--component "HIP"
 	elif use vulkan ; then
 einfo "Building for Vulkan"
-		cmake \
+		edo cmake \
+			-S "${S}" \
+			-B "${S}_build_vulkan" \
 			--preset "Vulkan" \
-			-DCMAKE_VERBOSE_MAKEFILE=ON \
-			|| die
-		cmake \
-			--build \
-			--preset "Vulkan" \
-			-DCMAKE_VERBOSE_MAKEFILE=ON \
-			|| die
-		cmake \
-			--install "build" \
-			--component "Vulkan" \
-			--strip \
-			|| die
+			"${mycmakeargs[@]}"
+		edo cmake \
+			--build "${S}_build_vulkan" \
+			--preset "Vulkan"
+		edo cmake \
+			--install "${S}_build_vulkan" \
+			--component "Vulkan"
 	fi
 
 	export CUSTOM_CPU_FLAGS="${cpu_flags}"
-#	edo go build ${args[@]} .
 }
 
 build_ollama() {
