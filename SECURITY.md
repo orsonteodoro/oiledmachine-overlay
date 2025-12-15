@@ -350,7 +350,7 @@ Potential threats
 
 * [1] The main threats are zero click attacks, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels or sandbox breakout
 * [2] The main threats are malicious untrusted data
-* [3] The main threats are data thefts
+* [3] The main threats are data thieves
 * [4] High uptime (Availability = Y) versus max runtime performance (Availability = N) is a sysadmin choice.
 
 Core threats
