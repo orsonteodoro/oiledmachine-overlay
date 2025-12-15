@@ -357,7 +357,7 @@ Core threats
 | Context                       | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   |
 | ---                           | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- |
 | Required (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   |
-| Required (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   |
+| Required (distro overlay)     | N   | Y   | Y   | Y    | N   | N   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   |
 | Required (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   |
 
 * ZC - Zero Click vulnerability
