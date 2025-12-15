@@ -376,7 +376,7 @@ Core threats
 * SE - Social Engineering
 * UB - Undefined Behavior (e.g. Integer Overflow)
 * MC - Memory Corruption
-* AP - Attack Primitives (ROP Gadgets)
+* AP - Attack Primitives (ROP Gadgets) and weaponization
 * PT - Path Traversal
 * HV - Hardware Vulnerabilities
 * FV - Firmware Vulnerability
