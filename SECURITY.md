@@ -341,12 +341,12 @@ app-editors/nano nano.conf
 
 Potential threats
 
-| Threat Level | ZC   | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | OWO | RP        |
-| ---          | ---  | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---       |
-| S0 [1]       | Y    | Y   | Y   | Y    | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B - C [7] |
-| S1 [2]       | Y    | Y   | Y   | Y    | Y   | N   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B         |
-| S2 [3]       | Y    | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | B - C [7] |
-| S3 [4]       | Y/N  | N   | N   | Y/N  | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y/N | B [B]     |
+| Threat Level | ZC   | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | OWO   | RP        |
+| ---          | ---  | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---   | ---       |
+| S0 [1]       | Y    | Y   | Y   | Y    | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y     | B - C [7] |
+| S1 [2]       | Y    | Y   | Y   | Y    | Y   | N   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y     | B         |
+| S2 [3]       | Y    | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | P [8] | B - C [7] |
+| S3 [4]       | Y/N  | N   | N   | Y/N  | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8] | B [B]     |
 
 * [1] The main threats are zero click attacks, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels or sandbox breakout
 * [2] The main threats are malicious untrusted data
