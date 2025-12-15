@@ -384,5 +384,5 @@ Core threats
 * O - Operationality
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
-* NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV.
-* GLSA covers CE, PE, SCI, DoS
+* NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI.
+* GLSA covers CE, PE, DoS, SCI.
