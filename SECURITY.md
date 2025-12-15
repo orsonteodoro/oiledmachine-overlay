@@ -361,6 +361,8 @@ Core threats
 | Required (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   |
 
 * ZC - Zero Click vulnerability
+* CE - Code Execution and Shell Command Injection (SCI)
+* PE - Privilege Escalation
 * DoS - Denial of Service
 * DT - Data Tampering
 * ID - Information Disclosure
@@ -368,6 +370,7 @@ Core threats
 * UB - Undefined Behavior (e.g. Integer Overflow)
 * MC - Memory Corruption
 * AP - Attack Primitives (ROP Gadgets)
+* SCI - Shell Code Injection
 * PT - Path Traversal
 * HV - Hardware Vulnerabilities
 * FV - Firmware Vulnerability
@@ -382,3 +385,4 @@ Core threats
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
 * NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV.
+* GLSA covers CE, PE, SCI, DoS
