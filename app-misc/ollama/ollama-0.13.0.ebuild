@@ -3561,7 +3561,6 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 		unset CXX
 		unset CPP
 	elif use rocm ; then
-		export ROCM_ADD_HIP_DEPS_LINKER_FLAGS=1
 		if use rocm_6_4 ; then
 			export ROCM_SLOT="6.4"
 			export LLVM_SLOT=19
@@ -4639,6 +4638,7 @@ einfo "Building for CUDA v11"
 	elif use rocm ; then
 einfo "Building for ROCm"
 		mycmakeargs+=(
+			"$(rocm_append_cmake_hip_deps)"
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
 			-DHIP_COMPILER="clang"
