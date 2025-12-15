@@ -1128,6 +1128,7 @@ rocm_append_cmake_hip_deps() {
 	local mode="${1}" # direct or indirect linking
 	[[ -z "${mode}" ]] && mode="indirect"
 	local flags=()
+	local flag_prefix=""
 	[[ "${mode}" == "indirect" ]] && flag_prefix="-Wl,"
 	if has_version "dev-util/hip[lc]" ; then
 		flags+=( "${flag_prefix}-lamd_comgr" )
