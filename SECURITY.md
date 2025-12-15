@@ -332,7 +332,7 @@ Potential threats
 | S0 [1]       | Y    | Y   | Y   | Y    | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | C   |
 | S1 [2]       | Y    | Y   | Y   | Y    | Y   | N   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B   |
 | S2 [3]       | Y    | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | C   |
-| S3           | N    | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | A   |
+| S3           | N    | N   | N   | Y    | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | A   |
 
 [1] The main threats are zero click attacks, sandbox breakout, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels
 [2] The main threats are untrusted data
