@@ -341,12 +341,12 @@ app-editors/nano nano.conf
 
 Potential threats
 
-| Threat Level | ZC   | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | RP    |
-| ---          | ---  | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---   |
-| S0 [1]       | Y    | Y   | Y   | Y    | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | C [7] |
-| S1 [2]       | Y    | Y   | Y   | Y    | Y   | N   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B     |
-| S2 [3]       | Y    | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | C [7] |
-| S3 [4]       | Y/N  | N   | N   | Y/N  | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y/N | B [B] |
+| Threat Level | ZC   | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | RP        |
+| ---          | ---  | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---       |
+| S0 [1]       | Y    | Y   | Y   | Y    | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B - C [7] |
+| S1 [2]       | Y    | Y   | Y   | Y    | Y   | N   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B         |
+| S2 [3]       | Y    | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | B - C [7] |
+| S3 [4]       | Y/N  | N   | N   | Y/N  | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y/N | B [B]     |
 
 * [1] The main threats are zero click attacks, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels or sandbox breakout
 * [2] The main threats are malicious untrusted data
@@ -357,7 +357,7 @@ Core threats
 
 | Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | SM    | T     | DPH  | RP    |
 | ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | ---   | ---   | ---  | ---   |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | P [1] | P [3] | R[5] | C     |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | P [1] | P [3] | R[5] | B - C |
 | Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   | P [2] | N     | N    | B [6] |
 | Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N   | Y     | N     | N    | B [6] |
 
@@ -368,6 +368,7 @@ Core threats
 * [5] Recognized as an ID threat and should be removed or disabled if possible
 * [6] SSP strong is 10% performance penalty worst case and default ON as the distro's default compiler.
 * [7] Repoline is 10% performance penalty for typical use, but worst case estimated 35% in real world to maybe even 54% in synthetic benchmarks.
+      The sysadmin can choose between Retpoline or CET (5% performance penalty), the latter having the more higher mitigation score while both are mutually exclusive mitigation techniques.
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
