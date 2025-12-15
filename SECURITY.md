@@ -347,7 +347,7 @@ Potential threats
 | S2 [3]       | Y    | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | C   |
 | S3 [4]       | Y/N  | N   | N   | Y/N  | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y/N | A   |
 
-* [1] The main threats are zero click attacks, sandbox breakout, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels
+* [1] The main threats are zero click attacks, ransomware, compromised firmware, code hijack that leads to impersonation or stolen crown jewels or sandbox breakout
 * [2] The main threats are malicious untrusted data
 * [3] The main threats are data thefts
 * [4] High uptime (Availability = Y) versus max runtime performance (Availability = N) is a sysadmin choice.
