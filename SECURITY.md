@@ -351,7 +351,6 @@ Potential threats
 * [2] The main threats are malicious untrusted data
 * [3] The main threats are data thefts
 * [4] High uptime (Availability = Y) versus max runtime performance (Availability = N) is a sysadmin choice.
-* [5] Upstream's responsibility
 
 Core threats
 
