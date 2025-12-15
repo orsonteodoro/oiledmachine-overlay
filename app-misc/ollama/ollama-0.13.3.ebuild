@@ -4237,7 +4237,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		fi
 	done
 
-	for n in "${FEATURED_LLMS[@]}" ; do
+	for n in "${COMMUNITY_LLMS[@]}" ; do
 		if use "ollama_llms_${n}" ; then
 ewarn "ollama_llms_${n} is a community provided LLM.  Use at your own risk."
 		fi
