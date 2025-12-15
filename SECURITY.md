@@ -360,8 +360,8 @@ Core threats
 | Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y   | P [2] |
 | Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | N   | N   | N   | Y     |
 
-[1] Partial mitigation -- CPU - Yes, GPU - No
-[1] Partial mitigation -- CPU - No, GPU - Yes
+* [1] Partial mitigation -- CPU - Yes, GPU - No
+* [2] Partial mitigation -- CPU - No, GPU - Yes
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
