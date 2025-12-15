@@ -267,7 +267,10 @@ LLMS=(
 	"deepseek-v2.5"
 	"deepseek-v3"
 	"deepseek-v3.1"
+	"deepseek-v3.2"
 	"devstral"
+	"devstral-2"
+	"devstral-small-2"
 	"disinfozone-telos"
 	"dolphin-llama3"
 	"dolphin-mistral"
@@ -349,8 +352,10 @@ LLMS=(
 	"megadolphin"
 	"minicpm-v"
 	"minimax-m2"
+	"ministral-3"
 	"mistral"
 	"mistral-large"
+	"mistral-large-3"
 	"mistral-nemo"
 	"mistral-openorca"
 	"mistral-small"
@@ -366,6 +371,7 @@ LLMS=(
 	"neural-chat"
 	"nexusraven"
 	"nomic-embed-text"
+	"nomic-embed-text-v2-moe"
 	"notus"
 	"notux"
 	"nous-hermes"
@@ -402,6 +408,7 @@ LLMS=(
 	"qwen3"
 	"qwen3-coder"
 	"qwen3-embedding"
+	"qwen3-next"
 	"qwen3-vl"
 	"qwq"
 	"r1-1776"
@@ -411,6 +418,7 @@ LLMS=(
 	"reefer-monica"
 	"reflection"
 	"rfc-whiterabbitneo"
+	"rnj-1"
 	"rouge-replete-coder-qwen2-1.5b"
 	"sailor2"
 	"samantha-mistral"
@@ -2292,6 +2300,9 @@ LLM_LICENSES="
 	ollama_llms_deepseek-v3.1? (
 		MIT
 	)
+	ollama_llms_deepseek-v3.2? (
+		all-rights-reserved
+	)
 	ollama_llms_deepseek-llm? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
@@ -2311,6 +2322,12 @@ LLM_LICENSES="
 		MIT
 	)
 	ollama_llms_devstral? (
+		Apache-2.0
+	)
+	ollama_llms_devstral-2? (
+		Devstral-2-123B-LICENSE
+	)
+	ollama_llms_devstral-small-2? (
 		Apache-2.0
 	)
 	ollama_llms_disinfozone-telos? (
@@ -2596,11 +2613,17 @@ LLM_LICENSES="
 	ollama_llms_minimax-m2? (
 		MIT
 	)
+	ollama_llms_ministral-3? (
+		Apache-2.0
+	)
 	ollama_llms_mistral? (
 		Apache-2.0
 	)
 	ollama_llms_mistral-large? (
 		MRL-0.1.md
+	)
+	ollama_llms_mistral-large-3? (
+		all-rights-reserved
 	)
 	ollama_llms_mistral-nemo? (
 		Apache-2.0
@@ -2650,6 +2673,9 @@ LLM_LICENSES="
 		NexusRaven-V2-13B-LICENSE
 	)
 	ollama_llms_nomic-embed-text? (
+		Apache-2.0
+	)
+	ollama_llms_nomic-embed-text-v2-moe? (
 		Apache-2.0
 	)
 	ollama_llms_notus? (
@@ -2765,6 +2791,9 @@ LLM_LICENSES="
 	ollama_llms_qwen3-embedding? (
 		Apache-2.0
 	)
+	ollama_llms_qwen3-next? (
+		Apache-2.0
+	)
 	ollama_llms_qwen3-vl? (
 		Apache-2.0
 	)
@@ -2805,6 +2834,9 @@ LLM_LICENSES="
 		llama2-USE_POLICY.md
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_rnj-1? (
+		Apache-2.0
 	)
 	ollama_llms_rouge-replete-coder-qwen2-1.5b? (
 		Apache-2.0
@@ -3488,7 +3520,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.13.0-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.13.3-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"

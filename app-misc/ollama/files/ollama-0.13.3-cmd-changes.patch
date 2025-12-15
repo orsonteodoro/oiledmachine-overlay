@@ -1,5 +1,5 @@
---- a/cmd/cmd.go.orig	2025-11-18 22:03:50.000000000 -0800
-+++ b/cmd/cmd.go	2025-11-19 23:59:20.535461581 -0800
+--- ollama-0.13.3.orig/cmd/cmd.go	2025-12-11 16:08:57.000000000 -0800
++++ ollama-0.13.3/cmd/cmd.go	2025-12-14 19:30:21.010868258 -0800
 @@ -15,8 +15,10 @@ import (
  	"net"
  	"net/http"
@@ -11,7 +11,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -86,6 +88,3212 @@ func getModelfileName(cmd *cobra.Command
+@@ -86,6 +88,3265 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -373,9 +373,18 @@
 +	"deepseek-v3.1:671b-terminus-fp16": "1.3TB",
 +	"deepseek-v3.1:671b-q8_0": "713GB",
 +	"deepseek-v3.1:671b-fp16": "1.3TB",
++	"deepseek-v3.2:cloud": "0GB",
 +	"devstral:24b": "14GB",
 +	"devstral:24b-small-2505-q8_0": "25GB",
 +	"devstral:24b-small-2505-fp16": "47GB",
++	"devstral-2:123b": "75GB",
++	"devstral-2:123b-instruct-2512-q8_0": "133GB",
++	"devstral-2:123b-instruct-2512-fp16": "250GB",
++	"devstral-2:123b-cloud": "0GB",
++	"devstral-small-2:24b": "15GB",
++	"devstral-small-2:24b-cloud": "0GB",
++	"devstral-small-2:24b-instruct-2512-q8_0": "8GB",
++	"devstral-small-2:24b-instruct-2512-fp16": "48GB",
 +	"disinfozone/telos": "5.1GB",
 +	"dolphin-llama3:8b": "4.7GB",
 +	"dolphin-llama3:70b": "40GB",
@@ -1178,6 +1187,16 @@
 +	"minicpm-v:8b-2.6-q8_0": "9.1GB",
 +	"minicpm-v:8b-2.6-fp16": "16GB",
 +	"minimax-m2:cloud": "0GB",
++	"ministral-3:3b": "3.0GB",
++	"ministral-3:8b": "6.0GB",
++	"ministral-3:14b": "9.1GB",
++	"ministral-3:3b-cloud": "0GB",
++	"ministral-3:3b-instruct-2512-q8_0": "4.5GB",
++	"ministral-3:3b-instruct-2512-fp16": "7.7GB",
++	"ministral-3:8b-instruct-2512-q8_0": "9.9GB",
++	"ministral-3:8b-instruct-2512-fp16": "18GB",
++	"ministral-3:14b-instruct-2512-q8_0": "15GB",
++	"ministral-3:14b-instruct-2512-fp16": "28GB",
 +	"mistral:7b": "4.1GB",
 +	"mistral:instruct": "4.1GB",
 +	"mistral:text": "4.1GB",
@@ -1236,6 +1255,7 @@
 +	"mistral-large:123b-instruct-2411-q6_K": "101GB",
 +	"mistral-large:123b-instruct-2411-q8_0": "130GB",
 +	"mistral-large:123b-instruct-2411-fp16": "245GB",
++	"mistral-large-3:675b-cloud": "0GB",
 +	"mistral-nemo:12b": "7.1GB",
 +	"mistral-nemo:12b-instruct-2407-q2_K": "4.8GB",
 +	"mistral-nemo:12b-instruct-2407-q3_K_S": "5.5GB",
@@ -1344,6 +1364,7 @@
 +	"nexusraven:13b-v2-fp16": "26GB",
 +	"nomic-embed-text:v1.5": "274MB",
 +	"nomic-embed-text:137m-v1.5-fp16": "274MB",
++	"nomic-embed-text-v2-moe:latest": "958MB",
 +	"notus:7b": "4.1GB",
 +	"notus:7b-v1": "4.1GB",
 +	"notus:7b-v1-q2_K": "3.1GB",
@@ -1902,6 +1923,13 @@
 +	"qwen3-embedding:4b-fp16": "8.0GB",
 +	"qwen3-embedding:8b-q8_0": "8.0GB",
 +	"qwen3-embedding:8b-fp16": "15GB",
++	"qwen3-next:80b": "50GB",
++	"qwen3-next:80b-a3b-instruct-q4_K_M": "50GB",
++	"qwen3-next:80b-a3b-instruct-q8_0": "85GB",
++	"qwen3-next:80b-a3b-instruct-fp16": "159GB",
++	"qwen3-next:80b-a3b-thinking-q8_0": "85GB",
++	"qwen3-next:80b-a3b-thinking-fp16": "159GB",
++	"qwen3-next:80b-cloud": "0GB",
 +	"qwen3-vl:2b": "1.9GB",
 +	"qwen3-vl:4b": "3.3GB",
 +	"qwen3-vl:8b": "6.1GB",
@@ -1981,6 +2009,10 @@
 +	"reflection:70b-q8_0": "75GB",
 +	"reflection:70b-fp16": "141GB",
 +	"rfc/whiterabbitneo": "7.4GB",
++	"rnj-1:8b": "5.1GB",
++	"rnj-1:8b-cloud": "0GB",
++	"rnj-1:8b-instruct-q8_0": "8.8GB",
++	"rnj-1:8b-instruct-fp16": "17GB",
 +	"rouge/replete-coder-qwen2-1.5b:latest": "6.2GB",
 +	"rouge/replete-coder-qwen2-1.5b:Q8": "1.9GB",
 +	"rouge/replete-coder-qwen2-1.5b:f16": "3.1GB",
@@ -2704,7 +2736,10 @@
 +	"deepseek-v2.5": 1,
 +	"deepseek-v3": 1,
 +	"deepseek-v3.1": 1,
++	"deepseek-v3.2": 1,
 +	"devstral": 1,
++	"devstral-2": 1,
++	"devstral-small-2": 1,
 +	"dolphin-llama3": 1,
 +	"dolphin-mistral": 1,
 +	"dolphin-mixtral": 1,
@@ -2785,8 +2820,10 @@
 +	"megadolphin": 1,
 +	"minicpm-v": 1,
 +	"minimax-m2": 1,
++	"ministral-3": 1,
 +	"mistral": 1,
 +	"mistral-large": 1,
++	"mistral-large-3": 1,
 +	"mistral-nemo": 1,
 +	"mistral-openorca": 1,
 +	"mistral-small3.1": 1,
@@ -2805,6 +2842,7 @@
 +	"neural-chat": 1,
 +	"nexusraven": 1,
 +	"nomic-embed-text": 1,
++	"nomic-embed-text-v2-moe": 1,
 +	"notus": 1,
 +	"notux": 1,
 +	"nous-hermes": 1,
@@ -2838,6 +2876,7 @@
 +	"qwen3": 1,
 +	"qwen3-coder": 1,
 +	"qwen3-embedding": 1,
++	"qwen3-next": 1,
 +	"qwen3-vl": 1,
 +	"qwq": 1,
 +	"r1-1776": 1,
@@ -2846,6 +2885,7 @@
 +	"reefer/minimonica": 1,
 +	"reefer/monica": 1,
 +	"reflection": 1,
++	"rnj-1": 1,
 +	"rfc/whiterabbitneo": 1,
 +	"rouge/replete-coder-qwen2-1.5b": 1,
 +	"sailor2": 1,
@@ -2986,8 +3026,13 @@
 +	"deepseek-v3": "general-knowledge trivia common-sense reasoning instruction-following coding code-generation python math-word-problems college-level-math graduate-level-stem stem calculus statistics chinese multilingual china-alignment china-bias",
 +	"deepseek-v3.1": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode",
 +	"deepseek-v3.1:671b-cloud": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode rate-limited",
++	"deepseek-v3.2": "cloud-hosted software-engineering ai-human-collaboration pre-calculus high-school-math ap-high-school-math",
 +	"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
 +	"devstral": "basic-coding-agent open-model",
++	"devstral-2": "software-engineering coding-agent coding coding-assistant vibe-coding",
++	"devstral-2:123b-cloud": "cloud-hosted software-engineering coding-agent coding coding-assistant vibe-coding",
++	"devstral-small-2": "basic-software-engineering",
++	"devstral-small-2:24b-cloud": "cloud-hosted basic-software-engineering",
 +	"dolphin-llama3": "uncensored coding function-calling chat fine-tunable-alignment",
 +	"dolphin-mistral": "uncensored coding function-calling chat fine-tunable-alignment",
 +	"dolphin-mixtral": "uncensored coding chat function-calling fine-tunable-alignment game-design humor prank-suggestions confessions",
@@ -3010,7 +3055,7 @@
 +	"goliath": "detailed-response roleplay detailed-roleplay",
 +	"gpt-oss": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math coding-agent vibe-coding",
 +	"gpt-oss:20b-cloud": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding rate-limited",
-+	"gpt-oss:120b-cloud": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloud-hosted coding-agent vibe-coding rate-limited",
++	"gpt-oss:120b-cloud": "reasoning function-calling fine-tuneable web-browsing python structure-output local-chat agentic-tasks general-knowledge expert-level-reasoning graduate-level-stem high-school-math undergrad-math cloud cloudw-hosted coding-agent vibe-coding rate-limited",
 +	"gpt-oss-safeguard": "safety-reasoning",
 +	"granite-code": "coding code-generation fixing-bugs documentation assistant fine-tunable",
 +	"granite-embedding": "embeddings english",
@@ -3096,8 +3141,11 @@
 +	"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
 +	"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
 +	"minimax-m2": "cloud cloud-hosted coding rag-tool-use ai-assistant instruction-following human-and-ai-collaboration human-and-ai-team rate-limited",
++	"ministral-3": "function-calling math vision edge-devices multilingual english french spanish german italian portuguese dutch chinese japanese korean arabic",
++	"ministral-3:3b-cloud": "cloud-hosted function-calling math vision edge-devices multilingual english french spanish german italian portuguese dutch chinese japanese korean arabic",
 +	"mistral": "multilingual function-calling fine-tuneable made-in-france european",
 +	"mistral-large": "multilingual french german spanish italian dutch portuguese russian japanese chinese coding code-generation solving-basic-programming-problems math-word-problems function-calling json",
++	"mistral-large-3": "cloud-hosted vision function-calling multilingual general-knowledge english french spanish german italian portuguese dutch chinese japanese korean arabic",
 +	"mistral-nemo": "multilingual english french german spanish italian portuguese chinese korean arabic hindi common-sense trivia function-calling",
 +	"mistral-openorca": "common-sense",
 +	"mistral-small3.1": "translation summaries vision long-context multilingual english french german spanish italian chinese japanese korean portuguese dutch polish instruction-following function-calling general-knowledge python qa-charts qa-diagrams qa-doc-images",
@@ -3113,6 +3161,7 @@
 +	"neural-chat": "chat chatbot common-sense",
 +	"nexusraven": "coding documentation python functional-programming",
 +	"nomic-embed-text": "embedding",
++	"nomic-embed-text-v2-moe": "embedding multilingual",
 +	"notus": "common-sense chat",
 +	"notux": "multilingual english spanish italian german french common-sense general-knowledge",
 +	"nous-hermes": "general-use creative-text instruction-following",
@@ -3158,6 +3207,8 @@
 +	"qwen3-coder": "basic-coding simulation-coding game-programming gui-testing",
 +	"qwen3-coder:480b-a35b-fp16": "basic-coding simulation-coding game-programming gui-testing coding-agent agentic-tool vibe-coding",
 +	"qwen3-embedding": "text-embedding multilingual",
++	"qwen3-next": "",
++	"qwen3-next:80b-cloud": "cloud-hosted",
 +	"qwen3-vl": "vision ocr optical-character-recognition stem math-reasoning code-from-images code-generation visual-agent image-recognition cloud cloud-hosted long-context spatial-reasoning",
 +	"qwq": "math-word-problems reasoning college-level-math high-school-math undergrad-math calculus statistics instruction-following",
 +	"r1-1776": "deepseek-r1-with-additional-post-training american-bias american-alignment uncensored general-knowledge math-word-problems calculus statistics reasoning",
@@ -3168,6 +3219,8 @@
 +	"reflection": "reasoning",
 +	"rfc/whiterabbitneo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"rouge/replete-coder-qwen2-1.5b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention mobile",
++	"rnj-1": "python stem science technology engineering math math-word-problems high-school-math code-generation basic-coding-agent fill-in-the-middle",
++	"rnj-1:8b-cloud": "cloud-hosted python stem science technology engineering math math-word-problems high-school-math code-generation basic-coding-agent fill-in-the-middle",
 +	"sailor2": "southeast-asia south-east-asia sea s-e-a multilingual english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
 +	"sailor2:8b": "southeast-asia south-east-asia sea s-e-a multilingual production-ready english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
 +	"sailor2:20b": "southeast-asia south-east-asia sea s-e-a multilingual production-ready english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
@@ -3224,7 +3277,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -363,6 +3566,25 @@ func generateEmbedding(cmd *cobra.Comman
+@@ -363,6 +3624,25 @@ func generateEmbedding(cmd *cobra.Comman
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3250,7 +3303,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -821,10 +4043,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -821,10 +4101,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3264,7 +3317,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -853,13 +4077,340 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -853,13 +4135,348 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3360,7 +3413,10 @@
 +		"deepseek-v2.5": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-v3": "DEEPSEEK LICENSE AGREEMENT 1.0",
 +		"deepseek-v3.1": "MIT",
++		"deepseek-v3.2": "",
 +		"devstral": "Apache-2.0",
++		"devstral-2": "Devstral 2 123B",
++		"devstral-small-2": "Apache-2.0",
 +		"disinfozone/telos": "",
 +		"dolphin-llama3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"dolphin-mistral": "Apache-2.0",
@@ -3442,8 +3498,10 @@
 +		"megadolphin": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"minicpm-v": "Apache-2.0",
 +		"minimax-m2": "MIT",
++		"ministral-3": "Apache-2.0",
 +		"mistral": "Apache-2.0",
 +		"mistral-large": "MRL-0.1",
++		"mistral-large-3": "",
 +		"mistral-nemo": "Apache-2.0",
 +		"mistral-openorca": "Apache-2.0",
 +		"mistral-small3.1": "Apache-2.0",
@@ -3461,6 +3519,7 @@
 +		"neural-chat": "Apache-2.0",
 +		"nexusraven": "NexusRaven-V2-13B-LICENSE",
 +		"nomic-embed-text": "Apache-2.0",
++		"nomic-embed-text-v2-moe": "Apache-2.0",
 +		"notus": "MIT",
 +		"notux": "MIT",
 +		"nous-hermes": "MIT, GPL-2+",
@@ -3505,6 +3564,7 @@
 +		"qwen3": "Apache-2.0",
 +		"qwen3-coder": "Apache-2.0",
 +		"qwen3-embedding": "Apache-2.0",
++		"qwen3-next": "Apache-2.0",
 +		"qwen3-vl": "Apache-2.0",
 +		"qwq": "Apache-2.0",
 +		"r1-1776": "MIT Apache-2.0",
@@ -3515,6 +3575,7 @@
 +		"reefer/monica": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"reflection": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"rfc/whiterabbitneo": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
++		"rnj-1": "Apache-2.0",
 +		"rouge/replete-coder-qwen2-1.5b": "Apache-2.0",
 +		"sailor2": "Apache-2.0",
 +		"samantha-mistral": "Apache-2.0",
@@ -3606,7 +3667,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1169,6 +4720,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1169,6 +4786,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -3753,7 +3814,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -1731,7 +5422,9 @@ func NewCLI() *cobra.Command {
+@@ -1731,7 +5488,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -3763,7 +3824,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1846,6 +5539,30 @@ func NewCLI() *cobra.Command {
+@@ -1846,6 +5605,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -3794,7 +3855,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1862,6 +5579,9 @@ func NewCLI() *cobra.Command {
+@@ -1862,6 +5645,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -3804,7 +3865,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1905,6 +5625,9 @@ func NewCLI() *cobra.Command {
+@@ -1905,6 +5691,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
