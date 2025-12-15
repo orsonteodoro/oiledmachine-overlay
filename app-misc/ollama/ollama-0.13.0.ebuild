@@ -3031,7 +3031,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_109
+ebuild_revision_110
 "
 
 gen_rocm_required_use() {
@@ -4641,8 +4641,6 @@ einfo "Building for ROCm"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
-			-DCMAKE_HIP_IMPLICIT_LINK_DIRECTORIES="/opt/rocm/lib"
-			-DCMAKE_HIP_IMPLICIT_LINK_LIBRARIES="${str}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 		)
