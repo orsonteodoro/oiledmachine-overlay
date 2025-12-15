@@ -329,10 +329,10 @@ Potential threats
 
 | Threat Level | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | O   | RP  |
 | ---          | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | --- | --- | ---- | ---    | ---  | --- | --- | --- | --- | --- |
-| S0 [1]       | Y   | Y   | Y   | Y    | Y   | Y   | Y   |     | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | C   |
-| S1 [2]       | N   | Y   | Y   | Y    | Y   | N   | Y   |     | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B   |
-| S2 [3]       | Y   | Y   | Y   | N    | Y   | Y   | N   |     | Y   | N   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | C   |
-| S3           | N   | N   | N   | N    | N   | N   | N   |     | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | A   |
+| S0 [1]       | Y   | Y   | Y   | Y    | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | C   |
+| S1 [2]       | N   | Y   | Y   | Y    | Y   | N   | Y   | Y   | Y   | Y   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | Y   | B   |
+| S2 [3]       | Y   | Y   | Y   | N    | Y   | Y   | N   | Y   | Y   | N   | Y   | Y   | Y    | Y      | Y    | Y   | Y   | Y   | N   | C   |
+| S3           | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N   | N   | N    | Y      | N    | Y   | Y   | Y   | N   | A   |
 
 [1] The main threats are zero click attacks, sandbox breakout, ransomware, code hijack that leads to impersonation or stolen crown jewels
 [2] The main threats are truntrusted data
