@@ -323,7 +323,8 @@ their own threat model and apply their own hardening.
       CFLAGS_HARDENED_TOLERANCE="1.05" or less as the system default and
       remove the crashy hardening flags to maximize availability, and
       also to disable exceptions and disable the compiler default ON
-      hardening which may have a worst case performance above 5%.
+      hardening which may compromise userland to the worst case performance
+      expectations above the 5%.
 
 
 ```
