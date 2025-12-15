@@ -370,7 +370,6 @@ Core threats
 * UB - Undefined Behavior (e.g. Integer Overflow)
 * MC - Memory Corruption
 * AP - Attack Primitives (ROP Gadgets)
-* SCI - Shell Code Injection
 * PT - Path Traversal
 * HV - Hardware Vulnerabilities
 * FV - Firmware Vulnerability
