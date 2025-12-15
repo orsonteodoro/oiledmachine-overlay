@@ -375,7 +375,7 @@ Core threats
 * HV - Hardware Vulnerabilities
 * FV - Firmware Vulnerability
 * IDEF - Incorrect Defaults
-* IPERMS - Incorrect File Permissions
+* IPERMS - Incorrect File Permissions or Incorrect File Ownership
 * UMSI - Unfinished or Missing Security Implementation
 * LCI - License and Copyright Issues
 * RP - Default Runtime Performance grade
