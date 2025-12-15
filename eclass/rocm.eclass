@@ -1119,23 +1119,26 @@ rocm_verify_rpath_correctness() {
 #
 # src_configure() {
 #   local mycmakeargs=(
-#     "$(rocm_append_cmake_hip_deps)" # Important!  This must be in quotes.
+#     "$(rocm_append_cmake_hip_deps direct)" # Important!  This must be in quotes.
 #   )
 #   cmake_src_configure
 # }
 #
 rocm_append_cmake_hip_deps() {
+	local mode="${1}" # direct or indirect linking
+	[[ -z "${mode}" ]] && mode="indirect"
 	local flags=()
+	[[ "${mode}" == "indirect" ]] && flag_prefix="-Wl,"
 	if has_version "dev-util/hip[lc]" ; then
-		flags+=( "-lamd_comgr" )
+		flags+=( "${flag_prefix}-lamd_comgr" )
 	fi
 	if has_version "dev-util/hip[hsa]" ; then
-		flags+=( "-lhsa-runtime64" )
+		flags+=( "${flag_prefix}-lhsa-runtime64" )
 	fi
 	if has_version "dev-util/hip[numa]" ; then
-		flags+=( "-lnuma" )
+		flags+=( "${flag_prefix}-lnuma" )
 	fi
-	echo -DCMAKE_HIP_FLAGS=" -L/opt/rocm/lib ${flags[@]} "
+	echo -DCMAKE_HIP_FLAGS=" ${flag_prefix}-L/opt/rocm/lib ${flags[@]} "
 }
 
 # @FUNCTION:  rocm_append_ldflags_hip_deps
@@ -1147,21 +1150,26 @@ rocm_append_cmake_hip_deps() {
 # inherit rocm
 #
 # src_configure() {
-#   rocm_append_ldflags_hip_deps
+#   rocm_append_ldflags_hip_deps "direct"
 #   econf
 # }
 rocm_append_ldflags_hip_deps() {
+	local mode="${1}" # direct or indirect linking
+	[[ -z "${mode}" ]] && mode="indirect"
+
 	local flags=()
+	local flag_prefix=""
+	[[ "${mode}" == "indirect" ]] && flag_prefix="-Wl,"
 	if has_version "dev-util/hip[lc]" ; then
-		flags+=( "-lamd_comgr" )
+		flags+=( "${flag_prefix}-lamd_comgr" )
 	fi
 	if has_version "dev-util/hip[hsa]" ; then
-		flags+=( "-lhsa-runtime64" )
+		flags+=( "${flag_prefix}-lhsa-runtime64" )
 	fi
 	if has_version "dev-util/hip[numa]" ; then
-		flags+=( "-lnuma" )
+		flags+=( "${flag_prefix}-lnuma" )
 	fi
-	append-ldflags -DCMAKE_HIP_FLAGS=" -L/opt/rocm/lib ${flags[@]} "
+	append-ldflags -DCMAKE_HIP_FLAGS=" ${flag_prefix}-L/opt/rocm/lib ${flags[@]} "
 }
 
 # @FUNCTION: rocm_set_default_gcc
