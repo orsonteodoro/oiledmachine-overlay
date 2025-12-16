@@ -310,7 +310,8 @@ their own threat model and apply their own hardening.
 | S2           | sensitive-data    | Weak hardening              | Packages that could process medical data, your explicit content, temporal passwords |
 | S3           | safe-zone         | None, performance critical  | Ebuilds without [cflags-hardened](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or [rustflags-hardened](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass) treatment       |
 
-* [1] Sandboxing is recommended and assumed used in the model
+* [1] Sandboxing with minimal chroot image and seccomp is strongly recommended.
+      Sandboxing is assumed the model.
 * [2] When an ebuild has multiple hardening listed, it means it is additive but
       security-critical means to apply all of them based on the tolerance level.
 * [3] Users can control the tolerance level per package or the systemwide
