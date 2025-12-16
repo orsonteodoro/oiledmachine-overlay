@@ -35,7 +35,7 @@ fi
 
 IUSE="
 accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
-ebuild_revision_6
+ebuild_revision_7
 "
 
 RDEPEND="
@@ -68,6 +68,10 @@ pkg_setup() {
 
 src_configure() {
 	cflags-hardened_append
+
+	# oiledmachine-overlay:  Breaks linking
+	filter-flags "-fno-inline"
+
 	local mycmakeargs=(
 		$(cmake_use_find_package qmlls Qt6LanguageServerPrivate)
 		$(cmake_use_find_package sql Qt6Sql)
