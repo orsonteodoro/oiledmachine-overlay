@@ -397,5 +397,5 @@ Core threats
 * DPH - Debug Phone Home
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
-* NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI.
-* GLSA covers CE, PE, DoS, SCI.
+* NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI, MC.
+* GLSA covers CE, PE, DoS, SCI, MC.
