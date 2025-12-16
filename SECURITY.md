@@ -356,11 +356,11 @@ Potential threats
 
 Core threats
 
-| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | BTF/RF | SM    | T     | DPH   | RP    |
-| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---    | ---   | ---   | ---   | ---   |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8]  | P [1] | P [3] | R [5] | B - C |
-| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y      | P [2] | N     | N     | B [6] |
-| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N      | Y     | N     | N     | B [6] |
+| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | BTF/RF | SM    | T     | DPH   | RP    | ISBX |
+| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---    | ---   | ---   | ---   | ---   | ---  |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8]  | P [1] | P [3] | R [5] | B - C | Y    |
+| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y      | P [2] | N     | N     | B [6] | N    |
+| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N      | Y     | N     | N     | B [6] | N    |
 
 * [1] Partial mitigation -- CPU - Yes, GPU - No
 * [2] Partial mitigation -- CPU - No, GPU - Yes
@@ -396,6 +396,7 @@ Core threats
 * SM - Software Mortality (Planned Obsolescence) that coerces non-free
 * T - Telemetry (Data Collection)
 * DPH - Debug Phone Home
+* ISBX - Improper Sanboxing
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
 * NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI, MC.
