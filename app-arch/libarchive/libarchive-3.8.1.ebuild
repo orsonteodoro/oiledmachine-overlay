@@ -78,7 +78,8 @@ PATCHES=(
 	# (we can simply update the command since we don't support old lrzip)
 	"${FILESDIR}/${PN}-3.7.2-lrzip.patch"
 
-	# Prevent error related to -fstrict-flex-arrays=3 with cmake
+	# oiledmachine-overlay:  Prevent error related to -fstrict-flex-arrays=3 with cmake
+	# Test with cmake
 	"${FILESDIR}/libarchive-3.8.1-remove-struct-hack.patch"
 )
 
