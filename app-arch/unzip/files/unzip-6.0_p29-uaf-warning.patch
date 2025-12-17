@@ -1,0 +1,18 @@
+diff '--color=auto' -urp unzip60.orig/unix/unix.c unzip60/unix/unix.c
+--- unzip60.orig/unix/unix.c	2025-12-17 12:43:58.463201071 -0800
++++ unzip60/unix/unix.c	2025-12-17 12:48:55.276869203 -0800
+@@ -978,11 +978,13 @@ int checkdir(__G__ pathcomp, flag)
+             }
+             tmproot[G.rootlen++] = '/';
+             tmproot[G.rootlen] = '\0';
+-            if ((G.rootpath = (char *)realloc(tmproot, G.rootlen+1)) == NULL) {
++            char *newpath = (char *)realloc(tmproot, G.rootlen+1);
++            if (newpath == NULL) {
+                 free(tmproot);
+                 G.rootlen = 0;
+                 return MPN_NOMEM;
+             }
++            G.rootpath = newpath;
+             Trace((stderr, "rootpath now = [%s]\n", FnFilter1(G.rootpath)));
+         }
+         return MPN_OK;

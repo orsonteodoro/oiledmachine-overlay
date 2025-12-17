@@ -1,0 +1,11 @@
+--- a/fileio.c.orig	2025-12-17 15:28:36.583823410 -0800
++++ b/fileio.c	2025-12-17 15:27:39.144307653 -0800
+@@ -1585,7 +1585,7 @@ int UZ_EXP UzpPassword (pG, rcnt, pwbuf,
+ #if CRYPT
+     int r = IZ_PW_ENTERED;
+     char *m;
+-    char *prompt;
++    char *prompt = (char *)NULL; /* initialize to silence false-positive GCC warning */
+     char *zfnf;
+     char *efnf;
+     size_t zfnfl;

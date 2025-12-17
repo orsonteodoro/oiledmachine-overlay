@@ -29,7 +29,7 @@ LICENSE="Info-ZIP"
 SLOT="0"
 IUSE="
 bzip2 natspec unicode
-ebuild_revision_22
+ebuild_revision_25
 "
 DEPEND="
 	bzip2? (
@@ -47,6 +47,16 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.0-no-exec-stack.patch"
 	"${FILESDIR}/${PN}-6.0-format-security.patch"
 	"${FILESDIR}/${PN}-6.0-fix-false-overlap-detection-on-32bit-systems.patch"
+
+	# oiledmachine-overlay:  Fix issues with -fstrict-flex-arrays=3
+	# Verify with unpacking app-arch/zip
+	"${FILESDIR}/${PN}-6.0_p29-remove-struct-hack.patch"
+	"${FILESDIR}/${PN}-6.0_p29-strcpy-fix.patch"
+
+	# oiledmachine-overlay patches
+	"${FILESDIR}/${PN}-6.0_p29-uaf-warning.patch"
+	"${FILESDIR}/${PN}-6.0_p29-format-overflow-warning.patch"
+	"${FILESDIR}/${PN}-6.0_p29-maybe-uninitialized.patch"
 )
 
 src_prepare() {
@@ -79,9 +89,6 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
-
-	replace-flags "-fstrict-flex-arrays=3" "-fstrict-flex-arrays=1" # Breaks unpacking app-arch/zip
-	replace-flags "-fstrict-flex-arrays=2" "-fstrict-flex-arrays=1" # Breaks unpacking app-archzip
 
 	case "${CHOST}" in
 		"i"?"86"*"-"*"linux"*)       TARGET="linux_asm" ;;

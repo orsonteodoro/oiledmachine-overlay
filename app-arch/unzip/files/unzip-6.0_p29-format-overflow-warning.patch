@@ -1,0 +1,134 @@
+diff '--color=auto' -urp unzip60.orig/list.c unzip60/list.c
+--- unzip60.orig/list.c	2025-12-17 15:37:17.031441026 -0800
++++ unzip60/list.c	2025-12-17 15:37:34.979290057 -0800
+@@ -388,10 +388,14 @@ int list_files(__G)    /* return PK-type
+                     (char)((G.crec.general_purpose_bit_flag & 1) ? 'E' : ' '));
+             }
+ #else /* !WINDLL */
+-            if (cfactor == 100)
+-                sprintf(cfactorstr, LoadFarString(CompFactor100));
+-            else
+-                sprintf(cfactorstr, LoadFarString(CompFactorStr), sgn, cfactor);
++            /* Safe bounded formatting for compression factor string */
++            if (cfactor == 100) {
++                snprintf(cfactorstr, sizeof(cfactorstr),
++                         LoadFarString(CompFactor100));
++            } else {
++                snprintf(cfactorstr, sizeof(cfactorstr),
++                         LoadFarString(CompFactorStr), sgn, cfactor);
++            }
+             if (longhdr)
+                 Info(slide, 0, ((char *)slide, LoadFarString(LongHdrStats),
+                   FmZofft(G.crec.ucsize, "8", "u"), methbuf,
+@@ -470,10 +474,14 @@ int list_files(__G)    /* return PK-type
+         G.lpUserFunctions->NumMembers = members;
+ 
+ #else /* !WINDLL */
+-        if (cfactor == 100)
+-            sprintf(cfactorstr, LoadFarString(CompFactor100));
+-        else
+-            sprintf(cfactorstr, LoadFarString(CompFactorStr), sgn, cfactor);
++        /* Safe bounded formatting for compression factor string */
++        if (cfactor == 100) {
++            snprintf(cfactorstr, sizeof(cfactorstr),
++                     LoadFarString(CompFactor100));
++        } else {
++            snprintf(cfactorstr, sizeof(cfactorstr),
++                     LoadFarString(CompFactorStr), sgn, cfactor);
++        }
+         if (longhdr) {
+             Info(slide, 0, ((char *)slide, LoadFarString(LongFileTrailer),
+               FmZofft(tot_ucsize, "8", "u"), FmZofft(tot_csize, "8", "u"),
+diff '--color=auto' -urp unzip60.orig/unzip.c unzip60/unzip.c
+--- unzip60.orig/unzip.c	2009-04-16 11:26:52.000000000 -0700
++++ unzip60/unzip.c	2025-12-17 15:43:52.896113530 -0800
+@@ -2494,13 +2494,39 @@ static void show_version_info(__G)
+ #endif
+ #ifdef UNICODE_SUPPORT
+ # ifdef UTF8_MAYBE_NATIVE
+-        sprintf((char *)(slide+256), LoadFarStringSmall(Use_Unicode),
+-          LoadFarStringSmall2(G.native_is_utf8 ? SysChUTF8 : SysChOther));
+-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
+-          (char *)(slide+256)));
++        /* Safe bounded output for Unicode/UTF8 compile option */
++        {
++            char *optbuf = (char *)(slide + 256);
++            const char *yesno = LoadFarStringSmall2(G.native_is_utf8 ? SysChUTF8 : SysChOther);
++            int len = snprintf(optbuf, 256, LoadFarStringSmall(Use_Unicode), yesno);
++            if (len < 0) len = 0;
++            if ((ulg)len >= 256) len = 255;  /* truncate if theoretically too long */
++            optbuf[len] = '\0';
++
++            char *outbuf = (char *)slide;  /* Temporary pointer to break restrict overlap */
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wrestrict"
++            len = snprintf(outbuf, sizeof(slide),
++                           LoadFarString(CompileOptFormat), optbuf);
++#pragma GCC diagnostic pop
++            if (len < 0) len = 0;
++            if ((ulg)len >= (ulg)sizeof(slide)) len = sizeof(slide) - 1;
++            char temp[sizeof(slide)];
++            memcpy(temp, outbuf, len + 1);
++            (*G.message)((zvoid *)&G, (uch *)temp, (ulg)len, 0);
++        }
+ # else
+-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
+-          LoadFarStringSmall(Use_Unicode)));
++        {
++            const char *yesno = LoadFarStringSmall(Use_Unicode);
++            char *outbuf = (char *)slide;  /* Temporary pointer to break restrict overlap */
++            int len = snprintf(outbuf, sizeof(slide),
++                               LoadFarString(CompileOptFormat), yesno);
++            if (len < 0) len = 0;
++            if ((ulg)len >= (ulg)sizeof(slide)) len = sizeof(slide) - 1;
++            char temp[sizeof(slide)];
++            memcpy(temp, outbuf, len + 1);
++            (*G.message)((zvoid *)&G, (uch *)temp, (ulg)len, 0);
++        }
+ # endif
+         ++numopts;
+ #endif
+diff '--color=auto' -urp unzip60.orig/zipinfo.c unzip60/zipinfo.c
+--- unzip60.orig/zipinfo.c	2025-12-17 15:37:17.031441026 -0800
++++ unzip60/zipinfo.c	2025-12-17 15:37:34.979290057 -0800
+@@ -1979,8 +1979,9 @@ static int zi_short(__G)   /* return PK-
+                     *p++ = ',';                     /* group separator */
+                 }
+                 *--p = ' ';   /* overwrite last comma */
++                /* Safe bounded version for host version string */
+                 if ((p - attribs) < 12)
+-                    sprintf(&attribs[12], "%u.%u", hostver/10, hostver%10);
++                    snprintf(&attribs[12], sizeof(attribs) - 12, "%u.%u", hostver/10, hostver%10);
+             }
+             break;
+ 
+@@ -1998,7 +1999,8 @@ static int zi_short(__G)   /* return PK-
+             attribs[6] = (xattr & AMI_IWRITE)?    'w' : '-';
+             attribs[7] = (xattr & AMI_IEXECUTE)?  'e' : '-';
+             attribs[8] = (xattr & AMI_IDELETE)?   'd' : '-';
+-            sprintf(&attribs[12], "%u.%u", hostver/10, hostver%10);
++            /* Safe bounded version for host version string */
++            snprintf(&attribs[12], sizeof(attribs) - 12, "%u.%u", hostver/10, hostver%10);
+             break;
+ 
+         case THEOS_:
+@@ -2023,7 +2025,8 @@ static int zi_short(__G)   /* return PK-
+             attribs[6] = (xattr & THS_IXUSR) ? '.' : 'X';
+             attribs[7] = (xattr & THS_IWUSR) ? '.' : 'W';
+             attribs[8] = (xattr & THS_IRUSR) ? '.' : 'R';
+-            sprintf(&attribs[12], "%u.%u", hostver/10, hostver%10);
++            /* Safe bounded version for host version string */
++            snprintf(&attribs[12], sizeof(attribs) - 12, "%u.%u", hostver/10, hostver%10);
+             break;
+ 
+         case FS_VFAT_:
+@@ -2069,7 +2072,8 @@ static int zi_short(__G)   /* return PK-
+                )
+             {
+                 xattr = (unsigned)(G.crec.external_file_attributes & 0xFF);
+-                sprintf(attribs, ".r.-...     %u.%u", hostver/10, hostver%10);
++                /* Safe bounded version for host version string */
++                snprintf(attribs, sizeof(attribs), ".r.-...     %u.%u", hostver/10, hostver%10);
+                 attribs[2] = (xattr & 0x01)? '-' : 'w';
+                 attribs[5] = (xattr & 0x02)? 'h' : '-';
+                 attribs[6] = (xattr & 0x04)? 's' : '-';

@@ -1,0 +1,156 @@
+diff '--color=auto' -urp unzip60.orig/atheos/atheos.c unzip60/atheos/atheos.c
+--- unzip60.orig/atheos/atheos.c	2008-12-28 11:47:42.000000000 -0800
++++ unzip60/atheos/atheos.c	2025-12-17 12:06:07.601042481 -0800
+@@ -55,7 +55,8 @@ typedef struct uxdirattr {      /* struc
+     unsigned perms;             /* same as min_info.file_attr */
+     int have_uidgid;            /* flag */
+     ulg uidgid[2];
+-    char fnbuf[1];              /* buffer stub for directory name */
++    char _dummy[0];
++    char fnbuf[];              /* buffer stub for directory name */
+ } uxdirattr;
+ #define UxAtt(d)  ((uxdirattr *)d)    /* typecast shortcut */
+ #endif /* SET_DIR_ATTRIB */
+diff '--color=auto' -urp unzip60.orig/beos/beos.c unzip60/beos/beos.c
+--- unzip60.orig/beos/beos.c	2009-01-11 06:36:02.000000000 -0800
++++ unzip60/beos/beos.c	2025-12-17 12:06:07.601042481 -0800
+@@ -69,7 +69,8 @@ typedef struct uxdirattr {      /* struc
+     unsigned perms;             /* same as min_info.file_attr */
+     int have_uidgid;            /* flag */
+     ulg uidgid[2];
+-    char fnbuf[1];              /* buffer stub for directory name */
++    char _dummy[0];
++    char fnbuf[];              /* buffer stub for directory name */
+ } uxdirattr;
+ #define UxAtt(d)  ((uxdirattr *)d)    /* typecast shortcut */
+ #endif /* SET_DIR_ATTRIB */
+diff '--color=auto' -urp unzip60.orig/qdos/callstub.c unzip60/qdos/callstub.c
+--- unzip60.orig/qdos/callstub.c	2000-04-14 17:16:08.000000000 -0700
++++ unzip60/qdos/callstub.c	2025-12-17 12:06:07.601042481 -0800
+@@ -22,7 +22,7 @@ struct
+ } ds = {0x4afb, 0x4afb, 0};
+ 
+ 
+-typedef struct {short len; char chrs[1];} __QP_t;
++typedef struct {short len; char _dummy[0]; char chrs[];} __QP_t;
+ 
+ #define __QA(l) struct {short len; char chrs[(l)+1];}
+ 
+diff '--color=auto' -urp unzip60.orig/theos/theos.c unzip60/theos/theos.c
+--- unzip60.orig/theos/theos.c	2005-01-26 19:37:08.000000000 -0800
++++ unzip60/theos/theos.c	2025-12-17 12:06:07.601042481 -0800
+@@ -46,7 +46,8 @@ typedef struct uxdirattr {      /* struc
+         ztimbuf t2;             /* modtime, actime */
+     } u;
+     unsigned perms;             /* same as min_info.file_attr */
+-    char fnbuf[1];              /* buffer stub for directory name */
++    char _dummy[0];
++    char fnbuf[];              /* buffer stub for directory name */
+ } uxdirattr;
+ #define UxAtt(d)  ((uxdirattr *)d)    /* typecast shortcut */
+ #endif /* SET_DIR_ATTRIB */
+diff '--color=auto' -urp unzip60.orig/unix/unix.c unzip60/unix/unix.c
+--- unzip60.orig/unix/unix.c	2025-12-17 12:05:36.517286706 -0800
++++ unzip60/unix/unix.c	2025-12-17 12:06:07.601042481 -0800
+@@ -82,7 +82,8 @@ typedef struct uxdirattr {      /* struc
+     unsigned perms;             /* same as min_info.file_attr */
+     int have_uidgid;            /* flag */
+     ulg uidgid[2];
+-    char fnbuf[1];              /* buffer stub for directory name */
++    char _dummy[0];
++    char fnbuf[];              /* buffer stub for directory name */
+ } uxdirattr;
+ #define UxAtt(d)  ((uxdirattr *)d)    /* typecast shortcut */
+ #endif /* SET_DIR_ATTRIB */
+diff '--color=auto' -urp unzip60.orig/unzpriv.h unzip60/unzpriv.h
+--- unzip60.orig/unzpriv.h	2025-12-17 12:05:36.605286014 -0800
++++ unzip60/unzpriv.h	2025-12-17 12:15:12.936757817 -0800
+@@ -1994,7 +1994,8 @@ typedef struct iztimes {
+    typedef struct direntry {    /* head of system-specific struct holding */
+        struct direntry *next;   /*  defered directory attributes info */
+        char *fn;                /* filename of directory */
+-       char buf[1];             /* start of system-specific internal data */
++       char _dummy[0];          /* Allows true flexible array */
++       char buf[];             /* start of system-specific internal data */
+    } direntry;
+ #endif /* SET_DIR_ATTRIB */
+ 
+@@ -2005,7 +2006,8 @@ typedef struct iztimes {
+        extent attriblen;        /* length of system-specific attrib data */
+        char *target;            /* pointer to target filespec */
+        char *fname;             /* pointer to name of link */
+-       char buf[1];             /* data/name/link buffer */
++       char _dummy[0];          /* Allows true flexible array */
++       char buf[];              /* data/name/link buffer */
+    } slinkentry;
+ #endif /* SYMLINKS */
+ 
+diff '--color=auto' -urp unzip60.orig/vms/vms.c unzip60/vms/vms.c
+--- unzip60.orig/vms/vms.c	2009-03-01 11:25:00.000000000 -0800
++++ unzip60/vms/vms.c	2025-12-17 12:15:33.500596250 -0800
+@@ -137,7 +137,8 @@ typedef struct vmsdirattr {
+     unsigned perms;                     /* same as min_info.file_attr */
+ 
+     unsigned xlen;                      /* G.lrec.extra_field_length */
+-    char buf[1];                        /* data buffer (extra_field, fn) */
++    char _dummy[0];
++    char buf[];                        /* data buffer (extra_field, fn) */
+ } vmsdirattr;
+ #define VmsAtt(d)  ((vmsdirattr *)d)    /* typecast shortcut */
+ #endif /* SET_DIR_ATTRIB */
+diff '--color=auto' -urp unzip60.orig/vms/vms.h unzip60/vms/vms.h
+--- unzip60.orig/vms/vms.h	2009-01-09 18:36:14.000000000 -0800
++++ unzip60/vms/vms.h	2025-12-17 12:06:07.609042417 -0800
+@@ -183,7 +183,8 @@
+ struct EB_header    /* Common header of extra block */
+ {   ush tag;
+     ush size;
+-    uch data[1];
++    uch _data[0];
++    uch data[];
+ };
+ 
+ #ifndef EB_HEADSIZE
+@@ -237,7 +237,8 @@ struct IZ_block                 /* Extra
+     ush flags;
+     ush length;
+     ulg reserved;
+-    uch body[1];                /* The actual size is unknown */
++    uch _dummy[0];
++    uch body[];                /* The actual size is unknown */
+ };
+ 
+ /*
+@@ -364,7 +364,8 @@ struct PK_field
+ {
+     ush         tag;
+     ush         size;
+-    byte        value[1];
++    byte        _dummy[0];
++    byte        value[];
+ };
+ 
+ #define PK_FLDHDR_SIZE  4
+@@ -374,7 +374,8 @@ struct PK_header
+     ush tag;
+     ush size;
+     ulg crc32;
+-    byte data[1];
++    byte _dummy[0]
++    byte data[];
+ };
+ 
+ #define PK_HEADER_SIZE  8
+diff '--color=auto' -urp unzip60.orig/win32/win32.c unzip60/win32/win32.c
+--- unzip60.orig/win32/win32.c	2009-01-11 06:57:26.000000000 -0800
++++ unzip60/win32/win32.c	2025-12-17 12:16:05.832342227 -0800
+@@ -120,7 +120,8 @@ typedef struct NTdirattr {      /* struc
+ #ifdef NTSD_EAS
+     unsigned SDlen;             /* length of SD data in buf */
+ #endif
+-    char buf[1];                /* buffer stub for directory SD and name */
++    char _dummy[0];
++    char buf[];                /* buffer stub for directory SD and name */
+ } NTdirattr;
+ #define NtAtt(d)  ((NTdirattr *)d)    /* typecast shortcut */
+ #endif /* SET_DIR_ATTRIB */
