@@ -15,10 +15,7 @@ HOMEPAGE="https://www.gtk.org/"
 
 LICENSE="LGPL-2+"
 SLOT="3"
-IUSE="
-aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
-ebuild_revision_5
-"
+IUSE="aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( X )
@@ -44,7 +41,7 @@ COMMON_DEPEND="
 	cloudproviders? ( net-libs/libcloudproviders[${MULTILIB_USEDEP}] )
 	colord? ( >=x11-misc/colord-0.1.9:0=[${MULTILIB_USEDEP}] )
 	cups? ( >=net-print/cups-2.0[${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.39:= )
+	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	wayland? (
 		>=dev-libs/wayland-1.14.91[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.32
@@ -108,8 +105,9 @@ PATCHES=(
 	# such support.
 	# https://bugs.gentoo.org/624960
 	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_.patch
-	# bug #952006
-	"${FILESDIR}"/${PN}-3.24.49-java-crash.patch
+
+	# oiledmachine-overlay added.  The result of adding -fstrict-flex-arrays=3.
+	"${FILESDIR}/gtk+-3.24.51-remove-struck-hack.patch"
 )
 
 pkg_setup() {
@@ -144,6 +142,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	local emesonargs=(
 		$(meson_use aqua quartz_backend)
 		$(meson_use broadway broadway_backend)
