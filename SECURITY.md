@@ -356,11 +356,11 @@ Potential threats
 
 Core threats
 
-| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | BTF/RF | SM    | T     | DPH   | RP    | ISBX |
-| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---    | ---   | ---   | ---   | ---   | ---  |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8]  | P [1] | P [3] | R [5] | B - C | Y    |
-| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y      | P [2] | N     | N     | B [6] | N    |
-| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N      | Y     | N     | N     | B [6] | N    |
+| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | BTF/RF | BI    | SM    | T     | DPH   | RP    | ISBX |
+| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---    | ---   | ---   | ---   | ---   | ---   | ---  |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8]  | Y     | P [1] | P [3] | R [5] | B - C | Y    |
+| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y      | P [9] | P [2] | N     | N     | B [6] | N    |
+| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N      | P [9] | Y     | N     | N     | B [6] | N    |
 
 * [1] Partial mitigation -- CPU - Yes, GPU - No
 * [2] Partial mitigation -- CPU - No, GPU - Yes
@@ -371,6 +371,7 @@ Core threats
 * [7] Repoline is 10% performance penalty for typical use, but worst case estimated 35% in real world to maybe even 54% in synthetic benchmarks.
       The sysadmin can choose between Retpoline or CET (5% performance penalty), the latter having the more higher mitigation score while both are mutually exclusive mitigation techniques.
 * [8] Operationally working required for @system set, web browser dependencies, lightweight high value assets.  Optional for EOL software or heavy packages (+20 MLOC).
+* [9] DoS mitigation is offloaded to sysadmin
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
@@ -393,6 +394,7 @@ Core threats
 * DI - Developer Integrity (Supply Chain Attack)
 * BCF - Bad Compiler Flags
 * BTF/RF - Build Time Failure and Runtime Failure
+* BI - Build Issues (e.g. hard/soft lockups, worst case trashing, excessive build or link times)
 * SM - Software Mortality (Planned Obsolescence) that coerces non-free
 * T - Telemetry (Data Collection)
 * DPH - Debug Phone Home
