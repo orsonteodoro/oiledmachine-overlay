@@ -24,7 +24,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
-	ebuild_revision_7
+	ebuild_revision_8
 "
 RESTRICT="!test? ( test )"
 
@@ -77,6 +77,9 @@ PATCHES=(
 	# https://github.com/libarchive/libarchive/issues/2069
 	# (we can simply update the command since we don't support old lrzip)
 	"${FILESDIR}/${PN}-3.7.2-lrzip.patch"
+
+	# Prevent error related to -fstrict-flex-arrays=3 with cmake
+	"${FILESDIR}/libarchive-3.8.1-remove-struct-hack.patch"
 )
 
 src_prepare() {
@@ -88,6 +91,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+
 	export ac_cv_header_ext2fs_ext2_fs_h=$(usex e2fsprogs) #354923
 
 	local myconf=(
