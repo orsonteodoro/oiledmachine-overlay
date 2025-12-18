@@ -27,6 +27,9 @@ EAPI=8
 # rust-bin < 1.71 has an executable stack
 # which is not supported on selinux #911589
 
+# TODO:
+# Manually bump flate2 = "1" to flate2 = "1.1.2" in files/1.4.3/libclamav_rust/Cargo.toml
+
 MY_P="${P//_/-}"
 
 declare -A GIT_CRATES=(
@@ -301,7 +304,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -464,11 +467,10 @@ einfo "Generating lockfile"
 
 _production_unpack() {
 	unpack "${MY_P}.tar.gz"
-	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
-einfo "Replacing with updated Cargo.lock"
-		cp -a "${FILESDIR}/${PV}/Cargo.lock" "${S}" || die
-	fi
 	cargo_src_unpack
+
+einfo "Replacing with updated Cargo.lock"
+	cp -aT "${FILESDIR}/${PV}" "${S}" || die # This line must go after cargo_src_unpack().
 }
 
 src_unpack() {
