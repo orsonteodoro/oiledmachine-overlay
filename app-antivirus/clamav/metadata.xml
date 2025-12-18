@@ -27,6 +27,8 @@
 
   This ebuild fork fixes JIT support for some LLVM slots.
 
+  LTS status:  https://docs.clamav.net/faq/faq-eol.html
+
   -->
   <use>
     <flag name="clamapp">

@@ -11,6 +11,7 @@ MY_PV="${1}" # right version in ${S}
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
+	[clam-sigutil]="clamav-signature-util-%commit%"
 	[onenote_parser]="onenote.rs-%commit%"
 )
 
