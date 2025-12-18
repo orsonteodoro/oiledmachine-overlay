@@ -408,6 +408,7 @@ PDEPEND+="
 # gcc contains libatomic.so.1
 # mesa contains libgbm.so.1
 # Sourced from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
+#	>=gnome-base/gconf-3.2.6
 RDEPEND+="
 	${OPTIONAL_RDEPENDS_LISTED}
 	${OPTIONAL_RDEPENDS_UNLISTED}
@@ -415,7 +416,6 @@ RDEPEND+="
 	>=dev-libs/glib-${GLIB_PV}:2
 	>=dev-libs/libayatana-appindicator-0.5.3
 	>=dev-libs/nss-${NSS_PV}
-	>=gnome-base/gconf-3.2.6
 	>=media-libs/alsa-lib-${ALSA_LIB}
 	>=media-libs/mesa-${MESA_PV}[wayland?,X?]
 	>=net-misc/curl-7.88.1[ssl,gnutls]
