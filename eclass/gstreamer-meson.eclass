@@ -236,7 +236,9 @@ if [[ "${PN}" != "${GST_ORG_MODULE}" ]]; then
 	# Do not run test phase for individual plugin ebuilds.
 	RESTRICT="test"
 	RDEPEND="${RDEPEND}
-		~media-libs/${GST_ORG_MODULE}-${PV}:${SLOT}[${MULTILIB_USEDEP}]"
+		~media-libs/${GST_ORG_MODULE}-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+		media-libs/${GST_ORG_MODULE}:=
+	"
 
 	# Export multilib phases used for split builds.
 	multilib_src_install_all() { gstreamer_multilib_src_install_all; }
