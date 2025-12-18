@@ -207,6 +207,7 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+
 	local contrib=(
 		completion
 		subtree
