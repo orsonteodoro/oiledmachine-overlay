@@ -79,7 +79,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.7.2-lrzip.patch"
 
 	# oiledmachine-overlay:  Prevent error related to -fstrict-flex-arrays=3 with cmake
-	# Test with cmake
+	# Test with configure phase of opencv ebuild
 	"${FILESDIR}/libarchive-3.8.1-remove-struct-hack.patch"
 )
 
