@@ -62,7 +62,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${EXTERNAL_IUSE}
-alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
+alsa curl doc gtk3 gtk4 +geolocation http2 mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
@@ -126,17 +126,15 @@ RDEPEND+="
 		x11-terms/st
 	)
 	gtk3? (
-		|| (
-			(
-				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
-			)
-			(
-				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
-			)
+		!http2? (
+			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+			net-libs/webkit-gtk:4[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
+		)
+		http2? (
+			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+			net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		)
 	)
 	gtk4? (
