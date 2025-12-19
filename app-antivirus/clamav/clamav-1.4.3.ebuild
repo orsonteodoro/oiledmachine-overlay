@@ -303,11 +303,11 @@ RESTRICT="
 #		test
 #	)
 #"
-SLOT="0/sts"
+SLOT="0/lts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_38
+ebuild_revision_39
 "
 REQUIRED_USE="
 	clamonacc? (
