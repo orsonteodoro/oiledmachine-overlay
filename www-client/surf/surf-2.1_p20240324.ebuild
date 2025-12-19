@@ -66,7 +66,7 @@ alsa curl doc gtk3 gtk4 +geolocation http2 mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	^^ (
@@ -474,7 +474,7 @@ eerror
 		sed -i -e "s|\[WebGL\]               =       { { .i = [01] },     },|\[WebGL\]               =       { { .i = 0 },     },|g" "${config_file}" || die
 	fi
 
-	SURF_ZOOM_LEVEL=${SURF_ZOOM_LEVEL:-"1.2"} # Fix tiny wiki tables
+	SURF_ZOOM_LEVEL=${SURF_ZOOM_LEVEL:-"1.0"} # Fix tiny wiki tables with 1.2
 	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "config.def.h" || die
 	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "${config_file}" || die
 
