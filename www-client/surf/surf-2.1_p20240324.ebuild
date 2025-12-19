@@ -66,7 +66,7 @@ alsa curl doc gtk3 gtk4 +geolocation http2 mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
-r1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	^^ (
@@ -496,7 +496,7 @@ einfo "Switching to webkit-gtk:5"
 		sed -i -e 's|gtk[+]-3.0|gtk4|g' "config.mk" || die
 		sed -i -e 's|gcr-3|gcr-4|g' "config.mk" || die
 		append-cflags -DWEBKIT_API_VERSION=0500
-	elif has_version "net-libs/webkit-gtk:4.1" && use gtk3 ; then
+	elif has_version "net-libs/webkit-gtk:4.1" && use gtk3 && use http2 ; then
 einfo "Switching to webkit-gtk:4.1"
 		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-4.1|g" "config.mk" || die
 		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-4.1|g" "config.mk" || die
