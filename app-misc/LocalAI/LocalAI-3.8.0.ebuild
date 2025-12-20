@@ -456,7 +456,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-3.8.0-offline-install.patch"
-	"${FILESDIR}/${PN}-3.8.0-llama-cpp-package-fix.patch"
+	"${FILESDIR}/${PN}-3.8.0-package-sh-fix.patch"
 )
 
 pkg_setup() {
@@ -557,6 +557,7 @@ einfo "CFLAGS: ${CFLAGS}"
 einfo "CXXFLAGS: ${CXXFLAGS}"
 einfo "CPPLAGS: ${CPPFLAGS}"
 einfo "LDFLAGS: ${LDFLAGS}"
+	export MAKEOPTS="-j1"
 }
 
 src_compile() {
