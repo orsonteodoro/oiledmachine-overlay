@@ -70,8 +70,11 @@
     <flag name="p2p">
       Support peer-to-peer inference.
     </flag>
+    <flag name="stt">
+      Support speech to text or microphone support.
+    </flag>
     <flag name="tts">
-      Support text to speech.
+      Support text to speech or audio out support.
     </flag>
     <flag name="sycl-f16">
       Support Intel GPU acceleration with 16 bit floats for speed.

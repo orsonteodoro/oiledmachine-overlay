@@ -238,7 +238,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_golang_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_python_}
-ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
+ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt sycl-f16
 sycl-f32 systemd tts vulkan
 ebuild_revision_28
 "
@@ -330,6 +330,42 @@ REQUIRED_USE="
 	)
 	localai_backends_python_mlx-vlm? (
 		localai_backends_python_mlx
+	)
+	rag? (
+		localai_backends_golang_local-store
+		localai_backends_python_rerankers
+		|| (
+			localai_backends_cpp_llama-cpp
+			localai_backends_golang_huggingface
+		)
+		|| (
+			localai_backends_cpp_llama-cpp
+			localai_backends_golang_huggingface
+			localai_backends_python_exllama2
+			localai_backends_python_mlx
+			localai_backends_python_transformers
+			localai_backends_python_vllm
+		)
+	)
+	stt? (
+		localai_backends_golang_silero-vad
+		|| (
+			localai_backends_golang_whisper
+			localai_backends_python_faster-whisper
+		)
+	)
+	tts? (
+		|| (
+			localai_backends_golang_bark-cpp
+			localai_backends_golang_piper
+			localai_backends_python_bark
+			localai_backends_python_chatterbox
+			localai_backends_python_coqui
+			localai_backends_python_kitten-tts
+			localai_backends_python_kokoro
+			localai_backends_python_mlx-audio
+			localai_backends_python_neutts
+		)
 	)
 	rocm? (
 		|| (
