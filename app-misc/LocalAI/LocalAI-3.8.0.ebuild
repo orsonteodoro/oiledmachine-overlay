@@ -118,8 +118,13 @@ ROCM_SLOTS=(
 inherit abseil-cpp cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
 inherit grpc protobuf python-single-r1 re2 toolchain-funcs xdg
 
+#
 # Used go-download-cache to avoid:
 # OSError: [Errno 7] Argument list too long: '/usr/local/bin/wget'
+#
+# The go-download-cache eclass works like the npm eclass, storing
+# the downloads in the distdir folder.
+#
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
