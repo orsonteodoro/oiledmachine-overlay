@@ -47,7 +47,7 @@ STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From ht
 WHISPER_CPP_COMMIT="19ceec8eac980403b714d603e5ca31653cd42a3f" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/whisper/Makefile#L9
 
 # Yes the Protobuf situation is a mess.
-# Protobuf 6, in https://github.com/mudler/LocalAI/blob/v3.8.0/Makefile#L267
+# Protobuf 6 needed by go-tools (protoc-gen-go@v1.34.2, protoc-gen-go-grpc@1958fcb) in https://github.com/mudler/LocalAI/blob/v3.8.0/Makefile#L267
 
 # Protobuf 5
 CPP_BACKENDS=(
