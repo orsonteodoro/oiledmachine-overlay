@@ -218,10 +218,10 @@ https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_PV}/on
 	"
 fi
 
-DESCRIPTION="A REST API featuring integrated WebUI, P2P inference, generation of text, audio, video, images, voice cloning"
+DESCRIPTION="A self hosted local AI alternative with text, audio, speech, video, images, voice cloning, WebUI, REST API, P2P inferencing support"
 HOMEPAGE="
-	https://github.com/mudler/LocalAI
 	https://localai.io/
+	https://github.com/mudler/LocalAI
 "
 LICENSE="
 	MIT
