@@ -620,6 +620,7 @@ einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
 	local path
 	for path in $(find "${ED}") ; do
+		[[ -L "${path}" ]] && continue
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
