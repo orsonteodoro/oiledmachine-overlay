@@ -456,6 +456,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-3.8.0-offline-install.patch"
+	"${FILESDIR}/${PN}-3.8.0-llama-cpp-package-fix.patch"
 )
 
 pkg_setup() {
