@@ -230,14 +230,14 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-${CPP_BACKENDS[@]/#/localai_backends_cpp_}
+${CPP_BACKENDS[@]/#/localai_backends_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
-${GOLANG_BACKENDS[@]/#/localai_backends_golang_}
-${PYTHON_BACKENDS[@]/#/localai_backends_python_}
+${GOLANG_BACKENDS[@]/#/localai_backends_}
+${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt sycl-f16
 sycl-f32 systemd tts vulkan
 ebuild_revision_28
@@ -325,46 +325,46 @@ REQUIRED_USE="
 		cpu_flags_x86_amx_bf16
 		cpu_flags_x86_amx_int8
 	)
-	localai_backends_python_mlx-audio? (
-		localai_backends_python_mlx
+	localai_backends_mlx-audio? (
+		localai_backends_mlx
 	)
-	localai_backends_python_mlx-vlm? (
-		localai_backends_python_mlx
+	localai_backends_mlx-vlm? (
+		localai_backends_mlx
 	)
 	rag? (
-		localai_backends_golang_local-store
-		localai_backends_python_rerankers
+		localai_backends_local-store
+		localai_backends_rerankers
 		|| (
-			localai_backends_cpp_llama-cpp
-			localai_backends_golang_huggingface
+			localai_backends_huggingface
+			localai_backends_llama-cpp
 		)
 		|| (
-			localai_backends_cpp_llama-cpp
-			localai_backends_golang_huggingface
-			localai_backends_python_exllama2
-			localai_backends_python_mlx
-			localai_backends_python_transformers
-			localai_backends_python_vllm
+			localai_backends_exllama2
+			localai_backends_huggingface
+			localai_backends_llama-cpp
+			localai_backends_mlx
+			localai_backends_transformers
+			localai_backends_vllm
 		)
 	)
 	stt? (
-		localai_backends_golang_silero-vad
+		localai_backends_silero-vad
 		|| (
-			localai_backends_golang_whisper
-			localai_backends_python_faster-whisper
+			localai_backends_faster-whisper
+			localai_backends_whisper
 		)
 	)
 	tts? (
 		|| (
-			localai_backends_golang_bark-cpp
-			localai_backends_golang_piper
-			localai_backends_python_bark
-			localai_backends_python_chatterbox
-			localai_backends_python_coqui
-			localai_backends_python_kitten-tts
-			localai_backends_python_kokoro
-			localai_backends_python_mlx-audio
-			localai_backends_python_neutts
+			localai_backends_bark
+			localai_backends_bark-cpp
+			localai_backends_chatterbox
+			localai_backends_coqui
+			localai_backends_kitten-tts
+			localai_backends_kokoro
+			localai_backends_mlx-audio
+			localai_backends_neutts
+			localai_backends_piper
 		)
 	)
 	rocm? (
@@ -377,16 +377,16 @@ REQUIRED_USE="
 		systemd
 	)
 	|| (
-		localai_backends_cpp_llama-cpp
-		localai_backends_golang_huggingface
-		localai_backends_golang_stablediffusion-ggml
-		localai_backends_python_diffusers
-		localai_backends_python_exllama2
-		localai_backends_python_mlx
-		localai_backends_python_rfdetr
-		localai_backends_python_transformers
-		localai_backends_python_vllm
-		localai_backends_python_mlx-vlm
+		localai_backends_diffusers
+		localai_backends_exllama2
+		localai_backends_huggingface
+		localai_backends_llama-cpp
+		localai_backends_mlx
+		localai_backends_mlx-vlm
+		localai_backends_rfdetr
+		localai_backends_stablediffusion-ggml
+		localai_backends_transformers
+		localai_backends_vllm
 	)
 "
 gen_rocm_rdepend() {
@@ -685,7 +685,7 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 	local x
 
 	for x in "${CPP_BACKENDS[@]}" ; do
-		if use "localai_backends_cpp_${x}" ; then
+		if use "localai_backends_${x}" ; then
 einfo "Building backend/cpp/${x}"
 			pushd "backend/cpp/${x}" >/dev/null 2>&1 || die
 				if use rocm ; then
@@ -708,14 +708,14 @@ einfo "Building ${x} for CPU"
 	done
 
 	for x in "${GOLANG_BACKENDS[@]}" ; do
-		if use "localai_backends_golang_${x}" ; then
+		if use "localai_backends_${x}" ; then
 einfo "Building backend/go/${x}"
 			emake -C "backend/go/${x}" "build"
 		fi
 	done
 
 	for x in "${PYTHON_BACKENDS[@]}" ; do
-		if use "localai_backends_python_${x}" ; then
+		if use "localai_backends_${x}" ; then
 einfo "Building backend/python/${x}"
 			pushd "backend/python/${x}" || die
 				cp -a "${S}/backend/backend.proto" "./" || die
@@ -831,7 +831,7 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 	local x
 
 	for x in "${CPP_BACKENDS[@]}" ; do
-		if use "localai_backends_cpp_${x}" ; then
+		if use "localai_backends_${x}" ; then
 einfo "Keeping backend/cpp/${x}"
 		else
 einfo "Removing backend/cpp/${x}"
@@ -840,7 +840,7 @@ einfo "Removing backend/cpp/${x}"
 	done
 
 	for x in "${GOLANG_BACKENDS[@]}" ; do
-		if use "localai_backends_golang_${x}" ; then
+		if use "localai_backends_${x}" ; then
 einfo "Keeping backend/go/${x}"
 		else
 einfo "Removing backend/go/${x}"
@@ -849,7 +849,7 @@ einfo "Removing backend/go/${x}"
 	done
 
 	for x in "${PYTHON_BACKENDS[@]}" ; do
-		if use "localai_backends_python_${x}" ; then
+		if use "localai_backends_${x}" ; then
 einfo "Keeping backend/python/${x}"
 		else
 einfo "Removing backend/python/${x}"

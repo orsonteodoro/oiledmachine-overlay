@@ -1,17 +1,25 @@
 # This file is part of app-misc/LocalAI
 bark - Install the text-to-speech synthesis audio & speech backend
+bark-cpp - Build the bark-cpp backend
 chatterbox - Install the TTS model audio & speech backend
 coqui - Install the Coqui TTS audio & speech backend
 diffusers - Install the Stable Diffusion and image and video generation computer vision backend
 exllama2 - Install ExLlama2 quantized models core AI backend
 faster-whisper - Install the Fast Whisper speech recognition audio & speech backend
+huggingface - Build the huggingface backend
 kitten-tts - Install the Lightweight TTS audio & speech backend
 kokoro - Install the TTS models audio & speech backend
+llama-cpp - Build the llama-cpp backend
+local-store - Build the local-store backend
 mlx - Install the Apple Silicon optimized ML framework core AI backend
 mlx-audio - Install the Apple Silicon audio processing audio & speech backend
 mlx-vlm - Install the Vision-language models for Apple Silicon computer vision backend
 neutts - Install the TTS audio & speech backend with voice cloning support
+piper - Build the piper backend
 rerankers - Install the Text reranking models specialized backend
 rfdetr - Install the Object detection models computer vision backend
+silero-vad - Build the silero-vad backend
+stablediffusion-ggml - Build the stablediffusion-ggml backend for image generation
 transformers - Install the Hugging Face Transformers core AI backend
 vllm - Install the high-performance LLM inference engine core AI backend
+whisper - Build the whisper backend

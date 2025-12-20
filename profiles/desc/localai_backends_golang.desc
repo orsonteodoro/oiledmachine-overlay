@@ -1,8 +1,0 @@
-# This file is part of app-misc/LocalAI
-bark-cpp - Build the bark-cpp backend
-huggingface - Build the huggingface backend
-local-store - Build the local-store backend
-piper - Build the piper backend
-silero-vad - Build the silero-vad backend
-stablediffusion-ggml - Build the stablediffusion-ggml backend for image generation
-whisper - Build the whisper backend
