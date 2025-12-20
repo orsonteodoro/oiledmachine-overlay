@@ -23,12 +23,12 @@ MY_PN2="local-ai"
 #
 GEN_EBUILD=1
 
-ABSEIL_CPP_SLOT="20240722.0" # The abseil-cpp version is the same used by gRPC.
+ABSEIL_CPP_SLOT="20250512" # The abseil-cpp version is the same used by gRPC.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon security-critical server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 GRPC_SLOT="6"
-PROTOBUF_CPP_SLOT="6"
+PROTOBUF_CPP_SLOT="6" # From https://github.com/mudler/LocalAI/blob/v3.8.0/Makefile#L267
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_SLOT="20250512"
 
@@ -189,7 +189,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	!ci
