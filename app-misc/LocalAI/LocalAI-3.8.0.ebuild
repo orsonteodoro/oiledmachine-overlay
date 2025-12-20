@@ -176,7 +176,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64 ~arm64" # Ebuild is unfinished
+	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${PN}-${PV}"
 	#go-module_set_globals
 
