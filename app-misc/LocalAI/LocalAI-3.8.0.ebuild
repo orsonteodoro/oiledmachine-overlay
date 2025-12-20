@@ -608,7 +608,6 @@ src_prepare() {
 			sed -i -e "s|--index-strategy=unsafe-first-match||g" "${x}" || die
 		done
 	fi
-	die
 }
 
 src_configure() {
