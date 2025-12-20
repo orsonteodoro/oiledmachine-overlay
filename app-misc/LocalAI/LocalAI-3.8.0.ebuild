@@ -25,26 +25,26 @@ GEN_EBUILD=1
 
 ABSEIL_CPP_SLOT="20240722.0" # The abseil-cpp version is the same used by gRPC.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
+CFLAGS_HARDENED_USE_CASES="daemon security-critical server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
-GRPC_SLOT="5"
-PROTOBUF_CPP_SLOT="5"
+GRPC_SLOT="6"
+PROTOBUF_CPP_SLOT="6"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_SLOT="20250512"
 
-ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/silero-vad/Makefile#L5
+ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/silero-vad/Makefile#L5
 
-BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/bark-cpp/Makefile#L15
+BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/bark-cpp/Makefile#L15
 ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
 GGML_COMMIT_2="5fdc78fff274094e2a1b155928131983362d8a71" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0ebe6fe118f125665939b27c89f34ed38716bff8
-GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/piper/Makefile#L4
-LLAMA_CPP_COMMIT="d64c8104f090b27b1f99e8da5995ffcfa6b726e2" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/cpp/llama-cpp/Makefile#L2
+GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/piper/Makefile#L4
+LLAMA_CPP_COMMIT="583cb83416467e8abf9b37349dcf1f6a0083745a" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/cpp/llama-cpp/Makefile#L2
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/stablediffusion-ggml/Makefile#L22
-WHISPER_CPP_COMMIT="7849aff7a2e1f4234aa31b01a1870906d5431959" # From https://github.com/mudler/LocalAI/blob/v3.6.0/backend/go/whisper/Makefile#L9
+STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/stablediffusion-ggml/Makefile#L22
+WHISPER_CPP_COMMIT="19ceec8eac980403b714d603e5ca31653cd42a3f" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/whisper/Makefile#L9
 
 inherit hip-versions
 
@@ -296,12 +296,12 @@ gen_rocm_rdepend() {
 		"
 	done
 }
-# CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.6.0/Dockerfile#L20
-#		  https://github.com/mudler/LocalAI/blob/v3.6.0/.github/workflows/image_build.yml#L20
+# CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L20
+#		  https://github.com/mudler/LocalAI/blob/v3.8.0/.github/workflows/image_build.yml#L20
 # ROCm versions:
-#		  https://github.com/mudler/LocalAI/blob/v3.6.0/backend/python/kokoro/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v3.6.0/backend/python/vllm/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v3.6.0/.github/workflows/image.yml#L42
+#		  https://github.com/mudler/LocalAI/blob/v3.8.0/backend/python/kokoro/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v3.8.0/backend/python/vllm/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v3.8.0/.github/workflows/image.yml#L42
 RDEPEND+="
 	(
 		|| (
@@ -359,8 +359,8 @@ DISABLED_DEPEND="
 	)
 "
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
-# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.6.0/Dockerfile#L118
-# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.6.0/Dockerfile#L154
+# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L118
+# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L154
 # TODO:  Review dev-go/protobuf-go multislot
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -403,7 +403,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-3.6.0-offline-install.patch"
+	"${FILESDIR}/${PN}-3.8.0-offline-install.patch"
 )
 
 pkg_setup() {
@@ -495,6 +495,15 @@ src_configure() {
 	ffmpeg_src_configure
 	export PATH="${ESYSROOT}/usr/lib/protobuf-go/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	cflags-hardened_append
+
+	export CGO_CFLAGS="${CFLAGS}"
+	export CGO_CXXFLAGS="${CXXFLAGS}"
+	export CGO_CPPFLAGS="${CPPFLAGS}"
+	export CGO_LDFLAGS="${LDFLAGS}"
+einfo "CFLAGS: ${CFLAGS}"
+einfo "CXXFLAGS: ${CXXFLAGS}"
+einfo "CPPLAGS: ${CPPFLAGS}"
+einfo "LDFLAGS: ${LDFLAGS}"
 }
 
 src_compile() {

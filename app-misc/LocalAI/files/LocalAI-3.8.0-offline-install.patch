@@ -1,0 +1,93 @@
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile LocalAI-3.8.0/backend/go/bark-cpp/Makefile
+--- LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/go/bark-cpp/Makefile	2025-12-19 16:44:56.698704865 -0800
+@@ -9,6 +9,7 @@ GOCMD=go
+ # keep standard at C11 and C++11
+ CXXFLAGS = -I. -I$(INCLUDE_PATH)/sources/bark.cpp/examples -I$(INCLUDE_PATH)/sources/bark.cpp/encodec.cpp/ggml/include -I$(INCLUDE_PATH)/sources/bark.cpp/spm-headers -I$(INCLUDE_PATH)/sources/bark.cpp -O3 -DNDEBUG -std=c++17 -fPIC
+ LDFLAGS  = -L$(LIBRARY_PATH) -L$(LIBRARY_PATH)/sources/bark.cpp/build/examples -lbark -lstdc++ -lm
++OFFLINE?=1
+ 
+ # bark.cpp
+ BARKCPP_REPO?=https://github.com/PABannier/bark.cpp.git
+@@ -19,10 +20,12 @@ CXXFLAGS += -Wall -Wextra -Wpedantic -Wc
+ 
+ ## bark.cpp
+ sources/bark.cpp:
++ifeq ($(OFFLINE),false)
+ 	git clone --recursive $(BARKCPP_REPO) sources/bark.cpp && \
+ 	cd sources/bark.cpp && \
+ 	git checkout $(BARKCPP_VERSION) && \
+ 	git submodule update --init --recursive --depth 1 --single-branch
++endif
+ 
+ sources/bark.cpp/build/libbark.a: sources/bark.cpp
+ 	cd sources/bark.cpp && \
+@@ -48,4 +51,4 @@ package:
+ build: bark-cpp package
+ 
+ clean:
+-	rm -f gobark.o libbark.a
+\ No newline at end of file
++	rm -f gobark.o libbark.a
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Makefile LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile
+--- LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile	2025-12-19 16:44:56.698911650 -0800
+@@ -5,6 +5,7 @@ NATIVE?=false
+ GOCMD?=go
+ GO_TAGS?=
+ JOBS?=$(shell nproc --ignore=1)
++OFFLINE?=1
+ 
+ # stablediffusion.cpp (ggml)
+ STABLEDIFFUSION_GGML_REPO?=https://github.com/leejet/stable-diffusion.cpp
+@@ -56,10 +57,12 @@ ifeq ($(BUILD_TYPE),sycl_f32)
+ endif
+ 
+ sources/stablediffusion-ggml.cpp:
++ifeq ($(OFFLINE),false)
+ 	git clone --recursive $(STABLEDIFFUSION_GGML_REPO) sources/stablediffusion-ggml.cpp && \
+ 	cd sources/stablediffusion-ggml.cpp && \
+ 	git checkout $(STABLEDIFFUSION_GGML_VERSION) && \
+ 	git submodule update --init --recursive --depth 1 --single-branch
++endif
+ 
+ libgosd.so: sources/stablediffusion-ggml.cpp CMakeLists.txt gosd.cpp gosd.h
+ 	mkdir -p build && \
+diff '--color=auto' -urp LocalAI-3.8.0.orig/Makefile LocalAI-3.8.0/Makefile
+--- LocalAI-3.8.0.orig/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/Makefile	2025-12-19 16:50:04.131215029 -0800
+@@ -11,6 +11,7 @@ export BUILD_TYPE?=
+ GO_TAGS?=
+ BUILD_ID?=
+ NATIVE?=false
++OFFLINE?=1
+ 
+ TEST_DIR=/tmp/test
+ 
+@@ -237,6 +238,7 @@ help: ## Show this help.
+ protogen: protogen-go
+ 
+ protoc:
++ifeq ($(OFFLINE),false)
+ 	@OS_NAME=$$(uname -s | tr '[:upper:]' '[:lower:]'); \
+ 	ARCH_NAME=$$(uname -m); \
+ 	if [ "$$OS_NAME" = "darwin" ]; then \
+@@ -267,12 +269,18 @@ protoc:
+ 	URL=https://github.com/protocolbuffers/protobuf/releases/download/v31.1/$$FILE; \
+ 	curl -L -s $$URL -o protoc.zip && \
+ 	unzip -j -d $(CURDIR) protoc.zip bin/protoc && rm protoc.zip
++endif
+ 
+ .PHONY: protogen-go
+ protogen-go: protoc install-go-tools
+ 	mkdir -p pkg/grpc/proto
++ifeq ($(OFFLINE),false)
+ 	./protoc --experimental_allow_proto3_optional -Ibackend/ --go_out=pkg/grpc/proto/ --go_opt=paths=source_relative --go-grpc_out=pkg/grpc/proto/ --go-grpc_opt=paths=source_relative \
+     backend/backend.proto
++else
++	protoc --experimental_allow_proto3_optional -Ibackend/ --go_out=pkg/grpc/proto/ --go_opt=paths=source_relative --go-grpc_out=pkg/grpc/proto/ --go-grpc_opt=paths=source_relative \
++    backend/backend.proto
++endif
+ 
+ .PHONY: protogen-go-clean
+ protogen-go-clean:
