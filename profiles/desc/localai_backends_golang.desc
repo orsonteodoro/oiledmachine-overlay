@@ -4,5 +4,5 @@ huggingface - Build the huggingface backend
 local-store - Build the local-store backend
 piper - Build the piper backend
 silero-vad - Build the silero-vad backend
-stablediffusion-ggml - Build the stablediffusion-ggml backend
+stablediffusion-ggml - Build the stablediffusion-ggml backend for image generation
 whisper - Build the whisper backend
