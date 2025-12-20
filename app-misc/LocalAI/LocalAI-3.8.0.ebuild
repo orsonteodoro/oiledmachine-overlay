@@ -713,7 +713,7 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 
 	local x
 	for x in "${PYTHON_BACKENDS[@]}" ; do
-		if use "localai_backends_${x}" ; then
+		if use "localai_backends_python_${x}" ; then
 einfo "Keeping backend/python/${x}"
 		else
 einfo "Removing backend/python/${x}"
