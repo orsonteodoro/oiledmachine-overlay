@@ -1,7 +1,23 @@
 #!/bin/bash
+
+ARGS=( "${@}" )
+
+prepare_backends() {
+	if [[ -n "${EXTRA_BACKENDS}" ]] ; then
+		local backend
+		for backend in ${EXTRA_BACKENDS} ; do
+			echo "Preparing backend:  ${backend}"
+			make -C "${backend}"
+		done
+	fi
+}
+
 main() {
 	cd "/opt/local-ai"
 	source "/etc/local-ai/local-ai.conf"
-	./local-ai
+	prepare_backends
+	# TODO sandbox local-ai
+	./local-ai "${ARGS[@]}"
 }
+
 main

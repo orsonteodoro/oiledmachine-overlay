@@ -46,6 +46,27 @@ PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper
 STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/stablediffusion-ggml/Makefile#L22
 WHISPER_CPP_COMMIT="19ceec8eac980403b714d603e5ca31653cd42a3f" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/whisper/Makefile#L9
 
+PYTHON_BACKENDS=(
+	# From backend/python
+	"bark"
+	"chatterbox"
+	"common"
+	"coqui"
+	"diffusers"
+	"exllama2"
+	"faster-whisper"
+	"kitten-tts"
+	"kokoro"
+	"mlx"
+	"mlx-audio"
+	"mlx-vlm"
+	"neutts"
+	"rerankers"
+	"rfdetr"
+	"transformers"
+	"vllm"
+)
+
 inherit hip-versions
 
 AMDGPU_TARGETS_COMPAT=(
@@ -190,6 +211,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${PYTHON_BACKENDS[@]/#/localai_backends_python_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
 ${CPU_FLAGS_RISCV[@]}
@@ -590,6 +612,7 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 		GO_TAGS="${go_tags[@]}" \
 		OFFLINE="true" \
 		build
+
 }
 
 sanitize_file_permissions() {
@@ -686,7 +709,17 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 
 	insinto "${dest}"
 	doins -r "sources"
-	doins -r "backend-assets"
+	doins -r "backend"
+
+	local x
+	for x in "${PYTHON_BACKENDS[@]}" ; do
+		if use "localai_backends_${x}" ; then
+einfo "Keeping backend/python/${x}"
+		else
+einfo "Removing backend/python/${x}"
+			rm -rf "${ED}/opt/local-ai/backend/python/${x}"
+		fi
+	done
 
 	keepdir "${dest}/models"
 
