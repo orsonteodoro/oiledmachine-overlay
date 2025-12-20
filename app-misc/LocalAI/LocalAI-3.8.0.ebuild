@@ -490,10 +490,6 @@ BDEPEND+="
 	app-crypt/rhash
 	net-misc/iputils
 	net-misc/wget
-	|| (
-		dev-python/pip
-		dev-python/uv
-	)
 	ci? (
 		app-crypt/gnupg
 		app-misc/ca-certificates
@@ -514,6 +510,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.8.0-offline-install.patch"
 	"${FILESDIR}/${PN}-3.8.0-package-sh-fix.patch"
 	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
+	"${FILESDIR}/${PN}-3.8.0-libbackend-sh.patch"
 )
 
 pkg_setup() {
@@ -611,6 +608,7 @@ src_prepare() {
 			sed -i -e "s|--index-strategy=unsafe-first-match||g" "${x}" || die
 		done
 	fi
+	die
 }
 
 src_configure() {

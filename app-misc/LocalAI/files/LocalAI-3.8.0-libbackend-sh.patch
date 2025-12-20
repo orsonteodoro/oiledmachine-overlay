@@ -1,0 +1,76 @@
+--- a/backend/python/common/libbackend.sh.orig	2025-11-26 07:03:42.000000000 -0800
++++ b/backend/python/common/libbackend.sh	2025-12-20 14:58:10.611975477 -0800
+@@ -26,6 +26,8 @@ PYTHON_PATCH="${PYTHON_PATCH:-18}"
+ PY_STANDALONE_TAG="${PY_STANDALONE_TAG:-20250818}"  # release tag date
+ # Enable/disable bundling of a portable Python build
+ PORTABLE_PYTHON="${PORTABLE_PYTHON:-false}"
++OFFLINE="${OFFLINE:-1}"
++USE_VENV="${USE_VENV:-0}"
+ 
+ # If you want to fully pin the filename (including tuned CPU targets), set:
+ # PORTABLE_PY_FILENAME="cpython-3.10.18+20250818-x86_64_v3-unknown-linux-gnu-install_only.tar.gz"
+@@ -284,6 +286,7 @@ _makeVenvPortable() {
+ # This function is idempotent, so you can call it as many times as you want and it will
+ # always result in an activated virtual environment
+ function ensureVenv() {
++    [ "${USE_VENV}" != "1" ] && return
+     local interpreter=""
+ 
+     if [ "x${PORTABLE_PYTHON}" == "xtrue" ] || [ -e "$(_portable_python)" ]; then
+@@ -333,7 +336,9 @@ function ensureVenv() {
+ 
+ function runProtogen() {
+     ensureVenv
+-    if [ "x${USE_PIP}" == "xtrue" ]; then
++    if [ "x${OFFLINE}" == "x1" || "x${OFFLINE}" == "xtrue" ]; then
++        :
++    elif [ "x${USE_PIP}" == "xtrue" ]; then
+         pip install grpcio-tools
+     else
+         uv pip install grpcio-tools
+@@ -393,7 +398,9 @@ function installRequirements() {
+     for reqFile in ${requirementFiles[@]}; do
+         if [ -f "${reqFile}" ]; then
+             echo "starting requirements install for ${reqFile}"
+-            if [ "x${USE_PIP}" == "xtrue" ]; then
++            if [ "x${OFFLINE}" == "x1" || "x${OFFLINE}" == "xtrue" ]; then
++                :
++            elif [ "x${USE_PIP}" == "xtrue" ]; then
+                 pip install ${EXTRA_PIP_INSTALL_FLAGS:-} --requirement "${reqFile}"
+             else
+                 uv pip install ${EXTRA_PIP_INSTALL_FLAGS:-} --requirement "${reqFile}"
+@@ -420,14 +427,26 @@ function installRequirements() {
+ #  - ${BACKEND_NAME}.py
+ function startBackend() {
+     ensureVenv
+-    if [ ! -z "${BACKEND_FILE:-}" ]; then
+-        exec "${EDIR}/venv/bin/python" "${BACKEND_FILE}" "$@"
+-    elif [ -e "${MY_DIR}/server.py" ]; then
+-        exec "${EDIR}/venv/bin/python" "${MY_DIR}/server.py" "$@"
+-    elif [ -e "${MY_DIR}/backend.py" ]; then
+-        exec "${EDIR}/venv/bin/python" "${MY_DIR}/backend.py" "$@"
+-    elif [ -e "${MY_DIR}/${BACKEND_NAME}.py" ]; then
+-        exec "${EDIR}/venv/bin/python" "${MY_DIR}/${BACKEND_NAME}.py" "$@"
++    if [ "${USE_VENV}" != "1" ]; then
++      if [ ! -z "${BACKEND_FILE:-}" ]; then
++          exec "@EPYTHON@" "${BACKEND_FILE}" "$@"
++      elif [ -e "${MY_DIR}/server.py" ]; then
++          exec "@EPYTHON@" "${MY_DIR}/server.py" "$@"
++      elif [ -e "${MY_DIR}/backend.py" ]; then
++          exec "@EPYTHON@" "${MY_DIR}/backend.py" "$@"
++      elif [ -e "${MY_DIR}/${BACKEND_NAME}.py" ]; then
++          exec "@EPYTHON@" "${MY_DIR}/${BACKEND_NAME}.py" "$@"
++      fi
++    else
++      if [ ! -z "${BACKEND_FILE:-}" ]; then
++          exec "${EDIR}/venv/bin/python" "${BACKEND_FILE}" "$@"
++      elif [ -e "${MY_DIR}/server.py" ]; then
++          exec "${EDIR}/venv/bin/python" "${MY_DIR}/server.py" "$@"
++      elif [ -e "${MY_DIR}/backend.py" ]; then
++          exec "${EDIR}/venv/bin/python" "${MY_DIR}/backend.py" "$@"
++      elif [ -e "${MY_DIR}/${BACKEND_NAME}.py" ]; then
++          exec "${EDIR}/venv/bin/python" "${MY_DIR}/${BACKEND_NAME}.py" "$@"
++      fi
+     fi
+ }
+ 
