@@ -325,7 +325,12 @@ REQUIRED_USE="
 		cpu_flags_x86_amx_bf16
 		cpu_flags_x86_amx_int8
 	)
-
+	localai_backends_python_mlx-audio? (
+		localai_backends_python_mlx
+	)
+	localai_backends_python_mlx-vlm? (
+		localai_backends_python_mlx
+	)
 	rocm? (
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
@@ -334,6 +339,18 @@ REQUIRED_USE="
 	|| (
 		openrc
 		systemd
+	)
+	|| (
+		localai_backends_cpp_llama-cpp
+		localai_backends_golang_huggingface
+		localai_backends_golang_stablediffusion-ggml
+		localai_backends_python_diffusers
+		localai_backends_python_exllama2
+		localai_backends_python_mlx
+		localai_backends_python_rfdetr
+		localai_backends_python_transformers
+		localai_backends_python_vllm
+		localai_backends_python_mlx-vlm
 	)
 "
 gen_rocm_rdepend() {
