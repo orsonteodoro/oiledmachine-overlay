@@ -13,6 +13,8 @@ prepare_backends() {
 }
 
 main() {
+	rm -rf "/tmp/generated" || true
+	rm -rf "/tmp/localai" || true
 	cd "/opt/local-ai"
 	source "/etc/conf.d/local-ai.conf"
 	prepare_backends

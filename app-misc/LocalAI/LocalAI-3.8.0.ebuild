@@ -23,12 +23,12 @@ MY_PN2="local-ai"
 #
 GEN_EBUILD=1
 
-ABSEIL_CPP_SLOT="20250512" # The abseil-cpp version is the same used by gRPC.
+ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon security-critical server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
-GRPC_SLOT="6"
-PROTOBUF_CPP_SLOT="6" # From https://github.com/mudler/LocalAI/blob/v3.8.0/Makefile#L267
+GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
+PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_SLOT="20250512"
 
@@ -46,6 +46,26 @@ PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper
 STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/stablediffusion-ggml/Makefile#L22
 WHISPER_CPP_COMMIT="19ceec8eac980403b714d603e5ca31653cd42a3f" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/whisper/Makefile#L9
 
+# Yes the Protobuf situation is a mess.
+# Protobuf 6, in https://github.com/mudler/LocalAI/blob/v3.8.0/Makefile#L267
+
+# Protobuf 5
+CPP_BACKENDS=(
+	"llama-cpp"
+)
+
+# Protobuf 5
+GOLANG_BACKENDS=(
+	"bark-cpp"
+	"huggingface"
+	"local-store"
+	"piper"
+	"silero-vad"
+	"stablediffusion-ggml"
+	"whisper"
+)
+
+# Protobuf 5
 PYTHON_BACKENDS=(
 	# From backend/python
 	"bark"
@@ -211,15 +231,17 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-${PYTHON_BACKENDS[@]/#/localai_backends_python_}
+${CPP_BACKENDS[@]/#/localai_backends_cpp_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
+${GOLANG_BACKENDS[@]/#/localai_backends_golang_}
+${PYTHON_BACKENDS[@]/#/localai_backends_python_}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_26
+ebuild_revision_28
 "
 REQUIRED_USE="
 	!ci
@@ -613,6 +635,49 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 		OFFLINE="true" \
 		build
 
+
+	local x
+
+	for x in "${CPP_BACKENDS[@]}" ; do
+		if use "localai_backends_cpp_${x}" ; then
+einfo "Building backend/cpp/${x}"
+			pushd "backend/cpp/${x}" >/dev/null 2>&1 || die
+				if use rocm ; then
+einfo "Building ${x} for ROCm"
+				elif [[ "${ARCH}" == "arm64" ]] ; then
+einfo "Building ${x} for CPU"
+				else
+einfo "Building ${x} for CPU"
+					use cpu_flags_x86_avx && emake "llama-cpp-avx"
+					use cpu_flags_x86_avx2 && emake "llama-cpp-avx2"
+					use cpu_flags_x86_avx512f && emake "llama-cpp-avx512"
+				fi
+				emake "llama-cpp-fallback"
+				emake "llama-cpp-grpc"
+				emake "llama-cpp-rpc-server"
+			popd >/dev/null 2>&1 || die
+
+			emake -BC "backend/cpp/${x}" "package"
+		fi
+	done
+
+	for x in "${GOLANG_BACKENDS[@]}" ; do
+		if use "localai_backends_golang_${x}" ; then
+einfo "Building backend/go/${x}"
+			emake -C "backend/go/${x}" "build"
+		fi
+	done
+
+	for x in "${PYTHON_BACKENDS[@]}" ; do
+		if use "localai_backends_python_${x}" ; then
+einfo "Building backend/python/${x}"
+			pushd "backend/python/${x}" || die
+				cp -a "${S}/backend/backend.proto" "./" || die
+				cp -a "${S}/backend/python/common/" "common" || die
+				emake
+			popd
+		fi
+	done
 }
 
 sanitize_file_permissions() {
@@ -751,10 +816,14 @@ einfo "Removing backend/python/${x}"
 	keepdir "/var/lib/${MY_PN2}/generated/images"
 	keepdir "/var/lib/${MY_PN2}/huggingface/hub"
 	keepdir "/var/lib/${MY_PN2}/models"
+	keepdir "/var/lib/${MY_PN2}/backends"
 
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}"
 
 	sanitize_file_permissions
+
+	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/configuration"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends"
 }
 
 pkg_postinst() {
