@@ -70,7 +70,6 @@ PYTHON_BACKENDS=(
 	# From backend/python
 	"bark"
 	"chatterbox"
-	"common"
 	"coqui"
 	"diffusers"
 	"exllama2"
