@@ -684,6 +684,7 @@ install_init_services() {
 	if use openrc ; then
 		exeinto "/etc/init.d"
 		newexe "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
+		fperms "+x" "/etc/init.d/${MY_PN2}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
