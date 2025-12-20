@@ -732,7 +732,7 @@ einfo "Removing backend/python/${x}"
 	fi
 
 	newicon \
-		"docs/static/apple-touch-icon.png" \
+		"core/http/static/logo.png" \
 		"${MY_PN2}.png"
 
 	make_desktop_entry \
