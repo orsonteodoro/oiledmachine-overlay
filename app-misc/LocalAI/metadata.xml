@@ -70,6 +70,9 @@
     <flag name="p2p">
       Support peer-to-peer inference.
     </flag>
+    <flag name="rag">
+      Support basic RAG (Retrieval-Augmented Generation).
+    </flag>
     <flag name="stt">
       Support speech to text or microphone support.
     </flag>
