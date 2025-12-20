@@ -774,7 +774,6 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 	doexe "local-ai"
 
 	insinto "${dest}"
-	doins -r "sources"
 	doins -r "backend"
 
 	local x
