@@ -457,6 +457,7 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-3.8.0-offline-install.patch"
 	"${FILESDIR}/${PN}-3.8.0-package-sh-fix.patch"
+	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
 )
 
 pkg_setup() {
@@ -490,7 +491,6 @@ einfo "Replace EGO_SUM contents with the following:"
 		done
 	done
 	IFS=$' \t\n'
-	die
 }
 
 src_unpack() {
@@ -530,6 +530,7 @@ src_prepare() {
 
 	local onnx_arch=$(get_onnx_arch)
 	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
+	die
 }
 
 src_configure() {
