@@ -530,7 +530,6 @@ src_prepare() {
 
 	local onnx_arch=$(get_onnx_arch)
 	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
-	die
 }
 
 src_configure() {
