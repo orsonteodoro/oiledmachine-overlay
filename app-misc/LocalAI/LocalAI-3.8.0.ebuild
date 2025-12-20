@@ -156,7 +156,7 @@ ROCM_SLOTS=(
 )
 
 inherit abseil-cpp cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
-inherit grpc protobuf python-single-r1 re2 toolchain-funcs xdg
+inherit grpc protobuf python-single-r1 re2 sandbox-changes toolchain-funcs xdg
 
 #
 # Used go-download-cache to avoid:
@@ -488,9 +488,12 @@ BDEPEND+="
 	>=dev-lang/go-1.22.6
 	app-arch/upx
 	app-crypt/rhash
-	dev-python/pip
 	net-misc/iputils
 	net-misc/wget
+	|| (
+		dev-python/pip
+		dev-python/uv
+	)
 	ci? (
 		app-crypt/gnupg
 		app-misc/ca-certificates
@@ -515,6 +518,7 @@ PATCHES=(
 
 pkg_setup() {
 ewarn "This ebuild is still in development"
+	sandbox-changes_no_network_sandbox "For downloading micropackages"
 	python-single-r1_pkg_setup
 }
 
@@ -583,6 +587,30 @@ src_prepare() {
 
 	local onnx_arch=$(get_onnx_arch)
 	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
+
+	local L=(
+		"backend/python/neutts/install.sh"
+		"backend/python/kitten-tts/install.sh"
+		"backend/python/bark/install.sh"
+		"backend/python/common/template/install.sh"
+		"backend/python/diffusers/install.sh"
+		"backend/python/rerankers/install.sh"
+		"backend/python/chatterbox/install.sh"
+		"backend/python/kokoro/install.sh"
+		"backend/python/coqui/install.sh"
+		"backend/python/transformers/install.sh"
+		"backend/python/faster-whisper/install.sh"
+		"backend/python/vllm/install.sh"
+		"backend/python/rfdetr/install.sh"
+	)
+
+	if ! has_version "dev-python/uv" ; then
+		local x
+		for x in "${L[@]}" ; do
+		# This is a uv arg not pip.
+			sed -i -e "s|--index-strategy=unsafe-first-match||g" "${x}" || die
+		done
+	fi
 }
 
 src_configure() {
@@ -603,7 +631,9 @@ einfo "CXXFLAGS: ${CXXFLAGS}"
 einfo "CPPLAGS: ${CPPFLAGS}"
 einfo "LDFLAGS: ${LDFLAGS}"
 	export MAKEOPTS="-j1"
-	export USE_PIP="true"
+	if ! has_version "dev-python/uv" ; then
+		export USE_PIP="true"
+	fi
 
 	use localai_backends_llama-cpp || ewarn "You are disabling the llama-cpp backend.  It is the recommended default for LLMs support."
 }
