@@ -488,6 +488,7 @@ BDEPEND+="
 	>=dev-lang/go-1.22.6
 	app-arch/upx
 	app-crypt/rhash
+	dev-python/pip
 	net-misc/iputils
 	net-misc/wget
 	ci? (
