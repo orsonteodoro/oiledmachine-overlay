@@ -504,6 +504,11 @@ src_unpack() {
 	fi
 }
 
+get_onnx_arch() {
+	[[ "${ARCH}" == "amd64" ]] && echo "x64"
+	[[ "${ARCH}" == "arm64" ]] && echo "aarch64"
+}
+
 src_prepare() {
 	default
 	# S_GO should appear at this point
@@ -523,21 +528,8 @@ src_prepare() {
 
 	dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/backend/cpp/llama-cpp/llama.cpp"
 
-	#local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	mkdir -p "${S}/backend/go/silero-vad/sources/onnxruntime" || die
-	if [[ "${ARCH}" == "amd64" ]] ; then
-		cat \
-			"${DISTDIR}/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
-			> \
-			"${S}/backend/go/silero-vad/sources/onnxruntime/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
-			|| die
-	elif [[ "${ARCH}" == "arm64" ]] ; then
-		cat \
-			"${DISTDIR}/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
-			> \
-			"${S}/backend/go/silero-vad/sources/onnxruntime/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
-			|| die
-	fi
+	local onnx_arch=$(get_onnx_arch)
+	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
 }
 
 src_configure() {

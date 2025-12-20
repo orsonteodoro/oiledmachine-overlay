@@ -1,6 +1,6 @@
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/cpp/grpc/Makefile LocalAI-3.8.0/backend/cpp/grpc/Makefile
 --- LocalAI-3.8.0.orig/backend/cpp/grpc/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/cpp/grpc/Makefile	2025-12-20 02:31:42.911275012 -0800
++++ LocalAI-3.8.0/backend/cpp/grpc/Makefile	2025-12-20 07:34:23.611491935 -0800
 @@ -5,6 +5,7 @@ SYSTEM ?= $(HOST_SYSTEM)
  TAG_LIB_GRPC?=v1.59.0
  GIT_REPO_LIB_GRPC?=https://github.com/grpc/grpc.git
@@ -27,7 +27,7 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/cpp/grpc/Makefile LocalAI-3.
  	mkdir -p $(GRPC_BUILD)
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/cpp/llama-cpp/Makefile LocalAI-3.8.0/backend/cpp/llama-cpp/Makefile
 --- LocalAI-3.8.0.orig/backend/cpp/llama-cpp/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/cpp/llama-cpp/Makefile	2025-12-20 02:31:41.919249831 -0800
++++ LocalAI-3.8.0/backend/cpp/llama-cpp/Makefile	2025-12-20 07:34:23.611697156 -0800
 @@ -1,6 +1,7 @@
  
  LLAMA_VERSION?=583cb83416467e8abf9b37349dcf1f6a0083745a
@@ -54,7 +54,7 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/cpp/llama-cpp/Makefile Local
  	mkdir -p llama.cpp/tools/grpc-server
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile LocalAI-3.8.0/backend/go/bark-cpp/Makefile
 --- LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/go/bark-cpp/Makefile	2025-12-20 02:27:14.034248822 -0800
++++ LocalAI-3.8.0/backend/go/bark-cpp/Makefile	2025-12-20 07:34:23.611866419 -0800
 @@ -9,6 +9,7 @@ GOCMD=go
  # keep standard at C11 and C++11
  CXXFLAGS = -I. -I$(INCLUDE_PATH)/sources/bark.cpp/examples -I$(INCLUDE_PATH)/sources/bark.cpp/encodec.cpp/ggml/include -I$(INCLUDE_PATH)/sources/bark.cpp/spm-headers -I$(INCLUDE_PATH)/sources/bark.cpp -O3 -DNDEBUG -std=c++17 -fPIC
@@ -78,7 +78,7 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile LocalAI
  	cd sources/bark.cpp && \
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/piper/Makefile LocalAI-3.8.0/backend/go/piper/Makefile
 --- LocalAI-3.8.0.orig/backend/go/piper/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/go/piper/Makefile	2025-12-20 02:31:39.679232051 -0800
++++ LocalAI-3.8.0/backend/go/piper/Makefile	2025-12-20 07:34:23.611988980 -0800
 @@ -2,6 +2,7 @@
  # go-piper version
  PIPER_REPO?=https://github.com/mudler/go-piper
@@ -103,9 +103,40 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/piper/Makefile LocalAI-3.
  
  sources/go-piper/libpiper_binding.a: sources/go-piper
  	$(MAKE) -C sources/go-piper libpiper_binding.a example/main piper.o
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/silero-vad/Makefile LocalAI-3.8.0/backend/go/silero-vad/Makefile
+--- LocalAI-3.8.0.orig/backend/go/silero-vad/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/go/silero-vad/Makefile	2025-12-20 07:36:03.287643715 -0800
+@@ -5,6 +5,7 @@ GOCMD=go
+ ONNX_VERSION?=1.20.0
+ ONNX_ARCH?=x64
+ ONNX_OS?=linux
++OFFLINE?=1
+ 
+ # Detect if we are running on arm64
+ ifneq (,$(findstring aarch64,$(shell uname -m)))
+@@ -23,10 +24,12 @@ ifeq ($(OS),Darwin)
+ endif
+ 
+ sources/onnxruntime:
++ifeq ($(OFFLINE),false)
+ 	mkdir -p sources/onnxruntime
+ 	curl -L https://github.com/microsoft/onnxruntime/releases/download/v$(ONNX_VERSION)/onnxruntime-$(ONNX_OS)-$(ONNX_ARCH)-$(ONNX_VERSION).tgz -o sources/onnxruntime/onnxruntime-$(ONNX_OS)-$(ONNX_ARCH)-$(ONNX_VERSION).tgz
+ 	cd sources/onnxruntime && tar -xvf onnxruntime-$(ONNX_OS)-$(ONNX_ARCH)-$(ONNX_VERSION).tgz && rm onnxruntime-$(ONNX_OS)-$(ONNX_ARCH)-$(ONNX_VERSION).tgz
+ 	cd sources/onnxruntime && mv onnxruntime-$(ONNX_OS)-$(ONNX_ARCH)-$(ONNX_VERSION)/* ./
++endif
+ 
+ backend-assets/lib/libonnxruntime.so.1: sources/onnxruntime
+ 	mkdir -p backend-assets/lib
+@@ -44,4 +47,4 @@ silero-vad: backend-assets/lib/libonnxru
+ package:
+ 	bash package.sh
+ 
+-build: silero-vad package
+\ No newline at end of file
++build: silero-vad package
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Makefile LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile
 --- LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile	2025-12-20 02:27:14.035625190 -0800
++++ LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile	2025-12-20 07:34:23.612130075 -0800
 @@ -5,6 +5,7 @@ NATIVE?=false
  GOCMD?=go
  GO_TAGS?=
@@ -129,7 +160,7 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Make
  	mkdir -p build && \
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/whisper/Makefile LocalAI-3.8.0/backend/go/whisper/Makefile
 --- LocalAI-3.8.0.orig/backend/go/whisper/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/go/whisper/Makefile	2025-12-20 02:31:40.863282278 -0800
++++ LocalAI-3.8.0/backend/go/whisper/Makefile	2025-12-20 07:34:23.612268219 -0800
 @@ -10,6 +10,7 @@ JOBS?=$(shell nproc --ignore=1)
  WHISPER_REPO?=https://github.com/ggml-org/whisper.cpp
  WHISPER_CPP_VERSION?=19ceec8eac980403b714d603e5ca31653cd42a3f
@@ -156,7 +187,7 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/whisper/Makefile LocalAI-
  UNAME_S := $(shell uname -s)
 diff '--color=auto' -urp LocalAI-3.8.0.orig/Makefile LocalAI-3.8.0/Makefile
 --- LocalAI-3.8.0.orig/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/Makefile	2025-12-20 02:27:14.035942796 -0800
++++ LocalAI-3.8.0/Makefile	2025-12-20 07:34:23.612433303 -0800
 @@ -11,6 +11,7 @@ export BUILD_TYPE?=
  GO_TAGS?=
  BUILD_ID?=
