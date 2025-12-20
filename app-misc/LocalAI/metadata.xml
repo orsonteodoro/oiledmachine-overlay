@@ -30,18 +30,20 @@
 
     Inference support
 
-    | Backend              | Text inference      | Image inference          | CPU | GPU | GPU SDK                            |
-    | ---                  | ---                 | ---                      | --- | --- | ---                                |
-    | diffusers            | N                   | Y (Generation)           | Y   | Y   | CUDA, ROCm, Intel, Metal           |
-    | exllama2             | Y                   | N                        | N   | Y   | CUDA                               |
-    | huggingface          | Y (Embeddings)      | N                        | Y   | Y   |                                    |
-    | llama.cpp            | Y                   | N                        | Y   | Y   | CUDA, ROCm, SYCL, Vulkan, Metal    |
-    | MLX                  | Y                   | N                        | N   | Y   | Metal - Apple Silicon              |
-    | MLX-VLM              | Y (Vision-Language) | Y (Image understanding)  | N   | Y   | Metal - Apple Silicon              |
-    | rfdetr               | N                   | Y (Object detection)     | Y   | Y   | CUDA                               |
-    | stablediffusion-ggml | N                   | Y (Generation)           | Y   | Y   | CUDA, SYCL, Vulkan                 |
-    | transformers         | Y                   | N                        | Y   | Y   | CUDA, ROCm, Intel                  |
-    | vLLM                 | Y                   | N                        | N   | Y   | CUDA, ROCm, Intel                  |
+    | Backend              | Text inference      | Image inference            | CPU | GPU | GPU SDK                            |
+    | ---                  | ---                 | ---                        | --- | --- | ---                                |
+    | diffusers            | N                   | Y (Image/video generation) | Y   | Y   | CUDA, ROCm, Intel, Metal           |
+    | exllama2             | Y                   | N                          | N   | Y   | CUDA                               |
+    | huggingface          | Y (Embeddings)      | N                          | Y   | Y   |                                    |
+    | llama.cpp            | Y                   | N                          | Y   | Y   | CUDA, ROCm, SYCL, Vulkan, Metal    |
+    | MLX                  | Y                   | N                          | N   | Y   | Metal - Apple Silicon              |
+    | MLX-VLM              | Y (Vision-Language) | Y (Image understanding)    | N   | Y   | Metal - Apple Silicon              |
+    | rfdetr               | N                   | Y (Object detection)       | Y   | Y   | CUDA                               |
+    | stablediffusion-ggml | N                   | Y (Image generation)       | Y   | Y   | CUDA, SYCL, Vulkan                 |
+    | transformers         | Y                   | N                          | Y   | Y   | CUDA, ROCm, Intel                  |
+    | vLLM                 | Y                   | N                          | N   | Y   | CUDA, ROCm, Intel                  |
+
+    
 
   -->
   <upstream>
