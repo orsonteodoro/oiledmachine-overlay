@@ -22,7 +22,7 @@
  function runProtogen() {
      ensureVenv
 -    if [ "x${USE_PIP}" == "xtrue" ]; then
-+    if [ "x${OFFLINE}" == "x1" || "x${OFFLINE}" == "xtrue" ]; then
++    if [ "x${OFFLINE}" == "x1" ] || [ "x${OFFLINE}" == "xtrue" ]; then
 +        :
 +    elif [ "x${USE_PIP}" == "xtrue" ]; then
          pip install grpcio-tools
@@ -33,7 +33,7 @@
          if [ -f "${reqFile}" ]; then
              echo "starting requirements install for ${reqFile}"
 -            if [ "x${USE_PIP}" == "xtrue" ]; then
-+            if [ "x${OFFLINE}" == "x1" || "x${OFFLINE}" == "xtrue" ]; then
++            if [ "x${OFFLINE}" == "x1" ] || [ "x${OFFLINE}" == "xtrue" ]; then
 +                :
 +            elif [ "x${USE_PIP}" == "xtrue" ]; then
                  pip install ${EXTRA_PIP_INSTALL_FLAGS:-} --requirement "${reqFile}"
