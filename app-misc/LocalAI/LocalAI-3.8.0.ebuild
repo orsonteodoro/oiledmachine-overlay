@@ -602,6 +602,7 @@ einfo "CXXFLAGS: ${CXXFLAGS}"
 einfo "CPPLAGS: ${CPPFLAGS}"
 einfo "LDFLAGS: ${LDFLAGS}"
 	export MAKEOPTS="-j1"
+	export USE_PIP="true"
 
 	use localai_backends_llama-cpp || ewarn "You are disabling the llama-cpp backend.  It is the recommended default for LLMs support."
 }
