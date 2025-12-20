@@ -46,8 +46,8 @@
 
     A = From image to image artwork
     U = From image understanding to textual/audio analysis
-    S = Worker (Sharded split weights to do collaborative work)
     F = Federated (Load balancing)
+    W = Worker (Sharded split weights to do collaborative work)
 
   -->
   <upstream>
