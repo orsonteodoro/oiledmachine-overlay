@@ -14,7 +14,7 @@ prepare_backends() {
 
 main() {
 	cd "/opt/local-ai"
-	source "/etc/local-ai/local-ai.conf"
+	source "/etc/conf.d/local-ai.conf"
 	prepare_backends
 	# TODO sandbox local-ai
 	./local-ai "${ARGS[@]}"

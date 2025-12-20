@@ -624,7 +624,9 @@ einfo "Sanitizing file/folder permissions"
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+		elif file "${path}" | grep -q -e "ELF.*shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF.*executable" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "OpenRC script" ; then
 			chmod 0755 "${path}" || die
