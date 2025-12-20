@@ -238,8 +238,8 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
-ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt sycl-f16
-sycl-f32 systemd tts vulkan
+ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt
+sycl-f16 sycl-f32 systemd tts vulkan
 ebuild_revision_28
 "
 REQUIRED_USE="
@@ -602,6 +602,8 @@ einfo "CXXFLAGS: ${CXXFLAGS}"
 einfo "CPPLAGS: ${CPPFLAGS}"
 einfo "LDFLAGS: ${LDFLAGS}"
 	export MAKEOPTS="-j1"
+
+	use localai_backends_llama-cpp || ewarn "You are disabling the llama-cpp backend.  It is the recommended default for LLMs support."
 }
 
 src_compile() {

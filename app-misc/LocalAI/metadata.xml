@@ -49,6 +49,10 @@
     F = Federated (Load balancing)
     W = Worker (Sharded split weights to do collaborative work)
 
+    See also
+
+    https://localai.io/model-compatibility/
+
   -->
   <upstream>
     <bugs-to>https://github.com/mudler/LocalAI/issues</bugs-to>
