@@ -219,7 +219,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	!ci
@@ -626,6 +626,10 @@ einfo "Sanitizing file/folder permissions"
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
 			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "OpenRC script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
 			:
 		else
@@ -684,7 +688,6 @@ install_init_services() {
 	if use openrc ; then
 		exeinto "/etc/init.d"
 		newexe "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
-		fperms "+x" "/etc/init.d/${MY_PN2}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
