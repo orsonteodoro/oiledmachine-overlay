@@ -777,6 +777,25 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 	doins -r "backend"
 
 	local x
+
+	for x in "${CPP_BACKENDS[@]}" ; do
+		if use "localai_backends_cpp_${x}" ; then
+einfo "Keeping backend/cpp/${x}"
+		else
+einfo "Removing backend/cpp/${x}"
+			rm -rf "${ED}/opt/local-ai/backend/cpp/${x}"
+		fi
+	done
+
+	for x in "${GOLANG_BACKENDS[@]}" ; do
+		if use "localai_backends_golang_${x}" ; then
+einfo "Keeping backend/go/${x}"
+		else
+einfo "Removing backend/go/${x}"
+			rm -rf "${ED}/opt/local-ai/backend/go/${x}"
+		fi
+	done
+
 	for x in "${PYTHON_BACKENDS[@]}" ; do
 		if use "localai_backends_python_${x}" ; then
 einfo "Keeping backend/python/${x}"
