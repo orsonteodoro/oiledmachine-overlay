@@ -21,7 +21,7 @@ MY_PN2="local-ai"
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
 #
-GEN_EBUILD=1
+GEN_EBUILD=0
 
 ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
@@ -507,35 +507,35 @@ src_unpack() {
 src_prepare() {
 	default
 	# S_GO should appear at this point
-	dep_prepare_mv "${WORKDIR}/bark.cpp-${BARK_CPP_COMMIT}" "${S}/sources/bark.cpp"
-	dep_prepare_mv "${WORKDIR}/encodec.cpp-${ENCODEC_CPP_COMMIT}" "${S}/sources/bark.cpp/encodec.cpp"
-	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_1}" "${S}/sources/bark.cpp/encodec.cpp/ggml"
+	dep_prepare_mv "${WORKDIR}/bark.cpp-${BARK_CPP_COMMIT}" "${S}/backend/go/bark-cpp/sources/bark.cpp"
+	dep_prepare_mv "${WORKDIR}/encodec.cpp-${ENCODEC_CPP_COMMIT}" "${S}/backend/go/bark-cpp/sources/bark.cpp/encodec.cpp"
+	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_1}" "${S}/backend/go/bark-cpp/sources/bark.cpp/encodec.cpp/ggml"
 
-	dep_prepare_mv "${WORKDIR}/stable-diffusion.cpp-${STABLE_DIFFUSION_CPP_COMMIT}" "${S}/sources/stablediffusion-ggml.cpp"
-	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_2}" "${S}/sources/stablediffusion-ggml.cpp/ggml"
+	dep_prepare_mv "${WORKDIR}/stable-diffusion.cpp-${STABLE_DIFFUSION_CPP_COMMIT}" "${S}/backend/go/stablediffusion-ggml/sources/stablediffusion-ggml.cpp"
+	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_2}" "${S}/backend/go/stablediffusion-ggml/sources/stablediffusion-ggml.cpp/ggml"
 
-	dep_prepare_mv "${WORKDIR}/go-piper-${GO_PIPER_COMMIT}" "${S}/sources/go-piper"
-	dep_prepare_mv "${WORKDIR}/espeak-ng-${ESPEAK_NG_COMMIT}" "${S}/sources/go-piper/espeak"
-	dep_prepare_mv "${WORKDIR}/piper-${PIPER_COMMIT}" "${S}/sources/go-piper/piper"
-	dep_prepare_mv "${WORKDIR}/piper-phonemize-${PIPER_PHONEMIZE_COMMIT}" "${S}/sources/go-piper/piper-phonemize"
+	dep_prepare_mv "${WORKDIR}/go-piper-${GO_PIPER_COMMIT}" "${S}/backend/go/piper/sources/go-piper"
+	dep_prepare_mv "${WORKDIR}/espeak-ng-${ESPEAK_NG_COMMIT}" "${S}/backend/go/piper/sources/go-piper/espeak"
+	dep_prepare_mv "${WORKDIR}/piper-${PIPER_COMMIT}" "${S}/backend/go/piper/sources/go-piper/piper"
+	dep_prepare_mv "${WORKDIR}/piper-phonemize-${PIPER_PHONEMIZE_COMMIT}" "${S}/backend/go/piper/sources/go-piper/piper-phonemize"
 
-	dep_prepare_mv "${WORKDIR}/whisper.cpp-${WHISPER_CPP_COMMIT}" "${S}/sources/whisper.cpp"
+	dep_prepare_mv "${WORKDIR}/whisper.cpp-${WHISPER_CPP_COMMIT}" "${S}/backend/go/whisper/sources/whisper.cpp"
 
-	dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/backend/cpp/llama/llama.cpp"
+	dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/backend/cpp/llama-cpp/llama.cpp"
 
 	#local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	mkdir -p "${S}/sources/onnxruntime" || die
+	mkdir -p "${S}/backend/go/silero-vad/sources/onnxruntime" || die
 	if [[ "${ARCH}" == "amd64" ]] ; then
 		cat \
 			"${DISTDIR}/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
 			> \
-			"${S}/sources/onnxruntime/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
+			"${S}/backend/go/silero-vad/sources/onnxruntime/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
 			|| die
 	elif [[ "${ARCH}" == "arm64" ]] ; then
 		cat \
 			"${DISTDIR}/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
 			> \
-			"${S}/sources/onnxruntime/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
+			"${S}/backend/go/silero-vad/sources/onnxruntime/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
 			|| die
 	fi
 }

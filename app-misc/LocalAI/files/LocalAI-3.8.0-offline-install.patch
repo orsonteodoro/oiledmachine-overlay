@@ -1,6 +1,60 @@
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/cpp/grpc/Makefile LocalAI-3.8.0/backend/cpp/grpc/Makefile
+--- LocalAI-3.8.0.orig/backend/cpp/grpc/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/cpp/grpc/Makefile	2025-12-20 02:31:42.911275012 -0800
+@@ -5,6 +5,7 @@ SYSTEM ?= $(HOST_SYSTEM)
+ TAG_LIB_GRPC?=v1.59.0
+ GIT_REPO_LIB_GRPC?=https://github.com/grpc/grpc.git
+ GIT_CLONE_DEPTH?=1
++OFFLINE?=1
+ 
+ INSTALLED_PACKAGES=installed_packages
+ GRPC_REPO=grpc_repo
+@@ -46,6 +47,7 @@ endif
+ $(INSTALLED_PACKAGES): grpc_build
+ 
+ $(GRPC_REPO):
++ifeq ($(OFFLINE),false)
+ 	mkdir -p $(GRPC_REPO)/grpc
+ 	cd $(GRPC_REPO)/grpc && \
+ 	git init && \
+@@ -53,6 +55,7 @@ $(GRPC_REPO):
+ 	git fetch origin && \
+ 	git checkout $(TAG_LIB_GRPC) && \
+ 	git submodule update --init --recursive --depth 1 --single-branch
++endif
+ 	
+ $(GRPC_BUILD): $(GRPC_REPO)
+ 	mkdir -p $(GRPC_BUILD)
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/cpp/llama-cpp/Makefile LocalAI-3.8.0/backend/cpp/llama-cpp/Makefile
+--- LocalAI-3.8.0.orig/backend/cpp/llama-cpp/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/cpp/llama-cpp/Makefile	2025-12-20 02:31:41.919249831 -0800
+@@ -1,6 +1,7 @@
+ 
+ LLAMA_VERSION?=583cb83416467e8abf9b37349dcf1f6a0083745a
+ LLAMA_REPO?=https://github.com/ggerganov/llama.cpp
++OFFLINE?=1
+ 
+ CMAKE_ARGS?=
+ BUILD_TYPE?=
+@@ -127,6 +128,7 @@ llama-cpp-rpc-server: llama-cpp-grpc
+ 	cp -rf $(CURRENT_MAKEFILE_DIR)/../llama-cpp-grpc-build/llama.cpp/build/bin/rpc-server llama-cpp-rpc-server
+ 
+ llama.cpp:
++ifeq ($(OFFLINE),false)
+ 	mkdir -p llama.cpp
+ 	cd llama.cpp && \
+ 	git init && \
+@@ -134,6 +136,7 @@ llama.cpp:
+ 	git fetch origin && \
+ 	git checkout -b build $(LLAMA_VERSION) && \
+ 	git submodule update --init --recursive --depth 1 --single-branch
++endif
+ 
+ llama.cpp/tools/grpc-server: llama.cpp
+ 	mkdir -p llama.cpp/tools/grpc-server
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile LocalAI-3.8.0/backend/go/bark-cpp/Makefile
 --- LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/go/bark-cpp/Makefile	2025-12-19 16:44:56.698704865 -0800
++++ LocalAI-3.8.0/backend/go/bark-cpp/Makefile	2025-12-20 02:27:14.034248822 -0800
 @@ -9,6 +9,7 @@ GOCMD=go
  # keep standard at C11 and C++11
  CXXFLAGS = -I. -I$(INCLUDE_PATH)/sources/bark.cpp/examples -I$(INCLUDE_PATH)/sources/bark.cpp/encodec.cpp/ggml/include -I$(INCLUDE_PATH)/sources/bark.cpp/spm-headers -I$(INCLUDE_PATH)/sources/bark.cpp -O3 -DNDEBUG -std=c++17 -fPIC
@@ -22,16 +76,36 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/bark-cpp/Makefile LocalAI
  
  sources/bark.cpp/build/libbark.a: sources/bark.cpp
  	cd sources/bark.cpp && \
-@@ -48,4 +51,4 @@ package:
- build: bark-cpp package
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/piper/Makefile LocalAI-3.8.0/backend/go/piper/Makefile
+--- LocalAI-3.8.0.orig/backend/go/piper/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/go/piper/Makefile	2025-12-20 02:31:39.679232051 -0800
+@@ -2,6 +2,7 @@
+ # go-piper version
+ PIPER_REPO?=https://github.com/mudler/go-piper
+ PIPER_VERSION?=e10ca041a885d4a8f3871d52924b47792d5e5aa0
++OFFLINE?=1
  
- clean:
--	rm -f gobark.o libbark.a
-\ No newline at end of file
-+	rm -f gobark.o libbark.a
+ CURRENT_DIR=$(abspath ./)
+ GOCMD=go
+@@ -11,6 +12,7 @@ PIPER_CGO_LDFLAGS+=-L$(CURRENT_DIR)/sour
+ 
+ ## go-piper
+ sources/go-piper:
++ifeq ($(OFFLINE),false)
+ 	mkdir -p sources/go-piper
+ 	cd sources/go-piper && \
+ 	git init && \
+@@ -18,6 +20,7 @@ sources/go-piper:
+ 	git fetch origin && \
+ 	git checkout $(PIPER_VERSION) && \
+ 	git submodule update --init --recursive --depth 1 --single-branch
++endif
+ 
+ sources/go-piper/libpiper_binding.a: sources/go-piper
+ 	$(MAKE) -C sources/go-piper libpiper_binding.a example/main piper.o
 diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Makefile LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile
 --- LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile	2025-12-19 16:44:56.698911650 -0800
++++ LocalAI-3.8.0/backend/go/stablediffusion-ggml/Makefile	2025-12-20 02:27:14.035625190 -0800
 @@ -5,6 +5,7 @@ NATIVE?=false
  GOCMD?=go
  GO_TAGS?=
@@ -53,9 +127,36 @@ diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/stablediffusion-ggml/Make
  
  libgosd.so: sources/stablediffusion-ggml.cpp CMakeLists.txt gosd.cpp gosd.h
  	mkdir -p build && \
+diff '--color=auto' -urp LocalAI-3.8.0.orig/backend/go/whisper/Makefile LocalAI-3.8.0/backend/go/whisper/Makefile
+--- LocalAI-3.8.0.orig/backend/go/whisper/Makefile	2025-11-26 07:03:42.000000000 -0800
++++ LocalAI-3.8.0/backend/go/whisper/Makefile	2025-12-20 02:31:40.863282278 -0800
+@@ -10,6 +10,7 @@ JOBS?=$(shell nproc --ignore=1)
+ WHISPER_REPO?=https://github.com/ggml-org/whisper.cpp
+ WHISPER_CPP_VERSION?=19ceec8eac980403b714d603e5ca31653cd42a3f
+ SO_TARGET?=libgowhisper.so
++OFFLINE?=1
+ 
+ CMAKE_ARGS+=-DBUILD_SHARED_LIBS=OFF
+ 
+@@ -50,6 +51,7 @@ ifeq ($(BUILD_TYPE),sycl_f32)
+ endif
+ 
+ sources/whisper.cpp:
++ifeq ($(OFFLINE),false)
+ 	mkdir -p sources/whisper.cpp
+ 	cd sources/whisper.cpp && \
+ 	git init && \
+@@ -57,6 +59,7 @@ sources/whisper.cpp:
+ 	git fetch origin && \
+ 	git checkout $(WHISPER_CPP_VERSION) && \
+ 	git submodule update --init --recursive --depth 1 --single-branch
++endif
+ 
+ # Detect OS
+ UNAME_S := $(shell uname -s)
 diff '--color=auto' -urp LocalAI-3.8.0.orig/Makefile LocalAI-3.8.0/Makefile
 --- LocalAI-3.8.0.orig/Makefile	2025-11-26 07:03:42.000000000 -0800
-+++ LocalAI-3.8.0/Makefile	2025-12-19 16:50:04.131215029 -0800
++++ LocalAI-3.8.0/Makefile	2025-12-20 02:27:14.035942796 -0800
 @@ -11,6 +11,7 @@ export BUILD_TYPE?=
  GO_TAGS?=
  BUILD_ID?=
