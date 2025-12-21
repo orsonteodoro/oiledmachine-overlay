@@ -91,4 +91,7 @@ src_install() {
 
 	exeinto "/opt/local-recall"
 	doexe "localrecall"
+
+	exeinto "/usr/bin"
+	doexe "${FILESDIR}/local-recall-start-server"
 }
