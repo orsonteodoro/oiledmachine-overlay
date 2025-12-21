@@ -843,6 +843,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.8.0-package-sh-fix.patch"
 	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
 	"${FILESDIR}/${PN}-3.8.0-libbackend-sh.patch"
+	"${FILESDIR}/${PN}-3.8.0-proto-reorder.patch"
 )
 
 pkg_setup() {

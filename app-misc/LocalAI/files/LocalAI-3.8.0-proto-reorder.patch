@@ -1,0 +1,20 @@
+--- a/backend/python/common/libbackend.sh.orig	2025-12-20 18:00:58.423212335 -0800
++++ b/backend/python/common/libbackend.sh	2025-12-20 18:17:07.791468956 -0800
+@@ -345,7 +345,7 @@ function runProtogen() {
+     fi
+     pushd "${EDIR}" >/dev/null
+         # use the venv python (ensures correct interpreter & sys.path)
+-        python -m grpc_tools.protoc -I../../ -I./ --python_out=. --grpc_python_out=. backend.proto
++        python -m grpc_tools.protoc -I./ -I../../ --python_out=. --grpc_python_out=. backend.proto
+     popd >/dev/null
+ }
+ 
+--- a/backend/python/faster-whisper/protogen.sh.orig	2025-11-26 07:03:42.000000000 -0800
++++ b/backend/python/faster-whisper/protogen.sh	2025-12-20 17:59:22.645491403 -0800
+@@ -8,4 +8,4 @@ else
+     source $backend_dir/../common/libbackend.sh
+ fi
+ 
+-python3 -m grpc_tools.protoc -I../.. -I./ --python_out=. --grpc_python_out=. backend.proto
+\ No newline at end of file
++python3 -m grpc_tools.protoc -I./ -I../.. --python_out=. --grpc_python_out=. backend.proto
