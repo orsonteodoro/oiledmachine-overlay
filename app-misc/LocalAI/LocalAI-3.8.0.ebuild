@@ -1116,7 +1116,7 @@ einfo "Building backend/cpp/${x}"
 					build_desc="CPU (OpenBLAS)"
 					export BUILD_TYPE="openblas"
 				else
-					build_desc="CPU (Unaccelerated BLAS)"
+					build_desc="CPU (Generic, Unaccelerated BLAS)"
 					export BUILD_TYPE="cpu"
 				fi
 
