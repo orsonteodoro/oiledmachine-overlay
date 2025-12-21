@@ -65,14 +65,14 @@
     <flag name="clblas">
       Support AMD/Intel GPU acceleration
     </flag>
+    <flag name="cuda">
+      Support NVIDIA GPU accelerated BLAS.
+    </flag>
     <flag name="devcontainer">
       For upstream development only.  (DO NOT USE)
     </flag>
     <flag name="docker">
       Support post-install Docker based backend options.
-    </flag>
-    <flag name="cuda">
-      Support NVIDIA GPU accelerated BLAS.
     </flag>
     <flag name="native">
       Build with -march=native.  Disabling requires SSE4.2 for ARCH=amd64.
@@ -86,11 +86,11 @@
     <flag name="rag">
       Support basic RAG (Retrieval-Augmented Generation).
     </flag>
+    <flag name="rocm">
+      Support AMD GPU accelerated BLAS.
+    </flag>
     <flag name="stt">
       Support speech to text or microphone support.
-    </flag>
-    <flag name="tts">
-      Support text to speech or audio out support.
     </flag>
     <flag name="sycl-f16">
       Support Intel GPU acceleration with 16 bit floats for speed.
@@ -98,8 +98,8 @@
     <flag name="sycl-f32">
       Support Intel GPU acceleration with 32 bit floats for accuracy.
     </flag>
-    <flag name="rocm">
-      Support AMD GPU accelerated BLAS.
+    <flag name="tts">
+      Support text to speech or artificial voice audio out support.
     </flag>
   </use>
 </pkgmetadata>

@@ -1021,6 +1021,8 @@ src_compile() {
 		build_type="clblas"
 	elif use openblas ; then
 		build_type="openblas"
+	else
+		build_type="cpu"
 	fi
 
 	local cmake_args=(
@@ -1113,6 +1115,9 @@ einfo "Building backend/cpp/${x}"
 				elif use openblas ; then
 					build_desc="CPU (OpenBLAS)"
 					export BUILD_TYPE="openblas"
+				else
+					build_desc="CPU (Unaccelerated BLAS)"
+					export BUILD_TYPE="cpu"
 				fi
 
 einfo "Building llama.cpp for ${build_desc}"
@@ -1243,7 +1248,11 @@ install_init_services() {
 			"${T}/${MY_PN2}.conf" \
 			|| die
 	else
-eerror "Unsupported configuration.  Use either openblas, cuda, opencl, rocm vulkan."
+		sed -i \
+			-e "s|@BUILD_TYPE@|cpu|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
 		die
 	fi
 
