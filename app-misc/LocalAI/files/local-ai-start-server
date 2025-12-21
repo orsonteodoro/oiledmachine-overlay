@@ -13,8 +13,9 @@ prepare_backends() {
 }
 
 main() {
-	rm -rf "/tmp/generated" || true
-	rm -rf "/tmp/localai" || true
+	[[ -e "/tmp/generated" ]] && echo "[warn] /tmp/generated may need to be manually removed to avoid ownership issue."
+	[[ -e "/tmp/localai" ]] && echo "[warn] /tmp/localai may need to be manually removed to avoid ownership issue."
+
 	cd "/opt/local-ai"
 	source "/etc/conf.d/local-ai.conf"
 	prepare_backends

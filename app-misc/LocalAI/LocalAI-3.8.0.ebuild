@@ -246,7 +246,7 @@ ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_32
+ebuild_revision_34
 "
 REQUIRED_USE="
 	!ci
@@ -1240,12 +1240,10 @@ einfo "Installing backend/python/${x}"
 		"${MY_PN2}.png" \
 		"Education;ArtificialIntelligence"
 
-	keepdir "/var/lib/${MY_PN2}/"
-	keepdir "/var/lib/${MY_PN2}/generated/images"
-	keepdir "/var/lib/${MY_PN2}/huggingface/hub"
-	keepdir "/var/lib/${MY_PN2}/models"
 	keepdir "/var/lib/${MY_PN2}/backends"					# Web UI gallery backends
 	keepdir "/var/lib/${MY_PN2}/configuration"
+	keepdir "/var/lib/${MY_PN2}/huggingface/hub"				# HF models
+	keepdir "/var/lib/${MY_PN2}/models"
 
 	sanitize_file_permissions
 }
@@ -1255,6 +1253,8 @@ pkg_postinst() {
 	chown "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends/"			# System package manager managed backends
 	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/backends/"
 	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/configuration/"
+	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/huggingface/hub"
+	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/models/"
 	local x
 	for x in "${CPP_BACKENDS[@]}" "${GOLANG_BACKENDS[@]}" "${PYTHON_BACKENDS[@]}" ; do
 		if use "localai_backends_${x}" ; then
@@ -1263,6 +1263,10 @@ pkg_postinst() {
 	done
 
 	xdg_pkg_postinst
+ewarn
+ewarn "By default generated images/videos content will be removed on reset."
+ewarn "If you do not like this behavior, change LOCALAI_GENERATED_CONTENT_PATH"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
