@@ -10,6 +10,11 @@ EAPI=8
 # We don't use go-module but just sandbox changes.
 
 # TODO package:
+# accelerate
+# bark
+# gguf
+# mlx-audio
+# piper-phonemize
 # upx-ucl
 
 # TODO:
@@ -29,6 +34,7 @@ CFLAGS_HARDENED_USE_CASES="daemon security-critical server"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
 PROTOBUF_CPP_SLOT="5"
+PROTOBUF_PYTHON_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_SLOT="20250512"
 
@@ -400,6 +406,257 @@ gen_rocm_rdepend() {
 		"
 	done
 }
+
+BARK_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/bark-0.1.5[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+BARK_CPP_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
+	>=dev-python/huggingface_hub-0.14.1[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+"
+
+# For bark-cpp
+GGML_1_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/accelerate-0.19.0[${PYTHON_USEDEP}]
+		>=dev-python/gguf-0.1.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.24.4[${PYTHON_USEDEP}]
+		>=sci-ml/sentencepiece-0.1.98[${PYTHON_USEDEP}]
+	')
+	(
+		>=sci-ml/transformers-4.35.2[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/transformers-5.0.0[${PYTHON_SINGLE_USEDEP}]
+	)
+	>=dev-python/keras-2.15.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/tensorflow-2.15.0[${PYTHON_SINGLE_USEDEP},python]
+	>=dev-python/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
+"
+# TODO add https://download.pytorch.org/whl/cpu
+
+CHATTERBOX_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/poetry[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
+COQUI_COMMON_TEMPLATE_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/grpcio-tools:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+COQUI_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/packaging-24.1[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+DIFFUSERS_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/pillow[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
+EXLLAMA2_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
+"
+
+FASTER_WHISPER_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/grpcio-tools:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+KITTEN_TTS_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/kitten-tts-0.1.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-24.1[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+KOKORO_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/packaging-24.1[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/chardet[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+MLX_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
+MLX_AUDIO_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/mlx-audio[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/soundfile[${PYTHON_USEDEP}]
+	')
+"
+
+MLX_VLM_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
+NEUTTS_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.2.6[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/scikit-build-core[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
+PIPER_RDEPEND="
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/librosa-0.9.2[${PYTHON_USEDEP}]
+			<dev-python/librosa-1[${PYTHON_USEDEP}]
+		)
+		>=dev-python/cython-0.29.0:0.29[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
+		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
+	')
+	(
+		>=sci-ml/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/pytorch-2[${PYTHON_SINGLE_USEDEP}]
+	)
+	>=dev-python/pytorch-lightning-1.7.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP}]
+"
+
+PIPER_BENCHMARK_RDEPEND="
+	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torch-1.11.0[${PYTHON_SINGLE_USEDEP}]
+"
+
+PIPER_RUN_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
+	')
+	(
+		>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/onnxruntime-2[${PYTHON_SINGLE_USEDEP}]
+	)
+"
+
+PYTHON_COMMON_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/grpcio-tools:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+RERANKERS_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+RFDETR_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/grpcio-tools:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+	')
+"
+
+STABLEDIFFUSION_GGML_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/accelerate-0.19.0[${PYTHON_USEDEP}]
+		>=dev-python/gguf-0.1.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-2.0.2[${PYTHON_USEDEP}]
+		>=sci-ml/sentencepiece-0.1.98[${PYTHON_USEDEP}]
+	')
+	(
+		>=sci-ml/transformers-4.35.2[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/transformers-5.0.0[${PYTHON_SINGLE_USEDEP}]
+	)
+	>=dev-python/keras-3.5.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tensorflow-2.18.0[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/pytorch-2.5.1[${PYTHON_SINGLE_USEDEP}]
+"
+# TODO package and add above https://download.pytorch.org/whl/cpu
+
+TRANSFORMERS_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.15.1[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
+VLLM_RDEPEND="
+	$(python_gen_cond_dep '
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
+"
+
 # CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L20
 #		  https://github.com/mudler/LocalAI/blob/v3.8.0/.github/workflows/image_build.yml#L20
 # ROCm versions:
@@ -421,6 +678,83 @@ RDEPEND+="
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-12.0*
 		dev-util/nvidia-cuda-toolkit:=
+	)
+	localai_backends_bark? (
+		${PYTHON_COMMON_RDEPEND}
+		${BARK_RDEPEND}
+	)
+	localai_backends_bark-cpp? (
+		${BARK_CPP_RDEPEND}
+		${GGML_1_RDEPEND}
+	)
+	localai_backends_chatterbox? (
+		${PYTHON_COMMON_RDEPEND}
+		${CHATTERBOX_RDEPEND}
+	)
+	localai_backends_coqui? (
+		${PYTHON_COMMON_RDEPEND}
+		${COQUI_RDEPEND}
+		${COQUI_COMMON_TEMPLATE_RDEPEND}
+	)
+	localai_backends_diffusers? (
+		${PYTHON_COMMON_RDEPEND}
+		${DIFFUSERS_RDEPEND}
+	)
+	localai_backends_exllama2? (
+		${PYTHON_COMMON_RDEPEND}
+		${EXLLAMA2_RDEPEND}
+	)
+	localai_backends_faster-whisper? (
+		${PYTHON_COMMON_RDEPEND}
+		${FASTER_WHISPER_RDEPEND}
+	)
+	localai_backends_kitten-tts? (
+		${PYTHON_COMMON_RDEPEND}
+		${KITTEN_TTS_RDEPEND}
+	)
+	localai_backends_kokoro? (
+		${PYTHON_COMMON_RDEPEND}
+		${KOKORO_RDEPEND}
+	)
+	localai_backends_mlx? (
+		${PYTHON_COMMON_RDEPEND}
+		${MLX_RDEPEND}
+	)
+	localai_backends_mlx-audio? (
+		${PYTHON_COMMON_RDEPEND}
+		${MLX_AUDIO_RDEPEND}
+	)
+	localai_backends_mlx-vlm? (
+		${PYTHON_COMMON_RDEPEND}
+		${MLX_VLM_RDEPEND}
+	)
+	localai_backends_neutts? (
+		${PYTHON_COMMON_RDEPEND}
+		${NEUTTS_RDEPEND}
+	)
+	localai_backends_piper? (
+		${PIPER_RDEPEND}
+		${PIPER_BENCHMARK_RDEPEND}
+		${PIPER_RUN_RDEPEND}
+	)
+	localai_backends_rerankers? (
+		${PYTHON_COMMON_RDEPEND}
+		${RERANKERS_RDEPEND}
+	)
+	localai_backends_rfdetr? (
+		${PYTHON_COMMON_RDEPEND}
+		${RFDETR_RDEPEND}
+	)
+	localai_backends_stablediffusion-ggml? (
+		${STABLEDIFFUSION_GGML_RDEPEND}
+	)
+	localai_backends_transformers? (
+		${PYTHON_COMMON_RDEPEND}
+		${TRANSFORMERS_RDEPEND}
+	)
+	localai_backends_vllm? (
+		${PYTHON_COMMON_RDEPEND}
+		${VLLM_RDEPEND}
 	)
 	openblas? (
 		>=sci-libs/openblas-0.3.26
