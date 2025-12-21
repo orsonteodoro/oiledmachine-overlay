@@ -246,7 +246,7 @@ ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_29
+ebuild_revision_32
 "
 REQUIRED_USE="
 	!ci
@@ -1096,7 +1096,7 @@ einfo "Sanitizing file/folder permissions"
 	local path
 	for path in $(find "${ED}") ; do
 		[[ -L "${path}" ]] && continue
-		chown root:root "${path}" || die
+		chown "root:root" "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF.*shared object" ; then
@@ -1189,35 +1189,35 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 	exeinto "${dest}"
 	doexe "local-ai"
 
-	insinto "${dest}"
-	doins -r "backend"
-
 	local x
 
 	for x in "${CPP_BACKENDS[@]}" ; do
 		if use "localai_backends_${x}" ; then
-einfo "Keeping backend/cpp/${x}"
-		else
-einfo "Removing backend/cpp/${x}"
-			rm -rf "${ED}/opt/local-ai/backend/cpp/${x}"
+einfo "Installing backend/cpp/${x}"
+			insinto "/opt/local-ai/backends"
+			doins -r "backend/cpp/${x}"
+			fowners "${MY_PN2}:${MY_PN2}" "/opt/local-ai/backends/${x}"
+			fperms "+x" "/opt/local-ai/backends/${x}"
 		fi
 	done
 
 	for x in "${GOLANG_BACKENDS[@]}" ; do
 		if use "localai_backends_${x}" ; then
-einfo "Keeping backend/go/${x}"
-		else
-einfo "Removing backend/go/${x}"
-			rm -rf "${ED}/opt/local-ai/backend/go/${x}"
+einfo "Installing backend/go/${x}"
+			insinto "/opt/local-ai/backends"
+			doins -r "backend/go/${x}"
+			fowners "${MY_PN2}:${MY_PN2}" "/opt/local-ai/backends/${x}"
+			fperms "+x" "/opt/local-ai/backends/${x}"
 		fi
 	done
 
 	for x in "${PYTHON_BACKENDS[@]}" ; do
 		if use "localai_backends_${x}" ; then
-einfo "Keeping backend/python/${x}"
-		else
-einfo "Removing backend/python/${x}"
-			rm -rf "${ED}/opt/local-ai/backend/python/${x}"
+einfo "Installing backend/python/${x}"
+			insinto "/opt/local-ai/backends"
+			doins -r "backend/python/${x}"
+			fowners "${MY_PN2}:${MY_PN2}" "/opt/local-ai/backends/${x}"
+			fperms "+x" "/opt/local-ai/backends/${x}"
 		fi
 	done
 
@@ -1244,20 +1244,24 @@ einfo "Removing backend/python/${x}"
 	keepdir "/var/lib/${MY_PN2}/generated/images"
 	keepdir "/var/lib/${MY_PN2}/huggingface/hub"
 	keepdir "/var/lib/${MY_PN2}/models"
-	keepdir "/var/lib/${MY_PN2}/backends"					# System package manager managed backends
+	keepdir "/var/lib/${MY_PN2}/backends"					# Web UI gallery backends
 	keepdir "/var/lib/${MY_PN2}/configuration"
-	keepdir "/opt/${MY_PN2}/backends"					# Web UI gallery backends
-
-	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}"
 
 	sanitize_file_permissions
-
-	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends"
-	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/backends"
-	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/configuration"
 }
 
 pkg_postinst() {
+	# The owners is not sticking in src_install
+	chown "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends/"			# System package manager managed backends
+	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/backends/"
+	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/configuration/"
+	local x
+	for x in "${CPP_BACKENDS[@]}" "${GOLANG_BACKENDS[@]}" "${PYTHON_BACKENDS[@]}" ; do
+		if use "localai_backends_${x}" ; then
+			chown "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends/${x}"
+		fi
+	done
+
 	xdg_pkg_postinst
 }
 
