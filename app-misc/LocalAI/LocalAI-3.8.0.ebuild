@@ -1271,4 +1271,11 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  N/A
+# OILEDMACHINE-OVERLAY-TEST:  3.8.0 (20251220) TESTING
+# Web UI - pass
+# LLM (moondream2) - testing
+# TTS (coqui) - untested
+# SST (whisper) - untested
+# diffusers (image) - untested
+# diffusers (video) - untested
+# stablediffusion - untested
