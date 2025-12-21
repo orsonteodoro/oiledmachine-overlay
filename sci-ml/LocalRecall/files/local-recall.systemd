@@ -1,0 +1,27 @@
+[Unit]
+Description=LocalRecall Service
+After=network-online.target
+
+[Service]
+User=local-ai
+Group=local-ai
+ExecStart=/usr/bin/local-recall-start-server
+Restart=always
+RestartSec=3
+Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
+Environment="PATH=$PATH"
+#
+# TODO: test settings
+#
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+#
+# ProtectHome=true # ID
+# ProtectSystem=full # ID
+# ProtectProc=noaccess # ID
+# PrivateDevices=true # ID
+# RestrictRealtime=true # DoS
+
+[Install]
+WantedBy=default.target
