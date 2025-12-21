@@ -1029,7 +1029,7 @@ src_compile() {
 		$(abseil-cpp_append_cmake)
 		$(protobuf_append_cmake)
 		$(grpc_append_cmake)
-
+		-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
 		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16 "ON" "OFF")
 		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8 "ON" "OFF")
 		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile "ON" "OFF")
@@ -1078,6 +1078,8 @@ src_compile() {
 	else
 ewarn "Q/A:  Remove 01-llava.patch conditional block"
 	fi
+
+	export VERBOSE=1
 
 	emake \
 		BUILD_TYPE="${build_type}" \
