@@ -39,6 +39,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_SLOT="20250512"
 
 ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/silero-vad/Makefile#L5
+VULKAN_PV="1.4.328.0" # From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
 
 BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/bark-cpp/Makefile#L15
 ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
@@ -249,17 +250,19 @@ ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_36
+ebuild_revision_38
 "
 REQUIRED_USE="
 	!ci
 	!devcontainer
 	?? (
 		cuda
+		openblas
 		opencl
 		rocm
 		sycl-f16
 		sycl-f32
+		vulkan
 	)
 	amd64? (
 		^^ (
@@ -771,7 +774,7 @@ RDEPEND+="
 		sci-libs/rocBLAS:=
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.3.275.0
+		>=media-libs/vulkan-loader-${VULKAN_PV}
 		>=sys-apps/pciutils-3.10.0
 	)
 	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
@@ -782,7 +785,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	vulkan? (
-		>=dev-util/vulkan-headers-1.3.275.0
+		>=dev-util/vulkan-headers-${VULKAN_PV}
 		dev-util/vulkan-headers:=
 	)
 "
@@ -972,7 +975,22 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		export USE_PIP="true"
 	fi
 
-	use localai_backends_llama-cpp || ewarn "You are disabling the llama-cpp backend.  It is the recommended default for LLMs support."
+	if use localai_backends_llama-cpp ; then
+ewarn "You are disabling the llama-cpp backend."
+ewarn "The localai_backends_llama-cpp USE flag is the recommended default for LLMs support."
+	fi
+
+	if use cuda || use opencl || use rocm || use sycl-f16 || use sycl-f32 || use vulkan ; then
+		:
+	else
+ewarn "You are using very slow CPU based inferencing."
+ewarn "For GPU inferencing, use either cuda, opencl, rocm, sycl-f16, sycl-f32, vulkan USE flag."
+	fi
+
+	if use opencl && [[ "${ARCH}" != "arm64" ]] ; then
+eerror "OpenCL is only supported on ARCH=${ARCH}.  Disable the opencl USE flag to continue."
+		die
+	fi
 }
 
 src_compile() {
@@ -987,16 +1005,22 @@ src_compile() {
 	fi
 
 	local build_type
+
+	# Sort by tokens/sec
 	if use cuda ; then
 		build_type="cublas"
-	elif use opencl ; then
-		build_type="clblas"
 	elif use rocm ; then
 		build_type="hipblas"
+	elif use vulkan ; then
+		build_type="vulkan"
 	elif use sycl-f16 ; then
 		build_type="sycl_f16"
 	elif use sycl-f32 ; then
 		build_type="sycl_f32"
+	elif use opencl ; then
+		build_type="clblas"
+	elif use openblas ; then
+		build_type="openblas"
 	fi
 
 	local cmake_args=(
@@ -1054,7 +1078,7 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 	fi
 
 	emake \
-		BUILD_TYPE="${build_type[@]}" \
+		BUILD_TYPE="${build_type}" \
 		GO_TAGS="${go_tags[@]}" \
 		OFFLINE="true" \
 		build
@@ -1065,12 +1089,37 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 		if use "localai_backends_${x}" ; then
 einfo "Building backend/cpp/${x}"
 			pushd "backend/cpp/${x}" >/dev/null 2>&1 || die
-				if use rocm ; then
-einfo "Building ${x} for ROCm"
-				elif [[ "${ARCH}" == "arm64" ]] ; then
-einfo "Building ${x} for CPU"
+				local build_desc="CPU"
+
+	# Sort by tokens/sec
+				if use cuda ; then
+					build_desc="GPU (CUDA)"
+					export BUILD_TYPE="cublas"
+				elif use rocm ; then
+					build_desc="GPU (ROCm)"
+					export BUILD_TYPE="hipblas"
+				elif use vulkan ; then
+					build_desc="GPU (Vulkan)"
+					export BUILD_TYPE="vulkan"
+				elif use sycl-f16 ; then
+					build_desc="GPU (SYCL F16)"
+					export BUILD_TYPE="sycl_f16"
+				elif use sycl-f32 ; then
+					build_desc="GPU (SYCL F32)"
+					export BUILD_TYPE="sycl_f32"
+				elif use opencl ; then
+					build_desc="GPU (OpenCL)"
+					export BUILD_TYPE="clblas"
+				elif use openblas ; then
+					build_desc="CPU (OpenBLAS)"
+					export BUILD_TYPE="openblas"
+				fi
+
+einfo "Building llama.cpp for ${build_desc}"
+
+				if use rocm || [[ "${ARCH}" == "arm64" ]] ; then
+					:
 				else
-einfo "Building ${x} for CPU"
 					use cpu_flags_x86_avx && emake "llama-cpp-avx"
 					use cpu_flags_x86_avx2 && emake "llama-cpp-avx2"
 					use cpu_flags_x86_avx512f && emake "llama-cpp-avx512"
@@ -1149,15 +1198,35 @@ install_init_services() {
 			> \
 		"${T}/${MY_PN2}.conf" \
 		|| die
+
+	# Keep sorted by tokens/second
 	if use cuda ; then
 		sed -i \
 			-e "s|@BUILD_TYPE@|cublas|g" \
 			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
 			"${T}/${MY_PN2}.conf" \
 			|| die
-	elif use openblas ; then
+	elif use rocm ; then
 		sed -i \
-			-e "s|@BUILD_TYPE@|openblas|g" \
+			-e "s|@BUILD_TYPE@|hipblas|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
+	elif use vulkan ; then
+		sed -i \
+			-e "s|@BUILD_TYPE@|vulkan|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
+	elif use sycl_f16 ; then
+		sed -i \
+			-e "s|@BUILD_TYPE@|sycl_f16|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
+	elif use sycl_f32 ; then
+		sed -i \
+			-e "s|@BUILD_TYPE@|sycl_f32|g" \
 			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
 			"${T}/${MY_PN2}.conf" \
 			|| die
@@ -1167,12 +1236,17 @@ install_init_services() {
 			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
 			"${T}/${MY_PN2}.conf" \
 			|| die
-	else
+	elif use openblas ; then
 		sed -i \
 			-e "s|@BUILD_TYPE@|openblas|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
 			"${T}/${MY_PN2}.conf" \
 			|| die
+	else
+eerror "Unsupported configuration.  Use either openblas, cuda, opencl, rocm vulkan."
+		die
 	fi
+
 	doins "${T}/${MY_PN2}.conf"
 
 	if use openrc ; then
