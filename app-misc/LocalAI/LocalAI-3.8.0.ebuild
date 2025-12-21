@@ -246,7 +246,7 @@ ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE="
 	!ci
@@ -1251,6 +1251,7 @@ einfo "Installing backend/python/${x}"
 pkg_postinst() {
 	# The owners is not sticking in src_install
 	chown "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends/"			# System package manager managed backends
+	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/"			# Required
 	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/backends/"
 	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/configuration/"
 	chown "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/huggingface/hub"
