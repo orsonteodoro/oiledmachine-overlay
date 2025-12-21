@@ -441,7 +441,6 @@ GGML_1_RDEPEND="
 	>=dev-python/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
 "
-# TODO add https://download.pytorch.org/whl/cpu
 
 CHATTERBOX_RDEPEND="
 	$(python_gen_cond_dep '
@@ -635,7 +634,6 @@ STABLEDIFFUSION_GGML_RDEPEND="
 	>=sci-ml/tensorflow-2.18.0[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-ml/pytorch-2.5.1[${PYTHON_SINGLE_USEDEP}]
 "
-# TODO package and add above https://download.pytorch.org/whl/cpu
 
 TRANSFORMERS_RDEPEND="
 	$(python_gen_cond_dep '
