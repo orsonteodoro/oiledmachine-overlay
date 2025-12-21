@@ -1251,8 +1251,8 @@ einfo "Removing backend/python/${x}"
 
 	sanitize_file_permissions
 
-	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends"
-	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/configuration"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/backends"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}/configuration"
 }
 
 pkg_postinst() {
