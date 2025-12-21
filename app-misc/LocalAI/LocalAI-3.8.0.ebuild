@@ -19,6 +19,7 @@ EAPI=8
 
 # TODO:
 # Change build files to make kleidai offline install.
+# Sandbox local-llm
 
 MY_PN2="local-ai"
 
@@ -30,7 +31,7 @@ GEN_EBUILD=0
 
 ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon security-critical server"
+CFLAGS_HARDENED_USE_CASES="daemon security-critical sensitive-data server untrusted-data" # May process sensitive emails or photos.
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
 PROTOBUF_CPP_SLOT="5"
@@ -1369,13 +1370,15 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  3.8.0 (20251220) TESTING
+# OILEDMACHINE-OVERLAY-TEST:  3.8.0 (20251220) PASSED
 # Web UI - pass
 # llama.cpp (CPU, fallback) - passed
+# llama.cpp (GPU, vulkan) - passed
 # Test message:  What is the speed of light?
-# LLM (llama2:1b-instruct-q8_0) - testing
+# Test message:  show me hello world in python
+# LLM (llama2:1b-instruct-q8_0) - passed, but uses CPU when it should use GPU
 # LLM (smollm:1.7b-instruct) - passed
-# LLM (smollm2:1.7b-instruct) - testing
+# LLM (smollm2:1.7b-instruct) - passed
 # TTS (coqui) - untested
 # SST (whisper) - untested
 # diffusers (image) - untested
