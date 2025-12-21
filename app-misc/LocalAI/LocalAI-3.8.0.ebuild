@@ -1286,8 +1286,10 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  3.8.0 (20251220) TESTING
 # Web UI - pass
+# llama.cpp (CPU, fallback) - passed
+# Test message:  What is the speed of light?
 # LLM (llama2:1b-instruct-q8_0) - testing
-# LLM (smollm:1.7b-instruct) - testing
+# LLM (smollm:1.7b-instruct) - passed
 # LLM (smollm2:1.7b-instruct) - testing
 # TTS (coqui) - untested
 # SST (whisper) - untested
