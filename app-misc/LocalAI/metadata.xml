@@ -68,6 +68,9 @@
     <flag name="devcontainer">
       For upstream development only.  (DO NOT USE)
     </flag>
+    <flag name="docker">
+      Support post-install Docker based backend options.
+    </flag>
     <flag name="cuda">
       Support NVIDIA GPU accelerated BLAS.
     </flag>

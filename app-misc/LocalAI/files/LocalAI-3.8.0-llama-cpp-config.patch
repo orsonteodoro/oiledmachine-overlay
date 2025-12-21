@@ -1,0 +1,56 @@
+--- a/backend/cpp/llama-cpp/Makefile	2025-12-21 07:40:43.587275739 -0800
++++ b/backend/cpp/llama-cpp/Makefile	2025-12-21 08:09:44.271600522 -0800
+@@ -2,6 +2,10 @@
+ LLAMA_VERSION?=583cb83416467e8abf9b37349dcf1f6a0083745a
+ LLAMA_REPO?=https://github.com/ggerganov/llama.cpp
+ OFFLINE?=1
++ABSEIL_CPP_SLOT?=20240722
++GRPC_SLOT?=5
++PROTOBUF_CPP_SLOT?=5
++LIBDIR?=lib64
+ 
+ CMAKE_ARGS?=
+ BUILD_TYPE?=
+@@ -67,6 +71,13 @@ ifeq ($(BUILD_TYPE),sycl_f32)
+ 		-DCMAKE_CXX_FLAGS="-fsycl"
+ endif
+ 
++ifeq ($(OFFLINE),1)
++ADDED_CMAKE_ARGS=-Dabsl_DIR=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/${LIBDIR}/cmake/absl \
++				 -DProtobuf_DIR=/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/${LIBDIR}/cmake/protobuf \
++				 -Dutf8_range_DIR=/usr/${LIBDIR}/cmake/utf8_range \
++				 -DgRPC_DIR=/usr/lib/grpc/${GRPC_SLOT}/${LIBDIR}/cmake/grpc \
++				 -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES="/usr/lib/grpc/${GRPC_SLOT}/include;/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
++else
+ INSTALLED_PACKAGES=$(CURDIR)/../grpc/installed_packages
+ INSTALLED_LIB_CMAKE=$(INSTALLED_PACKAGES)/lib/cmake
+ ADDED_CMAKE_ARGS=-Dabsl_DIR=${INSTALLED_LIB_CMAKE}/absl \
+@@ -74,9 +85,20 @@ ADDED_CMAKE_ARGS=-Dabsl_DIR=${INSTALLED_
+ 				 -Dutf8_range_DIR=${INSTALLED_LIB_CMAKE}/utf8_range \
+ 				 -DgRPC_DIR=${INSTALLED_LIB_CMAKE}/grpc \
+ 				 -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=${INSTALLED_PACKAGES}/include
++endif
++
+ build-llama-cpp-grpc-server:
+ # Conditionally build grpc for the llama backend to use if needed
+ ifdef BUILD_GRPC_FOR_BACKEND_LLAMA
++ifeq ($(OFFLINE),1)
++	$(MAKE) -C ../../grpc build
++	_PROTOBUF_PROTOC=/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/proto \
++	_GRPC_CPP_PLUGIN_EXECUTABLE=/usr/lib/grpc/${GRPC_SLOT}/bin/grpc_cpp_plugin \
++	PATH="/usr/lib/grpc/${GRPC_SLOT}/bin:/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}" \
++	CMAKE_ARGS="${CMAKE_ARGS} ${ADDED_CMAKE_ARGS}" \
++	LLAMA_VERSION=$(LLAMA_VERSION) \
++	$(MAKE) -C $(CURRENT_MAKEFILE_DIR)/../$(VARIANT) grpc-server
++else
+ 	$(MAKE) -C ../../grpc build
+ 	_PROTOBUF_PROTOC=${INSTALLED_PACKAGES}/bin/proto \
+ 	_GRPC_CPP_PLUGIN_EXECUTABLE=${INSTALLED_PACKAGES}/bin/grpc_cpp_plugin \
+@@ -84,6 +106,7 @@ ifdef BUILD_GRPC_FOR_BACKEND_LLAMA
+ 	CMAKE_ARGS="${CMAKE_ARGS} ${ADDED_CMAKE_ARGS}" \
+ 	LLAMA_VERSION=$(LLAMA_VERSION) \
+ 	$(MAKE) -C $(CURRENT_MAKEFILE_DIR)/../$(VARIANT) grpc-server
++endif
+ else
+ 	echo "BUILD_GRPC_FOR_BACKEND_LLAMA is not defined."
+ 	LLAMA_VERSION=$(LLAMA_VERSION) $(MAKE) -C $(CURRENT_MAKEFILE_DIR)/../$(VARIANT) grpc-server

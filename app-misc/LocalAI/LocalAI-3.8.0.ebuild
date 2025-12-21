@@ -122,6 +122,9 @@ CPU_FLAGS_LOONG=(
 CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
 	"cpu_flags_riscv_rv_zfh"
+	"cpu_flags_riscv_rv_zicbop"
+	"cpu_flags_riscv_rv_zvfh"
+	"cpu_flags_riscv_xthreadvector"
 )
 
 CPU_FLAGS_S390=(
@@ -244,9 +247,9 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
-ci cuda debug devcontainer native openblas opencl openrc p2p rag rocm stt
+ci cuda debug devcontainer docker native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_35
+ebuild_revision_36
 "
 REQUIRED_USE="
 	!ci
@@ -677,6 +680,9 @@ RDEPEND+="
 		=dev-util/nvidia-cuda-toolkit-12.0*
 		dev-util/nvidia-cuda-toolkit:=
 	)
+	docker? (
+		app-containers/docker
+	)
 	localai_backends_bark? (
 		${PYTHON_COMMON_RDEPEND}
 		${BARK_RDEPEND}
@@ -844,6 +850,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
 	"${FILESDIR}/${PN}-3.8.0-libbackend-sh.patch"
 	"${FILESDIR}/${PN}-3.8.0-proto-reorder.patch"
+	"${FILESDIR}/${PN}-3.8.0-llama-cpp-config.patch"
 )
 
 pkg_setup() {
@@ -996,23 +1003,29 @@ src_compile() {
 		$(abseil-cpp_append_cmake)
 		$(protobuf_append_cmake)
 		$(grpc_append_cmake)
+
 		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16 "ON" "OFF")
 		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8 "ON" "OFF")
 		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile "ON" "OFF")
+		-DGGML_AVX=$(usex cpu_flags_x86_avx "ON" "OFF")
 		-DGGML_AVX_VNNI=$(usex cpu_flags_x86_avx_vnni "ON" "OFF")
 		-DGGML_AVX2=$(usex cpu_flags_x86_avx2 "ON" "OFF")
 		-DGGML_AVX512=$(usex cpu_flags_x86_avx512f "ON" "OFF")
-		-DGGML_AVX512_BF16=$(usex cpu_flags_x86_avx512_bf16)
-		-DGGML_AVX512_VBMI=$(usex cpu_flags_x86_avx512_vbmi)
-		-DGGML_AVX512_VNNI=$(usex cpu_flags_x86_avx512_vnni)
-		-DGGML_BMI2=$(usex cpu_flags_x86_bmi2)
-		-DGGML_FMA=$(usex cpu_flags_x86_fma "ON" "OFF")
+		-DGGML_AVX512_BF16=$(usex cpu_flags_x86_avx512_bf16 "ON" "OFF")
+		-DGGML_AVX512_VBMI=$(usex cpu_flags_x86_avx512_vbmi "ON" "OFF")
+		-DGGML_AVX512_VNNI=$(usex cpu_flags_x86_avx512_vnni "ON" "OFF")
+		-DGGML_BMI2=$(usex cpu_flags_x86_bmi2 "ON" "OFF")
 		-DGGML_F16C=$(usex cpu_flags_x86_f16c "ON" "OFF")
+		-DGGML_FMA=$(usex cpu_flags_x86_fma "ON" "OFF")
 		-DGGML_LASX=$(usex cpu_flags_loong_lasx "ON" "OFF")
 		-DGGML_LSX=$(usex cpu_flags_loong_lsx "ON" "OFF")
 		-DGGML_NATIVE=$(usex native "ON" "OFF")
 		-DGGML_RVV=$(usex cpu_flags_riscv_rvv "ON" "OFF")
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
+		-DGGML_RV_ZICBOP=$(usex cpu_flags_riscv_rv_zicbop "ON" "OFF")
+		-DGGML_RV_ZVFH=$(usex cpu_flags_riscv_rv_zvfh "ON" "OFF")
+		-DGGML_SSE42=$(usex cpu_flags_x86_sse4_2 "ON" "OFF")
+		-DGGML_XTHEADVECTOR=$(usex cpu_flags_riscv_xthreadvector "ON" "OFF")
 		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")
 	)
 
@@ -1030,6 +1043,7 @@ src_compile() {
 		)
 	fi
 
+	# For llama.cpp
 	export CMAKE_ARGS="${cmake_args[@]}"
 
 	# Old patch
@@ -1044,7 +1058,6 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 		GO_TAGS="${go_tags[@]}" \
 		OFFLINE="true" \
 		build
-
 
 	local x
 
@@ -1273,7 +1286,9 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  3.8.0 (20251220) TESTING
 # Web UI - pass
-# LLM (moondream2) - testing
+# LLM (llama2:1b-instruct-q8_0) - testing
+# LLM (smollm:1.7b-instruct) - testing
+# LLM (smollm2:1.7b-instruct) - testing
 # TTS (coqui) - untested
 # SST (whisper) - untested
 # diffusers (image) - untested
