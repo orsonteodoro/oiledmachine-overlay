@@ -235,6 +235,10 @@ Language defaults
 | GTK 2 (4)                           | Not Supported                         |                                                          |
 | GTK 3                               | Fully supported                       |                                                          |
 | GTK 4                               | Fully supported                       |                                                          |
+| LocalAI (llama.cpp with CPU)        | Fully supported                       |                                                          |
+| LocalAI (llama.cpp with ROCm 7.0)   | WIP                                   |                                                          |
+| LocalAI (llama.cpp with CUDA 12.4)  | Not supported                         |                                                          |
+| LocalAI (llama.cpp with Vulkan)     | Fully supported                       |                                                          |
 | OpenGL <= 4.6                       | Fully supported                       |                                                          |
 | OpenCL <= 2.0                       | Fully supported                       |                                                          |
 | Ollama 0.13 (CPU)                   | Fully supported                       |                                                          |
@@ -291,11 +295,12 @@ Language defaults
       If no C++ standard stated, assume LTS.  The Qt5 based project will state
       in the build files either `-std=c++<ver>` or `-std=gnu++<ver>` or
       `CMAKE_CXX_STANDARD`.
-* Due to the lack of GPU access, the requirements are the exact major.minor
-  version requirements for GPU, Machine Learning (ML), and Large Language Model
-  (LLM) ebuild packages in this overlay for increased chances of
-  reproducibility.
+* Due to the lack of GPU access or GPU dev testers, the requirements are the
+  exact major.minor version requirements for GPU, Machine Learning (ML), and
+  Large Language Model (LLM) ebuild packages in this overlay for increased
+  chances of reproducibility.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
-The support status depends on the ebuild contributors ability to test and patch.
+The support status depends on the ebuild contributors ability to test, patch,
+and verify.
