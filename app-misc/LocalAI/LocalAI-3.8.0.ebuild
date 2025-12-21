@@ -576,11 +576,11 @@ PIPER_RDEPEND="
 		<sci-ml/pytorch-2[${PYTHON_SINGLE_USEDEP}]
 	)
 	>=dev-python/pytorch-lightning-1.7.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP},python]
 "
 
 PIPER_BENCHMARK_RDEPEND="
-	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-ml/torch-1.11.0[${PYTHON_SINGLE_USEDEP}]
 "
 
@@ -589,8 +589,8 @@ PIPER_RUN_RDEPEND="
 		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP}]
-		<sci-ml/onnxruntime-2[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP},python]
+		<sci-ml/onnxruntime-2[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 
