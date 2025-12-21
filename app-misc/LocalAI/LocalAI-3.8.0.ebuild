@@ -1245,13 +1245,14 @@ einfo "Removing backend/python/${x}"
 	keepdir "/var/lib/${MY_PN2}/huggingface/hub"
 	keepdir "/var/lib/${MY_PN2}/models"
 	keepdir "/var/lib/${MY_PN2}/backends"
+	keepdir "/var/lib/${MY_PN2}/configuration"
 
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}"
 
 	sanitize_file_permissions
 
-	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/configuration"
 	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/backends"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/opt/${MY_PN2}/configuration"
 }
 
 pkg_postinst() {
