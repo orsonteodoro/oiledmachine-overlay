@@ -251,7 +251,7 @@ ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_38
+ebuild_revision_39
 "
 REQUIRED_USE="
 	!ci
@@ -1259,7 +1259,7 @@ install_init_services() {
 		die
 	fi
 
-	doins "${T}/${MY_PN2}.conf"
+	newins "${T}/${MY_PN2}.conf" "${MY_PN2}"
 
 	if use openrc ; then
 		exeinto "/etc/init.d"
