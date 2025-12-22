@@ -36,6 +36,9 @@ EAPI=8
 # U24 - node 20 (release - live, debug - live)
 # U22 - node 18 (check - live)
 
+# TODO:
+# USE sandbox
+
 # @serwist/next needs pnpm workspaces
 
 # Use `PNPM_UPDATER_VERSIONS="1.142.8" pnpm_updater_update_locks.sh` to update lockfile
@@ -112,7 +115,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	file-management? (
@@ -750,9 +753,9 @@ gen_config() {
 		-e "s|@DATABASE_MODE@|${database_mode}|g" \
 		"${T}/${PN}.conf" \
 		|| die
-	insinto "/etc/${PN}"
-	doins "${T}/${PN}.conf"
-	fperms 0660 "/etc/${PN}/lobe-chat.conf"
+	insinto "/etc/conf.d/${PN}"
+	newins "${T}/${PN}.conf" "${PN}"
+	fperms 0660 "/etc/conf.d/${PN}"
 }
 
 gen_standalone_wrapper() {
