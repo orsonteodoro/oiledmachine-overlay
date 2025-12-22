@@ -755,7 +755,9 @@ gen_config() {
 		|| die
 	insinto "/etc/conf.d/${PN}"
 	newins "${T}/${PN}.conf" "${PN}"
-	fperms 0660 "/etc/conf.d/${PN}"
+
+	# Secure keys/tokens
+	fperms 0640 "/etc/conf.d/${PN}"
 }
 
 gen_standalone_wrapper() {
