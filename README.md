@@ -1256,7 +1256,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-misc/june | Local voice AI chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit |
 | app-misc/liquidctl | Cross-platform tool and drivers for liquid coolers and other devices |
 | app-misc/llocal | Aiming to provide a seamless and privacy driven AI chatting experience with open-sourced technologies |
-| app-misc/LocalAI | A REST API featuring integrated WebUI, P2P inference, generation of text, audio, video, images, voice cloning |
 | app-misc/ollama | Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs) synonymous with AI chatbots or AI assistants. |
 | app-misc/screen | screen manager with VT100/ANSI terminal emulation |
 | app-misc/ssl-cert-snakeoil | A self-signed certificate required by some *.deb packages or projects |
@@ -2302,6 +2301,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | virtual/pillow | Virtual for Python Pillow packages |
 | virtual/tmpfiles | Virtual to select between different tmpfiles.d handlers |
 | www-apps/lobe-chat | A modern-design progressive web app supporting AI chat, function call plugins, multiple open/closed LLM models, RAG, TTS, vision |
+| www-apps/LocalAI | A REST API featuring integrated WebUI, P2P inference, generation of text, audio, video, images, voice cloning |
 | www-apps/open-webui | A user-friendly AI interface with web search RAG, document RAG, AI image generation, Ollama, OpenAI API support |
 | www-apps/xpra-html5 | HTML5 client for Xpra |
 | www-client/chromium-sources | Chromium sources |
