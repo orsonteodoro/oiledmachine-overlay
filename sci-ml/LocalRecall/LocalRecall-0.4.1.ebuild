@@ -24,7 +24,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 openrc systemd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -92,7 +92,7 @@ src_install() {
 	fi
 
 	insinto "/etc/conf.d"
-	cat "local-recall.conf" > "${T}/local-recall.conf"
+	cat "${FILESDIR}/local-recall.conf" > "${T}/local-recall.conf"
 
 	local collection_db_path=${COLLECTION_DB_PATH:-"collections"}
 	local embedding_model=${EMBEDDING_MODEL:-"granite-embedding-107m-multilingual"}
@@ -117,9 +117,9 @@ einfo "VECTOR_ENGINE:  ${vector_engine}"
 		-e "s|@VECTOR_ENGINE@|${vector_engine}|" \
 		"${T}/local-recall.conf" \
 		|| die
-	doins "${T}/local-recall.conf"
+	newins "${T}/local-recall.conf" "local-recall"
 
-	fperms 0640 "/etc/conf.d/local-recall.conf"
+	fperms 0640 "/etc/conf.d/local-recall"
 
 	exeinto "/opt/local-recall"
 	doexe "localrecall"
@@ -127,3 +127,8 @@ einfo "VECTOR_ENGINE:  ${vector_engine}"
 	exeinto "/usr/bin"
 	doexe "${FILESDIR}/local-recall-start-server"
 }
+
+# OILEDMACHINE-OVERLAY-META:  orphaned
+# OILEDMACHINE-OVERLAY-TEST:  TESTING
+# load-test:  pass
+# production-test:  untested
