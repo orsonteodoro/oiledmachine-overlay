@@ -251,7 +251,7 @@ ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker native openblas opencl openrc p2p rag rocm stt
 sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_39
+ebuild_revision_40
 "
 REQUIRED_USE="
 	!ci
@@ -1184,6 +1184,7 @@ einfo "Sanitizing file/folder permissions"
 		fi
 	done
 	IFS=$' \t\n'
+	chmod "0640" "/etc/conf.d/${MY_PN2}"
 }
 
 install_init_services() {
