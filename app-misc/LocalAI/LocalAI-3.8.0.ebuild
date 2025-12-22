@@ -1184,6 +1184,8 @@ einfo "Sanitizing file/folder permissions"
 		fi
 	done
 	IFS=$' \t\n'
+
+	# Secure key/token permissions
 	chmod "0640" "/etc/conf.d/${MY_PN2}"
 }
 

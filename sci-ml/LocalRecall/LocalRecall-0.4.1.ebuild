@@ -119,6 +119,7 @@ einfo "VECTOR_ENGINE:  ${vector_engine}"
 		|| die
 	newins "${T}/local-recall.conf" "local-recall"
 
+	# Secure token permissions
 	fperms 0640 "/etc/conf.d/local-recall"
 
 	exeinto "/opt/local-recall"
