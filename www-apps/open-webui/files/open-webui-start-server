@@ -1,7 +1,7 @@
 #!/bin/bash
 main() {
 	cd "/usr/lib/@EPYTHON@/site-packages/open_webui/backend"
-	source "/etc/conf.d/open-webui.conf"
+	source "/etc/conf.d/open-webui"
 	"./start.sh"
 }
 main

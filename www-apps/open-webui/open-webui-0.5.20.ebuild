@@ -56,7 +56,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	|| (
@@ -464,7 +464,7 @@ install_init_services() {
 			> \
 		"${T}/${PN}.conf" \
 		|| die
-	doins "${T}/${PN}.conf"
+	newins "${T}/${PN}.conf" "${PN}"
 
 	if use openrc ; then
 		exeinto "/etc/init.d"
@@ -522,6 +522,9 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 	# Necessary
 	fowners -R "root:root" "/usr/lib/${EPYTHON}/site-packages/open_webui/backend/data"
+
+	# Secure secrets/tokens
+	fperms 0640 "/etc/conf.d/${PN}"
 
 	newicon \
 		"static/favicon.png" \
