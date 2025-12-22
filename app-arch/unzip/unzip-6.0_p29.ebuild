@@ -29,7 +29,7 @@ LICENSE="Info-ZIP"
 SLOT="0"
 IUSE="
 bzip2 natspec unicode
-ebuild_revision_26
+ebuild_revision_27
 "
 DEPEND="
 	bzip2? (
@@ -50,7 +50,8 @@ PATCHES=(
 
 	# oiledmachine-overlay:  Fix issues with -fstrict-flex-arrays=3
 	# Verify with unpacking app-arch/zip
-	"${FILESDIR}/${PN}-6.0_p29-remove-struct-hack.patch"
+	#"${FILESDIR}/${PN}-6.0_p29-remove-struct-hack.patch" # Broken
+
 	"${FILESDIR}/${PN}-6.0_p29-strcpy-fix.patch"
 
 	# oiledmachine-overlay patches

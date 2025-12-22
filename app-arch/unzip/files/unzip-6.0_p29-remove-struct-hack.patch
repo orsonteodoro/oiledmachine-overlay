@@ -30,7 +30,7 @@ diff '--color=auto' -urp unzip60.orig/qdos/callstub.c unzip60/qdos/callstub.c
  
  
 -typedef struct {short len; char chrs[1];} __QP_t;
-+typedef struct {short len; char char chrs[];} __QP_t;
++typedef struct {short len; char chrs[];} __QP_t;
  
  #define __QA(l) struct {short len; char chrs[(l)+1];}
  
