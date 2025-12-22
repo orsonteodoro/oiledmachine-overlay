@@ -24,6 +24,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 openrc systemd
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
@@ -114,6 +115,7 @@ einfo "VECTOR_ENGINE:  ${vector_engine}"
 		-e "s|@LISTENING_ADDRESS@|${listening_address}|" \
 		-e "s|@OPENAI_BASE_URL@|${openai_base_url}|" \
 		-e "s|@VECTOR_ENGINE@|${vector_engine}|" \
+		"${T}/local-recall.conf" \
 		|| die
 	doins "${T}/local-recall.conf"
 
