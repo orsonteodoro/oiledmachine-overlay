@@ -6,6 +6,34 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes
+
+
+  Build-time environment variables:
+
+  COLLECTION_DB_PATH - Path to the vector database storing collections
+  Default:  collections
+
+  EMBEDDING_MODEL - The name of the embedding model used for the vector database
+  Default:  granite-embedding-107m-multilingual
+
+  FILE_ASSETS - Directory path to store and retrieve uploaded file assets
+  Default:  assets
+
+  LISTENING_ADDRESS - The port to connect to LocalRecall server
+  Default: :8080
+
+  OPENAI_BASE_URL - Base URL for the embedding model API
+  Default:  http://localai:8080
+
+  VECTOR_ENGINE - Vector database engine
+  Default:  chromem
+
+  See also https://github.com/mudler/LocalRecall/blob/v0.4.1/README.md#-environment-variables
+
+  -->
   <upstream>
     <bugs-to>https://github.com/mudler/LocalRecall/issues</bugs-to>
     <remote-id type="github">mudler/LocalRecall</remote-id>

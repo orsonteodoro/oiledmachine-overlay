@@ -76,6 +76,7 @@ src_unpack() {
 
 src_compile() {
 	go-download-cache_setup
+	export VERBOSE=1
 	emake "build"
 }
 
@@ -88,6 +89,35 @@ src_install() {
 		insinto "/usr/lib/systemd/system"
 		newins "${FILESDIR}/${MY_PN}.systemd" "${MY_PN}.service"
 	fi
+
+	insinto "/etc/conf.d"
+	cat "local-recall.conf" > "${T}/local-recall.conf"
+
+	local collection_db_path=${COLLECTION_DB_PATH:-"collections"}
+	local embedding_model=${EMBEDDING_MODEL:-"granite-embedding-107m-multilingual"}
+	local file_assets=${FILE_ASSETS:-"assets"}
+	local listening_address=${LISTENING_ADDRESS:-":8080"}
+	local openai_base_url=${OPENAI_BASE_URL:-"http://localai:8080"}
+	local vector_engine=${VECTOR_ENGINE:-"chromem"}
+
+einfo "COLLECTION_DB_PATH:  ${collection_db_path}"
+einfo "EMBEDDING_MODEL:  ${embedding_model}"
+einfo "FILE_ASSETS:  ${file_assets}"
+einfo "LISTENING_ADDRESS:  ${listening_address}"
+einfo "OPENAI_BASE_URL:  ${openai_base_url}"
+einfo "VECTOR_ENGINE:  ${vector_engine}"
+
+	sed -i \
+		-e "s|@COLLECTION_DB_PATH@|${collection_db_path}|" \
+		-e "s|@EMBEDDING_MODEL@|${embedding_model}|" \
+		-e "s|@FILE_ASSETS@|${file_assets}|" \
+		-e "s|@LISTENING_ADDRESS@|${listening_address}|" \
+		-e "s|@OPENAI_BASE_URL@|${openai_base_url}|" \
+		-e "s|@VECTOR_ENGINE@|${vector_engine}|" \
+		|| die
+	doins "${T}/local-recall.conf"
+
+	fperms 0640 "/etc/conf.d/local-recall.conf"
 
 	exeinto "/opt/local-recall"
 	doexe "localrecall"

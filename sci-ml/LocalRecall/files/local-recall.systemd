@@ -3,13 +3,11 @@ Description=LocalRecall Service
 After=network-online.target
 
 [Service]
-User=local-ai
-Group=local-ai
+User=local-recall
+Group=local-recall
 ExecStart=/usr/bin/local-recall-start-server
 Restart=always
 RestartSec=3
-Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
-Environment="PATH=$PATH"
 #
 # TODO: test settings
 #
