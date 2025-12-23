@@ -97,7 +97,6 @@ BDEPEND+="
 DOCS=( "ReadMe.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
-#	"${FILESDIR}/${PN}-20250930-wasm-remove-extended-atomic-opcode-support.patch"
 )
 
 _set_clang() {
@@ -223,7 +222,6 @@ eerror "No suitable ruby interpreter found"
 }
 
 src_configure() {
-#	export MAKEOPTS="-j1"
 	filter-flags "-fuse-ld=*"
 
 einfo "BUILD_DIR:  ${BUILD_DIR}"
@@ -263,7 +261,7 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 	cflags-hardened_append
 
 	fix_mb_len_max
-#	strip-unsupported-flags
+	strip-unsupported-flags # Enablement required by GCC
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
