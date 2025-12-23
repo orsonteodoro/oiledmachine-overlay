@@ -50,6 +50,7 @@ IUSE+="
 clang lto
 "
 REQUIRED_USE="
+	clang
 	clang? (
 		^^ (
 			${LIBCXX_COMPAT_STDCXX23[@]}
@@ -255,6 +256,7 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 		"-fuse-ld=lld"
 
 	fix_mb_len_max
+	strip-unsupported-flags
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
