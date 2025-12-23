@@ -93,7 +93,6 @@ BDEPEND+="
 DOCS=( "ReadMe.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
-	"${FILESDIR}/${PN}-20250930-remove-wasm-opts-h-ref.patch"
 )
 
 _set_clang() {
@@ -186,6 +185,7 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
+	touch "Source/JavaScriptCore/wasm/WasmOps.h" || die
 }
 
 get_libc() {
