@@ -100,7 +100,7 @@ BDEPEND+="
 "
 DOCS=( "ReadMe.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
+#	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
 )
 
 _set_clang() {
@@ -184,6 +184,7 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	python-single-r1_pkg_setup
+	MAKEOPTS="-j1"
 }
 
 src_unpack() {
@@ -193,7 +194,7 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	touch "Source/JavaScriptCore/wasm/WasmOps.h" || die
+#	touch "Source/JavaScriptCore/wasm/WasmOps.h" || die
 }
 
 get_libc() {
@@ -285,24 +286,22 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
 		-DPORT="JSCOnly"
 		-DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON
+		-DENABLE_FTL_JIT=ON
 		-DENABLE_REMOTE_INSPECTOR=ON
 		-DENABLE_STATIC_JSC=ON
 		-DENABLE_ASSERTS="AUTO"
 		-DUSE_BUN_EVENT_LOOP=ON
 		-DUSE_BUN_JSC_ADDITIONS=ON
 		-DUSE_THIN_ARCHIVES=OFF
-
-	# Bun's extended atomic opcode support on wasm mod breaks reproducable builds
-	# Avoid error:  Source/JavaScriptCore/wasm/WasmTypeDefinition.h:127:38: error: use of undeclared identifier 'COUNT_WASM_EXT_ATOMIC_OP'
-		-DENABLE_WEBASSEMBLY=OFF
-		-DENABLE_B3_JIT=OFF # Depends on WebAssembly
-		-DENABLE_FTL_JIT=OFF # Force enables B3
 	)
 
 	cmake_src_configure
 }
 
 src_compile() {
+	pushd "Source/JavaScriptCore/wasm" || die
+		${EPYTHON} "generateWasmOpsHeader.py" "wasm.json" "${S}_build/JavaScriptCore/DerivedSources/WasmOps.h" # Adjust paths
+	popd || die
 	cmake_src_compile
 }
 
