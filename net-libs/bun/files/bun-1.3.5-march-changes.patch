@@ -1,0 +1,230 @@
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/CompilerFlags.cmake bun-bun-v1.3.5/cmake/CompilerFlags.cmake
+--- bun-bun-v1.3.5.orig/cmake/CompilerFlags.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/CompilerFlags.cmake	2025-12-22 08:45:31.834497049 -0800
+@@ -20,16 +20,44 @@ endforeach()
+ # --- CPU target ---
+ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|ARM|arm64|ARM64|aarch64|AARCH64")
+   if(APPLE)
+-    register_compiler_flags(-mcpu=apple-m1)
++    if(NOT "${DEFAULT_MARCH}" STREQUAL "" AND NOT "${DEFAULT_MTUNE}" STREQUAL "")
++      register_compiler_flags(-march=${DEFAULT_MARCH} -mtune=${DEFAULT_MTUNE})
++    elseif(NOT "${DEFAULT_MARCH}" STREQUAL "")
++      register_compiler_flags(-march=${DEFAULT_MARCH})
++    elseif(NOT "${DEFAULT_MCPU}" STREQUAL "")
++      register_compiler_flags(-mcpu=${DEFAULT_MCPU})
++    elseif(USE_AES AND USE_FP16FML AND USE_SHA3 AND USE_SB AND USE_SSBS AND USE_V8_4A)
++      register_compiler_flags(-mcpu=apple-m1)
++    else
++      message(FATAL_ERROR "CPU is not currently supported.")
++    endif()
++    message(STATUS "DEFAULT_MCPU:  ${DEFAULT_MCPU}")
+   else()
+-    register_compiler_flags(-march=armv8-a+crc -mtune=ampere1)
++    if(NOT "${DEFAULT_MARCH}" STREQUAL "" AND NOT "${DEFAULT_MTUNE}" STREQUAL "")
++      register_compiler_flags(-march=${DEFAULT_MARCH} -mtune=${DEFAULT_MTUNE})
++    elseif(NOT "${DEFAULT_MARCH}" STREQUAL "")
++      register_compiler_flags(-march=${DEFAULT_MARCH})
++    else(USE_CRC AND USE_AES AND USE_FP16 AND USE_RND AND USE_SHA3 AND USE_V8_6A)
++      register_compiler_flags(-march=armv8-a+crc -mtune=ampere1)
++    else
++      message(FATAL_ERROR "CPU is not currently supported.")
++    endif()
++    message(STATUS "DEFAULT_MARCH:  ${DEFAULT_MARCH}")
++    message(STATUS "DEFAULT_MTUNE:  ${DEFAULT_MTUNE}")
+   endif()
+ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|X86_64|x64|X64|amd64|AMD64")
+-  if(ENABLE_BASELINE)
+-    register_compiler_flags(-march=nehalem)
+-  else()
++  if(NOT "${DEFAULT_MARCH}" STREQUAL "")
++    register_compiler_flags(-march=${DEFAULT_MARCH})
++  elseif(USE_AVX2 AND USE_BMI AND USE_BMI2 AND USE_CX16 AND USE_F16C AND USE_FMA AND USE_FXSR AND USE_LZCNT AND USE_MMX AND USE_PCLMUL AND USE_POPCNT AND USE_RDRND)
+     register_compiler_flags(-march=haswell)
++  elseif(USE_CX16 AND USE_FXSR AND USE_MMX AND USE_SSE4_2)
++    register_compiler_flags(-march=nehalem)
++  elseif(USE_3DNOWA AND USE_CX16 AND USE_FXSR AND USE_LZCNT AND USE_POPCNT AND USE_SSE4A)
++    register_compiler_flags(-march=amdfam10)
++  else
++    message(FATAL_ERROR "CPU is not currently supported.")
+   endif()
++  message(STATUS "DEFAULT_MARCH:  ${DEFAULT_MARCH}")
+ else()
+   unsupported(CMAKE_SYSTEM_PROCESSOR)
+ endif()
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/Options.cmake bun-bun-v1.3.5/cmake/Options.cmake
+--- bun-bun-v1.3.5.orig/cmake/Options.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/Options.cmake	2025-12-22 09:02:02.291203322 -0800
+@@ -84,8 +84,36 @@ if(LINUX)
+   optionx(ABI "musl|gnu" "The ABI to use (e.g. musl, gnu)" DEFAULT ${DEFAULT_ABI})
+ endif()
+ 
+-if(ARCH STREQUAL "x64")
+-  optionx(ENABLE_BASELINE BOOL "If baseline features should be used for older CPUs (e.g. disables AVX, AVX2)" DEFAULT OFF)
++if(ARCH STREQUAL "aarch64")
++  optionx(USE_AES BOOL "Support AES" DEFAULT OFF)
++  optionx(USE_CRC BOOL "Support CRC" DEFAULT OFF)
++  optionx(USE_FP16 BOOL "Support FP16" DEFAULT OFF)
++  optionx(USE_FP16FML BOOL "Support FP16FML" DEFAULT OFF)
++  optionx(USE_NEON BOOL "Support NEON" DEFAULT OFF)
++  optionx(USE_RND BOOL "Support RND" DEFAULT OFF)
++  optionx(USE_SHA3 BOOL "Support SHA3" DEFAULT OFF)
++  optionx(USE_SB BOOL "Support SB" DEFAULT OFF)
++  optionx(USE_SSBS BOOL "Support SSBS" DEFAULT OFF)
++  optionx(USE_V8_4A BOOL "Support ARMv8.4-a" DEFAULT OFF)
++  optionx(USE_V8_6A BOOL "Support ARMv8.6-a" DEFAULT OFF)
++elseif(ARCH STREQUAL "x64")
++  optionx(ENABLE_LTO BOOL "If LTO should be used" DEFAULT OFF)
++
++  optionx(USE_3DNOWA BOOL "Support 3DNOWA" DEFAULT OFF)
++  optionx(USE_AVX2 BOOL "Support AVX2" DEFAULT OFF)
++  optionx(USE_BMI BOOL "Support BMI" DEFAULT OFF)
++  optionx(USE_BMI2 BOOL "Support BMI2" DEFAULT OFF)
++  optionx(USE_CX16 BOOL "Support CX16" DEFAULT OFF)
++  optionx(USE_F16C BOOL "Support F16C" DEFAULT OFF)
++  optionx(USE_FMA BOOL "Support FMA" DEFAULT OFF)
++  optionx(USE_FXSR BOOL "Support FXSR" DEFAULT OFF)
++  optionx(USE_LZCNT BOOL "Support LZCNT" DEFAULT OFF)
++  optionx(USE_MMX BOOL "Support MMX" DEFAULT OFF)
++  optionx(USE_PCLMUL BOOL "Support PCLMUL" DEFAULT OFF)
++  optionx(USE_POPCNT BOOL "Support POPCNT" DEFAULT OFF)
++  optionx(USE_RDRND BOOL "Support RDRND" DEFAULT OFF)
++  optionx(USE_SSE4A BOOL "Support SSE4A" DEFAULT OFF)
++  optionx(USE_SSE4_2 BOOL "Support SSE4.2" DEFAULT OFF)
+ endif()
+ 
+ # Disabling logs by default for tests yields faster builds
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/targets/BuildBrotli.cmake bun-bun-v1.3.5/cmake/targets/BuildBrotli.cmake
+--- bun-bun-v1.3.5.orig/cmake/targets/BuildBrotli.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/targets/BuildBrotli.cmake	2025-12-22 08:14:47.051446433 -0800
+@@ -9,7 +9,7 @@ register_repository(
+ 
+ # Tests fail with "BrotliDecompressionError" when LTO is enabled
+ # only on Linux x64 (non-baseline). It's a mystery.
+-if(LINUX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|X86_64|x64|X64|amd64|AMD64" AND NOT ENABLE_BASELINE)
++if(LINUX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|X86_64|x64|X64|amd64|AMD64" AND NOT ENABLE_LTO)
+   set(BROTLI_CMAKE_ARGS "-DCMAKE_C_FLAGS=-fno-lto")
+ endif()
+ 
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/targets/BuildBun.cmake bun-bun-v1.3.5/cmake/targets/BuildBun.cmake
+--- bun-bun-v1.3.5.orig/cmake/targets/BuildBun.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/targets/BuildBun.cmake	2025-12-22 08:45:30.362622455 -0800
+@@ -658,16 +658,38 @@ endif()
+ 
+ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|ARM|arm64|ARM64|aarch64|AARCH64")
+   if(APPLE)
+-    set(ZIG_CPU "apple_m1")
++    if(NOT "${DEFAULT_ZCPU}" STREQUAL "")
++      set(ZIG_CPU "${DEFAULT_ZCPU}")
++    elseif(USE_AES AND USE_FP16FML AND USE_SHA3 AND USE_SB AND USE_SSBS AND USE_V8_4A)
++      set(ZIG_CPU "apple_m1")
++    else
++      message(FATAL_ERROR "CPU is not currently supported.")
++    endif()
+   else()
+-    set(ZIG_CPU "native")
++    if(NOT "${DEFAULT_ZCPU}" STREQUAL "")
++      set(ZIG_CPU "${DEFAULT_ZCPU}")
++    else(USE_CRC AND USE_AES AND USE_FP16 AND USE_RND AND USE_SHA3 AND USE_V8_6A)
++      set(ZIG_CPU "native")
++    else
++      message(FATAL_ERROR "CPU is not currently supported.")
++    endif()
+   endif()
++  message(STATUS "DEFAULT_ZCPU:  ${DEFAULT_ZCPU}")
++  message(STATUS "ZIG_CPU:  ${ZIG_CPU}")
+ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|X86_64|x64|X64|amd64|AMD64")
+-  if(ENABLE_BASELINE)
+-    set(ZIG_CPU "nehalem")
+-  else()
++  if(NOT "${DEFAULT_ZCPU}" STREQUAL "")
++    set(ZIG_CPU "${DEFAULT_ZCPU}")
++  elseif(USE_AVX2 AND USE_BMI AND USE_BMI2 AND USE_CX16 AND USE_F16C AND USE_FMA AND USE_FXSR AND USE_LZCNT AND USE_MMX AND USE_PCLMUL AND USE_POPCNT AND USE_RDRND)
+     set(ZIG_CPU "haswell")
++  elseif(USE_CX16 AND USE_FXSR AND USE_MMX AND USE_SSE4_2)
++    set(ZIG_CPU "nehalem")
++  elseif(USE_3DNOWA AND USE_CX16 AND USE_FXSR AND USE_LZCNT AND USE_POPCNT AND USE_SSE4A)
++    set(ZIG_CPU "amdfam10")
++  else
++    message(FATAL_ERROR "CPU is not currently supported.")
+   endif()
++  message(STATUS "DEFAULT_ZCPU:  ${DEFAULT_ZCPU}")
++  message(STATUS "ZIG_CPU:  ${ZIG_CPU}")
+ else()
+   unsupported(CMAKE_SYSTEM_PROCESSOR)
+ endif()
+@@ -1482,9 +1504,6 @@ if(NOT BUN_CPP_ONLY)
+     if(LINUX AND ABI STREQUAL "musl")
+       set(bunTriplet ${bunTriplet}-musl)
+     endif()
+-    if(ENABLE_BASELINE)
+-      set(bunTriplet ${bunTriplet}-baseline)
+-    endif()
+ 
+     if (ENABLE_ASAN AND ENABLE_VALGRIND)
+       set(bunTriplet ${bunTriplet}-asan-valgrind)
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/targets/BuildMimalloc.cmake bun-bun-v1.3.5/cmake/targets/BuildMimalloc.cmake
+--- bun-bun-v1.3.5.orig/cmake/targets/BuildMimalloc.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/targets/BuildMimalloc.cmake	2025-12-22 09:01:55.779613254 -0800
+@@ -70,7 +70,7 @@ if(ENABLE_VALGRIND)
+ endif()
+ 
+ # Enable SIMD optimizations when not building for baseline (older CPUs)
+-if(NOT ENABLE_BASELINE)
++if(USE_AVX2 OR USE_NEON)
+   list(APPEND MIMALLOC_CMAKE_ARGS -DMI_OPT_ARCH=ON)
+   list(APPEND MIMALLOC_CMAKE_ARGS -DMI_OPT_SIMD=ON)
+ endif()
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/toolchains/linux-x64-baseline.cmake bun-bun-v1.3.5/cmake/toolchains/linux-x64-baseline.cmake
+--- bun-bun-v1.3.5.orig/cmake/toolchains/linux-x64-baseline.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/toolchains/linux-x64-baseline.cmake	2025-12-22 08:14:47.051980376 -0800
+@@ -1,7 +1,6 @@
+ set(CMAKE_SYSTEM_NAME Linux)
+ set(CMAKE_SYSTEM_PROCESSOR x64)
+-set(ENABLE_BASELINE ON)
+ set(ABI gnu)
+ 
+ set(CMAKE_C_COMPILER_WORKS ON)
+-set(CMAKE_CXX_COMPILER_WORKS ON)
+\ No newline at end of file
++set(CMAKE_CXX_COMPILER_WORKS ON)
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/toolchains/linux-x64-musl-baseline.cmake bun-bun-v1.3.5/cmake/toolchains/linux-x64-musl-baseline.cmake
+--- bun-bun-v1.3.5.orig/cmake/toolchains/linux-x64-musl-baseline.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/toolchains/linux-x64-musl-baseline.cmake	2025-12-22 08:14:47.052080742 -0800
+@@ -1,7 +1,6 @@
+ set(CMAKE_SYSTEM_NAME Linux)
+ set(CMAKE_SYSTEM_PROCESSOR x64)
+-set(ENABLE_BASELINE ON)
+ set(ABI musl)
+ 
+ set(CMAKE_C_COMPILER_WORKS ON)
+-set(CMAKE_CXX_COMPILER_WORKS ON)
+\ No newline at end of file
++set(CMAKE_CXX_COMPILER_WORKS ON)
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/toolchains/windows-x64-baseline.cmake bun-bun-v1.3.5/cmake/toolchains/windows-x64-baseline.cmake
+--- bun-bun-v1.3.5.orig/cmake/toolchains/windows-x64-baseline.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/toolchains/windows-x64-baseline.cmake	2025-12-22 08:14:47.052175183 -0800
+@@ -1,6 +1,5 @@
+ set(CMAKE_SYSTEM_NAME Windows)
+ set(CMAKE_SYSTEM_PROCESSOR x64)
+-set(ENABLE_BASELINE ON)
+ 
+ set(CMAKE_C_COMPILER_WORKS ON)
+-set(CMAKE_CXX_COMPILER_WORKS ON)
+\ No newline at end of file
++set(CMAKE_CXX_COMPILER_WORKS ON)
+diff '--color=auto' -urp bun-bun-v1.3.5.orig/cmake/tools/SetupBuildkite.cmake bun-bun-v1.3.5/cmake/tools/SetupBuildkite.cmake
+--- bun-bun-v1.3.5.orig/cmake/tools/SetupBuildkite.cmake	2025-12-17 00:52:16.000000000 -0800
++++ bun-bun-v1.3.5/cmake/tools/SetupBuildkite.cmake	2025-12-22 08:14:47.052408808 -0800
+@@ -9,11 +9,7 @@ optionx(BUILDKITE_PIPELINE_SLUG STRING "
+ optionx(BUILDKITE_BUILD_ID STRING "The build ID to use on Buildkite")
+ optionx(BUILDKITE_GROUP_ID STRING "The group ID to use on Buildkite")
+ 
+-if(ENABLE_BASELINE)
+-  set(DEFAULT_BUILDKITE_GROUP_KEY ${OS}-${ARCH}-baseline)
+-else()
+-  set(DEFAULT_BUILDKITE_GROUP_KEY ${OS}-${ARCH})
+-endif()
++set(DEFAULT_BUILDKITE_GROUP_KEY ${OS}-${ARCH})
+ 
+ optionx(BUILDKITE_GROUP_KEY STRING "The group key to use on Buildkite" DEFAULT ${DEFAULT_BUILDKITE_GROUP_KEY})
+ 
