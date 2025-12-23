@@ -21,13 +21,16 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
+	19 # Same as upstream
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 WEBKIT_COMMIT="6d0f3aac0b817cc01a846b3754b21271adedac12"
 
-inherit cflags-hardened check-compiler-switch cmake dhms flag-o-matic-om git-r3 libcxx-slot libstdcxx-slot python-single-r1 ruby-single sandbox-changes
+inherit cflags-hardened check-compiler-switch cmake dhms flag-o-matic-om git-r3
+inherit libcxx-slot libstdcxx-slot python-single-r1 ruby-single sandbox-changes
+inherit toolchain-funcs
 
 # The source tarball cannot be downloaded.  Only the prebuilt ones.
 EGIT_BRANCH="main"
@@ -289,10 +292,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DUSE_BUN_JSC_ADDITIONS=ON
 		-DUSE_THIN_ARCHIVES=OFF
 
-	# Breaks reproducable builds
-		-DENABLE_WEBASSEMBLY=OFF
-		-DB3_JIT=OFF # Depends on WebAssembly
 	)
+
+	if tc-is-clang ; then
+		local s=$(clang-major-version)
+		if ver_test "${s}" "-ge" "21" ; then
+			mycmakeargs+=(
+	# Bun's extended atomic opcode support on wasm mod breaks reproducable builds
+				-DENABLE_WEBASSEMBLY=OFF
+				-DB3_JIT=OFF # Depends on WebAssembly
+			)
+		fi
+	fi
+
 	cmake_src_configure
 }
 
