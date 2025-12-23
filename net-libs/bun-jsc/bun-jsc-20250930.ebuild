@@ -21,8 +21,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21 # 21 may be required if using libcxx profile
-	19 # Same as upstream
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -60,11 +59,10 @@ REQUIRED_USE="
 	clang
 	clang? (
 		^^ (
-			llvm_slot_19
+			${LIBCXX_COMPAT_STDCXX23[@]}
 		)
 	)
 "
-#			${LIBCXX_COMPAT_STDCXX23[@]}
 
 gen_depend_llvm() {
 	local s
@@ -295,18 +293,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DUSE_BUN_JSC_ADDITIONS=ON
 		-DUSE_THIN_ARCHIVES=OFF
 
-	)
-
-	if tc-is-clang ; then
-		local s=$(clang-major-version)
-		if ver_test "${s}" "-ge" "21" ; then
-			mycmakeargs+=(
 	# Bun's extended atomic opcode support on wasm mod breaks reproducable builds
-				-DENABLE_WEBASSEMBLY=OFF
-				-DB3_JIT=OFF # Depends on WebAssembly
-			)
-		fi
-	fi
+	# Avoid error:  Source/JavaScriptCore/wasm/WasmTypeDefinition.h:127:38: error: use of undeclared identifier 'COUNT_WASM_EXT_ATOMIC_OP'
+		-DENABLE_WEBASSEMBLY=OFF
+		-DB3_JIT=OFF # Depends on WebAssembly
+	)
 
 	cmake_src_configure
 }
