@@ -92,6 +92,7 @@ BDEPEND+="
 "
 DOCS=( "ReadMe.md" )
 PATCHES=(
+	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
 )
 
 _set_clang() {
