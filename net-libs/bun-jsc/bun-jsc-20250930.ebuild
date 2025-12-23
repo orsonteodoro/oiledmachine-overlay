@@ -235,6 +235,15 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 		"-DU_STATIC_IMPLEMENTATION=1"
 	)
 
+	# ccache is broken or not deterministic.
+	# It breaks when using cache.
+einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/ccache/d" \
+		| tr "\n" ":")
+einfo "PATH=${PATH} (after)"
+
 	if use lto ; then
 		common_flags+=(
 			"-flto=full"
