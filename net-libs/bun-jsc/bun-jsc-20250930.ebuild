@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# U20
+
+CFLAGS_HARDENED_USE_CASES="jit network untrusted-data"
+
 CXX_STANDARD=23
 INSTALL_PREFIX="/usr/lib/bun-jsc"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -23,7 +27,7 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 WEBKIT_COMMIT="6d0f3aac0b817cc01a846b3754b21271adedac12"
 
-inherit check-compiler-switch cmake dhms flag-o-matic-om git-r3 libcxx-slot libstdcxx-slot python-single-r1 ruby-single sandbox-changes
+inherit cflags-hardened check-compiler-switch cmake dhms flag-o-matic-om git-r3 libcxx-slot libstdcxx-slot python-single-r1 ruby-single sandbox-changes
 
 # The source tarball cannot be downloaded.  Only the prebuilt ones.
 EGIT_BRANCH="main"
@@ -93,6 +97,7 @@ BDEPEND+="
 DOCS=( "ReadMe.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
+#	"${FILESDIR}/${PN}-20250930-wasm-remove-extended-atomic-opcode-support.patch"
 )
 
 _set_clang() {
@@ -218,7 +223,7 @@ eerror "No suitable ruby interpreter found"
 }
 
 src_configure() {
-	export MAKEOPTS="-j1"
+#	export MAKEOPTS="-j1"
 	filter-flags "-fuse-ld=*"
 
 einfo "BUILD_DIR:  ${BUILD_DIR}"
@@ -255,8 +260,10 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 	append-ldflags \
 		"-fuse-ld=lld"
 
+	cflags-hardened_append
+
 	fix_mb_len_max
-	strip-unsupported-flags
+#	strip-unsupported-flags
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -283,6 +290,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DUSE_BUN_EVENT_LOOP=ON
 		-DUSE_BUN_JSC_ADDITIONS=ON
 		-DUSE_THIN_ARCHIVES=OFF
+
+	# Breaks reproducable builds
+		-DENABLE_WEBASSEMBLY=OFF
 	)
 	cmake_src_configure
 }
