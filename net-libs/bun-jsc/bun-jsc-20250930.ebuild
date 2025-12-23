@@ -300,7 +300,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 src_compile() {
 	pushd "Source/JavaScriptCore/wasm" || die
-		${EPYTHON} "generateWasmOpsHeader.py" "wasm.json" "${S}_build/JavaScriptCore/DerivedSources/WasmOps.h" # Adjust paths
+		${EPYTHON} "generateWasmOpsHeader.py" "wasm.json" "${S}_build/JavaScriptCore/DerivedSources/WasmOps.h"
 	popd || die
 	cmake_src_compile
 }
