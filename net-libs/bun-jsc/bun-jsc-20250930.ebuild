@@ -4,7 +4,6 @@
 
 EAPI=8
 
-CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=23
 INSTALL_PREFIX="/usr/lib/bun-jsc"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -94,6 +93,7 @@ BDEPEND+="
 DOCS=( "ReadMe.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
+	"${FILESDIR}/${PN}-20250930-remove-wasm-opts-h-ref.patch"
 )
 
 _set_clang() {
