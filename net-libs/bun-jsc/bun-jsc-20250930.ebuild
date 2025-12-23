@@ -296,7 +296,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Bun's extended atomic opcode support on wasm mod breaks reproducable builds
 	# Avoid error:  Source/JavaScriptCore/wasm/WasmTypeDefinition.h:127:38: error: use of undeclared identifier 'COUNT_WASM_EXT_ATOMIC_OP'
 		-DENABLE_WEBASSEMBLY=OFF
-		-DB3_JIT=OFF # Depends on WebAssembly
+		-DENABLE_B3_JIT=OFF # Depends on WebAssembly
 	)
 
 	cmake_src_configure
