@@ -4,6 +4,7 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=23
 INSTALL_PREFIX="/usr/lib/bun-jsc"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -49,7 +50,6 @@ IUSE+="
 clang lto
 "
 REQUIRED_USE="
-	clang
 	clang? (
 		^^ (
 			${LIBCXX_COMPAT_STDCXX23[@]}
@@ -217,6 +217,7 @@ eerror "No suitable ruby interpreter found"
 }
 
 src_configure() {
+	export MAKEOPTS="-j1"
 	filter-flags "-fuse-ld=*"
 
 einfo "BUILD_DIR:  ${BUILD_DIR}"
@@ -234,15 +235,6 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 		"-ffile-prefix-map=${BUILD_DIR}/=."
 		"-DU_STATIC_IMPLEMENTATION=1"
 	)
-
-	# ccache is broken or not deterministic.
-	# It breaks when using cache.
-einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/ccache/d" \
-		| tr "\n" ":")
-einfo "PATH=${PATH} (after)"
 
 	if use lto ; then
 		common_flags+=(
@@ -289,7 +281,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DUSE_BUN_EVENT_LOOP=ON
 		-DUSE_BUN_JSC_ADDITIONS=ON
 		-DUSE_THIN_ARCHIVES=OFF
-
 	)
 	cmake_src_configure
 }
