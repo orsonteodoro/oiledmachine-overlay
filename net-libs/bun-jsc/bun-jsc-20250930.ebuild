@@ -21,7 +21,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
+	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21 # 21 may be required if using libcxx profile
 	19 # Same as upstream
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
@@ -55,14 +55,17 @@ SLOT="0/${PV}"
 IUSE+="
 clang lto
 "
+
 REQUIRED_USE="
 	clang
 	clang? (
 		^^ (
-			${LIBCXX_COMPAT_STDCXX23[@]}
+			llvm_slot_19
 		)
 	)
 "
+#			${LIBCXX_COMPAT_STDCXX23[@]}
+
 gen_depend_llvm() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
