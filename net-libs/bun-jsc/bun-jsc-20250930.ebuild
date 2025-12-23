@@ -291,6 +291,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	# Breaks reproducable builds
 		-DENABLE_WEBASSEMBLY=OFF
+		-DB3_JIT=OFF # Depends on WebAssembly
 	)
 	cmake_src_configure
 }
