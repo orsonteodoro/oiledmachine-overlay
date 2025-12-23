@@ -285,7 +285,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
 		-DPORT="JSCOnly"
 		-DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON
-		-DENABLE_FTL_JIT=ON
 		-DENABLE_REMOTE_INSPECTOR=ON
 		-DENABLE_STATIC_JSC=ON
 		-DENABLE_ASSERTS="AUTO"
@@ -297,6 +296,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Avoid error:  Source/JavaScriptCore/wasm/WasmTypeDefinition.h:127:38: error: use of undeclared identifier 'COUNT_WASM_EXT_ATOMIC_OP'
 		-DENABLE_WEBASSEMBLY=OFF
 		-DENABLE_B3_JIT=OFF # Depends on WebAssembly
+		-DENABLE_FTL_JIT=OFF # Force enables B3
 	)
 
 	cmake_src_configure
