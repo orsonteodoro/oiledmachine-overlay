@@ -4,6 +4,7 @@
 
 EAPI=8
 
+CXX_STANDARD=23
 BROTLI_PV="1.1.0"
 NODEJS_PV="24.3.0"
 
@@ -24,14 +25,16 @@ ZLIB_COMMIT="886098f3f339617b4243b286f5ed364b9989e245"
 ZSTD_COMMIT="f8745da6ff1ad1e7bab384bd1f9d742439278e99"
 
 inherit libstdcxx-compat
-GCC_SLOT=(
+GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
-LLVM_SLOT=(
+LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_aes"
@@ -204,7 +207,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	net-libs/bun-jsc
+	net-libs/bun-jsc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
