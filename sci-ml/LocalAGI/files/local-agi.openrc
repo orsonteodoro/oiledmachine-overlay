@@ -1,0 +1,293 @@
+#!/sbin/openrc-run
+
+real_command="/usr/bin/local-recall-start-server"
+real_command_args=""
+command_user="local-recall"
+command_group="local-recall"
+command_background="yes"
+pidfile="/run/local-recall.pid"
+log="/var/log/local-recall/local-recall.log"
+
+# AC = Access Control
+# CE = Code Execution
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+
+# CWE-653 mitigation
+LOCAL_RECALL_CHROOT=${LOCAL_RECALL_CHROOT:-0}
+
+# CWE-653 mitigation
+LOCAL_RECALL_SANDBOX_PROVIDER=${LOCAL_RECALL_SANDBOX_PROVIDER:-""}
+
+_LOCAL_RECALL_DEBUG=${_LOCAL_RECALL_DEBUG:-"0"}
+
+# 0 back of the line OOM kill list
+# <500 back of the OOM kill list
+# >=500 front of the OOM kill list
+# 1000 front of the line OOM kill
+LOCAL_RECALL_OOM=${LOCAL_RECALL_OOM:-500}
+
+depend() {
+	after net
+	use dns logger
+}
+
+prepare_chroot() {
+	[[ -e "/var/lib/local-recall" ]] || exit 1
+	[[ -e "/var/lib/local-recall" ]] || return
+	pushd "/var/lib/local-recall" >/dev/null 2>&1 || exit 1
+		paths=(
+			"lib64"
+			"bin"
+			"usr"
+			"var"
+			"etc"
+			"tmp"
+		)
+		rm -rf ${paths[@]}
+
+		umount -l "proc" >/dev/null 2>&1
+		umount -l "sys" >/dev/null 2>&1
+		umount -l "dev" >/dev/null 2>&1
+		umount -l "run" >/dev/null 2>&1
+
+		mkdir -p "proc"
+		mkdir -p "sys"
+		mkdir -p "dev"
+		mkdir -p "run"
+
+		local gcc_slot=$(ldd "/usr/lib64/local-recall/local-recall" \
+			| grep "libstdc++.so" \
+			| grep -E -o -e "/[0-9]+/" \
+			| sed -e "s|/||g")
+		local chost=$(cat "/var/db/pkg/www-apps/local-recall"*"/CHOST")
+
+		mkdir -p "var/log/local-recall"
+		mkdir -p "var/lib/local-recall"
+		touch "var/log/local-recall/local-recall.log"
+		chown -R "local-recall:local-recall" "var/log/local-recall"
+		chown "local-recall:local-recall" "var/lib/local-recall"
+		chmod 0755 "var/lib"
+		chmod 0700 "var/lib/local-recall"
+		chmod 0755 "/var/lib/local-recall"
+		mkdir -p "tmp"
+		chmod 1777 "tmp"
+
+		if [[ "${LOCAL_RECALL_SANDBOX_PROVIDER}" != "bwrap" ]] ; then
+			mount --types "proc" "/proc" "proc"
+			mount --rbind "/sys" "sys"
+			mount --make-rslave "sys"
+			mount --rbind "/dev" "dev"
+			mount --make-rslave "dev"
+			mount --bind "/run" "run"
+			mount --make-slave "run"
+		fi
+
+		local paths=()
+		paths=(
+			"/etc/ld.so.cache"
+			"/etc/ld.so.preload"
+			"/bin/bash;libs"
+			"/bin/sh"
+			"/usr/bin/local-recall"
+			"/usr/lib64/local-recall"
+			"/usr/lib64/local-recall;libs-recursive"
+			"/bin/mkdir"
+		)
+
+		if [[ "${LOCAL_RECALL_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+			paths+=(
+				"/usr/bin/bwrap;libs"
+			)
+		elif [[ "${LOCAL_RECALL_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			paths+=(
+				"/etc/sandbox.conf"
+				"/usr/share/sandbox"
+				"/usr/lib64/libsandbox.so"
+				"/usr/bin/sandbox"
+				"/usr/bin/unshare"
+			)
+		fi
+
+	# For debugging only
+		if [[ "${_LOCAL_RECALL_DEBUG}" == "1" ]] ; then
+			paths+=(
+				"/bin/ls"
+				"/bin/cat"
+				"/bin/grep"
+				"/bin/echo"
+				"/bin/pwd"
+				"/usr/bin/top;libs"
+				"/bin/ps;libs"
+				"/usr/bin/id"
+				"/usr/bin/ping"
+			)
+		fi
+
+		paths+=(
+			"/bin/getcwd;libs"
+		)
+
+		local path
+		for path in ${paths[@]} ; do
+			if [[ "${path}" =~ ";libs-recursive" ]] ; then
+	# Copy ldd libs recursively without copying folder
+				local src="${path%;*}"
+				IFS=$'\n'
+				local pair
+				for pair in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "=>" ]] || continue
+					local lib_path=$(echo "${pair}" \
+						| cut -f 2 -d ">" \
+						| cut -f 1 -d '(' \
+						| sed -r -e "s|^[ ]+||g" -e "s|[ ]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					[[ -z "${dir_path}" ]] && continue
+					[[ "${dir_path}" =~ "opt/rocm" ]] && continue
+					[[ "${dir_path}" =~ "opt/cuda" ]] && continue
+					mkdir -p "${dir_path}"
+					cp -a "${lib_path}" "${dir_path}"
+					if [[ -L "${lib_path}" ]] ; then
+						local path2=$(realpath "${lib_path}")
+						if [[ -f "${path2}" ]] ; then
+							cp -a "${path2}" "${dir_path}"
+						fi
+					fi
+				done
+
+				local row
+				for row in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "(" ]] || continue
+					[[ "${pair}" =~ "=>" ]] && continue
+					local lib_path=$(echo "${row}" \
+						| cut -f 1 -d "(" \
+						| sed -r -e "s|^[[:space:]]+||g" -e "s|[[:space:]]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					if [[ -e "${lib_path}" ]] ; then
+						mkdir -p "${dir_path}"
+						cp -a "${lib_path}" "${dir_path}"
+					fi
+				done
+
+				IFS=$' \t\n'
+			elif [[ "${path}" =~ ";libs" ]] ; then
+	# Direct copy with copy ldd libs
+				local src="${path%;*}"
+
+	# Direct copy
+				local dest
+				dest=$(dirname "${src}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${src}" "${dest}"
+
+	# Copy libs depends
+				IFS=$'\n'
+				local pair
+				for pair in $(ldd "${src}") ; do
+					[[ "${pair}" =~ "=>" ]] || continue
+					local lib_path=$(echo "${pair}" \
+						| cut -f 2 -d ">" \
+						| cut -f 1 -d '(' \
+						| sed -r -e "s|^[ ]+||g" -e "s|[ ]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					[[ -z "${dir_path}" ]] && continue
+					[[ "${dir_path}" =~ "opt/rocm" ]] && continue
+					[[ "${dir_path}" =~ "opt/cuda" ]] && continue
+					mkdir -p "${dir_path}"
+					cp -a "${lib_path}" "${dir_path}"
+					if [[ -L "${lib_path}" ]] ; then
+						local path2=$(realpath "${lib_path}")
+						if [[ -f "${path2}" ]] ; then
+							cp -a "${path2}" "${dir_path}"
+						fi
+					fi
+				done
+
+				local row
+				for row in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "(" ]] || continue
+					[[ "${pair}" =~ "=>" ]] && continue
+					local lib_path=$(echo "${row}" \
+						| cut -f 1 -d "(" \
+						| sed -r -e "s|^[[:space:]]+||g" -e "s|[[:space:]]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					if [[ -e "${lib_path}" ]] ; then
+						mkdir -p "${dir_path}"
+						cp -a "${lib_path}" "${dir_path}"
+					fi
+				done
+
+				IFS=$' \t\n'
+			else
+	# Direct copy
+				local dest
+				dest=$(dirname "${path}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${path}" "${dest}"
+			fi
+		done
+
+	popd >/dev/null 2>&1
+}
+
+stop_chroot() {
+	[[ -e "/var/lib/local-recall" ]] || exit 1
+	[[ -e "/var/lib/local-recall" ]] || return
+	pushd "/var/lib/local-recall" >/dev/null 2>&1 || exit 1
+		if [[ "${LOCAL_RECALL_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			umount -l "proc" >/dev/null 2>&1
+			umount -l "sys" >/dev/null 2>&1
+			umount -l "dev" >/dev/null 2>&1
+			umount -l "run" >/dev/null 2>&1
+		fi
+	popd >/dev/null 2>&1
+}
+
+start() {
+	ebegin "Starting LocalRecall"
+
+	local args=()
+
+	if [[ "${LOCAL_RECALL_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+	# CWE-653 mitigation
+		sandbox_command="/usr/bin/sandbox"
+		sandbox_args=""
+		args+=(
+	# CWE-653 mitigation, ID
+			-e SANDBOX_DENY="/proc:/dev/input:/root:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${LOCAL_RECALL_SANDBOX_BLACKLISTED_PATHS}"
+			--exec $sandbox_command -- $sandbox_args $real_command $real_command_args
+		)
+	else
+		args+=(
+			--exec $real_command -- $real_command_args
+		)
+	fi
+
+	start-stop-daemon \
+		--start \
+		--make-pidfile \
+		--pidfile "$pidfile" \
+		--user "$command_user" \
+		--group "$command_group" \
+		--background \
+		${args[@]}
+
+	eend $? "Failed to start LocalRecall"
+}
+
+stop() {
+	# Broken
+	#start-stop-daemon \
+	#	--stop \
+	#	--pidfile "$pidfile"
+
+	pkill -9 -G "local-recall"
+	eend 0
+}

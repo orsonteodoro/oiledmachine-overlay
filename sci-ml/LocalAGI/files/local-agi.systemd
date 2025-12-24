@@ -1,0 +1,25 @@
+[Unit]
+Description=LocalRecall Service
+After=network-online.target
+
+[Service]
+User=local-recall
+Group=local-recall
+ExecStart=/usr/bin/local-recall-start-server
+Restart=always
+RestartSec=3
+#
+# TODO: test settings
+#
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+#
+# ProtectHome=true # ID
+# ProtectSystem=full # ID
+# ProtectProc=noaccess # ID
+# PrivateDevices=true # ID
+# RestrictRealtime=true # DoS
+
+[Install]
+WantedBy=default.target

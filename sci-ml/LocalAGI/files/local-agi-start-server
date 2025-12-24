@@ -1,0 +1,12 @@
+#!/bin/bash
+
+ARGS=( "${@}" )
+
+main() {
+	cd "/opt/local-recall"
+	source "/etc/conf.d/local-recall"
+	# TODO sandbox local-recall
+	./localrecall "${ARGS[@]}"
+}
+
+main
