@@ -198,6 +198,10 @@ src_prepare() {
 	sed -i -e "s|include \"JSBase.h\"|include <JavaScriptCore/JSBase.h>|g" \
 		$(grep -r -l -e "\"JSBase.h\"" "Source/JavaScriptCore/API") \
 		|| die
+
+	sed -i -e "s|include \"JSObjectRef.h\"|include <JavaScriptCore/JSObjectRef.h>|g" \
+		$(grep -r -l -e "\"JSObjectRef.h\"" "Source/JavaScriptCore/API") \
+		|| die
 }
 
 get_libc() {
