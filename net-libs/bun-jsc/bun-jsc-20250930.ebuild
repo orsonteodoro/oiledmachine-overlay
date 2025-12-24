@@ -101,6 +101,7 @@ BDEPEND+="
 DOCS=( "ReadMe.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
+#	"${FILESDIR}/${PN}-20250930-jsbase-h.patch"
 )
 
 _set_clang() {
