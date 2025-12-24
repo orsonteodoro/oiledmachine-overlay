@@ -4,6 +4,18 @@
 
 EAPI=8
 
+# TODO:
+#
+# Build gentoo/stage3 docker image with oiledmachine-overlay with bun ebuild to lower SIMD requirements
+#
+# Proposed prebuilts or changes
+#
+# bun-linux-armv8a-glibc with -march=armv8-a
+# bun-linux-armv8a-musl with -march=armv8-a
+# bun-linux-x86_64-sse2-glibc with -march=x86-64
+# bun-linux-x86_64-sse2-musl with -march=x86-64
+#
+
 CXX_STANDARD=23
 BROTLI_PV="1.1.0"
 NODEJS_PV="24.3.0"
