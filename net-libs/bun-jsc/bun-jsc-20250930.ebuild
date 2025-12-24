@@ -196,7 +196,7 @@ src_prepare() {
 	cmake_src_prepare
 
 	sed -i -e "s|include \"JSBase.h\"|include <JavaScriptCore/JSBase.h>|g" \
-		$(grep -l -e "\"JSBase.h\"" "Source/JavaScriptCore/API") \
+		$(grep -r -l -e "\"JSBase.h\"" "Source/JavaScriptCore/API") \
 		|| die
 }
 
