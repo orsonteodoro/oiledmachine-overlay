@@ -101,7 +101,6 @@ BDEPEND+="
 DOCS=( "ReadMe.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
-#	"${FILESDIR}/${PN}-20250930-jsbase-h.patch"
 )
 
 _set_clang() {
@@ -195,7 +194,10 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-#	touch "Source/JavaScriptCore/wasm/WasmOps.h" || die
+
+	sed -e "s|include \"JSBase.h\"|include <JavaScriptCore/JSBase.h>|g" \
+		$(grep -l -e "\"JSBase.h\"" "Source/JavaScriptCore/API") \
+		|| die
 }
 
 get_libc() {
