@@ -100,7 +100,7 @@ BDEPEND+="
 "
 DOCS=( "ReadMe.md" )
 PATCHES=(
-#	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
+	"${FILESDIR}/${PN}-20250930-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
 )
 
 _set_clang() {
@@ -184,7 +184,7 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	python-single-r1_pkg_setup
-	MAKEOPTS="-j1"
+	MAKEOPTS="-j1" # Prevent build scripts race condition
 }
 
 src_unpack() {
@@ -299,9 +299,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 src_compile() {
-	pushd "Source/JavaScriptCore/wasm" || die
+	pushd "Source/JavaScriptCore/wasm" >/dev/null 2>&1 || die
+	# There is a race issue that most of the time prevents this from running.
 		${EPYTHON} "generateWasmOpsHeader.py" "wasm.json" "${S}_build/JavaScriptCore/DerivedSources/WasmOps.h"
-	popd || die
+	popd >/dev/null 2>&1 || die
 	cmake_src_compile
 }
 
