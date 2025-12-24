@@ -373,7 +373,7 @@ Core threats
 * [8] Operationally working required for @system set, web browser dependencies, lightweight high value assets.  Optional for EOL software or heavy packages (+20 MLOC).
 * [9] DoS mitigation is offloaded to sysadmin
 * [10] Performance-critical and security-critical are mutually exclusive.  An analogy, the military checkpoints are guarded and slow flowing and not free flowing unchecked.  The memory corruption checks are not optimized out.
-* [11] A comprehensive isolation should be provided as default ON to isolate the crown jewels and crown jewel keys from network facing packages.  A presence of a Dockerfile may hint default ON necessity.
+* [11] A comprehensive isolation solution should be provided as default ON to isolate the crown jewels and crown jewel keys from network facing packages.  A presence of a Dockerfile may hint default ON necessity.
   - Isolation eras:  chroot (1979), MAC (early 2000s), virtualization (2000s), syscall isolation (2005), app sandboxes (mid 2000s), containers (2010s)
   - Input isolation (aka X11 sandboxing or Wayland) - mitigate keyboard snooping
   - File system isolation - mitigate sensitive file exfiltration
