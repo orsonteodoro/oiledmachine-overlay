@@ -53,7 +53,7 @@ RESTRICT="mirror"
 SLOT="0/${PV}"
 IUSE+="
 clang lto
-ebuild_revision_1
+ebuild_revision_2
 "
 
 REQUIRED_USE="
@@ -332,10 +332,10 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 	cp "${BUILD_DIR}/"*".h" "${ED}/${prefix}/include" || die
 	cp -r "${BUILD_DIR}/bin" "${ED}/${prefix}/bin" || die
 	cp "${BUILD_DIR}/"*".json" "${ED}/${prefix}" || die
-	find "${BUILD_DIR}/JavaScriptCore/DerivedSources/" -name "*.h" -exec sh -c "cp '\${1}' '${ED}/${prefix}/include/JavaScriptCore/\$(basename '\${1}')" sh {} \; || die
-	find "${BUILD_DIR}/JavaScriptCore/DerivedSources/" -name "*.json" -exec sh -c "cp '\${1}' '${ED}/${prefix}/$(basename '\${1}')" sh {} \; || die
-	find "${BUILD_DIR}/JavaScriptCore/Headers/JavaScriptCore/" -name "*.h" -exec cp {} "${ED}/${prefix}/include/JavaScriptCore/" \; || die
-	find "${BUILD_DIR}/JavaScriptCore/PrivateHeaders/JavaScriptCore/" -name "*.h" -exec cp {} "${ED}/${prefix}/include/JavaScriptCore/" \; || die
+	find "${BUILD_DIR}/JavaScriptCore/DerivedSources/" -name "*.h" -exec sh -c "cp \"\${1}\" \"${ED}/${prefix}/include/JavaScriptCore/\$(basename \"\${1}\")" sh {} \; || die
+	find "${BUILD_DIR}/JavaScriptCore/DerivedSources/" -name "*.json" -exec sh -c "cp \"\${1}\" \"${ED}/${prefix}/$(basename \"\${1}\")" sh {} \; || die
+	find "${BUILD_DIR}/JavaScriptCore/Headers/JavaScriptCore/" -name "*.h" -exec cp "{}" "${ED}/${prefix}/include/JavaScriptCore/" \; || die
+	find "${BUILD_DIR}/JavaScriptCore/PrivateHeaders/JavaScriptCore/" -name "*.h" -exec cp "{}" "${ED}/${prefix}/include/JavaScriptCore/" \; || die
 	cp -r "${BUILD_DIR}/WTF/Headers/wtf/" "${ED}/${prefix}/include" || die
 	cp -r "${BUILD_DIR}/bmalloc/Headers/bmalloc/" "${ED}/${prefix}/include" || die
 	mkdir -p "${ED}/${prefix}/Source/JavaScriptCore" || die
