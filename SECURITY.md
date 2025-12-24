@@ -356,11 +356,11 @@ Potential threats
 
 Core threats
 
-| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | BTF/RF | BI    | SM    | T     | DPH   | RP    | ISBX |
-| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---    | ---   | ---   | ---   | ---   | ---   | ---  |
-| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8]  | Y     | P [1] | P [3] | R [5] | B - C | Y    |
-| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y      | P [9] | P [2] | N     | N     | B [6] | N    |
-| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N      | P [9] | Y     | N     | N     | B [6] | N    |
+| Context                                  | ZC  | CE  | PE  | DoS  | DT  | ID  | SE  | UB  | MC  | AP  | PT [4] | HV  | FV  | IDEF | IPERMS | UMSI | LCI | DI  | BCF | BTF/RF | BI    | SM    | T     | DPH   | RP    | ISBX | IOOSP  | MI     | PLPM   |
+| ---                                      | --- | --- | --- | ---  | --- | --- | --- | --- | --- | --- | ---    | --- | --- | ---- | ---    | ---  | --- | --- | --- | ---    | ---   | ---   | ---   | ---   | ---   | ---  | ---    | ---    | ---    |
+| Required mitigation (this overlay)       | Y   | Y   | Y   | Y    | Y   | Y   | N   | Y   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | P [8]  | Y     | P [1] | P [3] | R [5] | B - C | Y    | Y [10] | R [11] | R [12] |
+| Required mitigation (distro overlay)     | N   | Y   | Y   | Y    | Y   | Y   | N   | N   | Y   | N   | N      | N   | N   | N    | Y      | N    | Y   | Y   | Y   | Y      | P [9] | P [2] | N     | N     | B [6] | N    | N      | N      |        |
+| Required mitigation (community overlays) | N   | N   | N   | N    | N   | N   | N   | N   | N   | N   | N      | N   | N   | N    | Y      | N    | Y   | N   | N   | N      | P [9] | Y     | N     | N     | B [6] | N    | N      | N      |        |
 
 * [1] Partial mitigation -- CPU - Yes, GPU - No
 * [2] Partial mitigation -- CPU - No, GPU - Yes
@@ -372,6 +372,23 @@ Core threats
       The sysadmin can choose between Retpoline or CET (5% performance penalty), the latter having the more higher mitigation score while both are mutually exclusive mitigation techniques.
 * [8] Operationally working required for @system set, web browser dependencies, lightweight high value assets.  Optional for EOL software or heavy packages (+20 MLOC).
 * [9] DoS mitigation is offloaded to sysadmin
+* [10] Performance-critical and security-critical are mutually exclusive.  An analogy, the military checkpoints are guarded and slow flowing and not free flowing unchecked.  The memory corruption checks are not optimized out.
+* [11] A comprehensive isolation should be provided as default on to isolate the crown jewels and crown jewel keys from network facing packages.  A presence of a Dockerfile may indicate default on necessity.
+  - Isolation eras:  chroot (1979), MAC (early 2000s), virtualization (2000s), syscall isolation (2005), app sandboxes (mid 2000s), containers (2010s)
+  - Input isolation - mitigate keyboard snooping (aka X11 sandboxing or Wayland)
+  - File system isolation - mitigate sensitive file exfiltration
+  - Memory isolation - mitigate sensitive memory exfiltration
+  - MAC isolation - mitigate file exfiltration, data tampering, privilege escalation (SELinux, Apparmor)
+  - Syscall isolation - mitigate memory exfiltration, shell code execution, privilege escalation (aka seccomp)
+* [12] Project maintainers that prevent adoption, security ignornant, possibly compromised, grifters of free software, ignoring community demands or narssistic, not following conventions, non LTS
+
+* A - A grade
+* B - B grade
+* C - C grade
+* D - D grade
+* F - F grade
+* P - Partially mitigated
+* R - Recognized as a threat but not actively mitigating
 
 * ZC - Zero Click vulnerability
 * CE - Code Execution and Shell Command Injection (SCI)
@@ -399,6 +416,9 @@ Core threats
 * T - Telemetry (Data Collection)
 * DPH - Debug Phone Home
 * ISBX - Improper Sanboxing
+* IOOSP - Inappropriate Over-Optimization on the Security-critical Perimeter
+* MI - Missing Isolation
+* PLPM - Problematic Lead Project Maintainer
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
 * NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI, MC.
