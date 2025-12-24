@@ -413,7 +413,7 @@ Core threats
 * BCF - Bad Compiler Flags
 * BTF/RF - Build Time Failure and Runtime Failure
 * BI - Build Issues (e.g. hard/soft lockups, worst case trashing, excessive build or link times)
-* SM - Software Mortality (Planned Obsolescence) that coerces non-free
+* SM - Software Mortality (Planned Obsolescence) that coerces non-free adoption
 * T - Telemetry (Data Collection)
 * DPH - Debug Phone Home
 * ISBX - Improper Sanboxing
