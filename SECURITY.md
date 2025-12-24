@@ -378,7 +378,7 @@ Core threats
   - Input isolation (aka X11 sandboxing or Wayland) - mitigate keyboard snooping
   - File system isolation - mitigate sensitive file exfiltration
     - DAC file/directory isolation (aka UNIX file permissions) - mitigate file exfiltration, data tampering, privilege escalation
-    - MAC file/directory isolation (aka SELinux, AppArmor) - mitigate file exfiltration, data tampering, privilege escalation
+    - MAC sensitive file/directory isolation (aka SELinux, AppArmor) - mitigate sensitive file exfiltration, data tampering, privilege escalation
   - Memory isolation - mitigate sensitive memory exfiltration
   - Syscall isolation (aka seccomp) - mitigate memory exfiltration, shell code execution, privilege escalation
 * [12] Project maintainers or gatekeepers that prevent portability, security ignornant, possibly compromised, grifters of free software, ignoring community demands or narssistic, not following conventions, non LTS
