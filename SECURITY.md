@@ -375,11 +375,11 @@ Core threats
 * [10] Performance-critical and security-critical are mutually exclusive.  An analogy, the military checkpoints are guarded and slow flowing and not free flowing unchecked.  The memory corruption checks are not optimized out.
 * [11] A comprehensive isolation should be provided as default on to isolate the crown jewels and crown jewel keys from network facing packages.  A presence of a Dockerfile may indicate default on necessity.
   - Isolation eras:  chroot (1979), MAC (early 2000s), virtualization (2000s), syscall isolation (2005), app sandboxes (mid 2000s), containers (2010s)
-  - Input isolation - mitigate keyboard snooping (aka X11 sandboxing or Wayland)
+  - Input isolation (aka X11 sandboxing or Wayland) - mitigate keyboard snooping
   - File system isolation - mitigate sensitive file exfiltration
   - Memory isolation - mitigate sensitive memory exfiltration
-  - MAC isolation - mitigate file exfiltration, data tampering, privilege escalation (SELinux, Apparmor)
-  - Syscall isolation - mitigate memory exfiltration, shell code execution, privilege escalation (aka seccomp)
+  - MAC isolation (aka SELinux, AppArmor) - mitigate file exfiltration, data tampering, privilege escalation
+  - Syscall isolation (aka seccomp) - mitigate memory exfiltration, shell code execution, privilege escalation
 * [12] Project maintainers that prevent adoption, security ignornant, possibly compromised, grifters of free software, ignoring community demands or narssistic, not following conventions, non LTS
 
 * A - A grade
