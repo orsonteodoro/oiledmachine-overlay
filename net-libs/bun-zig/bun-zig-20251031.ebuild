@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U22
+
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
@@ -15,7 +17,7 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
-	20 # Version sensitive
+	20 # Version sensitive.  Upstream uses 20.1.2
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
@@ -98,7 +100,7 @@ DEPEND+="
 	${RDEPEND}
 	app-arch/zstd[static-libs]
 	dev-libs/libxml2[static-libs]
-	sys-libs/zlib[static-libs]
+	>=sys-libs/zlib-1.2.11[static-libs]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.15
@@ -267,7 +269,8 @@ einfo "Added ${x} support"
 
 get_maxrss() {
 	local debug=$(usex debug "debug" "release")
-	echo ${MAXRSS["${ARCH}-${debug}"]}
+	local v=${MAXRSS["${ARCH}-${debug}"]}
+	[[ -z "${v}" ]] && die "ARCH=${ARCH} is not supported"
 }
 
 src_configure() {
