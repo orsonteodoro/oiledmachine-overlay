@@ -99,12 +99,15 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	app-arch/zstd[static-libs]
+	app-arch/zstd:=
 	dev-libs/libxml2[static-libs]
+	dev-libs/libxml2:=
 	>=sys-libs/zlib-1.2.11[static-libs]
+	sys-libs/zlib:=
 "
 BDEPEND+="
-	>=dev-build/cmake-3.15
 	$(gen_depend_llvm)
+	>=dev-build/cmake-3.15
 "
 DOCS=( "README.md" )
 PATCHES=(
