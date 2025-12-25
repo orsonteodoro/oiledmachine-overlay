@@ -14,7 +14,8 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	20 # 19 fails
+	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	20 # Version sensitive
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
@@ -23,7 +24,7 @@ LLVM_TARGETS=(
 	"llvm_targets_AArch64"
 )
 
-inherit check-compiler-switch cmake dhms flag-o-matic-om libcxx-slot libstdcxx-slot
+inherit check-compiler-switch cmake dhms flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -91,9 +92,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.15
-	clang? (
-		$(gen_depend_llvm)
-	)
+	$(gen_depend_llvm)
 "
 DOCS=( "README.md" )
 PATCHES=(
@@ -159,13 +158,8 @@ _set_cxx() {
 eerror "Enable the clang USE flag or remove clang from CC/CXX"
 		die
 	fi
-	if use clang ; then
-einfo "Switching to Clang"
-		_set_clang
-	else
-einfo "Switching to GCC"
-		_set_gcc
-	fi
+	_set_clang # Make llvm-config visible
+	_set_gcc # Force gcc
 }
 
 pkg_setup() {
@@ -174,6 +168,7 @@ pkg_setup() {
 	_set_cxx
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	export MAKEOPTS="-j1"
 }
 
 src_unpack() {
@@ -205,6 +200,55 @@ eerror "ARCH=${ARCH} is not supported"
 	sed -i -e "s|AArch64;AMDGPU;ARM;AVR;BPF;Hexagon;Lanai;Mips;MSP430;NVPTX;PowerPC;RISCV;Sparc;SystemZ;VE;WebAssembly;X86;XCore|${llvm_targets}|g" \
 		"cmake/Findllvm.cmake" \
 		|| die
+
+	local L=(
+		"AArch64"
+		"AMDGPU"
+		"ARC"
+		"ARM"
+		"AVR"
+		"BPF"
+		"CSKY"
+		"Hexagon"
+		"Lanai"
+		"LoongArch"
+		"M68k"
+		"Mips"
+		"MSP430"
+		"NVPTX"
+		"PowerPC"
+		"RISCV"
+		"Sparc"
+		"SPIRV"
+		"SystemZ"
+		"VE"
+		"WebAssembly"
+		"X86"
+		"XCore"
+		"Xtensa"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ! has "llvm_targets_${x}" "${IUSE}" ; then
+einfo "Removing ${x} support"
+			sed -i \
+				-e "/LLVMInitialize${x}Target/d" \
+				-e "/LLVMInitialize${x}Asm/d" \
+				"src/codegen/llvm.zig" \
+				"src/codegen/llvm/bindings.zig" \
+				|| die
+		else
+			if ! use "llvm_targets_${x}" ; then
+einfo "Removing ${x} support"
+				sed -i \
+					-e "/LLVMInitialize${x}Target/d" \
+					-e "/LLVMInitialize${x}Asm/d" \
+					"src/codegen/llvm.zig" \
+					"src/codegen/llvm/bindings.zig" \
+					|| die
+			fi
+		fi
+	done
 }
 
 src_configure() {
@@ -226,6 +270,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DZIG_STATIC_ZSTD=ON
 		-DZIG_NO_LIB=ON
 	)
+
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER_LAUNCHER="ccache"
+		)
+	fi
 
 	cmake_src_configure
 }
