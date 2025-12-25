@@ -159,7 +159,7 @@ eerror "Enable the clang USE flag or remove clang from CC/CXX"
 		die
 	fi
 	_set_clang # Make llvm-config visible
-	_set_gcc # Force gcc
+	_set_gcc # Force gcc to avoid atomics errors
 }
 
 pkg_setup() {
