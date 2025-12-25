@@ -229,8 +229,8 @@ eerror "ARCH=${ARCH} is not supported"
 	)
 	local x
 	for x in "${L[@]}" ; do
-		if ! has "llvm_targets_${x}" "${IUSE}" ; then
-einfo "Removing ${x} support"
+		if ! has "llvm_targets_${x}" ${IUSE} ; then
+einfo "Removing ${x} support (1)"
 			sed -i \
 				-e "/LLVMInitialize${x}Target/d" \
 				-e "/LLVMInitialize${x}Asm/d" \
@@ -239,13 +239,15 @@ einfo "Removing ${x} support"
 				|| die
 		else
 			if ! use "llvm_targets_${x}" ; then
-einfo "Removing ${x} support"
+einfo "Removing ${x} support (2)"
 				sed -i \
 					-e "/LLVMInitialize${x}Target/d" \
 					-e "/LLVMInitialize${x}Asm/d" \
 					"src/codegen/llvm.zig" \
 					"src/codegen/llvm/bindings.zig" \
 					|| die
+			else
+einfo "Added ${x} support"
 			fi
 		fi
 	done
