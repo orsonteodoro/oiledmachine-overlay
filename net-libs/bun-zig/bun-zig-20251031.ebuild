@@ -286,10 +286,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo # Force -O2
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/bun-zig"
 		-DZIG_MAXRSS=$(get_maxrss)
+		-DZIG_NO_LIB=ON
 		-DZIG_RELEASE_SAFE=$(usex debug)
 		-DZIG_STATIC_LLVM=OFF
 		-DZIG_STATIC_ZSTD=ON
-		-DZIG_NO_LIB=ON
 	)
 
 	cmake_src_configure
