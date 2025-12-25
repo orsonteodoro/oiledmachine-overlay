@@ -24,6 +24,16 @@ LLVM_TARGETS=(
 	"llvm_targets_AArch64"
 )
 
+declare -A MAXRSS=(
+	["amd64-debug"]="21000000000"
+	["amd64-debug-llvm"]="21000000000"
+	["amd64-release"]="21000000000"
+	["arm64-debug"]="44918199637"
+	["arm64-release"]="44918199637"
+	["riscv-debug"]="68719476736"
+	["riscv-release"]="68719476736"
+)
+
 inherit check-compiler-switch cmake dhms flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -54,8 +64,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-	${LLVM_TARGETS[@]}
-	clang
+${LLVM_TARGETS[@]}
+clang debug
 "
 REQUIRED_USE="
 	clang
@@ -97,6 +107,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20251031-llvm-non-fatal.patch"
+	"${FILESDIR}/${PN}-20251031-maxrss.patch"
 )
 
 _set_clang() {
@@ -169,6 +180,7 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	export MAKEOPTS="-j1"
+ewarn "Total virtual memory should be 32 GiB to build"
 }
 
 src_unpack() {
@@ -253,6 +265,11 @@ einfo "Added ${x} support"
 	done
 }
 
+get_maxrss() {
+	local debug=$(usex debug "debug" "release")
+	echo ${MAXRSS["${ARCH}-${debug}"]}
+}
+
 src_configure() {
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -268,6 +285,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo # Force -O2
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/bun-zig"
+		-DZIG_MAXRSS=$(get_maxrss)
+		-DZIG_RELEASE_SAFE=$(usex debug)
 		-DZIG_STATIC_LLVM=OFF
 		-DZIG_STATIC_ZSTD=ON
 		-DZIG_NO_LIB=ON
