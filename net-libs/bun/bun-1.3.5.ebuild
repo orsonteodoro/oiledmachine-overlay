@@ -6,7 +6,7 @@ EAPI=8
 
 # TODO:
 #
-# Build gentoo/stage3 docker image with oiledmachine-overlay with bun ebuild to lower SIMD requirements
+# Build gentoo/stage3 docker image with oiledmachine-overlay with bun ebuild to lower gimmicky SIMD requirements
 #
 # Proposed prebuilts or changes
 #
@@ -19,6 +19,7 @@ EAPI=8
 CXX_STANDARD=23
 BROTLI_PV="1.1.0"
 NODEJS_PV="24.3.0"
+NODE_SLOT="${NODEJS_PV%%.*}"
 
 BORINGSSL_COMMIT="f1ffd9e83d4f5c28a9c70d73f9a4e6fcf310062f"
 C_ARES_COMMIT="3ac47ee46edd8ea40370222f91613fc16c434853"
@@ -63,7 +64,6 @@ CPU_FLAGS_ARM=(
 )
 
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_3dnowa"
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_bmi"
 	"cpu_flags_x86_bmi2"
@@ -76,11 +76,12 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_pclmul"
 	"cpu_flags_x86_popcnt"
 	"cpu_flags_x86_rdrnd"
-	"cpu_flags_x86_sse4a"
+	"cpu_flags_x86_sse"
+	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse4_2"
 )
 
-inherit cmake dep-prepare git-r3 libcxx-slot libstdcxx-slot
+inherit check-compiler-switch cmake dep-prepare dhms edo git-r3 libcxx-slot libstdcxx-slot node
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -179,23 +180,28 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-lto release-safe
+bootstrap-without-bun clang lto release-safe
 "
 REQUIRED_USE="
+	clang
+	clang? (
+		^^ (
+			${LIBCXX_COMPAT_STDCXX23[@]}
+		)
+	)
+
 	cpu_flags_x86_cx16? (
 		cpu_flags_x86_mmx
 	)
 	cpu_flags_x86_fxsr? (
 		cpu_flags_x86_mmx
 	)
-	cpu_flags_x86_sse4_2? (
+	cpu_flags_x86_sse2? (
 		cpu_flags_x86_mmx
 	)
 
-	cpu_flags_x86_sse4a? (
-		cpu_flags_x86_mmx
-		cpu_flags_x86_lzcnt
-		cpu_flags_x86_popcnt
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse2
 	)
 
 	cpu_flags_x86_avx2? (
@@ -218,13 +224,53 @@ REQUIRED_USE="
 		cpu_flags_arm_fp16
 	)
 "
+gen_depend_llvm() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				llvm-core/clang:=
+				llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				llvm-core/llvm:=
+				llvm-core/lld:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				llvm-core/lld:=
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	net-libs/bun-jsc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	app-arch/xz-utils
+	dev-libs/libxml2
+	dev-libs/openssl
+	dev-vcs/git
+	sys-libs/zlib
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=net-libs/nodejs-${NODEJS_PV}:${NODE_SLOT}
+	>=dev-build/cmake-3.30
+	app-arch/unzip
+	dev-lang/go
+	dev-lang/python
+	net-misc/curl
+	net-misc/wget
+	virtual/pkgconfig
+	clang? (
+		$(gen_depend_llvm)
+	)
+	|| (
+		>=dev-lang/rust-1.92
+		>=dev-lang/rust-bin-1.92
+	)
+	|| (
+		=net-libs/bun-zig-20251031*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	)
+	net-libs/bun-zig:=
 "
 DOCS=( "README.md" )
 PATCHES=(
@@ -232,9 +278,86 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.3.5-offline.patch"
 )
 
+_set_clang() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${s}" ; then
+			export CC="${CHOST}-clang-${s}"
+			export CXX="${CHOST}-clang++-${s}"
+			export LLVM_SLOT="${s}"
+			break
+		fi
+	done
+	if [[ -z "${CC}" ]] ; then
+eerror "Choose a LLVM slot for C++ standard ${CXX_STANDARD}.  Valid values:  ${LLVM_COMPAT[@]/#/llvm_slot_}"
+eerror "Enable a llvm_slot_<x> flag."
+		die
+	fi
+
+einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH=${PATH} (after)"
+
+	if ! which "${CC}" ; then
+eerror "${CC} is not found.  Emerge the compiler slot."
+		die
+	fi
+	export CPP="${CC} -E"
+	export AR="llvm-ar"
+	export NM="llvm-nm"
+	export OBJCOPY="llvm-objcopy"
+	export OBJDUMP="llvm-objdump"
+	export READELF="llvm-readelf"
+	export STRIP="llvm-strip"
+	export GCC_FLAGS=""
+	strip-unsupported-flags
+	${CC} --version || die
+}
+
+_set_gcc() {
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
+	export AR="ar"
+	export NM="nm"
+	export OBJCOPY="objcopy"
+	export OBJDUMP="objdump"
+	export READELF="readelf"
+	export STRIP="strip"
+	export GCC_FLAGS="-fno-allow-store-data-races"
+	strip-unsupported-flags
+}
+
+_set_cxx() {
+	if tc-is-clang && ! use clang ; then
+eerror "Enable the clang USE flag or remove clang from CC/CXX"
+		die
+	fi
+	if [[ ${MERGE_TYPE} != "binary" ]] ; then
+	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
+	# Based on D 12, U 22, U 24
+	# D12 - gcc 12.2, clang 14.0
+	# U22 - gcc 11.2, clang 14.0
+	# U24 - gcc 13.2, clang 18.0
+		if use clang ; then
+			_set_clang
+		else
+			_set_gcc
+		fi
+	fi
+}
+
 pkg_setup() {
+	dhms_start
+	check-compiler-switch_start
+	_set_cxx
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	node_setup
 }
 
 src_unpack() {
@@ -263,7 +386,7 @@ src_prepare() {
 	local zig_arch=$(get_zig_arch)
 	dep_prepare_mv "${WORKDIR}/bootstrap-${zig_arch}-linux-musl" "${S}/cmake/vendor/zig"
 	dep_prepare_mv "${WORKDIR}/boringssl-${BORINGSSL_COMMIT}" "${S}/cmake/vendor/boringssl"
-	dep_prepare_mv "${WORKDIR}/brotli-v${BROTLI_PV}" "${S}/cmake/vendor/brotli"
+	dep_prepare_mv "${WORKDIR}/brotli-${BROTLI_PV}" "${S}/cmake/vendor/brotli"
 	dep_prepare_mv "${WORKDIR}/c-ares-${C_ARES_COMMIT}" "${S}/cmake/vendor/c-ares"
 	dep_prepare_mv "${WORKDIR}/HdrHistogram_c-${HDRHISTOGRAM_C_COMMIT}" "${S}/cmake/vendor/HdrHistogram_c"
 	dep_prepare_mv "${WORKDIR}/highway-${HIGHWAY_COMMIT}" "${S}/cmake/vendor/highway"
@@ -273,11 +396,12 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/lol-html-${LOL_HTML_COMMIT}" "${S}/cmake/vendor/lol-html"
 	dep_prepare_mv "${WORKDIR}/ls-hpack-${LS_HPACK_COMMIT}" "${S}/cmake/vendor/ls-hpack"
 	dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_COMMIT}" "${S}/cmake/vendor/mimalloc"
-	dep_prepare_mv "${WORKDIR}/node-v${NODE_PV}" "${S}/cmake/vendor/"
+#	dep_prepare_mv "${WORKDIR}/node-v${NODEJS_PV}" "${S}/cmake/vendor/" # TODO finish
 	dep_prepare_mv "${WORKDIR}/picohttpparser-${PICOHTTPPARSER_COMMIT}" "${S}/cmake/vendor/picohttpparser"
 	dep_prepare_mv "${WORKDIR}/tinycc-${TINYCC_COMMIT}" "${S}/cmake/vendor/tinycc"
 	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/vendor/zlib"
 	dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/cmake/vendor/zstd"
+	cmake_src_prepare
 }
 
 get_march() {
@@ -292,10 +416,23 @@ get_mcpu() {
 	echo "${CFLAGS}" | grep -E -e "-mcpu=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
 }
 
-src_configure() {
+_configure_cmake() {
+	local _ABI="${ABI}"
+	unset ABI
+
+	local libc=""
+	if use elibc_glibc ; then
+		libc="gnu"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+eerror "ELIBC=${ELIBC} is not supported."
+		die
+	fi
+
 	local mycmakeargs=(
+		-DABI="${libc}"
 		-DENABLE_LTO=$(usex lto "ON" "OFF")
-		-DENABLE_SIMD=$(usex simd "ON" "OFF")
 		-DWEBKIT_LOCAL=ON
 
 	# Hints for fallback defaults
@@ -311,7 +448,6 @@ src_configure() {
 		-DUSE_V8_4A=$(usex cpu_flags_arm_v8_4a)
 		-DUSE_V8_6A=$(usex cpu_flags_arm_v8_6a)
 
-		-DUSE_3DNOWA=$(usex cpu_flags_x86_3dnowa)
 		-DUSE_AVX2=$(usex cpu_flags_x86_avx2)
 		-DUSE_BMI=$(usex cpu_flags_x86_bmi)
 		-DUSE_BMI2=$(usex cpu_flags_x86_bmi2)
@@ -324,7 +460,8 @@ src_configure() {
 		-DUSE_PCLMUL=$(usex cpu_flags_x86_pclmul)
 		-DUSE_POPCNT=$(usex cpu_flags_x86_popcnt)
 		-DUSE_RDRND=$(usex cpu_flags_x86_rdrnd)
-		-DUSE_SSE4A=$(usex cpu_flags_x86_sse4a)
+		-DUSE_SSE=$(usex cpu_flags_x86_sse)
+		-DUSE_SSE2=$(usex cpu_flags_x86_sse2)
 		-DUSE_SSE4_2=$(usex cpu_flags_x86_sse4_2)
 	)
 	local march=$(get_march)
@@ -358,17 +495,55 @@ src_configure() {
 			-DDEFAULT_ZCPU="${mcpu/-/_}"
 		)
 	fi
-
 	cmake_src_configure
 }
 
+_configure_zig() {
+	if [[ -e "/usr/bin/zig" ]] ; then
+		ZIG="/usr/bin/zig"
+	else
+		ZIG=$(ls -1 "/opt/zig-bin-"*"/zig" | sort -V | tail -n 1)
+	fi
+	"${ZIG}" version || die
+}
+
+src_configure() {
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		allow_lto=0
+	fi
+
+	if use bootstrap-without-bun ; then
+		_configure_zig
+	else
+		_configure_cmake
+	fi
+}
+
 src_compile() {
-	cmake_src_compile
+	if use bootstrap-without-bun ; then
+		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
+einfo "Building with zig"
+		edo "${ZIG}" build -Drelease-fast
+	else
+einfo "Building with bun"
+		cmake_src_compile
+	fi
+}
+
+src_test() {
+	if use bootstrap-without-bun ; then
+		"./zig-out/bin/bun" -e "console.log('hello from bun')" || die
+	fi
 }
 
 src_install() {
+	dhms_end
 	docinto "licenses"
 	dodoc "LICENSE.md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-REVDEP:  LocalAGI, lobe-chat
