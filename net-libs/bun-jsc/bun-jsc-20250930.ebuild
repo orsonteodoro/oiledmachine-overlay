@@ -163,17 +163,10 @@ _set_cxx() {
 eerror "Enable the clang USE flag or remove clang from CC/CXX"
 		die
 	fi
-	if [[ ${MERGE_TYPE} != "binary" ]] ; then
-	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
-	# Based on D 12, U 22, U 24
-	# D12 - gcc 12.2, clang 14.0
-	# U22 - gcc 11.2, clang 14.0
-	# U24 - gcc 13.2, clang 18.0
-		if use clang ; then
-			_set_clang
-		else
-			_set_gcc
-		fi
+	if use clang ; then
+		_set_clang
+	else
+		_set_gcc
 	fi
 }
 
