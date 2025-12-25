@@ -14,7 +14,7 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
@@ -61,6 +61,9 @@ REQUIRED_USE="
 	|| (
 		${LLVM_TARGETS[@]}
 	)
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 "
 gen_depend_llvm() {
 	local s
@@ -94,6 +97,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/${PN}-20251031-llvm-non-fatal.patch"
 )
 
 _set_clang() {
@@ -156,8 +160,10 @@ eerror "Enable the clang USE flag or remove clang from CC/CXX"
 		die
 	fi
 	if use clang ; then
+einfo "Switching to Clang"
 		_set_clang
 	else
+einfo "Switching to GCC"
 		_set_gcc
 	fi
 }
@@ -208,6 +214,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		allow_lto=0
 	fi
+
+	llvm-config --version || die
 
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo # Force -O2

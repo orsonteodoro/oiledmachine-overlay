@@ -1,0 +1,26 @@
+--- a/CMakeLists.txt.orig	2025-12-25 09:15:31.913957750 -0800
++++ b/CMakeLists.txt	2025-12-25 09:16:28.555062582 -0800
+@@ -133,9 +133,9 @@ else()
+     set(ZIG_SYSTEM_LIBCXX "stdc++" CACHE STRING "system libcxx name for build.zig")
+ endif()
+ 
+-find_package(llvm 20)
+-find_package(clang 20)
+-find_package(lld 20)
++find_package(llvm)
++find_package(clang)
++find_package(lld)
+ 
+ if(ZIG_STATIC_ZLIB)
+     if (MSVC)
+--- a/cmake/Findllvm.cmake.orig	2025-12-25 09:17:29.399266201 -0800
++++ b/cmake/Findllvm.cmake	2025-12-25 09:18:08.890428199 -0800
+@@ -40,7 +40,7 @@ if(ZIG_USE_LLVM_CONFIG)
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+     get_filename_component(LLVM_CONFIG_DIR "${LLVM_CONFIG_EXE}" DIRECTORY)
+-    if("${LLVM_CONFIG_VERSION}" VERSION_LESS 20 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 21 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 21)
++    if(FALSE AND "${LLVM_CONFIG_VERSION}" VERSION_LESS 20 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 21 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 21)
+       # Save the error message, in case this is the last llvm-config we find
+       list(APPEND LLVM_CONFIG_ERROR_MESSAGES "expected LLVM 20.x but found ${LLVM_CONFIG_VERSION} using ${LLVM_CONFIG_EXE}")
+ 
