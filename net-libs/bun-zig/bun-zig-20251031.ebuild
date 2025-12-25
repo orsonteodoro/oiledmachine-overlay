@@ -306,7 +306,7 @@ src_install() {
 	dhms_end
 	cmake_src_install
 	docinto "licenses"
-	dodoc "LICENSE.md"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
