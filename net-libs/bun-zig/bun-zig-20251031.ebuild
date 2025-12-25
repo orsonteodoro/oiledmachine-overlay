@@ -271,12 +271,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DZIG_NO_LIB=ON
 	)
 
-	if [[ "${FEATURES}" =~ "ccache" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER_LAUNCHER="ccache"
-		)
-	fi
-
 	cmake_src_configure
 }
 
