@@ -271,6 +271,7 @@ get_maxrss() {
 	local debug=$(usex debug "debug" "release")
 	local v=${MAXRSS["${ARCH}-${debug}"]}
 	[[ -z "${v}" ]] && die "ARCH=${ARCH} is not supported"
+	echo "${v}"
 }
 
 src_configure() {
@@ -285,10 +286,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	llvm-config --version || die
 
+	local maxrss=$(get_maxrss)
+einfo "MAXRSS:  ${maxrss}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo # Force -O2
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/bun-zig"
-		-DZIG_MAXRSS=$(get_maxrss)
+		-DZIG_MAXRSS=${maxrss}
 		-DZIG_NO_LIB=ON
 		-DZIG_RELEASE_SAFE=$(usex debug)
 		-DZIG_STATIC_LLVM=OFF
