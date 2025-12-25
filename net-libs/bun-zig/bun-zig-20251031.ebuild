@@ -23,7 +23,7 @@ LLVM_TARGETS=(
 	"llvm_targets_AArch64"
 )
 
-inherit check-compiler-switch cmake dhms libcxx-slot libstdcxx-slot
+inherit check-compiler-switch cmake dhms flag-o-matic-om libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -214,6 +214,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		allow_lto=0
 	fi
+
+	fix_mb_len_max
 
 	llvm-config --version || die
 
