@@ -326,7 +326,11 @@ einfo "BUILD_DIR:  ${BUILD_DIR}"
 	cp -r "${BUILD_DIR}/bin" "${ED}/${prefix}/bin" || die
 	cp "${BUILD_DIR}/"*".json" "${ED}/${prefix}" || die
 	find "${BUILD_DIR}/JavaScriptCore/DerivedSources/" -name "*.h" -exec sh -c "cp \"\${1}\" \"${ED}/${prefix}/include/JavaScriptCore/\"\$(basename \"\${1}\")" sh {} \; || die
+
+# FIXME:
+# cp: cannot create regular file '/var/tmp/portage/net-libs/bun-jsc-20250930/image//usr/lib/bun-jsc/20250930//var/tmp/portage/net-libs/bun-jsc-20250930/work/bun-jsc-20250930_build/JavaScriptCore/DerivedSources/CombinedDomains.json': No such file or directory
 	find "${BUILD_DIR}/JavaScriptCore/DerivedSources/" -name "*.json" -exec sh -c "cp \"\${1}\" \"${ED}/${prefix}/\"$(basename \"\${1}\")" sh {} \; || die
+
 	find "${BUILD_DIR}/JavaScriptCore/Headers/JavaScriptCore/" -name "*.h" -exec cp "{}" "${ED}/${prefix}/include/JavaScriptCore/" \; || die
 	find "${BUILD_DIR}/JavaScriptCore/PrivateHeaders/JavaScriptCore/" -name "*.h" -exec cp "{}" "${ED}/${prefix}/include/JavaScriptCore/" \; || die
 	cp -r "${BUILD_DIR}/WTF/Headers/wtf/" "${ED}/${prefix}/include" || die
