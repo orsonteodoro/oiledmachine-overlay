@@ -9,7 +9,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="jit network untrusted-data"
 
 CXX_STANDARD=23
-INSTALL_PREFIX="/usr/lib/bun-jsc"
+INSTALL_PREFIX="/usr/lib/bun-jsc/${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{10..12} )
 USE_RUBY=" ruby32 ruby33"
 
@@ -50,10 +50,10 @@ LICENSE="
 	LGPL-2
 "
 RESTRICT="mirror"
-SLOT="0/${PV}"
+SLOT="${PV%%.*}"
 IUSE+="
 clang lto
-ebuild_revision_2
+ebuild_revision_3
 "
 
 REQUIRED_USE="
