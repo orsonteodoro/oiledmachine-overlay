@@ -6,15 +6,23 @@ EAPI=8
 
 # Bootstrap plan (Tentative):
 
-# Build Bun 1.2.19 or earlier to build generic Bun with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) with Bun's Zig.
-# Build Bun latest stable with generic Bun.
+# Build Bun 1.1.26 with build Bun's Zig for generic Bun.
+# Build 1 or more generic Buns with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) with Bun's Zig towards latest stable bun.
+# Build Bun latest stable with generic Bun as feature complete Bun.
 # Boostrapping Bun is similar to bootstrapping Rust where the previous version bootstraps to next version.
+
+# 1.1.26    Bun's Zig to generic Bun 1.1.26
+# M         generic Bun 1.2.26 -> M generic Bun
+# ...
+# N         generic Bun M -> Bun N generic Bun
+# 1.3.35    generic Bun N to feature complete Bun 1.3.5.  Steps will merged if possible to save time.
 
 # Deps versions:
 # https://github.com/oven-sh/bun/tree/bun-v1.3.5/cmake/targets
 # https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupZig.cmake#L23
 # https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupWebKit.cmake#L5
 # https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/Options.cmake#L163 # NODEJS_VERSION
+# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupBun.cmake#L9 # Minimum Bun bootstrap seed version
 
 CXX_STANDARD=23
 
@@ -25,7 +33,7 @@ BUN_ZIG_SLOT="20251031"
 NODE_PV="24.3.0"
 NODE_SLOT="${NODE_PV%%.*}"
 
-BUN_SEED_SLOT="1.2-20250712"
+BUN_SEED_SLOT="1.1-20240816"
 
 BORINGSSL_COMMIT="f1ffd9e83d4f5c28a9c70d73f9a4e6fcf310062f"
 C_ARES_COMMIT="3ac47ee46edd8ea40370222f91613fc16c434853"
