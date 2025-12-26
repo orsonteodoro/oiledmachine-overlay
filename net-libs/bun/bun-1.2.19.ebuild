@@ -10,33 +10,33 @@ EAPI=8
 # Build Bun latest stable with generic Bun.
 
 # Deps versions:
-# https://github.com/oven-sh/bun/tree/bun-v1.3.5/cmake/targets
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupZig.cmake#L23
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupWebKit.cmake#L5
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/Options.cmake#L163 # NODEJS_VERSION
+# https://github.com/oven-sh/bun/tree/bun-v1.2.19/cmake/targets
+# https://github.com/oven-sh/bun/blob/bun-v1.2.19/cmake/tools/SetupZig.cmake#L23
+# https://github.com/oven-sh/bun/blob/bun-v1.2.19/cmake/tools/SetupWebKit.cmake#L5
+# https://github.com/oven-sh/bun/blob/bun-v1.2.19/cmake/Options.cmake#L163 # NODEJS_VERSION
 
 CXX_STANDARD=23
 
 BROTLI_PV="1.1.0"
-BUN_JSC_SLOT="20250930"
+BUN_JSC_SLOT="20250712"
 BUN_SLOT=$(ver_cut 1-2 ${PV})
-BUN_ZIG_SLOT="20251031"
+BUN_ZIG_SLOT="20250610"
 NODE_PV="24.3.0"
 NODE_SLOT="${NODE_PV%%.*}"
 
-BORINGSSL_COMMIT="f1ffd9e83d4f5c28a9c70d73f9a4e6fcf310062f"
-C_ARES_COMMIT="3ac47ee46edd8ea40370222f91613fc16c434853"
-HDRHISTOGRAM_C_COMMIT="be60a9987ee48d0abf0d7b6a175bad8d6c1585d1"
-HIGHWAY_COMMIT="ac0d5d297b13ab1b89f48484fc7911082d76a93f"
-LIBARCHIVE_COMMIT="9525f90ca4bd14c7b335e2f8c84a4607b0af6bdf"
-LIBDEFLATE_COMMIT="c8c56a20f8f621e6a966b716b31f1dedab6a41e3"
-LIBUV_COMMIT="f3ce527ea940d926c40878ba5de219640c362811"
-LOL_HTML_COMMIT="d64457d9ff0143deef025d5df7e8586092b9afb7"
+BORINGSSL_COMMIT="7a5d984c69b0c34c4cbb56c6812eaa5b9bef485c"
+C_ARES_COMMIT="d3a507e920e7af18a5efb7f9f1d8044ed4750013"
+HDRHISTOGRAM_C_COMMIT="652d51bcc36744fd1a6debfeb1a8a5f58b14022c"
+HIGHWAY_COMMIT="12b325bc1793dee68ab2157995a690db859fe9e0"
+LIBARCHIVE_COMMIT="898dc8319355b7e985f68a9819f182aaed61b53a"
+LIBDEFLATE_COMMIT="96836d7d9d10e3e0d53e6edb54eb908514e336c4"
+LIBUV_COMMIT="da527d8d2a908b824def74382761566371439003"
+LOL_HTML_COMMIT="67f1d4ffd6b74db7e053fb129dcce620193c180d"
 LS_HPACK_COMMIT="8905c024b6d052f083a3d11d0a169b3c2735c8a1"
 MIMALLOC_COMMIT="1beadf9651a7bfdec6b5367c380ecc3fe1c40d1a"
 PICOHTTPPARSER_COMMIT="066d2b1e9ab820703db0837a7255d92d30f0c9f5"
 TINYCC_COMMIT="29985a3b59898861442fa3b43f663fc1af2591d7"
-ZIG_COMMIT="c1423ff3fc7064635773a4a4616c5bf986eb00fe"
+ZIG_COMMIT="0a0120fa92cd7f6ab244865688b351df634f0707"
 ZLIB_COMMIT="886098f3f339617b4243b286f5ed364b9989e245"
 ZSTD_COMMIT="f8745da6ff1ad1e7bab384bd1f9d742439278e99"
 
@@ -264,7 +264,6 @@ BDEPEND+="
 		net-libs/bun-zig:${BUN_ZIG_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	net-libs/bun-zig:=
-	=net-libs/bun-1.2.19
 "
 DOCS=( "README.md" )
 PATCHES=(
