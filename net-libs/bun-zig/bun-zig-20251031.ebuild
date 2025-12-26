@@ -7,6 +7,7 @@ EAPI=8
 # U22
 
 CXX_STANDARD=17
+INSTALL_PREFIX="/usr/lib/bun-zig/${PV%%.*}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -64,11 +65,11 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="${PV%.*}"
+SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_TARGETS[@]}
 clang debug
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	clang
@@ -294,7 +295,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "MAXRSS:  ${maxrss}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo # Force -O2
-		-DCMAKE_INSTALL_PREFIX="/usr/lib/bun-zig/${PV%.*}"
+		-DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
 		-DZIG_MAXRSS=${maxrss}
 		-DZIG_NO_LIB=ON
 		-DZIG_RELEASE_SAFE=$(usex debug)
@@ -315,7 +316,7 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
-	insinto "/usr/lib/bun-zig/${PV%.*}/bin"
+	insinto "${INSTALL_PREFIX}/bin"
 	doins -r "${S}/lib/"
 }
 
