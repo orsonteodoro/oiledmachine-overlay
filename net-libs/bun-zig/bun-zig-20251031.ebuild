@@ -68,6 +68,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_TARGETS[@]}
 clang debug
+ebuild_revision_1
 "
 REQUIRED_USE="
 	clang
@@ -313,6 +314,8 @@ src_install() {
 	cmake_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+	insinto "/usr/bin/bun-zig"
+	doins -r "${S}/lib/"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
