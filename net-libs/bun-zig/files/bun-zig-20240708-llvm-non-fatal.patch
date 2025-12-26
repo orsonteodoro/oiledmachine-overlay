@@ -1,0 +1,32 @@
+diff '--color=auto' -urp zig-131a009ba2eb127a3447d05b9e12f710429aa5ee.orig/cmake/Findllvm.cmake zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/cmake/Findllvm.cmake
+--- zig-131a009ba2eb127a3447d05b9e12f710429aa5ee.orig/cmake/Findllvm.cmake	2024-07-08 21:08:14.000000000 -0700
++++ zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/cmake/Findllvm.cmake	2025-12-26 15:46:18.642111628 -0800
+@@ -40,7 +40,7 @@ if(ZIG_USE_LLVM_CONFIG)
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+     get_filename_component(LLVM_CONFIG_DIR "${LLVM_CONFIG_EXE}" DIRECTORY)
+-    if("${LLVM_CONFIG_VERSION}" VERSION_LESS 18 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 19 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 19)
++    if(FALSE AND "${LLVM_CONFIG_VERSION}" VERSION_LESS 18 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 19 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 19)
+       # Save the error message, in case this is the last llvm-config we find
+       list(APPEND LLVM_CONFIG_ERROR_MESSAGES "expected LLVM 18.x but found ${LLVM_CONFIG_VERSION} using ${LLVM_CONFIG_EXE}")
+ 
+Only in zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/cmake: Findllvm.cmake.orig
+Only in zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/cmake: Findllvm.cmake.rej
+diff '--color=auto' -urp zig-131a009ba2eb127a3447d05b9e12f710429aa5ee.orig/CMakeLists.txt zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/CMakeLists.txt
+--- zig-131a009ba2eb127a3447d05b9e12f710429aa5ee.orig/CMakeLists.txt	2024-07-08 21:08:14.000000000 -0700
++++ zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/CMakeLists.txt	2025-12-26 15:45:54.290262691 -0800
+@@ -137,9 +137,9 @@ else()
+     set(ZIG_SYSTEM_LIBCXX "stdc++" CACHE STRING "system libcxx name for build.zig")
+ endif()
+ 
+-find_package(llvm 18)
+-find_package(clang 18)
+-find_package(lld 18)
++find_package(llvm)
++find_package(clang)
++find_package(lld)
+ 
+ if(ZIG_STATIC_ZLIB)
+     if (MSVC)
+Only in zig-131a009ba2eb127a3447d05b9e12f710429aa5ee: CMakeLists.txt.orig
+Only in zig-131a009ba2eb127a3447d05b9e12f710429aa5ee: CMakeLists.txt.rej
