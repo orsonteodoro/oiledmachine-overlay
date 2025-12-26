@@ -226,7 +226,7 @@ REQUIRED_USE="
 "
 gen_depend_llvm() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
@@ -499,11 +499,7 @@ eerror "ELIBC=${ELIBC} is not supported."
 }
 
 _configure_zig() {
-	if [[ -e "/usr/bin/zig" ]] ; then
-		ZIG="/usr/bin/zig"
-	else
-		ZIG=$(ls -1 "/opt/zig-bin-"*"/zig" | sort -V | tail -n 1)
-	fi
+	ZIG="/usr/lib/bun-zig/bin/zig"
 	"${ZIG}" version || die
 }
 
@@ -526,7 +522,7 @@ src_compile() {
 	if use bootstrap-without-bun ; then
 		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
 einfo "Building with zig"
-		edo "${ZIG}" build -Drelease-fast
+		edo "${ZIG}" build -Drelease-fast --zig-lib-dir "${ESYSROOT}/usr/lib/bun-zig/$(get_libdir)"
 	else
 einfo "Building with bun"
 		cmake_src_compile
