@@ -4,22 +4,19 @@
 
 EAPI=8
 
-# TODO:
-#
-# Build gentoo/stage3 docker image with oiledmachine-overlay with bun ebuild to lower gimmicky SIMD requirements
-#
-# Proposed prebuilts or changes
-#
-# bun-linux-armv8a-glibc with -march=armv8-a
-# bun-linux-armv8a-musl with -march=armv8-a
-# bun-linux-x86_64-sse2-glibc with -march=x86-64
-# bun-linux-x86_64-sse2-musl with -march=x86-64
-#
+# Bootstrap plan (Tentative):
+
+# Build Bun 1.2.19 or earlier to build generic Bun with lowest possible ISA SIMD with Bun's Zig.
+# Build Bun latest stable with generic Bun.
 
 CXX_STANDARD=23
+
 BROTLI_PV="1.1.0"
-NODEJS_PV="24.3.0"
-NODE_SLOT="${NODEJS_PV%%.*}"
+BUN_JSC_SLOT="20250930"
+BUN_SLOT=$(ver_cut 1-2 ${PV})
+BUN_ZIG_SLOT="20251031"
+NODE_PV="24.3.0"
+NODE_SLOT="${NODE_PV%%.*}"
 
 BORINGSSL_COMMIT="f1ffd9e83d4f5c28a9c70d73f9a4e6fcf310062f"
 C_ARES_COMMIT="3ac47ee46edd8ea40370222f91613fc16c434853"
@@ -128,18 +125,8 @@ https://github.com/oven-sh/tinycc/archive/${TINYCC_COMMIT}.tar.gz
 https://github.com/libarchive/libarchive/archive/${LIBARCHIVE_COMMIT}.tar.gz
 	-> libarchive-${LIBARCHIVE_COMMIT:0:7}.tar.gz
 
-https://nodejs.org/dist/v${NODEJS_PV}/node-v${NODEJS_PV}-headers.tar.gz
+https://nodejs.org/dist/v${NODE_PV}/node-v${NODE_PV}-headers.tar.gz
 
-	amd64? (
-		!release-safe? (
-https://github.com/oven-sh/zig/releases/download/autobuild-${ZIG_COMMIT}/bootstrap-x86_64-linux-musl.zip
-	-> oven-sh-zig-${ZIG_COMMIT:0:7}-bootstrap-x86_64-linux-musl.zip
-		)
-		release-safe? (
-https://github.com/oven-sh/zig/releases/download/autobuild-${ZIG_COMMIT}/bootstrap-x86_64-linux-musl-ReleaseSafe.zip
-	-> oven-sh-zig-${ZIG_COMMIT:0:7}-bootstrap-x86_64-linux-musl-ReleaseSafe.zip
-		)
-	)
 	"
 fi
 
@@ -176,11 +163,11 @@ LICENSE="
 	)
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${BUN_SLOT}-${BUN_JSC_SLOT}/${PV}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-bootstrap-without-bun clang lto release-safe
+bootstrap-without-bun clang lto
 "
 REQUIRED_USE="
 	clang
@@ -241,7 +228,7 @@ gen_depend_llvm() {
 }
 
 RDEPEND+="
-	net-libs/bun-jsc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	net-libs/bun-jsc:${BUN_JSC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	app-arch/xz-utils
 	dev-libs/libxml2
 	dev-libs/openssl
@@ -252,7 +239,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODEJS_PV}:${NODE_SLOT}
+	>=net-libs/nodejs-${NODE_PV}:${NODE_SLOT}
 	>=dev-build/cmake-3.30
 	app-arch/unzip
 	dev-lang/go
@@ -268,14 +255,14 @@ BDEPEND+="
 		>=dev-lang/rust-bin-1.92
 	)
 	|| (
-		=net-libs/bun-zig-20251031*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		net-libs/bun-zig:${BUN_ZIG_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	net-libs/bun-zig:=
 "
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.5-march-changes.patch"
-	"${FILESDIR}/${PN}-1.3.5-offline.patch"
+	"A${FILESDIR}/${PN}-1.3.5-offline.patch"
 )
 
 _set_clang() {
@@ -396,7 +383,7 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/lol-html-${LOL_HTML_COMMIT}" "${S}/cmake/vendor/lol-html"
 	dep_prepare_mv "${WORKDIR}/ls-hpack-${LS_HPACK_COMMIT}" "${S}/cmake/vendor/ls-hpack"
 	dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_COMMIT}" "${S}/cmake/vendor/mimalloc"
-#	dep_prepare_mv "${WORKDIR}/node-v${NODEJS_PV}" "${S}/cmake/vendor/" # TODO finish
+#	dep_prepare_mv "${WORKDIR}/node-v${NODE_PV}" "${S}/cmake/vendor/" # TODO finish
 	dep_prepare_mv "${WORKDIR}/picohttpparser-${PICOHTTPPARSER_COMMIT}" "${S}/cmake/vendor/picohttpparser"
 	dep_prepare_mv "${WORKDIR}/tinycc-${TINYCC_COMMIT}" "${S}/cmake/vendor/tinycc"
 	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/vendor/zlib"
@@ -522,7 +509,18 @@ src_compile() {
 	if use bootstrap-without-bun ; then
 		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
 einfo "Building with zig"
-		edo "${ZIG}" build -Drelease-fast
+		local codegen_dir="build/debug/codegen"
+		mkdir -p "${codegen_dir}" || die
+
+	# Bun is still required
+
+	# TypeScript bindgen to generate C/C++ bindings
+#		"./src/codegen/bindgen.ts" --debug=false --codegen-root="${codegen_dir}"
+
+#		"./src/codegen/generate-jssink.ts" --
+
+#		edo "${ZIG}" build -Drelease-fast -Dgenerated-code=build/debug/codegen
+		edo "${ZIG}" build -Dbaseline=true -Doptimize=ReleaseFast -Dtarget=x86_64-linux-gnu -Dcpu=x86_64
 	else
 einfo "Building with bun"
 		cmake_src_compile
