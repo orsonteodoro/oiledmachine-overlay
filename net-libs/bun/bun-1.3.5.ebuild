@@ -8,6 +8,7 @@ EAPI=8
 
 # Build Bun 1.2.19 or earlier to build generic Bun with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) with Bun's Zig.
 # Build Bun latest stable with generic Bun.
+# Boostrapping Bun is similar to bootstrapping Rust where the previous version bootstraps to next version.
 
 # Deps versions:
 # https://github.com/oven-sh/bun/tree/bun-v1.3.5/cmake/targets
@@ -19,10 +20,12 @@ CXX_STANDARD=23
 
 BROTLI_PV="1.1.0"
 BUN_JSC_SLOT="20250930"
-BUN_SLOT=$(ver_cut 1-2 ${PV})
+BUN_SLOT=$(ver_cut "1-2" "${PV}")
 BUN_ZIG_SLOT="20251031"
 NODE_PV="24.3.0"
 NODE_SLOT="${NODE_PV%%.*}"
+
+BUN_SEED_SLOT="1.2-20250712"
 
 BORINGSSL_COMMIT="f1ffd9e83d4f5c28a9c70d73f9a4e6fcf310062f"
 C_ARES_COMMIT="3ac47ee46edd8ea40370222f91613fc16c434853"
@@ -173,7 +176,7 @@ SLOT="${BUN_SLOT}-${BUN_JSC_SLOT}/${PV}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-bootstrap-without-bun clang lto
+bootstrap clang lto
 "
 REQUIRED_USE="
 	clang
@@ -264,7 +267,8 @@ BDEPEND+="
 		net-libs/bun-zig:${BUN_ZIG_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	net-libs/bun-zig:=
-	=net-libs/bun-1.2.19
+	net-libs/bun:${BUN_SEED_SLOT}
+	net-libs/bun:=
 "
 DOCS=( "README.md" )
 PATCHES=(
@@ -493,7 +497,7 @@ eerror "ELIBC=${ELIBC} is not supported."
 }
 
 _configure_zig() {
-	ZIG="/usr/lib/bun-zig/bin/zig"
+	ZIG="/usr/lib/bun-zig/${BUN_ZIG_SLOT}/bin/zig"
 	"${ZIG}" version || die
 }
 
@@ -505,7 +509,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		allow_lto=0
 	fi
 
-	if use bootstrap-without-bun ; then
+	if use bootstrap ; then
 		_configure_zig
 	else
 		_configure_cmake
@@ -513,7 +517,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 src_compile() {
-	if use bootstrap-without-bun ; then
+	if use bootstrap ; then
 		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
 einfo "Building with zig"
 		local codegen_dir="build/debug/codegen"
@@ -521,13 +525,15 @@ einfo "Building with zig"
 
 	# Bun is still required
 
-	# TypeScript bindgen to generate C/C++ bindings
-#		"./src/codegen/bindgen.ts" --debug=false --codegen-root="${codegen_dir}"
+	# Use TypeScript bindgen to generate C/C++ bindings
+	# Bypass cmake to build the seed artifact.  Once we have the seed, we can build the latest feature complete Bun.
+		#BUN_SEED_PATH="/usr/lib/bin/${BUN_SEED_SLOT}/bin/bun"	# Possibility 1 - A previous ancestor Bun must be used to build this version.
 
-#		"./src/codegen/generate-jssink.ts" --
+#		edo "${BUN_SEED_PATH}" run "./src/codegen/bindgen.ts" --debug=0 --codegen-root="${codegen_dir}"
 
-#		edo "${ZIG}" build -Drelease-fast -Dgenerated-code=build/debug/codegen
-		edo "${ZIG}" build -Dbaseline=true -Doptimize=ReleaseFast -Dtarget=x86_64-linux-gnu -Dcpu=x86_64
+#		edo "${BUN_SEED_PATH}" run "./src/codegen/generate-jssink.ts" "${codegen_dir}"
+
+		edo "${ZIG}" build -Drelease-fast -Dgenerated-code="build/debug/codegen"
 	else
 einfo "Building with bun"
 		cmake_src_compile
@@ -535,7 +541,7 @@ einfo "Building with bun"
 }
 
 src_test() {
-	if use bootstrap-without-bun ; then
+	if use bootstrap ; then
 		"./zig-out/bin/bun" -e "console.log('hello from bun')" || die
 	fi
 }

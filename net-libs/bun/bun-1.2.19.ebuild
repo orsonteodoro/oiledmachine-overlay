@@ -8,6 +8,9 @@ EAPI=8
 
 # Build Bun 1.2.19 or earlier to build generic Bun with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) with Bun's Zig.
 # Build Bun latest stable with generic Bun.
+# Boostrapping Bun is similar to bootstrapping Rust where the previous version bootstraps to next version.
+
+# 1.2.19 is being tested before AI changes introduced by 60faa86.
 
 # Deps versions:
 # https://github.com/oven-sh/bun/tree/bun-v1.2.19/cmake/targets
@@ -19,10 +22,12 @@ CXX_STANDARD=23
 
 BROTLI_PV="1.1.0"
 BUN_JSC_SLOT="20250712"
-BUN_SLOT=$(ver_cut 1-2 ${PV})
+BUN_SLOT=$(ver_cut "1-2" "${PV}")
 BUN_ZIG_SLOT="20250610"
 NODE_PV="24.3.0"
 NODE_SLOT="${NODE_PV%%.*}"
+
+BUN_SEED_SLOT="TBA"
 
 BORINGSSL_COMMIT="7a5d984c69b0c34c4cbb56c6812eaa5b9bef485c"
 C_ARES_COMMIT="d3a507e920e7af18a5efb7f9f1d8044ed4750013"
@@ -173,7 +178,7 @@ SLOT="${BUN_SLOT}-${BUN_JSC_SLOT}/${PV}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-bootstrap-without-bun clang lto
+bootstrap clang lto
 "
 REQUIRED_USE="
 	clang
@@ -492,7 +497,7 @@ eerror "ELIBC=${ELIBC} is not supported."
 }
 
 _configure_zig() {
-	ZIG="/usr/lib/bun-zig/bin/zig"
+	ZIG="/usr/lib/bun-zig/${BUN_ZIG_SLOT}/bin/zig"
 	"${ZIG}" version || die
 }
 
@@ -504,7 +509,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		allow_lto=0
 	fi
 
-	if use bootstrap-without-bun ; then
+	if use bootstrap ; then
 		_configure_zig
 	else
 		_configure_cmake
@@ -512,7 +517,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 src_compile() {
-	if use bootstrap-without-bun ; then
+	if use bootstrap ; then
 		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
 einfo "Building with zig"
 		local codegen_dir="build/debug/codegen"
@@ -520,13 +525,16 @@ einfo "Building with zig"
 
 	# Bun is still required
 
-	# TypeScript bindgen to generate C/C++ bindings
-#		"./src/codegen/bindgen.ts" --debug=false --codegen-root="${codegen_dir}"
+	# Use TypeScript bindgen to generate C/C++ bindings
+	# Bypass cmake to build the seed artifact.  Once we have the seed, we can build the latest feature complete Bun.
+		#BUN_SEED_PATH="/usr/lib/bin/${BUN_SEED_SLOT}/bin/bun"	# Possibility 1 - A previous ancestor Bun must be used to build this version.
+		#BUN_SEED_PATH="${BUILD_DIR}/bin/bun"			# Possibility 2 - Bun's Zig builds Bun within this version.
 
-#		"./src/codegen/generate-jssink.ts" --
+#		edo "${BUN_SEED_PATH}" run "./src/codegen/bindgen.ts" --debug=0 --codegen-root="${codegen_dir}"
 
-#		edo "${ZIG}" build -Drelease-fast -Dgenerated-code=build/debug/codegen
-		edo "${ZIG}" build -Dbaseline=true -Doptimize=ReleaseFast -Dtarget=x86_64-linux-gnu -Dcpu=x86_64
+#		edo "${BUN_SEED_PATH}" run "./src/codegen/generate-jssink.ts" "${codegen_dir}"
+
+		edo "${ZIG}" build -Drelease-fast -Dgenerated-code="build/debug/codegen"
 	else
 einfo "Building with bun"
 		cmake_src_compile
@@ -534,7 +542,7 @@ einfo "Building with bun"
 }
 
 src_test() {
-	if use bootstrap-without-bun ; then
+	if use bootstrap ; then
 		"./zig-out/bin/bun" -e "console.log('hello from bun')" || die
 	fi
 }
