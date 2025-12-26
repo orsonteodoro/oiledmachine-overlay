@@ -1,0 +1,16 @@
+diff '--color=auto' -urp zig-131a009ba2eb127a3447d05b9e12f710429aa5ee.orig/CMakeLists.txt zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/CMakeLists.txt
+--- zig-131a009ba2eb127a3447d05b9e12f710429aa5ee.orig/CMakeLists.txt	2025-12-26 15:49:20.280473472 -0800
++++ zig-131a009ba2eb127a3447d05b9e12f710429aa5ee/CMakeLists.txt	2025-12-26 15:50:09.856516296 -0800
+@@ -939,6 +939,10 @@ set(ZIG_BUILD_ARGS
+   -Dstd-docs=false
+ )
+ 
++if(NOT ZIG_MAXRSS STREQUAL "")
++  list(APPEND ZIG_BUILD_ARGS --maxrss ${ZIG_MAXRSS})
++endif()
++
+ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+   list(APPEND ZIG_BUILD_ARGS -Doptimize=Debug)
+ elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+Only in zig-131a009ba2eb127a3447d05b9e12f710429aa5ee: CMakeLists.txt.orig
+Only in zig-131a009ba2eb127a3447d05b9e12f710429aa5ee: CMakeLists.txt.rej

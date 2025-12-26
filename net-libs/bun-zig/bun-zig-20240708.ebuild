@@ -114,7 +114,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20240708-llvm-non-fatal.patch"
-	"${FILESDIR}/${PN}-20251031-maxrss.patch"
+	"${FILESDIR}/${PN}-20240708-maxrss.patch"
 )
 
 _set_clang() {
