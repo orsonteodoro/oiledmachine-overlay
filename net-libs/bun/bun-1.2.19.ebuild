@@ -6,7 +6,7 @@ EAPI=8
 
 # Bootstrap plan (Tentative):
 
-# Build Bun 1.2.19 or earlier to build generic Bun with lowest possible ISA SIMD with Bun's Zig.
+# Build Bun 1.2.19 or earlier to build generic Bun with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) with Bun's Zig.
 # Build Bun latest stable with generic Bun.
 
 # Deps versions:
