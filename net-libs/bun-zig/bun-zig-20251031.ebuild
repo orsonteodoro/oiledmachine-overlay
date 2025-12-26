@@ -68,7 +68,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_TARGETS[@]}
 clang debug
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	clang
@@ -315,8 +315,8 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
-	insinto "/usr/lib/bun-zig/$(get_libdir)"
-	doins -r "${S}/lib/"*
+	insinto "/usr/lib/bun-zig/bin"
+	doins -r "${S}/lib/"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

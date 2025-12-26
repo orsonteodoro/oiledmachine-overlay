@@ -522,7 +522,7 @@ src_compile() {
 	if use bootstrap-without-bun ; then
 		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
 einfo "Building with zig"
-		edo "${ZIG}" build -Drelease-fast --zig-lib-dir "${ESYSROOT}/usr/lib/bun-zig/$(get_libdir)"
+		edo "${ZIG}" build -Drelease-fast
 	else
 einfo "Building with bun"
 		cmake_src_compile
