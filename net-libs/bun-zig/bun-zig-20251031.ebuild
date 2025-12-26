@@ -68,7 +68,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_TARGETS[@]}
 clang debug
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	clang
@@ -314,7 +314,10 @@ src_install() {
 	cmake_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
-	insinto "/usr/bin/bun-zig"
+
+	# Let's keep the relative default for now, but
+	# using --zig-lib-dir with zig is verified working.
+	insinto "/usr/lib/bun-zig/bin"
 	doins -r "${S}/lib/"
 }
 
