@@ -64,11 +64,11 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${PV%.*}"
 IUSE+="
 ${LLVM_TARGETS[@]}
 clang debug
-ebuild_revision_4
+ebuild_revision_6
 "
 REQUIRED_USE="
 	clang
@@ -294,7 +294,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "MAXRSS:  ${maxrss}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo # Force -O2
-		-DCMAKE_INSTALL_PREFIX="/usr/lib/bun-zig"
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/bun-zig/${PV%.*}"
 		-DZIG_MAXRSS=${maxrss}
 		-DZIG_NO_LIB=ON
 		-DZIG_RELEASE_SAFE=$(usex debug)
@@ -315,7 +315,7 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
-	insinto "/usr/lib/bun-zig/bin"
+	insinto "/usr/lib/bun-zig/${PV%.*}/bin"
 	doins -r "${S}/lib/"
 }
 
