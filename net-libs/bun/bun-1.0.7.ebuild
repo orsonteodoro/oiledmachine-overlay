@@ -11,6 +11,8 @@ EAPI=8
 # Build Bun latest stable with generic Bun as feature complete Bun.
 # Boostrapping Bun is similar to bootstrapping Rust where the previous version bootstraps to next version.
 
+# 1.0.7 is being used before bun is required for generate-jssink ts to js transpilation.  We keep the pregenerated js transpilation.
+
 # 1.0.7     Bun's Zig to generic Bun 1.0.7 to build portable Bun for -march=x86-64 or -march=armv8-a
 # M         generic Bun 1.0.7 -> M generic Bun
 # ...
@@ -19,52 +21,47 @@ EAPI=8
 # 1.3.35    generic Bun 1.1.26 to feature complete Bun 1.3.5.  Steps will merge if possible to save time.
 
 # Deps versions:
-# https://github.com/oven-sh/bun/tree/bun-v1.3.5/cmake/targets
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupZig.cmake#L23
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupWebKit.cmake#L5
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/Options.cmake#L163 # NODEJS_VERSION
-# https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupBun.cmake#L9 # Minimum Bun bootstrap seed version
+# https://github.com/oven-sh/bun/tree/bun-v1.0.7/src/deps
+# https://github.com/oven-sh/bun/tree/bun-v1.0.7/src/bun.js		# Older WebKit commit
+# https://github.com/oven-sh/bun/blob/bun-v1.0.7/CMakeLists.txt#L7	# Newer WebKit commit
 
 # TODO:
 # FIXME:  Missing data collection policy/legal text
 
 CFLAGS_HARDENED_USE_CASES="security-critical jit network untrusted-data"
-CXX_STANDARD=23
+CXX_STANDARD=20
 
 BROTLI_PV="1.1.0"
-BUN_JSC_SLOT="20250930"
+BUN_JSC_SLOT="20231014"
 BUN_SLOT=$(ver_cut "1-2" "${PV}")
-BUN_ZIG_SLOT="20251031"
-NODE_PV="24.3.0"
+BUN_ZIG_SLOT="20231013"
+NODE_PV="22.6.0"
 NODE_SLOT="${NODE_PV%%.*}"
 
-BUN_SEED_SLOT="1.1-20240816"
+BUN_SEED_SLOT="TBA"
 
-BORINGSSL_COMMIT="f1ffd9e83d4f5c28a9c70d73f9a4e6fcf310062f"		# S1 in threat model
-C_ARES_COMMIT="3ac47ee46edd8ea40370222f91613fc16c434853"
-HDRHISTOGRAM_C_COMMIT="be60a9987ee48d0abf0d7b6a175bad8d6c1585d1"
-HIGHWAY_COMMIT="ac0d5d297b13ab1b89f48484fc7911082d76a93f"
-LIBARCHIVE_COMMIT="9525f90ca4bd14c7b335e2f8c84a4607b0af6bdf"		# S0 security-critical in threat model
-LIBDEFLATE_COMMIT="c8c56a20f8f621e6a966b716b31f1dedab6a41e3"		# S0 security-critical in threat model
-LIBUV_COMMIT="f3ce527ea940d926c40878ba5de219640c362811"
-LOL_HTML_COMMIT="d64457d9ff0143deef025d5df7e8586092b9afb7"
-LS_HPACK_COMMIT="8905c024b6d052f083a3d11d0a169b3c2735c8a1"
-MIMALLOC_COMMIT="1beadf9651a7bfdec6b5367c380ecc3fe1c40d1a"		# S0 security-critical in threat model
+BASE64_COMMIT="e77bd70bdd860c52c561568cffb251d88bba064c"
+BORINGSSL_COMMIT="b275c5ce1c88bc06f5a967026d3c0ce1df2be815"				# S1 in threat model
+C_ARES_COMMIT="0e7a5dee0fbb04080750cf6eabbe89d8bae87faa"
+LIBARCHIVE_COMMIT="dc321febde83dd0f31158e1be61a7aedda65e7a2"				# S0 security-critical in threat model
+LOL_HTML_COMMIT="8d4c273ded322193d017042d1f48df2766b0f88b"
+MIMALLOC_COMMIT="7968d4285043401bb36573374710d47a4081a063"				# S0 security-critical in threat model
 PICOHTTPPARSER_COMMIT="066d2b1e9ab820703db0837a7255d92d30f0c9f5"
-TINYCC_COMMIT="29985a3b59898861442fa3b43f663fc1af2591d7"
-ZIG_COMMIT="c1423ff3fc7064635773a4a4616c5bf986eb00fe"
-ZLIB_COMMIT="886098f3f339617b4243b286f5ed364b9989e245"			# S0 security-critical in threat model
-ZSTD_COMMIT="f8745da6ff1ad1e7bab384bd1f9d742439278e99"			# S0 security-critical in threat model
+TINYCC_COMMIT="2d3ad9e0d32194ad7fd867b66ebe218dcc8cb5cd"
+WEBKIT_COMMIT="1a49a1f94bf42ab4f8c6b11d7bbbb21e491d2d62"
+ZIG_COMMIT="027aabf4977d0362e908d9ef732aaa929605d563"
+ZLIB_COMMIT="885674026394870b7e7a05b7bf1ec5eb7bd8a9c0"					# S0 security-critical in threat model
+ZSTD_COMMIT="63779c798237346c2b245c546c40b72a5a5913fe"					# S0 security-critical in threat model
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -114,28 +111,20 @@ else
 	#KEYWORDS="~amd64" # We are still trying to figure how to bootstrap this as generic CPU.
 	S="${WORKDIR}/${PN}-${PN}-v${PV}"
 	SRC_URI="
+https://github.com/aklomp/base64/archive/${BASE64_COMMIT}.tar.gz
+	-> base64-${BASE64_COMMIT:0:7}.tar.gz
 https://github.com/c-ares/c-ares/archive/${C_ARES_COMMIT}.tar.gz
 	-> c-ares-${C_ARES_COMMIT:0:7}.tar.gz
 https://github.com/cloudflare/lol-html/archive/${LOL_HTML_COMMIT}.tar.gz
 	-> lol-html-${LOL_HTML_COMMIT:0:7}.tar.gz
 https://github.com/cloudflare/zlib/archive/${ZLIB_COMMIT}.tar.gz
 	-> cloudflare-zlib-${ZLIB_COMMIT:0:7}.tar.gz
-https://github.com/ebiggers/libdeflate/archive/${LIBDEFLATE_COMMIT}.tar.gz
-	-> libdeflate-${LIBDEFLATE_COMMIT:0:7}.tar.gz
 https://github.com/facebook/zstd/archive/${ZSTD_COMMIT}.tar.gz
 	-> zstd-${ZSTD_COMMIT:0:7}.tar.gz
 https://github.com/google/brotli/archive/refs/tags/v${BROTLI_PV}.tar.gz
 	-> brotli-${BROTLI_PV}.tar.gz
-https://github.com/google/highway/archive/${HIGHWAY_COMMIT}.tar.gz
-	-> highway-${HIGHWAY_COMMIT:0:7}.tar.gz
 https://github.com/h2o/picohttpparser/archive/${PICOHTTPPARSER_COMMIT}.tar.gz
 	-> picohttpparser-${PICOHTTPPARSER_COMMIT:0:7}.tar.gz
-https://github.com/HdrHistogram/HdrHistogram_c/archive/${HDRHISTOGRAM_C_COMMIT}.tar.gz
-	-> HdrHistogram_c-${HDRHISTOGRAM_C_COMMIT:0:7}.tar.gz
-https://github.com/libuv/libuv/archive/${LIBUV_COMMIT}.tar.gz
-	-> libuv-${LIBUV_COMMIT:0:7}.tar.gz
-https://github.com/litespeedtech/ls-hpack/archive/${LS_HPACK_COMMIT}.tar.gz
-	-> ls-hpack-${LS_HPACK_COMMIT:0:7}.tar.gz
 https://github.com/oven-sh/boringssl/archive/${BORINGSSL_COMMIT}.tar.gz
 	-> oven-sh-boringssl-${BORINGSSL_COMMIT:0:7}.tar.gz
 https://github.com/oven-sh/bun/archive/refs/tags/bun-v${PV}.tar.gz
@@ -151,6 +140,8 @@ https://nodejs.org/dist/v${NODE_PV}/node-v${NODE_PV}-headers.tar.gz
 
 	"
 fi
+#https://github.com/oven-sh/WebKit/archive/${WEBKIT_COMMIT}.tar.gz
+#	-> bun-webkit-${WEBKIT_COMMIT:0:7}.tar.gz
 
 DESCRIPTION="Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one"
 HOMEPAGE="
@@ -285,14 +276,12 @@ BDEPEND+="
 		net-libs/bun-zig:${BUN_ZIG_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	net-libs/bun-zig:=
-	net-libs/bun:${BUN_SEED_SLOT}
-	net-libs/bun:=
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-1.3.5-march-and-opt-level-changes.patch"
-	"${FILESDIR}/${PN}-1.3.5-offline.patch"
-	"${FILESDIR}/${PN}-1.3.5-mimalloc-secure-on.patch"
+	"${FILESDIR}/${PN}-1.1.26-march-and-opt-level-changes.patch"
+	"${FILESDIR}/${PN}-1.1.26-mimalloc-secure-on.patch"
+	"${FILESDIR}/${PN}-1.1.26-disable-cmake-build-type-check.patch"
 )
 
 _set_clang() {
@@ -406,23 +395,18 @@ eerror "ARCH=${ARCH} is not supported"
 
 src_prepare() {
 	local zig_arch=$(get_zig_arch)
-#	dep_prepare_mv "${WORKDIR}/bootstrap-${zig_arch}-linux-musl" "${S}/cmake/vendor/zig"
-	dep_prepare_mv "${WORKDIR}/boringssl-${BORINGSSL_COMMIT}" "${S}/cmake/vendor/boringssl"
-	dep_prepare_mv "${WORKDIR}/brotli-${BROTLI_PV}" "${S}/cmake/vendor/brotli"
-	dep_prepare_mv "${WORKDIR}/c-ares-${C_ARES_COMMIT}" "${S}/cmake/vendor/c-ares"
-	dep_prepare_mv "${WORKDIR}/HdrHistogram_c-${HDRHISTOGRAM_C_COMMIT}" "${S}/cmake/vendor/HdrHistogram_c"
-	dep_prepare_mv "${WORKDIR}/highway-${HIGHWAY_COMMIT}" "${S}/cmake/vendor/highway"
-	dep_prepare_mv "${WORKDIR}/libarchive-${LIBARCHIVE_COMMIT}" "${S}/cmake/vendor/libarchive"
-	dep_prepare_mv "${WORKDIR}/libdeflate-${LIBDEFLATE_COMMIT}" "${S}/cmake/vendor/libdeflate"
-	dep_prepare_mv "${WORKDIR}/libuv-${LIBUV_COMMIT}" "${S}/cmake/vendor/libuv"
-	dep_prepare_mv "${WORKDIR}/lol-html-${LOL_HTML_COMMIT}" "${S}/cmake/vendor/lol-html"
-	dep_prepare_mv "${WORKDIR}/ls-hpack-${LS_HPACK_COMMIT}" "${S}/cmake/vendor/ls-hpack"
-	dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_COMMIT}" "${S}/cmake/vendor/mimalloc"
-#	dep_prepare_mv "${WORKDIR}/node-v${NODE_PV}" "${S}/cmake/vendor/" # TODO finish
-	dep_prepare_mv "${WORKDIR}/picohttpparser-${PICOHTTPPARSER_COMMIT}" "${S}/cmake/vendor/picohttpparser"
-	dep_prepare_mv "${WORKDIR}/tinycc-${TINYCC_COMMIT}" "${S}/cmake/vendor/tinycc"
-	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/vendor/zlib"
-	dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/cmake/vendor/zstd"
+#	dep_prepare_mv "${WORKDIR}/bootstrap-${zig_arch}-linux-musl" "${S}/src/deps/zig"
+	dep_prepare_mv "${WORKDIR}/boringssl-${BORINGSSL_COMMIT}" "${S}/src/deps/boringssl"
+	dep_prepare_mv "${WORKDIR}/brotli-${BROTLI_PV}" "${S}/src/deps/brotli"
+	dep_prepare_mv "${WORKDIR}/c-ares-${C_ARES_COMMIT}" "${S}/src/deps/c-ares"
+	dep_prepare_mv "${WORKDIR}/libarchive-${LIBARCHIVE_COMMIT}" "${S}/src/deps/libarchive"
+	dep_prepare_mv "${WORKDIR}/lol-html-${LOL_HTML_COMMIT}" "${S}/src/deps/lol-html"
+	dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_COMMIT}" "${S}/src/deps/mimalloc"
+#	dep_prepare_mv "${WORKDIR}/node-v${NODE_PV}" "${S}/src/deps/" # TODO finish
+	dep_prepare_mv "${WORKDIR}/picohttpparser-${PICOHTTPPARSER_COMMIT}" "${S}/src/deps/picohttpparser"
+	dep_prepare_mv "${WORKDIR}/tinycc-${TINYCC_COMMIT}" "${S}/src/deps/tinycc"
+	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/src/deps/zlib"
+	dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/src/deps/zstd"
 	cmake_src_prepare
 }
 

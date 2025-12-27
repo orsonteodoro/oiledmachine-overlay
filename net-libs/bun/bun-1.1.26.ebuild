@@ -6,18 +6,19 @@ EAPI=8
 
 # Bootstrap plan (Tentative):
 
-# Build Bun 1.1.26 with Bun's Zig for generic Bun.
+# Build Bun 1.0.7 with Bun's Zig for generic Bun.
 # Build 1 or more generic Buns with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) towards the latest stable bun.
 # Build Bun latest stable with generic Bun as feature complete Bun.
 # Boostrapping Bun is similar to bootstrapping Rust where the previous version bootstraps to next version.
 
 # 1.1.26 is being tested before major cmake changes requiring Bun -> Bun bootstrap.
 
-# 1.1.26    Bun's Zig to generic Bun 1.1.26
-# M         generic Bun 1.2.26 -> M generic Bun
+# 1.0.7     Bun's Zig to generic Bun 1.0.7 to build portable Bun for -march=x86-64 or -march=armv8-a
+# M         generic Bun 1.0.7 -> M generic Bun
 # ...
 # N         generic Bun M -> Bun N generic Bun
-# 1.3.35    generic Bun N to feature complete Bun 1.3.5.  Steps will merge if possible to save time.
+# 1.1.26    generic Bun N -> Bun 1.1.26
+# 1.3.35    generic Bun 1.1.26 to feature complete Bun 1.3.5.  Steps will merge if possible to save time.
 
 # Deps versions:
 # https://github.com/oven-sh/bun/tree/bun-v1.1.26/src/deps
@@ -178,11 +179,12 @@ LICENSE="
 	)
 "
 RESTRICT="mirror"
-SLOT="${BUN_SLOT}-${BUN_JSC_SLOT}/${PV}"
+BUN_SLOT_MAJOR="${BUN_SLOT}-${BUN_JSC_SLOT}"
+SLOT="${BUN_SLOT_MAJOR}/${PV}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-bootstrap clang lto -telemetry
+clang lto -telemetry
 "
 REQUIRED_USE="
 	clang
@@ -585,6 +587,8 @@ eerror "ARCH=${ARCH} is not supported"
 }
 
 _configure_zig() {
+	export ZIG_COMPILER="system"
+	export PATH="/usr/lib/bun-zig/${BUN_ZIG_SLOT}/bin:${PATH}"
 	ZIG="/usr/lib/bun-zig/${BUN_ZIG_SLOT}/bin/zig"
 	"${ZIG}" version || die
 }
@@ -599,42 +603,16 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
-	if use bootstrap ; then
-		_configure_zig
-	else
-		_configure_cmake
-	fi
+	_configure_zig
+	_configure_cmake
 }
 
 src_compile() {
-	if use bootstrap ; then
-		[[ -e "${S}/build.zig" ]] || die "Missing build.zig"
-einfo "Building with zig"
-		local codegen_dir="build/debug/codegen"
-		mkdir -p "${codegen_dir}" || die
-
-	# Bun is still required
-
-	# Use TypeScript bindgen to generate C/C++ bindings
-	# Bypass cmake to build the seed artifact.  Once we have the seed, we can build the latest feature complete Bun.
-		#BUN_SEED_PATH="/usr/lib/bin/${BUN_SEED_SLOT}/bin/bun"	# Possibility 1 - A previous ancestor Bun must be used to build this version.
-		#BUN_SEED_PATH="${BUILD_DIR}/bin/bun"			# Possibility 2 - Bun's Zig builds Bun within this version.
-
-#		edo "${BUN_SEED_PATH}" run "./src/codegen/bindgen.ts" --debug=0 --codegen-root="${codegen_dir}"
-
-#		edo "${BUN_SEED_PATH}" run "./src/codegen/generate-jssink.ts" "${codegen_dir}"
-
-		edo "${ZIG}" build -Drelease-fast -Dgenerated-code="build/debug/codegen"
-	else
-einfo "Building with bun"
-		cmake_src_compile
-	fi
+	emake "bun"
 }
 
 src_test() {
-	if use bootstrap ; then
-		"./zig-out/bin/bun" -e "console.log('hello from bun')" || die
-	fi
+	"./zig-out/bin/bun" -e "console.log('hello from bun')" || die
 }
 
 src_install() {
