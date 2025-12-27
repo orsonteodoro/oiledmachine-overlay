@@ -24,6 +24,7 @@ EAPI=8
 # https://github.com/oven-sh/bun/tree/bun-v1.1.26/src/bun.js		# Older WebKit commit
 # https://github.com/oven-sh/bun/blob/bun-v1.1.26/CMakeLists.txt#L7	# Newer WebKit commit
 
+CFLAGS_HARDENED_USE_CASES="security-critical jit network untrusted-data"
 CXX_STANDARD=20
 
 BROTLI_PV="1.1.0"
@@ -93,7 +94,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
-inherit check-compiler-switch cmake dep-prepare dhms edo git-r3 libcxx-slot libstdcxx-slot node
+inherit check-compiler-switch cflags-hardened cmake dep-prepare dhms edo git-r3 libcxx-slot libstdcxx-slot node
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -505,6 +506,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		allow_lto=0
 	fi
+
+	cflags-hardened_append
 
 	if use bootstrap ; then
 		_configure_zig

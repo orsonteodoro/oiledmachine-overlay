@@ -24,6 +24,7 @@ EAPI=8
 # https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/Options.cmake#L163 # NODEJS_VERSION
 # https://github.com/oven-sh/bun/blob/bun-v1.3.5/cmake/tools/SetupBun.cmake#L9 # Minimum Bun bootstrap seed version
 
+CFLAGS_HARDENED_USE_CASES="security-critical jit network untrusted-data"
 CXX_STANDARD=23
 
 BROTLI_PV="1.1.0"
@@ -95,7 +96,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
-inherit check-compiler-switch cmake dep-prepare dhms edo git-r3 libcxx-slot libstdcxx-slot node
+inherit check-compiler-switch cflags-hardened cmake dep-prepare dhms edo git-r3 libcxx-slot libstdcxx-slot node
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -516,6 +517,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		allow_lto=0
 	fi
+
+	cflags-hardened_append
 
 	if use bootstrap ; then
 		_configure_zig
