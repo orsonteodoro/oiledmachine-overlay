@@ -1,5 +1,5 @@
---- Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp.orig	2025-12-26 16:34:00.422206904 -0800
-+++ Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp	2025-12-26 16:38:57.005316804 -0800
+--- a/Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp.orig	2025-12-26 16:34:00.422206904 -0800
++++ b/Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp	2025-12-26 16:38:57.005316804 -0800
 @@ -755,12 +755,17 @@ TEST(WTF, ExternalStringImplCreate8bit)
  {
      constexpr LChar buffer[] = "hello";
