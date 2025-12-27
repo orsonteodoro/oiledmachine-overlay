@@ -21,7 +21,8 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+	19 # Version sensitive
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -56,11 +57,12 @@ clang lto
 ebuild_revision_4
 "
 
+#			${LIBCXX_COMPAT_STDCXX23[@]}
 REQUIRED_USE="
 	clang
 	clang? (
 		^^ (
-			${LIBCXX_COMPAT_STDCXX23[@]}
+			llvm_slot_19
 		)
 	)
 "
