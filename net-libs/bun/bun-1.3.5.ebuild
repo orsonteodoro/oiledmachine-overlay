@@ -280,7 +280,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-1.3.5-march-changes.patch"
+	"A${FILESDIR}/${PN}-1.3.5-march-changes.patch"
 	"${FILESDIR}/${PN}-1.3.5-offline.patch"
 )
 
@@ -390,7 +390,7 @@ eerror "ARCH=${ARCH} is not supported"
 
 src_prepare() {
 	local zig_arch=$(get_zig_arch)
-	dep_prepare_mv "${WORKDIR}/bootstrap-${zig_arch}-linux-musl" "${S}/cmake/vendor/zig"
+#	dep_prepare_mv "${WORKDIR}/bootstrap-${zig_arch}-linux-musl" "${S}/cmake/vendor/zig"
 	dep_prepare_mv "${WORKDIR}/boringssl-${BORINGSSL_COMMIT}" "${S}/cmake/vendor/boringssl"
 	dep_prepare_mv "${WORKDIR}/brotli-${BROTLI_PV}" "${S}/cmake/vendor/brotli"
 	dep_prepare_mv "${WORKDIR}/c-ares-${C_ARES_COMMIT}" "${S}/cmake/vendor/c-ares"

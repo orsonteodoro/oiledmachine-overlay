@@ -1,0 +1,95 @@
+diff '--color=auto' -urp bun-bun-v1.1.26.orig/CMakeLists.txt bun-bun-v1.1.26/CMakeLists.txt
+--- bun-bun-v1.1.26.orig/CMakeLists.txt	2024-08-23 23:12:01.000000000 -0700
++++ bun-bun-v1.1.26/CMakeLists.txt	2025-12-26 23:21:10.319218875 -0800
+@@ -1222,23 +1222,6 @@ if(NOT CI AND NOT WIN32)
+     target_compile_options(${bun} PRIVATE -fdiagnostics-color=always)
+ endif()
+ 
+-if(NOT CPU_TARGET STREQUAL "native")
+-    # passing -march=native to clang will break older systems
+-    # by default on x64, CPU_TARGET is set to "haswell" or "nehalem" depending on baseline
+-    # on arm, this argument will not be passed.
+-    target_compile_options(${bun} PUBLIC "-march=${CPU_TARGET}")
+-else()
+-    if(APPLE AND ARCH STREQUAL "aarch64")
+-        # On arm macOS, we can set it to a minimum of the M1 cpu set. this might be the default already.
+-        target_compile_options(${bun} PUBLIC "-mcpu=apple-m1")
+-    endif()
+-
+-    if(NOT WIN32 AND NOT APPLE AND ARCH STREQUAL "aarch64")
+-        # on arm64 linux, we set a minimum of armv8
+-        target_compile_options(${bun} PUBLIC -march=armv8-a+crc -mtune=ampere1)
+-    endif()
+-endif()
+-
+ target_compile_options(${bun} PUBLIC -ferror-limit=${ERROR_LIMIT})
+ 
+ if(WIN32)
+diff '--color=auto' -urp bun-bun-v1.1.26.orig/Makefile bun-bun-v1.1.26/Makefile
+--- bun-bun-v1.1.26.orig/Makefile	2024-08-23 23:12:01.000000000 -0700
++++ bun-bun-v1.1.26/Makefile	2025-12-26 23:18:50.432168061 -0800
+@@ -15,7 +15,7 @@ ARCH_NAME_RAW = arm64
+ endif
+ 
+ CPU_TARGET ?= native
+-MARCH_NATIVE = -mtune=$(CPU_TARGET)
++MARCH_NATIVE =
+ NATIVE_OR_OLD_MARCH =
+ 
+ MMD_IF_LOCAL =
+@@ -27,17 +27,17 @@ ARCH_NAME = aarch64
+ DOCKER_BUILDARCH = arm64
+ BREW_PREFIX_PATH = /opt/homebrew
+ DEFAULT_MIN_MACOS_VERSION = 13.0
+-MARCH_NATIVE = -mtune=$(CPU_TARGET)
++MARCH_NATIVE =
+ ifeq ($(OS_NAME),linux)
+-MARCH_NATIVE = -march=armv8-a+crc -mtune=ampere1
++MARCH_NATIVE =
+ endif
+ else
+ ARCH_NAME = x64
+ DOCKER_BUILDARCH = amd64
+ BREW_PREFIX_PATH = /usr/local
+ DEFAULT_MIN_MACOS_VERSION = 10.14
+-MARCH_NATIVE = -march=$(CPU_TARGET) -mtune=$(CPU_TARGET)
+-NATIVE_OR_OLD_MARCH = -march=nehalem
++MARCH_NATIVE =
++NATIVE_OR_OLD_MARCH =
+ endif
+ 
+ MIN_MACOS_VERSION ?= $(DEFAULT_MIN_MACOS_VERSION)
+@@ -187,7 +187,7 @@ LIBICONV_PATH =
+ AR = $(shell which llvm-ar-16 2>/dev/null || which llvm-ar 2>/dev/null || which ar 2>/dev/null)
+ endif
+ 
+-OPTIMIZATION_LEVEL=-O3 $(MARCH_NATIVE)
++OPTIMIZATION_LEVEL= $(MARCH_NATIVE)
+ DEBUG_OPTIMIZATION_LEVEL= -O1 $(MARCH_NATIVE) -gdwarf-4
+ CFLAGS_WITHOUT_MARCH = $(MACOS_MIN_FLAG) $(OPTIMIZATION_LEVEL) -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables -fno-pie -fno-pic
+ BUN_CFLAGS = $(MACOS_MIN_FLAG) $(MARCH_NATIVE)  $(OPTIMIZATION_LEVEL) -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden  -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables -fno-pie -fno-pic
+diff '--color=auto' -urp bun-bun-v1.1.26.orig/scripts/env.sh bun-bun-v1.1.26/scripts/env.sh
+--- bun-bun-v1.1.26.orig/scripts/env.sh	2024-08-23 23:12:01.000000000 -0700
++++ bun-bun-v1.1.26/scripts/env.sh	2025-12-26 23:19:13.872324265 -0800
+@@ -67,8 +67,8 @@ export CMAKE_C_COMPILER=${CC}
+ 
+ export FILE_PREFIX_MAP=" -ffile-prefix-map='${BUN_BASE_DIR}'=. -ffile-prefix-map='${BUN_DEPS_DIR}'=src/deps -ffile-prefix-map='${BUN_DEPS_OUT_DIR}'=src/deps "
+ 
+-export CFLAGS="-O3 -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables $FILE_PREFIX_MAP "
+-export CXXFLAGS="-O3 -fno-exceptions -fno-rtti -fvisibility=hidden -fvisibility-inlines-hidden -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables -fno-c++-static-destructors $FILE_PREFIX_MAP "
++export CFLAGS=" -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables $FILE_PREFIX_MAP "
++export CXXFLAGS=" -fno-exceptions -fno-rtti -fvisibility=hidden -fvisibility-inlines-hidden -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables -fno-c++-static-destructors $FILE_PREFIX_MAP "
+ 
+ # Add flags for LTO
+ # We cannot enable LTO on macOS for dependencies because it requires -fuse-ld=lld and lld causes many segfaults on macOS (likely related to stack size)
+@@ -101,8 +101,8 @@ elif [[ $UNAME_OS == 'Linux' ]]; then
+ fi
+ 
+ if [[ $UNAME_OS == 'Linux' && ($UNAME_ARCH == 'aarch64' || $UNAME_ARCH == 'arm64') ]]; then
+-  export CFLAGS="$CFLAGS -march=armv8-a+crc -mtune=ampere1 "
+-  export CXXFLAGS="$CXXFLAGS -march=armv8-a+crc -mtune=ampere1 "
++  export CFLAGS="$CFLAGS "
++  export CXXFLAGS="$CXXFLAGS "
+ fi
+ 
+ export CMAKE_FLAGS=(
