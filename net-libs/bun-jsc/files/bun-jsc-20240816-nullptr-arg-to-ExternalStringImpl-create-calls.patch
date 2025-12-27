@@ -1,0 +1,90 @@
+--- Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp.orig	2025-12-26 16:34:00.422206904 -0800
++++ Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp	2025-12-26 16:38:57.005316804 -0800
+@@ -755,12 +755,17 @@ TEST(WTF, ExternalStringImplCreate8bit)
+ {
+     constexpr LChar buffer[] = "hello";
+     constexpr size_t bufferStringLength = sizeof(buffer) - 1;
+-    bool freeFunctionCalled = false;
++    static bool freeFunctionCalled = false;
++    freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+-            freeFunctionCalled = true;
+-        });
++        auto external = ExternalStringImpl::create(
++            { buffer, bufferStringLength },
++            nullptr,
++            reinterpret_cast<void(*)(void*, void*, unsigned)>(+[](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) {
++                freeFunctionCalled = true;
++            })
++        );
+ 
+         ASSERT_TRUE(external->isExternal());
+         ASSERT_TRUE(external->is8Bit());
+@@ -777,12 +782,17 @@ TEST(WTF, ExternalStringImplCreate16bit)
+ {
+     constexpr UChar buffer[] = { L'h', L'e', L'l', L'l', L'o', L'\0' };
+     constexpr size_t bufferStringLength = (sizeof(buffer) - 1) / sizeof(UChar);
+-    bool freeFunctionCalled = false;
++    static bool freeFunctionCalled = false;
++    freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+-            freeFunctionCalled = true;
+-        });
++        auto external = ExternalStringImpl::create(
++            { buffer, bufferStringLength },
++            nullptr,
++            reinterpret_cast<void(*)(void*, void*, unsigned)>(+[](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) {
++                freeFunctionCalled = true;
++            })
++        );
+ 
+         ASSERT_TRUE(external->isExternal());
+         ASSERT_FALSE(external->is8Bit());
+@@ -806,12 +816,17 @@ TEST(WTF, ExternalStringAtom)
+ {
+     constexpr LChar buffer[] = "hello";
+     constexpr size_t bufferStringLength = sizeof(buffer) - 1;
+-    bool freeFunctionCalled = false;
++    static bool freeFunctionCalled = false;
++    freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+-            freeFunctionCalled = true;
+-        });    
++        auto external = ExternalStringImpl::create(
++            { buffer, bufferStringLength },
++            nullptr,
++            reinterpret_cast<void(*)(void*, void*, unsigned)>(+[](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) {
++                freeFunctionCalled = true;
++            })
++        );
+ 
+         ASSERT_TRUE(external->isExternal());
+         ASSERT_FALSE(external->isAtom());
+@@ -843,12 +858,17 @@ TEST(WTF, ExternalStringToSymbol)
+ {
+     constexpr LChar buffer[] = "hello";
+     constexpr size_t bufferStringLength = sizeof(buffer) - 1;
+-    bool freeFunctionCalled = false;
++    static bool freeFunctionCalled = false;
++    freeFunctionCalled = false;
+ 
+     {
+-        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+-            freeFunctionCalled = true;
+-        });
++        auto external = ExternalStringImpl::create(
++            { buffer, bufferStringLength },
++            nullptr,
++            reinterpret_cast<void(*)(void*, void*, unsigned)>(+[](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) {
++                freeFunctionCalled = true;
++            })
++        );
+ 
+         ASSERT_TRUE(external->isExternal());
+         ASSERT_FALSE(external->isSymbol());
