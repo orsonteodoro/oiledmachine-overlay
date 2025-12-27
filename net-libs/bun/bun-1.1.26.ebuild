@@ -281,7 +281,6 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.26-march-and-opt-level-changes.patch"
-	"A${FILESDIR}/${PN}-1.3.5-offline.patch"
 	"${FILESDIR}/${PN}-1.1.26-mimalloc-secure-on.patch"
 )
 
