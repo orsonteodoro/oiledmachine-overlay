@@ -24,6 +24,9 @@ EAPI=8
 # https://github.com/oven-sh/bun/tree/bun-v1.1.26/src/bun.js		# Older WebKit commit
 # https://github.com/oven-sh/bun/blob/bun-v1.1.26/CMakeLists.txt#L7	# Newer WebKit commit
 
+# TODO:
+# FIXME:  Missing data collection policy/legal text
+
 CFLAGS_HARDENED_USE_CASES="security-critical jit network untrusted-data"
 CXX_STANDARD=20
 
@@ -179,7 +182,7 @@ SLOT="${BUN_SLOT}-${BUN_JSC_SLOT}/${PV}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-bootstrap clang lto
+bootstrap clang lto -telemetry
 "
 REQUIRED_USE="
 	clang
@@ -221,6 +224,10 @@ REQUIRED_USE="
 
 	cpu_flags_arm_fp16fml? (
 		cpu_flags_arm_fp16
+	)
+
+	cpu_flags_arm_v8_6a? (
+		cpu_flags_arm_v8_4a
 	)
 "
 gen_depend_llvm() {
@@ -274,7 +281,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.26-march-and-opt-level-changes.patch"
-#	"${FILESDIR}/${PN}-1.3.5-offline.patch"
+	"A${FILESDIR}/${PN}-1.3.5-offline.patch"
 	"${FILESDIR}/${PN}-1.1.26-mimalloc-secure-on.patch"
 )
 
@@ -358,6 +365,11 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	node_setup
+
+	export DO_NOT_TRACK=1
+	export BUN_ENABLE_CRASH_REPORTING=0
+	export BUN_CRASH_REPORT_URL="https://localhost"
+	export NEXT_TELEMETRY_DISABLED=1
 }
 
 src_unpack() {
@@ -399,18 +411,6 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/src/deps/zlib"
 	dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/src/deps/zstd"
 	cmake_src_prepare
-}
-
-get_march() {
-	echo "${CFLAGS}" | grep -E -e "-march=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
-}
-
-get_mtune() {
-	echo "${CFLAGS}" | grep -E -e "-mtune=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
-}
-
-get_mcpu() {
-	echo "${CFLAGS}" | grep -E -e "-mcpu=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
 }
 
 _configure_cmake() {
@@ -461,36 +461,104 @@ eerror "ELIBC=${ELIBC} is not supported."
 		-DUSE_SSE2=$(usex cpu_flags_x86_sse2)
 		-DUSE_SSE4_2=$(usex cpu_flags_x86_sse4_2)
 	)
-	local march=$(get_march)
-	local mtune=$(get_mtune)
-	local mcpu=$(get_mcpu)
 
 	if [[ -n "${march}" ]] ; then
 		mycmakeargs+=(
-			-DDEFAULT_MARCH="${march}"
-		)
-	fi
-
-	if [[ -n "${mtune}" ]] ; then
-		mycmakeargs+=(
-			-DDEFAULT_MTUNE="${mtune}"
-		)
-	fi
-
-	if [[ -n "${mcpu}" ]] ; then
-		mycmakeargs+=(
-			-DDEFAULT_MCPU="${mcpu}"
-		)
-	fi
-
-	if [[ -n "${march}" ]] ; then
-		mycmakeargs+=(
-			-DDEFAULT_ZCPU="${march/-/_}"
+			-DZIG_CPU="${march/-/_}"
 		)
 	elif [[ -n "${mcpu}" ]] ; then
 		mycmakeargs+=(
-			-DDEFAULT_ZCPU="${mcpu/-/_}"
+			-DZIG_CPU="${mcpu/-/_}"
 		)
+	else
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			local generic_arch=""
+			if \
+				   use cpu_flags_x86_fxsr \
+				&& use cpu_flags_x86_mmx \
+				&& use cpu_flags_x86_sse \
+				&& use cpu_flags_x86_sse2 \
+			; then
+				generic_arch="x86_64"
+			elif \
+				   use cpu_flags_x86_cx16 \
+				&& use cpu_flags_x86_fxsr \
+				&& use cpu_flags_x86_mmx \
+				&& use cpu_flags_x86_sse4_2 \
+				&& use cpu_flags_x86_popcnt \
+			; then
+				generic_arch="x86_64_v2"
+			elif \
+				   use cpu_flags_x86_avx2 \
+				&& use cpu_flags_x86_bmi \
+				&& use cpu_flags_x86_bmi2 \
+				&& use cpu_flags_x86_cx16 \
+				&& use cpu_flags_x86_f16c \
+				&& use cpu_flags_x86_fma \
+				&& use cpu_flags_x86_fxsr \
+				&& use cpu_flags_x86_lzcnt \
+				&& use cpu_flags_x86_mmx \
+				&& use cpu_flags_x86_popcnt \
+			; then
+				generic_arch="x86_64_v3"
+			else
+eerror
+eerror "CPU is not supported"
+eerror
+eerror "At least one row must be completely enabled to continue."
+eerror
+eerror "<zig_cpu> - -march=<codename> added to CFLAGS"
+eerror "nehalem - -march=nehalem added to CFLAGS"
+eerror "haswell - -march=haswell added to CFLAGS"
+eerror "x86_64 - cpu_flags_x86_fxsr, cpu_flags_x86_mmx, cpu_flags_x86_sse, cpu_flags_x86_sse2 added to USE flags"
+eerror "x86_64_v2 - cpu_flags_x86_cx16, cpu_flags_x86_fxsr, cpu_flags_x86_mmx, cpu_flags_x86_sse4_2, cpu_flags_x86_popcnt added to USE flags"
+eerror "x86_64_v3 - cpu_flags_x86_avx2, cpu_flags_x86_bmi, cpu_flags_x86_bmi2, cpu_flags_x86_cx16, cpu_flags_x86_f16c, cpu_flags_x86_fma, cpu_flags_x86_fxsr, cpu_flags_x86_lzcnt, cpu_flags_x86_mmx, cpu_flags_x86_popcnt added to USE flags"
+eerror
+				die
+			fi
+			mycmakeargs+=(
+				-DZIG_CPU="${generic_arch}"
+			)
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			local generic_arch=""
+			if \
+				   use cpu_flags_arm_aes \
+				&& use cpu_flags_arm_fp16fml \
+				&& use cpu_flags_arm_sb \
+				&& use cpu_flags_arm_sha3 \
+				&& use cpu_flags_arm_ssbs \
+				&& use cpu_flags_arm_v8_4a \
+			; then
+				generic_arch="apple_m1"
+			elif \
+				   use cpu_flags_arm_aes \
+				&& use cpu_flags_arm_fp16 \
+				&& use cpu_flags_arm_rnd \
+				&& use cpu_flags_arm_sha3 \
+				&& use cpu_flags_arm_v8_6a \
+			; then
+				generic_arch="ampere1"
+			else
+eerror
+eerror "CPU is not supported"
+eerror
+eerror "At least one row must be completely enabled to continue."
+eerror
+eerror "<zig_cpu> - -march=<codename> added to CFLAGS"
+eerror "apple_m1 - -mcpu=apple-m1 added to CFLAGS"
+eerror "ampere1 - -mtune=ampere1 added to CFLAGS"
+eerror "apple_m1 - cpu_flags_arm_aes, cpu_flags_arm_fp16fml, cpu_flags_arm_sb, cpu_flags_arm_sha3, cpu_flags_arm_ssbs, cpu_flags_arm_v8_4a added to USE flags"
+eerror "ampere1 - cpu_flags_arm_aes, cpu_flags_arm_fp16, cpu_flags_arm_rnd, cpu_flags_arm_sha3, cpu_flags_arm_v8_6a added to USE flags"
+eerror
+				die
+			fi
+			mycmakeargs+=(
+				-DZIG_CPU="${generic_arch}"
+			)
+		else
+eerror "ARCH=${ARCH} is not supported"
+			die
+		fi
 	fi
 	cmake_src_configure
 }
@@ -552,6 +620,16 @@ src_install() {
 	dhms_end
 	docinto "licenses"
 	dodoc "LICENSE.md"
+
+	if ! use telemetry ; then
+ewarn "Reboot for telemetry disablement for ${P}"
+	        dodir /etc/env.d
+newenvd - 50${PN}-${BUN_SLOT}-${BUN_JSC_SLOT} <<-EOF
+DO_NOT_TRACK=1
+BUN_ENABLE_CRASH_REPORTING=0
+BUN_CRASH_REPORT_URL="https://localhost"
+EOF
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
