@@ -281,8 +281,9 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"A${FILESDIR}/${PN}-1.3.5-march-changes.patch"
+	"${FILESDIR}/${PN}-1.3.5-march-and-opt-level-changes.patch"
 	"${FILESDIR}/${PN}-1.3.5-offline.patch"
+	"${FILESDIR}/${PN}-1.3.5-mimalloc-secure-on.patch"
 )
 
 _set_clang() {
