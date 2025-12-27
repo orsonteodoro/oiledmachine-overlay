@@ -1,5 +1,5 @@
---- a/CMakeLists.txt.orig	2025-12-27 10:49:50.701333060 -0800
-+++ b/CMakeLists.txt	2025-12-27 10:50:30.218472319 -0800
+--- a/CMakeLists.txt.orig	2025-12-27 11:11:09.584059992 -0800
++++ b/CMakeLists.txt	2025-12-27 11:52:28.858149702 -0800
 @@ -41,20 +41,6 @@ if(NOT WIN32 AND NOT APPLE)
      set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
  endif()
@@ -7,7 +7,7 @@
 -# --- Build Type ---
 -if(NOT CMAKE_BUILD_TYPE)
 -    message(WARNING "No CMAKE_BUILD_TYPE value specified, defaulting to Debug.\nSet a build type with -DCMAKE_BUILD_TYPE=<Debug|Release>")
--#_cmake_modify_IGNORE     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build (Debug, Release)" FORCE)
+-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build (Debug, Release)" FORCE)
 -else()
 -    if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release)$")
 -        message(FATAL_ERROR
