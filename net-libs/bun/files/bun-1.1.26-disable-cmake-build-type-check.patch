@@ -1,0 +1,23 @@
+--- a/CMakeLists.txt.orig	2025-12-27 10:49:50.701333060 -0800
++++ b/CMakeLists.txt	2025-12-27 10:50:30.218472319 -0800
+@@ -41,20 +41,6 @@ if(NOT WIN32 AND NOT APPLE)
+     set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
+ endif()
+ 
+-# --- Build Type ---
+-if(NOT CMAKE_BUILD_TYPE)
+-    message(WARNING "No CMAKE_BUILD_TYPE value specified, defaulting to Debug.\nSet a build type with -DCMAKE_BUILD_TYPE=<Debug|Release>")
+-#_cmake_modify_IGNORE     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build (Debug, Release)" FORCE)
+-else()
+-    if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release)$")
+-        message(FATAL_ERROR
+-            "Invalid CMAKE_BUILD_TYPE value specified: ${CMAKE_BUILD_TYPE}\n"
+-            "CMAKE_BUILD_TYPE must be Debug or Release.")
+-    endif()
+-
+-    message(STATUS "The CMake build type is: ${CMAKE_BUILD_TYPE}")
+-endif()
+-
+ if(WIN32 AND NOT CMAKE_CL_SHOWINCLUDES_PREFIX)
+     # workaround until cmake fix is shipped https://github.com/ninja-build/ninja/issues/2280
+     # './build/.ninja_deps' may need to be deleted, the bug is "Note: including file: ..." is saved

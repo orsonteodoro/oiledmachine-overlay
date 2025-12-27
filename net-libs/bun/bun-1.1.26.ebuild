@@ -282,6 +282,7 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.26-march-and-opt-level-changes.patch"
 	"${FILESDIR}/${PN}-1.1.26-mimalloc-secure-on.patch"
+	"${FILESDIR}/${PN}-1.1.26-disable-cmake-build-type-check.patch"
 )
 
 _set_clang() {
@@ -440,6 +441,7 @@ eerror "ELIBC=${ELIBC} is not supported."
 
 	local mycmakeargs=(
 		-DABI="${libc}"
+		-DCMAKE_BUILD_TYPE="RelWithDebInfo" # Force -O2 to prevent optimizing out _FORTIFY_SOURCE memory corruption checks
 		-DENABLE_LTO=$(usex lto "ON" "OFF")
 		-DWEBKIT_LOCAL=ON
 
