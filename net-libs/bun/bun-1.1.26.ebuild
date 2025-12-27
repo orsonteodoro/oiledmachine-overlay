@@ -6,8 +6,8 @@ EAPI=8
 
 # Bootstrap plan (Tentative):
 
-# Build Bun 1.1.26 with build Bun's Zig for generic Bun.
-# Build 1 or more generic Buns with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) with Bun's Zig towards latest stable bun.
+# Build Bun 1.1.26 with Bun's Zig for generic Bun.
+# Build 1 or more generic Buns with lowest possible ISA SIMD (-march=x86-64, -march=armv8-a) towards the latest stable bun.
 # Build Bun latest stable with generic Bun as feature complete Bun.
 # Boostrapping Bun is similar to bootstrapping Rust where the previous version bootstraps to next version.
 
@@ -17,7 +17,7 @@ EAPI=8
 # M         generic Bun 1.2.26 -> M generic Bun
 # ...
 # N         generic Bun M -> Bun N generic Bun
-# 1.3.35    generic Bun N to feature complete Bun 1.3.5.  Steps will merged if possible to save time.
+# 1.3.35    generic Bun N to feature complete Bun 1.3.5.  Steps will merge if possible to save time.
 
 # Deps versions:
 # https://github.com/oven-sh/bun/tree/bun-v1.1.26/src/deps
