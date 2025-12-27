@@ -413,6 +413,18 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+get_march() {
+	echo "${CFLAGS}" | grep -E -e "-march=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
+}
+
+get_mtune() {
+	echo "${CFLAGS}" | grep -E -e "-mtune=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
+}
+
+get_mcpu() {
+	echo "${CFLAGS}" | grep -E -e "-mcpu=[a-z0-9_+-]+" | tr " " $'\n' | tail -n 1
+}
+
 _configure_cmake() {
 	local _ABI="${ABI}"
 	unset ABI
@@ -462,6 +474,10 @@ eerror "ELIBC=${ELIBC} is not supported."
 		-DUSE_SSE4_2=$(usex cpu_flags_x86_sse4_2)
 	)
 
+	local march=$(get_march)
+	local mtune=$(get_mtune)
+	local mcpu=$(get_mcpu)
+
 	if [[ -n "${march}" ]] ; then
 		mycmakeargs+=(
 			-DZIG_CPU="${march/-/_}"
@@ -469,6 +485,10 @@ eerror "ELIBC=${ELIBC} is not supported."
 	elif [[ -n "${mcpu}" ]] ; then
 		mycmakeargs+=(
 			-DZIG_CPU="${mcpu/-/_}"
+		)
+	elif [[ -n "${mtune}" ]] ; then
+		mycmakeargs+=(
+			-DZIG_CPU="${mtune/-/_}"
 		)
 	else
 		if [[ "${ARCH}" == "amd64" ]] ; then
