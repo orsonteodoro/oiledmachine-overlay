@@ -54,7 +54,7 @@ cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -177,6 +177,7 @@ LLVM_COMPONENTS=(
 	"llvm/lib/Transforms/Hello"
 )
 LLVM_MANPAGES=1
+LLVM_PATCHSET="${PV}-r7"
 LLVM_TEST_COMPONENTS=(
 	"llvm/utils"
 )
@@ -221,27 +222,11 @@ PDEPEND+=" "$(gen_pdepend)
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
+
+	LLVM_MAX_SLOT=${LLVM_MAJOR} \
+	llvm_pkg_setup
+
 	python-single-r1_pkg_setup
-	if tc-is-gcc ; then
-		local gcc_slot=$(best_version "sys-devel/gcc" \
-			| sed -e "s|sys-devel/gcc-||g")
-		gcc_slot=$(ver_cut 1-3 ${gcc_slot})
-		# gcc-major-version is broken with gcc hardened 11.2.1_p20220115
-		if (( $(ver_cut 1 ${gcc_slot}) != $(ver_cut 1 $(_gcc_fullversion)) )) ; then
-# Prevent: undefined reference to `std::__throw_bad_array_new_length()'
-ewarn
-ewarn "Detected not using latest gcc."
-ewarn
-ewarn "Build may break if highest gcc version not chosen and profile not"
-ewarn "sourced.  To fix do the following:"
-ewarn
-ewarn "  gcc-config -l"
-ewarn "  gcc-config ${CHOST}-${gcc_slot}	# It must match at least one row from \ "
-ewarn "						# the above list."
-ewarn "  source /etc/profile"
-ewarn
-		fi
-	fi
 
 	if [[ -n "${MAKEOPTS}" ]] ; then
 		local nmakeopts=$(echo "${MAKEOPTS}" \

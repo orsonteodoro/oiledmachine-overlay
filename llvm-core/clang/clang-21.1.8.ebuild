@@ -34,8 +34,7 @@ inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstd
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C language family frontend for LLVM"
@@ -224,26 +223,6 @@ pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
-	if tc-is-gcc ; then
-		local gcc_slot=$(best_version "sys-devel/gcc" \
-			| sed -e "s|sys-devel/gcc-||g")
-		gcc_slot=$(ver_cut 1-3 ${gcc_slot})
-		# gcc-major-version is broken with gcc hardened 11.2.1_p20220115
-		if (( $(ver_cut 1 ${gcc_slot}) != $(ver_cut 1 $(_gcc_fullversion)) )) ; then
-# Prevent: undefined reference to `std::__throw_bad_array_new_length()'
-ewarn
-ewarn "Detected not using latest gcc."
-ewarn
-ewarn "Build may break if highest gcc version not chosen and profile not"
-ewarn "sourced.  To fix do the following:"
-ewarn
-ewarn "  gcc-config -l"
-ewarn "  gcc-config ${CHOST}-${gcc_slot}	# It must match at least one row from \ "
-ewarn "						# the above list."
-ewarn "  source /etc/profile"
-ewarn
-		fi
-	fi
 
 	if [[ -n "${MAKEOPTS}" ]] ; then
 		local nmakeopts=$(echo "${MAKEOPTS}" \
