@@ -34,8 +34,7 @@ inherit check-compiler-switch cmake dhms libstdcxx-slot llvm.org multilib-minima
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Low Level Virtual Machine"

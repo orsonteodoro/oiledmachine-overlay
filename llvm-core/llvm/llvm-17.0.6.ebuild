@@ -23,8 +23,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -34,8 +34,7 @@ inherit check-compiler-switch cmake dhms libstdcxx-slot llvm.org multilib-minima
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Low Level Virtual Machine"
@@ -54,10 +53,10 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM17_REVISION}
 +binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
-libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_11
+libedit +libffi ncurses tcmalloc test xar xml z3 zstd
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -135,6 +134,9 @@ RDEPEND="
 	tcmalloc? (
 		dev-util/google-perftools
 	)
+	xar? (
+		app-arch/xar
+	)
 	xml? (
 		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
 	)
@@ -156,6 +158,12 @@ BDEPEND="
 	>=dev-build/cmake-3.16
 	dev-lang/perl
 	sys-devel/gnuconfig
+	doc? (
+		$(python_gen_any_dep '
+			dev-python/recommonmark[${PYTHON_USEDEP}]
+			dev-python/sphinx[${PYTHON_USEDEP}]
+		')
+	)
 	kernel_Darwin? (
 		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
 		>=sys-devel/binutils-apple-5.1
@@ -193,18 +201,9 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV}-r7"
+LLVM_PATCHSET="${PV}-r4"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
-
-[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
-BDEPEND+="
-	$(python_gen_any_dep '
-		dev-python/myst-parser[${PYTHON_USEDEP}]
-		dev-python/sphinx[${PYTHON_USEDEP}]
-	')
-"
-[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
 
 pkg_setup() {
 	dhms_start
@@ -260,9 +259,9 @@ einfo
 }
 
 python_check_deps() {
-	llvm_are_manpages_built || return 0
+	use doc || return 0
 
-	python_has_version -b "dev-python/myst-parser[${PYTHON_USEDEP}]" &&
+	python_has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
 	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
@@ -315,9 +314,6 @@ check_distribution_components() {
 						;;
 					# TableGen/mlir lib + deps
 					LLVMCodeGenTypes|LLVMDemangle|LLVMSupport|LLVMTableGen)
-						;;
-					# used by lldb
-					LLVMDebuginfod)
 						;;
 					# testing libraries
 					LLVMTestingAnnotations|LLVMTestingSupport)
@@ -429,9 +425,6 @@ get_distribution_components() {
 
 	if multilib_is_native_abi; then
 		out+=(
-			# library used by lldb
-			LLVMDebuginfod
-
 			# utilities
 			llvm-tblgen
 			FileCheck
@@ -499,8 +492,8 @@ get_distribution_components() {
 			llvm-rc
 			llvm-readelf
 			llvm-readobj
-			llvm-readtapi
 			llvm-reduce
+			llvm-remark-size-diff
 			llvm-remarkutil
 			llvm-rtdyld
 			llvm-sim
@@ -510,6 +503,7 @@ get_distribution_components() {
 			llvm-strings
 			llvm-strip
 			llvm-symbolizer
+			llvm-tapi-diff
 			llvm-tli-checker
 			llvm-undname
 			llvm-windres
@@ -665,6 +659,9 @@ einfo
 
 		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
 		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
+
+		# used only for llvm-objdump tool
+		-DLLVM_HAVE_LIBXAR=$(multilib_native_usex xar 1 0)
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 
