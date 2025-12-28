@@ -1,0 +1,26 @@
+--- a/cmake/Findllvm.cmake.orig	2023-10-13 03:43:54.000000000 -0700
++++ b/cmake/Findllvm.cmake	2025-12-27 16:02:44.408977437 -0800
+@@ -37,7 +37,7 @@ if(ZIG_USE_LLVM_CONFIG)
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+     get_filename_component(LLVM_CONFIG_DIR "${LLVM_CONFIG_EXE}" DIRECTORY)
+-    if("${LLVM_CONFIG_VERSION}" VERSION_LESS 17 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 18 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 18)
++    if(FALSE AND "${LLVM_CONFIG_VERSION}" VERSION_LESS 17 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 18 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 18)
+       # Save the error message, in case this is the last llvm-config we find
+       list(APPEND LLVM_CONFIG_ERROR_MESSAGES "expected LLVM 17.x but found ${LLVM_CONFIG_VERSION} using ${LLVM_CONFIG_EXE}")
+ 
+--- a/CMakeLists.txt.orig	2023-10-13 03:43:54.000000000 -0700
++++ b/CMakeLists.txt	2025-12-27 16:02:25.433111053 -0800
+@@ -132,9 +132,9 @@ else()
+     set(ZIG_SYSTEM_LIBCXX "stdc++" CACHE STRING "system libcxx name for build.zig")
+ endif()
+ 
+-find_package(llvm 17)
+-find_package(clang 17)
+-find_package(lld 17)
++find_package(llvm)
++find_package(clang)
++find_package(lld)
+ 
+ if(ZIG_STATIC_ZLIB)
+     if (MSVC)
