@@ -15,8 +15,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -46,7 +46,7 @@ CXX_STANDARD=23
 LLVM_MAX_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_11" )
 
-inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm llvm.org python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
 SRC_URI+="
@@ -70,7 +70,7 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM17_REVISION}
 clang hardened +libcxxabi +static-libs test +threads
 ebuild_revision_17
 "
@@ -228,6 +228,15 @@ _usex_lto() {
 
 pkg_setup() {
 	check-compiler-switch_start
+
+	# Darwin Prefix builds do not have llvm installed yet, so rely on
+	# bootstrap-prefix to set the appropriate path vars to LLVM instead
+	# of using llvm_pkg_setup.
+	if [[ "${CHOST}" != *"-darwin"* ]] || has_version "llvm-core/llvm" ; then
+		LLVM_MAX_SLOT=${LLVM_MAJOR} \
+		llvm_pkg_setup
+	fi
+
 	python-any-r1_pkg_setup
 
 	if ! use libcxxabi && ! tc-is-gcc ; then
@@ -240,18 +249,7 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
-src_prepare() {
-	# Hanging tests
-	# https://github.com/llvm/llvm-project/issues/73791
-	rm "../libcxx/test/std/atomics/atomics.types.generic/atomics.types.float/fetch_"* || die
-	rm "../libcxx/test/std/atomics/atomics.types.generic/atomics.types.float/operator."*"_equals"* || die
-
-	cmake_src_prepare
-}
-
 src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
-
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
@@ -392,7 +390,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# We're using our own mechanism for generating linker scripts.
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
 		-DLIBCXX_ENABLE_THREADS=$(usex threads)
-		-DLIBCXX_HAS_MUSL_LIBC=$(llvm_cmake_use_musl)
+		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
@@ -402,9 +400,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
 		-DPython3_EXECUTABLE="${PYTHON}"
-
-		# This is broken with standalone builds, and also meaningless
-		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 	)
 
 	set_cfi() {
