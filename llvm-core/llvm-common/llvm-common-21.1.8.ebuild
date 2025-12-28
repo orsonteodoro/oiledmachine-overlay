@@ -26,8 +26,7 @@ unset -f _llvm_set_globals
 inherit elisp-common llvm.org
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Common files shared between multiple slots of LLVM"
