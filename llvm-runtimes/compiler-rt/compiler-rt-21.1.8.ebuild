@@ -33,8 +33,7 @@ inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.or
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~arm64-macos
-~ppc-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
