@@ -10,7 +10,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_11" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -23,17 +23,17 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot llvm.org llvm-utils python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot llvm llvm.org llvm-utils python-single-r1 toolchain-funcs
 
 KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos
 "
 
 DESCRIPTION="The LLVM linker (link editor)"
@@ -44,8 +44,8 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-${LLVM_EBUILDS_LLVM21_REVISION}
-debug default-full-relro default-no-relro +default-partial-relro hardened
+${LLVM_EBUILDS_LLVM17_REVISION}
++debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
 ebuild_revision_3
 "
@@ -119,7 +119,7 @@ BDEPEND="
 	test? (
 		>=dev-build/cmake-3.16
 		$(python_gen_cond_dep "
-			dev-python/lit[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${PV}[\${PYTHON_USEDEP}]
 		")
 	)
 "
@@ -136,7 +136,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"libunwind/include/mach-o"
 )
-LLVM_USE_TARGETS="llvm+eq"
+LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
 
 gen_rdepend() {
@@ -155,6 +155,10 @@ python_check_deps() {
 
 pkg_setup() {
 	check-compiler-switch_start
+
+	LLVM_MAX_SLOT=${LLVM_MAJOR} \
+	llvm_pkg_setup
+
 	python-single-r1_pkg_setup
 
 # See https://bugs.gentoo.org/767700
@@ -194,18 +198,18 @@ eapply_hardened() {
 ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
 	local hardened_flags=""
 	if use default-full-relro ; then
-		eapply "${FILESDIR}/lld-21.1.5-enable-full-relro-by-default.patch"
+		eapply "${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 		hardened_flags="Full RELRO"
 	fi
 	if use default-no-relro ; then
-		eapply "${FILESDIR}/lld-21.1.5-disable-relro-by-default.patch"
+		eapply "${FILESDIR}/clang-12.0.1-disable-relro-by-default.patch"
 		hardened_flags="NO RELRO"
 	fi
 	if use default-partial-relro ; then
 		hardened_flags="Partial RELRO"
 	fi
 	if use hardened || use hardened-compat ; then
-		eapply "${FILESDIR}/lld-20.1.8-version-info.patch"
+		eapply "${FILESDIR}/clang-12.0.1-version-info.patch"
 		sed -i -e "s|__HARDENED_FLAGS__|${hardened_flags}|g" \
 			"ELF/Driver.cpp" || die
 	fi
@@ -224,6 +228,10 @@ _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+
+	# ODR violations (https://github.com/llvm/llvm-project/issues/83529, bug #922353)
+	filter-lto
+
 	llvm-ebuilds_fix_toolchain # Compiler switch
 
 	check-compiler-switch_end
@@ -234,6 +242,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 _src_configure() {
+	llvm_prepend_path "${LLVM_MAJOR}"
+
+	# ODR violations (https://github.com/llvm/llvm-project/issues/83529, bug #922353)
+	filter-lto
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
@@ -249,12 +261,10 @@ _src_configure() {
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
-		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
 		-DLLVM_ENABLE_ZLIB=FORCE_ON
 		-DLLVM_ENABLE_ZSTD=$(usex zstd FORCE_ON OFF)
-		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON

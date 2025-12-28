@@ -24,7 +24,7 @@ _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -48,7 +48,7 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM17_REVISION}
 cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
