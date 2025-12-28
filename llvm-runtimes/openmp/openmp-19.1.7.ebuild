@@ -388,8 +388,8 @@ multilib_src_configure() {
 
 	# Avoid possible error:
 	# ld.bfd: duplicate version tag `VERS1.0'
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=lld
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
 	strip-unsupported-flags
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
@@ -413,15 +413,15 @@ multilib_src_configure() {
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 
-	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+	if use offload && has "${CHOST%%-*}" "aarch64" "powerpc64le" "x86_64" ; then
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex remote-offloading)
 
 	# Prevent trying to access the GPU
-			-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
-			-DLIBOMPTARGET_NVPTX_ARCH=LIBOMPTARGET_NVPTX_ARCH-NOTFOUND
+			-DLIBOMPTARGET_AMDGPU_ARCH="LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND"
+			-DLIBOMPTARGET_NVPTX_ARCH="LIBOMPTARGET_NVPTX_ARCH-NOTFOUND"
 
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)

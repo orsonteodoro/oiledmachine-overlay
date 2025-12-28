@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# Last update:  2024-07-23
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -13,11 +11,10 @@ fi
 
 CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
-PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_11" )
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
 CUDA_TARGETS_COMPAT=(
 	"auto"
 	"sm_35"
@@ -37,32 +34,25 @@ CUDA_TARGETS_COMPAT=(
 	"sm_89"
 	"sm_90"
 	"sm_90a"
-	"sm_100"
-	"sm_100a"
-	"sm_101"
-	"sm_101a"
-	"sm_120"
-	"sm_120a"
 )
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit llvm-ebuilds
-inherit abseil-cpp cmake-multilib flag-o-matic grpc libstdcxx-slot linux-info llvm.org llvm-utils protobuf python-single-r1
+inherit abseil-cpp cmake-multilib flag-o-matic grpc libstdcxx-slot linux-info llvm llvm.org protobuf python-single-r1
 inherit re2 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-	EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
+	EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	if [[ "${USE}" =~ "fallback-commit" ]] ; then
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
 	fi
 else
 	KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~amd64-linux ~x64-macos
+amd64 arm arm64 ~loong ppc64 ~riscv x86 ~x64-macos
 	"
 fi
 
@@ -83,8 +73,8 @@ RESTRICT="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${LLVM_EBUILDS_LLVM20_REVISION}
-cuda debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
+${LLVM_EBUILDS_LLVM17_REVISION}
+cuda +debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
 ebuild_revision_11
 "
 gen_cuda_required_use() {
@@ -126,34 +116,6 @@ CUDA_12_3_RDEPEND="
 		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
 	)
 "
-CUDA_12_4_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.4*
-		>=dev-util/nvidia-cuda-toolkit-550.54
-		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_5_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.5*
-		>=dev-util/nvidia-cuda-toolkit-555.42
-		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_6_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.6*
-		>=dev-util/nvidia-cuda-toolkit-560.35
-		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_8_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=dev-util/nvidia-cuda-toolkit-570.124
-		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
-	)
-"
 RDEPEND="
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -169,140 +131,90 @@ RDEPEND="
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_52? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_53? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_60? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_61? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_62? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_70? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_72? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_75? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_80? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_86? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_87? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_89? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 	)
 	cuda_targets_sm_90? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_90a? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
 		)
 	)
 	gdb-plugin? (
@@ -316,10 +228,6 @@ RDEPEND="
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
 		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -370,7 +278,7 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
-#	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
+	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
 
 kernel_pds_check() {
@@ -424,8 +332,6 @@ gen_nvptx_list() {
 }
 
 multilib_src_configure() {
-	use offload && llvm_prepend_path "${LLVM_MAJOR}"
-
 	# LTO causes issues in other packages building, #870127
 	filter-lto
 
@@ -439,6 +345,8 @@ multilib_src_configure() {
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	local libdir="$(get_libdir)"
+	local ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I "libffi")
+	local ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L "libffi")
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
@@ -454,6 +362,9 @@ multilib_src_configure() {
 		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 
 		-DPython3_EXECUTABLE="${PYTHON}"
+
+		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
+		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
 	)
 
 	if use offload && has "${CHOST%%-*}" "aarch64" "powerpc64le" "x86_64" ; then
