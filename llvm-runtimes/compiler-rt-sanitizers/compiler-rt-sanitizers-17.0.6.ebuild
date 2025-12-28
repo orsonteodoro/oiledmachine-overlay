@@ -15,8 +15,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -28,13 +28,13 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_11" )
 
-inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm llvm.org python-any-r1
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ppc64 ~riscv x86 ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -48,10 +48,10 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-${LLVM_EBUILDS_LLVM19_REVISION}
-+abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
-+orc +profile test +xray
-ebuild_revision_16
+${LLVM_EBUILDS_LLVM17_REVISION}
++abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
+test +xray
+ebuild_revision_15
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -348,9 +348,8 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
-LLVM_PATCHSET="${PV}-r1"
+LLVM_PATCHSET="${PV}-r4"
 LLVM_TEST_COMPONENTS=(
-	"llvm/include/llvm/ProfileData"
 	"llvm/lib/Testing/Support"
 	"third-party"
 )
@@ -390,6 +389,10 @@ pkg_setup() {
 	WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required for mitigiation for non-production compiler-rt-sanitizers and Scudo."
 	check_extra_config
 	check_space
+
+	LLVM_MAX_SLOT=${LLVM_MAJOR} \
+	llvm_pkg_setup
+
 	python-any-r1_pkg_setup
 	libstdcxx-slot_verify
 }
@@ -406,6 +409,12 @@ src_prepare() {
 		fi
 	done
 
+	# bug #926330
+	sed -i -e '/-Wthread-safety/d' \
+		"CMakeLists.txt" \
+		"cmake/config-ix.cmake" \
+		|| die
+
 	# TODO: fix these tests to be skipped upstream
 	if use asan && ! use profile; then
 		rm test/asan/TestCases/asan_and_llvm_coverage_test.cpp || die
@@ -414,11 +423,16 @@ src_prepare() {
 		> test/cfi/CMakeLists.txt || die
 	fi
 
+
+	if has_version ">=sys-libs/glibc-2.40" ; then
+		# https://github.com/llvm/llvm-project/issues/100877
+		rm "test/asan/TestCases/Linux/printf-fortify-5.c" || die
+	fi
+
 	llvm.org_src_prepare
 }
 
 src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain # Compiler switch
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
@@ -453,7 +467,6 @@ src_configure() {
 		# builtins & crt installed by llvm-runtimes/compiler-rt
 		-DCOMPILER_RT_BUILD_BUILTINS=OFF
 		-DCOMPILER_RT_BUILD_CRT=OFF
-		-DCOMPILER_RT_BUILD_CTX_PROFILE=$(usex ctx-profile)
 		-DCOMPILER_RT_BUILD_LIBFUZZER=$(usex libfuzzer)
 		-DCOMPILER_RT_BUILD_MEMPROF=$(usex memprof)
 		-DCOMPILER_RT_BUILD_ORC=$(usex orc)
