@@ -5,16 +5,15 @@ EAPI=8
 
 inherit check-compiler-switch flag-o-matic multilib multilib-build
 
+KEYWORDS="
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
+"
+S="${WORKDIR}"
+
 DESCRIPTION="Meta-ebuild for clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
-S=${WORKDIR}
-
 LICENSE="public-domain"
 SLOT="${PV%%.*}"
-KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
-"
 IUSE="
 +compiler-rt default-compiler-rt default-libcxx default-lld libcxx
 llvm-libunwind offload openmp polly pstl +sanitize
