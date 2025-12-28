@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# Last update:  2024-10-23
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -16,21 +14,20 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_11" )
 
-inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm llvm.org python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos
-~x64-macos
+amd64 arm arm64 ~loong ~ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
@@ -44,8 +41,8 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM21_REVISION}
-+clang debug static-libs test
+${LLVM_EBUILDS_LLVM18_REVISION}
++clang +debug static-libs test
 ebuild_revision_6
 "
 REQUIRED_USE="
@@ -64,8 +61,6 @@ BDEPEND="
 	)
 	clang? (
 		llvm-core/clang:${LLVM_MAJOR}
-		llvm-core/clang-linker-config:${LLVM_MAJOR}
-		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
 	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
@@ -84,7 +79,6 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
-	"libc"
 	"libcxxabi"
 	"llvm/utils/llvm-lit"
 )
@@ -97,21 +91,12 @@ python_check_deps() {
 
 pkg_setup() {
 	check-compiler-switch_start
+	LLVM_MAX_SLOT=${LLVM_MAJOR} \
+	llvm_pkg_setup
 	python-any-r1_pkg_setup
 }
 
-test_compiler() {
-	target_is_not_host && return
-	local compiler=${1}
-	shift
-	${compiler} ${CFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
-		<<<'int main() { return 0; }' &>/dev/null
-}
-
 multilib_src_configure() {
-	if use clang ; then
-		llvm_prepend_path -b "${LLVM_MAJOR}"
-	fi
 	local libdir=$(get_libdir)
 
 	# https://github.com/llvm/llvm-project/issues/56825
@@ -119,43 +104,10 @@ multilib_src_configure() {
 	filter-lto
 
 	if use clang ; then
-		local -x CC="${CTARGET}-clang-${LLVM_MAJOR}"
-		local -x CXX="${CTARGET}-clang++-${LLVM_MAJOR}"
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-
-		# The full clang configuration might not be ready yet. Use the partial
-		# configuration files that are guaranteed to exist even during initial
-		# installations and upgrades.
-		local flags=(
-			--config="${ESYSROOT}"/etc/clang/"${LLVM_MAJOR}"/gentoo-{rtlib,linker}.cfg
-		)
-		local -x CFLAGS="${CFLAGS} ${flags[@]}"
-		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
-		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
-	fi
-
-	# Check whether C compiler runtime is available.
-	if ! test_compiler "$(tc-getCC)"; then
-		local nolib_flags=( -nodefaultlibs -lc )
-		if test_compiler "$(tc-getCC)" "${nolib_flags[@]}"; then
-			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
-			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
-		elif test_compiler "$(tc-getCC)" "${nolib_flags[@]}" -nostartfiles; then
-			# Avoiding -nostartfiles earlier on for bug #862540,
-			# and set available entry symbol for bug #862798.
-			nolib_flags+=( -nostartfiles -e main )
-			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
-			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
-		fi
-	fi
-	# Check whether C++ standard library is available,
-	local nostdlib_flags=( -nostdlib++ )
-	if ! test_compiler "$(tc-getCXX)" &&
-		test_compiler "$(tc-getCXX)" "${nostdlib_flags[@]}"
-	then
-		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
-		ewarn "${CXX} seems to lack runtime, trying with ${nostdlib_flags[*]}"
 	fi
 
 	check-compiler-switch_end
@@ -185,10 +137,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	use debug || append-cppflags -DNDEBUG
 
 	local mycmakeargs=(
-		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
-
-		-DCMAKE_C_COMPILER_TARGET="${CTARGET}"
-		-DCMAKE_CXX_COMPILER_TARGET="${CTARGET}"
+		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_ENABLE_RUNTIMES="libunwind"
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
@@ -198,24 +147,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLIBUNWIND_INCLUDE_TESTS=$(usex test)
 		-DLIBUNWIND_INSTALL_HEADERS=ON
 
-		# cross-unwinding increases unwinding footprint (to account
-		# for the worst case) and causes some breakage on AArch64
-		# https://github.com/llvm/llvm-project/issues/152549
-		-DLIBUNWIND_ENABLE_CROSS_UNWINDING=OFF
+		# support non-native unwinding; given it's small enough,
+		# enable it unconditionally
+		-DLIBUNWIND_ENABLE_CROSS_UNWINDING=ON
 
 		# avoid dependency on libgcc_s if compiler-rt is used
 		-DLIBUNWIND_USE_COMPILER_RT=${use_compiler_rt}
 	)
-	if is_crosspkg; then
-		mycmakeargs+=(
-			# Without this, the compiler will compile a test program
-			# and fail due to no builtins.
-			-DCMAKE_C_COMPILER_WORKS=1
-			-DCMAKE_CXX_COMPILER_WORKS=1
-			# Install inside the cross sysroot.
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
-		)
-	fi
 	if use test; then
 		mycmakeargs+=(
 			-DLLVM_ENABLE_RUNTIMES="libunwind;libcxxabi;libcxx"
@@ -234,7 +172,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DLIBCXX_ENABLE_STATIC=ON
 			-DLIBCXX_CXX_ABI=libcxxabi
 			-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
-			-DLIBCXX_HAS_MUSL_LIBC=$(llvm_cmake_use_musl)
+			-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 			-DLIBCXX_HAS_GCC_S_LIB=OFF
 			-DLIBCXX_INCLUDE_TESTS=OFF
 			-DLIBCXX_INCLUDE_BENCHMARKS=OFF
