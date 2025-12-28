@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# Last update:  2024-10-18
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -16,18 +14,17 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit bash-completion-r1 check-compiler-switch flag-o-matic elisp-common llvm.org
+inherit bash-completion-r1 check-compiler-switch flag-o-matic llvm.org
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Common files shared between multiple slots of clang"
@@ -38,8 +35,9 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind emacs hardened
-${LLVM_EBUILDS_LLVM21_REVISION}
+bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
+${LLVM_EBUILDS_LLVM18_REVISION}
+ebuild_revision_1
 "
 PDEPEND="
 	!default-compiler-rt? (
@@ -51,12 +49,12 @@ PDEPEND="
 	!default-lld? (
 		sys-devel/binutils
 	)
+	llvm-core/clang:*
 	default-compiler-rt? (
 		!llvm-libunwind? (
 			sys-libs/libunwind[static-libs]
 		)
-		llvm-runtimes/clang-runtime:${LLVM_MAJOR}[compiler-rt]
-		llvm-runtimes/clang-runtime:=
+		llvm-runtimes/clang-runtime[compiler-rt]
 		llvm-libunwind? (
 			llvm-runtimes/libunwind[static-libs]
 		)
@@ -67,13 +65,6 @@ PDEPEND="
 	default-lld? (
 		llvm-core/lld
 	)
-	emacs? (
-		>=app-editors/emacs-26.3:*
-	)
-"
-# Enforce flags on clang-runtime as well to aid transition
-PDEPEND+="
-	llvm-runtimes/clang-runtime[default-compiler-rt(-)?,default-libcxx(-)?,default-lld(-)?,llvm-libunwind(-)?]
 "
 IDEPEND="
 	!default-compiler-rt? (
@@ -83,18 +74,10 @@ IDEPEND="
 		sys-devel/gcc-config
 	)
 "
-BDEPEND="
-	emacs? (
-		>=app-editors/emacs-26.3:*
-	)
-"
 LLVM_COMPONENTS=(
 	"clang/utils"
-	"clang/tools/clang-format"
 )
 llvm.org_set_globals
-
-SITEFILE="50clang-gentoo.el"
 
 pkg_pretend() {
 	[[ ${CLANG_IGNORE_DEFAULT_RUNTIMES} ]] && return
@@ -209,11 +192,6 @@ doclang_cfg() {
 	esac
 }
 
-src_compile() {
-	default
-	use emacs && elisp-compile "../tools/clang-format/clang-format.el"
-}
-
 src_install() {
 	newbashcomp bash-autocomplete.sh clang
 
@@ -253,8 +231,8 @@ src_install() {
 	newins - gentoo-hardened.cfg <<-EOF
 		# Some of these options are added unconditionally, regardless of
 		# USE=hardened, for parity with sys-devel/gcc.
-		-fstack-clash-protection
-		-fstack-protector-strong
+		-Xarch_host -fstack-clash-protection
+		-Xarch_host -fstack-protector-strong
 		-fPIE
 		-include "${EPREFIX}/usr/include/gentoo/fortify.h"
 	EOF
@@ -276,7 +254,7 @@ src_install() {
 		EOF
 	fi
 
-	dodir /usr/include/gentoo
+	dodir "/usr/include/gentoo"
 
 	cat >> "${ED}/usr/include/gentoo/maybe-stddefs.h" <<-EOF || die
 	/* __has_include is an extension, but it's fine, because this is only
@@ -301,20 +279,19 @@ src_install() {
 	#  define __GENTOO_HAS_FEATURE(x) 0
 	# endif
 	#
-	# if !defined(__OPTIMIZE__) || __OPTIMIZE__ == 0
-	# elif !defined(__STDC_HOSTED__) || __STDC_HOSTED__ != 1
-	# elif defined(__SANITIZE_ADDRESS__)
-	# elif __GENTOO_HAS_FEATURE(address_sanitizer)
-	# elif __GENTOO_HAS_FEATURE(hwaddress_sanitizer)
-	# elif __GENTOO_HAS_FEATURE(memory_sanitizer)
-	# elif __GENTOO_HAS_FEATURE(numerical_stability_sanitizer)
-	# elif __GENTOO_HAS_FEATURE(realtime_sanitizer)
-	# elif __GENTOO_HAS_FEATURE(thread_sanitizer)
+	# if defined(__STDC_HOSTED__) && __STDC_HOSTED__ == 1
+	#  define __GENTOO_NOT_FREESTANDING 1
 	# else
-	#  define _FORTIFY_SOURCE ${fortify_level}
+	#  define __GENTOO_NOT_FREESTANDING 0
 	# endif
 	#
+	# if defined(__OPTIMIZE__) && __OPTIMIZE__ > 0 && __GENTOO_NOT_FREESTANDING > 0
+	#  if !defined(__SANITIZE_ADDRESS__) && !__GENTOO_HAS_FEATURE(address_sanitizer) && !__GENTOO_HAS_FEATURE(memory_sanitizer)
+	#   define _FORTIFY_SOURCE ${fortify_level}
+	#  endif
+	# endif
 	# undef __GENTOO_HAS_FEATURE
+	# undef __GENTOO_NOT_FREESTANDING
 	#endif
 	EOF
 
@@ -323,12 +300,12 @@ src_install() {
 	if use hardened ; then
 		cat >> "${ED}/etc/clang/gentoo-hardened.cfg" <<-EOF || die
 			# Options below are conditional on USE=hardened.
-			-D_GLIBCXX_ASSERTIONS
+			-Xarch_host -D_GLIBCXX_ASSERTIONS
 
 			# Analogue to GLIBCXX_ASSERTIONS
 			# https://libcxx.llvm.org/UsingLibcxx.html#assertions-mode
 			# https://libcxx.llvm.org/Hardening.html#using-hardened-mode
-			-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE
+			-Xarch_host -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE
 		EOF
 
 		cat >> "${ED}/etc/clang/gentoo-hardened-ld.cfg" <<-EOF || die
@@ -346,10 +323,14 @@ src_install() {
 		doclang_cfg "${abi_chost}"
 	done
 
-	if use kernel_Darwin; then
+	if use kernel_Darwin ; then
 		cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
 			# Gentoo Prefix on Darwin
 			-Wl,-search_paths_first
+			-Wl,-rpath,"${EPREFIX}/usr/lib"
+			-L "${EPREFIX}/usr/lib"
+			-isystem "${EPREFIX}/usr/include"
+			-isysroot "${EPREFIX}/MacOSX.sdk"
 		EOF
 		if use bootstrap-prefix ; then
 			# bootstrap-prefix is only set during stage2 of bootstrapping
@@ -358,23 +339,8 @@ src_install() {
 			# EPREFIX.
 			cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
 				-Wl,-rpath,"${EPREFIX}/../usr/lib"
-				-Wl,-L,${EPREFIX}/../usr/lib
-				-isystem ${EPREFIX}/../usr/include
 			EOF
 		fi
-		# Using -Wl,-L instead of -L to trick compiler driver to put it
-		# after -isysroot's internal -L
-		cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
-			-Wl,-rpath,${EPREFIX}/usr/lib
-			-Wl,-L,${EPREFIX}/usr/lib
-			-isystem ${EPREFIX}/usr/include
-			-isysroot ${EPREFIX}/MacOSX.sdk
-		EOF
-	fi
-
-	if use emacs ; then
-		elisp-install clang ../tools/clang-format/clang-format.{el,elc}
-		elisp-make-site-file "${SITEFILE}" clang
 	fi
 }
 
@@ -388,12 +354,4 @@ pkg_preinst() {
 			EOF
 		fi
 	fi
-}
-
-pkg_postinst() {
-	use emacs && elisp-site-regen
-}
-
-pkg_postrm() {
-	use emacs && elisp-site-regen
 }

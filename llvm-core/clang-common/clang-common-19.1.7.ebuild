@@ -40,6 +40,7 @@ SLOT="0"
 IUSE+="
 bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
 ${LLVM_EBUILDS_LLVM19_REVISION}
+ebuild_revision_1
 "
 PDEPEND="
 	!default-compiler-rt? (
@@ -233,8 +234,8 @@ src_install() {
 	newins - gentoo-hardened.cfg <<-EOF
 		# Some of these options are added unconditionally, regardless of
 		# USE=hardened, for parity with sys-devel/gcc.
-		-fstack-clash-protection
-		-fstack-protector-strong
+		-Xarch_host -fstack-clash-protection
+		-Xarch_host -fstack-protector-strong
 		-fPIE
 		-include "${EPREFIX}/usr/include/gentoo/fortify.h"
 	EOF
@@ -256,7 +257,7 @@ src_install() {
 		EOF
 	fi
 
-	dodir /usr/include/gentoo
+	dodir "/usr/include/gentoo"
 
 	cat >> "${ED}/usr/include/gentoo/maybe-stddefs.h" <<-EOF || die
 	/* __has_include is an extension, but it's fine, because this is only
@@ -302,12 +303,12 @@ src_install() {
 	if use hardened ; then
 		cat >> "${ED}/etc/clang/gentoo-hardened.cfg" <<-EOF || die
 			# Options below are conditional on USE=hardened.
-			-D_GLIBCXX_ASSERTIONS
+			-Xarch_host -D_GLIBCXX_ASSERTIONS
 
 			# Analogue to GLIBCXX_ASSERTIONS
 			# https://libcxx.llvm.org/UsingLibcxx.html#assertions-mode
 			# https://libcxx.llvm.org/Hardening.html#using-hardened-mode
-			-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE
+			-Xarch_host -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE
 		EOF
 
 		cat >> "${ED}/etc/clang/gentoo-hardened-ld.cfg" <<-EOF || die

@@ -16,18 +16,17 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit bash-completion-r1 check-compiler-switch flag-o-matic llvm.org
+inherit bash-completion-r1 check-compiler-switch flag-o-matic elisp-common llvm.org
 
 KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Common files shared between multiple slots of clang"
@@ -38,8 +37,8 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
-${LLVM_EBUILDS_LLVM20_REVISION}
+bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind emacs hardened
+${LLVM_EBUILDS_LLVM21_REVISION}
 ebuild_revision_1
 "
 PDEPEND="
@@ -68,6 +67,9 @@ PDEPEND="
 	default-lld? (
 		llvm-core/lld
 	)
+	emacs? (
+		>=app-editors/emacs-26.3:*
+	)
 "
 # Enforce flags on clang-runtime as well to aid transition
 PDEPEND+="
@@ -81,10 +83,18 @@ IDEPEND="
 		sys-devel/gcc-config
 	)
 "
+BDEPEND="
+	emacs? (
+		>=app-editors/emacs-26.3:*
+	)
+"
 LLVM_COMPONENTS=(
 	"clang/utils"
+	"clang/tools/clang-format"
 )
 llvm.org_set_globals
+
+SITEFILE="50clang-gentoo.el"
 
 pkg_pretend() {
 	[[ ${CLANG_IGNORE_DEFAULT_RUNTIMES} ]] && return
@@ -197,6 +207,11 @@ doclang_cfg() {
 			_doclang_cfg ${triple/${abi}/sparcv9}
 			;;
 	esac
+}
+
+src_compile() {
+	default
+	use emacs && elisp-compile "../tools/clang-format/clang-format.el"
 }
 
 src_install() {
@@ -356,6 +371,11 @@ src_install() {
 			-isysroot ${EPREFIX}/MacOSX.sdk
 		EOF
 	fi
+
+	if use emacs ; then
+		elisp-install clang ../tools/clang-format/clang-format.{el,elc}
+		elisp-make-site-file "${SITEFILE}" clang
+	fi
 }
 
 pkg_preinst() {
@@ -368,4 +388,12 @@ pkg_preinst() {
 			EOF
 		fi
 	fi
+}
+
+pkg_postinst() {
+	use emacs && elisp-site-regen
+}
+
+pkg_postrm() {
+	use emacs && elisp-site-regen
 }
