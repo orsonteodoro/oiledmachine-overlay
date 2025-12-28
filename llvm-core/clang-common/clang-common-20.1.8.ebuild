@@ -40,7 +40,7 @@ SLOT="0"
 IUSE+="
 bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
 ${LLVM_EBUILDS_LLVM20_REVISION}
-ebuild_revision_1
+ebuild_revision_2
 "
 PDEPEND="
 	!default-compiler-rt? (
