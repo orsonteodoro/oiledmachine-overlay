@@ -65,7 +65,7 @@ src_compile() {
 src_install() {
 	insinto "/usr/share/vim/vimfiles"
 	doins -r "vim/"*"/"
-	# some users may find it useful
+	# Some users may find it useful.
 	newdoc "vim/README" "README.vim"
 	dodoc "vim/vimrc"
 	if use emacs ; then
