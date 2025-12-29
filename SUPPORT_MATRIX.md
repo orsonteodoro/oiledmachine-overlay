@@ -5,6 +5,7 @@
 | Fully supported      | Best         | Tested, fully compatible                                                                                 |
 | Mostly supported     | Better       | Tested and partially compatible                                                                          |
 | Partially supported  | Good         | May be tested and partially compatible                                                                   |
+| Limited support      | Good         | Tested but restricted for use (e.g. bootstrapping)                                                       |
 | Available            | Good to poor | **Not tested**, partially compatible, ebuild may be unfinished, Work in Progress (WIP)                   |
 | Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues                             |
 | Planned              | -            | To be added to maximize interoperability between platforms and app features                              |
@@ -57,7 +58,8 @@ exist in build files.
 
 | Compiler                        | Ebuild level of support               | Distro or CI image correspondence     |
 | ---                             | ---                                   | ---                                   |
-| Clang <= 17                     | Not supported                         | D12 (14.0), U22 (14.0)                |
+| Clang <= 16                     | Not supported                         | D12 (14.0), U22 (14.0)                |
+| Clang 17                        | Limited support                       |                                       |
 | Clang 18                        | Fully supported                       | U24 (18.0)                            |
 | Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7)              |
 | Clang 20                        | Available                             | F42 (20.1.3)                          |
