@@ -67,14 +67,14 @@ REQUIRED_USE="
 
 gen_depend_llvm() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/clang:=
-				llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/llvm:=
-				llvm-core/lld:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP_LTS}]
 				llvm-core/lld:=
 			)
 		"
@@ -106,7 +106,7 @@ PATCHES=(
 
 _set_clang() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" ; then
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
@@ -141,7 +141,7 @@ eerror "${CC} is not found.  Emerge the compiler slot."
 	export STRIP="llvm-strip"
 	export GCC_FLAGS=""
 	strip-unsupported-flags
-	${CC} --version || die
+	"${CC}" --version || die
 }
 
 _set_gcc() {
@@ -218,7 +218,7 @@ configure_ruby() {
 	done
 	# This will rarely occur. Only a couple of corner cases could lead us to
 	# that failure. See bug 513888
-	if [[ -z ${ruby_interpreter} ]] ; then
+	if [[ -z "${ruby_interpreter}" ]] ; then
 eerror "No suitable ruby interpreter found"
 		die
 	fi
@@ -302,7 +302,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 src_compile() {
 	pushd "Source/JavaScriptCore/wasm" >/dev/null 2>&1 || die
 	# There is a race issue that most of the time prevents this from running.
-		${EPYTHON} "generateWasmOpsHeader.py" "wasm.json" "${S}_build/JavaScriptCore/DerivedSources/WasmOps.h"
+		"${EPYTHON}" "generateWasmOpsHeader.py" "wasm.json" "${S}_build/JavaScriptCore/DerivedSources/WasmOps.h"
 	popd >/dev/null 2>&1 || die
 	cmake_src_compile
 }

@@ -82,14 +82,14 @@ REQUIRED_USE="
 "
 gen_depend_llvm() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_targets_AArch64?,llvm_targets_WebAssembly,llvm_targets_X86?]
+				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AArch64?,llvm_targets_WebAssembly,llvm_targets_X86?]
 				llvm-core/clang:=
-				llvm-core/llvm:${s}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_targets_AArch64?,llvm_targets_WebAssembly,llvm_targets_X86?]
+				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AArch64?,llvm_targets_WebAssembly,llvm_targets_X86?]
 				llvm-core/llvm:=
-				llvm-core/lld:${s}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm_targets_AArch64?,llvm_targets_WebAssembly,llvm_targets_X86?]
+				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AArch64?,llvm_targets_WebAssembly,llvm_targets_X86?]
 				llvm-core/lld:=
 			)
 		"
@@ -119,7 +119,7 @@ PATCHES=(
 
 _set_clang() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" ; then
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
@@ -154,7 +154,7 @@ eerror "${CC} is not found.  Emerge the compiler slot."
 	export STRIP="llvm-strip"
 	export GCC_FLAGS=""
 	strip-unsupported-flags
-	${CC} --version || die
+	"${CC}" --version || die
 }
 
 _set_gcc() {

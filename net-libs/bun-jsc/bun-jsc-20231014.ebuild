@@ -8,25 +8,25 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="jit network untrusted-data"
 
-CXX_STANDARD=23
+CXX_STANDARD=20
 INSTALL_PREFIX="/usr/lib/bun-jsc/${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{10..12} )
 USE_RUBY=" ruby32 ruby33"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+	#"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 	19 # Version sensitive
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-WEBKIT_COMMIT="21fc366db3de8f30dbb7f5997b9b9f5cf422ff1e"
+WEBKIT_COMMIT="1a49a1f94bf42ab4f8c6b11d7bbbb21e491d2d62"
 
 inherit cflags-hardened check-compiler-switch cmake dhms flag-o-matic-om git-r3
 inherit libcxx-slot libstdcxx-slot python-single-r1 ruby-single sandbox-changes
@@ -57,7 +57,7 @@ clang lto
 ebuild_revision_4
 "
 
-#			${LIBCXX_COMPAT_STDCXX23[@]}
+#			${LIBCXX_COMPAT_STDCXX20[@]}
 REQUIRED_USE="
 	clang
 	clang? (
