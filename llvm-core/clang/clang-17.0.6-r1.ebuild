@@ -345,7 +345,7 @@ ewarn "The Partial RELRO is in testing."
 	if use default-stack-clash-protection ; then
 		if use x86 || use amd64 ; then
 			patches_hardened+=(
-				"${FILESDIR}/clang-18.0.0.9999-2b033a3-enable-SCP-by-default.patch"
+				"${FILESDIR}/clang-17.0.6-enable-SCP-by-default.patch"
 			)
 			hardened_features+="SCP, "
 		elif use arm64 ; then
@@ -368,7 +368,7 @@ ewarn
 ewarn "The CET as default is in testing."
 	fi
 	patches_hardened+=(
-		"${FILESDIR}/clang-18.0.0.9999-cross-dso-cfi-link-with-shared.patch"
+		"${FILESDIR}/clang-17.0.6-cross-dso-cfi-link-with-shared.patch"
 	)
 	eapply ${patches_hardened[@]}
 

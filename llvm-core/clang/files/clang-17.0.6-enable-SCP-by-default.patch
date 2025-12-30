@@ -1,0 +1,11 @@
+--- clang/include/clang/Basic/CodeGenOptions.def.orig	2025-12-30 07:11:44.050034121 -0800
++++ clang/include/clang/Basic/CodeGenOptions.def	2025-12-30 07:12:32.176990753 -0800
+@@ -187,7 +187,7 @@ CODEGENOPT(MisExpect         , 1, 0) ///
+ CODEGENOPT(EnableSegmentedStacks , 1, 0) ///< Set when -fsplit-stack is enabled.
+ CODEGENOPT(NoInlineLineTables, 1, 0) ///< Whether debug info should contain
+                                      ///< inline line tables.
+-CODEGENOPT(StackClashProtector, 1, 0) ///< Set when -fstack-clash-protection is enabled.
++CODEGENOPT(StackClashProtector, 1, 1) ///< Set when -fstack-clash-protection is enabled.
+ CODEGENOPT(NoImplicitFloat   , 1, 0) ///< Set when -mno-implicit-float is enabled.
+ CODEGENOPT(NullPointerIsValid , 1, 0) ///< Assume Null pointer deference is defined.
+ CODEGENOPT(OpenCLCorrectlyRoundedDivSqrt, 1, 0) ///< -cl-fp32-correctly-rounded-divide-sqrt
