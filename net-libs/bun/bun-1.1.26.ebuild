@@ -38,7 +38,7 @@ BUN_ZIG_SLOT="20240708"
 NODE_PV="22.6.0"
 NODE_SLOT="${NODE_PV%%.*}"
 
-BUN_SEED_SLOT="TBA"
+BUN_SEED_SLOT="1.0-20231014" # TODO: verify
 
 BORINGSSL_COMMIT="29a2cd359458c9384694b75456026e4b57e3e567"				# S1 in threat model
 C_ARES_COMMIT="d1722e6e8acaf10eb73fa995798a9cd421d9f85e"
@@ -279,6 +279,8 @@ BDEPEND+="
 		net-libs/bun-zig:${BUN_ZIG_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	net-libs/bun-zig:=
+	net-libs/bun:${BUN_SEED_SLOT}
+	net-libs/bun:=
 "
 DOCS=( "README.md" )
 PATCHES=(
@@ -440,6 +442,8 @@ _configure_cmake() {
 eerror "ELIBC=${ELIBC} is not supported."
 		die
 	fi
+
+	export PATH="${ESYSROOT}/usr/lib/bun/${BUN_SEED_SLOT}/bin:${PATH}"
 
 	local mycmakeargs=(
 		-DABI="${libc}"

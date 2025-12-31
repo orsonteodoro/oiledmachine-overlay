@@ -452,6 +452,8 @@ eerror "ELIBC=${ELIBC} is not supported."
 		die
 	fi
 
+	export PATH="${ESYSROOT}/usr/lib/bun/${BUN_SEED_SLOT}/bin:${PATH}"
+
 	local mycmakeargs=(
 		-DABI="${libc}"
 		-DCMAKE_BUILD_TYPE="RelWithDebInfo" # Force -O2 to prevent optimizing out _FORTIFY_SOURCE memory corruption checks
