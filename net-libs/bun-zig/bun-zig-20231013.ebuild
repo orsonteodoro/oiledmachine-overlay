@@ -255,6 +255,7 @@ einfo "Removing ${x} support (1)"
 				-e "/LLVMInitialize${x}Asm/d" \
 				"src/codegen/llvm.zig" \
 				"src/codegen/llvm/bindings.zig" \
+				"src/codegen/llvm/Builder.zig" \
 				|| die
 		else
 			if ! use "llvm_targets_${x}" ; then
@@ -264,6 +265,7 @@ einfo "Removing ${x} support (2)"
 					-e "/LLVMInitialize${x}Asm/d" \
 					"src/codegen/llvm.zig" \
 					"src/codegen/llvm/bindings.zig" \
+					"src/codegen/llvm/Builder.zig" \
 					|| die
 			else
 einfo "Added ${x} support"
