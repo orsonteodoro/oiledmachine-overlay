@@ -1,3 +1,14 @@
+--- a/Source/JavaScriptCore/CMakeLists.txt.orig	2025-12-31 07:41:07.508838403 -0800
++++ b/Source/JavaScriptCore/CMakeLists.txt	2025-12-31 07:56:34.920428821 -0800
+@@ -1562,6 +1562,8 @@ if(COMPILER_IS_GCC_OR_CLANG)
+     if(WTF_CPU_MIPS)
+         WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -mno-madd4)
+     endif()
++
++    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -Wno-missing-template-arg-list-after-template-kw)
+ endif()
+ 
+ WEBKIT_COPY_FILES(JavaScriptCore_CopyHeaders
 --- a/Source/JavaScriptCore/runtime/JSCast.h.orig	2025-12-31 00:24:21.380554076 -0800
 +++ b/Source/JavaScriptCore/runtime/JSCast.h	2025-12-31 00:56:20.923680008 -0800
 @@ -236,7 +236,7 @@ template<typename Target, typename From>
@@ -18,6 +29,8 @@
          return static_cast<To>(from);
      return nullptr;
  }
+only in patch2:
+unchanged:
 --- a/Source/JavaScriptCore/llint/LLIntData.h.orig	2025-12-31 00:24:20.642336424 -0800
 +++ b/Source/JavaScriptCore/llint/LLIntData.h	2025-12-31 00:57:18.699305544 -0800
 @@ -217,7 +217,7 @@ ALWAYS_INLINE LLIntCode getCodeFunctionP
