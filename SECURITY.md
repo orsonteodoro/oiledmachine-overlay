@@ -420,7 +420,8 @@ Core threats
 * IOOSP - Inappropriate Over-Optimization on the Security-critical Perimeter
 * MI - Missing Isolation
 * PLPM - Problematic Lead Project Maintainer
+* MV - Multiple Vulnerabilities
 
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
-* NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI, MC.
-* GLSA covers CE, PE, DoS, SCI, MC.
+* NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI, MC, MV.
+* GLSA covers CE, PE, DoS, SCI, MC, MV.
