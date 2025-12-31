@@ -367,7 +367,7 @@ Core threats
 * [3] Default opt-out, best effort removal or disablement based on integration complexity
 * [4] At the source code level
 * [5] Recognized as an ID threat and should be removed or disabled if possible
-* [6] SSP strong is 10% performance penalty worst case and default ON as the distro's default compiler.
+* [6] SSP strong is 10% performance penalty worst case and default ON with the distro's default compiler.
 * [7] Repoline is 10% performance penalty for typical use, but worst case estimated 35% in real world to maybe even 54% in synthetic benchmarks.
       The sysadmin can choose between Retpoline or CET (5% performance penalty), the latter having the more higher mitigation score while both are mutually exclusive mitigation techniques.
 * [8] Operationally working required for @system set, web browser dependencies, lightweight high value assets.  Optional for EOL software or heavy packages (+20 MLOC).
