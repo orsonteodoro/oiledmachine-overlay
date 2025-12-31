@@ -1,0 +1,76 @@
+--- a/Source/JavaScriptCore/runtime/JSCast.h.orig	2025-12-31 00:24:21.380554076 -0800
++++ b/Source/JavaScriptCore/runtime/JSCast.h	2025-12-31 00:56:20.923680008 -0800
+@@ -236,7 +236,7 @@ template<typename Target, typename From>
+ bool inherits(From* from)
+ {
+     using Dispatcher = InheritsTraits<Target>;
+-    return Dispatcher::template inherits(from);
++    return Dispatcher::template inherits<>(from);
+ }
+ 
+ } // namespace JSCastingHelpers
+@@ -245,7 +245,7 @@ template<typename To, typename From>
+ To jsDynamicCast(From* from)
+ {
+     using Dispatcher = JSCastingHelpers::InheritsTraits<typename std::remove_cv<typename std::remove_pointer<To>::type>::type>;
+-    if (LIKELY(Dispatcher::template inherits(from)))
++    if (LIKELY(Dispatcher::template inherits<>(from)))
+         return static_cast<To>(from);
+     return nullptr;
+ }
+--- a/Source/JavaScriptCore/llint/LLIntData.h.orig	2025-12-31 00:24:20.642336424 -0800
++++ b/Source/JavaScriptCore/llint/LLIntData.h	2025-12-31 00:57:18.699305544 -0800
+@@ -217,7 +217,7 @@ ALWAYS_INLINE LLIntCode getCodeFunctionP
+ #if COMPILER(MSVC)
+     return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).taggedPtr());
+ #else
+-    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr());
++    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr<>());
+ #endif
+ }
+ 
+@@ -227,7 +227,7 @@ ALWAYS_INLINE LLIntCode getWide16CodeFun
+ #if COMPILER(MSVC)
+     return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).taggedPtr());
+ #else
+-    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr());
++    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr<>());
+ #endif
+ }
+ 
+@@ -237,7 +237,7 @@ ALWAYS_INLINE LLIntCode getWide32CodeFun
+ #if COMPILER(MSVC)
+     return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).taggedPtr());
+ #else
+-    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr());
++    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr<>());
+ #endif
+ }
+ #else // not ENABLE(JIT)
+@@ -361,7 +361,7 @@ ALWAYS_INLINE LLIntCode getCodeFunctionP
+ #if COMPILER(MSVC)
+     return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).taggedPtr());
+ #else
+-    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr());
++    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr<>());
+ #endif
+ }
+ 
+@@ -371,7 +371,7 @@ ALWAYS_INLINE LLIntCode getWide16CodeFun
+ #if COMPILER(MSVC)
+     return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).taggedPtr());
+ #else
+-    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr());
++    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr<>());
+ #endif
+ }
+ 
+@@ -381,7 +381,7 @@ ALWAYS_INLINE LLIntCode getWide32CodeFun
+ #if COMPILER(MSVC)
+     return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).taggedPtr());
+ #else
+-    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr());
++    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr<>());
+ #endif
+ }
+ #else // not ENABLE(JIT)
