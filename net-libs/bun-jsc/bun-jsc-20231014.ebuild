@@ -103,7 +103,7 @@ BDEPEND+="
 "
 DOCS=( "ReadMe.md" )
 PATCHES=(
-#	"A${FILESDIR}/${PN}-20240816-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
+	"${FILESDIR}/${PN}-20231014-nullptr-arg-to-ExternalStringImpl-create-calls.patch"
 	"${FILESDIR}/${PN}-20231014-clang-19-template-fix.patch"
 )
 
