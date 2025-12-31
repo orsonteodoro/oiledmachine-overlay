@@ -156,6 +156,10 @@ eerror "${CC} is not found.  Emerge the compiler slot."
 	export GCC_FLAGS=""
 	strip-unsupported-flags
 	"${CC}" --version || die
+	local clang_pv=$(clang-version)
+
+ewarn "Only the Clang ${clang_pv} with distro patchset supported"
+	ver_test "${clang_pv}" "-ge" "18.1.8" || die "Bump to Clang 18.1.8"
 }
 
 _set_gcc() {
