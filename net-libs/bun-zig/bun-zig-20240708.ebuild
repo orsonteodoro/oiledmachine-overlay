@@ -115,6 +115,7 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20240708-llvm-non-fatal.patch"
 	"${FILESDIR}/${PN}-20240708-maxrss.patch"
+	"${FILESDIR}/${PN}-20240708-EnvironmentType-changes.patch"
 )
 
 _set_clang() {

@@ -1,0 +1,14 @@
+--- a/src/zig_llvm.h.orig	2024-07-08 21:08:14.000000000 -0700
++++ b/src/zig_llvm.h	2025-12-30 16:27:39.215651265 -0800
+@@ -307,6 +307,11 @@ enum ZigLLVM_EnvironmentType {
+     ZigLLVM_Amplification,
+     ZigLLVM_OpenHOS,
+ 
++    // Distro backported values
++    ZigLLVM_GNUT64,
++    ZigLLVM_GNUEABIT64,
++    ZigLLVM_GNUEABIHFT64,
++
+     ZigLLVM_LastEnvironmentType = ZigLLVM_OpenHOS
+ };
+ 
