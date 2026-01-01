@@ -61,7 +61,7 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="15.4.7"
+NEXTJS_PV="15.4.8"
 SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
 
@@ -446,7 +446,6 @@ pnpm_dedupe_post() {
 			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-C			sed -i -e "s|snowflake-sdk: 2.0.2|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -462,7 +461,7 @@ ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}
 ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
@@ -490,7 +489,6 @@ ewarn
 #ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually change @babel/runtime@7.23.6 references to @babel/runtime@7.28.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @babel/runtime@7.28.2 references to @babel/runtime@7.28.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @babel/runtime@7.28.2 references to @babel/runtime@7.28.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/rest@19.0.13(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
