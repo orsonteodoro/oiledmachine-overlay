@@ -594,6 +594,16 @@ src_configure() {
 	edo npm --version
 	edo pnpm --version
 	edo tsc --version
+
+	if [[ -z "${KEY_VAULTS_SECRET}" ]] ; then
+eerror
+eerror "The KEY_VAULTS_SECRET environment variable needs to be set."
+eerror "It can be generated with \`openssl rand -base64 32\`"
+eerror "KEY_VAULTS_SECRET=\"<key>\""
+eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-the-key-vaults-secret-environment-variable"
+eerror
+		die
+	fi
 }
 
 attach_segfault_handler() {
@@ -668,6 +678,10 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	# Change hardcoded paths
 	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 	#attach_segfault_handler
+
+	# Remove the plaintext key from the package manager.
+	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	unset KEY_VAULTS_SECRET
 }
 
 # Slow
