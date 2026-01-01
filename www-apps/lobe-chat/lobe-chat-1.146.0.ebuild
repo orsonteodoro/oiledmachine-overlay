@@ -117,7 +117,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE="
 	file-management? (
@@ -220,7 +220,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	# Posthog (analytics)
 	export NEXT_PUBLIC_ANALYTICS_POSTHOG="${NEXT_PUBLIC_ANALYTICS_POSTHOG}"
 	export NEXT_PUBLIC_POSTHOG_HOST="${NEXT_PUBLIC_POSTHOG_HOST}"
-	export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY}"
+	export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY}" # API key
 
 	# Umami (analytics)
 	export NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}"
@@ -344,6 +344,8 @@ ewarn
 eerror "Rust ${RUST_PV} required for @swc/core"
 		die
 	fi
+ewarn "Do not store KEY_VAULTS_SECRET in a package.env file for ${PN}."
+ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env file for ${PN}."
 }
 
 pnpm_unpack_post() {
@@ -679,9 +681,12 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 	#attach_segfault_handler
 
-	# Remove the plaintext key from the package manager.
-	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	# Remove the plaintext keys from the package manager.
+	# API keys are sensitive data.
+	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)		# Encryption key for API keys
+	NEXT_PUBLIC_POSTHOG_KEY=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
 	unset KEY_VAULTS_SECRET
+	unset NEXT_PUBLIC_POSTHOG_KEY
 }
 
 # Slow
