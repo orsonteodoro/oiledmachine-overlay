@@ -19,7 +19,9 @@ LICENSE="
 RESTRICT="mirror"
 SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.13.1/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild_revision_3"
+IUSE+="
+ebuild_revision_5
+"
 CDEPEND+="
 	>=net-libs/nodejs-18.19[corepack,ssl]
 "
@@ -36,7 +38,7 @@ BDEPEND+="
 get_min_node_slot() {
 	local x
 	for x in $(seq 18 30) ; do
-		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/node" ]] ; then
+		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/corepack" ]] ; then
 			echo "${x}"
 			return
 		fi

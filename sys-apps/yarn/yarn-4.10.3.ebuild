@@ -21,7 +21,7 @@ SLOT_MAJOR="8" # See https://github.com/yarnpkg/berry/blob/%40yarnpkg/cli/4.9.2/
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +ssl
-ebuild_revision_5
+ebuild_revision_6
 "
 CDEPEND+="
 	!sys-apps/yarn:0
@@ -40,7 +40,7 @@ BDEPEND+="
 get_min_node_slot() {
 	local x
 	for x in $(seq 18 30) ; do
-		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/node" ]] ; then
+		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/corepack" ]] ; then
 			echo "${x}"
 			return
 		fi

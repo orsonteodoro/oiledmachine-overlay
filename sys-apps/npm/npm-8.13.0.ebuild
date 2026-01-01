@@ -22,7 +22,7 @@ RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +ssl
-ebuild_revision_4
+ebuild_revision_5
 "
 CDEPEND+="
 	!sys-apps/npm:0
@@ -45,7 +45,7 @@ BDEPEND+="
 get_min_node_slot() {
 	local x
 	for x in $(seq 12 30) ; do
-		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/node" ]] ; then
+		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/corepack" ]] ; then
 			echo "${x}"
 			return
 		fi
