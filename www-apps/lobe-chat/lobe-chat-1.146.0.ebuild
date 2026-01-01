@@ -61,7 +61,7 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="15.4.8"
+NEXTJS_PV="15.4.9"
 SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
 
@@ -117,7 +117,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_38
+ebuild_revision_39
 "
 REQUIRED_USE="
 	file-management? (
@@ -463,9 +463,10 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/p
 ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
-ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
-ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
+#ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
+#ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
+#ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
+ewarn "QA:  Manually remove @babel/core@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @babel/runtime@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/core@4.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/auth-token@3.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -479,8 +480,10 @@ ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/package-lock.json or 
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn
+
 ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.5 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@babel/runtime': 7.28.2 references to '@babel/runtime': 7.28.4 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@octokit/rest': 19.0.13 references to '@octokit/rest': 20.1.2 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually change '@octokit/auth-token': 3.0.4 to '@octokit/auth-token': 4.0.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change '@octokit/graphql': 5.0.6 to '@octokit/graphql': 7.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -488,11 +491,9 @@ ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7
 #ewarn "QA:  Manually change '@octokit/request-error': 3.0.3 to '@octokit/request-error': 5.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually change @babel/runtime@7.23.6 references to @babel/runtime@7.28.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @babel/runtime@7.28.2 references to @babel/runtime@7.28.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/rest@19.0.13(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/rest@20.1.2(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually remove regenerator-runtime@0.14.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove regenerator-runtime@0.14.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
