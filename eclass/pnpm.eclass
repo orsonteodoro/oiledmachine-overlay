@@ -185,10 +185,17 @@ eerror "continue."
 eerror
 		die
 	fi
+
 einfo "Hydrating pnpm..."
 	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${PNPM_SLOT}.tgz" || die
 	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/pnpm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin:${PATH}"
+	if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.cjs" ]] ; then
+		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm"{".cjs",""} || die
+	fi
+	if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/npm.cjs" ]] ; then
+		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/npm"{".cjs",""} || die
+	fi
 	local pnpm_pv=$(pnpm --version)
 	local node_pv=$(node --version)
 einfo "pnpm version:  ${pnpm_pv}"

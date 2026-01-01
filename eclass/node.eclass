@@ -35,6 +35,7 @@ eerror "QA:  NODE_SLOT must be defined"
 	local prefix="${ESYSROOT}/usr/lib/node/${NODE_SLOT}"
 	append-flags "-I${prefix}/include"
 	export PATH="${prefix}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
 }
 
 fi
