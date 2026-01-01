@@ -480,7 +480,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/packag
 ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn
-ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.0 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.5 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually change '@octokit/auth-token': 3.0.4 to '@octokit/auth-token': 4.0.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change '@octokit/graphql': 5.0.6 to '@octokit/graphql': 7.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
