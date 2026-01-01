@@ -19,7 +19,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT_MAJOR="6" # Based on yarn.lock
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl ebuild_revision_3"
+IUSE+="
++ssl
+ebuild_revision_5
+"
 CDEPEND+="
 	!sys-apps/yarn:0
 	>=net-libs/nodejs-14.10.0[corepack,ssl?]
@@ -33,6 +36,23 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
+
+get_min_node_slot() {
+	local x
+	for x in $(seq 14 30) ; do
+		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/node" ]] ; then
+			echo "${x}"
+			return
+		fi
+	done
+	echo ""
+}
+
+pkg_setup() {
+	local node_pv=$(get_min_node_slot)
+	export PATH="${ESYSROOT}/usr/lib/node/${node_pv}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
+}
 
 pkg_postinst() {
 	corepack enable

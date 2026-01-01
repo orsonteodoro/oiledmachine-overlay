@@ -20,7 +20,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl ebuild_revision_1"
+IUSE+="
++ssl
+ebuild_revision_4
+"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
@@ -37,6 +40,23 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
+
+get_min_node_slot() {
+	local x
+	for x in $(seq 18 30) ; do
+		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/node" ]] ; then
+			echo "${x}"
+			return
+		fi
+	done
+	echo ""
+}
+
+pkg_setup() {
+	local node_pv=$(get_min_node_slot)
+	export PATH="${ESYSROOT}/usr/lib/node/${node_pv}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
+}
 
 src_configure() {
 	local node_version=$(node --version | sed -e "s|v||g")

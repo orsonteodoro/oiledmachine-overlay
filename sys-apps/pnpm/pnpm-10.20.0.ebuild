@@ -19,7 +19,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.13.1/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 CDEPEND+="
 	>=net-libs/nodejs-18.19[corepack,ssl]
 "
@@ -32,6 +32,23 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
+
+get_min_node_slot() {
+	local x
+	for x in $(seq 18 30) ; do
+		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/node" ]] ; then
+			echo "${x}"
+			return
+		fi
+	done
+	echo ""
+}
+
+pkg_setup() {
+	local node_pv=$(get_min_node_slot)
+	export PATH="${ESYSROOT}/usr/lib/node/${node_pv}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
+}
 
 pkg_postinst() {
 	# Corepack issue 612
