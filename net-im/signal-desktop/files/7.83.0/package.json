@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.80.0",
+  "version": "7.83.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -20,7 +20,7 @@
     "start": "electron .",
     "generate": "run-s generate:phase-0 generate:phase-1",
     "generate:phase-0": "run-p build:esbuild:scripts",
-    "generate:phase-1": "run-p --aggregate-output --print-label generate:phase-1:bundle build:icu-types build:compact-locales build:styles get-expire-time copy-components",
+    "generate:phase-1": "run-p --aggregate-output --print-label generate:phase-1:bundle build:icu-types build:compact-locales build:styles get-expire-time copy-components build:policy-files",
     "generate:phase-1:bundle": "run-s build-protobuf build:esbuild:bundle",
     "build-release": "pnpm run build",
     "sign-release": "node ts/updater/generateSignature.js",
@@ -49,7 +49,7 @@
     "test": "run-s test-node test-electron test-lint-intl test-eslint",
     "test-electron": "node ts/scripts/test-electron.node.js",
     "test-release": "node ts/scripts/test-release.node.js",
-    "test-node": "cross-env LANG=en-us electron-mocha --timeout 10000 --file test/setup-test-node.js --recursive ts/test-node",
+    "test-node": "cross-env NODE_ENV=test LANG=en-us electron-mocha --timeout 10000 --file test/setup-test-node.js --recursive ts/test-node",
     "test-mock": "node ts/scripts/mocha-separator.node.js --require ts/test-mock/setup-ci.node.js -- ts/test-mock/**/*_test.node.js",
     "test-mock-docker": "mocha --require ts/test-mock/setup-ci.node.js ts/test-mock/**/*_test.docker.node.js",
     "test-eslint": "mocha .eslint/rules/**/*.test.js --ignore-leaks",
@@ -83,7 +83,7 @@
     "test:storybook:test": "wait-on http://127.0.0.1:6006/ --timeout 5000 && test-storybook --testTimeout 60000",
     "build": "run-s --print-label generate build:esbuild:prod build:release",
     "build-win32-all": "run-s --print-label generate build:esbuild:prod build:release-win32-all",
-    "build-linux": "run-s generate build:esbuild:prod && pnpm run build:release --publish=never",
+    "build-linux": "run-s build:policy-files generate build:esbuild:prod && pnpm run build:release --publish=never",
     "build:acknowledgments": "node scripts/generate-acknowledgments.js",
     "build:dns-fallback": "node ts/scripts/generate-dns-fallback.node.js",
     "build:icu-types": "node ts/scripts/generate-icu-types.node.js",
@@ -94,6 +94,7 @@
     "build:esbuild:scripts": "node scripts/esbuild.js --no-bundle",
     "build:esbuild:bundle": "node scripts/esbuild.js --no-scripts",
     "build:esbuild:prod": "node scripts/esbuild.js --prod",
+    "build:policy-files": "node ts/scripts/gen-policy-files.node.js",
     "build:styles": "pnpm run \"/^build:styles:.*/\"",
     "build:styles:sass": "sass stylesheets/manifest.scss:stylesheets/manifest.css stylesheets/manifest_bridge.scss:stylesheets/manifest_bridge.css --fatal-deprecation=1.80.7",
     "build:styles:tailwind": "tailwindcss -i ./stylesheets/tailwind-config.css -o ./stylesheets/tailwind.css",
@@ -134,10 +135,10 @@
     "@react-aria/utils": "3.25.3",
     "@react-spring/web": "9.7.5",
     "@react-types/shared": "3.27.0",
-    "@signalapp/libsignal-client": "0.83.0",
+    "@signalapp/libsignal-client": "0.86.3",
     "@signalapp/minimask": "1.0.1",
     "@signalapp/quill-cjs": "2.1.2",
-    "@signalapp/ringrtc": "2.59.4",
+    "@signalapp/ringrtc": "2.60.7",
     "@signalapp/sqlcipher": "2.4.4",
     "@signalapp/windows-ucv": "1.0.1",
     "@tanstack/react-virtual": "3.11.2",
@@ -157,6 +158,7 @@
     "credit-card-type": "10.0.2",
     "dashdash": "2.0.0",
     "direction": "1.0.4",
+    "dom-accessibility-api": "0.7.0",
     "emoji-datasource": "16.0.0",
     "emoji-datasource-apple": "16.0.0",
     "emoji-regex": "10.4.0",
@@ -202,7 +204,6 @@
     "react-aria": "3.35.1",
     "react-aria-components": "1.4.1",
     "react-blurhash": "0.3.0",
-    "react-contextmenu": "2.14.0",
     "react-dom": "18.3.1",
     "react-intl": "7.1.11",
     "react-popper": "2.3.0",
@@ -309,6 +310,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "9.2.1",
     "babel-plugin-lodash": "3.3.4",
+    "better-blockmap": "1.0.2",
     "brace-expansion": "1.1.12",
     "casual": "1.6.2",
     "chai": "4.4.1",
@@ -320,7 +322,7 @@
     "csv-parse": "5.5.6",
     "danger": "13.0.4",
     "debug": "4.3.7",
-    "electron": "39.2.3",
+    "electron": "39.2.7",
     "electron-builder": "26.0.14",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
@@ -388,9 +390,7 @@
       "canvas": "-",
       "jsdom": "-",
       "thenify-all>thenify": "3.3.1",
-      "@electron/rebuild@3.7.2>@electron/node-gyp": "10.2.0-electron.2",
-      "react-contextmenu>react": "18.3.1",
-      "react-contextmenu>react-dom": "18.3.1"
+      "@electron/rebuild@3.7.2>@electron/node-gyp": "10.2.0-electron.2"
     },
     "patchedDependencies": {
       "casual@1.6.2": "patches/casual+1.6.2.patch",
@@ -401,7 +401,6 @@
       "qrcode-generator@1.4.4": "patches/qrcode-generator+1.4.4.patch",
       "@types/node-fetch@2.6.12": "patches/@types+node-fetch+2.6.12.patch",
       "fabric@4.6.0": "patches/fabric+4.6.0.patch",
-      "react-contextmenu@2.14.0": "patches/react-contextmenu+2.14.0.patch",
       "@vitest/expect@2.0.5": "patches/@vitest+expect+2.0.5.patch",
       "got@11.8.5": "patches/got+11.8.5.patch",
       "growing-file@0.1.3": "patches/growing-file+0.1.3.patch",
@@ -540,11 +539,17 @@
           "StartupWMClass": "signal"
         }
       },
+      "artifactName": "${name}_${version}_${arch}.${ext}",
       "target": [
         "deb"
       ],
       "icon": "build/icons/png",
-      "publish": [],
+      "publish": [
+        {
+          "provider": "generic",
+          "url": ""
+        }
+      ],
       "extraResources": [
         {
           "from": "build",

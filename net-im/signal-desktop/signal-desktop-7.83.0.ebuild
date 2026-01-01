@@ -37,7 +37,7 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="39.2.3" # Cr 142.0.7444.175, node 22.21.1
+	ELECTRON_APP_ELECTRON_PV="39.2.7" # Cr 142.0.7444.235, node 22.21.1
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="39.2.1" # Cr 142.0.7444.162, node 22.21.1
@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_44
+ebuild_revision_45
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -210,15 +210,15 @@ src_unpack() {
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
 #ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to snapshot: section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove (encoding@0.1.13) suffix @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove cross-spawn@5.1.0 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove electron@23.3.13 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove (encoding@0.1.13) suffix at @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove cross-spawn@5.1.0 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove electron@23.3.13 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @types/keyv@3.1.4 from ${S}/pnpm-lock.yaml" # remove row
-ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations (@esbuild/<arch>@0.24.0) from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove suffix (esbuild@0.24.0) from esbuild-register: 3.6.0(esbuild@0.24.0) in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove on-headers@1.0.2 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations (@esbuild/<arch>@0.24.0) from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove suffix (esbuild@0.24.0) from esbuild-register: 3.6.0(esbuild@0.24.0) in ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove on-headers@1.0.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron from pnpm-lock.yaml"												# CVE-2023-44402
 #ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${S}/pnpm-lock.yaml"
@@ -255,7 +255,7 @@ ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yam
 ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
@@ -264,13 +264,13 @@ ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-l
 ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
-ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
-ewarn "QA:  Manually remove @octokit/request references from ${S}/danger/package.json"
-ewarn "QA:  Manually remove @octokit/plugin-paginate-rest references from ${S}/danger/package.json"
-ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
+#ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
+#ewarn "QA:  Manually remove @octokit/request references from ${S}/danger/package.json"
+#ewarn "QA:  Manually remove @octokit/plugin-paginate-rest references from ${S}/danger/package.json"
+#ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -468,7 +468,7 @@ ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/p
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
-		epnpm audit fix "${PNPM_AUDIT_FIX_ARGS[@]}"
+		pnpm audit fix "${PNPM_AUDIT_FIX_ARGS[@]}" || true
 
 		deps=(
 	# Required for custom version bump
