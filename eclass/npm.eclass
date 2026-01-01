@@ -505,9 +505,15 @@ einfo "Hydrating npm..."
 	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
 		local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*))
 		export PATH=".:${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin:${PATH}"
+		if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${npm_pv}/bin/npm.cjs" ]] ; then
+			ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${npm_pv}/bin/npm"{".cjs",""} || die
+		fi
 	else
 		local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 		export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+		if [[ -e "${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm.cjs" ]] ; then
+			ln -sf "${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm"{".cjs",""} || die
+		fi
 	fi
 	local npm_pv=$(npm --version)
 	local node_pv=$(node --version)

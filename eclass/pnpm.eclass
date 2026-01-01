@@ -193,9 +193,6 @@ einfo "Hydrating pnpm..."
 	if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.cjs" ]] ; then
 		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm"{".cjs",""} || die
 	fi
-	if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/npm.cjs" ]] ; then
-		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/npm"{".cjs",""} || die
-	fi
 	local pnpm_pv=$(pnpm --version)
 	local node_pv=$(node --version)
 einfo "pnpm version:  ${pnpm_pv}"
