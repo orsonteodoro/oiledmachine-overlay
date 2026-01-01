@@ -17,10 +17,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.13.1/pnpm-lock.yaml#L1
+SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.20.0/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_5
+ebuild_revision_6
 "
 CDEPEND+="
 	>=net-libs/nodejs-18.19[corepack,ssl]
