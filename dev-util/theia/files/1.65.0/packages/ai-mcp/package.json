@@ -3,7 +3,7 @@
   "version": "1.65.0",
   "description": "Theia - MCP Integration",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.1",
+    "@modelcontextprotocol/sdk": "^1.24.0",
     "@theia/ai-core": "1.65.0",
     "@theia/core": "1.65.0"
   },
