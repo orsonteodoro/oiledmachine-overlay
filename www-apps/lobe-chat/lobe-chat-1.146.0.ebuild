@@ -117,7 +117,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_41
+ebuild_revision_42
 "
 REQUIRED_USE="
 	file-management? (
@@ -344,8 +344,6 @@ ewarn
 eerror "Rust ${RUST_PV} required for @swc/core"
 		die
 	fi
-ewarn "Do not store KEY_VAULTS_SECRET in a package.env file for ${PN}."
-ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env file for ${PN}."
 }
 
 pnpm_unpack_post() {
@@ -596,6 +594,9 @@ src_configure() {
 	edo npm --version
 	edo pnpm --version
 	edo tsc --version
+
+ewarn "Do not store KEY_VAULTS_SECRET in a package.env or /etc/portage/make.conf file for ${PN}."
+ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env or /etc/portage/make.conf file for ${PN}."
 
 	if [[ -z "${KEY_VAULTS_SECRET}" ]] ; then
 eerror
