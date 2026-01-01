@@ -10,6 +10,8 @@ EAPI=8
 # 1.96.14 -> 1.111.4
 # 1.111.4 -> 1.133.4
 # 1.133.4 -> 1.137.0
+# 1.137.0 -> 1.142.8
+# 1.142.8 -> 1.146.0
 
 # Ebuild using React 19
 
@@ -41,7 +43,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.142.8" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.146.0" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
@@ -329,7 +331,6 @@ ewarn
 	addwrite "${EDISTDIR}"
 	npm_pkg_setup
 	pnpm_pkg_setup
-einfo "PATH:  ${PATH}"
 	check_virtual_mem
 
 	node-sharp_pkg_setup
@@ -445,7 +446,7 @@ pnpm_dedupe_post() {
 			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|snowflake-sdk: 2.0.2|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
+C			sed -i -e "s|snowflake-sdk: 2.0.2|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -502,7 +503,7 @@ ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package
 		# ID = Information Disclosure
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
-		epnpm remove "xlsx"
+#		epnpm remove "xlsx"
 
 		local pkgs
 		pkgs=(
@@ -541,6 +542,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
+		pnpm_hydrate
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
