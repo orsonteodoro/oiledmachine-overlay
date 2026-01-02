@@ -117,7 +117,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_42
+ebuild_revision_45
 "
 REQUIRED_USE="
 	file-management? (
@@ -584,6 +584,25 @@ src_prepare() {
 	default
 }
 
+postgres_checks() {
+	if [[ -z "${KEY_VAULTS_SECRET}" ]] ; then
+eerror
+eerror "The KEY_VAULTS_SECRET environment variable needs to be set for postgres support."
+eerror "It can be generated with \`openssl rand -base64 32\`"
+eerror "KEY_VAULTS_SECRET=\"<key>\""
+eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-the-key-vaults-secret-environment-variable"
+eerror
+		die
+	fi
+
+	if [[ -z "${DATABASE_URL}" ]] ; then
+eerror
+eerror "The DATABASE_URL needs to be set for postgres support."
+eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-environment-variables-in-vercel"
+eerror
+	fi
+}
+
 src_configure() {
 	npm_hydrate
 	pnpm_hydrate
@@ -598,23 +617,8 @@ src_configure() {
 ewarn "Do not store KEY_VAULTS_SECRET in a package.env or /etc/portage/make.conf file for ${PN}."
 ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env or /etc/portage/make.conf file for ${PN}."
 
-# TODO:  Remove this requirement.  It worked fine earlier without them.
-
-	if [[ -z "${KEY_VAULTS_SECRET}" ]] ; then
-eerror
-eerror "The KEY_VAULTS_SECRET environment variable needs to be set."
-eerror "It can be generated with \`openssl rand -base64 32\`"
-eerror "KEY_VAULTS_SECRET=\"<key>\""
-eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-the-key-vaults-secret-environment-variable"
-eerror
-		die
-	fi
-
-	if [[ -z "${DATABASE_URL}" ]] ; then
-eerror
-eerror "The DATABASE_URL needs to be set."
-eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-environment-variables-in-vercel"
-eerror
+	if use postgres ; then
+		postgres_checks
 	fi
 }
 
@@ -669,12 +673,20 @@ einfo "Building next.config.js"
 		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 	fi
 
+	if ! use postgres ; then
+		sed -i -e "s|MIGRATION_DB=1|true MIGRATION_DB=1|g" "package.json" || die
+	fi
+
 	edo next build #--debug
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
+
+
 	edo npm run build-sitemap
 	edo npm run build-sitemap
-	edo npm run build-migrate-db
+	if use postgres ; then
+		edo npm run build-migrate-db
+	fi
 
 	unset NEXT_AUTH_SECRET
 
