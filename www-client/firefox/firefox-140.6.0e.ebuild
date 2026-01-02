@@ -2505,6 +2505,13 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	cflags-hardened_append
 	rustflags-hardened_append
 
+	# Remove flags that may slow things down or break live stream
+	filter-flags \
+		"-fno-inline" \
+		"-fstrict-flex-arrays=3" \
+		"-ftrivial-auto-var-init=zero" \
+		"-fzero-call-used-regs=all"
+
 einfo "Cross-compile ABI:  ${ABI}"
 einfo "Cross-compile CFLAGS:  ${CFLAGS}"
 einfo "Cross-compile CC:  ${CC}"
