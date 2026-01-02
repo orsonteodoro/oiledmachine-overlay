@@ -26,6 +26,7 @@ EAPI=8
 # 143.0.3 -> 144.0.2
 # 144.0.2 -> 145.0
 # 145.0 -> 146.0
+# 146.0 -> 146.0.1
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -167,7 +168,7 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -222,11 +223,14 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Dec 12, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1765230480 # From `date +%s -d "2025-12-08 13:48"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-92/"
+MITIGATION_DATE="Dec 18, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1766036640 # From `date +%s -d "2025-12-17 21:44"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-98/#CVE-2025-14861"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
+	"CVE-2025-14860;ZC, UAF, DoS, DT, ID;Critical"
+	"CVE-2025-14861;MC, CE, DoS, DT, ID;High"
+
 	"CVE-2025-14321;UAF;"
 	"CVE-2025-14322;SBX, DT, ID;High"
 	"CVE-2025-14323;PE, DoS, DT, ID;High"
@@ -1522,6 +1526,7 @@ src_prepare() {
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
 		rm -v "${WORKDIR}/firefox-patches/"*"bmo-1988166-musl-remove-nonexisting-system-header-req.patch" || die
+		rm -v "${WORKDIR}/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch" || die
 	fi
 
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
