@@ -117,7 +117,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	file-management? (
@@ -796,7 +796,7 @@ gen_config() {
 		-e "s|@DATABASE_MODE@|${database_mode}|g" \
 		"${T}/${PN}.conf" \
 		|| die
-	insinto "/etc/conf.d/${PN}"
+	insinto "/etc/conf.d"
 	newins "${T}/${PN}.conf" "${PN}"
 
 	# Secure keys/tokens
