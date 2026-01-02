@@ -56,8 +56,8 @@ PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
-# Obtained from https://github.com/swc-project/swc/blob/v1.11.24/rust-toolchain \
-# Obtained from commit from committer-date:2024-10-07 GH search \
+# Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
+# Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
