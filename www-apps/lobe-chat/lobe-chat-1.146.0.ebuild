@@ -598,6 +598,8 @@ src_configure() {
 ewarn "Do not store KEY_VAULTS_SECRET in a package.env or /etc/portage/make.conf file for ${PN}."
 ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env or /etc/portage/make.conf file for ${PN}."
 
+# TODO:  Remove this requirement.  It worked fine earlier without them.
+
 	if [[ -z "${KEY_VAULTS_SECRET}" ]] ; then
 eerror
 eerror "The KEY_VAULTS_SECRET environment variable needs to be set."
@@ -606,6 +608,13 @@ eerror "KEY_VAULTS_SECRET=\"<key>\""
 eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-the-key-vaults-secret-environment-variable"
 eerror
 		die
+	fi
+
+	if [[ -z "${DATABASE_URL}" ]] ; then
+eerror
+eerror "The DATABASE_URL needs to be set."
+eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-environment-variables-in-vercel"
+eerror
 	fi
 }
 
