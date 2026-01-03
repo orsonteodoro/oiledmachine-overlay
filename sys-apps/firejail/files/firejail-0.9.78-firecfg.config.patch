@@ -1,0 +1,89 @@
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firecfg/firecfg.config firejail-0.9.78/src/firecfg/firecfg.config
+--- firejail-0.9.78.orig/src/firecfg/firecfg.config	2026-01-01 05:06:26.000000000 -0800
++++ firejail-0.9.78/src/firecfg/firecfg.config	2026-01-02 20:05:33.482068720 -0800
+@@ -248,7 +248,8 @@ editorconfiger
+ electron-mail
+ electrum
+ element-desktop
+-elinks
++# elinks breaks emerge/portage on Gentoo: 'too many environment variables' \
++#elinks
+ #emacs # text editor (see Note2)
+ empathy
+ enchant
+@@ -301,7 +302,8 @@ flowblade
+ fluffychat
+ #foliate # webkit2gtk-4.x requires bwrap (see #3647)
+ font-manager
+-fontforge
++# fontforge breaks emerge/portage on Gentoo \
++#fontforge
+ fossamail
+ four-in-a-row
+ fractal
+@@ -557,7 +559,8 @@ lowriter
+ luminance-hdr
+ lximage-qt
+ lxmusic
+-lynx
++# lynx breaks emerge/portage on Gentoo: 'too many environment variables' \
++#lynx
+ lyriek
+ lyx
+ #lz4 # disable until we fix CLI archivers for makepkg on Arch (see discussion in #3095)
+@@ -566,7 +569,12 @@ lyx
+ lzdoom
+ macrofusion
+ magicor
+-man
++# man breaks witht he following error:
++# $ man chromium-browser
++# WARNING: terminal is not fully functional
++# Press RETURN to continue 
++# Manual page chromium-browser(1) byte 0/0 (END) (press h for help or q to quit) \
++#man
+ manaplus
+ marker
+ masterpdfeditor
+@@ -648,7 +656,8 @@ musescore
+ musictube
+ musixmatch
+ mutool
+-mutt
++# mutt breaks when configs are under ~/.mutt/ \
++#mutt
+ mypaint
+ mypaint-ora-thumbnailer
+ #nano # text editor (see Note2)
+@@ -717,7 +726,8 @@ out123
+ palemoon
+ #pandoc
+ parole
+-patch
++# patch breaks emerge/portage on Gentoo: 'too many environment variables', path issues \
++#patch
+ pavucontrol
+ pavucontrol-qt
+ pcsxr
+@@ -865,7 +875,8 @@ steam-runtime
+ stellarium
+ straw-viewer
+ strawberry
+-strings
++# strings breaks emerge/portage on Gentoo \
++#strings
+ studio.sh
+ subdownloader
+ sum
+@@ -1002,7 +1013,8 @@ webstorm
+ weechat
+ weechat-curses
+ wesnoth
+-wget
++# wget breaks emerge/portage on Gentoo: 'too many environment variables', path issues \
++#wget
+ wget2
+ whalebird
+ whois
+Only in firejail-0.9.78/src/firecfg: firecfg.config.orig
+Only in firejail-0.9.78/src/firecfg: firecfg.config.rej

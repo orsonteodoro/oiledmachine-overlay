@@ -1,0 +1,90 @@
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firejail/firejail.h firejail-0.9.78/src/firejail/firejail.h
+--- firejail-0.9.78.orig/src/firejail/firejail.h	2026-01-02 20:19:31.856946959 -0800
++++ firejail-0.9.78/src/firejail/firejail.h	2026-01-02 20:20:06.052029454 -0800
+@@ -375,6 +375,7 @@ extern int arg_keep_fd_all;	// inherit a
+ extern int arg_netlock;	// netlocker
+ extern int arg_restrict_namespaces;
+ extern int arg_allow_bwrap;
++extern bool xpra_virtualgl;
+ 
+ typedef enum {
+ 	DBUS_POLICY_ALLOW,	// Allow unrestricted access to the bus
+Only in firejail-0.9.78/src/firejail: firejail.h.orig
+Only in firejail-0.9.78/src/firejail: firejail.h.rej
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firejail/main.c firejail-0.9.78/src/firejail/main.c
+--- firejail-0.9.78.orig/src/firejail/main.c	2026-01-02 20:19:31.857688791 -0800
++++ firejail-0.9.78/src/firejail/main.c	2026-01-02 20:20:29.299865012 -0800
+@@ -171,6 +171,7 @@ int just_run_the_shell = 0;
+ int arg_netlock = 0;
+ int arg_restrict_namespaces = 0;
+ int arg_allow_bwrap = 0;
++bool xpra_virtualgl = false;
+ 
+ int parent_to_child_fds[2];
+ int child_to_parent_fds[2];
+@@ -385,6 +386,16 @@ static void run_cmd_and_exit(int i, int
+ 	}
+ 	else if (strcmp(argv[i], "--x11=xpra") == 0) {
+ 		if (checkcfg(CFG_X11)) {
++			xpra_virtualgl = false;
++			x11_start_xpra(argc, argv);
++			exit(0);
++		}
++		else
++			exit_err_feature("x11");
++	}
++	else if (strcmp(argv[i], "--x11=xpra-virtualgl") == 0) {
++		if (checkcfg(CFG_X11)) {
++			xpra_virtualgl = true;
+ 			x11_start_xpra(argc, argv);
+ 			exit(0);
+ 		}
+Only in firejail-0.9.78/src/firejail: main.c.orig
+Only in firejail-0.9.78/src/firejail: main.c.rej
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firejail/x11.c firejail-0.9.78/src/firejail/x11.c
+--- firejail-0.9.78.orig/src/firejail/x11.c	2026-01-02 20:19:31.859001897 -0800
++++ firejail-0.9.78/src/firejail/x11.c	2026-01-02 20:19:48.424504720 -0800
+@@ -708,10 +708,19 @@ static void __attribute__((noreturn)) x1
+ 	pid_t server = 0;
+ 
+ 	// build the start command
+-	char *server_argv[256] = {		  // rest initialized to NULL
++	char *server_argv[256];
++	char *_server_argv[256] = {		  // rest initialized to NULL
+ 		"xpra", "start", display_str, "--no-daemon",
+ 	};
++	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
++		"xpra", "start", display_str, "--exec-wrapper=vglrun", "--no-daemon",
++	};
+ 	unsigned pos = 0;
++	if (xpra_virtualgl) {
++		memcpy(server_argv, _server_argv_virtualgl, 256);
++	} else {
++		memcpy(server_argv, _server_argv, 256);
++	}
+ 	while (server_argv[pos] != NULL) pos++;
+ 
+ 	assert(xpra_extra_params);		  // should be "" if empty
+@@ -970,11 +979,20 @@ static void __attribute__((noreturn)) x1
+ 	pid_t server = 0;
+ 
+ 	// build the start command
+-	char *server_argv[256] = {		  // rest initialized to NULL
++	char *server_argv[256];
++	char *_server_argv[256] = {		  // rest initialized to NULL
+ 		"xpra", "start", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
+ 	};
++	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
++		"xpra", "start", display_str, "--exec-wrapper=vglrun", "--daemon=no", "--attach=yes", "--exit-with-children=yes"
++	};
+ 	unsigned spos = 0;
+ 	unsigned fpos = 0;
++	if (xpra_virtualgl) {
++		memcpy(server_argv, _server_argv_virtualgl, 256);
++	} else {
++		memcpy(server_argv, _server_argv, 256);
++	}
+ 	while (server_argv[spos] != NULL) spos++;
+ 
+ 	// build jail command
+Only in firejail-0.9.78/src/firejail: x11.c.orig

@@ -1,0 +1,26 @@
+diff '--color=auto' -urp firejail-0.9.78.orig/etc/firejail.config firejail-0.9.78/etc/firejail.config
+--- firejail-0.9.78.orig/etc/firejail.config	2025-12-20 04:37:44.000000000 -0800
++++ firejail-0.9.78/etc/firejail.config	2026-01-02 19:53:41.024187127 -0800
+@@ -51,7 +51,7 @@
+ # Maximum number of environment variables.
+ # This limit is intended to make stack smashing harder (see
+ # https://github.com/netblue30/firejail/issues/4633).
+-# env-max-count 256
++env-max-count @ENV_MAX_COUNT@
+ 
+ # Maximum length for each environment variable value.
+ # Example: `FOO=barr` has a length of 4.
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firejail/checkcfg.c firejail-0.9.78/src/firejail/checkcfg.c
+--- firejail-0.9.78.orig/src/firejail/checkcfg.c	2025-12-30 14:06:53.000000000 -0800
++++ firejail-0.9.78/src/firejail/checkcfg.c	2026-01-02 19:53:25.936417651 -0800
+@@ -36,7 +36,7 @@ char *xvfb_extra_params = "";
+ char *netfilter_default = NULL;
+ int arg_max_count = MAX_ARGS; // maximum number of command arguments (argc)
+ unsigned long arg_max_len = MAX_ARG_LEN; // --foobar=PATH
+-int env_max_count = 256; // some sane maximum number of environment variables
++int env_max_count = @ENV_MAX_COUNT@; // some sane maximum number of environment variables
+ unsigned long env_max_len = (PATH_MAX + 32); // FOOBAR=SOME_PATH, only applied to Firejail's own sandboxed apps
+ unsigned long join_timeout = 5000000; // microseconds
+ char *config_seccomp_error_action_str = "EPERM";
+Only in firejail-0.9.78/src/firejail: firejail.h.orig
+Only in firejail-0.9.78/src/firejail: firejail.h.rej
