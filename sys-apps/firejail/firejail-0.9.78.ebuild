@@ -4218,7 +4218,7 @@ ewarn
 
 ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege escalation."
 
-einfo "TIP:  If the app processes untrusted data or interacts with the Internet, it should have a firejail profile."
+einfo "TIP:  If the app processes untrusted data or interacts with the Internet, it should have a ${MY_PN} profile."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
@@ -4229,6 +4229,7 @@ einfo "TIP:  If the app processes untrusted data or interacts with the Internet,
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (897f12d, 20250118)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (1a576d1, 20250814)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (0.9.76, 20250814)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (0.9.78, 20260102)
 
 # Tested for both 1a576d1, 897f12d
 # For sys-apps/firejail
