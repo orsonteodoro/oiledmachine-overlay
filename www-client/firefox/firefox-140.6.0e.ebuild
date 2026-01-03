@@ -3088,6 +3088,10 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 2, 2026)
+
+# 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
+
 # = Ebuild fork checklist =
 # Bump to latest release every week
 # Update *DEPENDs with MULTILIB_USEDEP

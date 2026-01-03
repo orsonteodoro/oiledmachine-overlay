@@ -3047,6 +3047,10 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 137.0.2 (Apr 15, 2025)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 2, 2026)
+
+# 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
+
 # USE="X dav1d dbus eme-free jemalloc libcanberra opus pulseaudio speech vpx
 # wayland webspeech -aac -alsa -cups (-debug) -firejail -gmp-autoupdate
 # -gnome-shell -hardened -hwaccel -jack -jit -libnotify -libproxy -libsecret
