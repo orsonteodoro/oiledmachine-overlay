@@ -205,8 +205,8 @@
     xpra-virtualgl | works [2]  | balanced-security      | 8              | 6                 | slow start                  | no window size problems     | yes, but slow
     xorg [1][3]    | broken [2] | balanced-security      | 6              | 9                 |                             |                             | 
     xvfb           | untested   | security-critical      | 9              | 3                 |                             | hidden output               | untested
-    wayland        | works      | performance-critical & | 10             | 10                | compatibility               | fastest fps                 | yes, fast
-                   |            | security-critical      |                |                   |                             |                             |
+    wayland        | works      | performance-critical & | 10             | 10                | annoying quirks,            | fastest fps                 | yes, fast
+                   |            | security-critical      |                |                   | compatibility               |                             |
 
     [1] Workarounds may compromise security.  Issue 1741
     [2] Disabled
