@@ -613,7 +613,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_26
+ebuild_revision_27
 "
 
 gen_gst_plugins_duse() {
@@ -2841,11 +2841,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
-	# Remove possible sources of slowdown with input and scrolling
-	# Remove possible sources of crash with CanvasMark
-	filter-flags \
-		"-fno-inline" \
-		"-fstrict-flex-arrays=3"
+	# Remove possible sources of slowdown with input, scrolling, crash with
+	# CanvasMark with hardening flags
+	filter-flags "-fno-inline"
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \
