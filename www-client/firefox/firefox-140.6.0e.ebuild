@@ -426,7 +426,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_24
+ebuild_revision_25
 "
 
 # Firefox-only IUSE
@@ -2508,9 +2508,7 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	# Remove flags that may slow things down or break live stream
 	filter-flags \
 		"-fno-inline" \
-		"-fstrict-flex-arrays=3" \
-		"-ftrivial-auto-var-init=zero" \
-		"-fzero-call-used-regs=all"
+		"-fstrict-flex-arrays=3"
 
 einfo "Cross-compile ABI:  ${ABI}"
 einfo "Cross-compile CFLAGS:  ${CFLAGS}"
@@ -3088,7 +3086,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 2, 2026)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 3, 2026)
 
 # 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
 

@@ -421,7 +421,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_24
+ebuild_revision_25
 "
 # telemetry disabled for crypto/security reasons
 
@@ -2486,9 +2486,7 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	# Remove flags that may slow things down or break live stream
 	filter-flags \
 		"-fno-inline" \
-		"-fstrict-flex-arrays=3" \
-		"-ftrivial-auto-var-init=zero" \
-		"-fzero-call-used-regs=all"
+		"-fstrict-flex-arrays=3"
 
 einfo "Cross-compile ABI:  ${ABI}"
 einfo "Cross-compile CFLAGS:  ${CFLAGS}"
@@ -3047,7 +3045,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 137.0.2 (Apr 15, 2025)
-# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 2, 2026)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 3, 2026)
 
 # 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
 
