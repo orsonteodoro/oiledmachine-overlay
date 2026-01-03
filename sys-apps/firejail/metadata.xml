@@ -96,18 +96,19 @@
     Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
     unset (It will fallback to hardened malloc followed by ptmalloc.)
 
-    Heap allocator      | HO    | OOB   | UAF   | HF     | FB                     | FP              | TC | MTE   | Examples
-    bmalloc             | y     | y     | y     | n      | poison                 | none            | n  | n     | Older WebKitGTK release
-    jemalloc            | n     | n     | n[11] | n      | zero/poison (c)[7][10] | none            | n  | n     | Mono, Blender, MariaDB, QEMU
-    hardened_malloc     | y     | y     | y     | y[2]   | poison                 | none            | y  | y (c) | GrapheneOS
-    libpas              | y     | y     | y     | y[1]   | none                   | none            | y  | n     | Latest WebKitGTK
-    mimalloc            | y     | y     | y     | y[3]   | none                   | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
-    mozjemalloc         | n     | n     | n[11] | n/a    | zero/poison (c)[8][10] | none            | n  | n     | Firefox
-    PartitionAlloc      | n[12] | n[12] | n[12] | y[5]   | poison                 | none            | y  | y     | Chromium
-    ptmalloc            | n     | n     | n     | n      | none                   | none            | n  | n     | glibc, Linux userland apps
-    Scudo               | y     | y     | y     | y[4]   | zero/poison (c)[9]     | none            | n  | y     | Android
-    Slub                | y     | y     | y     | y[6]   | none                   | none/poison (c) | n  | n     | Kernel/drivers
-    tcmalloc            | y     | y     | y     | n      | none                   | none            | n  | n     | Databases (Redis, MariaDB)          
+    Heap allocator      | HO    | OOB   | UAF   | HF     | FB                     | FP              | TC  | MTE   | Examples
+    ---                 | ---   | ---   | ---   | ---    | ---                    | ---             | --- | ---   | ---
+    bmalloc             | y     | y     | y     | n      | poison                 | none            | n   | n     | Older WebKitGTK release
+    jemalloc            | n     | n     | n[11] | n      | zero/poison (c)[7][10] | none            | n   | n     | Mono, Blender, MariaDB, QEMU
+    hardened_malloc     | y     | y     | y     | y[2]   | poison                 | none            | y   | y (c) | GrapheneOS
+    libpas              | y     | y     | y     | y[1]   | none                   | none            | y   | n     | Latest WebKitGTK
+    mimalloc            | y     | y     | y     | y[3]   | none                   | none            | n   | n     | AI/ML (pyTorch, ONNX Runtime)
+    mozjemalloc         | n     | n     | n[11] | n/a    | zero/poison (c)[8][10] | none            | n   | n     | Firefox
+    PartitionAlloc      | n[12] | n[12] | n[12] | y[5]   | poison                 | none            | y   | y     | Chromium
+    ptmalloc            | n     | n     | n     | n      | none                   | none            | n   | n     | glibc, Linux userland apps
+    Scudo               | y     | y     | y     | y[4]   | zero/poison (c)[9]     | none            | n   | y     | Android
+    Slub                | y     | y     | y     | y[6]   | none                   | none/poison (c) | n   | n     | Kernel/drivers
+    tcmalloc            | y     | y     | y     | n      | none                   | none            | n   | n     | Databases (Redis, MariaDB)          
 
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for security-critical.
     For web browsers:         KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for security-critical.
@@ -195,14 +196,17 @@
                        it will be X11 isolated.  However, the tabs might not
                        have isolation among each other.
 
-    X Backend      | Status     | Flaws                       | Benefits                    | OpenGL support
-    unsandboxed    | works      | no frame grab isolation and | fastest fps, fastest start  | yes, fast
-                   |            | no input isolation          |                             |
-    xephyr         | works      | window size inconsistencies | fast start, faster scroll   | yes, but slow
-    xpra           | works      | slow start                  | no window size problems     | yes, but slow
-    xpra-virtualgl | works [2]  | slow start                  | no window size problems     | yes, but slow
-    xorg [1][3]    | broken [2] |                             |                             | 
-    xvfb           | untested   |                             | hidden output               | untested
+    Backend        | Status     | Criticality            | Security score | Performance score | Flaws                       | Benefits                    | OpenGL support
+    ---            | ---        | ---                    | ---            | ---               | ---                         | ---                         | ---
+    unsandboxed    | works      | performance-critical   | 2              | 10                | no frame grab isolation and | fastest fps, fastest start  | yes, fast
+                   |            |                        |                |                   | no input isolation          |                             |
+    xephyr         | works      | balanced-security      | 9              | 8                 | window size inconsistencies | fast start, faster scroll   | yes, but slow
+    xpra           | works      | security-critical      | 9              | 4                 | slow start                  | no window size problems     | yes, but slow
+    xpra-virtualgl | works [2]  | balanced-security      | 8              | 6                 | slow start                  | no window size problems     | yes, but slow
+    xorg [1][3]    | broken [2] | balanced-security      | 6              | 9                 |                             |                             | 
+    xvfb           | untested   | security-critical      | 9              | 3                 |                             | hidden output               | untested
+    wayland        | works      | performance-critical & | 10             | 10                | compatibility               | fastest fps                 | yes, fast
+                   |            | security-critical      |                |                   |                             |                             |
 
     [1] Workarounds may compromise security.  Issue 1741
     [2] Disabled
