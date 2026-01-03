@@ -4217,6 +4217,8 @@ ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
 ewarn
 
 ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege escalation."
+
+einfo "TIP:  If the app processes untrusted data or interacts with the Internet, it should have a firejail profile."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
