@@ -421,7 +421,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_25
+ebuild_revision_26
 "
 # telemetry disabled for crypto/security reasons
 
@@ -2483,10 +2483,8 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	cflags-hardened_append
 	rustflags-hardened_append
 
-	# Remove flags that may slow things down or break live stream
-	filter-flags \
-		"-fno-inline" \
-		"-fstrict-flex-arrays=3"
+	# Remove hardening flags that may slow things down or break live stream
+	filter-flags "-fno-inline" # Verified to cause slowdown
 
 einfo "Cross-compile ABI:  ${ABI}"
 einfo "Cross-compile CFLAGS:  ${CFLAGS}"

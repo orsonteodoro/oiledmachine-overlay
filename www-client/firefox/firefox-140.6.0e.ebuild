@@ -426,7 +426,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_25
+ebuild_revision_26
 "
 
 # Firefox-only IUSE
@@ -2505,10 +2505,8 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	cflags-hardened_append
 	rustflags-hardened_append
 
-	# Remove flags that may slow things down or break live stream
-	filter-flags \
-		"-fno-inline" \
-		"-fstrict-flex-arrays=3"
+	# Remove hardening flags that may slow things down or break live stream
+	filter-flags "-fno-inline" # Verified to cause slowdown
 
 einfo "Cross-compile ABI:  ${ABI}"
 einfo "Cross-compile CFLAGS:  ${CFLAGS}"
