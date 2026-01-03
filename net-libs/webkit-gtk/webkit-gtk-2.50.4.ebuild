@@ -613,7 +613,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_25
+ebuild_revision_26
 "
 
 gen_gst_plugins_duse() {
@@ -2840,9 +2840,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Remove possible sources of crash with CanvasMark
 	filter-flags \
 		"-fno-inline" \
-		"-fstrict-flex-arrays=3" \
-		"-ftrivial-auto-var-init=zero" \
-		"-fzero-call-used-regs=all"
+		"-fstrict-flex-arrays=3"
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \
