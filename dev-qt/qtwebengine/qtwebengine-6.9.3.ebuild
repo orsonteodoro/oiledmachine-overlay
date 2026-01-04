@@ -8,7 +8,6 @@ EAPI=8
 
 CFLAGS_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
@@ -43,7 +42,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_6
+	ebuild_revision_7
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
@@ -301,13 +300,6 @@ src_configure() {
 	# "possibly" get enabled by some paths and cause issues (bug #953111)
 	append-ldflags -Wl,-z,noexecstack
 
-	if is-flagq "-fstack-protector" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="1"
-	elif is-flagq "-fstack-protector-strong" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="2"
-	elif is-flagq "-fstack-protector-all" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="3"
-	fi
 	cflags-hardened_append
 
 	export NINJAFLAGS=$(get_NINJAOPTS)
