@@ -2836,9 +2836,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
-	# Remove possible sources of slowdown with input, scrolling, crash with
-	# CanvasMark with hardening flags
-	filter-flags "-fno-inline"
+	# FIXME:  Fix crash with CanvasMark
+	filter-flags "-fno-inline" # Verified to fix slowdown, slow scrolling, streaming issues
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \
@@ -3103,5 +3102,6 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4/37:
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4.1/0:
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4/37
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4.1/0
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.4, 20260104) for slot 4/37 with completion time:  0 days, 11 hrs, 2 mins, 0 secs
