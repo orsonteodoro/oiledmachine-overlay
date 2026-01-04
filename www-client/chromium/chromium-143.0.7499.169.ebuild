@@ -47,6 +47,7 @@ EAPI=8
 # 142.0.7444.162 -> 142.0.7444.175
 # 142.0.7444.175 -> 143.0.7499.40
 # 143.0.7499.40 -> 143.0.7499.109
+# 143.0.7499.109 -> 143.0.7499.169
 #
 
 #
@@ -145,7 +146,7 @@ EAPI=8
 # The unbundle build files logic is in /usr/share/chromium/sources/build/linux/unbundle
 
 TC_COUNT_EXPECTED=5129
-SOURCES_COUNT_EXPECTED=516257
+SOURCES_COUNT_EXPECTED=516261
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
@@ -194,7 +195,7 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="143.0.7499.109-1"
+UNGOOGLED_CHROMIUM_PV="143.0.7499.169-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -415,27 +416,10 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Dec 10, 2025" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1765226100 # From `date +%s -d "2025-12-08 12:35 PM PST"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2025/12/stable-channel-update-for-desktop_10.html"
+MITIGATION_DATE="Dec 18, 2025" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1766012700 # From `date +%s -d "2025-12-17 03:05 PM PST"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/12/stable-channel-update-for-desktop_18.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-14174;ITW, KEV, OOB, DoS, DT, ID;High"
-	"CVE-2025-14372;UAF, SE, DT, ID;Medium"
-	"CVE-2025-14373;II, ID;Medium"
-
-	"CVE-2025-13630;TC, MC, DoS, DT, ID;High"
-	"CVE-2025-13631;II, PE, DoS, DT, ID;High"
-	"CVE-2025-13632;II, SBX, SEA, DoS, ID;Medium"
-	"CVE-2025-13633;UAF, MC, DoS, DT, ID;High"
-	"CVE-2025-13634;II, DT, ID;Medium"
-	"CVE-2025-13720;MC, DoS, DT, ID;High"
-	"CVE-2025-13721;RC, MC, DoS, DT, ID;High"
-	"CVE-2025-13635;II, UI, SEA, DoS, ID;Medium"
-	"CVE-2025-13636;II, SEA, DT;Medium"
-	"CVE-2025-13637;II, SEA, DT;Medium"
-	"CVE-2025-13638;UAF, MC, DoS, DT, ID;High"
-	"CVE-2025-13639;II, DoS, DT, ID;High"
-	"CVE-2025-13640;II, DT, ID;Low"
 )
 
 PATENT_STATUS=(
@@ -4280,6 +4264,10 @@ eerror "QA:  RUSTC is not initialized or missing."
 		"-Wl,-z,now" \
 		"-Wl,-z,relro" \
 		"-fstack-clash-protection"
+
+	# Prevent slowdowns with hardening flags
+	filter-flags "-fno-inline"
+
 	local wants_fc_protection=0
 	if \
 		   is-flagq "-fcf-protection=all" \
