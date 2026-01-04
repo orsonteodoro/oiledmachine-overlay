@@ -3591,16 +3591,18 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 			"./generate_gni.sh" || die
 		popd >/dev/null 2>&1 || die
 
-		pushd "third_party/ffmpeg" >/dev/null 2>&1 || die
-			cp \
-				"libavcodec/ppc/h264dsp.c" \
-				"libavcodec/ppc/h264dsp_ppc.c" \
-				|| die
-			cp \
-				"libavcodec/ppc/h264qpel.c" \
-				"libavcodec/ppc/h264qpel_ppc.c" \
-				|| die
-		popd >/dev/null 2>&1 || die
+		if [[ -e "third_party/ffmpeg" ]] ; then
+			pushd "third_party/ffmpeg" >/dev/null 2>&1 || die
+				cp \
+					"libavcodec/ppc/h264dsp.c" \
+					"libavcodec/ppc/h264dsp_ppc.c" \
+					|| die
+				cp \
+					"libavcodec/ppc/h264qpel.c" \
+					"libavcodec/ppc/h264qpel_ppc.c" \
+					|| die
+			popd >/dev/null 2>&1 || die
+		fi
 	fi
 
 	# Sanity check keeplibs, on major version bumps it is often necessary to update this list
@@ -6143,42 +6145,6 @@ ewarn
 				"v8_enable_external_code_space=false"
 			)
 		fi
-	fi
-
-	local myarch="$(tc-arch)"
-	if use system-ffmpeg ; then
-		local ffmpeg_target_arch
-		if [[ "${myarch}" == "amd64" ]] ; then
-			ffmpeg_target_arch="x64"
-		elif [[ "${myarch}" == "x86" ]] ; then
-			ffmpeg_target_arch="ia32"
-		elif [[ "${myarch}" == "arm64" ]] ; then
-			ffmpeg_target_arch="arm64"
-		elif [[ "${myarch}" == "arm" ]] ; then
-			ffmpeg_target_arch=$(usex cpu_flags_arm_neon "arm-neon" "arm")
-		elif [[ "${myarch}" == "ppc64" ]] ; then
-			ffmpeg_target_arch="ppc64"
-		else
-			die "Failed to determine target arch, got '${myarch}'."
-		fi
-
-		local build_ffmpeg_args=()
-		if use pic && [[ "${ffmpeg_target_arch}" == "ia32" ]] ; then
-			build_ffmpeg_args+=( "--disable-asm" )
-		fi
-
-	# Re-configure bundled ffmpeg. See bug #491378 for example reasons.
-einfo "Configuring bundled ffmpeg..."
-		pushd "third_party/ffmpeg" >/dev/null 2>&1 || die
-			"media/ffmpeg/scripts/build_ffmpeg.py" \
-				linux "${ffmpeg_target_arch}" \
-				--branding "${ffmpeg_branding}" \
-				-- \
-				"${build_ffmpeg_args[@]}" \
-				|| die
-#			"chromium/scripts/copy_config.sh" || die
-			"media/ffmpeg/scripts/generate_gn.py" || die
-		popd >/dev/null 2>&1 || die
 	fi
 
 	# Explicitly disable ICU data file support for system-icu/headless builds.
