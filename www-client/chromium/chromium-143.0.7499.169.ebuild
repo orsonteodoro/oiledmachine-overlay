@@ -781,11 +781,12 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 	"
 fi
 UNPACKAGE_REQUIRED_USE=(
-	"!system-abseil-cpp"		# Required to build
+	"!system-abseil-cpp"		# Vendored required to build mksnapshot
 	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-woff2"			# Disabled because live ebuild is required and not available
 	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
 	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
+	"!system-zlib"			# Vendored required to build mksnapshot
 	"!system-zstd"			# Disabled because live ebuild is required and not available
 )
 # Drumbrake is broken in this release and off by default.
