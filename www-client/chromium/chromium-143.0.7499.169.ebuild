@@ -2369,10 +2369,10 @@ einfo
 
 	if use official ; then
 	# Upstream default
-		CFLAGS_HARDENED_SSP_LEVEL="1" # 5% performance penalty, SSP-basic
+		CFLAGS_HARDENED_SSP_LEVEL="1" # 5% performance penalty, SSP-basic, performance-critical
 	else
 	# Overlay default
-		CFLAGS_HARDENED_SSP_LEVEL="2" # 10% performance penalty, SSP-strong
+		CFLAGS_HARDENED_SSP_LEVEL="2" # 10% performance penalty, SSP-strong, security-critical
 	fi
 
 einfo "CC:  ${CC}"
