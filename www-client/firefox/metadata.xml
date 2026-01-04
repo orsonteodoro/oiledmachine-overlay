@@ -94,7 +94,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="eme-free">
     Enable to remove EME and deny DRM plugins.
     Disable to allow use of proprietary DRM plugins for non-free content
-    (e.g. college e-books, music services, video streaming).
+    (e.g. college e-books, music services, video services).
   </flag>
   <flag name="firejail">
     Use Firejail for sandboxing.
