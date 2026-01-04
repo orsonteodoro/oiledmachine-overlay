@@ -88,11 +88,13 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 </upstream>
 <use>
   <flag name="bindist">
-    Disable official Firefox branding (icons, name) which are not
+    Disables official Firefox branding (icons, name) which are not
     binary-redistributable according to upstream.
   </flag>
   <flag name="eme-free">
-    Disable EME (DRM plugin) cabability at build time
+    Enable to remove EME and remove DRM plugins.
+    Disable to allow use of proprietary DRM plugins for non-free content
+    (e.g. college e-books, music services, video streaming).
   </flag>
   <flag name="firejail">
     Use Firejail for sandboxing.
@@ -103,8 +105,8 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     Disabling may allow you to use a hardened allocator instead.
   </flag>
   <flag name="jit">
-    Enable JavaScript JIT compilation for faster runtime performance.
-    Disable JIT compilation to mitigate against JIT based attacks.
+    Enable for JavaScript JIT compilation for faster runtime performance.
+    Disable for JIT compilation to mitigate against JIT based attacks.
   </flag>
   <flag name="geckodriver">
     Enable WebDriver support
