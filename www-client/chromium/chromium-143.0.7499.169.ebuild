@@ -784,6 +784,7 @@ UNPACKAGE_REQUIRED_USE=(
 	"!system-abseil-cpp"		# Vendored required to build mksnapshot
 	"!system-jsoncpp"		# Vendored required to build mksnapshot
 	"!system-opus"			# Disabled because live ebuild is required and not available
+	"!system-simdutf"		# Vendored required to build mksnapshot
 	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
 	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
 	"!system-woff2"			# Disabled because live ebuild is required and not available
