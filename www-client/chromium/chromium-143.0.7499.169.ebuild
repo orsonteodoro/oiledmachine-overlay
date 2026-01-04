@@ -160,7 +160,7 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan cfi hwasan lsan msan scs tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
-CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
+CFLAGS_HARDENED_SSP_LEVEL="2" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
 CHROMIUM_TOOLCHAIN=1
@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 systemd test +wayland
 +webassembly
 -widevine +X
-ebuild_revision_23
+ebuild_revision_25
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -2368,13 +2368,11 @@ einfo
 	check_ulimit
 
 	if use official ; then
+	# Upstream default
 		CFLAGS_HARDENED_SSP_LEVEL="1"
-	elif is-flagq "-fstack-protector" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="1"
-	elif is-flagq "-fstack-protector-strong" ; then
+	else
+	# Overlay default
 		CFLAGS_HARDENED_SSP_LEVEL="2"
-	elif is-flagq "-fstack-protector-all" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="3"
 	fi
 
 einfo "CC:  ${CC}"
@@ -4289,6 +4287,17 @@ eerror "Enable the cet USE flag"
 	if use official ; then
 ewarn "You are using official settings.  For strong hardening, disable this USE flag."
 	else
+		if ! use debug ; then
+	# The production build uses poison test pattern in non-official by default which is not proper.
+			myconf_gn+=(
+				"init_stack_vars_zero=true"
+			)
+		else
+			myconf_gn+=(
+				"init_stack_vars_zero=false"
+			)
+		fi
+
 		if use cet ; then
 			myconf_gn+=(
 				"use_cf_protection=\"full\""
