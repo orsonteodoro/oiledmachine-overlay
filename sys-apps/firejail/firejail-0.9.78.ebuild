@@ -4218,7 +4218,7 @@ ewarn
 
 ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege escalation."
 
-einfo "TIP:  If the app processes untrusted data or interacts with the Internet, it should have a ${MY_PN} profile."
+einfo "TIP:  If the app processes untrusted data, user generated content, or interacts with the network or Internet, it should have a ${MY_PN} profile."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
