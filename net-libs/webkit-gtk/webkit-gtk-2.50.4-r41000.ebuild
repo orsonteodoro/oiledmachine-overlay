@@ -76,7 +76,6 @@ CAIRO_PV="1.16.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
-CFLAGS_HARDENED_SSP_LEVEL=1
 CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
@@ -613,7 +612,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_27
+ebuild_revision_28
 "
 
 gen_gst_plugins_duse() {
