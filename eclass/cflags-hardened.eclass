@@ -73,7 +73,7 @@ CFLAGS_HARDENED_SSP_LEVEL=${CFLAGS_HARDENED_SSP_LEVEL:-2}
 # secure is compiler dependent so the performance guarantees vary.
 # secure is a bidirectional alias for default, balanced.
 # secure-embedded is a bidirectional alias for secure-lightweight.
-# secure-realtime is a bidirectional alias for secure-speed or IBRS.
+# secure-realtime is a bidirectional alias for secure-speed.
 CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
@@ -171,7 +171,6 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mharden-sls=indirect-jmp                     1.00          # balanced             ; estimated security score 65
 # -mharden-sls=none                             1.00          # performance-critical ; estimated security score 0
 # -mharden-sls=return                           1.00          # balanced             ; estimated security score 88
-# -mindirect-branch=ibrs                1.01 -  1.10
 # -mindirect-branch=thunk               1.05 -  1.30
 # -mindirect-branch=thunk-inline        1.03 -  1.25
 # -mindirect-branch=thunk-extern        1.05 -  1.15
@@ -908,17 +907,6 @@ _cflags-hardened_append_gcc_retpoline() {
 	fi
 
 	if \
-		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
-			&& \
-		which lscpu \
-			&& \
-		grep -q -e "Spectre v2.*Mitigation.*IBRS_FW" \
-	; then
-	# Full mitigation against Spectre v2 (hardware implementation)
-		append-flags $(test-flags-CC "-mindirect-branch=ibrs")
-		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=ibrs"
-		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=ibrs"
-	elif \
 		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] \
 			&& \
 		test-flags-CC "-mindirect-branch=none" \
@@ -1008,15 +996,13 @@ _cflags-hardened_append_gcc_retpoline() {
 				-e "s|-mindirect-branch=thunk-extern||g" \
 				-e "s|-mindirect-branch=thunk-inline||g" \
 				-e "s|-mindirect-branch=thunk||g" \
-				-e "s|-mindirect-branch=none||g" \
-				-e "s|-mindirect-branch=ibrs||g")
+				-e "s|-mindirect-branch=none||g")
 		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
 			| sed \
 				-e "s|-mindirect-branch=thunk-extern||g" \
 				-e "s|-mindirect-branch=thunk-inline||g" \
 				-e "s|-mindirect-branch=thunk||g" \
-				-e "s|-mindirect-branch=none||g" \
-				-e "s|-mindirect-branch=ibrs||g")
+				-e "s|-mindirect-branch=none||g")
 	else
 		filter-flags "-f*cf-protection=*"
 		append-flags "-fcf-protection=none" # none works, branch works, return doesn't work

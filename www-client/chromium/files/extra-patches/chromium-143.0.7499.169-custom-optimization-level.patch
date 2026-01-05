@@ -1,0 +1,567 @@
+--- a/build_overrides/build.gni.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/build_overrides/build.gni	2026-01-04 20:48:33.796337293 -0800
+@@ -36,6 +36,11 @@ if (is_cronet_build) {
+   perfetto_libperfetto_includes_json = false
+ }
+ 
++declare_args() {
++  custom_optimization_level = ""
++  v8_custom_optimization_level = ""
++}
++
+ # Features used by //base/trace_event and //services/tracing.
+ declare_args() {
+   # Limits the defined //third_party/android_deps targets to only "buildCompile"
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-04 19:38:50.153988565 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-04 20:57:41.821858531 -0800
+@@ -210,6 +210,7 @@ declare_args() {
+   is_wexit_time_destructors_default = true
+ 
+   #use_mold = false
++  #custom_optimization_level = ""
+ }
+ 
+ declare_args() {
+@@ -2819,7 +2820,7 @@ config("optimize") {
+     # `-O2`. But for rust, `-Copt-level=3` is the default and is thus reliable
+     # to use.
+     rustflags = [ "-Copt-level=3" ]
+-  } else if (optimize_for_size || is_chromeos) {
++  } else if ((optimize_for_size || is_chromeos) && custom_optimization_level == "") {
+     # Favor size over speed.
+     # -Os in clang is more of a size-conscious -O2 than "size at any cost"
+     # (AKA -Oz).
+@@ -2844,12 +2845,24 @@ config("optimize") {
+     # vectorization while otherwise optimizing for size.
+     rustflags = [ "-Copt-level=s" ]
+   } else {
+-    cflags = [ "-O2" ] + common_optimize_on_cflags
++    if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
++      cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++    } else if (custom_optimization_level != "") {
++      cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++    } else {
++      cflags = [ "-O2" ] + common_optimize_on_cflags
++    }
+ 
+     # The `-O3` for clang turns on extra optimizations compared to the standard
+     # `-O2`. But for rust, `-Copt-level=3` is the default and is thus reliable
+     # to use.
+-    rustflags = [ "-Copt-level=3" ]
++    if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++      rustflags = [ "-Copt-level=3" ]
++    } else if (custom_optimization_level != "") {
++      rustflags = [ "-Copt-level=$custom_optimization_level" ]
++    } else {
++      rustflags = [ "-Copt-level=3" ]
++    }
+   }
+   ldflags = common_optimize_on_ldflags
+ }
+@@ -2899,9 +2912,21 @@ config("optimize_max") {
+   } else if (optimize_for_fuzzing) {
+     cflags = [ "-O1" ] + common_optimize_on_cflags
+   } else {
+-    cflags = [ "-O2" ] + common_optimize_on_cflags
++    if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
++      cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++    } else if (custom_optimization_level != "") {
++      cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++    } else {
++      cflags = [ "-O2" ] + common_optimize_on_cflags
++    }
++  }
++  if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++    rustflags = [ "-Copt-level=3" ]
++  } else if (custom_optimization_level != "") {
++    rustflags = [ "-Copt-level=$custom_optimization_level" ]
++  } else {
++    rustflags = [ "-Copt-level=3" ]
+   }
+-  rustflags = [ "-Copt-level=3" ]
+ }
+ 
+ # This config can be used to override the default settings for per-component
+@@ -3420,3 +3445,33 @@ config("cet_shadow_stack") {
+     ldflags = [ "/CETCOMPAT" ]
+   }
+ }
++
++config("v8_custom_optimization_config") {
++  cflags = []
++  if (v8_custom_optimization_level != "") {
++    if (is_win) {
++      if (v8_custom_optimization_level == "fast" || v8_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (v8_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (v8_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (v8_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (v8_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (v8_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$v8_custom_optimization_level" ]
++      }
++    } else {
++      if (v8_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$v8_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$v8_custom_optimization_level" ]
++      }
++    }
++  }
++}
+--- a/third_party/libvpx/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/libvpx/BUILD.gn	2026-01-04 20:48:33.833482609 -0800
+@@ -10,6 +10,10 @@ import("//third_party/libvpx/libvpx_srcs
+ import("//third_party/libvpx/libvpx_test_srcs.gni")
+ import("//third_party/nasm/nasm_assemble.gni")
+ 
++declare_args() {
++  libvpx_custom_optimization_level = ""
++}
++
+ # Sets the architecture name for building libvpx.
+ if (current_cpu == "x86") {
+   cpu_arch_full = "ia32"
+@@ -81,8 +85,35 @@ config("libvpx_config") {
+   # gn orders flags on a target before flags from configs. The default config
+   # adds -Wall, and these flags have to be after -Wall -- so they need to come
+   # from a config and can't be on the target directly.
++  cflags = []
++  if (libvpx_custom_optimization_level != "") {
++    if (is_win) {
++      if (libvpx_custom_optimization_level == "fast" || libvpx_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (libvpx_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (libvpx_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (libvpx_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (libvpx_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (libvpx_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$libvpx_custom_optimization_level" ]
++      }
++    } else {
++      if (libvpx_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$libvpx_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$libvpx_custom_optimization_level" ]
++      }
++    }
++  }
+   if (is_clang) {
+-    cflags = [
++    cflags += [
+       # libvpx heavily relies on implicit enum casting.
+       "-Wno-conversion",
+ 
+@@ -93,7 +124,7 @@ config("libvpx_config") {
+       "-Wno-unused-function",
+     ]
+   } else if (!is_win) {
+-    cflags = [
++    cflags += [
+       "-Wno-unused-function",
+       "-Wno-sign-compare",
+     ]
+--- a/third_party/openh264/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/openh264/BUILD.gn	2026-01-04 20:48:33.833741716 -0800
+@@ -7,11 +7,42 @@ import("//build/config/sanitizers/saniti
+ import("//third_party/nasm/nasm_assemble.gni")
+ import("//third_party/openh264/openh264_sources.gni")
+ 
++declare_args() {
++  openh264_custom_optimization_level = ""
++}
++
+ # Config shared by all openh264 targets.
+ config("config") {
+   cflags = []
+   defines = []
+ 
++  if (openh264_custom_optimization_level != "") {
++    if (is_win) {
++      if (openh264_custom_optimization_level == "fast" || openh264_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (openh264_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (openh264_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (openh264_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (openh264_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (openh264_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$openh264_custom_optimization_level" ]
++      }
++    } else {
++      if (openh264_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$openh264_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$openh264_custom_optimization_level" ]
++      }
++    }
++  }
++
+   if (is_chromeos && current_cpu == "arm") {
+     # HAVE_NEON and __chromeos__ are needed for enabling NEON on ChromeOS
+     # devices.
+--- a/third_party/rnnoise/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/rnnoise/BUILD.gn	2026-01-04 20:48:33.843318787 -0800
+@@ -4,11 +4,46 @@
+ 
+ import("//testing/test.gni")
+ 
++declare_args() {
++  rnnoise_custom_optimization_level = ""
++}
++
++config("rnnoise_config") {
++  cflags = []
++  if (rnnoise_custom_optimization_level != "") {
++    if (is_win) {
++      if (rnnoise_custom_optimization_level == "fast" || rnnoise_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (rnnoise_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (rnnoise_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (rnnoise_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (rnnoise_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (rnnoise_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$rnnoise_custom_optimization_level" ]
++      }
++    } else {
++      if (rnnoise_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$rnnoise_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$rnnoise_custom_optimization_level" ]
++      }
++    }
++  }
++}
++
+ group("rnnoise") {
+   deps = [ ":rnn_vad" ]
+ }
+ 
+ source_set("rnn_vad") {
++  configs += [ ":rnnoise_config" ]
+   sources = [
+     "src/rnn_activations.h",
+     "src/rnn_vad_weights.cc",
+--- a/third_party/tflite/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/tflite/BUILD.gn	2026-01-04 20:48:33.860765859 -0800
+@@ -15,6 +15,10 @@ import("//third_party/tflite/features.gn
+ import("//third_party/tflite/tf_version.gni")
+ import("//third_party/tflite/tflite_target.gni")
+ 
++declare_args() {
++  tflite_custom_optimization_level = ""
++}
++
+ proto_library("tflite_proto") {
+   proto_in_dir = "src"
+   sources = [
+@@ -84,7 +88,34 @@ config("tflite_config_no_undef") {
+ }
+ 
+ config("tflite_flags") {
+-  cflags = [
++  cflags = []
++  if (tflite_custom_optimization_level != "") {
++    if (is_win) {
++      if (tflite_custom_optimization_level == "fast" || tflite_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (tflite_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (tflite_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (tflite_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (tflite_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (tflite_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$tflite_custom_optimization_level" ]
++      }
++    } else {
++      if (tflite_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$tflite_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$tflite_custom_optimization_level" ]
++      }
++    }
++  }
++  cflags += [
+     "-Wno-c99-extensions",
+     "-Wno-comment",
+     "-Wno-extern-c-compat",
+--- a/third_party/dav1d/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/dav1d/BUILD.gn	2026-01-04 20:48:33.868017600 -0800
+@@ -8,6 +8,10 @@ import("//build/config/compiler/compiler
+ import("//build/config/sanitizers/sanitizers.gni")
+ import("//third_party/nasm/nasm_assemble.gni")
+ 
++declare_args() {
++  dav1d_custom_optimization_level = ""
++}
++
+ # MemorySanitizer can't handle assembly, https://crbug.com/928357.
+ enable_nasm = (current_cpu == "x86" || current_cpu == "x64") && !is_msan
+ 
+@@ -85,7 +89,37 @@ config("dav1d_config") {
+   }
+ }
+ 
+-dav1d_copts = [
++dav1d_copts = []
++if (dav1d_custom_optimization_level != "") {
++  if (dav1d_custom_optimization_level != "") {
++    if (is_win) {
++      if (dav1d_custom_optimization_level == "fast" || dav1d_custom_optimization_level == "3") {
++        dav1d_copts += [ "/O2" ]
++      } else if (dav1d_custom_optimization_level == "2") {
++        dav1d_copts += [ "/Ox" ]
++      } else if (dav1d_custom_optimization_level == "s") {
++        dav1d_copts += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (dav1d_custom_optimization_level == "1") {
++        dav1d_copts += [ "/Ot", "/Oy" ]
++      } else if (dav1d_custom_optimization_level == "z") {
++        dav1d_copts += [ "/O1" ]
++      } else if (dav1d_custom_optimization_level == "0") {
++        dav1d_copts += [ "/Od" ]
++      }
++      if (is_clang) {
++        dav1d_copts += [ "/clang:-O$dav1d_custom_optimization_level" ]
++      }
++    } else {
++      if (dav1d_custom_optimization_level == "fast" && !is_clang) {
++        dav1d_copts += [ "-O$dav1d_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        dav1d_copts += [ "-O$dav1d_custom_optimization_level" ]
++      }
++    }
++  }
++}
++
++dav1d_copts += [
+   "-D_FILE_OFFSET_BITS=64",
+   "-D_POSIX_C_SOURCE=200112L",
+ ]
+--- a/third_party/libaom/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/libaom/BUILD.gn	2026-01-04 20:48:33.868314910 -0800
+@@ -12,6 +12,10 @@ import("//third_party/libaom/libaom_test
+ import("//third_party/libaom/options.gni")
+ import("//third_party/nasm/nasm_assemble.gni")
+ 
++declare_args() {
++  libaom_custom_optimization_level = ""
++}
++
+ # Sets the architecture name for building libaom.
+ if (current_cpu == "x86") {
+   cpu_arch_full = "ia32"
+@@ -58,6 +62,33 @@ libaom_include_dirs = [
+ # Private configuration used in building libaom.
+ config("libaom_config") {
+   include_dirs = libaom_include_dirs
++  cflags = []
++  if (libaom_custom_optimization_level != "") {
++    if (is_win) {
++      if (libaom_custom_optimization_level == "fast" || libaom_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (libaom_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (libaom_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (libaom_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (libaom_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (libaom_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$libaom_custom_optimization_level" ]
++      }
++    } else {
++      if (libaom_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$libaom_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$libaom_custom_optimization_level" ]
++      }
++    }
++  }
+ }
+ 
+ # This config is applied to targets that depend on libaom.
+--- a/third_party/ruy/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/ruy/BUILD.gn	2026-01-04 20:48:33.868584685 -0800
+@@ -5,6 +5,10 @@
+ import("//build/config/arm.gni")
+ import("//third_party/cpuinfo/cpuinfo.gni")
+ 
++declare_args() {
++  ruy_custom_optimization_level=""
++}
++
+ config("ruy_include") {
+   include_dirs = [ "src" ]
+ }
+@@ -12,9 +16,36 @@ config("ruy_include") {
+ config("ruy_shared_config") {
+   include_dirs = [ "src" ]
+ 
++  cflags = []
++  if (ruy_custom_optimization_level != "") {
++    if (is_win) {
++      if (ruy_custom_optimization_level == "fast" || ruy_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (ruy_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (ruy_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (ruy_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (ruy_custom_optimization_level == "z") {
++        cflags += [ "/O1" ]
++      } else if (ruy_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$ruy_custom_optimization_level" ]
++      }
++    } else {
++      if (ruy_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$ruy_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$ruy_custom_optimization_level" ]
++      }
++    }
++  }
+   if (current_cpu == "arm" || current_cpu == "arm64") {
+     # Disables a warning about the assembly instructions that are used.
+-    cflags = [ "-Wno-inline-asm" ]
++    cflags += [ "-Wno-inline-asm" ]
+   }
+ }
+ 
+--- a/third_party/xnnpack/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/xnnpack/BUILD.gn	2026-01-04 21:00:00.895964270 -0800
+@@ -21,6 +21,10 @@ if (build_with_chromium) {
+ }
+ import("//third_party/xnnpack/build_defs.gni")
+ 
++declare_args() {
++  xnnpack_custom_optimization_level = ""
++}
++
+ config("xnnpack_public_config") {
+   include_dirs = [
+     "//third_party/pthreadpool/src/include",
+@@ -42,7 +46,34 @@ config("xnnpack_public_config") {
+ }
+ 
+ config("xnnpack_private_config") {
+-  cflags = [
++  cflags = []
++  if (xnnpack_custom_optimization_level != "") {
++    if (is_win) {
++      if (xnnpack_custom_optimization_level == "fast" || xnnpack_custom_optimization_level == "3") {
++        cflags += [ "/O2" ]
++      } else if (xnnpack_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
++      } else if (xnnpack_custom_optimization_level == "s") {
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++      } else if (xnnpack_custom_optimization_level == "1") {
++        cflags += [ "/Ot", "/Oy" ]
++      } else if (xnnpack_custom_optimization_level == "z" ) {
++        cflags += [ "/O1" ]
++      } else if (xnnpack_custom_optimization_level == "0") {
++        cflags += [ "/Od" ]
++      }
++      if (is_clang) {
++        cflags += [ "/clang:-O$xnnpack_custom_optimization_level" ]
++      }
++    } else {
++      if (xnnpack_custom_optimization_level == "fast" && !is_clang) {
++        cflags += [ "-O$xnnpack_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$xnnpack_custom_optimization_level" ]
++      }
++    }
++  }
++  cflags += [
+     "-Wno-unused-function",
+     "-Wno-deprecated-comma-subscript",
+   ]
+--- a/third_party/opus/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/opus/BUILD.gn	2026-01-04 20:48:33.921854131 -0800
+@@ -5,6 +5,10 @@
+ import("//build/config/arm.gni")
+ import("//testing/test.gni")
+ 
++declare_args() {
++  opus_custom_optimization_level = ""
++}
++
+ # If ARM optimizations shall be used to accelerate performance.
+ use_opus_arm_optimization =
+     current_cpu == "arm" ||
+@@ -43,6 +47,34 @@ config("opus_private_config") {
+   ]
+ 
+   cflags = []
++  if (opus_custom_optimization_level != "") {
++    if (opus_custom_optimization_level != "") {
++      if (is_win) {
++        if (opus_custom_optimization_level == "fast" || opus_custom_optimization_level == "3") {
++          cflags += [ "/O2" ]
++        } else if (opus_custom_optimization_level == "2") {
++          cflags += [ "/Ox" ]
++        } else if (opus_custom_optimization_level == "s") {
++          cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++        } else if (opus_custom_optimization_level == "1") {
++          cflags += [ "/Ot", "/Oy" ]
++        } else if (opus_custom_optimization_level == "z") {
++          cflags += [ "/O1" ]
++        } else if (opus_custom_optimization_level == "0") {
++          cflags += [ "/Od" ]
++        }
++        if (is_clang) {
++          cflags += [ "/clang:-O$opus_custom_optimization_level" ]
++        }
++      } else {
++        if (opus_custom_optimization_level == "fast" && !is_clang) {
++          cflags += [ "-O$opus_custom_optimization_level", "-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "-O$opus_custom_optimization_level" ]
++        }
++      }
++    }
++  }
+ 
+   if (is_win) {
+     defines += [ "inline=__inline" ]

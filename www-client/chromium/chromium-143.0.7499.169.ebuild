@@ -2598,7 +2598,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	PATCHES+=(
+	DISABLED_PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
@@ -2631,15 +2631,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-mold-ungoogled-chromium.patch"
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-mold.patch"
 		)
 	fi
 
@@ -2677,8 +2677,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-custom-optimization-level.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-hardening.patch"
+		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-hardening.patch"
 		"${FILESDIR}/extra-patches/v8-13.7.152.13-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
 
@@ -3090,11 +3090,11 @@ src_prepare() {
 	# lib.
 	apply_distro_patchset
 
-#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-#		apply_oiledmachine_overlay_patchset
-#	else
-#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-#	fi
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+		apply_oiledmachine_overlay_patchset
+	else
+ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+	fi
 
 	default
 
@@ -4260,16 +4260,6 @@ eerror "QA:  RUSTC is not initialized or missing."
 		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
 	fi
 	cflags-hardened_append
-	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
-	filter-flags \
-		"-f*stack-protector" \
-		"-ftrivial-auto-var-init=*" \
-		"-Wl,-z,now" \
-		"-Wl,-z,relro" \
-		"-fstack-clash-protection"
-
-	# Prevent slowdowns with hardening flags
-	filter-flags "-fno-inline"
 
 	local wants_fc_protection=0
 	if \
@@ -4287,6 +4277,18 @@ eerror "Enable the cet USE flag"
 	if use official ; then
 ewarn "You are using official settings.  For strong hardening, disable this USE flag."
 	else
+		if is-flagq "-fhardened" ; then
+			myconf_gn+=(
+				"use_fhardened=true"
+			)
+			filter-flags \
+				"-D_FORTIFY_SOURCE=*" \
+				"-f*cf-protection=*" \
+				"-f*stack-clash-protection" \
+				"-f*stack-protector*" \
+				"-f*trivial-auto-var-init=*"
+		fi
+
 		if ! use debug ; then
 	# The production build uses poison test pattern in non-official by default which is not proper.
 			myconf_gn+=(
@@ -4298,9 +4300,55 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			)
 		fi
 
-		if use cet ; then
+		if is-flagq "-fzero-call-used-regs=all" ; then
 			myconf_gn+=(
-				"use_cf_protection=\"full\""
+				"use_zero_call_used_regs=\"all\""
+			)
+		elif is-flagq "-fzero-call-used-regs=used-all" ; then
+			myconf_gn+=(
+				"use_zero_call_used_regs=\"used-all\""
+			)
+		elif is-flagq "-fzero-call-used-regs=used-gpr" ; then
+			myconf_gn+=(
+				"use_zero_call_used_regs=\"used-gpr\""
+			)
+		fi
+
+		if is-flagq "-fstrict-flex-arrays=3" ; then
+			myconf_gn+=(
+				"use_strict_flex_arrays=3"
+			)
+		elif is-flagq "-fstrict-flex-arrays=2" ; then
+			myconf_gn+=(
+				"use_strict_flex_arrays=2"
+			)
+		elif is-flagq "-fstrict-flex-arrays=1" ; then
+			myconf_gn+=(
+				"use_strict_flex_arrays=1"
+			)
+		elif is-flagq "-fstrict-flex-arrays=0" ; then
+			myconf_gn+=(
+				"use_strict_flex_arrays=0"
+			)
+		fi
+
+		if is-flagq "-fvtable-verify=std" ; then
+			myconf_gn+=(
+				"use_vtable_verify=\"std\""
+			)
+		elif is-flagq "-fvtable-verify=preinit" ; then
+			myconf_gn+=(
+				"use_vtable_verify=\"preinit\""
+			)
+		fi
+
+		if use cet ; then
+			if ! is-flagq "-fhardened" ; then
+				myconf_gn+=(
+					"use_cf_protection=\"full\""
+				)
+			fi
+			myconf_gn+=(
 				"use_rust_cet=true"
 			)
 		else
@@ -4308,22 +4356,75 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				"use_cf_protection=\"none\""
 			)
 		fi
-		if [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
+
+		if use cet ; then
+			:;
+		elif is-flagq "-mretpoline" ; then
 			myconf_gn+=(
-				"use_retpoline=true"
+				"use_retpoline=\"thunk\""
 				"use_rust_retpoline=true"
 			)
+		elif is-flagq "-mindirect-branch=thunk-extern" ; then
+			myconf_gn+=(
+				"use_retpoline=\"thunk-extern\""
+			)
+		elif is-flagq "-mindirect-branch=thunk-inline" ; then
+			myconf_gn+=(
+				"use_retpoline=\"thunk-inline\""
+			)
+		elif is-flagq "-mindirect-branch=thunk" ; then
+			myconf_gn+=(
+				"use_retpoline=\"thunk\""
+			)
 		fi
-		myconf_gn+=(
-			"use_stack_clash_protection=false"
-			"use_rust_stack_clash_protection=false"
-		)
+
+		if use cet ; then
+			:;
+		elif is-flagq "-mretpoline-external-thunk" ; then
+			myconf_gn+=(
+				"use_retpoline_external_thunk=true"
+			)
+		fi
+
+		if is-flagq "-mharden-sls=all" ; then
+			myconf_gn+=(
+				"use_harden_sls=\"all\""
+			)
+		elif is-flagq "-mharden-sls=indirect-jmp" ; then
+			myconf_gn+=(
+				"use_harden_sls=\"indirect-jmp\""
+			)
+		elif is-flagq "-mharden-sls=none" ; then
+			myconf_gn+=(
+				"use_harden_sls=\"none\""
+			)
+		elif is-flagq "-mharden-sls=return" ; then
+			myconf_gn+=(
+				"use_harden_sls=\"return\""
+			)
+		fi
+
+		if is-flagq "-fstack-clash-protection" ; then
+			myconf_gn+=(
+				"use_stack_clash_protection=false"
+				"use_rust_stack_clash_protection=false"
+			)
+		fi
+
 		if is-flagq "-ftrapv" ; then
 			myconf_gn+=(
 				"use_trapv=true"
 				"use_rust_overflow_checks=true"
 			)
 		fi
+
+		if is-flagq "-fwrapv" ; then
+			myconf_gn+=(
+				"use_wrapv=true"
+				"use_rust_overflow_checks=true"
+			)
+		fi
+
 		if is-flagq "-D_FORITFY_SOURCE=3" ; then
 			myconf_gn+=(
 				"use_fortify_source=3"
@@ -4343,23 +4444,27 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				"use_rust_asan=true"
 			)
 		fi
+
 		if is-flagq "-fsanitize=hwaddress" ; then
 			myconf_gn+=(
 				"is_hwasan=true"
 				"use_rust_hwasan=true"
 			)
 		fi
+
 		if is-flagq "-fsanitize=undefined" ; then
 			myconf_gn+=(
 				"is_ubsan=true"
 				"use_rust_ubsan=true"
 			)
 		fi
+
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" || is-flagq "-fsanitize=undefined" ; then
 			myconf_gn+=(
 				"use_rust_no_sanitize_recover=true"
 			)
 		fi
+
 	# It is possible where some compilation units are SSP protected but not
 	# ASan protected if both flags are enabled.
 		if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
@@ -4379,6 +4484,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				"use_stack_protector_level=\"all\""
 			)
 		fi
+
 		if (( ${is_rust_nightly} == 0 )) ; then
 			if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
 				myconf_gn+=(
@@ -4537,16 +4643,6 @@ ewarn
 		)
 	fi
 
-	# Handled in build scripts.
-	filter-flags \
-		"-D_FORTIFY_SOURCE" \
-		"-U_FORTIFY_SOURCE" \
-		"-f*sanitize=*" \
-		"-f*sanitize-recover" \
-		"-fcf-protection=*" \
-		"-fstack-clash-protection" \
-		"-ftrapv" \
-		"-mretpoline"
 # LLVM CFI - forward edge protection
 # ShadowCallStack - backward edge protection
 # -fcf-protection=branch - forward edge protection
@@ -4554,16 +4650,8 @@ ewarn
 # -fcf-protection=full - forward and backward edge protection
 	if use pgo ; then
 # The compile flags should be the same as the one to generate the profile.
-ewarn "You have enabled PGO, disabling flags that differ from the one used to generate the prebuilt PGO profile"
+ewarn "You have enabled PGO"
 ewarn "For proper hardening, disable the pgo USE flag."
-		filter-flags \
-			"-fc-protection=*" \
-			"-fstack-clash-protection" \
-			"-ftrapv" \
-			"-mindirect-branch=*" \
-			"-mfunction-return=*" \
-			"-mretpoline" \
-			"-mretpoline-external-thunk"
 	fi
 
 	# See https://github.com/chromium/chromium/blob/143.0.7499.109/build/config/sanitizers/BUILD.gn#L196
@@ -4769,7 +4857,7 @@ eerror
 
 	if is-flagq "-Ofast" ; then
 	# Precaution
-		append_all $(test-flags -fno-allow-store-data-races)
+		append_all $(test-flags-CXX "-fno-allow-store-data-races")
 	fi
 
 	# There was some discussion that libcxx could be ASan-ed which would be
@@ -4788,6 +4876,36 @@ eerror
 			"use_custom_libcxx=false"
 		)
 	fi
+
+	# Handled in build scripts.
+	filter-flags \
+		"-D_FORTIFY_SOURCE*" \
+		"-U_FORTIFY_SOURCE" \
+		"-f*cf-protection=*" \
+		"-f*hardened" \
+		"-f*sanitize=*" \
+		"-f*sanitize-recover" \
+		"-f*stack-clash-protection" \
+		"-f*stack-protector" \
+		"-f*strict-flex-arrays=*" \
+		"-f*trivial-auto-var-init=*" \
+		"-f*trapv" \
+		"-f*vtable-verify=*" \
+		"-f*wrapv" \
+		"-f*zero-call-used-regs=*" \
+		"-m*function-return=*" \
+		"-m*indirect-branch=*" \
+		"-m*indirect-branch-register" \
+		"-m*harden-sls=*" \
+		"-m*retpoline" \
+		"-m*retpoline-external-thunk" \
+		"-Wl,-z,now" \
+		"-Wl,-z,relro" \
+		"-fstack-clash-protection" \
+		"-ftrapv"
+
+	# Prevent slowdowns with hardening flags
+	filter-flags "-fno-inline"
 }
 
 _configure_performance_pgo(){
@@ -6220,13 +6338,17 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	_configure_compiler_common
 	_configure_build_system
-	#_configure_linker
-	#_configure_optimization_level
-	#_configure_performance_pgo
+
+	# Comment entire block for working build
+	# Reason why it is commented out to avoid configure bug.
+	_configure_linker
+	_configure_optimization_level
+	_configure_performance_pgo
 	#_configure_performance_simd
-	#_configure_performance_thp
+	_configure_performance_thp
 	#_configure_v8
-	#_configure_security
+	_configure_security
+
 	_configure_debug
 	_configure_features
 
