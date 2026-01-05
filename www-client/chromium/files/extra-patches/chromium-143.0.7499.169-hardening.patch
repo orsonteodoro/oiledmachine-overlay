@@ -95,11 +95,11 @@
 +        # Lightweight, for embedded or mobile
 +          cflags += [ "-mfunction-return=thunk-extern" ]
 +          cflags += [ "-mindirect-branch=thunk-extern" ]
-+        else if (use_retpoline == "thunk-inline") {
++        } else if (use_retpoline == "thunk-inline") {
 +        # Speed
 +          cflags += [ "-mfunction-return=thunk-inline" ]
 +          cflags += [ "-mindirect-branch=thunk-inline" ]
-+        else {
++        } else {
 +        # Use default compiler implementation
 +          cflags += [ "-mfunction-return=thunk" ]
 +          cflags += [ "-mindirect-branch=thunk" ]
@@ -110,11 +110,11 @@
 +
 +    if (use_strict_flex_arrays == 3) {
 +      cflags += [ "-fstrict-flex-arrays=3" ]
-+    else if (use_strict_flex_arrays == 2) {
++    } else if (use_strict_flex_arrays == 2) {
 +      cflags += [ "-fstrict-flex-arrays=2" ]
-+    else if (use_strict_flex_arrays == 1) {
++    } else if (use_strict_flex_arrays == 1) {
 +      cflags += [ "-fstrict-flex-arrays=1" ]
-+    else if (use_strict_flex_arrays == 0) {
++    } else if (use_strict_flex_arrays == 0) {
 +      cflags += [ "-fstrict-flex-arrays=0" ]
 +    }
 +
@@ -152,11 +152,11 @@
 +
 +    if (use_harden_sls == "all") {
 +      cflags += [ "-mharden-sls=all" ]
-+    else if (use_harden_sls == "indirect-jmp") {
++    } else if (use_harden_sls == "indirect-jmp") {
 +      cflags += [ "-mharden-sls=indirect-jmp" ]
-+    else if (use_harden_sls == "none") {
++    } else if (use_harden_sls == "none") {
 +      cflags += [ "-mharden-sls=none" ]
-+    else if (use_harden_sls == "return") {
++    } else if (use_harden_sls == "return") {
 +      cflags += [ "-mharden-sls=return" ]
 +    }
 +
@@ -164,7 +164,7 @@
 +      if (use_vtable_verify == "std") {
 +        # Balanced-security
 +        cflags_cc += [ "-fvtable-verify=std" ]
-+      else if (use_vtable_verify == "preinit") {
++      } else if (use_vtable_verify == "preinit") {
 +        # Security-critical
 +        cflags_cc += [ "-fvtable-verify=preinit" ]
 +      }
@@ -181,9 +181,9 @@
 +
 +    if (use_zero_call_used_regs == "all") {
 +      cflags += [ "-fzero-call-used-regs=all" ]
-+    else if (use_zero_call_used_regs == "used-all") {
++    } else if (use_zero_call_used_regs == "used-all") {
 +      cflags += [ "-fzero-call-used-regs=used-all" ]
-+    else if (use_zero_call_used_regs == "used-gpr") {
++    } else if (use_zero_call_used_regs == "used-gpr") {
 +      cflags += [ "-fzero-call-used-regs=used-gpr" ]
 +    }
 +
