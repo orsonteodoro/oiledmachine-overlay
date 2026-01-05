@@ -2679,7 +2679,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-custom-optimization-level.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-hardening.patch"
-		"${FILESDIR}/extra-patches/v8-13.7.152.13-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
+		"${FILESDIR}/extra-patches/v8-14.3.127.17-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
 
 	if ! use official ; then

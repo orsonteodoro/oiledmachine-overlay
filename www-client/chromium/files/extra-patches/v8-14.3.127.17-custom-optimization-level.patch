@@ -1,0 +1,53 @@
+v8 version in v8/include/v8-version.h
+--- a/v8/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/v8/BUILD.gn	2026-01-05 10:21:57.488856442 -0800
+@@ -1791,9 +1791,15 @@ config("always_turbofanimize") {
+   # TODO(crbug.com/621335) Rework this so that we don't have the confusion
+   # between "optimize_speed" and "optimize_max".
+   if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
+-    configs += [ "//build/config/compiler:optimize_speed" ]
++    configs += [
++      "//build/config/compiler:optimize_speed",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   } else {
+-    configs += [ "//build/config/compiler:optimize_max" ]
++    configs += [
++      "//build/config/compiler:optimize_max",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   }
+ }
+ 
+@@ -7030,7 +7036,10 @@ if (v8_use_libm_trig_functions) {
+     configs -= [ "//build/config/compiler:chromium_code" ]
+     if (!is_debug) {
+       # Build code using -O3, see: crbug.com/1084371.
+-      configs += [ "//build/config/compiler:optimize_speed" ]
++      configs += [
++        "//build/config/compiler:optimize_speed",
++        "//build/config/compiler:v8_custom_optimization_config"
++      ]
+     }
+   }
+ }
+--- a/v8/gni/v8.gni.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/v8/gni/v8.gni	2026-01-05 10:22:20.940935216 -0800
+@@ -249,6 +249,8 @@ declare_args() {
+   # Some fuzzers depend on fuzzing functionality linked into the v8 library.
+   # For binary size reasons this functionality is not always available.
+   v8_wasm_random_fuzzers = ""
++
++  #v8_custom_optimization_level = ""
+ }
+ 
+ declare_args() {
+@@ -366,6 +368,8 @@ if (v8_force_optimize_speed) {
+   v8_add_configs += [ "//build/config/compiler:optimize_max" ]
+ }
+ 
++v8_add_configs += [ "//build/config/compiler:v8_custom_optimization_config" ]
++
+ if (!is_debug) {
+   v8_remove_configs += [
+     # Too much performance impact, unclear security benefit.
