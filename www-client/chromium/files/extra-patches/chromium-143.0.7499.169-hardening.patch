@@ -160,7 +160,7 @@
 +      cflags += [ "-mharden-sls=return" ]
 +    }
 +
-+    if (!use_clang) {
++    if (!is_clang) {
 +      if (use_vtable_verify == "std") {
 +        # Balanced-security
 +        cflags_cc += [ "-fvtable-verify=std" ]
