@@ -208,7 +208,7 @@
      if (use_mold) {
        ldflags += [ "-fuse-ld=mold" ]
      } else if (use_lld) {
-@@ -1220,6 +1385,117 @@ config("compiler") {
+@@ -1220,6 +1385,115 @@ config("compiler") {
      rustenv += [ "CROSTC_IS_AWARE_OF_THIS_USECASE=1" ]
    }
  
