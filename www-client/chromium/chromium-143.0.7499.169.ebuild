@@ -778,6 +778,11 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		)
 	"
 fi
+
+NOT_V8_SNAPSHOT_REQUIRED_USE=(
+	"!system-snappy"		# Vendored required to build chrome
+)
+
 V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-abseil-cpp"		# Vendored required to build mksnapshot
 	"!system-brotli"		# Vendored required to build v8_context_snapshot_generator
@@ -798,6 +803,7 @@ V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-zlib"			# Vendored required to build mksnapshot
 	"!system-zstd"			# Disabled because live ebuild is required and not available
 )
+
 # Drumbrake is broken in this release and off by default.
 #	!system-harfbuzz
 REQUIRED_USE+="
@@ -811,6 +817,9 @@ REQUIRED_USE+="
 			wayland
 			X
 		)
+	)
+	!v8-snapshot? (
+		${NOT_V8_SNAPSHOT_REQUIRED_USE[@]}
 	)
 	^^ (
 		${IUSE_LIBCXX[@]}
