@@ -1,13 +1,11 @@
 --- a/base/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
 +++ b/base/BUILD.gn	2026-01-04 21:56:53.312643630 -0800
-@@ -3240,7 +3240,9 @@ if (is_linux || is_chromeos) {
+@@ -3240,7 +3240,7 @@ if (is_linux || is_chromeos) {
      testonly = true
  
      sources = [ "stack_canary_linux_unittest.cc" ]
 -    cflags = [ "-fstack-protector-all" ]
-+    if (!is_asan && !is_hwasan) {
-+      cflags = [ "-fstack-protector-all" ]
-+    }
++    cflags = [ "-fstack-protector-all" ]
  
      deps = [
        "//base",
@@ -208,7 +206,7 @@
      if (use_mold) {
        ldflags += [ "-fuse-ld=mold" ]
      } else if (use_lld) {
-@@ -1220,6 +1385,115 @@ config("compiler") {
+@@ -1220,6 +1385,113 @@ config("compiler") {
      rustenv += [ "CROSTC_IS_AWARE_OF_THIS_USECASE=1" ]
    }
  
@@ -232,12 +230,10 @@
 +      "-Zstack-protector=all"
 +    ]
 +  }
-+  if (!use_rust_ubsan) {
-+    if (use_rust_overflow_checks) {
-+      rustflags += [
-+        "-Coverflow-checks=on"
-+      ]
-+    }
++  if (use_rust_overflow_checks) {
++    rustflags += [
++      "-Coverflow-checks=on"
++    ]
 +  }
 +  if (use_rust_cet) {
 +    rustflags += [

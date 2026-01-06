@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 systemd test +wayland
 +webassembly
 -widevine +X
-ebuild_revision_27
+ebuild_revision_28
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
