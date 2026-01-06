@@ -88,6 +88,11 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     per-package environment variables.
 
 
+    ALLOW_MKSNAPSHOT_USER - Force mksnapshot to qualify to build in score function.
+    It will shave of 5 seconds startup.
+    1 - Force mksnapshot enablement
+    0 - Force mksnapshot disablement
+    unset - Auto detect enablement.  Allow to build if estimated 1 hour build or less.
 
     APPLY_OILEDMACHINE_OVERLAY_PATCHSET - Apply the following patches:
     - Allow for Qt6 build without Qt5.

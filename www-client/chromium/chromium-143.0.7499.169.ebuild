@@ -780,7 +780,14 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 fi
 
 NOT_V8_SNAPSHOT_REQUIRED_USE=(
+	"!system-libwebp"		# Vendored required to build chrome
 	"!system-snappy"		# Vendored required to build chrome
+
+	"!system-opus"			# Disabled because live ebuild is required and not available
+	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
+	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
+	"!system-woff2"			# Disabled because live ebuild is required and not available
+	"!system-zstd"			# Disabled because live ebuild is required and not available
 )
 
 V8_SNAPSHOT_REQUIRED_USE=(
@@ -794,13 +801,14 @@ V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-libpng"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libvpx"		# Vendored required to build v8_context_snapshot_generator
 	"!system-openh264"		# Vendored required to build v8_context_snapshot_generator
-	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-simdutf"		# Vendored required to build mksnapshot
 	"!system-snappy"		# Vendored required to build v8_context_snapshot_generator
+	"!system-zlib"			# Vendored required to build mksnapshot
+
+	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
 	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
 	"!system-woff2"			# Disabled because live ebuild is required and not available
-	"!system-zlib"			# Vendored required to build mksnapshot
 	"!system-zstd"			# Disabled because live ebuild is required and not available
 )
 
@@ -6469,6 +6477,32 @@ _get_s() {
 	fi
 }
 
+check_mksnapshot_benefit() {
+	#return 0 # For debug
+	if [[ "${ALLOW_MKSNAPSHOT}" != "1" ]] ; then
+		return 1
+	fi
+	if [[ "${ALLOW_MKSNAPSHOT_USER:-0}" == "1" ]] ; then
+		return 0
+	elif [[ "${ALLOW_MKSNAPSHOT_USER:-0}" == "0" ]] ; then
+		return 1
+	else
+		local nprocs=$(get_nproc) # It is the same as the number of cores.
+		local block_dev_path=$(df "${WORKDIR}" | tail -n 1 | cut -f 1 -d " ")
+		local dev_name=$(basename "${block_dev_path}")
+		if [[ -e "/sys/block/${dev_name}/queue/rotational" ]] ; then
+ewarn "Did not detect block device backing ${WORKDIR}"
+			return 1
+		fi
+		local block_status=$(cat "/sys/block/${dev_name}/queue/rotational") # 0 = SSD, 1 = HDD
+		if (( ${nprocs} >= 32 && ${block_status} == 0 )) ; then
+			return 0
+		else
+			return 1
+		fi
+	fi
+}
+
 _src_compile() {
 	export s=$(_get_s)
 	cd "${s}" || die
@@ -6489,9 +6523,7 @@ _src_compile() {
 	_update_licenses
 	__clean_build
 
-	# TODO:  limit to 8 cores or more on HDD or 4 cores on SSD
-#	if [[ "${DISTRIBUTED_BUILD}" == "1" && "${ALLOW_MKSNAPSHOT}" == "1" ]] && use v8-snapshot ; then
-	if [[ "${ALLOW_MKSNAPSHOT}" == "1" ]] && use v8-snapshot ; then
+	if check_mksnapshot_benefit && use v8-snapshot ; then
 	# Build mksnapshot and pax-mark it.
 		local x
 		for x in "mksnapshot" "v8_context_snapshot_generator" ; do
