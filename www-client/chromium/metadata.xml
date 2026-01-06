@@ -298,7 +298,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     www-client/chromium chromium.conf
 
 
-  Estimated build times
+  Estimated worst-case build times
 
   Cores   | With v8-snapshot on HDD | Without v8-snapshot on HDD | With v8-snapshot on SSD | Without v8-snapshot on SSD 
   ---     | ---                     | ---                        | ---                     | ---
@@ -965,8 +965,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       encoding for WebRTC
     </flag>
     <flag name="v8-snapshot">
-      Optimize startup times.  Only available to configurations less than 12 hours
-      (i.e. 8 cores or more on HDD or 4 cores on SSD).
+      Optimize startup times, shaving of 5 seconds worst case.  Only available
+      to configurations less than 1 hours (i.e. 32 cores or more).
     </flag>
     <flag name="webassembly">
       Enable WebAssembly to play ported web version of games or apps.
