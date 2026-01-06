@@ -800,6 +800,7 @@ V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-libdrm"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libpng"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libvpx"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libwebp"		# Vendored required to build v8_context_snapshot_generator
 	"!system-openh264"		# Vendored required to build v8_context_snapshot_generator
 	"!system-simdutf"		# Vendored required to build mksnapshot
 	"!system-snappy"		# Vendored required to build v8_context_snapshot_generator
@@ -6478,7 +6479,7 @@ _get_s() {
 }
 
 check_mksnapshot_benefit() {
-	#return 0 # For debug
+	return 0 # For debug
 	if [[ "${ALLOW_MKSNAPSHOT}" != "1" ]] ; then
 		return 1
 	fi
