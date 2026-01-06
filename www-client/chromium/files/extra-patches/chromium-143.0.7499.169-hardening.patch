@@ -64,7 +64,7 @@
  }
  
  declare_args() {
-@@ -458,11 +490,144 @@ config("compiler") {
+@@ -458,11 +490,142 @@ config("compiler") {
        } else if (is_posix || is_fuchsia) {
          if (current_os != "aix") {
            # Not available on aix.
