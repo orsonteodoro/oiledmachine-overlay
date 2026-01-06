@@ -787,6 +787,8 @@ UNPACKAGE_REQUIRED_USE=(
 	"!system-fontconfig"		# Vendored required to build v8_context_snapshot_generator
 	"!system-jsoncpp"		# Vendored required to build mksnapshot
 	"!system-libdrm"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libpng"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libvpx"		# Vendored required to build v8_context_snapshot_generator
 	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-simdutf"		# Vendored required to build mksnapshot
 	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
