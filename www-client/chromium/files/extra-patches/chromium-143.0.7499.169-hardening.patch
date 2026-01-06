@@ -208,31 +208,29 @@
      if (use_mold) {
        ldflags += [ "-fuse-ld=mold" ]
      } else if (use_lld) {
-@@ -1220,6 +1385,117 @@ config("compiler") {
+@@ -1220,6 +1385,115 @@ config("compiler") {
      rustenv += [ "CROSTC_IS_AWARE_OF_THIS_USECASE=1" ]
    }
  
-+  if (!use_rust_asan && !use_rust_hwasan) {
-+    if (use_rust_stack_protector_level == "") {
-+      rustflags += [
-+      ]
-+    } else if (use_rust_stack_protector_level == "none") {
-+      rustflags += [
-+        "-Zstack-protector=none"
-+      ]
-+    } else if (use_rust_stack_protector_level == "basic") {
-+      rustflags += [
-+        "-Zstack-protector=basic"
-+      ]
-+    } else if (use_rust_stack_protector_level == "strong") {
-+      rustflags += [
-+        "-Zstack-protector=strong"
-+      ]
-+    } else if (use_rust_stack_protector_level == "all") {
-+      rustflags += [
-+        "-Zstack-protector=all"
-+      ]
-+    }
++  if (use_rust_stack_protector_level == "") {
++    rustflags += [
++    ]
++  } else if (use_rust_stack_protector_level == "none") {
++    rustflags += [
++      "-Zstack-protector=none"
++    ]
++  } else if (use_rust_stack_protector_level == "basic") {
++    rustflags += [
++      "-Zstack-protector=basic"
++    ]
++  } else if (use_rust_stack_protector_level == "strong") {
++    rustflags += [
++      "-Zstack-protector=strong"
++    ]
++  } else if (use_rust_stack_protector_level == "all") {
++    rustflags += [
++      "-Zstack-protector=all"
++    ]
 +  }
 +  if (!use_rust_ubsan) {
 +    if (use_rust_overflow_checks) {
