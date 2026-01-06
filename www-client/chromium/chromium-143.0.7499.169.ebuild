@@ -796,8 +796,10 @@ V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-flac"			# Vendored required to build v8_context_snapshot_generator
 	"!system-flatbuffers"		# Vendored required to build v8_context_snapshot_generator
 	"!system-fontconfig"		# Vendored required to build v8_context_snapshot_generator
+	"!system-freetype"		# Vendored required to build v8_context_snapshot_generator
 	"!system-jsoncpp"		# Vendored required to build mksnapshot
 	"!system-libdrm"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libjpeg-turbo"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libpng"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libvpx"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libwebp"		# Vendored required to build v8_context_snapshot_generator
@@ -6483,10 +6485,13 @@ check_mksnapshot_benefit() {
 	if [[ "${ALLOW_MKSNAPSHOT}" != "1" ]] ; then
 		return 1
 	fi
-	if [[ "${ALLOW_MKSNAPSHOT_USER:-0}" == "1" ]] ; then
+	local allow_mksnapshot_user="${ALLOW_MKSNAPSHOT_USER}"
+	if [[ "${allow_mksnapshot_user}" == "1" ]] ; then
 		return 0
-	elif [[ "${ALLOW_MKSNAPSHOT_USER:-0}" == "0" ]] ; then
+	elif [[ "${allow_mksnapshot_user}" == "0" ]] ; then
 		return 1
+	elif use official ; then
+		return 0
 	else
 		local nprocs=$(get_nproc) # It is the same as the number of cores.
 		local block_dev_path=$(df "${WORKDIR}" | tail -n 1 | cut -f 1 -d " ")
@@ -6496,7 +6501,7 @@ ewarn "Did not detect block device backing ${WORKDIR}"
 			return 1
 		fi
 		local block_status=$(cat "/sys/block/${dev_name}/queue/rotational") # 0 = SSD, 1 = HDD
-		if (( ${nprocs} >= 32 && ${block_status} == 0 )) ; then
+		if (( ${nprocs} >= 32 )) ; then
 			return 0
 		else
 			return 1
@@ -6525,6 +6530,7 @@ _src_compile() {
 	__clean_build
 
 	if check_mksnapshot_benefit && use v8-snapshot ; then
+einfo "Optimizing load time..."
 	# Build mksnapshot and pax-mark it.
 		local x
 		for x in "mksnapshot" "v8_context_snapshot_generator" ; do
@@ -6540,6 +6546,8 @@ _src_compile() {
 					"out/Release/${x}"
 			fi
 		done
+	else
+einfo "Skipping expensive load time optimization..."
 	fi
 
 	# Even though ninja autodetects number of CPUs, we respect user's
