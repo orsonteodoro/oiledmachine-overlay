@@ -69,14 +69,12 @@
          if (current_os != "aix") {
            # Not available on aix.
 -          cflags += [ "-fstack-protector" ]
-+          if (!is_asan && !is_hwasan) {
-+            if (use_stack_protector_level == "basic") {
-+              cflags += [ "-fstack-protector" ]
-+            } else if (use_stack_protector_level == "strong") {
-+              cflags += [ "-fstack-protector-strong" ]
-+            } else if (use_stack_protector_level == "all") {
-+              cflags += [ "-fstack-protector-all" ]
-+            }
++          if (use_stack_protector_level == "basic") {
++            cflags += [ "-fstack-protector" ]
++          } else if (use_stack_protector_level == "strong") {
++            cflags += [ "-fstack-protector-strong" ]
++          } else if (use_stack_protector_level == "all") {
++            cflags += [ "-fstack-protector-all" ]
 +          }
          }
        }
@@ -354,17 +352,13 @@
      } else if (arm_control_flow_integrity == "pac") {
 --- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
 +++ b/third_party/perfetto/gn/standalone/BUILD.gn	2026-01-04 21:56:53.311979163 -0800
-@@ -251,8 +251,12 @@ config("default") {
+@@ -251,8 +251,8 @@ config("default") {
      cflags += [
        "-g",
        "-fPIC",
 -      "-fstack-protector-strong",
++      "-fstack-protector-strong",
      ]
-+    if (!is_asan && !is_hwasan) {
-+      cflags += [
-+        "-fstack-protector-strong",
-+      ]
-+    }
    }
  
    # Treat warnings as errors, but give up on fuzzer builds.
