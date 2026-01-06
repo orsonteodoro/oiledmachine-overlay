@@ -151,6 +151,7 @@ CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
+ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
@@ -169,7 +170,6 @@ CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=20
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
-FORCE_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
@@ -642,9 +642,7 @@ ${SYSTEM_USE[@]}
 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
-systemd test +wayland
-+webassembly
--widevine +X
+systemd test +v8-snapshot +wayland +webassembly -widevine +X
 ebuild_revision_28
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
@@ -780,7 +778,7 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		)
 	"
 fi
-UNPACKAGE_REQUIRED_USE=(
+V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-abseil-cpp"		# Vendored required to build mksnapshot
 	"!system-brotli"		# Vendored required to build v8_context_snapshot_generator
 	"!system-flac"			# Vendored required to build v8_context_snapshot_generator
@@ -793,6 +791,7 @@ UNPACKAGE_REQUIRED_USE=(
 	"!system-openh264"		# Vendored required to build v8_context_snapshot_generator
 	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-simdutf"		# Vendored required to build mksnapshot
+	"!system-snappy"		# Vendored required to build v8_context_snapshot_generator
 	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
 	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
 	"!system-woff2"			# Disabled because live ebuild is required and not available
@@ -803,7 +802,6 @@ UNPACKAGE_REQUIRED_USE=(
 #	!system-harfbuzz
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
-	${UNPACKAGE_REQUIRED_USE[@]}
 	!drumbrake
 	!headless (
 		extensions
@@ -1063,6 +1061,9 @@ REQUIRED_USE+="
 	)
 	vaapi-hevc? (
 		vaapi
+	)
+	v8-snapshot? (
+		${V8_SNAPSHOT_REQUIRED_USE[@]}
 	)
 	webassembly? (
 		jit
@@ -6479,11 +6480,9 @@ _src_compile() {
 	_update_licenses
 	__clean_build
 
-	# If we find a way to disable mksnapshot, we can cut the build time by
-	# half for non-distributed builds.
-	#
-	# TODO:  completely disable v8_snapshot use
-	if [[ "${DISTRIBUTED_BUILD}" == "1" || "${FORCE_MKSNAPSHOT}" == "1" ]] ; then
+	# TODO:  limit to 8 cores or more on HDD or 4 cores on SSD
+#	if [[ "${DISTRIBUTED_BUILD}" == "1" && "${ALLOW_MKSNAPSHOT}" == "1" ]] && use v8-snapshot ; then
+	if [[ "${ALLOW_MKSNAPSHOT}" == "1" ]] && use v8-snapshot ; then
 	# Build mksnapshot and pax-mark it.
 		local x
 		for x in "mksnapshot" "v8_context_snapshot_generator" ; do
