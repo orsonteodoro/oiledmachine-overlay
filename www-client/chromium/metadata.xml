@@ -965,7 +965,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       encoding for WebRTC
     </flag>
     <flag name="v8-snapshot">
-      Optimize startup times, shaving of 5 seconds worst case.  Only available
+      Optimize startup times, shaving off 5 seconds worst case.  Only available
       to configurations less than 1 hours (i.e. 32 cores or more).
     </flag>
     <flag name="webassembly">
