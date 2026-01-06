@@ -784,6 +784,7 @@ UNPACKAGE_REQUIRED_USE=(
 	"!system-abseil-cpp"		# Vendored required to build mksnapshot
 	"!system-brotli"		# Vendored required to build v8_context_snapshot_generator
 	"!system-flatbuffers"		# Vendored required to build v8_context_snapshot_generator
+	"!system-fontconfig"		# Vendored required to build v8_context_snapshot_generator
 	"!system-jsoncpp"		# Vendored required to build mksnapshot
 	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-simdutf"		# Vendored required to build mksnapshot
