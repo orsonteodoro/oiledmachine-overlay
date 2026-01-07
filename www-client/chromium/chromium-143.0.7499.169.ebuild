@@ -793,6 +793,8 @@ NOT_V8_SNAPSHOT_REQUIRED_USE=(
 V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-abseil-cpp"		# Vendored required to build mksnapshot
 	"!system-brotli"		# Vendored required to build v8_context_snapshot_generator
+	"!system-dav1d"			# Vendored required to build v8_context_snapshot_generator
+	"!system-ffmpeg"		# Vendored required to build v8_context_snapshot_generator
 	"!system-flac"			# Vendored required to build v8_context_snapshot_generator
 	"!system-flatbuffers"		# Vendored required to build v8_context_snapshot_generator
 	"!system-fontconfig"		# Vendored required to build v8_context_snapshot_generator
@@ -803,7 +805,11 @@ V8_SNAPSHOT_REQUIRED_USE=(
 	"!system-libpng"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libvpx"		# Vendored required to build v8_context_snapshot_generator
 	"!system-libwebp"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libxml"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libxslt"		# Vendored required to build v8_context_snapshot_generator
+	"!system-libyuv"		# Vendored required to build v8_context_snapshot_generator
 	"!system-openh264"		# Vendored required to build v8_context_snapshot_generator
+	"!system-re2"			# Vendored required to build v8_context_snapshot_generator
 	"!system-simdutf"		# Vendored required to build mksnapshot
 	"!system-snappy"		# Vendored required to build v8_context_snapshot_generator
 	"!system-zlib"			# Vendored required to build mksnapshot
