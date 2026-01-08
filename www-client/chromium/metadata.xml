@@ -340,9 +340,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       API.
     </flag>
     <flag name="bundled-libcxx">
-      Build against the internal libc++ for proper cfi-icall and cfi-icast
-      protection.  This also builds libcxx with CFI, Full RELRO, noexecstack,
-      SSP security features.  This is the upstream default.
+      Build against the internal hardened libc++ for proper cfi-icall and
+      cfi-icast protection.  This also builds libc++ with CFI, Full RELRO,
+      noexecstack, SSP security features.  This is the upstream default.
     </flag>
     <flag name="cet">
       Use CET for hardware accelerated execution integrity checks.

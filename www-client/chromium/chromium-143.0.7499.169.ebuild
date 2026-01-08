@@ -779,40 +779,31 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 	"
 fi
 
-NOT_V8_SNAPSHOT_REQUIRED_USE=(
-	"!system-libwebp"		# Vendored required to build chrome
-	"!system-snappy"		# Vendored required to build chrome
-
-	"!system-opus"			# Disabled because live ebuild is required and not available
-	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
-	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
-	"!system-woff2"			# Disabled because live ebuild is required and not available
-	"!system-zstd"			# Disabled because live ebuild is required and not available
-)
-
-V8_SNAPSHOT_REQUIRED_USE=(
-	"!system-abseil-cpp"		# Vendored required to build mksnapshot
-	"!system-brotli"		# Vendored required to build v8_context_snapshot_generator
-	"!system-dav1d"			# Vendored required to build v8_context_snapshot_generator
-	"!system-ffmpeg"		# Vendored required to build v8_context_snapshot_generator
-	"!system-flac"			# Vendored required to build v8_context_snapshot_generator
-	"!system-flatbuffers"		# Vendored required to build v8_context_snapshot_generator
-	"!system-fontconfig"		# Vendored required to build v8_context_snapshot_generator
-	"!system-freetype"		# Vendored required to build v8_context_snapshot_generator
-	"!system-jsoncpp"		# Vendored required to build mksnapshot
-	"!system-libdrm"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libjpeg-turbo"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libpng"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libvpx"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libwebp"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libxml"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libxslt"		# Vendored required to build v8_context_snapshot_generator
-	"!system-libyuv"		# Vendored required to build v8_context_snapshot_generator
-	"!system-openh264"		# Vendored required to build v8_context_snapshot_generator
-	"!system-re2"			# Vendored required to build v8_context_snapshot_generator
-	"!system-simdutf"		# Vendored required to build mksnapshot
-	"!system-snappy"		# Vendored required to build v8_context_snapshot_generator
-	"!system-zlib"			# Vendored required to build mksnapshot
+LIBCXX_REQUIRED_USE=(
+	# Add C++ libraries here
+	"!system-abseil-cpp"		# Vendored required to build chrome, mksnapshot
+	"!system-brotli"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-dav1d"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-ffmpeg"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-flac"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-flatbuffers"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-fontconfig"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-freetype"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-highway"		# Vendored required to build chrome, mksnapshot
+	"!system-jsoncpp"		# Vendored required to build chrome, mksnapshot
+	"!system-libdrm"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libjpeg-turbo"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libpng"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libvpx"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libwebp"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libxml"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libxslt"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libyuv"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-openh264"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-re2"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-simdutf"		# Vendored required to build chrome, mksnapshot
+	"!system-snappy"		# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-zlib"			# Vendored required to build chrome, mksnapshot
 
 	"!system-opus"			# Disabled because live ebuild is required and not available
 	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
@@ -835,15 +826,15 @@ REQUIRED_USE+="
 			X
 		)
 	)
-	!v8-snapshot? (
-		${NOT_V8_SNAPSHOT_REQUIRED_USE[@]}
-	)
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
 	partitionalloc
 	amd64? (
 		cpu_flags_x86_sse2
+	)
+	bundled-libcxx? (
+		${LIBCXX_REQUIRED_USE[@]}
 	)
 	cfi? (
 		${SYSTEM_USE[@]/-/!}
@@ -1087,9 +1078,6 @@ REQUIRED_USE+="
 	)
 	vaapi-hevc? (
 		vaapi
-	)
-	v8-snapshot? (
-		${V8_SNAPSHOT_REQUIRED_USE[@]}
 	)
 	webassembly? (
 		jit
@@ -6462,6 +6450,7 @@ einfo
 }
 
 __clean_build() {
+	use pgo || return
 	if [[ -f "out/Release/chromedriver" ]] ; then
 		rm -f "out/Release/chromedriver" \
 			|| die
