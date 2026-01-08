@@ -5275,6 +5275,186 @@ _configure_performance_simd(){
 	fi
 }
 
+get_drive_type() {
+	local nprocs=$(get_nproc) # It is the same as the number of cores.
+	local block_dev_path=$(df "${WORKDIR}" | tail -n 1 | cut -f 1 -d " ")
+	local dev_name=$(basename "${block_dev_path}")
+	if [[ ! -e "/sys/block/${dev_name}/queue/rotational" ]] ; then
+ewarn "Did not detect block device backing ${WORKDIR}"
+		echo "hdd"
+		return
+	fi
+	local block_status=$(cat "/sys/block/${dev_name}/queue/rotational") # 0 = SSD, 1 = HDD
+	if [[ "${block_status}" == "0" ]] ; then
+		echo "ssd"
+	else
+		echo "hdd"
+	fi
+}
+
+#
+# chromium_build_allowed()
+#
+# Return:
+#
+# 0 if actual build time is within expected range (aka ALLOWED)
+# 1 if too slow (aka DISALLOWED)
+#
+chromium_build_allowed() {
+	local actual_hours="${1}"
+	if [[ -z "${actual_hours}" || ! "${actual_hours}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
+		return 1
+	fi
+
+	# Defaults
+	local cores=${nprocs}
+	[[ -z "${cores}" ]] && cores=16 # defaults
+
+	local storage=$(get_drive_type)  # ssd or hdd
+
+	# USE-flag interpretation
+	local has_lto=0
+	local has_v8_snapshot=0
+
+	use lto && has_lto=1
+	use v8-snapshot && has_v8_snapshot=1
+
+	local lto_type="With ThinLTO"
+	(( has_lto == 0 )) && lto_type="Without LTO (component)"
+
+	local v8_type="With V8 Snapshots"
+	(( has_v8_snapshot == 0 )) && v8_type="Without V8 Snapshots"
+
+	# Estimated ranges (cores:lto:storage:v8:low:high) — extend as needed
+	local ranges=(
+		"4:With ThinLTO:SSD:With V8 Snapshots:12:24"
+		"4:With ThinLTO:SSD:Without V8 Snapshots:12.5:25"
+		"4:With ThinLTO:HDD:With V8 Snapshots:18:36"
+		"4:With ThinLTO:HDD:Without V8 Snapshots:19:38"
+		"4:Without LTO (component):SSD:With V8 Snapshots:6:12"
+		"4:Without LTO (component):SSD:Without V8 Snapshots:6.5:13"
+		"4:Without LTO (component):HDD:With V8 Snapshots:9:18"
+		"4:Without LTO (component):HDD:Without V8 Snapshots:9.5:19"
+
+		"6:With ThinLTO:SSD:With V8 Snapshots:9:18"
+		"6:With ThinLTO:SSD:Without V8 Snapshots:9.5:19"
+		"6:With ThinLTO:HDD:With V8 Snapshots:13:27"
+		"6:With ThinLTO:HDD:Without V8 Snapshots:14:28"
+		"6:Without LTO (component):SSD:With V8 Snapshots:4:9"
+		"6:Without LTO (component):SSD:Without V8 Snapshots:4.5:10"
+		"6:Without LTO (component):HDD:With V8 Snapshots:6:14"
+		"6:Without LTO (component):HDD:Without V8 Snapshots:6.5:15"
+
+		"8:With ThinLTO:SSD:With V8 Snapshots:7:14"
+		"8:With ThinLTO:SSD:Without V8 Snapshots:7.5:15"
+		"8:With ThinLTO:HDD:With V8 Snapshots:10:22"
+		"8:With ThinLTO:HDD:Without V8 Snapshots:11:23"
+		"8:Without LTO (component):SSD:With V8 Snapshots:3:7"
+		"8:Without LTO (component):SSD:Without V8 Snapshots:3.5:8"
+		"8:Without LTO (component):HDD:With V8 Snapshots:5:11"
+		"8:Without LTO (component):HDD:Without V8 Snapshots:5.5:12"
+
+		"12:With ThinLTO:SSD:With V8 Snapshots:5:10"
+		"12:With ThinLTO:SSD:Without V8 Snapshots:5.5:11"
+		"12:With ThinLTO:HDD:With V8 Snapshots:8:16"
+		"12:With ThinLTO:HDD:Without V8 Snapshots:8.5:17"
+		"12:Without LTO (component):SSD:With V8 Snapshots:2:5"
+		"12:Without LTO (component):SSD:Without V8 Snapshots:2.5:6"
+		"12:Without LTO (component):HDD:With V8 Snapshots:3:8"
+		"12:Without LTO (component):HDD:Without V8 Snapshots:3.5:9"
+
+		"16:With ThinLTO:SSD:With V8 Snapshots:4:8"
+		"16:With ThinLTO:SSD:Without V8 Snapshots:4.5:9"
+		"16:With ThinLTO:HDD:With V8 Snapshots:6:13"
+		"16:With ThinLTO:HDD:Without V8 Snapshots:6.5:14"
+		"16:Without LTO (component):SSD:With V8 Snapshots:2:4"
+		"16:Without LTO (component):SSD:Without V8 Snapshots:2.5:5"
+		"16:Without LTO (component):HDD:With V8 Snapshots:3:7"
+		"16:Without LTO (component):HDD:Without V8 Snapshots:3.5:8"
+
+		"32:With ThinLTO:SSD:With V8 Snapshots:2:5"
+		"32:With ThinLTO:SSD:Without V8 Snapshots:2.5:6"
+		"32:With ThinLTO:HDD:With V8 Snapshots:3:9"
+		"32:With ThinLTO:HDD:Without V8 Snapshots:3.5:10"
+		"32:Without LTO (component):SSD:With V8 Snapshots:1:3"
+		"32:Without LTO (component):SSD:Without V8 Snapshots:1.5:3.5"
+		"32:Without LTO (component):HDD:With V8 Snapshots:2:5"
+		"32:Without LTO (component):HDD:Without V8 Snapshots:2.5:6"
+
+		"64:With ThinLTO:SSD:With V8 Snapshots:1.5:4"
+		"64:With ThinLTO:SSD:Without V8 Snapshots:2:4.5"
+		"64:With ThinLTO:HDD:With V8 Snapshots:2.5:7"
+		"64:With ThinLTO:HDD:Without V8 Snapshots:3:8"
+		"64:Without LTO (component):SSD:With V8 Snapshots:0.75:2.5"
+		"64:Without LTO (component):SSD:Without V8 Snapshots:1:3"
+		"64:Without LTO (component):HDD:With V8 Snapshots:1.5:4"
+		"64:Without LTO (component):HDD:Without V8 Snapshots:2:5"
+
+		"128:With ThinLTO:SSD:With V8 Snapshots:1:3"
+		"128:With ThinLTO:SSD:Without V8 Snapshots:1.25:3.5"
+		"128:With ThinLTO:HDD:With V8 Snapshots:2:6"
+		"128:With ThinLTO:HDD:Without V8 Snapshots:2.5:7"
+		"128:Without LTO (component):SSD:With V8 Snapshots:0.5:2"
+		"128:Without LTO (component):SSD:Without V8 Snapshots:0.75:2.5"
+		"128:Without LTO (component):HDD:With V8 Snapshots:1:4"
+		"128:Without LTO (component):HDD:Without V8 Snapshots:1.5:4.5"
+
+		"256:With ThinLTO:SSD:With V8 Snapshots:0.75:2.5"
+		"256:With ThinLTO:SSD:Without V8 Snapshots:1:3"
+		"256:With ThinLTO:HDD:With V8 Snapshots:1.5:5"
+		"256:With ThinLTO:HDD:Without V8 Snapshots:2:6"
+		"256:Without LTO (component):SSD:With V8 Snapshots:0.4:1.5"
+		"256:Without LTO (component):SSD:Without V8 Snapshots:0.5:2"
+		"256:Without LTO (component):HDD:With V8 Snapshots:1:3"
+		"256:Without LTO (component):HDD:Without V8 Snapshots:1.25:3.5"
+	)
+
+	local low=""
+	local high=""
+	for range in "${ranges[@]}"; do
+		IFS=':' read -r r_cores r_lto r_storage r_v8 r_low r_high <<< "$range"
+		if \
+			[[ \
+				"${r_cores}" == "${cores}" && \
+				"${r_lto}" == "${lto_type}" && \
+				"${r_storage}" == "${storage}" && \
+				"${r_v8}" == "${v8_type}" \
+			]] \
+		; then
+			low="${r_low}"
+			high="${r_high}"
+			break
+		fi
+	done
+
+	if [[ -z "${low}" || -z "${high}" ]]; then
+ewarn "chromium_build_allowed():  No estimate for: ${cores}c | ${storage} | LTO=$( ((has_lto)) && echo yes || echo no) | V8=$( ((has_v8_snapshot)) && echo yes || echo no)" >&2
+		return 1
+	fi
+
+	# Final decision using Python for float precision
+	local allowed
+allowed=$(python3 -c "
+actual = float(${actual_hours})
+low = float(${low})
+high = float(${high})
+
+if actual <= high:
+    print(0)  # ALLOWED
+else:
+    print(1)  # DISALLOWED (too slow)
+")
+
+	if (( ${allowed} == 0 )); then
+einfo "chromium_build_allowed():  PASSED: ${actual_hours}h ≤ ${high} (expected ${low}–${high}h)"
+	else
+einfo "chromium_build_allowed():  FAILED: ${actual_hours}h > ${high} (expected ${low}–${high}h)"
+	fi
+
+	return ${allowed}
+}
+
 _configure_linker() {
 	local use_thinlto=0
 
@@ -5282,18 +5462,28 @@ _configure_linker() {
 		USE_LTO=1
 	fi
 
-	if (( ${actual_gib_per_core%.*} <= 3 || ${nprocs} <= 4 )) ; then
 	#
-	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
-	# disqualified for LTO treatment.  LTO could increase build times by
-	# 5 times.
+	# Only do if build time meets user's tolerance which is for people that
+	# are building before real-world deadline obligations (e.g. college
+	# test on the same day or billing period on the same day).
 	#
 	# One of the goals is to prevent a systemwide vulnerability backlog or
 	# a ebuild update backlog that lasts 6 months.
 	#
-ewarn "Disabling LTO for older machines."
-		USE_LTO=0
-		filter-lto
+	if (( ${USE_LTO} == 0 )) ; then
+		:;
+	else
+		local build_time_tolerance=${BUILD_TIME_TOLERANCE:-"2.0"}
+		if chromium_build_allowed "${build_time_tolerance}" ; then
+einfo "Allowing LTO which is within build time tolerance"
+		else
+ewarn "Disallowing LTO for high cost reasons"
+			USE_LTO=0
+			filter-lto
+		fi
+	fi
+
+	if (( ${USE_LTO} == 1 )) ; then
 		use cfi         && fatal_message_lto_banned "cfi"
 		use official    && fatal_message_lto_banned "official"
 	fi
@@ -6493,15 +6683,12 @@ check_mksnapshot_benefit() {
 	elif use official ; then
 		return 0
 	else
-		local nprocs=$(get_nproc) # It is the same as the number of cores.
-		local block_dev_path=$(df "${WORKDIR}" | tail -n 1 | cut -f 1 -d " ")
-		local dev_name=$(basename "${block_dev_path}")
-		if [[ ! -e "/sys/block/${dev_name}/queue/rotational" ]] ; then
-ewarn "Did not detect block device backing ${WORKDIR}"
-			return 1
-		fi
-		local block_status=$(cat "/sys/block/${dev_name}/queue/rotational") # 0 = SSD, 1 = HDD
-		if (( ${nprocs} >= 32 )) ; then
+	# Only do if build time meets user's tolerance which is for people that
+	# are building before real-world deadline obligations (e.g. college
+	# test on the same day or billing period on the same day).
+
+		local build_time_tolerance=${BUILD_TIME_TOLERANCE:-"2.0"}
+		if chromium_build_allowed "${build_time_tolerance}" ; then
 			return 0
 		else
 			return 1

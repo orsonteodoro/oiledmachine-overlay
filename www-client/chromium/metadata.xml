@@ -157,6 +157,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
     
 
+    BUILD_TIME_TOLERANCE - The total allowed for time consuming
+    feature (e.g. LTO or v8-snapshots).
+    Default: 2.0
+    Valid values:  Decimal hours.
+
+
 
     FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
 
@@ -300,13 +306,26 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
   Estimated worst-case build times
 
-  Cores   | With v8-snapshot on HDD | Without v8-snapshot on HDD | With v8-snapshot on SSD | Without v8-snapshot on SSD 
-  ---     | ---                     | ---                        | ---                     | ---
-  4       | 20+ hours               | 18 hours                   | 6 hours                 | 5.7 hours
-  8       | 10 hours                | 9 hours                    | 3 hours                 | 2.9 hours
-  12      | 7 hours                 | 6.5 hours                  | 2 hours                 | 1.92 hours
-  16      | 5 hours                 | 4.5 hours                  | 1.25 hours              | 1.17 hours
-  32      | 3 hours                 | 2.66 hours                 | 0.83 hours              | 0.75 hours
+  Cores   | LTO | With v8-snapshot on HDD | Without v8-snapshot on HDD | With v8-snapshot on SSD | Without v8-snapshot on SSD 
+  ---     |     | ---                     | ---                        | ---                     | ---
+  4       | Y   | 36  hours               | 38   hours                 | 24   hours              | 25   hours
+  4       | N   | 18  hours               | 19   hours                 | 12   hours              | 13   hours
+  6       | Y   | 27  hours               | 28   hours                 | 18   hours              | 19   hours
+  6       | N   | 14  hours               | 15   hours                 |  9   hours              | 10   hours
+  8       | Y   | 22  hours               | 23   hours                 | 14   hours              | 15   hours
+  8       | N   | 11  hours               | 12   hours                 |  7   hours              |  8   hours
+  12      | Y   | 16  hours               | 17   hours                 | 10   hours              | 11   hours
+  12      | N   |  8  hours               |  9   hours                 |  5   hours              |  6   hours
+  16      | Y   | 13  hours               | 14   hours                 |  8   hours              |  9   hours
+  16      | N   |  7  hours               |  8   hours                 |  4   hours              |  5   hours
+  32      | Y   |  9  hours               | 10   hours                 |  5   hours              |  6   hours
+  32      | N   |  5  hours               |  6   hours                 |  3   hours              |  3.5 hours
+  64      | Y   |  7  hours               |  8   hours                 |  4   hours              |  4.5 hours
+  64      | N   |  4+ hours               |  5+  hours                 |  2.5 hours              |  3   hours
+  128     | Y   |  6  hours               |  7   hours                 |  3   hours              |  3.5 hours
+  128     | N   |  4  hours               |  4.5 hours                 |  2   hours              |  2.5 hours
+  256     | Y   |  5+ hours               |  6+  hours                 |  2.5 hours              |  3   hours
+  256     | N   |  3+ hours               |  3.5 hours                 |  1.5 hours              |  2   hours
 
   References:
 
