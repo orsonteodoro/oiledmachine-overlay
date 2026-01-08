@@ -5793,6 +5793,12 @@ get_host_cpu() {
 				break
 			fi
 		done
+
+		if (( ${is_x86_64_v1} == 0 )) && use cpu_flags_x86_mmx && use cpu_flags_x86_sse && ! use cpu_flags_x86_avx ; then
+			is_x86_64_v1=1
+		fi
+
+	# The vendored Clang makes x86-64 Level 2 ISA default.
 		if (( ${is_x86_64_v1} == 1 )) || [[ "${HOST_CPU_X86_64_V1:-0}" == "1" ]] ; then
 einfo "Using x86-64 Level 1 ISA"
 			host_cpu="x86_64"
