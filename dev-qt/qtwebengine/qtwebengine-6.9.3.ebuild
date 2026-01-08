@@ -42,7 +42,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_7
+	ebuild_revision_8
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
@@ -301,6 +301,9 @@ src_configure() {
 	append-ldflags -Wl,-z,noexecstack
 
 	cflags-hardened_append
+
+	# Remove hardening flags that may slow things down
+	filter-flags "-fno-inline"
 
 	export NINJAFLAGS=$(get_NINJAOPTS)
 	[[ ${NINJA_VERBOSE^^} == OFF ]] || NINJAFLAGS+=" -v"
