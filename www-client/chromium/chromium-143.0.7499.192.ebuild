@@ -5358,7 +5358,7 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 	local has_lto=0
 	local has_v8_snapshot=0
 
-	use lto && has_lto=1
+	(( ${USE_LTO} == 1 )) && has_lto=1
 	use v8-snapshot && has_v8_snapshot=1
 
 	local lto_type="With ThinLTO"
