@@ -792,6 +792,7 @@ LIBCXX_REQUIRED_USE=(
 	"!system-fontconfig"		# Vendored required to build chrome, v8_context_snapshot_generator
 	"!system-freetype"		# Vendored required to build chrome, v8_context_snapshot_generator
 	"!system-highway"		# Vendored required to build chrome, mksnapshot
+	"!system-icu"			# Vendored required to build chrome, mksnapshot
 	"!system-jsoncpp"		# Vendored required to build chrome, mksnapshot
 	"!system-libdrm"		# Vendored required to build chrome, v8_context_snapshot_generator
 	"!system-libjpeg-turbo"		# Vendored required to build chrome, v8_context_snapshot_generator
