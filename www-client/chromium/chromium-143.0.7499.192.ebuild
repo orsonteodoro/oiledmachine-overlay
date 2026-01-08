@@ -147,7 +147,7 @@ EAPI=8
 # The unbundle build files logic is in /usr/share/chromium/sources/build/linux/unbundle
 
 TC_COUNT_EXPECTED=5129
-SOURCES_COUNT_EXPECTED=516261
+SOURCES_COUNT_EXPECTED=516260
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
