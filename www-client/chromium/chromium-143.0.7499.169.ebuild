@@ -643,7 +643,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_28
+ebuild_revision_29
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -817,6 +817,7 @@ LIBCXX_REQUIRED_USE=(
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
+	!system-libstdcxx
 	!headless (
 		extensions
 		pdf
@@ -829,6 +830,7 @@ REQUIRED_USE+="
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
+	bundled-libcxx
 	partitionalloc
 	amd64? (
 		cpu_flags_x86_sse2
@@ -6476,7 +6478,7 @@ _get_s() {
 }
 
 check_mksnapshot_benefit() {
-	return 0 # For debug
+	#return 0 # For debug
 	if [[ "${ALLOW_MKSNAPSHOT}" != "1" ]] ; then
 		return 1
 	fi
