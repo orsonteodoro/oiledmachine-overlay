@@ -5311,6 +5311,47 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 	local cores=${nprocs}
 	[[ -z "${cores}" ]] && cores=16 # defaults
 
+	# Supported core counts (must match the keys in ranges array)
+	local supported=( 4 6 8 12 16 32 64 128 256 )
+
+	# Validate and fallback: round down to nearest supported
+	local validated_cores=${cores}
+	local best_diff=999999
+	local fallback=16  # safe default if something goes wrong
+
+	local sup
+	for sup in "${supported[@]}"; do
+		if (( sup == ${cores} )); then
+			validated_cores=${cores}
+			break
+		fi
+
+		local diff=$(( ${cores} - ${sup} ))
+		(( ${diff} < 0 )) && diff=$(( -${diff} ))
+
+		if (( ${diff} < ${best_diff} && ${sup} <= ${cores} )) ; then
+			best_diff=${diff}
+			fallback=${sup}
+		fi
+	done
+
+	# If no lower-or-equal found (unlikely), use overall closest
+	if (( ${validated_cores} != ${cores} )); then
+		# Find absolute closest
+		best_diff=999999
+		for sup in "${supported[@]}"; do
+			local diff=$(( ${cores} - ${sup} ))
+			(( ${diff} < 0 )) && diff=$(( -${diff} ))
+			if (( ${diff} < ${best_diff} )) ; then
+				best_diff=${diff}
+				fallback=${sup}
+			fi
+		done
+		validated_cores=${fallback}
+
+		echo "chromium_build_allowed():  WARNING: ${cores} threads not in table — rounding to nearest supported: ${validated_cores} cores" >&2
+	fi
+
 	local storage=$(get_drive_type)  # ssd or hdd
 
 	# USE-flag interpretation
@@ -5327,7 +5368,92 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 	(( has_v8_snapshot == 0 )) && v8_type="Without V8 Snapshots"
 
 	# Estimated ranges (cores:lto:storage:v8:low:high) — extend as needed
-	local ranges=(
+	local ranges=()
+
+	local mold_ranges=(
+		"4:With Mold:SSD:With V8 Snapshots:9:18"
+		"4:With Mold:SSD:Without V8 Snapshots:9.5:19"
+		"4:With Mold:HDD:With V8 Snapshots:13:27"
+		"4:With Mold:HDD:Without V8 Snapshots:14:28"
+		"4:Without LTO (component):SSD:With V8 Snapshots:6:12"
+		"4:Without LTO (component):SSD:Without V8 Snapshots:6.5:13"
+		"4:Without LTO (component):HDD:With V8 Snapshots:9:18"
+		"4:Without LTO (component):HDD:Without V8 Snapshots:9.5:19"
+
+		"6:With Mold:SSD:With V8 Snapshots:7:14"
+		"6:With Mold:SSD:Without V8 Snapshots:7.5:15"
+		"6:With Mold:HDD:With V8 Snapshots:10:21"
+		"6:With Mold:HDD:Without V8 Snapshots:11:22"
+		"6:Without LTO (component):SSD:With V8 Snapshots:4:9"
+		"6:Without LTO (component):SSD:Without V8 Snapshots:4.5:10"
+		"6:Without LTO (component):HDD:With V8 Snapshots:6:14"
+		"6:Without LTO (component):HDD:Without V8 Snapshots:6.5:15"
+
+		"8:With Mold:SSD:With V8 Snapshots:5.5:11"
+		"8:With Mold:SSD:Without V8 Snapshots:6:12"
+		"8:With Mold:HDD:With V8 Snapshots:8:17"
+		"8:With Mold:HDD:Without V8 Snapshots:8.5:18"
+		"8:Without LTO (component):SSD:With V8 Snapshots:3:7"
+		"8:Without LTO (component):SSD:Without V8 Snapshots:3.5:8"
+		"8:Without LTO (component):HDD:With V8 Snapshots:5:11"
+		"8:Without LTO (component):HDD:Without V8 Snapshots:5.5:12"
+
+		"12:With Mold:SSD:With V8 Snapshots:4:8"
+		"12:With Mold:SSD:Without V8 Snapshots:4.5:9"
+		"12:With Mold:HDD:With V8 Snapshots:6:13"
+		"12:With Mold:HDD:Without V8 Snapshots:6.5:14"
+		"12:Without LTO (component):SSD:With V8 Snapshots:2:5"
+		"12:Without LTO (component):SSD:Without V8 Snapshots:2.5:6"
+		"12:Without LTO (component):HDD:With V8 Snapshots:3:8"
+		"12:Without LTO (component):HDD:Without V8 Snapshots:3.5:9"
+
+		"16:With Mold:SSD:With V8 Snapshots:3:6.5"
+		"16:With Mold:SSD:Without V8 Snapshots:3.5:7"
+		"16:With Mold:HDD:With V8 Snapshots:5:10"
+		"16:With Mold:HDD:Without V8 Snapshots:5.5:11"
+		"16:Without LTO (component):SSD:With V8 Snapshots:2:4"
+		"16:Without LTO (component):SSD:Without V8 Snapshots:2.5:5"
+		"16:Without LTO (component):HDD:With V8 Snapshots:3:7"
+		"16:Without LTO (component):HDD:Without V8 Snapshots:3.5:8"
+
+		"32:With Mold:SSD:With V8 Snapshots:1.5:4"
+		"32:With Mold:SSD:Without V8 Snapshots:2:4.5"
+		"32:With Mold:HDD:With V8 Snapshots:2.5:7"
+		"32:With Mold:HDD:Without V8 Snapshots:3:8"
+		"32:Without LTO (component):SSD:With V8 Snapshots:1:3"
+		"32:Without LTO (component):SSD:Without V8 Snapshots:1.5:3.5"
+		"32:Without LTO (component):HDD:With V8 Snapshots:2:5"
+		"32:Without LTO (component):HDD:Without V8 Snapshots:2.5:6"
+
+		"64:With Mold:SSD:With V8 Snapshots:1.2:3.5"
+		"64:With Mold:SSD:Without V8 Snapshots:1.5:4"
+		"64:With Mold:HDD:With V8 Snapshots:2:6"
+		"64:With Mold:HDD:Without V8 Snapshots:2.5:7"
+		"64:Without LTO (component):SSD:With V8 Snapshots:0.75:2.5"
+		"64:Without LTO (component):SSD:Without V8 Snapshots:1:3"
+		"64:Without LTO (component):HDD:With V8 Snapshots:1.5:4"
+		"64:Without LTO (component):HDD:Without V8 Snapshots:2:5"
+
+		"128:With Mold:SSD:With V8 Snapshots:0.8:2.8"
+		"128:With Mold:SSD:Without V8 Snapshots:1:3.2"
+		"128:With Mold:HDD:With V8 Snapshots:1.5:5"
+		"128:With Mold:HDD:Without V8 Snapshots:2:6"
+		"128:Without LTO (component):SSD:With V8 Snapshots:0.5:2"
+		"128:Without LTO (component):SSD:Without V8 Snapshots:0.75:2.5"
+		"128:Without LTO (component):HDD:With V8 Snapshots:1:4"
+		"128:Without LTO (component):HDD:Without V8 Snapshots:1.5:4.5"
+
+		"256:With Mold:SSD:With V8 Snapshots:0.6:2.2"
+		"256:With Mold:SSD:Without V8 Snapshots:0.8:2.6"
+		"256:With Mold:HDD:With V8 Snapshots:1.2:4"
+		"256:With Mold:HDD:Without V8 Snapshots:1.5:5"
+		"256:Without LTO (component):SSD:With V8 Snapshots:0.4:1.5"
+		"256:Without LTO (component):SSD:Without V8 Snapshots:0.5:2"
+		"256:Without LTO (component):HDD:With V8 Snapshots:1:3"
+		"256:Without LTO (component):HDD:Without V8 Snapshots:1.25:3.5"
+	)
+
+	local thinlto_ranges=(
 		"4:With ThinLTO:SSD:With V8 Snapshots:12:24"
 		"4:With ThinLTO:SSD:Without V8 Snapshots:12.5:25"
 		"4:With ThinLTO:HDD:With V8 Snapshots:18:36"
@@ -5409,6 +5535,16 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 		"256:Without LTO (component):HDD:With V8 Snapshots:1:3"
 		"256:Without LTO (component):HDD:Without V8 Snapshots:1.25:3.5"
 	)
+
+	if use mold ; then
+		ranges=(
+			${mold_ranges}
+		)
+	else
+		ranges=(
+			${thinlto_ranges}
+		)
+	fi
 
 	local low=""
 	local high=""
