@@ -5314,8 +5314,8 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 	fi
 
 	# Defaults
-	local cores=${nprocs}
-	[[ -z "${cores}" ]] && cores=16 # defaults
+	local cores=$(get_nproc) # It is the same as the number of cores.
+	[[ -z "${cores}" ]] && cores=16 # Default
 
 	# Supported core counts (must match the keys in ranges array)
 	local supported=( 4 6 8 12 16 32 64 128 256 )
