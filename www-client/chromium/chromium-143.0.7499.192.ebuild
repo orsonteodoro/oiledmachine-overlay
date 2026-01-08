@@ -3678,6 +3678,12 @@ einfo "Unbundling third party internal libraries and packages"
 			"build/linux/strip_binary.gni" || die
 	fi
 
+	if use system-libsecret ; then
+		sed -i \
+			-e "s|include <libsecret/secret.h>|include <libsecret-1/libsecret/secret.h>|g" \
+			"components/os_crypt/sync/libsecret_util_linux.h" \
+			|| die
+	fi
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
 }
@@ -6655,7 +6661,6 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 		#	"use_system_re2=true" # Trigger build/linux/unbundle/re2.gn
 		#)
 	fi
-
 }
 
 _src_configure() {
