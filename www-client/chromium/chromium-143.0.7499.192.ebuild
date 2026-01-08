@@ -6496,7 +6496,7 @@ check_mksnapshot_benefit() {
 		local nprocs=$(get_nproc) # It is the same as the number of cores.
 		local block_dev_path=$(df "${WORKDIR}" | tail -n 1 | cut -f 1 -d " ")
 		local dev_name=$(basename "${block_dev_path}")
-		if [[ -e "/sys/block/${dev_name}/queue/rotational" ]] ; then
+		if [[ ! -e "/sys/block/${dev_name}/queue/rotational" ]] ; then
 ewarn "Did not detect block device backing ${WORKDIR}"
 			return 1
 		fi
