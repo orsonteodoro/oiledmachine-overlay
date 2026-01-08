@@ -5752,6 +5752,69 @@ eerror "Failed to determine target arch, got '${myarch}'."
 	echo "${target_cpu}"
 }
 
+get_host_cpu() {
+	local myarch="$(tc-arch)"
+	local host_cpu
+	if [[ "${myarch}" == "amd64" ]] ; then
+		local L=(
+	# Level 1 ISA
+			"x86-64"
+
+	# Pure K8 and older AMD (no SSE3)
+			"athlon"
+			"athlon-tbird"
+			"athlon-4"
+			"athlon-xp"
+			"athlon-mp"
+			"k8"
+			"opteron"
+			"athlon64"
+			"athlon-fx"
+
+	# VIA / Centaur / Zhaoxin pre-SSE3 or optional
+			"esther"
+			"eden-x2"
+			"nano"
+			"nano-1000"
+			"nano-2000"
+			"nano-3000"
+			"nano-x2"
+			"nano-x4"
+			"lujiazui"
+
+	# Else fallback to Level 2 for non-safe list
+		)
+
+		local is_x86_64_v1=0
+		local x
+		for x in "${L[@]}" ; do
+			if is-flagq "${x}" ; then
+				is_x86_64_v1=1
+				break
+			fi
+		done
+		if (( ${is_x86_64_v1} == 1 )) || [[ "${HOST_CPU_X86_64_V1:-0}" == "1" ]] ; then
+einfo "Using x86-64 Level 1 ISA"
+			host_cpu="x86_64"
+		else
+einfo "Using x86-64 Level 2 ISA"
+			host_cpu="x64"
+		fi
+	elif [[ "${myarch}" == "x86" ]] ; then
+		host_cpu="x86"
+	elif [[ "${myarch}" == "arm64" ]] ; then
+		host_cpu="arm64"
+	elif [[ "${myarch}" == "arm" ]] ; then
+		host_cpu="arm"
+	elif [[ "${myarch}" == "ppc64" ]] ; then
+		host_cpu="ppc64"
+	else
+eerror "Failed to determine target arch, got '${myarch}'."
+		die
+	fi
+	echo "${host_cpu}"
+}
+
 # JavaScript engine
 _configure_v8() {
 	if use official ; then
@@ -6166,11 +6229,20 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	fi
 
 	local target_cpu=$(get_target_cpu)
+	local host_cpu=$(get_host_cpu)
 	myconf_gn+=(
 		"current_cpu=\"${target_cpu}\""
-		"host_cpu=\"${target_cpu}\""
+		"host_cpu=\"${host_cpu}\""
 		"target_cpu=\"${target_cpu}\""
 	)
+
+	# Try to fix top_domain_generator invalid opcode in dmesg
+	if [[ "${host_cpu}" == "x86_64" ]] ; then
+		myconf_gn+=(
+			"extra_cflags = [ \"-march=x86-64\" ]"
+			"extra_cxxflags = [ \"-march=x86-64\" ]"
+		)
+	fi
 }
 
 _configure_performance_thp() {

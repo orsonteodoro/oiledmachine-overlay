@@ -156,15 +156,17 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     dns-send-IPv6-connectivity-probes-to-RIPE-DNS.patch       | add-flag-to-disable-beforeunload.patch
 
     
-
     BUILD_TIME_TOLERANCE - The total allowed for time consuming
     feature (e.g. LTO or v8-snapshots).
     Default: 2.0
     Valid values:  Decimal hours.
 
 
-
-    FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
+    HOST_CPU_X86_64_V1 - Force x86-64 v1 ISA (64-bit, mmx, sse, sse2, fxsr,
+    pre AVX) build for host compilation units so they do not segfault with
+    illegal instruction.  Only available with ARCH=amd64.
+    1 - Force Level 1
+    0 - Force Level 0
 
 
     JIT_LEVEL_OVERRIDE - Set the JIT runtime performance similar to -Oflags.
