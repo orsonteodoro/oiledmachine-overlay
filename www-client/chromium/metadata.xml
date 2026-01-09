@@ -157,7 +157,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
     
     BUILD_TIME_TOLERANCE - The acceptable time for time consuming
-    feature(s) (e.g. LTO or v8-snapshots) when doing cost-benefit analysis.
+    feature(s) (e.g. LTO, v8-snapshots) when doing cost-benefit analysis.
     When the worst case estimated build time exceeds the acceptable time,
     the expensive optimization will be disabled.  For example if the
     build time for the selected optimiations are estimated to total to

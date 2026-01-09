@@ -4391,7 +4391,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		fi
 
 		if use cet ; then
-			:;
+			:
 		elif is-flagq "-mretpoline" ; then
 			myconf_gn+=(
 				"use_retpoline=\"thunk\""
@@ -4412,7 +4412,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		fi
 
 		if use cet ; then
-			:;
+			:
 		elif is-flagq "-mretpoline-external-thunk" ; then
 			myconf_gn+=(
 				"use_retpoline_external_thunk=true"
@@ -5621,8 +5621,10 @@ _configure_linker() {
 	# One of the goals is to prevent a systemwide vulnerability backlog or
 	# a ebuild update backlog that lasts 6 months.
 	#
-	if (( ${USE_LTO} == 0 )) ; then
-		:;
+	if use official ; then
+		:
+	elif (( ${USE_LTO} == 0 )) ; then
+		:
 	else
 		local build_time_tolerance=${BUILD_TIME_TOLERANCE:-"2.0"}
 		if chromium_build_allowed "${build_time_tolerance}" ; then
