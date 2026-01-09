@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_30
+ebuild_revision_31
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -1068,6 +1068,9 @@ REQUIRED_USE+="
 	)
 	pdf? (
 		plugins
+	)
+	pgo? (
+		official
 	)
 	pre-check-vaapi? (
 		vaapi
@@ -4210,9 +4213,43 @@ einfo "Using the system toolchain"
 	)
 }
 
+_remove_hardening_flags() {
+	# Handled in build scripts.
+	filter-flags \
+		"-D_FORTIFY_SOURCE*" \
+		"-U_FORTIFY_SOURCE" \
+		"-f*cf-protection=*" \
+		"-f*hardened" \
+		"-f*sanitize=*" \
+		"-f*sanitize-recover" \
+		"-f*stack-clash-protection" \
+		"-f*stack-protector" \
+		"-f*strict-flex-arrays=*" \
+		"-f*trivial-auto-var-init=*" \
+		"-f*trapv" \
+		"-f*vtable-verify=*" \
+		"-f*wrapv" \
+		"-f*zero-call-used-regs=*" \
+		"-m*function-return=*" \
+		"-m*indirect-branch=*" \
+		"-m*indirect-branch-register" \
+		"-m*harden-sls=*" \
+		"-m*retpoline" \
+		"-m*retpoline-external-thunk" \
+		"-Wl,-z,now" \
+		"-Wl,-z,relro" \
+		"-fstack-clash-protection" \
+		"-ftrapv"
+
+	# Prevent slowdowns with hardening flags
+	filter-flags "-fno-inline"
+}
+
 _configure_security(){
 	if use official ; then
-		:
+ewarn "Using hardened flag defaults for USE=official."
+		_remove_hardening_flags # Do even when cross-compiling
+		return
 	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
 		:
 	elif use cfi ; then
@@ -4915,35 +4952,7 @@ eerror
 		"use_sanitize_array_bounds=false"
 	)
 
-	# Handled in build scripts.
-	filter-flags \
-		"-D_FORTIFY_SOURCE*" \
-		"-U_FORTIFY_SOURCE" \
-		"-f*cf-protection=*" \
-		"-f*hardened" \
-		"-f*sanitize=*" \
-		"-f*sanitize-recover" \
-		"-f*stack-clash-protection" \
-		"-f*stack-protector" \
-		"-f*strict-flex-arrays=*" \
-		"-f*trivial-auto-var-init=*" \
-		"-f*trapv" \
-		"-f*vtable-verify=*" \
-		"-f*wrapv" \
-		"-f*zero-call-used-regs=*" \
-		"-m*function-return=*" \
-		"-m*indirect-branch=*" \
-		"-m*indirect-branch-register" \
-		"-m*harden-sls=*" \
-		"-m*retpoline" \
-		"-m*retpoline-external-thunk" \
-		"-Wl,-z,now" \
-		"-Wl,-z,relro" \
-		"-fstack-clash-protection" \
-		"-ftrapv"
-
-	# Prevent slowdowns with hardening flags
-	filter-flags "-fno-inline"
+	_remove_hardening_flags
 }
 
 _configure_performance_pgo(){
