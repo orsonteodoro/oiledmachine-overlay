@@ -5313,7 +5313,7 @@ ewarn "Did not detect block device backing ${WORKDIR}"
 chromium_build_allowed() {
 	local tolerance_hours="${1}"
 	if [[ -z "${tolerance_hours}" || ! "${tolerance_hours}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours" >&2
+ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours"
 		return 1
 	fi
 
@@ -5322,15 +5322,15 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours" >&2
 	[[ -z "${cores}" ]] && cores=16 # Default
 
 	# Supported core counts (must match the keys in ranges array)
-	local supported=( 4 6 8 12 16 32 64 128 256 )
+	local supported_cores=( 4 6 8 12 16 32 64 128 256 )
 
 	# Validate and fallback: round down to nearest supported
 	local validated_cores=${cores}
 	local best_diff=999999
-	local fallback=16  # safe default if something goes wrong
+	local cores_fallback=16  # Safe default if something goes wrong
 
 	local sup
-	for sup in "${supported[@]}"; do
+	for sup in ${supported_cores[@]} ; do
 		if (( sup == ${cores} )); then
 			validated_cores=${cores}
 			break
@@ -5341,25 +5341,25 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours" >&2
 
 		if (( ${diff} < ${best_diff} && ${sup} <= ${cores} )) ; then
 			best_diff=${diff}
-			fallback=${sup}
+			cores_fallback=${sup}
 		fi
 	done
 
 	# If no lower-or-equal found (unlikely), use overall closest
 	if (( ${validated_cores} != ${cores} )); then
-		# Find absolute closest
+	# Find the absolute closest
 		best_diff=999999
-		for sup in "${supported[@]}"; do
+		for sup in ${supported_cores[@]} ; do
 			local diff=$(( ${cores} - ${sup} ))
 			(( ${diff} < 0 )) && diff=$(( -${diff} ))
 			if (( ${diff} < ${best_diff} )) ; then
 				best_diff=${diff}
-				fallback=${sup}
+				cores_fallback=${sup}
 			fi
 		done
-		validated_cores=${fallback}
+		validated_cores=${cores_fallback}
 
-		echo "chromium_build_allowed():  WARNING: ${cores} threads not in table — rounding to nearest supported: ${validated_cores} cores" >&2
+ewarn "chromium_build_allowed():  WARNING: ${cores} threads not in table — rounding to nearest supported: ${validated_cores} cores"
 	fi
 
 	local storage=$(get_drive_type)  # ssd or hdd
