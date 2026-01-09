@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_32
+ebuild_revision_33
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -4495,12 +4495,12 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			)
 		fi
 
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+		if is-flagq "-D_FORTIFY_SOURCE=3" ; then
 			myconf_gn+=(
 				"use_fortify_source=3"
 				"use_rust_fortify_source_level=3"
 			)
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+		elif is-flagq "-D_FORTIFY_SOURCE=2" ; then
 			myconf_gn+=(
 				"use_fortify_source=2"
 				"use_rust_fortify_source_level=2"
