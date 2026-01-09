@@ -6244,6 +6244,12 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	# Try to fix top_domain_generator invalid opcode in dmesg
 	if [[ "${host_cpu}" == "x86-64-v1" ]] ; then
+		if use official ; then
+eerror "-march=${a} is not supported with USE=official."
+eerror "Only x86-64 Level 2 ISA or above CPUs for amd64 are supported with the official build settings."
+eerror "Disable the official USE flag to continue."
+			die
+		fi
 		if [[ "${CFLAGS}" =~ "-march" ]] ; then
 			local a=$(echo "${CFLAGS}" \
 				| grep -E -e "-march=[a-z0-9-]+" \
@@ -6251,15 +6257,17 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 				| tail -n 1 \
 				| sed -e "s|-march=||g")
 			if ! tc-is-cross-compiler ; then
-				append-flags "-march=${a}"
-				export CFLAGS
-				export CXXFLAGS
+				myconf_gn+=(
+					"extra_cflags=\"-march=${a}\""
+					"extra_cxflags=\"-march=${a}\""
+				)
 			fi
 		else
 			if ! tc-is-cross-compiler ; then
-				append-flags "-march=x86-64"
-				export CFLAGS
-				export CXXFLAGS
+				myconf_gn+=(
+					"extra_cflags=\"-march=x86-64\""
+					"extra_cxflags=\"-march=x86-64\""
+				)
 			fi
 		fi
 	fi
@@ -6542,7 +6550,6 @@ ewarn
 		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/143.0.7499.192/device/vr#platform-support
 		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
-		"enable_ppapi=false"
 		"enable_reporting=$(usex reporting-api true false)"
 
 	# Forced because of asserts.  Required by chrome/renderer:renderer
