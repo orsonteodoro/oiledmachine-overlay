@@ -2748,6 +2748,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
+		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
 	)
 }
 
@@ -4909,6 +4910,11 @@ eerror
 		)
 	fi
 
+	# May break top_domain_generator
+	myconf_gn+=(
+		"use_sanitize_array_bounds=false"
+	)
+
 	# Handled in build scripts.
 	filter-flags \
 		"-D_FORTIFY_SOURCE*" \
@@ -5542,11 +5548,11 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 
 	if use mold ; then
 		ranges=(
-			${mold_ranges}
+			"${mold_ranges[@]}"
 		)
 	else
 		ranges=(
-			${thinlto_ranges}
+			"${thinlto_ranges[@]}"
 		)
 	fi
 

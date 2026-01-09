@@ -1,0 +1,20 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-08 21:53:29.446537218 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-09 06:46:17.427626139 -0800
+@@ -248,6 +248,8 @@ declare_args() {
+   use_march=""
+   use_mcpu=""
+   use_mtune=""
++
++  use_sanitize_array_bounds = true
+ }
+ 
+ declare_args() {
+@@ -2158,7 +2160,7 @@ config("clang_warning_suppression") {
+ #
+ # See also: https://crbug.com/40891132#comment10
+ config("sanitize_c_array_bounds") {
+-  if (!is_ubsan && is_clang && !(is_asan && target_cpu == "x86")) {
++  if (!is_ubsan && is_clang && !(is_asan && target_cpu == "x86") && use_sanitize_array_bounds) {
+     cflags = [
+       "-fsanitize=array-bounds",
+       "-fsanitize-trap=array-bounds",
