@@ -5580,7 +5580,11 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours" >&2
 	done
 
 	if [[ -z "${low}" || -z "${high}" ]]; then
-ewarn "chromium_build_allowed():  No estimate for: ${cores}c | ${storage} | LTO=$( ((has_lto)) && echo yes || echo no) | V8=$( ((has_v8_snapshot)) && echo yes || echo no)" >&2
+ewarn "chromium_build_allowed():  QA:  Missing estimate row for the following configuration:"
+ewarn "chromium_build_allowed():  Cores:  ${cores}"
+ewarn "chromium_build_allowed():  Storage:  ${storage}"
+ewarn "chromium_build_allowed():  LTO:  $( ((has_lto)) && echo yes || echo no)"
+ewarn "chromium_build_allowed():  V8:  $( ((has_v8_snapshot)) && echo yes || echo no)"
 		return 1
 	fi
 
@@ -5598,9 +5602,9 @@ else:
 ")
 
 	if (( ${allowed} == 0 )); then
-einfo "chromium_build_allowed():  PASSED: ${tolerance_hours}h ≤ ${high}"
+einfo "chromium_build_allowed():  PASSED: ${high} hrs ≤ ${tolerance_hours} hrs"
 	else
-einfo "chromium_build_allowed():  FAILED: ${tolerance_hours}h > ${high}"
+einfo "chromium_build_allowed():  FAILED: ${high} hrs > ${tolerance_hours} hrs"
 	fi
 
 	return ${allowed}
