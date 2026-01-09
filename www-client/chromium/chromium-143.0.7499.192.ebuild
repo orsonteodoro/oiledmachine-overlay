@@ -5371,7 +5371,12 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 	(( ${USE_LTO} == 1 )) && has_lto=1
 	use v8-snapshot && has_v8_snapshot=1
 
-	local lto_type="With ThinLTO"
+	local lto_type=""
+	if use mold ; then
+		lto_type="With Mold"
+	else
+		lto_type="With ThinLTO"
+	fi
 	(( has_lto == 0 )) && lto_type="Without LTO (component)"
 
 	local v8_type="With V8 Snapshots"
