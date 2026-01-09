@@ -5596,15 +5596,15 @@ low = float(${low})
 high = float(${high})
 
 if high > tolerance:
-    print(1)  # DISALLOWED (too slow)
+    print(1)  # DENIED (Too slow)
 else:
     print(0)  # ALLOWED
 ")
 
 	if (( ${allowed} == 0 )); then
-einfo "chromium_build_allowed():  PASSED: ${high} hrs ≤ ${tolerance_hours} hrs"
+einfo "chromium_build_allowed():  ALLOWED:  Estimated ${high} hours ≤ Tolerable ${tolerance_hours} hours"
 	else
-einfo "chromium_build_allowed():  FAILED: ${high} hrs > ${tolerance_hours} hrs"
+einfo "chromium_build_allowed():  DENIED:  Estimated ${high} hours > Tolerable ${tolerance_hours} hours"
 	fi
 
 	return ${allowed}

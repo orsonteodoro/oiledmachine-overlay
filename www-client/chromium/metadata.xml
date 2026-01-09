@@ -156,15 +156,15 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     dns-send-IPv6-connectivity-probes-to-RIPE-DNS.patch       | add-flag-to-disable-beforeunload.patch
 
     
-    BUILD_TIME_TOLERANCE - The acceptable time for time consuming
-    feature(s) (e.g. LTO, v8-snapshots) when doing cost-benefit analysis.
-    When the worst case estimated build time exceeds the acceptable time,
-    the expensive optimization will be disabled.  For example if the
-    build time for the selected optimizations are estimated to total to
-    36 hours but the user expects the build to finish in 12 hours, then
-    the expensive optimiation(s) will be disabled.  This tunable applies
-    to optimizations where the benefits are miniscule in seconds or
-    fractions of a second but the build time cost is hours or days.
+    BUILD_TIME_TOLERANCE - The acceptable time for time consuming feature(s)
+    (e.g. LTO, v8-snapshots) when doing cost-benefit analysis.  When the worst
+    case estimated build time exceeds the acceptable time, the expensive
+    optimization(s) will be disabled.  For example, if the build time for the
+    selected optimizations are estimated to total to 36 hours but the user
+    expects the build to finish in 12 hours, then the expensive optimization(s)
+    will be disabled.  This tunable applies to optimizations where the benefits
+    are miniscule or non-discernable in seconds or fractions of a seconds speed
+    up but the build time cost is hours or days.
     Default: 2.0
     Valid values:  Decimal hours.
 
