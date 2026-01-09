@@ -5584,7 +5584,7 @@ ewarn "chromium_build_allowed():  QA:  Missing estimate row for the following co
 ewarn "chromium_build_allowed():  Cores:  ${cores}"
 ewarn "chromium_build_allowed():  Storage:  ${storage}"
 ewarn "chromium_build_allowed():  LTO:  $( ((has_lto)) && echo yes || echo no)"
-ewarn "chromium_build_allowed():  V8:  $( ((has_v8_snapshot)) && echo yes || echo no)"
+ewarn "chromium_build_allowed():  V8 Snapshot:  $( ((has_v8_snapshot)) && echo yes || echo no)"
 		return 1
 	fi
 
