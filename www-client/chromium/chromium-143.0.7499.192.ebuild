@@ -1775,7 +1775,7 @@ eerror "At least gcc ${GCC_PV} is required"
 			die
 		fi
 
-		if use pgo && tc-is-cross-compiler; then
+		if use pgo && tc-is-cross-compiler ; then
 eerror "The pgo USE flag cannot be used when cross-compiling"
 			die
 		fi
@@ -6250,11 +6250,17 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 				| tr " " $'\n' \
 				| tail -n 1 \
 				| sed -e "s|-march=||g")
-			export BUILD_CXXFLAGS+=" -march=${a}"
-			export BUILD_CFLAGS+=" -march=${a}"
+			if ! tc-is-cross-compiler ; then
+				append-flags "-march=${a}"
+				export CFLAGS
+				export CXXFLAGS
+			fi
 		else
-			export BUILD_CXXFLAGS+=" -march=x86-64"
-			export BUILD_CFLAGS+=" -march=x86-64"
+			if ! tc-is-cross-compiler ; then
+				append-flags "-march=x86-64"
+				export CFLAGS
+				export CXXFLAGS
+			fi
 		fi
 	fi
 }
