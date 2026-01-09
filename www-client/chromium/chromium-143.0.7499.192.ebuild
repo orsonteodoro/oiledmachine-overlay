@@ -6244,8 +6244,18 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	# Try to fix top_domain_generator invalid opcode in dmesg
 	if [[ "${host_cpu}" == "x86-64-v1" ]] ; then
-		export BUILD_CXXFLAGS+=" -march=x86-64"
-		export BUILD_CFLAGS+=" -march=x86-64"
+		if [[ "${CFLAGS}" =~ "-march" ]] ; then
+			local a=$(echo "${CFLAGS}" \
+				| grep -E -e "-march=[a-z0-9-]+" \
+				| tr " " $'\n' \
+				| tail -n 1 \
+				| sed -e "s|-march=||g")
+			export BUILD_CXXFLAGS+=" -march=${a}"
+			export BUILD_CFLAGS+=" -march=${a}"
+		else
+			export BUILD_CXXFLAGS+=" -march=x86-64"
+			export BUILD_CFLAGS+=" -march=x86-64"
+		fi
 	fi
 }
 
