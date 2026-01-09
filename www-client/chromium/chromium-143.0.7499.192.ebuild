@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_31
+ebuild_revision_32
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -6099,11 +6099,14 @@ _configure_optimization_level() {
 	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
 		replace-flags "-O*" "-O1"
 	fi
+
+	local olast=""
 	if use official ; then
-		replace-flags "-O*" "-O3"
+		filter-flags "-O*"
+	else
+		olast=$(get_olast)
+		replace-flags "-O*" "${get_olast}"
 	fi
-	local olast=$(get_olast)
-	replace-flags "-O*" "${get_olast}"
 
 	local oshit_opt_level_dav1d
 	local oshit_opt_level_libaom
