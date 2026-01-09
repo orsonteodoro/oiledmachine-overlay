@@ -6272,6 +6272,7 @@ eerror "Disable the official USE flag to continue."
 				)
 			fi
 		fi
+		filter-flags "-march=*"
 	else
 		if ! use official ; then
 			if [[ "${CFLAGS}" =~ "-march" ]] ; then
@@ -6286,6 +6287,7 @@ eerror "Disable the official USE flag to continue."
 					)
 				fi
 			fi
+			filter-flags "-march=*"
 		fi
 	fi
 	if ! use official ; then
@@ -6300,6 +6302,7 @@ eerror "Disable the official USE flag to continue."
 					"use_mcpu=\"${a}\""
 				)
 			fi
+			filter-flags "-mcpu=*"
 		fi
 		if [[ "${CFLAGS}" =~ "-mtune" ]] ; then
 			local a=$(echo "${CFLAGS}" \
@@ -6312,6 +6315,7 @@ eerror "Disable the official USE flag to continue."
 					"use_mtune=\"${a}\""
 				)
 			fi
+			filter-flags "-mtune=*"
 		fi
 	fi
 }
