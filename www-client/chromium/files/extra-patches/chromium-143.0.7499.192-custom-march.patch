@@ -1,21 +1,29 @@
 --- a/build/config/compiler/BUILD.gn.orig	2026-01-08 20:21:00.565347382 -0800
 +++ b/build/config/compiler/BUILD.gn	2026-01-08 20:41:36.294240209 -0800
-@@ -243,6 +243,9 @@ declare_args() {
+@@ -243,6 +243,11 @@ declare_args() {
    use_rust_stack_protector_level = ""
    use_rust_tsan = false
    use_rust_ubsan = false
 +
 +  # Compatibility
 +  use_march=""
++  use_mcpu=""
++  use_mtune=""
  }
  
  declare_args() {
-@@ -390,6 +393,10 @@ config("compiler") {
+@@ -390,6 +393,16 @@ config("compiler") {
      configs += [ "//build/config/zos:compiler" ]
    }
  
 +  if (use_march != "") {
-+    cflags += [ "${use_march}" ]
++    cflags += [ "-march=${use_march}" ]
++  }
++  if (use_mcpu != "") {
++    cflags += [ "-mcpu=${use_mcpu}" ]
++  }
++  if (use_mtune != "") {
++    cflags += [ "-mtune=${use_mtune}" ]
 +  }
 +
    configs += [

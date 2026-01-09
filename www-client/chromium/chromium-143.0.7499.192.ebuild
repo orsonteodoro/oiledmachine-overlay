@@ -6262,13 +6262,54 @@ eerror "Disable the official USE flag to continue."
 				| sed -e "s|-march=||g")
 			if ! tc-is-cross-compiler ; then
 				myconf_gn+=(
-					"use_march=\"-march=${a}\""
+					"use_march=\"${a}\""
 				)
 			fi
 		else
 			if ! tc-is-cross-compiler ; then
 				myconf_gn+=(
-					"use_march=\"-march=x86-64\""
+					"use_march=\"x86-64\""
+				)
+			fi
+		fi
+	else
+		if ! use official ; then
+			if [[ "${CFLAGS}" =~ "-march" ]] ; then
+				local a=$(echo "${CFLAGS}" \
+					| grep -E -e "-march=[a-z0-9.+-]+" \
+					| tr " " $'\n' \
+					| tail -n 1 \
+					| sed -e "s|-march=||g")
+				if ! tc-is-cross-compiler ; then
+					myconf_gn+=(
+						"use_march=\"${a}\""
+					)
+				fi
+			fi
+		fi
+	fi
+	if ! use official ; then
+		if [[ "${CFLAGS}" =~ "-mcpu" ]] ; then
+			local a=$(echo "${CFLAGS}" \
+				| grep -E -e "-mcpu=[a-z0-9.+-]+" \
+				| tr " " $'\n' \
+				| tail -n 1 \
+				| sed -e "s|-mcpu=||g")
+			if ! tc-is-cross-compiler ; then
+				myconf_gn+=(
+					"use_mcpu=\"${a}\""
+				)
+			fi
+		fi
+		if [[ "${CFLAGS}" =~ "-mtune" ]] ; then
+			local a=$(echo "${CFLAGS}" \
+				| grep -E -e "-mtune=[a-z0-9.+-]+" \
+				| tr " " $'\n' \
+				| tail -n 1 \
+				| sed -e "s|-mtune=||g")
+			if ! tc-is-cross-compiler ; then
+				myconf_gn+=(
+					"use_mtune=\"${a}\""
 				)
 			fi
 		fi
