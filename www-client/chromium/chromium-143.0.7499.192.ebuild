@@ -5801,7 +5801,7 @@ get_host_cpu() {
 	# The vendored Clang makes x86-64 Level 2 ISA default.
 		if (( ${is_x86_64_v1} == 1 )) || [[ "${HOST_CPU_X86_64_V1:-0}" == "1" ]] ; then
 einfo "Using x86-64 Level 1 ISA"
-			host_cpu="x86_64"
+			host_cpu="x86-64-v1"
 		else
 einfo "Using x86-64 Level 2 ISA"
 			host_cpu="x64"
@@ -6238,16 +6238,14 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	local host_cpu=$(get_host_cpu)
 	myconf_gn+=(
 		"current_cpu=\"${target_cpu}\""
-		"host_cpu=\"${host_cpu}\""
+		"host_cpu=\"${target_cpu}\""
 		"target_cpu=\"${target_cpu}\""
 	)
 
 	# Try to fix top_domain_generator invalid opcode in dmesg
-	if [[ "${host_cpu}" == "x86_64" ]] ; then
-		myconf_gn+=(
-			"extra_cflags = [ \"-march=x86-64\" ]"
-			"extra_cxxflags = [ \"-march=x86-64\" ]"
-		)
+	if [[ "${host_cpu}" == "x86-64-v1" ]] ; then
+		export BUILD_CXXFLAGS+=" -march=x86-64"
+		export BUILD_CFLAGS+=" -march=x86-64"
 	fi
 }
 
