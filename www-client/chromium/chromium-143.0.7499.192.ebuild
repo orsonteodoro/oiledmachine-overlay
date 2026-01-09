@@ -2747,6 +2747,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
+		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 	)
 }
 
@@ -6243,6 +6244,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	)
 
 	# Try to fix top_domain_generator invalid opcode in dmesg
+	# Use_march is required because //build/toolchain/linux/unbundle:host
+	# or //build/toolchain/linux/unbundle:default are not applied and
+	# only applied with system-toolchain USE flag.
 	if [[ "${host_cpu}" == "x86-64-v1" ]] ; then
 		if use official ; then
 eerror "-march=${a} is not supported with USE=official."
@@ -6258,15 +6262,13 @@ eerror "Disable the official USE flag to continue."
 				| sed -e "s|-march=||g")
 			if ! tc-is-cross-compiler ; then
 				myconf_gn+=(
-					"extra_cflags=\"-march=${a}\""
-					"extra_cxflags=\"-march=${a}\""
+					"use_march=\"-march=${a}\""
 				)
 			fi
 		else
 			if ! tc-is-cross-compiler ; then
 				myconf_gn+=(
-					"extra_cflags=\"-march=x86-64\""
-					"extra_cxflags=\"-march=x86-64\""
+					"use_march=\"-march=x86-64\""
 				)
 			fi
 		fi
