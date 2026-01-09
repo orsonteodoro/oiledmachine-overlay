@@ -5311,9 +5311,9 @@ ewarn "Did not detect block device backing ${WORKDIR}"
 # 1 if too slow (aka DISALLOWED)
 #
 chromium_build_allowed() {
-	local actual_hours="${1}"
-	if [[ -z "${actual_hours}" || ! "${actual_hours}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
+	local tolerance_hours="${1}"
+	if [[ -z "${tolerance_hours}" || ! "${tolerance_hours}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours" >&2
 		return 1
 	fi
 
@@ -5569,7 +5569,7 @@ ewarn "chromium_build_allowed():  ERROR: Invalid or missing actual_hours" >&2
 			[[ \
 				"${r_cores}" == "${cores}" && \
 				"${r_lto}" == "${lto_type}" && \
-				"${r_storage}" == "${storage}" && \
+				"${r_storage,,}" == "${storage}" && \
 				"${r_v8}" == "${v8_type}" \
 			]] \
 		; then
@@ -5587,20 +5587,20 @@ ewarn "chromium_build_allowed():  No estimate for: ${cores}c | ${storage} | LTO=
 	# Final decision using Python for float precision
 	local allowed
 allowed=$(python3 -c "
-actual = float(${actual_hours})
+tolerance = float(${tolerance_hours})
 low = float(${low})
 high = float(${high})
 
-if actual <= high:
-    print(0)  # ALLOWED
-else:
+if high > tolerance:
     print(1)  # DISALLOWED (too slow)
+else:
+    print(0)  # ALLOWED
 ")
 
 	if (( ${allowed} == 0 )); then
-einfo "chromium_build_allowed():  PASSED: ${actual_hours}h ≤ ${high} (expected ${low}–${high}h)"
+einfo "chromium_build_allowed():  PASSED: ${tolerance_hours}h ≤ ${high}"
 	else
-einfo "chromium_build_allowed():  FAILED: ${actual_hours}h > ${high} (expected ${low}–${high}h)"
+einfo "chromium_build_allowed():  FAILED: ${tolerance_hours}h > ${high}"
 	fi
 
 	return ${allowed}
