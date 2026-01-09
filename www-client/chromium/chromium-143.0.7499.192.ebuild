@@ -5581,10 +5581,12 @@ ewarn "chromium_build_allowed():  WARNING: ${cores} threads not in table — rou
 
 	if [[ -z "${low}" || -z "${high}" ]]; then
 ewarn "chromium_build_allowed():  QA:  Missing estimate row for the following configuration:"
-ewarn "chromium_build_allowed():  Cores:  ${cores}"
-ewarn "chromium_build_allowed():  Storage:  ${storage}"
-ewarn "chromium_build_allowed():  LTO:  $( ((has_lto)) && echo yes || echo no)"
-ewarn "chromium_build_allowed():  V8 Snapshot:  $( ((has_v8_snapshot)) && echo yes || echo no)"
+ewarn "chromium_build_allowed():  cores:  ${cores}"
+ewarn "chromium_build_allowed():  storage:  ${storage}"
+ewarn "chromium_build_allowed():  has_lto:  ${has_lto}"
+ewarn "chromium_build_allowed():  has_v8_snapshot:  ${has_v8_snapshot}"
+ewarn "chromium_build_allowed():  low:  ${low}"
+ewarn "chromium_build_allowed():  high:  ${high}"
 		return 1
 	fi
 
