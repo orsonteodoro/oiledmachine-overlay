@@ -5602,9 +5602,9 @@ else:
 ")
 
 	if (( ${allowed} == 0 )); then
-einfo "chromium_build_allowed():  ALLOWED:  Estimated ${high} hours ≤ Tolerable ${tolerance_hours} hours"
+einfo "chromium_build_allowed():  ALLOWED:  Estimated worst-case ${high} hours ≤ Tolerable ${tolerance_hours} hours"
 	else
-einfo "chromium_build_allowed():  DENIED:  Estimated ${high} hours > Tolerable ${tolerance_hours} hours"
+einfo "chromium_build_allowed():  DENIED:  Estimated worst-case ${high} hours > Tolerable ${tolerance_hours} hours"
 	fi
 
 	return ${allowed}
