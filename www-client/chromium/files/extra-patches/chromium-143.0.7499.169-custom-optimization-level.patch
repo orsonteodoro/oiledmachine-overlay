@@ -12,8 +12,8 @@
  # Features used by //base/trace_event and //services/tracing.
  declare_args() {
    # Limits the defined //third_party/android_deps targets to only "buildCompile"
---- a/build/config/compiler/BUILD.gn.orig	2026-01-04 19:38:50.153988565 -0800
-+++ b/build/config/compiler/BUILD.gn	2026-01-04 20:57:41.821858531 -0800
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-10 11:25:02.520602999 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-10 11:40:51.173752717 -0800
 @@ -210,6 +210,7 @@ declare_args() {
    is_wexit_time_destructors_default = true
  
@@ -82,7 +82,31 @@
  }
  
  # This config can be used to override the default settings for per-component
-@@ -3420,3 +3445,33 @@ config("cet_shadow_stack") {
+@@ -2923,9 +2948,21 @@ config("optimize_speed") {
+   } else if (optimize_for_fuzzing) {
+     cflags = [ "-O1" ] + common_optimize_on_cflags
+   } else {
+-    cflags = [ "-O3" ] + common_optimize_on_cflags
++    if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
++      cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++    } else if (custom_optimization_level != "") {
++      cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++    } else {
++      cflags = [ "-O3" ] + common_optimize_on_cflags
++    }
++  }
++  if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++    rustflags = [ "-Copt-level=3" ]
++  } else if (custom_optimization_level != "") {
++    rustflags = [ "-Copt-level=$custom_optimization_level" ]
++  } else {
++    rustflags = [ "-Copt-level=3" ]
+   }
+-  rustflags = [ "-Copt-level=3" ]
+ }
+ 
+ config("optimize_fuzzing") {
+@@ -3420,3 +3457,33 @@ config("cet_shadow_stack") {
      ldflags = [ "/CETCOMPAT" ]
    }
  }
