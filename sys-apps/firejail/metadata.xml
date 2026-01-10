@@ -224,8 +224,8 @@
     [2] Disabled
     [3] Known as xcsecurity, x11 security extension
     [4] Some apps do not work
-    [5] Frame grab isolation is to prevent a analog hole like leak when using the show password feature typically found in password managers.
-    [6] Input isolation is to prevent a compromised app from snooping or keylogging on passwords between two X window applications.
+    [5] Frame grab isolation mitigates the analog hole like leak when using the show password feature typically found in password managers or from taking captures of sensitive documents or numbers.
+    [6] Input isolation mitigates a compromised app from snooping or keylogging on passwords between two X window applications.
 
     Tests performed with WebGL Aquarium and software rendering override
 
