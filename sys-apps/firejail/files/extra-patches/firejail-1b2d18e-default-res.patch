@@ -1,0 +1,75 @@
+diff '--color=auto' -urp firejail-0.9.78.orig/etc/firejail.config firejail-0.9.78/etc/firejail.config
+--- firejail-0.9.78.orig/etc/firejail.config	2026-01-09 18:40:16.108154177 -0800
++++ firejail-0.9.78/etc/firejail.config	2026-01-09 18:40:33.116606267 -0800
+@@ -168,7 +168,7 @@ private-bin-no-local yes
+ # xephyr-extra-params -keybd ephyr,,,xkbmodel=evdev
+ # xephyr-extra-params -grayscale
+ 
+-# Screen size for --x11=xephyr, default 800x600. Run /usr/bin/xrandr for
++# Screen size for --x11=xephyr, default @WIDTH@x@HEIGHT@. Run /usr/bin/xrandr for
+ # a full list of resolutions available on your specific setup.
+ # xephyr-screen 640x480
+ # xephyr-screen 800x600
+@@ -185,7 +185,7 @@ private-bin-no-local yes
+ # Xpra server command extra parameters. None by default; this is an example.
+ # xpra-extra-params --dpi 96
+ 
+-# Screen size for --x11=xvfb, default 800x600x24. The third dimension is
++# Screen size for --x11=xvfb, default @WIDTH@x@HEIGHT@x@BPP@. The third dimension is
+ # color depth; use 24 unless you know exactly what you're doing.
+ # xvfb-screen 640x480x24
+ # xvfb-screen 800x600x24
+Only in firejail-0.9.78/etc: firejail.config.orig
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firejail/checkcfg.c firejail-0.9.78/src/firejail/checkcfg.c
+--- firejail-0.9.78.orig/src/firejail/checkcfg.c	2026-01-09 18:40:16.077902454 -0800
++++ firejail-0.9.78/src/firejail/checkcfg.c	2026-01-09 18:40:33.116846546 -0800
+@@ -28,10 +28,10 @@
+ 
+ static int initialized = 0;
+ static int cfg_val[CFG_MAX];
+-char *xephyr_screen = "800x600";
++char *xephyr_screen = "@WIDTH@x@HEIGHT@";
+ char *xephyr_extra_params = "";
+ char *xpra_extra_params = "";
+-char *xvfb_screen = "800x600x24";
++char *xvfb_screen = "@WIDTH@x@HEIGHT@x@BPP@";
+ char *xvfb_extra_params = "";
+ char *netfilter_default = NULL;
+ int arg_max_count = MAX_ARGS; // maximum number of command arguments (argc)
+Only in firejail-0.9.78/src/firejail: checkcfg.c.orig
+diff '--color=auto' -urp firejail-0.9.78.orig/src/firejail/usage.c firejail-0.9.78/src/firejail/usage.c
+--- firejail-0.9.78.orig/src/firejail/usage.c	2025-12-30 05:03:06.000000000 -0800
++++ firejail-0.9.78/src/firejail/usage.c	2026-01-09 18:41:14.894462830 -0800
+@@ -290,7 +290,7 @@ static const char *const usage_str =
+ 	"\tinstalled, then it checks if Xephyr is installed. If all fails, it will\n"
+ 	"\tattempt to use X11 security extension.\n"
+ 	"    --x11=none - disable access to X11 sockets.\n"
+-	"    --x11=xephyr - enable Xephyr X11 server. The window size is 800x600.\n"
++	"    --x11=xephyr - enable Xephyr X11 server.\n"
+ 	"    --x11=xorg - enable X11 security extension.\n"
+ 	"    --x11=xpra - enable Xpra X11 server.\n"
+ 	"    --x11=xvfb - enable Xvfb X11 server.\n"
+Only in firejail-0.9.78/src/firejail: usage.c.orig
+Only in firejail-0.9.78/src/firejail: usage.c.rej
+diff '--color=auto' -urp firejail-0.9.78.orig/src/man/firejail.1.in firejail-0.9.78/src/man/firejail.1.in
+--- firejail-0.9.78.orig/src/man/firejail.1.in	2025-12-30 05:07:51.000000000 -0800
++++ firejail-0.9.78/src/man/firejail.1.in	2026-01-09 18:40:33.117604660 -0800
+@@ -3278,7 +3278,7 @@ A network namespace needs to be instanti
+ .br
+ 
+ .br
+-Xephyr runs in a window just like any other X11 application. The default window size is 800x600.
++Xephyr runs in a window just like any other X11 application. The default window size is @WIDTH@x@HEIGHT@.
+ This can be modified in /etc/firejail/firejail.config file.
+ .br
+ 
+@@ -3358,7 +3358,7 @@ Example: remote VNC access
+ 
+ .br
+ On the server we start a sandbox using Xvfb and openbox
+-window manager. The default size of Xvfb screen is 800x600 - it can be changed
++window manager. The default size of Xvfb screen is @WIDTH@x@HEIGHT@ - it can be changed
+ in /etc/firejail/firejail.config (xvfb-screen). Some sort of networking (--net) is required
+ in order to isolate the abstract sockets used by other X servers.
+ .br
+Only in firejail-0.9.78/src/man: firejail.1.in.orig

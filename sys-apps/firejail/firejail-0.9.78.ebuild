@@ -10,6 +10,9 @@ MY_PN="Firejail"
 
 CFLAGS_HARDENED_USE_CASES="security-critical sandbox sensitive-data untrusted-data"
 CXX_STANDARD="ignore"
+FIREJAIL_DEFAULT_WIDTH=${FIREJAIL_DEFAULT_WIDTH:-1920}
+FIREJAIL_DEFAULT_HEIGHT=${FIREJAIL_DEFAULT_HEIGHT:-1080}
+FIREJAIL_DEFAULT_BPP=${FIREJAIL_DEFAULT_BBP:-24}
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 may be needed for testing
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
 PYTHON_COMPAT=( "python3_"{9..12} )
@@ -1630,8 +1633,8 @@ ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
-test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild_revision_48
+test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
+ebuild_revision_50
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -1657,6 +1660,9 @@ REQUIRED_USE+="
 		X
 	)
 	xpra? (
+		X
+	)
+	xcsecurity? (
 		X
 	)
 	xvfb? (
@@ -1687,7 +1693,7 @@ RDEPEND+="
 		>=sys-libs/libselinux-8.1.0
 	)
 	X? (
-		x11-base/xorg-server[-suid,xvfb?]
+		x11-base/xorg-server[-suid,xcsecurity?,xvfb?]
 	)
 	xpra? (
 		x11-wm/xpra[X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
@@ -2365,13 +2371,13 @@ firejail_profiles_youtube-viewer )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.78-envlimits.patch"
 	"${FILESDIR}/${PN}-0.9.78-firecfg.config.patch"
-	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
-	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
+#	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
+#	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-1a576d1-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-upscayl-profile.patch"
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-1080p.patch"
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-caprine-profile.patch"
 )
 
@@ -3053,6 +3059,18 @@ ewarn "Use LLD or mold for ROP mitigation"
 	done
 }
 
+_src_configure_default_res() {
+	sed -i \
+		-e "s|@WIDTH@|${FIREJAIL_DEFAULT_WIDTH}|g" \
+		-e "s|@HEIGHT@|${FIREJAIL_DEFAULT_HEIGHT}|g" \
+		-e "s|@BBP@|${FIREJAIL_DEFAULT_BBP}|g" \
+		"etc/firejail.config" \
+		"src/firejail/checkcfg.c" \
+		"src/firejail/usage.c" \
+		"src/man/firejail.1.in" \
+		|| die
+}
+
 _src_configure_max_envs() {
 	sed -i \
 		-e "s|@ENV_MAX_COUNT@|${FIREJAIL_MAX_ENVS}|g" \
@@ -3087,6 +3105,7 @@ _src_configure() {
 	fi
 
 	_src_configure_max_envs
+	_src_configure_default_res
 
 	local myconf=(
 		--enable-suid # Hard requirement
@@ -3544,6 +3563,7 @@ einfo "Generating wrapper for ${wrapper_name}"
 	fi
 
 	local x11_arg=""
+	local xcsecurity_arg=""
 
 	is_x11_compat() {
 		local arg="${1}"
@@ -3649,12 +3669,16 @@ einfo "Forcing xephyr for ${profile_name}"
 		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
 		x11_arg="--x11=xvfb"
+	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xorg" ]] && use xcsecurity ; then
+		x11_arg="--x11=xorg"
 	elif is_x11_compat "${profile_name}" && use xpra ; then
 		x11_arg="--x11=xpra"
 	elif is_x11_compat "${profile_name}" && use xephyr ; then
 		picked_xephyr=1
 		x11_arg="--x11=xephyr"
+	elif is_x11_compat "${profile_name}" && use xcsecurity ; then
 	# For --x11=org, see issue 1741 in firejail repo
+		x11_arg="--x11=xorg"
 	fi
 
 	if (( ${picked_xephyr} == 1 )) ; then
@@ -3850,6 +3874,7 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 	local all_args_x=(
 		${apparmor_arg}
 		${x11_arg}
+		${xcsecurity_arg}
 		${allocator_args}
 		${wh_arg}
 		${seccomp_arg}

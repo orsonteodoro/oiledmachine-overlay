@@ -77,6 +77,18 @@
     sandboxed programs typically those without a PROFILE_NAME.  This
     can use all the VAR_NAME[PROFILE_NAME] environment variables.
 
+    FIREJAIL_DEFAULT_WIDTH - Horizontal size
+    Default:  1920
+    Valid values - Integer, typically 800, 1920, 2560, 3840
+
+    FIREJAIL_DEFAULT_HEIGHT - Vertical size
+    Default:  1080
+    Valid values - Integer, typically 600, 1080, 1440, 2160
+
+    FIREJAIL_DEFAULT_BPP - Bits per pixel
+    Default:  24
+    Valid values - Integer, typically 8, 16, 24, 32
+
     LANDLOCK[PROFILE_NAME] - Restrict app file access.
     Valid values - 1 (restrict), 0 (unrestrict), unset (unrestrict)
 
@@ -203,7 +215,7 @@
     xephyr         | works      | balanced-security      | 9              | 8                 | window size inconsistencies | fast start, faster scroll   | yes, but slow
     xpra           | works      | security-critical      | 9              | 4                 | slow start                  | no window size problems     | yes, but slow
     xpra-virtualgl | works [2]  | balanced-security      | 8              | 6                 | slow start                  | no window size problems     | yes, but slow
-    xorg [1][3]    | broken [2] | balanced-security      | 6              | 9                 |                             |                             | 
+    xorg [1][3]    | broken [2] | balanced-security      | 6              | 9                 | weak input isolation        | some screenshot protection  | yes, fast
     xvfb           | untested   | security-critical      | 9              | 3                 |                             | hidden output               | untested
     wayland        | works      | performance-critical & | 10             | 10                | annoying quirks,            | fastest fps                 | yes, fast
                    |            | security-critical      |                |                   | compatibility               |                             |
@@ -419,6 +431,9 @@
     </flag>
     <flag name="xpra">
       Enable Xpra support for windowed apps and better OpenGL support.
+    </flag>
+    <flag name="xcsecurity">
+      Enable xcsecurity support for balanced sandboxing.
     </flag>
     <flag name="xvfb">
       Enable Xvfb support for sandboxing remote access or headless servers.
