@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_37
+ebuild_revision_38
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -4518,7 +4518,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			)
 			if (( ${USE_LTO} == 1 )) ; then
 				myconf_gn+=(
-					"use_fortify_source_integrity_loss_mitigation_for_lto=1"
+					"use_fortify_source_integrity_loss_mitigation_for_lto=true"
 				)
 			fi
 		elif is-flagq "-D_FORTIFY_SOURCE=2" ; then
@@ -4529,7 +4529,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			)
 			if (( ${USE_LTO} == 1 )) ; then
 				myconf_gn+=(
-					"use_fortify_source_integrity_loss_mitigation_for_lto=1"
+					"use_fortify_source_integrity_loss_mitigation_for_lto=true"
 				)
 			fi
 		fi
