@@ -7047,7 +7047,7 @@ _src_compile() {
 einfo "Optimizing load time..."
 	# Build mksnapshot and pax-mark it.
 		local x
-		for x in "mksnapshot" "v8_context_snapshot_generator" ; do
+		for x in "mksnapshot" "v8_context_snapshot_generator" "code_cache_generator" ; do
 			if tc-is-cross-compiler ; then
 				_eninja \
 					"out/Release" \
