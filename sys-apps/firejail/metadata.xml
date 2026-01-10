@@ -223,7 +223,7 @@
     [1] Workarounds may compromise security.  Issue 1741
     [2] Disabled
     [3] Known as xcsecurity, x11 security extension
-    [4] Some apps do not work
+    [4] Some apps do not work with it
     [5] Frame grab isolation mitigates the analog hole like leak when using the show password feature typically found in password managers or from taking captures of sensitive documents or numbers.
     [6] Input isolation mitigates a compromised app from snooping or keylogging on passwords between two X window applications.
 
