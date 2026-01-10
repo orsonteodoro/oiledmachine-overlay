@@ -23,7 +23,7 @@
      } else if (arm_control_flow_integrity == "pac") {
 --- a/build/config/compiler/BUILD.gn.orig	2026-01-10 12:14:12.850538919 -0800
 +++ b/build/config/compiler/BUILD.gn	2026-01-10 12:40:36.084976876 -0800
-@@ -211,6 +211,40 @@ declare_args() {
+@@ -211,6 +211,39 @@ declare_args() {
  
    #use_mold = false
    #custom_optimization_level = ""
@@ -31,8 +31,7 @@
 +  # C/C++ hardening
 +  use_cf_protection = ""
 +  use_fortify_source = -1
-+  use_fortify_source_extras = false
-+  use_fortify_source_extras_no_inline = false
++  use_fortify_source_integrity_loss_mitigation_level = -1
 +  use_fhardened = false
 +  use_harden_sls = ""
 +  use_retpoline = ""
@@ -203,7 +202,7 @@
 +    } else if (use_fortify_source == 2) {
 +      cflags += [ "-U_FORTIFY_SOURCE" ]
 +      cflags += [ "-D_FORTIFY_SOURCE=2" ]
-+      if (use_fortify_source_extras) {
++      if (use_fortify_source_integrity_loss_mitigation_level >= 1) {
 +        # Prevent removal or optimizing out of security-critical fortify checks
 +        if (is_clang) {
 +          cflags += [ "-fno-strict-aliasing" ]
@@ -228,7 +227,7 @@
 +    } else if (use_fortify_source == 3) {
 +      cflags += [ "-U_FORTIFY_SOURCE" ]
 +      cflags += [ "-D_FORTIFY_SOURCE=3" ]
-+      if (use_fortify_source_extras) {
++      if (use_fortify_source_integrity_loss_mitigation_level >= 1) {
 +        # Prevent removal or optimizing out of security-critical fortify checks
 +        if (is_clang) {
 +          cflags += [ "-fno-strict-aliasing" ]
@@ -243,7 +242,7 @@
 +          cflags += [ "-fno-tree-loop-optimize" ]
 +          cflags += [ "-fno-optimize-sibling-calls" ]
 +        }
-+        if (use_fortify_source_extras_no_inline) {
++        if (use_fortify_source_integrity_loss_mitigation_level >= 2) {
 +          # Enable for stronger integrity preservation but will likely slow down by 50% runtime performance in web browsers
 +          cflags += [ "-fno-inline" ]
 +        }

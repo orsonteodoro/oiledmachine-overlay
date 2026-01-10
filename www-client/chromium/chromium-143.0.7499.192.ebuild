@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_35
+ebuild_revision_36
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
