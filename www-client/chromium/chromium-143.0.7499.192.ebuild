@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_36
+ebuild_revision_37
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -4516,12 +4516,22 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				"use_rust_fortify_source_level=3"
 				"use_fortify_source_integrity_loss_mitigation_level=1"
 			)
+			if (( ${USE_LTO} == 1 )) ; then
+				myconf_gn+=(
+					"use_fortify_source_integrity_loss_mitigation_for_lto=1"
+				)
+			fi
 		elif is-flagq "-D_FORTIFY_SOURCE=2" ; then
 			myconf_gn+=(
 				"use_fortify_source=2"
 				"use_rust_fortify_source_level=2"
 				"use_fortify_source_integrity_loss_mitigation_level=1"
 			)
+			if (( ${USE_LTO} == 1 )) ; then
+				myconf_gn+=(
+					"use_fortify_source_integrity_loss_mitigation_for_lto=1"
+				)
+			fi
 		fi
 
 		# For sanitizers on internal libc++, SSP for Rust
