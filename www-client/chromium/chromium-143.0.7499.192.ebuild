@@ -645,7 +645,7 @@ ${SYSTEM_USE[@]}
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_34
+ebuild_revision_35
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="
@@ -4241,6 +4241,21 @@ _remove_hardening_flags() {
 		"-fstack-clash-protection" \
 		"-ftrapv"
 
+	# _FORTIFY_SOURCE integrity loss mitigation flags
+	filter-flags \
+		"-f*strict-aliasing" \
+		"-mllvm" "-disable-dce" \
+		"-mllvm" "-disable-loop-optimizations" \
+		"-f*optimize-sibling-calls" \
+		"-f*tree-dce" \
+		"-f*tree-loop-optimize" \
+		"-f*optimize-sibling-calls" \
+		"-f*lto-promote-static-vtables" \
+		"-f*whole-program-vtables" \
+		"-f*ipa-cp" \
+		"-f*ipa-icf" \
+		"-f*inline"
+
 	# Prevent slowdowns with hardening flags
 	filter-flags "-fno-inline"
 }
@@ -4499,11 +4514,13 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			myconf_gn+=(
 				"use_fortify_source=3"
 				"use_rust_fortify_source_level=3"
+				"use_fortify_source_integrity_loss_mitigation_level=1"
 			)
 		elif is-flagq "-D_FORTIFY_SOURCE=2" ; then
 			myconf_gn+=(
 				"use_fortify_source=2"
 				"use_rust_fortify_source_level=2"
+				"use_fortify_source_integrity_loss_mitigation_level=1"
 			)
 		fi
 

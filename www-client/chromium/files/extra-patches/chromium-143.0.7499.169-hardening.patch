@@ -21,9 +21,9 @@
        cflags += [ "-mbranch-protection=standard" ]
        rustflags = [ "-Zbranch-protection=pac-ret,bti" ]
      } else if (arm_control_flow_integrity == "pac") {
---- a/build/config/compiler/BUILD.gn.orig	2026-01-09 16:33:37.585891252 -0800
-+++ b/build/config/compiler/BUILD.gn	2026-01-09 16:35:24.947432366 -0800
-@@ -211,6 +211,38 @@ declare_args() {
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-10 12:14:12.850538919 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-10 12:40:36.084976876 -0800
+@@ -211,6 +211,40 @@ declare_args() {
  
    #use_mold = false
    #custom_optimization_level = ""
@@ -31,6 +31,8 @@
 +  # C/C++ hardening
 +  use_cf_protection = ""
 +  use_fortify_source = -1
++  use_fortify_source_extras = false
++  use_fortify_source_extras_no_inline = false
 +  use_fhardened = false
 +  use_harden_sls = ""
 +  use_retpoline = ""
@@ -62,7 +64,7 @@
  }
  
  declare_args() {
-@@ -458,11 +490,145 @@ config("compiler") {
+@@ -458,7 +492,189 @@ config("compiler") {
        } else if (is_posix || is_fuchsia) {
          if (current_os != "aix") {
            # Not available on aix.
@@ -85,7 +87,7 @@
 +        if (use_retpoline_external_thunk) {
 +          # Lightweight modifier, for embedded or mobile
 +          cflags += [ "-mretpoline-external-thunk" ]
-         }
++        }
 +      } else {
 +        if (use_retpoline == "thunk-extern") {
 +        # Lightweight, for embedded or mobile
@@ -163,9 +165,9 @@
 +      } else if (use_vtable_verify == "preinit") {
 +        # Security-critical
 +        cflags_cc += [ "-fvtable-verify=preinit" ]
-       }
-     }
- 
++      }
++    }
++
 +    if (!is_official_build) {
 +      # Apply to entire package
 +      if (init_stack_vars_zero) {
@@ -201,15 +203,59 @@
 +    } else if (use_fortify_source == 2) {
 +      cflags += [ "-U_FORTIFY_SOURCE" ]
 +      cflags += [ "-D_FORTIFY_SOURCE=2" ]
++      if (use_fortify_source_extras) {
++        # Prevent removal or optimizing out of security-critical fortify checks
++        if (is_clang) {
++          cflags += [ "-fno-strict-aliasing" ]
++          cflags += [ "-mllvm" ]
++          cflags += [ "-disable-dce" ]
++          cflags += [ "-mllvm" ]
++          cflags += [ "-disable-loop-optimizations" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        } else {
++          cflags += [ "-fno-strict-aliasing" ]
++          cflags += [ "-fno-tree-dce" ]
++          cflags += [ "-fno-tree-loop-optimize" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        }
++        if (use_mold || use_thin_lto) {
++          cflags += [ "-fno-lto-promote-static-vtables" ]
++          cflags += [ "-fno-whole-program-vtables" ]
++          cflags += [ "-fno-ipa-cp" ]
++          cflags += [ "-fno-ipa-icf" ]
++        }
++      }
 +    } else if (use_fortify_source == 3) {
 +      cflags += [ "-U_FORTIFY_SOURCE" ]
 +      cflags += [ "-D_FORTIFY_SOURCE=3" ]
-+    }
-+
-     if (use_mold) {
-       ldflags += [ "-fuse-ld=mold" ]
-     } else if (use_lld) {
-@@ -1220,6 +1386,113 @@ config("compiler") {
++      if (use_fortify_source_extras) {
++        # Prevent removal or optimizing out of security-critical fortify checks
++        if (is_clang) {
++          cflags += [ "-fno-strict-aliasing" ]
++          cflags += [ "-mllvm" ]
++          cflags += [ "-disable-dce" ]
++          cflags += [ "-mllvm" ]
++          cflags += [ "-disable-loop-optimizations" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        } else {
++          cflags += [ "-fno-strict-aliasing" ]
++          cflags += [ "-fno-tree-dce" ]
++          cflags += [ "-fno-tree-loop-optimize" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        }
++        if (use_fortify_source_extras_no_inline) {
++          # Enable for stronger integrity preservation but will likely slow down by 50% runtime performance in web browsers
++          cflags += [ "-fno-inline" ]
++        }
++        if (use_mold || use_thin_lto) {
++          cflags += [ "-fno-lto-promote-static-vtables" ]
++          cflags += [ "-fno-whole-program-vtables" ]
++          cflags += [ "-fno-ipa-cp" ]
++          cflags += [ "-fno-ipa-icf" ]
+         }
+       }
+     }
+@@ -1220,6 +1436,113 @@ config("compiler") {
      rustenv += [ "CROSTC_IS_AWARE_OF_THIS_USECASE=1" ]
    }
  
@@ -323,7 +369,7 @@
    # 64-bit Android sometimes defines __ARM_NEON but not __ARM_NEON__.
    # 32-bit Android builds and macOS, however, define __ARM_NEON__,
    # and code typically checks for this.
-@@ -2366,7 +2639,7 @@ config("chromium_code") {
+@@ -2366,7 +2689,7 @@ config("chromium_code") {
        "__STDC_FORMAT_MACROS",
      ]
  
@@ -332,7 +378,7 @@
          current_cpu != "s390" && current_cpu != "ppc64" &&
          current_cpu != "mips" && current_cpu != "mips64" &&
          current_cpu != "riscv64" && current_cpu != "loong64") {
-@@ -2381,7 +2654,8 @@ config("chromium_code") {
+@@ -2381,7 +2704,8 @@ config("chromium_code") {
        if (is_chromeos_device) {
          fortify_level = "3"
        }
@@ -342,7 +388,7 @@
      }
  
      if (is_apple) {
-@@ -3404,9 +3678,10 @@ if (is_android) {
+@@ -3416,9 +3740,10 @@ if (is_android) {
  }
  
  # Initialize all variables on the stack if needed.
