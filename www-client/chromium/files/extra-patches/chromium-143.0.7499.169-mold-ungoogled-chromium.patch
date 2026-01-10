@@ -1,6 +1,6 @@
 --- a/build/config/compiler/compiler.gni.orig	2025-12-17 15:05:19.000000000 -0800
 +++ b/build/config/compiler/compiler.gni	2026-01-04 18:10:36.913029189 -0800
-@@ -26,15 +26,21 @@ if (is_apple) {
+@@ -26,15 +26,19 @@ if (is_apple) {
  }
  
  declare_args() {
@@ -18,8 +18,6 @@
    # If false, build using C++20; otherwise, build using C++23.
    use_cxx23 = false
  
-+  use_mold = false
-+
    # If true, optimize for size.
    # Default to favoring speed over size for platforms not listed below.
    optimize_for_size =
