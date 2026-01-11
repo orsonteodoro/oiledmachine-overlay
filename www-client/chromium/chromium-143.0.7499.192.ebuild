@@ -3318,7 +3318,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/lens_server_proto"
 		"third_party/leveldatabase"
 		"third_party/libaddressinput"
-		#"third_party/libc++" # We want the flexibility to one day use gcc again.  We do not want to be cornered into a particular license.
 		"third_party/libgav1"
 		"third_party/libjingle"
 		"third_party/libpfm4"
@@ -3492,9 +3491,13 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		$(use !system-libsecret && echo \
 			"third_party/libsecret" \
 		)
+
+	# We want the flexibility to one day use GCC again.  We do not want to
+	# be cornered into a particular license.
 		$(use !system-libstdcxx && echo \
 			"third_party/libc++" \
 		)
+
 		$(use !system-libvpx && echo \
 			"third_party/libvpx" \
 			"third_party/libvpx/source/libvpx/third_party/x86inc" \
