@@ -3193,333 +3193,333 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	# to whitelist from that point down.
 	#
 	local keeplibs=(
-		base/third_party/cityhash
-		base/third_party/double_conversion
-		base/third_party/icu
-		base/third_party/nspr
-		base/third_party/superfasthash
-		base/third_party/symbolize
-		base/third_party/xdg_user_dirs
-		buildtools/third_party/libc++
-		buildtools/third_party/libc++abi
-		net/third_party/mozilla_security_manager
-		net/third_party/quic
-		net/third_party/uri_template
-		third_party/angle
-		third_party/angle/src/common/third_party/xxhash
-		third_party/angle/src/third_party/ceval
-		third_party/angle/src/third_party/libXNVCtrl
-		third_party/angle/src/third_party/volk
-		third_party/anonymous_tokens
-		third_party/apple_apsl
-		third_party/axe-core
-		third_party/bidimapper
-		third_party/blink
-		third_party/boringssl
-		third_party/boringssl/src/third_party/fiat
-		third_party/breakpad
-		third_party/breakpad/breakpad/src/third_party/curl
-		third_party/catapult
-		third_party/catapult/common/py_vulcanize/third_party/rcssmin
-		third_party/catapult/common/py_vulcanize/third_party/rjsmin
-		third_party/catapult/third_party/beautifulsoup4-4.9.3
-		third_party/catapult/third_party/html5lib-1.1
-		third_party/catapult/third_party/polymer
-		third_party/catapult/third_party/six
-		third_party/catapult/tracing/third_party/d3
-		third_party/catapult/tracing/third_party/gl-matrix
-		third_party/catapult/tracing/third_party/jpeg-js
-		third_party/catapult/tracing/third_party/jszip
-		third_party/catapult/tracing/third_party/mannwhitneyu
-		third_party/catapult/tracing/third_party/oboe
-		third_party/catapult/tracing/third_party/pako
-		third_party/ced
-		third_party/cld_3
-		third_party/closure_compiler
+		"base/third_party/cityhash"
+		"base/third_party/double_conversion"
+		"base/third_party/icu"
+		"base/third_party/nspr"
+		"base/third_party/superfasthash"
+		"base/third_party/symbolize"
+		"base/third_party/xdg_user_dirs"
+		"buildtools/third_party/libc++"
+		"buildtools/third_party/libc++abi"
+		"net/third_party/mozilla_security_manager"
+		"net/third_party/quic"
+		"net/third_party/uri_template"
+		"third_party/angle"
+		"third_party/angle/src/common/third_party/xxhash"
+		"third_party/angle/src/third_party/ceval"
+		"third_party/angle/src/third_party/libXNVCtrl"
+		"third_party/angle/src/third_party/volk"
+		"third_party/anonymous_tokens"
+		"third_party/apple_apsl"
+		"third_party/axe-core"
+		"third_party/bidimapper"
+		"third_party/blink"
+		"third_party/boringssl"
+		"third_party/boringssl/src/third_party/fiat"
+		"third_party/breakpad"
+		"third_party/breakpad/breakpad/src/third_party/curl"
+		"third_party/catapult"
+		"third_party/catapult/common/py_vulcanize/third_party/rcssmin"
+		"third_party/catapult/common/py_vulcanize/third_party/rjsmin"
+		"third_party/catapult/third_party/beautifulsoup4-4.9.3"
+		"third_party/catapult/third_party/html5lib-1.1"
+		"third_party/catapult/third_party/polymer"
+		"third_party/catapult/third_party/six"
+		"third_party/catapult/tracing/third_party/d3"
+		"third_party/catapult/tracing/third_party/gl-matrix"
+		"third_party/catapult/tracing/third_party/jpeg-js"
+		"third_party/catapult/tracing/third_party/jszip"
+		"third_party/catapult/tracing/third_party/mannwhitneyu"
+		"third_party/catapult/tracing/third_party/oboe"
+		"third_party/catapult/tracing/third_party/pako"
+		"third_party/ced"
+		"third_party/cld_3"
+		"third_party/closure_compiler"
 	# Since M137 atomic is required; we could probably unbundle this as a target of opportunity. \
-		third_party/compiler-rt
-		third_party/content_analysis_sdk
-		third_party/cpuinfo
-		third_party/crabbyavif
-		third_party/crashpad
-		third_party/crashpad/crashpad/third_party/lss
-		third_party/crashpad/crashpad/third_party/zlib
-		third_party/crc32c
-		third_party/cros_system_api
-		third_party/d3
-		third_party/dawn
-		third_party/dawn/third_party/gn/webgpu-cts
-		third_party/dawn/third_party/khronos
-		third_party/dawn/third_party/webgpu-headers
-		third_party/depot_tools
-		third_party/devscripts
-		third_party/devtools-frontend
-		third_party/devtools-frontend/src/front_end/third_party/acorn
-		third_party/devtools-frontend/src/front_end/third_party/additional_readme_paths.json
-		third_party/devtools-frontend/src/front_end/third_party/axe-core
-		third_party/devtools-frontend/src/front_end/third_party/chromium
-		third_party/devtools-frontend/src/front_end/third_party/codemirror
-		third_party/devtools-frontend/src/front_end/third_party/csp_evaluator
-		third_party/devtools-frontend/src/front_end/third_party/diff
-		third_party/devtools-frontend/src/front_end/third_party/i18n
-		third_party/devtools-frontend/src/front_end/third_party/intl-messageformat
-		third_party/devtools-frontend/src/front_end/third_party/json5
-		third_party/devtools-frontend/src/front_end/third_party/legacy-javascript
-		third_party/devtools-frontend/src/front_end/third_party/lighthouse
-		third_party/devtools-frontend/src/front_end/third_party/lit
-		third_party/devtools-frontend/src/front_end/third_party/marked
-		third_party/devtools-frontend/src/front_end/third_party/puppeteer
-		third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/mitt
-		third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/parsel-js
-		third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/rxjs
-		third_party/devtools-frontend/src/front_end/third_party/source-map-scopes-codec
-		third_party/devtools-frontend/src/front_end/third_party/third-party-web
-		third_party/devtools-frontend/src/front_end/third_party/vscode.web-custom-data
-		third_party/devtools-frontend/src/front_end/third_party/wasmparser
-		third_party/devtools-frontend/src/front_end/third_party/web-vitals
-		third_party/devtools-frontend/src/third_party
-		third_party/dom_distiller_js
-		third_party/dragonbox
-		third_party/eigen3
-		third_party/emoji-segmenter
-		third_party/farmhash
-		third_party/fast_float
-		third_party/fdlibm
-		third_party/federated_compute/chromium/fcp/confidentialcompute
-		third_party/federated_compute/src/fcp/base
-		third_party/federated_compute/src/fcp/confidentialcompute
-		third_party/federated_compute/src/fcp/protos/confidentialcompute
-		third_party/federated_compute/src/fcp/protos/federatedcompute
-		third_party/fft2d
-		third_party/fp16
-		third_party/fusejs
-		third_party/fxdiv
-		third_party/gemmlowp
-		third_party/google_input_tools
-		third_party/google_input_tools/third_party/closure_library
-		third_party/google_input_tools/third_party/closure_library/third_party/closure
-		third_party/googletest
-		third_party/hunspell
-		third_party/ink_stroke_modeler/src/ink_stroke_modeler
-		third_party/ink_stroke_modeler/src/ink_stroke_modeler/internal
-		third_party/ink/src/ink/brush
-		third_party/ink/src/ink/color
-		third_party/ink/src/ink/geometry
-		third_party/ink/src/ink/rendering
-		third_party/ink/src/ink/rendering/skia/common_internal
-		third_party/ink/src/ink/rendering/skia/native
-		third_party/ink/src/ink/rendering/skia/native/internal
-		third_party/ink/src/ink/strokes
-		third_party/ink/src/ink/types
-		third_party/inspector_protocol
-		third_party/ipcz
-		third_party/jinja2
-		third_party/khronos
-		third_party/lens_server_proto
-		third_party/leveldatabase
-		third_party/libaddressinput
-		#third_party/libc++ # We want the flexibility to one day use gcc again.  We do not want to be cornered into a particular license.
-		third_party/libgav1
-		third_party/libjingle
-		third_party/libpfm4
-		third_party/libphonenumber
-		third_party/libsrtp
-		third_party/libsync
-		third_party/libtess2/libtess2
-		third_party/libtess2/src/Include
-		third_party/libtess2/src/Source
-		third_party/liburlpattern
-		third_party/libva_protected_content
-		third_party/libwebm
-		third_party/libx11
-		third_party/libxcb-keysyms
-		third_party/libxml/chromium
-		third_party/libzip
-		third_party/lit
-		third_party/llvm-libc
-		third_party/llvm-libc/src/shared/
-		third_party/lottie
-		third_party/lss
-		third_party/lzma_sdk
-		third_party/mako
-		third_party/markupsafe
-		third_party/material_color_utilities
-		third_party/metrics_proto
-		third_party/minigbm
-		third_party/ml_dtypes
-		third_party/modp_b64
-		third_party/nasm
-		third_party/nearby
-		third_party/neon_2_sse
-		third_party/node
-		third_party/oak/chromium/proto
-		third_party/oak/chromium/proto/attestation
-		third_party/omnibox_proto
-		third_party/one_euro_filter
-		third_party/openscreen
-		third_party/openscreen/src/third_party/
-		third_party/openscreen/src/third_party/tinycbor/src/src
-		third_party/ots
-		third_party/pdfium
-		third_party/pdfium/third_party/agg23
-		third_party/pdfium/third_party/bigint
-		third_party/pdfium/third_party/freetype
-		third_party/pdfium/third_party/lcms
-		third_party/pdfium/third_party/libopenjpeg
-		third_party/pdfium/third_party/libtiff
-		third_party/perfetto
-		third_party/perfetto/protos/third_party/chromium
-		third_party/perfetto/protos/third_party/simpleperf
-		third_party/pffft
-		third_party/ply
-		third_party/polymer
-		third_party/private_membership
-		third_party/private-join-and-compute
-		third_party/protobuf
-		third_party/protobuf/third_party/utf8_range
-		third_party/pthreadpool
-		third_party/puffin
-		third_party/pyjson5
-		third_party/pyyaml
-		third_party/rapidhash
-		third_party/readability
-		third_party/rnnoise
-		third_party/rust
-		third_party/ruy
-		third_party/s2cellid
-		third_party/search_engines_data
-		third_party/securemessage
-		third_party/selenium-atoms
-		third_party/sentencepiece
-		third_party/sentencepiece/src/third_party/darts_clone
-		third_party/shell-encryption
-		third_party/simplejson
-		third_party/six
-		third_party/skia
-		third_party/skia/include/third_party/vulkan
-		third_party/skia/third_party/vulkan
-		third_party/smhasher
-		third_party/sqlite
-		third_party/swiftshader
-		third_party/swiftshader/third_party/astc-encoder
-		third_party/swiftshader/third_party/llvm-subzero
-		third_party/swiftshader/third_party/marl
-		third_party/swiftshader/third_party/SPIRV-Headers/include/spirv
-		third_party/swiftshader/third_party/SPIRV-Tools
-		third_party/swiftshader/third_party/subzero
-		third_party/tensorflow_models
-		third_party/tensorflow-text
-		third_party/tflite
-		third_party/tflite/src/third_party/fft2d
-		third_party/tflite/src/third_party/xla/third_party/tsl
-		third_party/tflite/src/third_party/xla/xla/tsl/framework
-		third_party/tflite/src/third_party/xla/xla/tsl/lib/random
-		third_party/tflite/src/third_party/xla/xla/tsl/platform
-		third_party/tflite/src/third_party/xla/xla/tsl/protobuf
-		third_party/tflite/src/third_party/xla/xla/tsl/util
-		third_party/ukey2
-		third_party/utf
-		third_party/vulkan
-		third_party/wayland
-		third_party/webdriver
-		third_party/webgpu-cts
-		third_party/webrtc
-		third_party/webrtc/common_audio/third_party/ooura
-		third_party/webrtc/common_audio/third_party/spl_sqrt_floor
-		third_party/webrtc/modules/third_party/fft
-		third_party/webrtc/modules/third_party/g711
-		third_party/webrtc/modules/third_party/g722
-		third_party/webrtc/rtc_base/third_party/sigslot
-		third_party/widevine
-		third_party/wuffs
-		third_party/x11proto
-		third_party/xcbproto
-		third_party/xnnpack
-		third_party/zxcvbn-cpp
-		url/third_party/mozilla
-		v8/third_party/glibc
-		v8/third_party/inspector_protocol
-		v8/third_party/rapidhash-v8
-		v8/third_party/siphash
-		v8/third_party/utf8-decoder
-		v8/third_party/v8
-		v8/third_party/valgrind
+		"third_party/compiler-rt"
+		"third_party/content_analysis_sdk"
+		"third_party/cpuinfo"
+		"third_party/crabbyavif"
+		"third_party/crashpad"
+		"third_party/crashpad/crashpad/third_party/lss"
+		"third_party/crashpad/crashpad/third_party/zlib"
+		"third_party/crc32c"
+		"third_party/cros_system_api"
+		"third_party/d3"
+		"third_party/dawn"
+		"third_party/dawn/third_party/gn/webgpu-cts"
+		"third_party/dawn/third_party/khronos"
+		"third_party/dawn/third_party/webgpu-headers"
+		"third_party/depot_tools"
+		"third_party/devscripts"
+		"third_party/devtools-frontend"
+		"third_party/devtools-frontend/src/front_end/third_party/acorn"
+		"third_party/devtools-frontend/src/front_end/third_party/additional_readme_paths.json"
+		"third_party/devtools-frontend/src/front_end/third_party/axe-core"
+		"third_party/devtools-frontend/src/front_end/third_party/chromium"
+		"third_party/devtools-frontend/src/front_end/third_party/codemirror"
+		"third_party/devtools-frontend/src/front_end/third_party/csp_evaluator"
+		"third_party/devtools-frontend/src/front_end/third_party/diff"
+		"third_party/devtools-frontend/src/front_end/third_party/i18n"
+		"third_party/devtools-frontend/src/front_end/third_party/intl-messageformat"
+		"third_party/devtools-frontend/src/front_end/third_party/json5"
+		"third_party/devtools-frontend/src/front_end/third_party/legacy-javascript"
+		"third_party/devtools-frontend/src/front_end/third_party/lighthouse"
+		"third_party/devtools-frontend/src/front_end/third_party/lit"
+		"third_party/devtools-frontend/src/front_end/third_party/marked"
+		"third_party/devtools-frontend/src/front_end/third_party/puppeteer"
+		"third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/mitt"
+		"third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/parsel-js"
+		"third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/rxjs"
+		"third_party/devtools-frontend/src/front_end/third_party/source-map-scopes-codec"
+		"third_party/devtools-frontend/src/front_end/third_party/third-party-web"
+		"third_party/devtools-frontend/src/front_end/third_party/vscode.web-custom-data"
+		"third_party/devtools-frontend/src/front_end/third_party/wasmparser"
+		"third_party/devtools-frontend/src/front_end/third_party/web-vitals"
+		"third_party/devtools-frontend/src/third_party"
+		"third_party/dom_distiller_js"
+		"third_party/dragonbox"
+		"third_party/eigen3"
+		"third_party/emoji-segmenter"
+		"third_party/farmhash"
+		"third_party/fast_float"
+		"third_party/fdlibm"
+		"third_party/federated_compute/chromium/fcp/confidentialcompute"
+		"third_party/federated_compute/src/fcp/base"
+		"third_party/federated_compute/src/fcp/confidentialcompute"
+		"third_party/federated_compute/src/fcp/protos/confidentialcompute"
+		"third_party/federated_compute/src/fcp/protos/federatedcompute"
+		"third_party/fft2d"
+		"third_party/fp16"
+		"third_party/fusejs"
+		"third_party/fxdiv"
+		"third_party/gemmlowp"
+		"third_party/google_input_tools"
+		"third_party/google_input_tools/third_party/closure_library"
+		"third_party/google_input_tools/third_party/closure_library/third_party/closure"
+		"third_party/googletest"
+		"third_party/hunspell"
+		"third_party/ink_stroke_modeler/src/ink_stroke_modeler"
+		"third_party/ink_stroke_modeler/src/ink_stroke_modeler/internal"
+		"third_party/ink/src/ink/brush"
+		"third_party/ink/src/ink/color"
+		"third_party/ink/src/ink/geometry"
+		"third_party/ink/src/ink/rendering"
+		"third_party/ink/src/ink/rendering/skia/common_internal"
+		"third_party/ink/src/ink/rendering/skia/native"
+		"third_party/ink/src/ink/rendering/skia/native/internal"
+		"third_party/ink/src/ink/strokes"
+		"third_party/ink/src/ink/types"
+		"third_party/inspector_protocol"
+		"third_party/ipcz"
+		"third_party/jinja2"
+		"third_party/khronos"
+		"third_party/lens_server_proto"
+		"third_party/leveldatabase"
+		"third_party/libaddressinput"
+		#"third_party/libc++" # We want the flexibility to one day use gcc again.  We do not want to be cornered into a particular license.
+		"third_party/libgav1"
+		"third_party/libjingle"
+		"third_party/libpfm4"
+		"third_party/libphonenumber"
+		"third_party/libsrtp"
+		"third_party/libsync"
+		"third_party/libtess2/libtess2"
+		"third_party/libtess2/src/Include"
+		"third_party/libtess2/src/Source"
+		"third_party/liburlpattern"
+		"third_party/libva_protected_content"
+		"third_party/libwebm"
+		"third_party/libx11"
+		"third_party/libxcb-keysyms"
+		"third_party/libxml/chromium"
+		"third_party/libzip"
+		"third_party/lit"
+		"third_party/llvm-libc"
+		"third_party/llvm-libc/src/shared/"
+		"third_party/lottie"
+		"third_party/lss"
+		"third_party/lzma_sdk"
+		"third_party/mako"
+		"third_party/markupsafe"
+		"third_party/material_color_utilities"
+		"third_party/metrics_proto"
+		"third_party/minigbm"
+		"third_party/ml_dtypes"
+		"third_party/modp_b64"
+		"third_party/nasm"
+		"third_party/nearby"
+		"third_party/neon_2_sse"
+		"third_party/node"
+		"third_party/oak/chromium/proto"
+		"third_party/oak/chromium/proto/attestation"
+		"third_party/omnibox_proto"
+		"third_party/one_euro_filter"
+		"third_party/openscreen"
+		"third_party/openscreen/src/third_party/"
+		"third_party/openscreen/src/third_party/tinycbor/src/src"
+		"third_party/ots"
+		"third_party/pdfium"
+		"third_party/pdfium/third_party/agg23"
+		"third_party/pdfium/third_party/bigint"
+		"third_party/pdfium/third_party/freetype"
+		"third_party/pdfium/third_party/lcms"
+		"third_party/pdfium/third_party/libopenjpeg"
+		"third_party/pdfium/third_party/libtiff"
+		"third_party/perfetto"
+		"third_party/perfetto/protos/third_party/chromium"
+		"third_party/perfetto/protos/third_party/simpleperf"
+		"third_party/pffft"
+		"third_party/ply"
+		"third_party/polymer"
+		"third_party/private_membership"
+		"third_party/private-join-and-compute"
+		"third_party/protobuf"
+		"third_party/protobuf/third_party/utf8_range"
+		"third_party/pthreadpool"
+		"third_party/puffin"
+		"third_party/pyjson5"
+		"third_party/pyyaml"
+		"third_party/rapidhash"
+		"third_party/readability"
+		"third_party/rnnoise"
+		"third_party/rust"
+		"third_party/ruy"
+		"third_party/s2cellid"
+		"third_party/search_engines_data"
+		"third_party/securemessage"
+		"third_party/selenium-atoms"
+		"third_party/sentencepiece"
+		"third_party/sentencepiece/src/third_party/darts_clone"
+		"third_party/shell-encryption"
+		"third_party/simplejson"
+		"third_party/six"
+		"third_party/skia"
+		"third_party/skia/include/third_party/vulkan"
+		"third_party/skia/third_party/vulkan"
+		"third_party/smhasher"
+		"third_party/sqlite"
+		"third_party/swiftshader"
+		"third_party/swiftshader/third_party/astc-encoder"
+		"third_party/swiftshader/third_party/llvm-subzero"
+		"third_party/swiftshader/third_party/marl"
+		"third_party/swiftshader/third_party/SPIRV-Headers/include/spirv"
+		"third_party/swiftshader/third_party/SPIRV-Tools"
+		"third_party/swiftshader/third_party/subzero"
+		"third_party/tensorflow_models"
+		"third_party/tensorflow-text"
+		"third_party/tflite"
+		"third_party/tflite/src/third_party/fft2d"
+		"third_party/tflite/src/third_party/xla/third_party/tsl"
+		"third_party/tflite/src/third_party/xla/xla/tsl/framework"
+		"third_party/tflite/src/third_party/xla/xla/tsl/lib/random"
+		"third_party/tflite/src/third_party/xla/xla/tsl/platform"
+		"third_party/tflite/src/third_party/xla/xla/tsl/protobuf"
+		"third_party/tflite/src/third_party/xla/xla/tsl/util"
+		"third_party/ukey2"
+		"third_party/utf"
+		"third_party/vulkan"
+		"third_party/wayland"
+		"third_party/webdriver"
+		"third_party/webgpu-cts"
+		"third_party/webrtc"
+		"third_party/webrtc/common_audio/third_party/ooura"
+		"third_party/webrtc/common_audio/third_party/spl_sqrt_floor"
+		"third_party/webrtc/modules/third_party/fft"
+		"third_party/webrtc/modules/third_party/g711"
+		"third_party/webrtc/modules/third_party/g722"
+		"third_party/webrtc/rtc_base/third_party/sigslot"
+		"third_party/widevine"
+		"third_party/wuffs"
+		"third_party/x11proto"
+		"third_party/xcbproto"
+		"third_party/xnnpack"
+		"third_party/zxcvbn-cpp"
+		"url/third_party/mozilla"
+		"v8/third_party/glibc"
+		"v8/third_party/inspector_protocol"
+		"v8/third_party/rapidhash-v8"
+		"v8/third_party/siphash"
+		"v8/third_party/utf8-decoder"
+		"v8/third_party/v8"
+		"v8/third_party/valgrind"
 
 	# gyp -> gn leftovers
-		third_party/speech-dispatcher
-		third_party/usb_ids
-		third_party/xdg-utils
+		"third_party/speech-dispatcher"
+		"third_party/usb_ids"
+		"third_party/xdg-utils"
 
 	# This set is being retested.
 	# This set may be required unconditionally to keep by disabling system-<pkg>.
-		$(use !system-abseil-cpp && echo "
-			third_party/abseil-cpp
-		")
-		$(use !system-dav1d && echo "
-			third_party/dav1d
-		")
-		$(use !system-brotli && echo "
-			third_party/brotli
-		")
-		$(use !system-flatbuffers && echo "
-			third_party/flatbuffers
-		")
-		$(use !system-ffmpeg && echo "
-			third_party/ffmpeg
-		")
-		$(use !system-freetype && echo "
-			third_party/freetype
-		")
-		$(use !system-highway && echo "
-			third_party/highway
-		")
-		$(use !system-jsoncpp && echo "
-			third_party/jsoncpp
-		")
-		$(use !system-libaom && echo "
-			third_party/libaom
-			third_party/libaom/source/libaom/third_party/fastfeat
-			third_party/libaom/source/libaom/third_party/SVT-AV1
-			third_party/libaom/source/libaom/third_party/vector
-			third_party/libaom/source/libaom/third_party/x86inc
-		")
-		$(use !system-libdrm && echo "
-			third_party/libdrm
-		")
-		$(use !system-libpng && echo "
-			third_party/libpng
-		")
-		$(use !system-libsecret && echo "
-			third_party/libsecret
-		")
-		$(use !system-libstdcxx && echo "
-			third_party/libc++
-		")
-		$(use !system-libvpx && echo "
-			third_party/libvpx
-			third_party/libvpx/source/libvpx/third_party/x86inc
-		")
-		$(use !system-opus && echo "
-			third_party/opus
-		")
-		$(use !system-simdutf && echo "
-			third_party/simdutf
-		")
-		$(use !system-snappy && echo "
-			third_party/snappy
-		")
-		$(use !system-re2 && echo "
-			third_party/re2
-		")
-		$(use !system-spirv-headers && echo "
-			third_party/spirv-headers
-		")
-		$(use !system-spirv-tools && echo "
-			third_party/spirv-tools
-		")
-		$(use !system-woff2 && echo "
-			third_party/woff2
-		")
+		$(use !system-abseil-cpp && echo \
+			"third_party/abseil-cpp" \
+		)
+		$(use !system-dav1d && echo \
+			"third_party/dav1d" \
+		)
+		$(use !system-brotli && echo \
+			"third_party/brotli" \
+		)
+		$(use !system-flatbuffers && echo \
+			"third_party/flatbuffers" \
+		)
+		$(use !system-ffmpeg && echo \
+			"third_party/ffmpeg" \
+		)
+		$(use !system-freetype && echo \
+			"third_party/freetype" \
+		)
+		$(use !system-highway && echo \
+			"third_party/highway" \
+		)
+		$(use !system-jsoncpp && echo \
+			"third_party/jsoncpp" \
+		)
+		$(use !system-libaom && echo \
+			"third_party/libaom" \
+			"third_party/libaom/source/libaom/third_party/fastfeat" \
+			"third_party/libaom/source/libaom/third_party/SVT-AV1" \
+			"third_party/libaom/source/libaom/third_party/vector" \
+			"third_party/libaom/source/libaom/third_party/x86inc" \
+		)
+		$(use !system-libdrm && echo \
+			"third_party/libdrm" \
+		)
+		$(use !system-libpng && echo \
+			"third_party/libpng" \
+		)
+		$(use !system-libsecret && echo \
+			"third_party/libsecret" \
+		)
+		$(use !system-libstdcxx && echo \
+			"third_party/libc++" \
+		)
+		$(use !system-libvpx && echo \
+			"third_party/libvpx" \
+			"third_party/libvpx/source/libvpx/third_party/x86inc" \
+		)
+		$(use !system-opus && echo \
+			"third_party/opus" \
+		)
+		$(use !system-simdutf && echo \
+			"third_party/simdutf" \
+		)
+		$(use !system-snappy && echo \
+			"third_party/snappy" \
+		)
+		$(use !system-re2 && echo \
+			"third_party/re2" \
+		)
+		$(use !system-spirv-headers && echo \
+			"third_party/spirv-headers" \
+		)
+		$(use !system-spirv-tools && echo \
+			"third_party/spirv-tools" \
+		)
+		$(use !system-woff2 && echo \
+			"third_party/woff2" \
+		)
 
 	#
 	# Partial unconditional to keep
@@ -3533,79 +3533,87 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-		$(use !system-zlib && echo "
-			third_party/zlib
-			third_party/zlib/google
-		")
-		$(use !system-libxml && echo "
-			third_party/libxml
-		")
-		$(use !system-libyuv && echo "
-			third_party/libyuv
-		")
+		$(use !system-zlib && echo \
+			"third_party/zlib" \
+			"third_party/zlib/google" \
+		)
+		$(use !system-libxml && echo \
+			"third_party/libxml" \
+		)
+		$(use !system-libyuv && echo \
+			"third_party/libyuv" \
+		)
 
 	# Not listed in distro ebuild
 	# These imply removal and preference for the system package.
-		$(use !system-flac && echo "
-			third_party/flac
-		")
-		$(use !system-fontconfig && echo "
-			third_party/fontconfig
-		")
-		$(use !system-libjpeg-turbo && echo "
-			third_party/libjpeg_turbo
-		")
-		$(use !system-libusb && echo "
-			third_party/libusb
-		")
-		$(use !system-libwebp && echo "
-			third_party/libwebp
-		")
-		$(use !system-libxslt && echo "
-			third_party/libxslt
-		")
-		$(use !system-openh264 && echo "
-			third_party/openh264
-		")
+		$(use !system-flac && echo \
+			"third_party/flac" \
+		)
+		$(use !system-fontconfig && echo \
+			"third_party/fontconfig" \
+		)
+		$(use !system-libjpeg-turbo && echo \
+			"third_party/libjpeg_turbo" \
+		)
+		$(use !system-libusb && echo \
+			"third_party/libusb" \
+		)
+		$(use !system-libwebp && echo \
+			"third_party/libwebp" \
+		)
+		$(use !system-libxslt && echo \
+			"third_party/libxslt" \
+		)
+		$(use !system-openh264 && echo \
+			"third_party/openh264" \
+		)
 
 	# Allowed conditional to keep or remove
-		$(use rar && echo "
-			third_party/unrar
-		")
-		$(use !system-harfbuzz && echo "
-			third_party/harfbuzz-ng
-		")
-		$(use !system-icu && echo "
-			third_party/icu
-		")
-		$(use !system-zstd && echo "
-			third_party/zstd
-		")
+		$(use rar && echo \
+			"third_party/unrar" \
+		)
+		$(use !system-harfbuzz && echo \
+			"third_party/harfbuzz-ng" \
+		)
+		$(use !system-icu && echo \
+			"third_party/icu" \
+		)
+		$(use !system-zstd && echo \
+			"third_party/zstd" \
+		)
 
 	# Arch-specific to keep
-		$((use arm64 || use ppc64) && echo "
-			third_party/swiftshader/third_party/llvm-10.0
-		")
+		$((use arm64 || use ppc64) && echo \
+			"third_party/swiftshader/third_party/llvm-10.0" \
+		)
 
 	# tar tvf /var/cache/distfiles/${P}-testdata.tar.xz \
 	#	| grep '^d' \
 	#	| grep 'third_party' \
 	#	| awk '{print $NF}'
-		$(use test && echo "
-			third_party/breakpad/breakpad/src/processor
-			third_party/fuzztest
-			third_party/google_benchmark/src/include/benchmark
-			third_party/google_benchmark/src/src
-			third_party/perfetto/protos/third_party/pprof
-			third_party/test_fonts
-			third_party/test_fonts/fontconfig
-		")
+		$(use test && echo \
+			"third_party/breakpad/breakpad/src/processor" \
+			"third_party/fuzztest" \
+			"third_party/google_benchmark/src/include/benchmark" \
+			"third_party/google_benchmark/src/src" \
+			"third_party/perfetto/protos/third_party/pprof" \
+			"third_party/test_fonts" \
+			"third_party/test_fonts/fontconfig" \
+		)
 	)
 
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
 			"cromite_flags/third_party"
 	#		"third_party/cromite" # Not listed in other ebuild fork
+		)
+	fi
+
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		keeplibs+=(
+			"third_party/devtools-frontend/src/third_party/esbuild"
+			"third_party/devtools-frontend/src/third_party/esbuild/esbuild"
+			"third_party/ungoogled"
 		)
 	fi
 
@@ -4029,8 +4037,7 @@ einfo "Using the bundled toolchain"
 	# build/config/clang/BUILD.gn
 	# build/config/clang/clang.gni
 	#
-		"clang_use_chrome_plugins=false"
-		"use_clang_modules=false" # M141 enables this for the linux platform by default.
+		"use_clang_modules=false"		# M141 enables this for the linux platform by default.
 		"clang_use_raw_ptr_plugin=false"
 		"enable_check_raw_ptr_fields=false"
 		"enable_check_raw_ref_fields=false"
@@ -4038,6 +4045,14 @@ einfo "Using the bundled toolchain"
 		"treat_warnings_as_errors=false"
 	)
 
+	# Dedupe flags
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		:
+	else
+		myconf_gn+=(
+			"clang_use_chrome_plugins=false"	# Slows down build.  It should only used for dev builds.
+		)
+	fi
 }
 
 _configure_build_system() {
@@ -4097,7 +4112,6 @@ einfo "Using the system toolchain"
 	if tc-is-clang ; then
 		myconf_gn+=(
 			"is_clang=true"
-			"clang_use_chrome_plugins=false"
 		)
 	# Workaround for build failure with clang-18 and -march=native without
 	# avx512. Does not affect e.g. -march=skylake, only native (bug #931623).
@@ -4206,10 +4220,6 @@ einfo "Using the system toolchain"
 	# Silence
 	# The expected Rust version is [...] but the actual version is None
 		#"use_chromium_rust_toolchain=false"
-
-	# Disabled distro choices
-		#"use_lld=true"										# Mold is preferred
-		#"clang_use_chrome_plugins=false"							# Slows down build.  Should only used for dev builds.
 	)
 }
 
@@ -6419,9 +6429,6 @@ _configure_debug() {
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 		"is_debug=false"
 
-	# Chromium builds provided by Linux distros should disable the testing config
-		"disable_fieldtrial_testing_config=true"
-
 	# Don't need nocompile checks and GN crashes with our config (verify with modern GN)
 		"enable_nocompile_tests=false"
 
@@ -6432,6 +6439,16 @@ _configure_debug() {
 	# for development and debugging.
 		"is_component_build=false"
 	)
+
+	# Dedupe flags
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		:
+	else
+		myconf_gn+=(
+	# Chromium builds provided by Linux distros should disable the testing config
+			"disable_fieldtrial_testing_config=true"
+		)
+	fi
 
 	# Skipping typecheck is only supported on amd64, bug #876157
 	if ! use amd64 ; then
@@ -6651,32 +6668,22 @@ ewarn
 	# We now need to opt-in
 		"enable_freetype=true"
 
-		"enable_hangout_services_extension=$(usex hangouts true false)"
 		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_hidpi=$(usex hidpi true false)"
 		"enable_libaom=$(usex libaom $(usex encode true false) false)"
-		"enable_mdns=$(usex mdns true false)"
 		"enable_message_center=true"						# Required for Linux, but not Fucshia and Android
 		"enable_ml_internal=false"						# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
 		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/143.0.7499.192/device/vr#platform-support
 		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
-		"enable_reporting=$(usex reporting-api true false)"
 
 	# Forced because of asserts.  Required by chrome/renderer:renderer
 		"enable_screen_ai_service=true"
 
-		"enable_service_discovery=true"						# Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
 #		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
 		"enable_vr=false"							# https://github.com/chromium/chromium/blob/143.0.7499.192/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
 		"enable_widevine=$(usex widevine true false)"
-
-	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys
-	# Note: these are for Gentoo use ONLY. For your own distribution,
-	# please get your own set of keys. Feel free to contact chromium@gentoo.org for more info.
-	# note: OAuth2 is patched in; check patchset for details.
-		"google_api_key=\"AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc\""
 
 		"is_official_build=$(usex official true false)"
 
@@ -6708,6 +6715,24 @@ ewarn
 	# Enables building without non-free unRAR licence
 		"safe_browsing_use_unrar=$(usex rar true false)"
 	)
+
+	# Dedupe flags
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		:
+	else
+		myconf_gn+=(
+	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys
+	# Note: these are for Gentoo use ONLY. For your own distribution,
+	# please get your own set of keys. Feel free to contact chromium@gentoo.org for more info.
+	# note: OAuth2 is patched in; check patchset for details.
+			"google_api_key=\"AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc\""
+
+			"enable_hangout_services_extension=$(usex hangouts true false)"
+			"enable_mdns=$(usex mdns true false)"
+			"enable_reporting=$(usex reporting-api true false)"
+			"enable_service_discovery=true"						# Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
+		)
+	fi
 
 	if is_generating_credits ; then
 		myconf_gn+=(
