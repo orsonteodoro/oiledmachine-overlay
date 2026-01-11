@@ -3600,22 +3600,18 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 			"third_party/test_fonts" \
 			"third_party/test_fonts/fontconfig" \
 		)
+
+	# "third_party/ungoogled" was not listed for cromite in other ebuild so omitted.
+		$(has "cromite" ${IUSE_EFFECTIVE} && use cromite && echo \
+			"cromite_flags/third_party" \
+		)
+
+		$(has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && echo \
+			"third_party/devtools-frontend/src/third_party/esbuild" \
+			"third_party/devtools-frontend/src/third_party/esbuild/esbuild" \
+			"third_party/ungoogled" \
+		)
 	)
-
-	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
-		keeplibs+=(
-			"cromite_flags/third_party"
-	#		"third_party/cromite" # Not listed in other ebuild fork
-		)
-	fi
-
-	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
-		keeplibs+=(
-			"third_party/devtools-frontend/src/third_party/esbuild"
-			"third_party/devtools-frontend/src/third_party/esbuild/esbuild"
-			"third_party/ungoogled"
-		)
-	fi
 
 	# We need to generate ppc64 stuff because upstream does not ship it yet
 	# it has to be done before unbundling.
