@@ -207,10 +207,10 @@
 +        # Prevent removal or optimizing out of security-critical fortify checks
 +        if (is_clang) {
 +          cflags += [ "-fno-strict-aliasing" ]
-+          cflags += [ "-mllvm" ]
-+          cflags += [ "-disable-dce" ]
-+          cflags += [ "-mllvm" ]
-+          cflags += [ "-disable-loop-optimizations" ]
++          # No direct equivalent to -fno-tree-dce except for -O0 or -Og
++          cflags += [ "-fno-unroll-loops" ]
++          cflags += [ "-fno-vectorize" ]
++          cflags += [ "-fno-slp-vectorize" ]
 +          cflags += [ "-fno-optimize-sibling-calls" ]
 +        } else {
 +          cflags += [ "-fno-strict-aliasing" ]
@@ -232,10 +232,10 @@
 +        # Prevent removal or optimizing out of security-critical fortify checks
 +        if (is_clang) {
 +          cflags += [ "-fno-strict-aliasing" ]
-+          cflags += [ "-mllvm" ]
-+          cflags += [ "-disable-dce" ]
-+          cflags += [ "-mllvm" ]
-+          cflags += [ "-disable-loop-optimizations" ]
++          # No direct equivalent to -fno-tree-dce except for -O0 or -Og
++          cflags += [ "-fno-unroll-loops" ]
++          cflags += [ "-fno-vectorize" ]
++          cflags += [ "-fno-slp-vectorize" ]
 +          cflags += [ "-fno-optimize-sibling-calls" ]
 +        } else {
 +          cflags += [ "-fno-strict-aliasing" ]

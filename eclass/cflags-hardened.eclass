@@ -2193,7 +2193,11 @@ einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:  ${fortify_fix_level}"
 		if tc-is-clang ; then
 			flags+=(
 				"-fno-strict-aliasing"
-				"-mllvm -disable-loop-optimizations"
+
+	# Equivalent set for -fno-tree-loop-optimize
+				"-fno-unroll-loops"
+				"-fno-vectorize"
+				"-fno-slp-vectorize"
 			)
 		elif tc-is-gcc ; then
 			flags+=(
@@ -2226,8 +2230,13 @@ einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:  ${fortify_fix_level}"
 		if tc-is-clang ; then
 			flags+=(
 				"-fno-strict-aliasing"
-				"-mllvm -disable-dce"
-				"-mllvm -disable-loop-optimizations"
+	# No direct equivalent to -fno-tree-dce except for -O0 or -Og
+
+	# Equivalent set for -fno-tree-loop-optimize
+				"-fno-unroll-loops"
+				"-fno-vectorize"
+				"-fno-slp-vectorize"
+
 				"-fno-optimize-sibling-calls"
 			)
 		elif tc-is-gcc ; then
@@ -2263,8 +2272,13 @@ einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:  ${fortify_fix_level}"
 		if tc-is-clang ; then
 			flags+=(
 				"-fno-strict-aliasing"
-				"-mllvm -disable-dce"
-				"-mllvm -disable-loop-optimizations"
+	# No direct equivalent to -fno-tree-dce except for -O0 or -Og
+
+	# Equivalent set for -fno-tree-loop-optimize
+				"-fno-unroll-loops"
+				"-fno-vectorize"
+				"-fno-slp-vectorize"
+
 				"-fno-optimize-sibling-calls"
 			)
 		elif tc-is-gcc ; then
