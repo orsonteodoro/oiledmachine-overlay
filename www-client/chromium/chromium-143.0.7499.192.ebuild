@@ -4253,8 +4253,9 @@ _remove_hardening_flags() {
 	# _FORTIFY_SOURCE integrity loss mitigation flags
 	filter-flags \
 		"-f*strict-aliasing" \
-		"-mllvm" "-disable-dce" \
-		"-mllvm" "-disable-loop-optimizations" \
+		"-f*unroll-loops" \
+		"-f*vectorize" \
+		"-f*slp-vectorize" \
 		"-f*optimize-sibling-calls" \
 		"-f*tree-dce" \
 		"-f*tree-loop-optimize" \
