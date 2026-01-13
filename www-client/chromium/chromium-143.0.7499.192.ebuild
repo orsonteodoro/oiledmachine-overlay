@@ -4231,6 +4231,7 @@ _remove_hardening_flags() {
 		"-f*cf-protection=*" \
 		"-f*delete-null-pointer-checks" \
 		"-f*exceptions" \
+		"-f*fp-contract=*" \
 		"-f*hardened" \
 		"-f*math-errno*" \
 		"-f*rtti" \
@@ -4240,8 +4241,8 @@ _remove_hardening_flags() {
 		"-f*stack-protector" \
 		"-f*strict-flex-arrays=*" \
 		"-f*strict-overflow" \
-		"-f*trivial-auto-var-init=*" \
 		"-f*trapv" \
+		"-f*trivial-auto-var-init=*" \
 		"-f*visibility=*" \
 		"-f*visibility-inlines-hidden" \
 		"-f*vtable-verify=*" \
