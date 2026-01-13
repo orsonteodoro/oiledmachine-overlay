@@ -817,9 +817,11 @@ LIBCXX_REQUIRED_USE=(
 
 # Drumbrake is broken in this release and off by default.
 #	!system-harfbuzz
+# Mold 2.40.4 is segfaulting
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
+	!mold
 	!system-libstdcxx
 	!headless (
 		extensions
