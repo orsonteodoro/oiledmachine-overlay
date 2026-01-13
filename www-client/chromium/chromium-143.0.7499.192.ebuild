@@ -4230,11 +4230,7 @@ _remove_hardening_flags() {
 		"-U_FORTIFY_SOURCE" \
 		"-f*cf-protection=*" \
 		"-f*delete-null-pointer-checks" \
-		"-f*exceptions" \
-		"-f*fp-contract=*" \
 		"-f*hardened" \
-		"-f*math-errno*" \
-		"-f*rtti" \
 		"-f*sanitize=*" \
 		"-f*sanitize-recover" \
 		"-f*stack-clash-protection" \
@@ -4274,6 +4270,11 @@ _remove_hardening_flags() {
 
 	# Prevent slowdowns with hardening flags
 	filter-flags "-fno-inline"
+
+	# Prevent float integrity loss, non-deterministic float issues, or runtime bugs
+	filter-flags \
+		"-f*fast-math" \
+		"-f*fp-contract=*"
 }
 
 _remove_debug_flags() {
@@ -4289,6 +4290,9 @@ _remove_performance_flags() {
 	# Dedupe flags.  Handled in build scripts.
 	# Prevent duplicates in cross-compile case.
 	filter-flags \
+		"-f*exceptions" \
+		"-f*rtti" \
+		"-f*math-errno*" \
 		"-f*merge-all-constants" \
 		"-f*omit-frame-pointer" \
 		"-f*visibility=*" \
