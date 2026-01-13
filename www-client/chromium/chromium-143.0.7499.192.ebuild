@@ -821,7 +821,6 @@ LIBCXX_REQUIRED_USE=(
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
-	!mold
 	!system-libstdcxx
 	!headless (
 		extensions
@@ -5806,6 +5805,10 @@ einfo "Using ThinLTO"
 	if ! use mold && is-flagq "-fuse-ld=mold" && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
 		die
+	fi
+
+	if use mold ; then
+ewarn "Linking with the latest Mold may fail.  Use ThinLTO instead."
 	fi
 
 	# See https://github.com/rui314/mold/issues/336
