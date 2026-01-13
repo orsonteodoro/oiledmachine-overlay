@@ -12,11 +12,11 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="16" # can be live only when 9999
-PATCH_PROJC_VER="6.17-r1"
-PATCH_RT_VER="6.17.5-rt7"
+GENPATCHES_VER="6" # can be live only when 9999
+PATCH_PROJC_VER="6.18-r1"
+PATCH_RT_VER="6.18-rc4-rt3"
 
-inherit ot-kernel-v6.17
+inherit ot-kernel-v6.18
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
