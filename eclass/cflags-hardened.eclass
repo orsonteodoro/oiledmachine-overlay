@@ -797,7 +797,9 @@ _cflags-hardened_append_clang_retpoline() {
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
-		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+		if test-flag-CCLD "-Wl,-z,retpolineplt" ; then
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+		fi
 	elif \
 		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] \
 			&& \
@@ -810,7 +812,9 @@ _cflags-hardened_append_clang_retpoline() {
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
-		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+		if test-flag-CCLD "-Wl,-z,retpolineplt" ; then
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+		fi
 
 	# ZC, ID
 		append-flags "-mretpoline-external-thunk"
@@ -821,7 +825,9 @@ _cflags-hardened_append_clang_retpoline() {
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
-		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+		if test-flag-CCLD "-Wl,-z,retpolineplt" ; then
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+		fi
 	fi
 
 	#-mindirect-branch is not compatible with fcf-protection=return
