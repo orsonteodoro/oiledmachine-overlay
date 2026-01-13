@@ -4490,6 +4490,11 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				"use_retpoline=\"thunk\""
 				"use_rust_retpoline=true"
 			)
+			if [[ $(is-flagq $(test-flag-CCLD "-Wl,-z,retpolineplt")) == "-Wl,-z,retpolineplt" ]] ; then
+				myconf_gn+=(
+					"use_retpolineplt=true"
+				)
+			fi
 		elif is-flagq "-mindirect-branch=thunk-extern" ; then
 			myconf_gn+=(
 				"use_retpoline=\"thunk-extern\""

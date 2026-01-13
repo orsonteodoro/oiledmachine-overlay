@@ -23,7 +23,7 @@
      } else if (arm_control_flow_integrity == "pac") {
 --- a/build/config/compiler/BUILD.gn.orig	2026-01-10 12:14:12.850538919 -0800
 +++ b/build/config/compiler/BUILD.gn	2026-01-10 12:40:36.084976876 -0800
-@@ -211,6 +211,40 @@ declare_args() {
+@@ -211,6 +211,41 @@ declare_args() {
  
    #use_mold = false
    #custom_optimization_level = ""
@@ -37,6 +37,7 @@
 +  use_harden_sls = ""
 +  use_retpoline = ""
 +  use_retpoline_external_thunk = false
++  use_retpolineplt = false
 +  use_stack_clash_protection = false
 +  use_stack_protector_level = "basic"
 +  use_strict_flex_arrays = -1
@@ -64,7 +65,7 @@
  }
  
  declare_args() {
-@@ -458,7 +492,189 @@ config("compiler") {
+@@ -458,7 +492,191 @@ config("compiler") {
        } else if (is_posix || is_fuchsia) {
          if (current_os != "aix") {
            # Not available on aix.
@@ -83,7 +84,9 @@
 +    if (use_retpoline != "" && (use_cf_protection == "" || use_cf_protection == "none") && !use_fhardened) {
 +      if (is_clang) {
 +        cflags += [ "-mretpoline" ]
-+        ldflags += [ "-Wl,-z,retpolineplt" ]
++        if (use_retpolineplt) {
++          ldflags += [ "-Wl,-z,retpolineplt" ]
++        }
 +        if (use_retpoline_external_thunk) {
 +          # Lightweight modifier, for embedded or mobile
 +          cflags += [ "-mretpoline-external-thunk" ]
