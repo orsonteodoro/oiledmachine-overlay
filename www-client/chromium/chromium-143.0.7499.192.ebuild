@@ -4223,22 +4223,28 @@ einfo "Using the system toolchain"
 }
 
 _remove_hardening_flags() {
-	# Handled in build scripts.
+	# Dedupe flags.  Handled in build scripts.
+	# Prevent duplicates in cross-compile case.
 	filter-flags \
 		"-D_FORTIFY_SOURCE*" \
 		"-U_FORTIFY_SOURCE" \
 		"-f*cf-protection=*" \
+		"-f*delete-null-pointer-checks" \
+		"-f*exceptions" \
 		"-f*hardened" \
 		"-f*sanitize=*" \
 		"-f*sanitize-recover" \
 		"-f*stack-clash-protection" \
 		"-f*stack-protector" \
 		"-f*strict-flex-arrays=*" \
+		"-f*strict-overflow" \
 		"-f*trivial-auto-var-init=*" \
 		"-f*trapv" \
 		"-f*vtable-verify=*" \
 		"-f*wrapv" \
 		"-f*zero-call-used-regs=*" \
+		"-f*math-errno*" \
+		"-f*rtti" \
 		"-m*function-return=*" \
 		"-m*indirect-branch=*" \
 		"-m*indirect-branch-register" \
@@ -4246,28 +4252,33 @@ _remove_hardening_flags() {
 		"-m*retpoline" \
 		"-m*retpoline-external-thunk" \
 		"-Wl,-z,now" \
-		"-Wl,-z,relro" \
-		"-fstack-clash-protection" \
-		"-ftrapv"
+		"-Wl,-z,relro"
 
 	# _FORTIFY_SOURCE integrity loss mitigation flags
 	filter-flags \
-		"-f*strict-aliasing" \
-		"-f*unroll-loops" \
-		"-f*vectorize" \
-		"-f*slp-vectorize" \
-		"-f*optimize-sibling-calls" \
-		"-f*tree-dce" \
-		"-f*tree-loop-optimize" \
-		"-f*optimize-sibling-calls" \
-		"-f*lto-promote-static-vtables" \
-		"-f*whole-program-vtables" \
+		"-f*inline" \
 		"-f*ipa-cp" \
 		"-f*ipa-icf" \
-		"-f*inline"
+		"-f*lto-promote-static-vtables" \
+		"-f*optimize-sibling-calls" \
+		"-f*slp-vectorize" \
+		"-f*strict-aliasing" \
+		"-f*tree-dce" \
+		"-f*tree-loop-optimize" \
+		"-f*unroll-loops" \
+		"-f*vectorize" \
+		"-f*whole-program-vtables"
 
 	# Prevent slowdowns with hardening flags
 	filter-flags "-fno-inline"
+}
+
+_remove_performance_flags() {
+	# Dedupe flags.  Handled in build scripts.
+	# Prevent duplicates in cross-compile case.
+	filter-flags \
+		"-f*merge-all-constants" \
+		"-f*omit-frame-pointer"
 }
 
 _configure_security(){
@@ -6098,6 +6109,7 @@ ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only t
 }
 
 _configure_optimization_level() {
+	_remove_performance_flags
 	#
 	# Oflag and or compiler flag requirements:
 	#
