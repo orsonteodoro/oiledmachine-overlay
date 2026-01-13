@@ -4232,6 +4232,8 @@ _remove_hardening_flags() {
 		"-f*delete-null-pointer-checks" \
 		"-f*exceptions" \
 		"-f*hardened" \
+		"-f*math-errno*" \
+		"-f*rtti" \
 		"-f*sanitize=*" \
 		"-f*sanitize-recover" \
 		"-f*stack-clash-protection" \
@@ -4240,11 +4242,11 @@ _remove_hardening_flags() {
 		"-f*strict-overflow" \
 		"-f*trivial-auto-var-init=*" \
 		"-f*trapv" \
+		"-f*visibility=*" \
+		"-f*visibility-inlines-hidden" \
 		"-f*vtable-verify=*" \
 		"-f*wrapv" \
 		"-f*zero-call-used-regs=*" \
-		"-f*math-errno*" \
-		"-f*rtti" \
 		"-m*function-return=*" \
 		"-m*indirect-branch=*" \
 		"-m*indirect-branch-register" \
@@ -4273,12 +4275,25 @@ _remove_hardening_flags() {
 	filter-flags "-fno-inline"
 }
 
+_remove_debug_flags() {
+	# Dedupe flags.  Handled in build scripts.
+	# Prevent duplicates in cross-compile case.
+	filter-flags \
+		"-g1" \
+		"-g2" \
+		"-g3"
+}
+
 _remove_performance_flags() {
 	# Dedupe flags.  Handled in build scripts.
 	# Prevent duplicates in cross-compile case.
 	filter-flags \
 		"-f*merge-all-constants" \
-		"-f*omit-frame-pointer"
+		"-f*omit-frame-pointer" \
+		"-f*visibility=*" \
+		"-f*visibility-inlines-hidden" \
+		"-g0" \
+		"-m*sse3"
 }
 
 _configure_security(){
@@ -6109,7 +6124,6 @@ ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only t
 }
 
 _configure_optimization_level() {
-	_remove_performance_flags
 	#
 	# Oflag and or compiler flag requirements:
 	#
@@ -6404,6 +6418,8 @@ eerror "Disable the official USE flag to continue."
 			filter-flags "-mtune=*"
 		fi
 	fi
+
+	_remove_performance_flags
 }
 
 _configure_performance_thp() {
@@ -6483,6 +6499,7 @@ _configure_debug() {
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		TARGET_ISDEBUG=$(usex debug "true" "false")
 	fi
+	_remove_debug_flags
 }
 
 
