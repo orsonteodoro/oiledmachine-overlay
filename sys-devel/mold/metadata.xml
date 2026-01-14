@@ -14,4 +14,18 @@
   <upstream>
     <remote-id type="github">rui314/mold</remote-id>
   </upstream>
+  <use>
+    <flag name="mimalloc">
+      Optimize memory allocation for memory use and hardening
+    </flag>
+    <flag name="system-mimalloc">
+      Use mimalloc provided by the system.
+    </flag>
+    <flag name="system-tbb">
+      Use the TBB provided by the system.
+    </flag>
+    <flag name="tbb">
+      Optimize concurrency
+    </flag>
+  </use>
 </pkgmetadata>

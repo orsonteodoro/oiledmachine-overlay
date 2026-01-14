@@ -45,7 +45,15 @@ LICENSE="
 #  - xxhash (BSD-2)
 #  - siphash ( MIT CC0-1.0 )
 SLOT="0"
-IUSE="debug test"
+IUSE="
+debug mimalloc system-mimalloc system-tbb tbb test
+ebuild_revision_1
+"
+REQUIRED_USE="
+	kernel_Darwin? (
+		!mimalloc
+	)
+"
 RESTRICT="
 	!test? (
 		test
@@ -137,12 +145,15 @@ src_prepare() {
 
 src_configure() {
 	use debug || append-cppflags "-DNDEBUG"
+
+	# Using system mimalloc breaks linking Chromium.
+
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 		-DMOLD_LTO=OFF # Should be up to the user to decide this with CXXFLAGS.
-		-DMOLD_USE_MIMALLOC=$(usex !kernel_Darwin)
-		-DMOLD_USE_SYSTEM_MIMALLOC=ON
-		-DMOLD_USE_SYSTEM_TBB=ON
+		-DMOLD_USE_MIMALLOC=$(usex mimalloc)
+		-DMOLD_USE_SYSTEM_MIMALLOC=$(usex system-mimalloc)
+		-DMOLD_USE_SYSTEM_TBB=$(usex system-tbb)
 		-DTBB_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake/TBB"
 	)
 
@@ -180,6 +191,10 @@ src_install() {
 	dosym -r \
 		"/usr/bin/${PN}" \
 		"/usr/libexec/${PN}/ld"
+}
+
+pkg_postinst() {
+	ewarn "Using system-mimalloc breaks linking Chromium"
 }
 
 src_test() {
