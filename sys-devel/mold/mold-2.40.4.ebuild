@@ -197,6 +197,7 @@ src_install() {
 
 pkg_postinst() {
 	# Avoid mold: fatal: obj/third_party/rust/anyhow/v1/lib/libanyhow_lib.rlib: mmap failed: Cannot allocate memory
+	# See issue #1416 in mold repo
 	use system-mimalloc && ewarn "Using system-mimalloc breaks linking Chromium"
 }
 
