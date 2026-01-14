@@ -196,7 +196,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	ewarn "Using system-mimalloc breaks linking Chromium"
+	use system-mimalloc && ewarn "Using system-mimalloc breaks linking Chromium"
 }
 
 src_test() {
