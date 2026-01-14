@@ -154,6 +154,10 @@ einfo "CE = Code Execution"
 einfo "RCE = Remote Code Execution"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CJ"($|" "|";"|",") ]] ; then
+einfo "CJ = Clickjack"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CRSH"($|" "|";"|",") ]] ; then
 einfo "CRSH = Crash"
 		fi
