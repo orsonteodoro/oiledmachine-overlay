@@ -16,7 +16,7 @@
   </upstream>
   <use>
     <flag name="mimalloc">
-      Optimize memory allocation for memory use and hardening
+      Optimize memory allocation for memory use efficiency caused by fragmentation
     </flag>
     <flag name="system-mimalloc">
       Use mimalloc provided by the system.
