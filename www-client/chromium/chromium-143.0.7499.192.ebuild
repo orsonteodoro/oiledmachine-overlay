@@ -1637,6 +1637,7 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 fi
 # Upstream uses live rust.  Rust version is relaxed.
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
+# Using system-mimalloc with mold causes link failure.
 BDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
@@ -1661,7 +1662,7 @@ BDEPEND+="
 	sys-apps/hwdata
 	sys-devel/flex
 	mold? (
-		>=sys-devel/mold-2.38[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
 	vaapi? (
 		media-video/libva-utils
@@ -5805,10 +5806,6 @@ einfo "Using ThinLTO"
 	if ! use mold && is-flagq "-fuse-ld=mold" && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
 		die
-	fi
-
-	if use mold ; then
-ewarn "Linking with the latest Mold may fail.  Use ThinLTO instead."
 	fi
 
 	# See https://github.com/rui314/mold/issues/336
