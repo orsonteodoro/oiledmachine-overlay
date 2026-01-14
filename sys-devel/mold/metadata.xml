@@ -24,8 +24,5 @@
     <flag name="system-tbb">
       Use the TBB provided by the system.
     </flag>
-    <flag name="tbb">
-      Optimize concurrency
-    </flag>
   </use>
 </pkgmetadata>

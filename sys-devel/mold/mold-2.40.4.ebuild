@@ -46,8 +46,8 @@ LICENSE="
 #  - siphash ( MIT CC0-1.0 )
 SLOT="0"
 IUSE="
-debug mimalloc system-mimalloc system-tbb tbb test
-ebuild_revision_1
+debug +mimalloc -system-mimalloc -system-tbb test
+ebuild_revision_2
 "
 REQUIRED_USE="
 	kernel_Darwin? (
