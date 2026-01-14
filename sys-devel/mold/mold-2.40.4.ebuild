@@ -47,7 +47,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 debug +mimalloc -system-mimalloc -system-tbb test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	kernel_Darwin? (
@@ -62,15 +62,17 @@ RESTRICT="
 RDEPEND="
 	>=app-arch/zstd-1.5.7
 	app-arch/zstd:=
-	>=dev-cpp/tbb-2022.0.0:0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-cpp/tbb:=
 	>=dev-libs/blake3-1.6.1
 	dev-libs/blake3:=
 	>=sys-libs/zlib-1.3
 	sys-libs/zlib:=
-	!kernel_Darwin? (
+	system-mimalloc? (
 		>=dev-libs/mimalloc-2.2.2
 		dev-libs/mimalloc:=
+	)
+	system-tbb? (
+		>=dev-cpp/tbb-2022.0.0:0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		dev-cpp/tbb:=
 	)
 "
 DEPEND="
