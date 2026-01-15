@@ -6195,7 +6195,13 @@ einfo "-Oshit base:  -O1"
 	else
 		olast=$(get_olast)
 		replace-flags "-O*" "${get_olast}"
+einfo "olast:  ${olast}"
 	fi
+
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
 
 	local oshit_opt_level_dav1d
 	local oshit_opt_level_libaom
@@ -6333,6 +6339,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	if use official ; then
 		:
+	elif (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+		myconf_gn+=(
+			"custom_optimization_level=1"
+		)
 	elif is-flagq "-Ofast" ; then
 # DO NOT USE
 		myconf_gn+=(
