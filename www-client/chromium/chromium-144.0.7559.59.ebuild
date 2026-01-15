@@ -6185,7 +6185,7 @@ _configure_optimization_level() {
 	filter-flags "-ffast-math"
 
 	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
-einfo "-Oshit base:  -O1"
+einfo "-Oshit base:  -O1 (1)"
 		replace-flags "-O*" "-O1"
 	fi
 
@@ -6339,10 +6339,6 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	if use official ; then
 		:
-	elif (( ${OSHIT_OPTIMIZED} == 1 )) ; then
-		myconf_gn+=(
-			"custom_optimization_level=1"
-		)
 	elif is-flagq "-Ofast" ; then
 # DO NOT USE
 		myconf_gn+=(
@@ -6368,6 +6364,11 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 # DO NOT USE
 		myconf_gn+=(
 			"custom_optimization_level=0"
+		)
+	elif (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+einfo "-Oshit base:  -O1 (2)"
+		myconf_gn+=(
+			"custom_optimization_level=1"
 		)
 	fi
 
