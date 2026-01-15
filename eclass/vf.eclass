@@ -253,7 +253,7 @@ einfo "WS = Weak Security Design or Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
 # Same as CWE-119
-einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Error, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
+einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Read/Write, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
