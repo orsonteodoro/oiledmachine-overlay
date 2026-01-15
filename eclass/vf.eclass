@@ -251,8 +251,8 @@ einfo "NSS = Not Sufficiently Secure"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WS"($|" "|";"|",") ]] ; then
 einfo "WS = Weak Security Design or Implementation"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BORW"($|" "|";"|",") ]] ; then
-einfo "BORW = Buffer Overread or Overwrite"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOURW"($|" "|";"|",") ]] ; then
+einfo "BOURW = Buffer Over-/Under- Read or Write"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
