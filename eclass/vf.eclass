@@ -240,6 +240,7 @@ einfo "IRoR = Improper Release of Resources"
 einfo "ICP = Insecure Coding Practices"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
+# Deprecated
 einfo "II = Improper Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"III"($|" "|";"|",") ]] ; then

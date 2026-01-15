@@ -175,6 +175,7 @@ LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
 NODE_SLOT="22"
+OSHIT_OPTIMIZED=0 # Global variable
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
@@ -6172,6 +6173,7 @@ _configure_optimization_level() {
 	filter-flags "-ffast-math"
 
 	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+einfo "-Oshit base:  -O1"
 		replace-flags "-O*" "-O1"
 	fi
 
