@@ -144,7 +144,8 @@ EAPI=8
 # third_party/ffmpeg/libavformat/version*.h
 #
 
-# The unbundle build files logic is in /usr/share/chromium/sources/build/linux/unbundle
+# The unbundle build files logic is in
+# /usr/share/chromium/sources/build/linux/unbundle/replace_gn_files.py
 
 TC_COUNT_EXPECTED=5129
 SOURCES_COUNT_EXPECTED=516260

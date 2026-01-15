@@ -145,7 +145,8 @@ EAPI=8
 # third_party/ffmpeg/libavformat/version*.h
 #
 
-# The unbundle build files logic is in /usr/share/chromium/sources/build/linux/unbundle
+# The unbundle build files logic is in
+# /usr/share/chromium/sources/build/linux/unbundle/replace_gn_files.py
 
 TC_COUNT_EXPECTED=5227
 SOURCES_COUNT_EXPECTED=522496
@@ -3381,6 +3382,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/pdfium/third_party/libtiff"
 		"third_party/perfetto"
 		"third_party/perfetto/protos/third_party/chromium"
+		"third_party/perfetto/protos/third_party/pprof"
 		"third_party/perfetto/protos/third_party/simpleperf"
 		"third_party/pffft"
 		"third_party/ply"
