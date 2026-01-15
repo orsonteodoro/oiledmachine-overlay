@@ -240,7 +240,19 @@ einfo "IRoR = Improper Release of Resources"
 einfo "ICP = Insecure Coding Practices"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
-einfo "II = Insecure Implementation"
+einfo "II = Improper Implementation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"III"($|" "|";"|",") ]] ; then
+einfo "III = Improper and Insecure Implementation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NSS"($|" "|";"|",") ]] ; then
+einfo "NSS = Not Sufficiently Secure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WS"($|" "|";"|",") ]] ; then
+einfo "WS = Weak Security Design or Implementation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UIOOIB"($|" "|";"|",") ]] ; then
+einfo "UIOOIB = Unauthorized or Inappropriate Operations Outside the Intended Buffer"
 		fi
 
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
