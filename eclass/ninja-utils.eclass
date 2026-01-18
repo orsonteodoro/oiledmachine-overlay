@@ -116,6 +116,7 @@ get_NINJAOPTS() {
 	# Chromium where it slows down the build by adding 2 days additional
 	# build time and stuck with only 1 clang most of the time.
 		#NINJAOPTS="-l$(get_makeopts_loadavg 0)"
+		NINJAOPTS=""
 
 		if ! _ninja_uses_jobserver; then
 			# ninja only uses jobserver if -j is not passed
