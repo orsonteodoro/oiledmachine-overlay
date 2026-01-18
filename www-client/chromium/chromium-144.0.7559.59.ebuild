@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 2009-2025 Gentoo Authors
+# Copyright 2009-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -79,12 +79,12 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/highway								# Live
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/jsoncpp								# Stable, use commit to obtain closest tag
 # https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
-# https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/libpng/png.h#L288						# Stable
-# https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/libsecret							# Stable
+# https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/libpng/png.h#L288							# Stable
+# https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/libsecret								# Stable
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/libusb								# Stable
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/libvpx								# Stable
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/libwebp								# Stable
-# https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/libxml/linux/config.h#L86					# Stable
+# https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/libxml/linux/config.h#L86						# Stable
 # https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/re2								# Stable
@@ -94,7 +94,7 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/144.0.7559.59/third_party/spirv-tools							# Stable, tag not on distro
 # https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/144.0.7559.59/third_party/zlib/zlib.h#L40							# Stable
-# https://github.com/chromium/chromium/blob/144.0.7559.59/tools/rust/update_rust.py#L35						#
+# https://github.com/chromium/chromium/blob/144.0.7559.59/tools/rust/update_rust.py#L35							#
 #   https://github.com/rust-lang/rust/blob/15283f6fe95e5b604273d13a428bab5fc0788f5a/src/version						# Live
 # /usr/share/chromium/sources/third_party/flac/BUILD.gn										L122	# Stable
 # /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in						L56     # Stable
@@ -176,9 +176,9 @@ DISTRIBUTED_BUILD=0 # Global variable
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
-NODE_SLOT="22"
+NODE_SLOT="24"
 OSHIT_OPTIMIZED=0 # Global variable
-PATCH_REVISION=""
+PATCH_REVISION="-1"
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
@@ -186,8 +186,8 @@ USE_LTO=0 # Global variable
 RE2_SLOT="20250512"
 # https://github.com/chromium/chromium/blob/144.0.7559.59/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_MAX_VER="9999" # Corresponds to llvm-21.1
-RUST_MIN_VER="9999" # Corresponds to llvm-21.1
+RUST_MAX_VER="1.91.1" # Corresponds to llvm-21.1
+RUST_MIN_VER="1.91.1" # Corresponds to llvm-21.1
 RUST_NEEDS_LLVM="yes please"
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
 SHADOW_CALL_STACK=0 # Global variable
@@ -209,7 +209,7 @@ UNGOOGLED_CHROMIUM_PV="143.0.7499.192-1"
 VULKAN_PV="1.4.331"
 ZLIB_PV="1.3.1"
 
-COPIUM_COMMIT="8025c57b5b5d0f93ca6392cbcfab8fd2f8255e75"
+COPIUM_COMMIT="bd8cca0b09a9316960853a3150c26e18ed59afd9"
 CROMITE_COMMIT="8e844cf64f8159a72f158eb33e2f09b19f7d115a" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
 OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
@@ -1669,7 +1669,7 @@ BDEPEND+="
 	app-alternatives/lex
 	dev-lang/perl
 	dev-vcs/git
-	>=net-libs/nodejs-22.11.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
+	>=net-libs/nodejs-24.11.1:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
@@ -2431,11 +2431,6 @@ einfo "CXX:  ${CXX}"
 ewarn "Enabling ${x} could weaken the security or have version sensitive C++ standard incompatibility."
 		fi
 	done
-
-	# Prevent stuck at 1 clang the majority of build time.
-	if [[ -z "${MAKEOPTS}" ]] ; then
-		export MAKEOPTS="-j$(nproc)"
-	fi
 }
 
 src_unpack() {
@@ -2564,51 +2559,20 @@ apply_distro_patchset_for_system_toolchain() {
 	fi
 
 	# Oxidised hacks, let's keep 'em all in one place
-	# This is a nightly option that does not exist in older releases
-	# https://github.com/rust-lang/rust/commit/389a399a501a626ebf891ae0bb076c25e325ae64
-	if ver_test "${RUST_SLOT}" "-lt" "1.83.0" ; then
-		sed '/rustflags = \[ "-Zdefault-visibility=hidden" \]/d' -i build/config/gcc/BUILD.gn ||
-			die "Failed to remove default visibility nightly option"
-	fi
-
-	# Upstream Rust replaced adler with adler2, for older versions of Rust
-	# we still need to tell GN that we have the older lib when it tries to
-	# copy the Rust sysroot into the bulid directory.
-	if ver_test "${RUST_SLOT}" "-lt" "1.86.0" ; then
-		sed -i 's/adler2/adler/' "build/rust/std/BUILD.gn" \
-			|| die "Failed to tell GN that we have adler and not adler2"
-	fi
-
-	if ver_test "${RUST_SLOT}" "-lt" "1.89.0"; then
-	# The rust allocator was changed in 1.89.0, so we need to patch sources for older versions
-		PATCHES+=(
-			"${FILESDIR}/chromium-140-__rust_no_alloc_shim_is_unstable.patch"
-		)
-	fi
-
-	if ver_test "${RUST_SLOT}" "-lt" "1.90.0"; then
-		PATCHES+=(
-			"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
-		)
-	fi
-
-	if ver_test "${RUST_SLOT}" "-lt" "1.91.0"; then
-		PATCHES+=(
-			"${WORKDIR}/copium/cr142-crabbyavif-gn-rust-pre1.91.patch"
-			"${WORKDIR}/copium/cr142-crabbyavif-src-rust-pre1.91.patch"
-		)
-	fi
+	# "Adler2" is part of the stdlib since Rust 1.86, but it's behind a nightly-only feature flag in GN.
+	PATCHES+=(
+		"${WORKDIR}/copium/cr144-rust-1.86-is-not-nightly--adler2.patch"
+	)
 }
 
 apply_distro_patchset() {
 einfo "Applying the distro patchset ..."
 	PATCHES+=(
-		"${FILESDIR}/${PN}-cross-compile.patch"
 		$(use system-zlib && echo "${FILESDIR}/${PN}-109-system-zlib.patch")
 		"${FILESDIR}/${PN}-131-unbundle-icu-target.patch"
-		"${FILESDIR}/extra-patches/${PN}-144-bindgen-custom-toolchain.patch"
 		"${FILESDIR}/${PN}-135-oauth2-client-switches.patch"
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
+		"${FILESDIR}/${PN}-cross-compile.patch"
 	)
 
 	if _use_system_toolchain ; then
@@ -3168,23 +3132,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		fi
 	fi
 
-	if [[ "${LLVM_SLOT}" == "19" ]]; then
-	# Upstream now hard depends on a feature that was added in LLVM 20.1,
-	# but we don't want to stabilise that yet.
-	# Do the temp file shuffle in case someone is using something other than
-	# `gawk`
-		{
-			awk '/config\("clang_warning_suppression"\) \{/	{ print $0 " }"; sub(/clang/, "xclang"); print; next }
-				{ print }' "build/config/compiler/BUILD.gn" \
-				> \
-				"${T}/build.gn" \
-				&& \
-			mv \
-				"${T}/build.gn" \
-				"build/config/compiler/BUILD.gn"
-		} || die "Unable to disable warning suppression"
-	fi
-
 	# Not included in -lite tarballs, but we should check for it anyway.
 	if [[ -f "third_party/node/linux/node-linux-x64/bin/node" ]]; then
 		rm "third_party/node/linux/node-linux-x64/bin/node" || die
@@ -3619,7 +3566,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 			"third_party/fuzztest" \
 			"third_party/google_benchmark/src/include/benchmark" \
 			"third_party/google_benchmark/src/src" \
-			"third_party/perfetto/protos/third_party/pprof" \
 			"third_party/test_fonts" \
 			"third_party/test_fonts/fontconfig" \
 		)
@@ -7047,7 +6993,9 @@ _eninja() {
 	local file_name=$(basename "${2}")
 
 einfo "Building ${file_name}"
-	eninja -C "${ninja_into}" "${target_id}"
+	# The -l added by eninja may be too conservative.
+	[[ -z "${NINJA}" ]] && NINJA="ninja"
+	"${NINJA}" -v -j$(nproc) -C "${ninja_into}" "${target_id}"
 
 	if [[ -n "${pax_path}" ]] ; then
 		pax-mark m "${pax_path}"
