@@ -112,8 +112,9 @@ _ninja_uses_jobserver() {
 get_NINJAOPTS() {
 	if [[ -z ${NINJAOPTS+set} ]]; then
 	# oiledmachine-overlay changed.  Bugged or overly conservative.
-	# This is a security issue for large packages like chromium where it
-	# slows down the build by adding 2 days additional build time.
+	# This is possibly security DoS issue for large packages like in
+	# Chromium where it slows down the build by adding 2 days additional
+	# build time and stuck with only 1 clang most of the time.
 		#NINJAOPTS="-l$(get_makeopts_loadavg 0)"
 
 		if ! _ninja_uses_jobserver; then
