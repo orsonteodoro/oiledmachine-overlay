@@ -7639,6 +7639,7 @@ einfo "Since the build is done, you may remove /usr/share/chromium folder."
 # OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59 (20250506) - build failure and segfault with running mksnapshot
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 143.0.7499.192 (20260114) with mold 2.40.4 - segfault when playing yt video
+# OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260118) with lld with a completion time of 2 days, 14 hrs, 36 mins, 14 secs
 
 # 143.0.7499.192 test results:
 # search engine:  passed
