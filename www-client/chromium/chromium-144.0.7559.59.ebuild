@@ -2431,6 +2431,11 @@ einfo "CXX:  ${CXX}"
 ewarn "Enabling ${x} could weaken the security or have version sensitive C++ standard incompatibility."
 		fi
 	done
+
+	# Prevent stuck at 1 clang the majority of build time.
+	if [[ -z "${MAKEOPTS}" ]] ; then
+		export MAKEOPTS="-j$(nproc)"
+	fi
 }
 
 src_unpack() {
