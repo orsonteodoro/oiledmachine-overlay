@@ -54,7 +54,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     The -Oshit optimization flag:
 
     This flag address the unacceptable build times with -Oshit compiler
-    metaflag and OSHIT_* environment variables.
+    metaflag and OSHIT_* environment variables.  The idea combines the agility
+    of the build speed with the optimized performance impact for performance
+    sensitive subcomponents, inspired by luchador wrestlers with fast running
+    speed and powerful kicks.
 
     -Oshit will build mostly everything with -O1 for _FORTIFY_SOURCE and faster
     build speed but will have extra environment variables to customize the
