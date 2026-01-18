@@ -6994,8 +6994,8 @@ _eninja() {
 
 einfo "Building ${file_name}"
 	# The -l added by eninja may be too conservative.
-	[[ -z "${NINJA}" ]] && NINJA="ninja"
-	"${NINJA}" -v -j$(nproc) -C "${ninja_into}" "${target_id}"
+	export NINJA=${NINJA:-"ninja"}
+	edo "${NINJA}" -v -j$(nproc) -C "${ninja_into}" "${target_id}"
 
 	if [[ -n "${pax_path}" ]] ; then
 		pax-mark m "${pax_path}"
