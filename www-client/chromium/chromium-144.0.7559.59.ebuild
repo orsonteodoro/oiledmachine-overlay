@@ -4268,8 +4268,8 @@ _remove_performance_flags() {
 }
 
 _configure_security(){
-	if use official ; then
-ewarn "Using hardened flag defaults for USE=official."
+	if use official || true ; then
+#ewarn "Using hardened flag defaults for USE=official."
 		_remove_hardening_flags # Do even when cross-compiling
 		return
 	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
