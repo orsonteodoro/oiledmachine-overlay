@@ -199,7 +199,7 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="143.0.7499.192-1"
+UNGOOGLED_CHROMIUM_PV="144.0.7559.59-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
