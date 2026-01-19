@@ -2612,6 +2612,10 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-sse3.patch"
+	)
+
 	DISABLED_PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
@@ -5052,6 +5056,7 @@ einfo
 }
 
 _configure_performance_simd(){
+if false ; then
 	if ! use cpu_flags_arm_dotprod ; then
 		sed -r -i \
 			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
@@ -5128,6 +5133,7 @@ _configure_performance_simd(){
 	if ! use cpu_flags_x86_avxvnniint8 ; then
 		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
+fi
 
 	myconf_gn+=(
 	# ARM
@@ -5243,7 +5249,7 @@ _configure_performance_simd(){
 		append-flags "-msse2"
 	fi
 
-	if false && ! use custom-cflags ; then
+	if ! use custom-cflags ; then
 	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
 	# 546984, 853646.
 		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
@@ -5256,7 +5262,6 @@ _configure_performance_simd(){
 				"-mno-xop"
 		fi
 	fi
-
 
 	# For AVX3, see \
 	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L136
@@ -5316,6 +5321,7 @@ _configure_performance_simd(){
 		fi
 	fi
 
+if false ; then
 	if use cpu_flags_x86_avx ; then
 	# Default on upstream for 64-bit with wasm enabled
 		myconf_gn+=(
@@ -5331,6 +5337,7 @@ _configure_performance_simd(){
 			"v8/test/unittests/BUILD.gn" \
 			|| die
 	fi
+fi
 }
 
 get_drive_type() {
@@ -6951,7 +6958,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_linker
 	_configure_optimization_level
 	_configure_performance_pgo
-	#_configure_performance_simd
+	_configure_performance_simd
 	_configure_performance_thp
 	#_configure_v8
 	_configure_security
@@ -7590,7 +7597,8 @@ einfo "Since the build is done, you may remove /usr/share/chromium folder."
 # OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59 (20250506) - build failure and segfault with running mksnapshot
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 143.0.7499.192 (20260114) with mold 2.40.4 - segfault when playing yt video
-# OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260118) with lld with a completion time of 2 days, 14 hrs, 36 mins, 14 secs - segfault when playing yt video
+# OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260118) with lld with a completion time of 2 days, 14 hrs, 36 mins, 14 secs using ninja -l4 -j4 and overlay hardening flags and -Oshit - segfault when playing yt video
+# OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260119) with mold with a completion time of 1 days, 2 hrs, 57 mins, 36 secs using ninja -j4 and upstream hardening flags and -Oshit - segfault when playing yt video
 
 # 143.0.7499.192 test results:
 # search engine:  passed
