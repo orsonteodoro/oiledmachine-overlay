@@ -5237,19 +5237,9 @@ fi
 		)
 	fi
 
-	# This is normally defined by compiler_cpu_abi in
-	# build/config/compiler/BUILD.gn, but we patch that part out.
-	if use cpu_flags_x86_mmx ; then
-		append-flags "-mmmx"
-	fi
-	if use cpu_flags_x86_sse ; then
-		append-flags "-mfpmath=sse"
-	fi
-	if use cpu_flags_x86_sse2 ; then
-		append-flags "-msse2"
-	fi
-
-	if ! use custom-cflags ; then
+	# Disabled distro changes.  This ebuild fork handles flag changes via gn flags.
+	# C{,XX}FLAGS changes only work in cross-compile only in this ebuild fork.
+	if false && ! use custom-cflags ; then
 	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
 	# 546984, 853646.
 		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
