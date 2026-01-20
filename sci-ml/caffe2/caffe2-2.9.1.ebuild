@@ -180,8 +180,8 @@ CPU_FLAGS_PPC=(
 )
 
 CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
-	"cpu_flags_riscv_rvv_fp16"
+	"cpu_flags_riscv_v"	# rvv
+	"cpu_flags_riscv_zfh"	# zfh
 )
 
 CPU_FLAGS_S390=(
@@ -605,6 +605,11 @@ REQUIRED_USE="
 			)
 		)
 	)
+
+	cpu_flags_riscv_zfh? (
+		cpu_flags_riscv_v
+	)
+
 	cpu_flags_x86_sse4_1? (
 		cpu_flags_x86_sse2
 	)
@@ -1188,11 +1193,11 @@ BDEPEND="
 			>=sys-devel/gcc-8.1
 			>=sys-devel/binutils-2.28
 		)
-		cpu_flags_riscv_rvv? (
+		cpu_flags_riscv_v? (
 			>=sys-devel/gcc-14.1
 			>=sys-devel/binutils-2.38
 		)
-		cpu_flags_riscv_rvv_fp16? (
+		cpu_flags_riscv_zfh? (
 			>=sys-devel/gcc-14.1
 			>=sys-devel/binutils-2.42
 		)
@@ -1677,8 +1682,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DSLEEF_DISABLE_AVX512F=$(usex !cpu_flags_x86_avx512f)
 		-DSLEEF_DISABLE_FMA4=$(usex !cpu_flags_x86_fma4)
 		-DSLEEF_DISABLE_OPENMP=$(usex !openmp)
-		-DSLEEF_DISABLE_RVVM1=$(usex !cpu_flags_riscv_rvv)
-		-DSLEEF_DISABLE_RVVM2=$(usex !cpu_flags_riscv_rvv)
+		-DSLEEF_DISABLE_RVVM1=$(usex !cpu_flags_riscv_v)
+		-DSLEEF_DISABLE_RVVM2=$(usex !cpu_flags_riscv_v)
 		-DSLEEF_DISABLE_SSE2=$(usex !cpu_flags_x86_sse2)
 		-DSLEEF_DISABLE_SSE4=$(usex !cpu_flags_x86_sse4_1)
 		-DSLEEF_DISABLE_SVE=$(usex !cpu_flags_arm_sve)
@@ -1747,8 +1752,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DXNNPACK_ENABLE_AVX512AMX=$(usex cpu_flags_x86_amx)
 		-DXNNPACK_ENABLE_AVXVNNI=$(usex cpu_flags_x86_avx512vnni)
 		-DXNNPACK_ENABLE_JIT=$(usex jit)
-		-DXNNPACK_ENABLE_RISCV_VECTOR=$(usex cpu_flags_riscv_rvv)
-		-DXNNPACK_ENABLE_RISCV_FP16_VECTOR=$(usex cpu_flags_riscv_rvv_fp16)
+		-DXNNPACK_ENABLE_RISCV_VECTOR=$(usex cpu_flags_riscv_v)
+		-DXNNPACK_ENABLE_RISCV_FP16_VECTOR=$(usex cpu_flags_riscv_zfh)
 		-DXNNPACK_ENABLE_VSX=$(usex cpu_flags_ppc_vsx)
 		-Wno-dev
 

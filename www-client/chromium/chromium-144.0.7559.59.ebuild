@@ -349,7 +349,8 @@ CPU_FLAGS_PPC=(
 )
 
 CPU_FLAGS_RISCV=(
-	"rvv"
+	"c"
+	"v"
 )
 
 CPU_FLAGS_S390=(
@@ -5073,6 +5074,12 @@ _configure_performance_simd(){
 			"third_party/xnnpack/BUILD.gn" \
 			|| die
 	fi
+
+	if ! use cpu_flags_riscv_c && ! use cpu_flags_riscv_v ; then
+		sed -r -i -e "/:.*rv64gcv-/d" "third_party/xnnpack/BUILD.gn" || die
+
+	fi
+
 	if ! use cpu_flags_x86_avx ; then
 		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
@@ -5168,7 +5175,7 @@ _configure_performance_simd(){
 		"use_vsx=$(usex cpu_flags_ppc_vsx true false)"
 
 	# RISCV
-		"use_rvv=$(usex cpu_flags_riscv_rvv true false)"
+		"use_rvv=$(usex cpu_flags_riscv_v true false)"
 
 	# S390
 		"use_z15=$(usex cpu_flags_s390_z15 true false)"
@@ -5199,7 +5206,7 @@ _configure_performance_simd(){
 		"use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
 
 	# LIBYUV
-		"libyuv_disable_rvv=$(usex cpu_flags_riscv_rvv false true)"
+		"libyuv_disable_rvv=$(usex cpu_flags_riscv_v false true)"
 		"libyuv_use_lasx=$(usex cpu_flags_loong_lasx true false)"
 		"libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
 		"libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
