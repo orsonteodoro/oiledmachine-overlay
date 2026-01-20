@@ -507,10 +507,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Add support for MIPS SIMD Architecture (MSA).
     </flag>
     <flag name="cpu_flags_riscv_v">
-      Add support for RISC-V Vector Extension (RVV).
+      Add support for RISC-V Vector Extension.
     </flag>
     <flag name="cpu_flags_riscv_zfh">
-      Add support for RISC-V Half-precision Floating Point Extension (FP16).
+      Add support for RISC-V Half-precision Floating Point Extension.
     </flag>
     <flag name="cpu_flags_ppc_altivec">
       Add support for AltiVec instruction set for 32-bit floats and integer SIMD.

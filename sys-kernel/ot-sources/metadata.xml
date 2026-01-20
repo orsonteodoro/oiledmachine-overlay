@@ -5692,8 +5692,8 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="cpu_flags_ppc_476fpe">
       Install dependencies for fixing the 476FPE bug.
     </flag>
-    <flag name="cpu_flags_riscv_rvv">
-      Install dependencies for RISC-V Vector Extension (RVV) support.
+    <flag name="cpu_flags_riscv_v">
+      Install dependencies for RISC-V Vector Extension support.
     </flag>
     <flag name="cpu_flags_x86_aes">
       Install dependencies for support for the AES-NI instruction.

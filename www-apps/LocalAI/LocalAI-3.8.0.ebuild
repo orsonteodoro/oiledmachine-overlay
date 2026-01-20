@@ -122,11 +122,11 @@ CPU_FLAGS_LOONG=(
 )
 
 CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
-	"cpu_flags_riscv_rv_zfh"
-	"cpu_flags_riscv_rv_zicbop"
-	"cpu_flags_riscv_rv_zvfh"
+	"cpu_flags_riscv_v"
 	"cpu_flags_riscv_xthreadvector"
+	"cpu_flags_riscv_zfh"
+	"cpu_flags_riscv_zicbop"
+	"cpu_flags_riscv_zvfh"
 )
 
 CPU_FLAGS_S390=(
@@ -1047,10 +1047,10 @@ src_compile() {
 		-DGGML_LASX=$(usex cpu_flags_loong_lasx "ON" "OFF")
 		-DGGML_LSX=$(usex cpu_flags_loong_lsx "ON" "OFF")
 		-DGGML_NATIVE=$(usex native "ON" "OFF")
-		-DGGML_RVV=$(usex cpu_flags_riscv_rvv "ON" "OFF")
-		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
-		-DGGML_RV_ZICBOP=$(usex cpu_flags_riscv_rv_zicbop "ON" "OFF")
-		-DGGML_RV_ZVFH=$(usex cpu_flags_riscv_rv_zvfh "ON" "OFF")
+		-DGGML_RVV=$(usex cpu_flags_riscv_v "ON" "OFF")
+		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_zfh "ON" "OFF")
+		-DGGML_RV_ZICBOP=$(usex cpu_flags_riscv_zicbop "ON" "OFF")
+		-DGGML_RV_ZVFH=$(usex cpu_flags_riscv_zvfh "ON" "OFF")
 		-DGGML_SSE42=$(usex cpu_flags_x86_sse4_2 "ON" "OFF")
 		-DGGML_XTHEADVECTOR=$(usex cpu_flags_riscv_xthreadvector "ON" "OFF")
 		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")

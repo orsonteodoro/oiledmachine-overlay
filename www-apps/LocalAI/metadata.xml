@@ -68,6 +68,21 @@
     <flag name="cuda">
       Support NVIDIA GPU accelerated BLAS.
     </flag>
+    <flag name="cpu_flags_riscv_v">
+      Support RISC-V Vector extension
+    </flag>
+    <flag name="cpu_flags_riscv_xthreadvector">
+      Support T-head vector extension
+    </flag>
+    <flag name="cpu_flags_riscv_zfh">
+      Support RISC-V half-precision floating point extension
+    </flag>
+    <flag name="cpu_flags_riscv_zicbop">
+      Support RISC-V cache-block prefetch extension
+    </flag>
+    <flag name="cpu_flags_riscv_zvfh">
+      Support RISC-V vector half-precision floating-point extension
+    </flag>
     <flag name="devcontainer">
       For upstream development only.  (DO NOT USE)
     </flag>

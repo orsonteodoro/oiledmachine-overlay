@@ -125,6 +125,9 @@
     <flag name="chromium">
       Prevent symbol conflicts in the browser (testing)
     </flag>
+    <flag name="cpu_flags_riscv_v">
+      Add support for RISC-V Vector Extension
+    </flag>
     <flag name="pgo">
       Use profile guided optimization.
     </flag>

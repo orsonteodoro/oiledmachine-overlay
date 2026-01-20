@@ -49,10 +49,10 @@
       Use FBGEMM as a x86 quantization backend.
     </flag>
     <flag name="cpu_flags_riscv_v">
-      Add support for RISC-V Vector extensions (RVV)
+      Add support for RISC-V vector extensions
     </flag>
     <flag name="cpu_flags_riscv_zfh">
-      Add support for half-precision floating-point extensions (FP16)
+      Add support for RISC-V half-precision floating-point extensions
     </flag>
     <flag name="ffmpeg">
       Add support for video processing operators

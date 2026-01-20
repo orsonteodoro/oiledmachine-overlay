@@ -119,7 +119,7 @@ CPU_FLAGS_PPC=(
 )
 
 CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_v"
 	"cpu_flags_riscv_xtheadvector"
 	"cpu_flags_riscv_zfh"
 	"cpu_flags_riscv_zvfh"
@@ -247,7 +247,7 @@ REQUIRED_USE="
 		cpu_flags_arm_sve
 	)
 	cpu_flags_riscv_zvfh? (
-		cpu_flags_riscv_rvv
+		cpu_flags_riscv_v
 		cpu_flags_riscv_zfh
 	)
 
@@ -422,7 +422,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DNCNN_LSX=$(usex cpu_flags_loong_lsx)
 		-DNCNN_MMI=$(usex cpu_flags_loong_mmi)
 		-DNCNN_MSA=$(usex cpu_flags_mips_msa)
-		-DNCNN_RVV=$(usex cpu_flags_riscv_rvv)
+		-DNCNN_RVV=$(usex cpu_flags_riscv_v)
 		-DNCNN_SSE2=$(usex cpu_flags_x86_sse2)
 		-DNCNN_VFPV4=$(usex cpu_flags_arm_vfpv4)
 		-DNCNN_VSX_SSE2=$(usex cpu_flags_ppc_sse2)

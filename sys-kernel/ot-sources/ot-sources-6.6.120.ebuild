@@ -29,7 +29,7 @@ inherit ot-kernel-v6.6
 # 6.6.76 USE flags:
 # USE="build cfs genpatches linux-firmware ncurses openssl symlink zen-sauce
 # zstd -bbrv2 -bbrv3 (-big-endian) -bzip2 -c2tcp -cet -clang -clear
-# -cpu_flags_riscv_rvv (-debug) -deepcc -dwarf4 -dwarf5 -dwarf-auto -exfat
+# -cpu_flags_riscv_v (-debug) -deepcc -dwarf4 -dwarf5 -dwarf-auto -exfat
 # -expoline -gdb -genpatches_1510 -gost -graphicsmagick -gtk -gzip -imagemagick
 # -intel-microcode -kcfi -lto -lz4 -lzma -lzo -nest -orca -pcc -pgo -prjc (-qt5)
 # -qt6 -reiserfs -retpoline -rt -rust -shadowcallstack -tresor -tresor_prompt

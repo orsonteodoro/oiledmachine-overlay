@@ -53,7 +53,7 @@ CPU_FLAGS_LOONG=(
 )
 
 CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_v"
 	"cpu_flags_riscv_xtheadvector"
 	"cpu_flags_riscv_zfh"
 )
@@ -262,10 +262,10 @@ REQUIRED_USE="
 	)
 
 	cpu_flags_riscv_xtheadvector? (
-		cpu_flags_riscv_rvv
+		cpu_flags_riscv_v
 	)
 	cpu_flags_riscv_zfh? (
-		cpu_flags_riscv_rvv
+		cpu_flags_riscv_v
 	)
 
 	cuda? (
@@ -412,7 +412,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DGGML_LASX=$(usex cpu_flags_loong_lasx)
 		-DGGML_LSX=$(usex cpu_flags_loong_lsx)
 		-DGGML_NNPA=$(usex cpu_flags_s390_nnpa)
-		-DGGML_RVV=$(usex cpu_flags_riscv_rvv)
+		-DGGML_RVV=$(usex cpu_flags_riscv_v)
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_zfh)
 		-DGGML_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DGGML_VXE=$(use cpu_flags_s390_vxe)

@@ -88,6 +88,9 @@
     <flag name="cpu_flags_arm_vfpv3">
       Support vfpv3 (arm32 only)
     </flag>
+    <flag name="cpu_flags_riscv_v">
+      Support RISC-V Vector Extension
+    </flag>
     <flag name="cpu_flags_x86_fma">
       Support FMA (Fused Multiply Add instruction with 3 variables)
       Disable if using Bulldozer version 1 (bdver1).

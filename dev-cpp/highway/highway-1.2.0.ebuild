@@ -21,7 +21,7 @@ CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_vsx"
 )
 CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_v"
 )
 CPU_FLAGS_S390=(
 	"cpu_flags_s390_z14"
@@ -435,7 +435,7 @@ eerror "Detected compiler switch.  Removing LTO."
 		-DBUILD_TESTING=$(usex test)
 		-DHWY_CMAKE_ARM7=$(usex cpu_flags_arm_neon)
 		-DHWY_CMAKE_SSE2=$(usex cpu_flags_x86_sse2)
-		-DHWY_CMAKE_RVV=$(usex cpu_flags_riscv_rvv)
+		-DHWY_CMAKE_RVV=$(usex cpu_flags_riscv_v)
 		-DHWY_WARNINGS_ARE_ERRORS=OFF
 	)
 

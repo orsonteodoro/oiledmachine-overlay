@@ -90,7 +90,7 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_mips_msa:MSA"
 	"cpu_flags_ppc_vsx:VSX"					# Always available on Power8
 	"cpu_flags_ppc_vsx3:VSX3"				# Always available on Power9
-	"cpu_flags_riscv_rvv:RVV"
+	"cpu_flags_riscv_v:RVV"
 	"cpu_flags_x86_avx:AVX"
 	"cpu_flags_x86_avx2:AVX2"
 	"cpu_flags_x86_avx512bw:AVX_512BW"

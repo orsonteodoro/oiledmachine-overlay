@@ -49,7 +49,7 @@ CPU_FLAGS_PPC=(
 )
 
 CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
+	"cpu_flags_riscv_v"
 )
 
 CPU_FLAGS_X86=(
@@ -209,7 +209,7 @@ RDEPEND+="
 	highway? (
 		dev-cpp/highway[\
 cpu_flags_arm_sve?,\
-cpu_flags_riscv_rvv?,\
+cpu_flags_riscv_v?,\
 cpu_flags_x86_sse2?,\
 cpu_flags_x86_ssse3?,\
 cpu_flags_x86_sse4_1?,\
@@ -608,7 +608,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON OFF)
 		-DENABLE_NEON_DOTPROD=$(usex cpu_flags_arm_dotprod ON OFF)
 		-DENABLE_NEON_I8MM=$(usex cpu_flags_arm_i8mm ON OFF)
-		-DENABLE_RVV=$(usex cpu_flags_riscv_rvv ON OFF)
+		-DENABLE_RVV=$(usex cpu_flags_riscv_v ON OFF)
 		-DENABLE_SSE=$(usex cpu_flags_x86_sse ON OFF)
 		-DENABLE_SSE2=$(usex cpu_flags_x86_sse2 ON OFF)
 		-DENABLE_SSE3=$(usex cpu_flags_x86_sse3 ON OFF)

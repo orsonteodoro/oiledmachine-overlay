@@ -1,1 +1,6 @@
-cpu_flags_riscv_rvv - Add support for the RISC-V Vector (RVV) extension.
+c - Add support for the RISC-V Compressed extension.
+v - Add support for the RISC-V Vector extension.
+xthreadvector - Add support for the T-head vector extension.
+zfh - Add support for the RISC-V half-precision floating point extension
+zicbop - Add support for the RISC-V cache-block prefetch extension
+zvfh - Add support for the RISC-V vector half-precision floating-point extension

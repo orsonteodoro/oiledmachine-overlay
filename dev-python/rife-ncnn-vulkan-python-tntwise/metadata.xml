@@ -11,4 +11,18 @@
     <remote-id type="github">TNTwise/rife-ncnn-vulkan-python</remote-id>
     <remote-id type="pypi">rife-ncnn-vulkan-python-tntwise</remote-id>
   </upstream>
+  <use>
+    <flag name="cpu_flags_riscv_v">
+      Optimize with RISC-V Vector Extension
+    </flag>
+    <flag name="cpu_flags_riscv_zfh">
+      Optimize with RISC-V Half-precision Floating Point Extension
+    </flag>
+    <flag name="cpu_flags_riscv_xtheadvector">
+      Optimize with T-head Vector Extension
+    </flag>
+    <flag name="cpu_flags_riscv_zvfh">
+      Optimize with RISC-V Vector Half-precision Floating Point Extension
+    </flag>
+  </use>
 </pkgmetadata>

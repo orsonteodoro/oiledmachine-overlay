@@ -9,6 +9,18 @@
     <flag name="tools">
       Enable installation of various tools in addition to the library
     </flag>
+    <flag name="cpu_flags_riscv_v">
+      Add support for the RISC-V vector extension
+    </flag>
+    <flag name="cpu_flags_riscv_xtheadvector">
+      Add support for the T-head vector extension
+    </flag>
+    <flag name="cpu_flags_riscv_zfh">
+      Add support for the RISC-V half-precision floating-point extension
+    </flag>
+    <flag name="cpu_flags_riscv_zvfh">
+      Add support for the RISC-V vector half-precision floating-point extension
+    </flag>
   </use>
   <upstream>
     <remote-id type="github">Tencent/ncnn</remote-id>

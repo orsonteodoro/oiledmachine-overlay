@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<email>ionen@gentoo.org</email>
-		<name>Ionen Wolkens</name>
-	</maintainer>
-	<use>
-		<flag name="tools">Enable installation of various tools in addition to the library</flag>
-	</use>
-	<upstream>
-		<remote-id type="github">Tencent/ncnn</remote-id>
-	</upstream>
+  <maintainer type="person">
+    <email>ionen@gentoo.org</email>
+    <name>Ionen Wolkens</name>
+  </maintainer>
+  <use>
+    <flag name="cpu_flags_riscv_v">
+      Optimize with RISC-V Vector Extension
+    </flag>
+    <flag name="cpu_flags_riscv_xtheadvector">
+      Optimize with T-head Vector Extension
+    </flag>
+    <flag name="cpu_flags_riscv_zfh">
+      Optimize with RISC-V Half-precision Floating Point Extension
+    </flag>
+    <flag name="cpu_flags_riscv_zvfh">
+      Optimize with RISC-V Vector Half-precision Floating Point Extension
+    </flag>
+    <flag name="tools">
+      Enable installation of various tools in addition to the library
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">Tencent/ncnn</remote-id>
+  </upstream>
 </pkgmetadata>

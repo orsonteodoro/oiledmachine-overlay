@@ -60,8 +60,8 @@
     <flag name="cpu_flags_ppc_power10-vector">
       Optimize for POWER10
     </flag>
-    <flag name="cpu_flags_riscv_rvv">
-      Optimize with RISC-V Vector Extension (RVV)
+    <flag name="cpu_flags_riscv_v">
+      Optimize with RISC-V Vector Extensions
     </flag>
     <flag name="cpu_flags_s390_z14">
       Optimize for z14

@@ -312,7 +312,7 @@ PPC_FLAGS=(
 QT5_PV="5.15"
 QT6_PV="6.4"
 RISCV_FLAGS=(
-	+cpu_flags_riscv_rvv
+	+cpu_flags_riscv_v
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
@@ -770,7 +770,7 @@ CDEPEND+="
 	cpu_flags_ppc_476fpe? (
 		>=sys-devel/binutils-2.25
 	)
-	cpu_flags_riscv_rvv? (
+	cpu_flags_riscv_v? (
 		!clang? (
 			>=sys-devel/binutils-2.38
 		)
