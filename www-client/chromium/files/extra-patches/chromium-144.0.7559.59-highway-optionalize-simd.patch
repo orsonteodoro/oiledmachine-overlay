@@ -1,0 +1,183 @@
+--- a/third_party/highway/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/highway/BUILD.gn	2026-01-19 14:58:50.394053211 -0800
+@@ -2,12 +2,166 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ 
+ # This config is applied to targets that depend on libhwy
+ config("libhwy_external_config") {
+   include_dirs = [ "src" ]
+   defines = []
++  cflags = []
++  hwy_disabled_targets=""
++  if (target_cpu == "x64" || target_cpu == "x86") {
++    if (!use_f16c) {
++      cflags += [ "-mno-f16c" ]
++      defines += [ "HWY_DISABLE_F16C=1" ]
++    }
++    if (!use_aes) {
++      cflags += [ "-mno-aes" ]
++    }
++    if (!use_pclmul) {
++      cflags += [ "-mno-pclmul" ]
++    }
++    if (!use_aes || !use_pclmul) {
++      defines += [ "HWY_DISABLE_PCLMUL_AES=1" ]
++    }
++    if (!use_bmi) {
++      cflags += [ "-mno-bmi" ]
++    }
++    if (!use_bmi2) {
++      cflags += [ "-mno-bmi2" ]
++    }
++    if (!use_fma) {
++      cflags += [ "-mno-fma" ]
++    }
++    if (!use_sse2) {
++      cflags += [ "-mno-sse2" ]
++      hwy_disabled_targets += "|HWY_SSE2"
++    }
++    if (!use_ssse3) {
++      cflags += [ "-mno-ssse3" ]
++      hwy_disabled_targets += "|HWY_SSSE3"
++    }
++    if (!use_sse4_1 || !use_sse4_2) {
++      cflags += [ "-mno-sse4.1" ]
++      cflags += [ "-mno-sse4.2" ]
++      hwy_disabled_targets += "|HWY_SSE4"
++    }
++    if (!use_avx2) {
++      cflags += [ "-mno-avx2" ]
++      hwy_disabled_targets += "|HWY_AVX2"
++    }
++    if (!use_avx512) {
++      cflags += [ "-mno-avx512bw" ]
++      cflags += [ "-mno-avx512cd" ]
++      cflags += [ "-mno-avx512dq" ]
++      cflags += [ "-mno-avx512f" ]
++      cflags += [ "-mno-avx512vl" ]
++      hwy_disabled_targets += "|HWY_AVX3"
++    }
++    if (!use_avx512vbmi2) {
++      cflags += [ "-mno-avx512bitalg" ]
++      cflags += [ "-mno-avx512vpopcntdq" ]
++      cflags += [ "-mno-avx512vbmi" ]
++      cflags += [ "-mno-avx512vbmi2" ]
++      cflags += [ "-mno-avx512vnni" ]
++      cflags += [ "-mno-gfni" ]
++      cflags += [ "-mno-vaes" ]
++      cflags += [ "-mno-vpclmulqdq" ]
++      hwy_disabled_targets += "|HWY_AVX3_DL"
++    }
++    if (!use_avx512fp16) {
++      cflags += [ "-mno-avx512fp16" ]
++      hwy_disabled_targets += "|HWY_AVX3_SPR"
++    }
++    if (!use_avx512bf16) {
++      cflags += [ "-mno-avx512bf16" ]
++      hwy_disabled_targets += "|HWY_AVX3_ZEN4"
++      defines += [ "HWY_AVX3_DISABLE_AVX512BF16=1" ]
++    }
++    if (!use_avx10_2) {
++      cflags += [ "-mno-avx10.2" ]
++      hwy_disabled_targets += "|HWY_AVX10_2"
++    }
++  }
++  if (target_cpu == "arm" || target_cpu == "arm64") {
++    if (!use_sve) {
++      hwy_disabled_targets += "|HWY_SVE"
++    }
++    if (!use_sve_256) {
++      hwy_disabled_targets += "|HWY_SVE_256"
++    }
++    if (!use_sve2) {
++      hwy_disabled_targets += "|HWY_SVE2"
++    }
++    if (!use_sve2_128) {
++      hwy_disabled_targets += "|HWY_SVE2_128"
++    }
++    if (!use_neon) {
++      hwy_disabled_targets += "|HWY_NEON"
++    }
++    if (!use_neon || use_aes) {
++      hwy_disabled_targets += "|HWY_NEON_WITHOUT_AES"
++    }
++    if (!use_neon || !use_bf16) {
++      hwy_disabled_targets += "|HWY_NEON_BF16"
++    }
++  }
++  if (target_cpu == "riscv") {
++    if (!use_rvv) {
++      hwy_disabled_targets += "|HWY_RVV"
++    }
++  }
++  if (target_cpu == "ppc" || target_cpu == "ppc64") {
++    if (!use_altivec) {
++      cflags += [ "-mno-altivec" ]
++    }
++    if (!use_crypto) {
++      cflags += [ "-mno-crypto" ]
++      defines += [ "HWY_DISABLE_PPC8_CRYPTO=1" ]
++    }
++    if (!use_ppc8) {
++      cflags += [ "-mno-power8-vector" ]
++      hwy_disabled_targets += "|HWY_PPC8"
++    }
++    if (!use_ppc9) {
++      cflags += [ "-mno-power9-vector" ]
++      hwy_disabled_targets += "|HWY_PPC9"
++    }
++    if (!use_ppc10) {
++      if (is_clang) {
++        cflags += [ "-mno-power10-vector" ]
++      }
++      hwy_disabled_targets += "|HWY_PPC10"
++    }
++    if (!use_vsx) {
++      cflags += [ "-mno-vsx" ]
++    }
++  }
++  if (target_cpu == "s390" || target_cpu == "s390x") {
++    if (!use_z15) {
++      hwy_disabled_targets += "|HWY_Z15"
++    }
++    if (!use_z16) {
++      hwy_disabled_targets += "|HWY_Z16"
++    }
++  }
++  if (target_cpu == "wasm") {
++    if (!use_wasm_emu256) {
++      hwy_disabled_targets += "|HWY_WASM_EMU256"
++    }
++    if (!use_wasm) {
++      hwy_disabled_targets += "|HWY_WASM"
++    }
++  }
++  if (hwy_disabled_targets != "") {
++    hwy_disabled_targets = exec_script(
++      "//tools/slice_string.py",
++      [ hwy_disabled_targets ],
++      "trim string"
++    )
++    defines += [ "HWY_DISABLED_TARGETS=(${hwy_disabled_targets})" ]
++  }
+   if (current_cpu == "x86") {
+     # Highway automatically disables AVX2 and AVX3 targets when compiling in
+     # 32-bit mode due to bugs in the generated code. However, when doing so it
+--- /dev/null	2025-05-03 00:54:32.134046439 -0700
++++ b/tools/slice_string.py	2025-05-06 07:46:30.114162827 -0700
+@@ -0,0 +1,3 @@
++#!/usr/bin/env python3
++import sys
++print(sys.argv[1][1:])
+--- a/.gn.orig	2025-05-06 08:47:51.860419626 -0700
++++ b/.gn	2025-05-06 08:48:26.131161367 -0700
+@@ -173,4 +173,5 @@ exec_script_allowlist =
+ 
+       "//tools/grit/grit_rule.gni",
+       "//tools/gritsettings/BUILD.gn",
++      "//third_party/highway/BUILD.gn",
+     ]

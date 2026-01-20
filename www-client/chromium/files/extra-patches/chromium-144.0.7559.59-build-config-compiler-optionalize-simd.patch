@@ -1,0 +1,58 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-19 17:23:04.176989213 -0800
+@@ -18,6 +18,7 @@ import("//build/config/gclient_args.gni"
+ import("//build/config/host_byteorder.gni")
+ import("//build/config/pch.gni")
+ import("//build/config/rust.gni")
++import("//build/config/simd.gni")
+ import("//build/config/ui.gni")
+ import("//build/config/unwind.gni")
+ import("//build/toolchain/rbe.gni")
+@@ -1298,7 +1299,9 @@ config("compiler_cpu_abi") {
+         cflags += [ "-m64" ]
+         ldflags += [ "-m64" ]
+       }
+-      cflags += [ "-msse3" ]
++      if (use_sse3) {
++        cflags += [ "-msse3" ]
++      }
+     } else if (current_cpu == "x86") {
+       if (is_clang && !is_android && !is_chromeos_device) {
+         cflags += [ "--target=i386-unknown-linux-gnu" ]
+@@ -1307,10 +1310,16 @@ config("compiler_cpu_abi") {
+         cflags += [ "-m32" ]
+         ldflags += [ "-m32" ]
+       }
+-      cflags += [
+-        "-mfpmath=sse",
+-        "-msse3",
+-      ]
++      if (use_sse || use sse2) {
++        cflags += [
++          "-mfpmath=sse",
++        ]
++      }
++      if (use_sse3) {
++        cflags += [
++          "-msse3",
++        ]
++      }
+     } else if (current_cpu == "arm") {
+       if (is_clang && !is_android && !is_chromeos_device) {
+         cflags += [ "--target=arm-linux-gnueabihf" ]
+@@ -1407,9 +1416,13 @@ config("compiler_cpu_abi") {
+       }
+ 
+       if (mips_dsp_rev == 1) {
+-        cflags += [ "-mdsp" ]
++        if (use_dsp) {
++          cflags += [ "-mdsp" ]
++        }
+       } else if (mips_dsp_rev == 2) {
+-        cflags += [ "-mdspr2" ]
++        if (use_dspr2) {
++          cflags += [ "-mdspr2" ]
++        }
+       }
+ 
+       cflags += [ "-m${mips_float_abi}-float" ]

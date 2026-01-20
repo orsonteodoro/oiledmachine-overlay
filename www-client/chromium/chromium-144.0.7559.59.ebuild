@@ -364,6 +364,7 @@ CPU_FLAGS_X86=(
 	"amx-tile"
 	"avx"
 	"avx2"
+	"avx10_2"
 	"avx512bitalg"
 	"avx512bf16"
 	"avx512bw"
@@ -927,6 +928,9 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx
 		cpu_flags_x86_f16c
 		cpu_flags_x86_fma
+	)
+	cpu_flags_x86_avx10_2? (
+		cpu_flags_x86_avx2
 	)
 
 	cpu_flags_x86_avx512f? (
@@ -2612,31 +2616,31 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-sse3.patch"
-	)
+#	PATCHES+=(
+#		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-sse3.patch"
+#	)
 
-	DISABLED_PATCHES+=(
+	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-highway-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-simd-defaults.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-build-config-compiler-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-highway-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libaom-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-skia-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-perfetto-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-skia-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libwebp-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-opus-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-crc32c-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-crc32c-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-lzma_sdk-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libyuv-optionalize-simd.patch"
@@ -5056,7 +5060,6 @@ einfo
 }
 
 _configure_performance_simd(){
-if false ; then
 	if ! use cpu_flags_arm_dotprod ; then
 		sed -r -i \
 			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
@@ -5133,7 +5136,6 @@ if false ; then
 	if ! use cpu_flags_x86_avxvnniint8 ; then
 		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-fi
 
 	myconf_gn+=(
 	# ARM
@@ -5181,6 +5183,7 @@ fi
 		"use_aes=$(usex cpu_flags_x86_aes true false)"
 		"use_avx=$(usex cpu_flags_x86_avx true false)"
 		"use_avx2=$(usex cpu_flags_x86_avx2 true false)"
+		"use_avx10_2=$(usex cpu_flags_x86_avx10_2 true false)"
 		"use_avx512fp16=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
 		"use_avx512bf16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
 		"use_avxvnni=$(usex cpu_flags_x86_avxvnni true false)"
@@ -5237,11 +5240,10 @@ fi
 		)
 	fi
 
-	# Disabled distro changes.  This ebuild fork handles flag changes via gn flags.
 	# C{,XX}FLAGS changes only work in cross-compile only in this ebuild fork.
-	if false && ! use custom-cflags ; then
-	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
-	# 546984, 853646.
+	if ! use custom-cflags ; then
+	# Prevent libvpx/xnnpack build failures.
+	# Bug 530248, 544702, 546984, 853646.
 		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
 			filter-flags \
 				"-mno-avx*" \
@@ -5311,7 +5313,6 @@ fi
 		fi
 	fi
 
-if false ; then
 	if use cpu_flags_x86_avx ; then
 	# Default on upstream for 64-bit with wasm enabled
 		myconf_gn+=(
@@ -5327,7 +5328,6 @@ if false ; then
 			"v8/test/unittests/BUILD.gn" \
 			|| die
 	fi
-fi
 }
 
 get_drive_type() {

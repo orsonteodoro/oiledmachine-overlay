@@ -1,0 +1,143 @@
+--- a/third_party/skia/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/skia/BUILD.gn	2026-01-19 18:22:54.306490594 -0800
+@@ -3,6 +3,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("gn/codec.gni")
+ import("gn/pathops.gni")
+ import("gn/rust.gni")
+@@ -1689,15 +1690,33 @@ skia_component("skia") {
+     ":android_utils",
+     ":avif",
+     ":crabbyavif",
+-    ":hsw",
++  ]
++  if (use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
++    deps += [
++      ":hsw",
++    ]
++  }
++  deps += [
+     ":jpeg_decode",
+     ":jpegxl_decode",
+-    ":lasx",
++  ]
++  if (use_lasx) {
++    deps += [
++      ":lasx",
++    ]
++  }
++  deps += [
+     ":minify_sksl",
+     ":ndk_images",
+     ":png_decode_rust",
+     ":raw",
+-    ":skx",
++  ]
++  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
++    deps += [
++      ":skx",
++    ]
++  }
++  deps += [
+     ":typeface_fontations",
+     ":vello",
+     ":webp_decode",
+--- a/third_party/skia/gn/skia/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/skia/gn/skia/BUILD.gn	2026-01-19 18:23:34.146199167 -0800
+@@ -3,6 +3,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
++
+ if (is_wasm) {
+   import("../toolchain/wasm.gni")
+ }
+@@ -131,22 +133,34 @@ config("default") {
+   if (current_cpu == "arm") {
+     cflags += [
+       "-march=armv7-a",
+-      "-mfpu=neon",
+-      "-mthumb",
+     ]
++    if (use_neon && use_thumb) {
++      cflags += [
++        "-mfpu=neon",
++        "-mthumb",
++      ]
++    }
+   } else if (current_cpu == "x86" && !is_win) {
+     asmflags += [ "-m32" ]
+     cflags += [
+       "-m32",
+-      "-msse2",
+-      "-mfpmath=sse",
+     ]
++    if (use_sse2) {
++      cflags += [
++        "-msse2",
++        "-mfpmath=sse",
++      ]
++    }
+     ldflags += [ "-m32" ]
+   } else if (current_cpu == "loong64") {
+     cflags += [
+-      "-mlsx",
+       "-Wno-switch-default",
+     ]
++    if (use_lsx) {
++      cflags += [
++        "-mlsx",
++      ]
++    }
+   }
+ 
+   if (malloc != "" && !is_win) {
+--- a/third_party/skia/modules/skcms/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/skia/modules/skcms/BUILD.gn	2026-01-19 18:20:02.251748246 -0800
+@@ -3,6 +3,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("skcms.gni")
+ 
+ # Use for CPU-specific skcms transform code that needs particular compiler flags.
+@@ -90,11 +91,30 @@ static_library("skcms") {
+       "SKCMS_DISABLE_HSW",
+       "SKCMS_DISABLE_SKX",
+     ]
++  } else {
++    defines = []
++    if (!use_sse || !use_sse2 || !use_sse3 || !use_ssse3 || !use_sse4_1 || !use_sse4_2 || !use_pclmul || !use_avx || !use_avx2 || !use_bmi || !use_bmi2 || !use_fma) {
++      defines += [
++        "SKCMS_DISABLE_HSW",
++      ]
++    }
++    if (!use_sse || !use_sse2 || !use_sse3 || !use_ssse3 || !use_sse4_1 || !use_sse4_2 || !use_pclmul || !use_avx || !use_avx2 || !use_bmi || !use_bmi2 || !use_fma || !use_aes || !use_avx512) {
++      defines += [
++        "SKCMS_DISABLE_SKX",
++      ]
++    }
+   }
+   public = skcms_public_headers
+   sources = skcms_public + skcms_TransformBaseline
+-  deps = [
+-    ":skcms_TransformHsw",
+-    ":skcms_TransformSkx",
+-  ]
++  deps = []
++  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
++    deps += [
++      ":skcms_TransformHsw",
++    ]
++  }
++  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
++    deps += [
++      ":skcms_TransformSkx",
++    ]
++  }
+ }

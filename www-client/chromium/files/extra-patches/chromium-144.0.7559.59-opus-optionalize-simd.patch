@@ -1,0 +1,142 @@
+--- a/third_party/opus/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/opus/BUILD.gn	2026-01-19 20:24:46.943955936 -0800
+@@ -3,20 +3,21 @@
+ # found in the LICENSE file.
+ 
+ import("//build/config/arm.gni")
++import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ 
+ # If ARM optimizations shall be used to accelerate performance.
+ use_opus_arm_optimization =
+-    current_cpu == "arm" ||
+-    (current_cpu == "arm64" && (is_fuchsia || is_ios || is_win))
++    (current_cpu == "arm" ||
++    (current_cpu == "arm64" && (is_fuchsia || is_ios || is_win))) && (use_armv4 || use_edsp || arm_use_neon)
+ 
+-use_opus_x86_optimization = current_cpu == "x86" || current_cpu == "x64"
++use_opus_x86_optimization = (current_cpu == "x86" || current_cpu == "x64") && (use_sse2 || use_sse4_1 || use_avx)
+ 
+ # If OPUS Run Time CPU Detections (RTCD) shall be used.
+ # Based on the conditions in celt/arm/armcpu.c:
+ # defined(_MSC_VER) || defined(__linux__).
+ use_opus_arm_rtcd =
+-    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos)
++    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos) && (use_edsp || use_armv6)
+ 
+ config("opus_config") {
+   include_dirs = [ "src/include" ]
+@@ -73,35 +74,64 @@ config("opus_private_config") {
+       # Run Time CPU Detections (RTCD) is always enabled for x86.
+       "OPUS_HAVE_RTCD",
+       "CPU_INFO_BY_ASM",
+-
+-      # Chrome always targets SSE2+.
+-      "OPUS_X86_MAY_HAVE_SSE",
+-      "OPUS_X86_MAY_HAVE_SSE2",
+-      "OPUS_X86_PRESUME_SSE",
+-      "OPUS_X86_PRESUME_SSE2",
+-
+-      # Some systems may have SSE4.1+ support.
+-      "OPUS_X86_MAY_HAVE_SSE4_1",
+-
+-      # At present libopus has no AVX functions so no sources are add for this,
+-      # if you see linker errors on AVX code the this flag is why.
+-      "OPUS_X86_MAY_HAVE_AVX",
+     ]
++    if (use_sse) {
++      defines += [
++        "OPUS_X86_MAY_HAVE_SSE",
++        "OPUS_X86_PRESUME_SSE",
++      ]
++    }
++    if (use_sse2) {
++      defines += [
++        # Chrome always targets SSE2+.
++        "OPUS_X86_MAY_HAVE_SSE2",
++        "OPUS_X86_PRESUME_SSE2",
++      ]
++    }
++    if (use_sse4_1) {
++      defines += [
++        # Some systems may have SSE4.1+ support.
++        "OPUS_X86_MAY_HAVE_SSE4_1",
++      ]
++    }
++    if (use_avx) {
++      defines += [
++        # At present libopus has no AVX functions so no sources are add for this,
++        # if you see linker errors on AVX code the this flag is why.
++        "OPUS_X86_MAY_HAVE_AVX",
++      ]
++    }
+   }
+ 
+   if (use_opus_arm_optimization) {
+     if (current_cpu == "arm") {
++      if (use_armv4) {
++        defines += [
++          "OPUS_ARM_INLINE_ASM",
++        ]
++      }
++      if (use_edsp) {
++        defines += [
++          "OPUS_ARM_INLINE_EDSP",
++        ]
++      }
+       defines += [
+         "OPUS_ARM_ASM",
+-        "OPUS_ARM_INLINE_ASM",
+-        "OPUS_ARM_INLINE_EDSP",
+       ]
+     }
+ 
+     if (use_opus_arm_rtcd) {
++      if (use_edsp) {
++        defines += [
++          "OPUS_ARM_MAY_HAVE_EDSP",
++        ]
++      }
++      if (use_armv6) {
++        defines += [
++          "OPUS_ARM_MAY_HAVE_MEDIA",
++        ]
++      }
+       defines += [
+-        "OPUS_ARM_MAY_HAVE_EDSP",
+-        "OPUS_ARM_MAY_HAVE_MEDIA",
+         "OPUS_HAVE_RTCD",
+       ]
+     }
+@@ -114,12 +144,14 @@ config("opus_private_config") {
+     }
+ 
+     if (is_ios && current_cpu == "arm64") {
+-      # Runtime detection of CPU features not available on iOS.
+-      defines += [
+-        "OPUS_ARM_MAY_HAVE_NEON_INTR",
+-        "OPUS_ARM_PRESUME_NEON_INTR",
+-        "OPUS_ARM_PRESUME_AARCH64_NEON_INTR",
+-      ]
++      if (arm_use_neon) {
++        # Runtime detection of CPU features not available on iOS.
++        defines += [
++          "OPUS_ARM_MAY_HAVE_NEON_INTR",
++          "OPUS_ARM_PRESUME_NEON_INTR",
++          "OPUS_ARM_PRESUME_AARCH64_NEON_INTR",
++        ]
++      }
+     }
+   }
+ }
+@@ -434,7 +466,9 @@ static_library("opus") {
+       "src/silk/x86/main_sse.h",
+       "src/silk/x86/x86_silk_map.c",
+     ]
+-    deps += [ ":opus_sse41" ]
++    if (use_sse4_1) {
++      deps += [ ":opus_sse41" ]
++    }
+   }
+ 
+   if (use_opus_arm_optimization) {
