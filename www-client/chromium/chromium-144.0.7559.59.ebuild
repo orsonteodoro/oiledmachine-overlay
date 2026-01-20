@@ -2616,10 +2616,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-#	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-sse3.patch"
-#	)
-
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
