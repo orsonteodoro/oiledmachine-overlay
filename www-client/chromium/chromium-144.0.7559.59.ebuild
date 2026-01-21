@@ -5057,6 +5057,7 @@ einfo
 }
 
 _configure_performance_simd(){
+if false ; then
 	if ! use cpu_flags_arm_dotprod ; then
 		sed -r -i \
 			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
@@ -5139,6 +5140,7 @@ _configure_performance_simd(){
 	if ! use cpu_flags_x86_avxvnniint8 ; then
 		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
+fi
 
 	myconf_gn+=(
 	# ARM
