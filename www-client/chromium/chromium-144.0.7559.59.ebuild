@@ -6812,10 +6812,6 @@ ewarn
 
 		"is_official_build=$(usex official true false)"
 
-	# Link pulseaudio directly (DT_NEEDED) instead of using dlopen.
-	# helps with automated detection of ABI mismatches and prevents silent errors.
-		"link_pulseaudio=$(usex pulseaudio true false)"
-
 		"media_use_libvpx=$(usex vpx true false)"
 		"media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
 
@@ -6893,6 +6889,11 @@ ewarn
 			"enable_extensions=$(usex extensions true false)"
 			"enable_pdf=true" # required by chrome/browser/ui/lens:browser_tests and toolkit_views=true
 			"gtk_version=$(usex gtk4 4 3)"
+
+	# Link pulseaudio directly (DT_NEEDED) instead of using dlopen.
+	# It helps with the automated detection of ABI mismatches and prevents silent errors.
+			"link_pulseaudio=$(usex pulseaudio true false)"
+
 			"ozone_platform=$(usex wayland \"wayland\" \"x11\")"
 			"ozone_platform_x11=$(usex X true false)"
 			"ozone_platform_wayland=$(usex wayland true false)"
