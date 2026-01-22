@@ -6615,13 +6615,6 @@ _configure_features() {
 			|| die
 	fi
 
-	# TODO 131: The above call clobbers `enable_freetype = true` in the freetype gni file
-	# drop the last line, then append the freetype line and a new curly brace to end the block
-	local freetype_gni="build/config/freetype/freetype.gni"
-	sed -i -e '$d' "${freetype_gni}" || die
-	echo "  enable_freetype = true" >> "${freetype_gni}" || die
-	echo "}" >> "${freetype_gni}" || die
-
 	# Use system-provided libraries.
 	# TODO: freetype -- remove sources
 	# (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
@@ -6782,6 +6775,14 @@ ewarn
 				|| die "Failed to replace GN files for system libraries"
 		fi
 	fi
+
+	# TODO 131: The above call clobbers `enable_freetype = true` in the freetype gni file
+	# drop the last line, then append the freetype line and a new curly brace to end the block
+	# oiledmachine-overlay notes:  This code block must be placed after build/linux/unbundle/replace_gn_files.py.
+	local freetype_gni="build/config/freetype/freetype.gni"
+	sed -i -e '$d' "${freetype_gni}" || die
+	echo "  enable_freetype = true" >> "${freetype_gni}" || die
+	echo "}" >> "${freetype_gni}" || die
 
 	myconf_gn+=(
 		"enable_av1_decoder=$(usex dav1d true false)"
