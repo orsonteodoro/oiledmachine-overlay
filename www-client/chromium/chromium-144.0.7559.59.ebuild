@@ -308,6 +308,7 @@ CPU_FLAGS_ARM=(
 	"aes"
 	"armv4"
 	"armv6"
+	"armv8_2-a"
 	"bf16"
 	"bti"
 	"crc32"
@@ -2740,6 +2741,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 	)
 }
 
@@ -5057,90 +5059,200 @@ einfo
 }
 
 _configure_performance_simd(){
-if false ; then
+	if ! use cpu_flags_arm_armv8_2-a ; then
+		sed -r -i -e "/:.*armv8[.]2/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_arm_sve2 ; then
+		sed -r -i -e "/:.*[+]sve2/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_arm_sve ; then
+		sed -r -i -e "/:.*[+]sve/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+
 	if ! use cpu_flags_arm_dotprod ; then
-		sed -r -i \
+		sed -r -i -e "/:.*[+]dotprod/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
 			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
-			-e "/:.*[+]dotprod/d" \
-			"third_party/xnnpack/BUILD.gn" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
 			|| die
 	fi
 	if ! use cpu_flags_arm_fp16 ; then
 		sed -r -i -e "/:.*[+]fp16/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_ARM_FP16_SCALAR=1|XNN_ENABLE_ARM_FP16_SCALAR=0|g" \
+			-e "s|XNN_ENABLE_ARM_FP16_VECTOR=1|XNN_ENABLE_ARM_FP16_VECTOR=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_arm_i8mm ; then
-		sed -r -i \
+		sed -r -i -e "/:.*[+]i8mm/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
 			-e "s|XNN_ENABLE_ARM_I8MM=1|XNN_ENABLE_ARM_I8MM=0|g" \
-			-e "/:.*[+]i8mm/d" \
-			"third_party/xnnpack/BUILD.gn" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
 			|| die
 	fi
 
 	if ! use cpu_flags_riscv_c && ! use cpu_flags_riscv_v ; then
 		sed -r -i -e "/:.*rv64gcv-/d" "third_party/xnnpack/BUILD.gn" || die
 
+		sed -i \
+			-e "s|XNN_ENABLE_RISCV_FP16_VECTOR=1|XNN_ENABLE_RISCV_FP16_VECTOR=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 
 	if ! use cpu_flags_x86_avx ; then
 		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVX=1|XNN_ENABLE_AVX=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
-	if use cpu_flags_x86_avx2 ; then
-		sed -r -i -e "/:.*-no-avx2/d" "third_party/xnnpack/BUILD.gn" || die
-	else
+	if ! use cpu_flags_x86_avx2 ; then
 		sed -r -i -e "/:.*_avx2/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVX2=1|XNN_ENABLE_AVX2=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_avx512f ; then
 		sed -r -i -e "/:.*_avx512f/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVX512F=1|XNN_ENABLE_AVX512F=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_avx512fp16 ; then
 		sed -r -i -e "/:.*-avx512fp16/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVX512FP16=1|XNN_ENABLE_AVX512FP16=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
-	if use cpu_flags_x86_f16c ; then
-		sed -r -i -e "/:.*-no-f16c/d" "third_party/xnnpack/BUILD.gn" || die
-	else
+	if ! use cpu_flags_x86_f16c ; then
 		sed -r -i -e "/:.*_f16c/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_F16C=1|XNN_ENABLE_F16C=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
-	if use cpu_flags_x86_fma ; then
-		sed -r -i -e ":/-no-fma/d" "third_party/xnnpack/BUILD.gn" || die
+	if ! use cpu_flags_x86_fma ; then
+	# Same as FMA3
+		sed -r -i -e ":/-fma-/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_FMA3=1|XNN_ENABLE_FMA3=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_gfni ; then
 		sed -r -i -e "/:.*-gfni/d" "third_party/xnnpack/BUILD.gn" || die
+		if ! use cpu_flags_x86_avx2 ; then
+			sed -i \
+				-e "s|XNN_ENABLE_AVX256VNNIGFNI=1|XNN_ENABLE_AVX256VNNIGFNI=0|g" \
+				"third_party/xnnpack/src/build_defs.bzl" \
+				"third_party/xnnpack/build_defs.gni" \
+				|| die
+		fi
+		if ! use cpu_flags_x86_avx512f ; then
+			sed -i \
+				-e "s|XNN_ENABLE_AVX512VNNIGFNI=1|XNN_ENABLE_AVX512VNNIGFNI=0|g" \
+				"third_party/xnnpack/src/build_defs.bzl" \
+				"third_party/xnnpack/build_defs.gni" \
+				|| die
+		fi
 	fi
 	if ! use cpu_flags_x86_sse ; then
 		sed -r -i -e "/:.*_sse-/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_SSE=1|XNN_ENABLE_SSE=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
-	if use cpu_flags_x86_sse2 ; then
-		sed -r -i -e "/:.*-no-sse2/d" "third_party/xnnpack/BUILD.gn" || die
-	else
+	if ! use cpu_flags_x86_sse2 ; then
 		sed -r -i -e "/:.*_sse2/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_SSE2=1|XNN_ENABLE_SSE2=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
-	if use cpu_flags_x86_sse3 ; then
-		sed -r -i -e "/:.*-no-sse3/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_sse4_1 ; then
-		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
-	else
+	if ! use cpu_flags_x86_sse4_1 ; then
 		sed -r -i -e "/:.*_sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_sse4_2 ; then
-		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_SSE41=1|XNN_ENABLE_SSE41=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_ssse3 ; then
 		sed -r -i -e "/:.*_ssse3/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_SSSE3=1|XNN_ENABLE_SSSE3=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_amx-tile ; then
 		sed -r -i -e "/:.*amx-tile/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVX512AMX=1|XNN_ENABLE_AVX512AMX=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_amx-int8 ; then
 		sed -r -i -e "/:.*amx-int8/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVX512AMX=1|XNN_ENABLE_AVX512AMX=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_avxvnni ; then
 		sed -r -i -e "/:.*avxvnni-/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVXVNNI=1|XNN_ENABLE_AVXVNNI=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
 	if ! use cpu_flags_x86_avxvnniint8 ; then
 		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
+		sed -i \
+			-e "s|XNN_ENABLE_AVXVNNIINT8=1|XNN_ENABLE_AVXVNNIINT8=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
 	fi
-fi
+
+	if [[ "${ARCH}" == "arm64" ]] ; then
+	# Allow only arm64 .S files since build files are incomplete for x86 and arm.
+		if ! use cpu_flags_arm_armv8_2-a || ! use cpu_flags_arm_fp16 || ! use cpu_flags_arm_dotprod ; then
+			sed -i \
+				-e "s|XNN_ENABLE_ASSEMBLY=1|XNN_ENABLE_ASSEMBLY=0|g" \
+				"third_party/xnnpack/src/build_defs.bzl" \
+				"third_party/xnnpack/build_defs.gni" \
+				|| die
+		fi
+	else
+		sed -i \
+			-e "s|XNN_ENABLE_ASSEMBLY=1|XNN_ENABLE_ASSEMBLY=0|g" \
+			"third_party/xnnpack/src/build_defs.bzl" \
+			"third_party/xnnpack/build_defs.gni" \
+			|| die
+	fi
+
 
 	myconf_gn+=(
 	# ARM

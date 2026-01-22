@@ -1,3 +1,7 @@
+# Prevent
+mold: error: obj/third_party/dav1d/libdav1d_asm.a(obj/third_party/dav1d/dav1d_asm/ipred16_sse.o):(.text): R_X86_64_PC32 relocation at offset 0x823 against symbol `dav1d_smooth_weights_1d_16bpc' can not be used; recompile with -fPIC
+mold: error: obj/third_party/dav1d/libdav1d_asm.a(obj/third_party/dav1d/dav1d_asm/ipred16_sse.o):(.text): R_X86_64_PC32 relocation at offset 0x923 against symbol `dav1d_smooth_weights_1d_16bpc' can not be used; recompile with -fPIC
+mold: error: obj/third_party/dav1d/libdav1d_asm.a(obj/third_party/dav1d/dav1d_asm/ipred16_sse.o):(.text): R_X86_64_PC32 relocation at offset 0xa23 against symbol `dav1d_smooth_weights_2d_16bpc' can not be used; recompile with -fPIC
 --- a/third_party/dav1d/BUILD.gn.orig	2025-05-17 09:10:03.938739692 -0700
 +++ b/third_party/dav1d/BUILD.gn	2025-05-17 09:22:49.181618286 -0700
 @@ -179,6 +179,20 @@ if (enable_nasm) {
