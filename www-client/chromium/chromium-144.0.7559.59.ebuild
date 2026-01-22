@@ -2626,15 +2626,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libaom-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+#		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
+#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-opus-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
@@ -2741,7 +2741,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
+#		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 	)
 }
 
@@ -5059,6 +5059,7 @@ einfo
 }
 
 _configure_performance_simd(){
+if false ; then
 	if ! use cpu_flags_arm_armv8_2-a ; then
 		sed -r -i -e "/:.*armv8[.]2/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
@@ -5252,6 +5253,7 @@ _configure_performance_simd(){
 			"third_party/xnnpack/build_defs.gni" \
 			|| die
 	fi
+fi
 
 	myconf_gn+=(
 	# ARM
