@@ -2575,7 +2575,7 @@ apply_distro_patchset() {
 einfo "Applying the distro patchset ..."
 	PATCHES+=(
 		$(use system-zlib && echo "${FILESDIR}/${PN}-109-system-zlib.patch")
-		"${FILESDIR}/${PN}-131-unbundle-icu-target.patch"
+		$(use system-icu && echo "${FILESDIR}/${PN}-131-unbundle-icu-target.patch")
 		"${FILESDIR}/${PN}-135-oauth2-client-switches.patch"
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
 		"${FILESDIR}/${PN}-cross-compile.patch"
@@ -2591,7 +2591,7 @@ einfo "Applying the distro patchset ..."
 	# Unreleased fontconfig changed magic numbers and google have rolled to this version
 	if has_version "<=media-libs/fontconfig-2.17.1" ; then
 		PATCHES+=(
-			"${FILESDIR}/chromium-142-work-with-old-fontconfig.patch"
+			$(use system-fontconfig && echo "${FILESDIR}/chromium-142-work-with-old-fontconfig.patch")
 		)
 	fi
 
@@ -2626,15 +2626,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libaom-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-opus-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
@@ -5252,7 +5252,6 @@ _configure_performance_simd(){
 			"third_party/xnnpack/build_defs.gni" \
 			|| die
 	fi
-
 
 	myconf_gn+=(
 	# ARM
