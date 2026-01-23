@@ -2618,7 +2618,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	PATCHES+=(
+	DISABLE_PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
@@ -2626,15 +2626,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libaom-optionalize-simd.patch"
-#		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
-#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
-#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-opus-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
@@ -2708,7 +2708,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		PATCHES+=(
 	# FIXME: update perfetto disable patch
 	#		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
+#			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
 	#	Disabling async-dns causes debug crash/spam.
@@ -3117,11 +3117,11 @@ src_prepare() {
 	# lib.
 	apply_distro_patchset
 
-	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-		apply_oiledmachine_overlay_patchset
-	else
-ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-	fi
+#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+#		apply_oiledmachine_overlay_patchset
+#	else
+#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+#	fi
 
 	default
 
@@ -5415,6 +5415,7 @@ fi
 		)
 	fi
 
+if false ; then
 	if use webassembly ; then
 		if [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] ; then
 			myconf_gn+=(
@@ -5446,6 +5447,7 @@ fi
 			"v8/test/unittests/BUILD.gn" \
 			|| die
 	fi
+fi
 }
 
 get_drive_type() {
@@ -7068,10 +7070,10 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_linker
 	_configure_optimization_level
 	_configure_performance_pgo
-	_configure_performance_simd
+	#_configure_performance_simd
 	_configure_performance_thp
 	#_configure_v8
-	_configure_security
+	#_configure_security
 
 	_configure_debug
 	_configure_features
