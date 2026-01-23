@@ -149,7 +149,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	video_cards_lavapipe? (
@@ -854,7 +854,7 @@ src_install() {
 	# Prevent hard freeze on startup of X11.
 	if ! use shader-cache ; then
 cat <<-EOF > "${T}/99${PN}"
-MESA_GLSL_CACHE_DISABLE=true
+MESA_SHADER_CACHE_DISABLE=true
 EOF
 		doenvd "${T}/99${PN}"
 	fi
