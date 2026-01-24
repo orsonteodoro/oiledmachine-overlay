@@ -3681,7 +3681,7 @@ einfo "Forcing xephyr for ${profile_name}"
 		x11_arg="--x11=xorg"
 		x11_sandbox="xorg"
 	else
-ewarn "Uncaught x11_arg case for raw_profile_name:  ${raw_profile_name}"
+ewarn "Uncaught x11_arg case for raw_profile_name:  ${raw_profile_name}.  Ignore if console app"
 	fi
 
 	if [[ "${x11_sandbox}" == "xephyr" ]] ; then
@@ -3939,7 +3939,6 @@ EOF
 	}
 
 	if (( ${is_allowed_wrapper} == 1 )) ; then
-einfo "x11_sandbox:  ${x11_sandbox}, raw_profile_name:  ${raw_profile_name}"
 		if [[ "${x11_sandbox}" == "xorg" ]] ; then
 			gen_xcsecurity_wrapper
 		else
