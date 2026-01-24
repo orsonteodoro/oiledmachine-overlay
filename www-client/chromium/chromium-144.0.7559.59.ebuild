@@ -467,6 +467,8 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 
 SYSTEM_USE=(
 	# All packages below are security-critical
+
+	# Deps for unbundle
 	# Package			# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
 	"-system-abseil-cpp"		# S1					untrusted-data			# Missing package
 	"-system-brotli"		# S0					security-critical
@@ -506,6 +508,14 @@ SYSTEM_USE=(
 	# S1 - Medium, Sandboxed RCE
 	# S2 - Medium, ID or DoS
 	# S3 - Low, ID or DoS
+
+	# pdfium deps
+	"-system-libtiff"		# S0					security-critical
+	"-system-libopenjpeg"		# S0					security-critical
+	"-system-lcms"			# S0/S1					security-critical, untrusted-data
+
+	# For distro desktop version
+	"-system-minigbm"		# S0/S1					security-critical, untrusted-data
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
@@ -857,13 +867,13 @@ REQUIRED_USE+="
 	bundled-libcxx? (
 		${LIBCXX_REQUIRED_USE[@]}
 	)
+	bindist? (
+		!system-ffmpeg
+	)
 	cfi? (
 		${SYSTEM_USE[@]/-/!}
 		!mold
 		bundled-libcxx
-	)
-	bindist? (
-		!system-ffmpeg
 	)
 
 	cpu_flags_ppc_power8-vector? (
@@ -3317,7 +3327,9 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/markupsafe"
 		"third_party/material_color_utilities"
 		"third_party/metrics_proto"
-		"third_party/minigbm"
+	$(use !system-minigbm && echo \
+		"third_party/minigbm" \
+	)
 		"third_party/ml_dtypes"
 		"third_party/modp_b64"
 		"third_party/nasm"
@@ -3335,10 +3347,18 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/pdfium"
 		"third_party/pdfium/third_party/agg23"
 		"third_party/pdfium/third_party/bigint"
-		"third_party/pdfium/third_party/freetype"
-		"third_party/pdfium/third_party/lcms"
-		"third_party/pdfium/third_party/libopenjpeg"
-		"third_party/pdfium/third_party/libtiff"
+	$(use !system-freetype && echo \
+		"third_party/pdfium/third_party/freetype" \
+	)
+	$(use !system-lcms && echo \
+		"third_party/pdfium/third_party/lcms" \
+	)
+	$(use !system-libopenjpeg && echo \
+		"third_party/pdfium/third_party/libopenjpeg" \
+	)
+	$(use !system-libtiff && echo \
+		"third_party/pdfium/third_party/libtiff" \
+	)
 		"third_party/perfetto"
 		"third_party/perfetto/protos/third_party/chromium"
 		"third_party/perfetto/protos/third_party/pprof"
@@ -6830,9 +6850,6 @@ ewarn
 
 		"use_partition_alloc=$(usex partitionalloc true false)"			# See issue 40277359
 
-	# See dependency logic in third_party/BUILD.gn
-		"use_system_harfbuzz=$(usex system-harfbuzz true false)"
-
 		"rtc_include_opus=$(usex opus true false)"
 		"rtc_use_h264=$(usex patent_status_nonfree true false)"
 
@@ -6908,8 +6925,8 @@ ewarn
 			"use_pulseaudio=$(usex pulseaudio true false)"
 			"use_qt5=false"
 			"use_qt6=$(usex qt6 true false)"
-			"use_system_libffi=$(usex wayland true false)"
-			"use_system_minigbm=true"
+
+
 			"use_vaapi=$(usex vaapi true false)"
 			"use_xkbcommon=true"
 		)
@@ -7018,14 +7035,50 @@ ewarn "The system-ffmpeg USE flag is experimental with multislot ffmpeg.  Consid
 	if use system-re2 ; then
 ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider disabling the system-re2 USE flag if it fails."
 		re2_src_configure
-		#myconf_gn+=(
-		#	"use_system_re2=true" # Trigger build/linux/unbundle/re2.gn
-		#)
 	fi
 
-	if use system-libsecret ; then
+	# System features
+	# See also /usr/share/chromium/sources/build/linux/unbundle/replace_gn_files.py
+	myconf_gn+=(
+	# Set used by distros
+		"use_system_freetype=$(usex system-freetype true false)"		# For freetype, pdfium, skia, unbundle
+		"use_system_harfbuzz=$(usex system-harfbuzz true false)"		# For freetype, harfbuzz-ng, skia, unbundle; See dependency logic in third_party/BUILD.gn
+		"use_system_lcms2=$(usex system-lcms true false)"			# For pdfium
+#		"use_system_libdrm=$(usex system-libdrm true false)"			# For libdrm, unbundle
+		"use_system_libffi=true"						# For libffi, use always shared since libffi_pic.a is not available on distro, build/config/linux/libffi/BUILD.gn
+		"use_system_libjpeg=$(usex system-libjpeg-turbo true false)"		# For angle, libjpeg, pdfium, unbundle
+		"use_system_libopenjpeg2=$(usex system-libopenjpeg true false)"		# For pdfium
+		"use_system_libpng=$(usex system-libpng true false)"			# For pdfium, skia, unbundle
+#		"use_system_libsecret=$(usex system-libsecret true false)"		# For unbundle, missing gn* reference
+		"use_system_libtiff=$(usex system-libtiff true false)"			# For pdfium
+#		"use_system_minigbm=$(usex system-minigbm true false)"			# For minigbm, false is production setting on linux which default in build scripts, third_party/minigbm/BUILD.gn
+#		"use_system_re2=$(usex system-re2 true false)"				# For unbundle, missing gn* reference, triggers failure build/linux/unbundle/re2.gn
+		"use_system_zlib=$(usex system-zlib true false)"			# For pdfium, perfetto, skia, unbundle
+
+	# Available options but not used across distros.
+	# Build files equivalent defaults are listed below.
+#		"use_system_crash_handler=false"
+#		"use_system_libwayland=false"
+#		"use_system_libsync=false"
+#		"use_system_xcode=false"
+#		"perfetto_use_system_protobuf=false"
+#		"perfetto_use_system_sqlite=false"
+#		"perfetto_use_system_zlib=false"
+#		"skia_use_freetype_zlib_bundled=$(usex official false true)"
+#		"skia_use_system_harfbuzz=$(usex official $(usex !webassembly true false) false)"
+#		"skia_use_system_expat=$(usex official true false)"
+#		"skia_use_system_freetype2=$(usex official $(usex !webassembly true false) false)"
+#		"skia_use_system_icu=$(usex official $(usex !webassembly true false) false)"
+#		"skia_use_system_libjpeg_turbo=$(usex official $(usex !webassembly true false) false)"
+#		"skia_use_system_libpng=$(usex official $(usex !webassembly true false) false)"
+#		"skia_use_system_libwebp=$(usex official $(usex !webassembly true false) false)"
+#		"skia_use_system_lua=$(usex official true false)"
+#		"skia_use_system_zlib=$(usex official true false)"
+	)
+
+	if [[ "${ARCH}" == "loong" ]] ; then
 		myconf_gn+=(
-			"use_system_libsecret=true"
+			"build_tflite_with_xnnpack=false"
 		)
 	fi
 }
