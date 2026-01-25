@@ -516,6 +516,11 @@ SYSTEM_USE=(
 
 	# For distro desktop version
 	"-system-minigbm"		# S0/S1					security-critical, untrusted-data
+
+	# perfetto deps
+	"-system-sqlite"		# S0/S1					security-critical, untrusted-data
+	"-system-protobuf"		# S0/S1					security-critical, untrusted-data
+	"-system-lua"			#					For testing only
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
@@ -843,6 +848,9 @@ LIBCXX_REQUIRED_USE=(
 # Drumbrake is broken in this release and off by default.
 #	!system-harfbuzz
 # Mold 2.40.4 is segfaulting
+#	bundled-libcxx? (
+#		${LIBCXX_REQUIRED_USE[@]}
+#	)
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
@@ -863,9 +871,6 @@ REQUIRED_USE+="
 	partitionalloc
 	amd64? (
 		cpu_flags_x86_sse2
-	)
-	bundled-libcxx? (
-		${LIBCXX_REQUIRED_USE[@]}
 	)
 	bindist? (
 		!system-ffmpeg
@@ -1425,17 +1430,24 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/re2-0.2025.10.01:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/re2:=
 	)
-	system-snappy? (
-		>=app-arch/snappy-1.2.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		app-arch/snappy:=
-	)
 	system-simdutf? (
 		>=dev-cpp/simdutf-7.3.3[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-cpp/simdutf:=
 	)
+	system-snappy? (
+		>=app-arch/snappy-1.2.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		app-arch/snappy:=
+	)
 	system-spirv-tools? (
 		>=dev-util/spirv-tools-${VULKAN_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-util/spirv-tools:=
+	)
+	system-protobuf? (
+		dev-libs/protobuf:6/6.33[${MULTILIB_USEDEP}]
+		dev-libs/protobuf:=
+	)
+	system-sqlite? (
+		>=dev-db/sqlite-3.50.4:3[${MULTILIB_USEDEP}]
 	)
 	system-woff2? (
 		>=media-libs/woff2-9999
@@ -3163,10 +3175,12 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" ".gn" || die
 
+if false ; then
 	# Use the system copy of hwdata's usb.ids; upstream is woefully out of date (2015!)
 	sed "s|//third_party/usb_ids/usb.ids|/usr/share/hwdata/usb.ids|g" \
 		-i "services/device/public/cpp/usb/BUILD.gn" \
 		|| die "Failed to set system usb.ids path"
+fi
 
 	#
 	# remove_bundled_libraries.py walks the source tree and looks for paths
@@ -3327,9 +3341,9 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/markupsafe"
 		"third_party/material_color_utilities"
 		"third_party/metrics_proto"
-	$(use !system-minigbm && echo \
-		"third_party/minigbm" \
-	)
+		$(use !system-minigbm && echo \
+			"third_party/minigbm" \
+		)
 		"third_party/ml_dtypes"
 		"third_party/modp_b64"
 		"third_party/nasm"
@@ -3347,18 +3361,18 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/pdfium"
 		"third_party/pdfium/third_party/agg23"
 		"third_party/pdfium/third_party/bigint"
-	$(use !system-freetype && echo \
-		"third_party/pdfium/third_party/freetype" \
-	)
-	$(use !system-lcms && echo \
-		"third_party/pdfium/third_party/lcms" \
-	)
-	$(use !system-libopenjpeg && echo \
-		"third_party/pdfium/third_party/libopenjpeg" \
-	)
-	$(use !system-libtiff && echo \
-		"third_party/pdfium/third_party/libtiff" \
-	)
+		$(use !system-freetype && echo \
+			"third_party/pdfium/third_party/freetype" \
+		)
+		$(use !system-lcms && echo \
+			"third_party/pdfium/third_party/lcms" \
+		)
+		$(use !system-libopenjpeg && echo \
+			"third_party/pdfium/third_party/libopenjpeg" \
+		)
+		$(use !system-libtiff && echo \
+			"third_party/pdfium/third_party/libtiff" \
+		)
 		"third_party/perfetto"
 		"third_party/perfetto/protos/third_party/chromium"
 		"third_party/perfetto/protos/third_party/pprof"
@@ -3368,8 +3382,10 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/polymer"
 		"third_party/private_membership"
 		"third_party/private-join-and-compute"
-		"third_party/protobuf"
-		"third_party/protobuf/third_party/utf8_range"
+		$(use !system-protobuf && echo \
+			"third_party/protobuf" \
+			"third_party/protobuf/third_party/utf8_range" \
+		)
 		"third_party/pthreadpool"
 		"third_party/puffin"
 		"third_party/pyjson5"
@@ -3391,8 +3407,40 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		"third_party/skia"
 		"third_party/skia/include/third_party/vulkan"
 		"third_party/skia/third_party/vulkan"
+
+	# Missing externals folder
+	#	$(use !system-harfbuzz && echo \
+			"third_party/skia/third_party/harfbuzz"
+	#	)
+	#	$(use !system-harfbuzz && echo \
+			"third_party/skia/third_party/expat"
+	#	)
+	#	$(use !system-icu && echo \
+			"third_party/skia/third_party/icu"
+	#	)
+	#	$(use !system-freetype && echo \
+			"third_party/skia/third_party/freetype2"
+	#	)
+	#	$(use !system-libpng && echo \
+			"third_party/skia/third_party/libpng"
+	#	)
+	#	$(use !system-libwebp && echo \
+			"third_party/skia/third_party/libwebp"
+	#	)
+	#	$(use !system-libjpeg-turbo && echo \
+			"third_party/skia/third_party/libjpeg-turbo"
+	#	)
+	#	$(use !system-lua && echo \
+			"third_party/skia/third_party/lua"
+	#	)
+	#	$(use !system-zlib && echo \
+			"third_party/skia/third_party/zlib"
+	#	)
+
 		"third_party/smhasher"
-		"third_party/sqlite"
+		$(use !system-sqlite && echo \
+			"third_party/sqlite" \
+		)
 		"third_party/swiftshader"
 		"third_party/swiftshader/third_party/astc-encoder"
 		"third_party/swiftshader/third_party/llvm-subzero"
@@ -3530,10 +3578,12 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-		$(use !system-zlib && echo \
+	# Skia with system-zlib require it present
+		#$(use !system-zlib && echo \
 			"third_party/zlib" \
 			"third_party/zlib/google" \
-		)
+		#)
+
 		$(use !system-libxml && echo \
 			"third_party/libxml" \
 		)
@@ -5002,12 +5052,21 @@ eerror
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
-	if use official && use cfi || use bundled-libcxx ; then
+	if use official || use bundled-libcxx ; then
+einfo "C++ standard library:  vendored libc++ (fully hardened)"
 	# If you didn't do systemwide CFI Cross-DSO, it must be static.
 		myconf_gn+=(
 			"use_custom_libcxx=true"
+			"use_custom_libcxx_for_host=true"
+		)
+	elif use system-libstdcxx ; then
+ewarn "C++ standard library:  system libstdc++ (unhardened)"
+		myconf_gn+=(
+			"use_custom_libcxx=false"
+			"use_custom_libcxx_for_host=false"
 		)
 	else
+ewarn "C++ standard library:  system libc++ (partially hardened to unhardened)"
 		myconf_gn+=(
 			"use_custom_libcxx=false"
 		)
@@ -6553,7 +6612,7 @@ _configure_performance_thp() {
 		)
 	else
 		myconf_gn+=(
-			"v8_enable_hugepage=false"
+			"v8_enable_hugepage=false" # Upsteam default
 		)
 	fi
 }
@@ -6603,12 +6662,16 @@ _configure_debug() {
 		)
 	fi
 
+	myconf_gn+=(
+		"v8_enable_backtrace=true" # false by default
+	)
+
 	if ! use debug ; then
 		myconf_gn+=(
-			"blink_symbol_level=0"
+#			"blink_symbol_level=0"
 			"symbol_level=0"
-			"v8_enable_vtunejit=false"
-			"v8_symbol_level=0"
+#			"v8_enable_vtunejit=false"
+#			"v8_symbol_level=0"
 		)
 	fi
 
@@ -6816,6 +6879,7 @@ ewarn
 	# We now need to opt-in
 		"enable_freetype=true"
 
+		"enable_glic=false"							# AI assistant features, not production ready but enabled by default
 		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_hidpi=$(usex hidpi true false)"
 		"enable_libaom=$(usex libaom $(usex encode true false) false)"
@@ -7061,20 +7125,30 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 #		"use_system_libwayland=false"
 #		"use_system_libsync=false"
 #		"use_system_xcode=false"
-#		"perfetto_use_system_protobuf=false"
-#		"perfetto_use_system_sqlite=false"
-#		"perfetto_use_system_zlib=false"
-#		"skia_use_freetype_zlib_bundled=$(usex official false true)"
-#		"skia_use_system_harfbuzz=$(usex official $(usex !webassembly true false) false)"
-#		"skia_use_system_expat=$(usex official true false)"
-#		"skia_use_system_freetype2=$(usex official $(usex !webassembly true false) false)"
-#		"skia_use_system_icu=$(usex official $(usex !webassembly true false) false)"
-#		"skia_use_system_libjpeg_turbo=$(usex official $(usex !webassembly true false) false)"
-#		"skia_use_system_libpng=$(usex official $(usex !webassembly true false) false)"
-#		"skia_use_system_libwebp=$(usex official $(usex !webassembly true false) false)"
-#		"skia_use_system_lua=$(usex official true false)"
-#		"skia_use_system_zlib=$(usex official true false)"
+#		"perfetto_use_system_protobuf=$(usex system-protobuf true false)"
+		"perfetto_use_system_sqlite=$(usex system-sqlite true false)"
+		"perfetto_use_system_zlib=$(usex system-zlib true false)"
+
+		"skia_use_freetype_zlib_bundled=$(usex !system-zlib true false)"
+
+	# No vendor lib
+		"skia_use_system_harfbuzz=true"
+		"skia_use_system_expat=true"
+		"skia_use_system_freetype2=true"
+		"skia_use_system_icu=true"
+		"skia_use_system_libjpeg_turbo=true"
+		"skia_use_system_libpng=true"
+		"skia_use_system_libwebp=true"
+		"skia_use_system_lua=true"
+		"skia_use_system_zlib=true"
+
+	# Workarounds
+#		"enable_perfetto_zlib=false"
 	)
+
+	sed -i -e "s|//gn:system_zlib_config|:system_zlib_config|g" \
+		"third_party/perfetto/gn/BUILD.gn" \
+		|| die
 
 	if [[ "${ARCH}" == "loong" ]] ; then
 		myconf_gn+=(
@@ -7124,7 +7198,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_optimization_level
 	_configure_performance_pgo
 	#_configure_performance_simd
-	_configure_performance_thp
+	#_configure_performance_thp
 	#_configure_v8
 	#_configure_security
 
