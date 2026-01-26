@@ -33,7 +33,7 @@ LICENSE="|| ( FTL GPL-2+ )"
 SLOT="2"
 IUSE="
 X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils
-ebuild_revision_7
+ebuild_revision_8
 "
 
 RDEPEND="
@@ -273,4 +273,8 @@ multilib_src_install_all() {
 	fi
 
 	find "${ED}" -type f -name '*.la' -delete || die
+
+	# Install header required by www-client/chromium[system-freetype]
+	insinto "/usr/include/freetype2"
+	doins "src/psnames/pstables.h"
 }

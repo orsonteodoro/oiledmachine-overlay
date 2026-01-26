@@ -1,5 +1,5 @@
---- a/third_party/pdfium/BUILD.gn.orig	2026-01-26 08:15:41.378000495 -0800
-+++ b/third_party/pdfium/BUILD.gn	2026-01-26 08:20:46.838780604 -0800
+--- a/third_party/pdfium/BUILD.gn.orig	2026-01-26 10:29:08.268779237 -0800
++++ b/third_party/pdfium/BUILD.gn	2026-01-26 11:24:45.150559873 -0800
 @@ -4,6 +4,7 @@
  
  import("//build/config/clang/clang.gni")
@@ -8,10 +8,17 @@
  import("//testing/test.gni")
  import("pdfium.gni")
  
-@@ -24,6 +25,20 @@ group("freetype_common") {
+@@ -24,6 +25,27 @@ group("freetype_common") {
    }
  }
  
++if (use_system_freetype2) {
++  pkg_config("freetype2_from_pkgconfig") {
++    defines = [ "USE_SYSTEM_FREETYPE" ]
++    packages = [ "freetype2" ]
++  }
++}
++
 +if (use_system_lcms2) {
 +  pkg_config("lcms2_from_pkgconfig") {
 +    defines = [ "USE_SYSTEM_LCMS2" ]
@@ -29,12 +36,16 @@
  config("pdfium_common_config") {
    cflags = []
    cflags_cc = []
-@@ -31,7 +46,14 @@ config("pdfium_common_config") {
+@@ -31,7 +53,18 @@ config("pdfium_common_config") {
    include_dirs = [ "." ]
    defines = []
  
 -  if (!use_system_libopenjpeg2) {
 +  configs = []
++  if (use_system_freetype2) {
++    configs += [ ":freetype2_from_pkgconfig" ]
++  }
++
 +  if (use_system_lcms2) {
 +    configs += [ ":lcms2_from_pkgconfig" ]
 +  }
@@ -44,4 +55,19 @@
 +  } else {
      defines += [ "OPJ_STATIC" ]
    }
+ 
+--- a/third_party/pdfium/core/fxge/freetype/fx_freetype.cpp.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/pdfium/core/fxge/freetype/fx_freetype.cpp	2026-01-26 11:21:36.545140029 -0800
+@@ -13,7 +13,11 @@
+ #include "core/fxge/cfx_gemodule.h"
+ 
+ #define DEFINE_PS_TABLES
+-#include "third_party/freetype/include/pstables.h"
++#ifdef USE_SYSTEM_FREETYPE
++#  include <freetype2/pstables.h>
++#else
++#  include "third_party/freetype/include/pstables.h"
++#endif
+ 
+ namespace {
  
