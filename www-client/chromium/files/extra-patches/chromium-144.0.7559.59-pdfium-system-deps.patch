@@ -12,7 +12,7 @@
    }
  }
  
-+if (use_system_freetype2) {
++if (use_system_freetype) {
 +  pkg_config("freetype2_from_pkgconfig") {
 +    defines = [ "USE_SYSTEM_FREETYPE" ]
 +    packages = [ "freetype2" ]
