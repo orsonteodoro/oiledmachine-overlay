@@ -274,7 +274,7 @@ multilib_src_install_all() {
 
 	find "${ED}" -type f -name '*.la' -delete || die
 
-	# Install header required by www-client/chromium[system-freetype]
+	# oiledmachine-overlay:  Install header required by www-client/chromium[system-freetype]
 	insinto "/usr/include/freetype2"
 	doins "src/psnames/pstables.h"
 }
