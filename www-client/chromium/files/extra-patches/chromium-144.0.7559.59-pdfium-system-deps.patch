@@ -1,0 +1,35 @@
+--- a/third_party/pdfium/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/pdfium/BUILD.gn	2026-01-25 20:51:40.297214791 -0800
+@@ -4,6 +4,7 @@
+ 
+ import("//build/config/clang/clang.gni")
+ import("//build/config/gclient_args.gni")
++import("//build/config/linux/pkg_config.gni")
+ import("//testing/test.gni")
+ import("pdfium.gni")
+ 
+@@ -24,6 +25,13 @@ group("freetype_common") {
+   }
+ }
+ 
++if (use_system_libopenjpeg2) {
++  pkg_config("libopenjpeg2_from_pkgconfig") {
++    defines = [ "USE_SYSTEM_LIBOPENJPEG2" ]
++    packages = [ "libopenjp2" ]
++  }
++}
++
+ config("pdfium_common_config") {
+   cflags = []
+   cflags_cc = []
+@@ -31,7 +39,9 @@ config("pdfium_common_config") {
+   include_dirs = [ "." ]
+   defines = []
+ 
+-  if (!use_system_libopenjpeg2) {
++  if (use_system_libopenjpeg2) {
++    configs = [ ":libopenjpeg2_from_pkgconfig" ]
++  } else {
+     defines += [ "OPJ_STATIC" ]
+   }
+ 

@@ -2764,6 +2764,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
 #		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 	)
 }
 
@@ -3144,6 +3145,10 @@ src_prepare() {
 #	else
 #ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 #	fi
+
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
+	)
 
 	default
 
