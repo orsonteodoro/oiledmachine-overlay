@@ -1,3 +1,15 @@
+--- a/third_party/pdfium/pdfium.gni.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/pdfium/pdfium.gni	2026-01-26 12:35:47.821097757 -0800
+@@ -77,6 +77,9 @@ declare_args() {
+   # Enable callgrind for performance profiling
+   enable_callgrind = false
+ 
++  # Don't build against bundled freetype2.
++  use_system_freetype2 = false
++
+   # Don't build against bundled lcms2.
+   use_system_lcms2 = false
+ 
 --- a/third_party/pdfium/BUILD.gn.orig	2026-01-26 10:29:08.268779237 -0800
 +++ b/third_party/pdfium/BUILD.gn	2026-01-26 11:24:45.150559873 -0800
 @@ -4,6 +4,7 @@
@@ -12,7 +24,7 @@
    }
  }
  
-+if (use_system_freetype) {
++if (use_system_freetype2) {
 +  pkg_config("freetype2_from_pkgconfig") {
 +    defines = [ "USE_SYSTEM_FREETYPE" ]
 +    packages = [ "freetype2" ]
@@ -42,7 +54,7 @@
  
 -  if (!use_system_libopenjpeg2) {
 +  configs = []
-+  if (use_system_freetype) {
++  if (use_system_freetype2) {
 +    configs += [ ":freetype2_from_pkgconfig" ]
 +  }
 +

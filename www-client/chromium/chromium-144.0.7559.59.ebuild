@@ -7111,6 +7111,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 	myconf_gn+=(
 	# Set used by distros
 		"use_system_freetype=$(usex system-freetype true false)"		# For freetype, pdfium, skia, unbundle
+		"use_system_freetype2=$(usex system-freetype true false)"		# For pdfium
 		"use_system_harfbuzz=$(usex system-harfbuzz true false)"		# For freetype, harfbuzz-ng, skia, unbundle; See dependency logic in third_party/BUILD.gn
 		"use_system_lcms2=$(usex system-lcms true false)"			# For pdfium
 #		"use_system_libdrm=$(usex system-libdrm true false)"			# For libdrm, unbundle
