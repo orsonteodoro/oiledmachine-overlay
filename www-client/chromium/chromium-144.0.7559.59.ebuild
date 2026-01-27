@@ -469,58 +469,63 @@ SYSTEM_USE=(
 	# All packages below are security-critical
 
 	# Deps for unbundle
-	# Package			# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
-	"-system-abseil-cpp"		# S1					untrusted-data			# Missing package
-	"-system-brotli"		# S0					security-critical
-	"-system-crc32c"		# S2					sensitive-data
-	"-system-dav1d"			# S0					security-critical
-	"-system-flatbuffers"		# S1					untrusted-data
-	"-system-ffmpeg"		# S0					security-critical		# TODO dedupe/simplify *DEPENDs
-	"-system-flac"			# S0					security-critical
-	"-system-fontconfig"		# S1					untrusted-data
-	"-system-freetype"		# S0					security-critical
-	"-system-harfbuzz"		# S0					security-critical
-	"-system-highway"		# S2					sensitive-data
-	"-system-icu"			# S1					untrusted-data
-	"-system-jsoncpp"		# S1					untrusted-data
-	"-system-libaom"		# S0					security-critical
-	"-system-libdrm"		# S0					security-critical
-	"-system-libjpeg-turbo"		# S0					security-critical
-	"-system-libpng"		# S0					security-critical
-	"-system-libsecret"		# S2					sensitive-data
-	"-system-libusb"		# S0					security-critical
-	"-system-libvpx"		# S0					security-critical
-	"-system-libwebp"		# S0					security-critical
-	"-system-libxml"		# S1					untrusted-data
-	"-system-libxslt"		# S1					untrusted-data
-	"-system-libyuv"		# S1					untrusted-data
-	"-system-openh264"		# S0					security-critical		# TODO dedupe/simplify *DEPENDs
-	"-system-opus"			# S0					security-critical		# TODO dedupe/simplify *DEPENDs
-	"-system-re2"			# S1					untrusted-data
-	"-system-simdutf"		# S2					sensitive-data
-	"-system-snappy"		# S2					sensitive-data
-	"-system-spirv-headers"		# S3					sensitive-data
-	"-system-spirv-tools"		# S1					untrusted-data
-	"-system-woff2"			# S0					security-critical
-	"-system-zlib"			# S0					security-critical
-	"-system-zstd"			# S0					security-critical
+	# Package				# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
+	"-system-abseil-cpp"			# S1					untrusted-data			# Missing package
+	"-system-brotli"			# S0					security-critical
+	"-system-crc32c"			# S2					sensitive-data
+	"-system-dav1d"				# S0					security-critical
+	"-system-double-conversion"		# S2					sensitive-data
+	"-system-flatbuffers"			# S1					untrusted-data
+	"-system-ffmpeg"			# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-flac"				# S0					security-critical
+	"-system-fontconfig"			# S1					untrusted-data
+	"-system-freetype"			# S0					security-critical
+	"-system-harfbuzz"			# S0					security-critical
+	"-system-highway"			# S2					sensitive-data
+	"-system-icu"				# S1					untrusted-data
+	"-system-jsoncpp"			# S1					untrusted-data
+	"-system-libaom"			# S0					security-critical
+	"-system-libdrm"			# S0					security-critical
+	"-system-libjpeg-turbo"			# S0					security-critical
+	"-system-libpng"			# S0					security-critical
+	"-system-libsecret"			# S2					sensitive-data
+	"-system-libusb"			# S0					security-critical
+	"-system-libvpx"			# S0					security-critical
+	"-system-libwebp"			# S0					security-critical
+	"-system-libxml"			# S1					untrusted-data
+	"-system-libxnvctrl"			# S3/S4					sensitive-data
+	"-system-libxslt"			# S1					untrusted-data
+	"-system-libyuv"			# S1					untrusted-data
+	"-system-openh264"			# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-opus"				# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-re2"				# S1					untrusted-data
+	"-system-simdutf"			# S2					sensitive-data
+	"-system-snappy"			# S2					sensitive-data
+	"-system-spirv-headers"			# S3					sensitive-data
+	"-system-spirv-tools"			# S1					untrusted-data
+	"-system-vulkan-memory-allocator"	# S1/S2					untrusted-data, sensitive-data
+	"-system-woff2"				# S0					security-critical
+	"-system-zlib"				# S0					security-critical
+	"-system-zstd"				# S0					security-critical
 	# S0 - Critical, Full RCE
 	# S1 - Medium, Sandboxed RCE
 	# S2 - Medium, ID or DoS
 	# S3 - Low, ID or DoS
+	# S4 - Performance critical (outside threat model)
+
 
 	# pdfium deps
-	"-system-libtiff"		# S0					security-critical
-	"-system-libopenjpeg"		# S0					security-critical
-	"-system-lcms"			# S0/S1					security-critical, untrusted-data
+	"-system-libtiff"			# S0					security-critical
+	"-system-libopenjpeg"			# S0					security-critical
+	"-system-lcms"				# S0/S1					security-critical, untrusted-data
 
 	# For distro desktop version
-	"-system-minigbm"		# S0/S1					security-critical, untrusted-data
+	"-system-minigbm"			# S0/S1					security-critical, untrusted-data
 
 	# perfetto deps
-	"-system-sqlite"		# S0/S1					security-critical, untrusted-data
-	"-system-protobuf"		# S0/S1					security-critical, untrusted-data
-	"-system-lua"			#					For testing only
+	"-system-sqlite"			# S0/S1					security-critical, untrusted-data
+	"-system-protobuf"			# S0/S1					security-critical, untrusted-data
+	"-system-lua"				#					For testing only
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
@@ -813,36 +818,39 @@ fi
 
 LIBCXX_REQUIRED_USE=(
 	# Add C++ libraries here
-	"!system-abseil-cpp"		# Vendored required to build chrome, mksnapshot
-	"!system-brotli"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-dav1d"			# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-ffmpeg"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-flac"			# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-flatbuffers"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-fontconfig"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-freetype"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-highway"		# Vendored required to build chrome, mksnapshot
-	"!system-icu"			# Vendored required to build chrome, mksnapshot
-	"!system-jsoncpp"		# Vendored required to build chrome, mksnapshot
-	"!system-libdrm"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libjpeg-turbo"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libpng"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libvpx"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libwebp"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libxml"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libxslt"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-libyuv"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-openh264"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-re2"			# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-simdutf"		# Vendored required to build chrome, mksnapshot
-	"!system-snappy"		# Vendored required to build chrome, v8_context_snapshot_generator
-	"!system-zlib"			# Vendored required to build chrome, mksnapshot
+	"!system-abseil-cpp"			# Vendored required to build chrome, mksnapshot
+	"!system-brotli"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-dav1d"				# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-ffmpeg"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-flac"				# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-flatbuffers"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-fontconfig"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-freetype"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-highway"			# Vendored required to build chrome, mksnapshot
+	"!system-icu"				# Vendored required to build chrome, mksnapshot
+	"!system-jsoncpp"			# Vendored required to build chrome, mksnapshot
+	"!system-libdrm"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libjpeg-turbo"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libpng"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libvpx"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libwebp"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libxml"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libxslt"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-libyuv"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-openh264"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-re2"				# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-simdutf"			# Vendored required to build chrome, mksnapshot
+	"!system-snappy"			# Vendored required to build chrome, v8_context_snapshot_generator
+	"!system-zlib"				# Vendored required to build chrome, mksnapshot
 
-	"!system-opus"			# Disabled because live ebuild is required and not available
-	"!system-spirv-headers"		# Disabled because live ebuild is required and not available
-	"!system-spirv-tools"		# Disabled because live ebuild is required and not available
-	"!system-woff2"			# Disabled because live ebuild is required and not available
-	"!system-zstd"			# Disabled because live ebuild is required and not available
+	"!system-opus"				# Disabled because live ebuild is required and not available
+	"!system-spirv-headers"			# Disabled because live ebuild is required and not available
+	"!system-spirv-tools"			# Disabled because live ebuild is required and not available
+	"!system-woff2"				# Disabled because live ebuild is required and not available
+	"!system-zstd"				# Disabled because live ebuild is required and not available
+
+#	"!system-vulkan-memory-allocator"	# ? TODO:  RETEST
+#	"!system-libxnvctrl"			# ? TODO:  RETEST
 )
 
 # Drumbrake is broken in this release and off by default.
@@ -1359,6 +1367,9 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
 	)
+	system-double-conversion? (
+		>=dev-libs/double-conversion-3.1.6[${MULTILIB_USEDEP}]
+	)
 	system-flatbuffers? (
 		=dev-libs/flatbuffers-25.9.23
 		dev-libs/flatbuffers:=
@@ -1397,6 +1408,9 @@ COMMON_SNAPSHOT_DEPEND="
 	system-libjpeg-turbo? (
 		>=media-libs/libjpeg-turbo-3.1.0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
+	)
+	system-libxnvctrl? (
+		x11-drivers/nvidia-drivers
 	)
 	system-libpng? (
 		>=media-libs/libpng-1.6.43[${MULTILIB_USEDEP}]
@@ -1448,6 +1462,9 @@ COMMON_SNAPSHOT_DEPEND="
 	)
 	system-sqlite? (
 		>=dev-db/sqlite-3.50.4:3[${MULTILIB_USEDEP}]
+	)
+	system-vulkan-memory-allocator? (
+		>=media-libs/VulkanMemoryAllocator-3.0.0
 	)
 	system-woff2? (
 		>=media-libs/woff2-9999
@@ -3148,6 +3165,7 @@ src_prepare() {
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus.patch"
 	)
 
 	default
@@ -3195,8 +3213,12 @@ fi
 	# to whitelist from that point down.
 	#
 	local keeplibs=(
+	# This set is mostly unconditional by distro ebuild except for the ones
+	# with the use which were modified in this ebuild fork.
 		"base/third_party/cityhash"
-		"base/third_party/double_conversion"
+		$(use !system-double-conversion && echo \
+			"base/third_party/double_conversion" \
+		)
 		"base/third_party/icu"
 		"base/third_party/nspr"
 		"base/third_party/superfasthash"
@@ -3210,7 +3232,9 @@ fi
 		"third_party/angle"
 		"third_party/angle/src/common/third_party/xxhash"
 		"third_party/angle/src/third_party/ceval"
-		"third_party/angle/src/third_party/libXNVCtrl"
+		$(use !system-libxnvctrl && echo \
+			"third_party/angle/src/third_party/libXNVCtrl" \
+		)
 		"third_party/angle/src/third_party/volk"
 		"third_party/anonymous_tokens"
 		"third_party/apple_apsl"
@@ -3450,8 +3474,12 @@ fi
 		"third_party/swiftshader/third_party/astc-encoder"
 		"third_party/swiftshader/third_party/llvm-subzero"
 		"third_party/swiftshader/third_party/marl"
-		"third_party/swiftshader/third_party/SPIRV-Headers/include/spirv"
-		"third_party/swiftshader/third_party/SPIRV-Tools"
+		$(use !system-spirv-headers && echo \
+			"third_party/swiftshader/third_party/SPIRV-Headers/include/spirv" \
+		)
+		$(use !system-spirv-tools && echo \
+			"third_party/swiftshader/third_party/SPIRV-Tools" \
+		)
 		"third_party/swiftshader/third_party/subzero"
 		"third_party/tensorflow_models"
 		"third_party/tensorflow-text"
@@ -3618,6 +3646,9 @@ fi
 		)
 		$(use !system-openh264 && echo \
 			"third_party/openh264" \
+		)
+		$(use !system-vulkan-memory-allocator && echo \
+			"third_party/vulkan_memory_allocator" \
 		)
 
 	# Allowed conditional to keep or remove
@@ -6748,6 +6779,9 @@ _configure_features() {
 		$(use system-dav1d && echo "
 			dav1d
 		")
+		$(use system-double-conversion && echo "
+			double-conversion
+		")
 		$(use system-ffmpeg && echo "
 			ffmpeg
 		")
@@ -6822,10 +6856,18 @@ _configure_features() {
 			snappy
 		")
 		$(use system-spirv-headers && echo "
+			swiftshader-SPIRV-Headers
 			vulkan-SPIRV-Headers
 		")
 		$(use system-spirv-tools && echo "
+			swiftshader-SPIRV-Tools
 			vulkan-SPIRV-Tools
+		")
+		$(use system-libxnvctrl && echo "
+			libXNVCtrl
+		")
+		$(use system-vulkan-memory-allocator && echo "
+			vulkan_memory_allocator
 		")
 		$(use system-woff2 && echo "
 			woff2
@@ -7122,6 +7164,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 #		"use_system_libsecret=$(usex system-libsecret true false)"		# For unbundle, missing gn* reference
 		"use_system_libtiff=$(usex system-libtiff true false)"			# For pdfium
 #		"use_system_minigbm=$(usex system-minigbm true false)"			# For minigbm, false is production setting on linux which default in build scripts, third_party/minigbm/BUILD.gn
+		"use_system_opus=$(usex system-opus true false)"			# For opus
 #		"use_system_re2=$(usex system-re2 true false)"				# For unbundle, missing gn* reference, triggers failure build/linux/unbundle/re2.gn
 		"use_system_zlib=$(usex system-zlib true false)"			# For pdfium, perfetto, skia, unbundle
 
@@ -7586,7 +7629,7 @@ _src_install() {
 	# This next pass will copy PATENTS, *ThirdParty*, NOTICE files;
 	# and npm micropackages copyright notices and licenses which may not
 	# have been present in the listed the the .html (about:credits) file.
-	lcnr_install_files
+#	lcnr_install_files
 
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		insinto "/usr/share/cromite/docs"
