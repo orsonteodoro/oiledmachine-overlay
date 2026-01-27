@@ -7165,6 +7165,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 		"use_system_libtiff=$(usex system-libtiff true false)"			# For pdfium
 #		"use_system_minigbm=$(usex system-minigbm true false)"			# For minigbm, false is production setting on linux which default in build scripts, third_party/minigbm/BUILD.gn
 		"use_system_opus=$(usex system-opus true false)"			# For opus
+		"media_use_system_opus=$(usex system-opus true false)"			# For media/audio
 #		"use_system_re2=$(usex system-re2 true false)"				# For unbundle, missing gn* reference, triggers failure build/linux/unbundle/re2.gn
 		"use_system_zlib=$(usex system-zlib true false)"			# For pdfium, perfetto, skia, unbundle
 

@@ -5,7 +5,7 @@
  import("//tools/generate_stubs/rules.gni")
  
 +declare_args() {
-+  use_system_opus = false
++  media_use_system_opus = false
 +}
 +
  # When libpulse is not directly linked, use stubs to allow for dlopening of the
@@ -15,7 +15,7 @@
    if (use_alsa) {
      defines += [ "USE_ALSA" ]
    }
-+  if (use_system_opus) {
++  if (media_use_system_opus) {
 +    defines += [ "USE_SYSTEM_OPUS" ]
 +  }
  }
@@ -43,7 +43,7 @@
  }
  
 +declare_args() {
-+  #use_system_opus = false
++  use_system_opus = false
 +}
 +
  config("opus_private_config") {
