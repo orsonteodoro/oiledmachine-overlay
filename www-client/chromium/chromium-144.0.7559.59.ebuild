@@ -465,7 +465,9 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${LLVM_OFFICIAL_SLOT}.0.0"
 )
 
+# Has GLIBCXX symbol indicating C++
 HAS_GLIBCXX=(
+	# Package				# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
 	"-system-abseil-cpp"			# S1					untrusted-data			# Missing package
 	"-system-double-conversion"		# S2					sensitive-data
 	"-system-flatbuffers"			# S1					untrusted-data
@@ -482,10 +484,8 @@ HAS_GLIBCXX=(
 	"-system-vulkan-memory-allocator"	# S1/S2					untrusted-data, sensitive-data	# TODO verify GLIBCXX
 )
 
+# Does not have GLIBCXX symbol indicating C lang
 HAS_NO_GLIBCXX=(
-	# All packages below are security-critical
-
-	# Deps for unbundle
 	# Package				# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
 	"-system-brotli"			# S0					security-critical
 	"-system-crc32c"			# S2					sensitive-data
@@ -495,42 +495,29 @@ HAS_NO_GLIBCXX=(
 	"-system-fontconfig"			# S1					untrusted-data
 	"-system-freetype"			# S0					security-critical
 	"-system-harfbuzz"			# S0					security-critical
+	"-system-lcms"				# S0/S1					security-critical, untrusted-data
 	"-system-libaom"			# S0					security-critical
 	"-system-libdrm"			# S0					security-critical
 	"-system-libjpeg-turbo"			# S0					security-critical
+	"-system-libopenjpeg"			# S0					security-critical
 	"-system-libpng"			# S0					security-critical
 	"-system-libsecret"			# S2					sensitive-data
+	"-system-libtiff"			# S0					security-critical
 	"-system-libusb"			# S0					security-critical
 	"-system-libvpx"			# S0					security-critical
 	"-system-libwebp"			# S0					security-critical
 	"-system-libxml"			# S1					untrusted-data
 	"-system-libxnvctrl"			# S3/S4					sensitive-data
 	"-system-libxslt"			# S1					untrusted-data
+	"-system-lua"				#					For testing only
+	"-system-minigbm"			# S0/S1					security-critical, untrusted-data
 	"-system-opus"				# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-protobuf"			# S0/S1					security-critical, untrusted-data
 	"-system-spirv-headers"			# S3					sensitive-data
+	"-system-sqlite"			# S0/S1					security-critical, untrusted-data
 	"-system-zlib"				# S0					security-critical
 	"-system-zstd"				# S0					security-critical
-	# S0 - Critical, Full RCE
-	# S1 - Medium, Sandboxed RCE
-	# S2 - Medium, ID or DoS
-	# S3 - Low, ID or DoS
-	# S4 - Performance critical (outside threat model)
-
-
-	# pdfium deps
-	"-system-libtiff"			# S0					security-critical
-	"-system-libopenjpeg"			# S0					security-critical
-	"-system-lcms"				# S0/S1					security-critical, untrusted-data
-
-	# For distro desktop version
-	"-system-minigbm"			# S0/S1					security-critical, untrusted-data
-
-	# perfetto deps
-	"-system-sqlite"			# S0/S1					security-critical, untrusted-data
-	"-system-protobuf"			# S0/S1					security-critical, untrusted-data
-	"-system-lua"				#					For testing only
 )
-
 
 SYSTEM_USE=(
 	# All packages below are security-critical
