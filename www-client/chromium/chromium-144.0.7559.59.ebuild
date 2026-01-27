@@ -6888,11 +6888,13 @@ _configure_features() {
 	# Unbundling or use of system libs weakens the security because it removes noexecstack, full RELRO, SSP.
 einfo "Using official build settings for security-critical and compatibility-critical"
 	elif use bundled-libcxx ; then
-einfo "Using bundled libc++ for compatibility-critical"
 		if use force-unbundler ; then
 	# Usually other distros will use the unbundler incorrectly and make it unconditional.
 	# It may cause DoS (Denial of Service) runtime issues that manifest as crashes.
 			use_unbundler=1
+einfo "Using bundled libc++ for balanced compatibility"
+		else
+einfo "Using bundled libc++ for compatibility-critical"
 		fi
 	elif use cfi ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
