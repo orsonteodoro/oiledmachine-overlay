@@ -673,6 +673,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       crash.  The AI assistant said that mixing the vendored libc++ and
       unbundled system libraries can even lead to memory corruption.
 
+      Unbundled C libraries are considered low risk for DoS crashes.
+
       It is only useful when official or cfi USE flags are disabled and
       bundled-libcxx is enabled.  In the official and cfi USE cases, the
       unbundler is disabled to maximize security criticality.
