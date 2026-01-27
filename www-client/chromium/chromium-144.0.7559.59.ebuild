@@ -465,6 +465,73 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${LLVM_OFFICIAL_SLOT}.0.0"
 )
 
+HAS_GLIBCXX=(
+	"-system-abseil-cpp"			# S1					untrusted-data			# Missing package
+	"-system-double-conversion"		# S2					sensitive-data
+	"-system-flatbuffers"			# S1					untrusted-data
+	"-system-highway"			# S2					sensitive-data
+	"-system-icu"				# S1					untrusted-data
+	"-system-jsoncpp"			# S1					untrusted-data
+	"-system-libyuv"			# S1					untrusted-data
+	"-system-openh264"			# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-re2"				# S1					untrusted-data
+	"-system-simdutf"			# S2					sensitive-data
+	"-system-snappy"			# S2					sensitive-data
+	"-system-woff2"				# S0					security-critical
+	"-system-spirv-tools"			# S1					untrusted-data
+	"-system-vulkan-memory-allocator"	# S1/S2					untrusted-data, sensitive-data	# TODO verify GLIBCXX
+)
+
+HAS_NO_GLIBCXX=(
+	# All packages below are security-critical
+
+	# Deps for unbundle
+	# Package				# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
+	"-system-brotli"			# S0					security-critical
+	"-system-crc32c"			# S2					sensitive-data
+	"-system-dav1d"				# S0					security-critical
+	"-system-ffmpeg"			# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-flac"				# S0					security-critical
+	"-system-fontconfig"			# S1					untrusted-data
+	"-system-freetype"			# S0					security-critical
+	"-system-harfbuzz"			# S0					security-critical
+	"-system-libaom"			# S0					security-critical
+	"-system-libdrm"			# S0					security-critical
+	"-system-libjpeg-turbo"			# S0					security-critical
+	"-system-libpng"			# S0					security-critical
+	"-system-libsecret"			# S2					sensitive-data
+	"-system-libusb"			# S0					security-critical
+	"-system-libvpx"			# S0					security-critical
+	"-system-libwebp"			# S0					security-critical
+	"-system-libxml"			# S1					untrusted-data
+	"-system-libxnvctrl"			# S3/S4					sensitive-data
+	"-system-libxslt"			# S1					untrusted-data
+	"-system-opus"				# S0					security-critical		# TODO dedupe/simplify *DEPENDs
+	"-system-spirv-headers"			# S3					sensitive-data
+	"-system-zlib"				# S0					security-critical
+	"-system-zstd"				# S0					security-critical
+	# S0 - Critical, Full RCE
+	# S1 - Medium, Sandboxed RCE
+	# S2 - Medium, ID or DoS
+	# S3 - Low, ID or DoS
+	# S4 - Performance critical (outside threat model)
+
+
+	# pdfium deps
+	"-system-libtiff"			# S0					security-critical
+	"-system-libopenjpeg"			# S0					security-critical
+	"-system-lcms"				# S0/S1					security-critical, untrusted-data
+
+	# For distro desktop version
+	"-system-minigbm"			# S0/S1					security-critical, untrusted-data
+
+	# perfetto deps
+	"-system-sqlite"			# S0/S1					security-critical, untrusted-data
+	"-system-protobuf"			# S0/S1					security-critical, untrusted-data
+	"-system-lua"				#					For testing only
+)
+
+
 SYSTEM_USE=(
 	# All packages below are security-critical
 
@@ -2471,9 +2538,18 @@ einfo "CXX:  ${CXX}"
 	libstdcxx-slot_verify
 
 	local x
-	for x in "${SYSTEM_USE[@]/-}" ; do
+	for x in "${HAS_GLIBCXX[@]/-}" ; do
 		if use "${x}" ; then
+			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
 ewarn "Enabling ${x} could weaken the security or have version sensitive C++ standard incompatibility."
+			else
+ewarn "Enabling ${x} could weaken the security or have version sensitive C++ standard incompatibility with or C++ standard library implementation incompatility."
+			fi
+		fi
+	done
+	for x in "${HAS_NO_GLIBCXX[@]/-}" ; do
+		if use "${x}" ; then
+ewarn "Enabling ${x} could weaken the security."
 		fi
 	done
 }
@@ -3166,6 +3242,7 @@ src_prepare() {
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch"
 	)
 
 	default
@@ -6679,6 +6756,13 @@ _configure_debug() {
 	# Component build isn't generally intended for use by end users. It's mostly useful
 	# for development and debugging.
 		"is_component_build=false"
+
+	# Disable tests
+		"angle_build_tests=$(usex test true false)"
+		"angle_has_histograms=$(usex test true false)"
+		"build_angle_perftests=$(usex test true false)"
+		"build_dawn_tests=$(usex test true false)"
+		"libpng_test_only=$(usex test true false)"
 	)
 
 	# Dedupe flags
@@ -6900,7 +6984,7 @@ ewarn "Using vendored libc++, CFI = n"
 		fi
 	else
 		if ! is_generating_credits ; then
-			if eselect profile show 2>/dev/null | grep "llvm" ; then
+			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
 ewarn "Using system libc++, CFI = n"
 			else
 ewarn "Using system libstdc++ and system libc++ together, CFI = n"

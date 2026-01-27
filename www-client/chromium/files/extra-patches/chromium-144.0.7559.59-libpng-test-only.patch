@@ -1,0 +1,158 @@
+--- a/chrome/test/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/chrome/test/BUILD.gn	2026-01-27 10:29:16.159000565 -0800
+@@ -57,6 +57,10 @@ assert(!is_ios, "Chromium/iOS shouldn't
+ assert(!is_fuchsia, "Fuchsia shouldn't use anything in //chrome")
+ assert(enable_supervised_users)
+ 
++declare_args() {
++  #libpng_test_only = true
++}
++
+ if (is_android) {
+   import("//build/config/android/rules.gni")
+   import("//chrome/android/features/dev_ui/dev_ui_module.gni")
+@@ -11226,7 +11230,6 @@ if (!is_android) {
+         "//testing/gtest",
+         "//third_party/hunspell",
+         "//third_party/icu",
+-        "//third_party/libpng:libpng_for_testonly",
+         "//ui/base:test_support",
+         "//ui/events:test_support",
+         "//ui/ozone",
+@@ -11235,6 +11238,16 @@ if (!is_android) {
+         "//ui/web_dialogs:test_support",
+       ]
+ 
++      if (libpng_test_only) {
++        deps += [
++          "//third_party/libpng:libpng_for_testonly",
++        ]
++      } else {
++        deps += [
++          "//third_party/libpng",
++        ]
++      }
++
+       if (enable_extensions) {
+         deps += [
+           "//google_apis/common:test_support",
+@@ -11601,7 +11614,6 @@ if (!is_android && !is_chromeos_device)
+       "//testing/gtest",
+       "//third_party/hunspell",
+       "//third_party/icu",
+-      "//third_party/libpng:libpng_for_testonly",
+       "//ui/base:base_interactive_ui_tests",
+       "//ui/base:ozone_buildflags",
+       "//ui/base:test_support",
+@@ -11617,6 +11629,16 @@ if (!is_android && !is_chromeos_device)
+       "//ui/web_dialogs:test_support",
+     ]
+ 
++    if (libpng_test_only) {
++      deps += [
++        "//third_party/libpng:libpng_for_testonly",
++      ]
++    } else {
++      deps += [
++        "//third_party/libpng",
++      ]
++    }
++
+     # TODO(413315837): Remove this dependency when
+     # c/b/ui/views/privacy_sandbox/privacy_sandbox_dialog_view_interactive_ui_test.cc
+     # gets modularized.
+@@ -12572,13 +12594,22 @@ if (!is_android) {
+       "//testing/gtest",
+       "//third_party/hunspell",
+       "//third_party/icu",
+-      "//third_party/libpng:libpng_for_testonly",
+       "//ui/base:test_support",
+       "//ui/resources:ui_test_pak",
+       "//ui/views",
+       "//ui/web_dialogs:test_support",
+     ]
+ 
++    if (libpng_test_only) {
++      deps += [
++        "//third_party/libpng:libpng_for_testonly",
++      ]
++    } else {
++      deps += [
++        "//third_party/libpng",
++      ]
++    }
++
+     if (enable_extensions) {
+       deps += [
+         "//google_apis/common:test_support",
+--- a/tools/imagediff/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/tools/imagediff/BUILD.gn	2026-01-27 10:30:05.994725793 -0800
+@@ -4,6 +4,10 @@
+ 
+ import("//build/symlink.gni")
+ 
++declare_args() {
++  libpng_test_only = true
++}
++
+ # There are three machines involved with building and running tests:
+ # * the build host, where GN, ninja, and the build tools run
+ # * the test host, where the swarming task runs
+@@ -48,9 +52,18 @@ if (current_toolchain == imagediff_toolc
+     deps = [
+       "//base",
+       "//build/win:default_exe_manifest",
+-      "//third_party/libpng:libpng_for_testonly",
+       "//third_party/zlib",
+     ]
++
++    if (libpng_test_only) {
++      deps += [
++        "//third_party/libpng:libpng_for_testonly",
++      ]
++    } else {
++      deps += [
++        "//third_party/libpng",
++      ]
++    }
+   }
+   # Otherwise, if the current toolchain is the test target toolchain, make a
+   # symlink to the test host toolchain output so the tests can find it.
+--- a/ui/gfx/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/ui/gfx/BUILD.gn	2026-01-27 10:31:03.133897388 -0800
+@@ -21,6 +21,10 @@ if (is_android) {
+   import("//third_party/jni_zero/jni_zero.gni")
+ }
+ 
++declare_args() {
++  #libpng_test_only = true
++}
++
+ # Used for color generation at build time without importing all the gfx.
+ component("color_utils") {
+   sources = [
+@@ -881,7 +885,6 @@ test("gfx_unittests") {
+     "//skia:skcms",
+     "//testing/gtest",
+     "//third_party/icu:icuuc",
+-    "//third_party/libpng:libpng_for_testonly",
+     "//third_party/zlib",
+     "//ui/base",
+     "//ui/gfx/animation",
+@@ -890,6 +893,16 @@ test("gfx_unittests") {
+     "//ui/gfx/range",
+   ]
+ 
++  if (libpng_test_only) {
++    deps += [
++      "//third_party/libpng:libpng_for_testonly",
++    ]
++  } else {
++    deps += [
++      "//third_party/libpng",
++    ]
++  }
++
+   if (use_blink) {
+     deps += [ "//third_party/harfbuzz-ng" ]
+   }
