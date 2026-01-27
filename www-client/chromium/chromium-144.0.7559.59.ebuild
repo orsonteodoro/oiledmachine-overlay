@@ -6886,31 +6886,31 @@ _configure_features() {
 	if use official ; then
 	# Implies bundled-libcxx and cfi
 	# Unbundling or use of system libs weakens the security because it removes noexecstack, full RELRO, SSP.
-einfo "Using official build settings for security-critical and compatibility-critical"
+einfo "Using vendored libc++, CFI = y, official settings"
+	elif use cfi ; then
+	# Unbundling breaks cfi-icall and cfi-cast.
+	# Cross DSO CFI has a lesser security score than static CFI.
+einfo "Using vendored libc++, CFI = y"
 	elif use bundled-libcxx ; then
+ewarn "Using vendored libc++, CFI = n"
 		if use force-unbundler ; then
 	# Usually other distros will use the unbundler incorrectly and make it unconditional.
 	# It may cause DoS (Denial of Service) runtime issues that manifest as crashes.
 			use_unbundler=1
-einfo "Using bundled libc++ for balanced compatibility"
-		else
-einfo "Using bundled libc++ for compatibility-critical"
 		fi
-	elif use cfi ; then
-	# Unbundling breaks cfi-icall and cfi-cast.
-	# Cross DSO CFI has a lesser security score than static CFI.
-einfo "Using statically linked Clang CFI for security-critical"
 	else
 		if ! is_generating_credits ; then
-ewarn
-ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack,"
-ewarn "Full RELRO)."
-ewarn
+			if eselect profile show 2>/dev/null | grep "llvm" ; then
+ewarn "Using system libc++, CFI = n"
+			else
+ewarn "Using system libstdc++ and system libc++ together, CFI = n"
+			fi
 			use_unbundler=1
 		fi
 	fi
 
 	if (( ${use_unbundler} == 1 )) ; then
+ewarn "Unbundling libs and lowering security"
 		"build/linux/unbundle/replace_gn_files.py" \
 			--system-libraries \
 			"${gn_system_libraries[@]}" \
