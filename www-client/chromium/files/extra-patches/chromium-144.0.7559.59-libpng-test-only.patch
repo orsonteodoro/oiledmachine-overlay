@@ -5,7 +5,7 @@
  assert(enable_supervised_users)
  
 +declare_args() {
-+  #libpng_test_only = true
++  chrome_test_libpng_test_only = true
 +}
 +
  if (is_android) {
@@ -23,7 +23,7 @@
          "//ui/web_dialogs:test_support",
        ]
  
-+      if (libpng_test_only) {
++      if (chrome_test_libpng_test_only) {
 +        deps += [
 +          "//third_party/libpng:libpng_for_testonly",
 +        ]
@@ -48,7 +48,7 @@
        "//ui/web_dialogs:test_support",
      ]
  
-+    if (libpng_test_only) {
++    if (chrome_test_libpng_test_only) {
 +      deps += [
 +        "//third_party/libpng:libpng_for_testonly",
 +      ]
@@ -72,7 +72,7 @@
        "//ui/web_dialogs:test_support",
      ]
  
-+    if (libpng_test_only) {
++    if (chrome_test_libpng_test_only) {
 +      deps += [
 +        "//third_party/libpng:libpng_for_testonly",
 +      ]
@@ -92,7 +92,7 @@
  import("//build/symlink.gni")
  
 +declare_args() {
-+  libpng_test_only = true
++  tools_imagediff_libpng_test_only = true
 +}
 +
  # There are three machines involved with building and running tests:
@@ -106,7 +106,7 @@
        "//third_party/zlib",
      ]
 +
-+    if (libpng_test_only) {
++    if (tools_imagediff_libpng_test_only) {
 +      deps += [
 +        "//third_party/libpng:libpng_for_testonly",
 +      ]
@@ -125,7 +125,7 @@
  }
  
 +declare_args() {
-+  #libpng_test_only = true
++  ui_gfx_libpng_test_only = true
 +}
 +
  # Used for color generation at build time without importing all the gfx.
@@ -143,7 +143,7 @@
      "//ui/gfx/range",
    ]
  
-+  if (libpng_test_only) {
++  if (ui_gfx_libpng_test_only) {
 +    deps += [
 +      "//third_party/libpng:libpng_for_testonly",
 +    ]

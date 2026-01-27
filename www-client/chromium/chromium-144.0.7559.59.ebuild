@@ -6751,7 +6751,9 @@ _configure_debug() {
 		"angle_has_histograms=$(usex test true false)"
 		"build_angle_perftests=$(usex test true false)"
 		"build_dawn_tests=$(usex test true false)"
-		"libpng_test_only=$(usex test true false)"
+		"chrome_test_libpng_test_only=$(usex test true false)"
+		"tools_imagediff_libpng_test_only=$(usex test true false)"
+		"ui_gfx_libpng_test_only=$(usex test true false)"
 	)
 
 	# Dedupe flags
@@ -7234,6 +7236,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 	# See also /usr/share/chromium/sources/build/linux/unbundle/replace_gn_files.py
 	myconf_gn+=(
 	# Set used by distros
+		"media_use_system_opus=$(usex system-opus true false)"			# For media/audio
 		"use_system_freetype=$(usex system-freetype true false)"		# For freetype, pdfium, skia, unbundle
 		"use_system_freetype2=$(usex system-freetype true false)"		# For pdfium
 		"use_system_harfbuzz=$(usex system-harfbuzz true false)"		# For freetype, harfbuzz-ng, skia, unbundle; See dependency logic in third_party/BUILD.gn
@@ -7247,7 +7250,6 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 		"use_system_libtiff=$(usex system-libtiff true false)"			# For pdfium
 #		"use_system_minigbm=$(usex system-minigbm true false)"			# For minigbm, false is production setting on linux which default in build scripts, third_party/minigbm/BUILD.gn
 		"use_system_opus=$(usex system-opus true false)"			# For opus
-		"media_use_system_opus=$(usex system-opus true false)"			# For media/audio
 #		"use_system_re2=$(usex system-re2 true false)"				# For unbundle, missing gn* reference, triggers failure build/linux/unbundle/re2.gn
 		"use_system_zlib=$(usex system-zlib true false)"			# For pdfium, perfetto, skia, unbundle
 
