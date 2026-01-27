@@ -466,6 +466,7 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 )
 
 # Has GLIBCXX symbol indicating C++
+# More sensitive to ABI breakage
 HAS_GLIBCXX=(
 	# Package				# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
 	"-system-abseil-cpp"			# S1					untrusted-data			# Missing package
@@ -485,6 +486,7 @@ HAS_GLIBCXX=(
 )
 
 # Does not have GLIBCXX symbol indicating C lang
+# Less sensitive to ABI breakage
 HAS_NO_GLIBCXX=(
 	# Package				# Security-critical criticality		CFLAGS_HARDENED_USE_CASES	# Notes
 	"-system-brotli"			# S0					security-critical
