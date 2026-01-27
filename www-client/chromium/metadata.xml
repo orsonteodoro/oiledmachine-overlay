@@ -665,6 +665,18 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="ffmpeg-chromium">
       Use the upstream vendored FFmpeg as an external module.
     </flag>
+    <flag name="force-unbundler">
+      Force the use of the unbundler which is unconditional and common in
+      other distros.
+
+      Forcing the use of the unbundler can cause a DoS (Denial of Service)
+      crash.  The AI assistant said that mixing the vendored libc++ and
+      unbundled system libraries can even lead to memory corruption.
+
+      It is only useful when official or cfi USE flags are disabled and
+      bundled-libcxx is enabled.  In the official and cfi USE cases, the
+      unbundler is disabled to maximize security criticality.
+    </flag>
     <flag name="gtk4">
       Add support for GTK4 as the widget engine for GTK4 based themes.
     </flag>

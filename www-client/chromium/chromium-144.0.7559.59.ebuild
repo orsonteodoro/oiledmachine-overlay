@@ -675,11 +675,11 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 ${SYSTEM_USE[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
--debug -drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
--hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
--official +partitionalloc pax-kernel +pdf pic +pgo +plugins
-+pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
-systemd test +v8-snapshot +wayland +webassembly -widevine +X
+-debug -drumbrake +encode +extensions ffmpeg-chromium firejail -force-unbundler
+-gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns
++miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
++plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
+selinux systemd test +v8-snapshot +wayland +webassembly -widevine +X
 ebuild_revision_38
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
@@ -6880,32 +6880,39 @@ _configure_features() {
 		")
 
 	)
+
 	# [C]
-	if \
-		use bundled-libcxx \
-			|| \
-		use cfi \
-			|| \
-		use official \
-	; then
+	local use_unbundler=0
+	if use official ; then
+	# Implies bundled-libcxx and cfi
+	# Unbundling or use of system libs weakens the security because it removes noexecstack, full RELRO, SSP.
+einfo "Using official build settings for security-critical and compatibility-critical"
+	elif use bundled-libcxx ; then
+einfo "Using bundled libc++ for compatibility-critical"
+		if use force-unbundler ; then
+	# Usually other distros will use the unbundler incorrectly and make it unconditional.
+	# It may cause DoS (Denial of Service) runtime issues that manifest as crashes.
+			use_unbundler=1
+		fi
+	elif use cfi ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
-	# Unbundling weakens the security because it removes noexecstack,
-	# full RELRO, SSP.
-einfo
-einfo "Forcing use of internal libs to maintain upstream security expectations"
-einfo "and requirements."
-einfo
+	# Cross DSO CFI has a lesser security score than static CFI.
+einfo "Using statically linked Clang CFI for security-critical"
 	else
 		if ! is_generating_credits ; then
 ewarn
 ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack,"
 ewarn "Full RELRO)."
 ewarn
-			"build/linux/unbundle/replace_gn_files.py" \
-				--system-libraries \
-				"${gn_system_libraries[@]}" \
-				|| die "Failed to replace GN files for system libraries"
+			use_unbundler=1
 		fi
+	fi
+
+	if (( ${use_unbundler} == 1 )) ; then
+		"build/linux/unbundle/replace_gn_files.py" \
+			--system-libraries \
+			"${gn_system_libraries[@]}" \
+			|| die "Failed to replace GN files for system libraries"
 	fi
 
 	# TODO 131: The above call clobbers `enable_freetype = true` in the freetype gni file
