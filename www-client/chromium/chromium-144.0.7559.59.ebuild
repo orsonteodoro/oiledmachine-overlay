@@ -801,7 +801,7 @@ PATENT_USE_FLAGS="
 	)
 	openh264? (
 		patent_status_sponsored_ncp_nb? (
-			!system-openh264
+			system-openh264
 		)
 		system-openh264? (
 			patent_status_sponsored_ncp_nb
