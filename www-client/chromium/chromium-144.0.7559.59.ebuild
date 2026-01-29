@@ -732,7 +732,7 @@ ${PATENT_STATUS[@]}
 ${SYSTEM_USE[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -force-unbundler
--gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns
+-gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos
 +miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
 +plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
 selinux systemd test +v8-snapshot +wayland +webassembly -widevine +X
@@ -1132,7 +1132,6 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
-		mdns
 		miracleptr
 		mpris
 		openh264
@@ -1210,7 +1209,6 @@ if is_cromite_compatible ; then
 		cromite? (
 			!css-hyphen
 			!hangouts
-			!mdns
 			!official
 			!openh264
 			!reporting-api
@@ -1245,7 +1243,6 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 	REQUIRED_USE+="
 		ungoogled-chromium? (
 			!hangouts
-			!mdns
 			!pgo
 			!reporting-api
 		)
@@ -7062,7 +7059,7 @@ ewarn "Unbundling libs and lowering security"
 			"google_api_key=\"AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc\""
 
 			"enable_hangout_services_extension=$(usex hangouts true false)"
-			"enable_mdns=$(usex mdns true false)"
+			"enable_mdns=true"							# Crashes YouTube if disabled
 			"enable_reporting=$(usex reporting-api true false)"
 			"enable_service_discovery=true"						# Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
 		)
@@ -7965,11 +7962,12 @@ einfo "Since the build is done, you may remove /usr/share/chromium folder."
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 # OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59  (20250502) - build failure
 # OILEDMACHINE-OVERLAY-TEST: FAILED 135.0.7049.114 (20250430) - build failure and segfault with running mksnapshot
-# OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59 (20250506) - build failure and segfault with running mksnapshot
+# OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59 (20260106) - build failure and segfault with running mksnapshot
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 143.0.7499.192 (20260114) with mold 2.40.4 - segfault when playing yt video
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260118) with lld with a completion time of 2 days, 14 hrs, 36 mins, 14 secs using ninja -l4 -j4 and overlay hardening flags and -Oshit - segfault when playing yt video
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260119) with mold with a completion time of 1 days, 2 hrs, 57 mins, 36 secs using ninja -j4 and upstream hardening flags and -Oshit - segfault when playing yt video
+# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.59 (20260129) with mold and mdns enabled
 
 # 143.0.7499.192 test results:
 # search engine:  passed
