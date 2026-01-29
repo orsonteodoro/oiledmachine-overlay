@@ -800,14 +800,11 @@ PATENT_USE_FLAGS="
 		patent_status_nonfree
 	)
 	openh264? (
-		!system-openh264? (
-			patent_status_sponsored_ncp_nb
-		)
 		patent_status_sponsored_ncp_nb? (
 			!system-openh264
 		)
 		system-openh264? (
-			patent_status_nonfree
+			patent_status_sponsored_ncp_nb
 		)
 	)
 	vaapi? (
@@ -2530,9 +2527,9 @@ einfo "CXX:  ${CXX}"
 	for x in "${HAS_GLIBCXX[@]/-}" ; do
 		if use "${x}" ; then
 			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
-ewarn "Enabling ${x} could weaken the security or have version sensitive C++ standard incompatibility."
+ewarn "Enabling ${x} could weaken the security or have C++ library compatibility issues."
 			else
-ewarn "Enabling ${x} could weaken the security or have version sensitive C++ standard incompatibility with or C++ standard library implementation incompatility."
+ewarn "Enabling ${x} could weaken the security or have C++ library compatibility issues."
 			fi
 		fi
 	done
