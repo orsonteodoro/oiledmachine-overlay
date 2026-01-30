@@ -2298,17 +2298,7 @@ einfo "PATH:  ${PATH} (After)"
 }
 
 pkg_setup() {
-ewarn "This ebuild is under development and the non-production version.  Use ${PV} (without -r1) instead."
-ewarn
-ewarn "This ebuild is under maintenance."
-ewarn "This ebuild may fail to build/link."
-ewarn "Dav1d may fail to link."
-ewarn "Do one of the following until it is fixed..."
-ewarn "(1) disable the dav1d USE flag"
-ewarn "(2) use the system-dav1d USE flag"
-ewarn "(3) use the distro ebuild"
-ewarn "(4) use the prebuilt ebuild"
-ewarn
+ewarn "This ebuild is still under maintenance."
 	dhms_start
 	check-compiler-switch_start
 	# The emerge package system will over prune when it should not when it
