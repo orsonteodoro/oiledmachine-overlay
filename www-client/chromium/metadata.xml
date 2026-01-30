@@ -730,9 +730,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="llvm_slot_20">
       Use LLVM 20.
     </flag>
-    <flag name="mdns">
-      Enable Multicast DNS support.
-    </flag>
     <flag name="miracleptr">
       Use software based Use After Free (UAF) mitigation with pointers with
       PartitionAlloc.  It will mitigate an estimated 50% UAFs.  It may overlap
@@ -874,14 +871,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="system-libaom">
       Use system libaom instead of the bundled one
-
-      No modifications or no patch files in vendored package.
-
-      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
-    </flag>
-    <flag name="system-libdrm">
-      Use system libdrm instead of the bundled one
 
       No modifications or no patch files in vendored package.
 

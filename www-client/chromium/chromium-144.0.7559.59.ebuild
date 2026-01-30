@@ -499,7 +499,6 @@ HAS_NO_GLIBCXX=(
 	"-system-harfbuzz"			# S0					security-critical
 	"-system-lcms"				# S0/S1					security-critical, untrusted-data
 	"-system-libaom"			# S0					security-critical
-	"-system-libdrm"			# S0					security-critical
 	"-system-libjpeg-turbo"			# S0					security-critical
 	"-system-libopenjpeg"			# S0					security-critical
 	"-system-libpng"			# S0					security-critical
@@ -541,7 +540,6 @@ SYSTEM_USE=(
 	"-system-icu"				# S1					untrusted-data
 	"-system-jsoncpp"			# S1					untrusted-data
 	"-system-libaom"			# S0					security-critical
-	"-system-libdrm"			# S0					security-critical
 	"-system-libjpeg-turbo"			# S0					security-critical
 	"-system-libpng"			# S0					security-critical
 	"-system-libsecret"			# S2					sensitive-data
@@ -882,7 +880,6 @@ LIBCXX_REQUIRED_USE=(
 	"!system-highway"			# Vendored required to build chrome, mksnapshot
 	"!system-icu"				# Vendored required to build chrome, mksnapshot
 	"!system-jsoncpp"			# Vendored required to build chrome, mksnapshot
-	"!system-libdrm"			# Vendored required to build chrome, v8_context_snapshot_generator
 	"!system-libjpeg-turbo"			# Vendored required to build chrome, v8_context_snapshot_generator
 	"!system-libpng"			# Vendored required to build chrome, v8_context_snapshot_generator
 	"!system-libvpx"			# Vendored required to build chrome, v8_context_snapshot_generator
@@ -1451,9 +1448,6 @@ COMMON_SNAPSHOT_DEPEND="
 	system-libaom? (
 		>=media-libs/libaom-3.13.1[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
-	)
-	system-libdrm? (
-		>=x11-libs/libdrm-2.4.122[${MULTILIB_USEDEP}]
 	)
 	system-libjpeg-turbo? (
 		>=media-libs/libjpeg-turbo-3.1.0[${MULTILIB_USEDEP}]
@@ -2794,9 +2788,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-	# FIXME: update perfetto disable patch
-	#		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
-#			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
 	#	Disabling async-dns causes debug crash/spam.
@@ -3390,6 +3383,7 @@ fi
 		"third_party/lens_server_proto"
 		"third_party/leveldatabase"
 		"third_party/libaddressinput"
+		"third_party/libdrm"
 		"third_party/libgav1"
 		"third_party/libjingle"
 		"third_party/libpfm4"
@@ -3602,9 +3596,6 @@ fi
 			"third_party/libaom/source/libaom/third_party/SVT-AV1" \
 			"third_party/libaom/source/libaom/third_party/vector" \
 			"third_party/libaom/source/libaom/third_party/x86inc" \
-		)
-		$(use !system-libdrm && echo \
-			"third_party/libdrm" \
 		)
 		$(use !system-libpng && echo \
 			"third_party/libpng" \
@@ -6698,8 +6689,8 @@ _configure_performance_thp() {
 _configure_debug() {
 	myconf_gn+=(
 	# Disable profiling/tracing these should not be enabled in production.
-#		"rtc_use_perfetto=false"
-#		"v8_use_perfetto=false"
+		"rtc_use_perfetto=false"
+		"v8_use_perfetto=false"
 
 	# Disable code formating of generated files
 		"blink_enable_generated_code_formatting=false"
@@ -6756,10 +6747,10 @@ _configure_debug() {
 
 	if ! use debug ; then
 		myconf_gn+=(
-#			"blink_symbol_level=0"
+			"blink_symbol_level=0"
 			"symbol_level=0"
-#			"v8_enable_vtunejit=false"
-#			"v8_symbol_level=0"
+			"v8_enable_vtunejit=false"
+			"v8_symbol_level=0"
 		)
 	fi
 
@@ -6864,9 +6855,6 @@ _configure_features() {
 		")
 		$(use system-libaom && echo "
 			libaom
-		")
-		$(use system-libdrm && echo "
-			libdrm
 		")
 		$(use system-libjpeg-turbo && echo "
 			libjpeg
@@ -7218,7 +7206,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 		"use_system_freetype2=$(usex system-freetype true false)"		# For pdfium
 		"use_system_harfbuzz=$(usex system-harfbuzz true false)"		# For freetype, harfbuzz-ng, skia, unbundle; See dependency logic in third_party/BUILD.gn
 		"use_system_lcms2=$(usex system-lcms true false)"			# For pdfium
-#		"use_system_libdrm=$(usex system-libdrm true false)"			# For libdrm, unbundle
+		"use_system_libdrm=false"						# For libdrm, unbundle, system-libdrm is not supported for linux
 		"use_system_libffi=true"						# For libffi, use always shared since libffi_pic.a is not available on distro, build/config/linux/libffi/BUILD.gn
 		"use_system_libjpeg=$(usex system-libjpeg-turbo true false)"		# For angle, libjpeg, pdfium, unbundle
 		"use_system_libopenjpeg2=$(usex system-libopenjpeg true false)"		# For pdfium
