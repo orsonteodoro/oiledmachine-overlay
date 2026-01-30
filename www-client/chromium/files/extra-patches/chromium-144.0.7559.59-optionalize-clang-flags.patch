@@ -1,0 +1,43 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-30 09:46:33.200314826 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-30 12:04:38.054227783 -0800
+@@ -254,6 +254,9 @@ declare_args() {
+   use_mtune=""
+ 
+   use_sanitize_array_bounds = true
++
++  use_color_diagnostics = true
++  use_merge_all_constants = true
+ }
+ 
+ declare_args() {
+@@ -885,7 +888,9 @@ config("compiler") {
+   # Clang-specific compiler flags setup.
+   # ------------------------------------
+   if (is_clang) {
+-    cflags += [ "-fcolor-diagnostics" ]
++    if (use_color_diagnostics) {
++      cflags += [ "-fcolor-diagnostics" ]
++    }
+ 
+     # Enable -fmerge-all-constants. This used to be the default in clang
+     # for over a decade. It makes clang non-conforming, but is fairly safe
+@@ -893,7 +898,9 @@ config("compiler") {
+     # disabling this (https://bugs.llvm.org/show_bug.cgi?id=18538#c13),
+     # but for now it looks like our build might rely on it
+     # (https://crbug.com/829795).
+-    cflags += [ "-fmerge-all-constants" ]
++    if (use_merge_all_constants) {
++      cflags += [ "-fmerge-all-constants" ]
++    }
+ 
+     if (!use_sized_deallocation) {
+       if (is_win) {
+@@ -908,7 +915,7 @@ config("compiler") {
+     }
+   }
+ 
+-  if (use_lld) {
++  if (use_lld && use_color_diagnostics) {
+     # TODO(thakis): Make the driver pass --color-diagnostics to the linker
+     # if -fcolor-diagnostics is passed to it, and pass -fcolor-diagnostics
+     # in ldflags instead.

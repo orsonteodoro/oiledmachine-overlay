@@ -2826,6 +2826,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus-alt.patch"
 		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 	)
 }
 
@@ -6665,6 +6666,10 @@ eerror "Disable the official USE flag to continue."
 		fi
 	fi
 
+	myconf_gn+=(
+		$(is-flagq "-fmerge-all-constants" "use_merge_all_constants=true" "use_merge_all_constants=false")
+	)
+
 	_remove_performance_flags
 }
 
@@ -6723,6 +6728,10 @@ _configure_debug() {
 		"libpng_test_only=$(usex test true false)"
 		"tools_imagediff_libpng_test_only=$(usex test true false)"
 		"ui_gfx_libpng_test_only=$(usex test true false)"
+	)
+
+	myconf_gn+=(
+		$(is-flagq "-fcolor-diagnostics" "use_color_diagnostics=true" "use_color_diagnostics=false")
 	)
 
 	# Dedupe flags
