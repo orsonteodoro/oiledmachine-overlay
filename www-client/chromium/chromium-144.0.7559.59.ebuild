@@ -6667,15 +6667,10 @@ eerror "Disable the official USE flag to continue."
 	fi
 
 	if ! use official ; then
-		if is-flagq "-fmerge-all-constants" ; then
-			myconf_gn+=(
-				"use_merge_all_constants=true"
-			)
-		else
-			myconf_gn+=(
-				"use_merge_all_constants=false"
-			)
-		fi
+		myconf_gn+=(
+			$(is-flagq "-fmerge-all-constants" && echo "use_merge_all_constants=true")
+			$(is-flagq "-fmerge-all-constants" || echo "use_merge_all_constants=false")
+		)
 	fi
 
 	_remove_performance_flags
@@ -6736,18 +6731,11 @@ _configure_debug() {
 		"libpng_test_only=$(usex test true false)"
 		"tools_imagediff_libpng_test_only=$(usex test true false)"
 		"ui_gfx_libpng_test_only=$(usex test true false)"
-	)
 
 	# Colored console output
-	if is-flagq "-fcolor-diagnostics" ; then
-		myconf_gn+=(
-			"use_color_diagnostics=true"
-		)
-	else
-		myconf_gn+=(
-			"use_color_diagnostics=false"
-		)
-	fi
+		$(is-flagq "-fcolor-diagnostics" && echo "use_color_diagnostics=true")
+		$(is-flagq "-fcolor-diagnostics" || echo "use_color_diagnostics=false")
+	)
 
 	# Dedupe flags
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
