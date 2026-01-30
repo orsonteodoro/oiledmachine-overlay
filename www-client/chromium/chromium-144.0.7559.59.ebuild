@@ -2839,6 +2839,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus-alt.patch"
 		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
+		"chromium-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 	)
 }
 
@@ -6746,6 +6747,12 @@ _configure_debug() {
 	# Colored console output
 		$(usex_flag "-fcolor-diagnostics" "use_color_diagnostics=true" "use_color_diagnostics=false")
 	)
+
+	if ! use official ; then
+		myconf_gn+=(
+			$(usex debug "enable_frame_pointers=true" "enable_frame_pointers=false")
+		)
+	fi
 
 	# Dedupe flags
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then

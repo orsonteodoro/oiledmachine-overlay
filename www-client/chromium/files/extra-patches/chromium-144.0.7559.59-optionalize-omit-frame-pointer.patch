@@ -1,0 +1,244 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-30 13:56:56.258931461 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-30 14:26:26.377330268 -0800
+@@ -50,6 +50,8 @@ if (!is_clang) {
+ declare_args() {
+   # This allows overriding the location of lld.
+   lld_path = default_lld_path
++
++  enable_frame_pointers = true
+ }
+ 
+ declare_args() {
+--- a/build/config/sanitizers/BUILD.gn.orig	2026-01-30 13:56:55.440156235 -0800
++++ b/build/config/sanitizers/BUILD.gn	2026-01-30 14:26:59.479684931 -0800
+@@ -18,6 +18,8 @@ declare_args() {
+   # Allow building official with ASAN enabled to help with
+   # debugging https://crbug.com/371135823.
+   ios_allow_asan_for_official_to_debug_371135823 = false
++
++  enable_frame_pointers = true
+ }
+ 
+ # libfuzzer can't cope with shared objects being unloaded, which sometimes
+@@ -446,9 +448,17 @@ config("cfi_flags") {
+         cflags += [
+           "-fno-inline-functions",
+           "-fno-inline",
+-          "-fno-omit-frame-pointer",
+           "-O1",
+         ]
++        if (enable_frame_pointers) {
++          cflags += [
++            "-fno-omit-frame-pointer",
++          ]
++        } else {
++          cflags += [
++            "-fomit-frame-pointer",
++          ]
++        }
+       }
+       if (use_cfi_recover) {
+         cflags += [ "-fsanitize-recover=cfi" ]
+--- a/third_party/instrumented_libs/noble/BUILD.gn.orig	2026-01-30 13:56:55.524155532 -0800
++++ b/third_party/instrumented_libs/noble/BUILD.gn	2026-01-30 14:26:12.024321065 -0800
+@@ -7,6 +7,7 @@ import("//build/config/sanitizers/saniti
+ 
+ declare_args() {
+   use_mold = false
++  enable_frame_pointers = true
+ }
+ 
+ static_library("stat_wrapper") {
+@@ -118,11 +119,19 @@ template("instrumented_library") {
+       "-fPIC",
+       "-w",
+       "-U_FORTIFY_SOURCE",
+-      "-fno-omit-frame-pointer",
+ 
+       "-fsanitize=memory",
+       "-fsanitize-memory-track-origins=${msan_track_origins}",
+     ]
++    if (enable_frame_pointers) {
++      package_cflags += [
++        "-fno-omit-frame-pointer",
++      ]
++    } else {
++      package_cflags += [
++        "-fomit-frame-pointer",
++      ]
++    }
+     package_ldflags = [
+       "-fsanitize=memory",
+     ]
+--- a/third_party/mutter/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/mutter/BUILD.gn	2026-01-30 14:26:53.911754154 -0800
+@@ -8,6 +8,10 @@ import("//build/config/linux/pkg_config.
+ import("//build/config/ui.gni")
+ import("//third_party/wayland/wayland_protocol.gni")
+ 
++declare_args() {
++  enable_frame_pointers = true
++}
++
+ assert(is_linux)
+ 
+ pkg_config("atk") {
+@@ -131,8 +135,6 @@ config("mtk_public_config") {
+   cflags = [
+     # cflags as per upstream toplevel meson.build:
+     "-Wno-incompatible-pointer-types-discards-qualifiers",
+-    "-fno-omit-frame-pointer",
+-    "-mno-omit-leaf-frame-pointer",
+     "-fno-strict-aliasing",
+     "-Wpointer-arith",
+     "-Wmissing-declarations",
+@@ -178,6 +180,17 @@ config("mtk_public_config") {
+ 
+     # "-Wfloat-conversion", # Causes error in clutter
+   ]
++  if (enable_frame_pointers) {
++    cflags += [
++      "-fno-omit-frame-pointer",
++      "-mno-omit-leaf-frame-pointer",
++    ]
++  } else {
++    cflags += [
++      "-fomit-frame-pointer",
++      "-momit-leaf-frame-pointer",
++    ]
++  }
+ }
+ 
+ source_set("mtk") {
+--- a/third_party/perfetto/gn/standalone/sanitizers/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/perfetto/gn/standalone/sanitizers/BUILD.gn	2026-01-30 14:26:55.003582849 -0800
+@@ -14,6 +14,10 @@
+ 
+ import("//gn/standalone/sanitizers/sanitizers.gni")
+ 
++declare_args() {
++  enable_frame_pointers = true
++}
++
+ # Link dependencies for sanitizers for executables.
+ group("deps") {
+   visibility = [ "*" ]
+@@ -44,9 +48,17 @@ config("sanitizers_cflags") {
+   if (using_sanitizer) {
+     ignorelist_path_ = rebase_path("ignorelist.txt", root_build_dir)
+     cflags = [
+-      "-fno-omit-frame-pointer",
+       "-fsanitize-ignorelist=$ignorelist_path_",
+     ]
++    if (enable_frame_pointers) {
++      cflags += [
++        "-fno-omit-frame-pointer",
++      ]
++    } else {
++      cflags += [
++        "-fomit-frame-pointer",
++      ]
++    }
+     defines = []
+ 
+     if (is_asan) {
+--- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2026-01-30 13:56:55.697280750 -0800
++++ b/third_party/perfetto/gn/standalone/BUILD.gn	2026-01-30 14:26:55.911868064 -0800
+@@ -20,6 +20,10 @@ import("//gn/standalone/sanitizers/sanit
+ import("//gn/standalone/toolchain/msvc.gni")
+ import("//gn/standalone/wasm.gni")
+ 
++declare_args() {
++  enable_frame_pointers = true
++}
++
+ # These warnings have been introduced with the newest version of clang (only in
+ # the hermetic build) and are enabled just with -Werror.
+ hermetic_clang_suppressions = [ "-Wno-c99-designator" ]
+@@ -331,9 +335,7 @@ config("default") {
+     }
+     ldflags += [ "-m32" ]
+   } else if (current_cpu == "arm64") {
+-    cflags += [ "-fno-omit-frame-pointer" ]
+   } else if (current_cpu == "x64") {
+-    cflags += [ "-fno-omit-frame-pointer" ]  # For perf profiling.
+     if (enable_perfetto_x64_cpu_opt) {
+       # When updating these flags, the CheckCpuOptimizations() in utils.cc must
+       # be updated accordingly.
+@@ -350,6 +352,17 @@ config("default") {
+     }
+   }
+ 
++  # For perf profiling
++  if (enable_frame_pointers) {
++    cflags += [
++      "-fno-omit-frame-pointer",
++    ]
++  } else {
++    cflags += [
++      "-fomit-frame-pointer",
++    ]
++  }
++
+   if (is_wasm) {
+     # As of writing (2023-06-12) WASM 128bit SIMD is supported on
+     # stable Chrome, Safari, and Firefox. See:
+--- a/third_party/skia/gn/skia/BUILD.gn.orig	2026-01-30 13:56:54.812161491 -0800
++++ b/third_party/skia/gn/skia/BUILD.gn	2026-01-30 14:26:56.824822747 -0800
+@@ -21,6 +21,8 @@ declare_args() {
+   malloc = ""
+   werror = false
+   xcode_sysroot = ""
++
++  enable_frame_pointers = true
+ }
+ 
+ if (is_ios && xcode_sysroot == "") {
+@@ -369,7 +371,15 @@ config("default") {
+       assert(clang_win != "")
+       libs += [ "$clang_win/lib/clang/$clang_win_version/lib/windows/clang_rt.asan-x86_64.lib" ]
+     } else {
+-      cflags += [ "-fno-omit-frame-pointer" ]
++      if (enable_frame_pointers) {
++        cflags += [
++          "-fno-omit-frame-pointer",
++        ]
++      } else {
++        cflags += [
++          "-fomit-frame-pointer",
++        ]
++      }
+ 
+       ldflags += [ "-fsanitize=$sanitizers" ]
+     }
+--- a/third_party/skia/third_party/dawn/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/skia/third_party/dawn/BUILD.gn	2026-01-30 14:26:58.023670173 -0800
+@@ -9,6 +9,10 @@
+ 
+ import("//third_party/dawn/args.gni")
+ 
++declare_args() {
++    enable_frame_pointers = true
++}
++
+ if (is_win) {
+   # On Windows, the normal cc/cxx variables are just "clang" and "clang++"
+   # which are not found in the path. CMake needs the full path.
+@@ -189,8 +193,16 @@ if (sanitize != "") {
+     "-fsanitize=$sanitizers",
+     "-fno-sanitize-recover=$sanitizers",
+     "-fsanitize-blacklist=$_suppressions",
+-    "-fno-omit-frame-pointer",
+   ]
++  if (enable_frame_pointers) {
++    cxx_cflags += [
++      "-fno-omit-frame-pointer",
++    ]
++  } else {
++    cxx_cflags += [
++      "-fomit-frame-pointer",
++    ]
++  }
+   ld_flags = [ "-fsanitize=$sanitizers" ]
+ 
+   if (is_linux) {
