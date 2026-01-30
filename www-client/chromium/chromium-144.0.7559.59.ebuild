@@ -2788,7 +2788,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
+			"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
@@ -6689,6 +6689,7 @@ _configure_performance_thp() {
 _configure_debug() {
 	myconf_gn+=(
 	# Disable profiling/tracing these should not be enabled in production.
+		"content_browser_rtc_use_perfetto=false"
 		"rtc_use_perfetto=false"
 		"v8_use_perfetto=false"
 

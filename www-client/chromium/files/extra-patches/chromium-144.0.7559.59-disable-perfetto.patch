@@ -1,0 +1,104 @@
+--- a/v8/gni/v8.gni.orig	2024-09-13 10:38:56.572267440 -0700
++++ b/v8/gni/v8.gni	2024-09-13 11:13:08.929293690 -0700
+@@ -189,7 +189,7 @@ if (v8_enable_backtrace == "") {
+ # Chromium is configured to use the perfetto client library, v8 should also
+ # use perfetto for tracing.
+ if (build_with_chromium) {
+-  v8_use_perfetto = true
++  v8_use_perfetto = false
+ }
+ 
+ # Includes profiles to optimize builtins if
+--- a/third_party/webrtc/webrtc.gni.orig	2024-09-10 11:46:52.430369600 -0700
++++ b/third_party/webrtc/webrtc.gni	2024-09-13 11:13:05.097358691 -0700
+@@ -386,7 +386,7 @@ if (is_mac || is_ios) {
+ }
+ 
+ if (build_with_chromium) {
+-  rtc_use_perfetto = true
++  rtc_use_perfetto = false
+ }
+ 
+ # Global public configuration that should be applied to all WebRTC targets. You
+--- a/third_party/webrtc_overrides/init_webrtc.cc.orig	2024-09-10 11:42:44.059301000 -0700
++++ b/third_party/webrtc_overrides/init_webrtc.cc	2024-09-14 07:15:54.931465290 -0700
+@@ -16,5 +16,7 @@ bool InitializeWebRtcModuleBeforeSandbox
+ }
+ 
+ void InitializeWebRtcModule() {
++#if defined(RTC_USE_PERFETTO)
+   webrtc::RegisterPerfettoTrackEvents();
++#endif
+ }
+--- a/content/browser/BUILD.gn.orig	2026-01-30 06:11:29.547045202 -0800
++++ b/content/browser/BUILD.gn	2026-01-30 06:17:56.936118468 -0800
+@@ -26,6 +26,10 @@ import("//testing/libfuzzer/fuzzer_test.
+ import("//third_party/blink/public/public_features.gni")
+ import("//tools/ipc_fuzzer/ipc_fuzzer.gni")
+ 
++declare_args() {
++  content_browser_rtc_use_perfetto = true
++}
++
+ if (is_mac) {
+   import("//content/public/app/mac_helpers.gni")
+ }
+@@ -2718,6 +2722,10 @@ source_set("browser") {
+     public_deps += [ "//ash/webui/common/resources" ]
+   }
+ 
++  if (content_browser_rtc_use_perfetto) {
++    defines += [ "RTC_USE_PERFETTO" ]
++  }
++
+   if (is_castos) {
+     sources += [
+       "tracing/cast_tracing_agent.cc",
+--- a/content/browser/tracing/tracing_controller_impl.cc.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/content/browser/tracing/tracing_controller_impl.cc	2026-01-30 05:24:39.776487787 -0800
+@@ -211,7 +211,9 @@ bool TracingControllerImpl::GetCategorie
+   AddCategoriesToSet(base::perfetto_track_event::internal::kCategoryRegistry,
+                      category_set);
+   AddCategoriesToSet(v8::GetTrackEventCategoryRegistry(), category_set);
++#if defined(RTC_USE_PERFETTO)
+   AddCategoriesToSet(GetWebRtcTrackEventCategoryRegistry(), category_set);
++#endif
+ 
+   std::move(callback).Run(category_set);
+   return true;
+--- a/content/browser/tracing/traces_internals/traces_internals_handler.cc.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/content/browser/tracing/traces_internals/traces_internals_handler.cc	2026-01-30 05:24:40.896439767 -0800
+@@ -285,7 +285,9 @@ void TracesInternalsHandler::GetTrackEve
+   AddCategoriesToList(base::perfetto_track_event::internal::kCategoryRegistry,
+                       categories);
+   AddCategoriesToList(v8::GetTrackEventCategoryRegistry(), categories);
++#if defined(RTC_USE_PERFETTO)
+   AddCategoriesToList(GetWebRtcTrackEventCategoryRegistry(), categories);
++#endif
+ 
+   std::move(callback).Run(std::move(categories));
+ }
+--- a/third_party/webrtc_overrides/init_webrtc.h.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/webrtc_overrides/init_webrtc.h	2026-01-30 05:24:42.067647444 -0800
+@@ -16,7 +16,9 @@ RTC_EXPORT bool InitializeWebRtcModuleBe
+ // run after tracing is initialized, otherwise WebRTC traces won't work.
+ RTC_EXPORT void InitializeWebRtcModule();
+ 
++#if defined(RTC_USE_PERFETTO)
+ RTC_EXPORT const perfetto::internal::TrackEventCategoryRegistry&
+ GetWebRtcTrackEventCategoryRegistry();
++#endif
+ 
+ #endif  // THIRD_PARTY_WEBRTC_OVERRIDES_INIT_WEBRTC_H_
+--- a/third_party/webrtc_overrides/init_webrtc.cc.orig	2026-01-29 22:25:39.235470720 -0800
++++ b/third_party/webrtc_overrides/init_webrtc.cc	2026-01-30 04:43:30.802966162 -0800
+@@ -22,7 +22,9 @@ void InitializeWebRtcModule() {
+ #endif
+ }
+ 
++#if defined(RTC_USE_PERFETTO)
+ const perfetto::internal::TrackEventCategoryRegistry&
+ GetWebRtcTrackEventCategoryRegistry() {
+   return webrtc::perfetto_track_event::internal::kCategoryRegistry;
+ }
++#endif
