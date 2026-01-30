@@ -2717,7 +2717,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	DISABLE_PATCHES+=(
+	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
@@ -2840,8 +2840,10 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
-#		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus-alt.patch"
+		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch"
 	)
 }
 
@@ -3217,17 +3219,11 @@ src_prepare() {
 	# lib.
 	apply_distro_patchset
 
-#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-#		apply_oiledmachine_overlay_patchset
-#	else
-#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-#	fi
-
-	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch"
-	)
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+		apply_oiledmachine_overlay_patchset
+	else
+ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+	fi
 
 	default
 
@@ -5235,7 +5231,6 @@ einfo
 }
 
 _configure_performance_simd(){
-if false ; then
 	if ! use cpu_flags_arm_armv8_2-a ; then
 		sed -r -i -e "/:.*armv8[.]2/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
@@ -5429,7 +5424,6 @@ if false ; then
 			"third_party/xnnpack/build_defs.gni" \
 			|| die
 	fi
-fi
 
 	myconf_gn+=(
 	# ARM
@@ -5591,7 +5585,6 @@ fi
 		)
 	fi
 
-if false ; then
 	if use webassembly ; then
 		if [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] ; then
 			myconf_gn+=(
@@ -5623,7 +5616,6 @@ if false ; then
 			"v8/test/unittests/BUILD.gn" \
 			|| die
 	fi
-fi
 }
 
 get_drive_type() {
@@ -7326,10 +7318,10 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_linker
 	_configure_optimization_level
 	_configure_performance_pgo
-	#_configure_performance_simd
-	#_configure_performance_thp
+	_configure_performance_simd
+	_configure_performance_thp
 	#_configure_v8
-	#_configure_security
+	_configure_security
 
 	_configure_debug
 	_configure_features

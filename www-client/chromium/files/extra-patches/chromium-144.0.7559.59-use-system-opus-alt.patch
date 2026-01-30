@@ -1,0 +1,71 @@
+--- a/media/audio/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/media/audio/BUILD.gn	2026-01-29 16:25:32.182001489 -0800
+@@ -7,6 +7,10 @@ import("//media/media_options.gni")
+ import("//testing/libfuzzer/fuzzer_test.gni")
+ import("//tools/generate_stubs/rules.gni")
+ 
++declare_args() {
++  media_use_system_opus = false
++}
++
+ # When libpulse is not directly linked, use stubs to allow for dlopening of the
+ # binary.
+ if (use_pulseaudio && !link_pulseaudio) {
+@@ -23,6 +27,9 @@ config("platform_config") {
+   if (use_alsa) {
+     defines += [ "USE_ALSA" ]
+   }
++  if (media_use_system_opus) {
++    defines += [ "USE_SYSTEM_OPUS" ]
++  }
+ }
+ 
+ source_set("audio") {
+--- a/media/audio/audio_opus_encoder.h.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/media/audio/audio_opus_encoder.h	2026-01-29 16:25:32.193803152 -0800
+@@ -13,7 +13,11 @@
+ #include "media/base/audio_converter.h"
+ #include "media/base/audio_encoder.h"
+ #include "media/base/audio_timestamp_helper.h"
+-#include "third_party/opus/src/include/opus.h"
++#ifdef USE_SYSTEM_OPUS
++#  include <opus/opus.h>
++#else
++#  include "third_party/opus/src/include/opus.h"
++#endif
+ 
+ namespace media {
+ 
+--- a/third_party/opus/BUILD.gn.orig	2026-01-29 16:17:38.756274968 -0800
++++ b/third_party/opus/BUILD.gn	2026-01-29 16:26:20.986198941 -0800
+@@ -27,6 +27,10 @@ config("opus_config") {
+   include_dirs = [ "src/include" ]
+ }
+ 
++declare_args() {
++  use_system_opus = false
++}
++
+ config("opus_private_config") {
+   defines = [
+     "OPUS_BUILD",
+@@ -498,7 +502,7 @@ static_library("opus") {
+       "src/silk/x86/main_sse.h",
+       "src/silk/x86/x86_silk_map.c",
+     ]
+-    if (use_sse4_1) {
++    if (!use_system_opus && use_sse4_1) {
+       deps += [ ":opus_sse41" ]
+     }
+   }
+@@ -530,7 +534,9 @@ static_library("opus") {
+         "src/silk/arm/arm_silk_map.c",
+         "src/silk/fixed/main_FIX.h",
+       ]
+-      deps += [ ":convert_rtcd_assembler" ]
++      if (!use_system_opus) {
++        deps += [ ":convert_rtcd_assembler" ]
++      }
+     }
+ 
+     if (arm_use_neon) {
