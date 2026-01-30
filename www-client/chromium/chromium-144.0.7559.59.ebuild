@@ -1952,6 +1952,18 @@ get_olast() {
 	echo "${olast}"
 }
 
+usex_flag() {
+	local flag="${1}"
+	local t="${2}"
+	local f="${3}"
+
+	if is-flagq "${flag}" ; then
+		echo "${t}"
+	else
+		echo "${f}"
+	fi
+}
+
 pkg_pretend() {
 	pre_build_checks
 	if [[ "${MERGE_TYPE}" != "binary" ]]; then
@@ -6668,8 +6680,7 @@ eerror "Disable the official USE flag to continue."
 
 	if ! use official ; then
 		myconf_gn+=(
-			$(is-flagq "-fmerge-all-constants" && echo "use_merge_all_constants=true")
-			$(is-flagq "-fmerge-all-constants" || echo "use_merge_all_constants=false")
+			$(usex_flag "-fmerge-all-constants" "use_merge_all_constants=true" "use_merge_all_constants=false")
 		)
 	fi
 
@@ -6733,8 +6744,7 @@ _configure_debug() {
 		"ui_gfx_libpng_test_only=$(usex test true false)"
 
 	# Colored console output
-		$(is-flagq "-fcolor-diagnostics" && echo "use_color_diagnostics=true")
-		$(is-flagq "-fcolor-diagnostics" || echo "use_color_diagnostics=false")
+		$(usex_flag "-fcolor-diagnostics" "use_color_diagnostics=true" "use_color_diagnostics=false")
 	)
 
 	# Dedupe flags
