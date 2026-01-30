@@ -156,3 +156,27 @@
    if (use_blink) {
      deps += [ "//third_party/harfbuzz-ng" ]
    }
+--- a/third_party/libpng/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
++++ b/third_party/libpng/BUILD.gn	2026-01-29 18:00:14.689848833 -0800
+@@ -12,6 +12,10 @@ if (build_with_chromium) {
+   import("//testing/libfuzzer/fuzzer_test.gni")
+ }
+ 
++declare_args() {
++  libpng_test_only = true
++}
++
+ config("libpng_config") {
+   include_dirs = [ "." ]
+ 
+@@ -135,7 +139,9 @@ group("libpng_for_testonly") {
+   public_deps = [ ":libpng" ]
+ 
+   visibility = []
+-  visibility = libpng_testonly_visibility
++  if (libpng_test_only) {
++    visibility = libpng_testonly_visibility
++  }
+ }
+ 
+ if (build_with_chromium) {

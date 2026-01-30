@@ -6739,6 +6739,7 @@ _configure_debug() {
 		"build_angle_perftests=$(usex test true false)"
 		"build_dawn_tests=$(usex test true false)"
 		"chrome_test_libpng_test_only=$(usex test true false)"
+		"libpng_test_only=$(usex test true false)"
 		"tools_imagediff_libpng_test_only=$(usex test true false)"
 		"ui_gfx_libpng_test_only=$(usex test true false)"
 	)
