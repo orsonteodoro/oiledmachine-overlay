@@ -16,7 +16,7 @@
    # debugging https://crbug.com/371135823.
    ios_allow_asan_for_official_to_debug_371135823 = false
 +
-+  enable_frame_pointers = true
++  #enable_frame_pointers = true
  }
  
  # libfuzzer can't cope with shared objects being unloaded, which sometimes
