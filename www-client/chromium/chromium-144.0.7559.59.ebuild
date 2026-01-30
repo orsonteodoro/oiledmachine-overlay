@@ -6666,9 +6666,11 @@ eerror "Disable the official USE flag to continue."
 		fi
 	fi
 
-	myconf_gn+=(
-		$(is-flagq "-fmerge-all-constants" "use_merge_all_constants=true" "use_merge_all_constants=false")
-	)
+	if ! use official ; then
+		myconf_gn+=(
+			$(is-flagq "-fmerge-all-constants" "use_merge_all_constants=true" "use_merge_all_constants=false")
+		)
+	fi
 
 	_remove_performance_flags
 }
@@ -6694,9 +6696,9 @@ _configure_performance_thp() {
 _configure_debug() {
 	myconf_gn+=(
 	# Disable profiling/tracing these should not be enabled in production.
-		"content_browser_rtc_use_perfetto=false"
-		"rtc_use_perfetto=false"
-		"v8_use_perfetto=false"
+		"content_browser_rtc_use_perfetto=$(usex official true false)"
+		"rtc_use_perfetto=$(usex official true false)"
+		"v8_use_perfetto=$(usex official true false)"
 
 	# Disable code formating of generated files
 		"blink_enable_generated_code_formatting=false"
@@ -6728,9 +6730,8 @@ _configure_debug() {
 		"libpng_test_only=$(usex test true false)"
 		"tools_imagediff_libpng_test_only=$(usex test true false)"
 		"ui_gfx_libpng_test_only=$(usex test true false)"
-	)
 
-	myconf_gn+=(
+	# Colored console output
 		$(is-flagq "-fcolor-diagnostics" "use_color_diagnostics=true" "use_color_diagnostics=false")
 	)
 
