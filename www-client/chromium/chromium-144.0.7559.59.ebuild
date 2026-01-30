@@ -804,7 +804,6 @@ PATENT_USE_FLAGS="
 			!system-openh264
 		)
 		system-openh264? (
-			!patent_status_sponsored_ncp_nb
 			patent_status_nonfree
 		)
 	)
@@ -2843,7 +2842,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus-alt.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch"
+		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 	)
 }
 
