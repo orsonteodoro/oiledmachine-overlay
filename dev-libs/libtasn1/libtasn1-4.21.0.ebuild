@@ -34,19 +34,14 @@ HOMEPAGE="https://www.gnu.org/software/libtasn1/"
 LICENSE="LGPL-2.1+"
 SLOT="0/6" # subslot = libtasn1 soname version
 IUSE="
-static-libs test
+static-libs
 ebuild_revision_45
-"
-RESTRICT="
-	!test? (
-		test
-	)
 "
 BDEPEND="
 	app-alternatives/yacc
 	sys-apps/help2man
 	verify-sig? (
-		>=sec-keys/openpgp-keys-libtasn1-20250209
+		>=sec-keys/openpgp-keys-libtasn1-20260112
 	)
 "
 DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README.md" "THANKS" )
@@ -78,6 +73,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		--disable-valgrind-tests
 		$(use_enable static-libs static)
 	)
+
+	# https://gitlab.com/gnutls/libtasn1/-/issues/57 (bug #968661)
+	export MAKEINFO=:
+
 	ECONF_SOURCE="${S}" \
 	econf "${myeconfargs[@]}"
 }
