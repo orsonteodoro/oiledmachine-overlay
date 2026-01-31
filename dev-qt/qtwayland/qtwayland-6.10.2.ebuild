@@ -29,7 +29,7 @@ fi
 
 IUSE="
 gnome qml
-ebuild_revision_8
+ebuild_revision_9
 "
 
 RDEPEND="
