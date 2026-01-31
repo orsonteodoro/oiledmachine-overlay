@@ -89,7 +89,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda -doc +serialization tutorials +python test +utils +wabt
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	python? (
