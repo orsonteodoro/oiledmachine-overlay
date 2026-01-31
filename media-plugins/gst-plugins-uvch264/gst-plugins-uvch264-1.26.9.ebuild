@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="UVC compliant H.264 encoding cameras plugin for GStreamer"
 IUSE="
-ebuild_revision_21
+ebuild_revision_22
 "
 RDEPEND="
 	dev-libs/libgudev[${MULTILIB_USEDEP}]
