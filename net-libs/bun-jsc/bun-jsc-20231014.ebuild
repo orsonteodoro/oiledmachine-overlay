@@ -54,7 +54,7 @@ RESTRICT="mirror"
 SLOT="${PV%%.*}"
 IUSE+="
 clang lto
-ebuild_revision_4
+ebuild_revision_5
 "
 
 #			${LIBCXX_COMPAT_STDCXX20[@]}

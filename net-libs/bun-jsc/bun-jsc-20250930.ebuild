@@ -53,7 +53,7 @@ RESTRICT="mirror"
 SLOT="${PV%%.*}"
 IUSE+="
 clang lto
-ebuild_revision_4
+ebuild_revision_5
 "
 
 REQUIRED_USE="
