@@ -10,7 +10,7 @@ LIBREMINES_PV="1.10.0"
 LINUX_PV="6.1"
 NAUTILUS_PV="44.2.1"
 OPENFOAM_PV="3.0.1"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 VIM_QT_PV="20170421"
 
 inherit check-compiler-switch distutils-r1 flag-o-matic
@@ -133,7 +133,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 +cmake +make kbuild +meson +qmake qt5 qt6 +wmake test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	cmake? (
