@@ -23,7 +23,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 static symlink test verify-sig
-ebuild_revision_11
+ebuild_revision_12
 "
 RESTRICT="!test? ( test )"
 LIB_DEPEND="sys-libs/zlib[static-libs(+),${MULTILIB_USEDEP}]"
