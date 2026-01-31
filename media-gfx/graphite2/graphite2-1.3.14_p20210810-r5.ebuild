@@ -23,6 +23,7 @@ HOMEPAGE="https://scripts.sil.org/cms/scripts/page.php?site_id=projects&item_id=
 LICENSE="LGPL-2.1"
 SLOT="0"
 IUSE="
+${GENTOO_PERL_USESTRING}
 perl test
 ebuild_revision_22
 "
@@ -33,10 +34,12 @@ RESTRICT="
 "
 RDEPEND="
 	perl? (
+		${GENTOO_PERL_DEPSTRING}
 		dev-lang/perl:=
 	)
 "
-DEPEND="${RDEPEND}
+DEPEND="
+	${RDEPEND}
 	test? (
 		dev-libs/glib:2
 	)
@@ -65,7 +68,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.3.14-fix-nodefaultlibs.patch"
 	"${FILESDIR}/${PN}-1.3.5-fix-gcc-linking.patch"
 	"${FILESDIR}/${PN}-1.3.14-gcc15.patch"
-	"${FILESDIR}/${P}-cmake4.patch" # bug 951367, PR#92 pending
+	"${FILESDIR}/${PN}-1.3.14_p20210810-cmake-minreqver-3.16.patch" # bug 951367, PR#92 + PR#97 pending
+	"${FILESDIR}/${PN}-1.3.14_p20210810-cmake-findpython3.patch" # TODO: upstream
 )
 
 pkg_setup() {
@@ -75,11 +79,6 @@ pkg_setup() {
 
 python_check_deps() {
 	python_has_version "dev-python/fonttools[${PYTHON_USEDEP}]"
-}
-
-src_prepare() {
-	cmake_src_prepare
-	use test || cmake_comment_add_subdirectory tests
 }
 
 multilib_src_configure() {
@@ -106,6 +105,9 @@ multilib_src_configure() {
 		fi
 	fi
 
+	local mycmakeargs=(
+		-DBUILD_TESTING=$(usex test)
+	)
 	cmake_src_configure
 
 	# fix perl linking
