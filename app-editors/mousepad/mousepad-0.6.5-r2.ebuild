@@ -20,7 +20,7 @@ LICENSE="GPL-2+"
 SLOT="0"
 IUSE="
 policykit spell +shortcuts X
-ebuild_revision_20
+ebuild_revision_21
 "
 DEPEND="
 	>=dev-libs/glib-2.56.2
