@@ -14,7 +14,7 @@ KEYWORDS="
 
 DESCRIPTION="ASS/SSA rendering with effects support plugin for GStreamer"
 IUSE="
-ebuild_revision_21
+ebuild_revision_22
 "
 RDEPEND="
 	>=media-libs/libass-0.10.2[${MULTILIB_USEDEP}]
