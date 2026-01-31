@@ -73,7 +73,7 @@ ${_CXX_STANDARD[@]}
 ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +cgi -cxx +caching debug doc -duktape +ipv6 -lua -serve_no_files
 +server_executable -server_stats +ssl static-libs -test -websockets -zlib
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE+="
 	lua? (
