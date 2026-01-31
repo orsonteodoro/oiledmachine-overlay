@@ -73,7 +73,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
