@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="GSM plugin for GStreamer"
 IUSE="
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	media-sound/gsm[${MULTILIB_USEDEP}]
