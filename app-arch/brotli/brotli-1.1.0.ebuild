@@ -37,7 +37,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1)"
 IUSE="
 python test
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	python? (
