@@ -88,7 +88,7 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 IUSE="
 ${_CXX_STANDARD[@]}
 emacs examples static-libs test zlib
-ebuild_revision_39
+ebuild_revision_40
 "
 REQUIRED_USE="
 	^^ (
