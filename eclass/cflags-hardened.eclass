@@ -2393,8 +2393,9 @@ einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:  ${fortify_fix_level}"
 				"-fno-optimize-sibling-calls"
 			)
 		fi
-		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] && _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" ; then
 			if tc-is-clang || tc-is-gcc ; then
+	# Very slow with web-browsers
 				flags+=(
 					"-fno-inline"
 				)
