@@ -1,5 +1,5 @@
---- a/build/config/compiler/BUILD.gn.orig	2026-01-30 13:56:56.258931461 -0800
-+++ b/build/config/compiler/BUILD.gn	2026-01-30 14:26:26.377330268 -0800
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-30 15:53:58.380388377 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-30 16:00:05.898826359 -0800
 @@ -50,6 +50,8 @@ if (!is_clang) {
  declare_args() {
    # This allows overriding the location of lld.
@@ -9,8 +9,8 @@
  }
  
  declare_args() {
---- a/build/config/sanitizers/BUILD.gn.orig	2026-01-30 13:56:55.440156235 -0800
-+++ b/build/config/sanitizers/BUILD.gn	2026-01-30 14:26:59.479684931 -0800
+--- a/build/config/sanitizers/BUILD.gn.orig	2026-01-30 15:53:58.409392744 -0800
++++ b/build/config/sanitizers/BUILD.gn	2026-01-30 15:54:50.500517549 -0800
 @@ -18,6 +18,8 @@ declare_args() {
    # Allow building official with ASAN enabled to help with
    # debugging https://crbug.com/371135823.
@@ -39,8 +39,8 @@
        }
        if (use_cfi_recover) {
          cflags += [ "-fsanitize-recover=cfi" ]
---- a/third_party/instrumented_libs/noble/BUILD.gn.orig	2026-01-30 13:56:55.524155532 -0800
-+++ b/third_party/instrumented_libs/noble/BUILD.gn	2026-01-30 14:26:12.024321065 -0800
+--- a/third_party/instrumented_libs/noble/BUILD.gn.orig	2026-01-30 15:53:58.472840702 -0800
++++ b/third_party/instrumented_libs/noble/BUILD.gn	2026-01-30 15:54:50.500818060 -0800
 @@ -7,6 +7,7 @@ import("//build/config/sanitizers/saniti
  
  declare_args() {
@@ -70,8 +70,8 @@
      package_ldflags = [
        "-fsanitize=memory",
      ]
---- a/third_party/mutter/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
-+++ b/third_party/mutter/BUILD.gn	2026-01-30 14:26:53.911754154 -0800
+--- a/third_party/mutter/BUILD.gn.orig	2026-01-30 15:53:58.483663371 -0800
++++ b/third_party/mutter/BUILD.gn	2026-01-30 16:01:40.041502792 -0800
 @@ -8,6 +8,10 @@ import("//build/config/linux/pkg_config.
  import("//build/config/ui.gni")
  import("//third_party/wayland/wayland_protocol.gni")
@@ -92,26 +92,39 @@
      "-fno-strict-aliasing",
      "-Wpointer-arith",
      "-Wmissing-declarations",
-@@ -178,6 +180,17 @@ config("mtk_public_config") {
+@@ -178,6 +180,30 @@ config("mtk_public_config") {
  
      # "-Wfloat-conversion", # Causes error in clutter
    ]
-+  if (enable_frame_pointers) {
++  if (is_official_build) {
 +    cflags += [
 +      "-fno-omit-frame-pointer",
 +      "-mno-omit-leaf-frame-pointer",
 +    ]
++  } else if (enable_frame_pointers) {
++    cflags += [
++      "-fno-omit-frame-pointer",
++    ]
++    if (current_cpu == "x86" || current_cpu == "x64") {
++      cflags += [
++        "-mno-omit-leaf-frame-pointer",
++      ]
++    }
 +  } else {
 +    cflags += [
 +      "-fomit-frame-pointer",
-+      "-momit-leaf-frame-pointer",
 +    ]
++    if (current_cpu == "x86" || current_cpu == "x64") {
++      cflags += [
++        "-momit-leaf-frame-pointer",
++      ]
++    }
 +  }
  }
  
  source_set("mtk") {
---- a/third_party/perfetto/gn/standalone/sanitizers/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
-+++ b/third_party/perfetto/gn/standalone/sanitizers/BUILD.gn	2026-01-30 14:26:55.003582849 -0800
+--- a/third_party/perfetto/gn/standalone/sanitizers/BUILD.gn.orig	2026-01-30 15:53:58.553391531 -0800
++++ b/third_party/perfetto/gn/standalone/sanitizers/BUILD.gn	2026-01-30 15:54:50.501498566 -0800
 @@ -14,6 +14,10 @@
  
  import("//gn/standalone/sanitizers/sanitizers.gni")
@@ -142,8 +155,8 @@
      defines = []
  
      if (is_asan) {
---- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2026-01-30 13:56:55.697280750 -0800
-+++ b/third_party/perfetto/gn/standalone/BUILD.gn	2026-01-30 14:26:55.911868064 -0800
+--- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2026-01-30 15:53:58.562947489 -0800
++++ b/third_party/perfetto/gn/standalone/BUILD.gn	2026-01-30 15:54:50.501763973 -0800
 @@ -20,6 +20,10 @@ import("//gn/standalone/sanitizers/sanit
  import("//gn/standalone/toolchain/msvc.gni")
  import("//gn/standalone/wasm.gni")
@@ -183,8 +196,8 @@
    if (is_wasm) {
      # As of writing (2023-06-12) WASM 128bit SIMD is supported on
      # stable Chrome, Safari, and Firefox. See:
---- a/third_party/skia/gn/skia/BUILD.gn.orig	2026-01-30 13:56:54.812161491 -0800
-+++ b/third_party/skia/gn/skia/BUILD.gn	2026-01-30 14:26:56.824822747 -0800
+--- a/third_party/skia/gn/skia/BUILD.gn.orig	2026-01-30 15:53:58.617390992 -0800
++++ b/third_party/skia/gn/skia/BUILD.gn	2026-01-30 15:54:50.502070181 -0800
 @@ -21,6 +21,8 @@ declare_args() {
    malloc = ""
    werror = false
@@ -211,8 +224,8 @@
  
        ldflags += [ "-fsanitize=$sanitizers" ]
      }
---- a/third_party/skia/third_party/dawn/BUILD.gn.orig	2026-01-06 16:50:30.000000000 -0800
-+++ b/third_party/skia/third_party/dawn/BUILD.gn	2026-01-30 14:26:58.023670173 -0800
+--- a/third_party/skia/third_party/dawn/BUILD.gn.orig	2026-01-30 15:53:58.655663031 -0800
++++ b/third_party/skia/third_party/dawn/BUILD.gn	2026-01-30 15:54:50.502346108 -0800
 @@ -9,6 +9,10 @@
  
  import("//third_party/dawn/args.gni")
