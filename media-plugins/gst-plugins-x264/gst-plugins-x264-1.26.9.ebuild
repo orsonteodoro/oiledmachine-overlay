@@ -12,7 +12,7 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="H.264 encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_20
+ebuild_revision_21
 "
 # 20180806 ensures us X264_BUILD >= 156
 RDEPEND="
