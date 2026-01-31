@@ -42,7 +42,7 @@ IUSE="
 ${_CXX_STANDARD[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	test? (
