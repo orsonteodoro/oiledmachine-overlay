@@ -17,7 +17,7 @@ EAPI=8
 # To update lockfile:
 # cargo update -p pyo3 --precise 0.24.2
 
-CYTHON_SLOT="0.29"
+CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 DULWICH_PV="0.25.0"
@@ -111,7 +111,7 @@ SLOT="0"
 IUSE+="
 cext dev developer-docs doc fastimport git github gpg launchpad sftp subunit
 test user-docs workspace
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -192,7 +192,7 @@ BDEPEND+="
 	>=dev-python/mypy-0.942[${PYTHON_USEDEP}]
 	>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
 	cext? (
-		>=dev-python/cython-0.29:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+		>=dev-python/cython-3.0:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/docutils-0.17.1[${PYTHON_USEDEP}]
