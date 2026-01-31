@@ -35,7 +35,7 @@ SLOT="0/26"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~arm64-macos ~x64-macos"
 IUSE="
 +asm static-libs +urandom
-ebuild_revision_8
+ebuild_revision_9
 "
 
 CPU_USE=( cpu_flags_x86_{aes,sse4_1} )
