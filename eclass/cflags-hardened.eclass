@@ -532,7 +532,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # RCE, PE, ID, DT, etc.
 # Valid values: 1, 0, unset
 
-# @USER_VARIABLE:  DELETE_NULL_POINTER_CHECKS_LEVEL
+# @ECLASS_VARIABLE::  DELETE_NULL_POINTER_CHECKS_LEVEL
 # @DESCRIPTION:
 # Control the coverage of -fno-delete-null-pointer-checks to prevent
 # removal of security-critical null check added by programmer.
