@@ -22,7 +22,7 @@ LICENSE="
 "
 SLOT="1.0"
 IUSE="
-ebuild_revision_21
+ebuild_revision_22
 "
 RDEPEND="
 	media-libs/gstreamer:${SLOT}[${MULTILIB_USEDEP}]
