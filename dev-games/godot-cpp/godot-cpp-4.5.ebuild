@@ -40,7 +40,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2)"
 IUSE+="
 android +debug-export-template-plugin -debug-game-engine -editor-plugin fp64 web
-ebuild_revision_25
+ebuild_revision_26
 "
 # Consider relaxing the requirements.  The bindings are forwards compatibile, but not backwards compatible.
 RDEPEND+="
