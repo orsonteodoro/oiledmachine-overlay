@@ -24,7 +24,7 @@ LICENSE="LGPL-2.1"
 SLOT="0"
 IUSE="
 perl test
-ebuild_revision_20
+ebuild_revision_21
 "
 RESTRICT="
 	!test? (
