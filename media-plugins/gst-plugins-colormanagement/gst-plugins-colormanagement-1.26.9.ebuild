@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Color management correction GStreamer plugins"
 IUSE="
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	>=media-libs/lcms-2.7:2[${MULTILIB_USEDEP}]
