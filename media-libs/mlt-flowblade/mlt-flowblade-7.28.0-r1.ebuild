@@ -22,7 +22,7 @@ MY_PN="mlt"
 
 CXX_STANDARD=17
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream tests up to 3.11
+PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream tests up to 3.11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -61,7 +61,7 @@ SLOT="0/7"
 IUSE="
 alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate opencv oss pulseaudio +python
 +rtaudio +rubberband +sdl +sox test vdpau +vidstab +xine +xml
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	alsa? (
