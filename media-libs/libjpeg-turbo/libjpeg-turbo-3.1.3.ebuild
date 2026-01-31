@@ -1,11 +1,11 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 CFLAGS_HARDENED_ASSEMBLERS="nasm inline yasm"
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
-CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="14"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD OOBR SO UM"
@@ -14,6 +14,7 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libjpeg-turbo.asc"
 
 _TRAINERS=(
 	"libjpeg_turbo_trainers_70_pct_quality_baseline"
@@ -48,31 +49,44 @@ UOPTS_BOLT_INST_ARGS=(
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
-inherit flag-o-matic-om toolchain-funcs uopts
+inherit flag-o-matic-om toolchain-funcs uopts verify-sig
 
-if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~arm64-macos ~x64-macos ~x64-solaris
+# Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
+if [[ $(ver_cut 3) -lt "90" ]] ; then
+KEYWORDS="
+	~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+	~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris
 	"
 fi
 S="${WORKDIR}/${P}"
 SRC_URI="
-	mirror://sourceforge/${PN}/${P}.tar.gz
+	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
+	verify-sig? ( https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz.sig )
 "
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
-HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
+HOMEPAGE="
+	https://libjpeg-turbo.org/
+	https://github.com/libjpeg-turbo/libjpeg-turbo
+"
 LICENSE="
 	BSD
 	IJG
 	ZLIB
+	java? (
+		GPL-2-with-classpath-exception
+	)
 "
 SLOT="0/0.2"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 IUSE="
 ${_TRAINERS[@]}
-+asm cpu_flags_arm_neon debug java pgo static-libs
++asm cpu_flags_arm_neon debug java test pgo static-libs
 ebuild_revision_40
 "
 REQUIRED_USE="
@@ -164,6 +178,9 @@ BDEPEND+="
 	x64-macos? (
 		${ASM_DEPEND}
 	)
+	verify-sig? (
+		sec-keys/openpgp-keys-libjpeg-turbo
+	)
 "
 DEPEND="
 	${COMMON_DEPEND}
@@ -194,6 +211,7 @@ is_pgo_ready() {
 	if [[ ! -d "${distdir}/trainer/assets/jpeg" ]] ; then
 		return 1
 	fi
+
 	local n_assets=$(\
 		find \
 			"${distdir}/trainer/assets/jpeg" \
@@ -251,13 +269,21 @@ ewarn
 	uopts_setup
 }
 
+src_unpack() {
+	if use verify-sig ; then
+		verify-sig_verify_detached "${DISTDIR}/${P}.tar.gz"{"",".sig"}
+	fi
+
+	default
+}
+
 src_prepare() {
 	local FILE
 	ln -snf ../debian/extra/*.c . || die
 
 	for FILE in ../debian/extra/*.c; do
 		FILE=${FILE##*/}
-cat >> CMakeLists.txt <<EOF || die
+cat >> CMakeLists.txt <<-EOF || die
 add_executable(${FILE%.c} ${FILE})
 install(TARGETS ${FILE%.c})
 EOF
@@ -293,7 +319,9 @@ _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
-	local mycmakeargs=()
+	local mycmakeargs=(
+		-DWITH_TESTS="$(usex test)"
+	)
 
 	strip-flag-value "cfi-icall"
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
@@ -350,7 +378,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
 		-DWITH_JAVA="$(multilib_native_usex java)"
-		-DWITH_MEM_SRCDST=ON
 	)
 
 	if ! use asm ; then
@@ -373,7 +400,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	# mostly for Prefix, ensure that we use our yasm if installed and
+	# Mostly for Prefix, ensure that we use our yasm if installed and
 	# not pick up host-provided nasm
 	if has_version -b dev-lang/yasm && ! has_version -b dev-lang/nasm; then
 		mycmakeargs+=(
@@ -558,9 +585,6 @@ multilib_src_install_all() {
 	newdoc "${WORKDIR}"/debian/changelog changelog.debian
 	dobin "${WORKDIR}"/debian/extra/exifautotran
 	doman "${WORKDIR}"/debian/extra/*.[0-9]*
-
-	docinto html
-	dodoc -r "${S}"/doc/html/.
 
 	if use java; then
 		docinto html/java
