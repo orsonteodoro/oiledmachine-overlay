@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="openaptx plugin for GStreamer"
 IUSE="
-ebuild_revision_19
+ebuild_revision_20
 "
 RDEPEND="
 	|| (
