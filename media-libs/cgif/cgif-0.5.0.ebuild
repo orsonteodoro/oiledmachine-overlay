@@ -26,7 +26,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 examples test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	sys-libs/zlib
