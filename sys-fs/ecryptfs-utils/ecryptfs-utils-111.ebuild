@@ -10,7 +10,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 LANGS=( "ca" )
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1 sandbox-changes
 
@@ -34,7 +34,7 @@ SLOT="0"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 doc gpg gtk nls openssl pam pkcs11 python suid test tpm
-ebuild_revision_39
+ebuild_revision_40
 "
 REQUIRED_USE+="
 	pam? (
