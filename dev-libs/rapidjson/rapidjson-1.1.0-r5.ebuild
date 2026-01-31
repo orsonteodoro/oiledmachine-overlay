@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 doc examples test
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
 
