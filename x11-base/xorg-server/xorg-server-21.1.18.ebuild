@@ -21,7 +21,7 @@ fi
 IUSE_SERVERS="xephyr xnest xorg xvfb"
 IUSE="
 ${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_7
+ebuild_revision_8
 "
 RESTRICT="!test? ( test )"
 
