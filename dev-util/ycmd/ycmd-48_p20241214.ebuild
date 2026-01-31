@@ -537,7 +537,7 @@ libclang minimal netcore netfx objc objcxx python rust system-abseil
 system-clangd system-gopls system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
-ebuild_revision_9
+ebuild_revision_10
 "
 if [[ "${PV}" =~ "9999" || "${PV}" =~ "_p" ]] ; then
 	IUSE+="
