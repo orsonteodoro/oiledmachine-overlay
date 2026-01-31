@@ -31,7 +31,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 crypt debug examples python static-libs
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
