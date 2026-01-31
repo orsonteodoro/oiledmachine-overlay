@@ -34,7 +34,7 @@ SLOT="0"
 IUSE="
 ${_CXX_STANDARD[@]}
 test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	test? (
