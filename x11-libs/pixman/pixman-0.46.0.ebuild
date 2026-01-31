@@ -24,7 +24,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 cpu_flags_ppc_altivec cpu_flags_arm_neon loongson2f cpu_flags_x86_mmxext cpu_flags_x86_sse2 cpu_flags_x86_ssse3 static-libs test
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 
