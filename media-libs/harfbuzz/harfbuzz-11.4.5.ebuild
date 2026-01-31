@@ -30,7 +30,7 @@ SLOT="0/6.0.0"
 
 IUSE="
 +cairo debug doc experimental +glib +graphite icu +introspection test +truetype
-ebuild_revision_8
+ebuild_revision_9
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="introspection? ( glib )"
