@@ -12,7 +12,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="admin-access login credentials security-critical multiuser-system"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
-PYTHON_COMPAT=( "python3_"{8..11} ) # Originally for 2.7
+PYTHON_COMPAT=( "python3_"{8..12} ) # Originally for 2.7
 
 inherit cflags-hardened flag-o-matic python-single-r1 toolchain-funcs
 
@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc test
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
