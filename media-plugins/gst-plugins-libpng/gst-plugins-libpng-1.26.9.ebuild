@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="PNG image encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_19
+ebuild_revision_20
 "
 RDEPEND="
 	>=media-libs/libpng-1.2:0[${MULTILIB_USEDEP}]
