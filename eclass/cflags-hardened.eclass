@@ -131,7 +131,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fPIC                                 1.05 -  1.10
 # -fPIE -pie                            1.05 -  1.10
 # -fcf-protection=full                  1.03 -  1.05
+# -fdelete-null-pointer-checks                  1.00           # Performance-critical, compiler default
 # -fhardened                            1.03 -  1.08
+# -fno-delete-null-pointer-checks       1.002 - 1.008          # Security-critical
 # -fstack-clash-protection              1.02 -  1.10
 # -fstack-protect                       1.01 -  1.05
 # -fstack-protect-strong                1.03 -  1.10
@@ -180,6 +182,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -Wa,--noexecstack                             1.00
 # -Wl,-z,noexecstack                            1.00
 # -Wl,-z,relro,-z,now                   1.01 -  1.05
+
+
 
 # Setting to 4.0 will enable ASAN and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
@@ -527,6 +531,16 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # controlled variables beyond the bounds check/body which may lead to
 # RCE, PE, ID, DT, etc.
 # Valid values: 1, 0, unset
+
+# @USER_VARIABLE:  DELETE_NULL_POINTER_CHECKS_LEVEL
+# @DESCRIPTION:
+# Control the coverage of -fno-delete-null-pointer-checks to prevent
+# removal of security-critical null check added by programmer.
+# Valid values:
+# 0 - disable for performance-critical
+# 1 - enable for most benefit use cases
+# 2 - enable for most and moderate benefit use cases
+# 3 - enable for low, medium, and most benefit; or all use cases
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
 # @DESCRIPTION:
@@ -2027,6 +2041,89 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-fwrapv"
 		CFLAGS_HARDENED_CFLAGS+=" -fwrapv"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fwrapv"
+	fi
+
+	local delete_null_pointer_checks_level=${DELETE_NULL_POINTER_CHECKS_LEVEL:-1}
+	if \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("kernel"\
+|"hypervisor"\
+|"security-critical"\
+|"login"\
+|"admin-access"\
+|"system-set"\
+|"safety-critical"\
+|"realtime-safety")\
+		]] \
+			&& \
+		(( ${delete_null_pointer_checks_level} >>= 1 )) \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.008" \
+	]] ; then
+	# High benefit
+		filter-flags "-f*delete-null-pointer-checks"
+		append-flags "-fno-delete-null-pointer-checks"
+		CFLAGS_HARDENED_CFLAGS+=" -fno-delete-null-pointer-checks"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fno-delete-null-pointer-checks"
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("container-runtime"\
+|"daemon"\
+|"database"\
+|"server"\
+|"web-server"\
+|"network"\
+|"sandbox"\
+|"untrusted-data"\
+|"multiuser-system"\
+|"multithreaded-confidential")\
+		]] \
+			&& \
+		(( ${delete_null_pointer_checks_level} >= 2 )) \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.008" \
+	]] ; then
+	# Medium benefit
+		filter-flags "-f*delete-null-pointer-checks"
+		append-flags "-fno-delete-null-pointer-checks"
+		CFLAGS_HARDENED_CFLAGS+=" -fno-delete-null-pointer-checks"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fno-delete-null-pointer-checks"
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("casual-messaging"\
+|"copy-paste-password"\
+|"credentials"\
+|"crypto"\
+|"dss"\
+|"extension"\
+|"facial-embedding"\
+|"fp-determinism"\
+|"game-engine"\
+|"high-precision-research"\
+|"ip-assets"\
+|"jit"\
+|"language-runtime"\
+|"messenger"\
+|"modular-app"\
+|"p2p"\
+|"plugin"\
+|"scripting"\
+|"sensitive-data"\
+|"web-browser")\
+		]] \
+			&& \
+		(( ${delete_null_pointer_checks_level} >= 3 )) \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.008" \
+	]] ; then
+	# Low benefit
+		filter-flags "-f*delete-null-pointer-checks"
+		append-flags "-fno-delete-null-pointer-checks"
+		CFLAGS_HARDENED_CFLAGS+=" -fno-delete-null-pointer-checks"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fno-delete-null-pointer-checks"
 	fi
 
 	# Poor man's UBSan for build time only
