@@ -8,7 +8,7 @@ BD_ABS=""
 NEED_EMACS="27.2"
 EGIT_COMMIT="c17ff9e0250a9b39d23af37015a2b300e2f36fed"
 EMACS_SLOT="${NEED_EMACS%%.*}"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 SITEFILE="50emacs-ycmd-gentoo.el"
 
 inherit elisp java-pkg-opt-2 python-single-r1 sandbox-changes
@@ -50,7 +50,7 @@ builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error
 +rust-mode system-gocode system-godef system-gopls system-jdtls system-mono
 system-omnisharp system-racerd system-rust system-typescript +typescript-mode
 +ycmd-48
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
