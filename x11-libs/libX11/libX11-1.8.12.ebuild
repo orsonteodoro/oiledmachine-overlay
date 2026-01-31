@@ -28,7 +28,7 @@ KEYWORDS="
 DESCRIPTION="X.Org X11 library"
 IUSE="
 test
-ebuild_revision_14
+ebuild_revision_15
 "
 RESTRICT="
 	!test? (
