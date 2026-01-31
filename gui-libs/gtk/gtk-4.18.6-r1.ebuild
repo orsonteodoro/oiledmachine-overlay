@@ -28,7 +28,7 @@ REQUIRED_USE="
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="
 aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_7
+ebuild_revision_8
 "
 
 # TODO: Optional gst build dep on >=gst-plugins-base-1.23.1, so depend on it once we can
