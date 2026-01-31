@@ -28,7 +28,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 test
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND="
 	dev-libs/uthash
