@@ -1,4 +1,4 @@
-# Copyright 2021-2025 Gentoo Authors
+# Copyright 2021-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -16,12 +16,12 @@ LLVM_COMPAT=(
 )
 
 QT6_HAS_STATIC_LIBS=1
-inherit flag-o-matic libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
+inherit libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Qt module and API for defining 3D content in Qt QuickTools"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="amd64 arm arm64 ~loong ppc64 ~riscv x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
 elif [[ ${QT6_BUILD_TYPE} == live ]]; then
 	EGIT_SUBMODULES=() # skip qtquick3d-assimp
 fi
@@ -72,9 +72,6 @@ pkg_setup() {
 }
 
 src_configure() {
-	tc-is-gcc && [[ $(gcc-major-version) -ge 16 ]] &&
-		append-cxxflags -fno-devirtualize-speculatively #964252
-
 	local mycmakeargs=(
 		# TODO: if someone wants it, openxr should likely have its own
 		# USE and be packaged rather than use the bundled copy (if use

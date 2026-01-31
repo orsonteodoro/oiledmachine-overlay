@@ -1,4 +1,4 @@
-# Copyright 2021-2025 Gentoo Authors
+# Copyright 2021-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -24,7 +24,7 @@ inherit cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot qt6-build
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
 IUSE="
@@ -112,9 +112,6 @@ CMAKE_SKIP_TESTS=(
 	# fails with offscreen rendering
 	tst_qvideoframecolormanagement
 	tst_qwindowcapturebackend
-	# >=ffmpeg-8 changed SWS_* defines to an enum and this confuses a test-only
-	# assert, should have no negative runtime effect so just skip for now
-	tst_qffmpegvideoencoderutils
 )
 
 PATCHES=(

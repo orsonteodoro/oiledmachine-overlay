@@ -1,4 +1,4 @@
-# Copyright 2021-2025 Gentoo Authors
+# Copyright 2021-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -28,7 +28,7 @@ inherit cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot qt6-build toolch
 DESCRIPTION="Cross-platform application development framework"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
 declare -A QT6_IUSE=(
@@ -65,6 +65,7 @@ REQUIRED_USE="
 	libinput? ( udev )
 	sql? ( || ( ${QT6_IUSE[sql]//+/} ) )
 	test? ( icu sql? ( sqlite ) )
+	wayland? ( opengl )
 "
 
 # groups:
@@ -123,6 +124,7 @@ COMMON_DEPEND="
 		)
 		renderdoc? ( media-gfx/renderdoc )
 		tslib? ( x11-libs/tslib )
+		wayland? ( dev-libs/wayland )
 		widgets? (
 			cups? ( net-print/cups )
 			gtk? (
@@ -190,6 +192,7 @@ DEPEND="
 	X? ( x11-base/xorg-proto )
 	gui? (
 		vulkan? ( dev-util/vulkan-headers )
+		wayland? ( dev-util/wayland-scanner )
 	)
 	network? (
 		sctp? ( net-misc/lksctp-tools )
@@ -198,13 +201,12 @@ DEPEND="
 		elibc_musl? ( sys-libs/timezone-data )
 	)
 "
-BDEPEND="zstd? ( app-arch/libarchive[zstd] )" #910392
+# libarchive[zstd] is indirectly used by cmake (bug #910392)
+BDEPEND="
+	zstd? ( app-arch/libarchive[zstd] )
+"
 PDEPEND="
 	nls? ( ~dev-qt/qttranslations-${PV}:6 )
-	wayland? (
-		~dev-qt/qtwayland-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtwayland:=
-	)
 "
 
 PATCHES=(
@@ -239,6 +241,13 @@ src_prepare() {
 }
 
 src_configure() {
+	# Temporary warning to spare surprised users for whom "it worked before",
+	# will drop this in Qt 6.11 (bug #966289)
+	if use custom-cflags && tc-cpp-is-true __RDRND__ ${CXXFLAGS}; then
+		ewarn "USE=custom-cflags is enabled, and there is a good chance that the build"
+		ewarn "will fail with current CXXFLAGS. Please disable it if have issues."
+	fi
+
 	cflags-hardened_append
 	if use gtk; then
 		# defang automagic dependencies (bug #624960)
@@ -276,6 +285,8 @@ src_configure() {
 		$(qt_feature icu)
 		$(qt_feature journald)
 		$(qt_feature syslog)
+		# currently jemalloc upstream is dead and tests fail with it
+		-DQT_FEATURE_jemalloc=OFF
 
 		# tools
 		-DQT_FEATURE_androiddeployqt=OFF
@@ -355,9 +366,20 @@ src_configure() {
 	qt6-build_src_configure
 }
 
+src_compile() {
+	# workaround missing qtest include race condition when building
+	# the new test from qtbase@b412e424b (needs more looking into)
+	cmake_build include/QtTest/QtTest
+	cmake_src_compile
+}
+
 src_test() {
 	local -x TZ=UTC
 	local -x LC_TIME=C
+
+	# users' session setting may break tst_clientextension (bug #927030)
+	unset DESKTOP_SESSION XDG_CURRENT_DESKTOP
+	unset GNOME_DESKTOP_SESSION_ID KDE_FULL_SESSION
 
 	local CMAKE_SKIP_TESTS=(
 		# broken with out-of-source + if qtbase is not already installed
@@ -367,22 +389,27 @@ src_test() {
 		tst_qapplication
 		tst_qt_cmake_create
 		tst_uic
-		# needs x11/opengl, we *could* run these but tend to be flaky
-		# when opengl rendering is involved (even if software-only)
-		tst_qopengl{,config,widget,window}
+		# needs x11/wayland/opengl rather than just Qt offscreen and would
+		# rather to keep this simple
 		tst_qgraphicsview
+		tst_qopengl{,config,widget,window}
 		tst_qx11info
+		tst_surface
+		tst_wl_reconnect
+		tst_xdgdecorationv1
+		# fails for unknown reasons, but seatv4 is not actually used nowadays
+		tst_seatv4
 		# fails with network sandbox
 		tst_qdnslookup
 		# fails with sandbox
 		tst_qsharedmemory
 		# typical to lack SCTP support on non-generic kernels
 		tst_qsctpsocket
-		# randomly fails without -j1, and not worth it over this (bug #916181)
-		tst_qfiledialog{,2}
-		# may randomly hang+timeout, perhaps related to -j as well
+		# flaky tests, may be better with -j1 but not worth using over this
+		tst_qfiledialog{,2} #916181
 		tst_qprocess #936484
 		tst_qtimer
+		tst_wayland_cursor
 		# haystacksWithMoreThan4GiBWork can easily OOM (16GB ram not enough)
 		tst_qlatin1stringmatcher
 		# these can be flaky depending on the environment/toolchain

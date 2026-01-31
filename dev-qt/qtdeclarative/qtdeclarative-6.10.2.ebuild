@@ -1,4 +1,4 @@
-# Copyright 2021-2025 Gentoo Authors
+# Copyright 2021-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -30,7 +30,7 @@ inherit cflags-hardened libcxx-slot libstdcxx-slot python-any-r1 qt6-build
 DESCRIPTION="Qt Declarative (Quick 2)"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
 IUSE="
@@ -58,7 +58,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-6.9.3-QTBUG-140018.patch
+	"${FILESDIR}"/${PN}-6.10.1-QTBUG-142514.patch
 )
 
 pkg_setup() {
