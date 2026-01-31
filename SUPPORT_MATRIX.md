@@ -201,7 +201,7 @@ Language defaults
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
 | 3.10 and earlier     | Not supported (EOL) [1]               | U22 (EOL Apr 2027)                                             |
-| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                                             |
+| 3.11                 | Not supported (EOL) [4]               | D12 (EOL Jun 2026)                                             |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | 3.13t [3]            | Not supported                         |                                                                |
@@ -215,6 +215,7 @@ Language defaults
       bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
+* [4] Not supported by this distro any more
 
 | Platform                            | Ebuild level of support               | Distro or CI image correspondence                        |
 | ---                                 | ---                                   | ---                                                      |
