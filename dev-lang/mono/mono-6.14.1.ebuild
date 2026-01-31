@@ -207,7 +207,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
