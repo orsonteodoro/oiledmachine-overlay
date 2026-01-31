@@ -33,7 +33,7 @@ KEYWORDS="
 "
 IUSE="
 apng cpu_flags_x86_sse static-libs test
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
 
