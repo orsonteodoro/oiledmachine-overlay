@@ -2057,7 +2057,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"realtime-safety")\
 		]] \
 			&& \
-		(( ${delete_null_pointer_checks_level} >>= 1 )) \
+		(( ${delete_null_pointer_checks_level} >= 1 )) \
 			&& \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.008" \
 	]] ; then
