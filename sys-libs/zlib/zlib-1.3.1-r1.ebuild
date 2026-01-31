@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -45,10 +45,13 @@ _TRAINERS=(
 	"zlib_trainers_zlib_text_random"
 )
 
-inherit autotools cflags-hardened check-compiler-switch edo flag-o-matic flag-o-matic-om
+inherit autotools cflags-hardened check-compiler-switch dot-a edo flag-o-matic flag-o-matic-om
 inherit multilib-minimal toolchain-funcs uopts verify-sig
 
-KEYWORDS="~amd64  ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~ppc ~ppc64 ~ppc64-linux ~s390"
+KEYWORDS="
+~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
+x86 ~arm64-macos ~x64-macos ~x64-solaris
+"
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 SRC_URI="
@@ -368,6 +371,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	use static-libs && lto-guarantee-fat
+
 	# Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
 	# Prevents loading of precompiled www browser
 	# It doesn't work for elibc_glibc and gcc combo.
@@ -421,7 +426,13 @@ eerror "Remove all cfi flags from ${flag}"
 	*-mingw*|mingw*|*-cygwin*)
 		;;
 	*)
-		local uname=$("${EPREFIX}"/usr/share/gnuconfig/config.sub "${CHOST}" | cut -d- -f3) #347167
+		local uname=$("${BROOT}"/usr/share/gnuconfig/config.sub "${CHOST}" | cut -d- -f3) #347167
+
+		# For GNU Hurd
+		if [[ "${uname}" == "gnu" ]] ; then
+			uname="GNU"
+		fi
+
 		local myconf=(
 			--prefix="${EPREFIX}/usr"
 			--libdir="${EPREFIX}/usr/$(get_libdir)"
@@ -1165,6 +1176,8 @@ src_install() {
 }
 
 multilib_src_install_all() {
+	strip-lto-bytecode
+
 	cd "${S}" || die
 	dodoc FAQ README ChangeLog doc/*.txt
 	if use minizip ; then
