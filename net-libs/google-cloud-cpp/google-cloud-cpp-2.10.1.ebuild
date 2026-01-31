@@ -47,7 +47,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_12
+ebuild_revision_13
 "
 # Tests need a GCP account
 RESTRICT="test"
