@@ -29,7 +29,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 
 LICENSE="LGPL-2.1+"
 SLOT="2"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr
 ebuild_revision_9
@@ -102,6 +102,10 @@ MULTILIB_CHOST_TOOLS=(
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.64.1-mark-gdbus-server-auth-test-flaky.patch
 	"${FILESDIR}"/${PN}-2.84.4-libpcre2-10.47.patch
+	"${FILESDIR}"/${PN}-2.86-MR-4912.patch
+	"${FILESDIR}"/${PN}-2.86-MR-4915-CVE-2025-13601.patch
+	"${FILESDIR}"/${PN}-2.86-MR-4934-CVE-2025-14087.patch
+	"${FILESDIR}"/${PN}-2.86-MR-4936.patch
 )
 
 python_check_deps() {
