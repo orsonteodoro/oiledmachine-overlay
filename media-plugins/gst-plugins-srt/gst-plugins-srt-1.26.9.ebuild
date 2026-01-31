@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Secure reliable transport (SRT) transfer plugin for GStreamer"
 IUSE="
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	>=net-libs/srt-1.3.0[${MULTILIB_USEDEP}]
