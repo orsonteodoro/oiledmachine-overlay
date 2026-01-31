@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="OpenNI2 plugin for GStreamer"
 IUSE="
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	>=dev-libs/OpenNI2-0.26
