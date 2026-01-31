@@ -430,7 +430,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_27
+ebuild_revision_28
 "
 
 # Firefox-only IUSE
