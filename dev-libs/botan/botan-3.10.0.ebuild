@@ -77,7 +77,7 @@ S="${WORKDIR}/${MY_P}"
 LICENSE="BSD-2"
 # New major versions are parallel-installable
 SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
-KEYWORDS="~amd64 ~arm arm64 ~hppa ~loong ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~ppc-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~ppc-macos"
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
 ebuild_revision_41
@@ -91,9 +91,7 @@ CPU_USE=(
 IUSE+=" ${CPU_USE[@]}"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
+	python? ( ${PYTHON_REQUIRED_USE} )
 	cpu_flags_x86_ssse3? (
 		cpu_flags_x86_sse2
 	)
@@ -221,23 +219,6 @@ src_configure() {
 	fi
 
 	local myargs=(
-		# Intrinsics
-		$(usev !cpu_flags_arm_crypto '--disable-armv8crypto')
-		$(usev !cpu_flags_arm_neon '--disable-neon')
-		$(usev !cpu_flags_ppc_altivec '--disable-altivec')
-		$(usev !cpu_flags_x86_aes '--disable-aes-ni')
-		$(usev !cpu_flags_x86_sha '--disable-sha-ni')
-		$(usev !cpu_flags_x86_avx2 '--disable-avx2')
-		$(usev !cpu_flags_x86_bmi2 '--disable-bmi2')
-		$(usev !cpu_flags_x86_popcnt '--disable-bmi2')
-		$(usev !cpu_flags_x86_rdrnd '--disable-rdrnd')
-		$(usev !cpu_flags_x86_rdseed '--disable-rdseed')
-		$(usev !cpu_flags_x86_sha '--disable-sha-ni')
-		$(usev !cpu_flags_x86_sse2 '--disable-sse2')
-		$(usev !cpu_flags_x86_ssse3 '--disable-ssse3')
-		$(usev !cpu_flags_x86_sse4_1 '--disable-sse4.1')
-		$(usev !cpu_flags_x86_sse4_2 '--disable-sse4.2')
-
 		# We already set this by default in the toolchain
 		--without-stack-protector
 
@@ -269,12 +250,6 @@ src_configure() {
 		--lto-cxxflags-to-ldflags
 		--with-python-version=$(IFS=","; echo "${pythonvers[*]}")
 	)
-
-	if ! use cpu_flags_ppc_power8 && ! use cpu_flags_ppc_power8 ; then
-		myargs+=(
-			--disable-powercrypto
-		)
-	fi
 
 	local ARM_CRYPTO_OPTIONS=(
 		"shacal2_armv8"
@@ -328,6 +303,7 @@ src_configure() {
 	local X86_AES_OPTIONS=(
 		"aes_ni"
 	)
+
 
 	local X86_AVX2_OPTIONS=(
 		"argon2_avx2"
@@ -592,6 +568,11 @@ src_install() {
 	if [[ -d "${ED}"/usr/share/doc/${P} && ${P} != ${PF} ]] ; then
 		# --docdir in configure controls the parent directory unfortunately
 		mv "${ED}"/usr/share/doc/${P} "${ED}"/usr/share/doc/${PF} || die
+	fi
+
+	if [[ -d "${ED}"/usr/share/man/man1 ]] ; then
+		# --program-suffix doesn't apply to the man page
+		mv "${ED}"/usr/share/man/man1/botan{,$(ver_cut 1)}.1 || die
 	fi
 
 	# Manually install the Python bindings (bug #723096)
