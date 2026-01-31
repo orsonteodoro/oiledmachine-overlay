@@ -1,12 +1,12 @@
 # Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.1.7/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
+# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.2.4/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
 # D12 (LLVM 19; Python 3.11)
-# F41 (LLVM 19; Python 3.13)
+# F42 (LLVM 20; Python 3.13)
 
 MY_P="${P/_/-}"
 
@@ -28,7 +28,6 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -40,16 +39,21 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
+PATENT_STATUS=(
+	"patent_status_nonfree"
+)
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 )
 
 CRATES="
-	syn@2.0.68
-	proc-macro2@1.0.86
-	quote@1.0.33
-	unicode-ident@1.0.12
 	paste@1.0.14
+	proc-macro2@1.0.86
+	quote@1.0.35
+	rustc-hash@2.1.1
+	syn@2.0.87
+	unicode-ident@1.0.12
 "
 
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
@@ -61,10 +65,6 @@ video_cards_vc4?,\
 video_cards_vivante?,\
 video_cards_vmware?,\
 "
-
-PATENT_STATUS=(
-	"patent_status_nonfree"
-)
 
 RADEON_CARDS=(
 	"r300"
@@ -112,7 +112,7 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~alpha amd64 arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc x86
+~alpha amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc x86
 ~x64-solaris
 	"
 	SRC_URI="
@@ -143,25 +143,11 @@ ${CPU_FLAGS_X86[@]}
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
-asahi d3d9 debug +llvm lm-sensors opencl +opengl
-+proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
-wayland +X xa +zstd
+asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
+sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
 ebuild_revision_23
 "
 REQUIRED_USE="
-	d3d9? (
-		|| (
-			video_cards_freedreno
-			video_cards_intel
-			video_cards_nouveau
-			video_cards_panfrost
-			video_cards_r300
-			video_cards_r600
-			video_cards_radeonsi
-			video_cards_vmware
-			video_cards_zink
-		)
-	)
 	video_cards_lavapipe? (
 		llvm
 		vulkan
@@ -192,9 +178,6 @@ REQUIRED_USE="
 	vdpau? (
 		X
 	)
-	xa? (
-		X
-	)
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -217,8 +200,7 @@ RDEPEND="
 		)
 	)
 	lm-sensors? (
-		sys-apps/lm-sensors[${MULTILIB_USEDEP}]
-		sys-apps/lm-sensors:=
+		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
 	)
 	opencl? (
 		>=virtual/opencl-3
@@ -230,12 +212,10 @@ RDEPEND="
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-1.7.3[${MULTILIB_USEDEP}]
-		>=media-libs/libva-1.7.3:=
+		>=media-libs/libva-1.7.3:=[${MULTILIB_USEDEP}]
 	)
 	vdpau? (
-		>=x11-libs/libvdpau-1.5[${MULTILIB_USEDEP}]
-		>=x11-libs/libvdpau-1.5:=
+		>=x11-libs/libvdpau-1.5:=[${MULTILIB_USEDEP}]
 	)
 	video_cards_radeonsi? (
 		virtual/libelf:0[${MULTILIB_USEDEP}]
@@ -252,7 +232,7 @@ RDEPEND="
 		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-1.8[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.17[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.17:=
@@ -321,6 +301,9 @@ RDEPEND="
 unset {LLVM,PER_SLOT}_DEPSTR
 DEPEND="
 	${RDEPEND}
+	sysprof? (
+		>=dev-util/sysprof-capture-49.0[${MULTILIB_USEDEP}]
+	)
 	valgrind? (
 		dev-debug/valgrind
 	)
@@ -351,7 +334,7 @@ BDEPEND="
 	app-alternatives/lex
 	virtual/pkgconfig
 	opencl? (
-		>=dev-util/bindgen-0.71.0
+		>=dev-util/bindgen-0.71.1
 		llvm_slot_18? (
 			|| (
 				=dev-lang/rust-1.78*
@@ -397,7 +380,7 @@ BDEPEND="
 		video_cards_nvk? (
 			${CLC_DEPSTRING}
 			${RUST_DEPEND}
-			>=dev-util/bindgen-0.71.0
+			>=dev-util/bindgen-0.71.1
 			>=dev-util/cbindgen-0.26.0
 			|| (
 				(
@@ -501,7 +484,6 @@ pkg_pretend() {
 	ignore_video_card_use "vulkan" "asahi" "d3d12" "freedreno" "intel" "lavapipe" "nouveau" "nvk" "panfrost" "radeonsi" "v3d" "virgl"
 	ignore_video_card_use "vaapi" "d3d12" "nouveau" "r600" "radeonsi" "virgl"
 	ignore_video_card_use "vdpau" "d3d12" "nouveau" "r300" "r600" "radeonsi" "virgl"
-	ignore_video_card_use "xa" "freedreno" "intel" "nouveau" "vmware"
 
 	if ! use llvm ; then
 		if use opencl ; then
@@ -602,7 +584,6 @@ src_prepare() {
 		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
-
 }
 
 _src_configure_compiler() {
@@ -665,25 +646,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-Dplatforms=${platforms#,}
 	)
 
-	if use video_cards_freedreno ||
-	   use video_cards_intel || # crocus i915 iris
-	   use video_cards_nouveau ||
-	   use video_cards_panfrost ||
-	   use video_cards_r300 ||
-	   use video_cards_r600 ||
-	   use video_cards_radeonsi ||
-	   use video_cards_vmware || # svga
-	   use video_cards_zink \
-	; then
-		emesonargs+=(
-			$(meson_use d3d9 gallium-nine)
-		)
-	else
-		emesonargs+=(
-			-Dgallium-nine=false
-		)
-	fi
-
 	if use video_cards_d3d12 ||
 	   use video_cards_nouveau ||
 	   use video_cards_r600 ||
@@ -720,20 +682,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 	else
 		emesonargs+=(
 			-Dgallium-vdpau=disabled
-		)
-	fi
-
-	if use video_cards_freedreno ||
-	   use video_cards_intel ||
-	   use video_cards_nouveau ||
-	   use video_cards_vmware \
-	; then
-		emesonargs+=(
-			$(meson_feature xa gallium-xa)
-		)
-	else
-		emesonargs+=(
-			-Dgallium-xa=disabled
 		)
 	fi
 
@@ -851,7 +799,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature unwind libunwind)
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
+		$(meson_use llvm amd-use-llvm)
 		$(meson_use opengl)
+		$(meson_use sysprof)
 		$(meson_use test build-tests)
 		-Db_ndebug=$(usex debug false true)
 		-Dexpat=enabled

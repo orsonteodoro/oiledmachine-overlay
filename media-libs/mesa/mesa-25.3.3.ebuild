@@ -1,5 +1,5 @@
 # Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -66,24 +66,22 @@ video_cards_vivante?,\
 video_cards_vmware?,\
 "
 
-RADEON_CARDS=(
-	"r300"
-	"r600"
-	"radeon"
-	"radeonsi"
-)
-
 VIDEO_CARDS=(
-	${RADEON_CARDS[@]}
 	"asahi"
 	"d3d12"
 	"freedreno"
+	"i915"
+	"imagination"
 	"intel"
 	"lavapipe"
 	"lima"
 	"nouveau"
 	"nvk"
 	"panfrost"
+	"r300"
+	"r600"
+	"radeon"
+	"radeonsi"
 	"v3d"
 	"vc4"
 	"virgl"
@@ -113,11 +111,7 @@ if [[ "${PV}" == "9999" ]] ; then
 else
 	KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc
-~x86 ~amd64-linux ~x86-linux ~x64-solaris
-	"
-	KEYWORDS="
-~alpha amd64 arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
-~amd64-linux ~x86-linux ~x64-solaris
+~x86 ~x64-solaris
 	"
 	SRC_URI="
 		https://archive.mesa3d.org/${MY_P}.tar.xz
@@ -148,10 +142,13 @@ ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
-sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_22
+sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
+ebuild_revision_23
 "
 REQUIRED_USE="
+	video_cards_i915? (
+		llvm
+	)
 	video_cards_lavapipe? (
 		llvm
 		vulkan
@@ -179,15 +176,12 @@ REQUIRED_USE="
 		vulkan
 		opengl
 	)
-	vdpau? (
-		X
-	)
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
 RDEPEND="
-	${LIBDRM_DEPSTRING}[${LIBDRM_USEDEP}${MULTILIB_USEDEP}]
+	${LIBDRM_DEPSTRING}[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
@@ -195,36 +189,46 @@ RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	llvm? (
 		video_cards_r600? (
-			virtual/libelf:0=[${MULTILIB_USEDEP}]
+			virtual/libelf:0[${MULTILIB_USEDEP}]
+			virtual/libelf:=
 		)
 		video_cards_radeon? (
-			virtual/libelf:0=[${MULTILIB_USEDEP}]
+			virtual/libelf:0[${MULTILIB_USEDEP}]
+			virtual/libelf:=
 		)
 	)
 	lm-sensors? (
-		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
+		sys-apps/lm-sensors[${MULTILIB_USEDEP}]
+		sys-apps/lm-sensors:=
 	)
 	opencl? (
 		>=virtual/opencl-3
 		llvm-core/libclc[spirv(-)]
-		virtual/libelf:0=
+		virtual/libelf:0
+		virtual/libelf:=
 	)
 	unwind? (
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-1.7.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-1.7.3[${MULTILIB_USEDEP}]
+		>=media-libs/libva-1.7.3:=
 	)
-	vdpau? (
-		>=x11-libs/libvdpau-1.5:=[${MULTILIB_USEDEP}]
+	video_cards_i915? (
+		${LIBDRM_DEPSTRING}[video_cards_intel]
 	)
 	video_cards_radeonsi? (
-		virtual/libelf:0=[${MULTILIB_USEDEP}]
+		${LIBDRM_DEPSTRING}[video_cards_amdgpu]
+		virtual/libelf:0[${MULTILIB_USEDEP}]
+		virtual/libelf:=
 	)
 	video_cards_zink? (
-		media-libs/vulkan-loader:=[${MULTILIB_USEDEP}]
+		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
+		media-libs/vulkan-loader:=
 	)
 	vulkan? (
+		media-libs/libdisplay-info[${MULTILIB_USEDEP}]
+		media-libs/libdisplay-info:=
 		virtual/libudev:=
 	)
 	wayland? (
@@ -233,29 +237,16 @@ RDEPEND="
 	X? (
 		>=x11-libs/libX11-1.8[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libxcb-1.17:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-1.17[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-1.17:=
 		>=x11-libs/libxshmfence-1.1[${MULTILIB_USEDEP}]
 		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes[${MULTILIB_USEDEP}]
 		x11-libs/xcb-util-keysyms[${MULTILIB_USEDEP}]
 	)
 	zstd? (
-		app-arch/zstd:=[${MULTILIB_USEDEP}]
-	)
-"
-for card in ${RADEON_CARDS[@]} ; do
-	RDEPEND="
-		${RDEPEND}
-		video_cards_${card}? (
-			${LIBDRM_DEPSTRING}[video_cards_radeon]
-		)
-	"
-done
-unset card
-RDEPEND="
-	${RDEPEND}
-	video_cards_radeonsi? (
-		${LIBDRM_DEPSTRING}[video_cards_amdgpu]
+		app-arch/zstd[${MULTILIB_USEDEP}]
+		app-arch/zstd:=
 	)
 "
 # Please keep the LLVM dependency block separate. Since LLVM is slotted, \
@@ -268,10 +259,13 @@ gen_llvm_depstr() {
 			llvm_slot_${s}? (
 				!opencl? (
 					llvm-core/llvm:${s}[${LLVM_USE_DEPS}]
+					llvm-core/llvm:=
 				)
 				opencl? (
 					dev-util/spirv-llvm-translator:${s}
+					dev-util/spirv-llvm-translator:=
 					llvm-core/clang:${s}[${LLVM_USE_DEPS}]
+					llvm-core/clang:=
 				)
 			)
 		"
@@ -280,10 +274,12 @@ gen_llvm_depstr() {
 LLVM_DEPSTR="
 	$(gen_llvm_depstr)
 	!opencl? (
-		llvm-core/llvm:=[${LLVM_USE_DEPS}]
+		llvm-core/llvm[${LLVM_USE_DEPS}]
+		llvm-core/llvm:=
 	)
 	opencl? (
-		llvm-core/clang:=[${LLVM_USE_DEPS}]
+		llvm-core/clang[${LLVM_USE_DEPS}]
+		llvm-core/clang:=
 	)
 "
 RDEPEND="
@@ -296,13 +292,13 @@ unset {LLVM,PER_SLOT}_DEPSTR
 DEPEND="
 	${RDEPEND}
 	sysprof? (
-		>=dev-util/sysprof-capture-3.38.0[${MULTILIB_USEDEP}]
+		>=dev-util/sysprof-capture-49.0[${MULTILIB_USEDEP}]
 	)
 	valgrind? (
 		dev-debug/valgrind
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.614.1[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.618.1[${MULTILIB_USEDEP}]
 	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.41
@@ -475,9 +471,8 @@ tc-is-lto() {
 }
 
 pkg_pretend() {
-	ignore_video_card_use "vulkan" "asahi" "d3d12" "freedreno" "intel" "lavapipe" "nouveau" "nvk" "panfrost" "radeonsi" "v3d" "virgl"
+	ignore_video_card_use "vulkan" "asahi" "d3d12" "freedreno" "imagination" "intel" "lavapipe" "nouveau" "nvk" "panfrost" "radeonsi" "v3d" "virgl"
 	ignore_video_card_use "vaapi" "d3d12" "nouveau" "r600" "radeonsi" "virgl"
-	ignore_video_card_use "vdpau" "d3d12" "nouveau" "r300" "r600" "radeonsi" "virgl"
 
 	if ! use llvm ; then
 		if use opencl ; then
@@ -664,27 +659,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	if use video_cards_d3d12 ||
-	   use video_cards_nouveau ||
-	   use video_cards_r600 ||
-	   use video_cards_radeonsi ||
-	   use video_cards_virgl \
-	; then
-		emesonargs+=(
-			$(meson_feature vdpau gallium-vdpau)
-		)
-	else
-		emesonargs+=(
-			-Dgallium-vdpau=disabled
-		)
-	fi
-
 	gallium_enable !llvm softpipe
 	gallium_enable llvm llvmpipe
 	gallium_enable video_cards_asahi asahi
 	gallium_enable video_cards_d3d12 d3d12
 	gallium_enable video_cards_freedreno freedreno
-	gallium_enable video_cards_intel crocus i915 iris
+	gallium_enable video_cards_i915 i915
+	gallium_enable video_cards_intel crocus iris
 	gallium_enable video_cards_lima lima
 	gallium_enable video_cards_nouveau nouveau
 	gallium_enable video_cards_panfrost panfrost
@@ -718,24 +699,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 		vulkan_enable video_cards_asahi asahi
 		vulkan_enable video_cards_d3d12 microsoft-experimental
 		vulkan_enable video_cards_freedreno freedreno
+		vulkan_enable video_cards_imagination imagination
 		vulkan_enable video_cards_intel intel intel_hasvk
 		vulkan_enable video_cards_lavapipe swrast
+		vulkan_enable video_cards_nvk nouveau
 		vulkan_enable video_cards_panfrost panfrost
 		vulkan_enable video_cards_radeonsi amd
 		vulkan_enable video_cards_v3d broadcom
 		vulkan_enable video_cards_vc4 broadcom
 		vulkan_enable video_cards_virgl virtio
-		if use video_cards_nvk; then
-			vulkan_enable video_cards_nvk nouveau
-			if ! multilib_is_native_abi; then
-				echo -e "[binaries]\nrust = ['rustc', '--target=$(rust_abi $CBUILD)']" > "${T}/rust_fix.ini"
-				emesonargs+=(
-					--native-file "${T}"/rust_fix.ini
-				)
-			fi
-		fi
 		emesonargs+=(
-			-Dvulkan-layers=device-select,overlay
+			-Dvulkan-layers=anti-lag,device-select,overlay
 		)
 	fi
 
@@ -791,6 +765,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature llvm)
 		$(meson_feature lm-sensors lmsensors)
 		$(meson_feature unwind libunwind)
+		$(meson_feature vulkan display-info)
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
 		$(meson_use llvm amd-use-llvm)
@@ -800,19 +775,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-Db_ndebug=$(usex debug false true)
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
-		-Dlegacy-x11=dri2
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex patent_status_nonfree "all" "all_free")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
 	)
 	meson_src_configure
-
-	if ! multilib_is_native_abi && use video_cards_nvk ; then
-		sed -i -E \
-			-e '{N; s/(rule rust_COMPILER_FOR_BUILD\n command = rustc) --target=[a-zA-Z0-9=:-]+ (.*) -C link-arg=-m[[:digit:]]+/\1 \2/g}' \
-			"build.ninja" \
-			|| die
-	fi
 }
 
 _src_compile() {
