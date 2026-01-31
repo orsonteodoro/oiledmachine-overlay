@@ -85,7 +85,7 @@ RESTRICT="
 IUSE="
 ${_TRAINERS[@]}
 +asm cpu_flags_arm_neon debug java test pgo static-libs
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE="
 	pgo? (
