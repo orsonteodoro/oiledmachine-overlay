@@ -80,7 +80,7 @@ SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~ppc-macos"
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_41
+ebuild_revision_42
 "
 CPU_USE=(
 	"cpu_flags_arm_"{"crypto","neon","pmull"}
@@ -154,6 +154,10 @@ BDEPEND="
 # NOTE: Considering patching Botan?
 # Please see upstream's guidance:
 # https://botan.randombit.net/handbook/packaging.html#minimize-distribution-patches
+
+PATCHES=(
+	"${FILESDIR}/${PN}-3.9.0-tests-simd.patch"
+)
 
 python_check_deps() {
 	use doc || return 0
