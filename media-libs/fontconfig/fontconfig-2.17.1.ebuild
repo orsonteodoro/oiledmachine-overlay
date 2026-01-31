@@ -23,7 +23,7 @@ if ! [[ $(ver_cut 3) -ge 90 ]] ; then
 fi
 IUSE="
 doc nls test
-ebuild_revision_7
+ebuild_revision_8
 "
 RESTRICT="!test? ( test )"
 
