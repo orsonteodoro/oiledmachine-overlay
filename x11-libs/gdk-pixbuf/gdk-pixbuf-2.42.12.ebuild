@@ -26,7 +26,7 @@ LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="
 gtk-doc +introspection gif jpeg test tiff
-ebuild_revision_19
+ebuild_revision_20
 "
 RESTRICT="
 	!test? (
