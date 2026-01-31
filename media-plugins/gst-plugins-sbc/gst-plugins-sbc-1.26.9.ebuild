@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="SBC encoder and decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	>=media-libs/sbc-1.0[${MULTILIB_USEDEP}]
