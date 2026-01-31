@@ -29,7 +29,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE="
 debug nethack pam selinux utempter multiuser
-ebuild_revision_18
+ebuild_revision_19
 "
 DEPEND="
 	>=sys-libs/ncurses-5.2:=
