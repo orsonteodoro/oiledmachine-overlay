@@ -125,7 +125,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	arm64? (
