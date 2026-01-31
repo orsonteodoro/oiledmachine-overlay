@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..12} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit distutils-r1
 
@@ -23,7 +23,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
