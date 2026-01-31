@@ -191,7 +191,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 clang lto -telemetry
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	clang
