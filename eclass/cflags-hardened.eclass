@@ -2062,6 +2062,7 @@ einfo "All SSP hardening (All functions hardened)"
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.008" \
 	]] ; then
 	# High benefit
+	# CE, PE, partial DoS mitigation
 		filter-flags "-f*delete-null-pointer-checks"
 		append-flags "-fno-delete-null-pointer-checks"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-delete-null-pointer-checks"
