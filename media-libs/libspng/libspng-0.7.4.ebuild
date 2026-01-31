@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc examples +opt -static-libs -test -threads zlib
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE+="
 	pgo? (
