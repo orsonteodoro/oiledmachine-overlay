@@ -307,7 +307,7 @@ SLOT="0/lts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_39
+ebuild_revision_40
 "
 REQUIRED_USE="
 	clamonacc? (
