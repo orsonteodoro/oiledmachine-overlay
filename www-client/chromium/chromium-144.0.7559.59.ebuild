@@ -734,7 +734,7 @@ ${SYSTEM_USE[@]}
 +miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
 +plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
 selinux systemd test +v8-snapshot +wayland +webassembly -widevine +X
-ebuild_revision_38
+ebuild_revision_39
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	IUSE+="

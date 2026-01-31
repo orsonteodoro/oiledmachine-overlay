@@ -15,7 +15,10 @@ HOMEPAGE="https://www.gtk.org/"
 
 LICENSE="LGPL-2+"
 SLOT="3"
-IUSE="aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
+IUSE="
+aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
+ebuild_revision_1
+"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( X )
