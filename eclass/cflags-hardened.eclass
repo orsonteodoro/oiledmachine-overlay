@@ -155,8 +155,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fstrict-flex-arrays=2                        1.00          # balanced             ; estimated security score 78
 # -fstrict-flex-arrays=3                        1.00          # security-critical    ; estimated security score 98 (kernel default)
 # -ftrivial-auto-var-init=zero          1.01 -  1.05
-# -fvtable-verify=preinit               1.06 -  1.16
-# -fvtable-verify=std                   1.05 -  1.15
+# -fvtable-verify=preinit               1.06 -  1.16          # security-critical    ; estimated security score 9.0 - 9.5
+# -fvtable-verify=std                   1.05 -  1.15          # performance-critical ; estimated security score 8.5 - 9.0
 # -fwrapv                                       1.00
 # -fzero-call-used-regs=all             1.10 -  1.25
 # -fzero-call-used-regs=used-gpr        1.03 -  1.08
@@ -541,6 +541,15 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # 1 - enable for most benefit use cases
 # 2 - enable for most and moderate benefit use cases
 # 3 - enable for low, medium, and most benefit; or all use cases
+
+# @USER_VARIABLE:  VTABLE_VERIFY_FLAVOR
+# @DESCRIPTION:
+# Select the coverage an implementation used.
+# You cannot mix the implementation systemwie.
+# Valid values:
+# preinit - check all vtables, but slower startup
+# std - check standard or reachable vtables, partial coverage, faster startup but less secure
+# none - disable vtable verification.
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
 # @DESCRIPTION:
@@ -3086,6 +3095,14 @@ ewarn
 		done
 	fi
 
+	local vtable_verify_flavor=${VTABLE_VERIFY_FLAVOR:-"preinit"}
+	local vtable_verify_score="0.0"
+	if [[ "${vtable_verify_flavor}" == "preinit" ]] ; then
+		vtable_verify_score="1.16"
+	elif [[ "${vtable_verify_flavor}" == "std" ]] ; then
+		vtable_verify_score="1.15"
+	fi
+
 	if \
 		[[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] \
 			&& \
@@ -3093,7 +3110,7 @@ ewarn
 			&& \
 		ver_test $(gcc-version) -ge "4.9" \
 			&& \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "${vtable_verify_score}" \
 	; then
 	# The package manager is not designed to track updates which makes it a
 	# maintenance nightmare.  vtv can only be applied to c++ to the
@@ -3110,8 +3127,8 @@ ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV
 	# ZC, CE, PE
 			filter-flags "-f*vtable-verify=*"
 			if (( ${disable_vtv} == 0 )) ; then
-				append-cxxflags "-fvtable-verify=std"
-				CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
+				append-cxxflags "-fvtable-verify=${vtable_verify_flavor}"
+				CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=${vtable_verify_flavor}"
 			else
 ewarn "Skipping applying -fvtable-verify until >=sys-devel/gcc-15 is removed from the system."
 			fi
