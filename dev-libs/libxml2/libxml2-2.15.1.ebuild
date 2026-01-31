@@ -32,7 +32,7 @@ LICENSE="MIT"
 SLOT="2/16"
 IUSE="
 doc icu python readline static-libs test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
