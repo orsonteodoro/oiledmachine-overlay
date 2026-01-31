@@ -4,11 +4,10 @@
 
 EAPI=8
 
-CYTHON_SLOT="0.29"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..12} )
 
-inherit cython distutils-r1
+inherit distutils-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -38,16 +37,11 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/setuptools-rust-1.0.0[${PYTHON_USEDEP}]
 	test? (
-		>=dev-util/ruff-0.4.3
+		>=dev-util/ruff-0.14.13
 	)
 "
-
-python_configure() {
-	cython_python_configure
-}
 
 src_test() {
 	run_test() {
