@@ -6,7 +6,7 @@ EAPI=8
 
 # U 22.04
 
-CYTHON_SLOT="0.29"
+CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 "
@@ -35,7 +35,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.29:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.0:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
