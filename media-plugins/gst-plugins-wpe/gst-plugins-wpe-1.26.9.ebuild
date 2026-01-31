@@ -21,7 +21,7 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="WPE Web browser plugin for GStreamer"
 IUSE="
-ebuild_revision_19
+ebuild_revision_20
 "
 gen_wpe_rdepend() {
 	local row
