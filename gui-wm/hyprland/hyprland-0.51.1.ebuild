@@ -46,7 +46,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer +qtutils systemd test X
-ebuild_revision_25
+ebuild_revision_26
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
