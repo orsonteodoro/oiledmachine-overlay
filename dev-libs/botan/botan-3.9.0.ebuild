@@ -80,7 +80,7 @@ SLOT="$(ver_cut 1)/$(ver_cut 1-2)" # soname version
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~ppc-macos"
 IUSE="
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_39
+ebuild_revision_40
 "
 CPU_USE=(
 	"cpu_flags_arm_"{"crypto","neon","pmull"}
