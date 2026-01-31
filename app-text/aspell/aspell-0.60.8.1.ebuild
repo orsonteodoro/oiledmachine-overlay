@@ -61,7 +61,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 nls regex test unicode
-ebuild_revision_18
+ebuild_revision_19
 "
 for LANG in ${LANGUAGES[@]}; do
 	IUSE+="
