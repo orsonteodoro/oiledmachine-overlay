@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# U22
+# RL8, U20, U22
 
 ARM_CPU_FLAGS=(
 	"neon:neon"
@@ -21,7 +21,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
 )
 
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{8..12} )
 X86_CPU_FLAGS=(
 	"avx2:avx2"
 	"avx512f:avx512f"
