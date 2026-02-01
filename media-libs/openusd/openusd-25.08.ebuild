@@ -43,7 +43,7 @@ OPENEXR_V3_PV=(
 	"3.2.0:3.1.9"
 	"3.1.13:3.1.9"
 )
-PYTHON_COMPAT=( "python3_"{9..13} )
+PYTHON_COMPAT=( "python3_"{8..13} )
 VULKAN_PV="1.3.296.0"
 
 inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
