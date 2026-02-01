@@ -87,7 +87,7 @@ esac
 CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v5.0.0/build_files/build_environment/install_linux_packages.py#L693 \
-PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
+PYTHON_COMPAT=( "python3_"{11..13} )
 BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
 FREETYPE_PV="2.13.3"
