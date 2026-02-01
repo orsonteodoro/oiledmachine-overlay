@@ -7,7 +7,7 @@ EAPI=8
 
 CXX_STANDARD=17
 CMAKE_BUILD_TYPE="Release"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{8,9,12} )
 SLOT_MAJOR="${PV%%.*}"
 
 inherit libstdcxx-compat
