@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
-PYTHON_COMPAT=( "python3_"{8..11} ) # U22 (3.10)
+PYTHON_COMPAT=( "python3_"{10..11} ) # U22 (3.10 - 3.11)
 
 inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
 inherit python-any-r1 toolchain-funcs
