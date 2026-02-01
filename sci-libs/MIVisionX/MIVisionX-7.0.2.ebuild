@@ -29,7 +29,10 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}" # U22
+	"${FFMPEG_COMPAT_SLOTS_5[@]}" # D12
+	"${FFMPEG_COMPAT_SLOTS_6[@]}" # U24
+	"${FFMPEG_COMPAT_SLOTS_7[@]}" # D13
 )
 
 inherit libstdcxx-compat
@@ -152,6 +155,16 @@ RDEPEND="
 		|| (
 			>=media-video/ffmpeg-4.4.1:56.58.58[fdk,gpl,libass,x264,x265,nonfree]
 			>=media-video/ffmpeg-4.4.1:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+
+			>=media-video/ffmpeg-5.1.8:57.59.59[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-5.1.8:0/57.59.59[fdk,gpl,libass,x264,x265,nonfree]
+
+			>=media-video/ffmpeg-6.1.4:58.60.60[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-6.1.4:0/58.60.60[fdk,gpl,libass,x264,x265,nonfree]
+
+			>=media-video/ffmpeg-6.1.4:59.61.61[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-6.1.4:0/59.61.61[fdk,gpl,libass,x264,x265,nonfree]
+
 		)
 		media-video/ffmpeg:=
 	)
