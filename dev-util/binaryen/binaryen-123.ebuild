@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 doc
-ebuild_revision_1
+ebuild_revision_2
 "
 CDEPEND+="
 	|| (

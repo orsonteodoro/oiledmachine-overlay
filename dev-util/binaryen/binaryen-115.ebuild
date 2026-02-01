@@ -3,11 +3,11 @@
 
 EAPI=8
 
-# U23
+# U22
 
 CXX_STANDARD=17
 CMAKE_BUILD_TYPE="Release"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 SLOT_MAJOR="${PV%%.*}"
 
 inherit libstdcxx-compat
@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 doc
-ebuild_revision_1
+ebuild_revision_2
 "
 CDEPEND+="
 	|| (
