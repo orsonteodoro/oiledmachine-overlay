@@ -17,7 +17,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
 CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 
 CMAKE_PV="3.15"
 GSTREAMER_PV="1.16.2"
@@ -334,7 +334,8 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}" # U20, U22
+	"${FFMPEG_COMPAT_SLOTS_6[@]}" # U24
 )
 
 ROCM_SLOTS=(
@@ -828,8 +829,14 @@ PATENT_STATUS_RDEPEND="
 	!patent_status_nonfree? (
 		ffmpeg? (
 			|| (
-				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-4.4.6:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-4.4.6:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+
+				>=media-video/ffmpeg-6.1.4:58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-6.1.4:0/58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+
+				>=media-video/ffmpeg-4.4.6:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-4.4.6:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 			)
 			media-video/ffmpeg:=
 		)
