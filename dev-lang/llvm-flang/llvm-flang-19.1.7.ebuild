@@ -17,7 +17,7 @@ GCC_COMPAT=(
 )
 
 LLVM_MAX_SLOT=${PV%%.*}
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit llvm-ebuilds
 
