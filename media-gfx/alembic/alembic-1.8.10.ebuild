@@ -7,7 +7,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=14
-PYTHON_COMPAT=( "python3_"{11..12} )
+PYTHON_COMPAT=( "python3_11" ) # Upstream only tests with 3.11 for CY2024
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
