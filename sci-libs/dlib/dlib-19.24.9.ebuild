@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U22, U24
+
 # doc needs a bunch of deps not in portage
 
 CFLAGS_HARDENED_ASSEMBLERS="inline"
@@ -21,8 +23,8 @@ CPU_FLAGS_X86=(
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_5[@]}"
-	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}" # U22
+	"${FFMPEG_COMPAT_SLOTS_6[@]}" # U24
 )
 
 inherit cflags-hardened cmake cuda distutils-r1
@@ -40,7 +42,7 @@ SLOT="0/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 cblas cuda debug examples ffmpeg gif jpeg lapack mkl png python sqlite test webp X
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	python? (
@@ -62,11 +64,11 @@ RDEPEND="
 	)
 	ffmpeg? (
 		|| (
-			media-video/ffmpeg:57.59.59[X?]
-			media-video/ffmpeg:59.61.61[X?]
+			>=media-video/ffmpeg-4.4.6:56.58.58[X?]
+			>=media-video/ffmpeg-4.4.6:0/56.58.58[X?]
 
-			media-video/ffmpeg:0/57.59.59[X?]
-			media-video/ffmpeg:0/59.61.61[X?]
+			>=media-video/ffmpeg-6.1.4:58.60.60[X?]
+			>=media-video/ffmpeg-6.1.4:0/58.60.60[X?]
 		)
 		media-video/ffmpeg:=
 	)
