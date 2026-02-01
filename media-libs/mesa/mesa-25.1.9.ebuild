@@ -4,7 +4,8 @@
 
 EAPI=8
 
-# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.1.7/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
+# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.1.9/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
+# A3.21 (LLVM 19; Python 3.12)
 # D12 (LLVM 19; Python 3.11)
 # F41 (LLVM 19; Python 3.13)
 
