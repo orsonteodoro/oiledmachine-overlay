@@ -28,7 +28,7 @@ unset -f _llvm_set_globals
 
 CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_"{12..14} )
 
 inherit flag-o-matic cmake-multilib linux-info libstdcxx-slot llvm llvm.org
 inherit python-single-r1 toolchain-funcs
