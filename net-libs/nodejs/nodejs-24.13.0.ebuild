@@ -4,17 +4,20 @@
 
 EAPI=8
 
+# FIXME:
+# ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
+
 # For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Oct 11, 2025
+# Last deps commit date:  Jan 9, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
-CXX_STANDARD=17
+CXX_STANDARD=20
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
@@ -26,9 +29,10 @@ UOPTS_SUPPORT_TPGO=1
 
 ACORN_PV="8.15.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.34.0"
-NGHTTP2_PV="1.64.0"
-NPM_PV="10.9.4" # See https://github.com/nodejs/node/blob/v22.21.1/deps/npm/package.json
+COREPACK_PV="0.34.5"
+NGHTTP2_PV="1.67.1"
+NGHTTP3_PV="1.6.0"
+NPM_PV="11.6.2" # See https://github.com/nodejs/node/blob/v24.13.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
@@ -85,15 +89,15 @@ _TRAINERS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
-LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
 inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
@@ -132,8 +136,8 @@ SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
-acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector +npm
-mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
++npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
 ebuild_revision_56
 "
 
@@ -173,16 +177,16 @@ RDEPEND+="
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.51.0
-	>=net-dns/c-ares-1.34.5
+	>=net-dns/c-ares-1.34.6
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-77.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-77.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.17:0[asm?,fips?]
+		>=dev-libs/openssl-3.5.4:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -195,7 +199,7 @@ BDEPEND+="
 	sys-apps/coreutils
 	virtual/pkgconfig
 	mold? (
-		>=sys-devel/mold-2.0[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
+		>=sys-devel/mold-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-devel/mold:=
 	)
 	pax-kernel? (
@@ -219,11 +223,11 @@ PDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-22.17.0-lto-update.patch"
-	"${FILESDIR}/${PN}-22.17.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-24.2.0-lto-update.patch"
+	"${FILESDIR}/${PN}-24.2.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-22.17.0-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-22.13.0-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-24.11.1-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-24.2.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -273,7 +277,7 @@ einfo "FEATURES:  ${FEATURES}"
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2027-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2028-04-30."
 
 	local u
 	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do
@@ -498,6 +502,7 @@ enable_gdb() {
 set_jit_level() {
 	_jit_level_0() {
 		# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
+		#myconf+=( --v8-disable-drumbrake )
 		#myconf+=( --disable-gdb )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -507,6 +512,7 @@ set_jit_level() {
 
 	_jit_level_1() {
 		# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev ) # Requires turbofan
 		myconf+=( --v8-enable-sparkplug )
@@ -516,6 +522,7 @@ set_jit_level() {
 
 	_jit_level_2() {
 		# > 75% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -525,6 +532,7 @@ set_jit_level() {
 
 	_jit_level_5() {
 		# > 90% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		myconf+=( --v8-enable-sparkplug )
@@ -534,8 +542,9 @@ set_jit_level() {
 
 	_jit_level_6() {
 		# 100% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
-	# https://github.com/nodejs/node/blob/v22.13.0/deps/v8/BUILD.gn#L516
+	# https://github.com/nodejs/node/blob/v23.6.0/deps/v8/BUILD.gn#L542
 		if use amd64 || use arm || use arm64 ; then
 			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		fi

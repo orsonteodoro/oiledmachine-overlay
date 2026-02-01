@@ -12,7 +12,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Nov 14, 2025
+# Last deps commit date:  Jan 24, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
@@ -29,10 +29,10 @@ UOPTS_SUPPORT_TPGO=1
 
 ACORN_PV="8.15.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.34.2"
-NGHTTP2_PV="1.67.1"
-NGHTTP3_PV="1.6.0"
-NPM_PV="11.6.2" # See https://github.com/nodejs/node/blob/v25.1.0/deps/npm/package.json
+COREPACK_PV="0.34.4"
+NGHTTP2_PV="1.68.0"
+NGHTTP3_PV="1.14.0"
+NPM_PV="11.8.0" # See https://github.com/nodejs/node/blob/v25.5.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
@@ -174,15 +174,15 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.1.0
+	>=app-arch/brotli-1.2.0
 	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.51.0
-	>=net-dns/c-ares-1.34.5
+	>=net-dns/c-ares-1.34.6
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-77.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=dev-libs/icu-78.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-libs/icu:=
 	)
 	system-ssl? (
