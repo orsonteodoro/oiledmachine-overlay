@@ -7,7 +7,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=14
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
