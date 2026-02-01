@@ -11,7 +11,7 @@ GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="3"
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="4"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{10..11} ) # See https://github.com/grpc/grpc/blob/v1.51.3/setup.py
 
 inherit distutils-r1
 

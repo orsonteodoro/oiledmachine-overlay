@@ -16,7 +16,7 @@ GRPC_SLOT="4"
 PROTOBUF_PV="25.1"
 PROTOBUF_CPP_SLOT="4"
 PROTOBUF_PYTHON_SLOT="4"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx14"

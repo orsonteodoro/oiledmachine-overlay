@@ -9,7 +9,7 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_SLOT="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..13} ) # See https://github.com/grpc/grpc/blob/v1.71.2/src/python/grpcio/python_version.py#L17
 
 inherit distutils-r1
 
