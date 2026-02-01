@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# U22, U24
+# RL8, U22
 
 # SSE4.1 hardware was released in 2008.
 # See scripts/build.py for release versioning.
@@ -18,7 +18,7 @@ MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
 OIDN_WEIGHTS_COMMIT="28883d1769d5930e13cf7f1676dd852bd81ed9e7"
 ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx902"

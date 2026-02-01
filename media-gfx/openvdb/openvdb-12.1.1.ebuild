@@ -14,7 +14,7 @@ ONETBB_SLOT="0"
 OPENVDB_ABIS=( {12..11} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(

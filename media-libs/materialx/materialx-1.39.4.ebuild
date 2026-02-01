@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cmake libcxx-slot libstdcxx-slot python-single-r1
 
