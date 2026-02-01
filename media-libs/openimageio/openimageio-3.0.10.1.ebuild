@@ -20,7 +20,7 @@ ONETBB_SLOT="0"
 OPENVDB_APIS=( {12..9} )
 OPENVDB_APIS_=( "${OPENVDB_APIS[@]/#/abi}" )
 OPENVDB_APIS_=( "${OPENVDB_APIS_[@]/%/-compat}" )
-PYTHON_COMPAT=( "python3_"{11..12} )
+PYTHON_COMPAT=( "python3_"{7..13} )
 QT5_PV="5.15"
 QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
