@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -36,7 +36,7 @@ else
 		S="${WORKDIR}/${P//_/-}"
 	else
 		CURL_URI="https://curl.se/download/"
-		KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+		KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	fi
 	SRC_URI="
 		${CURL_URI}${P//_/-}.tar.xz
@@ -88,14 +88,12 @@ REQUIRED_USE="
 	)
 	curl_quic_openssl? (
 		curl_ssl_openssl
-		quic
 		!gnutls
 		!mbedtls
 		!rustls
 	)
 	curl_quic_ngtcp2? (
 		curl_ssl_gnutls
-		quic
 		!mbedtls
 		!openssl
 		!rustls
@@ -115,6 +113,9 @@ REQUIRED_USE="
 # However 'supported' vs 'works' are two entirely different things; be sane but
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
+# TODO: OpenSSL-QUIC support is going to be removed in 2026; depend on ngtcp2[{gnutls,openssl}] before that point.
+# - https://github.com/curl/curl/pull/18820 (Deprecate OpenSSL QUIC support)
+# - https://github.com/curl/curl/issues/18336 (curl w/ OpenSSL QUIC fails to fetch Google.com)
 RDEPEND="
 	>=sys-libs/zlib-1.2.5[${MULTILIB_USEDEP}]
 	adns? ( >=net-dns/c-ares-1.16.0:=[${MULTILIB_USEDEP}] )
@@ -140,7 +141,8 @@ RDEPEND="
 		)
 		mbedtls? (
 			app-misc/ca-certificates
-			net-libs/mbedtls:0=[${MULTILIB_USEDEP}]
+			net-libs/mbedtls:3[${MULTILIB_USEDEP}]
+			net-libs/mbedtls:=
 		)
 		openssl? (
 			>=dev-libs/openssl-1.0.2:=[static-libs?,${MULTILIB_USEDEP}]
@@ -165,7 +167,7 @@ BDEPEND="
 	verify-sig? ( sec-keys/openpgp-keys-danielstenberg )
 "
 
-DOCS=( README docs/{FEATURES.md,INTERNALS.md,FAQ,BUGS.md,CONTRIBUTE.md} )
+DOCS=( "README" "docs/"{"FEATURES.md","INTERNALS.md","FAQ.md","BUGS.md","CONTRIBUTE.md"} )
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/curl/curlbuild.h
@@ -190,7 +192,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-prefix-4.patch"
+	"${FILESDIR}/${PN}-prefix-6.patch"
 	"${FILESDIR}/${PN}-respect-cflags-3.patch"
 )
 
@@ -355,7 +357,6 @@ multilib_src_configure() {
 		$(use_with kerberos gssapi "${EPREFIX}"/usr)
 		$(use_with sasl-scram libgsasl)
 		$(use_with psl libpsl)
-		--without-msh3
 		--without-quiche
 		--without-schannel
 		--without-winidn
