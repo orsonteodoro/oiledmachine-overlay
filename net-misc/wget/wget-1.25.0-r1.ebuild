@@ -21,11 +21,11 @@ SRC_URI+=" verify-sig? ( mirror://gnu/wget/${P}.tar.lz.sig )"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
+x86 ~arm64-macos ~x64-macos ~x64-solaris
 "
 IUSE="
-cookie-check debug gnutls idn ipv6 libproxy metalink nls ntlm pcre +ssl static
+cookie-check debug gnutls idn libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
 ebuild_revision_20
 "
@@ -58,7 +58,7 @@ LIB_DEPEND="
 		net-libs/libproxy
 	)
 	metalink? (
-		app-crypt/gpgme
+		app-crypt/gpgme:=
 		media-libs/libmetalink
 	)
 	pcre? (
@@ -76,7 +76,8 @@ LIB_DEPEND="
 		sys-apps/util-linux[static-libs(+)]
 	)
 	zlib? (
-		sys-libs/zlib[static-libs(+)]
+		virtual/zlib[static-libs(+)]
+		virtual/zlib:=
 	)
 "
 RDEPEND="
@@ -154,7 +155,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		ac_cv_libunistring="no"
 		$(use_enable debug)
 		$(use_enable idn iri)
-		$(use_enable ipv6)
 		$(use_enable libproxy)
 		$(use_enable nls)
 		$(use_enable ntlm)
@@ -166,6 +166,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_with ssl ssl $(usex gnutls gnutls openssl))
 		$(use_with uuid libuuid)
 		$(use_with zlib)
+		--enable-ipv6
 		--disable-assert
 		--disable-pcre
 		--disable-rpath
