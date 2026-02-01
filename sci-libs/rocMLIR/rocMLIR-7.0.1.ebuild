@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17 # Compiler default
 LLVM_SLOT=19
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat

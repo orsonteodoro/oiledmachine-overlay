@@ -34,7 +34,7 @@ DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 AMDGPU_TARGETS_COMPAT=(

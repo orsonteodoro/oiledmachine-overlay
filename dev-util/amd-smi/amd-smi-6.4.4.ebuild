@@ -8,7 +8,7 @@ EAPI=8
 #AMD_HSMP_H_COMMIT="54aa699e8094efb7d7675fefbc03dfce24f98456"
 ESMI_PV="4.1.2"
 LLVM_SLOT=19
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 MY_PN="amdsmi"
 

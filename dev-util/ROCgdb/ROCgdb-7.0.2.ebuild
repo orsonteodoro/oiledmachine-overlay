@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=19
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch flag-o-matic python-single-r1 rocm
