@@ -4,7 +4,7 @@
 
 EAPI=8
 
-LOCKFILE_VER="3" # See https://github.com/npm/cli/blob/v11.6.0/package-lock.json#L4
+LOCKFILE_VER="3" # See https://github.com/npm/cli/blob/v11.8.0/package-lock.json#L4
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
