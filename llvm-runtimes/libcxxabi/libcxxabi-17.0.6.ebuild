@@ -35,7 +35,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 CXX_STANDARD=23
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_"{12..14} )
 
 inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm llvm.org python-any-r1 toolchain-funcs
 

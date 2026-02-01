@@ -28,7 +28,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
 

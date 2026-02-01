@@ -13,7 +13,7 @@ fi
 
 CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 # For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
 # For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41

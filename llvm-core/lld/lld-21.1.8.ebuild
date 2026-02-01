@@ -10,7 +10,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{13..14} )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="

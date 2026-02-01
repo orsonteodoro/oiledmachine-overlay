@@ -44,7 +44,7 @@ LLVM_COMPONENTS=(
 CMAKE_ECLASS="cmake"
 CXX_STANDARD=23
 LLVM_MAX_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_"{12..14} )
 
 inherit check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 

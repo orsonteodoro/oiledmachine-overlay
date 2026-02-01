@@ -23,7 +23,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv sparc x86 ~arm64-macos ~x64-macos

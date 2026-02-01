@@ -30,7 +30,7 @@ unset -f _llvm_set_globals
 CMAKE_ECLASS="cmake"
 CXX_STANDARD=17
 LLVM_MAX_SLOT="${LLVM_MAJOR}"
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit check-compiler-switch cmake-multilib flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
