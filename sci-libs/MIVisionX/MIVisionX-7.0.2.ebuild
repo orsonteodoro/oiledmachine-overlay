@@ -162,9 +162,8 @@ RDEPEND="
 			>=media-video/ffmpeg-6.1.4:58.60.60[fdk,gpl,libass,x264,x265,nonfree]
 			>=media-video/ffmpeg-6.1.4:0/58.60.60[fdk,gpl,libass,x264,x265,nonfree]
 
-			>=media-video/ffmpeg-6.1.4:59.61.61[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-6.1.4:0/59.61.61[fdk,gpl,libass,x264,x265,nonfree]
-
+			>=media-video/ffmpeg-7.1.3:59.61.61[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-7.1.3:0/59.61.61[fdk,gpl,libass,x264,x265,nonfree]
 		)
 		media-video/ffmpeg:=
 	)
