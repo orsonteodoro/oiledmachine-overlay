@@ -2,6 +2,8 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# U20
+
 # Versioning stored here to dedupe requirements in both godot-editor and export template ebuilds.
 
 STATUS="stable"
