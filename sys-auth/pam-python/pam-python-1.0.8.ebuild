@@ -73,6 +73,8 @@ PATCHES=(
 
 	# python3.9 compat
 	"${FILESDIR}/${PN}-1.0.8-use-PyObject_Call.patch"
+
+	"${FILESDIR}/${PN}-1.0.8-python-3.12-compat.patch"
 )
 
 pkg_setup() {
