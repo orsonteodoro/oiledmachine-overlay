@@ -45,6 +45,7 @@ distutils_enable_tests pytest
 python_configure() {
 	export PYYAML_FORCE_CYTHON=1
 	cython_set_cython_slot "3.0"
+	cython_python_configure
 }
 
 python_test() {
