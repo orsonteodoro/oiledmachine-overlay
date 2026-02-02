@@ -25,9 +25,9 @@ else
 	#printf -v DOC_PV "%u%02u%02u00" $(ver_rs 1-3 " ")
 
 	# It is not clear if it is tested recently.
-	#KEYWORDS="~amd64 ~amd64-linux ~arm ~arm64 ~ppc ~s390 ~sparc ~x64-macos ~x86" # Based on source code
+	#KEYWORDS="~amd64 ~amd64-linux arm arm64 ppc ~s390 ~sparc ~x64-macos x86" # Based on source code
 
-	KEYWORDS="~amd64 ~x64-macos" # Based on download page
+	KEYWORDS="amd64 ~x64-macos" # Based on download page
 	S="${WORKDIR}/${PN}-src-${SRC_PV}"
 	SRC_URI="
 		https://sqlite.org/2025/${PN}-src-${SRC_PV}.zip
@@ -59,15 +59,19 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
+	virtual/zlib[${MULTILIB_USEDEP}]
+	virtual/zlib:=
 	icu? (
-		dev-libs/icu:=[${MULTILIB_USEDEP}]
+		dev-libs/icu[${MULTILIB_USEDEP}]
+		dev-libs/icu:=
 	)
 	readline? (
-		sys-libs/readline:=[${MULTILIB_USEDEP}]
+		sys-libs/readline[${MULTILIB_USEDEP}]
+		sys-libs/readline:=
 	)
 	tcl? (
-		dev-lang/tcl:=[${MULTILIB_USEDEP},threads]
+		dev-lang/tcl[${MULTILIB_USEDEP},threads]
+		dev-lang/tcl:=
 	)
 	tools? (
 		dev-lang/tcl:=
@@ -93,6 +97,7 @@ fi
 
 PATCHES=(
 	"${FILESDIR}/${PN}-3.47.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
+	"${FILESDIR}/${PN}-3.50.4-clang.patch"
 )
 
 erun() {
