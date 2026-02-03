@@ -38,8 +38,9 @@ OPUS_PV="1.1.5"
 OPUSFILE_PV="0.8"
 PKGCONF_PV="1.3.7"
 
-# The latest Python 3.x in https://github.com/actions/runner-images/blob/ubuntu22/20251021.115/images/ubuntu/Ubuntu2204-Readme.md#python
-PYTHON_COMPAT=( "python3_14" )
+# CI uses the latest Python 3.x (3.14) in https://github.com/actions/runner-images/blob/ubuntu22/20251021.115/images/ubuntu/Ubuntu2204-Readme.md#python
+# U22 - 3.10, 3.11
+PYTHON_COMPAT=( "python3_"{10,11,14} ) # Override for bytecode compatiblity with U22
 
 RECASTNAVIGATION_PV="1.6.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1" # From past experience.  speech-dispatcher team noted a bug. # skip

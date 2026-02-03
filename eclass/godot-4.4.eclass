@@ -41,8 +41,9 @@ OPENXR_PV="1.1.41"
 PKGCONF_PV="1.3.7" # skip
 
 # Upstream builds with 3.13 or 3.8.
-# The latest Python 3.x in https://github.com/actions/runner-images/blob/ubuntu22/20250323.1/images/ubuntu/Ubuntu2204-Readme.md#python
-PYTHON_COMPAT=( "python3_13" )
+# CI uses the latest Python 3.x (3.13) in https://github.com/actions/runner-images/blob/ubuntu22/20250323.1/images/ubuntu/Ubuntu2204-Readme.md#python
+# U22 - 3.10, 3.11
+PYTHON_COMPAT=( "python3_"{10,11,13} ) # Override for bytecode compatiblity U22
 
 RECASTNAVIGATION_PV="1.6.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1" # From past experience.  speech-dispatcher team noted a bug. # skip

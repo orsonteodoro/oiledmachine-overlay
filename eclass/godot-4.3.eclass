@@ -41,8 +41,9 @@ MSDFGEN_PV="1.11"
 OPENXR_PV="1.0.34"
 PKGCONF_PV="1.3.7" # skip
 
-# The latest Python 3.x in https://github.com/actions/runner-images/blob/ubuntu22/20240811.1/images/ubuntu/Ubuntu2204-Readme.md#python
-PYTHON_COMPAT=( "python3_12" )
+# CI uses the latest Python 3.x (3.12) in https://github.com/actions/runner-images/blob/ubuntu20/20240811.1/images/ubuntu/Ubuntu2004-Readme.md#python
+# U20 - 3.8, 3.9
+PYTHON_COMPAT=( "python3_"{8,9,12} ) # Override for bytecode compatiblity with U20
 
 RECASTNAVIGATION_PV="1.6.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1" # From past experience.  speech-dispatcher team noted a bug. # skip
