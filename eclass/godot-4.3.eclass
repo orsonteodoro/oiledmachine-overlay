@@ -40,7 +40,10 @@ MINIUPNPC_PV="2.2.7"
 MSDFGEN_PV="1.11"
 OPENXR_PV="1.0.34"
 PKGCONF_PV="1.3.7" # skip
-PYTHON_COMPAT=( "python3_13" )
+
+# The latest Python 3.x in https://github.com/actions/runner-images/blob/ubuntu22/20240811.1/images/ubuntu/Ubuntu2204-Readme.md#python
+PYTHON_COMPAT=( "python3_12" )
+
 RECASTNAVIGATION_PV="1.6.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1" # From past experience.  speech-dispatcher team noted a bug. # skip
 SPEECH_DISPATCHER_PV_MIN="0.8.8" # skip
