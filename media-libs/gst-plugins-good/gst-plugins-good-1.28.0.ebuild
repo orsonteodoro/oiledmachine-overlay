@@ -5,36 +5,18 @@ EAPI=8
 
 # Old media-libs/gst-plugins-ugly is a blocker for xingmux moving from ugly->good.
 
+# TODO package:
+# amrnb
+# amrwbdec
+
 CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO IU UAF UM"
 GST_ORG_MODULE="gst-plugins-good"
-MITIGATION_DATE="Dec 3, 2024" # Advisory date
-MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
-SEVERITY_LABEL="CVSS 4.0"
-VULNERABILITIES_FIXED=(
-	"CVE-2024-47540;CE, DoS, DT, ID;High"
-	"CVE-2024-47606;CE, DoS, DT, ID;High"
-	"CVE-2024-47539;CE, DoS, DT, ID;High"
-	"CVE-2024-47613;DoS, DT, ID;High"
-	"CVE-2024-47537;DoS, DT, ID;High"
-	"CVE-2024-47598;DoS, DT;Medium"
-	"CVE-2024-47777;DoS, DT;Medium"
-	"CVE-2024-47776;DoS, DT;Medium"
-	"CVE-2024-47778;DoS, DT;Medium"
-	"CVE-2024-47774;DoS, DT;Medium"
-	"CVE-2024-47775;DoS, DT;Medium"
-	"CVE-2024-47596;DoS, DT;Medium"
-	"CVE-2024-47597;DoS, DT;Medium"
-	"CVE-2024-47543;DoS, DT;Medium"
-	"CVE-2024-47834;DoS, ID;Medium"
-	"CVE-2024-47603;DoS;Medium"
-	"CVE-2024-47601;DoS;Medium"
-	"CVE-2024-47602;DoS;Medium"
-	"CVE-2024-47599;DoS;Medium"
-	"CVE-2024-47546;DoS;Medium"
-	"CVE-2024-47544;DoS;Medium"
-	"CVE-2024-47545;DoS;Medium"
-)
+#MITIGATION_DATE="Dec 3, 2024" # Advisory date
+#MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
+#SEVERITY_LABEL="CVSS 4.0"
+#VULNERABILITIES_FIXED=(
+#)
 
 inherit cflags-hardened gstreamer-meson vf
 
