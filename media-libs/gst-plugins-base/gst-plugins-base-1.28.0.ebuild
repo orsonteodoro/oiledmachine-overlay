@@ -37,18 +37,11 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO SO"
 GST_ORG_MODULE="gst-plugins-base"
-MITIGATION_DATE="Dec 3, 2024" # Advisory date
-MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
-SEVERITY_LABEL="CVSS 4.0"
-VULNERABILITIES_FIXED=(
-	"CVE-2024-47615;CE, DoS, DT, ID;High"
-	"CVE-2024-47607;DoS, DT, ID;High"
-	"CVE-2024-47538;DoS, DT, ID;High"
-	"CVE-2024-47600;DoS, DT;Medium"
-	"CVE-2024-47541;DoS;Medium"
-	"CVE-2024-47835;DoS;Medium"
-	"CVE-2024-47542;DoS;Medium"
-)
+#MITIGATION_DATE="Dec 3, 2024" # Advisory date
+#MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
+#SEVERITY_LABEL="CVSS 4.0"
+#VULNERABILITIES_FIXED=(
+#)
 
 inherit cflags-hardened flag-o-matic gstreamer-meson vf
 
