@@ -4,11 +4,17 @@
 EAPI=8
 
 # TODO package:
-# lcevcdecoder
+# mpeghdec
 # svtjpegxs
 # nvdswrapper
 # teletextdec
+# vmaf
+# wpe2
 # zxing
+
+# Packaged in this ebuild
+# lcevcdecoder
+# webrtcdsp
 
 # X11 is no longer automagic which complicates vulkan configure.
 # Upstream issue #709530 - x11 is only used by librfb USE=vnc plugin.
@@ -190,8 +196,8 @@ RDEPEND="
 		)
 	)
 	wayland? (
-		>=dev-libs/wayland-1.4.0[${MULTILIB_USEDEP}]
-		>=dev-libs/wayland-protocols-1.15
+		>=dev-libs/wayland-1.15[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.44
 		>=x11-libs/libdrm-2.4.104[${MULTILIB_USEDEP}]
 	)
 	X? (
