@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# D10, U19
+
 DISTUTILS_USE_PEP517="no"
 EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
 EXTPLANE_ID="a1428feb9916d6acad8d"
@@ -10,7 +12,7 @@ LIBREMINES_PV="1.10.0"
 LINUX_PV="6.1"
 NAUTILUS_PV="44.2.1"
 OPENFOAM_PV="3.0.1"
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python2_7" "python3_"{7,11,12} )
 VIM_QT_PV="20170421"
 
 inherit check-compiler-switch distutils-r1 flag-o-matic
