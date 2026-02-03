@@ -32,6 +32,9 @@ RDEPEND="
 	media-plugins/gst-plugins-srtp:=
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/glib:=
+	examples? (
+		>=dev-libs/libcgroup-0.26
+	)
 	introspection? (
 		>=dev-libs/gobject-introspection-1.31.1
 		dev-libs/gobject-introspection:=
