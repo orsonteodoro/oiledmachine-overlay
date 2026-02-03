@@ -10,12 +10,11 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IU"
-MITIGATION_DATE="Dec 3, 2024" # Advisory date
-MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
-SEVERITY_LABEL="CVSS 4.0"
-VULNERABILITIES_FIXED=(
-	"CVE-2024-47606;CE, DoS, DT, ID;High"
-)
+#MITIGATION_DATE="Dec 3, 2024" # Advisory date
+#MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
+#SEVERITY_LABEL="CVSS 4.0"
+#VULNERABILITIES_FIXED=(
+#)
 # DoS = Denial of Service
 # DT = Data Tampering
 # ID = Information Disclosure
