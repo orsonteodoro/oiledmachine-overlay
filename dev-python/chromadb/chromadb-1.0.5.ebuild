@@ -19,7 +19,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
 PROTOBUF_GRPC="5"
 PROTOBUF_CPP_SLOT="5"
-PROTOBUF_PYTHON_SLOT="5.29"
+PROTOBUF_PYTHON_SLOT="5"
 PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
 PYTHON_COMPAT=( "python3_"{11..12} )
 OPENTELEMETRY_PV_DEV="1.29.0"
@@ -927,7 +927,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 dev
-ebuild_revision_6
+ebuild_revision_7
 "
 gen_grpcio_rdepend_dev() {
 	local impl
