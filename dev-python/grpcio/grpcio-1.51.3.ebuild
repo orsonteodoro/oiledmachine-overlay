@@ -13,7 +13,7 @@ GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="3"
 PROTOBUF_CPP_SLOT="3"
-PROTOBUF_PYTHON_SLOT="4"
+PROTOBUF_PYTHON_SLOT="4.21"
 PYTHON_COMPAT=( "python3_"{10..11} ) # See https://github.com/grpc/grpc/blob/v1.51.3/setup.py
 RE2_SLOT="20220623"
 
@@ -51,7 +51,7 @@ SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 ${_CXX_STANDARD[@]}
 doc protobuf
-ebuild_revision_9
+ebuild_revision_11
 "
 REQUIRED_USE="
 	^^ (

@@ -13,7 +13,7 @@ GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="4"
 PROTOBUF_CPP_SLOT="4"
-PROTOBUF_PYTHON_SLOT="4"
+PROTOBUF_PYTHON_SLOT="4.25"
 PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 RE2_SLOT="20220623"
 
@@ -45,7 +45,7 @@ LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 doc protobuf
-ebuild_revision_9
+ebuild_revision_11
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
