@@ -15,7 +15,7 @@ GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="4"
 PROTOBUF_PV="25.1"
 PROTOBUF_CPP_SLOT="4"
-PROTOBUF_PYTHON_SLOT="4"
+PROTOBUF_PYTHON_SLOT="4.25"
 PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 
 _CXX_STANDARD=(
@@ -52,7 +52,7 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_10
+ebuild_revision_11
 "
 # See https://github.com/grpc/grpc/blob/v1.62.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.62.3/third_party
