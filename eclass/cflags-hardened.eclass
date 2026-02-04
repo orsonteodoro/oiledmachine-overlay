@@ -3155,11 +3155,13 @@ einfo "Added ${x} from ${module} sanitizer"
 # remove all muxers by adding more additional ebuild metadata or constraints.
 #
 ewarn
-ewarn "TENTATIVE notice for resolution for unbroken vtv support."
+ewarn "Notice for resolution for unbroken vtv support."
 ewarn
-ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv) used in C++ programs to protect some execution integrity."
+ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv) used in C++"
+ewarn "programs to protect some execution integrity."
 ewarn
-ewarn "The following oiledmachine-overlay ebuilds have to be re-emerged to switch to the unbroken vtv implementation:"
+ewarn "The following oiledmachine-overlay ebuilds have to be re-emerged to"
+ewarn "switch to the unbroken vtv implementation:"
 ewarn
 ewarn "app-antivirus/clamav::oiledmachine-overlay"
 ewarn "dev-qt/qtwebengine::oiledmachine-overlay"
@@ -3167,15 +3169,22 @@ ewarn "dev-qt/qtwayland::oiledmachine-overlay"
 ewarn "dev-qt/qtdeclarative::oiledmachine-overlay"
 ewarn "dev-qt/qtbase::oiledmachine-overlay"
 ewarn
-ewarn "If you did system-wide vtv, the entire system should be re-emerged twice.  Once to remove vtv.  Second time to re-apply unbroken vtv."
+ewarn "If you did system-wide vtv, the entire system should be re-emerged"
+ewarn "twice.  Once to remove vtv.  Second time to re-apply unbroken vtv."
 ewarn
-ewarn "1. Rebuild the system without vtv and without using >=sys-devel/gcc-15.  You must link to older gcc version to safely remove >=gcc-15 and friends (libvtv, libstdc++, lib*san, etc)."
+ewarn "1. Rebuild the system without vtv and without using >=sys-devel/gcc-15."
+ewarn "   You must link to older gcc version to safely remove >=gcc-15 and"
+ewarn "   friends (libvtv, libstdc++, lib*san, etc)."
 ewarn "2. Then, remove >=sys-devel/gcc-15 from the system."
 ewarn "3. Add >=sys-devel/gcc-15 to /etc/portage/package.mask/gcc."
-ewarn "4. Then rebuild C++ packages selectively with vtv using <=sys-devel/gcc-14 compiler."
+ewarn "4. Then rebuild C++ packages selectively with vtv using"
+ewarn "   <=sys-devel/gcc-14 compiler."
 ewarn
-ewarn "GCC 14 is likely not to have a broken vtv implementation but not verified yet."
-ewarn "This message may be updated to point to the unbroken slot implementation of vtv."
+ewarn "Switching to a newer GCC slot from the systemwide default may be vtv"
+ewarn "incompatible."
+ewarn
+ewarn "C++ packages that require GCC 15 or newer need to be un-emerged to avoid"
+ewarn "vtv build time incompability."
 ewarn
 				disable_vtv=1
 				break
