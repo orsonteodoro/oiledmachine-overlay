@@ -6,7 +6,7 @@ EAPI=8
 MY_PV=$(ver_cut "1-3" "${PV}")
 
 ABSEIL_CPP_SLOT="20240722"
-CYTHON_SLOT="0.29"
+CYTHON_SLOT="3.0"
 CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -47,7 +47,7 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_11
+ebuild_revision_12
 "
 # See https://github.com/grpc/grpc/blob/v1.71.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.71.2/third_party
@@ -56,7 +56,7 @@ RDEPEND="
 	dev-cpp/abseil-cpp:=
 	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/protobuf:=
-	>=dev-python/cython-0.29.8:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.0:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
