@@ -8,7 +8,7 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_CPP_SLOT=3
-PROTOBUF_PYTHON_SLOT=$(ver_cut "1-2" "${PV}")
+PROTOBUF_PYTHON_SLOT=3
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.7
 
 inherit distutils-r1 flag-o-matic
@@ -39,7 +39,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="${PROTOBUF_PYTHON_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH wrapper for app
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 RDEPEND="
 	${PYTHON_DEPS}
 	!dev-python/protobuf:0
