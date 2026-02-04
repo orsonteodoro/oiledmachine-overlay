@@ -390,7 +390,8 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SLS_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of SLS detection always true for porting from builder machine to affected CPU when building bootdisk portable Live CD/USB.
+# Make automagic of SLS detection always true for porting from builder machine
+# to affected CPU when building bootdisk portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V1
@@ -403,7 +404,8 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V1_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of Spectre v1 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Make automagic of Spectre v1 detection always true for porting from builder
+# machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V2
@@ -416,8 +418,28 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SPECTRE_V2_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Make automagic of Spectre v2 detection always true for porting from builder
+# machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
+
+# @USER_VARIABLE:  RUSTFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER
+# A space delimited string containing tags that are associated with crown jewels
+# information to override the default.
+# Valid values:
+# See RUSTFLAGS_HARDENED_USE_CASES
+# Default:  "crypto database dss ip-assets multithreaded-confidential secure-messaging sensitive-data"
+
+# @USER_VARIABLE:  RUSTFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER
+# A space delimited string containing tags that are associated with the keys to
+# the crown jewels to override the default.
+# Valid values:
+# See RUSTFLAGS_HARDENED_USE_CASES
+# Default:  "admin-access copy-paste-password credentials crypto dss facial-embedding login secure-messaging sensitive-data"
+
+# @USER_VARIABLE:  RUSTFLAGS_HARDENED_USE_CASES_USER_APPEND
+# A space delimited list of custom use case tags to append for crown jewels
+# and/or keys to the crown jewels filtering.  One may add security-critical
+# to apply full hardening.
 
 # @FUNCTION:  _rustflags-hardened_compiler_arch
 # @DESCRIPTION:
@@ -892,7 +914,29 @@ _rustflags-hardened_harden_sls() {
 # @DESCRIPTION:
 # Information is the new gold
 _rustflags-hardened_is_crown_jewels() {
-	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto"|"ip-assets"|"multithreaded-confidential"|"secure-messaging"|"sensitive-data") ]] ; then
+	local default_categories=(
+		"crypto"
+		"database"
+		"dss"
+		"ip-assets"
+		"multithreaded-confidential"
+		"secure-messaging"
+		"sensitive-data"
+	)
+
+	if [[ -n "${RUSTFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}" ]] ; then
+		read -r -a default_categories <<< "${RUSTFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}"
+	fi
+
+	local found=0
+	local x
+	for x in "${default_categories[@]}" ; do
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
+			found=1
+		fi
+	done
+
+	if (( ${found} == 1 )) ; then
 		return 0
 	else
 		return 1
@@ -903,7 +947,32 @@ _rustflags-hardened_is_crown_jewels() {
 # @DESCRIPTION:
 # The keys to the jewels
 _rustflags-hardened_is_crown_jewels_key() {
-	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"admin-access"|"copy-paste-password"|"credentials"|"crypto"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
+	local default_categories=(
+		"admin-access"
+		"copy-paste-password"
+		"credentials"
+		"crypto"
+		"dss"
+		"facial-embedding"
+		"login"
+		"secure-messaging"
+		"sensitive-data"
+	)
+
+
+	if [[ -n "${RUSTFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}" ]] ; then
+		read -r -a default_categories <<< "${RUSTFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}"
+	fi
+
+	local found=0
+	local x
+	for x in "${default_categories[@]}" ; do
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
+			found=1
+		fi
+	done
+
+	if (( ${found} == 1 )) ; then
 		return 0
 	else
 		return 1
@@ -1124,6 +1193,10 @@ ewarn "Disabling rustflags-hardenend for USE=debug"
 
 	if [[ -n "${RUSTFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
 		RUSTFLAGS_HARDENED_TOLERANCE="${RUSTFLAGS_HARDENED_TOLERANCE_USER}"
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_USE_CASES_USER_APPEND}" ]] ; then
+		RUSTFLAGS_HARDENED_USE_CASES+=" ${RUSTFLAGS_HARDENED_USE_CASES_USER_APPEND}"
 	fi
 
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then

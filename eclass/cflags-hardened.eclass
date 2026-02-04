@@ -486,7 +486,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SLS_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of SLS detection always true for porting from builder machine to affected CPU when building bootdisk or portable Live CD/USB.
+# Make automagic of SLS detection always true for porting from builder machine
+# to affected CPU when building bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V1
@@ -499,7 +500,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V1_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of Spectre v1 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Make automagic of Spectre v1 detection always true for porting from builder
+# machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V2
@@ -512,7 +514,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SPECTRE_V2_FORCE
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Make automagic of Spectre v2 detection always true for porting from builder machine to affected CPU when bulding bootdisk or portable Live CD/USB.
+# Make automagic of Spectre v2 detection always true for porting from builder
+# machine to affected CPU when bulding bootdisk or portable Live CD/USB.
 # Valid values: 1, 0, unset
 
 # @USER_VARIABLE:  CFLAGS_HARDENED_TRAPV
@@ -550,6 +553,25 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # preinit - check all vtables, but slower startup
 # std - check standard or reachable vtables, partial coverage, faster startup but less secure
 # none - disable vtable verification.
+
+# @USER_VARIABLE:  CFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER
+# A space delimited string containing tags that are associated with crown jewels
+# information to override the default.
+# Valid values:
+# See CFLAGS_HARDENED_USE_CASES
+# Default:  "crypto database dss ip-assets multithreaded-confidential secure-messaging sensitive-data"
+
+# @USER_VARIABLE:  CFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER
+# A space delimited string containing tags that are associated with the keys to
+# the crown jewels to override the default.
+# Valid values:
+# See CFLAGS_HARDENED_USE_CASES
+# Default:  "admin-access copy-paste-password credentials crypto dss facial-embedding login secure-messaging sensitive-data"
+
+# @USER_VARIABLE:  CFLAGS_HARDENED_USE_CASES_USER_APPEND
+# A space delimited list of custom use case tags to append for crown jewels
+# and/or keys to the crown jewels filtering.  One may add security-critical
+# to apply full hardening.
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
 # @DESCRIPTION:
@@ -774,7 +796,29 @@ _cflags-hardened_is_sls_vulnerable() {
 # @DESCRIPTION:
 # Information is the new gold
 _cflags-hardened_is_crown_jewels() {
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("crypto"|"database"|"dss"|"ip-assets"|"multithreaded-confidential"|"secure-messaging"|"sensitive-data") ]] ; then
+	local default_categories=(
+		"crypto"
+		"database"
+		"dss"
+		"ip-assets"
+		"multithreaded-confidential"
+		"secure-messaging"
+		"sensitive-data"
+	)
+
+	if [[ -n "${CFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}" ]] ; then
+		read -r -a default_categories <<< "${CFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}"
+	fi
+
+	local found=0
+	local x
+	for x in "${default_categories[@]}" ; do
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
+			found=1
+		fi
+	done
+
+	if (( ${found} == 1 )) ; then
 		return 0
 	else
 		return 1
@@ -785,7 +829,32 @@ _cflags-hardened_is_crown_jewels() {
 # @DESCRIPTION:
 # The keys to the jewels
 _cflags-hardened_is_crown_jewels_key() {
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"copy-paste-password"|"credentials"|"crypto"|"dss"|"facial-embedding"|"login"|"secure-messaging"|"sensitive-data") ]] ; then
+	local default_categories=(
+		"admin-access"
+		"copy-paste-password"
+		"credentials"
+		"crypto"
+		"dss"
+		"facial-embedding"
+		"login"
+		"secure-messaging"
+		"sensitive-data"
+	)
+
+
+	if [[ -n "${CFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}" ]] ; then
+		read -r -a default_categories <<< "${CFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}"
+	fi
+
+	local found=0
+	local x
+	for x in "${default_categories[@]}" ; do
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
+			found=1
+		fi
+	done
+
+	if (( ${found} == 1 )) ; then
 		return 0
 	else
 		return 1
@@ -1371,6 +1440,10 @@ ewarn "Disabling cflags-hardenend for USE=debug"
 		if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">" "1.05" ; then
 			CFLAGS_HARDENED_TOLERANCE="1.05"
 		fi
+	fi
+
+	if [[ -n "${CFLAGS_HARDENED_USE_CASES_USER_APPEND}" ]] ; then
+		CFLAGS_HARDENED_USE_CASES+=" ${CFLAGS_HARDENED_USE_CASES_USER_APPEND}"
 	fi
 
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
