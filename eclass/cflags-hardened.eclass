@@ -3151,7 +3151,8 @@ einfo "Added ${x} from ${module} sanitizer"
 # introduces an unattended consequence that breaks vtv and breaks parallel
 # builds.  For vtv, it may to have RPATH hardcoded to avoid issue.  The muxer
 # should be removed because it introduces major issues for security and
-# build performance.
+# build performance.  We removed the nodejs muxer, so it should be possible to
+# remove all muxers by adding more additional ebuild metadata or constraints.
 #
 ewarn
 ewarn "TENTATIVE notice for resolution for unbroken vtv support."
