@@ -3147,9 +3147,11 @@ einfo "Added ${x} from ${module} sanitizer"
 # indeterministic, so it will randomly resolve to an ABI/vtv incompatible
 # version.  The vtv will randomly pick the highest gcc slot for the qt packages
 # even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or
-# using -L/usr/lib/gcc/${CHOST}/14 or less.  The existance of the muxer
+# using -L/usr/lib/gcc/${CHOST}/14 or less.  The existence of the muxer
 # introduces an unattended consequence that breaks vtv and breaks parallel
-# builds.  For vtv, it may to have RPATH hardcoded to avoid issue.
+# builds.  For vtv, it may to have RPATH hardcoded to avoid issue.  The muxer
+# should be removed because it introduces major issues for security and
+# build performance.
 #
 ewarn
 ewarn "TENTATIVE notice for resolution for unbroken vtv support."
