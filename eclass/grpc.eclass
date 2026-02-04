@@ -33,11 +33,11 @@ inherit flag-o-matic
 #
 # Full example for CMake based autotools based projects:
 #
-# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4 array.
 #
 # GRPC_SLOT="3"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 # RE2_SLOT="20220623"
 #
 # inherit abseil-cpp cmake grpc
@@ -63,11 +63,11 @@ inherit flag-o-matic
 #
 # Full example for CMake based projects:
 #
-# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4 array.
 #
 # GRPC_SLOT="3"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 # RE2_SLOT="20220623"
 #
 # inherit abseil-cpp cmake grpc
@@ -95,11 +95,11 @@ inherit flag-o-matic
 #
 # Full example for setuptools projects:
 #
-# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4 array.
 #
 # GRPC_SLOT="3"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 # RE2_SLOT="20220623"
 #
 # inherit abseil-cpp distutils-r1 grpc

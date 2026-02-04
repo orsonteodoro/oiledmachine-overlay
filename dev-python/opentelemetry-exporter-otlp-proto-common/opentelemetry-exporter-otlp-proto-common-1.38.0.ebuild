@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
@@ -63,7 +63,7 @@ python_configure() {
 	if has_version "dev-libs/protobuf:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

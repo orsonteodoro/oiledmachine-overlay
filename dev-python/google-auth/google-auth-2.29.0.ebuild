@@ -39,7 +39,7 @@ RESTRICT="test" # Not tested
 SLOT="0"
 IUSE+="
 aiohttp doc enterprise_cert pyopenssl reauth requests test
-ebuild_revision_2
+ebuild_revision_4
 "
 RDEPEND="
 	!dev-python/namespace-google
@@ -177,31 +177,31 @@ python_configure() {
 			ABSEIL_CPP_SLOT="20200225"
 			GRPC_SLOT="3"
 			PROTOBUF_CPP_SLOT="3"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 			RE2_SLOT="20220623"
 		elif has_version "dev-libs/protobuf:3/3.21" ; then
 			ABSEIL_CPP_SLOT="20220623"
 			GRPC_SLOT="3"
 			PROTOBUF_CPP_SLOT="3"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 			RE2_SLOT="20220623"
 		elif has_version "dev-libs/protobuf:4/4.25" ; then
 			ABSEIL_CPP_SLOT="20240116"
 			GRPC_SLOT="4"
 			PROTOBUF_CPP_SLOT="4"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 			RE2_SLOT="20220623"
 		elif has_version "dev-libs/protobuf:5/5.29" ; then
 			ABSEIL_CPP_SLOT="20240722"
 			GRPC_SLOT="5"
 			PROTOBUF_CPP_SLOT="5"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 			RE2_SLOT="20250512"
 		elif has_version "dev-libs/protobuf:6/6.33" ; then
 			ABSEIL_CPP_SLOT="20250512"
 			GRPC_SLOT="6"
 			PROTOBUF_CPP_SLOT="6"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 			RE2_SLOT="20250512"
 		fi
 		abseil-cpp_python_configure

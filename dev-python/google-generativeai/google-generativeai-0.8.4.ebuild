@@ -30,7 +30,10 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RDEPEND="
 	>=dev-python/google-auth-2.15.0[${PYTHON_USEDEP}]
 	dev-python/google-api-core[${PYTHON_USEDEP}]
@@ -48,23 +51,23 @@ python_configure() {
 	if has_version "dev-libs/protobuf:3/3.12" ; then
 		ABSEIL_CPP_SLOT="20200225"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 		ABSEIL_CPP_SLOT="20220623"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 	elif has_version "dev-libs/protobuf:4/4.25" ; then
 		ABSEIL_CPP_SLOT="20240116"
 		PROTOBUF_CPP_SLOT="4"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 	elif has_version "dev-libs/protobuf:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5[@]}"
 	elif has_version "dev-libs/protobuf:6/6.33" ; then
 		ABSEIL_CPP_SLOT="20250512"
 		PROTOBUF_CPP_SLOT="6"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

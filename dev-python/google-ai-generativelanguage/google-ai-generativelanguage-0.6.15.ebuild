@@ -24,7 +24,10 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
@@ -82,19 +85,19 @@ python_configure() {
 	if has_version "dev-libs/protobuf:3/3.21" ; then
 		ABSEIL_CPP_SLOT="20211102"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 	elif has_version "dev-libs/protobuf:4/4.25" ; then
 		ABSEIL_CPP_SLOT="20240116"
 		PROTOBUF_CPP_SLOT="4"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4[@]}"
 	elif has_version "dev-libs/protobuf:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	else
 		ABSEIL_CPP_SLOT="20211102"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

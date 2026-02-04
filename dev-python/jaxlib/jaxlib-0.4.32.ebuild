@@ -61,7 +61,7 @@ PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 ABSEIL_CPP_SLOT="20220623"
 GRPC_CPP_SLOT="3"
 PROTOBUF_CPP_SLOT="3"
-PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 RE2_SLOT="20220623"
 
 APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/720b2c53346660e95abbed7cf3309a8b85e979f9/third_party/tsl/workspace2.bzl#L534
@@ -374,7 +374,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_4
-ebuild_revision_28
+ebuild_revision_30
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 

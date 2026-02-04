@@ -445,7 +445,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_30
+ebuild_revision_31
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -1325,7 +1325,7 @@ ewarn
 		export TF_NEED_MPI=$(usex mpi 1 0)
 		export TF_SET_ANDROID_WORKSPACE=0
 
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 		GRPC_SLOT="5"
 		RE2_SLOT="20250512"
 		protobuf_python_configure

@@ -47,7 +47,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc flax pytorch quality test training
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	dev? (
@@ -162,11 +162,11 @@ python_configure() {
 	if has_version "dev-libs/protobuf:" ; then
 		ABSEIL_CPP_SLOT="20200225"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 	elif has_version "dev-libs/protobuf:" ; then
 		ABSEIL_CPP_SLOT="20220623"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

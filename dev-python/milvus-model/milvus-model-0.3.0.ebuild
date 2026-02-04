@@ -38,7 +38,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/scipy-1.10.0[${PYTHON_USEDEP}]
@@ -101,11 +103,11 @@ python_configure() {
 	if has_version "dev-libs/protobuf:3/3.12" ; then
 		ABSEIL_CPP_SLOT="20200225"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 		ABSEIL_CPP_SLOT="20220623"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

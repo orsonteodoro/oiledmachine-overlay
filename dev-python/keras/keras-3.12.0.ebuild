@@ -33,7 +33,10 @@ LICENSE="Apache-2.0"
 RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" cpu cuda jax pytorch tensorflow test ebuild_revision_3"
+IUSE="
+cpu cuda jax pytorch tensorflow test
+ebuild_revision_5
+"
 REQUIRED_USE="
 	cpu? (
 		jax
@@ -181,11 +184,11 @@ python_configure() {
 	# Align with TensorFlow
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	else
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

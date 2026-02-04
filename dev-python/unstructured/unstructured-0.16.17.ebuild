@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DOCS_IUSE="
 all-docs csv doc docx epub image md odt org pdf ppt pptx rst rtf tsv xlsx
-ebuild_revision_2
+ebuild_revision_3
 "
 LEGACY_IUSE="
 huggingface local-inference paddleocr
@@ -330,12 +330,12 @@ python_configure() {
 	if has_version "dev-python/grpcio:5/1.71" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		GRPC_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 		RE2_SLOT="20250512"
 	elif has_version "dev-python/grpcio:6/1.75" ; then
 		ABSEIL_CPP_SLOT="20250512"
 		GRPC_SLOT="6"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 		RE2_SLOT="20250512"
 	fi
 	abseil-cpp_python_configure

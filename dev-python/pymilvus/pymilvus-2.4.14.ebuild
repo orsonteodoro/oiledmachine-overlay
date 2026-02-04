@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bulk_writer dev model
-ebuild_revision_3
+ebuild_revision_4
 "
 gen_grpcio_dev() {
 	local impl
@@ -220,25 +220,25 @@ python_configure() {
 		export ABSEIL_CPP_SLOT="20240116"
 		export GRPC_SLOT="4"
 		export PROTOBUF_CPP_SLOT="4"
-		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+		export PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 		export RE2_SLOT="20220623"
 	elif use "dev-libs/protobuf:3/3.21" ; then
 		export ABSEIL_CPP_SLOT="20220623"
 		export GRPC_SLOT="3"
 		export PROTOBUF_CPP_SLOT="3"
-		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		export PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 		export RE2_SLOT="20220623"
 	elif use "dev-libs/protobuf:4/4.25" ; then
 		export ABSEIL_CPP_SLOT="20240116"
 		export GRPC_SLOT="4"
 		export PROTOBUF_CPP_SLOT="4"
-		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+		export PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 		export RE2_SLOT="20220623"
 	elif use "dev-libs/protobuf:5/5.29" ; then
 		export ABSEIL_CPP_SLOT="20240722"
 		export GRPC_SLOT="5"
 		export PROTOBUF_CPP_SLOT="5"
-		export PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		export PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 		export RE2_SLOT="20250512"
 	fi
 	abseil-cpp_python_configure

@@ -64,7 +64,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -128,7 +128,7 @@ src_prepare() {
 python_configure() {
 	ABSEIL_CPP_SLOT="20240722"
 	PROTOBUF_CPP_SLOT="5"
-	PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+	PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	abseil-cpp_python_configure
 	protobuf_python_configure
 }

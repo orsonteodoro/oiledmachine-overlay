@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+="
 test
-ebuild_revision_5
+ebuild_revision_7
 "
 RDEPEND+="
 	|| (
@@ -62,11 +62,11 @@ python_configure() {
 	if has_version "dev-libs/python:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	elif has_version "dev-libs/python:6/6.33" ; then
 		ABSEIL_CPP_SLOT="20250512"
 		PROTOBUF_CPP_SLOT="6"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

@@ -40,7 +40,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 gen_protobuf_rdepend() {
 	local impl
 	for impl in "${PYTHON_COMPAT[@]}" ; do
@@ -98,17 +100,17 @@ python_configure() {
 	# Align with TensorFlow 2.20
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	elif has_version "dev-libs/protobuf:3/3.21" ; then
 	# Align with TensorFlow 2.17
 		ABSEIL_CPP_SLOT="20220623"
 		PROTOBUF_CPP_SLOT="4"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 	else
 	# Align with TensorFlow 2.20
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_5[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

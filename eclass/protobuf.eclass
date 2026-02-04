@@ -23,11 +23,11 @@
 #
 # Full example for autotools based projects:
 #
-# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4 array.
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 # inherit abseil-cpp multilib-minimal
 #
 # multilib_src_configure() {
@@ -49,11 +49,11 @@
 #
 # Full example for CMake based projects:
 #
-# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4 array.
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 # inherit abseil-cpp cmake multilib-minimal
 #
 # multilib_src_configure() {
@@ -77,11 +77,11 @@
 #
 # Full example for setuptools based projects:
 #
-# inherit protobuf # To populate PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4 array.
+# inherit protobuf # To populate PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4 array.
 #
 # ABSEIL_CPP_SLOT="20220623"
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 # inherit abseil-cpp cmake disutils-r1
 #
 # python_configure() {
@@ -105,48 +105,35 @@ _PROTOBUF_CPP_ECLASS=1
 
 inherit flag-o-matic
 
-# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_3
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_3
 # @DESCRIPTION:
 # Adds all protobuf-python 3.x slots
-PROTOBUF_PYTHON_SLOTS_3=(
-	"3.12"
-)
+PROTOBUF_PYTHON_SLOT_3="3"
 
-# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_4
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_4
 # @DESCRIPTION:
 # Adds all protobuf-python 4.x slots for any protobuf-cpp
-PROTOBUF_PYTHON_SLOTS_4=(
-	"4.21" # For python-cpp:3
-	"4.25" # For python-cpp:4
-)
+PROTOBUF_PYTHON_SLOT_4="4"
 
-# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3
 # @DESCRIPTION:
 # Adds all protobuf-python 4.x slots compatible with protobuf-cpp:3
-PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3=(
-	"4.21" # For python-cpp:3
-)
+PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3="4.21"
 
-# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4
 # @DESCRIPTION:
 # Adds all protobuf-python 4.x slots compatible with protobuf-cpp:4
-PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4=(
-	"4.25" # For python-cpp:4
-)
+PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4="4.25"
 
-# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_5
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_5
 # @DESCRIPTION:
 # Adds all protobuf-python 5.x slots
-PROTOBUF_PYTHON_SLOTS_5=(
-	"5.29"
-)
+PROTOBUF_PYTHON_SLOT_5="5"
 
-# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOTS_6
+# @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_6
 # @DESCRIPTION:
 # Adds all protobuf-python 6.x slots
-PROTOBUF_PYTHON_SLOTS_6=(
-	"6.33"
-)
+PROTOBUF_PYTHON_SLOT_6="6"
 
 # @FUNCTION:  protobuf_src_configure
 # @DESCRIPTION:
@@ -227,19 +214,10 @@ eerror "QA:  Set either PROTOBUF_CPP_PV or PROTOBUF_CPP_SLOT"
 	export PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/lib/protobuf/${_PROTOBUF_CPP_SLOT}/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
 
-	local x=""
-	local s=""
-	for x in "${PROTOBUF_PYTHON_SLOTS[@]}" ; do
-		if has_version "dev-python/protobuf:${x}" ; then
-			s="${x}"
-			break
-		fi
-	done
-
-	if [[ -n "${PROTOBUF_PYTHON_SLOTS[@]}" ]] ; then
-		export PYTHONPATH="${ESYSROOT}/usr/lib/protobuf-python/${s}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+	if [[ -n "${PROTOBUF_PYTHON_SLOT}" ]] ; then
+		export PYTHONPATH="${ESYSROOT}/usr/lib/protobuf-python/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 	else
-ewarn "QA:  Setting protobuf-python support for PYTHONPATH is skipped.  Set PROTOBUF_PYTHON_SLOTS to remove this message."
+ewarn "QA:  Setting protobuf-python support for PYTHONPATH is skipped.  Set PROTOBUF_PYTHON_SLOT to remove this message."
 	fi
 }
 
@@ -250,7 +228,7 @@ ewarn "QA:  Setting protobuf-python support for PYTHONPATH is skipped.  Set PROT
 # Example for setuptools based projects:
 #
 # PROTOBUF_CPP_SLOT="3"
-# PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_4[@]}" )
+# PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4}"
 #
 # inherit abseil-cpp cmake disutils-r1
 #

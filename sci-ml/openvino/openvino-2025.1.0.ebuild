@@ -207,7 +207,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	?? (
@@ -718,11 +718,11 @@ src_configure() {
 		if has_version "dev-libs/protobuf:3/3.21" ; then
 			ABSEIL_CPP_SLOT="20200225"
 			PROTOBUF_CPP_SLOT="3"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 		elif has_version "dev-libs/protobuf:3/3.12" ; then
 			ABSEIL_CPP_SLOT="20220623"
 			PROTOBUF_CPP_SLOT="3"
-			PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_4_WITH_PROTOBUF_CPP_3[@]}" )
+			PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 		fi
 		abseil-cpp_src_configure
 		protobuf_src_configure

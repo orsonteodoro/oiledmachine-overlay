@@ -43,7 +43,7 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 doc
-ebuild_revision_9
+ebuild_revision_10
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
@@ -133,15 +133,18 @@ src_configure() {
 		ABSEIL_CPP_SLOT="20200225"
 		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_3[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 		RE2_SLOT="20220623"
 	elif has_version "dev-libs/protobuf:6/6.33" ; then
 	# Enigma slot equivalent being CI tested
 		ABSEIL_CPP_SLOT="20250512"
 		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
-		PROTOBUF_PYTHON_SLOTS=( "${PROTOBUF_PYTHON_SLOTS_6[@]}" )
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 		RE2_SLOT="20250512"
+	else
+eerror "Emerge dev-libs/protobuf:3/3.12 or dev-libs/protobuf:6/6.33 to continue"
+		die
 	fi
 	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
 		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
