@@ -29,7 +29,7 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]

@@ -8,7 +8,7 @@ MY_P="grpc-${PV}"
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_SLOT="4"
 PROTOBUF_CPP_SLOT="4"
-PROTOBUF_PYTHON_SLOT="4"
+PROTOBUF_PYTHON_SLOT="4.25"
 PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 
 inherit distutils-r1
@@ -29,7 +29,7 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	~dev-python/grpcio-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
