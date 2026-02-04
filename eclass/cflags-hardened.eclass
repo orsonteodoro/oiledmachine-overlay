@@ -3142,7 +3142,7 @@ einfo "Added ${x} from ${module} sanitizer"
 #
 # It is broken for GCC 15.2.0, 15.2.1_p20250906.
 #
-# Due to the way the gcc-config muxer works, it will generate a
+# Due to the way the gcc-config + etc-update muxer works, it will generate a
 # /etc/ld.so.cache that adds GCC 15 or newer.  Changes over time are
 # indeterministic, so it will randomly resolve to an ABI/vtv incompatible
 # version.  The vtv will randomly pick the highest gcc slot for the qt packages
