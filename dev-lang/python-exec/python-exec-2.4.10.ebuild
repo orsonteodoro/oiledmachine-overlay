@@ -13,7 +13,7 @@ EAPI=8
 # To manually unbreak it, see https://forums.gentoo.org/viewtopic-t-1163258-start-0.html
 #
 
-PYTHON_COMPAT=( "python3_"{10..13} "pypy3" "pypy3_11" )
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
 
 inherit python-any-r1
 
@@ -24,8 +24,9 @@ HOMEPAGE="https://github.com/projg2/python-exec/"
 LICENSE="BSD-2"
 SLOT="2"
 KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+01234567890123456789012345678901234567890123456789012345678901234567890123456789
+~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
+x86 ~arm64-macos ~x64-macos ~x64-solaris
 "
 # Internal Python project hack.  Do not copy it.  Ever.
 IUSE="${PYTHON_COMPAT[@]/#/python_targets_} +native-symlinks test"
