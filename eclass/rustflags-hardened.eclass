@@ -916,7 +916,7 @@ _rustflags-hardened_harden_sls() {
 # @DESCRIPTION:
 # Information is the new gold
 _rustflags-hardened_is_crown_jewels() {
-	local default_categories=(
+	local categories=(
 		"crypto"
 		"database"
 		"dss"
@@ -927,12 +927,12 @@ _rustflags-hardened_is_crown_jewels() {
 	)
 
 	if [[ -n "${RUSTFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}" ]] ; then
-		read -r -a default_categories <<< "${RUSTFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}"
+		read -r -a categories <<< "${RUSTFLAGS_HARDENED_CROWN_JEWELS_USE_CASES_USER}"
 	fi
 
 	local found=0
 	local x
-	for x in "${default_categories[@]}" ; do
+	for x in "${categories[@]}" ; do
 		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
 			found=1
 		fi
@@ -949,7 +949,7 @@ _rustflags-hardened_is_crown_jewels() {
 # @DESCRIPTION:
 # The keys to the jewels
 _rustflags-hardened_is_crown_jewels_key() {
-	local default_categories=(
+	local categories=(
 		"admin-access"
 		"copy-paste-password"
 		"credentials"
@@ -963,12 +963,12 @@ _rustflags-hardened_is_crown_jewels_key() {
 
 
 	if [[ -n "${RUSTFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}" ]] ; then
-		read -r -a default_categories <<< "${RUSTFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}"
+		read -r -a categories <<< "${RUSTFLAGS_HARDENED_CROWN_JEWEL_KEYS_USE_CASES_USER}"
 	fi
 
 	local found=0
 	local x
-	for x in "${default_categories[@]}" ; do
+	for x in "${categories[@]}" ; do
 		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
 			found=1
 		fi
