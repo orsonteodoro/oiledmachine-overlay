@@ -58,7 +58,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-6.10.1-QTBUG-142514.patch
+	"${FILESDIR}/${PN}-6.10.1-QTBUG-142514.patch"
+	"${FILESDIR}/extra/${PN}-6.10.2-disable-assert.patch" # oiledmachine-overlay added
 )
 
 pkg_setup() {

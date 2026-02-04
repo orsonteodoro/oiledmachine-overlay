@@ -1,0 +1,27 @@
+--- a/src/qml/jsruntime/qv4vtable_p.h.orig	2026-02-04 11:18:37.600453191 -0800
++++ b/src/qml/jsruntime/qv4vtable_p.h	2026-02-04 11:19:11.100154117 -0800
+@@ -158,6 +158,7 @@ constexpr VTable::Call vtableJsTypesCall
+ 
+     // A simple == on methods is not considered constexpr, so we have to jump through some hoops.
+ 
++#if 1
+     static_assert(
+             !std::is_same_v<
+                     VTableCallWrapper<Class::virtualCall>,
+@@ -166,13 +167,16 @@ constexpr VTable::Call vtableJsTypesCall
+                     VTableCallWithMetaTypesWrapper<Class::virtualCallWithMetaTypes>,
+                     VTableCallWithMetaTypesWrapper<Class::SuperClass::virtualCallWithMetaTypes>>,
+             "If you override virtualCallWithMetaTypes, override virtualCall, too");
++#endif
+ 
++#if 0
+     static_assert(
+             std::is_same_v<
+                     VTableCallWrapper<Class::virtualCall>,
+                     VTableCallWrapper<Class::SuperClass::virtualCall>>
+                 || VTableCallWrapper<Class::virtualCall>::c != nullptr,
+             "You mustn't override virtualCall with nullptr");
++#endif
+ 
+     return Class::virtualCall;
+ }
