@@ -54,7 +54,10 @@ MRAB_REGEX_PV="2021.10.23" # bf5e239
 NODE_SLOT="22"
 OMNISHARP_PV="1.37.11"
 PARSO_PV="0.8.4"
-PYTHON_COMPAT=( "python3_"{11..13} )
+# CI (linux_lint, unix-like, windows-2002):  3.9, 3.13
+# U24:  3.12
+# Already tested:  3.11
+PYTHON_COMPAT=( "python3_"{9,11,12,13} )
 RUST_PV="nightly-2024-12-12"
 WATCHDOG_PV="3.0.0"
 
