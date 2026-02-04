@@ -3139,8 +3139,18 @@ einfo "Added ${x} from ${module} sanitizer"
 		local s
 		for s in $(seq 15 25) ; do
 			if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
+#
 # It is broken for GCC 15.2.0, 15.2.1_p20250906.
-# The vtv always picks the highest slot for the qt packages even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or using -L/usr/lib/gcc/${CHOST}/14 or less.
+#
+# Due to the way muxer works for sys-devel/gcc-config, it will generate a
+# /etc/ld.so.cache that adds GCC 15 or nwer.  Changes over time are
+# indeterministic, so it will randomly resolve to an ABI/vtv incompatible
+# version.  The vtv will randomly picks the highest gcc slot for the qt packages
+# even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or
+# using -L/usr/lib/gcc/${CHOST}/14 or less.  The existance of the muxer
+# introduces an unattended consequence that breaks vtv and breaks parallel
+# builds.  For vtv, it may to have RPATH hardcoded to avoid issue.
+#
 ewarn
 ewarn "TENTATIVE notice for resolution for unbroken vtv support."
 ewarn
