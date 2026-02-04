@@ -205,7 +205,7 @@ OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
 #PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/ea3168acde66aa0c51594d9392159bf8cf4b5566/third_party/rules_cuda/cuda/dependencies.bzl#L66 ; hash from with EGIT_COMMIT_TF_RUNTIME
 PROTOBUF_CPP_PV="5.28.3"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-PROTOBUF_PYTHON_SLOT="5.29"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
+PROTOBUF_PYTHON_SLOT="5"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
 RULES_ANDROID_PV="0.1.1"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
 RULES_APPLE_PV="3.5.1"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
 RULES_CC_PV="0.0.2"				# From https://github.com/bazelbuild/rules_swift/blob/1.5.0/MODULE.bazel#L13
@@ -445,7 +445,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_29
+ebuild_revision_30
 "
 gen_required_use_cuda_targets() {
 	local x
