@@ -3143,9 +3143,9 @@ einfo "Added ${x} from ${module} sanitizer"
 # It is broken for GCC 15.2.0, 15.2.1_p20250906.
 #
 # Due to the way muxer works for sys-devel/gcc-config, it will generate a
-# /etc/ld.so.cache that adds GCC 15 or nwer.  Changes over time are
+# /etc/ld.so.cache that adds GCC 15 or newer.  Changes over time are
 # indeterministic, so it will randomly resolve to an ABI/vtv incompatible
-# version.  The vtv will randomly picks the highest gcc slot for the qt packages
+# version.  The vtv will randomly pick the highest gcc slot for the qt packages
 # even when selecting older gcc, changing LD_LIBRARY_PATH to older gcc slot, or
 # using -L/usr/lib/gcc/${CHOST}/14 or less.  The existance of the muxer
 # introduces an unattended consequence that breaks vtv and breaks parallel
