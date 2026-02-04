@@ -571,7 +571,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @USER_VARIABLE:  CFLAGS_HARDENED_USE_CASES_USER_APPEND
 # A space delimited list of custom use case tags to append for crown jewels
 # and/or keys to the crown jewels filtering.  One may add security-critical
-# to apply full hardening.
+# to apply full hardening.  By default, the eclass marks textual and visual
+# as sensitive data, but one may mark audio programs as ip-assets or
+# sensitive-data.
 
 # @FUNCTION:  _cflags-hardened_compiler_arch
 # @DESCRIPTION:

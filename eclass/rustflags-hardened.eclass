@@ -439,7 +439,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @USER_VARIABLE:  RUSTFLAGS_HARDENED_USE_CASES_USER_APPEND
 # A space delimited list of custom use case tags to append for crown jewels
 # and/or keys to the crown jewels filtering.  One may add security-critical
-# to apply full hardening.
+# to apply full hardening.  By default, the eclass marks textual and visual
+# as sensitive data, but one may mark audio programs as ip-assets or
+# sensitive-data.
 
 # @FUNCTION:  _rustflags-hardened_compiler_arch
 # @DESCRIPTION:
