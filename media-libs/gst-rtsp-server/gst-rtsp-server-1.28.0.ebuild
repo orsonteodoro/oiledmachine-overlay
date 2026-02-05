@@ -7,7 +7,7 @@ EAPI=8
 # gst-plugins-good for rtprtxsend and rtpbin elements, maybe more
 # gst-plugins-srtp for srtpenc and srtpdec elements
 
-CFLAGS_HARDENED_USE_CASES="network untrusted-data server"
+CFLAGS_HARDENED_USE_CASES="network security-critical server untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
 
 inherit cflags-hardened check-compiler-switch flag-o-matic gstreamer-meson
@@ -19,7 +19,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
 IUSE="
 examples +introspection static-libs
-ebuild_revision_27
+ebuild_revision_28
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
