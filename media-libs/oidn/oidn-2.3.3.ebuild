@@ -108,7 +108,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_10
+ebuild_revision_11
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -177,19 +177,19 @@ gen_clang_depends() {
 
 gen_hip_depends() {
 	local hip_version
-	for hip_version in ${HIP_VERSIONS[@]} ; do
+	for hip_version in "${HIP_VERSIONS[@]}" ; do
 		# Needed because of build failures
-		local s=$(ver_cut 1-2 ${hip_version})
-		local u="${s}"
+		local s="0/"$(ver_cut "1-2" "${hip_version}")
+		local u=$(ver_cut "1-2" "${hip_version}")
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
 				~dev-libs/rocm-comgr-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocm-comgr:=
-				~dev-libs/rocm-device-libs-${hip_version}${s}
+				~dev-libs/rocm-device-libs-${hip_version}:${s}
 				~dev-libs/rocr-runtime-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocr-runtime:=
-				~dev-libs/roct-thunk-interface-${hip_version}${s}
+				~dev-libs/roct-thunk-interface-${hip_version}:${s}
 				~dev-util/hip-${hip_version}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				dev-util/hip:=
 				~dev-util/rocminfo-${hip_version}:${s}
