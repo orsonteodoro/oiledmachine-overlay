@@ -414,8 +414,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Jan 9, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1736605580 # From `date +%s -d "2025-01-11 15:26:20 +0100"` from changelog for latest tag
+MITIGATION_DATE="Feb 4, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1769765548 # From `date +%s -d "2026-01-30 10:32:28 +0100"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -426,47 +426,90 @@ VULNERABILITIES_FIXED=(
 # If the ebuild maintainer(s) gathered them from the changelog, then the
 # vulnerability coverage may be incomplete or miscategoried.
 
-	# 2026-01-09
-	"CVE-2025-40361;DL;Rejected"
-
-	# 2026-01-06
-	"CVE-2025-68211;;"
-
-	# 2026-01-05
-	"CVE-2024-44972;;Rejected"
-	"CVE-2024-47672;;Rejected"
-	"CVE-2024-56781;;Rejected"
-	"CVE-2024-36923;UV;Rejected"
-	"CVE-2023-53183;;Rejected"
-	"CVE-2023-54029;;Rejected"
-	"CVE-2023-53779;ML;Rejected"
-	"CVE-2025-68764;;"
-	"CVE-2025-68766;OOBA;"
-	"CVE-2025-68765;ML, DoS;"
-	"CVE-2025-68760;OOBR;"
-	"CVE-2025-68759;ML, DoS;"
-	"CVE-2025-68758;NPD, DoS;"
-	"CVE-2025-68757;DL, DoS;"
-	"CVE-2025-68756;;"
-	"CVE-2025-68755;NPD, DoS;"
-	"CVE-2025-68754;DF;"
-	"CVE-2025-68753;;"
-	"CVE-2025-68763;;"
-	"CVE-2025-68762;;"
-	"CVE-2025-68761;UAF;"
-	"CVE-2025-68751;UV, DOS;"
-	"CVE-2025-68752;;"
-
-	# 2026-01-02
-	"CVE-2025-68203;;Rejected"
-	"CVE-2025-37942;;Rejected"
-	"CVE-2025-38073;RC;Rejected"
-	"CVE-2025-68224;;Rejected"
-
 
 
 # Some CVE reports may be slow released.  The second group may
 # catch these.
+
+	"CVE-2026-23089;UAF;"
+	"CVE-2026-23098;DF;"
+	"CVE-2026-23097;;"
+	"CVE-2026-23096;;"
+	"CVE-2026-23095;ML, DoS;"
+	"CVE-2026-23094;;"
+	"CVE-2026-23093;;"
+	"CVE-2026-23092;OOBW;"
+	"CVE-2026-23110;RC;"
+	"CVE-2026-23109;;"
+	"CVE-2026-23091;;"
+	"CVE-2026-23108;ML, DoS;"
+	"CVE-2026-23107;;"
+	"CVE-2026-23106;;"
+	"CVE-2026-23105;;"
+	"CVE-2026-23104;;"
+	"CVE-2026-23103;;"
+	"CVE-2026-23102;;"
+	"CVE-2026-23101;;"
+	"CVE-2026-23100;;"
+	"CVE-2026-23099;;"
+	"CVE-2026-23090;;"
+	"CVE-2026-23062;DoS;"
+	"CVE-2026-23061;ML, DoS;"
+	"CVE-2026-23060;;"
+	"CVE-2026-23059;OF;"
+	"CVE-2026-23058;ML, DoS;"
+	"CVE-2026-23057;;"
+	"CVE-2026-23088;DoS;"
+	"CVE-2026-23087;ML, DoS;"
+	"CVE-2026-23086;;"
+	"CVE-2026-23085;;"
+	"CVE-2026-23084;NPD, DoS;"
+	"CVE-2026-23083;;"
+	"CVE-2026-23056;;"
+	"CVE-2026-23082;;"
+	"CVE-2026-23081;;"
+	"CVE-2026-23080;ML, DoS;"
+	"CVE-2026-23079;;"
+	"CVE-2026-23078;BO;"
+	"CVE-2026-23077;UAF, DoS;"
+	"CVE-2026-23076;OOBA;"
+	"CVE-2026-23075;ML, DoS;"
+	"CVE-2026-23074;;"
+	"CVE-2026-23073;MC;"
+	"CVE-2025-71199;UAF;"
+	"CVE-2026-23072;ML, DoS;"
+	"CVE-2026-23071;RC;"
+	"CVE-2026-23070;;"
+	"CVE-2026-23069;;"
+	"CVE-2026-23068;DF;"
+	"CVE-2026-23067;;"
+	"CVE-2026-23066;;"
+	"CVE-2026-23065;ML, DoS;"
+	"CVE-2026-23064;NPD, DoS;"
+	"CVE-2026-23063;;"
+	"CVE-2025-71197;BO;"
+	"CVE-2025-71198;;"
+	"CVE-2026-23054;DoS;"
+	"CVE-2026-23053;DL, DoS;"
+	"CVE-2026-23052;;"
+	"CVE-2026-23051;DoS;"
+	"CVE-2026-23050;DL, DoS;"
+	"CVE-2026-23049;;"
+	"CVE-2025-71196;;"
+	"CVE-2025-71195;;"
+	"CVE-2026-23055;;"
+	"CVE-2025-71193;NPD, DoS;"
+	"CVE-2025-71194;DL, DoS;"
+	"CVE-2026-23048;;"
+	"CVE-2026-23047;;"
+	"CVE-2026-23046;;"
+	"CVE-2026-23045;;"
+	"CVE-2026-23044;DoS;"
+	"CVE-2026-23043;NPD, DoS;"
+	"CVE-2026-23042;;"
+	"CVE-2026-23041;DoS;"
+	"CVE-2025-71192;DF;"
+	"CVE-2026-23040;;"
 
 )
 
