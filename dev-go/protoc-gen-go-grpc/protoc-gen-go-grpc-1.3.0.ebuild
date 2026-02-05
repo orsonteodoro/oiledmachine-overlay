@@ -517,7 +517,10 @@ RESTRICT="
 	)
 "
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
-IUSE="test"
+IUSE="
+test
+ebuild_revision_2
+"
 RDEPEND="
 	>=net-libs/grpc-${GRPC_PV}:${GRPC_SLOT}
 	net-libs/grpc:=
@@ -551,5 +554,6 @@ src_compile() {
 }
 
 src_install() {
-	dobin "bin/protoc-gen-go-grpc"
+	exeinto "/usr/lib/grpc/${GRPC_SLOT}/bin"
+	doexe "bin/protoc-gen-go-grpc"
 }
