@@ -247,7 +247,7 @@ BDEPEND+="
 		)
 		>=dev-build/cmake-3.21
 		rocm_6_4? (
-			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:6.4[${LIBSTDCXX_USEDEP}]
+			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP}]
 			sys-devel/llvm-roc:=
 		)
 	)
