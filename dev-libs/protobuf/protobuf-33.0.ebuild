@@ -72,7 +72,7 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_41
+ebuild_revision_42
 "
 REQUIRED_USE="
 	!test

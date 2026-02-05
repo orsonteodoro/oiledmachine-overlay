@@ -88,7 +88,7 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 IUSE="
 ${_CXX_STANDARD[@]}
 emacs examples static-libs test zlib
-ebuild_revision_41
+ebuild_revision_42
 "
 REQUIRED_USE="
 	^^ (
@@ -214,9 +214,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 	append-cxxflags -std=c++${std_standard}
 
 	sed \
+		-i \
 		-e "s|-std=gnu++11|-std=gnu++${std_standard}|g" \
+		$(grep -l -F -r -e "-std=gnu++11" "${WORKDIR}") \
+		|| die
+	sed \
+		-i \
 		-e "s|-std=c++11|-std=c++${std_standard}|g" \
-		"CMakeLists.txt" \
+		$(grep -l -F -r -e "-std=c++11" "${WORKDIR}") \
+		|| die
+	sed \
+		-i \
+		-e "s|CMAKE_CXX_STANDARD 11|CMAKE_CXX_STANDARD ${std_standard}|g" \
+		$(grep -l -F -r -e "CMAKE_CXX_STANDARD 11" "${WORKDIR}") \
 		|| die
 
 	src_configure_abi() {
