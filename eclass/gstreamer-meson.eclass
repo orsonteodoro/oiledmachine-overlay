@@ -207,6 +207,7 @@ fi
 
 RDEPEND="
 	>=dev-libs/glib-${GLIB_VERSION}:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 "
 BDEPEND="
 	virtual/pkgconfig
@@ -224,6 +225,7 @@ if [[ "${PN}" != "gstreamer" ]]; then
 	RDEPEND="
 		${RDEPEND}
 		~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+		media-libs/gstreamer:=
 	"
 fi
 
