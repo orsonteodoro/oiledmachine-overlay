@@ -78,7 +78,7 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 IUSE="
 ${_CXX_STANDARD[@]}
 emacs examples static-libs test zlib
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE="
 	^^ (
@@ -189,9 +189,18 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# With shared and static libs
 	use static-libs && with_static_libs="OFF"
 
-	use cxx_standard_cxx11 && append-cxxflags -std=c++11
-	use cxx_standard_cxx14 && append-cxxflags -std=c++14
-	use cxx_standard_cxx17 && append-cxxflags -std=c++17
+	local std_standard=11
+	use cxx_standard_cxx11 && std_standard=11
+	use cxx_standard_cxx14 && std_standard=14
+	use cxx_standard_cxx17 && std_standard=17
+
+	append-cxxflags -std=c++${std_standard}
+
+	sed \
+		-e "s|-std=gnu++11|-std=gnu++${std_standard}|g" \
+		-e "s|-std=c++11|-std=c++${std_standard}|g" \
+		"CMakeLists.txt" \
+		|| die
 
 	local myeconfargs=(
 		$(use_enable static-libs static)
