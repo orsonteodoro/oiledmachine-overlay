@@ -425,18 +425,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 eerror "Emerge dev-libs/protobuf:3/3.12 or dev-libs/protobuf:6/6.33 to continue"
 		die
 	fi
-	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
-		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
-			| grep -q -F -e "--server"
-		if [[ "$?" != "0" ]] ; then
-eerror
-eerror "Your enigma is not built with --server.  Re-emerge with the radialgm"
-eerror "USE flag.  Enigma must be built against the same abseil-cpp version"
-eerror "installed."
-eerror
-			die
-		fi
-	popd >/dev/null 2>&1 || die
 	abseil-cpp_src_configure
 	protobuf_src_configure
 	re2_src_configure
