@@ -197,9 +197,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	append-cxxflags -std=c++${std_standard}
 
 	sed \
-		-e "s|-std=gnu++11|-std=gnu++${std_standard}|g" \
 		-e "s|-std=c++11|-std=c++${std_standard}|g" \
-		"CMakeLists.txt" \
+		"configure.ac" \
 		|| die
 
 	local myeconfargs=(
