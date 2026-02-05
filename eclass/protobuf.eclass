@@ -107,32 +107,32 @@ inherit flag-o-matic
 
 # @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_3
 # @DESCRIPTION:
-# Adds all protobuf-python 3.x slots
+# Adds the protobuf-python 3.x slot
 PROTOBUF_PYTHON_SLOT_3="3"
 
 # @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_4
 # @DESCRIPTION:
-# Adds all protobuf-python 4.x slots for any protobuf-cpp
-PROTOBUF_PYTHON_SLOT_4="4"
+# Adds the latest protobuf-python 4.x slot
+PROTOBUF_PYTHON_SLOT_4="4.25"
 
 # @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3
 # @DESCRIPTION:
-# Adds all protobuf-python 4.x slots compatible with protobuf-cpp:3
+# Adds the protobuf-python 4.x slot compatible with protobuf-cpp:3
 PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3="4.21"
 
 # @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4
 # @DESCRIPTION:
-# Adds all protobuf-python 4.x slots compatible with protobuf-cpp:4
+# Adds the protobuf-python 4.x slot compatible with protobuf-cpp:4
 PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_4="4.25"
 
 # @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_5
 # @DESCRIPTION:
-# Adds all protobuf-python 5.x slots
+# Adds the protobuf-python 5.x slot
 PROTOBUF_PYTHON_SLOT_5="5"
 
 # @ECLASS_VARIABLE:  PROTOBUF_PYTHON_SLOT_6
 # @DESCRIPTION:
-# Adds all protobuf-python 6.x slots
+# Adds the protobuf-python 6.x slot
 PROTOBUF_PYTHON_SLOT_6="6"
 
 # @FUNCTION:  protobuf_src_configure
