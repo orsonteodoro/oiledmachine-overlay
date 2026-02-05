@@ -54,7 +54,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README.md" "RELEASE" )
+DOCS=( "ChangeLog" "NEWS" "README.md" "RELEASE" )
 
 pkg_setup() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then

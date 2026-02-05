@@ -34,7 +34,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README.md" "RELEASE" )
+DOCS=( "ChangeLog" "NEWS" "README.md" "RELEASE" )
 
 multilib_src_configure() {
 	cflags-hardened_append

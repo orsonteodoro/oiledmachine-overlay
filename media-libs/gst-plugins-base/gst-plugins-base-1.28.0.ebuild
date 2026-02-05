@@ -179,7 +179,7 @@ DEPEND="
 	)
 "
 
-DOCS=( "AUTHORS" "NEWS" "README.md" "RELEASE" )
+DOCS=( "NEWS" "README.md" "RELEASE" )
 
 PATCHES=(
 )
