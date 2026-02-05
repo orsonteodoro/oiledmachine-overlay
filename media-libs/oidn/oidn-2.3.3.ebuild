@@ -175,6 +175,7 @@ gen_clang_depends() {
 	done
 }
 
+# roct-thunk-interface moved to rocr-runtime
 gen_hip_depends() {
 	local hip_version
 	for hip_version in "${HIP_VERSIONS[@]}" ; do
@@ -189,7 +190,6 @@ gen_hip_depends() {
 				~dev-libs/rocm-device-libs-${hip_version}:${s}
 				~dev-libs/rocr-runtime-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
 				dev-libs/rocr-runtime:=
-				~dev-libs/roct-thunk-interface-${hip_version}:${s}
 				~dev-util/hip-${hip_version}:${s}[${LIBSTDCXX_USEDEP},rocm]
 				dev-util/hip:=
 				~dev-util/rocminfo-${hip_version}:${s}
