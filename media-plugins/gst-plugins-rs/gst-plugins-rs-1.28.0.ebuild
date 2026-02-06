@@ -1773,6 +1773,10 @@ src_prepare() {
 		-e "s|csound64|csound|g" \
 		"meson.build" \
 		|| die
+
+	if ! use validate ; then
+		sed -i -e "/validate-plugins/d" "meson.build" || die
+	fi
 }
 
 multilib_src_configure() {
