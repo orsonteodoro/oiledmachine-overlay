@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -232,8 +232,8 @@ RDEPEND+="
 	virtual/libc
 	|| (
 		(
-			dev-cpp/abseil-cpp:20200225[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			dev-cpp/abseil-cpp:20200225[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
+			net-libs/grpc:3/1.30[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
 		)
 		(
 			dev-cpp/abseil-cpp:20250512[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -408,6 +408,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if has_version "dev-libs/protobuf:3/3.12" ; then
+einfo "Using dev-libs/protobuf:3/3.12"
 	# Enigma slot equivalent being CI tested
 		ABSEIL_CPP_SLOT="20200225"
 		GRPC_SLOT="3"
@@ -415,15 +416,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
 		RE2_SLOT="20220623"
 	elif has_version "dev-libs/protobuf:6/6.33" ; then
+einfo "Using dev-libs/protobuf:6/6.33"
 	# Enigma slot equivalent being CI tested
 		ABSEIL_CPP_SLOT="20250512"
 		GRPC_SLOT="6"
 		PROTOBUF_CPP_SLOT="6"
 		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 		RE2_SLOT="20250512"
-	else
-eerror "Emerge dev-libs/protobuf:3/3.12 or dev-libs/protobuf:6/6.33 to continue"
-		die
 	fi
 	abseil-cpp_src_configure
 	protobuf_src_configure
