@@ -28,7 +28,7 @@ unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
 
-RUSTFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical server"
+RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
@@ -1185,7 +1185,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_37
+ebuild_revision_38
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
