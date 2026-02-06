@@ -151,7 +151,7 @@ PDEPEND+="
 		dev-php/grpc:=
 	)
 	python? (
-		~dev-python/grpcio-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
+		~dev-python/grpcio-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 		dev-python/grpcio:=
 	)
 	ruby? (

@@ -17,6 +17,11 @@ PROTOBUF_PYTHON_SLOT="4.25"
 PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 RE2_SLOT="20220623"
 
+_CXX_STANDARD=(
+	"cxx_standard_cxx14"
+	"+cxx_standard_cxx17"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -44,8 +49,14 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
+${_CXX_STANDARD[@]}
 doc protobuf
 ebuild_revision_11
+"
+REQUIRED_USE="
+	^^ (
+		${_CXX_STANDARD[@]/+}
+	)
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
@@ -118,6 +129,15 @@ python_configure() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+	local L=(
+		"${S}/tools/distrib/python/grpcio_tools/setup.py"
+		"${S}/setup.py"
+		$(grep -r -l -e "-std=c++14" "${S}/src/python/grpcio")
+	)
+	if use cxx_standard_cxx17 ; then
+		append-cxxflags "-std=c++17"
+		sed -i "s|-std=c++14|-std=c++17|g" "${L[@]}" || die
+	fi
 	local libdir=$(get_libdir)
 	append-ldflags \
 		"-Wl,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
