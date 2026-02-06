@@ -9,7 +9,8 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python2_"{6..7} "python3_"{4..11} "pypy3_11" )
+# Python 3.12 required by grpcio-1.62.3.  It is not listed in setup.py but the 3.12 wheel is available for pypi and ci.yml.
+PYTHON_COMPAT=( "python2_"{6..7} "python3_"{4..12} "pypy3_11" )
 PYTHON_REQ_USE="threads(+)"
 SITEFILE="50cython-gentoo.el"
 SLOT_MAJOR=$(ver_cut 1-2 "${PV}")
