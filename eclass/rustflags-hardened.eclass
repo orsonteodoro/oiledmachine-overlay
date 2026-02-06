@@ -1371,8 +1371,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	fi
 einfo "Protect spectrum:  ${protect_spectrum}"
 
-	"${RUSTC}" -Z help 2>/dev/null 1>/dev/null
+einfo "RUSTC:  ${RUSTC}"
+	"${RUSTC}" --version || true
+	"${RUSTC}" --version | grep -q -e "nightly"
 	local is_rust_nightly=$?
+einfo "is_rust_nightly:  ${is_rust_nightly}"
 
 	local rust_pv=$("${RUSTC}" --version \
 		| cut -f 2 -d " " \
@@ -1517,7 +1520,7 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 	filter-flags "-U_FORTIFY_SOURCE"
 	append-flags "-U_FORTIFY_SOURCE"
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]##g")
-	if _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
 	# -D_FORTIFY_SOURCE is disabled
 		:
 	elif [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then

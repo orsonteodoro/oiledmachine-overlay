@@ -15,7 +15,7 @@ EAPI=8
 
 _gst_plugins_rs_globals() {
 	LOCKFILE_SOURCE="ebuild" # ebuild or upstream
-	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0} # Set to 1 if generating lockfile
+	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0} # DO NOT USE.  Copy upstream lockfile instead.  Set to 1 if generating lockfile
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 einfo "Generating lockfile"
 	fi
@@ -29,13 +29,12 @@ RUSTFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical serv
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
-LLVM_COMPAT=( 19 ) # For clang-sys ; slot based on rust subslot
-LLVM_MAX_SLOT="19"
+LLVM_COMPAT=( 21 ) # For clang-sys ; slot must be updated when rust slot is changed
+LLVM_MAX_SLOT="21"
 PYTHON_COMPAT=( "python3_"{8..11} )
-# Upstream uses Rust 1.88.0, but relaxed
-# The Cargo.toml says 1.83 in LTS zone
-RUST_MAX_VER="1.86.0" # Inclusive.  Corresponds to llvm 19.1
-RUST_MIN_VER="1.86.0" # Corresponds to llvm 19.1
+# Upstream uses Rust 1.92.0, required
+RUST_MAX_VER="1.92.0" # Inclusive.  Corresponds to llvm 21.1
+RUST_MIN_VER="1.92.0" # Corresponds to llvm 21.1
 
 MODULES=(
 	"analytics"
@@ -166,24 +165,23 @@ aws-runtime-1.5.18
 aws-sdk-kinesisvideo-1.94.0
 aws-sdk-kinesisvideosignaling-1.92.0
 aws-sdk-polly-1.97.0
-aws-sdk-s3-1.121.0
+aws-sdk-s3-1.120.0
 aws-sdk-sso-1.92.0
 aws-sdk-sts-1.96.0
 aws-sdk-transcribestreaming-1.96.0
 aws-sdk-translate-1.92.0
 aws-sigv4-1.3.7
-aws-smithy-async-1.2.11
+aws-smithy-async-1.2.7
 aws-smithy-checksums-0.63.13
-aws-smithy-eventstream-0.60.18
+aws-smithy-eventstream-0.60.14
 aws-smithy-http-0.62.6
-aws-smithy-http-0.63.3
-aws-smithy-http-client-1.1.9
+aws-smithy-http-client-1.1.5
 aws-smithy-json-0.61.9
-aws-smithy-observability-0.2.4
-aws-smithy-query-0.60.13
-aws-smithy-runtime-1.10.0
-aws-smithy-runtime-api-1.11.3
-aws-smithy-types-1.4.3
+aws-smithy-observability-0.2.0
+aws-smithy-query-0.60.9
+aws-smithy-runtime-1.9.8
+aws-smithy-runtime-api-1.10.0
+aws-smithy-types-1.3.6
 aws-smithy-xml-0.60.13
 aws-types-1.3.11
 backtrace-0.3.76
@@ -225,7 +223,7 @@ burn-std-0.20.1
 burn-store-0.20.1
 burn-tensor-0.20.1
 burn-wgpu-0.20.1
-bytemuck-1.25.0
+bytemuck-1.24.0
 bytemuck_derive-1.10.2
 byteorder-1.5.0
 byteorder-lite-0.1.0
@@ -237,7 +235,7 @@ bzip2-0.6.1
 c2rust-bitfields-0.20.0
 c2rust-bitfields-derive-0.20.0
 caseless-0.2.2
-cc-1.2.55
+cc-1.2.54
 cdg-0.1.0
 cdg_renderer-0.8.0
 cdp-types-0.3.0
@@ -251,9 +249,9 @@ cfg-if-1.0.4
 chrono-0.4.43
 cipher-0.4.4
 clang-sys-1.8.1
-clap-4.5.56
-clap_builder-4.5.56
-clap_derive-4.5.55
+clap-4.5.54
+clap_builder-4.5.54
+clap_derive-4.5.49
 clap_lex-0.7.7
 claxon-0.4.3
 cmake-0.1.57
@@ -405,7 +403,7 @@ fdeflate-0.3.7
 ff-0.12.1
 field-offset-0.3.6
 filetime-0.2.27
-find-msvc-tools-0.1.9
+find-msvc-tools-0.1.8
 fixedbitset-0.4.2
 flate2-1.1.8
 float4-0.1.0
@@ -485,10 +483,10 @@ hyper-proxy2-0.1.0
 hyper-rustls-0.24.2
 hyper-rustls-0.26.0
 hyper-rustls-0.27.7
-hyper-util-0.1.20
+hyper-util-0.1.19
 hyphenation-0.8.4
 hyphenation_commons-0.8.4
-iana-time-zone-0.1.65
+iana-time-zone-0.1.64
 iana-time-zone-haiku-0.1.2
 icu_collections-2.1.1
 icu_locale-2.1.1
@@ -563,6 +561,7 @@ livekit-protocol-0.6.0
 livekit-runtime-0.4.0
 lock_api-0.4.14
 log-0.4.29
+lru-0.12.5
 lru-0.16.3
 lru-slab-0.1.2
 lzma-rust2-0.15.7
@@ -588,7 +587,7 @@ mp4-atom-0.10.1
 muldiv-1.0.1
 multimap-0.10.1
 naga-26.0.0
-nasm-rs-0.3.2
+nasm-rs-0.3.1
 nb-0.1.3
 nb-1.1.0
 ndarray-0.17.2
@@ -662,8 +661,8 @@ pkg-config-0.3.32
 png-0.18.0
 pocket-resources-0.3.2
 polling-3.11.0
-portable-atomic-1.13.1
-portable-atomic-util-0.2.5
+portable-atomic-1.13.0
+portable-atomic-util-0.2.4
 potential_utf-0.1.4
 powerfmt-0.2.0
 ppmd-rust-1.4.0
@@ -735,7 +734,7 @@ rgb-0.8.52
 ring-0.17.14
 rmp-0.8.15
 rmp-serde-1.3.1
-rqrr-0.10.1
+rqrr-0.10.0
 rsa-0.9.10
 rtcp-types-0.3.0
 rtp-types-0.1.2
@@ -772,7 +771,7 @@ sanitize-filename-0.6.0
 scc-2.4.0
 schannel-0.1.28
 schemars-0.9.0
-schemars-1.2.1
+schemars-1.2.0
 scoped-tls-1.0.1
 scopeguard-1.2.0
 sct-0.7.1
@@ -810,10 +809,10 @@ signature-1.6.4
 signature-2.2.0
 simd-adler32-0.3.8
 simd_helpers-0.1.0
-siphasher-1.0.2
+siphasher-1.0.1
 skia-bindings-0.91.0
 skia-safe-0.91.1
-slab-0.4.12
+slab-0.4.11
 slotmap-1.1.1
 slug-0.1.6
 smallvec-1.15.1
@@ -847,7 +846,7 @@ syn-2.0.114
 sync_wrapper-1.0.2
 synstructure-0.13.2
 sysinfo-0.36.1
-system-configuration-0.7.0
+system-configuration-0.6.1
 system-configuration-sys-0.6.0
 system-deps-7.0.7
 tar-0.4.44
@@ -857,7 +856,7 @@ tempfile-3.24.0
 termcolor-1.4.1
 test-log-0.2.19
 test-log-macros-0.2.19
-test-with-0.15.7
+test-with-0.15.6
 textdistance-1.1.1
 text_placeholder-0.5.1
 textwrap-0.16.2
@@ -894,13 +893,13 @@ tower-http-0.6.8
 tower-layer-0.3.3
 tower-service-0.3.3
 tracel-ash-0.38.0+1.3.296
-tracel-llvm-20.1.4-7
-tracel-llvm-bundler-20.1.4-7
-tracel-mlir-rs-20.1.4-7
-tracel-mlir-rs-macros-20.1.4-7
-tracel-mlir-sys-20.1.4-7
+tracel-llvm-20.1.4-6
+tracel-llvm-bundler-20.1.4-6
+tracel-mlir-rs-20.1.4-6
+tracel-mlir-rs-macros-20.1.4-6
+tracel-mlir-sys-20.1.4-6
 tracel-rspirv-0.12.0
-tracel-tblgen-rs-20.1.4-7
+tracel-tblgen-rs-20.1.4-6
 tracing-0.1.44
 tracing-attributes-0.1.31
 tracing-core-0.1.36
@@ -912,7 +911,7 @@ tungstenite-0.20.1
 tungstenite-0.27.0
 tungstenite-0.28.0
 typed-arena-2.0.2
-typed-path-0.12.2
+typed-path-0.12.1
 type-map-0.5.1
 typenum-1.19.0
 unicase-2.9.0
@@ -938,10 +937,9 @@ va_list-0.1.4
 valuable-0.1.1
 variadics_please-1.1.0
 vcpkg-0.2.15
-vergen-9.1.0
+vergen-9.0.6
 vergen-gitcl-1.0.8
 vergen-lib-0.1.6
-vergen-lib-9.1.0
 version_check-0.9.5
 version-compare-0.2.1
 v_frame-0.3.9
@@ -1051,8 +1049,8 @@ yansi-1.0.1
 yasna-0.5.2
 yoke-0.8.1
 yoke-derive-0.8.1
-zerocopy-0.8.37
-zerocopy-derive-0.8.37
+zerocopy-0.8.34
+zerocopy-derive-0.8.34
 zerofrom-0.1.6
 zerofrom-derive-0.1.6
 zeroize-1.8.2
@@ -1062,14 +1060,11 @@ zerovec-0.11.5
 zerovec-derive-0.11.2
 zip-7.2.0
 zlib-rs-0.5.5
-zmij-1.0.19
+zmij-1.0.17
 zopfli-0.8.3
 zstd-0.13.3
 zstd-safe-7.2.4
 zstd-sys-2.0.16+zstd.1.5.7
-
-
-
 
 
 "
@@ -1079,14 +1074,14 @@ declare -A GIT_CRATES=(
 [cairo-sys-rs]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/cairo/sys" # 0.22.0-alpha.2
 [ffv1]="https://github.com/rust-av/ffv1;bd9eabfc14c9ad53c37b32279e276619f4390ab8;ffv1-%commit%" # 0.0.0
 [flavors]="https://github.com/rust-av/flavors;833508af656d298c269f2397c8541a084264d992;flavors-%commit%" # 0.2.0
-[gdk4]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4" # 0.11.0-alpha.2
-[gdk4-sys]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4/sys" # 0.11.0-alpha.2
-[gdk4-wayland]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4-wayland" # 0.11.0-alpha.2
-[gdk4-wayland-sys]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4-wayland/sys" # 0.11.0-alpha.2
-[gdk4-win32]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4-win32" # 0.11.0-alpha.2
-[gdk4-win32-sys]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4-win32/sys" # 0.11.0-alpha.2
-[gdk4-x11]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4-x11" # 0.11.0-alpha.2
-[gdk4-x11-sys]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gdk4-x11/sys" # 0.11.0-alpha.2
+[gdk4]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4" # 0.11.0-alpha.2
+[gdk4-sys]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4/sys" # 0.11.0-alpha.2
+[gdk4-wayland]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4-wayland" # 0.11.0-alpha.2
+[gdk4-wayland-sys]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4-wayland/sys" # 0.11.0-alpha.2
+[gdk4-win32]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4-win32" # 0.11.0-alpha.2
+[gdk4-win32-sys]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4-win32/sys" # 0.11.0-alpha.2
+[gdk4-x11]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4-x11" # 0.11.0-alpha.2
+[gdk4-x11-sys]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gdk4-x11/sys" # 0.11.0-alpha.2
 [gdk-pixbuf]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/gdk-pixbuf" # 0.22.0-alpha.2
 [gdk-pixbuf-sys]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/gdk-pixbuf/sys" # 0.22.0-alpha.2
 [gio]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/gio" # 0.22.0-alpha.2
@@ -1097,8 +1092,8 @@ declare -A GIT_CRATES=(
 [gobject-sys]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/glib/gobject-sys" # 0.22.0-alpha.2
 [graphene-rs]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/graphene" # 0.22.0-alpha.2
 [graphene-sys]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/graphene/sys" # 0.22.0-alpha.2
-[gsk4]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gsk4" # 0.11.0-alpha.2
-[gsk4-sys]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gsk4/sys" # 0.11.0-alpha.2
+[gsk4]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gsk4" # 0.11.0-alpha.2
+[gsk4-sys]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gsk4/sys" # 0.11.0-alpha.2
 [gstreamer-allocators]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;9e626e8542784e760958df396807ea0bde4015ea;gstreamer-rs-%commit%/gstreamer-allocators" # 0.25.0-alpha.1
 [gstreamer-allocators-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;9e626e8542784e760958df396807ea0bde4015ea;gstreamer-rs-%commit%/gstreamer-allocators/sys" # 0.25.0-alpha.1
 [gstreamer-analytics]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;9e626e8542784e760958df396807ea0bde4015ea;gstreamer-rs-%commit%/gstreamer-analytics" # 0.25.0-alpha.1
@@ -1138,9 +1133,9 @@ declare -A GIT_CRATES=(
 [gstreamer-video-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;9e626e8542784e760958df396807ea0bde4015ea;gstreamer-rs-%commit%/gstreamer-video/sys" # 0.25.0-alpha.1
 [gstreamer-webrtc]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;9e626e8542784e760958df396807ea0bde4015ea;gstreamer-rs-%commit%/gstreamer-webrtc" # 0.25.0-alpha.1
 [gstreamer-webrtc-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;9e626e8542784e760958df396807ea0bde4015ea;gstreamer-rs-%commit%/gstreamer-webrtc/sys" # 0.25.0-alpha.1
-[gtk4]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gtk4" # 0.11.0-alpha.2
-[gtk4-macros]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gtk4-macros" # 0.11.0-alpha.2
-[gtk4-sys]="https://github.com/gtk-rs/gtk4-rs;0add32f146062b115534f33c9110233c4ed9c7b3;gtk4-rs-%commit%/gtk4/sys" # 0.11.0-alpha.2
+[gtk4]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gtk4" # 0.11.0-alpha.2
+[gtk4-macros]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gtk4-macros" # 0.11.0-alpha.2
+[gtk4-sys]="https://github.com/gtk-rs/gtk4-rs;111bad7bda3a4069f98fffc25cad5685ef06e658;gtk4-rs-%commit%/gtk4/sys" # 0.11.0-alpha.2
 [pangocairo]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/pangocairo" # 0.22.0-alpha.2
 [pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/pangocairo/sys" # 0.22.0-alpha.2
 [pango]="https://github.com/gtk-rs/gtk-rs-core;19d547784bb77619e44fbdc41fc4517075868a65;gtk-rs-core-%commit%/pango" # 0.22.0-alpha.2
@@ -1599,12 +1594,10 @@ gen_llvm_bdepend() {
 	done
 }
 RUST1_BDEPEND="
-	llvm_slot_19? (
+	llvm_slot_21? (
 		|| (
-			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.92*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.92*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -1613,10 +1606,10 @@ RUST1_BDEPEND="
 	)
 "
 RUST_BDEPEND="
-	llvm_slot_19? (
+	llvm_slot_21? (
 		|| (
-			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.92*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.92*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (

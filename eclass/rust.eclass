@@ -89,10 +89,12 @@ declare -A -g -r _RUST_LLVM_MAP=(
 	["1.78.0"]="18" # U22, U24
 	["1.77.2"]="17" # U22, U24
 	["1.77.1"]="17"
+	["1.77.0"]="17"
 	["1.76.0"]="17" # U22, U24
 	["1.75.0"]="17" # U22 (default), U24 (default)
 	["1.74.1"]="17" # U24
 	# 1.63.0 # D12
+# ALSO UPDATE THE BELOW TABLE
 )
 
 # @ECLASS_VARIABLE: _RUST_SLOTS_ORDERED
@@ -103,6 +105,10 @@ declare -A -g -r _RUST_LLVM_MAP=(
 # this array is used to store the Rust slots in a more convenient order for iteration.
 declare -a -g -r _RUST_SLOTS_ORDERED=(
 	"9999"
+	"1.93.0"
+	"1.92.0"
+	"1.91.1"
+	"1.91.0"
 	"1.90.0"
 	"1.89.0"
 	"1.88.0"
@@ -118,7 +124,9 @@ declare -a -g -r _RUST_SLOTS_ORDERED=(
 	"1.80.1"
 	"1.79.0"
 	"1.78.0"
+	"1.77.2"
 	"1.77.1"
+	"1.77.0"
 	"1.76.0"
 	"1.75.0"
 	"1.74.1"
