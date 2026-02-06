@@ -1,0 +1,21 @@
+# Copyright 2024-2026 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
+
+DESCRIPTION="A redirect ebuild for gst-plugins-rsvalidate"
+LICENSE="metapackage"
+SLOT="1.0"
+IUSE="
+ebuild_revision_1
+"
+RDEPEND="
+	~media-libs/gst-plugins-rs-${PV}:1.0[validate]
+	media-libs/gst-plugins-rs:=
+"
+DEPEND="
+	${RDEPEND}
+"

@@ -6,14 +6,14 @@ EAPI=8
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
-DESCRIPTION="A redirect ebuild for gst-plugins-fmp4"
+DESCRIPTION="A redirect ebuild for gst-plugins-demucs"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
 ebuild_revision_1
 "
 RDEPEND="
-	~media-libs/gst-plugins-rs-${PV}:1.0[fmp4]
+	~media-libs/gst-plugins-rs-${PV}:1.0[demucs]
 	media-libs/gst-plugins-rs:=
 "
 DEPEND="

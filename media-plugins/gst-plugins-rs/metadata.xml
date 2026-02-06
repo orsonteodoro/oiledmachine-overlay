@@ -24,49 +24,58 @@
       Build the analytics plugin to convert to/from relation metadata to ONVIF metadata.
     </flag>
     <flag name="audiofx">
-      Build the Rust AudioFx Plugin to apply audio effects (echo, reverb, noise
+      Build the Rust AudioFx plugin to apply audio effects (echo, reverb, noise
       removal, normalization)
+    </flag>
+    <flag name="audioparsers">
+      Build S302M audio parser plugin
     </flag>
     <flag name="aws">
       Build support for Amazon AWS
     </flag>
+    <flag name="burn">
+      Build support for YOLOX object detection
+    </flag>
     <flag name="cdg">
-      Build the CD+G Plugin for parsing and rendering karaoke data
+      Build the CD+G plugin for parsing and rendering karaoke data
     </flag>
     <flag name="claxon">
-      Build the Claxon FLAC Decoder Plugin
+      Build the Claxon FLAC Decoder plugin
     </flag>
     <flag name="closedcaption">
-      Build the Rust Closed Caption Plugin supporting MCC, SCC, EIA-608, CEA-608
+      Build the Rust Closed Caption plugin supporting MCC, SCC, EIA-608, CEA-608
     </flag>
     <flag name="csound">
       Build the audio effects plugin using Csound
+    </flag>
+    <flag name="deepgram">
+      Build the transcription plugin for Deepgram.
+    </flag>
+    <flag name="demucs">
+      Build the demucs audio source separation plugin.
     </flag>
     <flag name="elevenlabs">
       Build the Text-To-Speech (TTS) plugin using ElevenLabs
     </flag>
     <flag name="dav1d">
-      Build the dav1d Plugin for decoding AV1 video
+      Build the dav1d plugin for decoding AV1 video
     </flag>
     <flag name="fallback-commit">
       Fallback to the commit snapshot with same dependencies and tested applied
       patches
     </flag>
     <flag name="fallbackswitch">
-      Build the Fallback Switcher Plugin for falling back to sync pad after
+      Build the Fallback Switcher plugin for falling back to sync pad after
       timeout
     </flag>
     <flag name="file">
-      Build the Rust File Plugin for filesink and filesrc
+      Build the Rust File plugin for filesink and filesrc
     </flag>
     <flag name="ffv1">
       Build the FFV1 decoder for lossless video produced by FFmpeg
     </flag>
     <flag name="flavors">
       Build the FLV demuxer plugin
-    </flag>
-    <flag name="fmp4">
-      Build a MP4/ISOBMFF/CMAF muxer to generate DASH/HLS media fragments
     </flag>
     <flag name="gif"> 
       Build a GIF encoder plugin
@@ -83,21 +92,23 @@
     <flag name="hsv">
       Build a plugin for HSV (hue, saturation, value) video manipulation
     </flag>
+    <flag name="icecast">
+      Build the Icecast server plugin
+    </flag>
     <flag name="inter">
       Build a plugin with a virtual audio/subtitle/video sink or source for
       internal process communication
     </flag>
+    <flag name="isobuff">
+    </flag>
     <flag name="json">
-      Build the Rust JSON to ND-JSON Plugin
+      Build the Rust JSON to ND-JSON plugin
     </flag>
     <flag name="livesync">
       Build the gap frame inserter on lag event for livestreaming plugin
     </flag>
     <flag name="lewton">
       Build the lewton Vorbis decoder plugin
-    </flag>
-    <flag name="mp4">
-      Build a non-fragmented MP4 plugin
     </flag>
     <flag name="hlsmultivariantsink">
       Build the HTTP Live Streaming (HLS) sink
@@ -160,11 +171,14 @@
     <flag name="streamgrouper">
       Build a plugin to assign several streams together by group-id
     </flag>
-    <flag name="test">
+    <flag name="tests">
       Build and run tests
     </flag>
     <flag name="textahead">
       Build a plugin to display text buffers at the start of the segment
+    </flag>
+    <flag name="textaccumulate">
+      Build a plugin to accumulate text before translation or speech synthesis
     </flag>
     <flag name="textwrap">
       Build the text hypenation wrap plugin
@@ -187,6 +201,9 @@
     </flag>
     <flag name="videofx">
       Build a plugin to round edges, find dominant color, compare similarity
+    </flag>
+    <flag name="validate">
+      Build a plugin to validate QR code content in video frames
     </flag>
     <flag name="version-helper">
       Build the build.rs helper function for GStreamer plugin metadata

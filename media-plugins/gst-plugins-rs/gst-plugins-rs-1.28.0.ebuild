@@ -13,6 +13,9 @@ EAPI=8
 # D12-slim
 # The versioning is based on the tag with the gstreamer- prefix.
 
+# For plugin renames see RENAMES variable in
+# https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/blob/main/dependencies.py?ref_type=heads
+
 _gst_plugins_rs_globals() {
 	LOCKFILE_SOURCE="ebuild" # ebuild or upstream
 	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0} # DO NOT USE.  Copy upstream lockfile instead.  Set to 1 if generating lockfile
@@ -39,12 +42,16 @@ RUST_MIN_VER="1.92.0" # Corresponds to llvm 21.1
 MODULES=(
 	"analytics"
 	"audiofx"
+	"audioparsers"
+	"burn"
 	"aws"
 	"cdg"
 	"claxon"
 	"closedcaption"
 	"csound"
 	"dav1d"
+	"demucs"
+	"deepgram"
 	"doc"
 	"elevenlabs"
 	"examples"
@@ -52,7 +59,6 @@ MODULES=(
 	"ffv1"
 	"file"
 	"flavors"
-	"fmp4"
 	"gif"
 	"gopbuffer"
 	"gtk4"
@@ -60,10 +66,11 @@ MODULES=(
 	"hlssink3"
 	"hsv"
 	"inter"
+	"icecast"
+	"isobuff"
 	"json"
 	"lewton"
 	"livesync"
-	"mp4"
 	"mpegtslive"
 	"ndi"
 	"onvif"
@@ -81,17 +88,21 @@ MODULES=(
 	"spotify"
 	"sodium"
 	"streamgrouper"
-#	"test"
+#	"tests"
 	"textahead"
 	"textwrap"
+	"textaccumulate"
 	"threadshare"
 	"togglerecord"
 	"tracers"
 	"uriplaylistbin"
+	"validate"
 	"videofx"
 	"vvdec"
 	"webp"
 	"webrtc"
+	"webrtc-aws"
+	"webrtc-livekit"
 	"webrtchttp"
 )
 
@@ -1356,7 +1367,6 @@ WEBRTC_VP9_DECODERS_REQUIRED_USE="
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!flavors
-		!fmp4
 		!hlssink3
 		!nvcodec
 		!openh264
@@ -1369,9 +1379,6 @@ PATENT_STATUS_REQUIRED_USE="
 		!x265
 	)
 	flavors? (
-		patent_status_nonfree
-	)
-	fmp4? (
 		patent_status_nonfree
 	)
 	hlssink3? (
@@ -1506,6 +1513,11 @@ RDEPEND+="
 	onvif? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
+	)
+	skia? (
+		media-libs/fontconfig[${MULTILIB_USEDEP}]
+		media-libs/freetype[${MULTILIB_USEDEP}]
+		media-libs/harfbuzz[${MULTILIB_USEDEP}]
 	)
 	system-libsodium? (
 		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
