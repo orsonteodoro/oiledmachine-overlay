@@ -1185,7 +1185,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_39
+ebuild_revision_40
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1851,25 +1851,88 @@ is_not_plugin() {
 	return 1
 }
 
-multilib_src_install_all() {
-	einstalldocs
+# Reduce bloat or attack surface
+prune_plugins() {
+	unset plugins
+	declare -A plugins=(
+		["aws"]="libgstaws.so"
+		["burn"]="libgstburn.so"
+		["cdg"]="libgstcdg.so"
+		["claxon"]="libgstclaxon.so"
+		["dav1d"]="libgstdav1d.so"
+		["deepgram"]="libgstdeepgram.so"
+		["demucs"]="libgstdemucs.so"
+		["elevenlabs"]="libgstelevenlabs.so"
+		["fallbackswitch"]="libgstfallbackswitch.so"
+		["ffv1"]="libgstffv1.so"
+		["gif"]="libgstgif.so"
+		["gopbuffer"]="libgstgopbuffer.so"
+		["gtk4"]="libgstgtk4.so"
+		["hlsmultivariantsink"]="libgsthlsmultivariantsink.so"
+		["hlssink3"]="libgsthlssink3.so"
+		["hsv"]="libgsthsv.so"
+		["icecast"]="libgsticecast.so"
+		["isobmff"]="libgstisobmff.so"
+		["json"]="libgstjson.so"
+		["lewton"]="libgstlewton.so"
+		["livesync"]="libgstlivesync.so"
+		["mpegtslive"]="libgstmpegtslive.so"
+		["ndi"]="libgstndi.so"
+		["originalbuffer"]="libgstoriginalbuffer.so"
+		["quinn"]="libgstquinn.so"
+		["raptorq"]="libgstraptorq.so"
+		["rav1e"]="libgstrav1e.so"
+		["regex"]="libgstregex.so"
+		["reqwest"]="libgstreqwest.so"
+		["analytics"]="libgstrsanalytics.so"
+		["audiofx"]="libgstrsaudiofx.so"
+		["audioparsers"]="libgstrsaudioparsers.so"
+		["closedcaption"]="libgstrsclosedcaption.so"
+		["file"]="libgstrsfile.so"
+		["flv"]="libgstrsflv.so"
+		["inter"]="libgstrsinter.so"
+		["onvif"]="libgstrsonvif.so"
+		["png"]="libgstrspng.so"
+		["rtp"]="libgstrsrtp.so"
+		["rtsp"]="libgstrsrtsp.so"
+		["tracers"]="libgstrstracers.so"
+		["videofx"]="libgstrsvideofx.so"
+		["webp"]="libgstrswebp.so"
+		["webrtc"]="libgstrswebrtc.so"
+		["skia"]="libgstskia.so"
+		["sodium"]="libgstsodium.so"
+		["speechmatics"]="libgstspeechmatics.so"
+		["spotify"]="libgstspotify.so"
+		["streamgrouper"]="libgststreamgrouper.so"
+		["textaccumulate"]="libgsttextaccumulate.so"
+		["textahead"]="libgsttextahead.so"
+		["textwrap"]="libgsttextwrap.so"
+		["threadshare"]="libgstthreadshare.so"
+		["togglerecord"]="libgsttogglerecord.so"
+		["uriplaylistbin"]="libgsturiplaylistbin.so"
+		["webrtchttp"]="libgstwebrtchttp.so"
+	)
+
+	# We cannot prune earlier because of dependencies.py
 
 	local dest="${ED}/usr/$(get_libdir)/gstreamer-1.0"
 	local x
-	for x in "${MODULES[@]}" ; do
-		if is_not_plugin "${x}" ; then
-			:
-		elif [[ -e "${dest}/libgst${x}.so" ]] ; then
-			if use "${x}" ; then
-einfo "Keeping libgst${x}.so"
-			else
-einfo "Removing libgst${x}.so"
-				rm "${dest}/libgst${x}.so"
-			fi
+	for x in "${!plugins[@]}" ; do
+		local f="${plugins[${x}]}"
+		if use "${x}" ; then
+einfo "Keeping ${f}"
 		else
-ewarn "QA:  ${x} is not a plugin or not built"
+einfo "Removing ${f}"
+			rm "${dest}/${f}" ||  die "Missing file"
 		fi
 	done
+}
+
+multilib_src_install_all() {
+	einstalldocs
+
+	prune_plugins
+
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
