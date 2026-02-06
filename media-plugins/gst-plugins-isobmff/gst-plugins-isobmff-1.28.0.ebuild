@@ -6,14 +6,14 @@ EAPI=8
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
-DESCRIPTION="A redirect ebuild for gst-plugins-isobuff"
+DESCRIPTION="A redirect ebuild for gst-plugins-isobmff"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
 ebuild_revision_1
 "
 RDEPEND="
-	~media-libs/gst-plugins-rs-${PV}:1.0[isobuff]
+	~media-libs/gst-plugins-rs-${PV}:1.0[isobmff]
 	media-libs/gst-plugins-rs:=
 "
 DEPEND="

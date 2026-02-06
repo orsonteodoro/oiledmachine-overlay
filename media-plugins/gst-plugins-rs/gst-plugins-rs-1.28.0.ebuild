@@ -67,7 +67,7 @@ MODULES=(
 	"hsv"
 	"inter"
 	"icecast"
-	"isobuff"
+	"isobmff"
 	"json"
 	"lewton"
 	"livesync"
@@ -1185,7 +1185,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_40
+ebuild_revision_41
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1666,44 +1666,6 @@ ewarn
 	rust_pkg_setup
 }
 
-multilib_src_configure() {
-	local llvm_slot=""
-	local s
-	for s in "${LLVM_COMPAT[@]}" ; do
-		if has "llvm_slot_${s}" ${IUSE_EFFECTIVE} && use "llvm_slot_${s}" ; then
-			llvm_slot="${s}"
-			break
-		fi
-	done
-	LLVM_MAX_SLOT="${llvm_slot}"
-	llvm_pkg_setup
-einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
-	"${RUSTC}" --version || die
-
-	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
-
-	local emesonargs=(
-		-Dauto_plugin_features=true
-	)
-
-	local m
-	for m in "${MODULES[@]}" ; do
-		emesonargs+=(
-			$(meson_feature "${m}")
-		)
-	done
-
-	if use system-libsodium ; then
-		emesonargs+=(
-			-Dsodium-source="system"
-		)
-	fi
-
-einfo "emesonargs:  ${emesonargs[@]}"
-
-	meson_src_configure
-}
-
 _production_unpack() {
 	if has fallback-commit ${IUSE} && use fallback-commit ; then
 		export EGIT_COMMIT="${EGIT_COMMIT_FALLBACK}"
@@ -1786,6 +1748,40 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	local llvm_slot=""
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		if has "llvm_slot_${s}" ${IUSE_EFFECTIVE} && use "llvm_slot_${s}" ; then
+			llvm_slot="${s}"
+			break
+		fi
+	done
+	LLVM_MAX_SLOT="${llvm_slot}"
+	llvm_pkg_setup
+einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
+	"${RUSTC}" --version || die
+
+	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
+
+	local emesonargs=(
+#		-Dauto_plugin_features=enabled
+	)
+
+	local m
+	for m in "${MODULES[@]}" ; do
+		emesonargs+=(
+			$(meson_feature "${m}")
+		)
+	done
+
+	if use system-libsodium ; then
+		emesonargs+=(
+			-Dsodium-source="system"
+		)
+	fi
+
+einfo "emesonargs:  ${emesonargs[@]}"
+
 	rustflags-hardened_append
 	meson_src_configure
 }
@@ -1941,7 +1937,7 @@ einfo "QA:  Missing ${f} for ${x} USE flag"
 multilib_src_install_all() {
 	einstalldocs
 
-	prune_plugins
+	#prune_plugins
 
 }
 

@@ -99,7 +99,9 @@
       Build a plugin with a virtual audio/subtitle/video sink or source for
       internal process communication
     </flag>
-    <flag name="isobuff">
+    <flag name="isobmff">
+      Build a MP4/ISOBMFF/CMAF muxer to produce fragmented (DASH/HLS) and
+      non-fragmented (MP4) files
     </flag>
     <flag name="json">
       Build the Rust JSON to ND-JSON plugin
