@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin security-critical untrusted-data"
 MY_P="libnice-${PV}"
 
 inherit cflags-hardened meson-multilib
@@ -22,7 +22,7 @@ LICENSE="
 "
 SLOT="1.0"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
 	media-libs/gstreamer:${SLOT}[${MULTILIB_USEDEP}]
