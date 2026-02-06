@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data p2p"
+CFLAGS_HARDENED_USE_CASES="multithreaded-confidential security-critical network untrusted-data p2p"
 
 inherit cflags-hardened meson-multilib xdg
 
@@ -14,7 +14,10 @@ SRC_URI="https://libnice.freedesktop.org/releases/${P}.tar.gz"
 LICENSE="|| ( MPL-1.1 LGPL-2.1 )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
-IUSE="+gnutls gtk-doc +introspection test +upnp"
+IUSE="
++gnutls gtk-doc +introspection test +upnp
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
