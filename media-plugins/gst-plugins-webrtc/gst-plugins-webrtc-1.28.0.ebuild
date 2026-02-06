@@ -25,7 +25,7 @@ RDEPEND="
 	media-plugins/gst-plugins-srtp:=
 	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
 	media-libs/webrtc-audio-processing:=
-	>=net-libs/libnice-0.1.20[${MULTILIB_USEDEP}]
+	>=net-libs/libnice-0.1.23[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
