@@ -1682,6 +1682,10 @@ einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 
+	local emesonargs=(
+		-Dauto_plugin_features=true
+	)
+
 	local m
 	for m in "${MODULES[@]}" ; do
 		emesonargs+=(
@@ -1694,6 +1698,8 @@ einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 			-Dsodium-source="system"
 		)
 	fi
+
+einfo "emesonargs:  ${emesonargs[@]}"
 
 	meson_src_configure
 }
@@ -1919,11 +1925,15 @@ prune_plugins() {
 	local x
 	for x in "${!plugins[@]}" ; do
 		local f="${plugins[${x}]}"
-		if use "${x}" ; then
+		if [[ -e "${dest}/${f}" ]] ; then
+			if use "${x}" ; then
 einfo "Keeping ${f}"
-		else
+			else
 einfo "Removing ${f}"
-			rm "${dest}/${f}" ||  die "Missing file"
+			rm "${dest}/${f}" || die "Missing file"
+			fi
+		else
+einfo "QA:  Missing ${f} for ${x} USE flag"
 		fi
 	done
 }
