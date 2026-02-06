@@ -69,12 +69,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	python_targets_python3_11? (
-		>=dev-python/cython-0.29:0.29[${PYTHON_USEDEP}]
-	)
-	python_targets_python3_12? (
-		>=dev-python/cython-3.0:3.0[${PYTHON_USEDEP}]
-	)
+	>=dev-python/cython-0.29:0.29[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
@@ -105,12 +100,7 @@ python_prepare_all() {
 }
 
 python_configure() {
-	if use python_targets_python3_11 ; then
-		cython_set_cython_slot "0.29"
-	fi
-	if use python_targets_python3_12 ; then
-		cython_set_cython_slot "3.0"
-	fi
+	cython_set_cython_slot "0.29"
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
