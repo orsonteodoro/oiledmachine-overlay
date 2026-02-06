@@ -1374,7 +1374,7 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 einfo "RUSTC:  ${RUSTC}"
 	"${RUSTC}" --version || true
 	"${RUSTC}" --version | grep -q -e "nightly"
-	local is_rust_nightly=$?
+	local is_rust_nightly=$(( $? ? 0 : 1 ))
 einfo "is_rust_nightly:  ${is_rust_nightly}"
 
 	local rust_pv=$("${RUSTC}" --version \
@@ -1411,7 +1411,8 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 	fi
 
 	"${RUSTC}" -Z help | grep -q -e "stack-protector"
-	has_stack_protector=$?
+	has_stack_protector=$(( $? ? 0 : 1 ))
+einfo "has_stack_protector:  ${has_stack_protector}"
 
 	local stack_mitigations=1
 	if [[ "${ARCH}" =~ "hppa" ]] ; then
@@ -1420,9 +1421,9 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 
 	# Not production ready only available on nightly
 	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41
-	if (( ${is_rust_nightly} != 0 )) ; then
+	if (( ${is_rust_nightly} == 0 )) ; then
 		:
-	elif (( ${has_stack_protector} != 0 )) ; then
+	elif (( ${has_stack_protector} == 0 )) ; then
 		:
 	else
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1944,7 +1945,7 @@ eerror
 		sanitizers_compat=0
 	fi
 
-	if (( ${is_rust_nightly} != 0 )) ; then
+	if (( ${is_rust_nightly} == 0 )) ; then
 		sanitizers_compat=0
 	fi
 
