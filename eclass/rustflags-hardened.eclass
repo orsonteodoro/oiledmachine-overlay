@@ -734,10 +734,10 @@ ewarn
 			RUSTFLAGS+=" -Z branch-protection=+pac-ret,+bti"	# balance
 		elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, rop
-			RUSTFLAGS+=" -Z branch-protection=+pac-ret"	# balance
+			RUSTFLAGS+=" -Z branch-protection=+pac-ret"		# balance
 		elif [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# jop
-			RUSTFLAGS+=" -Z branch-protection=+bti"		# performance-critical
+			RUSTFLAGS+=" -Z branch-protection=+bti"			# performance-critical
 		else
 			RUSTFLAGS+=" -Z branch-protection=-pac-ret,-bti"	# performance-critical
 		fi
@@ -2091,17 +2091,17 @@ eerror "emerge -1vuDN llvm-runtimes/clang-runtime:${LLVM_SLOT}[sanitize]"
 				[[ ${added[${module}]} == "0" ]] \
 			; then
 				if [[ "${x}" == "hwaddress" ]] && _rustflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
-					RUSTFLAGS+=" -Zsanitizer=${x}"
+					RUSTFLAGS+=" -Z sanitizer=${x}"
 					asan=1
 				elif [[ "${x}" == "hwaddress" ]] ; then
 					skip=1
 				elif [[ "${x}" == "address" ]] ; then
-					RUSTFLAGS+=" -Zsanitizer=${x}"
+					RUSTFLAGS+=" -Z sanitizer=${x}"
 					asan=1
 				elif [[ "${x}" =~ "address" ]] && (( ${asan} == 1 )) ; then
 					skip=1
 				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] && (( ${disable_cfi} == 0 )) ; then
-					RUSTFLAGS+=" -Zsanitizer=${x}"
+					RUSTFLAGS+=" -Z sanitizer=${x}"
 				elif [[ "${x}" == "cfi" ]] ; then
 					skip=1
 				elif [[ "${x}" == "ubsan" ]] ; then
@@ -2109,7 +2109,7 @@ eerror "emerge -1vuDN llvm-runtimes/clang-runtime:${LLVM_SLOT}[sanitize]"
 	# Many of the above sanitizer options are not supported
 					skip=1
 				else
-					RUSTFLAGS+=" -Zsanitizer=${x}"
+					RUSTFLAGS+=" -Z sanitizer=${x}"
 				fi
 
 	#
