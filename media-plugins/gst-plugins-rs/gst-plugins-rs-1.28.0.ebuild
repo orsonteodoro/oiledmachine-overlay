@@ -1185,7 +1185,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_38
+ebuild_revision_39
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1835,8 +1835,41 @@ multilib_src_test() {
 	meson_src_test
 }
 
+is_not_plugin() {
+	local name="${1}"
+	local NOT_PLUGINS=(
+		"tests"
+		"webrtc-aws"
+		"webrtc-livekit"
+	)
+	local x
+	for x in "${NOT_PLUGINS[@]}" ; do
+		if [[ "${x}" == "${name}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 multilib_src_install_all() {
 	einstalldocs
+
+	local dest="${ED}/usr/$(get_libdir)/gstreamer-1.0"
+	local x
+	for x in "${MODULES[@]}" ; do
+		if is_not_plugin "${x}" ; then
+			:
+		elif [[ -e "${dest}/libgst${x}.so" ]] ; then
+			if use "${x}" ; then
+einfo "Keeping libgst${x}.so"
+			else
+einfo "Removing libgst${x}.so"
+				rm "${dest}/libgst${x}.so"
+			fi
+		else
+ewarn "QA:  ${x} is not a plugin or not built"
+		fi
+	done
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
