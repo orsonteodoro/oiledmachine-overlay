@@ -615,6 +615,8 @@ rocm_src_configure() {
 			local force_rocm_path=${ROCM_FORCE_ROCM_PATH:-0}
 			if (( ${found_gfortran} == 0 || ${force_rocm_path} == 1 )) ; then
 	# Prevent configure test issues
+	# gcc/gfortran cannot consume --rocm-path.
+	# Only HIP-Clang can consume it.
 				append-flags \
 					"--rocm-path=${ESYSROOT}${EROCM_PATH}" \
 					"--rocm-device-lib-path=${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
