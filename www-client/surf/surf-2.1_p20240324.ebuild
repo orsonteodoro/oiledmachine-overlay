@@ -6,10 +6,10 @@ EAPI=8
 
 AUTOOPEN_FN="surf-0.3-autoopen.diff"
 LINK_HINTS_FN="surf-9999-link-hints.diff"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 
-inherit flag-o-matic git-r3 multilib-minimal python-r1 toolchain-funcs
+inherit flag-o-matic git-r3 multilib-minimal python-single-r1 toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="9ef79bf7106496c736ba613c51d2fd5af9d873a8" # 2023-03-24
@@ -128,12 +128,12 @@ RDEPEND+="
 	gtk3? (
 		!http2? (
 			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-			net-libs/webkit-gtk:4[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+			net-libs/webkit-gtk:4[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		)
 		http2? (
 			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-			net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+			net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		)
 	)
@@ -142,12 +142,12 @@ RDEPEND+="
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 		)
 	)
