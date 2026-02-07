@@ -283,7 +283,7 @@ The following are considered sensitive data:
 | Health                              | GDPR, [1]         | Discrimination                         | EU/UK, US         | Web browser/server/database, PDF                                          |
 | IP addresses                        | GDPR, [6]         | Discrimination, financial, anonymity   | EU/UK, US         | Web browser/server/database                                               |
 | Login / screen names                | GDPR, [9]         | Financial, reputational, emotional     | US                | Web browser/server/database                                               |
-| Password                            | CCPA/CPRA (US-CA) | Financial, reputational                | US                | Web browser/server/database, clipboard, crypto/auth libs                  |
+| Password                            | GDPR, [10]        | Financial, reputational                | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs                  |
 | Philosophical                       | GDPR              | Discrimination                         | EU/UK             | Web browser/server/database                                               |
 | Physcial location                   | GDPR, [3]         | Physical                               | EU/UK, UA, US     | GPS, Geolocation, web browsers/server/database                            |
 | Political                           | GDPR              | Discrimination, physical               | EU/UK, UA         | Web browser/server/database                                               |
@@ -303,7 +303,8 @@ The following are considered sensitive data:
 [6] CCPA/CPRA (US-CA), LGPD (BR)
 [7] CAN-SPAM (US), CCPA/CPRA (US-CA), COPPA (US), CPA (US-CO), HIPAA (US), PIPEDA (CA), VCDPA (US-VA)
 [8] CCPA/CPRA (US-CA)
-[9] CCPA/CPRA (US-CA), CPA (US-CO), VCDPA (US-VA)
+[9] CCPA/CPRA (US-CA), CPA (US-CO), ISO 27001, VCDPA (US-VA)
+[10] CCPA/CPRA (US-CA), CCPA/CPRA (US-CA), ISO 27001 (Worldwide), LGPD (BR), PCI DSS (Worldwide), VCDPA (US-VA)
 
 This list may be incomplete.
 
