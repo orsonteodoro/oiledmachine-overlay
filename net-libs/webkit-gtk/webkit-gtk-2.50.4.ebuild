@@ -612,7 +612,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_31
+ebuild_revision_32
 "
 
 gen_gst_plugins_duse() {
@@ -2183,19 +2183,19 @@ src_configure() {
 
 _src_configure() {
 	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_ram_gib=$(python -c "print(round(${total_ram} / (1024*1024)))" )
+	local total_ram_gib=$("${EPYTHON}" -c "print(round(${total_ram} / (1024*1024)))" )
 	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
 	[[ -z "${total_swap}" ]] && total_swap=0
 	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
 	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_mem_gib=$(python -c "print(round(${total_mem} / (1024*1024)))" )
+	local total_mem_gib=$("${EPYTHON}" -c "print(round(${total_mem} / (1024*1024)))" )
 
 	local jobs=$(get_makeopts_jobs)
 	local cores=$(get_nproc)
 
 	local minimal_gib_per_core=2
-	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
-	local ram_gib_per_core=$(python -c "print(${total_ram_gib} / ${cores})")
+	local actual_gib_per_core=$("${EPYTHON}" -c "print(${total_mem_gib} / ${cores})")
+	local ram_gib_per_core=$("${EPYTHON}" -c "print(${total_ram_gib} / ${cores})")
 
 	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
 einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
@@ -2295,6 +2295,7 @@ ewarn
 	#	${S}/Source/cmake/OptionsJSCOnly.cmake \
 	#	${S}/Source/cmake/WebKitFeatures.cmake
 	local mycmakeargs=(
+		-DPython_EXECUTABLE="${PYTHON}"
 		${ruby_interpreter}
 		-DBWRAP_EXECUTABLE:FILEPATH="${EPREFIX}/usr/bin/bwrap" # \
 # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails \
