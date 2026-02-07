@@ -269,43 +269,51 @@ Contributing AI fixes:
 
 The following are considered sensitive data:
 
-| Type                                | Standard          | Harm / Consequence                     | Region            | Example use cases                                                         |
-| ---                                 | ---               | ---                                    | ---               | ---                                                                       |
-| API keys                            |                   | Financial                              |                   | LLMs                                                                      |
-| Creditholder Data (CHD)             | PCI DSS           | Financial                              | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                           |
-| Biometric                           | GDPR, HIPAA       | Discrimination, security               | EU/UK, US         | Login, machine learning, computer vision                                  |
-| Birth dates                         | HIPAA             | Discrimination, financial              | US                | Web browser/server/database, genelogical apps                             |
-| Citizenship                         | [5]               | Discrimination, physical               | US                | Web browser/server/database                                               |
-| Child's data                        | [4]               | Physical                               | US                | Web browser/server/database                                               |
-| CPU details                         |                   | Security                               |                   | Debug logs/dumps, attacker reconnaissance                                 |
-| Criminal records                    | GDPR              | Discrimination, physical               | EU/UK             | Web browser/server/database                                               |
-| Cryptographic seeds                 | [11]              | Financial                              | Worldwide         | Cryptocurrency                                                            |
-| Email address                       | GDPR, [7]         | Financial, anonymity, emotional        | EU/UK, US, CA, JP | Web browser/server/database                                               |
-| Email content                       | CCPA/CPRA (US-CA) | Reputational                           | US                | Web browser/server/database, LLMs                                         |
-| Employee/User PII                   | [11]              | Anonymity                              | Worldwide         | Cryptocurrency                                                            |
-| Financial transaction metadata      | [11]              | Discrimination                         | Worldwide         | Cryptocurrency                                                            |
-| Genetic                             | GDPR              | Discrimination, physical               | EU/UK             | Web browser, genelogical apps                                             |
-| Health                              | GDPR, [1]         | Discrimination                         | EU/UK, US         | Web browser/server/database, PDF                                          |
-| IP addresses                        | GDPR, [6]         | Discrimination, financial, anonymity   | EU/UK, US         | Web browser/server/database                                               |
-| Kernel space memory address         |                   | Security, loss of ownership, financial |                   | Security bypass                                                           |
-| Login / screen names                | GDPR, [9]         | Financial, reputational, emotional     | US                | Web browser/server/database                                               |
-| Password                            | GDPR, [10]        | Financial, reputational                | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs                  |
-| PINs                                | PCI DSS, [11]     | Financial                              | Worldwide         | Point of Sale (POS) system, Cryptocurrency, VOIP                          |
-| Philosophical                       | GDPR              | Discrimination                         | EU/UK             | Web browser/server/database                                               |
-| Physcial location                   | GDPR, [3]         | Physical                               | EU/UK, UA, US     | GPS, Geolocation, web browsers/server/database                            |
-| Political                           | GDPR              | Discrimination, physical               | EU/UK, UA         | Web browser/server/database                                               |
-| Private keys                        |                   | Financial                              |                   | Cryptocurrency                                                            |
-| Racial/ethicity                     | GDPR, [1]         | Discrimination, physical               | EU/UK, US         | Web browser/server/database                                               |
-| Real names                          | GDPR, HIPAA, [8]  | Financial, anonymity, physical         | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
-| Recovery seed phrases               |                   | Financial                              |                   | Cryptocurrency                                                            |
-| Religious                           | GDPR, [2]         | Discrimination, physical               | EU/UK, US         | Web browser/server/database                                               |
-| Sex life                            | GDPR              | Discrimination, reputational, physical | EU/UK             | Web browser/server/database, image viewers, codecs, movie editors/players |
-| Sexual orientation                  | GDPR              | Discrimination, reputational, physical | EU/UK, US         | Web browser/server/database                                               |
-| Sensitive Authentication Data (SAD) | PCI DSS           | Financial                              | Worldwide         | Fintech, VOIP                                                             |
-| System and configuration            | [11]              | Security                               | Worldwide         | Cryptocurrency, attacker reconnaissance                                   |
-| Trade union membership              | GDPR              | Discrimination, financial              | EU/UK             | Web browser/server/database                                               |
-| Verification codes                  | PCI DSS, [11]     | Financial                              | Worldwide         | Fintech, cryptocurrency                                                   |
-| Wallet address                      | [11]              | Financial                              | Worldwide         | Cryptocurrency                                                            |
+| Type                                | Standard          | Harm / Consequence                      | Region            | Example use cases                                                         |
+| ---                                 | ---               | ---                                     | ---               | ---                                                                       |
+| API keys                            |                   | Financial                               |                   | LLMs                                                                      |
+| Creditholder Data (CHD)             | PCI DSS           | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                           |
+| Biometric                           | GDPR, HIPAA       | Discrimination, security                | EU/UK, US         | Login, machine learning, computer vision                                  |
+| Birth dates                         | HIPAA             | Discrimination, financial               | US                | Web browser/server/database, genelogical apps                             |
+| Citizenship                         | [5]               | Discrimination, physical                | US                | Web browser/server/database                                               |
+| Child's data                        | [4]               | Physical                                | US                | Web browser/server/database                                               |
+| Cookies (3rd party ad tracking)     | GDPR, [12][13]    | Discrimination                          | EU/UK, US         | Web, commercial/political targeted advertising                            |
+| Cookies (Geolocation)               | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                       |
+| Cookies (Health)                    | CCPA/CPRA (US-CA) | Discrimination                          | US                | Web                                                                       |
+| Cookies (Persistent cookies)        | GDPR, [12][13]    | Discrimination, physical                | EU/UK, US         | Web, state sponsored surveillance, domestic spying                        |
+| Cookies (Race)                      | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                       |
+| Cookies (Session replay, behavior)  | GDPR              | Discrimination, reputational, ownership | EU/UK             | Debugging websites, spying, malicious threat actor abuse                  |
+| Cookies (Session tokens)            | GDPR, [14]        | Reputation, impersonation               | EU/UK             | Web, one time login                                                       |
+| CPU details                         |                   | Security                                |                   | Debug logs/dumps, attacker reconnaissance                                 |
+| Criminal records                    | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database                                               |
+| Cryptographic seeds                 | [11]              | Financial                               | Worldwide         | Cryptocurrency                                                            |
+| Device fingerprint                  | GDPR, [12]        | Discrimination, anonymity               | EU/UK             | Debug logs, web                                                           |
+| Email address                       | GDPR, [7]         | Financial, anonymity, emotional         | EU/UK, US, CA, JP | Web browser/server/database                                               |
+| Email content                       | CCPA/CPRA (US-CA) | Reputational                            | US                | Web browser/server/database, LLMs                                         |
+| Employee/User PII                   | [11]              | Anonymity                               | Worldwide         | Cryptocurrency                                                            |
+| Financial transaction metadata      | [11]              | Discrimination                          | Worldwide         | Cryptocurrency                                                            |
+| Genetic                             | GDPR              | Discrimination, physical                | EU/UK             | Web browser, genelogical apps                                             |
+| Health                              | GDPR, [1]         | Discrimination                          | EU/UK, US         | Web browser/server/database, PDF                                          |
+| IP addresses                        | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                               |
+| Kernel space memory address         |                   | Security, ownership, financial          |                   | Security bypass                                                           |
+| Login / screen names                | GDPR, [9]         | Financial, reputational, emotional      | US                | Web browser/server/database                                               |
+| Password                            | GDPR, [10]        | Financial, reputational                 | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs                  |
+| PINs                                | PCI DSS, [11]     | Financial                               | Worldwide         | Point of Sale (POS) system, Cryptocurrency, VOIP                          |
+| Philosophical                       | GDPR              | Discrimination                          | EU/UK             | Web browser/server/database                                               |
+| Physcial location                   | GDPR, [3]         | Physical                                | EU/UK, UA, US     | GPS, Geolocation, web browsers/server/database                            |
+| Political                           | GDPR              | Discrimination, physical                | EU/UK, UA         | Web browser/server/database                                               |
+| Private keys                        |                   | Financial, data theft                   |                   | Cryptocurrency, encryption                                                |
+| Racial/ethicity                     | GDPR, [1]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
+| Real names                          | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
+| Recovery seed phrases               |                   | Financial                               |                   | Cryptocurrency                                                            |
+| Religious                           | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
+| Sex life                            | GDPR              | Discrimination, reputational, physical  | EU/UK             | Web browser/server/database, image viewers, codecs, movie editors/players |
+| Sexual orientation                  | GDPR              | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                               |
+| Sensitive Authentication Data (SAD) | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                             |
+| System and configuration            | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                   |
+| Trade union membership              | GDPR              | Discrimination, financial               | EU/UK             | Web browser/server/database                                               |
+| Verification codes                  | PCI DSS, [11]     | Financial                               | Worldwide         | Fintech, cryptocurrency                                                   |
+| Wallet address                      | [11]              | Financial                               | Worldwide         | Cryptocurrency                                                            |
 
 [1] CPA (US-CO), CTDPA (US-CT), CCPA/CPRA (US-CA), VCDPA (US-VA)
 [2] CPA (US-CO), CTDPA (US-CT), VCDPA (US-VA)
@@ -318,6 +326,9 @@ The following are considered sensitive data:
 [9] CCPA/CPRA (US-CA), CPA (US-CO), ISO 27001, VCDPA (US-VA)
 [10] CCPA/CPRA (US-CA), CCPA/CPRA (US-CA), CryptoCurrency Security Standard (CCSS), ISO 27001 (Worldwide), LGPD (BR), PCI DSS (Worldwide), VCDPA (US-VA)
 [11] CryptoCurrency Security Standard (CCSS)
+[12] ePrivacy Directive (EU)
+[13] CCPA/CPRA (US-CA)
+[14] CCPA/CPRA (US-CA), ePrivacy Directive (EU), PECR (UK), Technical Security Standards (OWASP, Worldwide)
 
 This list may be incomplete.
 
