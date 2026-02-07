@@ -415,7 +415,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Feb 4, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1769765548 # From `date +%s -d "2026-01-30 10:32:28 +0100"` from changelog for latest tag
+MITIGATION_LAST_UPDATE=1770393465 # From `date +%s -d "2026-02-06 16:57:45 +0100"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -426,11 +426,10 @@ VULNERABILITIES_FIXED=(
 # If the ebuild maintainer(s) gathered them from the changelog, then the
 # vulnerability coverage may be incomplete or miscategoried.
 
-
-
 # Some CVE reports may be slow released.  The second group may
 # catch these.
 
+	# 2026-02-04
 	"CVE-2026-23089;UAF;"
 	"CVE-2026-23098;DF;"
 	"CVE-2026-23097;;"
