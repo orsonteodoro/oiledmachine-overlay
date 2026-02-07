@@ -361,33 +361,6 @@ get_cuda_targets() {
 	echo "${targets}"
 }
 
-# @FUNCTION:  _rocm_src_configure
-# @DESCRIPTION:
-# Apply multilib configuration and call the build system's configure.
-_rocm_src_configure() {
-	if [[ -n "${_CMAKE_ECLASS}" ]] ; then
-		if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
-			local found_gfortran=0
-			if grep -q -e "gfortran" $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake") ; then
-				found_gfortran=1
-			fi
-			local force_rocm_path=${ROCM_FORCE_ROCM_PATH:-0}
-			if (( ${found_gfortran} == 0 || ${force_rocm_path} == 1 )) ; then
-	# Prevent configure test issues
-	# gcc/gfortran cannot consume --rocm-path.
-	# Only HIP-Clang can consume it.
-				append-flags \
-					"--rocm-path=${ESYSROOT}${EROCM_PATH}" \
-					"--rocm-device-lib-path=${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
-			fi
-		fi
-einfo "rocm_src_configure():  Calling cmake_src_configure()"
-		cmake_src_configure
-	else
-		ewarn "src_configure not called for the build system."
-	fi
-}
-
 src_configure() {
 	mycmakeargs=()
 
@@ -501,8 +474,9 @@ einfo "CUDA_TARGETS:  ${targets}"
 	fi
 
 	if use rocm ; then
+		ROCM_CUSTOM_LIBDIR="$(get_libdir)"
 		ROCM_FORCE_ROCM_PATH=1
-		_rocm_src_configure
+		rocm_src_configure
 	else
 		cmake_src_configure
 	fi

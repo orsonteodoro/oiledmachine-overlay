@@ -597,7 +597,11 @@ rocm_src_prepare() {
 # Apply multilib configuration and call the build system's configure.
 rocm_src_configure() {
 	if [[ -n "${_CMAKE_ECLASS}" ]] ; then
-		if [[ "${ROCM_DEFAULT_LIBDIR:-lib}" == "lib" ]] ; then
+		if [[ -n "${ROCM_CUSTOM_LIBDIR}" ]] ; then
+			mycmakeargs+=(
+				-DCMAKE_INSTALL_LIBDIR="${ROCM_CUSTOM_LIBDIR}"
+			)
+		elif [[ "${ROCM_DEFAULT_LIBDIR:-lib}" == "lib" ]] ; then
 			mycmakeargs+=(
 				-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
 			)
