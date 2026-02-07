@@ -265,23 +265,55 @@ Contributing AI fixes:
   version without a fix or still having the affected code that wasn't removed
   won't help.
 
-## Personal identifiable information
-
-The scope of personal identifiable information includes e-mail, names, etc.
-
-These are not easily removed due to the fork nature of git.
-
-It may be removed directly from this repo but not inactive forked ones in or
-have non-responding users.
-
-(WIP) Reports may be done via email or encrypted messaging.
-
-DO NOT SEND AN ISSUE REQUEST.
-
 ## Sensitive information
 
-The scope of sensitive information includes password tokens, raw passwords,
-personal numbers, private keys, memory dump, etc
+The following are considered sensitive data:
+
+| Type                                | Standard          | Harm / Consequence                     | Region            | Example use cases                                                         |
+| ---                                 | ---               | ---                                    | ---               | ---                                                                       |
+| Creditholder Data (CHD)             | PCI DSS           | Financial                              | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                           |
+| Biometric                           | GDPR, HIPAA       | Discrimination, security               | EU/UK, US         | Login, machine learning, computer vision                                  |
+| Birth dates                         | HIPAA             | Discrimination, financial              | US                | Web browser/server/database, genelogical apps                             |
+| Criminal records                    | GDPR              | Discrimination, physical               | EU/UK             | Web browser/server/database                                               |
+| Citizenship                         | [5]               | Discrimination, physical               | US                | Web browser/server/database                                               |
+| Child's data                        | [4]               | Physical                               | US                | Web browser/server/database                                               |
+| Email address                       | GDPR, [7]         | Financial                              | EU/UK, US, CA, JP | Web browser/server/database                                               |
+| Email content                       | CCPA/CPRA (US-CA) | Reputational                           | US                | Web browser/server/database, LLMs                                         |
+| Genetic                             | GDPR              | Discrimination, physical               | EU/UK             | Web browser, genelogical apps                                             |
+| Health                              | GDPR, [1]         | Discrimination                         | EU/UK, US         | Web browser/server/database, PDF                                          |
+| IP addresses                        | GDPR, [6]         | Discrimination, financial, anonymity   | EU/UK, US         | Web browser/server/database                                               |
+| Login / screen names                | GDPR, [9]         | Financial, reputational, emotional     | US                | Web browser/server/database                                               |
+| Password                            | CCPA/CPRA (US-CA) | Financial, reputational                | US                | Web browser/server/database, clipboard, crypto/auth libs                  |
+| Philosophical                       | GDPR              | Discrimination                         | EU/UK             | Web browser/server/database                                               |
+| Physcial location                   | GDPR, [3]         | Physical                               | EU/UK, UA, US     | GPS, Geolocation, web browsers/server/database                            |
+| Political                           | GDPR              | Discrimination, physical               | EU/UK, UA         | Web browser/server/database                                               |
+| Racial/ethicity                     | GDPR, [1]         | Discrimination, physical               | EU/UK, US         | Web browser/server/database                                               |
+| Real names                          | GDPR, HIPAA, [8]  | Financial, anonymity, physical         | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
+| Religious                           | GDPR, [2]         | Discrimination, physical               | EU/UK, US         | Web browser/server/database                                               |
+| Sex life                            | GDPR              | Discrimination, reputational, physical | EU/UK             | Web browser/server/database, image viewers, codecs, movie editors/players |
+| Sexual orientation                  | GDPR              | Discrimination, reputational, physical | EU/UK, US         | Web browser/server/database                                               |
+| Sensitive Authentication Data (SAD) | PCI DSS           | Financial                              | Worldwide         | Fintech, VOIP                                                             |
+| Trade union membership              | GDPR              | Discrimination, financial              | EU/UK             | Web browser/server/database                                               |
+
+[1] CPA (US-CO), CTDPA (US-CT), CCPA/CPRA (US-CA), VCDPA (US-VA)
+[2] CPA (US-CO), CTDPA (US-CT), VCDPA (US-VA)
+[3] CCPA/CPRA (US-CA), CTDPA (US-CT), VCDPA (US-VA)
+[4] CPA (US-CO), CTDPA (US-CT), VCDPA (US-VA)
+[5] VCDPA (US-VA)
+[6] CCPA/CPRA (US-CA), LGPD (BR)
+[7] CAN-SPAM (US), CCPA/CPRA (US-CA), COPPA (US), CPA (US-CO), HIPAA (US), PIPEDA (CA), VCDPA (US-VA)
+[8] CCPA/CPRA (US-CA)
+[9] CCPA/CPRA (US-CA), CPA (US-CO), VCDPA (US-VA)
+
+This list may be incomplete.
+
+The law should be respected to prevent possible indefinite detainment of
+developer(s) or contributor(s) while traveling.
+
+This is provided for ebuild developers to improve compiler hardened tagging and
+license references in ebuilds.
+
+### Personal identifiable information (PII) removal
 
 These are not easily removed due to the fork nature of git.
 
