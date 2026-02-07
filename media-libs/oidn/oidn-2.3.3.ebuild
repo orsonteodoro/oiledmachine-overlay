@@ -108,7 +108,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_11
+ebuild_revision_12
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -334,7 +334,7 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 	if use rocm ; then
-		eapply ${HIP_PATCHES[@]}
+		eapply "${HIP_PATCHES[@]}"
 	fi
 	if use cuda ; then
 		cuda_src_prepare
@@ -342,6 +342,9 @@ src_prepare() {
 	fi
 	if use rocm ; then
 		rocm_src_prepare
+		sed -i -e "s|@ESYSROOT_ROCM_PATH@|${ROCM_PATH}|g" \
+			"devices/hip/CMakeLists.txt" \
+			|| die
 	fi
 }
 
@@ -469,7 +472,12 @@ einfo "CUDA_TARGETS:  ${targets}"
 		fi
 	fi
 
-	cmake_src_configure
+	if use rocm ; then
+		ROCM_FORCE_ROCM_PATH=1
+		rocm_src_configure
+	else
+		cmake_src_configure
+	fi
 }
 
 src_install() {

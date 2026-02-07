@@ -608,10 +608,13 @@ rocm_src_configure() {
 		fi
 
 		if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
+			local found_gfortran=0
 			if grep -q -e "gfortran" $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake") ; then
-				:
-			else
-				# Prevent configure test issues
+				found_gfortran=1
+			fi
+			local force_rocm_path=${ROCM_FORCE_ROCM_PATH:-0}
+			if (( ${found_gfortran} == 0 || ${force_rocm_path} == 1 )) ; then
+	# Prevent configure test issues
 				append-flags \
 					"--rocm-path=${ESYSROOT}${EROCM_PATH}" \
 					"--rocm-device-lib-path=${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
