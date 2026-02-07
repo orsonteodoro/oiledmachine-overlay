@@ -128,12 +128,12 @@ RDEPEND+="
 	gtk3? (
 		!http2? (
 			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-			net-libs/webkit-gtk:4[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+			net-libs/webkit-gtk:4[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,introspection,pulseaudio?,v4l?,webgl?,X]
 			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		)
 		http2? (
 			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-			net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+			net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,introspection,pulseaudio?,v4l?,webgl?,X]
 			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		)
 	)
@@ -142,12 +142,12 @@ RDEPEND+="
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,introspection,pulseaudio?,v4l?,webgl?,X]
 			)
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,introspection,pulseaudio?,v4l?,webgl?,X]
 			)
 		)
 	)
