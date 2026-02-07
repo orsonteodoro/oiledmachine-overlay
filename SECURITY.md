@@ -277,7 +277,7 @@ The following are considered sensitive data:
 | Criminal records                    | GDPR              | Discrimination, physical               | EU/UK             | Web browser/server/database                                               |
 | Citizenship                         | [5]               | Discrimination, physical               | US                | Web browser/server/database                                               |
 | Child's data                        | [4]               | Physical                               | US                | Web browser/server/database                                               |
-| Email address                       | GDPR, [7]         | Financial                              | EU/UK, US, CA, JP | Web browser/server/database                                               |
+| Email address                       | GDPR, [7]         | Financial, anonymity, emotional        | EU/UK, US, CA, JP | Web browser/server/database                                               |
 | Email content                       | CCPA/CPRA (US-CA) | Reputational                           | US                | Web browser/server/database, LLMs                                         |
 | Genetic                             | GDPR              | Discrimination, physical               | EU/UK             | Web browser, genelogical apps                                             |
 | Health                              | GDPR, [1]         | Discrimination                         | EU/UK, US         | Web browser/server/database, PDF                                          |
