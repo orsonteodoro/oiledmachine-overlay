@@ -284,6 +284,7 @@ The following are considered sensitive data:
 | Cookies (Race)                        | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                       |
 | Cookies (Session replay, behavioral)  | GDPR              | Discrimination, reputational, ownership | EU/UK             | Debugging websites, spying, malicious threat actor abuse                  |
 | Cookies (Session tokens)              | GDPR, [14]        | Reputation, impersonation               | EU/UK             | Web, one time login                                                       |
+| Contact info (address, phone)         | GDPR, [17]        | Emotional, physical                     | CA, EU/UK, US     | Web browser/server/database                                               |
 | CPU details                           |                   | Security                                |                   | Debug logs/dumps, attacker reconnaissance                                 |
 | Criminal records                      | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database                                               |
 | Cryptographic seeds                   | [11]              | Financial                               | Worldwide         | Cryptocurrency                                                            |
@@ -332,6 +333,7 @@ The following are considered sensitive data:
 * [14] CCPA/CPRA (US-CA), ePrivacy Directive (EU), PECR (UK), Technical Security Standards (OWASP, Worldwide)
 * [15] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), HIPAA (US), PIPEDA (CA)
 * [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
+* [17] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), PIPEDA (CA), UCPA (US-UT), VCDPA (US-VA)
 
 This list may be incomplete.
 
