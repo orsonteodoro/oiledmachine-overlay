@@ -269,7 +269,7 @@ Contributing AI fixes:
 
 The following are considered sensitive data:
 
-| Type                                  | Standard          | Harm / Consequence                      | Region            | Example use cases                                                         |
+| Type                                  | Standards         | Harm / Consequence                      | Region            | Example use cases                                                         |
 | ---                                   | ---               | ---                                     | ---               | ---                                                                       |
 | API keys                              |                   | Financial                               |                   | LLMs                                                                      |
 | Creditholder Data (CHD)               | PCI DSS           | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                           |
