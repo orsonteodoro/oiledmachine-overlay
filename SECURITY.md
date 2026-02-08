@@ -311,7 +311,7 @@ The following are considered sensitive data:
 | Recovery seed phrases                 |                   | Financial                               |                   | Cryptocurrency, password managers                                           |
 | Religious                             | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                                 |
 | Sex life / explicit content           | GDPR [16]         | Discrimination, anonymity, physical     | CA, EU/UK, US     | Web browser/server/database, image viewers, codecs, movie editors/players   |
-| Sexual orientation                    | GDPR [19]         | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                                 |
+| Sexual orientation                    | GDPR [19]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                                 |
 | Sensitive Authentication Data (SAD)   | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                               |
 | System and configuration              | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                     |
 | Trade union membership                | GDPR              | Discrimination, financial               | EU/UK             | Web browser/server/database                                                 |
