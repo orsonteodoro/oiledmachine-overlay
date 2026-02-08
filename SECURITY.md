@@ -311,7 +311,7 @@ The following are considered sensitive data:
 | Recovery seed phrases                 |                   | Financial                               |                   | Cryptocurrency, password managers                                           |
 | Religious                             | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                                 |
 | Sex life / explicit content           | GDPR [16]         | Discrimination, anonymity, physical     | CA, EU/UK, US     | Web browser/server/database, image viewers, codecs, movie editors/players   |
-| Sexual orientation                    | GDPR              | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                                 |
+| Sexual orientation                    | GDPR [19]         | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                                 |
 | Sensitive Authentication Data (SAD)   | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                               |
 | System and configuration              | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                     |
 | Trade union membership                | GDPR              | Discrimination, financial               | EU/UK             | Web browser/server/database                                                 |
@@ -336,6 +336,7 @@ The following are considered sensitive data:
 * [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
 * [17] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), PIPEDA (CA), UCPA (US-UT), VCDPA (US-VA)
 * [18] CCPA (US-CA), Drivers Privacy Protection Act (DPPA, US), Utah Code 41-6a-1701 to 41-6a-1709
+* [19] CCPA/CPRA (US-CA), CCPA/CPRA (US-CA), Nevada SB 370 (US-NV), Washington My Health, My Data Act (MHMD, US-WA), over 18 states in the US
 
 This list may be incomplete.
 
