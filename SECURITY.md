@@ -296,7 +296,7 @@ The following are considered sensitive data:
 | Genetic                               | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database, genelogical apps                             |
 | Gov ID (SSN)                          | GDPR, [15]        | Financial, legal                        | CA, EU/UK, US     | Web                                                                       |
 | Health (e.g. sexual measurements)     | GDPR, [1]         | Discrimination                          | EU/UK, US         | Web browser/server/database, PDF, text editors                            |
-| IP addresses                          | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                               |
+| IP or MAC addresses                   | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                               |
 | Kernel space memory address           |                   | Security, ownership, financial          |                   | Security bypass                                                           |
 | License plates                        | GDPR, [18]        | Emotional, physical                     | EU/UK             | Video, still images                                                 |
 | Login / screen names                  | GDPR, [9]         | Financial, reputational, emotional      | US                | Web browser/server/database                                               |
