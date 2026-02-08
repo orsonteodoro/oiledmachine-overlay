@@ -396,7 +396,7 @@ their own threat model and apply their own hardening.
       also to disable exceptions and disable the compiler default ON
       hardening which may compromise userland to the worst case performance
       expectations above the 5%.
-* [5] Consider using a Docker container to reduce the blast radius or the scope
+* [5] Consider using a Docker container to reduce the blast radius or the extent
       of the compromise.  The distro does provide Docker images but these
       are considered balanced security and not security-critical quality.
 
