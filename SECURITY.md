@@ -304,7 +304,7 @@ The following are considered sensitive data:
 | Physcial location                     | GDPR, [3]         | Physical                                | EU/UK, UA, US     | GPS, Geolocation, web browsers/server/database                            |
 | Political                             | GDPR              | Discrimination, physical                | EU/UK, UA         | Web browser/server/database                                               |
 | Private keys                          |                   | Financial, data theft                   |                   | Cryptocurrency, encryption                                                |
-| Racial/ethicity                       | GDPR, [1]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
+| Racial / ethicity                     | GDPR, [1]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
 | Real names                            | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
 | Recovery seed phrases                 |                   | Financial                               |                   | Cryptocurrency                                                            |
 | Religious                             | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
