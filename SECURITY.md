@@ -280,7 +280,7 @@ The following are considered sensitive data:
 | Cookies (3rd party ad tracking)       | GDPR, [12][13]    | Discrimination                          | EU/UK, US         | Web, commercial/political targeted advertising                            |
 | Cookies (Geolocation)                 | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                       |
 | Cookies (Health)                      | CCPA/CPRA (US-CA) | Discrimination                          | US                | Web                                                                       |
-| Cookies (Persistent cookies)          | GDPR, [12][13]    | Discrimination, physical                | EU/UK, US         | Web, state sponsored surveillance, domestic spying                        |
+| Cookies (Persistent cookies)          | GDPR, [12][13]    | Discrimination, physical                | EU/UK, US         | Web, site analytics, state sponsored surveillance, domestic spying        |
 | Cookies (Race)                        | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                       |
 | Cookies (Session replay, behavioral)  | GDPR              | Discrimination, reputational, ownership | EU/UK             | Debugging websites, spying, malicious threat actor abuse                  |
 | Cookies (Session tokens)              | GDPR, [14]        | Reputation, impersonation               | EU/UK             | Web, one time login                                                       |
