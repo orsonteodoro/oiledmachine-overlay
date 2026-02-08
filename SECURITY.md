@@ -348,8 +348,8 @@ The following are considered sensitive data or PII:
 The law should be respected to prevent possible indefinite detainment of
 developer(s) or contributor(s) while traveling.
 
-This is provided for ebuild developers to improve compiler hardened tagging and
-license references in ebuilds.
+This is provided for ebuild developers to improve compiler hardened tagging,
+isolation, or license references in ebuilds.
 
 ### PII removal
 
