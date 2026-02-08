@@ -271,7 +271,7 @@ The following are considered sensitive data:
 
 | Type                                  | Standards         | Harm / Consequence                      | Region            | Example use cases                                                           |
 | ---                                   | ---               | ---                                     | ---               | ---                                                                         |
-| API keys                              |                   | Financial                               |                   | LLMs                                                                        |
+| API keys                              |                   | Financial                               |                   | Remote hosted LLMs                                                          |
 | Creditholder Data (CHD)               | PCI DSS           | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                             |
 | Biometric                             | GDPR, HIPAA       | Discrimination, security                | EU/UK, US         | Login, machine learning, computer vision                                    |
 | Birth dates                           | HIPAA             | Discrimination, financial               | US                | Web browser/server/database, genelogical apps                               |
