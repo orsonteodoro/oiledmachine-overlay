@@ -284,7 +284,7 @@ The following are considered sensitive data:
 | Cookies (Race)                        | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                       |
 | Cookies (Session replay, behavioral)  | GDPR              | Discrimination, reputational, ownership | EU/UK             | Debugging websites, spying, malicious threat actor abuse                  |
 | Cookies (Session tokens)              | GDPR, [14]        | Reputation, impersonation               | EU/UK             | Web, one time login                                                       |
-| Contact info (address, phone)         | GDPR, [17]        | Emotional, physical                     | CA, EU/UK, US     | Web browser/server/database                                               |
+| Contact info (address, phone)         | GDPR, [17]        | Emotional, physical                     | CA, EU/UK, US     | Web browser/server/database, word processor, address book app             |
 | CPU details                           |                   | Security                                |                   | Debug logs/dumps, attacker reconnaissance                                 |
 | Criminal records                      | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database                                               |
 | Cryptographic seeds                   | [11]              | Financial                               | Worldwide         | Cryptocurrency                                                            |
