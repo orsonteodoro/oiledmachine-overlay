@@ -278,10 +278,10 @@ The following are considered sensitive data:
 | Citizenship                           | [5]                 | Discrimination, physical                | US                | Web browser/server/database                                                 |
 | Children's data                       | [4]                 | Anonymity, physical                     | CN, EU, UK, US    | Web browser/server/database                                                 |
 | Cookies (3rd party ad tracking)       | GDPR, [12][13][21]  | Discrimination                          | CN, EU/UK, US     | Web, commercial/political targeted advertising                              |
-| Cookies (Geolocation)                 | GDPR, [12][22]      | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
-| Cookies (Health)                      | CCPA/CPRA (US-CA)   | Discrimination                          | US                | Web                                                                         |
+| Cookies (Geolocation)                 | GDPR, [12][13]      | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
+| Cookies (Health)                      | GDPR, [13][21]      | Discrimination                          | CN, EU/UK, US     | Web                                                                         |
 | Cookies (Persistent cookies)          | GDPR, [12][13][21]  | Discrimination, physical                | CN, EU/UK, US     | Web, site analytics, state sponsored surveillance, domestic spying          |
-| Cookies (Race)                        | GDPR, [23]          | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
+| Cookies (Race)                        | GDPR, [13]          | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
 | Cookies (Session replay, behavioral)  | GDPR, [21]          | Discrimination, reputational, ownership | CN, EU/UK         | Debugging websites, spying, malicious threat actor abuse                    |
 | Cookies (Session tokens)              | GDPR, [14][21]      | Reputation, impersonation               | CN, EU/UK         | Web, one time login                                                         |
 | Contact info (address, phone)         | GDPR, [17]          | Emotional, physical                     | CA, EU/UK, US     | Web browser/server/database, word processor, address book app               |
@@ -341,8 +341,6 @@ The following are considered sensitive data:
        California Age-Appropriate Design Code (CA AADC, US-CA), California Age Verification Law (AB 1043 - Effective 2027),
        FADP (CH), LGPD (BR), PIPEDA (CA), PIPL (CN)
 * [21] PIPL (CN)
-* [22] CCPA/CPRA (US-CA)
-* [23] CCPA/CPRA (US-CA)
 
 This list may be incomplete.
 
