@@ -291,7 +291,7 @@ The following are considered sensitive data:
 | Device fingerprint                    | GDPR, [12]        | Discrimination, anonymity               | EU/UK             | Debug logs, web                                                           |
 | Email address                         | GDPR, [7]         | Financial, anonymity, emotional         | CA, EU/UK, JP, US | Web browser/server/database                                               |
 | Email content                         | CCPA/CPRA (US-CA) | Reputational                            | US                | Web browser/server/database, LLMs                                         |
-| Employee/User PII                     | [11]              | Anonymity                               | Worldwide         | Cryptocurrency                                                            |
+| Employee/User PII                     | [11]              | Reputational, anonymity                 | Worldwide         | Cryptocurrency                                                            |
 | Financial transaction metadata        | [11]              | Discrimination                          | Worldwide         | Cryptocurrency                                                            |
 | Genetic                               | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database, genelogical apps                             |
 | Gov ID (SSN)                          | GDPR, [15]        | Financial, legal                        | CA, EU/UK, US     | Web                                                                       |
@@ -306,12 +306,13 @@ The following are considered sensitive data:
 | Political                             | GDPR              | Discrimination, physical                | EU/UK, UA         | Web browser/server/database                                               |
 | Private keys                          |                   | Financial, data theft                   |                   | Cryptocurrency, encryption                                                |
 | Racial / ethicity                     | GDPR, [1]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
-| Real names                            | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
+| Real names                            | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological, contacts app   |
 | Recovery seed phrases                 |                   | Financial                               |                   | Cryptocurrency                                                            |
 | Religious                             | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
 | Sex life / explicit content           | GDPR [16]         | Discrimination, anonymity, physical     | CA, EU/UK, US     | Web browser/server/database, image viewers, codecs, movie editors/players |
 | Sexual orientation                    | GDPR              | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                               |
 | Sensitive Authentication Data (SAD)   | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                             |
+| Social media profiles                 | GDPR, [18]        | Discrimination, anonymity, physical     | EU/UK, HK, US     | Web browser/server/database                                               |
 | System and configuration              | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                   |
 | Trade union membership                | GDPR              | Discrimination, financial               | EU/UK             | Web browser/server/database                                               |
 | Verification codes                    | PCI DSS, [11]     | Financial                               | Worldwide         | Fintech, cryptocurrency                                                   |
@@ -334,6 +335,7 @@ The following are considered sensitive data:
 * [15] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), HIPAA (US), PIPEDA (CA)
 * [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
 * [17] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), PIPEDA (CA), UCPA (US-UT), VCDPA (US-VA)
+* [18] Digital Services Act (DSA) (EU), HIPAA (US), PCPD Guidance (HK)
 
 This list may be incomplete.
 
