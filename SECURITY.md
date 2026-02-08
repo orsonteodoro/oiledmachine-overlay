@@ -277,11 +277,11 @@ The following are considered sensitive data:
 | Birth dates                           | GDPR, HIPAA, [20]   | Discrimination, financial               | Many countries    | Web browser/server/database, genelogical apps                               |
 | Children's data                       | [4]                 | Anonymity, physical                     | CN, EU, UK, US    | Web browser/server/database                                                 |
 | Citizenship                           | [5]                 | Discrimination, physical                | US                | Web browser/server/database                                                 |
-| Cookies (3rd party ad tracking)       | GDPR, [12][13][21]  | Discrimination                          | CN, EU/UK, US     | Web, commercial/political targeted advertising                              |
-| Cookies (Geolocation)                 | GDPR, [12][13]      | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
-| Cookies (Health)                      | GDPR, [13][21]      | Discrimination                          | CN, EU/UK, US     | Web                                                                         |
-| Cookies (Persistent cookies)          | GDPR, [12][13][21]  | Discrimination, physical                | CN, EU/UK, US     | Web, site analytics, state sponsored surveillance, domestic spying          |
-| Cookies (Race)                        | GDPR, [13]          | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
+| Cookies (3rd party ad tracking)       | GDPR, [8][12][21]   | Discrimination                          | CN, EU/UK, US     | Web, commercial/political targeted advertising                              |
+| Cookies (Geolocation)                 | GDPR, [8][12]       | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
+| Cookies (Health)                      | GDPR, [8][21]       | Discrimination                          | CN, EU/UK, US     | Web                                                                         |
+| Cookies (Persistent cookies)          | GDPR, [8][12][21]   | Discrimination, physical                | CN, EU/UK, US     | Web, site analytics, state sponsored surveillance, domestic spying          |
+| Cookies (Race)                        | GDPR, [8]           | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
 | Cookies (Session replay, behavioral)  | GDPR, [21]          | Discrimination, reputational, ownership | CN, EU/UK         | Debugging websites, spying, malicious threat actor abuse                    |
 | Cookies (Session tokens)              | GDPR, [14][21]      | Reputation, impersonation               | CN, EU/UK         | Web, one time login                                                         |
 | Contact info (address, phone)         | GDPR, [17]          | Emotional, physical                     | CA, EU/UK, US     | Web browser/server/database, word processor, address book app               |
@@ -330,7 +330,6 @@ The following are considered sensitive data:
 * [10] CCPA/CPRA (US-CA), CCPA/CPRA (US-CA), CryptoCurrency Security Standard (CCSS), ISO 27001 (Worldwide), LGPD (BR), PCI DSS (Worldwide), VCDPA (US-VA)
 * [11] CryptoCurrency Security Standard (CCSS)
 * [12] ePrivacy Directive (EU)
-* [13] CCPA/CPRA (US-CA)
 * [14] CCPA/CPRA (US-CA), ePrivacy Directive (EU), PECR (UK), Technical Security Standards (OWASP, Worldwide)
 * [15] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), HIPAA (US), PIPEDA (CA)
 * [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
