@@ -288,12 +288,12 @@ The following are considered sensitive data:
 | Criminal records                      | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database                                               |
 | Cryptographic seeds                   | [11]              | Financial                               | Worldwide         | Cryptocurrency                                                            |
 | Device fingerprint                    | GDPR, [12]        | Discrimination, anonymity               | EU/UK             | Debug logs, web                                                           |
-| Email address                         | GDPR, [7]         | Financial, anonymity, emotional         | EU/UK, US, CA, JP | Web browser/server/database                                               |
+| Email address                         | GDPR, [7]         | Financial, anonymity, emotional         | CA, EU/UK, JP, US | Web browser/server/database                                               |
 | Email content                         | CCPA/CPRA (US-CA) | Reputational                            | US                | Web browser/server/database, LLMs                                         |
 | Employee/User PII                     | [11]              | Anonymity                               | Worldwide         | Cryptocurrency                                                            |
 | Financial transaction metadata        | [11]              | Discrimination                          | Worldwide         | Cryptocurrency                                                            |
 | Genetic                               | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database, genelogical apps                             |
-| Gov ID (SSN)                          | GDPR, [15]        | Financial, legal                        | EU/UK, US         | Web                                                                       |
+| Gov ID (SSN)                          | GDPR, [15]        | Financial, legal                        | CA, EU/UK, US     | Web                                                                       |
 | Health                                | GDPR, [1]         | Discrimination                          | EU/UK, US         | Web browser/server/database, PDF                                          |
 | IP addresses                          | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                               |
 | Kernel space memory address           |                   | Security, ownership, financial          |                   | Security bypass                                                           |
@@ -308,7 +308,7 @@ The following are considered sensitive data:
 | Real names                            | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
 | Recovery seed phrases                 |                   | Financial                               |                   | Cryptocurrency                                                            |
 | Religious                             | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
-| Sex life / explicit content           | GDPR              | Discrimination, anonymity, physical     | EU/UK             | Web browser/server/database, image viewers, codecs, movie editors/players |
+| Sex life / explicit content           | GDPR [16]         | Discrimination, anonymity, physical     | CA, EU/UK, US     | Web browser/server/database, image viewers, codecs, movie editors/players |
 | Sexual orientation                    | GDPR              | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                               |
 | Sensitive Authentication Data (SAD)   | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                             |
 | System and configuration              | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                   |
@@ -331,6 +331,7 @@ The following are considered sensitive data:
 * [13] CCPA/CPRA (US-CA)
 * [14] CCPA/CPRA (US-CA), ePrivacy Directive (EU), PECR (UK), Technical Security Standards (OWASP, Worldwide)
 * [15] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), HIPAA (US), PIPEDA (CA)
+* [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
 
 This list may be incomplete.
 
