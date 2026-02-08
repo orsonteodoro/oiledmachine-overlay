@@ -265,11 +265,15 @@ Contributing AI fixes:
   version without a fix or still having the affected code that wasn't removed
   won't help.
 
-## Sensitive information
+## Sensitive Data and Personal Identifiable Information (PII)
 
-The following are considered sensitive data:
+This list is incomplete.
 
-| Type                                  | Standards           | Harm / Consequence                      | Region            | Example use cases                                                                      |
+Not all PII is sensitive data in certain data security guides.
+
+The following are considered sensitive data or PII:
+
+| Type                                  | Standards           | Harm / consequences                     | Region            | Example use cases                                                                      |
 | ---                                   | ---                 | ---                                     | ---               | ---                                                                                    |
 | API keys                              |                     | Financial                               |                   | Cloud LLMs                                                                             |
 | Creditholder Data (CHD)               | PCI DSS, PIPL       | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                                        |
@@ -341,15 +345,13 @@ The following are considered sensitive data:
        FADP (CH), LGPD (BR), PIPEDA (CA), PIPL (CN)
 * [21] PIPL (CN)
 
-This list may be incomplete.
-
 The law should be respected to prevent possible indefinite detainment of
 developer(s) or contributor(s) while traveling.
 
 This is provided for ebuild developers to improve compiler hardened tagging and
 license references in ebuilds.
 
-### Personal identifiable information (PII) removal
+### PII removal
 
 These are not easily removed due to the fork nature of git.
 
