@@ -275,8 +275,8 @@ The following are considered sensitive data:
 | Creditholder Data (CHD)               | PCI DSS, PIPL       | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                             |
 | Biometric                             | GDPR, HIPAA, PIPL   | Discrimination, security                | CN, EU/UK, US     | Login, machine learning, computer vision                                    |
 | Birth dates                           | GDPR, HIPAA, [20]   | Discrimination, financial               | Many countries    | Web browser/server/database, genelogical apps                               |
-| Citizenship                           | [5]                 | Discrimination, physical                | US                | Web browser/server/database                                                 |
 | Children's data                       | [4]                 | Anonymity, physical                     | CN, EU, UK, US    | Web browser/server/database                                                 |
+| Citizenship                           | [5]                 | Discrimination, physical                | US                | Web browser/server/database                                                 |
 | Cookies (3rd party ad tracking)       | GDPR, [12][13][21]  | Discrimination                          | CN, EU/UK, US     | Web, commercial/political targeted advertising                              |
 | Cookies (Geolocation)                 | GDPR, [12][13]      | Discrimination, physical                | CN, EU/UK, US     | Web                                                                         |
 | Cookies (Health)                      | GDPR, [13][21]      | Discrimination                          | CN, EU/UK, US     | Web                                                                         |
