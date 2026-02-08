@@ -319,7 +319,7 @@ The following are considered sensitive data:
 | Wallet address                        | [11]                | Financial                               | Worldwide         | Cryptocurrency                                                              |
 
 * [1] CPA (US-CO), CTDPA (US-CT), CCPA/CPRA (US-CA), PIPL (CN), VCDPA (US-VA)
-* [2] CPA (US-CO), CTDPA (US-CT), PIPL (CN) VCDPA (US-VA)
+* [2] CPA (US-CO), CTDPA (US-CT), PIPL (CN), VCDPA (US-VA)
 * [3] CCPA/CPRA (US-CA), CTDPA (US-CT), PIPL (CN), VCDPA (US-VA)
 * [4] Children's Online Privacy Protection Act (COPPA, US), Data Protection Act 2018 (UK), CPA (US-CO), CTDPA (US-CT), GDPR-K (EU), PIPL (CN), UK General Data Protection Regulation (UK GDPR), VCDPA (US-VA)
 * [5] CTDPA (US-CT), VCDPA (US-VA)
