@@ -298,6 +298,7 @@ The following are considered sensitive data:
 | Health (e.g. sexual measurements)     | GDPR, [1]         | Discrimination                          | EU/UK, US         | Web browser/server/database, PDF, text editors                            |
 | IP addresses                          | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                               |
 | Kernel space memory address           |                   | Security, ownership, financial          |                   | Security bypass                                                           |
+| License plates                        | GDPR, [18]        | Physical                                | EU/UK             | Video, still images                                                 |
 | Login / screen names                  | GDPR, [9]         | Financial, reputational, emotional      | US                | Web browser/server/database                                               |
 | Password                              | GDPR, [10]        | Financial, reputational                 | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs                  |
 | PINs                                  | PCI DSS, [11]     | Financial                               | Worldwide         | Point of Sale (POS) system, Cryptocurrency, VOIP                          |
@@ -334,6 +335,7 @@ The following are considered sensitive data:
 * [15] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), HIPAA (US), PIPEDA (CA)
 * [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
 * [17] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), PIPEDA (CA), UCPA (US-UT), VCDPA (US-VA)
+* [18] CCPA (US-CA), Drivers Privacy Protection Act (DPPA, US), Utah Code 41-6a-1701 to 41-6a-1709
 
 This list may be incomplete.
 
