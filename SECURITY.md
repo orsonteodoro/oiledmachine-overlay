@@ -312,7 +312,6 @@ The following are considered sensitive data:
 | Sex life / explicit content           | GDPR [16]         | Discrimination, anonymity, physical     | CA, EU/UK, US     | Web browser/server/database, image viewers, codecs, movie editors/players |
 | Sexual orientation                    | GDPR              | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                               |
 | Sensitive Authentication Data (SAD)   | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                             |
-| Social media profiles                 | GDPR, [18]        | Discrimination, anonymity, physical     | EU/UK, HK, US     | Web browser/server/database                                               |
 | System and configuration              | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                   |
 | Trade union membership                | GDPR              | Discrimination, financial               | EU/UK             | Web browser/server/database                                               |
 | Verification codes                    | PCI DSS, [11]     | Financial                               | Worldwide         | Fintech, cryptocurrency                                                   |
@@ -335,7 +334,6 @@ The following are considered sensitive data:
 * [15] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), HIPAA (US), PIPEDA (CA)
 * [16] CCPA/CPRA (US-CA), LGPD (BR), PIPEDA/CPPA (CA)
 * [17] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), PIPEDA (CA), UCPA (US-UT), VCDPA (US-VA)
-* [18] Digital Services Act (DSA) (EU), HIPAA (US), PCPD Guidance (HK)
 
 This list may be incomplete.
 
