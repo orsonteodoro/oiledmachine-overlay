@@ -308,7 +308,7 @@ The following are considered sensitive data:
 | Real names                            | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological apps            |
 | Recovery seed phrases                 |                   | Financial                               |                   | Cryptocurrency                                                            |
 | Religious                             | GDPR, [2]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                               |
-| Sex life                              | GDPR              | Discrimination, anonymity, physical     | EU/UK             | Web browser/server/database, image viewers, codecs, movie editors/players |
+| Sex life / explicit content           | GDPR              | Discrimination, anonymity, physical     | EU/UK             | Web browser/server/database, image viewers, codecs, movie editors/players |
 | Sexual orientation                    | GDPR              | Discrimination, reputational, physical  | EU/UK, US         | Web browser/server/database                                               |
 | Sensitive Authentication Data (SAD)   | PCI DSS           | Financial                               | Worldwide         | Fintech, VOIP                                                             |
 | System and configuration              | [11]              | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                   |
