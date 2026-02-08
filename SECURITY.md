@@ -272,11 +272,11 @@ The following are considered sensitive data:
 | Type                                  | Standards         | Harm / Consequence                      | Region            | Example use cases                                                           |
 | ---                                   | ---               | ---                                     | ---               | ---                                                                         |
 | API keys                              |                   | Financial                               |                   | Remote hosted LLMs                                                          |
-| Creditholder Data (CHD)               | PCI DSS           | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                             |
-| Biometric                             | GDPR, HIPAA       | Discrimination, security                | EU/UK, US         | Login, machine learning, computer vision                                    |
-| Birth dates                           | HIPAA             | Discrimination, financial               | US                | Web browser/server/database, genelogical apps                               |
+| Creditholder Data (CHD)               | PCI DSS, PIPL     | Financial                               | Worldwide         | Web browser/server/database, PDF, fintech, VOIP                             |
+| Biometric                             | GDPR, HIPAA, PIPL | Discrimination, security                | CN, EU/UK, US     | Login, machine learning, computer vision                                    |
+| Birth dates                           | GDPR, HIPAA, [20] | Discrimination, financial               | Many countries    | Web browser/server/database, genelogical apps                               |
 | Citizenship                           | [5]               | Discrimination, physical                | US                | Web browser/server/database                                                 |
-| Child's data                          | [4]               | Physical                                | US                | Web browser/server/database                                                 |
+| Children's data                       | [4]               | Anonymity, physical                     | CN, EU, UK, US    | Web browser/server/database                                                 |
 | Cookies (3rd party ad tracking)       | GDPR, [12][13]    | Discrimination                          | EU/UK, US         | Web, commercial/political targeted advertising                              |
 | Cookies (Geolocation)                 | CCPA/CPRA (US-CA) | Discrimination, physical                | US                | Web                                                                         |
 | Cookies (Health)                      | CCPA/CPRA (US-CA) | Discrimination                          | US                | Web                                                                         |
@@ -295,7 +295,7 @@ The following are considered sensitive data:
 | Financial transaction metadata        | [11]              | Discrimination                          | Worldwide         | Cryptocurrency                                                              |
 | Genetic                               | GDPR              | Discrimination, physical                | EU/UK             | Web browser/server/database, genelogical apps                               |
 | Gov ID (SSN)                          | GDPR, [15]        | Financial, legal                        | CA, EU/UK, US     | Web                                                                         |
-| Health (e.g. sexual measurements)     | GDPR, [1]         | Discrimination                          | EU/UK, US         | Web browser/server/database, PDF, text editors                              |
+| Health (e.g. sexual measurements)     | GDPR, [1]         | Discrimination                          | CN, EU/UK, US     | Web browser/server/database, PDF, text editors                              |
 | IP or MAC addresses                   | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                                 |
 | Kernel space memory address           |                   | Security, ownership, financial          |                   | Security bypass                                                             |
 | License plates                        | GDPR, [18]        | Emotional, physical                     | EU/UK, US         | Video, still images                                                         |
@@ -303,8 +303,8 @@ The following are considered sensitive data:
 | Password                              | GDPR, [10]        | Financial, reputational                 | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs, password managers |
 | PINs                                  | PCI DSS, [11]     | Financial                               | Worldwide         | Point of Sale (POS) system, Cryptocurrency, VOIP                            |
 | Philosophical                         | GDPR              | Discrimination                          | EU/UK             | Web browser/server/database                                                 |
-| Physcial location                     | GDPR, [3]         | Physical                                | EU/UK, UA, US     | GPS, Geolocation, web browsers/server/database                              |
-| Political                             | GDPR              | Discrimination, physical                | EU/UK, UA         | Web browser/server/database                                                 |
+| Physcial location                     | GDPR, [3]         | Physical                                | CN, EU/UK, UA, US | GPS, Geolocation, web browsers/server/database                              |
+| Political                             | GDPR, PIPL        | Discrimination, physical                | CN, EU/UK, UA     | Web browser/server/database                                                 |
 | Private keys                          |                   | Financial, data theft                   |                   | Cryptocurrency, encryption                                                  |
 | Racial / ethicity                     | GDPR, [1]         | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                                 |
 | Real names                            | GDPR, HIPAA, [8]  | Financial, anonymity, physical          | EU/UK, US         | Web browser/server/database, word processor, geneological, contacts app     |
@@ -318,10 +318,10 @@ The following are considered sensitive data:
 | Verification codes                    | PCI DSS, [11]     | Financial                               | Worldwide         | Fintech, cryptocurrency                                                     |
 | Wallet address                        | [11]              | Financial                               | Worldwide         | Cryptocurrency                                                              |
 
-* [1] CPA (US-CO), CTDPA (US-CT), CCPA/CPRA (US-CA), VCDPA (US-VA)
-* [2] CPA (US-CO), CTDPA (US-CT), VCDPA (US-VA)
-* [3] CCPA/CPRA (US-CA), CTDPA (US-CT), VCDPA (US-VA)
-* [4] CPA (US-CO), CTDPA (US-CT), VCDPA (US-VA)
+* [1] CPA (US-CO), CTDPA (US-CT), CCPA/CPRA (US-CA), PIPL (CN), VCDPA (US-VA)
+* [2] CPA (US-CO), CTDPA (US-CT), PIPL (CN) VCDPA (US-VA)
+* [3] CCPA/CPRA (US-CA), CTDPA (US-CT), PIPL (CN), VCDPA (US-VA)
+* [4] Children's Online Privacy Protection Act (COPPA, US), Data Protection Act 2018 (UK), CPA (US-CO), CTDPA (US-CT), GDPR-K (EU), PIPL (CN), UK General Data Protection Regulation (UK GDPR), VCDPA (US-VA)
 * [5] CTDPA (US-CT), VCDPA (US-VA)
 * [6] CCPA/CPRA (US-CA), LGPD (BR)
 * [7] CAN-SPAM (US), CCPA/CPRA (US-CA), COPPA (US), CPA (US-CO), HIPAA (US), PIPEDA (CA), VCDPA (US-VA)
@@ -337,6 +337,9 @@ The following are considered sensitive data:
 * [17] CCPA/CPRA (US-CA), CPA (US-CO), CTDPA (US-CT), PIPEDA (CA), UCPA (US-UT), VCDPA (US-VA)
 * [18] CCPA (US-CA), Drivers Privacy Protection Act (DPPA, US), Utah Code 41-6a-1701 to 41-6a-1709
 * [19] CCPA/CPRA (US-CA), CCPA/CPRA (US-CA), Nevada SB 370 (US-NV), Washington My Health, My Data Act (MHMD, US-WA), over 18 states in the US
+* [20] APPI (JP), Children's Online Privacy Protection Act (COPPA, US), California's Date of Birth Redaction Law (2021),
+       California Age-Appropriate Design Code (CA AADC, US-CA), California Age Verification Law (AB 1043 - Effective 2027),
+       FADP (CH), LGPD (BR), PIPEDA (CA), PIPL (CN)
 
 This list may be incomplete.
 
