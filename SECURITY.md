@@ -375,7 +375,7 @@ their own threat model and apply their own hardening.
 
 | Threat level | Name              | Hardening applied [2][3][4] | Ideas and packages affected                                           |
 | ---          | ---               | ---                         | ---                                                                   |
-| S0           | security-critical | Full hardening [1]          | End-to-end clipboard hardening for passwords used by password managers, image/video/web codecs and packages, core OS components needed to upgrade or login, secure communication, password managers and dependencies, developer/source-code integrity, web browser and dependencies against RCE (Remote Code Execution) and attack primitives, detailed security credentials, sandboxes and security software, crown jewels and master password |
+| S0           | security-critical | Full hardening [1][5]       | End-to-end clipboard hardening for passwords used by password managers, image/video/web codecs and packages, core OS components needed to upgrade or login, secure communication, password managers and dependencies, developer/source-code integrity, web browser and dependencies against RCE (Remote Code Execution) and attack primitives, detailed security credentials, sandboxes and security software, crown jewels and master password |
 | S1           | untrusted-data    | Balanced hardening [1]      | Non web codecs or non zero-click codecs, servers, packages that process web data, social media and casual messaging, untrusted explicit content |
 | S2           | sensitive-data    | Weak hardening              | Packages that could process medical data, your explicit content, temporal passwords |
 | S3           | safe-zone         | None, performance critical  | Ebuilds without [cflags-hardened](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass) or [rustflags-hardened](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass) treatment       |
@@ -396,6 +396,9 @@ their own threat model and apply their own hardening.
       also to disable exceptions and disable the compiler default ON
       hardening which may compromise userland to the worst case performance
       expectations above the 5%.
+* [5] Consider using Docker container to reduce the blast radius or the scope
+      of the compromise.  The distro does provide Docker images but these
+      are considered balanced security and not security-critical quality.
 
 
 ```
