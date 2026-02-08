@@ -300,7 +300,7 @@ The following are considered sensitive data:
 | Kernel space memory address           |                   | Security, ownership, financial          |                   | Security bypass                                                             |
 | License plates                        | GDPR, [18]        | Emotional, physical                     | EU/UK, US         | Video, still images                                                         |
 | Login / screen names                  | GDPR, [9]         | Financial, reputational, emotional      | US                | Web browser/server/database                                                 |
-| Password                              | GDPR, [10]        | Financial, reputational                 | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs, password managers |
+| Password                              | GDPR, [10]        | Financial, reputational, data theft     | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs, password managers |
 | PINs                                  | PCI DSS, [11]     | Financial                               | Worldwide         | Point of Sale (POS) system, Cryptocurrency, VOIP                            |
 | Philosophical                         | GDPR              | Discrimination                          | EU/UK             | Web browser/server/database                                                 |
 | Physcial location                     | GDPR, [3]         | Physical                                | CN, EU/UK, UA, US | GPS, Geolocation, web browsers/server/database                              |
