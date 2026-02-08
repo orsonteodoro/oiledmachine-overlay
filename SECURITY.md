@@ -298,7 +298,7 @@ The following are considered sensitive data:
 | Health (e.g. sexual measurements)     | GDPR, [1]         | Discrimination                          | EU/UK, US         | Web browser/server/database, PDF, text editors                              |
 | IP or MAC addresses                   | GDPR, [6]         | Discrimination, financial, anonymity    | EU/UK, US         | Web browser/server/database                                                 |
 | Kernel space memory address           |                   | Security, ownership, financial          |                   | Security bypass                                                             |
-| License plates                        | GDPR, [18]        | Emotional, physical                     | EU/UK             | Video, still images                                                         |
+| License plates                        | GDPR, [18]        | Emotional, physical                     | EU/UK, US         | Video, still images                                                         |
 | Login / screen names                  | GDPR, [9]         | Financial, reputational, emotional      | US                | Web browser/server/database                                                 |
 | Password                              | GDPR, [10]        | Financial, reputational                 | Worldwide         | Web browser/server/database, clipboard, crypto/auth libs, password managers |
 | PINs                                  | PCI DSS, [11]     | Financial                               | Worldwide         | Point of Sale (POS) system, Cryptocurrency, VOIP                            |
