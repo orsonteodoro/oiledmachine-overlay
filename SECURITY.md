@@ -289,7 +289,7 @@ The following are considered sensitive data or PII:
 | Cookies (Session replay, behavioral)  | GDPR, [21]          | Discrimination, reputational, ownership | CN, EU/UK         | Debugging websites, spying, malicious threat actor abuse, AI guardrails, rate limiting |
 | Cookies (Session tokens)              | GDPR, [14][21]      | Reputation, impersonation               | CN, EU/UK         | Web, one time login                                                                    |
 | Contact info (address, phone)         | GDPR, [17]          | Emotional, physical                     | CA, EU/UK, US     | Web browser/server/database, word processor, address book app                          |
-| CPU details                           |                     | Security                                |                   | Debug logs/dumps, attacker reconnaissance                                              |
+| CPU details                           |                     | Security                                |                   | Debug logs/dumps, attacker reconnaissance or explotation                               |
 | Criminal records                      | GDPR                | Discrimination, physical                | EU/UK             | Web browser/server/database                                                            |
 | Cryptographic seeds                   | [11]                | Financial                               | Worldwide         | Cryptocurrency                                                                         |
 | Device fingerprint                    | GDPR, [12][21]      | Discrimination, anonymity               | EU/UK             | Debug logs, web                                                                        |
@@ -317,7 +317,7 @@ The following are considered sensitive data or PII:
 | Sex life / explicit content           | GDPR [16]           | Discrimination, anonymity, physical     | CA, EU/UK, US     | Web browser/server/database, image viewers, codecs, movie editors/players              |
 | Sexual orientation                    | GDPR [19]           | Discrimination, physical                | EU/UK, US         | Web browser/server/database                                                            |
 | Sensitive Authentication Data (SAD)   | PCI DSS             | Financial                               | Worldwide         | Fintech, VOIP                                                                          |
-| System and configuration              | [11]                | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance                                                |
+| System and configuration              | [11]                | Security                                | Worldwide         | Cryptocurrency, attacker reconnaissance or lateral movement                            |
 | Trade union membership                | GDPR                | Discrimination, financial               | EU/UK             | Web browser/server/database                                                            |
 | Verification codes                    | PCI DSS, [11]       | Financial                               | Worldwide         | Fintech, cryptocurrency                                                                |
 | Wallet address                        | [11]                | Financial                               | Worldwide         | Cryptocurrency                                                                         |
