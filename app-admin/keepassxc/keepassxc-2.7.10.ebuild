@@ -20,7 +20,7 @@ LLVM_COMPAT=(
 
 PSL_COMMIT="c38a2f8e8862ad65d91af25dee90002c61329953" # Jul 9, 2025
 QT5_PV="5.2.0"
-QT6_PV="6.6.1"
+QT6_PV="6.10.2"
 VIRTUALX_REQUIRED="manual"
 
 inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs virtualx xdg
@@ -196,6 +196,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.7.10-fix-testpasskeys.patch"
 	"${FILESDIR}/${PN}-2.7.10-fix-getTopLevelDomainFromUrl.patch"
 	"${FILESDIR}/${PN}-2.7.10-testsshagent-workaround.patch"
+	"${FILESDIR}/${PN}-2.7.10-pkgconfig-x11-xcb.patch"
 )
 
 verify_qt_consistency() {
@@ -306,6 +307,9 @@ src_prepare() {
 
 	cmake_src_prepare
 	chmod +x "tests/run_testsshagent.sh" || die
+
+	# Dedupe.  Already set in cflags-hardened_append
+	sed -i -e "/-D_FORTIFY_SOURCE=/d" "CMakeLists.txt" || die
 }
 
 src_configure() {
@@ -323,6 +327,19 @@ eerror "Use \`eselect locale\` to change locale to en_US.utf8"
 	replace-flags '-O*' '-O2'
 	export MAKEOPTS="-j1"
 	cflags-hardened_append
+
+	if use qt6 ; then
+		local QT_SLOT
+		if use qt6 ; then
+			QT_SLOT="6"
+		elif use qt5 ; then
+			QT_SLOT="5"
+		else
+			die "Unsupported Qt slot"
+		fi
+		local QTCORE_PV=$(pkg-config --modversion Qt${QT_SLOT}Core)
+		append-cppflags -I"/usr/include/qt6/QtCore/${QTCORE_PV}"
+	fi
 
 	local -a mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or

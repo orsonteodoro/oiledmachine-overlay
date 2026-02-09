@@ -1,0 +1,12 @@
+--- a/src/CMakeLists.txt.orig	2026-02-09 11:10:24.803697730 -0800
++++ b/src/CMakeLists.txt	2026-02-09 11:11:09.610880462 -0800
+@@ -408,7 +408,8 @@ if(UNIX AND NOT APPLE AND WITH_QT6)
+     find_package(Qt6 REQUIRED COMPONENTS SvgWidgets)
+     target_link_libraries(keepassx_core Qt6::DBus Qt6::SvgWidgets ${LIBUSB_LIBRARIES})
+     if(WITH_XC_X11)
+-        pkg_check_modules(XCB REQUIRED xcb)
++        find_package(PkgConfig REQUIRED)
++        pkg_check_modules(XCB REQUIRED x11-xcb)
+         pkg_check_modules(XLIB REQUIRED x11)
+         include_directories(${XCB_INCLUDE_DIRS} ${XLIB_INCLUDE_DIRS})
+         target_link_libraries(keepassx_core Qt6::Gui X11 ${XCB_LIBRARIES} ${XLIB_LIBRARIES})
