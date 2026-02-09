@@ -83,7 +83,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	^^ (
@@ -339,6 +339,8 @@ eerror "Use \`eselect locale\` to change locale to en_US.utf8"
 		fi
 		local QTCORE_PV=$(pkg-config --modversion Qt${QT_SLOT}Core)
 		append-cppflags -I"/usr/include/qt6/QtCore/${QTCORE_PV}"
+		append-cppflags -I"/usr/include/qt6/QtGui/${QTCORE_PV}"
+		append-cppflags -I"/usr/include/qt6/QtGui/${QTCORE_PV}/QtGui/"
 	fi
 
 	local -a mycmakeargs=(
