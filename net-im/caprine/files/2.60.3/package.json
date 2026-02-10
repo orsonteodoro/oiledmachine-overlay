@@ -45,7 +45,7 @@
 		"is-online": "^9.0.1",
 		"json-schema-typed": "^8.0.1",
 		"lodash": "^4.17.21",
-		"npm-check-updates": "^16.14.15",
+		"npm-check-updates": "^19.3.2",
 		"p-wait-for": "^3.2.0"
 	},
 	"devDependencies": {
@@ -55,7 +55,7 @@
 		"@types/lodash": "^4.14.202",
 		"del-cli": "^5.1.0",
 		"electron": "^39.2.3",
-		"electron-builder": "^24.12.0",
+		"electron-builder": "^26.6.0",
 		"husky": "^9.0.11",
 		"np": "^9.2.0",
 		"patch-package": "^8.0.0",
