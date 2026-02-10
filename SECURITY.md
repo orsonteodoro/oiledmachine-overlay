@@ -322,6 +322,7 @@ The following are considered sensitive data or PII:
 | Sexual orientation                    | GDPR [19]           | Discrimination, physical                | EU/UK, US          | Database, server, web browser                                                                         |
 | System and configuration              | [11]                | Security                                | Worldwide          | Attacker reconnaissance or lateral movement, Cryptocurrency                                           |
 | Trade union membership                | GDPR                | Discrimination, financial               | EU/UK              | Database, server, web browser                                                                         |
+| UEFI certificates, credentials, keys  |                     | Anonymity, ownership                    |                    | Secure boot                                                                                           |
 | Use of encryption                     |                     | Legal, physical                         |                    |                                                                                                       |
 | Wallet address                        | [11]                | Financial                               | Worldwide          | Cryptocurrency                                                                                        |
 
