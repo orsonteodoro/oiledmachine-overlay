@@ -3111,3 +3111,4 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4/37
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4.1/0
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.4, 20260104) for slot 4/37 with completion time:  0 days, 11 hrs, 2 mins, 0 secs
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.5, 20260210) for slot 4/37 with completion time:  0 days, 6 hrs, 59 mins, 43 secs
