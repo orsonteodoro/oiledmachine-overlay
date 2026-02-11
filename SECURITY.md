@@ -273,7 +273,7 @@ Not all PII is sensitive data in certain data security guides.
 
 The following are considered sensitive data or PII:
 
-| Type                                   | Standards           | Harm / consequences                     | Region             | Example use cases                                                                                     |
+| Type                                   | Standards           | Harm / reductions / consequences        | Region             | Example use cases                                                                                     |
 | ---                                    | ---                 | ---                                     | ---                | ---                                                                                                   |
 | API keys                               |                     | Financial                               |                    | Cloud LLMs                                                                                            |
 | Creditholder Data (CHD)                | PCI DSS, PIPL       | Financial                               | Worldwide          | Database, fintech, PDF, server, VOIP, web browser                                                     |
@@ -293,7 +293,7 @@ The following are considered sensitive data or PII:
 | CPU details                            |                     | Security                                |                    | Attacker reconnaissance, debug logs/dumps, entropy, fingerprinting users, hardware flaw explotation   |
 | Criminal records                       | GDPR                | Discrimination, physical                | EU/UK              | Database, server, web browser                                                                         |
 | Cryptographic seeds                    | [11]                | Financial                               | Worldwide          | Cryptocurrency                                                                                        |
-| Device fingerprint                     | GDPR, [12][21]      | Anonymity, Discrimination               | EU/UK              | Debug logs, web                                                                                       |
+| Device fingerprint                     | GDPR, [12][21]      | Anonymity, discrimination               | EU/UK              | Debug logs, web                                                                                       |
 | Device/partition UUID/IDs              |                     | Plausible deniability, security         |                    | Attacker lateral movement, search space reduction                                                     |                                                                                                  |
 | Email address                          | GDPR, [7]           | Anonymity, emotional, financial         | CA, EU/UK, JP, US  | Database, server, web browser                                                                         |
 | Email content                          | CCPA/CPRA (US-CA)   | Contacts, reputational                  | US                 | Database, LLMs, server, web browser                                                                   |
