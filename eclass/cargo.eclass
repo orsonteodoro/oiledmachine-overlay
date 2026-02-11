@@ -38,7 +38,9 @@ fi
 # For reference the actual minimum version of cargo that can be used
 # is 1.53.0 for `cargo update --offline`; updated to 1.71.1 with rust eclass.
 # No need to enable usage of legacy rust versions in ebuilds; keep it as-is.
-_CARGO_ECLASS_RUST_MIN_VER="1.71.1"
+#
+# Based on avaliable dev-lang/rust-bin or dev-lang/rust
+_CARGO_ECLASS_RUST_MIN_VER="1.74.1"
 
 case ${EAPI} in
 	8)
