@@ -152,8 +152,8 @@ EAPI=8
 
 TC_COUNT_EXPECTED=5296
 SOURCES_COUNT_EXPECTED=534635
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
@@ -220,8 +220,8 @@ TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-b360ccddb51bb6cbf79138bf81eb646a1112b8c692d5adf9ecb61933fd373c2a\
-3896f79b40be76e885725193d0e19a147bb5144c16720a2a42499eec82072c90\
+5d50346e4aa012987fdc744970280660e953a7e6b34ace1ede347694c75546e3\
+fdda53cb0b3a5cbeb2781c71106ef41d52e76c598fc0702f88e180ae6154b082\
 "
 
 # One of the major sources of lag comes from dependencies
@@ -2721,28 +2721,28 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	PATCHES+=(
-		"A${FILESDIR}/extra-patches/${PN}-136.0.7103.92-zlib-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-build-config-compiler-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libaom-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-build-config-compiler-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-skia-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-opus-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libwebp-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-opus-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-crc32c-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-lzma_sdk-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-lzma_sdk-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libyuv-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-cpuinfo-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-inline.patch"
@@ -2844,7 +2844,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-use-system-opus-alt.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-use-system-opus-alt.patch"
 		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"

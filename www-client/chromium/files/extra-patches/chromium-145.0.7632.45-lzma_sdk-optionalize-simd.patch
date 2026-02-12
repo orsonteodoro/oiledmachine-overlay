@@ -1,0 +1,13 @@
+--- a/third_party/lzma_sdk/BUILD.gn.orig	2026-02-03 14:07:10.000000000 -0800
++++ b/third_party/lzma_sdk/BUILD.gn	2026-02-12 07:34:38.311708691 -0800
+@@ -4,8 +4,9 @@
+ 
+ import("//build/config/arm.gni")
+ import("//build/config/compiler/compiler.gni")
++import("//build/config/simd.gni")
+ 
+-use_arm_neon_optimizations = target_cpu == "arm" || target_cpu == "arm64"
++use_arm_neon_optimizations = (target_cpu == "arm" || target_cpu == "arm64") && (use_crc32 && use_crypto)
+ 
+ # TODO(crbug.com/1341436) For Windows, to assemble lzma_sdk's assembly files,
+ # ml64.exe needs to be utilized as llvm-ml cannot yet assemble it. Once llvm-ml

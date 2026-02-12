@@ -1,0 +1,128 @@
+--- a/third_party/opus/BUILD.gn.orig	2026-02-03 14:07:10.000000000 -0800
++++ b/third_party/opus/BUILD.gn	2026-02-11 23:34:49.031886715 -0800
+@@ -3,12 +3,13 @@
+ # found in the LICENSE file.
+ 
+ import("//build/config/arm.gni")
++import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ 
+ # If ARM optimizations shall be used to accelerate performance.
+-use_opus_arm_optimization = current_cpu == "arm" || current_cpu == "arm64"
++use_opus_arm_optimization = ( current_cpu == "arm" || current_cpu == "arm64" ) && (use_armv4 || use_edsp || arm_use_neon)
+ 
+-use_opus_x86_optimization = current_cpu == "x86" || current_cpu == "x64"
++use_opus_x86_optimization = ( current_cpu == "x86" || current_cpu == "x64" ) && (use_sse2 || use_sse4_1 || use_avx)
+ 
+ config("opus_config") {
+   include_dirs = [ "src/include" ]
+@@ -65,44 +66,71 @@ config("opus_private_config") {
+       # Run Time CPU Detections (RTCD) is always enabled for x86.
+       "OPUS_HAVE_RTCD",
+       "CPU_INFO_BY_ASM",
+-
+-      # Chrome always targets SSE2+.
+-      "OPUS_X86_MAY_HAVE_SSE",
+-      "OPUS_X86_MAY_HAVE_SSE2",
+-      "OPUS_X86_PRESUME_SSE",
+-      "OPUS_X86_PRESUME_SSE2",
+-
+-      # Some systems may have SSE4.1+ support.
+-      "OPUS_X86_MAY_HAVE_SSE4_1",
+-
+-      # At present libopus has no AVX functions so no sources are add for this,
+-      # if you see linker errors on AVX code the this flag is why.
+-      "OPUS_X86_MAY_HAVE_AVX",
+     ]
++    if (use_sse) {
++      defines += [
++        "OPUS_X86_MAY_HAVE_SSE",
++        "OPUS_X86_PRESUME_SSE",
++      ]
++    }
++    if (use_sse2) {
++      defines += [
++        # Chrome always targets SSE2+.
++        "OPUS_X86_MAY_HAVE_SSE2",
++        "OPUS_X86_PRESUME_SSE2",
++      ]
++    }
++    if (use_sse4_1) {
++      defines += [
++        # Some systems may have SSE4.1+ support.
++        "OPUS_X86_MAY_HAVE_SSE4_1",
++      ]
++    }
++    if (use_avx) {
++      defines += [
++        # At present libopus has no AVX functions so no sources are add for this,
++        # if you see linker errors on AVX code the this flag is why.
++        "OPUS_X86_MAY_HAVE_AVX",
++      ]
++    }
+   }
+ 
+   if (use_opus_arm_optimization) {
+     if (current_cpu == "arm") {
++      if (use_armv4) {
++        defines += [
++          "OPUS_ARM_INLINE_ASM",
++        ]
++      }
++      if (use_edsp) {
++        defines += [
++          "OPUS_ARM_INLINE_EDSP",
++          "OPUS_ARM_MAY_HAVE_EDSP",
++          "OPUS_ARM_PRESUME_EDSP",
++        ]
++      }
++      if (use_armv6) {
++        defines += [
++          "OPUS_ARM_MAY_HAVE_MEDIA",
++          "OPUS_ARM_PRESUME_MEDIA",
++        ]
++      }
+       defines += [
+         "OPUS_ARM_ASM",
+-        "OPUS_ARM_INLINE_ASM",
+-        "OPUS_ARM_INLINE_EDSP",
+-        "OPUS_ARM_MAY_HAVE_EDSP",
+-        "OPUS_ARM_MAY_HAVE_MEDIA",
+-        "OPUS_ARM_PRESUME_EDSP",
+-        "OPUS_ARM_PRESUME_MEDIA",
+       ]
+     }
+ 
+-    defines += [
+-      "OPUS_ARM_MAY_HAVE_NEON",
+-      "OPUS_ARM_MAY_HAVE_NEON_INTR",
+-      "OPUS_ARM_PRESUME_NEON",
+-      "OPUS_ARM_PRESUME_NEON_INTR",
+-    ]
++    if (arm_use_neon) {
++      defines += [
++        "OPUS_ARM_MAY_HAVE_NEON",
++        "OPUS_ARM_MAY_HAVE_NEON_INTR",
++        "OPUS_ARM_PRESUME_NEON",
++        "OPUS_ARM_PRESUME_NEON_INTR",
++      ]
+ 
+-    if (current_cpu == "arm64") {
+-      defines += [ "OPUS_ARM_PRESUME_AARCH64_NEON_INTR" ]
++      if (current_cpu == "arm64") {
++        defines += [ "OPUS_ARM_PRESUME_AARCH64_NEON_INTR" ]
++      }
+     }
+   }
+ }
+@@ -404,7 +432,9 @@ static_library("opus") {
+       "src/silk/x86/main_sse.h",
+       "src/silk/x86/x86_silk_map.c",
+     ]
+-    deps += [ ":opus_sse41" ]
++    if (use_sse4_1) {
++      deps += [ ":opus_sse41" ]
++    }
+   }
+ 
+   if (use_opus_arm_optimization) {
