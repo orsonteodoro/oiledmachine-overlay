@@ -1,0 +1,9 @@
+--- chromium-117.0.5938.92/tools/rust/update_rust.py.orig	2023-09-21 13:09:49.423832400 -0700
++++ chromium-117.0.5938.92/tools/rust/update_rust.py	2023-09-25 16:07:41.790986323 -0700
+@@ -150,4 +150,5 @@ def main():
+ 
+ 
+ if __name__ == '__main__':
+-    sys.exit(main())
++    pass
++    #sys.exit(main())

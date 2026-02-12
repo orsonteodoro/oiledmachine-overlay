@@ -1,0 +1,17 @@
+--- ./base/allocator/partition_allocator/partition_alloc.gni.orig	2025-04-27 16:35:54.000000000 -0700
++++ ./base/allocator/partition_allocator/partition_alloc.gni	2025-05-04 17:36:07.874195384 -0700
+@@ -89,8 +89,12 @@ if (is_nacl) {
+ # TODO(crbug.com/329199197): Clean this up when experiments are complete.
+ use_large_empty_slot_span_ring = true
+ 
+-has_memory_tagging = current_cpu == "arm64" && is_clang && !is_asan &&
+-                     !is_hwasan && (is_linux || is_android)
++declare_args() {
++  use_memory_tagging = true
++}
++
++has_memory_tagging = current_cpu == "arm64" && is_clang && !is_asan && 
++                     !is_hwasan && (is_linux || is_android) && use_memory_tagging
+ 
+ declare_args() {
+   # Debug configuration.

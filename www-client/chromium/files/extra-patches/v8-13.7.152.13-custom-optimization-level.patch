@@ -1,0 +1,52 @@
+--- a/v8/BUILD.gn.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/v8/BUILD.gn	2025-06-03 18:03:49.102492101 -0700
+@@ -1763,9 +1763,15 @@ config("always_turbofanimize") {
+   # TODO(crbug.com/621335) Rework this so that we don't have the confusion
+   # between "optimize_speed" and "optimize_max".
+   if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
+-    configs += [ "//build/config/compiler:optimize_speed" ]
++    configs += [
++      "//build/config/compiler:optimize_speed",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   } else {
+-    configs += [ "//build/config/compiler:optimize_max" ]
++    configs += [
++      "//build/config/compiler:optimize_max",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   }
+ }
+ 
+@@ -6800,7 +6806,10 @@ if (v8_use_libm_trig_functions) {
+     configs -= [ "//build/config/compiler:chromium_code" ]
+     if (!is_debug) {
+       # Build code using -O3, see: crbug.com/1084371.
+-      configs += [ "//build/config/compiler:optimize_speed" ]
++      configs += [
++        "//build/config/compiler:optimize_speed",
++        "//build/config/compiler:v8_custom_optimization_config"
++      ]
+     }
+   }
+ }
+--- a/v8/gni/v8.gni.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/v8/gni/v8.gni	2025-06-03 18:04:11.402979529 -0700
+@@ -194,6 +194,8 @@ declare_args() {
+   # Specifies if the target build is a simulator build. By default it is set to
+   # true if the host and target do not match and we are not cross-compiling.
+   v8_target_is_simulator = ""
++
++  #v8_custom_optimization_level = ""
+ }
+ 
+ if (v8_use_external_startup_data == "") {
+@@ -293,6 +295,8 @@ if (is_debug && !v8_optimized_debug) {
+   }
+ }
+ 
++v8_add_configs += [ "//build/config/compiler:v8_custom_optimization_config" ]
++
+ if (!is_debug) {
+   v8_remove_configs += [
+     # Too much performance impact, unclear security benefit.

@@ -1,0 +1,70 @@
+--- /dev/null	2025-05-03 00:54:32.134046439 -0700
++++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
+@@ -0,0 +1,67 @@
++declare_args() {
++  use_3dnow = true
++  use_aes = true
++  use_amx_int8 = true
++  use_amx_tile = true
++  use_avx = true
++  use_avx2 = true
++  use_avx10_2 = true
++  use_avx512 = true # >= avx512
++  use_avx512bf16 = true
++  use_avx512fp16 = true
++  use_avx512vbmi2 = true # >= avx512 + vaes
++  use_avxvnni = true
++  use_avxvnniint8 = true
++  use_bmi = true
++  use_bmi2 = true
++  use_f16c = true
++  use_fma = true
++  use_gfni = true
++  use_mmx = true
++  use_pclmul = true
++  use_popcnt = true
++  use_sse = true
++  use_sse2 = true
++  use_sse3 = true
++  use_ssse3 = true
++  use_sse4_1 = true
++  use_sse4_2 = true
++
++  use_lsx = true
++  use_lasx = true
++
++  use_armv4 = true
++  use_armv5te = true
++  use_armv6 = true
++  use_bf16 = true
++  use_crc32 = true
++  use_dotprod = true
++  use_edsp = true
++  use_fp16 = true
++  use_i8mm = true
++  use_neon = true
++  use_sve = true
++  use_sve_256 = true
++  use_sve2 = true
++  use_sve2_128 = true
++  use_thumb = true
++
++  use_dsp = true # mips
++  use_dspr2 = true # mips
++  use_msa = true
++
++  use_riscv_rvv = true
++
++  use_altivec = true
++  use_crypto = true
++  use_ppc8 = true
++  use_ppc9 = true
++  use_ppc10 = true
++  use_vsx = true
++
++  use_z15 = true
++  use_z16 = true
++
++  use_wasm = true
++  use_wasm_emu256 = true
++}

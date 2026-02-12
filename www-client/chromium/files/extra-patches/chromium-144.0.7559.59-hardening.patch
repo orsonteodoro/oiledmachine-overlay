@@ -1,0 +1,441 @@
+--- a/base/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/base/BUILD.gn	2026-01-04 21:56:53.312643630 -0800
+@@ -3240,7 +3240,7 @@ if (is_linux || is_chromeos) {
+     testonly = true
+ 
+     sources = [ "stack_canary_linux_unittest.cc" ]
+-    cflags = [ "-fstack-protector-all" ]
++    cflags = [ "-fstack-protector-all" ]
+ 
+     deps = [
+       "//base",
+--- a/build/config/android/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/build/config/android/BUILD.gn	2026-01-05 08:11:54.582210895 -0800
+@@ -55,7 +55,8 @@ config("compiler") {
+   ]
+ 
+   if (current_cpu == "arm64") {
+-    if (arm_control_flow_integrity == "standard") {
++    if (!is_official_build) {
++    } else if (arm_control_flow_integrity == "standard") {
+       cflags += [ "-mbranch-protection=standard" ]
+       rustflags = [ "-Zbranch-protection=pac-ret,bti" ]
+     } else if (arm_control_flow_integrity == "pac") {
+--- a/build/config/compiler/BUILD.gn.orig	2026-01-15 08:37:33.848825640 -0800
++++ b/build/config/compiler/BUILD.gn	2026-01-15 09:12:37.044700053 -0800
+@@ -211,6 +211,41 @@ declare_args() {
+ 
+   #use_mold = false
+   #custom_optimization_level = ""
++
++  # C/C++ hardening
++  use_cf_protection = ""
++  use_fortify_source = -1
++  use_fortify_source_integrity_loss_mitigation_level = -1
++  use_fortify_source_integrity_loss_mitigation_for_lto = false
++  use_fhardened = false
++  use_harden_sls = ""
++  use_retpoline = ""
++  use_retpoline_external_thunk = false
++  use_retpolineplt = false
++  use_stack_clash_protection = false
++  use_stack_protector_level = "basic"
++  use_strict_flex_arrays = -1
++  use_trapv = false
++  use_wrapv = false
++  use_vtable_verify = ""
++  use_zero_call_used_regs = ""
++
++  # Rust hardening
++  use_rust_cet = false
++  use_rust_asan = false
++  use_rust_fortify_source_level = -1
++  use_rust_hwasan = false
++  use_rust_lsan = false
++  use_rust_msan = false
++  use_rust_no_sanitize_recover = false
++  use_rust_overflow_checks = false
++  use_rust_pauth = false
++  use_rust_retpoline = false
++  use_rust_stack_clash_protection = false
++  use_rust_stack_probe = false
++  use_rust_stack_protector_level = ""
++  use_rust_tsan = false
++  use_rust_ubsan = false
+ }
+ 
+ declare_args() {
+@@ -458,7 +493,191 @@ config("compiler") {
+       } else if (is_posix || is_fuchsia) {
+         if (current_os != "aix") {
+           # Not available on aix.
+-          cflags += [ "-fstack-protector" ]
++          if (use_stack_protector_level == "basic") {
++            cflags += [ "-fstack-protector" ]
++          } else if (use_stack_protector_level == "strong") {
++            cflags += [ "-fstack-protector-strong" ]
++          } else if (use_stack_protector_level == "all") {
++            cflags += [ "-fstack-protector-all" ]
++          }
++        }
++      }
++    }
++
++    if (use_retpoline != "" && (use_cf_protection == "" || use_cf_protection == "none") && !use_fhardened) {
++      if (is_clang) {
++        cflags += [ "-mretpoline" ]
++        if (use_retpolineplt) {
++          ldflags += [ "-Wl,-z,retpolineplt" ]
++        }
++        if (use_retpoline_external_thunk) {
++          # Lightweight modifier, for embedded or mobile
++          cflags += [ "-mretpoline-external-thunk" ]
++        }
++      } else {
++        if (use_retpoline == "thunk-extern") {
++        # Lightweight, for embedded or mobile
++          cflags += [ "-mfunction-return=thunk-extern" ]
++          cflags += [ "-mindirect-branch=thunk-extern" ]
++        } else if (use_retpoline == "thunk-inline") {
++        # Speed
++          cflags += [ "-mfunction-return=thunk-inline" ]
++          cflags += [ "-mindirect-branch=thunk-inline" ]
++        } else {
++        # Use default compiler implementation
++          cflags += [ "-mfunction-return=thunk" ]
++          cflags += [ "-mindirect-branch=thunk" ]
++        }
++        cflags += [ "-mindirect-branch-register" ]
++      }
++    }
++
++    if (use_strict_flex_arrays == 3) {
++      cflags += [ "-fstrict-flex-arrays=3" ]
++    } else if (use_strict_flex_arrays == 2) {
++      cflags += [ "-fstrict-flex-arrays=2" ]
++    } else if (use_strict_flex_arrays == 1) {
++      cflags += [ "-fstrict-flex-arrays=1" ]
++    } else if (use_strict_flex_arrays == 0) {
++      cflags += [ "-fstrict-flex-arrays=0" ]
++    }
++
++    if (use_stack_clash_protection) {
++      cflags += [ "-fstack-clash-protection" ]
++    }
++
++    if (use_cf_protection == "") {
++      cflags += []
++    } else if (use_cf_protection == "none") {
++      cflags += [ "-fcf-protection=none" ]
++    } else if (use_cf_protection == "full") {
++      cflags += [ "-fcf-protection=full" ]
++    } else if (use_cf_protection == "return") {
++      cflags += [ "-fcf-protection=return" ]
++    } else if (use_cf_protection == "branch") {
++      cflags += [ "-fcf-protection=branch" ]
++    }
++
++    if (!is_official_build && current_cpu == "arm64") {
++      if (arm_control_flow_integrity == "standard") {
++        cflags += [ "-mbranch-protection=standard" ]
++        asmflags += [ "-mbranch-protection=standard" ]
++        rustflags = [ "-Zbranch-protection=+pac-ret,+bti" ]
++      } else if (arm_control_flow_integrity == "bti+pac") {
++        cflags += [ "-mbranch-protection=bti+pac-ret" ]
++        asmflags += [ "-mbranch-protection=bti+pac-ret" ]
++        rustflags = [ "-Zbranch-protection=+pac-ret,+bti" ]
++      } else if (arm_control_flow_integrity == "pac") {
++        cflags += [ "-mbranch-protection=pac-ret" ]
++        asmflags += [ "-mbranch-protection=pac-ret" ]
++        rustflags = [ "-Zbranch-protection=+pac-ret" ]
++      }
++    }
++
++    if (use_harden_sls == "all") {
++      cflags += [ "-mharden-sls=all" ]
++    } else if (use_harden_sls == "indirect-jmp") {
++      cflags += [ "-mharden-sls=indirect-jmp" ]
++    } else if (use_harden_sls == "none") {
++      cflags += [ "-mharden-sls=none" ]
++    } else if (use_harden_sls == "return") {
++      cflags += [ "-mharden-sls=return" ]
++    }
++
++    if (!is_clang) {
++      if (use_vtable_verify == "std") {
++        # Balanced-security
++        cflags_cc += [ "-fvtable-verify=std" ]
++      } else if (use_vtable_verify == "preinit") {
++        # Security-critical
++        cflags_cc += [ "-fvtable-verify=preinit" ]
++      }
++    }
++
++    if (!is_official_build) {
++      # Apply to entire package
++      if (init_stack_vars_zero) {
++        cflags += [ "-ftrivial-auto-var-init=zero" ]
++      } else {
++        cflags += [ "-ftrivial-auto-var-init=pattern" ]
++      }
++    }
++
++    if (use_zero_call_used_regs == "all") {
++      cflags += [ "-fzero-call-used-regs=all" ]
++    } else if (use_zero_call_used_regs == "used-all") {
++      cflags += [ "-fzero-call-used-regs=used-all" ]
++    } else if (use_zero_call_used_regs == "used-gpr") {
++      cflags += [ "-fzero-call-used-regs=used-gpr" ]
++    }
++
++    if (use_fhardened) {
++      cflags += [ "-fhardened" ]
++    }
++
++    if (use_trapv) {
++      # Fatal error on violation, heavy penalty
++      cflags += [ "-ftrapv" ]
++    }
++
++    if (use_wrapv) {
++      # Prevent removal of wrapping checks
++      cflags += [ "-fwrapv" ]
++    }
++
++    if (is_official_build) {
++    } else if (use_fortify_source == 2) {
++      cflags += [ "-U_FORTIFY_SOURCE" ]
++      cflags += [ "-D_FORTIFY_SOURCE=2" ]
++      if (use_fortify_source_integrity_loss_mitigation_level >= 1) {
++        # Prevent removal or optimizing out of security-critical fortify checks
++        if (is_clang) {
++          cflags += [ "-fno-strict-aliasing" ]
++          # No direct equivalent to -fno-tree-dce except for -O0 or -Og
++          cflags += [ "-fno-unroll-loops" ]
++          cflags += [ "-fno-vectorize" ]
++          cflags += [ "-fno-slp-vectorize" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        } else {
++          cflags += [ "-fno-strict-aliasing" ]
++          cflags += [ "-fno-tree-dce" ]
++          cflags += [ "-fno-tree-loop-optimize" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        }
++        if (use_fortify_source_integrity_loss_mitigation_for_lto) {
++          cflags += [ "-fno-lto-promote-static-vtables" ]
++          cflags += [ "-fno-whole-program-vtables" ]
++          cflags += [ "-fno-ipa-cp" ]
++          cflags += [ "-fno-ipa-icf" ]
++        }
++      }
++    } else if (use_fortify_source == 3) {
++      cflags += [ "-U_FORTIFY_SOURCE" ]
++      cflags += [ "-D_FORTIFY_SOURCE=3" ]
++      if (use_fortify_source_integrity_loss_mitigation_level >= 1) {
++        # Prevent removal or optimizing out of security-critical fortify checks
++        if (is_clang) {
++          cflags += [ "-fno-strict-aliasing" ]
++          # No direct equivalent to -fno-tree-dce except for -O0 or -Og
++          cflags += [ "-fno-unroll-loops" ]
++          cflags += [ "-fno-vectorize" ]
++          cflags += [ "-fno-slp-vectorize" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        } else {
++          cflags += [ "-fno-strict-aliasing" ]
++          cflags += [ "-fno-tree-dce" ]
++          cflags += [ "-fno-tree-loop-optimize" ]
++          cflags += [ "-fno-optimize-sibling-calls" ]
++        }
++        if (use_fortify_source_integrity_loss_mitigation_level >= 2) {
++          # Enable for stronger integrity preservation but will likely slow down by 50% runtime performance in web browsers
++          cflags += [ "-fno-inline" ]
++        }
++        if (use_fortify_source_integrity_loss_mitigation_for_lto) {
++          cflags += [ "-fno-lto-promote-static-vtables" ]
++          cflags += [ "-fno-whole-program-vtables" ]
++          cflags += [ "-fno-ipa-cp" ]
++          cflags += [ "-fno-ipa-icf" ]
+         }
+       }
+     }
+@@ -1214,6 +1433,113 @@ config("compiler") {
+     }
+   }
+ 
++  if (use_rust_stack_protector_level == "") {
++    rustflags += [
++    ]
++  } else if (use_rust_stack_protector_level == "none") {
++    rustflags += [
++      "-Zstack-protector=none"
++    ]
++  } else if (use_rust_stack_protector_level == "basic") {
++    rustflags += [
++      "-Zstack-protector=basic"
++    ]
++  } else if (use_rust_stack_protector_level == "strong") {
++    rustflags += [
++      "-Zstack-protector=strong"
++    ]
++  } else if (use_rust_stack_protector_level == "all") {
++    rustflags += [
++      "-Zstack-protector=all"
++    ]
++  }
++  if (use_rust_overflow_checks) {
++    rustflags += [
++      "-Coverflow-checks=on"
++    ]
++  }
++  if (use_rust_cet) {
++    rustflags += [
++      "-Ctarget-feature=+cet"
++    ]
++  }
++  if (use_rust_fortify_source_level == -1) {
++    rustflags += [
++    ]
++  } else if (use_rust_fortify_source_level == 0) {
++    rustflags += [
++      "-Clink-arg=-D_FORTIFY_SOURCE=0"
++    ]
++  } else if (use_rust_fortify_source_level == 1) {
++    rustflags += [
++      "-Clink-arg=-D_FORTIFY_SOURCE=1"
++    ]
++  } else if (use_rust_fortify_source_level == 2) {
++    rustflags += [
++      "-Clink-arg=-D_FORTIFY_SOURCE=2"
++    ]
++  } else if (use_rust_fortify_source_level == 3) {
++    rustflags += [
++      "-Clink-arg=-D_FORTIFY_SOURCE=3"
++    ]
++  }
++  if (use_rust_pauth) {
++    rustflags += [
++      "-Ccontrol-flow-protection"
++    ]
++  }
++  if (use_rust_retpoline) {
++    rustflags += [
++      "-Ctarget-feature=+retpoline"
++    ]
++  }
++  if (use_rust_stack_clash_protection) {
++    rustflags += [
++      "-Clink-arg=-fstack-clash-protection"
++    ]
++  }
++  if (use_rust_stack_probe) {
++    rustflags += [
++      "-Ctarget-feature=+stack-probe"
++    ]
++  }
++
++  if (use_rust_asan) {
++    rustflags += [
++      "-Zsanitizer=address"
++    ]
++  }
++  if (use_rust_hwasan) {
++    rustflags += [
++      "-Zsanitizer=hwaddress"
++    ]
++  }
++  if (use_rust_lsan) {
++    rustflags += [
++      "-Zsanitizer=leak"
++    ]
++  }
++  if (use_rust_msan) {
++    rustflags += [
++      "-Zsanitizer=memory"
++    ]
++  }
++  if (use_rust_tsan) {
++    rustflags += [
++      "-Zsanitizer=thread"
++    ]
++  }
++  if (use_rust_ubsan) {
++    rustflags += [
++      "-Zsanitizer=undefined"
++    ]
++  }
++  if ((use_rust_asan || use_rust_hwasan || use_rust_lsan || use_rust_msan || use_rust_tsan || use_rust_ubsan) && use_rust_no_sanitize_recover) {
++    rustflags += [
++      "-fno-sanitize-recover=all"
++    ]
++  }
++
+   # 64-bit Android sometimes defines __ARM_NEON but not __ARM_NEON__.
+   # 32-bit Android builds and macOS, however, define __ARM_NEON__,
+   # and code typically checks for this.
+@@ -2365,7 +2691,7 @@ config("chromium_code") {
+       "__STDC_FORMAT_MACROS",
+     ]
+ 
+-    if (!is_debug && !using_sanitizer && current_cpu != "s390x" &&
++    if (is_official_build && !is_debug && !using_sanitizer && current_cpu != "s390x" &&
+         current_cpu != "ppc64" && current_cpu != "mips" &&
+         current_cpu != "mips64" && current_cpu != "riscv64" &&
+         current_cpu != "loong64") {
+@@ -2380,7 +2706,8 @@ config("chromium_code") {
+       if (is_chromeos_device) {
+         fortify_level = "3"
+       }
+-      defines += [ "_FORTIFY_SOURCE=" + fortify_level ]
++      cflags += [ "-U_FORTIFY_SOURCE" ]
++      cflags += [ "-D_FORTIFY_SOURCE=" + fortify_level ]
+     }
+ 
+     if (is_apple) {
+@@ -3415,9 +3742,10 @@ if (is_android) {
+ }
+ 
+ # Initialize all variables on the stack if needed.
++# Apply to v8 but not libaom
+ config("default_init_stack_vars") {
+   cflags = []
+-  if (init_stack_vars && is_clang && !using_sanitizer) {
++  if (is_official_build && init_stack_vars && is_clang && !using_sanitizer) {
+     if (init_stack_vars_zero) {
+       cflags += [ "-ftrivial-auto-var-init=zero" ]
+     } else {
+--- a/build/config/linux/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/build/config/linux/BUILD.gn	2026-01-05 08:11:47.142282719 -0800
+@@ -19,7 +19,8 @@ config("compiler") {
+     import("//build/config/arm.gni")
+     cflags = []
+     asmflags = []
+-    if (arm_control_flow_integrity == "standard") {
++    if (!is_official_build) {
++    } else if (arm_control_flow_integrity == "standard") {
+       cflags += [ "-mbranch-protection=standard" ]
+       asmflags += [ "-mbranch-protection=standard" ]
+     } else if (arm_control_flow_integrity == "pac") {
+--- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/perfetto/gn/standalone/BUILD.gn	2026-01-04 21:56:53.311979163 -0800
+@@ -251,8 +251,8 @@ config("default") {
+     cflags += [
+       "-g",
+       "-fPIC",
+-      "-fstack-protector-strong",
++      "-fstack-protector-strong",
+     ]
+   }
+ 
+   # Treat warnings as errors, but give up on fuzzer builds.
+--- a/third_party/swiftshader/BUILD.gn.orig	2025-12-17 15:05:18.000000000 -0800
++++ b/third_party/swiftshader/BUILD.gn	2026-01-05 08:11:56.566871599 -0800
+@@ -50,7 +50,8 @@ config("swiftshader_config") {
+       if (current_cpu == "arm64") {
+         import("//build/config/arm.gni")
+ 
+-        if (arm_control_flow_integrity == "standard") {
++        if (!is_official_build) {
++        } else if (arm_control_flow_integrity == "standard") {
+           cflags += [ "-mbranch-protection=standard" ]
+           asmflags += [ "-mbranch-protection=standard" ]
+         } else if (arm_control_flow_integrity == "bti+pac") {

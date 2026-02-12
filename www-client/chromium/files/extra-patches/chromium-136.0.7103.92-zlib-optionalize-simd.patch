@@ -1,0 +1,153 @@
+--- a/third_party/skia/third_party/zlib/BUILD.gn.orig	2025-05-07 01:28:09.642365173 -0700
++++ b/third_party/skia/third_party/zlib/BUILD.gn	2025-05-07 01:31:43.616373391 -0700
+@@ -3,6 +3,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("../third_party.gni")
+ import("zlib.gni")
+ 
+@@ -30,12 +31,12 @@ if (skia_use_system_zlib) {
+   }
+ 
+   use_arm_neon_optimizations =
+-      (current_cpu == "arm" || current_cpu == "arm64") && (is_clang || !is_win)
++      (current_cpu == "arm" || current_cpu == "arm64") && (is_clang || !is_win) && use_neon && use_aes && use_crc32
+   use_x86_x64_optimizations =
+-      (current_cpu == "x86" || current_cpu == "x64") && !is_ios
++      (current_cpu == "x86" || current_cpu == "x64") && !is_ios && use_sse2
+ 
+   config("zlib_adler32_simd_config") {
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_ssse3) {
+       defines = [ "ADLER32_SIMD_SSSE3" ]
+       if (is_win) {
+         defines += [ "X86_WINDOWS" ]
+@@ -52,7 +53,7 @@ if (skia_use_system_zlib) {
+   source_set("zlib_adler32_simd") {
+     visibility = [ ":*" ]
+ 
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_ssse3) {
+       sources = [
+         "../externals/zlib/adler32_simd.c",
+         "../externals/zlib/adler32_simd.h",
+@@ -165,7 +166,7 @@ if (skia_use_system_zlib) {
+   }
+ 
+   config("zlib_crc32_simd_config") {
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_sse4_2 && use_pclmul) {
+       defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
+     }
+   }
+@@ -173,7 +174,7 @@ if (skia_use_system_zlib) {
+   source_set("zlib_crc32_simd") {
+     visibility = [ ":*" ]
+ 
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_sse4_2 && use_pclmul) {
+       sources = [
+         "../externals/zlib/crc32_simd.c",
+         "../externals/zlib/crc32_simd.h",
+--- a/third_party/zlib/BUILD.gn.orig	2025-05-07 01:28:09.673377742 -0700
++++ b/third_party/zlib/BUILD.gn	2025-05-07 16:53:58.934237033 -0700
+@@ -2,6 +2,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("//build/config/compiler/compiler.gni")
+ import("//build/config/dcheck_always_on.gni")
+ 
+@@ -72,16 +73,16 @@ if ((current_cpu == "arm" || current_cpu
+     !(is_win && !is_clang)) {
+   # TODO(richard.townsend@arm.com): Optimizations temporarily disabled for
+   # Windows on Arm MSVC builds, see http://crbug.com/v8/10012.
+-  if (arm_use_neon) {
++  if (arm_use_neon && use_neon) {
+     use_arm_neon_optimizations = true
+   }
+ }
+ 
+ use_x86_x64_optimizations =
+-    (current_cpu == "x86" || current_cpu == "x64") && !is_ios
++    (current_cpu == "x86" || current_cpu == "x64") && !is_ios && use_sse2
+ 
+ config("zlib_adler32_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_ssse3) {
+     defines = [ "ADLER32_SIMD_SSSE3" ]
+     if (is_win) {
+       defines += [ "X86_WINDOWS" ]
+@@ -98,7 +99,7 @@ config("zlib_adler32_simd_config") {
+ source_set("zlib_adler32_simd") {
+   visibility = [ ":*" ]
+ 
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_ssse3) {
+     sources = [
+       "adler32_simd.c",
+       "adler32_simd.h",
+@@ -219,7 +220,7 @@ source_set("zlib_inflate_chunk_simd") {
+ }
+ 
+ config("zlib_crc32_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_sse4_2 && use_pclmul) {
+     defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
+   }
+ }
+@@ -227,7 +228,7 @@ config("zlib_crc32_simd_config") {
+ source_set("zlib_crc32_simd") {
+   visibility = [ ":*" ]
+ 
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_sse4_2 && use_pclmul) {
+     sources = [
+       "crc32_simd.c",
+       "crc32_simd.h",
+@@ -340,9 +341,9 @@ component("zlib") {
+       ":zlib_slide_hash_simd",
+     ]
+ 
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && (use_sse4_2 && use_pclmul)) {
+       deps += [ ":zlib_crc32_simd" ]
+-    } else if (use_arm_neon_optimizations) {
++    } else if (use_arm_neon_optimizations && ((use_aes && use_crc32 && current_cpu == "arm64") || (use_crc32 && current_cpu == "arm"))) {
+       deps += [ ":zlib_arm_crc32" ]
+     }
+   } else {
+--- a/third_party/crashpad/crashpad/third_party/zlib/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/crashpad/crashpad/third_party/zlib/BUILD.gn	2025-05-07 15:54:12.196007198 -0700
+@@ -12,6 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++import("//build/config/simd.gni")
+ import("../../build/crashpad_buildconfig.gni")
+ 
+ if (crashpad_is_in_chromium || crashpad_is_in_fuchsia || crashpad_is_in_dart) {
+@@ -129,10 +130,16 @@ if (zlib_source == "external") {
+           "$zlib_dir/crc_folding.c",
+         ]
+         if (!crashpad_is_win || crashpad_is_clang) {
+-          cflags += [
+-            "-msse4.2",
+-            "-mpclmul",
+-          ]
++          if (use_sse4_2) {
++            cflags += [
++              "-msse4.2",
++            ]
++          }
++          if (use_pclmul) {
++            cflags += [
++              "-mpclmul",
++            ]
++          }
+         }
+         if (crashpad_is_clang) {
+           cflags += [ "-Wno-incompatible-pointer-types" ]

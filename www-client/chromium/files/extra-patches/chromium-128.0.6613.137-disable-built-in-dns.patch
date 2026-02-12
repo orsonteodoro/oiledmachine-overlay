@@ -1,0 +1,22 @@
+--- a/net/BUILD.gn.orig	2024-09-10 11:42:18.983169000 -0700
++++ b/net/BUILD.gn	2024-09-13 19:21:18.460239401 -0700
+@@ -37,7 +37,7 @@ if (is_android) {
+ # Writable mmap isn't supported on Fuchsia, so it should be bypassed.
+ posix_bypass_mmap = (is_android && current_cpu != "x86") || is_fuchsia
+ 
+-enable_built_in_dns = use_blink
++enable_built_in_dns = false
+ 
+ # TODO(droger): Support client auth on iOS. See http://crbug.com/145954).
+ #
+--- a/net/dns/BUILD.gn.orig	2024-09-10 11:42:19.259192500 -0700
++++ b/net/dns/BUILD.gn	2024-09-13 19:21:20.376206871 -0700
+@@ -6,7 +6,7 @@ import("//net/features.gni")
+ import("//testing/libfuzzer/fuzzer_test.gni")
+ import("//third_party/protobuf/proto_library.gni")
+ 
+-enable_built_in_dns = use_blink
++enable_built_in_dns = false
+ 
+ source_set("dns") {
+   # Due to circular dependencies, should only be depended on through //net.

@@ -1,0 +1,218 @@
+--- a/build/config/compiler/compiler.gni.orig	2024-08-21 15:46:04.998060500 -0700
++++ b/build/config/compiler/compiler.gni	2024-08-27 13:44:13.260481947 -0700
+@@ -36,6 +36,9 @@ declare_args() {
+   # The default linker everywhere else.
+   use_lld = is_clang && current_os != "zos"
+ 
++
++  use_mold = false
++
+   # If true, optimize for size.
+   # Default to favoring speed over size for platforms not listed below.
+   optimize_for_size =
+--- a/build/config/compiler/pgo/BUILD.gn.orig	2024-08-21 15:46:04.998060500 -0700
++++ b/build/config/compiler/pgo/BUILD.gn	2024-08-27 13:53:44.162811153 -0700
+@@ -148,16 +148,21 @@ config("pgo_optimization_flags") {
+     # Enable basic block layout based on the extended TSP problem. This aims to
+     # improve icache utilization and reduce the binary size.
+     if (use_thin_lto) {
++      assert(!use_mold, "use_mold=true is not allowed with use_thin_lto=true")
+       if (is_win) {
+         ldflags = [ "-mllvm:-enable-ext-tsp-block-placement=1" ]
+       } else {
+         ldflags = [ "-Wl,-mllvm,-enable-ext-tsp-block-placement=1" ]
+       }
+     } else {
+-      cflags += [
+-        "-mllvm",
+-        "-enable-ext-tsp-block-placement=1",
+-      ]
++      if (use_mold) {
++        # Pass
++      } else {
++        cflags += [
++          "-mllvm",
++          "-enable-ext-tsp-block-placement=1",
++        ]
++      }
+     }
+   }
+ }
+--- a/third_party/llvm/llvm/utils/gn/build/BUILD.gn.orig	2024-08-21 15:56:56.796674000 -0700
++++ b/third_party/llvm/llvm/utils/gn/build/BUILD.gn	2024-08-28 23:31:12.573530134 -0700
+@@ -38,6 +38,8 @@ declare_args() {
+ 
+   # The version of host gcc. Ignored if is_clang is true.
+   gcc_version = 9
++
++  use_mold = false
+ }
+ 
+ assert(!llvm_build_instrumented_coverage || is_clang,
+@@ -269,7 +271,9 @@ config("compiler_defaults") {
+   }
+ 
+   # On Windows, the linker is not invoked through the compiler driver.
+-  if (use_lld && current_os != "win") {
++  if (use_mold && current_os != "win") {
++    ldflags += [ "-fuse-ld=mold" ]
++  } else if (use_lld && current_os != "win") {
+     ldflags += [ "-fuse-ld=lld" ]
+   }
+ 
+--- a/third_party/rust-src/src/llvm-project/llvm/utils/gn/build/BUILD.gn.orig	2024-08-21 16:00:28.649322300 -0700
++++ b/third_party/rust-src/src/llvm-project/llvm/utils/gn/build/BUILD.gn	2024-08-28 23:31:15.385485283 -0700
+@@ -38,6 +38,8 @@ declare_args() {
+ 
+   # The version of host gcc. Ignored if is_clang is true.
+   gcc_version = 9
++
++  use_mold = false
+ }
+ 
+ assert(!llvm_build_instrumented_coverage || is_clang,
+@@ -274,7 +276,9 @@ config("compiler_defaults") {
+   }
+ 
+   # On Windows, the linker is not invoked through the compiler driver.
+-  if (use_lld && current_os != "win") {
++  if (use_mold && current_os != "win") {
++    ldflags += [ "-fuse-ld=mold" ]
++  } else if (use_lld && current_os != "win") {
+     ldflags += [ "-fuse-ld=lld" ]
+   }
+ 
+--- a/build/config/compiler/pgo/BUILD.gn.orig	2024-09-03 22:38:23.179931845 -0700
++++ b/build/config/compiler/pgo/BUILD.gn	2024-09-03 23:12:53.649305524 -0700
+@@ -9,6 +9,10 @@ import("//build/config/compiler/pgo/pgo.
+ import("//build/config/features.gni")
+ import("//build/toolchain/toolchain.gni")
+ 
++declare_args() {
++  #use_mold = false
++}
++
+ # Configuration that enables PGO instrumentation.
+ config("pgo_instrumentation_flags") {
+   visibility = [ ":default_pgo_flags" ]
+--- a/build/config/compiler/compiler.gni.orig	2024-09-04 14:15:54.594301843 -0700
++++ b/build/config/compiler/compiler.gni	2024-09-04 15:06:27.279810925 -0700
+@@ -34,10 +34,10 @@ declare_args() {
+   # In late bring-up on macOS (see docs/mac_lld.md).
+   # Tentatively used on iOS.
+   # The default linker everywhere else.
+-  use_lld = is_clang && current_os != "zos"
++  use_mold = false
++  use_lld = is_clang && current_os != "zos" && !use_mold
+ 
+ 
+-  use_mold = false
+ 
+   # If true, optimize for size.
+   # Default to favoring speed over size for platforms not listed below.
+--- a/build/config/compiler/compiler.gni.orig	2024-09-04 15:47:50.091188461 -0700
++++ b/build/config/compiler/compiler.gni	2024-09-04 16:10:20.957197926 -0700
+@@ -30,15 +30,16 @@ if (is_ios) {
+ }
+ 
+ declare_args() {
++  use_mold = false
++}
++
++declare_args() {
+   # Set to true to use lld, the LLVM linker.
+   # In late bring-up on macOS (see docs/mac_lld.md).
+   # Tentatively used on iOS.
+   # The default linker everywhere else.
+-  use_mold = false
+   use_lld = is_clang && current_os != "zos" && !use_mold
+ 
+-
+-
+   # If true, optimize for size.
+   # Default to favoring speed over size for platforms not listed below.
+   optimize_for_size =
+--- a/build/config/compiler/BUILD.gn.orig	2024-09-24 13:49:15.047595000 -0700
++++ b/build/config/compiler/BUILD.gn	2024-09-28 11:46:06.526005046 -0700
+@@ -200,6 +200,8 @@ declare_args() {
+   # debugging information which is required by some specialized
+   # debugging tools.
+   simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
++
++  #use_mold = false
+ }
+ 
+ declare_args() {
+@@ -373,7 +375,9 @@ config("compiler") {
+       }
+     }
+ 
+-    if (use_lld) {
++    if (use_mold) {
++      ldflags += [ "-fuse-ld=mold" ]
++    } else if (use_lld) {
+       ldflags += [ "-fuse-ld=lld" ]
+       if (lld_path != "") {
+         ldflags += [ "-B$lld_path" ]
+@@ -573,7 +577,10 @@ config("compiler") {
+       "-mllvm",
+       "-instcombine-lower-dbg-declare=0",
+     ]
+-    if (!is_debug && use_thin_lto && is_a_target_toolchain) {
++    if (use_mold) {
++      assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++      # Pass
++    } else if (!is_debug && use_thin_lto && is_a_target_toolchain) {
+       if (is_win) {
+         ldflags += [ "-mllvm:-instcombine-lower-dbg-declare=0" ]
+       } else {
+@@ -590,7 +597,10 @@ config("compiler") {
+         "-mllvm",
+         "-split-threshold-for-reg-with-hint=0",
+       ]
+-      if (use_thin_lto && is_a_target_toolchain) {
++      if (use_mold) {
++        assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++        # Pass
++      } else if (use_thin_lto && is_a_target_toolchain) {
+         if (is_win) {
+           ldflags += [ "-mllvm:-split-threshold-for-reg-with-hint=0" ]
+         } else {
+@@ -713,7 +723,10 @@ config("compiler") {
+   #
+   # [0]: https://pinpoint-dot-chromeperf.8pp2p8t.qjz9zk/job/15efb0313e0000
+   # [1]: https://pinpoint-dot-chromeperf.8pp2p8t.qjz9zk/job/157f0b42be0000
+-  if (!is_debug && use_thin_lto && is_a_target_toolchain) {
++  if (use_mold) {
++    assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++    # Pass
++  } else if (!is_debug && use_thin_lto && is_a_target_toolchain) {
+     assert(use_lld, "LTO is only supported with lld")
+ 
+     cflags += [
+@@ -930,7 +943,10 @@ config("compiler") {
+     assert(
+         is_android && host_os == "linux",
+         "MLGO is currently only supported for targeting Android on a linux host")
+-    if (use_thin_lto) {
++    if (use_mold) {
++      assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++      # Pass
++    } else if (use_thin_lto) {
+       ldflags += [ "-Wl,-mllvm,-enable-ml-inliner=release" ]
+       if (is_high_end_android) {
+         # Besides using the arm64 - trained model, instruct the inline advisor
+@@ -1517,7 +1533,12 @@ config("compiler_codegen") {
+     # This can be removed once https://bugs.llvm.org/show_bug.cgi?id=40348
+     # has been resolved, and -mno-outline is obeyed by the linker during
+     # ThinLTO.
+-    ldflags += [ "-Wl,-mllvm,-enable-machine-outliner=never" ]
++    if (use_mold) {
++      assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++      # Pass
++    } else {
++      ldflags += [ "-Wl,-mllvm,-enable-machine-outliner=never" ]
++    }
+   }
+ 
+   asmflags = cflags

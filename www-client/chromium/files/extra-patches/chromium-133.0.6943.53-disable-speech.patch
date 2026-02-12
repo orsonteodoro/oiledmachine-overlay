@@ -1,0 +1,10 @@
+--- a/chrome/test/BUILD.gn.orig	2025-02-03 11:02:21.000000000 -0800
++++ b/chrome/test/BUILD.gn	2025-02-09 12:46:45.528041904 -0800
+@@ -8003,7 +8003,6 @@ test("unit_tests") {
+       "//chrome/browser/webauthn:test_support",
+       "//chrome/browser/webauthn/proto",
+       "//chrome/common/read_anything:mojo_bindings",
+-      "//chrome/services/speech:unit_tests",
+       "//components/app_constants",
+       "//components/color",
+       "//components/commerce/core:account_checker_test_support",

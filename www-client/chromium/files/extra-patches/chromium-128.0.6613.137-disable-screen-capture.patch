@@ -1,0 +1,560 @@
+--- a/content/browser/renderer_host/media/media_stream_manager.cc.orig	2024-09-10 11:42:13.629714000 -0700
++++ b/content/browser/renderer_host/media/media_stream_manager.cc	2024-09-19 11:24:56.425737854 -0700
+@@ -106,7 +106,7 @@
+ #include "chromeos/lacros/lacros_service.h"
+ #endif
+ 
+-#if !BUILDFLAG(IS_ANDROID)
++#if !BUILDFLAG(IS_ANDROID) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ #include "content/browser/media/captured_surface_controller.h"
+ #endif
+ 
+@@ -516,7 +516,7 @@ bool ChangeSourceSupported(const MediaSt
+   return true;  // getDisplayMedia() and killswitches did not trigger.
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ base::TimeDelta GetConditionalFocusWindow() {
+   const std::string custom_window =
+       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+@@ -885,7 +885,7 @@ class MediaStreamManager::DeviceRequest
+       blink::mojom::MediaStreamType type,
+       media::mojom::CaptureHandlePtr capture_handle) {}
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // If capturing a tab, returns the tab's |WebContentsMediaCaptureId|.
+   // Otherwise, returns an empty |WebContentsMediaCaptureId|.
+   WebContentsMediaCaptureId GetCapturedTabId() const {
+@@ -923,7 +923,7 @@ class MediaStreamManager::DeviceRequest
+ 
+   // If capturing a tab, zoom-level updates are received through this callback.
+   virtual void OnZoomLevelChange(const std::string& label, int zoom_level) {}
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+   // Marks that CSC was used at least once during this capture-session.
+   void SetCapturedSurfaceControlActive() {
+@@ -1034,7 +1034,7 @@ class MediaStreamManager::DeviceRequest
+   std::optional<std::string> video_raw_id_;
+   GlobalRenderFrameHostId target_render_frame_host_id_;
+   std::string label_;
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   std::unique_ptr<CapturedSurfaceController> captured_surface_controller_;
+ #endif
+   bool captured_surface_control_active_ = false;
+@@ -1255,7 +1255,7 @@ class MediaStreamManager::CreateDeviceRe
+     }
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   void OnZoomLevelChange(const std::string& label, int zoom_level) override {
+     DCHECK_CURRENTLY_ON(BrowserThread::IO);
+ 
+@@ -1287,7 +1287,7 @@ class MediaStreamManager::CreateDeviceRe
+ 
+     zoom_level_change_callback_.Run(label, *device, zoom_level);
+   }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+  private:
+   DeviceChangedCallback device_changed_callback_;
+@@ -1555,7 +1555,7 @@ MediaStreamManager::MediaStreamManager(
+     media::AudioSystem* audio_system,
+     std::unique_ptr<VideoCaptureProvider> video_capture_provider)
+     :
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+       conditional_focus_window_(GetConditionalFocusWindow()),
+       captured_surface_controller_factory_(
+           MakeDefaultCapturedSurfaceControllerFactory()),
+@@ -2326,7 +2326,7 @@ MediaStreamManager::DeviceRequest* Media
+   return (it != requests_.end()) ? it->second.get() : nullptr;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ MediaStreamManager::DeviceRequest*
+ MediaStreamManager::FindRequestByVideoSessionId(
+     const base::UnguessableToken& session_id) const {
+@@ -3039,7 +3039,7 @@ void MediaStreamManager::FinalizeGenerat
+     return;
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   CHECK(!request->captured_surface_controller());
+   const WebContentsMediaCaptureId captured_tab_id = request->GetCapturedTabId();
+   if (!captured_tab_id.is_null()) {
+@@ -3049,7 +3049,7 @@ void MediaStreamManager::FinalizeGenerat
+             base::BindRepeating(&DeviceRequest::OnZoomLevelChange,
+                                 request->GetWeakPtr(), label)));
+   }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+   // TODO(crbug.com/40216442): Generalize to multiple streams.
+   DCHECK_EQ(1u, request->stream_devices_set.stream_devices.size());
+@@ -3130,7 +3130,7 @@ void MediaStreamManager::PanTiltZoomPerm
+     return;
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // 1. Only the first call to SetCapturedDisplaySurfaceFocus() has an
+   //    effect, so a direct call to SetCapturedDisplaySurfaceFocus()
+   //    before the scheduled task is executed would render the scheduled
+@@ -3718,7 +3718,7 @@ void MediaStreamManager::HandleChangeSou
+                             ? request->stream_controls().audio.stream_type
+                             : MediaStreamType::NO_SERVICE);
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   if (CapturedSurfaceController* const captured_surface_controller =
+           request->captured_surface_controller()) {
+     // Either inform the controller that it's now controlling a new tab,
+@@ -3726,7 +3726,7 @@ void MediaStreamManager::HandleChangeSou
+     captured_surface_controller->UpdateCaptureTarget(
+         request->GetCapturedTabId());
+   }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ }
+ 
+ void MediaStreamManager::StopMediaStreamFromBrowser(const std::string& label) {
+@@ -4033,13 +4033,13 @@ void MediaStreamManager::SetStateForTest
+   requests_iterator->second->SetState(stream_type, new_state);
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ void MediaStreamManager::SetCapturedSurfaceControllerFactoryForTesting(
+     CapturedSurfaceControllerFactoryCallback factory) {
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+   captured_surface_controller_factory_ = std::move(factory);
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ void MediaStreamManager::SetGenerateStreamsCallbackForTesting(
+     GenerateStreamTestCallback test_callback) {
+@@ -4179,7 +4179,7 @@ void MediaStreamManager::OnRegionCapture
+   }
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ void MediaStreamManager::SetCapturedDisplaySurfaceFocus(
+     const std::string& label,
+     bool focus,
+@@ -4275,7 +4275,7 @@ void MediaStreamManager::SetZoomLevel(
+   controller->SetZoomLevel(zoom_level, std::move(callback));
+ }
+ 
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ void MediaStreamManager::RegisterDispatcherHost(
+     std::unique_ptr<blink::mojom::MediaStreamDispatcherHost> host,
+--- a/content/browser/renderer_host/media/media_stream_manager.h.orig	2024-09-10 11:42:13.629714000 -0700
++++ b/content/browser/renderer_host/media/media_stream_manager.h	2024-09-19 15:08:32.177485324 -0700
+@@ -49,7 +49,7 @@
+ #include "third_party/blink/public/mojom/mediastream/media_stream.mojom.h"
+ #include "third_party/blink/public/mojom/permissions/permission_status.mojom.h"
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ #include "content/browser/media/captured_surface_controller.h"
+ #endif
+ 
+@@ -141,7 +141,7 @@ class CONTENT_EXPORT MediaStreamManager
+   using GenerateStreamTestCallback =
+       base::OnceCallback<bool(const blink::StreamControls&)>;
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // Callback for creating a CapturedSurfaceController. Used to override the
+   // default CapturedSurfaceController in tests.
+   using CapturedSurfaceControllerFactoryCallback =
+@@ -387,7 +387,7 @@ class CONTENT_EXPORT MediaStreamManager
+                           blink::mojom::MediaStreamType stream_type,
+                           MediaRequestState new_state);
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   void SetCapturedSurfaceControllerFactoryForTesting(
+       CapturedSurfaceControllerFactoryCallback factory);
+ #endif
+@@ -409,7 +409,7 @@ class CONTENT_EXPORT MediaStreamManager
+       const base::UnguessableToken& session_id,
+       const std::optional<gfx::Rect>& region_capture_rect);
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // Determines whether the captured surface (tab/window) should be focused.
+   // This can be called at most once, and only within the first 1s of the
+   // capture session being initiated. If a call with |focus=false| is not
+@@ -440,7 +440,7 @@ class CONTENT_EXPORT MediaStreamManager
+       base::OnceCallback<void(blink::mojom::CapturedSurfaceControlResult)>
+           callback);
+ 
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+   void RegisterDispatcherHost(
+       std::unique_ptr<blink::mojom::MediaStreamDispatcherHost> host,
+@@ -544,7 +544,7 @@ class CONTENT_EXPORT MediaStreamManager
+       const std::string& label) const;
+   DeviceRequest* FindRequest(const std::string& label) const;
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // Find a request by the session-ID of its video device.
+   // (In case of multiple video devices - any of them would fit.)
+   // TOOD(crbug.com/1466247): Remove this after making the Captured Surface
+@@ -556,7 +556,7 @@ class CONTENT_EXPORT MediaStreamManager
+       GlobalRenderFrameHostId capturer_rfh_id,
+       const base::UnguessableToken& session_id,
+       blink::mojom::CapturedSurfaceControlResult& result);
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+   // Clones an existing device identified by |existing_device_session_id| and
+   // returns it. If no such device is found, it returns std::nullopt.
+@@ -774,7 +774,7 @@ class CONTENT_EXPORT MediaStreamManager
+       GetRawDeviceIdsOpenedForFrameCallback callback,
+       base::flat_set<GlobalRenderFrameHostId> render_frame_host_ids) const;
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // Defines a window of opportunity for the Web-application to decide
+   // whether a display-surface which it's capturing should be focused.
+   // After |kConditionalFocusWindow| past the beginning of the capture,
+--- a/content/browser/renderer_host/media/media_stream_dispatcher_host.cc.orig	2024-09-10 11:42:13.627713700 -0700
++++ b/content/browser/renderer_host/media/media_stream_dispatcher_host.cc	2024-09-19 20:09:15.618479213 -0700
+@@ -40,7 +40,7 @@
+ #include "third_party/blink/public/mojom/mediastream/media_stream.mojom.h"
+ #include "url/origin.h"
+ 
+-#if !BUILDFLAG(IS_ANDROID)
++#if !BUILDFLAG(IS_ANDROID) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ #include "content/browser/media/capture/sub_capture_target_id_web_contents_helper.h"
+ #endif
+ 
+@@ -80,7 +80,7 @@ StartObservingWebContents(GlobalRenderFr
+   return web_contents_observer;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ // Checks whether a track living in the WebContents indicated by
+ // (render_process_id, render_frame_id) may be cropped or restricted
+ // to the target indicated by |target|.
+@@ -139,7 +139,7 @@ WrapApplySubCaptureTarget(
+       },
+       std::move(callback), std::move(bad_message_callback));
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ bool AllowedStreamTypeCombination(
+     blink::mojom::MediaStreamType audio_stream_type,
+@@ -179,7 +179,7 @@ bool AllowedStreamTypeCombination(
+   return false;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ bool IsValidZoomLevel(int zoom_level) {
+   if (blink::kPresetBrowserZoomFactors.size() == 0u) {
+     return false;
+@@ -199,7 +199,7 @@ bool IsValidZoomLevel(int zoom_level) {
+ 
+   return false;
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ }  // namespace
+ 
+@@ -676,7 +676,7 @@ void MediaStreamDispatcherHost::KeepDevi
+       render_frame_host_id_, requester_id_, session_id, transfer_id));
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ void MediaStreamDispatcherHost::FocusCapturedSurface(const std::string& label,
+                                                      bool focus) {
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+--- a/content/browser/renderer_host/media/media_devices_dispatcher_host.cc.orig	2024-09-10 11:42:13.625713600 -0700
++++ b/content/browser/renderer_host/media/media_devices_dispatcher_host.cc	2024-09-20 00:04:02.283890141 -0700
+@@ -38,7 +38,7 @@
+ #include "third_party/blink/public/common/mediastream/media_stream_request.h"
+ #include "url/origin.h"
+ 
+-#if !BUILDFLAG(IS_ANDROID)
++#if !BUILDFLAG(IS_ANDROID) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ #include "content/browser/media/capture/sub_capture_target_id_web_contents_helper.h"
+ #endif
+ 
+@@ -293,7 +293,7 @@ void MediaDevicesDispatcherHost::SetCapt
+           render_frame_host_id_, std::move(config)));
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ void MediaDevicesDispatcherHost::CloseFocusWindowOfOpportunity(
+     const std::string& label) {
+   media_stream_manager_->SetCapturedDisplaySurfaceFocus(
+--- a/content/browser/renderer_host/media/media_devices_dispatcher_host.h.orig	2024-09-10 11:42:13.625713600 -0700
++++ b/content/browser/renderer_host/media/media_devices_dispatcher_host.h	2024-09-20 00:03:52.075951792 -0700
+@@ -70,7 +70,7 @@ class CONTENT_EXPORT MediaDevicesDispatc
+       override;
+   void SetCaptureHandleConfig(
+       blink::mojom::CaptureHandleConfigPtr config) override;
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   void CloseFocusWindowOfOpportunity(const std::string& label) override;
+   void ProduceSubCaptureTargetId(
+       media::mojom::SubCaptureTargetType type,
+--- a/third_party/blink/public/mojom/mediastream/media_devices.mojom.orig	2024-09-10 11:42:21.803408900 -0700
++++ b/third_party/blink/public/mojom/mediastream/media_devices.mojom	2024-09-20 13:18:21.242520452 -0700
+@@ -131,7 +131,7 @@ interface MediaDevicesDispatcherHost {
+   // of opportunity from the render side.
+   // (Note that a timer exists on the browser-side, too. This message serves
+   // to close the window early.)
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   CloseFocusWindowOfOpportunity(string label);
+ 
+   // Mints a new ID backing a SubCaptureTarget.
+@@ -139,7 +139,7 @@ interface MediaDevicesDispatcherHost {
+   //   for BrowserCaptureMediaStreamTrack.cropTo().
+   // * RestrictionTargetIds back a RestrictionTarget, which is the input type
+   //   for BrowserCaptureMediaStreamTrack.restrictTo().
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   ProduceSubCaptureTargetId(media.mojom.SubCaptureTargetType type)
+       => (string id);
+ };
+--- a/third_party/blink/renderer/modules/mediastream/media_devices.cc.orig	2024-09-10 11:42:22.989509600 -0700
++++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc	2024-09-20 19:08:39.030421309 -0700
+@@ -181,7 +181,7 @@ enum class DisplayCapturePolicyResult {
+   kMaxValue = kAllowed
+ };
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ // These values are persisted to logs. Entries should not be renumbered and
+ // numeric values should never be reused.
+ enum class ProduceTargetFunctionResult {
+@@ -227,7 +227,7 @@ void RecordUma(SubCaptureTarget::Type ty
+   }
+ }
+ 
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ 
+ // When `blink::features::kGetDisplayMediaRequiresUserActivation` is enabled,
+ // calls to `getDisplayMedia()` will require a transient user activation. This
+@@ -283,7 +283,7 @@ bool TransientActivationRequirementSatis
+   return false;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ bool IsExtensionScreenSharingFunctionCall(const MediaStreamConstraints* options,
+                                           ExceptionState& exception_state) {
+   DCHECK(!exception_state.HadException());
+@@ -329,7 +329,7 @@ MediaStreamConstraints* ToMediaStreamCon
+     constraints->setVideo(source->video());
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   if (source->hasController()) {
+     const bool is_screen_sharing =
+         IsExtensionScreenSharingFunctionCall(constraints, exception_state);
+@@ -391,7 +391,7 @@ bool EqualDeviceForDeviceChange(const We
+          lhs.group_id == rhs.group_id && lhs.IsAvailable() == rhs.IsAvailable();
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ base::Token SubCaptureTargetIdToToken(const WTF::String& id) {
+   if (id.empty()) {
+     return base::Token();
+@@ -404,7 +404,7 @@ base::Token SubCaptureTargetIdToToken(co
+   DCHECK(!token.is_zero());
+   return token;
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ 
+ }  // namespace
+ 
+@@ -515,7 +515,7 @@ ScriptPromise<IDLResolvedType> MediaDevi
+ 
+   base::OnceCallback<void(const String&, CaptureController*)>
+       on_success_follow_up;
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   if (media_type == UserMediaRequestType::kDisplayMedia ||
+       IsExtensionScreenSharingFunctionCall(options, exception_state)) {
+     if (options->hasController()) {
+@@ -571,7 +571,7 @@ ScriptPromise<IDLResolvedType> MediaDevi
+     return promise;
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   if (media_type == UserMediaRequestType::kDisplayMedia) {
+     window->ConsumeDisplayCaptureRequestToken();
+   }
+@@ -769,7 +769,7 @@ ScriptPromise<CropTarget> MediaDevices::
+     ScriptState* script_state,
+     Element* element,
+     ExceptionState& exception_state) {
+-#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
++#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) || !defined(ENABLE_SCREEN_CAPTURE)
+   exception_state.ThrowDOMException(DOMExceptionCode::kNotSupportedError,
+                                     "Unsupported.");
+   return EmptyPromise();
+@@ -833,7 +833,7 @@ ScriptPromise<RestrictionTarget> MediaDe
+     ScriptState* script_state,
+     Element* element,
+     ExceptionState& exception_state) {
+-#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
++#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) || !defined(ENABLE_SCREEN_CAPTURE)
+   exception_state.ThrowDOMException(DOMExceptionCode::kNotSupportedError,
+                                     "Unsupported.");
+   return EmptyPromise();
+@@ -1202,7 +1202,7 @@ void MediaDevices::Trace(Visitor* visito
+   visitor->Trace(receiver_);
+   visitor->Trace(scheduled_events_);
+   visitor->Trace(enumerate_device_requests_);
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   visitor->Trace(crop_target_resolvers_);
+   visitor->Trace(restriction_target_resolvers_);
+ #endif
+@@ -1211,7 +1211,7 @@ void MediaDevices::Trace(Visitor* visito
+   ExecutionContextLifecycleObserver::Trace(visitor);
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ void MediaDevices::EnqueueMicrotaskToCloseFocusWindowOfOpportunity(
+     const String& id,
+     CaptureController* capture_controller) {
+--- a/third_party/blink/renderer/modules/mediastream/media_devices.h.orig	2024-09-10 11:42:22.989509600 -0700
++++ b/third_party/blink/renderer/modules/mediastream/media_devices.h	2024-09-20 19:09:18.374156103 -0700
+@@ -156,7 +156,7 @@ class MODULES_EXPORT MediaDevices final
+   void OnDispatcherHostConnectionError();
+   mojom::blink::MediaDevicesDispatcherHost& GetDispatcherHost(LocalFrame*);
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   // Manage the window of opportunity that occurs immediately after
+   // display-capture starts. The application can call
+   // CaptureController.setFocusBehavior() on the microtask where the
+@@ -191,7 +191,7 @@ class MODULES_EXPORT MediaDevices final
+                                               IDLSequence<MediaDeviceInfo>>>>
+       enumerate_device_requests_;
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   using ElementToCropTargetResolverMap =
+       HeapHashMap<Member<Element>, Member<ScriptPromiseResolver<CropTarget>>>;
+   using ElementToRestrictionTargetResolverMap =
+--- a/third_party/blink/public/mojom/mediastream/media_stream.mojom.orig	2024-09-10 11:42:21.803408900 -0700
++++ b/third_party/blink/public/mojom/mediastream/media_stream.mojom	2024-09-21 15:53:04.362909044 -0700
+@@ -248,7 +248,7 @@ interface MediaStreamDispatcherHost {
+   // the captured source (tab/window).
+   // It is an error to set it to |true| for anything other than
+   // a video track derived from tab/window screen-capture.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   FocusCapturedSurface(string label, bool focus);
+ 
+   // Cancels the request for a new media stream or opening a device.
+@@ -296,7 +296,7 @@ interface MediaStreamDispatcherHost {
+   // a higher version.)
+   //
+   // The callback reports success/failure.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   ApplySubCaptureTarget(mojo_base.mojom.UnguessableToken device_id,
+        media.mojom.SubCaptureTargetType type,
+        mojo_base.mojom.Token sub_capture_target,
+@@ -308,7 +308,7 @@ interface MediaStreamDispatcherHost {
+   // |device_id| identifies the captured tab.
+   // |action| is the action (mouse event) to be delivered.
+   // |callback| will be invoked with the result.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   SendWheel(mojo_base.mojom.UnguessableToken device_id,
+             CapturedWheelAction action) =>
+     (CapturedSurfaceControlResult result);
+@@ -321,7 +321,7 @@ interface MediaStreamDispatcherHost {
+   //
+   // TODO(crbug.com/1512609): Create a new device mojo interface to replace the
+   // use of the device_id token.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   SetZoomLevel(mojo_base.mojom.UnguessableToken device_id,
+                int32 zoom_level)
+            => (CapturedSurfaceControlResult result);
+--- a/third_party/blink/renderer/modules/mediastream/media_stream_video_capturer_source.cc.orig	2024-09-10 11:42:22.997510200 -0700
++++ b/third_party/blink/renderer/modules/mediastream/media_stream_video_capturer_source.cc	2024-09-21 19:56:24.070751971 -0700
+@@ -31,7 +31,7 @@ using mojom::blink::MediaStreamRequestRe
+ 
+ namespace {
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ inline DOMException* MakeDOMException(DOMExceptionCode code, String message) {
+   return MakeGarbageCollected<DOMException>(code, std::move(message));
+ }
+@@ -69,7 +69,7 @@ void OnCapturedSurfaceControlResult(
+     CapturedSurfaceControlResult result) {
+   std::move(callback).Run(CscResultToDOMException(result));
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ 
+ }  // namespace
+ 
+@@ -243,7 +243,7 @@ void MediaStreamVideoCapturerSource::Cha
+                          weak_factory_.GetWeakPtr(), capture_params_));
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+ void MediaStreamVideoCapturerSource::SendWheel(
+     double relative_x,
+     double relative_y,
+--- a/third_party/blink/renderer/modules/mediastream/media_stream_video_capturer_source.h.orig	2024-09-10 11:42:22.997510200 -0700
++++ b/third_party/blink/renderer/modules/mediastream/media_stream_video_capturer_source.h	2024-09-21 19:56:49.162593055 -0700
+@@ -97,7 +97,7 @@ class MODULES_EXPORT MediaStreamVideoCap
+   void RestartSourceImpl(const media::VideoCaptureFormat& new_format) override;
+   std::optional<media::VideoCaptureFormat> GetCurrentFormat() const override;
+   void ChangeSourceImpl(const MediaStreamDevice& new_device) override;
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
+   void SendWheel(double relative_x,
+                  double relative_y,
+                  int wheel_delta_x,
+--- a/content/common/features.gni.orig	2024-09-10 11:42:13.871734400 -0700
++++ b/content/common/features.gni	2024-09-14 10:55:04.189211887 -0700
+@@ -24,5 +24,4 @@ declare_args() {
+   content_enable_legacy_ipc = is_android || enable_ppapi
+ }
+ 
+-enable_screen_capture =
+-    is_linux || is_chromeos || is_mac || is_win || is_android || is_fuchsia
++enable_screen_capture = false

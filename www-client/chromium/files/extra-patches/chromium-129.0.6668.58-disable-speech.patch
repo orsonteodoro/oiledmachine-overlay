@@ -1,0 +1,10 @@
+--- a/chrome/test/BUILD.gn.orig	2024-09-17 15:00:01.641532400 -0700
++++ b/chrome/test/BUILD.gn	2024-09-22 08:57:15.291930670 -0700
+@@ -8209,7 +8209,6 @@ test("unit_tests") {
+       "//chrome/browser/webauthn:test_support",
+       "//chrome/browser/webauthn/proto",
+       "//chrome/common/accessibility:mojo_bindings",
+-      "//chrome/services/speech:unit_tests",
+       "//components/app_constants",
+       "//components/color",
+       "//components/commerce/core:account_checker_test_support",
