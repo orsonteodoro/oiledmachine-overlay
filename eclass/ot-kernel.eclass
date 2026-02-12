@@ -16670,40 +16670,6 @@ ewarn "OOBR - Out of Bounds Read"
 ewarn "OOBW - Out of Bounds Write"
 ewarn "UM - Uninitalized Memory"
 ewarn
-ewarn "Recent CPU vulnerabilities for Q1 2025:"
-ewarn
-# 20250211
-ewarn "CVE-2024-31068 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-36293 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn "CVE-2023-43758 - PE, DoS, DT, ID         # Microcode update for Intel® CPUs available"
-ewarn "CVE-2023-34440 - PE, DoS, DT, ID         # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-24582 - PE, DoS, DT, ID         # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-29214 - PE, DoS, DT, ID         # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-28127 - PE, DoS, DT, ID         # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-39279 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-31157 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-28047 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-39355 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-37020 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn
-# 20250211
-ewarn "CVE-2024-0179 - CE, DoS, DT, ID          # BIOS firmware update for AMD CPUs available"
-ewarn "CVE-2024-21925 - CE, DoS, DT, ID         # BIOS firmware update for AMD CPUs available"
-# 20250305
-ewarn "CVE-2024-36347 - DoS, DT, ID             # BIOS firmware update for AMD CPUs available"
-ewarn
-ewarn "Recent CPU vulnerabilities for Q2 2025:"
-ewarn
-# 20250512
-ewarn "CVE-2024-28956 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2025-20103 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn "CVE-2025-20054 - DoS                     # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-43420 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2025-20623 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2024-45332 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2025-24495 - ID                      # Microcode update for Intel® CPUs available"
-ewarn "CVE-2025-20012 - ID                      # Microcode update for Intel® CPUs available"
-ewarn
 ewarn "Recent CPU vulnerabilities for Q3 2025:"
 ewarn
 # 20250708
@@ -16767,6 +16733,13 @@ ewarn "CVE-2023-31326 - UM, ID                  # BIOS firmware update for AMD C
 ewarn "CVE-2023-20540 - DT                      # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2021-26410 -                         # BIOS firmware update for AMD CPUs available"
 
+# 20260210
+ewarn
+ewarn "Recent CPU vulnerabilities for Q1 2026:"
+ewarn
+ewarn "CVE-2024-24853 - PE, DoS, DT, ID         # Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-31648 - PE, DT, ID              # Microcode update for Intel® CPUs available"
+ewarn
 }
 
 # @FUNCTION: ot-kernel_postinst_experimental_kernel
