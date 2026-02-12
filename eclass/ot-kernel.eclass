@@ -16766,17 +16766,17 @@ ewarn "CVE-2021-26410 - VS(DT, ID)                     # BIOS firmware update fo
 ewarn
 # Embedded
 ewarn "CVE-2025-29939 - VS(DT), SS(DT, ID)             # BIOS firmware update for AMD CPUs available"
-ewarn "CVE-2025-0012  - VS(DT, ID)                     # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-0012  - VS(DT, ID)                     # BIOS firmware and microcode updates for AMD CPUs available"
 ewarn "CVE-2025-52536 - VS(DT)                         # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2024-21961 - VS(DoS)                        # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2025-29948 - SS(DT)                         # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2024-21953 - SS(DT)                         # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2025-29952 - SS(DT)                         # BIOS firmware update for AMD CPUs available"
-ewarn "CVE-2025-52534 - VS(DT), SS(DT)                 # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-52534 - VS(DT), SS(DT)                 # BIOS firmware and microcode updates for AMD CPUs available"
 ewarn "CVE-2025-48517 - SS(ID)                         # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2025-0031  - VS(DT), SS(DT)                 # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2025-29946 - SS(DT, ID)                     # BIOS firmware update for AMD CPUs available"
-ewarn "CVE-2025-48514 - SS(ID)                         # BIOS firmware update for AMD CPUs available"
+ewarn "CVE-2025-48514 - SS(ID)                         # BIOS firmware and microcode updates for AMD CPUs available"
 ewarn "CVE-2025-0029  - VS(DT), SS(DT)                 # BIOS firmware update for AMD CPUs available"
 ewarn "CVE-2025-48509 - SS(DT)                         # BIOS firmware update for AMD CPUs available"
 ewarn
