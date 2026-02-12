@@ -3495,7 +3495,7 @@ if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 	gen_linux_firmware_ge 20251030
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	gen_intel_microcode_ge 20250812
+	gen_intel_microcode_ge 20260210
 fi
 }
 
