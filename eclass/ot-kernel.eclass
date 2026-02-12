@@ -16745,8 +16745,8 @@ ewarn "CVE-2021-26410 -                         # BIOS firmware update for AMD C
 ewarn
 ewarn "Recent CPU vulnerabilities for Q1 2026:"
 ewarn
-ewarn "CVE-2024-24853 - PE, DoS, DT, ID                # Microcode update for Intel® CPUs available"
-ewarn "CVE-2025-31648 - PE, DT, ID                     # Microcode update for Intel® CPUs available"
+ewarn "CVE-2024-24853 - PE, VS(DoS, DT, ID), SS(DoS, DT, ID)  # Microcode update for Intel® CPUs available"
+ewarn "CVE-2025-31648 - PE, VS(DT, ID), SS(DT, ID)            # Microcode update for Intel® CPUs available"
 ewarn
 # Client and embedded
 ewarn "CVE-2025-52533 - VS(DT, ID), SS(DT, ID)         # BIOS firmware update for AMD CPUs available, Key Distribution Server (KDS), No fix planned"
