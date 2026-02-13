@@ -600,10 +600,23 @@ fi
 is_cromite_compatible() {
 	local c4_min=$(ver_cut "4" "${PV}")
 	local c4_max=$(ver_cut "4" "${PV}")
-	c4_min=$(( ${c4_min} - 10 ))
-	c4_max=$(( ${c4_max} + 10 ))
+	c4_min=$(( ${c4_min} - 25 ))
+	c4_max=$(( ${c4_max} + 25 ))
 
 	if ver_test "${PV%.*}.${c4_min}" -le "${CROMITE_PV}" && ver_test "${CROMITE_PV}" -le "${PV%.*}.${c4_max}" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_ungoogle_chromium_compatible() {
+	local c4_min=$(ver_cut "4" "${PV}")
+	local c4_max=$(ver_cut "4" "${PV}")
+	c4_min=$(( ${c4_min} - 25 ))
+	c4_max=$(( ${c4_max} + 25 ))
+
+	if ver_test "${PV%.*}.${c4_min}" -le "${UNGOOGLED_CHROMIUM_PV%-*}" && ver_test "${UNGOOGLED_CHROMIUM_PV%-*}" -le "${PV%.*}.${c4_max}" ; then
 		return 0
 	else
 		return 1
@@ -660,7 +673,7 @@ https://github.com/uazo/cromite/archive/${CROMITE_COMMIT}.tar.gz
 	"
 fi
 
-if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+if is_ungoogle_chromium_compatible ; then
 	IUSE+="
 		ungoogled-chromium
 	"
@@ -687,7 +700,7 @@ if is_cromite_compatible ; then
 		)
 	"
 fi
-if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+if is_ungoogle_chromium_compatible ; then
 	LICENSE+="
 		ungoogled-chromium? (
 			BSD
@@ -1234,7 +1247,7 @@ if is_cromite_compatible ; then
 		"
 	fi
 fi
-if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+if is_ungoogle_chromium_compatible ; then
 	# USE=widevine is default ON, implying that it is allowed, in
 	# ungoogled-chromium but dropped from being forced ON to allow the user
 	# to decide.
@@ -1255,7 +1268,7 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 	"
 fi
 
-if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] && is_cromite_compatible ; then
+if is_ungoogle_chromium_compatible && is_cromite_compatible ; then
 	REQUIRED_USE+="
 		?? (
 			cromite
@@ -2964,17 +2977,23 @@ einfo "Removing ${x} from ungoogled-chromium"
 			done
 		fi
 
-	# Don't touch the cached toolchain
+	# Don't touch the cached toolchain or required files to build
 		sed -i \
-			-e "/llvm-build/d" \
-			-e "/rust-toolchain/d" \
-			-e "/node\/linux/d" \
+			-e "\|llvm-build|d" \
+			-e "\|rust-toolchain|d" \
+			-e "\|node/linux|d" \
+			"utils/prune_binaries.py" \
+			|| die
+
+	# Required to build
+		sed -i \
+			-e "\|third_party/devtools-frontend/src/third_party/esbuild/|d" \
 			"utils/prune_binaries.py" \
 			|| die
 
 	# Allow the user to decide since it is allowed.
 		sed -i \
-			-e "/enable_widevine/d" \
+			-e "\|enable_widevine|d" \
 			"utils/prune_binaries.py" || die
 
 		edo "utils/prune_binaries.py" \
@@ -3368,6 +3387,9 @@ fi
 		"third_party/devtools-frontend/src/front_end/third_party/wasmparser"
 		"third_party/devtools-frontend/src/front_end/third_party/web-vitals"
 		"third_party/devtools-frontend/src/third_party"
+		$(has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && echo \
+			"third_party/devtools-frontend/src/third_party/esbuild" \
+		)
 		"third_party/dom_distiller_js"
 		"third_party/dragonbox"
 		"third_party/eigen3"
@@ -3748,12 +3770,6 @@ fi
 		$(has "cromite" ${IUSE_EFFECTIVE} && use cromite && echo \
 			"cromite_flags/third_party" \
 		)
-
-		$(has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && echo \
-			"third_party/devtools-frontend/src/third_party/esbuild" \
-			"third_party/devtools-frontend/src/third_party/esbuild/esbuild" \
-			"third_party/ungoogled" \
-		)
 	)
 
 	# We need to generate ppc64 stuff because upstream does not ship it yet
@@ -3801,12 +3817,6 @@ fi
 		"third_party/skia/third_party/vulkan"
 		"third_party/vulkan"
 	)
-
-	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
-		whitelist_libs+=(
-			"third_party/ungoogled"
-		)
-	fi
 
 	local not_found_libs=()
 	for lib in "${keeplibs[@]}"; do
@@ -7345,7 +7355,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_performance_pgo
 	_configure_performance_simd
 	_configure_performance_thp
-	#_configure_v8
+	_configure_v8
 	_configure_security
 
 	_configure_debug
