@@ -933,6 +933,7 @@ REQUIRED_USE+="
 	)
 	bundled-libcxx
 	partitionalloc
+	rar
 	amd64? (
 		cpu_flags_x86_sse2
 	)
