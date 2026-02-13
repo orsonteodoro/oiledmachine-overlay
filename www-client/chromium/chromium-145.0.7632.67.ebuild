@@ -3238,8 +3238,8 @@ elog "Removing bundled binaries from source tree ..."
 	# We restore what we need from the host system.
 	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
 	local -A restore_list=(
-		["/usr/bin/esbuild-${ESBUILD_VER}"]="${esbuild_path}/esbuild"
-		["/usr/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
+		["/usr/bin/esbuild-${ESBUILD_PV}"]="${esbuild_path}/esbuild"
+		["/usr/lib/node/${NODE_SLOT}/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
 	)
 
 	local src

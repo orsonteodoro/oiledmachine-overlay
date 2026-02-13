@@ -330,7 +330,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   Estimated worst-case build times
 
   Cores   | LTO | With v8-snapshot on HDD | Without v8-snapshot on HDD | With v8-snapshot on SSD | Without v8-snapshot on SSD 
-  ---     |     | ---                     | ---                        | ---                     | ---
+  ---     | --- | ---                     | ---                        | ---                     | ---
   4       | Y   | 36  hours               | 38   hours                 | 24   hours              | 25   hours
   4       | N   | 18  hours               | 19   hours                 | 12   hours              | 13   hours
   6       | Y   | 27  hours               | 28   hours                 | 18   hours              | 19   hours
@@ -349,6 +349,16 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   128     | N   |  4  hours               |  4.5 hours                 |  2   hours              |  2.5 hours
   256     | Y   |  5+ hours               |  6+  hours                 |  2.5 hours              |  3   hours
   256     | N   |  3+ hours               |  3.5 hours                 |  1.5 hours              |  2   hours
+
+
+  Flavors:
+
+  Flavors            | Available in this ebuild | Estimated privacy score | Design description
+  ---                | ---                      | ---                     | ---
+  Chrome             | No                       | 2                       | Feature complete with non-free integrations
+  Chromium           | Yes                      | 4 - 5                   | Near feature complete but not basic
+  ungoogled-chromium | Yes                      | 7 - 8                   | B/C grade privacy-critical
+  Cromite            | Yes                      | 8 - 9                   | A/B grade privacy-critical with integrated ad-blocking
 
   References:
 
