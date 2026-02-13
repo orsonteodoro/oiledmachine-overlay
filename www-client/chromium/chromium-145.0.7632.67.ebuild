@@ -199,8 +199,10 @@ GCC_PV="10.2.1" # Minimum
 CROMITE_PV="145.0.7632.46"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
+ESBUILD_PV="0.25.1"
 LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
+ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="6.4.2"
 UNGOOGLED_CHROMIUM_PV="145.0.7632.45-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
@@ -633,10 +635,7 @@ fi
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_PV}-${CROMITE_HASH}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 SRC_URI+="
-	ppc64? (
-https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${OPENPOWER_PATCHES_COMMIT}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}.tar.bz2
-	-> chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2
-	)
+	https://deps.gentoo.zip/www-client/chromium/rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz
 	test? (
 https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}-testdata.tar.xz
 https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
@@ -1415,7 +1414,7 @@ COMMON_SNAPSHOT_DEPEND="
 	media-libs/mesa:=
 	patent_status_nonfree? (
 		system-openh264? (
-			>=media-libs/openh264-1.6.0[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-2.6.0[${MULTILIB_USEDEP}]
 			media-libs/openh264:=
 		)
 	)
@@ -1778,6 +1777,7 @@ BDEPEND+="
 	>=sys-devel/bison-2.4.3
 	app-alternatives/lex
 	dev-lang/perl
+	dev-util/esbuild:${ESBUILD_PV}
 	dev-vcs/git
 	>=net-libs/nodejs-24.11.1:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
 	net-libs/nodejs:=
@@ -1794,7 +1794,7 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 	BDEPEND+="
 		system-toolchain? (
 			${RUST_BDEPEND}
-			>=dev-util/bindgen-0.68.0
+			>=dev-util/bindgen-0.72.1
 		)
 	"
 fi
@@ -2578,9 +2578,9 @@ src_unpack() {
 		ln -s "/usr/share/chromium/toolchain/rust" "${S}/third_party/rust-toolchain" || die
 	fi
 
-	if use ppc64 ; then
-		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
-	fi
+#	if use ppc64 ; then
+#		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
+#	fi
 
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		unpack "cromite-${CROMITE_PV}-${CROMITE_HASH}.tar.gz"
@@ -2607,6 +2607,10 @@ einfo "Updating V8 to ${V8_PV}"
 		rm -rf "${S}/v8" || die
 		mv "${WORKDIR}/v8-${V8_PV}" "${S}/v8" || die
 	fi
+
+	# This is a dirty hack, but we need rollup to build successfully and it's proving to be challenging
+	# to build locally due to deps
+	unpack "rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz"
 }
 
 is_generating_credits() {
@@ -2621,6 +2625,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# We don't need toolchain patches if we're using the official toolchain.
 
 	if _use_system_toolchain ; then
+	# Copium patches go here.
 		PATCHES+=(
 			"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
 		)
@@ -2702,7 +2707,11 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
 		"${FILESDIR}/cr144-glibc-2.43.patch"
 		"${FILESDIR}/cr145-oauth2-client-switches.patch"
+		"${FILESDIR}/cr145-revert-to-rollup-wasm.patch"
 	)
+
+	# No copium patches here: they should only need to apply to unbundled
+	# toolchain builds and don't get fetched or unpacked.
 
 	# https://issues.chromium.org/issues/442698344
 	# Unreleased fontconfig changed magic numbers and google have rolled to this version
@@ -3218,6 +3227,52 @@ src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python-any-r1_pkg_setup
 
+elog "Removing bundled binaries from source tree ..."
+	# Purge the bundled ELF files.  These are non-portable and cause issues
+	# if used instead of system versions.  Use `--wasm` to remove
+	# WebAssembly binaries; if desired, they're portable, so they shouldn't
+	# break builds.
+	python3 "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f \
+		|| die "Failed to remove bundled binaries"
+
+	# We restore what we need from the host system.
+	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
+	local -A restore_list=(
+		["/usr/bin/esbuild-${ESBUILD_VER}"]="${esbuild_path}/esbuild"
+		["/usr/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
+	)
+
+	local src
+	local dst
+	for src in "${!restore_list[@]}" ; do
+		dst="${restore_list[${src}]}"
+		if [[ -f "${src}" ]]; then
+einfo "Symlinking ${src} ..."
+	# Make sure the parent dir exists.  Some tarballs don't include, for
+	# example, a node's bindir.
+			if ! mkdir -p $(dirname "${dst}") ; then
+eerror "Failed to create directory for ${dst}"
+				die
+			fi
+			if ! ln -s "${src}" "${dst}" ; then
+eerror "Failed to symlink ${dst} from ${src}"
+				die
+			fi
+		else
+eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
+			die
+		fi
+	done
+	unset restore_list
+
+	# Until we can just symlink in a system rollup, we'll `mv` the wasm version and modify some files.
+	einfo "Moving rollup wasm-node package into place ..."
+	mkdir -p "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
+		|| die "Failed to create node_modules/@rollup/wasm-node"
+	mv "${WORKDIR}/package/"* "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
+		|| die "Failed to move rollup package"
+
+
 	check_deps_cfi_cross_dso
 
 	# To know which patches are safe to drop from files/ after tidying up old ebuilds:
@@ -3269,17 +3324,6 @@ ewarn "The use of unofficial patches is not endorsed upstream."
 ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		fi
 	fi
-
-	# Not included in -lite tarballs, but we should check for it anyway.
-	if [[ -f "third_party/node/linux/node-linux-x64/bin/node" ]]; then
-		rm "third_party/node/linux/node-linux-x64/bin/node" || die
-	else
-		mkdir -p "third_party/node/linux/node-linux-x64/bin" || die
-	fi
-	ln -s \
-		"${EPREFIX}/usr/lib/node/${NODE_SLOT}/bin/node" \
-		"third_party/node/linux/node-linux-x64/bin/node" \
-		|| die
 
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" ".gn" || die
@@ -7568,26 +7612,11 @@ einfo "Skipping expensive load time optimization..."
 	local suffix
 	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
 
-	# Build manpage; bug #684550
-	sed -e 's|@@PACKAGE@@|chromium-browser|g;
-		s|@@MENUNAME@@|Chromium${suffix}|g;' \
-		chrome/app/resources/manpage.1.in > \
-		out/Release/chromium-browser.1 || die
-
-	# Build desktop file; bug #706786
-	sed -e 's|@@MENUNAME@@|Chromium${suffix}|g;
-		s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g;
-		s|@@PACKAGE@@|chromium-browser|g;
-		s|\(^Exec=\)/usr/bin/|\1|g;' \
-		chrome/installer/linux/common/desktop.template > \
-		out/Release/chromium-browser-chromium.desktop || die
-
-	# Build vk_swiftshader_icd.json; bug #827861
-	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
-		"third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl" \
-		> \
-		"out/Release/vk_swiftshader_icd.json" \
-		|| die
+	# Generate support files (desktop file, manpage, etc.)
+	# See: #684550 #706786 #968958
+	"${EPYTHON}" "${FILESDIR}/generate-support-files.py" \
+		--installdir "/usr/$(get_libdir)/chromium-browser" \
+		|| die "Failed to generate support files"
 }
 
 _src_install() {
@@ -7718,7 +7747,11 @@ _src_install() {
 
 	# Install GNOME default application entry (bug #303100).
 	insinto "/usr/share/gnome-control-center/default-apps"
-	newins "${FILESDIR}/chromium-browser.xml" "chromium-browser.xml"
+	doins "out/Release/chromium-browser.xml"
+
+	# Install AppStream metadata
+	insinto "/usr/share/appdata"
+	doins "out/Release/chromium-browser.appdata.xml"
 
 	# Install manpage; bug #684550
 	doman "out/Release/chromium-browser.1"
