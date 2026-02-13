@@ -362,7 +362,7 @@ isolation, or license references in ebuilds.
 
 These are not easily removed due to the fork nature of git.
 
-It may be removed directly from this repo but not inactive forked ones in or
+It may be removed directly from this repo but not inactive forked ones that
 have non-responding users.
 
 (WIP) Reports should be done over encrypted messaging.  Coordinate over e-mail
