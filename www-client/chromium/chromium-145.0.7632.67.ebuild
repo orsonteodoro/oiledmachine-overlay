@@ -7612,12 +7612,27 @@ einfo "Skipping expensive load time optimization..."
 	local suffix
 	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
 
+	local menuname=""
+	if [[ -n "${CHROMIUM_MENU_NAME}" ]] ; then
+		menuname="${CHROMIUM_MENU_NAME}"
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		menuname="Cromite"
+	elif has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		menuname="ungoogled-chromium"
+	else
+		menuname="Chromium"
+	fi
+
+	if [[ "${CHROMIUM_APPEND_ABI_TO_MENU_NAME:-1}" == "1" ]] ; then
+		menuname+="${suffix}"
+	fi
+
 	cat "${FILESDIR}/generate-support-files.py" \
 		"${T}/generate-support-files.py" \
 		|| die
 	sed -i \
 		-e "s|@USR_BIN_SYMLINK_NAME@|chromium-browser-${ABI}|g" \
-		-e "s|@MENUNAME@|Chromium${suffix}|g" \
+		-e "s|@MENUNAME@|${menuname}|g" \
 		|| die
 
 	# Generate support files (desktop file, manpage, etc.)
