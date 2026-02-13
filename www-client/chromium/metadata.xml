@@ -357,7 +357,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   ---                | ---                      | ---                     | ---
   Chrome             | No                       | 2                       | Feature complete with non-free integrations
   Chromium           | Yes                      | 4 - 5                   | Near feature complete but not basic
-  ungoogled-chromium | Yes                      | 7 - 8                   | B/C grade balanced privacy
+  ungoogled-chromium | Yes                      | 7 - 8                   | B/C grade balanced privacy removing non-free or non-open integrations
   Cromite            | Yes                      | 8 - 9                   | A/B grade privacy-critical with integrated ad-blocking
 
 
