@@ -2753,7 +2753,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-mold-ungoogled-chromium.patch"
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
@@ -3799,6 +3799,13 @@ fi
 		"third_party/skia/third_party/vulkan"
 		"third_party/vulkan"
 	)
+
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		whitelist_libs+=(
+			"third_party/ungoogled"
+		)
+	fi
+
 	local not_found_libs=()
 	for lib in "${keeplibs[@]}"; do
 		if [[ ! -d "${lib}" ]] && ! has "${lib}" "${whitelist_libs[@]}" ; then

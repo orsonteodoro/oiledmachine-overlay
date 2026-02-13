@@ -1,0 +1,174 @@
+--- a/build/config/compiler/compiler.gni.orig	2026-02-03 14:07:11.000000000 -0800
++++ b/build/config/compiler/compiler.gni	2026-02-12 11:10:18.479626224 -0800
+@@ -27,11 +27,15 @@ if (is_apple) {
+ }
+ 
+ declare_args() {
++  use_mold = false
++}
++
++declare_args() {
+   # Set to true to use lld, the LLVM linker.
+   # In late bring-up on macOS (see docs/mac_lld.md).
+   # Tentatively used on iOS.
+   # The default linker everywhere else.
+-  use_lld = is_clang && current_os != "zos"
++  use_lld = is_clang && current_os != "zos" && !use_mold
+ 
+   # If false, build using C++20; otherwise, build using C++23.
+   use_cxx23 = true
+--- a/build/config/compiler/pgo/BUILD.gn.orig	2026-02-03 14:07:10.000000000 -0800
++++ b/build/config/compiler/pgo/BUILD.gn	2026-02-12 11:09:35.325949315 -0800
+@@ -9,6 +9,10 @@ import("//build/config/compiler/pgo/pgo.
+ import("//build/config/features.gni")
+ import("//build/toolchain/toolchain.gni")
+ 
++declare_args() {
++  #use_mold = false
++}
++
+ # Configuration that enables PGO instrumentation.
+ config("pgo_instrumentation_flags") {
+   visibility = [ ":default_pgo_flags" ]
+@@ -163,16 +167,21 @@ config("pgo_optimization_flags") {
+     # Enable basic block layout based on the extended TSP problem. This aims to
+     # improve icache utilization and reduce the binary size.
+     if (use_thin_lto) {
++      assert(!use_mold, "use_mold=true is not allowed with use_thin_lto=true")
+       if (is_win) {
+         ldflags = [ "-mllvm:-enable-ext-tsp-block-placement=1" ]
+       } else {
+         ldflags = [ "-Wl,-mllvm,-enable-ext-tsp-block-placement=1" ]
+       }
+     } else {
+-      cflags += [
+-        "-mllvm",
+-        "-enable-ext-tsp-block-placement=1",
+-      ]
++      if (use_mold) {
++        # Pass
++      } else {
++        cflags += [
++          "-mllvm",
++          "-enable-ext-tsp-block-placement=1",
++        ]
++      }
+     }
+   }
+ }
+--- a/build/config/compiler/BUILD.gn.orig	2026-02-12 11:08:49.493364200 -0800
++++ b/build/config/compiler/BUILD.gn	2026-02-12 11:09:35.326328077 -0800
+@@ -209,6 +209,8 @@ declare_args() {
+   # away from the opt-in wexit_time_destructors config, and into the default
+   # compiler config.
+   is_wexit_time_destructors_default = true
++
++  #use_mold = false
+ }
+ 
+ declare_args() {
+@@ -470,7 +472,9 @@ config("compiler") {
+       }
+     }
+ 
+-    if (use_lld) {
++    if (use_mold) {
++      ldflags += [ "-fuse-ld=mold" ]
++    } else if (use_lld) {
+       ldflags += [ "-fuse-ld=lld" ]
+       if (lld_path != "") {
+         ldflags += [ "-B" + rebase_path(lld_path, root_build_dir) ]
+@@ -703,7 +707,10 @@ config("compiler") {
+       "-mllvm",
+       "-instcombine-lower-dbg-declare=0",
+     ]
+-    if (!is_debug && use_thin_lto && is_a_target_toolchain) {
++    if (use_mold) {
++      assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++      # Pass
++    } else if (!is_debug && use_thin_lto && is_a_target_toolchain) {
+       if (is_win) {
+         ldflags += [ "-mllvm:-instcombine-lower-dbg-declare=0" ]
+       } else {
+@@ -718,7 +725,10 @@ config("compiler") {
+         "-mllvm",
+         "-split-threshold-for-reg-with-hint=0",
+       ]
+-      if (use_thin_lto && is_a_target_toolchain) {
++      if (use_mold) {
++        assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++        # Pass
++      } else if (use_thin_lto && is_a_target_toolchain) {
+         if (is_win) {
+           ldflags += [ "-mllvm:-split-threshold-for-reg-with-hint=0" ]
+         } else {
+@@ -837,7 +847,10 @@ config("compiler") {
+   #
+   # [0]: https://pinpoint-dot-chromeperf.8pp2p8t.qjz9zk/job/15efb0313e0000
+   # [1]: https://pinpoint-dot-chromeperf.8pp2p8t.qjz9zk/job/157f0b42be0000
+-  if (!is_debug && use_thin_lto && is_a_target_toolchain) {
++  if (use_mold) {
++    assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++    # Pass
++  } else if (!is_debug && use_thin_lto && is_a_target_toolchain) {
+     assert(use_lld, "LTO is only supported with lld")
+ 
+     cflags += [
+@@ -1054,7 +1067,10 @@ config("compiler") {
+     assert(
+         is_android && host_os == "linux",
+         "MLGO is currently only supported for targeting Android on a linux host")
+-    if (use_thin_lto) {
++    if (use_mold) {
++      assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++      # Pass
++    } else if (use_thin_lto) {
+       ldflags += [ "-Wl,-mllvm,-enable-ml-inliner=release" ]
+       if (is_high_end_android) {
+         # Besides using the arm64 - trained model, instruct the inline advisor
+@@ -1642,7 +1658,12 @@ config("compiler_codegen") {
+     # This can be removed once https://bugs.llvm.org/show_bug.cgi?id=40348
+     # has been resolved, and -mno-outline is obeyed by the linker during
+     # ThinLTO.
+-    ldflags += [ "-Wl,-mllvm,-enable-machine-outliner=never" ]
++    if (use_mold) {
++      assert(!use_thin_lto, "use_thin_lto=true is not allowed with use_mold=true")
++      # Pass
++    } else {
++      ldflags += [ "-Wl,-mllvm,-enable-machine-outliner=never" ]
++    }
+   }
+ 
+   asmflags = cflags
+--- a/third_party/instrumented_libs/noble/BUILD.gn.orig	2026-02-12 12:29:42.895431133 -0800
++++ b/third_party/instrumented_libs/noble/BUILD.gn	2026-02-12 12:25:40.918424894 -0800
+@@ -9,6 +9,10 @@ static_library("stat_wrapper") {
+   sources = [ "stat_wrapper.c" ]
+ }
+ 
++declare_args() {
++  use_mold = false
++}
++
+ group("locally_built") {
+   visibility = [ "//third_party/instrumented_libs:deps" ]
+ 
+@@ -129,7 +133,17 @@ template("instrumented_library") {
+     }
+     package_ldflags = [
+       "-fsanitize=memory",
+-      "-fuse-ld=lld",
++    ]
++    if (use_mold) {
++      package_ldflags += [
++        "-fuse-ld=mold",
++      ]
++    } else {
++      package_ldflags += [
++        "-fuse-ld=lld",
++      ]
++    }
++    package_ldflags += [
+       "-Wl,--wrap=stat",
+       "-Wl,--wrap=fstat",
+       "-Wl,--wrap=lstat",
