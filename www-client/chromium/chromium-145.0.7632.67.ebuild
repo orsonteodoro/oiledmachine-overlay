@@ -7612,9 +7612,17 @@ einfo "Skipping expensive load time optimization..."
 	local suffix
 	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
 
+	cat "${FILESDIR}/generate-support-files.py" \
+		"${T}/generate-support-files.py" \
+		|| die
+	sed -i \
+		-e "s|@USR_BIN_SYMLINK_NAME@|chromium-browser-${ABI}|g" \
+		-e "s|@MENUNAME@|Chromium${suffix}|g" \
+		|| die
+
 	# Generate support files (desktop file, manpage, etc.)
 	# See: #684550 #706786 #968958
-	"${EPYTHON}" "${FILESDIR}/generate-support-files.py" \
+	"${EPYTHON}" "${T}/generate-support-files.py" \
 		--installdir "/usr/$(get_libdir)/chromium-browser" \
 		|| die "Failed to generate support files"
 }

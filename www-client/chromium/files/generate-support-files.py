@@ -34,14 +34,14 @@ def main():
         "HELPURL": "https://wiki.gentoo.org/wiki/Chromium",
         "INSTALLDIR": args.installdir,
         "MAINTMAIL": "Gentoo Chromium Project <chromium@gentoo.org>",
-        "MENUNAME": "Chromium",
+        "MENUNAME": "@MENUNAME@",
         "PACKAGE": "chromium-browser",
         "PRODUCTURL": "https://www.chromium.org/",
         "PROGNAME": "chrome",
         "PROJECT_LICENSE": "BSD, LGPL-2, LGPL-2.1, MPL-1.1, MPL-2.0, Apache-2.0, and others",
         "SHORTDESC": "Open-source foundation of many web browsers including Google Chrome",
         "URI_SCHEME": "x-scheme-handler/chromium",
-        "USR_BIN_SYMLINK_NAME": "chromium-browser",
+        "USR_BIN_SYMLINK_NAME": "@USR_BIN_SYMLINK_NAME@",
     }
 
     # upstream is currently (M145) converting from upper to lower case
