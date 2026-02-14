@@ -2707,7 +2707,7 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
 		"${FILESDIR}/cr144-glibc-2.43.patch"
 		"${FILESDIR}/cr145-oauth2-client-switches.patch"
-		"${FILESDIR}/cr145-revert-to-rollup-wasm.patch"
+		$(use ungoogled-chromium || echo "${FILESDIR}/cr145-revert-to-rollup-wasm.patch") # Breaks ungoogled-chromium build
 	)
 
 	# No copium patches here: they should only need to apply to unbundled
@@ -3000,14 +3000,15 @@ einfo "Removing ${x} from ungoogled-chromium"
 
 	# Required to build
 		sed -i \
-			-e "\|third_party/devtools-frontend/src/third_party/esbuild/|d" \
+			-e "\|third_party/devtools-frontend/src/third_party/esbuild|d" \
 			"utils/prune_binaries.py" \
 			|| die
 
 	# Allow the user to decide since it is allowed.
 		sed -i \
 			-e "\|enable_widevine|d" \
-			"utils/prune_binaries.py" || die
+			"utils/prune_binaries.py" \
+			|| die
 
 		edo "utils/prune_binaries.py" \
 			"${S}" \
@@ -3227,52 +3228,6 @@ src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python-any-r1_pkg_setup
 
-elog "Removing bundled binaries from source tree ..."
-	# Purge the bundled ELF files.  These are non-portable and cause issues
-	# if used instead of system versions.  Use `--wasm` to remove
-	# WebAssembly binaries; if desired, they're portable, so they shouldn't
-	# break builds.
-	python3 "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f \
-		|| die "Failed to remove bundled binaries"
-
-	# We restore what we need from the host system.
-	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
-	local -A restore_list=(
-		["/usr/bin/esbuild-${ESBUILD_PV}"]="${esbuild_path}/esbuild"
-		["/usr/lib/node/${NODE_SLOT}/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
-	)
-
-	local src
-	local dst
-	for src in "${!restore_list[@]}" ; do
-		dst="${restore_list[${src}]}"
-		if [[ -f "${src}" ]]; then
-einfo "Symlinking ${src} ..."
-	# Make sure the parent dir exists.  Some tarballs don't include, for
-	# example, a node's bindir.
-			if ! mkdir -p $(dirname "${dst}") ; then
-eerror "Failed to create directory for ${dst}"
-				die
-			fi
-			if ! ln -s "${src}" "${dst}" ; then
-eerror "Failed to symlink ${dst} from ${src}"
-				die
-			fi
-		else
-eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
-			die
-		fi
-	done
-	unset restore_list
-
-	# Until we can just symlink in a system rollup, we'll `mv` the wasm version and modify some files.
-	einfo "Moving rollup wasm-node package into place ..."
-	mkdir -p "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
-		|| die "Failed to create node_modules/@rollup/wasm-node"
-	mv "${WORKDIR}/package/"* "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
-		|| die "Failed to move rollup package"
-
-
 	check_deps_cfi_cross_dso
 
 	# To know which patches are safe to drop from files/ after tidying up old ebuilds:
@@ -3282,7 +3237,6 @@ eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
 	#	<(find files/ -name "*.patch" | sort)
 
 	local PATCHES=()
-
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		prepare_cromite_with_ungoogled_chromium
@@ -3324,6 +3278,56 @@ ewarn "The use of unofficial patches is not endorsed upstream."
 ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		fi
 	fi
+
+elog "Removing bundled binaries from source tree ..."
+	# Purge the bundled ELF files.  These are non-portable and cause issues
+	# if used instead of system versions.  Use `--wasm` to remove
+	# WebAssembly binaries; if desired, they're portable, so they shouldn't
+	# break builds.
+	if ! use ungoogled-chromium ; then
+	# Breaks ungoogled-chromium build
+		"${EPYTHON}" "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f \
+			|| die "Failed to remove bundled binaries"
+
+		# Until we can just symlink in a system rollup, we'll `mv` the wasm version and modify some files.
+		einfo "Moving rollup wasm-node package into place ..."
+		mkdir -p "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
+			|| die "Failed to create node_modules/@rollup/wasm-node"
+		mv "${WORKDIR}/package/"* "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
+			|| die "Failed to move rollup package"
+	fi
+
+	# We restore what we need from the host system.
+	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
+	local -A restore_list=(
+		["/usr/bin/esbuild-${ESBUILD_PV}"]="${esbuild_path}/esbuild"
+		["/usr/lib/node/${NODE_SLOT}/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
+	)
+
+	local src
+	local dst
+	for src in "${!restore_list[@]}" ; do
+		dst="${restore_list[${src}]}"
+		if [[ -f "${src}" ]]; then
+einfo "Symlinking ${src} ..."
+	# Make sure the parent dir exists.  Some tarballs don't include, for
+	# example, a node's bindir.
+			rm -f "${dst}" || true
+			local d=$(dirname "${dst}")
+			if ! mkdir -p "${d}" ; then
+eerror "Failed to create directory for ${dst}"
+				die
+			fi
+			if ! ln -s "${src}" "${dst}" ; then
+eerror "Failed to symlink ${dst} from ${src}"
+				die
+			fi
+		else
+eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
+			die
+		fi
+	done
+	unset restore_list
 
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" ".gn" || die
