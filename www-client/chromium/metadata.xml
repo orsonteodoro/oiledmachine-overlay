@@ -359,7 +359,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   Chromium           | Yes                      | 4 - 5    | 7 - 8    | 9 - 9.5     | Near feature complete but not basic
   ungoogled-chromium | Yes                      | 7 - 8    | 8        | 9           | B/C grade balanced privacy decrapifying integrations
   Cromite            | Yes                      | 8 - 9    | 8 - 8.5  | 8 - 8.5     | B grade near privacy-critical with integrated ad-blocking
-  Tor browser        | No                       | 9.5 - 10 | 9 - 9.5  | 4 - 6       | A grade privacy-critical, Gecko based
+  Tor Browser        | No                       | 9.5 - 10 | 9 - 9.5  | 4 - 6       | A grade privacy-critical, Gecko based
 
   Flavors            | Closed source | Non-free     | Non-free | Snooping servers
                      | BLOBs         | integrations | services | (e.g. DNS/DoH, telemetry, update pings)
@@ -368,7 +368,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   Chromium           | N             | Optional     | Y        | Y
   ungoogled-chromium | N             | N            | N        | N
   Cromite            | N             | N            | N        | N
-  Tor browser        | N             | N            | N        | N
+  Tor Browser        | N             | N            | N        | N
 
 
   References:
