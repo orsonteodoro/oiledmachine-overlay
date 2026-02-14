@@ -7680,6 +7680,24 @@ _src_install() {
 		"chromium-launcher.sh" \
 		"chromium-launcher-${ABI}.sh"
 
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		dosym \
+			"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+			"/usr/bin/cromite-${ABI}"
+		dosym \
+			"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+			"/usr/bin/cromite"
+	fi
+
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		dosym \
+			"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+			"/usr/bin/ungoogled-chromium-${ABI}"
+		dosym \
+			"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+			"/usr/bin/ungoogled-chromium"
+	fi
+
 	# It is important that we name the target "chromium-browser",
 	# xdg-utils expect it; bug #355517.
 	dosym \
@@ -7688,6 +7706,7 @@ _src_install() {
 	dosym \
 		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
 		"/usr/bin/chromium-browser"
+
 	# Keep the old symlink around for consistency
 	dosym \
 		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
