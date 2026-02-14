@@ -240,11 +240,23 @@ einfo "IRoR = Improper Release of Resources"
 einfo "ICP = Insecure Coding Practices"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"II"($|" "|";"|",") ]] ; then
-# Deprecated
 einfo "II = Improper Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"III"($|" "|";"|",") ]] ; then
+# Deprecated.  Use II, ISI, or ICA
 einfo "III = Improper and Insecure Implementation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ISI"($|" "|";"|",") ]] ; then
+einfo "ISI = Improper Secure Implementation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICA"($|" "|";"|",") ]] ; then
+einfo "ICA = Improper Criticality Applied"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IAC"($|" "|";"|",") ]] ; then
+einfo "IAC = Improper Access Control"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ISPE"($|" "|";"|",") ]] ; then
+einfo "ISPE = Improper Security Policy Enforcement"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NSS"($|" "|";"|",") ]] ; then
 einfo "NSS = Not Sufficiently Secure"
