@@ -1312,7 +1312,7 @@ TBM=0
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
+      6.6: eevdf, eevdf-throughput, eevdf-interactive, eevdf-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.12: eevdf, eevdf-throughput, eevdf-interactive, eevdf-autogroup, prjc, prjc-bmq, prjc-pds
       6.18: eevdf, eevdf-throughput, eevdf-interactive, eevdf-autogroup, prjc, prjc-bmq, prjc-pds
 
