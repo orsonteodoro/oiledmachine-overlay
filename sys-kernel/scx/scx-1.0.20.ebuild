@@ -7,9 +7,16 @@ EAPI=8
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 
-ABSEIL_CPP_SLOT="20220623"
+# AL2006-01-01:  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1-3
+# C2006-02 (Native):  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1
+# C2006-02 (Frawhide):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
+# C2006-02 (F44):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
+# C2006-02 (F43):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
+# C2006-02 (F42):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
+# U24:  Rust 1.75.0, LLVM 14-19 (18 default), Protobuf 3.21.12
+# N25.11:  Rust 1.91.1, LLVM  21.1.7, Protobuf 6.32.1
+
 LLVM_COMPAT=( {19..22} )
-PROTOBUF_CPP_SLOT="3"
 RUST_MIN_VER="1.82.0"
 
 inherit abseil-cpp cargo llvm-r2 linux-info protobuf
@@ -54,7 +61,10 @@ RDEPEND="
 BDEPEND="
 	>=dev-util/bpftool-7.5.0
 	app-misc/jq
-	dev-libs/protobuf:3/3.21[protoc(+)]
+	|| (
+		dev-libs/protobuf:3/3.21[llvm_slot_19?,protoc(+)]
+		dev-libs/protobuf:6/6.33[llvm_slot_19?,protoc(+)]
+	)
 	dev-libs/protobuf:=
 	virtual/pkgconfig
 	llvm_slot_19? (
@@ -155,6 +165,13 @@ eerror "llvm_slot_22 requires Rust nightly"
 }
 
 src_configure() {
+	if has_version "dev-libs/protobuf:6/6.33" ; then
+		ABSEIL_CPP_SLOT="20250512"
+		PROTOBUF_CPP_SLOT="6"
+	elif has_version "dev-libs/protobuf:3/3.21" ; then
+		ABSEIL_CPP_SLOT="20220623"
+		PROTOBUF_CPP_SLOT="3"
+	fi
 	abseil-cpp_src_configure
 	protobuf_src_configure
 	cargo_src_configure
