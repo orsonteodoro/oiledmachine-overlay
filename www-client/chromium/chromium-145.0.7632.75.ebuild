@@ -2826,7 +2826,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-disable-perfetto.patch"
+			"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
