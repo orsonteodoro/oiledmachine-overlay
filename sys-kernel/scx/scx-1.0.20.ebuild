@@ -63,14 +63,15 @@ BDEPEND="
 	app-misc/jq
 	|| (
 		(
-			dev-cpp/abseil-cpp:20220623
+			dev-cpp/abseil-cpp:20220623[llvm_slot_19?]
 			dev-libs/protobuf:3/3.21[llvm_slot_19?,protoc(+)]
 		)
 		(
-			dev-cpp/abseil-cpp:20250512
+			dev-cpp/abseil-cpp:20250512[llvm_slot_19?]
 			dev-libs/protobuf:6/6.33[llvm_slot_19?,protoc(+)]
 		)
 	)
+	dev-cpp/abseil-cpp:=
 	dev-libs/protobuf:=
 	virtual/pkgconfig
 	llvm_slot_19? (
