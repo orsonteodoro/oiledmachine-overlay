@@ -1322,6 +1322,13 @@ TBM=0
 
       This field can be not set which would default to using cfs.
 
+      For LAVD, used for gaming, add rust and scx to USE and
+      OT_KERNEL_USE.  It will be called scx_lavd when the package is sys-kernel/scx
+      package installs it.  Use the AI to provide instructions to load and use it.
+      6.12 and later support scx Rust based CPU schedulers.
+      For scx scheduler names and descriptions, see also
+      https://github.com/sched-ext/scx/tree/v1.0.20/scheds/rust
+
       Notes:
 
         - cfs is preferred for server kernels and bug-less experience.
@@ -5941,6 +5948,9 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="rust">
       Add support for drivers written in Rust and kernel config options related
       to Rust.
+    </flag>
+    <flag name="scx">
+      Add scx CPU schedulers (e.g. scx_lavd)
     </flag>
     <flag name="shadowcallstack">
       Ensures that shadow call stack dependencies are installed.  Protects from

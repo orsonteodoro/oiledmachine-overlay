@@ -733,6 +733,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_sc_controller
 	ot-kernel-pkgflags_scap_driver
 	ot-kernel-pkgflags_scaphandre
+	ot-kernel-pkgflags_scx
 	ot-kernel-pkgflags_sddm
 	ot-kernel-pkgflags_shadow
 	ot-kernel-pkgflags_session_desktop_bin
@@ -9481,6 +9482,14 @@ ot-kernel-pkgflags_scaphandre() { # DONE
 		ot-kernel_y_configopt "CONFIG_POWERCAP"
 		ot-kernel_y_configopt "CONFIG_INTEL_RAPL"
 	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_scx
+# @DESCRIPTION:
+# Applies kernel config flags for the scx package
+ot-kernel-pkgflags_scx() { # DONE
+	# Handled in ot-kernel_set_rust()
+	:
 }
 
 # @FUNCTION: ot-kernel-pkgflags_scap_driver

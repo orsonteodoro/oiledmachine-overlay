@@ -12468,6 +12468,50 @@ eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=r
 		die
 	fi
 
+	# For Rust based CPU schedulers (e.g. scx_lavd)
+	if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
+# See
+# https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
+# https://github.com/sched-ext/scx/blob/v1.0.20/kernel.config
+ewarn "Enabling CONFIG_BPF_JIT for scx support and lowering security"
+		ot-kernel_y_configopt "CONFIG_BPF"
+		ot-kernel_y_configopt "CONFIG_BPF_JIT"
+		ot-kernel_y_configopt "CONFIG_BPF_JIT_ALWAYS_ON"
+		ot-kernel_y_configopt "CONFIG_BPF_JIT_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+
+ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
+		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
+
+ewarn "Enabling CONFIG_TRACING for scx support and lowering security"
+ewarn "Enabling CONFIG_FTRACE for scx support and lowering security"
+		ot-kernel_y_configopt "CONFIG_TRACE_IRQFLAGS_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_STACKTRACE_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_FTRACE"
+
+ewarn "Enabling CONFIG_KPROBES for scx support and lowering security"
+		ot-kernel_y_configopt "CONFIG_KPROBES"
+		ot-kernel_y_configopt "CONFIG_KPROBE_EVENTS"
+		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_UPROBE_EVENTS"
+		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
+
+		ot-kernel_y_configopt "CONFIG_SCHED_CLASS_EXT"
+
+ewarn "Enabling CONFIG_DEBUG_KERNEL for scx_p2dq support and lowering security"
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL" # Required by scx_p2dq (load balancing)
+
+ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security"
+		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
+	fi
+
 # Review.  If old Rust, maybe.  It could be that not all rust modules are not
 # sanitized with all hardening techniques.
 #ewarn "CONFIG_RUST=y may lower security."
