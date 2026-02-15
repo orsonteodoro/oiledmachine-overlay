@@ -107,3 +107,6 @@ net-libs/webkit-gtk libwebrtc
 
 # Debugging inference performance issue
 app-misc/ollama mimalloc-secure hardened_malloc sandbox chroot
+
+# Allow scx CPU schedulers
+sys-kernel/ot-sources -debug
