@@ -12501,6 +12501,8 @@ ewarn "Enabling CONFIG_KPROBES for scx support and lowering security"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_UPROBE_EVENTS"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
+		ot-kernel_y_configopt "CONFIG_TRACING"		# tracepoints dependency
+		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"	# For scx_lavd's interactivity detection
 
 		ot-kernel_y_configopt "CONFIG_SCHED_CLASS_EXT"
 
@@ -12510,6 +12512,14 @@ ewarn "Enabling CONFIG_DEBUG_KERNEL for scx_p2dq support and lowering security"
 
 ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+
+	# For utils
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"		# For /proc
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"	# For /proc/sys
+		ot-kernel_y_configopt "CONFIG_SYSFS"		# For /sys
+
 	fi
 
 # Review.  If old Rust, maybe.  It could be that not all rust modules are not
