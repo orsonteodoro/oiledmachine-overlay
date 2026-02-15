@@ -565,7 +565,7 @@
 
 
 
-    An example of a *builder* env file located in /etc/portage/ot-sources/6.1/builder/x86_64/env:
+    An example of a *builder* env file located in /etc/portage/ot-sources/6.12/builder/x86_64/env:
 
 CFLAGS="-O2 -pipe"
 CXXFLAGS="-O2 -pipe"
@@ -577,7 +577,7 @@ OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.18-builder-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.12-builder-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_CPU_MICROCODE="1"
 OT_KERNEL_CPU_SCHED="eevdf-throughput"
@@ -611,7 +611,7 @@ OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
-    An example of a *gaming* env file located in /etc/portage/ot-sources/6.1/gaming/x86_64/env:
+    An example of a *gaming* env file located in /etc/portage/ot-sources/6.12/gaming/x86_64/env:
 
 CFLAGS="-march=native -O3 -pipe"
 CXXFLAGS="-march=native -O3 -pipe"
@@ -623,7 +623,7 @@ OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.18-gaming-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.12-gaming-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_CPU_MICROCODE="0"
 OT_KERNEL_CPU_SCHED="eevdf-autogroup"
@@ -650,11 +650,11 @@ OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
 OT_KERNEL_VERBOSITY=1
-OT_KERNEL_USE="disable_debug genpatches rust zen-sauce"
+OT_KERNEL_USE="disable_debug genpatches rust scx zen-sauce"
 OT_KERNEL_WORK_PROFILE="gaming-tournament"
 TBM=1
 
-    An example of a *secure* env file located in /etc/portage/ot-sources/6.9/secure/x86_64/env:
+    An example of a *secure* env file located in /etc/portage/ot-sources/6.12/secure/x86_64/env:
 
 CFLAGS="-O2 -pipe"
 CXXFLAGS="-O2 -pipe"
@@ -666,7 +666,7 @@ OT_KERNEL_BOOT_ARGS="delayacct"
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.18-secure-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.12-secure-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_CPU_SCHED="eevdf-autogroup"
 OT_KERNEL_DISABLE="0"
