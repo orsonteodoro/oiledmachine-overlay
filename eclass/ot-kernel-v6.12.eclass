@@ -448,6 +448,7 @@ REQUIRED_USE+="
 	)
 	scx? (
 		debug
+		llvm_slot_19
 		rust
 	)
 	tresor_prompt? (
@@ -1148,7 +1149,7 @@ fi
 
 PDEPEND+="
 	scx? (
-		sys-kernel/scx[llvm_slot_18?,llvm_slot_19?]
+		sys-kernel/scx[llvm_slot_19?]
 	)
 "
 
