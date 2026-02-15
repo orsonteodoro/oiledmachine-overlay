@@ -7088,9 +7088,6 @@ ewarn "Unbundling libs and lowering security"
 		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
 
-	# Forced because of asserts.  Required by chrome/renderer:renderer
-		"enable_screen_ai_service=true"
-
 #		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
 		"enable_vr=false"							# https://github.com/chromium/chromium/blob/145.0.7632.75/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
@@ -7119,6 +7116,18 @@ ewarn "Unbundling libs and lowering security"
 	# Enables building without non-free unRAR licence
 		"safe_browsing_use_unrar=$(usex rar true false)"
 	)
+
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	# Prevent build error
+		myconf_gn+=(
+			"enable_screen_ai_service=false"
+		)
+	else
+	# Forced because of asserts.  Required by chrome/renderer:renderer
+		myconf_gn+=(
+			"enable_screen_ai_service=true"
+		)
+	fi
 
 	# Dedupe flags
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
