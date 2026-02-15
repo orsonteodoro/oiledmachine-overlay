@@ -1344,7 +1344,7 @@ TBM=0
 
       Scheduler    | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo
                    |        |       |        |     | embedded |               | readiness  | experiment |        
-      ---          | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---         
+      ---          | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---        | ---
       scx_beerland |        |       | Y      |     |          |               | Y          |            |
       scx_bpfland  | Y      | Y     |        |     | Y        |               | Y          |            |
       scx_chaos    |        |       |        |     |          |               | N          | Y          | Y
