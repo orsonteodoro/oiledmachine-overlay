@@ -1340,6 +1340,26 @@ TBM=0
       EEVDF (6.6+)      | 9.5 - 10 | fairness-critical | 7.5 - 8.5 (gaming)       | 15 - 25 ms    | 30 - 139 FPS  | 60 - 150 FPS
                         |          |                   | 8 - 8.8 (general)        |               |               |
 
+      Use cases for Rust based CPU schedulers
+
+      Scheduler    | Gaming | Audio | Server | HPC | Power savings | Production readiness | Research / Experiment | Demo
+      ---          | ---    | ---   | ---    | --- | ---           | ---                  | ---                   | ---
+      scx_beerland |        |       | Y      |     |               | Y                    |                       |
+      scx_bpfland  | Y      | Y     |        |     |               | Y                    |                       |
+      scx_chaos    |        |       |        |     |               | N                    | Y                     | Y
+      scx_cosmos   |        |       |        |     |               | Y                    |                       |
+      scx_flash    |        | Y     |        |     |               | Y                    |                       |
+      scx_lavd     | Y      | Y     | Y      |     | Y             | Y                    |                       |
+      scx_layered  |        |       | Y      |     |               | Y                    |                       |
+      scx_mitosis  |        |       |        |     |               | Partial              | Y                     | Partial
+      scx_p2dq     |        |       | Y      |     |               | Y                    |                       |
+      scx_rlfifo   |        |       |        |     |               | P                    |                       |
+      scx_rustland |        |       |        |     |               | P                    |                       | Y
+      scx_rusty    |        |       | Y      |     |               | Y                    |                       |
+      scx_tickless |        |       | Y      | Y   | Y             | Y                    |                       |
+      scx_wd40     |        |       |        |     |               | N                    | Y                     | Y
+
+
       Notes:
 
         - cfs is preferred for server kernels and bug-less experience.
