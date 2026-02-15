@@ -56,6 +56,7 @@ BDEPEND="
 	>=dev-util/bpftool-7.5.0
 	app-misc/jq
 	dev-libs/protobuf:3/3.21[protoc(+)]
+	dev-libs/protobuf:=
 	virtual/pkgconfig
 	llvm_slot_19? (
 		llvm-core/clang:19[llvm_targets_BPF(-)]
