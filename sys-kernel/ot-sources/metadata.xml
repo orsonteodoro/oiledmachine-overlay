@@ -1359,6 +1359,24 @@ TBM=0
       scx_tickless |        |       | Y      | Y   | Y             | Y                    |                       |
       scx_wd40     |        |       |        |     |               | N                    | Y                     | Y
 
+      Scheduler    | Criticality or algorithmic design focus
+      ---          | ---
+      scx_beerland | Cache-locality-critical + scalability-critical
+      scx_bpfland  | Interactive-critical + topology awareness
+      scx_chaos    | Debug-critical or race-conditon-critical
+      scx_cosmos   | Cache-locality-critical + lightweight/general-purpose
+      scx_flash    | Fairness-critical + predictability-critical
+      scx_lavd     | Latency-critical + interactive-critical
+      scx_layered  | Customizability / layered-policy-critical
+      scx_mitosis  | Experimental (hybrid locality + latency)
+      scx_p2dq     | Fairness + premption/latency-awareness (conservative wakeup for latency-critical)
+      scx_rlfifo   | FIFO / simple-queue-critical
+      scx_rustland | Interactive + userspace-decision-critical
+      scx_rusty    | Cache-locality-critical + load-balancing-critical
+      scx_tickless | Low-overhead-critical
+      scx_wd40     | Research / BPF-arenas-critical
+
+      * The + indicates hybrids
 
       Notes:
 
