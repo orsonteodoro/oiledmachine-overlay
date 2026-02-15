@@ -7,13 +7,14 @@ EAPI=8
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 
-# AL2006-01-01:  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1-3
-# C2006-02 (Native):  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1
-# C2006-02 (Frawhide):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
-# C2006-02 (F44):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
-# C2006-02 (F43):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
-# C2006-02 (F42):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
-# U24:  Rust 1.74, 1.75 (default), 1.76, 1.77, 1.78, 1.79, 1.80, 1.81, 1.82, 1.83, 1.84, 1.85, 1.89; LLVM 14-19 (18 default), Protobuf 3.21.12
+# AL2026-01-01:  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1-3
+# C2026-02 (Native):  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1
+# C2026-02 (Frawhide):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
+# C2026-02 (F44):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
+# C2026-02 (F43):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
+# C2026-02 (F42):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
+# G23:  Rust 1.92.0, LLVM 21.1.8, Protobuf 6.31.1
+# U24:  Rust 1.74.1, 1.75.0 (default), 1.76.0, 1.77.2, 1.78.0, 1.79.0, 1.80.1, 1.81.0, 1.82.0, 1.83.0, 1.84.1, 1.85.1, 1.89.0; LLVM 14-19 (18 default), Protobuf 3.21.12
 # U24 (CI):  Rust 1.95.0, LLVM 19, Protobuf 3.21.12
 # N25.11:  Rust 1.91.1, LLVM 21.1.7, Protobuf 6.32.1
 
