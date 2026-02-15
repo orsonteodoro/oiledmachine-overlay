@@ -650,7 +650,7 @@ OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
 OT_KERNEL_VERBOSITY=1
-OT_KERNEL_USE="disable_debug genpatches zen-sauce"
+OT_KERNEL_USE="disable_debug genpatches rust zen-sauce"
 OT_KERNEL_WORK_PROFILE="gaming-tournament"
 TBM=1
 
@@ -741,7 +741,7 @@ TBM=0
     RANDSTRUCT                    | N                           | N                     | M [16]                     | M [16]                         | Y                              | N                          | N
     Swap                          | Y [29]                      | N [18]                | N [17]                     | Y [29]                         | Y [29]                         | Y [29]                     | Y [29]
     LSMS                          | [21a]                       | [21b]                 | [21c]                      | [21d]                          | [21e]                          | [21f]                      | [21g]
-    CPU scheduler                 | eevdf-throughput            | eevdf-autogroup       | eevdf-autogroup [20]       | eevdf-throughput               | eevdf-throughput               | eevdf-autogroup            | eevdf-throughput
+    CPU scheduler                 | eevdf-throughput            | eevdf-autogroup [49]  | eevdf-autogroup [20]       | eevdf-throughput               | eevdf-throughput               | eevdf-autogroup            | eevdf-throughput
     HZ                            | 250                         | 1000                  | 1000 [46][47]              | 100                            | 300                            | 1000                       | 100
     IO schedulers                 | [27a]                       | [27a]                 | [27c]                      | mq-deadline/none [30a]         | mq-deadline/none [30a]         | BFQ/Kyber [30][34b]        | mq-deadline/none [30][34a]
     TCP congestion control        | [26a]                       | [26b]                 | Cubic[48]                  | Cubic                          | Cubic                          | Cubic                      | Cubic
@@ -865,6 +865,7 @@ TBM=0
     [46] Biased towards mitigating the more reported and dangerous Race Condition vulnerability versus Timing Attack vulnerability.
     [47] Tunable with DSS_ROLE
     [48] BBRv2 or BBRv3 or Cubic can be used to mitigate DoS partially.  Use Cubic if router doesn't support ECN.
+    [49] scx_lavd recommended instead
 
     Commentary:
 
