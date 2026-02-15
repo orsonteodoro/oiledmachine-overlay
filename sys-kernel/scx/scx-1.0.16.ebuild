@@ -7,10 +7,12 @@ EAPI=8
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.16?tab=readme-ov-file#build--install
 
+ABSEIL_CPP_SLOT="20220623"
 LLVM_COMPAT=( {19..22} )
+PROTOBUF_CPP_SLOT="3"
 RUST_MIN_VER="1.82.0"
 
-inherit eapi9-ver llvm-r2 linux-info cargo rust-toolchain toolchain-funcs meson
+inherit eapi9-ver abseil-cpp llvm-r2 linux-info cargo protobuf rust-toolchain toolchain-funcs meson
 
 KEYWORDS="amd64"
 SRC_URI="
@@ -53,7 +55,7 @@ RDEPEND="
 BDEPEND="
 	>=dev-util/bpftool-7.5.0
 	app-misc/jq
-	dev-libs/protobuf[protoc(+)]
+	dev-libs/protobuf:3/3.21[protoc(+)]
 	virtual/pkgconfig
 	llvm_slot_19? (
 		llvm-core/clang:19[llvm_targets_BPF(-)]
@@ -164,6 +166,9 @@ src_prepare() {
 }
 
 src_configure() {
+	abseil-cpp_src_configure
+	protobuf_src_configure
+
 	BUILD_DIR="${BUILD_DIR:-${WORKDIR}/${P}-build}"
 
 	local emesonargs=(

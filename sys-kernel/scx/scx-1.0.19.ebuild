@@ -7,10 +7,12 @@ EAPI=8
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.19?tab=readme-ov-file#build--install
 
+ABSEIL_CPP_SLOT="20220623"
 LLVM_COMPAT=( {19..22} )
+PROTOBUF_CPP_SLOT="3"
 RUST_MIN_VER="1.82.0"
 
-inherit cargo llvm-r2 linux-info
+inherit abseil-cpp cargo llvm-r2 linux-info protobuf
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -52,7 +54,7 @@ RDEPEND="
 BDEPEND="
 	>=dev-util/bpftool-7.5.0
 	app-misc/jq
-	dev-libs/protobuf[protoc(+)]
+	dev-libs/protobuf:3/3.21[protoc(+)]
 	virtual/pkgconfig
 	llvm_slot_19? (
 		llvm-core/clang:19[llvm_targets_BPF(-)]
@@ -150,6 +152,12 @@ eerror "llvm_slot_22 requires Rust nightly"
 			die
 		fi
 	fi
+}
+
+src_configure() {
+	abseil-cpp_src_configure
+	protobuf_src_configure
+	cargo_src_configure
 }
 
 src_compile() {
