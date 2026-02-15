@@ -16,7 +16,7 @@ EAPI=8
 # U24:  Rust 1.75.0, LLVM 14-19 (18 default), Protobuf 3.21.12
 # N25.11:  Rust 1.91.1, LLVM  21.1.7, Protobuf 6.32.1
 
-LLVM_COMPAT=( {19..22} ) # Only LTS supported for this ebuild fork
+LLVM_COMPAT=( {19..22} ) # Only U24 LTS supported for this ebuild fork
 RUST_MIN_VER="1.82.0"
 
 inherit abseil-cpp cargo llvm-r2 linux-info protobuf

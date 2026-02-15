@@ -14,7 +14,7 @@ EAPI=8
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.16?tab=readme-ov-file#build--install
 
-LLVM_COMPAT=( {19..22} ) # Only LTS supported for this ebuild fork
+LLVM_COMPAT=( {19..22} ) # Only U24 LTS supported for this ebuild fork
 RUST_MIN_VER="1.82.0"
 
 inherit eapi9-ver abseil-cpp llvm-r2 linux-info cargo protobuf rust-toolchain toolchain-funcs meson
