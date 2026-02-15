@@ -207,7 +207,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 ) # Based on scripts/min-tool-version.sh
 
 LLVM_MAX_SLOT="19"
@@ -1148,7 +1148,7 @@ fi
 
 PDEPEND+="
 	scx? (
-		sys-kernel/scx
+		sys-kernel/scx[llvm_slot_18?,llvm_slot_19?]
 	)
 "
 
