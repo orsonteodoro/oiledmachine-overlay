@@ -5677,7 +5677,7 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="cfs">
       Uses the CFS (Completely Fair Scheduling) CPU scheduler and not apply
-      any third-party CPU scheduler.
+      any third-party CPU scheduler patches.
     </flag>
     <flag name="clang">
       This is a stronger check for those prefer Clang over GCC and to make sure
@@ -5774,6 +5774,10 @@ unset OT_KERNEL_PRIVATE_KEY
 
       DWARF5 - llvm 14 or later, gcc 11 or later
       DWARF4 - llvm 13 or earlier, gcc 4.8 to 10.5
+    </flag>
+    <flag name="eevdf">
+      Uses the EEVDF (Earliest Eligible Virtual Deadline) CPU scheduler and not
+      apply any third-party CPU scheduler patches.
     </flag>
     <flag name="exfat">
       Enables or removes exFAT

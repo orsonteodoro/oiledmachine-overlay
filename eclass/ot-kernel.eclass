@@ -1210,9 +1210,12 @@ ot-kernel_use() {
 ot-kernel_pkg_setup() {
 	dhms_start
 
+	local cpu_sched_name="CFS"
+	ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="EEVDF"
+
 ewarn
-ewarn "The defaults use cfs (or the stock CPU scheduler) per build"
-ewarn "configuration."
+ewarn "The defaults use the ${cpu_sched_name} as the stock CPU scheduler per"
+ewarn "build configuration."
 ewarn
 ewarn "The build configuration scheme has changed.  Please see"
 ewarn "metadata.xml (or \`epkginfo -x ot-sources::oiledmachine-overlay\`) for"
@@ -2894,8 +2897,10 @@ eerror
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
-		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
-		ot-kernel_use rt && cpu_sched="cfs"
+		local cpu_sched_name="cfs"
+		ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+		[[ -z "${cpu_sched}" ]] && cpu_sched="${cpu_sched_name}"
+		ot-kernel_use rt && cpu_sched="${cpu_sched_name}"
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 einfo
@@ -5182,9 +5187,11 @@ einfo "Changed .config to use PDS"
 
 # @FUNCTION: _ot-kernel_set_kconfig_cfs
 # @DESCRIPTION:
-# Set cfs kernel config flags
+# Set CFS or EEVDF kernel config flags
 _ot-kernel_set_kconfig_cfs() {
-	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs ; then
+	if has "cfs" ${IUSE_EFFECTIVE} && ot-kernel_use "cfs" ; then
+		:
+	elif has "eevdf" ${IUSE_EFFECTIVE} && ot-kernel_use "eevdf" ; then
 		:
 	else
 		return
@@ -5245,14 +5252,17 @@ ot-kernel_unset_all_cpu_freq_default_gov() {
 # @DESCRIPTION:
 # Unbreak build for incompatible flags
 ot-kernel_set_kconfig_cpu_scheduler_post() {
+	local cpu_sched_name="cfs"
+	ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+
 	if [[ "${cpu_sched}" =~ "muqss" ]] ; then
 		if grep -q -E -e "^CONFIG_CPUSETS=y" "${path_config}" ; then
-ewarn "Dropping CONFIG_CPUSETS for muqss.  If you do not like this, switch to change to cfs or other scheduler."
+ewarn "Dropping CONFIG_CPUSETS for muqss.  If you do not like this, switch to change to ${cpu_sched_name} or other scheduler."
 			# Drop references to dl_bw_free, dl_bw_alloc from kernel/sched/deadline.c
 			ot-kernel_unset_configopt "CONFIG_CPUSETS"
 		fi
 		if grep -q -E -e "^CONFIG_PROC_PID_CPUSET=y" "${path_config}" ; then
-ewarn "Dropping CONFIG_PROC_PID_CPUSET for muqss.  If you do not like this, switch to change to cfs or other scheduler."
+ewarn "Dropping CONFIG_PROC_PID_CPUSET for muqss.  If you do not like this, switch to change to ${cpu_sched_name} or other scheduler."
 			ot-kernel_unset_configopt "CONFIG_PROC_PID_CPUSET"
 		fi
 	fi
@@ -5353,16 +5363,28 @@ einfo "Changed .config to disable autogroup"
 		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 	fi
 
-	if (( ${cpu_sched_config_applied} == 0 )) \
-		&& ! [[ "${cpu_sched}" =~ "cfs" ]] ; then
+	if (( ${cpu_sched_config_applied} == 0 )) && [[ "${cpu_sched}" == "cfs" ]] ; then
+		:
+	elif (( ${cpu_sched_config_applied} == 0 )) && [[ "${cpu_sched}" == "eevdf" ]] ; then
+		:
+	elif (( ${cpu_sched_config_applied} == 0 )) ; then
 ewarn
-ewarn "The chosen cpu_sched ${cpu_sched} config was not applied"
-ewarn "because the use flag was not enabled."
+ewarn "No cpu_sched ${cpu_sched} config was applied because the USE flag was"
+ewarn "not enabled."
 ewarn
 	fi
 
-	if [[ "${cpu_sched}" == "cfs" ]] || (( ${cpu_sched_config_applied} == 0 )) ; then
+	if \
+		   [[ "${cpu_sched}" == "cfs" ]] \
+		|| [[ "${cpu_sched}" == "eevdf" ]] \
+		|| (( ${cpu_sched_config_applied} == 0 )) \
+	; then
+		if [[ "${cpu_sched}" == "cfs" ]] ; then
 einfo "Changed .config to use CFS (Completely Fair Scheduler)"
+		fi
+		if [[ "${cpu_sched}" == "eevdf" ]] ; then
+einfo "Changed .config to use EEVDF (Earliest Eligible Virtual Deadline First)"
+		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
@@ -6439,7 +6461,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_ZERO_CALL_USED_REGS"
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
-		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-3}" =~ ("1"|"2"|"3"|"custom"|"manual") ]] ; then
+		if [[ "${cpu_sched}" =~ ("cfs"|"eevdf") && "${HT:-3}" =~ ("1"|"2"|"3"|"custom"|"manual") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 ewarn
 ewarn "The behavior the HT environment variable has changed.  See metadata.xml"
@@ -13843,8 +13865,10 @@ ot-kernel_src_configure() {
 		local check_mounted="${OT_KERNEL_BUILD_CHECK_MOUNTED:-1}"
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
-		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
-		ot-kernel_use rt && cpu_sched="cfs"
+		local cpu_sched_name="cfs"
+		ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+		[[ -z "${cpu_sched}" ]] && cpu_sched="${cpu_sched_name}"
+		ot-kernel_use rt && cpu_sched="${cpu_sched_name}"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		#[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
@@ -14804,8 +14828,10 @@ ot-kernel_src_compile() {
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
-		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
-		ot-kernel_use rt && cpu_sched="cfs"
+		local cpu_sched_name="cfs"
+		ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+		[[ -z "${cpu_sched}" ]] && cpu_sched="${cpu_sched_name}"
+		ot-kernel_use rt && cpu_sched="${cpu_sched_name}"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		if [[ -z "${build_config}" ]] ; then
 			if ot-kernel_is_build ; then
