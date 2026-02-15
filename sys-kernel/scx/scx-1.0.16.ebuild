@@ -9,7 +9,8 @@ EAPI=8
 # C2006-02 (F44):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
 # C2006-02 (F43):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
 # C2006-02 (F42):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
-# U24:  Rust 1.75.0, LLVM 14-19 (18 default), Protobuf 3.21.12
+# U24:  Rust 1.74, 1.75 (default), 1.76, 1.77, 1.78, 1.79, 1.80, 1.81, 1.82, 1.83, 1.84, 1.85, 1.89, 1.95 (CI) ; LLVM 14-19 (18 default), Protobuf 3.21.12
+# U24 (CI):  Rust 1.95.0 (nightly) ; LLVM 19.1.1, Protobuf 3.21.12
 # N25.11:  Rust 1.91.1, LLVM  21.1.7, Protobuf 6.32.1
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.16?tab=readme-ov-file#build--install
