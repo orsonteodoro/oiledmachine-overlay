@@ -7,7 +7,7 @@ EAPI=8
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.19?tab=readme-ov-file#build--install
 
-LLVM_COMPAT=( {19..22} )
+LLVM_COMPAT=( {19..22} ) # Only LTS supported for this ebuild fork
 RUST_MIN_VER="1.82.0"
 
 inherit abseil-cpp cargo llvm-r2 linux-info protobuf
