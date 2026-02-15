@@ -48,6 +48,13 @@ LICENSE+="
 	ZLIB
 "
 SLOT="0"
+IUSE+=" "
+REQUIRED_USE+="
+	llvm_slot_19
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+"
 DEPEND="
 	>=dev-libs/libbpf-1.2.2
 	dev-libs/libbpf:=
