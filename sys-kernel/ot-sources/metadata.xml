@@ -577,10 +577,10 @@ OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.1-builder-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.18-builder-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_CPU_MICROCODE="1"
-OT_KERNEL_CPU_SCHED="cfs-throughput"
+OT_KERNEL_CPU_SCHED="eevdf-throughput"
 OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="builder"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
@@ -623,10 +623,10 @@ OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.1-gaming-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.18-gaming-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_CPU_MICROCODE="0"
-OT_KERNEL_CPU_SCHED="cfs-autogroup"
+OT_KERNEL_CPU_SCHED="eevdf-autogroup"
 OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="gaming"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
@@ -666,9 +666,9 @@ OT_KERNEL_BOOT_ARGS="delayacct"
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.9-secure-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.18-secure-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
-OT_KERNEL_CPU_SCHED="cfs-autogroup"
+OT_KERNEL_CPU_SCHED="eevdf-autogroup"
 OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="secure"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
@@ -741,7 +741,7 @@ TBM=0
     RANDSTRUCT                    | N                           | N                     | M [16]                     | M [16]                         | Y                              | N                          | N
     Swap                          | Y [29]                      | N [18]                | N [17]                     | Y [29]                         | Y [29]                         | Y [29]                     | Y [29]
     LSMS                          | [21a]                       | [21b]                 | [21c]                      | [21d]                          | [21e]                          | [21f]                      | [21g]
-    CPU scheduler                 | cfs-throughput              | cfs-autogroup         | cfs-autogroup [20]         | cfs-throughput                 | cfs-throughput                 | cfs-autogroup              | cfs-throughput
+    CPU scheduler                 | eevdf-throughput            | eevdf-autogroup       | eevdf-autogroup [20]       | eevdf-throughput               | eevdf-throughput               | eevdf-autogroup            | eevdf-throughput
     HZ                            | 250                         | 1000                  | 1000 [46][47]              | 100                            | 300                            | 1000                       | 100
     IO schedulers                 | [27a]                       | [27a]                 | [27c]                      | mq-deadline/none [30a]         | mq-deadline/none [30a]         | BFQ/Kyber [30][34b]        | mq-deadline/none [30][34a]
     TCP congestion control        | [26a]                       | [26b]                 | Cubic[48]                  | Cubic                          | Cubic                          | Cubic                      | Cubic
@@ -779,7 +779,7 @@ TBM=0
     RANDSTRUCT                    |                             |                       | N                          |                                |                                |                            |
     Swap                          |                             |                       | Y [29]                     |                                |                                |                            |
     LSMS                          |                             |                       | [21i]                      |                                |                                |                            |
-    CPU scheduler                 |                             |                       | cfs-autogroup              |                                |                                |                            |
+    CPU scheduler                 |                             |                       | eevdf-autogroup            |                                |                                |                            |
     HZ                            |                             |                       | 1000                       |                                |                                |                            |
     IO schedulers                 |                             |                       | mq-deadline/none [30][34]  |                                |                                |                            |
     TCP congestion control        |                             |                       | Cubic                      |                                |                                |                            |
@@ -1312,9 +1312,9 @@ TBM=0
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.12: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.13: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.12: eevdf, eevdf-throughput, eevdf-interactive, eevdf-autogroup, prjc, prjc-bmq, prjc-pds
+      6.18: eevdf, eevdf-throughput, eevdf-interactive, eevdf-autogroup, prjc, prjc-bmq, prjc-pds
+
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -1328,6 +1328,16 @@ TBM=0
       6.12 and later support scx Rust based CPU schedulers.
       For scx scheduler names and descriptions, see also
       https://github.com/sched-ext/scx/tree/v1.0.20/scheds/rust
+
+      Estimated scores:
+
+      Configuration     | Security | Criticality       | Performance              | Interactivity | High poly FPS | Low poly FPS
+      ---               | ---      | ---               | ---                      | ---           | ---           | ---
+      scx_lavd          | 8 - 9    | latency-critical  | 8.8 - 9.5 (gaming)       | 8 - 15 ms     | 110 - 145 FPS | 60 - 150 FPS
+                        |          |                   | 8 - 8.8 (general/server) |               |               |
+      CFS (Pre 6.6)     | 9.5 - 10 | fairness-critical | 7 - 8                    | 20 - 40 ms    | 30 - 100 FPS  | 60 - 120 FPS
+      EEVDF (6.6+)      | 9.5 - 10 | fairness-critical | 7.5 - 8.5 (gaming)       | 15 - 25 ms    | 30 - 139 FPS  | 60 - 150 FPS
+                        |          |                   | 8 - 8.8 (general)        |               |               |
 
       Notes:
 

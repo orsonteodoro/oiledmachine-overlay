@@ -5190,10 +5190,16 @@ _ot-kernel_set_kconfig_cfs() {
 		return
 	fi
 
+	local cpu_sched_name="CFS"
+	ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="EEVDF"
+
 	if [[ \
 		   "${cpu_sched}" == "cfs-throughput" \
 		|| "${cpu_sched}" == "cfs-interactive" \
 		|| "${cpu_sched}" == "cfs-autogroup" \
+		|| "${cpu_sched}" == "eevdf-throughput" \
+		|| "${cpu_sched}" == "eevdf-interactive" \
+		|| "${cpu_sched}" == "eevdf-autogroup" \
 	]] ; then
 		ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
@@ -5204,15 +5210,20 @@ _ot-kernel_set_kconfig_cfs() {
 	if [[ \
 		   "${cpu_sched}" == "cfs-autogroup" \
 		|| "${cpu_sched}" == "cfs-interactive" \
+		|| "${cpu_sched}" == "eevdf-autogroup" \
+		|| "${cpu_sched}" == "eevdf-interactive" \
 	]] ; then
-einfo "Changed .config to use CFS with autogroup"
+einfo "Changed .config to use ${cpu_sched_name} with autogroup"
 		ot-kernel_y_configopt "CONFIG_SCHED_AUTOGROUP"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
 		ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
 		cpu_sched_config_applied=1
-	elif [[ "${cpu_sched}" == "cfs-throughput" ]] ; then
-einfo "Changed .config to use CFS without autogroup"
+	elif [[ \
+		   "${cpu_sched}" == "cfs-throughput" \
+		|| "${cpu_sched}" == "eevdf-throughput" \
+	]] ; then
+einfo "Changed .config to use ${cpu_sched_name} without autogroup"
 		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 		cpu_sched_config_applied=1
 	fi
