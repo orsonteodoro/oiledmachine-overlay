@@ -53,8 +53,14 @@ BDEPEND="
 	>=dev-util/bpftool-7.5.0
 	app-misc/jq
 	|| (
-		dev-libs/protobuf:3/3.21[llvm_slot_19?,protoc(+)]
-		dev-libs/protobuf:6/6.33[llvm_slot_19?,protoc(+)]
+		(
+			dev-cpp/abseil-cpp:20220623
+			dev-libs/protobuf:3/3.21[llvm_slot_19?,protoc(+)]
+		)
+		(
+			dev-cpp/abseil-cpp:20250512
+			dev-libs/protobuf:6/6.33[llvm_slot_19?,protoc(+)]
+		)
 	)
 	dev-libs/protobuf:=
 	virtual/pkgconfig
