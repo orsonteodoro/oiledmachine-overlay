@@ -2960,6 +2960,11 @@ einfo "Applying ${x} ... (4)"
 			done
 		popd >/dev/null 2>&1 || die
 	popd >/dev/null 2>&1 || die
+
+	local L=(
+		"${FILESDIR}/extra-patches/chromium-145.0.7632.75-cromite-v145.0.7632.46-c8a1047-flexible-array-member-hack-ignore.patch"
+	)
+	eapply "${L[@]}"
 }
 
 _apply_ungoogled_chromium_patches() {

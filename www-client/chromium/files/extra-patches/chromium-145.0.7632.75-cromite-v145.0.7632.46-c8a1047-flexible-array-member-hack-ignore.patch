@@ -1,0 +1,17 @@
+--- a/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c	2026-02-16 14:30:34.348287424 -0800
+@@ -222,7 +222,14 @@ llvm_regcomp(llvm_regex_t *preg, const c
+ 	g->mlen = 0;
+ 	g->nsub = 0;
+ 	g->ncategories = 1;	/* category 0 is "everything else" */
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+ 	g->categories = &g->catspace[-(CHAR_MIN)];
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ 	(void) memset((char *)g->catspace, 0, NC*sizeof(cat_t));
+ 	g->backrefs = 0;
+ 
