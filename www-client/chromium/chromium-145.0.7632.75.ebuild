@@ -7762,7 +7762,10 @@ _src_install() {
 	fi
 
 	doins -r "out/Release/locales"
-	doins -r "out/Release/MEIPreload"
+	if [[ -e "out/Release/MEIPreload" ]] ; then
+	# Missing in ungoogled-chromium build
+		doins -r "out/Release/MEIPreload"
+	fi
 
 	# Install vk_swiftshader_icd.json; bug #827861
 	doins "out/Release/vk_swiftshader_icd.json"
