@@ -8081,6 +8081,7 @@ einfo "Since the build is done, you may remove /usr/share/chromium folder."
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260119) with mold with a completion time of 1 days, 2 hrs, 57 mins, 36 secs using ninja -j4 and upstream hardening flags and -Oshit - segfault when playing yt video
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.59 (20260129) with mold and mdns enabled
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.132 (20260209) with mold and mdns enabled
+# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.75 (20260216) with ungoogled-chromium
 
 # 143.0.7499.192 test results:
 # search engine:  passed
