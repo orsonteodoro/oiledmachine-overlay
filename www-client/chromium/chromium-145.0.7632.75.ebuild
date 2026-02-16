@@ -7611,7 +7611,10 @@ einfo "Skipping expensive load time optimization..."
 		"
 	fi
 
-	mv "out/Release/chromedriver"{".unstripped",""} || die
+	# It doesn't exist in the ungoogled-chromium build.
+	if [[ -e "out/Release/chromedriver.unstripped" ]] ; then
+		mv "out/Release/chromedriver"{".unstripped",""} || die
+	fi
 
 	rm -f "out/Release/locales/"*".pak.info" || die
 
