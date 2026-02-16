@@ -7636,12 +7636,15 @@ einfo "Skipping expensive load time optimization..."
 		menuname+="${suffix}"
 	fi
 
-	cat "${FILESDIR}/generate-support-files.py" \
+	cat \
+		"${FILESDIR}/generate-support-files.py" \
+		> \
 		"${T}/generate-support-files.py" \
 		|| die
 	sed -i \
 		-e "s|@USR_BIN_SYMLINK_NAME@|chromium-browser-${ABI}|g" \
 		-e "s|@MENUNAME@|${menuname}|g" \
+		"${T}/generate-support-files.py" \
 		|| die
 
 	# Generate support files (desktop file, manpage, etc.)
