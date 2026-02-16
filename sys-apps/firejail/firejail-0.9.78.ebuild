@@ -664,6 +664,8 @@ _PROFILE_GRAPH["zstdmt"]="zstd"
 
 
 declare -A _SCOPE=(
+	["gpg-agent"]="ban" # Breaks loading of xfce4
+	["ssh-agent"]="ban" # Breaks loading of xfce4
 	["sway"]="ban" # Breaks startup
 	["X"]="ban"
 	["Xephyr"]="ban" # Breaks --x11=xephyr
@@ -1634,7 +1636,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_55
+ebuild_revision_56
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
