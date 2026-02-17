@@ -696,7 +696,6 @@ OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
 OT_KERNEL_VERBOSITY=1
 OT_KERNEL_USE="debug genpatches rust scx zen-sauce"
 OT_KERNEL_WORK_PROFILE="musical-live-performance"
-TBM=1
 
     An example of a *secure* env file located in /etc/portage/ot-sources/6.12/secure/x86_64/env:
 
@@ -5607,7 +5606,7 @@ unset OT_KERNEL_PRIVATE_KEY
     on the selected function.
     Valid values:  kcmp (default), fstat
 
-    TBM - Disables Turbo Boost Max
+    TBM - Support Turbo Boost Max 3.0 only
     Valid values:
       1 - enables turbo
       0 - disable turbo
