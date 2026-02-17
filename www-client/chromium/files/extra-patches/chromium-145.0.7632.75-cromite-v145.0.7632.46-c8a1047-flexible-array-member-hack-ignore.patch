@@ -47,3 +47,23 @@
  
    visibility = [
      "//chrome/browser/accessibility:utils",
+--- a/third_party/blink/renderer/platform/BUILD.gn.orig	2026-02-17 08:03:05.130200023 -0800
++++ b/third_party/blink/renderer/platform/BUILD.gn	2026-02-17 10:06:21.196525134 -0800
+@@ -1684,13 +1684,16 @@ component("platform") {
+     }
+   }
+ 
++  cflags = []
+   if (current_cpu == "loong64") {
+-    cflags = [
++    cflags += [
+       "-mlsx",
+       "-flax-vector-conversions=all",
+     ]
+   }
+ 
++  cflags += [ "-Wno-array-bounds" ]
++
+   if (is_apple) {
+     sources += [
+       "fonts/mac/font_platform_data_mac.h",
