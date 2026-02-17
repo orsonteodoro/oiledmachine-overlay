@@ -156,7 +156,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
-    6.16 (Stable)					A
+    6.18 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				A
@@ -170,21 +170,9 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    6.17 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				D
-		    genpatches				A
-		    kernel_compiler_patch		D
-		    Nest				D
-		    Project C				A
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
+    6.19 (TBA/Stable)					
 
-    6.17 (Live)						A
+    6.19 (Live)						A
     Ebuild support for live is temporarily down but may change in the future.
 
 
