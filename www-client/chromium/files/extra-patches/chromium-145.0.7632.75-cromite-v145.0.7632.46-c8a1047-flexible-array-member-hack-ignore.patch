@@ -33,7 +33,17 @@
      sources += [ "public/v8_snapshot_file_type.h" ]
    }
  
-+  cflags_cc = [ "-Wno-array-bounds" ]
    defines = [ "GIN_IMPLEMENTATION" ]
++  cflags_cc = [ "-Wno-array-bounds" ]
  
    public_deps = [
+--- a/ui/accessibility/platform/BUILD.gn.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/ui/accessibility/platform/BUILD.gn	2026-02-17 07:35:27.279877530 -0800
+@@ -30,6 +30,7 @@ component("platform") {
+   output_name = "accessibility_platform"
+ 
+   defines = [ "IS_AX_PLATFORM_IMPL" ]
++  cflags_cc = [ "-Wno-array-bounds" ]
+ 
+   visibility = [
+     "//chrome/browser/accessibility:utils",
