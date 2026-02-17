@@ -696,6 +696,7 @@ OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
 OT_KERNEL_VERBOSITY=1
 OT_KERNEL_USE="debug genpatches rust scx zen-sauce"
 OT_KERNEL_WORK_PROFILE="musical-live-performance"
+TBM=0 # Not supported by this laptop
 
     An example of a *secure* env file located in /etc/portage/ot-sources/6.12/secure/x86_64/env:
 
