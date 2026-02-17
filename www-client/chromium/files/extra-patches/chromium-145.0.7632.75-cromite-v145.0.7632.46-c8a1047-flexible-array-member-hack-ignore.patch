@@ -15,3 +15,15 @@
  	(void) memset((char *)g->catspace, 0, NC*sizeof(cat_t));
  	g->backrefs = 0;
  
+--- a/v8/BUILD.gn.orig	2026-02-16 18:38:38.754650178 -0800
++++ b/v8/BUILD.gn	2026-02-16 21:51:43.528192508 -0800
+@@ -1819,6 +1819,9 @@ config("toolchain") {
+   if (is_ubsan) {
+     cflags += [ "-fsanitize=undefined" ]
+   }
++
++  # Prevent flexible array member error
++  cflags += [ "-Wno-array-bounds" ]
+ }
+ 
+ config("strict_warnings") {
