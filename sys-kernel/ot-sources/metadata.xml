@@ -668,6 +668,7 @@ OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
 OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.12-dj-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
+OT_KERNEL_DRIVER_BUNDLE="15-da0086nr"
 OT_KERNEL_CPU_MICROCODE="0"
 OT_KERNEL_CPU_SCHED="eevdf-interactive"
 OT_KERNEL_DISABLE="0"
@@ -759,6 +760,9 @@ TBM=0
     To generate the kernel config, you may set OT_KERNEL_MENUCONFIG_UI to
     menuconfig then emerge, then change it back to disabled then emerge.
     The menuconfig can be used to enable drivers.
+
+    For the dj profile use case, it is assumed to be a typical laptop
+    with dj software.
 
 
     Comparison for examples:
