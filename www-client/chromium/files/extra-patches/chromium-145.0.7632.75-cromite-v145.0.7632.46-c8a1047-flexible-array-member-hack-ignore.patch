@@ -27,3 +27,13 @@
  }
  
  config("strict_warnings") {
+--- a/gin/BUILD.gn.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/gin/BUILD.gn	2026-02-17 01:00:23.164088026 -0800
+@@ -100,6 +100,7 @@ component("gin") {
+     sources += [ "public/v8_snapshot_file_type.h" ]
+   }
+ 
++  cflags_cc = [ "-Wno-array-bounds" ]
+   defines = [ "GIN_IMPLEMENTATION" ]
+ 
+   public_deps = [
