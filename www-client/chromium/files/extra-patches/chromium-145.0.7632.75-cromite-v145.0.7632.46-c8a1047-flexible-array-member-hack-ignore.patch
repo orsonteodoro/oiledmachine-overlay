@@ -1,3 +1,6 @@
+# Fix issues with -fstrict-flex-arrays=3 when using cromite.
+# These are considered false positives.
+# It is not an issue with ungoogle-chromium and vanilla source.
 --- a/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c.orig	2026-02-12 11:44:24.000000000 -0800
 +++ b/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c	2026-02-16 14:30:34.348287424 -0800
 @@ -222,7 +222,14 @@ llvm_regcomp(llvm_regex_t *preg, const c
@@ -67,3 +70,14 @@
    if (is_apple) {
      sources += [
        "fonts/mac/font_platform_data_mac.h",
+--- a/third_party/blink/renderer/bindings/core/v8/BUILD.gn.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/blink/renderer/bindings/core/v8/BUILD.gn	2026-02-17 13:54:19.421401560 -0800
+@@ -28,6 +28,8 @@ blink_core_sources("v8") {
+     "//third_party/blink/renderer/platform",
+     "//v8",
+   ]
++
++  cflags_cc += [ "-Wno-array-bounds" ]
+ }
+ 
+ source_set("testing") {
