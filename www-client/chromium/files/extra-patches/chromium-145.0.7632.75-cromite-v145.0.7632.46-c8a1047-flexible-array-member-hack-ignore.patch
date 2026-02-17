@@ -77,7 +77,7 @@
      "//v8",
    ]
 +
-+  cflags_cc += [ "-Wno-array-bounds" ]
++  cflags_cc = [ "-Wno-array-bounds" ]
  }
  
  source_set("testing") {
