@@ -11,3 +11,68 @@
  #include "compression_utils_portable.h"
  
  #include "libANGLE/MemoryProgramCache.h"
+--- a/third_party/angle/src/libANGLE/angletypes.cpp.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/angle/src/libANGLE/angletypes.cpp	2026-02-16 17:54:25.776161926 -0800
+@@ -19,7 +19,9 @@
+ 
+ #include <limits>
+ 
+-#define USE_SYSTEM_ZLIB
++#ifndef USE_SYSTEM_ZLIB
++#  define USE_SYSTEM_ZLIB
++#endif
+ #include "compression_utils_portable.h"
+ 
+ namespace gl
+--- a/third_party/angle/src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.cpp.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/angle/src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.cpp	2026-02-16 17:58:49.875418793 -0800
+@@ -10,7 +10,9 @@
+ 
+ #include "libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h"
+ 
+-#define USE_SYSTEM_ZLIB
++#ifndef USE_SYSTEM_ZLIB
++#  define USE_SYSTEM_ZLIB
++#endif
+ #include "compression_utils_portable.h"
+ 
+ namespace rx
+--- a/third_party/angle/src/libANGLE/capture/FrameCaptureCommon.cpp.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/angle/src/libANGLE/capture/FrameCaptureCommon.cpp	2026-02-16 17:57:16.556023116 -0800
+@@ -13,7 +13,9 @@
+ 
+ #include "libANGLE/capture/FrameCapture.h"
+ 
+-#define USE_SYSTEM_ZLIB
++#ifndef USE_SYSTEM_ZLIB
++#  define USE_SYSTEM_ZLIB
++#endif
+ #include "compression_utils_portable.h"
+ 
+ namespace angle
+--- a/third_party/angle/src/libANGLE/capture/FrameCapture.cpp.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/angle/src/libANGLE/capture/FrameCapture.cpp	2026-02-16 17:57:42.951204035 -0800
+@@ -57,7 +57,9 @@
+ #include "libANGLE/validationEGL.h"
+ #include "third_party/ceval/ceval.h"
+ 
+-#define USE_SYSTEM_ZLIB
++#ifndef USE_SYSTEM_ZLIB
++#  define USE_SYSTEM_ZLIB
++#endif
+ #include "compression_utils_portable.h"
+ 
+ #if !ANGLE_CAPTURE_ENABLED
+--- a/third_party/angle/src/libANGLE/renderer/vulkan/gen_vk_internal_shaders.py.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/angle/src/libANGLE/renderer/vulkan/gen_vk_internal_shaders.py	2026-02-16 17:58:23.331102980 -0800
+@@ -39,7 +39,9 @@ template_shader_library_cpp = u"""// GEN
+ 
+ #include "libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h"
+ 
+-#define USE_SYSTEM_ZLIB
++#ifndef USE_SYSTEM_ZLIB
++#  define USE_SYSTEM_ZLIB
++#endif
+ #include "compression_utils_portable.h"
+ 
+ namespace rx
