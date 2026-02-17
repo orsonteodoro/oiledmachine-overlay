@@ -11190,7 +11190,11 @@ ot-kernel-driver-bundle_add_musician_support() {
 	ot-kernel_y_configopt "CONFIG_SND_UMP_LEGACY_RAWMIDI" # MIDI 2.0 support for RawMidi
 
 	# For DJ Controller jog wheels and button mapping support
+	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_USB_HID"
+	ot-kernel_y_configopt "CONFIG_INPUT"
+	ot-kernel_y_configopt "CONFIG_HID"
+	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
 	ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
 }
 
