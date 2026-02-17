@@ -1163,7 +1163,7 @@ ewarn "The early-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_external_storage "ide parallel-port scsi"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
-	ot-kernel-driver-bundle_add_sound "early-2000s isa pci pcie"
+	ot-kernel-driver-bundle_add_sound "early-2000s isa pci pcie usb-2.0"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -1276,7 +1276,7 @@ ewarn "The late-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_optical_drive "cd-rom cd-r cd-rw dvd-rom dvd-r dvd+rw dvd-rw dvd+rw dvd-ram"
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_data_storage_interfaces "sata"
-	ot-kernel-driver-bundle_add_sound "late-2000s pci"
+	ot-kernel-driver-bundle_add_sound "late-2000s pci usb-2.0 usb-3.0"
 
 	# For HDD
 	ot-kernel_y_configopt "CONFIG_ATA"
@@ -1480,6 +1480,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
+	ot-kernel-driver-bundle_add_musician_support "2010s usb-2.0"
 
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
@@ -1508,7 +1509,7 @@ ewarn "The 2010s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
-	ot-kernel-driver-bundle_add_sound "2010s pcie"
+	ot-kernel-driver-bundle_add_sound "2010s pcie usb-2.0 usb-3.0"
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -1699,6 +1700,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_SKL"
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_TOPLEVEL"
 	ot-kernel-driver-bundle_add_midi_playback_support
+	ot-kernel-driver-bundle_add_musician_support "2010s usb-2.0 usb-3.0"
 
 	# Bluetooth
 	ot-kernel_y_configopt "CONFIG_BT"
@@ -1823,7 +1825,7 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_usb_storage_support
 	ot-kernel-driver-bundle_add_optical_drive "dvd-rom dvd-r dvd+r dvd-rw dvd+rw dvd-ram 4k-blu-ray"
 	ot-kernel-driver-bundle_add_data_storage_interfaces "nvme sata"
-	ot-kernel-driver-bundle_add_sound "2020s pcie"
+	ot-kernel-driver-bundle_add_sound "2020s pcie usb-2.0 usb-3.0"
 
 	# CPU temp sensors
 	ot-kernel_y_configopt "CONFIG_HWMON"
@@ -9855,7 +9857,7 @@ ot-kernel-driver-bundle_add_sound() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("port:gameport"|"port:midi") ]] ; then
 		ot-kernel-driver-bundle_add_gameport_to_5_pin_midi_support
 	fi
-	ot-kernel-driver-bundle_add_musician_support
+	ot-kernel-driver-bundle_add_musician_support "${tags}"
 }
 
 ot-kernel-driver-bundle_add_sound_by_decade() {
@@ -11177,6 +11179,7 @@ ot-kernel-driver-bundle_add_gameport_to_5_pin_midi_support() {
 }
 
 ot-kernel-driver-bundle_add_musician_support() {
+	local tags="${1}"
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel_y_configopt "CONFIG_SND"
 	ot-kernel_y_configopt "CONFIG_SND_HRTIMER"
@@ -11185,17 +11188,23 @@ ot-kernel-driver-bundle_add_musician_support() {
 	# Sequencer is used for software that needs to route between
 	# applications/devices or wavetable support on older sound cards.
 	ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
-	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO" # 2002
-	ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO_MIDI_V2" # 2020
+	if [[ "${tags}" =~ "usb-2.0" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO" # 2002
+	fi
+	if [[ "${tags}" =~ ("usb-2.0"|"usb-3.0") && "${tags}" =~ "2020s" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO_MIDI_V2" # 2020
+	fi
 	ot-kernel_y_configopt "CONFIG_SND_UMP_LEGACY_RAWMIDI" # MIDI 2.0 support for RawMidi
 
 	# For DJ Controller jog wheels and button mapping support
-	ot-kernel_y_configopt "CONFIG_EXPERT"
-	ot-kernel_y_configopt "CONFIG_USB_HID"
-	ot-kernel_y_configopt "CONFIG_INPUT"
-	ot-kernel_y_configopt "CONFIG_HID"
-	ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-	ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
+	if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
+	fi
 }
 
 fi
