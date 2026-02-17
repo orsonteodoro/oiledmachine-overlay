@@ -2866,6 +2866,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 	)
 }
 

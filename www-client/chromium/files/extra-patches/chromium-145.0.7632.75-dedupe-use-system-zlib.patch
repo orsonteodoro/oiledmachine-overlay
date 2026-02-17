@@ -1,0 +1,13 @@
+--- a/third_party/angle/src/libANGLE/MemoryProgramCache.cpp.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/angle/src/libANGLE/MemoryProgramCache.cpp	2026-02-16 16:41:52.798002403 -0800
+@@ -12,7 +12,9 @@
+ #endif
+ 
+ // Include zlib first, otherwise FAR gets defined elsewhere.
+-#define USE_SYSTEM_ZLIB
++#ifndef USE_SYSTEM_ZLIB
++#  define USE_SYSTEM_ZLIB
++#endif
+ #include "compression_utils_portable.h"
+ 
+ #include "libANGLE/MemoryProgramCache.h"
