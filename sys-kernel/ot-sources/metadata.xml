@@ -775,7 +775,7 @@ TBM=0
     | 2023 - 2024      | Reproducibility /        | Gentoo                  | Overlay               | BBR2, BBR3, Clang CFI, EP800, genpatches, kernel_compiler_patch, NEST,          |
     |                  | auto-configuration [4] / |                         |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]                   |
     |                  | customization / PGO      |                         |                       |                                                                                 |
-    | 2024 - today     | Uptime-critical /        | Gentoo                  | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C             |
+    | 2024 - today     | Uptime-critical /        | Gentoo                  | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C,            |
     |                  | DoSless-critical [9] /   |                         |                       | PREEMPT_RT, Zen Kernel [8]                                                      |
     |                  | score-critical [5]       |                         |                       |                                                                                 |
 
