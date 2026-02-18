@@ -81,3 +81,62 @@
  }
  
  config("core_include_dirs") {
+--- a/v8/include/v8-function-callback.h.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/v8/include/v8-function-callback.h	2026-02-18 08:07:40.122268408 -0800
+@@ -673,7 +673,14 @@ Local<Value> FunctionCallbackInfo<T>::op
+ 
+ template <typename T>
+ Local<Object> FunctionCallbackInfo<T>::This() const {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+   return Local<Object>::FromSlot(&values_[kReceiverIndex]);
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ }
+ 
+ template <typename T>
+@@ -700,7 +707,14 @@ Isolate* FunctionCallbackInfo<T>::GetIso
+ 
+ template <typename T>
+ ReturnValue<T> FunctionCallbackInfo<T>::GetReturnValue() const {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+   return ReturnValue<T>(&values_[kReturnValueIndex]);
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ }
+ 
+ template <typename T>
+@@ -739,12 +753,26 @@ Local<Object> PropertyCallbackInfo<T>::T
+ 
+ template <typename T>
+ Local<Object> PropertyCallbackInfo<T>::HolderV2() const {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+   return Local<Object>::FromSlot(&args_[kHolderIndex]);
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ }
+ 
+ template <typename T>
+ ReturnValue<T> PropertyCallbackInfo<T>::GetReturnValue() const {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+   return ReturnValue<T>(&args_[kReturnValueIndex]);
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ }
+ 
+ template <typename T>
