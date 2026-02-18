@@ -863,8 +863,8 @@ TBM=0
     -O level                      | 2                              | 2                              | 3                          | 2
     TBM                           | Y                              | Y                              | Y                          | Y
     Mitigated attack vectors [42] | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
-    Criticality                   | Security-critical (arm64) [34] | Security-critical (arm64) [34] | Balanced [34]              | Balanced
-                                  | Balanced (non arm64)           | Balanced (non arm64)           |                            |
+    Criticality                   | Security-critical (arm64) [34] | Security-critical (arm64) [34] | Balanced [34]              | Uptime-critical /
+                                  | Balanced (non arm64)           | Balanced (non arm64)           |                            | Balanced
     Security grade [40]           | B-                             | B                              | B                          | C
     Performance grade [41]        | C                              | C                              | B                          | B
     Uptime grade [38]             | C                              | C                              | C                          | A
