@@ -2176,6 +2176,7 @@ TBM=0
 
       external-audio:behringer
       external-audio:bose
+      external-audio:esi
       external-audio:native-instruments
       external-audio:pioneer
       external-audio:rane
