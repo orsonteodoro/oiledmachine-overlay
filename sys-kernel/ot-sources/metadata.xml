@@ -765,19 +765,19 @@ TBM=0
     | 2024 - today     | AI influenced + eclass assist   | From AI + cybersecurity | AI assistant             | Yes               | Lightweight [6]        | Yes           | Yes             |
     |                  |                                 | studies/advisories      |                          |                   |                        |               |                 |
 
-    | Approximate year | Criticality or focus     | Development environment   | Availability          | Patchsets applied during era                                                |
-    | ---              | ---                      | ---                       | ---                   | ---                                                                         |
-    | 2000 - 2002      | Operationality /         | Stampede, Enoch           | Local copy            | Point releases                                                              |
-    |                  | Performance              |                           |                       |                                                                             |
-    | 2002 - 2009      | Performance-critical     | Gentoo                    | Local copy            | ck (RDSL), point releases, PREEMPT_RT                                       |
-    | 2009 - 2023      | Security-critical or     | Gentoo                    | Local copy or overlay | BBR2, BBR3, ck (BFS, MuQSS), EP800 [3], genpatches, kernel_compiler_patch,  |
-    |                  | Performance-critical     |                           |                       | PaX/grsecurity, point releases, PREEMPT_RT, TRESOR, UKSM, Zen Kernel [8]    |
-    | 2023 - 2024      | Reproducibility /        | Gentoo                    | Overlay               | BBR2, BBR3, Clang CFI, EP800, genpatches, kernel_compiler_patch, NEST,      |
-    |                  | auto-configuration [4] / |                           |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]               |
-    |                  | customization / PGO      |                           |                       |                                                                             |
-    | 2024 - today     | Uptime-critical /        | Gentoo                    | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C         |
-    |                  | DoSless-critical [9] /   |                           |                       | PREEMPT_RT, Zen Kernel [8]                                                  |
-    |                  | score-critical [5]       |                           |                       |                                                                             |
+    | Approximate year | Criticality or focus     | Development environment   | Availability          | Patchsets applied during era                                                    |
+    | ---              | ---                      | ---                       | ---                   | ---                                                                             |
+    | 2000 - 2002      | Operationality /         | Stampede, Enoch           | Local copy            | Point releases                                                                  |
+    |                  | Performance              |                           |                       |                                                                                 |
+    | 2002 - 2009      | Performance-critical     | Gentoo                    | Local copy            | ck (RDSL), point releases, PREEMPT_RT                                           |
+    | 2009 - 2023      | Security-critical or     | Gentoo                    | Local copy or overlay | BBR2, BBR3, BMQ, ck (BFS, MuQSS), EP800 [3], genpatches, kernel_compiler_patch, |
+    |                  | Performance-critical     |                           |                       | PaX/grsecurity, PDS, point releases, PREEMPT_RT, TRESOR, UKSM, Zen Kernel [8]   |
+    | 2023 - 2024      | Reproducibility /        | Gentoo                    | Overlay               | BBR2, BBR3, Clang CFI, EP800, genpatches, kernel_compiler_patch, NEST,          |
+    |                  | auto-configuration [4] / |                           |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]                   |
+    |                  | customization / PGO      |                           |                       |                                                                                 |
+    | 2024 - today     | Uptime-critical /        | Gentoo                    | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C             |
+    |                  | DoSless-critical [9] /   |                           |                       | PREEMPT_RT, Zen Kernel [8]                                                      |
+    |                  | score-critical [5]       |                           |                       |                                                                                 |
 
     [1] Performance, security, uptime
     [2] Clean install then configured based on memory, observations, or feelings.
