@@ -970,14 +970,14 @@ TBM=0
          closer to vanilla to maximize uptime later on.
     [52] It is assumed to be only used for these specific cases.
          For general use, use the balanced builder kernel instead.
-         For shopping, legal, sensitive data use cases, use secure kernel
-         instead.  It is assumed multiple kernels are built.  The general
-         purpose kernels used by other kernel packages are like automatic drive,
-         but the kernels in this package are treated like manual drive.
-         The idea is to switch kernel gears to maximize the security
-         or performance benefit.  Most of the time, the builder kernel
-         will be used.  Once your done gaming or djing, switch immediately
-         back to the general purpose builder kernel.
+         For shopping, legal, or handling sensitive data use cases, use the
+         secure kernel instead.  It is assumed multiple kernels are built.  The
+         general purpose kernels used by other kernel packages are like driving
+         with automatic, but the kernels in this package are treated like
+         driving manually with a stick shift.  The idea is to switch kernel
+         gears to maximize the security or performance benefit.  Most of the
+         time, the builder kernel will be used.  Once your done gaming or DJing,
+         switch immediately back to the general purpose builder kernel.
         
 
     Commentary:
