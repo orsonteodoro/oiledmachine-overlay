@@ -115,6 +115,10 @@ get_NINJAOPTS() {
 	# This is possibly security DoS issue for large packages like in
 	# Chromium where it slows down the build by adding 2 days additional
 	# build time and stuck with only 1 clang most of the time.
+	#
+	# It is preferred to minimize suffering and legal issues with being late.
+	# This is why the -l option is actually disabled.
+	#
 		#NINJAOPTS="-l$(get_makeopts_loadavg 0)"
 		NINJAOPTS=""
 
