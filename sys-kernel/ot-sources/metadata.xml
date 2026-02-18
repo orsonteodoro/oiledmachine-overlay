@@ -658,7 +658,7 @@ OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.12-dj-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_DRIVER_BUNDLE="base:15-da0086nr external-audio:usb-audio"
 OT_KERNEL_CPU_MICROCODE="0"
-OT_KERNEL_CPU_SCHED="eevdf-interactive"
+OT_KERNEL_CPU_SCHED="eevdf-throughput" # Prevent studders from autogroup
 OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="dj"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
@@ -777,7 +777,7 @@ TBM=0
     RANDSTRUCT                    | N                           | N                           | N                             | M [16]                         |
     Swap                          | Y [29]                      | N [18]                      | N [18]                        | N [17]                         |
     LSMS                          | [21a]                       | [21b]                       | [21b]                         | [21c]                          |
-    CPU scheduler                 | eevdf-throughput            | eevdf-autogroup / scx_lavd  | eevdf-interactive / scx_flash | eevdf-autogroup [20]           |
+    CPU scheduler                 | eevdf-throughput            | eevdf-autogroup / scx_lavd  | eevdf-throughput / scx_flash  | eevdf-autogroup [20]           |
     HZ                            | 250                         | 1000                        | 1000                          | 1000 [46][47]                  |
     IO schedulers                 | [27a]                       | [27a]                       | [27a]                         | [27c]                          |
     TCP congestion control        | [26a]                       | [26b]                       | [26b]                         | Cubic[48]                      |
@@ -1464,6 +1464,8 @@ TBM=0
                           | predictibility       |          |             |               |            |               |
       scx_lavd            | Latency-critical     | 8        | 9           | High          | 8 - 8.5    | 65 - 75 FPS   | 120 - 140 FPS
 
+      autogroup=n is the same as cfs-throughput or eevdf-throughput.
+      autogroup=y is the same as cfs-autogroup, cfs-interactive, eevdf-autogroup, or eevdf-interactive.
       CFS is kernel version < 6.6.
       EEVDF is kernel version >= 6.6.
       scx_lavd is currently more popular than scx_bpfland for gamers.
