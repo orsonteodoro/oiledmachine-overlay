@@ -788,8 +788,8 @@ TBM=0
         weighted linear combo formula.
     [6] Debloated initially with make menuconfig (ncurses).
     [7] Script based builds aka automated build scripts.
-    [8] Only the core zen-sauce is applied.  The idea is that 20% of the secret
-        sauce code produces 80% of the results.
+    [8] Only the core zen-sauce is applied.  The idea is that 20% or all of the
+        secret sauce code produces 80% of the results.
     [9] Meaning a lagless and crashless experience.
 
     Comparison for examples:
