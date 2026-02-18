@@ -757,7 +757,7 @@ TBM=0
 
     | Approximate year | Config method                   | Research                | Engineering approach     | Reproducible? [1] | Bloat?                 | Scripts? [7]  | Custom patches? |
     | ---              | ---                             | ---                     | ---                      | ---               | ---                    | ---           | ---             |
-    | 2000 - 2002      | make config or make menuconfig  | Experiental             | Config                   | No [2]            | Defaults to minimalist | No            | No              |
+    | 2000 - 2002      | make config or make menuconfig  | Experiental             | Config                   | No [2]            | Defaults or minimalist | No            | No              |
     | 2002 - 2009      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist [6]         | No            | Yes             |
     | 2009 - 2023      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist [6]         | Yes           | Yes             |
     | 2023 - 2024      | Eclass assist + research papers | Experiental + from peer | Community mods + my mods | Yes               | Lightweight [6]        | Yes           | Yes             |
@@ -765,28 +765,31 @@ TBM=0
     | 2024 - today     | AI influenced + eclass assist   | From AI + cybersecurity | AI assistant             | Yes               | Lightweight [6]        | Yes           | Yes             |
     |                  |                                 | studies/advisories      |                          |                   |                        |               |                 |
 
-    | Approximate year | Criticality or focus     | Development environment   | Availability          | Patchsets applied during era                                                    |
-    | ---              | ---                      | ---                       | ---                   | ---                                                                             |
-    | 2000 - 2002      | Operationality /         | Stampede, Enoch           | Local copy            | Point releases                                                                  |
-    |                  | Performance              |                           |                       |                                                                                 |
-    | 2002 - 2009      | Performance-critical     | Gentoo                    | Local copy            | ck (RDSL), point releases, PREEMPT_RT                                           |
-    | 2009 - 2023      | Security-critical or     | Gentoo                    | Local copy or overlay | BBR2, BBR3, BMQ, ck (BFS, MuQSS), EP800 [3], genpatches, kernel_compiler_patch, |
-    |                  | Performance-critical     |                           |                       | PaX/grsecurity, PDS, point releases, PREEMPT_RT, TRESOR, UKSM, Zen Kernel [8]   |
-    | 2023 - 2024      | Reproducibility /        | Gentoo                    | Overlay               | BBR2, BBR3, Clang CFI, EP800, genpatches, kernel_compiler_patch, NEST,          |
-    |                  | auto-configuration [4] / |                           |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]                   |
-    |                  | customization / PGO      |                           |                       |                                                                                 |
-    | 2024 - today     | Uptime-critical /        | Gentoo                    | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C             |
-    |                  | DoSless-critical [9] /   |                           |                       | PREEMPT_RT, Zen Kernel [8]                                                      |
-    |                  | score-critical [5]       |                           |                       |                                                                                 |
+    | Approximate year | Criticality or focus     | Development environment | Availability          | Patchsets applied during era                                                    |
+    | ---              | ---                      | ---                     | ---                   | ---                                                                             |
+    | 2000 - 2002      | Operationality /         | Stampede, Enoch         | Local copy            | Point releases                                                                  |
+    |                  | Performance              |                         |                       |                                                                                 |
+    | 2002 - 2009      | Performance-critical     | Gentoo                  | Local copy            | ck (RDSL), point releases, PREEMPT_RT                                           |
+    | 2009 - 2023      | Security-critical or     | Gentoo                  | Local copy or overlay | BBR2, BBR3, BMQ, ck (BFS, MuQSS), EP800 [3], genpatches, kernel_compiler_patch, |
+    |                  | Performance-critical     |                         |                       | PaX/grsecurity, PDS, point releases, PREEMPT_RT, TRESOR, UKSM, Zen Kernel [8]   |
+    | 2023 - 2024      | Reproducibility /        | Gentoo                  | Overlay               | BBR2, BBR3, Clang CFI, EP800, genpatches, kernel_compiler_patch, NEST,          |
+    |                  | auto-configuration [4] / |                         |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]                   |
+    |                  | customization / PGO      |                         |                       |                                                                                 |
+    | 2024 - today     | Uptime-critical /        | Gentoo                  | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C             |
+    |                  | DoSless-critical [9] /   |                         |                       | PREEMPT_RT, Zen Kernel [8]                                                      |
+    |                  | score-critical [5]       |                         |                       |                                                                                 |
 
     [1] Performance, security, uptime
-    [2] Clean install then configured based on memory, observations, or feelings.
+    [2] I would do a clean install then configure based on memory, observations,
+        or feelings.
     [3] EP800 is the custom webcam driver I maintain.
     [4] Focused on kernel config flags completeness requested by ebuilds.
-    [5] Estimated scores based on either the AI's algorithm or the fallback weighted linear combo formula.
+    [5] Estimated scores based on either the AI's algorithm or the fallback
+        weighted linear combo formula.
     [6] Debloated initially with make menuconfig (ncurses).
     [7] Script based builds aka automated build scripts.
-    [8] Only the core zen-sauce is applied.  The idea is that 20% of the secret sauce code produces 80% of the results.
+    [8] Only the core zen-sauce is applied.  The idea is that 20% of the secret
+        sauce code produces 80% of the results.
     [9] Meaning a lagless and crashless experience.
 
     Comparison for examples:
@@ -5764,14 +5767,14 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="gost">
       Add support for GOST (Kuznyechik block cipher)
     </flag>
+    <flag name="graphicsmagick">
+      Adds build time logo conversion support.
+    </flag>
     <flag name="gtk">
       Add support for gconfig, the GTK+2 kernel config editor
     </flag>
     <flag name="gzip">
       Add support for gzip compression
-    </flag>
-    <flag name="graphicsmagick">
-      Adds build time logo conversion support.
     </flag>
     <flag name="nest">
       Adds the per-core Nest task scheduler for 10% to 2x the benefit.  It uses
