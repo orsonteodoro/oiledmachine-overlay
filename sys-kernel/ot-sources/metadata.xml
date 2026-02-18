@@ -785,7 +785,7 @@ TBM=0
     [5] Estimated scores based on either the AI's algorithm or the fallback weighted linear combo formula.
     [6] Debloated initially with make menuconfig (ncurses).
     [7] Script based builds aka automated build scripts.
-    [8] Only the core Zen Sauce applied.  The idea is that 20% of the code produces 80% of the results.
+    [8] Only the core zen-sauce is applied.  The idea is that 20% of the secret sauce code produces 80% of the results.
 
     Comparison for examples:
 
