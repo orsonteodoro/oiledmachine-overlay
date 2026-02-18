@@ -11198,12 +11198,15 @@ ot-kernel-driver-bundle_add_external_audio() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "external-audio:2010s"\
 |"external-audio:behringer"\
+|"external-audio:bose"\
 |"external-audio:pioneer"\
 |"external-audio:rane"\
+|"external-audio:companion-5"\
 |"external-audio:djm-900nxs2"\
 |"external-audio:djm-450"\
 |"external-audio:djm-750"\
 |"external-audio:djm-850"\
+|"external-audio:revolve+-soundlink"\
 |"external-audio:sl-1"\
 |"external-audio:umc202hd"\
 |"external-audio:umc204hd"\
@@ -11214,7 +11217,7 @@ ot-kernel-driver-bundle_add_external_audio() {
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB"
-		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO" # 2004, 2012, 2015, 2016, 2017
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
@@ -11231,7 +11234,8 @@ ot-kernel-driver-bundle_add_external_audio() {
 		ot-kernel_y_configopt "CONFIG_SND_USB_UA101" # 2003, 2005
 	fi
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
-"external-audio:2010s"\
+"external-audio:2000s"\
+|"external-audio:2010s"\
 |"external-audio:2020s"\
 |"external-audio:native-instruments"\
 |"external-audio:rigkontrol2"\
@@ -11254,10 +11258,11 @@ ot-kernel-driver-bundle_add_external_audio() {
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB"
-		ot-kernel_y_configopt "CONFIG_SND_USB_CAIAQ" # 2006 2007, 2008, 2009
+		ot-kernel_y_configopt "CONFIG_SND_USB_CAIAQ" # 2006, 2007, 2008, 2009
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"external-audio:2000s"\
 "external-audio:2010s"\
 |"external-audio:terratec"\
 |"external-audio:dmx-6fire-usb"\
@@ -11267,7 +11272,7 @@ ot-kernel-driver-bundle_add_external_audio() {
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB"
-		ot-kernel_y_configopt "CONFIG_SND_USB_6FIRE"
+		ot-kernel_y_configopt "CONFIG_SND_USB_6FIRE" # 2008
 	fi
 
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
