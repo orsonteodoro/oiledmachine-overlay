@@ -11178,6 +11178,108 @@ ot-kernel-driver-bundle_add_gameport_to_5_pin_midi_support() {
 	fi
 }
 
+# Currently DJ external audio interfaces listed
+ot-kernel-driver-bundle_add_external_interfaces() {
+	local tags="${1}"
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "external-audio:" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SND_PCM"
+		ot-kernel_y_configopt "CONFIG_SND_SEQUENCER"
+		if [[ "${tags}" =~ ("usb-2.0"|"usb-3.0") ]] ; then
+			ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+			ot-kernel_y_configopt "CONFIG_USB_GADGET"
+			ot-kernel_y_configopt "CONFIG_USB_CONFIGFS"
+			ot-kernel_y_configopt "CONFIG_SND"
+			ot-kernel_y_configopt "CONFIG_USB_CONFIGFS_F_UAC2" # 2006, Support 192 kHZ aubio
+		fi
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"external-audio:2010s"\
+|"external-audio:behringer"\
+|"external-audio:uca202"\
+|"external-audio:uca222"\
+|"external-audio:usb-audio"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"external-audio:2020s"\
+|"external-audio:edirol"\
+|"external-audio:ua-101"\
+|"external-audio:ua-1000"\
+|"external-audio:ua101"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_UA101" # 2003, 2005
+	fi
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"external-audio:2010s"\
+|"external-audio:2020s"\
+|"external-audio:native-instruments"\
+|"external-audio:rigkontrol2"\
+|"external-audio:rigkontrol3"\
+|"external-audio:kore-controller"\
+|"external-audio:kore-controller-2"\
+|"external-audio:audio-kontrol-1"\
+|"external-audio:audio-2-dj"\
+|"external-audio:audio-4-dj"\
+|"external-audio:audio-8-dj"\
+|"external-audio:traktor-audio-2"\
+|"external-audio:guitar-rig-session-i/o"\
+|"external-audio:guitar-rig-mobile"\
+|"external-audio:traktor-kontrol-x1"\
+|"external-audio:traktor-kontrol-s4"\
+|"external-audio:maschine-controller"\
+|"external-audio:usb-caiaq"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_CAIAQ" # 2006 2007, 2008, 2009
+	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"external-audio:2010s"\
+|"external-audio:terratec"\
+|"external-audio:dmx-6fire-usb"\
+|"external-audio:usb-6fire"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_6FIRE"
+	fi
+}
+
+ot-kernel-driver-bundle_add_dj_inputs() {
+	local tags="${1}"
+	# For DJ Controller jog wheels and button mapping support
+	# It should be 2 Core, SSD, 4 GiB RAM minimum, 8 GiB RAM recommended for laptop.
+	# The sofware sets the limits.
+	if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
+	fi
+}
+
 ot-kernel-driver-bundle_add_musician_support() {
 	local tags="${1}"
 	ot-kernel_y_configopt "CONFIG_SOUND"
@@ -11196,17 +11298,8 @@ ot-kernel-driver-bundle_add_musician_support() {
 	fi
 	ot-kernel_y_configopt "CONFIG_SND_UMP_LEGACY_RAWMIDI" # MIDI 2.0 support for RawMidi
 
-	# For DJ Controller jog wheels and button mapping support
-	# It should be 2 Core, SSD, 4 GiB RAM minimum, 8 GiB RAM recommended for laptop.
-	# The sofware sets the limits.
-	if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_USB_HID"
-		ot-kernel_y_configopt "CONFIG_INPUT"
-		ot-kernel_y_configopt "CONFIG_HID"
-		ot-kernel_y_configopt "CONFIG_HID_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_HID_MULTITOUCH"
-	fi
+	ot-kernel-driver-bundle_add_dj_inputs "${tags}"
+	ot-kernel-driver-bundle_add_external_interfaces "${tags}"
 }
 
 fi

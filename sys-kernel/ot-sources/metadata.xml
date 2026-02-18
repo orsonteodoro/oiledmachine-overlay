@@ -2161,6 +2161,14 @@ TBM=0
       Sound card module names:  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L9119
       Sound card product names:  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L9325
 
+      For external DJ interfaces, you can add the following
+
+      external-audio:2010s
+      external-audio:2020s
+      external-audio:behringer
+      external-audio:native-instruments
+      external-audio:terratec
+
       For Wi-Fi, you can quick add one of the following Wi-Fi vendors for the
       preselected driver bundles if you don't know the model:
 
