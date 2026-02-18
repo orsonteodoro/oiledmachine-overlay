@@ -787,7 +787,7 @@ TBM=0
     -O level                      | 2                           | 3                           | 3                             | 2                              |
     TBM                           | Y                           | Y                           | N                             | N [36]                         |
     Mitigated attack vectors [42] | CE, PE, DoS, DT, ID ; [14]  | DoS [14]                    | DoS [14]                      | CE, PE, DoS, DT, ID            |
-    Posture                       | Balanced                    | Performance-critical        | Performance-critical          | Security-critical [34]         |
+    Criticality                   | Balanced                    | Performance-critical        | Performance-critical          | Security-critical [34]         |
                                   |                             |                             |                               |                                |
     Security grade [40]           | C                           | F                           | F                             | A                              |
     Performance grade [41]        | B                           | A                           | A                             | B or C-F [39][45]              |
@@ -825,8 +825,8 @@ TBM=0
     -O level                      | 2                              | 2                              | 3                          | 2
     TBM                           | Y                              | Y                              | Y                          | Y
     Mitigated attack vectors [42] | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
-    Posture                       | Security-critical (arm64) [34] | Security-critical (arm64) [34] | Balanced [34]              | Balanced
-                                  | Balanced (non amd64)           | Balanced (non arm64)           |                            |
+    Criticality                   | Security-critical (arm64) [34] | Security-critical (arm64) [34] | Balanced [34]              | Balanced
+                                  | Balanced (non arm64)           | Balanced (non arm64)           |                            |
     Security grade [40]           | B-                             | B                              | B                          | C
     Performance grade [41]        | C                              | C                              | B                          | B
     Uptime grade [38]             | C                              | C                              | C                          | A
@@ -863,7 +863,7 @@ TBM=0
     -O level                      |                             |                       | 2                          |
     TBM                           |                             |                       | Y                          |
     Mitigated attack vectors [42] |                             |                       | CE, PE, DoS, DT, ID ; [14] |
-    Posture                       |                             |                       | Security-critical [34]     |
+    Criticality                   |                             |                       | Balanced [34]              |
     Security grade [40]           |                             |                       | B                          |
     Performance grade [41]        |                             |                       | B                          |
     Uptime grade [38]             |                             |                       | C                          |
@@ -924,6 +924,8 @@ TBM=0
     [33] Default off but can be overridable with
          OT_KERNEL_KCONFIG[CONFIG_FORTIFY_SOURCE]=y
     [34] Based on hardening flags plus sanitizer
+         HWTAGS KASAN is security-critical (A grade security), but
+         KFENCE is balanced (B grade security)
     [34a] Can switch to mq-deadline, kyber post compile during runtime
     [34b] Can switch to mq-deadline, kyber, bfq post compile during runtime
     [35a] May miss releases or may have uncheck patch failures that block update
