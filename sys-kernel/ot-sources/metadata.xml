@@ -1445,20 +1445,25 @@ TBM=0
 
       Estimated scores:
 
-      Configuration     | Criticality          | Security | Performance | Interactivity | High poly FPS | Low poly FPS
-      ---               | ---                  | ---      | ---         | ---           | ---           | ---
-      BORE              | Latency-critical /   | 8        | 8.5 - 9     | High          | 62 - 72       | 115 - 135 FPS
-                        | interactive focusd   |          |             |               |               |
-      CFS (Pre 6.6)     | Balanced /           | 9.5      | 7 - 8       | Medium        | 50 - 60 FPS   |  90 - 110 FPS
-                        | fairness focused     |          |             |               |               |
-      EEVDF (6.6+)      | Balanced             | 9        | 8           | Medium        | 55 - 65 FPS   | 100 - 120 FPS
-      Project C         | Performance-critical | 8        | 8           | High          | 60 - 70 FPS   | 110 - 130 FPS
-      scx_bpfland       | Latency-critical /   | 8        | 8.5 - 9     | Very high     | 63 - 75 FPS   | 118 - 140 FPS 
-                        | interactive focus    |          |             |               |               |
-      scx_flash         | Balanced / Firness & | 8        | 8 - 8.5     | Medium - High | 58 - 68 FPS   | 105 - 125 FPS
-                        | predictibility       |          |             |               |               |
-      scx_lavd          | Latency-critical     | 8        | 9           | High          | 65 - 75 FPS   | 120 - 140 FPS
+      Configuration       | Criticality          | Security | Performance | Interactivity | Troughput | High poly FPS | Low poly FPS
+      ---                 | ---                  | ---      | ---         | ---           | ---       | ---           | ---
+      BORE                | Latency-critical /   | 8        | 8.5 - 9     | High          | 8 - 8.5   | 62 - 72       | 115 - 135 FPS
+                          | interactive focusd   |          |             |               |           |               |
+      CFS (autogroup=n)   | Balanced /           | 9.5      | 7 - 8       | Low - Medium  | 8.5 - 9   | 45 - 55 FPS   |  85 - 105 FPS
+                          | fairness focused     |          |             |               |           |               |
+      CFS (autogroup=y)   | Balanced /           | 9.5      | 7 - 8       | Medium        | 8         | 50 - 60 FPS   |  90 - 110 FPS
+                          | fairness focused     |          |             |               |           |               |
+      EEVDF (autogroup=n) | Balanced             | 9        | 8           | Medium        | 8.5 - 9   | 52 - 62 FPS   |  95 - 115 FPS
+      EEVDF (autogroup=y) | Balanced             | 9        | 8           | Medium - High | 8 - 8.5   | 55 - 65 FPS   | 100 - 120 FPS
+      Project C           | Performance-critical | 8        | 8           | High          | 8.5       | 60 - 70 FPS   | 110 - 130 FPS
+      scx_bpfland         | Latency-critical /   | 8        | 8.5 - 9     | Very high     | 8 - 8.5   | 63 - 75 FPS   | 118 - 140 FPS 
+                          | interactive focus    |          |             |               |           |               |
+      scx_flash           | Balanced / Firness & | 8        | 8 - 8.5     | Medium - High | 8.5       | 58 - 68 FPS   | 105 - 125 FPS
+                          | predictibility       |          |             |               |           |               |
+      scx_lavd            | Latency-critical     | 8        | 9           | High          | 8 - 8.5   | 65 - 75 FPS   | 120 - 140 FPS
 
+      CFS is kernel version < 6.6.
+      EEVDF is kernel version >= 6.6.
       scx_lavd is currently more popular than scx_bpfland for gamers.
 
       Use cases for Rust based CPU schedulers
