@@ -770,12 +770,12 @@ TBM=0
     |                  | Performance              |                           |                       |                                                                             |
     | 2002 - 2009      | Performance-critical     | Gentoo                    | Local copy            | ck (RDSL), point releases, PREEMPT_RT                                       |
     | 2009 - 2023      | Security-critical or     | Gentoo                    | Local copy or overlay | BBR2, BBR3, ck (BFS, MuQSS), EP800 [3], genpatches, kernel_compiler_patch,  |
-    |                  | Performance-critical     |                           |                       | PaX/grsecurity, point releases, PREEMPT_RT, TRESOR, UKSM, Zen Kernel        |
+    |                  | Performance-critical     |                           |                       | PaX/grsecurity, point releases, PREEMPT_RT, TRESOR, UKSM, Zen Kernel [8]    |
     | 2023 - 2024      | Reproducibility /        | Gentoo                    | Overlay               | BBR2, BBR3, Clang CFI, EP800, genpatches, kernel_compiler_patch, NEST,      |
-    |                  | auto-configuration [4] / |                           |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel                   |
+    |                  | auto-configuration [4] / |                           |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]               |
     |                  | customization / PGO      |                           |                       |                                                                             |
     | 2024 - today     | Uptime-critical /        | Gentoo                    | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C         |
-    |                  | score-critical [5] /     |                           |                       | PREEMPT_RT, Zen Kernel                                                      |
+    |                  | score-critical [5] /     |                           |                       | PREEMPT_RT, Zen Kernel [8]                                                  |
     |                  | config review and verify |                           |                       |                                                                             |
 
     [1] Performance, security, uptime
@@ -785,6 +785,7 @@ TBM=0
     [5] Estimated scores based on either the AI's algorithm or the fallback weighted linear combo formula.
     [6] Debloated initially with make menuconfig (ncurses).
     [7] Script based builds aka automated build scripts.
+    [8] Only the core Zen Sauce applied.  The idea is that 20% of the code produces 80% of the results.
 
     Comparison for examples:
 
