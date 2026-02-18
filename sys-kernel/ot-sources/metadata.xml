@@ -755,7 +755,7 @@ TBM=0
 
     Kernel customization journey
 
-    | Approximate year | Config method                   | Research                | Engineering approach     | Reproducible? [1] | Bloat?                 | Script based? | Custom patches? |
+    | Approximate year | Config method                   | Research                | Engineering approach     | Reproducible? [1] | Bloat?                 | Scripts? [7]  | Custom patches? |
     | ---              | ---                             | ---                     | ---                      | ---               | ---                    | ---           | ---             |
     | 2000 - 2002      | make config or make menuconfig  | Experiental             | Config                   | No [2]            | Defaults to minimalist | No            | No              |
     | 2002 - 2009      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist             | No            | Yes             |
@@ -784,6 +784,7 @@ TBM=0
     [4] Focused on kernel config flags completeness requested by ebuilds.
     [5] Estimated scores based on either the AI's algorithm or the fallback weighted linear combo formula.
     [6] Debloated initially with make menuconfig (ncurses).
+    [7] Script based builds aka automated build scripts.
 
     Comparison for examples:
 
