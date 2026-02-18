@@ -766,7 +766,7 @@ TBM=0
 
     | Approximate year | Criticality or focus     | Development environment   | Availability          | Patchsets applied during era                                                |
     | ---              | ---                      | ---                       | ---                   | ---                                                                         |
-    | 2000 - 2002      | Operationality /         | Mandrake, Stampede, Enoch | Local copy            | Point releases                                                              |
+    | 2000 - 2002      | Operationality /         | Stampede, Enoch           | Local copy            | Point releases                                                              |
     |                  | Performance              |                           |                       |                                                                             |
     | 2002 - 2009      | Performance-critical     | Gentoo                    | Local copy            | ck (RDSL), point releases, PREEMPT_RT                                       |
     | 2009 - 2023      | Security-critical or     | Gentoo                    | Local copy or overlay | BBR2, BBR3, ck (BFS, MuQSS), EP800 [3], genpatches, kernel_compiler_patch,  |
