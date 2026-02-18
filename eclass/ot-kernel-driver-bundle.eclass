@@ -11198,11 +11198,16 @@ ot-kernel-driver-bundle_add_external_audio() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "external-audio:2010s"\
 |"external-audio:behringer"\
+|"external-audio:pioneer"\
 |"external-audio:rane"\
+|"external-audio:djm-900nxs2"\
+|"external-audio:djm-450"\
+|"external-audio:djm-750"\
+|"external-audio:djm-850"\
+|"external-audio:sl-1"\
 |"external-audio:umc202hd"\
 |"external-audio:umc204hd"\
 |"external-audio:umc404hd"\
-|"external-audio:sl-1"\
 |"external-audio:usb-audio"\
 ) \
 	]] ; then

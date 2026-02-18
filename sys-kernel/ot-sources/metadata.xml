@@ -2176,14 +2176,19 @@ TBM=0
 
       external-audio:behringer
       external-audio:native-instruments
+      external-audio:pioneer
       external-audio:rane
       external-audio:terratec
 
       By driver name
 
+      (These drivers require the snd- prefix when loading.)
+
       external-audio:ua101
+      external-audio:usb-6fire
       external-audio:usb-audio
       external-audio:usb-caiaq
+
 
       For Wi-Fi, you can quick add one of the following Wi-Fi vendors for the
       preselected driver bundles if you don't know the model:
