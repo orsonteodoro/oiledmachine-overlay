@@ -775,8 +775,8 @@ TBM=0
     |                  | auto-configuration [4] / |                           |                       | point releases, Project C, PREEMPT_RT, TRESOR, Zen Kernel [8]               |
     |                  | customization / PGO      |                           |                       |                                                                             |
     | 2024 - today     | Uptime-critical /        | Gentoo                    | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C         |
-    |                  | score-critical [5] /     |                           |                       | PREEMPT_RT, Zen Kernel [8]                                                  |
-    |                  | config review and verify |                           |                       |                                                                             |
+    |                  | DoSless-critical [9] /   |                           |                       | PREEMPT_RT, Zen Kernel [8]                                                  |
+    |                  | score-critical [5]       |                           |                       |                                                                             |
 
     [1] Performance, security, uptime
     [2] Clean install then configured based on memory, observations, or feelings.
@@ -786,6 +786,7 @@ TBM=0
     [6] Debloated initially with make menuconfig (ncurses).
     [7] Script based builds aka automated build scripts.
     [8] Only the core zen-sauce is applied.  The idea is that 20% of the secret sauce code produces 80% of the results.
+    [9] Meaning a lagless and crashless experience.
 
     Comparison for examples:
 
