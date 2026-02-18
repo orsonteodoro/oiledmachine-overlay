@@ -11179,7 +11179,7 @@ ot-kernel-driver-bundle_add_gameport_to_5_pin_midi_support() {
 }
 
 # Currently DJ external audio interfaces listed
-ot-kernel-driver-bundle_add_external_interfaces() {
+ot-kernel-driver-bundle_add_external_audio() {
 	local tags="${1}"
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "external-audio:" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SOUND"
@@ -11198,13 +11198,14 @@ ot-kernel-driver-bundle_add_external_interfaces() {
 	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "external-audio:2010s"\
 |"external-audio:behringer"\
-|"external-audio:uca202"\
-|"external-audio:uca222"\
+|"external-audio:rane"\
+|"external-audio:umc202hd"\
+|"external-audio:umc204hd"\
+|"external-audio:umc404hd"\
+|"external-audio:sl-1"\
 |"external-audio:usb-audio"\
 ) \
 	]] ; then
-		ot-kernel_y_configopt "CONFIG_SOUND"
-		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB"
@@ -11263,6 +11264,18 @@ ot-kernel-driver-bundle_add_external_interfaces() {
 		ot-kernel_y_configopt "CONFIG_SND_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB_6FIRE"
 	fi
+
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
+"external-audio:2000s"\
+|"external-audio:behringer"\
+|"external-audio:bcd2000"\
+) \
+	]] ; then
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_BCD2000" # 2005
+	fi
 }
 
 ot-kernel-driver-bundle_add_dj_inputs() {
@@ -11299,7 +11312,7 @@ ot-kernel-driver-bundle_add_musician_support() {
 	ot-kernel_y_configopt "CONFIG_SND_UMP_LEGACY_RAWMIDI" # MIDI 2.0 support for RawMidi
 
 	ot-kernel-driver-bundle_add_dj_inputs "${tags}"
-	ot-kernel-driver-bundle_add_external_interfaces "${tags}"
+	ot-kernel-driver-bundle_add_external_audio "${tags}"
 }
 
 fi

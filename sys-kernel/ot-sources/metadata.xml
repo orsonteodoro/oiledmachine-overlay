@@ -656,7 +656,7 @@ OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
 OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.12-dj-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
-OT_KERNEL_DRIVER_BUNDLE="base:15-da0086nr"
+OT_KERNEL_DRIVER_BUNDLE="base:15-da0086nr external-audio:usb-audio"
 OT_KERNEL_CPU_MICROCODE="0"
 OT_KERNEL_CPU_SCHED="eevdf-interactive"
 OT_KERNEL_DISABLE="0"
@@ -2161,13 +2161,29 @@ TBM=0
       Sound card module names:  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L9119
       Sound card product names:  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-driver-bundle.eclass#L9325
 
-      For external DJ interfaces, you can add the following
+      For DJ audio interfaces, you can add one following to
+      add independent dual-channel audio support or
+      other devices.  A more complete list is searchable in the
+      eclass with the external-audio: prefix.
 
+      By decade
+
+      external-audio:2000s
       external-audio:2010s
       external-audio:2020s
+
+      By vendor
+
       external-audio:behringer
       external-audio:native-instruments
+      external-audio:rane
       external-audio:terratec
+
+      By driver name
+
+      external-audio:ua101
+      external-audio:usb-audio
+      external-audio:usb-caiaq
 
       For Wi-Fi, you can quick add one of the following Wi-Fi vendors for the
       preselected driver bundles if you don't know the model:
