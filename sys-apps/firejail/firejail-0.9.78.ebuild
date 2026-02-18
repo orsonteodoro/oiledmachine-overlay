@@ -3978,31 +3978,31 @@ gen_wrapper() {
 		fi
 	elif [[ "${u}" == "x-terminal-emulator" ]] ; then
 		local terms=(
-			alacritty
-			aterm
-			cool-retro-term
-			gnome-terminal
-			guake
-			kitty
-			kterm
-			konsole
-			lxterminal
-			mate-terminal
-			ptyxis
-			qterminal
-			roxterm
-			rxvt-unicode
-			sakura
-			st
-			terminator
-			terminology
-			tilda
-			wezterm
-			xfce4-terminal
-			xterm
-			yakuake
-			yeahconsole
-			zutty
+			"alacritty"
+			"aterm"
+			"cool-retro-term"
+			"gnome-terminal"
+			"guake"
+			"kitty"
+			"kterm"
+			"konsole"
+			"lxterminal"
+			"mate-terminal"
+			"ptyxis"
+			"qterminal"
+			"roxterm"
+			"rxvt-unicode"
+			"sakura"
+			"st"
+			"terminator"
+			"terminology"
+			"tilda"
+			"wezterm"
+			"xfce4-terminal"
+			"xterm"
+			"yakuake"
+			"yeahconsole"
+			"zutty"
 		)
 		local exe_name
 		for exe_name in ${terms[@]} ; do
