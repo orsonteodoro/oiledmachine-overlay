@@ -1480,7 +1480,7 @@ ewarn "The vpceb25fx driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK" # 2004, 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2017, 2018, 2024
 	ot-kernel_y_configopt "CONFIG_SOUND"
 	ot-kernel-driver-bundle_add_midi_playback_support
-	ot-kernel-driver-bundle_add_musician_support "usb-2.0"
+	ot-kernel-driver-bundle_add_musician_support "2010s usb-2.0"
 
 	ot-kernel-driver-bundle_add_webcam
 	ot-kernel-driver-bundle_add_hid_gaming_mouse_fixes
@@ -1700,7 +1700,7 @@ ewarn "The 15-da0086nr driver bundle has not been recently tested."
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_SKL"
 	ot-kernel_y_configopt "CONFIG_SND_SOC_SOF_INTEL_TOPLEVEL"
 	ot-kernel-driver-bundle_add_midi_playback_support
-	ot-kernel-driver-bundle_add_musician_support "usb-2.0 usb-3.0"
+	ot-kernel-driver-bundle_add_musician_support "2010s usb-2.0 usb-3.0"
 
 	# Bluetooth
 	ot-kernel_y_configopt "CONFIG_BT"
@@ -11197,7 +11197,8 @@ ot-kernel-driver-bundle_add_musician_support() {
 	ot-kernel_y_configopt "CONFIG_SND_UMP_LEGACY_RAWMIDI" # MIDI 2.0 support for RawMidi
 
 	# For DJ Controller jog wheels and button mapping support
-	# It should be 4 Core, SSD, 8 GiB RAM minimum, 16 GiB RAM recommended for laptop.
+	# It should be 2 Core, SSD, 4 GiB RAM minimum, 8 GiB RAM recommended for laptop.
+	# The sofware sets the limits.
 	if [[ "${tags}" =~ ("2010s"|"2020s") ]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_USB_HID"
