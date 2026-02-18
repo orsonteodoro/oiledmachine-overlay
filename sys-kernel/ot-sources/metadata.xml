@@ -758,11 +758,12 @@ TBM=0
     | Approximate year | Config method                   | Research                | Engineering approach     | Reproducible? [1] | Bloat?                 | Scripts? [7]  | Custom patches? |
     | ---              | ---                             | ---                     | ---                      | ---               | ---                    | ---           | ---             |
     | 2000 - 2002      | make config or make menuconfig  | Experiental             | Config                   | No [2]            | Defaults to minimalist | No            | No              |
-    | 2002 - 2009      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist             | No            | Yes             |
-    | 2009 - 2023      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist             | Yes           | Yes             |
+    | 2002 - 2009      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist [6]         | No            | Yes             |
+    | 2009 - 2023      | make menuconfig                 | Experiental + community | Config + community mods  | No [2]            | Minimalist [6]         | Yes           | Yes             |
     | 2023 - 2024      | Eclass assist + research papers | Experiental + from peer | Community mods + my mods | Yes               | Lightweight [6]        | Yes           | Yes             |
     |                  | (ncurses + envvars + USE flags) | reviewed papers         | and build scripts        |                   |                        |               |                 |
-    | 2024 - today     | AI influenced + eclass assist   | From AI                 | AI assistant             | Yes               | Lightweight [6]        | Yes           | Yes             |
+    | 2024 - today     | AI influenced + eclass assist   | From AI + cybersecurity | AI assistant             | Yes               | Lightweight [6]        | Yes           | Yes             |
+    |                  |                                 | studies/advisories      |                          |                   |                        |               |                 |
 
     | Approximate year | Criticality or focus     | Development environment   | Availability          | Patchsets applied during era                                                |
     | ---              | ---                      | ---                       | ---                   | ---                                                                         |
