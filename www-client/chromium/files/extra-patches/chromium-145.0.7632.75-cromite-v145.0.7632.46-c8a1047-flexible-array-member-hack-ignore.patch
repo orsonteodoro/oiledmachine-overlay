@@ -1,89 +1,7 @@
-# Fix issues with -fstrict-flex-arrays=3 when using cromite.
-# These are considered false positives.
-# It is not an issue with ungoogle-chromium and vanilla source.
---- a/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c.orig	2026-02-12 11:44:24.000000000 -0800
-+++ b/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c	2026-02-16 14:30:34.348287424 -0800
-@@ -222,7 +222,14 @@ llvm_regcomp(llvm_regex_t *preg, const c
- 	g->mlen = 0;
- 	g->nsub = 0;
- 	g->ncategories = 1;	/* category 0 is "everything else" */
-+#if defined(__clang__)
-+#pragma clang diagnostic push
-+#pragma clang diagnostic ignored "-Warray-bounds"
-+#endif
- 	g->categories = &g->catspace[-(CHAR_MIN)];
-+#if defined(__clang__)
-+#pragma clang diagnostic pop
-+#endif
- 	(void) memset((char *)g->catspace, 0, NC*sizeof(cat_t));
- 	g->backrefs = 0;
- 
---- a/v8/BUILD.gn.orig	2026-02-16 18:38:38.754650178 -0800
-+++ b/v8/BUILD.gn	2026-02-16 21:51:43.528192508 -0800
-@@ -1819,6 +1819,9 @@ config("toolchain") {
-   if (is_ubsan) {
-     cflags += [ "-fsanitize=undefined" ]
-   }
-+
-+  # Prevent flexible array member error
-+  cflags += [ "-Wno-array-bounds" ]
- }
- 
- config("strict_warnings") {
---- a/gin/BUILD.gn.orig	2026-02-12 11:44:24.000000000 -0800
-+++ b/gin/BUILD.gn	2026-02-17 01:00:23.164088026 -0800
-@@ -100,6 +100,7 @@ component("gin") {
-     sources += [ "public/v8_snapshot_file_type.h" ]
-   }
- 
-   defines = [ "GIN_IMPLEMENTATION" ]
-+  cflags_cc = [ "-Wno-array-bounds" ]
- 
-   public_deps = [
---- a/ui/accessibility/platform/BUILD.gn.orig	2026-02-12 11:44:24.000000000 -0800
-+++ b/ui/accessibility/platform/BUILD.gn	2026-02-17 07:35:27.279877530 -0800
-@@ -30,6 +30,7 @@ component("platform") {
-   output_name = "accessibility_platform"
- 
-   defines = [ "IS_AX_PLATFORM_IMPL" ]
-+  cflags_cc = [ "-Wno-array-bounds" ]
- 
-   visibility = [
-     "//chrome/browser/accessibility:utils",
---- a/third_party/blink/renderer/platform/BUILD.gn.orig	2026-02-17 08:03:05.130200023 -0800
-+++ b/third_party/blink/renderer/platform/BUILD.gn	2026-02-17 10:06:21.196525134 -0800
-@@ -1684,13 +1684,16 @@ component("platform") {
-     }
-   }
- 
-+  cflags = []
-   if (current_cpu == "loong64") {
--    cflags = [
-+    cflags += [
-       "-mlsx",
-       "-flax-vector-conversions=all",
-     ]
-   }
- 
-+  cflags += [ "-Wno-array-bounds" ]
-+
-   if (is_apple) {
-     sources += [
-       "fonts/mac/font_platform_data_mac.h",
---- a/third_party/blink/renderer/core/BUILD.gn.orig	2026-02-12 11:44:24.000000000 -0800
-+++ b/third_party/blink/renderer/core/BUILD.gn	2026-02-17 17:33:33.033564802 -0800
-@@ -130,6 +130,8 @@ config("config") {
-       ]
-     }
-   }
-+
-+  cflags += [ "-Wno-array-bounds" ]
- }
- 
- config("core_include_dirs") {
---- a/v8/include/v8-function-callback.h.orig	2026-02-12 11:44:24.000000000 -0800
+diff -u b/v8/include/v8-function-callback.h b/v8/include/v8-function-callback.h
+--- b/v8/include/v8-function-callback.h	2026-02-18 18:05:27.457673134 -0800
 +++ b/v8/include/v8-function-callback.h	2026-02-18 08:07:40.122268408 -0800
-@@ -673,7 +673,14 @@ Local<Value> FunctionCallbackInfo<T>::op
+@@ -673,7 +673,14 @@
  
  template <typename T>
  Local<Object> FunctionCallbackInfo<T>::This() const {
@@ -98,7 +16,7 @@
  }
  
  template <typename T>
-@@ -700,7 +707,14 @@ Isolate* FunctionCallbackInfo<T>::GetIso
+@@ -700,7 +707,14 @@
  
  template <typename T>
  ReturnValue<T> FunctionCallbackInfo<T>::GetReturnValue() const {
@@ -113,7 +31,22 @@
  }
  
  template <typename T>
-@@ -739,12 +753,26 @@ Local<Object> PropertyCallbackInfo<T>::T
+@@ -719,7 +733,14 @@
+ 
+ template <typename T>
+ bool FunctionCallbackInfo<T>::IsConstructCall() const {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+   return I::SmiValue(values_[kFrameTypeIndex]) == I::kFrameTypeApiConstructExit;
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ }
+ 
+ template <typename T>
+@@ -732,12 +753,26 @@
  
  template <typename T>
  Local<Object> PropertyCallbackInfo<T>::HolderV2() const {
@@ -140,3 +73,20 @@
  }
  
  template <typename T>
+--- a/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c	2026-02-16 14:30:34.348287424 -0800
+@@ -222,7 +222,14 @@ llvm_regcomp(llvm_regex_t *preg, const c
+ 	g->mlen = 0;
+ 	g->nsub = 0;
+ 	g->ncategories = 1;	/* category 0 is "everything else" */
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+ 	g->categories = &g->catspace[-(CHAR_MIN)];
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+ 	(void) memset((char *)g->catspace, 0, NC*sizeof(cat_t));
+ 	g->backrefs = 0;
+ 
