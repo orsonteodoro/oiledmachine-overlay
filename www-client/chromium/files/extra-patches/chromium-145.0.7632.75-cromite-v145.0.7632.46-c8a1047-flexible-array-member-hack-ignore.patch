@@ -213,3 +213,20 @@ unchanged:
  	(void) memset((char *)g->catspace, 0, NC*sizeof(cat_t));
  	g->backrefs = 0;
  
+--- a/third_party/blink/renderer/core/layout/inline/line_info_list.h.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/blink/renderer/core/layout/inline/line_info_list.h	2026-02-19 06:21:25.134864721 -0800
+@@ -81,7 +81,14 @@ class LineInfoList {
+  private:
+   LineInfo& UnusedInstance() {
+     DCHECK(IsEmpty());
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+     return line_infos_[0];
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+   }
+ 
+   wtf_size_t size_ = 0;
