@@ -777,7 +777,8 @@ TBM=0
     |                  | customization / PGO      |                         |                       |                                                                                 |
     | 2024 - today     | Uptime-critical /        | Gentoo                  | Overlay               | EP800, genpatches, kernel_compiler_patch, point releases, Project C,            |
     |                  | DoSless-critical [9] /   |                         |                       | PREEMPT_RT, Zen Kernel [8]                                                      |
-    |                  | score-critical [5]       |                         |                       |                                                                                 |
+    |                  | score-critical [5] /     |                         |                       |                                                                                 |
+    |                  | driver bundles           |                         |                       |                                                                                 |
 
     [1] Performance, security, uptime
     [2] I would do a clean install then configure based on memory, observations,
