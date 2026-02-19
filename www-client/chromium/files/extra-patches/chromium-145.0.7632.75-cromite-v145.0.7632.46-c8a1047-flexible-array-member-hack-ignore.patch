@@ -1,39 +1,22 @@
---- a/v8/src/api/api-arguments.h.orig	2026-02-12 11:44:24.000000000 -0800
-+++ b/v8/src/api/api-arguments.h	2026-02-18 20:02:30.346449977 -0800
-@@ -193,8 +193,15 @@ class PropertyCallbackArguments final :
-   template <typename T>
-   static DirectHandle<AccessorInfo> GetAccessorInfo(
-       const PropertyCallbackInfo<T>& info) {
-+#if defined(__clang__)
-+#pragma clang diagnostic push
-+#pragma clang diagnostic ignored "-Warray-bounds"
-+#endif
-     return Cast<AccessorInfo>(
-         DirectHandle<Object>::FromSlot(&info.args_[kCallbackInfoIndex]));
-+#if defined(__clang__)
-+#pragma clang diagnostic pop
-+#endif
-   }
- 
-   // Returns whether given v8::PropertyCallbackInfo<T> object is named/indexed.
-@@ -324,7 +331,14 @@ class FunctionCallbackArguments : public
-   // v8::FunctionCallbackInfo<T>.
-   template <typename T>
-   static Tagged<Object> GetTarget(const FunctionCallbackInfo<T>& info) {
-+#if defined(__clang__)
-+#pragma clang diagnostic push
-+#pragma clang diagnostic ignored "-Warray-bounds"
-+#endif
-     return Tagged<Object>(info.values_[kTargetIndex]);
-+#if defined(__clang__)
-+#pragma clang diagnostic pop
-+#endif
-   }
- 
-  private:
---- a/v8/include/v8-function-callback.h.orig	2026-02-18 20:12:00.397218520 -0800
+diff -u b/v8/include/v8-function-callback.h b/v8/include/v8-function-callback.h
+--- b/v8/include/v8-function-callback.h	2026-02-18 22:04:47.473278847 -0800
 +++ b/v8/include/v8-function-callback.h	2026-02-18 20:04:07.096282764 -0800
-@@ -673,7 +673,14 @@ Local<Value> FunctionCallbackInfo<T>::op
+@@ -197,7 +197,14 @@
+                 kIsolateIndex - kReturnValueIndex);
+ 
+   internal::Address* address_of_first_argument() const {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+     return &values_[kFirstJSArgumentIndex];
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+   }
+ 
+   V8_INLINE FunctionCallbackInfo() = default;
+@@ -666,7 +673,14 @@
  
  template <typename T>
  Local<Object> FunctionCallbackInfo<T>::This() const {
@@ -48,7 +31,7 @@
  }
  
  template <typename T>
-@@ -689,7 +696,14 @@ Local<Value> FunctionCallbackInfo<T>::Ne
+@@ -682,7 +696,14 @@
  
  template <typename T>
  Local<Value> FunctionCallbackInfo<T>::Data() const {
@@ -63,7 +46,7 @@
    return api_internal::GetFunctionTemplateData(GetIsolate(), target);
  }
  
-@@ -700,12 +714,26 @@ Isolate* FunctionCallbackInfo<T>::GetIso
+@@ -693,12 +714,26 @@
  
  template <typename T>
  ReturnValue<T> FunctionCallbackInfo<T>::GetReturnValue() const {
@@ -90,7 +73,7 @@
  }
  
  template <typename T>
-@@ -715,8 +743,15 @@ int FunctionCallbackInfo<T>::Length() co
+@@ -708,8 +743,15 @@
  
  template <typename T>
  bool PropertyCallbackInfo<T>::IsNamed() const {
@@ -106,7 +89,7 @@
  }
  
  template <typename T>
-@@ -726,7 +761,14 @@ Isolate* PropertyCallbackInfo<T>::GetIso
+@@ -719,7 +761,14 @@
  
  template <typename T>
  Local<Value> PropertyCallbackInfo<T>::Data() const {
@@ -121,7 +104,7 @@
    internal::Address data =
        I::ReadTaggedPointerField(callback_info, I::kCallbackInfoDataOffset);
    return Local<Value>::New(GetIsolate(), data);
-@@ -734,26 +776,54 @@ Local<Value> PropertyCallbackInfo<T>::Da
+@@ -727,26 +776,54 @@
  
  template <typename T>
  Local<Object> PropertyCallbackInfo<T>::This() const {
@@ -176,6 +159,43 @@
    return v8::internal::ShouldThrowOnError(
        reinterpret_cast<v8::internal::Isolate*>(GetIsolate()));
  }
+only in patch2:
+unchanged:
+--- a/v8/src/api/api-arguments.h.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/v8/src/api/api-arguments.h	2026-02-18 20:02:30.346449977 -0800
+@@ -193,8 +193,15 @@ class PropertyCallbackArguments final :
+   template <typename T>
+   static DirectHandle<AccessorInfo> GetAccessorInfo(
+       const PropertyCallbackInfo<T>& info) {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+     return Cast<AccessorInfo>(
+         DirectHandle<Object>::FromSlot(&info.args_[kCallbackInfoIndex]));
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+   }
+ 
+   // Returns whether given v8::PropertyCallbackInfo<T> object is named/indexed.
+@@ -324,7 +331,14 @@ class FunctionCallbackArguments : public
+   // v8::FunctionCallbackInfo<T>.
+   template <typename T>
+   static Tagged<Object> GetTarget(const FunctionCallbackInfo<T>& info) {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+     return Tagged<Object>(info.values_[kTargetIndex]);
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+   }
+ 
+  private:
+only in patch2:
+unchanged:
 --- a/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c.orig	2026-02-12 11:44:24.000000000 -0800
 +++ b/third_party/swiftshader/third_party/llvm-subzero/lib/Support/regcomp.c	2026-02-16 14:30:34.348287424 -0800
 @@ -222,7 +222,14 @@ llvm_regcomp(llvm_regex_t *preg, const c
