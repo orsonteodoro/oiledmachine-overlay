@@ -7682,10 +7682,21 @@ _src_install() {
 		&& use X \
 		&& echo "true" \
 		|| echo "false")
+
+	# Prevent corruption or DoS
+	local flavor_name="chromium"
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		flavor_name="cromite"
+	fi
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		flavor_name="ungoogled-chromium"
+	fi
+
 	sed -e  "
 		s:/usr/lib/:/usr/$(get_libdir)/:g;
 		s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;
 		s:@@OZONE_AUTO_SESSION@@:${ozone_auto_session}:g;
+		s:@@FLAVOR_NAME@@:${flavor_name}:g;
 		" \
 		"${FILESDIR}/chromium-launcher-r7.sh" \
 		> \
@@ -8052,15 +8063,6 @@ ewarn "please complete the configuration of this system before logging any bugs.
 ewarn
 	fi
 einfo "Since the build is done, you may remove /usr/share/chromium folder."
-	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
-ewarn
-ewarn "If there is a segfault after clicking cancel for the"
-ewarn "\"Authentication required\" dialog or a console message about"
-ewarn "ERROR:components/content_settings/core/browser/content_settings_pref.cc:<...>] Invalid pattern strings,"
-ewarn "the ~/.config/chromium/Default needs to be moved or removed to resolve"
-ewarn "the issue."
-ewarn
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

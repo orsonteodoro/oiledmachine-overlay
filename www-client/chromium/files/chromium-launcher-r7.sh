@@ -29,7 +29,7 @@ esac
 if [[ ${EUID} == 0 && -O ${XDG_CONFIG_HOME:-${HOME}} ]]; then
 	# Running as root with HOME owned by root.
 	# Pass --user-data-dir to work around upstream failsafe.
-	CHROMIUM_FLAGS="--user-data-dir=${XDG_CONFIG_HOME:-${HOME}/.config}/chromium
+	CHROMIUM_FLAGS="--user-data-dir=${XDG_CONFIG_HOME:-${HOME}/.config}/@@FLAVOR_NAME@@
 		${CHROMIUM_FLAGS}"
 fi
 
