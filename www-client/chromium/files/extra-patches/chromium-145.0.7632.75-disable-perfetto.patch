@@ -1,4 +1,40 @@
-diff -u b/content/browser/tracing/tracing_controller_impl.cc b/content/browser/tracing/tracing_controller_impl.cc
+diff -u b/content/browser/tracing/traces_internals/traces_internals_handler.cc b/content/browser/tracing/traces_internals/traces_internals_handler.cc
+--- b/content/browser/tracing/traces_internals/traces_internals_handler.cc	2026-02-19 17:08:25.513002360 -0800
++++ b/content/browser/tracing/traces_internals/traces_internals_handler.cc	2026-02-08 20:53:53.650991803 -0800
+@@ -110,6 +110,7 @@
+   ~TraceReader() = default;
+ };
+ 
++#if defined(RTC_USE_PERFETTO)
+ void AddCategoriesToList(
+     const perfetto::internal::TrackEventCategoryRegistry& registry,
+     std::vector<traces_internals::mojom::TraceCategoryPtr>& categories) {
+@@ -132,6 +133,7 @@
+     categories.push_back(std::move(mojom_category));
+   }
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -278,6 +280,7 @@
+ 
+ void TracesInternalsHandler::GetTrackEventCategories(
+     GetTrackEventCategoriesCallback callback) {
++#if defined(RTC_USE_PERFETTO)
+   std::vector<traces_internals::mojom::TraceCategoryPtr> categories;
+ 
+   AddCategoriesToList(base::perfetto_track_event::internal::kCategoryRegistry,
+@@ -286,6 +289,7 @@
+   AddCategoriesToList(GetWebRtcTrackEventCategoryRegistry(), categories);
+ 
+   std::move(callback).Run(std::move(categories));
++#endif
+ }
+ 
+ void TracesInternalsHandler::GetBufferUsage(GetBufferUsageCallback callback) {
+only in patch2:
+unchanged:
 --- b/content/browser/tracing/tracing_controller_impl.cc	2026-02-19 15:30:37.358466599 -0800
 +++ b/content/browser/tracing/tracing_controller_impl.cc	2026-02-14 17:20:43.883025210 -0800
 @@ -103,6 +103,7 @@
@@ -122,26 +158,6 @@ unchanged:
    if (is_castos) {
      sources += [
        "tracing/cast_tracing_agent.cc",
-only in patch2:
-unchanged:
---- a/content/browser/tracing/traces_internals/traces_internals_handler.cc.orig	2026-02-08 20:50:24.184904574 -0800
-+++ b/content/browser/tracing/traces_internals/traces_internals_handler.cc	2026-02-08 20:53:53.650991803 -0800
-@@ -280,6 +280,7 @@ void TracesInternalsHandler::StopTraceSe
- 
- void TracesInternalsHandler::GetTrackEventCategories(
-     GetTrackEventCategoriesCallback callback) {
-+#if defined(RTC_USE_PERFETTO)
-   std::vector<traces_internals::mojom::TraceCategoryPtr> categories;
- 
-   AddCategoriesToList(base::perfetto_track_event::internal::kCategoryRegistry,
-@@ -288,6 +289,7 @@ void TracesInternalsHandler::GetTrackEve
-   AddCategoriesToList(GetWebRtcTrackEventCategoryRegistry(), categories);
- 
-   std::move(callback).Run(std::move(categories));
-+#endif
- }
- 
- void TracesInternalsHandler::GetBufferUsage(GetBufferUsageCallback callback) {
 only in patch2:
 unchanged:
 --- a/third_party/webrtc_overrides/init_webrtc.h.orig	2026-01-06 16:50:30.000000000 -0800
