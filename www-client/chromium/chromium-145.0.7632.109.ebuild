@@ -201,7 +201,7 @@ RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or L
 SHADOW_CALL_STACK=0 # Global variable
 
 GCC_PV="10.2.1" # Minimum
-CROMITE_PV="145.0.7632.46"
+CROMITE_PV="145.0.7632.76"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 ESBUILD_PV="0.25.1"
@@ -209,7 +209,7 @@ LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="145.0.7632.75-1"
+UNGOOGLED_CHROMIUM_PV="145.0.7632.109-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -220,7 +220,7 @@ VULKAN_PV="1.4.331"
 ZLIB_PV="1.3.1"
 
 COPIUM_COMMIT="fe1caafa06f27542c18a881348f78e984e2d9fe2"
-CROMITE_HASH="c8a1047c2a5f3456670e40c98e82a46d0001bfde" # Not the same as the tagged commit
+CROMITE_HASH="5342ca5f64ca7da15a07d2cefee953514d540807" # Not the same as the tagged commit but from the commit message
 OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 # chromium-tools/get-chromium-toolchain-strings.py (or just use Chromicler)
 # Node for M145+ should be 24.12.0 but that's not packaged in Gentoo yet. See #969145
@@ -435,11 +435,13 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Feb 13, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1770954264 # From `date +%s -d "2026-02-12 19:44:24 PST"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/02/stable-channel-update-for-desktop_13.html"
+MITIGATION_DATE="Feb 18, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1771400074 # From `date +%s -d "2026-02-17 23:34:34 PST"` From tag in GH or upstream repo
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/02/stable-channel-update-for-desktop_18.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-2441;UAF, ITW, ACE, DoS, DT, ID;High"
+	"CVE-2026-2648;HO, OOBW, DoS, DT, ID;High"
+	"CVE-2026-2649;IO, MC, DoS, DT, ID;High"
+	"CVE-2026-2650;HO, MC, DoS, DT, ID;High"
 )
 
 PATENT_STATUS=(
