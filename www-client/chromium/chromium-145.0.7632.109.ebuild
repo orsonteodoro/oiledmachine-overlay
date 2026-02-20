@@ -2860,8 +2860,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-custom-optimization-level.patch"
-		$(use cromite || echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-hardening.patch")
-		$(use cromite && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-hardening-cromite.patch")
+		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-hardening.patch")
+		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-hardening-cromite.patch")
 		"${FILESDIR}/extra-patches/v8-14.3.127.17-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
 
