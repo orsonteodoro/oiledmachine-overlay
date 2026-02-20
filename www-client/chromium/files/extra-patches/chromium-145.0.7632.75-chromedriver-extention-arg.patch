@@ -1,0 +1,12 @@
+--- a/chrome/test/chromedriver/chrome_launcher.cc.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/chrome/test/chromedriver/chrome_launcher.cc	2026-02-20 07:19:40.368935172 -0800
+@@ -1103,7 +1103,8 @@ Status ProcessExtension(const std::strin
+     crx_file::VerifierResult result = crx_file::Verify(
+         extension_crx, crx_file::VerifierFormat::CRX3,
+         {} /** required_key_hashes */, {} /** required_file_hash */,
+-        &public_key_base64, &id, /*compressed_verified_contents=*/nullptr);
++        &public_key_base64, &id, /*compressed_verified_contents=*/nullptr,
++        /*is_extension=*/true);
+     if (result == crx_file::VerifierResult::ERROR_HEADER_INVALID) {
+       return Status(kUnknownError,
+                     "CRX verification failed to parse extension header. Chrome "

@@ -2963,7 +2963,8 @@ einfo "Applying ${x} ... (4)"
 	popd >/dev/null 2>&1 || die
 
 	local L=(
-		"${FILESDIR}/extra-patches/chromium-145.0.7632.75-cromite-v145.0.7632.46-c8a1047-flexible-array-member-hack-ignore-v1.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-cromite-v145.0.7632.46-c8a1047-flexible-array-member-hack-ignore-v1.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-chromedriver-extention-arg.patch"
 	)
 	eapply "${L[@]}"
 }
@@ -8051,6 +8052,15 @@ ewarn "please complete the configuration of this system before logging any bugs.
 ewarn
 	fi
 einfo "Since the build is done, you may remove /usr/share/chromium folder."
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+ewarn
+ewarn "If there is a segfault after clicking cancel for the"
+ewarn "\"Authentication required\" dialog or a console message about"
+ewarn "ERROR:components/content_settings/core/browser/content_settings_pref.cc:<...>] Invalid pattern strings,"
+ewarn "the ~/.config/chromium/Default needs to be moved or removed to resolve"
+ewarn "the issue."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
@@ -8087,7 +8097,8 @@ einfo "Since the build is done, you may remove /usr/share/chromium folder."
 # OILEDMACHINE-OVERLAY-TEST: FAILED (interactive) 144.0.7559.59 (20260119) with mold with a completion time of 1 days, 2 hrs, 57 mins, 36 secs using ninja -j4 and upstream hardening flags and -Oshit - segfault when playing yt video
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.59 (20260129) with mold and mdns enabled
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.132 (20260209) with mold and mdns enabled
-# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.75 (20260216) with ungoogled-chromium
+# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.75 (20260216) with ungoogled-chromium and mold
+# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.75 (20260220) with cromite and mold
 
 # 143.0.7499.192 test results:
 # search engine:  passed
