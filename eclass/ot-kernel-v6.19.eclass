@@ -5,15 +5,15 @@
 # TODO package:
 # sphinx-rtd-dark-mode
 
-# @ECLASS: ot-kernel-v6.18.eclass
+# @ECLASS: ot-kernel-v6.19.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Eclass for patching the 6.18.x kernel
+# @BLURB: Eclass for patching the 6.19.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v6.18 eclass defines specific applicable patching for the 6.18.x
+# The ot-kernel-v6.19 eclass defines specific applicable patching for the 6.19.x
 # linux kernel.
 
 case ${EAPI:-0} in
@@ -23,9 +23,9 @@ esac
 
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/master/Documentation/process/changes.rst
-# https://github.com/torvalds/linux/blob/v6.18/Documentation/process/changes.rst
+# https://github.com/torvalds/linux/blob/v6.19/Documentation/process/changes.rst
 # For compiler versions, see
-# https://github.com/torvalds/linux/blob/v6.18/scripts/min-tool-version.sh#L26
+# https://github.com/torvalds/linux/blob/v6.19/scripts/min-tool-version.sh#L26
 
 # To update the array sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
@@ -53,21 +53,21 @@ else
 	MY_PV="${PV}" # ver_test context
 fi
 # AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
-# https://elixir.bootlin.com/linux/v6.18.0/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
-# https://elixir.bootlin.com/linux/v6.18.0/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.1
-# https://elixir.bootlin.com/linux/v6.18.0/source/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
+# https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
+# https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.1
+# https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20251130"
 # The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20250620" # Based on vcn 5.0.1 and dcn 4.0.1 and gc_12_0_1 first presence
 AMDXDNA_FIRMWARE_RELEASE_DATE="20241203" # Based on npu.sbin first presence
-ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.18/drivers/net/wireless/ath/ath12k/hw.c
-IVPU_FIRMWARE_RELEASE_DATE="20250307" # Based on presence of added vpu_37xx_v1 bin referenced in https://github.com/torvalds/linux/blob/v6.18/drivers/accel/ivpu/ivpu_fw.c
-RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v6.18/drivers/bluetooth/btrtl.c
-RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v6.18/drivers/net/wireless/realtek/rtl8xxxu/
-RTLWIFI_FIRMWARE_RELEASE_DATE="20241010" # Based on latest added rtl8192dufw bin from https://github.com/torvalds/linux/blob/v6.18/drivers/net/wireless/realtek/rtlwifi/
-RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin drivers from https://github.com/torvalds/linux/blob/v6.18/drivers/net/wireless/realtek/rtw89
+ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/ath/ath12k/hw.c
+IVPU_FIRMWARE_RELEASE_DATE="20250307" # Based on presence of added vpu_37xx_v1 bin referenced in https://github.com/torvalds/linux/blob/v6.19/drivers/accel/ivpu/ivpu_fw.c
+RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v6.19/drivers/bluetooth/btrtl.c
+RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/realtek/rtl8xxxu/
+RTLWIFI_FIRMWARE_RELEASE_DATE="20241010" # Based on latest added rtl8192dufw bin from https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/realtek/rtlwifi/
+RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin drivers from https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/realtek/rtw89
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -176,9 +176,9 @@ C2TCP_VER="2.2"
 # For CFI users, KCFI merged in 6.1
 CLANG_PGO_SUPPORTED=0 # Needs updated patch for LLVM 20
 # See
-# https://github.com/torvalds/linux/blob/v6.18/tools/build/feature/Makefile#L331
-# https://github.com/torvalds/linux/blob/v6.18/tools/perf/Makefile.config#L276
-# https://github.com/torvalds/linux/blob/v6.18/scripts/kconfig/qconf-cfg.sh
+# https://github.com/torvalds/linux/blob/v6.19/tools/build/feature/Makefile#L331
+# https://github.com/torvalds/linux/blob/v6.19/tools/perf/Makefile.config#L276
+# https://github.com/torvalds/linux/blob/v6.19/scripts/kconfig/qconf-cfg.sh
 CXX_STANDARD="17" # Qt6 (17), Qt5 (11), perf-cpp (17)
 DISABLE_DEBUG_PV="1.4.2"
 EXCLUDE_SCS=(
@@ -232,7 +232,7 @@ PATCH_ALLOW_O3_COMMIT="cd32ade31c0d6aa492e3af6249fa039521129a0d" # id from zen r
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
-PATCH_BFQ_DEFAULT="91a726c9add02c9571702356605e8b37bc80c549" # id from zen repo
+PATCH_BFQ_DEFAULT="8028b431ef43dc6ffe5ade68e14f3ebb2a47589e" # id from zen repo
 PATCH_KCP_COMMIT="" # id from zen repo ; aka more-uarches
 PATCH_KYBER_DEFAULT="e6c9ad463edfd2435888df854bb7250371363b91" # id from zen repo
 PATCH_OPENRGB_COMMIT="" # id from zen repo
@@ -247,7 +247,7 @@ PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 )
 
 PATCH_ZEN_SAUCE_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v6.18...zen-kernel:zen-kernel:6.18/zen-sauce
+# From https://github.com/torvalds/linux/compare/v6.19...zen-kernel:zen-kernel:6.19/zen-sauce
 #
 # Generated from:
 # wget -q -O - https://github.com/torvalds/linux/compare/963f039d266fb2d43626565b06ceb39690640095^..669f0096c96eda5618f4e42766c665f3ed341e92.patch \
@@ -383,7 +383,7 @@ IUSE+="
 "
 fi
 # CET default ON based on CI.
-# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.18/Documentation/process/changes.rst
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.19/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
 ${ARM_FLAGS[@]}
@@ -399,6 +399,7 @@ tresor_sysfs zen-sauce
 
 REQUIRED_USE+="
 	!prjc
+	!zen-sauce
 	?? (
 		qt5
 		qt6
