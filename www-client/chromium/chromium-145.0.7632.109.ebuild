@@ -599,7 +599,7 @@ fi
 is_cromite_compatible() {
 	local c4_min=$(ver_cut "4" "${PV}")
 	local c4_max=$(ver_cut "4" "${PV}")
-	local tolerance=30
+	local tolerance=33
 	c4_min=$(( ${c4_min} - ${tolerance} ))
 	c4_max=$(( ${c4_max} + ${tolerance} ))
 
