@@ -3331,8 +3331,8 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	local esbuild_js="${S}/third_party/devtools-frontend/src/node_modules/esbuild/lib/main.js"
 	local found
 	found=$(awk -F'"' '/if \(binaryVersion !==/ {print $2}' "${esbuild_js}")
-	if [[ "${found}" != "${ESBUILD_VER}" ]]; then
-		die "esbuild version mismatch: expected ${ESBUILD_VER}, found ${found}"
+	if [[ "${found}" != "${ESBUILD_PV}" ]]; then
+		die "esbuild version mismatch: expected ${ESBUILD_PV}, found ${found}"
 	fi
 
 elog "Removing bundled binaries from source tree ..."
