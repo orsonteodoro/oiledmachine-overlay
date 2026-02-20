@@ -230,3 +230,25 @@ unchanged:
    }
  
    wtf_size_t size_ = 0;
+--- a/third_party/pdfium/core/fxge/dib/cstretchengine.cpp.orig	2026-02-12 11:44:24.000000000 -0800
++++ b/third_party/pdfium/core/fxge/dib/cstretchengine.cpp	2026-02-20 00:29:31.612062364 -0800
+@@ -113,12 +113,19 @@ bool CStretchEngine::WeightTable::Calcul
+           // Always room for one weight per size calculation.
+           pixel_weights.weights_[0] = kFixedPointOne;
+         } else {
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
+           UNSAFE_TODO({
+             pixel_weights.weights_[1] =
+                 FixedFromDouble(src_pos - pixel_weights.src_start_ - 0.5f);
+             pixel_weights.weights_[0] =
+                 kFixedPointOne - pixel_weights.weights_[1];
+           });
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
+         }
+       } else {
+         int pixel_pos = static_cast<int>(floor(src_pos));
