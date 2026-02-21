@@ -12664,6 +12664,7 @@ eerror "The scx USE flag requires the debug USE flag."
 eerror "The scx USE flag requires debug be added to OT_KERNEL_USE."
 			die
 		fi
+einfo "Adding support for scx (Rust CPU schedulers)"
 # See
 # https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 # https://github.com/sched-ext/scx/blob/v1.0.20/kernel.config
