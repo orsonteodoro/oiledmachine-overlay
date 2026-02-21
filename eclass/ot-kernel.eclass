@@ -14255,6 +14255,10 @@ einfo
 		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
 		local s=$(clang-major-version)
+		if ver_test "${s}" "-gt" "19" ; then
+ewarn "Using Clang > 19 may make it impossible to merge out-of-source drivers with max compiler slot limit."
+ewarn "One way to avoid this is to disable the kernel_compiler_patch mod."
+		fi
 		if ver_test "${s}" "-lt" "${_llvm_min_slot}" ; then
 eerror "You must switch Clang to >= ${_llvm_min_slot}"
 			die
@@ -14268,6 +14272,10 @@ eerror "You must switch Clang to <= ${_llvm_max_slot}"
 		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
 		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
 		local s=$(gcc-major-version)
+		if ver_test "${s}" "-gt" "14" ; then
+ewarn "Using GCC > 14 may make it impossible to merge out-of-source drivers with max compiler slot limit."
+ewarn "One way to avoid this is to disable the kernel_compiler_patch mod."
+		fi
 		if ver_test "${s}" "-lt" "${_gcc_min_slot}" ; then
 eerror "You must switch GCC to >= ${_gcc_min_slot}"
 			die
