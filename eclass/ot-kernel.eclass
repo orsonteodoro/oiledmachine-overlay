@@ -12682,6 +12682,16 @@ eerror "The scx USE flag requires the debug USE flag."
 eerror "The scx USE flag requires debug be added to OT_KERNEL_USE."
 			die
 		fi
+
+		if ! use dwarf4 ; then
+eerror "The scx USE flag requires the dwarf4 USE flag."
+			die
+		fi
+		if ! [[ "${OT_KERNEL_USE}" =~ (^|" ")"dwarf4"($|" ") ]] ; then
+eerror "The scx USE flag requires dwarf4 be added to OT_KERNEL_USE."
+			die
+		fi
+
 einfo "Adding support for scx (Rust CPU schedulers)"
 # See
 # https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
@@ -12697,7 +12707,8 @@ ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
-		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
+		ot-kernel_y_configopt "CONFIG_COMPILE_TEST"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF4"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 
 ewarn "Enabling CONFIG_TRACING for scx support and lowering security"

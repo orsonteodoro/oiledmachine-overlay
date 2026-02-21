@@ -445,6 +445,7 @@ REQUIRED_USE+="
 	)
 	scx? (
 		debug
+		dwarf4
 		llvm_slot_19
 		rust
 	)
