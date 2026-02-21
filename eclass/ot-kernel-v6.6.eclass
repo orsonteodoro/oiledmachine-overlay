@@ -923,7 +923,7 @@ CDEPEND+="
 		dev-qt/qtwidgets:=
 	)
 	rust? (
-		>=dev-util/cbindgen-0.65.1
+		>=dev-util/bindgen-0.65.1
 		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)

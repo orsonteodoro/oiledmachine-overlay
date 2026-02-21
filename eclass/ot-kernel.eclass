@@ -6548,7 +6548,7 @@ ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
-			ot-kernel_y_configopt "CONFIG_COMPILE_TEST"
+			# ot-kernel_y_configopt "CONFIG_COMPILE_TEST" # Disabled line for Rust support
 			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
@@ -8662,7 +8662,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 		if ver_test "${KV_MAJOR_MINOR}" -le "4.17" ; then
 			ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
 		fi
-		ot-kernel_n_configopt "CONFIG_COMPILE_TEST"
+		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
 
 	# For profile compatibility checks
 	# Profile compatibility based on a bytestring of the compiler version.
@@ -12647,16 +12647,38 @@ ot-kernel_set_rust() {
 	done
 
 	if (( ${found} == 1 )) ; then
-einfo "Adding Rust support"
+einfo "Adding Rust support and lowering security"
 		ot-kernel_y_configopt "CONFIG_RUST"
-		ot-kernel_unset_configopt "CONFIG_MODVERSIONS"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_y_configopt "CONFIG_MODVERSIONS"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_unset_configopt "CONFIG_LTO"
+		ot-kernel_unset_configopt "CONFIG_GENKSYMS"
+		ot-kernel_y_configopt "CONFIG_GENDWARFKSYMS"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_BPF"
+ewarn "Enabling CONFIG_DEBUG_KERNEL for rust support and lowering security"
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel-debugger()
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
+
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
+ewarn "Disabling CONFIG_RANDSTRUCT for rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
-		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+ewarn "Disabling CONFIG_CFI_CLANG for rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
+ewarn "Disabling CONFIG_SHADOW_CALL_STACK for rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_SHADOW_CALL_STACK"
-		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+ewarn "Disabling CONFIG_KASAN_SW_TAGS for rust support and lowering security"
+		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		found=1
 	else
 eerror "Cannot find Rust slot."
@@ -12664,6 +12686,7 @@ eerror "Cannot find Rust slot."
 	fi
 
 	"${RUSTC}" --version || die
+	"${BINDGEN}" --version || die
 
 	if _ot-kernel_is_hardening_level_least_secure ; then
 		:
@@ -12683,12 +12706,22 @@ eerror "The scx USE flag requires debug be added to OT_KERNEL_USE."
 			die
 		fi
 
-		if ! use dwarf4 ; then
-eerror "The scx USE flag requires the dwarf4 USE flag."
+		if use dwarf4 || use dwarf5 || use dwarf-auto ; then
+			:
+		else
+eerror "The scx USE flag requires either the dwarf4, dwarf5, or the dwarf-auto USE flag."
 			die
 		fi
-		if ! [[ "${OT_KERNEL_USE}" =~ (^|" ")"dwarf4"($|" ") ]] ; then
+		if use dwarf4 && ! [[ "${OT_KERNEL_USE}" =~ (^|" ")"dwarf4"($|" ") ]] ; then
 eerror "The scx USE flag requires dwarf4 be added to OT_KERNEL_USE."
+			die
+		fi
+		if use dwarf5 && ! [[ "${OT_KERNEL_USE}" =~ (^|" ")"dwarf5"($|" ") ]] ; then
+eerror "The scx USE flag requires dwarf5 be added to OT_KERNEL_USE."
+			die
+		fi
+		if use dwarf5 && ! [[ "${OT_KERNEL_USE}" =~ (^|" ")"dwarf-auto"($|" ") ]] ; then
+eerror "The scx USE flag requires dwarf-auto be added to OT_KERNEL_USE."
 			die
 		fi
 
@@ -12697,6 +12730,7 @@ einfo "Adding support for scx (Rust CPU schedulers)"
 # https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 # https://github.com/sched-ext/scx/blob/v1.0.20/kernel.config
 ewarn "Enabling CONFIG_BPF_JIT for scx support and lowering security"
+		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_JIT"
 		ot-kernel_y_configopt "CONFIG_BPF_JIT_ALWAYS_ON"
@@ -12707,7 +12741,7 @@ ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
-		ot-kernel_y_configopt "CONFIG_COMPILE_TEST"
+		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF4"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 

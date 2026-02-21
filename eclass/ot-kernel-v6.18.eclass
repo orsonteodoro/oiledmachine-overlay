@@ -445,9 +445,13 @@ REQUIRED_USE+="
 	)
 	scx? (
 		debug
-		dwarf4
 		llvm_slot_19
 		rust
+		|| (
+			dwarf4
+			dwarf5
+			dwarf-auto
+		)
 	)
 	tresor_prompt? (
 		tresor
@@ -943,7 +947,7 @@ CDEPEND+="
 		)
 	)
 	rust? (
-		>=dev-util/cbindgen-0.65.1
+		>=dev-util/bindgen-0.65.1
 		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)
