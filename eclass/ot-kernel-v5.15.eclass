@@ -172,9 +172,9 @@ GCC_PV="5.1"
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64="not supported"
-GCC_MIN_KCP_GRAYSKY2_AMD64=11
+GCC_MIN_KCP_GRAYSKY2_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
-GCC_MIN_KCP_ZEN_SAUCE_AMD64=11
+GCC_MIN_KCP_ZEN_SAUCE_AMD64=10
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
 
@@ -1357,8 +1357,6 @@ eerror
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_KCOV=y" "${path_config}" ; then
 		_gcc_min_slot=12
-	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif grep -q -E -e "^CONFIG_KASAN_SW_TAGS=y" "${path_config}" ; then
 		_gcc_min_slot=11
 	else

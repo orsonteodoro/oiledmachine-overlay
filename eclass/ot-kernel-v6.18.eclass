@@ -201,10 +201,10 @@ GCC_PV="8.1"
 # out-of-source drivers
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
-GCC_MIN_KCP_GENPATCHES_AMD64=14
-GCC_MIN_KCP_GRAYSKY2_AMD64=14
+GCC_MIN_KCP_GENPATCHES_AMD64=10
+GCC_MIN_KCP_GRAYSKY2_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
-GCC_MIN_KCP_ZEN_SAUCE_AMD64=14
+GCC_MIN_KCP_ZEN_SAUCE_AMD64=10
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
 
@@ -1600,9 +1600,7 @@ ot-kernel_get_gcc_min_slot() {
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
 	# Descending sort
-	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 14
-	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y" "${path_config}" ; then
+	if grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y" "${path_config}" ; then
 		_gcc_min_slot=13
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_SPLIT=y" "${path_config}" ; then
 		_gcc_min_slot=12
