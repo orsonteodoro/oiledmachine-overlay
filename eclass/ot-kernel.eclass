@@ -167,14 +167,16 @@ INTEL_MICROCODE_PV="20260210"
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
 IPD_RAW_VER_MAX=9
-KCP_COMMIT_SNAPSHOT="10947ddd06191fd9a6a3e674fa749a2eca0ec298" # 20250128
+KCP_COMMIT_SNAPSHOT="a814e64f4f871a9e4ed74026cfae9bc24fb166ce" # 20250819
 KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72" # >= clang 3.8.0, >= gcc 5.1.0
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI="https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
 KERNEL_PATCH_0_TO_1_URI="https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
 
-if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+if ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.16%2B"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.1.79%2B"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.17-6.1.78"
