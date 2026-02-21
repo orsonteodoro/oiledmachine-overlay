@@ -12600,8 +12600,8 @@ einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
 # guarantees
 #
 ot-kernel_set_rust() {
-	has rust ${IUSE_EFFECTIVE} || return
-	ot-kernel_use rust || return
+	has "rust" ${IUSE_EFFECTIVE} || return
+	ot-kernel_use "rust" || return
 
 	unset RUSTC
 
@@ -12646,7 +12646,7 @@ eerror "Cannot find Rust slot."
 		die
 	fi
 
-	${RUSTC} --version || die
+	"${RUSTC}" --version || die
 
 	if _ot-kernel_is_hardening_level_least_secure ; then
 		:
