@@ -12603,6 +12603,7 @@ ot-kernel_set_rust() {
 	has "rust" ${IUSE_EFFECTIVE} || return
 	ot-kernel_use "rust" || return
 
+	unset BINDGEN
 	unset RUSTC
 
 	declare -A RUST_PV_TO_LLVM_SLOT=(
@@ -12686,6 +12687,7 @@ eerror "Cannot find Rust slot."
 	fi
 
 	"${RUSTC}" --version || die
+	export BINDGEN="/usr/bin/bindgen"
 	"${BINDGEN}" --version || die
 
 	if _ot-kernel_is_hardening_level_least_secure ; then

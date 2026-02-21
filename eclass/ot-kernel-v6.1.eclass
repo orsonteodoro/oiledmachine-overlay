@@ -583,9 +583,9 @@ gen_rust_cdepend() {
 				llvm-core/llvm:${llvm_slot}
 				llvm-core/llvm:=
 				|| (
-					=dev-lang/rust-${s}
+					=dev-lang/rust-${s}[rust-src]
 					dev-lang/rust:=
-					=dev-lang/rust-bin-${s}
+					=dev-lang/rust-bin-${s}[rust-src]
 					dev-lang/rust-bin:=
 				)
 			)
