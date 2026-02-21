@@ -948,7 +948,7 @@ CDEPEND+="
 	)
 	rust? (
 		>=dev-util/bindgen-0.65.1
-		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
+		>=dev-util/pahole-1.27[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)
 		)

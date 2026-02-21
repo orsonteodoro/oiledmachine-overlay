@@ -12653,14 +12653,13 @@ einfo "Adding Rust support and lowering security"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_MODVERSIONS"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
-		ot-kernel_unset_configopt "CONFIG_LTO"
 		ot-kernel_unset_configopt "CONFIG_GENKSYMS"
 		ot-kernel_y_configopt "CONFIG_GENDWARFKSYMS"
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_BPF"
-ewarn "Enabling CONFIG_DEBUG_KERNEL for rust support and lowering security"
+ewarn "Enabling CONFIG_DEBUG_KERNEL for Rust support and lowering security"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
 	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel-debugger()
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
@@ -12668,17 +12667,34 @@ ewarn "Enabling CONFIG_DEBUG_KERNEL for rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
-		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
+		if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
+ewarn "Disabling CONFIG_LTO for scx support and lowering security"
+			ot-kernel_unset_configopt "CONFIG_LTO"		# Required for scx, disabling this disables Clang CFI
+	# pahole 1.27 is needed to avoid disabling CONFIG_DEBUG_INFO_BTF needed by scx.
+			ot-kernel_y_configopt "CONFIG_PAHOLE_HAS_LANG_EXCLUDE"
+		else
+			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+		fi
 
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
-ewarn "Disabling CONFIG_RANDSTRUCT for rust support and lowering security"
+ewarn "Disabling CONFIG_RANDSTRUCT for Rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
-		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
-ewarn "Disabling CONFIG_CFI_CLANG for rust support and lowering security"
-		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
-ewarn "Disabling CONFIG_SHADOW_CALL_STACK for rust support and lowering security"
+		local is_clang_21=0
+		if tc-is-clang ; then
+			local clang_slot=$(clang-major-version)
+			if ver_test "${clang_slot}" "-ge" "21" ; then
+				is_clang_21=1
+			fi
+		fi
+		if (( ${is_clang_21} == 0 )) ; then
+ewarn "Disabling CONFIG_CFI for Rust support and lowering security"
+			ot-kernel_unset_configopt "CONFIG_CFI" # kCFI
+		else
+			ot-kernel_y_configopt "CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC"
+		fi
+ewarn "Disabling CONFIG_SHADOW_CALL_STACK for Rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_SHADOW_CALL_STACK"
-ewarn "Disabling CONFIG_KASAN_SW_TAGS for rust support and lowering security"
+ewarn "Disabling CONFIG_KASAN_SW_TAGS for Rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		found=1
 	else
@@ -12733,10 +12749,10 @@ einfo "Adding support for scx (Rust CPU schedulers)"
 # https://github.com/sched-ext/scx/blob/v1.0.20/kernel.config
 ewarn "Enabling CONFIG_BPF_JIT for scx support and lowering security"
 		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_BPF"
-		ot-kernel_y_configopt "CONFIG_BPF_JIT"
-		ot-kernel_y_configopt "CONFIG_BPF_JIT_ALWAYS_ON"
-		ot-kernel_y_configopt "CONFIG_BPF_JIT_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_BPF"			# Required
+		ot-kernel_y_configopt "CONFIG_BPF_JIT"			# Required
+		ot-kernel_y_configopt "CONFIG_BPF_JIT_ALWAYS_ON"	# Required
+		ot-kernel_y_configopt "CONFIG_BPF_JIT_DEFAULT_ON"	# Required
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 
 ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
@@ -12745,7 +12761,7 @@ ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
 		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF4"
-		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"		# Required
 
 ewarn "Enabling CONFIG_TRACING for scx support and lowering security"
 ewarn "Enabling CONFIG_FTRACE for scx support and lowering security"
@@ -12761,14 +12777,14 @@ ewarn "Enabling CONFIG_KPROBES for scx support and lowering security"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_UPROBE_EVENTS"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
-		ot-kernel_y_configopt "CONFIG_TRACING"		# tracepoints dependency
-		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"	# For scx_lavd's interactivity detection
+		ot-kernel_y_configopt "CONFIG_TRACING"			# tracepoints dependency
+		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"		# For scx_lavd's interactivity detection
 
-		ot-kernel_y_configopt "CONFIG_SCHED_CLASS_EXT"
+		ot-kernel_y_configopt "CONFIG_SCHED_CLASS_EXT"		# Required
 
 ewarn "Enabling CONFIG_DEBUG_KERNEL for scx_p2dq support and lowering security"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL" # Required by scx_p2dq (load balancing)
+		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"		# Required by scx_p2dq (load balancing)
 
 ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
@@ -12776,9 +12792,9 @@ ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security
 
 	# For utils
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_PROC_FS"		# For /proc
-		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"	# For /proc/sys
-		ot-kernel_y_configopt "CONFIG_SYSFS"		# For /sys
+		ot-kernel_y_configopt "CONFIG_PROC_FS"			# For /proc
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"		# For /proc/sys
+		ot-kernel_y_configopt "CONFIG_SYSFS"			# For /sys
 
 	fi
 
