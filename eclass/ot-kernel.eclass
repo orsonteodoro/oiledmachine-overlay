@@ -12629,7 +12629,8 @@ ot-kernel_set_rust() {
 		fi
 	done
 
-	if (( ${found} == 0 )) ; then
+	if (( ${found} == 1 )) ; then
+einfo "Adding Rust support"
 		ot-kernel_y_configopt "CONFIG_RUST"
 		ot-kernel_unset_configopt "CONFIG_MODVERSIONS"
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
