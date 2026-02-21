@@ -12605,12 +12605,29 @@ ot-kernel_set_rust() {
 
 	unset RUSTC
 
+	declare -A RUST_PV_TO_LLVM_SLOT=(
+		# Capped by LLVM_COMPAT
+		["str_1_86_0"]="19"
+		["str_1_85_1"]="19"
+		["str_1_85_0"]="19"
+		["str_1_84_1"]="19"
+		["str_1_84_0"]="19"
+		["str_1_83_0"]="19"
+		["str_1_82_0"]="19"
+		["str_1_81_0"]="18"
+		["str_1_80_1"]="18"
+		["str_1_79_0"]="18"
+		["str_1_78_0"]="18"
+	)
+
 	local found=0
 	local rust_pv=""
+	local s
 	for s in ${RUST_SLOTS[@]} ; do
-		local rust_llvm_slot=${RUST_PV_TO_LLVM_SLOT[${s}]}
+		local key="str_${s//./_}"
+		local rust_llvm_slot=${RUST_PV_TO_LLVM_SLOT["${key}"]}
 		# llvm_slot is associated with CC
-		if ver_test "${rust_llvm_slot}" -ne "${llvm_slot}" ; then
+		if [[ -z "${rust_llvm_slot}" ]] || ver_test "${rust_llvm_slot}" -ne "${llvm_slot}" ; then
 			continue
 		fi
 
@@ -12661,7 +12678,7 @@ eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=r
 eerror "The scx USE flag requires the debug USE flag."
 			die
 		fi
-		if [[ "${OT_KERNEL_USE}" =~ (^|" ")"debug"($|" ") ]] ; then
+		if ! [[ "${OT_KERNEL_USE}" =~ (^|" ")"debug"($|" ") ]] ; then
 eerror "The scx USE flag requires debug be added to OT_KERNEL_USE."
 			die
 		fi

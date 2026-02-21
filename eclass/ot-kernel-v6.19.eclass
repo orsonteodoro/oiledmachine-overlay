@@ -323,20 +323,20 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
-	["1.86.0"]="19"
-	["1.85.1"]="19"
-	["1.85.0"]="19"
-	["1.84.1"]="19"
-	["1.84.0"]="19"
-	["1.83.0"]="19"
-	["1.82.0"]="19"
-	["1.81.0"]="18"
-	["1.80.1"]="18"
-	["1.79.0"]="18"
-	["1.78.0"]="18"
+	["str_1_86_0"]="19"
+	["str_1_85_1"]="19"
+	["str_1_85_0"]="19"
+	["str_1_84_1"]="19"
+	["str_1_84_0"]="19"
+	["str_1_83_0"]="19"
+	["str_1_82_0"]="19"
+	["str_1_81_0"]="18"
+	["str_1_80_1"]="18"
+	["str_1_79_0"]="18"
+	["str_1_78_0"]="18"
 )
 RUST_SLOTS=(
-	# May needs -Z flags for Rust sanitizers and SSP, otherwise Rust drivers/subsystems has no SSP.
+	# It may need the -Z flag for sanitizers.
 	"1.86.0"
 	"1.85.1"
 	"1.85.0"
@@ -677,7 +677,8 @@ KCP_RDEPEND="
 gen_rust_cdepend() {
 	local s
 	for s in ${RUST_SLOTS[@]} ; do
-		local llvm_slot=${RUST_PV_TO_LLVM_SLOT[${s}]}
+		local key="str_${s//./_}"
+		local llvm_slot=${RUST_PV_TO_LLVM_SLOT["${key}"]}
 		echo "
 			llvm_slot_${llvm_slot}?	(
 				llvm-core/clang:${llvm_slot}
