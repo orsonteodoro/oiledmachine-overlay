@@ -1419,6 +1419,17 @@ ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
+	if [[ "${kcp_provider}" =~ ("graysky2"|"genpatches"|"zen-sauce") ]] ; then
+		if grep -q -E -e "^CONFIG_MZEN5=y" "${path_config}" ; then
+eerror
+eerror "CONFIG_MZEN5=y is not supported because it uses a rolling compiler"
+eerror "slot.  Downgrade to CONFIG_MZEN4=y, CONFIG_MNATIVE_AMD=y, or"
+eerror "-march=znver4 to use a LTS compiler slot."
+eerror
+			die
+		fi
+	fi
+
 	# Descending sort
 	if grep -q -E -e "^CONFIG_DEBUG_INFO_SPLIT=y" "${path_config}" ; then
 		_gcc_min_slot=12
