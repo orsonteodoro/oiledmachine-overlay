@@ -157,6 +157,8 @@ CXX_STANDARD="11" # Qt5 (11), perf-cpp (11)
 DISABLE_DEBUG_PV="1.4.2"
 EXTRAVERSION="-ot"
 GCC_PV="4.9"
+# Only LTS compiler slots allowed to avoid issues with closed source or
+# out-of-source drivers
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64="not supported"

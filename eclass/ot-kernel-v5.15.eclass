@@ -167,6 +167,8 @@ EXCLUDE_SCS=(
 )
 EXTRAVERSION="-ot"
 GCC_PV="5.1"
+# Only LTS compiler slots allowed to avoid issues with closed source or
+# out-of-source drivers
 GCC_MAX_SLOT="14"
 GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64="not supported"

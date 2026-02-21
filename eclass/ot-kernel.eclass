@@ -14251,6 +14251,8 @@ einfo
 	strip-unsupported-flags
 
 	# Verify requirements
+	# Only LTS compiler slots allowed to avoid issues with closed source or
+	# out-of-source drivers
 	if ot-kernel_use clang ; then
 		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
