@@ -12656,6 +12656,14 @@ eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=r
 
 	# For Rust based CPU schedulers (e.g. scx_lavd)
 	if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
+		if ! use debug ; then
+eerror "The scx USE flag requires the debug USE flag."
+			die
+		fi
+		if [[ "${OT_KERNEL_USE}" =~ (^|" ")"debug"($|" ") ]] ; then
+eerror "The scx USE flag requires debug be added to OT_KERNEL_USE."
+			die
+		fi
 # See
 # https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 # https://github.com/sched-ext/scx/blob/v1.0.20/kernel.config
