@@ -149,9 +149,11 @@ pkg_setup() {
 	llvm-r2_pkg_setup
 	rust_pkg_setup
 
-	local is_nightly=$("${RUSTC}" --version \
+	"${RUSTC}" --version \
 		| cut -f 2 -d " " \
-		| grep -q -e "nightly")
+		| grep -q -e "nightly" \
+		|| die
+	local is_nightly=$?
 	is_nightly=$(( ${is_nightly} ? 0 : 1 ))
 
 	if use llvm_slot_22 ; then
