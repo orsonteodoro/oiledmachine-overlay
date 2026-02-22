@@ -777,6 +777,7 @@ einfo "Building Rust schedulers"
 	# Upstream default
 		RUSTFLAGS+=" -C opt-level=3"
 	fi
+	export RUSTFLAGS
 
 	_cargo_src_compile ${myrustconf[@]}
 
