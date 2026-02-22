@@ -815,3 +815,11 @@ einfo "Installing tools"
 		newdoc "${readme}" "${readme_name}.md"
 	done
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.20 (INTERACTIVE, 20260222)
+# scx_lavd load: passed
+# scx_lavd used: passed
+# verification:
+# ps -aux | grep scx_lavd
+# cat /sys/kernel/sched_ext/state
+# cat /sys/kernel/sched_ext/root/ops
