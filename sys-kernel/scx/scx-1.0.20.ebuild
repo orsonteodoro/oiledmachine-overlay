@@ -715,6 +715,9 @@ src_unpack() {
 }
 
 src_configure() {
+	# Reduce trashing
+	export CARGO_BUILD_JOBS=1
+
 	if has_version "dev-libs/protobuf:6/6.33" ; then
 		ABSEIL_CPP_SLOT="20250512"
 		PROTOBUF_CPP_SLOT="6"
@@ -728,7 +731,7 @@ src_configure() {
 }
 
 src_compile() {
-einfo "Building rust schedulers"
+einfo "Building Rust schedulers"
 	cargo_src_compile
 
 einfo "Building C schedulers"
