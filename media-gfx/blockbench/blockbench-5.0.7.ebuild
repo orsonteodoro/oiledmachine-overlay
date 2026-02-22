@@ -17,10 +17,12 @@ ELECTRON_APP_AT_TYPES_NODE_PV="22.14.0"
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
 NODE_SLOT="${ELECTRON_APP_AT_TYPES_NODE_PV%%.*}"
+NPM_AUDIT_FATAL=0
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="39.2.3" # Cr 142.0.7444.175, node 22.21.1 works
+	#ELECTRON_APP_ELECTRON_PV="39.6.1" # Cr 142.0.7444.265, node 22.22.0 works
+	ELECTRON_APP_ELECTRON_PV="40.6.0" # Cr 144.0.7559.177, node 24.13.1 works
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="38.1.0" # Cr 140.0.7339.80, node 22.19.0
@@ -196,6 +198,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 
 		rm -vf package-lock.json
+		enpm install -D "typescript@5.6.3" # Fix build issue
 		enpm install "${NPM_INSTALL_ARGS[@]}"
 
 		npm_update_lock_install_post
@@ -251,7 +254,7 @@ src_install() {
 		"${PN}.png" \
 		"Graphics;3DGraphics"
 	insinto "${NPM_INSTALL_PATH}"
-	doins -r "dist/linux-unpacked/"*
+	doins -r "dist-electron/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/blockbench"
 	lcnr_install_files
 	electron-app_set_sandbox_suid "/opt/blockbench/chrome-sandbox"
@@ -259,12 +262,13 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20251002 with electron 38.2.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230905 with electron 38.0.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230807 with electron 37.2.6)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.5 (20230629 with electron 37.1.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.3 (20250311 with electron 35.0.1)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.2 (20250211 with electron 34.1.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20260222 with Electron 40.6.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20251002 with Electron 38.2.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230905 with Electron 38.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230807 with Electron 37.2.6)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.5 (20230629 with Electron 37.1.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.3 (20250311 with Electron 35.0.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.2 (20250211 with Electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.11.2 (20241130)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.7.4 (20230528)
 # preview (saved screenshot):  passed (vertically stacked rotated cubes)

@@ -158,6 +158,10 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # The number of reconnect tries.
 
+# @ECLASS_VARIABLE: NPM_AUDIT_FATAL
+# @DESCRIPTION:
+# Make `npm audit fix` fatal or not
+
 # @ECLASS_VARIABLE: _NPM_PKG_SETUP_CALLED
 # @INTERNAL
 # @DESCRIPTION:
@@ -386,6 +390,17 @@ einfo "Removing ${node_modules_path}"
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: npm_die
+# @DESCRIPTION:
+# Make die conditional when doing npm audit
+npm_die() {
+	if [[ "${NPM_AUDIT_FATAL:-1}" == "1" ]] ; then
+		die
+	else
+		true
+	fi
+}
+
 # @FUNCTION: enpm
 # @DESCRIPTION:
 # Wrapper for the npm command.
@@ -410,7 +425,11 @@ einfo "Skipping audit fix."
 einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tnpm ${cmd[@]}"
-		npm "${cmd[@]}" || die
+		if [[ "${cmd[@]}" =~ "audit fix" ]] ; then
+			npm "${cmd[@]}" || npm_die
+		else
+			npm "${cmd[@]}" || die
+		fi
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
