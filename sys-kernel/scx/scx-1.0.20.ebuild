@@ -765,7 +765,7 @@ einfo "Building Rust schedulers"
 	fi
 
 	local olast=$(get_olast)
-	if [[ "${olast}" =~ ("-O3"|"-Ofast") ]] ; then
+	if [[ "${olast}" =~ ("-O3"|"-O4"|"-Ofast") ]] ; then
 		RUSTFLAGS+=" -C opt-level=3"
 	elif [[ "${olast}" == "-Os" ]] ; then
 		RUSTFLAGS+=" -C opt-level=s"
