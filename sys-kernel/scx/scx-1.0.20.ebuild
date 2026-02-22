@@ -823,3 +823,4 @@ einfo "Installing tools"
 # ps -aux | grep scx_lavd
 # cat /sys/kernel/sched_ext/state
 # cat /sys/kernel/sched_ext/root/ops
+# scx_lavd --monitor 5
