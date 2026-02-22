@@ -1,0 +1,11 @@
+--- a/scheds/include/bpf_arena_spin_lock.h.orig	2026-02-07 00:06:01.000000000 -0800
++++ b/scheds/include/bpf_arena_spin_lock.h	2026-02-21 08:02:48.529208270 -0800
+@@ -250,7 +250,7 @@ static __always_inline int arena_spin_tr
+ }
+ 
+ __noinline __weak
+-int arena_spin_lock_slowpath(arena_spinlock_t __arena __arg_arena *lock, u32 val)
++int arena_spin_lock_slowpath(arena_spinlock_t __arena *lock, u32 val)
+ {
+ 	struct arena_mcs_spinlock __arena *prev, *next, *node0, *node;
+ 	int ret = -ETIMEDOUT;
