@@ -774,8 +774,8 @@ einfo "Building Rust schedulers"
 	elif [[ "${olast}" == "-O2" ]] ; then
 		RUSTFLAGS+=" -C opt-level=2"
 	else
-	# Upstream default
-		RUSTFLAGS+=" -C opt-level=3"
+	# Upstream default at -O3
+		:
 	fi
 	export RUSTFLAGS
 
