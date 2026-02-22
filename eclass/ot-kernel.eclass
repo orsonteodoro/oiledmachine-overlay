@@ -12797,6 +12797,10 @@ ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"		# For /proc/sys
 		ot-kernel_y_configopt "CONFIG_SYSFS"			# For /sys
 
+	# To avoid warnings with direct call to `scx_lavd --performance`
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_IKCONFIG"
+		ot-kernel_y_configopt "CONFIG_IKCONFIG_PROC"
 	fi
 
 # Review.  If old Rust, maybe.  It could be that not all rust modules are not
