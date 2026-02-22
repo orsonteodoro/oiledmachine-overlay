@@ -12669,6 +12669,7 @@ ewarn "Enabling CONFIG_DEBUG_KERNEL for Rust support and lowering security"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
 ewarn "Disabling CONFIG_LTO for scx support and lowering security"
+ewarn "Disabling CONFIG_LTO disables kCFI"
 			ot-kernel_unset_configopt "CONFIG_LTO"		# Required for scx, disabling this disables Clang CFI
 	# pahole 1.27 is needed to avoid disabling CONFIG_DEBUG_INFO_BTF needed by scx.
 			ot-kernel_y_configopt "CONFIG_PAHOLE_HAS_LANG_EXCLUDE"
