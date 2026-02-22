@@ -166,7 +166,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_11"
+IUSE+=" ebuild_revision_12"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_SLOT}[npm,webassembly(+)]
@@ -180,11 +180,31 @@ einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."	
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"1.4.1\"|g" "package-lock.json" || die				# CVE-2022-37601; ZC, DoS, DT, ID; Critical
 			sed -i -e "s|\"json5\": \"^0.5.0\"|\"json5\": \"2.2.3\"|g" "package-lock.json" || die						# CVE-2022-46175; DoS, DT, ID; High
+			sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"7.5.7\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+																			# CVE-2026-26960; DT, ID
+			sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"7.5.7\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+																			# CVE-2026-26960; DT, ID
+			sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"7.5.7\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+																			# CVE-2026-26960; DT, ID
+			sed -i -e "s|\"tar\": \"^6.1.2\"|\"tar\": \"7.5.7\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+																			# CVE-2026-26960; DT, ID
+																			# CVE-2026-23950; DoS, DT, ID
+			sed -i -e "s|\"postcss\": \"^6.0.1\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
+			sed -i -e "s|\"postcss\": \"^8.4.14\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
+			sed -i -e "s|\"postcss\": \"^7.0.36\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
+			sed -i -e "s|\"postcss\": \"^5.2.5\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
+			sed -i -e "s|\"postcss\": \">=6.0\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
 		}
 		fix_lockfile
 		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D ${NPM_INSTALL_ARGS[@]}
 		enpm install "serialize-javascript@^6.0.2" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "tar@7.5.7" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "postcss@8.4.31" ${NPM_INSTALL_ARGS[@]}
 		fix_lockfile
 	fi
 }
