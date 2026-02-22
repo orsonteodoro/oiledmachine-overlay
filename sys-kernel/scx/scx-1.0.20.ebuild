@@ -819,8 +819,16 @@ einfo "Installing tools"
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.20 (INTERACTIVE, 20260222)
 # scx_lavd load: passed
 # scx_lavd used: passed
-# verification:
+#
+# Verification:
 # ps -aux | grep scx_lavd
 # cat /sys/kernel/sched_ext/state
 # cat /sys/kernel/sched_ext/root/ops
 # scx_lavd --monitor 5
+#
+# Contents of /etc/scx_loader/config.toml
+# default_sched = "scx_lavd"
+# default_mode = "Auto"
+# [scheds.'scx_lavd']
+# auto_mode = ["--performance"]
+#
