@@ -552,7 +552,7 @@ LICENSE+="
 "
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" "
+IUSE+=" +lto"
 REQUIRED_USE+="
 	llvm_slot_19
 	^^ (
@@ -730,29 +730,71 @@ src_configure() {
 	cargo_src_configure
 }
 
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	echo "${olast}"
+}
+
+# @FUNCTION: cargo_src_compile
+# @DESCRIPTION:
+# Build the package using cargo build.
+_cargo_src_compile() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	#_cargo_check_initialized
+
+	set -- "${CARGO}" build ${ECARGO_ARGS[@]} "$@"
+	einfo "${@}"
+	cargo_env "${@}" || die "cargo build failed"
+}
+
 src_compile() {
 einfo "Building Rust schedulers"
-	cargo_src_compile
+	local myrustconf=()
+	if use lto ; then
+		myrustconf+=(
+			--profile release
+		)
+	else
+		myrustconf+=(
+			--profile release-fast
+		)
+	fi
+
+	local olast=$(get_olast)
+	if [[ "${olast}" =~ ("-O3"|"-Ofast") ]] ; then
+		RUSTFLAGS+=" -C opt-level=3"
+	elif [[ "${olast}" == "-Os" ]] ; then
+		RUSTFLAGS+=" -C opt-level=s"
+	elif [[ "${olast}" == "-Oz" ]] ; then
+		RUSTFLAGS+=" -C opt-level=z"
+	else
+		RUSTFLAGS+=" -C opt-level=2"
+	fi
+
+	_cargo_src_compile ${myrustconf[@]}
 
 einfo "Building C schedulers"
 	emake BPF_CLANG="$(get_llvm_prefix)/bin/clang"
 }
 
 src_install() {
+	local configuration=$(usex debug "debug" "release")
 einfo "Installing rust schedulers"
 	local sched
 	for sched in "scheds/rust/scx_"* ; do
 einfo "Installing ${sched#scheds/rust/}"
-		local configuration=$(usex debug "debug" "release")
-		dobin "target/${configuration}/${sched#scheds/rust}"
+		dobin "target/"*"/${configuration}/${sched#scheds/rust}"
 	done
 
 einfo "Installing C schedulers"
 	emake INSTALL_DIR="${ED}/usr/bin" install
 
 einfo "Installing tools"
-	local configuration=$(usex debug "debug" "release")
-	dobin "target/${configuration}/"{"scx"{"cash","top"},"vmlinux_docify"}
+	dobin "target/"*"/${configuration}/"{"scx"{"cash","top"},"vmlinux_docify"}
 
 	dodoc "README.md"
 

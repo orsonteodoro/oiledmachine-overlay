@@ -22,4 +22,9 @@
     <changelog>https://github.com/sched-ext/scx/releases</changelog>
     <bugs-to>https://github.com/sched-ext/scx/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="lto">
+      Optimize with LTO
+    </flag>
+  </use>
 </pkgmetadata>
