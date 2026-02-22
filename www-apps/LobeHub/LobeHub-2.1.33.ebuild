@@ -12,25 +12,26 @@ EAPI=8
 # 1.133.4 -> 1.137.0
 # 1.137.0 -> 1.142.8
 # 1.142.8 -> 1.146.0
+# 1.146.0 -> 2.1.33
 
 # Ebuild using React 19
 
 #
 # China distro users, fork ebuild and regenerate the npm lockfile.
 #
-# Contents of /etc/portage/env/lobe-chat.conf:
+# Contents of /etc/portage/env/lobehub.conf:
 #
 #   USE_CN_MIRROR=true
 #
 # Contents of /etc/portage/package.env:
 #
-#   www-apps/lobe-chat lobe-chat.conf
+#   www-apps/LobeHub lobehub.conf
 #
 # Generate the lockfile as follows:
 #
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
-#   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/lobe-chat"
+#   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/LobeHub"
 #   NPM_UPDATER_VERSIONS="1.71.10" npm_updater_update_locks.sh
 #
 
@@ -43,13 +44,11 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.146.0" pnpm_updater_update_locks.sh` to update lockfile
-
-MY_PN="LobeChat"
+# Use `PNPM_UPDATER_VERSIONS="2.1.33" pnpm_updater_update_locks.sh` to update lockfile
 
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_SHARP_USE="exif lcms webp"
-NODE_SLOT="22"
+NODE_SLOT="24" # See .nvmrc or Dockerfile
 NPM_SLOT="3"
 PNPM_AUDIT_FIX=0
 PNPM_DEDUPE=0 # Still debugging
@@ -61,7 +60,7 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="15.4.9"
+NEXTJS_PV="16.1.5"
 SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
 
@@ -81,16 +80,16 @@ inherit dhms desktop edo node-sharp npm pnpm rust xdg
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	EGIT_REPO_URI="https://github.com/lobehub/lobe-chat.git"
-	FALLBACK_COMMIT="f56dab7a48fc681e9ab9645b7a63c45e9cee680b" # Jan 21, 2025
+	EGIT_REPO_URI="https://github.com/lobehub/lobehub.git"
+	FALLBACK_COMMIT="ef0e4a674322a1faa1f7fd2ff70011a2b6a9bb6c" # Feb 21, 2026
 	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${P}"
+	S="${WORKDIR}/${PN,,}-${PV}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${PN,,}-${PV}"
 	SRC_URI="
-https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
+https://github.com/lobehub/lobehub/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
@@ -98,8 +97,7 @@ fi
 DESCRIPTION="A modern-design progressive web app supporting AI chat, function call plugins, multiple open/closed LLM models, RAG, TTS, vision"
 HOMEPAGE="
 	https://lobehub.com/
-	https://github.com/lobehub/lobe-chat
-	https://pypi.org/project/tdir
+	https://github.com/lobehub/lobehub
 "
 LICENSE="
 	(
@@ -111,7 +109,7 @@ LICENSE="
 	)
 "
 # The distro's Apache-2.0 license file does not contain all rights reserved
-# custom - See https://github.com/lobehub/lobe-chat/blob/main/LICENSE
+# custom - See https://github.com/lobehub/lobehub/blob/main/LICENSE
 RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
@@ -135,8 +133,8 @@ REQUIRED_USE="
 # xdg-open is from x11-misc/xdg-utils
 RDEPEND+="
 	${VIPS_RDEPEND}
-	acct-group/lobe-chat
-	acct-user/lobe-chat
+	acct-group/lobehub
+	acct-user/lobehub
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
@@ -155,7 +153,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
+	>=sys-apps/pnpm-10.20.0:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
@@ -207,8 +205,8 @@ setup_build_env() {
 	export NODE_OPTIONS=" --max-old-space-size=6144" # 6144 works but still triggers OOM killer, 8192 worked previously
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
-	# The build variables below can be set in /etc/portage/env/lobe-chat.conf
-	# Then referenced in /etc/portage/package.env with a `www-apps/lobe-chat lobe-chat.conf` line.
+	# The build variables below can be set in /etc/portage/env/lobehub.conf
+	# Then referenced in /etc/portage/package.env with a `www-apps/LobeHub lobehub.conf` line.
 
 	export NEXT_PUBLIC_BASE_PATH="${NEXT_PUBLIC_BASE_PATH}"
 
@@ -262,13 +260,13 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	if use postgres ; then
 		next_public_service_mode="server"
 	fi
-	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
+	cat "${FILESDIR}/lobehub.conf" > "${T}/lobehub.conf"
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
-		"${T}/lobe-chat.conf" \
+		"${T}/lobehub.conf" \
 		|| die
-	#source "${T}/lobe-chat.conf"
+	#source "${T}/lobehub.conf"
 }
 
 gen_git_tag() {
@@ -367,10 +365,10 @@ pnpm_unpack_post() {
 
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
-	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
-#	eapply "${FILESDIR}/${PN}-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
-	eapply "${FILESDIR}/${PN}-1.65.0-sharp-declaration.patch"
-	eapply "${FILESDIR}/${PN}-1.96.14-use-e965-xlsx.patch"
+	eapply "${FILESDIR}/lobe-chat-1.47.17-hardcoded-paths.patch"
+#	eapply "${FILESDIR}/lobe-chat-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
+	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
+	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 
 #	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
@@ -395,9 +393,9 @@ pnpm_unpack_post() {
 		epnpm add -D ${pkgs[@]}
 		pkgs=(
 			"next@${NEXTJS_PV}"								# CVE-2025-29927; ZC, DoS, DT, ID; Critical
-#			"react@19.0.0"
-#			"react-dom@19.0.0"
-			"svix@1.45.1"
+#			"react@19.2.3"
+#			"react-dom@19.2.3"
+			"svix@1.84.1"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 #		epnpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
@@ -411,8 +409,8 @@ pnpm_install_post() {
 		if use postgres ; then
 			local pkgs=(
 				"sharp@${SHARP_PV}"
-				"pg@8.13.1"
-				"drizzle-orm@0.38.2"
+				"pg@8.17.2"
+				"drizzle-orm@0.44.7"
 			)
 			epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 		fi
@@ -450,6 +448,7 @@ pnpm_dedupe_post() {
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
 
+	# xlsx-republish or @e965/xlsx can be used as a drop in replacement of xlsx
 			sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "packages/file-loaders/package.json" || die
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
@@ -791,8 +790,8 @@ gen_config() {
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
-		-e "s|@HOSTNAME@|${lobechat_hostname}|g" \
-		-e "s|@PORT@|${lobechat_port}|g" \
+		-e "s|@HOSTNAME@|${lobehub_hostname}|g" \
+		-e "s|@PORT@|${lobehub_port}|g" \
 		-e "s|@DATABASE_MODE@|${database_mode}|g" \
 		"${T}/${PN}.conf" \
 		|| die
@@ -833,11 +832,11 @@ src_install() {
 	addwrite "/opt/${PN}"
 	rm -rf "/opt/${PN}/"*
 
-	local lobechat_hostname=${LOBECHAT_HOSTNAME:-"localhost"}
-	local lobechat_port=${LOBECHAT_PORT:-3210}
+	local lobehub_hostname=${LOBEHUB_HOSTNAME:-"localhost"}
+	local lobehub_port=${LOBEHUB_PORT:-3210}
 
-einfo "LOBECHAT_HOSTNAME:  ${lobechat_hostname} (user-definable, per-package environment variable)"
-einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment variable)"
+einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
+einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
 
 	_install_webapp_v2
 	gen_config
@@ -856,7 +855,7 @@ einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
 	keepdir "/opt/${PN}"
 ewarn "An install speed up trick is used."
-ewarn "You may need to emerge again if missing /opt/lobe-chat/startServer.js"
+ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
@@ -868,17 +867,17 @@ ewarn "You may need to emerge again if missing /opt/lobe-chat/startServer.js"
 		"${T}/${PN}" \
 		|| die
 
-	local lobechat_uri=${LOBECHAT_URI:-"http://${lobechat_hostname}:${lobechat_port}"}
-einfo "LOBECHAT_URI:  ${lobechat_uri}"
+	local lobehub_uri=${LOBEHUB_URI:-"http://${lobehub_hostname}:${lobehub_port}"}
+einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	sed -i \
-		-e "s|@LOBECHAT_URI@|${lobechat_uri}|g" \
+		-e "s|@LOBEHUB_URI@|${lobehub_uri}|g" \
 		"${T}/${PN}" \
 		|| die
 	doexe "${T}/${PN}"
 
 	make_desktop_entry \
 		"${PN}" \
-		"${MY_PN}" \
+		"${PN}" \
 		"${PN}.png" \
 		"Education;ArtificialIntelligence"
 
@@ -887,7 +886,7 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 	dosym "/var/cache/${PN}" "/opt/${PN}/.next/cache"
 	fowners "${PN}:${PN}" "/var/cache/${PN}"
 
-	fowners "${PN}:${PN}" "/etc/lobe-chat/lobe-chat.conf"
+	fowners "${PN}:${PN}" "/etc/lobehub/lobehub.conf"
 
 	dhms_end
 }
@@ -899,7 +898,7 @@ pkg_preinst() {
 pkg_postinst() {
 	xdg_pkg_postinst
 einfo
-einfo "The documentation for /etc/${PN}/lobe-chat.conf can be found at"
+einfo "The documentation for /etc/lobehub/lobehub.conf can be found at"
 einfo
 einfo "https://lobehub.com/docs/self-hosting/advanced/auth"
 einfo "https://lobehub.com/docs/self-hosting/environment-variables/model-provider"

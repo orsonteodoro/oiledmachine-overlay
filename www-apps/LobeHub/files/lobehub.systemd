@@ -1,11 +1,11 @@
 [Unit]
-Description=Lobe Chat Service
+Description=LobeHub Service
 After=network-online.target
 
 [Service]
-User=lobe-chat
-Group=lobe-chat
-ExecStart=/usr/bin/lobe-chat-start-server
+User=lobehub
+Group=lobehub
+ExecStart=/usr/bin/lobehub-start-server
 Restart=always
 RestartSec=3
 Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"

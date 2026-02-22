@@ -1,0 +1,3 @@
+#!/bin/bash
+LOBEHUB_URI="@LOBEHUB_URI@"
+xdg-open "${LOBEHUB_URI}"
