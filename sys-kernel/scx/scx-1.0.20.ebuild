@@ -773,6 +773,10 @@ einfo "Building Rust schedulers"
 		RUSTFLAGS+=" -C opt-level=z"
 	elif [[ "${olast}" == "-O2" ]] ; then
 		RUSTFLAGS+=" -C opt-level=2"
+	elif [[ "${olast}" == "-O1" ]] ; then
+		RUSTFLAGS+=" -C opt-level=1"
+	elif [[ "${olast}" == "-O0" ]] ; then
+		RUSTFLAGS+=" -C opt-level=0"
 	else
 	# Upstream default at -O3
 		:
