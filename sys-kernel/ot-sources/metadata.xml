@@ -814,11 +814,11 @@ TBM=0
     Retpoline [13]                 | Y                           | N                                | N                                  | Y                              |
     YAMA [12]                      | M [1]                       | N                                | N                                  | M [1]                          |
     Register sanitize on exit [61] | N / Y [65]                  | N                                | N                                  | N / Y [65]                     |
-    Stack sanitize on init [62]    | Y                           | N                                | N                                  | Y                              |
+    Stack sanitize on init [62]    | N / Y [65]                  | N                                | N                                  | N / Y [65]                     |
     Stack sanitize on free         | N/A                         | N/A                              | N/A                                | N/A                            |
     Heap sanitize on init [62]     | N                           | N                                | N                                  | Y                              |
     Heap sanitize on free          | N                           | N                                | N                                  | Y (Zero)                       |
-    RANDSTRUCT                     | N                           | N                                | N                                  | M [16]                         |
+    RANDSTRUCT [70]                | N                           | N                                | N                                  | M [16]                         |
     Swap                           | Y [29]                      | N [18]                           | N [18]                             | N [17]                         |
     LSMS                           | [21a]                       | [21b]                            | [21b]                              | [21c]                          |
     CPU scheduler                  | eevdf-throughput            | eevdf-autogroup / scx_lavd       | eevdf-throughput / scx_flash       | eevdf-autogroup [20]           |
@@ -858,11 +858,11 @@ TBM=0
     Retpoline [13]                 | Y                              | Y                              | Y                             | Y
     YAMA [12]                      | M [25]                         | M                              | Y                             | N
     Register sanitize on exit [61] | N / Y [63]                     | N / Y [64]                     | N                             | N
-    Stack sanitize on init [62]    | Y                              | Y                              | Y                             | Y
+    Stack sanitize on init [62]    | Y                              | Y                              | Y                             | N / Y [65]
     Stack sanitize on exit         | N/A                            | N/A                            | N/A                           | N/A
     Heap sanitize on init [62]     | N / Y [63]                     | N / Y [64]                     | Y                             | N
     Heap sanitize on exit          | N / Y [63]                     | N / Y [64]                     | Y (Poison)                    | N
-    RANDSTRUCT                     | M [16]                         | Y                              | N                             | N
+    RANDSTRUCT [70]                | M [16]                         | Y                              | N                             | N
     Swap                           | Y [29]                         | Y [29]                         | Y [29]                        | Y [29]
     LSMS                           | [21d]                          | [21e]                          | [21f]                         | [21g]
     CPU scheduler                  | eevdf-throughput               | eevdf-throughput               | eevdf-autogroup               | eevdf-throughput
@@ -906,7 +906,7 @@ TBM=0
     Stack sanitize on exit         | N/A                         |                       | N/A                        | 
     Heap sanitize on init [62]     | N                           |                       | Y                          | 
     Heap sanitize on exit          | N                           |                       | N                          | 
-    RANDSTRUCT                     | N                           |                       | N                          |
+    RANDSTRUCT [70]                | N                           |                       | N                          |
     Swap                           | Y                           |                       | Y [29]                     |
     LSMS                           | [21k]                       |                       | [21i]                      |
     CPU scheduler                  | eevdf-throughput            |                       | eevdf-autogroup            |
@@ -927,6 +927,15 @@ TBM=0
     Uptime grade [38]              | A                           |                       | C                          |
     Release schedule grade [37]    | C [68]                      |                       | ?                          |
 
+    Y = Unconditionally Yes
+    N = Unconditionally No
+    M = Conditionally Maybe based on user config/settings or installed components
+    A = A grade, >= 90% coverage or score
+    B = B grade, >= 80% coverage or score
+    C = C grade, >= 70% coverage or score
+    D = D grade, >= 60% coverage or score
+    F = D grade, < 60% coverage or score
+
     [1] Maybe, if a chromium based app is installed
     [2] Increased entropy with RANDOMIZE_MEMORY
     [3] With SECCOMP, SECCOMP_FILTER
@@ -943,7 +952,7 @@ TBM=0
     [14] Some but not all
     [15] Custom patches for sanitizers to panic on violation, so higher
          availability
-    [16] Yes, if GCC used.
+    [16] Yes, if GCC used or Clang >= 16.
     [17] Necessary to prevent plaintext memory dump of keys or sensitive data by
          swap
     [18] Necessary to prevent lag in permadeath gameplay.
@@ -1067,6 +1076,7 @@ TBM=0
     [68] Release versioning is not the same as the kernel point release, >= 2 week release cycles
     [69] Slower release cycles prevent it from picking multiple memory corruption mitigations, but
          a monthly security update is considered standard industry practice.
+    [70] Mitigates PE, DT, ID
 
     Commentary:
 
