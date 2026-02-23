@@ -874,7 +874,7 @@ TBM=0
     io_uring mitigation            | N                              | N                              | N                             | N
     -march                         | generic [32]                   | generic                        | generic                       | i686 [32]
     -O level                       | 2                              | 2                              | 3                             | 2
-    TBM                            | N                              | Y (3.0)                        | Y (3.0)                       | N
+    TBM                            | Y (2.0)                        | Y (3.0)                        | Y (3.0)                       | Y (2.0)
     Mitigated attack vectors [42]  | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14]    | CE, PE ; [14]
     Criticality                    | Security-critical (arm64) [34] | Security-critical (arm64) [34] | Balanced [34]                 | Uptime-critical /
                                    | Balanced (non arm64)           | Balanced (non arm64)           |                               | Balanced
@@ -918,7 +918,7 @@ TBM=0
     io_uring mitigation            | N                           |                       | N                          |
     -march                         | i686 [32]                   |                       | generic                    |
     -O level                       | 2                           |                       | 2                          |
-    TBM                            | N                           |                       | Y (3.0)                    |
+    TBM                            | Y (2.0)                     |                       | Y (3.0)                    |
     Mitigated attack vectors [42]  | CE, PE ; [14]               |                       | CE, PE, DoS, DT, ID ; [14] |
     Criticality                    | Desktop-mobile use /        |                       | Balanced [34]              |
                                    | Uptime / Balanced           |                       |                            |
