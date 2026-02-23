@@ -172,6 +172,7 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 pnpm_unpack_post() {
 	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
 	eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
+	sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
 }
 
 pnpm_unpack_install_post() {
@@ -185,6 +186,7 @@ src_unpack() {
 		unpack "${P}.tar.gz"
 		cd "${S}" || die
 
+		sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
 		eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
 
 	# The package contains multiple pnpm-lock.yaml.
@@ -264,7 +266,7 @@ ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/p
 ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/danger/package.json and in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/danger/package.json and in ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
@@ -361,6 +363,9 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 
 				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die													# CVE-2025-54798; DT; Low
 				sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die												# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
+				sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+				sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die												# CVE-2025-64718; DT; Moderate
+				sed -i -e "s|ajv: 6.12.6|ajv: 6.14.0|g" "pnpm-lock.yaml" || die													# CVE-2025-69873; ZC, VS(DoS); Moderate
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -378,6 +383,8 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 
 
+				sed -i -e "s|qs: 6.14.0|qs: 6.14.1|g" "pnpm-lock.yaml" || die													# CVE-2026-2391; DoS; Low
+																								# CVE-2025-15284; DoS; High
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -434,6 +441,19 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								# CVE-2025-12816; VS(DT), High
 
 			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die													# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
+
+			sed -i -e "s|qs: 6.14.0|qs: 6.14.1|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
+																								# CVE-2026-2391; DoS, Low
+			sed -i -e "s|qs: 6.13.0|qs: 6.14.1|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
+																								# CVE-2026-2391; DoS, Low
+			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
+			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
+			sed -i -e "s|js-yaml: 3.14.1|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
+			sed -i -e "s|ajv: 6.12.6|ajv: 6.14.0|g" "pnpm-lock.yaml" || die														# CVE-2025-69873; ZC, VS(DoS); Moderate
+			sed -i -e "s|glob: 10.4.5|glob: 10.5.0|g" "pnpm-lock.yaml" || die													# CVE-2025-64756; DoS, DT, ID, High
+			sed -i -e "s|axios: 1.12.0(debug@4.3.7)|axios: 1.13.5|g" "pnpm-lock.yaml" || die											# CVE-2026-25639, DoS, High
+			sed -i -e "s|'@isaacs/brace-expansion': 5.0.0|'@isaacs/brace-expansion': 5.0.1|g" "pnpm-lock.yaml" || die								# CVE-2026-25547, ZC, VS(DoS), High
 		}
 		patch_edits_pnpm
 
@@ -444,6 +464,9 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				"@babel/helpers@7.26.10"
 				"brace-expansion@2.0.2"
 				"tmp@0.2.4"
+				"minimatch@10.2.1"
+				"js-yaml@4.1.1"
+				"ajv@6.14.0"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
@@ -466,6 +489,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				"cross-spawn@7.0.5"
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
+				"qs@6.14.1"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -480,6 +504,14 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			"node-forge@1.3.2"
 			"lodash@4.17.23"
 			"tar@7.5.9"
+			"qs@6.14.1"
+			"minimatch@10.2.1"
+			"fabric@7.2.0"
+			"js-yaml@4.1.1"
+			"ajv@6.14.0"
+			"glob@10.5.0"
+			"axios@1.13.5"
+			"@isaacs/brace-expansion@5.0.1"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
