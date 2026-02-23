@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.83.0",
+  "version": "7.90.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -133,12 +133,12 @@
     "@react-aria/focus": "3.19.1",
     "@react-aria/interactions": "3.23.0",
     "@react-aria/utils": "3.25.3",
-    "@react-spring/web": "9.7.5",
+    "@react-spring/web": "10.0.3",
     "@react-types/shared": "3.27.0",
-    "@signalapp/libsignal-client": "0.86.3",
+    "@signalapp/libsignal-client": "0.87.1",
     "@signalapp/minimask": "1.0.1",
     "@signalapp/quill-cjs": "2.1.2",
-    "@signalapp/ringrtc": "2.60.7",
+    "@signalapp/ringrtc": "2.64.1",
     "@signalapp/sqlcipher": "2.4.4",
     "@signalapp/windows-ucv": "1.0.1",
     "@tanstack/react-virtual": "3.11.2",
@@ -223,7 +223,6 @@
     "url": "0.11.4",
     "urlpattern-polyfill": "10.0.0",
     "uuid": "11.0.2",
-    "websocket": "1.0.34",
     "write-file-atomic": "6.0.0",
     "zod": "3.23.8"
   },
@@ -241,9 +240,9 @@
     "@electron/symbolicate-mac": "2.3.1",
     "@formatjs/intl": "2.10.14",
     "@indutny/parallel-prettier": "3.0.0",
-    "@indutny/rezip-electron": "2.0.1",
+    "@indutny/rezip-electron": "3.0.2",
     "@napi-rs/canvas": "0.1.61",
-    "@octokit/plugin-paginate-rest": "11.4.4-cjs.2",
+    "@octokit/plugin-paginate-rest": "9.2.2",
     "@octokit/request": "8.4.1",
     "@octokit/request-error": "5.1.1",
     "@octokit/rest": "20.1.2",
@@ -291,8 +290,8 @@
     "@types/pify": "5.0.4",
     "@types/pixelmatch": "5.2.6",
     "@types/pngjs": "6.0.5",
-    "@types/react": "18.3.20",
-    "@types/react-dom": "18.3.6",
+    "@types/react": "18.3.27",
+    "@types/react-dom": "18.3.7",
     "@types/react-redux": "7.1.34",
     "@types/react-virtualized": "9.22.2",
     "@types/redux-logger": "3.0.13",
@@ -300,7 +299,6 @@
     "@types/sinon": "17.0.3",
     "@types/split2": "4.2.3",
     "@types/uuid": "10.0.0",
-    "@types/websocket": "1.0.0",
     "@types/write-file-atomic": "4.0.3",
     "@types/yargs": "17.0.33",
     "@typescript-eslint/eslint-plugin": "6.18.1",
@@ -310,7 +308,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "9.2.1",
     "babel-plugin-lodash": "3.3.4",
-    "better-blockmap": "1.0.2",
+    "better-blockmap": "2.0.1",
     "brace-expansion": "1.1.12",
     "casual": "1.6.2",
     "chai": "4.4.1",
@@ -322,7 +320,7 @@
     "csv-parse": "5.5.6",
     "danger": "13.0.4",
     "debug": "4.3.7",
-    "electron": "39.2.7",
+    "electron": "40.6.0",
     "electron-builder": "26.0.14",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
@@ -350,13 +348,14 @@
     "npm-run-all": "4.1.5",
     "on-headers": "1.1.0",
     "p-limit": "3.1.0",
+    "patch-package": "8.0.0",
     "pixelmatch": "5.3.0",
     "playwright": "1.54.2",
     "pngjs": "7.0.0",
     "postcss": "8.5.3",
     "postcss-loader": "8.1.1",
-    "prettier": "3.3.3",
-    "prettier-plugin-tailwindcss": "0.6.11",
+    "prettier": "3.7.4",
+    "prettier-plugin-tailwindcss": "0.7.2",
     "protobufjs-cli": "1.1.1",
     "react-devtools": "6.0.1",
     "react-devtools-core": "6.0.1",
@@ -390,7 +389,9 @@
       "canvas": "-",
       "jsdom": "-",
       "thenify-all>thenify": "3.3.1",
-      "@electron/rebuild@3.7.2>@electron/node-gyp": "10.2.0-electron.2"
+      "@electron/rebuild@3.7.2>@electron/node-gyp": "10.2.0-electron.2",
+      "react-popper@2.3.0>react": "18.3.1",
+      "react-popper@2.3.0>react-dom": "18.3.1"
     },
     "patchedDependencies": {
       "casual@1.6.2": "patches/casual+1.6.2.patch",
@@ -404,13 +405,13 @@
       "@vitest/expect@2.0.5": "patches/@vitest+expect+2.0.5.patch",
       "got@11.8.5": "patches/got+11.8.5.patch",
       "growing-file@0.1.3": "patches/growing-file+0.1.3.patch",
-      "websocket@1.0.34": "patches/websocket+1.0.34.patch",
-      "@types/websocket@1.0.0": "patches/@types+websocket+1.0.0.patch",
       "node-fetch@2.6.7": "patches/node-fetch+2.6.7.patch",
       "zod@3.23.8": "patches/zod+3.23.8.patch",
       "app-builder-lib": "patches/app-builder-lib.patch",
       "dmg-builder": "patches/dmg-builder.patch",
-      "eslint-plugin-better-tailwindcss": "patches/eslint-plugin-better-tailwindcss.patch"
+      "eslint-plugin-better-tailwindcss": "patches/eslint-plugin-better-tailwindcss.patch",
+      "framer-motion@6.5.1": "patches/framer-motion@6.5.1.patch",
+      "fs-xattr": "patches/fs-xattr.patch"
     },
     "onlyBuiltDependencies": [
       "@indutny/mac-screen-share",
@@ -422,11 +423,9 @@
       "@signalapp/windows-ucv",
       "@swc/core",
       "@tailwindcss/oxide",
-      "bufferutil",
       "electron",
       "esbuild",
-      "fs-xattr",
-      "utf-8-validate"
+      "fs-xattr"
     ],
     "ignoredBuiltDependencies": [
       "core-js",
@@ -436,7 +435,7 @@
     ]
   },
   "engines": {
-    "node": "22.21.1"
+    "node": "24.11.1"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -602,9 +601,9 @@
       "screenShare.html",
       "settings.html",
       "permissions_popup.html",
-      "calling_tools.html",
       "debug_log.html",
       "loading.html",
+      "call_diagnostic.html",
       {
         "from": "build/compact-locales",
         "to": "_locales",
@@ -620,6 +619,9 @@
       "!ts/scripts/**",
       "!build",
       "!ts/{storybook,test-helpers,test-node,test-mock,test-electron}",
+      "!ts/**/*.preload.js",
+      "ts/windows/sticker-creator/preload.preload.js",
+      "!ts/**/*.dom.js",
       "!**/{tsconfig,bower,component}.json",
       "!**/.{github,husky,grenrc,npmrc,nycrc,taprc,bithoundrc}",
       "!**/.testem.json",
@@ -670,8 +672,6 @@
       "!**/*.{o,hprof,orig,pyc,pyo,rbc,c,h,m}",
       "!**/._*",
       "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}",
-      "node_modules/websocket/build/Release/*.node",
-      "!node_modules/websocket/builderror.log",
       "node_modules/socks/build/*.js",
       "node_modules/socks/build/common/*.js",
       "node_modules/socks/build/client/*.js",
@@ -718,6 +718,6 @@
     ]
   },
   "volta": {
-    "node": "22.21.1"
+    "node": "24.11.1"
   }
 }

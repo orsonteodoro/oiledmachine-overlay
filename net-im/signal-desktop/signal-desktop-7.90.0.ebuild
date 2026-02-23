@@ -8,7 +8,7 @@ EAPI=8
 # TODO fork @signalapp/libsignal-client for custom hardening
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.74.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.90.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -32,15 +32,15 @@ RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
 RUST_PV="${RUST_MIN_VER}"
 
-AT_TYPES_NODE_PV="20.17.6"
+AT_TYPES_NODE_PV="24.10.9"
 ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="39.2.7" # Cr 142.0.7444.235, node 22.21.1
+	ELECTRON_APP_ELECTRON_PV="40.6.0" # Cr 144.0.7559.177, node 24.13.1
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="39.2.1" # Cr 142.0.7444.162, node 22.21.1
+	ELECTRON_APP_ELECTRON_PV="40.1.0" # Cr 144.0.7559.96, node 24.11.1
 fi
 
 NPM_INSTALL_ARGS=(
