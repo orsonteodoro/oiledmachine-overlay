@@ -1006,7 +1006,8 @@ TBM=0
          chances increase more.
     [37] It assumes that critical vulnerabilies be remediated within a week.
     [38] Too much hardening can cause overheating leading to a Denial of
-         Service.
+         Service.  Too little hardening may not receive enough sanitizer
+         treatment or review.
     [38] Deviation from the default hardening settings may decrease uptime.
          Less hardening can lead to DoS or more hardening can lead to
          overheating.  The default settings get more testing and more bugfixes.
