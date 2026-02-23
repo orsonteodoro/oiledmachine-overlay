@@ -809,7 +809,7 @@ TBM=0
     UBSAN                          | Y                           | N                                | N                                  | Y                              |
     KCFI >= 6.1 [9][11]            | Y                           | N                                | N                                  | N                              |
     SCS >= 5.8 [9][10]             | N                           | N                                | N                                  | N                              |
-    CET (branch/return) >= 5.18    | M/M [23]                    | N/N                              | N/N                                | M/M [23]                       |
+    CET (branch/return) [71]       | M/M [23]                    | N/N                              | N/N                                | M/M [23]                       |
     Sandboxing support [3]         | Y                           | Y                                | Y                                  | Y                              |
     Retpoline [13]                 | Y                           | N                                | N                                  | Y                              |
     YAMA [12]                      | M [1]                       | N                                | N                                  | M [1]                          |
@@ -853,7 +853,7 @@ TBM=0
     UBSAN                          | Y                              | Y                              | N                             | N
     KCFI >= 6.1 [9][11]            | N                              | N                              | N                             | N
     SCS >= 5.8 [9][10]             | N                              | N                              | N                             | N
-    CET (branch/return) >= 5.18    | M/M [22]                       | Y/Y                            | Y/Y                           | Y/N
+    CET (branch/return) [71]       | M/M [22]                       | Y/Y                            | Y/Y                           | Y/N
     Sandboxing support [3]         | Y                              | Y                              | Y                             | Y
     Retpoline [13]                 | Y                              | Y                              | Y                             | Y
     YAMA [12]                      | M [25]                         | M                              | Y                             | N
@@ -897,7 +897,7 @@ TBM=0
     UBSAN                          | N                           |                       | N                          |
     KCFI >= 6.1 [9][11]            | N                           |                       | N                          |
     SCS >= 5.8 [9][10]             | N                           |                       | N                          |
-    CET (branch/return) >= 5.18    | Y                           |                       | Y/Y                        |
+    CET (branch/return) [71]       | Y                           |                       | Y/Y                        |
     Sandboxing support [3]         | Y                           |                       | Y                          |
     Retpoline [13]                 | Y                           |                       | Y                          |
     YAMA [12]                      | N                           |                       | Y                          |
@@ -1077,6 +1077,9 @@ TBM=0
     [69] Slower release cycles prevent it from picking multiple memory corruption mitigations, but
          a monthly security update is considered standard industry practice.
     [70] Mitigates PE, DT, ID
+    [71] Grade scores based on left for branch and right for return mitigations.
+         Support requires kernel version >= 5.18.
+         Earlier kernel versions are assumed unmitigated.
 
     Commentary:
 
