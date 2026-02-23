@@ -472,6 +472,8 @@ pnpm_dedupe_post() {
 
 		pnpm_patch_lockfile
 
+#ewarn "QA:  Manually remove minimatch@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"

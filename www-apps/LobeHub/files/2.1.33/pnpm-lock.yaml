@@ -6642,8 +6642,8 @@ packages:
     resolution: {integrity: sha512-MeG0fGNcpAhW9J9LiHgAJqIPySzj1xHCx4F+2R0ir4fzvm0ghKQRv6iUm3u1AhyKKJzDBeoHu7W98jJHNw8dnA==}
     engines: {node: ^18.19.0 || >=20.6.0}
 
-  '@ota-meshi/ast-token-store@0.2.3':
-    resolution: {integrity: sha512-Jgp8rBprSMIDY0IuokbESFozd5SSa/LZsQ9/xiNooDdiy+WK2LlA51f+GjgBKq8CE4YpfK5kdBjNtbwlThApoQ==}
+  '@ota-meshi/ast-token-store@0.3.0':
+    resolution: {integrity: sha512-XRO0zi2NIUKq2lUk3T1ecFSld1fMWRKE6naRFGkgkdeosx7IslyUKNv5Dcb5PJTja9tHJoFu0v/7yEpAkrkrTg==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@oxc-resolver/binding-android-arm-eabi@11.18.0':
@@ -11655,8 +11655,8 @@ packages:
       '@typescript-eslint/eslint-plugin':
         optional: true
 
-  eslint-plugin-yml@3.2.1:
-    resolution: {integrity: sha512-/oFj7MWk56AKLelLSUb7zN1OKDI9kR+uKEzbf/sGu7Bov0tJs3qwtMcu+VCcEtFAFD7KZe0LSYhyy0Uq8hKF9g==}
+  eslint-plugin-yml@3.2.2:
+    resolution: {integrity: sha512-vMluBBMGecygLzeOly0EnDhudQb9CNEXEUokTap93oF/KyASAADed4xRlFBQQNuzJK3N6u5s3M/IjIKPGZZOKA==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
     peerDependencies:
       eslint: '>=9.38.0'
@@ -11897,6 +11897,18 @@ packages:
 
   fast-wrap-ansi@0.2.0:
     resolution: {integrity: sha512-rLV8JHxTyhVmFYhBJuMujcrHqOT2cnO5Zxj37qROj23CP39GXubJRBUFF0z8KFK77Uc0SukZUf7JZhsVEQ6n8w==}
+
+  fast-xml-parser@4.5.3:
+    resolution: {integrity: sha512-RKihhV+SHsIUGXObeVy9AXiBbFwkVk7Syp8XgwN5U3JV416+Gwp/GO9i0JYKmikykgz/UHRrrV4ROuZEo/T0ig==}
+    hasBin: true
+
+  fast-xml-parser@5.2.5:
+    resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
+    hasBin: true
+
+  fast-xml-parser@5.3.6:
+    resolution: {integrity: sha512-QNI3sAvSvaOiaMl8FYU4trnEzCwiRr8XMWgAHzlrWpTSj+QaCSvOf1h82OEP1s4hiAXhnbXSyFWCf4ldZzZRVA==}
+    hasBin: true
 
   fast-xml-parser@5.3.7:
     resolution: {integrity: sha512-JzVLro9NQv92pOM/jTCR6mHlJh2FGwtomH8ZQjhFj/R29P2Fnj38OgPJVtcvYw6SuKClhgYuwUZf5b3rd8u2mA==}
@@ -23751,7 +23763,7 @@ snapshots:
       eslint-plugin-simple-import-sort: 12.1.1(eslint@10.0.0(jiti@2.6.1))
       eslint-plugin-unicorn: 62.0.0(eslint@10.0.0(jiti@2.6.1))
       eslint-plugin-unused-imports: 4.4.1(@typescript-eslint/eslint-plugin@8.56.0(@typescript-eslint/parser@8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.0(jiti@2.6.1))
-      eslint-plugin-yml: 3.2.1(eslint@10.0.0(jiti@2.6.1))
+      eslint-plugin-yml: 3.2.2(eslint@10.0.0(jiti@2.6.1))
       globals: 17.3.0
       typescript-eslint: 8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
     optionalDependencies:
@@ -25542,7 +25554,7 @@ snapshots:
       '@opentelemetry/api-logs': 0.208.0
       winston-transport: 4.9.0
 
-  '@ota-meshi/ast-token-store@0.2.3': {}
+  '@ota-meshi/ast-token-store@0.3.0': {}
 
   '@oxc-resolver/binding-android-arm-eabi@11.18.0':
     optional: true
@@ -31490,11 +31502,11 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 8.56.0(@typescript-eslint/parser@8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
 
-  eslint-plugin-yml@3.2.1(eslint@10.0.0(jiti@2.6.1)):
+  eslint-plugin-yml@3.2.2(eslint@10.0.0(jiti@2.6.1)):
     dependencies:
       '@eslint/core': 1.1.0
       '@eslint/plugin-kit': 0.6.0
-      '@ota-meshi/ast-token-store': 0.2.3
+      '@ota-meshi/ast-token-store': 0.3.0
       debug: 4.4.3(supports-color@10.2.2)
       diff-sequences: 29.6.3
       escape-string-regexp: 5.0.0
@@ -31862,6 +31874,18 @@ snapshots:
   fast-wrap-ansi@0.2.0:
     dependencies:
       fast-string-width: 3.0.2
+
+  fast-xml-parser@4.5.3:
+    dependencies:
+      strnum: 1.1.2
+
+  fast-xml-parser@5.2.5:
+    dependencies:
+      strnum: 2.1.2
+
+  fast-xml-parser@5.3.6:
+    dependencies:
+      strnum: 2.1.2
 
   fast-xml-parser@5.3.7:
     dependencies:
