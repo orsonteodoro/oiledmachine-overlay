@@ -472,12 +472,22 @@ pnpm_dedupe_post() {
 
 		pnpm_patch_lockfile
 
-#ewarn "QA:  Manually remove minimatch@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv-formats@2.1.1(ajv@8.12.0) to ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove minimatch@3.1.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@5.1.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@9.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -541,6 +551,7 @@ pnpm_dedupe_post() {
 													# CVE-2023-30533; DoS, DT, ID; High
 
 			"fast-xml-parser@5.3.7"								# CVE-2026-25896; ZC, EBR, DT, ID
+													# CVE-2026-26278; ZC, DoS
 			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID)
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
