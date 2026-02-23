@@ -5472,9 +5472,9 @@ unset OT_KERNEL_PRIVATE_KEY
     TBM - Support Turbo Boost Max
     Valid values:
       3 - enables 3.0 behavior
-      2 - enables 2.0 behavior
+      2 - enables 2.0 behavior (upstream default)
       0 - disables TBM
-      unset - disables TBM
+      unset - disables TBM (ebuild default)
     Note:  If max availability is on or a work profile requires max
     availability, it will disable turbo.
 
