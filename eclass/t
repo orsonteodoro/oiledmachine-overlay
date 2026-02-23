@@ -1,0 +1,422 @@
+CVE-2026-23220: ksmbd: fix infinite loop caused by next_smb2_rcv_hdr_off reset in error paths
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71237: nilfs2: Fix potential block overflow that cause system hang
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71236: scsi: qla2xxx: Validate sp before freeing associated memory
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71235: scsi: qla2xxx: Delay module unload while fabric scan in progress
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71234: wifi: rtl8xxxu: fix slab-out-of-bounds in rtl8xxxu_sta_add
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71233: PCI: endpoint: Avoid creating sub-groups asynchronously
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71232: scsi: qla2xxx: Free sp in error path to fix system crash
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71231: crypto: iaa - Fix out-of-bounds index in find_empty_iaa_compression_mode
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23230: smb: client: split cached_fid bitfields to avoid shared-byte RMW races
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23229: crypto: virtio - Add spinlock protection with virtqueue notification
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23228: smb: server: fix leak of active_num_conn in ksmbd_tcp_new_connection()
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23227: drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23226: ksmbd: add chann_lock to protect ksmbd_chann_list xarray
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23225: sched/mmcid: Don't assume CID is CPU owned on mode switch
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23224: erofs: fix UAF issue for file-backed mounts w/ directio option
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23223: xfs: fix UAF in xchk_btree_check_block_owner
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23222: crypto: omap - Allocate OMAP_CRYPTO_FORCE_COPY scatterlists correctly
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23221: bus: fsl-mc: fix use-after-free in driver_override_show()
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71229: wifi: rtw88: Fix alignment fault in rtw_core_enable_beacon()
+ 2026-02-18 14:54 UTC 
+
+CVE-2025-71230: hfs: ensure sb->s_fs_info is always cleaned up
+ 2026-02-18 14:54 UTC 
+
+CVE-2026-23218: gpio: loongson-64bit: Fix incorrect NULL check after devm_kcalloc()
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23217: riscv: trace: fix snapshot deadlock with sbi ecall
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23216: scsi: target: iscsi: Fix use-after-free in iscsit_dec_conn_usage_count()
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23215: x86/vmware: Fix hypercall clobbers
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23214: btrfs: reject new transactions if the fs is fully read-only
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23213: drm/amd/pm: Disable MMIO access during SMU Mode 1 reset
+ 2026-02-18 14:22 UTC 
+
+CVE-2025-71228: LoongArch: Set correct protection_map[] for VM_NONE/VM_SHARED
+ 2026-02-18 14:22 UTC 
+
+CVE-2025-71227: wifi: mac80211: don't WARN for connections on invalid channels
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23219: mm/slab: Add alloc_tagging_slab_free_hook for memcg_alloc_abort_single
+ 2026-02-18 14:22 UTC 
+
+CVE-2025-71225: md: suspend array while updating raid_disks via sysfs
+ 2026-02-18 14:22 UTC 
+
+CVE-2025-71226: wifi: iwlwifi: Implement settime64 as stub for MVM/MLD PTP
+ 2026-02-18 14:22 UTC 
+
+CVE-2026-23211: mm, swap: restore swap_space attr aviod kernel panic
+ 2026-02-18 14:16 UTC 
+
+CVE-2026-23212: bonding: annotate data-races around slave->last_rx
+ 2026-02-18 14:16 UTC 
+
+CVE-2026-23206: dpaa2-switch: prevent ZERO_SIZE_PTR dereference when num_ifs is zero
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23210: ice: Fix PTP NULL pointer dereference during VSI rebuild
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23209: macvlan: fix error recovery in macvlan_common_newlink()
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23208: ALSA: usb-audio: Prevent excessive number of frames
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23207: spi: tegra210-quad: Protect curr_xfer check in IRQ handler
+ 2026-02-14 16:29 UTC 
+
+CVE-2025-71222: wifi: wlcore: ensure skb headroom before skb_push
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23180: dpaa2-switch: add bounds check for if_id in IRQ handler
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23179: nvmet-tcp: fixup hang in nvmet_tcp_listen_data_ready()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23178: HID: i2c-hid: fix potential buffer overflow in i2c_hid_get_report()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23177: mm, shmem: prevent infinite loop on truncate race
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23176: platform/x86: toshiba_haps: Fix memory leaks in add/remove routines
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23175: net: cpsw: Execute ndo_set_rx_mode callback in a work queue
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23205: smb/client: fix memory leak in smb2_open_file()
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23204: net/sched: cls_u32: use skb_header_pointer_careful()
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23203: net: cpsw_new: Execute ndo_set_rx_mode callback in a work queue
+ 2026-02-14 16:29 UTC 
+
+CVE-2026-23202: spi: tegra210-quad: Protect curr_xfer in tegra_qspi_combined_seq_xfer
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23201: ceph: fix oops due to invalid pointer for kfree() in parse_longname()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23174: nvme-pci: handle changing device dma map requirements
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23200: ipv6: Fix ECMP sibling count mismatch when clearing RTF_ADDRCONF
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23199: procfs: avoid fetching build ID while holding VMA lock
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23198: KVM: Don't clobber irqfd routing type when deassigning irqfd
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23197: i2c: imx: preserve error state in block data length handler
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23196: HID: Intel-thc-hid: Intel-thc: Add safety check for reading DMA buffer
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23195: cgroup/dmem: avoid pool UAF
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23194: rust_binder: correctly handle FDA objects of length zero
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23193: scsi: target: iscsi: Fix use-after-free in iscsit_dec_session_usage_count()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23192: linkwatch: use __dev_put() in callers to prevent UAF
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23191: ALSA: aloop: Fix racy access at PCM trigger
+ 2026-02-14 16:28 UTC 
+
+CVE-2025-71224: wifi: mac80211: ocb: skip rx_no_sta when interface is not joined
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23190: ASoC: amd: fix memory leak in acp3x pdm dma ops
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23189: ceph: fix NULL pointer dereference in ceph_mds_auth_match()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23188: net: usb: r8152: fix resume reset deadlock
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23187: pmdomain: imx8m-blk-ctrl: fix out-of-range access of bc->domains
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23186: hwmon: (acpi_power_meter) Fix deadlocks related to acpi_power_meter_notify()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23185: wifi: iwlwifi: mld: cancel mlo_scan_start_wk
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23184: binder: fix UAF in binder_netlink_report()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23183: cgroup/dmem: fix NULL pointer dereference when setting max
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23182: spi: tegra: Fix a memory leak in tegra_slink_probe()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23181: btrfs: sync read disk super and set block size
+ 2026-02-14 16:28 UTC 
+
+CVE-2025-71223: smb/server: fix refcount leak in smb2_open()
+ 2026-02-14 16:28 UTC 
+
+CVE-2025-71221: dmaengine: mmp_pdma: Fix race condition in mmp_pdma_residue()
+ 2026-02-14 16:28 UTC 
+
+CVE-2025-71220: smb/server: call ksmbd_session_rpc_close() on error path in create_smb2_pipe()
+ 2026-02-14 16:28 UTC 
+
+CVE-2025-71203: riscv: Sanitize syscall table indexing under speculation
+ 2026-02-14 16:28 UTC 
+
+CVE-2025-71204: smb/server: fix refcount leak in parse_durable_handle_context()
+ 2026-02-14 16:28 UTC 
+
+CVE-2026-23171: bonding: fix use-after-free due to enslave fail after slave array update
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23173: net/mlx5e: TC, delete flows only for existing peers
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23172: net: wwan: t7xx: fix potential skb->frags overflow in RX path
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23155: can: gs_usb: gs_usb_receive_bulk_callback(): fix error message
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23154: net: fix segmentation of forwarding fraglist GRO
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23153: firewire: core: fix race condition against transaction list
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23152: wifi: mac80211: correctly decode TTLM with default link map
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23151: Bluetooth: MGMT: Fix memory leak in set_ssp_complete
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23150: nfc: llcp: Fix memleak in nfc_llcp_send_ui_frame()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23149: drm: Do not allow userspace to trigger kernel warnings in drm_gem_change_handle_ioctl()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23170: drm/imx/tve: fix probe device leak
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23169: mptcp: fix race in mptcp_pm_nl_flush_addrs_doit()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23168: flex_proportions: make fprop_new_period() hardirq safe
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23167: nfc: nci: Fix race between rfkill and nci_unregister_device()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23166: ice: Fix NULL pointer dereference in ice_vsi_set_napi_queues
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23148: nvmet: fix race in nvmet_bio_done() leading to NULL pointer dereference
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23165: sfc: fix deadlock in RSS config read
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23164: rocker: fix memory leak in rocker_world_port_post_fini()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23163: drm/amdgpu: fix NULL pointer dereference in amdgpu_gmc_filter_faults_remove
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23162: drm/xe/nvm: Fix double-free on aux add failure
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23161: mm/shmem, swap: fix race of truncate and swap entry split
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23160: octeon_ep: Fix memory leak in octep_device_setup()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23159: perf: sched: Fix perf crash with new is_user_task() helper
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23158: gpio: virtuser: fix UAF in configfs release path
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23157: btrfs: do not strictly require dirty metadata threshold for metadata writepages
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23156: efivarfs: fix error propagation in efivar_entry_get()
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23146: Bluetooth: hci_uart: fix null-ptr-deref in hci_uart_write_work
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23147: btrfs: zlib: fix the folio leak on S390 hardware acceleration
+ 2026-02-14 16:04 UTC 
+
+CVE-2026-23145: ext4: fix iloc.bh leak in ext4_xattr_inode_update_ref
+ 2026-02-14 15:36 UTC 
+
+CVE-2026-23144: mm/damon/sysfs: cleanup attrs subdirs on context dir setup failure
+ 2026-02-14 15:36 UTC 
+
+CVE-2026-23143: virtio_net: Fix misalignment bug in struct virtnet_info
+ 2026-02-14 15:36 UTC 
+
+CVE-2026-23142: mm/damon/sysfs-scheme: cleanup access_pattern subdirs on scheme dir setup failure
+ 2026-02-14 15:36 UTC 
+
+CVE-2025-71202: iommu/sva: invalidate stale IOTLB entries for kernel address space
+ 2026-02-14 15:36 UTC 
+
+CVE-2026-23141: btrfs: send: check for inline extents in range_is_hole_in_parent()
+ 2026-02-14 15:36 UTC 
+
+CVE-2026-23140: bpf, test_run: Subtract size of xdp_frame from allowed metadata size
+ 2026-02-14 15:22 UTC 
+
+CVE-2026-23139: netfilter: nf_conncount: update last_gc only when GC has been performed
+ 2026-02-14 15:22 UTC 
+
+CVE-2026-23138: tracing: Add recursion protection in kernel stack trace recording
+ 2026-02-14 15:22 UTC 
+
+CVE-2026-23137: of: unittest: Fix memory leak in unittest_data_add()
+ 2026-02-14 15:22 UTC 
+
+CVE-2025-71201: netfs: Fix early read unlock of page with EOF in middle
+ 2026-02-14 15:22 UTC 
+
+CVE-2026-23136: libceph: reset sparse-read state in osd_fault()
+ 2026-02-14 15:22 UTC 
+
+CVE-2026-23135: wifi: ath12k: fix dma_free_coherent() pointer
+ 2026-02-14 15:14 UTC 
+
+CVE-2026-23134: slab: fix kmalloc_nolock() context check for PREEMPT_RT
+ 2026-02-14 15:14 UTC 
+
+CVE-2026-23132: drm/bridge: synopsys: dw-dp: fix error paths of dw_dp_bind
+ 2026-02-14 15:14 UTC 
+
+CVE-2026-23133: wifi: ath10k: fix dma_free_coherent() pointer
+ 2026-02-14 15:14 UTC 
+
+CVE-2026-23130: wifi: ath12k: fix dead lock while flushing management frames
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23131: platform/x86: hp-bioscfg: Fix kobject warnings for empty attribute names
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23121: mISDN: annotate data-race around dev->work
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23120: l2tp: avoid one data-race in l2tp_tunnel_del_work()
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23119: bonding: provide a net pointer to __skb_flow_dissect()
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23118: rxrpc: Fix data-race warning and potential load/store tearing
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23117: ice: add missing ice_deinit_hw() in devlink reinit path
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23116: pmdomain: imx8m-blk-ctrl: Remove separate rst and clk mask for 8mq vpu
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23115: serial: Fix not set tty->port race condition
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23114: arm64/fpsimd: ptrace: Fix SVE writes on !SME systems
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23129: dpll: Prevent duplicate registrations
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23128: arm64: Set __nocfi on swsusp_arch_resume()
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23127: perf: Fix refcount warning on event->mmap_count increment
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23126: netdevsim: fix a race issue related to the operation on bpf_bound_progs list
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23125: sctp: move SCTP_CMD_ASSOC_SHKEY right after SCTP_CMD_PEER_INIT
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23124: ipv6: annotate data-race in ndisc_router_discovery()
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23123: interconnect: debugfs: initialize src_node and dst_node to empty strings
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23122: igc: Reduce TSN TX packet buffer from 7KB to 5KB per queue
+ 2026-02-14 15:10 UTC 
+
+CVE-2025-71200: mmc: sdhci-of-dwcmshc: Prevent illegal clock reduction in HS200/HS400 mode
+ 2026-02-14 15:10 UTC 
+
+CVE-2026-23113: io_uring/io-wq: check IO_WQ_BIT_EXIT inside work run loop
+ 2026-02-14 15:10 UTC 

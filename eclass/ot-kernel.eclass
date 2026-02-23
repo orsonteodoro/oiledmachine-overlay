@@ -3505,6 +3505,11 @@ eerror "OT_KERNEL_N_CPUS has been removed.  Please set CPU_SOCKETS, CPU_TPC and 
 		die
 	fi
 
+	if [[ "${TBM}" == "1" ]] ; then
+eerror "The TBM has different semantics.  Use 3 for TBM 3.0, 2 for TBM 2.0, 0 for disable TBM."
+		die
+	fi
+
 ewarn
 ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
 ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
@@ -13271,6 +13276,36 @@ ot-kernel_set_dev_mem() {
 # @DESCRIPTION:
 # Disables TBM settings to maximize uptime or availability.
 ot-kernel_set_tbm() {
+	local is_intel_cpu=0
+	if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
+		is_intel_cpu=1
+	fi
+
+	[[ "${arch}" =~ ("x86"|"x86_64") ]] || is_intel_cpu=0
+
+	[[ -z "${TBM}" ]] && TBM="0"
+
+	if (( ${is_intel_cpu} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
+	fi
+
+	if [[ "${TBM}" == "3" ]] && (( ${is_intel_cpu} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_X86_INTEL_PSTATE"
+
+		ot-kernel_y_configopt "CONFIG_X86_PLATFORM_DEVICES"
+		ot-kernel_y_configopt "CONFIG_SCHED_MC"
+		ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
+		ot-kernel_y_configopt "CONFIG_INTEL_TURBO_MAX_3"
+	elif [[ "${TBM}" == "2" ]] && (( ${is_intel_cpu} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_X86_INTEL_PSTATE"
+		ot-kernel_unset_configopt "CONFIG_INTEL_TURBO_MAX_3"
+	else
+		ot-kernel_unset_configopt "CONFIG_X86_INTEL_PSTATE"
+		ot-kernel_unset_configopt "CONFIG_INTEL_TURBO_MAX_3"
+	fi
+
 	if [[ \
 		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
