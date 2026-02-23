@@ -452,9 +452,29 @@ pnpm_dedupe_post() {
 			sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "packages/file-loaders/package.json" || die
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.3.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.3.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.3.7|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|jsondiffpatch: 0.6.0|jsondiffpatch: 0.7.2|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|ajv: 8.12.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|ajv: 6.14.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
+
+ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -501,6 +521,7 @@ ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock
 		# DT = Data Tampering
 		# ID = Information Disclosure
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
+		# EBR = Extended Blast Radius
 
 #		epnpm remove "xlsx"
 
@@ -515,6 +536,9 @@ ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
+
+			"fast-xml-parser@5.3.7"								# CVE-2026-25896; ZC, EBR, DT, ID
+			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID)
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -524,6 +548,8 @@ ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock
 			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
+			"minimatch@10.2.2"								# CVE-2026-26996: ZC, DoS
+			"bn.js@5.2.3"									# CVE-2026-2739: DoS
 		)
 		epnpm add -D ${pkgs[@]}
 
