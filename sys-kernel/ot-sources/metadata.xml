@@ -917,10 +917,10 @@ TBM=0
     Panic on oops                  | N                           |                       | N                          |
     io_uring mitigation            | N                           |                       | N                          |
     -march                         | i686 [32]                   |                       | generic                    |
-    -O level                       | O2                          |                       | 2                          |
+    -O level                       | 2                           |                       | 2                          |
     TBM                            | N                           |                       | Y (3.0)                    |
     Mitigated attack vectors [42]  | CE, PE ; [14]               |                       | CE, PE, DoS, DT, ID ; [14] |
-    Criticality                    | Desktop-mobile use case /   |                       | Balanced [34]              |
+    Criticality                    | Desktop-mobile use /        |                       | Balanced [34]              |
                                    | Uptime / Balanced           |                       |                            |
     Security grade [40]            | C- [69]                     |                       | B                          |
     Performance grade [41]         | B                           |                       | B                          |
