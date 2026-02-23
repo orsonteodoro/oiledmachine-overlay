@@ -395,7 +395,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								#   @octokit/request
 																								#   @octokit/plugin-paginate-rest
 																								#   @octokit/request-error
-			sed -i -e "s|axios: 1.7.9|axios: 1.12.0|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
+			sed -i -e "s|axios: 1.7.9|axios: 1.13.5|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
 																								# CVE-2025-58754, ZC, DoS, High
 			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
 			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
@@ -520,7 +520,6 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			"@octokit/request@8.4.1"
 			"@octokit/request-error@5.1.1"
 			"@octokit/rest@20.1.2"
-			"axios@1.12.0"
 			"brace-expansion@2.0.2"
 			"brace-expansion@1.1.12"
 			"patch-package@8.0.0"
