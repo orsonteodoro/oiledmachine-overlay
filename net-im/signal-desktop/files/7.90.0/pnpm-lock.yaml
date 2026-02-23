@@ -881,8 +881,8 @@ importers:
         specifier: 8.4.1
         version: 8.4.1
       '@octokit/request-error':
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 5.1.1
+        version: 5.1.1
       '@octokit/rest':
         specifier: 20.1.2
         version: 20.1.2
@@ -2098,9 +2098,6 @@ packages:
     engines: {node: '>= 18'}
     peerDependencies:
       '@octokit/core': ^5
-
-  '@octokit/request-error@2.1.0':
-    resolution: {integrity: sha512-1VIvgXxs9WHSjicsRwq8PlR2LR2x6DwsJAaFgzdi0JfJoGSO8mYI/cHJQ+9FbN21aa+DrgNLnwObmyeSC8Rmpg==}
 
   '@octokit/request-error@5.1.1':
     resolution: {integrity: sha512-v9iyEQJH6ZntoENr9/yXxjuezh4My67CBSu9r6Ve/05Iu5gNgnisNWOsoJHTP6k0Rr0+HQIpnH+kyammu90q/g==}
@@ -12261,12 +12258,6 @@ snapshots:
     dependencies:
       '@octokit/core': 5.2.2
       '@octokit/types': 13.10.0
-
-  '@octokit/request-error@2.1.0':
-    dependencies:
-      '@octokit/types': 6.41.0
-      deprecation: 2.3.1
-      once: 1.4.0
 
   '@octokit/request-error@5.1.1':
     dependencies:
