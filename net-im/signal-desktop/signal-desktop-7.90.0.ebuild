@@ -26,7 +26,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT="3"
 PNPM_SLOT="9"
-NODE_SLOT="22" # Upstream uses 22.15.0 from .nvmrc
+NODE_SLOT="24" # Upstream uses 24.11.1 from .nvmrc
 NODE_ENV="development"
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
@@ -171,6 +171,7 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 
 pnpm_unpack_post() {
 	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
+	eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
 }
 
 pnpm_unpack_install_post() {
@@ -183,6 +184,8 @@ src_unpack() {
 		pnpm_hydrate
 		unpack "${P}.tar.gz"
 		cd "${S}" || die
+
+		eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
 
 	# The package contains multiple pnpm-lock.yaml.
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -279,12 +282,16 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								# CVE-2025-61927; ZC, VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
 																								# CVE-2025-62410; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
 				sed -i -e "s|\"rollup\": \"^3.27.1\"|\"rollup\": \"^3.29.5\"|g" "package-lock.json" || die									# CVE-2024-47068; DT, ID; Medium
-				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
+				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
 																								# CVE-2025-58751; VS(ID); Low
 																								# CVE-2025-58752; VS(ID); Low
+																								# CVE-2025-30208; ID; Moderate
+																								# CVE-2025-31125; ID; Moderate
+																								# CVE-2025-31486; ID; Moderate
+																								# CVE-2025-62522; ID; Moderate
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -328,22 +335,31 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								# CVE-2025-62410; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
 				sed -i -e "s|rollup: 3.27.1|rollup: 3.29.5|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
 
-				sed -i -e "s|vite: 4.5.3|vite: 5.4.20|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: 4.5.3|vite: 5.4.21|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
 																								# CVE-2025-58751; VS(ID); Low
 																								# CVE-2025-58752; VS(ID); Low
+																								# CVE-2025-30208; ID; Moderate
+																								# CVE-2025-31125; ID; Moderate
+																								# CVE-2025-31486; ID; Moderate
+																								# CVE-2025-62522; ID; Moderate
 
 
-				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 5.4.20|g" "pnpm-lock.yaml" || die											# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 5.4.21|g" "pnpm-lock.yaml" || die											# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
 																								# CVE-2025-58751; VS(ID); Low
 																								# CVE-2025-58752; VS(ID); Low
+																								# CVE-2025-30208; ID; Moderate
+																								# CVE-2025-31125; ID; Moderate
+																								# CVE-2025-31486; ID; Moderate
+																								# CVE-2025-62522; ID; Moderate
 
 				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die													# CVE-2025-54798; DT; Low
+				sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die												# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -406,6 +422,17 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
 
 			sed -i -e "s|on-headers: 1.0.2|on-headers: 1.1.0|g" "pnpm-lock.yaml" || die												# CVE-2025-7339; DT, ID; Low
+
+			sed -i -e "s|tar: 6.2.1|tar: 7.5.9|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|tar: 7.5.2|tar: 7.5.9|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
+																								# CVE-2026-23745; VS(DT, ID), SS(DT, ID), High
+																								# CVE-2026-23950; DoS, DT, ID; High
+																								# CVE-2026-26960; DT, ID; High
+
+			sed -i -e "s|node-forge: 1.3.1|node-forge: 1.3.2|g" "pnpm-lock.yaml" || die												# CVE-2025-66031; VS(DoS), High
+																								# CVE-2025-12816; VS(DT), High
+
+			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die													# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 		}
 		patch_edits_pnpm
 
@@ -424,7 +451,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				"esbuild@0.25.0"
 				"happy-dom@20.0.2"
 				"rollup@3.29.5"
-				"vite@5.4.20"
+				"vite@5.4.21"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -449,6 +476,9 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			"got@11.8.5"
 			"tar-fs@2.1.4"
 			"form-data@4.0.4"
+			"node-forge@1.3.2"
+			"lodash@4.17.23"
+			"tar@7.5.9"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
