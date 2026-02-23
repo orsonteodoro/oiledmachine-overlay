@@ -214,6 +214,8 @@ src_unpack() {
 		# VS = Vulnerable System (Direct attack)
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
+ewarn "QA:  Manually remove js-yaml@3.14.2 from ${S}/pnpm-lock.yaml"
+
 #ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to snapshot: section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove (encoding@0.1.13) suffix at @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove cross-spawn@5.1.0 from ${S}/pnpm-lock.yaml"
@@ -221,6 +223,7 @@ src_unpack() {
 #ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @types/keyv@3.1.4 from ${S}/pnpm-lock.yaml" # remove row
 #ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations (@esbuild/<arch>@0.24.0) from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.24.2 and arch implementations (@esbuild/<arch>@0.24.0) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove suffix (esbuild@0.24.0) from esbuild-register: 3.6.0(esbuild@0.24.0) in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove on-headers@1.0.2 from ${S}/pnpm-lock.yaml"
@@ -383,8 +386,10 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 
 
-				sed -i -e "s|qs: 6.14.0|qs: 6.14.1|g" "pnpm-lock.yaml" || die													# CVE-2026-2391; DoS; Low
+				sed -i -e "s|qs: 6.14.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die													# CVE-2026-2391; DoS; Low
 																								# CVE-2025-15284; DoS; High
+				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.0|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; VS(DoS); Moderate
+				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -407,6 +412,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			sed -i -e "s|electron: 23.1.2|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.3.13|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|esbuild: 0.24.0|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die				# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s#esbuild: 0.24.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -442,18 +448,29 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 
 			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die													# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 
-			sed -i -e "s|qs: 6.14.0|qs: 6.14.1|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
+			sed -i -e "s|qs: 6.14.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
 																								# CVE-2026-2391; DoS, Low
-			sed -i -e "s|qs: 6.13.0|qs: 6.14.1|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
+			sed -i -e "s|qs: 6.13.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
 																								# CVE-2026-2391; DoS, Low
+
+			sed -i -e "s|qs: 6.14.1|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
 			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|js-yaml: 3.14.1|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
+			sed -i -e "s|js-yaml: 3.14.2|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|ajv: 6.12.6|ajv: 6.14.0|g" "pnpm-lock.yaml" || die														# CVE-2025-69873; ZC, VS(DoS); Moderate
 			sed -i -e "s|glob: 10.4.5|glob: 10.5.0|g" "pnpm-lock.yaml" || die													# CVE-2025-64756; DoS, DT, ID, High
 			sed -i -e "s|axios: 1.12.0(debug@4.3.7)|axios: 1.13.5|g" "pnpm-lock.yaml" || die											# CVE-2026-25639, DoS, High
 			sed -i -e "s|'@isaacs/brace-expansion': 5.0.0|'@isaacs/brace-expansion': 5.0.1|g" "pnpm-lock.yaml" || die								# CVE-2026-25547, ZC, VS(DoS), High
+			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.0|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
+			sed -i -e "s|diff: 4.0.2|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
+			sed -i -e "s|diff: 5.2.0|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
+			sed -i -e "s|diff: 7.0.0|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
+			sed -i -e "s|webpack: 5.96.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.0)(webpack-cli@5.1.4)|webpack: 5.104.1|g" "pnpm-lock.yaml" || die			# CVE-2025-68458; DT, ID, Low
+																								# CVE-2025-68157; DT, ID, Low
+			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "package.json" || die											# CVE-2025-68458; DT, ID, Low
+																								# CVE-2025-68157; DT, ID, Low
 		}
 		patch_edits_pnpm
 
@@ -467,6 +484,9 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				"minimatch@10.2.1"
 				"js-yaml@4.1.1"
 				"ajv@6.14.0"
+				"markdown-it@14.1.0"
+				"react-router@6.30.2"
+				"lodash@4.17.23"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
@@ -489,7 +509,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				"cross-spawn@7.0.5"
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
-				"qs@6.14.1"
+				"qs@6.14.2"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -504,7 +524,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			"node-forge@1.3.2"
 			"lodash@4.17.23"
 			"tar@7.5.9"
-			"qs@6.14.1"
+			"qs@6.14.2"
 			"minimatch@10.2.1"
 			"fabric@7.2.0"
 			"js-yaml@4.1.1"
@@ -512,6 +532,9 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			"glob@10.5.0"
 			"axios@1.13.5"
 			"@isaacs/brace-expansion@5.0.1"
+			"markdown-it@14.1.0"
+			"diff@8.0.3"
+			"webpack@5.104.1"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(

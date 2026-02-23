@@ -751,12 +751,12 @@ snapshots:
   '@gitbeaker/core@38.12.1':
     dependencies:
       '@gitbeaker/requester-utils': 38.12.1
-      qs: 6.14.1
+      qs: 6.14.2
       xcase: 2.0.1
 
   '@gitbeaker/requester-utils@38.12.1':
     dependencies:
-      qs: 6.14.1
+      qs: 6.14.2
       xcase: 2.0.1
 
   '@gitbeaker/rest@38.12.1':
