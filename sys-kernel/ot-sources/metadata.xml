@@ -839,7 +839,7 @@ TBM=0
     Uptime grade [38]              | A                           | D                                | D                                  | C                              |
     Release schedule grade [37]    | C- [35a]                    | C- [35a]                         | C- [35a]                           | C- [35a]                       |
 
-                                   | gentoo-sources                 | gentoo-kernel                  | zen-kernel                    | vanilla kernel defaults
+                                   | gentoo-sources                 | gentoo-kernel                  | zen-kernel                    | vanilla kernel defaults [72]
     Config                         | [59]                           | [58]                           | [55]                          | [57]
     IA32 support [8]               | M [6]                          | N                              | Y                             | M [6]
     SSP (basic)                    | Y                              | Y                              | Y                             | Y
@@ -883,7 +883,7 @@ TBM=0
     Uptime grade [38]              | C                              | C                              | C                             | A
     Release schedule grade [37]    | D [35b]                        | D [35b]                        | A                             | A
 
-                                   | pf-kernel                   | rt-kernel             | linux-tkg                  |
+                                   | pf-kernel                   |                       | linux-tkg                  |
     Kernel config                  | [60]                        |                       | [54]                       |
     IA32 support [8]               | M [6]                       |                       | Y                          |
     SSP (basic)                    | Y                           |                       | Y                          |
@@ -1081,6 +1081,7 @@ TBM=0
     [71] Grade scores based on left for branch and right for return mitigations.
          Support requires kernel version >= 5.18.
          Earlier kernel versions are assumed unmitigated.
+    [72] The -rt kernel uses mostly the same as vanilla but distros may customize the config.
 
     Commentary:
 
