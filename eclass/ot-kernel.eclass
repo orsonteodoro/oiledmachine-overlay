@@ -12598,12 +12598,6 @@ einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
 # @DESCRIPTION:
 # Sets config for support for drivers programmed in Rust and Rust related kernel
 # options.
-#
-# CONFIG_RUST is not supported on distro because it is an old version.
-#
-# Kernel docs say it requires a specific version and no forward compatible
-# guarantees
-#
 ot-kernel_set_rust() {
 	has "rust" ${IUSE_EFFECTIVE} || return
 	ot-kernel_use "rust" || return
@@ -12718,7 +12712,12 @@ eerror "Cannot find Rust slot."
 eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=rust with USE=rust."
 		die
 	fi
+}
 
+# @FUNCTION: ot-kernel_set_scx
+# @DESCRIPTION:
+# Sets config for support for scx CPU schedulers.
+ot-kernel_set_scx() {
 	# For Rust based CPU schedulers (e.g. scx_lavd)
 	if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
 		if ! use debug ; then
@@ -12766,7 +12765,8 @@ ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
 		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
-		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF4"
+	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel-debugger()
+	# CONFIG_DEBUG_INFO_DWARF* is needed to add CONFIG_DEBUG_INFO indirectly and access the menuconfig option
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"		# Required
 
 ewarn "Enabling CONFIG_TRACING for scx support and lowering security"
@@ -12807,10 +12807,6 @@ ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security
 		ot-kernel_y_configopt "CONFIG_IKCONFIG"
 		ot-kernel_y_configopt "CONFIG_IKCONFIG_PROC"
 	fi
-
-# Review.  If old Rust, maybe.  It could be that not all rust modules are not
-# sanitized with all hardening techniques.
-#ewarn "CONFIG_RUST=y may lower security."
 }
 
 
@@ -14005,6 +14001,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_fix_external_modules
 
 	ot-kernel_set_rust
+	ot-kernel_set_scx
 	ot-kernel_set_kconfig_cpu_scheduler_post
 
 	_ot-kernel-pkgflags_dss_enable_hmacs # 3
