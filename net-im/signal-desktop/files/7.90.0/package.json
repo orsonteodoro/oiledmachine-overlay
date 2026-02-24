@@ -145,7 +145,7 @@
     "@tanstack/react-virtual": "3.11.2",
     "@types/dom-mediacapture-transform": "0.1.11",
     "@types/fabric": "4.5.3",
-    "ajv": "6.14.0",
+    "ajv": "8.18.0",
     "axios": "1.13.5",
     "blob-util": "2.0.2",
     "blueimp-load-image": "5.16.0",
