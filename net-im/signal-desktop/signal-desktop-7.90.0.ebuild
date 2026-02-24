@@ -252,6 +252,7 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(
 #ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 
+ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove react-router@6.10.0 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"
