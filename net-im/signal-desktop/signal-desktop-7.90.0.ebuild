@@ -236,7 +236,7 @@ ewarn "QA:  Manually remove esbuild@0.24.2 and arch implementations (@esbuild/<a
 ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron from pnpm-lock.yaml"												# CVE-2023-44402
 #ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/pnpm-lock.yaml"
@@ -250,7 +250,6 @@ ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yam
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml and in ${S}/package.json"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 
 ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -274,7 +273,7 @@ ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yam
 ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
@@ -283,61 +282,9 @@ ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in 
 ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
-#ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
-#ewarn "QA:  Manually remove @octokit/request references from ${S}/danger/package.json"
-#ewarn "QA:  Manually remove @octokit/plugin-paginate-rest references from ${S}/danger/package.json"
-#ewarn "QA:  Manually remove @octokit/request-error references from ${S}/danger/package.json"
-		patch_edits_npm() {
-			pushd "sticker-creator" >/dev/null 2>&1 || die
-				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
-				sed -i -e "s|\"esbuild\": \"^0.18.10\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die									# GHSA-67mh-4wv8-2f99; ID; Moderate
-				sed -i -e "s|\"happy-dom\": \"8.9.0\"|\"happy-dom\": \"20.0.2\"|g" "package-lock.json" || die									# CVE-2024-51757; DoS, DT, ID; Critical
-																								# CVE-2025-61927; ZC, VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-																								# CVE-2025-62410; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-				sed -i -e "s|\"rollup\": \"^3.27.1\"|\"rollup\": \"^3.29.5\"|g" "package-lock.json" || die									# CVE-2024-47068; DT, ID; Medium
-				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
-																								# CVE-2024-45812; DoS, DT, ID; Medium
-																								# CVE-2024-45811; ID; Medium
-																								# CVE-2025-46565; VS(ID); Medium
-																								# CVE-2025-58751; VS(ID); Low
-																								# CVE-2025-58752; VS(ID); Low
-																								# CVE-2025-30208; ID; Moderate
-																								# CVE-2025-31125; ID; Moderate
-																								# CVE-2025-31486; ID; Moderate
-																								# CVE-2025-62522; ID; Moderate
-			popd >/dev/null 2>&1 || die
-			pushd "danger" >/dev/null 2>&1 || die
-				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
-				sed -i -e "s|\"danger: \"^10.5.3\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die										# CVE-2025-25975; DoS, DT, ID; High
-				sed -i -e "s|\"danger: \"12.3.4\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die										# CVE-2025-25975; DoS, DT, ID; High
-				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
-				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
-				sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die							# Bump for
-																								#   @octokit/request
-																								#   @octokit/plugin-paginate-rest
-																								#   @octokit/request-error
-																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
-			popd >/dev/null 2>&1 || die
-			sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die								# Bump for
-																								#   @octokit/request
-																								#   @octokit/plugin-paginate-rest
-																								#   @octokit/request-error
-																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
-
-			sed -i -e "s|\"danger: \"^10.5.3\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die											# CVE-2025-25975; DoS, DT, ID; High
-			sed -i -e "s|\"danger: \"12.3.4\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die											# CVE-2025-25975; DoS, DT, ID; High
-			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
-			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die		# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die							# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#\"esbuild\": \">=0.12 <1\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
-			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
-			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
-		}
+ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
 
 		patch_edits_pnpm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
@@ -384,7 +331,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
 				sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25290, DoS, Moderate
-				sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 2.1.0|g" "pnpm-lock.yaml" || die								# CVE-2025-25289, DoS, Moderate
+				sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 5.1.1|g" "pnpm-lock.yaml" || die								# CVE-2025-25289, DoS, Moderate
 				sed -i -e "s|cross-spawn: 7.0.3|cross-spawn: 7.0.5|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
 				sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
 				sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
@@ -525,7 +472,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				"danger@13.0.4"
 				"@octokit/plugin-paginate-rest@9.2.2"
 				"@octokit/request@8.4.1"
-				"@octokit/request-error@2.1.0"
+				"@octokit/request-error@5.1.1"
 				"cross-spawn@7.0.5"
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
