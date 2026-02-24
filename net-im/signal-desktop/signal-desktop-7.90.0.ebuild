@@ -54,9 +54,9 @@ NPM_AUDIT_FIX_ARGS=(
 NPM_DEDUPE_ARGS=(
 )
 
-if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
-	PNPM_INSTALL_ARGS+=( "--force" )
-fi
+#if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
+#	PNPM_INSTALL_ARGS+=( "--force" )
+#fi
 
 QA_PREBUILT="
 	opt/Signal/chrome_crashpad_handler
