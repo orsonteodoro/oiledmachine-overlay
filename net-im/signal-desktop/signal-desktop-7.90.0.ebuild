@@ -219,8 +219,10 @@ ewarn "QA:  Manually remove diff@5.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove js-yaml@3.14.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@3.1.3 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@5.1.7 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.5 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@9.0.6 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.24.2) to esbuild-register@3.6.0(esbuild@0.25.0) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to snapshot: section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove (encoding@0.1.13) suffix at @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
@@ -532,10 +534,11 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 		epnpm dedupe
 		patch_edits_pnpm
 
-	# Re-add missing dependency
+	# Re-add missing dependencies
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
 				"@octokit/rest@20.1.2"
+				"qs@6.14.2"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
