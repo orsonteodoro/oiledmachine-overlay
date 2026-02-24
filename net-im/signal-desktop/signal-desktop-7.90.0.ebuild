@@ -214,6 +214,7 @@ src_unpack() {
 		# VS = Vulnerable System (Direct attack)
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
+ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove diff@4.0.4 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove diff@5.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove js-yaml@3.14.2 from ${S}/pnpm-lock.yaml"
@@ -329,6 +330,8 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 				sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die												# CVE-2025-64718; DT; Moderate
 				sed -i -e "s|ajv: 6.12.6|ajv: 8.18.0|g" "pnpm-lock.yaml" || die													# CVE-2025-69873; ZC, VS(DoS); Moderate
 				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+				sed -i -e "s|'@remix-run/router': 1.5.0|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
+				sed -i -e "s|'@remix-run/router': 1.23.1|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -350,6 +353,7 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 																								# CVE-2025-15284; DoS; High
 				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.0|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; VS(DoS); Moderate
 				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
+				sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die													# CVE-2025-65945; DT; High
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -440,6 +444,7 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 			sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die														# CVE-2025-65945; DT; High
 		}
 		patch_edits_pnpm
 
@@ -456,6 +461,7 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 				"markdown-it@14.1.0"
 				"react-router@6.30.2"
 				"lodash@4.17.23"
+				"@remix-run/router@1.23.2"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
@@ -479,6 +485,7 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
 				"qs@6.14.2"
+				"jws@3.2.3"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -504,6 +511,7 @@ ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.
 			"markdown-it@14.1.0"
 			"diff@8.0.3"
 			"webpack@5.104.1"
+			"jws@3.2.2"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(

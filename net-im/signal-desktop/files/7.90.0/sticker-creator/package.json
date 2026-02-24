@@ -29,6 +29,7 @@
     "@popperjs/core": "2.11.8",
     "@react-aria/interactions": "3.19.0",
     "@reduxjs/toolkit": "1.9.5",
+    "@remix-run/router": "1.23.2",
     "@stablelib/x25519": "1.0.3",
     "ajv": "8.18.0",
     "base64-js": "1.5.1",

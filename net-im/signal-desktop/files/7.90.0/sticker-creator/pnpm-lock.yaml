@@ -29,6 +29,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 1.9.5
         version: 1.9.5(react-redux@8.0.5(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1))(react@18.3.1)
+      '@remix-run/router':
+        specifier: 1.23.2
+        version: 1.23.2
       '@stablelib/x25519':
         specifier: 1.0.3
         version: 1.0.3
@@ -633,6 +636,10 @@ packages:
 
   '@remix-run/router@1.23.1':
     resolution: {integrity: sha512-vDbaOzF7yT2Qs4vO6XV1MHcJv+3dgR1sT+l3B8xxOVhUC336prMvqrvsLL/9Dnw2xr6Qhz4J0dmS0llNAbnUmQ==}
+    engines: {node: '>=14.0.0'}
+
+  '@remix-run/router@1.23.2':
+    resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==}
     engines: {node: '>=14.0.0'}
 
   '@remix-run/router@1.5.0':
@@ -3303,6 +3310,8 @@ snapshots:
 
   '@remix-run/router@1.23.1': {}
 
+  '@remix-run/router@1.23.2': {}
+
   '@remix-run/router@1.5.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.59.0':
@@ -5203,14 +5212,14 @@ snapshots:
 
   react-router-dom@6.10.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.5.0
+      '@remix-run/router': 1.23.2
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router: 6.10.0(react@18.3.1)
 
   react-router@6.30.2(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.23.1
+      '@remix-run/router': 1.23.2
       react: 18.3.1
 
   react-sortablejs@6.1.4(@types/sortablejs@1.15.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sortablejs@1.15.0):
