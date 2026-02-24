@@ -866,7 +866,7 @@ TBM=0
     RANDSTRUCT [70]                | M [16]                         | Y                              | N                             | N                             | N
     Swap                           | Y [29]                         | Y [29]                         | Y                             | Y [29]                        | Y [29]
     LSMS                           | [21d]                          | [21e]                          | [21e]                         | [21f]                         | [21g]
-    CPU scheduler                  | eevdf-throughput               | eevdf-throughput               | eevdf-autogroup               | eevdf-autogroup               | eevdf-throughput
+    CPU scheduler                  | eevdf-throughput               | eevdf-autogroup                | eevdf-autogroup               | eevdf-autogroup               | eevdf-throughput
     scx support [76]               | N                              | N                              | Y                             | Y [53]                        | N
     Rust support                   | N                              | N                              | N                             | Y                             | N
     HZ                             | 100                            | 300                            | 300                           | 1000                          | 100
