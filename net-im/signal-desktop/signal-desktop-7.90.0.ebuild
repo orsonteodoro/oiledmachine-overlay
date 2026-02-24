@@ -215,6 +215,7 @@ src_unpack() {
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove diff@4.0.4 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove diff@5.2.2 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove js-yaml@3.14.2 from ${S}/pnpm-lock.yaml"
