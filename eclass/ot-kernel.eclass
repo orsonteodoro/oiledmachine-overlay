@@ -12692,8 +12692,6 @@ ewarn "Disabling CONFIG_CFI for Rust support and lowering security"
 		else
 			ot-kernel_y_configopt "CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC"
 		fi
-ewarn "Disabling CONFIG_SHADOW_CALL_STACK for Rust support and lowering security"
-		ot-kernel_unset_configopt "CONFIG_SHADOW_CALL_STACK"
 ewarn "Disabling CONFIG_KASAN_SW_TAGS for Rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		found=1
