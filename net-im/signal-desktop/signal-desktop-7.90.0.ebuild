@@ -378,6 +378,7 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 				sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
 				sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die												# CVE-2025-64718; DT; Moderate
 				sed -i -e "s|ajv: 6.12.6|ajv: 8.18.0|g" "pnpm-lock.yaml" || die													# CVE-2025-69873; ZC, VS(DoS); Moderate
+				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -485,6 +486,10 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 																								# CVE-2025-68157; DT, ID, Low
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "package.json" || die											# CVE-2025-68458; DT, ID, Low
 																								# CVE-2025-68157; DT, ID, Low
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 		}
 		patch_edits_pnpm
 

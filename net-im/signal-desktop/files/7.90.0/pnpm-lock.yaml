@@ -8031,19 +8031,12 @@ packages:
     resolution: {integrity: sha512-MClCe8IL5nRRmawL6ib/eT4oLyeKMGCghibcDWK+J0hh0Q8kqSdia6BvbRMVk6mPa6WqUa5uR2oxt6C5jd533A==}
     engines: {node: 20 || >=22}
 
-  minimatch@3.1.3:
-    resolution: {integrity: sha512-M2GCs7Vk83NxkUyQV1bkABc4yxgz9kILhHImZiBPAZ9ybuvCb0/H7lEl5XvIg3g+9d4eNotkZA5IWwYl0tibaA==}
-
-  minimatch@5.1.6:
-    resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
+  minimatch@5.1.7:
+    resolution: {integrity: sha512-FjiwU9HaHW6YB3H4a1sFudnv93lvydNjz2lmyUXR6IwKhGI+bgL3SOZrBGn6kvvX2pJvhEkGSGjyTHN47O4rqA==}
     engines: {node: '>=10'}
 
-  minimatch@9.0.3:
-    resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
-    engines: {node: '>=16 || 14 >=14.17'}
-
-  minimatch@9.0.5:
-    resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
+  minimatch@9.0.6:
+    resolution: {integrity: sha512-kQAVowdR33euIqeA0+VZTDqU+qo1IeVY+hrKYtZMio3Pg0P0vuh/kwRylLUddJhB6pf3q/botcOvRtx4IN1wqQ==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   minimist@1.2.8:
@@ -11142,7 +11135,7 @@ snapshots:
     dependencies:
       commander: 5.1.0
       glob: 10.5.0
-      minimatch: 3.1.3
+      minimatch: 10.2.1
 
   '@electron/fuses@1.5.0':
     dependencies:
@@ -11247,7 +11240,7 @@ snapshots:
       debug: 4.3.7(supports-color@8.1.1)
       dir-compare: 4.2.0
       fs-extra: 11.2.0
-      minimatch: 9.0.5
+      minimatch: 9.0.6
       plist: 3.1.0
     transitivePeerDependencies:
       - supports-color
@@ -11367,7 +11360,7 @@ snapshots:
       ignore: 5.3.2
       import-fresh: 3.3.1
       js-yaml: 4.1.1
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
@@ -11532,7 +11525,7 @@ snapshots:
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
       debug: 4.3.7(supports-color@8.1.1)
-      minimatch: 3.1.3
+      minimatch: 10.2.1
     transitivePeerDependencies:
       - supports-color
 
@@ -15073,7 +15066,7 @@ snapshots:
       debug: 4.3.7(supports-color@8.1.1)
       globby: 11.1.0
       is-glob: 4.0.3
-      minimatch: 9.0.3
+      minimatch: 10.2.1
       semver: 7.6.3
       ts-api-utils: 1.4.3(typescript@5.6.3)
     optionalDependencies:
@@ -16572,7 +16565,7 @@ snapshots:
 
   dir-compare@4.2.0:
     dependencies:
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       p-limit: 3.1.0
 
   dir-glob@3.0.1:
@@ -17157,7 +17150,7 @@ snapshots:
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       object.fromentries: 2.0.8
       object.groupby: 1.0.3
       object.values: 1.2.1
@@ -17186,7 +17179,7 @@ snapshots:
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       object.fromentries: 2.0.8
       object.groupby: 1.0.3
       object.values: 1.2.1
@@ -17214,7 +17207,7 @@ snapshots:
       hasown: 2.0.2
       jsx-ast-utils: 3.3.5
       language-tags: 1.0.9
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       object.fromentries: 2.0.8
       safe-regex-test: 1.1.0
       string.prototype.includes: 2.0.1
@@ -17253,7 +17246,7 @@ snapshots:
       eslint: 8.56.0
       estraverse: 5.3.0
       jsx-ast-utils: 3.3.5
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       object.entries: 1.1.8
       object.fromentries: 2.0.8
       object.hasown: 1.1.4
@@ -17317,7 +17310,7 @@ snapshots:
       json-stable-stringify-without-jsonify: 1.0.1
       levn: 0.4.1
       lodash.merge: 4.6.2
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       natural-compare: 1.4.0
       optionator: 0.9.4
       strip-ansi: 6.0.1
@@ -17529,7 +17522,7 @@ snapshots:
 
   filelist@1.0.4:
     dependencies:
-      minimatch: 5.1.6
+      minimatch: 5.1.7
 
   filesize@9.0.11: {}
 
@@ -17654,7 +17647,7 @@ snapshots:
       deepmerge: 4.3.1
       fs-extra: 10.1.0
       memfs: 3.5.3
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
       semver: 7.6.3
@@ -17860,7 +17853,7 @@ snapshots:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 3.4.3
-      minimatch: 9.0.5
+      minimatch: 9.0.6
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
@@ -18614,7 +18607,7 @@ snapshots:
       async: 3.2.6
       chalk: 4.1.2
       filelist: 1.0.4
-      minimatch: 3.1.3
+      minimatch: 10.2.1
 
   jest-changed-files@29.7.0:
     dependencies:
@@ -19643,21 +19636,13 @@ snapshots:
     dependencies:
       brace-expansion: 5.0.2
 
-  minimatch@3.1.3:
-    dependencies:
-      brace-expansion: 1.1.12
-
-  minimatch@5.1.6:
+  minimatch@5.1.7:
     dependencies:
       brace-expansion: 2.0.2
 
-  minimatch@9.0.3:
+  minimatch@9.0.6:
     dependencies:
-      brace-expansion: 2.0.2
-
-  minimatch@9.0.5:
-    dependencies:
-      brace-expansion: 2.0.2
+      brace-expansion: 5.0.2
 
   minimist@1.2.8: {}
 
@@ -19733,7 +19718,7 @@ snapshots:
       he: 1.2.0
       js-yaml: 4.1.1
       log-symbols: 4.1.0
-      minimatch: 5.1.6
+      minimatch: 5.1.7
       ms: 2.1.3
       serialize-javascript: 6.0.2
       strip-json-comments: 3.1.1
@@ -19876,7 +19861,7 @@ snapshots:
       chalk: 2.4.2
       cross-spawn: 6.0.6
       memorystream: 0.3.1
-      minimatch: 3.1.3
+      minimatch: 10.2.1
       pidtree: 0.3.1
       read-pkg: 3.0.0
       shell-quote: 1.8.2
@@ -21966,7 +21951,7 @@ snapshots:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 10.5.0
-      minimatch: 3.1.3
+      minimatch: 10.2.1
 
   text-table@0.2.0: {}
 
