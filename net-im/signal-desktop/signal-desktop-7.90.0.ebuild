@@ -336,6 +336,7 @@ ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
 				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
 				sed -i -e "s|'@remix-run/router': 1.5.0|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|'@remix-run/router': 1.23.1|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
+				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; ZC, VS(DoS), Moderate
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -355,7 +356,6 @@ ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
 
 				sed -i -e "s|qs: 6.14.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die													# CVE-2026-2391; DoS; Low
 																								# CVE-2025-15284; DoS; High
-				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.0|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; VS(DoS); Moderate
 				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
 				sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die													# CVE-2025-65945; DT; High
 			popd >/dev/null 2>&1 || die
@@ -434,7 +434,6 @@ ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|glob: 8.1.0|glob: 10.5.0|g" "pnpm-lock.yaml" || die													# CVE-2025-64756; DoS, DT, ID, High
 			sed -i -e "s|axios: 1.12.0(debug@4.3.7)|axios: 1.13.5|g" "pnpm-lock.yaml" || die											# CVE-2026-25639, DoS, High
 			sed -i -e "s|'@isaacs/brace-expansion': 5.0.0|'@isaacs/brace-expansion': 5.0.1|g" "pnpm-lock.yaml" || die								# CVE-2026-25547, ZC, VS(DoS), High
-			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.0|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
 			sed -i -e "s|diff: 4.0.2|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
 			sed -i -e "s|diff: 4.0.4|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
 			sed -i -e "s|diff: 5.2.0|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
@@ -449,6 +448,9 @@ ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die														# CVE-2025-65945; DT; High
+			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
+			sed -i -e "s|playwright: 1.54.2|playwright: 1.55.1|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
+			sed -i -e "s|storybook: 8.4.4(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.15|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
 		}
 		patch_edits_pnpm
 
@@ -462,10 +464,10 @@ ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
 				"minimatch@10.2.1"
 				"js-yaml@4.1.1"
 				"ajv@8.18.0"
-				"markdown-it@14.1.0"
 				"react-router@6.30.2"
 				"lodash@4.17.23"
 				"@remix-run/router@1.23.2"
+				"markdown-it@14.1.1"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
@@ -512,10 +514,12 @@ ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
 			"glob@10.5.0"
 			"axios@1.13.5"
 			"@isaacs/brace-expansion@5.0.1"
-			"markdown-it@14.1.0"
+			"markdown-it@14.1.1"
 			"diff@8.0.3"
 			"webpack@5.104.1"
 			"jws@3.2.2"
+			"playwright@1.55.1"
+			"storybook@8.6.15"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
