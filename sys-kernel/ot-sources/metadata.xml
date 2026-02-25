@@ -1002,7 +1002,9 @@ TBM=0
           due to lack of staffing
     [35b] KEYWORDS delayed rollout is a persistent threat for critical
           vulnerabilities or zero click attacks for users that rely on stable.
-          Relying on stable could be a type of configuration vulnerability.
+          Relying on stable KEYWORDS could be a type of configuration vulnerability.
+          The distro's KEYWORDS system creates a Pandora's box or an unintended
+          consequence that may lower security.
     [36] If the computer is not maintained properly, it could cause an
          availability problem (e.g crash) or overheating during an online exam
          with no retakes allowed.  With hardening enabled to the max, the
