@@ -1172,8 +1172,8 @@ TBM=0
            - Use this for
            - implies B/C grade security 
            - implies less than or equal to B/C grade performance
-           - implies red-basic zone appropriate kernel, but
-             can be improved with enforced sanitizers.
+           - implies red-basic zone appropriate kernel like the
+             builder kernel but without sanitizers changes.
          SSP is an estimated -10% performance penalty worst case.
          Retpoline is estimated to be -20% performance penalty worst case, but average case 3-8%.
          CET is estimated to be 10-15% performance penalty worst case, %5 average case.
