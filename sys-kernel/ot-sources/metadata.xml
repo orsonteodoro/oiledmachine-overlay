@@ -1154,7 +1154,7 @@ TBM=0
          red-critical = SSP && ASLR && SECCOMP && !EOL_KERNEL \
                         && (UBSAN && (PANIC_ON_WARN || CONFIG_UBSAN_TRAP || custom_panic_patch)) \
                         && (KASAN && (PANIC_ON_WARN || custom_sanitizers_panic_patch))
-         green = !SSP || !ASLR || !SECCOMP || !EOL_KERNEL
+         green = !SSP || !ASLR || !SECCOMP || EOL_KERNEL
 
          The UBSAN halt on violation mitigates againts some zero-click attacks.
 
