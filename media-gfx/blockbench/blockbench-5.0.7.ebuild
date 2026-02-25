@@ -21,8 +21,7 @@ NPM_AUDIT_FATAL=0
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	#ELECTRON_APP_ELECTRON_PV="39.6.1" # Cr 142.0.7444.265, node 22.22.0 works
-	ELECTRON_APP_ELECTRON_PV="40.6.0" # Cr 144.0.7559.177, node 24.13.1 works
+	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1 works
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="38.1.0" # Cr 140.0.7339.80, node 22.19.0
@@ -166,7 +165,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_13"
+IUSE+=" ebuild_revision_14"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_SLOT}[npm,webassembly(+)]
