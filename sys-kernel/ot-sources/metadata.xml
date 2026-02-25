@@ -920,7 +920,7 @@ TBM=0
     CPU scheduler                  | eevdf-throughput            | eevdf-autogroup            | bore-autogroup             | bore-autogroup / scx_lavd  |
     scx support [76]               | N                           | Y                          | Y                          | Y                          |
     Rust support                   | N                           | N                          | Y                          | Y                          |
-    HZ [89]                        | 250                         | 1000                       | 1000                       | 1000                       |
+    HZ [89]                        | 250                         | 1000                       | 1000 [90]                  | 1000                       |
     IO schedulers                  | Deadline                    | mq-deadline/none [30][34]  | ADIOS                      | Kyber                      |
     TCP congestion control         | Cubic                       | Cubic                      | Cubic                      | Cubic                      |
     Panic on oops [88]             | N                           | N                          | N                          | N / Y [86]                 |
