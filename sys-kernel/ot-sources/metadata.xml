@@ -926,7 +926,7 @@ TBM=0
     Criticality                    | Desktop-mobile use /        | Balanced [34]              | Balanced                   | Balanced                   |
                                    | Uptime / Balanced           |                            |                            |                            |
     Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | F [81][84][85]             |
-    Performance grade [41]         | B                           | B                          | C / C [78]                 | C / B [82]                 |
+    Performance grade [41]         | B                           | B                          | C / C [78]                 | C / B [83]                 |
     Uptime grade [38]              | A                           | C                          | C                          | C                          |
     Release schedule grade [37]    | C [68]                      | ?                          | A                          | F [85]                     |
 
@@ -1111,8 +1111,11 @@ TBM=0
     [82] lockdown,yama,integrity,selinux,bpf,landlock,ipe
     [83] C for compling, B for gaming.
          Autogroup and Hz lower throughput.
-         scx_lavd increase the resiliency when gaming in high poly or high content scenes, but the
-         the hardening and sanitizers may reduces the gaming by 20% or more.
+         scx_lavd increases the resiliency when gaming in high poly or high
+         content scenes, but the the hardening and sanitizers may reduces the
+         performance by 20% or more.  The sanitizers do not halt on violation,
+         so it is wasted CPU cycles or a type of ghost load that affects the
+         performance and drains the battery faster.
     [84] Using sanitizers with panic on oops disabled will make the sanitizers
          ineffective unless there is a special patch to panic on violation, or
          the kernel config has the panic_on_oops=1 kernel command line option.
@@ -1122,7 +1125,7 @@ TBM=0
          tampered so it is preferred to be built in.
     [86] Enabled via bootloader, but the user may use a custom bootloader and
          inadvertantly disable it and the kernel sanitizers.
-    [87] Uses an EOL kernel series
+    [87] It uses an EOL (End Of Life) kernel series.
          
   Sanitizers would boost it to B grade.  Basic hardening will
          boost it to C grade.  A grade will be based on creative config tuning
