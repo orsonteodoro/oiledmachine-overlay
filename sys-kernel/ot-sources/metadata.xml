@@ -928,7 +928,7 @@ TBM=0
     Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | F [81][84][85]             |
     Performance grade [41]         | B                           | B                          | C / C [78]                 | C / B [82]                 |
     Uptime grade [38]              | A                           | C                          | C                          | C                          |
-    Release schedule grade [37]    | C [68]                      | ?                          | A                          |                            |
+    Release schedule grade [37]    | C [68]                      | ?                          | A                          | F [85]                     |
 
     Y = Unconditionally Yes
     N = Unconditionally No
