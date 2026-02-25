@@ -945,7 +945,7 @@ TBM=0
     B = B grade, >= 80% coverage or score
     C = C grade, >= 70% coverage or score
     D = D grade, >= 60% coverage or score
-    F = D grade, < 60% coverage or score
+    F = F grade, < 60% coverage or score
 
     [1] Maybe, if a chromium based app is installed
     [2] Increased entropy with RANDOMIZE_MEMORY
