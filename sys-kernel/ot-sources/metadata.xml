@@ -925,8 +925,8 @@ TBM=0
     Mitigated attack vectors [42]  | CE, PE ; [14]               | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] |
     Criticality                    | Desktop-mobile use /        | Balanced [34]              | Balanced                   | Balanced                   |
                                    | Uptime / Balanced           |                            |                            |                            |
-    Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | D [81][84]                 |
-    Performance grade [41]         | B                           | B                          | C /C [78]                  | C / B [82]                 |
+    Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | F [81][84][85]             |
+    Performance grade [41]         | B                           | B                          | C / C [78]                 | C / B [82]                 |
     Uptime grade [38]              | A                           | C                          | C                          | C                          |
     Release schedule grade [37]    | C [68]                      | ?                          | A                          |                            |
 
@@ -1119,6 +1119,7 @@ TBM=0
          tampered so it is preferred to be built in.
     [86] Enabled via bootloader, but the user may use a custom bootloader and
          inadvertantly disable it and the kernel sanitizers.
+    [87] Uses an EOL kernel series
          
   Sanitizers would boost it to B grade.  Basic hardening will
          boost it to C grade.  A grade will be based on creative config tuning
