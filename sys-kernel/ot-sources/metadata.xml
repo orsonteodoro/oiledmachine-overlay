@@ -798,19 +798,19 @@ TBM=0
                                    | ot-sources (builder) [66]   | ot-sources (gaming) [52][66]     | ot-sources (dj) [50][52][66]       | ot-sources (secure) [66]            |
     Kernel config                  | [56]                        | [56]                             | [56]                               | [56]                                |
     IA32 support [8]               | M [7]                       | M [7]                            | M [7]                              | N                                   |
-    SSP (basic)                    | Y                           | N                                | N                                  | Y                                   |
-    SSP (strong)                   | Y                           | N                                | N                                  | Y                                   |
-    BO (_FORTIFY_SOURCE=2) [44]    | N [19][33]                  | N                                | N                                  | Y                                   |
-    ASLR (basic)                   | Y                           | N                                | N                                  | Y                                   |
-    ASLR (strong) [2]              | Y                           | N                                | N                                  | Y                                   |
-    KPTI                           | Y                           | N                                | N                                  | Y                                   |
+    SSP (basic)                    | Y                           | N [92]                           | N                                  | Y                                   |
+    SSP (strong)                   | Y                           | N [92]                           | N                                  | Y                                   |
+    BO (_FORTIFY_SOURCE=2) [44]    | N [19][33]                  | N [92]                           | N                                  | Y                                   |
+    ASLR (basic)                   | Y                           | N [92]                           | N                                  | Y                                   |
+    ASLR (strong) [2]              | Y                           | N [92]                           | N                                  | Y                                   |
+    KPTI                           | Y                           | N [92]                           | N                                  | Y                                   |
     KASAN                          | N                           | N                                | N                                  | Y                                   |
     KFENCE                         | Y                           | N                                | N                                  | N                                   |
     UBSAN                          | Y                           | N                                | N                                  | Y                                   |
     KCFI >= 6.1 [9][11]            | Y                           | N                                | N                                  | N                                   |
     SCS >= 5.8 [9][10]             | N                           | N                                | N                                  | N                                   |
-    CET (branch/return) [71]       | M/M [23]                    | N/N                              | N/N                                | M/M [23]                            |
-    Sandboxing support [3]         | Y                           | Y                                | Y                                  | Y                                   |
+    CET (branch/return) [71]       | M/M [23]                    | N/N [92]                         | N/N                                | M/M [23]                            |
+    Sandboxing support [3]         | Y [93]                      | Y [93]                           | Y [93]                             | Y [93]                              |
     Retpoline [13]                 | Y                           | N                                | N                                  | Y                                   |
     YAMA [12]                      | M [1]                       | N                                | N                                  | M [1]                               |
     Register sanitize on exit [61] | N / Y [65]                  | N                                | N                                  | N / Y [65]                          |
@@ -835,13 +835,14 @@ TBM=0
     Mitigated attack vectors [42]  | CE, PE, DoS, DT, ID ; [14]  | DoS [14]                         | DoS [14]                           | CE, PE, DoS, DT, ID                 |
     Criticality                    | Balanced                    | Performance-critical             | Performance-critical               | Security-critical [34]              |
                                    |                             |                                  |                                    |                                     |
-    Security grade [40]            | B-                          | F                                | F                                  | A                                   |
-    Performance grade [41]         | B                           | A                                | A                                  | B or C-F [39][45]                   |
+    Security grade [40]            | B-                          | F [92]                           | F                                  | A                                   |
+    Performance grade [41]         | B                           | A [92]                           | A                                  | B or C-F [39][45]                   |
     Uptime grade [38]              | A                           | D                                | D                                  | C                                   |
     Release schedule grade [37]    | C- [35a]                    | C- [35a]                         | C- [35a]                           | C- [35a]                            |
     Primary use cases              | Bulding packages            | PC gaming                        | Disk jockey                        | Online shopping and payments,       |
                                    |                             |                                  |                                    | legal paperwork                     |
     Secondary use cases            | General use                 | None                             | Music production                   | Red zones                           |
+    Red or green zone [91]         | Red-basic                   | Green [92]                       | Green                              | Red-critical                        |
 
                                    | gentoo-sources                 | gentoo-kernel                  | gentoo-kernel-bin             | zen-kernel                       | vanilla kernel defaults [72]
     Config                         | [59]                           | [58]                           | [73]                          | [55]                             | [57]
@@ -890,6 +891,7 @@ TBM=0
     Primary use cases              | Patches only and customize it  | Preconfigured for power user   | General use and enterprise    | Experimental desktop performance | Servers / data-centers
                                    | yourself                       |                                |                               | and interactivity                |
     Secondary use cases            | Red zones                      | Red zones                      |                               | General use                      | General use
+    Red or green zone [91]         | Red-basic                      | Red-basic                      | Red-basic                     | Red-basic                        | Red-basic
 
                                    | pf-kernel                   | linux-tkg                  | linux-cachyos              | kernel-bazzite             |
     Kernel config                  | [60]                        | [54]                       | [77]                       | [79]                       |
@@ -906,7 +908,7 @@ TBM=0
     KCFI >= 6.1 [9][11]            | N                           | N                          | N                          | N                          |
     SCS >= 5.8 [9][10]             | N                           | N                          | N                          | N                          |
     CET (branch/return) [71]       | Y                           | Y/Y                        | Y/Y                        | Y/Y                        |
-    Sandboxing support [3]         | Y                           | Y                          | Y                          | N [80]                     |
+    Sandboxing support [3]         | Y                           | Y                          | Y                          | Y                          |
     Retpoline [13]                 | Y                           | Y                          | Y                          | Y                          |
     YAMA [12]                      | N                           | Y                          | Y                          | Y                          |
     Register sanitize on exit [61] | N                           | N                          | N                          | N                          |
@@ -931,12 +933,13 @@ TBM=0
     Mitigated attack vectors [42]  | CE, PE ; [14]               | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] |
     Criticality                    | Desktop-mobile use /        | Balanced [34]              | Balanced                   | Balanced                   |
                                    | Uptime / Balanced           |                            |                            |                            |
-    Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | F [81][84][85]             |
+    Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | F [84][85][87]             |
     Performance grade [41]         | B                           | B                          | C / B [78]                 | C / B [83]                 |
     Uptime grade [38]              | A                           | C                          | C                          | C                          |
-    Release schedule grade [37]    | C [68]                      | ?                          | A                          | F [85]                     |
+    Release schedule grade [37]    | C [68]                      | ?                          | A                          | F [87]                     |
     Primary use case               | Desktop usability           | Gaming                     | General use performance    | Gaming                     |
     Secondary use case             | Laptop usability            | General use                | Customization              | General use                |
+    Red or green zone [91]         | Red-basic                   | Red-basic                  | Red-basic                  | Green                      |
 
     Y = Unconditionally Yes
     N = Unconditionally No
@@ -949,7 +952,7 @@ TBM=0
 
     [1] Maybe, if a chromium based app is installed
     [2] Increased entropy with RANDOMIZE_MEMORY
-    [3] With SECCOMP, SECCOMP_FILTER
+    [3] With SECCOMP=y and NET=y, implying SECCOMP_FILTER=y
     [4] ARCH=arm64 only
     [5] Non ARCH=arm64
     [6] No by default, but maybe if enabled using custom kernel config file.
@@ -1120,10 +1123,6 @@ TBM=0
          Uses a sanitizer without panic which lowers performance negligibly.
          The SSP has an estimated 10% worst case penalty.
     [79] https://github.com/bazzite-org/kernel-bazzite/blob/bazzite-6.17/kernel-x86_64-fedora.config
-    [80] Has CONFIG_ECCOMP=y Missing CONFIG_SECCOMP_FILTER=y needed for
-         capabilities sandboxing.
-    [81] It cannot deny running shellcode in sandbox in web browser sandbox.
-         Shellcode lowers the attack complexity.
     [82] lockdown,yama,integrity,selinux,bpf,landlock,ipe
     [83] C for compling, B for gaming.
          Autogroup and Hz lower throughput.
@@ -1146,6 +1145,46 @@ TBM=0
     [89] 1000 is standard for gaming and audio production.
          250 to 300 is standard for servers.
     [90] Ovewritten by build script
+    [91] This describes the appropriateness of placement of this kernel.
+         Red zone means network facing or processes untrusted data.
+         Green zone means internal network or isolated from red zone.
+         red-basic = SSP && ASLR && SECCOMP && !EOL_KERNEL && 
+                     && (UBSAN && (PANIC_ON_WARN || CONFIG_UBSAN_TRAP || custom_sanitizers_panic_patch)) \
+                     && (KFENCE && (PANIC_ON_WARN || custom_sanitizers_panic_patch))
+         red-critical = SSP && ASLR && SECCOMP && !EOL_KERNEL \
+                        && (UBSAN && (PANIC_ON_WARN || CONFIG_UBSAN_TRAP || custom_panic_patch)) \
+                        && (KASAN && (PANIC_ON_WARN || custom_sanitizers_panic_patch))
+         green = !SSP || !ASLR || !SECCOMP || !EOL_KERNEL
+
+         The UBSAN halt on violation mitigates againts some zero-click attacks.
+
+         Even though the sample interval were the lowest possible for KFENCE, it
+         cannot be A grade (90%) security score.
+    [92] The security score can be improved depending on circumstances.
+         One may choose to have a strictly gaming device, and shopping
+         or paying bills on another device.
+         OT_KERNEL_HARDENING_LEVEL="performance"
+           - Use this for single player games.
+           - implies F grade security 
+           - implies A grade performance
+           - implies green zone appropriate kernel
+         OT_KERNEL_HARDENING_LEVEL="secure"
+           - Use this for
+           - implies B/C grade security 
+           - implies less than or equal to B/C grade performance
+           - implies red-basic zone appropriate kernel, but
+             can be improved with enforced sanitizers.
+         SSP is an estimated -10% performance penalty worst case.
+         Retpoline is estimated to be -20% performance penalty worst case, but average case 3-8%.
+         CET is estimated to be 10-15% performance penalty worst case, %5 average case.
+         CET and Retpoline are mutually exclusive in compilers.
+         CET should be used in newer CPUs for higher security score over Retpoline.
+         Retpoline should be used in older CPUs.
+    [93] Currently, it is enabled via pkgflags autodetection
+         (OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1), requiring the sandboxed
+         software or web browser to be installed prior to build.
+         Assumes that the config was improperly configured then corrected by
+         the eclass assist.
 
   Sanitizers would boost it to B grade.  Basic hardening will
          boost it to C grade.  A grade will be based on creative config tuning
