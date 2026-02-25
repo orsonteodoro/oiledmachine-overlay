@@ -31,6 +31,7 @@ NODE_ENV="development"
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
 RUST_PV="${RUST_MIN_VER}"
+#export CI="true" # Avoid error during `pnpm install -P`
 
 AT_TYPES_NODE_PV="24.10.9"
 ELECTRON_BUILDER_PV="26.0.14"
@@ -94,7 +95,7 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-39.2.3-chromium.html
+		electron-40.6.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -106,7 +107,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_46
+ebuild_revision_48
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -172,7 +173,7 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 pnpm_unpack_post() {
 	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
 	eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
-	sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
+#	sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
 }
 
 pnpm_unpack_install_post() {
@@ -186,7 +187,7 @@ src_unpack() {
 		unpack "${P}.tar.gz"
 		cd "${S}" || die
 
-		sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
+#		sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
 		eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
 
 	# The package contains multiple pnpm-lock.yaml.
@@ -220,12 +221,13 @@ ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${
 #ewarn "QA:  Manually remove diff@5.2.2 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove js-yaml@3.14.2 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove minimatch@3.1.3 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@5.1.7 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove minimatch@5.1.7 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove minimatch@9.0.5 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@9.0.6 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.24.2) to esbuild-register@3.6.0(esbuild@0.25.0) from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove minimatch@9.0.6 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.24.2) to esbuild-register@3.6.0(esbuild@0.25.0) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to snapshot: section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove (encoding@0.1.13) suffix at @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove cross-spawn@5.1.0 from ${S}/pnpm-lock.yaml"
@@ -254,7 +256,7 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml and in ${S}/package.json"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
+#ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 
 ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -293,8 +295,13 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 
 #ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
 ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove jwa@1.4.1 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change danger@12.3.4 references to 13.0.4 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove danger@12.3.4 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in ${S}/danger/pnpm-lock.yaml"
 
+	# TODO:  brace-expansion breaks build
+	# Pinned fabric required for patching.
 		patch_edits_pnpm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
@@ -347,6 +354,8 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 				sed -i -e "s|cross-spawn: 7.0.3|cross-spawn: 7.0.5|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
 				sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
 				sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
+																								# Bump for
+																								#   parse-git-config
 				sed -i -e "s|micromatch: 4.0.2|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|micromatch: 4.0.4|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|'@octokit/rest': 18.12.0|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die									# Bump for
@@ -372,10 +381,10 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								#   @octokit/request-error
 			sed -i -e "s|axios: 1.7.9|axios: 1.13.5|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
 																								# CVE-2025-58754, ZC, DoS, High
-			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
-			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
-			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
-			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 			sed -i -e "s|cross-spawn: 5.1.0|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die												# CVE-2024-21538, DoS, High
 			sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
 			sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
@@ -425,7 +434,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 
 			sed -i -e "s|qs: 6.14.1|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
 			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
+#			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|js-yaml: 3.14.1|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|js-yaml: 3.14.2|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
@@ -453,6 +462,9 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
 			sed -i -e "s|playwright: 1.54.2|playwright: 1.55.1|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
 			sed -i -e "s|storybook: 8.4.4(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.15|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 		}
 		patch_edits_pnpm
 
@@ -461,7 +473,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			deps=(
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
-				"brace-expansion@2.0.2"
+#				"brace-expansion@2.0.2"
 				"tmp@0.2.4"
 				"minimatch@10.2.1"
 				"js-yaml@4.1.1"
@@ -473,7 +485,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
-				"brace-expansion@1.1.12"
+#				"brace-expansion@1.1.12"
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.0"
 				"happy-dom@20.0.2"
@@ -510,7 +522,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"tar@7.5.9"
 			"qs@6.14.2"
 			"minimatch@10.2.1"
-			"fabric@7.2.0"
+#			"fabric@7.2.0"
 			"js-yaml@4.1.1"
 			"ajv@8.18.0"
 			"glob@10.5.0"
@@ -530,8 +542,8 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"@octokit/request@8.4.1"
 			"@octokit/request-error@5.1.1"
 			"@octokit/rest@20.1.2"
-			"brace-expansion@2.0.2"
-			"brace-expansion@1.1.12"
+#			"brace-expansion@2.0.2"
+#			"brace-expansion@1.1.12"
 			"patch-package@8.0.0"
 			"webpack-dev-server@5.2.1"
 			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
@@ -680,7 +692,7 @@ src_install() {
 		"${MY_PN2}.png" \
 		"Network;InstantMessaging;Chat"
 
-	lcnr_install_files
+#	lcnr_install_files
 }
 
 pkg_postinst() {
@@ -688,18 +700,19 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.73.0, 20251003, electron 38.2.1)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.64.0, 20250807, electron 37.2.6)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.60.0, 20250704, electron 37.2.0)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.59.0, 20250701, electron 37.1.0)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.46.0, 20250313, electron 35.0.1)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.45.1, 20250311, electron 35.0.1)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.44.0, 20250227, electron 35.0.0-beta.11)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.42.0, 20250214, electron 35.0.0-beta.6)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250116, electron 34.1.1)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250207, electron 35.0.0-beta.3)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.40.1, 20250205, electron 35.0.0-beta.2)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, electron 34.0.0-beta.5)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, electron 34.0.0-beta.14)
-# OILEDMACHINE-OVERLAY-TEST:  passed (7.38.0, 20250116, electron 34.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.90.0, 20260225, Electron 40.6.0)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.73.0, 20251003, Electron 38.2.1)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.64.0, 20250807, Electron 37.2.6)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.60.0, 20250704, Electron 37.2.0)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.59.0, 20250701, Electron 37.1.0)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.46.0, 20250313, Electron 35.0.1)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.45.1, 20250311, Electron 35.0.1)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.44.0, 20250227, Electron 35.0.0-beta.11)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.42.0, 20250214, Electron 35.0.0-beta.6)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250116, Electron 34.1.1)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250207, Electron 35.0.0-beta.3)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.40.1, 20250205, Electron 35.0.0-beta.2)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, Electron 34.0.0-beta.5)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, Electron 34.0.0-beta.14)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.38.0, 20250116, Electron 34.0.0)
 # UI load - pass

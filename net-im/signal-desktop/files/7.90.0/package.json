@@ -138,6 +138,7 @@
     "@react-types/shared": "3.27.0",
     "@signalapp/libsignal-client": "0.87.1",
     "@signalapp/minimask": "1.0.1",
+    "@signalapp/mute-state-change": "workspace:1.0.0",
     "@signalapp/quill-cjs": "2.1.2",
     "@signalapp/ringrtc": "2.64.1",
     "@signalapp/sqlcipher": "2.4.4",
@@ -168,7 +169,7 @@
     "emoji-regex": "10.4.0",
     "encoding": "0.1.13",
     "esbuild": "0.25.0",
-    "fabric": "7.2.0",
+    "fabric": "4.6.0",
     "fast-glob": "3.3.2",
     "filesize": "9.0.11",
     "firstline": "2.0.2",
@@ -261,7 +262,6 @@
     "@octokit/request-error": "5.1.1",
     "@octokit/rest": "20.1.2",
     "@signalapp/mock-server": "15.2.0",
-    "@signalapp/mute-state-change": "workspace:*",
     "@storybook/addon-a11y": "8.4.4",
     "@storybook/addon-actions": "8.4.4",
     "@storybook/addon-controls": "8.4.4",
@@ -322,7 +322,6 @@
     "babel-loader": "9.2.1",
     "babel-plugin-lodash": "3.3.4",
     "better-blockmap": "2.0.1",
-    "brace-expansion": "1.1.12",
     "casual": "1.6.2",
     "chai": "4.4.1",
     "chai-as-promised": "7.1.1",
@@ -403,7 +402,7 @@
       "react-popper@2.3.0>react": "18.3.1",
       "react-popper@2.3.0>react-dom": "18.3.1"
     },
-    "disabledPatchedDependencies": {
+    "patchedDependencies": {
       "casual@1.6.2": "patches/casual+1.6.2.patch",
       "protobufjs@7.3.2": "patches/protobufjs+7.3.2.patch",
       "@types/express@4.17.21": "patches/@types+express+4.17.21.patch",
