@@ -932,7 +932,7 @@ TBM=0
     Criticality                    | Desktop-mobile use /        | Balanced [34]              | Balanced                   | Balanced                   |
                                    | Uptime / Balanced           |                            |                            |                            |
     Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | F [81][84][85]             |
-    Performance grade [41]         | B                           | B                          | C / C [78]                 | C / B [83]                 |
+    Performance grade [41]         | B                           | B                          | C / B [78]                 | C / B [83]                 |
     Uptime grade [38]              | A                           | C                          | C                          | C                          |
     Release schedule grade [37]    | C [68]                      | ?                          | A                          | F [85]                     |
     Primary use case               | Desktop usability           | Gaming                     | General use performance    | Gaming                     |
@@ -1108,9 +1108,10 @@ TBM=0
     [75] Arch dependent
     [76] Not all depend on CONFIG_RUST=y
     [77] https://github.com/CachyOS/linux-cachyos/blob/master/linux-cachyos/config
-    [78] C for compiling, C for gaming.
+    [78] C for compiling, B for gaming.
          Autogroup lowers throughput.
-         The 300 Hz is not standard for gaming.
+         Uses a sanitizer without panic which lowers performance negligibly.
+         The SSP has an estimated 10% worst case penalty.
     [79] https://github.com/bazzite-org/kernel-bazzite/blob/bazzite-6.17/kernel-x86_64-fedora.config
     [80] Has CONFIG_ECCOMP=y Missing CONFIG_SECCOMP_FILTER=y needed for
          capabilities sandboxing.
