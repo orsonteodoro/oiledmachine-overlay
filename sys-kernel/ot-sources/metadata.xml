@@ -1159,7 +1159,7 @@ TBM=0
                         && (KASAN && (PANIC_ON_WARN || custom_sanitizers_panic_patch))
          green = !SSP || !ASLR || !SECCOMP || EOL_KERNEL
 
-         The UBSAN halt on violation mitigates againts some zero-click attacks.
+         A halt enforced UBSAN could mitigate some zero-click attacks.
 
          Even though the sample interval were the lowest possible for KFENCE, it
          cannot be A grade (90%) security score.
