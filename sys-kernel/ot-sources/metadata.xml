@@ -1028,7 +1028,8 @@ TBM=0
          than normal build.  If using generic KASAN, the performance is C-F.
          The performance impact in the generic KASAN case is 2-4x slower than
          normal build.
-    [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
+    [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR,
+         disabling swap, etc.
          Security grade:
          Grade A - Includes grade C, grade B qualities plus config changes
                    that reduce the attack surface (e.g. disabling 32-bit,
