@@ -108,7 +108,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_42
+ebuild_revision_43
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
