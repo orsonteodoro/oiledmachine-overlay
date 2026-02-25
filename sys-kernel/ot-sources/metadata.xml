@@ -1033,11 +1033,14 @@ TBM=0
          Grade A - includes grade C, grade B qualities plus config changes
                    that reduce the attack surface (e.g. disabling 32-bit,
                    disabling uring, sandboxing support, full sanitization, etc.).
-         Grade B - using sanitizers with panic on oops ON or with panic on violation patches per sanitizer
-         Grade C - using compile hardening flags and cheap baselines (KPTI = y, ASLR = y, seccomp filter for sandboxing = y)
+         Grade B - using sanitizers with panic on oops ON or with panic on
+                   violation patches per sanitizer
+         Grade C - using compile hardening flags, cheap baselines (KPTI = y,
+                   ASLR = y, seccomp filter for sandboxing = y), actively
+                   maintained branch to pick up security fixes
          Grade D - uses mostly correct or better hardening settings but has
-                   an outstanding flaw like improper sandboxing capabilities that
-                   is necessary for daily use.
+                   an outstanding flaw like improper sandboxing capabilities
+                   that is necessary for daily use.
     [41] Based on HZ, scheduler, hardening penalty
     [42] Sanitizer and hardening mitigation against:
          ZC = Zero Click Attack
