@@ -1141,8 +1141,9 @@ TBM=0
     [86] Enabled via bootloader, but the user may use a custom bootloader and
          inadvertantly disable it and the kernel sanitizers.
     [87] It uses an EOL (End Of Life) kernel series.  EOL means that it is
-         likely that there are multiple high severity vulnerabilities or a
-         class of vulnerability mitigation is not backported.
+         likely that there are multiple outstanding high severity
+         vulnerabilities or a mitigation for a vulnerabilit(y/ies) class is/are
+         not backported.
     [88] It turns an uptime-critical kernel into a integrity-critical kernel.
     [89] 1000 is standard for gaming and audio production.
          250 to 300 is standard for servers.
