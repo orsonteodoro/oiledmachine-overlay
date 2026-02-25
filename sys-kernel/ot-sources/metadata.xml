@@ -1112,7 +1112,8 @@ TBM=0
          scx_lavd increase the resiliency when gaming in high poly or high content scenes, but the
          the hardening and sanitizers may reduces the gaming by 20% or more.
     [84] Using sanitizers with panic on oops disabled will make the sanitizers
-         ineffective unless there is a special patch to panic on violation.
+         ineffective unless there is a special patch to panic on violation, or
+         the kernel config has the panic_on_oops=1 kernel command line option.
     [85] If the user configures it with panic on oops then the latter (B-grade),
          else the former C grade.  While the panic on oops can be configured
          with the bootloader and setting the kernel command line, it can be
