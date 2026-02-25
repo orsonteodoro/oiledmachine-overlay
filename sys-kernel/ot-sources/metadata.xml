@@ -1032,8 +1032,9 @@ TBM=0
          disabling swap, etc.
          Security grade:
          Grade A - Includes grade C, grade B qualities plus config changes
-                   that reduce the attack surface (e.g. disabling 32-bit,
-                   disabling uring, sandboxing support, full sanitization, etc.).
+                   that reduce the attack surface or hidden in plain sight
+                   backdoors (e.g. disabling 32-bit, disabling uring, sandboxing
+                   support, full sanitization, etc.).
          Grade B - Uses sanitizers with panic on oops ON or with panic on
                    violation patches per sanitizer
          Grade C - Uses compiler hardening flags, cheap baselines (KPTI = y,
