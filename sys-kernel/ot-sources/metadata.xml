@@ -835,7 +835,7 @@ TBM=0
     Mitigated attack vectors [42]  | CE, PE, DoS, DT, ID ; [14]  | DoS [14]                         | DoS [14]                           | CE, PE, DoS, DT, ID            |
     Criticality                    | Balanced                    | Performance-critical             | Performance-critical               | Security-critical [34]         |
                                    |                             |                                  |                                    |                                |
-    Security grade [40]            | C                           | F                                | F                                  | A                              |
+    Security grade [40]            | B-                          | F                                | F                                  | A                              |
     Performance grade [41]         | B                           | A                                | A                                  | B or C-F [39][45]              |
     Uptime grade [38]              | A                           | D                                | D                                  | C                              |
     Release schedule grade [37]    | C- [35a]                    | C- [35a]                         | C- [35a]                           | C- [35a]                       |
@@ -880,55 +880,55 @@ TBM=0
     Mitigated attack vectors [42]  | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14]     | CE, PE, DoS, DT, ID ; [14]    | CE, PE, DoS, DT, ID ; [14]    | CE, PE ; [14]
     Criticality                    | Security-critical (arm64) [34] | Security-critical (arm64) [34] | Balanced (non arm64)          | Balanced [34]                 | Uptime-critical /
                                    | Balanced (non arm64)           | Balanced (non arm64)           |                               |                               | Balanced
-    Security grade [40]            | B-                             | B                              | B                             | B                             | C
+    Security grade [40]            | C / B [84][85]                 | C / B [84][85]                 | C [84]                        | C [84]                        | C
     Performance grade [41]         | C                              | C                              | C                             | B                             | B
     Uptime grade [38]              | C                              | C                              | C                             | C                             | A
     Release schedule grade [37]    | D [35b]                        | D [35b]                        | D [35b]                       | A                             | A
 
-                                   | pf-kernel                   |                       | linux-tkg                  |
-    Kernel config                  | [60]                        |                       | [54]                       |
-    IA32 support [8]               | M [6]                       |                       | Y                          |
-    SSP (basic)                    | Y                           |                       | Y                          |
-    SSP (strong)                   | Y                           |                       | Y                          |
-    BO (_FORTIFY_SOURCE=2) [44]    | N                           |                       | Y                          |
-    ASLR (basic)                   | Y                           |                       | Y                          |
-    ASLR (strong) [2]              | Y                           |                       | Y                          |
-    KPTI                           | Y                           |                       | Y                          |
-    KASAN                          | N                           |                       | N                          |
-    KFENCE                         | N                           |                       | Y                          |
-    UBSAN                          | N                           |                       | N                          |
-    KCFI >= 6.1 [9][11]            | N                           |                       | N                          |
-    SCS >= 5.8 [9][10]             | N                           |                       | N                          |
-    CET (branch/return) [71]       | Y                           |                       | Y/Y                        |
-    Sandboxing support [3]         | Y                           |                       | Y                          |
-    Retpoline [13]                 | Y                           |                       | Y                          |
-    YAMA [12]                      | N                           |                       | Y                          |
-    Register sanitize on exit [61] | N                           |                       | N                          |
-    Stack sanitize on init [62]    | Y                           |                       | Y                          | 
-    Stack sanitize on exit         | N/A                         |                       | N/A                        | 
-    Heap sanitize on init [62]     | N                           |                       | Y                          | 
-    Heap sanitize on exit          | N                           |                       | N                          | 
-    RANDSTRUCT [70]                | N                           |                       | N                          |
-    Swap                           | Y                           |                       | Y [29]                     |
-    LSMS                           | [21k]                       |                       | [21i]                      |
-    CPU scheduler                  | eevdf-throughput            |                       | eevdf-autogroup            |
-    scx support [76]               | N                           |                       | Y                          |
-    Rust support                   | N                           |                       | N                          |
-    HZ                             | 250                         |                       | 1000                       |
-    IO schedulers                  | Deadline                    |                       | mq-deadline/none [30][34]  |
-    TCP congestion control         | Cubic                       |                       | Cubic                      |
-    Panic on oops                  | N                           |                       | N                          |
-    io_uring mitigation            | N                           |                       | N                          |
-    -march [75]                    | x86-64 [32]                 |                       | x86-64                     |
-    -O level                       | 2                           |                       | 2                          |
-    TBM                            | Y (2.0)                     |                       | Y (3.0)                    |
-    Mitigated attack vectors [42]  | CE, PE ; [14]               |                       | CE, PE, DoS, DT, ID ; [14] |
-    Criticality                    | Desktop-mobile use /        |                       | Balanced [34]              |
-                                   | Uptime / Balanced           |                       |                            |
-    Security grade [40]            | C- [69]                     |                       | B                          |
-    Performance grade [41]         | B                           |                       | B                          |
-    Uptime grade [38]              | A                           |                       | C                          |
-    Release schedule grade [37]    | C [68]                      |                       | ?                          |
+                                   | pf-kernel                   | linux-tkg                  | linux-cachyos              | kernel-bazzite             |
+    Kernel config                  | [60]                        | [54]                       | [77]                       | [79]                       |
+    IA32 support [8]               | M [6]                       | Y                          | Y                          | Y                          |
+    SSP (basic)                    | Y                           | Y                          | Y                          | Y                          |
+    SSP (strong)                   | Y                           | Y                          | Y                          | Y                          |
+    BO (_FORTIFY_SOURCE=2) [44]    | N                           | Y                          | Y                          | Y                          |
+    ASLR (basic)                   | Y                           | Y                          | Y                          | Y                          |
+    ASLR (strong) [2]              | Y                           | Y                          | Y                          | Y                          |
+    KPTI                           | Y                           | Y                          | Y                          | Y                          |
+    KASAN                          | N                           | N                          | N                          | N                          |
+    KFENCE                         | N                           | Y                          | Y                          | Y                          |
+    UBSAN                          | N                           | N                          | N                          | Y                          |
+    KCFI >= 6.1 [9][11]            | N                           | N                          | N                          | N                          |
+    SCS >= 5.8 [9][10]             | N                           | N                          | N                          | N                          |
+    CET (branch/return) [71]       | Y                           | Y/Y                        | Y/Y                        | Y/Y                        |
+    Sandboxing support [3]         | Y                           | Y                          | Y                          | N [80]                     |
+    Retpoline [13]                 | Y                           | Y                          | Y                          | Y                          |
+    YAMA [12]                      | N                           | Y                          | Y                          | Y                          |
+    Register sanitize on exit [61] | N                           | N                          | N                          | N                          |
+    Stack sanitize on init [62]    | Y                           | Y                          | Y                          | Y                          |
+    Stack sanitize on exit         | N/A                         | N/A                        | N/A                        | N/A                        |
+    Heap sanitize on init [62]     | N                           | Y                          | Y                          | Y                          |
+    Heap sanitize on exit          | N                           | N                          | N                          | N                          |
+    RANDSTRUCT [70]                | N                           | N                          | N                          | N                          |
+    Swap                           | Y                           | Y [29]                     | Y                          | Y                          |
+    LSMS                           | [21k]                       | [21i]                      | [21f]                      | [82]                       |
+    CPU scheduler                  | eevdf-throughput            | eevdf-autogroup            | bore-autogroup             | bore-autogroup / scx_lavd  |
+    scx support [76]               | N                           | Y                          | Y                          | Y                          |
+    Rust support                   | N                           | N                          | Y                          | Y                          |
+    HZ                             | 250                         | 1000                       | 300                        | 1000                       |
+    IO schedulers                  | Deadline                    | mq-deadline/none [30][34]  | ADIOS                      | Kyber                      |
+    TCP congestion control         | Cubic                       | Cubic                      | Cubic                      | Cubic                      |
+    Panic on oops                  | N                           | N                          | N                          | N / Y [86]                 |
+    io_uring mitigation            | N                           | N                          | N                          | N                          |
+    -march [75]                    | x86-64 [32]                 | x86-64                     | x86-64                     | x86-64                     |
+    -O level                       | 2                           | 2                          | 2                          | 2                          |
+    TBM                            | Y (2.0)                     | Y (3.0)                    | Y (3.0)                    | Y (2.0)                    |
+    Mitigated attack vectors [42]  | CE, PE ; [14]               | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] |
+    Criticality                    | Desktop-mobile use /        | Balanced [34]              | Balanced                   | Balanced                   |
+                                   | Uptime / Balanced           |                            |                            |                            |
+    Security grade [40]            | C- [69]                     | C [84]                     | C [83][84]                 | D [81][84]                 |
+    Performance grade [41]         | B                           | B                          | C /C [78]                  | C / B [82]                 |
+    Uptime grade [38]              | A                           | C                          | C                          | C                          |
+    Release schedule grade [37]    | C [68]                      | ?                          | A                          |                            |
 
     Y = Unconditionally Yes
     N = Unconditionally No
@@ -1019,6 +1019,15 @@ TBM=0
          The performance impact in the generic KASAN case is 2-4x slower than
          normal build.
     [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
+         Security grade:
+         Grade A - includes grade C, grade B qualities plus config changes
+                   that reduce attack surface reduction (e.g. disabling 32-bit,
+                   disabling uring, sandboxing support, full sanitization, etc.).
+         Grade B - using sanitizers with panic on oops ON or with violation patch
+         Grade C - using compile hardening flags and cheap baselines (KPTI, ASLR, sandboxing capabilities)
+         Grade D - uses mostly correct or better hardening settings but has
+                   an outstanding flaw like improper sandboxing capabilities that
+                   is necessary for daily use.
     [41] Based on HZ, scheduler, hardening penalty
     [42] Sanitizer and hardening mitigation against:
          ZC = Zero Click Attack
@@ -1071,7 +1080,7 @@ TBM=0
          https://gitweb.gentoo.org/proj/linux-patches.git/tree/4567_distro-Gentoo-Kconfig.patch
     [60] Either `make defconfig` or `make menuconfig` based on Kconfig* + patchset changes
     [61] ROP gadget mitigation, requiring GCC >= 12 or Clang >= 8
-    [62] Information disclosure mitigation
+    [62] Uninitialized memory and information disclosure mitigation
     [63] Y if user explicitly enabled, N by default
     [64] Y if hardened USE flag, N if -hardened USE flag.
     [65] Enablement depends on compiler support
@@ -1088,6 +1097,32 @@ TBM=0
     [73] Contained in the tarball
     [75] Arch dependent
     [76] Not all depend on CONFIG_RUST=y
+    [77] https://github.com/CachyOS/linux-cachyos/blob/master/linux-cachyos/config
+    [78] C for compiling, C for gaming.
+         Autogroup lowers throughput.
+         The 300 Hz is not standard for gaming.
+    [79] https://github.com/bazzite-org/kernel-bazzite/blob/bazzite-6.17/kernel-x86_64-fedora.config
+    [80] Has CONFIG_ECCOMP=y Missing CONFIG_SECCOMP_FILTER=y needed for
+         capabilities sandboxing.
+    [81] It cannot deny running shellcode in sandbox in web browser sandbox.
+         Shellcode lowers the attack complexity.
+    [82] lockdown,yama,integrity,selinux,bpf,landlock,ipe
+    [83] C for compling, B for gaming.
+         Autogroup and Hz lower throughput.
+         scx_lavd increase the resiliency when gaming in high poly or high content scenes, but the
+         the hardening and sanitizers may reduces the gaming by 20% or more.
+    [84] Using sanitizers with panic on oops disabled will make the sanitizers
+         ineffective unless there is a special patch to panic on violation.
+    [85] If the user configures it with panic on oops then the latter (B-grade),
+         else the former C grade.  While the panic on oops can be configured
+         with the bootloader and setting the kernel command line, it can be
+         tampered so it is preferred to be built in.
+    [86] Enabled via bootloader, but the user may use a custom bootloader and
+         inadvertantly disable it and the kernel sanitizers.
+         
+  Sanitizers would boost it to B grade.  Basic hardening will
+         boost it to C grade.  A grade will be based on creative config tuning
+         like turning off 32-bit support or 
 
     Commentary:
 
