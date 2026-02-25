@@ -38,7 +38,7 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="40.6.0" # Cr 144.0.7559.177, node 24.13.1
+	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="40.1.0" # Cr 144.0.7559.96, node 24.11.1
@@ -94,6 +94,7 @@ LICENSE="
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# The license fingerprint of 40.6.1 is the same as 40.6.0.
 	LICENSE+="
 		electron-40.6.0-chromium.html
 	"
@@ -107,7 +108,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_48
+ebuild_revision_42
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
