@@ -1030,17 +1030,19 @@ TBM=0
          normal build.
     [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
          Security grade:
-         Grade A - includes grade C, grade B qualities plus config changes
+         Grade A - Includes grade C, grade B qualities plus config changes
                    that reduce the attack surface (e.g. disabling 32-bit,
                    disabling uring, sandboxing support, full sanitization, etc.).
-         Grade B - using sanitizers with panic on oops ON or with panic on
+         Grade B - Uses sanitizers with panic on oops ON or with panic on
                    violation patches per sanitizer
-         Grade C - using compile hardening flags, cheap baselines (KPTI = y,
-                   ASLR = y, seccomp filter for sandboxing = y), actively
-                   maintained branch to pick up security fixes
-         Grade D - uses mostly correct or better hardening settings but has
-                   an outstanding flaw like improper sandboxing capabilities
-                   that is necessary for daily use.
+         Grade C - Uses compiler hardening flags, cheap baselines (KPTI = y,
+                   ASLR = y, seccomp filter for sandboxing = y), an actively
+                   maintained branch to pick up security fixes.
+         Grade D - Uses mostly correct or better hardening settings but has
+                   an outstanding flaw like missing sandbox capabilities
+                   filtering support that is necessary for secured daily
+                   use or to prevent execve running attacker shellcode.
+         Grade F - Mostly or entirely insecure
     [41] Based on HZ, scheduler, hardening penalty
     [42] Sanitizer and hardening mitigation against:
          ZC = Zero Click Attack
