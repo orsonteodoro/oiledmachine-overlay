@@ -17,6 +17,7 @@ EAPI="8"
 # 128.10.0 -> 128.11.0
 # 128.11.0 -> 128.12.0
 # 128.12.0 -> 128.13.0
+# 128.13.0 - 128.14.0
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -57,8 +58,7 @@ RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untr
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 # Patch version
 FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
-#SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-04.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-04.tar.xz"
 WANT_AUTOCONF="2.1"
 
 CPU_FLAGS_ARM=(
