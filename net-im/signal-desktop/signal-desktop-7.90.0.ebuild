@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# 7.73.0 -> 7.74.0
-
 # TODO fork @signalapp/libsignal-client for custom hardening
 
 # To update use:
@@ -12,7 +10,7 @@ EAPI=8
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v7.74.0/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v7.90.0/CONTRIBUTING.md#known-issues
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -108,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_43
+ebuild_revision_44
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -301,8 +299,8 @@ ewarn "QA:  Manually remove danger@12.3.4 in ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in ${S}/danger/pnpm-lock.yaml"
 
-	# TODO:  brace-expansion breaks build
-	# Pinned fabric required for patching.
+	# The brace-expansion version changes breaks build.
+	# The pinned version of fabric is required.
 		patch_edits_pnpm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
@@ -466,6 +464,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|basic-ftp: 5.0.5|basic-ftp: 5.2.0|g" "pnpm-lock.yaml" || die												# CVE-2026-27699; ZC, DoS, DT
 		}
 		patch_edits_pnpm
 
@@ -535,6 +534,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"jws@3.2.2"
 			"playwright@1.55.1"
 			"storybook@8.6.15"
+			"basic-ftp@5.2.0"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
