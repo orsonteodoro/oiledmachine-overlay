@@ -1,0 +1,30 @@
+diff -u b/chrome/browser/pdf/BUILD.gn b/chrome/browser/pdf/BUILD.gn
+--- b/chrome/browser/pdf/BUILD.gn	2026-02-25 22:01:38.527540605 -0800
++++ b/chrome/browser/pdf/BUILD.gn	2026-02-25 22:48:20.891478619 -0800
+@@ -7,6 +7,11 @@
+ 
+ assert(enable_pdf)
+ 
++declare_args() {
++  enable_glic = true;
++  enable_glic_android = true;
++}
++
+ source_set("pdf") {
+   sources = [
+     "chrome_pdf_stream_delegate.cc",
+@@ -32,7 +37,13 @@
+     "//build:chromeos_buildflags",
+     "//chrome/browser:browser_process",
+     "//chrome/browser:resources",
+-    "//chrome/browser/glic",
++  ]
++  if (enable_glic || enable_glic_android) {
++    deps += [
++      "//chrome/browser/glic",
++    ]
++  }
++  deps += [
+     "//chrome/browser/pdf:pdf_pref_names",
+     "//chrome/browser/profiles:profile",
+     "//chrome/browser/resources/pdf:resources",
