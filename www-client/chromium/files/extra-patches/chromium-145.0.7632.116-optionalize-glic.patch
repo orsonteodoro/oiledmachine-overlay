@@ -65,3 +65,28 @@
      "//chrome/test:test_support",
      "//content/test:test_support",
    ]
+--- a/chrome/browser/ui/pdf/BUILD.gn.orig	2026-02-20 12:20:04.000000000 -0800
++++ b/chrome/browser/ui/pdf/BUILD.gn	2026-02-26 08:03:27.146220888 -0800
+@@ -2,6 +2,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//chrome/common/features.gni")
+ import("//pdf/features.gni")
+ import("//services/screen_ai/buildflags/features.gni")
+ 
+@@ -15,7 +16,13 @@ source_set("pdf") {
+   ]
+   deps = [
+     "//chrome/browser/download",
+-    "//chrome/browser/glic",
++  ]
++  if (enable_glic || enable_glic_android) {
++    deps += [
++      "//chrome/browser/glic",
++    ]
++  }
++  deps += [
+     "//chrome/browser/pdf",
+     "//chrome/browser/screen_ai:screen_ai_install_state",
+     "//chrome/browser/ui/tab_contents",
