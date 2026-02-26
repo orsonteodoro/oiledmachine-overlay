@@ -23,3 +23,45 @@
      "//chrome/browser/pdf:pdf_pref_names",
      "//chrome/browser/profiles:profile",
      "//chrome/browser/resources/pdf:resources",
+--- a/chrome/browser/extensions/api/pdf_viewer_private/BUILD.gn.orig	2026-02-20 12:20:04.000000000 -0800
++++ b/chrome/browser/extensions/api/pdf_viewer_private/BUILD.gn	2026-02-26 00:54:45.474181784 -0800
+@@ -2,6 +2,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//chrome/common/features.gni")
+ import("//extensions/buildflags/buildflags.gni")
+ import("//pdf/features.gni")
+ import("//services/screen_ai/buildflags/features.gni")
+@@ -18,7 +19,13 @@ source_set("pdf_viewer_private") {
+ 
+   deps = [
+     "//base",
+-    "//chrome/browser/glic",
++  ]
++  if (enable_glic || enable_glic_android) {
++    deps += [
++      "//chrome/browser/glic",
++    ]
++  }
++  deps += [
+     "//chrome/browser/pdf",
+     "//chrome/browser/pdf:pdf_pref_names",
+     "//chrome/browser/profiles:profile",
+@@ -48,8 +55,14 @@ source_set("browser_tests") {
+   # sources = [ "pdf_viewer_private_browsertest.cc" ]
+   deps = [
+     ":pdf_viewer_private",
+-    "//chrome/browser/glic",
+-    "//chrome/browser/glic/test_support",
++  }
++  if (enable_glic || enable_glic_android) {
++    deps += [
++      "//chrome/browser/glic",
++      "//chrome/browser/glic/test_support",
++    ]
++  }
++  deps += [
+     "//chrome/test:test_support",
+     "//content/test:test_support",
+   ]
