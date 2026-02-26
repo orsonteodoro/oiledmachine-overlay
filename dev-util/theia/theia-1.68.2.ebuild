@@ -24,9 +24,9 @@ NPM_OFFLINE=1
 NPM_SLOT="3"
 NPM_TEST_SCRIPT="test:theia"
 
-ELECTRON_APP_ELECTRON_PV="37.2.1" # Cr 138.0.7204.97, node 22.17.0.  Original
+ELECTRON_APP_ELECTRON_PV="38.4.0" # Cr 140.0.7339.240, node 22.20.0.  Original
 ELECTRON_APP_REACT_PV="18.3.1"
-NODE_GYP_PV="10.3.1" # Upstream uses 9.4.1
+NODE_GYP_PV="11.5.0" # Upstream uses 11.5.0
 
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -525,7 +525,7 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.63.0-download-plugins-serially.patch"
+	"${FILESDIR}/${PN}-1.68.0-download-plugins-serially.patch"
 )
 
 _puppeteer_setup_offline_cache() {
@@ -615,52 +615,7 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
-		sed -i -e "s|\"@babel/core\": \"^7.0.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/core\": \"^7.0.0-0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/core\": \"^7.7.5\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/core\": \"^7.10.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/core\": \"^7.12.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/core\": \"^7.13.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s#\"@babel/core\": \"^7.4.0 || ^8.0.0-0 <8.0.0\"#\"@babel/core\": \"^7.26.10\"#g" "package-lock.json" || die
-		sed -i -e "s#\"@babel/core\": \"^7.0.0-0 || ^8.0.0-0 <8.0.0\"#\"@babel/core\": \"^7.26.10\"#g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/helpers\": \"^7.26.0\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/runtime\": \"^7.10.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/runtime\": \"^7.20.13\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"axios\": \"^1.0.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
-		sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^3.2.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^3.2.4\"|g" "packages/core/package.json" || die
-		sed -i -e "s|\"serialize-javascript\": \"^5.0.1\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"tar-fs\": \"^3.0.6\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"~2.1.2\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"^3.0.9\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar\": \"6.1.11\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar\": \"^6.1.2\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tar\": \"^6.2.1\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"1.1.12\"|g" "package-lock.json" || die
-		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"1.1.12\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"multer\": \"^2.0.1\"|\"multer\": \"2.0.2\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"tmp\": \"~0.2.1\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tmp\": \"^0.2.1\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"jsondiffpatch\": \"0.6.0\"|\"jsondiffpatch\": \"0.7.2\"|g" "package-lock.json" || die
+		:
 	}
 	patch_lockfile
 
@@ -671,52 +626,6 @@ einfo "Fixing vulnerabilities"
 	# VS = Vulnerable System (Direct attack)
 	# ZC = Zero-Click Attack (AV:N, PR:N, UI:N)
 
-	enpm add "cookie@^0.7.0" -w "packages/core" "${NPM_INSTALL_SINGLE_ARGS[@]}"									# CVE-2024-47764; DT; Medium
-
-	enpm add "dompurify@^3.2.4" -w "packages/core" "${NPM_INSTALL_SINGLE_ARGS[@]}"									# CVE-2025-26791; DT, ID; Medium
-
-	# False positive since lockfile didn't add it and marked optional
-	#enpm add "esbuild@6.0.2" -w "dev-packages/application-manager"	${NPM_INSTALL_SINGLE_ARGS[@]}							# CVE-2024-11831; DT, ID; Medium
-	#enpm add "esbuild@6.0.2" -w "dev-packages/native-webpack-plugin" ${NPM_INSTALL_SINGLE_ARGS[@]}							# CVE-2024-11831; DT, ID; Medium
-
-	enpm add "serialize-javascript@^6.0.2" -w "dev-packages/application-manager" "${NPM_INSTALL_SINGLE_ARGS[@]}"					# CVE-2024-11831; DT, ID; Medium
-	enpm add "serialize-javascript@^6.0.2" "${NPM_INSTALL_SINGLE_ARGS[@]}"										# CVE-2024-11831; DT, ID; Medium
-
-	enpm add "axios@^1.8.2" -P -w "dev-packages/application-package"										# CVE-2025-27152; ID; High
-	enpm add "axios@^1.8.2" -D															# CVE-2025-27152; ID; High
-
-	enpm add "@babel/core@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
-	enpm add "@babel/helpers@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
-	enpm add "@babel/runtime@^7.26.10" -P -w "packages/core"											# CVE-2025-27789; DoS; Medium
-	enpm add "@babel/runtime@^7.26.10" -P														# CVE-2025-27789; DoS; Medium
-
-	enpm add "tar-fs@3.1.1" -D															# CVE-2025-48387; ZC, VS(DT); High
-																			# CVE-2025-59343; ZC, VS(DT); High
-	enpm add "tar-fs@3.1.1" -P -w "examples/browser"
-	enpm add "tar-fs@3.1.1" -P -w "examples/electron"
-	enpm add "tar-fs@3.1.1" -P -w "examples/api-samples"
-	enpm add "tar-fs@3.1.1" -P -w "examples/browser-only"
-	enpm add "tar-fs@2.1.4" -D															# CVE-2025-48387; ZC, VS(DT); High
-																			# CVE-2025-59343; ZC, VS(DT); High
-
-	enpm add "tar@6.2.1" -D																# CVE-2024-28863; DoS; Medium
-	enpm add "brace-expansion@1.1.12" -D														# CVE-2025-5889; DoS; Low
-
-	enpm add "form-data@4.0.4" -P -w "dev-packages/cli"												# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-	enpm add "form-data@4.0.4" -P -w "dev-packages/application-package"										# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-	enpm add "form-data@4.0.4" -D															# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-
-	enpm add "multer@2.0.2" -P -w "packages/filesystem"												# CVE-2025-7338; DoS; High
-
-	enpm add "tmp@0.2.4" -D																# CVE-2025-54798; DT; Low
-	enpm add "tmp@0.2.4" -P -w "dev-packages/cli"													# CVE-2025-54798; DT; Low
-
-	enpm add "jsondiffpatch@0.7.2" -P -w "examples/browser"												# CVE-2025-9910; VS(DT, ID); Moderate
-	enpm add "jsondiffpatch@0.7.2" -P -w "examples/electron"											# CVE-2025-9910; VS(DT, ID); Moderate
-
-einfo "QA:  Manually remove node_modules/patch-package/node_modules/tmp@0.0.33 from package-lock.json"
-einfo "QA:  Manually remove node_modules/jsondiffpatch@0.6.0 from package-lock.json"
-einfo "QA:  Manually remove node_modules/dockerode/node_modules/tar-fs@2.1.3 from package-lock.json"
 
 	patch_lockfile
 }
@@ -1021,6 +930,11 @@ src_install() {
 	if user_wants_plugin ; then
 		_install_plugins
 	fi
+
+	local x
+	for x in "${NPM_EXE_LIST[@]}" ; do
+		fperms +x "${x}"
+	done
 }
 
 pkg_postinst() {
