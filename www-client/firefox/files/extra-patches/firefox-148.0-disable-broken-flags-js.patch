@@ -1,0 +1,20 @@
+--- a/js/src/js-cxxflags.mozbuild.orig	2026-02-16 10:37:36.000000000 -0800
++++ b/js/src/js-cxxflags.mozbuild	2026-02-26 08:54:44.302002874 -0800
+@@ -26,3 +26,17 @@ if CONFIG["CC_TYPE"] in ("clang", "clang
+     CXXFLAGS += ["-Wdeprecated-this-capture"]
+     CXXFLAGS += ["-Wdeprecated-anon-enum-enum-conversion"]
+     CXXFLAGS += ["-Wdeprecated-enum-enum-conversion"]
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    # Prevent audio from muting always.  Breaks with -Ofast.
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent audio from muting always.  Breaks with -Ofast.
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
