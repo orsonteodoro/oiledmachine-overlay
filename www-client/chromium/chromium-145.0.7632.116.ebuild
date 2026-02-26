@@ -92,7 +92,7 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/145.0.7632.116/third_party/libusb								# Stable
 # https://github.com/chromium/chromium/tree/145.0.7632.116/third_party/libvpx								# Stable
 # https://github.com/chromium/chromium/tree/145.0.7632.116/third_party/libwebp								# Stable
-# https://github.com/chromium/chromium/blob/145.0.7632.116/third_party/libxml/linux/config.h#L86					# Stable
+# https://github.com/chromium/chromium/blob/145.0.7632.116/third_party/libxml/linux/config.h#L86					# Live
 # https://github.com/chromium/chromium/blob/145.0.7632.116/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/145.0.7632.116/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
 # https://github.com/chromium/chromium/tree/145.0.7632.116/third_party/re2								# Stable
