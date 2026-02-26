@@ -1,19 +1,14 @@
-diff -u b/chrome/browser/pdf/BUILD.gn b/chrome/browser/pdf/BUILD.gn
---- b/chrome/browser/pdf/BUILD.gn	2026-02-25 23:00:16.084961151 -0800
-+++ b/chrome/browser/pdf/BUILD.gn	2026-02-25 22:48:20.891478619 -0800
-@@ -2,10 +2,11 @@
+--- a/chrome/browser/pdf/BUILD.gn.orig	2026-02-26 00:11:33.007008322 -0800
++++ b/chrome/browser/pdf/BUILD.gn	2026-02-26 00:11:52.430401138 -0800
+@@ -2,6 +2,7 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
  
 +import("//chrome/common/features.gni")
  import("//pdf/features.gni")
+ import("//printing/buildflags/buildflags.gni")
  
- assert(enable_pdf)
- 
- source_set("pdf") {
-   sources = [
-     "chrome_pdf_stream_delegate.cc",
-@@ -31,7 +37,13 @@
+@@ -32,7 +33,13 @@ source_set("pdf") {
      "//build:chromeos_buildflags",
      "//chrome/browser:browser_process",
      "//chrome/browser:resources",
