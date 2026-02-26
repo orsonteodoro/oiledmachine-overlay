@@ -54,7 +54,7 @@
      ":pdf_viewer_private",
 -    "//chrome/browser/glic",
 -    "//chrome/browser/glic/test_support",
-+  }
++  ]
 +  if (enable_glic || enable_glic_android) {
 +    deps += [
 +      "//chrome/browser/glic",
