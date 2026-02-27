@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_36
+git ollama ebuild_revision_37
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -608,9 +608,16 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
-		:
+		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die		# CVE-2026-27699; ZC, DoS, DT; Critical
 	}
 	patch_lockfile
+
+	enpm add "basic-ftp@^5.2.0" -D
+	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
+	enpm add "basic-ftp@^5.2.0" -P -w "examples/browser"
+	enpm add "basic-ftp@^5.2.0" -P -w "examples/electron"
+	enpm add "basic-ftp@^5.2.0" -P -w "packages/ai-ide"
+	enpm add "basic-ftp@^5.2.0" -P -w "packages/scanoss"
 
 	# DoS = Denial of Serivce
 	# DT = Data Tampering
