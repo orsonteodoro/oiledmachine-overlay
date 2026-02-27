@@ -39,7 +39,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="40.1.0" # Cr 144.0.7559.96, node 24.11.1
+	ELECTRON_APP_ELECTRON_PV="40.4.1" # Cr 144.0.7559.173, node 24.13.0
 fi
 
 NPM_INSTALL_ARGS=(
@@ -98,7 +98,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	"
 else
 	LICENSE+="
-		electron-39.2.1-chromium.html
+		electron-40.4.1-chromium.html
 	"
 fi
 SLOT="0"
@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_44
+ebuild_revision_45
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -226,7 +226,7 @@ ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${
 #ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove minimatch@9.0.5 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove minimatch@9.0.6 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.24.2) to esbuild-register@3.6.0(esbuild@0.25.0) from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.24.2) to esbuild-register@3.6.0(esbuild@0.25.9) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to snapshot: section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove (encoding@0.1.13) suffix at @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove cross-spawn@5.1.0 from ${S}/pnpm-lock.yaml"
@@ -267,7 +267,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbu
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @esbuild/<arch>@0.24.2 or earlier and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @esbuild/<arch>@0.21.5 and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild: 0.21.5 to esbuild: 0.25.0 in ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild: 0.21.5 to esbuild: 0.25.9 in ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "CQA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
@@ -306,8 +306,8 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
 				sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
 				sed -i -e "s|cross-spawn: 6.0.5|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
-				sed -i -e "s|esbuild: 0.18.10|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
-				sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
+				sed -i -e "s|esbuild: 0.18.10|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
+				sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
 				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 20.0.2|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
 																								# CVE-2025-61927; ZC, VS(DoS, DT, ID), SS(DoS, DT, I); Critical
 																								# CVE-2025-62410; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
@@ -389,12 +389,12 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.1.2|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.3.13|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
-			sed -i -e "s|esbuild: 0.24.0|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die				# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#esbuild: 0.24.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
-			sed -i -e "s#esbuild: '>=0.12 <1'#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die												# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s|esbuild: 0.24.0|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0#esbuild: 0.25.9#g" "pnpm-lock.yaml" || die				# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0#esbuild: 0.25.9#g" "pnpm-lock.yaml" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: 0.24.0#esbuild: 0.25.9#g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: '>=0.12 <1'#esbuild: 0.25.9#g" "pnpm-lock.yaml" || die												# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s|got: 11.7.0|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
 			sed -i -e "s|got: 11.8.2|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
 			sed -i -e "s|got: 6.7.1|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
@@ -487,7 +487,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			deps=(
 #				"brace-expansion@1.1.12"
 				"cross-spawn@6.0.6"
-				"esbuild@0.25.0"
+				"esbuild@0.25.9"
 				"happy-dom@20.0.2"
 				"rollup@3.29.5"
 				"vite@5.4.21"
@@ -513,7 +513,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 		deps=(
 			"@babel/runtime@7.26.10"
 			"@babel/helpers@7.26.10"
-			"esbuild@0.25.0"
+			"esbuild@0.25.9"
 			"got@11.8.5"
 			"tar-fs@2.1.4"
 			"form-data@4.0.4"
@@ -701,6 +701,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.0.0, 20260226, Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.90.0, 20260225, Electron 40.6.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.73.0, 20251003, Electron 38.2.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.64.0, 20250807, Electron 37.2.6)

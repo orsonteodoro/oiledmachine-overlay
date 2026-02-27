@@ -491,6 +491,10 @@ packages:
   parse-entities@2.0.0:
     resolution: {integrity: sha512-kkywGpCcRYhqQIchaWqZ875wzpS/bMKhz5HnN3p7wveJTkTtyAB/AlnS0f8DFSqYW1T82t6yEAkEcB+A1I3MbQ==}
 
+  parse-git-config@2.0.3:
+    resolution: {integrity: sha512-Js7ueMZOVSZ3tP8C7E3KZiHv6QQl7lnJ+OkbxoaFazzSa2KyEHqApfGbU3XboUgUnq4ZuUmskUpYKTNx01fm5A==}
+    engines: {node: '>=6'}
+
   parse-github-url@1.0.3:
     resolution: {integrity: sha512-tfalY5/4SqGaV/GIGzWyHnFjlpTPTNpENR9Ea2lLldSJ8EWXMsvacWucqY3m3I4YPtas15IxTLQVQ5NSYXPrww==}
     engines: {node: '>= 0.10'}
@@ -710,6 +714,12 @@ snapshots:
       '@gitbeaker/requester-utils': 38.12.1
 
   '@octokit/openapi-types@12.11.0': {}
+
+  '@octokit/plugin-rest-endpoint-methods@5.16.2(@octokit/core@3.6.0)':
+    dependencies:
+      '@octokit/core': 3.6.0
+      '@octokit/types': 6.41.0
+      deprecation: 2.3.1
 
   '@tootallnate/once@2.0.0': {}
 
@@ -1180,6 +1190,12 @@ snapshots:
       is-alphanumerical: 1.0.4
       is-decimal: 1.0.4
       is-hexadecimal: 1.0.4
+
+  parse-git-config@2.0.3:
+    dependencies:
+      expand-tilde: 2.0.2
+      git-config-path: 1.0.1
+      ini: 1.3.8
 
   parse-github-url@1.0.3: {}
 

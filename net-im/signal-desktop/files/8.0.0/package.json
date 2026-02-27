@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.90.0",
+  "version": "8.0.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -169,7 +169,7 @@
     "emoji-datasource-apple": "16.0.0",
     "emoji-regex": "10.4.0",
     "encoding": "0.1.13",
-    "esbuild": "0.25.0",
+    "esbuild": "0.25.9",
     "fabric": "4.6.0",
     "fast-glob": "3.3.2",
     "filesize": "9.0.11",
@@ -187,7 +187,7 @@
     "humanize-duration": "3.27.1",
     "intl-tel-input": "24.7.0",
     "js-yaml": "4.1.1",
-    "jws": "3.2.2",
+    "jws": "3.2.3",
     "linkify-it": "5.0.0",
     "lodash": "4.17.23",
     "long": "5.2.3",
@@ -445,7 +445,7 @@
     ]
   },
   "engines": {
-    "node": "24.11.1"
+    "node": "24.13.0"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -728,6 +728,6 @@
     ]
   },
   "volta": {
-    "node": "24.11.1"
+    "node": "24.13.0"
   }
 }
