@@ -46,7 +46,7 @@
     "chalk": "4.0.0",
     "decompress": "^4.2.1",
     "escape-string-regexp": "4.0.0",
-    "glob": "^8.0.3",
+    "glob": "^10.5.0",
     "http-server": "^14.1.1",
     "limiter": "^2.1.0",
     "log-update": "^4.0.0",
@@ -55,6 +55,7 @@
     "puppeteer": "23.1.0",
     "puppeteer-core": "23.1.0",
     "puppeteer-to-istanbul": "1.4.0",
+    "qs": "^6.15.0",
     "temp": "^0.9.1",
     "tslib": "^2.6.2",
     "yargs": "^15.3.1"

@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_37
+git ollama ebuild_revision_39
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -608,7 +608,28 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
-		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die		# CVE-2026-27699; ZC, DoS, DT; Critical
+		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
+		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.2.1\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"6.2.1\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+																			# CVE-2026-24842; DT, ID; High
+																			# CVE-2026-23745; DT, ID; High
+																			# CVE-2026-26960; DT, ID; High
+		sed -i -e "s|\"qs\": \"^6.14.0\"|\"qs\": \"^6.14.1\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+		sed -i -e "s|\"@isaacs/brace-expansion\": \"^5.0.0\"|\"@isaacs/brace-expansion\": \"^5.0.1\"|g" "package-lock.json" || die		# CVE-2026-25547; ZC, DoS; High
+
+		sed -i -e "s|\"glob\": \"^7.1.7\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die							# CVE-2025-64756; DoS, DT, ID; High
+
+		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.13.5\"|g" "package-lock.json" || die							# CVE-2026-25639; ZC, DoS; High
+		sed -i -e "s|\"jws\": \"^4.0.0\"|\"jws\": \"^4.0.1\"|g" "package-lock.json" || die							# CVE-2025-65945; ZC, DT; High
+		sed -i -e "s|\"@modelcontextprotocol/sdk\": \"^1.25.1\"|\"@modelcontextprotocol/sdk\": \"^1.26.0\"|g" "package-lock.json" || die	# CVE-2026-25536; DT, ID; High
+#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
+#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
+#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
+#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
+#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
 	}
 	patch_lockfile
 
@@ -618,6 +639,40 @@ einfo "Fixing vulnerabilities"
 	enpm add "basic-ftp@^5.2.0" -P -w "examples/electron"
 	enpm add "basic-ftp@^5.2.0" -P -w "packages/ai-ide"
 	enpm add "basic-ftp@^5.2.0" -P -w "packages/scanoss"
+
+	enpm add "tar@^7.5.8" -D
+	enpm add "tar@^7.5.8" -P -w "dev-packages/application-manager"
+	enpm add "tar@^7.5.8" -P -w "packages/git"
+
+	enpm add "qs@^6.14.1" -D
+	enpm add "qs@^6.14.1" -P -w "dev-packages/application-package"
+	enpm add "qs@^6.14.1" -P -w "dev-packages/cli"
+	enpm add "qs@^6.14.1" -P -w "examples/api-samples"
+	enpm add "qs@^6.14.1" -P -w "packages/ai-mcp"
+	enpm add "qs@^6.14.1" -P -w "packages/ai-mcp-server"
+	enpm add "qs@^6.14.1" -P -w "examples/api-samples"
+	enpm add "qs@^6.14.1" -P -w "packages/core"
+
+	enpm add "@isaacs/brace-expansion@^5.0.1" -D
+
+	enpm add "glob@^10.5.0" -D
+	enpm add "glob@^10.5.0" -P -w "dev-packages/application-manager"
+	enpm add "glob@^10.5.0" -P -w "dev-packages/cli"
+	enpm add "glob@^10.5.0" -P -w "dev-packages/ffmpeg"
+	enpm add "glob@^10.5.0" -P -w "dev-packages/localization-manager"
+	enpm add "glob@^10.5.0" -D -w "examples/playwright"
+	enpm add "glob@^10.5.0" -P -w "packages/filesystem"
+	enpm add "glob@^10.5.0" -P -w "packages/remote"
+
+	enpm add "axios@^1.13.5" -D
+	enpm add "axios@^1.13.5" -P -w "dev-packages/application-package"
+
+	enpm add "jws@^4.0.1" -D
+	enpm add "jws@^4.0.1" -P -w "packages/ai-google"
+
+	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "examples/api-samples"
+	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "packages/ai-mcp"
+	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "packages/ai-mcp-server"
 
 	# DoS = Denial of Serivce
 	# DT = Data Tampering

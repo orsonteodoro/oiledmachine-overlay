@@ -6,7 +6,6 @@
   "typings": "lib/common/index.d.ts",
   "dependencies": {
     "@babel/runtime": "^7.10.0",
-    "@parcel/watcher": "^2.5.0",
     "@lumino/algorithm": "^2.0.4",
     "@lumino/commands": "^2.3.3",
     "@lumino/coreutils": "^2.2.2",
@@ -17,6 +16,7 @@
     "@lumino/signaling": "^2.1.5",
     "@lumino/virtualdom": "^2.0.4",
     "@lumino/widgets": "2.7.5",
+    "@parcel/watcher": "^2.5.0",
     "@theia/application-package": "1.69.0",
     "@theia/request": "1.69.0",
     "@types/body-parser": "^1.16.4",
@@ -60,6 +60,7 @@
     "msgpackr": "^1.10.2",
     "p-debounce": "^2.1.0",
     "perfect-scrollbar": "1.5.5",
+    "qs": "^6.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-tooltip": "^4.2.21",
