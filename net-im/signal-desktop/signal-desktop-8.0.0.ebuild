@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_45
+ebuild_revision_46
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -311,8 +311,8 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 20.0.2|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
 																								# CVE-2025-61927; ZC, VS(DoS, DT, ID), SS(DoS, DT, I); Critical
 																								# CVE-2025-62410; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-				sed -i -e "s|rollup: 3.27.1|rollup: 3.29.5|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
-
+				sed -i -e "s|rollup: 3.27.1|rollup: 3.30.0|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
+																								# CVE-2026-27606; ZC, DT, ID; High
 				sed -i -e "s|vite: 4.5.3|vite: 5.4.21|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
@@ -338,10 +338,12 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 
 				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die													# CVE-2025-54798; DT; Low
 				sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die												# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
-				sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+				sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+																								# CVE-2026-27903; ZC, DoS, High
+																								# CVE-2026-27904; ZC, DoS, High
 				sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die												# CVE-2025-64718; DT; Moderate
 				sed -i -e "s|ajv: 6.12.6|ajv: 8.18.0|g" "pnpm-lock.yaml" || die													# CVE-2025-69873; ZC, VS(DoS); Moderate
-				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
 				sed -i -e "s|'@remix-run/router': 1.5.0|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|'@remix-run/router': 1.23.1|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; ZC, VS(DoS), Moderate
@@ -432,7 +434,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 																								# CVE-2026-2391; DoS, Low
 
 			sed -i -e "s|qs: 6.14.1|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
-			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 #			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|js-yaml: 3.14.1|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
@@ -453,18 +455,20 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 																								# CVE-2025-68157; DT, ID, Low
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "package.json" || die											# CVE-2025-68458; DT, ID, Low
 																								# CVE-2025-68157; DT, ID, Low
-			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die														# CVE-2025-65945; DT; High
 			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
 			sed -i -e "s|playwright: 1.54.2|playwright: 1.55.1|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
-			sed -i -e "s|storybook: 8.4.4(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.15|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
-			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|storybook: 8.4.4(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.3|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|basic-ftp: 5.0.5|basic-ftp: 5.2.0|g" "pnpm-lock.yaml" || die												# CVE-2026-27699; ZC, DoS, DT
+			sed -i -e "s|storybook: 8.6.15(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
+																								# CVE-2026-27148; DoS, DT, ID; High
 		}
 		patch_edits_pnpm
 
@@ -475,7 +479,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"@babel/helpers@7.26.10"
 #				"brace-expansion@2.0.2"
 				"tmp@0.2.4"
-				"minimatch@10.2.1"
+				"minimatch@10.2.3"
 				"js-yaml@4.1.1"
 				"ajv@8.18.0"
 				"react-router@6.30.2"
@@ -489,7 +493,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.9"
 				"happy-dom@20.0.2"
-				"rollup@3.29.5"
+				"rollup@3.30.0"
 				"vite@5.4.21"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
@@ -521,7 +525,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"lodash@4.17.23"
 			"tar@7.5.9"
 			"qs@6.14.2"
-			"minimatch@10.2.1"
+			"minimatch@10.2.3"
 #			"fabric@7.2.0"
 			"js-yaml@4.1.1"
 			"ajv@8.18.0"
@@ -533,7 +537,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"webpack@5.104.1"
 			"jws@3.2.2"
 			"playwright@1.55.1"
-			"storybook@8.6.15"
+			"storybook@8.6.17"
 			"basic-ftp@5.2.0"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
