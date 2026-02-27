@@ -194,7 +194,7 @@
     "lru-cache": "11.0.2",
     "markdown-it": "14.1.1",
     "memoizee": "0.4.17",
-    "minimatch": "10.2.3",
+    "minimatch": "10.2.1",
     "moment": "2.30.1",
     "mp4box": "0.5.3",
     "node-fetch": "2.6.7",
