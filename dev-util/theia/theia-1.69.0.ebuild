@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_40
+git ollama ebuild_revision_41
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -607,8 +607,11 @@ einfo "Adding dependencies"
 
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
+	# Pinned version required for @modelcontextprotocol/sdk.
+	# Pinned version required for ai.
 	# Pinned version required for electron.
 	# Pinned version required for glob.
+	# Pinned version required for ajv and webpack for unattended install.
 	patch_lockfile() {
 		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
@@ -619,21 +622,62 @@ einfo "Fixing vulnerabilities"
 																			# CVE-2026-24842; DT, ID; High
 																			# CVE-2026-23745; DT, ID; High
 																			# CVE-2026-26960; DT, ID; High
-		sed -i -e "s|\"qs\": \"^6.14.0\"|\"qs\": \"^6.14.1\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+		sed -i -e "s|\"qs\": \"^6.4.0\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+		sed -i -e "s|\"qs\": \"^6.9.1\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+		sed -i -e "s|\"qs\": \"^6.13.0\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+		sed -i -e "s|\"qs\": \"^6.14.0\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+		sed -i -e "s|\"qs\": \"6.13.0\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
+																			# CVE-2026-2391; ZC, DoS; Low
 		sed -i -e "s|\"@isaacs/brace-expansion\": \"^5.0.0\"|\"@isaacs/brace-expansion\": \"^5.0.1\"|g" "package-lock.json" || die		# CVE-2026-25547; ZC, DoS; High
 
 #		sed -i -e "s|\"glob\": \"^7.1.7\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die							# CVE-2025-64756; DoS, DT, ID; High
 
 		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.13.5\"|g" "package-lock.json" || die							# CVE-2026-25639; ZC, DoS; High
 		sed -i -e "s|\"jws\": \"^4.0.0\"|\"jws\": \"^4.0.1\"|g" "package-lock.json" || die							# CVE-2025-65945; ZC, DT; High
-		sed -i -e "s|\"@modelcontextprotocol/sdk\": \"^1.25.1\"|\"@modelcontextprotocol/sdk\": \"^1.26.0\"|g" "package-lock.json" || die	# CVE-2026-25536; DT, ID; High
-#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
-#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
-#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
-#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
-#		sed -i -e "s|\"\": \"\"|\"\": \"\"|g" "package-lock.json" || die									# 
+		sed -i -e "s|\"jws\": \"^3.2.2\"|\"jws\": \"^4.0.1\"|g" "package-lock.json" || die							# CVE-2025-65945; ZC, DT; High
+#		sed -i -e "s|\"@modelcontextprotocol/sdk\": \"^1.25.1\"|\"@modelcontextprotocol/sdk\": \"^1.26.0\"|g" "package-lock.json" || die	# CVE-2026-25536; DT, ID; High
+
+		sed -i -e "s|\"serialize-javascript\": \"^5.0.1\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+		sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+
+		sed -i -e "s|\"lodash\": \"^4.5.1\"|\"lodash\": \"^4.17.23\"|g" "package-lock.json" || die						# CVE-2025-13465; VS(DoS, DT), SS(DoS, DT, ID)
+
+		sed -i -e "s|\"undici\": \"^7.12.0\"|\"undici\": \"^7.18.2\"|g" "package-lock.json" || die						# CVE-2026-22036; ZC, DoS; Moderate
+		sed -i -e "s|\"undici\": \"^7.16.0\"|\"undici\": \"^7.18.2\"|g" "package-lock.json" || die						# CVE-2026-22036; ZC, DoS; Moderate
+
+#		sed -i -e "s|\"ajv\": \"^8.17.1\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+#		sed -i -e "s|\"ajv\": \"^8.9.0\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+#		sed -i -e "s|\"ajv\": \"^8.6.3\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+#		sed -i -e "s|\"ajv\": \"^8.0.0\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+#		sed -i -e "s|\"ajv\": \"^6.12.4\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+#		sed -i -e "s|\"ajv\": \"^6.12.5\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+#		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die							# CVE-2025-69873; ZC, DoS; Moderate
+
+		sed -i -e "s|\"markdown-it\": \"^12.3.2\"|\"markdown-it\": \"^14.1.1\"|g" "package-lock.json" || die					# CVE-2026-2327; ZC, DoS; Moderate
+		sed -i -e "s|\"markdown-it\": \"^14.1.0\"|\"markdown-it\": \"^14.1.1\"|g" "package-lock.json" || die					# CVE-2026-2327; ZC, DoS; Moderate
+		sed -i -e "s|\"jsondiffpatch\": \"0.6.0\"|\"jsondiffpatch\": \"^0.7.2\"|g" "package-lock.json" || die					# CVE-2025-9910; DT, ID; Moderate
+		sed -i -e "s|\"js-yaml\": \"^3.10.0\"|\"js-yaml\": \"^3.14.2\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
+		sed -i -e "s|\"js-yaml\": \"^3.13.1\"|\"js-yaml\": \"^3.14.2\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
+
+		sed -i -e "s|\"diff\": \"^5.2.0\"|\"diff\": \"^5.2.2\"|g" "package-lock.json" || die							# CVE-2026-24001; ZC, DoS; Low
+		sed -i -e "s|\"diff\": \"^5.0.0\"|\"diff\": \"^5.2.2\"|g" "package-lock.json" || die							# CVE-2026-24001; ZC, DoS; Low
+		sed -i -e "s|\"diff\": \"^4.0.1\"|\"diff\": \"^5.2.2\"|g" "package-lock.json" || die							# CVE-2026-24001; ZC, DoS; Low
+		sed -i -e "s|\"diff\": \"5.0.0\"|\"diff\": \"^5.2.2\"|g" "package-lock.json" || die							# CVE-2026-24001; ZC, DoS; Low
+
+#		sed -i -e "s|\"ai\": \"^4.3.13\"|\"ai\": \"^5.0.52\"|g" "package-lock.json" || die							# CVE-2025-48985; ZC; DT; Low
+
+#		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.104.1\"|g" "package-lock.json" || die						# CVE-2025-68458; DT, ID; Low
+																			# CVE-2025-68157; DT, ID; Low
 	}
 	patch_lockfile
+
+ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/express/node_modules/qs fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
@@ -646,14 +690,14 @@ einfo "Fixing vulnerabilities"
 	enpm add "tar@^7.5.8" -P -w "dev-packages/application-manager"
 	enpm add "tar@^7.5.8" -P -w "packages/git"
 
-	enpm add "qs@^6.14.1" -D
-	enpm add "qs@^6.14.1" -P -w "dev-packages/application-package"
-	enpm add "qs@^6.14.1" -P -w "dev-packages/cli"
-	enpm add "qs@^6.14.1" -P -w "examples/api-samples"
-	enpm add "qs@^6.14.1" -P -w "packages/ai-mcp"
-	enpm add "qs@^6.14.1" -P -w "packages/ai-mcp-server"
-	enpm add "qs@^6.14.1" -P -w "examples/api-samples"
-	enpm add "qs@^6.14.1" -P -w "packages/core"
+	enpm add "qs@^6.14.2" -D
+	enpm add "qs@^6.14.2" -P -w "dev-packages/application-package"
+	enpm add "qs@^6.14.2" -P -w "dev-packages/cli"
+	enpm add "qs@^6.14.2" -P -w "examples/api-samples"
+	enpm add "qs@^6.14.2" -P -w "examples/api-samples"
+	enpm add "qs@^6.14.2" -P -w "packages/ai-mcp"
+#	enpm add "qs@^6.14.2" -P -w "packages/ai-mcp-server"
+	enpm add "qs@^6.14.2" -P -w "packages/core"
 
 	enpm add "@isaacs/brace-expansion@^5.0.1" -D
 
@@ -672,9 +716,50 @@ einfo "Fixing vulnerabilities"
 	enpm add "jws@^4.0.1" -D
 	enpm add "jws@^4.0.1" -P -w "packages/ai-google"
 
-	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "examples/api-samples"
-	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "packages/ai-mcp"
-	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "packages/ai-mcp-server"
+#	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "examples/api-samples"
+#	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "packages/ai-mcp"
+#	enpm add "@modelcontextprotocol/sdk@^1.26.0" -P -w "packages/ai-mcp-server"
+
+	enpm add "undici@^7.18.2" -D
+	enpm add "undici@^7.18.2" -P -w "packages/ai-anthropic"
+
+	# Retry
+#	patch_lockfile
+	enpm add "qs@^6.14.2" -P -w "dev-packages/application-package"
+	enpm add "qs@^6.14.2" -P -w "examples/api-samples"
+
+	enpm add "serialize-javascript@^6.0.2" -D
+	enpm add "serialize-javascript@^6.0.2" -P -w "dev-packages/application-manager"
+	enpm add "serialize-javascript@^6.0.2" -P -w "dev-packages/native-webpack-plugin"
+
+	enpm add "lodash@^4.17.23" -D
+	enpm add "lodash@^4.17.23" -D -w "packages/ai-anthropic"
+	enpm add "lodash@^4.17.23" -D -w "packages/ai-openai"
+
+#	enpm add "ajv@^8.18.0" -D
+#	enpm add "ajv@^8.18.0" -P -w "dev-packages/application-manager"
+#	enpm add "ajv@^8.18.0" -P -w "dev-packages/native-webpack-plugin"
+#	enpm add "ajv@^8.18.0" -P -w "examples/api-samples"
+#	enpm add "ajv@^8.18.0" -P -w "packages/electron"
+##	enpm add "ajv@^8.18.0" -P -w "packages/ai-mcp-serve"
+#	enpm add "ajv@^8.18.0" -P -w "packages/ai-mcp"
+
+	enpm add "markdown-it@^14.1.1" -D
+	enpm add "markdown-it@^14.1.1" -P -w "packages/core"
+
+	enpm add "jsondiffpatch@^0.7.2" -P -w "packages/ai-vercel-ai"
+
+	enpm add "js-yaml@^3.14.2" -D
+
+	enpm add "diff@^5.2.2" -D
+	enpm add "diff@^5.2.2" -P -w "dev-packages/cli"
+	enpm add "diff@^5.2.2" -P -w "packages/git"
+	enpm add "diff@^5.2.2" -P -w "packages/scm"
+
+#	enpm add "ai@^5.0.52" -P -w "packages/ai-vercel-ai"
+
+#	enpm add "webpack@^5.104.1" -P -w "dev-packages/application-manager"
+#	enpm add "webpack@^5.104.1" -P -w "dev-packages/native-webpack-plugin"
 
 	# DoS = Denial of Serivce
 	# DT = Data Tampering

@@ -54,7 +54,7 @@
     "keytar": "7.9.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.1.1",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-emoji": "^3.0.0",
     "msgpackr": "^1.10.2",

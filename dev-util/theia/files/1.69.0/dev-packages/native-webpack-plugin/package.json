@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "detect-libc": "^2.0.2",
+    "serialize-javascript": "^6.0.2",
     "tslib": "^2.6.2",
     "webpack": "^5.76.0"
   },

@@ -4,7 +4,7 @@
   "version": "1.69.0",
   "description": "Theia - Example code to demonstrate Theia API",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@modelcontextprotocol/sdk": "^1.25.1",
     "@theia/ai-chat": "1.69.0",
     "@theia/ai-chat-ui": "1.69.0",
     "@theia/ai-code-completion": "1.69.0",

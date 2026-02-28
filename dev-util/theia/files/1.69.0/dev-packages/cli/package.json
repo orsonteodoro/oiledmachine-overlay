@@ -45,6 +45,7 @@
     "chai": "^4.3.10",
     "chalk": "4.0.0",
     "decompress": "^4.2.1",
+    "diff": "^5.2.2",
     "escape-string-regexp": "4.0.0",
     "glob": "^8.0.3",
     "http-server": "^14.1.1",

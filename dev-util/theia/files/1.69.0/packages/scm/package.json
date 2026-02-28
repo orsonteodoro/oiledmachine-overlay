@@ -9,7 +9,7 @@
     "@theia/monaco": "1.69.0",
     "@theia/monaco-editor-core": "1.96.302",
     "@types/diff": "^5.2.1",
-    "diff": "^5.2.0",
+    "diff": "^5.2.2",
     "p-debounce": "^2.1.0",
     "react-textarea-autosize": "^8.5.5",
     "ts-md5": "^1.2.2",
