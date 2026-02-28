@@ -607,8 +607,8 @@ einfo "Adding dependencies"
 
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
-	# Pin version required for electron.
-	# Pin version required for glob.
+	# Pinned version required for electron.
+	# Pinned version required for glob.
 	patch_lockfile() {
 		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
