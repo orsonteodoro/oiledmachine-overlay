@@ -45,7 +45,6 @@
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^6.2.0",
     "fs-extra": "^4.0.2",
-    "glob": "^10.5.0",
     "http-server": "^14.1.1",
     "ignore-loader": "^0.1.2",
     "less": "^3.0.3",

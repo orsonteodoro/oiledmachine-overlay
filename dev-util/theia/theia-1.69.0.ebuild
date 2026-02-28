@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_39
+git ollama ebuild_revision_40
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -607,6 +607,8 @@ einfo "Adding dependencies"
 
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
+	# Pin version required for electron.
+	# Pin version required for glob.
 	patch_lockfile() {
 		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
@@ -620,7 +622,7 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"qs\": \"^6.14.0\"|\"qs\": \"^6.14.1\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
 		sed -i -e "s|\"@isaacs/brace-expansion\": \"^5.0.0\"|\"@isaacs/brace-expansion\": \"^5.0.1\"|g" "package-lock.json" || die		# CVE-2026-25547; ZC, DoS; High
 
-		sed -i -e "s|\"glob\": \"^7.1.7\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die							# CVE-2025-64756; DoS, DT, ID; High
+#		sed -i -e "s|\"glob\": \"^7.1.7\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die							# CVE-2025-64756; DoS, DT, ID; High
 
 		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.13.5\"|g" "package-lock.json" || die							# CVE-2026-25639; ZC, DoS; High
 		sed -i -e "s|\"jws\": \"^4.0.0\"|\"jws\": \"^4.0.1\"|g" "package-lock.json" || die							# CVE-2025-65945; ZC, DT; High
@@ -655,14 +657,14 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "@isaacs/brace-expansion@^5.0.1" -D
 
-	enpm add "glob@^10.5.0" -D
-	enpm add "glob@^10.5.0" -P -w "dev-packages/application-manager"
-	enpm add "glob@^10.5.0" -P -w "dev-packages/cli"
-	enpm add "glob@^10.5.0" -P -w "dev-packages/ffmpeg"
-	enpm add "glob@^10.5.0" -P -w "dev-packages/localization-manager"
-	enpm add "glob@^10.5.0" -D -w "examples/playwright"
-	enpm add "glob@^10.5.0" -P -w "packages/filesystem"
-	enpm add "glob@^10.5.0" -P -w "packages/remote"
+#	enpm add "glob@^10.5.0" -D
+#	enpm add "glob@^10.5.0" -P -w "dev-packages/application-manager"
+#	enpm add "glob@^10.5.0" -P -w "dev-packages/cli"
+#	enpm add "glob@^10.5.0" -P -w "dev-packages/ffmpeg"
+#	enpm add "glob@^10.5.0" -P -w "dev-packages/localization-manager"
+#	enpm add "glob@^10.5.0" -D -w "examples/playwright"
+#	enpm add "glob@^10.5.0" -P -w "packages/filesystem"
+#	enpm add "glob@^10.5.0" -P -w "packages/remote"
 
 	enpm add "axios@^1.13.5" -D
 	enpm add "axios@^1.13.5" -P -w "dev-packages/application-package"
