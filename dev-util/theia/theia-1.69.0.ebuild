@@ -637,9 +637,11 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"jws\": \"^3.2.2\"|\"jws\": \"^4.0.1\"|g" "package-lock.json" || die							# CVE-2025-65945; ZC, DT; High
 #		sed -i -e "s|\"@modelcontextprotocol/sdk\": \"^1.25.1\"|\"@modelcontextprotocol/sdk\": \"^1.26.0\"|g" "package-lock.json" || die	# CVE-2026-25536; DT, ID; High
 
-		sed -i -e "s|\"serialize-javascript\": \"^5.0.1\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
-		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
-		sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+		sed -i -e "s|\"serialize-javascript\": \"^5.0.1\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+		sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die			# CVE-2024-11831; DT, ID; Moderate
+																			# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID, High
 
 		sed -i -e "s|\"lodash\": \"^4.5.1\"|\"lodash\": \"^4.17.23\"|g" "package-lock.json" || die						# CVE-2025-13465; VS(DoS, DT), SS(DoS, DT, ID)
 
@@ -657,8 +659,10 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"markdown-it\": \"^12.3.2\"|\"markdown-it\": \"^14.1.1\"|g" "package-lock.json" || die					# CVE-2026-2327; ZC, DoS; Moderate
 		sed -i -e "s|\"markdown-it\": \"^14.1.0\"|\"markdown-it\": \"^14.1.1\"|g" "package-lock.json" || die					# CVE-2026-2327; ZC, DoS; Moderate
 		sed -i -e "s|\"jsondiffpatch\": \"0.6.0\"|\"jsondiffpatch\": \"^0.7.2\"|g" "package-lock.json" || die					# CVE-2025-9910; DT, ID; Moderate
-		sed -i -e "s|\"js-yaml\": \"^3.10.0\"|\"js-yaml\": \"^3.14.2\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
-		sed -i -e "s|\"js-yaml\": \"^3.13.1\"|\"js-yaml\": \"^3.14.2\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
+		sed -i -e "s|\"js-yaml\": \"^3.10.0\"|\"js-yaml\": \"^4.1.1\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
+		sed -i -e "s|\"js-yaml\": \"^3.13.1\"|\"js-yaml\": \"^4.1.1\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
+		sed -i -e "s|\"js-yaml\": \"^4.1.0\"|\"js-yaml\": \"^4.1.1\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
+		sed -i -e "s|\"js-yaml\": \"4.1.0\"|\"js-yaml\": \"^4.1.1\"|g" "package-lock.json" || die						# CVE-2025-64718; ZC, DT; Moderate
 
 		sed -i -e "s|\"diff\": \"^5.2.0\"|\"diff\": \"^5.2.2\"|g" "package-lock.json" || die							# CVE-2026-24001; ZC, DoS; Low
 		sed -i -e "s|\"diff\": \"^5.0.0\"|\"diff\": \"^5.2.2\"|g" "package-lock.json" || die							# CVE-2026-24001; ZC, DoS; Low
@@ -669,6 +673,21 @@ einfo "Fixing vulnerabilities"
 
 #		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.104.1\"|g" "package-lock.json" || die						# CVE-2025-68458; DT, ID; Low
 																			# CVE-2025-68157; DT, ID; Low
+
+		sed -i -e "s|\"body-parser\": \"^2.2.0\"|\"body-parser\": \"^2.2.1\"|g" "package-lock.json" || die					# CVE-2025-13466; ZC, VS(DoS), SS(DOS); Moderate
+		sed -i -e "s|\"body-parser\": \"^1.18.3\"|\"body-parser\": \"^2.2.1\"|g" "package-lock.json" || die					# CVE-2025-13466; ZC, VS(DoS), SS(DOS); Moderate
+		sed -i -e "s|\"body-parser\": \"^1.17.2\"|\"body-parser\": \"^2.2.1\"|g" "package-lock.json" || die					# CVE-2025-13466; ZC, VS(DoS), SS(DOS); Moderate
+		sed -i -e "s|\"body-parser\": \"1.20.3\"|\"body-parser\": \"^2.2.1\"|g" "package-lock.json" || die					# CVE-2025-13466; ZC, VS(DoS), SS(DOS); Moderate
+
+		sed -i -e "s|\"minimatch\": \"^3.1.2\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+		sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+		sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+		sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+		sed -i -e "s|\"minimatch\": \"^3.0.3\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+		sed -i -e "s|\"minimatch\": \"^3.0.0\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+		sed -i -e "s|\"minimatch\": \"3.0.5\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
+																			# CVE-2026-27903; ZC, DoS; High
+																			# CVE-2026-27904; ZC, DoS; High
 	}
 	patch_lockfile
 
@@ -678,6 +697,8 @@ ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar fro
 ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/jsondiffpatch fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs fron ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
@@ -728,9 +749,9 @@ ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}
 	enpm add "qs@^6.14.2" -P -w "dev-packages/application-package"
 	enpm add "qs@^6.14.2" -P -w "examples/api-samples"
 
-	enpm add "serialize-javascript@^6.0.2" -D
-	enpm add "serialize-javascript@^6.0.2" -P -w "dev-packages/application-manager"
-	enpm add "serialize-javascript@^6.0.2" -P -w "dev-packages/native-webpack-plugin"
+	enpm add "serialize-javascript@^7.0.3" -D
+	enpm add "serialize-javascript@^7.0.3" -P -w "dev-packages/application-manager"
+	enpm add "serialize-javascript@^7.0.3" -P -w "dev-packages/native-webpack-plugin"
 
 	enpm add "lodash@^4.17.23" -D
 	enpm add "lodash@^4.17.23" -D -w "packages/ai-anthropic"
@@ -749,7 +770,11 @@ ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}
 
 	enpm add "jsondiffpatch@^0.7.2" -P -w "packages/ai-vercel-ai"
 
-	enpm add "js-yaml@^3.14.2" -D
+	enpm add "js-yaml@^4.1.1" -D
+	enpm add "js-yaml@^4.1.1" -D -w "dev-packages/cli"
+	enpm add "js-yaml@^4.1.1" -D -w "packages/ai-chat"
+	enpm add "js-yaml@^4.1.1" -D -w "packages/ai-core"
+	enpm add "js-yaml@^4.1.1" -D -w "packages/ai-ide"
 
 	enpm add "diff@^5.2.2" -D
 	enpm add "diff@^5.2.2" -P -w "dev-packages/cli"
@@ -760,6 +785,15 @@ ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}
 
 #	enpm add "webpack@^5.104.1" -P -w "dev-packages/application-manager"
 #	enpm add "webpack@^5.104.1" -P -w "dev-packages/native-webpack-plugin"
+
+	enpm add "body-parser@^2.2.1" -P -w "examples/api-samples"
+	enpm add "body-parser@^2.2.1" -P -w "packages/ai-mcp"
+#	enpm add "body-parser@^2.2.1" -P -w "packages/ai-mcp-server"
+	enpm add "body-parser@^2.2.1" -P -w "packages/core"
+	enpm add "body-parser@^2.2.1" -P -w "packages/filesystem"
+
+	enpm add "minimatch@^3.1.4" -D
+	enpm add "minimatch@^3.1.4" -P -w "dev-packages/application-manager"
 
 	# DoS = Denial of Serivce
 	# DT = Data Tampering

@@ -36,7 +36,6 @@
     "basic-ftp": "^5.2.0",
     "date-fns": "^4.1.0",
     "ignore": "^6.0.0",
-    "js-yaml": "^4.1.0",
     "minimatch": "^10.0.3",
     "puppeteer-core": "^24.10.0",
     "simple-git": "^3.25.0"
@@ -46,7 +45,8 @@
   },
   "devDependencies": {
     "@theia/cli": "1.69.0",
-    "@theia/test": "1.69.0"
+    "@theia/test": "1.69.0",
+    "js-yaml": "^4.1.1"
   },
   "theiaExtensions": [
     {
