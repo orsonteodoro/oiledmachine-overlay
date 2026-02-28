@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_41
+git ollama ebuild_revision_42
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -694,11 +694,12 @@ einfo "Fixing vulnerabilities"
 ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/express/node_modules/qs fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/jsondiffpatch fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch fron ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
