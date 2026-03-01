@@ -607,6 +607,13 @@ einfo "Adding dependencies"
 
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
+	# DoS = Denial of Serivce
+	# DT = Data Tampering
+	# ID = Information Disclosure
+	# SS = Subsequent System (Indirect attack)
+	# VS = Vulnerable System (Direct attack)
+	# ZC = Zero-Click Attack (AV:N, PR:N, UI:N)
+
 	# Pinned version required for @modelcontextprotocol/sdk.
 	# Pinned version required for ai.
 	# Pinned version required for electron.
@@ -688,13 +695,16 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"minimatch\": \"3.0.5\"|\"minimatch\": \"^3.1.4\"|g" "package-lock.json" || die						# CVE-2026-26996; ZC, DoS; High
 																			# CVE-2026-27903; ZC, DoS; High
 																			# CVE-2026-27904; ZC, DoS; High
+
+		sed -i -e "s|\"multer\": \"^2.0.1\"|\"multer\": \"^2.1.0\"|g" "package-lock.json" || die						# CVE-2026-3304; ZC, VS(DoS); High
+																			# CVE-2026-2359; ZC, VS(DoS); High
 	}
 	patch_lockfile
 
-ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/express/node_modules/qs fron ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs fron ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/express/node_modules/qs fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/jsondiffpatch fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
@@ -798,13 +808,7 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 	enpm add "minimatch@^3.1.4" -D
 	enpm add "minimatch@^3.1.4" -P -w "dev-packages/application-manager"
 
-	# DoS = Denial of Serivce
-	# DT = Data Tampering
-	# ID = Information Disclosure
-	# SS = Subsequent System (Indirect attack)
-	# VS = Vulnerable System (Direct attack)
-	# ZC = Zero-Click Attack (AV:N, PR:N, UI:N)
-
+	enpm add "multer@^2.1.0" -P -w "packages/filesystem"
 
 	patch_lockfile
 }
