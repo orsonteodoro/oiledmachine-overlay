@@ -7,23 +7,35 @@ EAPI=8
 MY_PN="${PN//-cli/}"
 
 NODE_ENV="development"
+NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
 
 AT_TYPES_NODE_PV="18.16.3"
-PLAYWRIGHT_PV="1.56.1"
-NODE_SLOT="18" # Same as major version of AT_TYPES_NODE_PV
+PLAYWRIGHT_PV="1.58.2"
+NODE_SLOT="20" # Required by npm slot
 
+# 1.56.1 works
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1194"
-	["chromium-headless-shell-linux-glibc-amd64"]="1194"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="1371"
+# See https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1208"
+	["chromium-headless-shell-linux-glibc-amd64"]="1208"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="1401"
 	["ffmpeg-linux-glibc-amd64"]="1011"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1495"
-	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1490"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2215"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1509"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1504"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2248"
+)
+
+declare -A DL_VER=(
+# See https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/browsers.json
+	["chromium-linux-glibc-amd64"]="145.0.7632.6"
+	["chromium-headless-shell-linux-glibc-amd64"]="145.0.7632.6"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="146.0.7644.0"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="146.0.1"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="146.0b8"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="26.0"
 )
 
 EPLAYRIGHT_ALLOW_BROWSERS=(
@@ -62,10 +74,10 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-linux-glibc-amd64]}/chromium-linux.zip
-	-> chromium-linux-${DL_REVISIONS[chromium-linux-glibc-amd64]}-amd64.zip
-https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-headless-shell-linux-glibc-amd64]}/chromium-headless-shell-linux.zip
-	-> chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-amd64]}-amd64.zip
+https://cdn.playwright.dev/builds/cft/${DL_VER[chromium-linux-glibc-amd64]}/linux64/chrome-linux64.zip
+	-> chromium-linux-${DL_VER[chromium-linux-glibc-amd64]}-amd64.zip
+https://cdn.playwright.dev/builds/cft/${DL_VER[chromium-headless-shell-linux-glibc-amd64]}/linux64/chrome-headless-shell-linux64.zip
+	-> chromium-headless-shell-linux-${DL_VER[chromium-headless-shell-linux-glibc-amd64]}-amd64.zip
 					)
 				)
 			)
@@ -78,8 +90,8 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/chromium-tip-of-tree/${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-amd64]}/chromium-tip-of-tree-linux.zip
-	-> chromium-tip-of-tree-linux-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-amd64]}-amd64.zip
+https://cdn.playwright.dev/builds/cft/${DL_VER[chromium-tip-of-tree-linux-glibc-amd64]}/linux64/chrome-linux64.zip
+	-> chromium-tip-of-tree-linux-${DL_VER[chromium-tip-of-tree-linux-glibc-amd64]}-amd64.zip
 					)
 				)
 			)
@@ -92,7 +104,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}/firefox-ubuntu-24.04.zip
+https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}/builds/firefox/%s/firefox-ubuntu-24.04.zip
 	-> firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
@@ -106,7 +118,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}/firefox-beta-ubuntu-24.04.zip
+https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}/builds/firefox-beta/%s/firefox-beta-ubuntu-24.04.zip
 	-> firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
@@ -120,7 +132,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "webkit"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/webkit/${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}/webkit-ubuntu-24.04.zip
+https://playwright.azureedge.net/builds/webkit/${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}/builds/webkit/%s/webkit-ubuntu-24.04.zip
 	-> webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
@@ -138,15 +150,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium? (
 			BSD
-			chromium-141.0.7390.x
-		)
-	"
-fi
-if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
-	THIRD_PARTY_LICENSES+="
-		chromium-tip-of-tree? (
-			BSD
-			chromium-142.0.7430.x
+			chromium-145.0.7632.x
 		)
 	"
 fi
@@ -154,7 +158,15 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; t
 	THIRD_PARTY_LICENSES+="
 		chromium-headless-shell? (
 			BSD
-			chromium-141.0.7390.x
+			chromium-145.0.7632.x
+		)
+	"
+fi
+if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
+	THIRD_PARTY_LICENSES+="
+		chromium-tip-of-tree? (
+			BSD
+			chromium-146.0.7644.x
 		)
 	"
 fi
@@ -162,7 +174,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox? (
 			BSD
-			FF-142.0-THIRD-PARTY-LICENSES
+			FF-146.0-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -170,7 +182,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox-beta? (
 			BSD
-			FF-143.0b10-THIRD-PARTY-LICENSES
+			FF-146.0b8-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -188,7 +200,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE+="
 	|| (
@@ -262,6 +274,7 @@ einfo "Applying mitigation"
 									# ID		# CVE-2025-30208
 	)
 	enpm install -D --prefer-offline "${pkgs[@]}"
+
 #	enpm install -D "${pkgs[@]}"
 
 	patch_edits
@@ -287,10 +300,12 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.56.1/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.58.2/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/browsers.json
+
+	eapply "${FILESDIR}/${PN}-2.1.0-imports-fix.patch"
 
 	local L=()
 	local choice
@@ -302,7 +317,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.56.1/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.58.2/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
@@ -310,11 +325,11 @@ npm_unpack_install_post() {
 	export PLAYWRIGHT_SKIP_BROWSER_GC=1
 	local d_base="node_modules/playwright-core/.local-browsers"
 
-	_unpack_playwright "chromium" "${d_base}/chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}" "chromium-linux-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
-	_unpack_playwright "chromium" "${d_base}/chromium_headless_shell-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}" "chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "chromium" "${d_base}/chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}" "chromium-linux-${DL_VER[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "chromium" "${d_base}/chromium_headless_shell-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}" "chromium-headless-shell-linux-${DL_VER[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
 	_unpack_playwright "chromium" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
 
-	_unpack_playwright "chromium-tip-of-tree" "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}" "chromium-tip-of-tree-linux-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "chromium-tip-of-tree" "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}" "chromium-tip-of-tree-linux-${DL_VER[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
 	_unpack_playwright "chromium-tip-of-tree" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
 
 	_unpack_playwright "firefox" "${d_base}/firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
@@ -390,4 +405,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.0.0 (20230604)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20250118 with USE=chromium)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20250312 with USE=chromium and playwright 1.51.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20250312 with USE=chromium and Playwright 1.51.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20260301 with USE=chromium and Playwright 1.58.2)

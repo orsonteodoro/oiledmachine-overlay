@@ -1,0 +1,20 @@
+--- a/cli.ts.orig	2024-12-12 01:48:03.000000000 -0800
++++ b/cli.ts	2026-03-01 07:14:43.575812759 -0800
+@@ -14,7 +14,7 @@ import readFileAsync from './src/utils/r
+ import transformToQueryParams from './src/utils/transform-to-query-params.util.js';
+ import defaultErrorView from './src/views/default-error.view.js';
+ import defaultSuccessView from './src/views/default-success.view.js';
+-import packageJson from './package.json' assert { type: 'json' };
++import packageJson from './package.json' with { type: 'json' };
+ import {
+   CARBON_URL,
+   CARBON_CUSTOM_THEME,
+--- a/test/config/prompt.config.test.ts.orig	2024-12-12 01:48:03.000000000 -0800
++++ b/test/config/prompt.config.test.ts	2026-03-01 07:14:44.615779967 -0800
+@@ -1,5 +1,5 @@
+ import promptConfig from '../../src/config/cli/prompt.config.js';
+-import dummyConfig from './../test-dummies/_config.json' assert { type: 'json' };
++import dummyConfig from './../test-dummies/_config.json' with { type: 'json' };
+ 
+ describe('promptConfig', () => {
+   it('should have the same `name` values as a preset has setting keys', async () => {
