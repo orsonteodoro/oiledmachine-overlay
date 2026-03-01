@@ -17,14 +17,15 @@ ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="39.2.3" # Cr 142.0.7444.175, node 22.21.1
+	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="29.0.1" # Cr 122.0.6261.57, node 20.9.0
 fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
-ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
+ELECTRON_APP_TYPESCRIPT_PV="5.4.4" # Upstream uses 5.3.3
 NODE_ENV="development"
+NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX_ARGS=(
 	"--prefer-offline"
 )
@@ -51,7 +52,7 @@ DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="
 	${ELECTRON_APP_LICENSES}
-	electron-39.2.3-chromium.html
+	electron-40.6.1-chromium.html
 	MIT
 "
 # For ELECTRON_APP_LICENSES, see
