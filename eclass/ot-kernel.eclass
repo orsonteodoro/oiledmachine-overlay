@@ -416,8 +416,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Feb 18, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1771515207 # From `date +%s -d "2026-02-19 16:33:27 +0100"` from changelog for latest tag
+MITIGATION_DATE="Feb 26, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1771362357 # From `date +%s -d "2026-02-17 16:05:57 -0500"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -430,6 +430,11 @@ VULNERABILITIES_FIXED=(
 
 # Some CVE reports may be slow released.  The second group may
 # catch these.
+
+	# 2026-02-26
+
+	"CVE-2025-71226;;Rejected"
+	"CVE-2025-71228;;Rejected"
 
 	# 2026-02-18
 
