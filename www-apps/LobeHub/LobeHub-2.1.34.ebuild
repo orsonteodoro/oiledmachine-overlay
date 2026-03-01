@@ -12,7 +12,7 @@ EAPI=8
 # 1.133.4 -> 1.137.0
 # 1.137.0 -> 1.142.8
 # 1.142.8 -> 1.146.0
-# 1.146.0 -> 2.1.33
+# 1.146.0 -> 2.1.34
 
 # Ebuild using React 19
 
@@ -44,7 +44,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="2.1.33" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="2.1.34" pnpm_updater_update_locks.sh` to update lockfile
 
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_SHARP_USE="exif lcms webp"
