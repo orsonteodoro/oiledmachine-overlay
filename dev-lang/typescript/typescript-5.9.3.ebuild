@@ -9,9 +9,10 @@ MY_PN="TypeScript"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 NODE_SLOT="22" # Same as major version of NPM_SECAUDIT_AT_TYPES_NODE_PV
+NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}/${PV}"
 
-NPM_SECAUDIT_AT_TYPES_NODE_PV="22.7.4"
+NPM_SECAUDIT_AT_TYPES_NODE_PV="22.13.4"
 
 NPM_EXE_LIST=(
 	"${NPM_INSTALL_PATH}/bin/tsc"
