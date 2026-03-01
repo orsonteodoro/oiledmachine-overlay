@@ -123,7 +123,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_21
+	ebuild_revision_22
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -171,34 +171,51 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"@babel/runtime\": \"^7.18.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 
-		sed -i -e "s|\"undici\": \"^6.21.1\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die			# CVE-2025-47279; DoS; Low
-		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
+		sed -i -e "s|\"undici\": \"^6.21.2\"|\"undici\": \"^6.23.0\"|g" "package-lock.json" || die			# CVE-2026-22036; ZC, DoS; Moderdate
+		sed -i -e "s|\"undici\": \"^6.21.1\"|\"undici\": \"^6.23.0\"|g" "package-lock.json" || die			# CVE-2025-47279; DoS; Low
+		sed -i -e "s|\"undici\": \"6.21.2\"|\"undici\": \"^6.23.0\"|g" "package-lock.json" || die			# CVE-2026-22036; ZC, DoS; Moderdate
+		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"^6.23.0\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
 																# CVE-2025-47279; DoS; Low
 
-		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"14.2.32\"|g" "package-lock.json" || die				# CVE-2025-29927; DT, ID; Critical
-		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"14.2.32\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
+		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"^15.0.8\"|g" "package-lock.json" || die				# CVE-2025-29927; DT, ID; Critical
+		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"^15.0.8\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
+		sed -i -e "s|\"next\": \"^14.2.32\"|\"next\": \"^15.0.8\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
 																# CVE-2025-48068; VS(ID), SS(ID); Low
 																# CVE-2025-30218; VS(ID)
+																# GHSA-h25m-26qc-wcjf; DoS; High
+																# GHSA-5j59-xgg2-r9c4; DoS; High
+																# GHSA-mwv6-3258-q52c; ZC, DoS; High
 
-		sed -i -e "s|\"next\": \"^14.2.30\"|\"next\": \"14.2.32\"|g" "package-lock.json" || die				# CVE-2025-57752; ID; Medium
+		sed -i -e "s|\"next\": \"^14.2.30\"|\"next\": \"^15.0.8\"|g" "package-lock.json" || die				# CVE-2025-57752; ID; Medium
 																# CVE-2025-57822; DT, ID; Medium
 																# CVE-2025-55173; DT, Medium
 
 		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die			# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die				# CVE-2025-54798; DT; Low
+
+		sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"^7.5.7\"|g" "package-lock.json" || die				# CVE-2026-23950; DoS, DT, ID; High
+																# CVE-2026-24842; DT, ID; High
+																# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+		sed -i -e "s|\"glob\": \"^10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die				# CVE-2025-64756; DoS, DT, ID; High
+		sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die				# CVE-2025-64756; DoS, DT, ID; High
+
 	}
 	patch_lockfile
 	local pkgs
 	pkgs=(
-		"undici@6.21.2"
-		"next@14.2.32"
+		"undici@^6.23.0"
+		"next@^15.0.8"
 		"form-data@4.0.4"
 		"tmp@0.2.4"
+		"tar@^7.5.7"
+		"glob@^10.5.0"
 	)
 	enpm install -D "${pkgs[@]}"
 
 	pkgs=(
 		"@babel/runtime@7.26.10"
+		"glob@^10.5.0"
+		"undici@^6.23.0"
 	)
 	enpm install -P "${pkgs[@]}" --prefer-offline
 	patch_lockfile

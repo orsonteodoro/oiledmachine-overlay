@@ -214,16 +214,16 @@
     "electron": "^40.6.1",
     "electron-builder": "^24.13.3",
     "form-data": "^4.0.4",
-    "next": "^14.2.32",
+    "next": "^15.5.12",
     "postcss": "^8.4.31",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwindcss": "^3.3.5",
+    "tar": "^7.5.9",
     "tmp": "^0.2.4",
-    "typescript": "^4.8.4",
-    "undici": "^6.21.2"
+    "typescript": "^4.8.4"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
@@ -243,6 +243,7 @@
     "electron-updater": "^6.3.0",
     "eslint-config-next": "^14.2.7",
     "firebase": "^10.11.0",
+    "glob": "^10.5.0",
     "gray-matter": "^4.0.3",
     "jotai": "^2.2.2",
     "lucide-react": "^0.366.0",
@@ -256,7 +257,8 @@
     "tailwind-merge": "^2.2.2",
     "tailwind-scrollbar": "^3.0.4",
     "tailwindcss-animate": "^1.0.7",
-    "theme-change": "^2.5.0"
+    "theme-change": "^2.5.0",
+    "undici": "^6.23.0"
   },
   "volta": {
     "node": "18.20.5"
