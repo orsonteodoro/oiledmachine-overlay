@@ -324,6 +324,10 @@ pnpm_src_unpack() {
 		fi
 	fi
 	grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+einfo "Finished updating lockfiles."
+		exit 0
+	fi
 }
 
 # @FUNCTION: pnpm_src_compile
