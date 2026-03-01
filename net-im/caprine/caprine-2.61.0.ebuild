@@ -62,7 +62,7 @@ SLOT="0"
 # Deps based on their CI
 IUSE+="
 	firejail
-	ebuild_revision_17
+	ebuild_revision_19
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
@@ -99,10 +99,19 @@ src_unpack() {
 
 einfo "Applying mitigation"
 		patch_edits() {
-			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die						# CVE-2022-33987; ZC, DT; Moderate
+			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die						# CVE-2022-33987; ZC, DT; Moderate
 			sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
 			sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"^7.5.4\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"^7.5.4\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|\"tar\": \"^6.1.2\"|\"tar\": \"^7.5.4\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+																			# CVE-2026-24842; DT, ID; High
+																			# CVE-2026-26960; DT, ID; High
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die		# GHSA-5c6j-r48x-rmvq; DoS, DT, ID; High
+			sed -i -e "s|\"minimatch\": \"^9.0.0\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
 		}
 		patch_edits
 
@@ -110,12 +119,17 @@ einfo "Applying mitigation"
 		local L
 		L=(
 			"got@^11.8.5"
+			"tar@^7.5.4"
+			"minimatch@^9.0.7"
 		)
-		enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}					# DT		# CVE-2022-33987
+		enpm install ${L[@]} -P ${NPM_INSTALL_ARGS[@]}
 
 		L=(
 			"electron@${ELECTRON_APP_ELECTRON_PV}"
 			"tmp@0.2.4"
+			"tar@^7.5.4"
+			"serialize-javascript@^7.0.3"
+			"minimatch@^9.0.7"
 		)
 		enpm install ${L[@]} -D ${NPM_INSTALL_ARGS[@]}
 
@@ -193,3 +207,4 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250629 with Electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250806 with Electron 37.2.6)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250905 with Electron 38.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2.61.0, 20260228 with Electron 40.6.1)

@@ -57,10 +57,13 @@
 		"electron": "^40.6.1",
 		"electron-builder": "^24.12.0",
 		"husky": "^9.0.11",
+		"minimatch": "^9.0.9",
 		"np": "^9.2.0",
 		"patch-package": "^8.0.0",
+		"serialize-javascript": "^7.0.3",
 		"stylelint": "^14.10.0",
 		"stylelint-config-xo": "^0.22.0",
+		"tar": "^7.5.9",
 		"tmp": "^0.2.4",
 		"typescript": "^5.3.3",
 		"xo": "^0.57.0"
