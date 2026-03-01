@@ -2,7 +2,7 @@
 PROJECT_ROOT="@INSTALL_DIR@"
 cd "${PROJECT_ROOT}"
 if [[ -n "${DISPLAY}" ]] ; then
-	"./${PN}" "$@"
+	"./@PN@" "$@"
 else
-	"./${PN}" --enable-features="UseOzonePlatform" --ozone-platform-hint="wayland" "$@"
+	"./@PN@" --enable-features="UseOzonePlatform" --ozone-platform-hint="wayland" "$@"
 fi

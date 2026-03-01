@@ -21,7 +21,6 @@ NODE_SLOT="20"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-#	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
 	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream preference
@@ -124,7 +123,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_19
+	ebuild_revision_21
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -220,13 +219,11 @@ ewarn "Using pgo with x11-libs/cairo with an old pgo profile may produce artifac
 src_install() {
 	insinto "${NPM_INSTALL_PATH}"
 	doins -r "dist/linux-unpacked/"*
-	exeinto /usr/bin
+	exeinto "/usr/bin"
 	doexe "${FILESDIR}/${PN}"
 	sed -i \
-		-e "s|\${INSTALL_DIR}|${NPM_INSTALL_PATH}|g" \
-		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
-		-e "s|\${NODE_SLOT}|${NODE_SLOT}|g" \
-		-e "s|\${PN}|${PN}|g" \
+		-e "s|@INSTALL_DIR@|${NPM_INSTALL_PATH}|g" \
+		-e "s|@PN@|${PN}|g" \
 		"${ED}/usr/bin/${PN}" || die
         newicon "build/icon.png" "${PN}.png"
         make_desktop_entry \
@@ -281,8 +278,9 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.8.6 (20240211)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.9.9 (20240211)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250115, electron 34.0.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250312, electron 34.3.2)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250630, electron 37.1.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250806, electron 37.2.6)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250905, electron 38.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250115, Electron 34.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250312, Electron 34.3.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250630, Electron 37.1.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250806, Electron 37.2.6)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250905, Electron 38.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260228, Electron 40.6.1)
