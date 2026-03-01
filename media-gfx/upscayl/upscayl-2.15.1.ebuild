@@ -9,6 +9,7 @@ EAPI=8
 # For Cr version correspondance, see https://releases.electronjs.org/releases.json for version details.
 
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${PN}-${PV}-linux.AppImage"
@@ -16,11 +17,12 @@ ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_MODE="npm"
 ELECTRON_APP_REACT_PV="18.3.1"
 NODE_ENV="development"
-NODE_SLOT="18"
+NODE_SLOT="20"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
+#	ELECTRON_APP_ELECTRON_PV="38.2.0" # Cr 140.0.7339.133, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -106,7 +108,7 @@ THIRD_PARTY_LICENSES="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	THIRD_PARTY_LICENSES+="
-		electron-38.2.0-chromium.html
+		electron-40.6.1-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
@@ -122,7 +124,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_18
+	ebuild_revision_19
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
