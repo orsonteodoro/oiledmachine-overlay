@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_42
+git ollama ebuild_revision_43
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -700,6 +700,7 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws fron ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch fron ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript fron ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
