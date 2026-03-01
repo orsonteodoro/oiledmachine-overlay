@@ -274,7 +274,7 @@ eerror "   \`corepack prepare --all --activate\`"
 		| head -n 1)
 	path=$(realpath $(dirname "${path}"))
 	pushd "${path}" >/dev/null 2>&1 || die
-		local yarn_pv=$("/usr/bin/yarn" --version)
+		local yarn_pv=$(yarn --version)
 		if ! [[ "${yarn_pv}" =~ [0-9]+\.[0-9]+\.[0-9]+ ]] ; then
 eerror
 eerror "Failed to detect version.  Install yarn."
@@ -869,6 +869,22 @@ einfo "Hydrating yarn..."
 	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
 		npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*))
 		export PATH=".:${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin:${PATH}"
+		if [[ \
+			! -e "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin/npm" \
+				&& \
+			-e "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin/npm.js" \
+		]] ; then
+			chmod +x "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin/npm.js"
+			ln -s "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin/npm"{".js",""}
+		fi
+		if [[ \
+			! -e "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/npm" \
+				&& \
+			-e "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/npm.js" \
+		]] ; then
+			chmod +x "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/npm.js"
+			ln -s "${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/npm"{".js",""}
+		fi
 	else
 		npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 		export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
@@ -878,9 +894,39 @@ einfo "Hydrating yarn..."
 		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/yarn/"*))
 		export PATH="${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}:${PATH}"
 		export PATH="${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin:${PATH}"
+		if [[ \
+			! -e "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin/yarn" \
+				&& \
+			-e "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin/yarn.js" \
+		]] ; then
+			chmod +x "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin/yarn.js"
+			ln -s "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin/yarn"{".js",""}
+		fi
+		if [[ \
+			! -e "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/yarn" \
+				&& \
+			-e "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/yarn.js" \
+		]] ; then
+			chmod +x "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/yarn.js"
+			ln -s "${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/yarn"{".js",""}
+		fi
 	else
 		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
 		export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
+		if [[ \
+			! -e "${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin/yarn" \
+				&& \
+			-e "${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin/yarn.js" \
+		]] ; then
+			ln -s "${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin/yarn"{".js",""}
+		fi
+		if [[ \
+			! -e "${HOME}/.cache/node/corepack/yarn/${yarn_pv}/yarn" \
+				&& \
+			-e "${HOME}/.cache/node/corepack/yarn/${yarn_pv}/yarn.js" \
+		]] ; then
+			ln -s "${HOME}/.cache/node/corepack/yarn/${yarn_pv}/yarn"{".js",""}
+		fi
 	fi
 	local yarn_pv=$(yarn --version)
 	local node_pv=$(node --version)

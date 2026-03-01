@@ -16,24 +16,25 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
 NODE_SHARP_USE="png svg"
-NODE_SLOT="20" # originally 20
+NODE_SLOT="22"
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
 #export NODE_SHARP_DEBUG=1
 
-NODE_GYP_PV="9.3.0"
+NODE_GYP_PV="11.5.0"
 SHARP_PV="0.34.3" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
 VIPS_PV="8.17.2"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 #	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
-	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.133, node 22.19.0
+#	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.133, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream preference
-	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
+	ELECTRON_APP_ELECTRON_PV="38.7.2" # Cr 140.0.7339.249, node 22.21.1
 fi
 
 NODE_SHARP_PATCHES=(
@@ -87,11 +88,11 @@ LICENSE="
 # Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-38.2.0-chromium.html
+		electron-40.6.1-chromium.html
 	"
 else
 	LICENSE+="
-		electron-31.3.1-chromium.html
+		electron-38.7.2-chromium.html
 	"
 fi
 RESTRICT="mirror"
@@ -154,8 +155,8 @@ yarn_unpack_post() {
 einfo "Temporarily disabling file-type patch"
 		sed -i -e "s|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|\"file-type\": \"19.4.1\"|g" "package.json" || die
 	fi
-	eapply "${FILESDIR}/${PN}-3.64.0-sweetalert2-scss.patch"
 	eapply "${FILESDIR}/${PN}-3.64.0-sharp-type.patch"
+	sed -i -e "/npmMinimalAgeGate:/d" "${S}/.yarnrc.yml" || die
 }
 
 yarn_update_lock_install_post() {
