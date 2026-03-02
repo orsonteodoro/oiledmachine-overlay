@@ -118,7 +118,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_61
+ebuild_revision_62
 "
 REQUIRED_USE="
 	file-management? (
@@ -369,7 +369,7 @@ pnpm_unpack_post() {
 
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
-	eapply "${FILESDIR}/lobe-chat-1.47.17-hardcoded-paths.patch"
+	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 #	eapply "${FILESDIR}/lobe-chat-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
@@ -820,6 +820,11 @@ _install_webapp_v2() {
 	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
 	#mv "${S}/node_modules" "${ED}${_PREFIX}" || die
+
+	sed -i \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
+		"${S}/scripts/serverLauncher/startServer.js" \
+		|| die
 
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
