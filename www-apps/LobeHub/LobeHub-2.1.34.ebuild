@@ -46,6 +46,9 @@ EAPI=8
 
 # Use `PNPM_UPDATER_VERSIONS="2.1.34" pnpm_updater_update_locks.sh` to update lockfile
 
+MY_PN="${PN}"		# LobeHub
+MY_PN2="${PN,,}"	# lobehub
+
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_SHARP_USE="exif lcms webp"
 NODE_SLOT="24" # See .nvmrc or Dockerfile
@@ -83,11 +86,11 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/lobehub/lobehub.git"
 	FALLBACK_COMMIT="ef0e4a674322a1faa1f7fd2ff70011a2b6a9bb6c" # Feb 21, 2026
 	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${PN,,}-${PV}"
+	S="${WORKDIR}/${MY_PN2}-${PV}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN,,}-${PV}"
+	S="${WORKDIR}/${MY_PN2}-${PV}"
 	SRC_URI="
 https://github.com/lobehub/lobehub/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -115,7 +118,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_49
+ebuild_revision_50
 "
 REQUIRED_USE="
 	file-management? (
@@ -758,7 +761,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	fi
 
 	# Change hardcoded paths
-	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
+	sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 	#attach_segfault_handler
 
 	# Remove the plaintext keys from the package manager.
@@ -771,7 +774,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 # Slow
 _install_webapp_v1() {
-	local _PREFIX="/opt/${PN}"
+	local _PREFIX="/opt/${MY_PN2}"
 	insinto "${_PREFIX}"
 	doins -r "${S}/package.json"
 	doins -r "${S}/.npmrc"
@@ -801,12 +804,12 @@ _install_webapp_v1() {
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
 
-	fowners -R "${PN,,}:${PN,,}" "${_PREFIX}"
+	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 }
 
 # Use OS tricks to speed up copy
 _install_webapp_v2() {
-	local _PREFIX="/opt/${PN}"
+	local _PREFIX="/opt/${MY_PN2}"
 	dodir "${_PREFIX}"
 
 	mv "${S}/package.json" "${ED}${_PREFIX}" || die
@@ -832,7 +835,7 @@ _install_webapp_v2() {
 		|| die
 
 	# Sanitize permissions
-	chown -R "${PN,,}:${PN,,}" "${ED}${_PREFIX}" || die
+	chown -R "${MY_PN2}:${MY_PN2}" "${ED}${_PREFIX}" || die
 	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
 	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
@@ -846,9 +849,9 @@ gen_config() {
 	local database_mode=$(usex postgres "server" "client")
 
 	cat \
-		"${FILESDIR}/${PN}.conf" \
+		"${FILESDIR}/${MY_PN2}.conf" \
 		> \
-		"${T}/${PN}.conf" \
+		"${T}/${MY_PN2}.conf" \
 		|| die
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
@@ -856,29 +859,29 @@ gen_config() {
 		-e "s|@HOSTNAME@|${lobehub_hostname}|g" \
 		-e "s|@PORT@|${lobehub_port}|g" \
 		-e "s|@DATABASE_MODE@|${database_mode}|g" \
-		"${T}/${PN}.conf" \
+		"${T}/${MY_PN2}.conf" \
 		|| die
 	insinto "/etc/conf.d"
-	newins "${T}/${PN}.conf" "${PN}"
+	newins "${T}/${MY_PN2}.conf" "${MY_PN2}"
 
 	# Secure keys/tokens
-	fperms 0640 "/etc/conf.d/${PN}"
+	fperms 0640 "/etc/conf.d/${MY_PN2}"
 }
 
 gen_standalone_wrapper() {
 	cat \
-		"${FILESDIR}/${PN}-start-server" \
+		"${FILESDIR}/${MY_PN2}-start-server" \
 		> \
-		"${T}/${PN}-start-server" \
+		"${T}/${MY_PN2}-start-server" \
 		|| die
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
-		"${T}/${PN}-start-server" \
+		"${T}/${MY_PN2}-start-server" \
 		|| die
 
 	exeinto "/usr/bin"
-	doexe "${T}/${PN}-start-server"
-	fperms 0755 "/usr/bin/${PN}-start-server"
+	doexe "${T}/${MY_PN2}-start-server"
+	fperms 0755 "/usr/bin/${MY_PN2}-start-server"
 }
 
 src_install() {
@@ -892,8 +895,8 @@ src_install() {
 	# Include hidden files/dirs with *
 	shopt -s dotglob
 
-	addwrite "/opt/${PN}"
-	rm -rf "/opt/${PN}/"*
+	addwrite "/opt/${MY_PN2}"
+	rm -rf "/opt/${MY_PN2}/"*
 
 	local lobehub_hostname=${LOBEHUB_HOSTNAME:-"localhost"}
 	local lobehub_port=${LOBEHUB_PORT:-3210}
@@ -905,18 +908,18 @@ einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment v
 	gen_config
 	gen_standalone_wrapper
 	if use openrc ; then
-		newinitd "${FILESDIR}/${PN}.openrc" "${PN}"
+		newinitd "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
-		newins "${FILESDIR}/${PN}.systemd" "${PN}.service"
+		newins "${FILESDIR}/${MY_PN2}.systemd" "${MY_PN2}.service"
 	fi
 
 	# Bypass normal merge to speed up merge using OS tricks
 	# Essentially portage does a k*O(n) problem with copy, scanelf, md5,
 	# etc. versus a simple pointer change with the code below.
-	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
-	keepdir "/opt/${PN}"
+	mv "${ED}/opt/${MY_PN2}/"* "/opt/${MY_PN2}"
+	keepdir "/opt/${MY_PN2}"
 ewarn "An install speed up trick is used."
 ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 
@@ -925,31 +928,31 @@ ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 
 	exeinto "/usr/bin"
 	cat \
-		"${FILESDIR}/${PN}" \
+		"${FILESDIR}/${MY_PN2}" \
 		> \
-		"${T}/${PN}" \
+		"${T}/${MY_PN2}" \
 		|| die
 
 	local lobehub_uri=${LOBEHUB_URI:-"http://${lobehub_hostname}:${lobehub_port}"}
 einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	sed -i \
 		-e "s|@LOBEHUB_URI@|${lobehub_uri}|g" \
-		"${T}/${PN}" \
+		"${T}/${MY_PN2}" \
 		|| die
-	doexe "${T}/${PN}"
+	doexe "${T}/${MY_PN2}"
 
 	make_desktop_entry \
-		"${PN}" \
+		"${MY_PN2}" \
 		"${PN}" \
 		"${PN}.png" \
 		"Education;ArtificialIntelligence"
 
-	keepdir "/var/cache/${PN}"
-	keepdir "/opt/${PN}/.next"
-	dosym "/var/cache/${PN}" "/opt/${PN}/.next/cache"
-	fowners "${PN}:${PN}" "/var/cache/${PN}"
+	keepdir "/var/cache/${MY_PN2}"
+	keepdir "/opt/${MY_PN2}/.next"
+	dosym "/var/cache/${MY_PN2}" "/opt/${MY_PN2}/.next/cache"
+	fowners "${MY_PN2}:${MY_PN2}" "/var/cache/${MY_PN2}"
 
-	fowners "${PN}:${PN}" "/etc/lobehub/lobehub.conf"
+	fowners "${MY_PN2}:${MY_PN2}" "/etc/${MY_PN2}/${MY_PN2}.conf"
 
 	dhms_end
 }
@@ -972,7 +975,7 @@ einfo
 pkg_postrm() {
 	xdg_pkg_postrm
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-		rm -rf "/opt/${PN}"
+		rm -rf "/opt/${MY_PN2}"
 	fi
 }
 

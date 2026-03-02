@@ -1,12 +1,12 @@
 #!/sbin/openrc-run
 
-real_command="/usr/bin/lobe-chat-start-server"
+real_command="/usr/bin/lobehub-start-server"
 real_command_args=""
-command_user="lobe-chat"
-command_group="lobe-chat"
+command_user="lobehub"
+command_group="lobehub"
 command_background="yes"
-pidfile="/run/lobe-chat.pid"
-log="/var/log/lobe-chat/lobe-chat.log"
+pidfile="/run/lobehub.pid"
+log="/var/log/lobehub/lobehub.log"
 
 # AC = Access Control
 # CE = Code Execution
@@ -15,18 +15,18 @@ log="/var/log/lobe-chat/lobe-chat.log"
 # DT = Data Tampering
 
 # CWE-653 mitigation
-LOBE_CHAT_CHROOT=${LOBE_CHAT_CHROOT:-0}
+LOBEHUB_CHROOT=${LOBEHUB_CHROOT:-0}
 
 # CWE-653 mitigation
-LOBE_CHAT_SANDBOX_PROVIDER=${LOBE_CHAT_SANDBOX_PROVIDER:-""}
+LOBEHUB_SANDBOX_PROVIDER=${LOBEHUB_SANDBOX_PROVIDER:-""}
 
-_LOBE_CHAT_DEBUG=${_LOBE_CHAT_DEBUG:-"0"}
+_LOBEHUB_DEBUG=${_LOBEHUB_DEBUG:-"0"}
 
 # 0 back of the line OOM kill list
 # <500 back of the OOM kill list
 # >=500 front of the OOM kill list
 # 1000 front of the line OOM kill
-LOBE_CHAT_OOM=${LOBE_CHAT_OOM:-500}
+LOBEHUB_OOM=${LOBEHUB_OOM:-500}
 
 depend() {
 	after net
@@ -34,9 +34,9 @@ depend() {
 }
 
 prepare_chroot() {
-	[[ -e "/var/lib/lobe-chat" ]] || exit 1
-	[[ -e "/var/lib/lobe-chat" ]] || return
-	pushd "/var/lib/lobe-chat" >/dev/null 2>&1 || exit 1
+	[[ -e "/var/lib/lobehub" ]] || exit 1
+	[[ -e "/var/lib/lobehub" ]] || return
+	pushd "/var/lib/lobehub" >/dev/null 2>&1 || exit 1
 		paths=(
 			"lib64"
 			"bin"
@@ -57,24 +57,24 @@ prepare_chroot() {
 		mkdir -p "dev"
 		mkdir -p "run"
 
-		local gcc_slot=$(ldd "/usr/lib64/lobe-chat/lobe-chat" \
+		local gcc_slot=$(ldd "/opt/lobehub/lobehub" \
 			| grep "libstdc++.so" \
 			| grep -E -o -e "/[0-9]+/" \
 			| sed -e "s|/||g")
-		local chost=$(cat "/var/db/pkg/www-apps/lobe-chat"*"/CHOST")
+		local chost=$(cat "/var/db/pkg/www-apps/LobeHub"*"/CHOST")
 
-		mkdir -p "var/log/lobe-chat"
-		mkdir -p "var/lib/lobe-chat"
-		touch "var/log/lobe-chat/lobe-chat.log"
-		chown -R "lobe-chat:lobe-chat" "var/log/lobe-chat"
-		chown "lobe-chat:lobe-chat" "var/lib/lobe-chat"
+		mkdir -p "var/log/lobehub"
+		mkdir -p "var/lib/lobehub"
+		touch "var/log/lobehub/lobehub.log"
+		chown -R "lobehub:lobehub" "var/log/lobehub"
+		chown "lobehub:lobehub" "var/lib/lobehub"
 		chmod 0755 "var/lib"
-		chmod 0700 "var/lib/lobe-chat"
-		chmod 0755 "/var/lib/lobe-chat"
+		chmod 0700 "var/lib/lobehub"
+		chmod 0755 "/var/lib/lobehub"
 		mkdir -p "tmp"
 		chmod 1777 "tmp"
 
-		if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" != "bwrap" ]] ; then
+		if [[ "${LOBEHUB_SANDBOX_PROVIDER}" != "bwrap" ]] ; then
 			mount --types "proc" "/proc" "proc"
 			mount --rbind "/sys" "sys"
 			mount --make-rslave "sys"
@@ -90,17 +90,17 @@ prepare_chroot() {
 			"/etc/ld.so.preload"
 			"/bin/bash;libs"
 			"/bin/sh"
-			"/usr/bin/lobe-chat"
-			"/usr/lib64/lobe-chat"
-			"/usr/lib64/lobe-chat;libs-recursive"
+			"/usr/bin/lobehub"
+			"/opt/lobehub"
+			"/opt/lobehub;libs-recursive"
 			"/bin/mkdir"
 		)
 
-		if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+		if [[ "${LOBEHUB_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
 			paths+=(
 				"/usr/bin/bwrap;libs"
 			)
-		elif [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+		elif [[ "${LOBEHUB_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
 			paths+=(
 				"/etc/sandbox.conf"
 				"/usr/share/sandbox"
@@ -111,7 +111,7 @@ prepare_chroot() {
 		fi
 
 	# For debugging only
-		if [[ "${_LOBE_CHAT_DEBUG}" == "1" ]] ; then
+		if [[ "${_LOBEHUB_DEBUG}" == "1" ]] ; then
 			paths+=(
 				"/bin/ls"
 				"/bin/cat"
@@ -238,10 +238,10 @@ prepare_chroot() {
 }
 
 stop_chroot() {
-	[[ -e "/var/lib/lobe-chat" ]] || exit 1
-	[[ -e "/var/lib/lobe-chat" ]] || return
-	pushd "/var/lib/lobe-chat" >/dev/null 2>&1 || exit 1
-		if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+	[[ -e "/var/lib/lobehub" ]] || exit 1
+	[[ -e "/var/lib/lobehub" ]] || return
+	pushd "/var/lib/lobehub" >/dev/null 2>&1 || exit 1
+		if [[ "${LOBEHUB_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
 			umount -l "proc" >/dev/null 2>&1
 			umount -l "sys" >/dev/null 2>&1
 			umount -l "dev" >/dev/null 2>&1
@@ -251,17 +251,17 @@ stop_chroot() {
 }
 
 start() {
-	ebegin "Starting lobe-chat"
+	ebegin "Starting LobeHub"
 
 	local args=()
 
-	if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+	if [[ "${LOBEHUB_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
 	# CWE-653 mitigation
 		sandbox_command="/usr/bin/sandbox"
 		sandbox_args=""
 		args+=(
 	# CWE-653 mitigation, ID
-			-e SANDBOX_DENY="/proc:/dev/input:/root:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${LOBE_CHAT_SANDBOX_BLACKLISTED_PATHS}"
+			-e SANDBOX_DENY="/proc:/dev/input:/root:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${LOBEHUB_SANDBOX_BLACKLISTED_PATHS}"
 			--exec $sandbox_command -- $sandbox_args $real_command $real_command_args
 		)
 	else
@@ -279,7 +279,7 @@ start() {
 		--background \
 		${args[@]}
 
-	eend $? "Failed to start lobe-chat"
+	eend $? "Failed to start LobeHub"
 }
 
 stop() {
@@ -288,6 +288,6 @@ stop() {
 	#	--stop \
 	#	--pidfile "$pidfile"
 
-	pkill -9 -G "lobe-chat"
+	pkill -9 -G "lobehub"
 	eend 0
 }
