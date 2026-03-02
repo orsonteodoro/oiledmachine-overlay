@@ -5,7 +5,7 @@ EAPI=8
 
 CFFI_PV="1.0.0"
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..12} "pypy3" )
+PYTHON_COMPAT=( "python3_"{8..14} "pypy"{3,3_11} )
 
 inherit distutils-r1
 
