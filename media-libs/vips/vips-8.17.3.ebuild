@@ -258,7 +258,8 @@ RDEPEND+="
 		>=dev-lang/orc-0.4.32[${MULTILIB_USEDEP}]
 	)
 	png? (
-		>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
+		media-libs/libpng:=
 	)
 	spng? (
 		>=media-libs/libspng-0.7[${MULTILIB_USEDEP}]
@@ -274,7 +275,8 @@ RDEPEND+="
 		>=gnome-base/librsvg-2.52.5[${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-4.3.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-4.3.0:0[${MULTILIB_USEDEP}]
+		media-libs/tiff:=
 	)
 	vala? (
 		>=dev-lang/vala-0.56.0

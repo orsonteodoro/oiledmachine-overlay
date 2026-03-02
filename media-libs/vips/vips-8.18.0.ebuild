@@ -7,6 +7,9 @@ EAPI=8
 # For deps, see
 # https://github.com/libvips/libvips/blob/v8.16.0/.github/workflows/ci.yml
 
+# TODO package:
+# libultrahdr
+
 # See CI logs for deps versioning.
 
 # Auto defaults based on CI, but distro assumes auto means disabled.
@@ -16,28 +19,29 @@ EAPI=8
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="NPD UAF"
-CXX_STANDARD=11
+CXX_STANDARD=14
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LIBJPEG_TURBO_PV="2.1.2"
 PYTHON_COMPAT=( "python3_"{8..11} )
-SO_C=60
+SO_C=62
 SO_R=1
-SO_A=18
+SO_A=20
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}" # 18, 19
 )
 LLVM_MAX_SLOT="19"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx10_2"
 	"cpu_flags_x86_avx512bw"
 	"cpu_flags_x86_avx512fp16"
 	"cpu_flags_x86_avx512bf16"
@@ -72,9 +76,9 @@ ${PATENT_STATUS_IUSE[@]}
 +dzi +examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
-+pango +png +poppler +python +ppm -spng +svg test +tiff
-+vala +webp +zlib
-ebuild_revision_49
++pango +png +poppler +python +ppm -raw -spng +svg test +tiff
+-uhdr +vala +webp +zlib
+ebuild_revision_50
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -86,7 +90,7 @@ TRASH="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
-REQUIRED_USE2="
+REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
 	cgif? (
@@ -132,41 +136,8 @@ REQUIRED_USE2="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
-"
-REQUIRED_USE="
-	${PATENT_STATUS_REQUIRED_USE}
-	${PYTHON_REQUIRED_USE}
-	cgif? (
-		imagequant
-	)
-	debug? (
-		!jpegxl
-	)
-	fuzz-testing? (
-		test
-	)
-	imagequant? (
-		png
-	)
-	jpegxl? (
-		!debug
-	)
-	png? (
-		zlib
-	)
-	poppler? (
-		cairo
-	)
-	svg? (
-		cairo
-		fontconfig
-		pango
-		zlib
-	)
-	test? (
-		|| (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
-		)
+	uhdr? (
+		jpeg
 	)
 "
 # It requires <= c++11 for linking
@@ -174,29 +145,30 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 			media-libs/libheif:=
 		)
 		heic? (
-			>=media-libs/libheif-1.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 			media-libs/libheif:=
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 			media-libs/libheif:=
 		)
 		heic? (
-			>=media-libs/libheif-1.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 			media-libs/libheif:=
 		)
 	)
 "
+
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
@@ -233,6 +205,9 @@ RDEPEND+="
 	)
 	highway? (
 		>=dev-cpp/highway-0.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		cpu_flags_x86_avx10_2? (
+			>=dev-cpp/highway-1.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		)
 		dev-cpp/highway:=
 	)
 	imagemagick? (
@@ -266,11 +241,14 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.6.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		media-libs/libjxl:=
 	)
 	lcms? (
 		>=media-libs/lcms-2.12[${MULTILIB_USEDEP}]
+	)
+	raw? (
+		>=media-libs/libraw-0.14
 	)
 	matio? (
 		>=sci-libs/matio-1.5.21[${MULTILIB_USEDEP}]
@@ -283,13 +261,14 @@ RDEPEND+="
 		media-libs/openexr:=
 	)
 	openslide? (
-		>=media-libs/openslide-3.3.0[${MULTILIB_USEDEP}]
+		>=media-libs/openslide-3.4.0[${MULTILIB_USEDEP}]
 	)
 	orc? (
 		>=dev-lang/orc-0.4.32[${MULTILIB_USEDEP}]
 	)
 	png? (
-		>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.2.9:0[${MULTILIB_USEDEP}]
+		media-libs/libpng:=
 	)
 	spng? (
 		>=media-libs/libspng-0.7[${MULTILIB_USEDEP}]
@@ -305,7 +284,11 @@ RDEPEND+="
 		>=gnome-base/librsvg-2.52.5[${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-4.3.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-4.3.0:0[${MULTILIB_USEDEP}]
+		media-libs/tiff:=
+	)
+	uhdr? (
+		media-libs/libultrahdr
 	)
 	vala? (
 		>=dev-lang/vala-0.56.0
@@ -318,9 +301,9 @@ RDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
-	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
-	"${FILESDIR}/${PN}-8.16.1-magick-suffixes.patch"
+	"${FILESDIR}/${PN}-8.17.2-simd-options.patch"
+	"${FILESDIR}/${PN}-8.18.0-remove-release-changes.patch"
+	"${FILESDIR}/${PN}-8.17.0-magick-suffixes.patch"
 )
 
 get_configurations() {
@@ -719,9 +702,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature tiff)
 		$(meson_feature webp)
 		$(meson_feature zlib)
-		$(meson_native_use_bool doxygen)
+		$(meson_native_use_bool doxygen cpp-docs)
 		$(meson_use analyze)
 		$(meson_use cpu_flags_x86_avx avx)
+		$(meson_use cpu_flags_x86_avx10_2 avx10_2)
 		$(meson_use cpu_flags_x86_avx512bw avx512bw)
 		$(meson_use cpu_flags_x86_avx512fp16 bf16_spr)
 		$(meson_use cpu_flags_x86_avx512bf16 bf16_zen4)
@@ -748,7 +732,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	else
 		emesonargs+=(
 			$(meson_native_use_feature introspection)
-			$(meson_native_use_bool gtk-doc gtk_doc)
+			$(meson_native_use_bool gtk-doc docs)
 			$(meson_use vala vapi)
 		)
 	fi
