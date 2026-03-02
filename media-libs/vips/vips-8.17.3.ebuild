@@ -86,14 +86,12 @@ PATENT_STATUS_REQUIRED_USE="
 		!heic
 	)
 "
-TRASH="
-	?? (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
-	)
-"
 REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
+	?? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	cgif? (
 		imagequant
 	)
@@ -352,6 +350,7 @@ gen_llvm_test_bdepend()
 
 BDEPEND+="
 	${PYTHON_DEPS}
+	$(gen_llvm_bdepend)
 	>=dev-build/gtk-doc-am-1.32
 	>=dev-build/meson-0.61.2
 	>=dev-build/ninja-1.10.1
@@ -378,9 +377,6 @@ BDEPEND+="
 			>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 			dev-python/pyvips[${PYTHON_USEDEP}]
 		')
-	)
-	|| (
-		$(gen_llvm_bdepend)
 	)
 "
 PDEPEND+="
