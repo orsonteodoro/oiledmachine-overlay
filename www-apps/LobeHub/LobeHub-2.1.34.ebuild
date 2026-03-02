@@ -118,7 +118,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_62
+ebuild_revision_63
 "
 REQUIRED_USE="
 	file-management? (
@@ -772,8 +772,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	unset NEXT_PUBLIC_POSTHOG_KEY
 }
 
-# Slow
-_install_webapp_v1() {
+_install_webapp() {
 	local _PREFIX="/opt/${MY_PN2}"
 	insinto "${_PREFIX}"
 	doins -r "${S}/package.json"
@@ -796,7 +795,6 @@ _install_webapp_v1() {
 	insinto "${_PREFIX}"
 	doins "${S}/scripts/serverLauncher/startServer.js"
 
-
 	if use postgres ; then
 		insinto "${_PREFIX}"
 		doins -r "${S}/src/database/migrations"
@@ -804,45 +802,23 @@ _install_webapp_v1() {
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
 
-	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
-}
+	if [[ -e "${S}/out" ]] ; then
+		insinto "${_PREFIX}/apps/desktop/dist/next"
 
-# Use OS tricks to speed up copy
-_install_webapp_v2() {
-	local _PREFIX="/opt/${MY_PN2}"
-	dodir "${_PREFIX}"
+# START BLOCK 1
+		if [[ -e "${S}/out/." ]] ; then
+			doins -r "${S}/out/."
+		else
+ewarn "QA:  Remove BLOCK 1"
+		fi
+# END BLOCK 1
 
-	mv "${S}/package.json" "${ED}${_PREFIX}" || die
-	mv "${S}/.npmrc" "${ED}${_PREFIX}" || die
-	mv "${S}/public" "${ED}${_PREFIX}" || die
-
-	mkdir -p "${ED}${_PREFIX}/.next" || die
-	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
-
-	#mv "${S}/node_modules" "${ED}${_PREFIX}" || die
-
-	sed -i \
-		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
-		"${S}/scripts/serverLauncher/startServer.js" \
-		|| die
-
-	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
-
-	if use postgres ; then
-		mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
-		mv "${S}/scripts/migrateServerDB/docker.cjs" "${ED}${_PREFIX}" || die
-		mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
+		doins -r "${S}/out/"*
+	else
+		keepdir "${_PREFIX}/apps/desktop/dist/next"
 	fi
 
-	# It contains node_modules, .next, server.js
-	rsync -a --copy-unsafe-links --exclude='node_modules/.bin/*' \
-		"${S}/.next/standalone/" "${ED}${_PREFIX}/" \
-		|| die
-
-	# Sanitize permissions
-	chown -R "${MY_PN2}:${MY_PN2}" "${ED}${_PREFIX}" || die
-	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
-	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
+	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 }
 
 gen_config() {
@@ -909,7 +885,7 @@ src_install() {
 einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
 einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
 
-	_install_webapp_v2
+	_install_webapp
 	gen_config
 	gen_standalone_wrapper
 	if use openrc ; then
@@ -990,6 +966,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.65.1 (20250226) with sharp 0.30.7.    Client side database mode only.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.111.4 (20250809) with sharp 0.34.3.    Client side database mode only.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.133.4 (20251003) with sharp 0.34.3.    Client side database mode only.
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.34 (20260302) with sharp 0.34.3.    Internal Server Error because missing or undocumented workaround for #10456 changes.  See https://github.com/lobehub/lobehub/issues/10835
 # Browser load test: passed
 # Stability:  passed
 # Client side database mode:  passed
