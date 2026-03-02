@@ -115,7 +115,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_48
+ebuild_revision_49
 "
 REQUIRED_USE="
 	file-management? (
@@ -157,6 +157,7 @@ BDEPEND+="
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
+	net-misc/rsync
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -800,13 +801,14 @@ _install_webapp_v1() {
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
 
-	fowners -R "${PN}:${PN}" "${_PREFIX}"
+	fowners -R "${PN,,}:${PN,,}" "${_PREFIX}"
 }
 
-# Use OS tricks
+# Use OS tricks to speed up copy
 _install_webapp_v2() {
 	local _PREFIX="/opt/${PN}"
 	dodir "${_PREFIX}"
+
 	mv "${S}/package.json" "${ED}${_PREFIX}" || die
 	mv "${S}/.npmrc" "${ED}${_PREFIX}" || die
 	mv "${S}/public" "${ED}${_PREFIX}" || die
@@ -814,9 +816,7 @@ _install_webapp_v2() {
 	mkdir -p "${ED}${_PREFIX}/.next" || die
 	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
-	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
-
-	cp -aL -T "${S}/.next/standalone" "${ED}${_PREFIX}" || die # contains node_modules, .next, server.js
+	#mv "${S}/node_modules" "${ED}${_PREFIX}" || die
 
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
@@ -826,8 +826,13 @@ _install_webapp_v2() {
 		mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
 	fi
 
+	# It contains node_modules, .next, server.js
+	rsync -a --copy-unsafe-links --exclude='node_modules/.bin/*' \
+		"${S}/.next/standalone/" "${ED}${_PREFIX}/" \
+		|| die
+
 	# Sanitize permissions
-	chown -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
+	chown -R "${PN,,}:${PN,,}" "${ED}${_PREFIX}" || die
 	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
 	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
