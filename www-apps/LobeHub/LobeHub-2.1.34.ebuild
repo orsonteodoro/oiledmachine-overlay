@@ -118,7 +118,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd
-ebuild_revision_60
+ebuild_revision_61
 "
 REQUIRED_USE="
 	file-management? (
@@ -952,7 +952,7 @@ einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	dosym "/var/cache/${MY_PN2}" "/opt/${MY_PN2}/.next/cache"
 	fowners "${MY_PN2}:${MY_PN2}" "/var/cache/${MY_PN2}"
 
-	fowners "${MY_PN2}:${MY_PN2}" "/etc/${MY_PN2}/${MY_PN2}.conf"
+	fowners "${MY_PN2}:${MY_PN2}" "/etc/conf.d/${MY_PN2}"
 
 	dhms_end
 }
@@ -964,7 +964,7 @@ pkg_preinst() {
 pkg_postinst() {
 	xdg_pkg_postinst
 einfo
-einfo "The documentation for /etc/lobehub/lobehub.conf can be found at"
+einfo "The documentation for /etc/conf.d/lobehub can be found at"
 einfo
 einfo "https://lobehub.com/docs/self-hosting/advanced/auth"
 einfo "https://lobehub.com/docs/self-hosting/environment-variables/model-provider"
