@@ -414,22 +414,6 @@ eerror
 	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
 
-	if [[ "${CXX}" =~ 'g++' ]] ; then
-		if ver_test $(gcc-version) -lt ${GCC_PV} ; then
-ewarn
-ewarn "Upstream tests with GCC >= ${GCC_PV} only.  Switch to version >= ${GCC_PV} if it"
-ewarn "breaks."
-ewarn
-		fi
-	elif [[ "${CXX}" =~ 'clang++' ]] ; then
-		if ver_test $(clang-version) -ne ${LLVM_MAX_SLOT} ; then
-ewarn
-ewarn "Upstream tests with clang++ == ${LLVM_MAX_SLOT} only.  Switch to version == ${LLVM_MAX_SLOT} if it"
-ewarn "breaks."
-ewarn
-		fi
-	fi
-
 	if use jpeg \
 	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}" ; then
 eerror
