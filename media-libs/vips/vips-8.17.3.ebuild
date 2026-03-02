@@ -65,6 +65,10 @@ LICENSE="LGPL-2.1+"
 RESTRICT="mirror"
 SLOT="0/${SO_MAJOR}"
 # Upstream has heic indirectly default on
+#
+# In the meson_options.txt, some codecs are set to auto.
+# The auto conversion to USE defaults is based on CI logs.
+#
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
