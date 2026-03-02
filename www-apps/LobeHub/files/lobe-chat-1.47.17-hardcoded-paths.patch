@@ -6,8 +6,8 @@
  // Set file paths
 -const DB_MIGRATION_SCRIPT_PATH = '/app/docker.cjs';
 -const SERVER_SCRIPT_PATH = '/app/server.js';
-+const DB_MIGRATION_SCRIPT_PATH = '/opt/lobe-chat/docker.cjs';
-+const SERVER_SCRIPT_PATH = '/opt/lobe-chat/server.js';
++const DB_MIGRATION_SCRIPT_PATH = '/opt/lobehub/docker.cjs';
++const SERVER_SCRIPT_PATH = '/opt/lobehub/server.js';
  const PROXYCHAINS_CONF_PATH = '/etc/proxychains4.conf';
  
  // Function to check if a string is a valid IP address
