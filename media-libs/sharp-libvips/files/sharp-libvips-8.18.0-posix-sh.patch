@@ -895,7 +895,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +echo "DEBUG:  Building fribidi ${VERSION_FRIBIDI}"
 +#mkdir ${DEPS}/fribidi
 +#$CURL https://github.com/fribidi/fribidi/releases/download/v${VERSION_FRIBIDI}/fribidi-${VERSION_FRIBIDI}.tar.xz | tar xJC ${DEPS}/fribidi --strip-components=1
-+cd "${DEPS}/fribidi-${VERSION_FRIBIDI}"
++cd "${WORKDIR}/fribidi-${VERSION_FRIBIDI}"
 +meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Ddocs=false -Dbin=false -Dtests=false
 +meson compile -C _build ${MESON_LINK_JOBS}
