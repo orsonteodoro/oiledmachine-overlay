@@ -554,6 +554,7 @@ https://download.gnome.org/sources/pango/${VERSION_PANGO%.*}/pango-${VERSION_PAN
 https://download.gnome.org/sources/librsvg/${VERSION_RSVG%.*}/librsvg-${VERSION_RSVG}.tar.xz
 https://github.com/dloebl/cgif/archive/v${VERSION_CGIF}.tar.gz -> cgif-${VERSION_CGIF}.tar.gz
 https://github.com/libvips/libvips/releases/download/v${VERSION_VIPS}/vips-${VERSION_VIPS}.tar.xz
+https://github.com/google/libultrahdr/archive/v${VERSION_UHDR}.tar.gz -> libultrahdr-${VERSION_UHDR}.tar.gz
 
 https://gist.github.com/kleisauke/284d685efa00908da99ea6afbaaf39ae/raw/bdad5489a61c217850631571caf57f5db6ea8b2c/glib-without-gregex.patch -> ${P}-glib-without-gregex-bdad548.patch
 https://gist.githubusercontent.com/lovell/313a6901e9db1bf285f2a1f1180499e4/raw/3988223c7dfa4d22745d9392034b0117abef1446/libvips-cpp-soversion.patch -> ${P}-libvips-cpp-soversion-313a690-3988223.patch
@@ -1060,11 +1061,11 @@ einfo "MESON_LINK_JOBS:  ${MESON_LINK_JOBS}"
 	export USE_PIXMAN=${USE_PIXMAN:-1}
 	export USE_PNG16=${USE_PNG16:-1}
 	export USE_RSVG=${USE_RSVG:-1}
-	export USE_SPNG=${USE_SPNG:-0}
 	export USE_TIFF=${USE_TIFF:-1}
 	export USE_WEBP=${USE_WEBP:-1}
 	export USE_XML2=${USE_XML2:-1}
 	export USE_ZLIB_NG=${USE_ZLIB_NG:-1}
+	export USE_UHDR=${USE_UHDR:-1}
 
 	if use elibc_musl ; then
 		export USE_PROXY_LIBINTL=1
@@ -1127,12 +1128,12 @@ einfo "MESON_LINK_JOBS:  ${MESON_LINK_JOBS}"
 		USE_ZLIB_NG=1
 	fi
 
-	if [[ "${USE_SPNG}" == "1" ]] ; then
+	if [[ "${USE_TIFF}" == "1" ]] ; then
 		USE_ZLIB_NG=1
 	fi
 
-	if [[ "${USE_TIFF}" == "1" ]] ; then
-		USE_ZLIB_NG=1
+	if [[ "${USE_UHDR}" == "1" ]] ; then
+		USE_MOZJPEG=1
 	fi
 }
 
@@ -1219,14 +1220,6 @@ src_install() {
 	if [[ "${USE_ARCHIVE}" == "1" ]] ; then
 		vips_libs+=(
 			"-larchive"
-		)
-	fi
-	if [[ "${USE_SPNG}" == "1" ]] ; then
-		vips_libs+=(
-			"-lspng"
-		)
-		vips_cflags+=(
-			"-DSPNG_STATIC"
 		)
 	fi
 	if [[ "${USE_ZLIB_NG}" == "1" ]] ; then
