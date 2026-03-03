@@ -3,7 +3,7 @@ VER=${@}
 
 main() {
 	if [[ -z "${VER}" ]] ; then
-		echo "Arg 1 must set to the gst-plugins-rs version"
+		echo "Arg 1 must set to the sharp-libvips version"
 		exit 1
 	fi
 

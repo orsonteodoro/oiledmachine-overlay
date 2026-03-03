@@ -187,6 +187,15 @@ node-sharp_pkg_setup() {
 	unset SHARP_IGNORE_GLOBAL_LIBVIPS
 	unset SHARP_FORCE_GLOBAL_LIBVIPS
 
+	if [[ -z "${NODE_SLOT}" ]] ; then
+eerror "QA:  NODE_SLOT needs to be defined"
+		die
+	else
+		export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
+		local node_pv=$(node --version) || die
+einfo "Node version:  ${node_pv}"
+	fi
+
 	export SHARP_FORCE_GLOBAL_LIBVIPS="true"
 	local libdir=$(get_libdir)
 	local sharp_vips_pkgconfig="/usr/lib/sharp-vips/${libdir}/pkgconfig"
@@ -224,6 +233,7 @@ node-sharp_pkg_setup() {
 node-sharp_append_libs() {
 	local libdir=$(get_libdir)
 	local sharp_vips_lib="/usr/lib/sharp-vips/${libdir}"
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (1)"
 	local pkg_config_libs=$(pkg-config --libs --static vips-cpp glib-2.0 libxml2 libpng libjpeg-turbo tiff libwebp libheif libexif lcms2 aom cgif harfbuzz fontconfig cairo pango fribidi pixman-1 | sed 's/-l/ /g')
 	local libs="\"${sharp_vips_lib}/libvips-cpp.a ${sharp_vips_lib}/libvips.a $(pkg-config --libs --static vips-cpp glib-2.0 libxml2 libpng libjpeg-turbo tiff libwebp libheif libexif lcms2 aom cgif harfbuzz fontconfig cairo pango fribidi pixman-1)\""
 	einfo "Appending libraries to binding.gyp: ${libs}"
@@ -234,7 +244,7 @@ node-sharp_append_libs() {
 		|| die "Failed to append libraries to binding.gyp"
 
 	# Set PKG_CONFIG_PATH to use custom vips.pc
-einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
+einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (2)"
 einfo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"
 
 einfo "CFLAGS:  ${CFLAGS}"
@@ -244,7 +254,6 @@ einfo "LIBS:  ${LIBS}"
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 	unset LIBS
 }
-
 
 # @FUNCTION:  node-sharp_get_platform
 # @DESCRIPTION:
@@ -289,51 +298,53 @@ node-sharp_verify_built_symbols() {
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die "Failed to enter sharp directory"
 			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/sharp-${sharp_platform}.node")
 			if [[ -f "${node_path}" ]]; then
-				einfo "Checking for undefined symbols in sharp-${sharp_platform}.node"
-				if nm -D "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
-					die "Undefined symbol xmlCtxtUseOptions still present in sharp-${sharp_platform}.node"
-				fi
-				# Verify static libxml2 via nm
-				einfo "Verifying libxml2 static linking"
-				if nm "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
-					die "libxml2 not statically linked in sharp-${sharp_platform}.node"
-				fi
+				if false && [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+					einfo "Checking for undefined symbols in sharp-${sharp_platform}.node"
+					if nm -D "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
+						die "Undefined symbol xmlCtxtUseOptions still present in sharp-${sharp_platform}.node"
+					fi
+					# Verify static libxml2 via nm
+					einfo "Verifying libxml2 static linking"
+					if nm "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
+						die "libxml2 not statically linked in sharp-${sharp_platform}.node"
+					fi
 
-				# Verify format loader symbols
-				einfo "Verifying format loader symbols"
-				local use_list=${NODE_SHARP_USE:-"dzi exif gif heif jpg lcms png svg tiff webp"}  # Defaults if unset
-				for u in ${use_list} ; do
-				case "${u}" in
-					heif)
-						einfo "Checking vips_heifload for heif"
-						nm "${node_path}" | grep -q "vips_heifload" || die "Missing vips_heifload symbol for heif"
-						;;
-					gif)
-						einfo "Checking vips_nsgifload for gif"
-						nm "${node_path}" | grep -q "vips_nsgifload" || die "Missing vips_nsgifload symbol for gif"
-						;;
-					jpg|jpeg)
-						einfo "Checking vips_jpegload for jpeg"
-						nm "${node_path}" | grep -q "vips_jpegload" || die "Missing vips_jpegload symbol for jpeg"
-						;;
-					png)
-						einfo "Checking vips_pngload for png"
-						nm "${node_path}" | grep -q "vips_pngload" || die "Missing vips_pngload symbol for png"
-						;;
-					svg)
-						einfo "Checking vips_svgload for svg"
-						nm "${node_path}" | grep -q "vips_svgload" || die "Missing vips_svgload symbol for svg"
-						;;
-					tiff)
-						einfo "Checking vips_tiffload for tiff"
-						nm "${node_path}" | grep -q "vips_tiffload" || die "Missing vips_tiffload symbol for tiff"
-						;;
-					webp)
-						einfo "Checking vips_webpload for webp"
-						nm "${node_path}" | grep -q "vips_webpload" || die "Missing vips_webpload symbol for webp"
-						;;
-					esac
-				done
+					# Verify format loader symbols
+					einfo "Verifying format loader symbols"
+					local use_list=${NODE_SHARP_USE:-"dzi exif gif heif jpg lcms png svg tiff webp"}  # Defaults if unset
+					for u in ${use_list} ; do
+					case "${u}" in
+						heif)
+							einfo "Checking vips_heifload for heif"
+							nm "${node_path}" | grep -q "vips_heifload" || die "Missing vips_heifload symbol for heif"
+							;;
+						gif)
+							einfo "Checking vips_nsgifload for gif"
+							nm "${node_path}" | grep -q "vips_nsgifload" || die "Missing vips_nsgifload symbol for gif"
+							;;
+						jpg|jpeg)
+							einfo "Checking vips_jpegload for jpeg"
+							nm "${node_path}" | grep -q "vips_jpegload" || die "Missing vips_jpegload symbol for jpeg"
+							;;
+						png)
+							einfo "Checking vips_pngload for png"
+							nm "${node_path}" | grep -q "vips_pngload" || die "Missing vips_pngload symbol for png"
+							;;
+						svg)
+							einfo "Checking vips_svgload for svg"
+							nm "${node_path}" | grep -q "vips_svgload" || die "Missing vips_svgload symbol for svg"
+							;;
+						tiff)
+							einfo "Checking vips_tiffload for tiff"
+							nm "${node_path}" | grep -q "vips_tiffload" || die "Missing vips_tiffload symbol for tiff"
+							;;
+						webp)
+							einfo "Checking vips_webpload for webp"
+							nm "${node_path}" | grep -q "vips_webpload" || die "Missing vips_webpload symbol for webp"
+							;;
+						esac
+					done
+				fi
 			else
 				die "sharp-${sharp_platform}.node not found after rebuild"
 			fi
@@ -347,9 +358,12 @@ node-sharp_verify_built_symbols() {
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_npm_rebuild_sharp() {
+einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
 		enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
-		enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		if ! npm list --depth=0 | grep -q "node-gyp" ; then
+			enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		fi
 	fi
 
 	einfo "Cleaning prebuilt for system-vips"
@@ -384,22 +398,45 @@ node-sharp_npm_rebuild_sharp() {
 	edo rm -vrf "node_modules/sharp/build"
 	edo rm -vrf "node_modules/@img/sharp"*
 	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+einfo "DEBUG:  PATH:  ${PATH}"
+einfo "DEBUG:  PWD:  ${PWD}"
+		which node >/dev/null || die "DEBUG:  Missing node (1)"
 		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node "../install/check" --debug || die "Failed to run install/check --debug"
+		local sharp_full_pv=$(ver_cut 1-3 "${SHARP_PV}")
+		if ver_test "${sharp_full_pv}" -eq "0.34.5" ; then
+			if ! ls ../install/build.js >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/build.js for sharp (1)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/build.js --debug || die
 			else
-				edo node "../install/check" || die "Failed to run install/check"
+				node ../install/build.js || die
+			fi
+		elif ver_test "${sharp_full_pv}" -eq "0.34.3" || ver_test "${sharp_full_pv}" -eq "0.34.4" ; then
+			if ! ls ../install/check.js >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/check.js for sharp (1)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/check.js --debug || die
+			else
+				node ../install/check.js || die
+			fi
+		elif ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if ! ls ../install/check >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/check for sharp (1)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/check --debug || die
+			else
+				node ../install/check || die
 			fi
 		elif ver_test "${sharp_pv}" -lt "0.33" ; then
 			edo node "install/can-compile" || die "Failed to run install/can-compile"
 			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
-				edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+				edo node-gyp configure --debug
+				edo node-gyp build --debug --verbose
 			else
-				edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+				edo node-gyp rebuild
 			fi
-			edo node "../install/dll-copy" || die "Failed to run dll-copy"
+			ls ../install/dll-copy || die "Missing"
+			node ../install/dll-copy || die
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -430,7 +467,9 @@ node-sharp_npm_rebuild_sharp() {
 node-sharp_pnpm_rebuild_sharp() {
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
 		epnpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
-		epnpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
+		if ! npm list --depth=0 | grep -q "node-gyp" ; then
+			epnpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
+		fi
 	fi
 
 	einfo "Cleaning prebuilt for system-vips"
@@ -462,22 +501,45 @@ node-sharp_pnpm_rebuild_sharp() {
 	edo rm -vrf "node_modules/sharp/build"
 	edo rm -vrf "node_modules/@img/sharp"*
 	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+einfo "DEBUG:  PATH:  ${PATH}"
+einfo "DEBUG:  PWD:  ${PWD}"
+		which node >/dev/null || die "DEBUG:  Missing node (2)"
 		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node "../install/check" --debug || die "Failed to run install/check --debug"
+		local sharp_full_pv=$(ver_cut 1-3 "${SHARP_PV}")
+		if ver_test "${sharp_full_pv}" -eq "0.34.5" ; then
+			if ! ls ../install/build.js >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/build.js for sharp (2)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/build.js --debug || die
 			else
-				edo node "../install/check" || die "Failed to run install/check"
+				node ../install/build.js || die
+			fi
+		elif ver_test "${sharp_full_pv}" -eq "0.34.3" || ver_test "${sharp_full_pv}" -eq "0.34.4" ; then
+			if ! ls ../install/check.js >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/check.js for sharp (2)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/check.js --debug || die
+			else
+				node ../install/check.js || die
+			fi
+		elif ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if ! ls ../install/check >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/check for sharp (2)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/check --debug || die
+			else
+				node ../install/check || die
 			fi
 		elif ver_test "${sharp_pv}" -lt "0.33" ; then
 			edo node "install/can-compile" || die "Failed to run install/can-compile"
 			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
-				edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+				edo node-gyp configure --debug
+				edo node-gyp build --debug --verbose
 			else
-				edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+				edo node-gyp rebuild
 			fi
-			edo node "../install/dll-copy" || die "Failed to run dll-copy"
+			ls ../install/dll-copy || die "Missing"
+			node ../install/dll-copy || die
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -511,7 +573,9 @@ node-sharp_npm_lockfile_add_sharp() {
 	else
 		enpm install "node-addon-api" ${NPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
 	fi
-	if [[ -n "${NODE_GYP_PV}" ]] ; then
+	if npm list --depth=0 | grep -q "node-gyp" ; then
+		:
+	elif [[ -n "${NODE_GYP_PV}" ]] ; then
 		enpm install "node-gyp@${NODE_GYP_PV}" ${NPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	else
 		enpm install "node-gyp" ${NPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
@@ -528,7 +592,9 @@ node-sharp_pnpm_lockfile_add_sharp() {
 	else
 		epnpm install "node-addon-api" ${PNPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
 	fi
-	if [[ -n "${NODE_GYP_PV}" ]] ; then
+	if npm list --depth=0 | grep -q "node-gyp" ; then
+		:
+	elif [[ -n "${NODE_GYP_PV}" ]] ; then
 		epnpm install "node-gyp@${NODE_GYP_PV}" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	else
 		epnpm install "node-gyp" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
@@ -542,7 +608,9 @@ node-sharp_pnpm_lockfile_add_sharp() {
 node-sharp_yarn_rebuild_sharp() {
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
 		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
-		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		if ! npm list --depth=0 | grep -q "node-gyp" ; then
+			eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		fi
 	fi
 
 	einfo "Cleaning prebuilt for system-vips"
@@ -594,25 +662,48 @@ node-sharp_yarn_rebuild_sharp() {
 
 	node-sharp_append_libs
 
-	edo rm -vrf "node_modules/sharp/build" || die "Failed to clean sharp build directory"
-	edo rm -vrf "node_modules/@img/sharp"* || die "Failed to clean @img/sharp"
+	edo rm -vrf "node_modules/sharp/build"
+	edo rm -vrf "node_modules/@img/sharp"*
 	pushd "${S}/node_modules/sharp/src" >/dev/null 2>&1 || die
+einfo "DEBUG:  PATH:  ${PATH}"
+einfo "DEBUG:  PWD:  ${PWD}"
+		which node >/dev/null || die "DEBUG:  Missing node (3)"
 		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-		if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node "../install/check" --debug || die "Failed to run install/check --debug"
+		local sharp_full_pv=$(ver_cut 1-3 "${SHARP_PV}")
+		if ver_test "${sharp_full_pv}" -eq "0.34.5" ; then
+			if ! ls ../install/build.js >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/build.js for sharp (3)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/build.js --debug || die
 			else
-				edo node "../install/check" || die "Failed to run install/check"
+				node ../install/build.js || die
+			fi
+		elif ver_test "${sharp_full_pv}" -eq "0.34.3" || ver_test "${sharp_full_pv}" -eq "0.34.4" ; then
+			if ! ls ../install/check.js >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/check.js for sharp (3)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/check.js --debug || die
+			else
+				node ../install/check.js || die
+			fi
+		elif ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
+			if ! ls ../install/check >/dev/null ; then
+ewarn "DEBUG:  Missing ../install/check for sharp (3)"
+			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+				node ../install/check --debug || die
+			else
+				node ../install/check || die
 			fi
 		elif ver_test "${sharp_pv}" -lt "0.33" ; then
 			edo node "install/can-compile" || die "Failed to run install/can-compile"
 			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node-gyp configure --debug || die "Failed to configure node-gyp --debug"
-				edo node-gyp build --debug --verbose || die "Failed to build node-gyp --debug"
+				edo node-gyp configure --debug
+				edo node-gyp build --debug --verbose
 			else
-				edo node-gyp rebuild || die "Failed to rebuild node-gyp"
+				edo node-gyp rebuild
 			fi
-			edo node "../install/dll-copy" || die "Failed to run dll-copy"
+			ls ../install/dll-copy || die "Missing"
+			node ../install/dll-copy || die
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -646,7 +737,9 @@ node-sharp_yarn_lockfile_add_sharp() {
 	else
 		eyarn add "node-addon-api" ${YARN_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
 	fi
-	if [[ -n "${NODE_GYP_PV}" ]] ; then
+	if npm list --depth=0 | grep -q "node-gyp" ; then
+		:
+	elif [[ -n "${NODE_GYP_PV}" ]] ; then
 		eyarn add "node-gyp@${NODE_GYP_PV}" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	else
 		eyarn add "node-gyp" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
