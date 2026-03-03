@@ -1,7 +1,7 @@
 diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libvips-1.3.0-rc.2/build/posix.sh
 --- sharp-libvips-1.3.0-rc.2.orig/build/posix.sh	2026-01-02 01:52:44.000000000 -0800
-+++ sharp-libvips-1.3.0-rc.2/build/posix.sh	2026-03-03 13:34:51.649264732 -0800
-@@ -2,10 +2,41 @@
++++ sharp-libvips-1.3.0-rc.2/build/posix.sh	2026-03-03 14:38:25.854095438 -0800
+@@ -2,10 +2,42 @@
  set -e
  
  # Dependency version numbers
@@ -21,6 +21,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +echo "VERSION_EXIF: ${VERSION_EXIF}"
 +echo "VERSION_LCMS: ${VERSION_LCMS}"
 +echo "VERSION_MOZJPEG: ${VERSION_MOZJPEG}"
++echo "VERSION_MOZJPEG_COMMIT: ${VERSION_MOZJPEG_COMMIT}"
 +echo "VERSION_PNG: ${VERSION_PNG}"
 +echo "VERSION_IMAGEQUANT: ${VERSION_IMAGEQUANT}"
 +echo "VERSION_WEBP: ${VERSION_WEBP}"
@@ -45,7 +46,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  # Remove patch version component
  without_patch() {
    echo "${1%.[[:digit:]]*}"
-@@ -19,28 +50,66 @@ without_prerelease() {
+@@ -19,28 +51,66 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
      LINUX=true
@@ -125,7 +126,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  
  # Force "new" C++11 ABI compliance
  # Remove async exception unwind/backtrace tables
-@@ -50,20 +119,37 @@ if [ "$LINUX" = true ]; then
+@@ -50,20 +120,37 @@ if [ "$LINUX" = true ]; then
  fi
  
  # Common build paths and flags
@@ -172,7 +173,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  fi
  
  if [ "$DARWIN" = true ]; then
-@@ -72,17 +158,17 @@ if [ "$DARWIN" = true ]; then
+@@ -72,17 +159,17 @@ if [ "$DARWIN" = true ]; then
    # Local rust installation
    export CARGO_HOME="${DEPS}/cargo"
    export RUSTUP_HOME="${DEPS}/rustup"
@@ -197,7 +198,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  
  # Expose target sysroot to CMake
  export TARGET_SYSROOT="${TARGET}"
-@@ -102,8 +188,218 @@ export RUSTFLAGS+=" --remap-path-prefix=
+@@ -102,8 +189,201 @@ export RUSTFLAGS+=" --remap-path-prefix=
  # We don't want to use any native libraries, so unset PKG_CONFIG_PATH
  unset PKG_CONFIG_PATH
  
@@ -234,6 +235,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +USE_PROXY_LIBINTL=${USE_PROXY_LIBINTL:-0}
 +USE_RSVG=${USE_RSVG:-0}
 +USE_TIFF=${USE_TIFF:-0}
++USE_UHDR=${USE_UHDR:-0}
 +USE_WEBP=${USE_WEBP:-0}
 +USE_XML2=${USE_XML2:-0}
 +USE_ZLIB_NG=${USE_ZLIB_NG:-0}
@@ -297,33 +299,9 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +	USE_ZLIB_NG=1
 +fi
 +
-+
-+USE_ARCHIVE=${USE_ARCHIVE:-0}
-+USE_AOM=${USE_AOM:-0}
-+USE_CAIRO=${USE_CAIRO:-0}
-+USE_CGIF=${USE_CGIF:-0}
-+USE_EXIF=${USE_EXIF:-1}
-+USE_EXPAT=1
-+USE_FFI=${USE_FFI:-0}
-+USE_FONTCONFIG=${USE_FONTCONFIG:-0}
-+USE_FREETYPE=${USE_FREETYPE:-0}
-+USE_FRIBIDI=${USE_FRIBIDI:-1}
-+USE_GLIB=1
-+USE_HARFBUZZ=${USE_HARFBUZZ:-1}
-+USE_HEIF=${USE_HEIF:-1}
-+USE_HWY=${USE_HWY:-0}
-+USE_IMAGEQUANT=${USE_IMAGEQUANT:-0}
-+USE_LCMS2=${USE_LCMS2:-1}
-+USE_MOZJPEG=${USE_MOZJPEG:-1}
-+USE_PANGO=${USE_PANGO:-1}
-+USE_PIXMAN=${USE_PIXMAN:-0}
-+USE_PNG16=${USE_PNG16:-0}
-+USE_PROXY_LIBINTL=${USE_PROXY_LIBINTL:-1}
-+USE_RSVG=${USE_RSVG:-0}
-+USE_TIFF=${USE_TIFF:-0}
-+USE_WEBP=${USE_WEBP:-1}
-+USE_XML2=${USE_XML2:-1}
-+USE_ZLIB_NG=${USE_ZLIB_NG:-0}
++if [[ "${USE_UHDR}" == "1" ]] ; then
++	USE_MOZJPEG=1
++fi
 +
 +if [[ "${USE_ARCHIVE}" == "1" ]] ; then
 +	VIPS_ARGS+=( -Darchive=enabled )
@@ -403,6 +381,12 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +	VIPS_ARGS+=( -Dtiff=disabled )
 +fi
 +
++if [[ "${USE_UHDR}" == "1" ]] ; then
++	VIPS_ARGS+=( -Duhdr=enabled )
++else
++	VIPS_ARGS+=( -Duhdr=disabled )
++fi
++
 +if [[ "${USE_WEBP}" == "1" ]] ; then
 +	VIPS_ARGS+=( -Dwebp=enabled )
 +else
@@ -417,7 +401,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  
  # Download and build dependencies from source
  
-@@ -114,227 +410,403 @@ if [ "$DARWIN" = true ]; then
+@@ -114,227 +394,403 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -615,7 +599,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +echo "DEBUG:  Building mozjpeg ${VERSION_MOZJPEG}"
 +#mkdir ${DEPS}/jpeg
 +#$CURL https://github.com/mozilla/mozjpeg/archive/${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
-+cd "${WORKDIR}/mozjpeg-${VERSION_MOZJPEG}"
++cd "${WORKDIR}/mozjpeg-${VERSION_MOZJPEG_COMMIT}"
  # Use libjpeg-turbo behaviour by default
  sed -i'.bak' 's/JCP_MAX_COMPRESSION/JCP_FASTEST/' jcapimin.c
  cmake -G"Unix Makefiles" \
@@ -663,7 +647,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +echo "DEBUG:  Building libimagequant ${VERSION_IMAGEQUANT}"
 +#mkdir ${DEPS}/imagequant
 +#$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
-+cd "${WORKDIR}/imagequant-${VERSION_IMAGEQUANT}"
++cd "${WORKDIR}/libimagequant-${VERSION_IMAGEQUANT}"
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
 +meson compile -C _build ${MESON_LINK_JOBS}
  meson install -C _build --tag devel
@@ -707,7 +691,11 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +  make install-strip ${MAKE_LINK_JOBS} noinst_PROGRAMS= dist_doc_DATA=
 +fi
 +fi
-+
+ 
+-if [ -z "$WITHOUT_HIGHWAY" ]; then
+-  mkdir ${DEPS}/hwy
+-  $CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
+-  cd ${DEPS}/hwy
 +# Place after tiff
 +if [[ "${USE_HEIF}" == "1" ]] ; then
 +# oteodoro:  Changed build order to prevent referencing system-libs (libjpeg, libpng, libtiff, zlib).
@@ -735,11 +723,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +  make install/strip ${MAKE_LINK_JOBS}
 +fi
 +fi
- 
--if [ -z "$WITHOUT_HIGHWAY" ]; then
--  mkdir ${DEPS}/hwy
--  $CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
--  cd ${DEPS}/hwy
++
 +if [[ "${USE_HWY}" == "1" ]] ; then
 +  echo "DEBUG:  Building highway ${VERSION_HWY}"
 +  #mkdir ${DEPS}/hwy
@@ -863,8 +847,8 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
 -sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
 -sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
-+sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
-+sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
 +fi
  
 +if [[ "${USE_FREETYPE}" == "1" ]] ; then
@@ -946,7 +930,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -342,44 +814,63 @@ sed -i'.bak' "/cairo-rs = /s/, \"pdf\",
+@@ -342,44 +798,63 @@ sed -i'.bak' "/cairo-rs = /s/, \"pdf\",
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -984,7 +968,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +echo "DEBUG:  Building libultrahdr ${VERSION_UHDR}"
 +#mkdir ${DEPS}/uhdr
 +#$CURL https://github.com/google/libultrahdr/archive/v${VERSION_UHDR}.tar.gz | tar xzC ${DEPS}/uhdr --strip-components=1
-+cd "${WORKDIR}/uhdr-${VERSION_UHDR}"
++cd "${WORKDIR}/libultrahdr-${VERSION_UHDR}"
  # [PATCH] improper use of clamp macro
 -$CURL https://github.com/google/libultrahdr/commit/5ed39d67cd31d254e84ebf76b03d4b7bcc12e2f7.patch | patch -p1
 +#$CURL https://github.com/google/libultrahdr/commit/5ed39d67cd31d254e84ebf76b03d4b7bcc12e2f7.patch | patch -p1
@@ -1029,7 +1013,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -387,72 +878,119 @@ if [ "$LINUX" = true ]; then
+@@ -387,72 +862,119 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -1193,7 +1177,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -485,17 +1023,25 @@ printf "{\n\
+@@ -485,17 +1007,25 @@ printf "{\n\
  }" >versions.json
  
  # Add third-party notices

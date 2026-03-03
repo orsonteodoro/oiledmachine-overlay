@@ -56,7 +56,8 @@ VERSION_GLIB=2.87.1
 VERSION_XML2=2.15.1
 VERSION_EXIF=0.6.25
 VERSION_LCMS=2.17
-VERSION_MOZJPEG=0826579
+VERSION_MOZJPEG="0826579"
+VERSION_MOZJPEG_COMMIT="08265790774cd0714832c9e675522acbe5581437"
 VERSION_PNG=1.6.53
 VERSION_IMAGEQUANT=2.4.1
 VERSION_WEBP=1.6.0
@@ -771,6 +772,7 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 		eapply "${FILESDIR}/vips-8.16.1-quantise-c-cast-pointers.patch"
 		eapply "${FILESDIR}/vips-8.16.1-suffix.patch"
 	popd 2>&1 >/dev/null || die
+	echo "VERSION_MOZJPEG_COMMIT=${VERSION_MOZJPEG_COMMIT}" >> "${S}/versions.properties" || die
 }
 
 get_platform() {
