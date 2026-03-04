@@ -1,6 +1,6 @@
 diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libvips-1.3.0-rc.2/build/posix.sh
 --- sharp-libvips-1.3.0-rc.2.orig/build/posix.sh	2026-01-02 01:52:44.000000000 -0800
-+++ sharp-libvips-1.3.0-rc.2/build/posix.sh	2026-03-03 14:38:25.854095438 -0800
++++ sharp-libvips-1.3.0-rc.2/build/posix.sh	2026-03-03 17:15:59.922071229 -0800
 @@ -2,10 +2,42 @@
  set -e
  
@@ -1012,7 +1012,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -387,72 +862,120 @@ if [ "$LINUX" = true ]; then
+@@ -387,72 +861,121 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -1149,6 +1149,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
 +    "libxml2.a"
 +    "libsharpyuv.a"
 +    "libhwy.a"
++    "libuhrd.a"
 +  )
 +  for lib in "${L[@]}" ; do
 +    if [ -f "${TARGET}/${LIBDIR}/${lib}" ]; then
@@ -1177,7 +1178,7 @@ diff '--color=auto' -urp sharp-libvips-1.3.0-rc.2.orig/build/posix.sh sharp-libv
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -485,17 +1007,25 @@ printf "{\n\
+@@ -485,17 +1008,25 @@ printf "{\n\
  }" >versions.json
  
  # Add third-party notices

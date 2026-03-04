@@ -1,0 +1,12 @@
+--- a/configure.orig	2025-07-09 13:53:33.000000000 -0700
++++ b/configure	2026-03-03 18:07:08.441378480 -0800
+@@ -14866,8 +14866,7 @@ then :
+ fi
+ 
+ 
+-if test "x$enable_avx2" != "xno" -a "x$enable_sse4_1" != "xno"
+-      -a "x$enable_sse2" != "xno"
++if test "x$enable_avx2" != "xno" -a "x$enable_sse4_1" != "xno" -a "x$enable_sse2" != "xno"
+ then :
+ 
+   AVX2_FLAGS="$INTRINSICS_CFLAGS $AVX2_FLAGS"

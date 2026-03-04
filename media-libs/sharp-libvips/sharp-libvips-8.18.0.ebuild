@@ -24,8 +24,9 @@ EAPI=8
 # aom:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -laom
 # sharpyuv -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -lsharpyuv
 # libtiff:  -L/var/tmp/portage/media-libs/sharp-libvips-8.16.1/work/build/deps/lib64 -ltiff
-# vips-cpp:  -L/usr/lib/sharp-vips/lib64 -lvips-cpp -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
-# vips:  -L/usr/lib/sharp-vips/lib64 -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+# uhdr: -L/var/tmp/portage/media-libs/sharp-libvips-8.18.0/work/build/deps/lib64 -luhdr -ljpeg
+# vips-cpp:  -L/usr/lib/sharp-vips/lib64 -lvips-cpp -lvips -ltiff -larchive -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+# vips:  -L/usr/lib/sharp-vips/lib64 -lvips -ltiff -larchive -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
 
 # A:3.15, AL:2, D11, U22
 
@@ -787,6 +788,9 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 		eapply "${FILESDIR}/vips-8.16.1-suffix.patch"
 	popd 2>&1 >/dev/null || die
 	echo "VERSION_MOZJPEG_COMMIT=${VERSION_MOZJPEG_COMMIT}" >> "${S}/versions.properties" || die
+	pushd "${WORKDIR}/libwebp-${VERSION_WEBP}" 2>&1 >/dev/null || die
+		eapply "${FILESDIR}/libwebp-1.6.0-configure-fix.patch"
+	popd 2>&1 >/dev/null || die
 }
 
 get_platform() {
