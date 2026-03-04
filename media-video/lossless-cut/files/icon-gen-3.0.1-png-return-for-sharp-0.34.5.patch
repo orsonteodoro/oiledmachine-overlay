@@ -1,0 +1,142 @@
+--- a/node_modules/sharp/src/metadata.cc.orig	2026-03-02 15:09:40.784884071 -0800
++++ b/node_modules/sharp/src/metadata.cc	2026-03-02 15:15:15.066373681 -0800
+@@ -8,6 +8,7 @@
+ #include <string>
+ #include <utility>
+ #include <vector>
++#include <iostream>
+ 
+ #include <napi.h>
+ #include <vips/vips8>
+@@ -308,18 +309,44 @@ Napi::Value metadata(const Napi::Callbac
+   // V8 objects are converted to non-V8 types held in the baton struct
+   MetadataBaton *baton = new MetadataBaton;
+   Napi::Object options = info[size_t(0)].As<Napi::Object>();
++  std::cerr << "metadata: options keys=";
++  Napi::Array propNames = options.GetPropertyNames();
++  for (uint32_t i = 0; i < propNames.Length(); i++) {
++    std::cerr << propNames.Get(i).ToString().Utf8Value() << ",";
++  }
++  std::cerr << std::endl;
+ 
+   // Input
+-  baton->input = sharp::CreateInputDescriptor(options.Get("input").As<Napi::Object>());
++  std::cerr << "metadata: calling CreateInputDescriptor" << std::endl;
++  try {
++    baton->input = sharp::CreateInputDescriptor(options.Get("input").As<Napi::Object>());
++    std::cerr << "metadata: input created, buffer size="
++              << (baton->input->buffer ? baton->input->bufferLength : 0) << std::endl;
++  } catch (std::exception const &err) {
++    std::cerr << "metadata: CreateInputDescriptor error: " << err.what() << std::endl;
++    delete baton;
++    Napi::Error::New(info.Env(), err.what()).ThrowAsJavaScriptException();
++    return info.Env().Undefined();
++  }
+ 
+   // Function to notify of libvips warnings
+   Napi::Function debuglog = options.Get("debuglog").As<Napi::Function>();
+ 
+   // Join queue for worker thread
+   Napi::Function callback = info[size_t(1)].As<Napi::Function>();
++  std::cerr << "metadata: creating MetadataWorker" << std::endl;
+   MetadataWorker *worker = new MetadataWorker(callback, baton, debuglog);
+   worker->Receiver().Set("options", options);
+-  worker->Queue();
++  std::cerr << "metadata: queuing worker" << std::endl;
++  try {
++    worker->Queue();
++    std::cerr << "metadata: worker queued, counterQueue=" << sharp::counterQueue << std::endl;
++  } catch (std::exception const &err) {
++    std::cerr << "metadata: worker queue error: " << err.what() << std::endl;
++    delete baton;
++    Napi::Error::New(info.Env(), err.what()).ThrowAsJavaScriptException();
++    return info.Env().Undefined();
++  }
+ 
+   // Increment queued task counter
+   sharp::counterQueue++;
+--- a/node_modules/icon-gen/dist/lib/png.js.orig	2026-03-02 15:00:47.489659490 -0800
++++ b/node_modules/icon-gen/dist/lib/png.js	2026-03-02 15:15:01.726793035 -0800
+@@ -34,15 +34,33 @@ exports.filterImagesBySizes = filterImag
+  * @return Image generation task.
+  */
+ const generate = async (svg, size, dir, logger) => {
++    if (typeof svg === 'string') {
++        svg = fs_1.default.readFileSync(svg);
++    }
++    console.log('SVG input type:', typeof svg, 'length:', svg.length, 'first 100 bytes:', svg.slice(0, 100).toString());
++    if (!Buffer.isBuffer(svg)) {
++        throw new Error(`Invalid SVG input: expected Buffer, got ${typeof svg}`);
++    }
++    // Validate SVG with sharp
++    try {
++        await sharp_1.default(svg, { failOn: 'none' }).metadata();
++        console.log('SVG metadata validated successfully');
++    } catch (err) {
++        throw new Error(`Invalid SVG input: ${err.message}`);
++    }
+     const dest = path_1.default.join(dir, size + '.png');
+     logger.log('  Create: ' + dest);
+-    await (0, sharp_1.default)(svg)
++    try {
++        await sharp_1.default(svg, { failOn: 'none', animated: false })
+         .png({ compressionLevel: 9 })
+         .resize(size, size, {
+-        fit: 'contain',
+-        background: { r: 0, g: 0, b: 0, alpha: 0 }
+-    })
++          fit: 'contain',
++          background: { r: 0, g: 0, b: 0, alpha: 0 }
++        })
+         .toFile(dest);
++    } catch (err) {
++        throw new Error(`Failed to create PNG at ${dest}: ${err.message}`);
++    }
+     return { size: size, filePath: dest };
+ };
+ /**
+--- a/node_modules/icon-gen/dist/lib/index.js.orig	2026-03-02 15:00:47.489659490 -0800
++++ b/node_modules/icon-gen/dist/lib/index.js	2026-03-02 15:15:01.726793035 -0800
+@@ -172,8 +172,7 @@ const generateIconFromSVG = async (src,
+         throw new Error('Failed to create the working directory.');
+     }
+     try {
+-        const images = await (0, png_1.default)(svgFilePath, workDir, getRequiredPNGImageSizes(options), logger);
+-        const results = await generate(images, destDirPath, options, logger);
++        const results = await (0, png_1.default)(svgFilePath, destDirPath, getRequiredPNGImageSizes(options), logger);
+         del_1.default.sync([workDir], { force: true });
+         return results;
+     }
+--- a/node_modules/sharp/src/pipeline.cc.orig	2026-03-02 15:09:40.804883442 -0800
++++ b/node_modules/sharp/src/pipeline.cc	2026-03-02 15:15:36.957685503 -0800
+@@ -6,6 +6,7 @@
+ #include <algorithm>
+ #include <cmath>
+ #include <filesystem>  // NOLINT(build/c++17)
++#include <iostream>
+ #include <map>
+ #include <memory>
+ #include <numeric>
+@@ -1810,5 +1811,12 @@ Napi::Value pipeline(const Napi::Callbac
+   Napi::Number queueLength = Napi::Number::New(info.Env(), static_cast<int>(++sharp::counterQueue));
+   queueListener.Call(info.This(), { queueLength });
+ 
++  try {
++      queueListener.Call(info.This(), { queueLength });
++  } catch (std::exception& e) {
++    std::cerr << "queueListener error: " << e.what() << std::endl;
++    throw;
++  }
++  std::cerr << "pipeline: booleanResult=" << baton->booleanResult << ", formatOut=" << baton->formatOut << std::endl;
+   return info.Env().Undefined();
+ }
+--- a/node_modules/sharp/src/pipeline.h.orig	2026-03-02 15:09:40.816883064 -0800
++++ b/node_modules/sharp/src/pipeline.h	2026-03-02 15:15:01.726793035 -0800
+@@ -71,6 +71,7 @@ struct PipelineBaton {
+   bool hasAttentionCenter;
+   int attentionX;
+   int attentionY;
++  bool booleanResult;
+   bool premultiplied;
+   bool tileCentre;
+   bool fastShrinkOnLoad;

@@ -15,22 +15,20 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # TODO:  Fix newer sharp with ICON_TYPE="png"
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
+export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
 NODE_SLOT="22"
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
-#export NODE_SHARP_DEBUG=1
 
 NODE_GYP_PV="11.5.0"
-SHARP_PV="0.34.3" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
-VIPS_PV="8.17.2"
+SHARP_PV="0.34.5" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
+VIPS_PV="8.17.3" # Required by sharp@0.34.5.  See https://github.com/lovell/sharp/blob/v0.34.5/src/common.h#L23
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-#	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
-#	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.133, node 22.19.0
 	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
 else
 	# Upstream preference
@@ -38,10 +36,10 @@ else
 fi
 
 NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.2-debug.patch"
-	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
-	"${FILESDIR}/icon-gen-3.0.1-png-return.patch"
+	"${FILESDIR}/sharp-0.34.5-debug.patch"
+	"${FILESDIR}/sharp-0.34.5-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.5-static-libs.patch"
+	"${FILESDIR}/icon-gen-5.0.0-png-return-for-sharp-0.34.5.patch"
 )
 
 NPM_INSTALL_ARGS=(
@@ -133,6 +131,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	app-misc/jq
 	net-libs/nodejs:${NODE_SLOT}
 	net-libs/nodejs:=
 	sys-apps/yarn:${YARN_SLOT}
@@ -159,6 +158,25 @@ einfo "Temporarily disabling file-type patch"
 	sed -i -e "/npmMinimalAgeGate:/d" "${S}/.yarnrc.yml" || die
 }
 
+yarn_update_lock_install_pre() {
+einfo "DEBUG:  Called yarn_update_lock_install_pre()"
+	export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
+	export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+
+	if npm list --depth=0 | grep -q "node-gyp" ; then
+einfo "DEBUG:  Removing node-gyp (1)"
+		enpm uninstall "node-gyp"
+	fi
+
+	eyarn add "node-gyp@^11.2.0"
+#	eyarn remove "sharp"
+	eyarn add "node-addon-api@^1.6.3"
+	eyarn add "node-addon-api@^7.0.0"
+#	eyarn add "sharp@^0.33.4"
+#	eyarn add "sharp@^0.34.5"
+	eyarm add "@img/colour@^1.0.0"
+}
+
 yarn_update_lock_install_post() {
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		:
@@ -166,6 +184,7 @@ yarn_update_lock_install_post() {
 }
 
 yarn_update_lock_yarn_import_post() {
+einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 # Doesn't break build
 #ewarn "QA:  Manually modify lockfile to remove typescript@5.7.x and move associated version ranges from typescript 5.7.x to typescript@5.5.4"
@@ -205,7 +224,8 @@ ewarn "QA:  Manually modify sharp: \"npm:^0.30.4\" to sharp: \"npm:^0.34.3\" in 
 		eyarn add "tmp@0.2.4" -D
 
 		if [[ "${ICON_TYPE}" == "png" ]] ; then
-			eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+			#eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+			eyarn add "icon-gen@5.0.0" -D # Must go before node-sharp_yarn_rebuild_sharp
 		else
 			eyarn remove "icon-gen"
 			eyarn remove "sharp"
@@ -217,30 +237,20 @@ einfo "Adding file-type patch"
 }
 
 gen_icon() {
-	# Broken
-	#edo tsx "script/icon-gen.mts"
-	# See https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
-	# fail: module=node16, target=es2017, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2019, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2020, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2021, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2022, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2023, moduleResolution=node16; segfault
-	edo tsc "script/icon-gen.mts" \
-		--module "node16" \
-		--target "es2017" \
-		--moduleResolution "node16" \
-		--typeRoots "./src/types" \
-		--lib "es2017"
+einfo "DEBUG:  Called gen_icon()"
+	#cat "script/icon-gen.mjs" >> "script/icon-gen.mjs.t" || die
+	#mv "script/icon-gen.mjs"{".t",""} || die
+	edo npm run "generate-icon"
 
-	cat "script/icon-gen.mjs" >> "script/icon-gen.mjs.t" || die
-	mv "script/icon-gen.mjs"{".t",""} || die
-
-	edo node "script/icon-gen.mjs"
 	ls "icon-build/app-512.png" || die "Missing generated icon"
 }
 
 src_unpack() {
+	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
+		export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
+		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+	fi
+
 	append-cppflags -I"/usr/include/glib-2.0"
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
@@ -268,8 +278,8 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		if ver_test "${SHARP_PV%.*}" "-le" "0.32" ; then
 			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
 		fi
-		eyarn add "sharp@${SHARP_PV}" -D
-		eyarn add "@types/icon-gen" -D
+		eyarn add "sharp@${SHARP_PV}"
+		eyarn add "@types/icon-gen"
 
 		jq ".dependencies.sharp = \"^${SHARP_PV}\"" \
 			"node_modules/icon-gen/package.json" \
@@ -279,7 +289,8 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 			mv "temp.json" "node_modules/icon-gen/package.json" \
 			|| die "Failed to update icon-gen package.json"
 
-		eyarn add "icon-gen@3.0.1" -D --no-optional # Must go before node-sharp_yarn_rebuild_sharp
+#		eyarn add "icon-gen@3.0.1" --no-optional # Must go before node-sharp_yarn_rebuild_sharp
+		eyarn add "icon-gen@5.0.0" --no-optional # Must go before node-sharp_yarn_rebuild_sharp
 
 		# Remove nested sharp and prebuilt sharp
 		rm -rf "node_modules/icon-gen/node_modules/sharp" || die "Failed to remove nested sharp"
@@ -298,30 +309,32 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		fi
 		local sharp_platform=$(node-sharp_get_platform)
 
-	        # Rebuild sharp
-	        einfo "Rebuilding sharp in ${S}"
-	        pushd "${S}" >/dev/null 2>&1 || die
-	            node-sharp_yarn_rebuild_sharp
-	            # Copy sharp binary to expected location
-	            mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
-	            cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-	               "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-	               || die "Failed to copy sharp-${sharp_platform}.node"
-	            ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
-	        popd >/dev/null 2>&1 || die
+		# Rebuild sharp
+		einfo "Rebuilding sharp in ${S}"
+		pushd "${S}" >/dev/null 2>&1 || die
+			node-sharp_yarn_rebuild_sharp
+			# Copy sharp binary to expected location
+			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+			[[ -e "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" ]] || die "Missing"
+			cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node"
+			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+		popd >/dev/null 2>&1 || die
 
-	        # Copy sharp binary to icon-gen if needed
-	        if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
-	            einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
-	            mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" || die "Failed to create icon-gen sharp build directory"
-	            cp "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-	               "node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-	               || die "Failed to copy sharp-${sharp_platform}.node to icon-gen"
-	            ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "Copied sharp-${sharp_platform}.node not found"
-	        fi
+		# Copy sharp binary to icon-gen if needed
+		if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
+			einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
+			mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" || die "Failed to create icon-gen sharp build directory"
+			[[ -e "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" ]] || die "Missing"
+			cp "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node to icon-gen"
+			ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "Copied sharp-${sharp_platform}.node not found"
+		fi
 
 		ewarn "Removing nested sharp or @img/sharp-linux-x64"
-		rm -rfv "node_modules/@img"
+		rm -rfv "node_modules/@img/"*"sharp"*
 		rm -rfv "node_modules/@types/icon-gen/node_modules/sharp"
 		rm -rfv "node_modules/icon-gen/node_modules/sharp"
 		rm -rfv "node_modules/sharp/node_modules/@img"
@@ -332,7 +345,6 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
 		edo mkdirp "icon-build" "build-resources/appx"
-		edo tsx --version
 		if [[ "${ICON_TYPE}" == "png" ]] ; then
 			gen_icon
 		fi
@@ -421,12 +433,13 @@ pkg_postinst() {
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20241222)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250117 with electron 34.0.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250214 with electron 34.1.1)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250312 with electron 34.3.2)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250630 with electron 37.1.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250809 with electron 37.2.6)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20251003 with electron 38.2.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250117 with Electron 34.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250214 with Electron 34.1.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250312 with Electron 34.3.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250630 with Electron 37.1.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250809 with Electron 37.2.6)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20251003 with Electron 38.2.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.6.1)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
