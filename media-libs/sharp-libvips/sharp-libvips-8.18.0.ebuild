@@ -687,6 +687,20 @@ ewarn "This ebuild is under development."
 	check-compiler-switch_start
 	rust_pkg_setup
 	python-single-r1_pkg_setup
+
+	local rust_pv_raw=$(${RUSTC} --version | cut -f 2 -d " ")
+	local rust_pv=$(${RUSTC} --version | cut -f 2 -d " " | cut -f 1 -d "-")
+	if [[ "${rust_pv_raw}" =~ "nightly" ]] ; then
+		local _date=$(${RUSTC} --version | cut -f 4 -d " " | sed -e "s|)||g")
+		if ver_test "${rust_pv_raw}" -lt "1.94.0" ; then
+eerror "Only Rust >= 1.94.0 supported for nightly"
+			die
+		fi
+		if ver_test "${_date//-/.}" -lt "2026.01.01" ; then
+eerror "Only Rust nightly >= 2026-01-01 supported for nightly"
+			die
+		fi
+	fi
 }
 
 # @FUNCTION: cargo_src_unpack
