@@ -964,7 +964,13 @@ src_configure() {
 		if ! is-flagq '-O0' ; then
 			append-flags '-O0'
 		fi
+		export MESON_BUILDTYPE="debug"
+	else
+		export MESON_BUILDTYPE="release"
 	fi
+
+	# Reduce issue with pointer corruption or encoutering invalid pointer address ranges
+	export MESON_DEFAULT_LIBRARY="static"
 
 	filter-flags -Wl,--as-needed
 	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
