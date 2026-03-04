@@ -29,7 +29,7 @@ VIPS_PV="8.17.3" # Required by sharp@0.34.5.  See https://github.com/lovell/shar
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
+	ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="38.7.2" # Cr 140.0.7339.249, node 22.21.1
@@ -86,7 +86,7 @@ LICENSE="
 # Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-40.6.1-chromium.html
+		electron-40.7.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -98,7 +98,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_21
+ebuild_revision_23
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -440,6 +440,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250809 with Electron 37.2.6)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20251003 with Electron 38.2.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.6.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.7.0)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass

@@ -6486,16 +6486,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:40.6.1":
-  version: 40.6.1
-  resolution: "electron@npm:40.6.1"
+"electron@npm:40.7.0":
+  version: 40.7.0
+  resolution: "electron@npm:40.7.0"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^24.9.0"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10/d3a9cbce8c95b4e6e7a4fe0c78772722fe3b9678ce3b4566c87a051559c65c6a8b23d46b2b8bd45f9e99ed7af4754f54653dda1c7f2fd672f38dc5bf9eaaaeee
+  checksum: 10/52725e7a4ab873acf3cbd5bb2582467cec02961831a7e5bde5d95d95fd0659d1a9e6dd2258bf33234e3dcd90fc11747c3c54b5efec3473a0dcb066c723ea100d
   languageName: node
   linkType: hard
 
@@ -7803,11 +7803,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.34.5":
-  version: 12.34.5
-  resolution: "framer-motion@npm:12.34.5"
+"framer-motion@npm:^12.35.0":
+  version: 12.35.0
+  resolution: "framer-motion@npm:12.35.0"
   dependencies:
-    motion-dom: "npm:^12.34.5"
+    motion-dom: "npm:^12.35.0"
     motion-utils: "npm:^12.29.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7821,7 +7821,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/d01ba1ab89e23a8cc0c8081f5f8a4f00e327d2512947f99aa2fd7a58997985b26a1854563bc614ad05f8a95d23a019261357b637705580cf8d86d130b48bde8e
+  checksum: 10/9c2dd8a44efcf15d787ea1d1a24dbb2352b44824c4c33273f176f3feabe602278b9571541c89cc5673b3590b483daf9e0761889412feaafd4feba758cfdc1c96
   languageName: node
   linkType: hard
 
@@ -8413,8 +8413,8 @@ __metadata:
   linkType: hard
 
 "i18next-cli@npm:^1.34.1":
-  version: 1.47.11
-  resolution: "i18next-cli@npm:1.47.11"
+  version: 1.48.1
+  resolution: "i18next-cli@npm:1.48.1"
   dependencies:
     "@croct/json5-parser": "npm:0.2.2"
     "@swc/core": "npm:1.15.17"
@@ -8434,7 +8434,7 @@ __metadata:
     yaml: "npm:2.8.2"
   bin:
     i18next-cli: dist/esm/cli.js
-  checksum: 10/eb697f74977429e74c9ccdb0fee766100765ae9e126510ed4e1d6025f36ba47ab8a7ca9aa2672ab26e11bb74e18cc20aaefe9b08f99c7d7748c36c80be3e8e30
+  checksum: 10/067b09205621488b468a22fe513e11e4ff14605bbba1cecdc7683df1e39e972f2f4e5091644959142a0d8eb629843979b7ffcba4374c5e32113857da6704c309
   languageName: node
   linkType: hard
 
@@ -8460,8 +8460,8 @@ __metadata:
   linkType: hard
 
 "i18next@npm:^25.7.3":
-  version: 25.8.13
-  resolution: "i18next@npm:25.8.13"
+  version: 25.8.14
+  resolution: "i18next@npm:25.8.14"
   dependencies:
     "@babel/runtime": "npm:^7.28.4"
   peerDependencies:
@@ -8469,7 +8469,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/69d1277587810b86d2cc0c36240004151f1ed696a5c6bb8ced9ffbc0addd9f9f5a0a13b35459a322ffa52ea177b2602cad2a39c11025adb81f4df93510b6a46a
+  checksum: 10/7389c39909f1836da06191cb31bc85074bf025d5ffaed071e2889ddd1ea34419232ed38cfc521b3283ba6a85e91329a0d7e2bb41614df30766b42b1dd844a411
   languageName: node
   linkType: hard
 
@@ -9543,7 +9543,7 @@ __metadata:
     csv-stringify: "npm:^6.6.0"
     cue-parser: "npm:^0.3.0"
     data-uri-to-buffer: "npm:^6.0.2"
-    electron: "npm:40.6.1"
+    electron: "npm:40.7.0"
     electron-builder: "npm:26.4.0"
     electron-devtools-installer: "npm:^4.0.0"
     electron-store: "npm:5.1.1"
@@ -10425,12 +10425,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:^12.34.5":
-  version: 12.34.5
-  resolution: "motion-dom@npm:12.34.5"
+"motion-dom@npm:^12.35.0":
+  version: 12.35.0
+  resolution: "motion-dom@npm:12.35.0"
   dependencies:
     motion-utils: "npm:^12.29.2"
-  checksum: 10/9d36687ca6aaaaa664ebcac4959c3f9a902d2a0e290c3b25f59fc7a2e7ad95502f89ed297672522083fc7869abd191464cbb1719e5c88f0f7227195587e86794
+  checksum: 10/1a50cd2600d04dc8243c193af45b067aa65d853213f14aea15858a94fd3e901511ff258a91b4dffc1585eb43b61706a6f73fb98fb39dedd87e4b58a48ed8f593
   languageName: node
   linkType: hard
 
@@ -10442,10 +10442,10 @@ __metadata:
   linkType: hard
 
 "motion@npm:^12.24.7":
-  version: 12.34.5
-  resolution: "motion@npm:12.34.5"
+  version: 12.35.0
+  resolution: "motion@npm:12.35.0"
   dependencies:
-    framer-motion: "npm:^12.34.5"
+    framer-motion: "npm:^12.35.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -10458,7 +10458,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/5010f7cdab34c974907e6fd8b88a505df624536cb787640dff2a74f7c45874bbef06298f37800ff5818ee9d5f3158c8d72b83c1de8fc8c4de9bc5aaa98a21d11
+  checksum: 10/ef7f4df7337147a0012ba2bfe3fd1f23d76081b4094ab94a7bc9f3f8338074e7a290873a9ea94427aea1aa9c63021804972f62d6c4289e011ddf5ef59865fa01
   languageName: node
   linkType: hard
 
