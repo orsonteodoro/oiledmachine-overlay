@@ -689,10 +689,15 @@ ewarn "This ebuild is under development."
 	rust_pkg_setup
 	python-single-r1_pkg_setup
 
-	local rust_pv_raw=$("${RUSTC}" --version | cut -f 2 -d " ")
-	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
+	local rust_pv_raw=$("${RUSTC}" --version \
+		| cut -f 2 -d " ")
+	local rust_pv=$("${RUSTC}" --version \
+		| cut -f 2 -d " " \
+		| cut -f 1 -d "-")
 	if [[ "${rust_pv_raw}" =~ "nightly" ]] ; then
-		local _date=$("${RUSTC}" --version | cut -f 4 -d " " | sed -e "s|)||g")
+		local _date=$("${RUSTC}" --version \
+			| cut -f 4 -d " " \
+			| sed -e "s|)||g")
 		if ver_test "${rust_pv_raw}" -lt "1.94.0" ; then
 eerror "Only Rust >= 1.94.0 supported for nightly"
 			die
@@ -737,7 +742,7 @@ einfo "S:  ${S}"
 		esac
 	done
 
-	if [[ ${PKGBUMPING} != ${PVR} && ${crates[@]} ]]; then
+	if [[ "${PKGBUMPING}" != "${PVR}" && "${#crates[@]}" -gt "0" ]]; then
 		pushd "${DISTDIR}" >/dev/null || die
 
 		ebegin "Unpacking crates"
@@ -747,9 +752,9 @@ einfo "S:  ${S}"
 		assert
 		eend $?
 
-		while read -d '' -r shasum archive; do
-			pkg=${archive%.crate}
-			cat <<- EOF > ${ECARGO_VENDOR}/${pkg}/.cargo-checksum.json || die
+		while read -d '' -r shasum archive ; do
+			pkg="${archive%.crate}"
+			cat <<- EOF > "${ECARGO_VENDOR}/${pkg}/.cargo-checksum.json" || die
 			{
 				"package": "${shasum}",
 				"files": {}
@@ -814,7 +819,8 @@ get_platform() {
 		echo "linux-s390x"
 
 	else
-		die "ARCH=${ARCH} ABI=${ABI} is not supported.  Modify ebuild for support."
+eerror "ARCH=${ARCH} ABI=${ABI} is not supported.  Modify ebuild for support."
+		die
 	fi
 }
 
@@ -973,17 +979,25 @@ src_configure() {
 		export MESON_BUILDTYPE="release"
 	fi
 
-	# Reduce issue with pointer corruption or encoutering invalid pointer address ranges
+	# Reduce issue with pointer corruption or encoutering invalid pointer
+	# address ranges
 	export MESON_DEFAULT_LIBRARY="static"
 
 	filter-flags -Wl,--as-needed
 	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
 	if [[ -n "${ERUST_SLOT_OVERRIDE}" ]] ; then
 		RUST_SLOT="${ERUST_SLOT_OVERRIDE}"
-	elif ver_test "${RUST_MIN_VER}" -le "${rust_pv}" && ver_test "${rust_pv}" -le "${RUST_MAX_VER}" ; then
+	elif \
+		ver_test "${RUST_MIN_VER}" -le "${rust_pv}" \
+			&& \
+		ver_test "${rust_pv}" -le "${RUST_MAX_VER}" \
+	; then
 		:
 	else
-eerror "Use \`eselect rust\` to switch to Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
+eerror
+eerror "Use \`eselect rust\` to switch to"
+eerror "Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
+eerror
 		die
 	fi
 	if ! has_version "dev-util/sccache" ; then
@@ -1205,7 +1219,11 @@ src_install() {
 			doins -r "${WORKDIR}/build/deps/${libdir}/"*".a"
 		fi
 	else
-		die "No libraries found in ${WORKDIR}/build/deps/${libdir} or ${libdir}-original"
+eerror
+eerror "No libraries found in ${WORKDIR}/build/deps/${libdir}"
+eerror "or ${libdir}-original"
+eerror
+		die
 	fi
 
 	# Install binaries for debugging
@@ -1230,7 +1248,12 @@ src_install() {
 	fi
 
 
-#Libs: -L\${libdir} -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi -ldl -lmd -latomic -lstdc++ -pthread
+# Libs: -L\${libdir} -lvips -ltiff -larchive -lspng -lz -ljpeg -lwebp -lwebpmux \
+# -lwebpdemux -lheif -limagequant -lcgif -lexif -lrsvg-2 -lcairo-gobject \
+# -lxml2 -lpangocairo-1.0 -lpangoft2-1.0 -lpango-1.0 -lgio-2.0 -lgobject-2.0 \
+# -lcairo -lpng16 -lfontconfig -lexpat -lharfbuzz -lfreetype -lpixman-1 \
+# -lgmodule-2.0 -lglib-2.0 -llcms2 -lhwy -laom -lsharpyuv -lm -lffi -lfribidi \
+# -ldl -lmd -latomic -lstdc++ -pthread
 	# DO NOT SORT CONDITIONALS
 	local vips_cflags=()
 	local vips_libs=(
@@ -1439,15 +1462,25 @@ EOF
 	if [[ -d "${WORKDIR}/build/deps/${libdir}/glib-2.0/include" ]] ; then
 		doins -r "${WORKDIR}/build/deps/${libdir}/glib-2.0/include/"*
 	else
-		die "No glib-2.0/include directory found in ${WORKDIR}/build/deps/${libdir}/glib-2.0/include"
+eerror
+eerror "No glib-2.0/include directory found in"
+eerror "${WORKDIR}/build/deps/${libdir}/glib-2.0/include"
+eerror
+		die
 	fi
 
 	# Create symlinks for shared libraries
 	if [[ -f "${ED}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so.${PV}" ]] ; then
-		ln -sf "libvips-cpp.so.${PV}" "${ED}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so" || die "Failed to create libvips-cpp.so symlink"
+		ln -sf \
+			"libvips-cpp.so.${PV}" \
+			"${ED}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so" \
+			|| die "Failed to create libvips-cpp.so symlink"
 	fi
 	if [[ -f "${ED}/usr/lib/sharp-vips/${libdir}/libvips.so.${PV}" ]] ; then
-		ln -sf "libvips.so.${PV}" "${ED}/usr/lib/sharp-vips/${libdir}/libvips.so" || die "Failed to create libvips.so symlink"
+		ln -sf \
+			"libvips.so.${PV}" \
+			"${ED}/usr/lib/sharp-vips/${libdir}/libvips.so" \
+			|| die "Failed to create libvips.so symlink"
 	fi
 
 	# Install tarball for debugging
@@ -1483,17 +1516,27 @@ EOF
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
 		for x in ${L[@]} ; do
 			[[ -e "${ED}/usr/lib/sharp-vips/bin/${x}" ]] || continue
-			if file "${ED}/usr/lib/sharp-vips/bin/${x}" | grep -q "ELF.*executable.*with debug_info" ; then
+			if \
+				file "${ED}/usr/lib/sharp-vips/bin/${x}" \
+					| grep -q "ELF.*executable.*with debug_info" \
+			; then
 				:
 			else
 				continue
 			fi
 			if is_debug_whitelisted "${x}" ; then
-				objcopy --only-keep-debug "${ED}/usr/lib/sharp-vips/bin/${x}" "${T}/${x}.debug" || die
+				objcopy \
+					--only-keep-debug \
+					"${ED}/usr/lib/sharp-vips/bin/${x}" \
+					"${T}/${x}.debug" \
+					|| die
 				exeinto "/usr/lib/debug/usr/lib/sharp-vips/bin/${x}"
 				doexe "${T}/${x}.debug"
 			fi
-			strip --strip-unneeded "${ED}/usr/lib/sharp-vips/bin/${x}" || die
+			strip \
+				--strip-unneeded \
+				"${ED}/usr/lib/sharp-vips/bin/${x}" \
+				|| die
 		done
 	fi
 }
