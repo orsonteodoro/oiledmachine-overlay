@@ -1191,17 +1191,17 @@ src_install() {
 	insinto "/usr/lib/sharp-vips/${libdir}"
 	# Install shared and static libraries
 	if [[ -d "${WORKDIR}/build/deps/${libdir}-original" ]] ; then
-		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".so"* >/dev/null ; then
+		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".so"* >/dev/null 2>&1 ; then
 			doins -r "${WORKDIR}/build/deps/${libdir}-original/"*".so"*
 		fi
-		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".a" >/dev/null ; then
+		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".a" >/dev/null 2>&1 ; then
 			doins -r "${WORKDIR}/build/deps/${libdir}-original/"*".a"
 		fi
 	elif [[ -d "${WORKDIR}/build/deps/${libdir}" ]] ; then
-		if ls "${WORKDIR}/build/deps/${libdir}/"*".so"* >/dev/null ; then
+		if ls "${WORKDIR}/build/deps/${libdir}/"*".so"* >/dev/null 2>&1 ; then
 			doins -r "${WORKDIR}/build/deps/${libdir}/"*".so"*
 		fi
-		if ls "${WORKDIR}/build/deps/${libdir}/"*".a" >/dev/null ; then
+		if ls "${WORKDIR}/build/deps/${libdir}/"*".a" >/dev/null 2>&1 ; then
 			doins -r "${WORKDIR}/build/deps/${libdir}/"*".a"
 		fi
 	else
