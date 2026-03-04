@@ -98,7 +98,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_23
+ebuild_revision_25
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -163,6 +163,8 @@ einfo "DEBUG:  Called yarn_update_lock_install_pre()"
 	export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
 	export SHARP_FORCE_GLOBAL_LIBVIPS="true"
 
+	yarn_hydrate
+
 	if npm list --depth=0 | grep -q "node-gyp" ; then
 einfo "DEBUG:  Removing node-gyp (1)"
 		enpm uninstall "node-gyp"
@@ -172,9 +174,18 @@ einfo "DEBUG:  Removing node-gyp (1)"
 #	eyarn remove "sharp"
 	eyarn add "node-addon-api@^1.6.3"
 	eyarn add "node-addon-api@^7.0.0"
-#	eyarn add "sharp@^0.33.4"
-#	eyarn add "sharp@^0.34.5"
-	eyarm add "@img/colour@^1.0.0"
+#	eyarn add "sharp@^0.33.4" -D
+#	eyarn add "sharp@^0.34.5" -D
+	eyarn add '@img/colour@^1.0.0'
+
+ewarn "Replacing vulnerable packages"
+	eyarn add "electron-builder@^26.8.1" -D						# Bump to avoid build time error with tar update
+	sed -i -e "s|tar: \"npm:^6.0.5\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
+	sed -i -e "s|tar: \"npm:^6.1.12\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
+	sed -i -e "s|tar: \"npm:^7.4.3\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
+	eyarn add 'tar@^7.5.8'								# CVE-2026-23950; DoS, DT, ID; High
+											# CVE-2026-24842; DT, ID; High
+											# CVE-2026-26960; DT, ID; High
 }
 
 yarn_update_lock_install_post() {
@@ -278,7 +289,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		if ver_test "${SHARP_PV%.*}" "-le" "0.32" ; then
 			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
 		fi
-		eyarn add "sharp@${SHARP_PV}"
+		eyarn add "sharp@${SHARP_PV}" -D
 		eyarn add "@types/icon-gen"
 
 		jq ".dependencies.sharp = \"^${SHARP_PV}\"" \
