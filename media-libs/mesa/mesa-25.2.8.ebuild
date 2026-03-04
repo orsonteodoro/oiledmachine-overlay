@@ -541,10 +541,10 @@ einfo "PATH=${PATH} (after)"
 	if use opencl || ( use vulkan && use video_cards_nvk ) ; then
 		rust_pkg_setup
 		if use llvm_slot_21 ; then
-			local rust_pv_raw=$(${RUSTC} --version | cut -f 2 -d " ")
-			local rust_pv=$(${RUSTC} --version | cut -f 2 -d " " | cut -f 1 -d "-")
+			local rust_pv_raw=$("${RUSTC}" --version | cut -f 2 -d " ")
+			local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
 			[[ "${rust_pv_raw}" =~ "nightly" ]] || die "Only Rust nightly supported"
-			if ver_test -lt "1.91.0" ; then
+			if ver_test "${rust_pv_raw}" -lt "1.91.0" ; then
 eerror "Only Rust >= 1.91.0 supported"
 				die
 			fi
