@@ -5705,7 +5705,7 @@ snapshots:
 
   vite@5.4.21(@types/node@22.13.4)(sass@1.62.0):
     dependencies:
-      esbuild: 0.25.9
+      esbuild: 0.21.5
       postcss: 8.5.2
       rollup: 4.59.0
     optionalDependencies:

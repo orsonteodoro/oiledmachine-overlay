@@ -36,7 +36,7 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
+	ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="40.4.1" # Cr 144.0.7559.173, node 24.13.0
@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_47
+ebuild_revision_49
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -290,7 +290,7 @@ ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-l
 ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
 ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
@@ -706,6 +706,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.0.0, 20260304, Electron 40.7.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.0.0, 20260226, Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.90.0, 20260225, Electron 40.6.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.73.0, 20251003, Electron 38.2.1)
