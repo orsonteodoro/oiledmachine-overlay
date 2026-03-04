@@ -21,7 +21,7 @@ NPM_AUDIT_FATAL=0
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1 works
+	ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0 works
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="38.1.0" # Cr 140.0.7339.80, node 22.19.0
@@ -77,7 +77,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-40.6.0-chromium.html
+		electron-40.7.0-chromium.html
 	)
 	GPL-3+
 "
@@ -165,7 +165,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_14"
+IUSE+=" ebuild_revision_15"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_SLOT}[npm,webassembly(+)]
@@ -173,7 +173,7 @@ BDEPEND+="
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron@33.4.11 from lockfile."								# CVE-2025-55305; DT; Moderate
+#einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron@33.4.11 from lockfile."								# CVE-2025-55305; DT; Moderate
 einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."										# CVE-2022-46175; DoS, DT, ID; High
 		fix_lockfile() {
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
@@ -281,8 +281,9 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20260225 with Electron 40.6.1)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20260222 with Electron 40.6.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.7 (20260304 with Electron 40.7.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.7 (20260225 with Electron 40.6.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.7 (20260222 with Electron 40.6.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20251002 with Electron 38.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230905 with Electron 38.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.6 (20230807 with Electron 37.2.6)
