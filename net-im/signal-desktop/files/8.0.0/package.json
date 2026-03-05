@@ -384,7 +384,7 @@
     "stylelint-config-css-modules": "4.4.0",
     "stylelint-config-recommended-scss": "14.1.0",
     "stylelint-use-logical-spec": "5.0.1",
-    "svgo": "3.3.2",
+    "svgo": "3.3.3",
     "synckit": "0.11.11",
     "tailwindcss": "4.1.7",
     "terser-webpack-plugin": "5.3.10",

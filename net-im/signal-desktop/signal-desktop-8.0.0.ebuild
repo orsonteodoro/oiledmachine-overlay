@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_54
+ebuild_revision_56
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -575,6 +575,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"immutable@5.1.5"
 			"serialize-javascript@7.0.3"
 			"@tootallnate/once@3.0.1"
+			"svgo@3.3.3"				# CVE-2026-29074; DoS; High
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
