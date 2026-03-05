@@ -420,8 +420,8 @@ importers:
         specifier: 8.6.17
         version: 8.6.17(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)
       tar:
-        specifier: 7.5.9
-        version: 7.5.9
+        specifier: 7.5.10
+        version: 7.5.10
       tar-fs:
         specifier: 2.1.4
         version: 2.1.4
@@ -3904,10 +3904,6 @@ packages:
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
-
-  '@tootallnate/once@2.0.0':
-    resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
-    engines: {node: '>= 10'}
 
   '@tootallnate/once@3.0.1':
     resolution: {integrity: sha512-VyMVKRrpHTT8PnotUeV8L/mDaMwD5DaAKCFLP73zAqAtvF0FCqky+Ki7BYbFCYQmqFyTe9316Ed5zS70QUR9eg==}
@@ -9982,8 +9978,8 @@ packages:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
 
-  tar@7.5.9:
-    resolution: {integrity: sha512-BTLcK0xsDh2+PUe9F6c2TlRp4zOOBMTkoQHQIWSIzI0R7KG46uEwq4OPk2W7bZcprBMsuaeFsqwYr7pjh6CuHg==}
+  tar@7.5.10:
+    resolution: {integrity: sha512-8mOPs1//5q/rlkNSPcCegA6hiHJYDmSLEI8aMH/CdSQJNWztHC9WHNam5zdQlfpTwB9Xp7IBEsHfV5LKMJGVAw==}
     engines: {node: '>=18'}
 
   telejson@7.2.0:
@@ -11226,7 +11222,7 @@ snapshots:
       nopt: 6.0.0
       proc-log: 2.0.1
       semver: 7.6.3
-      tar: 7.5.9
+      tar: 7.5.10
       which: 2.0.2
     transitivePeerDependencies:
       - bluebird
@@ -11273,7 +11269,7 @@ snapshots:
       ora: 5.4.1
       read-binary-file-arch: 1.0.6
       semver: 7.6.3
-      tar: 7.5.9
+      tar: 7.5.10
       yargs: 17.7.2
     transitivePeerDependencies:
       - bluebird
@@ -14068,7 +14064,7 @@ snapshots:
   '@signalapp/ringrtc@2.64.1':
     dependencies:
       https-proxy-agent: 7.0.6
-      tar: 7.5.9
+      tar: 7.5.10
     transitivePeerDependencies:
       - supports-color
 
@@ -14544,7 +14540,7 @@ snapshots:
   '@tailwindcss/oxide@4.1.7':
     dependencies:
       detect-libc: 2.0.4
-      tar: 7.5.9
+      tar: 7.5.10
     optionalDependencies:
       '@tailwindcss/oxide-android-arm64': 4.1.7
       '@tailwindcss/oxide-darwin-arm64': 4.1.7
@@ -14599,8 +14595,6 @@ snapshots:
   '@testing-library/user-event@14.5.2(@testing-library/dom@10.4.0)':
     dependencies:
       '@testing-library/dom': 10.4.0
-
-  '@tootallnate/once@2.0.0': {}
 
   '@tootallnate/once@3.0.1': {}
 
@@ -15445,7 +15439,7 @@ snapshots:
       plist: 3.1.0
       resedit: 1.7.2
       semver: 7.6.3
-      tar: 7.5.9
+      tar: 7.5.10
       temp-file: 3.4.0
       tiny-async-pool: 1.3.0
     transitivePeerDependencies:
@@ -15875,7 +15869,7 @@ snapshots:
       promise-inflight: 1.0.1
       rimraf: 3.0.2
       ssri: 9.0.1
-      tar: 7.5.9
+      tar: 7.5.10
       unique-filename: 2.0.1
     transitivePeerDependencies:
       - bluebird
@@ -15892,7 +15886,7 @@ snapshots:
       minipass-pipeline: 1.2.4
       p-map: 7.0.3
       ssri: 12.0.0
-      tar: 7.5.9
+      tar: 7.5.10
       unique-filename: 4.0.0
 
   cacheable-lookup@5.0.4: {}
@@ -19849,7 +19843,7 @@ snapshots:
       nopt: 8.1.0
       proc-log: 5.0.0
       semver: 7.6.3
-      tar: 7.5.9
+      tar: 7.5.10
       which: 5.0.0
     transitivePeerDependencies:
       - supports-color
@@ -21894,7 +21888,7 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  tar@7.5.9:
+  tar@7.5.10:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
       chownr: 3.0.0

@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_51
+ebuild_revision_52
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -215,6 +215,7 @@ src_unpack() {
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 		# RCE = Remote Code Execution
 
+ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/pnpm-lock.yaml and ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove diff@4.0.4 from ${S}/pnpm-lock.yaml"
@@ -258,6 +259,7 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 
+ewarn "QA:  Manually remove immutable@4.3.7 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -422,11 +424,12 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 
 			sed -i -e "s|on-headers: 1.0.2|on-headers: 1.1.0|g" "pnpm-lock.yaml" || die												# CVE-2025-7339; DT, ID; Low
 
-			sed -i -e "s|tar: 6.2.1|tar: 7.5.9|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
-			sed -i -e "s|tar: 7.5.2|tar: 7.5.9|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|tar: 6.2.1|tar: 7.5.10|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|tar: 7.5.2|tar: 7.5.10|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
 																								# CVE-2026-23745; VS(DT, ID), SS(DT, ID), High
 																								# CVE-2026-23950; DoS, DT, ID; High
 																								# CVE-2026-26960; DT, ID; High
+																								# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID); High
 
 			sed -i -e "s|node-forge: 1.3.1|node-forge: 1.3.2|g" "pnpm-lock.yaml" || die												# CVE-2025-66031; VS(DoS), High
 																								# CVE-2025-12816; VS(DT), High
@@ -536,7 +539,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"form-data@4.0.4"
 			"node-forge@1.3.2"
 			"lodash@4.17.23"
-			"tar@7.5.9"
+			"tar@7.5.10"
 			"qs@6.14.2"
 			"minimatch@10.2.1"
 #			"fabric@7.2.0"

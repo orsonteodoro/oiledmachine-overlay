@@ -1707,9 +1707,6 @@ packages:
   immer@9.0.21:
     resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
 
-  immutable@4.3.7:
-    resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
-
   immutable@5.1.5:
     resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
 
@@ -4567,8 +4564,6 @@ snapshots:
 
   immer@9.0.21: {}
 
-  immutable@4.3.7: {}
-
   immutable@5.1.5: {}
 
   import-fresh@3.3.1:
@@ -5716,7 +5711,7 @@ snapshots:
 
   vite@5.4.21(@types/node@22.13.4)(sass@1.62.0):
     dependencies:
-      esbuild: 0.25.9
+      esbuild: 0.21.5
       postcss: 8.5.2
       rollup: 4.59.0
     optionalDependencies:
