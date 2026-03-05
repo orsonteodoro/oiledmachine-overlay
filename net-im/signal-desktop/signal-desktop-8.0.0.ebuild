@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_53
+ebuild_revision_54
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -280,6 +280,7 @@ ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
 
+ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
