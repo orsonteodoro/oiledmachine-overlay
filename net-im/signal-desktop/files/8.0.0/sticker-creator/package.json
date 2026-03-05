@@ -58,6 +58,7 @@
     "reselect": "4.1.8",
     "sortablejs": "1.15.0",
     "tmp": "0.2.4",
+    "underscore": "1.13.8",
     "zod": "3.22.3"
   },
   "devDependencies": {
@@ -78,6 +79,7 @@
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-react": "7.32.2",
     "happy-dom": "20.0.2",
+    "immutable": "5.1.5",
     "prettier": "2.8.7",
     "rollup": "3.30.0",
     "rollup-plugin-visualizer": "5.9.0",

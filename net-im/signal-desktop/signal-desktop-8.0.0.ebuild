@@ -106,7 +106,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_49
+ebuild_revision_51
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -213,6 +213,7 @@ src_unpack() {
 		# SS = Subsequent System (Indirect attack)
 		# VS = Vulnerable System (Direct attack)
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
+		# RCE = Remote Code Execution
 
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${S}/pnpm-lock.yaml"
@@ -348,6 +349,8 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				sed -i -e "s|'@remix-run/router': 1.5.0|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|'@remix-run/router': 1.23.1|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; ZC, VS(DoS), Moderate
+				sed -i -e "s|immutable: 4.3.7|immutable: 5.1.5|g" "pnpm-lock.yaml" || die											# CVE-2026-29063; ZC, VS(ID); High
+				sed -i -e "s|underscore: 1.13.7|underscore: 1.13.8|g" "pnpm-lock.yaml" || die											# CVE-2026-27601; ZC, DoS; High
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -371,6 +374,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 																								# CVE-2025-15284; DoS; High
 				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
 				sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die													# CVE-2025-65945; DT; High
+				sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die									# CVE-2026-3449; DoS; Low
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -470,6 +474,11 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			sed -i -e "s|basic-ftp: 5.0.5|basic-ftp: 5.2.0|g" "pnpm-lock.yaml" || die												# CVE-2026-27699; ZC, DoS, DT
 			sed -i -e "s|storybook: 8.6.15(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
 																								# CVE-2026-27148; DoS, DT, ID; High
+			sed -i -e "s|immutable: 5.0.3|immutable: 5.1.5|g" "pnpm-lock.yaml" || die												# CVE-2026-29063; ZC, VS(ID); High
+			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die										# GHSA-5c6j-r48x-rmvq; ZC, RCE, DoS, DT, ID; High
+
+			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die										# CVE-2026-3449; DoS; Low
+			sed -i -e "s|underscore: 1.13.7|underscore: 1.13.8|g" "pnpm-lock.yaml" || die												# CVE-2026-27601; ZC, DoS; High
 		}
 		patch_edits_pnpm
 
@@ -487,6 +496,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"lodash@4.17.23"
 				"@remix-run/router@1.23.2"
 				"markdown-it@14.1.1"
+				"underscore@1.13.8"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
@@ -496,6 +506,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"happy-dom@20.0.2"
 				"rollup@3.30.0"
 				"vite@5.4.21"
+				"immutable@5.1.5"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -511,6 +522,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"@octokit/rest@20.1.2"
 				"qs@6.14.2"
 				"jws@3.2.3"
+				"@tootallnate/once@3.0.1"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -555,6 +567,9 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
 			"tmp@0.2.4"
 			"on-headers@1.1.0"
+			"immutable@5.1.5"
+			"serialize-javascript@7.0.3"
+			"@tootallnate/once@3.0.1"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
@@ -563,6 +578,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 		deps=(
 	# Required for custom version bump
 			"electron@${ELECTRON_APP_ELECTRON_PV}"
+			"underscore@1.13.8"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 

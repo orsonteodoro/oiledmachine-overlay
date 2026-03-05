@@ -116,6 +116,9 @@ importers:
       tmp:
         specifier: 0.2.4
         version: 0.2.4
+      underscore:
+        specifier: 1.13.8
+        version: 1.13.8
       zod:
         specifier: 3.22.3
         version: 3.22.3
@@ -171,6 +174,9 @@ importers:
       happy-dom:
         specifier: 20.0.2
         version: 20.0.2
+      immutable:
+        specifier: 5.1.5
+        version: 5.1.5
       prettier:
         specifier: 2.8.7
         version: 2.8.7
@@ -1704,6 +1710,9 @@ packages:
   immutable@4.3.7:
     resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
 
+  immutable@5.1.5:
+    resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
+
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
@@ -2713,8 +2722,8 @@ packages:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
 
-  underscore@1.13.7:
-    resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
+  underscore@1.13.8:
+    resolution: {integrity: sha512-DXtD3ZtEQzc7M8m4cXotyHR+FAS18C64asBYY5vqZexfYryNNnDc02W4hKg3rdQuqOYas1jkseX0+nZXjTXnvQ==}
 
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
@@ -4560,6 +4569,8 @@ snapshots:
 
   immutable@4.3.7: {}
 
+  immutable@5.1.5: {}
+
   import-fresh@3.3.1:
     dependencies:
       parent-module: 1.0.1
@@ -4744,7 +4755,7 @@ snapshots:
       mkdirp: 1.0.4
       requizzle: 0.2.4
       strip-json-comments: 3.1.1
-      underscore: 1.13.7
+      underscore: 1.13.8
 
   jsesc@3.1.0: {}
 
@@ -5370,7 +5381,7 @@ snapshots:
   sass@1.62.0:
     dependencies:
       chokidar: 3.6.0
-      immutable: 4.3.7
+      immutable: 5.1.5
       source-map-js: 1.2.1
 
   scheduler@0.23.2:
@@ -5660,7 +5671,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  underscore@1.13.7: {}
+  underscore@1.13.8: {}
 
   undici-types@6.20.0: {}
 
@@ -5705,7 +5716,7 @@ snapshots:
 
   vite@5.4.21(@types/node@22.13.4)(sass@1.62.0):
     dependencies:
-      esbuild: 0.21.5
+      esbuild: 0.25.9
       postcss: 8.5.2
       rollup: 4.59.0
     optionalDependencies:
