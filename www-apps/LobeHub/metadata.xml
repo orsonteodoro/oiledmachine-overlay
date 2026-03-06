@@ -45,7 +45,7 @@
 
   Create extension:
 
-  psql -p 5432 -U lobehub_user
+  psql -p 5432 -U postgres
   CREATE EXTENSION IF NOT EXISTS vector;
 
 
