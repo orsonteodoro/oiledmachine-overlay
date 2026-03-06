@@ -141,6 +141,7 @@ file-management +indexdb +openrc postgres systemd
 ebuild_revision_65
 "
 REQUIRED_USE="
+	postgres
 	file-management? (
 		postgres
 	)
@@ -169,7 +170,7 @@ RDEPEND+="
 		sys-process/procps[kill]
 	)
 	postgres? (
-		>=dev-db/postgresql-16.4
+		>=dev-db/postgresql-17
 	)
 "
 DEPEND+="
@@ -978,6 +979,14 @@ einfo "https://lobehub.com/docs/self-hosting/advanced/auth"
 einfo "https://lobehub.com/docs/self-hosting/environment-variables/model-provider"
 einfo "https://lobehub.com/docs/self-hosting/advanced/s3"
 einfo
+ewarn
+ewarn "The auth system has switched to Better Auth requiring variable name changes."
+ewarn "See the link below details:"
+ewarn
+ewarn "https://lobehub.com/docs/self-hosting/migration/v2/auth/nextauth-to-betterauth"
+ewarn
+ewarn ""
+ewarn
 }
 
 pkg_postrm() {
