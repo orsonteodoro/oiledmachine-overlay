@@ -716,8 +716,13 @@ eerror
 
 	if [[ -z "${DATABASE_URL}" ]] ; then
 eerror
-eerror "The DATABASE_URL needs to be set for postgres support."
+eerror "The DATABASE_URL needs to be set for PostgreSQL support."
 eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-environment-variables-in-vercel"
+eerror
+eerror "It must be like this example but stronger password and match the port for dev-db/postgres:17:"
+eerror "postgres://lobehub_user:lobehub_password@localhost:5432/lobehub"
+eerror
+eerror "See also \`epkginfo -x ${PN}\` to setup PostgreSQL."
 eerror
 	fi
 }
@@ -801,13 +806,11 @@ einfo "Building next.config.js"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
 
 
-	edo npm run build-sitemap
-	edo npm run build-sitemap
+	edo npm run "build-sitemap"
+	edo npm run "build-sitemap"
 	if use postgres ; then
-		edo npm run build-migrate-db
+		edo npm run "build-migrate-db"
 	fi
-
-	unset NEXT_AUTH_SECRET
 
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
@@ -824,8 +827,10 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 	# Remove the plaintext keys from the package manager.
 	# API keys are sensitive data.
-	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)		# Encryption key for API keys
-	NEXT_PUBLIC_POSTHOG_KEY=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	AUTH_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# Session key
+	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)		# DB key
+	NEXT_PUBLIC_POSTHOG_KEY=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)	# Analytics/telemetry key
+	unset AUTH_SECRET
 	unset KEY_VAULTS_SECRET
 	unset NEXT_PUBLIC_POSTHOG_KEY
 }
@@ -1003,16 +1008,21 @@ ewarn
 ewarn "The ${PN} package uses dev-db/postgresql:${POSTGRES_SLOT}."
 ewarn "Make sure the PostgreSQL server is loaded and configured."
 ewarn
-einfo
-einfo "For PostgreSQL config documentation, see"
-einfo "epkginfo -x LobeHub"
-einfo
 }
 
 pkg_postrm() {
 	xdg_pkg_postrm
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		rm -rf "/opt/${MY_PN2}"
+	fi
+}
+
+pkg_config() {
+ehco "Migrate DB?"
+	read -r answer
+	cd "/opt//${MY_PN2}"
+	if [[ "${answer,,}" =~ "y" ]] ; then
+		ewarn "npm run db:migrate"
 	fi
 }
 
