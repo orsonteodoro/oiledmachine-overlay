@@ -4,6 +4,25 @@
 
 EAPI=8
 
+# Downgraded till build error fixed:
+#> Build error occurred
+#Error: Turbopack build failed with 1 errors:
+#
+#./src/app/spa/[variants]/[[...path]]/route.ts:98:61
+#Module not found: Can't resolve './spaHtmlTemplates'
+#   96 |   }
+#   97 |
+#>  98 |   const { desktopHtmlTemplate, mobileHtmlTemplate } = await import('./spaHtmlTemplates');
+#      |                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   99 |
+#  100 |   return isMobile ? mobileHtmlTemplate : desktopHtmlTemplate;
+#  101 | }
+#
+#https://nextjs.org/docs/messages/module-not-found
+#
+#    at <unknown> (./src/app/spa/[variants]/[[...path]]/route.ts:98:61)
+#    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+
 # Version bump history for configuration update reviews:
 # 1.74.0 -> 1.96.13
 # 1.96.13 -> 1.96.14
@@ -13,6 +32,7 @@ EAPI=8
 # 1.137.0 -> 1.142.8
 # 1.142.8 -> 1.146.0
 # 1.146.0 -> 2.1.34
+# 2.1.34 -> 2.1.36
 
 # Ebuild using React 19
 
@@ -64,17 +84,17 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 RUST_PV="${RUST_MIN_VER}"
 
 NEXTJS_PV="16.1.5"
-SHARP_PV="0.34.3" # used 0.30.7 ; 0.33.5 segfaults during build time and runtime
-VIPS_PV="8.17.2" # vips 8.15.3 corresponds to sharp 0.30.7
+SHARP_PV="0.34.5"
+VIPS_PV="8.18.0"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
 NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.2-debug.patch"
-	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
+	"${FILESDIR}/sharp-0.34.5-debug.patch"
+	"${FILESDIR}/sharp-0.34.5-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.5-static-libs.patch"
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
@@ -447,20 +467,24 @@ ewarn "QA:  Manually change ajv-formats@2.1.1(ajv@8.12.0) to ajv-formats@2.1.1(a
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove minimatch@3.1.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@5.1.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@9.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change fast-xml-parser: 4.x or earlier to fast-xml-parser: 4.5.4 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change fast-xml-parser: 5.x to fast-xml-parser: 5.4.2 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json"
-ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json"
 ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
-ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -483,6 +507,7 @@ ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/package-lock.json or 
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove js-yaml@4.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.5 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change '@babel/runtime': 7.28.2 references to '@babel/runtime': 7.28.4 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -501,7 +526,8 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change fast-xml-parser: 4.5.4 to fast-xml-parser: 5.4.1 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron specifier to ^35.0.0 and version to 35.7.5 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -527,14 +553,20 @@ ewarn "QA:  Manually change fast-xml-parser: 4.5.4 to fast-xml-parser: 5.4.1 dep
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.3.8|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.3.8|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.3.8|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.4.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.4.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.4.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 4.5.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 4.5.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 4.5.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
 
@@ -547,6 +579,10 @@ ewarn "QA:  Manually change fast-xml-parser: 4.5.4 to fast-xml-parser: 5.4.1 dep
 
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tar: 7.5.9|tar: 7.5.10|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.3|hono: 4.12.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -565,15 +601,16 @@ ewarn "QA:  Manually change fast-xml-parser: 4.5.4 to fast-xml-parser: 5.4.1 dep
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
 
-			"fast-xml-parser@5.3.8"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.4.2"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
-													# CVE-2026-27942; ZC, VS(DoS); Low
+													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID); Moderate
 			"ai@5.0.52"									# CVE-2025-48985; DT; Low
 			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
 													# CVE-2026-26019; ID; Moderate
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
 			"electron@35.7.5"								# CVE-2025-55305; DoS, DT, ID; Moderate
+			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -583,9 +620,15 @@ ewarn "QA:  Manually change fast-xml-parser: 4.5.4 to fast-xml-parser: 5.4.1 dep
 			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
-			"minimatch@10.2.2"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
 			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
+			"tar@7.5.10"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
+			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
+			"hono@4.12.4"									# CVE-2026-29045; ZC, ID; High
+													# CVE-2026-29085; DT, ID; Moderate
+													# CVE-2026-29086; DT, ID; Moderate
+			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
 		)
 		epnpm add -D ${pkgs[@]}
 
@@ -800,22 +843,6 @@ _install_webapp() {
 		doins -r "${S}/src/database/migrations"
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
-	fi
-
-	if [[ -e "${S}/out" ]] ; then
-		insinto "${_PREFIX}/apps/desktop/dist/next"
-
-# START BLOCK 1
-		if [[ -e "${S}/out/." ]] ; then
-			doins -r "${S}/out/."
-		else
-ewarn "QA:  Remove BLOCK 1"
-		fi
-# END BLOCK 1
-
-		doins -r "${S}/out/"*
-	else
-		keepdir "${_PREFIX}/apps/desktop/dist/next"
 	fi
 
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
