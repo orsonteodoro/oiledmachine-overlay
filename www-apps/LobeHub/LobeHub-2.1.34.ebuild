@@ -143,10 +143,10 @@ ebuild_revision_65
 "
 REQUIRED_USE="
 	postgres
-	file-management? (
+	embeddings? (
 		postgres
 	)
-	embeddings? (
+	file-management? (
 		postgres
 	)
 	rag? (
@@ -172,19 +172,19 @@ RDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
 	x11-misc/xdg-utils
+	embeddings? (
+		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
+	)
 	openrc? (
 		sys-apps/openrc[bash]
 		sys-process/procps[kill]
 	)
-	embeddings? (
-		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
-	)
-	rag? (
-		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
-	)
 	postgres? (
 		dev-db/postgresql:${POSTGRES_SLOT}[server]
 		dev-db/postgresql:=
+	)
+	rag? (
+		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
 	)
 "
 DEPEND+="
