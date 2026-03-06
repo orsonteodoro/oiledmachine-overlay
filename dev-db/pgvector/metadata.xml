@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild from ubuilds overlay.
+
+  -->
+  <upstream>
+    <remote-id type="github">pgvector/pgvector</remote-id>
+  </upstream>
+</pkgmetadata>
