@@ -76,6 +76,7 @@ NPM_SLOT="3"
 PNPM_AUDIT_FIX=0
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
+POSTGRES_SLOT="17"
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
 # Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
@@ -137,12 +138,18 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-file-management +indexdb +openrc postgres systemd
+embeddings file-management +indexdb +openrc postgres rag systemd
 ebuild_revision_65
 "
 REQUIRED_USE="
 	postgres
 	file-management? (
+		postgres
+	)
+	embeddings? (
+		postgres
+	)
+	rag? (
 		postgres
 	)
 	^^ (
@@ -169,8 +176,14 @@ RDEPEND+="
 		sys-apps/openrc[bash]
 		sys-process/procps[kill]
 	)
+	embeddings? (
+		dev-db/pgvector
+	)
+	rag? (
+		dev-db/pgvector
+	)
 	postgres? (
-		dev-db/postgresql:17[server]
+		dev-db/postgresql:${POSTGRES_SLOT}[server]
 		dev-db/postgresql:=
 	)
 "
@@ -986,7 +999,9 @@ ewarn "See the link below details:"
 ewarn
 ewarn "https://lobehub.com/docs/self-hosting/migration/v2/auth/nextauth-to-betterauth"
 ewarn
-ewarn ""
+ewarn
+ewarn "The ${PN} package uses dev-db/postgresql:${POSTGRES_SLOT}."
+ewarn "Make sure the PostgreSQL server is loaded and configured."
 ewarn
 }
 
