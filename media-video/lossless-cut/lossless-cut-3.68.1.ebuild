@@ -15,7 +15,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # TODO:  Fix newer sharp with ICON_TYPE="png"
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
-export NODE_SHARP_DEBUG=1
+#export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
 NODE_SLOT="22"
 YARN_AUDIT_FIX=0
@@ -98,7 +98,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
