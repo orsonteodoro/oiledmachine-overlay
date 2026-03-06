@@ -170,7 +170,7 @@ RDEPEND+="
 		sys-process/procps[kill]
 	)
 	postgres? (
-		dev-db/postgresql:17
+		dev-db/postgresql:17[server]
 		dev-db/postgresql:=
 	)
 "
