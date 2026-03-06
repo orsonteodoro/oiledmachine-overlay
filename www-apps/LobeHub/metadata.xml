@@ -6,6 +6,58 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <![CDATA[
+  <!--
+
+  Install PostgreSQL:
+
+  emerge -1vuDN dev-db/postgresql:17
+
+
+  Configure PostgreSQL:
+
+  emerge --config dev-db/postgresql:17
+
+
+  Start PostgreSQL server:
+
+  cd /etc/init.d
+  ./postgresql-17 start
+
+
+  Create a new user for LobeHub:
+
+  psql -p 5432 -U postgres
+  CREATE ROLE lobehub_user WITH LOGIN PASSWORD 'your_very_strong_password_here';
+  CREATE DATABASE lobehub;
+  ALTER DATABASE lobehub OWNER TO lobehub_user;
+
+
+  Allow the user to create extension:
+
+  ALTER ROLE lobehub_user CREATEDB;
+
+
+  Install pgvector for RAG and embeddings support:
+
+  emerge -1vuDN dev-db/pgvector
+
+
+  Create extension:
+
+  psql -p 5432 -U lobehub_user
+  CREATE EXTENSION IF NOT EXISTS vector;
+
+
+  Update /etc/conf.d/lobehub with the port and username and password changes.
+
+
+  Security notes:
+
+  Use least privileges for database so run as lobehub_user.
+
+  -->
+  ]]>
   <upstream>
     <bugs-to>https://github.com/lobehub/lobehub/issues</bugs-to>
     <changelog>https://github.com/lobehub/lobehub/blob/main/CHANGELOG.md</changelog>
