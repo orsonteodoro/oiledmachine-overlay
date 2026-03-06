@@ -177,10 +177,10 @@ RDEPEND+="
 		sys-process/procps[kill]
 	)
 	embeddings? (
-		dev-db/pgvector
+		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
 	)
 	rag? (
-		dev-db/pgvector
+		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
 	)
 	postgres? (
 		dev-db/postgresql:${POSTGRES_SLOT}[server]
