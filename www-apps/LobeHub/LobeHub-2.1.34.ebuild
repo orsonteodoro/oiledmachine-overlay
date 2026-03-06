@@ -1003,6 +1003,10 @@ ewarn
 ewarn "The ${PN} package uses dev-db/postgresql:${POSTGRES_SLOT}."
 ewarn "Make sure the PostgreSQL server is loaded and configured."
 ewarn
+einfo
+einfo "For PostgreSQL config documentation, see"
+einfo "epkginfo -x LobeHub"
+einfo
 }
 
 pkg_postrm() {
