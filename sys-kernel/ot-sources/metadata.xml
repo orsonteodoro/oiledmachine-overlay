@@ -3698,13 +3698,21 @@ TBM=0
 
     Examples:
 
-      OT_KERNEL_PKGFLAGS_ACCEPT[S05309e2]=1
-      OT_KERNEL_PKGFLAGS_ACCEPT[S351365c]=1
+      OT_KERNEL_PKGFLAGS_ACCEPT[S17f8f06]=1 # bpftool
+      OT_KERNEL_PKGFLAGS_ACCEPT[S00f70b8]=1 # qemu
 
     Notes:
 
       - You must prefix the id with an S.
       - You do not need to declare the associative array.
+      - It is a good idea to leave a comment of which packages needs the flag so
+        that you can ACCEPT or REJECT based on needs at that time.
+      - For the hardened profile, it is a good idea to use REJECT as much as
+        possible to reduce the attack surface.
+      - You must manually disable the flag via menuconfig or with a text editor
+        since the eclass assist cannot determine if the contested flag has a
+        dependency and is necessary for your use case.  Eclass assist does well
+        in enablement but not disablement.
 
     See also:
 
@@ -3739,7 +3747,8 @@ TBM=0
         possible to reduce the attack surface.
       - You must manually disable the flag via menuconfig or with a text editor
         since the eclass assist cannot determine if the contested flag has a
-        dependency.  Eclass assist does well in enablement but not disablement.
+        dependency and is necessary for your use case.  Eclass assist does well
+        in enablement but not disablement.
 
     See also:
 
