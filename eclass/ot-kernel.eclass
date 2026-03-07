@@ -39,14 +39,13 @@
 # genpatches:
 #	https://dev.gentoo.org/~mpagano/genpatches/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
-#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.17
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.18
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.19
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
@@ -82,14 +81,13 @@
 #       https://github.com/ClangBuiltLinux/linux/issues/1405
 # PREEMPT_RT (-rt):
 #	https://wiki.linuxfoundation.org/realtime/start
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.19/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -99,14 +97,13 @@
 #	https://github.com/dolohow/uksm
 # zen-sauce, zen-tune:
 #	https://liquorix.net/
-#	https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.17...zen-kernel:6.17/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.18...zen-kernel:6.18/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.19...zen-kernel:6.19/zen-sauce
 
 # CI
 # branch tip or live, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
