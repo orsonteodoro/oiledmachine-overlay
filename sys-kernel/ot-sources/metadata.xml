@@ -3709,10 +3709,10 @@ TBM=0
         that you can ACCEPT or REJECT based on needs at that time.
       - For the hardened profile, it is a good idea to use REJECT as much as
         possible to reduce the attack surface.
-      - You must manually disable the flag via menuconfig or with a text editor
-        since the eclass assist cannot determine if the contested flag has a
-        dependency and is necessary for your use case.  Eclass assist does well
-        in enablement but not disablement.
+      - You must manually disable the flag via menuconfig, with a text editor,
+        or with OT_KERNEL_KCONFIG since the eclass assist cannot determine if
+        the contested flag has a dependency and is necessary for your use case.
+        Eclass assist does well in enablement but not disablement.
 
     See also:
 
@@ -3745,10 +3745,10 @@ TBM=0
         that you can ACCEPT or REJECT based on needs at that time.
       - For the hardened profile, it is a good idea to use REJECT as much as
         possible to reduce the attack surface.
-      - You must manually disable the flag via menuconfig or with a text editor
-        since the eclass assist cannot determine if the contested flag has a
-        dependency and is necessary for your use case.  Eclass assist does well
-        in enablement but not disablement.
+      - You must manually disable the flag via menuconfig, with a text editor,
+        or with OT_KERNEL_KCONFIG since the eclass assist cannot determine if
+        the contested flag has a dependency and is necessary for your use case.
+        Eclass assist does well in enablement but not disablement.
 
     See also:
 
