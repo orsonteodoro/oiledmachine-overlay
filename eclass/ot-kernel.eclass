@@ -6173,9 +6173,9 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 	# Mitigate against ROP attack.
 		if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 			: # Hardware based
-		elif has cfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"cfi"(" "|"$") ]] ; then
+		elif has cfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"cfi"(" "|$) ]] ; then
 			: # Software based
-		elif has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"kcfi"(" "|"$") ]] ; then
+		elif has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"kcfi"(" "|$) ]] ; then
 			: # Software based
 		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
 			: # JOP mitigation, but implies use of pac
