@@ -2658,116 +2658,122 @@ apply_distro_patchset_for_system_toolchain() {
 			"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
 			"${WORKDIR}/copium/cr145-rustc_nightly_capability.patch"
 		)
-	fi
 
-	# Automate conditional application of chromium-patches
-	# The directory structure is expected to be something like:
-	# chromium-patches-145/
-	# ├── toolchain/
-	# │   ├── cr123-foo.patch
-	# │   └── cr135-bar.patch
-	# ├── llvm/
-	# │   ├── cr144-baz.patch
-	# │   └── lt-23/
-	# │       └── cr145-bleeding-edge-llvm-feature.patch
-	# Where `lt-23` means "apply this patch if the LLVM version is less than 23".
-	# Only categories in `slot_map` will be checked for version constraints.
-	shopt -s nullglob
-	local -A slot_map=(
-		[llvm]="${LLVM_SLOT}"
-		[rust]="${RUST_SLOT}"
-	)
-
-	local category
-	for category in "${WORKDIR}/chromium-patches-${PATCH_V}/"*"/" ; do
-		local category_name="${category%/}"
-		category_name="${category_name##*/}"
-
-	# Skip arch-specific categories
-		if [[ "${category_name}" == "ppc64le" ]]; then
-			use ppc64 || continue
-		fi
-
-	# We applied common patches above, no need to apply them again here
-		[[ "${category_name}" == "common" ]] && continue
-
-	# Unconditional patches for this category
-		PATCHES+=(
-			"${category}"*".patch"
+		# Automate conditional application of chromium-patches
+		# The directory structure is expected to be something like:
+		# chromium-patches-145/
+		# ├── toolchain/
+		# │   ├── cr123-foo.patch
+		# │   └── cr135-bar.patch
+		# ├── llvm/
+		# │   ├── cr144-baz.patch
+		# │   └── lt-23/
+		# │       └── cr145-bleeding-edge-llvm-feature.patch
+		# Where `lt-23` means "apply this patch if the LLVM version is less than 23".
+		# Only categories in `slot_map` will be checked for version constraints.
+		shopt -s nullglob
+		local -A slot_map=(
+			[llvm]="${LLVM_SLOT}"
+			[rust]="${RUST_SLOT}"
 		)
 
+		local category
+		for category in "${WORKDIR}/chromium-patches-${PATCH_VER}/"*"/" ; do
+			local category_name="${category%/}"
+			category_name="${category_name##*/}"
+
+	# Skip arch-specific categories
+			if [[ "${category_name}" == "ppc64le" ]]; then
+				use ppc64 || continue
+			fi
+
+	# We applied common patches above, no need to apply them again here
+			[[ "${category_name}" == "common" ]] && continue
+
+	# Unconditional patches for this category
+			PATCHES+=(
+				"${category}"*".patch"
+			)
+
 	# Version-constrained subdirectories (e.g., llvm/lt-23/)
-		local constraint_dir
-		for constraint_dir in "${category}"*"/" ; do
-			local dir_name="${constraint_dir%/}"
-			dir_name="${dir_name##*/}"
-			if [[ "${dir_name}" =~ ^"lt-"(.*)$ && -v slot_map[${category_name}] ]] ; then
-				ver_test "${slot_map[${category_name}]}" -lt "${BASH_REMATCH[1]}" && \
+			local constraint_dir
+			for constraint_dir in "${category}"*"/" ; do
+				local dir_name="${constraint_dir%/}"
+				dir_name="${dir_name##*/}"
+				if [[ "${dir_name}" =~ ^"lt-"(.*)$ && -v slot_map[${category_name}] ]] ; then
+					ver_test "${slot_map[${category_name}]}" -lt "${BASH_REMATCH[1]}" && \
+					PATCHES+=(
+						"${constraint_dir}"*".patch"
+					)
+				fi
+			done
+		done
+
+		shopt -u nullglob
+
+		# Strictly speaking this doesn't need to be gated (no bundled toolchain for ppc64); it keeps the logic together
+		if use ppc64 ; then
+			local patchset_dir="${WORKDIR}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}/patches"
+	# The patch causes build errors on 4K page systems (https://bugs.gentoo.org/show_bug.cgi?id=940304)
+			local page_size_patch="ppc64le/third_party/use-sysconf-page-size-on-ppc64.patch"
+			local isa_3_patch="ppc64le/core/baseline-isa-3-0.patch"
+	# Apply the OpenPOWER patches (check for page size and isa 3.0)
+			openpower_patches=(
+				$(grep -E "^ppc64le|^upstream" "${patchset_dir}/series" \
+					| grep -v "${page_size_patch}" \
+					| grep -v "${isa_3_patch}" \
+					|| die) \
+				)
+			local patch
+			for patch in "${openpower_patches[@]}"; do
 				PATCHES+=(
-					"${constraint_dir}"*".patch"
+					"${patchset_dir}/${patch}"
+				)
+			done
+			if [[ $(getconf PAGESIZE) == "65536" ]]; then
+				PATCHES+=(
+					"${patchset_dir}/${page_size_patch}"
 				)
 			fi
-		done
-	done
-
-	shopt -u nullglob
-
-	remove_compiler_builtins
-
-	# We can't use the bundled compiler builtins with the system toolchain
-	# `grep` is a development convenience to ensure we fail early when google changes something.
-	local builtins_match="if (is_clang && !is_nacl && !is_cronet_build) {"
-	grep -q \
-		-e "${builtins_match}" \
-		"build/config/compiler/BUILD.gn" \
-		|| die "Failed to disable bundled compiler builtins"
-	sed -i \
-		-e "/${builtins_match}/,+2d" \
-		"build/config/compiler/BUILD.gn" \
-		|| true
-
-	if use ppc64 ; then
-		local patchset_dir="${WORKDIR}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}/patches"
-	# The patch causes build errors on 4K page systems (https://bugs.gentoo.org/show_bug.cgi?id=940304)
-		local page_size_patch="ppc64le/third_party/use-sysconf-page-size-on-ppc64.patch"
-		local isa_3_patch="ppc64le/core/baseline-isa-3-0.patch"
-	# Apply the OpenPOWER patches (check for page size and isa 3.0)
-		openpower_patches=(
-			$(grep -E "^ppc64le|^upstream" "${patchset_dir}/series" \
-				| grep -v "${page_size_patch}" \
-				| grep -v "${isa_3_patch}" \
-				|| die) \
-			)
-		local patch
-		for patch in "${openpower_patches[@]}"; do
-			PATCHES+=(
-				"${patchset_dir}/${patch}"
-			)
-		done
-		if [[ $(getconf PAGESIZE) == "65536" ]]; then
-			PATCHES+=(
-				"${patchset_dir}/${page_size_patch}"
-			)
-		fi
 
 	# We use vsx3 as a proxy for 'want isa3.0' (POWER9)
-		if use cpu_flags_ppc_vsx3 ; then
-			PATCHES+=(
-				"${patchset_dir}/${isa_3_patch}"
-			)
+			if use cpu_flags_ppc_vsx3 ; then
+				PATCHES+=(
+					"${patchset_dir}/${isa_3_patch}"
+				)
+			fi
 		fi
+
+		remove_compiler_builtins
+
+	# We can't rely on the eselect'd Rust to actually include rustfmt, so
+	# we'll point to the selected slot specifically.
+		local suffix=""
+		if [[ "${RUST_TYPE}" == "binary" ]]; then
+			suffix="-bin-${RUST_SLOT}"
+		else
+			suffix="-${RUST_SLOT}"
+		fi
+		sed -i "s|/bin/rustfmt|/bin/rustfmt${suffix}|g" \
+			"build/rust/rust_bindgen_generator.gni" \
+			|| die "Failed to update rustfmt path"
 	fi
+
 }
 
 apply_distro_patchset() {
 einfo "Applying the distro patchset ..."
 
-	PATCHES+=(
-		"${WORKDIR}/chromium-patches-${PATCH_V}/common/"
+	if _use_system_toolchain ; then
+		PATCHES+=(
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
+		)
+	fi
+#	PATCHES+=(
 #		$(use system-zlib && echo "${FILESDIR}/${PN}-109-system-zlib.patch")
 #		$(use system-icu && echo "${FILESDIR}/${PN}-131-unbundle-icu-target.patch")
 #		$(use ungoogled-chromium || echo "${FILESDIR}/cr145-revert-to-rollup-wasm.patch") # Breaks ungoogled-chromium build
-	)
+#	)
 	# Prune
 #	use system-zlib || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
 #	use system-icu || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
