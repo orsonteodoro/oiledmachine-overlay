@@ -6173,7 +6173,9 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 	# Mitigate against ROP attack.
 		if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 			: # Hardware based
-		elif has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
+		elif has cfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"cfi"(" "|"$") ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] ; then
+			: # Software based
+		elif has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"kcfi"(" "|"$") ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] ; then
 			: # Software based
 		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
 			: # JOP mitigation, but implies use of pac
@@ -6181,8 +6183,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac ; then
 			: # ROP mitigation
 		else
-			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
-eerror "Enable either cet, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} || has kcfi ${IUSE_EFFECTIVE} ) ; then
+eerror "Enable either one of the CFI providers: cet, cfi, kcfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
+eerror "CFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"cfi\" USE=\"cfi\""
+eerror "CET:  OT_KERNEL_USE=\"cet\" USE=\"cfi\""
 				die
 			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_pac ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
 eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_pac, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
