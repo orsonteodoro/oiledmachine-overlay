@@ -4,7 +4,11 @@
 # This is based on Debian's chromium-browser package, and is intended
 # to be consistent with Debian.
 for f in /etc/chromium/*; do
-    [[ -f ${f} ]] && source "${f}"
+    # Skip backup files and hidden files #546394
+    case "${f}" in
+        *~|*.bak|*.old|*.swp|*.tmp|*/.*) continue ;;
+    esac
+    [[ -f "${f}" ]] && source "${f}"
 done
 
 # Prefer user defined CHROMIUM_USER_FLAGS (from env) over system
@@ -29,6 +33,7 @@ esac
 if [[ ${EUID} == 0 && -O ${XDG_CONFIG_HOME:-${HOME}} ]]; then
 	# Running as root with HOME owned by root.
 	# Pass --user-data-dir to work around upstream failsafe.
+	echo "Refusing to run as root is a safety feature. Running as root disables the sandbox." >&2
 	CHROMIUM_FLAGS="--user-data-dir=${XDG_CONFIG_HOME:-${HOME}/.config}/chromium
 		${CHROMIUM_FLAGS}"
 fi

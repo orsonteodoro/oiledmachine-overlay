@@ -58,7 +58,8 @@ EAPI=8
 # 145.0.7632.45 -> 145.0.7632.67
 # 145.0.7632.67 -> 145.0.7632.75
 # 145.0.7632.75 -> 145.0.7632.109
-# 145.0.7632.109 ->145.0.7632.116
+# 145.0.7632.109 -> 145.0.7632.116
+# 145.0.7632.116 -> 145.0.7632.159
 
 #
 # For depends see:
@@ -186,7 +187,7 @@ LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
 NODE_SLOT="24"
 OSHIT_OPTIMIZED=0 # Global variable
-PATCH_REVISION="-1"
+PATCH_REVISION="-3"
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
@@ -202,7 +203,8 @@ RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or L
 SHADOW_CALL_STACK=0 # Global variable
 
 GCC_PV="10.2.1" # Minimum
-CROMITE_PV="145.0.7632.76"
+CROMITE_PV="145.0.7632.120"
+GN_PV="0.2315"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 ESBUILD_PV="0.25.1"
@@ -210,7 +212,7 @@ LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="145.0.7632.116-1"
+UNGOOGLED_CHROMIUM_PV="145.0.7632.159-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -221,8 +223,8 @@ VULKAN_PV="1.4.341"
 ZLIB_PV="1.3.1"
 
 COPIUM_COMMIT="fe1caafa06f27542c18a881348f78e984e2d9fe2"
-CROMITE_HASH="5342ca5f64ca7da15a07d2cefee953514d540807" # Not the same as the tagged commit but from the commit message
-OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
+CROMITE_HASH="d133d52d09c925b6542ff00e368d18d74df85e7c" # Not the same as the tagged commit but from the commit message
+OPENPOWER_PATCHES_COMMIT="6e839bd94774ccf59b4c0db697fcf15c7bc1f22e" # Same as PPC64_HASH
 # chromium-tools/get-chromium-toolchain-strings.py (or just use Chromicler)
 # Node for M145+ should be 24.12.0 but that's not packaged in Gentoo yet. See #969145
 TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
@@ -628,7 +630,7 @@ is_ungoogle_chromium_compatible() {
 if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	:
 else
-	KEYWORDS="amd64 ~arm64"
+	KEYWORDS="amd64 arm64" # ~ppc64"
 fi
 
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-137.0.7151.0.tar.x%40
@@ -641,6 +643,16 @@ https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
         -> chromium-testfonts-${TEST_FONT:0:10}.tar.gz
 	)
 "
+
+if [[ "${KEYWORDS}" =~ "ppc64" ]] ; then
+	SRC_URI+="
+	ppc64? (
+https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${OPENPOWER_PATCHES_COMMIT}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}.tar.bz2
+	-> chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2
+	)
+	"
+fi
+
 
 if [[ -n "${V8_PV}" ]] ; then
 	SRC_URI+="
@@ -688,7 +700,7 @@ HOMEPAGE="https://www.chromium.org/"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
 LICENSE="
-	chromium-$(ver_cut "1-3" "${PV}").x.html
+	chromium-${PV%.*}.x.html
 "
 if is_cromite_compatible ; then
 	LICENSE+="
@@ -714,11 +726,11 @@ RESTRICT="
 	!test? (
 		test
 	)
-"
-#	!test? (
-#		test
-#	)
-SLOT="0/stable"
+	arm64? (
+		test
+	)
+" # Tests require CFI, which requires LTO, which is broken on arm64 with LLVM 21.
+SLOT="stable"
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/145.0.7632.116/media/gpu/args.gni#L24
@@ -1668,6 +1680,8 @@ fi
 
 RDEPEND+="
 	${COMMON_DEPEND}
+	!www-client/chromium:0
+	>=www-client/chromium-common-2
 	sys-kernel/mitigate-id
 	virtual/ttf-fonts
 	virtual/patent-status[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
@@ -2567,8 +2581,15 @@ src_unpack() {
 	cp -aT "/usr/share/chromium/sources" "${S}" || die
 	export PATH="/usr/share/chromium/toolchain/gn/out:${PATH}"
 
+	# Sanity checks for development convenience
+	local gn_pv=$(gn --version || die)
+	if ver_test "${gn_pv}" "-lt" "${GN_PV}" ; then
+eerror "gn >= ${GN_MIN_VER} is required"
+		die
+	fi
+
+	unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 	if _use_system_toolchain ; then
-		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
@@ -2579,9 +2600,9 @@ src_unpack() {
 		ln -s "/usr/share/chromium/toolchain/rust" "${S}/third_party/rust-toolchain" || die
 	fi
 
-#	if use ppc64 ; then
-#		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
-#	fi
+	if use ppc64 && [[ "${KEYWORDS}" =~ "ppc64" ]] ; then
+		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
+	fi
 
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		unpack "cromite-${CROMITE_PV}-${CROMITE_HASH}.tar.gz"
@@ -2592,12 +2613,6 @@ src_unpack() {
 	fi
 
 	if use test ; then
-	# A new testdata tarball is available for each release; but testfonts
-	# tend to remain stable for the duration of a release.  This unpacks
-	# directly into/over ${WORKDIR}/${P} so we can just use `unpack`.
-	# It is not generated by chromium-linux-tarballs.  Apparently, it's not
-	# required to run unit tests either, we'll see!
-		# unpack ${P}-linux-testdata.tar.xz
 	# This just contains a bunch of font files that need to be unpacked (or
 	# moved) to the correct location.
 		local testfonts_dir="${WORKDIR}/${P}/third_party/test_fonts/test_fonts"
@@ -2641,7 +2656,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# Automate conditional application of chromium-patches
 	# The directory structure is expected to be something like:
 	# chromium-patches-145/
-	# ├── common/
+	# ├── toolchain/
 	# │   ├── cr123-foo.patch
 	# │   └── cr135-bar.patch
 	# ├── llvm/
@@ -2661,10 +2676,13 @@ apply_distro_patchset_for_system_toolchain() {
 		local category_name="${category%/}"
 		category_name="${category_name##*/}"
 
-	# Skip arch-specific categories if they don't match our arch
+	# Skip arch-specific categories
 		if [[ "${category_name}" == "ppc64le" ]]; then
 			use ppc64 || continue
 		fi
+
+	# We applied common patches above, no need to apply them again here
+		[[ "${category_name}" == "common" ]] && continue
 
 	# Unconditional patches for this category
 		PATCHES+=(
@@ -2738,19 +2756,15 @@ apply_distro_patchset() {
 einfo "Applying the distro patchset ..."
 
 	PATCHES+=(
-		"${FILESDIR}/${PN}-cross-compile.patch"
-		$(use system-zlib && echo "${FILESDIR}/${PN}-109-system-zlib.patch")
-		$(use system-icu && echo "${FILESDIR}/${PN}-131-unbundle-icu-target.patch")
-		"${FILESDIR}/${PN}-138-nodejs-version-check.patch"
-		"${FILESDIR}/cr144-glibc-2.43.patch"
-		"${FILESDIR}/cr145-oauth2-client-switches.patch"
-		$(use ungoogled-chromium || echo "${FILESDIR}/cr145-revert-to-rollup-wasm.patch") # Breaks ungoogled-chromium build
-		"${FILESDIR}/cr145-fix-no-unrar.patch"
-		"${FILESDIR}/cr145-fix-no-unrar-2-include-harder.patch"
+		"${WORKDIR}/chromium-patches-${PATCH_V}/common/"
+#		$(use system-zlib && echo "${FILESDIR}/${PN}-109-system-zlib.patch")
+#		$(use system-icu && echo "${FILESDIR}/${PN}-131-unbundle-icu-target.patch")
+#		$(use ungoogled-chromium || echo "${FILESDIR}/cr145-revert-to-rollup-wasm.patch") # Breaks ungoogled-chromium build
 	)
-
-	# No copium patches here: they should only need to apply to unbundled
-	# toolchain builds and don't get fetched or unpacked.
+	# Prune
+#	use system-zlib || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
+#	use system-icu || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
+#	use ungoogled-chromium || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
 
 	# https://issues.chromium.org/issues/442698344
 	# Unreleased fontconfig changed magic numbers and google have rolled to this version
@@ -3277,12 +3291,7 @@ src_prepare() {
 
 	check_deps_cfi_cross_dso
 
-	# To know which patches are safe to drop from files/ after tidying up old ebuilds:
-	# comm -13 \
-	#	<(grep 'FILESDIR' *.ebuild | grep patch | grep -o '\${FILESDIR}/[^") ]*' \
-	#		| sed 's|\${FILESDIR}/|files/|; s|\${PN}|chromium|' | sort -u) \
-	#	<(find files/ -name "*.patch" | sort)
-
+	# We'll fill this in as we go. Patches go in chromium-patches.
 	local PATCHES=()
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium && has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
@@ -3326,18 +3335,46 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		fi
 	fi
 
-	# Sanity check esbuild version before we start removing files.  We
-	# _could_ patch the version check out - in theory esbuild upstream are
-	# being super conservative after arch(AUR) packaged an `esbuild` binary
-	# and set ESBUILD_BINARY_PATH=/usr/bin/esbuild, causing much breakage,
-	# but this is fine too and exactly matches what upstream are expecting.
+	# Sanity check esbuild version before we start removing files.
+	# We _could_ patch the version check out - in theory esbuild upstream
+	# are being super conservative after arch(AUR) packaged an `esbuild`
+	# binary and set ESBUILD_BINARY_PATH=/usr/bin/esbuild, causing much
+	# breakage, but this is fine too and exactly matches what upstream are
+	# expecting.
 	# https://github.com/evanw/esbuild/issues/2894
 	local esbuild_js="${S}/third_party/devtools-frontend/src/node_modules/esbuild/lib/main.js"
 	local found
 	found=$(awk -F'"' '/if \(binaryVersion !==/ {print $2}' "${esbuild_js}")
 	if [[ "${found}" != "${ESBUILD_PV}" ]]; then
-		die "esbuild version mismatch: expected ${ESBUILD_PV}, found ${found}"
+		die "esbuild version mismatch: expected ${ESBUILD_VER}, found ${found}"
 	fi
+
+	# And now we restore any that we actually need, from the host system
+	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
+	local -A restore_list=(
+		["/usr/bin/esbuild-${ESBUILD_PV}"]="${esbuild_path}/esbuild"
+		["/usr/lib/node/${NODE_SLOT}/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
+	)
+
+	local src
+	for src in "${!restore_list[@]}"; do
+		local dst="${restore_list[${src}]}"
+		if [[ -f "${src}" ]]; then
+einfo "Symlinking ${src} ..."
+	# Make sure the parent dir exists; some tarballs don't include (e.g.)
+	# node's bindir
+			mkdir -p $(dirname "${dst}") \
+				|| die "Failed to create directory for ${dst}"
+			ln -s \
+				"${src}" \
+				"${dst}" \
+				|| die "Failed to symlink ${dst} from ${src}"
+		else
+eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
+			die
+		fi
+	done
+	unset restore_list
 
 elog "Removing bundled binaries from source tree ..."
 	# Purge the bundled ELF files.  These are non-portable and cause issues
@@ -3346,58 +3383,33 @@ elog "Removing bundled binaries from source tree ..."
 	# break builds.
 	if ! use ungoogled-chromium ; then
 	# Breaks ungoogled-chromium build
-		"${EPYTHON}" "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f \
-			|| die "Failed to remove bundled binaries"
 
-		# Until we can just symlink in a system rollup, we'll `mv` the wasm version and modify some files.
-		einfo "Moving rollup wasm-node package into place ..."
-		mkdir -p "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
-			|| die "Failed to create node_modules/@rollup/wasm-node"
+elog "Removing bundled binaries from source tree ..."
+	# Purge bundled ELF files: These are non-portable and will cause issues if used instead of system versions.
+	# Use `--wasm` to also remove WebAssembly binaries, if desired - they're portable so shouldn't break builds.
+		"${EPYTHON}" "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f ||
+			die "Failed to remove bundled binaries"
+
+	# Until we can just symlink in a system rollup, we'll `mv` the wasm
+	# version and modify some files.
+	# Do this after removing bundled bins in case we decide to strip wasm
+	# binaries in the future.
+einfo "Moving rollup wasm-node package into place ..."
+		mkdir -p "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" ||
+			die "Failed to create node_modules/@rollup/wasm-node"
 		mv "${WORKDIR}/package/"* "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
 			|| die "Failed to move rollup package"
 	fi
 
-	# We restore what we need from the host system.
-	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
-	local -A restore_list=(
-		["/usr/bin/esbuild-${ESBUILD_PV}"]="${esbuild_path}/esbuild"
-		["/usr/lib/node/${NODE_SLOT}/bin/node"]="${S}/third_party/node/linux/node-linux-x64/bin/node"
-	)
-
-	local src
-	local dst
-	for src in "${!restore_list[@]}" ; do
-		dst="${restore_list[${src}]}"
-		if [[ -f "${src}" ]]; then
-einfo "Symlinking ${src} ..."
-	# Make sure the parent dir exists.  Some tarballs don't include, for
-	# example, a node's bindir.
-			rm -f "${dst}" || true
-			local d=$(dirname "${dst}")
-			if ! mkdir -p "${d}" ; then
-eerror "Failed to create directory for ${dst}"
-				die
-			fi
-			if ! ln -s "${src}" "${dst}" ; then
-eerror "Failed to symlink ${dst} from ${src}"
-				die
-			fi
-		else
-eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
-			die
-		fi
-	done
-	unset restore_list
-
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" ".gn" || die
 
-if false ; then
+	if ! use official ; then
 	# Use the system copy of hwdata's usb.ids; upstream is woefully out of date (2015!)
-	sed "s|//third_party/usb_ids/usb.ids|/usr/share/hwdata/usb.ids|g" \
-		-i "services/device/public/cpp/usb/BUILD.gn" \
-		|| die "Failed to set system usb.ids path"
-fi
+		sed "s|//third_party/usb_ids/usb.ids|/usr/share/hwdata/usb.ids|g" \
+			-i "services/device/public/cpp/usb/BUILD.gn" \
+			|| die "Failed to set system usb.ids path"
+	fi
 
 	#
 	# remove_bundled_libraries.py walks the source tree and looks for paths
@@ -3446,6 +3458,7 @@ fi
 		"third_party/catapult/third_party/html5lib-1.1"
 		"third_party/catapult/third_party/polymer"
 		"third_party/catapult/third_party/six"
+		"third_party/catapult/third_party/typ"
 		"third_party/catapult/tracing/third_party/d3"
 		"third_party/catapult/tracing/third_party/gl-matrix"
 		"third_party/catapult/tracing/third_party/jpeg-js"
@@ -3634,7 +3647,6 @@ fi
 		"third_party/six"
 		"third_party/skia"
 		"third_party/skia/include/third_party/vulkan"
-		"third_party/skia/third_party/vulkan"
 
 	# Missing externals folder
 	#	$(use !system-harfbuzz && echo \
@@ -3872,6 +3884,7 @@ fi
 			"third_party/google_benchmark/src/src" \
 			"third_party/test_fonts" \
 			"third_party/test_fonts/fontconfig" \
+			"third_party/test_fonts/test_fonts" \
 		)
 
 	# "third_party/ungoogled" was not listed for cromite in other ebuild so omitted.
@@ -4070,9 +4083,11 @@ einfo "Switching to clang."
 		CPP="${CHOST}-clang-${LLVM_SLOT} -E"
 	fi
 
-	# Sanity check our linker here; sometimes when adding a new LLVM slot devs (me) forget
-	# to install an appropriate lld version. llvm-r1_pkg_setup prefixed PATH for us, so it should be there.
-	local lld_ver=$(ld.lld --version | awk '{split($2,a,"."); print a[1]}' || die "Failed to check lld version")
+	# Sometimes, when adding a new LLVM slot, devs (me) forget to install an
+	# appropriate lld.
+	local lld_ver=$(ld.lld --version \
+		| awk '{split($2,a,"."); print a[1]}' \
+		|| die "Failed to check lld version")
 	if [[ "${lld_ver}" -lt "${LLVM_SLOT}" ]]; then
 eerror
 eerror "Your lld version (${lld_ver}) is too old for the selected LLVM slot"
@@ -4297,6 +4312,11 @@ einfo "Using the bundled toolchain"
 	# Prevent linker from running out of address space, bug #471810.
 		filter-flags "-g*"
 	fi
+
+	# 949123: Several multimedia components explicitly build with specific CFLAGS and
+	# use runtime detection to enable optimisations; unfortunately any of our CFLAGS are suffixed
+	# to the end of the command line, which causes build failures.
+	use arm64 && filter-flags "-march*" "-mtune*" "-mcpu*"
 
 	myconf_gn+=(
 	# The sysroot is the oldest debian image that Chromium supports.  We don't need it.
@@ -6094,6 +6114,11 @@ _configure_linker() {
 		USE_LTO=1
 	fi
 
+	if use amd64 ; then
+ewarn "LTO is likely broken with LLVM 21 for arm64."
+ewarn "Manually remove flto flags or disable official USE flag."
+	fi
+
 	#
 	# Only do if build time meets user's tolerance which is for people that
 	# are building before real-world deadline obligations (e.g. college
@@ -7153,6 +7178,11 @@ ewarn "Unbundling libs and lowering security"
 	# We now need to opt-in
 		"enable_freetype=true"
 
+	# Custom patch: Enable building Chromium as individual channels (e.g.
+	# stable, beta, dev) that use different profile directories, desktop
+	# entries, etc. This enables slotting the ebuild.
+		"enable_channel_branding=true"
+
 		"enable_glic=false"							# AI assistant features, not production ready but enabled by default
 		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_hidpi=$(usex hidpi true false)"
@@ -7191,6 +7221,10 @@ ewarn "Unbundling libs and lowering security"
 	# Enables building without non-free unRAR licence
 		"safe_browsing_use_unrar=$(usex rar true false)"
 	)
+
+	# Since we build from tarballs, we need to set the channel here so that
+	# it can be used in the build.
+	export CHROME_VERSION_EXTRA="${SLOT}"
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Prevent build error
@@ -7617,6 +7651,47 @@ check_mksnapshot_benefit() {
 	fi
 }
 
+get_flavor() {
+	local flavor_name="chromium"
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		flavor_name="cromite"
+	fi
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		flavor_name="ungoogled-chromium"
+	fi
+	echo "${flavor_name}"
+}
+
+get_browser_suffix() {
+	local browser_suffix
+	if [[ "${SLOT}" != "stable" ]]; then
+		browser_suffix="-${SLOT}"
+	else
+		browser_suffix=""
+	fi
+	echo "${browser_suffix}"
+}
+
+get_menu_name() {
+	local menu_name=""
+	if [[ -n "${CHROMIUM_MENU_NAME}" ]] ; then
+		menu_name="${CHROMIUM_MENU_NAME}"
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		menu_name="Cromite"
+	elif has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		menu_name="ungoogled-chromium"
+	elif [[ "${SLOT}" != "stable" ]] ; then
+		menu_name="Chromium (${SLOT})"
+	else
+		menu_name="Chromium"
+	fi
+
+	if [[ "${CHROMIUM_APPEND_ABI_TO_MENU_NAME:-1}" == "1" ]] ; then
+		menu_name+="${suffix}"
+	fi
+	echo "${menu_name}"
+}
+
 _src_compile() {
 	export s=$(_get_s)
 	cd "${s}" || die
@@ -7696,41 +7771,26 @@ einfo "Skipping expensive load time optimization..."
 	local suffix
 	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
 
-	local menuname=""
-	if [[ -n "${CHROMIUM_MENU_NAME}" ]] ; then
-		menuname="${CHROMIUM_MENU_NAME}"
-	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
-		menuname="Cromite"
-	elif has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
-		menuname="ungoogled-chromium"
-	else
-		menuname="Chromium"
-	fi
 
-	if [[ "${CHROMIUM_APPEND_ABI_TO_MENU_NAME:-1}" == "1" ]] ; then
-		menuname+="${suffix}"
-	fi
+	local browser_suffix=$(get_browser_suffix)
+	local menu_name=$(get_menu_name)
 
-	cat \
-		"${FILESDIR}/generate-support-files.py" \
-		> \
-		"${T}/generate-support-files.py" \
-		|| die
-	sed -i \
-		-e "s|@USR_BIN_SYMLINK_NAME@|chromium-browser-${ABI}|g" \
-		-e "s|@MENUNAME@|${menuname}|g" \
-		"${T}/generate-support-files.py" \
-		|| die
+	local browser_suffix=$(get_browser_suffix)
+	export GENERATE_SUPPORT_ABI=""
+	export GENERATE_SUPPORT_MENU_NAME="${menu_name}"
+	export GENERATE_SUPPORT_SYM_NAME="chromium-browser${browser_suffix}-${ABI}"
 
 	# Generate support files (desktop file, manpage, etc.)
 	# See: #684550 #706786 #968958
-	"${EPYTHON}" "${T}/generate-support-files.py" \
+	"${EPYTHON}" "${FILESDIR}/generate-support-files.py" \
 		--installdir "/usr/$(get_libdir)/chromium-browser" \
-		|| die "Failed to generate support files"
+		--channel "${SLOT}" \
+			|| die "Failed to generate support files"
 }
 
 _src_install() {
-	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser"
+	local browser_suffix=$(get_browser_suffix)
+	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser${browser_suffix}"
 	exeinto "${CHROMIUM_HOME}"
 	doexe "out/Release/chrome"
 
@@ -7739,40 +7799,30 @@ _src_install() {
 		"chrome-sandbox"
 	fperms 4755 "${CHROMIUM_HOME}/chrome-sandbox"
 
-	newexe \
-		"out/Release/chromedriver" \
-		"chromedriver-${ABI}"
+	doexe "out/Release/chromedriver"
 	doexe "out/Release/chrome_crashpad_handler"
 
-	ozone_auto_session=$(\
-		 ! use headless \
-		&& use wayland \
-		&& use X \
-		&& echo "true" \
-		|| echo "false")
+	ozone_auto_session () {
+		if use X && use wayland && ! use headless ; then
+			echo true
+		else
+			echo false
+		fi
+	}
 
-	# Prevent corruption or DoS
-	local flavor_name="chromium"
-	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
-		flavor_name="cromite"
-	fi
-	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
-		flavor_name="ungoogled-chromium"
-	fi
+	cat <<- EOF > "${D}${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" || die
+		#!/bin/bash
+		# Wrapper to launch slotted Chromium via the chromium-common launcher script.
+		export CHROME_DESKTOP="chromium-browser${browser_suffix}-${ABI}.desktop"
+		export CHROME_EXEC_NAME="chromium-browser${browser_suffix}-${ABI}"
+		export CHROME_VERSION_EXTRA="${SLOT}"
+		export CHROME_WRAPPER="\$(readlink -f "\$0")"
+		export OZONE_AUTO_SESSION=$(ozone_auto_session)
 
-	sed -e  "
-		s:/usr/lib/:/usr/$(get_libdir)/:g;
-		s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;
-		s:@@OZONE_AUTO_SESSION@@:${ozone_auto_session}:g;
-		s:@@FLAVOR_NAME@@:${flavor_name}:g;
-		" \
-		"${FILESDIR}/chromium-launcher-r7.sh" \
-		> \
-		"chromium-launcher.sh" \
-		|| die
-	newexe \
-		"chromium-launcher.sh" \
-		"chromium-launcher-${ABI}.sh"
+		exec "/usr/libexec/chromium/chromium-launcher.sh" "\$@"
+	EOF
+
+	chmod 755 "${D}${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" || die
 
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		dosym \
@@ -7796,29 +7846,25 @@ _src_install() {
 	# xdg-utils expect it; bug #355517.
 	dosym \
 		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		"/usr/bin/chromium-browser-${ABI}"
+		"/usr/bin/chromium-browser${browser_suffix}"
 	dosym \
 		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		"/usr/bin/chromium-browser"
+		"/usr/bin/chromium-browser${browser_suffix}-${ABI}"
 
 	# Keep the old symlink around for consistency
 	dosym \
 		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		"/usr/bin/chromium-${ABI}"
+		"/usr/bin/chromium${browser_suffix}"
 	dosym \
 		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		"/usr/bin/chromium"
+		"/usr/bin/chromium${browser_suffix}-${ABI}"
 
 	dosym \
-		"${CHROMIUM_HOME}/chromedriver-${ABI}" \
-		"/usr/bin/chromedriver-${ABI}"
+		"${CHROMIUM_HOME}/chromedriver" \
+		"/usr/bin/chromedriver${browser_suffix}"
 	dosym \
-		"${CHROMIUM_HOME}/chromedriver-${ABI}" \
-		"/usr/bin/chromedriver"
-
-	# Allow users to override command-line options, bug #357629.
-	insinto "/etc/chromium"
-	newins "${FILESDIR}/chromium.default" "default"
+		"${CHROMIUM_HOME}/chromedriver" \
+		"/usr/bin/chromedriver${browser_suffix}-${ABI}"
 
 	pushd "out/Release/locales" >/dev/null 2>&1 || die
 		chromium_remove_language_paks
@@ -7872,6 +7918,7 @@ _src_install() {
 		256
 	)
 	local branding size
+	local size
 	for size in ${sizes[@]} ; do
 		case ${size} in
 			16|32) branding="chrome/app/theme/default_100_percent/chromium" ;;
@@ -7880,27 +7927,28 @@ _src_install() {
 		newicon \
 			-s ${size} \
 			"${branding}/product_logo_${size}.png" \
-			"chromium-browser.png"
+			"chromium-browser${browser_suffix}.png"
 	done
 
 	# Install desktop entry
+	# TODO FIXME
 	newmenu \
-		"out/Release/chromium-browser-chromium.desktop" \
-		"chromium-browser-chromium-${ABI}.desktop"
+		"out/Release/chromium-browser${browser_suffix}-${ABI}.desktop" \
+		"chromium-browser${browser_suffix}-${ABI}.desktop"
 
 	# Install GNOME default application entry (bug #303100).
 	insinto "/usr/share/gnome-control-center/default-apps"
-	doins "out/Release/chromium-browser.xml"
+	doins "out/Release/chromium-browser${browser_suffix}.xml"
 
 	# Install AppStream metadata
 	insinto "/usr/share/appdata"
-	doins "out/Release/chromium-browser.appdata.xml"
+	doins "out/Release/chromium-browser${browser_suffix}.appdata.xml"
 
 	# Install manpage; bug #684550
-	doman "out/Release/chromium-browser.1"
+	doman "out/Release/chromium-browser${browser_suffix}.1"
 	dosym \
-		"chromium-browser.1" \
-		"/usr/share/man/man1/chromium.1"
+		"chromium-browser${browser_suffix}.1" \
+		"/usr/share/man/man1/chromium${browser_suffix}.1"
 
 	readme.gentoo_create_doc
 
@@ -7944,8 +7992,12 @@ src_compile() {
 }
 
 src_test() {
-	# The initial list of tests to skip pulled from Alpine. Thanks Lauren!
-	# https://issues.chromium.org/issues/40939315
+	# Tests may be flaky with usersandbox, and the test runner executes
+	# significantly faster without.  If you seem to be excluding too many
+	# tests for a particular milestone: comment them out, reboot, and run
+	# the tests again. If that doesn't help, try FEATURES="-usersandbox" and
+	# send it because obviously the chromium gods are not smiling upon you
+	# today. Do some runtime testing, obvs.
 	local skip_tests=(
 	# Wildcard exclusions (if all tests in a test suite are broken)
 		'AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/*'
@@ -7953,11 +8005,14 @@ src_test() {
 		'AlternateTestParams/PartitionAllocTest.*' # 200+ tests, >= 1 crashes entire test runner with usersandbox.
 		'CheckExitCodeAfterSignalHandlerDeathTest.*'
 		'CriticalProcessAndThreadSpotChecks/HangWatcherAnyCriticalThreadTests.*'
-		'PostJobTest.*' # M145
+		'PostJobTest.*' # M145, flaky?
+		'ThreadControllerWithMessagePump*'
 		'LazyThreadPoolTaskRunnerEnvironmentTest.*' # M142
-		'LazyThreadPoolTaskRunnerTest.*' # M145
+		'LazyThreadPoolTaskRunnerTest.*'
 		'SequenceManager*'
+		'SequencedTaskRunnerTest.*'
 		'ToolsSanityTest.BadVirtualCall*'
+		'WakeUpQueueTest.*'
 	# requires en-us locale
 		"SysStrings.SysNativeMBAndWide"
 		"SysStrings.SysNativeMBToWide"
@@ -7971,9 +8026,9 @@ src_test() {
 		"RawPtrTest.SetLookupUsesGetForComparison" # M146 ; also broken for alpine in M144.
 		"RustLogIntegrationTest.CheckAllSeverity"
 		"StackCanary.ChangingStackCanaryCrashesOnReturn"
-		"SequenceManagerWithTaskRunnerTest.DeleteSequenceManagerInsideATask" # crashes test runner
 		"StackTraceDeathTest.StackDumpSignalHandlerIsMallocFree"
 		"TestLauncherTools.TruncateSnippetFocusedMatchesFatalMessagesTest"
+		"ThreadControllerPowerMonitorTest.IsProcessInPowerSuspendState"
 		"ThreadPoolEnvironmentConfig.CanUseBackgroundPriorityForWorker"
 	)
 
@@ -8007,8 +8062,8 @@ pkg_postinst() {
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	if ! use headless ; then
-		if use vaapi; then
+	if ! use headless && [[ -z "${REPLACING_VERSIONS}" ]] ; then
+		if use vaapi ; then
 	# It says 3 args:
 	# https://github.com/chromium/chromium/blob/145.0.7632.116/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
@@ -8096,7 +8151,46 @@ ewarn "Chromium is known to behave unpredictably with this system configuration;
 ewarn "please complete the configuration of this system before logging any bugs."
 ewarn
 	fi
+
+	if [[ -n "${REPLACING_VERSIONS}" ]]; then
+		local replacing_non_slotted=false
+		# There could be more than one PVR
+		local version
+		for version in ${REPLACING_VERSIONS} ; do
+			if ver_test "${version}" "-le" "145.0.7632.116" ; then
+				replacing_non_slotted=true
+				break
+			fi
+		done
+		if ${replacing_non_slotted} ; then
+ewarn
+ewarn "This version of Chromium has replaced a non-slotted ebuild."
+ewarn
+			if [[ "${SLOT}" != "stable" ]]; then
+ewarn
+ewarn "This channel has its own profile directory, so your existing profile"
+ewarn "will not be used.  To use your existing profile, either copy or move it"
+ewarn "to the new location.  See"
+ewarn
+ewarn "  https://wiki.gentoo.org/wiki/Chromium#Profile_Directories"
+ewarn
+ewarn "for more information."
+ewarn
+			fi
+ewarn
+ewarn "Any existing Progressive Web Apps (PWAs) will need to be reinstalled,"
+ewarn "or have the path in the desktop files updated to point to the new"
+ewarn "wrapper script."
+ewarn
+		fi
+	fi
+
 einfo "Since the build is done, you may remove /usr/share/chromium folder."
+ewarn
+ewarn "To avoid startup error, either:"
+ewarn "(1) set --user-data-dir=\${XDG_CONFIG_HOME:-\${HOME}/.config}/chromium in /etc/chromium/chromium.default or"
+ewarn "(2) remove ${HOME}/.config/chromium when switching between flavors (e.g. ungoogled-chromium, Cromite, Chromium)."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
