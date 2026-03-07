@@ -6173,9 +6173,9 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 	# Mitigate against ROP attack.
 		if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 			: # Hardware based
-		elif has cfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"cfi"(" "|"$") ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] ; then
+		elif has cfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"cfi"(" "|"$") ]] ; then
 			: # Software based
-		elif has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"kcfi"(" "|"$") ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] ; then
+		elif has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|"^")"kcfi"(" "|"$") ]] ; then
 			: # Software based
 		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
 			: # JOP mitigation, but implies use of pac
@@ -6184,23 +6184,50 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 			: # ROP mitigation
 		else
 			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} || has kcfi ${IUSE_EFFECTIVE} ) ; then
-eerror "Enable either one of the CFI providers: cet, cfi, kcfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+eerror
+eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
+eerror
 eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
 eerror "CFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"cfi\" USE=\"cfi\""
 eerror "CET:  OT_KERNEL_USE=\"cet\" USE=\"cfi\""
+eerror
+eerror "KCFI+CET can be combined and are complementary."
+eerror
 				die
-			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_pac ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
-eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_pac, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_pac ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} || has kcfi ${IUSE_EFFECTIVE} ) ; then
+eerror
+eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
+eerror
+eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
+eerror "CFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"cfi\" USE=\"cfi\""
+eerror "BTI:  OT_KERNEL_USE=\"cpu_flags_arm_bti\" USE=\"cpu_flags_arm_bti\""
+eerror "PAC:  OT_KERNEL_USE=\"cpu_flags_arm_pac\" USE=\"cpu_flags_arm_pac\""
+eerror
+eerror "BTI+PAC has a higher security score than KCFI."
+eerror "BTI+PAC is recommended over individual BTI and PAC."
+eerror "KCFI+BTI+PAC can be combined and are complementary."
+eerror
 				die
-			elif [[ "${arch}" == "arm" ]] && has cfi ${IUSE_EFFECTIVE} ; then
-eerror "Enable cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+			elif [[ "${arch}" == "arm" ]] && has kcfi ${IUSE_EFFECTIVE} ; then
+eerror
+eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
+eerror
+eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
+eerror
 				die
-			elif [[ "${arch}" == "riscv" ]] && has cfi ${IUSE_EFFECTIVE} ; then
-eerror "Enable cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+			elif [[ "${arch}" == "riscv" ]] && has kcfi ${IUSE_EFFECTIVE} ; then
+eerror
+eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
+eerror
+eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
+eerror
 				die
 			else
-ewarn "No mitigation for ROP applied.  Consider either using a newer kernel, using only 64-bit mode, or moving services to ROP mitigated arches."
+ewarn
+ewarn "No mitigation for ROP applied.  Consider either using a newer kernel,"
+ewarn "using only 64-bit mode, or moving services to ROP mitigated arches."
 ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
+ewarn
 			fi
 		fi
 
