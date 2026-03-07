@@ -438,13 +438,20 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Feb 23, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1771618804 # From `date +%s -d "2026-02-20 20:20:04 UTC"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/02/stable-channel-update-for-desktop_23.html"
+MITIGATION_DATE="Mar 3, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1772492409 # From `date +%s -d "2026-03-02 23:00:09 UTC"` From tag in GH or upstream repo
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/03/stable-channel-update-for-desktop.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-3061;ZC, OOBR, DoS, ID;High"
-	"CVE-2026-3062;ZC, OOBA, OOBR, OOBW, DoS, DT, ID;High"
-	"CVE-2026-3063;II, DoS, DT, ID ;High"
+	"CVE-2026-3536;IO, OOBA, DoS, DT, ID;High"
+	"CVE-2026-3537;MC, DoS, DT, ID;High"
+	"CVE-2026-3538;IO, OOBA, DoS, DT, ID;High"
+	"CVE-2026-3539;SEA, MC, DoS, DT, ID;High"
+	"CVE-2026-3540;II, OOBA, DoS, DT, ID;High"
+	"CVE-2026-3541;II, OOBR, DoS, DT, ID;High"
+	"CVE-2026-3542;II, OOBA, DoS, DT, ID;High"
+	"CVE-2026-3543;II, OOBA, DoS, DT, ID;High"
+	"CVE-2026-3544;HO, OOBW, DoS, DT, ID;High"
+	"CVE-2026-3545;SBE, DoS, DT, ID;Critical"
 )
 
 PATENT_STATUS=(
@@ -2588,8 +2595,8 @@ eerror "gn >= ${GN_MIN_VER} is required"
 		die
 	fi
 
-	unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 	if _use_system_toolchain ; then
+		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
