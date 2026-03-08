@@ -169,18 +169,27 @@ CLANG_21_1_0="210100"
 CLANG_21_1_1="210101"
 CLANG_21_1_2="210101"
 CLANG_21_1_3="210103"
-CLANG_20_0_0="220000"
-
+CLANG_21_1_4="210104"
+CLANG_21_1_5="210105"
+CLANG_21_1_6="210106"
+CLANG_21_1_7="210107"
+CLANG_21_1_8="210108"
+CLANG_22_1_0="220100"
 
 # @ECLASS_VARIABLE: _ALL_LLVM_COMPAT
 # @DESCRIPTION:
 # All Clang point versions available by distro repo.
 # Live is not supported
 _ALL_LLVM_COMPAT=(
-	{11..21}
+	{11..22}
 )
 _ALL_LLVM_COMPAT2=(
-	"20_0_0"
+	"22_1_0"
+	"21_1_8"
+	"21_1_7"
+	"21_1_6"
+	"21_1_5"
+	"21_1_4"
 	"21_1_3"
 	"21_1_2"
 	"21_1_1"

@@ -970,6 +970,17 @@ LIBCXX_REQUIRED_USE=(
 #	vendored-libcxx? (
 #		${LIBCXX_REQUIRED_USE[@]}
 #	)
+if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
+	REQUIRED_USE+="
+		system-toolchain? (
+			vendored-libcxx
+		)
+	"
+else
+	REQUIRED_USE+="
+		vendored-libcxx
+	"
+fi
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
@@ -983,12 +994,11 @@ REQUIRED_USE+="
 			X
 		)
 	)
-	vendored-libcxx
-	partitionalloc
-	rar
 	^^ (
 		${IUSE_LIBCXX[@]/+}
 	)
+	partitionalloc
+	rar
 	amd64? (
 		cpu_flags_x86_sse2
 	)
@@ -1361,7 +1371,7 @@ gen_depend_llvm() {
 				llvm-runtimes/compiler-rt-sanitizers:=
 			)
 			vendored-libcxx? (
-				>=llvm-runtimes/libcx-${s}[${LIBCXX_USEDEP_LTS}]
+				>=llvm-runtimes/libcx-${s}[${LIBCXX_USEDEP}]
 				llvm-runtimes/libcx:=
 			)
 		"
@@ -1801,16 +1811,11 @@ fi
 # Upstream uses live rust.  Rust version is relaxed.
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 # Using system-mimalloc with mold causes link failure.
-TRASH_BDEPEND="
-	${COMMON_SNAPSHOT_DEPEND}
-
-	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	www-client/chromium-toolchain:=
-"
-aBDEPEND+="
+BDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
+	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	app-alternatives/ninja
 	dev-util/patchutils
@@ -1828,6 +1833,8 @@ aBDEPEND+="
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
+	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	www-client/chromium-toolchain:=
 	mold? (
 		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
