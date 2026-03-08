@@ -2940,7 +2940,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
+#		"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
 	)
 }
 
@@ -3378,6 +3378,7 @@ einfo "Symlinking ${src} ..."
 	# node's bindir
 			mkdir -p $(dirname "${dst}") \
 				|| die "Failed to create directory for ${dst}"
+			rm -f "${dst}" || true
 			ln -s \
 				"${src}" \
 				"${dst}" \
