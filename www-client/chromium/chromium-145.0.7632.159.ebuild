@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# TODO:  test/verify and require system-toolchain for cromite and ungoogled-chromium builds.
+# TODO:  test/verify and require system-clang for cromite and ungoogled-chromium builds.
 
 # D11, U22, U24
 
@@ -164,7 +164,6 @@ GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
-ALLOW_SYSTEM_TOOLCHAIN=1
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
@@ -199,7 +198,7 @@ RUST_MAX_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_MIN_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_NEEDS_LLVM="yes please"
 RUST_REQ_USE="rustfmt" # Upstream run rustfmt on bindgen output, so we need it to be available.
-RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=-system-toolchain
+RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=-system-clang
 SHADOW_CALL_STACK=0 # Global variable
 
 GCC_PV="10.2.1" # Minimum
@@ -595,13 +594,9 @@ SYSTEM_USE=(
 )
 
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
-inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr libcxx-slot libstdcxx-slot
+inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info llvm
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
-inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
-
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-	inherit llvm rust
-fi
+inherit re2 readme.gentoo-r1 rust systemd toolchain-funcs vf xdg-utils
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut "4" "${PV}")
@@ -642,6 +637,11 @@ S_CROMITE="${WORKDIR}/cromite-${CROMITE_PV}-${CROMITE_HASH}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 SRC_URI+="
 	https://deps.gentoo.zip/www-client/chromium/rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz
+	system-clang? (
+https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
+https://codeberg.org/selfisekai/copium/archive/${COPIUM_COMMIT}.tar.gz
+	-> chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz
+	)
 	test? (
 https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
         -> chromium-testfonts-${TEST_FONT:0:10}.tar.gz
@@ -665,16 +665,6 @@ https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
 	"
 fi
 
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-	SRC_URI+="
-		system-toolchain? (
-https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
-https://codeberg.org/selfisekai/copium/archive/${COPIUM_COMMIT}.tar.gz
-	-> chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz
-		)
-	"
-fi
-
 if is_cromite_compatible ; then
 	IUSE+="
 		cromite
@@ -687,13 +677,12 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	"
 	# Force require the reviewed system compiler to prevent possibility of
 	# trojanized compiler injecting user fingerprinting code.
-	if false && (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-		REQUIRED_USE+="
-			cromite? (
-				system-toolchain
-			)
-		"
-	fi
+	REQUIRED_USE+="
+		cromite? (
+			system-clang
+			system-rust
+		)
+	"
 fi
 
 if is_ungoogle_chromium_compatible ; then
@@ -708,13 +697,12 @@ https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNG
 	"
 	# Force require the reviewed system compiler to prevent possibility of
 	# trojanized compiler injecting user fingerprinting code.
-	if false && (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
-		REQUIRED_USE+="
-			ungoogled-chromium? (
-				system-toolchain
-			)
-		"
-	fi
+	REQUIRED_USE+="
+		ungoogled-chromium? (
+			system-clang
+			system-rust
+		)
+	"
 fi
 
 DESCRIPTION="The open-source version of the Chrome web browser"
@@ -785,16 +773,10 @@ ${SYSTEM_USE[@]}
 -gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos
 +miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
 +plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
-selinux systemd test +v8-snapshot +wayland +webassembly
--widevine +X
+selinux -system-clang -system-rust systemd test +v8-snapshot +wayland
++webassembly -widevine +X
 ebuild_revision_40
 "
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-	IUSE+="
-		-system-toolchain
-	"
-fi
-
 # What is considered a proprietary codec can be found at:
 #
 #   https://github.com/chromium/chromium/blob/145.0.7632.159/media/filters/BUILD.gn#L160
@@ -884,38 +866,11 @@ DISTRO_REQUIRE_USE="
 	system-zlib
 "
 #
-# Generally, the availability of the system-toolchain USE flag is.
-#
-#  ( sys-devel/rust:${LLVM_OFFICIAL_SLOT}  || sys-devel/rust-bin:${LLVM_OFFICIAL_SLOT} ) && llvm-core/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
-#
-# The community prefers only stable versioning.
-#
-# Upstream uses a customized build where they do not align.  For 128.x.x.x
-# release it should be
-#
-#   dev-lang/rust-cr:${RUST_CR_PV%%.*}-${PV%%.*} && llvm-core/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
-#
-# The rust-cr build is actually an older snapshot of 1.79.x that submodules llvm 18.
-# The official slot discussed here is llvm 19.  Hypothetical rust-cr, needs to be
-# built and link against llvm 19.
-#
-# We will not consider rust-cr file situation for now because the env file situation.
-#
-#	extensions
-#	!partitionalloc
-#
 # Dawn needs partition alloc
 #ERROR Unresolved dependencies.
 #//third_party/dawn/src/dawn/partition_alloc:partition_alloc(//build/toolchain/linux:clang_x64)
 #  needs //base/allocator/partition_allocator:partition_alloc(//build/toolchain/linux:clang_x64)
 #
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
-	REQUIRED_USE+="
-		official? (
-			llvm_slot_22
-		)
-	"
-fi
 
 LIBCXX_REQUIRED_USE=(
 	# Add C++ libraries here
@@ -970,6 +925,12 @@ REQUIRED_USE+="
 			wayland
 			X
 		)
+	)
+	!system-clang? (
+		!system-rust
+	)
+	!system-rust? (
+		!system-clang
 	)
 	partitionalloc
 	rar
@@ -1162,7 +1123,8 @@ REQUIRED_USE+="
 		!drumbrake
 		!hangouts
 		!mold
-		!system-toolchain
+		!system-clang
+		!system-rust
 		accessibility
 		css-hyphen
 		cups
@@ -1173,6 +1135,7 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
+		llvm_slot_22
 		miracleptr
 		mpris
 		openh264
@@ -1213,6 +1176,12 @@ REQUIRED_USE+="
 	)
 	screencast? (
 		wayland
+	)
+	system-clang? (
+		system-rust
+	)
+	system-rust? (
+		system-clang
 	)
 	test? (
 		cfi
@@ -1702,28 +1671,18 @@ BDEPEND+="
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
+	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
 	www-client/chromium-toolchain:=
 	mold? (
 		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
-	!system-toolchain? (
-		www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi?,pgo?,-system-clang,-system-rust]
-	)
-	system-toolchain? (
-		www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi?,pgo?,system-clang,system-rust]
+	system-rust? (
+		>=dev-util/bindgen-0.72.1
 	)
 	vaapi? (
 		media-video/libva-utils
 	)
 "
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-	BDEPEND+="
-		system-toolchain? (
-			${RUST_BDEPEND}
-			>=dev-util/bindgen-0.72.1
-		)
-	"
-fi
 
 # Upstream uses llvm:16
 # When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
@@ -1794,14 +1753,6 @@ Chromium, then add --password-store=basic to CHROMIUM_FLAGS in
 /etc/chromium/default.
 
 "
-
-_use_system_toolchain() {
-	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) && use system-toolchain ; then
-		return 0
-	else
-		return 1
-	fi
-}
 
 python_check_deps() {
 	python_has_version "dev-python/setuptools[${PYTHON_USEDEP}]"
@@ -2337,14 +2288,14 @@ ewarn
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		setup_system_clang_paths
 	else
 		setup_vendor_clang_paths_pre
 	fi
 
 	# We are always using.
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		_use_system_clang
 	else
 		_use_vendor_clang
@@ -2462,7 +2413,7 @@ eerror "gn >= ${GN_MIN_VER} is required"
 		die
 	fi
 
-	if _use_system_toolchain ; then
+	if use system-clang || use system-rust ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
 	else
@@ -2519,7 +2470,7 @@ is_generating_credits() {
 apply_distro_patchset_for_system_toolchain() {
 	# We don't need toolchain patches if we're using the official toolchain.
 
-	if _use_system_toolchain ; then
+	if use system-clang || use system-rust ; then
 	# Copium patches go here.
 		PATCHES+=(
 			"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
@@ -2631,7 +2582,7 @@ apply_distro_patchset_for_system_toolchain() {
 apply_distro_patchset() {
 einfo "Applying the distro patchset ..."
 
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		PATCHES+=(
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
 		)
@@ -2654,14 +2605,14 @@ einfo "Applying the distro patchset ..."
 		)
 	fi
 
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		apply_distro_patchset_for_system_toolchain
 	fi
 }
 
 apply_oiledmachine_overlay_patchset() {
 einfo "Applying the oiledmachine-overlay patchset ..."
-	if _use_system_toolchain && tc-is-clang ; then
+	if use system-clang && tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
 	#   lib.unstripped/libEGL.so
@@ -2728,7 +2679,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		# Slot 16 is selected but it spits out 17.
 #
 # Fixes:
@@ -4100,7 +4051,7 @@ _set_vendor_cc() {
 }
 
 _src_configure_compiler() {
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		_set_system_cc
 	else
 		_set_vendor_cc
@@ -4119,7 +4070,7 @@ src_configure() {
 }
 
 _configure_compiler_common() {
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		_configure_system_toolchain
 	else
 einfo "Using the bundled toolchain"
@@ -4141,7 +4092,7 @@ einfo "Using the bundled toolchain"
 		strip-flags
 	fi
 
-	if _use_system_toolchain ; then
+	if use system-clang ; then
 		myconf_gn+=(
 			"llvm_libdir=\"$(get_libdir)\""
 		)
@@ -4231,7 +4182,7 @@ eerror
 
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/145.0.7632.159/build/toolchain/cc_wrapper.gni#L36
-	if ! _use_system_toolchain ; then
+	if ! use system-clang ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			myconf_gn+=(
 				"cc_wrapper=\"ccache\""
@@ -4239,8 +4190,8 @@ eerror
 			export CCACHE_BASEDIR="${TMPDIR}"
 		fi
 
-		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
-		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
+		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-clang is not supported by the ebuild."
+		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-clang is not supported by the ebuild."
 	fi
 
 	if [[ "${FEATURES}" =~ ("distcc"|"icecream") ]] ; then
@@ -4515,7 +4466,7 @@ ewarn
 		CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1
 	fi
 
-	if ! _use_system_toolchain ; then
+	if ! use system-rust ; then
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
 einfo "RUSTC:  ${RUSTC}"
@@ -4526,7 +4477,7 @@ eerror "QA:  RUSTC is not initialized or missing."
 	"${RUSTC}" -Z help 2>/dev/null 1>/dev/null
 	local is_rust_nightly=$?
 
-	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 0 )) ; then
+	if ! use system-clang ; then
 		CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
 		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
 	fi
@@ -5154,7 +5105,7 @@ eerror
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
-	if use system-toolchain ; then
+	if use system-clang ; then
 ewarn "Using system libc++ (partially hardened to unhardened)"
 		myconf_gn+=(
 			"use_custom_libcxx=false"
@@ -6415,7 +6366,7 @@ _configure_optimization_level() {
 		append-flags "-O2"
 	fi
 
-	if ! _use_system_toolchain ; then
+	if ! use system-clang ; then
 	# The vendored clang/rust is likely built for portability not performance
 	# that is why it is very slow.
 		replace-flags "-O*" "-O2"
@@ -6619,7 +6570,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	# Try to fix top_domain_generator invalid opcode in dmesg
 	# Use_march is required because //build/toolchain/linux/unbundle:host
 	# or //build/toolchain/linux/unbundle:default are not applied and
-	# only applied with system-toolchain USE flag.
+	# only applied with system-clang USE flag.
 	if [[ "${host_cpu}" == "x86-64-v1" ]] ; then
 		if use official ; then
 eerror "-march=${a} is not supported with USE=official."
@@ -6973,14 +6924,14 @@ einfo "Clang provider:  Upstream"
 einfo "C++ implementation:  libc++ (vendored)"
 einfo "CFI:  Y"
 einfo "Official settings:  Y"
-	elif ! use system-toolchain && use cfi ; then
+	elif ! use system-clang && use cfi ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
 	# Cross DSO CFI has a lesser security score than static CFI.
 einfo "Clang provider:  Upstream"
 einfo "C++ implementation:  libc++ (vendored)"
 einfo "CFI:  Y"
 einfo "Official settings:  N"
-	elif ! use system-toolchain ; then
+	elif ! use system-clang ; then
 einfo "Clang provider:  Upstream"
 einfo "C++ implementation:  libc++ (vendored)"
 ewarn "CFI:  N"
@@ -7614,7 +7565,7 @@ einfo "Skipping expensive load time optimization..."
 	# This codepath does minimal patching, so we're at the mercy of upstream
 	# CFLAGS. This is fine - we're not intending to force this on users
 	# and we do a lot of flag 'management' anyway.
-	if ! _use_system_toolchain ; then
+	if ! use system-clang ; then
 		QA_FLAGS_IGNORED="
 			usr/lib64/chromium-browser/chrome
 			usr/lib64/chromium-browser/chrome-sandbox
@@ -8150,7 +8101,7 @@ ewarn
 # -system-fontconfig -system-freetype -system-harfbuzz -system-icu
 # -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
 # -system-libstdcxx -system-libwebp -system-libxml -system-libxslt
-# -system-openh264 -system-opus -system-re2 (-system-toolchain) -system-zlib
+# -system-openh264 -system-opus -system-re2 (-system-clang) -system-zlib
 # -system-zstd -systemd -thinlto-opt -vaapi-hevc -widevine -vorbis"
 # LLVM_SLOT="(-19) -20"
 
@@ -8230,7 +8181,7 @@ ewarn
 # -system-harfbuzz -system-icu -system-libaom -system-libdrm
 # -system-libjpeg-turbo -system-libpng -system-libstdcxx -system-libwebp
 # -system-libxml -system-libxslt -system-openh264 -system-opus -system-re2
-# (-system-toolchain) -system-zlib -system-zstd -systemd -vaapi-hevc -vorbis
+# (-system-clang) -system-zlib -system-zstd -systemd -vaapi-hevc -vorbis
 # -webassembly -widevine"
 
 # OILEDMACHINE-OVERLAY-TEST: FAILED 137.0.7151.68 (20250608) - segfaults when playing videos, browsing without videos works.  distro patches only.  no oiledmachine-overlay settings or patchset.
