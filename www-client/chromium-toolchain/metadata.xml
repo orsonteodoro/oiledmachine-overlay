@@ -13,4 +13,20 @@
   The chromium ebuild is split to speed up rebuilds or modding.
 
   -->
+  <use>
+    <flag name="cfi">
+      Add support for Control Flow Integrity to mitigate against ROP expolits.
+    </flag>
+    <flag name="pgo">
+      Add support for Profile Guided Optimization support.
+    </flag>
+    <flag name="system-clang">
+      Use the open and reviewable system Clang instead of the prebuilt Clang
+      that could possibly be trojanized compiler.
+    </flag>
+    <flag name="system-rust">
+      Use the open and reviewable system Rust instead of the prebuilt Rust
+      that could possibly be trojanized compiler.
+    </flag>
+  </use>
 </pkgmetadata>
