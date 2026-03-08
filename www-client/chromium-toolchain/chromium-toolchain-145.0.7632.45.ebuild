@@ -237,8 +237,8 @@ verify_rust() {
 
 		local merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
 		if (( ${merge_time} < ${compatible_time} )) ; then
-eerror "Live merge time is old."
-eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to rust 1.88 or later to continue."
+eerror "The live merge time is old for rust or rust-bin."
+eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.96.0 or later to continue."
 eerror "Merge time:  ${merge_time}"
 eerror "Compatible time:  ${compatible_time}"
 			die
